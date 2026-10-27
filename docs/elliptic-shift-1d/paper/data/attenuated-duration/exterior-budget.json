@@ -1,0 +1,16 @@
+{
+  "created_utc": "2026-10-27T01:13:05.226267+00:00",
+  "authority": "User requests removing apparent-horizon-interior errors from the budget and prioritizing apparent-horizon mass; puncture measurements are not primary acceptance quantities.",
+  "parent_protocol": "telegraph-long-puncture-500-v1.json",
+  "target_time": 500,
+  "resolution": 1025,
+  "evolution_changes": "None; continuation still evolves the full puncture domain with original frozen source and parameters.",
+  "budget": {
+    "region": "Saved nodes r >= r_AH(t), with r_AH from the existing outgoing-expansion apparent-horizon finder.",
+    "RMS": "sqrt(sum_exterior(r^2 * dr/dx * C^2) / sum_exterior(r^2 * dr/dx)) for H, M, Theta, Z; no zero filling of excluded nodes.",
+    "pointwise": "Maximum absolute constraint on the same apparent-horizon exterior.",
+    "primary_invariant": "Apparent-horizon mass relative to initial Schwarzschild M=1/3; report absolute and relative error.",
+    "excluded_from_acceptance": "All errors at nodes inside the apparent horizon, including AF/puncture mass estimates; retain as secondary diagnostics."
+  },
+  "scope": "Prospective interpretation amendment for this single-grid long-duration pilot. Historical full-domain three-grid results and their original assessment remain unchanged. No new numerical pass threshold or convergence claim is inferred."
+}

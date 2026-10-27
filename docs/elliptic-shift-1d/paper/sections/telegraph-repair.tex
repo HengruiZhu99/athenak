@@ -1,0 +1,62 @@
+\subsection{Regularity repair: total-lapse stages and attenuated coupling}
+\label{sec:tele-repair}
+The two long-run failures motivate separating the continuum gauge from its near-puncture representation. The telegrapher addition already contains $\chi$ in Eq.~\eqref{eq:telegraph-alpha}. Its logarithmic rate, however, contains $\chi/\alpha$. A collapsing lapse can therefore amplify a finite additive flux source in the stored variable. A lower floor prevents underflow but does not prevent a large positive logarithmic stage increment from exponentiating to a large lapse. The floored terminal replay also finds a neighboring conformal lapse of approximately $7.59\times10^{12}$, consistent with this conditioning problem. This evidence motivates the following separately identified candidate; it does not establish a unique cause of every failed control.
+
+First, the option \code{lapse_update=total} advances the total conformal lapse at ordinary nodes during RK4. Each stage is formed in $\alpha$, receives the same physical-lapse floor, and is converted back to logarithmic storage. The accepted compensated update also uses $\alpha$ units and accounts for reconstruction roundoff. The AF coefficient endpoint and scri retain their previous variables. This changes the finite-step update without changing the underlying lapse equation. The existing filter rate is still computed in the stored chart before conversion to the total-lapse rate.
+
+Second, \code{puncture_stencil=positive} excludes the AF coefficient slot at $r=0$ from positive-radius derivative and advection stencils. The endpoint coefficient is still evolved, but is no longer treated as a neighboring bulk sample. Every positive-radius node remains in the evolution, constraint evaluation, and elliptic solve. This is a finite-grid inner closure, not a derived continuum boundary condition or positive-radius excision. Polynomial stencil identities, endpoint isolation, and independent native/Python rate comparisons test its implementation.
+
+Third, the new input \code{lapse_attenuation} accepts $0\leq\epsilon_\alpha\leq1$ in
+\begin{align}
+ \eta_\alpha&=\frac{(1+\epsilon_\alpha)\alpha}
+ {\alpha+\epsilon_\alpha A},\\
+ \Delta(D\alpha)&=\eta_\alpha\chi
+ \left[\varpi B_r+\left(\varpi_r+\frac{2\varpi}{r}\right)B\right].
+ \label{eq:attenuated-lapse}
+\end{align}
+Equation~\eqref{eq:telegraph-B} is unchanged. The factor multiplies the existing divergence; it is not moved inside the derivative. For positive $\epsilon_\alpha$, the logarithmic-source coefficient becomes $(1+\epsilon_\alpha)\chi/(\alpha+\epsilon_\alpha A)$ and is bounded as $\alpha\to0$ at fixed finite $\chi$. The reference lapse has $\eta_\alpha=1$; zero attenuation recovers the historical gauge. This third change explicitly modifies the gauge equation. It neither changes a Z4c constraint source nor projects a differential constraint.
+
+The frozen coupled speeds used by both the characteristic diagnostic and timestep guard become
+\begin{equation}
+ c_\pm=-\beta\pm\sqrt{\chi\left(F+
+ \eta_\alpha\frac{\kappa_T\varpi^2}{\tau_T}\right)}.
+ \label{eq:attenuated-speeds}
+\end{equation}
+The frozen dispersion polynomial~\eqref{eq:telegraph-dispersion} retains its form with $c_T^2$ replaced by $\eta_\alpha c_T^2$. Attenuation therefore also reduces the additional frozen-wave damping near lapse collapse. Bounded logarithmic forcing is its purpose; stronger damping everywhere is not claimed. Spatially varying coefficients, the elliptic shift, and nonlinear sources remain outside this frozen argument.
+
+\subsection{Failed controls and interim duration evidence}
+\label{sec:tele-repair-evidence}
+Neither the total-lapse update nor the inner closure alone establishes stability. Table~\ref{tab:repair-controls} records fresh failed controls. A separate blend to derivatives of reconstructed total fields inside $r=10^{-3}$ fails early and is disabled in the current candidate. The two attenuated $N=257$ controls already have approximately seven percent relative horizon-mass error and exterior Hamiltonian RMS of order $0.75$ by $t=31.25$. Their later termination times are not improvements in scientific acceptance.
+
+\begin{table*}[tbp]
+\caption{Fresh unsuccessful repair controls, all initialized from the wormhole data. ``Total'' denotes total-lapse RK stages and ``positive'' denotes positive-radius-only bulk stencils. Direct-total derivatives are an additional inner collar experiment. Each failed trajectory is retained under its original input and source binding.}
+\label{tab:repair-controls}
+\begin{ruledtabular}
+\begin{tabular}{p{9.2cm}rrl}
+Variant & $N$ & Stop time & Guard\\
+\hline
+Total &257&17.2758&Speed\\
+Total &513&42.6005&Speed\\
+Total and positive &257&32.9070&Speed\\
+Total, positive, direct-total derivatives &257&4.7414&Positivity\\
+Same &513&5.6743&Positivity\\
+Total, positive, $\epsilon_\alpha=10^{-4}$ &257&57.1580&Speed\\
+Total, positive, $\epsilon_\alpha=10^{-3}$ &257&73.5424&Speed
+\end{tabular}
+\end{ruledtabular}
+\end{table*}
+
+The present duration candidate combines total-lapse RK, positive-radius stencils, $\epsilon_\alpha=10^{-4}$, and physical floor $10^{-10}$. The direct-total derivative collar is disabled. All other selected mapped-grid, telegrapher, timestep, and KO parameters are retained. No shift cap, upper lapse cap, constraint projection, or relaxed timestep guard is introduced. Nine targeted implementation test groups pass, including independent total-lapse RK stages, exact compensated restart, endpoint isolation, and attenuated native/Python rates and characteristic speeds. These tests do not replace the duration experiment.
+
+Fresh $N=513$ and $1025$ trials target $t=500$ in the compactification units defined in Sec.~\ref{sec:formulation}. The $N=513$ trial is exploratory; the predeclared principal $N=1025$ budget requires relative horizon-mass error below $10^{-5}$. Its full saved-trajectory exterior RMS limits for $(\HH,\MM,\Th,Z_r)$ are $(5\times10^{-5},10^{-4},5\times10^{-7},5\times10^{-6})$; for $t\geq10$ the first two tighten to $10^{-6}$ and $10^{-5}$. The corresponding clock, nullness, and all-stage scri-pole limits are $10^{-12}$, $10^{-10}$, and $10^{-5}$. The interior is excluded and the radial weights are renormalized as in Eq.~\eqref{eq:exterior-norm}. Duration and accuracy are separate requirements.
+
+The fixed interim export contains all 1801 saved $N=1025$ states through $t=90$, each checked for frozen bindings, finite fields, reconstructed full-domain norms, and an independently computed horizon. It passes the declared accuracy budget to this cutoff. The final saved relative horizon-mass error is $2.23\times10^{-7}$; the initial-transient maximum is $2.64\times10^{-6}$. The late exterior RMS maxima are $(1.79\times10^{-7},2.44\times10^{-6},5.00\times10^{-8},5.21\times10^{-7})$. The captured stage extrema extend through $t=92.65$ and give maximum mapped Courant number $0.2000$ and scri-pole residue $2.83\times10^{-6}$. Thus this candidate passes the earlier floored stop time without weakening its guard, while its target-duration verdict remains pending.
+
+Figure~\ref{fig:repair-duration} retains the small inner lapse ripples. Over $0<r\leq10^{-4}$, the maximum fractional physical-lapse change between $t=25$ and $90$ is $3.05\times10^{-4}$, and the minimum at $t=90$ is $4.62\times10^{-7}$, above the imposed floor. Five negative neighboring differences remain, with a largest local fractional drop of $0.250$. These observations support settling of this discrete profile, not elimination of its inner oscillation. The accumulated maximum conformal-lapse floor correction is $5.74\times10^{-15}$, with no recorded nonpositive total-lapse stage clamp. Neither a single surviving grid nor these small corrections establishes convergence of the regularization or nonlinear stability to the requested final time.
+
+\begin{figure*}[tbp]
+ \centering
+ \includegraphics[width=\textwidth]{telegraph_repair_duration}
+ \caption{Interim $N=1025$ attenuation candidate through $t=90$. (a) Exterior RMS constraints, including the initial transient. (b) Relative apparent-horizon mass error and its declared limit. (c) Raw physical-lapse profiles near the puncture, including the initial floor and residual late ripples. (d) Conformal lapse across the domain; the dotted line marks the last saved horizon. No radial smoothing is applied. The trial is still running in this evidence snapshot; this figure is not a $t=500$ result or an extension of the earlier three-grid convergence study.}
+ \label{fig:repair-duration}
+\end{figure*}

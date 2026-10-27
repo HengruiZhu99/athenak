@@ -333,3 +333,10 @@ Added a predeclared-budget assessor and seven passing gate tests. Independently 
 ## 2026-10-27 UTC: repaired trial passes the historical floor-only stop time
 
 The current N1025 trial passed the floor-only failure time84.798291 without changing parameters or relaxing a guard. At the independently checked saved state t86.3, relative AH mass error is2.14166e-7, exterior(H,M,Theta,Z) RMS=(1.79431e-7,2.43679e-6,4.99923e-8,5.21146e-7), and the maximum recorded mappedCFL remains0.200000000008. The sampled physical lapse over0<r<=1e-4 spans4.61814e-7 to1.79677e-3. N513 is still live at338.5, with relativeAHdrift7.33719e-4; its survival is not promoted to the primary accuracy result. Actual worker identities and frozen bindings were checked. The monitoring receipt is evidence/telegraph-attenuated-interim-t60-v2/past-old-failure-monitor.json; its time is explicitly86.3 and is separate from the t60 full-trajectory export. Target500 and its terminal assessment remain pending.
+
+
+## 2026-10-27 UTC: interim repair manuscript and portable package
+
+Updated the paper with the explicitly modified attenuation gauge, total-lapse stages, positive-radius stencils, seven failed fresh controls, and a fixed validated N1025 export through90. All1801 saved states pass the declared exterior budget to that cutoff; final relativeAH error2.22518e-7. Captured stage extrema through92.65 are labeled separately. Duration verdict remains pending. The new Figure16 shows raw lapse ripples and exterior diagnostics; the historical pre-telegrapher baseline is now Figure17 in AppendixA. No convergence verdict is transferred from the old unattenuated three-grid study to the modified candidate.
+
+Final PDF has29 pages,17 figures,5 tables. Source/claim audit and full rendering completed; no undefined references or overfull boxes. REVTeX deferred-float warnings remain with all floats present and inspected. The181-file source package passes CRC and all SHA checks; a clean extracted build reproduces29 pages, identical PNG output, and the pending t90 assessment. No numerical parameters or running-state source bindings changed. Paused historical experiments remain paused.

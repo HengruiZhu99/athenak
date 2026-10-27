@@ -1,0 +1,161 @@
+Start testing: Oct 26 22:56 EDT
+----------------------------------------------------------
+51/59 Testing: spherical_conformal_telegraph_rates_RK_and_restart
+51/59 Test: spherical_conformal_telegraph_rates_RK_and_restart
+Command: "/usr/bin/python3" "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/tst/elliptic_shift_1d/test_telegraph.py" "--library" "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/build-elliptic-shift-1d/libspherical_z4c.dylib" "--fast-library" "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/build-elliptic-shift-1d/libspherical_telegraph.dylib"
+Directory: /Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/build-elliptic-shift-1d
+"spherical_conformal_telegraph_rates_RK_and_restart" start time: Oct 26 22:56 EDT
+Output:
+----------------------------------------------------------
+/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/tst/elliptic_shift_1d/test_telegraph.py:156: RuntimeWarning: divide by zero encountered in matmul
+  np.testing.assert_allclose(np.dot(J*v,Q@v),-epsilon*np.sum(W*Jbar*difference**2)/(2**(2*p)*dx),rtol=3e-15)
+/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/tst/elliptic_shift_1d/test_telegraph.py:156: RuntimeWarning: overflow encountered in matmul
+  np.testing.assert_allclose(np.dot(J*v,Q@v),-epsilon*np.sum(W*Jbar*difference**2)/(2**(2*p)*dx),rtol=3e-15)
+/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/tst/elliptic_shift_1d/test_telegraph.py:156: RuntimeWarning: invalid value encountered in matmul
+  np.testing.assert_allclose(np.dot(J*v,Q@v),-epsilon*np.sum(W*Jbar*difference**2)/(2**(2*p)*dx),rtol=3e-15)
+{"max_python_compiled_rate_difference": 3.878426468872931e-10, "resolutions": [33, 65, 129], "nonzero_flux_RK": true, "free_constraints": true, "disabled_bitwise_equivalence": true, "restart_bitwise": true, "stage_characteristic_oracle": true, "ray_activation": true, "scope": "Implementation validation only; nonlinear convergence remains unproven."}
+<end of output>
+Test time =   7.64 sec
+----------------------------------------------------------
+Test Passed.
+"spherical_conformal_telegraph_rates_RK_and_restart" end time: Oct 26 22:56 EDT
+"spherical_conformal_telegraph_rates_RK_and_restart" time elapsed: 00:00:07
+----------------------------------------------------------
+
+52/59 Testing: telegraph_initial_invariant_mass_and_cli_restart
+52/59 Test: telegraph_initial_invariant_mass_and_cli_restart
+Command: "/usr/bin/python3" "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/tst/elliptic_shift_1d/test_telegraph_driver.py" "--library" "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/build-elliptic-shift-1d/libspherical_z4c.dylib" "--fast-library" "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/build-elliptic-shift-1d/libspherical_telegraph.dylib"
+Directory: /Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/build-elliptic-shift-1d
+"telegraph_initial_invariant_mass_and_cli_restart" start time: Oct 26 22:56 EDT
+Output:
+----------------------------------------------------------
+{"initial_invariant_masses": [0.3333333333333333, 0.2], "cli_checkpoint_bitwise": true, "inner_profiles": ["collar", "af-regular"], "nondefault_quadrature_and_KO": true, "auxiliary_and_stage_rays_included": true}
+<end of output>
+Test time =   6.44 sec
+----------------------------------------------------------
+Test Passed.
+"telegraph_initial_invariant_mass_and_cli_restart" end time: Oct 26 22:56 EDT
+"telegraph_initial_invariant_mass_and_cli_restart" time elapsed: 00:00:06
+----------------------------------------------------------
+
+53/59 Testing: telegraph_analysis_evidence_guards
+53/59 Test: telegraph_analysis_evidence_guards
+Command: "/usr/bin/python3" "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/tst/elliptic_shift_1d/test_telegraph_time_analysis.py"
+Directory: /Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/build-elliptic-shift-1d
+"telegraph_analysis_evidence_guards" start time: Oct 26 22:56 EDT
+Output:
+----------------------------------------------------------
+.....
+----------------------------------------------------------------------
+Ran 5 tests in 0.007s
+
+OK
+<end of output>
+Test time =   0.11 sec
+----------------------------------------------------------
+Test Passed.
+"telegraph_analysis_evidence_guards" end time: Oct 26 22:56 EDT
+"telegraph_analysis_evidence_guards" time elapsed: 00:00:00
+----------------------------------------------------------
+
+54/59 Testing: telegraph_ray_interpolation_and_no_feedback
+54/59 Test: telegraph_ray_interpolation_and_no_feedback
+Command: "/usr/bin/python3" "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/tst/elliptic_shift_1d/test_telegraph_rays.py" "--library" "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/build-elliptic-shift-1d/libspherical_z4c.dylib" "--fast-library" "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/build-elliptic-shift-1d/libspherical_telegraph.dylib"
+Directory: /Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/build-elliptic-shift-1d
+"telegraph_ray_interpolation_and_no_feedback" start time: Oct 26 22:56 EDT
+Output:
+----------------------------------------------------------
+{"grids": ["uniform", "sinh", "inner-exp-scri"], "C1": true, "no_overshoot": true, "affine_exactness": true, "geometry_flux_bitwise": true, "restart_bitwise": true, "scipy_version": null, "independent_stage_oracle": false, "max_normalized_oracle_difference": 0.0}
+<end of output>
+Test time =   0.20 sec
+----------------------------------------------------------
+Test Passed.
+"telegraph_ray_interpolation_and_no_feedback" end time: Oct 26 22:56 EDT
+"telegraph_ray_interpolation_and_no_feedback" time elapsed: 00:00:00
+----------------------------------------------------------
+
+55/59 Testing: telegraph_dense_exit_exact_flows_and_restart
+55/59 Test: telegraph_dense_exit_exact_flows_and_restart
+Command: "/usr/bin/python3" "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/tst/elliptic_shift_1d/test_telegraph_exit.py" "--library" "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/build-elliptic-shift-1d/libspherical_z4c.dylib" "--fast-library" "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/build-elliptic-shift-1d/libspherical_telegraph.dylib"
+Directory: /Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/build-elliptic-shift-1d
+"telegraph_dense_exit_exact_flows_and_restart" start time: Oct 26 22:56 EDT
+Output:
+----------------------------------------------------------
+{"exact_flows": [{"time_dependent": false, "dt": [0.08, 0.04, 0.02, 0.01], "errors": [[1.5200101299850388e-07, 9.120060784351125e-08], [8.306529797330597e-09, 4.983917861745013e-09], [5.918978640551131e-10, 3.5513880725090985e-10], [3.778755086614183e-11, 2.267269705313879e-11]], "orders": [[4.193691237222023, 4.193691242745169], [3.8108257352373673, 3.81082536960829], [3.969365329637529, 3.9693550936532818]]}, {"time_dependent": true, "dt": [0.08, 0.04, 0.02, 0.01], "errors": [[3.645424121456742e-07, 2.6878064063318163e-07], [2.1060521548932343e-08, 1.508140862194196e-08], [1.421237350029969e-09, 1.0376812742407537e-09], [9.029432757046152e-11, 6.657457918279874e-11]], "orders": [[4.1134736032876695, 4.155586139893137], [3.88932175079976, 3.8613358940275813], [3.9763683397760468, 3.9622481708042736]]}], "continuous_order_conditions": true, "cross_and_return": true, "no_feedback_bitwise": true, "terminal_freezing_bitwise": true, "restart_with_exited_rays_bitwise": true, "independent_coupled_stage_oracle": false}
+<end of output>
+Test time =   0.22 sec
+----------------------------------------------------------
+Test Passed.
+"telegraph_dense_exit_exact_flows_and_restart" end time: Oct 26 22:56 EDT
+"telegraph_dense_exit_exact_flows_and_restart" time elapsed: 00:00:00
+----------------------------------------------------------
+
+56/59 Testing: telegraph_independent_control_evidence_guards
+56/59 Test: telegraph_independent_control_evidence_guards
+Command: "/usr/bin/python3" "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/tst/elliptic_shift_1d/test_telegraph_controls.py"
+Directory: /Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/build-elliptic-shift-1d
+"telegraph_independent_control_evidence_guards" start time: Oct 26 22:56 EDT
+Output:
+----------------------------------------------------------
+......
+----------------------------------------------------------------------
+Ran 6 tests in 0.036s
+
+OK
+<end of output>
+Test time =   0.13 sec
+----------------------------------------------------------
+Test Passed.
+"telegraph_independent_control_evidence_guards" end time: Oct 26 22:56 EDT
+"telegraph_independent_control_evidence_guards" time elapsed: 00:00:00
+----------------------------------------------------------
+
+57/59 Testing: telegraph_configurable_physical_lapse_floor
+57/59 Test: telegraph_configurable_physical_lapse_floor
+Command: "/usr/bin/python3" "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/tst/elliptic_shift_1d/test_telegraph_lapse_floor.py" "--library" "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/build-elliptic-shift-1d/libspherical_z4c.dylib" "--fast-library" "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/build-elliptic-shift-1d/libspherical_telegraph.dylib"
+Directory: /Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/build-elliptic-shift-1d
+"telegraph_configurable_physical_lapse_floor" start time: Oct 26 22:56 EDT
+Output:
+----------------------------------------------------------
+{"default": 1e-10, "physical_lapse": true, "AF_and_scri_preserved": true, "only_lapse_clamped": true, "compensation_reset": true, "disabled_and_invalid_inputs": true, "independent_projected_RK4_oracle": true}
+<end of output>
+Test time =   0.12 sec
+----------------------------------------------------------
+Test Passed.
+"telegraph_configurable_physical_lapse_floor" end time: Oct 26 22:56 EDT
+"telegraph_configurable_physical_lapse_floor" time elapsed: 00:00:00
+----------------------------------------------------------
+
+58/59 Testing: telegraph_total_lapse_RK_oracle_and_restart
+58/59 Test: telegraph_total_lapse_RK_oracle_and_restart
+Command: "/usr/bin/python3" "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/tst/elliptic_shift_1d/test_telegraph_total_lapse.py" "--library" "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/build-elliptic-shift-1d/libspherical_z4c.dylib" "--fast-library" "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/build-elliptic-shift-1d/libspherical_telegraph.dylib"
+Directory: /Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/build-elliptic-shift-1d
+"telegraph_total_lapse_RK_oracle_and_restart" start time: Oct 26 22:56 EDT
+Output:
+----------------------------------------------------------
+{"independent_total_RK4": true, "physical_floor": true, "split_restart_exact": true}
+<end of output>
+Test time =   0.12 sec
+----------------------------------------------------------
+Test Passed.
+"telegraph_total_lapse_RK_oracle_and_restart" end time: Oct 26 22:56 EDT
+"telegraph_total_lapse_RK_oracle_and_restart" time elapsed: 00:00:00
+----------------------------------------------------------
+
+59/59 Testing: telegraph_positive_node_closure_and_endpoint_isolation
+59/59 Test: telegraph_positive_node_closure_and_endpoint_isolation
+Command: "/usr/bin/python3" "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/tst/elliptic_shift_1d/test_telegraph_positive_stencil.py" "--library" "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/build-elliptic-shift-1d/libspherical_z4c.dylib" "--fast-library" "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/build-elliptic-shift-1d/libspherical_telegraph.dylib"
+Directory: /Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/build-elliptic-shift-1d
+"telegraph_positive_node_closure_and_endpoint_isolation" start time: Oct 26 22:56 EDT
+Output:
+----------------------------------------------------------
+{"positive_node_polynomial_derivatives": true, "independent_python_native_rates": true, "large_AF_coefficient_no_bulk_feedback": true}
+<end of output>
+Test time =   0.13 sec
+----------------------------------------------------------
+Test Passed.
+"telegraph_positive_node_closure_and_endpoint_isolation" end time: Oct 26 22:56 EDT
+"telegraph_positive_node_closure_and_endpoint_isolation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Oct 26 22:56 EDT
