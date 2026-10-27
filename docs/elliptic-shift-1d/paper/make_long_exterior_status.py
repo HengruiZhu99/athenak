@@ -22,7 +22,8 @@ axs[1].annotate(f'Final saved: {y[-1]:.2e}',xy=(t[-1],y[-1]),xytext=(-8,-28),tex
 axs[1].set(title='Apparent-horizon mass error',ylabel=r'$|M_{\rm AH}-M|/M$')
 stop=s['integrator_time'];limit=max(t[-1],stop)*1.035
 for ax in axs:
- ax.set(xlabel='$t$',xlim=(0,limit));ax.grid(alpha=.2);ax.axvline(10,color='.65',ls=':',lw=.8)
+ ax.set(xlabel='$t$',xlim=(0,limit));ax.grid(alpha=.2)
+ if s.get('parent_checkpoint'):ax.axvline(10,color='.65',ls=':',lw=.8)
  if s['status']=='failed':ax.axvline(stop,color='#B22222',ls='--',lw=1)
 f.suptitle(f'$N={s["resolution"]}$: stopped at $t={stop:.4f}$; saved profiles through $t={t[-1]:g}$' if s['status']=='failed' else f'$N={s["resolution"]}$: evidence through $t={t[-1]:g}$',fontsize=12)
 a.output.parent.mkdir(parents=True,exist_ok=True)

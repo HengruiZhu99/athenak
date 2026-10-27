@@ -1,0 +1,50 @@
+{
+  "checked_utc": "2026-10-27T02:28:55.155495+00:00",
+  "status": "failed",
+  "time": 84.79829101562501,
+  "last_saved_time": 84.75,
+  "profile_count": 1696,
+  "failure": {
+    "type": "FloatingPointError",
+    "message": "telegraph coupled-speed/relaxation timestep guard",
+    "time": 84.79829101562501,
+    "step": 1736669
+  },
+  "process_checks": {
+    "80846": "",
+    "80847": ""
+  },
+  "last_exterior_RMS": {
+    "H": 1.7943224696262516e-07,
+    "M": 2.4368107952889687e-06,
+    "Theta": 4.9992650195827305e-08,
+    "Z": 5.211499691115031e-07
+  },
+  "last_relative_AH_mass_error": 2.1044912629220036e-07,
+  "peak_relative_AH_mass_error": 2.636298878033738e-06,
+  "floor_stats": {
+    "max_lapse_floor_radius": 6.29212026640898e-07,
+    "max_lapse_floor_log_correction": 11950.570998551293,
+    "max_lapse_floor_clamps_per_call": 80.0
+  },
+  "guard_replay": [
+    {
+      "stage": 1,
+      "node": 3,
+      "r": 5.530268340773754e-09,
+      "family": "minus",
+      "speed": -39301719.1193009,
+      "jacobian": 1.9775315850395774e-06,
+      "courant": 993706482784.5553,
+      "relaxation_dt": 0.00244140625,
+      "physical_lapse_at_max_speed": 1.0000000000000108e-10,
+      "max_log_floor_correction": 0.0,
+      "max_metric_deviation": 0.0,
+      "shift_at_max_speed": 39301719.11930076,
+      "intrinsic_speed_at_max": 1.4156103134155273e-07,
+      "conformal_chi_at_max_speed": 7.7198374712388e-14
+    }
+  ],
+  "checkpoint_sha256": "a632aa0fcc0974f6b2b016afe08675a269d42a9954613de8a22bdfd761479d5f",
+  "outcome": "Target500 not reached. Exterior constraints nearly steady and horizon mass accurate in saved states. Physical lapse floor prevents original underflow but not subsequent shift-dominated inner speed-guard failure. No restart, parameter change, or resumption of paused controls."
+}
