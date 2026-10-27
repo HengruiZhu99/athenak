@@ -129,6 +129,15 @@ bool FixedAngleScriShift(const SpatialGeometry<T> &geometry, T alpha, T chi,
   return true;
 }
 
+// Additional telegrapher coupling used by the successful spherical duration
+// run. Apply this OUTSIDE div(window B); the B equation is unchanged. At the
+// Minkowski reference alpha=A the strength is one, and it vanishes with alpha.
+template <typename T>
+KOKKOS_INLINE_FUNCTION
+T ReferenceTelegraphAttenuation(T alpha, T reference_alpha, T epsilon) {
+  return epsilon > 0 ? (1+epsilon)*alpha/(alpha+epsilon*reference_alpha) : T(1);
+}
+
 template <typename T>
 struct TelegraphRate {
   T lapse{}, flux[3]{};
@@ -141,7 +150,8 @@ template <typename T>
 KOKKOS_INLINE_FUNCTION
 TelegraphRate<T> ReferenceTelegraph(const Z4cJet<T> &u,
     const VectorJet<T> &flux, const T reference_lapse_gradient[3],
-    T window, const T window_gradient[3], T tau, T kappa) {
+    T window, const T window_gradient[3], T tau, T kappa,
+    T attenuation = T(1)) {
   TelegraphRate<T> out{};
   for (int i = 0; i < 3; ++i) {
     out.lapse += u.chi.value*(window*flux.d[i][i]+window_gradient[i]*flux.value[i]);
@@ -149,6 +159,7 @@ TelegraphRate<T> ReferenceTelegraph(const Z4cJet<T> &u,
                    -flux.value[i])/tau;
     for (int j = 0; j < 3; ++j) out.flux[i] += u.beta.value[j]*flux.d[j][i];
   }
+  out.lapse *= attenuation;
   return out;
 }
 

@@ -66,6 +66,10 @@ class CompositeTensorEvolution {
   V boundary_rhs, beta_padded;
   Real pole_sat=4,regularity_sat=8;
   Real telegraph_width=.24;
+  // Opt-in reference alignment, used by SphericalMatchedEvolution. Legacy
+  // native/pilot paths retain their recorded formulation until qualified.
+  Real telegraph_attenuation=0;
+  bool spherical_scri_traces=false;
   std::unique_ptr<PunctureLogPlans> log_plans;
   std::unique_ptr<SupportedPunctureLogPlans> supported_log_plans;
   int puncture_derivative_scheme=0;
@@ -356,9 +360,19 @@ class CompositeTensorEvolution {
       boundary_rhs[p*fields]=rate.chi;boundary_rhs[p*fields+13]=rate.trace;boundary_rhs[p*fields+14]=rate.theta;
       for(int t=0;t<6;++t){const int i=tensor_i[t],j=tensor_j[t];
         rate.a[i][j]+=pole_sat/h*parts.pole.a[i][j];
+        if(spherical_scri_traces) {
+          const auto trace=ScriRegularityTraces(u,omega);
+          rate.a[i][j]-=regularity_sat/h*trace.a[i][j];
+          boundary_regularity=std::max(boundary_regularity,std::abs(trace.a[i][j]));
+        }
         boundary_rhs[p*fields+1+t]=rate.metric[i][j];boundary_rhs[p*fields+7+t]=rate.a[i][j];
         boundary_pole=std::max(boundary_pole,std::abs(parts.pole.a[i][j]));}
       for(int v=0;v<3;++v){rate.lambda[v]+=pole_sat/h*parts.pole.lambda[v];
+        if(spherical_scri_traces) {
+          const Real residual=u.lambda.value[v]-geometry.contracted[v];
+          rate.lambda[v]-=regularity_sat/h*residual;
+          boundary_regularity=std::max(boundary_regularity,std::abs(residual));
+        }
         boundary_rhs[p*fields+15+v]=rate.lambda[v];boundary_pole=std::max(boundary_pole,std::abs(parts.pole.lambda[v]));
         if(telegraph){Real flux=-sampled.value[19+v]/.02;
           for(int a=0;a<3;++a)flux+=u.beta.value[a]*sampled.d[19+v][a];boundary_rhs[p*fields+19+v]=flux;}}
@@ -408,7 +422,8 @@ class CompositeTensorEvolution {
         const Real reference_gradient[3] = {x[0], x[1], x[2]};
         const Real radial_gradient = radius > 0 ? window_r/radius : 0;
         const Real window_gradient[3] = {radial_gradient*x[0], radial_gradient*x[1], radial_gradient*x[2]};
-        const auto addition = ReferenceTelegraph(u, flux, reference_gradient, window, window_gradient, .02, .005);
+        const auto addition = ReferenceTelegraph(u, flux, reference_gradient, window, window_gradient, .02, .005,
+            ReferenceTelegraphAttenuation(u.alpha.value,(1+radius*radius)/2,telegraph_attenuation));
         rhs[p*fields+18] += addition.lapse;
         for (int i = 0; i < 3; ++i) rhs[p*fields+19+i] = addition.flux[i];
       }
@@ -429,7 +444,7 @@ class CompositeTensorEvolution {
             norm += u.chi.value*shift.geometry[p].inverse[i][j]
                 *grid.geometry[p].J[A][i]*grid.geometry[p].J[A][j];
         }
-        speed += std::abs(transport)+std::sqrt(norm*(F+(telegraph ? .25*window*window : 0)));
+        speed += std::abs(transport)+std::sqrt(norm*(F+(telegraph ? .25*window*window*ReferenceTelegraphAttenuation(u.alpha.value,(1+radius*radius)/2,telegraph_attenuation) : 0)));
       }
       if (dt*grid.n*speed > .5 || (telegraph && dt/.02 > .25))
         throw std::runtime_error("bounded coupled stage CFL/relaxation guard");

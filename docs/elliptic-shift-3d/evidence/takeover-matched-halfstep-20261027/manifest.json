@@ -1,0 +1,113 @@
+{
+  "scope": "Genuine 3D host research RK4 compared with the successful 1D gauge; spatial operators/KO differ; no scientific acceptance yet",
+  "binary_sha256": "0bd9686b9955cd8a3c58b7ffc9d75165b4f5fea63f5e0d35c876b555ddc474d5",
+  "build_manifest_sha256": "327a7b31db67f1d4d69bdaac1c0674fc22c2b45da404851f917731c288654cee",
+  "reference_receipt_sha256": "8cc2d4a54c266f130bbdaad069c06ae4f90e16598832d083eb3e9fbbcde3c631",
+  "runner_sha256": "b11b7caae7f4184d073a79a3e2782ebfed483a6b7ef5faafd9b742512672e404",
+  "predeclared": {
+    "max_seconds_per_command": 180,
+    "max_cells": 50000,
+    "time": 0.0001953125,
+    "steps": 8,
+    "dt": 2.44140625e-05,
+    "metric_freeze_rms_target": 1e-08,
+    "scri_pole_target": 1e-07,
+    "all_cells_retained": true,
+    "puncture_exclusions": false,
+    "constant_linear_shift_not_pinned": true
+  },
+  "commands": [
+    {
+      "name": "coordinates-n6",
+      "argv": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/takeover-matched-pilot-build-20261027/probe",
+        "coordinates",
+        "6",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/takeover-matched-halfstep-20261027/coordinates-n6.csv"
+      ],
+      "maximum_seconds": 180,
+      "owned_process_group": 43842,
+      "exit_code": 0,
+      "seconds": 0.041426916999999994
+    },
+    {
+      "name": "n6",
+      "argv": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/takeover-matched-pilot-build-20261027/probe",
+        "evolve",
+        "6",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/takeover-matched-halfstep-20261027/initial-n6.dat",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/takeover-matched-halfstep-20261027/n6",
+        "8",
+        "2.44140625e-05",
+        "0.0001",
+        "1e-10"
+      ],
+      "maximum_seconds": 180,
+      "owned_process_group": 43843,
+      "exit_code": 0,
+      "seconds": 41.779181291
+    }
+  ],
+  "cases": {
+    "n6": {
+      "child_exit_code": 0,
+      "initializer_sha256": "20bdc192bfbd0c8887cc8028db9c305bc792a00bb5cce6b933524f1db399f41a",
+      "coordinates_sha256": "73a3e93162f0913950c011b71950dfae72759950e7a7f765f9acddb475f45f8a",
+      "lapse_attenuation": 0.0001,
+      "lapse_floor": 1e-10,
+      "initial": {
+        "time": 0,
+        "cells": 10800,
+        "minimum_radius": 0.03608439182435161,
+        "H_all_rms": 3.530264390346034,
+        "M_all_rms": 0.07105985189216973,
+        "actual_metric_Vt_rms": 2.206024020351423,
+        "actual_metric_Vt_max": 15.283974976416566,
+        "expanded_residual_max_over_solves": 4.634595545010977e-11,
+        "scri_pole": 7.598952027620953e-07,
+        "scri_trace": 3.7994760138104766e-07,
+        "initial_floor_clamps": 0,
+        "evolution_floor_clamps": 0,
+        "nonpositive_clamps": 0,
+        "maximum_floor_radius": 0,
+        "lapse_attenuation": 0.0001,
+        "physical_lapse_floor": 1e-10,
+        "total_lapse_update": 1,
+        "additional_scri_traces": 1,
+        "all_active_cells_retained": true,
+        "scientific_validation": false,
+        "native_Driver_integration": false
+      },
+      "final": {
+        "time": 0.0001953125,
+        "cells": 10800,
+        "minimum_radius": 0.03608439182435161,
+        "H_all_rms": 3.5302721155426737,
+        "M_all_rms": 0.07109733597010895,
+        "actual_metric_Vt_rms": 2.2032644208579906,
+        "actual_metric_Vt_max": 15.233857502504009,
+        "expanded_residual_max_over_solves": 6.553850756539843e-11,
+        "scri_pole": 1.057238312332515e-06,
+        "scri_trace": 4.331570822197676e-07,
+        "initial_floor_clamps": 0,
+        "evolution_floor_clamps": 0,
+        "nonpositive_clamps": 0,
+        "maximum_floor_radius": 0,
+        "lapse_attenuation": 0.0001,
+        "physical_lapse_floor": 1e-10,
+        "total_lapse_update": 1,
+        "additional_scri_traces": 1,
+        "all_active_cells_retained": true,
+        "scientific_validation": false,
+        "native_Driver_integration": false
+      },
+      "gates": {
+        "actual_metric_freeze": false,
+        "scri_pole": false
+      }
+    }
+  },
+  "binary_unchanged": true,
+  "scientific_gates_passed": false
+}

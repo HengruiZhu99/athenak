@@ -7,6 +7,29 @@
 namespace z4c {
 namespace hyperboloidal {
 
+// Weak regularity traces in the selected alpha=1, K=-3, chi*g^{nn}=1
+// scri normalization. No field is projected. With g=I and radial fields,
+// C_A,rr = A_rr + 2 chi_r/3 and C_Lambda = Lambda, as in the 1D scheme.
+// The general expression retains all metric connection and angular derivatives.
+template<typename T>
+KOKKOS_INLINE_FUNCTION
+Z4cRHS<T> ScriRegularityTraces(const Z4cJet<T>&u,const OmegaJet<T>&o) {
+  Z4cRHS<T> result{};
+  const auto geometry=Geometry(u.metric);
+  ScalarJet<T> omega{};omega.value=o.omega;
+  for(int i=0;i<3;++i){omega.d[i]=o.gradient[i];
+    for(int j=0;j<3;++j)omega.dd[i][j]=o.hessian[i][j];}
+  const auto hessian=RegularPenroseHessian(u.metric,geometry,u.chi,omega);
+  T tr=0;
+  for(int i=0;i<3;++i)for(int j=0;j<3;++j)
+    tr+=geometry.inverse[i][j]*hessian.chi_hessian[i][j];
+  for(int i=0;i<3;++i){result.lambda[i]=u.lambda.value[i]-geometry.contracted[i];
+    for(int j=0;j<3;++j)result.a[i][j]=u.a.k[i][j]
+      -hessian.chi_hessian[i][j]+u.metric.g[i][j]*tr/3;}
+  return result;
+}
+
+
 // First-order directional AD. Only algebra is needed by the combined pole
 // numerators, so no finite differences, third metric jets or Omega division enter.
 template <typename T> struct ScriDual {

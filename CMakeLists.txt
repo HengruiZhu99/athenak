@@ -377,6 +377,20 @@ if(Athena_ENABLE_ELLIPTIC_SHIFT_3D_TESTS)
   target_link_libraries(elliptic_shift_3d_operator_tests PRIVATE Kokkos::kokkos)
   add_test(NAME elliptic_shift_3d_exact_operator COMMAND elliptic_shift_3d_operator_tests)
   set_tests_properties(elliptic_shift_3d_exact_operator PROPERTIES TIMEOUT 30)
+  foreach(component matched_radial_kernel matched_time_update)
+    add_executable(elliptic_shift_3d_${component}_tests
+        tst/elliptic_shift_3d/test_${component}.cpp)
+    target_include_directories(elliptic_shift_3d_${component}_tests PRIVATE
+        ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+    target_link_libraries(elliptic_shift_3d_${component}_tests PRIVATE Kokkos::kokkos)
+  endforeach()
+  add_test(NAME elliptic_shift_3d_matched_radial_kernel
+      COMMAND elliptic_shift_3d_matched_radial_kernel_tests
+      ${CMAKE_SOURCE_DIR}/docs/elliptic-shift-3d/evidence/takeover-spherical-reference-20261027/radial-kernel.dat)
+  add_test(NAME elliptic_shift_3d_matched_time_update
+      COMMAND elliptic_shift_3d_matched_time_update_tests)
+  set_tests_properties(elliptic_shift_3d_matched_radial_kernel
+      elliptic_shift_3d_matched_time_update PROPERTIES TIMEOUT 60)
   add_executable(elliptic_shift_3d_tensor_scri_tests tst/elliptic_shift_3d/test_tensor_scri.cpp)
   target_include_directories(elliptic_shift_3d_tensor_scri_tests PRIVATE
       ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
