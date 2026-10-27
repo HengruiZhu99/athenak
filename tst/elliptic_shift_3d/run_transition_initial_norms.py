@@ -1,0 +1,18 @@
+#!/usr/bin/env python3
+"""All-cell initial norms ONLY after complete interface qualification succeeds."""
+import argparse,hashlib,json,os,resource,shutil,signal,subprocess,time
+from pathlib import Path
+p=argparse.ArgumentParser();p.add_argument('--qualification',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args();root=Path.cwd();old=a.qualification.resolve();qualified=json.loads((old/'manifest.json').read_text());assert qualified.get('complete_interface_coverage') and qualified['status']=='complete_interface_qualified' and all(r['passed'] for r in qualified['face_summaries'].values());out=a.output.resolve();out.mkdir(exist_ok=False);capsule=out/'source';shutil.copytree(old/'source',capsule,ignore=shutil.ignore_patterns('__pycache__'));shutil.copyfile(root/'tst/elliptic_shift_3d/evaluate_transition_initial_norms.cpp',capsule/'tst/elliptic_shift_3d/evaluate_transition_initial_norms.cpp');sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest();files={str(f.relative_to(capsule)):sha(f) for f in capsule.rglob('*') if f.is_file()};m={'scope':'ALLCELL initial source/constraint comparison, complete432-cell interface/both scalars qualified first; no coupled adoption','qualification_manifest_sha256':sha(old/'manifest.json'),'all432_queries_and864_fields_qualified':True,'source_sha256':files,'predeclared_budget':{'maximum_seconds_per_command':180,'one_CPU_per_process':True,'all_active_cells':47088,'interface_overrides':864,'all_other_jets_unchanged':True,'independent_exact_radial_shift_shared_for_validation':True},'commands':[]};resource.setrlimit(resource.RLIMIT_CORE,(0,0))
+def save():(out/'manifest.json').write_text(json.dumps(m,indent=2)+'\n')
+def run(name,command):
+ row={'name':name,'argv':list(map(str,command)),'maximum_seconds':180};m['commands'].append(row);save();start=time.monotonic()
+ with (out/(name+'.stdout')).open('w') as so,(out/(name+'.stderr')).open('w') as se:
+  process=subprocess.Popen(list(map(str,command)),stdout=so,stderr=se,start_new_session=True);row['owned_process_group']=process.pid;save()
+  try:row['exit_code']=process.wait(timeout=180)
+  except subprocess.TimeoutExpired:
+   assert os.getpgid(process.pid)==process.pid;os.killpg(process.pid,signal.SIGTERM)
+   try:process.wait(timeout=5)
+   except subprocess.TimeoutExpired:os.killpg(process.pid,signal.SIGKILL);process.wait(timeout=5)
+   row['exit_code']=124;row['owned_process_reaped']=True
+ row['seconds']=time.monotonic()-start;save();print(name,row['exit_code'],round(row['seconds'],3),flush=True);assert row['exit_code']==0
+command=[str(x).replace(str(old/'source'),str(capsule)).replace(str(old/'diagnostic.d'),str(out/'diagnostic.d')).replace(str(old/'diagnostic'),str(out/'diagnostic')).replace('qualify_transition_background_balanced.cpp','evaluate_transition_initial_norms.cpp') for x in qualified['commands'][0]['argv']];run('compile',command);initial=root/'docs/elliptic-shift-3d/evidence/amr-core-pilot-20261027/initial.dat';exact=root/'docs/elliptic-shift-3d/evidence/transition-jet-localization-20261027/exact.dat';m['initial_unknown96_sha256']=sha(initial);m['exact96_sha256']=sha(exact);m['binary_sha256']=sha(out/'diagnostic');m['qualified_support_hashes']={f.name:sha(f) for f in old.glob('face*.supports')};save();run('all-cell-initial-norms',[out/'diagnostic',initial,exact,old,out/'all-cell.csv']);rows=[json.loads(s) for s in (out/'all-cell-initial-norms.stdout').read_text().splitlines() if s.startswith('{')];m['norms']=next(r for r in rows if r['phase']=='full_initial_norms');m['source_unchanged']=all(sha(capsule/f)==h for f,h in files.items());m['unknown96_unchanged']=sha(initial)==m['initial_unknown96_sha256'];assert m['source_unchanged'] and m['unknown96_unchanged'];save()

@@ -1,0 +1,29 @@
+#!/usr/bin/env python3
+"""Independent summary of global scalar-background qualification and failures."""
+import argparse,csv,hashlib,json,os,tempfile
+from pathlib import Path
+import numpy as np
+p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);a=p.parse_args();out=a.output;out.mkdir(exist_ok=False);ev=Path('docs/elliptic-shift-3d/evidence');inputs={};sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+def read(path):inputs[str(path)]=sha(path);return json.loads(path.read_text())
+def rows(path):inputs[str(path)]=sha(path);return list(csv.DictReader(path.open()))
+scalar=read(ev/'global-background-scalar-proof-r2-20261027/manifest.json');derivative=read(ev/'global-background-derivative-proof-20261027/manifest.json');values=rows(ev/'global-background-derivative-proof-20261027/probe.csv');actual=read(ev/'global-background-all-cell-initial-actual-beta-20261027/manifest.json');isolated=read(ev/'global-background-all-cell-initial-r2-20261027/manifest.json');weights=read(ev/'global-background-all-weights-20261027/manifest.json');weight_file=ev/'global-background-all-weights-20261027/probe.stdout';inputs[str(weight_file)]=sha(weight_file);weight_summary=json.loads(weight_file.read_text().splitlines()[-1]);assert weight_summary['all_query_cells']==47088
+names=['supported_base','global_free_background'];mms={}
+for mode in range(9):
+ mms[mode]={name:{key:max(abs(float(row[key])) for row in values if row['method']==name and int(row['mode'])==mode) for key in ['scaled_gradient_error','scaled_hessian_error','H_error','source_error_max']} for name in names}
+changed={row['method']:row for row in values if row['point']=='126' and row['field']=='0' and row['mode']=='6'};changed_ratio=abs(float(changed[names[1]]['H_error'])/float(changed[names[0]]['H_error']));assert changed_ratio>1
+norms=actual['norms'];assert norms['all_active_cells']==47088 and norms['overridden_scalar_jets']==94176 and norms['actual_unknown_values_unchanged'] and not norms['known_independent_radial_shift_shared_for_validation'];assert actual['sources_unchanged'] and actual['initial_unchanged']
+summary={'scope':'Global free-initial-background scalar derivative prototype; no production/evolution or generic regularity claim','scalar_projection':scalar,'seven_query_MMS':mms,'changed_radial_falsifier':{'query':126,'field':'logchi','profile':'.2 log(r+.17)','baseline_H_error':float(changed[names[0]]['H_error']),'candidate_H_error':float(changed[names[1]]['H_error']),'absolute_error_ratio':changed_ratio,'preserved_failure':True},'all_cell_effective_weights_and_noise':weight_summary,'all_cell_actual_engine_jets':norms,'all_cell_independent_shift_isolation':isolated['norms'],'actual_source_limit':'No initial elliptic solve performed. Actual engine reference beta jet is retained in the actual-source variant; its difference from independent radial beta contributes to source errors. No signed/metric jets are substituted.','scientific_acceptance':False,'production_adopted':False,'remaining_gates':['Coupled original-vector elliptic and RK solve with corrected scalar derivatives','Generic nonspherical/profile robustness: changed radial profile demonstrably worsens','Independent background jet uncertainty beyond current scalar96/192 and nodal controls','Signed K/A derivatives still limit momentum and source accuracy']}
+with tempfile.TemporaryDirectory(dir=out,prefix='plot-cache-') as cache:
+ os.environ['MPLCONFIGDIR']=cache;os.environ['XDG_CACHE_HOME']=cache
+ import matplotlib;matplotlib.use('Agg')
+ import matplotlib.pyplot as plt
+ fig,axes=plt.subplots(2,2,figsize=(12,8),layout='constrained');regions=['all','Cartesian','puncture_r_lt_01','transition_all','other_shells','scri_r_ge_09'];labels=['all','Cartesian','r<.1','transition','other shells','scri r>=.9'];methods=['supported_baseline','global_free_background']
+ for method in methods:
+  for ax,field in zip(axes[0],['H','M']):ax.semilogy(range(6),[norms['regions'][r][method][field]['RMS'] for r in regions],'.-',label=method)
+ for ax,field in zip(axes[0],['H','M']):ax.set_xticks(range(6),labels,rotation=25,ha='right');ax.set_title('ALLCELL '+field+' RMS; actual other jets retained');ax.grid(alpha=.2)
+ axes[0,0].legend(fontsize=7)
+ for name in names:axes[1,0].semilogy(range(9),[mms[mode][name]['source_error_max'] for mode in range(9)],'.-',label=name)
+ axes[1,0].set_xticks(range(9),['constant','P2','logpower','rho','angular','fractional','new radial','initial B','B+angular'],rotation=35,ha='right');axes[1,0].set_title('Seven-query full physical-source error maxima');axes[1,0].legend(fontsize=7);axes[1,0].grid(alpha=.2)
+ metrics=['gradient_L1_max','hessian_L1_max'];axes[1,1].bar(np.arange(2)-.17,[weight_summary['base_'+k] for k in metrics],.34,label='base');axes[1,1].bar(np.arange(2)+.17,[weight_summary['new_'+k] for k in metrics],.34,label='base+rank1');axes[1,1].set_xticks([0,1],['scaled gradient L1','scaled Hessian L1']);axes[1,1].set_title('Exact effective functionals: all query cells');axes[1,1].legend(fontsize=7)
+ fig.suptitle('Global scalar background prototype: exact initial chi/lapse, remaining failures visible\nFree coefficients; physical values/Minkowski gauge unchanged; no coupled acceptance');fig.savefig(out/'global-background-qualification.png',dpi=150);plt.close(fig)
+summary['input_sha256']=inputs;summary['inputs_unchanged']=all(sha(Path(path))==h for path,h in inputs.items());assert summary['inputs_unchanged'];summary['script_sha256']=sha(Path(__file__));(out/'analysis.json').write_text(json.dumps(summary,indent=2,allow_nan=False)+'\n');print(json.dumps({'all_H':{m:norms['regions']['all'][m]['H']['RMS'] for m in methods},'all_M':{m:norms['regions']['all'][m]['M']['RMS'] for m in methods},'weights':weight_summary,'changed_profile_error_ratio':changed_ratio},indent=2))
