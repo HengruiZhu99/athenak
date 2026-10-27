@@ -1,3 +1,5 @@
+#include <filesystem>
+#include "z4c/hyperboloidal/native_composite_evolution.hpp"
 //========================================================================================
 // AthenaXXX astrophysical plasma code
 // Copyright(C) 2020 James M. Stone <jmstone@ias.edu> and the Athena code team
@@ -211,6 +213,11 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
     }
   }
 
+  if (pz4c != nullptr && pz4c->native_composite) {
+    const auto sidecar=std::filesystem::absolute(fname+".composite").string();
+    pz4c->native_composite->WriteRestart(sidecar);
+    pin->SetString("z4c","composite_restart_file",sidecar);
+  }
   // create string holding input parameters (copy of input file)
   std::stringstream ost;
   pin->ParameterDump(ost);

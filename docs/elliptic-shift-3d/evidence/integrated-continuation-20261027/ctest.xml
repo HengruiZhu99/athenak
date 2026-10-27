@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="(empty)"
+	tests="31"
+	failures="0"
+	disabled="0"
+	skipped="0"
+	hostname=""
+	time="13"
+	timestamp="2026-10-27T04:09:45"
+	>
+	<testcase name="elliptic_shift_3d_exact_operator" classname="elliptic_shift_3d_exact_operator" time="0.00779521" status="run">
+		<properties/>
+		<system-out>{"variation_error":5.6861043651323939e-12,"flat_error":5.5511151231257827e-17,"metric_rhs_error":5.5511151231257827e-17,"radial_error":2.6461471902550215e-14,"scri_null_error":2.0644816989874987e-16,"scri_angular_error":8.1882613345500832e-17,"cases":32,"status":"passed","selected_telegraph_support":[[0,1,0],[0.01,1,0],[0.02,1,0],[0.029999999999999999,1,0],[0.040000000000000001,1,0],[0.050000000000000003,1,0],[0.059999999999999998,1,0],[0.070000000000000007,1,0],[0.080000000000000002,1,0],[0.089999999999999997,1,0],[0.10000000000000001,1,0],[0.11,1,0],[0.12,1,0],[0.13,1,0],[0.14000000000000001,1,0],[0.14999999999999999,1,0],[0.16,1,0],[0.17000000000000001,1,0],[0.17999999999999999,1,0],[0.19,1,0],[0.20000000000000001,1,0],[0.20999999999999999,1,0],[0.22,1,0],[0.23000000000000001,1,0],[0.23999999999999999,1,0],[0.25,1,0],[0.26000000000000001,1,0],[0.27000000000000002,1,0],[0.28000000000000003,1,0],[0.28999999999999998,1,0],[0.29999999999999999,1,0],[0.31,1,0],[0.32000000000000001,1,0],[0.33000000000000002,1,0]...
+[This part of the test output was removed since it exceeds the threshold of 1024 bytes.]
+</system-out>
+	</testcase>
+	<testcase name="elliptic_shift_3d_tensor_scri_radial" classname="elliptic_shift_3d_tensor_scri_radial" time="0.0936518" status="run">
+		<properties/>
+		<system-out>{"cases": 16, "radial_limit_error": 2.3037127760972e-15, "native_value_error": 1.3322676295501878e-15, "independent_FD_derivative_error": 1.276179162346125e-09}
+</system-out>
+	</testcase>
+	<testcase name="elliptic_shift_3d_selected_telegraph_support" classname="elliptic_shift_3d_selected_telegraph_support" time="0.0797183" status="run">
+		<properties/>
+		<system-out>{"cases": 101, "selected_width": 0.24, "outer": 0.8, "inner_profile": "af-regular", "value_and_derivative_error": 1.4210854715202004e-14, "old_narrow_width_difference": 0.9996952148735141}
+</system-out>
+	</testcase>
+	<testcase name="elliptic_shift_3d_wormhole_chart_radial" classname="elliptic_shift_3d_wormhole_chart_radial" time="0.0837269" status="run">
+		<properties/>
+		<system-out>{"cases": 9, "lapse_relative_error": 5.5248960778941976e-15, "chart_relative_error": 2.156366263700811e-15, "matched_chart_relative_error": 3.356488668626562e-15, "smooth_chart_relative_error": 2.9262819923291106e-15, "moving_reference_time_error": 2.3631929746414926e-12}
+</system-out>
+	</testcase>
+	<testcase name="elliptic_shift_3d_chart_physical_equivalence" classname="elliptic_shift_3d_chart_physical_equivalence" time="0.00349613" status="run">
+		<properties/>
+		<system-out>{"cases":18,"full_tensor_gauge_relative_error":1.9349207893496789e-12,"original_shift_source_error":3.0834709785487746e-16,"null_boundary_error":2.2204460492503131e-16}
+</system-out>
+	</testcase>
+	<testcase name="elliptic_shift_3d_native_field_layout" classname="elliptic_shift_3d_native_field_layout" time="0.047418" status="run">
+		<properties/>
+		<system-out>{"chart_cases":4,"blocks":20,"native_field_count":25,"roundtrip_max":2.2204460492503131e-16,"physical_rate_FD_error":1.1495058377386513e-11,"untouched_ghost_and_block_error":0,"bad_layouts_rejected":true}
+</system-out>
+	</testcase>
+	<testcase name="elliptic_shift_3d_scri_reconstruction" classname="elliptic_shift_3d_scri_reconstruction" time="0.0492938" status="run">
+		<properties/>
+		<system-out>{"degree5_error":3.1753128142630871e-05,"degree7_error":3.432809592140984e-12,"full_second_chain_rule":true}
+</system-out>
+	</testcase>
+	<testcase name="elliptic_shift_3d_native_stage_state" classname="elliptic_shift_3d_native_stage_state" time="0.00470471" status="run">
+		<properties/>
+		<system-out>{"methods":["rk3","rk4"],"driver_coefficients_parsed_from_source":true,"recurrence_max":0,"abscissa_max":0,"counterfactual_native_beta_mixing_error":6.0564177419649994,"midstage_restart_bitwise":true,"geometry_epoch_checks":true,"generic_endpoint_and_chart_metadata":true}
+</system-out>
+	</testcase>
+	<testcase name="elliptic_shift_3d_puncture_position" classname="elliptic_shift_3d_puncture_position" time="0.0121007" status="run">
+		<properties/>
+		<system-out>{"cases":12,"time_relative_error":4.0825710479869007e-11,"spatial_relative_error":5.217553333347522e-08,"coefficient_rate_error":3.3306690738754696e-16,"actual_chart_time_error":4.5501935552749728e-12,"all_active_cells":1280,"scaling_motion":0.0902001941676015,"beta_transport_sign":-1,"revision_invalidation":true,"explicit_endpoint":true,"tracker_stage_publication_rejected":true}
+</system-out>
+	</testcase>
+	<testcase name="elliptic_shift_3d_positive_field_chart" classname="elliptic_shift_3d_positive_field_chart" time="0.00413896" status="run">
+		<properties/>
+		<system-out>{"cases":96,"jet_error":6.2338003137275496e-15,"rate_error":1.5065369890700945e-17,"actual_UnpackComposite_error":3.9932159351521829e-15,"actual_UnpackComposite_endpoint_errors":2,"full_tensor_RHS_error":5.5511151231257827e-17,"selected_Minkowski_lapse_error":2.7755575615628914e-16,"omitted_reference_time_control_error":0.033907818890854022,"beta_untouched":true,"endpoint_limit_errors_reported":2,"expected_range_failures_retained":5,"conditioning":[{"physical_value":9.9999999999999998e-121,"mode":"direct","status":"valid","relative_value_error":0,"absolute_reconstruction_Jacobian":1},{"physical_value":9.9999999999999998e-121,"mode":"log_reference","status":"valid","relative_value_error":9.5479180117763462e-15,"absolute_reconstruction_Jacobian":1.0000000000000094e-120},{"physical_value":9.9999999999999998e-121,"mode":"square","status":"valid","relative_value_error":0,"absolute_reconstruction_Jacobian":4.9999999999999999e+119},{"physical_value":9.9999999999999999e-161,"mode":"direct","status":"valid","relative_...
+[This part of the test output was removed since it exceeds the threshold of 1024 bytes.]
+</system-out>
+	</testcase>
+	<testcase name="elliptic_shift_3d_regular_penrose" classname="elliptic_shift_3d_regular_penrose" time="0.00346458" status="run">
+		<properties/>
+		<system-out>{"random_nonflat_cases":128,"maximum_normal_combination_error":8.3396180489335924e-16,"nonflat_Ricci_maximum":0.68929901848197128,"metric_determinant_range":[1.1392071883769925,2.0275293517436559],"determinant_one_assumed":false,"finite_analytic_extreme_cases":4,"maximum_extreme_analytic_error":1.7382706998054279e-16,"expected_old_geometry_failures":4,"expect_regular_full_RHS":1,"current_full_RHS_range_failures":0,"unrepresentable_physical_result_reported":true,"zero_chi_rejected_without_floor":true}
+</system-out>
+	</testcase>
+	<testcase name="elliptic_shift_3d_regular_kernel" classname="elliptic_shift_3d_regular_kernel" time="0.00465133" status="run">
+		<properties/>
+		<system-out>{"random_offconstraint_cases":384,"normal_data_modes":3,"regular_error":4.4408920985006262e-16,"pole_error":4.0641466376837196e-16,"assembled_error":8.8817841970012523e-16,"constraint_error":4.4408920985006262e-16,"selected_AppendixC_error":8.8817841970012523e-16,"selected_tiny_alpha_relative_error":0,"selected_tiny_alpha_theta_pole":-3.0742666666666664e-200,"legacy_post_add_value":3.4694469519536142e-18,"legacy_post_add_relative_error":1.1285445695299523e+182,"maximum_determinant_error_sampled":0.60688339033676253,"maximum_trace_A_sampled":0.22388742504342288,"maximum_Lambda_minus_V_sampled":0.41913568000357615,"finite_full_RHS_extreme_cases":3,"expected_legacy_extreme_failures":3,"scaled_chi_source_error":0,"null_nonfinite_validity_preserved":true,"positive_lapse_guard_preserved":true}
+</system-out>
+	</testcase>
+	<testcase name="elliptic_shift_3d_stationary_omega_product" classname="elliptic_shift_3d_stationary_omega_product" time="0.00806821" status="run">
+		<properties/>
+		<system-out>{"finite_legacy_cases":6,"legacy_product_error":2.7755575615628914e-17,"pole_product_error":1.3877787807814457e-17,"pole_directional_derivative_error":1.1102230246251565e-16,"directional_derivative_error":2.8588242884097781e-14,"nonfinite_legacy_cases":2,"product_cache_error":0,"unit_normal_out_of_range_cases":1,"tiny_stationary_pole_components":30,"largest_finite_new_product":1000000000000.25,"nonstationary_time_data_preserved":true,"alpha_zero_normal_not_defined":true}
+</system-out>
+	</testcase>
+	<testcase name="elliptic_shift_3d_puncture_log_plans" classname="elliptic_shift_3d_puncture_log_plans" time="0.127719" status="run">
+		<properties/>
+		<system-out>{"cases":[{"mode":0,"n":8,"amr":0,"translated":0,"active_cells":3584,"selected_rows":8,"untouched_cells":3576,"donors_checked":1000,"nearest_distance_violation":0,"cross_level_donors":0,"constant_checks":16,"reconstruction_checks":80,"maximum_condition":188.43288624053338,"maximum_scaled_stored_jet_error":1.2878587085651816e-14,"maximum_scaled_physical_jet_error":2.6367796834847468e-16,"physical_value_change":0,"stale_point_rejections":5,"invalid_radius_rejections":5,"storage_contract_rejections":8,"mesh_mutation_rejections":12,"all_active_values_unchanged":true,"stale_mesh_is_rejected":true},{"mode":1,"n":8,"amr":0,"translated":1,"active_cells":3584,"selected_rows":18,"untouched_cells":3566,"donors_checked":2250,"nearest_distance_violation":0,"cross_level_donors":0,"constant_checks":36,"reconstruction_checks":180,"maximum_condition":254.01443580028794,"maximum_scaled_stored_jet_error":2.1316282072803006e-14,"maximum_scaled_physical_jet_error":8.8817841970012523e-16,"physical_value_change":0,"stale_point_reje...
+[This part of the test output was removed since it exceeds the threshold of 1024 bytes.]
+</system-out>
+	</testcase>
+	<testcase name="elliptic_shift_3d_puncture_refinement" classname="elliptic_shift_3d_puncture_refinement" time="0.00861646" status="run">
+		<properties/>
+		<system-out>{"fixed_origin":[{"level":0,"active_cells":10800,"cartesian_leaves":8,"shell_leaves":42,"targeted_refinements":0,"balance_refinements":0,"containing_leaves":8,"minimum_spacing":0.041666666666666664,"revision":0,"map_error":2.2204460492503131e-16,"constant_integral_error":0,"face_edge_corner_contacts":[12,12,4]},{"level":1,"active_cells":22896,"cartesian_leaves":64,"shell_leaves":42,"targeted_refinements":8,"balance_refinements":0,"containing_leaves":8,"minimum_spacing":0.020833333333333332,"revision":8,"map_error":2.2204460492503131e-16,"constant_integral_error":0,"face_edge_corner_contacts":[144,216,108]},{"level":2,"active_cells":34992,"cartesian_leaves":120,"shell_leaves":42,"targeted_refinements":16,"balance_refinements":0,"containing_leaves":8,"minimum_spacing":0.010416666666666666,"revision":16,"map_error":2.2204460492503131e-16,"constant_integral_error":0,"face_edge_corner_contacts":[348,492,212]},{"level":3,"active_cells":47088,"cartesian_leaves":176,"shell_leaves":42,"targeted_refinements":24,"balanc...
+[This part of the test output was removed since it exceeds the threshold of 1024 bytes.]
+</system-out>
+	</testcase>
+	<testcase name="elliptic_shift_3d_topology_transfers" classname="elliptic_shift_3d_topology_transfers" time="1.78484" status="run">
+		<properties/>
+		<system-out>{"case":"mixed_topology","stage":0,"fine_blocks":34,"coarse_blocks":27,"fine_n":4,"coarse_n":4,"fine_cells":2176,"coarse_cells":1728,"prolong_linear_max":2.2204460492503131e-16,"prolong_quadratic_max":3.3306690738754696e-16,"restrict_linear_nodal_max":2.2204460492503131e-16,"restrict_quadratic_cell_average_max":2.2204460492503131e-16,"represented_mass_relative":1.0139256613395038e-15,"coverage_max":0,"quadratic_rows":512,"linear_fallback_rows":0,"identity_rows":1664,"cross_patch_rows":178,"maximum_prolongation_l1":3.2873438237562542,"maximum_moment_error":7.9936057773011271e-15,"seconds":0.012448167}
+{"case":"mixed_topology","stage":1,"fine_blocks":27,"coarse_blocks":20,"fine_n":4,"coarse_n":4,"fine_cells":1728,"coarse_cells":1280,"prolong_linear_max":2.2204460492503131e-16,"prolong_quadratic_max":2.2204460492503131e-16,"restrict_linear_nodal_max":2.2204460492503131e-16,"restrict_quadratic_cell_average_max":2.2204460492503131e-16,"represented_mass_relative":1.0139256656760787e-15,"coverage_max":0,"quadratic_r...
+[This part of the test output was removed since it exceeds the threshold of 1024 bytes.]
+</system-out>
+	</testcase>
+	<testcase name="elliptic_shift_3d_radial_line_contract" classname="elliptic_shift_3d_radial_line_contract" time="0.610153" status="run">
+		<properties/>
+		<system-out>{"cells":11264,"shell_layers":7,"face_subdivisions":2,"lines":384,"line_length":28,"factor_residual":8.0847924133549166e-17,"assembly_residual":2.0289315792723171e-16,"zero_correction_error":0,"expected_rejections":["invalid_damping","shape_mismatch","line_cap","stale_ghost_stencils","stale_topology_revision","unsupported_fourth_order_preconditioner","unmatched_angular_layers"],"scope":"CPU helper contracts only; no scalable/native/GPU claim"}
+</system-out>
+	</testcase>
+	<testcase name="elliptic_shift_3d_topology_vector_cycle" classname="elliptic_shift_3d_topology_vector_cycle" time="3.34323" status="run">
+		<properties/>
+		<system-out>setup vector N6 shells=7 blocks=50 cells=10800 levels=3 seconds=1.4068
+{"equation":"vector","source":"discrete_mms","n":6,"shells":7,"subdivisions":1,"mixed_amr":0,"curved_metric":1,"lines":1,"topology":1,"blocks":50,"cells":10800,"order":4,"setup_seconds":1.4067983749999999,"solve_seconds":1.8838449589999999,"iterations":22,"applications":24,"converged":1,"operator_difference_relative":0,"residual_rms":9.4360481303284089e-11,"error_rms":2.3007097265168504e-13,"continuum_truncation_rms":0.10468548767320514,"coarse_cells":400,"hierarchy_cells":[10800,1350,400],"hierarchy_halo_rows":[39200,15800,10400],"regions":{"all":{"cells":10800,"residual_rms":9.4360481303284089e-11,"residual_max":3.9164951282089078e-09},"bulk":{"cells":1728,"residual_rms":1.4073881144976009e-10,"residual_max":6.4740568461729708e-10},"shell":{"cells":9072,"residual_rms":9.2578625581753391e-11,"residual_max":3.9164951282089078e-09},"interfaces_edges_corners":{"cells":10400,"residual_rms":9.740273927510531e-11,"residual_max":3.91649512820890...
+[This part of the test output was removed since it exceeds the threshold of 1024 bytes.]
+</system-out>
+	</testcase>
+	<testcase name="elliptic_shift_3d_original_acceptance" classname="elliptic_shift_3d_original_acceptance" time="0.313862" status="run">
+		<properties/>
+		<system-out>{"cells":1280,"forced_budget":[{"expected_accepted":1,"classic_inner_converged":0,"stage_converged":1,"stage_inner_converged":0,"stage_external_acceptance":1,"stage_iterations":1,"target":1e-10,"inner_target":7.1821948016043043e-11,"classic_original":{"physical":9.4999999999999827e-11,"conformal":9.497390177799306e-11,"balanced":9.4986951785326389e-11,"maximum":5.8971404755442271e-10,"finite":1,"accepted":1},"stage_original":{"physical":9.4999999999999827e-11,"conformal":9.497390177799306e-11,"balanced":9.4986951785326389e-11,"maximum":5.8971404755442271e-10,"finite":1,"accepted":1}},{"expected_accepted":0,"classic_inner_converged":0,"stage_converged":0,"stage_inner_converged":0,"stage_external_acceptance":0,"stage_iterations":1,"target":1e-10,"inner_target":7.1821948016043043e-11,"classic_original":{"physical":1.1000000000000005e-10,"conformal":1.0996978100609713e-10,"balanced":1.0998489154090431e-10,"maximum":6.8282679190512173e-10,"finite":1,"accepted":0},"stage_original":{"physical":1.1000000000000005e-10...
+[This part of the test output was removed since it exceeds the threshold of 1024 bytes.]
+</system-out>
+	</testcase>
+	<testcase name="elliptic_shift_3d_odd_radial_falsifier" classname="elliptic_shift_3d_odd_radial_falsifier" time="0.203272" status="run">
+		<properties/>
+		<system-out>{
+"qualification":"host-only derivative prototype; original physical fields and equations unchanged; no evolution validation",
+"rejections":["five_cubed:rank_deficient","query_endpoint:point_collocation","sample_endpoint:point_collocation","far_log:rank_deficient"],
+"cases":[
+{"family":"power_odd_polynomial","translated":0,"octant":0,"h":0.040000000000000001,"p":4,"scaled_derivative_error":1.7389538697898389e-13,"H_enriched_error":1.3368890413104073e-16,"H_log_only_error":7.3103947851745341e-06,"H_fd_error":0.0034666202038642581},
+{"family":"power_odd_polynomial","translated":0,"octant":0,"h":0.040000000000000001,"p":2,"scaled_derivative_error":4.6275090426206591e-13,"H_enriched_error":3.7525538232330291e-13,"H_log_only_error":0.0049884325580595856,"H_fd_error":1.071504110553902},
+{"family":"power_odd_polynomial","translated":0,"octant":0,"h":0.040000000000000001,"p":1.0900000000000001,"scaled_derivative_error":6.3664629124104983e-14,"H_enriched_error":8.9528384705772623e-13,"H_log_only_error":0.0956889839829...
+[This part of the test output was removed since it exceeds the threshold of 1024 bytes.]
+</system-out>
+	</testcase>
+	<testcase name="elliptic_shift_3d_affine_shift_remainder" classname="elliptic_shift_3d_affine_shift_remainder" time="0.0165485" status="run">
+		<properties/>
+		<system-out>{"cases":[{"translated":0,"curved":0,"near":1,"h":0.01,"family":0,"nu":-1,"gram_condition":15.950790222061929,"support_points":124,"all_samples":125,"full_original_L_scale":0,"direct_original_residual":0,"separate_original_residual":0,"nodal_recovery_original_residual":0,"truncation_coordinate_control":0,"direct_arithmetic_defect":0,"separate_arithmetic_defect":0,"normalized_moment":0},{"translated":0,"curved":0,"near":1,"h":0.01,"family":1,"nu":-1,"gram_condition":15.950790222061929,"support_points":124,"all_samples":125,"full_original_L_scale":0,"direct_original_residual":4.3125702661739308e-13,"separate_original_residual":0,"nodal_recovery_original_residual":2.3129646346357426e-14,"truncation_coordinate_control":0,"direct_arithmetic_defect":4.3125702661739308e-13,"separate_arithmetic_defect":0,"normalized_moment":0},{"translated":0,"curved":0,"near":1,"h":0.01,"family":2,"nu":0.5,"gram_condition":15.950790222061929,"support_points":124,"all_samples":125,"full_original_L_scale":2.6175871688288215,"direct_or...
+[This part of the test output was removed since it exceeds the threshold of 1024 bytes.]
+</system-out>
+	</testcase>
+	<testcase name="elliptic_shift_3d_enriched_log_value" classname="elliptic_shift_3d_enriched_log_value" time="0.0390787" status="run">
+		<properties/>
+		<system-out>{"offgrid_plans":12,"independent_field_checks":60,"identity_checks":12,"constant_checks":12,"rejections_without_output_mutation":216,"maximum_value_error":2.8421709430404007e-14,"maximum_value_weight_l1":7.272262211264322,"implementation_checks_passed":true,"qualification":"self-contained local scalar value contracts only"}
+</system-out>
+	</testcase>
+	<testcase name="elliptic_shift_3d_log_volume_norm" classname="elliptic_shift_3d_log_volume_norm" time="0.0678507" status="run">
+		<properties/>
+		<system-out>{"uniform_tiny_chi_error":3.694822225952521e-13,"mixed_tiny_chi_error":3.5527136788005009e-15,"rescued_weight_underflow_relative_error":0,"physical_log_volume":856.01468992340313,"unrepresentable_volume_disclosed":true,"all_cells_retained_in_log_dot":true,"zero_chi_rejected":true}
+</system-out>
+	</testcase>
+	<testcase name="elliptic_shift_3d_enriched_log_derivative" classname="elliptic_shift_3d_enriched_log_derivative" time="0.0966723" status="run">
+		<properties/>
+		<system-out>{
+"qualification":"host-only derivative prototype; original physical fields and equations unchanged; no evolution validation",
+"rejections":["five_cubed:rank_deficient","query_endpoint:point_collocation","sample_endpoint:point_collocation","far_log:rank_deficient"],
+"cases":[
+{"family":"power_polynomial","translated":0,"octant":0,"h":0.040000000000000001,"p":4,"scaled_derivative_error":5.820766091346741e-15,"H_enriched_error":1.1511177753185942e-18,"H_fd_error":0.003573338341707072},
+{"family":"power_polynomial","translated":0,"octant":0,"h":0.040000000000000001,"p":2,"scaled_derivative_error":3.637978807091713e-15,"H_enriched_error":3.3306690738754696e-16,"H_fd_error":1.1082083221047283},
+{"family":"power_polynomial","translated":0,"octant":0,"h":0.040000000000000001,"p":1.0900000000000001,"scaled_derivative_error":7.2759576141834263e-16,"H_enriched_error":1.7763568394002505e-15,"H_fd_error":10.868749634431603},
+{"family":"power_polynomial","translated":0,"octant":0,"h":0.040000000000000001,"p":0.5,"scaled_d...
+[This part of the test output was removed since it exceeds the threshold of 1024 bytes.]
+</system-out>
+	</testcase>
+	<testcase name="elliptic_shift_3d_global_composite" classname="elliptic_shift_3d_global_composite" time="0.42143" status="run">
+		<properties/>
+		<system-out>built 1512 cells, 7 blocks, 2 global MG levels in 0.034009 seconds
+{"n":6,"shells":1,"subdivisions":1,"curved":1,"refined":0,"blocks":7,"cells":1512,"mg_levels":2,"coarse_cells":189,"setup_seconds":0.034008999999999998,"solve_seconds":0.35401404199999997,"iterations":19,"applications":24,"converged":1,"map_error":1.1102230246251565e-16,"constant_error":0,"derivative_error":0.0056697506299356916,"hessian_error":0.066438097511265753,"volume":4.2073914047442171,"curvature_max":0.72034297399355685,"truncation_rms":0.051052178756763864,"error_rms":0.0010167132443726903,"error_max":0.0014627283028241789,"bulk_error":0.00054951168767908287,"interface_error":0.0014627283028241789,"scri_collar_error":0.0010884690404382447,"residual_rms":2.93223544639513e-10,"residual_max":1.6153463011647773e-09,"residual_history":[191.62654875101902,2.9322314165035263e-10],"elliptic_atol":1.0000000000000001e-09,"spatial_order":4,"cotton_max":0.51480255087008553,"cotton_difference":8.8415830212795754e-11}
+</system-out>
+	</testcase>
+	<testcase name="elliptic_shift_3d_radial_interface" classname="elliptic_shift_3d_radial_interface" time="1.01479" status="run">
+		<properties/>
+		<system-out>built 2808 cells, 13 blocks, 2 global MG levels in 0.218763 seconds
+{"n":6,"shells":2,"subdivisions":1,"curved":1,"refined":0,"blocks":13,"cells":2808,"mg_levels":2,"coarse_cells":351,"setup_seconds":0.21876283399999999,"solve_seconds":0.76317758300000005,"iterations":29,"applications":36,"converged":1,"map_error":2.2204460492503131e-16,"constant_error":0,"derivative_error":0.0058896994540865201,"hessian_error":0.30298301185234239,"volume":4.2148078206299919,"curvature_max":0.78706298470660463,"truncation_rms":0.069334327854174371,"error_rms":0.0014116007403691933,"error_max":0.0020409754044397044,"bulk_error":0.0006701060872096043,"interface_error":0.0020409754044397044,"scri_collar_error":0.00079608839237998996,"residual_rms":6.369226888388646e-11,"residual_max":9.136431611267426e-10,"residual_history":[539.92334751866827,4.0504568984694403e-09,6.3693805940388559e-11],"elliptic_atol":1e-10,"spatial_order":4,"cotton_max":0.51480255087008553,"cotton_difference":8.8415830212795754e-11}
+</system-out>
+	</testcase>
+	<testcase name="elliptic_shift_3d_coupled_minkowski" classname="elliptic_shift_3d_coupled_minkowski" time="0.77352" status="run">
+		<properties/>
+		<system-out>{"n":6,"shells":1,"cells":1512,"amplitude":0,"angular":0,"dt":0.00050000000000000001,"steps":2,"time":0.001,"seconds":0.75707225,"elliptic_iterations":0,"shift_residual_max":3.1131889541019012e-14,"shift_residual_point_max":1.2842268943627122e-13,"H_rms":4.4179429980794165e-16,"M_rms":1.1853575250411931e-16,"Theta_rms":2.015448315797114e-18,"Z_rms":9.2337973621361458e-18,"H_max":1.5543122344752192e-15,"M_max":4.7583080662343042e-16,"max_deviation":1.287231388960291e-16,"min_alpha":0.50260416666666674,"min_chi":1,"scri_pole":2.5390269877297044e-15,"scri_clock_extrapolation":2.2204460492503131e-16,"scri_null_extrapolation":2.2204460492503131e-16,"scri_tangent_extrapolation":2.1612234819214379e-16,"restart_checked":0,"restart_equal":1,"spatial_order":4,"wormhole_chart":0,"bulk_subdivisions":1,"isotropic_reference":0,"scri_radial_points":6,"radial_interface_stencils":0,"log_halo_enrichment":0,"log_halo_plans":0,"log_halo_assignments":0,"log_halo_setup_seconds":0,"topology_coarsening":0,"mesh_revision":0,"radial_l...
+[This part of the test output was removed since it exceeds the threshold of 1024 bytes.]
+</system-out>
+	</testcase>
+	<testcase name="elliptic_shift_3d_coupled_tensor_scri" classname="elliptic_shift_3d_coupled_tensor_scri" time="0.837698" status="run">
+		<properties/>
+		<system-out>{"n":6,"shells":1,"cells":1512,"amplitude":0,"angular":0,"dt":0.00050000000000000001,"steps":2,"time":0.001,"seconds":0.828421042,"elliptic_iterations":0,"shift_residual_max":3.173631140526612e-14,"shift_residual_point_max":1.3140331343192533e-13,"H_rms":4.4179429980794165e-16,"M_rms":1.1801759292290279e-16,"Theta_rms":2.0145487075194301e-18,"Z_rms":1.1766048690223642e-17,"H_max":1.5543122344752192e-15,"M_max":4.072072205973289e-16,"max_deviation":1.2738462401348907e-16,"min_alpha":0.50260416666666674,"min_chi":1,"scri_pole":2.5327155764172701e-15,"scri_clock_extrapolation":2.2204460492503131e-16,"scri_null_extrapolation":2.2204460492503131e-16,"scri_tangent_extrapolation":2.1612234819214379e-16,"restart_checked":0,"restart_equal":1,"spatial_order":4,"wormhole_chart":0,"bulk_subdivisions":1,"isotropic_reference":0,"scri_radial_points":6,"radial_interface_stencils":0,"log_halo_enrichment":0,"log_halo_plans":0,"log_halo_assignments":0,"log_halo_setup_seconds":0,"topology_coarsening":0,"mesh_revision":0,"radial_...
+[This part of the test output was removed since it exceeds the threshold of 1024 bytes.]
+</system-out>
+	</testcase>
+	<testcase name="elliptic_shift_3d_regrid_restart" classname="elliptic_shift_3d_regrid_restart" time="0.97064" status="run">
+		<properties/>
+		<system-out>{"mixed_leaf_blocks":63,"layers":2,"face_subdivisions":2,"transfer_error":8.21565e-15,"surface_jet_error":1.3084e-12,"active_only_trace_error":0.00348126,"ghost_boundary_residual":4.66294e-15,"checkpoint_exact":true,"corruption_and_source_mismatch_rejected":true,"status":"passed"}
+</system-out>
+	</testcase>
+	<testcase name="elliptic_shift_3d_radial_interface_regrid" classname="elliptic_shift_3d_radial_interface_regrid" time="2.38983" status="run">
+		<properties/>
+		<system-out>{"mixed_leaf_blocks":63,"layers":2,"face_subdivisions":2,"transfer_error":8.21565e-15,"surface_jet_error":1.3084e-12,"active_only_trace_error":0.00348126,"ghost_boundary_residual":4.44089e-15,"checkpoint_exact":true,"corruption_and_source_mismatch_rejected":true,"status":"passed"}
+</system-out>
+	</testcase>
+	<testcase name="cubed_sphere_map" classname="cubed_sphere_map" time="0.010565" status="run">
+		<properties/>
+		<system-out>  Kokkos Version: 4.7.2
+Compiler:
+  KOKKOS_COMPILER_APPLECC: 6000
+Architecture:
+  CPU architecture: none
+  Default Device: Serial
+  GPU architecture: none
+  platform: 64bit
+Atomics:
+Vectorization:
+  KOKKOS_ENABLE_PRAGMA_IVDEP: no
+  KOKKOS_ENABLE_PRAGMA_LOOPCOUNT: no
+  KOKKOS_ENABLE_PRAGMA_UNROLL: no
+  KOKKOS_ENABLE_PRAGMA_VECTOR: no
+Memory:
+Options:
+  KOKKOS_ENABLE_ASM: no
+  KOKKOS_ENABLE_CXX17: yes
+  KOKKOS_ENABLE_CXX20: no
+  KOKKOS_ENABLE_CXX23: no
+  KOKKOS_ENABLE_CXX26: no
+  KOKKOS_ENABLE_DEBUG_BOUNDS_CHECK: no
+  KOKKOS_ENABLE_HWLOC: no
+  KOKKOS_ENABLE_LIBDL: yes
+Host Serial Execution Space:
+  KOKKOS_ENABLE_SERIAL: yes
+
+Serial Runtime Configuration:
+radial_stretch=0
+h=0.04 derivative error=1.15723e-06
+h=0.02 derivative error=7.23077e-08
+h=0.01 derivative error=4.51883e-09
+radial_stretch=2.4
+h=0.04 derivative error=3.83402e-06
+h=0.02 derivative error=2.37969e-07
+h=0.01 derivative error=1.48473e-08
+radial_stretch=2.85927
+h=0.04 derivative error=5.74618e-06
+h=0.02 derivative error=3.58815e-07
+h=0.01 derivativ...
+[This part of the test output was removed since it exceeds the threshold of 1024 bytes.]
+</system-out>
+	</testcase>
+</testsuite>

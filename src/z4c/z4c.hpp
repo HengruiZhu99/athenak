@@ -35,7 +35,7 @@ namespace cubed_sphere {class Extension;}
 
 namespace z4c {
 class Z4c_AMR;
-namespace hyperboloidal { class CartesianConformalPatch; }
+namespace hyperboloidal { class CartesianConformalPatch; class NativeCompositeEvolution; }
 
 // Shift needed for derivatives
 //----------------------------------------------------------------------------------------
@@ -48,6 +48,7 @@ class Z4c {
   std::unique_ptr<cubed_sphere::Extension> cubed_sphere;
   void InitializeCubedSphere(ParameterInput *pin, bool restart);
   std::unique_ptr<hyperboloidal::CartesianConformalPatch> hyperboloidal_patch;
+  std::unique_ptr<hyperboloidal::NativeCompositeEvolution> native_composite;
   DvceArray5D<Real> hyperboloidal_active;
   Real hyperboloidal_pole_cfl = 0.04;
   bool hyperboloidal_mass_diagnostics = false;

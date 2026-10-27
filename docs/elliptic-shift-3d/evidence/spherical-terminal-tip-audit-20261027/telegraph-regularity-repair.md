@@ -1,0 +1,92 @@
+# Puncture regularity repair: candidates and controls
+
+The user authorized repairing the late puncture failure and asked whether the telegrapher term already has conformal-factor attenuation. The previous `origin/project/telegrapher_lapse` implementation contracts the flux derivative with `oopsi4 * g_uu`, where `oopsi4 = chi_guarded**(-4/chi_psi_power)`. The current spherical lapse correction already carries `chi`; its AF-regular window is one at the puncture. The flux relaxation equation has no additional chi factor. Conformal compactification and the reference-reduced lapse mean these are related prescriptions, not identical coordinate equations.
+
+The unfloored long trial failed at t43.836474609375 through log-lapse underflow. The default physical floor1e-10 trial failed later at t84.798291015625. At its terminal checkpoint, node4 has conformal lapse7.59e12, while the Courant-maximizing node3 remains floored. The elliptic shift is3.93e7 at node3. Thus lower-bounding the lapse does not prevent a positive logarithmic RK overshoot or the resulting shift amplification. Both failed trials and their terminal paper plots remain preserved.
+
+## Explicit numerical controls
+
+- `lapse_update=log` preserves the historical RK variable. `total` integrates the conformal lapse directly at ordinary positive-radius RK stages, floors the physical lapse, then converts to logarithmic storage. The physical compensation remainder includes storage/reconstruction roundoff. The AF coefficient endpoint and scri retain their original time variables. This changes the discrete method, not the continuum gauge equation.
+- `puncture_stencil=coefficient` preserves the historical stencil. `positive` excludes the r=0 asymptotic-coefficient slot from bulk derivative and advection stencils. Every positive-radius node remains evolved. AF endpoint coefficients are still independently evolved; unused exponentials of those coefficients are avoided. This is a disclosed finite-grid inner closure and requires validation; it is not an exact asymptotic boundary theorem.
+- `inner_total_derivatives_radius` defaults to0. Positive values select a separate tested-but-unsuccessful control: direct reconstructed-field derivatives inside half the specified radius, blended back to historical chart derivatives by that radius. Upwind transport uses the same variable choice. This option is **disabled in the current duration candidate**.
+
+Nine targeted implementation test groups pass, including independent projected total-lapse RK, compensated split restart, CLI method-binding rejection, positive-node polynomial derivatives, finite large endpoint coefficients with no bulk feedback, and Python/native attenuated rate and characteristic comparisons. Passing these tests establishes implementation agreement, not nonlinear stability.
+
+## Gauge attenuation candidate
+
+For nonnegative input epsilon=`lapse_attenuation` (default0), define
+
+    A = (1+r^2)/2
+    s(alpha,r) = (1+epsilon)*alpha/(alpha+epsilon*A)
+    delta D_t alpha = s*chi*[w*B_r + (w_r+2*w/r)*B]
+    tau D_t B = kappa*w*(alpha-A)_r - B.
+
+Zero epsilon recovers the original equations. For positive epsilon, s=1 on the reference lapse alpha=A. The logarithmic source is `(1+epsilon)*chi*div(wB)/(alpha+epsilon*A)`, so its coefficient stays bounded as alpha approaches zero. The factor is outside the existing divergence: no derivative of s is inserted. This is an explicitly modified gauge equation, not merely a new implementation of the historical equation.
+
+The frozen coupled speeds become `-beta +/- sqrt(chi*(F+s*kappa*w*w/tau))`. Characteristic tracking and the timestep guard use this modified expression. The current trials use epsilon1e-4, total-lapse RK, positive-node inner closure, physical floor1e-10, and **no direct-total-derivative collar**. The Einstein/Z4 variables remain independently evolved. No constraint projection, shift cap, positive-radius excision, or lapse upper bound is used.
+
+The predeclared duration criteria and full input are in `telegraph-attenuated-duration-protocol-v1.json` and `inputs/elliptic_shift_1d/telegraph-attenuated-duration-v1.json`. Primary acceptance uses the N1025 apparent-horizon-exterior constraints and apparent-horizon mass. N513 is an exploratory resolution control. A single-grid duration pass would still not be convergence evidence.
+
+## Preserved unsuccessful controls
+
+| Control | Resolution | Outcome |
+|---|---:|---|
+| Total-lapse RK from degraded t84.75 profile, zero compensation |1025|Fails at84.8822265625; explicitly not an exact restart|
+| Fresh total-lapse RK, historical coefficient stencil |257|Speed guard at17.27578125|
+| Same |513|Speed guard at42.60048828125|
+| Total-lapse RK plus positive-node stencil |257|Speed guard at32.90703125|
+| Above plus direct-total derivatives inside radius0.001 |257|Positivity guard at4.74140625|
+| Same |513|Positivity guard at5.67431640625|
+| Attenuation epsilon1e-4, total RK, positive-node stencil |257|Speed guard at57.1580078125; exterior accuracy already unacceptable|
+| Same with epsilon1e-3 |257|Speed guard at73.5423828125; exterior accuracy already unacceptable|
+
+The N257 attenuation pilots had approximately7% apparent-horizon mass error and exterior H RMS about0.75 by t31.25. Their longer survival does not constitute success. No failed trajectory was restarted or relabeled. Fresh N513 and N1025 epsilon1e-4 trials under `output/elliptic-shift-1d/telegraph-attenuated-duration-v1` both now finish500. The principal N1025 trajectory passes its unchanged budget; see the terminal assessment below.
+
+
+## Duration assessment and interim evidence
+
+Use `paper/collect_long_puncture.py` with the explicit candidate `--case`, current `--protocol`, and a new export directory. Running exports require `--through`. Then run `tst/elliptic_shift_1d/assess_telegraph_duration.py --export EXPORT --output NEW_ASSESSMENT.json`. The assessor applies only the declared N1025 budget, rejects missing report times and copied-manifest receipt mismatches, and never promotes a healthy partial trajectory to a duration pass. Recorded stage extrema may extend beyond an interim saved-profile cutoff; both times are labeled. Seven gate tests cover incomplete duration, terminal failure despite healthy exterior, missing reports/horizon, nonfinite constraints, mass and boundary violations, coarse-grid mislabeling, and an explicitly synthetic complete-coverage positive control.
+
+The validated export `evidence/telegraph-attenuated-interim-t60-v2/n1025` contains all1201 saved profiles through t60 in its receipts. Its assessment is **pending**: the saved-state accuracy budget passes to this cutoff, but target500 is not reached. Peak relative AH error is2.64272e-6 (initial transient); late exterior RMS maxima are H1.79450e-7, M2.44246e-6, Theta4.99959e-8, Z5.21288e-7. Captured stage extrema through t68 include scri-pole2.83285e-6 and mappedCFL0.200000000008. These are duration-candidate diagnostics, not convergence evidence.
+
+A live-export race was found while constructing the assessment: the collector could read a manifest, then hash a newer version before copying the earlier parsed content. The collector now reads each manifest once and hashes/copies those exact captured bytes; history receipts similarly hash the exact bytes parsed. The rejected first t60 export is retained under tmp as a receipt-race diagnostic, not scientific evidence. No numerical run was changed or restarted.
+
+
+The interim figure `evidence/telegraph-attenuated-interim-t60-v2/repair-status.png` shows exterior constraints, relative AH mass error, physical inner lapse, and conformal lapse across the domain. It uses the validated export without smoothing the radial samples. The lapse at0<r<=1e-4 changes by at most3.04355e-4 fractionally between t25 and60 (maximum absolute change5.04193e-10). Five negative neighboring differences remain; the largest local fractional drop is0.250054, so the near-puncture ripple is not claimed eliminated. The minimum saved physical lapse in this region at60 is4.61814e-7, above the1e-10 floor. The maximum coupled speed in this region is positive6.52221e-5, so this region cannot be assumed pure gauge outflow. These diagnostics support finite-grid settling only; neither a continuum noncrossing claim nor an excision argument follows. Profile hashes and measurements are recorded in lapse-settling.json.
+
+
+## Completed exploratory N513 duration trial
+
+The N513 attenuation trial finished normally at coordinate t500 after5,120,000 accepted steps, runtime2488.08s. Its worker89528 exited. The collector validates all10,001 saved states, exact frozen bindings, finite arrays, full-domain recorded norms, and independently recomputed apparent horizons. Full report coverage is checked against every0.05 interval. The terminal export, assessment, selected raw profiles, and plots are in `evidence/telegraph-attenuated-n513-terminal-v1`.
+
+The final and maximum relativeAH error is0.00109005921 (0.109%). Final exterior RMS(H,M,Theta,Z)=(9.64422e-6,1.26845e-4,2.60933e-6,2.71117e-5); maxima aftert10=(9.90852e-6,1.27908e-4,2.62909e-6,2.72778e-5). Over0<r<=1e-4, the maximum relative lapse change250-to500 is0.00213845 and the final minimum physical lapse is5.96101e-7. Four negative neighboring differences remain, so absence of inner ripples is not claimed. This is exploratory coarse-grid duration evidence, not the principal N1025 accuracy certificate or convergence evidence. The fine-grid run subsequently also reaches500; its terminal assessment is recorded below.
+
+Terminal export exposed two analysis edge cases. Numeric report indices must determine snapshot order once the filenames reach five digits; lexicographic order would misplace report10000. Also, the r0 AF coefficient must be excluded before exponentiation when computing a positive-radius chi minimum; its logarithm can exceed the exponential range while all positive-radius samples remain finite. Both changes affect only collection, not evolution. The entire N513 terminal collector passes with Python warnings promoted to errors. The primary accuracy line is shown only on N1025 plots and read from that export's protocol, rather than applied to the exploratory coarse run.
+
+
+## Frozen characteristic check on the surviving fine trajectory
+
+At the saved N1025 state t151.5, reconstructed coupled speeds agree with the native saved speeds to relative tolerance2e-12. The check uses the frozen source binding and the raw profile identified in `evidence/telegraph-attenuated-characteristics-v1/review.json`. In0<r<=1e-4 the taper is exactlyone. The comparison with eta=1 holds alpha, chi, and beta fixed; it is a frozen-symbol comparison, not a separately evolved unattenuated trajectory.
+
+At the first positive-radius node r1.78613e-9, eta=0.00459738. The plus-family speed is-2.34507e-9, whereas the unattenuated expression on that same geometry gives+1.48092e-9. Both attenuated families point toward decreasingr at the first seven positive nodes. This does not establish causal isolation of the full Z4c/elliptic system: the elliptic shift is nonlocal, and farther-out gauge speeds are positive.
+
+The high-frequency frozen damping remains almost unchanged despite the much smaller flux coefficient. At the first positive node gamma_infinity=24.9949784, versus24.9999769 for eta=1 on the same geometry; the ratio throughout0<r<=1e-4 is0.9998001--0.9998010. Algebraically, as r->0 and alpha->0, F~nu*alpha and eta~2(1+epsilon)*alpha/epsilon. Therefore gamma_infinity tends to R/[2*tau*(1+R)], with R=2(1+epsilon)*kappa/(tau*epsilon*nu); for the selected parameters this is24.9950015. Thus attenuating the singular logarithmic forcing need not remove the intended frozen-wave damping. This calculation is restricted to the local frozen lapse-trace-flux subsystem. It is not a nonlinear stability estimate or evidence of continuum characteristic noncrossing.
+
+## Floor-counter accounting and t400 validation
+
+All8001 saved N1025 states through400 pass the declared exterior budget. Captured stage extrema extend through401.95; target500 is still pending. The verified worker continues unchanged. The full export and assessment are retained under the run's `monitor/validated-t400` directory.
+
+The initial floor and later total-RK clipping have different native counters. Independent reconstruction of the saved analytic initial state and actual evolved initial state finds80 modified positive-radius lapse nodes, maximum radius6.29212e-7, maximum conformal-lapse change4.99996e-11, and maximum physical-lapse change9.99992e-11. All non-lapse fields and both endpoints are unchanged. The native maximum absolute conformal-lapse correction5.73769e-15 is only a `store_alpha` total-RK update counter; it excludes that initial `floor_lapse` call. Radius, logarithmic-change, and count counters do include initialization. This distinction is preserved in `evidence/telegraph-attenuated-floor-accounting-v1`, with a reproducible read-only review and raw comparison arrays. The terminal manuscript update must report the initial change separately rather than treating the later-stage counter as a bound on all flooring.
+
+
+## Completed principal N1025 duration-and-accuracy result
+
+N1025 finishes coordinate t500 after10,240,000 accepted steps and9593.38s. Worker89529 and dispatcher89526 have exited. The terminal checkpoint, including q/B/rays, agrees exactly with the last profile; compensated increments are finite. The warning-as-error collector independently validates all10,001 profiles and their complete cadence. The unchanged protocol hash is7b0d784f3158fe79771b4646819659255a671a4d740f57d23e01579ab9082cab. `evidence/telegraph-attenuated-n1025-terminal-v1/assessment.json` gives **passed_duration_budget**.
+
+Final relativeAH error is1.148041365e-6; the maximum2.642722959e-6 occurs during the initial transient at2.65. Final exterior RMS(H,M,Theta,Z)=(1.794304115e-7,2.436786689e-6,4.999216013e-8,5.211453531e-7). Full-trajectory and late-time RMS limits, scri conditions, mappedCFL<=0.4, relaxation-step bound, and positive recorded geometry all pass. The interior remains in the evolution but outside the primary error budget. No restart, parameter change, or guard relaxation was used.
+
+The minimum physical lapse over0<r<=1e-4 at500 is4.61816e-7; its maximum fractional change from25 to500 is3.07971e-4. Five negative neighboring differences remain (maximum local fractional drop0.250053), so inner ripples are not claimed eliminated. Initial flooring and subsequent total-RK corrections are separately exported. Interior pointwise H remains large (about393 at radius9.52e-9). Passive inward rays coalesce at subnormal binary64 radius3.7233e-320, with logJminimum-797.93; their separation diagnostic no longer resolves crossing/noncrossing at that scale. This diagnostic loss does not feed into q/B evolution.
+
+This completes the requested fixed-input duration-and-exterior-accuracy test. It does not establish convergence of the modified gauge/closure, robustness across parameters or arbitrary data, or continuum stability. The N513 control remains exploratory with0.109% finalAH drift. All historical failures and paused broader studies retain their original status.
+
+The terminal paper has29 pages,17 figures,and6 tables. Figure16 now covers500; Figure17 remains the pre-telegrapher baseline in AppendixA. The terminal evidence, full losslessly compressed histories, source receipts, and the floor/ray limitations are in the portable package. A clean extracted build reproduces all page text, the identical figure PNG, and the passing assessment without running another evolution.

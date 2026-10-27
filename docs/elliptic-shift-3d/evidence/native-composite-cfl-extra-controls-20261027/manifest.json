@@ -1,0 +1,60 @@
+{
+  "binary_sha256": "62b03ee60e5a9a7e90d4f376a1be3d4a83be4dfc44cc012a19806b05d73aa26f",
+  "cases": [
+    {
+      "name": "thin-shell",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-i",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/inputs/z4c/composite_minkowski.athinput",
+        "z4c/composite_radii=.98,1",
+        "z4c/composite_dt=.0005",
+        "time/tlim=.0002",
+        "time/nlim=2",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-composite-cfl-extra-controls-20261027/thin-shell"
+      ],
+      "exit_code": -6,
+      "seconds": 14.530583208
+    },
+    {
+      "name": "default-cauchy-linear-wave",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-i",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/inputs/tests/linear_wave_z4c.athinput",
+        "mesh/nx1=8",
+        "mesh/nx2=8",
+        "mesh/nx3=8",
+        "meshblock/nx1=8",
+        "meshblock/nx2=8",
+        "meshblock/nx3=8",
+        "time/nlim=2",
+        "time/tlim=.125",
+        "output1/dt=1",
+        "output2/dt=1",
+        "output3/dt=1",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-composite-cfl-extra-controls-20261027/default-cauchy-linear-wave"
+      ],
+      "exit_code": 0,
+      "seconds": 0.02410575000000037
+    },
+    {
+      "name": "geometry-limited-default",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-i",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/inputs/z4c/composite_minkowski.athinput",
+        "time/cfl_number=.001",
+        "z4c/composite_dt=.0005",
+        "time/tlim=.0002",
+        "time/nlim=2",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-composite-cfl-extra-controls-20261027/geometry-limited-default"
+      ],
+      "exit_code": 0,
+      "seconds": 3.00189575
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/amr-core-derivatives-20261027/source/tst/elliptic_shift_3d/wormhole_exact_jets.py", line 13, in <module>
+    q,d,dd,meta=initial.data(unique);chi=np.array([m['chi_total'] for m in meta]);alpha=np.ones_like(unique)
+  File "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/amr-core-derivatives-20261027/source/tst/elliptic_shift_1d/wormhole_isotropic.py", line 126, in data
+    ys[use]=self.inverse(r[use]);rows=[self.point(float(x),float(y) if mask else None) for x,y,mask in zip(r,ys,use)]
+  File "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/amr-core-derivatives-20261027/source/tst/elliptic_shift_1d/wormhole_isotropic.py", line 75, in inverse
+    if max(abs(E)/target)<3e-15:break
+ValueError: max() arg is an empty sequence

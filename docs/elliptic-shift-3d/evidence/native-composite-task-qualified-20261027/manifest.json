@@ -1,0 +1,154 @@
+{
+  "scope": "Actual Serial native vacuum Driver RK/Task integration with canonical global host coefficients and verified native physical core mirror; engine-owned shells are NOT native MeshBlocks; no AMR/device/MPI/wormhole claim",
+  "binary_sha256": "b136e637fd6733ff5c1dbdb5e7824f0652ac09371cb1e94166c2eafe567e764d",
+  "input_sha256": "9dfc4e96a5c0b0e4c35160d73db684aa5331e89eaf4c1de0b691d453894a4c19",
+  "cases": [
+    {
+      "name": "two-shell",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-i",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/inputs/z4c/composite_minkowski.athinput",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-composite-task-qualified-20261027/two-shell"
+      ],
+      "maximum_seconds": 180,
+      "expected_success": true,
+      "owned_group": 15898,
+      "exit_code": 0,
+      "seconds": 2.972850708,
+      "expectation_met": true
+    },
+    {
+      "name": "one-shell",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-i",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/inputs/z4c/composite_minkowski.athinput",
+        "z4c/composite_radii=1",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-composite-task-qualified-20261027/one-shell"
+      ],
+      "maximum_seconds": 180,
+      "expected_success": true,
+      "owned_group": 15902,
+      "exit_code": 0,
+      "seconds": 3.018779875,
+      "expectation_met": true
+    },
+    {
+      "name": "restart",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-r",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-composite-task-qualified-20261027/two-shell/rst/native_composite.00001.rst",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-composite-task-qualified-20261027/restart"
+      ],
+      "maximum_seconds": 180,
+      "expected_success": true,
+      "owned_group": 15904,
+      "exit_code": 0,
+      "seconds": 1.9219118750000002,
+      "expectation_met": true
+    },
+    {
+      "name": "reject-adm-alias",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-i",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/inputs/z4c/composite_minkowski.athinput",
+        "adm/separate_z4c_gauge=false",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-composite-task-qualified-20261027/reject-adm-alias"
+      ],
+      "maximum_seconds": 180,
+      "expected_success": false,
+      "owned_group": 15932,
+      "exit_code": -6,
+      "seconds": 0.04911933300000104,
+      "expectation_met": true
+    },
+    {
+      "name": "reject-native-amr",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-i",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/inputs/z4c/composite_minkowski.athinput",
+        "mesh/refinement=adaptive",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-composite-task-qualified-20261027/reject-native-amr"
+      ],
+      "maximum_seconds": 180,
+      "expected_success": false,
+      "owned_group": 15934,
+      "exit_code": 1,
+      "seconds": 0.012790625000000944,
+      "expectation_met": true
+    },
+    {
+      "name": "reject-sidecar-corruption",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-r",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-composite-task-qualified-20261027/two-shell/rst/native_composite.00001.rst",
+        "z4c/composite_restart_file=/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-composite-task-qualified-20261027/corrupt-sidecar.composite",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-composite-task-qualified-20261027/reject-sidecar-corruption"
+      ],
+      "maximum_seconds": 180,
+      "expected_success": false,
+      "owned_group": 15935,
+      "exit_code": -6,
+      "seconds": 0.5109312080000006,
+      "expectation_met": true
+    },
+    {
+      "name": "reject-native-mirror-edit",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-r",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-composite-task-qualified-20261027/edited-native-core.rst",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-composite-task-qualified-20261027/reject-native-mirror-edit"
+      ],
+      "maximum_seconds": 180,
+      "expected_success": false,
+      "owned_group": 15938,
+      "exit_code": -6,
+      "seconds": 0.7307200410000014,
+      "expectation_met": true
+    },
+    {
+      "name": "reject-restart-rk-change",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-r",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-composite-task-qualified-20261027/two-shell/rst/native_composite.00001.rst",
+        "time/integrator=rk3",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-composite-task-qualified-20261027/reject-restart-rk-change"
+      ],
+      "maximum_seconds": 180,
+      "expected_success": false,
+      "owned_group": 15942,
+      "exit_code": -6,
+      "seconds": 0.8105722499999999,
+      "expectation_met": true
+    }
+  ],
+  "accepted_restart_physical_state_comparison": {
+    ".csv": {
+      "identical": true,
+      "uninterrupted_sha256": "a04bd6273f6957d80bb0f615bcf57ecdc1141e3886f808016e050fe8c70ba0af",
+      "restart_sha256": "a04bd6273f6957d80bb0f615bcf57ecdc1141e3886f808016e050fe8c70ba0af"
+    },
+    ".scri.csv": {
+      "identical": true,
+      "uninterrupted_sha256": "9214057c6252452c3ca7c556c0d9a662d012856e3350c7397936f32bf0dbb30a",
+      "restart_sha256": "9214057c6252452c3ca7c556c0d9a662d012856e3350c7397936f32bf0dbb30a"
+    }
+  },
+  "binary_unchanged": true,
+  "input_unchanged": true
+}

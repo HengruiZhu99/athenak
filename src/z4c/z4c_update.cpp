@@ -1,3 +1,4 @@
+#include "z4c/hyperboloidal/native_composite_evolution.hpp"
 //========================================================================================
 // AthenaXXX astrophysical plasma code
 // Copyright(C) 2020 James M. Stone <jmstone@ias.edu> and the Athena code team
@@ -20,6 +21,7 @@ namespace z4c {
 //! \fn  void Z4c::Update
 //! \brief Explicit RK update
 TaskStatus Z4c::ExpRKUpdate(Driver *pdriver, int stage) {
+  if (native_composite) {native_composite->AdvanceStage(pdriver,stage);return TaskStatus::complete;}
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   int is = indcs.is, ie = indcs.ie;
   int js = indcs.js, je = indcs.je;

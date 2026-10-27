@@ -1,3 +1,4 @@
+#include "z4c/hyperboloidal/native_composite_evolution.hpp"
 //========================================================================================
 // AthenaXXX astrophysical plasma code
 // Copyright(C) 2020 James M. Stone <jmstone@ias.edu> and the Athena code team
@@ -216,6 +217,7 @@ template void Z4c::ADMToZ4c<4>(MeshBlockPack *pmbp, ParameterInput *pin);
 //
 // This sets the ADM variables everywhere in the MeshBlock
 void Z4c::Z4cToADM(MeshBlockPack *pmbp) {
+  if (native_composite) {native_composite->ToADM();return;}
   if (hyperboloidal_patch) {
     HyperboloidalADM();
     return;

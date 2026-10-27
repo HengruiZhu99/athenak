@@ -1,7 +1,8 @@
-# Composite 3D elliptic shift: research backend
+# Composite 3D elliptic shift: current implementation and evidence
 
 The exact variable-metric shift and a global composite-grid CPU solver are
-implemented and tested. **The full requested production/scientific milestone
+implemented and tested. A restricted experimental native Driver/RK/restart
+path now passes Minkowski and small-pulse controls on engine-owned shells. **The full requested production/scientific milestone
 is incomplete.** Start with [status and blockers](status.md), the
 [equation/boundary derivation](derivation.md), and the
 [spherical-to-3D test map](spherical-test-mapping.md).
@@ -10,6 +11,17 @@ Source revisions and selective reuse are recorded in
 [source-revisions.json](source-revisions.json). Alan Lam's CFC scalar potentials
 were inspected as infrastructure references; no CFC physics or isolated Robin,
 Sommerfeld or multipole condition was substituted for the hyperboloidal gauge.
+
+The sections below retain their historical commands and outcomes; consult
+[the current status](status.md) and
+[native integration qualification](native-composite-integration.md) before interpreting an old failure or integration
+statement. Actual native controls are reproduced with:
+
+```sh
+cmake --build build-shift-3d --target athena -j2
+python3 tst/elliptic_shift_3d/run_native_composite_smoke.py \
+  --extended-controls --output build-shift-3d/native-reproduced
+```
 
 ## Reproduce on local CPU
 

@@ -1,3 +1,4 @@
+#include "z4c/hyperboloidal/native_composite_evolution.hpp"
 //========================================================================================
 // AthenaXXX astrophysical plasma code
 // Copyright(C) 2020 James M. Stone <jmstone@ias.edu> and the Athena code team
@@ -325,6 +326,8 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
     }
   }
   */
+  if (pin->GetOrAddBoolean("z4c","composite_elliptic_experimental",false))
+    native_composite=std::make_unique<hyperboloidal::NativeCompositeEvolution>(*this,pmy_pack,pin);
   SetupHyperboloidal(pin);
 }
 
@@ -334,6 +337,7 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
 //
 // This function operates on all grid points of the MeshBlock
 void Z4c::AlgConstr(MeshBlockPack *pmbp) {
+  if (native_composite) return; // independently evolved tensor fields are never projected
   if (hyperboloidal_patch) {
     hyperboloidal_patch->ProjectAlgebraic(u0);
     return;

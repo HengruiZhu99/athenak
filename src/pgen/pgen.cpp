@@ -1,3 +1,4 @@
+#include "z4c/hyperboloidal/native_composite_evolution.hpp"
 //========================================================================================
 // AthenaXXX astrophysical plasma code
 // Copyright(C) 2020 James M. Stone <jmstone@ias.edu> and the Athena code team
@@ -916,6 +917,9 @@ void ProblemGenerator::OutputErrors(ParameterInput *pin, Mesh *pm) {
 
 void ProblemGenerator::CallProblemGenerator(ParameterInput *pin, bool is_restart) {
   auto *z4c = pmy_mesh_->pmb_pack->pz4c;
+  if (z4c != nullptr && z4c->native_composite) {
+    z4c->native_composite->Initialize(pin,is_restart);return;
+  }
   if (z4c != nullptr && z4c->hyperboloidal_patch) {
     z4c->InitializeHyperboloidal(pin,is_restart);
     return;

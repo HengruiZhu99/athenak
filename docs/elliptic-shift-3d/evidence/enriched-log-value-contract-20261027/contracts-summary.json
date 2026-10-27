@@ -1,0 +1,30 @@
+{
+  "elliptic_shift_3d_enriched_log_value": {
+    "offgrid_plans": 12,
+    "independent_field_checks": 60,
+    "identity_checks": 12,
+    "constant_checks": 12,
+    "rejections_without_output_mutation": 216,
+    "maximum_value_error": 2.842170943040401e-14,
+    "maximum_value_weight_l1": 7.272262211264322,
+    "implementation_checks_passed": true,
+    "qualification": "self-contained local scalar value contracts only"
+  },
+  "elliptic_shift_3d_affine_shift_remainder": {
+    "real_mantissa_bits": 53,
+    "long_double_mantissa_bits": 53,
+    "moment_plans": 128,
+    "local_vector_tests": 256,
+    "maximum_gram_condition": 519.7357170247848,
+    "maximum_relative_moment": 1.0235049931216034e-14,
+    "maximum_reconstruction_change": 8.326672684688674e-17,
+    "maximum_recenter_change": 5.551115123125783e-17,
+    "maximum_recentered_state_change": 1.1102230246251565e-16,
+    "maximum_recentered_operator_change": 2.1500000002561137e-08,
+    "maximum_full_boundary_reconstruction_error": 1.1102230246251565e-16,
+    "maximum_curved_affine_operator": 0.042036748313349526,
+    "negative_contract_rejections": 5,
+    "implementation_checks_passed": true,
+    "qualification": "local representation/arithmetic only; augmented elliptic solve and evolution not implemented"
+  }
+}

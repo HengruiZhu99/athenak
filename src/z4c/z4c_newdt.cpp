@@ -1,3 +1,4 @@
+#include "z4c/hyperboloidal/native_composite_evolution.hpp"
 //========================================================================================
 // AthenaXXX astrophysical plasma code
 // Copyright(C) 2020 James M. Stone <jmstone@ias.edu> and the Athena code team
@@ -31,6 +32,7 @@ TaskStatus Z4c::NewTimeStep(Driver *pdriver, int stage) {
     return TaskStatus::complete; // only execute last stage
   }
 
+  if (native_composite) {dtnew=native_composite->TimeStep();return TaskStatus::complete;}
   if (hyperboloidal_patch) {
     const auto g = hyperboloidal_patch->grid;
     const Real h = std::min(g.h[0],std::min(g.h[1],g.h[2]));

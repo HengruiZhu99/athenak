@@ -14,6 +14,7 @@
 namespace h=z4c::hyperboloidal;
 using Grid=cubed_sphere::CompositeDifference;using Point=std::array<Real,3>;using V=std::vector<Real>;
 using S=h::ScalarJet<Real>;using Plan=h::EnrichedLogDerivative;
+struct WeightAudit {Real value=0,gradient=0,hessian=0,enrichment=0;};
 struct Datum {Real r,chi,alpha,arr,khat;};
 struct Exact {Real r,chi,cp,cpp,alpha,ap,app,arr,arrp,khat,khatp,beta,bp,bpp;};
 Grid MakeGrid(){auto mesh=cubed_sphere::CompositeMesh(.25,{.45,.55,.60,.65,.70,.75,1},1,6,2,2);
@@ -54,6 +55,9 @@ void Catalog(const Grid &grid,const std::vector<size_t> &targets,const std::stri
   for(size_t p:donors)line(3,p,grid.geometry[p].x);
   // Existing independent generator treats the final unique radius as scri.
   // Include that real endpoint explicitly; otherwise the last lapse is wrong.
+  // Its vectorized inverse also assumes a nonempty transition-region sample.
+  // These two oracle-only points are never used as derivative data/donors.
+  const Real transition[3]={.5,0,0};line(1,1,transition);
   const Real scri[3]={1,0,0};line(1,0,scri);
   std::cout<<"{\"targets\":"<<targets.size()<<",\"internal_ghosts\":"<<ghost.size()<<",\"active_donors\":"<<donors.size()<<",\"actual_cells\":"<<grid.active.size()<<"}\n";}
 std::map<std::pair<int,size_t>,Exact> ReadExact(const std::string &path){std::ifstream f(path);std::string magic;size_t count;f>>magic>>count;if(magic!="EXACT_WORMHOLE_V1")throw std::runtime_error("exact jet magic");
@@ -67,7 +71,11 @@ S Sample(const Grid &grid,const V &padded,const V &stored,size_t p,int field){S 
   for(int a=0;a<3;++a){q.d[a]=d[a];for(int b=0;b<3;++b)q.dd[a][b]=dd[a][b];}return q;}
 Real HChi(const Real x[3],const S &q){Real dot=0,g2=0,lap=0;for(int a=0;a<3;++a){dot+=x[a]*q.d[a];g2+=q.d[a]*q.d[a];lap+=q.dd[a][a];}
   const Real omega=(1-Radius(x)*Radius(x))/2;return std::exp(q.value)*(-6+2*omega*dot+omega*omega*(2*lap-.5*g2));}
-void Report(const char *method,const Grid &grid,size_t p,int field,const S &q,const S &eq,const Exact &exact,size_t halo_count,const Plan::Diagnostics *diagnostic=nullptr,int donors=0){
+WeightAudit AuditWeights(const Plan &plan,int count,Real spacing){h::PuncturePosition point;WeightAudit out;Real gradient[3]{},hessian[3][3]{};
+  for(int i=0;i<count;++i){V unit(count,0);unit[i]=1;Plan::Result r;if(!plan.Evaluate(unit,point,r))throw std::runtime_error("weight impulse evaluation failed");out.value+=std::abs(r.fitted_value);out.enrichment+=std::abs(r.enrichment_coefficient);
+    for(int a=0;a<3;++a){gradient[a]+=spacing*std::abs(r.gradient[a]);for(int b=0;b<3;++b)hessian[a][b]+=spacing*spacing*std::abs(r.hessian[a][b]);}}
+  for(int a=0;a<3;++a){out.gradient=std::max(out.gradient,gradient[a]);for(int b=0;b<3;++b)out.hessian=std::max(out.hessian,hessian[a][b]);}return out;}
+void Report(const char *method,const Grid &grid,size_t p,int field,const S &q,const S &eq,const Exact &exact,size_t halo_count,const Plan::Diagnostics *diagnostic=nullptr,int donors=0,const WeightAudit *weights=nullptr){
   const auto &x=grid.geometry[p].x;const Real h=Spacing(grid,p);S physical{};if(Chart(x,field).Reconstruct(q,physical)!=h::PositiveFieldStatus::valid)throw std::runtime_error("physical reconstruction failed");const auto ep=Physical(x,exact,field);
   Real dg=0,dh=0,pg=0,ph=0;for(int a=0;a<3;++a){dg=std::max(dg,std::abs(q.d[a]-eq.d[a]));pg=std::max(pg,std::abs(physical.d[a]-ep.d[a]));for(int b=0;b<3;++b){dh=std::max(dh,std::abs(q.dd[a][b]-eq.dd[a][b]));ph=std::max(ph,std::abs(physical.dd[a][b]-ep.dd[a][b]));}}
   std::cout<<"{\"method\":\""<<method<<"\",\"point\":"<<p<<",\"field\":\""<<(field==0?"chi":"alpha")<<"\",\"xyz\":["<<x[0]<<','<<x[1]<<','<<x[2]<<"],\"rho\":"<<exact.r<<",\"h\":"<<h<<",\"rho_over_h\":"<<exact.r/h
@@ -75,8 +83,10 @@ void Report(const char *method,const Grid &grid,size_t p,int field,const S &q,co
     <<",\"stored_gradient_error_max\":"<<dg<<",\"stored_hessian_error_max\":"<<dh<<",\"stored_scaled_error\":"<<std::max(h*dg,h*h*dh)<<",\"physical_gradient_error_max\":"<<pg<<",\"physical_hessian_error_max\":"<<ph
     <<",\"physical_scaled_error\":"<<std::max(h*pg,h*h*ph)<<",\"active_value_change\":"<<std::abs(physical.value-ep.value)<<",\"chi_spatial_curvature\":"<<(field==0?HChi(x,q):0)<<",\"exact_chi_spatial_curvature\":"<<(field==0?HChi(x,eq):0);
   if(diagnostic)std::cout<<",\"donors\":"<<donors<<",\"rank\":"<<diagnostic->rank<<",\"condition\":"<<diagnostic->condition<<",\"weight_l1\":"<<diagnostic->maximum_weight_l1<<",\"reproduction\":"<<diagnostic->reproduction<<",\"orthogonality\":"<<diagnostic->orthogonality;
+  if(weights)std::cout<<",\"value_weight_l1\":"<<weights->value<<",\"scaled_gradient_weight_l1\":"<<weights->gradient<<",\"scaled_hessian_weight_l1\":"<<weights->hessian<<",\"enrichment_coefficient_weight_l1\":"<<weights->enrichment;
   std::cout<<"}\n";
 }
+#ifndef ELLIPTIC_SHIFT_3D_AMR_CORE_NO_MAIN
 int main(int argc,char **argv){Kokkos::initialize(argc,argv);int status=0;try{
   if(argc<4)throw std::invalid_argument("usage: catalog initial.dat catalog.csv OR diagnose initial.dat exact.dat");const std::string mode=argv[1];auto grid=MakeGrid();auto initial=ReadInitial(argv[2],grid);const auto targets=Targets(grid);std::cout<<std::setprecision(17);
   if(mode=="catalog")Catalog(grid,targets,argv[3]);else if(mode=="diagnose"){
@@ -91,10 +101,12 @@ int main(int argc,char **argv){Kokkos::initialize(argc,argv);int status=0;try{
       for(int f=0;f<2;++f){const auto eq=StoredExact(x,e,f);Report("ordinary_mapped_fd",grid,p,f,Sample(grid,padded,stored,p,f),eq,e,ghosts);Report("exact_internal_ghost_only",grid,p,f,Sample(grid,oracle,stored,p,f),eq,e,ghosts);}
       for(int count:{125,175,256}){auto nearest=Nearest(grid,p,count);std::vector<Point> nodes;for(const auto &neighbor:nearest){const auto &y=grid.geometry[neighbor.second].x;nodes.push_back({y[0],y[1],y[2]});}
         Plan plan;h::PuncturePosition point;if(!plan.Build({x[0],x[1],x[2]},nodes,Spacing(grid,p),point)){const auto &d=plan.diagnostics();std::cout<<"{\"method\":\"enriched_rejected\",\"point\":"<<p<<",\"donors\":"<<count<<",\"status\":\""<<d.status<<"\",\"rank\":"<<d.rank<<",\"condition\":"<<d.condition<<",\"weight_l1\":"<<d.maximum_weight_l1<<"}\n";continue;}
+        const auto weights=AuditWeights(plan,count,Spacing(grid,p));
         for(int f=0;f<2;++f){V values;for(const auto &neighbor:nearest)values.push_back(stored[2*neighbor.second+f]);Plan::Result result;if(!plan.Evaluate(values,point,result))throw std::runtime_error("fresh enriched evaluation failed");
-          S q{};q.value=stored[2*p+f];for(int a=0;a<3;++a){q.d[a]=result.gradient[a];for(int b=0;b<3;++b)q.dd[a][b]=result.hessian[a][b];}Report("enriched_active_only",grid,p,f,q,StoredExact(x,e,f),e,ghosts,&plan.diagnostics(),count);}
+          S q{};q.value=stored[2*p+f];for(int a=0;a<3;++a){q.d[a]=result.gradient[a];for(int b=0;b<3;++b)q.dd[a][b]=result.hessian[a][b];}Report("enriched_active_only",grid,p,f,q,StoredExact(x,e,f),e,ghosts,&plan.diagnostics(),count,&weights);}
       }
     }
     std::cout<<"{\"summary\":true,\"targets\":"<<targets.size()<<",\"oracle_internal_rows\":"<<oracle_rows<<",\"initial_oracle_value_difference_max\":"<<initial_difference<<",\"all_actual_active_cells\":"<<grid.active.size()<<",\"physics_rhs_changed\":false,\"production_headers_changed\":false}\n";
   }else throw std::invalid_argument("unknown mode");
 }catch(const std::exception &e){std::cerr<<e.what()<<'\n';status=1;}Kokkos::finalize();return status;}
+#endif

@@ -1,0 +1,5 @@
+{
+  "failure": "Initial independent BIN reader interpreted active block bounds as all-output bounds while ghosts are stored; produced false ADM mismatch",
+  "evidence": "Storedfirstnativealpha=.8151041865 andphysicalADMalpha=4.4084506035 matchactualghostx=y=z=-.4583333333, notinitialreader-.2291666667",
+  "fix": "Use BIN explicit index offsets minus nghost and active meshblock cell counts; no native/PDE code or test data changed"
+}

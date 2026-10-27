@@ -1,3 +1,4 @@
+#include "z4c/hyperboloidal/native_composite_evolution.hpp"
 //========================================================================================
 // AthenaXXX astrophysical plasma code
 // Copyright(C) 2020 James M. Stone <jmstone@ias.edu> and the Athena code team
@@ -31,6 +32,7 @@ template <int NGHOST>
 //! \fn void Z4c::CalcRHS(Driver *pdriver, int stage)
 //! \brief compute rhs of the z4c equations
 TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
+  if (native_composite) {native_composite->EvaluateRHS(pdriver,stage);return TaskStatus::complete;}
   if (hyperboloidal_patch) {
     hyperboloidal_patch->RHS(u0,u_rhs);
     return TaskStatus::complete;

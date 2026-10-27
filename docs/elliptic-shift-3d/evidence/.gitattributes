@@ -1,3 +1,7 @@
 # Immutable generated-build snapshots retain their exact bytes and hashes.
 **/config.hpp -whitespace
 **/*.make -whitespace
+
+# Raw compiler logs and native numeric output retain exact receipt bytes.
+**/*.stdout -whitespace
+**/*.dat -whitespace

@@ -1,99 +1,124 @@
 # Current continuation checkpoint, 2026-10-27
 
-**The first scientific milestone remains incomplete.** The global full-vector
-CPU research solver works on the tested composite grids, including seven shell
-layers and puncture-centered Cartesian AMR. Production AthenaK compiled with
-its common tensor changes, but its tasks do not dispatch this composite solver.
+**The first scientific milestone remains incomplete.** The full variable-metric
+vector solver converges on the tested global composite CPU domains. Actual
+AthenaK Driver/RK tasks now dispatch the shared tensor evolution and shift
+solver in a deliberately restricted experimental configuration. The selected
+wormhole evolution still fails the unchanged scientific accuracy gates.
 
 ## Implemented and checked
 
-- Full variable-metric Frechet operator, independent evolved Lambda, original
-  metric-connection gauge, fixed-angle/future-null scri data and prescribed
-  lapse clock remain unchanged. No CFC substitution, differential projection,
-  Omega/chi/lapse floor, puncture beta pin or background physical-RHS subtraction.
-- The optional hierarchy now handles odd logical sizes and coarsens complete
-  Cartesian sibling families. Every level rebuilds global face/edge/corner,
-  Cartesian/shell and coarse/fine halos. Restriction carries represented volume;
-  prolongation uses global active values. The1024-cell dense coarse guard stays.
-  [25 actual-cycle qualifications](global-cycle-qualification.md) passed scalar
-  and curved full-vector tests on N6/N8, 1/2/7 shells, mixed AMR and subdivisions.
-- A global radial-line scalar smoother spans every layer on each angular line.
-  It changes only the preconditioner. The seven-shell scalar control reduced
-  iterations115→11, timed solve4.36→.50s. The full coupled pilot now finishes
-  instead of timing out. [Derivation and limits](radial-line-smoother.md).
-- Direct physical beta and bounded optional scaling retain translation/linear
-  modes. Logarithmic volume arithmetic handles finite tiny chi; independent
-  physical/conformal RMS and point checks protect against misleading infinite-
-  end quadrature RMS. The public residual is recomputed from the original
-  equation at every Krylov restart. [Acceptance audit](shift-acceptance-audit.md)
-  shows this does not weaken the requested tolerance; auxiliary flags/targets
-  remain separate, including an exact-inner-zero/original-failure rejection.
-- Exponent-independent log-field derivative enrichment keeps physical values
-  unchanged and fits a Cartesian polynomial plus log distance. No exponent is
-  evolved, prescribed or shared globally. Rank, conditioning, point-position,
-  storage and mesh-lifecycle guards are tested. Rebuild after regrid/restart.
-  The optional odd-radial expansion is **not adopted**: it improves radial
-  initial data but worsens fractional angular errors and noise amplification.
-- All **28 integrated CTests passed** in18.0s. Four independent spherical test
-  drivers passed earlier; the original limit audit matches16 radial scri cases
-  to2.31e-15. All tests and failed attempts remain in the evidence directories.
-- Actual production `athena` built with-j2/SerialKokkos/double in139.7s, help
-  exit0. Native Z4c compiler dependencies verify the regular-source headers.
-  [This is compilation compatibility](native-production-build.md), not task,
-  shell-owner, distributed/device solver, or production evolution integration.
+- The exact metric-built connection, its full variable-metric Frechet operator,
+  independent evolved Lambda, future-null/fixed-angle shift data and prescribed
+  scri lapse clock are retained. No CFC, differential projection, field floor,
+  puncture beta pin or physical-RHS background subtraction is used.
+- The host hierarchy supports odd logical sizes, complete Cartesian sibling
+  coarsening, global face/edge/corner and coarse/fine halos at every level,
+  volume-aware restriction and global active prolongation. Twenty-five actual
+  scalar/curved-vector cycle qualifications pass, including seven shell layers,
+  mixed Cartesian AMR and shell subdivisions where the coarse budget allows.
+  The 1024-cell dense coarse guard remains; angular shell topology coarsening
+  is still missing. This is selectively reused scalar MG infrastructure and
+  new mapped/coupled code, not Alan's four-potential CFC solver.
+- Global radial-line smoothing changes only the scalar preconditioner. Original
+  physical/conformal RMS and point residuals are recomputed independently of
+  the preconditioner. Tight-tolerance and timestep controls separate solver and
+  temporal errors from the unresolved spatial/interface errors.
+- Exponent-independent positive log fields and local polynomial-plus-log
+  derivatives retain the original physical values. Puncture position, map,
+  storage, rank, conditioning and mesh lifecycle guards are explicit. An
+  optional value-only Cartesian coarse/fine halo cache uses the same fixed
+  function space, with bounded donor enlargement and VALUE amplification.
+  It changes no active value, signed tensor, beta or evolution equation.
+- Fixed odd-radial enrichment was rejected as a general replacement after
+  fractional angular/noise counterexamples. A separate affine-plus-remainder
+  beta prototype preserves constant/linear translation modes without power
+  division; its augmented global solve is not implemented. Neither prototype
+  establishes generic wormhole-to-trumpet or moving-puncture safety.
 
-## Actual coupled pilots and remaining numerical failures
+## Actual native Task/RK/restart validation
 
-All following pilots evolve the22 full3D tensor/gauge fields with classicalRK4,
-solve the full shift at every stage, use actual Omega=0 and the M=1/3 isotropic
-wormhole with Minkowski reference, and reach only t=.0002. None is accepted as
-collapse/front convergence. All listed completed checkpoints restart bitwise.
+The experimental `z4c/composite_elliptic_experimental=true` path uses actual
+AthenaK task callbacks and live Driver RK coefficients, including all 22 free
+3D tensor/gauge fields and the algebraic full-vector solve at each stage.
+[The native architecture and exact commands](native-composite-integration.md)
+record its restrictions and failed attempts. A mechanical extraction shares
+the same tensor engine with the research
+pilot; the native path never invokes the pilot's classical-RK Step method.
+The canonical host core/shell/scri state has a verified physical native-core
+mirror and separate physical ADM gauge conversion. Independent Lambda and
+nonzero telegraph flux evolve; there is no symmetry enforcement.
 
-| Configuration | Cells | H RMS | M RMS | Tensor scri pole | Result |
-|---|---:|---:|---:|---:|---|
-| N8,3 shells, log enrichment |13312|.51056|.14016|3.93e-6|Failed|
-| N8,7 buffered shells, radial lines |25600|.50906|.02839|1.46e-6|Failed|
-| N6,7 shells,3 Cartesian refinement levels |47088|.02981|.03286|1.44e-5|Failed|
+The native two-shell Minkowski test reaches t=.02 in 40 RK4 cycles (42.23s):
+H/M RMS 2.02e-15/4.80e-15, original shift RMS maximum 1.65e-13,
+scri pole 8.97e-14, ghost clock 0 and null/tangential residuals below 7e-16.
+Small radial and nonspherical lapse pulses both complete with nonzero flux
+and tensor response. Their actual native restart continuations are bit-identical
+in full volume, scri, flux, RK registers and warm shift. Independent native
+binary ADM decoding agrees at the output precision. Corruption, mirror edit,
+changed RK and changed pulse configuration are rejected. Evidence:
+`evidence/native-composite-pulse-controls-20261027` and
+`evidence/native-composite-task-qualified-20261027`.
 
-The unchanged pole gate is1e-7. The refined run still has H maximum.4061 and
-M maximum.5637; every cell is retained. Its maximum error near r=.08475 lies at
-fine/coarse Cartesian boundaries outside the current rho/h<=8 enrichment rule.
-Source-derivative and interface errors, not a converged elliptic tolerance,
-remain actionable numerical failures. The previous seven-shell180s timeout
-and its valid t=.0001 checkpoint are preserved, not relabeled as completion.
+This is Serial/double/vacuum with one static cubic native Cartesian block,
+ng=3/order=4, and dedicated Minkowski initialization. Shells are engine-owned
+host blocks, not native MeshBlocks or device/rank-distributed storage. Native
+wormhole initialization, native AMR/regridding, matter, tracking, MPI/GPU and
+midstage restart remain unsupported and guarded. Native restart is paired
+with a complete composite sidecar; this does not claim general shell output
+or native distributed multigrid support. Full-grid characteristic, scri penalty
+and flux-relaxation timestep selection is now active. A small-CFL control
+selects4.861111e-6 from a requested ceiling .0005 and advances with that step;
+all34 default output CSVs remain bit-identical after this update. A .98,1
+thin-shell attempt fails the initial shift solve and is retained as unsupported
+by that tight-tolerance control, not counted as a runtime CFL pass.
 
-The line pilot's step-halving changes stored fields/shift by3.10e-11; tightening
-original vector RMS from1e-10 to1e-12 changes them by3.06e-13. The latter runs
-81.2s, restarts bitwise and verifies original maximum9.04e-11. The earlier
-surrogate-norm240-iteration failure remains archived. These controls isolate
-spatial/interface error; they do not relax any scientific acceptance target.
+## Selected wormhole: actual coupled failures retained
 
-The selected verified spherical taper is width**.24**, not the former driver
-.08 default. Shared support matches independent1D values/derivatives; checkpoints
-store all new controls (current formatv12, old versions retain old defaults).
-Earlier.08 pilots/references remain labeled matched narrow-taper controls.
+The following full 3D classical-RK4 research pilots solve the full vector
+shift each stage and evolve actual Omega=0 with the M=1/3 isotropic wormhole,
+Minkowski reference and verified spherical taper width .24. All reach only
+t=.0002 and restart bitwise; none establishes collapse/front convergence.
 
-Frozen true1D collapse snapshots at t1/5/10 are compared in nine instantaneous
-full3D global solves: original residual RMS5.2–5.9e-11. Shift RMS differences
-are~.006 with FD sources and~.001 with independent numerical snapshot jets.
-[The comparison](instantaneous-radial-collapse.md) retains all regions and raw
-angular scatter. It is neither a3D time evolution to those times nor an endpoint
-validation. At t10 the recorded B feature peaks near4e-7, far below current3D
-cells; true innermost AF and outer trumpet-like slopes coexist. No universal
-puncture power or generic safety claim follows from these data.
+| Configuration | Cells | H RMS | M RMS | Maximum H | Tensor scri pole |
+|---|---:|---:|---:|---:|---:|
+| N8, 3 shells, log derivatives | 13312 | .51056 | .14016 | — | 3.93e-6 |
+| N8, 7 buffered shells, radial lines | 25600 | .50906 | .02839 | 1.57085 | 1.46e-6 |
+| N6, 7 shells, 3 Cartesian refinement levels | 47088 | .02981 | .03286 | .40613 | 1.44e-5 |
+| Same, value-only log halos within rho<.12 | 47088 | .02968 | .03286 | .19555 | 1.44e-5 |
 
-A geometry-only budget estimate for8cells across that *radius* (not its unknown
-width) gives about599k active cells and20nested refinement levels. State/Krylov
-arrays alone exceed800MB, before halos, geometry and working arrays. Timing
-extrapolations are labeled arithmetic estimates, not scalability measurements.
-No such large run, GPU job, remote allocation, push or external PR was started.
+Every case **fails** the unchanged 1e-7 pole target and remaining scientific
+criteria. Every active cell remains in the norms. The last run costs 127.55s,
+including cache rebuild/restart, and has original vector RMS maximum 2.73e-11
+and point maximum 1.25e-9. The halo cache uses 9,616 plans for all 19,248 selected
+receivers; no exclusion or fallback hides a rejected fit. Its reduced maximum
+moves to the next Cartesian coarse/fine interface at r=.16949, outside .12.
+The expanded support and scri component localization are separate followups.
 
-Remaining work: fix all-region radial accuracy/scri consistency, validate the
-applicable constraint/scalar/nonspherical and collapse families, establish
-puncture endpoint behavior across evolving regularity, and wire actual native
-RK tasks/shell ownership/regrid/restart/MPI/device paths. These are unfinished
-numerical and engineering work, not a proven mathematical incompatibility.
-Original1D jobs/checkouts were never modified or signaled by this task.
+Step halving in the seven-shell N8 pilot changes fields/shift by 3.10e-11;
+tightening original vector RMS from 1e-10 to 1e-12 changes them by 3.06e-13.
+Thus converged elliptic tolerance does not fix these discretization defects.
+Earlier 180s timeout and auxiliary-norm stopping failures remain recorded.
+Current research checkpoint v13 binds the halo choice; older versions retain
+old defaults. Earlier .08-taper controls are explicitly not the selected .24
+benchmark. The integrated suite now passes 31/31 in 13.46s, including the new value-only
+halo and affine-remainder contracts (`evidence/integrated-continuation-20261027`).
+The actual native task controls are separately executed and recorded above.
+
+Frozen true 1D collapse snapshots at t=1/5/10 have nine instantaneous full 3D
+solves with original RMS 5.2–5.9e-11. Shift RMS differences are about .006 with
+FD sources and .001 with independent numerical snapshot jets. They are not 3D
+evolution to those times. The recorded t=10 flux feature near r=4e-7 is far
+below present 3D resolution; AF and outer trumpet-like powers coexist. A budget
+estimate for eight cells across that radius requires about 599k active cells
+and 20 nested levels, with over 800MB for state/Krylov arrays before halos.
+This is a geometry/memory estimate, not a request or a scalability result.
+
+Remaining work includes all-region radial accuracy and scri consistency,
+applicable constraint/scalar/collapse families, a validated changing-regularity
+puncture endpoint, and general native shell ownership/AMR/MPI/device paths.
+No mathematical incompatibility or new permission blocker has been established.
+Original 1D jobs/checkouts have never been modified or signaled by this task.
 
 ---
 

@@ -1,0 +1,60 @@
+{
+  "source_head": "f4b7b702b9f97e76b5101ab8ab23339698154320",
+  "test_only": true,
+  "commands": [
+    {
+      "argv": [
+        "ctest",
+        "--test-dir",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d",
+        "-j2",
+        "--output-on-failure",
+        "-R",
+        "^elliptic_shift_3d_(affine_shift_remainder|enriched_log_value)$",
+        "--output-junit",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/enriched-log-value-contract-20261027/ctest.xml"
+      ],
+      "return_code": 0,
+      "wall_seconds": 0.727753084,
+      "log": "ctest.log"
+    }
+  ],
+  "source_sha256": {
+    "CMakeLists.txt": "321f872c7baa165e33fef31a6d5009dd223bf7a48cc4e87d959ec996281642b4",
+    "tst/elliptic_shift_3d/test_enriched_log_value.cpp": "5ac0d8b2393c1e4f2d7d6728c4d45b86608fa02f91fc305f69b873c0d82080af",
+    "tst/elliptic_shift_3d/test_affine_shift_remainder.cpp": "02d067961dc2a3e5bcc06acf70fe706c46cb9e48b68139b6b37c950864e37209",
+    "src/z4c/hyperboloidal/enriched_log_value.hpp": "873d4053da5d74260196b33403d55e3099cb6f0abf3375a46b1ab79b9df2a393",
+    "src/z4c/hyperboloidal/enriched_log_derivative.hpp": "df5389ff424ba8eeaab7b14c0e5c2ad5704870e926b493a05dc707f07fb319b9",
+    "src/z4c/hyperboloidal/affine_shift_remainder.hpp": "2073a06ec763e8a96ca4d3f331243cb0b49bcd4e9fc553cda6256c1069a89bbd",
+    "docs/elliptic-shift-3d/evidence/enriched-log-value-contract-20261027/reproduce.py": "f4ce9935d46fa4616ec68b20a25d4fe9fc46774d8694c081ab5cc8db9de064ce"
+  },
+  "parallel_limit": 2,
+  "qualification": "Self-contained local contracts; no external data/cache, production evolution or coupled acceptance claim.",
+  "prior_build_observed": {
+    "commands": [
+      "cmake -S . -B build-shift-3d",
+      "cmake --build build-shift-3d --target elliptic_shift_3d_affine_shift_remainder_tests elliptic_shift_3d_enriched_log_value_tests -j2"
+    ],
+    "return_codes": [
+      0,
+      0
+    ],
+    "provenance": "Executed directly via exec tools earlier in this delegated turn; CTest deliberately waits for coordinated native rebuild to finish."
+  },
+  "raw_log_capture": {
+    "path": "full-ctest-last-test.log",
+    "sha256": "63f020c204baae0db9890c117072b09eb6573eaea6f1e184c62b6451322d8fc9",
+    "notes": "CTest JUnit truncates the large passing affine JSON. Complete original LastTest.log captured without rerunning either test; affine summary extracted from that raw log."
+  },
+  "before_after_source_hashes_match": true,
+  "before_after_files": [
+    "source-hashes-before.json",
+    "source-hashes-after.json"
+  ],
+  "final_verification": {
+    "source_hashes_match": true,
+    "new_test_whitespace": "passed",
+    "changed_CMake_whitespace": "git diff --check passed",
+    "whole_CMake_file_check": "An initial whole-file check flagged pre-existing unchanged trailing whitespace at line23; not modified."
+  }
+}

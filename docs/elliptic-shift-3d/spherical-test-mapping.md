@@ -25,3 +25,24 @@ The 3D scalar, puncture, long-time and moving-puncture/binary milestones are not
 filled in by a converged standalone solve or a short equilibrium run. The raw
 provisional pulse results and their failed reference boundary targets are retained
 alongside passing component tests.
+
+
+## Later independent spherical terminal result (read-only audit)
+
+The original branch independently reached `a9214bccf` during this implementation.
+Its N1025 t=500 trajectory passes the declared **exterior** duration budget,
+with relative AH-mass error 1.148e-6 and exterior H/M RMS 1.794e-7/2.437e-6.
+This is an explicitly different candidate: epsilon=1e-4 lapse-flux attenuation,
+total-lapse RK, positive-node inner closure, and a physical lapse floor 1e-10.
+The full-domain interior remains evolved and has H maximum about393 near
+r=9.52e-9. The initial floor modifies80 positive-radius nodes; this is not an
+unfloored or all-cell accuracy certificate. The unattenuated historical trials
+failed at t=43.84 (unfloored) and84.80 (floored). These failures are not replaced.
+
+Its eventual 3D analogue would explicitly bind the modified attenuation source,
+its changed characteristic speeds, total-lapse storage method, disclosed inner
+closure and separate full-domain/exterior diagnostics. The present unchanged
+unattenuated/no-floor 3D pilot does **not** reproduce that candidate. No gauge
+change or floor was silently imported. The source receipts, exact protocol,
+assessment and limitations are retained in
+`evidence/spherical-terminal-tip-audit-20261027`.

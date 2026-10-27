@@ -1,3 +1,4 @@
+#include "z4c/hyperboloidal/native_composite_evolution.hpp"
 //========================================================================================
 // AthenaXXX astrophysical plasma code
 // Copyright(C) 2020 James M. Stone <jmstone@ias.edu> and the Athena code team
@@ -40,6 +41,15 @@ void Z4c::QueueZ4cTasks() {
   NumericalRelativity *pnr = pmy_pack->pnr;
   auto &indcs = pmy_pack->pmesh->mb_indcs;
 
+  if (native_composite) {
+    pnr->QueueTask(&Z4c::CopyU,this,Z4c_CopyU,"Composite_BeginNativeStage",Task_Run);
+    pnr->QueueTask(&Z4c::CalcRHS<3>,this,Z4c_CalcRHS,"Composite_GlobalTensorRHS",Task_Run,{Z4c_CopyU});
+    pnr->QueueTask(&Z4c::ExpRKUpdate,this,Z4c_ExplRK,"Composite_NativeRKUpdate",Task_Run,{Z4c_CalcRHS});
+    pnr->QueueTask(&Z4c::ConvertZ4cToADM,this,Z4c_Z4c2ADM,"Composite_PhysicalADM",Task_Run,{Z4c_ExplRK});
+    pnr->QueueTask(&Z4c::NewTimeStep,this,Z4c_Newdt,"Composite_TimeStep",Task_Run,{Z4c_Z4c2ADM});
+    pnr->QueueTask(&Z4c::ADMConstraints_,this,Z4c_ADMC,"Composite_GlobalConstraints",Task_End);
+    return;
+  }
   // Start task list
   pnr->QueueTask(&Z4c::InitRecv, this, Z4c_Recv, "Z4c_Recv", Task_Start);
   pnr->QueueTask(&Z4c::InitRecvWeyl, this, Z4c_IRecvW, "Z4c_IRecvW", Task_Start);
@@ -124,6 +134,7 @@ void Z4c::QueueZ4cTasks() {
 //  receive status flags to waiting (with or without MPI) for Wave variables.
 
 TaskStatus Z4c::InitRecv(Driver *pdrive, int stage) {
+  if (native_composite) return TaskStatus::complete;
   TaskStatus tstat = pbval_u->InitRecv(nz4c);
   if (tstat != TaskStatus::complete) return tstat;
   return tstat;
@@ -134,6 +145,7 @@ TaskStatus Z4c::InitRecv(Driver *pdrive, int stage) {
 //! \brief Waits for all MPI receives to complete before allowing execution to continue
 
 TaskStatus Z4c::ClearRecv(Driver *pdrive, int stage) {
+  if (native_composite) return TaskStatus::complete;
   TaskStatus tstat = pbval_u->ClearRecv();
   if (tstat != TaskStatus::complete) return tstat;
   return tstat;
@@ -144,6 +156,7 @@ TaskStatus Z4c::ClearRecv(Driver *pdrive, int stage) {
 //! \brief Waits for all MPI sends to complete before allowing execution to continue
 
 TaskStatus Z4c::ClearSend(Driver *pdrive, int stage) {
+  if (native_composite) return TaskStatus::complete;
   TaskStatus tstat = pbval_u->ClearSend();
   if (tstat != TaskStatus::complete) return tstat;
   return tstat;
@@ -154,6 +167,7 @@ TaskStatus Z4c::ClearSend(Driver *pdrive, int stage) {
 //! \brief  copy u0 --> u1 in first stage
 
 TaskStatus Z4c::CopyU(Driver *pdrive, int stage) {
+  if (native_composite) {native_composite->BeginStage(pdrive,stage);return TaskStatus::complete;}
   if (cubed_sphere) cubed_sphere->BeginStage(pdrive,stage);
   auto integrator = pdrive->integrator;
 
@@ -192,6 +206,7 @@ TaskStatus Z4c::CopyU(Driver *pdrive, int stage) {
 //! \brief sends cell-centered conserved variables
 
 TaskStatus Z4c::SendU(Driver *pdrive, int stage) {
+  if (native_composite) return TaskStatus::complete;
   TaskStatus tstat = pbval_u->PackAndSendCC(u0, coarse_u0);
   return tstat;
 }
@@ -201,6 +216,7 @@ TaskStatus Z4c::SendU(Driver *pdrive, int stage) {
 //! \brief receives cell-centered conserved variables
 
 TaskStatus Z4c::RecvU(Driver *pdrive, int stage) {
+  if (native_composite) return TaskStatus::complete;
   TaskStatus tstat = pbval_u->RecvAndUnpackCC(u0, coarse_u0);
   return tstat;
 }
@@ -210,6 +226,7 @@ TaskStatus Z4c::RecvU(Driver *pdrive, int stage) {
 //! \brief
 
 TaskStatus Z4c::EnforceAlgConstr(Driver *pdrive, int stage) {
+  if (native_composite) return TaskStatus::complete;
   if (pmy_pack->pdyngr != nullptr || stage == pdrive->nexp_stages) {
     AlgConstr(pmy_pack);
   }
@@ -222,6 +239,7 @@ TaskStatus Z4c::EnforceAlgConstr(Driver *pdrive, int stage) {
 //! \brief
 
 TaskStatus Z4c::ConvertZ4cToADM(Driver *pdrive, int stage) {
+  if (native_composite) {if(stage==0||stage==pdrive->nexp_stages)native_composite->ToADM();return TaskStatus::complete;}
   if (pmy_pack->pdyngr != nullptr || stage == pdrive->nexp_stages
       || pmy_pack->padm->separate_z4c_gauge) {
     Z4cToADM(pmy_pack);
@@ -245,6 +263,7 @@ TaskStatus Z4c::UpdateExcisionMasks(Driver *pdrive, int stage) {
 //! \brief
 
 TaskStatus Z4c::ADMConstraints_(Driver *pdrive, int stage) {
+  if (native_composite) {if(stage==pdrive->nexp_stages)native_composite->Constraints();return TaskStatus::complete;}
   if (hyperboloidal_patch) {
     if (stage == pdrive->nexp_stages) HyperboloidalConstraints();
     return TaskStatus::complete;
@@ -268,6 +287,7 @@ TaskStatus Z4c::ADMConstraints_(Driver *pdrive, int stage) {
 //! \brief
 
 TaskStatus Z4c::RestrictU(Driver *pdrive, int stage) {
+  if (native_composite) return TaskStatus::complete;
   // Only execute Mesh function with SMR/SMR
   if (pmy_pack->pmesh->multilevel) {
     pmy_pack->pmesh->pmr->RestrictCC(u0, coarse_u0, true);
@@ -281,6 +301,7 @@ TaskStatus Z4c::RestrictU(Driver *pdrive, int stage) {
 //! at fine/coarse boundaries with SMR/AMR
 
 TaskStatus Z4c::Prolongate(Driver *pdrive, int stage) {
+  if (native_composite) return TaskStatus::complete;
   if (pmy_pack->pmesh->multilevel) {  // only prolongate with SMR/AMR
     // Step 1: apply physical BCs to the coarse array, so the prolongation stencil
     //         reads valid data in coarse ghost zones that sit at a physical boundary.
@@ -306,6 +327,7 @@ TaskStatus Z4c::Prolongate(Driver *pdrive, int stage) {
 //! \brief
 
 TaskStatus Z4c::ApplyPhysicalBCs(Driver *pdrive, int stage) {
+  if (native_composite) {native_composite->PrepareNative();return TaskStatus::complete;}
   if (cubed_sphere) {
     const Real c = stage==2 ? 0.5 : (stage>0 ? 1.0 : 0.0);
     cubed_sphere->Fill(pmy_pack->pmesh->time+c*pmy_pack->pmesh->dt);

@@ -761,7 +761,8 @@ void Driver::InitBoundaryValuesAndPrimitives(Mesh *pm) {
     (void) pz4c->ApplyPhysicalBCs(this, 0); // fine grid BCs
     // Initial/regridded halos must also reach independently stored ADM gauge.
     pm->pmb_pack->padm->EnsureSeparateGaugeStorage();
-    pm->pmb_pack->padm->SyncCauchyGaugeFromZ4c();
+    if(pz4c->native_composite)pz4c->Z4cToADM(pm->pmb_pack);
+    else pm->pmb_pack->padm->SyncCauchyGaugeFromZ4c();
   }
 
   // Initialize HYDRO: ghost zones and primitive variables (everywhere)
