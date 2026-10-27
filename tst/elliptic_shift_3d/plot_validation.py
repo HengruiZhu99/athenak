@@ -19,6 +19,8 @@ def main():
     root = args.evidence
     manifest = json.loads((root/'manifest.json').read_text())
     tests = manifest['tests']
+    audit_path = root/'surface-interpolation-audit.json'
+    audit = json.loads(audit_path.read_text()) if audit_path.exists() else None
     plt.rcParams.update({'font.size': 10, 'axes.grid': True, 'grid.alpha': .25})
     fig, ax = plt.subplots(2, 2, figsize=(10, 7), layout='constrained')
     for curved, label in [(0, 'flat metric'), (1, 'curved metric (nonzero Cotton)')]:
@@ -36,8 +38,8 @@ def main():
             ax[0, 0].loglog(n, error[0]*(n[0]/n)**4, 'k--', label=r'$N^{-4}$')
     for a in ax.flat:
         a.legend(fontsize=8)
-    ax[0, 0].set(xlabel='active cells per block axis N', ylabel='solution RMS error', title='Original vector equation: manufactured solutions')
-    ax[0, 1].set(xlabel='N', ylabel='continuum-to-discrete residual RMS', title='Discretization error remains separate from solve error')
+    ax[0, 0].set(xlabel='active cells per block axis N', ylabel='solution RMS error', title='Vector manufactured solutions')
+    ax[0, 1].set(xlabel='N', ylabel='continuum-to-discrete residual RMS', title='Discretization error vs solver error')
     ax[1, 0].set(xlabel='Krylov iterations (true residual checks)', ylabel='original vector residual RMS', title='Variable metric, all patch interfaces coupled')
     ax[1, 1].set(xlabel='active cells', ylabel='local CPU solve seconds', title='Small-run cost; no scalability claim')
     fig.savefig(root/'elliptic-convergence.png', dpi=170)
@@ -57,14 +59,20 @@ def main():
             exact = np.array([r[field]['reference'] for r in rows])
             plotted = mean-(1+radius**2)/2 if field == 'alpha' else mean
             top.plot(radius, plotted, 'o', markersize=3, label=f'3D N={n}, mean of 64 angles')
-            line = bottom.plot(radius, mean-exact, 'o-', markersize=3, label=f'N={n}')[0]
-            bottom.fill_between(radius, mean-exact-scatter, mean-exact+scatter,
+            difference = mean-exact
+            if audit:
+                controlled = audit['cases'][str(n)]['rows']
+                difference = np.array([r[field]['mean_error'] for r in controlled])
+                scatter = np.array([r[field]['angular_scatter'] for r in controlled])
+            line = bottom.plot(radius, difference, 'o-', markersize=3, label=f'N={n}')[0]
+            bottom.fill_between(radius, difference-scatter, difference+scatter,
                                 color=line.get_color(), alpha=.18)
-    ax[0, 0].set(ylabel=r'$alpha-alpha_{mathrm{ref}}$', title='Radial lapse pulse, coupled 3D evolution at t=0.002')
-    ax[0, 1].set(ylabel=r'$widetilde A_{rr}$', title='Independent 1D comparison; no symmetry enforcement')
-    ax[1, 0].set(ylabel='lapse mean error ± angular scatter', title='64 equal-area directions at each exact radius')
-    ax[1, 1].set(ylabel='curvature mean error ± angular scatter', title='Scatter retained; coarse scri gates fail')
+    ax[0, 0].set(ylabel='α − αref', title='Radial lapse pulse, 3D evolution at t=0.002')
+    ax[0, 1].set(ylabel='conformal A_rr', title='Independent 1D comparison; free 3D evolution')
+    ax[1, 0].set(ylabel='lapse mean error ± angular scatter', title='Matched extraction interpolation control')
+    ax[1, 1].set(ylabel='curvature mean error ± angular scatter', title='64 angles per radius; raw errors also retained')
     for a in ax.flat:
+        a.title.set_fontsize(10)
         a.set_xlabel('compact radius r')
         a.legend(fontsize=7)
         a.ticklabel_format(axis='y', style='sci', scilimits=(-2, 2))
@@ -81,6 +89,7 @@ def main():
     ax[0].set(ylabel='independent active-only face clock defect', title='Prescribed face data vs interior consistency')
     ax[1].set(ylabel='independent face future-null defect', title='Provisional short pilots; failures retained')
     for a in ax:
+        a.title.set_fontsize(10)
         a.set_xlabel('active cells per block axis N')
         a.legend(fontsize=7)
     fig.savefig(root/'coupled-boundary-consistency.png', dpi=170)
