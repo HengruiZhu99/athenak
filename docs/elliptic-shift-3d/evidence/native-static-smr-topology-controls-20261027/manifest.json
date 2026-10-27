@@ -1,0 +1,133 @@
+{
+  "binary_sha256": "35cc34c4c90e781bc4fe13fc824631bec6b37f42b28eb813f9e0c0aa12b9f322",
+  "native_rst_sha256": "56b813b848f2390a8c63e3d81f6dbed83686df0efa5061a8cae04674aa436c0c",
+  "original_sidecar_sha256": "8568ab9f36138de9a0d3db7eaaca749925d92f8b967d942559123b93ba965b9f",
+  "maximum_seconds_per_process": 180,
+  "cases": [
+    {
+      "name": "count",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static-smr-audited-relink-20261027/athena-frozen",
+        "-r",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static-smr-wormhole-20261027/full/rst/native_smr.00001.rst",
+        "z4c/composite_restart_file=/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static-smr-topology-controls-20261027/count.composite",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static-smr-topology-controls-20261027/count"
+      ],
+      "checksummed_edit_offset": 176,
+      "old": 15,
+      "new": 14,
+      "expected_reason": "core topology/count mismatch",
+      "owned_group": 26585,
+      "exit_code": -6,
+      "seconds": 3.778610333,
+      "reason_observed": true
+    },
+    {
+      "name": "map",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static-smr-audited-relink-20261027/athena-frozen",
+        "-r",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static-smr-wormhole-20261027/full/rst/native_smr.00001.rst",
+        "z4c/composite_restart_file=/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static-smr-topology-controls-20261027/map.composite",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static-smr-topology-controls-20261027/map"
+      ],
+      "checksummed_edit_offset": 192,
+      "old": 0,
+      "new": 1,
+      "expected_reason": "core pack map mismatch",
+      "owned_group": 26591,
+      "exit_code": -6,
+      "seconds": 3.8085767499999994,
+      "reason_observed": true
+    },
+    {
+      "name": "level",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static-smr-audited-relink-20261027/athena-frozen",
+        "-r",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static-smr-wormhole-20261027/full/rst/native_smr.00001.rst",
+        "z4c/composite_restart_file=/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static-smr-topology-controls-20261027/level.composite",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static-smr-topology-controls-20261027/level"
+      ],
+      "checksummed_edit_offset": 196,
+      "old": 1,
+      "new": 2,
+      "expected_reason": "core pack map mismatch",
+      "owned_group": 26597,
+      "exit_code": -6,
+      "seconds": 3.8027050829999993,
+      "reason_observed": true
+    },
+    {
+      "name": "bounds",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static-smr-audited-relink-20261027/athena-frozen",
+        "-r",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static-smr-wormhole-20261027/full/rst/native_smr.00001.rst",
+        "z4c/composite_restart_file=/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static-smr-topology-controls-20261027/bounds.composite",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static-smr-topology-controls-20261027/bounds"
+      ],
+      "checksummed_edit_offset": 200,
+      "old": -0.25,
+      "new": -0.24999,
+      "expected_reason": "core bounds mismatch",
+      "owned_group": 26608,
+      "exit_code": -6,
+      "seconds": 3.916572083000002,
+      "reason_observed": true
+    }
+  ],
+  "uniform_regression": {
+    "command": [
+      "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static-smr-audited-relink-20261027/athena-frozen",
+      "-i",
+      "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/inputs/z4c/composite_minkowski.athinput",
+      "-d",
+      "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static-smr-topology-controls-20261027/uniform-ng3"
+    ],
+    "exit_code": 0,
+    "seconds": 2.971410125000002,
+    "input_sha256": "2fa795e5ffbf82b6202863d89096b3e38fc5cccb60e86670634990ca761e717e",
+    "files": {
+      "native_composite.00000.csv": {
+        "bitwise": true,
+        "baseline_sha256": "dfd19497b629fcac82bd4f61723c16cacb9d99f6f996fbebfd483d311a96a336",
+        "new_sha256": "dfd19497b629fcac82bd4f61723c16cacb9d99f6f996fbebfd483d311a96a336"
+      },
+      "native_composite.00000.scri.csv": {
+        "bitwise": true,
+        "baseline_sha256": "67561cc40db3ac18cfdc1b90b1ff5cb1fad4f3602576b71cbfe4109559447bdd",
+        "new_sha256": "67561cc40db3ac18cfdc1b90b1ff5cb1fad4f3602576b71cbfe4109559447bdd"
+      },
+      "native_composite.00001.csv": {
+        "bitwise": true,
+        "baseline_sha256": "d97ba7b0bd9571ecc6a60c012c33610107e5b5e021de95918c9b7cbd966181c9",
+        "new_sha256": "d97ba7b0bd9571ecc6a60c012c33610107e5b5e021de95918c9b7cbd966181c9"
+      },
+      "native_composite.00001.scri.csv": {
+        "bitwise": true,
+        "baseline_sha256": "ee134d8ef4e42f7daf19fae4c411833c4b2495075db79dad2a9f8da09d0725c8",
+        "new_sha256": "ee134d8ef4e42f7daf19fae4c411833c4b2495075db79dad2a9f8da09d0725c8"
+      },
+      "native_composite.00002.csv": {
+        "bitwise": true,
+        "baseline_sha256": "a04bd6273f6957d80bb0f615bcf57ecdc1141e3886f808016e050fe8c70ba0af",
+        "new_sha256": "a04bd6273f6957d80bb0f615bcf57ecdc1141e3886f808016e050fe8c70ba0af"
+      },
+      "native_composite.00002.scri.csv": {
+        "bitwise": true,
+        "baseline_sha256": "9214057c6252452c3ca7c556c0d9a662d012856e3350c7397936f32bf0dbb30a",
+        "new_sha256": "9214057c6252452c3ca7c556c0d9a662d012856e3350c7397936f32bf0dbb30a"
+      }
+    }
+  },
+  "original_inputs_unchanged": true,
+  "control_source": {
+    "path": "tst/elliptic_shift_3d/test_native_static_restart_controls.py",
+    "sha256": "6fdcc2608e18aa0001732e293eb20c870c3f98838a79e01ad75ae3712d3ffd41"
+  }
+}

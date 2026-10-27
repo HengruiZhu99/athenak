@@ -44,8 +44,8 @@ struct NativeCompositeEvolution::Impl {
  Z4c &z;MeshBlockPack *pack;std::unique_ptr<CompositeTensorEvolution> engine;
  std::unique_ptr<NativeCompositeFields> fields;std::unique_ptr<State> stage;
  std::vector<NativeCompositeFields::Block> mapping;
- std::unique_ptr<NativeCartesianCoreMap> core_map;std::vector<int> composite_to_native;int core_bulk=1;
- State::Epoch epoch{};State::Values rate;NativeCompositeRK bound_rk{};bool has_bound_rk=false,initialized=false;
+ std::unique_ptr<NativeCartesianCoreMap> core_map;std::vector<int> composite_to_native;int core_bulk=1;bool static_multilevel=false;size_t hierarchy_terminal_cells=0;
+ State::Epoch epoch{};State::Values rate;NativeCompositeRK bound_rk{};bool has_bound_rk=false,initialized=false,mesh_receipt_written=false;
  V expected_native,expected_read,expected_beta;
  Real dt_ceiling=1e-4,half=.25,initial_amplitude=0;bool initial_angular=false;int output_every=1;V radii;std::string prefix,checkpoint_tag;
  bool wormhole=false;int positive_storage=0;std::string initial_file,initial_receipt;
@@ -60,14 +60,15 @@ struct NativeCompositeEvolution::Impl {
 #endif
   const auto &ind=p->pmesh->mb_indcs;const auto integrator=pin->GetString("time","integrator");
   wormhole=pin->GetString("problem","pgen_name")=="z4c_composite_wormhole";
-  if(SINGLE_PRECISION_ENABLED||MPI_PARALLEL_ENABLED||global_variable::nranks!=1||(p->nmb_thispack!=1&&p->nmb_thispack!=8)||p->pmesh->nmb_total!=p->nmb_thispack||p->pmesh->multilevel||!p->pmesh->three_d
-      ||ind.ng!=3||ind.nx1!=ind.nx2||ind.nx1!=ind.nx3||ind.nx1<6||ind.nx1>16||z.opt.spatial_order!=4||z.opt.chi_psi_power!=-4||z.opt.floor_chi||z.opt.enable_driftcontrol||z.opt.telegraph_lapse
+  static_multilevel=p->pmesh->multilevel;
+  if(SINGLE_PRECISION_ENABLED||MPI_PARALLEL_ENABLED||global_variable::nranks!=1||(!static_multilevel&&p->nmb_thispack!=1&&p->nmb_thispack!=8)||p->pmesh->nmb_total!=p->nmb_thispack||p->pmesh->adaptive||!p->pmesh->three_d
+      ||ind.ng!=(static_multilevel?4:3)||ind.nx1!=ind.nx2||ind.nx1!=ind.nx3||ind.nx1<6||ind.nx1>16||z.opt.spatial_order!=4||z.opt.chi_psi_power!=-4||z.opt.floor_chi||z.opt.enable_driftcontrol||z.opt.telegraph_lapse
       ||z.nrad||!z.ptracker.empty()||!z.pfastflow.empty()||!z.phorizon_dump.empty()||p->pmesh->pzoom
       ||pin->GetOrAddBoolean("z4c","hyperboloidal",false)||pin->GetOrAddBoolean("cubed_sphere","enabled",false)
       ||!pin->GetOrAddBoolean("adm","separate_z4c_gauge",false)||pin->GetString("problem","pgen_name")!=(wormhole?"z4c_composite_wormhole":"z4c_composite_minkowski")
       ||pin->GetOrAddReal("problem","mass",0)!=(wormhole?Real(1./3):Real(0))||pin->GetOrAddReal("problem","lapse_pulse",0)!=0||!(integrator=="rk3"||integrator=="rk4")
       ||pin->GetOrAddInteger("cce","num_radii",0)||pin->DoesBlockExist("hydro")||pin->DoesBlockExist("mhd")||pin->DoesBlockExist("radiation")||pin->DoesBlockExist("ion-neutral")||pin->DoesBlockExist("gravity")||pin->DoesBlockExist("particles"))
-    throw std::invalid_argument("experimental composite native path: one/eight uniform static cubic Serial double vacuum blocks, ng3/order4, chi^-4, separate ADM gauge, RK3/RK4, dedicated Minkowski or isotropic-M1/3 pgen; MPI/device/AMR/matter/floors/tracking/Cauchy gauge/restart midstage unsupported");
+    throw std::invalid_argument("experimental composite native path: one/eight uniform ng3 or complete static-SMR cubic ng4 Serial double vacuum core, order4, chi^-4, separate ADM gauge, RK3/RK4, dedicated Minkowski or isotropic-M1/3 pgen; MPI/device/dynamic-regrid/matter/floors/tracking/Cauchy gauge/restart midstage unsupported");
   half=pin->GetOrAddReal("z4c","composite_half_width",.25);dt_ceiling=pin->GetOrAddReal("z4c","composite_dt",1e-4);
   initial_amplitude=pin->GetOrAddReal("z4c","composite_initial_lapse_amplitude",0);
   initial_angular=pin->GetOrAddBoolean("z4c","composite_initial_angular",false);
@@ -84,9 +85,30 @@ struct NativeCompositeEvolution::Impl {
   }
   std::stringstream list(pin->GetOrAddString("z4c","composite_radii",".65,1"));std::string word;while(std::getline(list,word,','))radii.push_back(std::stod(word));
   if(radii.empty()||radii.size()>16||radii.back()!=1||!(dt_ceiling>0&&dt_ceiling<=.0005)||!std::isfinite(dt_ceiling))throw std::invalid_argument("experimental composite shell/time controls");
-  core_bulk=p->nmb_thispack==1?1:2;
-  const Real ghostmax=half+(ind.ng-.5)*(2*half/(ind.nx1*core_bulk));if(std::sqrt(3.)*ghostmax>=1)throw std::invalid_argument("native core ghost ADM samples must remain strictly inside scri");
-  auto mesh=cubed_sphere::CompositeMesh(half,radii,1,ind.nx1,ind.ng,core_bulk);
+  core_bulk=static_multilevel?p->pmesh->nmb_rootx1:(p->nmb_thispack==1?1:2);
+  if(static_multilevel&&(p->pmesh->nmb_rootx2!=core_bulk||p->pmesh->nmb_rootx3!=core_bulk))
+    throw std::invalid_argument("native static composite requires cubic root block subdivisions");
+  const auto records=NativeRecords();
+  if(static_multilevel){
+   const auto &box=p->pmesh->mesh_size;
+   if(box.x1min!=-half||box.x2min!=-half||box.x3min!=-half||box.x1max!=half||box.x2max!=half||box.x3max!=half)
+    throw std::invalid_argument("native static composite physical domain differs from inner cube");
+   for(int m=0;m<p->nmb_thispack;++m){const auto &box=p->pmb->mb_size.h_view(m);
+    const Real xmax=std::max(std::abs(box.x1min),std::abs(box.x1max))+(ind.ng-.5)*box.dx1;
+    const Real ymax=std::max(std::abs(box.x2min),std::abs(box.x2max))+(ind.ng-.5)*box.dx2;
+    const Real zmax=std::max(std::abs(box.x3min),std::abs(box.x3max))+(ind.ng-.5)*box.dx3;
+    const Real maximum_radius2=xmax*xmax+ymax*ymax+zmax*zmax;
+    if(maximum_radius2>=1)throw std::invalid_argument("native static core ghosts reach scri");
+   }
+  }else{
+   const Real ghostmax=half+(ind.ng-.5)*(2*half/(ind.nx1*core_bulk));
+   if(std::sqrt(3.)*ghostmax>=1)throw std::invalid_argument("native core ghost ADM samples must remain strictly inside scri");
+  }
+  auto mesh=static_multilevel?NativeCartesianCoreMap::FromNativeLeaves(half,radii,1,ind.nx1,ind.ng,core_bulk,records):
+      cubed_sphere::CompositeMesh(half,radii,1,ind.nx1,ind.ng,core_bulk);
+  if(static_multilevel){const auto hierarchy=multigrid::CompositeCoarseningPlan::Build(mesh);
+   if(!hierarchy.dense_supported)throw std::invalid_argument("native static composite hierarchy: "+hierarchy.unsupported_reason);
+   hierarchy_terminal_cells=hierarchy.TerminalCells();}
   core_map=std::make_unique<NativeCartesianCoreMap>(mesh,NativeRecords(),ind.nx1,ind.ng);
   composite_to_native.assign(mesh.blocks.size(),-1);
   for(const auto &match:core_map->matches){mapping.push_back({match.native,match.composite});composite_to_native[match.composite]=match.native;}
@@ -95,36 +117,47 @@ struct NativeCompositeEvolution::Impl {
    engine=std::make_unique<CompositeTensorEvolution>(std::move(mesh),true,pin->GetOrAddReal("z4c","composite_tolerance",1e-11),4,true,true,0,6,true,2,.24,true,true,true);
    fields=std::make_unique<NativeCompositeFields>(engine->shift.grid,true,0,-4,2);
   }else{
-  engine=std::make_unique<CompositeTensorEvolution>(std::move(mesh),true,pin->GetOrAddReal("z4c","composite_tolerance",1e-11),4,true,false,0,6,true,0,.24,false,true,core_bulk>1);
+  engine=std::make_unique<CompositeTensorEvolution>(std::move(mesh),true,pin->GetOrAddReal("z4c","composite_tolerance",1e-11),4,true,false,0,6,true,0,.24,false,true,static_multilevel||core_bulk>1);
   fields=std::make_unique<NativeCompositeFields>(engine->shift.grid,false,0,-4);
   }
+ }
+ void WriteMeshReceipt()const{
+  const auto records=NativeRecords();std::ofstream out(prefix+".mesh.dat");
+  out<<std::setprecision(17)<<"NATIVE_STATIC_COMPOSITE_MESH_V1 "<<engine->shift.grid.n<<' '<<engine->shift.grid.ng<<' '<<half<<' '<<core_bulk<<' '<<records.size()<<' '<<radii.size()<<'\n';
+  for(Real radius:radii)out<<radius<<' ';out<<'\n';
+  for(const auto &b:records){out<<b.native<<' '<<b.refinement;for(int a=0;a<3;++a)out<<' '<<b.lo[a]<<' '<<b.hi[a];out<<'\n';}
+  out<<hierarchy_terminal_cells<<'\n';if(!out)throw std::runtime_error("native static mesh receipt write failed");
+  std::ofstream points(prefix+".coordinates.csv");points<<std::setprecision(17)<<"x,y,z,r\n";
+  for(const auto &p:engine->shift.grid.geometry){const auto &x=p.x;points<<x[0]<<','<<x[1]<<','<<x[2]<<','<<std::sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2])<<'\n';}
+  if(!points)throw std::runtime_error("native static coordinate receipt write failed");
  }
  std::vector<NativeCartesianBlock> NativeRecords()const{
   std::vector<NativeCartesianBlock> records;
   for(int m=0;m<pack->nmb_thispack;++m){const auto box=pack->pmb->mb_size.h_view(m);
    const int relative=pack->pmb->mb_lev.h_view(m)-pack->pmesh->root_level;
-   if(relative!=0)throw std::invalid_argument("native composite static core requires relative refinement level0");
+   if(relative<0||relative>20||(!static_multilevel&&relative!=0))throw std::invalid_argument("native composite relative refinement level unsupported");
    records.push_back({m,relative,{box.x1min,box.x2min,box.x3min},{box.x1max,box.x2max,box.x3max}});}
   return records;
  }
  void ValidateCore()const{core_map->ValidateCurrent(engine->shift.grid.mesh,NativeRecords());}
  std::array<Real,3> CoreCoordinate(int native,int i,int j,int k)const{
   const int n=engine->shift.grid.n,ng=engine->shift.grid.ng;
-  if(core_bulk==1){const Real h=2*half/n;return {-half+(i-ng+.5)*h,-half+(j-ng+.5)*h,-half+(k-ng+.5)*h};}
+  if(!static_multilevel&&core_bulk==1){const Real h=2*half/n;return {-half+(i-ng+.5)*h,-half+(j-ng+.5)*h,-half+(k-ng+.5)*h};}
   const auto box=pack->pmb->mb_size.h_view(native);
   return {box.x1min+(i-ng+.5)*box.dx1,box.x2min+(j-ng+.5)*box.dx2,box.x3min+(k-ng+.5)*box.dx3};
  }
  std::string SidecarMagic()const{
+  if(static_multilevel)return wormhole?"ATHENAK_NATIVE_COMPOSITE_WORMHOLE_STATIC_SMR_V1":"ATHENAK_NATIVE_COMPOSITE_STATIC_SMR_V1";
   if(core_bulk>1)return wormhole?"ATHENAK_NATIVE_COMPOSITE_WORMHOLE_STATIC_CORE_V1":"ATHENAK_NATIVE_COMPOSITE_STATIC_CORE_V1";
   return wormhole?"ATHENAK_NATIVE_COMPOSITE_WORMHOLE_V1":"ATHENAK_NATIVE_COMPOSITE_V1";
  }
  void WriteTopology(Buffer &b)const{
-  if(core_bulk==1)return;ValidateCore();b.Put(core_bulk);b.Put(pack->nmb_thispack);b.Put(uint64_t(mapping.size()));
+  if(!static_multilevel&&core_bulk==1)return;ValidateCore();b.Put(core_bulk);b.Put(pack->nmb_thispack);b.Put(uint64_t(mapping.size()));
   const auto records=NativeRecords();for(size_t i=0;i<mapping.size();++i){const auto &match=mapping[i];const auto &record=records[match.native];
    b.Put(match.native);b.Put(match.composite);b.Put(record.refinement);for(int d=0;d<3;++d){b.Put(record.lo[d]);b.Put(record.hi[d]);}}
  }
  void ReadTopology(Buffer &b)const{
-  if(core_bulk==1)return;ValidateCore();if(b.Get<int>()!=core_bulk||b.Get<int>()!=pack->nmb_thispack||b.Get<uint64_t>()!=mapping.size())
+  if(!static_multilevel&&core_bulk==1)return;ValidateCore();if(b.Get<int>()!=core_bulk||b.Get<int>()!=pack->nmb_thispack||b.Get<uint64_t>()!=mapping.size())
    throw std::runtime_error("native composite restart core topology/count mismatch");
   const auto records=NativeRecords();for(const auto &match:mapping){const auto &record=records[match.native];
    if(b.Get<int>()!=match.native||b.Get<int>()!=match.composite||b.Get<int>()!=record.refinement)throw std::runtime_error("native composite restart core pack map mismatch");
@@ -133,7 +166,8 @@ struct NativeCompositeEvolution::Impl {
  State::Metadata Metadata()const{
   State::Metadata m;if(wormhole){m.chart="wormhole-positive-log22-v1";m.chart_parameters={Real(1./3),2,0,.24,1,1,.02,.005,initial_amplitude,initial_angular?Real(1):Real(0)};}
   else{m.chart="regular-conformal-deviation22";m.chart_parameters={initial_amplitude,initial_angular?Real(1):Real(0)};}
-  if(core_bulk>1){m.chart+="-static-core";m.chart_parameters.push_back(core_bulk);m.chart_parameters.push_back(pack->nmb_thispack);}return m;
+  if(static_multilevel){m.chart+="-static-smr";m.chart_parameters.push_back(core_bulk);m.chart_parameters.push_back(pack->nmb_thispack);}
+  else if(core_bulk>1){m.chart+="-static-core";m.chart_parameters.push_back(core_bulk);m.chart_parameters.push_back(pack->nmb_thispack);}return m;
  }
  void WriteRK(const NativeCompositeRK &rk)const{
   std::ofstream file(prefix+".rk.dat");file<<std::setprecision(17)<<"NATIVE_COMPOSITE_RK_V1 "<<rk.integrator<<' '<<rk.stages<<'\n';
@@ -211,10 +245,10 @@ struct NativeCompositeEvolution::Impl {
 NativeCompositeEvolution::NativeCompositeEvolution(Z4c &z,MeshBlockPack *p,ParameterInput *pin):p_(std::make_unique<Impl>(z,p,pin)){}
 NativeCompositeEvolution::~NativeCompositeEvolution()=default;
 void NativeCompositeEvolution::Initialize(ParameterInput *pin,bool restart){auto &p=*p_;V loaded;if(restart){const auto h=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),p.z.u0);loaded.assign(h.data(),h.data()+h.size());}if(!restart){p.engine->Initialize(p.initial_amplitude,p.initial_angular);if(p.wormhole){const auto receipt=InitialReceipt(p.initial_file);if(!p.initial_receipt.empty()&&p.initial_receipt!=receipt)throw std::runtime_error("native wormhole supplied initial receipt mismatch");p.engine->InitializeWormhole(p.initial_file,p.initial_amplitude,p.initial_angular);if(InitialReceipt(p.initial_file)!=receipt)throw std::runtime_error("native wormhole initializer changed during read");p.initial_receipt=receipt;pin->SetString("z4c","composite_initial_receipt",receipt);}}auto m=p.Metadata();p.stage=std::make_unique<State>(p.Values(),p.engine->beta_delta.size(),m);if(restart)p.Restore(pin->GetString("z4c","composite_restart_file"));p.SolveAccepted();p.Scatter();if(restart&&loaded!=p.expected_native)throw std::runtime_error("native restart u0 disagrees with paired global composite state");p.initialized=true;p.ADM();}
-void NativeCompositeEvolution::BeginStage(Driver *d,int s){auto &p=*p_;p.Verify();const auto rk=NativeCompositeRK::FromDriver(*d);if(p.has_bound_rk&&!(p.bound_rk==rk))throw std::runtime_error("native composite live Driver RK differs from restart");if(p.wormhole&&!p.has_bound_rk)p.WriteRK(rk);p.bound_rk=rk;p.has_bound_rk=true;if(s==1)p.stage->BeginCycle(rk,p.pack->pmesh->dt,p.pack->pmesh->time);p.epoch=p.stage->BeginStage(s);p.Load();++p.begins;}
+void NativeCompositeEvolution::BeginStage(Driver *d,int s){auto &p=*p_;p.Verify();const auto rk=NativeCompositeRK::FromDriver(*d);if(p.has_bound_rk&&!(p.bound_rk==rk))throw std::runtime_error("native composite live Driver RK differs from restart");if((p.wormhole||p.static_multilevel)&&!p.has_bound_rk)p.WriteRK(rk);p.bound_rk=rk;p.has_bound_rk=true;if(s==1)p.stage->BeginCycle(rk,p.pack->pmesh->dt,p.pack->pmesh->time);p.epoch=p.stage->BeginStage(s);p.Load();++p.begins;}
 void NativeCompositeEvolution::EvaluateRHS(Driver *,int){auto &p=*p_;p.rate.volume=p.engine->RHS(p.engine->state,p.pack->pmesh->dt);p.rate.scri=p.engine->boundary_rhs;p.rate.endpoints.clear();p.stage->InstallShift(p.epoch,p.engine->beta_delta);p.fields->Write(p.z.u_rhs,p.mapping,p.engine->state,p.engine->beta_delta,&p.rate.volume);++p.rhs_calls;}
 void NativeCompositeEvolution::AdvanceStage(Driver *,int){auto &p=*p_;p.stage->AdvanceStage(p.epoch,p.rate);p.Load();++p.updates;if(!p.stage->Active())p.SolveAccepted();p.Scatter();}
-void NativeCompositeEvolution::PrepareNative(){p_->Verify();p_->Scatter();p_->Diagnostics();}
+void NativeCompositeEvolution::PrepareNative(){if(p_->static_multilevel&&!p_->mesh_receipt_written){p_->WriteMeshReceipt();p_->mesh_receipt_written=true;}p_->Verify();p_->Scatter();p_->Diagnostics();}
 void NativeCompositeEvolution::ToADM(){p_->ADM();}
 void NativeCompositeEvolution::Constraints(){p_->Diagnostics();}
 Real NativeCompositeEvolution::TimeStep()const{return p_->CFLStep()/p_->pack->pmesh->cfl_no;}

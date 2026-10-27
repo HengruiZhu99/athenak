@@ -47,6 +47,46 @@ class NativeCartesianCoreMap {
       if(mesh.blocks[m].face<0&&!used[m])throw std::invalid_argument("unmapped Cartesian leaf");
   }
 
+  // Construct a STATIC leaf descriptor from actual native records. Relative
+  // levels are measured from AthenaK root_level, not from pack order/count.
+  // Every leaf must lie on the root-subdivision-anchored dyadic lattice. This
+  // changes neither native fields nor shell ownership and never drops a leaf.
+  static cubed_sphere::CompositeMesh FromNativeLeaves(Real half,
+      const std::vector<Real> &radii,int face_subdivisions,int cells,int ghosts,
+      int root_subdivisions,std::vector<NativeCartesianBlock> native,
+      size_t maximum_cells=50000){
+    if(root_subdivisions<1||root_subdivisions>64||cells<2||ghosts<1)
+      throw std::invalid_argument("native static Cartesian root/logical shape");
+    const auto records=Canonical(std::move(native));
+    // Seed only the shell maps; avoid allocating a potentially huge fictitious
+    // uniform root mesh before the actual leaf/cell budget is checked.
+    auto mesh=cubed_sphere::CompositeMesh(half,radii,face_subdivisions,cells,ghosts);
+    const size_t shell_blocks=mesh.blocks.size()-1;
+    if(records.size()+shell_blocks>maximum_cells/size_t(cells)/cells/cells)
+      throw std::invalid_argument("native static composite active-cell budget");
+    std::vector<cubed_sphere::CompositeBlock> blocks;blocks.reserve(records.size()+shell_blocks);
+    const Real root_width=2*half/root_subdivisions;
+    for(const auto &record:records){
+      if(record.refinement>20)throw std::invalid_argument("native static relative level exceeds20");
+      cubed_sphere::CompositeBlock leaf;leaf.refinement=record.refinement;
+      const Real width=std::ldexp(root_width,-record.refinement);
+      for(int a=0;a<3;++a){
+        const Real index=(record.lo[a]+half)/width;
+        if(!Near(record.hi[a]-record.lo[a],width,half)||
+            !std::isfinite(index)||std::abs(index-std::round(index))>2e-10)
+          throw std::invalid_argument("native static leaf bounds/relative level violate root dyadic lattice");
+        leaf.lo[a]=record.lo[a];leaf.hi[a]=record.hi[a];
+      }
+      blocks.push_back(leaf);
+    }
+    for(const auto &b:mesh.blocks)if(b.face>=0)blocks.push_back(b);
+    mesh.blocks=std::move(blocks);
+    // Reuse the full complete-volume/nonoverlap/bijection verification before
+    // any hierarchy or field array is constructed.
+    NativeCartesianCoreMap verified(mesh,records,cells,ghosts);
+    return mesh;
+  }
+
   // A native reorder/regrid/map change requires a newly constructed map before
   // any fields are exchanged. Reordering the input records alone is harmless;
   // changing a pack slot's physical block is not.

@@ -1,0 +1,146 @@
+{
+  "scope": "Actual Serial static Cartesian SMR Driver integration; engine-owned shells; Minkowski",
+  "scientific_acceptance": false,
+  "binary_sha256": "35cc34c4c90e781bc4fe13fc824631bec6b37f42b28eb813f9e0c0aa12b9f322",
+  "frozen_build_manifest_sha256": "61c01fd663ddfe77fef244f4ced0b89835b653fd003b778b55eeea3f32a31132",
+  "maximum_seconds_per_process": 180,
+  "maximum_active_cells": 50000,
+  "cases": [
+    {
+      "name": "full",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static-smr-audited-relink-20261027/athena-frozen",
+        "-i",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static-smr-controls-r3-20261027/native_static.athinput",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static-smr-controls-r3-20261027/full"
+      ],
+      "expected_success": true,
+      "owned_group": 25875,
+      "exit_code": 0,
+      "seconds": 18.724591916999998,
+      "expectation_met": true
+    },
+    {
+      "name": "restart",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static-smr-audited-relink-20261027/athena-frozen",
+        "-r",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static-smr-controls-r3-20261027/full/rst/native_smr.00001.rst",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static-smr-controls-r3-20261027/restart"
+      ],
+      "expected_success": true,
+      "owned_group": 25893,
+      "exit_code": 0,
+      "seconds": 12.295448625000002,
+      "expectation_met": true
+    }
+  ],
+  "shell_native_MeshBlocks": false,
+  "dynamic_regrid_supported": false,
+  "input_sha256": "179aaa701823b3f772977b41194ab7a8c56ecdaf892404a330b964aba980ac17",
+  "trace": [
+    {
+      "cycle": 0,
+      "time": 0,
+      "cells": 12312,
+      "shells": 7,
+      "native_begin_calls": 0,
+      "rhs_calls": 1,
+      "native_update_calls": 0,
+      "H_rms": 4.49218357822959e-16,
+      "M_rms": 0,
+      "Theta_rms": 0,
+      "Z_rms": 0,
+      "H_max": 1.3322676295501878e-15,
+      "M_max": 0,
+      "state_deviation_max": 0,
+      "dt_ceiling": 0.0001,
+      "full_grid_selected_dt": 0.0001,
+      "shift_original_rms_max": 1.952094850327982e-13,
+      "shift_point_max": 1.0199341623181861e-12,
+      "scri_tensor_pole": 7.401486830834376e-16,
+      "scri_ghost_clock": 0,
+      "scri_ghost_null": 4.440892098500626e-16,
+      "scri_ghost_tangent": 2.220446049250313e-16,
+      "canonical_global_state": true,
+      "native_physical_mirror_verified": true,
+      "beta_excluded_from_RK": true,
+      "live_Driver_RK": "not_yet_started"
+    },
+    {
+      "cycle": 1,
+      "time": 0.0001,
+      "cells": 12312,
+      "shells": 7,
+      "native_begin_calls": 4,
+      "rhs_calls": 6,
+      "native_update_calls": 4,
+      "H_rms": 5.233039395028113e-16,
+      "M_rms": 5.641001564587766e-17,
+      "Theta_rms": 3.4371153917948143e-19,
+      "Z_rms": 5.617512890002648e-18,
+      "H_max": 4.4825254619240695e-15,
+      "M_max": 2.677974360875028e-16,
+      "state_deviation_max": 1.0190943874053404e-16,
+      "dt_ceiling": 0.0001,
+      "full_grid_selected_dt": 0.0001,
+      "shift_original_rms_max": 1.95948075186944e-13,
+      "shift_point_max": 1.0249712084141453e-12,
+      "scri_tensor_pole": 1.3303887676821964e-15,
+      "scri_ghost_clock": 0,
+      "scri_ghost_null": 4.440892098500626e-16,
+      "scri_ghost_tangent": 2.220446049250313e-16,
+      "canonical_global_state": true,
+      "native_physical_mirror_verified": true,
+      "beta_excluded_from_RK": true,
+      "live_Driver_RK": "rk4"
+    },
+    {
+      "cycle": 2,
+      "time": 0.0002,
+      "cells": 12312,
+      "shells": 7,
+      "native_begin_calls": 8,
+      "rhs_calls": 11,
+      "native_update_calls": 8,
+      "H_rms": 6.556239541366525e-16,
+      "M_rms": 1.1431395204082554e-16,
+      "Theta_rms": 6.824610747834926e-19,
+      "Z_rms": 1.1194117812453327e-17,
+      "H_max": 9.43689570931383e-15,
+      "M_max": 5.360386796202294e-16,
+      "state_deviation_max": 2.0364702775181839e-16,
+      "dt_ceiling": 0.0001,
+      "full_grid_selected_dt": 0.0001,
+      "shift_original_rms_max": 1.9654801456114304e-13,
+      "shift_point_max": 1.0289748695682147e-12,
+      "scri_tensor_pole": 2.7210340585290923e-15,
+      "scri_ghost_clock": 0,
+      "scri_ghost_null": 4.440892098500626e-16,
+      "scri_ghost_tangent": 2.220446049250313e-16,
+      "canonical_global_state": true,
+      "native_physical_mirror_verified": true,
+      "beta_excluded_from_RK": true,
+      "live_Driver_RK": "rk4"
+    }
+  ],
+  "restart": {
+    ".csv": {
+      "bitwise": true,
+      "full_sha256": "a414c6c6bb3d2ed594006aefbb349c98f09ab17850ddd7c5525f39746951e1d3",
+      "restart_sha256": "a414c6c6bb3d2ed594006aefbb349c98f09ab17850ddd7c5525f39746951e1d3"
+    },
+    ".scri.csv": {
+      "bitwise": true,
+      "full_sha256": "f6558d8406186812b84afa5f0b4c1af034590807492cd21ba35ae730a3f07001",
+      "restart_sha256": "f6558d8406186812b84afa5f0b4c1af034590807492cd21ba35ae730a3f07001"
+    },
+    "complete-sidecar": {
+      "bitwise": false,
+      "full_sha256": "eb4df8e9acbf227083512de03b87cc6a40bbad440db3acd41b2f363639efc575",
+      "restart_sha256": "dbaa2bc54acd78294be99ff92a40b84ba57c35440c449220366997cc91c98a00"
+    }
+  }
+}
