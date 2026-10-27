@@ -1,0 +1,98 @@
+{
+  "verdict": "pending",
+  "reached_target": false,
+  "accuracy_to_saved_cutoff": true,
+  "saved_cutoff": 60.0,
+  "stage_extrema_through": 68.0,
+  "checks": {
+    "relative_AH_mass_error": {
+      "passed": true,
+      "measured": 2.6427229589676138e-06,
+      "limit": 1e-05
+    },
+    "H_exterior_full": {
+      "passed": true,
+      "measured": 1.8452707559525766e-05,
+      "limit": 5e-05
+    },
+    "M_exterior_full": {
+      "passed": true,
+      "measured": 4.9341354829239e-05,
+      "limit": 0.0001
+    },
+    "Theta_exterior_full": {
+      "passed": true,
+      "measured": 7.84039244317425e-08,
+      "limit": 5e-07
+    },
+    "Z_exterior_full": {
+      "passed": true,
+      "measured": 5.212879032117096e-07,
+      "limit": 5e-06
+    },
+    "H_exterior_late": {
+      "passed": true,
+      "measured": 1.7945042691190746e-07,
+      "limit": 1e-06
+    },
+    "M_exterior_late": {
+      "passed": true,
+      "measured": 2.442457841085192e-06,
+      "limit": 1e-05
+    },
+    "Theta_exterior_late": {
+      "passed": true,
+      "measured": 4.9995880148533336e-08,
+      "limit": 5e-07
+    },
+    "Z_exterior_late": {
+      "passed": true,
+      "measured": 5.212879032117096e-07,
+      "limit": 5e-06
+    },
+    "scri_clock": {
+      "passed": true,
+      "measured": 0.0,
+      "limit": 1e-12
+    },
+    "scri_null": {
+      "passed": true,
+      "measured": 4.440892098500626e-16,
+      "limit": 1e-10
+    },
+    "all_stage_scri_pole": {
+      "passed": true,
+      "measured": 2.8328529955157222e-06,
+      "limit": 1e-05
+    },
+    "mapped_CFL": {
+      "passed": true,
+      "measured": 0.2000000000082463,
+      "limit": 0.4
+    },
+    "relaxation_dt": {
+      "passed": true,
+      "measured": 0.00244140625,
+      "limit": 0.4
+    },
+    "positive_stage_geometry": {
+      "passed": true,
+      "min_chi": 3.452627264558169e-31,
+      "min_alpha": 4.9999999999980466e-11
+    }
+  },
+  "floor_diagnostics": {
+    "max_lapse_floor_radius": 6.29212026640898e-07,
+    "max_lapse_floor_log_correction": 11.728944036103341,
+    "max_lapse_floor_clamps_per_call": 80.0,
+    "max_lapse_floor_conformal_correction": 5.737688844047944e-15,
+    "max_nonpositive_lapse_clamps_per_call": 0.0
+  },
+  "scope": "N1025 finite-duration evidence only. Exterior RMS excludes the apparent-horizon interior and normalizes over exterior weights. Saved-state accuracy is not an all-stage constraint bound or convergence evidence.",
+  "export_sha256": {
+    "summary.json": "cab9f2a313a07ca658570afbc0980aea68988e4336df1903e2c27bb876a9bf38",
+    "manifest-long.json": "890bb28e2d39ec1daf92b3deba6a58f5e0f3c8dfde6be1ff5f27c325c33cb690",
+    "protocol.json": "7b0d784f3158fe79771b4646819659255a671a4d740f57d23e01579ab9082cab",
+    "source-manifest.json": "bba6b454f419f0d7254074efcc1aa4fe295b00e390d41feb3ad97ff362a01fb5"
+  }
+}

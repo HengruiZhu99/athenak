@@ -41,3 +41,12 @@ The predeclared duration criteria and full input are in `telegraph-attenuated-du
 | Same with epsilon1e-3 |257|Speed guard at73.5423828125; exterior accuracy already unacceptable|
 
 The N257 attenuation pilots had approximately7% apparent-horizon mass error and exterior H RMS about0.75 by t31.25. Their longer survival does not constitute success. No failed trajectory was restarted or relabeled. Fresh N513 and N1025 epsilon1e-4 trials target500 under `output/elliptic-shift-1d/telegraph-attenuated-duration-v1`; their final assessment is pending.
+
+
+## Duration assessment and interim evidence
+
+Use `paper/collect_long_puncture.py` with the explicit candidate `--case`, current `--protocol`, and a new export directory. Running exports require `--through`. Then run `tst/elliptic_shift_1d/assess_telegraph_duration.py --export EXPORT --output NEW_ASSESSMENT.json`. The assessor applies only the declared N1025 budget, rejects missing report times and copied-manifest receipt mismatches, and never promotes a healthy partial trajectory to a duration pass. Recorded stage extrema may extend beyond an interim saved-profile cutoff; both times are labeled. Seven gate tests cover incomplete duration, terminal failure despite healthy exterior, missing reports/horizon, nonfinite constraints, mass and boundary violations, coarse-grid mislabeling, and an explicitly synthetic complete-coverage positive control.
+
+The validated export `evidence/telegraph-attenuated-interim-t60-v2/n1025` contains all1201 saved profiles through t60 in its receipts. Its assessment is **pending**: the saved-state accuracy budget passes to this cutoff, but target500 is not reached. Peak relative AH error is2.64272e-6 (initial transient); late exterior RMS maxima are H1.79450e-7, M2.44246e-6, Theta4.99959e-8, Z5.21288e-7. Captured stage extrema through t68 include scri-pole2.83285e-6 and mappedCFL0.200000000008. These are duration-candidate diagnostics, not convergence evidence.
+
+A live-export race was found while constructing the assessment: the collector could read a manifest, then hash a newer version before copying the earlier parsed content. The collector now reads each manifest once and hashes/copies those exact captured bytes; history receipts similarly hash the exact bytes parsed. The rejected first t60 export is retained under tmp as a receipt-race diagnostic, not scientific evidence. No numerical run was changed or restarted.

@@ -14,25 +14,27 @@ from telegraph_analysis_io import validate_telegraph_profile
 from horizon import apparent_horizons
 case=ROOT/'output/elliptic-shift-1d/telegraph-long-puncture-500-v1/n1025'
 parser=argparse.ArgumentParser();parser.add_argument('--through',type=float,help='Explicit saved-time cutoff for a running pilot');parser.add_argument('--output',type=Path,help='New export directory; defaults to the paper data directory');parser.add_argument('--case',type=Path,default=case);parser.add_argument('--protocol',type=Path);a=parser.parse_args();case=a.case.resolve()
-m=json.loads((case/'manifest.json').read_text())
+manifest_bytes=(case/'manifest.json').read_bytes();m=json.loads(manifest_bytes)
 assert m['status'] in ['finished','failed'] or a.through is not None,'Running exports require an explicit cutoff'
 assert a.through is None or 0<=a.through<=m['time']
 cutoff=m['time'] if a.through is None else a.through
 D=a.output if a.output is not None else P/'data/long-puncture';D.mkdir(parents=True,exist_ok=False)
 receipts=[];folders=[]
-def receipt(path):
- receipts.append(dict(path=str(path.relative_to(ROOT)),sha256=hashlib.sha256(path.read_bytes()).hexdigest()))
+def receipt(path,content=None):
+ receipts.append(dict(path=str(path.relative_to(ROOT)),sha256=hashlib.sha256(path.read_bytes() if content is None else content).hexdigest()))
 def ancestors(folder):
  assert folder not in folders,'Ancestry cycle'
- mm=json.loads((folder/'manifest.json').read_text());numerical_binding(folder,mm)
+ raw=manifest_bytes if folder==case else (folder/'manifest.json').read_bytes()
+ mm=json.loads(raw);numerical_binding(folder,mm)
  if 'checkpoint_parent' in mm:
   cp=Path(mm['checkpoint_parent']['path']);assert hashlib.sha256(cp.read_bytes()).hexdigest()==mm['checkpoint_parent']['sha256'];receipt(cp);ancestors(cp.parent)
- folders.append(folder);receipt(folder/'manifest.json')
- (D/('manifest-parent.json' if folder!=case else 'manifest-long.json')).write_text(json.dumps(mm,indent=2)+'\n')
+ folders.append(folder);receipt(folder/'manifest.json',raw)
+ (D/('manifest-parent.json' if folder!=case else 'manifest-long.json')).write_bytes(raw)
 ancestors(case)
 rows={};profiles={};prev=None;last_t=None;last_path=None
 for folder in folders:
- history={round(h['t'],9):h for h in map(json.loads,(folder/'history.jsonl').read_text().splitlines())};receipt(folder/'history.jsonl')
+ raw_history=(folder/'history.jsonl').read_bytes()
+ history={round(h['t'],9):h for h in map(json.loads,raw_history.splitlines())};receipt(folder/'history.jsonl',raw_history)
  for path in sorted(folder.glob('profile-*.npz')):
   # Filename indices are report numbers; check the time before loading full arrays.
   with np.load(path,allow_pickle=False) as z:
