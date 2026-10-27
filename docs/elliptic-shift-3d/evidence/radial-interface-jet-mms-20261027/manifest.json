@@ -1,0 +1,188 @@
+{
+  "scope": "ADjetprototypeofexistingglobalradial6pointvalueinterpolant; no productionSampler/PDE/evolution edits",
+  "parent_source_sha256": "4415573621bc9370ae9c838e96fe48eca401d5f60adb02c1d392ecfd4a3f12e0",
+  "predeclared_guards": {
+    "radial_condition": 100000000.0,
+    "value_L1": 8192,
+    "scaled_gradient_L1": 100000.0,
+    "scaled_hessian_L1": 1000000.0,
+    "partition_reproduction": 1e-10
+  },
+  "runs": {
+    "build": {
+      "command": [
+        "/usr/bin/c++",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/build-shift-3d/kokkos",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/build-shift-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/build-shift-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/build-shift-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/build-shift-3d/kokkos/simd/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/tst/elliptic_shift_3d/test_radial_interface_jet_probe.cpp",
+        "-o",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/mms",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/build-shift-3d/kokkos/core/src/libkokkoscore.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/build-shift-3d/kokkos/simd/src/libkokkossimd.a"
+      ],
+      "exit_code": 0,
+      "seconds": 1.58889925,
+      "maximum_seconds": 180
+    },
+    "dependencies": {
+      "command": [
+        "/usr/bin/c++",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/build-shift-3d/kokkos",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/build-shift-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/build-shift-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/build-shift-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/build-shift-3d/kokkos/simd/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "-M",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/source/tst/elliptic_shift_3d/test_radial_interface_jet_probe.cpp"
+      ],
+      "exit_code": 0,
+      "seconds": 0.1468582089999999,
+      "maximum_seconds": 180
+    },
+    "mms-1-1-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/mms",
+        "6",
+        "1",
+        "1"
+      ],
+      "exit_code": 0,
+      "seconds": 0.6062344580000001,
+      "maximum_seconds": 180
+    },
+    "mms-1-1-12": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/mms",
+        "12",
+        "1",
+        "1"
+      ],
+      "exit_code": 0,
+      "seconds": 0.33065004100000017,
+      "maximum_seconds": 180
+    },
+    "mms-1-1-18": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/mms",
+        "18",
+        "1",
+        "1"
+      ],
+      "exit_code": 0,
+      "seconds": 0.7370695409999999,
+      "maximum_seconds": 180
+    },
+    "mms-2-1-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/mms",
+        "6",
+        "2",
+        "1"
+      ],
+      "exit_code": 0,
+      "seconds": 0.27055883299999994,
+      "maximum_seconds": 180
+    },
+    "mms-2-1-10": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/mms",
+        "10",
+        "2",
+        "1"
+      ],
+      "exit_code": 0,
+      "seconds": 0.5047098329999997,
+      "maximum_seconds": 180
+    },
+    "mms-2-1-14": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/mms",
+        "14",
+        "2",
+        "1"
+      ],
+      "exit_code": 0,
+      "seconds": 0.8542082500000001,
+      "maximum_seconds": 180
+    },
+    "mms-7-1-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/mms",
+        "6",
+        "7",
+        "1"
+      ],
+      "exit_code": 0,
+      "seconds": 0.7415401660000001,
+      "maximum_seconds": 180
+    },
+    "mms-7-1-8": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/mms",
+        "8",
+        "7",
+        "1"
+      ],
+      "exit_code": 0,
+      "seconds": 1.0890116250000004,
+      "maximum_seconds": 180
+    },
+    "mms-7-1-10": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/mms",
+        "10",
+        "7",
+        "1"
+      ],
+      "exit_code": 0,
+      "seconds": 1.6492495829999996,
+      "maximum_seconds": 180
+    },
+    "mms-7-2-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-interface-jet-mms-20261027/mms",
+        "6",
+        "7",
+        "2"
+      ],
+      "exit_code": 0,
+      "seconds": 2.702055165999999,
+      "maximum_seconds": 180
+    }
+  },
+  "live_project_paths": [],
+  "compiled_source_sha256": "da3ca4f1ea2c8f559b187f17f797c7ae4616c37062949a4134f750874daa8c9a"
+}

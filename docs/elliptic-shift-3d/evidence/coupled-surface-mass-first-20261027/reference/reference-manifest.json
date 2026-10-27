@@ -1,0 +1,165 @@
+{
+  "no_evolution": true,
+  "radii": [
+    0.05,
+    0.1,
+    0.2,
+    0.3,
+    0.5,
+    0.7,
+    0.85,
+    0.95
+  ],
+  "library_sha256": "1c6d85d5cbcdaf4bf6fef0b4bee536cbc4e3ec31af47f22ba7cae8f95983de5b",
+  "quadratures": {
+    "128": {
+      "n_mu": 8,
+      "n_phi": 16,
+      "sha256": "2744a286e9dd8d68f5ec142a0826d75422037f600c8b6199ef3c4b194709769b",
+      "solid_weight_sum": 12.56637061435917
+    },
+    "512": {
+      "n_mu": 16,
+      "n_phi": 32,
+      "sha256": "d1b1d1f35840466b182cb455c08205ad97c315e6948b61ef4cd6aaa59658589b",
+      "solid_weight_sum": 12.566370614359172
+    },
+    "2048": {
+      "n_mu": 32,
+      "n_phi": 64,
+      "sha256": "e36d2cf32f68ff53381d44677702ed77e6955521f3c75cb405bef8d7c27a4540",
+      "solid_weight_sum": 12.56637061435917
+    }
+  },
+  "reference": {
+    "1025": {
+      "input": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/coupled-surface-mass-first-20261027/source/reference/radial-n1025.npz",
+      "input_sha256": "e9761b1720c3226eb06a465394f46600d82552bc5fe707846a5c90ca7811e208",
+      "physical_reconstruction_errors": {
+        "chi": 0.0,
+        "alpha": 0.0,
+        "Khat": 0.0,
+        "A_rr": 0.0
+      },
+      "mass_at_requested": [
+        0.3333333333334806,
+        0.3333333333332874,
+        0.3333333333333123,
+        0.33333333333335247,
+        0.33333333333335813,
+        0.3333333333333364,
+        0.33333333333333115,
+        0.33333333333319
+      ],
+      "direct_at_requested": [
+        0.3333333333334806,
+        0.3333333333332874,
+        0.3333333333333123,
+        0.33333333333335247,
+        0.33333333333335824,
+        0.33333333333332943,
+        0.33333333333329124,
+        0.33333333333302406
+      ],
+      "expansion_at_requested": [
+        0.3333333333334806,
+        0.3333333333332874,
+        0.33333333333331233,
+        0.33333333333335247,
+        0.3333333333333585,
+        0.3333333333333312,
+        0.3333333333333414,
+        0.3333333333346998
+      ],
+      "mass_direct_difference_at_requested": 1.6592283103022964e-13,
+      "normalization_Rp_over2_matches_negative_normalR": 0.0,
+      "normalization_Rk_over2_matches_spatial": 5.684341886080802e-14,
+      "finite_domain_only": true,
+      "omitted_reference_endpoints": "r=0 AF coefficient and actualscri r=1 are not requested finite surfaces; no requested radius omitted"
+    },
+    "2049": {
+      "input": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/coupled-surface-mass-first-20261027/source/reference/radial-n2049.npz",
+      "input_sha256": "8b526e79490dc6a05fbb5be050f6bf6297be46c1b8d2158c43886c26c5be4be5",
+      "physical_reconstruction_errors": {
+        "chi": 0.0,
+        "alpha": 0.0,
+        "Khat": 0.0,
+        "A_rr": 0.0
+      },
+      "mass_at_requested": [
+        0.33333333333333454,
+        0.33333333333333276,
+        0.3333333333333616,
+        0.33333333333330584,
+        0.33333333333335835,
+        0.33333333333334686,
+        0.33333333333334153,
+        0.3333333333334058
+      ],
+      "direct_at_requested": [
+        0.33333333333333454,
+        0.33333333333333276,
+        0.3333333333333616,
+        0.33333333333330584,
+        0.33333333333335835,
+        0.33333333333334164,
+        0.33333333333330856,
+        0.33333333333423537
+      ],
+      "expansion_at_requested": [
+        0.33333333333333454,
+        0.3333333333333328,
+        0.33333333333336174,
+        0.3333333333333057,
+        0.33333333333335835,
+        0.333333333333347,
+        0.3333333333333064,
+        0.3333333333343897
+      ],
+      "mass_direct_difference_at_requested": 8.29558643999917e-13,
+      "normalization_Rp_over2_matches_negative_normalR": 0.0,
+      "normalization_Rk_over2_matches_spatial": 1.1368683772161603e-13,
+      "finite_domain_only": true,
+      "omitted_reference_endpoints": "r=0 AF coefficient and actualscri r=1 are not requested finite surfaces; no requested radius omitted"
+    }
+  },
+  "initial_oracle": {
+    "mass": 0.3333333333333333,
+    "initial_data": "exact original hyperboloidal isotropic wormhole, not time-symmetric replacement",
+    "quadrature_order": 96,
+    "sha256": "b62e454e102931fc4492d32c8384f48976d3e2eddc30504545bc3cf2e6c8a292"
+  },
+  "selected_parameters": {
+    "telegraph_width": 0.24,
+    "outer": 0.8,
+    "inner_profile": "af-regular",
+    "kappa": 0.005,
+    "tau": 0.02,
+    "nu": 1,
+    "dt": 0.0001,
+    "steps": 2,
+    "time": 0.0002,
+    "mass": 0.3333333333333333,
+    "reference": "Minkowski",
+    "spatial_control": "centered zeroKO",
+    "library_sha256": "1c6d85d5cbcdaf4bf6fef0b4bee536cbc4e3ec31af47f22ba7cae8f95983de5b"
+  },
+  "loaded_private_python_modules": {
+    "tst/elliptic_shift_3d/prepare_surface_mass_reference.py": "0d6dd21a5337236e1f086b19bb2123e26747e79a7a7ea0af4f3b4e9074c9e1e0",
+    "tst/elliptic_shift_1d/wormhole_data.py": "b7e8125715c6658a0574feb4c262b741dda03e825d8376c37a1d6cb181875969",
+    "tst/elliptic_shift_1d/wormhole_isotropic.py": "5103cd3480a113df2f2bf42d98914f0dec823ef58730eeacabd2d633d3b5b4b9",
+    "tst/elliptic_shift_1d/elliptic.py": "7ad89763e49cd7e1b4b3a0ec974c0867e77e69feeb1b5eb5718cd783550bc714",
+    "tst/elliptic_shift_1d/numerics.py": "c62ee8d579cf22758768a91348b3adc890b9955cb7e64f1a3e27e65d833fbb61",
+    "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+    "tst/elliptic_shift_1d/gauge.py": "12a72a023c3ae3f2a802d6595f3a0cbc8f69b0be6484ba71763ec944c5554237",
+    "tst/elliptic_shift_1d/horizon.py": "70a1f334ca3e377b8eaaedf2b996f79b5e4a70722c0fc16cf6c7a5c17626f1eb",
+    "tst/elliptic_shift_1d/time_lattice.py": "94214ed7e50e92cf32477215d9932492b34f3497649194afdd83809dfe7aad4f",
+    "tst/elliptic_shift_1d/evolve.py": "a69291e981ac98542058a17f6bdec8738803ccb406544865ee12368a6e98a22d",
+    "tst/elliptic_shift_1d/g1_rhs.py": "6a3fcf7716cdbaaefb13f477b0d60348956f9a971cac68584b0cbb9074e6540c",
+    "tst/elliptic_shift_1d/scri_limits.py": "33c82da68e486c54e6eff4932936cc8de1b3ac512b06e20344ebd714e6c696bc",
+    "tst/elliptic_shift_1d/puncture_chart.py": "f5b6b1d0ab9a03ed50db686b311ba51d003f80a189d9f6c995a2e182e72bed03",
+    "tst/elliptic_shift_1d/fast.py": "cd93348bb944992ee099412d85f610d609ec35c734e39e1e18338022d5482548",
+    "tst/elliptic_shift_1d/telegraph.py": "23a4dbe49f3c8d500ac22e2597b63edd237f1460ed39577cdc152bfcaaafd185",
+    "tst/elliptic_shift_3d/compare_coupled_family.py": "cb8ceb74c8ab557e6fe97b6d0095e8ee87729cb71666b566d80e83be8337e176"
+  }
+}
