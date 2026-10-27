@@ -10,7 +10,7 @@ import hashlib
 import json
 from pathlib import Path
 import numpy as np
-from telegraph_analysis_io import trajectory, physical_lapse_gradient
+from telegraph_analysis_io import trajectory, physical_lapse_gradient, validate_telegraph_profile
 
 
 def sha(path):
@@ -81,6 +81,7 @@ def controlled_inputs(base, other, changed):
 
 def differences(a, b, gradient_scale=None):
     """Use the coarser physical nodes and their mapped radial measure."""
+    validate_telegraph_profile(a); validate_telegraph_profile(b)
     ra, rb = a['r'], b['r']; ratio = (len(rb)-1)//(len(ra)-1)
     if ratio < 1 or (len(rb)-1) != ratio*(len(ra)-1) or not np.array_equal(ra, rb[::ratio]):
         raise ValueError('Require identical or nested physical nodes')

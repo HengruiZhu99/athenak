@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 p=argparse.ArgumentParser();p.add_argument('--cases',type=Path,nargs='+',required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False)
 records=[];groups={};profiles={}
 configuration_keys=['inner','outer','transition','cfl','inner_profile','quadrature_width','puncture_ko','puncture_ko_radius','grid_stretch','grid_map','mapped_ko','width','ko_order','ray_interpolation','ray_exit']
-from telegraph_analysis_io import trajectory,physical_lapse_gradient
+from telegraph_analysis_io import trajectory,physical_lapse_gradient,validate_telegraph_profile
 for folder in a.cases:
  m=json.loads((folder/'manifest.json').read_text());assert m['status']=='finished',str(folder)
  assert m.get('initial_data',{}).get('mass')==1/3,'Reject the misconfigured M=.1 pilots'
@@ -21,7 +21,7 @@ for folder in a.cases:
  key=(args['kappa'],args['tau'],args['nu'],*[args[x] for x in configuration_keys]);n=args['n'];groups.setdefault(key,[]).append(n)
  data,ancestry=trajectory(folder);snapshot=None;front_history=[]
  for t in sorted(data):
-  d=data[t];r=d['r'];mask=(r>=0)&(r<.3);alpha=d['diagnostic'][:,7];O=(1-r*r)/2
+  d=data[t];validate_telegraph_profile(d);r=d['r'];mask=(r>=0)&(r<.3);alpha=d['diagnostic'][:,7];O=(1-r*r)/2
   grad=physical_lapse_gradient(d)[mask];j=int(np.argmax(abs(d['diagnostic'][:,0])))
   front_history.append(dict(t=t,gradient=float(max(abs(grad))),gradient_location=float(r[mask][np.argmax(abs(grad))]),H_peak=float(abs(d['diagnostic'][j,0])),H_peak_location=float(r[j]),min_logJ=float(min(d['rays'][:,1]))))
   if abs(t-2.5)<1e-9:

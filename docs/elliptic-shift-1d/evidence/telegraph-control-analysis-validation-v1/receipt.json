@@ -1,0 +1,16 @@
+{
+  "python": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]",
+  "numpy": "2.0.2",
+  "test_scope": "Two analysis CTest targets passed: five existing temporal-analysis tests and six control/ray-analysis tests. No evolution-kernel change; no claim of rerunning all55 prior solver tests.",
+  "sha256": {
+    "tst/elliptic_shift_1d/analyze_telegraph_control.py": "785854a9da6dbfcc2450b0d8356e367e217266caa00febd407976b018d1ca4cd",
+    "tst/elliptic_shift_1d/analyze_telegraph_ray_convergence.py": "10f3e601bd2517ce38e1c4e23287913be60bce22540db81d5f7e78df14d57f67",
+    "tst/elliptic_shift_1d/analyze_telegraph_time.py": "5cb4230854bf6a04eba741879be30982f475143f89dc85b3e9d007c3d9458cf7",
+    "tst/elliptic_shift_1d/telegraph_analysis_io.py": "017785fd4d4005cae5c21e356c59a065fe4dc66162518a6509a3c9b7589c3f24",
+    "tst/elliptic_shift_1d/test_telegraph_controls.py": "679cf7d762e43bfdfa2de432b28e0a28bd6c65cc181fc22f9853192bb82d0ce0",
+    "tst/elliptic_shift_1d/test_telegraph_time_analysis.py": "aeba7b1d0ce33838bd6b0744cfffa351bc5468afec8cc2dfc222a00c0cf12c2e"
+  },
+  "commands": [
+    "ctest --test-dir build-elliptic-shift-1d -R 'telegraph_(independent_control_evidence_guards|analysis_evidence_guards)' --output-on-failure"
+  ]
+}

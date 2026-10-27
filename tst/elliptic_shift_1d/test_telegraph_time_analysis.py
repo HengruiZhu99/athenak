@@ -12,7 +12,7 @@ def profile(n, amplitude):
     q=np.zeros((n,8));q[:,6]=amplitude*shape
     diagnostic=np.zeros((n,12));diagnostic[:,:4]=amplitude*shape[:,None]*np.arange(1,5)[None,:]
     diagnostic[:,10]=1/3+amplitude*shape
-    return dict(r=r,grid_jacobian=np.ones(n),q_physical=physical,q=q,
+    return dict(r=r,grid_jacobian=np.ones(n),q_physical=physical,q=q,beta=-r,gauge_speeds=np.c_[-r,r],
         diagnostic=diagnostic,B=amplitude*shape,
         rays=np.array([[.2+amplitude,amplitude],[.3+amplitude,2*amplitude]]))
 

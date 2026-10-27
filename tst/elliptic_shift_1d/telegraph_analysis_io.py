@@ -48,3 +48,13 @@ def trajectory(folder,seen=None):
   data[t]=d
  ancestry.append(dict(path=str(folder),manifest_sha256=hashlib.sha256((folder/'manifest.json').read_bytes()).hexdigest()))
  return data,ancestry
+
+
+def validate_telegraph_profile(d):
+    for name in ['r','grid_jacobian','q','q_physical','B','beta','gauge_speeds','rays']:
+        if not np.all(np.isfinite(d[name])):raise ValueError('Nonfinite profile array: '+name)
+    if np.any(np.diff(d['r'])<=0) or np.any(d['grid_jacobian']<=0):raise ValueError('Invalid radial geometry')
+    diag=d['diagnostic']
+    if not np.all(np.isfinite(np.delete(diag,10,axis=1))):raise ValueError('Nonfinite non-mass diagnostic')
+    # The implementation deliberately leaves only the actual-scri mass undefined.
+    if not np.all(np.isfinite(diag[d['r']<1,10])):raise ValueError('Nonfinite interior mass diagnostic')
