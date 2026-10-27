@@ -29,6 +29,8 @@ def main():
     p.add_argument('--cases', nargs='+', type=Path, required=True)
     p.add_argument('--time', type=float, required=True)
     p.add_argument('--kind', choices=['spatial', 'temporal'], required=True)
+    p.add_argument('--include-driver', action='store_true',
+                   help='Add auxiliary Gamma-driver D to the historical nine-field norm')
     p.add_argument('--output', type=Path, required=True)
     a = p.parse_args()
     assert len(a.cases)==3 or (a.kind=='spatial' and len(a.cases)==2)
@@ -65,6 +67,8 @@ def main():
         physical = v['physical'][:,:7].copy()
         physical[:,0], physical[:,1], physical[:,6] = v['chi'], v['g'], v['alpha']
         physical = np.c_[physical, v['beta'], q[:,8]]
+        if a.include_driver:
+            physical = np.c_[physical, q[:,9]]
         weight = e.r**2*e.jac
         weight[[0,-1]] *= .5
         states.append((e.r.copy(), physical, weight, report['apparent_horizon_r']))
@@ -90,7 +94,8 @@ def main():
         comparisons.append(item)
     orders = {scope:float(np.log2(comparisons[0][scope]['mixed_rms']/comparisons[1][scope]['mixed_rms']))
               for scope in ['full','exterior']} if len(comparisons)==2 else None
-    result = dict(kind=a.kind,t=a.time,t_over_M=3*a.time,fields=FIELDS,runs=rows,
+    result = dict(kind=a.kind,t=a.time,t_over_M=3*a.time,
+                  fields=FIELDS+(['D'] if a.include_driver else []),runs=rows,
                   comparisons=comparisons,orders=orders,
                   norm='Radial r^2 times Jacobian trapezoidal weights; exterior mask begins at the larger interpolated AH radius in each pair.',
                   scope='Exact saved common-time profiles, verified identical equation sources; no convergence claim beyond the sampled time.')

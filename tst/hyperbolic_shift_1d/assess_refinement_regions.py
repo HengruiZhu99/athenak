@@ -27,6 +27,7 @@ def main():
     trajectory = json.loads(a.trajectory.read_text())
     results = []
     for index, row in enumerate(trajectory['rows']):
+        assert 'D' not in row['fields'], 'Regional audit expects the historical nine-field input'
         archived = a.trajectory.parent / f'frame-{index:02d}' / 'physical-profiles.npz'
         states = []
         with np.load(archived) as physical:
