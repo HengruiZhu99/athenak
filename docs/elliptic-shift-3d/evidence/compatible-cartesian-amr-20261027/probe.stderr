@@ -1,0 +1,4 @@
+  File "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-cartesian-amr-20261027/source/tst/elliptic_shift_3d/qualify_cartesian_sbp.py", line 52
+    row={'n':n,'blocks':len(grid.blocks),'cells':grid.cells,'coarse_fine_face_groups':grid.coarse_fine_links,'derivative_rms':float(np.sqrt(np.sum(W*np.sum(np.array(errors)**2,axis=0)))),'derivative_max':float(np.max(abs(np.array(errors))))),'constant_derivative_max':constant,'adjoint_relative_max':max(adjoint),'variable_scalar_energy_relative_defect':abs(energy-strain)/max(1,abs(strain))}
+                                                                                                                                                                                                                                                ^
+SyntaxError: closing parenthesis ')' does not match opening parenthesis '{'

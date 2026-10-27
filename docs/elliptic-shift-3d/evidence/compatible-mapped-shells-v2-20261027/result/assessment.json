@@ -1,0 +1,121 @@
+{
+  "scope": "All-cell derivative and tensor checks on a cube plus actual spherical shells.\n\nUnadopted spatial candidate. The outer nodes have r=1 and Omega=0 exactly up to\nroundoff, but no hyperboloidal boundary equations or evolution are solved here.\nThe core is uniform Cartesian and unrefined in this first mapped test.\n",
+  "rows": [
+    {
+      "n": 10,
+      "cells": 13000,
+      "blocks": 13,
+      "radial_partition": [
+        0.0,
+        0.45,
+        1.0
+      ],
+      "rms": 0.0017948303698066895,
+      "maximum": 0.01640289718517235,
+      "core_rms": 6.613338456294285e-05,
+      "shell_rms": 0.0018221884149228777,
+      "constant_derivative_max": 1.8857268788667855e-12,
+      "adjoint_relative_max": 3.708144902248023e-14,
+      "geometry_divergence_max": 3.868521359897436e-13,
+      "interface_normal_mismatch": 6.247780071078068e-14,
+      "surface_discrete_normal_error": 0.013427340143017242,
+      "outer_Omega_max": 2.220446049250313e-16,
+      "core_shell_value_L1_max": 13.449166005347061,
+      "volume": 4.188787372565176
+    },
+    {
+      "n": 12,
+      "cells": 22464,
+      "blocks": 13,
+      "radial_partition": [
+        0.0,
+        0.45,
+        1.0
+      ],
+      "rms": 0.0003917250771512805,
+      "maximum": 0.004379089523352919,
+      "core_rms": 5.9516531227488896e-05,
+      "shell_rms": 0.00039756706837822304,
+      "constant_derivative_max": 2.425780934231727e-12,
+      "adjoint_relative_max": 8.493206138382448e-15,
+      "geometry_divergence_max": 1.0809131367750524e-12,
+      "interface_normal_mismatch": 2.831068712794149e-15,
+      "surface_discrete_normal_error": 0.0030923563891993625,
+      "outer_Omega_max": 2.220446049250313e-16,
+      "core_shell_value_L1_max": 12.62367189631929,
+      "volume": 4.188790122133517
+    },
+    {
+      "n": 14,
+      "cells": 35672,
+      "blocks": 13,
+      "radial_partition": [
+        0.0,
+        0.45,
+        1.0
+      ],
+      "rms": 8.312727435292744e-05,
+      "maximum": 0.0032510279047970048,
+      "core_rms": 3.5432171224963186e-05,
+      "shell_rms": 8.416697347526912e-05,
+      "constant_derivative_max": 4.889425864875893e-12,
+      "adjoint_relative_max": 8.923417560424696e-14,
+      "geometry_divergence_max": 1.0554057627842894e-12,
+      "interface_normal_mismatch": 3.7349406686620775e-15,
+      "surface_discrete_normal_error": 0.0006805648176179459,
+      "outer_Omega_max": 2.220446049250313e-16,
+      "core_shell_value_L1_max": 13.436246642050538,
+      "volume": 4.1887902023691375
+    }
+  ],
+  "tensor": {
+    "constant_metric": {
+      "smooth": {
+        "energy": 11.242713815621908,
+        "strain": 11.242713815621919,
+        "energy_relative_defect": 9.480042996017436e-16,
+        "symmetry_relative_defect": 3.0887370965246883e-12,
+        "rayleigh": 27.62098271359923
+      },
+      "random": {
+        "energy": 65273.3372027981,
+        "strain": 65273.33720279811,
+        "energy_relative_defect": 1.1146906112028118e-16,
+        "symmetry_relative_defect": 6.371030261072055e-15,
+        "rayleigh": 4195.576079108261
+      }
+    },
+    "variable_metric_frechet": [
+      {
+        "epsilon": 0.001,
+        "scaled_rms": 3.5592345871689665e-06,
+        "maximum": 0.017097978151241477
+      },
+      {
+        "epsilon": 0.0001,
+        "scaled_rms": 3.5592113215097576e-08,
+        "maximum": 0.0001709763017743171
+      },
+      {
+        "epsilon": 1e-05,
+        "scaled_rms": 3.565318003463358e-10,
+        "maximum": 1.7112531622842653e-06
+      }
+    ],
+    "variable_metric_det_min": 1.1886849271746909,
+    "variable_metric_det_max": 1.405917096807334
+  },
+  "orders": [
+    8.348467190489334,
+    10.056312449882233
+  ],
+  "gates": {
+    "all_cell_refinement": true,
+    "constants_and_pair_identity": true,
+    "interface_amplification": true,
+    "actual_Omega_zero_nodes": true,
+    "constant_metric_energy": true,
+    "full_metric_frechet": true
+  },
+  "seconds": 1.078732709
+}

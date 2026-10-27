@@ -1,0 +1,76 @@
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:54: RuntimeWarning: divide by zero encountered in matmul
+  S=S0+F@U.T-U@F.T-U@(U.T@F)@U.T
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:54: RuntimeWarning: overflow encountered in matmul
+  S=S0+F@U.T-U@F.T-U@(U.T@F)@U.T
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:54: RuntimeWarning: invalid value encountered in matmul
+  S=S0+F@U.T-U@F.T-U@(U.T@F)@U.T
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:60: RuntimeWarning: divide by zero encountered in matmul
+  Rplus=(L.T@L)/(2**(2*degree+2))
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:60: RuntimeWarning: overflow encountered in matmul
+  Rplus=(L.T@L)/(2**(2*degree+2))
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:60: RuntimeWarning: invalid value encountered in matmul
+  Rplus=(L.T@L)/(2**(2*degree+2))
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:101: RuntimeWarning: divide by zero encountered in matmul
+  x=a['x'];exact=2*np.pi*np.cos(2*np.pi*x);error=a['Dminus']@np.sin(2*np.pi*x)-exact
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:101: RuntimeWarning: overflow encountered in matmul
+  x=a['x'];exact=2*np.pi*np.cos(2*np.pi*x);error=a['Dminus']@np.sin(2*np.pi*x)-exact
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:101: RuntimeWarning: invalid value encountered in matmul
+  x=a['x'];exact=2*np.pi*np.cos(2*np.pi*x);error=a['Dminus']@np.sin(2*np.pi*x)-exact
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:51: RuntimeWarning: divide by zero encountered in matmul
+  F=H[:,None]*dU-B@U/2-S0@U
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:51: RuntimeWarning: overflow encountered in matmul
+  F=H[:,None]*dU-B@U/2-S0@U
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:51: RuntimeWarning: invalid value encountered in matmul
+  F=H[:,None]*dU-B@U/2-S0@U
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:102: RuntimeWarning: divide by zero encountered in matmul
+  result['local'].append(dict(n=n,degree=degree,status='constructed',minimum_weight=float(min(H)),sbp_max=float(np.max(abs(sbp))),polynomial_max=float(np.max(abs(a['Dminus']@a['V']-a['dV']))),smooth_rms=float(np.sqrt(sum(H*error**2))),smooth_max=float(max(abs(error)))))
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:102: RuntimeWarning: overflow encountered in matmul
+  result['local'].append(dict(n=n,degree=degree,status='constructed',minimum_weight=float(min(H)),sbp_max=float(np.max(abs(sbp))),polynomial_max=float(np.max(abs(a['Dminus']@a['V']-a['dV']))),smooth_rms=float(np.sqrt(sum(H*error**2))),smooth_max=float(max(abs(error)))))
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:102: RuntimeWarning: invalid value encountered in matmul
+  result['local'].append(dict(n=n,degree=degree,status='constructed',minimum_weight=float(min(H)),sbp_max=float(np.max(abs(sbp))),polynomial_max=float(np.max(abs(a['Dminus']@a['V']-a['dV']))),smooth_rms=float(np.sqrt(sum(H*error**2))),smooth_max=float(max(abs(error)))))
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:74: RuntimeWarning: divide by zero encountered in matmul
+  ILR=VL@np.linalg.solve(RR,UR.T*np.sqrt(HR)[None,:])
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:74: RuntimeWarning: overflow encountered in matmul
+  ILR=VL@np.linalg.solve(RR,UR.T*np.sqrt(HR)[None,:])
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:74: RuntimeWarning: invalid value encountered in matmul
+  ILR=VL@np.linalg.solve(RR,UR.T*np.sqrt(HR)[None,:])
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:113: RuntimeWarning: divide by zero encountered in matmul
+  err=a['Dminus']@np.sin(2*np.pi*x)-2*np.pi*np.cos(2*np.pi*x)
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:113: RuntimeWarning: overflow encountered in matmul
+  err=a['Dminus']@np.sin(2*np.pi*x)-2*np.pi*np.cos(2*np.pi*x)
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:113: RuntimeWarning: invalid value encountered in matmul
+  err=a['Dminus']@np.sin(2*np.pi*x)-2*np.pi*np.cos(2*np.pi*x)
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:114: RuntimeWarning: divide by zero encountered in matmul
+  result['chains'].append(dict(n=n,degree=degree,sbp_max=float(np.max(abs(H[:,None]*a['Dplus']+a['Dminus'].T*H[None,:]-B))),polynomial_max=float(np.max(abs(a['Dminus']@V-dV))),smooth_rms=float(np.sqrt(sum(H*err**2))),smooth_max=float(max(abs(err)))))
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:114: RuntimeWarning: overflow encountered in matmul
+  result['chains'].append(dict(n=n,degree=degree,sbp_max=float(np.max(abs(H[:,None]*a['Dplus']+a['Dminus'].T*H[None,:]-B))),polynomial_max=float(np.max(abs(a['Dminus']@V-dV))),smooth_rms=float(np.sqrt(sum(H*err**2))),smooth_max=float(max(abs(err)))))
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:114: RuntimeWarning: invalid value encountered in matmul
+  result['chains'].append(dict(n=n,degree=degree,sbp_max=float(np.max(abs(H[:,None]*a['Dplus']+a['Dminus'].T*H[None,:]-B))),polynomial_max=float(np.max(abs(a['Dminus']@V-dV))),smooth_rms=float(np.sqrt(sum(H*err**2))),smooth_max=float(max(abs(err)))))
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:117: RuntimeWarning: divide by zero encountered in matmul
+  A=-(a['Dplus']@np.diag(coefficient)@G);weighted=np.sqrt(H)[:,None]*A/np.sqrt(H)[None,:]
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:117: RuntimeWarning: overflow encountered in matmul
+  A=-(a['Dplus']@np.diag(coefficient)@G);weighted=np.sqrt(H)[:,None]*A/np.sqrt(H)[None,:]
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:117: RuntimeWarning: invalid value encountered in matmul
+  A=-(a['Dplus']@np.diag(coefficient)@G);weighted=np.sqrt(H)[:,None]*A/np.sqrt(H)[None,:]
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:119: RuntimeWarning: divide by zero encountered in matmul
+  checker=(-1.)**np.arange(len(H));cg=G@checker
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:119: RuntimeWarning: overflow encountered in matmul
+  checker=(-1.)**np.arange(len(H));cg=G@checker
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:119: RuntimeWarning: invalid value encountered in matmul
+  checker=(-1.)**np.arange(len(H));cg=G@checker
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:120: RuntimeWarning: divide by zero encountered in matmul
+  q=np.random.default_rng(1927).normal(size=len(H));lhs=sum(H*q*(A@q));rhs=sum(H*coefficient*(G@q)**2)
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:120: RuntimeWarning: overflow encountered in matmul
+  q=np.random.default_rng(1927).normal(size=len(H));lhs=sum(H*q*(A@q));rhs=sum(H*coefficient*(G@q)**2)
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py:120: RuntimeWarning: invalid value encountered in matmul
+  q=np.random.default_rng(1927).normal(size=len(H));lhs=sum(H*q*(A@q));rhs=sum(H*coefficient*(G@q)**2)
+Traceback (most recent call last):
+  File "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py", line 126, in <module>
+    start=time.monotonic();result=evaluate();result['seconds']=time.monotonic()-start;result['script_sha256']=hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+  File "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py", line 111, in evaluate
+    a=chain(n,degree,[.25,.20,.10,.05,.05,.05,.05,.25]);x=a['x'];H=a['H'];B=np.outer(a['trace'][1],a['trace'][1])-np.outer(a['trace'][0],a['trace'][0])
+  File "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py", line 80, in chain
+    loc=local(n,degree);count=n*len(widths);H=np.concatenate([h*loc['H'] for h in widths]);x=np.concatenate([sum(widths[:i])+h*loc['x'] for i,h in enumerate(widths)])
+  File "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-sbp-initial-failure-20261027/source/tst/elliptic_shift_3d/probe_sbp_pair.py", line 37, in local
+    raise ValueError('positive degree-2p quadrature unavailable on these nodes')
+ValueError: positive degree-2p quadrature unavailable on these nodes

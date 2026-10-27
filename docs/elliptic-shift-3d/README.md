@@ -1,6 +1,8 @@
 # Composite 3D elliptic shift: current implementation and evidence
 
 **Takeover in progress:** [current spherical alignment and interface evidence](takeover-alignment-20261027.md).
+The latest [compatible derivative and mapped-shell prototype](compatible-gauge-prototype-20261027.md)
+passes scoped spatial controls but is unadopted; stable 3D collapse remains unverified.
 The [dated handoff](TAKEOVER-20261027.md) preserves the previous paused state.
 
 **Residual qualification:** all prior "original vector residual" results refer to

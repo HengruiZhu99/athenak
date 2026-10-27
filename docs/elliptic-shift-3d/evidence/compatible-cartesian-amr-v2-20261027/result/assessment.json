@@ -1,0 +1,113 @@
+{
+  "scope": "Periodic Cartesian 3D core with actual 2:1 leaf interfaces. Constant non-diagonal metric kernel and variable scalar coefficient controls only. No cubed-sphere, scri, general variable-metric gauge or evolution validation.",
+  "rows": [
+    {
+      "n": 10,
+      "blocks": 15,
+      "cells": 15000,
+      "coarse_fine_face_groups": 6,
+      "derivative_rms": 0.28652234099598645,
+      "derivative_max": 1.4757012303215502,
+      "constant_derivative_max": 2.118014345590755e-13,
+      "adjoint_relative_max": 1.1102230246251565e-16,
+      "variable_scalar_energy_relative_defect": 0.0,
+      "tensor_face_value_L1_max": 13.282053782838434
+    },
+    {
+      "n": 12,
+      "blocks": 15,
+      "cells": 25920,
+      "coarse_fine_face_groups": 6,
+      "derivative_rms": 0.1872458259799196,
+      "derivative_max": 1.1016149623932319,
+      "constant_derivative_max": 4.0737719946485623e-13,
+      "adjoint_relative_max": 2.220446049250313e-16,
+      "variable_scalar_energy_relative_defect": 0.0,
+      "tensor_face_value_L1_max": 12.1286611999882
+    },
+    {
+      "n": 14,
+      "blocks": 15,
+      "cells": 41160,
+      "coarse_fine_face_groups": 6,
+      "derivative_rms": 0.1299689419165593,
+      "derivative_max": 1.095877539168445,
+      "constant_derivative_max": 3.113618965201459e-13,
+      "adjoint_relative_max": 4.163336342344337e-16,
+      "variable_scalar_energy_relative_defect": 0.0,
+      "tensor_face_value_L1_max": 11.945256575128035
+    }
+  ],
+  "tensor": {
+    "cases": {
+      "smooth": {
+        "energy": 35.12690401446467,
+        "strain": 35.126904014464664,
+        "energy_relative_defect": 2.0227878194659874e-16,
+        "rayleigh": 80.93890702098804,
+        "bilinear_symmetry_relative": 5.051514762044462e-14
+      },
+      "checker": {
+        "energy": 47862.984620269184,
+        "strain": 47862.9846202692,
+        "energy_relative_defect": 3.040327581703785e-16,
+        "rayleigh": 32875.235376740406,
+        "bilinear_symmetry_relative": 0.0
+      },
+      "random": {
+        "energy": 39455.46582235642,
+        "strain": 39455.46582235642,
+        "energy_relative_defect": 0.0,
+        "rayleigh": 10830.717766653774,
+        "bilinear_symmetry_relative": 3.828414041715911e-15
+      }
+    },
+    "frechet": [
+      {
+        "epsilon": 0.0001,
+        "scaled_rms": 6.543039635913049e-07,
+        "maximum": 0.0002444944917954217
+      },
+      {
+        "epsilon": 1e-05,
+        "scaled_rms": 6.543069116851153e-09,
+        "maximum": 2.44459607756653e-06
+      },
+      {
+        "epsilon": 1e-06,
+        "scaled_rms": 1.0464465761391742e-10,
+        "maximum": 4.7303474914883736e-08
+      }
+    ],
+    "metric": [
+      [
+        1.3,
+        0.13,
+        -0.07
+      ],
+      [
+        0.13,
+        0.9,
+        0.08
+      ],
+      [
+        -0.07,
+        0.08,
+        1.1
+      ]
+    ]
+  },
+  "orders": [
+    2.333208363572812,
+    2.368635790758628
+  ],
+  "gates": {
+    "all_cell_refinement": true,
+    "constant_and_adjoint": true,
+    "scalar_energy": true,
+    "interface_amplification": true,
+    "tensor_energy": true,
+    "tensor_frechet": true
+  },
+  "seconds": 0.397441333
+}
