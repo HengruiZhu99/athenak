@@ -1,7 +1,11 @@
 """Negative controls for the duration acceptance gate; no numerical evolution."""
 import copy
+import gzip
 import json
 from pathlib import Path
+import subprocess
+import sys
+import tempfile
 import unittest
 
 from assess_telegraph_duration import assess
@@ -62,6 +66,24 @@ class DurationAssessment(unittest.TestCase):
         self.summary['resolution'] = 513
         with self.assertRaises(ValueError):
             self.run_assessment()
+
+    def test_compressed_export_preserves_verdict_and_receipts(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            for name in ['summary.json', 'manifest-long.json', 'protocol.json',
+                         'source-manifest.json']:
+                (root/name).write_bytes((EXPORT/name).read_bytes())
+            command = [sys.executable, str(Path(__file__).with_name(
+                'assess_telegraph_duration.py')), '--export', str(root), '--output']
+            subprocess.run(command+[str(root/'raw-result.json')], check=True,
+                           capture_output=True, text=True)
+            summary = root/'summary.json'
+            (root/'summary.json.gz').write_bytes(gzip.compress(summary.read_bytes(), mtime=0))
+            summary.unlink()
+            subprocess.run(command+[str(root/'compressed-result.json')], check=True,
+                           capture_output=True, text=True)
+            self.assertEqual((root/'raw-result.json').read_bytes(),
+                             (root/'compressed-result.json').read_bytes())
 
 
 if __name__ == '__main__':

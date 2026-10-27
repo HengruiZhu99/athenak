@@ -87,6 +87,14 @@ The source collector hashes and copies the same captured manifest bytes, avoidin
 python3 data/attenuated-duration/assess_telegraph_duration.py --export data/attenuated-duration --output /tmp/attenuated-duration-assessment.json
 ```
 
+The assessment and repair-duration plot also accept `summary.json.gz` when the raw
+summary is absent. Assessment receipts hash the decompressed original bytes, so
+lossless compression preserves both the verdict and the receipts. When packaging,
+`package_source.py` omits a raw JSON file if its gzip counterpart is present and
+byte-identical after decompression; a mismatch stops packaging without replacing
+the previous archive. This keeps full diagnostic histories without storing them
+twice.
+
 Use a new output filename. A healthy interim export always remains pending; only reaching the declared target with the full accuracy budget can pass the duration gate. The gate has seven separate tests, including negative controls for missing histories, missing horizons, nonfinite constraints, excessive mass/boundary error, and terminal failures with otherwise healthy exterior diagnostics.
 
 `python3 package_source.py` refreshes the sibling portable source ZIP and verifies its CRC and every listed SHA-256 digest. Generated TeX logs, auxiliary files, and QA images are excluded.

@@ -5,6 +5,7 @@ Run paper/collect_long_puncture.py first, with explicit --case and --protocol.
 This assesses saved-state accuracy and recorded stage extrema, not convergence.
 """
 import argparse
+import gzip
 import hashlib
 import json
 import math
@@ -77,7 +78,13 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     names = ['summary.json', 'manifest-long.json', 'protocol.json', 'source-manifest.json']
-    files = {name:(args.export/name).read_bytes() for name in names}
+    files = {}
+    for name in names:
+        path = args.export/name
+        files[name] = (gzip.decompress(path.with_suffix('.json.gz').read_bytes())
+                       if name == 'summary.json' and not path.exists()
+                       else path.read_bytes())
+    # Receipts identify the original bytes, independently of storage compression.
     data = {name:json.loads(content) for name,content in files.items()}
     receipts = data['source-manifest.json']
     for name in ['manifest-long.json', 'protocol.json']:

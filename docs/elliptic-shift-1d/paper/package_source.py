@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Package the portable paper, excluding TeX build debris and QA renders."""
+import gzip
 import hashlib
 import json
 from pathlib import Path
@@ -14,6 +15,14 @@ def main():
     for name in ['sections', 'data', 'figures']:
         paths.update(p for p in (root/name).rglob('*') if p.is_file() and
                      '__pycache__' not in p.parts and p.suffix != '.pyc')
+    # Keep only the lossless compressed representation when both are present.
+    # Refuse a stale compressed copy rather than silently dropping newer data.
+    for path in list(paths):
+        compressed = path.with_suffix('.json.gz')
+        if path.suffix == '.json' and compressed in paths:
+            if gzip.decompress(compressed.read_bytes()) != path.read_bytes():
+                raise ValueError('Compressed JSON differs from raw source: '+str(path))
+            paths.remove(path)
     paths = sorted(paths)
     manifest = [dict(path=str(p.relative_to(root)),
                      sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in paths]
