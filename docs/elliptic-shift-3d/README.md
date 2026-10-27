@@ -1,5 +1,10 @@
 # Composite 3D elliptic shift: current implementation and evidence
 
+**Residual qualification:** all prior "original vector residual" results refer to
+the expanded continuum-equation discretization. Exact freezing of the actual
+discrete metric-built connection is not established and fails the new accepted-state
+audit. See [discrete gauge qualification](discrete-gauge-qualification.md).
+
 The exact variable-metric shift and a global composite-grid CPU solver are
 implemented and tested. A restricted experimental native Driver/RK/restart
 path now passes Minkowski and small-pulse controls on engine-owned shells. **The full requested production/scientific milestone

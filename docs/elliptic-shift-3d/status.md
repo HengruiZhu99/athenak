@@ -1,5 +1,10 @@
 # Current continuation checkpoint, 2026-10-27
 
+**Residual qualification:** all prior "original vector residual" results refer to
+the expanded continuum-equation discretization. Exact freezing of the actual
+discrete metric-built connection is not established and fails the new accepted-state
+audit. See [discrete gauge qualification](discrete-gauge-qualification.md).
+
 **The first scientific milestone remains incomplete.** The full variable-metric
 vector solver converges on the tested global composite CPU domains. Actual
 AthenaK Driver/RK tasks now dispatch the shared tensor evolution and shift

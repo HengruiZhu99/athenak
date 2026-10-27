@@ -1,5 +1,10 @@
 # Exact metric-connection shift equation and implemented boundaries
 
+The equations below are continuum identities. Their expanded mapped discretization
+does not exactly enforce the connection of the actual discrete metric evolution;
+[the discrete gauge audit](discrete-gauge-qualification.md) records a large mismatch.
+This qualification applies to every earlier reported original-vector residual.
+
 This is a **partial CPU research implementation**, based on
 `8bef4966e253e92d85761f46d8885e7cc80dc2ed`. The production AthenaK hyperboloidal
 and cubed-sphere restrictions remain in force. See `status.md` for the distinction
@@ -39,7 +44,7 @@ The derivatives of H include all of
 of the determinant-convention term. No metric coefficient is lagged within an
 individual linear solve.
 
-The **implemented original vector equation** is
+The **continuum vector equation discretized by the expanded operator** is
 
 ```
 L_g beta := DV_g[H(beta)] = -eta V - DV_g[C] =: S.

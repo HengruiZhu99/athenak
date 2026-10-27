@@ -1,0 +1,1428 @@
+{
+  "scope": "Unadopted fixed flat N6 seven-shell full-action AP Arnoldi controls; no spectral-gap or scientific-completion claim",
+  "source_head": "d137f9b5ca49e95aa920b7fad53a982654885fa5",
+  "runs": {
+    "dependencies": {
+      "command": [
+        "/usr/bin/c++",
+        "-std=c++17",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include",
+        "-M",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/probe_composed_arnoldi.cpp"
+      ],
+      "maximum_seconds": 60,
+      "owned_process_group": 35270,
+      "exit_code": 0,
+      "seconds": 0.151198459
+    },
+    "frozen-dependencies": {
+      "command": [
+        "/usr/bin/c++",
+        "-std=c++17",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/source/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/source/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/source/build-shift-3d/kokkos",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/source/build-shift-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/source/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/source/build-shift-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/source/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/source/build-shift-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/source/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/source/build-shift-3d/kokkos/simd/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/source/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/source/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/source/kokkos/tpls/mdspan/include",
+        "-M",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/source/tst/elliptic_shift_3d/probe_composed_arnoldi.cpp"
+      ],
+      "maximum_seconds": 60,
+      "owned_process_group": 35287,
+      "exit_code": 0,
+      "seconds": 0.15137725000000002
+    },
+    "build": {
+      "command": [
+        "/usr/bin/c++",
+        "-O3",
+        "-std=c++17",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/source/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/source/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/source/build-shift-3d/kokkos",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/source/build-shift-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/source/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/source/build-shift-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/source/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/source/build-shift-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/source/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/source/build-shift-3d/kokkos/simd/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/source/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/source/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/source/kokkos/tpls/mdspan/include",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/source/tst/elliptic_shift_3d/probe_composed_arnoldi.cpp",
+        "-o",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/probe",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src/libkokkoscore.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src/libkokkossimd.a"
+      ],
+      "maximum_seconds": 60,
+      "owned_process_group": 35289,
+      "exit_code": 0,
+      "seconds": 3.2323421250000006
+    },
+    "expanded-arnoldi": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/probe",
+        "expanded",
+        "arnoldi",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/expanded"
+      ],
+      "maximum_seconds": 180,
+      "owned_process_group": 35297,
+      "exit_code": 0,
+      "seconds": 13.352818708000001
+    },
+    "expanded-witness": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/probe",
+        "expanded",
+        "witness",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/expanded",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/expanded.coefficients.dat"
+      ],
+      "maximum_seconds": 180,
+      "owned_process_group": 35318,
+      "exit_code": 0,
+      "seconds": 1.4435095830000009
+    },
+    "composed-arnoldi": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/probe",
+        "composed",
+        "arnoldi",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/composed"
+      ],
+      "maximum_seconds": 180,
+      "owned_process_group": 35319,
+      "exit_code": 0,
+      "seconds": 18.947204375
+    },
+    "composed-witness": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/probe",
+        "composed",
+        "witness",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/composed",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/composed-arnoldi-20261027/composed.coefficients.dat"
+      ],
+      "maximum_seconds": 180,
+      "owned_process_group": 35336,
+      "exit_code": 0,
+      "seconds": 1.6337003339999967
+    }
+  },
+  "cases": {
+    "expanded": {
+      "arnoldi_columns": 80,
+      "singular_values_of_full_action_on_Arnoldi_space": [
+        2.8015504404921456,
+        2.645118430138141,
+        2.53817780468129,
+        2.4251091260994895,
+        2.4102260805899736,
+        2.348640663695315,
+        2.304435438195338,
+        2.2807104033064514,
+        2.2292490055791765,
+        2.1686583818532497,
+        2.046773265272764,
+        2.0222914342359375,
+        1.9466025906014621,
+        1.8712230348867704,
+        1.8665526287191117,
+        1.83525424789609,
+        1.8232817749017338,
+        1.8059699727843526,
+        1.7991382525730122,
+        1.7776178089730308,
+        1.7531723324455182,
+        1.7385069532552764,
+        1.7254818059993196,
+        1.705524833136498,
+        1.6777119525047006,
+        1.661467254777592,
+        1.6454720594664483,
+        1.6331112241802226,
+        1.6095529346763968,
+        1.6040846563397173,
+        1.5661023297653172,
+        1.559461697511212,
+        1.5369964959557918,
+        1.5165764664835992,
+        1.503933272657034,
+        1.4960398655709422,
+        1.4811037656877348,
+        1.4664740852520954,
+        1.4588005897432559,
+        1.4567128295295388,
+        1.4481555180655035,
+        1.4388696265498409,
+        1.4211923002570253,
+        1.4094192843829803,
+        1.3648600865541547,
+        1.3501704492621946,
+        1.3313136969556576,
+        1.2943943572067438,
+        1.2887286759399263,
+        1.2605926245992316,
+        1.215893609652214,
+        1.1906297163500865,
+        1.1598588727634696,
+        1.121144704692942,
+        1.1148835909144572,
+        1.1097393178039199,
+        1.084908684306244,
+        1.081122168915092,
+        1.0669664565505608,
+        1.0540864972348285,
+        1.0377536779062408,
+        1.0281185849492254,
+        1.010524650121688,
+        0.9937033791081722,
+        0.9772721341725901,
+        0.9652077003018367,
+        0.9473591551252897,
+        0.938561812001119,
+        0.9271121843516736,
+        0.90705996937121,
+        0.8957412733974658,
+        0.8641798502906806,
+        0.8264652994306114,
+        0.8238723679532945,
+        0.8183465435913692,
+        0.8129489163832614,
+        0.807532472994098,
+        0.8012345760381832,
+        0.7368062532582051,
+        0.5826910732883561
+      ],
+      "restricted_condition": 4.80795153541977,
+      "smallest_full_action_singular_value": 0.5826910732883561,
+      "projected_square_smallest_singular_value": 0.5826888901717187,
+      "projected_square_relative_nonnormal_commutator": 0.044197885296333755,
+      "projected_numerical_range_real_min": 0.24525344547738903,
+      "projected_numerical_range_real_max": 2.4786373549792136,
+      "ritz_eigenvalues_real_imag": [
+        [
+          1.7954495621867455,
+          0.4281793787683794
+        ],
+        [
+          1.7954495621867455,
+          -0.4281793787683794
+        ],
+        [
+          1.8363501556753599,
+          0.4012275491536448
+        ],
+        [
+          1.8363501556753599,
+          -0.4012275491536448
+        ],
+        [
+          1.8348143310806435,
+          0.40092332048446055
+        ],
+        [
+          1.8348143310806435,
+          -0.40092332048446055
+        ],
+        [
+          1.8072680106820778,
+          0.4119540850488015
+        ],
+        [
+          1.8072680106820778,
+          -0.4119540850488015
+        ],
+        [
+          1.8025987019704979,
+          0.41256390294458084
+        ],
+        [
+          1.8025987019704979,
+          -0.41256390294458084
+        ],
+        [
+          1.8375992754893145,
+          0.3176712067806945
+        ],
+        [
+          1.8375992754893145,
+          -0.3176712067806945
+        ],
+        [
+          1.81947511693111,
+          0.2482528407628777
+        ],
+        [
+          1.81947511693111,
+          -0.2482528407628777
+        ],
+        [
+          1.7848563270181956,
+          0.3340221643044319
+        ],
+        [
+          1.7848563270181956,
+          -0.3340221643044319
+        ],
+        [
+          0.8077553066815337,
+          0.0
+        ],
+        [
+          1.7993217562821815,
+          0.31678100534724984
+        ],
+        [
+          1.7993217562821815,
+          -0.31678100534724984
+        ],
+        [
+          1.7800488285164355,
+          0.2915366360472712
+        ],
+        [
+          1.7800488285164355,
+          -0.2915366360472712
+        ],
+        [
+          0.8148171914360978,
+          0.0
+        ],
+        [
+          0.8227103641526696,
+          0.004401438803179151
+        ],
+        [
+          0.8227103641526696,
+          -0.004401438803179151
+        ],
+        [
+          1.7908275091200547,
+          0.21140735620165485
+        ],
+        [
+          1.7908275091200547,
+          -0.21140735620165485
+        ],
+        [
+          0.8316427486049086,
+          0.0
+        ],
+        [
+          1.812084076618906,
+          0.11866137541538953
+        ],
+        [
+          1.812084076618906,
+          -0.11866137541538953
+        ],
+        [
+          1.809552923583152,
+          0.0
+        ],
+        [
+          0.9390512505810864,
+          0.14666634748652124
+        ],
+        [
+          0.9390512505810864,
+          -0.14666634748652124
+        ],
+        [
+          0.9985356513287853,
+          0.20690194066923295
+        ],
+        [
+          0.9985356513287853,
+          -0.20690194066923295
+        ],
+        [
+          0.9212509628879211,
+          0.0940288696740509
+        ],
+        [
+          0.9212509628879211,
+          -0.0940288696740509
+        ],
+        [
+          1.802060071892269,
+          0.1095518283790647
+        ],
+        [
+          1.802060071892269,
+          -0.1095518283790647
+        ],
+        [
+          0.9981443442042665,
+          0.18419966521713296
+        ],
+        [
+          0.9981443442042665,
+          -0.18419966521713296
+        ],
+        [
+          0.943641651329319,
+          0.1059093513341084
+        ],
+        [
+          0.943641651329319,
+          -0.1059093513341084
+        ],
+        [
+          1.01287374657726,
+          0.1794170916960305
+        ],
+        [
+          1.01287374657726,
+          -0.1794170916960305
+        ],
+        [
+          1.0491823741450226,
+          0.209155929271946
+        ],
+        [
+          1.0491823741450226,
+          -0.209155929271946
+        ],
+        [
+          0.9223245838444604,
+          0.04810585495086615
+        ],
+        [
+          0.9223245838444604,
+          -0.04810585495086615
+        ],
+        [
+          1.506868577150908,
+          0.36076669501151976
+        ],
+        [
+          1.506868577150908,
+          -0.36076669501151976
+        ],
+        [
+          1.14035268926978,
+          0.230980154579919
+        ],
+        [
+          1.14035268926978,
+          -0.230980154579919
+        ],
+        [
+          1.2190956681274878,
+          0.2678852834199173
+        ],
+        [
+          1.2190956681274878,
+          -0.2678852834199173
+        ],
+        [
+          1.2185882091163858,
+          0.26080087701664145
+        ],
+        [
+          1.2185882091163858,
+          -0.26080087701664145
+        ],
+        [
+          1.5008836236746026,
+          0.3456216722011397
+        ],
+        [
+          1.5008836236746026,
+          -0.3456216722011397
+        ],
+        [
+          1.7583779712865082,
+          0.023614041045003847
+        ],
+        [
+          1.7583779712865082,
+          -0.023614041045003847
+        ],
+        [
+          1.252903481420713,
+          0.24180486584096428
+        ],
+        [
+          1.252903481420713,
+          -0.24180486584096428
+        ],
+        [
+          1.655774386820978,
+          0.17570409520190852
+        ],
+        [
+          1.655774386820978,
+          -0.17570409520190852
+        ],
+        [
+          1.3179094154322226,
+          0.2254095139410631
+        ],
+        [
+          1.3179094154322226,
+          -0.2254095139410631
+        ],
+        [
+          1.4159287460444117,
+          0.25332159306624763
+        ],
+        [
+          1.4159287460444117,
+          -0.25332159306624763
+        ],
+        [
+          1.470716996586109,
+          0.2843531238090587
+        ],
+        [
+          1.470716996586109,
+          -0.2843531238090587
+        ],
+        [
+          1.4557471697342534,
+          0.27314177561353387
+        ],
+        [
+          1.4557471697342534,
+          -0.27314177561353387
+        ],
+        [
+          1.8012677898239526,
+          0.33247507713589863
+        ],
+        [
+          1.8012677898239526,
+          -0.33247507713589863
+        ],
+        [
+          1.570366322282196,
+          0.09249981859521986
+        ],
+        [
+          1.570366322282196,
+          -0.09249981859521986
+        ],
+        [
+          1.0619490035197496,
+          0.09991273878637462
+        ],
+        [
+          1.0619490035197496,
+          -0.09991273878637462
+        ],
+        [
+          1.1311804248692823,
+          0.0
+        ],
+        [
+          0.8784632403922933,
+          0.0
+        ]
+      ],
+      "independent_APv_norm": 0.5826910732883566,
+      "predicted_APv_norm": 0.5826910732883565,
+      "fresh_action_relative_agreement": 1.90533727994103e-16,
+      "basis_orthogonality_max": 8.881784197001252e-16,
+      "witness_Az_over_z": 30.325855679842853,
+      "regions": {
+        "all": {
+          "cells": 10800,
+          "physical_measure_fraction": 0.9999999999999906,
+          "v_norm_contribution": 1.0000000000000022,
+          "Pv_norm_contribution": 0.019214332464018886,
+          "APv_norm_contribution": 0.582691073288356,
+          "APv_pointmax": 4.14163085469049
+        },
+        "any_patch_stencil_band": {
+          "cells": 10400,
+          "physical_measure_fraction": 0.9355677053523641,
+          "v_norm_contribution": 0.993077681156881,
+          "Pv_norm_contribution": 0.01856841435466221,
+          "APv_norm_contribution": 0.5680865973884262,
+          "APv_pointmax": 4.14163085469049
+        },
+        "bulk": {
+          "cells": 400,
+          "physical_measure_fraction": 0.0644322946476264,
+          "v_norm_contribution": 0.11745943635178013,
+          "Pv_norm_contribution": 0.004940097204653497,
+          "APv_norm_contribution": 0.1296399041868532,
+          "APv_pointmax": 1.1893698548592468
+        },
+        "cartesian": {
+          "cells": 1728,
+          "physical_measure_fraction": 0.02964403708715891,
+          "v_norm_contribution": 0.20368615543967092,
+          "Pv_norm_contribution": 0.005321341052538332,
+          "APv_norm_contribution": 0.18264523898201068,
+          "APv_pointmax": 1.4229778200405936
+        },
+        "not_outer_shell": {
+          "cells": 9504,
+          "physical_measure_fraction": 0.4219002020617892,
+          "v_norm_contribution": 0.9328892295562617,
+          "Pv_norm_contribution": 0.018290547903489003,
+          "APv_norm_contribution": 0.5648374477453085,
+          "APv_pointmax": 4.14163085469049
+        },
+        "outer_shell": {
+          "cells": 1296,
+          "physical_measure_fraction": 0.5780997979381962,
+          "v_norm_contribution": 0.36016341482434017,
+          "Pv_norm_contribution": 0.005886121764627699,
+          "APv_norm_contribution": 0.14313470758171085,
+          "APv_pointmax": 0.5308358015351108
+        },
+        "scri_stencil_band": {
+          "cells": 432,
+          "physical_measure_fraction": 0.22974230753429023,
+          "v_norm_contribution": 0.34228991201929637,
+          "Pv_norm_contribution": 0.0010620245523249548,
+          "APv_norm_contribution": 0.10852967945681412,
+          "APv_pointmax": 0.5308358015351108
+        },
+        "shell": {
+          "cells": 9072,
+          "physical_measure_fraction": 0.9703559629128308,
+          "v_norm_contribution": 0.979036235326461,
+          "Pv_norm_contribution": 0.018462770686991196,
+          "APv_norm_contribution": 0.5533259469491217,
+          "APv_pointmax": 4.14163085469049
+        }
+      },
+      "full_spectral_gap_proved": false,
+      "shared_start_unrestarted_residual_curve": [
+        {
+          "columns": 16,
+          "unrestarted_minimum_relative_residual": 1.75265451365568e-08
+        },
+        {
+          "columns": 32,
+          "unrestarted_minimum_relative_residual": 2.7810667082558276e-15
+        },
+        {
+          "columns": 48,
+          "unrestarted_minimum_relative_residual": 2.237793891427071e-15
+        },
+        {
+          "columns": 64,
+          "unrestarted_minimum_relative_residual": 2.0464438565847946e-15
+        },
+        {
+          "columns": 80,
+          "unrestarted_minimum_relative_residual": 1.9205975364517665e-15
+        }
+      ]
+    },
+    "composed": {
+      "arnoldi_columns": 80,
+      "singular_values_of_full_action_on_Arnoldi_space": [
+        3.4424773313087886,
+        2.923170557353368,
+        2.6681367257172406,
+        2.648519721675692,
+        2.616861879411389,
+        2.3706811355274526,
+        2.255853072302701,
+        2.0937723012644827,
+        2.076871262516721,
+        2.0333208096480884,
+        1.9874893733894776,
+        1.9594246551756054,
+        1.891280323681681,
+        1.8689211970015216,
+        1.819518205278007,
+        1.797566791430856,
+        1.7108862211076854,
+        1.6960355318985316,
+        1.679481785773191,
+        1.6762893086844286,
+        1.6651242060619567,
+        1.6556402076630914,
+        1.6531948856712286,
+        1.6348142262825802,
+        1.6287080709869468,
+        1.6100203474060808,
+        1.5972655277000922,
+        1.5773717014677073,
+        1.5531329676156056,
+        1.5213253723179079,
+        1.5086864296152822,
+        1.4453444245390423,
+        1.4233146568363557,
+        1.3887733486915632,
+        1.3615822110185052,
+        1.3393754142316827,
+        1.3183791026892724,
+        1.3110282681232466,
+        1.2989358812474987,
+        1.278523565954752,
+        1.2545773583715742,
+        1.2456952502905896,
+        1.2127803367822543,
+        1.2086385094826848,
+        1.1877253177498948,
+        1.1720592671557768,
+        1.163169801962183,
+        1.1381212644098229,
+        1.111540170466798,
+        1.0835066529032065,
+        1.0660531626106133,
+        1.0550417809565797,
+        1.046018741157368,
+        1.0072722228948303,
+        0.9182229275080928,
+        0.9055469045435627,
+        0.863924056077424,
+        0.8263068819110754,
+        0.7914531826373195,
+        0.7567277362080967,
+        0.6781577010629449,
+        0.6181470107152268,
+        0.6051201299879816,
+        0.5958779235945263,
+        0.5731168395133825,
+        0.5368427501834041,
+        0.4938521271715556,
+        0.4601578443571005,
+        0.4473117223829424,
+        0.4414630301150046,
+        0.40874222736615407,
+        0.39676754832999345,
+        0.3814938629015417,
+        0.3624064976781347,
+        0.35123455589178293,
+        0.3303782163475087,
+        0.30993396495431624,
+        0.29868029193555407,
+        0.24302704230397063,
+        0.21480956384468256
+      ],
+      "restricted_condition": 16.025717243194357,
+      "smallest_full_action_singular_value": 0.21480956384468256,
+      "projected_square_smallest_singular_value": 0.025340398263045384,
+      "projected_square_relative_nonnormal_commutator": 0.10426433192037252,
+      "projected_numerical_range_real_min": -2.793939041462416,
+      "projected_numerical_range_real_max": 1.7860063361913932,
+      "ritz_eigenvalues_real_imag": [
+        [
+          -2.461917472435495,
+          0.0
+        ],
+        [
+          -2.5998760663188136,
+          0.0
+        ],
+        [
+          -2.6008940021429106,
+          0.0
+        ],
+        [
+          -2.600465441644581,
+          0.0
+        ],
+        [
+          -2.269920142694022,
+          0.0
+        ],
+        [
+          -2.2694466817019987,
+          0.0
+        ],
+        [
+          -2.011575270531768,
+          4.158663451171744e-05
+        ],
+        [
+          -2.011575270531768,
+          -4.158663451171744e-05
+        ],
+        [
+          -1.9764216644973844,
+          0.0
+        ],
+        [
+          -1.975985936473814,
+          0.0
+        ],
+        [
+          -1.8769866490982927,
+          0.0
+        ],
+        [
+          -1.8786814314179507,
+          0.0
+        ],
+        [
+          -1.7825475569659295,
+          0.0
+        ],
+        [
+          -1.765557191849065,
+          0.0
+        ],
+        [
+          -1.7315857172498121,
+          0.0
+        ],
+        [
+          -1.6680814347703705,
+          0.0
+        ],
+        [
+          -1.6479399119255251,
+          0.0
+        ],
+        [
+          -1.3538685209765813,
+          0.1399985110981781
+        ],
+        [
+          -1.3538685209765813,
+          -0.1399985110981781
+        ],
+        [
+          -1.5158894261052898,
+          0.004376235270757631
+        ],
+        [
+          -1.5158894261052898,
+          -0.004376235270757631
+        ],
+        [
+          -1.1965432639727647,
+          0.0
+        ],
+        [
+          -1.2142602001513907,
+          0.0
+        ],
+        [
+          -1.3028872290497966,
+          0.0
+        ],
+        [
+          -1.3471362711326276,
+          0.0
+        ],
+        [
+          1.6776119946088441,
+          0.0
+        ],
+        [
+          -1.4375766586693501,
+          0.0
+        ],
+        [
+          -0.8883218274917073,
+          0.0
+        ],
+        [
+          1.6540676518263429,
+          0.0
+        ],
+        [
+          1.6406700594565102,
+          0.007594019992795323
+        ],
+        [
+          1.6406700594565102,
+          -0.007594019992795323
+        ],
+        [
+          1.6178249010972108,
+          0.0
+        ],
+        [
+          1.6032315804923318,
+          0.0
+        ],
+        [
+          1.207232041794841,
+          0.5100206716093
+        ],
+        [
+          1.207232041794841,
+          -0.5100206716093
+        ],
+        [
+          1.5760714181310387,
+          0.0
+        ],
+        [
+          1.5070542951528962,
+          0.0
+        ],
+        [
+          1.1480615967528651,
+          0.5184365087260975
+        ],
+        [
+          1.1480615967528651,
+          -0.5184365087260975
+        ],
+        [
+          1.1362011140557677,
+          0.5274693778161302
+        ],
+        [
+          1.1362011140557677,
+          -0.5274693778161302
+        ],
+        [
+          1.3579339189009276,
+          0.04433370227941939
+        ],
+        [
+          1.3579339189009276,
+          -0.04433370227941939
+        ],
+        [
+          1.096326484171723,
+          0.46019277214689913
+        ],
+        [
+          1.096326484171723,
+          -0.46019277214689913
+        ],
+        [
+          1.316295729429655,
+          0.12720251805574725
+        ],
+        [
+          1.316295729429655,
+          -0.12720251805574725
+        ],
+        [
+          1.0109306302993668,
+          0.44600625666318694
+        ],
+        [
+          1.0109306302993668,
+          -0.44600625666318694
+        ],
+        [
+          -0.30787333782253057,
+          0.33292345732846845
+        ],
+        [
+          -0.30787333782253057,
+          -0.33292345732846845
+        ],
+        [
+          -0.21609777113542578,
+          0.41193473701294037
+        ],
+        [
+          -0.21609777113542578,
+          -0.41193473701294037
+        ],
+        [
+          1.057174385559161,
+          0.3852181578866983
+        ],
+        [
+          1.057174385559161,
+          -0.3852181578866983
+        ],
+        [
+          1.1848986799697385,
+          0.14090309742305715
+        ],
+        [
+          1.1848986799697385,
+          -0.14090309742305715
+        ],
+        [
+          -0.21529037659194414,
+          0.3103453914629213
+        ],
+        [
+          -0.21529037659194414,
+          -0.3103453914629213
+        ],
+        [
+          -0.15783221646433931,
+          0.35190144988467387
+        ],
+        [
+          -0.15783221646433931,
+          -0.35190144988467387
+        ],
+        [
+          0.7089515521162817,
+          0.3636773129786592
+        ],
+        [
+          0.7089515521162817,
+          -0.3636773129786592
+        ],
+        [
+          0.11312836116898328,
+          0.40677584029703234
+        ],
+        [
+          0.11312836116898328,
+          -0.40677584029703234
+        ],
+        [
+          0.029737724999672033,
+          0.3757287278859524
+        ],
+        [
+          0.029737724999672033,
+          -0.3757287278859524
+        ],
+        [
+          0.7918721278830165,
+          0.26409519983595875
+        ],
+        [
+          0.7918721278830165,
+          -0.26409519983595875
+        ],
+        [
+          0.33575337391537463,
+          0.2725013072675621
+        ],
+        [
+          0.33575337391537463,
+          -0.2725013072675621
+        ],
+        [
+          0.8334059828602665,
+          0.15837015443754882
+        ],
+        [
+          0.8334059828602665,
+          -0.15837015443754882
+        ],
+        [
+          1.2301828223369142,
+          0.0
+        ],
+        [
+          -0.24489672208604893,
+          0.0
+        ],
+        [
+          -0.41396626667569103,
+          0.0
+        ],
+        [
+          -0.004271132552958471,
+          0.243766248252681
+        ],
+        [
+          -0.004271132552958471,
+          -0.243766248252681
+        ],
+        [
+          0.6735478328760548,
+          0.0
+        ],
+        [
+          0.4705251749033048,
+          0.0
+        ]
+      ],
+      "independent_APv_norm": 0.21480956384468253,
+      "predicted_APv_norm": 0.21480956384468256,
+      "fresh_action_relative_agreement": 1.292101483698254e-16,
+      "basis_orthogonality_max": 8.881784197001252e-16,
+      "witness_Az_over_z": 646.123653731363,
+      "regions": {
+        "all": {
+          "cells": 10800,
+          "physical_measure_fraction": 0.9999999999999906,
+          "v_norm_contribution": 1,
+          "Pv_norm_contribution": 0.0003324589072140565,
+          "APv_norm_contribution": 0.2148095638446814,
+          "APv_pointmax": 11.587372318454333
+        },
+        "any_patch_stencil_band": {
+          "cells": 10400,
+          "physical_measure_fraction": 0.9355677053523641,
+          "v_norm_contribution": 0.9994605380166811,
+          "Pv_norm_contribution": 0.000329673701804963,
+          "APv_norm_contribution": 0.21453461401679624,
+          "APv_pointmax": 11.587372318454333
+        },
+        "bulk": {
+          "cells": 400,
+          "physical_measure_fraction": 0.0644322946476264,
+          "v_norm_contribution": 0.032842547821487204,
+          "Pv_norm_contribution": 4.294386247389817e-05,
+          "APv_norm_contribution": 0.010864994606832488,
+          "APv_pointmax": 0.3031723846776134
+        },
+        "cartesian": {
+          "cells": 1728,
+          "physical_measure_fraction": 0.02964403708715891,
+          "v_norm_contribution": 0.41043818587372144,
+          "Pv_norm_contribution": 0.0001988288944260233,
+          "APv_norm_contribution": 0.08625991812209946,
+          "APv_pointmax": 1.705882055958905
+        },
+        "not_outer_shell": {
+          "cells": 9504,
+          "physical_measure_fraction": 0.4219002020617892,
+          "v_norm_contribution": 0.999910876313404,
+          "Pv_norm_contribution": 0.0003289104038215775,
+          "APv_norm_contribution": 0.2146382326490128,
+          "APv_pointmax": 11.587372318454333
+        },
+        "outer_shell": {
+          "cells": 1296,
+          "physical_measure_fraction": 0.5780997979381962,
+          "v_norm_contribution": 0.013350634073473257,
+          "Pv_norm_contribution": 4.8444517170585795e-05,
+          "APv_norm_contribution": 0.00857775054722927,
+          "APv_pointmax": 0.04959592495288853
+        },
+        "scri_stencil_band": {
+          "cells": 432,
+          "physical_measure_fraction": 0.22974230753429023,
+          "v_norm_contribution": 0.011755459648855089,
+          "Pv_norm_contribution": 1.631275667777182e-05,
+          "APv_norm_contribution": 0.007990522356271056,
+          "APv_pointmax": 0.04959592495288853
+        },
+        "shell": {
+          "cells": 9072,
+          "physical_measure_fraction": 0.9703559629128308,
+          "v_norm_contribution": 0.9118884227671101,
+          "Pv_norm_contribution": 0.0002664507378996911,
+          "APv_norm_contribution": 0.19672919266014116,
+          "APv_pointmax": 11.587372318454333
+        }
+      },
+      "full_spectral_gap_proved": false,
+      "shared_start_unrestarted_residual_curve": [
+        {
+          "columns": 16,
+          "unrestarted_minimum_relative_residual": 0.1981289204491658
+        },
+        {
+          "columns": 32,
+          "unrestarted_minimum_relative_residual": 0.18117105139878395
+        },
+        {
+          "columns": 48,
+          "unrestarted_minimum_relative_residual": 0.175744266129125
+        },
+        {
+          "columns": 64,
+          "unrestarted_minimum_relative_residual": 0.17229657299510753
+        },
+        {
+          "columns": 80,
+          "unrestarted_minimum_relative_residual": 0.1669207988374181
+        }
+      ]
+    }
+  },
+  "project_source_hashes": {
+    "tst/elliptic_shift_3d/probe_composed_arnoldi.cpp": "b880e342b48efa686bfe2354a5826216cca9f1735b2a6ed670b7c83f46986ecd",
+    "tst/elliptic_shift_3d/composed_metric_operator_probe.hpp": "5f6d91966276b3aa804fe9c3460754478a1b6d52956b7ce5a10742768ae3c555",
+    "src/z4c/hyperboloidal/composite_shift.hpp": "f7989726eda8ac177d58f6aed898235a438ad2f729db193fba2bf8dcf3aff430",
+    "src/multigrid/composite_poisson.hpp": "15673566ae055ceeb5da38f28bf182dd2387d402c5bf908dd69f0ea0ef207faf",
+    "src/mesh/cubed_sphere/composite_difference.hpp": "0634c9d141201ff724241dc61cc9baed2e705702693e9d895ba97536f80e2a2a",
+    "src/mesh/cubed_sphere/composite.hpp": "1850e39ba00f37563dbb708c2c708e87b4fc3032e286605c2e41653680d2fb05",
+    "src/mesh/cubed_sphere/map.hpp": "3c0dbf467a00eeb0a28c2fc005e7a140b49c91219edb0d6532fa837fa06d2ee8",
+    "src/athena.hpp": "322dd4f67ac4a718edf2afebe0e20aa302546cf96dd13640784fbbe4ced8d3d6",
+    "kokkos/core/src/Kokkos_Core.hpp": "8495df3af73cbf0eb7f760f504a1e3279982c451d56cb64a473df45875a46c37",
+    "kokkos/core/src/Kokkos_Core_fwd.hpp": "5d7b3d94bec55f1beaec74c870819ff3371166a35813dcb60b1fc47406934aa9",
+    "kokkos/core/src/Kokkos_Macros.hpp": "92b786e668e577b454d254531a1e39523e1f2b7eebab43e848ef38a909c6aecf",
+    "build-shift-3d/kokkos/KokkosCore_config.h": "e9c50e173f81b345c44926fa0e51928b81111ffddf8800da23203006f9e7d61f",
+    "kokkos/core/src/impl/Kokkos_DesulAtomicsConfig.hpp": "96ddc3c14dbb9dba2853b0d94a8f3c2455f11bcb8696456add2b2ab4ae787263",
+    "kokkos/core/src/impl/Kokkos_NvidiaGpuArchitectures.hpp": "7858fcb4f045f4f3f723a00b4a3daa3467fa969584bb207d2db4e33074860c31",
+    "build-shift-3d/kokkos/KokkosCore_Config_SetupBackend.hpp": "3cde2dc1673dd911bbaac6024a7646eff22e0932ebbe5a7a4fed7261848c5029",
+    "kokkos/core/src/Kokkos_Printf.hpp": "4ca18f47716666f0485d681a4d0c90579cd71ce9a3dbc8c46d6c7430f0463116",
+    "kokkos/core/src/impl/Kokkos_Error.hpp": "96424ecbae08b533bf9a8540577689717223a59c50131cf809537d109519a131",
+    "kokkos/core/src/Kokkos_Abort.hpp": "b04d4d4bb784e4efe97b700bc6bf01be89f30b2fe934efec983b17c36b451b04",
+    "kokkos/core/src/Kokkos_Assert.hpp": "716c5ef59fcca2e4e9edf50454cb9f967af3895f23a70bb023be3486e2111f63",
+    "kokkos/core/src/impl/Kokkos_Utilities.hpp": "73b365e23e601cefec68930b9c8de542fa28b8836527920a654349a9a1ae7eae",
+    "build-shift-3d/kokkos/KokkosCore_Config_FwdBackend.hpp": "a155e6bb941a833c7dce5e8df24e19fa70d23bebb1a7ff11b9f5ccf4f4486036",
+    "kokkos/core/src/fwd/Kokkos_Fwd_SERIAL.hpp": "41792ad4f899744e7316093e1ba9c614988abbf7d61d9b1f35c414c1c65e893e",
+    "build-shift-3d/kokkos/KokkosCore_Config_DeclareBackend.hpp": "259683468913b523025b07f976de2b00b1b7ad28214ed2deefda97e5157c3086",
+    "kokkos/core/src/decl/Kokkos_Declare_SERIAL.hpp": "7a7dcf349e159edf2ca872a6b92d7cbf502e212ea9b3cf81ca977ab24df07354",
+    "kokkos/core/src/Serial/Kokkos_Serial.hpp": "a7ff7c6ff332cb48073b93d7b9b313b70c3478eaa2cf65ee0399279b444b1bd4",
+    "kokkos/core/src/Kokkos_Layout.hpp": "a562e7d85709b32cab92cea5ed9e431f31b74acf321fcfa778789e0515dfe659",
+    "kokkos/core/src/impl/Kokkos_Traits.hpp": "c93277d6363576a48dda83ccba026e20cac2a2b283f3952ed531a34d90ce5baa",
+    "kokkos/core/src/Kokkos_HostSpace.hpp": "3c6ce24050c8de25a3fd15569596790e77746079b1ee5e102c15be41dce4c37e",
+    "kokkos/core/src/Kokkos_Concepts.hpp": "779486767ad65e41a13e9253b95ecda2228db2720d47704ce39fb49647369b58",
+    "kokkos/core/src/Kokkos_DetectionIdiom.hpp": "a52984686cd48fb99d800cf8657eefc6c19a07122837007c24ffa7af7c1a6036",
+    "kokkos/core/src/Kokkos_MemoryTraits.hpp": "58df7c4300b0033fc78befc4e406b117bb9fbae7e122ad46e2b49da123321c01",
+    "kokkos/core/src/Kokkos_BitManipulation.hpp": "35325b9b9a887dafbf92effb0f2012ad6900679c01709ecbec5c3ab3e797f73b",
+    "kokkos/core/src/Kokkos_NumericTraits.hpp": "acb9f6ccbac75dd96dd7410f35770cc2283b89c50e4eeef118b0cba6e801bacd",
+    "kokkos/core/src/Kokkos_ReductionIdentity.hpp": "adf0f291a7b4eea67f6d38086574e2a5bd87186d339fa82869a25e6e6f848b7a",
+    "kokkos/core/src/impl/Kokkos_SharedAlloc.hpp": "860cb1b87271fbaeb7e2af3aa1e50de2c791f5619f66048381e801af7deae674",
+    "kokkos/core/src/impl/Kokkos_Tools.hpp": "1f7959a81fd10599e32e87d20c58d516fd14e9b499cfd3e6d0ffee4834b71bdb",
+    "kokkos/core/src/impl/Kokkos_Profiling.hpp": "8f61b50bb024ba356c7f7d180940bce2e3387d0a557054f9fc15338b02570643",
+    "kokkos/core/src/Kokkos_ExecPolicy.hpp": "6fdb8a85b2d1b52725f2a04cdb256468c01ddd0a06fb72540aa1832f83d45686",
+    "kokkos/core/src/impl/Kokkos_AnalyzePolicy.hpp": "6d6c85fb5276a67deb3d211aab16e3c206aeb1c6bcf743e4a3ac308407ad0a83",
+    "kokkos/core/src/traits/Kokkos_Traits_fwd.hpp": "a8c5eb59bc9b1b9a345d4f43f82e2b16376294110613dac52a6bf84be3622665",
+    "kokkos/core/src/traits/Kokkos_PolicyTraitAdaptor.hpp": "e483fadaee0b09b1be9c1ce4f0573df27f84f0d7ff21472504603ef63c4836b3",
+    "kokkos/core/src/traits/Kokkos_ExecutionSpaceTrait.hpp": "4892c2a57e766ca962ddead65dd3e567d95d52ebf0369660147cdf9364eb4050",
+    "kokkos/core/src/traits/Kokkos_GraphKernelTrait.hpp": "fd102158f39f553c2e3bb3f050bfeb071633701d14ae85e604916128290cc727",
+    "kokkos/core/src/impl/Kokkos_GraphImpl_fwd.hpp": "c476458d61fcbc9d3104f5e7029f32e72bc67b5d402baf7b7572e09bcaa70a53",
+    "kokkos/core/src/traits/Kokkos_IndexTypeTrait.hpp": "e6abc88498cfddb8c5f0d113aebf5c5d334b40efe9a9a49ea28121d51beb100a",
+    "kokkos/core/src/traits/Kokkos_IterationPatternTrait.hpp": "9d8dab7d1fa557514f6abb7623997578204a0cfee4f3df36caaac11b93b4e2b8",
+    "kokkos/core/src/Kokkos_Rank.hpp": "858991adccff826c6e956bd4109e268b600e948f76bc0a63b5eed797c08b2e0b",
+    "kokkos/core/src/traits/Kokkos_LaunchBoundsTrait.hpp": "ad4b7317c6ee0643c93987e56477d271bd72992ea4438cb461a133adcd11490c",
+    "kokkos/core/src/traits/Kokkos_OccupancyControlTrait.hpp": "7cf5340734fda24f3e56c98e8f09769db8addf9ce92eb7e19807696e416ba481",
+    "kokkos/core/src/traits/Kokkos_ScheduleTrait.hpp": "ef7be97363d9a4aab9d62e58b8a7dda4dc354c708f322d70cc4b8258c8f82a22",
+    "kokkos/core/src/traits/Kokkos_WorkItemPropertyTrait.hpp": "bd6f94946c4be87c8025d647cc5738c4eacde26b3316a8174fadf0f71d0e355b",
+    "kokkos/core/src/traits/Kokkos_WorkTagTrait.hpp": "5618fc4e489965214a8dd4c2103f7ea5811d39955502b729bb6777031d2cc0c2",
+    "kokkos/core/src/Kokkos_TypeInfo.hpp": "419993d5205284b8c17a51b5dfd7b190aa0874c19ed691318badee9f8969dd73",
+    "kokkos/core/src/Kokkos_Tuners.hpp": "324dc9c21b6fd2ab31cfbae037bd5c3e96f1199e68fa3e50188e496ec8cebecf",
+    "kokkos/core/src/KokkosExp_MDRangePolicy.hpp": "2ea86d48235e8307702370f3671dd301846928f2e23173596b73b49552917025",
+    "kokkos/core/src/Kokkos_Array.hpp": "b456f19bfbaacbde71eac0dca33c822f9d825c515b884d35890ae759fd649c2d",
+    "kokkos/core/src/Kokkos_Swap.hpp": "dded76f83b034fcb56c3e26c169979e1b67d3fc14e2c176c4526ed6a0347bd50",
+    "kokkos/core/src/impl/Kokkos_StringManipulation.hpp": "c7b89c7d14a059d9658cce3011f252ad0bff2dfbcb289b524fa23a379456883b",
+    "kokkos/core/src/impl/KokkosExp_Host_IterateTile.hpp": "cfd687b7293a0f05b711653a33629478180d62e20d6494af68a7a8f373e62fe2",
+    "kokkos/core/src/impl/Kokkos_Profiling_Interface.hpp": "a606c6789f9ceae0a860501dc73a643185bfb4857f32930b23648b442ace73c2",
+    "kokkos/core/src/impl/Kokkos_Profiling_DeviceInfo.hpp": "cef0e6e7ecbd890a1880bf24fffc2eae531d2826b6442847f086345d77f60ed2",
+    "kokkos/core/src/impl/Kokkos_Profiling_C_Interface.h": "5c7276a527609c2d62292fe6a602addb9e945f84ab828244a4e30c287235277d",
+    "kokkos/core/src/impl/Kokkos_HostSpace_deepcopy.hpp": "79a43bd17b48e11237a0be6ce70ef9631a58b4eedea9dad58a1c54e32bb069d4",
+    "kokkos/core/src/Kokkos_ScratchSpace.hpp": "070208b5af47fee9243591208752ee638fa1de0906062c9635f332978e800b85",
+    "kokkos/core/src/impl/Kokkos_HostThreadTeam.hpp": "9f86b68555943d8effb8e3781e0d1fc83963ebf18e45f03de96dab502076c008",
+    "kokkos/core/src/Kokkos_Pair.hpp": "0f86e28b6a15704c7e65f82c28f0c30bfed1af1e40463c34f9ab6684cf507c42",
+    "kokkos/core/src/Kokkos_Atomic.hpp": "4a37c86c07a7f1ed5ca11a3c91f41d7d55688df2900a85e18f9a43cd6a57ab97",
+    "kokkos/core/src/Kokkos_Atomics_Desul_Wrapper.hpp": "85582ca6ee4a95894f591649630e8218162388a9c7dc997b4784bc70e9632ec2",
+    "kokkos/tpls/desul/include/desul/atomics.hpp": "3b4464cd05d021e3139f8c3171183b472ab2212bf113bfe7679c9eaed9232ad6",
+    "kokkos/tpls/desul/include/desul/atomics/Atomic_Ref.hpp": "560a09f728c34b741d77424964892cdc098eaa396e78cc89c3490b26116586fa",
+    "kokkos/tpls/desul/include/desul/atomics/Common.hpp": "0f99de3e3db676beea8400e863a5ccf0ddcb2920db1f6222a191cda89f66cf58",
+    "kokkos/tpls/desul/include/desul/atomics/Macros.hpp": "6742f0b7e582f5b1345a3b2425ad6487a89d6245627ed8dbb594da2e210a6297",
+    "build-shift-3d/kokkos/core/src/desul/atomics/Config.hpp": "8835ec26f17079d128243c0656762a4b8ccda09ee6e72a02b01d4bc01916d4f1",
+    "kokkos/tpls/desul/include/desul/atomics/Generic.hpp": "fe5db8982a914fef5632e5e798de5bd4e4ffe284943235592e6a4c5c5f53bca8",
+    "kokkos/tpls/desul/include/desul/atomics/Compare_Exchange.hpp": "2c231e55d17a43d2bb9fe1b0a1435704c680e16643a3f147bd0dd2bb09b14f83",
+    "kokkos/tpls/desul/include/desul/atomics/Compare_Exchange_GCC.hpp": "70ce7a16bd501d4dd6aeebbf173ab6511859623b4cdd58a2c6735c6ff7983d2a",
+    "kokkos/tpls/desul/include/desul/atomics/Lock_Array.hpp": "ad1633f3b78b89dfbd663d406fa483bd2b3e4c5ef19564281af485d52fef1564",
+    "kokkos/tpls/desul/include/desul/atomics/Thread_Fence_GCC.hpp": "c5528adcaad8bdc9b6719a95fbbe98e08272b3aef2add9da7fbdab34d9f073f2",
+    "kokkos/tpls/desul/include/desul/atomics/Adapt_GCC.hpp": "b0a0f62f58348695b6193ada64b482a696d60199821cb9fbefa524dfe6386625",
+    "kokkos/tpls/desul/include/desul/atomics/Compare_Exchange_ScopeCaller.hpp": "649641e9b2932ce53354ff0ee810feeddb1ac94e579a324b5ed5fd1b6b37074c",
+    "kokkos/tpls/desul/include/desul/atomics/Fetch_Op.hpp": "3868eeac956dbe90ea72aba7312adf886b5132dab205c42fa8ab852b74538b96",
+    "kokkos/tpls/desul/include/desul/atomics/Fetch_Op_GCC.hpp": "4fa0f20d79020de21d5c6de6fb36869cc518eec3be335508ea2c994c6617d02a",
+    "kokkos/tpls/desul/include/desul/atomics/Fetch_Op_ScopeCaller.hpp": "92aa293acfda19751507f10d034bf07cce6118a5f547ae90916dc8bea70243db",
+    "kokkos/tpls/desul/include/desul/atomics/Fetch_Op_Generic.hpp": "749089a5f99653f8fe0e6e0ebbfb0107d772069213954650078d90d967029480",
+    "kokkos/tpls/desul/include/desul/atomics/Lock_Based_Fetch_Op.hpp": "5b6543b593f492f71733e3e899f303818d3f7f6799d52e61fda737a1eb308c1b",
+    "kokkos/tpls/desul/include/desul/atomics/Lock_Based_Fetch_Op_Host.hpp": "47372d8e20a0a6886508f9e8bb6bbb955cd11fc7a36df5fbafc4f607385a78e7",
+    "kokkos/tpls/desul/include/desul/atomics/Thread_Fence.hpp": "b9bba064c60eaef76122b5ec69be0ab88a168285c740a23b923e99d39300735f",
+    "kokkos/tpls/desul/include/desul/atomics/Thread_Fence_ScopeCaller.hpp": "f63facfde57fa0a58d8493795e758a8d40470f928c97f80e2ba357df74fa5206",
+    "kokkos/tpls/desul/include/desul/atomics/Lock_Free_Fetch_Op.hpp": "d3d27735db14be608084393b1941e208b5359d504da440919afb22a1eee45c8b",
+    "kokkos/tpls/desul/include/desul/atomics/Operator_Function_Objects.hpp": "98d850e15e238305ca1fd35ba69b103a20c4fc4863102138c3ebb54d95c0c504",
+    "kokkos/core/src/impl/Kokkos_Volatile_Load.hpp": "6c2e33f6bf4ad496508ac7d168484d57a14288c1b8a9ab4e353e4f5cad68472b",
+    "kokkos/core/src/impl/Kokkos_FunctorAnalysis.hpp": "c2466e8d19c2680b44be8ae7a7d8d3bf64f8d96ed15e38a2bdb809b925389226",
+    "kokkos/core/src/impl/Kokkos_HostBarrier.hpp": "a4c8fa6b5525ab0a70bc375f089a44956bdbc55a1768d64c759e05ba390a6ea9",
+    "kokkos/core/src/impl/Kokkos_HostSharedPtr.hpp": "c4160aa157e65f335747479ca8cd0a7b1f82a49a0ac69fe4f2fb0afac1e32e77",
+    "kokkos/core/src/impl/Kokkos_InitializationSettings.hpp": "f4504fca2a3783229445630e685a53754e7e9bea7a340d1021190f9845b86d5f",
+    "kokkos/core/src/Serial/Kokkos_Serial_Parallel_Range.hpp": "eab2d67fbe71a313a9e81ce3202465b889b59237eb4c4024bff71b96cf5f9fc2",
+    "kokkos/core/src/Kokkos_Parallel.hpp": "a12e7d3b4e29afe7948a6f6ef1d69cb12d29c668d4a82de8802b39ae93029107",
+    "kokkos/core/src/Kokkos_View.hpp": "0b6ae712a3541a7adbfbda28967122ae417bf22ca507445aeb1b2d48db110eca",
+    "kokkos/core/src/View/Kokkos_BasicView.hpp": "98f8d0400754e3bd19f6141e430ca079436b49fb6f66e70764a8e45fdce9b69d",
+    "kokkos/core/src/View/Kokkos_ViewAlloc.hpp": "f7665bb2bf0f0a6bc3388477b46e358f28034d09dfbc2e12ec7a4111077f7a9e",
+    "kokkos/core/src/impl/Kokkos_ZeroMemset_fwd.hpp": "d30eada2ea1bbb1e94649be39b679e3c9936f726c330518cff41a5f30fc43cdf",
+    "kokkos/core/src/View/Kokkos_ViewAccessPreconditionsCheck.hpp": "dd939ce23b9a9ffe93450dcbdfbd85673129ee149babd727679af817491f103a",
+    "kokkos/core/src/View/MDSpan/Kokkos_MDSpan_Header.hpp": "6d29c398c02d36fa949f4b83f10bc1f44c8866c4277b7e6af82fcb3bae64c7e0",
+    "kokkos/tpls/mdspan/include/mdspan/mdspan.hpp": "abf0d6cd6ef0c359a59654861df5fc0084864d6d07696ba762423531d29d6bea",
+    "kokkos/tpls/mdspan/include/experimental/__p0009_bits/default_accessor.hpp": "c223542656806eab4e74ea167fc7ca12a425f48e8a165464886f5a4f3e05d5f8",
+    "kokkos/tpls/mdspan/include/experimental/__p0009_bits/macros.hpp": "447c342dfcc74e66b74a5f4bbc3d0f8d2b76276f120fe765bd7ff947d24e97e2",
+    "kokkos/tpls/mdspan/include/experimental/__p0009_bits/config.hpp": "00d00945c079dc425835ed8b6eabea5247113e4f5146ffd512364ea11837465a",
+    "kokkos/tpls/mdspan/include/experimental/__p0009_bits/full_extent_t.hpp": "33f70b7fa2167ffad361f000f780b62bafac5a026a5c8f08ae9c8271405a2c41",
+    "kokkos/tpls/mdspan/include/experimental/__p0009_bits/mdspan.hpp": "19bfb3af0e0da44dbafb357534920132d5684e3f538203ef42e22f261d156345",
+    "kokkos/tpls/mdspan/include/experimental/__p0009_bits/layout_right.hpp": "5a411b04a160fe8ebaa06bd572cd816bb46e69ec731932d815505cb5d1fff9dc",
+    "kokkos/tpls/mdspan/include/experimental/__p0009_bits/trait_backports.hpp": "fa5856564e40b42941a531ae87ee1496328c29c0dc07453d8baa6a59f12d19b5",
+    "kokkos/tpls/mdspan/include/experimental/__p0009_bits/extents.hpp": "5552a0f633d8846d3655b05859a97820a1e81c724d4e6ce0e60d63d2e7d06808",
+    "kokkos/tpls/mdspan/include/experimental/__p0009_bits/dynamic_extent.hpp": "44db5333096629fe2bf6c379d78254e273cbbddd96c6dc4b6e1fcd63bd4d816f",
+    "kokkos/tpls/mdspan/include/experimental/__p0009_bits/utility.hpp": "faf0f98124a7ec0d55fdb8a137244b25a891a8859ed54e73ed46d3d89884d770",
+    "kokkos/tpls/mdspan/include/experimental/__p0009_bits/layout_stride.hpp": "553859d5511995159ce79159cbb8fa597991fa6b3897fe2428bfc0ec7a6dcbef",
+    "kokkos/tpls/mdspan/include/experimental/__p0009_bits/compressed_pair.hpp": "b12157142839c5a18501d3c8b8390aa387fd2484a9725f3f8216436f3a458908",
+    "kokkos/tpls/mdspan/include/experimental/__p2642_bits/layout_padded_fwd.hpp": "2f16852249f363913b384a1dcf87091906f205db4d4855a55895e2f07ae83030",
+    "kokkos/tpls/mdspan/include/experimental/__p0009_bits/layout_left.hpp": "fc6fc36b7bb53546dba651c90d27bc8e9d673f3c7d0d6166ca068382d493503c",
+    "kokkos/tpls/mdspan/include/experimental/__p2642_bits/layout_padded.hpp": "c09e43f07a3d3c969799986f88698cc0ef3b02dc776c4b3cb2893e35ebe5bd06",
+    "kokkos/tpls/mdspan/include/experimental/__p2630_bits/submdspan.hpp": "fdb1097ecf664f51a1d93126648acf527df0b1bb3e5a91840bb50d932a1839c9",
+    "kokkos/tpls/mdspan/include/experimental/__p2630_bits/submdspan_extents.hpp": "d27a54b212bfe517e31e490af5ccb536f05661fbc74f68a2aa65e6433df12395",
+    "kokkos/tpls/mdspan/include/experimental/__p2630_bits/strided_slice.hpp": "2d903163fe0367dc0301c06bc3be6e8830f1e475ba16d67a60b2cfc4b991c148",
+    "kokkos/tpls/mdspan/include/experimental/__p2630_bits/submdspan_mapping.hpp": "a6da27289bd82a6a40b37ba86415e7ab309b813e5b0cc2febe7addc34737046f",
+    "kokkos/tpls/mdspan/include/experimental/__p2389_bits/dims.hpp": "b7354bf2f10878bbe3c8dbdc808549a682d09ce04268f7b35edec2c86807d86a",
+    "kokkos/core/src/View/Kokkos_ViewCtor.hpp": "487f1b691f8854998da030738e617653e0994ab68838fe2331024bd5c3de8b31",
+    "kokkos/core/src/View/Kokkos_ViewTraits.hpp": "aa798eec2753c82f118df63a13202cb12fa27bc78dd0b7af4bcfb9c46df4c2f4",
+    "kokkos/core/src/View/Hooks/Kokkos_ViewHooks.hpp": "b4f7970398c91f33cc88ca63a5af484c47970831689bb9c3189fbfc72ddf8451",
+    "kokkos/core/src/View/MDSpan/Kokkos_MDSpan_Layout.hpp": "d4f2314ea331ce4856d2f60fccd9c76a17a1f32d775905650c3cf00f48b93e6b",
+    "kokkos/core/src/View/MDSpan/Kokkos_MDSpan_Extents.hpp": "2b251dbdbd771989575ccc432ab3a3ffb84f5f4558fb492a1a005fc62925b310",
+    "kokkos/core/src/View/Kokkos_ViewDataAnalysis.hpp": "b383582edf996591554af2b42bf80da57cf00ba14474dc7de72c0993ad4f58e1",
+    "kokkos/core/src/View/MDSpan/Kokkos_MDSpan_Accessor.hpp": "69af6148043601c4f24e97a366c8a54a79b8f723965f51360332e099d1f412b3",
+    "kokkos/core/src/View/Kokkos_ViewLegacy.hpp": "6750044d192d635b926f4832b9ad1149c51c8586ee8d00c01822da9b9da3654c",
+    "kokkos/core/src/Kokkos_MinMax.hpp": "607817e9771f27f0204032ad488332fd784bde4dc31d284c76444078cfbebd86",
+    "kokkos/core/src/View/Kokkos_ViewMapping.hpp": "1b4de572cda19dedbd9bc63528518d183609ca1c7264414183ba37cdb332680c",
+    "kokkos/core/src/Kokkos_Extents.hpp": "6fdc7ee88eb49a56eddb40a683a2be36980350c88c44a218e838b89dd28fb718",
+    "kokkos/core/src/View/Kokkos_ViewTracker.hpp": "ee7aa425e77ba96e4fb8a87694d0fc00ffe2d16996357048184e73c41ca45b11",
+    "kokkos/core/src/View/Kokkos_ViewAtomic.hpp": "ce0f4e19ae7d976bbc9bc1284b954543fad9624903d03ff3390029cde9454535",
+    "kokkos/core/src/View/Kokkos_ViewCommonType.hpp": "3909199652489ffa3cd086af6e05159c225591492c53ea4de81fb217855d67b1",
+    "kokkos/core/src/View/Kokkos_ViewUniformType.hpp": "427c8bc1f1a975a1bda50aba7cdabf727f5a3b7f71d26dd10d84349fad29dd33",
+    "kokkos/core/src/impl/Kokkos_Tools_Generic.hpp": "3c3e9c32abfef836deec15609e520409d6aaab9d87ac71f7f9a621ab317248af",
+    "kokkos/core/src/Kokkos_Parallel_Reduce.hpp": "c686e148a97fce3d659d9e47534082a8e2e17970c29718f5127279202343960a",
+    "kokkos/core/src/Serial/Kokkos_Serial_Parallel_MDRange.hpp": "f7ed2f95f76d0018b648c290f33b2bae2b0fb20fbc5e54f17fd0047b899b867c",
+    "kokkos/core/src/Serial/Kokkos_Serial_Parallel_Team.hpp": "4f3894e193326aed376abd5d3af8a4bdb15a142fdc1497ea60e7ac4090c27d8f",
+    "kokkos/core/src/Serial/Kokkos_Serial_Task.hpp": "72543797c63401ad642f97cf1f4dc47f6e8bfb407f1b83e9147c164799703687",
+    "kokkos/core/src/Kokkos_TaskScheduler_fwd.hpp": "1f5d184b247f6abeaf198309ba3ea48f01b548faa71f306edd26682f0d670641",
+    "kokkos/core/src/impl/Kokkos_TaskQueue.hpp": "8ba90a53d1894689c60ea33f07042fd0d1a7dfb49cc40131c6cb645db3da6568",
+    "kokkos/core/src/Kokkos_MemoryPool.hpp": "627a41e42a5a01acaa4ef54df192c89d07e543e68696fa5f081563f45cb0848f",
+    "kokkos/core/src/impl/Kokkos_ConcurrentBitset.hpp": "23818d06e06b727c7f1f474a64786067870d6beedda2dcace52242dba689f568",
+    "kokkos/core/src/impl/Kokkos_ClockTic.hpp": "4c511582297cd5f396bd12b709768d0c67d6fab62e8b29084af9d76c65487409",
+    "kokkos/core/src/impl/Kokkos_TaskBase.hpp": "e0b005a1ac5d716555ec78b6fa16ca8d0dcc84ae09a53a5c52ca04ac1dd74a8a",
+    "kokkos/core/src/impl/Kokkos_LIFO.hpp": "f3ddbbe44a365741805c6f7c14a4b00e9c69686d2383561a8f6384c36bcd002c",
+    "kokkos/core/src/Kokkos_PointerOwnership.hpp": "78105799909ab48f7f388bc58d9f5b1a53764d3f838858ffe5744f49ad34af3e",
+    "kokkos/core/src/impl/Kokkos_OptionalRef.hpp": "465c7653dea6e9247791bca86ff614175dd687563b001f474f28c7c87fd3c8fd",
+    "kokkos/core/src/impl/Kokkos_LinkedListNode.hpp": "dd2d009c57b18e891d6b2ab0373d9bd8663e4a383ac9c88afadd55702d27a0c4",
+    "kokkos/core/src/impl/Kokkos_TaskResult.hpp": "236d0f5e93c76c5819b3b5a49a5baedabc0805969ea2c506bfbe88df76bdea6b",
+    "kokkos/core/src/impl/Kokkos_TaskNode.hpp": "e2391275340e00beb7a4e1a907dfa8bdc8215f262e1de18178eb1ad299601e17",
+    "kokkos/core/src/impl/Kokkos_VLAEmulation.hpp": "5e473d8ccf510a5528fd2f52068e3fce92405b2bc7f475aec77cda7e8fd4419c",
+    "kokkos/core/src/impl/Kokkos_ChaseLev.hpp": "640964f5f65a88166349507cb4417591959c84282ef9ac5a7e1272b875cb8dfd",
+    "kokkos/core/src/impl/Kokkos_EBO.hpp": "8b7114bd425940dc3e550cfa0da997ca618f6ed33d4586703c9d64581a8d4e43",
+    "kokkos/core/src/impl/Kokkos_TaskTeamMember.hpp": "79a9474163ae1162c7d6e9539c314d6172725501619262e996cf679244423341",
+    "kokkos/core/src/Kokkos_Future.hpp": "e070ab0fdac3bde10df5a4f61dfe3c7fb21e7530e547021378cc1138be9f8213",
+    "kokkos/core/src/impl/Kokkos_SingleTaskQueue.hpp": "5ae4381b5f7e2dc44bab8e92e0079575d276d4c25c8c664fdd1041822eda07ff",
+    "kokkos/core/src/impl/Kokkos_TaskQueueMemoryManager.hpp": "53e40da6d69d7c7ea1d04a4741794f17d3c12fd01139ebd9b66777daa38b9ba6",
+    "kokkos/core/src/impl/Kokkos_TaskQueueCommon.hpp": "b2d5617353f582df3d4d89d11b88e91bf8e8a47ca61a18d45b7e18c5bea93522",
+    "kokkos/core/src/impl/Kokkos_TaskQueueMultiple.hpp": "d09621919402f51d0252a9d993f394f70faa147d31cc7042f12b89a5203457c7",
+    "kokkos/core/src/impl/Kokkos_TaskQueueMultiple_impl.hpp": "96a766de76962601521fb18ebbc49434c5e6bf04231cd894f1e1d6b27eba53fc",
+    "kokkos/core/src/impl/Kokkos_TaskPolicyData.hpp": "f17f374566f751b7bf8b6f91eabd045d18f4ff68336a1c741f6218561ca1f568",
+    "kokkos/core/src/Serial/Kokkos_Serial_UniqueToken.hpp": "3b899a26a39db9616d418b1bd8d8310401c9cc5eb6fccfa95ade1780cae2822f",
+    "kokkos/core/src/Kokkos_UniqueToken.hpp": "3345e1885c8863a77b0694aba34ccf1fd28cc7cfc20c0c9b95ae31ee49c51a4a",
+    "kokkos/core/src/Serial/Kokkos_Serial_MDRangePolicy.hpp": "3b83d9743810c4236d642d6e8fc13642ea99585e10163242ac1fdfcfa8096ba1",
+    "kokkos/core/src/Serial/Kokkos_Serial_ZeroMemset.hpp": "9dae717c5bec3f64b6dbc8cc6ec8c5af24515ff6a592858571ed70333f9ae273",
+    "kokkos/core/src/Kokkos_Half.hpp": "6b349d94e39cda920dcd4926ebc3193e332b20a337988974c675041c674d6b6d",
+    "kokkos/core/src/impl/Kokkos_Half_FloatingPointWrapper.hpp": "c64132473099d73489e69990ba6fe1cf4e48e08bf8af2125b57d382485c6a33b",
+    "kokkos/core/src/impl/Kokkos_Half_NumericTraits.hpp": "43bbfb9e943c7a8cf03c7af3d7dde75cbc86bd1edd8e0fd498d585df20cbd5aa",
+    "kokkos/core/src/impl/Kokkos_Half_MathematicalFunctions.hpp": "6f393b65b0c7d1f9cbc238601ba733466a5a32c9cca49c9020daa146ed1d9efe",
+    "kokkos/core/src/Kokkos_MathematicalFunctions.hpp": "aebd6b1e3a127898bf0592959de1adf8463ef33880141d6a410d16b8f59daaad",
+    "kokkos/core/src/Kokkos_AnonymousSpace.hpp": "f5a9aea55abb8d16132e19e553f356626bffe599641c37fc80757009e96373e6",
+    "kokkos/core/src/Kokkos_Clamp.hpp": "89042894faa0c505297e3e3d0e7fccc8f945263ef2ef2cc73e50fa1dd103db72",
+    "kokkos/core/src/Kokkos_MathematicalConstants.hpp": "adca290b02b58884315f6715d135aea3c51a9c6d56e431424516ee67d49ca01a",
+    "kokkos/core/src/Kokkos_MathematicalSpecialFunctions.hpp": "77785af4618adffc9a3df4db5678246debafb1c9f8cf6bf7cd2d3fb9c5e8fda1",
+    "kokkos/core/src/Kokkos_Complex.hpp": "d2059bb07f4ce26cc59dc9f80222f10420c25b6e3c19e8a7ff4aa44e660bfcbf",
+    "kokkos/core/src/Kokkos_Vectorization.hpp": "768d81bcd63205ebe8a680595bd07be518d2615d621651316bc0d0cd44093b58",
+    "kokkos/core/src/Kokkos_hwloc.hpp": "a202568000d793cfe6306c9a2c8428b3a56a6a0d922e16ac7e1ef86ce1b4fb16",
+    "kokkos/core/src/Kokkos_Timer.hpp": "ccffd03e1c52db2d7c1713f25dd35127cf8728929085cdd65f13a63c30bf3549",
+    "kokkos/core/src/Kokkos_TaskScheduler.hpp": "b2f369bf178bfb5289cddc8ec43033bed66fff6faa945feb058f53be6507eb79",
+    "kokkos/core/src/impl/Kokkos_SimpleTaskScheduler.hpp": "4b23b8b11e5e7dbb0713c5c9bea3741ec5f65f5a03f24163a8de649a68c79b4f",
+    "kokkos/core/src/impl/Kokkos_MultipleTaskQueue.hpp": "b9eac169440df837d760444b08952643301f1083ad9a5279ad3114e2533407c0",
+    "kokkos/core/src/Kokkos_CopyViews.hpp": "ccc7a7ba1e5303a38699691d4c6bb48297684cb34d5b95332af945170dec1d8e",
+    "kokkos/core/src/impl/Kokkos_HostSpace_ZeroMemset.hpp": "a0416d8965f754acc5a1790a17fe9e2640d3c727e181f87d5cb84750077c5ad9",
+    "kokkos/core/src/impl/Kokkos_TeamMDPolicy.hpp": "706e787852ce98c18152ab23da02de93b69d8c45892bfb937b0c538bd3bb9395",
+    "kokkos/core/src/Kokkos_Crs.hpp": "e25691b5c3ffa1cdb5ef130bb5fc77d4480c9c36dcb92cd65e91d4802e34868b",
+    "kokkos/core/src/Kokkos_WorkGraphPolicy.hpp": "d1d42baa0403e625f792ca34d7659279361071fee8c9d947e25809992dabb6a2",
+    "kokkos/core/src/Serial/Kokkos_Serial_WorkGraphPolicy.hpp": "3da3e63038cc8302c08b924ac948cb94b2110570f8c45590180d9d1a9c5932e3",
+    "kokkos/core/src/impl/Kokkos_Combined_Reducer.hpp": "f173e0da6b487da5bc7b79cda558db4c3994056f24d3bc7733a2bad942c8ed36",
+    "kokkos/core/src/Kokkos_AcquireUniqueTokenImpl.hpp": "9a48e85ad6504261032b24dc1328965903c4adaf4a985b6d024a9e8fd4917a2a",
+    "kokkos/containers/src/Kokkos_DualView.hpp": "336a2ea67f7ae34c6b3d5fcbe5867807095cb9c06071da103872488448421efb",
+    "build-shift-3d/config.hpp": "2c75d192b1cd6dfe32e8d53bacd60467d04a0562fe8142635619d61170907a08",
+    "src/multigrid/composite_radial_line.hpp": "485c2534a5cf4b529b448e21b23e01aa5a0bb45a1c255862377627fa58bc5c69",
+    "src/multigrid/composite_topology_transfer.hpp": "27b31487c4d073983696bf10b69a9fced900a8cfe6b4dce0f4c9cf3a635e19e0",
+    "src/multigrid/flexible_gmres.hpp": "c9f3ac1f4c1dcd8618056923ebc5b31a1b1d87bfa2043309a24e02e34d3b761a",
+    "src/z4c/hyperboloidal/elliptic_shift.hpp": "efd759753921a8e241cf3802b25635107ea7fc692e633099b51fa1be9fce33a7",
+    "src/z4c/hyperboloidal/conformal_rhs.hpp": "ae56ecae2e6b3a1844b98367a33e0b1714f15936c3868f15db13d83fb9346c8c",
+    "src/z4c/hyperboloidal/conformal_constraints.hpp": "532204531be51088f93647105a3d8c0096c1eb192fa02310914d073d111b2fe7",
+    "src/z4c/hyperboloidal/stationary_omega_product.hpp": "d3f70e24f47cef079a750bbc4d340399f1e96434747bf921c870b1db74cd90b8",
+    "src/z4c/hyperboloidal/regular_penrose.hpp": "dde09618a1b69ef1b6f36f0742fbcc6cfdb313a10c92334e501976868423ee65",
+    "src/z4c/hyperboloidal/cartesian_affine_derivative.hpp": "b8464448c9def2b1e57978259ab2bdbcb828e531ccb2b048456b331d32c10e86",
+    "src/z4c/hyperboloidal/log_volume_norm.hpp": "c945f92a0758937a85e7f0fde278cf69cb06452786d901dd39e6135602069a49",
+    "src/mesh/cubed_sphere/scri_surface.hpp": "403041e42e711465f228d65d6bf6524801b0c4febf8b8fa6bd4ded1bdbd39703",
+    "src/mesh/cubed_sphere/hermite_boundary_sampler.hpp": "3c74f23c8f64a54dc464d49bb7d4756c442d04039f93541bdca176ba0fdae1e8",
+    "src/mesh/cubed_sphere/surface_polynomial_weights.hpp": "4bb238c94984eb3dab3d6ed100ed6f3d01f7aace516976e6a704dd319130c350",
+    "tst/elliptic_shift_3d/run_composed_arnoldi.py": "82d59e43ce2fe300aad34111966cf5afa31cc6da52097255503569d7bf3f2477"
+  },
+  "live_project_header_leaks": [],
+  "libraries": [
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a",
+      "sha256": "f4b400cb92b22e4ef324d6845825c320ca984a5a03792e2a9c367bd70ef28efb"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a",
+      "sha256": "ed9158549e8bbfdf38d3ea96f2fe2c06f6958d26c6cc146c0a5d0b75f31b060f"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src/libkokkoscore.a",
+      "sha256": "53fc7c058b9102fb5e1bdf74302a0ac0af62307d1ca5524ebd6fabdd890fb833"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src/libkokkossimd.a",
+      "sha256": "1959abedd19d4ecdf37b58888ff9d145d39f764d2f932b581966ae6ad824814d"
+    }
+  ],
+  "binary_sha256": "9a4941cdcae51e9859f6d6f0b2a34b260f78bec329c2e00474216dbc199e1557",
+  "compressed_files": [
+    {
+      "original": "expanded.Q.bin",
+      "bytes": 20995216,
+      "sha256": "750af6f9a915470627fdff181a84d92f88b2670b95a3a99450a08545b086ab1b",
+      "compressed": "expanded.Q.bin.gz",
+      "compressed_sha256": "85fc08dfc743c2a4b6af22da7bfcccf269197c49ee08f92362cc57a3bb092a0b"
+    },
+    {
+      "original": "expanded.witness.csv",
+      "bytes": 2832651,
+      "sha256": "0ab67f7a32c9ab140668253bc3d184ad3890376c4de0148e1f53b4134479e2c6",
+      "compressed": "expanded.witness.csv.gz",
+      "compressed_sha256": "7e78fe80056f027d47100fe79754f7aa28240afcd50d832b648d6b6123929d12"
+    },
+    {
+      "original": "composed.Q.bin",
+      "bytes": 20995216,
+      "sha256": "c81388c88e6dc87cfcffb94d7e289ba352966a8f4376d116bb78ac75828a2307",
+      "compressed": "composed.Q.bin.gz",
+      "compressed_sha256": "5238efb0921bc4354fa1ae5d28d5b847ccf25541adc8c240f8edaf9138068868"
+    },
+    {
+      "original": "composed.witness.csv",
+      "bytes": 2944969,
+      "sha256": "f6d2d3e8552917061c87124841bc0eb8b458d4293975d259a992f53160f56210",
+      "compressed": "composed.witness.csv.gz",
+      "compressed_sha256": "2d48f7e1ad35b97e9f0c47b225074d412227df7304a966c5f37d3dc47e1234c9"
+    }
+  ],
+  "libraries_unchanged": true,
+  "project_sources_unchanged": true,
+  "binary_unchanged": true
+}
