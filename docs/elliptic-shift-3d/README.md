@@ -13,10 +13,13 @@ unadopted; stable 3D collapse is unverified. The preceding
 [compatible derivative prototype](compatible-gauge-prototype-20261027.md) retains its component evidence.
 The [dated handoff](TAKEOVER-20261027.md) preserves the previous paused state.
 
-**Residual qualification:** all prior "original vector residual" results refer to
-the expanded continuum-equation discretization. Exact freezing of the actual
-discrete metric-built connection is not established and fails the new accepted-state
-audit. See [discrete gauge qualification](discrete-gauge-qualification.md).
+**Residual qualification:** historical native and expanded-operator "original
+vector residual" results refer to the expanded continuum-equation discretization.
+They do not establish exact freezing of the actual discrete metric-built
+connection; see [discrete gauge qualification](discrete-gauge-qualification.md).
+The later paired-derivative prototypes independently check the actual metric
+rate and pass some bulk solves, but retain explicit physical scri failures.
+They have not replaced the native evolution operator.
 
 The exact variable-metric shift and a global composite-grid CPU solver are
 implemented and tested. A restricted experimental native Driver/RK/restart
