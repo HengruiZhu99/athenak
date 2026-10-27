@@ -381,11 +381,32 @@ if(Athena_ENABLE_ELLIPTIC_SHIFT_3D_TESTS)
   target_include_directories(elliptic_shift_3d_tensor_scri_tests PRIVATE
       ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
   target_link_libraries(elliptic_shift_3d_tensor_scri_tests PRIVATE Kokkos::kokkos)
-  find_package(Python3 REQUIRED COMPONENTS Interpreter)
+  find_program(ELLIPTIC_SHIFT_3D_PYTHON NAMES python3 REQUIRED
+      DOC "Python with NumPy for independent elliptic-shift radial audits")
+  execute_process(COMMAND ${ELLIPTIC_SHIFT_3D_PYTHON} -c "import numpy"
+      RESULT_VARIABLE ELLIPTIC_SHIFT_3D_NUMPY_STATUS OUTPUT_QUIET ERROR_QUIET)
+  if(NOT ELLIPTIC_SHIFT_3D_NUMPY_STATUS EQUAL 0)
+    message(FATAL_ERROR "3D shift reference tests require NumPy; set ELLIPTIC_SHIFT_3D_PYTHON to a Python with NumPy")
+  endif()
   add_test(NAME elliptic_shift_3d_tensor_scri_radial
-      COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tst/elliptic_shift_3d/test_scri_radial.py
+      COMMAND ${ELLIPTIC_SHIFT_3D_PYTHON} ${CMAKE_SOURCE_DIR}/tst/elliptic_shift_3d/test_scri_radial.py
       $<TARGET_FILE:elliptic_shift_3d_tensor_scri_tests>)
   set_tests_properties(elliptic_shift_3d_tensor_scri_radial PROPERTIES TIMEOUT 30)
+  add_executable(elliptic_shift_3d_wormhole_chart_tests tst/elliptic_shift_3d/test_wormhole_chart.cpp)
+  target_include_directories(elliptic_shift_3d_wormhole_chart_tests PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+  target_link_libraries(elliptic_shift_3d_wormhole_chart_tests PRIVATE Kokkos::kokkos)
+  add_test(NAME elliptic_shift_3d_wormhole_chart_radial
+      COMMAND ${ELLIPTIC_SHIFT_3D_PYTHON} ${CMAKE_SOURCE_DIR}/tst/elliptic_shift_3d/test_wormhole_chart.py
+      $<TARGET_FILE:elliptic_shift_3d_wormhole_chart_tests>)
+  set_tests_properties(elliptic_shift_3d_wormhole_chart_radial PROPERTIES TIMEOUT 30)
+  add_executable(elliptic_shift_3d_chart_equivalence_tests tst/elliptic_shift_3d/test_chart_equivalence.cpp)
+  target_include_directories(elliptic_shift_3d_chart_equivalence_tests PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+  target_link_libraries(elliptic_shift_3d_chart_equivalence_tests PRIVATE Kokkos::kokkos)
+  add_test(NAME elliptic_shift_3d_chart_physical_equivalence COMMAND elliptic_shift_3d_chart_equivalence_tests)
+  set_tests_properties(elliptic_shift_3d_chart_physical_equivalence PROPERTIES TIMEOUT 30)
+  add_library(elliptic_shift_3d_radial_kernel SHARED tst/elliptic_shift_1d/spherical_api.cpp)
+  target_include_directories(elliptic_shift_3d_radial_kernel PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+  target_link_libraries(elliptic_shift_3d_radial_kernel PRIVATE Kokkos::kokkos)
   add_executable(elliptic_shift_3d_composite_tests tst/elliptic_shift_3d/test_composite.cpp)
   target_include_directories(elliptic_shift_3d_composite_tests PRIVATE
       ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})

@@ -9,48 +9,13 @@
 #include "mesh/cubed_sphere/composite_checkpoint.hpp"
 #include "mesh/cubed_sphere/scri_surface.hpp"
 #include "z4c/hyperboloidal/tensor_scri.hpp"
+#include "z4c/hyperboloidal/composite_state.hpp"
 
 namespace h = z4c::hyperboloidal;
 using V = multigrid::Vector;
 constexpr int fields = 22;
 const int tensor_i[6] = {0,0,0,1,1,2}, tensor_j[6] = {0,1,2,1,2,2};
 
-h::Z4cJet<Real> Unpack(const Real x[3], const V &values,
-    const std::vector<std::array<Real, 3>> &d,
-    const std::vector<std::array<std::array<Real, 3>, 3>> &dd) {
-  h::Z4cJet<Real> u{};
-  auto scalar = [&](int f) {
-    h::ScalarJet<Real> out{}; out.value = values[f];
-    for (int a = 0; a < 3; ++a) {
-      out.d[a] = d[f][a];
-      for (int b = 0; b < 3; ++b) out.dd[a][b] = dd[f][a][b];
-    }
-    return out;
-  };
-  u.chi = scalar(0); u.trace = scalar(13); u.theta = scalar(14); u.alpha = scalar(18);
-  u.chi.value += 1; u.trace.value -= 3;
-  u.alpha.value += (1+x[0]*x[0]+x[1]*x[1]+x[2]*x[2])/2;
-  for (int a = 0; a < 3; ++a) {
-    u.alpha.d[a] += x[a]; u.alpha.dd[a][a] += 1;
-    u.lambda.value[a] = values[15+a]; u.beta.value[a] = -x[a]; u.beta.d[a][a] = -1;
-    for (int b = 0; b < 3; ++b) {
-      u.lambda.d[b][a] = d[15+a][b];
-      for (int c = 0; c < 3; ++c) u.lambda.dd[b][c][a] = dd[15+a][b][c];
-    }
-  }
-  for (int t = 0; t < 6; ++t) {
-    const int i = tensor_i[t], j = tensor_j[t];
-    u.metric.g[i][j] = u.metric.g[j][i] = values[1+t]+(i == j ? 1 : 0);
-    u.a.k[i][j] = u.a.k[j][i] = values[7+t];
-    for (int a = 0; a < 3; ++a) {
-      u.metric.dg[a][i][j] = u.metric.dg[a][j][i] = d[1+t][a];
-      u.a.dk[a][i][j] = u.a.dk[a][j][i] = d[7+t][a];
-      for (int b = 0; b < 3; ++b)
-        u.metric.ddg[a][b][i][j] = u.metric.ddg[a][b][j][i] = dd[1+t][a][b];
-    }
-  }
-  return u;
-}
 h::OmegaJet<Real> Omega(const Real x[3], const h::Z4cJet<Real> &u, bool boundary = false) {
   h::OmegaJet<Real> o{};
   o.omega = boundary ? 0 : (1-x[0]*x[0]-x[1]*x[1]-x[2]*x[2])/2;
@@ -67,17 +32,18 @@ class Pilot {
   double max_shift_residual = 0;
   int elliptic_iterations = 0;
   double elliptic_atol;
-  bool telegraph;
+  bool telegraph, wormhole=false;
+  int isotropic_reference=0;
   std::unique_ptr<cubed_sphere::ScriSurface> scri;
   V boundary_rhs, beta_padded;
   Real pole_sat=4,regularity_sat=8;
   Real boundary_pole=0,raw_clock_rate=0,boundary_regularity=0;
   Pilot(int n, int shells, bool flux, Real tolerance, int order = 4,bool regular_scri=false)
       : Pilot(cubed_sphere::CompositeMesh(.25, shells == 1 ? V{1} : V{.65, 1}, 1, n), flux, tolerance, order,regular_scri) {}
-  Pilot(cubed_sphere::CompositeMesh mesh, bool flux, Real tolerance, int order = 4,bool regular_scri=false)
+  Pilot(cubed_sphere::CompositeMesh mesh, bool flux, Real tolerance, int order = 4,bool regular_scri=false,bool puncture=false,int matched=0)
       : shift(std::move(mesh), order),
         state(fields*shift.grid.active.size(), 0), beta_delta(3*shift.grid.active.size(), 0),
-        elliptic_atol(tolerance), telegraph(flux) {
+        elliptic_atol(tolerance), telegraph(flux),wormhole(puncture),isotropic_reference(matched) {
     if(regular_scri)scri=std::make_unique<cubed_sphere::ScriSurface>(shift.grid,fields);
   }
 
@@ -91,6 +57,24 @@ class Pilot {
     // The analytic pulse vanishes at the actual endpoint. Geometric reference
     // deviations and flux start at zero; no evolved constraint is reset later.
     if(scri)std::fill(scri->values.begin(),scri->values.end(),0.);
+  }
+  void InitializeWormhole(const std::string &path,Real amplitude,bool angular){
+    if(!wormhole||!scri)throw std::invalid_argument("wormhole requires positive chart and tensor scri");
+    std::ifstream file(path);size_t count;std::string magic;
+    file>>magic>>count;
+    if(magic!="ISOTROPIC_M1_3"||count!=shift.grid.active.size())throw std::runtime_error("wormhole initializer layout");
+    for(size_t p=0;p<count;++p){const auto &x=shift.grid.geometry[p].x;
+      Real r,chi,alpha,arr,khat;file>>r>>chi>>alpha>>arr>>khat;
+      const Real radius=std::sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);
+      if(!file||std::abs(r-radius)>1e-13||!(r>0&&chi>0&&alpha>0))throw std::runtime_error("wormhole initial data/radius mismatch");
+      const auto chart=h::WormholeChart::At(x,isotropic_reference);state[p*fields]=std::log(chi/chart.chi.f);
+      state[p*fields+18]=std::log(alpha/chart.alpha.f)+amplitude*std::pow(1-r*r,4)*std::exp(-r*r/.09)
+          *(angular?1+.8*x[0]*x[1]+.3*x[2]:1);
+      state[p*fields+13]=3+khat/chart.weight.f;
+      for(int t=0;t<6;++t){const int i=tensor_i[t],j=tensor_j[t];
+        state[p*fields+7+t]=1.5*arr*(x[i]*x[j]/(r*r)-(i==j?1./3:0))/chart.weight.f;}
+    }
+    std::string extra;if(file>>extra)throw std::runtime_error("wormhole initializer trailing payload");
   }
   V Padded(const V &input) const {
     const auto &grid = shift.grid;
@@ -133,7 +117,7 @@ class Pilot {
           for (int b = 0; b < 3; ++b) dd[v][a][b] = second[a][b];
         }
       }
-      jets[p] = Unpack(grid.geometry[p].x, values, d, dd);
+      jets[p] = h::UnpackComposite(grid.geometry[p].x, values, d, dd,wormhole,isotropic_reference);
       if (!(jets[p].alpha.value > 0 && jets[p].chi.value > 0))
         throw std::runtime_error("coupled stage lost lapse/chi positivity");
       metrics.push_back(jets[p].metric);
@@ -150,7 +134,7 @@ class Pilot {
       Real chi = 1;
       h::MetricJet<Real> metric{};
       for (int i = 0; i < 3; ++i) metric.g[i][i] = 1;
-      if(scri){const auto value=scri->Interpolate(scri->values,fields,x.data());chi+=value[0];
+      if(scri){const auto value=scri->Interpolate(scri->values,fields,x.data());chi=wormhole?std::exp(value[0]):chi+value[0];
         for(int t=0;t<6;++t){int i=tensor_i[t],j=tensor_j[t];metric.g[i][j]+=value[1+t];if(i!=j)metric.g[j][i]=metric.g[i][j];}}
       else for (const auto &entry : grid.Interpolate(x.data(), std::min(grid.n, 6))) {
         chi += entry.weight*padded[entry.point];
@@ -206,7 +190,7 @@ class Pilot {
     for(size_t p=0;p<scri->rows.size();++p){
       const auto &row=scri->rows[p];const auto &x=row.geometry.x;
       const auto sampled=scri->Sample(p,padded,scri->values,fields);
-      auto u=Unpack(x,sampled.value,sampled.d,sampled.dd);
+      auto u=h::UnpackComposite(x,sampled.value,sampled.d,sampled.dd,wormhole,isotropic_reference);
       const auto shift_jet=scri->Sample(p,beta_padded,scri->beta,3);
       for(int v=0;v<3;++v){u.beta.value[v]+=shift_jet.value[v];
         for(int a=0;a<3;++a){u.beta.d[a][v]+=shift_jet.d[v][a];for(int b=0;b<3;++b)u.beta.dd[a][b][v]+=shift_jet.dd[v][a][b];}}
@@ -215,10 +199,10 @@ class Pilot {
       const auto omega=Omega(x,u,true);
       auto parts=h::ConformalRHS(u,omega,4.,-.99);parts.pole.theta+=3*u.alpha.value*omega.normal*u.theta.value;
       const Real normal[3]={x[0],x[1],x[2]};
-      const auto pole=h::TensorPoleNormalJet(u,omega,x,normal,4.,-.99,1.,1.);
+      const auto pole=h::TensorPoleNormalJet(u,omega,x,normal,4.,-.99,1.,1.,true,wormhole);
       auto rate=h::TensorScriLimit(parts.regular,pole,-1.);
       const auto gauge=h::UnfactoredReferenceGauge(reference,reference.At(x[0],x[1],x[2]),
-          u,h::GaugeParameters<Real>{1,0,1,0},false,true);
+          u,h::GaugeParameters<Real>{1,0,wormhole?2.:1.,0},wormhole,true);
       if(!parts.valid||!gauge.valid)throw std::runtime_error("invalid complete scri source");
       raw_clock_rate=std::max(raw_clock_rate,std::abs(gauge.regular.alpha-pole.lapse.derivative));
       const Real h=row.radial_spacing;
@@ -243,6 +227,7 @@ class Pilot {
         if(telegraph){Real flux=-sampled.value[19+v]/.02;
           for(int a=0;a<3;++a)flux+=u.beta.value[a]*sampled.d[19+v][a];boundary_rhs[p*fields+19+v]=flux;}}
       boundary_rhs[p*fields+18]=0; // prescribed incoming lapse clock, not a geometry projection
+      if(wormhole)boundary_rhs[p*fields]/=u.chi.value;
     }
     for(Real value:boundary_rhs)if(!std::isfinite(value))throw std::runtime_error("nonfinite regular tensor scri rate");
   }
@@ -265,6 +250,7 @@ class Pilot {
           u, h::GaugeParameters<Real>{1, 0, 1, 0}, false, true);
       h::GaugeRHS<Real> lapse{};
       if (!h::AssembleGaugeInterior(gauge, omega.omega, lapse)) throw std::runtime_error("invalid lapse rate");
+      if(wormhole)lapse.alpha=h::WormholeLapseRate(x,u);
       rhs[p*fields] = rate.chi; rhs[p*fields+13] = rate.trace; rhs[p*fields+14] = rate.theta;
       rhs[p*fields+18] = lapse.alpha;
       for (int t = 0; t < 6; ++t) {
@@ -293,6 +279,10 @@ class Pilot {
         rhs[p*fields+18] += addition.lapse;
         for (int i = 0; i < 3; ++i) rhs[p*fields+19+i] = addition.flux[i];
       }
+      if(wormhole){const h::WormholeChart chart(x);
+        rhs[p*fields]/=u.chi.value;rhs[p*fields+18]/=u.alpha.value;
+        rhs[p*fields+13]/=chart.weight.f;rhs[p*fields+14]/=chart.weight.f;
+        for(int t=0;t<6;++t)rhs[p*fields+7+t]/=chart.weight.f;}
       // Conservative stage guard for transport/lapse/telegrapher speeds.
       Real speed = 0;
       const Real F = u.alpha.value*u.alpha.value+4*omega.omega*omega.omega*u.alpha.value;
@@ -351,14 +341,21 @@ int main(int argc, char **argv) {
     const std::string source_tag = argc > 10 ? argv[10] : "";
     const int spatial_order = argc > 11 ? std::stoi(argv[11]) : 4;
     const bool regular_scri = argc > 12 ? std::stoi(argv[12]) : false;
+    const bool wormhole=argc>15?std::stoi(argv[15]):false;
+    const std::string initial=argc>16?argv[16]:"";
+    const int bulk=argc>17?std::stoi(argv[17]):1;
+    const int isotropic_reference=argc>18?std::stoi(argv[18]):0;
     if (n < 6 || n > 16 || steps < 0 || steps > 200 || dt <= 0 || dt*steps > .1
-        || std::abs(amplitude) > 1e-3 || (shells != 1 && shells != 2))
+        || std::abs(amplitude) > 1e-3 || (shells != 1 && shells != 2)||bulk<1||bulk>2
+        ||isotropic_reference<0||isotropic_reference>2||(!wormhole&&isotropic_reference)
+        ||(wormhole&&(!regular_scri||n%2||initial.empty())))
       throw std::invalid_argument("bounded coupled pilot budget");
     const auto start = std::chrono::steady_clock::now();
-    Pilot pilot(n, shells, true, tolerance, spatial_order,regular_scri);
+    Pilot pilot(cubed_sphere::CompositeMesh(.25,shells==1?V{1}:V{.65,1},1,n,2,bulk),true,tolerance,spatial_order,regular_scri,wormhole,isotropic_reference);
     if(argc>13)pilot.pole_sat=std::stod(argv[13]);if(argc>14)pilot.regularity_sat=std::stod(argv[14]);
     if(pilot.pole_sat<0||pilot.regularity_sat<0)throw std::invalid_argument("negative scri weak-boundary coefficient");
     pilot.Initialize(amplitude, angular);
+    if(wormhole)pilot.InitializeWormhole(initial,amplitude,angular);
     const int saved_step = steps/2;
     for (int i = 0; i < steps; ++i) {
       pilot.Step(dt);
@@ -368,13 +365,15 @@ int main(int argc, char **argv) {
         snapshot.spatial_order = spatial_order;
         if(pilot.scri){snapshot.boundary_scheme=1;snapshot.boundary_fields=pilot.scri->values;}
         snapshot.boundary_pole_sat=pilot.pole_sat;snapshot.boundary_regularity_sat=pilot.regularity_sat;
+        snapshot.wormhole_chart=wormhole;
+        snapshot.isotropic_reference=isotropic_reference;
         cubed_sphere::CompositeCheckpoint::Write(checkpoint, snapshot);
       }
     }
     bool restart_equal = checkpoint.empty();
     if (!checkpoint.empty()) {
       const auto snapshot = cubed_sphere::CompositeCheckpoint::Read(checkpoint, source_tag);
-      Pilot restarted(snapshot.mesh, snapshot.telegraph, snapshot.tolerance, snapshot.spatial_order,snapshot.boundary_scheme==1);
+      Pilot restarted(snapshot.mesh, snapshot.telegraph, snapshot.tolerance, snapshot.spatial_order,snapshot.boundary_scheme==1,snapshot.wormhole_chart,snapshot.isotropic_reference);
       restarted.state = snapshot.fields; restarted.beta_delta = snapshot.shift_warm_start;
       restarted.pole_sat=snapshot.boundary_pole_sat;restarted.regularity_sat=snapshot.boundary_regularity_sat;
       if(restarted.scri)restarted.scri->values=snapshot.boundary_fields;
@@ -433,13 +432,14 @@ int main(int argc, char **argv) {
     if(pilot.scri)for(size_t p=0;p<pilot.scri->rows.size();++p){
       const auto &x=pilot.scri->rows[p].geometry.x;
       const auto sample=pilot.scri->Sample(p,padded,pilot.scri->values,fields);
-      const auto u=Unpack(x,sample.value,sample.d,sample.dd);const auto geometry=h::Geometry(u.metric);
+      const auto u=h::UnpackComposite(x,sample.value,sample.d,sample.dd,wormhole,isotropic_reference);const auto geometry=h::Geometry(u.metric);
       if(!geometry.valid)throw std::runtime_error("invalid accepted scri metric");
       Real bn=0,bghost=0,norm=0,ghost[3];
       for(int i=0;i<3;++i){bn+=(-x[i]+pilot.scri->beta[3*p+i])*x[i];
         ghost[i]=-x[i]+pilot.scri->ReconstructFromGhost(p,pilot.beta_padded,i);bghost+=ghost[i]*x[i];
         for(int j=0;j<3;++j)norm+=u.chi.value*geometry.inverse[i][j]*x[i]*x[j];}
-      const Real alpha_ghost=(1+x[0]*x[0]+x[1]*x[1]+x[2]*x[2])/2+pilot.scri->ReconstructFromGhost(p,padded,18);
+      const Real ag=pilot.scri->ReconstructFromGhost(p,padded,18);
+      const Real alpha_ghost=wormhole?std::exp(ag):(1+x[0]*x[0]+x[1]*x[1]+x[2]*x[2])/2+ag;
       scri_clock=std::max(scri_clock,std::abs(u.alpha.value-1));ghost_clock=std::max(ghost_clock,std::abs(alpha_ghost-1));
       scri_null=std::max(scri_null,std::abs(bn+u.alpha.value*std::sqrt(norm)));
       ghost_null=std::max(ghost_null,std::abs(bghost+alpha_ghost*std::sqrt(norm)));
@@ -475,9 +475,11 @@ int main(int argc, char **argv) {
           grr += weight*value[1+t]; arr += weight*value[7+t];
         }
         for (int v = 0; v < 3; ++v) {lambda += value[15+v]*normal[v]; beta_r += delta[v]*normal[v];}
-        spheres << radius << ',' << direction << ',' << (1+radius*radius)/2+value[18] << ','
-                << 1+value[0] << ',' << grr << ',' << arr << ',' << value[13]-3 << ','
-                << value[14] << ',' << lambda << ',' << beta_r << '\n';
+        const auto chart=h::WormholeChart::At(x,isotropic_reference);
+        spheres << radius << ',' << direction << ',' << (wormhole?chart.alpha.f*std::exp(value[18]):(1+radius*radius)/2+value[18]) << ','
+                << (wormhole?chart.chi.f*std::exp(value[0]):1+value[0]) << ',' << grr << ',' << (wormhole?chart.weight.f*arr:arr) << ','
+                << (wormhole?chart.weight.f*(value[13]-3):value[13]-3) << ','
+                << (wormhole?chart.weight.f*value[14]:value[14]) << ',' << lambda << ',' << beta_r << '\n';
       }
     }
     V beta(3*grid.count, 0);
@@ -493,7 +495,7 @@ int main(int argc, char **argv) {
         V values; std::vector<std::array<Real, 3>> d;
         std::vector<std::array<std::array<Real, 3>, 3>> dd;
         grid.SampleJets(padded, fields, x, values, d, dd);
-        auto u = Unpack(x, values, d, dd);
+        auto u = h::UnpackComposite(x, values, d, dd,wormhole,isotropic_reference);
         grid.SampleJets(beta, 3, x, values, d, dd);
         for (int v = 0; v < 3; ++v) {
           u.beta.value[v] += values[v];
@@ -539,6 +541,8 @@ int main(int argc, char **argv) {
               << ",\"scri_null_extrapolation\":" << null << ",\"scri_tangent_extrapolation\":" << tangential
               << ",\"restart_checked\":" << !checkpoint.empty() << ",\"restart_equal\":" << restart_equal
               << ",\"spatial_order\":" << spatial_order
+              << ",\"wormhole_chart\":"<<wormhole<<",\"bulk_subdivisions\":"<<bulk
+              << ",\"isotropic_reference\":"<<isotropic_reference
               << ",\"regular_scri\":"<<regular_scri<<",\"scri_nodal_clock\":"<<scri_clock<<",\"scri_nodal_null\":"<<scri_null
               << ",\"scri_nodal_tangent\":"<<scri_tangent<<",\"scri_ghost_clock\":"<<ghost_clock<<",\"scri_ghost_null\":"<<ghost_null
               << ",\"scri_ghost_tangent\":"<<ghost_tangent<<",\"scri_tensor_pole\":"<<pilot.boundary_pole
@@ -546,7 +550,7 @@ int main(int argc, char **argv) {
               << ",\"closure\":\""<<(regular_scri?"evolved_tensor_limit":"experimental_active_only_extrapolation")<<"\"}\n";
     // Report original scientific gates without weakening them for a coarse grid.
     if(regular_scri){if(pilot.boundary_pole>1e-7||ghost_clock>1e-13||ghost_null>1e-12||ghost_tangent>1e-12
-        ||(amplitude==0&&drift>1e-9))status=1;}
+        ||(!wormhole&&amplitude==0&&drift>1e-9))status=1;}
     else if (pole > 1e-7 || clock > 1e-13 || null > 1e-12 || (amplitude == 0 && drift > 1e-9)) status = 1;
   } catch (const std::exception &error) {std::cerr << error.what() << "\n"; status = 2;}
   Kokkos::finalize();

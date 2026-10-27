@@ -24,6 +24,8 @@ struct CompositeSnapshot {
   int boundary_scheme = 0;
   double boundary_pole_sat = 4, boundary_regularity_sat = 8;
   std::vector<double> boundary_fields;
+  bool wormhole_chart = false;
+  int isotropic_reference = 0;
 };
 
 // Explicit version/endian/layout contract; shell, bulk and new flux fields all
@@ -65,12 +67,21 @@ class CompositeCheckpoint {
   static void Write(const std::string &path, const CompositeSnapshot &snapshot) {
     const auto &mesh = snapshot.mesh;
     const size_t count = mesh.blocks.size()*mesh.cells*mesh.cells*mesh.cells;
+    size_t face_cells=0;for(const auto &block:mesh.blocks)
+      if(block.layer==static_cast<int>(mesh.radii.size())-1)face_cells+=mesh.cells*mesh.cells;
     if (snapshot.source_tag.size() != 64 || snapshot.components < 1
         || snapshot.fields.size() != count*snapshot.components || snapshot.shift_warm_start.size() != 3*count
-        || !(snapshot.dt > 0 && snapshot.tolerance > 0))
+        || !(snapshot.dt > 0 && snapshot.tolerance > 0)
+        || (snapshot.boundary_scheme!=0&&snapshot.boundary_scheme!=1)
+        || snapshot.boundary_fields.size()!=(snapshot.boundary_scheme?face_cells*snapshot.components:0)
+        || !(snapshot.boundary_pole_sat>=0&&snapshot.boundary_regularity_sat>=0)
+        || !std::isfinite(snapshot.boundary_pole_sat+snapshot.boundary_regularity_sat)
+        || (snapshot.wormhole_chart&&snapshot.boundary_scheme!=1)
+        || (snapshot.isotropic_reference&&!snapshot.wormhole_chart)
+        || snapshot.isotropic_reference<0||snapshot.isotropic_reference>2)
       throw std::invalid_argument("invalid composite checkpoint state");
     Buffer b;
-    b.Put<std::uint64_t>(0x4353484946543031ull); b.Put<std::uint32_t>(3); b.Put<std::uint32_t>(0x01020304);
+    b.Put<std::uint64_t>(0x4353484946543031ull); b.Put<std::uint32_t>(6); b.Put<std::uint32_t>(0x01020304);
     for (char c : snapshot.source_tag) b.Put<char>(c);
     b.Put(mesh.half_width); b.Put(mesh.face_subdivisions); b.Put(mesh.cells); b.Put(mesh.ghosts);
     b.Put<std::uint64_t>(mesh.revision); b.PutVector(mesh.radii);
@@ -84,6 +95,8 @@ class CompositeCheckpoint {
     b.PutVector(snapshot.fields); b.PutVector(snapshot.shift_warm_start);
     b.Put(snapshot.boundary_scheme); b.Put(snapshot.boundary_pole_sat); b.Put(snapshot.boundary_regularity_sat);
     b.PutVector(snapshot.boundary_fields);
+    b.Put<int>(snapshot.wormhole_chart?1:0);
+    b.Put<int>(snapshot.isotropic_reference);
     b.Put(Hash(b.bytes, b.bytes.size()));
     const std::string temporary = path+".tmp";
     {std::ofstream out(temporary, std::ios::binary|std::ios::trunc);
@@ -101,7 +114,7 @@ class CompositeCheckpoint {
     if (stored != Hash(b.bytes, b.bytes.size()-8)) throw std::runtime_error("composite checkpoint checksum mismatch");
     if (b.Get<std::uint64_t>() != 0x4353484946543031ull) throw std::runtime_error("checkpoint magic mismatch");
     const auto version=b.Get<std::uint32_t>();
-    if ((version!=2&&version!=3)||b.Get<std::uint32_t>()!=0x01020304)
+    if ((version<2||version>6)||b.Get<std::uint32_t>()!=0x01020304)
       throw std::runtime_error("checkpoint format/endian mismatch");
     std::string tag;
     for (int i = 0; i < 64; ++i) tag += b.Get<char>();
@@ -153,6 +166,10 @@ class CompositeCheckpoint {
         throw std::runtime_error("checkpoint scri closure configuration mismatch");
       out.boundary_fields=b.GetVector(out.boundary_scheme==1?face_cells*out.components:0);
     }
+    if(version>=4){const int chart=b.Get<int>();if((chart!=0&&chart!=1)||(chart&&out.boundary_scheme!=1))
+      throw std::runtime_error("checkpoint puncture chart configuration mismatch");out.wormhole_chart=chart==1;}
+    if(version>=5){const int ref=b.Get<int>();if((ref<0||ref>(version>=6?2:1))||(ref&&!out.wormhole_chart))
+      throw std::runtime_error("checkpoint isotropic reference configuration mismatch");out.isotropic_reference=ref;}
     if (b.cursor+8 != b.bytes.size()) throw std::runtime_error("checkpoint unexpected trailing payload");
     return out;
   }
