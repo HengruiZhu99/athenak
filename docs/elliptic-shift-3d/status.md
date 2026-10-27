@@ -37,6 +37,30 @@ norms and raw angular scatter. A separate exact-jet diagnostic identifies the
 current transition H maximum as mapped chi-Hessian truncation, with little
 contribution from halo interpolation; higher-order checks are ongoing.
 
+The related fixed-mesh N6/N8/N10 supported+Hermite family subsequently completes
+at t=.0002 in21.70/49.71/102.72s with bitwise restarts. Final accepted scri poles
+1.07350e-6/2.47960e-7/1.35404e-7 and H RMS .16354/.092576/.061430 all fail the
+unchanged scientific targets. [The full family](related-scri-coupled-family.md)
+retains every cell, regional diagnostics, actual angular scatter and independent
+N2049/N1025 profiles. The exact final N10 snapshot has a separately passing fresh
+original-vector certificate and a localized LambdaZ pole: Khat-normal
+−6.72602e-7 against A/Omega contribution+5.42417e-7 dominates its uncancelled
+balance. [The accepted-state certificate](final-scri-accepted-certificate.md)
+corrects the earlier stage-history label: this is the surface maximum after
+the final accepted-state RHS, not a maximum over all stage history. The saved
+midpoint beta is only a warm start and fails certification against midpoint
+accepted geometry; actual stage and final accepted solves pass.
+
+Native static-refinement integration is committed as `429252ad1efcc7fd1080f9cb185302dbff44df1e`;
+all native fields, ADM ghosts, live RK, restart and corrupted-topology checks
+pass. Its wormhole Hmax26.826 and scri pole1.44249e-5 still fail. A complete
+[accepted host regrid transfer](accepted-regrid-transfer.md), committed as
+`6d377a99899efc72fe3f7aab31e4c4111752d878`, now includes global scalar-log donors;
+Cartesian-only corner extrapolation and radius-cutoff failures remain recorded.
+Actual native adaptive integration is being validated separately on regular
+Minkowski angular pulses. Wormhole adaptive evolution remains guarded, and no
+dynamic-collapse qualification is established.
+
 ## Implemented and checked
 
 - The exact metric-built connection, its full variable-metric Frechet operator,
