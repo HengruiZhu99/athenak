@@ -1,0 +1,103 @@
+{
+  "scope": "Combined AMR/core/shell spatial checks; no scri or evolution acceptance.",
+  "rows": [
+    {
+      "n": 10,
+      "cells": 27000,
+      "core_leaves": 15,
+      "shell_blocks": 12,
+      "rms": 0.001794853214124036,
+      "maximum": 0.01640289718517235,
+      "core_rms": 4.835547741702871e-05,
+      "shell_rms": 0.001822228787158448,
+      "constant_derivative_max": 1.8592918993121986e-12,
+      "adjoint_relative_max": 1.1844691893969639e-14,
+      "interface_value_L1_max": 4.415582442350914,
+      "transfer_adjoint_max": 1.0842021724855044e-19,
+      "transfer_composition_max": 3.3306690738754696e-16,
+      "transfer_tensor_polynomial_max": 6.217248937900877e-15
+    },
+    {
+      "n": 11,
+      "cells": 35937,
+      "core_leaves": 15,
+      "shell_blocks": 12,
+      "rms": 0.00078252844735713,
+      "maximum": 0.009407906367719876,
+      "core_rms": 5.9329720917587516e-05,
+      "shell_rms": 0.0007944042284503833,
+      "constant_derivative_max": 3.4012495373863265e-12,
+      "adjoint_relative_max": 2.1566082253343666e-14,
+      "interface_value_L1_max": 4.275338546488235,
+      "transfer_adjoint_max": 1.0842021724855044e-19,
+      "transfer_composition_max": 2.220446049250313e-16,
+      "transfer_tensor_polynomial_max": 1.4876988529977098e-14
+    },
+    {
+      "n": 12,
+      "cells": 46656,
+      "core_leaves": 15,
+      "shell_blocks": 12,
+      "rms": 0.00039161000538043126,
+      "maximum": 0.004379089523352919,
+      "core_rms": 3.929566430064336e-05,
+      "shell_rms": 0.0003975275096883137,
+      "constant_derivative_max": 2.80952839709195e-12,
+      "adjoint_relative_max": 1.3801634144413635e-14,
+      "interface_value_L1_max": 4.150501106739917,
+      "transfer_adjoint_max": 5.421010862427522e-20,
+      "transfer_composition_max": 3.3306690738754696e-16,
+      "transfer_tensor_polynomial_max": 9.43689570931383e-15
+    }
+  ],
+  "tensor": {
+    "constant_metric": {
+      "smooth": {
+        "energy": 11.242862902117379,
+        "strain": 11.242862902117386,
+        "energy_relative_defect": 6.3199448569837365e-16,
+        "symmetry_relative_defect": 9.233724895807427e-13,
+        "rayleigh": 27.62113560523165
+      },
+      "random": {
+        "energy": 70786.85783624146,
+        "strain": 70786.85783624146,
+        "energy_relative_defect": 0.0,
+        "symmetry_relative_defect": 3.171586449162228e-14,
+        "rayleigh": 4710.639345161652
+      }
+    },
+    "variable_metric_frechet": [
+      {
+        "epsilon": 0.001,
+        "scaled_rms": 4.508040697734522e-06,
+        "maximum": 0.022071901751132827
+      },
+      {
+        "epsilon": 0.0001,
+        "scaled_rms": 4.508001519159367e-08,
+        "maximum": 0.00022071205057727639
+      },
+      {
+        "epsilon": 1e-05,
+        "scaled_rms": 4.520509127238457e-10,
+        "maximum": 2.206898784606892e-06
+      }
+    ],
+    "variable_metric_det_min": 1.1886849271746909,
+    "variable_metric_det_max": 1.405917096807334
+  },
+  "orders": [
+    8.709964121547003,
+    7.956014946814977
+  ],
+  "gates": {
+    "all_cell_refinement": true,
+    "constant_and_adjoint": true,
+    "interface_amplification": true,
+    "interface_polynomials": true,
+    "constant_metric_energy": true,
+    "full_metric_variation": true
+  },
+  "seconds": 2.164781208
+}

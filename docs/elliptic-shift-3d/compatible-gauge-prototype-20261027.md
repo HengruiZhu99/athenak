@@ -1,5 +1,9 @@
 # Compatible gauge derivative and shell-interface research
 
+Subsequent work joins AMR and shells and tests the physical initial source;
+see the [updated results and scri failure](compatible-wormhole-gauge-20261027.md).
+The scoped results below are retained as the preceding component stage.
+
 The requested stable 3D wormhole-to-trumpet evolution is **not established**.
 This work advances the replacement spatial operator motivated by the retained
 negative-energy counterexample in the [alignment report](takeover-alignment-20261027.md).

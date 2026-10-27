@@ -32,7 +32,7 @@ def axis_apply(values,axis,operator):
 
 
 class ShellGrid:
-    def __init__(self,n,radial=(0.,.45,1.),half_width=.25):
+    def __init__(self,n,radial=(0.,.45,1.),half_width=.25,transfer_seed='prolongation'):
         if radial[0]!=0 or radial[-1]!=1 or min(np.diff(radial))<=0:
             raise ValueError('radial partition must span the actual sphere')
         self.n=n;self.radial=radial;self.half_width=half_width
@@ -66,7 +66,7 @@ class ShellGrid:
         # matching moments, while their actual face nodes are different.
         cf=dict(x=self.locals[0]['x'],H=self.locals[0]['H'],V=basis(self.locals[0]['x'],2)[0],degree=2)
         sf=dict(x=lobatto(n)['x'],H=lobatto(n)['H'],V=basis(lobatto(n)['x'],2)[0],degree=2)
-        P,Q=mortar(cf,sf)
+        P,Q=mortar(cf,sf,seed=transfer_seed)
         for patch in range(6):
             a=patch//2;side=1-patch%2;tangents=[j for j in range(3) if j!=a]
             swap=tangents!=[(a+1)%3,(a+2)%3]

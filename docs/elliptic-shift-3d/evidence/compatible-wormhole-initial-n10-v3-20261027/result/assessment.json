@@ -1,0 +1,253 @@
+{
+  "iterations": 540,
+  "maximum_iterations": 900,
+  "restart": 100,
+  "converged": true,
+  "history": [
+    {
+      "iteration": 20,
+      "original_rms": 19.947013390959434,
+      "original_point": 1018.6735121670582
+    },
+    {
+      "iteration": 40,
+      "original_rms": 7.151528899593707,
+      "original_point": 567.860534398718
+    },
+    {
+      "iteration": 60,
+      "original_rms": 1.8809784894826316,
+      "original_point": 182.40724279251614
+    },
+    {
+      "iteration": 80,
+      "original_rms": 0.5024885496220289,
+      "original_point": 69.21932143089613
+    },
+    {
+      "iteration": 100,
+      "original_rms": 0.13495619731600308,
+      "original_point": 16.407682294396906
+    },
+    {
+      "iteration": 120,
+      "original_rms": 0.06631473390494991,
+      "original_point": 8.514749500359741
+    },
+    {
+      "iteration": 140,
+      "original_rms": 0.023325892318837745,
+      "original_point": 4.070239809019256
+    },
+    {
+      "iteration": 160,
+      "original_rms": 0.008520326238274012,
+      "original_point": 1.6431610291280379
+    },
+    {
+      "iteration": 180,
+      "original_rms": 0.0032001469790156555,
+      "original_point": 0.43419527823749604
+    },
+    {
+      "iteration": 200,
+      "original_rms": 0.0010091270169568006,
+      "original_point": 0.1282006858145266
+    },
+    {
+      "iteration": 220,
+      "original_rms": 0.000601809584533433,
+      "original_point": 0.052235364977192944
+    },
+    {
+      "iteration": 240,
+      "original_rms": 0.00026086661659454095,
+      "original_point": 0.03598998144250842
+    },
+    {
+      "iteration": 260,
+      "original_rms": 0.00010404638695197438,
+      "original_point": 0.008362161318672179
+    },
+    {
+      "iteration": 280,
+      "original_rms": 3.482454644663553e-05,
+      "original_point": 0.004115424852992433
+    },
+    {
+      "iteration": 300,
+      "original_rms": 1.2992492430725066e-05,
+      "original_point": 0.0018109106656254426
+    },
+    {
+      "iteration": 320,
+      "original_rms": 6.9791479160600135e-06,
+      "original_point": 0.0011239520527723812
+    },
+    {
+      "iteration": 340,
+      "original_rms": 2.8373844297030897e-06,
+      "original_point": 0.0003838257129586964
+    },
+    {
+      "iteration": 360,
+      "original_rms": 1.2510291329215534e-06,
+      "original_point": 0.00016084616922107386
+    },
+    {
+      "iteration": 380,
+      "original_rms": 4.4731836385265296e-07,
+      "original_point": 5.633087476830667e-05
+    },
+    {
+      "iteration": 400,
+      "original_rms": 1.6541557863523885e-07,
+      "original_point": 2.1478314174316893e-05
+    },
+    {
+      "iteration": 420,
+      "original_rms": 9.436631728009274e-08,
+      "original_point": 7.851433970529342e-06
+    },
+    {
+      "iteration": 440,
+      "original_rms": 4.1274684646074793e-08,
+      "original_point": 6.157916445204137e-06
+    },
+    {
+      "iteration": 460,
+      "original_rms": 1.7280445038387625e-08,
+      "original_point": 2.3533230848471476e-06
+    },
+    {
+      "iteration": 480,
+      "original_rms": 5.997835353578663e-09,
+      "original_point": 6.344806138258718e-07
+    },
+    {
+      "iteration": 500,
+      "original_rms": 2.4949891257092677e-09,
+      "original_point": 3.335270051252337e-07
+    },
+    {
+      "iteration": 520,
+      "original_rms": 1.346274060242552e-09,
+      "original_point": 2.5167102535306185e-07
+    },
+    {
+      "iteration": 540,
+      "original_rms": 5.385019357882948e-10,
+      "original_point": 5.510674228048629e-08
+    }
+  ],
+  "original_rms": 5.385019357882948e-10,
+  "original_point": 5.510674228048629e-08,
+  "scope": "Frozen physical wormhole initial-state gauge test on the compatible grid.\n\nUses the successful spherical run's actual Schwarzschild constructor and t=0\nshift profiles. This is an initial elliptic solve, not a time evolution. The\nbulk source is DV[-2 alpha A], with physical future-null fixed-angle boundary\ndata at actual scri. Evolved scri metric-rate regularity is not supplied here;\nthe raw boundary connection rate is reported separately, not declared zero.\n",
+  "n": 10,
+  "cells": 13000,
+  "amr_core": false,
+  "cached_coefficients": true,
+  "reference_source_hashes": {
+    "wormhole_isotropic.py": "5103cd3480a113df2f2bf42d98914f0dec823ef58730eeacabd2d633d3b5b4b9",
+    "wormhole_data.py": "b7e8125715c6658a0574feb4c262b741dda03e825d8376c37a1d6cb181875969",
+    "profile-n1025": "d2b3613e75e1d8d48dfb6510f3c7865cb3d957ee820fb91ba80ef7a16336c519",
+    "profile-n2049": "10ccd0b3f5efabfa01822b7ae3e731330a0ba693aaa1b1c0380be10e49c7174a"
+  },
+  "mass": 0.3333333333333333,
+  "time": 0.0,
+  "constructor_warnings": [
+    {
+      "message": "underflow encountered in multiply",
+      "file": "wormhole_isotropic.py",
+      "line": 56
+    },
+    {
+      "message": "underflow encountered in multiply",
+      "file": "wormhole_isotropic.py",
+      "line": 56
+    },
+    {
+      "message": "underflow encountered in multiply",
+      "file": "wormhole_isotropic.py",
+      "line": 56
+    },
+    {
+      "message": "underflow encountered in multiply",
+      "file": "wormhole_isotropic.py",
+      "line": 56
+    },
+    {
+      "message": "underflow encountered in multiply",
+      "file": "wormhole_isotropic.py",
+      "line": 56
+    },
+    {
+      "message": "underflow encountered in multiply",
+      "file": "wormhole_isotropic.py",
+      "line": 56
+    },
+    {
+      "message": "underflow encountered in multiply",
+      "file": "wormhole_isotropic.py",
+      "line": 56
+    },
+    {
+      "message": "underflow encountered in multiply",
+      "file": "wormhole_isotropic.py",
+      "line": 56
+    },
+    {
+      "message": "underflow encountered in multiply",
+      "file": "wormhole_isotropic.py",
+      "line": 56
+    },
+    {
+      "message": "underflow encountered in multiply",
+      "file": "wormhole_isotropic.py",
+      "line": 56
+    },
+    {
+      "message": "underflow encountered in multiply",
+      "file": "wormhole_isotropic.py",
+      "line": 56
+    },
+    {
+      "message": "underflow encountered in multiply",
+      "file": "wormhole_isotropic.py",
+      "line": 56
+    }
+  ],
+  "setup_seconds": 7.526462834,
+  "solve_seconds": 29.876631624999998,
+  "preconditioner": {
+    "coarse_dimension": 156,
+    "coarse_degree": 1,
+    "coarse_singular_min": 11.58088094121156,
+    "coarse_singular_max": 13392.431367486477,
+    "coarse_condition": 1156.425960639001,
+    "balanced": false,
+    "operator_changed": false
+  },
+  "full_original_rms": 5.385019367969376e-10,
+  "full_original_point": 5.5100592533108284e-08,
+  "bulk_actual_metric_rate_rms": 5.419642864311034e-10,
+  "bulk_actual_metric_rate_max": 5.510040727779032e-08,
+  "raw_scri_metric_rate_max": 213.7223979731635,
+  "radial_shift_reference_rms": 0.008963722945227837,
+  "radial_shift_reference_max": 0.04988208942283212,
+  "reference_1025_2049_rms": 2.643476617679741e-06,
+  "tangential_shift_rms": 0.002842946887648309,
+  "angular_radial_scatter_rms": 0.00222184303416097,
+  "inner_shift_reference_rms": 0.002404293182571505,
+  "inner_cells": 136,
+  "minimum_radius": 0.04330127018922192,
+  "null_boundary_max": 8.881784197001252e-16,
+  "fixed_angle_boundary_max": 4.742874840267547e-16,
+  "future_branch_max_beta_dot_normal": -0.9999999999999996,
+  "boundary_clock_error_max": 0.0,
+  "gates": {
+    "original_gauge_residual": true,
+    "direct_metric_rate": true,
+    "physical_boundary_data": true
+  }
+}

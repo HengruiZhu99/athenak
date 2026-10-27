@@ -1,8 +1,10 @@
 # Composite 3D elliptic shift: current implementation and evidence
 
 **Takeover in progress:** [current spherical alignment and interface evidence](takeover-alignment-20261027.md).
-The latest [compatible derivative and mapped-shell prototype](compatible-gauge-prototype-20261027.md)
-passes scoped spatial controls but is unadopted; stable 3D collapse remains unverified.
+The [latest combined-grid and physical wormhole gauge tests](compatible-wormhole-gauge-20261027.md)
+pass the bulk solve but expose a large scri-rate failure. The candidate remains
+unadopted; stable 3D collapse is unverified. The preceding
+[compatible derivative prototype](compatible-gauge-prototype-20261027.md) retains its component evidence.
 The [dated handoff](TAKEOVER-20261027.md) preserves the previous paused state.
 
 **Residual qualification:** all prior "original vector residual" results refer to

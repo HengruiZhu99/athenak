@@ -125,7 +125,7 @@ def mortar_global_candidate(left,right):
     return ILR,IRL
 
 
-def mortar(left,right):
+def mortar(left,right,seed='prolongation'):
     """Simultaneously constrain both norm-adjoint transfers on a local band.
 
     A global polynomial correction can satisfy moments yet fail refinement.
@@ -153,6 +153,8 @@ def mortar(left,right):
         first=max(0,min(nl-width,int(np.searchsorted(xl,x))-width//2))
         prolong[j,first:first+width]=interpolation(xl[first:first+width],x)
     initial=np.array([prolong[j,i]*np.sqrt(HR[j]/HL[i]) for i,j in pairs])
+    if seed=='zero':initial[:]=0
+    elif seed!='prolongation':raise ValueError('unknown local mortar seed')
     scale=np.sqrt(np.sum(A*A,axis=1));A/=scale[:,None];b/=scale
     value=initial+np.linalg.lstsq(A,b-mm(A,initial),rcond=1e-12)[0]
     residual=np.max(abs(mm(A,value)-b))

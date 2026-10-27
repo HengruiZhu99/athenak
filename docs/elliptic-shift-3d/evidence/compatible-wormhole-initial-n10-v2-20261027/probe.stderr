@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-wormhole-initial-n10-v2-20261027/source/tst/elliptic_shift_3d/solve_wormhole_sbp.py", line 125, in <module>
+    result=run(args);(args.output/'assessment.json').write_text(json.dumps(result,indent=2,allow_nan=False)+'\n');print(json.dumps(result,indent=2));raise SystemExit(0 if all(result['gates'].values()) else 1)
+  File "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/compatible-wormhole-initial-n10-v2-20261027/source/tst/elliptic_shift_3d/solve_wormhole_sbp.py", line 87, in run
+    weights=np.bincount(groups,weights=W.ravel());mean=np.bincount(groups,weights=(W*radial).ravel())/weights
+ValueError: object too deep for desired array
