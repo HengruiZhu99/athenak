@@ -35,6 +35,7 @@ struct CompositeSnapshot {
   bool log_halo_enrichment=false;
   int puncture_derivative_scheme=0;
   int boundary_derivative_scheme=0;
+  bool affine_shift_derivatives=false;
   Real log_halo_radius=.12; // v13 support was fixed at .12; v14 binds the radius
   Real telegraph_width=.08; // versions2..8 used the historical narrow default
 };
@@ -100,10 +101,11 @@ class CompositeCheckpoint {
         ||snapshot.puncture_derivative_scheme<0||snapshot.puncture_derivative_scheme>1
         ||(snapshot.puncture_derivative_scheme&&(!snapshot.enriched_log_derivatives||snapshot.positive_storage!=2||!snapshot.wormhole_chart))
         ||snapshot.boundary_derivative_scheme<0||snapshot.boundary_derivative_scheme>1
-        ||(snapshot.boundary_derivative_scheme&&snapshot.boundary_scheme!=1))
+        ||(snapshot.boundary_derivative_scheme&&snapshot.boundary_scheme!=1)
+        ||(snapshot.affine_shift_derivatives&&snapshot.boundary_scheme!=1))
       throw std::invalid_argument("invalid composite checkpoint state");
     Buffer b;
-    b.Put<std::uint64_t>(0x4353484946543031ull); b.Put<std::uint32_t>(16); b.Put<std::uint32_t>(0x01020304);
+    b.Put<std::uint64_t>(0x4353484946543031ull); b.Put<std::uint32_t>(17); b.Put<std::uint32_t>(0x01020304);
     for (char c : snapshot.source_tag) b.Put<char>(c);
     b.Put(mesh.half_width); b.Put(mesh.face_subdivisions); b.Put(mesh.cells); b.Put(mesh.ghosts);
     b.Put<std::uint64_t>(mesh.revision); b.PutVector(mesh.radii);
@@ -122,6 +124,7 @@ class CompositeCheckpoint {
     b.Put(snapshot.scri_radial_points);b.Put<int>(snapshot.radial_interface_stencils?1:0);
     b.Put(snapshot.positive_storage);b.Put(snapshot.telegraph_width);b.Put<int>(snapshot.enriched_log_derivatives?1:0);b.Put<int>(snapshot.radial_line_smoothing?1:0);b.Put<int>(snapshot.topology_coarsening?1:0);b.Put<int>(snapshot.log_halo_enrichment?1:0);b.Put(snapshot.log_halo_radius);b.Put(snapshot.puncture_derivative_scheme);
     b.Put(snapshot.boundary_derivative_scheme);
+    b.Put<int>(snapshot.affine_shift_derivatives?1:0);
     b.Put(Hash(b.bytes, b.bytes.size()));
     const std::string temporary = path+".tmp";
     {std::ofstream out(temporary, std::ios::binary|std::ios::trunc);
@@ -139,7 +142,7 @@ class CompositeCheckpoint {
     if (stored != Hash(b.bytes, b.bytes.size()-8)) throw std::runtime_error("composite checkpoint checksum mismatch");
     if (b.Get<std::uint64_t>() != 0x4353484946543031ull) throw std::runtime_error("checkpoint magic mismatch");
     const auto version=b.Get<std::uint32_t>();
-    if ((version<2||version>16)||b.Get<std::uint32_t>()!=0x01020304)
+    if ((version<2||version>17)||b.Get<std::uint32_t>()!=0x01020304)
       throw std::runtime_error("checkpoint format/endian mismatch");
     std::string tag;
     for (int i = 0; i < 64; ++i) tag += b.Get<char>();
@@ -213,6 +216,7 @@ class CompositeCheckpoint {
       ||(out.puncture_derivative_scheme&&(!out.enriched_log_derivatives||out.positive_storage!=2||!out.wormhole_chart)))throw std::runtime_error("checkpoint puncture derivative scheme mismatch");}
     if(version>=16){out.boundary_derivative_scheme=b.Get<int>();if(out.boundary_derivative_scheme<0||out.boundary_derivative_scheme>1
       ||(out.boundary_derivative_scheme&&out.boundary_scheme!=1))throw std::runtime_error("checkpoint boundary derivative scheme mismatch");}
+    if(version>=17){const int affine=b.Get<int>();if(affine<0||affine>1||(affine&&out.boundary_scheme!=1))throw std::runtime_error("checkpoint affine shift derivative mismatch");out.affine_shift_derivatives=affine;}
     if (b.cursor+8 != b.bytes.size()) throw std::runtime_error("checkpoint unexpected trailing payload");
     return out;
   }

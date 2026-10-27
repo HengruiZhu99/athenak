@@ -1,0 +1,50 @@
+UpdateCTestConfiguration  from :/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/DartConfiguration.tcl
+Test project /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 12
+    Start 12: elliptic_shift_3d_affine_engine
+
+12: Test command: /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_affine_engine_tests
+12: Working Directory: /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d
+12: Test timeout computed to be: 30
+12: {"prototype_bitwise":true,"linearity_roundoff_max":2.04636e-12,"minkowski_surface_rate_max":8.35702e-13,"body_beta_derivative_consistency_max":1.11022e-16,"original_vector_rms_max":3.35484e-12,"surface_pole":2.97889e-09,"status":"passed"}
+1/4 Test #12: elliptic_shift_3d_affine_engine .............   Passed    2.97 sec
+test 13
+    Start 13: elliptic_shift_3d_native_register_reset
+
+13: Test command: /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_native_register_reset_tests
+13: Working Directory: /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d
+13: Test timeout computed to be: 30
+13: {"methods":["rk3","rk4"],"next_stage_bitwise_checks":7,"all_volume_scri_endpoint_registers":true,"time_cycle_RK_beta_preserved":true,"midcycle_rejected":true,"status":"passed"}
+2/4 Test #13: elliptic_shift_3d_native_register_reset .....   Passed    0.42 sec
+test 37
+    Start 37: elliptic_shift_3d_regrid_restart
+
+37: Test command: /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_lifecycle_tests "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/composite-checkpoint-test.bin"
+37: Working Directory: /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d
+37: Test timeout computed to be: 60
+37: {"mixed_leaf_blocks":63,"layers":2,"face_subdivisions":2,"transfer_error":8.21565e-15,"surface_jet_error":1.3084e-12,"active_only_trace_error":0.00348126,"ghost_boundary_residual":4.66294e-15,"checkpoint_exact":true,"corruption_and_source_mismatch_rejected":true,"status":"passed"}
+3/4 Test #37: elliptic_shift_3d_regrid_restart ............   Passed    1.12 sec
+test 38
+    Start 38: elliptic_shift_3d_radial_interface_regrid
+
+38: Test command: /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_lifecycle_tests "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/composite-radial-checkpoint-test.bin" "1"
+38: Working Directory: /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d
+38: Test timeout computed to be: 180
+38: {"mixed_leaf_blocks":63,"layers":2,"face_subdivisions":2,"transfer_error":8.21565e-15,"surface_jet_error":1.3084e-12,"active_only_trace_error":0.00348126,"ghost_boundary_residual":4.44089e-15,"checkpoint_exact":true,"corruption_and_source_mismatch_rejected":true,"status":"passed"}
+4/4 Test #38: elliptic_shift_3d_radial_interface_regrid ...   Passed    2.57 sec
+
+The following tests passed:
+	elliptic_shift_3d_affine_engine
+	elliptic_shift_3d_native_register_reset
+	elliptic_shift_3d_regrid_restart
+	elliptic_shift_3d_radial_interface_regrid
+
+100% tests passed out of 4
+
+Total Test time (real) =   7.09 sec

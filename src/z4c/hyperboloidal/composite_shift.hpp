@@ -8,6 +8,7 @@
 #include "multigrid/composite_poisson.hpp"
 #include "multigrid/flexible_gmres.hpp"
 #include "z4c/hyperboloidal/elliptic_shift.hpp"
+#include "z4c/hyperboloidal/cartesian_affine_derivative.hpp"
 #include "z4c/hyperboloidal/log_volume_norm.hpp"
 
 namespace z4c {
@@ -44,9 +45,12 @@ class CompositeShiftStage {
   Real log_physical_volume=0;
   std::vector<Real> conformal_volume;
   multigrid::CompositePoisson preconditioner;
+  std::unique_ptr<CartesianAffineDerivative> affine_derivative;
 
-  explicit CompositeShiftStage(cubed_sphere::CompositeMesh mesh, int order = 4,bool radial_stencils=false,bool radial_lines=false,bool topology=false)
-      : grid(mesh, order,radial_stencils), preconditioner(std::move(mesh),radial_stencils,radial_lines,topology) {}
+  explicit CompositeShiftStage(cubed_sphere::CompositeMesh mesh, int order = 4,bool radial_stencils=false,bool radial_lines=false,bool topology=false,bool affine=false)
+      : grid(mesh, order,radial_stencils), preconditioner(std::move(mesh),radial_stencils,radial_lines,topology) {
+    if(affine)affine_derivative=std::make_unique<CartesianAffineDerivative>(grid);
+  }
 
   void SetGeometry(const std::vector<MetricJet<Real>> &g, const std::vector<Real> &chi = {}) {
     if (g.size() != grid.active.size()) throw std::invalid_argument("stage metric shape");
@@ -70,6 +74,12 @@ class CompositeShiftStage {
     const size_t size = grid.active.size();
     if (geometry.size() != size || beta.size() != 3*size)
       throw std::invalid_argument("shift stage geometry/vector shape");
+    if(affine_derivative){
+      const auto affine=affine_derivative->Fit(beta);const auto remainder=affine_derivative->PaddedRemainder(beta,affine,boundary);
+      out.resize(beta.size());for(size_t p=0;p<size;++p){const auto jet=affine_derivative->Sample(beta,remainder,affine,p);
+        Real result[3];ApplyEllipticShift(metric[p],geometry[p],jet,result);for(int v=0;v<3;++v)out[3*p+v]=-result[v];}
+      return;
+    }
     std::vector<Real> field(3*grid.count, 0);
     for (size_t p = 0; p < size; ++p)
       for (int v = 0; v < 3; ++v) field[v*grid.count+grid.active[p]] = beta[3*p+v];

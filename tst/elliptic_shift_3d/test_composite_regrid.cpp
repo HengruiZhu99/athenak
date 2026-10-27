@@ -7,7 +7,7 @@ template<class F>void Reject(F f){bool caught=false;try{f();}catch(const std::ex
 Real Polynomial(int f,const Real*x){return .0001*(f+1)*(1+x[0]-.3*x[1]+.2*x[2]+x[0]*x[1]+x[2]*x[2]);}
 int main(int argc,char**argv){Kokkos::initialize(argc,argv);int status=0;try{
   cubed_sphere::CompositeMesh mesh(.25,{.65,1},1,6,2,2);
-  auto factory=[&](bool wormhole){return std::make_unique<h::CompositeTensorEvolution>(mesh,true,1e-11,4,true,wormhole,0,7,true,wormhole?2:0,.24,false,true,true,false,.12,0,1);};
+  auto factory=[&](bool wormhole,bool affine=false){return std::make_unique<h::CompositeTensorEvolution>(mesh,true,1e-11,4,true,wormhole,0,7,true,wormhole?2:0,.24,false,true,true,false,.12,0,1,affine);};
   auto source=factory(false);source->Initialize(0,false);
   for(size_t p=0;p<source->shift.grid.active.size();++p){const auto&x=source->shift.grid.geometry[p].x;
     for(int f=0;f<22;++f)source->state[22*p+f]=Polynomial(f,x);
@@ -35,6 +35,12 @@ int main(int argc,char**argv){Kokkos::initialize(argc,argv);int status=0;try{
   changed=refined;changed.ghosts=3;Reject([&]{h::RebuildCompositeAtAcceptedState(*source,changed);});
   changed=refined;changed.blocks.pop_back();Reject([&]{h::RebuildCompositeAtAcceptedState(*source,changed);});
   source->state[0]=std::numeric_limits<Real>::quiet_NaN();Reject([&]{h::RebuildCompositeAtAcceptedState(*source,refined);});source->state=saved;
+  auto affine_source=factory(false,true);affine_source->Initialize(0,false);
+  const auto affine_before=affine_source->state;
+  auto affine_regrid=h::RebuildCompositeAtAcceptedState(*affine_source,refined);
+  Require(affine_regrid.engine->affine_shift_derivatives&&affine_regrid.engine->shift.affine_derivative,
+          "accepted regrid lost declared affine fine discretization");
+  Require(affine_source->state==affine_before,"affine regrid mutated source");
   Real log_error=0,global_log_error=0,physical_error=0,physical_square=0,physical_volume=0,maximum_l1=0;size_t log_rows=0,enlarged_rows=0;
   for(const auto powers:{std::array<Real,2>{4,2},std::array<Real,2>{2,1.09}}){
     auto positive=factory(true);positive->Initialize(0,false);

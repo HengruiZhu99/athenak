@@ -73,7 +73,7 @@ inline CompositeRegridResult RebuildCompositeAtAcceptedState(
     source.order,bool(old.scri),old.wormhole,old.isotropic_reference,old.scri?old.scri->radial_nodes:6,
     source.radial_interface_stencils,old.positive_storage,old.telegraph_width,bool(old.log_plans||old.supported_log_plans),
     old.shift.preconditioner.UsesRadialLines(),old.shift.preconditioner.UsesTopologyCoarsening(),bool(old.log_halo_plans),
-    old.log_halo_radius,old.puncture_derivative_scheme,old.boundary_derivative_scheme);
+    old.log_halo_radius,old.puncture_derivative_scheme,old.boundary_derivative_scheme,old.affine_shift_derivatives);
   auto&target=*result.engine;target.pole_sat=old.pole_sat;target.regularity_sat=old.regularity_sat;
   const size_t per=size_t(source.n)*source.n*source.n;
   std::vector<int> ordinal(source.count,-1);for(size_t p=0;p<source.active.size();++p)ordinal[source.active[p]]=p;

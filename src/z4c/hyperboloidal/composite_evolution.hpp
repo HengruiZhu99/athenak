@@ -60,6 +60,8 @@ class CompositeTensorEvolution {
   std::unique_ptr<cubed_sphere::ScriSurface> scri;
   std::unique_ptr<cubed_sphere::HermiteBoundarySampler> hermite_boundary;
   int boundary_derivative_scheme=0;
+  bool affine_shift_derivatives=false;
+  std::optional<CartesianAffineDerivative::Field> shift_affine;
   std::uint64_t boundary_epoch=0;
   V boundary_rhs, beta_padded;
   Real pole_sat=4,regularity_sat=8;
@@ -73,8 +75,8 @@ class CompositeTensorEvolution {
   Real boundary_pole=0,raw_clock_rate=0,boundary_regularity=0;
   CompositeTensorEvolution(int n, int shells, bool flux, Real tolerance, int order = 4,bool regular_scri=false)
       : CompositeTensorEvolution(cubed_sphere::CompositeMesh(.25, shells == 1 ? V{1} : V{.65, 1}, 1, n), flux, tolerance, order,regular_scri) {}
-  CompositeTensorEvolution(cubed_sphere::CompositeMesh mesh, bool flux, Real tolerance, int order = 4,bool regular_scri=false,bool puncture=false,int matched=0,int surface_points=6,bool radial_stencils=false,int positive_mode=0,Real taper_width=.24,bool enriched=false,bool radial_lines=false,bool topology=false,bool log_halos=false,Real halo_radius=.12,int puncture_scheme=0,int boundary_derivatives=0)
-      : shift(std::move(mesh), order,radial_stencils,radial_lines,topology),
+  CompositeTensorEvolution(cubed_sphere::CompositeMesh mesh, bool flux, Real tolerance, int order = 4,bool regular_scri=false,bool puncture=false,int matched=0,int surface_points=6,bool radial_stencils=false,int positive_mode=0,Real taper_width=.24,bool enriched=false,bool radial_lines=false,bool topology=false,bool log_halos=false,Real halo_radius=.12,int puncture_scheme=0,int boundary_derivatives=0,bool affine_shift=false)
+      : shift(std::move(mesh), order,radial_stencils,radial_lines,topology,affine_shift),
         state(fields*shift.grid.active.size(), 0), beta_delta(3*shift.grid.active.size(), 0),
         elliptic_atol(tolerance), telegraph(flux),wormhole(puncture),isotropic_reference(matched),positive_storage(positive_mode),telegraph_width(taper_width),log_halo_radius(halo_radius) {
     if(puncture_scheme<0||puncture_scheme>1||(puncture_scheme&&(!enriched||!regular_scri)))
@@ -83,6 +85,8 @@ class CompositeTensorEvolution {
     if(boundary_derivatives<0||boundary_derivatives>1||(boundary_derivatives&&!regular_scri))
       throw std::invalid_argument("unsupported boundary derivative scheme");
     boundary_derivative_scheme=boundary_derivatives;
+    if(affine_shift&&!regular_scri)throw std::invalid_argument("coupled affine shift option requires regular tensor scri");
+    affine_shift_derivatives=affine_shift;
     if(enriched){if(!wormhole||positive_storage!=2)throw std::invalid_argument("enrichment requires exponent-independent log storage");
       if(puncture_derivative_scheme) supported_log_plans=std::make_unique<SupportedPunctureLogPlans>(shift.grid);
       else log_plans=std::make_unique<PunctureLogPlans>(shift.grid);}
@@ -277,13 +281,19 @@ class CompositeTensorEvolution {
     elliptic_iterations += report.iterations;
     max_shift_residual = std::max(max_shift_residual, report.physical_residual_rms);
     max_shift_point_residual=std::max(max_shift_point_residual,report.residual_max);
-    V delta(3*grid.count, 0);
-    for (size_t p = 0; p < jets.size(); ++p)
-    for (int v = 0; v < 3; ++v) delta[v*grid.count+grid.active[p]] = beta_delta[3*p+v];
-    grid.Fill(delta, 3, [&](int v, const auto &x) {return boundary(x)[v];});
+    V delta;
+    if(shift.affine_derivative){shift_affine.emplace(shift.affine_derivative->Fit(beta_delta));
+      delta=shift.affine_derivative->PaddedRemainder(beta_delta,*shift_affine,boundary);
+    }else{shift_affine.reset();delta.assign(3*grid.count,0);
+      for (size_t p = 0; p < jets.size(); ++p)
+      for (int v = 0; v < 3; ++v) delta[v*grid.count+grid.active[p]] = beta_delta[3*p+v];
+      grid.Fill(delta, 3, [&](int v, const auto &x) {return boundary(x)[v];});}
     if(scri){beta_padded=delta;
       for(size_t p=0;p<scri->rows.size();++p){const auto &x=scri->rows[p].geometry.x;
         const auto datum=boundary({x[0],x[1],x[2]});for(int v=0;v<3;++v)scri->beta[3*p+v]=datum[v];}}
+    if(shift_affine){for(size_t p=0;p<jets.size();++p){const auto q=shift.affine_derivative->Sample(beta_delta,delta,*shift_affine,p);
+        for(int v=0;v<3;++v){jets[p].beta.value[v]+=q.value[v];for(int a=0;a<3;++a){jets[p].beta.d[a][v]+=q.d[a][v];
+          for(int b=0;b<3;++b)jets[p].beta.dd[a][b][v]+=q.dd[a][b][v];}}}return;}
     for (size_t p = 0; p < jets.size(); ++p)
     for (int v = 0; v < 3; ++v) {
       jets[p].beta.value[v] += beta_delta[3*p+v];
@@ -300,17 +310,24 @@ class CompositeTensorEvolution {
     boundary_pole=raw_clock_rate=boundary_regularity=0;
     using Prepared=cubed_sphere::HermiteBoundarySampler::Prepared;
     std::optional<Prepared> prepared_fields,prepared_beta;
+    V beta_remainder;
+    if(shift_affine){beta_remainder=scri->beta;for(size_t p=0;p<scri->rows.size();++p){
+      const auto a=shift.affine_derivative->At(*shift_affine,scri->rows[p].geometry.x);
+      for(int v=0;v<3;++v)beta_remainder[3*p+v]-=a.value[v];}}
+    const auto&beta_trace=shift_affine?beta_remainder:scri->beta;
     if(hermite_boundary){
       if(boundary_epoch==std::numeric_limits<std::uint64_t>::max())throw std::overflow_error("boundary epoch exhausted");
       const auto epoch=++boundary_epoch;
       prepared_fields.emplace(hermite_boundary->Prepare(padded,scri->values,fields,epoch));
-      prepared_beta.emplace(hermite_boundary->Prepare(beta_padded,scri->beta,3,epoch));
+      prepared_beta.emplace(hermite_boundary->Prepare(beta_padded,beta_trace,3,epoch));
     }
     for(size_t p=0;p<scri->rows.size();++p){
       const auto &row=scri->rows[p];const auto &x=row.geometry.x;
       const auto sampled=hermite_boundary?hermite_boundary->Sample(p,*prepared_fields):scri->Sample(p,padded,scri->values,fields);
       auto u=UnpackComposite(x,sampled.value,sampled.d,sampled.dd,wormhole,isotropic_reference,positive_storage);
-      const auto shift_jet=hermite_boundary?hermite_boundary->Sample(p,*prepared_beta):scri->Sample(p,beta_padded,scri->beta,3);
+      auto shift_jet=hermite_boundary?hermite_boundary->Sample(p,*prepared_beta):scri->Sample(p,beta_padded,beta_trace,3);
+      if(shift_affine){const auto affine=shift.affine_derivative->At(*shift_affine,x);
+        for(int v=0;v<3;++v){shift_jet.value[v]=scri->beta[3*p+v];for(int a=0;a<3;++a)shift_jet.d[v][a]+=affine.d[a][v];}}
       for(int v=0;v<3;++v){u.beta.value[v]+=shift_jet.value[v];
         for(int a=0;a<3;++a){u.beta.d[a][v]+=shift_jet.d[v][a];for(int b=0;b<3;++b)u.beta.dd[a][b][v]+=shift_jet.dd[v][a][b];}}
       const auto geometry=Geometry(u.metric);

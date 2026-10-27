@@ -82,12 +82,14 @@ int main(int argc, char **argv) {
     const Real halo_radius=argc>29?std::stod(argv[29]):.12;
     const int puncture_scheme=argc>30?std::stoi(argv[30]):0;
     const int boundary_derivatives=argc>31?std::stoi(argv[31]):0;
+    const int affine_shift=argc>32?std::stoi(argv[32]):0;
     if (n < 6 || n > 16 || steps < 0 || steps > 200 || dt <= 0 || dt*steps > .1
         || std::abs(amplitude) > 1e-3 || shells<1||shells>16||radii.size()!=size_t(shells)||radii.back()!=1||bulk<1||bulk>4
         ||size_t(n)*n*n*(bulk*bulk*bulk+6*shells)>50000
         ||surface_points<6||surface_points>8||surface_points>n+1
         ||refinement<0||refinement>30|| (refinement>0&&!topology)|| (log_halos&&!enriched)
         ||!(halo_radius>0)||!std::isfinite(halo_radius)||(log_halos&&halo_radius>.25)
+        ||affine_shift<0||affine_shift>1||(affine_shift&&!regular_scri)
         ||boundary_derivatives<0||boundary_derivatives>1||(boundary_derivatives&&!regular_scri)
         ||puncture_scheme<0||puncture_scheme>1||(puncture_scheme&&!enriched)
         ||positive_storage<0||positive_storage>3||(!wormhole&&positive_storage)
@@ -96,7 +98,7 @@ int main(int argc, char **argv) {
         ||(wormhole&&(!regular_scri||n%2||initial.empty())))
       throw std::invalid_argument("bounded coupled pilot budget");
     const auto start = std::chrono::steady_clock::now();
-    Pilot pilot(PilotMesh(n,radii,bulk,refinement),true,tolerance,spatial_order,regular_scri,wormhole,isotropic_reference,surface_points,radial_stencils,positive_storage,telegraph_width,enriched,radial_lines,topology,log_halos,halo_radius,puncture_scheme,boundary_derivatives);
+    Pilot pilot(PilotMesh(n,radii,bulk,refinement),true,tolerance,spatial_order,regular_scri,wormhole,isotropic_reference,surface_points,radial_stencils,positive_storage,telegraph_width,enriched,radial_lines,topology,log_halos,halo_radius,puncture_scheme,boundary_derivatives,affine_shift);
     if(argc>13)pilot.pole_sat=std::stod(argv[13]);if(argc>14)pilot.regularity_sat=std::stod(argv[14]);
     if(pilot.pole_sat<0||pilot.regularity_sat<0)throw std::invalid_argument("negative scri weak-boundary coefficient");
     pilot.Initialize(amplitude, angular);
@@ -113,14 +115,14 @@ int main(int argc, char **argv) {
         snapshot.wormhole_chart=wormhole;
         snapshot.isotropic_reference=isotropic_reference;
         snapshot.scri_radial_points=surface_points;snapshot.radial_interface_stencils=radial_stencils;
-        snapshot.positive_storage=positive_storage;snapshot.telegraph_width=telegraph_width;snapshot.enriched_log_derivatives=enriched;snapshot.radial_line_smoothing=radial_lines;snapshot.topology_coarsening=topology;snapshot.log_halo_enrichment=log_halos;snapshot.log_halo_radius=halo_radius;snapshot.puncture_derivative_scheme=puncture_scheme;snapshot.boundary_derivative_scheme=boundary_derivatives;
+        snapshot.positive_storage=positive_storage;snapshot.telegraph_width=telegraph_width;snapshot.enriched_log_derivatives=enriched;snapshot.radial_line_smoothing=radial_lines;snapshot.topology_coarsening=topology;snapshot.log_halo_enrichment=log_halos;snapshot.log_halo_radius=halo_radius;snapshot.puncture_derivative_scheme=puncture_scheme;snapshot.boundary_derivative_scheme=boundary_derivatives;snapshot.affine_shift_derivatives=affine_shift;
         cubed_sphere::CompositeCheckpoint::Write(checkpoint, snapshot);
       }
     }
     bool restart_equal = checkpoint.empty();
     if (!checkpoint.empty()) {
       const auto snapshot = cubed_sphere::CompositeCheckpoint::Read(checkpoint, source_tag);
-      Pilot restarted(snapshot.mesh, snapshot.telegraph, snapshot.tolerance, snapshot.spatial_order,snapshot.boundary_scheme==1,snapshot.wormhole_chart,snapshot.isotropic_reference,snapshot.scri_radial_points,snapshot.radial_interface_stencils,snapshot.positive_storage,snapshot.telegraph_width,snapshot.enriched_log_derivatives,snapshot.radial_line_smoothing,snapshot.topology_coarsening,snapshot.log_halo_enrichment,snapshot.log_halo_radius,snapshot.puncture_derivative_scheme,snapshot.boundary_derivative_scheme);
+      Pilot restarted(snapshot.mesh, snapshot.telegraph, snapshot.tolerance, snapshot.spatial_order,snapshot.boundary_scheme==1,snapshot.wormhole_chart,snapshot.isotropic_reference,snapshot.scri_radial_points,snapshot.radial_interface_stencils,snapshot.positive_storage,snapshot.telegraph_width,snapshot.enriched_log_derivatives,snapshot.radial_line_smoothing,snapshot.topology_coarsening,snapshot.log_halo_enrichment,snapshot.log_halo_radius,snapshot.puncture_derivative_scheme,snapshot.boundary_derivative_scheme,snapshot.affine_shift_derivatives);
       restarted.state = snapshot.fields; restarted.beta_delta = snapshot.shift_warm_start;
       restarted.pole_sat=snapshot.boundary_pole_sat;restarted.regularity_sat=snapshot.boundary_regularity_sat;
       if(restarted.scri)restarted.scri->values=snapshot.boundary_fields;
@@ -131,6 +133,13 @@ int main(int argc, char **argv) {
       if (!restart_equal) throw std::runtime_error("coupled restart is not bitwise reproducible");
     }
     pilot.RHS(pilot.state, dt);  // accepted-state diagnostics, with a fresh stage solve
+    // Preserve the actual diagnostic state as well as the midpoint restart.
+    // The latter can contain a last-RK-stage shift warm start; this snapshot
+    // follows the fresh accepted-state solve above. No evolution is repeated.
+    if(!checkpoint.empty()&&steps>=2){auto accepted=cubed_sphere::CompositeCheckpoint::Read(checkpoint,source_tag);
+      accepted.step=steps;accepted.fields=pilot.state;accepted.shift_warm_start=pilot.beta_delta;
+      if(pilot.scri)accepted.boundary_fields=pilot.scri->values;
+      cubed_sphere::CompositeCheckpoint::Write(checkpoint+".accepted.checkpoint",accepted);}
     const auto &grid = pilot.shift.grid;
     Real H2 = 0, M2 = 0, theta2 = 0, Z2 = 0, volume = 0;
     Real maxH = 0, maxM = 0, drift = 0, min_alpha = 1, min_chi = 1;
@@ -183,7 +192,7 @@ int main(int argc, char **argv) {
       if(!geometry.valid)throw std::runtime_error("invalid accepted scri metric");
       Real bn=0,bghost=0,norm=0,ghost[3];
       for(int i=0;i<3;++i){bn+=(-x[i]+pilot.scri->beta[3*p+i])*x[i];
-        ghost[i]=-x[i]+pilot.scri->ReconstructFromGhost(p,pilot.beta_padded,i);bghost+=ghost[i]*x[i];
+        ghost[i]=-x[i]+(pilot.shift_affine?pilot.shift.affine_derivative->At(*pilot.shift_affine,x).value[i]:0)+pilot.scri->ReconstructFromGhost(p,pilot.beta_padded,i);bghost+=ghost[i]*x[i];
         for(int j=0;j<3;++j)norm+=u.chi.value*geometry.inverse[i][j]*x[i]*x[j];}
       const Real ag=pilot.scri->ReconstructFromGhost(p,padded,18);
       const Real alpha_ghost=positive_storage?pilot.DecodePositive(18,ag,x):(wormhole?std::exp(ag):(1+x[0]*x[0]+x[1]*x[1]+x[2]*x[2])/2+ag);
@@ -292,6 +301,7 @@ int main(int argc, char **argv) {
               << ",\"isotropic_reference\":"<<isotropic_reference
               << ",\"scri_radial_points\":"<<surface_points<<",\"radial_interface_stencils\":"<<radial_stencils
               << ",\"log_halo_enrichment\":"<<log_halos
+              << ",\"affine_shift_derivatives\":"<<affine_shift
               << ",\"boundary_derivative_scheme\":"<<boundary_derivatives
               << ",\"puncture_derivative_scheme\":"<<puncture_scheme
               << ",\"supported_enlarged_rows\":"<<(pilot.supported_log_plans?pilot.supported_log_plans->enlarged_rows:0)

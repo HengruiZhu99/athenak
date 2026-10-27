@@ -23,6 +23,7 @@ def main():
     parser.add_argument('--radius', type=float, default=.24)
     parser.add_argument('--puncture-scheme', type=int, choices=(0, 1), default=0)
     parser.add_argument('--boundary-scheme', type=int, choices=(0, 1), default=0)
+    parser.add_argument('--affine-shift', type=int, choices=(0, 1), default=0)
     args = parser.parse_args()
     if not 0 < args.radius <= .25:
         parser.error('radius must lie in (0,.25]')
@@ -49,11 +50,12 @@ def main():
                str(output/'coupled.csv'), str(output/'coupled.checkpoint'), tag,
                '4', '1', '4', '8', '1', str(initial), '2', '0',
                '.45,.55,.60,.65,.70,.75,1', '7', '1', '2', '.24',
-               '1', '1', '1', '3', '1', str(args.radius), str(args.puncture_scheme), str(args.boundary_scheme)]
+               '1', '1', '1', '3', '1', str(args.radius), str(args.puncture_scheme), str(args.boundary_scheme), str(args.affine_shift)]
     report = dict(command=command, maximum_seconds=180, workers=1,
                   active_cell_budget=50000, actual_active_cells=47088,
                   radius=args.radius, puncture_derivative_scheme=args.puncture_scheme,
                   boundary_derivative_scheme=args.boundary_scheme,
+                  affine_shift_derivatives=args.affine_shift,
                   binary_sha256=tag,
                   source_head=subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),
                   compiled_dependencies=before, initial_sha256=digest(initial),
