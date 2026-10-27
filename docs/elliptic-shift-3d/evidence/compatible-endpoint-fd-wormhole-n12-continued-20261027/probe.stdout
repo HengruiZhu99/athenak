@@ -1,0 +1,124 @@
+{
+  "iterations": 80,
+  "maximum_iterations": 400,
+  "restart": 100,
+  "converged": true,
+  "history": [
+    {
+      "iteration": 20,
+      "original_rms": 2.256922621998209e-09,
+      "original_point": 4.355836452062754e-08
+    },
+    {
+      "iteration": 40,
+      "original_rms": 1.7403210466890867e-09,
+      "original_point": 6.312192201345309e-08
+    },
+    {
+      "iteration": 60,
+      "original_rms": 1.2395283793332322e-09,
+      "original_point": 3.347549369194859e-08
+    },
+    {
+      "iteration": 80,
+      "original_rms": 7.735879944813183e-10,
+      "original_point": 1.6081331592891147e-08
+    }
+  ],
+  "original_rms": 7.73587870876926e-10,
+  "original_point": 1.608133109013858e-08,
+  "linear_continuation": {
+    "case": "compatible-endpoint-fd-wormhole-n12-20261027",
+    "solution_sha256": "a011b224af2b8305f46c868c457eb83ae978f233e309e06a9cd989d70e7841cd",
+    "prior_iterations": 1200,
+    "initial_residual_rms": 3.241911019652744e-09,
+    "total_iterations": 1280
+  },
+  "scope": "Frozen physical wormhole initial-state gauge test on the compatible grid.\n\nUses the successful spherical run's actual Schwarzschild constructor and t=0\nshift profiles. This is an initial elliptic solve, not a time evolution. The\nbulk source is DV[-2 alpha A], with physical future-null fixed-angle boundary\ndata at actual scri. Evolved scri metric-rate regularity is not supplied here;\nthe raw boundary connection rate is reported separately, not declared zero.\n",
+  "n": 12,
+  "cells": 32832,
+  "amr_core": false,
+  "cached_coefficients": true,
+  "radial_partition_s": [
+    0.0,
+    0.45,
+    0.8,
+    1.0
+  ],
+  "affine_coefficient_correction": true,
+  "affine_coefficient_diagnostics": {
+    "scope": "Unadopted global affine-moment correction of an existing SBP pair.\n\nThis changes derivative coefficients, not evolved fields, constraints or RHS\nvalues. The four physical affine modes are differentiated rather than removed.\nThe update is global and low rank; its nonlocality and refinement behavior must\nbe qualified before any evolution adoption. No boundary rows are replaced here.\n",
+    "global_affine_modes": 4,
+    "axes": [
+      {
+        "axis": 0,
+        "moment_compatibility_max": 1.757304160981807e-16,
+        "high_mode_symmetry_max": 2.379568124672811e-17,
+        "uncorrected_affine_rms": 0.013508627935195937
+      },
+      {
+        "axis": 1,
+        "moment_compatibility_max": 1.757304160981796e-16,
+        "high_mode_symmetry_max": 9.686757734049075e-18,
+        "uncorrected_affine_rms": 0.01350862793519594
+      },
+      {
+        "axis": 2,
+        "moment_compatibility_max": 1.7573041609817957e-16,
+        "high_mode_symmetry_max": 2.4418204640511458e-17,
+        "uncorrected_affine_rms": 0.013508627935195928
+      }
+    ]
+  },
+  "reference_source_hashes": {
+    "wormhole_isotropic.py": "5103cd3480a113df2f2bf42d98914f0dec823ef58730eeacabd2d633d3b5b4b9",
+    "wormhole_data.py": "b7e8125715c6658a0574feb4c262b741dda03e825d8376c37a1d6cb181875969",
+    "profile-n1025": "d2b3613e75e1d8d48dfb6510f3c7865cb3d957ee820fb91ba80ef7a16336c519",
+    "profile-n2049": "10ccd0b3f5efabfa01822b7ae3e731330a0ba693aaa1b1c0380be10e49c7174a"
+  },
+  "mass": 0.3333333333333333,
+  "time": 0.0,
+  "constructor_warnings": [
+    {
+      "message": "underflow encountered in multiply",
+      "file": "wormhole_isotropic.py",
+      "line": 56
+    }
+  ],
+  "setup_seconds": 29.703551125,
+  "solve_seconds": 12.544674333000003,
+  "preconditioner": {
+    "coarse_dimension": 228,
+    "coarse_degree": 1,
+    "coarse_singular_min": 11.528213593783844,
+    "coarse_singular_max": 14499.511307400622,
+    "coarse_condition": 1257.741382864292,
+    "balanced": false,
+    "operator_changed": false
+  },
+  "full_original_rms": 7.735861112417805e-10,
+  "full_original_point": 1.608124496869386e-08,
+  "bulk_actual_metric_rate_rms": 7.784662542030702e-10,
+  "bulk_actual_metric_rate_max": 1.6081244994418558e-08,
+  "raw_scri_metric_rate_max": 0.2182311903869816,
+  "all_node_metric_rate_rms": 0.00904141773275811,
+  "radial_shift_reference_rms": 0.0041759468238744294,
+  "radial_shift_reference_max": 0.04291019272842711,
+  "reference_1025_2049_rms": 2.879916892070965e-06,
+  "tangential_shift_rms": 0.0018051170792155633,
+  "angular_radial_scatter_rms": 0.0034694115250937197,
+  "inner_shift_reference_rms": 9.172626333314115e-05,
+  "inner_cells": 208,
+  "minimum_radius": 0.036084391824351573,
+  "null_boundary_max": 8.881784197001252e-16,
+  "fixed_angle_boundary_max": 4.596460756922437e-16,
+  "future_branch_max_beta_dot_normal": -0.9999999999999997,
+  "boundary_clock_error_max": 0.0,
+  "gates": {
+    "original_gauge_residual": true,
+    "direct_metric_rate": true,
+    "physical_boundary_data": true,
+    "strong_all_node_rate": false
+  },
+  "shell_rule": "Unmodified full strong tensor gauge with local endpoint SBP shell rules."
+}

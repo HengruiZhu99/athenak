@@ -1,0 +1,332 @@
+{
+  "scope": "Frozen 1D field sampled on 3D layouts; no evolution or solved-field claim.\n\nCompare truncation and affine-moment localization before expensive solves.\nEvery active node and every scri node is retained in the saved diagnostics.\n",
+  "reference_hashes": {
+    "wormhole_data.py": "b7e8125715c6658a0574feb4c262b741dda03e825d8376c37a1d6cb181875969",
+    "wormhole_isotropic.py": "5103cd3480a113df2f2bf42d98914f0dec823ef58730eeacabd2d633d3b5b4b9",
+    "profile": "10ccd0b3f5efabfa01822b7ae3e731330a0ba693aaa1b1c0380be10e49c7174a"
+  },
+  "rows": [
+    {
+      "n": 10,
+      "radial_partition_s": [
+        0.0,
+        0.45,
+        1.0
+      ],
+      "cells": 13000,
+      "sampled_reference": [
+        {
+          "operator": "base",
+          "scri_max": 6.496389867450668,
+          "all_node_rms": 50.56794716414599,
+          "bulk_rms": 51.66435285735247,
+          "layer_rms": [
+            53.19850762260884,
+            50.822344736238776
+          ]
+        },
+        {
+          "operator": "global_affine",
+          "scri_max": 0.5529714837302964,
+          "all_node_rms": 50.547419204843614,
+          "bulk_rms": 51.64378990581296,
+          "layer_rms": [
+            53.22663271736248,
+            50.787435308338026
+          ]
+        },
+        {
+          "operator": "layer_affine",
+          "scri_max": 0.060562703201771484,
+          "all_node_rms": 50.55561725988745,
+          "bulk_rms": 51.65216875304938,
+          "layer_rms": [
+            53.21863772007576,
+            50.80053103171331
+          ]
+        }
+      ],
+      "shell_group_affine_moments": [
+        {
+          "group": "core",
+          "blocks": [
+            0
+          ],
+          "compatibility_max": 7.807716606846711e-15
+        },
+        {
+          "group": "layer-0",
+          "blocks": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "compatibility_max": 6.554098514618648e-16
+        },
+        {
+          "group": "layer-1",
+          "blocks": [
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ],
+          "compatibility_max": 4.0524173373864167e-16
+        }
+      ],
+      "constructor_underflow_warnings": 10
+    },
+    {
+      "n": 10,
+      "radial_partition_s": [
+        0.0,
+        0.45,
+        0.8,
+        1.0
+      ],
+      "cells": 19000,
+      "sampled_reference": [
+        {
+          "operator": "base",
+          "scri_max": 6.4864123646608665,
+          "all_node_rms": 43.87184150868717,
+          "bulk_rms": 44.21064938415599,
+          "layer_rms": [
+            39.467913506552875,
+            63.14074211452584,
+            1.0219583956908032
+          ]
+        },
+        {
+          "operator": "global_affine",
+          "scri_max": 0.5546274886888156,
+          "all_node_rms": 43.87181618381318,
+          "bulk_rms": 44.2107914864878,
+          "layer_rms": [
+            39.50177142862746,
+            63.136939703990265,
+            0.08750273690625922
+          ]
+        },
+        {
+          "operator": "layer_affine",
+          "scri_max": 2.3200958046044276e-12,
+          "all_node_rms": 43.89012493072732,
+          "bulk_rms": 44.2292429351858,
+          "layer_rms": [
+            39.52578271816184,
+            63.161119473629874,
+            0.025500958390122636
+          ]
+        }
+      ],
+      "shell_group_affine_moments": [
+        {
+          "group": "core",
+          "blocks": [
+            0
+          ],
+          "compatibility_max": 7.807716606846711e-15
+        },
+        {
+          "group": "layer-0",
+          "blocks": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "compatibility_max": 6.554098514618648e-16
+        },
+        {
+          "group": "layer-1",
+          "blocks": [
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ],
+          "compatibility_max": 4.552123965301505e-16
+        },
+        {
+          "group": "layer-2",
+          "blocks": [
+            13,
+            14,
+            15,
+            16,
+            17,
+            18
+          ],
+          "compatibility_max": 3.353209195842338e-16
+        }
+      ],
+      "constructor_underflow_warnings": 10
+    },
+    {
+      "n": 10,
+      "radial_partition_s": [
+        0.0,
+        0.45,
+        0.55,
+        0.6,
+        0.65,
+        0.7,
+        0.75,
+        1.0
+      ],
+      "cells": 43000,
+      "sampled_reference": [
+        {
+          "operator": "base",
+          "scri_max": 6.486681406378283,
+          "all_node_rms": 20.077974979294225,
+          "bulk_rms": 20.271993613170366,
+          "layer_rms": [
+            17.852885106818444,
+            55.26936116113538,
+            35.621546379889345,
+            1.1120448628525519,
+            1.0954953413407327,
+            1.088306336975136,
+            1.032993175345609
+          ]
+        },
+        {
+          "operator": "global_affine",
+          "scri_max": 0.5541738927394113,
+          "all_node_rms": 20.071478446027438,
+          "bulk_rms": 20.26589340140162,
+          "layer_rms": [
+            17.89400971056623,
+            55.29353994256047,
+            35.58660538055163,
+            0.09512144502479512,
+            0.093706115435345,
+            0.09309454744038456,
+            0.08836353909403594
+          ]
+        },
+        {
+          "operator": "layer_affine",
+          "scri_max": 1.5807503292017611e-12,
+          "all_node_rms": 20.075872185602666,
+          "bulk_rms": 20.270333089123135,
+          "layer_rms": [
+            17.870168905864112,
+            55.389535965385626,
+            35.43026535421742,
+            0.0017226964072524905,
+            1.0377163414579436e-11,
+            9.433675967435655e-12,
+            6.047884459444632e-13
+          ]
+        }
+      ],
+      "shell_group_affine_moments": [
+        {
+          "group": "core",
+          "blocks": [
+            0
+          ],
+          "compatibility_max": 7.807716606846711e-15
+        },
+        {
+          "group": "layer-0",
+          "blocks": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "compatibility_max": 6.554098514618648e-16
+        },
+        {
+          "group": "layer-1",
+          "blocks": [
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ],
+          "compatibility_max": 3.9743108297642794e-16
+        },
+        {
+          "group": "layer-2",
+          "blocks": [
+            13,
+            14,
+            15,
+            16,
+            17,
+            18
+          ],
+          "compatibility_max": 5.993228078052689e-16
+        },
+        {
+          "group": "layer-3",
+          "blocks": [
+            19,
+            20,
+            21,
+            22,
+            23,
+            24
+          ],
+          "compatibility_max": 8.458115465318285e-16
+        },
+        {
+          "group": "layer-4",
+          "blocks": [
+            25,
+            26,
+            27,
+            28,
+            29,
+            30
+          ],
+          "compatibility_max": 4.917596649871568e-16
+        },
+        {
+          "group": "layer-5",
+          "blocks": [
+            31,
+            32,
+            33,
+            34,
+            35,
+            36
+          ],
+          "compatibility_max": 4.1559741638757237e-16
+        },
+        {
+          "group": "layer-6",
+          "blocks": [
+            37,
+            38,
+            39,
+            40,
+            41,
+            42
+          ],
+          "compatibility_max": 3.827517490422622e-16
+        }
+      ],
+      "constructor_underflow_warnings": 10
+    }
+  ],
+  "adopted": false
+}

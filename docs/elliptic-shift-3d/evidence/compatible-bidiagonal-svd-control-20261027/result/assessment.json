@@ -1,0 +1,50 @@
+{
+  "scope": "Independent SVD controls, including a stationary nonzero residual.",
+  "rows": [
+    {
+      "inconsistent": false,
+      "independent_solution_error": 6.956024006297335e-12,
+      "residual_norm": 9.563551133302336e-16,
+      "normal_residual_norm": 4.788232973753381e-16,
+      "reported_converged": true,
+      "diagnostic": {
+        "iteration": 24,
+        "original_rms": 9.563551133302336e-16,
+        "original_point": 4.440892098500626e-16,
+        "adjoint_residual_norm": 4.788232973753381e-16,
+        "restricted_min_singular": 1.0000000000005859e-05,
+        "restricted_max_singular": 0.9999999999999992,
+        "conditioning_lower_bound": 99999.99999994133,
+        "weak_vector_norm": 0.9999999999999999,
+        "weak_action_norm": 1.0000000000004168e-05,
+        "weak_action_vs_svd_relative_error": 1.6906777627195835e-18,
+        "small_system_residual": 9.471047002997093e-16
+      }
+    },
+    {
+      "inconsistent": true,
+      "independent_solution_error": 2.2235862694875096e-08,
+      "residual_norm": 0.24999999999999992,
+      "normal_residual_norm": 3.113232972192538e-16,
+      "reported_converged": false,
+      "diagnostic": {
+        "iteration": 24,
+        "original_rms": 0.24999999999999992,
+        "original_point": 0.09638741059800976,
+        "adjoint_residual_norm": 3.113232972192538e-16,
+        "restricted_min_singular": 9.999999999998066e-06,
+        "restricted_max_singular": 0.9999999999999992,
+        "conditioning_lower_bound": 100000.00000001927,
+        "weak_vector_norm": 0.9999999999999999,
+        "weak_action_norm": 1.000000000000197e-05,
+        "weak_action_vs_svd_relative_error": 3.903127820947816e-18,
+        "small_system_residual": 0.25
+      }
+    }
+  ],
+  "gates": {
+    "consistent_solution": true,
+    "stationary_residual_not_accepted": true,
+    "known_condition": true
+  }
+}

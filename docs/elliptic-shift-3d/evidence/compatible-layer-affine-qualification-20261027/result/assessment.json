@@ -1,0 +1,441 @@
+{
+  "scope": "Layer-local coefficient checks, with unaltered interface jumps and all nodes.",
+  "rows": [
+    {
+      "n": 10,
+      "cells": 13000,
+      "affine_max": 2.6868883361188163e-13,
+      "adjoint_relative_max": 4.757483934409429e-16,
+      "smooth_rms": 0.0020610409948464445,
+      "jump_action_change_max": 1.4210854715202004e-14,
+      "jump_energies": [
+        1.4007591110858186,
+        1.4007591110858186,
+        1.4007591110858186
+      ],
+      "moments": {
+        "scope": "Experimental affine coefficient updates confined to complete shell layers.\n\nEach correction is skew in the original physical norm. Only the block-local\npositive high-mode form is modified; the full interface jump penalty is kept.\nNo physical field or source is projected and affine shift modes stay free.\nAngular coupling within a layer remains nonlocal. This is not a native adapter.\n",
+        "groups": [
+          {
+            "blocks": [
+              0
+            ],
+            "axes": [
+              {
+                "axis": 0,
+                "moment_compatibility_max": 7.785698001430463e-15,
+                "local_penalty_symmetry_max": 1.8639904482907308e-17
+              },
+              {
+                "axis": 1,
+                "moment_compatibility_max": 7.785698001430474e-15,
+                "local_penalty_symmetry_max": 5.3609288066120743e-17
+              },
+              {
+                "axis": 2,
+                "moment_compatibility_max": 7.807716606846711e-15,
+                "local_penalty_symmetry_max": 6.599584202311026e-17
+              }
+            ]
+          },
+          {
+            "blocks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ],
+            "axes": [
+              {
+                "axis": 0,
+                "moment_compatibility_max": 6.554098514618648e-16,
+                "local_penalty_symmetry_max": 6.087300253928853e-17
+              },
+              {
+                "axis": 1,
+                "moment_compatibility_max": 6.554098514618638e-16,
+                "local_penalty_symmetry_max": 6.83807544739894e-17
+              },
+              {
+                "axis": 2,
+                "moment_compatibility_max": 6.55409851461864e-16,
+                "local_penalty_symmetry_max": 4.3418184904339077e-17
+              }
+            ]
+          },
+          {
+            "blocks": [
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "axes": [
+              {
+                "axis": 0,
+                "moment_compatibility_max": 4.052417337386406e-16,
+                "local_penalty_symmetry_max": 2.4081161091952296e-17
+              },
+              {
+                "axis": 1,
+                "moment_compatibility_max": 4.0524173373864103e-16,
+                "local_penalty_symmetry_max": 4.622463839164715e-17
+              },
+              {
+                "axis": 2,
+                "moment_compatibility_max": 4.0524173373864167e-16,
+                "local_penalty_symmetry_max": 2.4832714272643503e-17
+              }
+            ]
+          }
+        ]
+      },
+      "tensor": {
+        "constant_metric": {
+          "smooth": {
+            "energy": 11.246037401362578,
+            "strain": 11.246037401362585,
+            "energy_relative_defect": 6.318160881040729e-16,
+            "symmetry_relative_defect": 8.659739592076221e-14,
+            "rayleigh": 27.636378303336404
+          },
+          "random": {
+            "energy": 41914.666369198254,
+            "strain": 41914.66636919825,
+            "energy_relative_defect": 1.7358977762328786e-16,
+            "symmetry_relative_defect": 4.632123819464552e-16,
+            "rayleigh": 2786.3973952085394
+          }
+        },
+        "variable_metric_frechet": [
+          {
+            "epsilon": 0.001,
+            "scaled_rms": 3.795901855166349e-06,
+            "maximum": 0.00021949467657123023
+          },
+          {
+            "epsilon": 0.0001,
+            "scaled_rms": 3.795880537589059e-08,
+            "maximum": 2.194992852366795e-06
+          },
+          {
+            "epsilon": 1e-05,
+            "scaled_rms": 3.803489511110579e-10,
+            "maximum": 2.2135203892048594e-08
+          }
+        ],
+        "variable_metric_det_min": 1.1894512149996432,
+        "variable_metric_det_max": 1.4069233324601975
+      }
+    },
+    {
+      "n": 12,
+      "cells": 22464,
+      "affine_max": 2.215177644421203e-13,
+      "adjoint_relative_max": 1.1934897514720433e-15,
+      "smooth_rms": 0.0010977236192455467,
+      "jump_action_change_max": 1.4210854715202004e-14,
+      "jump_energies": [
+        1.3999436405356103,
+        1.3999436405356105,
+        1.3999436405356103
+      ],
+      "moments": {
+        "scope": "Experimental affine coefficient updates confined to complete shell layers.\n\nEach correction is skew in the original physical norm. Only the block-local\npositive high-mode form is modified; the full interface jump penalty is kept.\nNo physical field or source is projected and affine shift modes stay free.\nAngular coupling within a layer remains nonlocal. This is not a native adapter.\n",
+        "groups": [
+          {
+            "blocks": [
+              0
+            ],
+            "axes": [
+              {
+                "axis": 0,
+                "moment_compatibility_max": 3.2422997307693132e-15,
+                "local_penalty_symmetry_max": 4.1403892193511256e-17
+              },
+              {
+                "axis": 1,
+                "moment_compatibility_max": 3.242299730769308e-15,
+                "local_penalty_symmetry_max": 4.2812186132914824e-17
+              },
+              {
+                "axis": 2,
+                "moment_compatibility_max": 3.2277140054078926e-15,
+                "local_penalty_symmetry_max": 3.9731825709063297e-17
+              }
+            ]
+          },
+          {
+            "blocks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ],
+            "axes": [
+              {
+                "axis": 0,
+                "moment_compatibility_max": 3.6649167857656623e-16,
+                "local_penalty_symmetry_max": 2.1862039833162505e-17
+              },
+              {
+                "axis": 1,
+                "moment_compatibility_max": 3.644982707482697e-16,
+                "local_penalty_symmetry_max": 2.6820628993512587e-17
+              },
+              {
+                "axis": 2,
+                "moment_compatibility_max": 3.6664723105407087e-16,
+                "local_penalty_symmetry_max": 4.517600770042233e-17
+              }
+            ]
+          },
+          {
+            "blocks": [
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "axes": [
+              {
+                "axis": 0,
+                "moment_compatibility_max": 1.666064102348942e-16,
+                "local_penalty_symmetry_max": 1.690183491124919e-17
+              },
+              {
+                "axis": 1,
+                "moment_compatibility_max": 1.6590962752627906e-16,
+                "local_penalty_symmetry_max": 1.4829485264465528e-17
+              },
+              {
+                "axis": 2,
+                "moment_compatibility_max": 1.6626256801660696e-16,
+                "local_penalty_symmetry_max": 1.7343353246019896e-17
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "n": 14,
+      "cells": 35672,
+      "affine_max": 4.987706850130056e-13,
+      "adjoint_relative_max": 8.302690063278217e-16,
+      "smooth_rms": 0.0006625402131568471,
+      "jump_action_change_max": 1.8270048153328248e-14,
+      "jump_energies": [
+        1.399432874385644,
+        1.399432874385644,
+        1.399432874385644
+      ],
+      "moments": {
+        "scope": "Experimental affine coefficient updates confined to complete shell layers.\n\nEach correction is skew in the original physical norm. Only the block-local\npositive high-mode form is modified; the full interface jump penalty is kept.\nNo physical field or source is projected and affine shift modes stay free.\nAngular coupling within a layer remains nonlocal. This is not a native adapter.\n",
+        "groups": [
+          {
+            "blocks": [
+              0
+            ],
+            "axes": [
+              {
+                "axis": 0,
+                "moment_compatibility_max": 8.679587596896205e-15,
+                "local_penalty_symmetry_max": 3.6353643254549874e-17
+              },
+              {
+                "axis": 1,
+                "moment_compatibility_max": 8.679587596896166e-15,
+                "local_penalty_symmetry_max": 1.4748294545684547e-17
+              },
+              {
+                "axis": 2,
+                "moment_compatibility_max": 8.686216374544923e-15,
+                "local_penalty_symmetry_max": 1.6899924311228496e-17
+              }
+            ]
+          },
+          {
+            "blocks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ],
+            "axes": [
+              {
+                "axis": 0,
+                "moment_compatibility_max": 8.076992222038722e-16,
+                "local_penalty_symmetry_max": 2.7527049680273546e-17
+              },
+              {
+                "axis": 1,
+                "moment_compatibility_max": 8.066703064987035e-16,
+                "local_penalty_symmetry_max": 5.019430712411585e-17
+              },
+              {
+                "axis": 2,
+                "moment_compatibility_max": 8.066202829868846e-16,
+                "local_penalty_symmetry_max": 1.1915863851387743e-17
+              }
+            ]
+          },
+          {
+            "blocks": [
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "axes": [
+              {
+                "axis": 0,
+                "moment_compatibility_max": 1.823656568459885e-16,
+                "local_penalty_symmetry_max": 7.862129337265802e-18
+              },
+              {
+                "axis": 1,
+                "moment_compatibility_max": 1.8236565684598797e-16,
+                "local_penalty_symmetry_max": 1.3836226486957102e-17
+              },
+              {
+                "axis": 2,
+                "moment_compatibility_max": 1.82365656845988e-16,
+                "local_penalty_symmetry_max": 3.5397201931042094e-18
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "orders": [
+    3.139335280139614,
+    3.0224500250231707
+  ],
+  "core_to_outer_derivative_max": 0.0,
+  "amr": {
+    "scope": "Combined AMR/core/shell spatial checks; no scri or evolution acceptance.",
+    "rows": [
+      {
+        "n": 10,
+        "cells": 27000,
+        "core_leaves": 15,
+        "shell_blocks": 12,
+        "rms": 0.002061024678872787,
+        "maximum": 0.01139907390232997,
+        "core_rms": 4.247562905150745e-05,
+        "shell_rms": 0.0020924713890915253,
+        "constant_derivative_max": 2.7044587093412483e-13,
+        "adjoint_relative_max": 8.049116928532385e-16,
+        "interface_value_L1_max": 4.58541979469947,
+        "transfer_adjoint_max": 2.168404344971009e-19,
+        "transfer_composition_max": 8.326672684688674e-17,
+        "transfer_tensor_polynomial_max": 5.995204332975845e-15
+      },
+      {
+        "n": 11,
+        "cells": 35937,
+        "core_leaves": 15,
+        "shell_blocks": 12,
+        "rms": 0.0014758640985671615,
+        "maximum": 0.00716739727659188,
+        "core_rms": 3.0154379481743985e-05,
+        "shell_rms": 0.0014983815974739902,
+        "constant_derivative_max": 5.996259125328969e-13,
+        "adjoint_relative_max": 1.4988010832439613e-15,
+        "interface_value_L1_max": 4.67386068843703,
+        "transfer_adjoint_max": 1.0842021724855044e-19,
+        "transfer_composition_max": 2.220446049250313e-16,
+        "transfer_tensor_polynomial_max": 1.0436096431476471e-14
+      },
+      {
+        "n": 12,
+        "cells": 46656,
+        "core_leaves": 15,
+        "shell_blocks": 12,
+        "rms": 0.0010977162361433884,
+        "maximum": 0.004969498337946993,
+        "core_rms": 2.5879884010260736e-05,
+        "shell_rms": 0.001114461735658615,
+        "constant_derivative_max": 6.61653288228124e-13,
+        "adjoint_relative_max": 8.86295989552227e-16,
+        "interface_value_L1_max": 4.705606579588635,
+        "transfer_adjoint_max": 1.0842021724855044e-19,
+        "transfer_composition_max": 1.6653345369377348e-16,
+        "transfer_tensor_polynomial_max": 1.3211653993039363e-14
+      }
+    ],
+    "tensor": {
+      "constant_metric": {
+        "smooth": {
+          "energy": 11.24544884225265,
+          "strain": 11.245448842252657,
+          "energy_relative_defect": 6.318491558028076e-16,
+          "symmetry_relative_defect": 3.1692190866745526e-14,
+          "rayleigh": 27.63471841570284
+        },
+        "random": {
+          "energy": 54757.59691464182,
+          "strain": 54757.59691464182,
+          "energy_relative_defect": 0.0,
+          "symmetry_relative_defect": 6.912544824714949e-15,
+          "rayleigh": 3738.0825509782917
+        }
+      },
+      "variable_metric_frechet": [
+        {
+          "epsilon": 0.001,
+          "scaled_rms": 3.6870138227492726e-06,
+          "maximum": 0.00022160780653734946
+        },
+        {
+          "epsilon": 0.0001,
+          "scaled_rms": 3.68699316839047e-08,
+          "maximum": 2.2160721186992305e-06
+        },
+        {
+          "epsilon": 1e-05,
+          "scaled_rms": 3.6992017681250033e-10,
+          "maximum": 2.3316857777899713e-08
+        }
+      ],
+      "variable_metric_det_min": 1.1894512149996432,
+      "variable_metric_det_max": 1.4069233324601975
+    },
+    "orders": [
+      3.5039240188945064,
+      3.4019893188695427
+    ],
+    "gates": {
+      "all_cell_refinement": true,
+      "constant_and_adjoint": true,
+      "interface_amplification": true,
+      "interface_polynomials": true,
+      "constant_metric_energy": true,
+      "full_metric_variation": true
+    }
+  },
+  "gates": {
+    "affine_and_adjoint": true,
+    "interface_jump_preserved": true,
+    "radial_locality": true,
+    "smooth_refinement": true,
+    "constant_metric_energy": true,
+    "variable_metric_variation": true,
+    "amr_components": true
+  },
+  "evolution_adopted": false
+}

@@ -1,0 +1,84 @@
+{
+  "scope": "Distinguish sampled-reference improvement, physical solve error and cost.",
+  "input_sha256": {
+    "compatible-endpoint-fd-wormhole-n10-continued-20261027/manifest.json": "e2a419d30808f1da061dd4980060b50cfd52f0bc7d7317be4440119d9c02bfc2",
+    "compatible-endpoint-fd-wormhole-n10-continued-20261027/result/assessment.json": "01c6501a85e17c440f3c24d1cf66074ac5604c2afbd3118a0b1b0818868136eb",
+    "compatible-layer-affine-wormhole-n10-20261027/manifest.json": "51e026f1d6ffdde8937cb9e9eb8aa0dc8bb4f8aa74546777ea00d9b24fecd6c5",
+    "compatible-layer-affine-wormhole-n10-20261027/result/assessment.json": "dec9cf4e1d69c9bbab156017441410232e733601faf0770402f78c5470537310",
+    "compatible-concentric-pcg-n10-20261027/manifest.json": "abef84f8094b5f3f6bac471f9a332be796e4b22ef8e3923f0a6999904374d90e",
+    "compatible-concentric-pcg-n10-20261027/result/assessment.json": "af740d9d4153faea6731e32b2b5ac1892918cb17af5fd4c2ebe0beb447f52169",
+    "compatible-layer-affine-pcg-n10-20261027/manifest.json": "f1e8744757e00f6118460526ac9688ff56b9211ba072a1cee269635a2623db0e",
+    "compatible-layer-affine-pcg-n10-20261027/result/assessment.json": "09ae4fa096c7f8e680c63bd446a0984098d9f337188e729cf16175853ccb802e",
+    "compatible-concentric-wormhole-n10-20261027/manifest.json": "a1ef56555ce26972660baf949e9a6cf5ccd5317ac979d10e282178aa03a33d57",
+    "compatible-concentric-wormhole-n10-20261027/result/assessment.json": "83a0603150e7ab0297a661e7ab8e0a46a2bcd0b1a3818ef05d119476d333ae31",
+    "compatible-layer-trace-mass-pcg-n10-20261027/manifest.json": "b91b942529e0865d60a1ad3410b4a82a7157c669eba7b1d5b7bca0dca4bd3cf3",
+    "compatible-layer-trace-mass-pcg-n10-20261027/result/assessment.json": "7c7b24e01eec35a77c0ff8569046378ae7e64a27773e2180995fb56bfdc65ea3",
+    "compatible-layer-affine-layout-audit-20261027/result/assessment.json": "7e9b663a5aca0d884e5a4044fa9a5774fdc5f7c0d4dd46e56cc9073f94bf2cf0",
+    "compatible-concentric-reference-audit-20261027/result/assessment.json": "0519acf2328e0e9627e5756db00bc67f290b3f69e2d540f8cc8aab1e37b2e26e",
+    "compatible-endpoint-fd-wormhole-n10-continued-20261027/result/profile.npz": "c350e170b6db388ad6434324289913e0a338d94d0e3bfd0a5b37436f60318b2c",
+    "compatible-layer-affine-wormhole-n10-20261027/result/profile.npz": "645e4ec4774786ba17f6eac630798ffcc3bc2fa73c64a2c73fe30f9f333ae8a6",
+    "compatible-concentric-pcg-n10-20261027/result/profile.npz": "f32479b29c2e40b635d9ad9ca08fefdf013edc43ccedb109538794e0c7c853b7"
+  },
+  "physical_cases": [
+    {
+      "case": "compatible-endpoint-fd-wormhole-n10-continued-20261027",
+      "cells": 19000,
+      "iterations": 160,
+      "original_rms": 8.641583599444829e-10,
+      "raw_scri_metric_rate_max": 1.3256537401831765,
+      "all_node_metric_rate_rms": 0.07221338663481432,
+      "radial_shift_reference_rms": 0.007434267884930848,
+      "inner_shift_reference_rms": 0.0002834723417397071,
+      "gates": {
+        "original_gauge_residual": true,
+        "direct_metric_rate": true,
+        "physical_boundary_data": true,
+        "strong_all_node_rate": false
+      }
+    },
+    {
+      "case": "compatible-layer-affine-wormhole-n10-20261027",
+      "cells": 19000,
+      "iterations": 940,
+      "original_rms": 7.054953936650643e-10,
+      "raw_scri_metric_rate_max": 1.3204289337464692,
+      "all_node_metric_rate_rms": 0.07213075753237838,
+      "radial_shift_reference_rms": 0.007379870516156902,
+      "inner_shift_reference_rms": 0.0002536733789532052,
+      "gates": {
+        "original_gauge_residual": true,
+        "direct_metric_rate": true,
+        "physical_boundary_data": true,
+        "strong_all_node_rate": false
+      }
+    },
+    {
+      "case": "compatible-concentric-pcg-n10-20261027",
+      "cells": 25000,
+      "iterations": 1160,
+      "original_rms": 2.6879065427170193e-10,
+      "raw_scri_metric_rate_max": 2.4968307215995402,
+      "all_node_metric_rate_rms": 0.20154163138632367,
+      "radial_shift_reference_rms": 0.002470041615937279,
+      "inner_shift_reference_rms": 8.713822455974799e-05,
+      "gates": {
+        "original_gauge_residual": true,
+        "direct_metric_rate": true,
+        "physical_boundary_data": true,
+        "strong_all_node_rate": false
+      }
+    }
+  ],
+  "sampled_reference_scri_max": [
+    0.5546274886888156,
+    2.3200958046044276e-12,
+    4.728061898111482e-13
+  ],
+  "solver_control_cases": [
+    "compatible-layer-affine-wormhole-n10-20261027",
+    "compatible-layer-affine-pcg-n10-20261027",
+    "compatible-concentric-wormhole-n10-20261027",
+    "compatible-concentric-pcg-n10-20261027",
+    "compatible-layer-trace-mass-pcg-n10-20261027"
+  ]
+}

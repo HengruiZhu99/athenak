@@ -1,0 +1,146 @@
+{
+  "scope": "Independent inner-product checks of every adjoint, including physical scri.",
+  "rows": [
+    {
+      "curved": false,
+      "tests": [
+        {
+          "name": "derivative_0_-1",
+          "left": -0.9180210770123564,
+          "right": -0.9180210770123611,
+          "relative_defect": 4.773959005888173e-15
+        },
+        {
+          "name": "derivative_0_1",
+          "left": -1.5226014767603326,
+          "right": -1.5226014767603375,
+          "relative_defect": 3.2083124723775643e-15
+        },
+        {
+          "name": "derivative_1_-1",
+          "left": -4.171650931714643,
+          "right": -4.171650931714585,
+          "relative_defect": 1.383902877434166e-14
+        },
+        {
+          "name": "derivative_1_1",
+          "left": -3.7776556973691124,
+          "right": -3.777655697369054,
+          "relative_defect": 1.5517500904339447e-14
+        },
+        {
+          "name": "derivative_2_-1",
+          "left": -0.4706561002097786,
+          "right": -0.47065610020973364,
+          "relative_defect": 4.496403249731884e-14
+        },
+        {
+          "name": "derivative_2_1",
+          "left": -1.4434303744149246,
+          "right": -1.4434303744148766,
+          "relative_defect": 3.3227535954581374e-14
+        },
+        {
+          "name": "full_variation",
+          "left": 7.876173622547004,
+          "right": 7.876173622547073,
+          "relative_defect": 8.795884912730759e-15
+        },
+        {
+          "name": "full_metric_rate",
+          "left": -0.04060143365167379,
+          "right": -0.04060143365202151,
+          "relative_defect": 3.4772185131259903e-13
+        },
+        {
+          "name": "enriched_metric_rate",
+          "left": -1.9522971245893266,
+          "right": -1.9522971245896716,
+          "relative_defect": 1.7674426280068502e-13
+        },
+        {
+          "name": "enriched_full_operator",
+          "left": -435.43222545189064,
+          "right": -435.4322254518895,
+          "relative_defect": 2.6108962790623057e-15
+        },
+        {
+          "name": "complete_preconditioner",
+          "left": 0.00017132662134360885,
+          "right": 0.00017132662134360888,
+          "relative_defect": 2.710505431213761e-20
+        }
+      ]
+    },
+    {
+      "curved": true,
+      "tests": [
+        {
+          "name": "derivative_0_-1",
+          "left": -0.09900297580386702,
+          "right": -0.09900297580381956,
+          "relative_defect": 4.746203430272544e-14
+        },
+        {
+          "name": "derivative_0_1",
+          "left": -0.3158277907254645,
+          "right": -0.3158277907254178,
+          "relative_defect": 4.674038933671909e-14
+        },
+        {
+          "name": "derivative_1_-1",
+          "left": -1.9298750615375457,
+          "right": -1.9298750615375169,
+          "relative_defect": 1.4957340615229505e-14
+        },
+        {
+          "name": "derivative_1_1",
+          "left": -1.4383187487927673,
+          "right": -1.4383187487927382,
+          "relative_defect": 2.02235028011653e-14
+        },
+        {
+          "name": "derivative_2_-1",
+          "left": 2.074414492375332,
+          "right": 2.074414492375319,
+          "relative_defect": 6.208299803625573e-15
+        },
+        {
+          "name": "derivative_2_1",
+          "left": 2.4491971565452175,
+          "right": 2.4491971565452024,
+          "relative_defect": 6.1648908478239806e-15
+        },
+        {
+          "name": "full_variation",
+          "left": -3.0946621360088624,
+          "right": -3.0946621360088598,
+          "relative_defect": 8.610100689494929e-16
+        },
+        {
+          "name": "full_metric_rate",
+          "left": -9.025895676986885,
+          "right": -9.025895676986522,
+          "relative_defect": 4.014856898485928e-14
+        },
+        {
+          "name": "enriched_metric_rate",
+          "left": -4.5597624136782695,
+          "right": -4.559762413677885,
+          "relative_defect": 8.434238910705003e-14
+        },
+        {
+          "name": "enriched_full_operator",
+          "left": -929.1158499977927,
+          "right": -929.1158499977614,
+          "relative_defect": 3.364906580112553e-14
+        }
+      ]
+    }
+  ],
+  "gates": {
+    "all_adjoint_defects_below_1e-10": true
+  },
+  "evolution_adopted": false,
+  "seconds": 20.443711291
+}

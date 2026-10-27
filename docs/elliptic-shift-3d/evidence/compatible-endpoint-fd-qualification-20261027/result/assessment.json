@@ -1,0 +1,135 @@
+{
+  "scope": "Local closure, mapped tensor and continuum derivative checks at actual scri.",
+  "local": [
+    {
+      "n": 10,
+      "minimum_weight": 0.036651234567901564,
+      "sbp_max": 6.661338147750939e-16,
+      "polynomial_max": 1.9539925233402755e-14,
+      "quadrature_degree_four_error": 4.322916604989604e-16,
+      "smooth_rms": 0.004280004805462309,
+      "smooth_endpoint_max": 0.00548277667395114
+    },
+    {
+      "n": 12,
+      "minimum_weight": 0.02998737373737401,
+      "sbp_max": 1.4137483454444169e-15,
+      "polynomial_max": 1.7763568394002505e-14,
+      "quadrature_degree_four_error": 2.843051015951702e-16,
+      "smooth_rms": 0.0026312084290865856,
+      "smooth_endpoint_max": 0.003595624163893252
+    },
+    {
+      "n": 14,
+      "minimum_weight": 0.025373931623931856,
+      "sbp_max": 1.4137483454444167e-15,
+      "polynomial_max": 1.9539925233402755e-14,
+      "quadrature_degree_four_error": 2.2109544333600912e-16,
+      "smooth_rms": 0.0017536762103587938,
+      "smooth_endpoint_max": 0.0025340677119314314
+    },
+    {
+      "n": 20,
+      "minimum_weight": 0.017361111111111268,
+      "sbp_max": 1.4137483454444167e-15,
+      "polynomial_max": 2.1316282072803006e-14,
+      "quadrature_degree_four_error": 5.0034425960646955e-17,
+      "smooth_rms": 0.0006950731285457303,
+      "smooth_endpoint_max": 0.0011503316649918993
+    },
+    {
+      "n": 40,
+      "minimum_weight": 0.008457977207977285,
+      "sbp_max": 1.4137483454444167e-15,
+      "polynomial_max": 5.684341886080802e-14,
+      "quadrature_degree_four_error": 2.220446049250313e-16,
+      "smooth_rms": 0.00011859153029334079,
+      "smooth_endpoint_max": 0.00026232702655137885
+    }
+  ],
+  "mapped": [
+    {
+      "n": 10,
+      "cells": 13000,
+      "affine_max": 2.531308496145357e-14,
+      "mortar_amplification_max": 2.7499999999999973,
+      "smooth_all_node_rms": 0.002061146432826302,
+      "smooth_scri_max": 0.011967497920476605,
+      "metric_identity_max": 2.5542068460282508e-14,
+      "normal_mismatch": 2.886579864025407e-15,
+      "actual_scri_radius_error": 2.220446049250313e-16,
+      "tensor": {
+        "constant_metric": {
+          "smooth": {
+            "energy": 11.247683616303048,
+            "strain": 11.247683616303057,
+            "energy_relative_defect": 7.896545190982675e-16,
+            "symmetry_relative_defect": 3.930189507173054e-14,
+            "rayleigh": 27.64042376550585
+          },
+          "random": {
+            "energy": 41914.661146842795,
+            "strain": 41914.661146842795,
+            "energy_relative_defect": 0.0,
+            "symmetry_relative_defect": 6.176195441462335e-16,
+            "rayleigh": 2786.397048037515
+          }
+        },
+        "variable_metric_frechet": [
+          {
+            "epsilon": 0.001,
+            "scaled_rms": 3.7888395870079305e-06,
+            "maximum": 0.0002273489729418543
+          },
+          {
+            "epsilon": 0.0001,
+            "scaled_rms": 3.788819470175244e-08,
+            "maximum": 2.2735170759347056e-06
+          },
+          {
+            "epsilon": 1e-05,
+            "scaled_rms": 3.794598738287984e-10,
+            "maximum": 2.5471486253536568e-08
+          }
+        ],
+        "variable_metric_det_min": 1.1894512149996432,
+        "variable_metric_det_max": 1.4069233324601975
+      }
+    },
+    {
+      "n": 12,
+      "cells": 22464,
+      "affine_max": 3.6012859361278515e-14,
+      "mortar_amplification_max": 2.7499999999999916,
+      "smooth_all_node_rms": 0.0010977846744380376,
+      "smooth_scri_max": 0.005818536465801454,
+      "metric_identity_max": 4.0190073491430667e-14,
+      "normal_mismatch": 3.469446951953614e-15,
+      "actual_scri_radius_error": 2.220446049250313e-16
+    },
+    {
+      "n": 14,
+      "cells": 35672,
+      "affine_max": 3.655344256447979e-14,
+      "mortar_amplification_max": 2.750000000000001,
+      "smooth_all_node_rms": 0.0006625797804694569,
+      "smooth_scri_max": 0.0036656442496391588,
+      "metric_identity_max": 5.773159728050814e-14,
+      "normal_mismatch": 7.022160630754115e-15,
+      "actual_scri_radius_error": 2.220446049250313e-16
+    }
+  ],
+  "mapped_smooth_orders": [
+    3.139313044952599,
+    3.0224254787103915
+  ],
+  "gates": {
+    "local_algebra": true,
+    "mapped_affine_and_interfaces": true,
+    "smooth_mapped_refinement": true,
+    "constant_metric_energy": true,
+    "full_variable_metric_variation": true
+  },
+  "evolution_adopted": false,
+  "seconds": 1.327132417
+}

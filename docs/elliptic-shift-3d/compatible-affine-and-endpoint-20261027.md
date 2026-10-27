@@ -1,5 +1,8 @@
 # Affine consistency and the unresolved outer radial mode
 
+Follow-up: [local finite-difference endpoint closures](compatible-local-endpoint-20261027.md)
+improve physical initial-state refinement but retain explicit scri failures.
+
 **The 3D wormhole-to-trumpet milestone remains incomplete.** These experiments
 are spatial/gauge components, not a stable evolution. The full metric-built
 connection variation, physical curvature source, actual scri, and all core

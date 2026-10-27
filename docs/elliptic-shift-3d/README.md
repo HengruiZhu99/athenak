@@ -1,7 +1,11 @@
 # Composite 3D elliptic shift: current implementation and evidence
 
 **Takeover in progress:** [current spherical alignment and interface evidence](takeover-alignment-20261027.md).
-The [latest affine and endpoint diagnosis](compatible-affine-and-endpoint-20261027.md)
+The [local endpoint shell study](compatible-local-endpoint-20261027.md)
+establishes physical initial-state refinement while retaining its scri failures.
+The [layer-local affine follow-up](compatible-layer-affine-20261027.md) tests
+whether the global coefficient update can be confined to complete shell layers.
+The preceding [affine and endpoint diagnosis](compatible-affine-and-endpoint-20261027.md)
 identifies a dominant high radial mode and tests an enriched shift space.
 The [combined-grid and physical wormhole gauge tests](compatible-wormhole-gauge-20261027.md)
 pass the bulk solve but expose a large scri-rate failure. The candidates remain

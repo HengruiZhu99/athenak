@@ -1,0 +1,105 @@
+{
+  "scope": "Combined AMR/core/shell spatial checks; no scri or evolution acceptance.",
+  "rows": [
+    {
+      "n": 10,
+      "cells": 27000,
+      "core_leaves": 15,
+      "shell_blocks": 12,
+      "rms": 0.002061129956415422,
+      "maximum": 0.011410115275053312,
+      "core_rms": 4.2510351294242933e-05,
+      "shell_rms": 0.0020925782526034858,
+      "constant_derivative_max": 2.904896713531529e-13,
+      "adjoint_relative_max": 5.273559366969494e-16,
+      "interface_value_L1_max": 4.58541979469947,
+      "transfer_adjoint_max": 2.168404344971009e-19,
+      "transfer_composition_max": 8.326672684688674e-17,
+      "transfer_tensor_polynomial_max": 5.995204332975845e-15
+    },
+    {
+      "n": 11,
+      "cells": 35937,
+      "core_leaves": 15,
+      "shell_blocks": 12,
+      "rms": 0.001475943753602163,
+      "maximum": 0.007173810912523504,
+      "core_rms": 3.017008183867198e-05,
+      "shell_rms": 0.0014984624591039952,
+      "constant_derivative_max": 3.49111241065222e-13,
+      "adjoint_relative_max": 1.5543122344752192e-15,
+      "interface_value_L1_max": 4.67386068843703,
+      "transfer_adjoint_max": 1.0842021724855044e-19,
+      "transfer_composition_max": 2.220446049250313e-16,
+      "transfer_tensor_polynomial_max": 1.0436096431476471e-14
+    },
+    {
+      "n": 12,
+      "cells": 46656,
+      "core_leaves": 15,
+      "shell_blocks": 12,
+      "rms": 0.0010977780679882422,
+      "maximum": 0.004977110916249555,
+      "core_rms": 2.588616906444898e-05,
+      "shell_rms": 0.001114524507290726,
+      "constant_derivative_max": 3.6773699823763853e-13,
+      "adjoint_relative_max": 7.819223946870038e-16,
+      "interface_value_L1_max": 4.705606579588635,
+      "transfer_adjoint_max": 1.0842021724855044e-19,
+      "transfer_composition_max": 1.6653345369377348e-16,
+      "transfer_tensor_polynomial_max": 1.3211653993039363e-14
+    }
+  ],
+  "tensor": {
+    "constant_metric": {
+      "smooth": {
+        "energy": 11.24709360517722,
+        "strain": 11.247093605177229,
+        "energy_relative_defect": 7.896959435736194e-16,
+        "symmetry_relative_defect": 2.4273737695712872e-14,
+        "rayleigh": 27.63876027840825
+      },
+      "random": {
+        "energy": 54757.59312743256,
+        "strain": 54757.59312743256,
+        "energy_relative_defect": 0.0,
+        "symmetry_relative_defect": 2.073835691695862e-15,
+        "rayleigh": 3738.082292440634
+      }
+    },
+    "variable_metric_frechet": [
+      {
+        "epsilon": 0.001,
+        "scaled_rms": 3.6799954828509075e-06,
+        "maximum": 0.0002216068741915933
+      },
+      {
+        "epsilon": 0.0001,
+        "scaled_rms": 3.679973553929214e-08,
+        "maximum": 2.216052479298014e-06
+      },
+      {
+        "epsilon": 1e-05,
+        "scaled_rms": 3.691195287500184e-10,
+        "maximum": 2.3324872699959087e-08
+      }
+    ],
+    "variable_metric_det_min": 1.1894512149996432,
+    "variable_metric_det_max": 1.4069233324601975
+  },
+  "orders": [
+    3.50389368164878,
+    3.401962244392122
+  ],
+  "gates": {
+    "all_cell_refinement": true,
+    "constant_and_adjoint": true,
+    "interface_amplification": true,
+    "interface_polynomials": true,
+    "constant_metric_energy": true,
+    "full_metric_variation": true
+  },
+  "shell_rule": "Endpoint shell-rule check with the genuine 15-leaf Cartesian AMR core.",
+  "seconds": 2.65084625,
+  "evolution_adopted": false
+}

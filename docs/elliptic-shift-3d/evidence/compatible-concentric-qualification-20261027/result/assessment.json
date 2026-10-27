@@ -1,0 +1,201 @@
+{
+  "scope": "Concentric shell geometry, derivative, energy and full tensor checks.",
+  "half_width": 0.2,
+  "physical_radial_knots": [
+    0.0,
+    0.4,
+    0.55,
+    0.7,
+    1.0
+  ],
+  "rows": [
+    {
+      "n": 10,
+      "cells": 25000,
+      "affine_max": 1.3191419237140165e-12,
+      "adjoint_relative_max": 5.828670879282072e-16,
+      "smooth_rms": 0.0020424521486090428,
+      "jacobian_min": 0.0048037704378431955,
+      "metric_identity_max": 2.1843638009499955e-14,
+      "normal_mismatch": 1.915134717478395e-15,
+      "actual_scri_radius_error": 2.220446049250313e-16,
+      "mortar_amplification": 2.7499999999999973,
+      "tensor": {
+        "constant_metric": {
+          "smooth": {
+            "energy": 11.243170040639415,
+            "strain": 11.243170040639427,
+            "energy_relative_defect": 1.105960136763579e-15,
+            "symmetry_relative_defect": 9.96425164601078e-14,
+            "rayleigh": 27.628717107597005
+          },
+          "random": {
+            "energy": 92713.34276946555,
+            "strain": 92713.34276946555,
+            "energy_relative_defect": 0.0,
+            "symmetry_relative_defect": 3.5535214334331327e-16,
+            "rayleigh": 6246.475801253107
+          }
+        },
+        "variable_metric_frechet": [
+          {
+            "epsilon": 0.001,
+            "scaled_rms": 3.7820416384943433e-06,
+            "maximum": 0.006345551196375254
+          },
+          {
+            "epsilon": 0.0001,
+            "scaled_rms": 3.7820210663465494e-08,
+            "maximum": 6.345497507709297e-05
+          },
+          {
+            "epsilon": 1e-05,
+            "scaled_rms": 3.795221830911755e-10,
+            "maximum": 6.342638698697556e-07
+          }
+        ],
+        "variable_metric_det_min": 1.1894512149996432,
+        "variable_metric_det_max": 1.4069233324601975
+      }
+    },
+    {
+      "n": 11,
+      "cells": 33275,
+      "affine_max": 6.787932996060951e-13,
+      "adjoint_relative_max": 6.938893903907228e-16,
+      "smooth_rms": 0.001462158790080663,
+      "jacobian_min": 0.004842381395260504,
+      "metric_identity_max": 2.53431028614637e-14,
+      "normal_mismatch": 2.0539125955565396e-15,
+      "actual_scri_radius_error": 2.220446049250313e-16,
+      "mortar_amplification": 2.749999999999993
+    },
+    {
+      "n": 12,
+      "cells": 43200,
+      "affine_max": 1.0450704699318904e-12,
+      "adjoint_relative_max": 1.3322676295501878e-15,
+      "smooth_rms": 0.001087663622430249,
+      "jacobian_min": 0.004869727719397203,
+      "metric_identity_max": 4.3298697960381105e-14,
+      "normal_mismatch": 2.275957200481571e-15,
+      "actual_scri_radius_error": 2.220446049250313e-16,
+      "mortar_amplification": 2.7499999999999916
+    }
+  ],
+  "orders": [
+    3.1723188763940517,
+    3.1044116957209584
+  ],
+  "amr": {
+    "scope": "Combined AMR/core/shell spatial checks; no scri or evolution acceptance.",
+    "rows": [
+      {
+        "n": 10,
+        "cells": 27000,
+        "core_leaves": 15,
+        "shell_blocks": 12,
+        "rms": 0.0020935478769685597,
+        "maximum": 0.010444998110237802,
+        "core_rms": 2.709853559868246e-05,
+        "shell_rms": 0.0021097253800705933,
+        "constant_derivative_max": 1.034165681811245e-12,
+        "adjoint_relative_max": 4.163336342344337e-16,
+        "interface_value_L1_max": 4.58541979469947,
+        "transfer_adjoint_max": 2.168404344971009e-19,
+        "transfer_composition_max": 8.326672684688674e-17,
+        "transfer_tensor_polynomial_max": 5.995204332975845e-15
+      },
+      {
+        "n": 11,
+        "cells": 35937,
+        "core_leaves": 15,
+        "shell_blocks": 12,
+        "rms": 0.001503821001133411,
+        "maximum": 0.0067837189912342,
+        "core_rms": 1.9238391478928153e-05,
+        "shell_rms": 0.0015154409783216386,
+        "constant_derivative_max": 2.105302773345495e-12,
+        "adjoint_relative_max": 1.3877787807814457e-15,
+        "interface_value_L1_max": 4.67386068843703,
+        "transfer_adjoint_max": 1.0842021724855044e-19,
+        "transfer_composition_max": 2.220446049250313e-16,
+        "transfer_tensor_polynomial_max": 1.0436096431476471e-14
+      },
+      {
+        "n": 12,
+        "cells": 46656,
+        "core_leaves": 15,
+        "shell_blocks": 12,
+        "rms": 0.0011219987994499578,
+        "maximum": 0.0045564731884692455,
+        "core_rms": 1.6508798241356527e-05,
+        "shell_rms": 0.0011306678720634034,
+        "constant_derivative_max": 2.9075146326360684e-12,
+        "adjoint_relative_max": 5.427657527959642e-16,
+        "interface_value_L1_max": 4.705606579588635,
+        "transfer_adjoint_max": 1.0842021724855044e-19,
+        "transfer_composition_max": 1.6653345369377348e-16,
+        "transfer_tensor_polynomial_max": 1.3211653993039363e-14
+      }
+    ],
+    "tensor": {
+      "constant_metric": {
+        "smooth": {
+          "energy": 11.250510372566335,
+          "strain": 11.25051037256634,
+          "energy_relative_defect": 4.736736682804501e-16,
+          "symmetry_relative_defect": 4.3076653355456074e-14,
+          "rayleigh": 27.644821247120007
+        },
+        "random": {
+          "energy": 48863.29146897351,
+          "strain": 48863.29146897351,
+          "energy_relative_defect": 0.0,
+          "symmetry_relative_defect": 9.845146930722918e-16,
+          "rayleigh": 3408.441514899687
+        }
+      },
+      "variable_metric_frechet": [
+        {
+          "epsilon": 0.001,
+          "scaled_rms": 3.935406600233439e-06,
+          "maximum": 0.0030523354946581094
+        },
+        {
+          "epsilon": 0.0001,
+          "scaled_rms": 3.935382801801325e-08,
+          "maximum": 3.0523048849318e-05
+        },
+        {
+          "epsilon": 1e-05,
+          "scaled_rms": 3.9459040858514235e-10,
+          "maximum": 3.053600039493176e-07
+        }
+      ],
+      "variable_metric_det_min": 1.1894512149996432,
+      "variable_metric_det_max": 1.4069233324601975
+    },
+    "orders": [
+      3.4713078182876105,
+      3.366197344341009
+    ],
+    "gates": {
+      "all_cell_refinement": true,
+      "constant_and_adjoint": true,
+      "interface_amplification": true,
+      "interface_polynomials": true,
+      "constant_metric_energy": true,
+      "full_metric_variation": true
+    }
+  },
+  "gates": {
+    "geometry": true,
+    "affine_and_adjoint": true,
+    "smooth_refinement": true,
+    "constant_metric_energy": true,
+    "variable_metric_variation": true,
+    "amr_components": true
+  },
+  "evolution_adopted": false
+}
