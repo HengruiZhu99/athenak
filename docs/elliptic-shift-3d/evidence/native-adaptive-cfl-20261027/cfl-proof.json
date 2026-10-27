@@ -1,0 +1,24 @@
+{
+  "actual_binary_native_dts": [
+    4.261105759405178e-05,
+    2.8066292246365876e-05,
+    2.8066292246365876e-05,
+    4.261105759405178e-05
+  ],
+  "fresh_regrid_limits": [
+    2.8066292246365876e-05,
+    4.2611057594051784e-05
+  ],
+  "refined_next_dt_drops": true,
+  "coarsened_next_dt_increases_within_refreshed_bound": true,
+  "dt_ceiling": 0.0005,
+  "cfl": 0.005,
+  "SAT_and_relaxation_bounds_retained": true,
+  "source_path": [
+    "MeshRefinement::CommitRegrid",
+    "AdaptiveMeshRefinement::pz4c.NewTimeStep",
+    "NativeCompositeEvolution::CFLStep",
+    "Driver::Mesh.NewTimeStep"
+  ],
+  "no_time_difference_reconstruction": true
+}

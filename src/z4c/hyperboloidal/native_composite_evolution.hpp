@@ -7,6 +7,7 @@
 class MeshBlockPack;
 class ParameterInput;
 class Driver;
+struct LogicalLocation;
 namespace z4c {class Z4c; namespace hyperboloidal {
 // Explicit experimental host owner. Native u0 is a verified physical mirror of
 // canonical global coefficients; outer shells/scri are owned here, not native MBs.
@@ -23,6 +24,12 @@ class NativeCompositeEvolution {
   void Constraints();
   Real TimeStep() const;
   void WriteRestart(const std::string &path);
+  // Accepted-step canonical transaction; no native physical-field transfer is
+  // authoritative. Prepare may throw before native Views change.
+  void PrepareRegrid(const LogicalLocation *leaves,int count);
+  void CommitRegrid();
+  int ValidationRefinementFlag(int native)const; // sentinel2: normal criteria
+
  private:
   struct Impl;
   std::unique_ptr<Impl> p_;

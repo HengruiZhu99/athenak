@@ -9,9 +9,11 @@
 #include "mesh/mesh.hpp"
 #include "mesh/meshblock.hpp"
 #include "coordinates/adm.hpp"
+#include "coordinates/cell_locations.hpp"
 #include "driver/driver.hpp"
 #include "z4c/z4c.hpp"
 #include "z4c/hyperboloidal/composite_evolution.hpp"
+#include "z4c/hyperboloidal/composite_regrid.hpp"
 #include "z4c/hyperboloidal/native_composite_fields.hpp"
 #include "z4c/hyperboloidal/native_core_map.hpp"
 #include "z4c/hyperboloidal/native_composite_stage.hpp"
@@ -41,7 +43,7 @@ std::string InitialReceipt(const std::string &path){
 }
 }
 struct NativeCompositeEvolution::Impl {
- Z4c &z;MeshBlockPack *pack;std::unique_ptr<CompositeTensorEvolution> engine;
+ Z4c &z;MeshBlockPack *pack;ParameterInput *parameters;bool adaptive_native=false;int validation_refine=-1,validation_coarsen=-1;std::unique_ptr<CompositeTensorEvolution> engine;
  std::unique_ptr<NativeCompositeFields> fields;std::unique_ptr<State> stage;
  std::vector<NativeCompositeFields::Block> mapping;
  std::unique_ptr<NativeCartesianCoreMap> core_map;std::vector<int> composite_to_native;int core_bulk=1;bool static_multilevel=false;size_t hierarchy_terminal_cells=0;
@@ -51,8 +53,19 @@ struct NativeCompositeEvolution::Impl {
  bool wormhole=false;int positive_storage=0;std::string initial_file,initial_receipt;
  inline static const std::string wormhole_slice="isotropic-Schwarzschild-M1_3-hyperboloidal-outer-v1";
  inline static const std::string wormhole_gauge="Minkowski-reference-physical1log-restoring1-nu1-referenceflux-tau.02-kappa.005-taper.24-clockA-v1";
+ struct Pending {
+  std::unique_ptr<CompositeTensorEvolution> engine;
+  std::unique_ptr<NativeCompositeFields> fields;
+  std::unique_ptr<NativeCartesianCoreMap> map;
+  std::unique_ptr<State> stage;
+  std::vector<NativeCompositeFields::Block> mapping;
+  std::vector<int> inverse;
+  std::vector<NativeCartesianBlock> records;
+  size_t copied=0,interpolated=0,terminal=0;
+ };
+ std::unique_ptr<Pending> pending;
  uint64_t begins=0,rhs_calls=0,updates=0,last_report=std::numeric_limits<uint64_t>::max();
- Impl(Z4c &native,MeshBlockPack *p,ParameterInput *pin):z(native),pack(p){
+ Impl(Z4c &native,MeshBlockPack *p,ParameterInput *pin):z(native),pack(p),parameters(pin){
 #if defined(KOKKOS_ENABLE_SERIAL)
   if(!std::is_same<DevExeSpace,Kokkos::Serial>::value)throw std::invalid_argument("experimental composite requires Kokkos Serial");
 #else
@@ -61,14 +74,21 @@ struct NativeCompositeEvolution::Impl {
   const auto &ind=p->pmesh->mb_indcs;const auto integrator=pin->GetString("time","integrator");
   wormhole=pin->GetString("problem","pgen_name")=="z4c_composite_wormhole";
   static_multilevel=p->pmesh->multilevel;
-  if(SINGLE_PRECISION_ENABLED||MPI_PARALLEL_ENABLED||global_variable::nranks!=1||(!static_multilevel&&p->nmb_thispack!=1&&p->nmb_thispack!=8)||p->pmesh->nmb_total!=p->nmb_thispack||p->pmesh->adaptive||!p->pmesh->three_d
+  adaptive_native=p->pmesh->adaptive&&pin->GetOrAddBoolean("z4c","composite_adaptive_experimental",false)&&!wormhole;
+  if(adaptive_native)for(const auto &block:pin->block)
+   if(block.block_name.compare(0,13,"amr_criterion")==0&&pin->GetString(block.block_name,"method")=="cyclic_zoom")
+    throw std::invalid_argument("native adaptive cyclic zoom is unsupported; criterion precedes late zoom object creation");
+  if(adaptive_native){validation_refine=pin->GetOrAddInteger("z4c","composite_validation_refine_cycle",-1);
+   validation_coarsen=pin->GetOrAddInteger("z4c","composite_validation_coarsen_cycle",-1);
+   if((validation_refine>=0||validation_coarsen>=0)&&!(validation_refine>=1&&validation_coarsen>validation_refine))throw std::invalid_argument("invalid explicit native AMR validation schedule");}
+  if(SINGLE_PRECISION_ENABLED||MPI_PARALLEL_ENABLED||global_variable::nranks!=1||(!static_multilevel&&p->nmb_thispack!=1&&p->nmb_thispack!=8)||p->pmesh->nmb_total!=p->nmb_thispack||(p->pmesh->adaptive&&!adaptive_native)||!p->pmesh->three_d
       ||ind.ng!=(static_multilevel?4:3)||ind.nx1!=ind.nx2||ind.nx1!=ind.nx3||ind.nx1<6||ind.nx1>16||z.opt.spatial_order!=4||z.opt.chi_psi_power!=-4||z.opt.floor_chi||z.opt.enable_driftcontrol||z.opt.telegraph_lapse
       ||z.nrad||!z.ptracker.empty()||!z.pfastflow.empty()||!z.phorizon_dump.empty()||p->pmesh->pzoom
       ||pin->GetOrAddBoolean("z4c","hyperboloidal",false)||pin->GetOrAddBoolean("cubed_sphere","enabled",false)
       ||!pin->GetOrAddBoolean("adm","separate_z4c_gauge",false)||pin->GetString("problem","pgen_name")!=(wormhole?"z4c_composite_wormhole":"z4c_composite_minkowski")
       ||pin->GetOrAddReal("problem","mass",0)!=(wormhole?Real(1./3):Real(0))||pin->GetOrAddReal("problem","lapse_pulse",0)!=0||!(integrator=="rk3"||integrator=="rk4")
       ||pin->GetOrAddInteger("cce","num_radii",0)||pin->DoesBlockExist("hydro")||pin->DoesBlockExist("mhd")||pin->DoesBlockExist("radiation")||pin->DoesBlockExist("ion-neutral")||pin->DoesBlockExist("gravity")||pin->DoesBlockExist("particles"))
-    throw std::invalid_argument("experimental composite native path: one/eight uniform ng3 or complete static-SMR cubic ng4 Serial double vacuum core, order4, chi^-4, separate ADM gauge, RK3/RK4, dedicated Minkowski or isotropic-M1/3 pgen; MPI/device/dynamic-regrid/matter/floors/tracking/Cauchy gauge/restart midstage unsupported");
+    throw std::invalid_argument("experimental composite native path: one/eight uniform ng3 or complete static-SMR cubic ng4 Serial double vacuum core, order4, chi^-4, separate ADM gauge, RK3/RK4, dedicated Minkowski or isotropic-M1/3 pgen; MPI/device/wormhole-adaptive/unopted-dynamic-regrid/matter/floors/tracking/Cauchy gauge/restart midstage unsupported");
   half=pin->GetOrAddReal("z4c","composite_half_width",.25);dt_ceiling=pin->GetOrAddReal("z4c","composite_dt",1e-4);
   initial_amplitude=pin->GetOrAddReal("z4c","composite_initial_lapse_amplitude",0);
   initial_angular=pin->GetOrAddBoolean("z4c","composite_initial_angular",false);
@@ -106,6 +126,7 @@ struct NativeCompositeEvolution::Impl {
   }
   auto mesh=static_multilevel?NativeCartesianCoreMap::FromNativeLeaves(half,radii,1,ind.nx1,ind.ng,core_bulk,records):
       cubed_sphere::CompositeMesh(half,radii,1,ind.nx1,ind.ng,core_bulk);
+  if(adaptive_native){const int revision=pin->GetOrAddInteger("z4c","composite_mesh_revision",0);if(revision<0)throw std::invalid_argument("invalid native mesh revision");mesh.revision=revision;}
   if(static_multilevel){const auto hierarchy=multigrid::CompositeCoarseningPlan::Build(mesh);
    if(!hierarchy.dense_supported)throw std::invalid_argument("native static composite hierarchy: "+hierarchy.unsupported_reason);
    hierarchy_terminal_cells=hierarchy.TerminalCells();}
@@ -147,6 +168,7 @@ struct NativeCompositeEvolution::Impl {
   return {box.x1min+(i-ng+.5)*box.dx1,box.x2min+(j-ng+.5)*box.dx2,box.x3min+(k-ng+.5)*box.dx3};
  }
  std::string SidecarMagic()const{
+  if(adaptive_native)return "ATHENAK_NATIVE_COMPOSITE_ADAPTIVE_REGULAR_V1";
   if(static_multilevel)return wormhole?"ATHENAK_NATIVE_COMPOSITE_WORMHOLE_STATIC_SMR_V1":"ATHENAK_NATIVE_COMPOSITE_STATIC_SMR_V1";
   if(core_bulk>1)return wormhole?"ATHENAK_NATIVE_COMPOSITE_WORMHOLE_STATIC_CORE_V1":"ATHENAK_NATIVE_COMPOSITE_STATIC_CORE_V1";
   return wormhole?"ATHENAK_NATIVE_COMPOSITE_WORMHOLE_V1":"ATHENAK_NATIVE_COMPOSITE_V1";
@@ -163,11 +185,95 @@ struct NativeCompositeEvolution::Impl {
    if(b.Get<int>()!=match.native||b.Get<int>()!=match.composite||b.Get<int>()!=record.refinement)throw std::runtime_error("native composite restart core pack map mismatch");
    for(int d=0;d<3;++d)if(b.Get<Real>()!=record.lo[d]||b.Get<Real>()!=record.hi[d])throw std::runtime_error("native composite restart core bounds mismatch");}
  }
- State::Metadata Metadata()const{
+ State::Metadata Metadata(int planned_count=-1,unsigned long planned_revision=std::numeric_limits<unsigned long>::max())const{
   State::Metadata m;if(wormhole){m.chart="wormhole-positive-log22-v1";m.chart_parameters={Real(1./3),2,0,.24,1,1,.02,.005,initial_amplitude,initial_angular?Real(1):Real(0)};}
   else{m.chart="regular-conformal-deviation22";m.chart_parameters={initial_amplitude,initial_angular?Real(1):Real(0)};}
-  if(static_multilevel){m.chart+="-static-smr";m.chart_parameters.push_back(core_bulk);m.chart_parameters.push_back(pack->nmb_thispack);}
+  const int count=planned_count<0?pack->nmb_thispack:planned_count;
+  if(adaptive_native){m.chart+="-adaptive-core";m.chart_parameters.insert(m.chart_parameters.end(),{Real(core_bulk),Real(count),Real(validation_refine),Real(validation_coarsen)});m.mesh_revision=planned_revision==std::numeric_limits<unsigned long>::max()?engine->shift.grid.mesh.revision:planned_revision;}
+  else if(static_multilevel){m.chart+="-static-smr";m.chart_parameters.push_back(core_bulk);m.chart_parameters.push_back(pack->nmb_thispack);}
   else if(core_bulk>1){m.chart+="-static-core";m.chart_parameters.push_back(core_bulk);m.chart_parameters.push_back(pack->nmb_thispack);}return m;
+ }
+ void ValidatePreparedMirror(const CompositeTensorEvolution &e,const std::vector<NativeCartesianBlock>&records)const{
+  const auto &g=e.shift.grid;const int n=g.n,ng=g.ng;
+  for(const auto &b:records)for(int k=0;k<n+2*ng;++k)for(int j=0;j<n+2*ng;++j)for(int i=0;i<n+2*ng;++i){
+   const int ijk[3]={i,j,k};Real x[3];for(int a=0;a<3;++a)x[a]=b.lo[a]+(ijk[a]-ng+.5)*((b.hi[a]-b.lo[a])/n);
+   const bool active=i>=ng&&i<ng+n&&j>=ng&&j<ng+n&&k>=ng&&k<ng+n;
+   V q(22,0);Real beta[3]={-x[0],-x[1],-x[2]};const Real *reference=x;
+   if(active){const size_t p=((size_t(b.native)*n+k-ng)*n+j-ng)*n+i-ng;reference=g.geometry[p].x;
+    std::copy_n(e.state.begin()+22*p,22,q.begin());for(int a=0;a<3;++a)beta[a]=e.beta_delta[3*p+a]-reference[a];
+   }else for(const auto &entry:g.Interpolate(x,6)){
+    const int block=entry.point/(g.padded*g.padded*g.padded),ii=entry.point%g.padded-ng,jj=entry.point/g.padded%g.padded-ng,kk=entry.point/(g.padded*g.padded)%g.padded-ng;
+    const size_t p=((size_t(block)*n+kk)*n+jj)*n+ii;for(int f=0;f<22;++f)q[f]+=entry.weight*e.state[22*p+f];for(int a=0;a<3;++a)beta[a]+=entry.weight*e.beta_delta[3*p+a];}
+   for(Real value:q)if(!std::isfinite(value))throw std::runtime_error("native regrid PREPARE nonfinite planned physical mirror");
+   Z4cJet<Real> u{};u.chi.value=q[0]+1;u.alpha.value=q[18]+(1+reference[0]*reference[0]+reference[1]*reference[1]+reference[2]*reference[2])/2;u.trace.value=q[13]-3;u.theta.value=q[14];
+   for(int t=0;t<6;++t){const int a=CompositeTensorEvolution::tensor_i[t],c=CompositeTensorEvolution::tensor_j[t];u.metric.g[a][c]=u.metric.g[c][a]=q[1+t]+(a==c?1:0);u.a.k[a][c]=u.a.k[c][a]=q[7+t];}
+   for(int a=0;a<3;++a)u.beta.value[a]=beta[a];const Real omega=(1-x[0]*x[0]-x[1]*x[1]-x[2]*x[2])/2;
+   if(!ToPhysicalADM(u,omega).valid)throw std::runtime_error("native regrid PREPARE invalid planned ADM active/ghost");
+  }
+ }
+ void PrepareRegrid(const LogicalLocation *leaves,int count){
+  if(!adaptive_native||wormhole||!initialized||!stage||stage->Active()||stage->StageOpen()||pending||!has_bound_rk)
+   throw std::logic_error("native adaptive transaction requires opted regular accepted state");
+  Verify();if(count<1||count>pack->pmesh->nmb_maxperrank)throw std::invalid_argument("native adaptive planned leaf capacity");
+  auto next=std::make_unique<Pending>();const auto &domain=pack->pmesh->mesh_size;
+  const Real lower[3]={domain.x1min,domain.x2min,domain.x3min},upper[3]={domain.x1max,domain.x2max,domain.x3max};
+  for(int m=0;m<count;++m){const int relative=leaves[m].level-pack->pmesh->root_level;
+   if(relative<0||relative>20)throw std::invalid_argument("native adaptive planned level");
+   const int subdivisions=core_bulk<<relative,index[3]={leaves[m].lx1,leaves[m].lx2,leaves[m].lx3};NativeCartesianBlock b;b.native=m;b.refinement=relative;
+   for(int a=0;a<3;++a){if(index[a]<0||index[a]>=subdivisions)throw std::invalid_argument("native adaptive planned logical index");
+    b.lo[a]=index[a]==0?lower[a]:LeftEdgeX(index[a],subdivisions,lower[a],upper[a]);
+    b.hi[a]=index[a]+1==subdivisions?upper[a]:LeftEdgeX(index[a]+1,subdivisions,lower[a],upper[a]);
+    const Real end=std::max(std::abs(b.lo[a]),std::abs(b.hi[a]))+(engine->shift.grid.ng-.5)*(b.hi[a]-b.lo[a])/engine->shift.grid.n;
+    if(end>=1/std::sqrt(Real(3)))throw std::invalid_argument("native adaptive planned ghost bound");}
+   next->records.push_back(b);
+  }
+  auto mesh=NativeCartesianCoreMap::FromNativeLeaves(half,radii,1,engine->shift.grid.n,engine->shift.grid.ng,core_bulk,next->records);
+  if(engine->shift.grid.mesh.revision>=unsigned(std::numeric_limits<int>::max()))throw std::overflow_error("native adaptive mesh revision");
+  mesh.revision=engine->shift.grid.mesh.revision+1;const auto hierarchy=multigrid::CompositeCoarseningPlan::Build(mesh);
+  if(!hierarchy.dense_supported)throw std::invalid_argument("native adaptive coarse cap: "+hierarchy.unsupported_reason);next->terminal=hierarchy.TerminalCells();
+  auto rebuilt=RebuildCompositeAtAcceptedState(*engine,std::move(mesh));next->copied=rebuilt.copied_cells;next->interpolated=rebuilt.interpolated_cells;next->engine=std::move(rebuilt.engine);
+  // This globally coupled accepted solve is still PREPARE: failure cannot
+  // mutate native Views, old coefficients or old adapters.
+  next->engine->RHS(next->engine->state,0);++rhs_calls;
+  next->engine->max_shift_residual=std::max(next->engine->max_shift_residual,engine->max_shift_residual);
+  next->engine->max_shift_point_residual=std::max(next->engine->max_shift_point_residual,engine->max_shift_point_residual);
+  if(engine->scri->values!=next->engine->scri->values)throw std::runtime_error("native adaptive transfer changed scri coefficients");
+  const size_t per=size_t(engine->shift.grid.n)*engine->shift.grid.n*engine->shift.grid.n;
+  for(size_t b=0;b<next->engine->shift.grid.mesh.blocks.size();++b)if(next->engine->shift.grid.mesh.blocks[b].face>=0){int old=-1;
+   for(size_t a=0;a<engine->shift.grid.mesh.blocks.size();++a)if(composite_regrid_detail::Same(next->engine->shift.grid.mesh.blocks[b],engine->shift.grid.mesh.blocks[a]))old=a;
+   if(old<0||!std::equal(next->engine->state.begin()+22*per*b,next->engine->state.begin()+22*per*(b+1),engine->state.begin()+22*per*old))throw std::runtime_error("native adaptive changed shell coefficients");}
+  next->map=std::make_unique<NativeCartesianCoreMap>(next->engine->shift.grid.mesh,next->records,engine->shift.grid.n,engine->shift.grid.ng);
+  next->inverse.assign(next->engine->shift.grid.mesh.blocks.size(),-1);for(const auto &m:next->map->matches){next->mapping.push_back({m.native,m.composite});next->inverse[m.composite]=m.native;}
+  next->fields=std::make_unique<NativeCompositeFields>(next->engine->shift.grid,false,0,-4);
+  next->stage=std::make_unique<State>(*stage);
+  // Both native RK3/RK4 overwrite scratch registers at BeginStage1. The
+  // accepted-only reset is explicit and independently bitwise-tested.
+  next->stage->ReplaceAcceptedState({next->engine->state,next->engine->scri->values,{}},next->engine->beta_delta,Metadata(count,next->engine->shift.grid.mesh.revision));
+  next->stage->InstallShift(next->stage->CurrentEpoch(),next->engine->beta_delta);
+  const auto a=stage->Save(),b=next->stage->Save();if(a.time!=b.time||a.cycle!=b.cycle||a.completed_cycles!=b.completed_cycles||!(a.rk==b.rk)||a.has_rk!=b.has_rk)throw std::logic_error("native adaptive lost accepted time/cycle/RK binding");
+  ValidatePreparedMirror(*next->engine,next->records);
+  pending=std::move(next);
+ }
+ void CommitRegrid(){
+  if(!pending)throw std::logic_error("native adaptive commit without prepare");
+  pending->map->ValidateCurrent(pending->engine->shift.grid.mesh,NativeRecords());
+  // Keep old grid owner alive until every adapter referencing it is released.
+  auto old_engine=std::move(engine);fields.reset();core_map.reset();
+  engine=std::move(pending->engine);fields=std::move(pending->fields);core_map=std::move(pending->map);stage=std::move(pending->stage);
+  mapping=std::move(pending->mapping);composite_to_native=std::move(pending->inverse);hierarchy_terminal_cells=pending->terminal;
+  parameters->SetInteger("z4c","composite_mesh_revision",int(engine->shift.grid.mesh.revision));
+  Scatter();ADM();
+  const auto saved_prefix=prefix;const auto saved_report=last_report;prefix+=".regrid-"+std::to_string(engine->shift.grid.mesh.revision);last_report=std::numeric_limits<uint64_t>::max();
+  WriteMeshReceipt();Diagnostics();Save(prefix+".composite");prefix=saved_prefix;last_report=saved_report;
+  std::ofstream report(prefix+".regrid.jsonl",std::ios::app);report<<"{\"cycle\":"<<stage->CompletedCycles()<<",\"revision\":"<<engine->shift.grid.mesh.revision<<",\"native_leaves\":"<<pack->nmb_thispack<<",\"cells\":"<<engine->shift.grid.active.size()<<",\"copied_cells\":"<<pending->copied<<",\"interpolated_cells\":"<<pending->interpolated<<",\"coarse_cells\":"<<hierarchy_terminal_cells<<",\"shell_scri_coefficients_bitwise\":true,\"accepted_register_reset\":true,\"source\":\"canonical22_not_native_coarse_u0\"}\n";
+  if(!report)throw std::runtime_error("native adaptive event output failed");pending.reset();
+ }
+ int ValidationFlag(int m)const{
+  if(!adaptive_native||validation_refine<0)return 2;
+  const int cycle=pack->pmesh->ncycle,relative=pack->pmb->mb_lev.h_view(m)-pack->pmesh->root_level;
+  const auto &b=pack->pmb->mb_size.h_view(m);const bool negative=b.x1max<=0&&b.x2max<=0&&b.x3max<=0;
+  if(cycle>=validation_coarsen)return negative&&relative>0?-1:0;
+  return cycle>=validation_refine&&negative&&relative==0?1:0;
  }
  void WriteRK(const NativeCompositeRK &rk)const{
   std::ofstream file(prefix+".rk.dat");file<<std::setprecision(17)<<"NATIVE_COMPOSITE_RK_V1 "<<rk.integrator<<' '<<rk.stages<<'\n';
@@ -208,7 +314,7 @@ struct NativeCompositeEvolution::Impl {
    dst(block.native,adm::ADM::I_ADM_PSI4,k,j,i)=physical.psi4;dst(block.native,adm::ADM::I_ADM_ALPHA,k,j,i)=physical.alpha;for(int a=0;a<3;++a)dst(block.native,adm::ADM::I_ADM_BETAX+a,k,j,i)=physical.beta[a];for(int t=0;t<6;++t){const int a=CompositeTensorEvolution::tensor_i[t],b=CompositeTensorEvolution::tensor_j[t];dst(block.native,adm::ADM::I_ADM_GXX+t,k,j,i)=physical.metric[a][b];dst(block.native,adm::ADM::I_ADM_KXX+t,k,j,i)=physical.curvature[a][b];}
   }Kokkos::deep_copy(a->u_adm,dst);
  }
- void Diagnostics(){if(!initialized||stage->Active())return;Verify();auto con=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),z.u_con);Kokkos::deep_copy(con,Real(0));const auto &g=engine->shift.grid;Real h2=0,m2=0,t2=0,z2=0,volume=0,maxh=0,maxm=0,drift=0;
+ void Diagnostics(){if(!initialized||stage->Active()||(adaptive_native&&last_report==stage->CompletedCycles()))return;Verify();auto con=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),z.u_con);Kokkos::deep_copy(con,Real(0));const auto &g=engine->shift.grid;Real h2=0,m2=0,t2=0,z2=0,volume=0,maxh=0,maxm=0,drift=0;
   const bool write_snapshot=stage->CompletedCycles()%output_every==0;std::ostringstream number;number<<std::setw(5)<<std::setfill('0')<<stage->CompletedCycles();std::ofstream out;if(write_snapshot){out.open(prefix+"."+number.str()+".csv");out<<std::setprecision(17)<<"x,y,z,Omega,weight,alpha,chi,H,M,Theta,Z,beta_x,beta_y,beta_z";for(int f=0;f<22;++f)out<<",state_"<<f;if(wormhole)for(int a=0;a<3;++a)out<<",delta_beta_"<<a;out<<'\n';}
   for(size_t p=0;p<g.active.size();++p){const auto &u=engine->jets[p];const auto &x=g.geometry[p].x;const auto o=CompositeOmegaAt(x,u);const auto c=EvolvedConstraints(u,o);if(!c.valid)throw std::runtime_error("invalid native composite full-domain constraints");const Real w=g.volumes[p]*std::sqrt(engine->shift.geometry[p].determinant)/std::pow(u.chi.value,1.5);volume+=w;h2+=w*c.hamiltonian*c.hamiltonian;m2+=w*c.momentum_conformal_norm2;t2+=w*u.theta.value*u.theta.value;z2+=w*c.z4.z_conformal_norm2;maxh=std::max(maxh,std::abs(c.hamiltonian));maxm=std::max(maxm,std::sqrt(c.momentum_conformal_norm2));for(int f=0;f<22;++f)drift=std::max(drift,std::abs(engine->state[22*p+f]));if(write_snapshot){out<<x[0]<<','<<x[1]<<','<<x[2]<<','<<o.omega<<','<<w<<','<<u.alpha.value<<','<<u.chi.value<<','<<c.hamiltonian<<','<<std::sqrt(c.momentum_conformal_norm2)<<','<<u.theta.value<<','<<std::sqrt(c.z4.z_conformal_norm2);for(int a=0;a<3;++a)out<<','<<u.beta.value[a];for(int f=0;f<22;++f){out<<','<<engine->state[22*p+f];drift=std::max(drift,std::abs(engine->state[22*p+f]));}if(wormhole)for(int a=0;a<3;++a)out<<','<<engine->beta_delta[3*p+a];out<<'\n';}
    const int native_block=composite_to_native[p/(size_t(g.n)*g.n*g.n)];if(native_block>=0){const int i=p%g.n+g.ng,j=p/g.n%g.n+g.ng,k=p/(g.n*g.n)%g.n+g.ng;con(native_block,Z4c::I_CON_H,k,j,i)=c.hamiltonian;con(native_block,Z4c::I_CON_M,k,j,i)=c.momentum_conformal_norm2;con(native_block,Z4c::I_CON_Z,k,j,i)=c.z4.z_conformal_norm2;con(native_block,Z4c::I_CON_C,k,j,i)=c.hamiltonian*c.hamiltonian+c.momentum_conformal_norm2+c.z4.z_conformal_norm2+u.theta.value*u.theta.value;for(int a=0;a<3;++a)con(native_block,Z4c::I_CON_MX+a,k,j,i)=c.momentum[a];}
@@ -252,5 +358,8 @@ void NativeCompositeEvolution::PrepareNative(){if(p_->static_multilevel&&!p_->me
 void NativeCompositeEvolution::ToADM(){p_->ADM();}
 void NativeCompositeEvolution::Constraints(){p_->Diagnostics();}
 Real NativeCompositeEvolution::TimeStep()const{return p_->CFLStep()/p_->pack->pmesh->cfl_no;}
-void NativeCompositeEvolution::WriteRestart(const std::string &path){p_->Save(path);}
+void NativeCompositeEvolution::WriteRestart(const std::string &path){if(p_->pending)throw std::logic_error("restart during native regrid transaction");p_->Save(path);}
+void NativeCompositeEvolution::PrepareRegrid(const LogicalLocation *leaves,int count){p_->PrepareRegrid(leaves,count);}
+void NativeCompositeEvolution::CommitRegrid(){p_->CommitRegrid();}
+int NativeCompositeEvolution::ValidationRefinementFlag(int native)const{return p_->ValidationFlag(native);}
 }} // namespace z4c::hyperboloidal

@@ -31,6 +31,7 @@
 #include "radiation/radiation.hpp"
 #include "coordinates/adm.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c/hyperboloidal/native_composite_evolution.hpp"
 #include "z4c/z4c_amr.hpp"
 #include "prolongation.hpp"
 #include "restriction.hpp"
@@ -215,6 +216,10 @@ void MeshRefinement::CheckForRefinement(MeshBlockPack* pmbp) {
     pmrc->SetRefinementData(pmbp, false, true);
   }
 
+  const auto native_owner=pmbp->pz4c?pmbp->pz4c->native_composite.get():nullptr;
+  const bool validation=native_owner&&native_owner->ValidationRefinementFlag(0)!=2;
+  if(validation){for(int m=0;m<pmbp->nmb_thispack;++m)refine_flag.h_view(m)=native_owner->ValidationRefinementFlag(m);}
+  else {
   // iterate through list of refinement criteria and apply methods
   for (auto it = pmrc->rcrit.begin(); it != pmrc->rcrit.end(); ++it) {
     switch (it->rmethod) {
@@ -243,6 +248,7 @@ void MeshRefinement::CheckForRefinement(MeshBlockPack* pmbp) {
     }
   }
 
+  }
   // Turn off (on host) refine/derefine flag for MeshBlocks at max/root level
   int nmb = pmbp->nmb_thispack;
   int mbs = pmy_mesh->gids_eachrank[global_variable::my_rank];
@@ -522,6 +528,9 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
     RestrictFC(pmhd->b0, pmhd->coarse_b0);
   }
 
+  auto *canonical=pz4c?pz4c->native_composite.get():nullptr;
+  if(canonical)canonical->PrepareRegrid(new_lloc_eachmb,new_nmb_total);
+
   // Step 4.
   // Allocate send/recv buffers for load balancing, post receives.
   // Pack send buffers for load blancing and send data
@@ -547,7 +556,7 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
     if (prad != nullptr) {
       DerefineCCSameRank(prad->i0, prad->coarse_i0);
     }
-    if (pz4c != nullptr) {
+    if (pz4c != nullptr && !canonical) {
       DerefineCCSameRank(pz4c->u0, pz4c->coarse_u0);
     }
   }
@@ -565,9 +574,9 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
   if (prad != nullptr) {
     CopyCC(prad->i0);
   }
-  if (pz4c != nullptr) {
+  if (pz4c != nullptr && !canonical) {
     CopyCC(pz4c->u0);
-  } else if (padm != nullptr) {
+  } else if (pz4c == nullptr && padm != nullptr) {
     CopyCC(padm->u_adm);
   }
   // Step 7.
@@ -584,7 +593,7 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
     if (prad != nullptr) {
       CopyForRefinementCC(prad->i0, prad->coarse_i0);
     }
-    if (pz4c != nullptr) {
+    if (pz4c != nullptr && !canonical) {
       CopyForRefinementCC(pz4c->u0, pz4c->coarse_u0);
     }
   }
@@ -619,7 +628,7 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
     if (prad != nullptr) {
       RefineCC(new_to_old, prad->i0, prad->coarse_i0);
     }
-    if (pz4c != nullptr) {
+    if (pz4c != nullptr && !canonical) {
       RefineCC(new_to_old, pz4c->u0, pz4c->coarse_u0, true);
     }
   }
@@ -663,6 +672,7 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
   pm->pmb_pack->AddMeshBlocks(pin);
   pm->pmb_pack->AddCoordinates(pin);
   pm->pmb_pack->pmb->SetNeighbors(pm->ptree, pm->rank_eachmb);
+  if(canonical)canonical->CommitRegrid();
 
   Kokkos::realloc(fc_amr_repair, new_nmb_total);
   for (int m=0; m<new_nmb_total; ++m) {

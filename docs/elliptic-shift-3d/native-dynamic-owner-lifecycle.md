@@ -1,7 +1,9 @@
 # Native adaptive owner lifecycle and required transaction
 
-Read-only audit of current source after static-SMR qualification. No dynamic
-native regrid is enabled by this audit; the adaptive guard remains mandatory.
+Historical read-only audit after static-SMR qualification. The later explicit
+regular-Minkowski transaction is implemented and qualified in
+[native-adaptive-regular-integration.md](native-adaptive-regular-integration.md).
+Wormhole adaptive and the other unsupported configurations remain guarded.
 The parent owns the new host-engine regrid-transfer component separately.
 
 ## Actual ordering and object lifetime

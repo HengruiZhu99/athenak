@@ -1,0 +1,292 @@
+{
+  "scope": "Adaptive-hook OFF regression: current shared5c8916 binary versus existing uniform/static Minkowski controls; new affine operator not enabled or claimed",
+  "binary_sha256": "5c8916bdd1d40142b06e114133e57b5ed162a92fa0415d710990e616df0d3f47",
+  "frozen_build_manifest_sha256": "4b521dd4fefe3902a1d4f6a2c059c41dbc3e874a7c9b2f1893ecd6a8a8b6d1ad",
+  "maximum_seconds_per_process": 180,
+  "maximum_active_cells": 50000,
+  "cases": [
+    {
+      "name": "uniform-ng3",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-i",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/inputs/z4c/composite_minkowski.athinput",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-adaptive-default-regression-20261027/uniform-ng3"
+      ],
+      "input_sha256": "2fa795e5ffbf82b6202863d89096b3e38fc5cccb60e86670634990ca761e717e",
+      "expected_active_cells": 2808,
+      "reference": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-composite-cfl-controls-20261027/two-shell",
+      "files": {
+        "native_composite.00000.csv": {
+          "bitwise": true,
+          "reference_sha256": "dfd19497b629fcac82bd4f61723c16cacb9d99f6f996fbebfd483d311a96a336",
+          "shared_sha256": "dfd19497b629fcac82bd4f61723c16cacb9d99f6f996fbebfd483d311a96a336"
+        },
+        "native_composite.00000.scri.csv": {
+          "bitwise": true,
+          "reference_sha256": "67561cc40db3ac18cfdc1b90b1ff5cb1fad4f3602576b71cbfe4109559447bdd",
+          "shared_sha256": "67561cc40db3ac18cfdc1b90b1ff5cb1fad4f3602576b71cbfe4109559447bdd"
+        },
+        "native_composite.00001.csv": {
+          "bitwise": true,
+          "reference_sha256": "d97ba7b0bd9571ecc6a60c012c33610107e5b5e021de95918c9b7cbd966181c9",
+          "shared_sha256": "d97ba7b0bd9571ecc6a60c012c33610107e5b5e021de95918c9b7cbd966181c9"
+        },
+        "native_composite.00001.scri.csv": {
+          "bitwise": true,
+          "reference_sha256": "ee134d8ef4e42f7daf19fae4c411833c4b2495075db79dad2a9f8da09d0725c8",
+          "shared_sha256": "ee134d8ef4e42f7daf19fae4c411833c4b2495075db79dad2a9f8da09d0725c8"
+        },
+        "native_composite.00002.csv": {
+          "bitwise": true,
+          "reference_sha256": "a04bd6273f6957d80bb0f615bcf57ecdc1141e3886f808016e050fe8c70ba0af",
+          "shared_sha256": "a04bd6273f6957d80bb0f615bcf57ecdc1141e3886f808016e050fe8c70ba0af"
+        },
+        "native_composite.00002.scri.csv": {
+          "bitwise": true,
+          "reference_sha256": "9214057c6252452c3ca7c556c0d9a662d012856e3350c7397936f32bf0dbb30a",
+          "shared_sha256": "9214057c6252452c3ca7c556c0d9a662d012856e3350c7397936f32bf0dbb30a"
+        }
+      },
+      "owned_group": 31876,
+      "exit_code": 0,
+      "seconds": 2.9568571250000004,
+      "trace": [
+        {
+          "cycle": 0,
+          "time": 0,
+          "cells": 2808,
+          "shells": 2,
+          "native_begin_calls": 0,
+          "rhs_calls": 1,
+          "native_update_calls": 0,
+          "H_rms": 4.1463400214413643e-16,
+          "M_rms": 0,
+          "Theta_rms": 0,
+          "Z_rms": 0,
+          "H_max": 1.1102230246251565e-15,
+          "M_max": 0,
+          "state_deviation_max": 0,
+          "dt_ceiling": 0.0001,
+          "full_grid_selected_dt": 0.0001,
+          "shift_original_rms_max": 1.1124203452546409e-13,
+          "shift_point_max": 8.103879103065002e-13,
+          "scri_tensor_pole": 7.401486830834376e-16,
+          "scri_ghost_clock": 0,
+          "scri_ghost_null": 6.661338147750939e-16,
+          "scri_ghost_tangent": 3.218513772791761e-16,
+          "canonical_global_state": true,
+          "native_physical_mirror_verified": true,
+          "beta_excluded_from_RK": true,
+          "live_Driver_RK": "not_yet_started"
+        },
+        {
+          "cycle": 1,
+          "time": 0.0001,
+          "cells": 2808,
+          "shells": 2,
+          "native_begin_calls": 4,
+          "rhs_calls": 6,
+          "native_update_calls": 4,
+          "H_rms": 4.1463400214413643e-16,
+          "M_rms": 3.304624784440353e-17,
+          "Theta_rms": 2.9203793459519164e-19,
+          "Z_rms": 4.288745088776633e-18,
+          "H_max": 1.1102230246251565e-15,
+          "M_max": 1.6585254632540123e-16,
+          "state_deviation_max": 8.077853272281177e-17,
+          "dt_ceiling": 0.0001,
+          "full_grid_selected_dt": 0.0001,
+          "shift_original_rms_max": 1.1179708086011076e-13,
+          "shift_point_max": 8.146366638533215e-13,
+          "scri_tensor_pole": 1.0341584850256874e-15,
+          "scri_ghost_clock": 0,
+          "scri_ghost_null": 6.661338147750939e-16,
+          "scri_ghost_tangent": 3.218513772791761e-16,
+          "canonical_global_state": true,
+          "native_physical_mirror_verified": true,
+          "beta_excluded_from_RK": true,
+          "live_Driver_RK": "rk4"
+        },
+        {
+          "cycle": 2,
+          "time": 0.0002,
+          "cells": 2808,
+          "shells": 2,
+          "native_begin_calls": 8,
+          "rhs_calls": 11,
+          "native_update_calls": 8,
+          "H_rms": 4.1463400214413643e-16,
+          "M_rms": 6.686703004275914e-17,
+          "Theta_rms": 5.844491022404224e-19,
+          "Z_rms": 8.542661788414529e-18,
+          "H_max": 1.1102230246251565e-15,
+          "M_max": 3.333587176628834e-16,
+          "state_deviation_max": 1.6103846313955784e-16,
+          "dt_ceiling": 0.0001,
+          "full_grid_selected_dt": 0.0001,
+          "shift_original_rms_max": 1.1225809698116764e-13,
+          "shift_point_max": 8.181293250417241e-13,
+          "scri_tensor_pole": 2.1073440420814727e-15,
+          "scri_ghost_clock": 0,
+          "scri_ghost_null": 6.661338147750939e-16,
+          "scri_ghost_tangent": 3.218513772791761e-16,
+          "canonical_global_state": true,
+          "native_physical_mirror_verified": true,
+          "beta_excluded_from_RK": true,
+          "live_Driver_RK": "rk4"
+        }
+      ],
+      "active_cells": 2808,
+      "snapshot_CSV_count": 6,
+      "all_six_CSVs_bitwise": true,
+      "input_unchanged": true
+    },
+    {
+      "name": "static-SMR-ng4",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-i",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static-smr-controls-r3-20261027/native_static.athinput",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-adaptive-default-regression-20261027/static-SMR-ng4"
+      ],
+      "input_sha256": "179aaa701823b3f772977b41194ab7a8c56ecdaf892404a330b964aba980ac17",
+      "expected_active_cells": 12312,
+      "reference": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static-smr-controls-r3-20261027/full",
+      "files": {
+        "native_smr.00000.csv": {
+          "bitwise": true,
+          "reference_sha256": "18e48875acdd313dc92dbbff3ecf89c6ad656537c2e8c8aeabee036fceeb6260",
+          "shared_sha256": "18e48875acdd313dc92dbbff3ecf89c6ad656537c2e8c8aeabee036fceeb6260"
+        },
+        "native_smr.00000.scri.csv": {
+          "bitwise": true,
+          "reference_sha256": "67561cc40db3ac18cfdc1b90b1ff5cb1fad4f3602576b71cbfe4109559447bdd",
+          "shared_sha256": "67561cc40db3ac18cfdc1b90b1ff5cb1fad4f3602576b71cbfe4109559447bdd"
+        },
+        "native_smr.00001.csv": {
+          "bitwise": true,
+          "reference_sha256": "bfb5abca6f7cbd81c56c8ab91f562a26faedd35cd178c93a077c9f1dd0eda34f",
+          "shared_sha256": "bfb5abca6f7cbd81c56c8ab91f562a26faedd35cd178c93a077c9f1dd0eda34f"
+        },
+        "native_smr.00001.scri.csv": {
+          "bitwise": true,
+          "reference_sha256": "0f630dcffeed3286eb53461329fba7e7625920121d435bdb11b12450c2556280",
+          "shared_sha256": "0f630dcffeed3286eb53461329fba7e7625920121d435bdb11b12450c2556280"
+        },
+        "native_smr.00002.csv": {
+          "bitwise": true,
+          "reference_sha256": "a414c6c6bb3d2ed594006aefbb349c98f09ab17850ddd7c5525f39746951e1d3",
+          "shared_sha256": "a414c6c6bb3d2ed594006aefbb349c98f09ab17850ddd7c5525f39746951e1d3"
+        },
+        "native_smr.00002.scri.csv": {
+          "bitwise": true,
+          "reference_sha256": "f6558d8406186812b84afa5f0b4c1af034590807492cd21ba35ae730a3f07001",
+          "shared_sha256": "f6558d8406186812b84afa5f0b4c1af034590807492cd21ba35ae730a3f07001"
+        },
+        "native_smr.coordinates.csv": {
+          "bitwise": true,
+          "reference_sha256": "f5cbb066845e52e8c3ef44cd34c2943858ec7c3f3e87bee8e2085a5eee4927da",
+          "shared_sha256": "f5cbb066845e52e8c3ef44cd34c2943858ec7c3f3e87bee8e2085a5eee4927da"
+        }
+      },
+      "owned_group": 31882,
+      "exit_code": 0,
+      "seconds": 18.120494208,
+      "trace": [
+        {
+          "cycle": 0,
+          "time": 0,
+          "cells": 12312,
+          "shells": 7,
+          "native_begin_calls": 0,
+          "rhs_calls": 1,
+          "native_update_calls": 0,
+          "H_rms": 4.49218357822959e-16,
+          "M_rms": 0,
+          "Theta_rms": 0,
+          "Z_rms": 0,
+          "H_max": 1.3322676295501878e-15,
+          "M_max": 0,
+          "state_deviation_max": 0,
+          "dt_ceiling": 0.0001,
+          "full_grid_selected_dt": 0.0001,
+          "shift_original_rms_max": 1.952094850327982e-13,
+          "shift_point_max": 1.0199341623181861e-12,
+          "scri_tensor_pole": 7.401486830834376e-16,
+          "scri_ghost_clock": 0,
+          "scri_ghost_null": 4.440892098500626e-16,
+          "scri_ghost_tangent": 2.220446049250313e-16,
+          "canonical_global_state": true,
+          "native_physical_mirror_verified": true,
+          "beta_excluded_from_RK": true,
+          "live_Driver_RK": "not_yet_started"
+        },
+        {
+          "cycle": 1,
+          "time": 0.0001,
+          "cells": 12312,
+          "shells": 7,
+          "native_begin_calls": 4,
+          "rhs_calls": 6,
+          "native_update_calls": 4,
+          "H_rms": 5.233039395028113e-16,
+          "M_rms": 5.641001564587766e-17,
+          "Theta_rms": 3.4371153917948143e-19,
+          "Z_rms": 5.617512890002648e-18,
+          "H_max": 4.4825254619240695e-15,
+          "M_max": 2.677974360875028e-16,
+          "state_deviation_max": 1.0190943874053404e-16,
+          "dt_ceiling": 0.0001,
+          "full_grid_selected_dt": 0.0001,
+          "shift_original_rms_max": 1.95948075186944e-13,
+          "shift_point_max": 1.0249712084141453e-12,
+          "scri_tensor_pole": 1.3303887676821964e-15,
+          "scri_ghost_clock": 0,
+          "scri_ghost_null": 4.440892098500626e-16,
+          "scri_ghost_tangent": 2.220446049250313e-16,
+          "canonical_global_state": true,
+          "native_physical_mirror_verified": true,
+          "beta_excluded_from_RK": true,
+          "live_Driver_RK": "rk4"
+        },
+        {
+          "cycle": 2,
+          "time": 0.0002,
+          "cells": 12312,
+          "shells": 7,
+          "native_begin_calls": 8,
+          "rhs_calls": 11,
+          "native_update_calls": 8,
+          "H_rms": 6.556239541366525e-16,
+          "M_rms": 1.1431395204082554e-16,
+          "Theta_rms": 6.824610747834926e-19,
+          "Z_rms": 1.1194117812453327e-17,
+          "H_max": 9.43689570931383e-15,
+          "M_max": 5.360386796202294e-16,
+          "state_deviation_max": 2.0364702775181839e-16,
+          "dt_ceiling": 0.0001,
+          "full_grid_selected_dt": 0.0001,
+          "shift_original_rms_max": 1.9654801456114304e-13,
+          "shift_point_max": 1.0289748695682147e-12,
+          "scri_tensor_pole": 2.7210340585290923e-15,
+          "scri_ghost_clock": 0,
+          "scri_ghost_null": 4.440892098500626e-16,
+          "scri_ghost_tangent": 2.220446049250313e-16,
+          "canonical_global_state": true,
+          "native_physical_mirror_verified": true,
+          "beta_excluded_from_RK": true,
+          "live_Driver_RK": "rk4"
+        }
+      ],
+      "active_cells": 12312,
+      "snapshot_CSV_count": 6,
+      "all_six_CSVs_bitwise": true,
+      "input_unchanged": true
+    }
+  ],
+  "binary_unchanged": true,
+  "qualified": true
+}

@@ -1,8 +1,9 @@
 # Native static Cartesian refinement qualification
 
 `NativeCompositeEvolution` now accepts a complete Serial static-SMR Cartesian
-core, using actual AthenaK leaf bounds and relative levels. Dynamic AMR remains
-rejected. The canonical global tensor engine still owns shell/scri state;
+core, using actual AthenaK leaf bounds and relative levels. Dynamic AMR is
+rejected by default; a later explicit regular-Minkowski adaptive path is described
+in [native-adaptive-regular-integration.md](native-adaptive-regular-integration.md). The canonical global tensor engine still owns shell/scri state;
 shells are **not native MeshBlocks**. This implements static native tree/field/
 Driver integration, not generic native multipatch/MPI/device support.
 
