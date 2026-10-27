@@ -91,10 +91,11 @@ changed RK and changed pulse configuration are rejected. Evidence:
 `evidence/native-composite-pulse-controls-20261027` and
 `evidence/native-composite-task-qualified-20261027`.
 
-This is Serial/double/vacuum with one or eight uniform static native Cartesian blocks,
-ng=3/order=4, and dedicated Minkowski or selected M=1/3 wormhole initialization.
+This is Serial/double/vacuum with one or eight uniform static native Cartesian
+blocks (ng3), or a complete verified static-refinement tree (ng4), all order4,
+with dedicated Minkowski or selected M=1/3 wormhole initialization.
 Shells are engine-owned host blocks, not native MeshBlocks or device/rank
-distributed storage. Native AMR/regridding, matter, tracking, MPI/GPU and
+distributed storage. Native dynamic regridding, matter, tracking, MPI/GPU and
 midstage restart remain unsupported and guarded. Native restart is paired
 with a complete composite sidecar; this does not claim general shell output
 or native distributed multigrid support. Full-grid characteristic, scri penalty

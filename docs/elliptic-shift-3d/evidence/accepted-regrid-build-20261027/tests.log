@@ -1,0 +1,37 @@
+UpdateCTestConfiguration  from :/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/DartConfiguration.tcl
+Test project /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 12
+    Start 12: elliptic_shift_3d_accepted_regrid
+
+12: Test command: /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_composite_regrid_tests
+12: Working Directory: /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d
+12: Test timeout computed to be: 60
+12: positive-log accepted transfer rejected: value_weight_amplification
+1/2 Test #12: elliptic_shift_3d_accepted_regrid ........***Failed    2.04 sec
+test 13
+    Start 13: elliptic_shift_3d_native_static_leaves
+
+13: Test command: /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_native_static_leaves_tests
+13: Working Directory: /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d
+13: Test timeout computed to be: 30
+13: {"cases":9,"matched_leaves":282,"invalid_rejections":45,"largest_terminal_cells":848,"coarse_cap":1024,"actual_Driver_run":false,"status":"passed"}
+2/2 Test #13: elliptic_shift_3d_native_static_leaves ...   Passed    0.45 sec
+
+The following tests passed:
+	elliptic_shift_3d_native_static_leaves
+
+50% tests passed, 1 tests failed out of 2
+
+Total Test time (real) =   2.50 sec
+
+The following tests FAILED:
+	 12 - elliptic_shift_3d_accepted_regrid (Failed)
+Errors while running CTest
+Output from these tests are in: /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/Testing/Temporary/LastTest.log
+Use "--rerun-failed --output-on-failure" to re-run the failed cases verbosely.
