@@ -1,0 +1,96 @@
+{
+  "updated_utc": "2026-10-27T16:49:19.202996+00:00",
+  "goal_status": "active",
+  "turn_classification": "progress",
+  "target_t_over_M": 100,
+  "target_coordinate_t": 33.333333333333336,
+  "completed": "Three grids N257/513/1025 through t=1; separate factor-four timestep check; diagnosed failed duration extensions; rejected b=.1 speed candidate; report updated",
+  "failure_diagnosis": "N513 original driver loses metric positivity near r=.09365 at t~2.727 despite bounded scri residues and small exterior mass error. A b=.1 Omega^2 sqrt(chi) speed addition does not cure the failure.",
+  "next_step": "Derive and test a lapse-adapted shift background source, motivated by the original leading AF slope equation b1_dot=b1^2-1-2 xi_beta (b1+1), which restores b1=-1 even for collapsed lapse. Recheck scri pole limit and compatible D trace; unchanged telegrapher lapse. Gate on regular-center tests before matched puncture comparisons.",
+  "active_processes": [],
+  "do_not_repeat": [
+    "Do not relabel the failed duration trials as survivors",
+    "Do not mark 100M complete from the three-grid t=1 evidence",
+    "Do not resume elliptic historical jobs or its paused monitor"
+  ],
+  "runs": [
+    {
+      "case": "duration-probe-v1/n1025-cfl05",
+      "status": "completed",
+      "t": 1.0,
+      "sources_verified": true,
+      "error": null
+    },
+    {
+      "case": "duration-probe-v1/n257",
+      "status": "completed",
+      "t": 1.0,
+      "sources_verified": true,
+      "error": null
+    },
+    {
+      "case": "duration-probe-v1/n257-cfl05",
+      "status": "completed",
+      "t": 1.0,
+      "sources_verified": true,
+      "error": null
+    },
+    {
+      "case": "duration-probe-v1/n257-t3",
+      "status": "failed",
+      "t": 2.825,
+      "sources_verified": true,
+      "error": "Scri numerator guard"
+    },
+    {
+      "case": "duration-probe-v1/n513-cfl05",
+      "status": "completed",
+      "t": 1.0,
+      "sources_verified": true,
+      "error": null
+    },
+    {
+      "case": "duration-probe-v1/n513-t3",
+      "status": "failed",
+      "t": 2.726953125,
+      "sources_verified": true,
+      "error": "Invalid AF stage"
+    },
+    {
+      "case": "inner-shift-v1/pulse-n129",
+      "status": "completed",
+      "t": 1.0,
+      "sources_verified": true,
+      "error": null
+    },
+    {
+      "case": "inner-shift-v1/pulse-n257",
+      "status": "completed",
+      "t": 1.0,
+      "sources_verified": true,
+      "error": null
+    },
+    {
+      "case": "inner-shift-v1/pulse-n65",
+      "status": "completed",
+      "t": 1.0,
+      "sources_verified": true,
+      "error": null
+    },
+    {
+      "case": "inner-shift-v1/puncture-n257",
+      "status": "failed",
+      "t": 2.8078125000000003,
+      "sources_verified": true,
+      "error": "Invalid AF stage: node 96, r=0.067154569629860245, g=-3.3901587491058649e-05"
+    }
+  ],
+  "checks": {
+    "ctest_groups_passed": 4,
+    "latex_pages": 10,
+    "latex_warnings": 0,
+    "source_hashes_verified": true,
+    "visual_review": "All-page contact sheet; full pages 7,8,9 and both new plot PNGs"
+  },
+  "manuscript_changes": "Added measured duration probes and rejected candidate with explicit failure times, mass/exterior data, low self-convergence order, and next hypothesis. Existing equations retained; optional speed coefficient and AF slope equation newly derived. Scientific updates explicitly authorized by the research goal."
+}

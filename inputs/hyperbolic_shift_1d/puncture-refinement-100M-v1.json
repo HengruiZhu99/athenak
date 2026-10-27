@@ -1,0 +1,32 @@
+{
+  "scope": "Gated qualification toward 100M; fixed inputs, no single-grid convergence claim",
+  "mass": 0.3333333333333333,
+  "duration_stages": [
+    1.0,
+    3.0,
+    10.0,
+    33.333333333333336
+  ],
+  "grids": [
+    257,
+    513,
+    1025
+  ],
+  "cfl": 0.05,
+  "timestep_controls": [
+    0.025,
+    0.0125
+  ],
+  "restoring": 4.0,
+  "ratio": 2.0,
+  "damping": 1.0,
+  "ko": 0.5,
+  "guards": {
+    "relative_null": 5e-14,
+    "scri_pole": 0.01,
+    "cfl": 0.4,
+    "horizon_mass_relative": 0.05
+  },
+  "gate": "Assess each duration and spatial trends before escalating. A rejected grid or guard requires diagnosis; do not omit it from the evidence.",
+  "goal_criteria": "docs/hyperbolic-shift-1d/goal/protocol-100M-v1.json"
+}

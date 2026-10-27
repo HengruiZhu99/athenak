@@ -19,6 +19,9 @@ add_test(NAME hyperbolic_shift_boundary_and_native_principal_symbol
 add_test(NAME hyperbolic_shift_live_metric_AF_coefficients
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../hyperbolic_shift_1d/test_puncture.py
     --library $<TARGET_FILE:spherical_z4c> --output ${CMAKE_CURRENT_BINARY_DIR}/hyperbolic-AF-audit.json)
+add_test(NAME hyperbolic_shift_inner_speed_and_diagnostic_invariance
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../hyperbolic_shift_1d/test_inner_shift.py
+    --library $<TARGET_FILE:spherical_z4c> --output ${CMAKE_CURRENT_BINARY_DIR}/hyperbolic-inner-shift-audit.json)
 add_test(NAME nonlinear_elliptic_shift
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_elliptic.py --library $<TARGET_FILE:spherical_z4c>)
 add_test(NAME hyperboloidal_wormhole_initial_data

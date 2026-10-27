@@ -10,10 +10,14 @@ def main():
  p.add_argument('--cfl',type=float,default=.025);p.add_argument('--amplitude',type=float,default=.01)
  p.add_argument('--ratio',type=float,default=2.);p.add_argument('--damping',type=float,default=1.)
  p.add_argument('--restoring',type=float,default=0.)
+ p.add_argument('--inner-shift',type=float,default=0.,help='Coefficient of Omega^2 sqrt(chi) in the shift driver')
+ p.add_argument('--lapse-floor',type=float,default=1e-10,help='Minimum physical lapse on positive-radius nodes')
+ p.add_argument('--report-dt',type=float,default=.025,
+                help='Maximum coordinate-time spacing of guard checks and saved diagnostics')
  p.add_argument('--puncture',action='store_true')
  p.add_argument('--ko',type=float,default=.5);p.add_argument('--mode',choices=['hyperbolic','elliptic'],default='hyperbolic')
  p.add_argument('--wall-seconds',type=float,default=180.);a=p.parse_args()
- if a.n<17 or a.t<=0 or a.cfl<=0 or a.ratio<=0:raise ValueError('Invalid inputs')
+ if a.n<17 or a.t<=0 or a.cfl<=0 or a.ratio<=0 or a.report_dt<=0 or a.inner_shift<0 or a.lapse_floor<0 or not np.isfinite([a.t,a.cfl,a.ratio,a.report_dt,a.inner_shift,a.lapse_floor]).all():raise ValueError('Invalid inputs')
  a.output.mkdir(parents=True,exist_ok=False);frozen=a.output/'source';frozen.mkdir()
  root=Path(__file__).resolve().parents[2]
  sources=list(Path(__file__).parent.glob('*.py'))+list((root/'tst/elliptic_shift_1d').glob('*.py'))+list((root/'src/z4c/hyperboloidal').glob('*.hpp'))+[root/'tst/elliptic_shift_1d/spherical_api.cpp']
@@ -30,22 +34,32 @@ def main():
  if a.puncture:
   if a.mode!='hyperbolic':raise ValueError('Use the preserved elliptic puncture reference')
   from puncture import PunctureEvolution
-  e=PunctureEvolution(a.n,a.library,a.ratio,a.damping,a.ko,restoring=a.restoring);q=e.initial()
+  e=PunctureEvolution(a.n,a.library,a.ratio,a.damping,a.ko,restoring=a.restoring,inner_shift=a.inner_shift,lapse_floor=a.lapse_floor);q=e.initial()
   manifest['scope']='Fresh matched full-domain wormhole trial; no convergence claim'
  else:
-  e=Evolution(a.n,a.library,a.ratio,a.damping,a.ko,mode=a.mode,restoring=a.restoring);q=np.zeros((a.n,10))
+  e=Evolution(a.n,a.library,a.ratio,a.damping,a.ko,mode=a.mode,restoring=a.restoring,inner_shift=a.inner_shift,lapse_floor=a.lapse_floor);q=np.zeros((a.n,10))
  r=e.r
  # Compact C-infinity pulse, even at the center and identically zero at scri.
  z=(r-.4)/.12;use=abs(z)<1
  if not a.puncture:q[use,6]=a.amplitude*np.exp(1-1/(1-z[use]**2))
  steps=int(np.ceil(a.t/(a.cfl*e.h)));dt=a.t/steps;t=0.;start=time.monotonic();history=[];profiles=[];times=[]
+ report_steps=max(1,min(steps//40,int(a.report_dt/dt)))
+ def save_progress():
+  # Replace atomically so a monitor never sees a partially written history.
+  tmp=a.output/'history.tmp';tmp.write_text(json.dumps(history,indent=2)+'\n')
+  tmp.replace(a.output/'history.json')
+  tmp=a.output/'progress.tmp';tmp.write_text(json.dumps(dict(t=t,step=step,
+    wall_seconds=time.monotonic()-start,dt=dt,steps_requested=steps))+'\n')
+  tmp.replace(a.output/'progress.json')
  error=None;step=0
  try:
   history.append(e.report(q,0.));profiles.append(q.copy());times.append(0.)
+  save_progress()
   for step in range(1,steps+1):
    q=e.step(q,dt);t=step*dt
-   if step%max(1,steps//40)==0 or step==steps:
+   if step%report_steps==0 or step==steps:
     history.append(e.report(q,t));profiles.append(q.copy());times.append(t)
+    save_progress()
     if history[-1]['max_relative_null']>5e-14:raise FloatingPointError('Nullness guard')
     if history[-1]['pole']>1e-2:raise FloatingPointError('Scri numerator guard')
     if history[-1]['max_speed']*dt/e.h>.4:raise FloatingPointError('CFL guard')
@@ -58,6 +72,8 @@ def main():
                  error=error,wall_seconds=time.monotonic()-start,stage_stats=e.stats)
  np.savez_compressed(a.output/'profiles.npz',r=r,t=np.array(times),q=np.array(profiles),last=q,last_time=t,
                      compensation=getattr(e,'compensation',np.zeros_like(q)))
+ if hasattr(e,'failure_state'):
+  np.savez_compressed(a.output/'failed-stage.npz',r=r,q=e.failure_state,last_accepted_time=t,attempted_step=step)
  (a.output/'history.json').write_text(json.dumps(history,indent=2)+'\n');mp.write_text(json.dumps(manifest,indent=2)+'\n')
  print(json.dumps({k:manifest[k] for k in ['status','t','error','wall_seconds','stage_stats']}),flush=True)
 

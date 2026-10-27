@@ -17,8 +17,8 @@ from numerics import puncture_dissipation
 from elliptic import connection,solve
 
 class PunctureEvolution(Evolution):
- def __init__(self,n,library,ratio=2.,damping=1.,ko=.5,restoring=4.):
-  super().__init__(n,library,ratio,damping,ko,restoring=restoring)
+ def __init__(self,n,library,ratio=2.,damping=1.,ko=.5,restoring=4.,inner_shift=0.,lapse_floor=1e-10):
+  super().__init__(n,library,ratio,damping,ko,restoring=restoring,inner_shift=inner_shift,lapse_floor=lapse_floor)
   opts=options(n,library);opts.grid_map='inner-exp-scri';opts.grid_stretch=16.
   opts.puncture_stencil='positive';opts.mapped_ko='local';opts.ko_order=8
   self.chart=PunctureChart(opts);self.r=self.chart.r;self.h=self.chart.h;self.op=self.chart.op
@@ -27,7 +27,10 @@ class PunctureEvolution(Evolution):
   self.xi=self.chart.restoring_strength
   function=self.kernel.lib.spherical_parts_positive_totals
   function.argtypes=self.kernel.lib.spherical_parts.argtypes;function.restype=ctypes.c_int
-  self.function=function
+  # The tensor adapter already supports a null diagnostic pointer. Use a
+  # separate ctypes callable, preserving the legacy ndarray-based signature.
+  prototype=ctypes.CFUNCTYPE(ctypes.c_int,*function.argtypes[:-1],ctypes.c_void_p)
+  self.function=prototype(('spherical_parts_positive_totals',self.kernel.lib))
 
  def initial(self):
   initial=IsotropicWormhole(1/3,96);state,iq,d,dd,_=self.chart.initial_wormhole(initial)
@@ -43,17 +46,23 @@ class PunctureEvolution(Evolution):
   return self.materialize(q)
 
  def materialize(self,state):
-  q=state.copy();active=(q[1:-1,6]<1e-10*self.O[1:-1])
+  q=state.copy();active=(q[1:-1,6]<self.lapse_floor*self.O[1:-1])
   if np.any(active):
-   indices=np.flatnonzero(active)+1;q[indices,6]=1e-10*self.O[indices]
+   indices=np.flatnonzero(active)+1;q[indices,6]=self.lapse_floor*self.O[indices]
    self.stats['floor_calls']+=1;self.stats['max_floor_radius']=max(self.stats['max_floor_radius'],float(max(self.r[indices])))
-  if not np.isfinite(q).all() or np.any(q[1:,6]<=0) or np.any(1+q[:,1]<=0):raise FloatingPointError('Invalid AF stage')
+  if not np.isfinite(q).all() or np.any(q[1:,6]<=0) or np.any(1+q[:,1]<=0):
+   self.failure_state=q.copy()
+   bad=np.argwhere(~np.isfinite(q))
+   if len(bad):i,f=bad[0];reason=f'nonfinite field {f}'
+   elif np.any(1+q[:,1]<=0):i=int(np.argmin(1+q[:,1]));reason=f'g={1+q[i,1]:.17g}'
+   else:i=int(np.argmin(q[1:,6]))+1;reason=f'alpha={q[i,6]:.17g}'
+   raise FloatingPointError(f'Invalid AF stage: node {i}, r={self.r[i]:.17g}, {reason}')
   stored=q[:,:8].copy();stored[1:,6]=np.log(q[1:,6]/self.chart.refs['alpha'][1:,0])
   _,chi,alpha,_=self.chart.reconstruct(stored)
   q[-1,7]=1+normal_shift(alpha[-1],chi[-1],1+q[-1,1]);q[0,7]=0.
   return q
 
- def rhs(self,state,return_state=False):
+ def rhs(self,state,return_state=False,diagnostics=False):
   s=self.materialize(state);r=self.r;n=len(r);physical=slice(1,None)
   chart=s[:,:8].copy();chart[1:,6]=np.log(s[1:,6]/self.chart.refs['alpha'][1:,0])
   d,dd=self.op.derivatives(chart,np.ones(8))
@@ -65,7 +74,7 @@ class PunctureEvolution(Evolution):
   R=np.zeros((n,8));S=R.copy();diag=np.zeros((n,12))
   rr=np.ascontiguousarray(r[1:]);R1=np.zeros((n-1,8));S1=R1.copy();diag1=np.zeros((n-1,12))
   arrays=[np.ascontiguousarray(z) for z in [native,dp[1:],ddp[1:],beta[1:],db[1:],ddb[1:]]]
-  bad=self.function(n-1,rr,*arrays,4.,-.99,1,1.,R1,S1,diag1)
+  bad=self.function(n-1,rr,*arrays,4.,-.99,1,1.,R1,S1,diag1.ctypes.data if diagnostics else None)
   if bad:raise FloatingPointError(f'Native AF tensor failed at node {bad}')
   R[1:]=R1;S[1:]=S1;diag[1:]=diag1
   S[:,6]-=2*self.xi*alpha*q[:,6];S[:,6]+=collapsed_background_correction(r,q[:,6])
@@ -77,7 +86,7 @@ class PunctureEvolution(Evolution):
   trace=np.zeros(8);trace[0]=chi[-1]-g[-1];trace[2]=q[-1,2]-dp[-1,1]/6+2*dp[-1,0]/3
   trace[3:5]=q[-1,3:5];trace[5]=q[-1,5]-connection(1.,g[-1],dp[-1,1])
   hs=self.h*self.jac[-1];raw[-1]+=4/hs*S[-1]-8/hs*trace;raw[-1,6]=0.
-  F=lapse_coefficient(r,alpha);mu=coefficient(alpha,chi,g,F,eta,self.w,.005,.02,self.ratio)
+  F=lapse_coefficient(r,alpha);mu=coefficient(alpha,chi,g,F,eta,self.w,.005,.02,self.ratio,inner_shift=self.inner_shift,omega=self.O)
   rate=np.zeros_like(s);rate[1:,0]=raw[1:,0]/chi[1:];rate[:,1]=raw[:,1]
   weight=self.chart.refs['w'][:,0]
   for f in [2,3,4]:rate[1:,f]=raw[1:,f]/weight[1:]
@@ -123,7 +132,7 @@ class PunctureEvolution(Evolution):
   return (rate,s) if return_state else rate
 
  def report(self,q,t):
-  self.rhs(q);x=self.last
+  self.rhs(q,diagnostics=True);x=self.last
   from horizon import apparent_horizons
   # b=g^(-1/2), so chi*sqrt(g) is the factor in the areal radius.
   horizon=apparent_horizons(self.r[1:-1],x['chi'][1:-1]*np.sqrt(x['g'][1:-1]),x['diag'][1:-1,11])
@@ -135,4 +144,7 @@ class PunctureEvolution(Evolution):
    norms[key+'_exterior_rms']=float(np.sqrt(sum(weight[exterior]*x['diag'][exterior,i]**2)/sum(weight[exterior]))) if np.any(exterior) else None
   return dict(t=t,**horizon,**norms,**self.stats,pole=float(max(abs(x['pole']))),trace=float(max(abs(x['trace']))),
               alpha_min=float(min(x['alpha'][1:])),g_min=float(min(x['g'])),metric_change=float(max(abs(q[:,1]))),
+              raw_clock_rate=x['raw_clock_rate'],scri_metric=float(x['g'][-1]),
+              scri_poles=x['pole'].tolist(),scri_traces=x['trace'].tolist(),
+              floor_active_nodes=int(np.count_nonzero(x['alpha'][1:-1]<=self.lapse_floor*self.O[1:-1]*(1+1e-12))),
               original_equation_rate_difference=x['original_equation_rate_difference'])

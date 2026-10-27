@@ -1,0 +1,43 @@
+{
+  "hypothesis": "A shift coefficient that vanishes more slowly near the AF puncture improves gauge transport and reduces inner compression. This is not an established cause of the failed baseline.",
+  "change": "mu = mu_separated + inner_shift * Omega^2 * sqrt(chi)",
+  "inner_shift": 0.1,
+  "controls": [
+    0.0
+  ],
+  "preserved": "Lapse, telegraph coupling, floor, native tensor equations, stencils, KO, and scri nullness closure",
+  "puncture_gate": "Run puncture controls only after algebraic identities and regular-center survival with decreasing errors; compare N257 t=3 against unchanged failed run. Do not extend duration before this gate.",
+  "guards": {
+    "scri_pole": 0.01,
+    "relative_null": 5e-14,
+    "cfl": 0.4,
+    "horizon_mass_relative": 0.05
+  },
+  "characteristics": "cS^2 = 2 cL^2 + 4 inner_shift Omega^2 sqrt(chi)/(3g); the shift/lapse speeds stay separated for positive geometry. At scri mu and the mode count are unchanged. In the unfloored AF scaling cS changes from O(r^3) to O(r); exact collapsed-limit uniform hyperbolicity remains unresolved.",
+  "cases": [
+    {
+      "name": "pulse-n65",
+      "n": 65,
+      "t": 1,
+      "restoring": 4,
+      "cfl": 0.05,
+      "inner_shift": 0.1
+    },
+    {
+      "name": "pulse-n129",
+      "n": 129,
+      "t": 1,
+      "restoring": 4,
+      "cfl": 0.05,
+      "inner_shift": 0.1
+    },
+    {
+      "name": "pulse-n257",
+      "n": 257,
+      "t": 1,
+      "restoring": 4,
+      "cfl": 0.05,
+      "inner_shift": 0.1
+    }
+  ]
+}

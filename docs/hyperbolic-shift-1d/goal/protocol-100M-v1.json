@@ -1,0 +1,33 @@
+{
+  "objective": "Stable and convergent full variable-metric wormhole evolution through 100M with hyperbolic shift and exact scri nullness",
+  "mass": 0.3333333333333333,
+  "target_t_over_M": 100,
+  "target_coordinate_t": 33.333333333333336,
+  "previous_turn_classification": "progress: implemented exact-nullness prototype and short regular-center convergence; puncture qualification failed at N129 and remains incomplete",
+  "status": "active; no 100M evidence",
+  "unchanged_reference_commit": "a9214bccff96ae44f6e13608b03945905da9677c",
+  "criteria": {
+    "all_three_grids_complete": true,
+    "relative_null_max": 5e-14,
+    "metric_positive": true,
+    "finite_full_domain": true,
+    "finest_peak_relative_AH_mass_drift": 0.001,
+    "scri_numerator_max": 0.01,
+    "spatial_convergence": "Three fixed-CFL nested grids; decreasing exterior constraint norms and horizon mass errors, positive-order field self-convergence over the shared trajectory. Report local puncture and endpoint errors separately.",
+    "temporal_convergence": "Independent timestep refinement at fixed grid; time error below measured spatial differences.",
+    "puncture_scope": "No excision or silently discarded positive-radius nodes; floor activation and interior constraints retained. Exterior success is not a uniform puncture regularity proof."
+  },
+  "progression": [
+    "Diagnose current N257 t=1 trial with unchanged parameters",
+    "Repair diagnosed discretization/boundary or driver issue with archived controls",
+    "Repeat regular-center and short puncture qualification",
+    "Escalate fixed-parameter durations before three-grid 100M certification"
+  ],
+  "limits": {
+    "wall_seconds_per_probe": 420,
+    "no_3d": true,
+    "no_reference_mutation": true,
+    "no_parameter_changes_within_run": true,
+    "wall_budget_note": "Fine-grid probes get up to 420 seconds, declared before launch; at most two independent single-process local trials."
+  }
+}

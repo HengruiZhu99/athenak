@@ -24,7 +24,7 @@ For the exact symbolic audit, install SymPy in a local target directory:
   python3 -m pip install --target build-hyperbolic-shift/symbolic sympy
   PYTHONPATH=build-hyperbolic-shift/symbolic python3 tst/hyperbolic_shift_1d/exact_symbol.py build-hyperbolic-shift/exact-symbol.json
 
-Only short puncture trials were authorized by the qualification gates:
+The initial puncture qualification trial was:
 
   python3 tst/hyperbolic_shift_1d/run.py --library build-hyperbolic-shift/libspherical_z4c.dylib --output output/hyperbolic-shift-1d/new-puncture --n 257 --t .2 --cfl .0125 --restoring 4 --puncture --wall-seconds 120
 
@@ -63,3 +63,27 @@ including KO. This diagnostic is not an independent continuum PDE residual.
 The source factorization proves the scalar polynomial, not full 3D strong
 hyperbolicity. The report records the singular-reduction and collapsed-limit
 limitations and the remaining AMR, shell-interface, and moving-puncture work.
+
+Persistent 100M follow-up (M=1/3, coordinate target 100/3):
+  See goal/protocol-100M-v1.json and inputs/hyperbolic_shift_1d/puncture-refinement-100M-v1.json.
+  Three grids reach coordinate t=1, but N257 and N513 duration extensions fail near t=2.8.
+  evidence/duration-probe-v1 retains both survivors and failed extensions.
+  evidence/inner-shift-v1 retains the rejected b=0.1 shift-speed candidate.
+  The telegrapher lapse, attenuation, and floor remain unchanged in these experiments.
+
+New bounded trial example (does not authorize bypassing qualification gates):
+  python3 tst/hyperbolic_shift_1d/run.py --library build-hyperbolic-shift/libspherical_z4c.dylib --output output/hyperbolic-shift-1d/new-duration --n 257 --t 3 --cfl .05 --restoring 4 --puncture --wall-seconds 180
+
+The optional --inner-shift argument adds b*Omega^2*sqrt(chi) to mu (default zero).
+The b=0.1 puncture failure is retained; this is not an adopted repair.
+Report calculations retain full constraints; intermediate native calls omit only
+unused diagnostics, with bitwise equality of the RHS checked independently.
+History/progress files are atomically replaced during execution. --report-dt
+bounds the diagnostic interval (default .025). A stage failure may occur between
+samples; its exact terminal time and last state are recorded separately.
+Failed-stage geometry is retained in failed-stage.npz when available.
+
+Rebuild duration plots from the original local records into a NEW directory:
+  python3 tst/hyperbolic_shift_1d/assess_duration.py --root output/hyperbolic-shift-1d/duration-probe-v1 --cases n257-cfl05 n513-cfl05 n1025-cfl05 n257-t3 n513-t3 --output output/hyperbolic-shift-1d/new-duration-assessment --library build-hyperbolic-shift/libspherical_z4c.dylib
+
+--lapse-floor configures the physical floor (default 1e-10); existing trials all used the default.

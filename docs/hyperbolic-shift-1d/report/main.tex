@@ -12,7 +12,7 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-We replace the elliptic shift by an auxiliary Gamma driver while retaining the full variable-metric spherical Z4c equations. Algebraic elimination enforces the normal nullness relation at every Runge--Kutta stage and accepted state. Across 31 bounded runs the maximum relative nullness error is one binary64 machine epsilon. A source-restored candidate exhibits approximately second-order spatial self-convergence and fourth-order timestep convergence in short regular-center tests. It is not qualified for long puncture evolution: one of two short wormhole trials fails a scri-regularity guard. Exact nullness therefore succeeds as a discrete gauge identity without establishing full boundary compatibility, puncture regularity, or improved robustness over the elliptic formulation.
+We replace the elliptic shift by an auxiliary Gamma driver while retaining the full variable-metric spherical Z4c equations. Algebraic elimination enforces the normal nullness relation at every Runge--Kutta stage and accepted state. Across the initial 31 bounded runs the maximum relative nullness error is one binary64 machine epsilon. A source-restored candidate exhibits approximately second-order spatial self-convergence and fourth-order timestep convergence in short regular-center tests. Subsequent three-grid puncture tests reach $3M$ with decreasing errors, but duration extensions fail near $8M$. It is not qualified for the persistent $100M$ target. Exact nullness therefore succeeds as a discrete gauge identity without establishing full boundary compatibility, puncture regularity, or improved robustness over the elliptic formulation.
 \end{abstract}
 
 \section{Preserved baseline and proposed driver}
@@ -152,13 +152,60 @@ Fresh trials use $\xi_\beta=4$ and $\Delta t\leq0.0125h$. At $N=129$ the scri gu
 
 For exterior constraints, the mask uses the instantaneous apparent horizon and the RMS is normalized by the sum of exterior radial quadrature weights. The full interior diagnostics are retained separately. At the final saved states the interior maximum $|H|$ is $0.449$ and $0.00164$. The largest used-minus-original rate differences are in $\Lambda^r$ near $r=3.65\times10^{-8}$ and $1.60\times10^{-8}$, of order $4.64\times10^4$ and $2.01\times10^4$. These include the finite-difference advection and dissipation modifications, not an independent continuum residual. They prevent an accuracy claim near the puncture. The floor activates only inside $r\simeq6.29\times10^{-7}$.
 
-The independently evaluated raw lapse-clock rates at the final endpoints are $0.0276$ and $-0.00438$, despite the imposed $\alpha_t=0$. These compatibility defects, together with the scri numerators, are a reason to revisit the boundary closure. They do not identify a unique cause of failure. No longer-duration puncture run or expensive 3D run was launched after these short-test results.
+The independently evaluated raw lapse-clock rates at the final endpoints are $0.0276$ and $-0.00438$, despite the imposed $\alpha_t=0$. These compatibility defects, together with the scri numerators, are a reason to revisit the boundary closure. They do not identify a unique cause of failure. The later bounded duration probes below reassess this short-test decision; no 3D run has been launched.
 
 \begin{figure}[htbp]
 \centering\includegraphics[width=\linewidth]{figures/puncture-comparison.pdf}
 \caption{Short puncture tests. The dashed elliptic reference is $N=1025$, so this is not a matched-resolution superiority comparison. Mass errors include the initial discretization error; changes from the numerical initial mass are reported separately in the text.}
 \end{figure}
 \FloatBarrier
+
+
+\section{Bounded extensions toward the persistent \texorpdfstring{$100M$}{100M} target}
+The duration target is $t/M=100$, or coordinate $t=100/3$ for the retained $M=1/3$. The goal remains active. The predeclared criteria require three nested grids to reach that duration, decreasing exterior constraints and mass errors, positive-order field self-convergence, a separate timestep check, and continued positivity on every positive-radius node. A small horizon-mass error alone cannot certify a usable evolution.
+
+At coordinate $t=1=3M$, grids $N=257,513,1025$ all complete with $\Delta t=0.05h$. Comparing $\Delta t=0.05h$ against $0.0125h$ at $N=257$ changes the final conformal lapse by at most $3.5\times10^{-13}$ and the horizon mass by $2.1\times10^{-14}$. This bounds the measured time sensitivity; two stepsizes do not establish a new temporal order.
+\begin{center}
+\begin{tabular}{rrrrr}
+\toprule
+$N$ & exterior $H$ RMS & exterior $M_r$ RMS & $|M_{\rm AH}/M-1|$ & peak scri numerator\\
+\midrule
+257 & $9.49\times10^{-3}$ & $1.86\times10^{-2}$ & $2.92\times10^{-5}$ & $4.90\times10^{-3}$\\
+513 & $9.81\times10^{-4}$ & $9.12\times10^{-4}$ & $1.10\times10^{-6}$ & $2.99\times10^{-3}$\\
+1025 & $4.33\times10^{-4}$ & $5.37\times10^{-5}$ & $5.81\times10^{-8}$ & $1.77\times10^{-3}$\\
+\bottomrule
+\end{tabular}
+\end{center}
+The full radial-weighted mixed-field self-differences are $1.7606\times10^{-2}$ and $1.3080\times10^{-2}$, giving only order $0.43$ at this time. The independently evolved connection dominates this mixed norm. These are short-time refinement results, not a satisfactory long-time convergence certificate. No puncture neighborhood is removed from the profile comparison.
+
+Two fresh extensions target coordinate $t=3=9M$. The $N=257$ run stops at $t=2.825$ when its scri numerator exceeds $10^{-2}$. Its interior Hamiltonian maximum has already reached $3.19\times10^4$ near $r=0.0672$. The $N=513$ run fails earlier, at last accepted time $t=2.726953125$, because the next RK stage produces $g=-5.91\times10^{-6}$ near $r=0.09365$. A one-step postmortem replay reproduces that failure. The finer run's scri numerator remains below $0.0051$, so raising the scri guard would not cure this failure. The last scheduled diagnostics precede a between-sample stage failure; manifests and terminal arrays retain their separate exact times.
+
+Both runs retain small horizon-mass drift: the largest sampled changes relative to their numerical initial masses are $2.77\times10^{-4}$ and $1.07\times10^{-5}$. Nevertheless, the loss of positive spatial metric makes the second run unusable. The failing region is far outside the lapse-floor radius, at most $7.32\times10^{-6}$. An outer-collar Jacobian diagnostic has negative spectral abscissae at the sampled times, but its artificial inner interface and exclusion of the bulk prevent a full-domain stability conclusion.
+
+\begin{figure}[htbp]
+\centering\includegraphics[width=\linewidth]{figures/duration-constraints.pdf}
+\caption{Duration probes with the original hyperbolic driver. Curves terminate at their actual saved diagnostic times; crosses identify failed runs. The $N=1025$ trajectory is only a $3M$ probe. The horizon-exterior norms decrease with refinement, while interior metric breakdown still prevents continuation toward $100M$.}
+\end{figure}
+\begin{figure}[htbp]
+\centering\includegraphics[width=\linewidth]{figures/duration-lapse.pdf}
+\caption{Lapse snapshots at the indicated times, retaining the telegrapher coupling and physical floor $10^{-10}$. Different terminal times must not be interpreted as a convergence comparison. The floor region is several orders of magnitude closer to the puncture than the observed metric failure.}
+\end{figure}
+\FloatBarrier
+
+A bounded candidate adds $b\Omega^2\sqrt\chi$ to $\mu$, with $b=0.1$. It leaves the scri coefficient and incoming-mode count unchanged and gives
+\begin{equation}
+ c_S^2=2c_L^2+\frac{4b\Omega^2\sqrt\chi}{3g}>2c_L^2
+ \quad(\Omega>0,\ \chi,g>0).
+\end{equation}
+Before lapse flooring changes the leading AF scaling, the shift speed changes from $O(r^3)$ to $O(r)$. This is a gauge-transport hypothesis, not a cure established by the symbol. Three regular-center grids pass the same short gate, but the fresh $N=257$ puncture trial fails at $t=2.8078125$ when a stage metric becomes negative near $r=0.0672$. This candidate therefore does not resolve the duration failure and is not the default.
+
+One remaining mechanism to test is the collapsed-region background forcing. For smooth AF data with $\beta=b_1r+O(r^2)$, the original driver gives, at continuum leading order,
+\begin{equation}
+ \dot b_1=b_1^2-1-2\xi_\beta(b_1+1).
+\end{equation}
+At $\xi_\beta=4$ this has a stable fixed point $b_1=-1$. Thus the driver actively restores the inward reference shift even in the collapsed-lapse region. The added $b\Omega^2\sqrt\chi D=O(r^2)$ does not change this leading forcing. Its causal role in the observed compression remains a hypothesis; a lapse-adapted background source needs a separate derivation and controlled test.
+
+The implementation now writes atomic progress records and bounds diagnostic spacing by $\Delta t_{\rm report}\leq0.025$. A diagnostic-only optimization omits constraint and horizon calculations during intermediate RHS evaluations while retaining them at reports; the native rate arrays agree bit for bit with diagnostics enabled. Full failed-stage arrays are preserved for newly instrumented failures. The original failed runs and elliptic reference remain unchanged.
 
 \section{Implementation route and reproducibility}
 A genuine 3D implementation should evolve Cartesian shift and auxiliary vectors in the interior and transform them consistently to shell frames. The spherical code evolves the full radial component, not a globally slaved $\beta/r$ profile. Spherical symmetry necessarily fixes the central location; it is not a test of puncture motion. Constant and linear Cartesian shift modes must be included in the 3D driver tests. The reference source and restoring term can influence translations, so their effect on puncture tracking must be measured rather than assumed benign.
@@ -176,7 +223,7 @@ Evidence category & Established scope\\
 \midrule
 Analytic identities & Nullness elimination, evolving-normal rate, scalar principal polynomial, selected exact eigenspaces, leading AF limits.\\
 Algebraic numerics & Every tested stage/state satisfies spherical nullness within one machine epsilon; general 3D boundary identities have separate randomized tests.\\
-Convergence evidence & Short regular-center spatial self-differences and independent timestep refinement; no puncture convergence certificate.\\
+Convergence evidence & Short regular-center refinement and three-grid puncture evidence through $3M$; no $100M$ convergence certificate.\\
 Unresolved & Complete boundary well-posedness, uniform collapsed-lapse hyperbolicity, accurate puncture evolution, long-time robustness, and all 3D/AMR qualification.\\
 \bottomrule
 \end{tabular}

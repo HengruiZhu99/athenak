@@ -16,13 +16,16 @@ from boundary import normal_shift, normal_rate
 from principal import coefficient, speeds
 
 class Evolution:
-    def __init__(self,n,library,ratio=2.,damping=1.,ko=.5,kind='separated',mode='hyperbolic',restoring=0.):
+    def __init__(self,n,library,ratio=2.,damping=1.,ko=.5,kind='separated',mode='hyperbolic',restoring=0.,inner_shift=0.,lapse_floor=1e-10):
         self.r=(np.arange(n)+.5)/(n-.5);self.h=1/(n-.5)
         self.O=(1-self.r**2)/2;self.A=(1+self.r**2)/2
         self.op=RadialOperators(self.r,width=7,subtract_local=True)
         self.kernel=Kernel(library);self.ratio=ratio;self.damping=damping
         self.ko=ko;self.kind=kind;self.mode=mode
         self.restoring=restoring
+        self.inner_shift=inner_shift
+        if not np.isfinite(lapse_floor) or lapse_floor<0:raise ValueError('Invalid physical lapse floor')
+        self.lapse_floor=lapse_floor
         self.w,self.wp=window(self.r,width=.24,inner_profile='af-regular')
         self.xi=restoring_coefficient(self.r,1.,1.,profile='physical-log')
         self.parity=np.r_[PARITY,-1,-1]
@@ -31,7 +34,7 @@ class Evolution:
 
     def materialize(self,state):
         q=state.copy();alpha=self.A+q[:,6];chi=1+q[:,0];g=1+q[:,1]
-        floor=1e-10*self.O;active=(alpha<floor)&(self.r<1)
+        floor=self.lapse_floor*self.O;active=(alpha<floor)&(self.r<1)
         if np.any(active):
             q[active,6]=floor[active]-self.A[active];alpha=self.A+q[:,6]
             self.stats['max_floor_radius']=max(self.stats['max_floor_radius'],float(max(self.r[active])))
@@ -65,7 +68,7 @@ class Evolution:
         trace[5]=q[-1,5]-connection(1.,g[-1],d[-1,1])
         rate[-1,:8]+=4/self.h*S[-1]-8/self.h*trace
         F=lapse_coefficient(r,alpha)
-        mu=coefficient(alpha,chi,g,F,eta,self.w,.005,.02,self.ratio,self.kind)
+        mu=coefficient(alpha,chi,g,F,eta,self.w,.005,.02,self.ratio,self.kind,self.inner_shift,self.O)
         rate[:,8]=beta*d[:,8]+(.005*self.w*d[:,6]-q[:,8])/.02
         if self.mode=='hyperbolic':
             # D is the auxiliary Gamma driver, not the independent Z4 connection.

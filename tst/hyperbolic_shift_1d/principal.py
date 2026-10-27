@@ -24,9 +24,9 @@ def symbol(alpha, chi, g, F, eta, w, kappa, tau, mu):
     P[9]=P[5]
     return P
 
-def coefficient(alpha,chi,g,F,eta,w,kappa,tau,ratio=2.,kind='separated'):
+def coefficient(alpha,chi,g,F,eta,w,kappa,tau,ratio=2.,kind='separated',inner_shift=0.,omega=0.):
     if kind=='light':return .75*ratio*alpha**2*chi
-    if kind=='separated':return .75*ratio*chi*(F+g*eta*kappa*w*w/tau)
+    if kind=='separated':return .75*ratio*chi*(F+g*eta*kappa*w*w/tau)+inner_shift*omega**2*np.sqrt(chi)
     raise ValueError(kind)
 
 def speeds(alpha,chi,g,F,eta,w,kappa,tau,mu,beta=0.):
