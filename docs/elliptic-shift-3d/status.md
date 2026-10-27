@@ -60,7 +60,7 @@ changed RK and changed pulse configuration are rejected. Evidence:
 `evidence/native-composite-pulse-controls-20261027` and
 `evidence/native-composite-task-qualified-20261027`.
 
-This is Serial/double/vacuum with one static cubic native Cartesian block,
+This is Serial/double/vacuum with one or eight uniform static native Cartesian blocks,
 ng=3/order=4, and dedicated Minkowski or selected M=1/3 wormhole initialization.
 Shells are engine-owned host blocks, not native MeshBlocks or device/rank
 distributed storage. Native AMR/regridding, matter, tracking, MPI/GPU and
@@ -95,6 +95,27 @@ scri pole1.4151e-5. The original vector solve passes (RMS maximum6.96e-12, point
 spacing.08333 and is severely underresolved despite log enrichment. No late
 collapse, all-cell accuracy, native AMR/MPI/device support or generic puncture
 safety follows from these execution/restart checks.
+
+## Eight actual native Cartesian core blocks
+
+The static native pack path now maps actual per-block physical bounds and
+relative levels bijectively to the composite core descriptor. Every block's
+active values and ghosts participate in verified scatter/gather and physical
+ADM output; topology changes require a map rebuild. This is static multiple
+block support, **not native AMR or regridding**. On10,800 cells (8 native core
+blocks plus7 host-owned shells), the actual two-cycle Driver run takes31.91s,
+initializer-hidden restart15.54s, and the matched actual-RK reference29.53s.
+Full state and shift match bitwise; all eight blocks' physical ADM/core/ghost
+outputs verify independently. Existing34 Minkowski and6 one-core wormhole CSVs
+remain bit-identical. Count/map/bounds corruption controls reject correctly.
+
+Scientific acceptance still fails: all-cell H RMS.616059/max2.15346, M RMS
+.0710983, pole1.44116e-5. Matched1D beta RMS error changes .00136819→.00102225
+when the core spacing halves .08333→.04167; angular scatter remains about.00171.
+All-region norms, unnormalized L2, raw nodal samples and changed volume measure
+are retained; no uniform-resolution convergence order or collapse safety follows.
+See [native-static-core-integration.md](native-static-core-integration.md) and
+`evidence/native-static8-radial-comparison-qualified-20261027`.
 
 ## Selected wormhole: actual coupled failures retained
 

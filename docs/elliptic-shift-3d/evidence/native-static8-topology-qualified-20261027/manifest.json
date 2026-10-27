@@ -1,0 +1,62 @@
+{
+  "scope": "Actual static-core checkpoint count/map/bounds binding negative controls only; no new evolution or scientific qualification",
+  "binary_sha256": "6f4eee9dce9d94daaf57662500afcb975bd98fcdf6947024e6adb7c1edd1a627",
+  "source_native_RST_sha256": "7f70a9bd303997d9f2896c441856138731f7f540911adb87b95e8f40773b5d82",
+  "source_sidecar_sha256": "de9c1abb115fc70a880c1bf0bbdf0adb6810341ead20bb9db6110c7de41ec209",
+  "cases": [
+    {
+      "name": "count",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-r",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static8-topology-qualified-20261027/count/native_wormhole.00001.rst",
+        "z4c/composite_restart_file=/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static8-topology-qualified-20261027/count/native_wormhole.00001.rst.composite",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static8-topology-qualified-20261027/count/output"
+      ],
+      "maximum_seconds": 180,
+      "owned_process_group": 22147,
+      "seconds": 2.163281417,
+      "exit_code": -6,
+      "expected_diagnostic": "core topology/count mismatch",
+      "rejected_for_expected_reason": true
+    },
+    {
+      "name": "map",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-r",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static8-topology-qualified-20261027/map/native_wormhole.00001.rst",
+        "z4c/composite_restart_file=/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static8-topology-qualified-20261027/map/native_wormhole.00001.rst.composite",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static8-topology-qualified-20261027/map/output"
+      ],
+      "maximum_seconds": 180,
+      "owned_process_group": 22152,
+      "seconds": 2.343028916,
+      "exit_code": -6,
+      "expected_diagnostic": "core pack map mismatch",
+      "rejected_for_expected_reason": true
+    },
+    {
+      "name": "bounds",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-r",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static8-topology-qualified-20261027/bounds/native_wormhole.00001.rst",
+        "z4c/composite_restart_file=/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static8-topology-qualified-20261027/bounds/native_wormhole.00001.rst.composite",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static8-topology-qualified-20261027/bounds/output"
+      ],
+      "maximum_seconds": 180,
+      "owned_process_group": 22163,
+      "seconds": 2.222203833,
+      "exit_code": -6,
+      "expected_diagnostic": "core bounds mismatch",
+      "rejected_for_expected_reason": true
+    }
+  ],
+  "source_unchanged": true,
+  "binary_unchanged": true,
+  "script_sha256": "df8d6bdd2f11ef6824d269bfd0fd3fd2e2e276fe769cefe43dde387aefafdf6b"
+}

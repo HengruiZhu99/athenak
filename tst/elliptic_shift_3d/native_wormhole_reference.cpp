@@ -11,7 +11,8 @@ namespace h=z4c::hyperboloidal;
 using Engine=h::CompositeTensorEvolution;using Stage=h::NativeCompositeStageState;
 int main(int argc,char **argv){Kokkos::initialize(argc,argv);int status=0;
 try{
- if(argc!=5)throw std::invalid_argument("native reference: initial.dat rk.dat dt.dat output-prefix");
+ if(argc!=5&&argc!=6)throw std::invalid_argument("native reference: initial.dat rk.dat dt.dat output-prefix [core-bulk]");
+ const int bulk=argc==6?std::stoi(argv[5]):1;if(bulk!=1&&bulk!=2)throw std::invalid_argument("native reference static core bulk1/2");
  std::ifstream receipt(argv[2]);std::string magic;h::NativeCompositeRK rk;
  receipt>>magic>>rk.integrator>>rk.stages;
  if(magic!="NATIVE_COMPOSITE_RK_V1")throw std::runtime_error("native RK receipt magic");
@@ -20,7 +21,7 @@ try{
  std::ifstream timestep(argv[3]);std::vector<Real> dts;Real dt;
  while(timestep>>dt){if(!(dt>0&&dt<=1.e-4))throw std::runtime_error("native reference dt bound");dts.push_back(dt);}
  if(dts.empty()||dts.size()>2)throw std::runtime_error("native reference only one/two cycles");
- Engine engine(cubed_sphere::CompositeMesh(.25,{.45,.55,.60,.65,.70,.75,1},1,6,3,1),true,1.e-11,4,true,true,0,6,true,2,.24,true,true,true);
+ Engine engine(cubed_sphere::CompositeMesh(.25,{.45,.55,.60,.65,.70,.75,1},1,6,3,bulk),true,1.e-11,4,true,true,0,6,true,2,.24,true,true,true);
  engine.Initialize(0,false);engine.InitializeWormhole(argv[1],0,false);
  Stage stage({engine.state,engine.scri->values,{}},engine.beta_delta.size());
  auto load=[&]{engine.state=stage.Coefficients().volume;engine.scri->values=stage.Coefficients().scri;engine.beta_delta=stage.ShiftWarmStart();};
@@ -40,6 +41,6 @@ try{
    time+=dts[cycle];write(cycle+1);
  }
  std::cout<<std::setprecision(17)<<"{\"cycles\":"<<dts.size()<<",\"time\":"<<time<<",\"cells\":"<<engine.shift.grid.active.size()
-   <<",\"ng\":3,\"actual_native_RK_receipt\":true,\"qualification\":\"same-engine stage recurrence control; no independent equation or scientific pass\"}\n";
+   <<",\"ng\":3,\"core_bulk\":"<<bulk<<",\"actual_native_RK_receipt\":true,\"qualification\":\"same-engine stage recurrence control; no independent equation or scientific pass\"}\n";
 }catch(const std::exception&e){std::cerr<<e.what()<<'\n';status=1;}
 Kokkos::finalize();return status;}

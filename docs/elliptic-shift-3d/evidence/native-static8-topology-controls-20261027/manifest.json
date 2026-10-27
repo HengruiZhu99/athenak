@@ -1,0 +1,25 @@
+{
+  "scope": "Actual static-core checkpoint count/map/bounds binding negative controls only; no new evolution or scientific qualification",
+  "binary_sha256": "6f4eee9dce9d94daaf57662500afcb975bd98fcdf6947024e6adb7c1edd1a627",
+  "source_native_RST_sha256": "7f70a9bd303997d9f2896c441856138731f7f540911adb87b95e8f40773b5d82",
+  "source_sidecar_sha256": "de9c1abb115fc70a880c1bf0bbdf0adb6810341ead20bb9db6110c7de41ec209",
+  "cases": [
+    {
+      "name": "count",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-r",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static8-topology-controls-20261027/count/native_wormhole.00001.rst",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-static8-topology-controls-20261027/count/output"
+      ],
+      "maximum_seconds": 180,
+      "owned_process_group": 22054,
+      "seconds": 15.690491415999999,
+      "exit_code": 0,
+      "expected_diagnostic": "core topology/count mismatch",
+      "rejected_for_expected_reason": false
+    }
+  ],
+  "qualification": "Failed test setup: copied nativeRST retains original absolute composite_restart_file in ParameterInput. Copied mutated sidecar was not read; unexpected one-cycle evolution only in new output directory. No topology rejection claim. Corrected control explicitly supplies copied sidecar path."
+}

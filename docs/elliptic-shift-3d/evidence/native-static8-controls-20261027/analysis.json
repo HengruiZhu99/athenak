@@ -1,0 +1,1067 @@
+{
+  "scope": "Actual Serial Driver/Task selected wormhole mechanical qualification; static native Cartesian core plus host-owned shells; scientific gates remain failed",
+  "scientific_acceptance": false,
+  "retained_rounded_input_ADM_proxy": {
+    "relative_errors": {
+      "adm_psi4": 8.955816025232473e-08,
+      "adm_alpha": 6.777380934241961e-08,
+      "adm_gxx": 1.3570769953038229e-07,
+      "adm_Kxx": 2.536311214937197e-07,
+      "adm_gxy": 1.6104593814113624e-11,
+      "adm_Kxy": 1.3937732220738233e-07,
+      "adm_gxz": 1.6317938157390383e-11,
+      "adm_Kxz": 1.4185256806738313e-07,
+      "adm_gyy": 1.330405926515515e-07,
+      "adm_Kyy": 2.5363270137883467e-07,
+      "adm_gyz": 1.4594817162542212e-11,
+      "adm_Kyz": 1.2782348043679945e-07,
+      "adm_gzz": 1.3080662661716073e-07,
+      "adm_Kzz": 4.758893419332111e-07,
+      "adm_betax": 0,
+      "adm_betay": 0,
+      "adm_betaz": 0
+    },
+    "float32_output_reference_tolerance": 3e-07,
+    "passed": false,
+    "qualification": "Rounded-input proxy retained; fullprecision nativeRST is the authoritative independent conversion control."
+  },
+  "actual_ADM": {
+    "reference": "actual fullprecision nativeRST pack/ghosts matched by physical bounds, independently mapped Penrose-to-ADM, then quantized32",
+    "native_count": 8,
+    "blocks": [
+      {
+        "native": 0,
+        "composite": 0,
+        "bounds": [
+          -0.25,
+          0.0,
+          -0.25,
+          0.0,
+          -0.25,
+          0.0
+        ],
+        "maximum_relative": 5.8992506488208726e-08,
+        "quantized_all_identical": true
+      },
+      {
+        "native": 1,
+        "composite": 1,
+        "bounds": [
+          0.0,
+          0.25,
+          -0.25,
+          0.0,
+          -0.25,
+          0.0
+        ],
+        "maximum_relative": 5.885176290829527e-08,
+        "quantized_all_identical": true
+      },
+      {
+        "native": 2,
+        "composite": 2,
+        "bounds": [
+          -0.25,
+          0.0,
+          0.0,
+          0.25,
+          -0.25,
+          0.0
+        ],
+        "maximum_relative": 5.819531265784159e-08,
+        "quantized_all_identical": true
+      },
+      {
+        "native": 3,
+        "composite": 3,
+        "bounds": [
+          0.0,
+          0.25,
+          0.0,
+          0.25,
+          -0.25,
+          0.0
+        ],
+        "maximum_relative": 5.879471879575338e-08,
+        "quantized_all_identical": true
+      },
+      {
+        "native": 4,
+        "composite": 4,
+        "bounds": [
+          -0.25,
+          0.0,
+          -0.25,
+          0.0,
+          0.0,
+          0.25
+        ],
+        "maximum_relative": 5.912628599691633e-08,
+        "quantized_all_identical": true
+      },
+      {
+        "native": 5,
+        "composite": 5,
+        "bounds": [
+          0.0,
+          0.25,
+          -0.25,
+          0.0,
+          0.0,
+          0.25
+        ],
+        "maximum_relative": 5.9126286438003286e-08,
+        "quantized_all_identical": true
+      },
+      {
+        "native": 6,
+        "composite": 6,
+        "bounds": [
+          -0.25,
+          0.0,
+          0.0,
+          0.25,
+          0.0,
+          0.25
+        ],
+        "maximum_relative": 5.9126286438003286e-08,
+        "quantized_all_identical": true
+      },
+      {
+        "native": 7,
+        "composite": 7,
+        "bounds": [
+          0.0,
+          0.25,
+          0.0,
+          0.25,
+          0.0,
+          0.25
+        ],
+        "maximum_relative": 5.9126286438003286e-08,
+        "quantized_all_identical": true
+      }
+    ],
+    "native_RST_fields_verified_against_BIN32": {
+      "z4c_chi": true,
+      "z4c_gxx": true,
+      "z4c_gxy": true,
+      "z4c_gxz": true,
+      "z4c_gyy": true,
+      "z4c_gyz": true,
+      "z4c_gzz": true,
+      "z4c_Khat": true,
+      "z4c_Axx": true,
+      "z4c_Axy": true,
+      "z4c_Axz": true,
+      "z4c_Ayy": true,
+      "z4c_Ayz": true,
+      "z4c_Azz": true,
+      "z4c_Gamx": true,
+      "z4c_Gamy": true,
+      "z4c_Gamz": true,
+      "z4c_Theta": true,
+      "z4c_alpha": true,
+      "z4c_betax": true,
+      "z4c_betay": true,
+      "z4c_betaz": true,
+      "z4c_Bx": true,
+      "z4c_By": true,
+      "z4c_Bz": true
+    },
+    "relative_output_rounding": {
+      "adm_psi4": 5.819531265784159e-08,
+      "adm_alpha": 4.460912220091408e-08,
+      "adm_gxx": 5.9126286438003286e-08,
+      "adm_Kxx": 5.8281459634870485e-08,
+      "adm_gxy": 7.0524903462727134e-12,
+      "adm_Kxy": 5.8992506488208726e-08,
+      "adm_gxz": 7.233768705566801e-12,
+      "adm_Kxz": 5.879471879575338e-08,
+      "adm_gyy": 5.885176290829527e-08,
+      "adm_Kyy": 5.780666039833004e-08,
+      "adm_gyz": 6.820401475581342e-12,
+      "adm_Kyz": 5.8255025641654886e-08,
+      "adm_gzz": 5.765904198967034e-08,
+      "adm_Kzz": 5.8012749374355284e-08,
+      "adm_betax": 6.7838029360611785e-09,
+      "adm_betay": 7.24021739784142e-09,
+      "adm_betaz": 7.409653418610773e-09
+    },
+    "original_tolerance": 3e-07,
+    "within_original_tolerance": true,
+    "quantized_outputs_bitwise_identical": {
+      "adm_psi4": true,
+      "adm_alpha": true,
+      "adm_gxx": true,
+      "adm_Kxx": true,
+      "adm_gxy": true,
+      "adm_Kxy": true,
+      "adm_gxz": true,
+      "adm_Kxz": true,
+      "adm_gyy": true,
+      "adm_Kyy": true,
+      "adm_gyz": true,
+      "adm_Kyz": true,
+      "adm_gzz": true,
+      "adm_Kzz": true,
+      "adm_betax": true,
+      "adm_betay": true,
+      "adm_betaz": true
+    },
+    "passed": true,
+    "native_RST_sha256": "5ae4e1ecc646b584ac9208736bc6c243ec522258b6ebe17d1fcde1b94226fd6d",
+    "z4c_BIN_sha256": "ea1b382eae9c7f6dd9c4e8210676349d126d86c6775215bc18923485d3564f2d",
+    "all_native_core_and_ghost_cells": true
+  },
+  "native_active_mapping": {
+    "reference": "All25 native physical RST active fields versus independently decoded global canonical CSV including Cartesian shift, matched by stored physical topology",
+    "blocks": [
+      {
+        "native": 0,
+        "composite": 0,
+        "cells": 216,
+        "physical_fields": {
+          "z4c_chi": true,
+          "z4c_alpha": true,
+          "z4c_Khat": true,
+          "z4c_Theta": true,
+          "z4c_gxx": true,
+          "z4c_Axx": true,
+          "z4c_gxy": true,
+          "z4c_Axy": true,
+          "z4c_gxz": true,
+          "z4c_Axz": true,
+          "z4c_gyy": true,
+          "z4c_Ayy": true,
+          "z4c_gyz": true,
+          "z4c_Ayz": true,
+          "z4c_gzz": true,
+          "z4c_Azz": true,
+          "z4c_Gamx": true,
+          "z4c_betax": true,
+          "z4c_Bx": true,
+          "z4c_Gamy": true,
+          "z4c_betay": true,
+          "z4c_By": true,
+          "z4c_Gamz": true,
+          "z4c_betaz": true,
+          "z4c_Bz": true
+        },
+        "maximum_error": 0.0
+      },
+      {
+        "native": 1,
+        "composite": 1,
+        "cells": 216,
+        "physical_fields": {
+          "z4c_chi": true,
+          "z4c_alpha": true,
+          "z4c_Khat": true,
+          "z4c_Theta": true,
+          "z4c_gxx": true,
+          "z4c_Axx": true,
+          "z4c_gxy": true,
+          "z4c_Axy": true,
+          "z4c_gxz": true,
+          "z4c_Axz": true,
+          "z4c_gyy": true,
+          "z4c_Ayy": true,
+          "z4c_gyz": true,
+          "z4c_Ayz": true,
+          "z4c_gzz": true,
+          "z4c_Azz": true,
+          "z4c_Gamx": true,
+          "z4c_betax": true,
+          "z4c_Bx": true,
+          "z4c_Gamy": true,
+          "z4c_betay": true,
+          "z4c_By": true,
+          "z4c_Gamz": true,
+          "z4c_betaz": true,
+          "z4c_Bz": true
+        },
+        "maximum_error": 0.0
+      },
+      {
+        "native": 2,
+        "composite": 2,
+        "cells": 216,
+        "physical_fields": {
+          "z4c_chi": true,
+          "z4c_alpha": true,
+          "z4c_Khat": true,
+          "z4c_Theta": true,
+          "z4c_gxx": true,
+          "z4c_Axx": true,
+          "z4c_gxy": true,
+          "z4c_Axy": true,
+          "z4c_gxz": true,
+          "z4c_Axz": true,
+          "z4c_gyy": true,
+          "z4c_Ayy": true,
+          "z4c_gyz": true,
+          "z4c_Ayz": true,
+          "z4c_gzz": true,
+          "z4c_Azz": true,
+          "z4c_Gamx": true,
+          "z4c_betax": true,
+          "z4c_Bx": true,
+          "z4c_Gamy": true,
+          "z4c_betay": true,
+          "z4c_By": true,
+          "z4c_Gamz": true,
+          "z4c_betaz": true,
+          "z4c_Bz": true
+        },
+        "maximum_error": 0.0
+      },
+      {
+        "native": 3,
+        "composite": 3,
+        "cells": 216,
+        "physical_fields": {
+          "z4c_chi": true,
+          "z4c_alpha": true,
+          "z4c_Khat": true,
+          "z4c_Theta": true,
+          "z4c_gxx": true,
+          "z4c_Axx": true,
+          "z4c_gxy": true,
+          "z4c_Axy": true,
+          "z4c_gxz": true,
+          "z4c_Axz": true,
+          "z4c_gyy": true,
+          "z4c_Ayy": true,
+          "z4c_gyz": true,
+          "z4c_Ayz": true,
+          "z4c_gzz": true,
+          "z4c_Azz": true,
+          "z4c_Gamx": true,
+          "z4c_betax": true,
+          "z4c_Bx": true,
+          "z4c_Gamy": true,
+          "z4c_betay": true,
+          "z4c_By": true,
+          "z4c_Gamz": true,
+          "z4c_betaz": true,
+          "z4c_Bz": true
+        },
+        "maximum_error": 0.0
+      },
+      {
+        "native": 4,
+        "composite": 4,
+        "cells": 216,
+        "physical_fields": {
+          "z4c_chi": true,
+          "z4c_alpha": true,
+          "z4c_Khat": true,
+          "z4c_Theta": true,
+          "z4c_gxx": true,
+          "z4c_Axx": true,
+          "z4c_gxy": true,
+          "z4c_Axy": true,
+          "z4c_gxz": true,
+          "z4c_Axz": true,
+          "z4c_gyy": true,
+          "z4c_Ayy": true,
+          "z4c_gyz": true,
+          "z4c_Ayz": true,
+          "z4c_gzz": true,
+          "z4c_Azz": true,
+          "z4c_Gamx": true,
+          "z4c_betax": true,
+          "z4c_Bx": true,
+          "z4c_Gamy": true,
+          "z4c_betay": true,
+          "z4c_By": true,
+          "z4c_Gamz": true,
+          "z4c_betaz": true,
+          "z4c_Bz": true
+        },
+        "maximum_error": 0.0
+      },
+      {
+        "native": 5,
+        "composite": 5,
+        "cells": 216,
+        "physical_fields": {
+          "z4c_chi": true,
+          "z4c_alpha": true,
+          "z4c_Khat": true,
+          "z4c_Theta": true,
+          "z4c_gxx": true,
+          "z4c_Axx": true,
+          "z4c_gxy": true,
+          "z4c_Axy": true,
+          "z4c_gxz": true,
+          "z4c_Axz": true,
+          "z4c_gyy": true,
+          "z4c_Ayy": true,
+          "z4c_gyz": true,
+          "z4c_Ayz": true,
+          "z4c_gzz": true,
+          "z4c_Azz": true,
+          "z4c_Gamx": true,
+          "z4c_betax": true,
+          "z4c_Bx": true,
+          "z4c_Gamy": true,
+          "z4c_betay": true,
+          "z4c_By": true,
+          "z4c_Gamz": true,
+          "z4c_betaz": true,
+          "z4c_Bz": true
+        },
+        "maximum_error": 0.0
+      },
+      {
+        "native": 6,
+        "composite": 6,
+        "cells": 216,
+        "physical_fields": {
+          "z4c_chi": true,
+          "z4c_alpha": true,
+          "z4c_Khat": true,
+          "z4c_Theta": true,
+          "z4c_gxx": true,
+          "z4c_Axx": true,
+          "z4c_gxy": true,
+          "z4c_Axy": true,
+          "z4c_gxz": true,
+          "z4c_Axz": true,
+          "z4c_gyy": true,
+          "z4c_Ayy": true,
+          "z4c_gyz": true,
+          "z4c_Ayz": true,
+          "z4c_gzz": true,
+          "z4c_Azz": true,
+          "z4c_Gamx": true,
+          "z4c_betax": true,
+          "z4c_Bx": true,
+          "z4c_Gamy": true,
+          "z4c_betay": true,
+          "z4c_By": true,
+          "z4c_Gamz": true,
+          "z4c_betaz": true,
+          "z4c_Bz": true
+        },
+        "maximum_error": 0.0
+      },
+      {
+        "native": 7,
+        "composite": 7,
+        "cells": 216,
+        "physical_fields": {
+          "z4c_chi": true,
+          "z4c_alpha": true,
+          "z4c_Khat": true,
+          "z4c_Theta": true,
+          "z4c_gxx": true,
+          "z4c_Axx": true,
+          "z4c_gxy": true,
+          "z4c_Axy": true,
+          "z4c_gxz": true,
+          "z4c_Axz": true,
+          "z4c_gyy": true,
+          "z4c_Ayy": true,
+          "z4c_gyz": true,
+          "z4c_Ayz": true,
+          "z4c_gzz": true,
+          "z4c_Azz": true,
+          "z4c_Gamx": true,
+          "z4c_betax": true,
+          "z4c_Bx": true,
+          "z4c_Gamy": true,
+          "z4c_betay": true,
+          "z4c_By": true,
+          "z4c_Gamz": true,
+          "z4c_betaz": true,
+          "z4c_Bz": true
+        },
+        "maximum_error": 0.0
+      }
+    ],
+    "cells": 1728,
+    "all_bitwise_identical": true
+  },
+  "restart": {
+    "groups_bitwise_identical": {
+      "values": {
+        "volume": true,
+        "scri": true,
+        "endpoints": true
+      },
+      "registers": {
+        "volume": true,
+        "scri": true,
+        "endpoints": true
+      }
+    },
+    "vectors_bitwise_identical": {
+      "radii": true,
+      "chart_parameters": true,
+      "shift": true
+    },
+    "actual_Driver_RK_bitwise": {
+      "gam0": true,
+      "gam1": true,
+      "beta": true,
+      "delta": true
+    },
+    "actual_Driver_RK_arrays": {
+      "gam0": [
+        0.0,
+        0.121098479554482,
+        -3.843833699660025,
+        0.546370891121863
+      ],
+      "gam1": [
+        1.0,
+        0.721781678111411,
+        2.121209265338722,
+        0.198653035682705
+      ],
+      "beta": [
+        1.193743905974738,
+        0.099279895495783,
+        1.131678018054042,
+        0.310665766509336
+      ],
+      "delta": [
+        1.0,
+        0.217683334308543,
+        1.065841341361089,
+        0.0
+      ]
+    },
+    "initial_file_hidden": true,
+    "receipt_persisted_in_native_input_and_sidecar": "fnv1a64:5853d6977b816655:897887",
+    "slice": "isotropic-Schwarzschild-M1_3-hyperboloidal-outer-v1",
+    "gauge": "Minkowski-reference-physical1log-restoring1-nu1-referenceflux-tau.02-kappa.005-taper.24-clockA-v1",
+    "chart": "wormhole-positive-log22-v1-static-core",
+    "chart_parameters": [
+      0.3333333333333333,
+      2.0,
+      0.0,
+      0.24,
+      1.0,
+      1.0,
+      0.02,
+      0.005,
+      0.0,
+      0.0,
+      2.0,
+      8.0
+    ],
+    "time": 0.0002,
+    "native_core_blocks": 8,
+    "core_topology": [
+      {
+        "native": 0,
+        "composite": 0,
+        "refinement": 0,
+        "lo": [
+          -0.25,
+          -0.25,
+          -0.25
+        ],
+        "hi": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "native": 1,
+        "composite": 1,
+        "refinement": 0,
+        "lo": [
+          0.0,
+          -0.25,
+          -0.25
+        ],
+        "hi": [
+          0.25,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "native": 2,
+        "composite": 2,
+        "refinement": 0,
+        "lo": [
+          -0.25,
+          0.0,
+          -0.25
+        ],
+        "hi": [
+          0.0,
+          0.25,
+          0.0
+        ]
+      },
+      {
+        "native": 3,
+        "composite": 3,
+        "refinement": 0,
+        "lo": [
+          0.0,
+          0.0,
+          -0.25
+        ],
+        "hi": [
+          0.25,
+          0.25,
+          0.0
+        ]
+      },
+      {
+        "native": 4,
+        "composite": 4,
+        "refinement": 0,
+        "lo": [
+          -0.25,
+          -0.25,
+          0.0
+        ],
+        "hi": [
+          0.0,
+          0.0,
+          0.25
+        ]
+      },
+      {
+        "native": 5,
+        "composite": 5,
+        "refinement": 0,
+        "lo": [
+          0.0,
+          -0.25,
+          0.0
+        ],
+        "hi": [
+          0.25,
+          0.0,
+          0.25
+        ]
+      },
+      {
+        "native": 6,
+        "composite": 6,
+        "refinement": 0,
+        "lo": [
+          -0.25,
+          0.0,
+          0.0
+        ],
+        "hi": [
+          0.0,
+          0.25,
+          0.25
+        ]
+      },
+      {
+        "native": 7,
+        "composite": 7,
+        "refinement": 0,
+        "lo": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "hi": [
+          0.25,
+          0.25,
+          0.25
+        ]
+      }
+    ],
+    "geometry_epoch_full": 10,
+    "geometry_epoch_restart": 11
+  },
+  "matched_actual_Driver_RK": {
+    "0": {
+      "cells": 10800,
+      "maximum_coefficient_error": 0.0,
+      "field_errors": {
+        "state_0": 0.0,
+        "state_1": 0.0,
+        "state_2": 0.0,
+        "state_3": 0.0,
+        "state_4": 0.0,
+        "state_5": 0.0,
+        "state_6": 0.0,
+        "state_7": 0.0,
+        "state_8": 0.0,
+        "state_9": 0.0,
+        "state_10": 0.0,
+        "state_11": 0.0,
+        "state_12": 0.0,
+        "state_13": 0.0,
+        "state_14": 0.0,
+        "state_15": 0.0,
+        "state_16": 0.0,
+        "state_17": 0.0,
+        "state_18": 0.0,
+        "state_19": 0.0,
+        "state_20": 0.0,
+        "state_21": 0.0,
+        "delta_beta_0": 0.0,
+        "delta_beta_1": 0.0,
+        "delta_beta_2": 0.0
+      },
+      "bitwise_all_fields": true
+    },
+    "1": {
+      "cells": 10800,
+      "maximum_coefficient_error": 0.0,
+      "field_errors": {
+        "state_0": 0.0,
+        "state_1": 0.0,
+        "state_2": 0.0,
+        "state_3": 0.0,
+        "state_4": 0.0,
+        "state_5": 0.0,
+        "state_6": 0.0,
+        "state_7": 0.0,
+        "state_8": 0.0,
+        "state_9": 0.0,
+        "state_10": 0.0,
+        "state_11": 0.0,
+        "state_12": 0.0,
+        "state_13": 0.0,
+        "state_14": 0.0,
+        "state_15": 0.0,
+        "state_16": 0.0,
+        "state_17": 0.0,
+        "state_18": 0.0,
+        "state_19": 0.0,
+        "state_20": 0.0,
+        "state_21": 0.0,
+        "delta_beta_0": 0.0,
+        "delta_beta_1": 0.0,
+        "delta_beta_2": 0.0
+      },
+      "bitwise_all_fields": true
+    },
+    "2": {
+      "cells": 10800,
+      "maximum_coefficient_error": 0.0,
+      "field_errors": {
+        "state_0": 0.0,
+        "state_1": 0.0,
+        "state_2": 0.0,
+        "state_3": 0.0,
+        "state_4": 0.0,
+        "state_5": 0.0,
+        "state_6": 0.0,
+        "state_7": 0.0,
+        "state_8": 0.0,
+        "state_9": 0.0,
+        "state_10": 0.0,
+        "state_11": 0.0,
+        "state_12": 0.0,
+        "state_13": 0.0,
+        "state_14": 0.0,
+        "state_15": 0.0,
+        "state_16": 0.0,
+        "state_17": 0.0,
+        "state_18": 0.0,
+        "state_19": 0.0,
+        "state_20": 0.0,
+        "state_21": 0.0,
+        "delta_beta_0": 0.0,
+        "delta_beta_1": 0.0,
+        "delta_beta_2": 0.0
+      },
+      "bitwise_all_fields": true
+    }
+  },
+  "negative_controls": {
+    "reject-receipt-change": {
+      "diagnostic": "slice/gauge/receipt/chart controls mismatch",
+      "passed": true
+    },
+    "reject-taper-change": {
+      "diagnostic": "verified taper .24",
+      "passed": true
+    },
+    "reject-chart-change": {
+      "diagnostic": "positive log mode2",
+      "passed": true
+    },
+    "reject-minkowski-reinterpretation": {
+      "diagnostic": "restart config/tag mismatch",
+      "passed": true
+    },
+    "reject-minkowski-valid-geometry": {
+      "diagnostic": "restart config/tag mismatch",
+      "passed": true
+    }
+  },
+  "old_Minkowski_regression": {
+    "compared": 34,
+    "all_identical": true,
+    "files": {
+      "two-shell/native_composite.00000.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "dfd19497b629fcac82bd4f61723c16cacb9d99f6f996fbebfd483d311a96a336",
+        "new_sha256": "dfd19497b629fcac82bd4f61723c16cacb9d99f6f996fbebfd483d311a96a336"
+      },
+      "two-shell/native_composite.00000.scri.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "67561cc40db3ac18cfdc1b90b1ff5cb1fad4f3602576b71cbfe4109559447bdd",
+        "new_sha256": "67561cc40db3ac18cfdc1b90b1ff5cb1fad4f3602576b71cbfe4109559447bdd"
+      },
+      "two-shell/native_composite.00001.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "d97ba7b0bd9571ecc6a60c012c33610107e5b5e021de95918c9b7cbd966181c9",
+        "new_sha256": "d97ba7b0bd9571ecc6a60c012c33610107e5b5e021de95918c9b7cbd966181c9"
+      },
+      "two-shell/native_composite.00001.scri.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "ee134d8ef4e42f7daf19fae4c411833c4b2495075db79dad2a9f8da09d0725c8",
+        "new_sha256": "ee134d8ef4e42f7daf19fae4c411833c4b2495075db79dad2a9f8da09d0725c8"
+      },
+      "two-shell/native_composite.00002.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "a04bd6273f6957d80bb0f615bcf57ecdc1141e3886f808016e050fe8c70ba0af",
+        "new_sha256": "a04bd6273f6957d80bb0f615bcf57ecdc1141e3886f808016e050fe8c70ba0af"
+      },
+      "two-shell/native_composite.00002.scri.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "9214057c6252452c3ca7c556c0d9a662d012856e3350c7397936f32bf0dbb30a",
+        "new_sha256": "9214057c6252452c3ca7c556c0d9a662d012856e3350c7397936f32bf0dbb30a"
+      },
+      "one-shell/native_composite.00000.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "c4619f34b8075ded14d71399501760e758fb556c095c09cbefc46a3cae7058e2",
+        "new_sha256": "c4619f34b8075ded14d71399501760e758fb556c095c09cbefc46a3cae7058e2"
+      },
+      "one-shell/native_composite.00000.scri.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "67561cc40db3ac18cfdc1b90b1ff5cb1fad4f3602576b71cbfe4109559447bdd",
+        "new_sha256": "67561cc40db3ac18cfdc1b90b1ff5cb1fad4f3602576b71cbfe4109559447bdd"
+      },
+      "one-shell/native_composite.00001.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "d8a4c2ac86a4f7b8a323c6580313ba9acae61dce975289071c31832ebe969953",
+        "new_sha256": "d8a4c2ac86a4f7b8a323c6580313ba9acae61dce975289071c31832ebe969953"
+      },
+      "one-shell/native_composite.00001.scri.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "3d0b89f815a1fce4b8dd15ae20c60daddefd363c4f75d986b5183347db83a597",
+        "new_sha256": "3d0b89f815a1fce4b8dd15ae20c60daddefd363c4f75d986b5183347db83a597"
+      },
+      "one-shell/native_composite.00002.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "e955737f5a83cc6d1bdc142946b6407031ff04787491d41a20de10c9c6ed0157",
+        "new_sha256": "e955737f5a83cc6d1bdc142946b6407031ff04787491d41a20de10c9c6ed0157"
+      },
+      "one-shell/native_composite.00002.scri.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "24fa0da28b7dc2d348ac2ca536aac6ec3c2f9f635037f78a1e36980416e9d330",
+        "new_sha256": "24fa0da28b7dc2d348ac2ca536aac6ec3c2f9f635037f78a1e36980416e9d330"
+      },
+      "radial-pulse/native_composite.00000.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "75cb75eda2b12148ca46e54939f6b2eb10e2b500553dca07f5cc0eca0a13b57f",
+        "new_sha256": "75cb75eda2b12148ca46e54939f6b2eb10e2b500553dca07f5cc0eca0a13b57f"
+      },
+      "radial-pulse/native_composite.00000.scri.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "67561cc40db3ac18cfdc1b90b1ff5cb1fad4f3602576b71cbfe4109559447bdd",
+        "new_sha256": "67561cc40db3ac18cfdc1b90b1ff5cb1fad4f3602576b71cbfe4109559447bdd"
+      },
+      "radial-pulse/native_composite.00001.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "c005fc61fb71eeeaba0439c74a0773e6aa8bdd5db35d3baf1b847b25074989c9",
+        "new_sha256": "c005fc61fb71eeeaba0439c74a0773e6aa8bdd5db35d3baf1b847b25074989c9"
+      },
+      "radial-pulse/native_composite.00001.scri.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "ecfe1a12fa3c2ca034c78ff552ce1b5708f09b9107b41ebe25c5b7077922e7ae",
+        "new_sha256": "ecfe1a12fa3c2ca034c78ff552ce1b5708f09b9107b41ebe25c5b7077922e7ae"
+      },
+      "radial-pulse/native_composite.00002.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "34adcbcca77ea2d6a1920b0286ed70d621a43c4112945f2588a8197b5236d42b",
+        "new_sha256": "34adcbcca77ea2d6a1920b0286ed70d621a43c4112945f2588a8197b5236d42b"
+      },
+      "radial-pulse/native_composite.00002.scri.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "4229ad5e16268fef0c3de5b32aad53ee85dcbb1870ae55811e51fe6c38b0589c",
+        "new_sha256": "4229ad5e16268fef0c3de5b32aad53ee85dcbb1870ae55811e51fe6c38b0589c"
+      },
+      "angular-pulse/native_composite.00000.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "4ba1d5124af33dcfa49e884ca1dc8d4483ca6db650aaa6def56b52eebc5743aa",
+        "new_sha256": "4ba1d5124af33dcfa49e884ca1dc8d4483ca6db650aaa6def56b52eebc5743aa"
+      },
+      "angular-pulse/native_composite.00000.scri.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "67561cc40db3ac18cfdc1b90b1ff5cb1fad4f3602576b71cbfe4109559447bdd",
+        "new_sha256": "67561cc40db3ac18cfdc1b90b1ff5cb1fad4f3602576b71cbfe4109559447bdd"
+      },
+      "angular-pulse/native_composite.00001.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "61b1f9b1b970f82382ea2cb9111d56784f210e1846162ca620ca0b95df8a130c",
+        "new_sha256": "61b1f9b1b970f82382ea2cb9111d56784f210e1846162ca620ca0b95df8a130c"
+      },
+      "angular-pulse/native_composite.00001.scri.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "cb1c9c616e4f1a485d6ff2efc98534e77a2000ea475ac8719c4099288c1d3ad2",
+        "new_sha256": "cb1c9c616e4f1a485d6ff2efc98534e77a2000ea475ac8719c4099288c1d3ad2"
+      },
+      "angular-pulse/native_composite.00002.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "4a2462ad8bba7f8cc0e51b67cac2963057aead70d683e7f0d48541cb7962f298",
+        "new_sha256": "4a2462ad8bba7f8cc0e51b67cac2963057aead70d683e7f0d48541cb7962f298"
+      },
+      "angular-pulse/native_composite.00002.scri.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "e1ae3217443773e06b8f715a3f57b908e19ca6b29062b074ddfde2fce4c861fa",
+        "new_sha256": "e1ae3217443773e06b8f715a3f57b908e19ca6b29062b074ddfde2fce4c861fa"
+      },
+      "extended-minkowski/native_composite.00000.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "dfd19497b629fcac82bd4f61723c16cacb9d99f6f996fbebfd483d311a96a336",
+        "new_sha256": "dfd19497b629fcac82bd4f61723c16cacb9d99f6f996fbebfd483d311a96a336"
+      },
+      "extended-minkowski/native_composite.00000.scri.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "67561cc40db3ac18cfdc1b90b1ff5cb1fad4f3602576b71cbfe4109559447bdd",
+        "new_sha256": "67561cc40db3ac18cfdc1b90b1ff5cb1fad4f3602576b71cbfe4109559447bdd"
+      },
+      "extended-minkowski/native_composite.00010.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "a3420416491b64000b0f78162c675f2de2ee8510fc47439f5d22dde65549f226",
+        "new_sha256": "a3420416491b64000b0f78162c675f2de2ee8510fc47439f5d22dde65549f226"
+      },
+      "extended-minkowski/native_composite.00010.scri.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "c547334a0cc067eb727bdf7d39f2e2306fcd0c98916804eb8b9d561a029c192b",
+        "new_sha256": "c547334a0cc067eb727bdf7d39f2e2306fcd0c98916804eb8b9d561a029c192b"
+      },
+      "extended-minkowski/native_composite.00020.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "a2e941da64a5e5403a5a456245527679712c44a58200f0a8a4aaff9c72008f38",
+        "new_sha256": "a2e941da64a5e5403a5a456245527679712c44a58200f0a8a4aaff9c72008f38"
+      },
+      "extended-minkowski/native_composite.00020.scri.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "94ce0c04ca7c99311c0979824ff558b2df0180a8df74a97871f002a3c665b141",
+        "new_sha256": "94ce0c04ca7c99311c0979824ff558b2df0180a8df74a97871f002a3c665b141"
+      },
+      "extended-minkowski/native_composite.00030.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "34e4d854ce5c5d223537585d25842dcf38a9c61c8b7c0811800ebd78060abf60",
+        "new_sha256": "34e4d854ce5c5d223537585d25842dcf38a9c61c8b7c0811800ebd78060abf60"
+      },
+      "extended-minkowski/native_composite.00030.scri.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "29ced028cd64321180a6256cfae87327d86aeb6599313cebe3b192221f2c5d19",
+        "new_sha256": "29ced028cd64321180a6256cfae87327d86aeb6599313cebe3b192221f2c5d19"
+      },
+      "extended-minkowski/native_composite.00040.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "de868dd4873632ef423c966a70b4eb67b202d55b6843e9f4172520701747886d",
+        "new_sha256": "de868dd4873632ef423c966a70b4eb67b202d55b6843e9f4172520701747886d"
+      },
+      "extended-minkowski/native_composite.00040.scri.csv": {
+        "bitwise_identical": true,
+        "old_sha256": "4c8d9c61ad3896caa4b49bb9fd607fdf2a55480a0d3e608213dbf9eb047d6bb8",
+        "new_sha256": "4c8d9c61ad3896caa4b49bb9fd607fdf2a55480a0d3e608213dbf9eb047d6bb8"
+      }
+    }
+  },
+  "execution": {
+    "steps": 2,
+    "time": 0.0002,
+    "cells": 10800,
+    "native_updates": 8,
+    "all_snapshots_restart_bitwise": true
+  },
+  "scientific_gates": {
+    "acceptance": false,
+    "final_diagnostics": {
+      "cycle": 2,
+      "time": 0.0002,
+      "cells": 10800,
+      "shells": 7,
+      "native_begin_calls": 8,
+      "rhs_calls": 11,
+      "native_update_calls": 8,
+      "H_rms": 0.6160586370078087,
+      "M_rms": 0.07109832982820186,
+      "Theta_rms": 1.0008195010736644e-05,
+      "Z_rms": 0.0002179772421965947,
+      "H_max": 2.1534614119681144,
+      "M_max": 0.563699257327961,
+      "state_deviation_max": 6.191446330687286,
+      "dt_ceiling": 0.0001,
+      "full_grid_selected_dt": 0.0001,
+      "shift_original_rms_max": 5.185092440122695e-12,
+      "shift_point_max": 1.8583468097688183e-10,
+      "scri_tensor_pole": 1.4411610427482153e-05,
+      "scri_ghost_clock": 0,
+      "scri_ghost_null": 4.440892098500626e-16,
+      "scri_ghost_tangent": 3.3528356356381985e-16,
+      "canonical_global_state": true,
+      "native_physical_mirror_verified": true,
+      "beta_excluded_from_RK": true,
+      "live_Driver_RK": "rk4"
+    },
+    "tensor_pole_target": 1e-07,
+    "tensor_pole_passed": false,
+    "clock_target": 1e-13,
+    "null_target": 1e-12,
+    "minimum_cell_radius": 0.03608439182435161,
+    "throat_radius": 0.06292449103608883,
+    "throat_unresolved": false,
+    "reason": "Coarse static core pilot with nonanalytic remainder underresolved even after log enrichment; H/M/poles and complete radial-collapse scientific milestone fail. Shell resolution is unchanged in the eight-core control."
+  },
+  "old_onecore_wormhole_regression": {
+    "files": {
+      "native_wormhole.00000.csv": {
+        "bitwise_identical": true,
+        "baseline_sha256": "c23ab3df5453994550532fca098f07fa50a47e92e8f0e3e5c07ea05fcf20428a",
+        "current_sha256": "c23ab3df5453994550532fca098f07fa50a47e92e8f0e3e5c07ea05fcf20428a"
+      },
+      "native_wormhole.00000.scri.csv": {
+        "bitwise_identical": true,
+        "baseline_sha256": "b3509b8cb0191a18bbea81bc84dc39ccefd1e1f45f3f8983e9d7e2afda00da7a",
+        "current_sha256": "b3509b8cb0191a18bbea81bc84dc39ccefd1e1f45f3f8983e9d7e2afda00da7a"
+      },
+      "native_wormhole.00001.csv": {
+        "bitwise_identical": true,
+        "baseline_sha256": "c0f9c68f4b606526f1920c0bc275c7415b1e89a4574d3767755e6f69e03a9863",
+        "current_sha256": "c0f9c68f4b606526f1920c0bc275c7415b1e89a4574d3767755e6f69e03a9863"
+      },
+      "native_wormhole.00001.scri.csv": {
+        "bitwise_identical": true,
+        "baseline_sha256": "eb3591eb10585a0e2bf462d0e3ab261fe6adce221079fbc8d9495db21dceeb7b",
+        "current_sha256": "eb3591eb10585a0e2bf462d0e3ab261fe6adce221079fbc8d9495db21dceeb7b"
+      },
+      "native_wormhole.00002.csv": {
+        "bitwise_identical": true,
+        "baseline_sha256": "37eb2b6897643c7456be8a000a0437f6254bef99bde2070ade1cdafd541b0614",
+        "current_sha256": "37eb2b6897643c7456be8a000a0437f6254bef99bde2070ade1cdafd541b0614"
+      },
+      "native_wormhole.00002.scri.csv": {
+        "bitwise_identical": true,
+        "baseline_sha256": "6b7e25ae74be4bbbd008472d522c1e6272f9bb373164d7cf62756bf919f2313a",
+        "current_sha256": "6b7e25ae74be4bbbd008472d522c1e6272f9bb373164d7cf62756bf919f2313a"
+      }
+    },
+    "compared": 6,
+    "all_identical": true
+  },
+  "binary_unchanged": true,
+  "source_hashes": {
+    "analyzer": "3d3618b72fd2523af053cabc08ddbdcd8a040c7db66175c2b9c66b3970890f2f",
+    "native_owner": "c819d46d1c11430bc6a2b0f21645c7e961aa029d321ef6a1c1ec4356b2ec4078"
+  }
+}

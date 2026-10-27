@@ -17,18 +17,18 @@ import sys
 import time
 import numpy as np
 from analyze_native_composite import native_bin
-from analyze_native_wormhole import physical_adm_check
+from analyze_native_wormhole import physical_adm_check, native_bins
 
 def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);p.add_argument('--minkowski-baseline',type=Path,default=Path('docs/elliptic-shift-3d/evidence/native-composite-cfl-controls-20261027'));p.add_argument('--skip-minkowski',action='store_true');a=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);p.add_argument('--minkowski-baseline',type=Path,default=Path('docs/elliptic-shift-3d/evidence/native-composite-cfl-controls-20261027'));p.add_argument('--skip-minkowski',action='store_true');p.add_argument('--core-bulk',type=int,choices=[1,2],default=1);a=p.parse_args()
  resource.setrlimit(resource.RLIMIT_CORE,(0,0));root=Path.cwd();out=a.output.resolve();out.mkdir(parents=True,exist_ok=False)
- binary=root/'build-shift-3d/src/athena';coordinate_binary=root/'build-shift-3d/elliptic_shift_3d_coupled_pilot';input=root/'inputs/z4c/composite_wormhole.athinput'
+ binary=root/'build-shift-3d/src/athena';coordinate_binary=root/'build-shift-3d/elliptic_shift_3d_coupled_pilot';input=root/('inputs/z4c/composite_wormhole_static8.athinput' if a.core_bulk==2 else 'inputs/z4c/composite_wormhole.athinput')
  files=[f for f in (root/'src').rglob('*') if f.is_file() and f.suffix in ['.cpp','.hpp','.h']]
  files += [input,root/'tst/elliptic_shift_3d/native_wormhole_reference.cpp',root/'tst/elliptic_shift_3d/wormhole_initial.py',root/'tst/elliptic_shift_1d/wormhole_isotropic.py',Path(__file__).resolve()]
  source_hashes={str(f.relative_to(root)):sha(f) for f in files}
- m={'scope':'Actual Serial native Driver selected isotropic M1/3 wormhole; one native Cartesian block, host-owned shells, no AMR/MPI/GPU/tracking claim','source_head':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'source_sha256':source_hashes,'binary_sha256':sha(binary),'input_sha256':sha(input),'coordinate_binary_sha256':sha(coordinate_binary),'cases':[],'scientific_acceptance':False}
+ m={'scope':'Actual Serial native Driver selected isotropic M1/3 wormhole; static native Cartesian core, host-owned shells, no AMR/MPI/GPU/tracking claim','source_head':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'source_sha256':source_hashes,'binary_sha256':sha(binary),'input_sha256':sha(input),'coordinate_binary_sha256':sha(coordinate_binary),'cases':[],'scientific_acceptance':False,'core_bulk':a.core_bulk,'native_core_blocks':a.core_bulk**3}
  def save():(out/'manifest.json').write_text(json.dumps(m,indent=2)+'\n')
  def run(name,command,success=True,folder=None):
   folder=folder or out/name;folder.mkdir(parents=True,exist_ok=False)
@@ -47,7 +47,7 @@ def main():
   if not row['expectation_met']:raise RuntimeError('Unexpected execution result: '+name)
   return folder
  coordinates=out/'coordinates.csv';initial=out/'initial.dat';radii='.45,.55,.60,.65,.70,.75,1'
- run('coordinates',[coordinate_binary,'--coordinates','6',radii,'1','0',coordinates])
+ run('coordinates',[coordinate_binary,'--coordinates','6',radii,str(a.core_bulk),'0',coordinates])
  run('independent-initializer',[sys.executable,root/'tst/elliptic_shift_3d/wormhole_initial.py',coordinates,initial])
  m['initializer']=json.loads(initial.with_suffix('.json').read_text());m['initializer']['file_sha256']=sha(initial);save()
  # Compile a local same-engine control; its RK arrays come from the actual
@@ -75,7 +75,7 @@ def main():
  run('reject-minkowski-reinterpretation',[binary,'-r',midpoint,'problem/pgen_name=z4c_composite_minkowski','problem/mass=0','-d',out/'reject-minkowski-reinterpretation'],False)
  run('reject-minkowski-valid-geometry',[binary,'-r',midpoint,'problem/pgen_name=z4c_composite_minkowski','problem/mass=0','z4c/composite_radii=.65,1','-d',out/'reject-minkowski-valid-geometry'],False)
  dts=out/'actual-dt.dat';dts.write_text(''.join(format(trace[i+1]['time']-trace[i]['time'],'.17g')+'\n' for i in range(2)))
- run('matched-native-RK-reference',[reference,hidden,full/'native_wormhole.rk.dat',dts,out/'reference'])
+ run('matched-native-RK-reference',[reference,hidden,full/'native_wormhole.rk.dat',dts,out/'reference',str(a.core_bulk)])
  comparison={}
  for cycle in range(3):
   actual=np.genfromtxt(full/f'native_wormhole.{cycle:05d}.csv',delimiter=',',names=True)
@@ -85,13 +85,16 @@ def main():
   comparison[str(cycle)]={'cells':len(actual),'maximum_coefficient_error':max(errors.values()),'field_errors':errors,'bitwise_all_fields':all(np.array_equal(actual[field],expected[field]) for field in fields)}
  m['matched_actual_RK_comparison']=comparison;save()
  # Physical native ADM is independent of the chart, including every core ghost.
- zbin=max((full/'bin').glob('*.z4c.*.bin'));number=zbin.name.rsplit('.',2)[1];q,xyz,_=native_bin(zbin);adm,_,_=native_bin(full/'bin'/('native_wormhole.adm.'+number+'.bin'))
- omega=(1-sum(x*x for x in xyz))/2;psi4=1/(omega**2*q['z4c_chi']);expected={'adm_psi4':psi4,'adm_alpha':q['z4c_alpha']/omega}
- for component in ['xx','xy','xz','yy','yz','zz']:
-  expected['adm_g'+component]=psi4*q['z4c_g'+component]
-  expected['adm_K'+component]=psi4*(omega*q['z4c_A'+component]+q['z4c_g'+component]*(q['z4c_Khat']+2*q['z4c_Theta'])/3)
- for c in ['x','y','z']:expected['adm_beta'+c]=q['z4c_beta'+c]
- errors={name:float(np.max(abs(adm[name]-value)/np.maximum(1,abs(value)))) for name,value in expected.items()}
+ zbin=max((full/'bin').glob('*.z4c.*.bin'));number=zbin.name.rsplit('.',2)[1]
+ errors={}
+ for qr,ar in zip(native_bins(zbin),native_bins(full/'bin'/('native_wormhole.adm.'+number+'.bin'))):
+  assert np.array_equal(qr['bounds'],ar['bounds']);q,xyz,adm=qr['values'],qr['xyz'],ar['values']
+  omega=(1-sum(x*x for x in xyz))/2;psi4=1/(omega**2*q['z4c_chi']);expected={'adm_psi4':psi4,'adm_alpha':q['z4c_alpha']/omega}
+  for component in ['xx','xy','xz','yy','yz','zz']:
+   expected['adm_g'+component]=psi4*q['z4c_g'+component]
+   expected['adm_K'+component]=psi4*(omega*q['z4c_A'+component]+q['z4c_g'+component]*(q['z4c_Khat']+2*q['z4c_Theta'])/3)
+  for c in ['x','y','z']:expected['adm_beta'+c]=q['z4c_beta'+c]
+  for name,value in expected.items():errors[name]=max(errors.get(name,0),float(np.max(abs(adm[name]-value)/np.maximum(1,abs(value)))))
  m['physical_ADM_all_native_core_and_ghosts']={'relative_errors':errors,'float32_output_reference_tolerance':3e-7,'passed':max(errors.values())<3e-7,'qualification':'Rounded-input proxy retained; fullprecision nativeRST is the authoritative independent conversion control.'};save()
  m['physical_ADM_fullprecision_RST_control']=physical_adm_check(full);save();assert m['physical_ADM_fullprecision_RST_control']['passed']
  m['scientific_gates']={'acceptance':False,'reason':'One coarse native execution/control cannot establish radial evolution/convergence/collapse milestone; retain raw physical residuals and unchanged boundary reference targets.','tensor_pole_reference_target':1e-7,'tensor_pole_passed':trace[-1]['scri_tensor_pole']<=1e-7,'clock_reference_target':1e-13,'null_reference_target':1e-12,'final_native_diagnostics':trace[-1],'minimum_sample_radius':m['initializer']['minimum_cell_radius'],'isotropic_throat_radius':m['initializer']['throat_radius'],'throat_unresolved':m['initializer']['minimum_cell_radius']>m['initializer']['throat_radius']};save()
@@ -102,6 +105,15 @@ def main():
    for old in sorted((baseline/name).glob('*.csv')):
     current=control/name/old.name;identical[str(old.relative_to(baseline))]={'bitwise_identical':current.exists() and old.read_bytes()==current.read_bytes(),'baseline_sha256':sha(old),'current_sha256':sha(current) if current.exists() else None}
   m['default_Minkowski_bitwise_comparison']={'files':identical,'compared':len(identical),'all_identical':len(identical)==34 and all(v['bitwise_identical'] for v in identical.values())};save();assert m['default_Minkowski_bitwise_comparison']['all_identical']
+ if a.core_bulk==2:
+  baseline=root/'docs/elliptic-shift-3d/evidence/native-wormhole-controls-r3-20261027'
+  old_initial=baseline/'initial.hidden-after-fresh-run.dat';assert old_initial.exists()
+  control=out/'onecore-wormhole-regression'
+  run('onecore-wormhole-regression',[binary,'-i',root/'inputs/z4c/composite_wormhole.athinput','z4c/composite_initial_file='+str(old_initial),'-d',control],folder=control)
+  identical={}
+  for old in sorted((baseline/'full').glob('*.csv')):
+   current=control/old.name;identical[old.name]={'bitwise_identical':current.exists() and old.read_bytes()==current.read_bytes(),'baseline_sha256':sha(old),'current_sha256':sha(current) if current.exists() else None}
+  m['default_onecore_wormhole_bitwise_comparison']={'files':identical,'compared':len(identical),'all_identical':len(identical)==6 and all(v['bitwise_identical'] for v in identical.values())};save();assert m['default_onecore_wormhole_bitwise_comparison']['all_identical']
  m['source_changes_during_controls']=[name for name,value in source_hashes.items() if sha(root/name)!=value]
  m['binary_unchanged']=sha(binary)==m['binary_sha256'];m['input_unchanged']=sha(input)==m['input_sha256'];save()
  print(json.dumps({'execution_qualification':m['execution_qualification'],'restart':checks,'same_engine_control':comparison,'scientific_acceptance':False,'binary_unchanged':m['binary_unchanged']}),flush=True)
