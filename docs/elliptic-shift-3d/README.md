@@ -1,6 +1,7 @@
 # Composite 3D elliptic shift: current implementation and evidence
 
-**Development paused for takeover:** [handoff and copy-paste prompt](TAKEOVER-20261027.md).
+**Takeover in progress:** [current spherical alignment and interface evidence](takeover-alignment-20261027.md).
+The [dated handoff](TAKEOVER-20261027.md) preserves the previous paused state.
 
 **Residual qualification:** all prior "original vector residual" results refer to
 the expanded continuum-equation discretization. Exact freezing of the actual

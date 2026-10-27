@@ -1,7 +1,9 @@
 # Current continuation checkpoint, 2026-10-27
 
-**Paused at user request for takeover.** No experiments remain active. Read
-[the complete handoff and copy-paste prompt](TAKEOVER-20261027.md) before resuming.
+**Takeover resumed with user authorization.** The latest [spherical alignment,
+short 3D comparisons and interface repair report](takeover-alignment-20261027.md)
+supersedes the dated checkpoint below. The [handoff](TAKEOVER-20261027.md)
+remains a record of the preceding paused state.
 
 **Residual qualification:** all prior "original vector residual" results refer to
 the expanded continuum-equation discretization. Exact freezing of the actual
