@@ -1,5 +1,8 @@
 # Current continuation checkpoint, 2026-10-27
 
+**Paused at user request for takeover.** No experiments remain active. Read
+[the complete handoff and copy-paste prompt](TAKEOVER-20261027.md) before resuming.
+
 **Residual qualification:** all prior "original vector residual" results refer to
 the expanded continuum-equation discretization. Exact freezing of the actual
 discrete metric-built connection is not established and fails the new accepted-state

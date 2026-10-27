@@ -1,5 +1,7 @@
 # Composite 3D elliptic shift: current implementation and evidence
 
+**Development paused for takeover:** [handoff and copy-paste prompt](TAKEOVER-20261027.md).
+
 **Residual qualification:** all prior "original vector residual" results refer to
 the expanded continuum-equation discretization. Exact freezing of the actual
 discrete metric-built connection is not established and fails the new accepted-state
