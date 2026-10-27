@@ -23,7 +23,9 @@ cmake -S . -B build-shift-3d -DCMAKE_BUILD_TYPE=Release \
   -DAthena_ENABLE_CUBED_SPHERE_TESTS=ON
 cmake --build build-shift-3d --target elliptic_shift_3d_operator_tests \
   elliptic_shift_3d_composite_tests elliptic_shift_3d_coupled_pilot \
-  elliptic_shift_3d_lifecycle_tests cubed_sphere_map_tests -j2
+  elliptic_shift_3d_tensor_scri_tests elliptic_shift_3d_wormhole_chart_tests \
+  elliptic_shift_3d_chart_equivalence_tests elliptic_shift_3d_native_fields_tests \
+  elliptic_shift_3d_radial_kernel elliptic_shift_3d_lifecycle_tests cubed_sphere_map_tests -j2
 ctest --test-dir build-shift-3d \
   -R 'elliptic_shift_3d|cubed_sphere_map$' --output-on-failure
 ```
@@ -59,3 +61,47 @@ separately in the report provenance.
 Double-precision CPU execution is the validated configuration. The host mapped
 backend, replicated MPI oracle and research checkpoint are separate from native
 AthenaK pack/task/GPU/restart integration. Existing production guards remain.
+
+## Tensor scri and selected wormhole continuation
+
+The tensor scri limit/surface continuation is described in
+[tensor-scri-closure.md](tensor-scri-closure.md). The selected M=1/3 wormhole
+lapse, positive charts, rejected controls and explicit proof that the
+Minkowski-reference equations are unchanged are in [wormhole-chart.md](wormhole-chart.md).
+The latest focused suite has10/10 passing component/regression tests, while
+**all27 wormhole scientific cases in the final three-chart matrix fail**.
+They are retained with unchanged targets and independently matched 1D profiles;
+passing component tests does not override those failures.
+
+For a bounded rerun of one complete chart family (one Serial worker,
+N=6/8/12, t=.0002, at most34,560 cells, 180 seconds per case):
+
+```sh
+python3 tst/elliptic_shift_3d/validate_wormhole.py \
+  --binary build-shift-3d/elliptic_shift_3d_coupled_pilot \
+  --output build-shift-3d/wormhole-reproduced --isotropic-reference 2
+```
+
+Chart0 is the generic positive-power chart, chart1 the rejected compact
+initial-factor blend, and chart2 the exploratory smooth AF factorization.
+Every variant evaluates the same full physical tensor/gauge RHS. No lapse
+floor, attenuation candidate, Omega floor or regular-center parity is used.
+The independent spherical reference uses the existing equations with centered,
+zero-KO discretization controls, explicitly distinguished from historical
+upwind/KO long runs.
+
+Frozen CSV/initializer files are losslessly compressed; restore them before
+replaying the recorded comparison commands:
+
+```sh
+python3 tst/elliptic_shift_3d/rehydrate_evidence.py docs/elliptic-shift-3d/evidence
+python3 tst/elliptic_shift_3d/compare_wormhole.py \
+  --matrix docs/elliptic-shift-3d/evidence/wormhole-final-20261027 \
+  --reference docs/elliptic-shift-3d/evidence/wormhole-radial-reference-20261027
+```
+
+The first command verifies hashes and refuses to overwrite different data.
+Use `--check-only` for a read-only archive check. The final matrix's kernel
+revision is62170e4bf. The native field adapter is tested on actual enums and
+Kokkos pack views; production stage scheduling, arbitrary shell allocation,
+MPI/AMR lifecycle and native restart remain unconnected.

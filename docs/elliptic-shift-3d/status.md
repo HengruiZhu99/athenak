@@ -1,5 +1,53 @@
 # Implementation and validation status, 2026-10-27
 
+**Current wormhole continuation:** commit `62170e4bf` implements the selected
+M=1/3 isotropic-wormhole source and three positive coefficient-chart controls.
+[The derivation and equivalence audit](wormhole-chart.md) explain why these
+factors retain the Minkowski reference connection, gauge sources and complete
+physical RHS. Selected lapse agreement with independent 1D is 5.53e-15
+relative; full tensor/gauge chart equivalence is 1.94e-12 relative. The
+[final matrix](evidence/wormhole-final-20261027/source-revision.json) contains
+three related N=6/8/12 families through t=.0002: **18 setup/initializer passes,
+27 retained scientific failures, no timeouts**. All original vector solves
+converge, all three nonzero wormhole checkpoints restart bitwise, and actual
+ghost face boundary data hold at roundoff. The coupled tensor poles do not
+meet the unchanged 1e-7 gate. The best smooth-chart N12 case has H/M RMS
+.0483254/.133361 and pole2.61657e-5. A halved timestep or tightened elliptic
+tolerance changes stored fields/shift by only about2.1e-12. These tests identify
+unresolved spatial/interface/scri errors; they do not establish an accepted
+wormhole or permit a late-time stability claim. The compact blend is rejected
+because its unresolved collar produces very large constraint errors.
+
+The independent [spherical reference](evidence/wormhole-radial-reference-20261027/manifest.json)
+has been extended through N2049, with explicit N1025/N2049 differences. The
+[comparison](evidence/wormhole-final-20261027/comparison.json) retains raw
+angular scatter, every cell, full-domain norms, puncture/transition/scri norms,
+time/tolerance controls and all failed plots. No general 3D Misner-Sharp mass
+is used. Compressed data can be restored with `rehydrate_evidence.py`.
+
+The native 25-field pack adapter now passes independent roundtrip/rate/ghost
+tests on twenty permuted bulk/shell blocks: roundtrip2.22e-16,
+physical-rate finite-difference error1.15e-11, untouched ghost/block error0.
+It uses actual `Z4c` enums and Kokkos mirrors, but is **not connected to native
+tasks** and does not supply native shell allocation, MPI, AMR lifecycle or
+restart. The latest focused CTest suite has10/10 passes. All coupled results
+remain from the Serial CPU research harness, with Kokkos-inline physical
+kernels; the inherited AthenaK MG transfer stencils are adapted in the host
+preconditioner, not a port of the native MG task driver or CFC physics.
+
+The spherical checkout independently advanced to `98fcd04e1` during this work.
+[A read-only audit](evidence/spherical-tip-audit-20261027/receipt.json) records
+new late puncture failures and experimental floor/attenuation controls. None
+were imported or called successful. Historical paused jobs and the new active
+spherical workers89528/89529 were untouched. The isolated branch remains based
+on the inspected starting HEAD8bef4966e. There is no mathematical impossibility
+or permission denial established here: native integration and complete AF
+angular endpoint treatment remain engineering/formulation work, and the
+measured coupled failures are the gate against extending these pilots.
+
+The following sections preserve earlier implementation/evidence snapshots;
+their outstanding-item descriptions are historical where superseded above.
+
 **Continuation update:** the full tensor finite limiting source and evolved scri
 surface are now implemented and independently checked. See
 [tensor-scri-closure.md](tensor-scri-closure.md) and
