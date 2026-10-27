@@ -10,6 +10,7 @@ p=argparse.ArgumentParser()
 p.add_argument('--cases',type=Path,nargs='+',required=True)
 p.add_argument('--crossing',type=Path)
 p.add_argument('--stem',default='gamma2-progress')
+p.add_argument('--show-duration',action='store_true',help='Label each curve by its actual terminal time')
 p.add_argument('--output',type=Path,required=True)
 a=p.parse_args();a.output.mkdir(parents=True,exist_ok=True)
 plt.rcParams.update({'font.size':12,'axes.spines.top':False,'axes.spines.right':False,'savefig.bbox':'tight'})
@@ -18,6 +19,7 @@ for case in a.cases:
  m=json.loads((case/'manifest.json').read_text());h=json.loads((case/'history.json').read_text())
  t=3*np.array([x['t'] for x in h]);n=m['arguments']['n'];mu=m['arguments']['gamma_coefficient']
  label=f'N={n}, bulk coefficient {mu:g}'
+ if a.show_duration:label=f'N={n}, {3*m["t"]:.3g}M'
  line,=ax[0,0].plot(t,[x['shift_lapse_gap_times_g_min'] for x in h],label=label);color=line.get_color()
  ax[0,1].semilogy(t,[x['H_exterior_rms'] for x in h],color=color)
  ax[1,0].plot(t,1e6*(3*np.array([x['apparent_horizon_mass'] for x in h])-1),color=color)

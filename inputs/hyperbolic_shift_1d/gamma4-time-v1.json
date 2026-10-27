@@ -1,0 +1,37 @@
+{
+  "hypothesis": "Independent fixed-grid temporal refinement for the coefficient-four family through9M, contingent on the duration candidate surviving its coarse100M test. All runs start from the same wormhole data, with fixed dt throughout each run.",
+  "baseline": "gamma4-inner-damping-v1/n257-t3",
+  "cases": [
+    {
+      "n": 257,
+      "t": 3,
+      "cfl": 0.05,
+      "restoring": 4,
+      "shift_gauge": "moving-puncture",
+      "gamma_coefficient": 4,
+      "grid_stretch": 0,
+      "shift_inner_stencil": "odd",
+      "inner_z4_damping": 8,
+      "puncture": true,
+      "lapse_floor": 1e-10,
+      "name": "double-dt",
+      "wall_seconds": 180
+    },
+    {
+      "n": 257,
+      "t": 3,
+      "cfl": 0.0125,
+      "restoring": 4,
+      "shift_gauge": "moving-puncture",
+      "gamma_coefficient": 4,
+      "grid_stretch": 0,
+      "shift_inner_stencil": "odd",
+      "inner_z4_damping": 8,
+      "puncture": true,
+      "lapse_floor": 1e-10,
+      "name": "half-dt",
+      "wall_seconds": 420
+    }
+  ],
+  "scope": "Compare cfl.05,.025,.0125 at exact saved common times. A failed larger timestep is retained; short temporal evidence does not qualify time accuracy at100M."
+}

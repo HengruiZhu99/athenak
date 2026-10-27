@@ -1,19 +1,19 @@
 {
-  "updated_utc": "2026-10-27T18:48:22.994711+00:00",
+  "updated_utc": "2026-10-27T19:19:45.403083+00:00",
   "goal_status": "active",
   "turn_classification": "progress",
   "target_t_over_M": 100,
   "target_coordinate_t": 33.333333333333336,
   "latest_user_direction": "Stay close to the moving-puncture Gamma driver in the bulk; adapt only as needed for exact algebraic scri closure.",
-  "completed": "Coefficient-one adjusted-damping trajectory failed at45.525M after a defective scalar speed coincidence. Coefficient-two passed three-grid3M and independent2.7M temporal refinement, but failed at74.7M after a transient stage coincidence. New coefficient-four family completes30M on N257 and3M on N513/N1025. Nine common-time three-grid comparisons have positive orders3.9005-4.7963 and decreasing exterior H and AH mass errors. None is a100M certificate.",
-  "failure_diagnosis": "Exact9x9 collision minor proves a defective interior scalar symbol at lapse/shift speed equality under stated positivity conditions. This does not establish ray crossing or unique nonlinear causation. Coefficient-two transient negative stage gap is hidden by its positive terminal instantaneous gap. New trials preserve the first finite affected state and stop at the next diagnostic check. Large-step boundary failure is consistent with restricted RK4 gain2.396. Coefficient-four has no observed crossing through30M, but interior Hmax1030 and coarse AH mass drift1.390e-4 require longer matched-resolution assessment.",
+  "completed": "Coefficient-four coarse N257 completed100.000195M with no guard failure, floor activation or speed coincidence. N513 and N1025 both complete9M. At29 exact common times0.6-9M, H/M exterior norms and AH mass errors decrease with resolution; exterior profile orders3.9005-4.8078. Independent N257 timestep controls complete9M; exterior orders3.918-3.983 at3/6/9M. Goal remains incomplete: finer-grid and temporal100M evidence are absent.",
+  "failure_diagnosis": "Historical coefficient-one and coefficient-two failures remain preserved. No new evolution failed this turn. Coarse interior Hamiltonian errors and extra expansion zeros persist inside the outer horizon and are secondary diagnostics. At100M the relative AH mass error is-2.56318e-5, far above the1.724e-10 spread of7/9/11-node extraction; extraction order alone does not explain the offset.",
   "next_steps": [
-    "Verify process identities and manifests before starting. No evolution is active at this checkpoint.",
-    "Continue completed gamma4-inner-damping-v1/n257-t10 toward100M in segments of at most420 seconds, keeping frozen equations and dt. Inspect exterior H/M, AH mass, stage speed gap, boundary numerator, metric positivity and floor activation at each segment.",
-    "Continue completed gamma4-inner-damping-v1/n513-t1 and n1025-t1 to longer exact common times in bounded segments; do not transfer coefficient-two temporal evidence to coefficient four.",
-    "Run independent fixed-grid timestep refinement for coefficient four and compare time errors with spatial differences, including at longer duration.",
-    "If new failures appear with positive gauge-speed margin, diagnose the distinct mechanism before changing parameters; do not restart or relabel failures.",
-    "Retain the100M three-grid stability/convergence goal as active until every criterion is met."
+    "Verify current process identities and terminal manifests; no evolution is active at this checkpoint.",
+    "Prioritize continuing gamma4-inner-damping-v1/n513-t3 from coordinate t3 to5 (15M) and n1025-t3 from t3 to3.6 (10.8M), each with declared wall limit420 seconds and unchanged frozen equations/dt. At most two single-process evolution trials.",
+    "Continue both finer trajectories in bounded segments toward the common aligned100M target t33.3333984375; collect exact-time multi-segment refinement throughout. Stop and diagnose any genuine new failure without restarting it.",
+    "Continue the completed gamma4-time-v1/double-dt and half-dt controls toward the same100M target as resources become available. They and the .025 baseline form the independent temporal comparison; short9M results do not establish100M time accuracy.",
+    "Retain full geometry validity and positive stage speed margin; judge exterior-normalized H/M and outermost AH mass as primary. Interior constraint peaks or extra interior expansion zeros alone are not rejection criteria.",
+    "Use goal/completion-audit-gamma4-long-v2.json for remaining requirements. Do not mark complete until all three grids and independent temporal evidence cover100M."
   ],
   "active_processes": [],
   "do_not_repeat": [
@@ -737,6 +737,94 @@
       "error": null,
       "continuation": false,
       "sources_verified": true
+    },
+    {
+      "case": "gamma4-inner-damping-v1/n257-t17",
+      "status": "completed",
+      "t": 17.0,
+      "error": null,
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma4-inner-damping-v1/n257-t24",
+      "status": "completed",
+      "t": 24.0,
+      "error": null,
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma4-inner-damping-v1/n257-t31",
+      "status": "completed",
+      "t": 31.0,
+      "error": null,
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma4-inner-damping-v1/n257-t100M",
+      "status": "completed",
+      "t": 33.3333984375,
+      "error": null,
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma4-inner-damping-v1/n513-t3",
+      "status": "completed",
+      "t": 3.0,
+      "error": null,
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma4-inner-damping-v1/n1025-t16",
+      "status": "completed",
+      "t": 1.6,
+      "error": null,
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma4-inner-damping-v1/n1025-t22",
+      "status": "completed",
+      "t": 2.2,
+      "error": null,
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma4-inner-damping-v1/n1025-t28",
+      "status": "completed",
+      "t": 2.8000000000000003,
+      "error": null,
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma4-inner-damping-v1/n1025-t3",
+      "status": "completed",
+      "t": 3.0,
+      "error": null,
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma4-time-v1/double-dt",
+      "status": "completed",
+      "t": 3.0,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma4-time-v1/half-dt",
+      "status": "completed",
+      "t": 3.0,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
     }
   ],
   "checks": {
@@ -744,15 +832,17 @@
     "exact_scalar_corners_verified": true,
     "restart_two_generations_bitwise": true,
     "source_checkpoint_parent_hashes_verified": true,
-    "latex_pages": 27,
+    "latex_pages": 28,
     "latex_warnings": 0,
     "desktop_compile": "success",
-    "visual_review": "Final abstract and pages21-27 inspected; separate coefficient-four refinement plot inspected.",
-    "source_bundle_files": 17,
+    "visual_review": "Final abstract and pages25-28 inspected.",
+    "source_bundle_files": 18,
     "source_bundle_bytewise_verified": true,
-    "new_family_source_checkpoint_verifications": 47
+    "new_family_source_checkpoint_verifications": 47,
+    "multi_segment_nine_frame_regression_identical": true,
+    "integrator_equations_changed_this_turn": false
   },
-  "manuscript_changes": "Added exact scalar collision proof, late failures, boundary timestep restriction, coefficient-two spatial/time refinement, coefficient-four short refinement and30M coarse result, and four new figures; rebuilt and inspected27-page paper and refreshed17-file portable bundle.",
+  "manuscript_changes": "Updated coefficient-four section to coarse100M,29-time spatial refinement through9M,temporal controls through9M and interpolation-order sensitivity. Added9M convergence figure and refreshed100M duration figure.28-page PDF compiled and visually inspected;18-file source bundle verified.",
   "current_candidate": {
     "gamma_coefficient": 4,
     "inner_z4_damping": 8,
@@ -761,21 +851,26 @@
     "grid_stretch": 0,
     "cfl": 0.025,
     "lapse_floor": 1e-10,
-    "coarse_checkpoint": "gamma4-inner-damping-v1/n257-t10",
-    "medium_checkpoint": "gamma4-inner-damping-v1/n513-t1",
-    "fine_checkpoint": "gamma4-inner-damping-v1/n1025-t1",
+    "coarse_checkpoint": "gamma4-inner-damping-v1/n257-t100M",
+    "medium_checkpoint": "gamma4-inner-damping-v1/n513-t3",
+    "fine_checkpoint": "gamma4-inner-damping-v1/n1025-t3",
     "short_spatial_orders": {
       "minimum": {
-        "full": 3.900854436130875,
+        "full": 3.891382590257332,
         "exterior": 3.900489665754456
       },
       "maximum": {
-        "full": 4.796182469051096,
-        "exterior": 4.7962646094083246
+        "full": 4.797127068929267,
+        "exterior": 4.807793367198491
       }
     },
-    "temporal_qualification": "outstanding",
-    "coarse_peak_AH_mass_drift": 0.0001390228085729195,
-    "coarse_H_interior_max": 1030.35793337442
-  }
+    "temporal_qualification": "Verified at3/6/9M with fixed N257 dt/h=.05,.025,.0125;100M pending",
+    "coarse_peak_AH_mass_drift": 0.0001654639828644333,
+    "coarse_H_interior_max": 8160.313578442605,
+    "coarse_100M_complete": true,
+    "shared_t_over_M": 9
+  },
+  "previous_turn_classification": "progress",
+  "current_turn_findings": "Coefficient-four coarse N257 completed100.000195M with no guard failure, floor activation or speed coincidence. N513 and N1025 both complete9M. At29 exact common times0.6-9M, H/M exterior norms and AH mass errors decrease with resolution; exterior profile orders3.9005-4.8078. Independent N257 timestep controls complete9M; exterior orders3.918-3.983 at3/6/9M. Goal remains incomplete: finer-grid and temporal100M evidence are absent. At100M, the relative spread from7/9/11-node horizon extraction is1.724e-10, well below the measured mass offset.",
+  "completion_audit": "goal/completion-audit-gamma4-long-v2.json"
 }

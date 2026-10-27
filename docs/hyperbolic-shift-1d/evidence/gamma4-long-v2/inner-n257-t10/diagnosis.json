@@ -1,0 +1,83 @@
+{
+  "case": "output/hyperbolic-shift-1d/gamma4-inner-damping-v1/n257-t10",
+  "manifest_sha256": "6f025f43a540fe517c264462dc7540e046daf6cd7d3595b3f1576a800f8eed8e",
+  "profile_columns": [
+    "r",
+    "g",
+    "alpha",
+    "beta",
+    "Lambda",
+    "V",
+    "H",
+    "Zr",
+    "gdot",
+    "transport",
+    "curvature",
+    "shear",
+    "KO"
+  ],
+  "profiles": [
+    {
+      "t": 3.0,
+      "key": "t0",
+      "metric_rate_decomposition_error": 8.396061623727746e-16,
+      "first_positive_node": [
+        0.00390625,
+        0.9999994713210658,
+        0.001985511579106379,
+        0.002006166755517222,
+        0.0032558321830344784,
+        0.0027415495677237316,
+        6.746998176736406e-05,
+        0.00025714117173654844,
+        5.332800537281653e-06,
+        6.314553950017986e-06,
+        5.85437307970692e-05,
+        -5.5916083101382415e-05,
+        -3.6094011085412806e-06
+      ]
+    },
+    {
+      "t": 6.5,
+      "key": "t35",
+      "metric_rate_decomposition_error": 9.43689570931383e-16,
+      "first_positive_node": [
+        0.00390625,
+        1.003853310951847,
+        0.01905782603610444,
+        0.006083359388462535,
+        0.12209872806189868,
+        -10.001833869328067,
+        -19.623158739030142,
+        5.081471628871655,
+        -0.015003036660340995,
+        -0.07940407513394426,
+        0.2812195490986447,
+        -0.1818333505875446,
+        -0.03498516003749765
+      ]
+    },
+    {
+      "t": 10.0,
+      "key": "t70",
+      "metric_rate_decomposition_error": 7.979727989493313e-16,
+      "first_positive_node": [
+        0.00390625,
+        1.0017239109559932,
+        0.004866024139063709,
+        0.00612823128041219,
+        0.2856831572349687,
+        -2.0977972538001106,
+        -320.62707232659096,
+        1.1937946595145148,
+        -0.00413740455317143,
+        -0.021031193485145552,
+        0.28517135841105773,
+        -0.2314569127676188,
+        -0.03682065671146525
+      ]
+    }
+  ],
+  "spectra": [],
+  "scope": "Exact decomposition of the implemented metric rate away from endpoints. Restricted Jacobians perturb only inner positive nodes and hold the exterior fixed; artificial-interface and nonnormal effects prevent a full-domain stability claim. Parity alternatives are diagnostic-only and retain all positive-node fields independently."
+}
