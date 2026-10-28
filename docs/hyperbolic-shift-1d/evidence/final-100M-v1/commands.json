@@ -1,0 +1,28 @@
+[
+  [
+    "python3",
+    "tst/hyperbolic_shift_1d/assess_completed_campaign.py",
+    "--cases",
+    "docs/hyperbolic-shift-1d/evidence/final-100M-v1/cases.json",
+    "--output",
+    "NEW/profiles"
+  ],
+  [
+    "python3",
+    "tst/hyperbolic_shift_1d/assess_history_refinement.py",
+    "--cases",
+    "output/hyperbolic-shift-1d/gamma4-inner-damping-v1/n257-t100M",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-hyperbolic-shift/hyperboloidal/output/hyperbolic-shift-1d/gamma4-duration-series-v1/n513/segment-0015",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-hyperbolic-shift/hyperboloidal/output/hyperbolic-shift-1d/gamma4-duration-series-v1/n1025/segment-0050",
+    "--output",
+    "NEW/history"
+  ],
+  [
+    "python3",
+    "tst/hyperbolic_shift_1d/plot_completed_campaign.py",
+    "--cases",
+    "docs/hyperbolic-shift-1d/evidence/final-100M-v1/cases.json",
+    "--evidence",
+    "NEW"
+  ]
+]

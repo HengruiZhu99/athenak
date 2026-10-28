@@ -6,13 +6,13 @@
 \newcommand{\scri}{\mathscr I^+}
 \newcommand{\dt}{\mathcal D_t}
 \newcommand{\A}{\mathcal A}
-\title{A local hyperbolic shift with exact scri nullness\\\large Spherical prototype, boundary closure, and qualification failures}
+\title{A local hyperbolic shift with exact scri nullness\\\large Spherical prototype, 100M refinement, and remaining limitations}
 \author{Numerical formulation note}
 \date{27 October 2026}
 \begin{document}
 \maketitle
 \begin{abstract}
-We replace the elliptic shift by an auxiliary Gamma driver while retaining the full variable-metric spherical Z4c equations. Algebraic elimination enforces the normal nullness relation at every Runge--Kutta stage and accepted state. Across the initial 31 bounded runs the maximum relative nullness error is one binary64 machine epsilon. A source-restored candidate exhibits approximately second-order spatial self-convergence and fourth-order timestep convergence in short regular-center tests. Subsequent three-grid puncture tests reach $3M$ with decreasing errors, but the original duration extensions fail near $8M$. An interior-only source adaptation postpones failure to $16$--$17M$. A subsequent constant-strength bulk Gamma driver, with an independently audited inner gauge stencil, reaches $24M$ on two grids; three-grid tests through $3M$ improve under refinement. A compact lapse-adjusted Z4 damping control subsequently reaches $30M$ on the coarse grid with positive metric and small horizon-mass drift, but a later extension fails at $45.525M$ after exterior lapse/shift speed coincidences develop. Doubling the constant coefficient delays the coarse failure to $74.7M$ and gives positive short spatial and temporal refinement, but a transient speed coincidence recurs. A fresh coefficient-four control completes $100M$ on the coarse grid; matched three-grid spatial refinement extends through $12.6M$, and independent timestep tests through $9M$. Regional diagnostics reveal lower orders near the puncture and scri than in the exterior aggregate. Single-grid survival does not yet qualify the persistent three-grid $100M$ stability and convergence target. Exact nullness therefore succeeds as a discrete gauge identity without establishing full boundary compatibility, puncture regularity, or improved robustness over the elliptic formulation.
+We replace the elliptic shift by an auxiliary Gamma driver while retaining the full variable-metric spherical Z4c equations. Algebraic elimination enforces the normal nullness relation at every Runge--Kutta stage and accepted state. Across the initial 31 bounded runs the maximum relative nullness error is one binary64 machine epsilon. A source-restored candidate exhibits approximately second-order spatial self-convergence and fourth-order timestep convergence in short regular-center tests. Subsequent three-grid puncture tests reach $3M$ with decreasing errors, but the original duration extensions fail near $8M$. An interior-only source adaptation postpones failure to $16$--$17M$. A subsequent constant-strength bulk Gamma driver, with an independently audited inner gauge stencil, reaches $24M$ on two grids; three-grid tests through $3M$ improve under refinement. A compact lapse-adjusted Z4 damping control subsequently reaches $30M$ on the coarse grid with positive metric and small horizon-mass drift, but a later extension fails at $45.525M$ after exterior lapse/shift speed coincidences develop. Doubling the constant coefficient delays the coarse failure to $74.7M$ and gives positive short spatial and temporal refinement, but a transient speed coincidence recurs. A fresh coefficient-four control completes $100M$ on all three grids. Across all 374 shared saved profiles, exterior mixed-field self-convergence remains positive, with endpoint order $3.522$; independent timestep differences remain far smaller than spatial differences. The finest terminal relative horizon-mass error is $-5.97\times10^{-11}$. However, the full-domain endpoint order is only $0.627$, puncture-region order becomes slightly negative, and interior constraint peaks increase with refinement. The horizon coordinate radius continues to grow, so stationary-gauge relaxation is not established. Exact nullness therefore succeeds as a discrete gauge identity without establishing full boundary compatibility, puncture regularity, or improved robustness over the elliptic formulation.
 \end{abstract}
 
 \section{Preserved baseline and proposed driver}
@@ -162,7 +162,7 @@ The independently evaluated raw lapse-clock rates at the final endpoints are $0.
 
 
 \section{Bounded extensions toward the persistent \texorpdfstring{$100M$}{100M} target}
-The duration target is $t/M=100$, or coordinate $t=100/3$ for the retained $M=1/3$. The goal remains active. The predeclared criteria require three nested grids to reach that duration, decreasing exterior constraints and mass errors, positive-order field self-convergence, a separate timestep check, and continued positivity on every positive-radius node. A small horizon-mass error alone cannot certify a usable evolution.
+The duration target is $t/M=100$, or coordinate $t=100/3$ for the retained $M=1/3$. The final assessment below retains the full scope of the target. The predeclared criteria require three nested grids to reach that duration, decreasing exterior constraints and mass errors, positive-order field self-convergence, a separate timestep check, and continued positivity on every positive-radius node. A small horizon-mass error alone cannot certify a usable evolution.
 
 At coordinate $t=1=3M$, grids $N=257,513,1025$ all complete with $\Delta t=0.05h$. Comparing $\Delta t=0.05h$ against $0.0125h$ at $N=257$ changes the final conformal lapse by at most $3.5\times10^{-13}$ and the horizon mass by $2.1\times10^{-14}$. This bounds the measured time sensitivity; two stepsizes do not establish a new temporal order.
 \begin{center}
@@ -416,7 +416,15 @@ Subsequent matched profiles extend the spatial comparison to $12.6M$. At seven e
 
 A supplemental regional audit includes the auxiliary shift driver $D$ as a tenth field and reproduces the historical nine-field norms before extending them. With each regional norm normalized over its own radial weights, the ten-field exterior orders over this interval are $3.743$--$4.627$. At $12.6M$, the full-domain order is $2.031$, the horizon-interior order is $1.907$, and the puncture-region order for $r\leq0.02$ is $1.357$. The largest interior self-differences are in $A_{rr}$ and $p+3$; this localizes the reduced full-domain order without establishing its cause. The scri collar $r\geq0.9$ gives orders $1.445$--$1.508$, with a substantial contribution from $D$. Exact nullness therefore coexists with lower-order convergence of other boundary fields. These local results remain visible even though the primary physical budget excludes the horizon interior. No nodes are removed from the full-domain assessment, and no uniform fourth-order claim is made.
 
-Independent $N=257$ controls with $\Delta t/h=0.05,\allowbreak 0.025,\allowbreak 0.0125$ all reach $9M$ from the same initial data. At $3M,6M,9M$, exterior mixed-profile temporal orders are $3.983$, $3.918$, and $3.946$. At $9M$, the successive temporal differences are $2.465\times10^{-11}$ and $1.599\times10^{-12}$, far below the same-time spatial difference $3.012\times10^{-4}$ between $N=257$ and $513$. The full-domain temporal order at $9M$ is only $3.407$, with differences $4.634\times10^{-11}$ and $4.370\times10^{-12}$; we do not promote the exterior order to a uniform full-domain result. Independent temporal accuracy and matched spatial refinement through $100M$ remain outstanding.
+The next 29 matched profiles, from $21.6M$ through $30M$, retain decreasing exterior Hamiltonian and momentum norms and absolute relative horizon-mass errors at every saved profile time. The nine-field exterior orders range from $3.634$ to $4.334$, while full-domain orders are only $0.769$--$1.136$. At $30M$, the exterior Hamiltonian RMS is $4.611\times10^{-3}$, $8.242\times10^{-5}$, and $1.771\times10^{-6}$; the corresponding momentum RMS is $1.173\times10^{-2}$, $2.016\times10^{-4}$, and $1.206\times10^{-5}$. Absolute relative mass errors are $1.390\times10^{-4}$, $6.513\times10^{-9}$, and $7.035\times10^{-11}$. Including $D$, the exterior order is $3.506$ at $30M$, compared with $0.796$ over the full domain. The puncture-region order becomes negative at several saved times, reaching $-0.034$ at $22.8M$; it is only $0.082$ at $30M$. The scri-collar order is $1.480$ at that endpoint. Thus the exterior refinement result does not establish uniform puncture convergence. Matched inner profiles display substantial grid-scale metric and curvature oscillations, all of which remain included in the full-domain diagnostics.
+
+A separate history audit compares every recorded diagnostic at the exact shared times, rather than only the saved field profiles. Through $27M$, all 394 common samples have decreasing exterior Hamiltonian and momentum RMS with refinement. Peak absolute relative horizon-mass errors are $8.464\times10^{-5}$, $1.236\times10^{-7}$, and $5.635\times10^{-9}$; time-RMS errors are $2.048\times10^{-5}$, $2.208\times10^{-8}$, and $7.590\times10^{-10}$. The time RMS uses trapezoidal weights on the actual diagnostic times. Pointwise mass-error ordering is not universal: at $18.375M$, the medium and fine errors are $1.413\times10^{-9}$ and $1.688\times10^{-9}$, while at $22.95M$ they are $9.795\times10^{-11}$ and $1.265\times10^{-10}$. These exceptions are retained and are not attributed to roundoff. The $\Theta$ and $Z$ exterior norms tie at their exactly zero initial values, then decrease with resolution at every shared sample.
+
+Manufactured power laws identify a concrete limitation of the inner derivative reconstruction. The fixed wormhole reference has $\chi\sim r^4$ and $\alpha\sim r^2$; different evolved powers produce logarithmically singular residual variables. For the test $\chi=r^2$, the relative first- and second-derivative errors at the first positive node are $4.8346\%$ and $11.2561\%$ on all three grids. At the fixed positive radius $r=0.046875$, the same derivatives converge at approximately sixth order. Thus fixed-radius convergence does not imply uniform accuracy at a fixed inner node index. This limitation is consistent with the observed grid-scale inner structure, but does not identify its unique nonlinear cause. Earlier direct-total-derivative controls in the elliptic formulation failed at coordinate times $4.74140625$ and $5.67431640625$ on $N=257,513$; they used a different historical configuration and do not establish the outcome of that change in the present system. Their failures rule out treating the option as an already qualified repair. It remains disabled, and the current trajectories retain frozen equations and timesteps.
+
+Independent $N=257$ controls with $\Delta t/h=0.05,\allowbreak 0.025,\allowbreak 0.0125$ all reach $9M$ from the same initial data. At $3M,6M,9M$, exterior mixed-profile temporal orders are $3.983$, $3.918$, and $3.946$. At $9M$, the successive temporal differences are $2.465\times10^{-11}$ and $1.599\times10^{-12}$, far below the same-time spatial difference $3.012\times10^{-4}$ between $N=257$ and $513$. The full-domain temporal order at $9M$ is only $3.407$, with differences $4.634\times10^{-11}$ and $4.370\times10^{-12}$; we do not promote the exterior order to a uniform full-domain result. The completed long-time spatial and temporal tests are assessed below.
+
+Repeating the independent timestep comparison with $D$ included preserves the nine-field results exactly. Across $3M,6M,9M$, the largest ten-field temporal-to-spatial difference ratio is $2.464\times10^{-5}$ over the full and exterior norms. The measured ten-field exterior orders are $5.008$, $5.157$, and $5.062$; these finite-resolution ratios are not a claim that RK4 is formally fifth order. The comparison remains limited to the short common interval.
 
 \begin{figure}[htbp]
 \centering\includegraphics[width=\linewidth]{figures/gamma4-9M-convergence.pdf}
@@ -425,7 +433,12 @@ Independent $N=257$ controls with $\Delta t/h=0.05,\allowbreak 0.025,\allowbreak
 
 \begin{figure}[htbp]
 \centering\includegraphics[width=\linewidth]{figures/gamma4-regional-refinement.pdf}
-\caption{Regional spatial refinement at seven exact common times from $10.8M$ to $12.6M$, including the auxiliary shift driver $D$. The full-domain order declines as interior curvature differences grow. The scri collar also has lower order than the aggregate exterior norm. Solid and dashed difference curves compare $257/513$ and $513/1025$ nodes, respectively; all norms are normalized within their labeled regions. These are finite-resolution self-convergence measurements, not asymptotic order proofs.}
+\caption{Regional spatial refinement at 29 exact common times from $21.6M$ to $30M$, including the auxiliary shift driver $D$. The puncture-region order briefly becomes negative even though exterior refinement remains positive. The scri collar also has lower order than the aggregate exterior norm. Solid and dashed difference curves compare $257/513$ and $513/1025$ nodes, respectively; all norms are normalized within their labeled regions. These are finite-resolution self-convergence measurements, not asymptotic order proofs.}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering\includegraphics[width=\linewidth]{figures/gamma4-inner-30M.png}
+\caption{Matched inner profiles at $30M$, showing every positive-radius node within $r\leq0.06$. Metric and curvature oscillations remain substantial and move toward smaller radii with refinement. The lapse also contains inner grid-scale structure. Curvature panels use symmetric logarithmic axes; no smoothing or excision is applied. These coordinate profiles diagnose the numerical limitation and do not supersede the outermost-horizon mass budget.}
 \end{figure}
 
 \FloatBarrier
@@ -436,7 +449,70 @@ A read-only extraction check varies the local horizon interpolation width throug
 
 \begin{figure}[htbp]
 \centering\includegraphics[width=0.85\linewidth]{figures/gamma4-progress.pdf}
-\caption{The fresh coefficient-four control. The coarse trajectory completes $100M$; the finer curves in this archived duration snapshot end at their completed $9M$ checkpoints. Subsequent matched spatial evidence reaches $12.6M$, as discussed above. All evaluated stage speed margins remain positive, and the lapse floor has not activated. Unequal-duration histories do not demonstrate long-time convergence; the larger coarse horizon-mass drift remains to be tested at matched finer resolution.}
+\caption{The fresh coefficient-four control. The coarse trajectory completes $100M$; the finer curves in this archived duration snapshot end at their completed $9M$ checkpoints. Subsequent matched spatial evidence reaches $30M$, as discussed above. All evaluated stage speed margins remain positive, and the lapse floor has not activated. Unequal-duration histories do not demonstrate long-time convergence; the final common-duration assessment is given below.}
+\end{figure}
+\FloatBarrier
+\clearpage
+
+An intermediate matched two-grid history comparison extended to $69M$, with 954 exact common samples. The medium grid has lower exterior Hamiltonian and momentum RMS and lower absolute relative horizon-mass error at every sample. The two peak mass errors over this interval are $1.655\times10^{-4}$ and $1.236\times10^{-7}$. This is duration evidence on two grids, not a three-grid field-convergence result. The final three-grid and independent timestep assessment below supersedes this intermediate duration snapshot.
+
+\begin{figure}[htbp]
+\centering\includegraphics[width=0.78\linewidth]{figures/gamma4-matched-histories.png}
+\caption{Three-grid histories at all 394 exact shared diagnostic times through $27M$. Constraint norms use only the outermost-horizon exterior and are normalized by exterior radial weights. All mass-error crossings and the two medium/fine ordering exceptions are retained. Lines connect recorded samples without smoothing; this history audit supplements, rather than replaces, field self-convergence tests.}
+\end{figure}
+\FloatBarrier
+
+\subsection{Completed three-grid assessment through 100M}
+All three spatial trajectories now complete the common endpoint $t/M=100.0001953125$ (coordinate $t=33.3333984375$), with $M=1/3$, at fixed $\Delta t/h=0.025$. No evolution parameter changes, metric floors, excision, or restarts from failed states were introduced within these trajectories. Source, library, checkpoint, and continuation-ancestry hashes are checked before assessment. Every shared saved profile is used: 374 exact common times including the initial state and endpoint. The denser histories contain 1368 common diagnostic times. Table~\ref{tab:final100} gives the terminal exterior and horizon measurements.
+
+\begin{table}[htbp]
+\centering\small
+\begin{tabular}{lrrr}
+\toprule
+Quantity at $100.0002M$ & $N=257$ & $N=513$ & $N=1025$\\
+\midrule
+Exterior Hamiltonian RMS & $2.3440\times10^{-3}$ & $6.1259\times10^{-5}$ & $1.0846\times10^{-6}$\\
+Exterior momentum RMS & $4.4620\times10^{-3}$ & $1.5450\times10^{-4}$ & $3.5874\times10^{-5}$\\
+Exterior $\Theta$ RMS & $5.6561\times10^{-5}$ & $1.5939\times10^{-6}$ & $2.7710\times10^{-8}$\\
+Exterior $Z_r$ RMS & $2.1574\times10^{-4}$ & $1.2193\times10^{-5}$ & $3.3925\times10^{-6}$\\
+$M_{\rm AH}/M-1$ & $-2.5632\times10^{-5}$ & $-2.9771\times10^{-9}$ & $-5.9688\times10^{-11}$\\
+Peak relative mass drift & $1.6546\times10^{-4}$ & $1.2354\times10^{-7}$ & $5.6350\times10^{-9}$\\
+Horizon coordinate radius & $0.170409232$ & $0.170559633$ & $0.170578748$\\
+Minimum radial metric & $0.751782$ & $0.757821$ & $0.840712$\\
+\bottomrule
+\end{tabular}
+\caption{Completed coefficient-four campaign. Constraints exclude the interior of each instantaneous outermost apparent horizon and are normalized by the retained radial weights. Peak drift is measured over the history relative to each numerical initial horizon mass; the signed terminal error uses analytic $M$. The coordinate radius is gauge dependent.}
+\label{tab:final100}
+\end{table}
+
+The exterior Hamiltonian and momentum RMS decrease with refinement at all 1368 diagnostic samples. The exterior $\Theta$ and $Z_r$ norms do likewise after their exactly zero initial values. Peak and time-RMS mass errors also decrease across all three grids. The two medium/fine pointwise mass-error exceptions at $18.375M$ and $22.95M$, described above, remain the only such exceptions; a claim of strictly decreasing mass error at every instant would therefore be false. The finest Hamiltonian norm settles near $10^{-6}$, but its momentum and $Z_r$ norms grow slowly over the later evolution. They remain below the coarser-grid norms through the tested endpoint; this does not establish stability for arbitrarily long times.
+
+The profile comparison includes all ten evolved physical fields, adding $D$ to the historical nine-field set. It uses the Euclidean aggregate of their individual radial-weighted RMS differences, without field rescaling. Between nested grids, the measured order is the base-two logarithm of the coarse/medium difference divided by the medium/fine difference. At all 373 positive-time shared profiles, exterior and full-domain aggregate orders are positive. Exterior orders range from $2.637$ to $4.868$ over the complete sampled history and from $3.432$ to $3.988$ after $30M$. At the endpoint, exterior differences are $1.6480\times10^{-3}$ and $1.4346\times10^{-4}$, giving order $3.522$. Full-domain differences are much larger, $0.44286$ and $0.28683$, giving only $0.627$. These finite-grid observations support exterior self-convergence through $100M$, not a uniform formal fourth-order result.
+
+Independent $N=257$ trajectories with $\Delta t/h=0.05,0.025,0.0125$ also complete the same endpoint. Their comparison uses all 334 shared saved times; the other saved times are recorded but not interpolated. At the 333 positive times shared with the spatial comparison, the larger temporal self-difference is at most $2.165\times10^{-4}$ of the coarse/medium spatial difference, in either the full or exterior aggregate. At the endpoint, exterior temporal differences are $7.763\times10^{-11}$ and $2.168\times10^{-12}$. The corresponding empirical order is $5.162$; this is not a fifth-order claim for RK4, and the smallest individual field differences approach floating-point precision. This independently excludes timestep error as the dominant measured coarse-grid error over the tested interval; it is not a separate timestep study on the finest grid.
+
+The outermost horizon coordinate radius grows from approximately $0.06292449$ initially to the values in Table~\ref{tab:final100}. At the endpoint its successive resolution differences are $1.5040\times10^{-4}$ and $1.9115\times10^{-5}$, giving order $2.976$. Seven earlier history samples do not have decreasing successive radius differences; these crossings are retained in the plot. The radius is a coordinate diagnostic, not a conserved mass proxy, and its continued growth precludes a claim that the gauge has reached a stationary trumpet. On the two finer endpoint geometries, changing the local horizon-interpolation width from seven to nine or eleven nodes changes the relative mass by at most $1.17\times10^{-15}$ and $5.00\times10^{-16}$, respectively, far below the reported mass errors. This extraction check does not independently establish evolution accuracy.
+
+\pagebreak
+All three runs retain positive full geometry, no lapse-floor activation, and relative nullness at or below $2.23\times10^{-16}$. The smallest recorded stage speed margins are $0.71894$, $0.71752$, and $0.71752$. Maximum stage scri numerators are $2.308\times10^{-3}$, $1.324\times10^{-3}$, and $7.873\times10^{-4}$, below the predeclared $10^{-2}$ guard. Exact nullness remains an algebraic identity; the other regularity residuals are controlled numerically and are not thereby exactly zero.
+
+The principal remaining limitation is the puncture neighborhood. The ten-field order on $r\leq0.02$ is nonpositive at 132 positive-time saved profiles, reaches $-0.0567$ at $96.9M$, and is $-0.0549$ at the endpoint. Interior Hamiltonian maxima at the endpoint are $8.160\times10^3$, $1.423\times10^4$, and $4.538\times10^4$, increasing with resolution. No positive-radius nodes are removed from the full-domain audit. The scri-collar order has one early negative sample, $-0.0452$ at $0.01494M$, and reaches $3.153$ at the endpoint. These observations prevent a uniform local-convergence claim even though the primary exterior constraints, mass-error envelopes, and aggregate profile tests improve. The manufactured reference-chart limitation is a plausible contributor to the inner behavior, not a demonstrated unique cause. Local temporal orders are also nonpositive at twelve puncture-region samples, so the aggregate timestep result is not a uniform local temporal-order claim. A separately qualified regularity-aware reconstruction remains a possible repair; no such change has been tested in this completed campaign. Robustness beyond $100M$, a settled gauge, full boundary well-posedness, and nonspherical or 3D/AMR performance also remain unestablished.
+
+\begin{figure}[htbp]
+\centering\includegraphics[width=\linewidth]{figures/exterior-constraints-100M.pdf}
+\caption{Apparent-horizon-exterior constraint RMS through the common $100.0002M$ endpoint. Every one of the 1368 shared diagnostic samples is retained. Each curve uses the instantaneous outermost horizon and its own exterior radial-weight normalization. Lines connect samples without smoothing. Zero initial $\Theta$ and $Z_r$ values are omitted only on logarithmic axes.}
+\end{figure}
+\begin{figure}[htbp]
+\centering\includegraphics[width=\linewidth]{figures/horizon-100M.pdf}
+\caption{Absolute relative outermost-horizon mass error, horizon coordinate radius, and successive radius self-differences through $100M$. The almost coincident radius curves separate in the right panel. The radius continues to evolve and is not a conserved invariant. Error crossings are retained; neither the mass error nor the radius differences are strictly ordered at every sample.}
+\end{figure}
+\begin{figure}[htbp]
+\centering\includegraphics[width=\linewidth]{figures/convergence-100M.pdf}
+\caption{Completed ten-field spatial and temporal refinement assessment. Exterior and full-domain aggregate spatial orders stay positive, but the local puncture order becomes slightly negative. Temporal differences at fixed $N=257$ remain much smaller than the matched coarse/medium spatial differences. Mixed norms have no field rescaling; individual field differences and all regional values are archived.}
+\end{figure}
+\begin{figure}[htbp]
+\centering\includegraphics[width=\linewidth]{figures/inner-100M.png}
+\caption{Inner metric, lapse, and curvature profiles at the common $100.0002M$ endpoint, with every positive-radius node shown within $r\leq0.06$. The inner oscillations and nonconvergent local curvature behavior remain visible despite the accurate outermost-horizon mass. Curvature axes are symmetric logarithmic. No smoothing, excision, or metric floor is used.}
 \end{figure}
 \FloatBarrier
 
@@ -456,8 +532,8 @@ Evidence category & Established scope\\
 \midrule
 Analytic identities & Nullness elimination, evolving-normal rate, scalar principal polynomial, selected exact eigenspaces, leading AF limits.\\
 Algebraic numerics & Every tested stage/state satisfies spherical nullness within one machine epsilon; general 3D boundary identities have separate randomized tests.\\
-Convergence evidence & Short regular-center refinement; coefficient-two three-grid puncture evidence through $3M$; coefficient-four spatial evidence through $12.6M$ and temporal evidence through $9M$, with lower regional orders near the puncture and scri; coarse coefficient-four survival through $100M$, without a $100M$ convergence certificate.\\
-Unresolved & Complete boundary well-posedness, uniform collapsed-lapse hyperbolicity, accurate puncture evolution, long-time robustness, and all 3D/AMR qualification.\\
+Convergence evidence & Short regular-center refinement; coefficient-two three-grid puncture evidence through $3M$; coefficient-four three-grid survival and positive exterior/full aggregate refinement through $100M$; independent timestep differences below spatial differences. Local puncture convergence fails, and pointwise mass/radius ordering has disclosed exceptions.\\
+Unresolved & Complete boundary well-posedness, uniform collapsed-lapse hyperbolicity, uniformly accurate puncture evolution, stationary-gauge relaxation, robustness beyond $100M$, and all 3D/AMR qualification.\\
 \bottomrule
 \end{tabular}
 \end{center}
