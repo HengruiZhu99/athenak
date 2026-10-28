@@ -1,0 +1,82 @@
+{
+  "minkowski": {
+    "command": [
+      "/workspace/scratch/000a8370d93b/athenak/build-scri/src/athena",
+      "-i",
+      "/workspace/scratch/000a8370d93b/athenak/docs/hyperbolic-shift-3d/evidence/small-patch-smoke/minkowski/input.athinput",
+      "-d",
+      "/workspace/scratch/000a8370d93b/athenak/docs/hyperbolic-shift-3d/evidence/small-patch-smoke/minkowski"
+    ],
+    "returncode": 0,
+    "metrics": [
+      {
+        "region": "bulk",
+        "time": "0.018749999999999999",
+        "blocks": "8",
+        "plan_builds": "1",
+        "l2": "0",
+        "linf": "0",
+        "H_l2": "0",
+        "H_linf": "0",
+        "M_l2": "0",
+        "Z_l2": "0",
+        "weyl_l2": "0"
+      },
+      {
+        "region": "shell",
+        "time": "0.018749999999999999",
+        "blocks": "6",
+        "plan_builds": "1",
+        "l2": "0",
+        "linf": "0",
+        "H_l2": "0",
+        "H_linf": "0",
+        "M_l2": "0",
+        "Z_l2": "0",
+        "weyl_l2": "0"
+      }
+    ],
+    "tolerance": 1e-11
+  },
+  "gauge_wave": {
+    "command": [
+      "/workspace/scratch/000a8370d93b/athenak/build-scri/src/athena",
+      "-i",
+      "/workspace/scratch/000a8370d93b/athenak/docs/hyperbolic-shift-3d/evidence/small-patch-smoke/gauge_wave/input.athinput",
+      "-d",
+      "/workspace/scratch/000a8370d93b/athenak/docs/hyperbolic-shift-3d/evidence/small-patch-smoke/gauge_wave"
+    ],
+    "returncode": 0,
+    "metrics": [
+      {
+        "region": "bulk",
+        "time": "0.018744941433636638",
+        "blocks": "8",
+        "plan_builds": "1",
+        "l2": "2.6815855963137808e-08",
+        "linf": "9.6318351085178909e-08",
+        "H_l2": "1.6398986795911974e-06",
+        "H_linf": "9.9021017828707968e-06",
+        "M_l2": "3.0151176375268422e-07",
+        "Z_l2": "2.0001322872927848e-08",
+        "weyl_l2": "4.1777833659592762e-07"
+      },
+      {
+        "region": "shell",
+        "time": "0.018744941433636638",
+        "blocks": "6",
+        "plan_builds": "1",
+        "l2": "3.3851220450306995e-07",
+        "linf": "8.8811061611695618e-07",
+        "H_l2": "1.199461047608368e-05",
+        "H_linf": "6.7128625621535465e-05",
+        "M_l2": "2.4961669492931143e-06",
+        "Z_l2": "4.2920280705458985e-06",
+        "weyl_l2": "8.7600395545569692e-06"
+      }
+    ],
+    "tolerance": 0.0001
+  },
+  "scope": "Uniform finite-radius regular-Z4c infrastructure smoke only; no hyperboloidal or new-gauge evolution.",
+  "binary_sha256": "42ce138c959f6f31bafe718e111039380b1161e72b6ec2ec5fe85b69bc02c8d3"
+}

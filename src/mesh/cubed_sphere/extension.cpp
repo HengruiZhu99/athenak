@@ -31,6 +31,10 @@ namespace cubed_sphere {
 Extension::~Extension() = default;
 
 Extension::Extension(MeshBlockPack *bulk, ParameterInput *pin) : bulk_(bulk) {
+  if (pin->GetOrAddBoolean("cubed_sphere","hyperbolic_shift",false))
+    throw std::invalid_argument("hyperbolic scri evolution is not admitted: native point "
+        "kernels are available, but the full scri closure, stage storage and restart "
+        "are not integrated; see docs/hyperbolic-shift-3d/README.md");
   using Z=z4c::Z4c;
   Mesh *mesh=bulk->pmesh;
   if (global_variable::nranks!=1 || !mesh->three_d || bulk->pdyngr ||

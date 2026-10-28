@@ -1,0 +1,49 @@
+{
+  "status": "Completed duration and sampled exterior convergence; uniform local convergence not established",
+  "spatial_duration": "All N257/513/1025 complete common100.0001953125M",
+  "time_controls": "N257 CFL .05/.025/.0125 complete same endpoint",
+  "constraint_history": "All1368 shared samples strictly ordered for H/M; Theta/Z initial zero ties then strictly ordered",
+  "mass_history": "Peak and time-RMS errors decrease; two medium/fine pointwise exceptions retained",
+  "profile_refinement": {
+    "spatial_samples": 374,
+    "full_exterior_positive_at_all_positive_times": true,
+    "endpoint_orders": {
+      "full": 0.6266759945176524,
+      "exterior": 3.5220538958267418,
+      "interior": 0.639057939278255,
+      "puncture": -0.0548953535372711,
+      "scri_collar": 3.153032467014721
+    }
+  },
+  "temporal_test": {
+    "shared_samples": 334,
+    "max_temporal_spatial_ratio": {
+      "full": 0.00021641962603310456,
+      "exterior": 0.00021641965571500988
+    }
+  },
+  "horizon_radius": {
+    "final": [
+      0.17040923196050317,
+      0.1705596330886997,
+      0.17057874773403237
+    ],
+    "initial": [
+      0.06292449049869783,
+      0.06292449102782302,
+      0.0629244910359561
+    ],
+    "final_self_difference_order": 2.9760650523755467,
+    "nonpositive_order_samples": 7,
+    "scope": "Coordinate radius is gauge dependent; mass uses the outermost AH areal radius."
+  },
+  "remaining": [
+    "132 nonpositive puncture-region spatial order samples, including endpoint; interior H peaks increase with resolution",
+    "One early nonpositive scri-collar spatial order sample",
+    "Coordinate radius still growing; stationary gauge not established",
+    "Finest momentum and Z exterior RMS rise slowly late in time despite refinement ordering",
+    "No robustness claim beyond100M, uniform puncture regularity, complete boundary well-posedness, or3D/AMR qualification"
+  ],
+  "strict_gate_exception": "Do not claim every original criterion is unconditionally passed: pointwise mass-error monotonicity has two disclosed exceptions. Exterior and full aggregate convergence do not prove local puncture convergence.",
+  "new_evolutions_launched": false
+}

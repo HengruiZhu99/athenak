@@ -1,0 +1,49 @@
+{
+  "fully_3d_implementation_complete": false,
+  "production_evolution_enabled": false,
+  "passed": [
+    "native point/symbol audit",
+    "mapped J/H operator and mode tests",
+    "scri moving-normal identities",
+    "four unchanged donor regression tests",
+    "spherical regular three-grid reproduction",
+    "spherical independent timestep refinement",
+    "spherical short puncture three-grid reproduction",
+    "existing finite-radius scalar transport",
+    "existing first-failed-stage capture",
+    "small uniform finite-radius smoke",
+    "unsupported evolution admission guard",
+    "exact donor scalar polynomial and collision minor"
+  ],
+  "failed_formulation_tests": [
+    "constant bulk four: positive-metric tangential lapse/shift collision with deficient eigenspaces"
+  ],
+  "bounded_stops": [
+    {
+      "test": "existing regular-Z4c AMR smoke suite",
+      "wall_seconds": 300.1,
+      "status": "timeout, not passed"
+    }
+  ],
+  "unimplemented": [
+    "coupled 3D hyperboloidal stage evolution",
+    "full geometric and tangential scri closure",
+    "new gauge stage storage and shell/gauge restart",
+    "native hyperboloidal full-domain and regional output",
+    "3D horizon extraction"
+  ],
+  "untested": [
+    "3D radial evolution without symmetry reduction",
+    "nonspherical seam/interface crossings with new gauge",
+    "3D off-center or moving puncture",
+    "3D wormhole-to-trumpet",
+    "GPU",
+    "MPI",
+    "hyperboloidal AMR"
+  ],
+  "donor_limitations_unresolved": [
+    "late local puncture convergence failure",
+    "stationary gauge not established",
+    "100M robustness not rerun here"
+  ]
+}

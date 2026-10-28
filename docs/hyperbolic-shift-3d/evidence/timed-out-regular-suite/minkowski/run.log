@@ -1,0 +1,30 @@
+
+Root grid = 4 x 4 x 4 MeshBlocks
+Total number of MeshBlocks = 64
+Number of logical  levels of refinement = 2 (3 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 1
+AssembleZ4cTasks
+
+Root grid = 6 x 1 x 1 MeshBlocks
+Total number of MeshBlocks = 6
+Number of logical  levels of refinement = 3 (4 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 1
+AssembleZ4cTasks
+Cubed sphere donor plan 1: bulk blocks=64, halos=86528/0/58368
+Cubed sphere: six fixed patches, Cartesian AMR bulk, Cartesian components, R=4, nr=16, nangular=16, outer=analytic
+### WARNING in /workspace/scratch/000a8370d93b/athenak/src/parameter_input.cpp: input parameter <job>/basename = cubed_sphere was not used by the code (check for a typo)
+
+Setup complete, executing task list(s)...
+
+elapsed=1.519071e+00 cycle=0 time=0.000000e+00 dt=3.125000e-03
+
+Terminating on cycle limit
+time=9.375000e-03 cycle=3
+tlim=1.000000e-01 nlim=3
+
+MeshBlock-cycles = 192
+cpu time used  = 2.172239e+01
+zone-cycles/cpu_second = 4.525469e+03
+particle-updates/cpu_second = 0.000000e+00

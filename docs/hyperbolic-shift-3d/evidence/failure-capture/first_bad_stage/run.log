@@ -1,0 +1,24 @@
+
+Root grid = 2 x 2 x 2 MeshBlocks
+Total number of MeshBlocks = 8
+Number of logical  levels of refinement = 1 (2 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 1
+AssembleZ4cTasks
+
+Root grid = 6 x 1 x 1 MeshBlocks
+Total number of MeshBlocks = 6
+Number of logical  levels of refinement = 3 (4 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 1
+AssembleZ4cTasks
+Cubed sphere donor plan 1: bulk blocks=8, halos=18944/0/37632
+Cubed sphere: six fixed patches, Cartesian AMR bulk, Cartesian components, R=4, nr=12, nangular=12, outer=sommerfeld
+### WARNING in /workspace/scratch/000a8370d93b/athenak/src/parameter_input.cpp: input parameter <job>/basename = cubed_sphere was not used by the code (check for a typo)
+
+Setup complete, executing task list(s)...
+
+elapsed=5.026244e-01 cycle=0 time=0.000000e+00 dt=3.057623e-02
+elapsed=2.416559e+01 cycle=10 time=3.585038e-01 dt=3.561286e-02
+terminate called after throwing an instance of 'std::runtime_error'
+  what():  cubed sphere inadmissible RK stage; saved full stencil

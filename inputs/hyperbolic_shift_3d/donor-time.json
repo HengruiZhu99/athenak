@@ -1,0 +1,41 @@
+{
+  "scope": "Independent timestep refinement of the matched donor; not 3D evolution.",
+  "cases": [
+    {
+      "name": "dt",
+      "n": 65,
+      "t": 0.15,
+      "cfl": 0.05,
+      "amplitude": 0.01,
+      "shift_gauge": "moving-puncture",
+      "gamma_coefficient": 4,
+      "inner_z4_damping": 8,
+      "restoring": 4,
+      "wall_seconds": 120
+    },
+    {
+      "name": "half-dt",
+      "n": 65,
+      "t": 0.15,
+      "cfl": 0.025,
+      "amplitude": 0.01,
+      "shift_gauge": "moving-puncture",
+      "gamma_coefficient": 4,
+      "inner_z4_damping": 8,
+      "restoring": 4,
+      "wall_seconds": 120
+    },
+    {
+      "name": "quarter-dt",
+      "n": 65,
+      "t": 0.15,
+      "cfl": 0.0125,
+      "amplitude": 0.01,
+      "shift_gauge": "moving-puncture",
+      "gamma_coefficient": 4,
+      "inner_z4_damping": 8,
+      "restoring": 4,
+      "wall_seconds": 120
+    }
+  ]
+}

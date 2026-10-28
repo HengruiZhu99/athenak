@@ -1,0 +1,57 @@
+# Expected rejection: this branch does not admit coupled hyperbolic scri evolution.
+<job>
+basename = cubed_sphere
+<time>
+evolution = dynamic
+integrator = rk3
+cfl_number = 0.15
+tlim = 0.1
+ndiag = 10
+nlim = -1
+<mesh>
+nx1 = 32
+nx2 = 32
+nx3 = 32
+nghost = 4
+x1min = -1
+x1max = 1
+x2min = -1
+x2max = 1
+x3min = -1
+x3max = 1
+ix1_bc = outflow
+ox1_bc = outflow
+ix2_bc = outflow
+ox2_bc = outflow
+ix3_bc = outflow
+ox3_bc = outflow
+<meshblock>
+nx1 = 8
+nx2 = 8
+nx3 = 8
+<mesh_refinement>
+refinement = none
+<z4c>
+spatial_order = 4
+diss = 0.1
+damp_kappa1 = 0.02
+lapse_harmonic = 1
+lapse_harmonicf = 1
+lapse_oplog = 0
+shift_Gamma = 0
+shift_eta = 0
+<problem>
+pgen_name = z4c_cubed_sphere
+initial_data = gauge_wave
+amplitude = 0.001
+wave_number = 1
+pulse_width = 0.35
+amr_refine_corners = false
+<cubed_sphere>
+enabled = true
+hyperbolic_shift = true
+outer_radius = 4
+nr = 16
+nangular = 16
+outer_boundary = analytic
+scalar_probe_tlim = 0

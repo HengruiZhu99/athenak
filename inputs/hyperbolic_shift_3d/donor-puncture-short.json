@@ -1,0 +1,50 @@
+{
+  "scope": "Spherical donor reproduction through 0.15M; odd parity is not adopted as a 3D boundary rule.",
+  "cases": [
+    {
+      "name": "puncture-n257",
+      "n": 257,
+      "t": 0.05,
+      "cfl": 0.025,
+      "shift_gauge": "moving-puncture",
+      "gamma_coefficient": 4,
+      "inner_z4_damping": 8,
+      "restoring": 4,
+      "grid_stretch": 0,
+      "shift_inner_stencil": "odd",
+      "puncture": true,
+      "lapse_floor": 1e-10,
+      "wall_seconds": 120
+    },
+    {
+      "name": "puncture-n513",
+      "n": 513,
+      "t": 0.05,
+      "cfl": 0.025,
+      "shift_gauge": "moving-puncture",
+      "gamma_coefficient": 4,
+      "inner_z4_damping": 8,
+      "restoring": 4,
+      "grid_stretch": 0,
+      "shift_inner_stencil": "odd",
+      "puncture": true,
+      "lapse_floor": 1e-10,
+      "wall_seconds": 120
+    },
+    {
+      "name": "puncture-n1025",
+      "n": 1025,
+      "t": 0.05,
+      "cfl": 0.025,
+      "shift_gauge": "moving-puncture",
+      "gamma_coefficient": 4,
+      "inner_z4_damping": 8,
+      "restoring": 4,
+      "grid_stretch": 0,
+      "shift_inner_stencil": "odd",
+      "puncture": true,
+      "lapse_floor": 1e-10,
+      "wall_seconds": 120
+    }
+  ]
+}

@@ -1,0 +1,128 @@
+#------------------------- PAR_DUMP -------------------------
+<job>
+basename = cubed_sphere 
+<time>
+evolution        = dynamic 
+integrator       = rk3     
+cfl_number       = 1       
+tlim             = 2       
+ndiag            = 10      
+nlim             = -1      
+sts_integrator   = none    # Default value added at run time
+sts_max_dt_ratio = -1      # Default value added at run time
+start_time       = 0       # Default value added at run time
+<mesh>
+nx1    = 16      
+nx2    = 16      
+nx3    = 16      
+nghost = 4       
+x1min  = -1      
+x1max  = 1       
+x2min  = -1      
+x2max  = 1       
+x3min  = -1      
+x3max  = 1       
+ix1_bc = outflow 
+ox1_bc = outflow 
+ix2_bc = outflow 
+ox2_bc = outflow 
+ix3_bc = outflow 
+ox3_bc = outflow 
+<meshblock>
+nx1 = 8 
+nx2 = 8 
+nx3 = 8 
+<mesh_refinement>
+refinement = none 
+<z4c>
+spatial_order        = 4                      
+diss                 = 0.1                    
+damp_kappa1          = 0.02                   
+lapse_harmonic       = 1                      
+lapse_harmonicf      = 1                      
+lapse_oplog          = 0                      
+shift_Gamma          = 0                      
+shift_eta            = 0                      
+hyperboloidal        = 0                      # Default value added at run time
+chi_psi_power        = -4                     # Default value added at run time
+chi_div_floor        = -1000                  # Default value added at run time
+chi_min_floor        = 9.9999999999999998e-13 # Default value added at run time
+floor_chi            = 0                      # Default value added at run time
+eps_floor            = 9.9999999999999998e-13 # Default value added at run time
+damp_kappa2          = 0                      # Default value added at run time
+lapse_advect         = 1                      # Default value added at run time
+slow_start_lapse     = 0                      # Default value added at run time
+ssl_damping_amp      = 0.59999999999999998    # Default value added at run time
+ssl_damping_time     = 20                     # Default value added at run time
+ssl_damping_index    = 1                      # Default value added at run time
+telegraph_lapse      = 0                      # Default value added at run time
+telegraph_tau        = 0.10000000000000001    # Default value added at run time
+telegraph_kappa      = 0.10000000000000001    # Default value added at run time
+shift_advect         = 1                      # Default value added at run time
+shift_alpha2Gamma    = 0                      # Default value added at run time
+shift_H              = 0                      # Default value added at run time
+use_z4c              = 1                      # Default value added at run time
+user_Sbc             = 0                      # Default value added at run time
+excise_chi           = 0.0625                 # Default value added at run time
+extrap_order         = 2                      # Default value added at run time
+enable_driftcontrol  = 0                      # Default value added at run time
+dc_tracker_index     = 0                      # Default value added at run time
+dc_fixed_x           = 0                      # Default value added at run time
+dc_fixed_y           = 0                      # Default value added at run time
+dc_fixed_z           = 0                      # Default value added at run time
+dc_damping_time      = 0.5                    # Default value added at run time
+dc_damping_scale     = 10                     # Default value added at run time
+dc_damping_coeff     = 1                      # Default value added at run time
+dc_variety           = oscillator             # Default value added at run time
+dc_Kp                = 1                      # Default value added at run time
+dc_Ki                = 0.10000000000000001    # Default value added at run time
+dc_Kd                = 2                      # Default value added at run time
+dc_omega_c           = 0.20000000000000001    # Default value added at run time
+dc_omega_o           = 1                      # Default value added at run time
+dc_zeta              = 1                      # Default value added at run time
+dc_relaxation_time   = 1                      # Default value added at run time
+dc_kappa             = 1                      # Default value added at run time
+dc_gamma_suppress    = 0                      # Default value added at run time
+dc_gain_x            = 1                      # Default value added at run time
+dc_gain_y            = 1                      # Default value added at run time
+dc_gain_z            = 1                      # Default value added at run time
+dc_gaussian_center   = fixed                  # Default value added at run time
+nrad_wave_extraction = 0                      # Default value added at run time
+extraction_nlev      = 10                     # Default value added at run time
+waveform_dt          = 1                      # Default value added at run time
+cce_last_output_time = -100                   # Default value added at run time
+dump_horizon_0       = 0                      # Default value added at run time
+<problem>
+pgen_name          = z4c_cubed_sphere 
+initial_data       = angular_pulse    
+amplitude          = 0.99             
+wave_number        = 1                
+pulse_width        = 0.1              
+amr_refine_corners = false            
+user_srcs          = 0                # Default value added at run time
+user_hist          = 0                # Default value added at run time
+<cubed_sphere>
+enabled           = true       
+outer_radius      = 4          
+nr                = 12         
+nangular          = 12         
+outer_boundary    = sommerfeld 
+scalar_probe_tlim = 0          
+hyperbolic_shift  = 0          # Default value added at run time
+radial_stretch    = 0          # Default value added at run time
+<coord>
+special_rel = 0 # Default value added at run time
+general_rel = 0 # Default value added at run time
+<z4c_amr>
+max_ref_lev = -1      # Default value added at run time
+method      = trivial # Default value added at run time
+<cce>
+cce_dt    = 1 # Default value added at run time
+num_radii = 0 # Default value added at run time
+<fastflow>
+num_horizons = 0 # Default value added at run time
+<adm>
+dynamic            = 0 # Default value added at run time
+separate_z4c_gauge = 0 # Default value added at run time
+#------------------------- PAR_DUMP -------------------------
+<par_end>
