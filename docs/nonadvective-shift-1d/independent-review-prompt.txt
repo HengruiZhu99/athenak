@@ -1,0 +1,31 @@
+Independently assess the nonadvective Gamma-driver experiment and recommend the next step.
+
+Worktree: /Users/hz0693/.codex/worktrees/4bdd/hyperboloidal
+Branch: codex/nonadvective-adaptive-reference
+Report: docs/nonadvective-shift-1d/report/main.pdf
+LaTeX: docs/nonadvective-shift-1d/report/main.tex and results-*.tex
+Original user specification: docs/nonadvective-shift-1d/request.txt
+Predeclared criteria: inputs/nonadvective_shift_1d/protocol-v1.json
+Code: tst/nonadvective_shift_1d/
+Final comparison: docs/nonadvective-shift-1d/comparison-final/assessment.json
+Raw trials and immutable scientific source: output/hyperbolic-shift-1d/nonadvective-campaign-v1/
+Additional resolution controls: output/hyperbolic-shift-1d/nonadvective-supplement-v1/supplement.json
+Verified advective sampling replay: output/hyperbolic-shift-1d/nonadvective-reference-sampling-v1/
+Portable manifests/data and source archive: docs/nonadvective-shift-1d/evidence/ and frozen-experiment-source.zip
+
+Treat the report and previous agent's interpretation as claims to test, not conclusions to endorse. Begin with read-only review. Preserve other worktrees and jobs. Do not restart failed/bounded trials, modify the main-thread evolutions, or launch long runs. Any separately justified new numerical experiment must use a fresh output, fixed parameters, a <=420-second bound, verified process identity, and the global maximum of two concurrent single-process evolutions.
+
+The proposed bulk equations are beta_t=mu*Lambda-eta_D*(beta-b), b_t=sigma*(beta-b), with eta_D=1,sigma=.1 for the adaptive candidate and eta_D=sigma=0 for the direct control. Bulk mu=4 blends only in the existing outer collar to mu_outer=3g(2cL^2+beta^2)/4. Independent Lambda, full metric, telegrapher lapse, attenuation and lapse floor are retained. Exact scri nullness is beta=-alpha sqrt(chi/g), with compatible mu*Lambda=G_t+eta_D*(G-b). M=1/3 and100M is coordinate33.3333984375 on the inherited timestep lattice.
+
+Audit these points independently:
+1. Check frozen source/library/checkpoint/ancestry bindings and actual configuration differences from the advective reference. Confirm that completed, failed, bounded, and replay outcomes have not been relabeled. Inspect the eight actual trajectory segments, not just a summary flag.
+2. Rederive the nonadvective scalar principal symbol, shift speeds, speed-separation condition and outer coefficient. Verify the normalized-scri3/2 versus9/4 eigenspace claims and determine what they do and do not establish.
+3. Audit the boundary construction in candidate.py. It projects Lambda and independent endpoint chi_r,g_r,beta_r along an incoming eigenvector. Does it preserve outgoing/tangent information in the actual metric discretization, or only in an augmented jet whose reduction constraints are not maintained? Check boundary-consistency-counterexample.json independently. Decide whether the implementation actually satisfies the original prohibition on overwriting an outgoing constraint mode.
+4. Audit every scri numerator/regularity penalty and the fixed lapse clock. Determine whether the closure is inconsistent or overdetermined, and distinguish an analytic incompatibility of the proposed bulk gauge from a failure of this particular discretization. The current report's causal diagnosis may be incomplete.
+5. Verify that primary exterior constraints use exterior-normalized radial weights and the outermost horizon. Compare evolved-jet Z with metric-reconstructed Z using constraint-sampling-audit.json. Check that no endpoint or puncture neighborhood was silently removed. Audit the exact matched0.45M comparison and the reference replay's bitwise recovery of the successful0.2 checkpoint, including compensation.
+6. Check the full-step linearization at two perturbation sizes, the timestep-halving control, and the boundary-method controls. Assess whether the growing modes and their localization are robust or could be analysis artifacts.
+7. Verify the report's numerical claims, plots, units and limitations. Both N257 puncture tests stopped at coordinate.15=.45M; N65/N129 pulses stopped near coordinate.223/.224. The report claims no qualified100M result, not a measured failure at100M. Determine whether the early gate failures justify withholding the long runs and N513 extension.
+
+Deliver a concise independent assessment with verified findings, discrepancies, unresolved questions, and a requirement-by-requirement acceptance/rejection table. Cite concrete files/evidence. In particular say whether the failure indicts the bulk gauge, the boundary construction, or neither decisively.
+
+Then propose the smallest mathematically consistent next experiment. One candidate direction is a consistent first-order reduction through an outer collar, or a ghost construction tied to the same metric values, with only the incoming gauge relation imposed and physical outgoing constraint modes transported. Do not assume that this direction will work. Specify which boundary degrees of freedom are evolved or eliminated, how reduction consistency is preserved, and how the remaining regularity conditions are handled. Require a metric-reconstructed constraint-preservation test and a stable/admissible numerical boundary audit before new pulse/puncture tests. Retain the telegrapher lapse and avoid an unconstrained sigma scan unless the reviewed evidence specifically motivates it. Do not merge or activate a candidate automatically.

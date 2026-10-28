@@ -1,0 +1,108 @@
+\documentclass[11pt]{article}
+\usepackage[margin=.85in]{geometry}
+\usepackage{amsmath,amssymb,booktabs,graphicx,hyperref,placeins,microtype}
+\hypersetup{colorlinks=true,linkcolor=blue!50!black,urlcolor=blue!50!black}
+\setlength{\parindent}{0pt}\setlength{\parskip}{5pt}
+\title{A nonadvective Gamma driver with an adapting reference\\\large Spherical implementation, boundary tests, and comparison}
+\author{Isolated numerical experiment}
+\date{27 October 2026}
+\begin{document}\maketitle
+\input{results-summary}
+\section{Candidate and controlled comparison}
+The proposed shift uses the independent evolved Z4 connection:
+\begin{align}
+ \partial_t\beta&=\mu_\Gamma\Lambda-\eta_D(\beta-b),&
+ \partial_t b&=\sigma(\beta-b).
+\end{align}
+The initial reference is the initial shift. The direct control has $\eta_D=\sigma=0$; the adaptive candidate has $\eta_D=1$, $\sigma=0.1$ in coordinate-time units. Both retain the full spherical metric, the existing telegrapher lapse with its $\chi$ and lapse attenuation, and the configurable physical lapse floor $10^{-10}$. The old shift advection, explicit $-r$ source, and $1/\Omega$ restoration are absent. Minkowski data $\beta=b=-r$, $\Lambda=0$ are an exact continuum equilibrium. For positive $\eta_D,\sigma$, stationarity requires $b=\beta$ and $\Lambda=0$; the final shift is not anchored to its initial value.
+
+The main comparison uses $N=257$, the same wormhole data and initial elliptic shift as the completed advective control, grid stretch zero with the existing outer mapping collar, KO8 coefficient $0.5$, compact Z4 damping strength $8$, and $\Delta t/h=0.025$. The mass is $M=1/3$. The aligned duration target is coordinate $t=33.3333984375$, or $100.0002M$. Native equations, numerical sources, and the library binding were checked against the preserved reference. No existing worktree or job was changed.
+
+A short diagnostic replay uses the unchanged frozen advective code and exactly recovers its completed coordinate-$0.2$ state and compensated-update array, bit for bit. It supplies the missing common snapshots through $0.45M$ in a new output directory. This is a sampling control on a successful interval; the original trajectory is untouched.
+
+The predeclared low-resolution mass criteria are peak relative drift and final absolute relative error below $10^{-3}$. Each exterior constraint time RMS is compared separately with twice the matched advective value. Reduced horizon-coordinate drift means an absolute least-squares slope over the final $20M$ below half the advective slope. Field time derivatives, the reference gap, and connection residuals are also required to assess settling. A flat coordinate horizon alone is insufficient. These criteria are comparisons at finite resolution, not convergence criteria.
+
+\section{Characteristic speeds and coefficient}
+For the derivative reduction
+\[
+ U=(\chi_r,g_r,A_{rr},p/\Omega,\Theta/\Omega,\Lambda,\alpha_r,\beta_r,B_r),
+ \qquad \partial_tU=L\,\partial_rU+\cdots,
+\]
+coordinate characteristic speeds are $-\operatorname{eig}(L)$. Exact symbolic factorization gives
+\begin{align}
+ \det(zI-L)={}&(z-\beta)
+ \big[(z-\beta)^2-\alpha^2\chi/g\big]^2
+ \big[(z-\beta)^2-c_L^2\big]\nonumber\\
+ &{}\times\big[z^2-\beta z-4\mu_\Gamma/(3g)\big],\\
+ c_L^2={}&\chi F/g+\eta\chi\kappa w^2/\tau .
+\end{align}
+Thus the proposed shift speeds are
+\[
+ v_\pm=-\frac{\beta}{2}\pm\frac12
+       \sqrt{\beta^2+\frac{16\mu_\Gamma}{3g}}.
+\]
+The reference variable supplies an additional zero-coordinate-speed mode. A sufficient separation from both advected lapse speeds is
+\[
+ \frac{4\mu_\Gamma}{3g}>c_L^2+|\beta|c_L .
+\]
+It also separates the light speeds for the retained slicing. The outer coefficient
+\[
+ \mu_{\rm outer}=\frac{3g}{4}(2c_L^2+\beta^2)
+\]
+leaves the strictly positive margin $c_L^2+\beta^2-|\beta|c_L$ for $c_L>0$. A C7 collar blends constant bulk strength $4$ into this value between $r=0.8$ and $0.9$. The margin of the actual blend is evaluated at every stage. Exact eigenspaces reproduce the defective normalized-scri coefficient $3/2$ and the complete coefficient $9/4$. These scalar checks do not establish 3D or singular-endpoint well posedness.
+
+\section{Incoming boundary implementation and its limitations}
+Every stage and accepted state reconstructs
+\[
+ \beta=G=-\alpha\sqrt{\chi/g},\qquad
+ G_t=\frac G2(\chi_t/\chi-g_t/g)
+\]
+with the fixed lapse clock. The new compatibility condition is
+\[
+ \mu_\Gamma\Lambda-G_t-\eta_D(G-b)=0 .
+\]
+It cannot be replaced by the old auxiliary-driver trace.
+
+For the incoming eigenvalue
+$\lambda=(\beta+\sqrt{\beta^2+16\mu_\Gamma/(3g)})/2>0$,
+an exact right eigenvector normalized by $\delta\Lambda=1$ has
+\[
+ (\delta\chi_r,\delta g_r,\delta\Lambda,\delta\beta_r)
+ =(-\chi g/2,\ g^2,\ 1,\ \mu_\Gamma/\lambda),
+\]
+with all other components zero. In particular
+$\delta(\Lambda-V)=\delta\Lambda-\delta g_r/g^2=0$.
+The implementation projects this complete incoming combination to satisfy the driver relation, leaving frozen outgoing and tangent amplitudes intact in that augmented first-order jet. It does not independently set $\Lambda=0$.
+
+Three independent endpoint first derivatives are evolved using endpoint derivatives of the corresponding total-field rates. Their differences from ordinary finite-difference derivatives are measured as reduction defects. This additional numerical boundary construction requires its own stability test. Perturbed-metric tests verify projection idempotence, the incoming-vector identity, nullness, and compatible rates to floating-point precision.
+
+The initial algebraic checks were too narrow to establish the requested physical outgoing-constraint preservation. A finite counterexample changes the reference endpoint while holding the metric values fixed. The projection changes the independent metric derivative together with $\Lambda$, so its augmented-jet constraint is preserved; the derivative reconstructed from the metric values does not change, however, and the corresponding physical discrete connection constraint changes by $g\,\delta\Lambda/2$. Thus this first boundary attempt fails reduction consistency and is not admitted as a compliant outgoing-constraint-preserving implementation of the proposed gauge. Both constraint definitions are retained in the diagnostics below, with the metric-reconstructed definition used for the primary comparison.
+
+The native scri numerator limits and regularity traces remain approximate penalties. They include $\chi-g$, the shear-like trace $A_{rr}-g_r/6+2\chi_r/3$, $p$, $\Theta$, and $\Lambda-V$. The raw lapse-clock compatibility is recorded before imposing its zero rate. The shear-like trace varies along the incoming direction by $-g^2/6-\chi g/3$; imposing it as an extra arbitrary exact incoming datum would require a compatibility argument. Exact nullness, approximate regularity, and a well-posed boundary problem are distinct claims.
+
+\section{Independent implementation and stability tests}
+The discrete Minkowski RHS at $N=65$ has maximum magnitude $3.3\times10^{-12}$. Independent bulk identities confirm the requested nonadvective equations and the absence of the old reference forces. Native Einstein, lapse, and telegrapher rates match the advective implementation bitwise away from the modified boundary. One hundred randomized scalar-symbol checks have complete eigenspaces for the tested separated states.
+
+The full constrained RK-step map was linearized around Minkowski equilibrium at two perturbation sizes. This includes all stage projections. Its spectral radius exceeds one for both new configurations at $N=25,33,65$; halving the differentiation perturbation reproduces the result. The matched advective $N=33$ map has spectral radius one. The dominant new modes are concentrated near the outer boundary, including when only physical-state variables are used to measure their localization.
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=\linewidth]{figures/linear-growth.pdf}
+\caption{Independent full-step linearization at fixed CFL. Growth is a property of the tested discretization and background; this is not a nonlinear evolution or a proof that the continuum bulk gauge is impossible.}
+\end{figure}
+\begin{figure}[htbp]\centering
+\includegraphics[width=\linewidth]{figures/boundary-mode.pdf}
+\caption{Dominant modes at $N=33$, normalized by the norm of their physical-state entries. The independent endpoint derivative slots are excluded from that normalization. Curvature and connection components localize the growing mode in the outer region.}
+\end{figure}
+
+Diagnostic boundary-reduction relaxation strengths $1/h_{\rm scri}$ and $4/h_{\rm scri}$ barely reduce the dominant growth. Disabling the incoming-sensitive shear penalty alone also leaves growth. These controls do not qualify a repair and are not included in the frozen v1 trajectories. Reducing the timestep is assessed separately in the linearized map; its result is included below.
+\FloatBarrier
+\input{results-detail}
+
+\section{Implication for a subsequent boundary attempt}
+A possible next implementation is a consistent first-order reduction through an outer collar, or a ghost construction whose derivatives are consistent with the same metric values. It would need to impose the single incoming gauge relation while preserving the physical outgoing constraint fields, and test that preservation before long evolution. The present independent-endpoint-jet construction does not meet that requirement. Varying the reference relaxation rate does not address the diagnosed consistency defect.
+
+\section{Reproducibility and assessment limits}
+The experiment is isolated on \texttt{codex/nonadvective-adaptive-reference}. Inputs and comparison criteria are under \path{inputs/nonadvective_shift_1d/}; implementation and analysis tools are under \path{tst/nonadvective_shift_1d/}. Each trajectory binds frozen sources, the native library, numerical parameters, and checkpoint hashes. Continuations require a verified completed parent. Every integration segment is capped at 420 seconds; failures and bounded stops are terminal and retain their actual outcomes. The controller reserves the existing main-thread slots through serial child transitions and permits at most two simultaneous evolution processes.
+
+Finite-error radial-weighted constraint norms are gauge dependent; apparent-horizon mass supplies the invariant comparison. Exterior RMS norms use only nodes outside the outermost apparent horizon and normalize by the exterior radial weights. Interior errors are retained and plotted separately. No physical positive-radius node is excised. Unequal terminal times are not treated as a refinement test, and a single surviving low-resolution run cannot establish convergence. A failure of this boundary discretization does not by itself reject every possible implementation of the proposed nonadvective bulk gauge.
+\end{document}

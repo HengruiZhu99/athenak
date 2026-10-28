@@ -1,0 +1,7 @@
+{
+ "declared_before_trajectory_results": true,
+ "motivation": "The incoming-only jet projection is algebraically correct, but its independent derivative reductions develop a boundary-localized growing mode. At N33 the dominant eigenvector has >99.9 percent of its norm outside r=.8. The matched old advective step map has spectral radius1 at the same resolution and CFL.",
+ "controls": [1,4],
+ "modification": "Endpoint derivative reductions receive -gamma/hs times (independent derivative - finite-difference derivative). This lower-order reduction-constraint relaxation vanishes on the reduction constraint surface. It does not change the proposed bulk gauge or the incoming projection, but does modify auxiliary boundary evolution away from that surface; all reduction defects remain reported.",
+ "scope": "Frozen linearized step audits first, then separately named fresh trajectories only if justified. The waiting v1 campaign retains gamma=0 in its immutable source snapshot. No failed or bounded trajectory may be restarted. No sigma tuning is implied."
+}

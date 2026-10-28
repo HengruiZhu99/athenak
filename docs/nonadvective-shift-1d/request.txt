@@ -1,0 +1,92 @@
+Implement and test the proposed nonadvective Gamma driver with an adapting reference shift, using bounded local low-resolution spherical evolutions through \(100M\). Compare against the existing advective hyperbolic-shift results.
+
+Work in a new isolated worktree and experimental branch. Preserve all existing worktrees, running jobs, numerical parameters, and historical evidence. Do not restart or modify the main thread’s evolutions.
+
+Reference checkout:
+/Users/hz0693/.codex/worktrees/hyperboloidal-hyperbolic-shift/hyperboloidal
+Proposed gauge
+Investigate
+\[
+\partial_t\beta^r=\mu_\Gamma\Lambda^r-\eta_D(\beta^r-b),
+\qquad
+\partial_t b=\sigma(\beta^r-b),
+\]
+where \(b\) is an evolving reference shift, initially equal to the initial shift. Retain the independently evolved Z4 connection \(\Lambda^r\), full variable metric, current telegrapher lapse, lapse attenuation, and configurable physical lapse floor.
+
+Remove the old shift’s explicit \(-r\) source and \(1/\Omega\) restoring term for this candidate only. Hyperboloidal Minkowski should remain an exact continuum equilibrium with
+\[
+\beta^r=b=-r,\qquad\Lambda^r=0.
+\]
+The intended stationary condition is \(b=\beta^r,\ \Lambda^r=0\), allowing the elliptic gauge’s stationary branch on the constraint surface without anchoring the final shift to its initial value.
+
+This is an experimental proposal. Independently verify the equations and diagnostics before relying on the side-conversation analysis.
+Characteristic speeds and outer coefficient
+The proposed radial shift speeds are
+\[
+v_\pm=-\frac{\beta^r}{2}
+\pm\frac12\sqrt{(\beta^r)^2+\frac{16\mu_\Gamma}{3g_{rr}}}.
+\]
+Do not blindly reuse the old outer coefficient. The side audit found a defective scalar eigenspace at normalized scri for \(\mu_\Gamma=3/2\), whereas \(\mu_\Gamma=9/4\) passed that endpoint check.
+
+Investigate
+\[
+\mu_{\rm outer}=\frac{3g_{rr}}4
+\left[2c_L^2+(\beta^r)^2\right],
+\]
+where \(c_L\) is the retained lapse–telegrapher speed relative to shift advection. Prefer retaining constant bulk strength \(4\), blending only in the existing outer collar, provided the new speed-separation conditions hold throughout. Derive and monitor the appropriate conditions for this driver; the old advective gap formula is insufficient.
+Scri closure
+Enforce, to floating-point precision at every RK stage and accepted state,
+\[
+\beta^r=G=-\alpha\sqrt{\chi/g_{rr}}.
+\]
+The compatible driver relation is
+\[
+\mu_\Gamma\Lambda^r=\partial_tG+\eta_D(G-b),
+\]
+with
+\[
+\partial_tG=\frac{G}{2}
+\left(\frac{\partial_t\chi}{\chi}
+-\frac{\partial_tg_{rr}}{g_{rr}}\right)
+\]
+for the fixed lapse clock.
+
+Derive a boundary implementation that uses this relation for the incoming gauge information while preserving outgoing and tangent evolution. Evolve \(b\) consistently. Do not independently impose \(\Lambda^r=0\), overwrite an outgoing constraint mode, or substitute the old auxiliary-driver closure without rederivation.
+
+Audit the remaining scri numerator limits and regularity penalties. Distinguish exact nullness from approximate regularity and from a well-posedness claim.
+Tests and execution
+1. First verify analytic Minkowski equilibrium, the discrete residual, perturbed-metric nullness identities, the compatible boundary rate, and the scalar characteristic eigenspaces. Run short Minkowski pulse and puncture checks before extending.
+2. Use a small, declared candidate set:
+   - Undamped direct-driver control: \(\partial_t\beta^r=\mu_\Gamma\Lambda^r\).
+   - Adaptive-reference candidate, initially \(\eta_D=1,\ \sigma=0.1\) in the code’s coordinate-time units. These are starting experimental choices, not established optimal parameters.
+   - Consider one nearby \(\sigma\) only if the short tests motivate it.
+3. Prioritize \(N=257\), matching the existing coarse advective run’s initial data, mesh, lapse, constraint damping, dissipation, and timestep where admissible. Add \(N=513\) for the best candidate if practical.
+4. The mass is \(M=1/3\): \(100M\) means coordinate time \(100/3\). Use the existing aligned endpoint \(t=33.3333984375\) when the timestep permits; do not accidentally run to coordinate \(t=100\).
+5. Keep parameters fixed within each trajectory. Use bounded segments of at most 420 seconds, continuing only verified completed checkpoints. Preserve failed and bounded outcomes without relabeling them.
+6. Inspect actual process commands before launching. Existing main-thread runs may already occupy the local evolution slots. Respect the existing maximum of two simultaneous single-process evolutions; if both slots are occupied, continue preparation and wait without interrupting them.
+Required comparison
+The completed coarse advective reference is:
+output/hyperbolic-shift-1d/gamma4-inner-damping-v1/n257-t100M
+
+Verify its manifest and source/checkpoint hashes. Compare at matched physical times and, where possible, matched resolution. Record every difference between configurations.
+
+Produce polished plots of:
+- Apparent-horizon-exterior RMS Hamiltonian, momentum, \(\Theta\), and connection constraints, normalized over exterior radial weights.
+- Relative outermost apparent-horizon mass error and peak drift.
+- Compactified outermost horizon radius versus \(t/M\), including late-time drift rate.
+- Lapse, shift, and radial metric profiles at matched times.
+- Maximum stagewise relative scri-nullness error.
+- Scri numerator/regularity residuals, raw lapse-clock compatibility, and new driver-boundary compatibility residual.
+- Characteristic-speed separation, geometry positivity, and lapse-floor activation.
+- Interior constraint errors separately, without including them in the exterior accuracy budget or silently removing nodes.
+Assess whether the candidate actually approaches a stationary coordinate state: examine field time derivatives and gauge residuals, not merely horizon-radius flattening. A stationary coordinate horizon with deteriorating constraints or mass is not success.
+
+Retain the previous finest-grid mass-drift target of \(10^{-3}\) as context, but declare suitable low-resolution comparison criteria before the long runs rather than changing thresholds after seeing results.
+Deliverables
+Provide reproducible inputs, implementation changes, manifests, preserved failures, comparison plots, and a concise assessment answering:
+- Does the new gauge reach \(100M\)?
+- Is its horizon-coordinate drift reduced?
+- Are exterior constraints and horizon-mass conservation competitive with the old advective gauge?
+- Is nullness preserved to roundoff at every stage?
+- Does improved settling introduce boundary defects, gauge oscillations, or puncture instability?
+Do not claim convergence from a single low-resolution survivor, or full 3D/continuum well-posedness from scalar-symbol checks. Keep the experiment isolated; do not merge it into or alter the main thread’s active gauge automatically.

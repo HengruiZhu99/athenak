@@ -1,0 +1,30 @@
+{
+  "status": "completed",
+  "pid": 12805,
+  "command": [
+    "tst/nonadvective_shift_1d/supplement_resolution.py",
+    "--campaign",
+    "output/hyperbolic-shift-1d/nonadvective-campaign-v1",
+    "--output",
+    "output/hyperbolic-shift-1d/nonadvective-supplement-v1"
+  ],
+  "script_sha256": "a1b2054ce9f042d43de0963045b684bcc939113cf88ecea7bd5467f2f35b9c15",
+  "started_utc": "2026-10-27T23:35:43.337180+00:00",
+  "finished": [
+    {
+      "name": "direct-pulse-n129-resolution",
+      "exit_code": 1,
+      "status": "failed",
+      "t": 0.22412451361867705,
+      "error": "Scri numerator guard"
+    },
+    {
+      "name": "adaptive-pulse-n129-resolution",
+      "exit_code": 1,
+      "status": "failed",
+      "t": 0.22412451361867705,
+      "error": "Scri numerator guard"
+    }
+  ],
+  "active_child": null
+}

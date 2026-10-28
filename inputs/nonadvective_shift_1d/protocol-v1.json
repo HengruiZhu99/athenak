@@ -1,0 +1,28 @@
+{
+  "scope": "Isolated low-resolution experimental comparison; no single-grid convergence claim",
+  "mass": 0.3333333333333333,
+  "target_coordinate_t": 33.3333984375,
+  "reference": "docs/nonadvective-shift-1d/advective-reference.json",
+  "candidates": [
+    {"name": "direct", "reference_damping": 0, "reference_rate": 0},
+    {"name": "adaptive", "reference_damping": 1, "reference_rate": 0.1}
+  ],
+  "additional_sigma": "Only one nearby value, and only after a documented short-test mechanism motivates it; no unrestricted scan",
+  "frozen": {"gamma_coefficient": 4, "ko": 0.5, "cfl": 0.025, "lapse_floor": 1e-10, "grid_stretch": 0, "inner_z4_damping": 8},
+  "boundary": "Exact beta=-alpha sqrt(chi/g); incoming gauge projection changes Lambda and independent endpoint chi_r,g_r,beta_r together; b_t=sigma(beta-b). All outgoing/tangent characteristic jet amplitudes and Lambda-V boundary constraint trace preserved by the projection. Derivative reduction defects remain explicit diagnostics.",
+  "short_gates": {"analytic_and_symbol_identities": true, "minkowski_discrete_RHS_max": 2e-9, "pulse_targets": [0.1, 1.0], "puncture_target": 0.2, "positive_stage_separation": true, "nullness": 5e-14, "driver_compatibility": 1e-10, "scri_numerator": 0.01},
+  "long_comparison_predeclared": {
+    "duration": "All guards hold through target with fixed parameters and timestep",
+    "mass_peak_drift": 0.001,
+    "mass_final_absolute_relative_error": 0.001,
+    "constraints": "At matched N257 times, time-RMS H/M/Theta/Z exterior norms no greater than twice the advective reference over the common completed interval; report each metric separately",
+    "reduced_horizon_coordinate_drift": "Absolute least-squares drift slope on last20M at most half the matched advective slope; also report total drift and fit residual",
+    "settling": "Report field-rate RMS and gauge residuals versus time; horizon flattening alone is insufficient",
+    "validity": "Finite positive physical geometry at every evaluated positive-radius stage, positive new speed margin, relative nullness<=5e-14, scri numerator<=.01, driver compatibility<=1e-10, speed CFL<=.4",
+    "interior": "Retain and plot separately; no interior truncation threshold in exterior budget",
+    "boundary_reduction": "Report independent endpoint derivative minus finite-difference derivative, including any growth; no well-posedness inference from roundoff nullness"
+  },
+  "execution": {"maximum_simultaneous_local_evolutions": 2, "maximum_segment_wall_seconds": 420, "continuation": "Only source/library/checkpoint/ancestry-verified completed parents; no retry or relabeling of failed/bounded runs", "primary_grid": 257, "optional_grid": 513},
+  "configuration_differences": ["Nonadvective beta equation directly uses independently evolved Lambda instead of auxiliary D", "b+r replaces D storage and follows nonadvective adaptive ODE", "No -r source or 1/Omega shift restoration", "New outer coefficient and speed-separation diagnostic", "Incoming boundary jet closure with three independent endpoint derivative reductions instead of old D elimination"],
+  "preserved": "Native full-metric Einstein equations, positive-node puncture chart, initial bulk wormhole/elliptic shift, independent positive-radius Lambda, telegrapher flux, chi/lapse attenuation, floor, compact Z4 damping, KO8 and mesh. Existing worktrees and jobs unchanged."
+}

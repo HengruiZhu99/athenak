@@ -1,0 +1,414 @@
+{
+  "constraint_audit_sha256": "c8a419d0daf387680e59994e2281ea1657f779dc3e7b1baa9f56cb58687f5cb8",
+  "reference_sampling": "output/hyperbolic-shift-1d/nonadvective-reference-sampling-v1",
+  "reference_sampling_manifest_sha256": "11e5a0e64061e61687ca6dedba1eaed1a5369408bec0847ab9f6a38eabf5f891",
+  "supplement": "output/hyperbolic-shift-1d/nonadvective-supplement-v1/supplement.json",
+  "supplement_sha256": "b4901adb847b0b49ff0596ae15f46e258b4034b5647ea88779aea3736fe53700",
+  "campaign": "output/hyperbolic-shift-1d/nonadvective-campaign-v1",
+  "campaign_sha256": "41c5a597ab2e7d06481c418cd9e1d734c7bc134b540caf8c8d48794b2beb33bb",
+  "runs": [
+    {
+      "name": "direct-pulse-n65-short",
+      "case": "output/hyperbolic-shift-1d/nonadvective-campaign-v1/direct-pulse-n65-short",
+      "status": "completed",
+      "t_over_M": 0.30000000000000004,
+      "error": null,
+      "manifest_sha256": "d84ea72812c6d90efbb9700ef3a1fd0f6c8d51c5d3ae8ceb85842b83caec362f"
+    },
+    {
+      "name": "direct-pulse-n65-t1",
+      "case": "output/hyperbolic-shift-1d/nonadvective-campaign-v1/direct-pulse-n65-t1",
+      "status": "failed",
+      "t_over_M": 0.6697674418604651,
+      "error": "Scri numerator guard",
+      "manifest_sha256": "3b9bbc088a300963d8b28434433a768172c051cecb0111a2f5e9126793cd9862"
+    },
+    {
+      "name": "direct-puncture-n257-short",
+      "case": "output/hyperbolic-shift-1d/nonadvective-campaign-v1/direct-puncture-n257-short",
+      "status": "failed",
+      "t_over_M": 0.45000000000000007,
+      "error": "Scri numerator guard",
+      "manifest_sha256": "4d32d4171c89d7adb00661f0846be0d4dc11ecacde452eb9db887f3673a27dda"
+    },
+    {
+      "name": "adaptive-pulse-n65-short",
+      "case": "output/hyperbolic-shift-1d/nonadvective-campaign-v1/adaptive-pulse-n65-short",
+      "status": "completed",
+      "t_over_M": 0.30000000000000004,
+      "error": null,
+      "manifest_sha256": "8f4a1bff158fc7923a7ad40f810cb0a4fe5e1b708bf08e794e50166a19df1351"
+    },
+    {
+      "name": "adaptive-pulse-n65-t1",
+      "case": "output/hyperbolic-shift-1d/nonadvective-campaign-v1/adaptive-pulse-n65-t1",
+      "status": "failed",
+      "t_over_M": 0.6697674418604651,
+      "error": "Scri numerator guard",
+      "manifest_sha256": "c3059fff84724832e4c29a4ca7706757312be349f456e14b54beea5e0daf787e"
+    },
+    {
+      "name": "adaptive-puncture-n257-short",
+      "case": "output/hyperbolic-shift-1d/nonadvective-campaign-v1/adaptive-puncture-n257-short",
+      "status": "failed",
+      "t_over_M": 0.45000000000000007,
+      "error": "Scri numerator guard",
+      "manifest_sha256": "6c0b427f28ff6c991ae5c7c018cf8232e84dd72db87fdd4ef3c363047a56c3af"
+    },
+    {
+      "name": "direct-pulse-n129-resolution",
+      "case": "output/hyperbolic-shift-1d/nonadvective-campaign-v1/direct-pulse-n129-resolution",
+      "status": "failed",
+      "t_over_M": 0.6723735408560312,
+      "error": "Scri numerator guard",
+      "manifest_sha256": "5b5cf8cd16b2a50ac3f0174940a06644320ed4de49f31c428c5806f699d183ea"
+    },
+    {
+      "name": "adaptive-pulse-n129-resolution",
+      "case": "output/hyperbolic-shift-1d/nonadvective-campaign-v1/adaptive-pulse-n129-resolution",
+      "status": "failed",
+      "t_over_M": 0.6723735408560312,
+      "error": "Scri numerator guard",
+      "manifest_sha256": "6d624f0ff126192b8859a2800ce551744cea2e599f271dc7f85799af35eb7cb8"
+    }
+  ],
+  "puncture_assessments": [
+    {
+      "name": "Direct control",
+      "case": "output/hyperbolic-shift-1d/nonadvective-campaign-v1/direct-puncture-n257-short",
+      "status": "failed",
+      "t_over_M": 0.45000000000000007,
+      "target_over_M": 0.6000000000000001,
+      "error": "Scri numerator guard",
+      "peak_relative_mass_drift": 2.5108846113397476e-09,
+      "final_absolute_relative_mass_error": 2.9212552377089196e-09,
+      "last_report_t_over_M": 0.45000000000000007,
+      "exact_matched_diagnostic_samples": [
+        {
+          "t": 0.0,
+          "new": {
+            "H_exterior_rms": 0.00012104713492283368,
+            "M_exterior_rms": 0.00018918958807765838,
+            "Theta_exterior_rms": 0.0,
+            "Z_exterior_rms": 1.496114662880602e-14,
+            "apparent_horizon_mass": 0.3333333334701235,
+            "apparent_horizon_r": 0.06292449049869783
+          },
+          "advective": {
+            "H_exterior_rms": 0.00012104713492283367,
+            "M_exterior_rms": 0.00018918958807765838,
+            "Theta_exterior_rms": 0.0,
+            "Z_exterior_rms": 0.0,
+            "apparent_horizon_mass": 0.3333333334701235,
+            "apparent_horizon_r": 0.06292449049869783
+          },
+          "connection_constraint_definition": "metric finite difference"
+        },
+        {
+          "t": 0.025,
+          "new": {
+            "H_exterior_rms": 0.0017628948952751083,
+            "M_exterior_rms": 0.003109863081681706,
+            "Theta_exterior_rms": 5.5044497397972165e-05,
+            "Z_exterior_rms": 0.00024102711298413252,
+            "apparent_horizon_mass": 0.33333333358812567,
+            "apparent_horizon_r": 0.0633174785899045
+          },
+          "advective": {
+            "H_exterior_rms": 0.0018415721549874106,
+            "M_exterior_rms": 0.0032134377496755725,
+            "Theta_exterior_rms": 5.4190977293645696e-05,
+            "Z_exterior_rms": 0.00023635371463782693,
+            "apparent_horizon_mass": 0.3333333335927423,
+            "apparent_horizon_r": 0.06333704024921741
+          },
+          "connection_constraint_definition": "evolution-used boundary jet; no independent profile at this time"
+        },
+        {
+          "t": 0.05,
+          "new": {
+            "H_exterior_rms": 0.0015916835941195142,
+            "M_exterior_rms": 0.0028898616826385907,
+            "Theta_exterior_rms": 1.9909098658255815e-05,
+            "Z_exterior_rms": 0.00011321671135106972,
+            "apparent_horizon_mass": 0.33333333366316814,
+            "apparent_horizon_r": 0.06367731770192986
+          },
+          "advective": {
+            "H_exterior_rms": 0.0016990831427995253,
+            "M_exterior_rms": 0.0030632817166465925,
+            "Theta_exterior_rms": 2.0188288582333293e-05,
+            "Z_exterior_rms": 0.00011525101971744581,
+            "apparent_horizon_mass": 0.33333333367542783,
+            "apparent_horizon_r": 0.0637562673044286
+          },
+          "connection_constraint_definition": "evolution-used boundary jet; no independent profile at this time"
+        },
+        {
+          "t": 0.07500000000000001,
+          "new": {
+            "H_exterior_rms": 0.001267922443606127,
+            "M_exterior_rms": 0.0023207835122451316,
+            "Theta_exterior_rms": 3.0369269074131588e-05,
+            "Z_exterior_rms": 0.00015884522861564588,
+            "apparent_horizon_mass": 0.33333333367324924,
+            "apparent_horizon_r": 0.06400047292953867
+          },
+          "advective": {
+            "H_exterior_rms": 0.0014821065164386858,
+            "M_exterior_rms": 0.002718902254902392,
+            "Theta_exterior_rms": 2.9825008989588818e-05,
+            "Z_exterior_rms": 0.0001409088814148003,
+            "apparent_horizon_mass": 0.3333333336875375,
+            "apparent_horizon_r": 0.06417959307202065
+          },
+          "connection_constraint_definition": "evolution-used boundary jet; no independent profile at this time"
+        },
+        {
+          "t": 0.1,
+          "new": {
+            "H_exterior_rms": 0.0013386443244813276,
+            "M_exterior_rms": 0.002522313490100534,
+            "Theta_exterior_rms": 2.8805950161746875e-05,
+            "Z_exterior_rms": 0.00015711930275525188,
+            "apparent_horizon_mass": 0.3333333336995675,
+            "apparent_horizon_r": 0.06429163960097775
+          },
+          "advective": {
+            "H_exterior_rms": 0.001558977843024065,
+            "M_exterior_rms": 0.0029229894498247998,
+            "Theta_exterior_rms": 2.4975738059120402e-05,
+            "Z_exterior_rms": 0.00016483093889161287,
+            "apparent_horizon_mass": 0.333333333692166,
+            "apparent_horizon_r": 0.06461244046197842
+          },
+          "connection_constraint_definition": "metric finite difference"
+        },
+        {
+          "t": 0.125,
+          "new": {
+            "H_exterior_rms": 0.001443685009859846,
+            "M_exterior_rms": 0.0027506068234401672,
+            "Theta_exterior_rms": 1.7928567918165706e-05,
+            "Z_exterior_rms": 0.00011572606612820387,
+            "apparent_horizon_mass": 0.3333333338772816,
+            "apparent_horizon_r": 0.06455428860159731
+          },
+          "advective": {
+            "H_exterior_rms": 0.0015646447872790835,
+            "M_exterior_rms": 0.0029826527356681585,
+            "Theta_exterior_rms": 1.2967446599348245e-05,
+            "Z_exterior_rms": 0.00011169217519778793,
+            "apparent_horizon_mass": 0.33333333379003666,
+            "apparent_horizon_r": 0.06505895785267832
+          },
+          "connection_constraint_definition": "evolution-used boundary jet; no independent profile at this time"
+        },
+        {
+          "t": 0.15000000000000002,
+          "new": {
+            "H_exterior_rms": 0.001424331145040386,
+            "M_exterior_rms": 0.025440126002813243,
+            "Theta_exterior_rms": 1.5140344225579841e-05,
+            "Z_exterior_rms": 0.0161859406808979,
+            "apparent_horizon_mass": 0.33333333430708506,
+            "apparent_horizon_r": 0.0647898071734904
+          },
+          "advective": {
+            "H_exterior_rms": 0.0014522281613459165,
+            "M_exterior_rms": 0.002811204228327236,
+            "Theta_exterior_rms": 5.024534788867102e-06,
+            "Z_exterior_rms": 0.00011797400678457532,
+            "apparent_horizon_mass": 0.3333333340591344,
+            "apparent_horizon_r": 0.0655212308079258
+          },
+          "connection_constraint_definition": "metric finite difference"
+        }
+      ],
+      "stage_stats": {
+        "calls": 7687,
+        "max_null": 2.220446049250313e-16,
+        "max_relative_null": 2.2204460492503126e-16,
+        "max_driver_boundary_defect": 8.309325449928906e-16,
+        "max_pole": 0.6437581720724022,
+        "max_trace": 0.14126109977061882,
+        "max_speed": 4.605618512769254,
+        "max_floor_radius": 0.0,
+        "floor_calls": 0,
+        "min_stage_nonadvective_gap": 0.7938007336809292,
+        "max_boundary_projection": 0.005996624470335937,
+        "max_boundary_reduction_defect": 0.8338438033864128
+      }
+    },
+    {
+      "name": "Adaptive reference",
+      "case": "output/hyperbolic-shift-1d/nonadvective-campaign-v1/adaptive-puncture-n257-short",
+      "status": "failed",
+      "t_over_M": 0.45000000000000007,
+      "target_over_M": 0.6000000000000001,
+      "error": "Scri numerator guard",
+      "peak_relative_mass_drift": 2.508804719525415e-09,
+      "final_absolute_relative_mass_error": 2.919175345894587e-09,
+      "last_report_t_over_M": 0.45000000000000007,
+      "exact_matched_diagnostic_samples": [
+        {
+          "t": 0.0,
+          "new": {
+            "H_exterior_rms": 0.00012104713492283368,
+            "M_exterior_rms": 0.00018918958807765838,
+            "Theta_exterior_rms": 0.0,
+            "Z_exterior_rms": 1.496114662880602e-14,
+            "apparent_horizon_mass": 0.3333333334701235,
+            "apparent_horizon_r": 0.06292449049869783
+          },
+          "advective": {
+            "H_exterior_rms": 0.00012104713492283367,
+            "M_exterior_rms": 0.00018918958807765838,
+            "Theta_exterior_rms": 0.0,
+            "Z_exterior_rms": 0.0,
+            "apparent_horizon_mass": 0.3333333334701235,
+            "apparent_horizon_r": 0.06292449049869783
+          },
+          "connection_constraint_definition": "metric finite difference"
+        },
+        {
+          "t": 0.025,
+          "new": {
+            "H_exterior_rms": 0.0017628537518687027,
+            "M_exterior_rms": 0.0031099667767586934,
+            "Theta_exterior_rms": 5.5042821641949884e-05,
+            "Z_exterior_rms": 0.00024114110204115659,
+            "apparent_horizon_mass": 0.3333333335881272,
+            "apparent_horizon_r": 0.06331748457920747
+          },
+          "advective": {
+            "H_exterior_rms": 0.0018415721549874106,
+            "M_exterior_rms": 0.0032134377496755725,
+            "Theta_exterior_rms": 5.4190977293645696e-05,
+            "Z_exterior_rms": 0.00023635371463782693,
+            "apparent_horizon_mass": 0.3333333335927423,
+            "apparent_horizon_r": 0.06333704024921741
+          },
+          "connection_constraint_definition": "evolution-used boundary jet; no independent profile at this time"
+        },
+        {
+          "t": 0.05,
+          "new": {
+            "H_exterior_rms": 0.0015912620996377067,
+            "M_exterior_rms": 0.002889240380482727,
+            "Theta_exterior_rms": 1.9909696737847625e-05,
+            "Z_exterior_rms": 0.00011318528055519567,
+            "apparent_horizon_mass": 0.33333333366318624,
+            "apparent_horizon_r": 0.06367742475646901
+          },
+          "advective": {
+            "H_exterior_rms": 0.0016990831427995253,
+            "M_exterior_rms": 0.0030632817166465925,
+            "Theta_exterior_rms": 2.0188288582333293e-05,
+            "Z_exterior_rms": 0.00011525101971744581,
+            "apparent_horizon_mass": 0.33333333367542783,
+            "apparent_horizon_r": 0.0637562673044286
+          },
+          "connection_constraint_definition": "evolution-used boundary jet; no independent profile at this time"
+        },
+        {
+          "t": 0.07500000000000001,
+          "new": {
+            "H_exterior_rms": 0.0012669305282355823,
+            "M_exterior_rms": 0.002319522600750062,
+            "Theta_exterior_rms": 3.0376626612118118e-05,
+            "Z_exterior_rms": 0.00015773028357265982,
+            "apparent_horizon_mass": 0.33333333367328943,
+            "apparent_horizon_r": 0.06400086249427941
+          },
+          "advective": {
+            "H_exterior_rms": 0.0014821065164386858,
+            "M_exterior_rms": 0.002718902254902392,
+            "Theta_exterior_rms": 2.9825008989588818e-05,
+            "Z_exterior_rms": 0.0001409088814148003,
+            "apparent_horizon_mass": 0.3333333336875375,
+            "apparent_horizon_r": 0.06417959307202065
+          },
+          "connection_constraint_definition": "evolution-used boundary jet; no independent profile at this time"
+        },
+        {
+          "t": 0.1,
+          "new": {
+            "H_exterior_rms": 0.001338696082961212,
+            "M_exterior_rms": 0.002522358532449922,
+            "Theta_exterior_rms": 2.8837098936343474e-05,
+            "Z_exterior_rms": 0.00015764600243988632,
+            "apparent_horizon_mass": 0.3333333336995826,
+            "apparent_horizon_r": 0.06429244070795165
+          },
+          "advective": {
+            "H_exterior_rms": 0.001558977843024065,
+            "M_exterior_rms": 0.0029229894498247998,
+            "Theta_exterior_rms": 2.4975738059120402e-05,
+            "Z_exterior_rms": 0.00016483093889161287,
+            "apparent_horizon_mass": 0.333333333692166,
+            "apparent_horizon_r": 0.06461244046197842
+          },
+          "connection_constraint_definition": "metric finite difference"
+        },
+        {
+          "t": 0.125,
+          "new": {
+            "H_exterior_rms": 0.001445236121296307,
+            "M_exterior_rms": 0.002753954828968754,
+            "Theta_exterior_rms": 1.801925755594302e-05,
+            "Z_exterior_rms": 0.00011474513375749495,
+            "apparent_horizon_mass": 0.3333333338771334,
+            "apparent_horizon_r": 0.06455559845318329
+          },
+          "advective": {
+            "H_exterior_rms": 0.0015646447872790835,
+            "M_exterior_rms": 0.0029826527356681585,
+            "Theta_exterior_rms": 1.2967446599348245e-05,
+            "Z_exterior_rms": 0.00011169217519778793,
+            "apparent_horizon_mass": 0.33333333379003666,
+            "apparent_horizon_r": 0.06505895785267832
+          },
+          "connection_constraint_definition": "evolution-used boundary jet; no independent profile at this time"
+        },
+        {
+          "t": 0.15000000000000002,
+          "new": {
+            "H_exterior_rms": 0.0014246783490918986,
+            "M_exterior_rms": 0.024403379749511508,
+            "Theta_exterior_rms": 1.470867453921542e-05,
+            "Z_exterior_rms": 0.015542517503235142,
+            "apparent_horizon_mass": 0.3333333343063918,
+            "apparent_horizon_r": 0.0647917595456878
+          },
+          "advective": {
+            "H_exterior_rms": 0.0014522281613459165,
+            "M_exterior_rms": 0.002811204228327236,
+            "Theta_exterior_rms": 5.024534788867102e-06,
+            "Z_exterior_rms": 0.00011797400678457532,
+            "apparent_horizon_mass": 0.3333333340591344,
+            "apparent_horizon_r": 0.0655212308079258
+          },
+          "connection_constraint_definition": "metric finite difference"
+        }
+      ],
+      "stage_stats": {
+        "calls": 7687,
+        "max_null": 2.220446049250313e-16,
+        "max_relative_null": 2.2204460492503126e-16,
+        "max_driver_boundary_defect": 7.934462548792043e-16,
+        "max_pole": 0.6164009957686623,
+        "max_trace": 0.1350762682493011,
+        "max_speed": 4.605615252612251,
+        "max_floor_radius": 0.0,
+        "floor_calls": 0,
+        "min_stage_nonadvective_gap": 0.7938007336809292,
+        "max_boundary_projection": 0.005706613866702923,
+        "max_boundary_reduction_defect": 0.7974003399572127
+      }
+    }
+  ],
+  "matched_profile_t_over_M": 0.44999999999999996,
+  "reaches_100M": false,
+  "scope": "No failed pulse candidate is promoted to long evolution. Crosses mark last reported diagnostics, which can precede the actual failure time in the manifest. Matched profiles use exact saved times; no interpolation. All interior errors remain separate."
+}

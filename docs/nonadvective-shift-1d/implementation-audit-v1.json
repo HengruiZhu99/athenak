@@ -1,0 +1,44 @@
+{
+  "checks": [
+    {
+      "name": "Minkowski discrete equilibrium",
+      "eta": 0.0,
+      "max_RHS": 3.2747566223955816e-12
+    },
+    {
+      "name": "perturbed metric boundary projection",
+      "eta": 0.0,
+      "incoming_only": true,
+      "connection_constraint_trace_preserved": true,
+      "idempotent": true
+    },
+    {
+      "name": "bulk equations and unchanged Einstein/lapse/telegraph rates",
+      "eta": 0.0,
+      "exact": true
+    },
+    {
+      "name": "Minkowski discrete equilibrium",
+      "eta": 1.0,
+      "max_RHS": 3.2747566223955816e-12
+    },
+    {
+      "name": "perturbed metric boundary projection",
+      "eta": 1.0,
+      "incoming_only": true,
+      "connection_constraint_trace_preserved": true,
+      "idempotent": true
+    },
+    {
+      "name": "bulk equations and unchanged Einstein/lapse/telegraph rates",
+      "eta": 1.0,
+      "exact": true
+    },
+    {
+      "name": "100 randomized scalar symbols",
+      "complete": true
+    }
+  ],
+  "passed": 7,
+  "scope": "Algebraic/RHS preparation only; short and long trajectories remain separately gated."
+}
