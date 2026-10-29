@@ -1,0 +1,246 @@
+{
+  "schema": 1,
+  "reviewed": true,
+  "phase": "stability",
+  "n": 16,
+  "low_resolution_n": 16,
+  "admission": "admissions/preflight-angular-v1.json",
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "00:20:00"
+  },
+  "storage": {
+    "limit_bytes": 5000000000,
+    "planned_new_bytes": 130000000,
+    "atomic_checkpoint_reserve_bytes": 100000000
+  },
+  "worker_seconds": 1110,
+  "output_dir": "campaigns/stability-angular-minkowski-v1/output",
+  "commands": [
+    {
+      "name": "minkowski",
+      "kind": "minkowski",
+      "executable": "build-sycl-mpi-v10/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_projected_angular",
+      "args": [
+        "16",
+        "campaigns/stability-angular-minkowski-v1/output/minkowski",
+        "minkowski",
+        "1",
+        ".0005",
+        "-",
+        "-",
+        "@WALL_SECONDS@",
+        ".05"
+      ],
+      "timeout_seconds": 1050,
+      "report": "campaigns/stability-angular-minkowski-v1/output/minkowski.report.json",
+      "artifacts": [
+        "campaigns/stability-angular-minkowski-v1/output/minkowski.report.json",
+        "campaigns/stability-angular-minkowski-v1/output/minkowski.history.csv",
+        "campaigns/stability-angular-minkowski-v1/output/minkowski.checkpoint",
+        "campaigns/stability-angular-minkowski-v1/output/minkowski.failed-stage.bin",
+        "campaigns/stability-angular-minkowski-v1/output/minkowski.log"
+      ],
+      "inputs": [],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "n"
+          ],
+          "op": "eq",
+          "value": 16
+        },
+        {
+          "path": [
+            "min_lapse"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "min_chi"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "diagnostics_current"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_cfl"
+          ],
+          "op": "le",
+          "value": 0.5
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "H_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "max_state_deviation"
+          ],
+          "op": "le",
+          "value": 1e-08
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "le",
+          "value": 1e-07
+        },
+        {
+          "path": [
+            "M_L2"
+          ],
+          "op": "le",
+          "value": 1e-07
+        },
+        {
+          "path": [
+            "algebraic_projection"
+          ],
+          "op": "eq",
+          "value": "final_stage_standard"
+        },
+        {
+          "path": [
+            "checkpoint_schema"
+          ],
+          "op": "eq",
+          "value": "HYP3D_MPI_V3"
+        },
+        {
+          "path": [
+            "max_determinant_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_tracefree_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "scri_angular_stencil"
+          ],
+          "op": "eq",
+          "value": "cross_face_centered5"
+        },
+        {
+          "path": [
+            "t"
+          ],
+          "op": "eq",
+          "value": 1.0
+        },
+        {
+          "path": [
+            "steps"
+          ],
+          "op": "eq",
+          "value": 2001
+        },
+        {
+          "path": [
+            "dt"
+          ],
+          "op": "eq",
+          "value": 0.0005
+        },
+        {
+          "path": [
+            "start_time"
+          ],
+          "op": "eq",
+          "value": 0.0
+        },
+        {
+          "path": [
+            "segment_steps"
+          ],
+          "op": "eq",
+          "value": 2001
+        }
+      ]
+    }
+  ],
+  "notes": "Coordinator-reviewed bounded duration plan; execution requires a passed source-v10 preflight admission. Fresh analytic n16 Minkowski, nominal dt=.0005 to exact coordinate t=1, fixed V3 cross-face centered angular scri candidate with standard final-stage algebraic projection. All previous scientific tolerances are retained. Frozen time accumulation takes 2000 nominal steps to .9999999999999453 plus a final endpoint remainder ~5.473399511402022e-14: expected accepted steps=2001. This matches existing clock bookkeeping without a nominal-timestep or tolerance change. Not a puncture/100M/convergence admission."
+}

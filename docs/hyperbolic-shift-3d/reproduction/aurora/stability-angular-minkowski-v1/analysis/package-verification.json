@@ -1,0 +1,163 @@
+{
+  "checks_recomputed": 28,
+  "failed_checks": [
+    {
+      "path": [
+        "status"
+      ],
+      "op": "eq",
+      "value": "completed"
+    },
+    {
+      "path": [
+        "diagnostics_current"
+      ],
+      "op": "eq",
+      "value": true
+    },
+    {
+      "path": [
+        "checkpoint_admitted"
+      ],
+      "op": "eq",
+      "value": true
+    },
+    {
+      "path": [
+        "max_state_deviation"
+      ],
+      "op": "le",
+      "value": 1e-08
+    },
+    {
+      "path": [
+        "H_L2"
+      ],
+      "op": "le",
+      "value": 1e-07
+    },
+    {
+      "path": [
+        "M_L2"
+      ],
+      "op": "le",
+      "value": 1e-07
+    },
+    {
+      "path": [
+        "t"
+      ],
+      "op": "eq",
+      "value": 1.0
+    },
+    {
+      "path": [
+        "steps"
+      ],
+      "op": "eq",
+      "value": 2001
+    },
+    {
+      "path": [
+        "segment_steps"
+      ],
+      "op": "eq",
+      "value": 2001
+    }
+  ],
+  "all_recorded_checks_reproduced": true,
+  "terminal_exit_status": 1,
+  "allocation_released": true,
+  "one_node_twelve_tiles_verified": true,
+  "source_manifest_sha256": "86b602e7e68fc93e6a76e16c9bd5c4aea9fcef64363670c5f95c6b0adf30fc13",
+  "binary_sha256": "a557b2090b8c41c6999969a008f1731e743eea21caa3fa257af386ab15b1847d",
+  "plan_pbs_admission_verified": true,
+  "preflight_references": [
+    {
+      "path": "docs/hyperbolic-shift-3d/reproduction/aurora/preflight-angular-v1/worker-status.json",
+      "sha256": "9efc60228a381d2d68e7ed8d270f60ab877051086b832708fe4bbf24983b6ec2"
+    },
+    {
+      "path": "docs/hyperbolic-shift-3d/reproduction/aurora/preflight-angular-v1/verification-at-admission.json",
+      "sha256": "19edcce25ac20b188b70092bdaad714f2cac00cc7a01a2ed20044688244210c2"
+    },
+    {
+      "path": "docs/hyperbolic-shift-3d/reproduction/aurora/preflight-angular-v1/compile-evidence/source-v10-manifest.json",
+      "sha256": "86b602e7e68fc93e6a76e16c9bd5c4aea9fcef64363670c5f95c6b0adf30fc13"
+    },
+    {
+      "path": "docs/hyperbolic-shift-3d/reproduction/aurora/preflight-angular-v1/compile-evidence/build-status.json",
+      "sha256": "2fe39cc02bbc70e88769d6d6c605c0e18d68f212a39a3026f0d66639f5f0d531"
+    },
+    {
+      "path": "docs/hyperbolic-shift-3d/reproduction/aurora/preflight-angular-v1/compile-evidence/CMakeCache.txt",
+      "sha256": "138a101d7b4d8e3cb2dbdf248b39ea1a7a1c43ecdc8a3a2e0d00c0bf82a31ea3"
+    }
+  ],
+  "artifacts": [
+    {
+      "remote_path": "campaigns/stability-angular-minkowski-v1/output/minkowski.report.json",
+      "local_path": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/aurora/stability-angular-minkowski-v1/output/minkowski.report.json",
+      "sha256": "e332ef223e7d7953328d96263a5e11bd71809bb0eecb1fb2141784fac8e40687",
+      "bytes": 2123,
+      "worker_bound": true,
+      "retained_in_package": true,
+      "unchanged_after_read": true
+    },
+    {
+      "remote_path": "campaigns/stability-angular-minkowski-v1/output/minkowski.history.csv",
+      "local_path": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/aurora/stability-angular-minkowski-v1/output/minkowski.history.csv",
+      "sha256": "fb23b6ae99274312ff21f1f22bd77ed6115405c22a02fddc6e11ae07da9f1cce",
+      "bytes": 5832,
+      "worker_bound": true,
+      "retained_in_package": true,
+      "unchanged_after_read": true
+    },
+    {
+      "remote_path": "campaigns/stability-angular-minkowski-v1/output/minkowski.checkpoint",
+      "local_path": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/aurora/stability-angular-minkowski-v1/output/minkowski.checkpoint",
+      "sha256": "65aa86f0a34d9909609d5c68aa45b6e87960c5353636c9f1720828ac1503b6f5",
+      "bytes": 39362632,
+      "worker_bound": true,
+      "retained_in_package": false,
+      "unchanged_after_read": true
+    },
+    {
+      "remote_path": "campaigns/stability-angular-minkowski-v1/output/minkowski.failed-stage.bin",
+      "local_path": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/aurora/stability-angular-minkowski-v1/output/minkowski.failed-stage.bin",
+      "sha256": "e21b8d31d872db6114e54121e255eeeecfae57d45c02ebdc4e2367b5363cddd1",
+      "bytes": 19681280,
+      "worker_bound": true,
+      "retained_in_package": false,
+      "unchanged_after_read": true
+    },
+    {
+      "remote_path": "campaigns/stability-angular-minkowski-v1/output/minkowski.log",
+      "local_path": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/aurora/stability-angular-minkowski-v1/output/minkowski.log",
+      "sha256": "7dc8dd5f2b2d8e451e6857d83dd263cefcd839ebddba4ba907daf39883993e20",
+      "bytes": 959,
+      "worker_bound": true,
+      "retained_in_package": true,
+      "unchanged_after_read": true
+    }
+  ],
+  "helpers": [
+    {
+      "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-angular-minkowski-v1/analyze.py",
+      "sha256": "baac4d00c58b617805580ea158558deb4fb428fbefd59ddcad66ca1e8731e4d3"
+    },
+    {
+      "path": "docs/hyperbolic-shift-3d/reproduction/aurora/resolution-control-v1/analyze.py",
+      "sha256": "2da7fb327a068c6442cf4dc0ea91225502d3c5f83d07f2dd3ef936d9aa35ebb1"
+    },
+    {
+      "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-projected-minkowski-v1/analyze.py",
+      "sha256": "c3a0b979a46f007f8b1c9828b016f23089ad547a0c47f63071f21792bb1a9dd9"
+    },
+    {
+      "path": "docs/hyperbolic-shift-3d/reproduction/aurora/scri-positivity-audit-v1/run_audit.py",
+      "sha256": "f6e8a4a26d5746deef847fc3f82bdf412682334afa939a6d6f9ec884dfc56234"
+    }
+  ],
+  "scope": "Read only; failed scientific gates retained. No checkpoint admission, evolution, clamping or restart."
+}
