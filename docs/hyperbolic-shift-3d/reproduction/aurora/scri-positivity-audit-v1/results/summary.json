@@ -1,0 +1,616 @@
+{
+  "scope": "Read-only rejection localization, not identification of the first growing mode",
+  "exact_failed_rk_substep_time_recorded": false,
+  "no_checkpoint_admission_or_restart": true,
+  "q_zero_for_invalid_metric": "Geometry returns before constructing its inverse; q=0 is consequent, not independent",
+  "query_count_scope": "global exact-coordinate deduplication; not sum of rank-local invalid counters",
+  "host_replay": "Frozen stencil and Geometry on CPU binary64; not a bitwise SYCL replay",
+  "cases": [
+    {
+      "case": "original-n16",
+      "header": {
+        "magic": "HYP3D_MPI_V1",
+        "n": 16,
+        "nf": 31,
+        "kind": 0,
+        "admitted": 0,
+        "steps": 979,
+        "accepted_time": 0.4895000000000004,
+        "dt": 0.0005,
+        "failed_stage_abscissa": "not recorded",
+        "attempted_interval": [
+          0.4895000000000004,
+          0.4900000000000004
+        ]
+      },
+      "nodal_surface": {
+        "invalid_metric_count": 0,
+        "nonfinite_point_count": 0,
+        "min_chi": 0.7361301081087676,
+        "min_determinant": 0.5942626421780303,
+        "min_minor1": 0.8742189804043208,
+        "min_minor2": 0.9043205583989011
+      },
+      "nodal_minimum_eigenvalue": 0.5666498681363151,
+      "unique_global_boundary_queries": 6616,
+      "rejected_exact_coordinate_queries": 2,
+      "distinct_failed_directions_at_12_decimals": 1,
+      "rejection_counts": {
+        "nonfinite_field": 0,
+        "metric_invalid": 2,
+        "nonpositive_chi": 0,
+        "nonpositive_q_with_valid_metric": 0,
+        "nonfinite_chi_q": 0
+      },
+      "interpolant_ranges": {
+        "min_chi": 0.5723211259981591,
+        "min_determinant": -0.00644908961214305,
+        "min_q_valid_metric": 0.8511646461688974
+      },
+      "rejected": [
+        {
+          "query_id": 1243,
+          "boundary_xyz": [
+            -0.5540346888515549,
+            0.5886618569047771,
+            -0.5886618569047771
+          ],
+          "donor_block": 15,
+          "donor_face": 2,
+          "donor_local": [
+            0.9999999999999996,
+            0,
+            0.02941176470588236
+          ],
+          "target_ghosts_block_i_j_k": [
+            [
+              14,
+              16,
+              16,
+              -1
+            ],
+            [
+              14,
+              18,
+              16,
+              -1
+            ]
+          ],
+          "interpolated_check": {
+            "all31_finite": true,
+            "metric_valid": false,
+            "chi": 0.6609485717278967,
+            "minor1": 0.7468594444918653,
+            "minor2": 0.8457447217350875,
+            "determinant": -0.006449089612137082,
+            "code_q": 0,
+            "code_chi_q": 0,
+            "metric": [
+              [
+                0.7468594444918653,
+                0.5931741740914214,
+                0.177186460015992
+              ],
+              [
+                0.5931741740914214,
+                1.603515000548636,
+                -0.7341879923030274
+              ],
+              [
+                0.177186460015992,
+                -0.7341879923030274,
+                0.7103849996300647
+              ]
+            ]
+          },
+          "eigenvalues": [
+            -0.003298605861578771,
+            0.9059161016961623,
+            2.1581419488359828
+          ],
+          "minimum_donor_eigenvalue": 0.5943560495217463,
+          "donor_chi_range": [
+            0.8505067284382469,
+            1.000487230025348
+          ],
+          "minimum_donor_determinant": 0.7524237100003452,
+          "weights": {
+            "sum": 0.9999999999999999,
+            "l1": 27.838632033014555,
+            "minimum": -4.822111242419828,
+            "maximum": 5.7865334909037935
+          },
+          "rollback_same_query": {
+            "chi": 0.6676642085969573,
+            "determinant": 0.047869205393699564,
+            "eigenvalues": [
+              0.025193455893769288,
+              0.8951788884491492,
+              2.122553479372227
+            ]
+          }
+        },
+        {
+          "query_id": 1244,
+          "boundary_xyz": [
+            -0.554034688851555,
+            0.5886618569047771,
+            -0.5886618569047771
+          ],
+          "donor_block": 15,
+          "donor_face": 2,
+          "donor_local": [
+            1,
+            0,
+            0.02941176470588225
+          ],
+          "target_ghosts_block_i_j_k": [
+            [
+              14,
+              17,
+              16,
+              -1
+            ]
+          ],
+          "interpolated_check": {
+            "all31_finite": true,
+            "metric_valid": false,
+            "chi": 0.6609485717278958,
+            "minor1": 0.7468594444918653,
+            "minor2": 0.8457447217350851,
+            "determinant": -0.00644908961214305,
+            "code_q": 0,
+            "code_chi_q": 0,
+            "metric": [
+              [
+                0.7468594444918653,
+                0.5931741740914244,
+                0.1771864600159925
+              ],
+              [
+                0.5931741740914244,
+                1.6035150005486376,
+                -0.7341879923030291
+              ],
+              [
+                0.1771864600159925,
+                -0.7341879923030291,
+                0.7103849996300643
+              ]
+            ]
+          },
+          "eigenvalues": [
+            -0.0032986058615812907,
+            0.9059161016961624,
+            2.1581419488359868
+          ],
+          "minimum_donor_eigenvalue": 0.5943560495217463,
+          "donor_chi_range": [
+            0.8505067284382469,
+            1.000487230025348
+          ],
+          "minimum_donor_determinant": 0.7524237100003452,
+          "weights": {
+            "sum": 0.9999999999999998,
+            "l1": 27.83863203301517,
+            "minimum": -4.822111242419848,
+            "maximum": 5.7865334909038175
+          },
+          "rollback_same_query": {
+            "chi": 0.6676642085969559,
+            "determinant": 0.0478692053936947,
+            "eigenvalues": [
+              0.025193455893766988,
+              0.8951788884491492,
+              2.122553479372231
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "case": "n24",
+      "header": {
+        "magic": "HYP3D_MPI_V1",
+        "n": 24,
+        "nf": 31,
+        "kind": 0,
+        "admitted": 0,
+        "steps": 941,
+        "accepted_time": 0.31366666666666765,
+        "dt": 0.0003333333333333333,
+        "failed_stage_abscissa": "not recorded",
+        "attempted_interval": [
+          0.31366666666666765,
+          0.314000000000001
+        ]
+      },
+      "nodal_surface": {
+        "invalid_metric_count": 0,
+        "nonfinite_point_count": 0,
+        "min_chi": 0.8877299271422991,
+        "min_determinant": 0.7850744919373706,
+        "min_minor1": 0.8706859323519043,
+        "min_minor2": 0.7954651976518524
+      },
+      "nodal_minimum_eigenvalue": 0.588196514923701,
+      "unique_global_boundary_queries": 12938,
+      "rejected_exact_coordinate_queries": 2,
+      "distinct_failed_directions_at_12_decimals": 1,
+      "rejection_counts": {
+        "nonfinite_field": 0,
+        "metric_invalid": 2,
+        "nonpositive_chi": 0,
+        "nonpositive_q_with_valid_metric": 0,
+        "nonfinite_chi_q": 0
+      },
+      "interpolant_ranges": {
+        "min_chi": 0.7090800896460914,
+        "min_determinant": -0.012410815028513933,
+        "min_q_valid_metric": 0.588183581663828
+      },
+      "rejected": [
+        {
+          "query_id": 144,
+          "boundary_xyz": [
+            0.5616436526410907,
+            -0.5850454715011363,
+            -0.5850454715011363
+          ],
+          "donor_block": 16,
+          "donor_face": 3,
+          "donor_local": [
+            1,
+            0,
+            0.98
+          ],
+          "target_ghosts_block_i_j_k": [
+            [
+              13,
+              24,
+              -1,
+              -1
+            ]
+          ],
+          "interpolated_check": {
+            "all31_finite": true,
+            "metric_valid": false,
+            "chi": 0.8951476635988606,
+            "minor1": 1.1034169096843447,
+            "minor2": 0.40484067918632016,
+            "determinant": -0.012410815028513933,
+            "code_q": 0,
+            "code_chi_q": 0,
+            "metric": [
+              [
+                1.1034169096843447,
+                -1.5925733765843457,
+                -0.6251123776725176
+              ],
+              [
+                -1.5925733765843457,
+                2.665475409320087,
+                0.5664591358719666
+              ],
+              [
+                -0.6251123776725176,
+                0.5664591358719666,
+                0.6307728176361724
+              ]
+            ]
+          },
+          "eigenvalues": [
+            -0.005919515637562725,
+            0.5427618940157449,
+            3.8628227582624217
+          ],
+          "minimum_donor_eigenvalue": 0.588196514923701,
+          "donor_chi_range": [
+            0.9698455369010286,
+            1.0043896595678066
+          ],
+          "minimum_donor_determinant": 0.9793999226028121,
+          "weights": {
+            "sum": 1.0,
+            "l1": 24.676151082239866,
+            "minimum": -4.721163352073434,
+            "maximum": 5.665396022488121
+          },
+          "rollback_same_query": {
+            "chi": 0.8614370056796223,
+            "determinant": 0.06886074452770381,
+            "eigenvalues": [
+              0.034343745335700664,
+              0.5593607611713131,
+              3.584528694431841
+            ]
+          }
+        },
+        {
+          "query_id": 145,
+          "boundary_xyz": [
+            0.5616436526410908,
+            -0.5850454715011363,
+            -0.5850454715011363
+          ],
+          "donor_block": 16,
+          "donor_face": 3,
+          "donor_local": [
+            1,
+            0,
+            0.98
+          ],
+          "target_ghosts_block_i_j_k": [
+            [
+              13,
+              25,
+              -1,
+              -1
+            ],
+            [
+              13,
+              26,
+              -1,
+              -1
+            ]
+          ],
+          "interpolated_check": {
+            "all31_finite": true,
+            "metric_valid": false,
+            "chi": 0.8951476635988606,
+            "minor1": 1.1034169096843447,
+            "minor2": 0.40484067918632016,
+            "determinant": -0.012410815028513933,
+            "code_q": 0,
+            "code_chi_q": 0,
+            "metric": [
+              [
+                1.1034169096843447,
+                -1.5925733765843457,
+                -0.6251123776725176
+              ],
+              [
+                -1.5925733765843457,
+                2.665475409320087,
+                0.5664591358719666
+              ],
+              [
+                -0.6251123776725176,
+                0.5664591358719666,
+                0.6307728176361724
+              ]
+            ]
+          },
+          "eigenvalues": [
+            -0.005919515637562725,
+            0.5427618940157449,
+            3.8628227582624217
+          ],
+          "minimum_donor_eigenvalue": 0.588196514923701,
+          "donor_chi_range": [
+            0.9698455369010286,
+            1.0043896595678066
+          ],
+          "minimum_donor_determinant": 0.9793999226028121,
+          "weights": {
+            "sum": 1.0,
+            "l1": 24.676151082239866,
+            "minimum": -4.721163352073434,
+            "maximum": 5.665396022488121
+          },
+          "rollback_same_query": {
+            "chi": 0.8614370056796223,
+            "determinant": 0.06886074452770381,
+            "eigenvalues": [
+              0.034343745335700664,
+              0.5593607611713131,
+              3.584528694431841
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "case": "n16-half-dt",
+      "header": {
+        "magic": "HYP3D_MPI_V1",
+        "n": 16,
+        "nf": 31,
+        "kind": 0,
+        "admitted": 0,
+        "steps": 1944,
+        "accepted_time": 0.4859999999999742,
+        "dt": 0.00025,
+        "failed_stage_abscissa": "not recorded",
+        "attempted_interval": [
+          0.4859999999999742,
+          0.48624999999997415
+        ]
+      },
+      "nodal_surface": {
+        "invalid_metric_count": 0,
+        "nonfinite_point_count": 0,
+        "min_chi": 0.8013463621618586,
+        "min_determinant": 0.6710003308913773,
+        "min_minor1": 0.8475707054794747,
+        "min_minor2": 0.9104196550020998
+      },
+      "nodal_minimum_eigenvalue": 0.5969481957427905,
+      "unique_global_boundary_queries": 6616,
+      "rejected_exact_coordinate_queries": 2,
+      "distinct_failed_directions_at_12_decimals": 1,
+      "rejection_counts": {
+        "nonfinite_field": 0,
+        "metric_invalid": 2,
+        "nonpositive_chi": 0,
+        "nonpositive_q_with_valid_metric": 0,
+        "nonfinite_chi_q": 0
+      },
+      "interpolant_ranges": {
+        "min_chi": 0.6052291690195103,
+        "min_determinant": -0.02326965296458347,
+        "min_q_valid_metric": 0.8248447768085432
+      },
+      "rejected": [
+        {
+          "query_id": 1209,
+          "boundary_xyz": [
+            -0.5540346888515549,
+            -0.5886618569047771,
+            -0.5886618569047771
+          ],
+          "donor_block": 16,
+          "donor_face": 3,
+          "donor_local": [
+            0.9999999999999996,
+            0,
+            0.02941176470588236
+          ],
+          "target_ghosts_block_i_j_k": [
+            [
+              14,
+              16,
+              -1,
+              -1
+            ],
+            [
+              14,
+              18,
+              -1,
+              -1
+            ]
+          ],
+          "interpolated_check": {
+            "all31_finite": true,
+            "metric_valid": false,
+            "chi": 0.692266118861794,
+            "minor1": 0.6690500173483105,
+            "minor2": 0.9982976857563548,
+            "determinant": -0.023269652964576698,
+            "code_q": 0,
+            "code_chi_q": 0,
+            "metric": [
+              [
+                0.6690500173483105,
+                -0.48571631960077416,
+                0.27295538158549604
+              ],
+              [
+                -0.48571631960077416,
+                1.8447320781404848,
+                0.7739756925081644
+              ],
+              [
+                0.27295538158549604,
+                0.7739756925081644,
+                0.7214118163403016
+              ]
+            ]
+          },
+          "eigenvalues": [
+            -0.010708607550934808,
+            0.943992560736907,
+            2.301909958643124
+          ],
+          "minimum_donor_eigenvalue": 0.5969481957427905,
+          "donor_chi_range": [
+            0.8614567705567998,
+            1.0008369853602805
+          ],
+          "minimum_donor_determinant": 0.7769205938609032,
+          "weights": {
+            "sum": 0.9999999999999999,
+            "l1": 27.838632033014555,
+            "minimum": -4.822111242419828,
+            "maximum": 5.7865334909037935
+          },
+          "rollback_same_query": {
+            "chi": 0.6942984947578649,
+            "determinant": 0.045536443192616516,
+            "eigenvalues": [
+              0.021829625059507723,
+              0.9260785406322125,
+              2.2525010813044313
+            ]
+          }
+        },
+        {
+          "query_id": 1210,
+          "boundary_xyz": [
+            -0.554034688851555,
+            -0.5886618569047771,
+            -0.5886618569047771
+          ],
+          "donor_block": 16,
+          "donor_face": 3,
+          "donor_local": [
+            1,
+            0,
+            0.02941176470588225
+          ],
+          "target_ghosts_block_i_j_k": [
+            [
+              14,
+              17,
+              -1,
+              -1
+            ]
+          ],
+          "interpolated_check": {
+            "all31_finite": true,
+            "metric_valid": false,
+            "chi": 0.6922661188617926,
+            "minor1": 0.6690500173483102,
+            "minor2": 0.9982976857563535,
+            "determinant": -0.02326965296458347,
+            "code_q": 0,
+            "code_chi_q": 0,
+            "metric": [
+              [
+                0.6690500173483102,
+                -0.48571631960077666,
+                0.2729553815854966
+              ],
+              [
+                -0.48571631960077666,
+                1.8447320781404872,
+                0.7739756925081671
+              ],
+              [
+                0.2729553815854966,
+                0.7739756925081671,
+                0.7214118163403014
+              ]
+            ]
+          },
+          "eigenvalues": [
+            -0.010708607550938033,
+            0.9439925607369071,
+            2.3019099586431286
+          ],
+          "minimum_donor_eigenvalue": 0.5969481957427905,
+          "donor_chi_range": [
+            0.8614567705567998,
+            1.0008369853602805
+          ],
+          "minimum_donor_determinant": 0.7769205938609032,
+          "weights": {
+            "sum": 0.9999999999999998,
+            "l1": 27.83863203301517,
+            "minimum": -4.822111242419848,
+            "maximum": 5.7865334909038175
+          },
+          "rollback_same_query": {
+            "chi": 0.6942984947578638,
+            "determinant": 0.0455364431926102,
+            "eigenvalues": [
+              0.021829625059504986,
+              0.9260785406322131,
+              2.2525010813044366
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
