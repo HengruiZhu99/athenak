@@ -11,11 +11,10 @@ Admission SHA256: 2f87e55d379be509a37a6a5646ed9a840817d02f2b60511bcf5ec151ae8112
 2001 steps are expected: 2000 full steps plus the roundoff-sized final interval
 from the existing clock loop. The full step remains 0.0005.
 
-Do not treat submission or an admitted checkpoint alone as scientific success.
-Collect the terminal job, release the campaign allocation lock, archive and
-verify all artifacts and replay the predeclared gates. The independent duration
-reader in ../../evolved-overlap-v1/verify_duration.py accepts an explicit pinned
-V10 preflight decoder and admission. No result or long-time claim is recorded here.
+The terminal job has been collected, all artifacts archived and verified, and
+the allocation lock released. The independent duration reader in
+../../evolved-overlap-v1/verify_duration.py used the pinned V10 preflight decoder
+and admission. The scientific gates failed; this checkpoint is unadmitted.
 
 The matching Minkowski t=1 plan is prepared locally at
 output/hyperbolic-core-shell/aurora-staging/stability-spherical-overlap-minkowski-v1-plan.json

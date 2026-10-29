@@ -1,0 +1,43 @@
+{
+  "passed": true,
+  "phase": "preflight",
+  "low_resolution_n": 16,
+  "source_manifest_sha256": "137409668e9253da36f318254663342314426955ed1b7b59114262453bf519e8",
+  "binaries": {
+    "source-v19/tst/hyperbolic_shift_3d/aurora/preflight.py": "983d38420554270e63759b353e6a72fb62eb67634cb186222509c63437d73408",
+    "build-sycl-mpi-v19/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive": "c6418b4891bc3886741d79c464627d4c00c877c0bc251aaae41a498a3f4727e1"
+  },
+  "gpu_cpu_parity": true,
+  "restart_equivalence": true,
+  "normal_derivative_configs": [
+    {
+      "executable": "build-sycl-mpi-v19/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive",
+      "checkpoint_schema": "HYP3D_MPI_V11",
+      "scri_dissipation_epsilon": 2.0,
+      "scri_dissipation_degree": 7,
+      "checkpoint_header_bytes": 152,
+      "scri_normal_derivative": "sampled_native_numerator7",
+      "scri_normal_radial_nodes": 7,
+      "scri_normal_bulk_derivative_order": 4,
+      "scri_radial_closure": "donor_seven_last3",
+      "scri_radial_bulk_rows": 3,
+      "interpatch_interpolation": "logical_inner_transition",
+      "evolved_overlap": 3,
+      "nominal_cells": 106496,
+      "mesh_topology": "cartesian_2x2x2_shells3",
+      "cartesian_core_subdivisions": 2,
+      "mesh_blocks": 26,
+      "shell_geometry": "spherical_equiangular",
+      "core_half_width": 0.18,
+      "shell_inner_radius": 0.16,
+      "overlap_quadrature": "radial_quintic_partition",
+      "cartesian_seams": "uniform_global_stencil",
+      "positive_variables": "log_chi_log_lapse_rk_and_ko",
+      "physical_lapse_floor": 1e-10
+    }
+  ],
+  "job_id": "8986460.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "verification_sha256": "fd9d4cafcee876af734ce2d23edb743658d5cdf2778432c8974624e7e8c8f1ff",
+  "verifier_sha256": "eb8489db9ed2ea541a608c654282b065aed0b1565103d06a6d05fdab49f03e1a",
+  "scope": "V11 four-step GPU/CPU and bitwise restart qualification only. No duration or convergence claim."
+}

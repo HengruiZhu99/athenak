@@ -1,0 +1,41 @@
+{
+  "passed": false,
+  "admission_written": false,
+  "issues": [
+    "ValueError: Plan case/check identities differ"
+  ],
+  "cases": [],
+  "artifacts": [],
+  "verifier_sha256": "58384d30ea92b52889685903989f9a693eb941d82efaf92c781599f88efe202c",
+  "source_manifest_sha256": "137409668e9253da36f318254663342314426955ed1b7b59114262453bf519e8",
+  "plan_sha256": "00dad02d3418f75314c62404127451967aaf2e0bc06f97f2d5f5b94e373d416d",
+  "scope": "Implementation/restart preflight only; no duration, convergence, AMR or nonspherical stability claim.",
+  "component_replay": "Frozen source-v19 parser replays hash-bound logs; checkpoint decoder is independent.",
+  "pins_sha256": "8f9b03aaa2111aabe6643d5ff160ca50bf7b8d1ae88d33446356e16e731c4958",
+  "build": {
+    "source_commit": "faee66ea34d8d9b7a1b0412abab09caf515c03b5",
+    "kokkos_pin": "6739bc623081648af9e752b616d9671527922cbf",
+    "source_manifest_sha256": "137409668e9253da36f318254663342314426955ed1b7b59114262453bf519e8",
+    "git_blob_hashes_verified": 2645,
+    "build_receipt_sha256": "acac51553ca4f8b5498dbdaf50332e646ef5c28be410179fabb0eab8a0995114",
+    "cache_sha256": "e2d68e308cff346cce05d345949c5961a53120184620350be028d665ce860886",
+    "binaries": {
+      "build-sycl-mpi-v19/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive": "c6418b4891bc3886741d79c464627d4c00c877c0bc251aaae41a498a3f4727e1",
+      "build-sycl-mpi-v19/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_continuous_positive_device": "5ea89c2d02f8678c22e71dc2d5f332d453eaa3f15e1cb368b0a51845a63ae766"
+    },
+    "records": {
+      "CMakeCache.txt": "e2d68e308cff346cce05d345949c5961a53120184620350be028d665ce860886",
+      "build-v19.sh": "98ada5f8f151a0b18791285ebd0484e4672f5fd0cfb306b7eaf3b3756e2f2f63",
+      "source-v19-manifest.json": "137409668e9253da36f318254663342314426955ed1b7b59114262453bf519e8",
+      "source-v19-non-kokkos-manifest.json": "45a35ad7b87d916d806f848bc6d111dc781d9d16710945958d4af0ba99bdf556",
+      "source-v19-provenance.json": "901b3b66a9d664e6d2264d478e6cb90e43da70deaa3c9ee3860edd882a180915",
+      "v19/build-status.json": "acac51553ca4f8b5498dbdaf50332e646ef5c28be410179fabb0eab8a0995114",
+      "v19/build.log": "54fa5160000d853910920586949c9b273fc59591d530b6f78768f9525c35ba50",
+      "v19/compiler.txt": "6f41d08dd542e36e2f41b7b105da56d84c00bd6eb99a7c324ef8ef06635cbe26",
+      "v19/configure.log": "c2e6fe241499ec09149910810cd940a5c483080de1f43e5823eee13aa538035f",
+      "v19/modules.txt": "cf3fde5892e6950a2ec013c75688552bf45cd2c81a1c7e4bdce32cb81f224156",
+      "v19/mpi-wrapper.txt": "35ee2ba9df330d781abc430dd144e1728a49ceb7215380336a8682af0ed5a88d",
+      "v19/runner.log": "49ffc1d0b96bd484714286e7edc3bd9647b05bbe938142420cf570066d87b487"
+    }
+  }
+}

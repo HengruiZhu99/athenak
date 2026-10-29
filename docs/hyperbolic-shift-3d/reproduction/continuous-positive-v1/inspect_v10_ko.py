@@ -1,6 +1,6 @@
 from pathlib import Path
 import numpy as np,json,hashlib
-root=Path(__file__).resolve().parents[3];raw=root/'output/hyperbolic-core-shell/aurora/stability-spherical-overlap-puncture-v1/output'
+root=next(p for p in Path(__file__).resolve().parents if (p/'CMakeLists.txt').is_file());raw=root/'output/hyperbolic-core-shell/aurora/stability-spherical-overlap-puncture-v1/output'
 n=16;o=3;total=189512;coords=np.genfromtxt(root/'output/hyperbolic-core-shell/spherical-overlap-local-v1/coordinates-n16.csv',delimiter=',',names=True)
 xyz=np.c_[coords['x'],coords['y'],coords['z']];h=.18/n
 ids={};cells={}
@@ -40,5 +40,5 @@ result=[]
 for p in near:
  d=dict(point=int(p),cell=cells[p],xyz=xyz[p].tolist(),initial_chi=float(initial[p]),accepted_chi=float(accepted[p]),failed_chi=float(failed[p]))
  d['initial_KO'],d['terms']=ko(initial,p);d['accepted_KO'],_=ko(accepted,p);result.append(d)
-out=Path(__file__).with_name('ko-copy-analysis.json');out.write_text(json.dumps(dict(note='Read-only diagnostic: original V10 block-local KO at identical physical points, no trajectory modification',h=h,copies=result),indent=2)+'\n')
+out=Path(__file__).with_name('v10-ko-copy-analysis.json');out.write_text(json.dumps(dict(note='Read-only diagnostic: original V10 block-local KO at identical physical points, no trajectory modification',h=h,copies=result),indent=2)+'\n')
 print(out.read_text())
