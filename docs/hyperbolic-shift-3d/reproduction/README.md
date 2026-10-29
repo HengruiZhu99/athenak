@@ -65,6 +65,10 @@ jets alone therefore do not establish stability. Owner-face ghost-value
 interpolation and the original regularity penalties are unchanged, and no
 explicit angular dissipation acts at scri. The full coupled discrete operator
 and the remaining boundary interpolation need further investigation.
+The recorded all-direction shift/lapse speed-gap diagnostic remains positive
+(minimum .54185) in this run; it does not demonstrate the earlier bulk
+tangential-speed collision. This diagnostic alone is not a complete
+hyperbolicity or boundary-stability proof.
 
 The original J-disabled, bulk-mu=4 1D control is confirmed to have completed coordinate `33.3333984375 = 100.0001953125 M`. Its N513/N1025 continuation chains and frozen-source identities were checked. A [portable N513 time series](original-1d-reference/history.csv) and [provenance](original-1d-reference/provenance.json) preserve the matching horizon/exterior-constraint reference. Late gauge settling and uniform puncture convergence were not established by that original control.
 
