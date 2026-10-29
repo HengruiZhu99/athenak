@@ -1,0 +1,166 @@
+{
+  "status": "passed",
+  "scope": "Initial snapshots only; zero evolution steps in all cases",
+  "appended_columns": [
+    "Theta_exterior_L2",
+    "Zr_L2",
+    "Zr_exterior_L2",
+    "horizon_irreducible_mass"
+  ],
+  "source_inputs": {
+    "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/puncture-v3/n16/initial.txt": "c8ffa46d9007ee8b643db41980cfa4a08f9ab3f2f1c2383978a002f067f9db31",
+    "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/puncture-v3/n16/mesh.coordinates.csv": "552899c85042dc7ea784b737f42efcf101778408dcd511a26f57c6d4b05ae192",
+    "output/hyperbolic-core-shell/comparison-diagnostics-local-v1/before-puncture.checkpoint": "a5405ccba10be5ce6e32e4dd575a5d31d37e999efe209c89cc0b18d3d0b5f66f"
+  },
+  "inputs_unchanged": true,
+  "binary_sha256": "fcdd26fd10281dc3eb69a39d076da816347907a4c38536596463b610d8a27528",
+  "checkpoint_byte_equivalence": {
+    "reference": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/comparison-diagnostics-local-v1/before-puncture.checkpoint",
+    "sha256": "a5405ccba10be5ce6e32e4dd575a5d31d37e999efe209c89cc0b18d3d0b5f66f",
+    "bytes": 39362632,
+    "all_four_arrays_bitwise_equal": true
+  },
+  "fixture": {
+    "theta": ".02*(1-r^2)^2",
+    "radial_z": ".03*r*(1-r^2)^2",
+    "lambda_field": ".06*x*(1-r^2)^2 on gtilde=identity",
+    "physical_K_preserved_by_P_offset": true
+  },
+  "analytic_exterior_values": {
+    "nonzero-one-rank": {
+      "Theta_exterior_L2": 0.0066519207960450645,
+      "Zr_exterior_L2": 0.004798484225694897
+    },
+    "nonzero-two-rank": {
+      "Theta_exterior_L2": 0.0066519207960450645,
+      "Zr_exterior_L2": 0.004798484225694897
+    }
+  },
+  "executions": [
+    {
+      "name": "unchanged-puncture",
+      "command": [
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/comparison-diagnostics-local-v1/checks/runner",
+        "16",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/comparison-diagnostics-local-v1/checks/unchanged-puncture",
+        "puncture",
+        "0",
+        ".0005",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/puncture-v3/n16/initial.txt",
+        "-",
+        "400",
+        ".05",
+        ".001",
+        "6",
+        "12"
+      ],
+      "seconds": 7.045746333,
+      "returncode": 0
+    },
+    {
+      "name": "nonzero-one-rank",
+      "command": [
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/comparison-diagnostics-local-v1/checks/runner",
+        "16",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/comparison-diagnostics-local-v1/checks/nonzero-one-rank",
+        "puncture",
+        "0",
+        ".0005",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/comparison-diagnostics-local-v1/checks/nonzero-initial.txt",
+        "-",
+        "400",
+        ".05",
+        ".001",
+        "6",
+        "12"
+      ],
+      "seconds": 6.516181084,
+      "returncode": 0
+    },
+    {
+      "name": "nonzero-two-rank",
+      "command": [
+        "mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/comparison-diagnostics-local-v1/checks/runner",
+        "16",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/comparison-diagnostics-local-v1/checks/nonzero-two-rank",
+        "puncture",
+        "0",
+        ".0005",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/comparison-diagnostics-local-v1/checks/nonzero-initial.txt",
+        "-",
+        "400",
+        ".05",
+        ".001",
+        "6",
+        "12"
+      ],
+      "seconds": 6.159722917,
+      "returncode": 0
+    },
+    {
+      "name": "unresolved-horizon",
+      "command": [
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/comparison-diagnostics-local-v1/checks/runner",
+        "16",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/comparison-diagnostics-local-v1/checks/unresolved-horizon",
+        "puncture",
+        "0",
+        ".0005",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/comparison-diagnostics-local-v1/checks/nonzero-initial.txt",
+        "-",
+        "400",
+        ".05",
+        "1e-15",
+        "6",
+        "12"
+      ],
+      "seconds": 8.161642125,
+      "returncode": 0
+    }
+  ],
+  "observations": {
+    "unchanged-puncture": {
+      "Theta_exterior_L2": 0,
+      "Zr_L2": 0,
+      "Zr_exterior_L2": 0,
+      "horizon_irreducible_mass": 0.33333532607612104,
+      "horizon_mass": 0.33333532607612104,
+      "horizon_areal_radius": 0.6666706521522421,
+      "horizon_found": true,
+      "horizon_expansion_rms": 0.00047078596985336937
+    },
+    "nonzero-one-rank": {
+      "Theta_exterior_L2": 0.006651920796045468,
+      "Zr_L2": 0.004797929667346183,
+      "Zr_exterior_L2": 0.0047984842256949874,
+      "horizon_irreducible_mass": 0.3333353260761211,
+      "horizon_mass": 0.3333353260761211,
+      "horizon_areal_radius": 0.6666706521522422,
+      "horizon_found": true,
+      "horizon_expansion_rms": 0.00047078596985307186
+    },
+    "nonzero-two-rank": {
+      "Theta_exterior_L2": 0.006651920796044986,
+      "Zr_L2": 0.004797929667346043,
+      "Zr_exterior_L2": 0.004798484225694849,
+      "horizon_irreducible_mass": 0.3333353260761211,
+      "horizon_mass": 0.3333353260761211,
+      "horizon_areal_radius": 0.6666706521522422,
+      "horizon_found": true,
+      "horizon_expansion_rms": 0.00047078596985307186
+    },
+    "unresolved-horizon": {
+      "Theta_exterior_L2": null,
+      "Zr_L2": 0.004797929667346183,
+      "Zr_exterior_L2": null,
+      "horizon_irreducible_mass": null,
+      "horizon_mass": null,
+      "horizon_areal_radius": null,
+      "horizon_found": false,
+      "horizon_expansion_rms": null
+    }
+  }
+}

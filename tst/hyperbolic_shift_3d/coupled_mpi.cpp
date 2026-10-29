@@ -324,11 +324,11 @@ int main(int argc,char**argv){
     std::ofstream history;
     CollectiveLocal([&]{if(e.rank==0){
       history.open(output+".history.csv");history<<std::setprecision(17)
-        <<"t,t_over_M,steps,min_chi,min_lapse,state_deviation,H_L2,M_L2,M_physical_L2,Theta_L2,Z_L2,H_exterior_L2,M_exterior_L2,exterior_cutoff,horizon_found,horizon_radius,horizon_areal_radius,horizon_mass,horizon_expansion_rms,horizon_trial_radius,horizon_trial_expansion_rms,horizon_complete_surface,horizon_iterations,null_surface,null_ghost,pole_max,clock_max,cfl_max,wall_seconds,determinant_residual,tracefree_residual,Mr_L2,Mr_exterior_L2\n";
+        <<"t,t_over_M,steps,min_chi,min_lapse,state_deviation,H_L2,M_L2,M_physical_L2,Theta_L2,Z_L2,H_exterior_L2,M_exterior_L2,exterior_cutoff,horizon_found,horizon_radius,horizon_areal_radius,horizon_mass,horizon_expansion_rms,horizon_trial_radius,horizon_trial_expansion_rms,horizon_complete_surface,horizon_iterations,null_surface,null_ghost,pole_max,clock_max,cfl_max,wall_seconds,determinant_residual,tracefree_residual,Mr_L2,Mr_exterior_L2,Theta_exterior_L2,Zr_L2,Zr_exterior_L2,horizon_irreducible_mass\n";
       history.flush();if(!history)throw std::runtime_error("history open/header write failed");
     }});
     Diagnostic diagnostic{};bool diagnostic_valid=false;Real diagnostic_time=nan;
-    Real horizon_radius=nan,horizon_areal=nan,horizon_mass=nan,horizon_expansion=nan;
+    Real horizon_radius=nan,horizon_areal=nan,horizon_mass=nan,horizon_irreducible_mass=nan,horizon_expansion=nan;
     Real trial_radius=nan,trial_expansion=nan,cutoff=kind==2?nan:0;
     bool horizon_found=false,horizon_complete=false;int horizon_iterations=0;
     Real initial_rhs=nan;double last_diag_seconds=0;
@@ -340,7 +340,7 @@ int main(int argc,char**argv){
       e.null_ghost=std::max(e.null_ghost,halo.after);e.null_before=std::max(e.null_before,halo.before);
       e.SynchronizeError(halo.invalid,"invalid diagnostic halo");
       cutoff=kind==2?nan:0;horizon_found=false;
-      horizon_radius=horizon_areal=horizon_mass=horizon_expansion=nan;
+      horizon_radius=horizon_areal=horizon_mass=horizon_irreducible_mass=horizon_expansion=nan;
       if(finder){
         CollectiveLocal([&]{e.DownloadOwnedPadded();});
         finder->Find(e.steps,e.time);
@@ -349,7 +349,8 @@ int main(int argc,char**argv){
         horizon_found=result.found;horizon_complete=result.complete_surface;horizon_iterations=result.iterations;
         trial_expansion=result.last_expansion_rms;trial_radius=result.last_mean_radius;
         if(result.found){horizon_radius=result.mean_radius;horizon_areal=result.areal_radius;
-          horizon_mass=result.mass;horizon_expansion=result.expansion_rms;cutoff=result.mean_radius;}
+          horizon_mass=result.mass;horizon_irreducible_mass=result.irreducible_mass;
+          horizon_expansion=result.expansion_rms;cutoff=result.mean_radius;}
       }
       // Failure to locate a horizon is not a volume-evolution failure. Still
       // measure the full domain; with no reliable cutoff, exterior norms are NaN.
@@ -370,7 +371,10 @@ int main(int argc,char**argv){
           <<','<<trial_radius<<','<<trial_expansion<<','<<horizon_complete<<','<<horizon_iterations
           <<','<<e.model.null_max<<','<<e.null_ghost<<','<<e.model.pole_max<<','<<e.model.clock_max<<','<<e.cfl<<','<<elapsed()
           <<','<<diagnostic.max_determinant_residual<<','<<diagnostic.max_tracefree_residual
-          <<','<<Norm(diagnostic.total.mr2,diagnostic.total.volume)<<','<<Norm(diagnostic.exterior.mr2,diagnostic.exterior.volume)<<'\n';
+          <<','<<Norm(diagnostic.total.mr2,diagnostic.total.volume)<<','<<Norm(diagnostic.exterior.mr2,diagnostic.exterior.volume)
+          <<','<<Norm(diagnostic.exterior.theta2,diagnostic.exterior.volume)
+          <<','<<Norm(diagnostic.total.zr2,diagnostic.total.volume)<<','<<Norm(diagnostic.exterior.zr2,diagnostic.exterior.volume)
+          <<','<<horizon_irreducible_mass<<'\n';
         history.flush();if(!history)throw std::runtime_error("history append failed");
         std::cout<<"t="<<e.time<<" steps="<<e.steps<<" min_alpha="<<diagnostic.min_lapse<<" H="<<Norm(diagnostic.total.h2,diagnostic.total.volume)<<" horizon="<<horizon_found<<" seconds="<<elapsed()<<std::endl;
       }});
@@ -443,9 +447,13 @@ int main(int argc,char**argv){
         <<",\"M_exterior_L2\":"<<valid_number(Norm(diagnostic.exterior.m2,diagnostic.exterior.volume))
         <<",\"Mr_L2\":"<<valid_number(Norm(diagnostic.total.mr2,diagnostic.total.volume))
         <<",\"Mr_exterior_L2\":"<<valid_number(Norm(diagnostic.exterior.mr2,diagnostic.exterior.volume))
+        <<",\"Theta_exterior_L2\":"<<valid_number(Norm(diagnostic.exterior.theta2,diagnostic.exterior.volume))
+        <<",\"Zr_L2\":"<<valid_number(Norm(diagnostic.total.zr2,diagnostic.total.volume))
+        <<",\"Zr_exterior_L2\":"<<valid_number(Norm(diagnostic.exterior.zr2,diagnostic.exterior.volume))
         <<",\"exterior_coordinate_cutoff\":"<<JsonNumber(cutoff)<<",\"horizon_found\":"<<(horizon_found?"true":"false")
         <<",\"horizon_radius\":"<<JsonNumber(horizon_radius)<<",\"horizon_areal_radius\":"<<JsonNumber(horizon_areal)
         <<",\"horizon_mass\":"<<JsonNumber(horizon_mass)<<",\"horizon_expansion_rms\":"<<JsonNumber(horizon_expansion)
+        <<",\"horizon_irreducible_mass\":"<<JsonNumber(horizon_irreducible_mass)
         <<",\"horizon_trial_radius\":"<<JsonNumber(trial_radius)<<",\"horizon_trial_expansion_rms\":"<<JsonNumber(trial_expansion)
         <<",\"horizon_complete_surface\":"<<(horizon_complete?"true":"false")<<",\"horizon_iterations\":"<<horizon_iterations
         <<",\"horizon_seed_radius\":"<<seed_radius<<",\"horizon_seed_loaded\":"<<(seed_loaded?"true":"false")
