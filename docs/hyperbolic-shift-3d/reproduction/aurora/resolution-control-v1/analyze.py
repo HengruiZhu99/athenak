@@ -356,6 +356,11 @@ def plot(results, histories, out, low, high):
     axes[0, 0].axhspan(low, high, color="grey", alpha=.08)
     axes[1, 1].set_title("Null closure: recorded running maxima")
     axes[1, 1].set_ylabel("Relative residual / 10⁻¹⁵")
+    null_values = [float(value) / 1e-15 for data in histories if data is not None
+                   for field in ("null_surface", "null_ghost") for value in data[field]
+                   if np.isfinite(value) and value >= 0]
+    # Reserve annotation space above every available curve, including later cases.
+    axes[1, 1].set_ylim(0, 1.30 * max(null_values, default=1) or 1)
     axes[1, 1].text(.02, .97, "Solid/dashed: surface; dotted: ghost", transform=axes[1, 1].transAxes,
                     va="top", fontsize=8)
     axes[1, 2].set_title("Full-step node throughput after startup")
