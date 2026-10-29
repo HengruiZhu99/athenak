@@ -1,0 +1,68 @@
+{
+  "schema": 1,
+  "worker_bound_artifacts_checked": 3,
+  "worker_bound_artifacts_matching": 3,
+  "artifacts": [
+    {
+      "path": "output/minkowski.report.json",
+      "sha256": "590230abbb4e597e6bba8355a42dcb318c76a7217a2b916b8f2edead75a7b090",
+      "bytes": 1785,
+      "matches_worker": true,
+      "retained_in_package": true
+    },
+    {
+      "path": "output/minkowski.history.csv",
+      "sha256": "8ddf741e336086d8b0347b60036fff03faf4169a9b22143233c86905530e2ff5",
+      "bytes": 4449,
+      "matches_worker": true,
+      "retained_in_package": true
+    },
+    {
+      "path": "output/minkowski.checkpoint",
+      "sha256": "c590ea38f2ea7736a78c63f28fcac9c82fee08eebc0b04f9eee27747ca0ae40d",
+      "bytes": 39362632,
+      "matches_worker": true,
+      "retained_in_package": false
+    }
+  ],
+  "checkpoint_header": {
+    "magic": "HYP3D_MPI_V1",
+    "n": 16,
+    "nf": 31,
+    "kind": 0,
+    "admitted": 0,
+    "cells": 77824,
+    "surface": 47616,
+    "steps": 979,
+    "time": 0.4895000000000004,
+    "dt": 0.0005
+  },
+  "plan_binding_matches": true,
+  "source_and_binary_match_preflight_v2": true,
+  "affinity_twelve_distinct_tiles": true,
+  "checkpoint_payload_retained": false,
+  "scheduler_record_included": false,
+  "scheduler_note": "Raw scheduler/account records are excluded; no terminal scheduler claim is derived from this local package.",
+  "acceptance_checks_recomputed": 18,
+  "acceptance_checks_match_worker": true,
+  "rejected_check_paths": [
+    [
+      "status"
+    ],
+    [
+      "diagnostics_current"
+    ],
+    [
+      "checkpoint_admitted"
+    ],
+    [
+      "max_state_deviation"
+    ],
+    [
+      "H_L2"
+    ],
+    [
+      "M_L2"
+    ]
+  ]
+}

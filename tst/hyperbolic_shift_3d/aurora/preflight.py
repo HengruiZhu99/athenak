@@ -115,7 +115,7 @@ def bound_context(args):
     return root,binding,checked
 
 
-def component(args, rank, root, checked):
+def run_binary(args, rank, root, checked, argv):
     binary = checked(args.test_binary)
     cache = checked(args.cmake_cache)
     if not re.search(r'^Kokkos_ENABLE_SYCL:BOOL=ON$',cache.read_text(),re.M):
@@ -124,18 +124,26 @@ def component(args, rank, root, checked):
     started=time.monotonic()
     with log.open('x') as stream:
         try:
-            result=subprocess.run([str(binary)],cwd=root,stdout=stream,stderr=subprocess.STDOUT,
+            result=subprocess.run([str(binary),*argv],cwd=root,stdout=stream,stderr=subprocess.STDOUT,
                                   timeout=max(1,args.seconds-20))
             code=result.returncode
         except subprocess.TimeoutExpired:
             code=124
-    content=log.read_text()
+    return log.read_text(),dict(returncode=code,seconds=time.monotonic()-started,
+                log=str(log.relative_to(root)),log_sha256=control.digest(log),
+                binary=args.test_binary,binary_sha256=control.digest(binary),cache_sha256=control.digest(cache),
+                binary_args=argv)
+
+
+def parse_component(content, kind, code):
     backend=re.findall(r'^backend=(\S+)\s*$',content,re.M)
     fields = {
         'device':['scaled_error','partition_error','worst_scaled_error','diagnostic_scaled_error','partition_sum_error'],
         'exchange':['scaled_error','scri_jet_error','null_before','null_after'],
-        'scri':['projection_error','rate_error','dependent_trace_error','null','pole','clock','compatibility','max_cfl']
-    }[args.component]
+        'scri':['projection_error','rate_error','dependent_trace_error','null','pole','clock','compatibility','max_cfl'],
+        'algebraic':['rotation_covariance_max','scri_null_before_reclosure','after','ghost',
+                     'D_compatibility','null_time_derivative']
+    }[kind]
     maxima={}
     for key in fields:
         values=[float(v) for v in re.findall(r'(?<![A-Za-z0-9_])'+key+r'=([^\s;]+)',content)]
@@ -145,15 +153,69 @@ def component(args, rank, root, checked):
     marker={
         'device':'CPU/device and partition parity passed on',
         'exchange':'CPU/device halo, off-node null closure and sparse scri donor parity passed',
-        'scri':'CPU/device scri projection, native rates, D independence and partition parity passed on'
-    }[args.component]
-    independent=(args.component!='scri' or re.findall(r'D_input_and_order_independent=(\d+)',content)==['1','1'])
+        'scri':'CPU/device scri projection, native rates, D independence and partition parity passed on',
+        'algebraic':'algebraic projection: tensors, rejection, device, unchanged fields, compensation, scri passed'
+    }[kind]
+    independent=(kind!='scri' or re.findall(r'D_input_and_order_independent=(\d+)',content)==['1','1'])
     passed=code==0 and backend==['SYCL'] and marker in content and independent
     return dict(passed=passed,gpu_cpu_parity=passed,backend=backend[0] if len(backend)==1 else None,
-                returncode=code,seconds=time.monotonic()-started,maxima=maxima,
-                dependent_input_and_order_independent=independent if args.component=='scri' else None,
-                log=str(log.relative_to(root)),log_sha256=control.digest(log),
-                binary=args.test_binary,binary_sha256=control.digest(binary),cache_sha256=control.digest(cache))
+                maxima=maxima,dependent_input_and_order_independent=independent if kind=='scri' else None)
+
+
+def component(args, rank, root, checked):
+    content,execution=run_binary(args,rank,root,checked,[])
+    return dict(execution,**parse_component(content,args.component,execution['returncode']))
+
+
+def parse_benchmark(content, rank, sampling, code):
+    backend=re.findall(r'^backend=(\S+)\s*$',content,re.M)
+    variants=re.findall(r'^sampling=(\S+)\s*$',content,re.M)
+    records=re.findall(r'^benchmark_repeats=.*$',content,re.M)
+    if len(records)!=1:
+        raise ValueError('Benchmark needs exactly one metric record')
+    tokens=records[0].split()
+    if any(token.count('=')!=1 for token in tokens):
+        raise ValueError('Malformed benchmark metric record')
+    fields=dict(token.split('=') for token in tokens)
+    if len(fields)!=len(tokens):
+        raise ValueError('Duplicate benchmark metric')
+    integers=['benchmark_repeats','n','rank','ranks','first_row','owned_rows','sampled_fields','staged_jet_bytes']
+    for key in integers:
+        if not re.fullmatch(r'[0-9]+',fields.get(key,'')):
+            raise ValueError('Missing/invalid benchmark integer '+key)
+        fields[key]=int(fields[key])
+    expected=dict(benchmark_repeats=20,n=16,rank=rank,ranks=12,first_row=128*rank,
+                  owned_rows=128,sampled_fields=25)
+    if any(fields[key]!=value for key,value in expected.items()):
+        raise ValueError('Benchmark does not cover its owned 128-row partition')
+    if fields.get('rank_source') not in ['PMI_RANK','OMPI_COMM_WORLD_RANK','MPI_LOCALRANKID','PALS_LOCAL_RANKID'] \
+            or fields.get('size_source')!='argument':
+        raise ValueError('Benchmark needs launcher rank identity and explicit 12-rank size')
+    if ((sampling=='inline' and fields['staged_jet_bytes']!=0)
+            or (sampling=='staged' and fields['staged_jet_bytes']<=0)):
+        raise ValueError('Benchmark sample storage disagrees with its variant')
+    for key in ['evaluate_seconds_total','evaluate_seconds_mean','rhs_norm2','surface_norm2','repeat_error']:
+        try:
+            fields[key]=float(fields[key])
+        except (KeyError,ValueError):
+            raise ValueError('Missing/invalid benchmark metric '+key)
+        if not math.isfinite(fields[key]) or fields[key]<0:
+            raise ValueError('Nonfinite/negative benchmark metric '+key)
+    if min(fields['evaluate_seconds_total'],fields['evaluate_seconds_mean'])<=0 \
+            or not math.isclose(fields['evaluate_seconds_mean'],fields['evaluate_seconds_total']/20,rel_tol=1e-12):
+        raise ValueError('Benchmark timing is nonpositive or inconsistent')
+    if fields['repeat_error']!=0:
+        raise ValueError('Repeated benchmark evaluation changed outputs')
+    passed=(code==0 and backend==['SYCL'] and variants==[sampling]
+            and content.splitlines().count('Scri repeated-Evaluate benchmark completed')==1)
+    return dict(passed=passed,benchmark_passed=passed,backend=backend[0] if len(backend)==1 else None,
+                sampling=variants[0] if len(variants)==1 else None,metrics=fields)
+
+
+def benchmark(args, rank, root, checked):
+    argv=['--benchmark-repeats','20','--benchmark-n','16','--benchmark-ranks','12']
+    content,execution=run_binary(args,rank,root,checked,argv)
+    return dict(execution,**parse_benchmark(content,rank,args.sampling,execution['returncode']))
 
 
 def restart(args, rank, root, checked):
@@ -219,10 +281,11 @@ def run(args):
             listener=socket.socket(socket.AF_UNIX,socket.SOCK_STREAM)
             listener.bind(address);listener.listen(12)
         try:
-            result=component(args,rank,root,checked) if args.mode=='component' else restart(args,rank,root,checked)
+            operation={'component':component,'benchmark':benchmark,'restart':restart}[args.mode]
+            result=operation(args,rank,root,checked)
         except Exception as error:
             result=dict(passed=False,error=f'{type(error).__name__}: {error}')
-            if args.mode=='component':
+            if args.mode in ['component','benchmark']:
                 log=control.local_path(root,args.output_prefix+f'.rank-{rank:02d}.log')
                 if log.is_file():
                     result.update(log=str(log.relative_to(root)),log_sha256=control.digest(log))
@@ -258,6 +321,18 @@ def run(args):
             report['component']=args.component
             report['maxima']={key:max(r['result'].get('maxima',{}).get(key,0) for r in rows)
                               for key in set().union(*(r['result'].get('maxima',{}).keys() for r in rows))}
+        elif args.mode=='benchmark':
+            report.update(benchmark_passed=passed,sampling=args.sampling,
+                          timing_scope='per-rank repeated Evaluate; no inter-rank start barrier',
+                          benchmark_config=dict(n=16,ranks=12,repeats=20,owned_rows_per_rank=128,
+                                                total_rows=1536,sampled_fields=25))
+            metrics=[r['result'].get('metrics') for r in rows]
+            if all(m is not None for m in metrics):
+                report['timing']={key+suffix:operation([m[key] for m in metrics])
+                    for key in ['evaluate_seconds_total','evaluate_seconds_mean']
+                    for suffix,operation in [('_min',min),('_max',max),('_rank_mean',lambda v:math.fsum(v)/12)]}
+                report['norms']={key:math.fsum(m[key] for m in metrics) for key in ['rhs_norm2','surface_norm2']}
+                report['repeat_error']=max(m['repeat_error'] for m in metrics)
         else:
             report.update({k:v for k,v in rows[0]['result'].items() if k not in ['passed','backend']})
             report['restart_equivalence']=passed and rows[0]['result'].get('restart_equivalence',False)
@@ -287,9 +362,13 @@ def main():
     parser.add_argument('--seconds',type=int,required=True)
     sub=parser.add_subparsers(dest='mode',required=True)
     comp=sub.add_parser('component')
-    comp.add_argument('--component',choices=['device','exchange','scri'],required=True)
+    comp.add_argument('--component',choices=['device','exchange','scri','algebraic'],required=True)
     comp.add_argument('--test-binary',required=True)
     comp.add_argument('--cmake-cache',required=True)
+    bench=sub.add_parser('benchmark')
+    bench.add_argument('--sampling',choices=['staged','inline'],required=True)
+    bench.add_argument('--test-binary',required=True)
+    bench.add_argument('--cmake-cache',required=True)
     rest=sub.add_parser('restart')
     for name in ['reference','candidate','reference-report','candidate-report']:
         rest.add_argument('--'+name,required=True)

@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "job_id": "8982042.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "worker_status": "failed",
+  "case": "minkowski",
+  "n": 16,
+  "dt": 0.0005,
+  "target_coordinate_time": 1,
+  "final_accepted_time": 0.4895000000000004,
+  "accepted_steps": 979,
+  "failure": "nonpositive interpolated scri geometry",
+  "last_diagnostic_time": 0.45000000000000034,
+  "diagnostics_current": false,
+  "checkpoint_written": true,
+  "checkpoint_admitted": false,
+  "last_diagnostic_values": {
+    "state_deviation": 1.0567408911906813,
+    "H_L2": 0.00022923478433789575,
+    "M_L2": 0.02119754330825022,
+    "null_surface": 1.1102230246251504e-15,
+    "null_ghost": 1.222138904088118e-15
+  },
+  "launched_cases": [
+    "minkowski"
+  ],
+  "not_launched_cases": [
+    "puncture",
+    "pulse"
+  ],
+  "scientific_stability_pass": false,
+  "causal_attribution": "Unresolved: this history does not isolate the first growing mode or its origin.",
+  "interpretation": "Recorded null closure remains at roundoff despite growth of the equilibrium error and constraints; nullness alone does not establish stable evolution.",
+  "source_manifest_sha256": "3f367265e2e627aa770d0ae78be4fac912f4c0980a09471382cf9b295c677d7f",
+  "binary_sha256": "6e7553b556dd9c4f8b56f81eb0f43c15cf0517a0b81776320a9a6c6d3c29ccef"
+}
