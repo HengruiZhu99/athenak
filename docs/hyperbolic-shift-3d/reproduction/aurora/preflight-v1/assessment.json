@@ -1,0 +1,12 @@
+{
+  "status": "preflight_rejected",
+  "numerical_evolutions_started": false,
+  "job_id": "8981303.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "reason": "Missing explicit backend line in stale component-test binary. The old object was newer than the transferred updated source timestamp; incremental make did not recompile it.",
+  "numerical_component_exit_code": 0,
+  "worst_scaled_rhs_difference": 3.3972820822290164e-14,
+  "diagnostic_scaled_difference": 3.746669307108981e-15,
+  "unique_gpu_tiles": 12,
+  "corrective_action": "Fresh build-sycl-mpi-v4 directory; rebuild every target against unchanged frozen source before a fresh preflight plan.",
+  "source_sha256": "3f367265e2e627aa770d0ae78be4fac912f4c0980a09471382cf9b295c677d7f"
+}

@@ -1,0 +1,974 @@
+{
+  "schema": 1,
+  "reviewed": true,
+  "phase": "preflight",
+  "n": 16,
+  "low_resolution_n": 16,
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "01:00:00"
+  },
+  "storage": {
+    "limit_bytes": 5000000000,
+    "planned_new_bytes": 500000000,
+    "atomic_checkpoint_reserve_bytes": 50000000
+  },
+  "worker_seconds": 3510,
+  "output_dir": "campaigns/preflight-v1/output",
+  "commands": [
+    {
+      "name": "parity-device",
+      "kind": "check",
+      "executable": "source/tst/hyperbolic_shift_3d/aurora/preflight.py",
+      "args": [
+        "--root",
+        "/home/hzhu/hyperbolic-core-shell-20261028",
+        "--plan",
+        "campaigns/preflight-v1/plan.json",
+        "--output-prefix",
+        "campaigns/preflight-v1/output/parity-device",
+        "--seconds",
+        "@WALL_SECONDS@",
+        "component",
+        "--component",
+        "device",
+        "--test-binary",
+        "build-sycl-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_composite_device",
+        "--cmake-cache",
+        "build-sycl-mpi/CMakeCache.txt"
+      ],
+      "timeout_seconds": 400,
+      "report": "campaigns/preflight-v1/output/parity-device.report.json",
+      "artifacts": [
+        "campaigns/preflight-v1/output/parity-device.rank-00.log",
+        "campaigns/preflight-v1/output/parity-device.rank-01.log",
+        "campaigns/preflight-v1/output/parity-device.rank-02.log",
+        "campaigns/preflight-v1/output/parity-device.rank-03.log",
+        "campaigns/preflight-v1/output/parity-device.rank-04.log",
+        "campaigns/preflight-v1/output/parity-device.rank-05.log",
+        "campaigns/preflight-v1/output/parity-device.rank-06.log",
+        "campaigns/preflight-v1/output/parity-device.rank-07.log",
+        "campaigns/preflight-v1/output/parity-device.rank-08.log",
+        "campaigns/preflight-v1/output/parity-device.rank-09.log",
+        "campaigns/preflight-v1/output/parity-device.rank-10.log",
+        "campaigns/preflight-v1/output/parity-device.rank-11.log",
+        "campaigns/preflight-v1/output/parity-device.report.json"
+      ],
+      "inputs": [
+        "build-sycl-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_composite_device",
+        "build-sycl-mpi/CMakeCache.txt"
+      ],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "gpu_cpu_parity"
+          ],
+          "op": "eq",
+          "value": true
+        }
+      ]
+    },
+    {
+      "name": "parity-exchange",
+      "kind": "check",
+      "executable": "source/tst/hyperbolic_shift_3d/aurora/preflight.py",
+      "args": [
+        "--root",
+        "/home/hzhu/hyperbolic-core-shell-20261028",
+        "--plan",
+        "campaigns/preflight-v1/plan.json",
+        "--output-prefix",
+        "campaigns/preflight-v1/output/parity-exchange",
+        "--seconds",
+        "@WALL_SECONDS@",
+        "component",
+        "--component",
+        "exchange",
+        "--test-binary",
+        "build-sycl-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_composite_exchange",
+        "--cmake-cache",
+        "build-sycl-mpi/CMakeCache.txt"
+      ],
+      "timeout_seconds": 400,
+      "report": "campaigns/preflight-v1/output/parity-exchange.report.json",
+      "artifacts": [
+        "campaigns/preflight-v1/output/parity-exchange.rank-00.log",
+        "campaigns/preflight-v1/output/parity-exchange.rank-01.log",
+        "campaigns/preflight-v1/output/parity-exchange.rank-02.log",
+        "campaigns/preflight-v1/output/parity-exchange.rank-03.log",
+        "campaigns/preflight-v1/output/parity-exchange.rank-04.log",
+        "campaigns/preflight-v1/output/parity-exchange.rank-05.log",
+        "campaigns/preflight-v1/output/parity-exchange.rank-06.log",
+        "campaigns/preflight-v1/output/parity-exchange.rank-07.log",
+        "campaigns/preflight-v1/output/parity-exchange.rank-08.log",
+        "campaigns/preflight-v1/output/parity-exchange.rank-09.log",
+        "campaigns/preflight-v1/output/parity-exchange.rank-10.log",
+        "campaigns/preflight-v1/output/parity-exchange.rank-11.log",
+        "campaigns/preflight-v1/output/parity-exchange.report.json"
+      ],
+      "inputs": [
+        "build-sycl-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_composite_exchange",
+        "build-sycl-mpi/CMakeCache.txt"
+      ],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "gpu_cpu_parity"
+          ],
+          "op": "eq",
+          "value": true
+        }
+      ]
+    },
+    {
+      "name": "parity-scri",
+      "kind": "check",
+      "executable": "source/tst/hyperbolic_shift_3d/aurora/preflight.py",
+      "args": [
+        "--root",
+        "/home/hzhu/hyperbolic-core-shell-20261028",
+        "--plan",
+        "campaigns/preflight-v1/plan.json",
+        "--output-prefix",
+        "campaigns/preflight-v1/output/parity-scri",
+        "--seconds",
+        "@WALL_SECONDS@",
+        "component",
+        "--component",
+        "scri",
+        "--test-binary",
+        "build-sycl-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_scri_device",
+        "--cmake-cache",
+        "build-sycl-mpi/CMakeCache.txt"
+      ],
+      "timeout_seconds": 400,
+      "report": "campaigns/preflight-v1/output/parity-scri.report.json",
+      "artifacts": [
+        "campaigns/preflight-v1/output/parity-scri.rank-00.log",
+        "campaigns/preflight-v1/output/parity-scri.rank-01.log",
+        "campaigns/preflight-v1/output/parity-scri.rank-02.log",
+        "campaigns/preflight-v1/output/parity-scri.rank-03.log",
+        "campaigns/preflight-v1/output/parity-scri.rank-04.log",
+        "campaigns/preflight-v1/output/parity-scri.rank-05.log",
+        "campaigns/preflight-v1/output/parity-scri.rank-06.log",
+        "campaigns/preflight-v1/output/parity-scri.rank-07.log",
+        "campaigns/preflight-v1/output/parity-scri.rank-08.log",
+        "campaigns/preflight-v1/output/parity-scri.rank-09.log",
+        "campaigns/preflight-v1/output/parity-scri.rank-10.log",
+        "campaigns/preflight-v1/output/parity-scri.rank-11.log",
+        "campaigns/preflight-v1/output/parity-scri.report.json"
+      ],
+      "inputs": [
+        "build-sycl-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_scri_device",
+        "build-sycl-mpi/CMakeCache.txt"
+      ],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "gpu_cpu_parity"
+          ],
+          "op": "eq",
+          "value": true
+        }
+      ]
+    },
+    {
+      "name": "minkowski-short",
+      "kind": "minkowski",
+      "executable": "build-sycl-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi",
+      "args": [
+        "16",
+        "campaigns/preflight-v1/output/minkowski-short",
+        "minkowski",
+        "0.002",
+        ".0005",
+        "-",
+        "-",
+        "@WALL_SECONDS@",
+        "0.002"
+      ],
+      "timeout_seconds": 400,
+      "report": "campaigns/preflight-v1/output/minkowski-short.report.json",
+      "artifacts": [
+        "campaigns/preflight-v1/output/minkowski-short.history.csv",
+        "campaigns/preflight-v1/output/minkowski-short.checkpoint",
+        "campaigns/preflight-v1/output/minkowski-short.report.json"
+      ],
+      "inputs": [],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "diagnostics_current"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "min_lapse"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "min_chi"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "max_cfl"
+          ],
+          "op": "le",
+          "value": 0.5
+        },
+        {
+          "path": [
+            "t"
+          ],
+          "op": "eq",
+          "value": 0.002
+        },
+        {
+          "path": [
+            "max_state_deviation"
+          ],
+          "op": "le",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "le",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "H_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_exterior_L2"
+          ],
+          "op": "finite"
+        }
+      ]
+    },
+    {
+      "name": "pulse-half",
+      "kind": "pulse",
+      "executable": "build-sycl-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi",
+      "args": [
+        "16",
+        "campaigns/preflight-v1/output/pulse-half",
+        "pulse",
+        "0.001",
+        ".0005",
+        "-",
+        "-",
+        "@WALL_SECONDS@",
+        "0.001"
+      ],
+      "timeout_seconds": 400,
+      "report": "campaigns/preflight-v1/output/pulse-half.report.json",
+      "artifacts": [
+        "campaigns/preflight-v1/output/pulse-half.history.csv",
+        "campaigns/preflight-v1/output/pulse-half.checkpoint",
+        "campaigns/preflight-v1/output/pulse-half.report.json"
+      ],
+      "inputs": [],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "diagnostics_current"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "min_lapse"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "min_chi"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "max_cfl"
+          ],
+          "op": "le",
+          "value": 0.5
+        },
+        {
+          "path": [
+            "t"
+          ],
+          "op": "eq",
+          "value": 0.001
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "H_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_exterior_L2"
+          ],
+          "op": "finite"
+        }
+      ]
+    },
+    {
+      "name": "pulse-resumed",
+      "kind": "pulse",
+      "executable": "build-sycl-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi",
+      "args": [
+        "16",
+        "campaigns/preflight-v1/output/pulse-resumed",
+        "pulse",
+        "0.002",
+        ".0005",
+        "-",
+        "campaigns/preflight-v1/output/pulse-half.checkpoint",
+        "@WALL_SECONDS@",
+        "0.002"
+      ],
+      "timeout_seconds": 400,
+      "report": "campaigns/preflight-v1/output/pulse-resumed.report.json",
+      "artifacts": [
+        "campaigns/preflight-v1/output/pulse-resumed.history.csv",
+        "campaigns/preflight-v1/output/pulse-resumed.checkpoint",
+        "campaigns/preflight-v1/output/pulse-resumed.report.json"
+      ],
+      "inputs": [],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "diagnostics_current"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "min_lapse"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "min_chi"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "max_cfl"
+          ],
+          "op": "le",
+          "value": 0.5
+        },
+        {
+          "path": [
+            "t"
+          ],
+          "op": "eq",
+          "value": 0.002
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "H_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_exterior_L2"
+          ],
+          "op": "finite"
+        }
+      ],
+      "generated_inputs": [
+        "campaigns/preflight-v1/output/pulse-half.checkpoint"
+      ]
+    },
+    {
+      "name": "pulse-direct",
+      "kind": "pulse",
+      "executable": "build-sycl-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi",
+      "args": [
+        "16",
+        "campaigns/preflight-v1/output/pulse-direct",
+        "pulse",
+        "0.002",
+        ".0005",
+        "-",
+        "-",
+        "@WALL_SECONDS@",
+        "0.002"
+      ],
+      "timeout_seconds": 400,
+      "report": "campaigns/preflight-v1/output/pulse-direct.report.json",
+      "artifacts": [
+        "campaigns/preflight-v1/output/pulse-direct.history.csv",
+        "campaigns/preflight-v1/output/pulse-direct.checkpoint",
+        "campaigns/preflight-v1/output/pulse-direct.report.json"
+      ],
+      "inputs": [],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "diagnostics_current"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "min_lapse"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "min_chi"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "max_cfl"
+          ],
+          "op": "le",
+          "value": 0.5
+        },
+        {
+          "path": [
+            "t"
+          ],
+          "op": "eq",
+          "value": 0.002
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "H_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_exterior_L2"
+          ],
+          "op": "finite"
+        }
+      ]
+    },
+    {
+      "name": "restart-audit",
+      "kind": "check",
+      "executable": "source/tst/hyperbolic_shift_3d/aurora/preflight.py",
+      "args": [
+        "--root",
+        "/home/hzhu/hyperbolic-core-shell-20261028",
+        "--plan",
+        "campaigns/preflight-v1/plan.json",
+        "--output-prefix",
+        "campaigns/preflight-v1/output/restart-audit",
+        "--seconds",
+        "@WALL_SECONDS@",
+        "restart",
+        "--reference",
+        "campaigns/preflight-v1/output/pulse-direct.checkpoint",
+        "--candidate",
+        "campaigns/preflight-v1/output/pulse-resumed.checkpoint",
+        "--reference-report",
+        "campaigns/preflight-v1/output/pulse-direct.report.json",
+        "--candidate-report",
+        "campaigns/preflight-v1/output/pulse-resumed.report.json"
+      ],
+      "timeout_seconds": 150,
+      "report": "campaigns/preflight-v1/output/restart-audit.report.json",
+      "artifacts": [
+        "campaigns/preflight-v1/output/restart-audit.report.json"
+      ],
+      "inputs": [],
+      "generated_inputs": [
+        "campaigns/preflight-v1/output/pulse-direct.checkpoint",
+        "campaigns/preflight-v1/output/pulse-resumed.checkpoint",
+        "campaigns/preflight-v1/output/pulse-direct.report.json",
+        "campaigns/preflight-v1/output/pulse-resumed.report.json"
+      ],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "restart_equivalence"
+          ],
+          "op": "eq",
+          "value": true
+        }
+      ]
+    },
+    {
+      "name": "puncture-short",
+      "kind": "puncture",
+      "executable": "build-sycl-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi",
+      "args": [
+        "16",
+        "campaigns/preflight-v1/output/puncture-short",
+        "puncture",
+        "0.002",
+        ".0005",
+        "inputs/puncture-n16.txt",
+        "-",
+        "@WALL_SECONDS@",
+        "0.002"
+      ],
+      "timeout_seconds": 400,
+      "report": "campaigns/preflight-v1/output/puncture-short.report.json",
+      "artifacts": [
+        "campaigns/preflight-v1/output/puncture-short.history.csv",
+        "campaigns/preflight-v1/output/puncture-short.checkpoint",
+        "campaigns/preflight-v1/output/puncture-short.checkpoint.horizon-seed.txt",
+        "campaigns/preflight-v1/output/puncture-short.fastflow.horizon_summary_0.txt",
+        "campaigns/preflight-v1/output/puncture-short.fastflow.horizon_shape_0.txt",
+        "campaigns/preflight-v1/output/puncture-short.report.json"
+      ],
+      "inputs": [
+        "inputs/puncture-n16.txt"
+      ],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "diagnostics_current"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "min_lapse"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "min_chi"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "max_cfl"
+          ],
+          "op": "le",
+          "value": 0.5
+        },
+        {
+          "path": [
+            "t"
+          ],
+          "op": "eq",
+          "value": 0.002
+        },
+        {
+          "path": [
+            "horizon_found"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "horizon_expansion_rms"
+          ],
+          "op": "le",
+          "value": 0.001
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "H_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_exterior_L2"
+          ],
+          "op": "finite"
+        }
+      ]
+    }
+  ],
+  "notes": "Preflight requires completed short cases; target-time mismatch is an admission failure even if a healthy walltime checkpoint was written. Such a result is not classified as a numerical blow-up. Full stability has not been established."
+}

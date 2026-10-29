@@ -14,6 +14,10 @@ Local Kokkos-Serial verification establishes bitwise agreement of volume, scri a
 
 The existing fast-flow horizon finder now accepts physical Cartesian geometry reconstructed from hyperboloidal fields, with patch-aware sampling. It has analytic Schwarzschild, displaced-horizon and actual puncture-grid tests. Expansion residuals and finite-resolution acceptance thresholds are recorded explicitly; an unfound horizon leaves exterior norms unavailable. See [horizon validation](../horizon.md).
 
+The first Aurora allocation, job `8981303`, verified twelve distinct GPU tiles and the component arithmetic check measured a maximum scaled CPU/SYCL difference of `3.40e-14`. The preflight rejected the job because the test binary lacked its required backend identifier: an older object survived source extraction with preserved timestamps. No physical evolution ran. A fresh build directory is required for each exported scientific snapshot; a source hash alone does not prove that an incrementally reused object was recompiled. The [recorded outcome](aurora/preflight-v1/assessment.json) remains a preflight rejection.
+
+The original J-disabled, bulk-mu=4 1D control is confirmed to have completed coordinate `33.3333984375 = 100.0001953125 M`. Its N513/N1025 continuation chains and frozen-source identities were checked. A [portable N513 time series](original-1d-reference/history.csv) and [provenance](original-1d-reference/provenance.json) preserve the matching horizon/exterior-constraint reference. Late gauge settling and uniform puncture convergence were not established by that original control.
+
 ## Archived pause point
 
 At the previous user-requested pause, no evolution processes remained. Changes were local and uncommitted on `codex/hyperbolic-core-shell` and had not been pushed. See the [paused overview](paused-overview.png), [recorded summary](paused-summary.json), [duration comparison](duration-comparison-v2/summary.json), and [three-resolution pulse comparison](pulse-comparison-v3/summary.json).

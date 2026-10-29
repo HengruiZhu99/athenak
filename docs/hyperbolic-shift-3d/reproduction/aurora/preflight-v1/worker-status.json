@@ -1,0 +1,261 @@
+{
+  "schema": 1,
+  "status": "failed",
+  "started": "2026-10-29T01:59:29.181583+00:00",
+  "job_id": "8981303.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "launcher_host": "x4613c2s1b0n0",
+  "allocation_nodes": [
+    "x4613c2s1b0n0.hsn.cm.aurora.alcf.anl.gov"
+  ],
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "01:00:00"
+  },
+  "source_manifest_sha256": "3f367265e2e627aa770d0ae78be4fac912f4c0980a09471382cf9b295c677d7f",
+  "binaries": {
+    "source/tst/hyperbolic_shift_3d/aurora/preflight.py": "46eb17d2a804989708643371524dbd867b8073ff3e32a9ffbd858adf405841f1",
+    "build-sycl-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi": "17689e5d5877310c34039d53ac64b2d22271987f180f788e0cb9b7e0b463bcf4"
+  },
+  "plan_sha256": "533e72b4a59a4d414157476e9b65a366f1e9c5299859b1f0d099cf3c91e2d12f",
+  "phase": "preflight",
+  "n": 16,
+  "cases": [
+    {
+      "name": "parity-device",
+      "kind": "check",
+      "started": "2026-10-29T01:59:33.680556+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/source/tst/hyperbolic_shift_3d/aurora/preflight.py",
+        "--root",
+        "/home/hzhu/hyperbolic-core-shell-20261028",
+        "--plan",
+        "campaigns/preflight-v1/plan.json",
+        "--output-prefix",
+        "campaigns/preflight-v1/output/parity-device",
+        "--seconds",
+        "370",
+        "component",
+        "--component",
+        "device",
+        "--test-binary",
+        "build-sycl-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_composite_device",
+        "--cmake-cache",
+        "build-sycl-mpi/CMakeCache.txt"
+      ],
+      "generated_inputs": {},
+      "returncode": 1,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 3.329360216972418,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "failed",
+          "passed": false
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": null,
+          "passed": false
+        },
+        {
+          "check": {
+            "path": [
+              "gpu_cpu_parity"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": false,
+          "passed": false
+        }
+      ],
+      "report_status": "failed",
+      "status": "failed",
+      "artifacts": {
+        "campaigns/preflight-v1/output/parity-device.report.json": {
+          "sha256": "629561fde933f99254aa61e3a913a7bccec640e4046395dd92c17bf93c413e94",
+          "bytes": 13726
+        },
+        "campaigns/preflight-v1/output/parity-device.rank-00.log": {
+          "sha256": "082004c4d9448bdc0899accd3bf211ae78a60b8ee1d026f8db4a1b66c52bdd08",
+          "bytes": 850
+        },
+        "campaigns/preflight-v1/output/parity-device.rank-01.log": {
+          "sha256": "082004c4d9448bdc0899accd3bf211ae78a60b8ee1d026f8db4a1b66c52bdd08",
+          "bytes": 850
+        },
+        "campaigns/preflight-v1/output/parity-device.rank-02.log": {
+          "sha256": "082004c4d9448bdc0899accd3bf211ae78a60b8ee1d026f8db4a1b66c52bdd08",
+          "bytes": 850
+        },
+        "campaigns/preflight-v1/output/parity-device.rank-03.log": {
+          "sha256": "082004c4d9448bdc0899accd3bf211ae78a60b8ee1d026f8db4a1b66c52bdd08",
+          "bytes": 850
+        },
+        "campaigns/preflight-v1/output/parity-device.rank-04.log": {
+          "sha256": "082004c4d9448bdc0899accd3bf211ae78a60b8ee1d026f8db4a1b66c52bdd08",
+          "bytes": 850
+        },
+        "campaigns/preflight-v1/output/parity-device.rank-05.log": {
+          "sha256": "082004c4d9448bdc0899accd3bf211ae78a60b8ee1d026f8db4a1b66c52bdd08",
+          "bytes": 850
+        },
+        "campaigns/preflight-v1/output/parity-device.rank-06.log": {
+          "sha256": "082004c4d9448bdc0899accd3bf211ae78a60b8ee1d026f8db4a1b66c52bdd08",
+          "bytes": 850
+        },
+        "campaigns/preflight-v1/output/parity-device.rank-07.log": {
+          "sha256": "082004c4d9448bdc0899accd3bf211ae78a60b8ee1d026f8db4a1b66c52bdd08",
+          "bytes": 850
+        },
+        "campaigns/preflight-v1/output/parity-device.rank-08.log": {
+          "sha256": "082004c4d9448bdc0899accd3bf211ae78a60b8ee1d026f8db4a1b66c52bdd08",
+          "bytes": 850
+        },
+        "campaigns/preflight-v1/output/parity-device.rank-09.log": {
+          "sha256": "082004c4d9448bdc0899accd3bf211ae78a60b8ee1d026f8db4a1b66c52bdd08",
+          "bytes": 850
+        },
+        "campaigns/preflight-v1/output/parity-device.rank-10.log": {
+          "sha256": "082004c4d9448bdc0899accd3bf211ae78a60b8ee1d026f8db4a1b66c52bdd08",
+          "bytes": 850
+        },
+        "campaigns/preflight-v1/output/parity-device.rank-11.log": {
+          "sha256": "082004c4d9448bdc0899accd3bf211ae78a60b8ee1d026f8db4a1b66c52bdd08",
+          "bytes": 850
+        }
+      },
+      "finished": "2026-10-29T01:59:41.176318+00:00"
+    }
+  ],
+  "storage_at_start": {
+    "bytes": 114102784,
+    "entries": 3533,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 50000000,
+    "planned_bytes": 500000000,
+    "headroom_bytes": 4335897216
+  },
+  "affinity": {
+    "returncode": 0,
+    "timed_out": false,
+    "storage_error": null,
+    "elapsed_seconds": 0.32069049900746904,
+    "records": [
+      {
+        "host": "x4613c2s1b0n0",
+        "rank": 5,
+        "mask": "2.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4613c2s1b0n0",
+        "rank": 1,
+        "mask": "0.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4613c2s1b0n0",
+        "rank": 2,
+        "mask": "1.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4613c2s1b0n0",
+        "rank": 0,
+        "mask": "0.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4613c2s1b0n0",
+        "rank": 3,
+        "mask": "1.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4613c2s1b0n0",
+        "rank": 4,
+        "mask": "2.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4613c2s1b0n0",
+        "rank": 8,
+        "mask": "4.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4613c2s1b0n0",
+        "rank": 9,
+        "mask": "4.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4613c2s1b0n0",
+        "rank": 11,
+        "mask": "5.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4613c2s1b0n0",
+        "rank": 6,
+        "mask": "3.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4613c2s1b0n0",
+        "rank": 7,
+        "mask": "3.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4613c2s1b0n0",
+        "rank": 10,
+        "mask": "5.0",
+        "hierarchy": "COMPOSITE"
+      }
+    ],
+    "passed": true
+  },
+  "finished": "2026-10-29T01:59:41.176333+00:00",
+  "elapsed_seconds": 11.99475831000018,
+  "storage_at_finish": {
+    "bytes": 114136237,
+    "entries": 3550
+  }
+}
