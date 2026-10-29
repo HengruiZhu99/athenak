@@ -1,0 +1,72 @@
+{
+  "schema": 1,
+  "scope": "Small-record packaging verification; immutable full-payload verification.json retained separately.",
+  "copied_originals": [
+    {
+      "path": "plan.json",
+      "sha256": "56ef8f149efb2a86b1ffea6ae241aff4d51cf8728567bc9de7e441a5dfbaa04a",
+      "matches_download": true
+    },
+    {
+      "path": "binding.json",
+      "sha256": "ed9d4e73b0855bd5845685866cddaaccb985bfd6e332725930518e45f16e0fe2",
+      "matches_download": true
+    },
+    {
+      "path": "worker-status.json",
+      "sha256": "dd56cb37256d8c3e36a21b415868e8e1fdd0a6f8da4dbd2161ab78a8efc85fc0",
+      "matches_download": true
+    },
+    {
+      "path": "run_debug.pbs",
+      "sha256": "8a2fda1588d4522f769b9c6889d35068d0844e095b4ae88e7afd45b6b479ef43",
+      "matches_download": true
+    },
+    {
+      "path": "verification.json",
+      "sha256": "341ae5d448d877848073f94b5f54aeb602205c015671b0f1d755a2d5606525c0",
+      "matches_download": true
+    },
+    {
+      "path": "output/affinity.log",
+      "sha256": "c6a263bac47be979fa69aa829dc516c39dcca25024787c62fd213d11e545311f",
+      "matches_download": true
+    },
+    {
+      "path": "output/minkowski-n32.log",
+      "sha256": "324c987a330f34403e705784b08f71fafc5bb0e6216571a7ad254e3b4f8aaf67",
+      "matches_download": true
+    },
+    {
+      "path": "output/minkowski-n32.report.json",
+      "sha256": "01d12b097ef8800cd4fc69cc9ccd330fcea35245da9d2cd74e5036a291059e6d",
+      "matches_download": true
+    },
+    {
+      "path": "output/minkowski-n32.history.csv",
+      "sha256": "a8185df6a2bc7f969c5de0e290354235a2e376e29fbf7665714d6167fbc8d7af",
+      "matches_download": true
+    }
+  ],
+  "retained_worker_artifacts_rechecked": [
+    {
+      "path": "output/minkowski-n32.report.json",
+      "sha256": "01d12b097ef8800cd4fc69cc9ccd330fcea35245da9d2cd74e5036a291059e6d",
+      "bytes": 1770,
+      "matches_full_payload_verification": true
+    },
+    {
+      "path": "output/minkowski-n32.history.csv",
+      "sha256": "a8185df6a2bc7f969c5de0e290354235a2e376e29fbf7665714d6167fbc8d7af",
+      "bytes": 4858,
+      "matches_full_payload_verification": true
+    }
+  ],
+  "all_three_worker_artifact_records_match_full_payload_verification": true,
+  "full_checkpoint_payload_rehashed_during_packaging": false,
+  "full_checkpoint_payload_retained": false,
+  "plan_binding_matches": true,
+  "pbs_binding_matches": true,
+  "worker_source_binary_binding_matches": true,
+  "root_full_payload_verification_sha256": "341ae5d448d877848073f94b5f54aeb602205c015671b0f1d755a2d5606525c0"
+}

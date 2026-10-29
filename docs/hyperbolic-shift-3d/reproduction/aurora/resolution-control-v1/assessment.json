@@ -1,0 +1,98 @@
+{
+  "schema": 1,
+  "case": "minkowski-n32",
+  "native_status": "checkpointed",
+  "native_returncode": 0,
+  "worker_status": "failed",
+  "worker_case_status": "failed",
+  "job_id": "8982298.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "n": 32,
+  "active_cells": 622592,
+  "mpi_size": 12,
+  "backend": "SYCL",
+  "dt": 0.00025,
+  "reached_coordinate_time": 0.23225000000000018,
+  "requested_coordinate_time": 0.6,
+  "accepted_steps": 929,
+  "diagnostic_time": 0.23225000000000018,
+  "diagnostics_current": true,
+  "native_checkpoint_admitted": true,
+  "native_checkpoint_schema": "HYP3D_MPI_V1",
+  "scientific_gates_passed": false,
+  "restart_admission": false,
+  "convergence_admission": false,
+  "failed_worker_checks": [
+    {
+      "check": {
+        "path": [
+          "status"
+        ],
+        "op": "eq",
+        "value": "completed"
+      },
+      "observed": "checkpointed",
+      "passed": false
+    },
+    {
+      "check": {
+        "path": [
+          "max_state_deviation"
+        ],
+        "op": "le",
+        "value": 1e-08
+      },
+      "observed": 10.181649497204766,
+      "passed": false
+    },
+    {
+      "check": {
+        "path": [
+          "H_L2"
+        ],
+        "op": "le",
+        "value": 1e-07
+      },
+      "observed": 0.0010441964402529292,
+      "passed": false
+    },
+    {
+      "check": {
+        "path": [
+          "M_L2"
+        ],
+        "op": "le",
+        "value": 1e-07
+      },
+      "observed": 0.1140526364852746,
+      "passed": false
+    }
+  ],
+  "diagnostics": {
+    "max_state_deviation": 10.181649497204766,
+    "H_L2": 0.0010441964402529292,
+    "M_L2": 0.1140526364852746,
+    "max_null_surface": 1.5543122299380149e-15,
+    "max_null_ghost": 1.5543122344750829e-15,
+    "min_chi": 0.9379797661025133,
+    "min_lapse": 0.5000228881835938,
+    "max_cfl": 0.33838333480054245
+  },
+  "launched_cases": [
+    "minkowski-n32"
+  ],
+  "unstarted_cases": [
+    "minkowski-n24",
+    "minkowski-n16-half-dt"
+  ],
+  "followup_campaign": "resolution-control-v2",
+  "followup_job_id": "8982461",
+  "source_manifest_sha256": "3f367265e2e627aa770d0ae78be4fac912f4c0980a09471382cf9b295c677d7f",
+  "binary_sha256": "6e7553b556dd9c4f8b56f81eb0f43c15cf0517a0b81776320a9a6c6d3c29ccef",
+  "interpretation": [
+    "The executable made a bounded checkpoint before reaching t=0.6; it did not report numerical geometry rejection.",
+    "Native admitted=1 describes the saved native state; it does not override failed worker state/constraint thresholds.",
+    "No restart is admitted by this package, and no completed stability or convergence result is claimed.",
+    "n24 and n16 half-timestep were not started in this allocation; their separate follow-up data are outside this package.",
+    "Combined resolution/growth/throughput conclusions await the remaining controls."
+  ]
+}

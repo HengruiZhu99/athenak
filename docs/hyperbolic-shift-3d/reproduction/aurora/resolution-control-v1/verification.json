@@ -1,0 +1,35 @@
+{
+  "scope": "Read-only full-payload verification. Native checkpoint admitted flag does not override failed worker scientific checks; no restart.",
+  "artifacts": [
+    {
+      "path": "campaigns/resolution-control-v1/output/minkowski-n32.report.json",
+      "sha256": "01d12b097ef8800cd4fc69cc9ccd330fcea35245da9d2cd74e5036a291059e6d",
+      "bytes": 1770,
+      "verified": true
+    },
+    {
+      "path": "campaigns/resolution-control-v1/output/minkowski-n32.history.csv",
+      "sha256": "a8185df6a2bc7f969c5de0e290354235a2e376e29fbf7665714d6167fbc8d7af",
+      "bytes": 4858,
+      "verified": true
+    },
+    {
+      "path": "campaigns/resolution-control-v1/output/minkowski-n32.checkpoint",
+      "sha256": "4a211b376f5f4e4c63f1c336f31ac17753ececed9818160155b600dac814f448",
+      "bytes": 311853128,
+      "verified": true
+    }
+  ],
+  "checkpoint_header": {
+    "magic": "HYP3D_MPI_V1",
+    "n": 32,
+    "nf": 31,
+    "kind": 0,
+    "admitted": 1,
+    "cells": 622592,
+    "surface_doubles": 190464,
+    "steps": 929,
+    "t": 0.23225000000000018,
+    "dt": 0.00025
+  }
+}
