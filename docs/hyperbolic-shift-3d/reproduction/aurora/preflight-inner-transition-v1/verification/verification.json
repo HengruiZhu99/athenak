@@ -1,0 +1,609 @@
+{
+  "passed": true,
+  "admission_written": false,
+  "issues": [],
+  "cases": [
+    {
+      "name": "parity-inner-transition",
+      "status": "passed",
+      "checks_recomputed": 4,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "component": {
+        "component": "inner_transition_device",
+        "ranks_verified": 12,
+        "maxima": {
+          "cpu_pole_error": 5.669989031061851e-16,
+          "cpu_rate_error": 7.899374949090663e-14,
+          "cpu_trace_error": 1.9270155682866604e-14,
+          "partition_error": 0,
+          "finite_D_error": 0,
+          "null": 1.1101861976998643e-15,
+          "compatibility": 2.242265617971584e-17,
+          "cpu_bulk_error": 3.3614524843258325e-14
+        }
+      }
+    },
+    {
+      "name": "minkowski-short",
+      "status": "passed",
+      "checks_recomputed": 33,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V7",
+        "n": 16,
+        "nf": 31,
+        "kind": 0,
+        "admitted": true,
+        "cells": 77824,
+        "surface_size": 47616,
+        "steps": 4,
+        "time": 0.002,
+        "dt": 0.0005,
+        "header_bytes": 104,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "80c8e42ff4c0972dd21763c0e02bde5f2613023f3ddad89d2c9f4d72946b0746",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 2412544,
+            "sha256": "3d52bd9cb5774dfbe0985159fcc0d800ba91099506929efa2d23d4d8c6b7f070"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 2412544,
+            "sha256": "b07262c914c86d61ece8fd4f4ecef6ae07ae27526bc8df3ba4315045162069fe"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "8f0ee15937736e96f931232b0386cb916fca94be6646256dd5d7e6910d05ea33"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "4893884e8c668b31490a76d2b921cd674e4e56ab034e998324d8e0a2c7d4b225"
+          }
+        ],
+        "bytes": 39362664,
+        "sha256": "91ea3757c9a2a546136192b3573c07ab85b284971ee280aed31e5db44a12b625",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition"
+      }
+    },
+    {
+      "name": "pulse-half",
+      "status": "passed",
+      "checks_recomputed": 31,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V7",
+        "n": 16,
+        "nf": 31,
+        "kind": 1,
+        "admitted": true,
+        "cells": 77824,
+        "surface_size": 47616,
+        "steps": 2,
+        "time": 0.001,
+        "dt": 0.0005,
+        "header_bytes": 104,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "b37b6829d08abfce12f6266ea238c6bd16c8fc17907bb0ef3f8040b9f285db00",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 2412544,
+            "sha256": "2cfc3639c981c0646ab8fc1db71987fb6769b9f438bec6ad0e18b68071cfe17f"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 2412544,
+            "sha256": "d8f6c619cbd993f5dc48f180478efefd6ff272002cca482f4fc101b6e3300747"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "9fb33eb7ee7acade8442fc0182e3a439446cee870116f9f9f1feb860f800b825"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "748d1143f5eeef1e7733f758891d37634c5d1d5778a5a66432d223d71a165660"
+          }
+        ],
+        "bytes": 39362664,
+        "sha256": "a886a4cbe998eee09502f2516edc58e0b2c9eaa7628e9d32f68a63ecde8bf522",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition"
+      }
+    },
+    {
+      "name": "pulse-resumed",
+      "status": "passed",
+      "checks_recomputed": 31,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V7",
+        "n": 16,
+        "nf": 31,
+        "kind": 1,
+        "admitted": true,
+        "cells": 77824,
+        "surface_size": 47616,
+        "steps": 4,
+        "time": 0.002,
+        "dt": 0.0005,
+        "header_bytes": 104,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "8e1c614a3a75bec7cfc020f4ba9030514b4a59e4c11c53013e21a7aa8f590903",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 2412544,
+            "sha256": "123fc53425aea07b5757e89e0b0aadd3731e175780870d2f1864829668a9835d"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 2412544,
+            "sha256": "05ad9f033a6e8797ae8528f513f5c1cfb98f9ea6f8c7ce5ec0f668470bb3a177"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "816cde61ad4da3b492b8fb2dc6cf0abf437d21ce2d2c38652b48f624b12fdc6b"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "a300848f178129c22d082afe5b889651348dd40fd448c2259420a6862dbdacce"
+          }
+        ],
+        "bytes": 39362664,
+        "sha256": "98e38bd3b816ac34fbb6f50ddd9442a2e4ffea3edb7e3a83d5fa39e1b717c4c3",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition"
+      }
+    },
+    {
+      "name": "pulse-direct",
+      "status": "passed",
+      "checks_recomputed": 31,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V7",
+        "n": 16,
+        "nf": 31,
+        "kind": 1,
+        "admitted": true,
+        "cells": 77824,
+        "surface_size": 47616,
+        "steps": 4,
+        "time": 0.002,
+        "dt": 0.0005,
+        "header_bytes": 104,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "8e1c614a3a75bec7cfc020f4ba9030514b4a59e4c11c53013e21a7aa8f590903",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 2412544,
+            "sha256": "123fc53425aea07b5757e89e0b0aadd3731e175780870d2f1864829668a9835d"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 2412544,
+            "sha256": "05ad9f033a6e8797ae8528f513f5c1cfb98f9ea6f8c7ce5ec0f668470bb3a177"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "816cde61ad4da3b492b8fb2dc6cf0abf437d21ce2d2c38652b48f624b12fdc6b"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "a300848f178129c22d082afe5b889651348dd40fd448c2259420a6862dbdacce"
+          }
+        ],
+        "bytes": 39362664,
+        "sha256": "98e38bd3b816ac34fbb6f50ddd9442a2e4ffea3edb7e3a83d5fa39e1b717c4c3",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition"
+      }
+    },
+    {
+      "name": "restart-audit",
+      "status": "passed",
+      "checks_recomputed": 15,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": []
+    },
+    {
+      "name": "puncture-short",
+      "status": "passed",
+      "checks_recomputed": 39,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V7",
+        "n": 16,
+        "nf": 31,
+        "kind": 2,
+        "admitted": true,
+        "cells": 77824,
+        "surface_size": 47616,
+        "steps": 4,
+        "time": 0.002,
+        "dt": 0.0005,
+        "header_bytes": 104,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "2b049028299538aa4181b9acf3d0aaf76027d17c4f64d98612cddd3c82f43b84",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 2412544,
+            "sha256": "861f329e4c4f58038849ca5383365ff6406c4f5b136bb85ae1a0ae3d4b0568f7"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 2412544,
+            "sha256": "976078d5d942768ceef93e0ca8d56cab64348911aa0f93fe05bdf8cc049824f4"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "8310eb7bfdbcbd1c7dffb4fab18198562aab59b0fd452ab97accd94e994ce811"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "dd318468523d397427c80f827aece874ea298390bdba1676da2de53ead7259b6"
+          }
+        ],
+        "bytes": 39362664,
+        "sha256": "8c2718f46c0f85d4523e62ba82eb28b94afcd606d64361b636a27d986672c9ea",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/parity-inner-transition.report.json",
+      "sha256": "8bf8d117258900f8092713b1298e855ea2546978af2ea3c29daf9bcb42966f10",
+      "bytes": 36478
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/parity-inner-transition.rank-00.log",
+      "sha256": "615fdb88987e4955dd3078ba3db61b8417073ec187c6c5879cc24680e6247099",
+      "bytes": 1133
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/parity-inner-transition.rank-01.log",
+      "sha256": "615fdb88987e4955dd3078ba3db61b8417073ec187c6c5879cc24680e6247099",
+      "bytes": 1133
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/parity-inner-transition.rank-02.log",
+      "sha256": "615fdb88987e4955dd3078ba3db61b8417073ec187c6c5879cc24680e6247099",
+      "bytes": 1133
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/parity-inner-transition.rank-03.log",
+      "sha256": "615fdb88987e4955dd3078ba3db61b8417073ec187c6c5879cc24680e6247099",
+      "bytes": 1133
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/parity-inner-transition.rank-04.log",
+      "sha256": "615fdb88987e4955dd3078ba3db61b8417073ec187c6c5879cc24680e6247099",
+      "bytes": 1133
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/parity-inner-transition.rank-05.log",
+      "sha256": "615fdb88987e4955dd3078ba3db61b8417073ec187c6c5879cc24680e6247099",
+      "bytes": 1133
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/parity-inner-transition.rank-06.log",
+      "sha256": "615fdb88987e4955dd3078ba3db61b8417073ec187c6c5879cc24680e6247099",
+      "bytes": 1133
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/parity-inner-transition.rank-07.log",
+      "sha256": "615fdb88987e4955dd3078ba3db61b8417073ec187c6c5879cc24680e6247099",
+      "bytes": 1133
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/parity-inner-transition.rank-08.log",
+      "sha256": "615fdb88987e4955dd3078ba3db61b8417073ec187c6c5879cc24680e6247099",
+      "bytes": 1133
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/parity-inner-transition.rank-09.log",
+      "sha256": "615fdb88987e4955dd3078ba3db61b8417073ec187c6c5879cc24680e6247099",
+      "bytes": 1133
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/parity-inner-transition.rank-10.log",
+      "sha256": "615fdb88987e4955dd3078ba3db61b8417073ec187c6c5879cc24680e6247099",
+      "bytes": 1133
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/parity-inner-transition.rank-11.log",
+      "sha256": "615fdb88987e4955dd3078ba3db61b8417073ec187c6c5879cc24680e6247099",
+      "bytes": 1133
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/parity-inner-transition.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/minkowski-short.report.json",
+      "sha256": "de33c4fc27c3eedf6b3348ddb905cbb362f65cd19b49023e8247c206179cb86a",
+      "bytes": 2927
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/minkowski-short.history.csv",
+      "sha256": "0db662891fae2d4087cdd7bcd011e63af2cf36278a4c200393e76a8f5214c270",
+      "bytes": 1299
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/minkowski-short.checkpoint",
+      "sha256": "91ea3757c9a2a546136192b3573c07ab85b284971ee280aed31e5db44a12b625",
+      "bytes": 39362664
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/minkowski-short.log",
+      "sha256": "056f0b9dfea8b0745aa0510ec15201e27ae50b6797380d64818136579d824803",
+      "bytes": 178
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/pulse-half.report.json",
+      "sha256": "c385aa03b1e53698b8b2d900a0b01362fa78c9f5e3c889c1e903cb4088b590f2",
+      "bytes": 2929
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/pulse-half.history.csv",
+      "sha256": "6b6ec483ff33c88a4698a04c48f9999e6d17ef560afc71982fb229fa6a7ab642",
+      "bytes": 1339
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/pulse-half.checkpoint",
+      "sha256": "a886a4cbe998eee09502f2516edc58e0b2c9eaa7628e9d32f68a63ecde8bf522",
+      "bytes": 39362664
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/pulse-half.log",
+      "sha256": "8384259c455b20e6284344bc4beab804f4c4180df4266b3f383a65bf98772477",
+      "bytes": 178
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/pulse-resumed.report.json",
+      "sha256": "ef33d9d95dd1b581832785b2e9b65a7004b0946961b035a45cceae17ea108cf8",
+      "bytes": 2941
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/pulse-resumed.history.csv",
+      "sha256": "68979554f07081f662e1f866b74c37775ff4fbaafb8c42988209d6439e15074c",
+      "bytes": 1610
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/pulse-resumed.checkpoint",
+      "sha256": "98e38bd3b816ac34fbb6f50ddd9442a2e4ffea3edb7e3a83d5fa39e1b717c4c3",
+      "bytes": 39362664
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/pulse-resumed.log",
+      "sha256": "d208f81742a81603992c26f544dc1f34eacbe986dc0c8cf865e93838d07ccb2f",
+      "bytes": 181
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/pulse-direct.report.json",
+      "sha256": "54032faa7b5cd96ce5ceb9bbd7e5d49931bb5fb7361d60d74c8dd4c8d3976553",
+      "bytes": 2926
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/pulse-direct.history.csv",
+      "sha256": "bc37e6323b810d496a39e04d744d7a6ab0f5bda57c3431947299ba543e2b3f07",
+      "bytes": 1336
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/pulse-direct.checkpoint",
+      "sha256": "98e38bd3b816ac34fbb6f50ddd9442a2e4ffea3edb7e3a83d5fa39e1b717c4c3",
+      "bytes": 39362664
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/pulse-direct.log",
+      "sha256": "f358e2dfa403758bf19c95bfb72cf962bcfd3ed2b46e0b59ea21b5fe3fecf567",
+      "bytes": 177
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/restart-audit.report.json",
+      "sha256": "ac7964dbd8dbd2f53dcf793bca47542ccf48efb78ca58e61338ebb4392b786ec",
+      "bytes": 4994
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/restart-audit.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/puncture-short.report.json",
+      "sha256": "62393bdb7bd2da0d001ab67f01c706440e4563725a2b9556bffba2c780926d73",
+      "bytes": 3076
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/puncture-short.history.csv",
+      "sha256": "5df897a74586d88ddec25ab5f1fd665ecf307735b405e5b2bc80c5d9ee79a2c6",
+      "bytes": 1749
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/puncture-short.checkpoint",
+      "sha256": "8c2718f46c0f85d4523e62ba82eb28b94afcd606d64361b636a27d986672c9ea",
+      "bytes": 39362664
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/puncture-short.checkpoint.horizon-seed.txt",
+      "sha256": "5e2148db792e5129edd408c984e7ac871db57a66030e5b7eee93954a8691d83b",
+      "bytes": 58
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/puncture-short.fastflow.horizon_summary_0.txt",
+      "sha256": "2f305d843f38846bd3a9ae174b6bbede17b825b8fa8fe0d0a989aae31fb4946d",
+      "bytes": 547
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/puncture-short.fastflow.horizon_shape_0.txt",
+      "sha256": "e4f126499052856dcfc2a05068fbad4aa9b8ecd4537f0eb9be675ee9558a9e95",
+      "bytes": 4598
+    },
+    {
+      "remote_path": "campaigns/preflight-inner-transition-v1/output/puncture-short.log",
+      "sha256": "ceb416956e3004ec36943f59965d3ab6e57b7a5fd4fbfd975187c49280b2e311",
+      "bytes": 175
+    }
+  ],
+  "verifier_sha256": "6a79a826041dbadbc253ea22ad29bb88fcdfdc7f3e8fc1fa2930c59878369621",
+  "source_manifest_sha256": "da9304ba17ad5a1336aef4468dc88ce375622104bac2c69cc1d3cc534abcb2a4",
+  "plan_sha256": "a2cdb0ff507a7edc632cb2ce1c226cf50cd30562a7d729e7abc537583995c7d8",
+  "scope": "Implementation/restart preflight only; no duration, convergence, AMR or nonspherical stability claim.",
+  "component_replay": "Frozen source-v14 parser replays hash-bound logs; checkpoint decoder is independent.",
+  "pins_sha256": "096e3a2eafcdcb8330244f6aa9e0be8bc580ea89495dc0dead8d31c416ed4ae3",
+  "build": {
+    "source_commit": "9022f51f26e66acafdd3190d0c33f0c1ea53a661",
+    "kokkos_pin": "6739bc623081648af9e752b616d9671527922cbf",
+    "source_manifest_sha256": "da9304ba17ad5a1336aef4468dc88ce375622104bac2c69cc1d3cc534abcb2a4",
+    "git_blob_hashes_verified": 2637,
+    "build_receipt_sha256": "f66b4d40b864f41ffce691382f5511dd4385b6c96989cf7e6f70a4f8880f1e18",
+    "cache_sha256": "4d01e12495aec62b4b74011a4f4e8431a46abaed31caf9e32cc227f4f2ba6ff5",
+    "binaries": {
+      "build-sycl-mpi-v14/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_inner_transition": "c6873ac0a8fef73b03ed272c60736f2027e342b56ca85d2bafa62605c1584eb0",
+      "build-sycl-mpi-v14/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_donor_seven": "a50b98b76273e97efec16aaf5b8db4cea044b20866dccad7b83fd9bb04cb16b6",
+      "build-sycl-mpi-v14/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_inner_transition_device": "a4d04cd370a1d1062c67768eb94f0dda851e7c3b46ec5f4cc29b41d962f7073d"
+    },
+    "records": {
+      "CMakeCache.txt": "4d01e12495aec62b4b74011a4f4e8431a46abaed31caf9e32cc227f4f2ba6ff5",
+      "build-v14.sh": "0935bd772de7d925adac527ab4a742a555891ad168a005738a9711c5495ff2af",
+      "source-v14-manifest.json": "da9304ba17ad5a1336aef4468dc88ce375622104bac2c69cc1d3cc534abcb2a4",
+      "source-v14-non-kokkos-manifest.json": "b32ad0490efe4c41cc761a3a7f6c887bff96efb5a8af28f83f41dded4ba36697",
+      "source-v14-provenance.json": "2d254cc30827e6fb2dfb10d68036a744ae262e277b84a5f64a5ed61836a82e8a",
+      "v14/build-status.json": "f66b4d40b864f41ffce691382f5511dd4385b6c96989cf7e6f70a4f8880f1e18",
+      "v14/build.log": "ec8aea10485547b340d03c4e2525a50c969496bb96422fc5b313864ae32499ad",
+      "v14/compiler.txt": "6f41d08dd542e36e2f41b7b105da56d84c00bd6eb99a7c324ef8ef06635cbe26",
+      "v14/configure.log": "61417b55f16bb117dd27b3204f6c42395d5add335bb0caae04f034148a2c4861",
+      "v14/launch.json": "5a05de4dec3d63273ae35256bc837c4571ad6d4f3266408f1b89d8a63d1e7cca",
+      "v14/launcher.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "v14/modules.txt": "cf3fde5892e6950a2ec013c75688552bf45cd2c81a1c7e4bdce32cb81f224156",
+      "v14/mpi-wrapper.txt": "35ee2ba9df330d781abc430dd144e1728a49ceb7215380336a8682af0ed5a88d",
+      "v14/runner.log": "49ffc1d0b96bd484714286e7edc3bd9647b05bbe938142420cf570066d87b487"
+    }
+  },
+  "initial_data": {
+    "sha256": "c8ffa46d9007ee8b643db41980cfa4a08f9ab3f2f1c2383978a002f067f9db31",
+    "bytes": 14225648
+  },
+  "storage_at_finish": {
+    "bytes": 3378457541,
+    "entries": 18166
+  },
+  "affinity_log_sha256": "b0f8cba5c5246a14c2b56074e4f194349149425bcc7290fd0e7e090cdcf1c9a0",
+  "one_node_twelve_tiles_verified": true,
+  "terminal": {
+    "job_id": "8984332.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "state": "F",
+    "exit_status": 0,
+    "allocation_released": true
+  },
+  "epsilon2_restart": {
+    "passed": true,
+    "whole_file_equal": true,
+    "four_arrays_equal": true,
+    "core_header_equal": true,
+    "arrays": [
+      {
+        "name": "volume_state",
+        "doubles": 2412544,
+        "sha256": "123fc53425aea07b5757e89e0b0aadd3731e175780870d2f1864829668a9835d"
+      },
+      {
+        "name": "volume_compensation",
+        "doubles": 2412544,
+        "sha256": "05ad9f033a6e8797ae8528f513f5c1cfb98f9ea6f8c7ce5ec0f668470bb3a177"
+      },
+      {
+        "name": "scri_state",
+        "doubles": 47616,
+        "sha256": "816cde61ad4da3b492b8fb2dc6cf0abf437d21ce2d2c38652b48f624b12fdc6b"
+      },
+      {
+        "name": "scri_compensation",
+        "doubles": 47616,
+        "sha256": "a300848f178129c22d082afe5b889651348dd40fd448c2259420a6862dbdacce"
+      }
+    ],
+    "streaming_byte_equality": true
+  },
+  "metadata_sha256": {
+    "plan.json": "a2cdb0ff507a7edc632cb2ce1c226cf50cd30562a7d729e7abc537583995c7d8",
+    "binding.json": "f11d0b1ef3be3ba43dd3c9a346b728e503c8661c74be069890ee3c4aa0f93e32",
+    "worker-status.json": "1b69940589bb94e979fe868f911880dfb0339df49f11425c3cf6a2f38022b8ca",
+    "run_debug.pbs": "edb426d330de87f9bfb79029df86cc586ddfc28f701c7a26350a43995023285a",
+    "submission.json": "0bd55d502462891473e68ee29f9df14a29881a843fd05ccbe274aed690c743b9",
+    "collected.json": "5bc9265c0ec83532d86daa9720a98aacb53d76316e24ec60baf3cef1f6a72b76",
+    "allocation-released.json": "ca3c1480bb824819c52da44d0c4dbf5df0eff66a261874bbd2f106e1f6a2dc21"
+  },
+  "checks_recomputed": 184,
+  "artifacts_verified": 39,
+  "verified_preflight_configurations": [
+    {
+      "checkpoint_schema": "HYP3D_MPI_V7",
+      "checkpoint_header_bytes": 104,
+      "scri_dissipation_epsilon": 2.0,
+      "scri_dissipation_degree": 7,
+      "scri_normal_derivative": "sampled_native_numerator7",
+      "scri_normal_radial_nodes": 7,
+      "scri_normal_bulk_derivative_order": 4,
+      "scri_radial_closure": "donor_seven_last3",
+      "scri_radial_bulk_rows": 3,
+      "interpatch_interpolation": "logical_inner_transition"
+    }
+  ]
+}

@@ -20,7 +20,9 @@ no accurate long-time puncture result follows. Its allocation is released.
 The optional [V7 native implementation](inner-transition-native-v1/README.md)
 passes local component, ownership and restart tests. Its fresh SYCL/MPI build
 is verified; [Aurora qualification job8984332](aurora/preflight-inner-transition-v1/README.md)
-is submitted, with no GPU-duration acceptance yet.
+passed184 checks and39 artifact verifications. The [fresh V7 t=2 Minkowski
+control](aurora/stability-inner-transition-minkowski-v1/README.md), job8984359,
+is submitted; no duration acceptance follows from the preflight.
 
 ## Aurora work resumed on 2026-10-28
 
