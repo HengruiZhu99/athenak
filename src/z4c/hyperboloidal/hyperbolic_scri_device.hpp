@@ -149,6 +149,7 @@ class HyperbolicScriDevice {
   };
   template<class Sampling>struct EvaluateRows {
     Sampling sample;Buffer surface,rhs;Diagnostics diagnostics;int first;Real dt;
+    ConstBuffer additive_rates;
     KOKKOS_INLINE_FUNCTION void operator()(int local) const {
       RowDiagnostic info{};const auto row=sample.rows(local);const auto*x=row.x;
       bool finite=true;
@@ -157,6 +158,15 @@ class HyperbolicScriDevice {
         finite=finite&&Kokkos::isfinite(surface(nf*local+f));
       }
       if(!finite){info.status=invalid_input;diagnostics(local)=info;return;}
+      if(additive_rates.extent(0)!=0) {
+        for(int f=0;f<nf;++f) {
+          const Real value=additive_rates(nf*local+f);
+          const bool free=f<18||(f>=19&&f<=21);
+          if(!Kokkos::isfinite(value)||(!free&&value!=0)) {
+            info.status=invalid_input;diagnostics(local)=info;return;
+          }
+        }
+      }
       Z4cJet<Real> u{};VectorJet<Real>B{};Real shift_derivative[3][3]{};
       Jet(sample,local,u,B,shift_derivative);
       if(!(u.chi.value>0&&u.alpha.value>0)){info.status=invalid_input;diagnostics(local)=info;return;}
@@ -185,6 +195,23 @@ class HyperbolicScriDevice {
           info.pole=fmax(info.pole,fabs(parts.pole.a[i][j]));
         }
       }
+      // Optional angular dissipation is an additive rate of the 21 free
+      // surface fields. Geometry must enter before the moving-normal D trace
+      // below; lapse, shift, D and J are never independently filtered.
+      if(additive_rates.extent(0)!=0) {
+        rate.chi+=additive_rates(nf*local);
+        rate.trace+=additive_rates(nf*local+13);
+        rate.theta+=additive_rates(nf*local+14);
+        constexpr int qi[6]={0,0,0,1,1,2},qj[6]={0,1,2,1,2,2};
+        for(int t=0;t<6;++t) {
+          const int i=qi[t],j=qj[t];
+          rate.metric[i][j]+=additive_rates(nf*local+1+t);
+          rate.a[i][j]+=additive_rates(nf*local+7+t);
+          if(i!=j){rate.metric[j][i]+=additive_rates(nf*local+1+t);
+            rate.a[j][i]+=additive_rates(nf*local+7+t);}
+        }
+        for(int i=0;i<3;++i)rate.lambda[i]+=additive_rates(nf*local+15+i);
+      }
       rhs(nf*local)=rate.chi;rhs(nf*local+13)=rate.trace;rhs(nf*local+14)=rate.theta;
       constexpr int ti[6]={0,0,0,1,1,2},tj[6]={0,1,2,1,2,2};
       for(int t=0;t<6;++t) {
@@ -199,6 +226,8 @@ class HyperbolicScriDevice {
       info.clock=fabs(gauge.lapse_regular-pole.lapse.derivative);
       info.pole=fmax(info.pole,fabs(gauge.lapse_pole));
       for(int a=0;a<3;++a)rhs(nf*local+19+a)=gauge.flux_rate[a];
+      if(additive_rates.extent(0)!=0)for(int a=0;a<3;++a)
+        rhs(nf*local+19+a)+=additive_rates(nf*local+19+a);
       Real qdot=0,invn[3]{};
       for(int i=0;i<3;++i)for(int j=0;j<3;++j)invn[i]+=g.inverse[i][j]*x[j];
       for(int i=0;i<3;++i)for(int j=0;j<3;++j)qdot-=invn[i]*rate.metric[i][j]*invn[j];
@@ -304,25 +333,32 @@ class HyperbolicScriDevice {
                         ProjectRows{global_surface,local_surface_,rows_,diagnostics_,first_});
     return Reduce();
   }
-  Summary Evaluate(ConstBuffer global_active,ConstBuffer projected_surface,Real dt) {
+  Summary Evaluate(ConstBuffer global_active,ConstBuffer projected_surface,Real dt,
+                   ConstBuffer additive_rates={}) {
     CheckSurface(projected_surface);
     if(global_active.extent(0)!=size_t(nf)*active_total_||!(dt>0)||!std::isfinite(dt))
       throw std::invalid_argument("invalid device scri active state/timestep");
     if(projected_surface.data()==local_surface_.data())
       throw std::invalid_argument("device scri atlas input must not alias the owned output");
+    if(additive_rates.extent(0)!=0) {
+      if(additive_rates.extent(0)!=size_t(nf)*local_)
+        throw std::invalid_argument("device scri additive-rate size mismatch");
+      if(additive_rates.data()==local_surface_.data()||additive_rates.data()==local_rhs_.data())
+        throw std::invalid_argument("device scri additive rates must not alias writable outputs");
+    }
     const Sample source{global_active,projected_surface,rows_,terms_};
 #if defined(HYPERBOLIC_SCRI_INLINE_SAMPLING) && HYPERBOLIC_SCRI_INLINE_SAMPLING
     // Controlled performance reference only: compile the same equations and
     // field summation order with the original in-kernel sampling organization.
     Kokkos::parallel_for("scri owned native rates inline sampling",
         Kokkos::RangePolicy<ExecutionSpace>(0,local_),
-        EvaluateRows<Sample>{source,local_surface_,local_rhs_,diagnostics_,first_,dt});
+        EvaluateRows<Sample>{source,local_surface_,local_rhs_,diagnostics_,first_,dt,additive_rates});
 #else
     Kokkos::parallel_for("scri owned field sampling",
         Kokkos::RangePolicy<ExecutionSpace>(0,sampled_fields*local_),CacheSamples{source,samples_});
     const CachedSample sample{projected_surface,rows_,samples_};
     Kokkos::parallel_for("scri owned native rates",Kokkos::RangePolicy<ExecutionSpace>(0,local_),
-        EvaluateRows<CachedSample>{sample,local_surface_,local_rhs_,diagnostics_,first_,dt});
+        EvaluateRows<CachedSample>{sample,local_surface_,local_rhs_,diagnostics_,first_,dt,additive_rates});
 #endif
     return Reduce();
   }

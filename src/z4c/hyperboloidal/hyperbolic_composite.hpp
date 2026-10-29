@@ -4,9 +4,11 @@
 #include <fstream>
 #include <iomanip>
 #include <map>
+#include <memory>
 #include <thread>
 #include <exception>
 #include "mesh/cubed_sphere/scri_surface.hpp"
+#include "mesh/cubed_sphere/angular_dissipation.hpp"
 #include "z4c/hyperboloidal/hyperbolic_shift.hpp"
 #include "z4c/hyperboloidal/tensor_scri.hpp"
 
@@ -26,15 +28,24 @@ class HyperbolicComposite {
   int failed_stage=0;
   bool adaptive;
   Real ko=.5;
+  Real angular_epsilon=0,angular_cfl=0,angular_cfl_max=0;
+  std::shared_ptr<const cubed_sphere::AngularDissipationPlan> angular_plan;
   int workers=1;
   Real time=0,null_max=0,compatibility_max=0,pole_max=0,clock_max=0;
   mutable Real interpolated_null_max=0,interpolated_null_before_max=0;
   Real gap_min=std::numeric_limits<Real>::infinity(),cfl_max=0;
   size_t steps=0;
-  HyperbolicComposite(cubed_sphere::CompositeMesh mesh,bool source=false,bool cross_face_scri=false)
+  HyperbolicComposite(cubed_sphere::CompositeMesh mesh,bool source=false,bool cross_face_scri=false,
+                      Real angular_strength=0)
       :grid(std::move(mesh),4,true),scri(grid,nf,6,cross_face_scri),
        state(nf*grid.active.size(),0),compensation(state.size(),0),
-       edge_compensation(scri.values.size(),0),adaptive(source) {
+       edge_compensation(scri.values.size(),0),adaptive(source),angular_epsilon(angular_strength) {
+    if(!std::isfinite(angular_epsilon)||angular_epsilon<0)
+      throw std::invalid_argument("invalid angular dissipation strength");
+    if(angular_epsilon>0){
+      if(!cross_face_scri)throw std::invalid_argument("angular dissipation requires cross-face scri jets");
+      angular_plan=std::make_shared<const cubed_sphere::AngularDissipationPlan>(scri,grid.n,7);
+    }
     for(size_t p=0;p<grid.active.size();++p)state[nf*p]=1;
     for(size_t p=0;p<scri.rows.size();++p)scri.values[nf*p]=1;
   }
@@ -117,10 +128,26 @@ class HyperbolicComposite {
     for(int w=1;w<count;++w)pool.emplace_back(fill,w);fill(0);for(auto&t:pool)t.join();
   }
   V Padded(const V&values)const{auto out=ActivePadded(values);FillGhosts(out);return out;}
+  // Conservative isolated-Q bound only; this is not a combined PDE/RK proof.
+  // Shared by the CPU reference and callers orchestrating the device operator.
+  void CheckAngularCFL(Real dt){
+    angular_cfl=0;
+    if(angular_epsilon==0)return;
+    if(!angular_plan||!std::isfinite(angular_epsilon)||angular_epsilon<0||!(dt>0)||!std::isfinite(dt))
+      throw std::invalid_argument("invalid angular dissipation configuration/timestep");
+    angular_cfl=dt*angular_epsilon*grid.n*angular_plan->SpectralUpperBound();
+    angular_cfl_max=std::max(angular_cfl_max,angular_cfl);
+    if(!std::isfinite(angular_cfl)||angular_cfl>2.7)
+      throw std::runtime_error("isolated angular dissipation CFL exceeded");
+  }
   // Geometry receives its regular limit and weak numerator/regularity rates.
   // No geometric field or independently evolved Lambda is algebraically reset.
   V BoundaryRates(const V&padded,Real dt){
     V out(scri.values.size(),0);
+    CheckAngularCFL(dt);
+    // BoundaryValues must already have supplied the projected actual surface.
+    // Compute once before any dependent-D row writes; only 21 free fields enter Q.
+    const V angular=angular_epsilon>0?angular_plan->Apply(scri.values,angular_epsilon):V{};
     for(size_t p=0;p<scri.rows.size();++p){const auto&row=scri.rows[p];const auto*x=row.geometry.x;
       const auto sample=scri.Sample(p,padded,scri.values,nf);const auto u=Jet(x,sample.value,sample.d,sample.dd);
       const auto o=Omega(x,u,true);const auto g=Geometry(u.metric);
@@ -137,12 +164,20 @@ class HyperbolicComposite {
         pole_max=std::max(pole_max,std::abs(parts.pole.lambda[i]));
         for(int j=0;j<3;++j){rate.a[i][j]+=4/h*parts.pole.a[i][j]-8/h*trace.a[i][j];
           pole_max=std::max(pole_max,std::abs(parts.pole.a[i][j]));}}
+      if(!angular.empty()){
+        rate.chi+=angular[p*nf];rate.trace+=angular[p*nf+13];rate.theta+=angular[p*nf+14];
+        for(int t=0;t<6;++t){const int i=ti[t],j=tj[t];
+          rate.metric[i][j]+=angular[p*nf+1+t];rate.a[i][j]+=angular[p*nf+7+t];
+          if(i!=j){rate.metric[j][i]+=angular[p*nf+1+t];rate.a[j][i]+=angular[p*nf+7+t];}}
+        for(int i=0;i<3;++i)rate.lambda[i]+=angular[p*nf+15+i];
+      }
       StoreGeometry(rate,&out[p*nf]);
       const auto B=Vector(19,sample.value,sample.d);
       const auto gauge=HyperbolicGauge(x,u,B,&sample.value[25]);
       clock_max=std::max(clock_max,std::abs(gauge.lapse_regular-pole.lapse.derivative));
       pole_max=std::max(pole_max,std::abs(gauge.lapse_pole));
       for(int a=0;a<3;++a)out[p*nf+19+a]=gauge.flux_rate[a];
+      if(!angular.empty())for(int a=0;a<3;++a)out[p*nf+19+a]+=angular[p*nf+19+a];
       Real qdot=0;Real invn[3]{};
       for(int i=0;i<3;++i)for(int j=0;j<3;++j)invn[i]+=g.inverse[i][j]*x[j];
       for(int i=0;i<3;++i)for(int j=0;j<3;++j)qdot-=invn[i]*rate.metric[i][j]*invn[j];
