@@ -129,3 +129,22 @@ No GPU job has been submitted from this experimental fork yet.
 Recommendation pending these gates: retain V11 as the control. One-layer
 coupling is a viable bounded experiment only with an explicit donor policy;
 its construction and dissipative added term alone do not justify adoption.
+
+### GPU qualification preparation
+
+`aurora/thin_plan.py` generates a separately bound 12-tile preflight for the
+V12 variant. It checks paired-lift CPU/device parity on each tile, short
+Minkowski preservation for Cartesian layers 1/2/3 and kappa 0/1, an oblique
+full-gather versus poisoned sparse restart comparison, and a 100-step puncture
+comparison through 0.15 M. The V12 checkpoint auditor verifies the 184-byte
+header, point count, log-variable configuration, and exact trace parameters;
+it rejects geometry or penalty mismatches before accepting equivalence.
+This plan is preparation, not GPU evidence until a completed collected run
+is recorded below. It does not qualify the requested 3 M puncture evolution.
+
+```sh
+python3 tst/hyperbolic_shift_3d/aurora/thin_plan.py --output plan.json
+```
+
+The proposed frozen source/build names are `source-thin-v1` and
+`build-sycl-mpi-thin-v1`, separate from the ongoing control/performance work.

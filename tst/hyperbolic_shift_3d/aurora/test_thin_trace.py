@@ -2,7 +2,8 @@
 import copy,json,os,sys,tempfile,unittest
 from pathlib import Path
 from unittest.mock import patch
-import control,worker
+import control,worker,preflight,struct
+from types import SimpleNamespace
 from test_control import example
 class ThinTraceAdmissionTests(unittest.TestCase):
  def setUp(self):
@@ -42,4 +43,39 @@ class ThinTraceAdmissionTests(unittest.TestCase):
    result=worker.run_bounded([sys.executable,'-c','import os,json;print(json.dumps({k:v for k,v in os.environ.items() if k.startswith("HYPERBOLIC_TRACE_") or k=="HYPERBOLIC_SPARSE_POISON"}))'],self.root,log,10,environment=control.command_environment(self.command))
   self.assertEqual(result['returncode'],0)
   self.assertEqual(json.loads(log.read_text()),control.TRACE_ENV)
+class ThinTracePreflightTests(unittest.TestCase):
+ def test_gpu_component_contract(self):
+  fixture='backend=SYCL\nPASS: CPU/device physical RHS, partition norms, zero coefficient and exact Minkowski; max_error=1e-16 scaled_error=1e-16 norm_error=1e-17\n'
+  self.assertTrue(preflight.parse_component(fixture,'paired_trace_device',0)['passed'])
+  self.assertFalse(preflight.parse_component(fixture,'paired_trace_device',1)['passed'])
+  self.assertFalse(preflight.parse_component(fixture.replace('SYCL','Serial'),'paired_trace_device',0)['passed'])
+  for bad in [fixture+fixture,fixture.replace('1e-17','nan'),fixture.replace('1e-17','3e-12'),fixture.replace(' scaled_error=1e-16','')]:
+   with self.assertRaises(ValueError):preflight.parse_component(bad,'paired_trace_device',0)
+ def test_v12_shape_and_report_binding(self):
+  with tempfile.TemporaryDirectory() as directory:
+   root=Path(directory);n=12
+   for layers in (1,2,3):
+    cells=12*n**3+8*(n+layers)**3+6*(n+3)*(n+6)**2;surface=31*6*n*n
+    header=preflight.HEADER.pack(b'HYP3D_MPI_V12'.ljust(16,b'\0'),n,31,3,1,cells,surface,2,.0005,.00025)
+    header+=struct.pack('<dii4i4i2ddii4i2d',2.,7,0,3,7,4,3,4,2,3,3,.18,.16,1e-10,1,0,1,layers,1,0,1.,.25)
+    for name in ('a','b'):
+     with (root/name).open('wb') as stream:stream.write(header);stream.truncate(184+16*(31*cells+surface))
+    parsed=preflight.read_checkpoint(root/'a')
+    self.assertEqual(parsed['header_bytes'],184);self.assertEqual(parsed['core_evolved_layers'],layers)
+    report=dict(parsed,status='completed',backend='SYCL',mpi_size=12,kind='oblique',t=.0005,target_time=.0005,
+                checkpoint_schema=parsed['magic'],checkpoint_header_bytes=184,
+                algebraic_projection='final_stage_standard',scri_angular_stencil='cross_face_centered5')
+    for name in ('a.json','b.json'):(root/name).write_text(json.dumps(report))
+    args=SimpleNamespace(reference='a',candidate='b',reference_report='a.json',candidate_report='b.json',atol=0,rtol=0)
+    self.assertTrue(preflight.restart(args,0,root,lambda p:root/p)['passed'])
+    for key,bad in [('core_evolved_layers',float(layers)),('shifted_overlap_donors',1),('trace_kappa',0.),('trace_normal_ratio',0.),('interface_method','none')]:
+     for remove in (False,True):
+      changed=dict(report)
+      if remove:changed.pop(key)
+      else:changed[key]=bad
+      (root/'b.json').write_text(json.dumps(changed))
+      with self.subTest(key=key,layers=layers),self.assertRaises(ValueError):preflight.restart(args,0,root,lambda p:root/p)
+    for offset,fmt,value in [(152,'i',0),(156,'i',0),(156,'i',4),(160,'i',2),(164,'i',1),(168,'d',float('nan')),(168,'d',-1),(176,'d',-1)]:
+     with (root/'a').open('r+b') as stream:stream.write(header);stream.seek(offset);stream.write(struct.pack('<'+fmt,value))
+     with self.subTest(offset=offset,value=value),self.assertRaises(ValueError):preflight.read_checkpoint(root/'a')
 if __name__=='__main__':unittest.main()

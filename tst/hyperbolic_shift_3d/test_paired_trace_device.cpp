@@ -6,6 +6,7 @@ using Device=z4c::hyperboloidal::PairedTraceDevice;
 int main(int argc,char**argv){
  Kokkos::initialize(argc,argv);int code=0;
  try{
+  std::cout<<"backend="<<Kokkos::DefaultExecutionSpace::name()<<'\n';
   const int n=12; cubed_sphere::CompositeDifference g(hyperbolic_reproduction::ThinCoreMesh(n,1,true),4,true);
   cubed_sphere::PairedTracePenalty plan(g);const int total=g.active.size();
   Device::Buffer state("test state",31*total),rhs("test rate",31*total);
@@ -40,7 +41,7 @@ int main(int argc,char**argv){
   for(int p=0;p<total;++p)for(int f=0;f<31;++f)host(31*p+f)=f==0?1:0;
   Kokkos::deep_copy(state,host);all.Add(state,rhs,1,.25);result=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),rhs);
   for(int i=0;i<31*total;++i)if(result(i)!=0)throw std::runtime_error("Minkowski penalty not zero");
-  std::cout<<std::setprecision(17)<<"PASS: CPU/device physical RHS, partition norms, zero coefficient and exact Minkowski; max_error="<<error<<" norm_error="<<norm_error<<'\n';
+  std::cout<<std::setprecision(17)<<"PASS: CPU/device physical RHS, partition norms, zero coefficient and exact Minkowski; max_error="<<error<<" scaled_error="<<error/std::max(Real(1),scale)<<" norm_error="<<norm_error<<'\n';
  }catch(const std::exception&e){std::cerr<<e.what()<<'\n';code=1;}
  Kokkos::finalize();return code;
 }
