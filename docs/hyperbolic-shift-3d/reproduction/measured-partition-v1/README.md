@@ -91,3 +91,16 @@ there were zero lapse-floor interventions. Both short puncture runs reached
 floor, interpolation order, and scientific acceptance are unchanged. This does
 not establish long-time stability, horizon convergence, AMR evolution, or a
 resolution-matched 1D/3D accuracy result.
+
+### Follow-up: direct radial row ownership
+
+The reproducible `radial_work_audit.py` derives counts from the frozen mesh's
+nominal block ordering and the last-three-radial-row selector. Every expensive
+rank in this experiment owns direct radial rows. In the equal-cell run, ranks
+6/7/8 own 2,052/2,487/**69** such rows and take 11.92/12.02/**12.08** seconds of
+bulk RHS time. All other ranks have zero such rows and take about 5.2 seconds.
+Measured cuts spread direct radial rows over ranks 4–8; they still take about
+11.5–12.1 seconds. This is evidence against a simple proportional cost-per-cell
+model. It motivates testing a separate field-batched derivative kernel for this
+path; it does not by itself prove a particular occupancy or register-spill cause.
+The physical derivative stencil and sum order must remain unchanged.

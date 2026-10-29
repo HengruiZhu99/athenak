@@ -738,6 +738,11 @@ int main(int argc,char**argv){
       if constexpr(scri_sampled_normal)report<<",\"scri_normal_derivative\":\"sampled_native_numerator"<<(scri_donor_seven?7:6)<<"\""
         <<",\"scri_normal_radial_nodes\":"<<(scri_donor_seven?7:6)<<",\"scri_normal_bulk_derivative_order\":4";
       if constexpr(evolved_overlap)report<<",\"evolved_overlap\":"<<evolved_overlap<<",\"nominal_cells\":"<<e.model.grid.nominal_count;
+#if defined(HYPERBOLIC_RADIAL_FIELD_BATCH) && HYPERBOLIC_RADIAL_FIELD_BATCH
+      report<<",\"radial_derivative_execution\":\"stage_field_batch\"";
+#else
+      report<<",\"radial_derivative_execution\":\"inline_per_point\"";
+#endif
       report<<",\"boundary_phase_seconds_by_rank\":[";
       for(int rank=0;rank<e.size;++rank){if(rank)report<<',';report<<'[';for(int k=0;k<6;++k){if(k)report<<',';report<<rank_boundary_phases[6*rank+k];}report<<']';}report<<']';
       report<<",\"error_sync_seconds_by_rank\":[";

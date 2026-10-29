@@ -89,7 +89,7 @@ class HyperbolicCompositeDevice {
     int n, width, padded_count;
     Real dt, ko;
     bool adaptive;
-    ScriRadialDevice::Kernel radial;
+    ScriRadialDevice::BoundKernel radial;
     ConstBuffer positive_ko;
 
     KOKKOS_INLINE_FUNCTION int Offset(int axis, int amount) const {
@@ -476,7 +476,7 @@ class HyperbolicCompositeDevice {
       throw std::invalid_argument("invalid device RHS storage/timestep/dissipation");
     PointKernel kernel{padded,active_,ko_offsets_,status_,geometry_,ko_terms_,
         volumes_,rhs_,gap_,cfl_,n_,width_,padded_count_,dt,ko,adaptive};
-    if(radial_plan_)kernel.radial=radial_plan_->Bind(padded,surface);
+    if(radial_plan_)kernel.radial=radial_plan_->Prepare(padded,surface);
     if(positive_ko.extent(0)&&positive_ko.extent(0)!=size_t(2)*padded_count_)throw std::invalid_argument("positive KO storage mismatch");
     kernel.positive_ko=positive_ko;
     Kokkos::parallel_for("hyperboloidal owned bulk RHS",
@@ -493,7 +493,7 @@ class HyperbolicCompositeDevice {
       throw std::invalid_argument("invalid device diagnostic storage/exterior cutoff");
     PointKernel kernel{padded,active_,ko_offsets_,status_,geometry_,ko_terms_,
         diagnostic_volumes_,rhs_,gap_,cfl_,n_,width_,padded_count_,0,0,false};
-    if(radial_plan_)kernel.radial=radial_plan_->Bind(padded,surface);
+    if(radial_plan_)kernel.radial=radial_plan_->Prepare(padded,surface);
     DiagnosticSummary result;
     Kokkos::parallel_reduce("hyperboloidal owned constraints",
         Kokkos::RangePolicy<ExecutionSpace>(0,local_),Diagnose{kernel,first_,exterior_radius},result);

@@ -83,7 +83,7 @@ class HyperbolicSampledNormalDevice {
     if(padded.extent(0)!=size_t(nf)*padded_count_)throw std::invalid_argument("sampled-normal padded shape mismatch");
     Device::PointKernel point{};point.padded=padded;point.active=active_;point.n=n_;
     point.width=width_;point.padded_count=padded_count_;
-    if(radial_plan_)point.radial=radial_plan_->Bind(padded,surface);
+    if(radial_plan_)point.radial=radial_plan_->Prepare(padded,surface);
     Kokkos::parallel_for("owned scri interior pole samples",Kokkos::RangePolicy<ExecutionSpace>(0,donors_*local_),
                         Kernel{point,geometry_,poles_,status_});
     Summary result;Kokkos::parallel_reduce("owned sampled-normal diagnostics",Kokkos::RangePolicy<ExecutionSpace>(0,local_),

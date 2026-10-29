@@ -283,3 +283,23 @@ endif()
 add_executable(hyperbolic_shift_3d_measured_partition test_measured_partition.cpp)
 target_include_directories(hyperbolic_shift_3d_measured_partition PRIVATE ${CMAKE_SOURCE_DIR}/src)
 target_compile_options(hyperbolic_shift_3d_measured_partition PRIVATE -Wall -Wextra)
+
+
+if(ENABLE_MPI)
+  add_executable(hyperbolic_shift_3d_mpi_continuous_positive_radial_batch coupled_mpi.cpp)
+  target_link_libraries(hyperbolic_shift_3d_mpi_continuous_positive_radial_batch PRIVATE hyperboloidal_fastflow MPI::MPI_CXX)
+  target_compile_options(hyperbolic_shift_3d_mpi_continuous_positive_radial_batch PRIVATE -Wall -Wextra -ffp-contract=off)
+  target_compile_definitions(hyperbolic_shift_3d_mpi_continuous_positive_radial_batch PRIVATE
+    HYPERBOLIC_ALGEBRAIC_FINAL_PROJECTION=1 HYPERBOLIC_SCRI_ANGULAR_EXCHANGE=1
+    HYPERBOLIC_SCRI_ANGULAR_DISSIPATION=1 HYPERBOLIC_SCRI_SAMPLED_NORMAL=1
+    HYPERBOLIC_SCRI_DONOR_SEVEN=1 HYPERBOLIC_INNER_TRANSITION_LOGICAL=1
+    HYPERBOLIC_CORE_SUBDIVISIONS=2 HYPERBOLIC_EVOLVED_OVERLAP=3 HYPERBOLIC_SPHERICAL_OVERLAP=1 HYPERBOLIC_CONTINUOUS_POSITIVE=1 HYPERBOLIC_BOUNDARY_REUSE=1 HYPERBOLIC_SPARSE_STAGE=1 HYPERBOLIC_RADIAL_FIELD_BATCH=1)
+endif()
+
+add_executable(hyperbolic_shift_3d_radial_field_batch test_radial_field_batch.cpp)
+target_include_directories(hyperbolic_shift_3d_radial_field_batch PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+target_link_libraries(hyperbolic_shift_3d_radial_field_batch PRIVATE Kokkos::kokkos Threads::Threads)
+target_compile_options(hyperbolic_shift_3d_radial_field_batch PRIVATE -Wall -Wextra -ffp-contract=off)
+target_compile_definitions(hyperbolic_shift_3d_radial_field_batch PRIVATE HYPERBOLIC_RADIAL_FIELD_BATCH=1)
+add_test(NAME hyperbolic_shift_3d_radial_field_batch COMMAND hyperbolic_shift_3d_radial_field_batch)
+set_tests_properties(hyperbolic_shift_3d_radial_field_batch PROPERTIES TIMEOUT 420)
