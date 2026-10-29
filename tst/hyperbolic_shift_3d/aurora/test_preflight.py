@@ -437,6 +437,32 @@ class CheckpointTests(unittest.TestCase):
 
 
 class OverlapCheckpointTests(unittest.TestCase):
+    def test_v9_restart_report_binding(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);n=12;cells=12*n**3+7*(n+6)**3;surface=31*6*n*n
+            header=preflight.HEADER.pack(b'HYP3D_MPI_V9'.ljust(16,b'\0'),n,31,1,1,cells,surface,2,.0005,.00025)
+            header+=struct.pack('<dii4i4i',2.,7,0,3,7,4,3,2,1,3,3)
+            for name in ['a','b']:
+                with (root/name).open('wb') as out:
+                    out.write(header);out.truncate(120+16*(31*cells+surface))
+            args=SimpleNamespace(reference='a',candidate='b',reference_report='a.json',candidate_report='b.json',atol=0,rtol=0)
+            report=dict(status='completed',backend='SYCL',mpi_size=12,n=n,kind='pulse',t=.0005,
+                target_time=.0005,dt=.00025,steps=2,checkpoint_schema='HYP3D_MPI_V9',
+                algebraic_projection='final_stage_standard',scri_angular_stencil='cross_face_centered5',
+                scri_dissipation_epsilon=2.,scri_dissipation_degree=7,checkpoint_header_bytes=120,
+                scri_normal_derivative='sampled_native_numerator7',scri_normal_radial_nodes=7,
+                scri_normal_bulk_derivative_order=4,scri_radial_closure='donor_seven_last3',scri_radial_bulk_rows=3,
+                interpatch_interpolation='logical_inner_transition',evolved_overlap=3,nominal_cells=19*n**3)
+            (root/'a.json').write_text(json.dumps(report));(root/'b.json').write_text(json.dumps(report))
+            self.assertTrue(preflight.restart(args,0,root,lambda p:root/p)['passed'])
+            for key,bad in [('evolved_overlap',0),('evolved_overlap',3.0),('nominal_cells',cells),('checkpoint_schema','HYP3D_MPI_V7'),('scri_angular_stencil','face_local6')]:
+                for remove in [False,True]:
+                    changed=dict(report)
+                    if remove:changed.pop(key)
+                    else:changed[key]=bad
+                    (root/'b.json').write_text(json.dumps(changed))
+                    with self.subTest(key=key,bad=bad,remove=remove),self.assertRaises(ValueError):preflight.restart(args,0,root,lambda p:root/p)
+
     def test_v9_shape_and_descriptor(self):
         with tempfile.TemporaryDirectory() as directory:
             path=Path(directory)/'state.checkpoint';n=12;cells=12*n**3+7*(n+6)**3;surface=31*6*n*n

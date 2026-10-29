@@ -40,7 +40,7 @@ preflight decoder are the supported diagnostics for this experiment.
 - Two-step pulse runs: one/two MPI ranks and restart produce identical complete
   checkpoints. The original V7 control remains bitwise equal to its frozen
   checkpoint. Four altered mesh descriptors and both cross-schema restarts fail.
-- 93 controller/preflight Python tests pass.
+- 94 controller/preflight Python tests pass, including strict V9 restart-report binding.
 - n16 wormhole data on all original cells are bitwise identical to the existing
   input. Extra points receive the same analytic isotropic initial data.
 

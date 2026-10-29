@@ -446,7 +446,7 @@ def restart(args, rank, root, checked):
         raise ValueError('Evolution kind does not describe the checkpoint')
     for report in reports:
         scheme='none' if header['magic']=='HYP3D_MPI_V1' else 'final_stage_standard'
-        angular='cross_face_centered5' if header['magic'] in ['HYP3D_MPI_V3','HYP3D_MPI_V4','HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7','HYP3D_MPI_V8'] else 'face_local6'
+        angular='cross_face_centered5' if header['magic'] in ['HYP3D_MPI_V3','HYP3D_MPI_V4','HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7','HYP3D_MPI_V8','HYP3D_MPI_V9'] else 'face_local6'
         if (report.get('checkpoint_schema',header['magic'])!=header['magic']
                 or report.get('algebraic_projection','none')!=scheme
                 or report.get('scri_angular_stencil','face_local6')!=angular):
@@ -456,13 +456,13 @@ def restart(args, rank, root, checked):
             expected=header[header_key]
             # Legacy reports may predate these fields. V4 must state its exact
             # runtime configuration; a V3 or missing-config report cannot pass.
-            value=report.get(key) if header['magic'] in ['HYP3D_MPI_V4','HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7','HYP3D_MPI_V8'] else report.get(key,expected)
+            value=report.get(key) if header['magic'] in ['HYP3D_MPI_V4','HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7','HYP3D_MPI_V8','HYP3D_MPI_V9'] else report.get(key,expected)
             if type(value) not in [int,float] or not math.isfinite(value) or value!=expected:
                 raise ValueError('Evolution report/checkpoint dissipation configuration mismatch: '+key)
-        if header['magic'] in ['HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7','HYP3D_MPI_V8']:
+        if header['magic'] in ['HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7','HYP3D_MPI_V8','HYP3D_MPI_V9']:
             if report.get('checkpoint_schema')!=header['magic']:
                 raise ValueError('V5 evolution report must state its checkpoint schema')
-            for key in ['scri_normal_derivative','scri_normal_radial_nodes','scri_normal_bulk_derivative_order'] + (['scri_radial_closure','scri_radial_bulk_rows'] if header['magic'] in ['HYP3D_MPI_V6','HYP3D_MPI_V7','HYP3D_MPI_V8'] else []) + (['interpatch_interpolation'] if header['magic'] in ['HYP3D_MPI_V7','HYP3D_MPI_V8'] else []) + (['mesh_topology','cartesian_core_subdivisions','mesh_blocks'] if header['magic']=='HYP3D_MPI_V8' else []):
+            for key in ['scri_normal_derivative','scri_normal_radial_nodes','scri_normal_bulk_derivative_order'] + (['scri_radial_closure','scri_radial_bulk_rows'] if header['magic'] in ['HYP3D_MPI_V6','HYP3D_MPI_V7','HYP3D_MPI_V8','HYP3D_MPI_V9'] else []) + (['interpatch_interpolation'] if header['magic'] in ['HYP3D_MPI_V7','HYP3D_MPI_V8','HYP3D_MPI_V9'] else []) + (['mesh_topology','cartesian_core_subdivisions','mesh_blocks'] if header['magic']=='HYP3D_MPI_V8' else []) + (['evolved_overlap','nominal_cells'] if header['magic']=='HYP3D_MPI_V9' else []):
                 if type(report.get(key)) is not type(header[key]) or report[key]!=header[key]:
                     raise ValueError('Evolution report/checkpoint normal configuration mismatch: '+key)
         for report_key,header_key in [('n','n'),('t','time'),('dt','dt'),('steps','steps')]:
