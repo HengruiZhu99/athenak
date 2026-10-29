@@ -1,0 +1,75 @@
+{
+  "scope": "One sequential same-node pair, identical n16 initial data/dt/diagnostics; full checkpoint byte equality independently verified.",
+  "rows": [
+    {
+      "name": "puncture-control",
+      "wall_seconds": 74.385686765,
+      "steps": 100,
+      "seconds_per_step_after_initial_diagnostic": 0.62871717464,
+      "rank": 7,
+      "seconds": {
+        "Bulk RHS": 12.016534127999993,
+        "Timed MPI gathers": 27.548409565999993,
+        "Boundary / checks": 19.270357507000007,
+        "Diagnostics": 3.590262023999996,
+        "Bulk halo": 1.3596808909999991,
+        "Other / startup": 10.600442649000016
+      },
+      "percent": {
+        "Bulk RHS": 16.154363360202275,
+        "Timed MPI gathers": 37.03455700157908,
+        "Boundary / checks": 25.90600200799263,
+        "Diagnostics": 4.826549542175213,
+        "Bulk halo": 1.8278797308083157,
+        "Other / startup": 14.250648357242488
+      },
+      "collective_seconds": [
+        26.048741272999994,
+        1.4225761630000011,
+        0.07709213
+      ],
+      "collective_calls": [
+        401,
+        1407,
+        503
+      ],
+      "boundary_cache_hits": 0
+    },
+    {
+      "name": "puncture-fast",
+      "wall_seconds": 71.444702703,
+      "steps": 100,
+      "seconds_per_step_after_initial_diagnostic": 0.59951112325,
+      "rank": 8,
+      "seconds": {
+        "Bulk RHS": 12.016041594000013,
+        "Timed MPI gathers": 27.649349557999983,
+        "Boundary / checks": 16.196707999000004,
+        "Diagnostics": 3.5868983010000015,
+        "Bulk halo": 1.647204360000001,
+        "Other / startup": 10.348500891
+      },
+      "percent": {
+        "Bulk RHS": 16.818659941733443,
+        "Timed MPI gathers": 38.70034937781185,
+        "Boundary / checks": 22.67027139343096,
+        "Diagnostics": 5.020523797139946,
+        "Bulk halo": 2.3055654200809403,
+        "Other / startup": 14.484630069802868
+      },
+      "collective_seconds": [
+        26.842110513999987,
+        0.8072390439999991,
+        0
+      ],
+      "collective_calls": [
+        401,
+        804,
+        0
+      ],
+      "boundary_cache_hits": 100
+    }
+  ],
+  "wall_speedup": 1.041164480370586,
+  "step_speedup": 1.0487164462131604
+}

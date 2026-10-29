@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "plan_sha256": "1e6dffc2f4cd84e5316adc24f37e43e8b5d449e210f91c2978dceffe1d0c8b40",
+  "source_manifest": "source-v20-manifest.json",
+  "source_manifest_sha256": "43a5353912eb51d59820fd0aa59970b1ac57b25acdad91844c9216a1d9a8d57e",
+  "binaries": {
+    "source-v20/tst/hyperbolic_shift_3d/aurora/preflight.py": "983d38420554270e63759b353e6a72fb62eb67634cb186222509c63437d73408",
+    "build-sycl-mpi-v20/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive_fast": "85fa2fbe06d09319f4a88d925c52cd44eb1be63e3260787b56d323e3cba7c581",
+    "build-sycl-mpi-v20/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive": "44723dbe626ac11bd1426e5c91bcec9241816deb72530fc7f0dce031e21437e9"
+  },
+  "inputs": {
+    "build-sycl-mpi-v20/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_continuous_positive_device": "9d2ffb1f129ac53dcb7e8ee5d0157183d710c003e0623e1552540acdcdd9c310",
+    "build-sycl-mpi-v20/CMakeCache.txt": "85e0fdd522a8533ccab2a7b3cfd73ce527255ff141d203a58979659ab5ac4df1",
+    "inputs/puncture-continuous-n16.txt": "35c1b65aeaaefac34552f9a63b279cabe839b09326adc9af1d2c767ecc29c8ca"
+  },
+  "pbs_sha256": "5cc8ad43d4fbc0e1d2da0a36f2cacc4313f23d0bee6a49b2cbc41f3730d2d899",
+  "admission": null,
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "00:30:00"
+  },
+  "storage_at_bind": {
+    "bytes": 4299220244,
+    "entries": 32772,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 100000000,
+    "planned_bytes": 520000000,
+    "headroom_bytes": 80779756
+  },
+  "launcher": {
+    "control.py": "398679d720599014c82069708cf2699d6f924c76822e25ade07e735b86299450",
+    "worker.py": "62b5346a7815dca5954a95c705ec1c43eaf87ec5bf1442318f5c259d9d3685b1",
+    "run_debug.pbs": "1d5df790cf6c8cdc96e9d330b9b337ce755b30e057959586bcd661dc9ce885a6",
+    "storage.py": "fdcf2abc2533b8fed91220d9c18d8b9d723660820949a72e956fb9c8866afd39"
+  },
+  "allocation_seconds": 1800,
+  "worker_seconds": 1710
+}
