@@ -45,10 +45,12 @@ class HyperbolicScriDevice {
   // vanishes in the outer collar; their six stencils were never sampled.
   static constexpr int sampled_fields=25;
   int first_,local_,total_,active_total_;
+  bool sampled_normal_;
   Rows rows_;
   Terms terms_;
   Jets samples_;
   Buffer local_surface_,local_rhs_;
+  Buffer normal_weights_;
   Diagnostics diagnostics_;
 
   struct Sample {
@@ -150,6 +152,7 @@ class HyperbolicScriDevice {
   template<class Sampling>struct EvaluateRows {
     Sampling sample;Buffer surface,rhs;Diagnostics diagnostics;int first;Real dt;
     ConstBuffer additive_rates;
+    ConstBuffer sampled_poles,normal_weights;
     KOKKOS_INLINE_FUNCTION void operator()(int local) const {
       RowDiagnostic info{};const auto row=sample.rows(local);const auto*x=row.x;
       bool finite=true;
@@ -177,7 +180,23 @@ class HyperbolicScriDevice {
       SetStationaryOmegaNormal(u.alpha.value,u.beta.value,u.alpha.d,u.beta.d,omega);
       auto parts=ConformalRHS(u,omega,Real(4),Real(-.99));
       if(!HyperbolicDamping(x,u,omega,parts)){info.status=invalid_source;diagnostics(local)=info;return;}
-      const auto pole=TensorPoleNormalJet(u,omega,x,x,Real(4),Real(-.99),Real(1),Real(1),true,true);
+      auto pole=TensorPoleNormalJet(u,omega,x,x,Real(4),Real(-.99),Real(1),Real(1),true,true);
+      if(sampled_poles.extent(0)!=0){
+        Z4cRHS<Real> normal{};constexpr int ni[6]={0,0,0,1,1,2},nj[6]={0,1,2,1,2,2};
+        for(int s=0;s<5;++s){const int offset=nf*(5*local+s);const Real w=normal_weights(s)/row.h;
+          for(int f=0;f<nf;++f){const Real value=sampled_poles(offset+f);const bool geometric=f==0||(f>=7&&f<=17);
+            if(!Kokkos::isfinite(value)||(!geometric&&value!=0)){info.status=invalid_input;diagnostics(local)=info;return;}}
+          normal.chi+=w*(sampled_poles(offset)-parts.pole.chi);
+          normal.trace+=w*(sampled_poles(offset+13)-parts.pole.trace);
+          normal.theta+=w*(sampled_poles(offset+14)-parts.pole.theta);
+          for(int a=0;a<3;++a)normal.lambda[a]+=w*(sampled_poles(offset+15+a)-parts.pole.lambda[a]);
+          for(int t=0;t<6;++t){const int a=ni[t],b=nj[t];const Real value=w*(sampled_poles(offset+7+t)-parts.pole.a[a][b]);
+            normal.a[a][b]+=value;if(a!=b)normal.a[b][a]+=value;}}
+        pole.geometry.chi.derivative=normal.chi;pole.geometry.trace.derivative=normal.trace;
+        pole.geometry.theta.derivative=normal.theta;
+        for(int a=0;a<3;++a){pole.geometry.lambda[a].derivative=normal.lambda[a];
+          for(int b=0;b<3;++b)pole.geometry.a[a][b].derivative=normal.a[a][b];}
+      }
       auto rate=TensorScriLimit(parts.regular,pole,Real(-1));
       const auto trace=ScriRegularityTraces(u,omega);const Real h=row.h;
       info.cfl=dt*12/h;
@@ -288,12 +307,20 @@ class HyperbolicScriDevice {
  public:
   HyperbolicScriDevice(const HyperbolicComposite&model,int first_surface,int local_count)
       :first_(first_surface),local_(local_count),total_(model.scri.rows.size()),
-       active_total_(model.grid.active.size()) {
+       active_total_(model.grid.active.size()),
+       sampled_normal_(model.normal_derivative==HyperbolicComposite::NormalDerivative::sampled_numerator) {
     if(first_<0||local_<0||size_t(first_)+size_t(local_)>model.scri.rows.size())
       throw std::invalid_argument("invalid device scri owned row range");
     rows_=Rows("scri owned rows",local_);diagnostics_=Diagnostics("scri owned diagnostics",local_);
     local_surface_=Buffer("scri owned surface",size_t(nf)*local_);
     local_rhs_=Buffer("scri owned RHS",size_t(nf)*local_);
+    if(sampled_normal_){
+      if(model.scri.radial_nodes!=6)throw std::invalid_argument("sampled-normal device requires six radial nodes");
+      normal_weights_=Buffer("scri normal derivative weights",5);auto weights=Kokkos::create_mirror_view(normal_weights_);
+      const Real nodes[6]={-4.5,-3.5,-2.5,-1.5,-.5,0};
+      for(int i=0;i<5;++i){cubed_sphere::Jet basis(1);
+        for(int j=0;j<6;++j)if(i!=j)basis=basis*(cubed_sphere::Jet::Variable(0,0)-cubed_sphere::Jet(nodes[j]))/cubed_sphere::Jet(nodes[i]-nodes[j]);
+        weights(i)=basis.d[0];}Kokkos::deep_copy(normal_weights_,weights);}
 #if !defined(HYPERBOLIC_SCRI_INLINE_SAMPLING) || !HYPERBOLIC_SCRI_INLINE_SAMPLING
     samples_=Jets("scri owned field jets",size_t(sampled_fields)*local_);
 #endif
@@ -334,7 +361,7 @@ class HyperbolicScriDevice {
     return Reduce();
   }
   Summary Evaluate(ConstBuffer global_active,ConstBuffer projected_surface,Real dt,
-                   ConstBuffer additive_rates={}) {
+                   ConstBuffer additive_rates={},ConstBuffer sampled_poles={}) {
     CheckSurface(projected_surface);
     if(global_active.extent(0)!=size_t(nf)*active_total_||!(dt>0)||!std::isfinite(dt))
       throw std::invalid_argument("invalid device scri active state/timestep");
@@ -346,19 +373,24 @@ class HyperbolicScriDevice {
       if(additive_rates.data()==local_surface_.data()||additive_rates.data()==local_rhs_.data())
         throw std::invalid_argument("device scri additive rates must not alias writable outputs");
     }
+    if((sampled_normal_&&sampled_poles.extent(0)!=size_t(nf)*5*local_)||
+       (!sampled_normal_&&sampled_poles.extent(0)!=0))
+      throw std::invalid_argument("device scri sampled-normal input/mode mismatch");
+    if(sampled_poles.extent(0)!=0&&(sampled_poles.data()==local_surface_.data()||sampled_poles.data()==local_rhs_.data()))
+      throw std::invalid_argument("device scri pole samples alias writable output");
     const Sample source{global_active,projected_surface,rows_,terms_};
 #if defined(HYPERBOLIC_SCRI_INLINE_SAMPLING) && HYPERBOLIC_SCRI_INLINE_SAMPLING
     // Controlled performance reference only: compile the same equations and
     // field summation order with the original in-kernel sampling organization.
     Kokkos::parallel_for("scri owned native rates inline sampling",
         Kokkos::RangePolicy<ExecutionSpace>(0,local_),
-        EvaluateRows<Sample>{source,local_surface_,local_rhs_,diagnostics_,first_,dt,additive_rates});
+        EvaluateRows<Sample>{source,local_surface_,local_rhs_,diagnostics_,first_,dt,additive_rates,sampled_poles,normal_weights_});
 #else
     Kokkos::parallel_for("scri owned field sampling",
         Kokkos::RangePolicy<ExecutionSpace>(0,sampled_fields*local_),CacheSamples{source,samples_});
     const CachedSample sample{projected_surface,rows_,samples_};
     Kokkos::parallel_for("scri owned native rates",Kokkos::RangePolicy<ExecutionSpace>(0,local_),
-        EvaluateRows<CachedSample>{sample,local_surface_,local_rhs_,diagnostics_,first_,dt,additive_rates});
+        EvaluateRows<CachedSample>{sample,local_surface_,local_rhs_,diagnostics_,first_,dt,additive_rates,sampled_poles,normal_weights_});
 #endif
     return Reduce();
   }

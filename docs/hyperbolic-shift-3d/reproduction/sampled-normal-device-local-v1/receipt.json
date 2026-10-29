@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "created_utc": "2026-10-29T09:45:33.894875+00:00",
+  "parent_git_commit": "917fb7229714ca903d4733686a32f56b873a5f64",
+  "source_state": "GPU changes and runner CMake were uncommitted during this build; exact hashes below",
+  "backend": "Serial",
+  "real_bytes": 8,
+  "cxx_flags": "-O3 -DNDEBUG -std=c++17 -arch arm64 -Wall -Wextra -ffp-contract=off",
+  "source_sha256": {
+    "src/z4c/hyperboloidal/hyperbolic_composite.hpp": "99298c2febe0262650907b09303101df50d2c70ca2b11ec5fe86375572ac96ec",
+    "src/z4c/hyperboloidal/hyperbolic_composite_device.hpp": "bb2f5201ebc81b4a1e8983f1aa2567eaddbf392ee4f01cf600db95f588e6488c",
+    "src/z4c/hyperboloidal/hyperbolic_scri_device.hpp": "dbc38f8ee23d2f067b4aabf76b209e3aed48a1815842c3bb85745382888c51ba",
+    "src/z4c/hyperboloidal/hyperbolic_sampled_normal_device.hpp": "4a7bcccdb948c32991f6bea5a0c2a7824123d042e0fd14727973a1e12a38bb65",
+    "src/z4c/hyperboloidal/hyperbolic_composite_exchange.hpp": "65a0eb7c4194389a8325c6e77c23fea1b93831492a94153f02295793db9d37fc",
+    "tst/hyperbolic_shift_3d/test_sampled_normal_device.cpp": "e0a629308d1c44a85c96e487a3ce3a36e3d370c5d9d53150db5c33fbc1ca6750",
+    "tst/hyperbolic_shift_3d/frozen_d98_scri_device.hpp": "afe5d0cbb5f273a9c96c9fb34a72fc4ed2fa2f3a28cfd28869fa85d2d23c7608",
+    "tst/hyperbolic_shift_3d/CMakeLists.txt": "f4dbb80f509c1f9dc61f29a053b5ebead3fdf18dab4ab7fd5f448a525da35ffe"
+  },
+  "binary_sha256": {
+    "hyperbolic_shift_3d_sampled_normal_device": "014ad338ef0e5d2c51ee9206c04a7ae9cf9f22da495e8dc8afd530c5106c581c",
+    "hyperbolic_shift_3d_scri_device": "15ff243ccea9757abbe645847077f14605b7516c6f1b4e2dbf1dd6a00e472d04"
+  },
+  "log_sha256": {
+    "configure.log": "c3b1f879701fb70ff10c5a9ad0c3c4b6839ac342c3d72e7a9af79c5fa93da1ac",
+    "ctest.log": "b1d04d5aa2e7591fa66974b7feb4a725d1586eecae8755ed77f22eeb1f447db0",
+    "build.log": "d31e68c84d4975c33cbdb38df08b0d00b82a936db2b67487bca30c976be9edb1",
+    "results.log": "15d519de28b9e770003573edc7c4bf4cc9354a5a13ecd138da3790c43b4ececb"
+  },
+  "frozen_default_original_sha256": "507b9773c8d8f9d3d99ed6ceb7363186fb25f1816c5112a6a5614f0f8bca04b2",
+  "frozen_default_only_class_and_guard_renamed": true,
+  "component_seconds": 4.87,
+  "default_regression_seconds": 1.87,
+  "case_count": 2,
+  "full_array_default_bits_equal": true,
+  "cpu_samples_rates_dependent_D_max_error": 0,
+  "partition_max_error": 0,
+  "finite_D_raw_bits_equal": true,
+  "maximum_null_residual": 1.1101861976998643e-15,
+  "maximum_D_compatibility": 2.42861286636753e-17,
+  "evolution_performed": false,
+  "SYCL_tested": false
+}

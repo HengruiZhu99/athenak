@@ -58,6 +58,9 @@ class HyperbolicCompositeDevice {
   };
 
  private:
+  // The optional sampled-normal control reuses the exact bulk jet arithmetic
+  // on its surface-owned donor points; the default bulk path is unchanged.
+  friend class HyperbolicSampledNormalDevice;
   struct KOTerm {
     int point[5];
     int target_coefficient;
