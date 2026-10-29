@@ -309,18 +309,17 @@ class HyperbolicComposite {
   void Dissipate(const V&v,V&rhs)const{
     if(ko==0)return;
     constexpr int b[5]={1,-4,6,-4,1};const int n=grid.n;
-    for(size_t m=0;m<grid.mesh.blocks.size();++m)
-    for(int k=0;k<n;++k)for(int j=0;j<n;++j)for(int i=0;i<n;++i)
-    for(int A=0;A<3;++A){const int pos[3]={i,j,k};if(pos[A]+4>=n)continue;
-      const size_t start=m*n*n*n+(k*n+j)*n+i;
-      const int stride=A==0?1:(A==1?n:n*n);Real weight=0;
-      for(int a=0;a<5;++a){const size_t p=start+a*stride;Real inverse_length=0;
+    for(size_t start=0;start<grid.active.size();++start)
+    for(int A=0;A<3;++A){if(grid.ShiftActive(start,A,4)<0)continue;
+      int donors[5];for(int a=0;a<5;++a)donors[a]=grid.ShiftActive(start,A,a);
+      Real weight=0;
+      for(int a=0;a<5;++a){const size_t p=donors[a];Real inverse_length=0;
         for(int d=0;d<3;++d)inverse_length+=grid.geometry[p].J[A][d]*grid.geometry[p].J[A][d];
         const Real r=Radius(grid.geometry[p].x),taper=std::pow(std::max(Real(0),1-r*r/.64),6);
         weight+=grid.volumes[p]*std::sqrt(inverse_length)*taper/5;}
       for(int f=0;f<nf;++f){Real fourth=0;const Real anchor=v[nf*start+f];
-        for(int a=0;a<5;++a)fourth+=b[a]*(v[nf*(start+a*stride)+f]-anchor);
-        for(int a=0;a<5;++a){const size_t p=start+a*stride;
+        for(int a=0;a<5;++a)fourth+=b[a]*(v[nf*donors[a]+f]-anchor);
+        for(int a=0;a<5;++a){const size_t p=donors[a];
           rhs[nf*p+f]-=ko*n*b[a]*weight*fourth/(256*grid.volumes[p]);}}
     }
   }

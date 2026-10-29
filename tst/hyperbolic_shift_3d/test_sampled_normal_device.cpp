@@ -23,6 +23,9 @@
 #ifndef HYPERBOLIC_TEST_CORE2
 #define HYPERBOLIC_TEST_CORE2 0
 #endif
+#ifndef HYPERBOLIC_TEST_OVERLAP
+#define HYPERBOLIC_TEST_OVERLAP 0
+#endif
 constexpr bool inner_transition=HYPERBOLIC_TEST_INNER_TRANSITION;
 constexpr bool donor_seven=HYPERBOLIC_TEST_DONOR_SEVEN;
 namespace h=z4c::hyperboloidal;
@@ -82,7 +85,8 @@ template<class F>static void Reject(F operation,const char*message){
   bool rejected=false;try{operation();}catch(const std::invalid_argument&){rejected=true;}Require(rejected,message);
 }
 static void Check(bool perturb,int refinement=0,int core_subdivisions=1){
-  auto mesh=cubed_sphere::CompositeMesh(.125,{.45,.75,1},1,6,3,core_subdivisions);
+  auto mesh=cubed_sphere::CompositeMesh(.125,{.45,.75,1},1,HYPERBOLIC_TEST_OVERLAP?12:6,3,core_subdivisions);
+  mesh.evolved_overlap=HYPERBOLIC_TEST_OVERLAP;
   if(refinement>0)mesh.RefineCartesian(0);
   // Refine one child again to exercise a genuine coarse/fine Cartesian seam.
   // The shell geometry, cell count and outer-boundary operator stay fixed.
@@ -169,7 +173,8 @@ static void Check(bool perturb,int refinement=0,int core_subdivisions=1){
   // Nonfinite D is rejected by native jet validation even though finite D has
   // no effect on N. This distinguishes invariance from skipped input checks.
   auto invalid_padded=padded;const auto&row=model.scri.rows[0];
-  const size_t donor=size_t(row.block)*6*6*6+(row.k*6+row.j)*6+1;
+  const int n=model.grid.n;
+  const size_t donor=size_t(row.block)*n*n*n+(row.k*n+row.j)*n+n-donors+1;
   invalid_padded[25*model.grid.count+model.grid.active[donor]]=std::numeric_limits<Real>::quiet_NaN();
   const auto bad_sample=samples.Evaluate(Upload(invalid_padded),surface);
   Require(bad_sample.bad_rows>0&&bad_sample.first_bad==0&&bad_sample.reason==Sampled::invalid_input,
@@ -204,7 +209,7 @@ static void Check(bool perturb,int refinement=0,int core_subdivisions=1){
             "direct radial device constraints failed");
     std::cout<<"donor_seven_bulk_error="<<bulk_error<<" exterior_radial_poison=1\n";
   }
-  std::cout<<"sampled_case="<<(perturb?"nonspherical":"minkowski")<<" n=6 epsilon=2 cpu_pole_error="<<pole_error
+  std::cout<<"sampled_case="<<(perturb?"nonspherical":"minkowski")<<" n="<<mesh.cells<<" overlap="<<mesh.evolved_overlap<<" epsilon=2 cpu_pole_error="<<pole_error
     <<" cpu_rate_error="<<rate_error<<" cpu_trace_error="<<trace_error<<" partition_error="<<partition_error
     <<" finite_D_error="<<d_error<<" null="<<null<<" compatibility="<<summary.compatibility
     <<" default_bitwise=1 partitions=12 rejection_checks=1";

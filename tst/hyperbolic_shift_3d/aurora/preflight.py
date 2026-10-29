@@ -36,16 +36,16 @@ def rank_info():
 def read_checkpoint(path):
     with path.open('rb') as stream:
         data = stream.read(HEADER.size)
-        extra = stream.read(V4_CONFIG.size) if data[:16] in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6',b'HYP3D_MPI_V7',b'HYP3D_MPI_V8']] else b''
-        normal = stream.read(V5_NORMAL_CONFIG.size) if data[:16] in [b'HYP3D_MPI_V5'.ljust(16,b'\0'),b'HYP3D_MPI_V6'.ljust(16,b'\0'),b'HYP3D_MPI_V7'.ljust(16,b'\0'),b'HYP3D_MPI_V8'.ljust(16,b'\0')] else b''
-        mesh = stream.read(16) if data[:16]==b'HYP3D_MPI_V8'.ljust(16,b'\0') else b''
+        extra = stream.read(V4_CONFIG.size) if data[:16] in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6',b'HYP3D_MPI_V7',b'HYP3D_MPI_V8',b'HYP3D_MPI_V9']] else b''
+        normal = stream.read(V5_NORMAL_CONFIG.size) if data[:16] in [b'HYP3D_MPI_V5'.ljust(16,b'\0'),b'HYP3D_MPI_V6'.ljust(16,b'\0'),b'HYP3D_MPI_V7'.ljust(16,b'\0'),b'HYP3D_MPI_V8'.ljust(16,b'\0'),b'HYP3D_MPI_V9'.ljust(16,b'\0')] else b''
+        mesh = stream.read(16) if data[:16] in [b'HYP3D_MPI_V8'.ljust(16,b'\0'),b'HYP3D_MPI_V9'.ljust(16,b'\0')] else b''
     if len(data) != HEADER.size:
         raise ValueError('Checkpoint header truncated')
     result = dict(zip(KEYS, HEADER.unpack(data)))
-    if result['magic'] not in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V1',b'HYP3D_MPI_V2',b'HYP3D_MPI_V3',b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6',b'HYP3D_MPI_V7',b'HYP3D_MPI_V8']] or result['nf'] != 31 or result['admitted'] != 1:
+    if result['magic'] not in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V1',b'HYP3D_MPI_V2',b'HYP3D_MPI_V3',b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6',b'HYP3D_MPI_V7',b'HYP3D_MPI_V8',b'HYP3D_MPI_V9']] or result['nf'] != 31 or result['admitted'] != 1:
         raise ValueError('Unknown or unadmitted checkpoint schema')
     result.update(header_bytes=HEADER.size,scri_dissipation_epsilon=0.0,scri_dissipation_degree=0)
-    if result['magic'] in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6',b'HYP3D_MPI_V7',b'HYP3D_MPI_V8']]:
+    if result['magic'] in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6',b'HYP3D_MPI_V7',b'HYP3D_MPI_V8',b'HYP3D_MPI_V9']]:
         if len(extra) != V4_CONFIG.size:
             raise ValueError('V4 checkpoint configuration truncated')
         epsilon,degree,reserved = V4_CONFIG.unpack(extra)
@@ -53,8 +53,8 @@ def read_checkpoint(path):
             raise ValueError('Invalid V4 checkpoint dissipation configuration')
         result.update(header_bytes=HEADER.size+V4_CONFIG.size,
                       scri_dissipation_epsilon=epsilon,scri_dissipation_degree=degree)
-    if result['magic'] in [b'HYP3D_MPI_V5'.ljust(16,b'\0'),b'HYP3D_MPI_V6'.ljust(16,b'\0'),b'HYP3D_MPI_V7'.ljust(16,b'\0'),b'HYP3D_MPI_V8'.ljust(16,b'\0')]:
-        inner=result['magic'] in [b'HYP3D_MPI_V7'.ljust(16,b'\0'),b'HYP3D_MPI_V8'.ljust(16,b'\0')]
+    if result['magic'] in [b'HYP3D_MPI_V5'.ljust(16,b'\0'),b'HYP3D_MPI_V6'.ljust(16,b'\0'),b'HYP3D_MPI_V7'.ljust(16,b'\0'),b'HYP3D_MPI_V8'.ljust(16,b'\0'),b'HYP3D_MPI_V9'.ljust(16,b'\0')]:
+        inner=result['magic'] in [b'HYP3D_MPI_V7'.ljust(16,b'\0'),b'HYP3D_MPI_V8'.ljust(16,b'\0'),b'HYP3D_MPI_V9'.ljust(16,b'\0')]
         radial=inner or result['magic']==b'HYP3D_MPI_V6'.ljust(16,b'\0')
         if len(normal) != V5_NORMAL_CONFIG.size:
             raise ValueError('V5 checkpoint normal configuration truncated')
@@ -68,6 +68,11 @@ def read_checkpoint(path):
         if len(mesh)!=16 or struct.unpack('<4i',mesh)!=(1,2,3,0):raise ValueError('Invalid V8 fixed-core topology')
         result.update(header_bytes=120,mesh_topology='cartesian_2x2x2_shells3',cartesian_core_subdivisions=2,mesh_blocks=26)
         if result['cells']!=26*result['n']**3 or result['surface']!=31*6*result['n']**2:raise ValueError('V8 dimensions disagree with topology')
+    if result['magic']==b'HYP3D_MPI_V9'.ljust(16,b'\0'):
+        if len(mesh)!=16 or struct.unpack('<4i',mesh)!=(2,1,3,3):raise ValueError('Invalid V9 evolved-overlap topology')
+        n=result['n']
+        result.update(header_bytes=120,evolved_overlap=3,nominal_cells=19*n**3)
+        if n<10 or result['cells']!=12*n**3+7*(n+6)**3 or result['surface']!=31*6*n*n:raise ValueError('V9 dimensions disagree with topology')
     if result['n'] < 6 or result['n'] % 2 or result['cells'] <= 0 or result['surface'] <= 0:
         raise ValueError('Invalid checkpoint dimensions')
     if not math.isfinite(result['time']) or result['time'] < 0 or not math.isfinite(result['dt']) or result['dt'] <= 0:
@@ -167,8 +172,8 @@ def run_binary(args, rank, root, checked, argv):
 def parse_component(content, kind, code):
     if kind=='sampled_normal_device':
         return parse_sampled_normal_component(content,code)
-    if kind in ['inner_transition_device','core2_device']:
-        result=parse_donor_seven_component(content,code)
+    if kind in ['inner_transition_device','core2_device','overlap_device']:
+        result=parse_donor_seven_component(content,code,expected_n=12 if kind=='overlap_device' else 6)
         rows=[line for line in content.splitlines() if line.startswith('sampled_case=')]
         if len(rows)!=2 or any('interpatch_interpolation=logical_inner_transition' not in line for line in rows):
             raise ValueError('Missing inner-transition component configuration')
@@ -183,6 +188,12 @@ def parse_component(content, kind, code):
         if len(exchange)!=2:raise ValueError('Missing inner transition full exchange checks')
         result['inner_transition_exchange_checks']=exchange
         result['interpatch_interpolation']='logical_inner_transition'
+        if kind=='overlap_device':
+            for line in rows:
+                tokens=line.split()
+                if tokens.count('overlap=3')!=1 or tokens.count('n=12')!=1:
+                    raise ValueError('Missing evolved-overlap component configuration')
+            result.update(evolved_overlap=3)
         if kind=='core2_device':
             for line in rows:
                 tokens=line.split()
@@ -300,7 +311,7 @@ def parse_dissipation_component(content,kind,code):
                 maxima=maxima,cases=records)
 
 
-def parse_sampled_normal_component(content,code):
+def parse_sampled_normal_component(content,code,expected_n=6):
     """Validate the fixed V5 normal-closure test contract on one GPU tile."""
     backend=re.findall(r'^backend=(\S+)\s*$',content,re.M)
     marker='Sampled-normal device, ownership, default and closure parity passed'
@@ -315,7 +326,7 @@ def parse_sampled_normal_component(content,code):
         row=dict(token.split('=') for token in tokens)
         if len(row)!=len(tokens):raise ValueError('Duplicate sampled-normal component metric')
         if any(row.get(key)!=value for key,value in
-               [('n','6'),('default_bitwise','1'),('partitions','12'),('rejection_checks','1')]):
+               [('n',str(expected_n)),('default_bitwise','1'),('partitions','12'),('rejection_checks','1')]):
             raise ValueError('Sampled-normal shape, default, partition or rejection check failed')
         try:epsilon=float(row['epsilon'])
         except (KeyError,ValueError):raise ValueError('Missing/invalid sampled-normal epsilon')
@@ -335,13 +346,13 @@ def parse_sampled_normal_component(content,code):
                 maxima=maxima,cases=records)
 
 
-def parse_donor_seven_component(content,code):
+def parse_donor_seven_component(content,code,expected_n=6):
     """V6 must independently establish complete bulk and surface parity."""
     marker='Donor-seven device, ownership, default and closure parity passed'
     if content.splitlines().count(marker)!=1:
         raise ValueError('Missing or duplicate donor-seven component marker')
     old='Sampled-normal device, ownership, default and closure parity passed'
-    result=parse_sampled_normal_component(content.replace(marker,old),code)
+    result=parse_sampled_normal_component(content.replace(marker,old),code,expected_n)
     for row in result['cases']:
         if row.get('radial_nodes')!='7' or row.get('radial_bulk_rows')!='3':
             raise ValueError('Donor-seven radial configuration mismatch')
@@ -579,7 +590,7 @@ def main():
     comp=sub.add_parser('component')
     comp.add_argument('--component',choices=['device','exchange','scri','algebraic','angular',
                                             'angular_dissipation','scri_dissipation_closure',
-                                            'sampled_normal_device','donor_seven_device','inner_transition_device','core2_device'],required=True)
+                                            'sampled_normal_device','donor_seven_device','inner_transition_device','core2_device','overlap_device'],required=True)
     comp.add_argument('--test-binary',required=True)
     comp.add_argument('--cmake-cache',required=True)
     bench=sub.add_parser('benchmark')

@@ -75,7 +75,7 @@ class HyperbolicCompositeDevice {
   int first_, local_, n_, width_, padded_count_;
   IntBuffer active_, ko_offsets_, status_;
   GeometryBuffer geometry_;
-  Buffer volumes_, rhs_, gap_, cfl_, uploaded_padded_;
+  Buffer volumes_, diagnostic_volumes_, rhs_, gap_, cfl_, uploaded_padded_;
   KOTermBuffer ko_terms_;
   HostBuffer host_rhs_, host_padded_;
   std::unique_ptr<ScriRadialDevice> radial_plan_;
@@ -354,8 +354,8 @@ class HyperbolicCompositeDevice {
       const auto map=point.geometry(local);const Real *x=map.x;
       const Real r=sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);
       const Real reference_alpha=(1+r*r)/2,weight=point.volume(local);
-      // Volumes include all owned cells. Invalid samples are counted explicitly,
-      // never silently discarded from a reported RMS denominator.
+      // Nominal cells cover the physical domain once; overlap has zero norm
+      // weight. Invalid samples are still counted on every evolved cell.
       result.total.volume+=weight;
       if (r>exterior_radius) result.exterior.volume+=weight;
       const int active=point.active(local);
@@ -404,6 +404,7 @@ class HyperbolicCompositeDevice {
        padded_count_(grid.count),active_("owned active indices",local_count),
        ko_offsets_("owned KO offsets",local_count+1),status_("owned RHS status",local_count),
        geometry_("owned mapped geometry",local_count),volumes_("owned volumes",local_count),
+       diagnostic_volumes_("unique coverage volumes",local_count),
        rhs_("owned hyperboloidal RHS",size_t(nf)*local_count),
        gap_("owned characteristic gap",local_count),cfl_("owned CFL",local_count),
        host_rhs_("host owned RHS",size_t(nf)*local_count) {
@@ -418,6 +419,7 @@ class HyperbolicCompositeDevice {
     auto indices=Kokkos::create_mirror_view(active_);
     auto maps=Kokkos::create_mirror_view(geometry_);
     auto volumes=Kokkos::create_mirror_view(volumes_);
+    auto diagnostic_volumes=Kokkos::create_mirror_view(diagnostic_volumes_);
     auto offsets=Kokkos::create_mirror_view(ko_offsets_);
     std::vector<KOTerm> terms;
     constexpr int b[5]={1,-4,6,-4,1};
@@ -425,24 +427,22 @@ class HyperbolicCompositeDevice {
     for (int local=0;local<local_;++local) {
       const int p=first_+local;
       indices(local)=grid.active[p];maps(local)=grid.geometry[p];volumes(local)=grid.volumes[p];
+      diagnostic_volumes(local)=grid.DiagnosticVolume(p);
       offsets(local)=terms.size();
-      const int block_point=p%(n_*n_*n_);
-      const int position[3]={block_point%n_,(block_point/n_)%n_,block_point/(n_*n_)};
       std::vector<Candidate> candidates;
       for (int A=0;A<3;++A) for (int a=0;a<5;++a) {
-        if (position[A]-a<0 || position[A]-a+4>=n_) continue;
-        const int stride=A==0?1:(A==1?n_:n_*n_);
-        candidates.push_back({p-a*stride,A,a});
+        const int start=grid.ShiftActive(p,A,-a);
+        if(start<0||grid.ShiftActive(start,A,4)<0)continue;
+        candidates.push_back({start,A,a});
       }
       // Match the CPU scatter's global-start, then axis, accumulation order.
       std::sort(candidates.begin(),candidates.end(),[](const Candidate&a,const Candidate&b){
         return a.start<b.start || (a.start==b.start && a.axis<b.axis);
       });
       for (const auto &candidate:candidates) {
-        const int stride=candidate.axis==0?1:(candidate.axis==1?n_:n_*n_);
         KOTerm term{};term.target_coefficient=b[candidate.target];
         for (int a=0;a<5;++a) {
-          const int donor=candidate.start+a*stride;
+          const int donor=grid.ShiftActive(candidate.start,candidate.axis,a);
           term.point[a]=grid.active[donor];
           const auto &map=grid.geometry[donor];Real inverse_length=0,r2=0;
           for (int d=0;d<3;++d) {
@@ -460,6 +460,7 @@ class HyperbolicCompositeDevice {
     auto host_terms=Kokkos::create_mirror_view(ko_terms_);
     for (size_t i=0;i<terms.size();++i) host_terms(i)=terms[i];
     Kokkos::deep_copy(active_,indices);Kokkos::deep_copy(geometry_,maps);
+    Kokkos::deep_copy(diagnostic_volumes_,diagnostic_volumes);
     Kokkos::deep_copy(volumes_,volumes);Kokkos::deep_copy(ko_offsets_,offsets);
     Kokkos::deep_copy(ko_terms_,host_terms);
   }
@@ -484,7 +485,7 @@ class HyperbolicCompositeDevice {
         || !std::isfinite(exterior_radius))
       throw std::invalid_argument("invalid device diagnostic storage/exterior cutoff");
     PointKernel kernel{padded,active_,ko_offsets_,status_,geometry_,ko_terms_,
-        volumes_,rhs_,gap_,cfl_,n_,width_,padded_count_,0,0,false};
+        diagnostic_volumes_,rhs_,gap_,cfl_,n_,width_,padded_count_,0,0,false};
     if(radial_plan_)kernel.radial=radial_plan_->Bind(padded,surface);
     DiagnosticSummary result;
     Kokkos::parallel_reduce("hyperboloidal owned constraints",

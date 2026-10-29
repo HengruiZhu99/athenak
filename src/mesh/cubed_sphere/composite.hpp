@@ -26,6 +26,10 @@ class CompositeMesh {
   int face_subdivisions, cells, ghosts;
   std::vector<CompositeBlock> blocks;
   unsigned long revision = 0;
+  // Optional research overlap: nominal ownership and maps remain unchanged.
+  // The Cartesian core and cube-to-sphere layer evolve this many extra cells
+  // on each side; interpolation ghosts lie outside that evolved region.
+  int evolved_overlap = 0;
 
   CompositeMesh(Real width, std::vector<Real> shell_radii, int subdivisions,
                 int active_cells, int halo = 2, int bulk_subdivisions = 1)

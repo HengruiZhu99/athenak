@@ -80,6 +80,13 @@ class ComponentParserTests(unittest.TestCase):
                 preflight.parse_component(fixture.replace(before,after),'inner_transition_device',0)
         with self.assertRaises(ValueError):preflight.parse_component(DONOR_SEVEN_FIXTURE,'inner_transition_device',0)
 
+    def test_overlap_requires_width_and_grid(self):
+        fixture=DONOR_SEVEN_FIXTURE.replace('n=6','n=12 overlap=3').replace('radial_bulk_rows=3','radial_bulk_rows=3 interpatch_interpolation=logical_inner_transition')+('inner_transition_exchange_error=1e-14 bulk_error=1e-14\n'*2)
+        self.assertTrue(preflight.parse_component(fixture,'overlap_device',0)['passed'])
+        for before,after in [('overlap=3','overlap=0'),('overlap=3',''),('n=12','n=6'),('overlap=3','overlap=3 overlap=3')]:
+            with self.subTest(before=before,after=after),self.assertRaises(ValueError):
+                preflight.parse_component(fixture.replace(before,after),'overlap_device',0)
+
     def test_core2_requires_both_topology_markers(self):
         fixture=DONOR_SEVEN_FIXTURE.replace('radial_bulk_rows=3','radial_bulk_rows=3 interpatch_interpolation=logical_inner_transition cartesian_core_subdivisions=2 mesh_blocks=26')+('inner_transition_exchange_error=1e-14 bulk_error=1e-14\n'*2)
         self.assertTrue(preflight.parse_component(fixture,'core2_device',0)['passed'])
@@ -427,6 +434,23 @@ class CheckpointTests(unittest.TestCase):
             changed=dict(report);del changed[key];(self.root/'b.json').write_text(json.dumps(changed))
             with self.subTest(missing=key),self.assertRaises(ValueError):
                 preflight.restart(args,0,self.root,lambda p:self.root/p)
+
+
+class OverlapCheckpointTests(unittest.TestCase):
+    def test_v9_shape_and_descriptor(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'state.checkpoint';n=12;cells=12*n**3+7*(n+6)**3;surface=31*6*n*n
+            header=preflight.HEADER.pack(b'HYP3D_MPI_V9'.ljust(16,b'\0'),n,31,0,1,cells,surface,2,.0005,.00025)
+            header+=struct.pack('<dii4i4i',2.,7,0,3,7,4,3,2,1,3,3)
+            with path.open('wb') as out:
+                out.write(header);out.truncate(120+16*(31*cells+surface))
+            result=preflight.read_checkpoint(path)
+            self.assertEqual(result['evolved_overlap'],3);self.assertEqual(result['nominal_cells'],19*n**3)
+            self.assertEqual(result['header_bytes'],120)
+            for offset,value in [(104,1),(108,2),(112,2),(116,0),(32,19*n**3)]:
+                with path.open('r+b') as out:
+                    out.write(header);out.seek(offset);out.write(struct.pack('<i',value))
+                with self.subTest(offset=offset),self.assertRaises(ValueError):preflight.read_checkpoint(path)
 
 
 class ExportCheckpointTests(unittest.TestCase):

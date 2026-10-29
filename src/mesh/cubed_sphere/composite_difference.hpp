@@ -22,8 +22,12 @@ class CompositeDifference {
     std::array<Real, 3> boundary{};
   };
   CompositeMesh mesh;
-  int n, ng, padded, count, order;
+  int n, ng, padded, count, order, storage_halo;
   std::vector<int> active;
+  struct Cell {int block,i,j,k;};
+  std::vector<Cell> cells;
+  std::vector<int> inverse_active;
+  size_t nominal_count=0;
   std::vector<Point> geometry;
   std::vector<Real> volumes;
   std::vector<Row> halos;
@@ -32,28 +36,57 @@ class CompositeDifference {
 
   CompositeDifference(CompositeMesh descriptor, int derivative_order = 4,bool radial_stencils=false)
       : mesh(std::move(descriptor)), n(mesh.cells), ng(mesh.ghosts),
-        padded(n+2*ng), count(static_cast<int>(mesh.blocks.size())*padded*padded*padded),
-        order(derivative_order),radial_interface_stencils(radial_stencils) {
+        padded(n+2*(ng+mesh.evolved_overlap)), count(static_cast<int>(mesh.blocks.size())*padded*padded*padded),
+        order(derivative_order),storage_halo(ng+mesh.evolved_overlap),radial_interface_stencils(radial_stencils) {
     if ((order != 2 && order != 4) || ng < order/2 || n < order)
       throw std::invalid_argument("composite derivative order/halo contract");
+    if(mesh.evolved_overlap<0||mesh.evolved_overlap>n/3)
+      throw std::invalid_argument("overlap must be nonnegative and no larger than n/3");
+    inverse_active.assign(count,-1);
+    auto append=[&](int m,int i,int j,int k){
+      const Real q[3] = {(i+.5)/n, (j+.5)/n, (k+.5)/n};
+      const int index=Index(m,i,j,k);
+      inverse_active[index]=active.size();active.push_back(index);cells.push_back({m,i,j,k});
+      geometry.push_back(mesh.Geometry(m,q));
+      const Real volume=PhysicalCellVolume(geometry.back(),n);
+      if(!std::isfinite(volume)||volume<=0)throw std::runtime_error("invalid evolved overlap map");
+      volumes.push_back(volume);
+    };
     for (int m = 0; m < static_cast<int>(mesh.blocks.size()); ++m)
     for (int k = 0; k < n; ++k)
     for (int j = 0; j < n; ++j)
     for (int i = 0; i < n; ++i) {
-      const Real q[3] = {(i+.5)/n, (j+.5)/n, (k+.5)/n};
-      active.push_back(Index(m, i, j, k));
-      geometry.push_back(mesh.Geometry(m, q));
-      volumes.push_back(PhysicalCellVolume(geometry.back(), n));
+      append(m,i,j,k);
+    }
+    nominal_count=active.size();
+    for(int m=0;m<int(mesh.blocks.size());++m){const int o=Overlap(m);
+      for(int k=-o;k<n+o;++k)for(int j=-o;j<n+o;++j)for(int i=-o;i<n+o;++i)
+        if(i<0||i>=n||j<0||j>=n||k<0||k>=n)append(m,i,j,k);
     }
     BuildHalos();
   }
   int Index(int m, int i, int j, int k) const {
-    return ((m*padded+k+ng)*padded+j+ng)*padded+i+ng;
+    return ((m*padded+k+storage_halo)*padded+j+storage_halo)*padded+i+storage_halo;
   }
+  int Overlap(int m)const{return mesh.blocks[m].layer<=0?mesh.evolved_overlap:0;}
+  int ActiveIndex(int m,int i,int j,int k)const{
+    const int o=Overlap(m);
+    if(i< -o||i>=n+o||j< -o||j>=n+o||k< -o||k>=n+o)return -1;
+    return inverse_active[Index(m,i,j,k)];
+  }
+  // Map a logical stencil offset to its independently evolved cell, or -1.
+  int ShiftActive(size_t p,int axis,int amount)const{
+    auto c=cells.at(p);
+    if(axis==0)c.i+=amount;else if(axis==1)c.j+=amount;else c.k+=amount;
+    return ActiveIndex(c.block,c.i,c.j,c.k);
+  }
+  Real DiagnosticVolume(size_t p)const{return p<nominal_count?volumes.at(p):0;}
   int Offset(int a, int amount) const {
     return amount*(a == 0 ? 1 : (a == 1 ? padded : padded*padded));
   }
   std::vector<Entry> Interpolate(const Real x[3], int width) const {
+    if(mesh.evolved_overlap&&std::sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2])<mesh.radii[0])
+      return InterpolateOverlap(x,width);
     const int owner = mesh.Owner(x);
     if (owner < 0) throw std::runtime_error("interpolation outside scri");
     Real q[3]; mesh.Inverse(owner, x, q);
@@ -218,6 +251,39 @@ class CompositeDifference {
 
  private:
   bool inner_transition_logical=false;
+  std::vector<Entry> InterpolateOverlap(const Real x[3],int width)const{
+    const int preferred=mesh.Owner(x);int selected=-1,best_first[3]{};
+    Real best_q[3]{},best_margin=-1e300;
+    for(int m=0;m<int(mesh.blocks.size());++m){
+      const auto&b=mesh.blocks[m];if(b.layer>0)continue;
+      if(b.face>=0&&(b.face%2?-x[b.face/2]:x[b.face/2])<=0)continue;
+      Real q[3];mesh.Inverse(m,x,q);int first[3];Real margin=1e300;bool valid=true;
+      const int o=Overlap(m);
+      for(int a=0;a<3;++a){const Real t=n*q[a]-.5;
+        if(!std::isfinite(t)){valid=false;break;}
+        first[a]=int(std::floor(t))-width/2+1;
+        if(first[a]<-o||first[a]+width>n+o){valid=false;break;}
+        margin=std::min(margin,std::min(t+o,n+o-1-t));
+      }
+      if(!valid)continue;
+      // Prefer the nominal owner when it supplies a centered active stencil.
+      if(m==preferred)margin+=1e6;
+      if(margin>best_margin){selected=m;best_margin=margin;
+        for(int a=0;a<3;++a){best_first[a]=first[a];best_q[a]=q[a];}}
+    }
+    if(selected<0)throw std::runtime_error("no centered evolved-overlap donor at "+
+      std::to_string(x[0])+","+std::to_string(x[1])+","+std::to_string(x[2]));
+    Real w[3][6]{};
+    for(int a=0;a<3;++a)for(int i=0;i<width;++i){w[a][i]=1;
+      for(int j=0;j<width;++j)if(i!=j)w[a][i]*=(n*best_q[a]-.5-best_first[a]-j)/Real(i-j);}
+    std::vector<Entry> entries;
+    for(int k=0;k<width;++k)for(int j=0;j<width;++j)for(int i=0;i<width;++i){
+      const int p=Index(selected,best_first[0]+i,best_first[1]+j,best_first[2]+k);
+      if(inverse_active[p]<0)throw std::runtime_error("overlap stencil reads an unevolved donor");
+      const Real weight=w[0][i]*w[1][j]*w[2][k];if(std::abs(weight)>1e-18)entries.push_back({p,weight});
+    }
+    return entries;
+  }
   std::vector<Entry> InterpolateShellRadius(int owner,const Real x[3],const Real local[3],int width) const {
     const auto &block=mesh.blocks[owner];width=std::min(width,n);
     std::vector<int> chain;
@@ -247,11 +313,11 @@ class CompositeDifference {
   }
   void BuildHalos() {
     halos.clear();extrapolated_halos.clear();
-    for (int m = 0; m < static_cast<int>(mesh.blocks.size()); ++m)
-    for (int k = -ng; k < n+ng; ++k)
-    for (int j = -ng; j < n+ng; ++j)
-    for (int i = -ng; i < n+ng; ++i) {
-      if (i >= 0 && i < n && j >= 0 && j < n && k >= 0 && k < n) continue;
+    for (int m = 0; m < static_cast<int>(mesh.blocks.size()); ++m){const int o=Overlap(m);
+    for (int k = -ng-o; k < n+ng+o; ++k)
+    for (int j = -ng-o; j < n+ng+o; ++j)
+    for (int i = -ng-o; i < n+ng+o; ++i) {
+      if (ActiveIndex(m,i,j,k)>=0) continue;
       const Real q[3] = {(i+.5)/n, (j+.5)/n, (k+.5)/n};
       Real x[3]; mesh.Forward(m, q, x);
       Row row; row.target = Index(m, i, j, k);
@@ -303,6 +369,7 @@ class CompositeDifference {
       coalesce(row);coalesce(extrapolated);
       halos.push_back(std::move(row));
       extrapolated_halos.push_back(std::move(extrapolated));
+    }
     }
   }
 };

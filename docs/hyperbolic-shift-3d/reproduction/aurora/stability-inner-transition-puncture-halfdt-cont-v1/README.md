@@ -1,13 +1,17 @@
-# Half-timestep continuation submitted
+# Half-timestep continuation failed
 
-Job 8984609 continues the independently verified, scientifically accepted
-checkpoint from job 8984574 (coordinate t=.5=1.5M) to t=1=3M. It uses the same
-source-v14 binary, n16 mesh, dt=.00025 and all physical acceptance limits.
-The checkpoint and horizon seed are hash-bound inputs; the original isotropic
-input is not reloaded. Expected successful endpoint: 4002 total steps,
-2001 segment steps. The added check requires the bound horizon seed to load.
+Job 8984609 is terminal (PBS F, exit1), independently verified, and released.
+The same V7 n16 formulation at dt=.00025 failed at coordinate t=.96975
+(2.90925M), versus .9695 (2.9085M) at dt=.0005, at the same Cartesian cell1143.
+The captured intermediate-stage lapse is -2.1596772971199663e-5. No lapse floor
+was applied. This strongly disfavors a timestep-size explanation of the failure.
 
-This run tests whether timestep halving avoids the previous negative-lapse
-failure near 2.9M. No outcome is claimed yet. Resources remain one debug node,
-12 MPI ranks and 12 GPU tiles under CompactBinaryMerger. Footprint at binding:
-3,863,696,082 bytes; planned outputs and checkpoint reserve fit below 5GB.
+The last fresh diagnostic is at t=.95; the final report explicitly marks its
+diagnostics stale. Its positive diagnostic minimum lapse must not be confused
+with the negative lapse in the failed stage. Horizon acceptance is lost from
+t=.65 onward. Scri surface/ghost null residual maxima remain below1.3e-15.
+
+The preserved parent at t=.5 remains a valid checkpoint, but this failed
+continuation is not admitted for restart. Verification replays all47 scientific
+gates and checks raw artifact hashes, all four checkpoint arrays, source, binary,
+plan, input and scheduler identities. Scientific acceptance is false.
