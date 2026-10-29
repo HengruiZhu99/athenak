@@ -1,0 +1,66 @@
+{
+  "passed": true,
+  "scope": "Local verifier validation only; native fixtures are Serial. No Aurora campaign outcome.",
+  "tests": 13,
+  "unittest_output": ".............\n----------------------------------------------------------------------\nRan 13 tests in 0.327s\n\nOK\n",
+  "verifier_sha256": "b406851e1399a645f8870123800a04817fb0fd19c828680d9b7c60b23d1a6c0f",
+  "test_sha256": "1942ce534e4741028195350eef7ede251a4fa5e68d444420c36c0d7bb1257148",
+  "source_git_blobs_verified": 2613,
+  "build_targets_verified": 9,
+  "native_serial_off_control": {
+    "passed": true,
+    "whole_file_equal": false,
+    "four_arrays_equal": true,
+    "core_header_equal": true,
+    "arrays": [
+      {
+        "name": "volume_state",
+        "doubles": 127224,
+        "sha256": "f6583321ddce300f7a5f1d8251634e659383decd1e7df00fff074e039ca1970b"
+      },
+      {
+        "name": "volume_compensation",
+        "doubles": 127224,
+        "sha256": "ac128912e445c7bbe7dfc56248552b0c94d0bcabc7ddb1b21ff29e140427d441"
+      },
+      {
+        "name": "scri_state",
+        "doubles": 6696,
+        "sha256": "6e36cdecc72fc27671c5490965c7e27eaed20a1e375bf796bffe6658a916cb2b"
+      },
+      {
+        "name": "scri_compensation",
+        "doubles": 6696,
+        "sha256": "d2b1de8e7e3c39d47d9a3573ae363caa022b7d585d5b475c59c5ee84b1e50216"
+      }
+    ]
+  },
+  "native_serial_restart": {
+    "passed": true,
+    "whole_file_equal": true,
+    "four_arrays_equal": true,
+    "core_header_equal": true,
+    "arrays": [
+      {
+        "name": "volume_state",
+        "doubles": 127224,
+        "sha256": "683923477b883f45b1ad1813dfbc63f96da7783965622115facbef7de8e5eaf2"
+      },
+      {
+        "name": "volume_compensation",
+        "doubles": 127224,
+        "sha256": "72e4eacb25bb63157cbdc94ade8081882e9cd3a322d6a89073e6fa74a1113f9f"
+      },
+      {
+        "name": "scri_state",
+        "doubles": 6696,
+        "sha256": "be988f6e6ffb59a17f5425b2142593aa0f0746b0dcc64c5a586a31d975179f41"
+      },
+      {
+        "name": "scri_compensation",
+        "doubles": 6696,
+        "sha256": "7f2d573fad93b956444330d7ce30ffbf90357900d1a4722c754a7b6875fc7a1b"
+      }
+    ]
+  }
+}

@@ -1,0 +1,899 @@
+{
+  "status": "completed",
+  "mode": "component",
+  "mpi_size": 12,
+  "backend": "SYCL",
+  "placement_passed": true,
+  "ranks": [
+    {
+      "rank": 0,
+      "host": "x4502c7s0b0n0",
+      "mask": "0.0",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 8.5500877359882,
+        "log": "campaigns/preflight-dissipative-v1/output/parity-dissipation-closure.rank-00.log",
+        "log_sha256": "6c99569b63bc2ae5c772fe94cb8bd1d2287dd479edd23bc58725e406aed7d91d",
+        "binary": "build-sycl-mpi-v11/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_scri_dissipation_closure",
+        "binary_sha256": "46b9bf67d8e2a9de96cf8c2c468440bbf14d6ceeca5bb568e0da91592f94917a",
+        "cache_sha256": "1c571ff056eac7b36beadf1ea2d5cf55b11a94914d5e9e50a7fda56a3821a0cd",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "maxima": {
+          "additive_rate_error": 0,
+          "dependent_D_response_error": 3.003240017784847e-17,
+          "compatibility": 2.7755575615628914e-17,
+          "cpu_rate_error": 8.466179469962272e-14,
+          "cpu_trace_error": 2.0187233355690522e-14,
+          "host_rate_error": 0,
+          "null": 1.1101848448075473e-15,
+          "angular_cfl": 0.005916923866773288
+        },
+        "cases": [
+          {
+            "closure_case": "synthetic",
+            "additive_rate_error": "0",
+            "dependent_D_response_error": "3.0032400177848473e-17",
+            "compatibility": "2.7755575615628914e-17",
+            "cpu_rate_error": "0",
+            "cpu_trace_error": "0",
+            "partition_parity": "1",
+            "zero_off": "1",
+            "rejection_checks": "1"
+          },
+          {
+            "closure_case": "plan",
+            "additive_rate_error": "0",
+            "dependent_D_response_error": "2.3978285126907565e-17",
+            "compatibility": "1.7347234759768071e-17",
+            "cpu_rate_error": "8.466179469962272e-14",
+            "cpu_trace_error": "2.0187233355690522e-14",
+            "partition_parity": "1",
+            "zero_off": "1",
+            "rejection_checks": "1"
+          },
+          {
+            "plan_perturb": "0",
+            "host_rate_error": "0",
+            "angular_cfl": "0.0059169238667732878",
+            "null": "9.9920072216264128e-16",
+            "compatibility": "1.1044052673094165e-29"
+          },
+          {
+            "plan_perturb": "1",
+            "host_rate_error": "0",
+            "angular_cfl": "0.0059169238667732878",
+            "null": "1.1101848448075473e-15",
+            "compatibility": "2.4286128663675299e-17"
+          },
+          {
+            "cfl_rejection": "1",
+            "cross_face_guard": "1",
+            "epsilon_validation": "1",
+            "shared_plan": "1"
+          }
+        ]
+      }
+    },
+    {
+      "rank": 1,
+      "host": "x4502c7s0b0n0",
+      "mask": "0.1",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 8.60917289298959,
+        "log": "campaigns/preflight-dissipative-v1/output/parity-dissipation-closure.rank-01.log",
+        "log_sha256": "6c99569b63bc2ae5c772fe94cb8bd1d2287dd479edd23bc58725e406aed7d91d",
+        "binary": "build-sycl-mpi-v11/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_scri_dissipation_closure",
+        "binary_sha256": "46b9bf67d8e2a9de96cf8c2c468440bbf14d6ceeca5bb568e0da91592f94917a",
+        "cache_sha256": "1c571ff056eac7b36beadf1ea2d5cf55b11a94914d5e9e50a7fda56a3821a0cd",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "maxima": {
+          "additive_rate_error": 0,
+          "dependent_D_response_error": 3.003240017784847e-17,
+          "compatibility": 2.7755575615628914e-17,
+          "cpu_rate_error": 8.466179469962272e-14,
+          "cpu_trace_error": 2.0187233355690522e-14,
+          "host_rate_error": 0,
+          "null": 1.1101848448075473e-15,
+          "angular_cfl": 0.005916923866773288
+        },
+        "cases": [
+          {
+            "closure_case": "synthetic",
+            "additive_rate_error": "0",
+            "dependent_D_response_error": "3.0032400177848473e-17",
+            "compatibility": "2.7755575615628914e-17",
+            "cpu_rate_error": "0",
+            "cpu_trace_error": "0",
+            "partition_parity": "1",
+            "zero_off": "1",
+            "rejection_checks": "1"
+          },
+          {
+            "closure_case": "plan",
+            "additive_rate_error": "0",
+            "dependent_D_response_error": "2.3978285126907565e-17",
+            "compatibility": "1.7347234759768071e-17",
+            "cpu_rate_error": "8.466179469962272e-14",
+            "cpu_trace_error": "2.0187233355690522e-14",
+            "partition_parity": "1",
+            "zero_off": "1",
+            "rejection_checks": "1"
+          },
+          {
+            "plan_perturb": "0",
+            "host_rate_error": "0",
+            "angular_cfl": "0.0059169238667732878",
+            "null": "9.9920072216264128e-16",
+            "compatibility": "1.1044052673094165e-29"
+          },
+          {
+            "plan_perturb": "1",
+            "host_rate_error": "0",
+            "angular_cfl": "0.0059169238667732878",
+            "null": "1.1101848448075473e-15",
+            "compatibility": "2.4286128663675299e-17"
+          },
+          {
+            "cfl_rejection": "1",
+            "cross_face_guard": "1",
+            "epsilon_validation": "1",
+            "shared_plan": "1"
+          }
+        ]
+      }
+    },
+    {
+      "rank": 2,
+      "host": "x4502c7s0b0n0",
+      "mask": "1.0",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 8.555060217855498,
+        "log": "campaigns/preflight-dissipative-v1/output/parity-dissipation-closure.rank-02.log",
+        "log_sha256": "6c99569b63bc2ae5c772fe94cb8bd1d2287dd479edd23bc58725e406aed7d91d",
+        "binary": "build-sycl-mpi-v11/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_scri_dissipation_closure",
+        "binary_sha256": "46b9bf67d8e2a9de96cf8c2c468440bbf14d6ceeca5bb568e0da91592f94917a",
+        "cache_sha256": "1c571ff056eac7b36beadf1ea2d5cf55b11a94914d5e9e50a7fda56a3821a0cd",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "maxima": {
+          "additive_rate_error": 0,
+          "dependent_D_response_error": 3.003240017784847e-17,
+          "compatibility": 2.7755575615628914e-17,
+          "cpu_rate_error": 8.466179469962272e-14,
+          "cpu_trace_error": 2.0187233355690522e-14,
+          "host_rate_error": 0,
+          "null": 1.1101848448075473e-15,
+          "angular_cfl": 0.005916923866773288
+        },
+        "cases": [
+          {
+            "closure_case": "synthetic",
+            "additive_rate_error": "0",
+            "dependent_D_response_error": "3.0032400177848473e-17",
+            "compatibility": "2.7755575615628914e-17",
+            "cpu_rate_error": "0",
+            "cpu_trace_error": "0",
+            "partition_parity": "1",
+            "zero_off": "1",
+            "rejection_checks": "1"
+          },
+          {
+            "closure_case": "plan",
+            "additive_rate_error": "0",
+            "dependent_D_response_error": "2.3978285126907565e-17",
+            "compatibility": "1.7347234759768071e-17",
+            "cpu_rate_error": "8.466179469962272e-14",
+            "cpu_trace_error": "2.0187233355690522e-14",
+            "partition_parity": "1",
+            "zero_off": "1",
+            "rejection_checks": "1"
+          },
+          {
+            "plan_perturb": "0",
+            "host_rate_error": "0",
+            "angular_cfl": "0.0059169238667732878",
+            "null": "9.9920072216264128e-16",
+            "compatibility": "1.1044052673094165e-29"
+          },
+          {
+            "plan_perturb": "1",
+            "host_rate_error": "0",
+            "angular_cfl": "0.0059169238667732878",
+            "null": "1.1101848448075473e-15",
+            "compatibility": "2.4286128663675299e-17"
+          },
+          {
+            "cfl_rejection": "1",
+            "cross_face_guard": "1",
+            "epsilon_validation": "1",
+            "shared_plan": "1"
+          }
+        ]
+      }
+    },
+    {
+      "rank": 3,
+      "host": "x4502c7s0b0n0",
+      "mask": "1.1",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 8.610861169872805,
+        "log": "campaigns/preflight-dissipative-v1/output/parity-dissipation-closure.rank-03.log",
+        "log_sha256": "6c99569b63bc2ae5c772fe94cb8bd1d2287dd479edd23bc58725e406aed7d91d",
+        "binary": "build-sycl-mpi-v11/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_scri_dissipation_closure",
+        "binary_sha256": "46b9bf67d8e2a9de96cf8c2c468440bbf14d6ceeca5bb568e0da91592f94917a",
+        "cache_sha256": "1c571ff056eac7b36beadf1ea2d5cf55b11a94914d5e9e50a7fda56a3821a0cd",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "maxima": {
+          "additive_rate_error": 0,
+          "dependent_D_response_error": 3.003240017784847e-17,
+          "compatibility": 2.7755575615628914e-17,
+          "cpu_rate_error": 8.466179469962272e-14,
+          "cpu_trace_error": 2.0187233355690522e-14,
+          "host_rate_error": 0,
+          "null": 1.1101848448075473e-15,
+          "angular_cfl": 0.005916923866773288
+        },
+        "cases": [
+          {
+            "closure_case": "synthetic",
+            "additive_rate_error": "0",
+            "dependent_D_response_error": "3.0032400177848473e-17",
+            "compatibility": "2.7755575615628914e-17",
+            "cpu_rate_error": "0",
+            "cpu_trace_error": "0",
+            "partition_parity": "1",
+            "zero_off": "1",
+            "rejection_checks": "1"
+          },
+          {
+            "closure_case": "plan",
+            "additive_rate_error": "0",
+            "dependent_D_response_error": "2.3978285126907565e-17",
+            "compatibility": "1.7347234759768071e-17",
+            "cpu_rate_error": "8.466179469962272e-14",
+            "cpu_trace_error": "2.0187233355690522e-14",
+            "partition_parity": "1",
+            "zero_off": "1",
+            "rejection_checks": "1"
+          },
+          {
+            "plan_perturb": "0",
+            "host_rate_error": "0",
+            "angular_cfl": "0.0059169238667732878",
+            "null": "9.9920072216264128e-16",
+            "compatibility": "1.1044052673094165e-29"
+          },
+          {
+            "plan_perturb": "1",
+            "host_rate_error": "0",
+            "angular_cfl": "0.0059169238667732878",
+            "null": "1.1101848448075473e-15",
+            "compatibility": "2.4286128663675299e-17"
+          },
+          {
+            "cfl_rejection": "1",
+            "cross_face_guard": "1",
+            "epsilon_validation": "1",
+            "shared_plan": "1"
+          }
+        ]
+      }
+    },
+    {
+      "rank": 4,
+      "host": "x4502c7s0b0n0",
+      "mask": "2.0",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 8.60080198617652,
+        "log": "campaigns/preflight-dissipative-v1/output/parity-dissipation-closure.rank-04.log",
+        "log_sha256": "6c99569b63bc2ae5c772fe94cb8bd1d2287dd479edd23bc58725e406aed7d91d",
+        "binary": "build-sycl-mpi-v11/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_scri_dissipation_closure",
+        "binary_sha256": "46b9bf67d8e2a9de96cf8c2c468440bbf14d6ceeca5bb568e0da91592f94917a",
+        "cache_sha256": "1c571ff056eac7b36beadf1ea2d5cf55b11a94914d5e9e50a7fda56a3821a0cd",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "maxima": {
+          "additive_rate_error": 0,
+          "dependent_D_response_error": 3.003240017784847e-17,
+          "compatibility": 2.7755575615628914e-17,
+          "cpu_rate_error": 8.466179469962272e-14,
+          "cpu_trace_error": 2.0187233355690522e-14,
+          "host_rate_error": 0,
+          "null": 1.1101848448075473e-15,
+          "angular_cfl": 0.005916923866773288
+        },
+        "cases": [
+          {
+            "closure_case": "synthetic",
+            "additive_rate_error": "0",
+            "dependent_D_response_error": "3.0032400177848473e-17",
+            "compatibility": "2.7755575615628914e-17",
+            "cpu_rate_error": "0",
+            "cpu_trace_error": "0",
+            "partition_parity": "1",
+            "zero_off": "1",
+            "rejection_checks": "1"
+          },
+          {
+            "closure_case": "plan",
+            "additive_rate_error": "0",
+            "dependent_D_response_error": "2.3978285126907565e-17",
+            "compatibility": "1.7347234759768071e-17",
+            "cpu_rate_error": "8.466179469962272e-14",
+            "cpu_trace_error": "2.0187233355690522e-14",
+            "partition_parity": "1",
+            "zero_off": "1",
+            "rejection_checks": "1"
+          },
+          {
+            "plan_perturb": "0",
+            "host_rate_error": "0",
+            "angular_cfl": "0.0059169238667732878",
+            "null": "9.9920072216264128e-16",
+            "compatibility": "1.1044052673094165e-29"
+          },
+          {
+            "plan_perturb": "1",
+            "host_rate_error": "0",
+            "angular_cfl": "0.0059169238667732878",
+            "null": "1.1101848448075473e-15",
+            "compatibility": "2.4286128663675299e-17"
+          },
+          {
+            "cfl_rejection": "1",
+            "cross_face_guard": "1",
+            "epsilon_validation": "1",
+            "shared_plan": "1"
+          }
+        ]
+      }
+    },
+    {
+      "rank": 5,
+      "host": "x4502c7s0b0n0",
+      "mask": "2.1",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 8.610085076885298,
+        "log": "campaigns/preflight-dissipative-v1/output/parity-dissipation-closure.rank-05.log",
+        "log_sha256": "6c99569b63bc2ae5c772fe94cb8bd1d2287dd479edd23bc58725e406aed7d91d",
+        "binary": "build-sycl-mpi-v11/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_scri_dissipation_closure",
+        "binary_sha256": "46b9bf67d8e2a9de96cf8c2c468440bbf14d6ceeca5bb568e0da91592f94917a",
+        "cache_sha256": "1c571ff056eac7b36beadf1ea2d5cf55b11a94914d5e9e50a7fda56a3821a0cd",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "maxima": {
+          "additive_rate_error": 0,
+          "dependent_D_response_error": 3.003240017784847e-17,
+          "compatibility": 2.7755575615628914e-17,
+          "cpu_rate_error": 8.466179469962272e-14,
+          "cpu_trace_error": 2.0187233355690522e-14,
+          "host_rate_error": 0,
+          "null": 1.1101848448075473e-15,
+          "angular_cfl": 0.005916923866773288
+        },
+        "cases": [
+          {
+            "closure_case": "synthetic",
+            "additive_rate_error": "0",
+            "dependent_D_response_error": "3.0032400177848473e-17",
+            "compatibility": "2.7755575615628914e-17",
+            "cpu_rate_error": "0",
+            "cpu_trace_error": "0",
+            "partition_parity": "1",
+            "zero_off": "1",
+            "rejection_checks": "1"
+          },
+          {
+            "closure_case": "plan",
+            "additive_rate_error": "0",
+            "dependent_D_response_error": "2.3978285126907565e-17",
+            "compatibility": "1.7347234759768071e-17",
+            "cpu_rate_error": "8.466179469962272e-14",
+            "cpu_trace_error": "2.0187233355690522e-14",
+            "partition_parity": "1",
+            "zero_off": "1",
+            "rejection_checks": "1"
+          },
+          {
+            "plan_perturb": "0",
+            "host_rate_error": "0",
+            "angular_cfl": "0.0059169238667732878",
+            "null": "9.9920072216264128e-16",
+            "compatibility": "1.1044052673094165e-29"
+          },
+          {
+            "plan_perturb": "1",
+            "host_rate_error": "0",
+            "angular_cfl": "0.0059169238667732878",
+            "null": "1.1101848448075473e-15",
+            "compatibility": "2.4286128663675299e-17"
+          },
+          {
+            "cfl_rejection": "1",
+            "cross_face_guard": "1",
+            "epsilon_validation": "1",
+            "shared_plan": "1"
+          }
+        ]
+      }
+    },
+    {
+      "rank": 6,
+      "host": "x4502c7s0b0n0",
+      "mask": "3.0",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 8.648960988037288,
+        "log": "campaigns/preflight-dissipative-v1/output/parity-dissipation-closure.rank-06.log",
+        "log_sha256": "6c99569b63bc2ae5c772fe94cb8bd1d2287dd479edd23bc58725e406aed7d91d",
+        "binary": "build-sycl-mpi-v11/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_scri_dissipation_closure",
+        "binary_sha256": "46b9bf67d8e2a9de96cf8c2c468440bbf14d6ceeca5bb568e0da91592f94917a",
+        "cache_sha256": "1c571ff056eac7b36beadf1ea2d5cf55b11a94914d5e9e50a7fda56a3821a0cd",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "maxima": {
+          "additive_rate_error": 0,
+          "dependent_D_response_error": 3.003240017784847e-17,
+          "compatibility": 2.7755575615628914e-17,
+          "cpu_rate_error": 8.466179469962272e-14,
+          "cpu_trace_error": 2.0187233355690522e-14,
+          "host_rate_error": 0,
+          "null": 1.1101848448075473e-15,
+          "angular_cfl": 0.005916923866773288
+        },
+        "cases": [
+          {
+            "closure_case": "synthetic",
+            "additive_rate_error": "0",
+            "dependent_D_response_error": "3.0032400177848473e-17",
+            "compatibility": "2.7755575615628914e-17",
+            "cpu_rate_error": "0",
+            "cpu_trace_error": "0",
+            "partition_parity": "1",
+            "zero_off": "1",
+            "rejection_checks": "1"
+          },
+          {
+            "closure_case": "plan",
+            "additive_rate_error": "0",
+            "dependent_D_response_error": "2.3978285126907565e-17",
+            "compatibility": "1.7347234759768071e-17",
+            "cpu_rate_error": "8.466179469962272e-14",
+            "cpu_trace_error": "2.0187233355690522e-14",
+            "partition_parity": "1",
+            "zero_off": "1",
+            "rejection_checks": "1"
+          },
+          {
+            "plan_perturb": "0",
+            "host_rate_error": "0",
+            "angular_cfl": "0.0059169238667732878",
+            "null": "9.9920072216264128e-16",
+            "compatibility": "1.1044052673094165e-29"
+          },
+          {
+            "plan_perturb": "1",
+            "host_rate_error": "0",
+            "angular_cfl": "0.0059169238667732878",
+            "null": "1.1101848448075473e-15",
+            "compatibility": "2.4286128663675299e-17"
+          },
+          {
+            "cfl_rejection": "1",
+            "cross_face_guard": "1",
+            "epsilon_validation": "1",
+            "shared_plan": "1"
+          }
+        ]
+      }
+    },
+    {
+      "rank": 7,
+      "host": "x4502c7s0b0n0",
+      "mask": "3.1",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 8.648746423888952,
+        "log": "campaigns/preflight-dissipative-v1/output/parity-dissipation-closure.rank-07.log",
+        "log_sha256": "6c99569b63bc2ae5c772fe94cb8bd1d2287dd479edd23bc58725e406aed7d91d",
+        "binary": "build-sycl-mpi-v11/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_scri_dissipation_closure",
+        "binary_sha256": "46b9bf67d8e2a9de96cf8c2c468440bbf14d6ceeca5bb568e0da91592f94917a",
+        "cache_sha256": "1c571ff056eac7b36beadf1ea2d5cf55b11a94914d5e9e50a7fda56a3821a0cd",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "maxima": {
+          "additive_rate_error": 0,
+          "dependent_D_response_error": 3.003240017784847e-17,
+          "compatibility": 2.7755575615628914e-17,
+          "cpu_rate_error": 8.466179469962272e-14,
+          "cpu_trace_error": 2.0187233355690522e-14,
+          "host_rate_error": 0,
+          "null": 1.1101848448075473e-15,
+          "angular_cfl": 0.005916923866773288
+        },
+        "cases": [
+          {
+            "closure_case": "synthetic",
+            "additive_rate_error": "0",
+            "dependent_D_response_error": "3.0032400177848473e-17",
+            "compatibility": "2.7755575615628914e-17",
+            "cpu_rate_error": "0",
+            "cpu_trace_error": "0",
+            "partition_parity": "1",
+            "zero_off": "1",
+            "rejection_checks": "1"
+          },
+          {
+            "closure_case": "plan",
+            "additive_rate_error": "0",
+            "dependent_D_response_error": "2.3978285126907565e-17",
+            "compatibility": "1.7347234759768071e-17",
+            "cpu_rate_error": "8.466179469962272e-14",
+            "cpu_trace_error": "2.0187233355690522e-14",
+            "partition_parity": "1",
+            "zero_off": "1",
+            "rejection_checks": "1"
+          },
+          {
+            "plan_perturb": "0",
+            "host_rate_error": "0",
+            "angular_cfl": "0.0059169238667732878",
+            "null": "9.9920072216264128e-16",
+            "compatibility": "1.1044052673094165e-29"
+          },
+          {
+            "plan_perturb": "1",
+            "host_rate_error": "0",
+            "angular_cfl": "0.0059169238667732878",
+            "null": "1.1101848448075473e-15",
+            "compatibility": "2.4286128663675299e-17"
+          },
+          {
+            "cfl_rejection": "1",
+            "cross_face_guard": "1",
+            "epsilon_validation": "1",
+            "shared_plan": "1"
+          }
+        ]
+      }
+    },
+    {
+      "rank": 8,
+      "host": "x4502c7s0b0n0",
+      "mask": "4.0",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 8.603547896957025,
+        "log": "campaigns/preflight-dissipative-v1/output/parity-dissipation-closure.rank-08.log",
+        "log_sha256": "6c99569b63bc2ae5c772fe94cb8bd1d2287dd479edd23bc58725e406aed7d91d",
+        "binary": "build-sycl-mpi-v11/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_scri_dissipation_closure",
+        "binary_sha256": "46b9bf67d8e2a9de96cf8c2c468440bbf14d6ceeca5bb568e0da91592f94917a",
+        "cache_sha256": "1c571ff056eac7b36beadf1ea2d5cf55b11a94914d5e9e50a7fda56a3821a0cd",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "maxima": {
+          "additive_rate_error": 0,
+          "dependent_D_response_error": 3.003240017784847e-17,
+          "compatibility": 2.7755575615628914e-17,
+          "cpu_rate_error": 8.466179469962272e-14,
+          "cpu_trace_error": 2.0187233355690522e-14,
+          "host_rate_error": 0,
+          "null": 1.1101848448075473e-15,
+          "angular_cfl": 0.005916923866773288
+        },
+        "cases": [
+          {
+            "closure_case": "synthetic",
+            "additive_rate_error": "0",
+            "dependent_D_response_error": "3.0032400177848473e-17",
+            "compatibility": "2.7755575615628914e-17",
+            "cpu_rate_error": "0",
+            "cpu_trace_error": "0",
+            "partition_parity": "1",
+            "zero_off": "1",
+            "rejection_checks": "1"
+          },
+          {
+            "closure_case": "plan",
+            "additive_rate_error": "0",
+            "dependent_D_response_error": "2.3978285126907565e-17",
+            "compatibility": "1.7347234759768071e-17",
+            "cpu_rate_error": "8.466179469962272e-14",
+            "cpu_trace_error": "2.0187233355690522e-14",
+            "partition_parity": "1",
+            "zero_off": "1",
+            "rejection_checks": "1"
+          },
+          {
+            "plan_perturb": "0",
+            "host_rate_error": "0",
+            "angular_cfl": "0.0059169238667732878",
+            "null": "9.9920072216264128e-16",
+            "compatibility": "1.1044052673094165e-29"
+          },
+          {
+            "plan_perturb": "1",
+            "host_rate_error": "0",
+            "angular_cfl": "0.0059169238667732878",
+            "null": "1.1101848448075473e-15",
+            "compatibility": "2.4286128663675299e-17"
+          },
+          {
+            "cfl_rejection": "1",
+            "cross_face_guard": "1",
+            "epsilon_validation": "1",
+            "shared_plan": "1"
+          }
+        ]
+      }
+    },
+    {
+      "rank": 9,
+      "host": "x4502c7s0b0n0",
+      "mask": "4.1",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 8.649159847060218,
+        "log": "campaigns/preflight-dissipative-v1/output/parity-dissipation-closure.rank-09.log",
+        "log_sha256": "6c99569b63bc2ae5c772fe94cb8bd1d2287dd479edd23bc58725e406aed7d91d",
+        "binary": "build-sycl-mpi-v11/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_scri_dissipation_closure",
+        "binary_sha256": "46b9bf67d8e2a9de96cf8c2c468440bbf14d6ceeca5bb568e0da91592f94917a",
+        "cache_sha256": "1c571ff056eac7b36beadf1ea2d5cf55b11a94914d5e9e50a7fda56a3821a0cd",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "maxima": {
+          "additive_rate_error": 0,
+          "dependent_D_response_error": 3.003240017784847e-17,
+          "compatibility": 2.7755575615628914e-17,
+          "cpu_rate_error": 8.466179469962272e-14,
+          "cpu_trace_error": 2.0187233355690522e-14,
+          "host_rate_error": 0,
+          "null": 1.1101848448075473e-15,
+          "angular_cfl": 0.005916923866773288
+        },
+        "cases": [
+          {
+            "closure_case": "synthetic",
+            "additive_rate_error": "0",
+            "dependent_D_response_error": "3.0032400177848473e-17",
+            "compatibility": "2.7755575615628914e-17",
+            "cpu_rate_error": "0",
+            "cpu_trace_error": "0",
+            "partition_parity": "1",
+            "zero_off": "1",
+            "rejection_checks": "1"
+          },
+          {
+            "closure_case": "plan",
+            "additive_rate_error": "0",
+            "dependent_D_response_error": "2.3978285126907565e-17",
+            "compatibility": "1.7347234759768071e-17",
+            "cpu_rate_error": "8.466179469962272e-14",
+            "cpu_trace_error": "2.0187233355690522e-14",
+            "partition_parity": "1",
+            "zero_off": "1",
+            "rejection_checks": "1"
+          },
+          {
+            "plan_perturb": "0",
+            "host_rate_error": "0",
+            "angular_cfl": "0.0059169238667732878",
+            "null": "9.9920072216264128e-16",
+            "compatibility": "1.1044052673094165e-29"
+          },
+          {
+            "plan_perturb": "1",
+            "host_rate_error": "0",
+            "angular_cfl": "0.0059169238667732878",
+            "null": "1.1101848448075473e-15",
+            "compatibility": "2.4286128663675299e-17"
+          },
+          {
+            "cfl_rejection": "1",
+            "cross_face_guard": "1",
+            "epsilon_validation": "1",
+            "shared_plan": "1"
+          }
+        ]
+      }
+    },
+    {
+      "rank": 10,
+      "host": "x4502c7s0b0n0",
+      "mask": "5.0",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 8.603379111038521,
+        "log": "campaigns/preflight-dissipative-v1/output/parity-dissipation-closure.rank-10.log",
+        "log_sha256": "6c99569b63bc2ae5c772fe94cb8bd1d2287dd479edd23bc58725e406aed7d91d",
+        "binary": "build-sycl-mpi-v11/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_scri_dissipation_closure",
+        "binary_sha256": "46b9bf67d8e2a9de96cf8c2c468440bbf14d6ceeca5bb568e0da91592f94917a",
+        "cache_sha256": "1c571ff056eac7b36beadf1ea2d5cf55b11a94914d5e9e50a7fda56a3821a0cd",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "maxima": {
+          "additive_rate_error": 0,
+          "dependent_D_response_error": 3.003240017784847e-17,
+          "compatibility": 2.7755575615628914e-17,
+          "cpu_rate_error": 8.466179469962272e-14,
+          "cpu_trace_error": 2.0187233355690522e-14,
+          "host_rate_error": 0,
+          "null": 1.1101848448075473e-15,
+          "angular_cfl": 0.005916923866773288
+        },
+        "cases": [
+          {
+            "closure_case": "synthetic",
+            "additive_rate_error": "0",
+            "dependent_D_response_error": "3.0032400177848473e-17",
+            "compatibility": "2.7755575615628914e-17",
+            "cpu_rate_error": "0",
+            "cpu_trace_error": "0",
+            "partition_parity": "1",
+            "zero_off": "1",
+            "rejection_checks": "1"
+          },
+          {
+            "closure_case": "plan",
+            "additive_rate_error": "0",
+            "dependent_D_response_error": "2.3978285126907565e-17",
+            "compatibility": "1.7347234759768071e-17",
+            "cpu_rate_error": "8.466179469962272e-14",
+            "cpu_trace_error": "2.0187233355690522e-14",
+            "partition_parity": "1",
+            "zero_off": "1",
+            "rejection_checks": "1"
+          },
+          {
+            "plan_perturb": "0",
+            "host_rate_error": "0",
+            "angular_cfl": "0.0059169238667732878",
+            "null": "9.9920072216264128e-16",
+            "compatibility": "1.1044052673094165e-29"
+          },
+          {
+            "plan_perturb": "1",
+            "host_rate_error": "0",
+            "angular_cfl": "0.0059169238667732878",
+            "null": "1.1101848448075473e-15",
+            "compatibility": "2.4286128663675299e-17"
+          },
+          {
+            "cfl_rejection": "1",
+            "cross_face_guard": "1",
+            "epsilon_validation": "1",
+            "shared_plan": "1"
+          }
+        ]
+      }
+    },
+    {
+      "rank": 11,
+      "host": "x4502c7s0b0n0",
+      "mask": "5.1",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 8.6567216378171,
+        "log": "campaigns/preflight-dissipative-v1/output/parity-dissipation-closure.rank-11.log",
+        "log_sha256": "6c99569b63bc2ae5c772fe94cb8bd1d2287dd479edd23bc58725e406aed7d91d",
+        "binary": "build-sycl-mpi-v11/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_scri_dissipation_closure",
+        "binary_sha256": "46b9bf67d8e2a9de96cf8c2c468440bbf14d6ceeca5bb568e0da91592f94917a",
+        "cache_sha256": "1c571ff056eac7b36beadf1ea2d5cf55b11a94914d5e9e50a7fda56a3821a0cd",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "maxima": {
+          "additive_rate_error": 0,
+          "dependent_D_response_error": 3.003240017784847e-17,
+          "compatibility": 2.7755575615628914e-17,
+          "cpu_rate_error": 8.466179469962272e-14,
+          "cpu_trace_error": 2.0187233355690522e-14,
+          "host_rate_error": 0,
+          "null": 1.1101848448075473e-15,
+          "angular_cfl": 0.005916923866773288
+        },
+        "cases": [
+          {
+            "closure_case": "synthetic",
+            "additive_rate_error": "0",
+            "dependent_D_response_error": "3.0032400177848473e-17",
+            "compatibility": "2.7755575615628914e-17",
+            "cpu_rate_error": "0",
+            "cpu_trace_error": "0",
+            "partition_parity": "1",
+            "zero_off": "1",
+            "rejection_checks": "1"
+          },
+          {
+            "closure_case": "plan",
+            "additive_rate_error": "0",
+            "dependent_D_response_error": "2.3978285126907565e-17",
+            "compatibility": "1.7347234759768071e-17",
+            "cpu_rate_error": "8.466179469962272e-14",
+            "cpu_trace_error": "2.0187233355690522e-14",
+            "partition_parity": "1",
+            "zero_off": "1",
+            "rejection_checks": "1"
+          },
+          {
+            "plan_perturb": "0",
+            "host_rate_error": "0",
+            "angular_cfl": "0.0059169238667732878",
+            "null": "9.9920072216264128e-16",
+            "compatibility": "1.1044052673094165e-29"
+          },
+          {
+            "plan_perturb": "1",
+            "host_rate_error": "0",
+            "angular_cfl": "0.0059169238667732878",
+            "null": "1.1101848448075473e-15",
+            "compatibility": "2.4286128663675299e-17"
+          },
+          {
+            "cfl_rejection": "1",
+            "cross_face_guard": "1",
+            "epsilon_validation": "1",
+            "shared_plan": "1"
+          }
+        ]
+      }
+    }
+  ],
+  "source_manifest_sha256": "0e7967f1f33559ed79b9f97d6416dacc296f0f14663d35c682177a9ac07db60f",
+  "plan_sha256": "672dccc8fa28eba2380c3752dfc19220166341210c1ba73556d8bab22b6e7269",
+  "gpu_cpu_parity": true,
+  "component": "scri_dissipation_closure",
+  "maxima": {
+    "null": 1.1101848448075473e-15,
+    "cpu_trace_error": 2.0187233355690522e-14,
+    "additive_rate_error": 0,
+    "cpu_rate_error": 8.466179469962272e-14,
+    "dependent_D_response_error": 3.003240017784847e-17,
+    "angular_cfl": 0.005916923866773288,
+    "host_rate_error": 0,
+    "compatibility": 2.7755575615628914e-17
+  }
+}
