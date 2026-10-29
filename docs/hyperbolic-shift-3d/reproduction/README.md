@@ -134,6 +134,30 @@ layout, sampled-numerator versus direct-jet differentiation, and outer ghost
 feedback. It proposes an isolated control; none of those differences has yet
 been established as the unique instability cause or repaired by that audit.
 
+The [native directional replay](scri-directional-replay-v1/README.md) reproduces
+the measured early growth with the full coupled RHS: the projected rate is
+72.9635 and the relative shape residual is 0.0140 on the t=.30 error direction.
+The surface normal-pole term contributes +110.981 to the projected surface
+action, while the regular term contributes -53.4475. These are contributions
+to one directional action, not independent eigenvalues. Replacing only the
+normal derivative by the derivative of native pole numerators sampled on the
+same six radial nodes changes the held-other-terms surface action from
++72.9647 to -27.0231. This motivates a controlled experimental closure; it does
+not establish stability of a trajectory.
+
+An [optional CPU sampled-numerator closure](scri-sampled-normal-cpu-v1/README.md)
+now implements that control, preserving independent Lambda and Theta, the weak
+penalties, angular operators and moving-normal null closure. It fills provisional
+geometric ghosts, computes the final geometric rate and dependent D, then
+refreshes ghosts before the bulk RHS. Ordering tests detect a deliberately stale
+D ghost field; surface null error remains 1.11e-15. The default analytic-jet
+path is bitwise identical to the frozen V4 control across six fixtures.
+The [manufactured accuracy study](scri-sampled-accuracy-v1/README.md) finds
+roughly third-order complete sampled-closure accuracy over n8/12/16/24,
+compared with approximately fourth order for the analytic-jet closure. The
+candidate is consistent but does not retain the original boundary order.
+These checks alone provide no evolution, restart, GPU or stability admission.
+
 The original J-disabled, bulk-mu=4 1D control is confirmed to have completed coordinate `33.3333984375 = 100.0001953125 M`. Its N513/N1025 continuation chains and frozen-source identities were checked. A [portable N513 time series](original-1d-reference/history.csv) and [provenance](original-1d-reference/provenance.json) preserve the matching horizon/exterior-constraint reference. Late gauge settling and uniform puncture convergence were not established by that original control.
 
 ## Archived pause point
