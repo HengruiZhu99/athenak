@@ -158,6 +158,15 @@ compared with approximately fourth order for the analytic-jet closure. The
 candidate is consistent but does not retain the original boundary order.
 These checks alone provide no evolution, restart, GPU or stability admission.
 
+The subsequent [complete coupled candidate action](scri-candidate-action-v1/README.md)
+includes the new dependent D and refreshed volume ghosts. On the same t=.30
+direction, the whole-state projected rate changes from +72.9635 to -22.3588;
+the surface rate is -27.0231. The whole-state shape residual increases to
+0.6888, so this is not a negative eigenvalue or a stable evolution. The volume
+instantaneous action remains nearly unchanged. All nine default-path arrays
+match the frozen V4 oracle bitwise, and candidate surface/ghost null residuals
+stay at or below 1.11e-15. An actual candidate trajectory is still required.
+
 The original J-disabled, bulk-mu=4 1D control is confirmed to have completed coordinate `33.3333984375 = 100.0001953125 M`. Its N513/N1025 continuation chains and frozen-source identities were checked. A [portable N513 time series](original-1d-reference/history.csv) and [provenance](original-1d-reference/provenance.json) preserve the matching horizon/exterior-constraint reference. Late gauge settling and uniform puncture convergence were not established by that original control.
 
 ## Archived pause point
