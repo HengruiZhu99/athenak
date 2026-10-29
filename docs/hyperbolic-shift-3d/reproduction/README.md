@@ -12,6 +12,11 @@ changes its projected growth to decay while retaining the outer radial seam
 stencils. This is a read-only RHS result, not a stable evolution or an adopted
 production closure.
 
+The [fresh V6 puncture duration](aurora/stability-donor-seven-puncture-v1/README.md)
+failed at2.8905 M because a Cartesian-core stage lapse became negative. Null
+closure stayed near1e-15. The horizon diagnostic ceased passing at1.95 M;
+no accurate long-time puncture result follows. Its allocation is released.
+
 ## Aurora work resumed on 2026-10-28
 
 The user authorized one Aurora debug node at a time, using the `CompactBinaryMerger` allocation, all 12 MPI ranks and all 12 GPU tiles. The campaign lives under `/home/hzhu/hyperbolic-core-shell-20261028`, with a 5,000,000,000-byte campaign storage cap, explicit output/checkpoint reserves, and retained small diagnostics. Builds use MPI and SYCL with `make -j64`. Long-time stability of both Minkowski and the isotropic wormhole comes before a convergence campaign.
