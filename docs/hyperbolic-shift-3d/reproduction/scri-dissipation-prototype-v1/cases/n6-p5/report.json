@@ -1,0 +1,324 @@
+{
+  "status": "completed",
+  "scope": "standalone angular operator; no native RHS or evolution",
+  "n": 6,
+  "degree": 5,
+  "epsilon": 1,
+  "scale": "h=1/n; Q=-n M^-1 B.T M B",
+  "prototype_sha256": "666583d1a23cd3369d02d79adc48e9377af14f35c3a6ea649f913f1b29ad55e6",
+  "numpy_version": "2.3.5",
+  "plan": {
+    "polynomial_moments": 21,
+    "target_neighbors": 48,
+    "neighbor_min": 48,
+    "neighbor_max": 49,
+    "incoming_max": 51,
+    "coefficient_l1_max": 2.9146859457698744,
+    "condition_max": 69.05602597977297,
+    "moment_residual_max": 3.0808688933348094e-15,
+    "chord_radius_over_h_max": 5.827908788470617,
+    "cross_face_rows": 216,
+    "cross_face_entries": 5376,
+    "mass_min": 0.030251348607617468,
+    "mass_max": 0.1001674211615598,
+    "mass_ratio": 3.3111720889143124,
+    "mass_sum": 12.566370614359174,
+    "stored_entries": 10416
+  },
+  "native_geometry": {
+    "native_library_sha256": "d239bf6e3519414291448387d6f9e6e62a229ef05f1cc5a531c19385cd638b46",
+    "coordinate_max": 0.0,
+    "labels_exact": true,
+    "midpoint_area_relative_max": 5.551115123125783e-16,
+    "exact_area_sum_error": 1.7763568394002505e-15
+  },
+  "checks": {
+    "constant_B_max": 0.0,
+    "constant_Q_max": 0.0,
+    "energy_identity_relative_max": 1.5926974733542384e-16,
+    "weighted_adjoint_relative_max": 2.2741864036290913e-15,
+    "cube_rotation_commutator_relative_max": 2.4541990984842946e-15,
+    "normalized_spectral_upper_bound": 8.489787278351935,
+    "normalized_power_estimate": {
+      "rayleigh": 1.6962482727453108,
+      "residual": 0.0021405886317151803,
+      "iterations": 160,
+      "interpretation": "Rayleigh lower bound / finite power estimate, not a certified upper bound"
+    },
+    "rk4_isolated_dt_epsilon_over_h_upper": 0.32807577764727835
+  },
+  "truncation": {
+    "vector_x": {
+      "all": {
+        "max": 0.007035044179069519,
+        "l2": 0.0021360162828491652
+      },
+      "interior": {
+        "max": 0.0013212396229158368,
+        "l2": 0.0010728607174475817
+      },
+      "edge": {
+        "max": 0.0049635015989572704,
+        "l2": 0.002210059114580877
+      },
+      "corner": {
+        "max": 0.007035044179069519,
+        "l2": 0.002464512051445288
+      }
+    },
+    "vector_y": {
+      "all": {
+        "max": 0.007035044179071359,
+        "l2": 0.0021360162828491713
+      },
+      "interior": {
+        "max": 0.0013212396229159362,
+        "l2": 0.0010728607174477177
+      },
+      "edge": {
+        "max": 0.004963501598957689,
+        "l2": 0.002210059114580882
+      },
+      "corner": {
+        "max": 0.007035044179071359,
+        "l2": 0.0024645120514452624
+      }
+    },
+    "vector_z": {
+      "all": {
+        "max": 0.007035044179070378,
+        "l2": 0.0021360162828491396
+      },
+      "interior": {
+        "max": 0.0013212396229147013,
+        "l2": 0.0010728607174475629
+      },
+      "edge": {
+        "max": 0.00496350159895792,
+        "l2": 0.0022100591145808647
+      },
+      "corner": {
+        "max": 0.007035044179070378,
+        "l2": 0.002464512051445241
+      }
+    },
+    "harmonic_l3": {
+      "all": {
+        "max": 0.0022560931444793562,
+        "l2": 0.0013176355322190383
+      },
+      "interior": {
+        "max": 0.0008521579988318435,
+        "l2": 0.0008521579988307786
+      },
+      "edge": {
+        "max": 0.0012121396002299043,
+        "l2": 0.0009468933647217173
+      },
+      "corner": {
+        "max": 0.0022560931444793562,
+        "l2": 0.0018815572578887714
+      }
+    },
+    "harmonic_l4": {
+      "all": {
+        "max": 0.008178608233176591,
+        "l2": 0.003221280328732841
+      },
+      "interior": {
+        "max": 0.001889081041726237,
+        "l2": 0.0013315151506201278
+      },
+      "edge": {
+        "max": 0.0022776537114330728,
+        "l2": 0.0014953160758041724
+      },
+      "corner": {
+        "max": 0.008178608233176591,
+        "l2": 0.005213451547216517
+      }
+    },
+    "harmonic_l6": {
+      "all": {
+        "max": 0.26991262612029526,
+        "l2": 0.16699100102808564
+      },
+      "interior": {
+        "max": 0.14708672928131789,
+        "l2": 0.08659033177567212
+      },
+      "edge": {
+        "max": 0.2598607070964614,
+        "l2": 0.1542203072584117
+      },
+      "corner": {
+        "max": 0.26991262612029526,
+        "l2": 0.2136862713896832
+      }
+    },
+    "smooth_exp": {
+      "all": {
+        "max": 0.0038406604999296034,
+        "l2": 0.0013744567224783912
+      },
+      "interior": {
+        "max": 0.0013146828369206408,
+        "l2": 0.0006936608720603182
+      },
+      "edge": {
+        "max": 0.002861347901250486,
+        "l2": 0.0014251286750952357
+      },
+      "corner": {
+        "max": 0.0038406604999296034,
+        "l2": 0.001581043534800519
+      }
+    },
+    "tensor_00": {
+      "all": {
+        "max": 0.0009539592294579469,
+        "l2": 0.00027364784123104616
+      },
+      "interior": {
+        "max": 0.00019505085055877323,
+        "l2": 0.00013792177910465245
+      },
+      "edge": {
+        "max": 0.0001671955457656044,
+        "l2": 8.567964048693095e-05
+      },
+      "corner": {
+        "max": 0.0009539592294579469,
+        "l2": 0.00045309767570494573
+      }
+    },
+    "tensor_01": {
+      "all": {
+        "max": 0.0006967266334516464,
+        "l2": 0.00042724316257226425
+      },
+      "interior": {
+        "max": 0.0005840026801723913,
+        "l2": 0.0005248099774094166
+      },
+      "edge": {
+        "max": 0.0006967266334516464,
+        "l2": 0.0004305514581758868
+      },
+      "corner": {
+        "max": 0.0005308988502206062,
+        "l2": 0.00035292245968535985
+      }
+    },
+    "tensor_02": {
+      "all": {
+        "max": 0.0006967266334518888,
+        "l2": 0.0004272431625724627
+      },
+      "interior": {
+        "max": 0.0005840026801723822,
+        "l2": 0.0005248099774097813
+      },
+      "edge": {
+        "max": 0.0006967266334518888,
+        "l2": 0.0004305514581760885
+      },
+      "corner": {
+        "max": 0.0005308988502212711,
+        "l2": 0.0003529224596854165
+      }
+    },
+    "tensor_11": {
+      "all": {
+        "max": 0.0009539592294595755,
+        "l2": 0.00027364784123102697
+      },
+      "interior": {
+        "max": 0.00019505085055960406,
+        "l2": 0.00013792177910470571
+      },
+      "edge": {
+        "max": 0.00016719554576595204,
+        "l2": 8.567964048694307e-05
+      },
+      "corner": {
+        "max": 0.0009539592294595755,
+        "l2": 0.0004530976757048979
+      }
+    },
+    "tensor_12": {
+      "all": {
+        "max": 0.0006967266334517635,
+        "l2": 0.00042724316257248694
+      },
+      "interior": {
+        "max": 0.0005840026801719255,
+        "l2": 0.0005248099774096982
+      },
+      "edge": {
+        "max": 0.0006967266334517635,
+        "l2": 0.00043055145817618665
+      },
+      "corner": {
+        "max": 0.0005308988502207789,
+        "l2": 0.00035292245968540317
+      }
+    },
+    "tensor_22": {
+      "all": {
+        "max": 0.000953959229458191,
+        "l2": 0.00027364784123107657
+      },
+      "interior": {
+        "max": 0.0001950508505578358,
+        "l2": 0.0001379217791046303
+      },
+      "edge": {
+        "max": 0.0001671955457656059,
+        "l2": 8.567964048689214e-05
+      },
+      "corner": {
+        "max": 0.000953959229458191,
+        "l2": 0.000453097675705016
+      }
+    }
+  },
+  "surface_modes": {
+    "source_sha256": "0db088ad386007f7acd0c10e401b931f53ff22562ff82a36526b1901eb7d04d6",
+    "measurements": [
+      {
+        "mode_index": 0,
+        "area_weighted_norm_squared": 0.03067101224616822,
+        "energy_rate_half_norm": -0.14686197927477967,
+        "damping_rayleigh": 4.788299065451529,
+        "factorized_damping_rayleigh": 4.788299065451529,
+        "interpretation": "Added Q energy only; not an eigenvalue shift or full coupled stability result"
+      },
+      {
+        "mode_index": 1,
+        "area_weighted_norm_squared": 0.030671089897754033,
+        "energy_rate_half_norm": -0.14756435282967356,
+        "damping_rayleigh": 4.811187125126562,
+        "factorized_damping_rayleigh": 4.811187125126561,
+        "interpretation": "Added Q energy only; not an eigenvalue shift or full coupled stability result"
+      },
+      {
+        "mode_index": 2,
+        "area_weighted_norm_squared": 0.030911292200581714,
+        "energy_rate_half_norm": -0.14934635932553753,
+        "damping_rayleigh": 4.831449890753095,
+        "factorized_damping_rayleigh": 4.8314498907530945,
+        "interpretation": "Added Q energy only; not an eigenvalue shift or full coupled stability result"
+      },
+      {
+        "mode_index": 3,
+        "area_weighted_norm_squared": 0.03091129858819307,
+        "energy_rate_half_norm": -0.15027807780404526,
+        "damping_rayleigh": 4.8615905726278905,
+        "factorized_damping_rayleigh": 4.861590572627888,
+        "interpretation": "Added Q energy only; not an eigenvalue shift or full coupled stability result"
+      }
+    ]
+  },
+  "seconds": 0.7863322920165956
+}

@@ -1,0 +1,94 @@
+{
+  "scope": "standalone operator; production integration, closure feedback and nonlinear stability untested",
+  "recommendation": "degree7 qualifies for a controlled opt-in native candidate, not a stable-evolution admission",
+  "cases": {
+    "n6-p5": {
+      "report_sha256": "a40e82d5683f4e1134457a1fb3ab67fc1b3842f1802779969366149928fd7845",
+      "prototype_sha256": "666583d1a23cd3369d02d79adc48e9377af14f35c3a6ea649f913f1b29ad55e6"
+    },
+    "n8-p5": {
+      "report_sha256": "18343d5e2964dd6465abeab755a71565f8f1b59a367e86d62cc7baa82c3f2800",
+      "prototype_sha256": "666583d1a23cd3369d02d79adc48e9377af14f35c3a6ea649f913f1b29ad55e6"
+    },
+    "n12-p5": {
+      "report_sha256": "f55d4091223d0746f480d4e055bd4f893a0cce64a6cd13cd7e61a6ad863e0976",
+      "prototype_sha256": "666583d1a23cd3369d02d79adc48e9377af14f35c3a6ea649f913f1b29ad55e6"
+    },
+    "n16-p5": {
+      "report_sha256": "9b5a977430bb5ef487b1ec2c08b502affbc9b28fb11582a6a11ccd9cc7855f0f",
+      "prototype_sha256": "666583d1a23cd3369d02d79adc48e9377af14f35c3a6ea649f913f1b29ad55e6"
+    },
+    "n24-p5": {
+      "report_sha256": "134a557ecf2de2581ae33bdbb91b616a3f3034ea979bb70bbcc72b1e4ccdc022",
+      "prototype_sha256": "666583d1a23cd3369d02d79adc48e9377af14f35c3a6ea649f913f1b29ad55e6"
+    },
+    "n32-p5": {
+      "report_sha256": "5a5e8afbc752dc3b0a3a056946f4b4e45eed4018922b681b9d5c567c60b6ef48",
+      "prototype_sha256": "666583d1a23cd3369d02d79adc48e9377af14f35c3a6ea649f913f1b29ad55e6"
+    },
+    "n6-p7": {
+      "report_sha256": "a66e6f43042763c89bbffd1198bc8fae2b49e7e2d1181e03782449cfef3936f3",
+      "prototype_sha256": "666583d1a23cd3369d02d79adc48e9377af14f35c3a6ea649f913f1b29ad55e6"
+    },
+    "n8-p7": {
+      "report_sha256": "e7f3f1c73350294bc23c77492ea40f4ee6d04d0d9fa5d1a4e6c5c1f38eace570",
+      "prototype_sha256": "666583d1a23cd3369d02d79adc48e9377af14f35c3a6ea649f913f1b29ad55e6"
+    },
+    "n12-p7": {
+      "report_sha256": "0f2783b41d686c162c022853fd3e84bf29f3c811b5ba6a107ea93a0785578cbc",
+      "prototype_sha256": "666583d1a23cd3369d02d79adc48e9377af14f35c3a6ea649f913f1b29ad55e6"
+    },
+    "n16-p7": {
+      "report_sha256": "f57dc9573ecaa2c4051dd74b06343e1b1dad3f55eb37292efe25a24ccd4875f9",
+      "prototype_sha256": "666583d1a23cd3369d02d79adc48e9377af14f35c3a6ea649f913f1b29ad55e6"
+    },
+    "n24-p7": {
+      "report_sha256": "373ecd2befd4b2a168089fba34a40faa1839aaded226ebb4433416980a2a4593",
+      "prototype_sha256": "666583d1a23cd3369d02d79adc48e9377af14f35c3a6ea649f913f1b29ad55e6"
+    },
+    "n32-p7": {
+      "report_sha256": "b30940bc603a0d8bb6edb200223194cc3efc1dbbfcef85d6af1971d8d3d1789a",
+      "prototype_sha256": "666583d1a23cd3369d02d79adc48e9377af14f35c3a6ea649f913f1b29ad55e6"
+    }
+  },
+  "degree_assessment": {
+    "5": {
+      "final_interval_maxnorm_order_min": 0.9010139493019614,
+      "penultimate_interval_maxnorm_order_min": 3.285750018679348,
+      "bounded_study_only": true,
+      "formal_smooth_order": 5,
+      "formal_surface_only_two_radial_derivative_order": 3
+    },
+    "7": {
+      "final_interval_maxnorm_order_min": 6.103170364844409,
+      "penultimate_interval_maxnorm_order_min": 4.112193489836096,
+      "bounded_study_only": true,
+      "formal_smooth_order": 7,
+      "formal_surface_only_two_radial_derivative_order": 5
+    }
+  },
+  "dense_n6_checks": {
+    "5": {
+      "plan_sha256": "bbc0734f1b8b7eaaceb4c0dc21c033a150748774da83d9579665129679ce0f9c",
+      "symmetric_residual_max": 1.942890293094024e-16,
+      "symmetric_part_eigen_min": -1.568777545511073e-16,
+      "symmetric_part_eigen_max": 1.6965382822597908,
+      "upper_bound": 8.489787278351935,
+      "row_l2_max": 0.9188216590397917
+    },
+    "7": {
+      "plan_sha256": "810dd9c75061e5d932b3f62aa2dc64b71fa3dc56c3b5f4c491a4381d49e987fe",
+      "symmetric_residual_max": 1.6653345369377348e-16,
+      "symmetric_part_eigen_min": -1.9612709080494423e-16,
+      "symmetric_part_eigen_max": 1.7327579776167608,
+      "upper_bound": 11.70019588197765,
+      "row_l2_max": 0.8925338569741903
+    }
+  },
+  "mode_scope": "Only frozen-volume V2 surface modes0 and2 are independently resolved; no full-coupled mode claim",
+  "source_files": {
+    "prototype.py": "666583d1a23cd3369d02d79adc48e9377af14f35c3a6ea649f913f1b29ad55e6",
+    "native_geometry.cpp": "7c27c5282aeec8daf171dd4eda1d4d7cf5d0ce73325b160a6a899fe92a2dac6f",
+    "analyze.py": "76662398f0708123066eec5bb3ebef1a4f272371b55f2c482f544f6b5a5302ca"
+  }
+}
