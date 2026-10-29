@@ -51,9 +51,10 @@ records exact command lines and checksums in its verification.json. Raw evidence
 is under output/hyperbolic-core-shell/evolved-overlap-local-v1.
 
 GPU preflight now passed all7 cases on12 ranks/12 tiles, independently verified
-with194 scientific checks; see ../aurora/preflight-overlap-v2. The first n16
-Minkowski duration segment is being run at dt=.0003 to obey the native CFL=.4
-guard. Long-time Minkowski/puncture stability and dynamic AMR compatibility
+with194 scientific checks; see ../aurora/preflight-overlap-v2. The n16 Minkowski segment completed coordinate t=1 (3334 steps, dt=.0003),
+with state error 6.09e-14, H L2 1.52e-13, M L2 2.70e-14, and surface null error
+8.89e-16. Independent artifact/checkpoint/scientific-gate verification passed;
+see ../aurora/stability-overlap-minkowski-v1. Long-time Minkowski/puncture stability and dynamic AMR compatibility
 remain unestablished. The spatial-only spherical/equiangular comparison is
 documented separately in map-cfl-notes.md.
 

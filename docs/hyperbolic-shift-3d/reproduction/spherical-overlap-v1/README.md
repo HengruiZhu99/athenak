@@ -57,5 +57,14 @@ input with initial_data.py on that CSV. test_spherical_overlap_mpi.py records
 bounded commands and hashes. Raw local evidence is in
 output/hyperbolic-core-shell/spherical-overlap-local-v1.
 
-GPU preflight and duration tests remain pending. No wormhole-to-trumpet stability,
+Two-step n16 native evolutions at dt=0.0005 pass: Minkowski CFL 0.33567,
+puncture CFL 0.31116, with null closure below 1.12e-15. The puncture horizon
+is found at both samples (t=0 and 0.001). These do not establish duration stability.
+The source was committed as 77277bd25 and built on Aurora with SYCL/MPI
+(make -j64, 269 seconds). An independent read-only audit verified all 2643
+source-file hashes against Git and the build configuration/binary identities.
+GPU preflight job 8985881 has been submitted on one debug node, 12 ranks/tiles,
+CompactBinaryMerger. GPU qualification and duration tests remain pending. No wormhole-to-trumpet stability,
 100M result, dynamic AMR validation or evolution convergence is claimed.
+
+![Spatial accuracy and CFL contribution](spatial-and-cfl.png)
