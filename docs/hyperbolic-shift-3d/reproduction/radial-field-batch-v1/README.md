@@ -65,3 +65,18 @@ This is **local fidelity evidence only**. SYCL fidelity, same-node performance,
 and full GPU failure/restart qualification remain pending. It is separate from
 the already frozen V23 timer-only job 8987400. Do not promote this prototype or
 infer long-time stability, convergence or AMR evolution from these checks.
+
+The broader native operator target `hyperbolic_shift_3d_radial_batch_device` also
+passed the existing Minkowski/nonspherical parity matrix: bulk RHS, complete scri
+rates, normal samples, twelve-way ownership, poisoned halos and invalid-input
+rejection. These checks used the Serial backend locally and do not stand in for
+SYCL qualification. Bulk scaled error against the CPU reference was at most
+4.33e-19; sampled-normal and scri rate errors were zero.
+
+The Aurora controller now treats the candidate as its own V11 execution identity
+and requires `radial_derivative_execution=stage_field_batch` in admission. The
+new `radial_field_batch` component adapter requires a SYCL backend, exact direct
+derivative equality, all 110,019 field-row comparisons, three changed-stage
+refreshes, and CPU scaled error <=2e-12 (the native derivative test tolerance).
+All 105 offline controller/worker tests passed; the final admission and parser
+changes were checked again with two focused tests. No GPU admission was issued.

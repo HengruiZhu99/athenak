@@ -183,7 +183,25 @@ def run_binary(args, rank, root, checked, argv):
                 binary_args=argv)
 
 
+def parse_radial_field_batch_component(content,code):
+    rows=[json.loads(line) for line in content.splitlines() if line.startswith('{')]
+    if len(rows)!=1:raise ValueError('Need one radial field-batch test record')
+    result=rows[0]
+    for key,value in [('passed',True),('backend','SYCL'),('stage_refreshes_per_plan',3),
+                      ('exact_direct_equality',True),('simulated_partitions',12),
+                      ('sparse_and_empty_ownership',True),('radial_ghost_poison',True),
+                      ('invalid_inputs_rejected',True),('tested_field_rows',110019)]:
+        if type(result.get(key)) is not type(value) or result[key]!=value:
+            raise ValueError('Missing/invalid radial batch coverage: '+key)
+    error=result.get('max_scaled_error')
+    if type(error) not in (int,float) or not math.isfinite(error) or not 0<=error<=2e-12:
+        raise ValueError('Radial field-batch CPU/direct parity failed')
+    return dict(passed=code==0,gpu_cpu_parity=code==0,backend='SYCL',radial_field_batch_checks=result)
+
+
 def parse_component(content, kind, code):
+    if kind=='radial_field_batch':
+        return parse_radial_field_batch_component(content,code)
     if kind=='sampled_normal_device':
         return parse_sampled_normal_component(content,code)
     if kind in ['inner_transition_device','core2_device','overlap_device','spherical_overlap_device','continuous_positive_device']:
@@ -613,7 +631,7 @@ def main():
     comp=sub.add_parser('component')
     comp.add_argument('--component',choices=['device','exchange','scri','algebraic','angular',
                                             'angular_dissipation','scri_dissipation_closure',
-                                            'sampled_normal_device','donor_seven_device','inner_transition_device','core2_device','overlap_device','spherical_overlap_device','continuous_positive_device'],required=True)
+                                            'sampled_normal_device','donor_seven_device','inner_transition_device','core2_device','overlap_device','spherical_overlap_device','continuous_positive_device','radial_field_batch'],required=True)
     comp.add_argument('--test-binary',required=True)
     comp.add_argument('--cmake-cache',required=True)
     bench=sub.add_parser('benchmark')

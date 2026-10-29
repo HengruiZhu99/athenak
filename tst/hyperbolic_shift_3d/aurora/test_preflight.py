@@ -68,6 +68,27 @@ DONOR_SEVEN_FIXTURE = SAMPLED_NORMAL_FIXTURE.replace(
     'donor_seven_bulk_error=1e-14 exterior_radial_poison=1\n'*2)
 
 
+class RadialFieldBatchTests(unittest.TestCase):
+    def test_gpu_coverage_is_required(self):
+        fixture=dict(passed=True,backend='SYCL',stage_refreshes_per_plan=3,exact_direct_equality=True,
+                     simulated_partitions=12,sparse_and_empty_ownership=True,radial_ghost_poison=True,
+                     invalid_inputs_rejected=True,tested_field_rows=110019,max_scaled_error=0.)
+        self.assertTrue(preflight.parse_component(json.dumps(fixture),'radial_field_batch',0)['passed'])
+        self.assertFalse(preflight.parse_component(json.dumps(fixture),'radial_field_batch',1)['passed'])
+        self.assertTrue(preflight.parse_component(json.dumps(dict(fixture,max_scaled_error=1e-12)),'radial_field_batch',0)['passed'])
+        for key in fixture:
+            bad=dict(fixture);del bad[key]
+            with self.subTest(missing=key),self.assertRaises(ValueError):
+                preflight.parse_component(json.dumps(bad),'radial_field_batch',0)
+        for key,value in [('backend','Serial'),('stage_refreshes_per_plan',True),('tested_field_rows',110018),
+                          ('max_scaled_error',True),('max_scaled_error',float('nan')),('max_scaled_error',3e-12),('max_scaled_error',-1e-16),
+                          ('exact_direct_equality',False)]:
+            with self.subTest(key=key,value=value),self.assertRaises(ValueError):
+                preflight.parse_component(json.dumps(dict(fixture,**{key:value})),'radial_field_batch',0)
+        with self.assertRaises(ValueError):
+            preflight.parse_component(json.dumps(fixture)+'\n'+json.dumps(fixture),'radial_field_batch',0)
+
+
 class ComponentParserTests(unittest.TestCase):
     def test_inner_transition_requires_full_exchange_and_policy(self):
         fixture=DONOR_SEVEN_FIXTURE.replace('radial_bulk_rows=3','radial_bulk_rows=3 interpatch_interpolation=logical_inner_transition')+('inner_transition_exchange_error=1e-14 bulk_error=1e-14\n'*2)

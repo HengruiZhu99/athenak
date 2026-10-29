@@ -99,6 +99,8 @@ class ScriRadialDevice {
       throw std::invalid_argument("direct radial device field shape mismatch");
     return Kernel{padded,surface,offsets_,active_,terms_,fields_,padded_count_};
   }
+  // Consumers use the default execution stream and finish before the next
+  // Prepare. The returned stage view is overwritten by the next preparation.
   BoundKernel Prepare(ConstBuffer padded,ConstBuffer surface)const{
     const auto source=Bind(padded,surface);
 #if defined(HYPERBOLIC_RADIAL_FIELD_BATCH) && HYPERBOLIC_RADIAL_FIELD_BATCH
