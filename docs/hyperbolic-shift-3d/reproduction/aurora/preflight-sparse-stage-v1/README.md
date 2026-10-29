@@ -3,8 +3,10 @@
 Prepared against frozen source `fd522df9248c4911c9352057156b3ec58e7dc02b`.
 Source-v21 manifest SHA256:
 `5870a4f1290ded6e9cca2a6a592276119e1b46e5c52ee61fad71c8ba07e94fd2`.
-The SYCL/MPI build is in progress. This directory does not yet contain a GPU
-result or admission. Do not treat the reviewed test plan as a passing run.
+The SYCL/MPI build passed in 428.60 seconds. Independent verification matches
+all 2,649 manifest entries to frozen main/Kokkos Git blobs and pins all three
+executables. Job **8987177** was submitted; GPU results and admission are
+pending. Do not treat the reviewed test plan as a passing run.
 
 The plan uses CompactBinaryMerger, one debug node, 12 ranks and GPU tiles.
 It checks the donor-plan lifecycle, native CPU/device component parity,
@@ -13,7 +15,7 @@ uncached V11 executable. All 409 gates must pass, with exact whole-checkpoint
 comparisons. No scientific acceptance threshold has been relaxed.
 
 The independent verifier binds candidate build identities and the separately
-verified frozen control. Binary pins will be recorded after the build and before
+verified frozen control. Binary pins were recorded and independently checked after the build and before
 submission. Its 20 offline tests check checkpoint layouts, array coverage,
 exact comparison, configuration, placement, pins, and frozen control identity.
 

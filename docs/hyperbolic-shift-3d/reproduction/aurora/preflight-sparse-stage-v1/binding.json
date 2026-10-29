@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "plan_sha256": "318d915a37e4d628734cd6b1ebe1c19cee96cd1aaad8273e15ec7ae25f4a0a8a",
+  "source_manifest": "source-v21-manifest.json",
+  "source_manifest_sha256": "5870a4f1290ded6e9cca2a6a592276119e1b46e5c52ee61fad71c8ba07e94fd2",
+  "binaries": {
+    "build-sycl-mpi-v21/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_sparse_exchange": "7ab55a54b8de20f7c7df9cdfd08e7aba5866d7318738afe95aad01d40391951a",
+    "source-v21/tst/hyperbolic_shift_3d/aurora/preflight.py": "983d38420554270e63759b353e6a72fb62eb67634cb186222509c63437d73408",
+    "build-sycl-mpi-v21/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive_sparse": "dadc194251e43e9503e4c194a89086fbdd4a8692b077d1f55172c92ce12d3606",
+    "build-sycl-mpi-v20/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive": "44723dbe626ac11bd1426e5c91bcec9241816deb72530fc7f0dce031e21437e9"
+  },
+  "inputs": {
+    "build-sycl-mpi-v21/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_continuous_positive_device": "66763e5a3f430caa5b154ea2193538648ad86f83373cda6793619db3bdd42db9",
+    "build-sycl-mpi-v21/CMakeCache.txt": "74bb9a668a48a949d548c3e523a0a290a49cdc8477652c53cb636027618f6087",
+    "inputs/puncture-continuous-n16.txt": "35c1b65aeaaefac34552f9a63b279cabe839b09326adc9af1d2c767ecc29c8ca",
+    "source-v20-provenance.json": "3d9eacb0358b684e484513c31e9fe181a2a75060436f60a9e39c4420a48dbc8f",
+    "source-v20-manifest.json": "43a5353912eb51d59820fd0aa59970b1ac57b25acdad91844c9216a1d9a8d57e",
+    "build-logs/v20/build-status.json": "1c8fbd75f841ef48da0fd787e202db9d3dbc87835051d9b56e8900fa7ec3a566"
+  },
+  "pbs_sha256": "222380d3a542d9139d3334869a71bbc97c49e1e739fccf9cbbb16b44b9a84ea3",
+  "admission": null,
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "00:30:00"
+  },
+  "storage_at_bind": {
+    "bytes": 3788888160,
+    "entries": 35267,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 100000000,
+    "planned_bytes": 520000000,
+    "headroom_bytes": 591111840
+  },
+  "launcher": {
+    "control.py": "0d42cc617a9ad27ec32f302c9655cc8a1809b8eeeeea3782e35629b61aa67ae8",
+    "worker.py": "62b5346a7815dca5954a95c705ec1c43eaf87ec5bf1442318f5c259d9d3685b1",
+    "run_debug.pbs": "1d5df790cf6c8cdc96e9d330b9b337ce755b30e057959586bcd661dc9ce885a6",
+    "storage.py": "fdcf2abc2533b8fed91220d9c18d8b9d723660820949a72e956fb9c8866afd39"
+  },
+  "allocation_seconds": 1800,
+  "worker_seconds": 1710
+}
