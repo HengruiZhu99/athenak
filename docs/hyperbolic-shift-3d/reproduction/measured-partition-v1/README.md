@@ -31,15 +31,63 @@ executable, using the same required arguments as the sparse regression.
 
 This is fixed ownership selected at startup, not in-flight repartitioning or
 AMR field migration. Native geometry changes and AMR remain outside the current
-runner. Twelve-tile performance validation of measured cuts is still pending;
-no load-balancing speedup is claimed here.
+runner. The twelve-tile comparison below validates fidelity, but does not establish a
+load-balancing speedup.
 
 Validation also includes four planner tests, the C++ descriptor-reader negative
-controls, and all 103 offline Aurora controller/worker tests. GPU timing of
-this balanced target has not yet been performed.
+controls, and all 103 offline Aurora controller/worker tests. GPU evidence is described below.
 
-The next GPU candidate is frozen at `85b8ba91a45dca07496d941e765ea6929006c352`
+The tested GPU candidate is frozen at `85b8ba91a45dca07496d941e765ea6929006c352`
 (source-v22). `inputs/partition-n16-v21-r12.txt` is generated from the verified
 sparse run in job 8987177; its sidecar records the cost estimate and source
-report digest. The profile is also retained alongside the cuts. This input is
-prepared for the twelve-tile comparison, not yet validated as a speedup.
+report digest. The profile is also retained alongside the cuts. This input was tested in job 8987308.
+
+## Same-node GPU result: no performance improvement
+
+Job **8987308** used one debug node, CompactBinaryMerger, twelve MPI ranks and
+all twelve GPU tiles. Both cases used sparse exchange and boundary reuse; only
+volume ownership changed. The control is frozen V21 and the candidate is V22.
+All ten cases and **425 independently replayed checks** passed. Complete pulse
+restart and 100-step puncture checkpoints are byte-identical. Source, binaries,
+partition/profile inputs, logs, 49 artifacts and checkpoint arrays were verified
+independently; see [raw evidence and verifier](../aurora/preflight-measured-partition-v1/README.md).
+
+| Metric | Equal-cell sparse control | Measured-cut sparse candidate |
+|---|---:|---:|
+| Native wall time, including startup | 45.346 s | 46.207 s |
+| Seconds/step after initial diagnostics | 0.33035 | 0.33456 |
+| Maximum rank bulk RHS time, 100 steps | 12.080 s | 12.117 s |
+| Maximum/minimum rank RHS time | 2.328 | 2.323 |
+| Maximum rank boundary/check time | 16.164 s | 16.185 s |
+| Diagnostic time | 3.680 s | 4.636 s |
+
+The candidate is **1.3% slower per step** and 1.9% slower overall in this single
+sequential pair. The per-step estimate includes final diagnostics. This is not
+a statistically established regression, but there is no evidence of a benefit.
+The slowest RHS cost did not fall despite reducing those ranks' cell counts;
+the number of ranks incurring the expensive RHS path increased. A piecewise
+constant rank-average cost model therefore does not explain the observed GPU
+scaling. These timings alone do not establish whether the cause is occupancy,
+branch behavior, or stencil cost. The next experiment needs finer kernel/boundary
+timing, rather than another untested adjustment to the same cost model.
+
+The experimental measured-cut target remains separate; equal-cell sparse is the
+best verified execution choice. This does not undo the previously verified
+1.92x per-step improvement of sparse exchange plus boundary reuse over frozen
+uncached V11. Do not multiply results from different jobs into a new same-node
+speedup claim.
+
+![Same-node ownership comparison](gpu-performance.png)
+
+Recreate the plot and JSON with `python3 docs/hyperbolic-shift-3d/reproduction/measured-partition-v1/analyze_gpu.py`
+after collecting the raw campaign under `output/hyperbolic-core-shell/aurora/`.
+The plot uses a single rank with the largest sum of recorded exclusive phases;
+all-rank error synchronization was not separately timed in this frozen run.
+The boundary bucket includes synchronization waiting and is not all device work.
+
+Null errors remain 1.11e-15 on the surface and 1.55e-15 in the ghost closure;
+there were zero lapse-floor interventions. Both short puncture runs reached
+0.15 M with accepted horizon residual 1.036e-4. The logarithmic chi/lapse scheme,
+floor, interpolation order, and scientific acceptance are unchanged. This does
+not establish long-time stability, horizon convergence, AMR evolution, or a
+resolution-matched 1D/3D accuracy result.

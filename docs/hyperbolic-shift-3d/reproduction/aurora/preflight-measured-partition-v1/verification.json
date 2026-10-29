@@ -1,0 +1,934 @@
+{
+  "passed": true,
+  "admission_written": false,
+  "issues": [],
+  "cases": [
+    {
+      "name": "sparse-plan-lifecycle",
+      "status": "passed",
+      "checks_recomputed": 4,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": []
+    },
+    {
+      "name": "parity-continuous-positive",
+      "status": "passed",
+      "checks_recomputed": 4,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "component": {
+        "component": "continuous_positive_device",
+        "ranks_verified": 12,
+        "maxima": {
+          "cpu_pole_error": 8.236281941653411e-16,
+          "cpu_rate_error": 2.111971841314933e-13,
+          "cpu_trace_error": 6.800364729772313e-14,
+          "partition_error": 0,
+          "finite_D_error": 0,
+          "null": 1.1102162777403758e-15,
+          "compatibility": 4.683753385137379e-17,
+          "cpu_bulk_error": 6.772360450213235e-14
+        }
+      }
+    },
+    {
+      "name": "minkowski-short",
+      "status": "passed",
+      "checks_recomputed": 65,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V11",
+        "n": 16,
+        "nf": 31,
+        "kind": 0,
+        "admitted": true,
+        "cells": 159200,
+        "nominal_cells": 106496,
+        "surface_size": 47616,
+        "steps": 4,
+        "time": 0.001,
+        "dt": 0.00025,
+        "header_bytes": 152,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "a5607aa766e9e42678034b14ab71af21b1ef5d76a078b2a391f64f2743f82db0",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 4935200,
+            "sha256": "ea56835fdb5ddcb0ef4395a4cb90a2cf8dfed5566930f325e2900cc57e7fc43c"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 4935200,
+            "sha256": "a102f1978835b72edfd4fac8e483fff6c335fb91e521337700aae5a0cb292b1c"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "21a38de14a9763f6a86a4c0330570b018cd232576a3af0c1017eceb80c889ecf"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "6335ba282d5a32c003e8496fd5d80aade68ff61b13a5f14ae791f4cee1653f58"
+          }
+        ],
+        "bytes": 79725208,
+        "sha256": "6bbad5d9f4047f9ada4194ba2a7f1decb9e7bd807608a776833b58cd34463844",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3,
+        "mesh_topology": "cartesian_2x2x2_shells3",
+        "cartesian_core_subdivisions": 2,
+        "mesh_blocks": 26,
+        "shell_geometry": "spherical_equiangular",
+        "core_half_width": 0.18,
+        "shell_inner_radius": 0.16,
+        "overlap_quadrature": "radial_quintic_partition",
+        "cartesian_seams": "uniform_global_stencil",
+        "positive_variables": "log_chi_log_lapse_rk_and_ko",
+        "physical_lapse_floor": 1e-10
+      }
+    },
+    {
+      "name": "pulse-half",
+      "status": "passed",
+      "checks_recomputed": 63,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V11",
+        "n": 16,
+        "nf": 31,
+        "kind": 1,
+        "admitted": true,
+        "cells": 159200,
+        "nominal_cells": 106496,
+        "surface_size": 47616,
+        "steps": 2,
+        "time": 0.0005,
+        "dt": 0.00025,
+        "header_bytes": 152,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "ee8cb57715bd57aee972e743b366b60e1f6b28b9e124b294e51852c1f402b577",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 4935200,
+            "sha256": "96bf01bc994231c01d4eca93aa74589dfc75ce45b7fb9f2cf94092737841b706"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 4935200,
+            "sha256": "4b34166f87b13b3c7e3725663261d2a2cc3796aa62cf77f2cff8925e40a89096"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "053bef0780916c46f7945a07374d2583550502e3d73aa0b5545d09b9b0cf38cd"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "bc5f40e7735f5dae47e7c38f69dbf6322981ebcbf374d1d8cd598620c292f9b9"
+          }
+        ],
+        "bytes": 79725208,
+        "sha256": "a7bdb3dddf3c102686022f683a5e3c9daec9cfbf9d8af471ef1bca8fa63127ea",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3,
+        "mesh_topology": "cartesian_2x2x2_shells3",
+        "cartesian_core_subdivisions": 2,
+        "mesh_blocks": 26,
+        "shell_geometry": "spherical_equiangular",
+        "core_half_width": 0.18,
+        "shell_inner_radius": 0.16,
+        "overlap_quadrature": "radial_quintic_partition",
+        "cartesian_seams": "uniform_global_stencil",
+        "positive_variables": "log_chi_log_lapse_rk_and_ko",
+        "physical_lapse_floor": 1e-10
+      }
+    },
+    {
+      "name": "pulse-resumed",
+      "status": "passed",
+      "checks_recomputed": 63,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V11",
+        "n": 16,
+        "nf": 31,
+        "kind": 1,
+        "admitted": true,
+        "cells": 159200,
+        "nominal_cells": 106496,
+        "surface_size": 47616,
+        "steps": 4,
+        "time": 0.001,
+        "dt": 0.00025,
+        "header_bytes": 152,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "0e9a44fec8cbb26884013ca7780adfe78867ea1488e08b4081e45138bf107696",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 4935200,
+            "sha256": "bb5c4ce993402091c6f3e8dc177b7d692b69e1fca4ef7b36597cc056898b1e26"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 4935200,
+            "sha256": "f85511bb96e52d5d233324c74d143e474212d333e1e6e97670c87bd109a6f51f"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "25d59d359ed8888f814f56484602e1182426a18d09664c15eab6cfb46c9b5c5a"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "b0ebf04721fa1341150a6450e38be986049a44abc6d8ae7f115456a540cadfc9"
+          }
+        ],
+        "bytes": 79725208,
+        "sha256": "3cd1336de3f233840af002ac130772c3689d8d16b6a3a9275e6c3526c346d971",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3,
+        "mesh_topology": "cartesian_2x2x2_shells3",
+        "cartesian_core_subdivisions": 2,
+        "mesh_blocks": 26,
+        "shell_geometry": "spherical_equiangular",
+        "core_half_width": 0.18,
+        "shell_inner_radius": 0.16,
+        "overlap_quadrature": "radial_quintic_partition",
+        "cartesian_seams": "uniform_global_stencil",
+        "positive_variables": "log_chi_log_lapse_rk_and_ko",
+        "physical_lapse_floor": 1e-10
+      }
+    },
+    {
+      "name": "pulse-direct",
+      "status": "passed",
+      "checks_recomputed": 63,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V11",
+        "n": 16,
+        "nf": 31,
+        "kind": 1,
+        "admitted": true,
+        "cells": 159200,
+        "nominal_cells": 106496,
+        "surface_size": 47616,
+        "steps": 4,
+        "time": 0.001,
+        "dt": 0.00025,
+        "header_bytes": 152,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "0e9a44fec8cbb26884013ca7780adfe78867ea1488e08b4081e45138bf107696",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 4935200,
+            "sha256": "bb5c4ce993402091c6f3e8dc177b7d692b69e1fca4ef7b36597cc056898b1e26"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 4935200,
+            "sha256": "f85511bb96e52d5d233324c74d143e474212d333e1e6e97670c87bd109a6f51f"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "25d59d359ed8888f814f56484602e1182426a18d09664c15eab6cfb46c9b5c5a"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "b0ebf04721fa1341150a6450e38be986049a44abc6d8ae7f115456a540cadfc9"
+          }
+        ],
+        "bytes": 79725208,
+        "sha256": "3cd1336de3f233840af002ac130772c3689d8d16b6a3a9275e6c3526c346d971",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3,
+        "mesh_topology": "cartesian_2x2x2_shells3",
+        "cartesian_core_subdivisions": 2,
+        "mesh_blocks": 26,
+        "shell_geometry": "spherical_equiangular",
+        "core_half_width": 0.18,
+        "shell_inner_radius": 0.16,
+        "overlap_quadrature": "radial_quintic_partition",
+        "cartesian_seams": "uniform_global_stencil",
+        "positive_variables": "log_chi_log_lapse_rk_and_ko",
+        "physical_lapse_floor": 1e-10
+      }
+    },
+    {
+      "name": "restart-audit",
+      "status": "passed",
+      "checks_recomputed": 18,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": []
+    },
+    {
+      "name": "puncture-control",
+      "status": "passed",
+      "checks_recomputed": 56,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V11",
+        "n": 16,
+        "nf": 31,
+        "kind": 2,
+        "admitted": true,
+        "cells": 159200,
+        "nominal_cells": 106496,
+        "surface_size": 47616,
+        "steps": 100,
+        "time": 0.05,
+        "dt": 0.0005,
+        "header_bytes": 152,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "0afdcb562e7cf6a5c60fbba453d07b7a8396de814f02a75e13029aea7e2e71fa",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 4935200,
+            "sha256": "43658fc5bfa49e1b44112d7fedd0f4d93085a25679dbac3aaf5db2b2be28a007"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 4935200,
+            "sha256": "23893c6c0a7c6762a747a0421e7b6f96018d4a6829a3ab4baa917bff53189994"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "55d35f312e4fa4cd3d71a66bc7ac95ab6f05694db7da8c57f0c8f3a229dfbccb"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "4c51b024fe21f2eef459a6770ef6ee0d01e10516496b4caea12301e4a162d6c7"
+          }
+        ],
+        "bytes": 79725208,
+        "sha256": "f63926b4db9b24f9233e3a6041646c4ffddce6a9712ab050bd06e86159479d8a",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3,
+        "mesh_topology": "cartesian_2x2x2_shells3",
+        "cartesian_core_subdivisions": 2,
+        "mesh_blocks": 26,
+        "shell_geometry": "spherical_equiangular",
+        "core_half_width": 0.18,
+        "shell_inner_radius": 0.16,
+        "overlap_quadrature": "radial_quintic_partition",
+        "cartesian_seams": "uniform_global_stencil",
+        "positive_variables": "log_chi_log_lapse_rk_and_ko",
+        "physical_lapse_floor": 1e-10
+      }
+    },
+    {
+      "name": "puncture-fast",
+      "status": "passed",
+      "checks_recomputed": 71,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V11",
+        "n": 16,
+        "nf": 31,
+        "kind": 2,
+        "admitted": true,
+        "cells": 159200,
+        "nominal_cells": 106496,
+        "surface_size": 47616,
+        "steps": 100,
+        "time": 0.05,
+        "dt": 0.0005,
+        "header_bytes": 152,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "0afdcb562e7cf6a5c60fbba453d07b7a8396de814f02a75e13029aea7e2e71fa",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 4935200,
+            "sha256": "43658fc5bfa49e1b44112d7fedd0f4d93085a25679dbac3aaf5db2b2be28a007"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 4935200,
+            "sha256": "23893c6c0a7c6762a747a0421e7b6f96018d4a6829a3ab4baa917bff53189994"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "55d35f312e4fa4cd3d71a66bc7ac95ab6f05694db7da8c57f0c8f3a229dfbccb"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "4c51b024fe21f2eef459a6770ef6ee0d01e10516496b4caea12301e4a162d6c7"
+          }
+        ],
+        "bytes": 79725208,
+        "sha256": "f63926b4db9b24f9233e3a6041646c4ffddce6a9712ab050bd06e86159479d8a",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3,
+        "mesh_topology": "cartesian_2x2x2_shells3",
+        "cartesian_core_subdivisions": 2,
+        "mesh_blocks": 26,
+        "shell_geometry": "spherical_equiangular",
+        "core_half_width": 0.18,
+        "shell_inner_radius": 0.16,
+        "overlap_quadrature": "radial_quintic_partition",
+        "cartesian_seams": "uniform_global_stencil",
+        "positive_variables": "log_chi_log_lapse_rk_and_ko",
+        "physical_lapse_floor": 1e-10
+      }
+    },
+    {
+      "name": "execution-audit",
+      "status": "passed",
+      "checks_recomputed": 18,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": []
+    }
+  ],
+  "artifacts": [
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/sparse-plan-lifecycle.report.json",
+      "sha256": "3503b5d6293de739f686579618683dffa63e8595f7548a2089a26f9e6a229ffc",
+      "bytes": 78
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive.report.json",
+      "sha256": "88f3acc99c517efb81d363fd4c0e0f085b71294f7a51abb81634f948b56f4adf",
+      "bytes": 51729
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive.rank-00.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive.rank-01.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive.rank-02.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive.rank-03.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive.rank-04.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive.rank-05.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive.rank-06.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive.rank-07.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive.rank-08.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive.rank-09.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive.rank-10.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive.rank-11.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/minkowski-short.report.json",
+      "sha256": "ddad4dfa6a334c430b759ba7a1fc9579be609b18f7175ffc699715f947e3cdb7",
+      "bytes": 8705
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/minkowski-short.history.csv",
+      "sha256": "ae23da8683e561ebf9c993ea4e77da3d1b2162cb013c5d2e0559f6ad8cf69750",
+      "bytes": 1282
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/minkowski-short.checkpoint",
+      "sha256": "6bbad5d9f4047f9ada4194ba2a7f1decb9e7bd807608a776833b58cd34463844",
+      "bytes": 79725208
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/minkowski-short.log",
+      "sha256": "ae33a19e12cf10b3dad540348ca51d831a8ffff9ee251f305b8f874e2671faae",
+      "bytes": 178
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/pulse-half.report.json",
+      "sha256": "eb5555402ddd3d95cffae532404c76c850abfe5a69bf37e7b4e6223fd82dbfb9",
+      "bytes": 8803
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/pulse-half.history.csv",
+      "sha256": "6f5030ddb556c9a806fb657e4d206f4cb08de095f5fb4fa659c897cb4649d1b8",
+      "bytes": 1374
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/pulse-half.checkpoint",
+      "sha256": "a7bdb3dddf3c102686022f683a5e3c9daec9cfbf9d8af471ef1bca8fa63127ea",
+      "bytes": 79725208
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/pulse-half.log",
+      "sha256": "f4f611db032a7ea26154a8009ae4be62ff3c2f837179aa342e63527a710cdbb8",
+      "bytes": 180
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/pulse-resumed.report.json",
+      "sha256": "3db41481607c2fe3e9faacf707bc4115c918bdec4bf0e3b95a9ea26d528a1a3c",
+      "bytes": 8692
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/pulse-resumed.history.csv",
+      "sha256": "8c257ae671c73abcfee73d4e52bbae1056cd97eafc7086968a3e57e1c38779f0",
+      "bytes": 1661
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/pulse-resumed.checkpoint",
+      "sha256": "3cd1336de3f233840af002ac130772c3689d8d16b6a3a9275e6c3526c346d971",
+      "bytes": 79725208
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/pulse-resumed.log",
+      "sha256": "825009199ae3ff1f4e9245f6c83bc766ed26d94ae64c0f4553f5b961ca43ed3f",
+      "bytes": 183
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/pulse-direct.report.json",
+      "sha256": "455e426202f4d1a2055f0a0ad5021b439d5f70fbcbdd59da959690cb2e275dc0",
+      "bytes": 8762
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/pulse-direct.history.csv",
+      "sha256": "640631593b509650bd70d73e7fbe4c027545d84e4049ea3c04872ece4c27bccb",
+      "bytes": 1337
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/pulse-direct.checkpoint",
+      "sha256": "3cd1336de3f233840af002ac130772c3689d8d16b6a3a9275e6c3526c346d971",
+      "bytes": 79725208
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/pulse-direct.log",
+      "sha256": "aece9570bd14f492e89e662fe6e8ea3ccecef1aebb92a1f9ba7f2c14ec30253b",
+      "bytes": 177
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/restart-audit.report.json",
+      "sha256": "3ebc3fbe4cba277525bc82cdf062d873f2e23bb15b27ead0e69b098c7cbc8dcf",
+      "bytes": 6006
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/restart-audit.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/puncture-control.report.json",
+      "sha256": "d71c6bf99806616ddea5a49f861f0e21f943cbdc6853c03ba98d98cba9aa85a7",
+      "bytes": 8659
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/puncture-control.history.csv",
+      "sha256": "21119c1b519fe93caa01abb780b7e1dcaf7920151307e3c14e341cc1345e3d1c",
+      "bytes": 1765
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/puncture-control.checkpoint",
+      "sha256": "f63926b4db9b24f9233e3a6041646c4ffddce6a9712ab050bd06e86159479d8a",
+      "bytes": 79725208
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/puncture-control.checkpoint.horizon-seed.txt",
+      "sha256": "38aafd8ca307fc7d51663d86f29621faf0c9fb2aec7913f28d14b5500b98faf1",
+      "bytes": 90
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/puncture-control.fastflow.horizon_summary_0.txt",
+      "sha256": "a9325c142408dad2c7a038bccc23d020d6badd43c2b577063ba2172e55e895ba",
+      "bytes": 548
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/puncture-control.fastflow.horizon_shape_0.txt",
+      "sha256": "be9ef35a634d5ea2b94842a3888f57f07244a12af19b5837bf9a9632b951aab7",
+      "bytes": 4611
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/puncture-control.log",
+      "sha256": "6eb197c59e8e090ac049f0b9215759ce01ce17ec5c235df91efa18ca4e18efb5",
+      "bytes": 178
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/puncture-fast.report.json",
+      "sha256": "ca6ae95d335b547156f1f7ccc4921cb1299b0cb02cba09ad09bb18b2f504a278",
+      "bytes": 8818
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/puncture-fast.history.csv",
+      "sha256": "1b74d661349e1124c79b0c086181282a2925bed0e82f6af975e6c78d7f645efb",
+      "bytes": 1766
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/puncture-fast.checkpoint",
+      "sha256": "f63926b4db9b24f9233e3a6041646c4ffddce6a9712ab050bd06e86159479d8a",
+      "bytes": 79725208
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/puncture-fast.checkpoint.horizon-seed.txt",
+      "sha256": "38aafd8ca307fc7d51663d86f29621faf0c9fb2aec7913f28d14b5500b98faf1",
+      "bytes": 90
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/puncture-fast.fastflow.horizon_summary_0.txt",
+      "sha256": "4f9aef8cecf8c4cbfaf3cc15fa998a67baeafca1a80739b1f957171eafc8d78b",
+      "bytes": 548
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/puncture-fast.fastflow.horizon_shape_0.txt",
+      "sha256": "e3a1e12067a81c44ea7ee5e7d191e76db192f9e4228e67807e944d826e86aed3",
+      "bytes": 4607
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/puncture-fast.log",
+      "sha256": "be4c87ccd1446ec26e98d1911aa8ef9117134f671931cc8957cfd7bb72732dfa",
+      "bytes": 178
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/execution-audit.report.json",
+      "sha256": "c6bdabd7ef645cacba392a3321e596a781abbbffb27820af30950fa643c50642",
+      "bytes": 6006
+    },
+    {
+      "remote_path": "campaigns/preflight-measured-partition-v1/output/execution-audit.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  ],
+  "verifier_sha256": "ed63209e66f4bbaaeecc5be3df1c967d95d84b50c13de81882c91edc58e4e439",
+  "source_manifest_sha256": "361cf418ffc284fe569208d3b2e1ec43d1fbdde5b514fa8b560d3b0813e452be",
+  "plan_sha256": "814a270dd1856e82461cc6614322b6333713c29457b65c10a24b4c97560e0c1f",
+  "scope": "Implementation/restart preflight only; no duration, convergence, AMR or nonspherical stability claim.",
+  "component_replay": "Frozen source-v22 parser replays hash-bound logs; checkpoint decoder is independent.",
+  "pins_sha256": "8efafdb965e9bf7edf6055f95a6160c57f094b8d0db005dd2895b65dc8480dd1",
+  "build": {
+    "source_commit": "85b8ba91a45dca07496d941e765ea6929006c352",
+    "kokkos_pin": "6739bc623081648af9e752b616d9671527922cbf",
+    "source_manifest_sha256": "361cf418ffc284fe569208d3b2e1ec43d1fbdde5b514fa8b560d3b0813e452be",
+    "git_blob_hashes_verified": 2653,
+    "build_receipt_sha256": "807b5d372b8843a53881d97c88b7c7b1ba6680b55c5d7353a24db40a8676cd66",
+    "cache_sha256": "283dfb9ec265aab2c0c9dfbecda4400947e85a6012f8178ab08f87892760c6c2",
+    "binaries": {
+      "build-sycl-mpi-v22/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive_balanced": "084c6babd9d828c2bec1c93d0229ad753fbc36623bd53b27935359d88793c640",
+      "build-sycl-mpi-v22/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_sparse_exchange": "c2a9fdbef9a50d2905a840aa98dfc665e18940cb2d71ee6e017a7f0599561814",
+      "build-sycl-mpi-v22/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_continuous_positive_device": "b4bab37bc286af3e91667173f6f17c4dccd87d1027f7d152fb1618c4d0248e11"
+    },
+    "records": {
+      "CMakeCache.txt": "283dfb9ec265aab2c0c9dfbecda4400947e85a6012f8178ab08f87892760c6c2",
+      "build-v22.sh": "8ad1db418c1840856d0ed1e5dd4b8f11b0d4c52e61443b2fa2eeb4c639e41c26",
+      "source-v22-manifest.json": "361cf418ffc284fe569208d3b2e1ec43d1fbdde5b514fa8b560d3b0813e452be",
+      "source-v22-non-kokkos-manifest.json": "b90756d1da6a0c984c38dd62aa1e6f92df4cbc8a1417cd416ac4a2b33dc8ca9a",
+      "source-v22-provenance.json": "79be17130f5f563573d76d303b97cf781840ce7672455693a493e1e565b4c40d",
+      "v22/build-status.json": "807b5d372b8843a53881d97c88b7c7b1ba6680b55c5d7353a24db40a8676cd66",
+      "v22/build.log": "27babdf2e1fa980d99b03429d5e5f21cd254b19352cbb21f5c0f811d9643f18c",
+      "v22/compiler.txt": "6f41d08dd542e36e2f41b7b105da56d84c00bd6eb99a7c324ef8ef06635cbe26",
+      "v22/configure.log": "804f1f94e7599cf9897fe3ceb06f577ed9ed4e6559248e8c7ec4ca29fdee62b6",
+      "v22/modules.txt": "cf3fde5892e6950a2ec013c75688552bf45cd2c81a1c7e4bdce32cb81f224156",
+      "v22/mpi-wrapper.txt": "35ee2ba9df330d781abc430dd144e1728a49ceb7215380336a8682af0ed5a88d",
+      "v22/runner.log": "49ffc1d0b96bd484714286e7edc3bd9647b05bbe938142420cf570066d87b487"
+    }
+  },
+  "frozen_control": {
+    "build-sycl-mpi-v21/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive_sparse": "dadc194251e43e9503e4c194a89086fbdd4a8692b077d1f55172c92ce12d3606",
+    "source-v21-provenance.json": "8bf0cf032181f7d28f176a80582e5784f9844e451a971089619c5db8be4b8721",
+    "source-v21-manifest.json": "5870a4f1290ded6e9cca2a6a592276119e1b46e5c52ee61fad71c8ba07e94fd2",
+    "build-logs/v21/build-status.json": "8d2a2b9b35c6b52391be2145c78807a96ca0a3f889a2b1c3b70953d0b3d703cd"
+  },
+  "measured_partition": {
+    "inputs": {
+      "inputs/partition-n16-v21-r12.txt": "ff50e0cd495ee5a8342d83b0da0493e647d86b5c35647e03ef8247cddaf7fee5",
+      "inputs/partition-n16-v21-r12-source.report.json": "b91ef02712d26a223873bb5eb009785d4f596a524968301ae6a42dfb8850cc4b"
+    },
+    "cuts": [
+      0,
+      17546,
+      35013,
+      52595,
+      70140,
+      83132,
+      90803,
+      98470,
+      106135,
+      113766,
+      123992,
+      141585,
+      159200
+    ],
+    "source_report_sha256": "b91ef02712d26a223873bb5eb009785d4f596a524968301ae6a42dfb8850cc4b",
+    "prediction": {
+      "n": 16,
+      "cells": 159200,
+      "ranks": 12,
+      "cuts": [
+        0,
+        17546,
+        35013,
+        52595,
+        70140,
+        83132,
+        90803,
+        98470,
+        106135,
+        113766,
+        123992,
+        141585,
+        159200
+      ],
+      "source_ranks": 12,
+      "source_cuts": [
+        0,
+        13266,
+        26533,
+        39800,
+        53066,
+        66333,
+        79600,
+        92866,
+        106133,
+        119400,
+        132666,
+        145933,
+        159200
+      ],
+      "source_bulk_rhs_seconds": [
+        5.220381601,
+        5.260820823000005,
+        5.247426109,
+        5.209098646999998,
+        5.230294734,
+        5.235378443000004,
+        11.961781346000006,
+        11.973304834000006,
+        12.02600805400001,
+        5.232127638000002,
+        5.2010181819999985,
+        5.212901289
+      ],
+      "estimated_bulk_rhs_seconds": [
+        6.917548490458055,
+        6.9177033346363945,
+        6.917529971011614,
+        6.91754551719303,
+        6.917831954757151,
+        6.916841904505205,
+        6.917721820084765,
+        6.917576464841332,
+        6.917198120153323,
+        6.918087780259221,
+        6.917522976870515,
+        6.917433365229442
+      ],
+      "source_max_over_mean": 1.7384791580995074,
+      "estimated_max_over_mean": 1.0000784438093915,
+      "scope": "Fixed contiguous cuts using rank-average bulk RHS cost only; ignores communication and boundary work. Prediction, not measured speedup."
+    }
+  },
+  "initial_data": {
+    "sha256": "35c1b65aeaaefac34552f9a63b279cabe839b09326adc9af1d2c767ecc29c8ca",
+    "bytes": 29181172
+  },
+  "storage_at_finish": {
+    "bytes": 4414618282,
+    "entries": 40348
+  },
+  "affinity_log_sha256": "12b6bfe4fa7e241f957e116faab912bc8be4a0ef6d13566c532dcba2ffe73593",
+  "one_node_twelve_tiles_verified": true,
+  "terminal": {
+    "job_id": "8987308.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "state": "F",
+    "exit_status": 0,
+    "allocation_released": true
+  },
+  "epsilon2_restart": {
+    "passed": true,
+    "whole_file_equal": true,
+    "four_arrays_equal": true,
+    "core_header_equal": true,
+    "arrays": [
+      {
+        "name": "volume_state",
+        "doubles": 4935200,
+        "sha256": "bb5c4ce993402091c6f3e8dc177b7d692b69e1fca4ef7b36597cc056898b1e26"
+      },
+      {
+        "name": "volume_compensation",
+        "doubles": 4935200,
+        "sha256": "f85511bb96e52d5d233324c74d143e474212d333e1e6e97670c87bd109a6f51f"
+      },
+      {
+        "name": "scri_state",
+        "doubles": 47616,
+        "sha256": "25d59d359ed8888f814f56484602e1182426a18d09664c15eab6cfb46c9b5c5a"
+      },
+      {
+        "name": "scri_compensation",
+        "doubles": 47616,
+        "sha256": "b0ebf04721fa1341150a6450e38be986049a44abc6d8ae7f115456a540cadfc9"
+      }
+    ],
+    "streaming_byte_equality": true
+  },
+  "execution_equivalence": {
+    "passed": true,
+    "whole_file_equal": true,
+    "four_arrays_equal": true,
+    "core_header_equal": true,
+    "arrays": [
+      {
+        "name": "volume_state",
+        "doubles": 4935200,
+        "sha256": "43658fc5bfa49e1b44112d7fedd0f4d93085a25679dbac3aaf5db2b2be28a007"
+      },
+      {
+        "name": "volume_compensation",
+        "doubles": 4935200,
+        "sha256": "23893c6c0a7c6762a747a0421e7b6f96018d4a6829a3ab4baa917bff53189994"
+      },
+      {
+        "name": "scri_state",
+        "doubles": 47616,
+        "sha256": "55d35f312e4fa4cd3d71a66bc7ac95ab6f05694db7da8c57f0c8f3a229dfbccb"
+      },
+      {
+        "name": "scri_compensation",
+        "doubles": 47616,
+        "sha256": "4c51b024fe21f2eef459a6770ef6ee0d01e10516496b4caea12301e4a162d6c7"
+      }
+    ],
+    "streaming_byte_equality": true
+  },
+  "metadata_sha256": {
+    "plan.json": "814a270dd1856e82461cc6614322b6333713c29457b65c10a24b4c97560e0c1f",
+    "binding.json": "ce065ab453013e0270d01ea205e75f311aaa7217d82009cef0ee3ebe4d3dcd3a",
+    "worker-status.json": "454007ed45eb9176fee78bd4d4ddd4983b30305cf993911464adb63f772ad736",
+    "run_debug.pbs": "0e2c0ae9ab4e06bede8c522b0264bf388f1313a3df5edc736c153c1b966cb4bd",
+    "submission.json": "4b1456663f11761423c0b2069dcecbf8d003cae4db8c7b83021997b0655249eb",
+    "collected.json": "4cae5215bdc43023269c62a0e6c1861329d3322ebc8f730e24dacf7d56692c7a",
+    "allocation-released.json": "ad9208f745e3d13d913b03da8d944ac7dcef50ea7e56dfc248500f2677c93dc7"
+  },
+  "checks_recomputed": 425,
+  "artifacts_verified": 49,
+  "verified_preflight_configurations": [
+    {
+      "checkpoint_schema": "HYP3D_MPI_V11",
+      "checkpoint_header_bytes": 152,
+      "scri_dissipation_epsilon": 2.0,
+      "scri_dissipation_degree": 7,
+      "scri_normal_derivative": "sampled_native_numerator7",
+      "scri_normal_radial_nodes": 7,
+      "scri_normal_bulk_derivative_order": 4,
+      "scri_radial_closure": "donor_seven_last3",
+      "scri_radial_bulk_rows": 3,
+      "interpatch_interpolation": "logical_inner_transition",
+      "evolved_overlap": 3,
+      "mesh_topology": "cartesian_2x2x2_shells3",
+      "cartesian_core_subdivisions": 2,
+      "mesh_blocks": 26,
+      "shell_geometry": "spherical_equiangular",
+      "core_half_width": 0.18,
+      "shell_inner_radius": 0.16,
+      "overlap_quadrature": "radial_quintic_partition",
+      "cartesian_seams": "uniform_global_stencil",
+      "positive_variables": "log_chi_log_lapse_rk_and_ko",
+      "physical_lapse_floor": 1e-10
+    }
+  ]
+}
