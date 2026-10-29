@@ -20,6 +20,7 @@ import time
 import control
 
 HEADER = struct.Struct('<16s4i3Q2d')
+V4_CONFIG = struct.Struct('<dii')
 KEYS = ['magic', 'n', 'nf', 'kind', 'admitted', 'cells', 'surface', 'steps', 'time', 'dt']
 
 
@@ -34,20 +35,30 @@ def rank_info():
 def read_checkpoint(path):
     with path.open('rb') as stream:
         data = stream.read(HEADER.size)
+        extra = stream.read(V4_CONFIG.size) if data[:16] == b'HYP3D_MPI_V4'.ljust(16,b'\0') else b''
     if len(data) != HEADER.size:
         raise ValueError('Checkpoint header truncated')
     result = dict(zip(KEYS, HEADER.unpack(data)))
-    if result['magic'] not in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V1',b'HYP3D_MPI_V2',b'HYP3D_MPI_V3']] or result['nf'] != 31 or result['admitted'] != 1:
+    if result['magic'] not in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V1',b'HYP3D_MPI_V2',b'HYP3D_MPI_V3',b'HYP3D_MPI_V4']] or result['nf'] != 31 or result['admitted'] != 1:
         raise ValueError('Unknown or unadmitted checkpoint schema')
+    result.update(header_bytes=HEADER.size,scri_dissipation_epsilon=0.0,scri_dissipation_degree=0)
+    if result['magic'] == b'HYP3D_MPI_V4'.ljust(16,b'\0'):
+        if len(extra) != V4_CONFIG.size:
+            raise ValueError('V4 checkpoint configuration truncated')
+        epsilon,degree,reserved = V4_CONFIG.unpack(extra)
+        if not math.isfinite(epsilon) or epsilon < 0 or degree != 7 or reserved != 0:
+            raise ValueError('Invalid V4 checkpoint dissipation configuration')
+        result.update(header_bytes=HEADER.size+V4_CONFIG.size,
+                      scri_dissipation_epsilon=epsilon,scri_dissipation_degree=degree)
     if result['n'] < 6 or result['n'] % 2 or result['cells'] <= 0 or result['surface'] <= 0:
         raise ValueError('Invalid checkpoint dimensions')
     if not math.isfinite(result['time']) or result['time'] < 0 or not math.isfinite(result['dt']) or result['dt'] <= 0:
         raise ValueError('Invalid checkpoint clock')
-    expected = HEADER.size + 16*(31*result['cells']+result['surface'])
+    expected = result['header_bytes'] + 16*(31*result['cells']+result['surface'])
     if path.stat().st_size != expected:
         raise ValueError('Checkpoint payload truncated or contains trailing data')
     result['magic'] = result['magic'].rstrip(b'\0').decode('ascii')
-    result['payload_doubles'] = (expected-HEADER.size)//8
+    result['payload_doubles'] = (expected-result['header_bytes'])//8
     return result
 
 
@@ -62,7 +73,7 @@ def compare_checkpoints(reference, candidate, atol=0, rtol=0):
     bitwise = True
     count = 0
     with reference.open('rb') as a, candidate.open('rb') as b:
-        a.seek(HEADER.size); b.seek(HEADER.size)
+        a.seek(left['header_bytes']); b.seek(right['header_bytes'])
         while True:
             av, bv = a.read(1<<20), b.read(1<<20)
             if not av:
@@ -136,6 +147,8 @@ def run_binary(args, rank, root, checked, argv):
 
 
 def parse_component(content, kind, code):
+    if kind in ['angular_dissipation','scri_dissipation_closure']:
+        return parse_dissipation_component(content,kind,code)
     backend=re.findall(r'^backend=(\S+)\s*$',content,re.M)
     fields = {
         'device':['scaled_error','partition_error','worst_scaled_error','diagnostic_scaled_error','partition_sum_error'],
@@ -163,6 +176,82 @@ def parse_component(content, kind, code):
     passed=code==0 and backend==['SYCL'] and marker in content and independent
     return dict(passed=passed,gpu_cpu_parity=passed,backend=backend[0] if len(backend)==1 else None,
                 maxima=maxima,dependent_input_and_order_independent=independent if kind=='scri' else None)
+
+
+def parse_dissipation_component(content,kind,code):
+    """Check the explicit standalone V4 test contract on every GPU rank."""
+    backend=re.findall(r'^backend=(\S+)\s*$',content,re.M)
+    maxima={}
+    def rows(prefix):
+        parsed=[]
+        for line in content.splitlines():
+            if not line.startswith(prefix):continue
+            tokens=line.split()
+            if any(token.count('=')!=1 for token in tokens):
+                raise ValueError('Malformed dissipation component metric row')
+            row=dict(token.split('=') for token in tokens)
+            if len(row)!=len(tokens):raise ValueError('Duplicate dissipation component metric')
+            parsed.append(row)
+        return parsed
+    def metric(row,key,upper=None,positive=False):
+        try:value=float(row[key])
+        except (KeyError,ValueError):raise ValueError('Missing/invalid dissipation metric '+key)
+        if not math.isfinite(value) or value<0 or (positive and value<=0) or (upper is not None and value>=upper):
+            raise ValueError('Dissipation metric out of bounds: '+key)
+        maxima[key]=max(maxima.get(key,0),value)
+        return value
+    def integer(row,key):
+        if not re.fullmatch(r'[0-9]+',row.get(key,'')):
+            raise ValueError('Missing/invalid dissipation integer '+key)
+        return int(row[key])
+    def flags(row,names):
+        if any(row.get(key)!='1' for key in names):
+            raise ValueError('Dissipation component rejection/parity checks did not pass')
+    if kind=='angular_dissipation':
+        marker='Angular dissipation CPU/device, energy, constants, partitions and reference parity passed'
+        records=rows('n=');identities=[]
+        for row in records:
+            n,degree=integer(row,'n'),integer(row,'degree');identities.append((n,degree))
+            points,neighbors=integer(row,'points'),integer(row,'max_neighbors')
+            if points!=6*n*n or not 0<neighbors<=points:
+                raise ValueError('Angular dissipation shape/neighborhood mismatch')
+            metric(row,'epsilon',positive=True)
+            for key in ['coefficient_reference_error','source_reference_error','device_residual_error',
+                        'device_source_error','partition_error']:metric(row,key,2e-11)
+            for key in ['energy_error','adjoint_error']:metric(row,key,2e-12)
+            if metric(row,'constant_error')!=0:raise ValueError('Angular dissipation must annihilate constants exactly')
+            metric(row,'max_moment_error',1e-11);metric(row,'max_condition_bound',1e8,positive=True)
+            if metric(row,'max_coefficient_l1')>math.sqrt(neighbors)*(1+1e-10):
+                raise ValueError('Angular dissipation coefficient bound exceeded')
+            metric(row,'spectral_upper_bound',positive=True)
+        if len(identities)!=3 or set(identities)!={(6,7),(8,7),(6,5)}:
+            raise ValueError('Angular dissipation requires n6/n8 degree7 and n6 degree5 reference cases')
+    else:
+        marker='Optional additive scri closure checks passed'
+        records=rows('closure_case=');identities=[]
+        for row in records:
+            identities.append(row.get('closure_case'))
+            metric(row,'additive_rate_error',2e-13);metric(row,'dependent_D_response_error',3e-12)
+            metric(row,'compatibility',2e-12)
+            for key in ['cpu_rate_error','cpu_trace_error']:metric(row,key,2e-10)
+            flags(row,['partition_parity','zero_off','rejection_checks'])
+        if len(identities)!=2 or set(identities)!={'synthetic','plan'}:
+            raise ValueError('Scri closure requires synthetic and actual-plan cases')
+        plan_rows=rows('plan_perturb=');identities=[]
+        for row in plan_rows:
+            identities.append(integer(row,'plan_perturb'))
+            metric(row,'host_rate_error',2e-13);metric(row,'null',3e-14);metric(row,'compatibility',2e-12)
+            if metric(row,'angular_cfl',positive=True)>2.7:
+                raise ValueError('Scri dissipation CFL exceeds the tested bound')
+        if len(identities)!=2 or set(identities)!={0,1}:
+            raise ValueError('Scri closure requires equilibrium and perturbed actual-plan cases')
+        final=rows('cfl_rejection=')
+        if len(final)!=1:raise ValueError('Missing/duplicate scri closure validation flags')
+        flags(final[0],['cfl_rejection','cross_face_guard','epsilon_validation','shared_plan'])
+        records+=plan_rows+final
+    passed=code==0 and backend==['SYCL'] and content.splitlines().count(marker)==1
+    return dict(passed=passed,gpu_cpu_parity=passed,backend=backend[0] if len(backend)==1 else None,
+                maxima=maxima,cases=records)
 
 
 def component(args, rank, root, checked):
@@ -239,11 +328,19 @@ def restart(args, rank, root, checked):
         raise ValueError('Evolution kind does not describe the checkpoint')
     for report in reports:
         scheme='none' if header['magic']=='HYP3D_MPI_V1' else 'final_stage_standard'
-        angular='cross_face_centered5' if header['magic']=='HYP3D_MPI_V3' else 'face_local6'
+        angular='cross_face_centered5' if header['magic'] in ['HYP3D_MPI_V3','HYP3D_MPI_V4'] else 'face_local6'
         if (report.get('checkpoint_schema',header['magic'])!=header['magic']
                 or report.get('algebraic_projection','none')!=scheme
                 or report.get('scri_angular_stencil','face_local6')!=angular):
             raise ValueError('Evolution report/checkpoint algebraic scheme mismatch')
+        for key in ['scri_dissipation_epsilon','scri_dissipation_degree','checkpoint_header_bytes']:
+            header_key='header_bytes' if key=='checkpoint_header_bytes' else key
+            expected=header[header_key]
+            # Legacy reports may predate these fields. V4 must state its exact
+            # runtime configuration; a V3 or missing-config report cannot pass.
+            value=report.get(key) if header['magic']=='HYP3D_MPI_V4' else report.get(key,expected)
+            if type(value) not in [int,float] or not math.isfinite(value) or value!=expected:
+                raise ValueError('Evolution report/checkpoint dissipation configuration mismatch: '+key)
         for report_key,header_key in [('n','n'),('t','time'),('dt','dt'),('steps','steps')]:
             if report[report_key]!=header[header_key]:
                 raise ValueError('Evolution report does not describe the checkpoint')
@@ -367,7 +464,8 @@ def main():
     parser.add_argument('--seconds',type=int,required=True)
     sub=parser.add_subparsers(dest='mode',required=True)
     comp=sub.add_parser('component')
-    comp.add_argument('--component',choices=['device','exchange','scri','algebraic','angular'],required=True)
+    comp.add_argument('--component',choices=['device','exchange','scri','algebraic','angular',
+                                            'angular_dissipation','scri_dissipation_closure'],required=True)
     comp.add_argument('--test-binary',required=True)
     comp.add_argument('--cmake-cache',required=True)
     bench=sub.add_parser('benchmark')

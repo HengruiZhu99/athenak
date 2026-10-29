@@ -18,7 +18,11 @@ The V1/V2/V3 checkpoints are little-endian binary64 with a 72-byte header and fo
 contiguous arrays: volume state, volume RK compensation, scri state, scri RK
 compensation. V1 is the unprojected control; V2 applies standard algebraic tensor
 repair at accepted RK steps. V3 additionally exchanges angular scri stencils
-across patch faces. The evolution binaries reject cross-scheme restarts.
+across patch faces. V4 adds a 16-byte <dii configuration record after the base
+header: finite nonnegative scri-dissipation epsilon, degree 7, reserved zero.
+Its arrays therefore start at byte 88. V4 retains projection and cross-face
+stencils even at epsilon zero. The evolution binaries reject cross-scheme
+restarts and V4 rejects a different epsilon.
 The header contains no topology descriptor. This exporter therefore
 supports only the current unrefined 19-block layout: core half-width .125,
 shell radii .45/.75/1, one core block and six faces per shell layer. All four
@@ -60,6 +64,7 @@ import subprocess
 import sys
 
 HEADER = struct.Struct('<16s4i3Q2d')
+V4_CONFIG = struct.Struct('<dii')
 HEADER_KEYS = ('magic', 'n', 'nf', 'kind', 'admitted', 'cells', 'surface', 'steps', 't', 'dt')
 KINDS = {0: 'minkowski', 1: 'pulse', 2: 'puncture'}
 CHUNK = 1 << 20
@@ -101,8 +106,19 @@ def validate_checkpoint(path, expected_hash=None, expected_time=None):
         if len(raw) != HEADER.size:
             raise ValueError('Truncated checkpoint header')
         h = dict(zip(HEADER_KEYS, HEADER.unpack(raw)))
-        if h['magic'] not in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V1',b'HYP3D_MPI_V2',b'HYP3D_MPI_V3']] or h['nf'] != 31:
+        if h['magic'] not in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V1',b'HYP3D_MPI_V2',b'HYP3D_MPI_V3',b'HYP3D_MPI_V4']] or h['nf'] != 31:
             raise ValueError('Unsupported checkpoint magic/schema/precision')
+        h.update(header_bytes=HEADER.size,scri_dissipation_epsilon=0.0,scri_dissipation_degree=0)
+        if h['magic'] == b'HYP3D_MPI_V4'.ljust(16,b'\0'):
+            extra = stream.read(V4_CONFIG.size)
+            if len(extra) != V4_CONFIG.size:
+                raise ValueError('Truncated V4 checkpoint configuration')
+            epsilon,degree,reserved = V4_CONFIG.unpack(extra)
+            if not math.isfinite(epsilon) or epsilon < 0 or degree != 7 or reserved != 0:
+                raise ValueError('Invalid V4 checkpoint dissipation configuration')
+            raw += extra
+            h.update(header_bytes=HEADER.size+V4_CONFIG.size,
+                     scri_dissipation_epsilon=epsilon,scri_dissipation_degree=degree)
         n = h['n']
         if h['admitted'] != 1 or h['kind'] not in KINDS:
             raise ValueError('Checkpoint is unadmitted or has an unknown physical kind')
@@ -114,7 +130,7 @@ def validate_checkpoint(path, expected_hash=None, expected_time=None):
             if not math.isfinite(expected_time) or abs(h['t']-expected_time) > 1e-12:
                 raise ValueError('Checkpoint does not match requested comparison time')
         nv, ns = 31*h['cells'], h['surface']
-        expected_size = HEADER.size+16*(nv+ns)
+        expected_size = h['header_bytes']+16*(nv+ns)
         if path.stat().st_size != expected_size:
             raise ValueError('Truncated checkpoint payload or trailing bytes')
         checksum = hashlib.sha256(raw)
@@ -152,11 +168,17 @@ def validate_report(path, h):
     if report.get('kind') != KINDS[h['kind']]:
         raise ValueError('Source report/checkpoint physical kind mismatch')
     scheme = 'none' if h['magic']=='HYP3D_MPI_V1' else 'final_stage_standard'
-    angular = 'cross_face_centered5' if h['magic']=='HYP3D_MPI_V3' else 'face_local6'
+    angular = 'cross_face_centered5' if h['magic'] in ['HYP3D_MPI_V3','HYP3D_MPI_V4'] else 'face_local6'
     if (report.get('checkpoint_schema',h['magic']) != h['magic']
             or report.get('algebraic_projection','none') != scheme
             or report.get('scri_angular_stencil','face_local6') != angular):
         raise ValueError('Source report/checkpoint algebraic scheme mismatch')
+    for key in ['scri_dissipation_epsilon','scri_dissipation_degree','checkpoint_header_bytes']:
+        header_key='header_bytes' if key=='checkpoint_header_bytes' else key
+        expected=h[header_key]
+        value=report.get(key) if h['magic']=='HYP3D_MPI_V4' else report.get(key,expected)
+        if type(value) not in [int,float] or not math.isfinite(value) or value!=expected:
+            raise ValueError('Source report/checkpoint dissipation configuration mismatch: '+key)
     for key in ['checkpoint_written', 'checkpoint_admitted']:
         if key in report and report[key] is not True:
             raise ValueError(f'Source report rejects {key}')
@@ -266,6 +288,9 @@ def compatible_report(h, source, provenance):
                 source_target_reached=source['status'] == 'completed' and h['t'] >= target-1e-12,
                 n=h['n'], cells=h['cells'], kind=KINDS[h['kind']], t=h['t'], dt=h['dt'],
                 steps=h['steps'], t_over_M=3*h['t'] if h['kind'] == 2 else None,
+                checkpoint_schema=h['magic'], checkpoint_header_bytes=h['header_bytes'],
+                scri_dissipation_epsilon=h['scri_dissipation_epsilon'],
+                scri_dissipation_degree=h['scri_dissipation_degree'],
                 null_max=source.get('max_null_surface'), pole_max=source.get('max_pole'),
                 compatibility_max=source.get('max_compatibility', source.get('compatibility_max')),
                 native_fastflow={k: v for k, v in source.items()
@@ -307,7 +332,7 @@ def main():
     prefix = args.output/'evolution'
     manifest = dict(schema=1, status='exporting', checkpoint=str(args.checkpoint),
                     checkpoint_sha256=checkpoint_hash, source_report_sha256=report_hash,
-                    header_bytes=HEADER.size, header=h, arrays=arrays, provenance=provenance,
+                    header_bytes=h['header_bytes'], header=h, arrays=arrays, provenance=provenance,
                     momentum_conventions=MOMENTUM,
                     coordinate_measure='analytic Jacobian of the fixed unrefined composite map',
                     script_sha256=digest(Path(__file__)), output_files={}, removed_intermediates=[])

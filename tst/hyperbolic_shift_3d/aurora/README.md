@@ -54,8 +54,17 @@ The installed ALCF wrapper maps local rank `r` to `ZE_AFFINITY_MASK=(r/2).(r%2)`
 Copy `plan.example.json` into a fresh `campaigns/<name>/plan.json`. It is deliberately unreviewed and incomplete. Replace/extend it with the actual parity and restart cases and numerical acceptance criteria. Every command is an explicit argument list, with no shell interpolation. `@WALL_SECONDS@` is the one supported argument substitution and becomes a numeric deadline with 30 seconds left for shutdown. The main evolution interface is:
 
 ```text
-n output_prefix kind target_time dt initial_file|- restart_checkpoint|- wall_seconds [diagnostic_interval]
+n output_prefix kind target_time dt initial_file|- restart_checkpoint|- wall_seconds [diagnostic_interval [horizon_rms_tolerance [horizon_lmax [horizon_ntheta]]]]
 ```
+
+Only the optional target named `hyperbolic_shift_3d_mpi_dissipative` accepts a
+13th positional argument, `scri_dissipation_epsilon`, after all twelve arguments
+above. Its default is 2 when omitted. Epsilon must be finite and nonnegative;
+epsilon zero retains the V4 schema and degree 7. All older targets reject a
+13th argument. The native report records `scri_dissipation_epsilon`,
+`scri_dissipation_degree` and `checkpoint_header_bytes`; add exact checks for
+these fields to every reviewed V4 evolution plan. The original V1
+resolution-control failure-continuation policy is not available to V4.
 
 `kind` is `minkowski`, `pulse`, or `puncture`. The puncture donor mass is `M=1/3`; 100 M means target coordinate time `100/3`, not 100. Every command needs a JSON report with `status=completed|checkpointed|failed`. Checks use explicit JSON paths and `eq`, `le`, `ge`, or `finite`; configure checks against the final executable schema. `inputs` are existing initial/checkpoint files bound before submission. `artifacts` are output files hashed after execution. A later case may name earlier artifacts as `generated_inputs`; the worker records their hashes immediately before use. Evolution argument grid, kind, output prefix, initial/restart declarations, and bounded deadline are checked against plan metadata. Source, executables, inputs, command plan, launcher files, PBS script, and admission evidence are bound and reverified.
 
@@ -82,6 +91,27 @@ Reports, stdout, hashes, and `worker-status.json` distinguish passed, checkpoint
 3. **Convergence:** only after all low-grid stability tests pass, including puncture to 100 M; then refine spatial resolution and independently refine timestep.
 
 Phase transitions require a coordinator-reviewed admission JSON. Preflight admission needs `passed=true`, `phase=preflight`, `low_resolution_n`, `source_manifest_sha256`, executable `binaries` hash mapping, `gpu_cpu_parity=true`, and `restart_equivalence=true`. Stability admission has `phase=stability`, the same bindings, `minkowski_stable=true`, `pulse_stable=true`, `puncture_stable=true`, and `puncture_completed_t_over_M>=100`. Retain the exact supporting reports/checkpoint hashes and numerical thresholds in these evidence documents. The controller checks the admission fields and hashes; the coordinator must assess the actual scientific evidence.
+
+V4 admissions additionally require `scri_dissipation_configs`, a list of exact
+configuration records. For example, a separately verified epsilon-2 record is:
+
+```json
+{
+  "executable": "build-sycl-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_dissipative",
+  "checkpoint_schema": "HYP3D_MPI_V4",
+  "scri_dissipation_epsilon": 2.0,
+  "scri_dissipation_degree": 7,
+  "checkpoint_header_bytes": 88
+}
+```
+
+Each requested epsilon must have its own supported record and exact executable
+path. A scan of 0, 1 and 2 therefore needs all three configurations admitted;
+epsilon 2 does not authorize 0 or 1 even when source and executable hashes
+match. Omitting the runtime epsilon requests the default 2 and still requires
+that record. Existing V1–V3 admissions remain unchanged. Admissions are written
+only after reviewing the corresponding source-bound reports and restart
+comparisons; this list is not proof by itself.
 
 Offline launcher tests (no SSH or scheduler calls):
 
@@ -114,6 +144,23 @@ source/tst/hyperbolic_shift_3d/aurora/preflight.py
 
 Use targets `hyperbolic_shift_3d_composite_device`, `hyperbolic_shift_3d_composite_exchange`, and `hyperbolic_shift_3d_scri_device`. Declare the binary and cache as bound `inputs`. The adapter requires actual `backend=SYCL` stdout on **every rank**, successful native assertions and marker, finite error metrics, and correct tile placement. Scri audits also require the dependent-input/order-independence checks. Artificial scri perturbation pole/clock values are parity data, not equilibrium tolerances. The aggregate report includes `status`, `mpi_size=12`, `backend`, `gpu_cpu_parity`, per-rank records and maximum metrics.
 
+For V4 preflight, two additional component modes consume their matching
+standalone targets:
+
+- `--component angular_dissipation` runs
+  `hyperbolic_shift_3d_angular_dissipation`. The adapter checks n6/n8 degree-7
+  and n6 degree-5 reference cases, finite reference/device/partition errors,
+  energy and adjoint errors, exact constant annihilation, moment and
+  conditioning bounds, coefficient bounds, and a positive spectral bound.
+- `--component scri_dissipation_closure` runs
+  `hyperbolic_shift_3d_scri_dissipation_closure`. The adapter checks synthetic
+  and actual-plan additive rates, moving-normal dependent-D response,
+  CPU/device/partition parity, epsilon-zero equivalence, equilibrium and
+  perturbed null/compatibility residuals, and explicit invalid-input/CFL guards.
+
+Both require the exact native success marker and actual SYCL backend on every
+rank. These adapters do not add a communication-benchmark rerun requirement.
+
 Restart comparison uses the same common arguments followed by:
 
 ```text
@@ -122,7 +169,19 @@ restart --reference REFERENCE.checkpoint --candidate RESUMED.checkpoint
   --atol 0 --rtol 0
 ```
 
-Run it after uninterrupted and split/restarted evolution cases in the same bound plan, declaring all four artifacts as `generated_inputs`. Only rank zero reads the checkpoint payload; all ranks receive the result. It validates the current 72-byte native header, configuration/time/step agreement, finite full state and compensation arrays, matching completed SYCL reports, hashes, and elementwise differences. The report exposes `restart_equivalence`, `bitwise_payload_equal`, maximum errors, and header metadata. Current source and plan identity are checked against the worker binding. For comparisons across different plans, independently verify the original source/executable provenance before admitting results.
+Run it after uninterrupted and split/restarted evolution cases in the same bound plan, declaring all four artifacts as `generated_inputs`. Only rank zero reads the checkpoint payload; all ranks receive the result. It validates the native header, configuration/time/step agreement, finite full state and compensation arrays, matching completed SYCL reports, hashes, and elementwise differences. The report exposes `restart_equivalence`, `bitwise_payload_equal`, maximum errors, and header metadata. Current source and plan identity are checked against the worker binding. For comparisons across different plans, independently verify the original source/executable provenance before admitting results.
+
+V1–V3 retain their original 72-byte little-endian `<16s4i3Q2d` header and array
+layout. V4 uses magic `HYP3D_MPI_V4` padded to 16 bytes, the same base header,
+then exactly 16 bytes `<dii>` containing epsilon, degree 7 and reserved zero.
+Its four binary64 arrays begin at byte **88**. Both the preflight reader and
+`checkpoint_export.py` reject truncated/trailing data, invalid configuration,
+and nonfinite payloads. V4 report configuration must be explicit and agree
+with the checkpoint. Restart comparison requires exact schema, epsilon,
+degree, clock and step metadata even when nonzero payload tolerances are
+requested. Equal V3 and epsilon-zero V4 arrays do not make their schemas
+interchangeable. Export metadata retains the schema, configuration and actual
+header size.
 
 Additional offline tests exercise checkpoint corruption, exact/tolerant comparison, all three metric adapters, 12-process success/failure propagation, and storage accounting:
 

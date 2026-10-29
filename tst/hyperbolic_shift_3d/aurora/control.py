@@ -22,6 +22,18 @@ ACCOUNT = 'CompactBinaryMerger'
 CPU_BIND = '1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100'
 FIXED = dict(queue='debug', account=ACCOUNT, nodes=1, ranks=12, ranks_per_node=12)
 PHASES = {'preflight', 'stability', 'convergence', 'resolution_control'}
+DISSIPATIVE_TARGET = 'hyperbolic_shift_3d_mpi_dissipative'
+
+
+def dissipation_config(command):
+    """V4 runtime configuration, independently of the source/binary identity."""
+    if command['kind']=='check' or Path(command['executable']).name != DISSIPATIVE_TARGET:
+        return None
+    epsilon=float(command['args'][12]) if len(command['args'])==13 else 2.0
+    if not math.isfinite(epsilon) or epsilon < 0:
+        raise ValueError('V4 scri dissipation epsilon must be finite and nonnegative')
+    return dict(executable=command['executable'],checkpoint_schema='HYP3D_MPI_V4',
+                scri_dissipation_epsilon=epsilon,scri_dissipation_degree=7,checkpoint_header_bytes=88)
 
 
 def digest(path):
@@ -134,8 +146,13 @@ def validate_plan(root, plan):
             if path not in preceding_artifacts:
                 raise ValueError('Generated inputs must be declared artifacts of an earlier case')
         if command['kind'] != 'check':
-            if not 8 <= len(argv) <= 12 or argv[0] != str(case_n) or argv[2] != command['kind']:
+            v4 = Path(command['executable']).name == DISSIPATIVE_TARGET
+            if not 8 <= len(argv) <= (13 if v4 else 12) or argv[0] != str(case_n) or argv[2] != command['kind']:
                 raise ValueError('Evolution arguments must match the declared grid and physical case')
+            if v4:
+                dissipation_config(command)
+                if command.get('continue_after_failure'):
+                    raise ValueError('V4 does not inherit original V1 numerical-failure continuation')
             if command['report'] != argv[1] + '.report.json':
                 raise ValueError('Evolution report must match its output prefix')
             target, dt = float(argv[3]), float(argv[4])
@@ -203,6 +220,25 @@ def validate_admission(root, plan, source_digest, binary_hashes):
     for name, sha in binary_hashes.items():
         if admitted.get(name) != sha:
             raise ValueError('Admission executable binding does not match the requested run')
+    requested_configs = [config for config in map(dissipation_config,plan['commands']) if config is not None]
+    if requested_configs:
+        configs=admission.get('scri_dissipation_configs')
+        if not isinstance(configs,list) or not configs:
+            raise ValueError('V4 admission must explicitly bind each scri dissipation configuration')
+        for config in configs:
+            if not isinstance(config,dict):
+                raise ValueError('Invalid V4 admission configuration')
+            epsilon=config.get('scri_dissipation_epsilon')
+            if (type(epsilon) not in [int,float] or not math.isfinite(epsilon) or epsilon<0
+                    or config.get('checkpoint_schema')!='HYP3D_MPI_V4'
+                    or type(config.get('scri_dissipation_degree')) is not int
+                    or config['scri_dissipation_degree']!=7
+                    or type(config.get('checkpoint_header_bytes')) is not int
+                    or config['checkpoint_header_bytes']!=88
+                    or config.get('executable') not in admitted):
+                raise ValueError('Invalid V4 admission configuration')
+        if any(config not in configs for config in requested_configs):
+            raise ValueError('Admission does not cover the exact requested V4 scri dissipation epsilon')
     if required == 'preflight':
         for key in ['gpu_cpu_parity', 'restart_equivalence']:
             if admission.get(key) is not True:

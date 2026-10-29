@@ -129,6 +129,73 @@ class ControllerTests(unittest.TestCase):
             with self.subTest(suffix=suffix), self.assertRaises(ValueError):
                 control.validate_plan(self.root, plan)
 
+    def test_v4_optional_epsilon_and_old_target_argument_limit(self):
+        for suffix,epsilon in [([],2.0),(['.05','.001','6','12'],2.0),
+                               (['.05','.001','6','12','0'],0.0),
+                               (['.05','.001','6','12','1'],1.0),
+                               (['.05','.001','6','12','2.5'],2.5)]:
+            plan=example();command=plan['commands'][0]
+            command['executable']='build/'+control.DISSIPATIVE_TARGET
+            command['args'].extend(suffix)
+            control.validate_plan(self.root,plan)
+            self.assertEqual(control.dissipation_config(command),dict(
+                executable=command['executable'],checkpoint_schema='HYP3D_MPI_V4',
+                scri_dissipation_epsilon=epsilon,scri_dissipation_degree=7,checkpoint_header_bytes=88))
+        for executable in ['build/evolve','build/hyperbolic_shift_3d_mpi_projected_angular',
+                           'build/'+control.DISSIPATIVE_TARGET+'-other']:
+            plan=example();command=plan['commands'][0];command['executable']=executable
+            command['args'].extend(['.05','.001','6','12','0'])
+            with self.subTest(executable=executable),self.assertRaises(ValueError):
+                control.validate_plan(self.root,plan)
+
+    def test_v4_invalid_epsilon_and_failure_continuation_rejected(self):
+        for epsilon in ['-1','nan','inf','-inf','invalid','']:
+            plan=example();command=plan['commands'][0]
+            command['executable']='build/'+control.DISSIPATIVE_TARGET
+            command['args'].extend(['.05','.001','6','12',epsilon])
+            with self.subTest(epsilon=epsilon),self.assertRaises(ValueError):
+                control.validate_plan(self.root,plan)
+        plan=example();command=plan['commands'][0]
+        command['executable']='build/'+control.DISSIPATIVE_TARGET
+        command['args'].extend(['.05','.001','6','12','2','extra'])
+        with self.assertRaises(ValueError):control.validate_plan(self.root,plan)
+        plan=resolution_example()
+        for command in plan['commands']:command['executable']='build/'+control.DISSIPATIVE_TARGET
+        with self.assertRaisesRegex(ValueError,'does not inherit'):
+            control.validate_plan(self.root,plan)
+
+    def test_v4_admission_binds_exact_epsilon_including_default(self):
+        plan=example();plan.update(phase='stability',admission='admission.json')
+        command=plan['commands'][0];command['executable']='build/'+control.DISSIPATIVE_TARGET
+        hashes={command['executable']:'binary-sha'}
+        admission=dict(passed=True,phase='preflight',source_manifest_sha256='source-sha',
+                       low_resolution_n=16,binaries=hashes,gpu_cpu_parity=True,restart_equivalence=True)
+        control.atomic(self.root/'admission.json',admission)
+        with self.assertRaisesRegex(ValueError,'explicitly bind'):
+            control.validate_admission(self.root,plan,'source-sha',hashes)
+        config=control.dissipation_config(command)
+        admission['scri_dissipation_configs']=[config]
+        control.atomic(self.root/'admission.json',admission)
+        control.validate_admission(self.root,plan,'source-sha',hashes)
+        command['args'].extend(['.05','.001','6','12','2'])
+        control.validate_admission(self.root,plan,'source-sha',hashes)
+        for epsilon in ['0','1','2.0000000000000004']:
+            command['args'][12]=epsilon
+            with self.subTest(epsilon=epsilon),self.assertRaisesRegex(ValueError,'exact requested'):
+                control.validate_admission(self.root,plan,'source-sha',hashes)
+        admission['scri_dissipation_configs']=[dict(config,scri_dissipation_epsilon=x) for x in [0,1,2]]
+        control.atomic(self.root/'admission.json',admission)
+        for epsilon in ['0','1','2']:
+            command['args'][12]=epsilon
+            control.validate_admission(self.root,plan,'source-sha',hashes)
+        for key,value in [('scri_dissipation_degree',0),('scri_dissipation_degree',7.0),
+                          ('checkpoint_header_bytes',72),('checkpoint_schema','HYP3D_MPI_V3'),
+                          ('scri_dissipation_epsilon',True),('executable','build/another')]:
+            admission['scri_dissipation_configs']=[dict(config,**{key:value})]
+            control.atomic(self.root/'admission.json',admission)
+            with self.subTest(key=key,value=value),self.assertRaises(ValueError):
+                control.validate_admission(self.root,plan,'source-sha',hashes)
+
     def test_every_bound_input_is_immutable(self):
         self.bound()
         pbs = (self.root/'runs/one/run_debug.pbs').read_text()

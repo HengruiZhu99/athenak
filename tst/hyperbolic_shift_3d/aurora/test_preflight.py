@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Offline checkpoint and 12-process adapter tests; no MPI or GPU claims."""
 import json
+import importlib.util
 import os
 from pathlib import Path
 import shutil
@@ -9,11 +10,16 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from types import SimpleNamespace
 from unittest.mock import patch
 
 import control
 import preflight
 import storage
+
+_export_spec=importlib.util.spec_from_file_location('checkpoint_export',Path(__file__).resolve().parents[1]/'checkpoint_export.py')
+checkpoint_export=importlib.util.module_from_spec(_export_spec)
+_export_spec.loader.exec_module(checkpoint_export)
 
 
 def benchmark_fixture(rank=7,sampling='staged'):
@@ -31,8 +37,68 @@ ALGEBRAIC_FIXTURE = ('backend=SYCL\nrotation_covariance_max=8.88e-16\n'
     'D_compatibility=1.11e-16 null_time_derivative=6.66e-16\n'
     'algebraic projection: tensors, rejection, device, unchanged fields, compensation, scri passed\n')
 
+ANGULAR_DISSIPATION_FIXTURE = 'backend=SYCL\n'+''.join(
+    f'n={n} degree={degree} points={6*n*n} epsilon=1.25 '
+    'coefficient_reference_error=1e-14 source_reference_error=1e-14 '
+    'device_residual_error=1e-14 device_source_error=1e-14 partition_error=0 '
+    'energy_error=1e-14 adjoint_error=1e-14 constant_error=0 max_moment_error=1e-14 '
+    'max_condition_bound=1000 max_coefficient_l1=2 max_neighbors=70 spectral_upper_bound=3\n'
+    for n,degree in [(6,7),(8,7),(6,5)]) + \
+    'Angular dissipation CPU/device, energy, constants, partitions and reference parity passed\n'
+
+SCRI_DISSIPATION_FIXTURE = ('backend=SYCL\n'+''.join(
+    f'closure_case={name} additive_rate_error=1e-14 dependent_D_response_error=1e-14 '
+    'compatibility=1e-15 cpu_rate_error=1e-14 cpu_trace_error=1e-14 '
+    'partition_parity=1 zero_off=1 rejection_checks=1\n' for name in ['synthetic','plan'])+''.join(
+    f'plan_perturb={perturb} host_rate_error=1e-14 angular_cfl=.1 null=1e-15 compatibility=1e-15\n'
+    for perturb in [0,1])+
+    'cfl_rejection=1 cross_face_guard=1 epsilon_validation=1 shared_plan=1\n'
+    'Optional additive scri closure checks passed\n')
+
 
 class ComponentParserTests(unittest.TestCase):
+    def test_new_dissipation_components_require_exact_markers_backend_and_metrics(self):
+        for kind,fixture in [('angular_dissipation',ANGULAR_DISSIPATION_FIXTURE),
+                             ('scri_dissipation_closure',SCRI_DISSIPATION_FIXTURE)]:
+            with self.subTest(kind=kind):
+                parsed=preflight.parse_component(fixture,kind,0)
+                self.assertTrue(parsed['passed']);self.assertTrue(parsed['gpu_cpu_parity'])
+                self.assertTrue(parsed['maxima']);self.assertTrue(parsed['cases'])
+                for content,code in [(fixture.replace('backend=SYCL','backend=Serial'),0),
+                                     (fixture.replace('checks passed','checks failed').replace('parity passed','parity failed'),0),
+                                     (fixture,2),(fixture+'backend=SYCL\n',0)]:
+                    self.assertFalse(preflight.parse_component(content,kind,code)['passed'])
+
+    def test_angular_dissipation_checks_moments_energy_reference_and_coverage(self):
+        for before,after in [('source_reference_error=1e-14','source_reference_error=3e-11'),
+                             ('device_source_error=1e-14','device_source_error=nan'),
+                             ('energy_error=1e-14','energy_error=3e-12'),('adjoint_error=1e-14','adjoint_error=-1'),
+                             ('constant_error=0','constant_error=1e-30'),
+                             ('max_moment_error=1e-14','max_moment_error=1e-10'),
+                             ('max_condition_bound=1000','max_condition_bound=1e9'),
+                             ('max_coefficient_l1=2','max_coefficient_l1=20'),
+                             ('spectral_upper_bound=3','spectral_upper_bound=0'),
+                             ('max_neighbors=70','max_neighbors=70.0'),
+                             ('n=6 degree=7','n=4 degree=7'),('n=6 degree=5','n=6 degree=7'),
+                             ('partition_error=0',''),('energy_error=1e-14','energy_error=0 energy_error=0')]:
+            with self.subTest(before=before,after=after),self.assertRaises(ValueError):
+                preflight.parse_component(ANGULAR_DISSIPATION_FIXTURE.replace(before,after),'angular_dissipation',0)
+
+    def test_scri_dissipation_checks_closure_parity_zero_off_and_rejections(self):
+        for before,after in [('dependent_D_response_error=1e-14','dependent_D_response_error=4e-12'),
+                             ('cpu_rate_error=1e-14','cpu_rate_error=3e-10'),
+                             ('cpu_trace_error=1e-14','cpu_trace_error=nan'),
+                             ('additive_rate_error=1e-14','additive_rate_error=3e-13'),
+                             ('partition_parity=1','partition_parity=0'),('zero_off=1','zero_off=0'),
+                             ('rejection_checks=1','rejection_checks=0'),('angular_cfl=.1','angular_cfl=0'),
+                             ('angular_cfl=.1','angular_cfl=2.8'),('null=1e-15','null=4e-14'),
+                             ('compatibility=1e-15','compatibility=inf'),
+                             ('closure_case=plan','closure_case=synthetic'),('plan_perturb=1','plan_perturb=0'),
+                             ('cross_face_guard=1','cross_face_guard=0'),('epsilon_validation=1','epsilon_validation=0'),
+                             ('shared_plan=1','')]:
+            with self.subTest(before=before,after=after),self.assertRaises(ValueError):
+                preflight.parse_component(SCRI_DISSIPATION_FIXTURE.replace(before,after),'scri_dissipation_closure',0)
+
     def test_angular_requires_sycl_success_and_metrics(self):
         log=('backend=SYCL\nfine_gradient_order=4 fine_hessian_order=4 fine_mixed_order=4\n'
              'projection_error=0 rate_error=1e-14 dependent_trace_error=1e-14 null=1e-15 compatibility=1e-16\n'
@@ -100,9 +166,10 @@ class CheckpointTests(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.root=Path(self.temp.name)
 
-    def checkpoint(self,name='state',value=0.125,steps=4,tail=b'',magic=b'HYP3D_MPI_V1'):
+    def checkpoint(self,name='state',value=0.125,steps=4,tail=b'',magic=b'HYP3D_MPI_V1',config=(2.0,7,0)):
         path=self.root/name
         header=preflight.HEADER.pack(magic.ljust(16,b'\0'),6,31,1,1,1,1,steps,0.0004,0.0001)
+        if magic==b'HYP3D_MPI_V4':header+=preflight.V4_CONFIG.pack(*config)
         path.write_bytes(header+struct.pack('<64d',*([value]*64))+tail)
         return path
 
@@ -138,6 +205,138 @@ class CheckpointTests(unittest.TestCase):
             with self.subTest(kwargs=kwargs),self.assertRaises(ValueError):
                 preflight.compare_checkpoints(a,b)
 
+    def test_v4_config_and_payload_offsets(self):
+        self.assertEqual(preflight.V4_CONFIG.size,16)
+        for epsilon in [0.0,1.0,2.0]:
+            a=self.checkpoint('a',magic=b'HYP3D_MPI_V4',config=(epsilon,7,0))
+            b=self.checkpoint('b',magic=b'HYP3D_MPI_V4',config=(epsilon,7,0))
+            result=preflight.compare_checkpoints(a,b)
+            self.assertTrue(result['restart_equivalence'])
+            self.assertTrue(result['bitwise_payload_equal'])
+            self.assertEqual(result['compared_doubles'],64)
+            self.assertEqual(result['header']['header_bytes'],88)
+            self.assertEqual(result['header']['scri_dissipation_epsilon'],epsilon)
+            self.assertEqual(result['header']['scri_dissipation_degree'],7)
+        b=self.checkpoint('b',magic=b'HYP3D_MPI_V4',value=.125000001)
+        self.assertFalse(preflight.compare_checkpoints(a,b)['restart_equivalence'])
+        self.assertTrue(preflight.compare_checkpoints(a,b,atol=1e-8)['restart_equivalence'])
+
+    def test_v4_configuration_cannot_be_tolerated_or_cross_schema(self):
+        a=self.checkpoint('a',magic=b'HYP3D_MPI_V4')
+        for epsilon in [0.0,1.0,2.0000000000000004]:
+            b=self.checkpoint('b',magic=b'HYP3D_MPI_V4',config=(epsilon,7,0))
+            with self.subTest(epsilon=epsilon),self.assertRaises(ValueError):
+                preflight.compare_checkpoints(a,b,atol=1e100,rtol=1e100)
+        zero=self.checkpoint('zero',magic=b'HYP3D_MPI_V4',config=(0.0,7,0))
+        for magic in [b'HYP3D_MPI_V1',b'HYP3D_MPI_V2',b'HYP3D_MPI_V3']:
+            b=self.checkpoint('b',magic=magic)
+            self.assertEqual(b.read_bytes()[72:],zero.read_bytes()[88:])
+            self.assertEqual(preflight.read_checkpoint(b)['header_bytes'],72)
+            self.assertEqual(preflight.read_checkpoint(b)['scri_dissipation_degree'],0)
+            with self.subTest(magic=magic),self.assertRaises(ValueError):
+                preflight.compare_checkpoints(zero,b)
+
+    def test_v4_invalid_config_truncation_and_trailing_bytes(self):
+        for config in [(-1,7,0),(float('nan'),7,0),(float('inf'),7,0),(2,6,0),(2,7,1)]:
+            p=self.checkpoint(magic=b'HYP3D_MPI_V4',config=config)
+            with self.subTest(config=config),self.assertRaises(ValueError):
+                preflight.read_checkpoint(p)
+        p=self.checkpoint(magic=b'HYP3D_MPI_V4');original=p.read_bytes()
+        for data in [original[:71],original[:72],original[:87],original[:-1],original+b'x']:
+            p.write_bytes(data)
+            with self.subTest(bytes=len(data)),self.assertRaises(ValueError):
+                preflight.read_checkpoint(p)
+
+    def test_v4_restart_requires_matching_report_configuration(self):
+        a=self.checkpoint('a',magic=b'HYP3D_MPI_V4');b=self.checkpoint('b',magic=b'HYP3D_MPI_V4')
+        args=SimpleNamespace(reference='a',candidate='b',reference_report='a.json',candidate_report='b.json',atol=0,rtol=0)
+        report=dict(status='completed',backend='SYCL',mpi_size=12,n=6,kind='pulse',t=.0004,
+                    target_time=.0004,dt=.0001,steps=4,checkpoint_schema='HYP3D_MPI_V4',
+                    algebraic_projection='final_stage_standard',scri_angular_stencil='cross_face_centered5',
+                    scri_dissipation_epsilon=2.0,scri_dissipation_degree=7,checkpoint_header_bytes=88)
+        (self.root/'a.json').write_text(json.dumps(report));(self.root/'b.json').write_text(json.dumps(report))
+        self.assertTrue(preflight.restart(args,0,self.root,lambda p:self.root/p)['passed'])
+        for key,bad in [('scri_dissipation_epsilon',0),('scri_dissipation_epsilon',True),
+                        ('scri_dissipation_degree',0),('checkpoint_header_bytes',72),
+                        ('checkpoint_schema','HYP3D_MPI_V3'),('scri_angular_stencil','face_local6')]:
+            changed=dict(report);changed[key]=bad;(self.root/'b.json').write_text(json.dumps(changed))
+            with self.subTest(key=key,bad=bad),self.assertRaises(ValueError):
+                preflight.restart(args,0,self.root,lambda p:self.root/p)
+        for key in ['scri_dissipation_epsilon','scri_dissipation_degree','checkpoint_header_bytes']:
+            changed=dict(report);del changed[key];(self.root/'b.json').write_text(json.dumps(changed))
+            with self.subTest(missing=key),self.assertRaises(ValueError):
+                preflight.restart(args,0,self.root,lambda p:self.root/p)
+
+
+class ExportCheckpointTests(unittest.TestCase):
+    """Actual fixed-topology payloads catch byte-offset and streaming-hash bugs."""
+    def setUp(self):
+        self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
+        self.root=Path(self.temp.name)
+
+    def fixture(self,magic=b'HYP3D_MPI_V4',config=(2.0,7,0)):
+        n=6;cells=19*n**3;ns=31*6*n*n;nv=31*cells
+        header=checkpoint_export.HEADER.pack(magic.ljust(16,b'\0'),n,31,0,1,cells,ns,4,.0004,.0001)
+        if magic==b'HYP3D_MPI_V4':header+=checkpoint_export.V4_CONFIG.pack(*config)
+        path=self.root/'state.checkpoint'
+        payload=b''.join(struct.pack('<d',value)*count for value,count in [(1.25,nv),(-0.0,nv),(2.5,ns),(3.75,ns)])
+        path.write_bytes(header+payload)
+        return path
+
+    def test_all_schema_offsets_hashes_and_export_rows(self):
+        for version in range(1,5):
+            path=self.fixture(f'HYP3D_MPI_V{version}'.encode())
+            h,arrays,sha=checkpoint_export.validate_checkpoint(path)
+            self.assertEqual(sha,checkpoint_export.digest(path))
+            self.assertEqual(h['header_bytes'],88 if version==4 else 72)
+            self.assertEqual(h['scri_dissipation_epsilon'],2.0 if version==4 else 0.0)
+            self.assertEqual(h['scri_dissipation_degree'],7 if version==4 else 0)
+            self.assertEqual(arrays[0]['offset'],h['header_bytes'])
+            offset=h['header_bytes']
+            with path.open('rb') as stream:
+                for array,value in zip(arrays,[1.25,-0.0,2.5,3.75]):
+                    self.assertEqual(array['offset'],offset)
+                    stream.seek(offset);self.assertEqual(struct.unpack('<d',stream.read(8))[0],value)
+                    target=self.root/(str(version)+'-'+array['name']+'.csv')
+                    checkpoint_export.export_array(stream,dict(array,count=31),target)
+                    self.assertEqual(target.read_text().strip().split(','),[format(value,'.17g')]*31)
+                    offset+=8*array['count']
+            self.assertEqual(offset,path.stat().st_size)
+
+    def test_invalid_v4_configs_sizes_and_nonfinite_payload_rejected(self):
+        for config in [(-1,7,0),(float('nan'),7,0),(float('inf'),7,0),(0,0,0),(2,7,-1)]:
+            path=self.fixture(config=config)
+            with self.subTest(config=config),self.assertRaises(ValueError):
+                checkpoint_export.validate_checkpoint(path)
+        path=self.fixture();original=path.read_bytes()
+        for data in [original[:71],original[:72],original[:87],original[:-1],original+b'x',
+                     original[:88]+struct.pack('<d',float('nan'))+original[96:]]:
+            path.write_bytes(data)
+            with self.subTest(bytes=len(data)),self.assertRaises(ValueError):
+                checkpoint_export.validate_checkpoint(path)
+        path=self.fixture(b'HYP3D_MPI_V3');path.write_bytes(path.read_bytes()+struct.pack('<dii',2,7,0))
+        with self.assertRaises(ValueError):checkpoint_export.validate_checkpoint(path)
+
+    def test_report_config_required_and_preserved(self):
+        path=self.fixture(config=(0.0,7,0));h,_,_=checkpoint_export.validate_checkpoint(path)
+        report=dict(status='completed',n=h['n'],cells=h['cells'],steps=h['steps'],t=h['t'],dt=h['dt'],
+                    kind='minkowski',checkpoint_schema='HYP3D_MPI_V4',algebraic_projection='final_stage_standard',
+                    scri_angular_stencil='cross_face_centered5',scri_dissipation_epsilon=0,
+                    scri_dissipation_degree=7,checkpoint_header_bytes=88)
+        target=self.root/'report.json';target.write_text(json.dumps(report))
+        checkpoint_export.validate_report(target,h)
+        exported=checkpoint_export.compatible_report(h,report,dict(execution_artifacts_verified=False))
+        self.assertEqual(exported['checkpoint_schema'],'HYP3D_MPI_V4')
+        self.assertEqual(exported['checkpoint_header_bytes'],88)
+        self.assertEqual(exported['scri_dissipation_epsilon'],0)
+        self.assertEqual(exported['scri_dissipation_degree'],7)
+        for key in ['scri_dissipation_epsilon','scri_dissipation_degree','checkpoint_header_bytes']:
+            changed=dict(report);del changed[key];target.write_text(json.dumps(changed))
+            with self.subTest(missing=key),self.assertRaises(ValueError):
+                checkpoint_export.validate_report(target,h)
+        changed=dict(report,scri_dissipation_epsilon=2);target.write_text(json.dumps(changed))
+        with self.assertRaises(ValueError):checkpoint_export.validate_report(target,h)
+
 
 class SocketIntegrationTests(unittest.TestCase):
     def exercise(self,bad_rank,component='device',mode='component',sampling='staged',bad_layout_rank=-1):
@@ -159,7 +358,9 @@ class SocketIntegrationTests(unittest.TestCase):
                 'print("projection_error=0 rate_error=0 dependent_trace_error=0 null=1e-15 pole=0.003 clock=0.099 compatibility=0 max_cfl=0.01 D_input_and_order_independent=1")\n'+
                 'print("D_input_and_order_independent=1")\n'+
                 'print("CPU/device scri projection, native rates, D independence and partition parity passed on 216 rows")\n'+
-                'print('+repr(ALGEBRAIC_FIXTURE.split('\n',1)[1])+')\n')
+                'print('+repr(ALGEBRAIC_FIXTURE.split('\n',1)[1])+')\n'+
+                'print('+repr(ANGULAR_DISSIPATION_FIXTURE.split('\n',1)[1])+')\n'+
+                'print('+repr(SCRI_DISSIPATION_FIXTURE.split('\n',1)[1])+')\n')
             if mode=='benchmark':
                 logs={rank:benchmark_fixture(rank,sampling) for rank in range(12)}
                 if bad_layout_rank>=0:
@@ -226,6 +427,12 @@ class SocketIntegrationTests(unittest.TestCase):
 
     def test_algebraic_metric_adapter(self):
         self.exercise(-1,'algebraic')
+
+    def test_angular_dissipation_metric_adapter(self):
+        self.exercise(-1,'angular_dissipation')
+
+    def test_scri_dissipation_closure_metric_adapter(self):
+        self.exercise(-1,'scri_dissipation_closure')
 
     def test_benchmark_both_sampling_variants(self):
         for sampling in ['staged','inline']:
