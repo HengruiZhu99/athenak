@@ -110,6 +110,25 @@ class ControllerTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             control.validate_plan(self.root, plan)
 
+    def test_optional_horizon_angular_arguments_preserve_old_plans(self):
+        for suffix in [[], ['.05'], ['.05', '.001'], ['.05', '.001', '6'],
+                       ['.05', '.001', '12', '24']]:
+            plan = example()
+            plan['commands'][0]['args'].extend(suffix)
+            with self.subTest(suffix=suffix):
+                control.validate_plan(self.root, plan)
+
+    def test_invalid_optional_horizon_arguments_rejected(self):
+        for suffix in [['nan'], ['0'], ['.05', '-1'], ['.05', 'inf'],
+                       ['.05', '.001', '0', '24'], ['.05', '.001', '12'],
+                       ['.05', '.001', '12', '12'], ['.05', '.001', '12.0', '24'],
+                       ['.05', '.001', '12x', '24'], ['.05', '.001', '12', '32768'],
+                       ['.05', '.001', '12', '24', 'unused']]:
+            plan = example()
+            plan['commands'][0]['args'].extend(suffix)
+            with self.subTest(suffix=suffix), self.assertRaises(ValueError):
+                control.validate_plan(self.root, plan)
+
     def test_every_bound_input_is_immutable(self):
         self.bound()
         pbs = (self.root/'runs/one/run_debug.pbs').read_text()

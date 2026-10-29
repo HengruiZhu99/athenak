@@ -134,13 +134,24 @@ def validate_plan(root, plan):
             if path not in preceding_artifacts:
                 raise ValueError('Generated inputs must be declared artifacts of an earlier case')
         if command['kind'] != 'check':
-            if len(argv) not in [8, 9] or argv[0] != str(case_n) or argv[2] != command['kind']:
+            if not 8 <= len(argv) <= 12 or argv[0] != str(case_n) or argv[2] != command['kind']:
                 raise ValueError('Evolution arguments must match the declared grid and physical case')
             if command['report'] != argv[1] + '.report.json':
                 raise ValueError('Evolution report must match its output prefix')
             target, dt = float(argv[3]), float(argv[4])
             if not math.isfinite(target) or target < 0 or not math.isfinite(dt) or dt <= 0:
                 raise ValueError('Evolution target time and timestep must be finite and physical')
+            for text in argv[8:10]:
+                value = float(text)
+                if not math.isfinite(value) or value <= 0:
+                    raise ValueError('Diagnostic interval and horizon RMS tolerance must be finite and positive')
+            angular = [6, 12]
+            for i, text in enumerate(argv[10:12]):
+                if not re.fullmatch(r'[0-9]+', text):
+                    raise ValueError('Horizon angular resolution requires decimal integers')
+                angular[i] = int(text)
+            if not 1 <= angular[0] < angular[1] <= 32767:
+                raise ValueError('Horizon angular resolution requires 1 <= lmax < ntheta <= 32767')
             declared = command.get('inputs', []) + command.get('generated_inputs', [])
             if any(p != '-' and p not in declared for p in argv[5:7]):
                 raise ValueError('Initial and restart files must be explicitly bound inputs')

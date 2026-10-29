@@ -241,11 +241,22 @@ int main(int argc,char**argv){
   try{
     if(const char*expected=std::getenv("HYPERBOLIC_EXPECT_MPI_SIZE"))
       if(global_variable::nranks!=std::stoi(expected))throw std::runtime_error("MPI rank count differs from the bound launch plan");
-    if(argc<9)throw std::invalid_argument("usage: mpi n output kind target dt initial|- restart|- wall_seconds [diagnostic_interval=.1] [horizon_rms_tol=.001]");
+    if(argc<9||argc>13)throw std::invalid_argument("usage: mpi n output kind target dt initial|- restart|- wall_seconds [diagnostic_interval=.1] [horizon_rms_tol=.001] [horizon_lmax=6] [horizon_ntheta=12]");
     const int n=std::stoi(argv[1]);const std::string output=argv[2],kind_name=argv[3],initial=argv[6],restart=argv[7];
     const int kind=kind_name=="minkowski"?0:kind_name=="pulse"?1:kind_name=="puncture"?2:-1;
     const Real end=std::stod(argv[4]),dt=std::stod(argv[5]),wall=std::stod(argv[8]);
     const Real interval=argc>9?std::stod(argv[9]):.1,horizon_tolerance=argc>10?std::stod(argv[10]):.001;
+    const auto angular_integer=[](const char*text){
+      const std::string value(text);
+      if(value.empty()||value.find_first_not_of("0123456789")!=std::string::npos)
+        throw std::invalid_argument("horizon angular resolution requires decimal integers");
+      return std::stoi(value);
+    };
+    const int horizon_lmax=argc>11?angular_integer(argv[11]):6;
+    const int horizon_ntheta=argc>12?angular_integer(argv[12]):12;
+    // GaussLegendreGrid stores 2*ntheta*ntheta in an int.
+    if(horizon_lmax<1||horizon_ntheta<=horizon_lmax||horizon_ntheta>32767)
+      throw std::invalid_argument("horizon angular resolution requires 1 <= lmax < ntheta <= 32767");
     if(n<6||n%2||kind<0||!(dt>0&&end>=0&&wall>0&&interval>0&&horizon_tolerance>0)
        ||!std::isfinite(dt)||!std::isfinite(end)||!std::isfinite(wall)
        ||!std::isfinite(interval)||!std::isfinite(horizon_tolerance))
@@ -296,7 +307,7 @@ int main(int argc,char**argv){
     ParameterInput pin;std::unique_ptr<FastFlow> finder;
     CollectiveLocal([&]{
       std::ostringstream input;
-      input<<std::setprecision(17)<<"<job>\nbasename="<<output<<".fastflow\n<fastflow>\nntheta=12\nlmax=6\nflow=standard\nflow_iterations_0=300\nflow_alpha_beta_const_0=.1\ninitial_radius_0="<<seed_radius<<"\nmass_tol_0=1e-10\nexpansion_rms_tol_0="<<horizon_tolerance<<"\nhmean_tol_0=1e8\nstart_time_0=0\nstop_time_0="<<end+1<<"\n";
+      input<<std::setprecision(17)<<"<job>\nbasename="<<output<<".fastflow\n<fastflow>\nntheta="<<horizon_ntheta<<"\nlmax="<<horizon_lmax<<"\nflow=standard\nflow_iterations_0=300\nflow_alpha_beta_const_0=.1\ninitial_radius_0="<<seed_radius<<"\nmass_tol_0=1e-10\nexpansion_rms_tol_0="<<horizon_tolerance<<"\nhmean_tol_0=1e8\nstart_time_0=0\nstop_time_0="<<end+1<<"\n";
       std::istringstream stream(input.str());pin.LoadFromStream(stream);
       if(kind==2)finder=std::make_unique<FastFlow>(nullptr,&pin,0,[&](const Real x[3],z4c::HorizonGeometry<Real>&q){
         const int block=e.model.grid.mesh.Owner(x);if(block<0)return false;
@@ -438,7 +449,9 @@ int main(int argc,char**argv){
         <<",\"horizon_trial_radius\":"<<JsonNumber(trial_radius)<<",\"horizon_trial_expansion_rms\":"<<JsonNumber(trial_expansion)
         <<",\"horizon_complete_surface\":"<<(horizon_complete?"true":"false")<<",\"horizon_iterations\":"<<horizon_iterations
         <<",\"horizon_seed_radius\":"<<seed_radius<<",\"horizon_seed_loaded\":"<<(seed_loaded?"true":"false")
-        <<",\"horizon_expansion_tolerance\":"<<horizon_tolerance<<",\"rhs_seconds\":"<<timing[0]<<",\"exchange_seconds\":"<<timing[1]
+        <<",\"horizon_expansion_tolerance\":"<<horizon_tolerance
+        <<",\"horizon_lmax\":"<<horizon_lmax<<",\"horizon_ntheta\":"<<horizon_ntheta<<",\"horizon_nphi\":"<<2*horizon_ntheta
+        <<",\"rhs_seconds\":"<<timing[0]<<",\"exchange_seconds\":"<<timing[1]
         <<",\"closure_seconds\":"<<timing[2]<<",\"diagnostic_seconds\":"<<timing[3]<<"}\n";
       report.close();if(!report)throw std::runtime_error("report write failed");
       std::filesystem::rename(output+".report.json.tmp",output+".report.json");

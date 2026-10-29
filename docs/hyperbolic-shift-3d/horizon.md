@@ -172,6 +172,59 @@ radius and is intended for the spherical-data campaign, not general distorted
 surfaces. Fast-flow summaries and harmonic shape coefficients are written under
 the run's `.fastflow` prefix.
 
+The 3D MPI runner accepts optional angular settings after its existing diagnostic
+interval and expansion tolerance:
+
+```text
+hyperbolic_shift_3d_mpi n output kind target dt initial|- restart|- wall_seconds \
+  [diagnostic_interval=.1] [horizon_rms_tol=.001] [horizon_lmax=6] [horizon_ntheta=12]
+```
+
+Existing command lines keep `lmax=6`, `ntheta=12`. For the higher angular
+configuration, append `.05 .001 12 24`, for example this initial-snapshot
+measurement (target zero, no time steps):
+
+```sh
+mpiexec -n 2 hyperbolic_shift_3d_mpi 16 /tmp/puncture-angular puncture \
+  0 .0005 output/hyperbolic-core-shell/puncture-v3/n16/initial.txt - 400 \
+  .05 .001 12 24
+```
+
+Both angular arguments must be decimal integers with `1 <= lmax < ntheta`.
+The runner also rejects `ntheta > 32767` to prevent overflow of the underlying
+integer angular-point count; this is a representation bound, not a claim that
+such large searches are practical. The azimuthal count is `2*ntheta`. Reports
+record `horizon_lmax`, `horizon_ntheta`, and `horizon_nphi`, including when no
+horizon is found. The local Aurora plan validator accepts these appended
+arguments and rejects invalid settings; future plans should check their
+reported values explicitly. Existing eight- and nine-argument plans retain
+their behavior. A rebuilt executable needs its own normal source/binary
+binding before a later remote campaign.
+
+The angular settings change the horizon measurement, not the evolution fields,
+equations, null closure, or checkpoint schema. They may also be selected afresh
+on an admitted restart. Expansion tolerance, mass-change tolerance `1e-10`,
+flow coefficient `.1`, and iteration cap `300` are otherwise unchanged.
+The [fixed-snapshot audit](reproduction/horizon-angular-audit-v1/interpretation.md)
+found that `lmax=6, ntheta=12` plateaued at RMS `5.73769e-3` after both 300
+and 1000 iterations on the saved t=.369 state, while `12,24` reached
+`2.20900e-4` in 111 iterations with the same `1e-3` tolerance. That unadmitted
+failed state was inspected only; it is not enabled as an evolution restart.
+Increasing both harmonic and quadrature resolution does not distinguish their
+individual effects or establish spatial convergence. The exterior constraint
+mask remains a **coordinate sphere at the mean accepted horizon radius**;
+it does not follow a distorted horizon surface.
+
+The [local CLI checks](reproduction/horizon-angular-cli-v1/assessment.json)
+used n16 initial data at target `t=0`, with no accepted evolution steps.
+Omitted and explicit `6,12` settings gave identical horizon reports. A
+two-rank `12,24` search found expansion RMS `3.38049e-4` and mass
+`0.3333347908114` in 63 iterations at the unchanged `1e-3` tolerance. All three
+complete checkpoint files were bitwise identical. Invalid integer/range/extra
+arguments were rejected before writing output, including a two-rank check;
+all 35 offline launcher tests passed. These are Kokkos Serial diagnostic checks,
+not GPU evolution or convergence evidence.
+
 An optional `.checkpoint.horizon-seed.txt` contains a previous measured radius
 as a restart search hint, bound to the checkpoint time and step count. It does
 not change the evolution state; absent or invalid hints fall back to radius
