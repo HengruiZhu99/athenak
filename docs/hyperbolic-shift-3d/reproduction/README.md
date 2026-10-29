@@ -56,10 +56,11 @@ rate was 75.81, so final algebraic repair did not suppress the growing mode.
 
 The [cross-face V3 preflight](aurora/preflight-angular-v1/README.md) passed all
 twelve GPU component, four-step, exact-restart and communication checks.
-Its [fresh duration control](aurora/stability-angular-minkowski-v1/protocol.md)
+Its [fresh duration control](aurora/stability-angular-minkowski-v1/README.md)
 then failed at accepted t=.5205 with nonpositive interpolated scri geometry.
 The last fresh diagnostic at t=.5 has state deviation 29.76 and H/M RMS
-.07128/1.92019, while null closure remains near 1e-15. Cross-face derivative
+.07128/1.92019, while null closure remains near 1e-15. Its state-growth rate
+is 72.44 on the same t=.15–.35 fit interval. Cross-face derivative
 jets alone therefore do not establish stability. Owner-face ghost-value
 interpolation and the original regularity penalties are unchanged, and no
 explicit angular dissipation acts at scri. The full coupled discrete operator
