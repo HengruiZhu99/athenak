@@ -1,0 +1,73 @@
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/scri-dissipation-prototype-v1/prototype.py:100: RuntimeWarning: divide by zero encountered in matmul
+  distance=2-2*points[begin:begin+128]@points.T
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/scri-dissipation-prototype-v1/prototype.py:100: RuntimeWarning: overflow encountered in matmul
+  distance=2-2*points[begin:begin+128]@points.T
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/scri-dissipation-prototype-v1/prototype.py:100: RuntimeWarning: invalid value encountered in matmul
+  distance=2-2*points[begin:begin+128]@points.T
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/scri-dissipation-prototype-v1/prototype.py:119: RuntimeWarning: divide by zero encountered in matmul
+  moments.append(float(np.max(np.abs(v.T@b))))
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/scri-dissipation-prototype-v1/prototype.py:119: RuntimeWarning: overflow encountered in matmul
+  moments.append(float(np.max(np.abs(v.T@b))))
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/scri-dissipation-prototype-v1/prototype.py:119: RuntimeWarning: invalid value encountered in matmul
+  moments.append(float(np.max(np.abs(v.T@b))))
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-collar-design-v1/analyze.py:48: RuntimeWarning: divide by zero encountered in matmul
+  coeff=spaces[key].conj().T@weighted
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-collar-design-v1/analyze.py:48: RuntimeWarning: overflow encountered in matmul
+  coeff=spaces[key].conj().T@weighted
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-collar-design-v1/analyze.py:48: RuntimeWarning: invalid value encountered in matmul
+  coeff=spaces[key].conj().T@weighted
+{
+  "seconds": 2.8997469170000003,
+  "modes": [
+    {
+      "index": 0,
+      "surface": 0.9539454677923124,
+      "B": 0.019571118248167523,
+      "gamma": 0.004596344033805077,
+      "collar": 0.00450526152713431,
+      "low6": 0.9989245771858235
+    },
+    {
+      "index": 1,
+      "surface": 0.9534427211832209,
+      "B": 0.06600772322746994,
+      "gamma": 0.05228423430809129,
+      "collar": 0.05100842495992242,
+      "low6": 0.9880765344040774
+    },
+    {
+      "index": 2,
+      "surface": 0.9524722018865194,
+      "B": 0.16632181237560303,
+      "gamma": 0.3319553432628634,
+      "collar": 0.31091774678900164,
+      "low6": 0.9126003977893103
+    },
+    {
+      "index": 3,
+      "surface": 0.9531205301277832,
+      "B": 0.3185535976401601,
+      "gamma": 1.2177167348338684,
+      "collar": 1.102392286557949,
+      "low6": 0.708856636947414
+    }
+  ],
+  "terminal": [
+    {
+      "time": 0.5204999999999981,
+      "surface": 0.9485704366420643,
+      "B": 0.7555530606112947,
+      "gamma": 18.267533676771034,
+      "collar": 9.609442931199476,
+      "low6": 0.07891542466638102
+    },
+    {
+      "time": 0.5224999999999979,
+      "surface": 0.9582160224006,
+      "B": 0.8130232299889697,
+      "gamma": 21.152216720054295,
+      "collar": 11.314640387888018,
+      "low6": 0.05558849948740453
+    }
+  ]
+}
