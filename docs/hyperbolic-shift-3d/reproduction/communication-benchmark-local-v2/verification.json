@@ -1,0 +1,130 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "scope": "Fresh local checks of completed-status/full-array-validation contract; Serial backend only, no Aurora performance claim.",
+  "build_command": "cmake --build build-hyperbolic-mpi --target hyperbolic_shift_3d_mpi_communication -j64",
+  "ctest_command": "ctest --test-dir build-hyperbolic-mpi -R '^hyperbolic_shift_3d_communication_(cli|mpi)$' --output-on-failure",
+  "binary_sha256": "344ec85c8cc9447b0c74162ed23cef9a69a4ba3cd2a97115eabcd157935a10de",
+  "source_sha256": {
+    "tst/hyperbolic_shift_3d/benchmark_communication.cpp": "19877fb7bfe7eba66126e22ffe1133a45245af9591fa71a327063392aa4e99f4",
+    "tst/hyperbolic_shift_3d/test_communication.py": "886986bef847663a9aebec64e974584eb4abb9d3cdcd847710d7eb4e4ae28640",
+    "tst/hyperbolic_shift_3d/CMakeLists.txt": "2bac6f5a6d62e108349245ea317c73e6cf05b2d55e0d39f3ea5d1a46cbc1ab2e",
+    "tst/hyperbolic_shift_3d/aurora/worker.py": "62b5346a7815dca5954a95c705ec1c43eaf87ec5bf1442318f5c259d9d3685b1"
+  },
+  "worker_modified": false,
+  "measured_worker_classification_passed": true,
+  "layout_only_worker_full_validation_gate_rejected": true,
+  "old_native_passed_status_rejected_by_unchanged_worker": true,
+  "tests": [
+    {
+      "case": "serial-cli",
+      "report_path": "output/hyperbolic-core-shell/communication-benchmark-local-v2/serial-cli/measured.json",
+      "report_sha256": "03f32d6fd8c5dcc626b9ae2b3b86dae512117b3f929a403617f6ec9d7b9974e7",
+      "report_bytes": 40123,
+      "status": "completed",
+      "full_array_validation_passed": true,
+      "backend": "Serial",
+      "mpi_size": 1,
+      "groups": 6,
+      "grids": [
+        16
+      ],
+      "timed_rank_samples": 30,
+      "values_checked": 59043840,
+      "mismatches": 0,
+      "command": [
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+        "--output",
+        "output/hyperbolic-core-shell/communication-benchmark-local-v2/serial-cli/measured.json",
+        "--repeats",
+        "2",
+        "--warmup",
+        "1",
+        "--mix-repeats",
+        "1",
+        "--expect-ranks",
+        "1",
+        "--n",
+        "16"
+      ],
+      "unchanged_worker_classification": "passed"
+    },
+    {
+      "case": "mpi3-all-grids",
+      "report_path": "output/hyperbolic-core-shell/communication-benchmark-local-v2/mpi3-all-grids/measured.json",
+      "report_sha256": "42979a45765a7595bf8ee75c44ce06e9a44d94ced5f1f50592868744054d29cb",
+      "report_bytes": 191353,
+      "status": "completed",
+      "full_array_validation_passed": true,
+      "backend": "Serial",
+      "mpi_size": 3,
+      "groups": 18,
+      "grids": [
+        16,
+        24,
+        32
+      ],
+      "timed_rank_samples": 270,
+      "values_checked": 2174432256,
+      "mismatches": 0,
+      "command": [
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+        "--output",
+        "output/hyperbolic-core-shell/communication-benchmark-local-v2/mpi3-all-grids/measured.json",
+        "--repeats",
+        "2",
+        "--warmup",
+        "1",
+        "--mix-repeats",
+        "1",
+        "--expect-ranks",
+        "3",
+        "--n",
+        "16",
+        "--n",
+        "24",
+        "--n",
+        "32"
+      ],
+      "unchanged_worker_classification": "passed"
+    },
+    {
+      "case": "mpi12-n16",
+      "report_path": "output/hyperbolic-core-shell/communication-benchmark-local-v2/mpi12-n16.report.json",
+      "report_sha256": "3b777b0da32030f7bfd3b0f27ea1c5640f6c40846d454a1ff419ee5e812e3141",
+      "report_bytes": 462370,
+      "status": "completed",
+      "full_array_validation_passed": true,
+      "backend": "Serial",
+      "mpi_size": 12,
+      "groups": 6,
+      "grids": [
+        16
+      ],
+      "timed_rank_samples": 936,
+      "values_checked": 1653227520,
+      "mismatches": 0,
+      "command": [
+        "build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+        "--output",
+        "output/hyperbolic-core-shell/communication-benchmark-local-v2/mpi12-n16.report.json",
+        "--n",
+        "16",
+        "--repeats",
+        "6",
+        "--warmup",
+        "1",
+        "--mix-repeats",
+        "1",
+        "--mode",
+        "both",
+        "--expect-ranks",
+        "12",
+        "--expect-backend",
+        "Serial"
+      ],
+      "unchanged_worker_classification": "passed"
+    }
+  ],
+  "raw_per_rank_reports_retained_locally": true
+}

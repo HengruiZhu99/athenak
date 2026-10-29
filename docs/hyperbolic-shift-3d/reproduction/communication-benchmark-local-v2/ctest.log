@@ -1,0 +1,35 @@
+Start testing: Oct 28 23:00 PDT
+----------------------------------------------------------
+12/13 Testing: hyperbolic_shift_3d_communication_cli
+12/13 Test: hyperbolic_shift_3d_communication_cli
+Command: "/usr/bin/python3" "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/test_communication.py" "--binary" "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication" "--cli-tests"
+Directory: /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d
+"hyperbolic_shift_3d_communication_cli" start time: Oct 28 23:00 PDT
+Output:
+----------------------------------------------------------
+{"status": "passed", "backend": "Serial", "ranks": 1, "commands": 20, "evidence": "/var/folders/fj/qwzwgh792dz9vbvt3_gdm6l80000gn/T/communication-test-nj3mfm2m"}
+<end of output>
+Test time =   1.51 sec
+----------------------------------------------------------
+Test Passed.
+"hyperbolic_shift_3d_communication_cli" end time: Oct 28 23:00 PDT
+"hyperbolic_shift_3d_communication_cli" time elapsed: 00:00:01
+----------------------------------------------------------
+
+13/13 Testing: hyperbolic_shift_3d_communication_mpi
+13/13 Test: hyperbolic_shift_3d_communication_mpi
+Command: "/usr/bin/python3" "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/test_communication.py" "--binary" "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication" "--mpiexec" "/opt/homebrew/bin/mpiexec" "--ranks" "2"
+Directory: /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d
+"hyperbolic_shift_3d_communication_mpi" start time: Oct 28 23:00 PDT
+Output:
+----------------------------------------------------------
+{"status": "passed", "backend": "Serial", "ranks": 2, "commands": 3, "evidence": "/var/folders/fj/qwzwgh792dz9vbvt3_gdm6l80000gn/T/communication-test-0oq55heo"}
+<end of output>
+Test time =   0.57 sec
+----------------------------------------------------------
+Test Passed.
+"hyperbolic_shift_3d_communication_mpi" end time: Oct 28 23:00 PDT
+"hyperbolic_shift_3d_communication_mpi" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Oct 28 23:00 PDT

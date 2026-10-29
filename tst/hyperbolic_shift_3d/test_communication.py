@@ -7,11 +7,12 @@ import math
 from pathlib import Path
 import statistics
 import subprocess
+import sys
 import tempfile
 
 
 def validate(report):
-    assert report["status"] == "passed" and report["real_bytes"] == 8
+    assert report["status"] == "completed" and report["real_bytes"] == 8
     ranks = report["mpi_size"]
     assert [r["rank"] for r in report["ranks"]] == list(range(ranks))
     assert all(r["shared_node_ranks"] == ranks for r in report["ranks"])
@@ -26,8 +27,10 @@ def validate(report):
         assert item["displacements"] == [31*(points*r//ranks) for r in range(ranks)]
         layouts[n, kind] = item
     if report["layout_only"]:
+        assert report["full_array_validation_passed"] is False
         assert not report["groups"]
         return
+    assert report["full_array_validation_passed"] is True
     for group in report["groups"]:
         workload, mode = group["workload"], group["mode"]
         calls = group["call_sequence"]
@@ -124,6 +127,15 @@ def main():
     run("measured", args)
     report = json.loads(measured.read_text())
     validate(report)
+    # Exercise the unchanged production worker contract, including the layout-only guard.
+    sys.path.insert(0, str(Path(__file__).resolve().parent/"aurora"))
+    import worker
+    measured_checks = [{"passed": report["full_array_validation_passed"]}]
+    assert worker.classify(0, False, report, measured_checks) == "passed"
+    layout_report = json.loads(layout.read_text())
+    assert worker.classify(0, False, layout_report,
+                           [{"passed": layout_report["full_array_validation_passed"]}]) == "failed"
+    assert worker.classify(0, False, {**report, "status": "passed"}, measured_checks) == "failed"
     assert len(report["groups"]) == 6*len(grids)
     if options.cli_tests:
         run("overwrite", ["--output", str(layout), "--layout-only"], success=False)
@@ -145,6 +157,7 @@ def main():
               "sha256": hashlib.sha256(p.read_bytes()).hexdigest()}
              for p in sorted(directory.iterdir()) if p.is_file()]
     summary = {"status": "passed", "scope": "Local communication correctness and CLI validation; no GPU performance inference.",
+               "unchanged_worker_classification_contract_checked": True,
                "backend": report["backend"], "mpi_size": report["mpi_size"],
                "binary_sha256": hashlib.sha256(binary.read_bytes()).hexdigest(),
                "commands": records, "artifacts": files}

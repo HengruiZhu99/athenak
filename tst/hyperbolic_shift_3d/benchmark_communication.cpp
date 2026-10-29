@@ -279,10 +279,15 @@ void Write(const Options &o, int ranks, const std::vector<std::string> &rank_met
            const std::vector<double> &all, const std::vector<std::string> &command) {
   char library[MPI_MAX_LIBRARY_VERSION_STRING]; int library_length = 0;
   MPICheck(MPI_Get_library_version(library, &library_length));
+  bool full_validation = !o.layout_only && !samples.empty();
+  for (size_t i = 0; i < all.size()/metrics; ++i)
+    full_validation = full_validation && all[i*metrics+checked] > 0
+                      && all[i*metrics+mismatches] == 0;
   const std::filesystem::path output(o.output), temporary(o.output+".tmp");
   std::ofstream out(temporary); Require(out.good(), "cannot open output file");
-  out << std::setprecision(17) << "{\"schema\":1,\"status\":\"passed\",\"benchmark\":\"mpi_allgatherv\""
+  out << std::setprecision(17) << "{\"schema\":1,\"status\":\"completed\",\"benchmark\":\"mpi_allgatherv\""
       << ",\"layout_only\":" << (o.layout_only ? "true" : "false")
+      << ",\"full_array_validation_passed\":" << (full_validation ? "true" : "false")
       << ",\"backend\":" << Json(Kokkos::DefaultExecutionSpace::name())
       << ",\"device_memory_space\":" << Json(Kokkos::DefaultExecutionSpace::memory_space::name())
       << ",\"host_memory_space\":\"HostSpace\",\"host_pinned_allocation_claimed\":false"
@@ -427,7 +432,7 @@ int main(int argc, char **argv) {
       Write(options, ranks, rank_metadata, groups, samples, all, command);
       std::cout << "backend=" << Kokkos::DefaultExecutionSpace::name() << " mpi_size=" << ranks
                 << " groups=" << groups.size() << " samples_per_rank=" << samples.size()
-                << " mismatches=0 report=" << options.output << "\nCommunication benchmark passed\n";
+                << " mismatches=0 report=" << options.output << "\nCommunication benchmark completed\n";
     }
     Kokkos::finalize(); initialized = false; MPI_Finalize(); return 0;
   } catch (const std::exception &error) {

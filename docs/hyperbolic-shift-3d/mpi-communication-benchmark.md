@@ -5,7 +5,7 @@ the [original-driver timing audit](mpi-performance-audit.md). It constructs
 no mesh, RHS or evolution state. The native equations, closure, timestep
 and production MPI runner are unchanged. Local Serial/MPI checks establish
 correctness of the benchmark, not Aurora performance. The retained
-[local validation record](reproduction/communication-benchmark-local-v1/README.md)
+[local validation record](reproduction/communication-benchmark-local-v2/README.md)
 covers one, two, three and twelve MPI ranks.
 
 Build the MPI target from an existing configured build:
@@ -44,7 +44,11 @@ each order position. CLI bounds are 1–200 measured single-buffer rounds,
 0–20 warmup rounds, and 0–20 mixed rounds. An outer launcher timeout remains
 necessary; bounded call counts do not make a hung collective interruptible.
 `--layout-only` reports layouts/runtime identity without allocating payload
-buffers. Existing output or temporary files are rejected. One shared-memory
+buffers. Successful native reports use `status=completed`, matching the
+campaign worker contract. `full_array_validation_passed` is false for
+layout-only reports and true only after the measured workloads' complete
+receive arrays pass validation on every rank. Existing output or temporary
+files are rejected. One shared-memory
 node and the production double-precision datatype are required. Each rank
 records its hostname, Kokkos configuration and selected GPU/MPI environment
 variables; the launcher remains responsible for verifying twelve distinct
