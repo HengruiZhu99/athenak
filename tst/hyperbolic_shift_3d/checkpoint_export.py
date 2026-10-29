@@ -29,6 +29,8 @@ at byte104 and its sampled-native-numerator scheme cannot mix with V1-V4.
 V6 has the same byte offset but requires the exact tuple (2,7,4,3), binding
 seven-node sampled normal derivatives and direct radial derivatives in the
 last three volume rows. V5 and V6 checkpoints cannot be interchanged.
+V7 requires tuple (3,7,4,3), additionally binding logical inner-transition
+halos. V7 reanalysis explicitly selects that halo policy.
 V6 reanalysis explicitly requests the donor_seven bulk diagnostic operator;
 an older reanalysis binary rejects that extra argument. Ray diagnostics still
 use independent interpolated jets and are not native cell constraints.
@@ -117,10 +119,10 @@ def validate_checkpoint(path, expected_hash=None, expected_time=None):
         if len(raw) != HEADER.size:
             raise ValueError('Truncated checkpoint header')
         h = dict(zip(HEADER_KEYS, HEADER.unpack(raw)))
-        if h['magic'] not in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V1',b'HYP3D_MPI_V2',b'HYP3D_MPI_V3',b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6']] or h['nf'] != 31:
+        if h['magic'] not in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V1',b'HYP3D_MPI_V2',b'HYP3D_MPI_V3',b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6',b'HYP3D_MPI_V7']] or h['nf'] != 31:
             raise ValueError('Unsupported checkpoint magic/schema/precision')
         h.update(header_bytes=HEADER.size,scri_dissipation_epsilon=0.0,scri_dissipation_degree=0)
-        if h['magic'] in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6']]:
+        if h['magic'] in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6',b'HYP3D_MPI_V7']]:
             extra = stream.read(V4_CONFIG.size)
             if len(extra) != V4_CONFIG.size:
                 raise ValueError('Truncated V4 checkpoint configuration')
@@ -130,17 +132,19 @@ def validate_checkpoint(path, expected_hash=None, expected_time=None):
             raw += extra
             h.update(header_bytes=HEADER.size+V4_CONFIG.size,
                      scri_dissipation_epsilon=epsilon,scri_dissipation_degree=degree)
-        if h['magic'] in [b'HYP3D_MPI_V5'.ljust(16,b'\0'),b'HYP3D_MPI_V6'.ljust(16,b'\0')]:
-            radial=h['magic']==b'HYP3D_MPI_V6'.ljust(16,b'\0')
+        if h['magic'] in [b'HYP3D_MPI_V5'.ljust(16,b'\0'),b'HYP3D_MPI_V6'.ljust(16,b'\0'),b'HYP3D_MPI_V7'.ljust(16,b'\0')]:
+            inner=h['magic']==b'HYP3D_MPI_V7'.ljust(16,b'\0')
+            radial=inner or h['magic']==b'HYP3D_MPI_V6'.ljust(16,b'\0')
             extra = stream.read(V5_NORMAL_CONFIG.size)
             if len(extra) != V5_NORMAL_CONFIG.size:
                 raise ValueError('Truncated V5 checkpoint normal configuration')
-            if V5_NORMAL_CONFIG.unpack(extra) != ((2,7,4,3) if radial else (1,6,4,0)):
+            if V5_NORMAL_CONFIG.unpack(extra) != ((3,7,4,3) if inner else (2,7,4,3) if radial else (1,6,4,0)):
                 raise ValueError('Invalid V5 checkpoint normal derivative configuration')
             raw += extra
             h.update(header_bytes=104,scri_normal_derivative='sampled_native_numerator7' if radial else SAMPLED_NORMAL_SCHEME,
                      scri_normal_radial_nodes=7 if radial else 6,scri_normal_bulk_derivative_order=4)
             if radial:h.update(scri_radial_closure='donor_seven_last3',scri_radial_bulk_rows=3)
+            if inner:h.update(interpatch_interpolation='logical_inner_transition')
         n = h['n']
         if h['admitted'] != 1 or h['kind'] not in KINDS:
             raise ValueError('Checkpoint is unadmitted or has an unknown physical kind')
@@ -190,7 +194,7 @@ def validate_report(path, h):
     if report.get('kind') != KINDS[h['kind']]:
         raise ValueError('Source report/checkpoint physical kind mismatch')
     scheme = 'none' if h['magic']=='HYP3D_MPI_V1' else 'final_stage_standard'
-    angular = 'cross_face_centered5' if h['magic'] in ['HYP3D_MPI_V3','HYP3D_MPI_V4','HYP3D_MPI_V5','HYP3D_MPI_V6'] else 'face_local6'
+    angular = 'cross_face_centered5' if h['magic'] in ['HYP3D_MPI_V3','HYP3D_MPI_V4','HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7'] else 'face_local6'
     if (report.get('checkpoint_schema',h['magic']) != h['magic']
             or report.get('algebraic_projection','none') != scheme
             or report.get('scri_angular_stencil','face_local6') != angular):
@@ -198,13 +202,13 @@ def validate_report(path, h):
     for key in ['scri_dissipation_epsilon','scri_dissipation_degree','checkpoint_header_bytes']:
         header_key='header_bytes' if key=='checkpoint_header_bytes' else key
         expected=h[header_key]
-        value=report.get(key) if h['magic'] in ['HYP3D_MPI_V4','HYP3D_MPI_V5','HYP3D_MPI_V6'] else report.get(key,expected)
+        value=report.get(key) if h['magic'] in ['HYP3D_MPI_V4','HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7'] else report.get(key,expected)
         if type(value) not in [int,float] or not math.isfinite(value) or value!=expected:
             raise ValueError('Source report/checkpoint dissipation configuration mismatch: '+key)
-    if h['magic'] in ['HYP3D_MPI_V5','HYP3D_MPI_V6']:
+    if h['magic'] in ['HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7']:
         if report.get('checkpoint_schema')!=h['magic']:
             raise ValueError('V5 source report must state its checkpoint schema')
-        for key in ['scri_normal_derivative','scri_normal_radial_nodes','scri_normal_bulk_derivative_order'] + (['scri_radial_closure','scri_radial_bulk_rows'] if h['magic']=='HYP3D_MPI_V6' else []):
+        for key in ['scri_normal_derivative','scri_normal_radial_nodes','scri_normal_bulk_derivative_order'] + (['scri_radial_closure','scri_radial_bulk_rows'] if h['magic'] in ['HYP3D_MPI_V6','HYP3D_MPI_V7'] else []) + (['interpatch_interpolation'] if h['magic']=='HYP3D_MPI_V7' else []):
             if type(report.get(key)) is not type(h[key]) or report[key]!=h[key]:
                 raise ValueError('Source report/checkpoint normal configuration mismatch: '+key)
     for key in ['checkpoint_written', 'checkpoint_admitted']:
@@ -324,8 +328,8 @@ def compatible_report(h, source, provenance):
                 native_fastflow={k: v for k, v in source.items()
                                  if k.startswith('horizon_') or k == 'diagnostic_time'},
                 execution_provenance_verified=provenance['execution_artifacts_verified'])
-    if h['magic'] in ['HYP3D_MPI_V5','HYP3D_MPI_V6']:
-        for key in ['scri_normal_derivative','scri_normal_radial_nodes','scri_normal_bulk_derivative_order'] + (['scri_radial_closure','scri_radial_bulk_rows'] if h['magic']=='HYP3D_MPI_V6' else []):
+    if h['magic'] in ['HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7']:
+        for key in ['scri_normal_derivative','scri_normal_radial_nodes','scri_normal_bulk_derivative_order'] + (['scri_radial_closure','scri_radial_bulk_rows'] if h['magic'] in ['HYP3D_MPI_V6','HYP3D_MPI_V7'] else []) + (['interpatch_interpolation'] if h['magic']=='HYP3D_MPI_V7' else []):
             result[key]=h[key]
     return result
 
@@ -392,8 +396,9 @@ def main():
                 shutil.copyfile(path, args.output/name)
         if args.reanalyze:
             command = [str(args.reanalyze), str(h['n']), str(prefix), str(prefix)]
-            radial=h['magic']=='HYP3D_MPI_V6'
-            if radial:command.append('donor_seven')
+            inner=h['magic']=='HYP3D_MPI_V7'
+            radial=inner or h['magic']=='HYP3D_MPI_V6'
+            if radial:command.append('inner_transition' if inner else 'donor_seven')
             manifest['reanalyze'] = dict(command=command, executable_sha256=analyzer_hash,
                 bulk_diagnostic_operator='donor_seven_last3' if radial else 'legacy_grid',
                 ray_diagnostic_operator='interpolated_jets')
@@ -401,7 +406,9 @@ def main():
                 result = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, timeout=args.timeout)
             if result.returncode:
                 raise RuntimeError(f'Diagnostic reanalysis exited {result.returncode}; see reanalyze.log')
-            if radial and 'bulk_diagnostic_operator=donor_seven_last3 ray_diagnostic_operator=interpolated_jets' not in (args.output/'reanalyze.log').read_text().splitlines():
+            marker='bulk_diagnostic_operator=donor_seven_last3 ray_diagnostic_operator=interpolated_jets'+(' interpatch_interpolation=logical_inner_transition' if inner else '')
+            if inner:manifest['reanalyze']['interpatch_interpolation']='logical_inner_transition'
+            if radial and marker not in (args.output/'reanalyze.log').read_text().splitlines():
                 raise RuntimeError('Reanalysis did not confirm the requested V6 diagnostic operator')
             for suffix in ['.diagnostics.csv', '.rays.csv']:
                 if not prefix.with_suffix(suffix).is_file():

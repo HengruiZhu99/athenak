@@ -26,6 +26,7 @@ DISSIPATIVE_TARGET = 'hyperbolic_shift_3d_mpi_dissipative'
 SAMPLED_NORMAL_TARGET = 'hyperbolic_shift_3d_mpi_sampled_normal'
 SAMPLED_NORMAL_SCHEME = 'sampled_native_numerator6'
 DONOR_SEVEN_TARGET = 'hyperbolic_shift_3d_mpi_donor_seven'
+INNER_TRANSITION_TARGET = 'hyperbolic_shift_3d_mpi_inner_transition'
 
 
 def dissipation_config(command):
@@ -41,17 +42,19 @@ def dissipation_config(command):
 
 def normal_derivative_config(command):
     """V5 normal operator and angular coefficient require their own admission."""
-    if command['kind']=='check' or Path(command['executable']).name not in [SAMPLED_NORMAL_TARGET,DONOR_SEVEN_TARGET]:
+    if command['kind']=='check' or Path(command['executable']).name not in [SAMPLED_NORMAL_TARGET,DONOR_SEVEN_TARGET,INNER_TRANSITION_TARGET]:
         return None
     epsilon=float(command['args'][12]) if len(command['args'])==13 else 2.0
     if not math.isfinite(epsilon) or epsilon < 0:
         raise ValueError('V5 scri dissipation epsilon must be finite and nonnegative')
-    radial=Path(command['executable']).name==DONOR_SEVEN_TARGET
-    result=dict(executable=command['executable'],checkpoint_schema='HYP3D_MPI_V6' if radial else 'HYP3D_MPI_V5',
+    inner=Path(command['executable']).name==INNER_TRANSITION_TARGET
+    radial=inner or Path(command['executable']).name==DONOR_SEVEN_TARGET
+    result=dict(executable=command['executable'],checkpoint_schema='HYP3D_MPI_V7' if inner else 'HYP3D_MPI_V6' if radial else 'HYP3D_MPI_V5',
                 scri_dissipation_epsilon=epsilon,scri_dissipation_degree=7,checkpoint_header_bytes=104,
                 scri_normal_derivative='sampled_native_numerator7' if radial else SAMPLED_NORMAL_SCHEME,scri_normal_radial_nodes=7 if radial else 6,
                 scri_normal_bulk_derivative_order=4)
     if radial:result.update(scri_radial_closure='donor_seven_last3',scri_radial_bulk_rows=3)
+    if inner:result.update(interpatch_interpolation='logical_inner_transition')
     return result
 
 
@@ -166,7 +169,7 @@ def validate_plan(root, plan):
                 raise ValueError('Generated inputs must be declared artifacts of an earlier case')
         if command['kind'] != 'check':
             v4 = Path(command['executable']).name == DISSIPATIVE_TARGET
-            v5 = Path(command['executable']).name in [SAMPLED_NORMAL_TARGET,DONOR_SEVEN_TARGET]
+            v5 = Path(command['executable']).name in [SAMPLED_NORMAL_TARGET,DONOR_SEVEN_TARGET,INNER_TRANSITION_TARGET]
             if not 8 <= len(argv) <= (13 if v4 or v5 else 12) or argv[0] != str(case_n) or argv[2] != command['kind']:
                 raise ValueError('Evolution arguments must match the declared grid and physical case')
             if v4:
@@ -272,15 +275,17 @@ def validate_admission(root, plan, source_digest, binary_hashes):
             if not isinstance(config,dict):
                 raise ValueError('Invalid V5 admission configuration')
             epsilon=config.get('scri_dissipation_epsilon')
-            radial=Path(config.get('executable','')).name==DONOR_SEVEN_TARGET
+            inner=Path(config.get('executable','')).name==INNER_TRANSITION_TARGET
+            radial=inner or Path(config.get('executable','')).name==DONOR_SEVEN_TARGET
             if (type(epsilon) not in [int,float] or not math.isfinite(epsilon) or epsilon<0
-                    or config.get('checkpoint_schema')!=('HYP3D_MPI_V6' if radial else 'HYP3D_MPI_V5')
+                    or config.get('checkpoint_schema')!=('HYP3D_MPI_V7' if inner else 'HYP3D_MPI_V6' if radial else 'HYP3D_MPI_V5')
                     or config.get('scri_normal_derivative')!=('sampled_native_numerator7' if radial else SAMPLED_NORMAL_SCHEME)
                     or any(type(config.get(k)) is not int or config[k]!=v for k,v in
                            [('scri_dissipation_degree',7),('checkpoint_header_bytes',104),
                             ('scri_normal_radial_nodes',7 if radial else 6),('scri_normal_bulk_derivative_order',4)])
                     or config.get('executable') not in admitted
-                    or Path(config.get('executable','')).name not in [SAMPLED_NORMAL_TARGET,DONOR_SEVEN_TARGET]
+                    or Path(config.get('executable','')).name not in [SAMPLED_NORMAL_TARGET,DONOR_SEVEN_TARGET,INNER_TRANSITION_TARGET]
+                    or (inner and config.get('interpatch_interpolation')!='logical_inner_transition')
                     or (radial and (config.get('scri_radial_closure')!='donor_seven_last3'
                                     or type(config.get('scri_radial_bulk_rows')) is not int or config['scri_radial_bulk_rows']!=3))):
                 raise ValueError('Invalid V5 admission configuration')

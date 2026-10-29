@@ -39,6 +39,12 @@ target_link_libraries(hyperbolic_shift_3d_donor_seven_device PRIVATE Kokkos::kok
 target_compile_options(hyperbolic_shift_3d_donor_seven_device PRIVATE -Wall -Wextra -ffp-contract=off)
 target_compile_definitions(hyperbolic_shift_3d_donor_seven_device PRIVATE HYPERBOLIC_TEST_DONOR_SEVEN=1)
 add_test(NAME hyperbolic_shift_3d_donor_seven_device COMMAND hyperbolic_shift_3d_donor_seven_device)
+add_executable(hyperbolic_shift_3d_inner_transition_device test_sampled_normal_device.cpp)
+target_include_directories(hyperbolic_shift_3d_inner_transition_device PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+target_link_libraries(hyperbolic_shift_3d_inner_transition_device PRIVATE Kokkos::kokkos Threads::Threads)
+target_compile_options(hyperbolic_shift_3d_inner_transition_device PRIVATE -Wall -Wextra -ffp-contract=off)
+target_compile_definitions(hyperbolic_shift_3d_inner_transition_device PRIVATE HYPERBOLIC_TEST_DONOR_SEVEN=1 HYPERBOLIC_TEST_INNER_TRANSITION=1)
+add_test(NAME hyperbolic_shift_3d_inner_transition_device COMMAND hyperbolic_shift_3d_inner_transition_device)
 add_executable(hyperbolic_shift_3d_scri_sampled_normal scri_sampled_normal.cpp)
 target_include_directories(hyperbolic_shift_3d_scri_sampled_normal PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
 target_link_libraries(hyperbolic_shift_3d_scri_sampled_normal PRIVATE Kokkos::kokkos Threads::Threads)
@@ -106,6 +112,12 @@ if(ENABLE_MPI)
   target_compile_definitions(hyperbolic_shift_3d_mpi_donor_seven PRIVATE
     HYPERBOLIC_ALGEBRAIC_FINAL_PROJECTION=1 HYPERBOLIC_SCRI_ANGULAR_EXCHANGE=1
     HYPERBOLIC_SCRI_ANGULAR_DISSIPATION=1 HYPERBOLIC_SCRI_SAMPLED_NORMAL=1 HYPERBOLIC_SCRI_DONOR_SEVEN=1)
+  add_executable(hyperbolic_shift_3d_mpi_inner_transition coupled_mpi.cpp)
+  target_link_libraries(hyperbolic_shift_3d_mpi_inner_transition PRIVATE hyperboloidal_fastflow MPI::MPI_CXX)
+  target_compile_options(hyperbolic_shift_3d_mpi_inner_transition PRIVATE -Wall -Wextra -ffp-contract=off)
+  target_compile_definitions(hyperbolic_shift_3d_mpi_inner_transition PRIVATE
+    HYPERBOLIC_ALGEBRAIC_FINAL_PROJECTION=1 HYPERBOLIC_SCRI_ANGULAR_EXCHANGE=1
+    HYPERBOLIC_SCRI_ANGULAR_DISSIPATION=1 HYPERBOLIC_SCRI_SAMPLED_NORMAL=1 HYPERBOLIC_SCRI_DONOR_SEVEN=1 HYPERBOLIC_INNER_TRANSITION_LOGICAL=1)
   add_test(NAME hyperbolic_shift_3d_sampled_normal_mpi
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_sampled_normal_mpi.py
       --binary $<TARGET_FILE:hyperbolic_shift_3d_mpi_sampled_normal>

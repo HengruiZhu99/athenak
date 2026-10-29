@@ -18,7 +18,7 @@ NORMAL = struct.Struct('<4i')
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--version', type=int, choices=(5,6), default=5)
+    parser.add_argument('--version', type=int, choices=(5,6,7), default=5)
     parser.add_argument('--frozen-control-checkpoint', type=Path)
     parser.add_argument('--binary', type=Path, required=True)
     parser.add_argument('--control', type=Path, required=True)
@@ -27,7 +27,7 @@ def main():
     parser.add_argument('--output-dir', type=Path)
     args = parser.parse_args()
     version, control_version = args.version, args.version-1
-    normal_config = {5:(1,6,4,0),6:(2,7,4,3)}
+    normal_config = {5:(1,6,4,0),6:(2,7,4,3),7:(3,7,4,3)}
     temporary = tempfile.TemporaryDirectory(prefix='sampled-normal-mpi-')
     output = (args.output_dir or Path(temporary.name)).resolve()
     output.mkdir(parents=True, exist_ok=True)
@@ -73,17 +73,18 @@ def main():
                 assert report['scri_normal_derivative'] == f'sampled_native_numerator{normal_config[version][1]}'
                 assert report['scri_normal_radial_nodes'] == normal_config[version][1]
                 assert report['scri_normal_bulk_derivative_order'] == 4
-                if version == 6:
+                if version >= 6:
                     assert report['scri_radial_closure'] == 'donor_seven_last3'
                     assert report['scri_radial_bulk_rows'] == 3
+                if version==7: assert report['interpatch_interpolation']=='logical_inner_transition'
             else:
                 assert report['checkpoint_schema'] == f'HYP3D_MPI_V{control_version}'
-                assert report['checkpoint_header_bytes'] == (104 if control_version == 5 else 88)
+                assert report['checkpoint_header_bytes'] == (104 if control_version >= 5 else 88)
                 if control_version == 4:
                     assert 'scri_normal_derivative' not in report
                 else:
-                    assert report['scri_normal_derivative'] == 'sampled_native_numerator6'
-                    assert 'scri_radial_closure' not in report
+                    assert report['scri_normal_derivative'] == ('sampled_native_numerator7' if control_version==6 else 'sampled_native_numerator6')
+                    if control_version==5: assert 'scri_radial_closure' not in report
         return prefix.with_suffix('.checkpoint'), report
 
     def checkpoint(path, version=version):
@@ -137,7 +138,7 @@ def main():
         error='checkpoint schema/configuration/admission mismatch')
     run('epsilon-mismatch', restart=first, epsilon='1', success=False,
         error='checkpoint angular dissipation configuration mismatch')
-    for index, (label, bad) in enumerate([('scheme', 0), ('radial-nodes', 8 if version == 6 else 7), ('bulk-order', 2), ('reserved', 1)]):
+    for index, (label, bad) in enumerate([('scheme', 0), ('radial-nodes', 8 if version >= 6 else 7), ('bulk-order', 2), ('reserved', 1)]):
         data = bytearray(first.read_bytes())
         struct.pack_into('<i', data, 88+4*index, bad)
         path = output/f'wrong-{label}.checkpoint'; path.write_bytes(data)

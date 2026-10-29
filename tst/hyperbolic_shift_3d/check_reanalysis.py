@@ -1,4 +1,4 @@
-"""Compare exported cell constraints with a native V6 report; never evolve."""
+"""Compare exported cell constraints with a native V6/V7 report; never evolve."""
 import argparse
 import hashlib
 import json
@@ -18,8 +18,10 @@ def main():
     e=args.export;m=json.loads((e/'export.json').read_text())
     if m['status']!='completed' or not m['provenance']['execution_artifacts_verified']:
         raise ValueError('Export lacks verified execution provenance')
-    if m['header']['magic']!='HYP3D_MPI_V6' or m['reanalyze']['bulk_diagnostic_operator']!='donor_seven_last3':
-        raise ValueError('Expected V6 checkpoint and bulk diagnostic operator')
+    if m['header']['magic'] not in ['HYP3D_MPI_V6','HYP3D_MPI_V7'] or m['reanalyze']['bulk_diagnostic_operator']!='donor_seven_last3':
+        raise ValueError('Expected V6/V7 checkpoint and bulk diagnostic operator')
+    if m['header']['magic']=='HYP3D_MPI_V7' and m['reanalyze'].get('interpatch_interpolation')!='logical_inner_transition':
+        raise ValueError('Expected V7 inner-transition diagnostic interpolation')
     for name in ['evolution.diagnostics.csv','evolution.coordinates.csv','source.report.json']:
         path=e/name;bound=m['output_files'][name]
         if path.stat().st_size!=bound['bytes'] or digest(path)!=bound['sha256']:

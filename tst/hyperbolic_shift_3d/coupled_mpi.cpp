@@ -28,6 +28,9 @@
 #ifndef HYPERBOLIC_SCRI_DONOR_SEVEN
 #define HYPERBOLIC_SCRI_DONOR_SEVEN 0
 #endif
+#ifndef HYPERBOLIC_INNER_TRANSITION_LOGICAL
+#define HYPERBOLIC_INNER_TRANSITION_LOGICAL 0
+#endif
 namespace h=z4c::hyperboloidal;
 using Buffer=h::HyperbolicCompositeDevice::Buffer;
 using HostBuffer=Kokkos::View<Real*,Kokkos::HostSpace>;
@@ -37,11 +40,13 @@ constexpr bool scri_angular_exchange=HYPERBOLIC_SCRI_ANGULAR_EXCHANGE;
 constexpr bool scri_angular_dissipation=HYPERBOLIC_SCRI_ANGULAR_DISSIPATION;
 constexpr bool scri_sampled_normal=HYPERBOLIC_SCRI_SAMPLED_NORMAL;
 constexpr bool scri_donor_seven=HYPERBOLIC_SCRI_DONOR_SEVEN;
+constexpr bool inner_transition_logical=HYPERBOLIC_INNER_TRANSITION_LOGICAL;
+static_assert(!inner_transition_logical||scri_donor_seven,"inner transition candidate requires V6 scri closure");
 static_assert(!scri_angular_exchange||algebraic_final_projection,"angular candidate requires algebraic repair");
 static_assert(!scri_angular_dissipation||scri_angular_exchange,"dissipation candidate requires cross-face jets");
 static_assert(!scri_sampled_normal||scri_angular_dissipation,"sampled-normal candidate requires V4 geometry/closure");
 static_assert(!scri_donor_seven||scri_sampled_normal,"direct radial candidate requires sampled numerator");
-constexpr const char*checkpoint_magic=scri_donor_seven?"HYP3D_MPI_V6":scri_sampled_normal?"HYP3D_MPI_V5":scri_angular_dissipation?"HYP3D_MPI_V4":scri_angular_exchange?"HYP3D_MPI_V3":algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
+constexpr const char*checkpoint_magic=inner_transition_logical?"HYP3D_MPI_V7":scri_donor_seven?"HYP3D_MPI_V6":scri_sampled_normal?"HYP3D_MPI_V5":scri_angular_dissipation?"HYP3D_MPI_V4":scri_angular_exchange?"HYP3D_MPI_V3":algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
 constexpr const char*algebraic_scheme=algebraic_final_projection?"final_stage_standard":"none";
 constexpr const char*scri_angular_scheme=scri_angular_exchange?"cross_face_centered5":"face_local6";
 constexpr const char*scri_dissipation_scheme=scri_angular_dissipation?"degree7_weighted_negative_square":"none";
@@ -54,8 +59,9 @@ struct Header {
 struct DissipationConfig { Real epsilon=0;int32_t degree=7,reserved=0; };
 // V5 appends an exact normal-factorization identity, never reinterpreting V4.
 // V6 binds both the seven-node normal derivative and the last-three-row bulk
-// radial closure. The fourth word retains zero in V5 and is three only in V6.
-struct NormalConfig { int32_t scheme=scri_donor_seven?2:1,radial_nodes=scri_donor_seven?7:6,
+// radial closure. V7 uses scheme=3 to bind the logical inner-transition halos;
+// V6 and V7 retain the same last-three-row scri closure.
+struct NormalConfig { int32_t scheme=inner_transition_logical?3:scri_donor_seven?2:1,radial_nodes=scri_donor_seven?7:6,
   bulk_derivative_order=4,reserved=scri_donor_seven?3:0; };
 static_assert(sizeof(Header)==72&&sizeof(DissipationConfig)==16&&sizeof(NormalConfig)==16,"checkpoint layout requires float64");
 class Evolution {
@@ -83,6 +89,7 @@ class Evolution {
   explicit Evolution(int resolution,Real epsilon=0):n(resolution),model(cubed_sphere::CompositeMesh(.125,{.45,.75,1},1,n,3),false,scri_angular_exchange,epsilon,
     scri_sampled_normal?h::HyperbolicComposite::NormalDerivative::sampled_numerator:h::HyperbolicComposite::NormalDerivative::analytic_jets,
     scri_donor_seven?h::HyperbolicComposite::RadialClosure::donor_seven:h::HyperbolicComposite::RadialClosure::ghost_lift),angular_epsilon(epsilon){
+    if constexpr(inner_transition_logical)model.grid.SetInnerTransitionLogical(true);
     MPI_Comm_rank(MPI_COMM_WORLD,&rank);MPI_Comm_size(MPI_COMM_WORLD,&size);
     total=model.grid.active.size();first=total*rank/size;last=total*(rank+1)/size;local=last-first;
     surface_total=model.scri.rows.size();surface_first=surface_total*rank/size;surface_local=surface_total*(rank+1)/size-surface_first;
@@ -539,6 +546,7 @@ int main(int argc,char**argv){
         <<",\"checkpoint_header_bytes\":"<<(sizeof(Header)+(scri_angular_dissipation?sizeof(DissipationConfig):0)+(scri_sampled_normal?sizeof(NormalConfig):0));
       if constexpr(scri_sampled_normal)report<<",\"scri_normal_derivative\":\"sampled_native_numerator"<<(scri_donor_seven?7:6)<<"\""
         <<",\"scri_normal_radial_nodes\":"<<(scri_donor_seven?7:6)<<",\"scri_normal_bulk_derivative_order\":4";
+      if constexpr(inner_transition_logical)report<<",\"interpatch_interpolation\":\"logical_inner_transition\"";
       if constexpr(scri_donor_seven)report<<",\"scri_radial_closure\":\"donor_seven_last3\",\"scri_radial_bulk_rows\":3";
       report<<",\"minimum_owned_cells\":"<<e.total/e.size<<",\"maximum_owned_cells\":"<<(e.total+e.size-1)/e.size
         <<",\"t\":"<<e.time<<",\"start_time\":"<<start_time<<",\"target_time\":"<<end<<",\"t_over_M\":"<<(kind==2?e.time*3:e.time)

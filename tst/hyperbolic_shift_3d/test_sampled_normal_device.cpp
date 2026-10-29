@@ -14,6 +14,10 @@
 #ifndef HYPERBOLIC_TEST_DONOR_SEVEN
 #define HYPERBOLIC_TEST_DONOR_SEVEN 0
 #endif
+#ifndef HYPERBOLIC_TEST_INNER_TRANSITION
+#define HYPERBOLIC_TEST_INNER_TRANSITION 0
+#endif
+constexpr bool inner_transition=HYPERBOLIC_TEST_INNER_TRANSITION;
 constexpr bool donor_seven=HYPERBOLIC_TEST_DONOR_SEVEN;
 namespace h=z4c::hyperboloidal;
 using Model=h::HyperbolicComposite;
@@ -75,6 +79,7 @@ static void Check(bool perturb){
   const auto mesh=cubed_sphere::CompositeMesh(.125,{.45,.75,1},1,6,3);
   Model model(mesh,false,true,2,Model::NormalDerivative::sampled_numerator,
     donor_seven?Model::RadialClosure::donor_seven:Model::RadialClosure::ghost_lift);
+  if(inner_transition)model.grid.SetInnerTransitionLogical(true);
   const int donors=model.scri.radial_nodes-1;
   Seed(model,perturb);const int total=model.scri.rows.size();const Real dt=.0001;
   const auto projected=model.scri.values,padded=model.Padded(model.state);
@@ -160,6 +165,15 @@ static void Check(bool perturb){
     const auto cpu_bulk=model.EvaluateRHS(model.state,dt,cpu_edge);
     h::HyperbolicCompositeDevice bulk(model.grid,0,model.grid.active.size(),model.radial_plan.get());
     const auto final_surface=Upload(model.scri.values);auto final_padding=model.Padded(model.state);
+    if(inner_transition){
+      Exchange all_halos(model,0,model.grid.mesh.blocks.size());all_halos.SetSurface(model.scri.values);
+      Require(all_halos.Fill(active).invalid==0,"inner transition device exchange failed");
+      const Real halo_error=Compare(final_padding,Download(all_halos.padded));
+      Require(bulk.Evaluate(all_halos.padded,dt,false,.5,final_surface).bad_cells==0,"inner transition exchanged bulk failed");
+      const Real exchanged_bulk_error=Compare(cpu_bulk,bulk.DownloadRHS());
+      Require(halo_error<2e-10&&exchanged_bulk_error<2e-10,"inner transition device halo/bulk parity failed");
+      std::cout<<"inner_transition_exchange_error="<<halo_error<<" bulk_error="<<exchanged_bulk_error<<'\n';
+    }
     // Every exterior radial ghost is unused by the seven-node bulk closure,
     // including its native transport correction and sampled numerator jets.
     const auto&g=model.grid;
@@ -179,6 +193,7 @@ static void Check(bool perturb){
     <<" finite_D_error="<<d_error<<" null="<<null<<" compatibility="<<summary.compatibility
     <<" default_bitwise=1 partitions=12 rejection_checks=1";
   if(donor_seven)std::cout<<" radial_nodes=7 radial_bulk_rows=3";
+  if(inner_transition)std::cout<<" interpatch_interpolation=logical_inner_transition";
   std::cout<<'\n';
 }
 int main(int argc,char**argv){
