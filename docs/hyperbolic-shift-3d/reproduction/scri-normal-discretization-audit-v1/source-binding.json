@@ -1,0 +1,96 @@
+{
+  "scope": "Read-only source snapshots and retained 1D coordinates, no evolved state arrays.",
+  "original_scientific_commit": "ef3e9ba0d345854861beaa9675e66de6b8b62db5",
+  "archival_donor_head": "c0ae7472a7aecc92cc72312c33d4cdc417a26291",
+  "three_d_frozen_commit": "d98e2a99bbf1d5546956be3d724c82715ca704ec",
+  "original_manifest_sha256": "ee6fd9a03f3ce595412e42ec09ed2139d7713be854715b08a98216a5f1088095",
+  "original_profiles_sha256": "bcca8dd6769e58d250ab8ec77e543c086e1cb5197f98fee4a05c71271f96d762",
+  "original_profiles_bytes": 261074,
+  "original_grid_config": {
+    "n": 513,
+    "grid_stretch": 0.0,
+    "puncture": true,
+    "gamma_coefficient": 4.0
+  },
+  "original_n513_r_npy_sha256": "d810c96dbfe3fbdba7a29afb888e2a98210c62cbb5f1d338b0a083692d79bea7",
+  "r_little_endian_float64_sha256": "a664d4f512303031ff0adffd9af4fc63f98ff1419465c29ee2a897fd727fd2a6",
+  "reference_provenance_sha256": "864bdd7c3f4fada8eda9d066fa18d97d43b18270e468650ef413e318a23c0ba6",
+  "sources": [
+    {
+      "repository_path": "tst/hyperbolic_shift_1d/puncture.py",
+      "snapshot": "source/one-d/puncture.py",
+      "sha256": "890f8ff1517b3988d0864977f97fdca0be2eb37c570344b3ccde0db2ef5e5f35",
+      "matches_original_manifest": true,
+      "matches_recorded_scientific_commit": false,
+      "matches_archival_donor": true
+    },
+    {
+      "repository_path": "tst/hyperbolic_shift_1d/evolution.py",
+      "snapshot": "source/one-d/evolution.py",
+      "sha256": "eeb7d4d196224860f93d0ab21601d0c8fad39bf35e1e61358381607eb5f58288",
+      "matches_original_manifest": true,
+      "matches_recorded_scientific_commit": true,
+      "matches_archival_donor": true
+    },
+    {
+      "repository_path": "tst/elliptic_shift_1d/numerics.py",
+      "snapshot": "source/one-d/numerics.py",
+      "sha256": "c62ee8d579cf22758768a91348b3adc890b9955cb7e64f1a3e27e65d833fbb61",
+      "matches_original_manifest": true,
+      "matches_recorded_scientific_commit": true,
+      "matches_archival_donor": true
+    },
+    {
+      "repository_path": "tst/elliptic_shift_1d/evolve.py",
+      "snapshot": "source/one-d/evolve.py",
+      "sha256": "a69291e981ac98542058a17f6bdec8738803ccb406544865ee12368a6e98a22d",
+      "matches_original_manifest": true,
+      "matches_recorded_scientific_commit": true,
+      "matches_archival_donor": true
+    },
+    {
+      "repository_path": "tst/elliptic_shift_1d/radial_grid.py",
+      "snapshot": "source/one-d/radial_grid.py",
+      "sha256": "6a41e8b1e3ec8c57b437022b521fb5b8b842fea9499f55440353267f93cc174b",
+      "matches_original_manifest": true,
+      "matches_recorded_scientific_commit": true,
+      "matches_archival_donor": true
+    },
+    {
+      "repository_path": "src/z4c/hyperboloidal/tensor_scri.hpp",
+      "snapshot": "source/three-d/tensor_scri.hpp",
+      "sha256": "e959c1a1b401f958f409a37517d40572e956996011dce114d81480dd53dbec17",
+      "matches_frozen_v4_commit": true
+    },
+    {
+      "repository_path": "src/z4c/hyperboloidal/hyperbolic_composite.hpp",
+      "snapshot": "source/three-d/hyperbolic_composite.hpp",
+      "sha256": "e79c1b5058ce227ea8878bd1b2e10f67f4559e2bf50fdcbad320af4231a4388b",
+      "matches_frozen_v4_commit": true
+    },
+    {
+      "repository_path": "src/z4c/hyperboloidal/conformal_rhs.hpp",
+      "snapshot": "source/three-d/conformal_rhs.hpp",
+      "sha256": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+      "matches_frozen_v4_commit": true
+    },
+    {
+      "repository_path": "src/z4c/hyperboloidal/hyperbolic_shift.hpp",
+      "snapshot": "source/three-d/hyperbolic_shift.hpp",
+      "sha256": "33833d30381484d580ee5be3905d67a98b67c001a3802fce74a2896c55130b6a",
+      "matches_frozen_v4_commit": true
+    },
+    {
+      "repository_path": "src/mesh/cubed_sphere/scri_surface.hpp",
+      "snapshot": "source/three-d/scri_surface.hpp",
+      "sha256": "0cbdc593855d5e1023e22eec2ba60e9bbe66ddd5161c7c15856b0fb86698f473",
+      "matches_frozen_v4_commit": true
+    },
+    {
+      "repository_path": "src/mesh/cubed_sphere/composite_difference.hpp",
+      "snapshot": "source/three-d/composite_difference.hpp",
+      "sha256": "ac3dd6532334b1fa2a9644f52d6bd7ecf82657dc767529b0a965281e69f3819e",
+      "matches_frozen_v4_commit": true
+    }
+  ]
+}
