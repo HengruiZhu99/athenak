@@ -1,0 +1,50 @@
+{
+  "t": 0.02,
+  "t_over_M": 0.06,
+  "reference_horizon": 0.0,
+  "runs": [
+    {
+      "n": 12,
+      "cells": 32832,
+      "dt": 0.0005,
+      "null_max": 1.1102230246251554e-15,
+      "pole_max": 1.6467448787211345e-10,
+      "compatibility_max": 2.5849394142282115e-26,
+      "horizon": {
+        "valid_rays": 0
+      },
+      "rms_error": {
+        "chi": 1.6985601049339373e-05,
+        "alpha": 4.205866884932112e-05,
+        "beta_r": 6.824576545817129e-05,
+        "g_rr": 3.0981050219653706e-05,
+        "A_rr": 0.0035132474601122583,
+        "P": 0.0017984801064877764,
+        "Theta": 0.0001542424594830765,
+        "Lambda_r": 0.0011764519372582279,
+        "B_r": 1.0258007445174233e-05,
+        "D_r": 0.0011693334316868042
+      },
+      "constraint_rms": {
+        "H": 0.004823128031447931,
+        "M_r": 0.005535515519060006,
+        "Z_r": 0.00046403486639651876,
+        "Theta": 0.00015412552563834393,
+        "M_norm": 0.01156472327106113,
+        "Z_norm": 0.00048511192270564744,
+        "det_error": 6.409316408467021e-09,
+        "tracefree_error": 5.791677588668552e-07
+      },
+      "angular_rms": {
+        "chi": 3.952973412912344e-06,
+        "alpha": 1.5112833721342286e-05,
+        "beta_r": 1.721892971912218e-05,
+        "g_rr": 8.776820793564735e-06,
+        "H": 0.06364514449549338,
+        "M_r": 0.07548432274739798
+      }
+    }
+  ],
+  "horizon_method": "14 ray coordinate-sphere expansion zeros; spherical diagnostic, not a general 3D apparent-horizon solve",
+  "normalization": "static compactified Cartesian coordinate volume; exterior normalized, r > contemporaneous 1D horizon"
+}

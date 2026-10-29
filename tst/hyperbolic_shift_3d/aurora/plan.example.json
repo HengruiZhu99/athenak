@@ -1,0 +1,94 @@
+{
+  "schema": 1,
+  "reviewed": false,
+  "_review_note": "Template only: coordinator must replace placeholders with built executable names, confirm actual report keys and numerical tolerances, add GPU/CPU parity and restart equivalence cases, and review all command arguments before changing reviewed to true.",
+  "phase": "preflight",
+  "n": 16,
+  "low_resolution_n": 16,
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "00:10:00"
+  },
+  "worker_seconds": 510,
+  "output_dir": "campaigns/preflight-v1/output",
+  "commands": [
+    {
+      "name": "minkowski-short",
+      "kind": "minkowski",
+      "executable": "build-sycl-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi",
+      "args": [
+        "16",
+        "campaigns/preflight-v1/output/minkowski",
+        "minkowski",
+        "0.01",
+        "0.0001",
+        "-",
+        "-",
+        "@WALL_SECONDS@"
+      ],
+      "timeout_seconds": 300,
+      "report": "campaigns/preflight-v1/output/minkowski.report.json",
+      "artifacts": [
+        "campaigns/preflight-v1/output/minkowski.history.csv",
+        "campaigns/preflight-v1/output/minkowski.checkpoint"
+      ],
+      "inputs": [],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "min_lapse"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "min_chi"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "finite"
+        }
+      ]
+    }
+  ],
+  "storage": {
+    "limit_bytes": 5000000000,
+    "planned_new_bytes": 1500000000,
+    "atomic_checkpoint_reserve_bytes": 500000000
+  }
+}

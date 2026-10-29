@@ -1,0 +1,409 @@
+#include <mpi.h>
+#include <chrono>
+#include <cstring>
+#include <filesystem>
+#include <iostream>
+#include <memory>
+#include "globals.hpp"
+#include "parameter_input.hpp"
+#include "z4c/fastflow.hpp"
+#include "z4c/hyperboloidal/horizon_geometry.hpp"
+#include "z4c/hyperboloidal/hyperbolic_composite_exchange.hpp"
+#include "z4c/hyperboloidal/hyperbolic_scri_device.hpp"
+namespace h=z4c::hyperboloidal;
+using Buffer=h::HyperbolicCompositeDevice::Buffer;
+using HostBuffer=Kokkos::View<Real*,Kokkos::HostSpace>;
+using V=std::vector<Real>;
+struct Header {
+  char magic[16]{};int n=0,nf=31,kind=0,admitted=0;
+  uint64_t cells=0,surface=0,steps=0;Real time=0,dt=0;
+};
+class Evolution {
+ public:
+  int rank,size,n,total,first,last,local,first_block,last_block;
+  int surface_total,surface_first,surface_local;
+  h::HyperbolicComposite model;
+  std::unique_ptr<h::HyperbolicCompositeDevice> kernel;
+  std::unique_ptr<h::HyperbolicCompositeExchange> exchange;
+  std::unique_ptr<h::HyperbolicScriDevice> boundary;
+  Buffer state,base,local_state,compensation,next_compensation,reference_lapse,failed_state;
+  Buffer surface,surface_base,surface_stage,surface_compensation,next_surface_compensation;
+  std::array<Buffer,4> rates,edge_rates;
+  V failed_edge,owned_padding;
+  std::vector<int> counts,displacements,surface_counts,surface_displacements;
+  Real time=0,gap=1e300,cfl=0,null_ghost=0,null_before=0,last_rhs=0;
+  uint64_t steps=0;
+  double rhs_seconds=0,exchange_seconds=0,closure_seconds=0,diagnostic_seconds=0;
+  explicit Evolution(int resolution):n(resolution),model(cubed_sphere::CompositeMesh(.125,{.45,.75,1},1,n,3),false){
+    MPI_Comm_rank(MPI_COMM_WORLD,&rank);MPI_Comm_size(MPI_COMM_WORLD,&size);
+    total=model.grid.active.size();first=total*rank/size;last=total*(rank+1)/size;local=last-first;
+    surface_total=model.scri.rows.size();surface_first=surface_total*rank/size;surface_local=surface_total*(rank+1)/size-surface_first;
+    if(local==0||surface_local==0)throw std::runtime_error("rank has no active cells/surface rows");
+    const int nc=n*n*n;first_block=first/nc;last_block=(last+nc-1)/nc;
+    counts.resize(size);displacements.resize(size);surface_counts.resize(size);surface_displacements.resize(size);
+    for(int r=0;r<size;++r){displacements[r]=total*r/size*31;counts[r]=(total*(r+1)/size-total*r/size)*31;
+      surface_displacements[r]=surface_total*r/size*31;surface_counts[r]=(surface_total*(r+1)/size-surface_total*r/size)*31;}
+    kernel=std::make_unique<h::HyperbolicCompositeDevice>(model.grid,first,local);
+    exchange=std::make_unique<h::HyperbolicCompositeExchange>(model,first_block,last_block);
+    boundary=std::make_unique<h::HyperbolicScriDevice>(model,surface_first,surface_local);
+    state=Buffer("global active stage",31*total);base=Buffer("accepted stage",31*total);
+    local_state=Buffer("local stage",31*local);compensation=Buffer("local RK compensation",31*local);
+    next_compensation=Buffer("next RK compensation",31*local);Kokkos::deep_copy(compensation,Real(0));
+    surface=Buffer("global surface stage",31*surface_total);surface_base=Buffer("accepted surface stage",31*surface_total);
+    surface_stage=Buffer("local surface stage",31*surface_local);surface_compensation=Buffer("surface RK compensation",31*surface_local);
+    next_surface_compensation=Buffer("next surface RK compensation",31*surface_local);Kokkos::deep_copy(surface_compensation,Real(0));
+    for(int s=0;s<4;++s){rates[s]=Buffer("persistent volume RK rate",31*local);edge_rates[s]=Buffer("persistent surface RK rate",31*surface_local);}
+    CopyFromHost(model.scri.values,surface);exchange->surface=surface;
+    reference_lapse=Buffer("reference lapse",local);HostBuffer lapse("reference lapse host",local);
+    for(int p=0;p<local;++p){const Real r=model.Radius(model.grid.geometry[first+p].x);lapse(p)=(1+r*r)/2;}
+    Kokkos::deep_copy(reference_lapse,lapse);
+  }
+  void SynchronizeError(int failed,std::string message){
+    int all=0;MPI_Allreduce(&failed,&all,1,MPI_INT,MPI_MAX,MPI_COMM_WORLD);
+    if(all){int owner=failed?rank:size;MPI_Allreduce(MPI_IN_PLACE,&owner,1,MPI_INT,MPI_MIN,MPI_COMM_WORLD);
+      char text[512]{};if(rank==owner)std::strncpy(text,message.c_str(),sizeof(text)-1);
+      MPI_Bcast(text,sizeof(text),MPI_CHAR,owner,MPI_COMM_WORLD);throw std::runtime_error(text);}
+  }
+  static void CopyFromHost(const V&values,Buffer target){
+    if(values.size()!=target.extent(0))throw std::runtime_error("device upload size mismatch");
+    HostBuffer host("host upload",target.extent(0));for(size_t i=0;i<values.size();++i)host(i)=values[i];Kokkos::deep_copy(target,host);
+  }
+  void Upload(const V&values){CopyFromHost(values,state);}
+  V Download(Buffer data){auto host=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),data);V values(data.extent(0));
+    for(size_t i=0;i<values.size();++i)values[i]=host(i);return values;}
+  void Gather(Buffer local_values,Buffer global,bool edge=false){
+    Kokkos::fence();const auto start=std::chrono::steady_clock::now();
+    const auto&c=edge?surface_counts:counts;const auto&d=edge?surface_displacements:displacements;
+    MPI_Allgatherv(local_values.data(),c[rank],MPI_ATHENA_REAL,global.data(),c.data(),d.data(),MPI_ATHENA_REAL,MPI_COMM_WORLD);
+    exchange_seconds+=std::chrono::duration<double>(std::chrono::steady_clock::now()-start).count();
+  }
+  Buffer RefreshBoundary(Real dt){
+    const auto start=std::chrono::steady_clock::now();const auto projected=boundary->Project(surface);
+    SynchronizeError(projected.bad_rows,"device scri projection failure at row "+std::to_string(projected.first_bad)+" reason "+h::HyperbolicScriDevice::Reason(projected.reason));
+    Gather(boundary->LocalSurface(),surface,true);
+    const auto q=boundary->Evaluate(state,surface,dt);
+    SynchronizeError(q.bad_rows,"device scri rate failure at row "+std::to_string(q.first_bad)+" reason "+h::HyperbolicScriDevice::Reason(q.reason));
+    Gather(boundary->LocalSurface(),surface,true);
+    Real stats[4]={projected.null_after,q.pole,q.clock,q.compatibility};MPI_Allreduce(MPI_IN_PLACE,stats,4,MPI_ATHENA_REAL,MPI_MAX,MPI_COMM_WORLD);
+    model.null_max=std::max(model.null_max,stats[0]);model.pole_max=std::max(model.pole_max,stats[1]);
+    model.clock_max=std::max(model.clock_max,stats[2]);model.compatibility_max=std::max(model.compatibility_max,stats[3]);
+    closure_seconds+=std::chrono::duration<double>(std::chrono::steady_clock::now()-start).count();return boundary->LocalRHS();
+  }
+  Buffer RHS(Real dt,Buffer&edge_rate){
+    edge_rate=RefreshBoundary(dt);auto halo=exchange->Fill(state);
+    null_ghost=std::max(null_ghost,halo.after);null_before=std::max(null_before,halo.before);
+    SynchronizeError(halo.invalid,"nonpositive interpolated scri geometry");
+    const auto start=std::chrono::steady_clock::now();const auto stats=kernel->Evaluate(exchange->padded,dt,false,.5);
+    rhs_seconds+=std::chrono::duration<double>(std::chrono::steady_clock::now()-start).count();
+    gap=std::min(gap,stats.min_gap);cfl=std::max(cfl,stats.max_cfl);
+    SynchronizeError(stats.bad_cells,"device RHS failure at active cell "+std::to_string(stats.first_bad)+" reason "+std::to_string(stats.reason));
+    const auto rate=kernel->LocalRHS();Real maximum=0;
+    Kokkos::parallel_reduce("RHS maximum",Kokkos::RangePolicy<>(0,31*local),KOKKOS_LAMBDA(int i,Real&v){v=fmax(v,fabs(rate(i)));},Kokkos::Max<Real>(maximum));
+    last_rhs=maximum;MPI_Allreduce(MPI_IN_PLACE,&last_rhs,1,MPI_ATHENA_REAL,MPI_MAX,MPI_COMM_WORLD);return rate;
+  }
+  void Step(Real dt){
+    Kokkos::deep_copy(base,state);Kokkos::deep_copy(surface_base,surface);
+    auto stage=[&](int s,Real h){const auto out=local_state,begin=base,k=rates[s];const int offset=31*first;
+      Kokkos::parallel_for("local RK stage",Kokkos::RangePolicy<>(0,31*local),KOKKOS_LAMBDA(int i){out(i)=begin(offset+i)+h*k(i);});Gather(out,state);
+      const auto es=surface_stage,eb=surface_base,ek=edge_rates[s];const int eo=31*surface_first;
+      Kokkos::parallel_for("local surface RK stage",Kokkos::RangePolicy<>(0,31*surface_local),KOKKOS_LAMBDA(int i){es(i)=eb(eo+i)+h*ek(i);});Gather(es,surface,true);};
+    try{
+      for(int s=0;s<4;++s){Buffer edge;const auto rhs=RHS(dt,edge);Kokkos::deep_copy(rates[s],rhs);Kokkos::deep_copy(edge_rates[s],edge);
+        if(s<3)stage(s,s<2?dt/2:dt);}
+      const auto out=local_state,begin=base,old=compensation,next=next_compensation;const int offset=31*first;
+      const auto k1=rates[0],k2=rates[1],k3=rates[2],k4=rates[3];
+      Kokkos::parallel_for("compensated RK acceptance",Kokkos::RangePolicy<>(0,31*local),KOKKOS_LAMBDA(int i){
+        const Real increment=dt*(k1(i)+2*k2(i)+2*k3(i)+k4(i))/6-old(i);
+        out(i)=begin(offset+i)+increment;next(i)=(out(i)-begin(offset+i))-increment;});Gather(out,state);
+      const auto es=surface_stage,eb=surface_base,ec=surface_compensation,en=next_surface_compensation;const int eo=31*surface_first;
+      const auto a=edge_rates[0],b=edge_rates[1],c=edge_rates[2],d=edge_rates[3];
+      Kokkos::parallel_for("compensated surface RK acceptance",Kokkos::RangePolicy<>(0,31*surface_local),KOKKOS_LAMBDA(int i){
+        const Real increment=dt*(a(i)+2*b(i)+2*c(i)+d(i))/6-ec(i);
+        es(i)=eb(eo+i)+increment;const int f=i%31;en(i)=(f==18||f>=22)?0:(es(i)-eb(eo+i))-increment;});Gather(es,surface,true);
+      int invalid=0;const auto current=state,alpha0=reference_lapse;const int f=first;
+      Kokkos::parallel_reduce("validate accepted geometry",Kokkos::RangePolicy<>(0,local),KOKKOS_LAMBDA(int p,int&bad){
+        const int i=31*(f+p);const Real A=1+current(i+1),B=current(i+2),C=current(i+3),D=1+current(i+4),E=current(i+5),F=1+current(i+6);
+        const Real det=A*(D*F-E*E)-B*(B*F-C*E)+C*(B*E-C*D);
+        bool valid=current(i)>0&&alpha0(p)+current(i+18)>0&&A>0&&A*D-B*B>0&&det>0;
+        for(int j=0;j<31;++j)valid=valid&&Kokkos::isfinite(current(i+j));if(!valid)++bad;
+      },invalid);SynchronizeError(invalid,"invalid accepted volume geometry");
+      RefreshBoundary(dt);Kokkos::deep_copy(compensation,next_compensation);Kokkos::deep_copy(surface_compensation,next_surface_compensation);time+=dt;++steps;
+    }catch(...){
+      failed_state=Buffer("failed stage",state.extent(0));Kokkos::deep_copy(failed_state,state);if(rank==0)failed_edge=Download(surface);
+      Kokkos::deep_copy(state,base);Kokkos::deep_copy(surface,surface_base);throw;
+    }
+  }
+  void WriteCheckpoint(const std::string&path,int kind,Real dt,bool admitted){
+    Buffer comp_global("global compensation",state.extent(0)),edge_comp_global("global surface compensation",surface.extent(0));
+    Gather(compensation,comp_global);Gather(surface_compensation,edge_comp_global,true);int bad=0;std::string reason;
+    if(rank==0)try{Header header;std::memcpy(header.magic,"HYP3D_MPI_V1",12);header.n=n;header.kind=kind;header.admitted=admitted;
+      header.cells=total;header.surface=surface.extent(0);header.steps=steps;header.time=time;header.dt=dt;
+      const auto values=Download(state),comps=Download(comp_global),edge=Download(surface),edge_comps=Download(edge_comp_global);std::ofstream out(path+".tmp",std::ios::binary);
+      out.write(reinterpret_cast<const char*>(&header),sizeof(header));
+      for(const V*v:{&values,&comps,&edge,&edge_comps})out.write(reinterpret_cast<const char*>(v->data()),v->size()*sizeof(Real));
+      out.close();if(!out)throw std::runtime_error("checkpoint write failed");std::filesystem::rename(path+".tmp",path);
+    }catch(const std::exception&e){bad=1;reason=e.what();}SynchronizeError(bad,reason);
+  }
+  void LoadCheckpoint(const std::string&path,int kind,Real dt){
+    Header header{};V values(31*total),comps(31*total),edge(31*surface_total),edge_comps(31*surface_total);int bad=0;std::string reason;
+    if(rank==0)try{std::ifstream in(path,std::ios::binary);in.read(reinterpret_cast<char*>(&header),sizeof(header));
+      if(!in||std::memcmp(header.magic,"HYP3D_MPI_V1",12)||header.n!=n||header.nf!=31||header.kind!=kind||header.admitted!=1||header.cells!=size_t(total)||header.surface!=surface.extent(0)||header.dt!=dt)
+        throw std::runtime_error("checkpoint schema/configuration/admission mismatch");
+      for(auto*v:{&values,&comps,&edge,&edge_comps})in.read(reinterpret_cast<char*>(v->data()),v->size()*sizeof(Real));
+      char tail;if(!in||in.read(&tail,1))throw std::runtime_error("checkpoint truncated or trailing data");
+      for(const auto*v:{&values,&comps,&edge,&edge_comps})for(Real x:*v)if(!std::isfinite(x))throw std::runtime_error("checkpoint nonfinite data");
+    }catch(const std::exception&e){bad=1;reason=e.what();}
+    SynchronizeError(bad,reason);MPI_Bcast(&header,sizeof(header),MPI_BYTE,0,MPI_COMM_WORLD);
+    for(auto*v:{&values,&comps,&edge,&edge_comps})MPI_Bcast(v->data(),v->size(),MPI_ATHENA_REAL,0,MPI_COMM_WORLD);
+    Upload(values);CopyFromHost(edge,surface);CopyFromHost(V(comps.begin()+31*first,comps.begin()+31*last),compensation);
+    CopyFromHost(V(edge_comps.begin()+31*surface_first,edge_comps.begin()+31*(surface_first+surface_local)),surface_compensation);time=header.time;steps=header.steps;
+  }
+  void DownloadOwnedPadded(){
+    if(owned_padding.empty())owned_padding.resize(31*model.grid.count,0);
+    const int width=model.grid.padded,blocksize=width*width*width;
+    const int begin=first_block*blocksize,end=last_block*blocksize;HostBuffer host("owned padded snapshot",end-begin);
+    for(int f=0;f<31;++f){auto piece=Kokkos::subview(exchange->padded,std::make_pair(size_t(f*model.grid.count+begin),size_t(f*model.grid.count+end)));
+      Kokkos::deep_copy(host,piece);for(int i=begin;i<end;++i)owned_padding[f*model.grid.count+i]=host(i-begin);}
+  }
+};
+
+using Diagnostic=h::HyperbolicCompositeDevice::DiagnosticSummary;
+
+// Run local work between MPI phases. A rank-local I/O/device exception must be
+// made collective before any rank enters the next communication operation.
+template<class F>
+void CollectiveLocal(F&& action) {
+  int failed=0;std::string message;
+  try { action(); } catch(const std::exception& ex) { failed=1;message=ex.what(); }
+  int any=0;MPI_Allreduce(&failed,&any,1,MPI_INT,MPI_MAX,MPI_COMM_WORLD);
+  if(!any)return;
+  int owner=failed?global_variable::my_rank:global_variable::nranks;
+  MPI_Allreduce(MPI_IN_PLACE,&owner,1,MPI_INT,MPI_MIN,MPI_COMM_WORLD);
+  char text[512]{};
+  if(global_variable::my_rank==owner)std::strncpy(text,message.c_str(),sizeof(text)-1);
+  MPI_Bcast(text,sizeof(text),MPI_CHAR,owner,MPI_COMM_WORLD);
+  throw std::runtime_error(text);
+}
+
+Diagnostic ReduceDiagnostic(Diagnostic q){
+  static_assert(sizeof(q.total)==9*sizeof(Real),"diagnostic reduction layout");
+  MPI_Allreduce(MPI_IN_PLACE,&q.total,9,MPI_ATHENA_REAL,MPI_SUM,MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE,&q.exterior,9,MPI_ATHENA_REAL,MPI_SUM,MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE,&q.min_chi,1,MPI_ATHENA_REAL,MPI_MIN,MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE,&q.min_lapse,1,MPI_ATHENA_REAL,MPI_MIN,MPI_COMM_WORLD);
+  for(Real*v:{&q.max_determinant_residual,&q.max_tracefree_residual,&q.max_state_deviation})
+    MPI_Allreduce(MPI_IN_PLACE,v,1,MPI_ATHENA_REAL,MPI_MAX,MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE,&q.invalid_cells,1,MPI_INT,MPI_SUM,MPI_COMM_WORLD);
+  return q;
+}
+Real Norm(Real sum,Real volume){return volume>0?std::sqrt(sum/volume):std::numeric_limits<Real>::quiet_NaN();}
+std::string JsonNumber(Real value){if(!std::isfinite(value))return "null";std::ostringstream s;s<<std::setprecision(17)<<value;return s.str();}
+std::string JsonString(const std::string&value){std::string out="\"";for(char c:value){if(c=='"'||c=='\\')out+='\\';if(c=='\n')out+="\\n";else if(static_cast<unsigned char>(c)>=32)out+=c;}return out+'"';}
+
+int main(int argc,char**argv){
+  MPI_Init(&argc,&argv);
+  MPI_Comm_rank(MPI_COMM_WORLD,&global_variable::my_rank);
+  MPI_Comm_size(MPI_COMM_WORLD,&global_variable::nranks);
+  Kokkos::initialize(argc,argv);int code=0;
+  try{
+    if(const char*expected=std::getenv("HYPERBOLIC_EXPECT_MPI_SIZE"))
+      if(global_variable::nranks!=std::stoi(expected))throw std::runtime_error("MPI rank count differs from the bound launch plan");
+    if(argc<9)throw std::invalid_argument("usage: mpi n output kind target dt initial|- restart|- wall_seconds [diagnostic_interval=.1] [horizon_rms_tol=.001]");
+    const int n=std::stoi(argv[1]);const std::string output=argv[2],kind_name=argv[3],initial=argv[6],restart=argv[7];
+    const int kind=kind_name=="minkowski"?0:kind_name=="pulse"?1:kind_name=="puncture"?2:-1;
+    const Real end=std::stod(argv[4]),dt=std::stod(argv[5]),wall=std::stod(argv[8]);
+    const Real interval=argc>9?std::stod(argv[9]):.1,horizon_tolerance=argc>10?std::stod(argv[10]):.001;
+    if(n<6||n%2||kind<0||!(dt>0&&end>=0&&wall>0&&interval>0&&horizon_tolerance>0)
+       ||!std::isfinite(dt)||!std::isfinite(end)||!std::isfinite(wall)
+       ||!std::isfinite(interval)||!std::isfinite(horizon_tolerance))
+      throw std::invalid_argument("invalid resolution/kind/time parameters");
+    if(kind==2&&initial=="-"&&restart=="-")throw std::invalid_argument("puncture requires initial data or a bound checkpoint");
+    if(initial!="-"&&restart!="-")throw std::invalid_argument("supply initial data or restart, not both");
+    const auto started=std::chrono::steady_clock::now();
+    std::unique_ptr<Evolution> evolution;
+    CollectiveLocal([&]{evolution=std::make_unique<Evolution>(n);});
+    auto&e=*evolution;
+    std::string error,status="completed";
+    CollectiveLocal([&]{if(e.rank==0){
+      const auto parent=std::filesystem::path(output).parent_path();
+      if(!parent.empty())std::filesystem::create_directories(parent);
+      for(const char*suffix:{".report.json",".report.json.tmp",".checkpoint",".checkpoint.tmp",
+                            ".history.csv",".fastflow.horizon_summary_0.txt",
+                            ".fastflow.horizon_shape_0.txt",".checkpoint.horizon-seed.txt"})
+        if(std::filesystem::exists(output+suffix))throw std::runtime_error("refusing to overwrite result: "+output+suffix);
+      if(initial!="-"){std::ifstream in(initial);size_t count=0;in>>count;
+        if(count!=e.model.state.size())throw std::runtime_error("initial field count mismatch");
+        for(auto&x:e.model.state)if(!(in>>x)||!std::isfinite(x))throw std::runtime_error("invalid initial state");
+        std::string trailing;if(in>>trailing)throw std::runtime_error("trailing initial data");}
+      else if(kind==1)for(int p=0;p<e.total;++p){const Real z=(e.model.Radius(e.model.grid.geometry[p].x)-.4)/.12;
+        if(std::abs(z)<1)e.model.state[31*p+18]=.01*std::exp(1-1/(1-z*z));}
+    }});
+    MPI_Bcast(e.model.state.data(),e.model.state.size(),MPI_ATHENA_REAL,0,MPI_COMM_WORLD);
+    CollectiveLocal([&]{e.Upload(e.model.state);});
+    if(restart!="-")e.LoadCheckpoint(restart,kind,dt);
+    if(e.time>end+1e-14)throw std::runtime_error("checkpoint later than requested end");
+    const Real start_time=e.time;const uint64_t start_steps=e.steps;
+    const Real nan=std::numeric_limits<Real>::quiet_NaN();
+    Real seed_radius=.07;int seed_loaded=0;
+    // This optional sidecar is a search hint only. The volume/shell checkpoint
+    // remains authoritative, and older checkpoints simply use the default hint.
+    CollectiveLocal([&]{if(e.rank==0&&restart!="-"){
+      std::ifstream seed(restart+".horizon-seed.txt");std::string tag,tail;
+      Real checkpoint_time=0,measurement_time=0,radius=0;uint64_t checkpoint_steps=0;
+      if(seed>>tag>>checkpoint_time>>checkpoint_steps>>measurement_time>>radius){
+        if(tag=="HYP3D_FASTFLOW_SEED_V1"&&checkpoint_time==e.time&&checkpoint_steps==e.steps
+           &&std::isfinite(measurement_time)&&measurement_time<=e.time&&measurement_time>=0
+           &&std::isfinite(radius)&&radius>0&&radius<1&&!(seed>>tail)){
+          seed_radius=radius;seed_loaded=1;
+        }
+      }
+    }});
+    MPI_Bcast(&seed_radius,1,MPI_ATHENA_REAL,0,MPI_COMM_WORLD);
+    MPI_Bcast(&seed_loaded,1,MPI_INT,0,MPI_COMM_WORLD);
+    ParameterInput pin;std::unique_ptr<FastFlow> finder;
+    CollectiveLocal([&]{
+      std::ostringstream input;
+      input<<std::setprecision(17)<<"<job>\nbasename="<<output<<".fastflow\n<fastflow>\nntheta=12\nlmax=6\nflow=standard\nflow_iterations_0=300\nflow_alpha_beta_const_0=.1\ninitial_radius_0="<<seed_radius<<"\nmass_tol_0=1e-10\nexpansion_rms_tol_0="<<horizon_tolerance<<"\nhmean_tol_0=1e8\nstart_time_0=0\nstop_time_0="<<end+1<<"\n";
+      std::istringstream stream(input.str());pin.LoadFromStream(stream);
+      if(kind==2)finder=std::make_unique<FastFlow>(nullptr,&pin,0,[&](const Real x[3],z4c::HorizonGeometry<Real>&q){
+        const int block=e.model.grid.mesh.Owner(x);if(block<0)return false;
+        // Split blocks have one sampler owner, selected by their central active
+        // cell. Each participating rank stores that block's complete filled halo.
+        const int center=block*n*n*n+n*n*n/2;
+        if(center<e.first||center>=e.last)return false;
+        try{V v;std::vector<std::array<Real,3>>d;std::vector<std::array<std::array<Real,3>,3>>dd;
+          e.model.grid.SampleJets(e.owned_padding,31,x,v,d,dd,true);
+          const auto u=e.model.Jet(x,v,d,dd);q=h::PhysicalHorizonGeometry(u,e.model.Omega(x,u));
+        }catch(const std::exception&){q={};}return true;
+      });
+    });
+    std::ofstream history;
+    CollectiveLocal([&]{if(e.rank==0){
+      history.open(output+".history.csv");history<<std::setprecision(17)
+        <<"t,t_over_M,steps,min_chi,min_lapse,state_deviation,H_L2,M_L2,M_physical_L2,Theta_L2,Z_L2,H_exterior_L2,M_exterior_L2,exterior_cutoff,horizon_found,horizon_radius,horizon_areal_radius,horizon_mass,horizon_expansion_rms,horizon_trial_radius,horizon_trial_expansion_rms,horizon_complete_surface,horizon_iterations,null_surface,null_ghost,pole_max,clock_max,cfl_max,wall_seconds\n";
+      history.flush();if(!history)throw std::runtime_error("history open/header write failed");
+    }});
+    Diagnostic diagnostic{};bool diagnostic_valid=false;Real diagnostic_time=nan;
+    Real horizon_radius=nan,horizon_areal=nan,horizon_mass=nan,horizon_expansion=nan;
+    Real trial_radius=nan,trial_expansion=nan,cutoff=kind==2?nan:0;
+    bool horizon_found=false,horizon_complete=false;int horizon_iterations=0;
+    Real initial_rhs=nan;double last_diag_seconds=0;
+    auto elapsed=[&]{return std::chrono::duration<double>(std::chrono::steady_clock::now()-started).count();};
+    auto record=[&]{
+      const auto begin=std::chrono::steady_clock::now();
+      e.RefreshBoundary(dt);h::HyperbolicCompositeExchange::Summary halo{};
+      CollectiveLocal([&]{halo=e.exchange->Fill(e.state);});
+      e.null_ghost=std::max(e.null_ghost,halo.after);e.null_before=std::max(e.null_before,halo.before);
+      e.SynchronizeError(halo.invalid,"invalid diagnostic halo");
+      cutoff=kind==2?nan:0;horizon_found=false;
+      horizon_radius=horizon_areal=horizon_mass=horizon_expansion=nan;
+      if(finder){
+        CollectiveLocal([&]{e.DownloadOwnedPadded();});
+        finder->Find(e.steps,e.time);
+        CollectiveLocal([&]{finder->Write(e.steps,e.time);});
+        const auto result=finder->GetResult();
+        horizon_found=result.found;horizon_complete=result.complete_surface;horizon_iterations=result.iterations;
+        trial_expansion=result.last_expansion_rms;trial_radius=result.last_mean_radius;
+        if(result.found){horizon_radius=result.mean_radius;horizon_areal=result.areal_radius;
+          horizon_mass=result.mass;horizon_expansion=result.expansion_rms;cutoff=result.mean_radius;}
+      }
+      // Failure to locate a horizon is not a volume-evolution failure. Still
+      // measure the full domain; with no reliable cutoff, exterior norms are NaN.
+      Diagnostic next{};
+      CollectiveLocal([&]{next=e.kernel->Diagnostics(e.exchange->padded,std::isfinite(cutoff)?cutoff:0);});
+      next=ReduceDiagnostic(next);
+      e.SynchronizeError(next.invalid_cells,"invalid diagnostic volume geometry");
+      if(!std::isfinite(cutoff))next.exterior=h::HyperbolicCompositeDevice::DiagnosticSums{};
+      diagnostic=next;diagnostic_valid=true;diagnostic_time=e.time;
+      MPI_Allreduce(MPI_IN_PLACE,&e.null_ghost,1,MPI_ATHENA_REAL,MPI_MAX,MPI_COMM_WORLD);
+      MPI_Allreduce(MPI_IN_PLACE,&e.cfl,1,MPI_ATHENA_REAL,MPI_MAX,MPI_COMM_WORLD);
+      CollectiveLocal([&]{if(e.rank==0){
+        history<<e.time<<','<<(kind==2?e.time*3:e.time)<<','<<e.steps<<','<<diagnostic.min_chi<<','<<diagnostic.min_lapse<<','<<diagnostic.max_state_deviation
+          <<','<<Norm(diagnostic.total.h2,diagnostic.total.volume)<<','<<Norm(diagnostic.total.m2,diagnostic.total.volume)<<','<<Norm(diagnostic.total.m2_physical,diagnostic.total.volume)
+          <<','<<Norm(diagnostic.total.theta2,diagnostic.total.volume)<<','<<Norm(diagnostic.total.z2,diagnostic.total.volume)
+          <<','<<Norm(diagnostic.exterior.h2,diagnostic.exterior.volume)<<','<<Norm(diagnostic.exterior.m2,diagnostic.exterior.volume)<<','<<cutoff
+          <<','<<horizon_found<<','<<horizon_radius<<','<<horizon_areal<<','<<horizon_mass<<','<<horizon_expansion
+          <<','<<trial_radius<<','<<trial_expansion<<','<<horizon_complete<<','<<horizon_iterations
+          <<','<<e.model.null_max<<','<<e.null_ghost<<','<<e.model.pole_max<<','<<e.model.clock_max<<','<<e.cfl<<','<<elapsed()<<'\n';
+        history.flush();if(!history)throw std::runtime_error("history append failed");
+        std::cout<<"t="<<e.time<<" steps="<<e.steps<<" min_alpha="<<diagnostic.min_lapse<<" H="<<Norm(diagnostic.total.h2,diagnostic.total.volume)<<" horizon="<<horizon_found<<" seconds="<<elapsed()<<std::endl;
+      }});
+      const double local_seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-begin).count();
+      e.diagnostic_seconds+=local_seconds;last_diag_seconds=local_seconds;
+      MPI_Allreduce(MPI_IN_PLACE,&last_diag_seconds,1,MPI_DOUBLE,MPI_MAX,MPI_COMM_WORLD);
+    };
+    Real last_recorded=-1;
+    try{
+      Buffer edge;e.RHS(dt,edge);initial_rhs=e.last_rhs;record();last_recorded=e.time;
+      Real next_record=e.time+interval;double step_seconds=0;
+      while(e.time<end-1e-14){
+        double used=elapsed();MPI_Allreduce(MPI_IN_PLACE,&used,1,MPI_DOUBLE,MPI_MAX,MPI_COMM_WORLD);
+        // Every term in this branch must be identical on every rank.
+        if(used+std::max(15.,last_diag_seconds*1.5)+2*step_seconds>=wall){status="checkpointed";break;}
+        const auto tick=std::chrono::steady_clock::now();e.Step(std::min(dt,end-e.time));
+        step_seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-tick).count();
+        MPI_Allreduce(MPI_IN_PLACE,&step_seconds,1,MPI_DOUBLE,MPI_MAX,MPI_COMM_WORLD);
+        if(e.time>=next_record-1e-14){record();last_recorded=e.time;next_record=e.time+interval;}
+      }
+      if(e.time!=last_recorded)record();
+    }catch(const std::exception&x){status="failed";error=x.what();code=2;}
+    bool checkpoint_written=false,checkpoint_admitted=status!="failed";
+    try{
+      e.WriteCheckpoint(output+".checkpoint",kind,dt,checkpoint_admitted);checkpoint_written=true;
+      CollectiveLocal([&]{if(e.rank==0&&horizon_found&&std::isfinite(horizon_radius)){
+        const std::string path=output+".checkpoint.horizon-seed.txt";
+        std::ofstream seed(path+".tmp");seed<<std::setprecision(17)<<"HYP3D_FASTFLOW_SEED_V1 "
+          <<e.time<<' '<<e.steps<<' '<<diagnostic_time<<' '<<horizon_radius<<'\n';
+        seed.close();if(!seed)throw std::runtime_error("horizon seed write failed");
+        std::filesystem::rename(path+".tmp",path);
+      }});
+    }catch(const std::exception&x){status="failed";error+=(error.empty()?"":"; ")+std::string(x.what());code=2;}
+    MPI_Allreduce(MPI_IN_PLACE,&e.gap,1,MPI_ATHENA_REAL,MPI_MIN,MPI_COMM_WORLD);
+    MPI_Allreduce(MPI_IN_PLACE,&e.null_before,1,MPI_ATHENA_REAL,MPI_MAX,MPI_COMM_WORLD);
+    double timing[4]={e.rhs_seconds,e.exchange_seconds,e.closure_seconds,e.diagnostic_seconds};
+    MPI_Allreduce(MPI_IN_PLACE,timing,4,MPI_DOUBLE,MPI_MAX,MPI_COMM_WORLD);
+    CollectiveLocal([&]{if(e.rank==0){
+      if(e.failed_state.extent(0)){
+        const auto failed=e.Download(e.failed_state);std::ofstream capture(output+".failed-stage.bin",std::ios::binary);
+        capture.write(reinterpret_cast<const char*>(failed.data()),failed.size()*sizeof(Real));
+        capture.write(reinterpret_cast<const char*>(e.failed_edge.data()),e.failed_edge.size()*sizeof(Real));
+        capture.close();if(!capture)throw std::runtime_error("failed-stage capture write failed");
+      }
+      const auto valid_number=[&](Real value){return JsonNumber(diagnostic_valid?value:nan);};
+      std::ofstream report(output+".report.json.tmp");report<<std::setprecision(17)
+        <<"{\"status\":"<<JsonString(status)<<",\"error\":"<<JsonString(error)<<",\"kind\":"<<JsonString(kind_name)
+        <<",\"backend\":"<<JsonString(Kokkos::DefaultExecutionSpace::name())<<",\"mpi_size\":"<<e.size<<",\"n\":"<<n<<",\"cells\":"<<e.total
+        <<",\"minimum_owned_cells\":"<<e.total/e.size<<",\"maximum_owned_cells\":"<<(e.total+e.size-1)/e.size
+        <<",\"t\":"<<e.time<<",\"start_time\":"<<start_time<<",\"target_time\":"<<end<<",\"t_over_M\":"<<(kind==2?e.time*3:e.time)
+        <<",\"dt\":"<<dt<<",\"steps\":"<<e.steps<<",\"segment_steps\":"<<e.steps-start_steps<<",\"seconds\":"<<elapsed()
+        <<",\"checkpoint_written\":"<<(checkpoint_written?"true":"false")<<",\"checkpoint_admitted\":"<<(checkpoint_written&&checkpoint_admitted?"true":"false")
+        <<",\"diagnostic_time\":"<<JsonNumber(diagnostic_time)<<",\"diagnostics_current\":"<<(diagnostic_valid&&diagnostic_time==e.time?"true":"false")
+        <<",\"constraint_measure\":\"normalized compactified Cartesian coordinate volume\""
+        <<",\"exterior_method\":\"coordinate sphere at mean fast-flow radius for spherical-data comparison\""
+        <<",\"initial_rhs\":"<<JsonNumber(initial_rhs)<<",\"last_rhs\":"<<JsonNumber(e.last_rhs)
+        <<",\"min_chi\":"<<valid_number(diagnostic.min_chi)<<",\"min_lapse\":"<<valid_number(diagnostic.min_lapse)
+        <<",\"max_state_deviation\":"<<valid_number(diagnostic.max_state_deviation)<<",\"max_null_surface\":"<<JsonNumber(e.model.null_max)
+        <<",\"max_null_ghost\":"<<JsonNumber(e.null_ghost)<<",\"max_null_before_ghost_closure\":"<<JsonNumber(e.null_before)
+        <<",\"max_pole\":"<<JsonNumber(e.model.pole_max)<<",\"max_clock\":"<<JsonNumber(e.model.clock_max)
+        <<",\"max_cfl\":"<<JsonNumber(e.cfl)<<",\"min_speed_gap\":"<<JsonNumber(e.gap)
+        <<",\"H_L2\":"<<valid_number(Norm(diagnostic.total.h2,diagnostic.total.volume))
+        <<",\"M_L2\":"<<valid_number(Norm(diagnostic.total.m2,diagnostic.total.volume))
+        <<",\"M_physical_L2\":"<<valid_number(Norm(diagnostic.total.m2_physical,diagnostic.total.volume))
+        <<",\"H_exterior_L2\":"<<valid_number(Norm(diagnostic.exterior.h2,diagnostic.exterior.volume))
+        <<",\"M_exterior_L2\":"<<valid_number(Norm(diagnostic.exterior.m2,diagnostic.exterior.volume))
+        <<",\"exterior_coordinate_cutoff\":"<<JsonNumber(cutoff)<<",\"horizon_found\":"<<(horizon_found?"true":"false")
+        <<",\"horizon_radius\":"<<JsonNumber(horizon_radius)<<",\"horizon_areal_radius\":"<<JsonNumber(horizon_areal)
+        <<",\"horizon_mass\":"<<JsonNumber(horizon_mass)<<",\"horizon_expansion_rms\":"<<JsonNumber(horizon_expansion)
+        <<",\"horizon_trial_radius\":"<<JsonNumber(trial_radius)<<",\"horizon_trial_expansion_rms\":"<<JsonNumber(trial_expansion)
+        <<",\"horizon_complete_surface\":"<<(horizon_complete?"true":"false")<<",\"horizon_iterations\":"<<horizon_iterations
+        <<",\"horizon_seed_radius\":"<<seed_radius<<",\"horizon_seed_loaded\":"<<(seed_loaded?"true":"false")
+        <<",\"horizon_expansion_tolerance\":"<<horizon_tolerance<<",\"rhs_seconds\":"<<timing[0]<<",\"exchange_seconds\":"<<timing[1]
+        <<",\"closure_seconds\":"<<timing[2]<<",\"diagnostic_seconds\":"<<timing[3]<<"}\n";
+      report.close();if(!report)throw std::runtime_error("report write failed");
+      std::filesystem::rename(output+".report.json.tmp",output+".report.json");
+      std::cout<<"status="<<status<<" t="<<e.time<<" error="<<error<<std::endl;
+    }});
+  }catch(const std::exception&x){std::cerr<<"rank "<<global_variable::my_rank<<": "<<x.what()<<std::endl;code=1;}
+  int collective_code=0;MPI_Allreduce(&code,&collective_code,1,MPI_INT,MPI_MAX,MPI_COMM_WORLD);
+  Kokkos::finalize();MPI_Finalize();return collective_code;
+}

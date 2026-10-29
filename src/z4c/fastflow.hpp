@@ -10,6 +10,7 @@
 #define Z4C_FASTFLOW_HPP_
 
 #include <cstdio>
+#include <functional>
 
 #include <string>
 #include <vector>
@@ -19,6 +20,7 @@
 #include "coordinates/adm.hpp"
 #include "geodesic-grid/gauss_legendre.hpp"
 #include "z4c_macros.hpp"
+#include "z4c/horizon_geometry.hpp"
 
 // Forward declaration
 class Mesh;
@@ -39,7 +41,23 @@ enum SpatialMetricDrvsIndex {D1S11=0, D1S12=1, D1S13=2, D1S22=3, D1S23=4, D1S33=
 class FastFlow {
  public:
   // Constructor for FastFlow object
-  FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n);
+  // Return false for a point not owned by this MPI rank; return true with a
+  // physical Cartesian first jet for an owned point. Exactly one rank must own
+  // every surface point. An owned invalid jet fails the entire search.
+  using GeometrySampler = std::function<bool(const Real[3], z4c::HorizonGeometry<Real>&)>;
+  FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n,
+           GeometrySampler sampler = {});
+
+  struct Result {
+    bool found, complete_surface;
+    int iterations;
+    Real area, areal_radius, irreducible_mass, mass, mean_radius, min_radius;
+    Real expansion_rms, expansion_mean;
+    // Last sampled trial surface, including searches that did not converge.
+    // These diagnostic values must not be interpreted as a found horizon.
+    Real last_expansion_rms, last_mean_radius;
+  };
+  Result GetResult() const;
 
   // Default Destructor for FastFlow object (closes output file)
   ~FastFlow();
@@ -66,6 +84,9 @@ class FastFlow {
   // Fast-Flow parameters
   Real hmean_tol; // for convergence
   Real mass_tol; // for convergence
+  // Additional RMS outgoing-expansion tolerance for external geometry samplers.
+  // A negative value retains the legacy mass-only convergence criterion.
+  Real expansion_rms_tol;
   int flow_iterations; // number of flow iterations
   Real flow_alpha_beta_const; // alpha & beta constants in the iteration formula
                               // Eqs. (43) & (44) of https://arxiv.org/pdf/gr-qc/9707050
@@ -152,10 +173,14 @@ class FastFlow {
 
   // Flag points
   DualArray1D<int> havepoint;
+  GeometrySampler geometry_sampler;
+  bool complete_surface = false;
+  Real sampled_expansion_rms = -1, sampled_mean_radius = -1;
 
   // Functions used in the fast-flow algorithm
   void FastFlowLoop();
   void InitialGuess();
+  void SampleGeometry();
 
   // Pointers to MeshBlockPack and ParameterInput
   MeshBlockPack *pmbp;

@@ -1,0 +1,83 @@
+{
+  "scope": "Two-rank local Serial main/diagnostic behavior before the full-device scri Evolution rewrite",
+  "not_claimed": [
+    "GPU parity",
+    "long-time evolution stability",
+    "restart evolution equivalence"
+  ],
+  "commands": {
+    "minkowski": [
+      "6",
+      "OUTPUT",
+      "minkowski",
+      ".0001",
+      ".0001",
+      "-",
+      "-",
+      "90",
+      ".0001",
+      ".001"
+    ],
+    "puncture_strict": [
+      "8",
+      "OUTPUT",
+      "puncture",
+      "0",
+      ".0001",
+      "output/hyperbolic-core-shell/puncture-v3/n8/initial.txt",
+      "-",
+      "90",
+      ".1",
+      "1e-8"
+    ],
+    "puncture_seed": [
+      "8",
+      "OUTPUT",
+      "puncture",
+      "0",
+      ".0001",
+      "output/hyperbolic-core-shell/puncture-v3/n8/initial.txt",
+      "-",
+      "90",
+      ".1",
+      ".005"
+    ],
+    "puncture_resume": [
+      "8",
+      "OUTPUT",
+      "puncture",
+      "0",
+      ".0001",
+      "-",
+      "mpi-puncture-seed.checkpoint",
+      "90",
+      ".1",
+      ".005"
+    ],
+    "wall": [
+      "6",
+      "OUTPUT",
+      "minkowski",
+      "100",
+      ".0001",
+      "-",
+      "-",
+      ".1",
+      ".1",
+      ".001"
+    ],
+    "rejected": [
+      "6",
+      "OUTPUT",
+      "minkowski",
+      ".1",
+      ".1",
+      "-",
+      "-",
+      "90",
+      ".1",
+      ".001"
+    ]
+  },
+  "launcher": "mpiexec -n 2 build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi"
+}

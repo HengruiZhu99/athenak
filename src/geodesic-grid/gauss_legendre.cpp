@@ -34,7 +34,7 @@ GaussLegendreGrid::GaussLegendreGrid(MeshBlockPack *pmy_pack, int ntheta, Real r
   interp_wghts("interp_wghts",1,1,1),
   pmy_pack(pmy_pack) {
   // reallocate and set interpolation coordinates, indices, and weights
-  int &ng = pmy_pack->pmesh->mb_indcs.ng;
+  const int ng = pmy_pack ? pmy_pack->pmesh->mb_indcs.ng : 0;
   nangles = 2*ntheta*ntheta;
 
   Kokkos::realloc(int_weights,nangles);
@@ -45,8 +45,10 @@ GaussLegendreGrid::GaussLegendreGrid(MeshBlockPack *pmy_pack, int ntheta, Real r
 
   InitializeAngleAndWeights();
   InitializeRadius();
-  SetInterpolationIndices();
-  SetInterpolationWeights();
+  if (pmy_pack) {
+    SetInterpolationIndices();
+    SetInterpolationWeights();
+  }
   return;
 }
 

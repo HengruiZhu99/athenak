@@ -17,6 +17,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <utility>
 
 #if MPI_PARALLEL_ENABLED
 #include <mpi.h>
@@ -37,7 +38,8 @@
 //----------------------------------------------------------------------------------------
 //! \fn FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput * pin, int n)
 //! \brief Constructor for FastFlow class.
-FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n):
+FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n,
+                   GeometrySampler sampler):
   Y0("Y0",1,1), Yc("Yc",1,1), Ys("Ys",1,1),
   dY0dth("dY0dth",1,1), dYcdth("dYcdth",1,1),
   dYsdth("dYsdth",1,1), dYcdph("dYcdph",1,1),
@@ -49,7 +51,11 @@ FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n):
   rr("rr",1), rr_dth("rr_dth",1), rr_dph("rr_dph",1),
   rho("rho",1), dg("dg",1,1,1,1,1), g_interp("g_interp",1,1),
   K_interp("K_interp",1,1), dg_interp("dg_interp",1,1),
+  geometry_sampler(std::move(sampler)),
   pmbp(pmbp), pin(pin) {
+  if (!pmbp && !geometry_sampler) {
+    throw std::invalid_argument("FastFlow requires a mesh or an external geometry sampler");
+  }
   nh = n; // The n-th horizon
   std::string n_str = std::to_string(nh);
 
@@ -59,6 +65,9 @@ FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n):
 
   lmax = pin->GetOrAddInteger("fastflow", "lmax", 4);
   lmax1 = lmax + 1;
+  if (geometry_sampler && (lmax < 1 || ntheta <= lmax)) {
+    throw std::invalid_argument("FastFlow sampler requires 1 <= lmax < ntheta");
+  }
 
   // Flow parameters
   flow_iterations = pin->GetOrAddInteger("fastflow", "flow_iterations_" + n_str, 100);
@@ -82,6 +91,11 @@ FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n):
   // Convergence parameters
   hmean_tol = pin->GetOrAddReal("fastflow", "hmean_tol_" + n_str, 100.);
   mass_tol = pin->GetOrAddReal("fastflow", "mass_tol_" + n_str, 1e-2);
+  expansion_rms_tol = pin->GetOrAddReal("fastflow", "expansion_rms_tol_" + n_str,
+                                      geometry_sampler ? 1e-8 : -1.0);
+  if (geometry_sampler && !(expansion_rms_tol > 0)) {
+    throw std::invalid_argument("FastFlow sampler requires a positive expansion RMS tolerance");
+  }
 
   // Output booleans
   verbose = pin->GetOrAddBoolean("fastflow", "verbose", false);
@@ -127,6 +141,10 @@ FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n):
                                             "wait_until_punc_are_close_" + n_str, 0);
   use_puncture_massweighted_center = pin->GetOrAddBoolean("fastflow",
                                      "use_puncture_massweighted_center_" + n_str, 0);
+  if (!pmbp && (use_puncture >= 0 || wait_until_punc_are_close
+               || use_puncture_massweighted_center)) {
+    throw std::invalid_argument("FastFlow external sampler: set center explicitly; mesh tracker unavailable");
+  }
 
   // Timer
   start_time = pin->GetOrAddReal("fastflow", "start_time_" + n_str,
@@ -181,12 +199,14 @@ FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n):
   // with adaptive mesh refinement and load balancing (e.g. a boosted puncture
   // dragging the refined region across ranks). To prevent this allocate more
   // memory based in the max. nmb. of MBs per rank from startup.
-  auto &indcs = pmbp->pmesh->mb_indcs;
-  int nmb = std::max((pmbp->nmb_thispack), (pmbp->pmesh->nmb_maxperrank));
-  int ncells1 = indcs.nx1 + 2 * (indcs.ng);
-  int ncells2 = indcs.nx2 + 2 * (indcs.ng);
-  int ncells3 = indcs.nx3 + 2 * (indcs.ng);
-  Kokkos::realloc(dg, nmb, (NDRVSSPMETRIC), ncells3, ncells2, ncells1);
+  if (!geometry_sampler) {
+    auto &indcs = pmbp->pmesh->mb_indcs;
+    int nmb = std::max((pmbp->nmb_thispack), (pmbp->pmesh->nmb_maxperrank));
+    int ncells1 = indcs.nx1 + 2 * (indcs.ng);
+    int ncells2 = indcs.nx2 + 2 * (indcs.ng);
+    int ncells3 = indcs.nx3 + 2 * (indcs.ng);
+    Kokkos::realloc(dg, nmb, (NDRVSSPMETRIC), ncells3, ncells2, ncells1);
+  }
 
   // Array computed in surface integrals.
   Kokkos::realloc(rho, nangles);
@@ -245,6 +265,7 @@ FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n):
     }
     pofile_summary = fopen(ofname_summary.c_str(), "a");
     if (NULL == pofile_summary) {
+      if (geometry_sampler) throw std::runtime_error("FastFlow cannot open "+ofname_summary);
       std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
             << std::endl
             << "Could not open file '" << pofile_summary << "' for writing!" << std::endl;
@@ -259,6 +280,7 @@ FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n):
     if (output_grid) {
       pofile_grid = fopen(ofname_grid.c_str(), "w");
       if (NULL == pofile_grid) {
+        if (geometry_sampler) throw std::runtime_error("FastFlow cannot open "+ofname_grid);
         std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
             << std::endl
             << "Could not open file '" << pofile_grid << "' for writing!" << std::endl;
@@ -281,6 +303,7 @@ FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n):
     if (output_ylm) {
       pofile_ylm = fopen(ofname_ylm.c_str(), "w");
       if (NULL == pofile_ylm) {
+        if (geometry_sampler) throw std::runtime_error("FastFlow cannot open "+ofname_ylm);
         std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
           << std::endl
           << "Could not open file '" << pofile_ylm << "' for writing!" << std::endl;
@@ -336,6 +359,7 @@ FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n):
     if (verbose) {
       pofile_verbose = fopen(ofname_verbose.c_str(), "a");
       if (NULL == pofile_verbose) {
+        if (geometry_sampler) throw std::runtime_error("FastFlow cannot open "+ofname_verbose);
         std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
             << std::endl
             << "Could not open file '" << pofile_verbose << "' for writing!" << std::endl;
@@ -383,12 +407,15 @@ void FastFlow::Write(int iter, Real time) {
         ah_prop[hmeanradius],
         ah_prop[hminradius]);
     fprintf(pofile_summary, "\n");
-    fflush(pofile_summary);
+    if (fflush(pofile_summary) != 0 && geometry_sampler) {
+      throw std::runtime_error("FastFlow summary write failed: "+ofname_summary);
+    }
 
     if (ah_found) {
       // Shape file (coefficients).
       pofile_shape = fopen(ofname_shape.c_str(), "a");
       if (NULL == pofile_shape) {
+        if (geometry_sampler) throw std::runtime_error("FastFlow cannot open "+ofname_shape);
         std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
             << std::endl
             << "Could not open file '" << pofile_shape << "' for writing!" << std::endl;
@@ -405,7 +432,9 @@ void FastFlow::Write(int iter, Real time) {
         }
       }
       fprintf(pofile_shape,"\n");
-      fclose(pofile_shape);
+      if (fclose(pofile_shape) != 0 && geometry_sampler) {
+        throw std::runtime_error("FastFlow shape write failed: "+ofname_shape);
+      }
     }
   }
 
@@ -509,6 +538,7 @@ void FastFlow::InitialGuess() {
 //! \brief Compute drvts of ADM metric at MB level.
 template <int NGHOST>
 void FastFlow::MetricDerivatives(Real time) {
+  if (geometry_sampler) return;
   // Check whether derivatives have to be computed
   // if (use_stored_metric_drvts) return;
   if((time < start_time) || (time > stop_time)) return;
@@ -567,6 +597,10 @@ template void FastFlow::MetricDerivatives<4>(Real time);
 //!        Flag here the surface points contained (on this rank).
 template <int NGHOST>
 void FastFlow::MetricInterp() {
+  if (geometry_sampler) {
+    SampleGeometry();
+    return;
+  }
   // In MetricInterp() we'll flag the surface points on this mesh
   // default to 0 (no points).
   Kokkos::deep_copy(havepoint.d_view, 0.0);
@@ -660,11 +694,88 @@ template void FastFlow::MetricInterp<2>();
 template void FastFlow::MetricInterp<3>();
 template void FastFlow::MetricInterp<4>();
 
+// External patch/AMR samplers supply physical Cartesian jets. Only the surface
+// data is staged on the host; the existing flow and integrals remain on device.
+void FastFlow::SampleGeometry() {
+  auto radius = Kokkos::create_mirror_view_and_copy(HostMemSpace(), rr);
+  auto g = Kokkos::create_mirror_view(g_interp);
+  auto k = Kokkos::create_mirror_view(K_interp);
+  auto d = Kokkos::create_mirror_view(dg_interp);
+  Kokkos::deep_copy(g, 0.0);
+  Kokkos::deep_copy(k, 0.0);
+  Kokkos::deep_copy(d, 0.0);
+  std::vector<int> owners(nangles, 0);
+  int invalid = 0;
+  constexpr int pair[6][2] = {{0,0}, {0,1}, {0,2}, {1,1}, {1,2}, {2,2}};
+  for (int p = 0; p < nangles; ++p) {
+    havepoint.h_view(p) = 0;
+    const Real theta = gl_grid->polar_pos.h_view(p, 0);
+    const Real phi = gl_grid->polar_pos.h_view(p, 1);
+    if (!(radius(p) > 0 && std::isfinite(radius(p)))) {
+      invalid = 1;
+      continue;
+    }
+    const Real pos[3] = {center[0]+radius(p)*std::sin(theta)*std::cos(phi),
+                         center[1]+radius(p)*std::sin(theta)*std::sin(phi),
+                         center[2]+radius(p)*std::cos(theta)};
+    z4c::HorizonGeometry<Real> q{};
+    if (!geometry_sampler(pos, q)) continue;
+    owners[p] = 1;
+    if (!z4c::ValidHorizonGeometry(q)) {
+      invalid = 1;
+      continue;
+    }
+    havepoint.h_view(p) = 1;
+    for (int a = 0; a < 6; ++a) {
+      const int i = pair[a][0], j = pair[a][1];
+      g(a,p) = q.metric[i][j];
+      k(a,p) = q.curvature[i][j];
+      for (int b = 0; b < 3; ++b) d(6*b+a,p) = q.derivative[b][i][j];
+    }
+  }
+  #if MPI_PARALLEL_ENABLED
+    MPI_Allreduce(MPI_IN_PLACE, owners.data(), nangles, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+    MPI_Allreduce(MPI_IN_PLACE, &invalid, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
+  #endif
+  complete_surface = !invalid && std::all_of(owners.begin(), owners.end(),
+                                            [](int count) { return count == 1; });
+  Kokkos::deep_copy(g_interp, g);
+  Kokkos::deep_copy(K_interp, k);
+  Kokkos::deep_copy(dg_interp, d);
+  havepoint.template modify<HostMemSpace>();
+  havepoint.template sync<DevExeSpace>();
+}
+
+FastFlow::Result FastFlow::GetResult() const {
+  Result out{};
+  out.found = ah_found;
+  out.complete_surface = complete_surface;
+  out.iterations = fastflow_iter+1;
+  out.area = ah_prop[harea];
+  out.areal_radius = std::sqrt(out.area/(4*M_PI));
+  out.irreducible_mass = out.areal_radius/2;
+  out.mass = ah_prop[hmass];
+  out.mean_radius = ah_prop[hmeanradius];
+  out.min_radius = ah_prop[hminradius];
+  // Legacy storage is the mean SQUARE despite the historical "hrms" name.
+  out.expansion_rms = std::sqrt(ah_prop[hhrms]);
+  out.expansion_mean = ah_prop[hhmean]/out.area;
+  out.last_expansion_rms = sampled_expansion_rms;
+  out.last_mean_radius = sampled_mean_radius;
+  return out;
+}
+
 //----------------------------------------------------------------------------------------
 //! \fn void FastFlow::FastFlowLoop()
 //! \brief Fast Flow loop for horizon n.
 void FastFlow::FastFlowLoop() {
   ah_found = false;
+  complete_surface = !geometry_sampler;
+  sampled_expansion_rms = sampled_mean_radius = NAN;
+  if (geometry_sampler) {
+    // A failed search must not expose properties from a previous found horizon.
+    for (int v = 0; v < hnvar; ++v) ah_prop[v] = NAN;
+  }
 
   Real meanradius = a0.h_view(0) / Kokkos::sqrt(4.0*M_PI);
   Real mass = 0;
@@ -694,14 +805,22 @@ void FastFlow::FastFlowLoop() {
     RadiiFromSphericalHarmonics();
 
     // Step 2: Interpolate metric onto the surface.
-    auto &indcs = pmbp->pmesh->mb_indcs;
-    switch (indcs.ng) {
+    const int ng = geometry_sampler ? 2 : pmbp->pmesh->mb_indcs.ng;
+    switch (ng) {
       case 2: MetricInterp<2>();
               break;
       case 3: MetricInterp<3>();
               break;
       case 4: MetricInterp<4>();
               break;
+    }
+    if (geometry_sampler && !complete_surface) {
+      if (verbose && ioproc) {
+        fprintf(pofile_verbose, "Failed, incomplete/duplicate/invalid surface sampling\n");
+        fflush(pofile_verbose);
+      }
+      failed = true;
+      break;
     }
 
     // Step 3: Compute the surface integrals.
@@ -716,6 +835,8 @@ void FastFlow::FastFlowLoop() {
     S  = Kokkos::sqrt(SQR(Sx) + SQR(Sy) + SQR(Sz));
 
     meanradius = a0.h_view(0) / Kokkos::sqrt(4.0 * M_PI);
+    sampled_expansion_rms = std::sqrt(hrms);
+    sampled_mean_radius = meanradius;
 
     // Step 4: Check that we get a finite result.
     if (!(Kokkos::isfinite(area))) {
@@ -776,7 +897,8 @@ void FastFlow::FastFlowLoop() {
     }
 
     // End flow when mass difference is small
-    if (Kokkos::fabs(mass_prev-mass) < mass_tol) {
+    if (Kokkos::fabs(mass_prev-mass) < mass_tol
+        && (expansion_rms_tol < 0 || std::sqrt(hrms) <= expansion_rms_tol)) {
       ah_found = true;
       break;
     }
@@ -942,7 +1064,7 @@ void FastFlow::RadiiFromSphericalHarmonics() {
   // Step 2: Compute the global minimum.
   rr_min = std::numeric_limits<Real>::infinity();
   Kokkos::parallel_reduce("FastFlow_sphradii",
-  Kokkos::RangePolicy<>(DevExeSpace(), 0, nangles-1),
+  Kokkos::RangePolicy<>(DevExeSpace(), 0, nangles),
   KOKKOS_LAMBDA(const int &p, Real &lmin) {
     lmin = Kokkos::min(lmin, rr_(p));
   }, Kokkos::Min<Real>(rr_min));
@@ -1041,7 +1163,7 @@ void FastFlow::SurfaceIntegrals() {
 
   // Loop over surface points
   Kokkos::parallel_reduce("FastFlow_surfintegrals",
-  Kokkos::RangePolicy<>(DevExeSpace(), 0, nangles-1),
+  Kokkos::RangePolicy<>(DevExeSpace(), 0, nangles),
   KOKKOS_LAMBDA(const int &p,
                 Real& area,
                 Real& coarea,

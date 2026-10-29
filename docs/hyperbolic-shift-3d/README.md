@@ -1,11 +1,17 @@
-# Native hyperbolic shift: admission work, not a completed 3D evolution
+# Native hyperbolic shift: coupled 3D research implementation
 
-**The requested coupled hyperboloidal evolution is not implemented on this branch.**
-It contains native C++ point kernels, a full 3D frozen-symbol audit, mapped
-operator tests and bounded reproduction of the unchanged spherical donor.
-The new kernels are not called by the evolution task graph. In particular, this
-is not a wormhole-to-trumpet result, a scri boundary well-posedness result, or a
-replacement for the preserved elliptic experiment.
+Coupled Cartesian-core / spherical-shell CPU and MPI/SYCL research drivers are
+implemented on `codex/hyperbolic-core-shell`, with a hyperboloidal fast-flow
+horizon finder. See the [implementation, reproduction results and
+remaining work](reproduction/README.md). Production hyperboloidal evolution is
+still disabled; no 100 M 3D wormhole-to-trumpet result is claimed.
+
+## Original admission audit at 4b4cef3
+
+The material below describes the original `codex/hyperbolic-shift-scri-3d`
+snapshot, before the coupled prototype. That snapshot contained native C++ point
+kernels, a full 3D frozen-symbol audit, mapped operator tests and bounded
+reproduction of the unchanged spherical donor, without coupled 3D evolution.
 
 ## Sources and preserved infrastructure
 

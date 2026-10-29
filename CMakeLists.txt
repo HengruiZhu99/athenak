@@ -118,7 +118,7 @@ if(Athena_ENABLE_CUBED_SPHERE_CONFORMAL_PROBE AND
 endif()
 add_subdirectory(src)
 add_subdirectory(kokkos)
-option(Athena_ENABLE_HYPERBOLIC_SHIFT_3D_TESTS "Build native hyperbolic gauge admission tests; not evolution support" OFF)
+option(Athena_ENABLE_HYPERBOLIC_SHIFT_3D_TESTS "Build hyperbolic gauge audits and standalone research evolution drivers" OFF)
 if(Athena_ENABLE_HYPERBOLIC_SHIFT_3D_TESTS)
   enable_testing()
   add_subdirectory(tst/hyperbolic_shift_3d)

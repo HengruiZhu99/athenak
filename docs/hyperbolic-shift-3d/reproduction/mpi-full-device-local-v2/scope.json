@@ -1,0 +1,34 @@
+{
+  "scope": "Short local Serial-backend checks of the full-device bulk and scri kernels through MPI; no GPU execution claimed",
+  "test_steps": {
+    "pulse": 2,
+    "direct": 4,
+    "restart": 2,
+    "puncture": 1,
+    "minkowski": 1
+  },
+  "pulse_ranks": [
+    1,
+    2,
+    12
+  ],
+  "puncture_ranks": 2,
+  "checkpoint_header_bytes": 72,
+  "source_sha256": {
+    "tst/hyperbolic_shift_3d/coupled_mpi.cpp": "7c523531314f562d0bcdfa6a1cdc4dbb74c982dd840ebc659c7fb8ef3a737a07",
+    "src/z4c/hyperboloidal/hyperbolic_scri_device.hpp": "0a60b471f10d01199710d5364555826c5f1ea947a92866098e7742d62c95925d"
+  },
+  "all_arrays_bitwise": true,
+  "scri_component_test": {
+    "command": "build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_scri_device",
+    "backend": "Serial",
+    "rows": 216,
+    "passed": true,
+    "projection_error": 0,
+    "rate_error": 0,
+    "dependent_trace_error": 0,
+    "background_null_residual": 9.992007221626413e-16,
+    "perturbed_null_residual": 8.883981012589983e-16,
+    "old_D_input_and_row_order_independent": true
+  }
+}
