@@ -44,6 +44,10 @@
 #ifndef HYPERBOLIC_CONTINUOUS_POSITIVE
 #define HYPERBOLIC_CONTINUOUS_POSITIVE 0
 #endif
+#ifndef HYPERBOLIC_BOUNDARY_REUSE
+#define HYPERBOLIC_BOUNDARY_REUSE 0
+#endif
+constexpr bool boundary_reuse=HYPERBOLIC_BOUNDARY_REUSE;
 constexpr bool continuous_positive=HYPERBOLIC_CONTINUOUS_POSITIVE;
 constexpr bool spherical_overlap=HYPERBOLIC_SPHERICAL_OVERLAP;
 constexpr Real physical_lapse_floor=1e-10;
@@ -108,6 +112,12 @@ class Evolution {
   std::unique_ptr<h::HyperbolicSampledNormalDevice> sampled_normal;
   std::unique_ptr<h::HyperbolicAngularDissipationDevice> angular_dissipation;
   Buffer angular_residual;
+  std::unique_ptr<h::HyperbolicScriDevice> global_projector;
+  bool boundary_cached=false;
+  Real boundary_cached_dt=0;
+  uint64_t boundary_cache_hits=0;
+  double collective_seconds[3]={0,0,0};  // volume, surface, angular residual
+  uint64_t collective_calls[3]={0,0,0};
   Buffer state,base,local_state,compensation,next_compensation,reference_lapse,failed_state,floor_statistics;
   Buffer surface,surface_base,surface_stage,surface_compensation,next_surface_compensation;
   std::array<Buffer,4> rates,edge_rates;
@@ -138,6 +148,7 @@ class Evolution {
     if constexpr(continuous_positive){std::set<int> blocks;for(int p=first;p<last;++p)blocks.insert(model.grid.cells[p].block);owned_blocks.assign(blocks.begin(),blocks.end());}
     exchange=std::make_unique<h::HyperbolicCompositeExchange>(model,first_block,last_block,owned_blocks,continuous_positive);
     boundary=std::make_unique<h::HyperbolicScriDevice>(model,surface_first,surface_local);
+    if constexpr(boundary_reuse)global_projector=std::make_unique<h::HyperbolicScriDevice>(model,0,surface_total);
     if constexpr(scri_sampled_normal){
       // Surface ownership is independent of bulk ownership. Its five radial
       // donors therefore require their own native halo plan, not this rank's
@@ -146,7 +157,7 @@ class Evolution {
       normal_exchange=std::make_unique<h::HyperbolicCompositeExchange>(model,sampled_normal->FirstBlock(),sampled_normal->EndBlock(),std::vector<int>{},continuous_positive,false);
     }
     if(angular_epsilon>0){
-      angular_dissipation=std::make_unique<h::HyperbolicAngularDissipationDevice>(*model.angular_plan,surface_first,surface_local);
+      angular_dissipation=std::make_unique<h::HyperbolicAngularDissipationDevice>(*model.angular_plan,boundary_reuse?0:surface_first,boundary_reuse?surface_total:surface_local);
       angular_upper_bound=model.angular_plan->SpectralUpperBound();
       angular_residual=Buffer("global angular residual",21*surface_total);
       residual_counts.resize(size);residual_displacements.resize(size);
@@ -176,16 +187,22 @@ class Evolution {
     if(values.size()!=target.extent(0))throw std::runtime_error("device upload size mismatch");
     HostBuffer host("host upload",target.extent(0));for(size_t i=0;i<values.size();++i)host(i)=values[i];Kokkos::deep_copy(target,host);
   }
-  void Upload(const V&values){CopyFromHost(values,state);}
+  void Upload(const V&values){boundary_cached=false;CopyFromHost(values,state);}
   V Download(Buffer data){auto host=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),data);V values(data.extent(0));
     for(size_t i=0;i<values.size();++i)values[i]=host(i);return values;}
   void Gather(Buffer local_values,Buffer global,bool edge=false){
+    boundary_cached=false;
     Kokkos::fence();const auto start=std::chrono::steady_clock::now();
     const auto&c=edge?surface_counts:counts;const auto&d=edge?surface_displacements:displacements;
     MPI_Allgatherv(local_values.data(),c[rank],MPI_ATHENA_REAL,global.data(),c.data(),d.data(),MPI_ATHENA_REAL,MPI_COMM_WORLD);
-    exchange_seconds+=std::chrono::duration<double>(std::chrono::steady_clock::now()-start).count();
+    const double seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-start).count();
+    exchange_seconds+=seconds;collective_seconds[edge?1:0]+=seconds;++collective_calls[edge?1:0];
   }
   Buffer RefreshBoundary(Real dt){
+    // Reuse only an identical gathered state and timestep. Gather, upload and
+    // rollback invalidate this cache. The accepted step already computed these
+    // same physical rates; no RK stage or projection is omitted after a change.
+    if(boundary_reuse&&boundary_cached&&boundary_cached_dt==dt){++boundary_cache_hits;return boundary->LocalRHS();}
     // This is an isolated negative-real-axis RK4 bound with margin. Passing it
     // does not establish stability of the coupled evolution or interpolation.
     if(angular_dissipation){
@@ -194,9 +211,10 @@ class Evolution {
       SynchronizeError(!(dt>0)||!std::isfinite(angular_cfl)||angular_cfl>2.7,"angular dissipation RK4 bound exceeded");
     }
     const auto start=std::chrono::steady_clock::now();const double exchange_before=exchange_seconds;
-    const auto projected=boundary->Project(surface);
+    const auto projected=boundary_reuse?global_projector->Project(surface):boundary->Project(surface);
     SynchronizeError(projected.bad_rows,"device scri projection failure at row "+std::to_string(projected.first_bad)+" reason "+h::HyperbolicScriDevice::Reason(projected.reason));
-    Gather(boundary->LocalSurface(),surface,true);
+    if constexpr(boundary_reuse)Kokkos::deep_copy(surface,global_projector->LocalSurface());
+    else Gather(boundary->LocalSurface(),surface,true);
     Buffer pole_samples;
     if constexpr(scri_sampled_normal){
       // Current geometric ghosts precede native interior numerator sampling.
@@ -212,13 +230,20 @@ class Evolution {
     if(angular_dissipation){
       const auto residual=angular_dissipation->Residual(surface);
       SynchronizeError(residual.bad_values,"nonfinite angular residual at row "+std::to_string(residual.first_bad));
-      Kokkos::fence();const auto gather_start=std::chrono::steady_clock::now();
-      MPI_Allgatherv(angular_dissipation->LocalResidual().data(),residual_counts[rank],MPI_ATHENA_REAL,
-        angular_residual.data(),residual_counts.data(),residual_displacements.data(),MPI_ATHENA_REAL,MPI_COMM_WORLD);
-      exchange_seconds+=std::chrono::duration<double>(std::chrono::steady_clock::now()-gather_start).count();
-      const auto applied=angular_dissipation->Apply(angular_residual,angular_epsilon);
+      Buffer residual_input;
+      if constexpr(boundary_reuse)residual_input=angular_dissipation->LocalResidual();
+      else{
+        Kokkos::fence();const auto gather_start=std::chrono::steady_clock::now();
+        MPI_Allgatherv(angular_dissipation->LocalResidual().data(),residual_counts[rank],MPI_ATHENA_REAL,
+          angular_residual.data(),residual_counts.data(),residual_displacements.data(),MPI_ATHENA_REAL,MPI_COMM_WORLD);
+        const double seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-gather_start).count();
+        exchange_seconds+=seconds;collective_seconds[2]+=seconds;++collective_calls[2];residual_input=angular_residual;
+      }
+      const auto applied=angular_dissipation->Apply(residual_input,angular_epsilon);
       SynchronizeError(applied.bad_values,"nonfinite angular rate at row "+std::to_string(applied.first_bad));
-      additive=angular_dissipation->LocalRHS();
+      if constexpr(boundary_reuse)additive=Kokkos::subview(angular_dissipation->LocalRHS(),
+        std::make_pair(size_t(31*surface_first),size_t(31*(surface_first+surface_local))));
+      else additive=angular_dissipation->LocalRHS();
     }
     // Dependent D is reconstructed from geometric rates including Q. Appending
     // Q after this call would violate the differentiated moving-normal closure.
@@ -228,6 +253,7 @@ class Evolution {
     Real stats[4]={projected.null_after,q.pole,q.clock,q.compatibility};MPI_Allreduce(MPI_IN_PLACE,stats,4,MPI_ATHENA_REAL,MPI_MAX,MPI_COMM_WORLD);
     model.null_max=std::max(model.null_max,stats[0]);model.pole_max=std::max(model.pole_max,stats[1]);
     model.clock_max=std::max(model.clock_max,stats[2]);model.compatibility_max=std::max(model.compatibility_max,stats[3]);
+    boundary_cached=true;boundary_cached_dt=dt;
     closure_seconds+=std::chrono::duration<double>(std::chrono::steady_clock::now()-start).count()-(exchange_seconds-exchange_before);return boundary->LocalRHS();
   }
   Buffer RHS(Real dt,Buffer&edge_rate){
@@ -311,7 +337,7 @@ class Evolution {
       RefreshBoundary(dt);Kokkos::deep_copy(compensation,next_compensation);Kokkos::deep_copy(surface_compensation,next_surface_compensation);time+=dt;++steps;
     }catch(...){
       failed_state=Buffer("failed stage",state.extent(0));Kokkos::deep_copy(failed_state,state);if(rank==0)failed_edge=Download(surface);
-      Kokkos::deep_copy(state,base);Kokkos::deep_copy(surface,surface_base);throw;
+      boundary_cached=false;Kokkos::deep_copy(state,base);Kokkos::deep_copy(surface,surface_base);throw;
     }
   }
   void WriteCheckpoint(const std::string&path,int kind,Real dt,bool admitted){
@@ -599,6 +625,9 @@ int main(int argc,char**argv){
       MPI_Allreduce(MPI_IN_PLACE,floor_totals,1,MPI_ATHENA_REAL,MPI_SUM,MPI_COMM_WORLD);
       MPI_Allreduce(MPI_IN_PLACE,floor_totals+1,1,MPI_ATHENA_REAL,MPI_MAX,MPI_COMM_WORLD);}
     double timing[5]={e.rhs_seconds,e.exchange_seconds,e.closure_seconds,e.diagnostic_seconds,e.halo_seconds};
+    std::vector<double> rank_collectives(3*e.size);std::vector<uint64_t> rank_collective_calls(3*e.size);
+    MPI_Gather(e.collective_seconds,3,MPI_DOUBLE,rank_collectives.data(),3,MPI_DOUBLE,0,MPI_COMM_WORLD);
+    MPI_Gather(e.collective_calls,3,MPI_UINT64_T,rank_collective_calls.data(),3,MPI_UINT64_T,0,MPI_COMM_WORLD);
     std::vector<double> rank_timings(5*e.size);MPI_Gather(timing,5,MPI_DOUBLE,rank_timings.data(),5,MPI_DOUBLE,0,MPI_COMM_WORLD);
     MPI_Allreduce(MPI_IN_PLACE,timing,5,MPI_DOUBLE,MPI_MAX,MPI_COMM_WORLD);
     CollectiveLocal([&]{if(e.rank==0){
@@ -628,6 +657,7 @@ int main(int argc,char**argv){
       if constexpr(scri_sampled_normal)report<<",\"scri_normal_derivative\":\"sampled_native_numerator"<<(scri_donor_seven?7:6)<<"\""
         <<",\"scri_normal_radial_nodes\":"<<(scri_donor_seven?7:6)<<",\"scri_normal_bulk_derivative_order\":4";
       if constexpr(evolved_overlap)report<<",\"evolved_overlap\":"<<evolved_overlap<<",\"nominal_cells\":"<<e.model.grid.nominal_count;
+      report<<",\"boundary_execution\":\""<<(boundary_reuse?"cached_global_projection_angular":"partitioned_uncached")<<"\",\"boundary_cache_hits\":"<<e.boundary_cache_hits;
       if constexpr(continuous_positive)report<<",\"cartesian_seams\":\"uniform_global_stencil\",\"positive_variables\":\"log_chi_log_lapse_rk_and_ko\",\"physical_lapse_floor\":"<<physical_lapse_floor;
       if constexpr(spherical_overlap)report<<",\"shell_geometry\":\"spherical_equiangular\",\"core_half_width\":0.18,\"shell_inner_radius\":0.16,\"overlap_quadrature\":\"radial_quintic_partition\"";
       if constexpr(inner_transition_logical)report<<",\"interpatch_interpolation\":\"logical_inner_transition\"";
@@ -671,7 +701,10 @@ int main(int argc,char**argv){
         <<",\"bulk_halo_seconds\":"<<timing[4]<<",\"timing_per_rank_exclusive\":true"
         <<",\"rhs_seconds\":"<<timing[0]<<",\"exchange_seconds\":"<<timing[1]
         <<",\"closure_seconds\":"<<timing[2]<<",\"diagnostic_seconds\":"<<timing[3]<<",\"phase_seconds_by_rank\":[";
-      for(int rank=0;rank<e.size;++rank){if(rank)report<<',';report<<'[';for(int k=0;k<5;++k){if(k)report<<',';report<<rank_timings[5*rank+k];}report<<']';}report<<"]}\n";
+      for(int rank=0;rank<e.size;++rank){if(rank)report<<',';report<<'[';for(int k=0;k<5;++k){if(k)report<<',';report<<rank_timings[5*rank+k];}report<<']';}report<<"],\"collective_seconds_by_rank\":[";
+      for(int rank=0;rank<e.size;++rank){if(rank)report<<',';report<<'[';for(int k=0;k<3;++k){if(k)report<<',';report<<rank_collectives[3*rank+k];}report<<']';}
+      report<<"],\"collective_calls_by_rank\":[";
+      for(int rank=0;rank<e.size;++rank){if(rank)report<<',';report<<'[';for(int k=0;k<3;++k){if(k)report<<',';report<<rank_collective_calls[3*rank+k];}report<<']';}report<<"]}\n";
       report.close();if(!report)throw std::runtime_error("report write failed");
       std::filesystem::rename(output+".report.json.tmp",output+".report.json");
       std::cout<<"status="<<status<<" t="<<e.time<<" error="<<error<<std::endl;

@@ -1,0 +1,34 @@
+{
+  "qualified_pilot": true,
+  "original_worker_status": "failed",
+  "original_scientific_checks_passed": false,
+  "numerical_criteria_unchanged": true,
+  "original_verification_sha256": "0920ec5ea1607bd0cb5ed68457c9387de8ed7125923c64770482d5d561b275a0",
+  "checkpoint_sha256": "9cc9279a8c6ad6b69d748b67d7b5f535f0d8a9dbfe1bffca1ba1b13b5963adbc",
+  "source_manifest_sha256": "137409668e9253da36f318254663342314426955ed1b7b59114262453bf519e8",
+  "binary_sha256": "c6418b4891bc3886741d79c464627d4c00c877c0bc251aaae41a498a3f4727e1",
+  "plan_sha256": "7d2d259a1ea1a2e6666beb6cca465b31c72d07d9ae8537aafd032fa1bdbafed3",
+  "job_id": "8986522.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "corrections": [
+    {
+      "path": [
+        "segment_steps"
+      ],
+      "original_expected": 2001,
+      "derived_expected": 300,
+      "observed": 300
+    },
+    {
+      "path": [
+        "cells"
+      ],
+      "original_expected": 189512,
+      "derived_expected": 159200,
+      "observed": 159200
+    }
+  ],
+  "cell_formula": "12*n^3 + 8*(n+3)^3 + 6*(n+3)*(n+6)^2",
+  "step_rule": "Advance from 0 to predeclared .15 in steps min(.0005, remaining).",
+  "scope": "Bounded pilot qualified after explicit correction of contradictory inherited bookkeeping checks. Not a convergence or 3M result.",
+  "script_sha256": "89f52c97d9fe3f0818147182f2c655a26e4a63f61c8c95781c65b1e1c9640ab5"
+}

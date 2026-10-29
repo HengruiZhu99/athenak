@@ -1,0 +1,859 @@
+{
+  "schema": 1,
+  "status": "failed",
+  "started": "2026-10-29T19:13:31.465199+00:00",
+  "job_id": "8986522.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "launcher_host": "x4018c1s0b0n0",
+  "allocation_nodes": [
+    "x4018c1s0b0n0.hsn.cm.aurora.alcf.anl.gov"
+  ],
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "00:30:00"
+  },
+  "source_manifest_sha256": "137409668e9253da36f318254663342314426955ed1b7b59114262453bf519e8",
+  "binaries": {
+    "build-sycl-mpi-v19/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive": "c6418b4891bc3886741d79c464627d4c00c877c0bc251aaae41a498a3f4727e1"
+  },
+  "plan_sha256": "7d2d259a1ea1a2e6666beb6cca465b31c72d07d9ae8537aafd032fa1bdbafed3",
+  "phase": "stability",
+  "n": 16,
+  "cases": [
+    {
+      "name": "puncture",
+      "kind": "puncture",
+      "started": "2026-10-29T19:13:42.338711+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-v19/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive",
+        "16",
+        "campaigns/stability-continuous-positive-puncture-v1/output/puncture",
+        "puncture",
+        ".15",
+        ".0005",
+        "inputs/puncture-continuous-n16.txt",
+        "-",
+        "1650",
+        ".01",
+        ".001",
+        "12",
+        "24",
+        "2"
+      ],
+      "generated_inputs": {},
+      "n": 16,
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 223.83690852602012,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "completed",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "n"
+            ],
+            "op": "eq",
+            "value": 16
+          },
+          "observed": 16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "min_lapse"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.008664590357928381,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "min_chi"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.00017357390110801527,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "diagnostics_current"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_admitted"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_surface"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.110229146649995e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_ghost"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.554312122926869e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_cfl"
+            ],
+            "op": "le",
+            "value": 0.4
+          },
+          "observed": 0.3213667346714793,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.05502972772076426,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "M_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.08966001482518395,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.04832199285489871,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "M_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.08966998904254862,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_exterior_L2"
+            ],
+            "op": "le",
+            "value": 1
+          },
+          "observed": 0.04832199285489871,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "M_exterior_L2"
+            ],
+            "op": "le",
+            "value": 1
+          },
+          "observed": 0.08966998904254862,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_pole"
+            ],
+            "op": "le",
+            "value": 0.1
+          },
+          "observed": 0.007881370390510985,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_found"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_expansion_rms"
+            ],
+            "op": "le",
+            "value": 0.001
+          },
+          "observed": 0.0003301044197739737,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_mass"
+            ],
+            "op": "ge",
+            "value": 0.33
+          },
+          "observed": 0.3333039260707482,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_mass"
+            ],
+            "op": "le",
+            "value": 0.33666666666666667
+          },
+          "observed": 0.3333039260707482,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "algebraic_projection"
+            ],
+            "op": "eq",
+            "value": "final_stage_standard"
+          },
+          "observed": "final_stage_standard",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_schema"
+            ],
+            "op": "eq",
+            "value": "HYP3D_MPI_V11"
+          },
+          "observed": "HYP3D_MPI_V11",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_angular_stencil"
+            ],
+            "op": "eq",
+            "value": "cross_face_centered5"
+          },
+          "observed": "cross_face_centered5",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_epsilon"
+            ],
+            "op": "eq",
+            "value": 2.0
+          },
+          "observed": 2,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_degree"
+            ],
+            "op": "eq",
+            "value": 7
+          },
+          "observed": 7,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_header_bytes"
+            ],
+            "op": "eq",
+            "value": 152
+          },
+          "observed": 152,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_derivative"
+            ],
+            "op": "eq",
+            "value": "sampled_native_numerator7"
+          },
+          "observed": "sampled_native_numerator7",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_radial_nodes"
+            ],
+            "op": "eq",
+            "value": 7
+          },
+          "observed": 7,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_bulk_derivative_order"
+            ],
+            "op": "eq",
+            "value": 4
+          },
+          "observed": 4,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_radial_closure"
+            ],
+            "op": "eq",
+            "value": "donor_seven_last3"
+          },
+          "observed": "donor_seven_last3",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_radial_bulk_rows"
+            ],
+            "op": "eq",
+            "value": 3
+          },
+          "observed": 3,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "t"
+            ],
+            "op": "eq",
+            "value": 0.15
+          },
+          "observed": 0.15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "dt"
+            ],
+            "op": "eq",
+            "value": 0.0005
+          },
+          "observed": 0.0005,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "steps"
+            ],
+            "op": "eq",
+            "value": 300
+          },
+          "observed": 300,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "segment_steps"
+            ],
+            "op": "eq",
+            "value": 2001
+          },
+          "observed": 300,
+          "passed": false
+        },
+        {
+          "check": {
+            "path": [
+              "start_time"
+            ],
+            "op": "eq",
+            "value": 0.0
+          },
+          "observed": 0,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_lmax"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_ntheta"
+            ],
+            "op": "eq",
+            "value": 24
+          },
+          "observed": 24,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_nphi"
+            ],
+            "op": "eq",
+            "value": 48
+          },
+          "observed": 48,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_complete_surface"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_determinant_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.3322676295501878e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_tracefree_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.9984014443252818e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_cfl_max"
+            ],
+            "op": "le",
+            "value": 2.7
+          },
+          "observed": 0.38144684889139013,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "interpatch_interpolation"
+            ],
+            "op": "eq",
+            "value": "logical_inner_transition"
+          },
+          "observed": "logical_inner_transition",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "evolved_overlap"
+            ],
+            "op": "eq",
+            "value": 3
+          },
+          "observed": 3,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "nominal_cells"
+            ],
+            "op": "eq",
+            "value": 106496
+          },
+          "observed": 106496,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "cells"
+            ],
+            "op": "eq",
+            "value": 189512
+          },
+          "observed": 159200,
+          "passed": false
+        },
+        {
+          "check": {
+            "path": [
+              "shell_geometry"
+            ],
+            "op": "eq",
+            "value": "spherical_equiangular"
+          },
+          "observed": "spherical_equiangular",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "core_half_width"
+            ],
+            "op": "eq",
+            "value": 0.18
+          },
+          "observed": 0.18,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "shell_inner_radius"
+            ],
+            "op": "eq",
+            "value": 0.16
+          },
+          "observed": 0.16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "overlap_quadrature"
+            ],
+            "op": "eq",
+            "value": "radial_quintic_partition"
+          },
+          "observed": "radial_quintic_partition",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mesh_blocks"
+            ],
+            "op": "eq",
+            "value": 26
+          },
+          "observed": 26,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "cartesian_core_subdivisions"
+            ],
+            "op": "eq",
+            "value": 2
+          },
+          "observed": 2,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "cartesian_seams"
+            ],
+            "op": "eq",
+            "value": "uniform_global_stencil"
+          },
+          "observed": "uniform_global_stencil",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "positive_variables"
+            ],
+            "op": "eq",
+            "value": "log_chi_log_lapse_rk_and_ko"
+          },
+          "observed": "log_chi_log_lapse_rk_and_ko",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "physical_lapse_floor"
+            ],
+            "op": "eq",
+            "value": 1e-10
+          },
+          "observed": 1e-10,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "lapse_floor_node_interventions"
+            ],
+            "op": "eq",
+            "value": 0
+          },
+          "observed": 0,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "cells"
+            ],
+            "op": "eq",
+            "value": 159200
+          },
+          "observed": 159200,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "timing_per_rank_exclusive"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        }
+      ],
+      "report_status": "completed",
+      "status": "failed",
+      "artifacts": {
+        "campaigns/stability-continuous-positive-puncture-v1/output/puncture.report.json": {
+          "sha256": "c1e50c2ea1c7c74cc67cb7046c51130b5e940176fa53c87d22daad1476903a63",
+          "bytes": 4819
+        },
+        "campaigns/stability-continuous-positive-puncture-v1/output/puncture.history.csv": {
+          "sha256": "f366d995b5bd9649062695acf8aa6fe2ba9ebf2b375398e88e9ea534885d145a",
+          "bytes": 11707
+        },
+        "campaigns/stability-continuous-positive-puncture-v1/output/puncture.checkpoint": {
+          "sha256": "9cc9279a8c6ad6b69d748b67d7b5f535f0d8a9dbfe1bffca1ba1b13b5963adbc",
+          "bytes": 79725208
+        },
+        "campaigns/stability-continuous-positive-puncture-v1/output/puncture.checkpoint.horizon-seed.txt": {
+          "sha256": "0777f336bf8bf887bdd1c50aa4fb05e21afca726d4d9ce5f2400ef498f4952d3",
+          "bytes": 88
+        },
+        "campaigns/stability-continuous-positive-puncture-v1/output/puncture.fastflow.horizon_summary_0.txt": {
+          "sha256": "767c424b15e65ad03699b7b9d8ca283d7acdc2c85a5bab79b31a93ac1a2e16f4",
+          "bytes": 3780
+        },
+        "campaigns/stability-continuous-positive-puncture-v1/output/puncture.fastflow.horizon_shape_0.txt": {
+          "sha256": "4fe585e87b96fb5f56e0b47a88cef4ff96c2b9d44afc6d431763385351191f8e",
+          "bytes": 36867
+        },
+        "campaigns/stability-continuous-positive-puncture-v1/output/puncture.log": {
+          "sha256": "3107a6e41da89d1cb144256181c2b0c3ed80cdba67294010901187524bde2c85",
+          "bytes": 1234
+        }
+      },
+      "finished": "2026-10-29T19:17:30.330681+00:00"
+    }
+  ],
+  "storage_at_start": {
+    "bytes": 4149244416,
+    "entries": 30299,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 100000000,
+    "planned_bytes": 200000000,
+    "headroom_bytes": 550755584
+  },
+  "affinity": {
+    "returncode": 0,
+    "timed_out": false,
+    "storage_error": null,
+    "elapsed_seconds": 0.32007360295392573,
+    "records": [
+      {
+        "host": "x4018c1s0b0n0",
+        "rank": 3,
+        "mask": "1.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4018c1s0b0n0",
+        "rank": 1,
+        "mask": "0.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4018c1s0b0n0",
+        "rank": 0,
+        "mask": "0.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4018c1s0b0n0",
+        "rank": 11,
+        "mask": "5.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4018c1s0b0n0",
+        "rank": 5,
+        "mask": "2.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4018c1s0b0n0",
+        "rank": 4,
+        "mask": "2.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4018c1s0b0n0",
+        "rank": 7,
+        "mask": "3.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4018c1s0b0n0",
+        "rank": 2,
+        "mask": "1.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4018c1s0b0n0",
+        "rank": 8,
+        "mask": "4.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4018c1s0b0n0",
+        "rank": 10,
+        "mask": "5.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4018c1s0b0n0",
+        "rank": 6,
+        "mask": "3.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4018c1s0b0n0",
+        "rank": 9,
+        "mask": "4.1",
+        "hierarchy": "COMPOSITE"
+      }
+    ],
+    "passed": true
+  },
+  "stop_reason_status": "failed",
+  "finished": "2026-10-29T19:17:30.330701+00:00",
+  "elapsed_seconds": 238.86551183299161,
+  "storage_at_finish": {
+    "bytes": 4211926891,
+    "entries": 30309
+  }
+}

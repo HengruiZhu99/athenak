@@ -1,6 +1,6 @@
 # V11 candidate: continuous core and logarithmic positive variables
 
-Experimental candidate, not yet a duration-stability admission.
+Experimental V11 candidate with bounded GPU pilots; no long-time or convergence admission.
 
 ## Captured V10 failure
 
@@ -65,3 +65,34 @@ plus mesh scheme 4 and a 16-byte <dii> positive-variable descriptor (1e-10,1,0).
 Physical state is stored; chi/lapse compensation uses logarithmic coordinates.
 Old checkpoint schemas are rejected. Reproduce MPI checks with
 `tst/hyperbolic_shift_3d/test_continuous_positive_mpi.py`.
+
+## GPU pilots and performance
+
+GPU preflight v2 passed 257 gates and 39 artifacts, including bitwise restart.
+The V11 puncture pilot completed 300 steps to coordinate .15=0.45M, beyond V10's
+negative-chi failure at .2985M. Minimum chi 0.000173574, minimum conformal lapse
+0.00866459, zero floor interventions, null closure <=1.56e-15. Horizon mass
+relative error is 8.82e-5; exterior H/M norms are .04832/.08967. Pole and clock
+residuals reach .00788/.01017, so exact null closure is not a claim of full scri
+regularity or evolution convergence.
+
+Minkowski completed the same 300 steps to coordinate .15: state drift 2.11e-13,
+H/M norms 2.15e-13/2.81e-13, null closure <=1e-15, zero floor interventions.
+Both original pilot workers flagged inherited, contradictory step/cell metadata
+checks. Original failed records are retained. Separate pilot-metadata-audit.json
+files derive the correct 300/159200 counts from the predeclared target and V11
+mesh and qualify the numerical results without changing any numerical criterion.
+
+Puncture took 222.70 s, Minkowski 192.72 s, including startup. Puncture horizon
+sampling every .01 cost 29.2 s. On the longest measured rank, bulk RHS was 16.2%,
+MPI communication 37.5%, boundary work 26.1%, diagnostics 13.1%, bulk halo fill
+2.2%, and other/startup 4.9%. Timers are exclusive. MPI timing currently groups
+volume, surface, and angular-residual collectives; it does not isolate which
+kind dominates. Full-state Allgather and repeated surface collectives remain.
+The halo cleanup and 16% cell reduction have not established a substantial wall-
+time speedup, and bulk RHS does not yet dominate. Sparse donor exchange, fewer
+surface collectives, and balancing the costly outer-shell kernels are candidates
+for subsequent measured optimization. A 3M run is estimated at 22–25 minutes at
+this resolution if stable, excluding queue time.
+
+![Puncture positivity and exclusive cost](diagnosis-and-cost.png)

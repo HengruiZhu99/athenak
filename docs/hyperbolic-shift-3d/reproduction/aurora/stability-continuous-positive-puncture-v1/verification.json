@@ -1,0 +1,968 @@
+{
+  "verification_passed": true,
+  "scientific_checks_passed": false,
+  "job_id": "8986522.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "scheduler_state": "F",
+  "scheduler_exit_status": 1,
+  "worker_status": "failed",
+  "report": {
+    "status": "completed",
+    "error": "",
+    "kind": "puncture",
+    "backend": "SYCL",
+    "mpi_size": 12,
+    "n": 16,
+    "cells": 159200,
+    "algebraic_projection": "final_stage_standard",
+    "checkpoint_schema": "HYP3D_MPI_V11",
+    "scri_angular_stencil": "cross_face_centered5",
+    "scri_dissipation_scheme": "degree7_weighted_negative_square",
+    "scri_dissipation_epsilon": 2,
+    "scri_dissipation_degree": 7,
+    "scri_dissipation_spectral_upper_bound": 23.840428055711882,
+    "scri_dissipation_cfl": 0.38144684889139013,
+    "scri_dissipation_cfl_max": 0.38144684889139013,
+    "scri_dissipation_max_neighbors": 79,
+    "scri_dissipation_max_incoming": 85,
+    "scri_dissipation_max_moment_error": 7.901665433074356e-16,
+    "scri_dissipation_max_coefficient_l1": 3.213389927495406,
+    "checkpoint_header_bytes": 152,
+    "scri_normal_derivative": "sampled_native_numerator7",
+    "scri_normal_radial_nodes": 7,
+    "scri_normal_bulk_derivative_order": 4,
+    "evolved_overlap": 3,
+    "nominal_cells": 106496,
+    "cartesian_seams": "uniform_global_stencil",
+    "positive_variables": "log_chi_log_lapse_rk_and_ko",
+    "physical_lapse_floor": 1e-10,
+    "shell_geometry": "spherical_equiangular",
+    "core_half_width": 0.18,
+    "shell_inner_radius": 0.16,
+    "overlap_quadrature": "radial_quintic_partition",
+    "interpatch_interpolation": "logical_inner_transition",
+    "mesh_topology": "cartesian_2x2x2_shells3",
+    "cartesian_core_subdivisions": 2,
+    "mesh_blocks": 26,
+    "scri_radial_closure": "donor_seven_last3",
+    "scri_radial_bulk_rows": 3,
+    "minimum_owned_cells": 13266,
+    "maximum_owned_cells": 13267,
+    "t": 0.15,
+    "start_time": 0,
+    "target_time": 0.15,
+    "t_over_M": 0.44999999999999996,
+    "dt": 0.0005,
+    "steps": 300,
+    "segment_steps": 300,
+    "seconds": 222.7029215,
+    "checkpoint_written": true,
+    "checkpoint_admitted": true,
+    "diagnostic_time": 0.15,
+    "diagnostics_current": true,
+    "constraint_measure": "normalized compactified Cartesian coordinate volume",
+    "exterior_method": "coordinate sphere at mean fast-flow radius for spherical-data comparison",
+    "initial_rhs": 51.80692290843453,
+    "last_rhs": 34.72317005255338,
+    "min_chi": 0.00017357390110801527,
+    "min_lapse": 0.008664590357928381,
+    "max_determinant_residual": 1.3322676295501878e-15,
+    "max_tracefree_residual": 1.9984014443252818e-15,
+    "max_state_deviation": 3.5935876345840447,
+    "max_null_surface": 1.110229146649995e-15,
+    "max_null_ghost": 1.554312122926869e-15,
+    "max_null_before_ghost_closure": 1.960855164053926e-08,
+    "max_pole": 0.007881370390510985,
+    "max_clock": 0.010173155141114245,
+    "max_cfl": 0.3213667346714793,
+    "min_speed_gap": 0.8250862088211262,
+    "H_L2": 0.05502972772076426,
+    "M_L2": 0.08966001482518395,
+    "M_physical_L2": 0.023295047386221197,
+    "H_exterior_L2": 0.04832199285489871,
+    "M_exterior_L2": 0.08966998904254862,
+    "Mr_L2": 0.09621804255870624,
+    "Mr_exterior_L2": 0.09607574460434802,
+    "Theta_exterior_L2": 0.0010119633187672028,
+    "Zr_L2": 0.0097937593117921,
+    "Zr_exterior_L2": 0.009795154990646832,
+    "exterior_coordinate_cutoff": 0.06546042043417752,
+    "horizon_found": true,
+    "horizon_radius": 0.06546042043417752,
+    "horizon_areal_radius": 0.6666078521414964,
+    "horizon_mass": 0.3333039260707482,
+    "horizon_expansion_rms": 0.0003301044197739737,
+    "horizon_irreducible_mass": 0.3333039260707482,
+    "horizon_trial_radius": 0.06546042043417752,
+    "horizon_trial_expansion_rms": 0.0003301044197739737,
+    "horizon_complete_surface": true,
+    "horizon_iterations": 86,
+    "horizon_seed_radius": 0.07,
+    "horizon_seed_loaded": false,
+    "horizon_expansion_tolerance": 0.001,
+    "horizon_lmax": 12,
+    "horizon_ntheta": 24,
+    "horizon_nphi": 48,
+    "lapse_floor_node_interventions": 0,
+    "lapse_floor_max_radius": 0,
+    "bulk_halo_seconds": 4.871298632999989,
+    "timing_per_rank_exclusive": true,
+    "rhs_seconds": 35.98487577200003,
+    "exchange_seconds": 83.92209932600001,
+    "closure_seconds": 58.08856344399971,
+    "diagnostic_seconds": 29.208428897999973,
+    "phase_seconds_by_rank": [
+      [
+        15.634362967999982,
+        83.4130431719997,
+        58.07376141700017,
+        29.208423754999973,
+        1.1290737949999996
+      ],
+      [
+        15.824891501000007,
+        80.16237071700003,
+        58.051011933000126,
+        29.208423902999982,
+        1.1171840930000012
+      ],
+      [
+        15.643002840999989,
+        80.68906242100024,
+        58.067568170999905,
+        29.20842453199995,
+        1.1988028419999996
+      ],
+      [
+        15.589923054000012,
+        83.92209932600001,
+        58.045416890999924,
+        29.20842649199999,
+        1.2848337490000012
+      ],
+      [
+        15.60005253,
+        83.55868089200031,
+        58.08856344399971,
+        29.208426783999993,
+        0.9157316670000005
+      ],
+      [
+        15.527883976,
+        80.33125186899997,
+        58.04920276799991,
+        29.208427033000042,
+        0.44692668299999977
+      ],
+      [
+        35.49536411699996,
+        80.43259563100021,
+        58.07009693599983,
+        29.208420680999975,
+        4.039146186000005
+      ],
+      [
+        35.98132638900005,
+        83.76600821999999,
+        58.04937983000017,
+        29.20842594899997,
+        4.080500601000002
+      ],
+      [
+        35.98487577200003,
+        83.57757155699997,
+        58.07976832099982,
+        29.208426454000005,
+        4.871298632999989
+      ],
+      [
+        15.704448686999994,
+        80.31528519499977,
+        58.03958826000005,
+        29.208428897999973,
+        1.3989628790000002
+      ],
+      [
+        15.70418864199997,
+        80.70395111099985,
+        58.07995730400012,
+        29.208427535000013,
+        1.3014922640000002
+      ],
+      [
+        15.62082236900001,
+        83.91131861699961,
+        58.058684670000346,
+        29.20842720400003,
+        1.0088124969999996
+      ]
+    ]
+  },
+  "checkpoint": {
+    "magic": "HYP3D_MPI_V11",
+    "n": 16,
+    "nf": 31,
+    "kind": 2,
+    "admitted": true,
+    "cells": 159200,
+    "nominal_cells": 106496,
+    "surface_size": 47616,
+    "steps": 300,
+    "time": 0.15,
+    "dt": 0.0005,
+    "header_bytes": 152,
+    "scri_dissipation_epsilon": 2.0,
+    "scri_dissipation_degree": 7,
+    "base_except_magic_sha256": "63922e4885a89ddc1374d63afe969440d87a804d8ea9b3db28a63d36cdc20cdd",
+    "arrays": [
+      {
+        "name": "volume_state",
+        "doubles": 4935200,
+        "sha256": "e21398aea642dcdc9706ccf2631549a886dfa3059b4b345b47f41aabf54b1b0b"
+      },
+      {
+        "name": "volume_compensation",
+        "doubles": 4935200,
+        "sha256": "a10c754951c80aae4f8aec2415868b34968849504d47b3eafaffaa94697d7719"
+      },
+      {
+        "name": "scri_state",
+        "doubles": 47616,
+        "sha256": "d6d12e922a50d8124c7396d2517861c95086aa9b9a1d7536c6ecebe224d6810e"
+      },
+      {
+        "name": "scri_compensation",
+        "doubles": 47616,
+        "sha256": "50682e39fbd5995a5786be153f1e766a898077da23079ebaac84cbf46ce9e30f"
+      }
+    ],
+    "bytes": 79725208,
+    "sha256": "9cc9279a8c6ad6b69d748b67d7b5f535f0d8a9dbfe1bffca1ba1b13b5963adbc",
+    "scri_normal_derivative": "sampled_native_numerator7",
+    "scri_normal_radial_nodes": 7,
+    "scri_normal_bulk_derivative_order": 4,
+    "scri_radial_closure": "donor_seven_last3",
+    "scri_radial_bulk_rows": 3,
+    "interpatch_interpolation": "logical_inner_transition",
+    "evolved_overlap": 3,
+    "mesh_topology": "cartesian_2x2x2_shells3",
+    "cartesian_core_subdivisions": 2,
+    "mesh_blocks": 26,
+    "shell_geometry": "spherical_equiangular",
+    "core_half_width": 0.18,
+    "shell_inner_radius": 0.16,
+    "overlap_quadrature": "radial_quintic_partition",
+    "cartesian_seams": "uniform_global_stencil",
+    "positive_variables": "log_chi_log_lapse_rk_and_ko",
+    "physical_lapse_floor": 1e-10
+  },
+  "checks": [
+    {
+      "check": {
+        "path": [
+          "status"
+        ],
+        "op": "eq",
+        "value": "completed"
+      },
+      "observed": "completed",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "backend"
+        ],
+        "op": "eq",
+        "value": "SYCL"
+      },
+      "observed": "SYCL",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "mpi_size"
+        ],
+        "op": "eq",
+        "value": 12
+      },
+      "observed": 12,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "n"
+        ],
+        "op": "eq",
+        "value": 16
+      },
+      "observed": 16,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "min_lapse"
+        ],
+        "op": "ge",
+        "value": 1e-12
+      },
+      "observed": 0.008664590357928381,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "min_chi"
+        ],
+        "op": "ge",
+        "value": 1e-12
+      },
+      "observed": 0.00017357390110801527,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "diagnostics_current"
+        ],
+        "op": "eq",
+        "value": true
+      },
+      "observed": true,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "checkpoint_admitted"
+        ],
+        "op": "eq",
+        "value": true
+      },
+      "observed": true,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "max_null_surface"
+        ],
+        "op": "le",
+        "value": 1e-12
+      },
+      "observed": 1.110229146649995e-15,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "max_null_ghost"
+        ],
+        "op": "le",
+        "value": 1e-12
+      },
+      "observed": 1.554312122926869e-15,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "max_cfl"
+        ],
+        "op": "le",
+        "value": 0.4
+      },
+      "observed": 0.3213667346714793,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "H_L2"
+        ],
+        "op": "finite"
+      },
+      "observed": 0.05502972772076426,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "M_L2"
+        ],
+        "op": "finite"
+      },
+      "observed": 0.08966001482518395,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "H_exterior_L2"
+        ],
+        "op": "finite"
+      },
+      "observed": 0.04832199285489871,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "M_exterior_L2"
+        ],
+        "op": "finite"
+      },
+      "observed": 0.08966998904254862,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "H_exterior_L2"
+        ],
+        "op": "le",
+        "value": 1
+      },
+      "observed": 0.04832199285489871,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "M_exterior_L2"
+        ],
+        "op": "le",
+        "value": 1
+      },
+      "observed": 0.08966998904254862,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "max_pole"
+        ],
+        "op": "le",
+        "value": 0.1
+      },
+      "observed": 0.007881370390510985,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "horizon_found"
+        ],
+        "op": "eq",
+        "value": true
+      },
+      "observed": true,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "horizon_expansion_rms"
+        ],
+        "op": "le",
+        "value": 0.001
+      },
+      "observed": 0.0003301044197739737,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "horizon_mass"
+        ],
+        "op": "ge",
+        "value": 0.33
+      },
+      "observed": 0.3333039260707482,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "horizon_mass"
+        ],
+        "op": "le",
+        "value": 0.33666666666666667
+      },
+      "observed": 0.3333039260707482,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "algebraic_projection"
+        ],
+        "op": "eq",
+        "value": "final_stage_standard"
+      },
+      "observed": "final_stage_standard",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "checkpoint_schema"
+        ],
+        "op": "eq",
+        "value": "HYP3D_MPI_V11"
+      },
+      "observed": "HYP3D_MPI_V11",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_angular_stencil"
+        ],
+        "op": "eq",
+        "value": "cross_face_centered5"
+      },
+      "observed": "cross_face_centered5",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_dissipation_epsilon"
+        ],
+        "op": "eq",
+        "value": 2.0
+      },
+      "observed": 2,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_dissipation_degree"
+        ],
+        "op": "eq",
+        "value": 7
+      },
+      "observed": 7,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "checkpoint_header_bytes"
+        ],
+        "op": "eq",
+        "value": 152
+      },
+      "observed": 152,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_normal_derivative"
+        ],
+        "op": "eq",
+        "value": "sampled_native_numerator7"
+      },
+      "observed": "sampled_native_numerator7",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_normal_radial_nodes"
+        ],
+        "op": "eq",
+        "value": 7
+      },
+      "observed": 7,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_normal_bulk_derivative_order"
+        ],
+        "op": "eq",
+        "value": 4
+      },
+      "observed": 4,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_radial_closure"
+        ],
+        "op": "eq",
+        "value": "donor_seven_last3"
+      },
+      "observed": "donor_seven_last3",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_radial_bulk_rows"
+        ],
+        "op": "eq",
+        "value": 3
+      },
+      "observed": 3,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "t"
+        ],
+        "op": "eq",
+        "value": 0.15
+      },
+      "observed": 0.15,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "dt"
+        ],
+        "op": "eq",
+        "value": 0.0005
+      },
+      "observed": 0.0005,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "steps"
+        ],
+        "op": "eq",
+        "value": 300
+      },
+      "observed": 300,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "segment_steps"
+        ],
+        "op": "eq",
+        "value": 2001
+      },
+      "observed": 300,
+      "passed": false
+    },
+    {
+      "check": {
+        "path": [
+          "start_time"
+        ],
+        "op": "eq",
+        "value": 0.0
+      },
+      "observed": 0,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "horizon_lmax"
+        ],
+        "op": "eq",
+        "value": 12
+      },
+      "observed": 12,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "horizon_ntheta"
+        ],
+        "op": "eq",
+        "value": 24
+      },
+      "observed": 24,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "horizon_nphi"
+        ],
+        "op": "eq",
+        "value": 48
+      },
+      "observed": 48,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "horizon_complete_surface"
+        ],
+        "op": "eq",
+        "value": true
+      },
+      "observed": true,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "max_determinant_residual"
+        ],
+        "op": "le",
+        "value": 1e-12
+      },
+      "observed": 1.3322676295501878e-15,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "max_tracefree_residual"
+        ],
+        "op": "le",
+        "value": 1e-12
+      },
+      "observed": 1.9984014443252818e-15,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_dissipation_cfl_max"
+        ],
+        "op": "le",
+        "value": 2.7
+      },
+      "observed": 0.38144684889139013,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "interpatch_interpolation"
+        ],
+        "op": "eq",
+        "value": "logical_inner_transition"
+      },
+      "observed": "logical_inner_transition",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "evolved_overlap"
+        ],
+        "op": "eq",
+        "value": 3
+      },
+      "observed": 3,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "nominal_cells"
+        ],
+        "op": "eq",
+        "value": 106496
+      },
+      "observed": 106496,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "cells"
+        ],
+        "op": "eq",
+        "value": 189512
+      },
+      "observed": 159200,
+      "passed": false
+    },
+    {
+      "check": {
+        "path": [
+          "shell_geometry"
+        ],
+        "op": "eq",
+        "value": "spherical_equiangular"
+      },
+      "observed": "spherical_equiangular",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "core_half_width"
+        ],
+        "op": "eq",
+        "value": 0.18
+      },
+      "observed": 0.18,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "shell_inner_radius"
+        ],
+        "op": "eq",
+        "value": 0.16
+      },
+      "observed": 0.16,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "overlap_quadrature"
+        ],
+        "op": "eq",
+        "value": "radial_quintic_partition"
+      },
+      "observed": "radial_quintic_partition",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "mesh_blocks"
+        ],
+        "op": "eq",
+        "value": 26
+      },
+      "observed": 26,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "cartesian_core_subdivisions"
+        ],
+        "op": "eq",
+        "value": 2
+      },
+      "observed": 2,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "cartesian_seams"
+        ],
+        "op": "eq",
+        "value": "uniform_global_stencil"
+      },
+      "observed": "uniform_global_stencil",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "positive_variables"
+        ],
+        "op": "eq",
+        "value": "log_chi_log_lapse_rk_and_ko"
+      },
+      "observed": "log_chi_log_lapse_rk_and_ko",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "physical_lapse_floor"
+        ],
+        "op": "eq",
+        "value": 1e-10
+      },
+      "observed": 1e-10,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "lapse_floor_node_interventions"
+        ],
+        "op": "eq",
+        "value": 0
+      },
+      "observed": 0,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "cells"
+        ],
+        "op": "eq",
+        "value": 159200
+      },
+      "observed": 159200,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "timing_per_rank_exclusive"
+        ],
+        "op": "eq",
+        "value": true
+      },
+      "observed": true,
+      "passed": true
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "campaigns/stability-continuous-positive-puncture-v1/output/puncture.report.json",
+      "sha256": "c1e50c2ea1c7c74cc67cb7046c51130b5e940176fa53c87d22daad1476903a63",
+      "bytes": 4819
+    },
+    {
+      "path": "campaigns/stability-continuous-positive-puncture-v1/output/puncture.history.csv",
+      "sha256": "f366d995b5bd9649062695acf8aa6fe2ba9ebf2b375398e88e9ea534885d145a",
+      "bytes": 11707
+    },
+    {
+      "path": "campaigns/stability-continuous-positive-puncture-v1/output/puncture.checkpoint",
+      "sha256": "9cc9279a8c6ad6b69d748b67d7b5f535f0d8a9dbfe1bffca1ba1b13b5963adbc",
+      "bytes": 79725208
+    },
+    {
+      "path": "campaigns/stability-continuous-positive-puncture-v1/output/puncture.checkpoint.horizon-seed.txt",
+      "sha256": "0777f336bf8bf887bdd1c50aa4fb05e21afca726d4d9ce5f2400ef498f4952d3",
+      "bytes": 88
+    },
+    {
+      "path": "campaigns/stability-continuous-positive-puncture-v1/output/puncture.fastflow.horizon_summary_0.txt",
+      "sha256": "767c424b15e65ad03699b7b9d8ca283d7acdc2c85a5bab79b31a93ac1a2e16f4",
+      "bytes": 3780
+    },
+    {
+      "path": "campaigns/stability-continuous-positive-puncture-v1/output/puncture.fastflow.horizon_shape_0.txt",
+      "sha256": "4fe585e87b96fb5f56e0b47a88cef4ff96c2b9d44afc6d431763385351191f8e",
+      "bytes": 36867
+    },
+    {
+      "path": "campaigns/stability-continuous-positive-puncture-v1/output/puncture.log",
+      "sha256": "3107a6e41da89d1cb144256181c2b0c3ed80cdba67294010901187524bde2c85",
+      "bytes": 1234
+    }
+  ],
+  "source_manifest_sha256": "137409668e9253da36f318254663342314426955ed1b7b59114262453bf519e8",
+  "binary_sha256": "c6418b4891bc3886741d79c464627d4c00c877c0bc251aaae41a498a3f4727e1",
+  "plan_sha256": "7d2d259a1ea1a2e6666beb6cca465b31c72d07d9ae8537aafd032fa1bdbafed3",
+  "script_sha256": "0f70a66e5ea1ca4e803266c072b6b411c9abe8e18eab02ecacac738f9b540b12"
+}

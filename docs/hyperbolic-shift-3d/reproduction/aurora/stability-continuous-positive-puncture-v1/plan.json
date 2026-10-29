@@ -1,0 +1,489 @@
+{
+  "schema": 1,
+  "reviewed": true,
+  "phase": "stability",
+  "n": 16,
+  "low_resolution_n": 16,
+  "admission": "admissions/preflight-continuous-positive-v2.json",
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "00:30:00"
+  },
+  "storage": {
+    "limit_bytes": 5000000000,
+    "planned_new_bytes": 200000000,
+    "atomic_checkpoint_reserve_bytes": 100000000
+  },
+  "worker_seconds": 1710,
+  "output_dir": "campaigns/stability-continuous-positive-puncture-v1/output",
+  "commands": [
+    {
+      "name": "puncture",
+      "kind": "puncture",
+      "executable": "build-sycl-mpi-v19/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive",
+      "args": [
+        "16",
+        "campaigns/stability-continuous-positive-puncture-v1/output/puncture",
+        "puncture",
+        ".15",
+        ".0005",
+        "inputs/puncture-continuous-n16.txt",
+        "-",
+        "@WALL_SECONDS@",
+        ".01",
+        ".001",
+        "12",
+        "24",
+        "2"
+      ],
+      "timeout_seconds": 1680,
+      "report": "campaigns/stability-continuous-positive-puncture-v1/output/puncture.report.json",
+      "artifacts": [
+        "campaigns/stability-continuous-positive-puncture-v1/output/puncture.report.json",
+        "campaigns/stability-continuous-positive-puncture-v1/output/puncture.history.csv",
+        "campaigns/stability-continuous-positive-puncture-v1/output/puncture.checkpoint",
+        "campaigns/stability-continuous-positive-puncture-v1/output/puncture.checkpoint.horizon-seed.txt",
+        "campaigns/stability-continuous-positive-puncture-v1/output/puncture.fastflow.horizon_summary_0.txt",
+        "campaigns/stability-continuous-positive-puncture-v1/output/puncture.fastflow.horizon_shape_0.txt",
+        "campaigns/stability-continuous-positive-puncture-v1/output/puncture.failed-stage.bin",
+        "campaigns/stability-continuous-positive-puncture-v1/output/puncture.log"
+      ],
+      "inputs": [
+        "inputs/puncture-continuous-n16.txt"
+      ],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "n"
+          ],
+          "op": "eq",
+          "value": 16
+        },
+        {
+          "path": [
+            "min_lapse"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "min_chi"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "diagnostics_current"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_cfl"
+          ],
+          "op": "le",
+          "value": 0.4
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "H_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "H_exterior_L2"
+          ],
+          "op": "le",
+          "value": 1
+        },
+        {
+          "path": [
+            "M_exterior_L2"
+          ],
+          "op": "le",
+          "value": 1
+        },
+        {
+          "path": [
+            "max_pole"
+          ],
+          "op": "le",
+          "value": 0.1
+        },
+        {
+          "path": [
+            "horizon_found"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "horizon_expansion_rms"
+          ],
+          "op": "le",
+          "value": 0.001
+        },
+        {
+          "path": [
+            "horizon_mass"
+          ],
+          "op": "ge",
+          "value": 0.33
+        },
+        {
+          "path": [
+            "horizon_mass"
+          ],
+          "op": "le",
+          "value": 0.33666666666666667
+        },
+        {
+          "path": [
+            "algebraic_projection"
+          ],
+          "op": "eq",
+          "value": "final_stage_standard"
+        },
+        {
+          "path": [
+            "checkpoint_schema"
+          ],
+          "op": "eq",
+          "value": "HYP3D_MPI_V11"
+        },
+        {
+          "path": [
+            "scri_angular_stencil"
+          ],
+          "op": "eq",
+          "value": "cross_face_centered5"
+        },
+        {
+          "path": [
+            "scri_dissipation_epsilon"
+          ],
+          "op": "eq",
+          "value": 2.0
+        },
+        {
+          "path": [
+            "scri_dissipation_degree"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "checkpoint_header_bytes"
+          ],
+          "op": "eq",
+          "value": 152
+        },
+        {
+          "path": [
+            "scri_normal_derivative"
+          ],
+          "op": "eq",
+          "value": "sampled_native_numerator7"
+        },
+        {
+          "path": [
+            "scri_normal_radial_nodes"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "scri_normal_bulk_derivative_order"
+          ],
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "path": [
+            "scri_radial_closure"
+          ],
+          "op": "eq",
+          "value": "donor_seven_last3"
+        },
+        {
+          "path": [
+            "scri_radial_bulk_rows"
+          ],
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "path": [
+            "t"
+          ],
+          "op": "eq",
+          "value": 0.15
+        },
+        {
+          "path": [
+            "dt"
+          ],
+          "op": "eq",
+          "value": 0.0005
+        },
+        {
+          "path": [
+            "steps"
+          ],
+          "op": "eq",
+          "value": 300
+        },
+        {
+          "path": [
+            "segment_steps"
+          ],
+          "op": "eq",
+          "value": 2001
+        },
+        {
+          "path": [
+            "start_time"
+          ],
+          "op": "eq",
+          "value": 0.0
+        },
+        {
+          "path": [
+            "horizon_lmax"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "horizon_ntheta"
+          ],
+          "op": "eq",
+          "value": 24
+        },
+        {
+          "path": [
+            "horizon_nphi"
+          ],
+          "op": "eq",
+          "value": 48
+        },
+        {
+          "path": [
+            "horizon_complete_surface"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "max_determinant_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_tracefree_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "scri_dissipation_cfl_max"
+          ],
+          "op": "le",
+          "value": 2.7
+        },
+        {
+          "path": [
+            "interpatch_interpolation"
+          ],
+          "op": "eq",
+          "value": "logical_inner_transition"
+        },
+        {
+          "path": [
+            "evolved_overlap"
+          ],
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "path": [
+            "nominal_cells"
+          ],
+          "op": "eq",
+          "value": 106496
+        },
+        {
+          "path": [
+            "cells"
+          ],
+          "op": "eq",
+          "value": 189512
+        },
+        {
+          "path": [
+            "shell_geometry"
+          ],
+          "op": "eq",
+          "value": "spherical_equiangular"
+        },
+        {
+          "path": [
+            "core_half_width"
+          ],
+          "op": "eq",
+          "value": 0.18
+        },
+        {
+          "path": [
+            "shell_inner_radius"
+          ],
+          "op": "eq",
+          "value": 0.16
+        },
+        {
+          "path": [
+            "overlap_quadrature"
+          ],
+          "op": "eq",
+          "value": "radial_quintic_partition"
+        },
+        {
+          "path": [
+            "mesh_blocks"
+          ],
+          "op": "eq",
+          "value": 26
+        },
+        {
+          "path": [
+            "cartesian_core_subdivisions"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "cartesian_seams"
+          ],
+          "op": "eq",
+          "value": "uniform_global_stencil"
+        },
+        {
+          "path": [
+            "positive_variables"
+          ],
+          "op": "eq",
+          "value": "log_chi_log_lapse_rk_and_ko"
+        },
+        {
+          "path": [
+            "physical_lapse_floor"
+          ],
+          "op": "eq",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "lapse_floor_node_interventions"
+          ],
+          "op": "eq",
+          "value": 0
+        },
+        {
+          "path": [
+            "cells"
+          ],
+          "op": "eq",
+          "value": 159200
+        },
+        {
+          "path": [
+            "timing_per_rank_exclusive"
+          ],
+          "op": "eq",
+          "value": true
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "V11 bounded stability pilot to coordinate t=.15=.45M, beyond V10 failure at t=.0995. Fresh initial data; no failed checkpoint resumed.",
+    "Zero floor interventions required. Stable pilot is not a trumpet or convergence result."
+  ]
+}
