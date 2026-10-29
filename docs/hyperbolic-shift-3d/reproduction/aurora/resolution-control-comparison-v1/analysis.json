@@ -1,0 +1,2466 @@
+{
+  "schema": 1,
+  "analysis_script": {
+    "path": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/aurora/resolution-control-v1/analyze.py",
+    "sha256": "2da7fb327a068c6442cf4dc0ea91225502d3c5f83d07f2dd3ef936d9aa35ebb1",
+    "bytes": 28240
+  },
+  "protocol": {
+    "path": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/aurora/resolution-control-v1/protocol.md",
+    "sha256": "ae36a28421cd8d904937e5231bdb1fbdbf978e29fa912fe14040be8b0fc2f058",
+    "bytes": 3195
+  },
+  "expected_source_manifest_sha256": "3f367265e2e627aa770d0ae78be4fac912f4c0980a09471382cf9b295c677d7f",
+  "expected_binary_sha256": "6e7553b556dd9c4f8b56f81eb0f43c15cf0517a0b81776320a9a6c6d3c29ccef",
+  "state_fit_amplitude_window": [
+    1e-10,
+    0.001
+  ],
+  "cases": [
+    {
+      "case": "original-n16",
+      "label": "n16, dt=0.0005",
+      "n": 16,
+      "dt": 0.0005,
+      "n_times_dt": 0.008,
+      "active_cells": 77824,
+      "outcome": "failed",
+      "input_directory": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/aurora/stability-v1/output",
+      "worker_record": {
+        "path": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/aurora/stability-v1/worker-status.json",
+        "sha256": "fbcee84091d2877383d8abf270fcb6372cdf28bb568d3b14fef06693278ca4b0",
+        "bytes": 8517
+      },
+      "inputs": [
+        {
+          "path": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/aurora/stability-v1/output/minkowski.history.csv",
+          "sha256": "8ddf741e336086d8b0347b60036fff03faf4169a9b22143233c86905530e2ff5",
+          "bytes": 4449,
+          "worker_bound": true
+        },
+        {
+          "path": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/aurora/stability-v1/output/minkowski.report.json",
+          "sha256": "590230abbb4e597e6bba8355a42dcb318c76a7217a2b916b8f2edead75a7b090",
+          "bytes": 1785,
+          "worker_bound": true
+        }
+      ],
+      "original_binary_evidence_verified": true,
+      "scientific_gates": {
+        "status": "failed",
+        "checks": [
+          {
+            "check": {
+              "path": [
+                "min_lapse"
+              ],
+              "op": "ge",
+              "value": 1e-12
+            },
+            "observed": 0.5000915527343748,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "min_chi"
+              ],
+              "op": "ge",
+              "value": 1e-12
+            },
+            "observed": 0.9948714241688155,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_null_surface"
+              ],
+              "op": "le",
+              "value": 1e-12
+            },
+            "observed": 1.1102230246251504e-15,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_null_ghost"
+              ],
+              "op": "le",
+              "value": 1e-12
+            },
+            "observed": 1.222138904088118e-15,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_cfl"
+              ],
+              "op": "le",
+              "value": 0.5
+            },
+            "observed": 0.3239200538644451,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "H_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 0.00022923478433789575,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "M_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 0.02119754330825022,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "H_exterior_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 0.00022923478433789575,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "M_exterior_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 0.02119754330825022,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_state_deviation"
+              ],
+              "op": "le",
+              "value": 1e-08
+            },
+            "observed": 1.0567408911906813,
+            "passed": false
+          },
+          {
+            "check": {
+              "path": [
+                "H_L2"
+              ],
+              "op": "le",
+              "value": 1e-07
+            },
+            "observed": 0.00022923478433789575,
+            "passed": false
+          },
+          {
+            "check": {
+              "path": [
+                "M_L2"
+              ],
+              "op": "le",
+              "value": 1e-07
+            },
+            "observed": 0.02119754330825022,
+            "passed": false
+          }
+        ],
+        "other_failed_checks": [
+          {
+            "check": {
+              "path": [
+                "status"
+              ],
+              "op": "eq",
+              "value": "completed"
+            },
+            "observed": "failed",
+            "passed": false
+          },
+          {
+            "check": {
+              "path": [
+                "diagnostics_current"
+              ],
+              "op": "eq",
+              "value": true
+            },
+            "observed": false,
+            "passed": false
+          },
+          {
+            "check": {
+              "path": [
+                "checkpoint_admitted"
+              ],
+              "op": "eq",
+              "value": true
+            },
+            "observed": false,
+            "passed": false
+          }
+        ],
+        "worker_case_status": "failed",
+        "worker_report_status": "failed",
+        "diagnostic_time": 0.45000000000000034,
+        "diagnostics_current": false,
+        "note": "Science thresholds apply to the report's stated diagnostics and running maxima; passing them alone does not establish endpoint completion or admit a trajectory."
+      },
+      "report_status": "failed",
+      "reached_time": 0.4895000000000004,
+      "accepted_steps": 979,
+      "failure_time": 0.4895000000000004,
+      "error": "nonpositive interpolated scri geometry",
+      "target_time": 1,
+      "numerical_breakdown_reported": true,
+      "checkpoint_admitted": false,
+      "report_diagnostic_time": 0.45000000000000034,
+      "report_diagnostics_current": false,
+      "timers_seconds": {
+        "rhs_seconds": 48.74915317699998,
+        "exchange_seconds": 30.028635129999813,
+        "closure_seconds": 242.08117593600045,
+        "diagnostic_seconds": 0.5891810430000001
+      },
+      "report_null_maxima": {
+        "max_null_surface": 1.1102230246251504e-15,
+        "max_null_ghost": 1.222138904088118e-15
+      },
+      "history_status": "present",
+      "history_rows": 10,
+      "last_history_time": 0.45000000000000034,
+      "last_history_values": {
+        "state_deviation": 1.0567408911906813,
+        "H_L2": 0.00022923478433789575,
+        "M_L2": 0.02119754330825022,
+        "Z_L2": 0.004140352258185902,
+        "null_surface": 1.1102230246251504e-15,
+        "null_ghost": 1.222138904088118e-15
+      },
+      "missing_history_values": {
+        "state_deviation": 0,
+        "H_L2": 0,
+        "M_L2": 0,
+        "Z_L2": 0,
+        "null_surface": 0,
+        "null_ghost": 0
+      },
+      "history_end_gap": 0.039500000000000035,
+      "selected_state_fit_times": [
+        0.1500000000000001,
+        0.20000000000000015,
+        0.25000000000000017,
+        0.3000000000000002,
+        0.35000000000000026
+      ],
+      "growth": {
+        "state_deviation": {
+          "points": 5,
+          "times": [
+            0.1500000000000001,
+            0.20000000000000015,
+            0.25000000000000017,
+            0.3000000000000002,
+            0.35000000000000026
+          ],
+          "values": [
+            1.549160094966191e-10,
+            5.630809194741189e-09,
+            2.0913868876002534e-07,
+            9.240555343120453e-06,
+            0.00046810978696634905
+          ],
+          "method": "unweighted OLS ln(value) = intercept + rate * coordinate_time",
+          "precision": {
+            "initial_recorded_magnitude": 0.0,
+            "minimum_fit_value_over_initial": null,
+            "samples_within_100_times_initial": null,
+            "note": "The initial residual is an empirical comparison scale, not a rigorous roundoff bound. The factor100 is a sensitivity flag only; no values are removed or floored."
+          },
+          "time_range": [
+            0.1500000000000001,
+            0.35000000000000026
+          ],
+          "value_range": [
+            1.549160094966191e-10,
+            0.00046810978696634905
+          ],
+          "status": "fitted",
+          "rate": 74.49152948025743,
+          "intercept": -33.86730940859887,
+          "rate_standard_error": 0.832212164862076,
+          "r_squared": 0.9996257058777576,
+          "log10_dynamic_range": 6.480251419792846,
+          "monotone_nondecreasing": true,
+          "conditioning": {
+            "centered_time_sum_of_squares": 0.025000000000000036,
+            "scaled_design_condition_number": 2.8284271247461903,
+            "standard_error_caveat": "OLS residual standard error is descriptive only; diagnostic samples are correlated, so this is not an independent-sample confidence interval."
+          }
+        },
+        "H_L2": {
+          "points": 5,
+          "times": [
+            0.1500000000000001,
+            0.20000000000000015,
+            0.25000000000000017,
+            0.3000000000000002,
+            0.35000000000000026
+          ],
+          "values": [
+            1.5163633472768734e-13,
+            1.3857221438685943e-12,
+            5.157719719317552e-11,
+            2.0368952377444408e-09,
+            8.469564174301853e-08
+          ],
+          "method": "unweighted OLS ln(value) = intercept + rate * coordinate_time",
+          "precision": {
+            "initial_recorded_magnitude": 7.551942288460613e-15,
+            "minimum_fit_value_over_initial": 20.07911725694568,
+            "samples_within_100_times_initial": 1,
+            "note": "The initial residual is an empirical comparison scale, not a rigorous roundoff bound. The factor100 is a sensitivity flag only; no values are removed or floored.",
+            "hamiltonian_caveat": "H combines differentiated fields and cancellation of nonzero geometric terms. Near the initial roundoff residual, log slopes can reflect cancellation or seed amplitude rather than a resolved physical constraint mode. Compare state/M/Z growth and the later H samples; R\u00b2 alone does not establish resolution."
+          },
+          "time_range": [
+            0.1500000000000001,
+            0.35000000000000026
+          ],
+          "value_range": [
+            1.5163633472768734e-13,
+            8.469564174301853e-08
+          ],
+          "status": "fitted",
+          "rate": 67.51827949032777,
+          "intercept": -40.24078452510222,
+          "rate_standard_error": 3.4455189930377794,
+          "r_squared": 0.9922481012125681,
+          "log10_dynamic_range": 5.747057784690906,
+          "monotone_nondecreasing": true,
+          "conditioning": {
+            "centered_time_sum_of_squares": 0.025000000000000036,
+            "scaled_design_condition_number": 2.8284271247461903,
+            "standard_error_caveat": "OLS residual standard error is descriptive only; diagnostic samples are correlated, so this is not an independent-sample confidence interval."
+          }
+        },
+        "M_L2": {
+          "points": 5,
+          "times": [
+            0.1500000000000001,
+            0.20000000000000015,
+            0.25000000000000017,
+            0.3000000000000002,
+            0.35000000000000026
+          ],
+          "values": [
+            2.495911918143885e-12,
+            1.0480133459832375e-10,
+            4.5661740441107605e-09,
+            2.0263321785276064e-07,
+            9.087112690489908e-06
+          ],
+          "method": "unweighted OLS ln(value) = intercept + rate * coordinate_time",
+          "precision": {
+            "initial_recorded_magnitude": 0.0,
+            "minimum_fit_value_over_initial": null,
+            "samples_within_100_times_initial": null,
+            "note": "The initial residual is an empirical comparison scale, not a rigorous roundoff bound. The factor100 is a sensitivity flag only; no values are removed or floored."
+          },
+          "time_range": [
+            0.1500000000000001,
+            0.35000000000000026
+          ],
+          "value_range": [
+            2.495911918143885e-12,
+            9.087112690489908e-06
+          ],
+          "status": "fitted",
+          "rate": 75.56502709412409,
+          "intercept": -38.07534344825251,
+          "rate_standard_error": 0.14957699374048256,
+          "r_squared": 0.9999882455025617,
+          "log10_dynamic_range": 6.561196658996511,
+          "monotone_nondecreasing": true,
+          "conditioning": {
+            "centered_time_sum_of_squares": 0.025000000000000036,
+            "scaled_design_condition_number": 2.8284271247461903,
+            "standard_error_caveat": "OLS residual standard error is descriptive only; diagnostic samples are correlated, so this is not an independent-sample confidence interval."
+          }
+        },
+        "Z_L2": {
+          "points": 5,
+          "times": [
+            0.1500000000000001,
+            0.20000000000000015,
+            0.25000000000000017,
+            0.3000000000000002,
+            0.35000000000000026
+          ],
+          "values": [
+            5.334404510516033e-13,
+            2.2403834771374515e-11,
+            9.774778782413713e-10,
+            4.3428374766705045e-08,
+            1.9488614257638355e-06
+          ],
+          "method": "unweighted OLS ln(value) = intercept + rate * coordinate_time",
+          "precision": {
+            "initial_recorded_magnitude": 0.0,
+            "minimum_fit_value_over_initial": null,
+            "samples_within_100_times_initial": null,
+            "note": "The initial residual is an empirical comparison scale, not a rigorous roundoff bound. The factor100 is a sensitivity flag only; no values are removed or floored."
+          },
+          "time_range": [
+            0.1500000000000001,
+            0.35000000000000026
+          ],
+          "value_range": [
+            5.334404510516033e-13,
+            1.9488614257638355e-06
+          ],
+          "status": "fitted",
+          "rate": 75.5839271657578,
+          "intercept": -39.621518078397145,
+          "rate_standard_error": 0.15064209388179503,
+          "r_squared": 0.9999880834686344,
+          "log10_dynamic_range": 6.562695014240664,
+          "monotone_nondecreasing": true,
+          "conditioning": {
+            "centered_time_sum_of_squares": 0.025000000000000036,
+            "scaled_design_condition_number": 2.8284271247461903,
+            "standard_error_caveat": "OLS residual standard error is descriptive only; diagnostic samples are correlated, so this is not an independent-sample confidence interval."
+          }
+        }
+      },
+      "throughput": {
+        "method": "median history delta-wall/delta-accepted-steps; first interval discarded as startup; includes diagnostics and communication",
+        "intervals": [
+          {
+            "time_start": 0.0,
+            "time_end": 0.05000000000000004,
+            "accepted_steps": 100,
+            "seconds": 34.362451207,
+            "seconds_per_step": 0.34362451207,
+            "active_cell_steps_per_second": 226479.76866139984,
+            "used": false
+          },
+          {
+            "time_start": 0.05000000000000004,
+            "time_end": 0.10000000000000007,
+            "accepted_steps": 100,
+            "seconds": 33.997513504,
+            "seconds_per_step": 0.33997513504,
+            "active_cell_steps_per_second": 228910.85840981745,
+            "used": true
+          },
+          {
+            "time_start": 0.10000000000000007,
+            "time_end": 0.1500000000000001,
+            "accepted_steps": 100,
+            "seconds": 34.01044577200001,
+            "seconds_per_step": 0.3401044577200001,
+            "active_cell_steps_per_second": 228823.81642898268,
+            "used": true
+          },
+          {
+            "time_start": 0.1500000000000001,
+            "time_end": 0.20000000000000015,
+            "accepted_steps": 100,
+            "seconds": 33.99552255900001,
+            "seconds_per_step": 0.3399552255900001,
+            "active_cell_steps_per_second": 228924.26455552984,
+            "used": true
+          },
+          {
+            "time_start": 0.20000000000000015,
+            "time_end": 0.25000000000000017,
+            "accepted_steps": 100,
+            "seconds": 34.00351853699999,
+            "seconds_per_step": 0.3400351853699999,
+            "active_cell_steps_per_second": 228870.4326739539,
+            "used": true
+          },
+          {
+            "time_start": 0.25000000000000017,
+            "time_end": 0.3000000000000002,
+            "accepted_steps": 100,
+            "seconds": 34.00087674399998,
+            "seconds_per_step": 0.3400087674399998,
+            "active_cell_steps_per_second": 228888.2154008965,
+            "used": true
+          },
+          {
+            "time_start": 0.3000000000000002,
+            "time_end": 0.35000000000000026,
+            "accepted_steps": 100,
+            "seconds": 33.993123328000024,
+            "seconds_per_step": 0.33993123328000024,
+            "active_cell_steps_per_second": 228940.42200557847,
+            "used": true
+          },
+          {
+            "time_start": 0.35000000000000026,
+            "time_end": 0.4000000000000003,
+            "accepted_steps": 100,
+            "seconds": 34.003256153999985,
+            "seconds_per_step": 0.34003256153999983,
+            "active_cell_steps_per_second": 228872.19873160633,
+            "used": true
+          },
+          {
+            "time_start": 0.4000000000000003,
+            "time_end": 0.45000000000000034,
+            "accepted_steps": 100,
+            "seconds": 33.99386712799998,
+            "seconds_per_step": 0.33993867127999977,
+            "active_cell_steps_per_second": 228935.41269359773,
+            "used": true
+          }
+        ],
+        "used_intervals": 8,
+        "median_seconds_per_step": 0.3399919512399999,
+        "median_active_cell_steps_per_second": 228899.53634538874,
+        "accepted_steps_per_interval": [
+          100
+        ],
+        "median_coordinate_interval": 0.050000000000000044,
+        "median_coordinate_time_per_wall_second": 0.0014706230526916964
+      },
+      "comparison_to_original_n16": {
+        "state_growth_rate_ratio": 1.0,
+        "node_throughput_ratio": 1.0,
+        "state_growth_rate_divided_by_n": 4.655720592516089,
+        "note": "Amplitude-window fits can use different coordinate times; ratios are not convergence orders."
+      }
+    },
+    {
+      "case": "minkowski-n24",
+      "label": "n24, dt=1/3000",
+      "n": 24,
+      "dt": 0.0003333333333333333,
+      "n_times_dt": 0.008,
+      "active_cells": 262656,
+      "outcome": "failed",
+      "input_directory": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/aurora/resolution-control-v2/output",
+      "worker_record": {
+        "path": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/aurora/resolution-control-v2/worker-status.json",
+        "sha256": "0d90d5b732fd7542a304b576eeedeaf665fb5bd12ef98086eedec1c317dd5982",
+        "bytes": 15353
+      },
+      "inputs": [
+        {
+          "path": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/aurora/resolution-control-v2/output/minkowski-n24.history.csv",
+          "sha256": "a567fd8d3f389afc4a414b738b53fdc22198eec665ff67435b406dfe9c025182",
+          "bytes": 5728,
+          "worker_bound": true
+        },
+        {
+          "path": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/aurora/resolution-control-v2/output/minkowski-n24.report.json",
+          "sha256": "c1570c4fdca35e86158642fe361bb0383daec315c178db2d01599338125e0ebd",
+          "bytes": 1809,
+          "worker_bound": true
+        }
+      ],
+      "original_binary_evidence_verified": true,
+      "scientific_gates": {
+        "status": "failed",
+        "checks": [
+          {
+            "check": {
+              "path": [
+                "min_lapse"
+              ],
+              "op": "ge",
+              "value": 1e-12
+            },
+            "observed": 0.5000406901041665,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "min_chi"
+              ],
+              "op": "ge",
+              "value": 1e-12
+            },
+            "observed": 0.9757627745694641,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_null_surface"
+              ],
+              "op": "le",
+              "value": 1e-12
+            },
+            "observed": 1.5543122344752044e-15,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_null_ghost"
+              ],
+              "op": "le",
+              "value": 1e-12
+            },
+            "observed": 1.554312234464881e-15,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_cfl"
+              ],
+              "op": "le",
+              "value": 0.5
+            },
+            "observed": 0.33349118227448915,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "H_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 0.00045451802156805317,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "M_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 0.06453160146343982,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "H_exterior_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 0.00045451802156805317,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "M_exterior_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 0.06453160146343982,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_state_deviation"
+              ],
+              "op": "le",
+              "value": 1e-08
+            },
+            "observed": 4.8742126654633875,
+            "passed": false
+          },
+          {
+            "check": {
+              "path": [
+                "H_L2"
+              ],
+              "op": "le",
+              "value": 1e-07
+            },
+            "observed": 0.00045451802156805317,
+            "passed": false
+          },
+          {
+            "check": {
+              "path": [
+                "M_L2"
+              ],
+              "op": "le",
+              "value": 1e-07
+            },
+            "observed": 0.06453160146343982,
+            "passed": false
+          }
+        ],
+        "other_failed_checks": [
+          {
+            "check": {
+              "path": [
+                "status"
+              ],
+              "op": "eq",
+              "value": "completed"
+            },
+            "observed": "failed",
+            "passed": false
+          },
+          {
+            "check": {
+              "path": [
+                "diagnostics_current"
+              ],
+              "op": "eq",
+              "value": true
+            },
+            "observed": false,
+            "passed": false
+          },
+          {
+            "check": {
+              "path": [
+                "checkpoint_admitted"
+              ],
+              "op": "eq",
+              "value": true
+            },
+            "observed": false,
+            "passed": false
+          }
+        ],
+        "worker_case_status": "failed",
+        "worker_report_status": "failed",
+        "diagnostic_time": 0.3000000000000002,
+        "diagnostics_current": false,
+        "note": "Science thresholds apply to the report's stated diagnostics and running maxima; passing them alone does not establish endpoint completion or admit a trajectory."
+      },
+      "report_status": "failed",
+      "reached_time": 0.31366666666666765,
+      "accepted_steps": 941,
+      "failure_time": 0.31366666666666765,
+      "error": "nonpositive interpolated scri geometry",
+      "target_time": 0.6,
+      "numerical_breakdown_reported": true,
+      "checkpoint_admitted": false,
+      "report_diagnostic_time": 0.3000000000000002,
+      "report_diagnostics_current": false,
+      "timers_seconds": {
+        "rhs_seconds": 47.979274699999905,
+        "exchange_seconds": 433.58560112999936,
+        "closure_seconds": 252.93453038400037,
+        "diagnostic_seconds": 0.920138443
+      },
+      "report_null_maxima": {
+        "max_null_surface": 1.5543122344752044e-15,
+        "max_null_ghost": 1.554312234464881e-15
+      },
+      "history_status": "present",
+      "history_rows": 13,
+      "last_history_time": 0.3000000000000002,
+      "last_history_values": {
+        "state_deviation": 4.8742126654633875,
+        "H_L2": 0.00045451802156805317,
+        "M_L2": 0.06453160146343982,
+        "Z_L2": 0.009798397600085114,
+        "null_surface": 1.5543122344752044e-15,
+        "null_ghost": 1.554312234464881e-15
+      },
+      "missing_history_values": {
+        "state_deviation": 0,
+        "H_L2": 0,
+        "M_L2": 0,
+        "Z_L2": 0,
+        "null_surface": 0,
+        "null_ghost": 0
+      },
+      "history_end_gap": 0.013666666666667437,
+      "selected_state_fit_times": [
+        0.10000000000000042,
+        0.12500000000000078,
+        0.1500000000000001,
+        0.17499999999999943,
+        0.19999999999999876,
+        0.2249999999999981
+      ],
+      "growth": {
+        "state_deviation": {
+          "points": 6,
+          "times": [
+            0.10000000000000042,
+            0.12500000000000078,
+            0.1500000000000001,
+            0.17499999999999943,
+            0.19999999999999876,
+            0.2249999999999981
+          ],
+          "values": [
+            3.8136328210035514e-10,
+            6.831217883465591e-09,
+            1.2298556312550687e-07,
+            2.268289203501364e-06,
+            4.236796035080166e-05,
+            0.0007862106942680201
+          ],
+          "method": "unweighted OLS ln(value) = intercept + rate * coordinate_time",
+          "precision": {
+            "initial_recorded_magnitude": 0.0,
+            "minimum_fit_value_over_initial": null,
+            "samples_within_100_times_initial": null,
+            "note": "The initial residual is an empirical comparison scale, not a rigorous roundoff bound. The factor100 is a sensitivity flag only; no values are removed or floored."
+          },
+          "time_range": [
+            0.10000000000000042,
+            0.2249999999999981
+          ],
+          "value_range": [
+            3.8136328210035514e-10,
+            0.0007862106942680201
+          ],
+          "status": "fitted",
+          "rate": 116.35150076878386,
+          "intercept": -33.3428053694517,
+          "rate_standard_error": 0.17568820560010578,
+          "r_squared": 0.9999908799490201,
+          "log10_dynamic_range": 6.31420007035139,
+          "monotone_nondecreasing": true,
+          "conditioning": {
+            "centered_time_sum_of_squares": 0.010937499999999541,
+            "scaled_design_condition_number": 2.927700218845606,
+            "standard_error_caveat": "OLS residual standard error is descriptive only; diagnostic samples are correlated, so this is not an independent-sample confidence interval."
+          }
+        },
+        "H_L2": {
+          "points": 6,
+          "times": [
+            0.10000000000000042,
+            0.12500000000000078,
+            0.1500000000000001,
+            0.17499999999999943,
+            0.19999999999999876,
+            0.2249999999999981
+          ],
+          "values": [
+            3.409647062489933e-13,
+            6.359024890384186e-13,
+            8.759777417517137e-12,
+            1.4957818799070477e-10,
+            2.6111903504307577e-09,
+            4.6327610977043556e-08
+          ],
+          "method": "unweighted OLS ln(value) = intercept + rate * coordinate_time",
+          "precision": {
+            "initial_recorded_magnitude": 1.7039809953580955e-14,
+            "minimum_fit_value_over_initial": 20.009889029151925,
+            "samples_within_100_times_initial": 2,
+            "note": "The initial residual is an empirical comparison scale, not a rigorous roundoff bound. The factor100 is a sensitivity flag only; no values are removed or floored.",
+            "hamiltonian_caveat": "H combines differentiated fields and cancellation of nonzero geometric terms. Near the initial roundoff residual, log slopes can reflect cancellation or seed amplitude rather than a resolved physical constraint mode. Compare state/M/Z growth and the later H samples; R\u00b2 alone does not establish resolution."
+          },
+          "time_range": [
+            0.10000000000000042,
+            0.2249999999999981
+          ],
+          "value_range": [
+            3.409647062489933e-13,
+            4.6327610977043556e-08
+          ],
+          "status": "fitted",
+          "rate": 99.30949931669507,
+          "intercept": -39.72542170904156,
+          "rate_standard_error": 7.571118976792713,
+          "r_squared": 0.9772795279668359,
+          "log10_dynamic_range": 5.133130478208442,
+          "monotone_nondecreasing": true,
+          "conditioning": {
+            "centered_time_sum_of_squares": 0.010937499999999541,
+            "scaled_design_condition_number": 2.927700218845606,
+            "standard_error_caveat": "OLS residual standard error is descriptive only; diagnostic samples are correlated, so this is not an independent-sample confidence interval."
+          }
+        },
+        "M_L2": {
+          "points": 6,
+          "times": [
+            0.10000000000000042,
+            0.12500000000000078,
+            0.1500000000000001,
+            0.17499999999999943,
+            0.19999999999999876,
+            0.2249999999999981
+          ],
+          "values": [
+            4.186599469699603e-12,
+            6.983922401010385e-11,
+            1.1923251672224e-09,
+            2.074916077416516e-08,
+            3.666504901100086e-07,
+            6.556436278418061e-06
+          ],
+          "method": "unweighted OLS ln(value) = intercept + rate * coordinate_time",
+          "precision": {
+            "initial_recorded_magnitude": 0.0,
+            "minimum_fit_value_over_initial": null,
+            "samples_within_100_times_initial": null,
+            "note": "The initial residual is an empirical comparison scale, not a rigorous roundoff bound. The factor100 is a sensitivity flag only; no values are removed or floored."
+          },
+          "time_range": [
+            0.10000000000000042,
+            0.2249999999999981
+          ],
+          "value_range": [
+            4.186599469699603e-12,
+            6.556436278418061e-06
+          ],
+          "status": "fitted",
+          "rate": 114.14268659771243,
+          "intercept": -37.644186288428955,
+          "rate_standard_error": 0.25424514427970274,
+          "r_squared": 0.9999801545694147,
+          "log10_dynamic_range": 6.194806430586921,
+          "monotone_nondecreasing": true,
+          "conditioning": {
+            "centered_time_sum_of_squares": 0.010937499999999541,
+            "scaled_design_condition_number": 2.927700218845606,
+            "standard_error_caveat": "OLS residual standard error is descriptive only; diagnostic samples are correlated, so this is not an independent-sample confidence interval."
+          }
+        },
+        "Z_L2": {
+          "points": 6,
+          "times": [
+            0.10000000000000042,
+            0.12500000000000078,
+            0.1500000000000001,
+            0.17499999999999943,
+            0.19999999999999876,
+            0.2249999999999981
+          ],
+          "values": [
+            8.968412008026285e-13,
+            1.4930414566012962e-11,
+            2.544474816029467e-10,
+            4.421964229076238e-09,
+            7.806397078694467e-08,
+            1.395093319418125e-06
+          ],
+          "method": "unweighted OLS ln(value) = intercept + rate * coordinate_time",
+          "precision": {
+            "initial_recorded_magnitude": 0.0,
+            "minimum_fit_value_over_initial": null,
+            "samples_within_100_times_initial": null,
+            "note": "The initial residual is an empirical comparison scale, not a rigorous roundoff bound. The factor100 is a sensitivity flag only; no values are removed or floored."
+          },
+          "time_range": [
+            0.10000000000000042,
+            0.2249999999999981
+          ],
+          "value_range": [
+            8.968412008026285e-13,
+            1.395093319418125e-06
+          ],
+          "status": "fitted",
+          "rate": 114.08872807894613,
+          "intercept": -39.180153859699885,
+          "rate_standard_error": 0.25961743093309436,
+          "r_squared": 0.9999792874669183,
+          "log10_dynamic_range": 6.191887707551397,
+          "monotone_nondecreasing": true,
+          "conditioning": {
+            "centered_time_sum_of_squares": 0.010937499999999541,
+            "scaled_design_condition_number": 2.927700218845606,
+            "standard_error_caveat": "OLS residual standard error is descriptive only; diagnostic samples are correlated, so this is not an independent-sample confidence interval."
+          }
+        }
+      },
+      "throughput": {
+        "method": "median history delta-wall/delta-accepted-steps; first interval discarded as startup; includes diagnostics and communication",
+        "intervals": [
+          {
+            "time_start": 0.0,
+            "time_end": 0.025000000000000033,
+            "accepted_steps": 75,
+            "seconds": 59.470222764,
+            "seconds_per_step": 0.79293630352,
+            "active_cell_steps_per_second": 331244.7656060372,
+            "used": false
+          },
+          {
+            "time_start": 0.025000000000000033,
+            "time_end": 0.04999999999999995,
+            "accepted_steps": 75,
+            "seconds": 59.563202536000006,
+            "seconds_per_step": 0.7941760338133335,
+            "active_cell_steps_per_second": 330727.6835575421,
+            "used": true
+          },
+          {
+            "time_start": 0.04999999999999995,
+            "time_end": 0.07500000000000005,
+            "accepted_steps": 75,
+            "seconds": 59.558168223999985,
+            "seconds_per_step": 0.7941089096533331,
+            "active_cell_steps_per_second": 330755.63919143286,
+            "used": true
+          },
+          {
+            "time_start": 0.07500000000000005,
+            "time_end": 0.10000000000000042,
+            "accepted_steps": 75,
+            "seconds": 59.56684885600001,
+            "seconds_per_step": 0.7942246514133334,
+            "active_cell_steps_per_second": 330707.43842135865,
+            "used": true
+          },
+          {
+            "time_start": 0.10000000000000042,
+            "time_end": 0.12500000000000078,
+            "accepted_steps": 75,
+            "seconds": 59.55146492899999,
+            "seconds_per_step": 0.7940195323866666,
+            "active_cell_steps_per_second": 330792.87005762657,
+            "used": true
+          },
+          {
+            "time_start": 0.12500000000000078,
+            "time_end": 0.1500000000000001,
+            "accepted_steps": 75,
+            "seconds": 59.539600983000014,
+            "seconds_per_step": 0.7938613464400002,
+            "active_cell_steps_per_second": 330858.78431776183,
+            "used": true
+          },
+          {
+            "time_start": 0.1500000000000001,
+            "time_end": 0.17499999999999943,
+            "accepted_steps": 75,
+            "seconds": 59.541430563000006,
+            "seconds_per_step": 0.7938857408400001,
+            "active_cell_steps_per_second": 330848.6177394837,
+            "used": true
+          },
+          {
+            "time_start": 0.17499999999999943,
+            "time_end": 0.19999999999999876,
+            "accepted_steps": 75,
+            "seconds": 59.57693115799998,
+            "seconds_per_step": 0.7943590821066664,
+            "active_cell_steps_per_second": 330651.47225789586,
+            "used": true
+          },
+          {
+            "time_start": 0.19999999999999876,
+            "time_end": 0.2249999999999981,
+            "accepted_steps": 75,
+            "seconds": 59.518969148999986,
+            "seconds_per_step": 0.7935862553199998,
+            "active_cell_steps_per_second": 330973.4741992079,
+            "used": true
+          },
+          {
+            "time_start": 0.2249999999999981,
+            "time_end": 0.24999999999999742,
+            "accepted_steps": 75,
+            "seconds": 59.53623623500005,
+            "seconds_per_step": 0.793816483133334,
+            "active_cell_steps_per_second": 330877.48312210693,
+            "used": true
+          },
+          {
+            "time_start": 0.24999999999999742,
+            "time_end": 0.2749999999999988,
+            "accepted_steps": 75,
+            "seconds": 59.596207272000015,
+            "seconds_per_step": 0.7946160969600002,
+            "active_cell_steps_per_second": 330544.524588484,
+            "used": true
+          },
+          {
+            "time_start": 0.2749999999999988,
+            "time_end": 0.3000000000000002,
+            "accepted_steps": 75,
+            "seconds": 59.54206900899999,
+            "seconds_per_step": 0.7938942534533332,
+            "active_cell_steps_per_second": 330845.0701809236,
+            "used": true
+          }
+        ],
+        "used_intervals": 11,
+        "median_seconds_per_step": 0.7940195323866666,
+        "median_active_cell_steps_per_second": 330792.87005762657,
+        "accepted_steps_per_interval": [
+          75
+        ],
+        "median_coordinate_interval": 0.024999999999999915,
+        "median_coordinate_time_per_wall_second": 0.0004198049540814237
+      },
+      "comparison_to_original_n16": {
+        "state_growth_rate_ratio": 1.5619427011445728,
+        "node_throughput_ratio": 1.4451443429683928,
+        "state_growth_rate_divided_by_n": 4.847979198699328,
+        "note": "Amplitude-window fits can use different coordinate times; ratios are not convergence orders."
+      }
+    },
+    {
+      "case": "minkowski-n32",
+      "label": "n32, dt=0.00025",
+      "n": 32,
+      "dt": 0.00025,
+      "n_times_dt": 0.008,
+      "active_cells": 622592,
+      "outcome": "bounded",
+      "input_directory": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/aurora/resolution-control-v1/output",
+      "worker_record": {
+        "path": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/aurora/resolution-control-v1/worker-status.json",
+        "sha256": "dd56cb37256d8c3e36a21b415868e8e1fdd0a6f8da4dbd2161ab78a8efc85fc0",
+        "bytes": 8713
+      },
+      "inputs": [
+        {
+          "path": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/aurora/resolution-control-v1/output/minkowski-n32.history.csv",
+          "sha256": "a8185df6a2bc7f969c5de0e290354235a2e376e29fbf7665714d6167fbc8d7af",
+          "bytes": 4858,
+          "worker_bound": true
+        },
+        {
+          "path": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/aurora/resolution-control-v1/output/minkowski-n32.report.json",
+          "sha256": "01d12b097ef8800cd4fc69cc9ccd330fcea35245da9d2cd74e5036a291059e6d",
+          "bytes": 1770,
+          "worker_bound": true
+        }
+      ],
+      "original_binary_evidence_verified": true,
+      "scientific_gates": {
+        "status": "failed",
+        "checks": [
+          {
+            "check": {
+              "path": [
+                "min_lapse"
+              ],
+              "op": "ge",
+              "value": 1e-12
+            },
+            "observed": 0.5000228881835938,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "min_chi"
+              ],
+              "op": "ge",
+              "value": 1e-12
+            },
+            "observed": 0.9379797661025133,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_null_surface"
+              ],
+              "op": "le",
+              "value": 1e-12
+            },
+            "observed": 1.5543122299380149e-15,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_null_ghost"
+              ],
+              "op": "le",
+              "value": 1e-12
+            },
+            "observed": 1.5543122344750829e-15,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_cfl"
+              ],
+              "op": "le",
+              "value": 0.5
+            },
+            "observed": 0.33838333480054245,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "H_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 0.0010441964402529292,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "M_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 0.1140526364852746,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "H_exterior_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 0.0010441964402529292,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "M_exterior_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 0.1140526364852746,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_state_deviation"
+              ],
+              "op": "le",
+              "value": 1e-08
+            },
+            "observed": 10.181649497204766,
+            "passed": false
+          },
+          {
+            "check": {
+              "path": [
+                "H_L2"
+              ],
+              "op": "le",
+              "value": 1e-07
+            },
+            "observed": 0.0010441964402529292,
+            "passed": false
+          },
+          {
+            "check": {
+              "path": [
+                "M_L2"
+              ],
+              "op": "le",
+              "value": 1e-07
+            },
+            "observed": 0.1140526364852746,
+            "passed": false
+          }
+        ],
+        "other_failed_checks": [
+          {
+            "check": {
+              "path": [
+                "status"
+              ],
+              "op": "eq",
+              "value": "completed"
+            },
+            "observed": "checkpointed",
+            "passed": false
+          }
+        ],
+        "worker_case_status": "failed",
+        "worker_report_status": "checkpointed",
+        "diagnostic_time": 0.23225000000000018,
+        "diagnostics_current": true,
+        "note": "Science thresholds apply to the report's stated diagnostics and running maxima; passing them alone does not establish endpoint completion or admit a trajectory."
+      },
+      "report_status": "checkpointed",
+      "reached_time": 0.23225000000000018,
+      "accepted_steps": 929,
+      "failure_time": null,
+      "error": "",
+      "target_time": 0.6,
+      "numerical_breakdown_reported": false,
+      "checkpoint_admitted": true,
+      "report_diagnostic_time": 0.23225000000000018,
+      "report_diagnostics_current": true,
+      "timers_seconds": {
+        "rhs_seconds": 56.35592583099999,
+        "exchange_seconds": 1024.3783332240002,
+        "closure_seconds": 283.65028569900045,
+        "diagnostic_seconds": 0.879795544
+      },
+      "report_null_maxima": {
+        "max_null_surface": 1.5543122299380149e-15,
+        "max_null_ghost": 1.5543122344750829e-15
+      },
+      "history_status": "present",
+      "history_rows": 11,
+      "last_history_time": 0.23225000000000018,
+      "last_history_values": {
+        "state_deviation": 10.181649497204766,
+        "H_L2": 0.0010441964402529292,
+        "M_L2": 0.1140526364852746,
+        "Z_L2": 0.015253005402845842,
+        "null_surface": 1.5543122299380149e-15,
+        "null_ghost": 1.5543122344750829e-15
+      },
+      "missing_history_values": {
+        "state_deviation": 0,
+        "H_L2": 0,
+        "M_L2": 0,
+        "Z_L2": 0,
+        "null_surface": 0,
+        "null_ghost": 0
+      },
+      "history_end_gap": 0.0,
+      "selected_state_fit_times": [
+        0.07500000000000005,
+        0.10000000000000007,
+        0.12500000000000008,
+        0.1500000000000001
+      ],
+      "growth": {
+        "state_deviation": {
+          "points": 4,
+          "times": [
+            0.07500000000000005,
+            0.10000000000000007,
+            0.12500000000000008,
+            0.1500000000000001
+          ],
+          "values": [
+            2.8010088587561106e-10,
+            1.27745650404411e-08,
+            6.053105118239694e-07,
+            2.8683185189491576e-05
+          ],
+          "method": "unweighted OLS ln(value) = intercept + rate * coordinate_time",
+          "precision": {
+            "initial_recorded_magnitude": 0.0,
+            "minimum_fit_value_over_initial": null,
+            "samples_within_100_times_initial": null,
+            "note": "The initial residual is an empirical comparison scale, not a rigorous roundoff bound. The factor100 is a sensitivity flag only; no values are removed or floored."
+          },
+          "time_range": [
+            0.07500000000000005,
+            0.1500000000000001
+          ],
+          "value_range": [
+            2.8010088587561106e-10,
+            2.8683185189491576e-05
+          ],
+          "status": "fitted",
+          "rate": 153.87320331096467,
+          "intercept": -33.54783656668252,
+          "rate_standard_error": 0.2650049460207289,
+          "r_squared": 0.9999940678873624,
+          "log10_dynamic_range": 5.0103128945218005,
+          "monotone_nondecreasing": true,
+          "conditioning": {
+            "centered_time_sum_of_squares": 0.0031250000000000045,
+            "scaled_design_condition_number": 2.6832815729997477,
+            "standard_error_caveat": "OLS residual standard error is descriptive only; diagnostic samples are correlated, so this is not an independent-sample confidence interval."
+          }
+        },
+        "H_L2": {
+          "points": 4,
+          "times": [
+            0.07500000000000005,
+            0.10000000000000007,
+            0.12500000000000008,
+            0.1500000000000001
+          ],
+          "values": [
+            6.021882608681326e-13,
+            8.720776161949994e-13,
+            2.75020056765901e-11,
+            1.2891643844246761e-09
+          ],
+          "method": "unweighted OLS ln(value) = intercept + rate * coordinate_time",
+          "precision": {
+            "initial_recorded_magnitude": 3.032854072800537e-14,
+            "minimum_fit_value_over_initial": 19.85549737683462,
+            "samples_within_100_times_initial": 2,
+            "note": "The initial residual is an empirical comparison scale, not a rigorous roundoff bound. The factor100 is a sensitivity flag only; no values are removed or floored.",
+            "hamiltonian_caveat": "H combines differentiated fields and cancellation of nonzero geometric terms. Near the initial roundoff residual, log slopes can reflect cancellation or seed amplitude rather than a resolved physical constraint mode. Compare state/M/Z growth and the later H samples; R\u00b2 alone does not establish resolution."
+          },
+          "time_range": [
+            0.07500000000000005,
+            0.1500000000000001
+          ],
+          "value_range": [
+            6.021882608681326e-13,
+            1.2891643844246761e-09
+          ],
+          "status": "fitted",
+          "rate": 105.83175930522978,
+          "intercept": -37.07910742460248,
+          "rate_standard_error": 23.265489740179813,
+          "r_squared": 0.9118641673140595,
+          "log10_dynamic_range": 3.330576013740027,
+          "monotone_nondecreasing": true,
+          "conditioning": {
+            "centered_time_sum_of_squares": 0.0031250000000000045,
+            "scaled_design_condition_number": 2.6832815729997477,
+            "standard_error_caveat": "OLS residual standard error is descriptive only; diagnostic samples are correlated, so this is not an independent-sample confidence interval."
+          }
+        },
+        "M_L2": {
+          "points": 4,
+          "times": [
+            0.07500000000000005,
+            0.10000000000000007,
+            0.12500000000000008,
+            0.1500000000000001
+          ],
+          "values": [
+            1.9915910015072767e-12,
+            8.354077207215787e-11,
+            3.721200376557914e-09,
+            1.7324611098696037e-07
+          ],
+          "method": "unweighted OLS ln(value) = intercept + rate * coordinate_time",
+          "precision": {
+            "initial_recorded_magnitude": 0.0,
+            "minimum_fit_value_over_initial": null,
+            "samples_within_100_times_initial": null,
+            "note": "The initial residual is an empirical comparison scale, not a rigorous roundoff bound. The factor100 is a sensitivity flag only; no values are removed or floored."
+          },
+          "time_range": [
+            0.07500000000000005,
+            0.1500000000000001
+          ],
+          "value_range": [
+            1.9915910015072767e-12,
+            1.7324611098696037e-07
+          ],
+          "status": "fitted",
+          "rate": 151.6682829265596,
+          "intercept": -38.344068278914904,
+          "rate_standard_error": 0.6609606249826326,
+          "r_squared": 0.9999620182355088,
+          "log10_dynamic_range": 4.939463339030275,
+          "monotone_nondecreasing": true,
+          "conditioning": {
+            "centered_time_sum_of_squares": 0.0031250000000000045,
+            "scaled_design_condition_number": 2.6832815729997477,
+            "standard_error_caveat": "OLS residual standard error is descriptive only; diagnostic samples are correlated, so this is not an independent-sample confidence interval."
+          }
+        },
+        "Z_L2": {
+          "points": 4,
+          "times": [
+            0.07500000000000005,
+            0.10000000000000007,
+            0.12500000000000008,
+            0.1500000000000001
+          ],
+          "values": [
+            4.2516834224176237e-13,
+            1.764842298374442e-11,
+            7.795143607675939e-10,
+            3.611528862488701e-08
+          ],
+          "method": "unweighted OLS ln(value) = intercept + rate * coordinate_time",
+          "precision": {
+            "initial_recorded_magnitude": 0.0,
+            "minimum_fit_value_over_initial": null,
+            "samples_within_100_times_initial": null,
+            "note": "The initial residual is an empirical comparison scale, not a rigorous roundoff bound. The factor100 is a sensitivity flag only; no values are removed or floored."
+          },
+          "time_range": [
+            0.07500000000000005,
+            0.1500000000000001
+          ],
+          "value_range": [
+            4.2516834224176237e-13,
+            3.611528862488701e-08
+          ],
+          "status": "fitted",
+          "rate": 151.34899854189737,
+          "intercept": -39.86565369824393,
+          "rate_standard_error": 0.6961483164082473,
+          "r_squared": 0.9999576887290612,
+          "log10_dynamic_range": 4.9291301702190236,
+          "monotone_nondecreasing": true,
+          "conditioning": {
+            "centered_time_sum_of_squares": 0.0031250000000000045,
+            "scaled_design_condition_number": 2.6832815729997477,
+            "standard_error_caveat": "OLS residual standard error is descriptive only; diagnostic samples are correlated, so this is not an independent-sample confidence interval."
+          }
+        }
+      },
+      "throughput": {
+        "method": "median history delta-wall/delta-accepted-steps; first interval discarded as startup; includes diagnostics and communication",
+        "intervals": [
+          {
+            "time_start": 0.0,
+            "time_end": 0.02500000000000002,
+            "accepted_steps": 100,
+            "seconds": 148.14358875,
+            "seconds_per_step": 1.4814358875,
+            "active_cell_steps_per_second": 420262.5339734792,
+            "used": false
+          },
+          {
+            "time_start": 0.02500000000000002,
+            "time_end": 0.05000000000000004,
+            "accepted_steps": 100,
+            "seconds": 148.34655942900002,
+            "seconds_per_step": 1.4834655942900001,
+            "active_cell_steps_per_second": 419687.52251243015,
+            "used": true
+          },
+          {
+            "time_start": 0.05000000000000004,
+            "time_end": 0.07500000000000005,
+            "accepted_steps": 100,
+            "seconds": 148.48311385299996,
+            "seconds_per_step": 1.4848311385299997,
+            "active_cell_steps_per_second": 419301.5514318843,
+            "used": true
+          },
+          {
+            "time_start": 0.07500000000000005,
+            "time_end": 0.10000000000000007,
+            "accepted_steps": 100,
+            "seconds": 148.48367197000005,
+            "seconds_per_step": 1.4848367197000005,
+            "active_cell_steps_per_second": 419299.9753708878,
+            "used": true
+          },
+          {
+            "time_start": 0.10000000000000007,
+            "time_end": 0.12500000000000008,
+            "accepted_steps": 100,
+            "seconds": 148.75108138299993,
+            "seconds_per_step": 1.4875108138299993,
+            "active_cell_steps_per_second": 418546.2009496041,
+            "used": true
+          },
+          {
+            "time_start": 0.12500000000000008,
+            "time_end": 0.1500000000000001,
+            "accepted_steps": 100,
+            "seconds": 148.69660499000008,
+            "seconds_per_step": 1.4869660499000008,
+            "active_cell_steps_per_second": 418699.53926780616,
+            "used": true
+          },
+          {
+            "time_start": 0.1500000000000001,
+            "time_end": 0.17500000000000013,
+            "accepted_steps": 100,
+            "seconds": 148.7436295749999,
+            "seconds_per_step": 1.487436295749999,
+            "active_cell_steps_per_second": 418567.1694168758,
+            "used": true
+          },
+          {
+            "time_start": 0.17500000000000013,
+            "time_end": 0.20000000000000015,
+            "accepted_steps": 100,
+            "seconds": 148.7749122570001,
+            "seconds_per_step": 1.487749122570001,
+            "active_cell_steps_per_second": 418479.15791374026,
+            "used": true
+          },
+          {
+            "time_start": 0.20000000000000015,
+            "time_end": 0.22500000000000017,
+            "accepted_steps": 100,
+            "seconds": 148.78481696599988,
+            "seconds_per_step": 1.4878481696599988,
+            "active_cell_steps_per_second": 418451.29946442985,
+            "used": true
+          },
+          {
+            "time_start": 0.22500000000000017,
+            "time_end": 0.23225000000000018,
+            "accepted_steps": 29,
+            "seconds": 43.19173786900001,
+            "seconds_per_step": 1.4893702713448278,
+            "active_cell_steps_per_second": 418023.6519947657,
+            "used": true
+          }
+        ],
+        "used_intervals": 9,
+        "median_seconds_per_step": 1.487436295749999,
+        "median_active_cell_steps_per_second": 418567.1694168758,
+        "accepted_steps_per_interval": [
+          29,
+          100
+        ],
+        "median_coordinate_interval": 0.025000000000000022,
+        "median_coordinate_time_per_wall_second": 0.00016807442491104777
+      },
+      "comparison_to_original_n16": {
+        "state_growth_rate_ratio": 2.065646985430013,
+        "node_throughput_ratio": 1.8286064537295337,
+        "state_growth_rate_divided_by_n": 4.808537603467646,
+        "note": "Amplitude-window fits can use different coordinate times; ratios are not convergence orders."
+      }
+    },
+    {
+      "case": "minkowski-n16-half-dt",
+      "label": "n16, dt=0.00025",
+      "n": 16,
+      "dt": 0.00025,
+      "n_times_dt": 0.004,
+      "active_cells": 77824,
+      "outcome": "failed",
+      "input_directory": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/aurora/resolution-control-v2/output",
+      "worker_record": {
+        "path": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/aurora/resolution-control-v2/worker-status.json",
+        "sha256": "0d90d5b732fd7542a304b576eeedeaf665fb5bd12ef98086eedec1c317dd5982",
+        "bytes": 15353
+      },
+      "inputs": [
+        {
+          "path": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/aurora/resolution-control-v2/output/minkowski-n16-half-dt.history.csv",
+          "sha256": "0f80b09248878ef9d15f6394cbe8886cbac17595dbfe91481084b36e02e4a80b",
+          "bytes": 8694,
+          "worker_bound": true
+        },
+        {
+          "path": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/aurora/resolution-control-v2/output/minkowski-n16-half-dt.report.json",
+          "sha256": "6c93fed06fcfed32881f6c9134478c00a412e4632869d12e7125e80e2f0d54f1",
+          "bytes": 1798,
+          "worker_bound": true
+        }
+      ],
+      "original_binary_evidence_verified": true,
+      "scientific_gates": {
+        "status": "failed",
+        "checks": [
+          {
+            "check": {
+              "path": [
+                "min_lapse"
+              ],
+              "op": "ge",
+              "value": 1e-12
+            },
+            "observed": 0.5000915527343749,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "min_chi"
+              ],
+              "op": "ge",
+              "value": 1e-12
+            },
+            "observed": 0.8633245609897898,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_null_surface"
+              ],
+              "op": "le",
+              "value": 1e-12
+            },
+            "observed": 1.1102230246251504e-15,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_null_ghost"
+              ],
+              "op": "le",
+              "value": 1e-12
+            },
+            "observed": 1.2419969118035465e-15,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_cfl"
+              ],
+              "op": "le",
+              "value": 0.5
+            },
+            "observed": 0.16196002693222272,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "H_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 0.008200741555632168,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "M_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 0.4015199114269835,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "H_exterior_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 0.008200741555632168,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "M_exterior_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 0.4015199114269835,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_state_deviation"
+              ],
+              "op": "le",
+              "value": 1e-08
+            },
+            "observed": 12.717926424489365,
+            "passed": false
+          },
+          {
+            "check": {
+              "path": [
+                "H_L2"
+              ],
+              "op": "le",
+              "value": 1e-07
+            },
+            "observed": 0.008200741555632168,
+            "passed": false
+          },
+          {
+            "check": {
+              "path": [
+                "M_L2"
+              ],
+              "op": "le",
+              "value": 1e-07
+            },
+            "observed": 0.4015199114269835,
+            "passed": false
+          }
+        ],
+        "other_failed_checks": [
+          {
+            "check": {
+              "path": [
+                "status"
+              ],
+              "op": "eq",
+              "value": "completed"
+            },
+            "observed": "failed",
+            "passed": false
+          },
+          {
+            "check": {
+              "path": [
+                "diagnostics_current"
+              ],
+              "op": "eq",
+              "value": true
+            },
+            "observed": false,
+            "passed": false
+          },
+          {
+            "check": {
+              "path": [
+                "checkpoint_admitted"
+              ],
+              "op": "eq",
+              "value": true
+            },
+            "observed": false,
+            "passed": false
+          }
+        ],
+        "worker_case_status": "failed",
+        "worker_report_status": "failed",
+        "diagnostic_time": 0.4749999999999754,
+        "diagnostics_current": false,
+        "note": "Science thresholds apply to the report's stated diagnostics and running maxima; passing them alone does not establish endpoint completion or admit a trajectory."
+      },
+      "report_status": "failed",
+      "reached_time": 0.4859999999999742,
+      "accepted_steps": 1944,
+      "failure_time": 0.4859999999999742,
+      "error": "nonpositive interpolated scri geometry",
+      "target_time": 0.6,
+      "numerical_breakdown_reported": true,
+      "checkpoint_admitted": false,
+      "report_diagnostic_time": 0.4749999999999754,
+      "report_diagnostics_current": false,
+      "timers_seconds": {
+        "rhs_seconds": 96.71464286699975,
+        "exchange_seconds": 62.81473419399987,
+        "closure_seconds": 480.1238310809988,
+        "diagnostic_seconds": 1.192404157
+      },
+      "report_null_maxima": {
+        "max_null_surface": 1.1102230246251504e-15,
+        "max_null_ghost": 1.2419969118035465e-15
+      },
+      "history_status": "present",
+      "history_rows": 20,
+      "last_history_time": 0.4749999999999754,
+      "last_history_values": {
+        "state_deviation": 12.717926424489365,
+        "H_L2": 0.008200741555632168,
+        "M_L2": 0.4015199114269835,
+        "Z_L2": 0.05507118290210355,
+        "null_surface": 1.1102230246251504e-15,
+        "null_ghost": 1.2419969118035465e-15
+      },
+      "missing_history_values": {
+        "state_deviation": 0,
+        "H_L2": 0,
+        "M_L2": 0,
+        "Z_L2": 0,
+        "null_surface": 0,
+        "null_ghost": 0
+      },
+      "history_end_gap": 0.010999999999998789,
+      "selected_state_fit_times": [
+        0.1500000000000001,
+        0.17500000000000013,
+        0.20000000000000015,
+        0.22500000000000017,
+        0.25000000000000017,
+        0.2749999999999974,
+        0.29999999999999466,
+        0.3249999999999919,
+        0.34999999999998915
+      ],
+      "growth": {
+        "state_deviation": {
+          "points": 9,
+          "times": [
+            0.1500000000000001,
+            0.17500000000000013,
+            0.20000000000000015,
+            0.22500000000000017,
+            0.25000000000000017,
+            0.2749999999999974,
+            0.29999999999999466,
+            0.3249999999999919,
+            0.34999999999998915
+          ],
+          "values": [
+            1.4506284548582426e-10,
+            8.738081592937912e-10,
+            5.302462875916039e-09,
+            3.247932450337177e-08,
+            2.115016006579076e-07,
+            1.4520014172990746e-06,
+            1.001875275361836e-05,
+            6.93796974122125e-05,
+            0.0004850855056697374
+          ],
+          "method": "unweighted OLS ln(value) = intercept + rate * coordinate_time",
+          "precision": {
+            "initial_recorded_magnitude": 0.0,
+            "minimum_fit_value_over_initial": null,
+            "samples_within_100_times_initial": null,
+            "note": "The initial residual is an empirical comparison scale, not a rigorous roundoff bound. The factor100 is a sensitivity flag only; no values are removed or floored."
+          },
+          "time_range": [
+            0.1500000000000001,
+            0.34999999999998915
+          ],
+          "value_range": [
+            1.4506284548582426e-10,
+            0.0004850855056697374
+          ],
+          "status": "fitted",
+          "rate": 75.21705736528813,
+          "intercept": -34.06421160837379,
+          "rate_standard_error": 0.4746233243340036,
+          "r_squared": 0.9997213606249679,
+          "log10_dynamic_range": 6.524262105993486,
+          "monotone_nondecreasing": true,
+          "conditioning": {
+            "centered_time_sum_of_squares": 0.03749999999999589,
+            "scaled_design_condition_number": 3.0983866769659336,
+            "standard_error_caveat": "OLS residual standard error is descriptive only; diagnostic samples are correlated, so this is not an independent-sample confidence interval."
+          }
+        },
+        "H_L2": {
+          "points": 9,
+          "times": [
+            0.1500000000000001,
+            0.17500000000000013,
+            0.20000000000000015,
+            0.22500000000000017,
+            0.25000000000000017,
+            0.2749999999999974,
+            0.29999999999999466,
+            0.3249999999999919,
+            0.34999999999998915
+          ],
+          "values": [
+            1.537090466257869e-13,
+            2.860441347092721e-13,
+            1.476034449485265e-12,
+            9.046466663227601e-12,
+            5.652023358402037e-11,
+            3.582076060929131e-10,
+            2.300859447634523e-09,
+            1.4957842341445708e-08,
+            9.824896700710894e-08
+          ],
+          "method": "unweighted OLS ln(value) = intercept + rate * coordinate_time",
+          "precision": {
+            "initial_recorded_magnitude": 7.551942288460613e-15,
+            "minimum_fit_value_over_initial": 20.353578027291697,
+            "samples_within_100_times_initial": 2,
+            "note": "The initial residual is an empirical comparison scale, not a rigorous roundoff bound. The factor100 is a sensitivity flag only; no values are removed or floored.",
+            "hamiltonian_caveat": "H combines differentiated fields and cancellation of nonzero geometric terms. Near the initial roundoff residual, log slopes can reflect cancellation or seed amplitude rather than a resolved physical constraint mode. Compare state/M/Z growth and the later H samples; R\u00b2 alone does not establish resolution."
+          },
+          "time_range": [
+            0.1500000000000001,
+            0.34999999999998915
+          ],
+          "value_range": [
+            1.537090466257869e-13,
+            9.824896700710894e-08
+          ],
+          "status": "fitted",
+          "rate": 69.63180801271551,
+          "intercept": -40.790925248367806,
+          "rate_standard_error": 2.120224632096384,
+          "r_squared": 0.993551822676369,
+          "log10_dynamic_range": 5.805628564005608,
+          "monotone_nondecreasing": true,
+          "conditioning": {
+            "centered_time_sum_of_squares": 0.03749999999999589,
+            "scaled_design_condition_number": 3.0983866769659336,
+            "standard_error_caveat": "OLS residual standard error is descriptive only; diagnostic samples are correlated, so this is not an independent-sample confidence interval."
+          }
+        },
+        "M_L2": {
+          "points": 9,
+          "times": [
+            0.1500000000000001,
+            0.17500000000000013,
+            0.20000000000000015,
+            0.22500000000000017,
+            0.25000000000000017,
+            0.2749999999999974,
+            0.29999999999999466,
+            0.3249999999999919,
+            0.34999999999998915
+          ],
+          "values": [
+            2.705111519955253e-12,
+            1.7622679990507594e-11,
+            1.1625466068576424e-10,
+            7.735933272359603e-10,
+            5.177002100758064e-09,
+            3.477480234852197e-08,
+            2.3417587186192514e-07,
+            1.579755624253793e-06,
+            1.067131233836153e-05
+          ],
+          "method": "unweighted OLS ln(value) = intercept + rate * coordinate_time",
+          "precision": {
+            "initial_recorded_magnitude": 0.0,
+            "minimum_fit_value_over_initial": null,
+            "samples_within_100_times_initial": null,
+            "note": "The initial residual is an empirical comparison scale, not a rigorous roundoff bound. The factor100 is a sensitivity flag only; no values are removed or floored."
+          },
+          "time_range": [
+            0.1500000000000001,
+            0.34999999999998915
+          ],
+          "value_range": [
+            2.705111519955253e-12,
+            1.067131233836153e-05
+          ],
+          "status": "fitted",
+          "rate": 75.98945271752706,
+          "intercept": -38.06177684064949,
+          "rate_standard_error": 0.08294633262831759,
+          "r_squared": 0.9999916596905908,
+          "log10_dynamic_range": 6.596032657565425,
+          "monotone_nondecreasing": true,
+          "conditioning": {
+            "centered_time_sum_of_squares": 0.03749999999999589,
+            "scaled_design_condition_number": 3.0983866769659336,
+            "standard_error_caveat": "OLS residual standard error is descriptive only; diagnostic samples are correlated, so this is not an independent-sample confidence interval."
+          }
+        },
+        "Z_L2": {
+          "points": 9,
+          "times": [
+            0.1500000000000001,
+            0.17500000000000013,
+            0.20000000000000015,
+            0.22500000000000017,
+            0.25000000000000017,
+            0.2749999999999974,
+            0.29999999999999466,
+            0.3249999999999919,
+            0.34999999999998915
+          ],
+          "values": [
+            5.761255766976545e-13,
+            3.753941208408581e-12,
+            2.4785807219420025e-11,
+            1.6509680511650768e-10,
+            1.1059246738265205e-09,
+            7.435015837200353e-09,
+            5.010304860140898e-08,
+            3.3818236982939194e-07,
+            2.2853716644538562e-06
+          ],
+          "method": "unweighted OLS ln(value) = intercept + rate * coordinate_time",
+          "precision": {
+            "initial_recorded_magnitude": 0.0,
+            "minimum_fit_value_over_initial": null,
+            "samples_within_100_times_initial": null,
+            "note": "The initial residual is an empirical comparison scale, not a rigorous roundoff bound. The factor100 is a sensitivity flag only; no values are removed or floored."
+          },
+          "time_range": [
+            0.1500000000000001,
+            0.34999999999998915
+          ],
+          "value_range": [
+            5.761255766976545e-13,
+            2.2853716644538562e-06
+          ],
+          "status": "fitted",
+          "rate": 76.02002278946196,
+          "intercept": -39.6131612738927,
+          "rate_standard_error": 0.08278910862880189,
+          "r_squared": 0.9999916979593239,
+          "log10_dynamic_range": 6.5984396825498495,
+          "monotone_nondecreasing": true,
+          "conditioning": {
+            "centered_time_sum_of_squares": 0.03749999999999589,
+            "scaled_design_condition_number": 3.0983866769659336,
+            "standard_error_caveat": "OLS residual standard error is descriptive only; diagnostic samples are correlated, so this is not an independent-sample confidence interval."
+          }
+        }
+      },
+      "throughput": {
+        "method": "median history delta-wall/delta-accepted-steps; first interval discarded as startup; includes diagnostics and communication",
+        "intervals": [
+          {
+            "time_start": 0.0,
+            "time_end": 0.02500000000000002,
+            "accepted_steps": 100,
+            "seconds": 34.506817978,
+            "seconds_per_step": 0.34506817978,
+            "active_cell_steps_per_second": 225532.24133739917,
+            "used": false
+          },
+          {
+            "time_start": 0.02500000000000002,
+            "time_end": 0.05000000000000004,
+            "accepted_steps": 100,
+            "seconds": 34.155877030999996,
+            "seconds_per_step": 0.34155877031,
+            "active_cell_steps_per_second": 227849.51453410683,
+            "used": true
+          },
+          {
+            "time_start": 0.05000000000000004,
+            "time_end": 0.07500000000000005,
+            "accepted_steps": 100,
+            "seconds": 34.162461983,
+            "seconds_per_step": 0.34162461983,
+            "active_cell_steps_per_second": 227805.59562342713,
+            "used": true
+          },
+          {
+            "time_start": 0.07500000000000005,
+            "time_end": 0.10000000000000007,
+            "accepted_steps": 100,
+            "seconds": 34.15846403299999,
+            "seconds_per_step": 0.34158464032999986,
+            "active_cell_steps_per_second": 227832.25827957425,
+            "used": true
+          },
+          {
+            "time_start": 0.10000000000000007,
+            "time_end": 0.12500000000000008,
+            "accepted_steps": 100,
+            "seconds": 34.16127066500002,
+            "seconds_per_step": 0.34161270665000015,
+            "active_cell_steps_per_second": 227813.5399680396,
+            "used": true
+          },
+          {
+            "time_start": 0.12500000000000008,
+            "time_end": 0.1500000000000001,
+            "accepted_steps": 100,
+            "seconds": 34.163224235,
+            "seconds_per_step": 0.34163224235,
+            "active_cell_steps_per_second": 227800.5128107019,
+            "used": true
+          },
+          {
+            "time_start": 0.1500000000000001,
+            "time_end": 0.17500000000000013,
+            "accepted_steps": 100,
+            "seconds": 34.150320185,
+            "seconds_per_step": 0.34150320185,
+            "active_cell_steps_per_second": 227886.58957927718,
+            "used": true
+          },
+          {
+            "time_start": 0.17500000000000013,
+            "time_end": 0.20000000000000015,
+            "accepted_steps": 100,
+            "seconds": 34.156061033999976,
+            "seconds_per_step": 0.34156061033999974,
+            "active_cell_steps_per_second": 227848.28708009288,
+            "used": true
+          },
+          {
+            "time_start": 0.20000000000000015,
+            "time_end": 0.22500000000000017,
+            "accepted_steps": 100,
+            "seconds": 34.155518459999996,
+            "seconds_per_step": 0.34155518459999995,
+            "active_cell_steps_per_second": 227851.9065407857,
+            "used": true
+          },
+          {
+            "time_start": 0.22500000000000017,
+            "time_end": 0.25000000000000017,
+            "accepted_steps": 100,
+            "seconds": 34.15743257500003,
+            "seconds_per_step": 0.3415743257500003,
+            "active_cell_steps_per_second": 227839.1381703545,
+            "used": true
+          },
+          {
+            "time_start": 0.25000000000000017,
+            "time_end": 0.2749999999999974,
+            "accepted_steps": 100,
+            "seconds": 34.16113681899998,
+            "seconds_per_step": 0.34161136818999976,
+            "active_cell_steps_per_second": 227814.43255926808,
+            "used": true
+          },
+          {
+            "time_start": 0.2749999999999974,
+            "time_end": 0.29999999999999466,
+            "accepted_steps": 100,
+            "seconds": 34.16552970500004,
+            "seconds_per_step": 0.3416552970500004,
+            "active_cell_steps_per_second": 227785.14096507817,
+            "used": true
+          },
+          {
+            "time_start": 0.29999999999999466,
+            "time_end": 0.3249999999999919,
+            "accepted_steps": 100,
+            "seconds": 34.15908964299996,
+            "seconds_per_step": 0.34159089642999957,
+            "active_cell_steps_per_second": 227828.0856233183,
+            "used": true
+          },
+          {
+            "time_start": 0.3249999999999919,
+            "time_end": 0.34999999999998915,
+            "accepted_steps": 100,
+            "seconds": 34.162789562,
+            "seconds_per_step": 0.34162789562,
+            "active_cell_steps_per_second": 227803.41124884397,
+            "used": true
+          },
+          {
+            "time_start": 0.34999999999998915,
+            "time_end": 0.3749999999999864,
+            "accepted_steps": 100,
+            "seconds": 34.16900892500007,
+            "seconds_per_step": 0.3416900892500007,
+            "active_cell_steps_per_second": 227761.94700531496,
+            "used": true
+          },
+          {
+            "time_start": 0.3749999999999864,
+            "time_end": 0.39999999999998365,
+            "accepted_steps": 100,
+            "seconds": 34.167449964999946,
+            "seconds_per_step": 0.34167449964999946,
+            "active_cell_steps_per_second": 227772.33911140703,
+            "used": true
+          },
+          {
+            "time_start": 0.39999999999998365,
+            "time_end": 0.4249999999999809,
+            "accepted_steps": 100,
+            "seconds": 34.16636727100001,
+            "seconds_per_step": 0.34166367271000014,
+            "active_cell_steps_per_second": 227779.5569623114,
+            "used": true
+          },
+          {
+            "time_start": 0.4249999999999809,
+            "time_end": 0.44999999999997814,
+            "accepted_steps": 100,
+            "seconds": 34.16177869699993,
+            "seconds_per_step": 0.34161778696999934,
+            "active_cell_steps_per_second": 227810.15207160293,
+            "used": true
+          },
+          {
+            "time_start": 0.44999999999997814,
+            "time_end": 0.4749999999999754,
+            "accepted_steps": 100,
+            "seconds": 34.15509514000007,
+            "seconds_per_step": 0.3415509514000007,
+            "active_cell_steps_per_second": 227854.73054899488,
+            "used": true
+          }
+        ],
+        "used_intervals": 18,
+        "median_seconds_per_step": 0.34161203741999996,
+        "median_active_cell_steps_per_second": 227813.98626277954,
+        "accepted_steps_per_interval": [
+          100
+        ],
+        "median_coordinate_interval": 0.02499999999999862,
+        "median_coordinate_time_per_wall_second": 0.0007318243288177212
+      },
+      "comparison_to_original_n16": {
+        "state_growth_rate_ratio": 1.0097397367203071,
+        "node_throughput_ratio": 0.9952575260747963,
+        "state_growth_rate_divided_by_n": 4.701066085330508,
+        "note": "Amplitude-window fits can use different coordinate times; ratios are not convergence orders."
+      }
+    }
+  ],
+  "exact_common_diagnostic_samples": [
+    {
+      "coordinate_time": 0.0,
+      "values": {
+        "original-n16": {
+          "state_deviation": 0.0,
+          "H_L2": 7.551942288460613e-15,
+          "M_L2": 0.0,
+          "Z_L2": 0.0,
+          "null_surface": 6.661338147750941e-16,
+          "null_ghost": 8.881784197001248e-16
+        },
+        "minkowski-n24": {
+          "state_deviation": 0.0,
+          "H_L2": 1.7039809953580955e-14,
+          "M_L2": 0.0,
+          "Z_L2": 0.0,
+          "null_surface": 9.992007221626413e-16,
+          "null_ghost": 9.992007221626413e-16
+        },
+        "minkowski-n32": {
+          "state_deviation": 0.0,
+          "H_L2": 3.032854072800537e-14,
+          "M_L2": 0.0,
+          "Z_L2": 0.0,
+          "null_surface": 9.992007221626413e-16,
+          "null_ghost": 9.992007221626413e-16
+        },
+        "minkowski-n16-half-dt": {
+          "state_deviation": 0.0,
+          "H_L2": 7.551942288460613e-15,
+          "M_L2": 0.0,
+          "Z_L2": 0.0,
+          "null_surface": 6.661338147750941e-16,
+          "null_ghost": 8.881784197001248e-16
+        }
+      }
+    },
+    {
+      "coordinate_time": 0.05000000000000004,
+      "values": {
+        "original-n16": {
+          "state_deviation": 3.952942035534433e-13,
+          "H_L2": 5.347963388967055e-14,
+          "M_L2": 2.6924349104834067e-14,
+          "Z_L2": 7.61049618274109e-15,
+          "null_surface": 8.881784197001248e-16,
+          "null_ghost": 9.992007221626413e-16
+        },
+        "minkowski-n24": {
+          "state_deviation": 1.4437480251202945e-12,
+          "H_L2": 2.0867005647726044e-13,
+          "M_L2": 4.9498381752711025e-14,
+          "Z_L2": 8.82806368404342e-15,
+          "null_surface": 1.2212453270876728e-15,
+          "null_ghost": 1.2212453270876724e-15
+        },
+        "minkowski-n32": {
+          "state_deviation": 6.708177099684593e-12,
+          "H_L2": 4.5167781076644966e-13,
+          "M_L2": 9.166036810608809e-14,
+          "Z_L2": 1.37701232372034e-14,
+          "null_surface": 1.2212453270876724e-15,
+          "null_ghost": 1.332267629550187e-15
+        },
+        "minkowski-n16-half-dt": {
+          "state_deviation": 4.724695354051441e-13,
+          "H_L2": 5.475944621022067e-14,
+          "M_L2": 2.6363664337094973e-14,
+          "Z_L2": 7.559951172422294e-15,
+          "null_surface": 8.881784197001248e-16,
+          "null_ghost": 9.992007221626413e-16
+        }
+      }
+    },
+    {
+      "coordinate_time": 0.10000000000000007,
+      "values": {
+        "original-n16": {
+          "state_deviation": 4.4028305325294475e-12,
+          "H_L2": 1.2030468110969684e-13,
+          "M_L2": 7.277741348218123e-14,
+          "Z_L2": 1.5412004975101498e-14,
+          "null_surface": 8.881784197001248e-16,
+          "null_ghost": 1.1102230246251558e-15
+        },
+        "minkowski-n24": {
+          "state_deviation": 3.8136328210035514e-10,
+          "H_L2": 3.409647062489933e-13,
+          "M_L2": 4.186599469699603e-12,
+          "Z_L2": 8.968412008026285e-13,
+          "null_surface": 1.2212453270876799e-15,
+          "null_ghost": 1.2212453270876724e-15
+        },
+        "minkowski-n32": {
+          "state_deviation": 1.27745650404411e-08,
+          "H_L2": 8.720776161949994e-13,
+          "M_L2": 8.354077207215787e-11,
+          "Z_L2": 1.764842298374442e-11,
+          "null_surface": 1.221245327088045e-15,
+          "null_ghost": 1.332267629550187e-15
+        },
+        "minkowski-n16-half-dt": {
+          "state_deviation": 4.119132512317212e-12,
+          "H_L2": 1.1932015648393147e-13,
+          "M_L2": 7.596065607528201e-14,
+          "Z_L2": 1.6028063306968047e-14,
+          "null_surface": 8.881784197001248e-16,
+          "null_ghost": 1.1102230246251558e-15
+        }
+      }
+    },
+    {
+      "coordinate_time": 0.1500000000000001,
+      "values": {
+        "original-n16": {
+          "state_deviation": 1.549160094966191e-10,
+          "H_L2": 1.5163633472768734e-13,
+          "M_L2": 2.495911918143885e-12,
+          "Z_L2": 5.334404510516033e-13,
+          "null_surface": 1.1102230246251504e-15,
+          "null_ghost": 1.110223024625346e-15
+        },
+        "minkowski-n24": {
+          "state_deviation": 1.2298556312550687e-07,
+          "H_L2": 8.759777417517137e-12,
+          "M_L2": 1.1923251672224e-09,
+          "Z_L2": 2.544474816029467e-10,
+          "null_surface": 1.5543122344752044e-15,
+          "null_ghost": 1.4432899320127252e-15
+        },
+        "minkowski-n32": {
+          "state_deviation": 2.8683185189491576e-05,
+          "H_L2": 1.2891643844246761e-09,
+          "M_L2": 1.7324611098696037e-07,
+          "Z_L2": 3.611528862488701e-08,
+          "null_surface": 1.33226762954555e-15,
+          "null_ghost": 1.5543122344750829e-15
+        },
+        "minkowski-n16-half-dt": {
+          "state_deviation": 1.4506284548582426e-10,
+          "H_L2": 1.537090466257869e-13,
+          "M_L2": 2.705111519955253e-12,
+          "Z_L2": 5.761255766976545e-13,
+          "null_surface": 1.1102230246251455e-15,
+          "null_ghost": 1.110223024625346e-15
+        }
+      }
+    },
+    {
+      "coordinate_time": 0.20000000000000015,
+      "values": {
+        "original-n16": {
+          "state_deviation": 5.630809194741189e-09,
+          "H_L2": 1.3857221438685943e-12,
+          "M_L2": 1.0480133459832375e-10,
+          "Z_L2": 2.2403834771374515e-11,
+          "null_surface": 1.1102230246251504e-15,
+          "null_ghost": 1.1102230246309026e-15
+        },
+        "minkowski-n24": {
+          "state_deviation": 4.236796035080166e-05,
+          "H_L2": 2.6111903504307577e-09,
+          "M_L2": 3.666504901100086e-07,
+          "Z_L2": 7.806397078694467e-08,
+          "null_surface": 1.5543122344752044e-15,
+          "null_ghost": 1.554312234464881e-15
+        },
+        "minkowski-n32": {
+          "state_deviation": 0.06459808238299336,
+          "H_L2": 2.9685275474381868e-06,
+          "M_L2": 0.00040423693255011497,
+          "Z_L2": 8.39966327535977e-05,
+          "null_surface": 1.5543122299380149e-15,
+          "null_ghost": 1.5543122344750829e-15
+        },
+        "minkowski-n16-half-dt": {
+          "state_deviation": 5.302462875916039e-09,
+          "H_L2": 1.476034449485265e-12,
+          "M_L2": 1.1625466068576424e-10,
+          "Z_L2": 2.4785807219420025e-11,
+          "null_surface": 1.1102230246251504e-15,
+          "null_ghost": 1.1102230246292036e-15
+        }
+      }
+    }
+  ],
+  "common_samples_method": "intersection of available recorded coordinate times within 1e-10; no interpolation"
+}
