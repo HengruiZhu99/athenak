@@ -20,5 +20,10 @@ inline cubed_sphere::CompositeMesh SphericalOverlapMesh(int n) {
 inline cubed_sphere::CompositeMesh ContinuousCoreMesh(int n) {
   auto mesh=SphericalOverlapMesh(n);mesh.continuous_cartesian_core=true;return mesh;
 }
+inline cubed_sphere::CompositeMesh ThinCoreMesh(int n,int layers,bool shifted=false) {
+  if(layers<1||layers>3)throw std::invalid_argument("thin core requires 1..3 layers");
+  auto mesh=ContinuousCoreMesh(n);mesh.core_evolved_overlap=layers;
+  mesh.shifted_overlap_donors=shifted;return mesh;
+}
 }
 #endif

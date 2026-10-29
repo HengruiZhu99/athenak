@@ -14,6 +14,14 @@
 #include "z4c/hyperboloidal/hyperbolic_sampled_normal_device.hpp"
 #include "z4c/hyperboloidal/algebraic_projection.hpp"
 #include "fixed_composite_mesh.hpp"
+#include "z4c/hyperboloidal/paired_trace_device.hpp"
+#ifndef HYPERBOLIC_THIN_TRACE
+#define HYPERBOLIC_THIN_TRACE 0
+#endif
+constexpr bool thin_trace=HYPERBOLIC_THIN_TRACE;
+struct TraceConfig {int32_t scheme=1,layers=1,shifted=1,reserved=0;Real kappa=0,normal_ratio=.25;};
+static_assert(sizeof(TraceConfig)==32,"trace config layout");
+TraceConfig trace_config;
 #ifndef HYPERBOLIC_ALGEBRAIC_FINAL_PROJECTION
 #define HYPERBOLIC_ALGEBRAIC_FINAL_PROJECTION 0
 #endif
@@ -73,7 +81,7 @@ static_assert(!scri_sampled_normal||scri_angular_dissipation,"sampled-normal can
 static_assert(!scri_donor_seven||scri_sampled_normal,"direct radial candidate requires sampled numerator");
 static_assert(!spherical_overlap||(evolved_overlap==3&&core_subdivisions==2),"spherical overlap requires eight core blocks and three overlap cells");
 static_assert(!continuous_positive||(spherical_overlap&&core_subdivisions==2),"positive scheme requires continuous spherical-overlap mesh");
-constexpr const char*checkpoint_magic=continuous_positive?"HYP3D_MPI_V11":spherical_overlap?"HYP3D_MPI_V10":evolved_overlap?"HYP3D_MPI_V9":core_subdivisions==2?"HYP3D_MPI_V8":inner_transition_logical?"HYP3D_MPI_V7":scri_donor_seven?"HYP3D_MPI_V6":scri_sampled_normal?"HYP3D_MPI_V5":scri_angular_dissipation?"HYP3D_MPI_V4":scri_angular_exchange?"HYP3D_MPI_V3":algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
+constexpr const char*checkpoint_magic=thin_trace?"HYP3D_MPI_V12":continuous_positive?"HYP3D_MPI_V11":spherical_overlap?"HYP3D_MPI_V10":evolved_overlap?"HYP3D_MPI_V9":core_subdivisions==2?"HYP3D_MPI_V8":inner_transition_logical?"HYP3D_MPI_V7":scri_donor_seven?"HYP3D_MPI_V6":scri_sampled_normal?"HYP3D_MPI_V5":scri_angular_dissipation?"HYP3D_MPI_V4":scri_angular_exchange?"HYP3D_MPI_V3":algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
 constexpr const char*algebraic_scheme=algebraic_final_projection?"final_stage_standard":"none";
 constexpr const char*scri_angular_scheme=scri_angular_exchange?"cross_face_centered5":"face_local6";
 constexpr const char*scri_dissipation_scheme=scri_angular_dissipation?"degree7_weighted_negative_square":"none";
@@ -105,6 +113,8 @@ class Evolution {
   int rank,size,n,total,first,last,local,first_block,last_block;
   int surface_total,surface_first,surface_local;
   h::HyperbolicComposite model;
+  std::unique_ptr<h::PairedTraceDevice> trace_penalty;
+  double interface_seconds=0;
   std::unique_ptr<h::HyperbolicCompositeDevice> kernel;
   std::unique_ptr<h::HyperbolicCompositeExchange> exchange;
   std::unique_ptr<h::HyperbolicCompositeExchange> normal_exchange;
@@ -128,7 +138,7 @@ class Evolution {
   Real angular_epsilon=0,angular_upper_bound=0,angular_cfl=0,angular_cfl_max=0;
   uint64_t steps=0;
   double rhs_seconds=0,exchange_seconds=0,closure_seconds=0,diagnostic_seconds=0,halo_seconds=0;
-  explicit Evolution(int resolution,Real epsilon=0,int kind=0):n(resolution),model(continuous_positive?hyperbolic_reproduction::ContinuousCoreMesh(n):spherical_overlap?hyperbolic_reproduction::SphericalOverlapMesh(n):hyperbolic_reproduction::FixedMesh(n,core_subdivisions,evolved_overlap),false,scri_angular_exchange,epsilon,
+  explicit Evolution(int resolution,Real epsilon=0,int kind=0):n(resolution),model(thin_trace?hyperbolic_reproduction::ThinCoreMesh(n,trace_config.layers,trace_config.shifted):continuous_positive?hyperbolic_reproduction::ContinuousCoreMesh(n):spherical_overlap?hyperbolic_reproduction::SphericalOverlapMesh(n):hyperbolic_reproduction::FixedMesh(n,core_subdivisions,evolved_overlap),false,scri_angular_exchange,epsilon,
     scri_sampled_normal?h::HyperbolicComposite::NormalDerivative::sampled_numerator:h::HyperbolicComposite::NormalDerivative::analytic_jets,
     scri_donor_seven?h::HyperbolicComposite::RadialClosure::donor_seven:h::HyperbolicComposite::RadialClosure::ghost_lift),angular_epsilon(epsilon){
     if constexpr(inner_transition_logical)model.grid.SetInnerTransitionLogical(true);
@@ -162,6 +172,10 @@ class Evolution {
       angular_residual=Buffer("global angular residual",21*surface_total);
       residual_counts.resize(size);residual_displacements.resize(size);
       for(int r=0;r<size;++r){residual_counts[r]=surface_counts[r]/31*21;residual_displacements[r]=surface_displacements[r]/31*21;}
+    }
+    if constexpr(thin_trace){
+      const cubed_sphere::PairedTracePenalty plan(model.grid);
+      trace_penalty=std::make_unique<h::PairedTraceDevice>(model.grid,plan,first,local);
     }
     state=Buffer("global active stage",31*total);base=Buffer("accepted stage",31*total);
     local_state=Buffer("local stage",31*local);compensation=Buffer("local RK compensation",31*local);
@@ -265,7 +279,15 @@ class Evolution {
     rhs_seconds+=std::chrono::duration<double>(std::chrono::steady_clock::now()-start).count();
     gap=std::min(gap,stats.min_gap);cfl=std::max(cfl,stats.max_cfl);
     SynchronizeError(stats.bad_cells,"device RHS failure at active cell "+std::to_string(stats.first_bad)+" reason "+std::to_string(stats.reason));
-    const auto rate=kernel->LocalRHS();Real maximum=0;
+    const auto rate=kernel->LocalRHS();
+    if constexpr(thin_trace){
+      const Real bound=dt*trace_config.kappa*(trace_penalty->upper_value+trace_config.normal_ratio*trace_penalty->upper_normal);
+      SynchronizeError(!std::isfinite(bound)||bound>2.7,"isolated paired penalty RK4 bound exceeded");
+      const auto begin=std::chrono::steady_clock::now();
+      trace_penalty->Add(state,rate,trace_config.kappa,trace_config.normal_ratio);
+      interface_seconds+=std::chrono::duration<double>(std::chrono::steady_clock::now()-begin).count();
+    }
+    Real maximum=0;
     Kokkos::parallel_reduce("RHS maximum",Kokkos::RangePolicy<>(0,31*local),KOKKOS_LAMBDA(int i,Real&v){v=fmax(v,fabs(rate(i)));},Kokkos::Max<Real>(maximum));
     last_rhs=maximum;MPI_Allreduce(MPI_IN_PLACE,&last_rhs,1,MPI_ATHENA_REAL,MPI_MAX,MPI_COMM_WORLD);return rate;
   }
@@ -356,6 +378,7 @@ class Evolution {
       if constexpr(spherical_overlap){const GeometryConfig config;
         out.write(reinterpret_cast<const char*>(&config),sizeof(config));}
       if constexpr(continuous_positive){const PositiveConfig config;out.write(reinterpret_cast<const char*>(&config),sizeof(config));}
+      if constexpr(thin_trace)out.write(reinterpret_cast<const char*>(&trace_config),sizeof(trace_config));
       for(const V*v:{&values,&comps,&edge,&edge_comps})out.write(reinterpret_cast<const char*>(v->data()),v->size()*sizeof(Real));
       out.close();if(!out)throw std::runtime_error("checkpoint write failed");std::filesystem::rename(path+".tmp",path);
     }catch(const std::exception&e){bad=1;reason=e.what();}SynchronizeError(bad,reason);
@@ -387,6 +410,10 @@ class Evolution {
       if constexpr(continuous_positive){PositiveConfig config;in.read(reinterpret_cast<char*>(&config),sizeof(config));const PositiveConfig expected;
         if(!in||config.physical_lapse_floor!=expected.physical_lapse_floor||config.scheme!=1||config.reserved!=0)
           throw std::runtime_error("checkpoint positive-variable configuration mismatch");}
+      if constexpr(thin_trace){TraceConfig config;in.read(reinterpret_cast<char*>(&config),sizeof(config));
+        if(config.scheme!=trace_config.scheme||config.layers!=trace_config.layers||config.shifted!=trace_config.shifted||
+           config.reserved!=0||config.kappa!=trace_config.kappa||config.normal_ratio!=trace_config.normal_ratio)
+          throw std::runtime_error("checkpoint trace configuration mismatch");}
       for(auto*v:{&values,&comps,&edge,&edge_comps})in.read(reinterpret_cast<char*>(v->data()),v->size()*sizeof(Real));
       char tail;if(!in||in.read(&tail,1))throw std::runtime_error("checkpoint truncated or trailing data");
       for(const auto*v:{&values,&comps,&edge,&edge_comps})for(Real x:*v)if(!std::isfinite(x))throw std::runtime_error("checkpoint nonfinite data");
@@ -448,7 +475,7 @@ int main(int argc,char**argv){
       if(global_variable::nranks!=std::stoi(expected))throw std::runtime_error("MPI rank count differs from the bound launch plan");
     if(argc<9||argc>(scri_angular_dissipation?14:13))throw std::invalid_argument("usage: mpi n output kind target dt initial|- restart|- wall_seconds [diagnostic_interval=.1] [horizon_rms_tol=.001] [horizon_lmax=6] [horizon_ntheta=12] [angular_epsilon=2 (V4/V5 only)]");
     const int n=std::stoi(argv[1]);const std::string output=argv[2],kind_name=argv[3],initial=argv[6],restart=argv[7];
-    const int kind=kind_name=="minkowski"?0:kind_name=="pulse"?1:kind_name=="puncture"?2:-1;
+    const int kind=kind_name=="minkowski"?0:kind_name=="pulse"?1:kind_name=="puncture"?2:thin_trace&&kind_name=="oblique"?3:-1;
     const Real end=std::stod(argv[4]),dt=std::stod(argv[5]),wall=std::stod(argv[8]);
     const Real interval=argc>9?std::stod(argv[9]):.1,horizon_tolerance=argc>10?std::stod(argv[10]):.001;
     const auto angular_integer=[](const char*text){
@@ -473,6 +500,15 @@ int main(int argc,char**argv){
       throw std::invalid_argument("invalid resolution/kind/time parameters");
     if(kind==2&&initial=="-"&&restart=="-")throw std::invalid_argument("puncture requires initial data or a bound checkpoint");
     if(initial!="-"&&restart!="-")throw std::invalid_argument("supply initial data or restart, not both");
+    if constexpr(thin_trace){
+      const auto parameter=[](const char*name,Real fallback){const char*text=std::getenv(name);if(!text)return fallback;
+        size_t used=0;Real value=std::stod(text,&used);if(used!=std::strlen(text)||!std::isfinite(value))throw std::invalid_argument("invalid trace parameter");return value;};
+      const Real layers=parameter("HYPERBOLIC_TRACE_LAYERS",1),shifted=parameter("HYPERBOLIC_TRACE_SHIFTED",1);
+      trace_config.kappa=parameter("HYPERBOLIC_TRACE_KAPPA",0);trace_config.normal_ratio=parameter("HYPERBOLIC_TRACE_NORMAL_RATIO",.25);
+      if(layers<1||layers>3||layers!=std::floor(layers)||(shifted!=0&&shifted!=1)||trace_config.kappa<0||trace_config.normal_ratio<0)
+        throw std::invalid_argument("invalid trace layers/penalty");
+      trace_config.layers=int(layers);trace_config.shifted=int(shifted);
+    }
     const auto started=std::chrono::steady_clock::now();
     std::unique_ptr<Evolution> evolution;
     CollectiveLocal([&]{evolution=std::make_unique<Evolution>(n,angular_epsilon,kind);});
@@ -489,7 +525,8 @@ int main(int argc,char**argv){
         if(count!=e.model.state.size())throw std::runtime_error("initial field count mismatch");
         for(auto&x:e.model.state)if(!(in>>x)||!std::isfinite(x))throw std::runtime_error("invalid initial state");
         std::string trailing;if(in>>trailing)throw std::runtime_error("trailing initial data");}
-      else if(kind==1)for(int p=0;p<e.total;++p){const Real z=(e.model.Radius(e.model.grid.geometry[p].x)-.4)/.12;
+      else if(kind==1||kind==3)for(int p=0;p<e.total;++p){const auto*x=e.model.grid.geometry[p].x;
+        const Real z=kind==1?(e.model.Radius(x)-.4)/.12:std::sqrt((x[0]-.12)*(x[0]-.12)+(x[1]-.04)*(x[1]-.04)+(x[2]+.03)*(x[2]+.03))/.09;
         if(std::abs(z)<1)e.model.state[31*p+18]=.01*std::exp(1-1/(1-z*z));}
     }});
     MPI_Bcast(e.model.state.data(),e.model.state.size(),MPI_ATHENA_REAL,0,MPI_COMM_WORLD);
@@ -534,13 +571,16 @@ int main(int argc,char**argv){
     std::ofstream history;
     CollectiveLocal([&]{if(e.rank==0){
       history.open(output+".history.csv");history<<std::setprecision(17)
-        <<"t,t_over_M,steps,min_chi,min_lapse,state_deviation,H_L2,M_L2,M_physical_L2,Theta_L2,Z_L2,H_exterior_L2,M_exterior_L2,exterior_cutoff,horizon_found,horizon_radius,horizon_areal_radius,horizon_mass,horizon_expansion_rms,horizon_trial_radius,horizon_trial_expansion_rms,horizon_complete_surface,horizon_iterations,null_surface,null_ghost,pole_max,clock_max,cfl_max,wall_seconds,determinant_residual,tracefree_residual,Mr_L2,Mr_exterior_L2,Theta_exterior_L2,Zr_L2,Zr_exterior_L2,horizon_irreducible_mass\n";
+        <<"t,t_over_M,steps,min_chi,min_lapse,state_deviation,H_L2,M_L2,M_physical_L2,Theta_L2,Z_L2,H_exterior_L2,M_exterior_L2,exterior_cutoff,horizon_found,horizon_radius,horizon_areal_radius,horizon_mass,horizon_expansion_rms,horizon_trial_radius,horizon_trial_expansion_rms,horizon_complete_surface,horizon_iterations,null_surface,null_ghost,pole_max,clock_max,cfl_max,wall_seconds,determinant_residual,tracefree_residual,Mr_L2,Mr_exterior_L2,Theta_exterior_L2,Zr_L2,Zr_exterior_L2,horizon_irreducible_mass";
+      if constexpr(thin_trace)history<<",core_trace_value_rms,core_trace_normal_rms,shell_trace_value_rms,shell_trace_normal_rms";
+      history<<'\n';
       history.flush();if(!history)throw std::runtime_error("history open/header write failed");
     }});
     Diagnostic diagnostic{};bool diagnostic_valid=false;Real diagnostic_time=nan;
     Real horizon_radius=nan,horizon_areal=nan,horizon_mass=nan,horizon_irreducible_mass=nan,horizon_expansion=nan;
     Real trial_radius=nan,trial_expansion=nan,cutoff=kind==2?nan:0;
     bool horizon_found=false,horizon_complete=false;int horizon_iterations=0;
+    std::array<Real,6> trace_norm{};
     Real initial_rhs=nan;double last_diag_seconds=0;
     auto elapsed=[&]{return std::chrono::duration<double>(std::chrono::steady_clock::now()-started).count();};
     auto record=[&]{
@@ -549,6 +589,7 @@ int main(int argc,char**argv){
       CollectiveLocal([&]{halo=e.exchange->Fill(e.state);});
       e.null_ghost=std::max(e.null_ghost,halo.after);e.null_before=std::max(e.null_before,halo.before);
       e.SynchronizeError(halo.invalid,"invalid diagnostic halo");
+      if constexpr(thin_trace){trace_norm=e.trace_penalty->Measure(e.state);MPI_Allreduce(MPI_IN_PLACE,trace_norm.data(),6,MPI_ATHENA_REAL,MPI_SUM,MPI_COMM_WORLD);}
       cutoff=kind==2?nan:0;horizon_found=false;
       horizon_radius=horizon_areal=horizon_mass=horizon_irreducible_mass=horizon_expansion=nan;
       if(finder){
@@ -584,7 +625,9 @@ int main(int argc,char**argv){
           <<','<<Norm(diagnostic.total.mr2,diagnostic.total.volume)<<','<<Norm(diagnostic.exterior.mr2,diagnostic.exterior.volume)
           <<','<<Norm(diagnostic.exterior.theta2,diagnostic.exterior.volume)
           <<','<<Norm(diagnostic.total.zr2,diagnostic.total.volume)<<','<<Norm(diagnostic.exterior.zr2,diagnostic.exterior.volume)
-          <<','<<horizon_irreducible_mass<<'\n';
+          <<','<<horizon_irreducible_mass;
+        if constexpr(thin_trace)for(int side=0;side<2;++side)history<<','<<Norm(trace_norm[3*side],31*trace_norm[3*side+2])<<','<<Norm(trace_norm[3*side+1],11*trace_norm[3*side+2]);
+        history<<'\n';
         history.flush();if(!history)throw std::runtime_error("history append failed");
         std::cout<<"t="<<e.time<<" steps="<<e.steps<<" min_alpha="<<diagnostic.min_lapse<<" H="<<Norm(diagnostic.total.h2,diagnostic.total.volume)<<" horizon="<<horizon_found<<" seconds="<<elapsed()<<std::endl;
       }});
@@ -628,6 +671,7 @@ int main(int argc,char**argv){
     std::vector<double> rank_collectives(3*e.size);std::vector<uint64_t> rank_collective_calls(3*e.size);
     MPI_Gather(e.collective_seconds,3,MPI_DOUBLE,rank_collectives.data(),3,MPI_DOUBLE,0,MPI_COMM_WORLD);
     MPI_Gather(e.collective_calls,3,MPI_UINT64_T,rank_collective_calls.data(),3,MPI_UINT64_T,0,MPI_COMM_WORLD);
+    std::vector<double> interface_timings(e.size);MPI_Gather(&e.interface_seconds,1,MPI_DOUBLE,interface_timings.data(),1,MPI_DOUBLE,0,MPI_COMM_WORLD);
     std::vector<double> rank_timings(5*e.size);MPI_Gather(timing,5,MPI_DOUBLE,rank_timings.data(),5,MPI_DOUBLE,0,MPI_COMM_WORLD);
     MPI_Allreduce(MPI_IN_PLACE,timing,5,MPI_DOUBLE,MPI_MAX,MPI_COMM_WORLD);
     CollectiveLocal([&]{if(e.rank==0){
@@ -653,9 +697,16 @@ int main(int argc,char**argv){
         <<",\"scri_dissipation_max_incoming\":"<<(e.model.angular_plan?e.model.angular_plan->Stats().max_incoming:0)
         <<",\"scri_dissipation_max_moment_error\":"<<(e.model.angular_plan?e.model.angular_plan->Stats().max_moment_error:0)
         <<",\"scri_dissipation_max_coefficient_l1\":"<<(e.model.angular_plan?e.model.angular_plan->Stats().max_coefficient_l1:0)
-        <<",\"checkpoint_header_bytes\":"<<(sizeof(Header)+(scri_angular_dissipation?sizeof(DissipationConfig):0)+(scri_sampled_normal?sizeof(NormalConfig):0)+((core_subdivisions==2||evolved_overlap)?sizeof(MeshConfig):0)+(spherical_overlap?sizeof(GeometryConfig):0)+(continuous_positive?sizeof(PositiveConfig):0));
+        <<",\"checkpoint_header_bytes\":"<<(sizeof(Header)+(scri_angular_dissipation?sizeof(DissipationConfig):0)+(scri_sampled_normal?sizeof(NormalConfig):0)+((core_subdivisions==2||evolved_overlap)?sizeof(MeshConfig):0)+(spherical_overlap?sizeof(GeometryConfig):0)+(continuous_positive?sizeof(PositiveConfig):0)+(thin_trace?sizeof(TraceConfig):0));
       if constexpr(scri_sampled_normal)report<<",\"scri_normal_derivative\":\"sampled_native_numerator"<<(scri_donor_seven?7:6)<<"\""
         <<",\"scri_normal_radial_nodes\":"<<(scri_donor_seven?7:6)<<",\"scri_normal_bulk_derivative_order\":4";
+      if constexpr(thin_trace){
+        report<<",\"interface_method\":\"experimental_ghost_plus_adjoint_trace_penalty\",\"core_evolved_layers\":"<<trace_config.layers
+          <<",\"shifted_overlap_donors\":"<<(trace_config.shifted?"true":"false")<<",\"trace_kappa\":"<<trace_config.kappa
+          <<",\"trace_normal_ratio\":"<<trace_config.normal_ratio<<",\"trace_upper_value\":"<<e.trace_penalty->upper_value
+          <<",\"trace_upper_normal\":"<<e.trace_penalty->upper_normal<<",\"interface_seconds_by_rank\":[";
+        for(int r=0;r<e.size;++r){if(r)report<<',';report<<interface_timings[r];}report<<']';
+      }
       if constexpr(evolved_overlap)report<<",\"evolved_overlap\":"<<evolved_overlap<<",\"nominal_cells\":"<<e.model.grid.nominal_count;
       report<<",\"boundary_execution\":\""<<(boundary_reuse?"cached_global_projection_angular":"partitioned_uncached")<<"\",\"boundary_cache_hits\":"<<e.boundary_cache_hits;
       if constexpr(continuous_positive)report<<",\"cartesian_seams\":\"uniform_global_stencil\",\"positive_variables\":\"log_chi_log_lapse_rk_and_ko\",\"physical_lapse_floor\":"<<physical_lapse_floor;

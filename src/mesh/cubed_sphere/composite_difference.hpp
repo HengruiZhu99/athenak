@@ -47,6 +47,8 @@ class CompositeDifference {
       throw std::invalid_argument("composite derivative order/halo contract");
     if(mesh.evolved_overlap<0||mesh.evolved_overlap>n/3)
       throw std::invalid_argument("overlap must be nonnegative and no larger than n/3");
+    if(mesh.core_evolved_overlap < -1 || mesh.CoreOverlap()>mesh.evolved_overlap)
+      throw std::invalid_argument("core overlap must fit allocated overlap storage");
     if(mesh.spherical_inner_boundary&&(!mesh.equiangular||mesh.inner_radius<=0||
         mesh.inner_radius>=mesh.half_width||n<12))
       throw std::invalid_argument("spherical overlap requires equiangular shells, 0<Rin<core width, and n>=12");
@@ -79,7 +81,7 @@ class CompositeDifference {
   int Index(int m, int i, int j, int k) const {
     return ((m*padded+k+storage_halo)*padded+j+storage_halo)*padded+i+storage_halo;
   }
-  int Overlap(int m)const{return mesh.blocks[m].layer<=0?mesh.evolved_overlap:0;}
+  int Overlap(int m)const{return mesh.blocks[m].face<0?mesh.CoreOverlap():mesh.blocks[m].layer==0?mesh.evolved_overlap:0;}
   int Lower(int m,int axis)const{
     const auto&b=mesh.blocks[m];
     if(mesh.continuous_cartesian_core&&b.face<0&&b.lo[axis]>-mesh.half_width+1e-14)return 0;
@@ -91,7 +93,7 @@ class CompositeDifference {
     return n+Overlap(m);
   }
   int CartesianPoint(int i,int j,int k)const{
-    const int o=mesh.evolved_overlap;
+    const int o=mesh.CoreOverlap();
     if(i< -o||j< -o||k< -o||i>=cartesian_n+o||j>=cartesian_n+o||k>=cartesian_n+o)return -1;
     return cartesian_points[((k+o)*cartesian_width+j+o)*cartesian_width+i+o];
   }
@@ -292,7 +294,7 @@ class CompositeDifference {
     if(!mesh.continuous_cartesian_core)return;
     for(const auto&b:mesh.blocks)if(b.face<0){cartesian_h=(b.hi[0]-b.lo[0])/n;break;}
     if(!(cartesian_h>0))throw std::invalid_argument("continuous core has no Cartesian blocks");
-    cartesian_n=std::lround(2*mesh.half_width/cartesian_h);cartesian_width=cartesian_n+2*mesh.evolved_overlap;
+    cartesian_n=std::lround(2*mesh.half_width/cartesian_h);cartesian_width=cartesian_n+2*mesh.CoreOverlap();
     cartesian_points.assign(cartesian_width*cartesian_width*cartesian_width,-1);
     cartesian_coordinates.resize(active.size());
     for(size_t p=0;p<active.size();++p){const auto&b=mesh.blocks[cells[p].block];if(b.face>=0)continue;
@@ -302,17 +304,21 @@ class CompositeDifference {
         const Real t=(geometry[p].x[a]+mesh.half_width)/cartesian_h-.5;q[a]=std::lround(t);
         if(std::abs(t-q[a])>1e-10)throw std::invalid_argument("misaligned continuous Cartesian grid");
       }
-      const int o=mesh.evolved_overlap;auto&target=cartesian_points[((q[2]+o)*cartesian_width+q[1]+o)*cartesian_width+q[0]+o];
+      const int o=mesh.CoreOverlap();auto&target=cartesian_points[((q[2]+o)*cartesian_width+q[1]+o)*cartesian_width+q[0]+o];
       if(target>=0)throw std::invalid_argument("duplicate continuous Cartesian point");target=p;
     }
     for(int p:cartesian_points)if(p<0)throw std::invalid_argument("hole in continuous Cartesian grid");
   }
-  std::vector<Entry> InterpolateCartesian(const Real x[3],int width)const{
+  std::vector<Entry> InterpolateCartesian(const Real x[3],int width,bool shifted=false)const{
     if(!mesh.continuous_cartesian_core)return {};
-    int first[3],length[3];Real t[3],w[3][6]{};const int o=mesh.evolved_overlap;
+    int first[3],length[3];Real t[3],w[3][6]{};const int o=mesh.CoreOverlap();
     for(int a=0;a<3;++a){t[a]=(x[a]+mesh.half_width)/cartesian_h-.5;
       const bool exact=std::abs(t[a]-std::round(t[a]))<=64*std::numeric_limits<Real>::epsilon()*std::max(Real(1),std::abs(t[a]));
       length[a]=exact?1:width;first[a]=exact?int(std::round(t[a])):int(std::floor(t[a]))-width/2+1;
+      if(shifted){
+        if(t[a]<-o-1e-12||t[a]>cartesian_n+o-1+1e-12)return {};
+        first[a]=std::clamp(first[a],-o,cartesian_n+o-length[a]);
+      }
       if(first[a]<-o||first[a]+length[a]>cartesian_n+o)return {};
       for(int i=0;i<length[a];++i){w[a][i]=1;for(int j=0;j<length[a];++j)if(j!=i)w[a][i]*=(t[a]-first[a]-j)/Real(i-j);}
     }
@@ -328,6 +334,8 @@ class CompositeDifference {
     auto cartesian=InterpolateCartesian(x,width);if(!cartesian.empty())return cartesian;
     const int preferred=mesh.Owner(x);int selected=-1,best_first[3]{},best_width[3]{};
     Real best_q[3]{},best_margin=-1e300;
+    for(int pass=0;pass<(mesh.shifted_overlap_donors?2:1)&&selected<0;++pass){
+    if(pass){auto shifted=InterpolateCartesian(x,width,true);if(!shifted.empty())return shifted;}
     for(int m=0;m<int(mesh.blocks.size());++m){
       const auto&b=mesh.blocks[m];if(b.layer>0||(mesh.continuous_cartesian_core&&b.face<0))continue;
       if(b.face>=0&&(b.face%2?-x[b.face/2]:x[b.face/2])<=0)continue;
@@ -338,6 +346,10 @@ class CompositeDifference {
         const bool exact=mesh.spherical_inner_boundary&&std::abs(t-std::round(t))<=64*std::numeric_limits<Real>::epsilon()*std::max(Real(1),std::abs(t));
         length[a]=exact?1:width;aligned=aligned&&exact;
         first[a]=exact?int(std::round(t)):int(std::floor(t))-width/2+1;
+        if(pass){
+          if(t<Lower(m,a)-1e-12||t>Upper(m,a)-1+1e-12){valid=false;break;}
+          first[a]=std::clamp(first[a],Lower(m,a),Upper(m,a)-length[a]);
+        }
         if(first[a]<Lower(m,a)||first[a]+length[a]>Upper(m,a)){valid=false;break;}
         margin=std::min(margin,std::min(t-Lower(m,a),Upper(m,a)-1-t));
       }
@@ -348,6 +360,7 @@ class CompositeDifference {
       if(aligned&&mesh.spherical_inner_boundary)margin+=1e9;
       if(margin>best_margin){selected=m;best_margin=margin;
         for(int a=0;a<3;++a){best_first[a]=first[a];best_q[a]=q[a];best_width[a]=length[a];}}
+    }
     }
     if(selected<0)throw std::runtime_error("no centered evolved-overlap donor at "+
       std::to_string(x[0])+","+std::to_string(x[1])+","+std::to_string(x[2]));

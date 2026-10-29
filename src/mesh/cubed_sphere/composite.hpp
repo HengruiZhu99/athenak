@@ -30,6 +30,14 @@ class CompositeMesh {
   // The Cartesian core and cube-to-sphere layer evolve this many extra cells
   // on each side; interpolation ghosts lie outside that evolved region.
   int evolved_overlap = 0;
+  // Experimental core-only extension. -1 preserves every legacy descriptor.
+  // Shell angular/radial overlap stays evolved_overlap; geometric overlap of
+  // the cube and the spherical annulus is independent of either layer count.
+  int core_evolved_overlap = -1;
+  bool shifted_overlap_donors = false;
+  int CoreOverlap() const {
+    return core_evolved_overlap < 0 ? evolved_overlap : core_evolved_overlap;
+  }
   // Optional overlapping spherical annulus. Angles are equiangular face
   // coordinates; tensor components remain Cartesian. The core covers r<inner_radius.
   bool spherical_inner_boundary = false, equiangular = false;

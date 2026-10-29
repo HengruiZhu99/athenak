@@ -1,0 +1,71 @@
+Explore a thin-overlap Cartesian–spherical-shell coupling using our existing vertex-centered infrastructure, ordinary ghost-zone communication, and controlled damping of disagreement between the two domain solutions.
+
+Continue from the latest codex/hyperbolic-core-shell state. Preserve the current validated controls and ongoing comparison work. Make this a separate experimental variant so we can attribute numerical and performance changes.
+
+Infrastructure to inspect and selectively reuse:
+- origin/codex/z4c-vc-performance-aurora-20260829
+  Verified remote head: 6bfa5c11c3b10775294f5f2d95a196d84d6718cb
+- Sparse GPU-aware shared-vertex synchronization:
+  62993e7bac8fbaed13f592834282ca09142a5c2d
+- Original vertex-centered implementation:
+  origin/codex/z4c-vertex-centered-cartoon-amr-20260821
+  7e0690e46766cdb101f45aceefe8cc5f2a66ae4f
+- Additional 2D/3D hardening:
+  origin/codex/z4c-vc-hardening-2d3d-20260822
+  34cd6db227e81aed91064f3684733e720c9fac7e
+
+Relevant donor files:
+- src/z4c/z4c_grid.hpp
+- src/z4c/z4c_vertex_topology.hpp and .cpp
+- src/bvals/vertex_topology.hpp
+- src/bvals/vertex_boundary_indices.hpp
+- MeshBoundaryValuesVC in src/bvals/bvals.hpp and its implementation
+- src/mesh/vertex_amr.hpp
+- src/z4c/z4c_calcrhs.cpp
+- docs/design/z4c_vertex_centered_design.md
+- docs/investigations/z4c_vc_performance_aurora_20260829/REPORT.md
+
+The donor supports grid_centering=vertex and has deterministic shared-node averaging plus sparse communication. Reuse suitable infrastructure, but do not import its gauge or evolution equations wholesale. Do not import the later experimental subcycling work as a dependency.
+
+Proposed experiment:
+
+1. Clarify the geometry and meaning of “one shared outer layer.”
+   I want to explore one evolved interface layer on each side, with enough ordinary ghost points for the existing high-order derivatives and dissipation. This does not mean a one-point donor stencil.
+
+   Distinguish truly coincident shared vertices from two solutions sampled at the same physical location through interpolation. Vertex centering alone does not make a Cartesian cube boundary coincide with a spherical boundary. Prefer preserving purely spherical shells; explicitly describe any common trace grid, masking, or geometry change needed. Do not silently claim that reducing extra evolved layers eliminates the geometric overlap.
+
+2. Retain ghost-zone communication and test an additional paired disagreement penalty at both artificial interfaces: the Cartesian outer boundary and spherical-shell inner boundary.
+
+   At coincident scalar points, the motivating example is
+       du_C/dt += -kappa*(u_C-u_S)
+       du_S/dt += +kappa*(u_C-u_S).
+   Derive the appropriate weighted/interpolated construction for our grids and evolution variables. Check that its agreement state is consistent and its disagreement contribution is dissipative in an explicitly stated discrete norm.
+
+   Account for our second spatial derivatives and the appropriate normal-derivative or characteristic combinations. Do not assume that damping every raw component with one coefficient supplies a stable boundary closure. If calling the method SBP–SAT, identify the actual SBP operators, boundary terms, transfer operators, and penalty construction; otherwise describe it honestly as an experimental ghost-plus-penalty method.
+
+   Keep separate interface copies where disagreement is being damped. The donor’s hard shared-node averaging would otherwise erase that disagreement before the penalty is evaluated. Preserve normal synchronization within each domain.
+
+3. Preserve the current hyperboloidal gauge, reference functions, log-chi/log-lapse evolution, counted lapse floor, and numerical-precision scri null closure. Keep tensor components in the common Cartesian frame.
+
+   Audit the puncture before changing centering: a vertex grid can place a node exactly at r=0, where chi vanishes and log chi is undefined. The donor documents a rejected vertex puncture case. Do not assume its centering machinery solves this. Explain whether the prototype can retain the current puncture sampling, use interface-only nodal traces, or needs justified analytic limits.
+
+4. Replace global volume Allgatherv with precomputed sparse donor/neighbor communication where practical, using the existing VC sparse-exchange work as a reference. Include dependencies for bulk RHS, sampled-normal scri evaluation, diagnostics, and horizon sampling. Keep communication-only changes separately testable for numerical equivalence.
+
+5. Run a bounded comparison:
+   - Current overlap scheme as control.
+   - Thin overlap with ghost communication and zero penalty.
+   - The same geometry with paired penalties.
+   - One versus two/three evolved layers where donor coverage permits.
+
+   Start with constant/Minkowski preservation and smooth waves crossing the interface, including a nonspherical/oblique case. Then reproduce the isotropic puncture evolution through at least 3M and compare with the preserved 1D baseline.
+
+   Measure interface jumps, reflected waves, radial and angular errors, exterior constraints with matching norm conventions, accepted horizon quantities, scri closure, floor interventions, and timestep restrictions. Preserve failed horizon samples as unavailable. Do not loosen acceptance tolerances to qualify the new scheme.
+
+6. Compare performance at comparable accuracy and physical end time:
+   evolved points, communicated bytes, message counts, bulk RHS, interface/ghost work, MPI waiting, diagnostics, and allowable timestep. Distinguish communication-only speedups from changes caused by centering, overlap width, penalties, or resolution. Bitwise equality is appropriate for communication-only refactoring, not for a genuinely changed discretization.
+
+For background, inspect the overset penalty formulation of Kopriva–Nordström–Gassner (arXiv:2105.04664), the overlap-disagreement penalties in arXiv:2405.04668, and Sharan–Pantano–Bodony’s SBP–SAT overset method (DOI:10.1016/j.jcp.2018.01.049). Their model-problem stability results do not automatically establish stability for our complete formulation.
+
+Use the existing Aurora constraints: CompactBinaryMerger, one debug node at a time, all 12 GPU tiles/ranks, SYCL+MPI, make -j64, and keep campaign home storage below 5 GB through verified cleanup.
+
+Deliver a bounded prototype, reproducible comparisons and plots, and a recommendation about whether the single-layer ghost-plus-penalty coupling is accurate, stable, and cheaper. Commit and push the work, identifying the experimental branch and exact revisions.
