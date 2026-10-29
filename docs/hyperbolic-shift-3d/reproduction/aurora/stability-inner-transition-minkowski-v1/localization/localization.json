@@ -1,0 +1,470 @@
+{
+  "status": "completed",
+  "scope": "Observed V7 endpoint localization and tangent RHS at Minkowski; no checkpoint evolution and no verified eigenvalue or stability proof",
+  "norm": "Unweighted point-coordinate Euclidean, not physical energy",
+  "checkpoint": {
+    "magic": "HYP3D_MPI_V7",
+    "n": 16,
+    "nf": 31,
+    "kind": 0,
+    "admitted": true,
+    "cells": 77824,
+    "surface_size": 47616,
+    "steps": 4001,
+    "time": 2.0,
+    "dt": 0.0005,
+    "header_bytes": 104,
+    "scri_dissipation_epsilon": 2.0,
+    "scri_dissipation_degree": 7,
+    "base_except_magic_sha256": "bc2cbc1a45ffcce422bfc2b312f97322c69c8ca6041b01c8d89132aaaef34575",
+    "arrays": [
+      {
+        "name": "volume_state",
+        "doubles": 2412544,
+        "sha256": "e226c825764f7426f35b0e326a47dac8bdf602e81b46dfbcd5467d1c34c71a53"
+      },
+      {
+        "name": "volume_compensation",
+        "doubles": 2412544,
+        "sha256": "9f50600f61d9123eb7890eac2ac82278826449ce7896853e170eced3420eb87e"
+      },
+      {
+        "name": "scri_state",
+        "doubles": 47616,
+        "sha256": "d867c10c057045695f12c90c2ccb4a7f5a687ca88cf10767a1dc82f50e005f38"
+      },
+      {
+        "name": "scri_compensation",
+        "doubles": 47616,
+        "sha256": "42bcea11cac0901905482e644a69b4dcf964b891c70fc32ced72bab0e4588c97"
+      }
+    ],
+    "bytes": 39362664,
+    "sha256": "b84f916bc45622c42a1f9669e536a9d2776642ca8b7af899ed11c2a8877ce44d",
+    "scri_normal_derivative": "sampled_native_numerator7",
+    "scri_normal_radial_nodes": 7,
+    "scri_normal_bulk_derivative_order": 4,
+    "scri_radial_closure": "donor_seven_last3",
+    "scri_radial_bulk_rows": 3,
+    "interpatch_interpolation": "logical_inner_transition",
+    "worker_sha256": "04b49ea3d836c5f771ea57f6544943dea15c7e4dc4cb11b793674760e9fb5262",
+    "bound_artifact": [
+      [
+        "minkowski",
+        "campaigns/stability-inner-transition-minkowski-v1/output/minkowski.checkpoint"
+      ]
+    ],
+    "scientifically_admitted": false,
+    "tangent_norm": 3.0775591928191564e-06,
+    "trace_discard_relative": 8.0767048926218e-09
+  },
+  "localization": {
+    "regions": {
+      "Cartesian": {
+        "norm_squared_fraction": 0.0019982149490919933,
+        "i_row_fractions": [
+          0.0008605111977556908,
+          7.642487971802679e-05,
+          5.35099324133777e-05,
+          1.6475957864901512e-05,
+          5.834500303861462e-06,
+          1.9814538182479015e-06,
+          5.492912444267422e-07,
+          1.0099871886202495e-07,
+          1.5827872677788996e-07,
+          5.104667192999743e-07,
+          1.6213564137075785e-06,
+          6.280076761101966e-06,
+          1.97300490128899e-05,
+          4.1746476324135276e-05,
+          7.24400437211442e-05,
+          0.0008403399895755417
+        ]
+      },
+      "transition_shell": {
+        "norm_squared_fraction": 0.9980017850035563,
+        "i_row_fractions": [
+          0.3524156284389487,
+          0.3473999393760043,
+          0.18541615080548826,
+          0.08103774823726131,
+          0.023408177076376883,
+          0.0061787794827482,
+          0.0017183055030805603,
+          0.0003505379143767291,
+          6.001574470674588e-05,
+          1.3345995710804227e-05,
+          2.698791943989958e-06,
+          3.804257028211839e-07,
+          6.117774375574978e-08,
+          1.362866012848779e-08,
+          2.1896698339377456e-09,
+          2.1513326183044356e-10
+        ]
+      },
+      "middle_shell": {
+        "norm_squared_fraction": 4.618738315146134e-11,
+        "i_row_fractions": [
+          4.216556246093338e-11,
+          3.6052115271977375e-12,
+          3.147808948841092e-13,
+          6.309582829352025e-14,
+          1.3985405314924385e-14,
+          5.648686437127526e-15,
+          3.730864420794369e-15,
+          2.729401513672953e-15,
+          2.1410058806833882e-15,
+          1.8182805094755924e-15,
+          1.69620803557441e-15,
+          1.5776148200629607e-15,
+          1.4829879779035272e-15,
+          1.4011874563289234e-15,
+          1.3086244286593941e-15,
+          1.2121733574283714e-15
+        ]
+      },
+      "outer_shell": {
+        "norm_squared_fraction": 4.848103644280235e-13,
+        "i_row_fractions": [
+          1.1550830234634085e-15,
+          1.105167279343413e-15,
+          1.0471046768062189e-15,
+          9.811225781309643e-16,
+          1.0067764815148342e-15,
+          1.367650132765856e-15,
+          2.402138363797702e-15,
+          9.134793762543087e-15,
+          1.212352736123563e-14,
+          8.743448289766074e-15,
+          7.310234635501571e-15,
+          9.215192486173665e-15,
+          1.8828969612029463e-14,
+          6.518532305262665e-14,
+          8.36757488614533e-14,
+          2.615280838308716e-13
+        ]
+      }
+    },
+    "block_norm_squared_fractions": [
+      0.0019982149490919933,
+      0.2444933702624966,
+      0.2347064344871595,
+      0.13197898852487405,
+      0.18339100296348995,
+      0.06335785360296757,
+      0.14007413516256872,
+      1.2015651326814418e-11,
+      1.089983192853695e-11,
+      6.008800302807629e-12,
+      8.834485665868935e-12,
+      1.7389674135288466e-12,
+      6.6896465139045614e-12,
+      9.378462011443225e-14,
+      7.322061117838272e-14,
+      8.396020162920751e-14,
+      6.787751934446443e-14,
+      8.859744640166586e-14,
+      7.736996575987074e-14
+    ],
+    "volume_field_norm_squared_fractions": {
+      "chi": 1.5471427390040222e-07,
+      "metric": 5.473654482197733e-06,
+      "A": 0.0011952852109282334,
+      "trace": 3.261090464692885e-08,
+      "Theta": 1.260663701236578e-05,
+      "Lambda": 0.5000966699607945,
+      "B": 1.1127717699049444e-13,
+      "lapse": 1.636982256686571e-11,
+      "beta": 2.3234973663773642e-05,
+      "D": 0.4986665422207799
+    },
+    "surface_norm_squared_fraction": 6.795940753890211e-13,
+    "transition_angular_outer_two_rows_fraction": 0.9883870666666141,
+    "peak_block_k_j_i": [
+      1,
+      0,
+      0,
+      1
+    ]
+  },
+  "rows": [
+    {
+      "amplitude": 1e-05,
+      "V7": {
+        "projected_matrix": [
+          [
+            -4.3713601212365525,
+            -606.7943619654216
+          ],
+          [
+            601.4329491512858,
+            26.00241373582472
+          ]
+        ],
+        "column_relative_residuals": [
+          5.229485875842606e-17,
+          0.00042072615138868296
+        ],
+        "projected_eigenvalues": [
+          {
+            "real": 10.81552680729409,
+            "imag": 603.9167832662513
+          },
+          {
+            "real": 10.81552680729409,
+            "imag": -603.9167832662513
+          }
+        ],
+        "direction_metrics": {
+          "all": {
+            "coordinate_norm": 0.9999999999999998,
+            "action_norm": 601.4488349927389,
+            "projected_rate": -4.371360121236554,
+            "relative_shape_residual": 0.9999735873767995
+          },
+          "volume": {
+            "coordinate_norm": 0.9999999999996599,
+            "action_norm": 601.448834992713,
+            "projected_rate": -4.371360121220941,
+            "relative_shape_residual": 0.9999735873767996
+          },
+          "outer_shell": {
+            "coordinate_norm": 6.962832501417966e-07,
+            "action_norm": 8.482718808641911e-05,
+            "projected_rate": -0.5010276277028043,
+            "relative_shape_residual": 0.9999915433775173
+          },
+          "surface": {
+            "coordinate_norm": 8.243749604330672e-07,
+            "action_norm": 0.0001763206131143334,
+            "projected_rate": -27.34674440565375,
+            "relative_shape_residual": 0.9917925059129704
+          },
+          "volume_Lambda": {
+            "coordinate_norm": 0.7071751338676965,
+            "action_norm": 425.35655269100874,
+            "projected_rate": -4.4471748477072675,
+            "relative_shape_residual": 0.9999726667007085
+          },
+          "volume_D": {
+            "coordinate_norm": 0.7061632546520528,
+            "action_norm": 424.65522217173753,
+            "projected_rate": -4.255522575876677,
+            "relative_shape_residual": 0.9999749609105706
+          }
+        }
+      },
+      "V6_on_same_plane": {
+        "projected_matrix": [
+          [
+            -32.198750760870915,
+            -533.2475911638828
+          ],
+          [
+            546.2520158835523,
+            -8.193422785707245
+          ]
+        ],
+        "column_relative_residuals": [
+          0.21336436353972474,
+          0.23909964668794062
+        ],
+        "projected_eigenvalues": [
+          {
+            "real": -20.196086773289068,
+            "imag": 539.5771563877779
+          },
+          {
+            "real": -20.196086773289068,
+            "imag": -539.5771563877779
+          }
+        ],
+        "direction_metrics": {
+          "all": {
+            "coordinate_norm": 0.9999999999999998,
+            "action_norm": 560.0977088141435,
+            "projected_rate": -32.19875076087093,
+            "relative_shape_residual": 0.9983462124398439
+          },
+          "volume": {
+            "coordinate_norm": 0.9999999999996599,
+            "action_norm": 560.0977088141157,
+            "projected_rate": -32.198750760874226,
+            "relative_shape_residual": 0.9983462124398446
+          },
+          "outer_shell": {
+            "coordinate_norm": 6.962832501417966e-07,
+            "action_norm": 8.482718808641911e-05,
+            "projected_rate": -0.5010276277028043,
+            "relative_shape_residual": 0.9999915433775173
+          },
+          "surface": {
+            "coordinate_norm": 8.243749604330672e-07,
+            "action_norm": 0.0001763206131143334,
+            "projected_rate": -27.34674440565375,
+            "relative_shape_residual": 0.9917925059129704
+          },
+          "volume_Lambda": {
+            "coordinate_norm": 0.7071751338676965,
+            "action_norm": 395.95188278969675,
+            "projected_rate": -32.56576852430758,
+            "relative_shape_residual": 0.9983071067702273
+          },
+          "volume_D": {
+            "coordinate_norm": 0.7061632546520528,
+            "action_norm": 395.4545550541699,
+            "projected_rate": -32.61226673869454,
+            "relative_shape_residual": 0.9983028597735043
+          }
+        }
+      },
+      "relative_action_difference": 0.22369136214240642
+    },
+    {
+      "amplitude": 1e-06,
+      "V7": {
+        "projected_matrix": [
+          [
+            -4.371359549902067,
+            -606.7943622021701
+          ],
+          [
+            601.4329490863719,
+            26.002414724947396
+          ]
+        ],
+        "column_relative_residuals": [
+          2.0230916867896974e-16,
+          0.00042072645569747916
+        ],
+        "projected_eigenvalues": [
+          {
+            "real": 10.815527587522666,
+            "imag": 603.916783346274
+          },
+          {
+            "real": 10.815527587522666,
+            "imag": -603.916783346274
+          }
+        ],
+        "direction_metrics": {
+          "all": {
+            "coordinate_norm": 0.9999999999999998,
+            "action_norm": 601.4488349236742,
+            "projected_rate": -4.371359549902069,
+            "relative_shape_residual": 0.9999735873836975
+          },
+          "volume": {
+            "coordinate_norm": 0.9999999999996599,
+            "action_norm": 601.4488349236483,
+            "projected_rate": -4.37135954988671,
+            "relative_shape_residual": 0.999973587383698
+          },
+          "outer_shell": {
+            "coordinate_norm": 6.962832501417966e-07,
+            "action_norm": 8.310660925017627e-05,
+            "projected_rate": -0.9713773223308452,
+            "relative_shape_residual": 0.9999668827790893
+          },
+          "surface": {
+            "coordinate_norm": 8.243749604330672e-07,
+            "action_norm": 0.0001765565009753877,
+            "projected_rate": -26.971755532579365,
+            "relative_shape_residual": 0.9920383534982566
+          },
+          "volume_Lambda": {
+            "coordinate_norm": 0.7071751338676965,
+            "action_norm": 425.35655264291586,
+            "projected_rate": -4.447174279960239,
+            "relative_shape_residual": 0.9999726667076814
+          },
+          "volume_D": {
+            "coordinate_norm": 0.7061632546520528,
+            "action_norm": 424.65522212484916,
+            "projected_rate": -4.255522013517281,
+            "relative_shape_residual": 0.9999749609171831
+          }
+        }
+      },
+      "V6_on_same_plane": {
+        "projected_matrix": [
+          [
+            -32.198750157766874,
+            -533.2475915416027
+          ],
+          [
+            546.252015818642,
+            -8.19342170564155
+          ]
+        ],
+        "column_relative_residuals": [
+          0.21336436338261267,
+          0.23909964521523167
+        ],
+        "projected_eigenvalues": [
+          {
+            "real": -20.196085931704225,
+            "imag": 539.577156541595
+          },
+          {
+            "real": -20.196085931704225,
+            "imag": -539.577156541595
+          }
+        ],
+        "direction_metrics": {
+          "all": {
+            "coordinate_norm": 0.9999999999999998,
+            "action_norm": 560.0977086918222,
+            "projected_rate": -32.19875015776689,
+            "relative_shape_residual": 0.9983462125011249
+          },
+          "volume": {
+            "coordinate_norm": 0.9999999999996599,
+            "action_norm": 560.0977086917944,
+            "projected_rate": -32.19875015777044,
+            "relative_shape_residual": 0.998346212501125
+          },
+          "outer_shell": {
+            "coordinate_norm": 6.962832501417966e-07,
+            "action_norm": 8.310660925017627e-05,
+            "projected_rate": -0.9713773223308452,
+            "relative_shape_residual": 0.9999668827790893
+          },
+          "surface": {
+            "coordinate_norm": 8.243749604330672e-07,
+            "action_norm": 0.0001765565009753877,
+            "projected_rate": -26.971755532579365,
+            "relative_shape_residual": 0.9920383534982566
+          },
+          "volume_Lambda": {
+            "coordinate_norm": 0.7071751338676965,
+            "action_norm": 395.95188270347734,
+            "projected_rate": -32.56576791133854,
+            "relative_shape_residual": 0.9983071068332722
+          },
+          "volume_D": {
+            "coordinate_norm": 0.7061632546520528,
+            "action_norm": 395.45455497000864,
+            "projected_rate": -32.61226613278373,
+            "relative_shape_residual": 0.9983028598358984
+          }
+        }
+      },
+      "relative_action_difference": 0.22369136198866002
+    }
+  ],
+  "library_sha256": "14dccaedcffbc44cdcc56cc0552856293d8908f223181f8ee5b22b1b2b6624db",
+  "source_manifest_sha256": "af519fa8244a694c872ac916e9ee4b547073d01a2916630ad4b14b6bc1fb67c1",
+  "frozen_V7_commit": "9022f51f26e66acafdd3190d0c33f0c1ea53a661",
+  "exact_frozen_source_blobs_verified": 45,
+  "script_sha256": "3cbd947fb566114207ce6ba246092404b009ad69fe57f7c7cd38680c128cff37",
+  "imported_script_sha256": {
+    "tst/hyperbolic_shift_3d/scri_directional_replay.py": "a5abda1d0831a236730250f8160ff54eede351a003ca25e2c9fc2f0c97a60b35",
+    "tst/hyperbolic_shift_3d/scri_candidate_replay.py": "48344a41dfbdb92dffdd0467de04d3e526fec17c860297eb651be21690ffb397"
+  },
+  "calls": {
+    "V7": 8,
+    "V6": 8
+  },
+  "seconds": 34.491826791
+}

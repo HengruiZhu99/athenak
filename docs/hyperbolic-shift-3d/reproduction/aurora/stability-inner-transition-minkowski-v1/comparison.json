@@ -1,0 +1,1832 @@
+{
+  "evidence_verified": true,
+  "scientifically_admitted_for_this_bounded_test": false,
+  "cases": [
+    {
+      "case": "v6",
+      "label": "V6: seven-node radial closure",
+      "outcome": "completed_pass",
+      "evidence_verified": true,
+      "source_manifest_sha256": "1493f0552235b296de1fbaecea3b7c3a60425b54484582b9292e34a7d1505196",
+      "binary_sha256": "acfa9ffc56caa5f736ab2ffb62c56b1121f6037118c2580e93a15e5c78490263",
+      "job_id": "8984226.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+      "native_status": "completed",
+      "worker_case_status": "passed",
+      "error": "",
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "accepted_endpoint": 1,
+      "accepted_steps": 2001,
+      "last_fresh_diagnostic": 1.0,
+      "diagnostics_current": true,
+      "checkpoint_admitted": true,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "completed",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "n"
+            ],
+            "op": "eq",
+            "value": 16
+          },
+          "observed": 16,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "min_lapse"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.500091552734375,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "min_chi"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.9999999999921515,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "diagnostics_current"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_admitted"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_surface"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 8.881784197001248e-16,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_ghost"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 9.992007221626413e-16,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "max_cfl"
+            ],
+            "op": "le",
+            "value": 0.5
+          },
+          "observed": 0.3239200538661476,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "H_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 4.982639097241074e-10,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "M_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 1.0889978274233255e-10,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "H_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 4.982639097241074e-10,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "M_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 1.0889978274233255e-10,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "max_state_deviation"
+            ],
+            "op": "le",
+            "value": 1e-08
+          },
+          "observed": 6.388673001167805e-09,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "H_L2"
+            ],
+            "op": "le",
+            "value": 1e-07
+          },
+          "observed": 4.982639097241074e-10,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "M_L2"
+            ],
+            "op": "le",
+            "value": 1e-07
+          },
+          "observed": 1.0889978274233255e-10,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "algebraic_projection"
+            ],
+            "op": "eq",
+            "value": "final_stage_standard"
+          },
+          "observed": "final_stage_standard",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_schema"
+            ],
+            "op": "eq",
+            "value": "HYP3D_MPI_V6"
+          },
+          "observed": "HYP3D_MPI_V6",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "max_determinant_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 4.440892098500626e-16,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "max_tracefree_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 2.5849394142282115e-26,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_angular_stencil"
+            ],
+            "op": "eq",
+            "value": "cross_face_centered5"
+          },
+          "observed": "cross_face_centered5",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "t"
+            ],
+            "op": "eq",
+            "value": 1.0
+          },
+          "observed": 1,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "steps"
+            ],
+            "op": "eq",
+            "value": 2001
+          },
+          "observed": 2001,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "dt"
+            ],
+            "op": "eq",
+            "value": 0.0005
+          },
+          "observed": 0.0005,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "start_time"
+            ],
+            "op": "eq",
+            "value": 0.0
+          },
+          "observed": 0,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "segment_steps"
+            ],
+            "op": "eq",
+            "value": 2001
+          },
+          "observed": 2001,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_epsilon"
+            ],
+            "op": "eq",
+            "value": 2
+          },
+          "observed": 2,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_degree"
+            ],
+            "op": "eq",
+            "value": 7
+          },
+          "observed": 7,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_header_bytes"
+            ],
+            "op": "eq",
+            "value": 104
+          },
+          "observed": 104,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_cfl_max"
+            ],
+            "op": "le",
+            "value": 2.7
+          },
+          "observed": 0.40227335994307845,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_scheme"
+            ],
+            "op": "eq",
+            "value": "degree7_weighted_negative_square"
+          },
+          "observed": "degree7_weighted_negative_square",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_derivative"
+            ],
+            "op": "eq",
+            "value": "sampled_native_numerator7"
+          },
+          "observed": "sampled_native_numerator7",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_radial_nodes"
+            ],
+            "op": "eq",
+            "value": 7
+          },
+          "observed": 7,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_bulk_derivative_order"
+            ],
+            "op": "eq",
+            "value": 4
+          },
+          "observed": 4,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_radial_closure"
+            ],
+            "op": "eq",
+            "value": "donor_seven_last3"
+          },
+          "observed": "donor_seven_last3",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_radial_bulk_rows"
+            ],
+            "op": "eq",
+            "value": 3
+          },
+          "observed": 3,
+          "passed": true,
+          "category": "completion_or_configuration"
+        }
+      ],
+      "all_declared_checks_passed": true,
+      "science_checks_passed": true,
+      "execution_succeeded": true,
+      "all_v4_recorded_trajectory_limits_passed": true,
+      "inputs": [
+        {
+          "path": "output/hyperbolic-core-shell/aurora/stability-donor-seven-minkowski-v1/worker-status.json",
+          "sha256": "ea18d33c368865c7aceae673ff821e3d6ec61901e8027a515d37957cd6d4b261",
+          "bytes": 13766
+        },
+        {
+          "path": "output/hyperbolic-core-shell/aurora/stability-donor-seven-minkowski-v1/binding.json",
+          "sha256": "c2d17ce77a176766d11beb95807e6128d7fc86d911d4b7ea0675ec7ed7091a05",
+          "bytes": 1474
+        },
+        {
+          "path": "output/hyperbolic-core-shell/aurora/stability-donor-seven-minkowski-v1/plan.json",
+          "sha256": "ade7fe285ddb866413e7e9c1e01e733e36d4d6b58fe734237aec16fba385e21f",
+          "bytes": 7004
+        }
+      ],
+      "artifacts": [
+        {
+          "remote_path": "campaigns/stability-donor-seven-minkowski-v1/output/minkowski.report.json",
+          "sha256": "8fb5ffd930fbb893af6ed81ec2792d7eaee3a6c2f4c4bc4d406e50cada975ee7",
+          "bytes": 2887,
+          "bytes_verified": true,
+          "local": {
+            "path": "output/hyperbolic-core-shell/aurora/stability-donor-seven-minkowski-v1/output/minkowski.report.json",
+            "sha256": "8fb5ffd930fbb893af6ed81ec2792d7eaee3a6c2f4c4bc4d406e50cada975ee7",
+            "bytes": 2887
+          }
+        },
+        {
+          "remote_path": "campaigns/stability-donor-seven-minkowski-v1/output/minkowski.history.csv",
+          "sha256": "3da1bee92bff6759bcb192fd2989ef438779edea8aee67b1a4793ad16096ddf6",
+          "bytes": 13028,
+          "bytes_verified": true,
+          "local": {
+            "path": "output/hyperbolic-core-shell/aurora/stability-donor-seven-minkowski-v1/output/minkowski.history.csv",
+            "sha256": "3da1bee92bff6759bcb192fd2989ef438779edea8aee67b1a4793ad16096ddf6",
+            "bytes": 13028
+          }
+        },
+        {
+          "remote_path": "campaigns/stability-donor-seven-minkowski-v1/output/minkowski.checkpoint",
+          "sha256": "ad256d7320a025cf0914b3deccd3f95878e13edfe4b88eebdee0157c1ffd2318",
+          "bytes": 39362664,
+          "bytes_verified": true,
+          "local": {
+            "path": "output/hyperbolic-core-shell/aurora/stability-donor-seven-minkowski-v1/output/minkowski.checkpoint",
+            "sha256": "ad256d7320a025cf0914b3deccd3f95878e13edfe4b88eebdee0157c1ffd2318",
+            "bytes": 39362664
+          }
+        },
+        {
+          "remote_path": "campaigns/stability-donor-seven-minkowski-v1/output/minkowski.log",
+          "sha256": "1d8b5da0b5362c61dc9806812c524f7da33199eaba1b9981c028477cf24cb21f",
+          "bytes": 1688,
+          "bytes_verified": true,
+          "local": {
+            "path": "output/hyperbolic-core-shell/aurora/stability-donor-seven-minkowski-v1/output/minkowski.log",
+            "sha256": "1d8b5da0b5362c61dc9806812c524f7da33199eaba1b9981c028477cf24cb21f",
+            "bytes": 1688
+          }
+        }
+      ],
+      "growth": {
+        "status": "fitted",
+        "points": 6,
+        "minimum_points": 4,
+        "sample_indexes": [
+          16,
+          17,
+          18,
+          19,
+          20,
+          21
+        ],
+        "times": [
+          0.7999999999999673,
+          0.8499999999999618,
+          0.8999999999999563,
+          0.9499999999999508,
+          0.9999999999999453,
+          1.0
+        ],
+        "amplitudes": [
+          2.393354982187763e-10,
+          5.190647042491253e-10,
+          1.2220440607202995e-09,
+          2.96429472192064e-09,
+          6.3886730011630285e-09,
+          6.388673001167805e-09
+        ],
+        "rate": 16.575074373275577,
+        "r_squared": 0.9995209358429803,
+        "selection": "longest contiguous recorded state_deviation interval in [1e-10,1e-3]; earliest tie",
+        "method": "unweighted OLS log(state_deviation)=intercept+rate*coordinate_time",
+        "time_range": [
+          0.7999999999999673,
+          1.0
+        ],
+        "intercept": -35.43198375836952,
+        "descriptive_rate_standard_error": 0.1814372195404805,
+        "centered_time_sum_of_squares": 0.033333333333335116,
+        "log10_dynamic_range": 1.4264035417967789,
+        "monotone_nondecreasing": true,
+        "caveat": "Correlated diagnostic samples: OLS error is descriptive, not a confidence interval. Growth rates are not inferred from failure times."
+      },
+      "v4_limits_on_recorded_history": [
+        {
+          "field": "state_deviation",
+          "op": "le",
+          "limit": 1e-08,
+          "status": "passed_recorded_samples",
+          "samples": 22,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 6.388673001167805e-09
+        },
+        {
+          "field": "H_L2",
+          "op": "le",
+          "limit": 1e-07,
+          "status": "passed_recorded_samples",
+          "samples": 22,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 4.982639097241074e-10
+        },
+        {
+          "field": "M_L2",
+          "op": "le",
+          "limit": 1e-07,
+          "status": "passed_recorded_samples",
+          "samples": 22,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 1.0889978274233255e-10
+        },
+        {
+          "field": "null_surface",
+          "op": "le",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 22,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 8.881784197001248e-16
+        },
+        {
+          "field": "null_ghost",
+          "op": "le",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 22,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 9.992007221626413e-16
+        },
+        {
+          "field": "determinant_residual",
+          "op": "le",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 22,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 4.440892098500626e-16
+        },
+        {
+          "field": "tracefree_residual",
+          "op": "le",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 22,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 7.754818242684634e-26
+        },
+        {
+          "field": "min_chi",
+          "op": "ge",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 22,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 0.9999999999921515
+        },
+        {
+          "field": "min_lapse",
+          "op": "ge",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 22,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 0.5000915527343748
+        },
+        {
+          "field": "cfl_max",
+          "op": "le",
+          "limit": 0.5,
+          "status": "passed_recorded_samples",
+          "samples": 22,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 0.3239200538661476
+        }
+      ],
+      "terminal": {
+        "one_node_twelve_tiles_verified": true,
+        "terminal_verified": true,
+        "scheduler_state": "F",
+        "scheduler_exit_status": 0,
+        "allocation_released": true,
+        "records": [
+          {
+            "path": "output/hyperbolic-core-shell/aurora/stability-donor-seven-minkowski-v1/collected.json",
+            "sha256": "aa565518361900e8a7076004c48ef20bd06a334f089b0505e8a305e05a45d3bd",
+            "bytes": 22428
+          },
+          {
+            "path": "output/hyperbolic-core-shell/aurora/stability-donor-seven-minkowski-v1/allocation-released.json",
+            "sha256": "840872f7a93a70c6172a05c734ac66e2042e40a66e52108ca4260adb31e058a6",
+            "bytes": 108
+          }
+        ]
+      },
+      "last_fresh": {
+        "state_deviation": 6.388673001167805e-09,
+        "H_L2": 4.982639097241074e-10,
+        "M_L2": 1.0889978274233255e-10,
+        "Z_L2": 1.221273304148504e-11,
+        "Theta_L2": 5.724039313594377e-13,
+        "determinant_residual": 4.440892098500626e-16,
+        "tracefree_residual": 2.5849394142282115e-26,
+        "null_surface": 8.881784197001248e-16,
+        "null_ghost": 9.992007221626413e-16
+      },
+      "history_max": {
+        "state_deviation": 6.388673001167805e-09,
+        "H_L2": 4.982639097241074e-10,
+        "M_L2": 1.0889978274233255e-10,
+        "Z_L2": 1.221273304148504e-11,
+        "Theta_L2": 5.724039313594377e-13,
+        "determinant_residual": 4.440892098500626e-16,
+        "tracefree_residual": 7.754818242684634e-26,
+        "null_surface": 8.881784197001248e-16,
+        "null_ghost": 9.992007221626413e-16
+      },
+      "unavailable_history_fields": [],
+      "reported_running_bounds": {
+        "H_L2": 4.982639097241074e-10,
+        "max_tracefree_residual": 2.5849394142282115e-26,
+        "max_null_surface": 8.881784197001248e-16,
+        "max_cfl": 0.3239200538661476,
+        "min_lapse": 0.500091552734375,
+        "max_state_deviation": 6.388673001167805e-09,
+        "min_chi": 0.9999999999921515,
+        "max_determinant_residual": 4.440892098500626e-16,
+        "scri_dissipation_cfl_max": 0.40227335994307845,
+        "H_exterior_L2": 4.982639097241074e-10,
+        "M_L2": 1.0889978274233255e-10,
+        "M_exterior_L2": 1.0889978274233255e-10,
+        "max_null_ghost": 9.992007221626413e-16
+      },
+      "scientifically_admitted_for_this_bounded_test": true,
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V6",
+        "n": 16,
+        "nf": 31,
+        "kind": 0,
+        "admitted": true,
+        "cells": 77824,
+        "surface_size": 47616,
+        "steps": 2001,
+        "time": 1.0,
+        "dt": 0.0005,
+        "header_bytes": 104,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "051bfcdad0f1a6dcdcc9a44beb8540df348d4cc2c47d0be7380d63e6cb6f5d20",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 2412544,
+            "sha256": "21d3a0309c545b902746a9d423533e7d5787ebdec7ff54a5288b51feffc0d427"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 2412544,
+            "sha256": "4f5f5645e04a1dc23405c3f7be76ea0cc51484b5d2d109c373fbaff6b4b4d068"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "9a9e4ff9075e306a87ed4a718ca529873e798f24453f324edf1d5c6d3a1e02af"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "5a8050b7d5e0c6971f19a82bf7bf328e8e75165053256fbc979b99ab76ab8e1c"
+          }
+        ],
+        "bytes": 39362664,
+        "sha256": "ad256d7320a025cf0914b3deccd3f95878e13edfe4b88eebdee0157c1ffd2318",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3
+      },
+      "target_time": 1,
+      "preflight_admission": {
+        "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-donor-seven-minkowski-v1/admission.json",
+        "sha256": "2a1899fabadd76de9308ffbb29007b2e5014a56f55f3ae9d85a39f37ca48b5d6",
+        "bytes": 1453
+      },
+      "reviewed_identity": {
+        "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-donor-seven-minkowski-v1/analysis/identity.json",
+        "sha256": "837db055279c30a13215d08d0cf422bf38bc33f81d2cb983fdd059e9929b5af3",
+        "bytes": 424
+      },
+      "timing": {
+        "cumulative": {
+          "seconds": 721.44522044,
+          "rhs_seconds": 236.51236936499956,
+          "exchange_seconds": 63.12704165699906,
+          "closure_seconds": 389.0628449890015,
+          "diagnostic_seconds": 1.5143582219999998
+        },
+        "cumulative_per_accepted_step": {
+          "seconds": 0.3605423390504747,
+          "rhs_seconds": 0.11819708613943006,
+          "exchange_seconds": 0.03154774695502202,
+          "closure_seconds": 0.19443420539180487,
+          "diagnostic_seconds": 0.0007568007106446776
+        },
+        "accepted_steps": 2001,
+        "full_step_interval_count": 20,
+        "discarded_initial_interval": true,
+        "median_history_seconds_per_step": 0.35751950193499993,
+        "median_history_coordinate_advance_per_second": 0.001398525107848,
+        "median_diagnostic_coordinate_interval": 0.04999999999999449,
+        "interpretation": "Cumulative timing buckets overlap and are independently MPI_MAX reduced; they cannot be summed or subtracted as disjoint wall time. Closure includes surface gathers also charged to exchange; V4/V5 add the 21-field residual gather. V5 additionally includes provisional local halo filling and five native numerator samples per row. Diagnostics contain a boundary refresh. Per-accepted-step cumulative values amortize initialization, diagnostics and failed-stage work, and are not isolated kernel timings. Full-step history rates include diagnostics; these separate allocations do not establish a causal GPU throughput improvement."
+      },
+      "scope": "Only the declared n16 Minkowski duration; no100M or puncture/convergence admission",
+      "endpoint_sensitivity": {
+        "rule": "Drop later sample when adjacent time gap <= dt*1e-6",
+        "removed_indices": [
+          21
+        ],
+        "fit": {
+          "status": "fitted",
+          "points": 5,
+          "minimum_points": 4,
+          "sample_indexes": [
+            16,
+            17,
+            18,
+            19,
+            20
+          ],
+          "times": [
+            0.7999999999999673,
+            0.8499999999999618,
+            0.8999999999999563,
+            0.9499999999999508,
+            0.9999999999999453
+          ],
+          "amplitudes": [
+            2.393354982187763e-10,
+            5.190647042491253e-10,
+            1.2220440607202995e-09,
+            2.96429472192064e-09,
+            6.3886730011630285e-09
+          ],
+          "rate": 16.6223938655871,
+          "r_squared": 0.9993973538394156,
+          "selection": "longest contiguous recorded state_deviation interval in [1e-10,1e-3]; earliest tie",
+          "method": "unweighted OLS log(state_deviation)=intercept+rate*coordinate_time",
+          "time_range": [
+            0.7999999999999673,
+            0.9999999999999453
+          ],
+          "intercept": -35.47220532683431,
+          "descriptive_rate_standard_error": 0.2356649745158593,
+          "centered_time_sum_of_squares": 0.024999999999994492,
+          "log10_dynamic_range": 1.4264035417964542,
+          "monotone_nondecreasing": true,
+          "caveat": "Correlated diagnostic samples: OLS error is descriptive, not a confidence interval. Growth rates are not inferred from failure times."
+        }
+      }
+    },
+    {
+      "case": "v7",
+      "label": "V7: logical inner-transition halos",
+      "outcome": "completed_gate_failure",
+      "evidence_verified": true,
+      "source_manifest_sha256": "da9304ba17ad5a1336aef4468dc88ce375622104bac2c69cc1d3cc534abcb2a4",
+      "binary_sha256": "c6873ac0a8fef73b03ed272c60736f2027e342b56ca85d2bafa62605c1584eb0",
+      "job_id": "8984359.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+      "native_status": "completed",
+      "worker_case_status": "failed",
+      "error": "",
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "accepted_endpoint": 2,
+      "accepted_steps": 4001,
+      "last_fresh_diagnostic": 2.0,
+      "diagnostics_current": true,
+      "checkpoint_admitted": true,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "completed",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "n"
+            ],
+            "op": "eq",
+            "value": 16
+          },
+          "observed": 16,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "min_lapse"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.500091552734375,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "min_chi"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.9999999997840775,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "diagnostics_current"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_admitted"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_surface"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 8.881784197001248e-16,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_ghost"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.1102230246251558e-15,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "max_cfl"
+            ],
+            "op": "le",
+            "value": 0.5
+          },
+          "observed": 0.3239200539713663,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "H_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 1.7540369966056302e-08,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "M_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 3.3917280858759436e-09,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "H_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 1.7540369966056302e-08,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "M_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 3.3917280858759436e-09,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "max_state_deviation"
+            ],
+            "op": "le",
+            "value": 1e-08
+          },
+          "observed": 3.114118158415119e-07,
+          "passed": false,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "H_L2"
+            ],
+            "op": "le",
+            "value": 1e-07
+          },
+          "observed": 1.7540369966056302e-08,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "M_L2"
+            ],
+            "op": "le",
+            "value": 1e-07
+          },
+          "observed": 3.3917280858759436e-09,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "algebraic_projection"
+            ],
+            "op": "eq",
+            "value": "final_stage_standard"
+          },
+          "observed": "final_stage_standard",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_schema"
+            ],
+            "op": "eq",
+            "value": "HYP3D_MPI_V7"
+          },
+          "observed": "HYP3D_MPI_V7",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "max_determinant_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 4.440892098500626e-16,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "max_tracefree_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 3.308722450212111e-24,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_angular_stencil"
+            ],
+            "op": "eq",
+            "value": "cross_face_centered5"
+          },
+          "observed": "cross_face_centered5",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "t"
+            ],
+            "op": "eq",
+            "value": 2
+          },
+          "observed": 2,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "steps"
+            ],
+            "op": "eq",
+            "value": 4001
+          },
+          "observed": 4001,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "dt"
+            ],
+            "op": "eq",
+            "value": 0.0005
+          },
+          "observed": 0.0005,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "start_time"
+            ],
+            "op": "eq",
+            "value": 0.0
+          },
+          "observed": 0,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "segment_steps"
+            ],
+            "op": "eq",
+            "value": 4001
+          },
+          "observed": 4001,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_epsilon"
+            ],
+            "op": "eq",
+            "value": 2
+          },
+          "observed": 2,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_degree"
+            ],
+            "op": "eq",
+            "value": 7
+          },
+          "observed": 7,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_header_bytes"
+            ],
+            "op": "eq",
+            "value": 104
+          },
+          "observed": 104,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_cfl_max"
+            ],
+            "op": "le",
+            "value": 2.7
+          },
+          "observed": 0.40227335994307845,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_scheme"
+            ],
+            "op": "eq",
+            "value": "degree7_weighted_negative_square"
+          },
+          "observed": "degree7_weighted_negative_square",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_derivative"
+            ],
+            "op": "eq",
+            "value": "sampled_native_numerator7"
+          },
+          "observed": "sampled_native_numerator7",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_radial_nodes"
+            ],
+            "op": "eq",
+            "value": 7
+          },
+          "observed": 7,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_bulk_derivative_order"
+            ],
+            "op": "eq",
+            "value": 4
+          },
+          "observed": 4,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_radial_closure"
+            ],
+            "op": "eq",
+            "value": "donor_seven_last3"
+          },
+          "observed": "donor_seven_last3",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_radial_bulk_rows"
+            ],
+            "op": "eq",
+            "value": 3
+          },
+          "observed": 3,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "interpatch_interpolation"
+            ],
+            "op": "eq",
+            "value": "logical_inner_transition"
+          },
+          "observed": "logical_inner_transition",
+          "passed": true,
+          "category": "completion_or_configuration"
+        }
+      ],
+      "all_declared_checks_passed": false,
+      "science_checks_passed": false,
+      "execution_succeeded": true,
+      "all_v4_recorded_trajectory_limits_passed": false,
+      "inputs": [
+        {
+          "path": "output/hyperbolic-core-shell/aurora/stability-inner-transition-minkowski-v1/worker-status.json",
+          "sha256": "04b49ea3d836c5f771ea57f6544943dea15c7e4dc4cb11b793674760e9fb5262",
+          "bytes": 14119
+        },
+        {
+          "path": "output/hyperbolic-core-shell/aurora/stability-inner-transition-minkowski-v1/binding.json",
+          "sha256": "896ee2d92ef247ad434bfaa9e3f6bbbe23f74e90449f5ed211d2aa911495fc90",
+          "bytes": 1484
+        },
+        {
+          "path": "output/hyperbolic-core-shell/aurora/stability-inner-transition-minkowski-v1/plan.json",
+          "sha256": "1d142e62337d77ea42a5abefee2cfbf593817125947d755a4a33b1d4a8acaa3b",
+          "bytes": 7143
+        }
+      ],
+      "artifacts": [
+        {
+          "remote_path": "campaigns/stability-inner-transition-minkowski-v1/output/minkowski.report.json",
+          "sha256": "0442f813963cad6dd5a703a4389a8d35e5a67177fda8317eb4b457392cdf5183",
+          "bytes": 2935,
+          "bytes_verified": true,
+          "local": {
+            "path": "output/hyperbolic-core-shell/aurora/stability-inner-transition-minkowski-v1/output/minkowski.report.json",
+            "sha256": "0442f813963cad6dd5a703a4389a8d35e5a67177fda8317eb4b457392cdf5183",
+            "bytes": 2935
+          }
+        },
+        {
+          "remote_path": "campaigns/stability-inner-transition-minkowski-v1/output/minkowski.history.csv",
+          "sha256": "7363a4e5b513d3c7fae4e89ebfb9787ee58b12417af1bbf61be55272a5a04897",
+          "bytes": 24735,
+          "bytes_verified": true,
+          "local": {
+            "path": "output/hyperbolic-core-shell/aurora/stability-inner-transition-minkowski-v1/output/minkowski.history.csv",
+            "sha256": "7363a4e5b513d3c7fae4e89ebfb9787ee58b12417af1bbf61be55272a5a04897",
+            "bytes": 24735
+          }
+        },
+        {
+          "remote_path": "campaigns/stability-inner-transition-minkowski-v1/output/minkowski.checkpoint",
+          "sha256": "b84f916bc45622c42a1f9669e536a9d2776642ca8b7af899ed11c2a8877ce44d",
+          "bytes": 39362664,
+          "bytes_verified": true,
+          "local": {
+            "path": "output/hyperbolic-core-shell/aurora/stability-inner-transition-minkowski-v1/output/minkowski.checkpoint",
+            "sha256": "b84f916bc45622c42a1f9669e536a9d2776642ca8b7af899ed11c2a8877ce44d",
+            "bytes": 39362664
+          }
+        },
+        {
+          "remote_path": "campaigns/stability-inner-transition-minkowski-v1/output/minkowski.log",
+          "sha256": "c6d1e8dfe9645f59252128ce3e1c6d3defff9d86f6e06dd094cca83277e8f734",
+          "bytes": 3209,
+          "bytes_verified": true,
+          "local": {
+            "path": "output/hyperbolic-core-shell/aurora/stability-inner-transition-minkowski-v1/output/minkowski.log",
+            "sha256": "c6d1e8dfe9645f59252128ce3e1c6d3defff9d86f6e06dd094cca83277e8f734",
+            "bytes": 3209
+          }
+        }
+      ],
+      "growth": {
+        "status": "fitted",
+        "points": 17,
+        "minimum_points": 4,
+        "sample_indexes": [
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41
+        ],
+        "times": [
+          1.2499999999999178,
+          1.2999999999999123,
+          1.3499999999999068,
+          1.3999999999999013,
+          1.4499999999998958,
+          1.4999999999998903,
+          1.5499999999998848,
+          1.5999999999998793,
+          1.6499999999998738,
+          1.6999999999998683,
+          1.7499999999998628,
+          1.7999999999998573,
+          1.8499999999998518,
+          1.8999999999998463,
+          1.9499999999998407,
+          1.9999999999998352,
+          2.0
+        ],
+        "amplitudes": [
+          1.0447569437352396e-10,
+          1.2480467435408293e-10,
+          2.9076612689009185e-10,
+          4.798120954033735e-10,
+          7.526201527397986e-10,
+          1.5111626254713695e-09,
+          1.864938197216644e-09,
+          4.3978608486975274e-09,
+          7.625935883981217e-09,
+          9.922872022086152e-09,
+          2.1160616560483557e-08,
+          2.8122972989130987e-08,
+          6.454390210263582e-08,
+          1.1730177702725262e-07,
+          1.357790953097259e-07,
+          3.114118158296526e-07,
+          3.114118158415119e-07
+        ],
+        "rate": 10.765748447536916,
+        "r_squared": 0.9971493958965072,
+        "selection": "longest contiguous recorded state_deviation interval in [1e-10,1e-3]; earliest tie",
+        "method": "unweighted OLS log(state_deviation)=intercept+rate*coordinate_time",
+        "time_range": [
+          1.2499999999999178,
+          2.0
+        ],
+        "intercept": -36.57484497897164,
+        "descriptive_rate_standard_error": 0.14862331233215373,
+        "centered_time_sum_of_squares": 0.9823529411763705,
+        "log10_dynamic_range": 3.4743198206377173,
+        "monotone_nondecreasing": true,
+        "caveat": "Correlated diagnostic samples: OLS error is descriptive, not a confidence interval. Growth rates are not inferred from failure times."
+      },
+      "v4_limits_on_recorded_history": [
+        {
+          "field": "state_deviation",
+          "op": "le",
+          "limit": 1e-08,
+          "status": "failed",
+          "samples": 42,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": 1.7499999999998628,
+          "extreme": 3.114118158415119e-07
+        },
+        {
+          "field": "H_L2",
+          "op": "le",
+          "limit": 1e-07,
+          "status": "passed_recorded_samples",
+          "samples": 42,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 1.754037832442405e-08
+        },
+        {
+          "field": "M_L2",
+          "op": "le",
+          "limit": 1e-07,
+          "status": "passed_recorded_samples",
+          "samples": 42,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 3.3917280858759436e-09
+        },
+        {
+          "field": "null_surface",
+          "op": "le",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 42,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 8.881784197001248e-16
+        },
+        {
+          "field": "null_ghost",
+          "op": "le",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 42,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 1.1102230246251558e-15
+        },
+        {
+          "field": "determinant_residual",
+          "op": "le",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 42,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 4.440892098500626e-16
+        },
+        {
+          "field": "tracefree_residual",
+          "op": "le",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 42,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 3.308722450212111e-24
+        },
+        {
+          "field": "min_chi",
+          "op": "ge",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 42,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 0.9999999997840775
+        },
+        {
+          "field": "min_lapse",
+          "op": "ge",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 42,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 0.5000915527343748
+        },
+        {
+          "field": "cfl_max",
+          "op": "le",
+          "limit": 0.5,
+          "status": "passed_recorded_samples",
+          "samples": 42,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 0.3239200539713663
+        }
+      ],
+      "terminal": {
+        "one_node_twelve_tiles_verified": true,
+        "terminal_verified": true,
+        "scheduler_state": "F",
+        "scheduler_exit_status": 1,
+        "allocation_released": true,
+        "records": [
+          {
+            "path": "output/hyperbolic-core-shell/aurora/stability-inner-transition-minkowski-v1/collected.json",
+            "sha256": "709a4848177c2c44b61671fd9e0f35efba618fa57f8056470f781ed9692c61eb",
+            "bytes": 22820
+          },
+          {
+            "path": "output/hyperbolic-core-shell/aurora/stability-inner-transition-minkowski-v1/allocation-released.json",
+            "sha256": "09fd5cb0c629330c70977a81e2eea88a706440609840d6e3d809ce1991637122",
+            "bytes": 107
+          }
+        ]
+      },
+      "last_fresh": {
+        "state_deviation": 3.114118158415119e-07,
+        "H_L2": 1.7540369966056302e-08,
+        "M_L2": 3.3917280858759436e-09,
+        "Z_L2": 6.190679462706369e-10,
+        "Theta_L2": 9.031726735332359e-12,
+        "determinant_residual": 4.440892098500626e-16,
+        "tracefree_residual": 3.308722450212111e-24,
+        "null_surface": 8.881784197001248e-16,
+        "null_ghost": 1.1102230246251558e-15
+      },
+      "history_max": {
+        "state_deviation": 3.114118158415119e-07,
+        "H_L2": 1.754037832442405e-08,
+        "M_L2": 3.3917280858759436e-09,
+        "Z_L2": 6.190679462706369e-10,
+        "Theta_L2": 9.031726735332359e-12,
+        "determinant_residual": 4.440892098500626e-16,
+        "tracefree_residual": 3.308722450212111e-24,
+        "null_surface": 8.881784197001248e-16,
+        "null_ghost": 1.1102230246251558e-15
+      },
+      "unavailable_history_fields": [],
+      "reported_running_bounds": {
+        "H_L2": 1.7540369966056302e-08,
+        "max_tracefree_residual": 3.308722450212111e-24,
+        "max_null_surface": 8.881784197001248e-16,
+        "max_cfl": 0.3239200539713663,
+        "min_lapse": 0.500091552734375,
+        "max_state_deviation": 3.114118158415119e-07,
+        "min_chi": 0.9999999997840775,
+        "max_determinant_residual": 4.440892098500626e-16,
+        "scri_dissipation_cfl_max": 0.40227335994307845,
+        "H_exterior_L2": 1.7540369966056302e-08,
+        "M_L2": 3.3917280858759436e-09,
+        "M_exterior_L2": 3.3917280858759436e-09,
+        "max_null_ghost": 1.1102230246251558e-15
+      },
+      "scientifically_admitted_for_this_bounded_test": false,
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V7",
+        "n": 16,
+        "nf": 31,
+        "kind": 0,
+        "admitted": true,
+        "cells": 77824,
+        "surface_size": 47616,
+        "steps": 4001,
+        "time": 2.0,
+        "dt": 0.0005,
+        "header_bytes": 104,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "bc2cbc1a45ffcce422bfc2b312f97322c69c8ca6041b01c8d89132aaaef34575",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 2412544,
+            "sha256": "e226c825764f7426f35b0e326a47dac8bdf602e81b46dfbcd5467d1c34c71a53"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 2412544,
+            "sha256": "9f50600f61d9123eb7890eac2ac82278826449ce7896853e170eced3420eb87e"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "d867c10c057045695f12c90c2ccb4a7f5a687ca88cf10767a1dc82f50e005f38"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "42bcea11cac0901905482e644a69b4dcf964b891c70fc32ced72bab0e4588c97"
+          }
+        ],
+        "bytes": 39362664,
+        "sha256": "b84f916bc45622c42a1f9669e536a9d2776642ca8b7af899ed11c2a8877ce44d",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition"
+      },
+      "target_time": 2,
+      "preflight_admission": {
+        "path": "output/hyperbolic-core-shell/aurora-staging/preflight-inner-transition-v1-admission.json",
+        "sha256": "9d32893f2c49f40a313b303b3c692cb9cfd642b2269258f531641726b460b004",
+        "bytes": 1528
+      },
+      "reviewed_identity": {
+        "path": "output/hyperbolic-core-shell/aurora-staging/inner-transition-duration-analysis/identity.json",
+        "sha256": "f1f393a1a597eaad8bda8b0de448531acd08148906410385154376d73dd15013",
+        "bytes": 424
+      },
+      "timing": {
+        "cumulative": {
+          "seconds": 1436.857730514,
+          "rhs_seconds": 470.59179007999944,
+          "exchange_seconds": 122.14108045300165,
+          "closure_seconds": 779.1109940850006,
+          "diagnostic_seconds": 2.8813619100000003
+        },
+        "cumulative_per_accepted_step": {
+          "seconds": 0.3591246514656336,
+          "rhs_seconds": 0.1176185428842788,
+          "exchange_seconds": 0.030527638203699487,
+          "closure_seconds": 0.19472906625468647,
+          "diagnostic_seconds": 0.0007201604373906524
+        },
+        "accepted_steps": 4001,
+        "full_step_interval_count": 40,
+        "discarded_initial_interval": true,
+        "median_history_seconds_per_step": 0.3565711122899998,
+        "median_history_coordinate_advance_per_second": 0.0014022448337217175,
+        "median_diagnostic_coordinate_interval": 0.04999999999999449,
+        "interpretation": "Cumulative timing buckets overlap and are independently MPI_MAX reduced; they cannot be summed or subtracted as disjoint wall time. Closure includes surface gathers also charged to exchange; V4/V5 add the 21-field residual gather. V5 additionally includes provisional local halo filling and five native numerator samples per row. Diagnostics contain a boundary refresh. Per-accepted-step cumulative values amortize initialization, diagnostics and failed-stage work, and are not isolated kernel timings. Full-step history rates include diagnostics; these separate allocations do not establish a causal GPU throughput improvement."
+      },
+      "scope": "Only the declared n16 Minkowski duration; no100M or puncture/convergence admission",
+      "endpoint_sensitivity": {
+        "rule": "Drop later sample when adjacent time gap <= dt*1e-6",
+        "removed_indices": [
+          41
+        ],
+        "fit": {
+          "status": "fitted",
+          "points": 16,
+          "minimum_points": 4,
+          "sample_indexes": [
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40
+          ],
+          "times": [
+            1.2499999999999178,
+            1.2999999999999123,
+            1.3499999999999068,
+            1.3999999999999013,
+            1.4499999999998958,
+            1.4999999999998903,
+            1.5499999999998848,
+            1.5999999999998793,
+            1.6499999999998738,
+            1.6999999999998683,
+            1.7499999999998628,
+            1.7999999999998573,
+            1.8499999999998518,
+            1.8999999999998463,
+            1.9499999999998407,
+            1.9999999999998352
+          ],
+          "amplitudes": [
+            1.0447569437352396e-10,
+            1.2480467435408293e-10,
+            2.9076612689009185e-10,
+            4.798120954033735e-10,
+            7.526201527397986e-10,
+            1.5111626254713695e-09,
+            1.864938197216644e-09,
+            4.3978608486975274e-09,
+            7.625935883981217e-09,
+            9.922872022086152e-09,
+            2.1160616560483557e-08,
+            2.8122972989130987e-08,
+            6.454390210263582e-08,
+            1.1730177702725262e-07,
+            1.357790953097259e-07,
+            3.114118158296526e-07
+          ],
+          "rate": 10.738749131409822,
+          "r_squared": 0.9967370767254047,
+          "selection": "longest contiguous recorded state_deviation interval in [1e-10,1e-3]; earliest tie",
+          "method": "unweighted OLS log(state_deviation)=intercept+rate*coordinate_time",
+          "time_range": [
+            1.2499999999999178,
+            1.9999999999998352
+          ],
+          "intercept": -36.53479599338313,
+          "descriptive_rate_standard_error": 0.16421121075123526,
+          "centered_time_sum_of_squares": 0.8499999999998128,
+          "log10_dynamic_range": 3.4743198206211785,
+          "monotone_nondecreasing": true,
+          "caveat": "Correlated diagnostic samples: OLS error is descriptive, not a confidence interval. Growth rates are not inferred from failure times."
+        }
+      }
+    }
+  ],
+  "analysis": {
+    "path": "output/hyperbolic-core-shell/aurora-staging/inner-transition-duration-analysis/analyze.py",
+    "sha256": "795307dfbe98a3a3d5311563ba1b9b0c5cb39b2152e663aa811b85efacf71f3a",
+    "bytes": 5960
+  },
+  "fit_selection": "Unchanged amplitude window1e-10..1e-3, at least four samples; no fit below the window",
+  "warning": "Bounded test acceptance is not a long-time stability, puncture, convergence or100M result"
+}

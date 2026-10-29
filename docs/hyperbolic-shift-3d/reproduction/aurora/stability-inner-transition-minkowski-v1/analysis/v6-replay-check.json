@@ -1,0 +1,47 @@
+{
+  "passed": true,
+  "growth": {
+    "status": "fitted",
+    "points": 6,
+    "minimum_points": 4,
+    "sample_indexes": [
+      16,
+      17,
+      18,
+      19,
+      20,
+      21
+    ],
+    "times": [
+      0.7999999999999673,
+      0.8499999999999618,
+      0.8999999999999563,
+      0.9499999999999508,
+      0.9999999999999453,
+      1.0
+    ],
+    "amplitudes": [
+      2.393354982187763e-10,
+      5.190647042491253e-10,
+      1.2220440607202995e-09,
+      2.96429472192064e-09,
+      6.3886730011630285e-09,
+      6.388673001167805e-09
+    ],
+    "rate": 16.575074373275577,
+    "r_squared": 0.9995209358429803,
+    "selection": "longest contiguous recorded state_deviation interval in [1e-10,1e-3]; earliest tie",
+    "method": "unweighted OLS log(state_deviation)=intercept+rate*coordinate_time",
+    "time_range": [
+      0.7999999999999673,
+      1.0
+    ],
+    "intercept": -35.43198375836952,
+    "descriptive_rate_standard_error": 0.1814372195404805,
+    "centered_time_sum_of_squares": 0.033333333333335116,
+    "log10_dynamic_range": 1.4264035417967789,
+    "monotone_nondecreasing": true,
+    "caveat": "Correlated diagnostic samples: OLS error is descriptive, not a confidence interval. Growth rates are not inferred from failure times."
+  },
+  "checkpoint_sha256": "ad256d7320a025cf0914b3deccd3f95878e13edfe4b88eebdee0157c1ffd2318"
+}
