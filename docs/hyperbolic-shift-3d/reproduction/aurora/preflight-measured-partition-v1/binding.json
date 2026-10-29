@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "plan_sha256": "814a270dd1856e82461cc6614322b6333713c29457b65c10a24b4c97560e0c1f",
+  "source_manifest": "source-v22-manifest.json",
+  "source_manifest_sha256": "361cf418ffc284fe569208d3b2e1ec43d1fbdde5b514fa8b560d3b0813e452be",
+  "binaries": {
+    "build-sycl-mpi-v22/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_sparse_exchange": "c2a9fdbef9a50d2905a840aa98dfc665e18940cb2d71ee6e017a7f0599561814",
+    "source-v22/tst/hyperbolic_shift_3d/aurora/preflight.py": "983d38420554270e63759b353e6a72fb62eb67634cb186222509c63437d73408",
+    "build-sycl-mpi-v22/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive_balanced": "084c6babd9d828c2bec1c93d0229ad753fbc36623bd53b27935359d88793c640",
+    "build-sycl-mpi-v21/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive_sparse": "dadc194251e43e9503e4c194a89086fbdd4a8692b077d1f55172c92ce12d3606"
+  },
+  "inputs": {
+    "build-sycl-mpi-v22/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_continuous_positive_device": "b4bab37bc286af3e91667173f6f17c4dccd87d1027f7d152fb1618c4d0248e11",
+    "build-sycl-mpi-v22/CMakeCache.txt": "283dfb9ec265aab2c0c9dfbecda4400947e85a6012f8178ab08f87892760c6c2",
+    "inputs/partition-n16-v21-r12.txt": "ff50e0cd495ee5a8342d83b0da0493e647d86b5c35647e03ef8247cddaf7fee5",
+    "inputs/partition-n16-v21-r12-source.report.json": "b91ef02712d26a223873bb5eb009785d4f596a524968301ae6a42dfb8850cc4b",
+    "inputs/puncture-continuous-n16.txt": "35c1b65aeaaefac34552f9a63b279cabe839b09326adc9af1d2c767ecc29c8ca",
+    "source-v21-provenance.json": "8bf0cf032181f7d28f176a80582e5784f9844e451a971089619c5db8be4b8721",
+    "source-v21-manifest.json": "5870a4f1290ded6e9cca2a6a592276119e1b46e5c52ee61fad71c8ba07e94fd2",
+    "build-logs/v21/build-status.json": "8d2a2b9b35c6b52391be2145c78807a96ca0a3f889a2b1c3b70953d0b3d703cd"
+  },
+  "pbs_sha256": "0e2c0ae9ab4e06bede8c522b0264bf388f1313a3df5edc736c153c1b966cb4bd",
+  "admission": null,
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "00:30:00"
+  },
+  "storage_at_bind": {
+    "bytes": 3928280310,
+    "entries": 40281,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 100000000,
+    "planned_bytes": 520000000,
+    "headroom_bytes": 451719690
+  },
+  "launcher": {
+    "control.py": "674ea90b97a5e64823f0cff6c91fa9c864e642e471f5efd4d8f3a35081f830fd",
+    "worker.py": "62b5346a7815dca5954a95c705ec1c43eaf87ec5bf1442318f5c259d9d3685b1",
+    "run_debug.pbs": "1d5df790cf6c8cdc96e9d330b9b337ce755b30e057959586bcd661dc9ce885a6",
+    "storage.py": "fdcf2abc2533b8fed91220d9c18d8b9d723660820949a72e956fb9c8866afd39"
+  },
+  "allocation_seconds": 1800,
+  "worker_seconds": 1710
+}
