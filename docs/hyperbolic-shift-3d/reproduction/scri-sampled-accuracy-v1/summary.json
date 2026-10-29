@@ -1,0 +1,823 @@
+{
+  "scope": "Absolute manufactured derivative/rate errors and pairwise observed orders; no stability or evolution admission",
+  "global_norm_primary": true,
+  "expected_order_imposed": false,
+  "binary_sha256": "efaf4ed9842ac4b0d98c584e02016dc673aea5b257e1fd76a8e1b23e76dfceb3",
+  "source_binding_sha256": "9ffe4f83fbf4897f8b5f54aa4d9178ca1bd59059c0b20b3c51700aea95837b56",
+  "reports": [
+    {
+      "path": "output/hyperbolic-core-shell/scri-sampled-accuracy-v1/n8-v2/accuracy.json",
+      "sha256": "7d5c72e9cafa26c22b37edc7b3533c63df31d44d4eb25089c2be0fd679641a00",
+      "n": 8
+    },
+    {
+      "path": "output/hyperbolic-core-shell/scri-sampled-accuracy-v1/n12/accuracy.json",
+      "sha256": "c8b0114d4bb7c7827d0298b4360d6219ec10d1f930b1cd14b08c490be233296b",
+      "n": 12
+    },
+    {
+      "path": "output/hyperbolic-core-shell/scri-sampled-accuracy-v1/n16/accuracy.json",
+      "sha256": "029d36d0b5a0493fbc13ffcf7cdca9045f41d2f369294e8f5a408f3c7ffd9cb5",
+      "n": 16
+    },
+    {
+      "path": "output/hyperbolic-core-shell/scri-sampled-accuracy-v1/n24/accuracy.json",
+      "sha256": "7d5bdd6f3a09ac37f900f81bd40ef8fdf229f216c105db033db9c932be7d442d",
+      "n": 24
+    }
+  ],
+  "fixtures": [
+    {
+      "fixture": "radial_p1",
+      "exact_boundary_regular": false,
+      "methods": {
+        "discrete_AD": [
+          {
+            "n": 8,
+            "h": 0.03125,
+            "l2": 0.0005278771632078094,
+            "linf_component": 0.0005861378461261557
+          },
+          {
+            "n": 12,
+            "h": 0.020833333333333332,
+            "l2": 0.00010255266798652372,
+            "linf_component": 0.00011483331368533634,
+            "observed_order_l2": 4.041006433869101,
+            "observed_order_linf_component": 4.020255580391666
+          },
+          {
+            "n": 16,
+            "h": 0.015625,
+            "l2": 3.182427620785859e-05,
+            "linf_component": 3.574072175893672e-05,
+            "observed_order_l2": 4.067500937225281,
+            "observed_order_linf_component": 4.057225104437807
+          },
+          {
+            "n": 24,
+            "h": 0.010416666666666666,
+            "l2": 6.111495819455691e-06,
+            "linf_component": 6.8780002896451364e-06,
+            "observed_order_l2": 4.069543371598125,
+            "observed_order_linf_component": 4.064376236477267
+          }
+        ],
+        "sampled_native_numerators": [
+          {
+            "n": 8,
+            "h": 0.03125,
+            "l2": 0.0008683107858844861,
+            "linf_component": 0.000978087448339271
+          },
+          {
+            "n": 12,
+            "h": 0.020833333333333332,
+            "l2": 0.0002994773880079667,
+            "linf_component": 0.0003376595208119948,
+            "observed_order_l2": 2.625406630500462,
+            "observed_order_linf_component": 2.6230642473164143
+          },
+          {
+            "n": 16,
+            "h": 0.015625,
+            "l2": 0.00013402161485509344,
+            "linf_component": 0.00015115604013093975,
+            "observed_order_l2": 2.794883312966811,
+            "observed_order_linf_component": 2.7937972097359602
+          },
+          {
+            "n": 24,
+            "h": 0.010416666666666666,
+            "l2": 4.177987590275445e-05,
+            "linf_component": 4.7125515586499134e-05,
+            "observed_order_l2": 2.8746895420931913,
+            "observed_order_linf_component": 2.874471987243984
+          }
+        ],
+        "sampled_exact_numerators": [
+          {
+            "n": 8,
+            "h": 0.03125,
+            "l2": 3.2170369712127454e-05,
+            "linf_component": 3.262119680874642e-05
+          },
+          {
+            "n": 12,
+            "h": 0.020833333333333332,
+            "l2": 4.3608719137032806e-06,
+            "linf_component": 4.473622311096381e-06,
+            "observed_order_l2": 4.928596261672405,
+            "observed_order_linf_component": 4.899962549972926
+          },
+          {
+            "n": 16,
+            "h": 0.015625,
+            "l2": 1.0417347513507518e-06,
+            "linf_component": 1.0671030970521578e-06,
+            "observed_order_l2": 4.97696867827489,
+            "observed_order_linf_component": 4.982065228210271
+          },
+          {
+            "n": 24,
+            "h": 0.010416666666666666,
+            "l2": 1.3730552604344485e-07,
+            "linf_component": 1.3961124128991642e-07,
+            "observed_order_l2": 4.9978013699004435,
+            "observed_order_linf_component": 5.016069489504318
+          }
+        ],
+        "sampled_native_minus_exact_samples": [
+          {
+            "n": 8,
+            "h": 0.03125,
+            "l2": 0.0008971731842241127,
+            "linf_component": 0.0010016855380611256
+          },
+          {
+            "n": 12,
+            "h": 0.020833333333333332,
+            "l2": 0.0003032668982268964,
+            "linf_component": 0.00034067754776545556,
+            "observed_order_l2": 2.6750406439338206,
+            "observed_order_linf_component": 2.6599156237185753
+          },
+          {
+            "n": 16,
+            "h": 0.015625,
+            "l2": 0.00013490752783120537,
+            "linf_component": 0.0001518500721190419,
+            "observed_order_l2": 2.8156905934813086,
+            "observed_order_linf_component": 2.8088046949685186
+          },
+          {
+            "n": 24,
+            "h": 0.010416666666666666,
+            "l2": 4.189353995947642e-05,
+            "linf_component": 4.721283219621952e-05,
+            "observed_order_l2": 2.884238135059579,
+            "observed_order_linf_component": 2.881204618746498
+          }
+        ],
+        "full_rate_discrete_AD": [
+          {
+            "n": 8,
+            "h": 0.03125,
+            "l2": 0.00023283875747773838,
+            "linf_component": 0.00019474781872297342
+          },
+          {
+            "n": 12,
+            "h": 0.020833333333333332,
+            "l2": 4.511479699673676e-05,
+            "linf_component": 3.781729217244845e-05,
+            "observed_order_l2": 4.04753915303991,
+            "observed_order_linf_component": 4.042120983084519
+          },
+          {
+            "n": 16,
+            "h": 0.015625,
+            "l2": 1.3983888182023588e-05,
+            "linf_component": 1.1724934593004832e-05,
+            "observed_order_l2": 4.071524002260442,
+            "observed_order_linf_component": 4.0706350487002805
+          },
+          {
+            "n": 24,
+            "h": 0.010416666666666666,
+            "l2": 2.682683684910918e-06,
+            "linf_component": 2.2488132671583116e-06,
+            "observed_order_l2": 4.072084431629875,
+            "observed_order_linf_component": 4.072644137853737
+          }
+        ],
+        "full_rate_sampled_native": [
+          {
+            "n": 8,
+            "h": 0.03125,
+            "l2": 0.0012987674839248875,
+            "linf_component": 0.0014770260372714006
+          },
+          {
+            "n": 12,
+            "h": 0.020833333333333332,
+            "l2": 0.0003823573598683806,
+            "linf_component": 0.000435736141755072,
+            "observed_order_l2": 3.015833697271862,
+            "observed_order_linf_component": 3.010737559793973
+          },
+          {
+            "n": 16,
+            "h": 0.015625,
+            "l2": 0.000159614171779704,
+            "linf_component": 0.00018172291343176994,
+            "observed_order_l2": 3.03667233835091,
+            "observed_order_linf_component": 3.040001067653555
+          },
+          {
+            "n": 24,
+            "h": 0.010416666666666666,
+            "l2": 4.6668718003837146e-05,
+            "linf_component": 5.3014301304443734e-05,
+            "observed_order_l2": 3.032777326323151,
+            "observed_order_linf_component": 3.038291916059261
+          }
+        ]
+      }
+    },
+    {
+      "fixture": "angular_p1",
+      "exact_boundary_regular": false,
+      "methods": {
+        "discrete_AD": [
+          {
+            "n": 8,
+            "h": 0.03125,
+            "l2": 0.0005471662163777865,
+            "linf_component": 0.0007889705851332751
+          },
+          {
+            "n": 12,
+            "h": 0.020833333333333332,
+            "l2": 0.00010650047029305005,
+            "linf_component": 0.00015691680673746156,
+            "observed_order_l2": 4.036360198602389,
+            "observed_order_linf_component": 3.98311281326568
+          },
+          {
+            "n": 16,
+            "h": 0.015625,
+            "l2": 3.3086228317123665e-05,
+            "linf_component": 4.8947490102313473e-05,
+            "observed_order_l2": 4.06362571777848,
+            "observed_order_linf_component": 4.049496962552207
+          },
+          {
+            "n": 24,
+            "h": 0.010416666666666666,
+            "l2": 6.361877574428504e-06,
+            "linf_component": 9.490619362173547e-06,
+            "observed_order_l2": 4.0664253224688345,
+            "observed_order_linf_component": 4.045833254020073
+          }
+        ],
+        "sampled_native_numerators": [
+          {
+            "n": 8,
+            "h": 0.03125,
+            "l2": 0.0008878912860919129,
+            "linf_component": 0.001177387871419855
+          },
+          {
+            "n": 12,
+            "h": 0.020833333333333332,
+            "l2": 0.00030628088758215575,
+            "linf_component": 0.00040903143882364823,
+            "observed_order_l2": 2.6250019408751575,
+            "observed_order_linf_component": 2.607527882462639
+          },
+          {
+            "n": 16,
+            "h": 0.015625,
+            "l2": 0.00013710063449874266,
+            "linf_component": 0.00018414379969933226,
+            "observed_order_l2": 2.7940128238678286,
+            "observed_order_linf_component": 2.774156350238547
+          },
+          {
+            "n": 24,
+            "h": 0.010416666666666666,
+            "l2": 4.2751329807811274e-05,
+            "linf_component": 5.77788968609827e-05,
+            "observed_order_l2": 2.874020204796112,
+            "observed_order_linf_component": 2.858675990876054
+          }
+        ],
+        "sampled_exact_numerators": [
+          {
+            "n": 8,
+            "h": 0.03125,
+            "l2": 3.2983936406574005e-05,
+            "linf_component": 4.2273259854730405e-05
+          },
+          {
+            "n": 12,
+            "h": 0.020833333333333332,
+            "l2": 4.474323953645867e-06,
+            "linf_component": 5.810892060975625e-06,
+            "observed_order_l2": 4.92684908995469,
+            "observed_order_linf_component": 4.89418347909264
+          },
+          {
+            "n": 16,
+            "h": 0.015625,
+            "l2": 1.069376820716525e-06,
+            "linf_component": 1.3886537372220786e-06,
+            "observed_order_l2": 4.975211656547126,
+            "observed_order_linf_component": 4.975629320018176
+          },
+          {
+            "n": 24,
+            "h": 0.010416666666666666,
+            "l2": 1.4103903526122313e-07,
+            "linf_component": 1.8212551766705332e-07,
+            "observed_order_l2": 4.996224357770436,
+            "observed_order_linf_component": 5.010033847336927
+          }
+        ],
+        "sampled_native_minus_exact_samples": [
+          {
+            "n": 8,
+            "h": 0.03125,
+            "l2": 0.0009172905429845584,
+            "linf_component": 0.0012084188278915775
+          },
+          {
+            "n": 12,
+            "h": 0.020833333333333332,
+            "l2": 0.00031014817342345143,
+            "linf_component": 0.00041304198059988195,
+            "observed_order_l2": 2.6743955992460817,
+            "observed_order_linf_component": 2.6476231197967017
+          },
+          {
+            "n": 16,
+            "h": 0.015625,
+            "l2": 0.00013800541152373324,
+            "linf_component": 0.00018505924161105192,
+            "observed_order_l2": 2.814764426713862,
+            "observed_order_linf_component": 2.7908351401686096
+          },
+          {
+            "n": 24,
+            "h": 0.010416666666666666,
+            "l2": 4.286749928540021e-05,
+            "linf_component": 5.789543739487257e-05,
+            "observed_order_l2": 2.8835500972765677,
+            "observed_order_linf_component": 2.8659369092449207
+          }
+        ],
+        "full_rate_discrete_AD": [
+          {
+            "n": 8,
+            "h": 0.03125,
+            "l2": 0.00024661454729803765,
+            "linf_component": 0.00029318206356787613
+          },
+          {
+            "n": 12,
+            "h": 0.020833333333333332,
+            "l2": 4.803579287264829e-05,
+            "linf_component": 5.8658684746859535e-05,
+            "observed_order_l2": 4.034576909044972,
+            "observed_order_linf_component": 3.968425690812363
+          },
+          {
+            "n": 16,
+            "h": 0.015625,
+            "l2": 1.4943747211874637e-05,
+            "linf_component": 1.8403389747234655e-05,
+            "observed_order_l2": 4.058832871540273,
+            "observed_order_linf_component": 4.029450840444653
+          },
+          {
+            "n": 24,
+            "h": 0.010416666666666666,
+            "l2": 2.8782158799742233e-06,
+            "linf_component": 3.5782000225026422e-06,
+            "observed_order_l2": 4.062303553733703,
+            "observed_order_linf_component": 4.039003488412216
+          }
+        ],
+        "full_rate_sampled_native": [
+          {
+            "n": 8,
+            "h": 0.03125,
+            "l2": 0.0013308995931345239,
+            "linf_component": 0.0018361303719576227
+          },
+          {
+            "n": 12,
+            "h": 0.020833333333333332,
+            "l2": 0.00039162617054183435,
+            "linf_component": 0.0005384392219003331,
+            "observed_order_l2": 3.0170355370154205,
+            "observed_order_linf_component": 3.0255154590241466
+          },
+          {
+            "n": 16,
+            "h": 0.015625,
+            "l2": 0.00016345720480459593,
+            "linf_component": 0.00022447657755364503,
+            "observed_order_l2": 3.0372296716121383,
+            "observed_order_linf_component": 3.041215766726866
+          },
+          {
+            "n": 24,
+            "h": 0.010416666666666666,
+            "l2": 4.778604439259351e-05,
+            "linf_component": 6.559051553622908e-05,
+            "observed_order_l2": 3.033103338890688,
+            "observed_order_linf_component": 3.034392455157136
+          }
+        ]
+      }
+    },
+    {
+      "fixture": "radial_p2",
+      "exact_boundary_regular": true,
+      "methods": {
+        "discrete_AD": [
+          {
+            "n": 8,
+            "h": 0.03125,
+            "l2": 0.0006883657842021666,
+            "linf_component": 0.0007638387481133102
+          },
+          {
+            "n": 12,
+            "h": 0.020833333333333332,
+            "l2": 0.00017128916993396298,
+            "linf_component": 0.0001916568890897863,
+            "observed_order_l2": 3.430547170127819,
+            "observed_order_linf_component": 3.4100344004408973
+          },
+          {
+            "n": 16,
+            "h": 0.015625,
+            "l2": 5.99769153882227e-05,
+            "linf_component": 6.730560093587412e-05,
+            "observed_order_l2": 3.6477540186147857,
+            "observed_order_linf_component": 3.6375686251890063
+          },
+          {
+            "n": 24,
+            "h": 0.010416666666666666,
+            "l2": 1.300180011620719e-05,
+            "linf_component": 1.462103775945467e-05,
+            "observed_order_l2": 3.770662125380675,
+            "observed_order_linf_component": 3.7655077886870014
+          }
+        ],
+        "sampled_native_numerators": [
+          {
+            "n": 8,
+            "h": 0.03125,
+            "l2": 0.0007507293927580799,
+            "linf_component": 0.0008318731872596352
+          },
+          {
+            "n": 12,
+            "h": 0.020833333333333332,
+            "l2": 0.00013273344037880862,
+            "linf_component": 0.00014779444523380092,
+            "observed_order_l2": 4.273369800587028,
+            "observed_order_linf_component": 4.261421144944076
+          },
+          {
+            "n": 16,
+            "h": 0.015625,
+            "l2": 3.687690108311206e-05,
+            "linf_component": 4.11222714631343e-05,
+            "observed_order_l2": 4.451989414526942,
+            "observed_order_linf_component": 4.446827549697003
+          },
+          {
+            "n": 24,
+            "h": 0.010416666666666666,
+            "l2": 5.405732750054406e-06,
+            "linf_component": 6.027709188893837e-06,
+            "observed_order_l2": 4.735611816898548,
+            "observed_order_linf_component": 4.735753545413906
+          }
+        ],
+        "sampled_exact_numerators": [
+          {
+            "n": 8,
+            "h": 0.03125,
+            "l2": 5.5607968640726715e-05,
+            "linf_component": 5.80129786253436e-05
+          },
+          {
+            "n": 12,
+            "h": 0.020833333333333332,
+            "l2": 9.065526740085254e-06,
+            "linf_component": 9.278897166731248e-06,
+            "observed_order_l2": 4.473498523198577,
+            "observed_order_linf_component": 4.520546943050607
+          },
+          {
+            "n": 16,
+            "h": 0.015625,
+            "l2": 2.3712855157685987e-06,
+            "linf_component": 2.4004218999729154e-06,
+            "observed_order_l2": 4.661558220476623,
+            "observed_order_linf_component": 4.699973741363742
+          },
+          {
+            "n": 24,
+            "h": 0.010416666666666666,
+            "l2": 3.4204590005278167e-07,
+            "linf_component": 3.420659582809016e-07,
+            "observed_order_l2": 4.775361729866761,
+            "observed_order_linf_component": 4.805336327692645
+          }
+        ],
+        "sampled_native_minus_exact_samples": [
+          {
+            "n": 8,
+            "h": 0.03125,
+            "l2": 0.0006956088107365541,
+            "linf_component": 0.0007738602086342916
+          },
+          {
+            "n": 12,
+            "h": 0.020833333333333332,
+            "l2": 0.0001237273606587222,
+            "linf_component": 0.00013851554807015054,
+            "observed_order_l2": 4.25858347293974,
+            "observed_order_linf_component": 4.243049855866822
+          },
+          {
+            "n": 16,
+            "h": 0.015625,
+            "l2": 3.452237890186303e-05,
+            "linf_component": 3.872184956316138e-05,
+            "observed_order_l2": 4.437094922508584,
+            "observed_order_linf_component": 4.430510876076326
+          },
+          {
+            "n": 24,
+            "h": 0.010416666666666666,
+            "l2": 5.06670931396775e-06,
+            "linf_component": 5.685643230612936e-06,
+            "observed_order_l2": 4.732629720328272,
+            "observed_order_linf_component": 4.731503955627122
+          }
+        ],
+        "full_rate_discrete_AD": [
+          {
+            "n": 8,
+            "h": 0.03125,
+            "l2": 0.00030670635013827944,
+            "linf_component": 0.0002623503767362201
+          },
+          {
+            "n": 12,
+            "h": 0.020833333333333332,
+            "l2": 7.577656348473008e-05,
+            "linf_component": 6.442393817526759e-05,
+            "observed_order_l2": 3.4481431119129584,
+            "observed_order_linf_component": 3.4631725966522073
+          },
+          {
+            "n": 16,
+            "h": 0.015625,
+            "l2": 2.6455692640174023e-05,
+            "linf_component": 2.241238700867454e-05,
+            "observed_order_l2": 3.65791892827127,
+            "observed_order_linf_component": 3.6702720762684153
+          },
+          {
+            "n": 24,
+            "h": 0.010416666666666666,
+            "l2": 5.720158079083326e-06,
+            "linf_component": 4.8266599610991e-06,
+            "observed_order_l2": 3.777081889414659,
+            "observed_order_linf_component": 3.7869080662131624
+          }
+        ],
+        "full_rate_sampled_native": [
+          {
+            "n": 8,
+            "h": 0.03125,
+            "l2": 0.0003443457193735857,
+            "linf_component": 0.00031250700672946774
+          },
+          {
+            "n": 12,
+            "h": 0.020833333333333332,
+            "l2": 6.57587202234982e-05,
+            "linf_component": 5.351155677404788e-05,
+            "observed_order_l2": 4.083344851466565,
+            "observed_order_linf_component": 4.35235784812893
+          },
+          {
+            "n": 16,
+            "h": 0.015625,
+            "l2": 2.5103588853885544e-05,
+            "linf_component": 2.0534367203686732e-05,
+            "observed_order_l2": 3.34738088782084,
+            "observed_order_linf_component": 3.329361838389201
+          },
+          {
+            "n": 24,
+            "h": 0.010416666666666666,
+            "l2": 6.9230013318357686e-06,
+            "linf_component": 6.421938021361484e-06,
+            "observed_order_l2": 3.1769969802810913,
+            "observed_order_linf_component": 2.866781786039327
+          }
+        ]
+      }
+    },
+    {
+      "fixture": "angular_p2",
+      "exact_boundary_regular": true,
+      "methods": {
+        "discrete_AD": [
+          {
+            "n": 8,
+            "h": 0.03125,
+            "l2": 0.0007018831175716891,
+            "linf_component": 0.0009127031573155364
+          },
+          {
+            "n": 12,
+            "h": 0.020833333333333332,
+            "l2": 0.00017485523301228201,
+            "linf_component": 0.00023114542746766054,
+            "observed_order_l2": 3.4276895139518944,
+            "observed_order_linf_component": 3.3871314764094946
+          },
+          {
+            "n": 16,
+            "h": 0.015625,
+            "l2": 6.125545440160018e-05,
+            "linf_component": 8.157495139485271e-05,
+            "observed_order_l2": 3.6460579061736658,
+            "observed_order_linf_component": 3.6204022483908824
+          },
+          {
+            "n": 24,
+            "h": 0.010416666666666666,
+            "l2": 1.3284703670816404e-05,
+            "linf_component": 1.7791213954482243e-05,
+            "observed_order_l2": 3.7695959354665916,
+            "observed_order_linf_component": 3.7557300956793784
+          }
+        ],
+        "sampled_native_numerators": [
+          {
+            "n": 8,
+            "h": 0.03125,
+            "l2": 0.0007774315298791783,
+            "linf_component": 0.0011277643725685627
+          },
+          {
+            "n": 12,
+            "h": 0.020833333333333332,
+            "l2": 0.00013936790556134883,
+            "linf_component": 0.00021240517155318717,
+            "observed_order_l2": 4.239275592946971,
+            "observed_order_linf_component": 4.117485944006503
+          },
+          {
+            "n": 16,
+            "h": 0.015625,
+            "l2": 3.958825191371921e-05,
+            "linf_component": 6.362929034781084e-05,
+            "observed_order_l2": 4.374915763747367,
+            "observed_order_linf_component": 4.190117662136533
+          },
+          {
+            "n": 24,
+            "h": 0.010416666666666666,
+            "l2": 6.356162364104553e-06,
+            "linf_component": 1.1374664721897076e-05,
+            "observed_order_l2": 4.51113443662976,
+            "observed_order_linf_component": 4.246198700101525
+          }
+        ],
+        "sampled_exact_numerators": [
+          {
+            "n": 8,
+            "h": 0.03125,
+            "l2": 5.684019427457902e-05,
+            "linf_component": 7.196575903656299e-05
+          },
+          {
+            "n": 12,
+            "h": 0.020833333333333332,
+            "l2": 9.272867441591139e-06,
+            "linf_component": 1.1502908260740963e-05,
+            "observed_order_l2": 4.471780748240869,
+            "observed_order_linf_component": 4.522190700650428
+          },
+          {
+            "n": 16,
+            "h": 0.015625,
+            "l2": 2.426342121300308e-06,
+            "linf_component": 2.986737130172834e-06,
+            "observed_order_l2": 4.660380196171125,
+            "observed_order_linf_component": 4.687182462958257
+          },
+          {
+            "n": 24,
+            "h": 0.010416666666666666,
+            "l2": 3.5010113192204626e-07,
+            "linf_component": 4.269023364811275e-07,
+            "observed_order_l2": 4.774561368040084,
+            "observed_order_linf_component": 4.7979012347270515
+          }
+        ],
+        "sampled_native_minus_exact_samples": [
+          {
+            "n": 8,
+            "h": 0.03125,
+            "l2": 0.00072137659577551,
+            "linf_component": 0.0010557986135319997
+          },
+          {
+            "n": 12,
+            "h": 0.020833333333333332,
+            "l2": 0.00013026543388488067,
+            "linf_component": 0.00020093559682066164,
+            "observed_order_l2": 4.221293332029767,
+            "observed_order_linf_component": 4.091765883505158
+          },
+          {
+            "n": 16,
+            "h": 0.015625,
+            "l2": 3.724060021918956e-05,
+            "linf_component": 6.066839419677228e-05,
+            "observed_order_l2": 4.352633403211031,
+            "observed_order_linf_component": 4.162795265299473
+          },
+          {
+            "n": 24,
+            "h": 0.010416666666666666,
+            "l2": 6.040259555999873e-06,
+            "linf_component": 1.0953753216136342e-05,
+            "observed_order_l2": 4.486089060754324,
+            "observed_order_linf_component": 4.22167205647492
+          }
+        ],
+        "full_rate_discrete_AD": [
+          {
+            "n": 8,
+            "h": 0.03125,
+            "l2": 0.00031434167014921964,
+            "linf_component": 0.00031702057905663716
+          },
+          {
+            "n": 12,
+            "h": 0.020833333333333332,
+            "l2": 7.772700811088381e-05,
+            "linf_component": 7.815777365499654e-05,
+            "observed_order_l2": 3.4461108888894207,
+            "observed_order_linf_component": 3.45340977325862
+          },
+          {
+            "n": 16,
+            "h": 0.015625,
+            "l2": 2.714498666172477e-05,
+            "linf_component": 2.7259245246213926e-05,
+            "observed_order_l2": 3.656850796295626,
+            "observed_order_linf_component": 3.6614613320803593
+          },
+          {
+            "n": 24,
+            "h": 0.010416666666666666,
+            "l2": 5.870617025141467e-06,
+            "linf_component": 5.8983764837372554e-06,
+            "observed_order_l2": 3.776484343619708,
+            "observed_order_linf_component": 3.7752091789205915
+          }
+        ],
+        "full_rate_sampled_native": [
+          {
+            "n": 8,
+            "h": 0.03125,
+            "l2": 0.0003697884863279259,
+            "linf_component": 0.0004773254994119569
+          },
+          {
+            "n": 12,
+            "h": 0.020833333333333332,
+            "l2": 7.193005409706054e-05,
+            "linf_component": 7.230498752102896e-05,
+            "observed_order_l2": 4.037923300692606,
+            "observed_order_linf_component": 4.654668178967146
+          },
+          {
+            "n": 16,
+            "h": 0.015625,
+            "l2": 2.727586118877483e-05,
+            "linf_component": 2.8895022964395278e-05,
+            "observed_order_l2": 3.3707073304317077,
+            "observed_order_linf_component": 3.188324312804924
+          },
+          {
+            "n": 24,
+            "h": 0.010416666666666666,
+            "l2": 7.457686677312671e-06,
+            "linf_component": 9.566308256353517e-06,
+            "observed_order_l2": 3.198195875129617,
+            "observed_order_linf_component": 2.726306095183904
+          }
+        ]
+      }
+    }
+  ]
+}
