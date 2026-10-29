@@ -1,0 +1,67 @@
+{
+  "passed": true,
+  "phase": "preflight",
+  "low_resolution_n": 16,
+  "source_manifest_sha256": "86b602e7e68fc93e6a76e16c9bd5c4aea9fcef64363670c5f95c6b0adf30fc13",
+  "binaries": {
+    "source-v10/tst/hyperbolic_shift_3d/aurora/preflight.py": "f0d4b64eacd516e004a1dcc5ba7ce51e6c6b6368d093dd8ac7f39427ba18bc84",
+    "build-sycl-mpi-v10/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_projected_angular": "a557b2090b8c41c6999969a008f1731e743eea21caa3fa257af386ab15b1847d",
+    "build-sycl-mpi-v10/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication": "3200b532382fc47e0885601acd8e8fd49dbce9958db9d702988c73b67a91c586"
+  },
+  "gpu_cpu_parity": true,
+  "restart_equivalence": true,
+  "job_id": "8983281.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "worker_status_sha256": "9efc60228a381d2d68e7ed8d270f60ab877051086b832708fe4bbf24983b6ec2",
+  "verification_sha256": "19edcce25ac20b188b70092bdaad714f2cac00cc7a01a2ed20044688244210c2",
+  "supporting_reports": {
+    "parity-device": {
+      "path": "campaigns/preflight-angular-v1/output/parity-device.report.json",
+      "sha256": "0f23f37dc7ac5003d33124bc4d3619206f97607a1693407613db60044ff6e8f8"
+    },
+    "parity-exchange": {
+      "path": "campaigns/preflight-angular-v1/output/parity-exchange.report.json",
+      "sha256": "1e2b3e2085e7837c76c3493fe6bafd9e45d281d477ad448dc8b5802e6971e56e"
+    },
+    "parity-scri": {
+      "path": "campaigns/preflight-angular-v1/output/parity-scri.report.json",
+      "sha256": "5c6741e727311ab43d067ffc134f0a851f52f6ee496f5a409b24d5cd99537b6a"
+    },
+    "parity-algebraic": {
+      "path": "campaigns/preflight-angular-v1/output/parity-algebraic.report.json",
+      "sha256": "108f432d337505dfe451f1444c9374f5a9059483dace0e544063be6eb148207d"
+    },
+    "parity-angular": {
+      "path": "campaigns/preflight-angular-v1/output/parity-angular.report.json",
+      "sha256": "f4ab8616c01dc75406f4458a7f14732e90ff0d703f7f170fa59055567307f5dc"
+    },
+    "minkowski-short": {
+      "path": "campaigns/preflight-angular-v1/output/minkowski-short.report.json",
+      "sha256": "ab47d6421e6c58d695dffb1c7ca9e099cfa3684101a165fade3949bc497d38db"
+    },
+    "pulse-half": {
+      "path": "campaigns/preflight-angular-v1/output/pulse-half.report.json",
+      "sha256": "07cc053f24b02974348cf1657b795bc2375002ba8dcc698ee481dd7045e22770"
+    },
+    "pulse-resumed": {
+      "path": "campaigns/preflight-angular-v1/output/pulse-resumed.report.json",
+      "sha256": "4532fdfa8bbfabb50e2df021413417b274a8caa50982f6f8bd2cc88962cdc60e"
+    },
+    "pulse-direct": {
+      "path": "campaigns/preflight-angular-v1/output/pulse-direct.report.json",
+      "sha256": "ff3644b6d6e759e1b4c9565af2a48a4c6e7c1a9c53ffbcf903f66dbcfcdf7515"
+    },
+    "restart-audit": {
+      "path": "campaigns/preflight-angular-v1/output/restart-audit.report.json",
+      "sha256": "cd41c588084498095e003e66b724d4efd62e635dc7fa9ad47808ed31be70e514"
+    },
+    "puncture-short": {
+      "path": "campaigns/preflight-angular-v1/output/puncture-short.report.json",
+      "sha256": "ef6c3459fa47cebff592c17f4c2cf9cec068fba3e704ee3e76a45d8704706dd3"
+    },
+    "communication": {
+      "path": "campaigns/preflight-angular-v1/output/communication.report.json",
+      "sha256": "648d367d79bea540df247ad195234a5efb6c5be1b331fd4cad368bb9b7cb6bfd"
+    }
+  },
+  "scope": "Admits bounded longer stability tests of the frozen V3 cross-face candidate at n16 only. Four-step evolution preflight, no duration/trumpet/convergence qualification."
+}

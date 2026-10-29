@@ -23,11 +23,15 @@ at coordinate t=0.4895 and the [puncture](aurora/stability-puncture-v1/README.md
 at t=0.369=1.107 M, both with nonpositive interpolated scri geometry. Null closure
 remained near roundoff while field and constraint errors grew. The Minkowski
 failure is strongly concentrated at outer-shell face edges/corners; this
-localization does not by itself rule out a coarse-grid effect or identify the
-unique unstable operator. At the user's request, the next priority is the
-[unchanged-executable n16/n24/n32 spatial and timestep control](aurora/resolution-control-v1/protocol.md),
-including throughput measurements with larger blocks. It is a stability
-discriminator, not a convergence admission.
+localization does not by itself identify the unique unstable operator. The
+[unchanged-executable n16/n24/n32 spatial and timestep controls](aurora/resolution-control-comparison-v1/README.md)
+are now complete. Fitted growth rates increase from 74.49 to 116.35 to 153.87
+per coordinate time under spatial refinement; halving the n16 timestep changes
+the rate by less than one percent. All four controls fail the scientific
+stability limits. Thus modest spatial refinement or a smaller timestep does
+not cure this instability. Larger blocks improve measured cell throughput,
+but global communication costs grow strongly. These are stability controls,
+not evidence of physical convergence.
 
 The puncture horizon rejection has a separately demonstrated measurement
 limitation. On its fixed unadmitted t=0.369 state, lmax6/ntheta12 stalls at
@@ -36,7 +40,7 @@ finds a horizon at RMS 0.000221 with the original 0.001 tolerance. See the
 [fixed-snapshot audit](horizon-angular-audit-v1/interpretation.md). This does not
 admit the failed evolution or establish spatial accuracy.
 
-Two optional repairs are preserved for controlled later comparisons:
+Two optional repairs have controlled comparison evidence:
 [standard final-stage tensor projection](../algebraic-projection-audit.md) and
 [cross-face scri angular reconstruction](../scri-angular-exchange.md). Their
 checkpoint schemas are distinct from the original control. Projection-only
@@ -44,8 +48,22 @@ Aurora preflight job 8982210 passed all twelve component, benchmark and four-ste
 checks; no long-time stability claim follows. The staged scri sampling
 microbenchmark reduced mean Evaluate time from 47.64 ms to 3.72 ms per rank
 (12.81x), with matching per-rank output norms. This is a kernel microbenchmark,
-not a measured whole-evolution speedup. Candidate evolution tests are deferred
-until the unchanged-scheme resolution question is addressed.
+not a measured whole-evolution speedup. The subsequent
+[projection-only duration test](aurora/stability-projected-minkowski-v1/README.md)
+failed at t=.485 with a stored scri RK-stage metric becoming indefinite;
+accepted algebraic residuals remained near roundoff. Its measured state-growth
+rate was 75.81, so final algebraic repair did not suppress the growing mode.
+
+The [cross-face V3 preflight](aurora/preflight-angular-v1/README.md) passed all
+twelve GPU component, four-step, exact-restart and communication checks.
+Its [fresh duration control](aurora/stability-angular-minkowski-v1/protocol.md)
+then failed at accepted t=.5205 with nonpositive interpolated scri geometry.
+The last fresh diagnostic at t=.5 has state deviation 29.76 and H/M RMS
+.07128/1.92019, while null closure remains near 1e-15. Cross-face derivative
+jets alone therefore do not establish stability. Owner-face ghost-value
+interpolation and the original regularity penalties are unchanged, and no
+explicit angular dissipation acts at scri. The full coupled discrete operator
+and the remaining boundary interpolation need further investigation.
 
 The original J-disabled, bulk-mu=4 1D control is confirmed to have completed coordinate `33.3333984375 = 100.0001953125 M`. Its N513/N1025 continuation chains and frozen-source identities were checked. A [portable N513 time series](original-1d-reference/history.csv) and [provenance](original-1d-reference/provenance.json) preserve the matching horizon/exterior-constraint reference. Late gauge settling and uniform puncture convergence were not established by that original control.
 

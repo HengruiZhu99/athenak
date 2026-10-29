@@ -1,0 +1,442 @@
+{
+  "report_raw_sha256": "648d367d79bea540df247ad195234a5efb6c5be1b331fd4cad368bb9b7cb6bfd",
+  "report_raw_bytes": 5479270,
+  "report_gzip_sha256": "8a44d6f6145fe04768b199fe3b4d4af8fc3c327a79163f6ea170e68f06bd9e32",
+  "report_gzip_bytes": 541697,
+  "worker_sha256": "9efc60228a381d2d68e7ed8d270f60ab877051086b832708fe4bbf24983b6ec2",
+  "binding_sha256": "4c75dfd3088b9e7ca736d64262244baa62e6de3e50b2ae53ce6851dc41c51840",
+  "plan_sha256": "e7a6e774a96b602471be0799b8b0fdde49f605f1e72e8ae3a9b27bc8217cddae",
+  "source_manifest_sha256": "86b602e7e68fc93e6a76e16c9bd5c4aea9fcef64363670c5f95c6b0adf30fc13",
+  "executable": "build-sycl-mpi-v10/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+  "binary_sha256": "3200b532382fc47e0885601acd8e8fd49dbce9958db9d702988c73b67a91c586",
+  "job_id": "8983281.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "backend": "SYCL",
+  "memory_space": "SYCLDeviceUSM",
+  "host_memory_space": "HostSpace",
+  "host_pinned_allocation_claimed": false,
+  "mpi_library": "MPICH Version:      5.1.0a1\nMPICH Release date: unreleased development copy\nMPICH ABI:          17:0:5\nMPICH Device:       ch4:ofi\nMPICH configure:    --prefix=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.87e2045-po72xy6 --disable-maintainer-mode --disable-silent-rules --enable-shared --enable-static --with-pm=no --enable-romio --without-ibverbs --enable-wrapper-rpath=yes --with-yaksa=embedded --with-ze --with-ch4-shmmods=posix,gpudirect --with-hwloc=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/hwloc-2.12.2-nidjp7i --enable-fortran --with-slurm=no --with-pmi=pmix --with-pmix=/usr --without-cuda --without-hip --with-device=ch4:ofi --with-libfabric=/opt/cray/libfabric/2.3.1 --enable-libxml2 --with-datatype-engine=yaksa --with-xpmem=/usr --with-file-system=daos+lustre+nfs+ufs --with-daos=/usr --enable-timer-type=linux86_cycle --enable-fast=O3,alwaysinline,avx,avx2,avx512f,sse2 --enable-g=no --disable-debuginfo --enable-error-checking=runtime --without-valgrind --enable-ch4-mt=runtime --with-ze=/usr --enable-ze-native=pvc --disable-opencl CC=icx CXX=icpx FC=ifx F77=ifx\nMPICH CC:           icx      -mavx2 -mavx512f -O3\nMPICH CXX:          icpx   -O3\nMPICH F77:          ifx   -O3\nMPICH FC:           ifx   -O3\nMPICH features:     threadcomm\n",
+  "compiler": "Intel(R) oneAPI DPC++/C++ Compiler 2025.3.2 (2025.3.2.20260112)",
+  "kokkos_version": 40702,
+  "case_elapsed_seconds": 175.21461517806165,
+  "ranks": [
+    {
+      "rank": 0,
+      "host": "x4112c4s0b0n0",
+      "shared_node_ranks": 12,
+      "environment": {
+        "ZE_AFFINITY_MASK": "0.0",
+        "ZE_FLAT_DEVICE_HIERARCHY": "COMPOSITE",
+        "ZE_ENABLE_PCI_ID_DEVICE_ORDER": "1",
+        "ONEAPI_DEVICE_SELECTOR": "level_zero:gpu",
+        "MPIR_CVAR_ENABLE_GPU": "1",
+        "OMP_NUM_THREADS": "1",
+        "MPI_LOCALRANKID": null,
+        "PALS_LOCAL_RANKID": "0"
+      },
+      "kokkos_configuration": "  Kokkos Version: 4.7.2\nCompiler:\n  KOKKOS_COMPILER_INTEL_LLVM: 20250302\nArchitecture:\n  CPU architecture: none\n  Default Device: SYCL\n  GPU architecture: INTEL_PVC\n  platform: 64bit\nAtomics:\nVectorization:\n  KOKKOS_ENABLE_PRAGMA_IVDEP: yes\n  KOKKOS_ENABLE_PRAGMA_LOOPCOUNT: yes\n  KOKKOS_ENABLE_PRAGMA_UNROLL: yes\n  KOKKOS_ENABLE_PRAGMA_VECTOR: yes\nMemory:\nOptions:\n  KOKKOS_ENABLE_ASM: yes\n  KOKKOS_ENABLE_CXX17: yes\n  KOKKOS_ENABLE_CXX20: no\n  KOKKOS_ENABLE_CXX23: no\n  KOKKOS_ENABLE_CXX26: no\n  KOKKOS_ENABLE_DEBUG_BOUNDS_CHECK: no\n  KOKKOS_ENABLE_HWLOC: no\n  KOKKOS_ENABLE_LIBDL: yes\nHost Serial Execution Space:\n  KOKKOS_ENABLE_SERIAL: yes\n\nSerial Runtime Configuration:\n\nRuntime Configuration:\nmacro  KOKKOS_ENABLE_ONEDPL : defined\nmacro  KOKKOS_IMPL_SYCL_DEVICE_GLOBAL_SUPPORTED : defined\nmacro  KOKKOS_ENABLE_SYCL_RELOCATABLE_DEVICE_CODE : undefined\nmacro  SYCL_EXT_ONEAPI_DEVICE_GLOBAL : defined\nmacro  KOKKOS_IMPL_SYCL_USE_IN_ORDER_QUEUES : defined\nmacro  KOKKOS_IMPL_SYCL_GRAPH_SUPPORT : defined\nmacro  SYCL_EXT_ONEAPI_BFLOAT16 : undefined\nmacro  SYCL_EXT_ONEAPI_AUTO_LOCAL_RANGE : defined\nImmediate command lists and standard command queue allowed.\nSYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS not defined.\n[ext_oneapi_level_zero]:gpu:0] Intel(R) Data Center GPU Max 1550 : Selected\n\nName: Intel(R) Data Center GPU Max 1550\nDriver Version: 1.6.33578+77\nIs CPU: 0\nIs GPU: 1\nIs Accelerator: 0\nVendor Id: 32902\nMax Compute Units: 448\nMax Work Item Dimensions: 3\nMax Work Group Size: 1024\nPreferred Vector Width Char: 16\nPreferred Vector Width Short: 8\nPreferred Vector Width Int: 4\nPreferred Vector Width Long: 1\nPreferred Vector Width Float: 1\nPreferred Vector Width Double: 1\nPreferred Vector Width Half: 8\nNative Vector Width Char: 16\nNative Vector Width Short: 8\nNative Vector Width Int: 4\nNative Vector Width Long: 1\nNative Vector Width Float: 1\nNative Vector Width Double: 1\nNative Vector Width Half: 8\nAddress Bits: 64\nMax Mem Alloc Size: 65267564544\nMax Read Image Args: 0\nImage2d Max Width: 0\nImage2d Max Height: 0\nImage3d Max Width: 0\nImage3d Max Height: 0\nImage3d Max Depth: 0\nImage Max Buffer Size: 0\nMax Samplers: 0\nMax Parameter Size: 2048\nMem Base Addr Align: 8\nGlobal Cache Mem Line Size: 1\nGlobal Mem Cache Size: 201326592\nGlobal Mem Size: 68702699520\nLocal Mem Size: 131072\nError Correction Support: 0\nProfiling Timer Resolution: 80\nIs Available: 1\nVendor: Intel(R) Corporation\nVersion: 12.60.7\nPartition Max Sub Devices: 0\nReference Count: 1\n"
+    },
+    {
+      "rank": 1,
+      "host": "x4112c4s0b0n0",
+      "shared_node_ranks": 12,
+      "environment": {
+        "ZE_AFFINITY_MASK": "0.1",
+        "ZE_FLAT_DEVICE_HIERARCHY": "COMPOSITE",
+        "ZE_ENABLE_PCI_ID_DEVICE_ORDER": "1",
+        "ONEAPI_DEVICE_SELECTOR": "level_zero:gpu",
+        "MPIR_CVAR_ENABLE_GPU": "1",
+        "OMP_NUM_THREADS": "1",
+        "MPI_LOCALRANKID": null,
+        "PALS_LOCAL_RANKID": "1"
+      },
+      "kokkos_configuration": "  Kokkos Version: 4.7.2\nCompiler:\n  KOKKOS_COMPILER_INTEL_LLVM: 20250302\nArchitecture:\n  CPU architecture: none\n  Default Device: SYCL\n  GPU architecture: INTEL_PVC\n  platform: 64bit\nAtomics:\nVectorization:\n  KOKKOS_ENABLE_PRAGMA_IVDEP: yes\n  KOKKOS_ENABLE_PRAGMA_LOOPCOUNT: yes\n  KOKKOS_ENABLE_PRAGMA_UNROLL: yes\n  KOKKOS_ENABLE_PRAGMA_VECTOR: yes\nMemory:\nOptions:\n  KOKKOS_ENABLE_ASM: yes\n  KOKKOS_ENABLE_CXX17: yes\n  KOKKOS_ENABLE_CXX20: no\n  KOKKOS_ENABLE_CXX23: no\n  KOKKOS_ENABLE_CXX26: no\n  KOKKOS_ENABLE_DEBUG_BOUNDS_CHECK: no\n  KOKKOS_ENABLE_HWLOC: no\n  KOKKOS_ENABLE_LIBDL: yes\nHost Serial Execution Space:\n  KOKKOS_ENABLE_SERIAL: yes\n\nSerial Runtime Configuration:\n\nRuntime Configuration:\nmacro  KOKKOS_ENABLE_ONEDPL : defined\nmacro  KOKKOS_IMPL_SYCL_DEVICE_GLOBAL_SUPPORTED : defined\nmacro  KOKKOS_ENABLE_SYCL_RELOCATABLE_DEVICE_CODE : undefined\nmacro  SYCL_EXT_ONEAPI_DEVICE_GLOBAL : defined\nmacro  KOKKOS_IMPL_SYCL_USE_IN_ORDER_QUEUES : defined\nmacro  KOKKOS_IMPL_SYCL_GRAPH_SUPPORT : defined\nmacro  SYCL_EXT_ONEAPI_BFLOAT16 : undefined\nmacro  SYCL_EXT_ONEAPI_AUTO_LOCAL_RANGE : defined\nImmediate command lists and standard command queue allowed.\nSYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS not defined.\n[ext_oneapi_level_zero]:gpu:0] Intel(R) Data Center GPU Max 1550 : Selected\n\nName: Intel(R) Data Center GPU Max 1550\nDriver Version: 1.6.33578+77\nIs CPU: 0\nIs GPU: 1\nIs Accelerator: 0\nVendor Id: 32902\nMax Compute Units: 448\nMax Work Item Dimensions: 3\nMax Work Group Size: 1024\nPreferred Vector Width Char: 16\nPreferred Vector Width Short: 8\nPreferred Vector Width Int: 4\nPreferred Vector Width Long: 1\nPreferred Vector Width Float: 1\nPreferred Vector Width Double: 1\nPreferred Vector Width Half: 8\nNative Vector Width Char: 16\nNative Vector Width Short: 8\nNative Vector Width Int: 4\nNative Vector Width Long: 1\nNative Vector Width Float: 1\nNative Vector Width Double: 1\nNative Vector Width Half: 8\nAddress Bits: 64\nMax Mem Alloc Size: 65267564544\nMax Read Image Args: 0\nImage2d Max Width: 0\nImage2d Max Height: 0\nImage3d Max Width: 0\nImage3d Max Height: 0\nImage3d Max Depth: 0\nImage Max Buffer Size: 0\nMax Samplers: 0\nMax Parameter Size: 2048\nMem Base Addr Align: 8\nGlobal Cache Mem Line Size: 1\nGlobal Mem Cache Size: 201326592\nGlobal Mem Size: 68702699520\nLocal Mem Size: 131072\nError Correction Support: 0\nProfiling Timer Resolution: 80\nIs Available: 1\nVendor: Intel(R) Corporation\nVersion: 12.60.7\nPartition Max Sub Devices: 0\nReference Count: 1\n"
+    },
+    {
+      "rank": 2,
+      "host": "x4112c4s0b0n0",
+      "shared_node_ranks": 12,
+      "environment": {
+        "ZE_AFFINITY_MASK": "1.0",
+        "ZE_FLAT_DEVICE_HIERARCHY": "COMPOSITE",
+        "ZE_ENABLE_PCI_ID_DEVICE_ORDER": "1",
+        "ONEAPI_DEVICE_SELECTOR": "level_zero:gpu",
+        "MPIR_CVAR_ENABLE_GPU": "1",
+        "OMP_NUM_THREADS": "1",
+        "MPI_LOCALRANKID": null,
+        "PALS_LOCAL_RANKID": "2"
+      },
+      "kokkos_configuration": "  Kokkos Version: 4.7.2\nCompiler:\n  KOKKOS_COMPILER_INTEL_LLVM: 20250302\nArchitecture:\n  CPU architecture: none\n  Default Device: SYCL\n  GPU architecture: INTEL_PVC\n  platform: 64bit\nAtomics:\nVectorization:\n  KOKKOS_ENABLE_PRAGMA_IVDEP: yes\n  KOKKOS_ENABLE_PRAGMA_LOOPCOUNT: yes\n  KOKKOS_ENABLE_PRAGMA_UNROLL: yes\n  KOKKOS_ENABLE_PRAGMA_VECTOR: yes\nMemory:\nOptions:\n  KOKKOS_ENABLE_ASM: yes\n  KOKKOS_ENABLE_CXX17: yes\n  KOKKOS_ENABLE_CXX20: no\n  KOKKOS_ENABLE_CXX23: no\n  KOKKOS_ENABLE_CXX26: no\n  KOKKOS_ENABLE_DEBUG_BOUNDS_CHECK: no\n  KOKKOS_ENABLE_HWLOC: no\n  KOKKOS_ENABLE_LIBDL: yes\nHost Serial Execution Space:\n  KOKKOS_ENABLE_SERIAL: yes\n\nSerial Runtime Configuration:\n\nRuntime Configuration:\nmacro  KOKKOS_ENABLE_ONEDPL : defined\nmacro  KOKKOS_IMPL_SYCL_DEVICE_GLOBAL_SUPPORTED : defined\nmacro  KOKKOS_ENABLE_SYCL_RELOCATABLE_DEVICE_CODE : undefined\nmacro  SYCL_EXT_ONEAPI_DEVICE_GLOBAL : defined\nmacro  KOKKOS_IMPL_SYCL_USE_IN_ORDER_QUEUES : defined\nmacro  KOKKOS_IMPL_SYCL_GRAPH_SUPPORT : defined\nmacro  SYCL_EXT_ONEAPI_BFLOAT16 : undefined\nmacro  SYCL_EXT_ONEAPI_AUTO_LOCAL_RANGE : defined\nImmediate command lists and standard command queue allowed.\nSYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS not defined.\n[ext_oneapi_level_zero]:gpu:0] Intel(R) Data Center GPU Max 1550 : Selected\n\nName: Intel(R) Data Center GPU Max 1550\nDriver Version: 1.6.33578+77\nIs CPU: 0\nIs GPU: 1\nIs Accelerator: 0\nVendor Id: 32902\nMax Compute Units: 448\nMax Work Item Dimensions: 3\nMax Work Group Size: 1024\nPreferred Vector Width Char: 16\nPreferred Vector Width Short: 8\nPreferred Vector Width Int: 4\nPreferred Vector Width Long: 1\nPreferred Vector Width Float: 1\nPreferred Vector Width Double: 1\nPreferred Vector Width Half: 8\nNative Vector Width Char: 16\nNative Vector Width Short: 8\nNative Vector Width Int: 4\nNative Vector Width Long: 1\nNative Vector Width Float: 1\nNative Vector Width Double: 1\nNative Vector Width Half: 8\nAddress Bits: 64\nMax Mem Alloc Size: 65267564544\nMax Read Image Args: 0\nImage2d Max Width: 0\nImage2d Max Height: 0\nImage3d Max Width: 0\nImage3d Max Height: 0\nImage3d Max Depth: 0\nImage Max Buffer Size: 0\nMax Samplers: 0\nMax Parameter Size: 2048\nMem Base Addr Align: 8\nGlobal Cache Mem Line Size: 1\nGlobal Mem Cache Size: 201326592\nGlobal Mem Size: 68702699520\nLocal Mem Size: 131072\nError Correction Support: 0\nProfiling Timer Resolution: 80\nIs Available: 1\nVendor: Intel(R) Corporation\nVersion: 12.60.7\nPartition Max Sub Devices: 0\nReference Count: 1\n"
+    },
+    {
+      "rank": 3,
+      "host": "x4112c4s0b0n0",
+      "shared_node_ranks": 12,
+      "environment": {
+        "ZE_AFFINITY_MASK": "1.1",
+        "ZE_FLAT_DEVICE_HIERARCHY": "COMPOSITE",
+        "ZE_ENABLE_PCI_ID_DEVICE_ORDER": "1",
+        "ONEAPI_DEVICE_SELECTOR": "level_zero:gpu",
+        "MPIR_CVAR_ENABLE_GPU": "1",
+        "OMP_NUM_THREADS": "1",
+        "MPI_LOCALRANKID": null,
+        "PALS_LOCAL_RANKID": "3"
+      },
+      "kokkos_configuration": "  Kokkos Version: 4.7.2\nCompiler:\n  KOKKOS_COMPILER_INTEL_LLVM: 20250302\nArchitecture:\n  CPU architecture: none\n  Default Device: SYCL\n  GPU architecture: INTEL_PVC\n  platform: 64bit\nAtomics:\nVectorization:\n  KOKKOS_ENABLE_PRAGMA_IVDEP: yes\n  KOKKOS_ENABLE_PRAGMA_LOOPCOUNT: yes\n  KOKKOS_ENABLE_PRAGMA_UNROLL: yes\n  KOKKOS_ENABLE_PRAGMA_VECTOR: yes\nMemory:\nOptions:\n  KOKKOS_ENABLE_ASM: yes\n  KOKKOS_ENABLE_CXX17: yes\n  KOKKOS_ENABLE_CXX20: no\n  KOKKOS_ENABLE_CXX23: no\n  KOKKOS_ENABLE_CXX26: no\n  KOKKOS_ENABLE_DEBUG_BOUNDS_CHECK: no\n  KOKKOS_ENABLE_HWLOC: no\n  KOKKOS_ENABLE_LIBDL: yes\nHost Serial Execution Space:\n  KOKKOS_ENABLE_SERIAL: yes\n\nSerial Runtime Configuration:\n\nRuntime Configuration:\nmacro  KOKKOS_ENABLE_ONEDPL : defined\nmacro  KOKKOS_IMPL_SYCL_DEVICE_GLOBAL_SUPPORTED : defined\nmacro  KOKKOS_ENABLE_SYCL_RELOCATABLE_DEVICE_CODE : undefined\nmacro  SYCL_EXT_ONEAPI_DEVICE_GLOBAL : defined\nmacro  KOKKOS_IMPL_SYCL_USE_IN_ORDER_QUEUES : defined\nmacro  KOKKOS_IMPL_SYCL_GRAPH_SUPPORT : defined\nmacro  SYCL_EXT_ONEAPI_BFLOAT16 : undefined\nmacro  SYCL_EXT_ONEAPI_AUTO_LOCAL_RANGE : defined\nImmediate command lists and standard command queue allowed.\nSYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS not defined.\n[ext_oneapi_level_zero]:gpu:0] Intel(R) Data Center GPU Max 1550 : Selected\n\nName: Intel(R) Data Center GPU Max 1550\nDriver Version: 1.6.33578+77\nIs CPU: 0\nIs GPU: 1\nIs Accelerator: 0\nVendor Id: 32902\nMax Compute Units: 448\nMax Work Item Dimensions: 3\nMax Work Group Size: 1024\nPreferred Vector Width Char: 16\nPreferred Vector Width Short: 8\nPreferred Vector Width Int: 4\nPreferred Vector Width Long: 1\nPreferred Vector Width Float: 1\nPreferred Vector Width Double: 1\nPreferred Vector Width Half: 8\nNative Vector Width Char: 16\nNative Vector Width Short: 8\nNative Vector Width Int: 4\nNative Vector Width Long: 1\nNative Vector Width Float: 1\nNative Vector Width Double: 1\nNative Vector Width Half: 8\nAddress Bits: 64\nMax Mem Alloc Size: 65267564544\nMax Read Image Args: 0\nImage2d Max Width: 0\nImage2d Max Height: 0\nImage3d Max Width: 0\nImage3d Max Height: 0\nImage3d Max Depth: 0\nImage Max Buffer Size: 0\nMax Samplers: 0\nMax Parameter Size: 2048\nMem Base Addr Align: 8\nGlobal Cache Mem Line Size: 1\nGlobal Mem Cache Size: 201326592\nGlobal Mem Size: 68702699520\nLocal Mem Size: 131072\nError Correction Support: 0\nProfiling Timer Resolution: 80\nIs Available: 1\nVendor: Intel(R) Corporation\nVersion: 12.60.7\nPartition Max Sub Devices: 0\nReference Count: 1\n"
+    },
+    {
+      "rank": 4,
+      "host": "x4112c4s0b0n0",
+      "shared_node_ranks": 12,
+      "environment": {
+        "ZE_AFFINITY_MASK": "2.0",
+        "ZE_FLAT_DEVICE_HIERARCHY": "COMPOSITE",
+        "ZE_ENABLE_PCI_ID_DEVICE_ORDER": "1",
+        "ONEAPI_DEVICE_SELECTOR": "level_zero:gpu",
+        "MPIR_CVAR_ENABLE_GPU": "1",
+        "OMP_NUM_THREADS": "1",
+        "MPI_LOCALRANKID": null,
+        "PALS_LOCAL_RANKID": "4"
+      },
+      "kokkos_configuration": "  Kokkos Version: 4.7.2\nCompiler:\n  KOKKOS_COMPILER_INTEL_LLVM: 20250302\nArchitecture:\n  CPU architecture: none\n  Default Device: SYCL\n  GPU architecture: INTEL_PVC\n  platform: 64bit\nAtomics:\nVectorization:\n  KOKKOS_ENABLE_PRAGMA_IVDEP: yes\n  KOKKOS_ENABLE_PRAGMA_LOOPCOUNT: yes\n  KOKKOS_ENABLE_PRAGMA_UNROLL: yes\n  KOKKOS_ENABLE_PRAGMA_VECTOR: yes\nMemory:\nOptions:\n  KOKKOS_ENABLE_ASM: yes\n  KOKKOS_ENABLE_CXX17: yes\n  KOKKOS_ENABLE_CXX20: no\n  KOKKOS_ENABLE_CXX23: no\n  KOKKOS_ENABLE_CXX26: no\n  KOKKOS_ENABLE_DEBUG_BOUNDS_CHECK: no\n  KOKKOS_ENABLE_HWLOC: no\n  KOKKOS_ENABLE_LIBDL: yes\nHost Serial Execution Space:\n  KOKKOS_ENABLE_SERIAL: yes\n\nSerial Runtime Configuration:\n\nRuntime Configuration:\nmacro  KOKKOS_ENABLE_ONEDPL : defined\nmacro  KOKKOS_IMPL_SYCL_DEVICE_GLOBAL_SUPPORTED : defined\nmacro  KOKKOS_ENABLE_SYCL_RELOCATABLE_DEVICE_CODE : undefined\nmacro  SYCL_EXT_ONEAPI_DEVICE_GLOBAL : defined\nmacro  KOKKOS_IMPL_SYCL_USE_IN_ORDER_QUEUES : defined\nmacro  KOKKOS_IMPL_SYCL_GRAPH_SUPPORT : defined\nmacro  SYCL_EXT_ONEAPI_BFLOAT16 : undefined\nmacro  SYCL_EXT_ONEAPI_AUTO_LOCAL_RANGE : defined\nImmediate command lists and standard command queue allowed.\nSYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS not defined.\n[ext_oneapi_level_zero]:gpu:0] Intel(R) Data Center GPU Max 1550 : Selected\n\nName: Intel(R) Data Center GPU Max 1550\nDriver Version: 1.6.33578+77\nIs CPU: 0\nIs GPU: 1\nIs Accelerator: 0\nVendor Id: 32902\nMax Compute Units: 448\nMax Work Item Dimensions: 3\nMax Work Group Size: 1024\nPreferred Vector Width Char: 16\nPreferred Vector Width Short: 8\nPreferred Vector Width Int: 4\nPreferred Vector Width Long: 1\nPreferred Vector Width Float: 1\nPreferred Vector Width Double: 1\nPreferred Vector Width Half: 8\nNative Vector Width Char: 16\nNative Vector Width Short: 8\nNative Vector Width Int: 4\nNative Vector Width Long: 1\nNative Vector Width Float: 1\nNative Vector Width Double: 1\nNative Vector Width Half: 8\nAddress Bits: 64\nMax Mem Alloc Size: 65267564544\nMax Read Image Args: 0\nImage2d Max Width: 0\nImage2d Max Height: 0\nImage3d Max Width: 0\nImage3d Max Height: 0\nImage3d Max Depth: 0\nImage Max Buffer Size: 0\nMax Samplers: 0\nMax Parameter Size: 2048\nMem Base Addr Align: 8\nGlobal Cache Mem Line Size: 1\nGlobal Mem Cache Size: 201326592\nGlobal Mem Size: 68702699520\nLocal Mem Size: 131072\nError Correction Support: 0\nProfiling Timer Resolution: 80\nIs Available: 1\nVendor: Intel(R) Corporation\nVersion: 12.60.7\nPartition Max Sub Devices: 0\nReference Count: 1\n"
+    },
+    {
+      "rank": 5,
+      "host": "x4112c4s0b0n0",
+      "shared_node_ranks": 12,
+      "environment": {
+        "ZE_AFFINITY_MASK": "2.1",
+        "ZE_FLAT_DEVICE_HIERARCHY": "COMPOSITE",
+        "ZE_ENABLE_PCI_ID_DEVICE_ORDER": "1",
+        "ONEAPI_DEVICE_SELECTOR": "level_zero:gpu",
+        "MPIR_CVAR_ENABLE_GPU": "1",
+        "OMP_NUM_THREADS": "1",
+        "MPI_LOCALRANKID": null,
+        "PALS_LOCAL_RANKID": "5"
+      },
+      "kokkos_configuration": "  Kokkos Version: 4.7.2\nCompiler:\n  KOKKOS_COMPILER_INTEL_LLVM: 20250302\nArchitecture:\n  CPU architecture: none\n  Default Device: SYCL\n  GPU architecture: INTEL_PVC\n  platform: 64bit\nAtomics:\nVectorization:\n  KOKKOS_ENABLE_PRAGMA_IVDEP: yes\n  KOKKOS_ENABLE_PRAGMA_LOOPCOUNT: yes\n  KOKKOS_ENABLE_PRAGMA_UNROLL: yes\n  KOKKOS_ENABLE_PRAGMA_VECTOR: yes\nMemory:\nOptions:\n  KOKKOS_ENABLE_ASM: yes\n  KOKKOS_ENABLE_CXX17: yes\n  KOKKOS_ENABLE_CXX20: no\n  KOKKOS_ENABLE_CXX23: no\n  KOKKOS_ENABLE_CXX26: no\n  KOKKOS_ENABLE_DEBUG_BOUNDS_CHECK: no\n  KOKKOS_ENABLE_HWLOC: no\n  KOKKOS_ENABLE_LIBDL: yes\nHost Serial Execution Space:\n  KOKKOS_ENABLE_SERIAL: yes\n\nSerial Runtime Configuration:\n\nRuntime Configuration:\nmacro  KOKKOS_ENABLE_ONEDPL : defined\nmacro  KOKKOS_IMPL_SYCL_DEVICE_GLOBAL_SUPPORTED : defined\nmacro  KOKKOS_ENABLE_SYCL_RELOCATABLE_DEVICE_CODE : undefined\nmacro  SYCL_EXT_ONEAPI_DEVICE_GLOBAL : defined\nmacro  KOKKOS_IMPL_SYCL_USE_IN_ORDER_QUEUES : defined\nmacro  KOKKOS_IMPL_SYCL_GRAPH_SUPPORT : defined\nmacro  SYCL_EXT_ONEAPI_BFLOAT16 : undefined\nmacro  SYCL_EXT_ONEAPI_AUTO_LOCAL_RANGE : defined\nImmediate command lists and standard command queue allowed.\nSYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS not defined.\n[ext_oneapi_level_zero]:gpu:0] Intel(R) Data Center GPU Max 1550 : Selected\n\nName: Intel(R) Data Center GPU Max 1550\nDriver Version: 1.6.33578+77\nIs CPU: 0\nIs GPU: 1\nIs Accelerator: 0\nVendor Id: 32902\nMax Compute Units: 448\nMax Work Item Dimensions: 3\nMax Work Group Size: 1024\nPreferred Vector Width Char: 16\nPreferred Vector Width Short: 8\nPreferred Vector Width Int: 4\nPreferred Vector Width Long: 1\nPreferred Vector Width Float: 1\nPreferred Vector Width Double: 1\nPreferred Vector Width Half: 8\nNative Vector Width Char: 16\nNative Vector Width Short: 8\nNative Vector Width Int: 4\nNative Vector Width Long: 1\nNative Vector Width Float: 1\nNative Vector Width Double: 1\nNative Vector Width Half: 8\nAddress Bits: 64\nMax Mem Alloc Size: 65267564544\nMax Read Image Args: 0\nImage2d Max Width: 0\nImage2d Max Height: 0\nImage3d Max Width: 0\nImage3d Max Height: 0\nImage3d Max Depth: 0\nImage Max Buffer Size: 0\nMax Samplers: 0\nMax Parameter Size: 2048\nMem Base Addr Align: 8\nGlobal Cache Mem Line Size: 1\nGlobal Mem Cache Size: 201326592\nGlobal Mem Size: 68702699520\nLocal Mem Size: 131072\nError Correction Support: 0\nProfiling Timer Resolution: 80\nIs Available: 1\nVendor: Intel(R) Corporation\nVersion: 12.60.7\nPartition Max Sub Devices: 0\nReference Count: 1\n"
+    },
+    {
+      "rank": 6,
+      "host": "x4112c4s0b0n0",
+      "shared_node_ranks": 12,
+      "environment": {
+        "ZE_AFFINITY_MASK": "3.0",
+        "ZE_FLAT_DEVICE_HIERARCHY": "COMPOSITE",
+        "ZE_ENABLE_PCI_ID_DEVICE_ORDER": "1",
+        "ONEAPI_DEVICE_SELECTOR": "level_zero:gpu",
+        "MPIR_CVAR_ENABLE_GPU": "1",
+        "OMP_NUM_THREADS": "1",
+        "MPI_LOCALRANKID": null,
+        "PALS_LOCAL_RANKID": "6"
+      },
+      "kokkos_configuration": "  Kokkos Version: 4.7.2\nCompiler:\n  KOKKOS_COMPILER_INTEL_LLVM: 20250302\nArchitecture:\n  CPU architecture: none\n  Default Device: SYCL\n  GPU architecture: INTEL_PVC\n  platform: 64bit\nAtomics:\nVectorization:\n  KOKKOS_ENABLE_PRAGMA_IVDEP: yes\n  KOKKOS_ENABLE_PRAGMA_LOOPCOUNT: yes\n  KOKKOS_ENABLE_PRAGMA_UNROLL: yes\n  KOKKOS_ENABLE_PRAGMA_VECTOR: yes\nMemory:\nOptions:\n  KOKKOS_ENABLE_ASM: yes\n  KOKKOS_ENABLE_CXX17: yes\n  KOKKOS_ENABLE_CXX20: no\n  KOKKOS_ENABLE_CXX23: no\n  KOKKOS_ENABLE_CXX26: no\n  KOKKOS_ENABLE_DEBUG_BOUNDS_CHECK: no\n  KOKKOS_ENABLE_HWLOC: no\n  KOKKOS_ENABLE_LIBDL: yes\nHost Serial Execution Space:\n  KOKKOS_ENABLE_SERIAL: yes\n\nSerial Runtime Configuration:\n\nRuntime Configuration:\nmacro  KOKKOS_ENABLE_ONEDPL : defined\nmacro  KOKKOS_IMPL_SYCL_DEVICE_GLOBAL_SUPPORTED : defined\nmacro  KOKKOS_ENABLE_SYCL_RELOCATABLE_DEVICE_CODE : undefined\nmacro  SYCL_EXT_ONEAPI_DEVICE_GLOBAL : defined\nmacro  KOKKOS_IMPL_SYCL_USE_IN_ORDER_QUEUES : defined\nmacro  KOKKOS_IMPL_SYCL_GRAPH_SUPPORT : defined\nmacro  SYCL_EXT_ONEAPI_BFLOAT16 : undefined\nmacro  SYCL_EXT_ONEAPI_AUTO_LOCAL_RANGE : defined\nImmediate command lists and standard command queue allowed.\nSYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS not defined.\n[ext_oneapi_level_zero]:gpu:0] Intel(R) Data Center GPU Max 1550 : Selected\n\nName: Intel(R) Data Center GPU Max 1550\nDriver Version: 1.6.33578+77\nIs CPU: 0\nIs GPU: 1\nIs Accelerator: 0\nVendor Id: 32902\nMax Compute Units: 448\nMax Work Item Dimensions: 3\nMax Work Group Size: 1024\nPreferred Vector Width Char: 16\nPreferred Vector Width Short: 8\nPreferred Vector Width Int: 4\nPreferred Vector Width Long: 1\nPreferred Vector Width Float: 1\nPreferred Vector Width Double: 1\nPreferred Vector Width Half: 8\nNative Vector Width Char: 16\nNative Vector Width Short: 8\nNative Vector Width Int: 4\nNative Vector Width Long: 1\nNative Vector Width Float: 1\nNative Vector Width Double: 1\nNative Vector Width Half: 8\nAddress Bits: 64\nMax Mem Alloc Size: 65267564544\nMax Read Image Args: 0\nImage2d Max Width: 0\nImage2d Max Height: 0\nImage3d Max Width: 0\nImage3d Max Height: 0\nImage3d Max Depth: 0\nImage Max Buffer Size: 0\nMax Samplers: 0\nMax Parameter Size: 2048\nMem Base Addr Align: 8\nGlobal Cache Mem Line Size: 1\nGlobal Mem Cache Size: 201326592\nGlobal Mem Size: 68702699520\nLocal Mem Size: 131072\nError Correction Support: 0\nProfiling Timer Resolution: 80\nIs Available: 1\nVendor: Intel(R) Corporation\nVersion: 12.60.7\nPartition Max Sub Devices: 0\nReference Count: 1\n"
+    },
+    {
+      "rank": 7,
+      "host": "x4112c4s0b0n0",
+      "shared_node_ranks": 12,
+      "environment": {
+        "ZE_AFFINITY_MASK": "3.1",
+        "ZE_FLAT_DEVICE_HIERARCHY": "COMPOSITE",
+        "ZE_ENABLE_PCI_ID_DEVICE_ORDER": "1",
+        "ONEAPI_DEVICE_SELECTOR": "level_zero:gpu",
+        "MPIR_CVAR_ENABLE_GPU": "1",
+        "OMP_NUM_THREADS": "1",
+        "MPI_LOCALRANKID": null,
+        "PALS_LOCAL_RANKID": "7"
+      },
+      "kokkos_configuration": "  Kokkos Version: 4.7.2\nCompiler:\n  KOKKOS_COMPILER_INTEL_LLVM: 20250302\nArchitecture:\n  CPU architecture: none\n  Default Device: SYCL\n  GPU architecture: INTEL_PVC\n  platform: 64bit\nAtomics:\nVectorization:\n  KOKKOS_ENABLE_PRAGMA_IVDEP: yes\n  KOKKOS_ENABLE_PRAGMA_LOOPCOUNT: yes\n  KOKKOS_ENABLE_PRAGMA_UNROLL: yes\n  KOKKOS_ENABLE_PRAGMA_VECTOR: yes\nMemory:\nOptions:\n  KOKKOS_ENABLE_ASM: yes\n  KOKKOS_ENABLE_CXX17: yes\n  KOKKOS_ENABLE_CXX20: no\n  KOKKOS_ENABLE_CXX23: no\n  KOKKOS_ENABLE_CXX26: no\n  KOKKOS_ENABLE_DEBUG_BOUNDS_CHECK: no\n  KOKKOS_ENABLE_HWLOC: no\n  KOKKOS_ENABLE_LIBDL: yes\nHost Serial Execution Space:\n  KOKKOS_ENABLE_SERIAL: yes\n\nSerial Runtime Configuration:\n\nRuntime Configuration:\nmacro  KOKKOS_ENABLE_ONEDPL : defined\nmacro  KOKKOS_IMPL_SYCL_DEVICE_GLOBAL_SUPPORTED : defined\nmacro  KOKKOS_ENABLE_SYCL_RELOCATABLE_DEVICE_CODE : undefined\nmacro  SYCL_EXT_ONEAPI_DEVICE_GLOBAL : defined\nmacro  KOKKOS_IMPL_SYCL_USE_IN_ORDER_QUEUES : defined\nmacro  KOKKOS_IMPL_SYCL_GRAPH_SUPPORT : defined\nmacro  SYCL_EXT_ONEAPI_BFLOAT16 : undefined\nmacro  SYCL_EXT_ONEAPI_AUTO_LOCAL_RANGE : defined\nImmediate command lists and standard command queue allowed.\nSYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS not defined.\n[ext_oneapi_level_zero]:gpu:0] Intel(R) Data Center GPU Max 1550 : Selected\n\nName: Intel(R) Data Center GPU Max 1550\nDriver Version: 1.6.33578+77\nIs CPU: 0\nIs GPU: 1\nIs Accelerator: 0\nVendor Id: 32902\nMax Compute Units: 448\nMax Work Item Dimensions: 3\nMax Work Group Size: 1024\nPreferred Vector Width Char: 16\nPreferred Vector Width Short: 8\nPreferred Vector Width Int: 4\nPreferred Vector Width Long: 1\nPreferred Vector Width Float: 1\nPreferred Vector Width Double: 1\nPreferred Vector Width Half: 8\nNative Vector Width Char: 16\nNative Vector Width Short: 8\nNative Vector Width Int: 4\nNative Vector Width Long: 1\nNative Vector Width Float: 1\nNative Vector Width Double: 1\nNative Vector Width Half: 8\nAddress Bits: 64\nMax Mem Alloc Size: 65267564544\nMax Read Image Args: 0\nImage2d Max Width: 0\nImage2d Max Height: 0\nImage3d Max Width: 0\nImage3d Max Height: 0\nImage3d Max Depth: 0\nImage Max Buffer Size: 0\nMax Samplers: 0\nMax Parameter Size: 2048\nMem Base Addr Align: 8\nGlobal Cache Mem Line Size: 1\nGlobal Mem Cache Size: 201326592\nGlobal Mem Size: 68702699520\nLocal Mem Size: 131072\nError Correction Support: 0\nProfiling Timer Resolution: 80\nIs Available: 1\nVendor: Intel(R) Corporation\nVersion: 12.60.7\nPartition Max Sub Devices: 0\nReference Count: 1\n"
+    },
+    {
+      "rank": 8,
+      "host": "x4112c4s0b0n0",
+      "shared_node_ranks": 12,
+      "environment": {
+        "ZE_AFFINITY_MASK": "4.0",
+        "ZE_FLAT_DEVICE_HIERARCHY": "COMPOSITE",
+        "ZE_ENABLE_PCI_ID_DEVICE_ORDER": "1",
+        "ONEAPI_DEVICE_SELECTOR": "level_zero:gpu",
+        "MPIR_CVAR_ENABLE_GPU": "1",
+        "OMP_NUM_THREADS": "1",
+        "MPI_LOCALRANKID": null,
+        "PALS_LOCAL_RANKID": "8"
+      },
+      "kokkos_configuration": "  Kokkos Version: 4.7.2\nCompiler:\n  KOKKOS_COMPILER_INTEL_LLVM: 20250302\nArchitecture:\n  CPU architecture: none\n  Default Device: SYCL\n  GPU architecture: INTEL_PVC\n  platform: 64bit\nAtomics:\nVectorization:\n  KOKKOS_ENABLE_PRAGMA_IVDEP: yes\n  KOKKOS_ENABLE_PRAGMA_LOOPCOUNT: yes\n  KOKKOS_ENABLE_PRAGMA_UNROLL: yes\n  KOKKOS_ENABLE_PRAGMA_VECTOR: yes\nMemory:\nOptions:\n  KOKKOS_ENABLE_ASM: yes\n  KOKKOS_ENABLE_CXX17: yes\n  KOKKOS_ENABLE_CXX20: no\n  KOKKOS_ENABLE_CXX23: no\n  KOKKOS_ENABLE_CXX26: no\n  KOKKOS_ENABLE_DEBUG_BOUNDS_CHECK: no\n  KOKKOS_ENABLE_HWLOC: no\n  KOKKOS_ENABLE_LIBDL: yes\nHost Serial Execution Space:\n  KOKKOS_ENABLE_SERIAL: yes\n\nSerial Runtime Configuration:\n\nRuntime Configuration:\nmacro  KOKKOS_ENABLE_ONEDPL : defined\nmacro  KOKKOS_IMPL_SYCL_DEVICE_GLOBAL_SUPPORTED : defined\nmacro  KOKKOS_ENABLE_SYCL_RELOCATABLE_DEVICE_CODE : undefined\nmacro  SYCL_EXT_ONEAPI_DEVICE_GLOBAL : defined\nmacro  KOKKOS_IMPL_SYCL_USE_IN_ORDER_QUEUES : defined\nmacro  KOKKOS_IMPL_SYCL_GRAPH_SUPPORT : defined\nmacro  SYCL_EXT_ONEAPI_BFLOAT16 : undefined\nmacro  SYCL_EXT_ONEAPI_AUTO_LOCAL_RANGE : defined\nImmediate command lists and standard command queue allowed.\nSYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS not defined.\n[ext_oneapi_level_zero]:gpu:0] Intel(R) Data Center GPU Max 1550 : Selected\n\nName: Intel(R) Data Center GPU Max 1550\nDriver Version: 1.6.33578+77\nIs CPU: 0\nIs GPU: 1\nIs Accelerator: 0\nVendor Id: 32902\nMax Compute Units: 448\nMax Work Item Dimensions: 3\nMax Work Group Size: 1024\nPreferred Vector Width Char: 16\nPreferred Vector Width Short: 8\nPreferred Vector Width Int: 4\nPreferred Vector Width Long: 1\nPreferred Vector Width Float: 1\nPreferred Vector Width Double: 1\nPreferred Vector Width Half: 8\nNative Vector Width Char: 16\nNative Vector Width Short: 8\nNative Vector Width Int: 4\nNative Vector Width Long: 1\nNative Vector Width Float: 1\nNative Vector Width Double: 1\nNative Vector Width Half: 8\nAddress Bits: 64\nMax Mem Alloc Size: 65267564544\nMax Read Image Args: 0\nImage2d Max Width: 0\nImage2d Max Height: 0\nImage3d Max Width: 0\nImage3d Max Height: 0\nImage3d Max Depth: 0\nImage Max Buffer Size: 0\nMax Samplers: 0\nMax Parameter Size: 2048\nMem Base Addr Align: 8\nGlobal Cache Mem Line Size: 1\nGlobal Mem Cache Size: 201326592\nGlobal Mem Size: 68702699520\nLocal Mem Size: 131072\nError Correction Support: 0\nProfiling Timer Resolution: 80\nIs Available: 1\nVendor: Intel(R) Corporation\nVersion: 12.60.7\nPartition Max Sub Devices: 0\nReference Count: 1\n"
+    },
+    {
+      "rank": 9,
+      "host": "x4112c4s0b0n0",
+      "shared_node_ranks": 12,
+      "environment": {
+        "ZE_AFFINITY_MASK": "4.1",
+        "ZE_FLAT_DEVICE_HIERARCHY": "COMPOSITE",
+        "ZE_ENABLE_PCI_ID_DEVICE_ORDER": "1",
+        "ONEAPI_DEVICE_SELECTOR": "level_zero:gpu",
+        "MPIR_CVAR_ENABLE_GPU": "1",
+        "OMP_NUM_THREADS": "1",
+        "MPI_LOCALRANKID": null,
+        "PALS_LOCAL_RANKID": "9"
+      },
+      "kokkos_configuration": "  Kokkos Version: 4.7.2\nCompiler:\n  KOKKOS_COMPILER_INTEL_LLVM: 20250302\nArchitecture:\n  CPU architecture: none\n  Default Device: SYCL\n  GPU architecture: INTEL_PVC\n  platform: 64bit\nAtomics:\nVectorization:\n  KOKKOS_ENABLE_PRAGMA_IVDEP: yes\n  KOKKOS_ENABLE_PRAGMA_LOOPCOUNT: yes\n  KOKKOS_ENABLE_PRAGMA_UNROLL: yes\n  KOKKOS_ENABLE_PRAGMA_VECTOR: yes\nMemory:\nOptions:\n  KOKKOS_ENABLE_ASM: yes\n  KOKKOS_ENABLE_CXX17: yes\n  KOKKOS_ENABLE_CXX20: no\n  KOKKOS_ENABLE_CXX23: no\n  KOKKOS_ENABLE_CXX26: no\n  KOKKOS_ENABLE_DEBUG_BOUNDS_CHECK: no\n  KOKKOS_ENABLE_HWLOC: no\n  KOKKOS_ENABLE_LIBDL: yes\nHost Serial Execution Space:\n  KOKKOS_ENABLE_SERIAL: yes\n\nSerial Runtime Configuration:\n\nRuntime Configuration:\nmacro  KOKKOS_ENABLE_ONEDPL : defined\nmacro  KOKKOS_IMPL_SYCL_DEVICE_GLOBAL_SUPPORTED : defined\nmacro  KOKKOS_ENABLE_SYCL_RELOCATABLE_DEVICE_CODE : undefined\nmacro  SYCL_EXT_ONEAPI_DEVICE_GLOBAL : defined\nmacro  KOKKOS_IMPL_SYCL_USE_IN_ORDER_QUEUES : defined\nmacro  KOKKOS_IMPL_SYCL_GRAPH_SUPPORT : defined\nmacro  SYCL_EXT_ONEAPI_BFLOAT16 : undefined\nmacro  SYCL_EXT_ONEAPI_AUTO_LOCAL_RANGE : defined\nImmediate command lists and standard command queue allowed.\nSYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS not defined.\n[ext_oneapi_level_zero]:gpu:0] Intel(R) Data Center GPU Max 1550 : Selected\n\nName: Intel(R) Data Center GPU Max 1550\nDriver Version: 1.6.33578+77\nIs CPU: 0\nIs GPU: 1\nIs Accelerator: 0\nVendor Id: 32902\nMax Compute Units: 448\nMax Work Item Dimensions: 3\nMax Work Group Size: 1024\nPreferred Vector Width Char: 16\nPreferred Vector Width Short: 8\nPreferred Vector Width Int: 4\nPreferred Vector Width Long: 1\nPreferred Vector Width Float: 1\nPreferred Vector Width Double: 1\nPreferred Vector Width Half: 8\nNative Vector Width Char: 16\nNative Vector Width Short: 8\nNative Vector Width Int: 4\nNative Vector Width Long: 1\nNative Vector Width Float: 1\nNative Vector Width Double: 1\nNative Vector Width Half: 8\nAddress Bits: 64\nMax Mem Alloc Size: 65267564544\nMax Read Image Args: 0\nImage2d Max Width: 0\nImage2d Max Height: 0\nImage3d Max Width: 0\nImage3d Max Height: 0\nImage3d Max Depth: 0\nImage Max Buffer Size: 0\nMax Samplers: 0\nMax Parameter Size: 2048\nMem Base Addr Align: 8\nGlobal Cache Mem Line Size: 1\nGlobal Mem Cache Size: 201326592\nGlobal Mem Size: 68702699520\nLocal Mem Size: 131072\nError Correction Support: 0\nProfiling Timer Resolution: 80\nIs Available: 1\nVendor: Intel(R) Corporation\nVersion: 12.60.7\nPartition Max Sub Devices: 0\nReference Count: 1\n"
+    },
+    {
+      "rank": 10,
+      "host": "x4112c4s0b0n0",
+      "shared_node_ranks": 12,
+      "environment": {
+        "ZE_AFFINITY_MASK": "5.0",
+        "ZE_FLAT_DEVICE_HIERARCHY": "COMPOSITE",
+        "ZE_ENABLE_PCI_ID_DEVICE_ORDER": "1",
+        "ONEAPI_DEVICE_SELECTOR": "level_zero:gpu",
+        "MPIR_CVAR_ENABLE_GPU": "1",
+        "OMP_NUM_THREADS": "1",
+        "MPI_LOCALRANKID": null,
+        "PALS_LOCAL_RANKID": "10"
+      },
+      "kokkos_configuration": "  Kokkos Version: 4.7.2\nCompiler:\n  KOKKOS_COMPILER_INTEL_LLVM: 20250302\nArchitecture:\n  CPU architecture: none\n  Default Device: SYCL\n  GPU architecture: INTEL_PVC\n  platform: 64bit\nAtomics:\nVectorization:\n  KOKKOS_ENABLE_PRAGMA_IVDEP: yes\n  KOKKOS_ENABLE_PRAGMA_LOOPCOUNT: yes\n  KOKKOS_ENABLE_PRAGMA_UNROLL: yes\n  KOKKOS_ENABLE_PRAGMA_VECTOR: yes\nMemory:\nOptions:\n  KOKKOS_ENABLE_ASM: yes\n  KOKKOS_ENABLE_CXX17: yes\n  KOKKOS_ENABLE_CXX20: no\n  KOKKOS_ENABLE_CXX23: no\n  KOKKOS_ENABLE_CXX26: no\n  KOKKOS_ENABLE_DEBUG_BOUNDS_CHECK: no\n  KOKKOS_ENABLE_HWLOC: no\n  KOKKOS_ENABLE_LIBDL: yes\nHost Serial Execution Space:\n  KOKKOS_ENABLE_SERIAL: yes\n\nSerial Runtime Configuration:\n\nRuntime Configuration:\nmacro  KOKKOS_ENABLE_ONEDPL : defined\nmacro  KOKKOS_IMPL_SYCL_DEVICE_GLOBAL_SUPPORTED : defined\nmacro  KOKKOS_ENABLE_SYCL_RELOCATABLE_DEVICE_CODE : undefined\nmacro  SYCL_EXT_ONEAPI_DEVICE_GLOBAL : defined\nmacro  KOKKOS_IMPL_SYCL_USE_IN_ORDER_QUEUES : defined\nmacro  KOKKOS_IMPL_SYCL_GRAPH_SUPPORT : defined\nmacro  SYCL_EXT_ONEAPI_BFLOAT16 : undefined\nmacro  SYCL_EXT_ONEAPI_AUTO_LOCAL_RANGE : defined\nImmediate command lists and standard command queue allowed.\nSYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS not defined.\n[ext_oneapi_level_zero]:gpu:0] Intel(R) Data Center GPU Max 1550 : Selected\n\nName: Intel(R) Data Center GPU Max 1550\nDriver Version: 1.6.33578+77\nIs CPU: 0\nIs GPU: 1\nIs Accelerator: 0\nVendor Id: 32902\nMax Compute Units: 448\nMax Work Item Dimensions: 3\nMax Work Group Size: 1024\nPreferred Vector Width Char: 16\nPreferred Vector Width Short: 8\nPreferred Vector Width Int: 4\nPreferred Vector Width Long: 1\nPreferred Vector Width Float: 1\nPreferred Vector Width Double: 1\nPreferred Vector Width Half: 8\nNative Vector Width Char: 16\nNative Vector Width Short: 8\nNative Vector Width Int: 4\nNative Vector Width Long: 1\nNative Vector Width Float: 1\nNative Vector Width Double: 1\nNative Vector Width Half: 8\nAddress Bits: 64\nMax Mem Alloc Size: 65267564544\nMax Read Image Args: 0\nImage2d Max Width: 0\nImage2d Max Height: 0\nImage3d Max Width: 0\nImage3d Max Height: 0\nImage3d Max Depth: 0\nImage Max Buffer Size: 0\nMax Samplers: 0\nMax Parameter Size: 2048\nMem Base Addr Align: 8\nGlobal Cache Mem Line Size: 1\nGlobal Mem Cache Size: 201326592\nGlobal Mem Size: 68702699520\nLocal Mem Size: 131072\nError Correction Support: 0\nProfiling Timer Resolution: 80\nIs Available: 1\nVendor: Intel(R) Corporation\nVersion: 12.60.7\nPartition Max Sub Devices: 0\nReference Count: 1\n"
+    },
+    {
+      "rank": 11,
+      "host": "x4112c4s0b0n0",
+      "shared_node_ranks": 12,
+      "environment": {
+        "ZE_AFFINITY_MASK": "5.1",
+        "ZE_FLAT_DEVICE_HIERARCHY": "COMPOSITE",
+        "ZE_ENABLE_PCI_ID_DEVICE_ORDER": "1",
+        "ONEAPI_DEVICE_SELECTOR": "level_zero:gpu",
+        "MPIR_CVAR_ENABLE_GPU": "1",
+        "OMP_NUM_THREADS": "1",
+        "MPI_LOCALRANKID": null,
+        "PALS_LOCAL_RANKID": "11"
+      },
+      "kokkos_configuration": "  Kokkos Version: 4.7.2\nCompiler:\n  KOKKOS_COMPILER_INTEL_LLVM: 20250302\nArchitecture:\n  CPU architecture: none\n  Default Device: SYCL\n  GPU architecture: INTEL_PVC\n  platform: 64bit\nAtomics:\nVectorization:\n  KOKKOS_ENABLE_PRAGMA_IVDEP: yes\n  KOKKOS_ENABLE_PRAGMA_LOOPCOUNT: yes\n  KOKKOS_ENABLE_PRAGMA_UNROLL: yes\n  KOKKOS_ENABLE_PRAGMA_VECTOR: yes\nMemory:\nOptions:\n  KOKKOS_ENABLE_ASM: yes\n  KOKKOS_ENABLE_CXX17: yes\n  KOKKOS_ENABLE_CXX20: no\n  KOKKOS_ENABLE_CXX23: no\n  KOKKOS_ENABLE_CXX26: no\n  KOKKOS_ENABLE_DEBUG_BOUNDS_CHECK: no\n  KOKKOS_ENABLE_HWLOC: no\n  KOKKOS_ENABLE_LIBDL: yes\nHost Serial Execution Space:\n  KOKKOS_ENABLE_SERIAL: yes\n\nSerial Runtime Configuration:\n\nRuntime Configuration:\nmacro  KOKKOS_ENABLE_ONEDPL : defined\nmacro  KOKKOS_IMPL_SYCL_DEVICE_GLOBAL_SUPPORTED : defined\nmacro  KOKKOS_ENABLE_SYCL_RELOCATABLE_DEVICE_CODE : undefined\nmacro  SYCL_EXT_ONEAPI_DEVICE_GLOBAL : defined\nmacro  KOKKOS_IMPL_SYCL_USE_IN_ORDER_QUEUES : defined\nmacro  KOKKOS_IMPL_SYCL_GRAPH_SUPPORT : defined\nmacro  SYCL_EXT_ONEAPI_BFLOAT16 : undefined\nmacro  SYCL_EXT_ONEAPI_AUTO_LOCAL_RANGE : defined\nImmediate command lists and standard command queue allowed.\nSYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS not defined.\n[ext_oneapi_level_zero]:gpu:0] Intel(R) Data Center GPU Max 1550 : Selected\n\nName: Intel(R) Data Center GPU Max 1550\nDriver Version: 1.6.33578+77\nIs CPU: 0\nIs GPU: 1\nIs Accelerator: 0\nVendor Id: 32902\nMax Compute Units: 448\nMax Work Item Dimensions: 3\nMax Work Group Size: 1024\nPreferred Vector Width Char: 16\nPreferred Vector Width Short: 8\nPreferred Vector Width Int: 4\nPreferred Vector Width Long: 1\nPreferred Vector Width Float: 1\nPreferred Vector Width Double: 1\nPreferred Vector Width Half: 8\nNative Vector Width Char: 16\nNative Vector Width Short: 8\nNative Vector Width Int: 4\nNative Vector Width Long: 1\nNative Vector Width Float: 1\nNative Vector Width Double: 1\nNative Vector Width Half: 8\nAddress Bits: 64\nMax Mem Alloc Size: 65267564544\nMax Read Image Args: 0\nImage2d Max Width: 0\nImage2d Max Height: 0\nImage3d Max Width: 0\nImage3d Max Height: 0\nImage3d Max Depth: 0\nImage Max Buffer Size: 0\nMax Samplers: 0\nMax Parameter Size: 2048\nMem Base Addr Align: 8\nGlobal Cache Mem Line Size: 1\nGlobal Mem Cache Size: 201326592\nGlobal Mem Size: 68702699520\nLocal Mem Size: 131072\nError Correction Support: 0\nProfiling Timer Resolution: 80\nIs Available: 1\nVendor: Intel(R) Corporation\nVersion: 12.60.7\nPartition Max Sub Devices: 0\nReference Count: 1\n"
+    }
+  ],
+  "layout": [
+    {
+      "n": 16,
+      "kind": "volume",
+      "points": 77824,
+      "fields": 31,
+      "global_values": 2412544,
+      "global_receive_bytes": 19300352,
+      "counts": [
+        201035,
+        201035,
+        201066,
+        201035,
+        201035,
+        201066,
+        201035,
+        201035,
+        201066,
+        201035,
+        201035,
+        201066
+      ],
+      "displacements": [
+        0,
+        201035,
+        402070,
+        603136,
+        804171,
+        1005206,
+        1206272,
+        1407307,
+        1608342,
+        1809408,
+        2010443,
+        2211478
+      ]
+    },
+    {
+      "n": 16,
+      "kind": "surface",
+      "points": 1536,
+      "fields": 31,
+      "global_values": 47616,
+      "global_receive_bytes": 380928,
+      "counts": [
+        3968,
+        3968,
+        3968,
+        3968,
+        3968,
+        3968,
+        3968,
+        3968,
+        3968,
+        3968,
+        3968,
+        3968
+      ],
+      "displacements": [
+        0,
+        3968,
+        7936,
+        11904,
+        15872,
+        19840,
+        23808,
+        27776,
+        31744,
+        35712,
+        39680,
+        43648
+      ]
+    },
+    {
+      "n": 24,
+      "kind": "volume",
+      "points": 262656,
+      "fields": 31,
+      "global_values": 8142336,
+      "global_receive_bytes": 65138688,
+      "counts": [
+        678528,
+        678528,
+        678528,
+        678528,
+        678528,
+        678528,
+        678528,
+        678528,
+        678528,
+        678528,
+        678528,
+        678528
+      ],
+      "displacements": [
+        0,
+        678528,
+        1357056,
+        2035584,
+        2714112,
+        3392640,
+        4071168,
+        4749696,
+        5428224,
+        6106752,
+        6785280,
+        7463808
+      ]
+    },
+    {
+      "n": 24,
+      "kind": "surface",
+      "points": 3456,
+      "fields": 31,
+      "global_values": 107136,
+      "global_receive_bytes": 857088,
+      "counts": [
+        8928,
+        8928,
+        8928,
+        8928,
+        8928,
+        8928,
+        8928,
+        8928,
+        8928,
+        8928,
+        8928,
+        8928
+      ],
+      "displacements": [
+        0,
+        8928,
+        17856,
+        26784,
+        35712,
+        44640,
+        53568,
+        62496,
+        71424,
+        80352,
+        89280,
+        98208
+      ]
+    },
+    {
+      "n": 32,
+      "kind": "volume",
+      "points": 622592,
+      "fields": 31,
+      "global_values": 19300352,
+      "global_receive_bytes": 154402816,
+      "counts": [
+        1608342,
+        1608373,
+        1608373,
+        1608342,
+        1608373,
+        1608373,
+        1608342,
+        1608373,
+        1608373,
+        1608342,
+        1608373,
+        1608373
+      ],
+      "displacements": [
+        0,
+        1608342,
+        3216715,
+        4825088,
+        6433430,
+        8041803,
+        9650176,
+        11258518,
+        12866891,
+        14475264,
+        16083606,
+        17691979
+      ]
+    },
+    {
+      "n": 32,
+      "kind": "surface",
+      "points": 6144,
+      "fields": 31,
+      "global_values": 190464,
+      "global_receive_bytes": 1523712,
+      "counts": [
+        15872,
+        15872,
+        15872,
+        15872,
+        15872,
+        15872,
+        15872,
+        15872,
+        15872,
+        15872,
+        15872,
+        15872
+      ],
+      "displacements": [
+        0,
+        15872,
+        31744,
+        47616,
+        63488,
+        79360,
+        95232,
+        111104,
+        126976,
+        142848,
+        158720,
+        174592
+      ]
+    }
+  ],
+  "validated_values": 86977290240,
+  "raw_sample_count": 972,
+  "rank_sample_count": 11664,
+  "exhaustive_validation_mismatches": 0,
+  "all_original_report_summaries_rechecked": true,
+  "analysis_sha256": "19825fae76a810eb03b4ae386e0bb4281fcbcdd2060f438fa6c97c8de48bb716",
+  "validation_helper_sha256": "886986bef847663a9aebec64e974584eb4abb9d3cdcd847710d7eb4e4ae28640",
+  "numpy_version": "2.0.2",
+  "matplotlib_version": "3.9.4"
+}

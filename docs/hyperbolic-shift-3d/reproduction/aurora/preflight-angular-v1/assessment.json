@@ -1,0 +1,252 @@
+{
+  "cases": [
+    {
+      "name": "parity-device",
+      "elapsed_seconds": 3.4276614668779075,
+      "passed": true,
+      "report": {
+        "status": "completed",
+        "backend": "SYCL",
+        "mpi_size": 12,
+        "maxima": {
+          "partition_sum_error": 4.235150661017241e-22,
+          "partition_error": 3.3972820822290164e-14,
+          "diagnostic_scaled_error": 3.746669307108981e-15,
+          "worst_scaled_error": 3.3972820822290164e-14,
+          "scaled_error": 3.3972820822290164e-14
+        }
+      }
+    },
+    {
+      "name": "parity-exchange",
+      "elapsed_seconds": 2.8699213941581547,
+      "passed": true,
+      "report": {
+        "status": "completed",
+        "backend": "SYCL",
+        "mpi_size": 12,
+        "maxima": {
+          "null_before": 0.01561473342378682,
+          "scri_jet_error": 0.0,
+          "scaled_error": 0.0,
+          "null_after": 1.1099144265614566e-15
+        }
+      }
+    },
+    {
+      "name": "parity-scri",
+      "elapsed_seconds": 1.8230598710943013,
+      "passed": true,
+      "report": {
+        "status": "completed",
+        "backend": "SYCL",
+        "mpi_size": 12,
+        "maxima": {
+          "null": 9.992007221626413e-16,
+          "compatibility": 2.7755575615628914e-17,
+          "rate_error": 7.818505917731196e-14,
+          "max_cfl": 0.02880000000000001,
+          "projection_error": 0.0,
+          "clock": 0.09943708262441184,
+          "pole": 0.003521494356092044,
+          "dependent_trace_error": 1.8919706587481366e-14
+        }
+      }
+    },
+    {
+      "name": "parity-algebraic",
+      "elapsed_seconds": 1.8224957350175828,
+      "passed": true,
+      "report": {
+        "status": "completed",
+        "backend": "SYCL",
+        "mpi_size": 12,
+        "maxima": {
+          "after": 1.1091860267423246e-15,
+          "D_compatibility": 2.3071822230491534e-16,
+          "rotation_covariance_max": 6.661338147750939e-16,
+          "null_time_derivative": 7.216449660063518e-16,
+          "scri_null_before_reclosure": 0.001273691481490251,
+          "ghost": 1.110201495756099e-15
+        }
+      }
+    },
+    {
+      "name": "parity-angular",
+      "elapsed_seconds": 12.452911377884448,
+      "passed": true,
+      "report": {
+        "status": "completed",
+        "backend": "SYCL",
+        "mpi_size": 12,
+        "maxima": {
+          "projection_error": 0.0,
+          "fine_gradient_order": 4.51496745657738,
+          "rate_error": 7.819155766322113e-14,
+          "compatibility": 1.734723475976807e-17,
+          "fine_mixed_order": 4.260333466161379,
+          "dependent_trace_error": 1.891970658882179e-14,
+          "null": 9.992007221626413e-16,
+          "fine_hessian_order": 4.980858879209774
+        }
+      }
+    },
+    {
+      "name": "minkowski-short",
+      "elapsed_seconds": 6.789855541894212,
+      "passed": true,
+      "report": {
+        "status": "completed",
+        "backend": "SYCL",
+        "mpi_size": 12,
+        "t": 0.002,
+        "steps": 4,
+        "max_state_deviation": 1.0052538452116998e-14,
+        "H_L2": 7.529732155508107e-15,
+        "M_L2": 2.849277823560612e-15,
+        "H_exterior_L2": 7.529732155508107e-15,
+        "Mr_exterior_L2": 2.8020012297530324e-15,
+        "max_null_surface": 6.661338147750941e-16,
+        "max_null_ghost": 8.881784197001252e-16,
+        "horizon_found": false,
+        "horizon_radius": null,
+        "horizon_areal_radius": null,
+        "horizon_mass": null,
+        "horizon_expansion_rms": null,
+        "horizon_lmax": 6,
+        "horizon_ntheta": 12
+      }
+    },
+    {
+      "name": "pulse-half",
+      "elapsed_seconds": 6.544458677060902,
+      "passed": true,
+      "report": {
+        "status": "completed",
+        "backend": "SYCL",
+        "mpi_size": 12,
+        "t": 0.001,
+        "steps": 2,
+        "max_state_deviation": 0.009942810803271033,
+        "H_L2": 0.00016080713803411496,
+        "M_L2": 0.003472312636061747,
+        "H_exterior_L2": 0.00016080713803411496,
+        "Mr_exterior_L2": 0.0013886379150558183,
+        "max_null_surface": 6.661338147750941e-16,
+        "max_null_ghost": 8.881784197001252e-16,
+        "horizon_found": false,
+        "horizon_radius": null,
+        "horizon_areal_radius": null,
+        "horizon_mass": null,
+        "horizon_expansion_rms": null,
+        "horizon_lmax": 6,
+        "horizon_ntheta": 12
+      }
+    },
+    {
+      "name": "pulse-resumed",
+      "elapsed_seconds": 6.588934395927936,
+      "passed": true,
+      "report": {
+        "status": "completed",
+        "backend": "SYCL",
+        "mpi_size": 12,
+        "t": 0.002,
+        "steps": 4,
+        "max_state_deviation": 0.011752548581735626,
+        "H_L2": 0.0005967336854184529,
+        "M_L2": 0.006534446407175112,
+        "H_exterior_L2": 0.0005967336854184529,
+        "Mr_exterior_L2": 0.002618737723804748,
+        "max_null_surface": 6.661338147750941e-16,
+        "max_null_ghost": 8.881784197001252e-16,
+        "horizon_found": false,
+        "horizon_radius": null,
+        "horizon_areal_radius": null,
+        "horizon_mass": null,
+        "horizon_expansion_rms": null,
+        "horizon_lmax": 6,
+        "horizon_ntheta": 12
+      }
+    },
+    {
+      "name": "pulse-direct",
+      "elapsed_seconds": 6.741983978077769,
+      "passed": true,
+      "report": {
+        "status": "completed",
+        "backend": "SYCL",
+        "mpi_size": 12,
+        "t": 0.002,
+        "steps": 4,
+        "max_state_deviation": 0.011752548581735626,
+        "H_L2": 0.0005967336854184529,
+        "M_L2": 0.006534446407175112,
+        "H_exterior_L2": 0.0005967336854184529,
+        "Mr_exterior_L2": 0.002618737723804748,
+        "max_null_surface": 6.661338147750941e-16,
+        "max_null_ghost": 8.881784197001252e-16,
+        "horizon_found": false,
+        "horizon_radius": null,
+        "horizon_areal_radius": null,
+        "horizon_mass": null,
+        "horizon_expansion_rms": null,
+        "horizon_lmax": 6,
+        "horizon_ntheta": 12
+      }
+    },
+    {
+      "name": "restart-audit",
+      "elapsed_seconds": 2.4253436010330915,
+      "passed": true,
+      "report": {
+        "status": "completed",
+        "backend": "SYCL",
+        "mpi_size": 12,
+        "bitwise_payload_equal": true,
+        "maximum_absolute_error": 0.0,
+        "compared_doubles": 4920320
+      }
+    },
+    {
+      "name": "puncture-short",
+      "elapsed_seconds": 12.754757579881698,
+      "passed": true,
+      "report": {
+        "status": "completed",
+        "backend": "SYCL",
+        "mpi_size": 12,
+        "t": 0.002,
+        "steps": 4,
+        "max_state_deviation": 6.615930962284041,
+        "H_L2": 0.047940120176503946,
+        "M_L2": 0.05767082469458553,
+        "H_exterior_L2": 0.024830170348307905,
+        "Mr_exterior_L2": 0.05794036284656649,
+        "max_null_surface": 8.881784197127095e-16,
+        "max_null_ghost": 1.2212453271046564e-15,
+        "horizon_found": true,
+        "horizon_radius": 0.06294960071768506,
+        "horizon_areal_radius": 0.6666700708561077,
+        "horizon_mass": 0.33333503542805387,
+        "horizon_expansion_rms": 0.00032517731876865964,
+        "horizon_lmax": 12,
+        "horizon_ntheta": 24
+      }
+    },
+    {
+      "name": "communication",
+      "elapsed_seconds": 175.21461517806165,
+      "passed": true,
+      "report": {
+        "status": "completed",
+        "backend": "SYCL",
+        "mpi_size": 12,
+        "full_array_validation_passed": true,
+        "repeats": 24,
+        "warmup": 3,
+        "mix_repeats": 6
+      }
+    }
+  ]
+}

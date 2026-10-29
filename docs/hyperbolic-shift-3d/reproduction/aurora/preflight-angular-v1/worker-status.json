@@ -1,0 +1,2692 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "started": "2026-10-29T06:18:13.054648+00:00",
+  "job_id": "8983281.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "launcher_host": "x4112c4s0b0n0",
+  "allocation_nodes": [
+    "x4112c4s0b0n0.hsn.cm.aurora.alcf.anl.gov"
+  ],
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "01:00:00"
+  },
+  "source_manifest_sha256": "86b602e7e68fc93e6a76e16c9bd5c4aea9fcef64363670c5f95c6b0adf30fc13",
+  "binaries": {
+    "source-v10/tst/hyperbolic_shift_3d/aurora/preflight.py": "f0d4b64eacd516e004a1dcc5ba7ce51e6c6b6368d093dd8ac7f39427ba18bc84",
+    "build-sycl-mpi-v10/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_projected_angular": "a557b2090b8c41c6999969a008f1731e743eea21caa3fa257af386ab15b1847d",
+    "build-sycl-mpi-v10/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication": "3200b532382fc47e0885601acd8e8fd49dbce9958db9d702988c73b67a91c586"
+  },
+  "plan_sha256": "e7a6e774a96b602471be0799b8b0fdde49f605f1e72e8ae3a9b27bc8217cddae",
+  "phase": "preflight",
+  "n": 16,
+  "cases": [
+    {
+      "name": "parity-device",
+      "kind": "check",
+      "started": "2026-10-29T06:18:16.908555+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/source-v10/tst/hyperbolic_shift_3d/aurora/preflight.py",
+        "--root",
+        "/home/hzhu/hyperbolic-core-shell-20261028",
+        "--plan",
+        "campaigns/preflight-angular-v1/plan.json",
+        "--output-prefix",
+        "campaigns/preflight-angular-v1/output/parity-device",
+        "--seconds",
+        "170",
+        "component",
+        "--component",
+        "device",
+        "--test-binary",
+        "build-sycl-mpi-v10/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_composite_device",
+        "--cmake-cache",
+        "build-sycl-mpi-v10/CMakeCache.txt"
+      ],
+      "generated_inputs": {},
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 3.4276614668779075,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "completed",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "gpu_cpu_parity"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        }
+      ],
+      "report_status": "completed",
+      "status": "passed",
+      "artifacts": {
+        "campaigns/preflight-angular-v1/output/parity-device.report.json": {
+          "sha256": "0f23f37dc7ac5003d33124bc4d3619206f97607a1693407613db60044ff6e8f8",
+          "bytes": 14198
+        },
+        "campaigns/preflight-angular-v1/output/parity-device.rank-00.log": {
+          "sha256": "aa7bef565ccb5b7160f1ce4d5f27d1f166da95ab34871bb45288b82df9e443e7",
+          "bytes": 863
+        },
+        "campaigns/preflight-angular-v1/output/parity-device.rank-01.log": {
+          "sha256": "aa7bef565ccb5b7160f1ce4d5f27d1f166da95ab34871bb45288b82df9e443e7",
+          "bytes": 863
+        },
+        "campaigns/preflight-angular-v1/output/parity-device.rank-02.log": {
+          "sha256": "aa7bef565ccb5b7160f1ce4d5f27d1f166da95ab34871bb45288b82df9e443e7",
+          "bytes": 863
+        },
+        "campaigns/preflight-angular-v1/output/parity-device.rank-03.log": {
+          "sha256": "aa7bef565ccb5b7160f1ce4d5f27d1f166da95ab34871bb45288b82df9e443e7",
+          "bytes": 863
+        },
+        "campaigns/preflight-angular-v1/output/parity-device.rank-04.log": {
+          "sha256": "aa7bef565ccb5b7160f1ce4d5f27d1f166da95ab34871bb45288b82df9e443e7",
+          "bytes": 863
+        },
+        "campaigns/preflight-angular-v1/output/parity-device.rank-05.log": {
+          "sha256": "aa7bef565ccb5b7160f1ce4d5f27d1f166da95ab34871bb45288b82df9e443e7",
+          "bytes": 863
+        },
+        "campaigns/preflight-angular-v1/output/parity-device.rank-06.log": {
+          "sha256": "aa7bef565ccb5b7160f1ce4d5f27d1f166da95ab34871bb45288b82df9e443e7",
+          "bytes": 863
+        },
+        "campaigns/preflight-angular-v1/output/parity-device.rank-07.log": {
+          "sha256": "aa7bef565ccb5b7160f1ce4d5f27d1f166da95ab34871bb45288b82df9e443e7",
+          "bytes": 863
+        },
+        "campaigns/preflight-angular-v1/output/parity-device.rank-08.log": {
+          "sha256": "aa7bef565ccb5b7160f1ce4d5f27d1f166da95ab34871bb45288b82df9e443e7",
+          "bytes": 863
+        },
+        "campaigns/preflight-angular-v1/output/parity-device.rank-09.log": {
+          "sha256": "aa7bef565ccb5b7160f1ce4d5f27d1f166da95ab34871bb45288b82df9e443e7",
+          "bytes": 863
+        },
+        "campaigns/preflight-angular-v1/output/parity-device.rank-10.log": {
+          "sha256": "aa7bef565ccb5b7160f1ce4d5f27d1f166da95ab34871bb45288b82df9e443e7",
+          "bytes": 863
+        },
+        "campaigns/preflight-angular-v1/output/parity-device.rank-11.log": {
+          "sha256": "aa7bef565ccb5b7160f1ce4d5f27d1f166da95ab34871bb45288b82df9e443e7",
+          "bytes": 863
+        },
+        "campaigns/preflight-angular-v1/output/parity-device.log": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      "finished": "2026-10-29T06:18:23.334147+00:00"
+    },
+    {
+      "name": "parity-exchange",
+      "kind": "check",
+      "started": "2026-10-29T06:18:26.467383+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/source-v10/tst/hyperbolic_shift_3d/aurora/preflight.py",
+        "--root",
+        "/home/hzhu/hyperbolic-core-shell-20261028",
+        "--plan",
+        "campaigns/preflight-angular-v1/plan.json",
+        "--output-prefix",
+        "campaigns/preflight-angular-v1/output/parity-exchange",
+        "--seconds",
+        "170",
+        "component",
+        "--component",
+        "exchange",
+        "--test-binary",
+        "build-sycl-mpi-v10/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_composite_exchange",
+        "--cmake-cache",
+        "build-sycl-mpi-v10/CMakeCache.txt"
+      ],
+      "generated_inputs": {},
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 2.8699213941581547,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "completed",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "gpu_cpu_parity"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        }
+      ],
+      "report_status": "completed",
+      "status": "passed",
+      "artifacts": {
+        "campaigns/preflight-angular-v1/output/parity-exchange.report.json": {
+          "sha256": "1e2b3e2085e7837c76c3493fe6bafd9e45d281d477ad448dc8b5802e6971e56e",
+          "bytes": 12735
+        },
+        "campaigns/preflight-angular-v1/output/parity-exchange.rank-00.log": {
+          "sha256": "1bfc285cd71fa976488ea11aedf640f88c7d56936675df21f44f3d1b25519acd",
+          "bytes": 892
+        },
+        "campaigns/preflight-angular-v1/output/parity-exchange.rank-01.log": {
+          "sha256": "1bfc285cd71fa976488ea11aedf640f88c7d56936675df21f44f3d1b25519acd",
+          "bytes": 892
+        },
+        "campaigns/preflight-angular-v1/output/parity-exchange.rank-02.log": {
+          "sha256": "1bfc285cd71fa976488ea11aedf640f88c7d56936675df21f44f3d1b25519acd",
+          "bytes": 892
+        },
+        "campaigns/preflight-angular-v1/output/parity-exchange.rank-03.log": {
+          "sha256": "1bfc285cd71fa976488ea11aedf640f88c7d56936675df21f44f3d1b25519acd",
+          "bytes": 892
+        },
+        "campaigns/preflight-angular-v1/output/parity-exchange.rank-04.log": {
+          "sha256": "1bfc285cd71fa976488ea11aedf640f88c7d56936675df21f44f3d1b25519acd",
+          "bytes": 892
+        },
+        "campaigns/preflight-angular-v1/output/parity-exchange.rank-05.log": {
+          "sha256": "1bfc285cd71fa976488ea11aedf640f88c7d56936675df21f44f3d1b25519acd",
+          "bytes": 892
+        },
+        "campaigns/preflight-angular-v1/output/parity-exchange.rank-06.log": {
+          "sha256": "1bfc285cd71fa976488ea11aedf640f88c7d56936675df21f44f3d1b25519acd",
+          "bytes": 892
+        },
+        "campaigns/preflight-angular-v1/output/parity-exchange.rank-07.log": {
+          "sha256": "1bfc285cd71fa976488ea11aedf640f88c7d56936675df21f44f3d1b25519acd",
+          "bytes": 892
+        },
+        "campaigns/preflight-angular-v1/output/parity-exchange.rank-08.log": {
+          "sha256": "1bfc285cd71fa976488ea11aedf640f88c7d56936675df21f44f3d1b25519acd",
+          "bytes": 892
+        },
+        "campaigns/preflight-angular-v1/output/parity-exchange.rank-09.log": {
+          "sha256": "1bfc285cd71fa976488ea11aedf640f88c7d56936675df21f44f3d1b25519acd",
+          "bytes": 892
+        },
+        "campaigns/preflight-angular-v1/output/parity-exchange.rank-10.log": {
+          "sha256": "1bfc285cd71fa976488ea11aedf640f88c7d56936675df21f44f3d1b25519acd",
+          "bytes": 892
+        },
+        "campaigns/preflight-angular-v1/output/parity-exchange.rank-11.log": {
+          "sha256": "1bfc285cd71fa976488ea11aedf640f88c7d56936675df21f44f3d1b25519acd",
+          "bytes": 892
+        },
+        "campaigns/preflight-angular-v1/output/parity-exchange.log": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      "finished": "2026-10-29T06:18:31.285812+00:00"
+    },
+    {
+      "name": "parity-scri",
+      "kind": "check",
+      "started": "2026-10-29T06:18:31.765109+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/source-v10/tst/hyperbolic_shift_3d/aurora/preflight.py",
+        "--root",
+        "/home/hzhu/hyperbolic-core-shell-20261028",
+        "--plan",
+        "campaigns/preflight-angular-v1/plan.json",
+        "--output-prefix",
+        "campaigns/preflight-angular-v1/output/parity-scri",
+        "--seconds",
+        "170",
+        "component",
+        "--component",
+        "scri",
+        "--test-binary",
+        "build-sycl-mpi-v10/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_scri_device",
+        "--cmake-cache",
+        "build-sycl-mpi-v10/CMakeCache.txt"
+      ],
+      "generated_inputs": {},
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 1.8230598710943013,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "completed",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "gpu_cpu_parity"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        }
+      ],
+      "report_status": "completed",
+      "status": "passed",
+      "artifacts": {
+        "campaigns/preflight-angular-v1/output/parity-scri.report.json": {
+          "sha256": "5c6741e727311ab43d067ffc134f0a851f52f6ee496f5a409b24d5cd99537b6a",
+          "bytes": 15135
+        },
+        "campaigns/preflight-angular-v1/output/parity-scri.rank-00.log": {
+          "sha256": "bfcfbb19b1ea393682b781bab0a5bfe684704b5ffe38481d95ff2ac4bedc0970",
+          "bytes": 703
+        },
+        "campaigns/preflight-angular-v1/output/parity-scri.rank-01.log": {
+          "sha256": "bfcfbb19b1ea393682b781bab0a5bfe684704b5ffe38481d95ff2ac4bedc0970",
+          "bytes": 703
+        },
+        "campaigns/preflight-angular-v1/output/parity-scri.rank-02.log": {
+          "sha256": "bfcfbb19b1ea393682b781bab0a5bfe684704b5ffe38481d95ff2ac4bedc0970",
+          "bytes": 703
+        },
+        "campaigns/preflight-angular-v1/output/parity-scri.rank-03.log": {
+          "sha256": "bfcfbb19b1ea393682b781bab0a5bfe684704b5ffe38481d95ff2ac4bedc0970",
+          "bytes": 703
+        },
+        "campaigns/preflight-angular-v1/output/parity-scri.rank-04.log": {
+          "sha256": "bfcfbb19b1ea393682b781bab0a5bfe684704b5ffe38481d95ff2ac4bedc0970",
+          "bytes": 703
+        },
+        "campaigns/preflight-angular-v1/output/parity-scri.rank-05.log": {
+          "sha256": "bfcfbb19b1ea393682b781bab0a5bfe684704b5ffe38481d95ff2ac4bedc0970",
+          "bytes": 703
+        },
+        "campaigns/preflight-angular-v1/output/parity-scri.rank-06.log": {
+          "sha256": "bfcfbb19b1ea393682b781bab0a5bfe684704b5ffe38481d95ff2ac4bedc0970",
+          "bytes": 703
+        },
+        "campaigns/preflight-angular-v1/output/parity-scri.rank-07.log": {
+          "sha256": "bfcfbb19b1ea393682b781bab0a5bfe684704b5ffe38481d95ff2ac4bedc0970",
+          "bytes": 703
+        },
+        "campaigns/preflight-angular-v1/output/parity-scri.rank-08.log": {
+          "sha256": "bfcfbb19b1ea393682b781bab0a5bfe684704b5ffe38481d95ff2ac4bedc0970",
+          "bytes": 703
+        },
+        "campaigns/preflight-angular-v1/output/parity-scri.rank-09.log": {
+          "sha256": "bfcfbb19b1ea393682b781bab0a5bfe684704b5ffe38481d95ff2ac4bedc0970",
+          "bytes": 703
+        },
+        "campaigns/preflight-angular-v1/output/parity-scri.rank-10.log": {
+          "sha256": "bfcfbb19b1ea393682b781bab0a5bfe684704b5ffe38481d95ff2ac4bedc0970",
+          "bytes": 703
+        },
+        "campaigns/preflight-angular-v1/output/parity-scri.rank-11.log": {
+          "sha256": "bfcfbb19b1ea393682b781bab0a5bfe684704b5ffe38481d95ff2ac4bedc0970",
+          "bytes": 703
+        },
+        "campaigns/preflight-angular-v1/output/parity-scri.log": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      "finished": "2026-10-29T06:18:34.131223+00:00"
+    },
+    {
+      "name": "parity-algebraic",
+      "kind": "check",
+      "started": "2026-10-29T06:18:34.606556+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/source-v10/tst/hyperbolic_shift_3d/aurora/preflight.py",
+        "--root",
+        "/home/hzhu/hyperbolic-core-shell-20261028",
+        "--plan",
+        "campaigns/preflight-angular-v1/plan.json",
+        "--output-prefix",
+        "campaigns/preflight-angular-v1/output/parity-algebraic",
+        "--seconds",
+        "170",
+        "component",
+        "--component",
+        "algebraic",
+        "--test-binary",
+        "build-sycl-mpi-v10/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_algebraic_projection",
+        "--cmake-cache",
+        "build-sycl-mpi-v10/CMakeCache.txt"
+      ],
+      "generated_inputs": {},
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 1.8224957350175828,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "completed",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "gpu_cpu_parity"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        }
+      ],
+      "report_status": "completed",
+      "status": "passed",
+      "artifacts": {
+        "campaigns/preflight-angular-v1/output/parity-algebraic.report.json": {
+          "sha256": "108f432d337505dfe451f1444c9374f5a9059483dace0e544063be6eb148207d",
+          "bytes": 14827
+        },
+        "campaigns/preflight-angular-v1/output/parity-algebraic.rank-00.log": {
+          "sha256": "e2b08df8cf9e61a3a3ea16e92a84e8f3e16244317a531062fb727a4284402e48",
+          "bytes": 343
+        },
+        "campaigns/preflight-angular-v1/output/parity-algebraic.rank-01.log": {
+          "sha256": "e2b08df8cf9e61a3a3ea16e92a84e8f3e16244317a531062fb727a4284402e48",
+          "bytes": 343
+        },
+        "campaigns/preflight-angular-v1/output/parity-algebraic.rank-02.log": {
+          "sha256": "e2b08df8cf9e61a3a3ea16e92a84e8f3e16244317a531062fb727a4284402e48",
+          "bytes": 343
+        },
+        "campaigns/preflight-angular-v1/output/parity-algebraic.rank-03.log": {
+          "sha256": "e2b08df8cf9e61a3a3ea16e92a84e8f3e16244317a531062fb727a4284402e48",
+          "bytes": 343
+        },
+        "campaigns/preflight-angular-v1/output/parity-algebraic.rank-04.log": {
+          "sha256": "e2b08df8cf9e61a3a3ea16e92a84e8f3e16244317a531062fb727a4284402e48",
+          "bytes": 343
+        },
+        "campaigns/preflight-angular-v1/output/parity-algebraic.rank-05.log": {
+          "sha256": "e2b08df8cf9e61a3a3ea16e92a84e8f3e16244317a531062fb727a4284402e48",
+          "bytes": 343
+        },
+        "campaigns/preflight-angular-v1/output/parity-algebraic.rank-06.log": {
+          "sha256": "e2b08df8cf9e61a3a3ea16e92a84e8f3e16244317a531062fb727a4284402e48",
+          "bytes": 343
+        },
+        "campaigns/preflight-angular-v1/output/parity-algebraic.rank-07.log": {
+          "sha256": "e2b08df8cf9e61a3a3ea16e92a84e8f3e16244317a531062fb727a4284402e48",
+          "bytes": 343
+        },
+        "campaigns/preflight-angular-v1/output/parity-algebraic.rank-08.log": {
+          "sha256": "e2b08df8cf9e61a3a3ea16e92a84e8f3e16244317a531062fb727a4284402e48",
+          "bytes": 343
+        },
+        "campaigns/preflight-angular-v1/output/parity-algebraic.rank-09.log": {
+          "sha256": "e2b08df8cf9e61a3a3ea16e92a84e8f3e16244317a531062fb727a4284402e48",
+          "bytes": 343
+        },
+        "campaigns/preflight-angular-v1/output/parity-algebraic.rank-10.log": {
+          "sha256": "e2b08df8cf9e61a3a3ea16e92a84e8f3e16244317a531062fb727a4284402e48",
+          "bytes": 343
+        },
+        "campaigns/preflight-angular-v1/output/parity-algebraic.rank-11.log": {
+          "sha256": "e2b08df8cf9e61a3a3ea16e92a84e8f3e16244317a531062fb727a4284402e48",
+          "bytes": 343
+        },
+        "campaigns/preflight-angular-v1/output/parity-algebraic.log": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      "finished": "2026-10-29T06:18:36.939185+00:00"
+    },
+    {
+      "name": "parity-angular",
+      "kind": "check",
+      "started": "2026-10-29T06:18:37.414989+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/source-v10/tst/hyperbolic_shift_3d/aurora/preflight.py",
+        "--root",
+        "/home/hzhu/hyperbolic-core-shell-20261028",
+        "--plan",
+        "campaigns/preflight-angular-v1/plan.json",
+        "--output-prefix",
+        "campaigns/preflight-angular-v1/output/parity-angular",
+        "--seconds",
+        "270",
+        "component",
+        "--component",
+        "angular",
+        "--test-binary",
+        "build-sycl-mpi-v10/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_scri_angular",
+        "--cmake-cache",
+        "build-sycl-mpi-v10/CMakeCache.txt"
+      ],
+      "generated_inputs": {},
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 12.452911377884448,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "completed",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "gpu_cpu_parity"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "component"
+            ],
+            "op": "eq",
+            "value": "angular"
+          },
+          "observed": "angular",
+          "passed": true
+        }
+      ],
+      "report_status": "completed",
+      "status": "passed",
+      "artifacts": {
+        "campaigns/preflight-angular-v1/output/parity-angular.report.json": {
+          "sha256": "f4ab8616c01dc75406f4458a7f14732e90ff0d703f7f170fa59055567307f5dc",
+          "bytes": 15540
+        },
+        "campaigns/preflight-angular-v1/output/parity-angular.rank-00.log": {
+          "sha256": "7782c2bd62486db2869e895ae408ed4cfd21c9978bbee62c2d1d767e2de42242",
+          "bytes": 3951
+        },
+        "campaigns/preflight-angular-v1/output/parity-angular.rank-01.log": {
+          "sha256": "7782c2bd62486db2869e895ae408ed4cfd21c9978bbee62c2d1d767e2de42242",
+          "bytes": 3951
+        },
+        "campaigns/preflight-angular-v1/output/parity-angular.rank-02.log": {
+          "sha256": "7782c2bd62486db2869e895ae408ed4cfd21c9978bbee62c2d1d767e2de42242",
+          "bytes": 3951
+        },
+        "campaigns/preflight-angular-v1/output/parity-angular.rank-03.log": {
+          "sha256": "7782c2bd62486db2869e895ae408ed4cfd21c9978bbee62c2d1d767e2de42242",
+          "bytes": 3951
+        },
+        "campaigns/preflight-angular-v1/output/parity-angular.rank-04.log": {
+          "sha256": "7782c2bd62486db2869e895ae408ed4cfd21c9978bbee62c2d1d767e2de42242",
+          "bytes": 3951
+        },
+        "campaigns/preflight-angular-v1/output/parity-angular.rank-05.log": {
+          "sha256": "7782c2bd62486db2869e895ae408ed4cfd21c9978bbee62c2d1d767e2de42242",
+          "bytes": 3951
+        },
+        "campaigns/preflight-angular-v1/output/parity-angular.rank-06.log": {
+          "sha256": "7782c2bd62486db2869e895ae408ed4cfd21c9978bbee62c2d1d767e2de42242",
+          "bytes": 3951
+        },
+        "campaigns/preflight-angular-v1/output/parity-angular.rank-07.log": {
+          "sha256": "7782c2bd62486db2869e895ae408ed4cfd21c9978bbee62c2d1d767e2de42242",
+          "bytes": 3951
+        },
+        "campaigns/preflight-angular-v1/output/parity-angular.rank-08.log": {
+          "sha256": "7782c2bd62486db2869e895ae408ed4cfd21c9978bbee62c2d1d767e2de42242",
+          "bytes": 3951
+        },
+        "campaigns/preflight-angular-v1/output/parity-angular.rank-09.log": {
+          "sha256": "7782c2bd62486db2869e895ae408ed4cfd21c9978bbee62c2d1d767e2de42242",
+          "bytes": 3951
+        },
+        "campaigns/preflight-angular-v1/output/parity-angular.rank-10.log": {
+          "sha256": "7782c2bd62486db2869e895ae408ed4cfd21c9978bbee62c2d1d767e2de42242",
+          "bytes": 3951
+        },
+        "campaigns/preflight-angular-v1/output/parity-angular.rank-11.log": {
+          "sha256": "7782c2bd62486db2869e895ae408ed4cfd21c9978bbee62c2d1d767e2de42242",
+          "bytes": 3951
+        },
+        "campaigns/preflight-angular-v1/output/parity-angular.log": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      "finished": "2026-10-29T06:18:50.388149+00:00"
+    },
+    {
+      "name": "minkowski-short",
+      "kind": "minkowski",
+      "started": "2026-10-29T06:18:50.874898+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-v10/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_projected_angular",
+        "16",
+        "campaigns/preflight-angular-v1/output/minkowski-short",
+        "minkowski",
+        "0.002",
+        ".0005",
+        "-",
+        "-",
+        "170",
+        "0.002"
+      ],
+      "generated_inputs": {},
+      "n": 16,
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 6.789855541894212,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "completed",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "diagnostics_current"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "min_lapse"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.500091552734375,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "min_chi"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.9999999999999999,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_ghost"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 8.881784197001252e-16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_surface"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 6.661338147750941e-16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_admitted"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_cfl"
+            ],
+            "op": "le",
+            "value": 0.5
+          },
+          "observed": 0.32392005386444456,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "t"
+            ],
+            "op": "eq",
+            "value": 0.002
+          },
+          "observed": 0.002,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_state_deviation"
+            ],
+            "op": "le",
+            "value": 1e-10
+          },
+          "observed": 1.0052538452116998e-14,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_L2"
+            ],
+            "op": "le",
+            "value": 1e-10
+          },
+          "observed": 7.529732155508107e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 7.529732155508107e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "M_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 2.849277823560612e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 7.529732155508107e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "M_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 2.849277823560612e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "algebraic_projection"
+            ],
+            "op": "eq",
+            "value": "final_stage_standard"
+          },
+          "observed": "final_stage_standard",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_schema"
+            ],
+            "op": "eq",
+            "value": "HYP3D_MPI_V3"
+          },
+          "observed": "HYP3D_MPI_V3",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_determinant_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 0,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_tracefree_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.9721522630525295e-31,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_angular_stencil"
+            ],
+            "op": "eq",
+            "value": "cross_face_centered5"
+          },
+          "observed": "cross_face_centered5",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "steps"
+            ],
+            "op": "eq",
+            "value": 4
+          },
+          "observed": 4,
+          "passed": true
+        }
+      ],
+      "report_status": "completed",
+      "status": "passed",
+      "artifacts": {
+        "campaigns/preflight-angular-v1/output/minkowski-short.report.json": {
+          "sha256": "ab47d6421e6c58d695dffb1c7ca9e099cfa3684101a165fade3949bc497d38db",
+          "bytes": 2048
+        },
+        "campaigns/preflight-angular-v1/output/minkowski-short.history.csv": {
+          "sha256": "576d21f684d037ee0a8d62cb272881070e2f6c38f7ee643bf8f89781c6a34883",
+          "bytes": 1161
+        },
+        "campaigns/preflight-angular-v1/output/minkowski-short.checkpoint": {
+          "sha256": "da87f0ebea83b0266abb3a0ed69d4842c4761f6c439622f78e60ef3c77192766",
+          "bytes": 39362632
+        },
+        "campaigns/preflight-angular-v1/output/minkowski-short.log": {
+          "sha256": "027b1c561fcd0a6d0ef0cb650b98c459f9a3b0201729941aaf9e0a2412ccd7c2",
+          "bytes": 178
+        }
+      },
+      "finished": "2026-10-29T06:18:58.231126+00:00"
+    },
+    {
+      "name": "pulse-half",
+      "kind": "pulse",
+      "started": "2026-10-29T06:18:58.711012+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-v10/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_projected_angular",
+        "16",
+        "campaigns/preflight-angular-v1/output/pulse-half",
+        "pulse",
+        "0.001",
+        ".0005",
+        "-",
+        "-",
+        "170",
+        "0.001"
+      ],
+      "generated_inputs": {},
+      "n": 16,
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 6.544458677060902,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "completed",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "diagnostics_current"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "min_lapse"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.500091552734375,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "min_chi"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.9999526546433576,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_ghost"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 8.881784197001252e-16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_surface"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 6.661338147750941e-16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_admitted"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_cfl"
+            ],
+            "op": "le",
+            "value": 0.5
+          },
+          "observed": 0.3239200579567997,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "t"
+            ],
+            "op": "eq",
+            "value": 0.001
+          },
+          "observed": 0.001,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.00016080713803411496,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "M_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.003472312636061747,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.00016080713803411496,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "M_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.003472312636061747,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "algebraic_projection"
+            ],
+            "op": "eq",
+            "value": "final_stage_standard"
+          },
+          "observed": "final_stage_standard",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_schema"
+            ],
+            "op": "eq",
+            "value": "HYP3D_MPI_V3"
+          },
+          "observed": "HYP3D_MPI_V3",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_determinant_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 6.661338147750939e-16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_tracefree_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.734723475976807e-18,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_angular_stencil"
+            ],
+            "op": "eq",
+            "value": "cross_face_centered5"
+          },
+          "observed": "cross_face_centered5",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "steps"
+            ],
+            "op": "eq",
+            "value": 2
+          },
+          "observed": 2,
+          "passed": true
+        }
+      ],
+      "report_status": "completed",
+      "status": "passed",
+      "artifacts": {
+        "campaigns/preflight-angular-v1/output/pulse-half.report.json": {
+          "sha256": "07cc053f24b02974348cf1657b795bc2375002ba8dcc698ee481dd7045e22770",
+          "bytes": 2069
+        },
+        "campaigns/preflight-angular-v1/output/pulse-half.history.csv": {
+          "sha256": "c7befaaae5895d5d3f6b936b901e327c1ab7385f9cc842ec7fa9f3742cb47d39",
+          "bytes": 1196
+        },
+        "campaigns/preflight-angular-v1/output/pulse-half.checkpoint": {
+          "sha256": "be30cf8d7c1ac57eb1a65778c101b65f00f3f1bef1bbc5ad0da19602cecf2ecc",
+          "bytes": 39362632
+        },
+        "campaigns/preflight-angular-v1/output/pulse-half.log": {
+          "sha256": "b0b2d9f641feda7151fb686ef5dfb04f393f359391fe304bc938cb9a9283511d",
+          "bytes": 178
+        }
+      },
+      "finished": "2026-10-29T06:19:05.807442+00:00"
+    },
+    {
+      "name": "pulse-resumed",
+      "kind": "pulse",
+      "started": "2026-10-29T06:19:06.321205+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-v10/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_projected_angular",
+        "16",
+        "campaigns/preflight-angular-v1/output/pulse-resumed",
+        "pulse",
+        "0.002",
+        ".0005",
+        "-",
+        "campaigns/preflight-angular-v1/output/pulse-half.checkpoint",
+        "170",
+        "0.002"
+      ],
+      "generated_inputs": {
+        "campaigns/preflight-angular-v1/output/pulse-half.checkpoint": "be30cf8d7c1ac57eb1a65778c101b65f00f3f1bef1bbc5ad0da19602cecf2ecc"
+      },
+      "n": 16,
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 6.588934395927936,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "completed",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "diagnostics_current"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "min_lapse"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.500091552734375,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "min_chi"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.9999061727679877,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_ghost"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 8.881784197001252e-16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_surface"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 6.661338147750941e-16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_admitted"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_cfl"
+            ],
+            "op": "le",
+            "value": 0.5
+          },
+          "observed": 0.3239200766419578,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "t"
+            ],
+            "op": "eq",
+            "value": 0.002
+          },
+          "observed": 0.002,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.0005967336854184529,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "M_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.006534446407175112,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.0005967336854184529,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "M_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.006534446407175112,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "algebraic_projection"
+            ],
+            "op": "eq",
+            "value": "final_stage_standard"
+          },
+          "observed": "final_stage_standard",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_schema"
+            ],
+            "op": "eq",
+            "value": "HYP3D_MPI_V3"
+          },
+          "observed": "HYP3D_MPI_V3",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_determinant_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 8.881784197001252e-16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_tracefree_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 3.469446951953614e-18,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_angular_stencil"
+            ],
+            "op": "eq",
+            "value": "cross_face_centered5"
+          },
+          "observed": "cross_face_centered5",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "steps"
+            ],
+            "op": "eq",
+            "value": 4
+          },
+          "observed": 4,
+          "passed": true
+        }
+      ],
+      "report_status": "completed",
+      "status": "passed",
+      "artifacts": {
+        "campaigns/preflight-angular-v1/output/pulse-resumed.report.json": {
+          "sha256": "4532fdfa8bbfabb50e2df021413417b274a8caa50982f6f8bd2cc88962cdc60e",
+          "bytes": 2060
+        },
+        "campaigns/preflight-angular-v1/output/pulse-resumed.history.csv": {
+          "sha256": "59e9b80da72df880604cb0f65264157042e458b90e54bd483e320dfa431a2c8d",
+          "bytes": 1402
+        },
+        "campaigns/preflight-angular-v1/output/pulse-resumed.checkpoint": {
+          "sha256": "490184f252a58425fb32c043b01dbdd674bbf8c60a14964beb71bcc4fed72df5",
+          "bytes": 39362632
+        },
+        "campaigns/preflight-angular-v1/output/pulse-resumed.log": {
+          "sha256": "b88bfaf18318192647c2f665889d1f4327e6496bd6bda1ee423976ccb1b2ee02",
+          "bytes": 181
+        }
+      },
+      "finished": "2026-10-29T06:19:13.458350+00:00"
+    },
+    {
+      "name": "pulse-direct",
+      "kind": "pulse",
+      "started": "2026-10-29T06:19:13.938396+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-v10/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_projected_angular",
+        "16",
+        "campaigns/preflight-angular-v1/output/pulse-direct",
+        "pulse",
+        "0.002",
+        ".0005",
+        "-",
+        "-",
+        "170",
+        "0.002"
+      ],
+      "generated_inputs": {},
+      "n": 16,
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 6.741983978077769,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "completed",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "diagnostics_current"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "min_lapse"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.500091552734375,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "min_chi"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.9999061727679877,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_ghost"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 8.881784197001252e-16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_surface"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 6.661338147750941e-16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_admitted"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_cfl"
+            ],
+            "op": "le",
+            "value": 0.5
+          },
+          "observed": 0.3239200766419578,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "t"
+            ],
+            "op": "eq",
+            "value": 0.002
+          },
+          "observed": 0.002,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.0005967336854184529,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "M_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.006534446407175112,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.0005967336854184529,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "M_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.006534446407175112,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "algebraic_projection"
+            ],
+            "op": "eq",
+            "value": "final_stage_standard"
+          },
+          "observed": "final_stage_standard",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_schema"
+            ],
+            "op": "eq",
+            "value": "HYP3D_MPI_V3"
+          },
+          "observed": "HYP3D_MPI_V3",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_determinant_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 8.881784197001252e-16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_tracefree_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 3.469446951953614e-18,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_angular_stencil"
+            ],
+            "op": "eq",
+            "value": "cross_face_centered5"
+          },
+          "observed": "cross_face_centered5",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "steps"
+            ],
+            "op": "eq",
+            "value": 4
+          },
+          "observed": 4,
+          "passed": true
+        }
+      ],
+      "report_status": "completed",
+      "status": "passed",
+      "artifacts": {
+        "campaigns/preflight-angular-v1/output/pulse-direct.report.json": {
+          "sha256": "ff3644b6d6e759e1b4c9565af2a48a4c6e7c1a9c53ffbcf903f66dbcfcdf7515",
+          "bytes": 2055
+        },
+        "campaigns/preflight-angular-v1/output/pulse-direct.history.csv": {
+          "sha256": "f45dc403c08e1ec4bf0d27f860cb8abfed910f210f7cb3f63163bfa11cf1c0c2",
+          "bytes": 1192
+        },
+        "campaigns/preflight-angular-v1/output/pulse-direct.checkpoint": {
+          "sha256": "490184f252a58425fb32c043b01dbdd674bbf8c60a14964beb71bcc4fed72df5",
+          "bytes": 39362632
+        },
+        "campaigns/preflight-angular-v1/output/pulse-direct.log": {
+          "sha256": "32b123358c8f2f52e824cf4b8aa2d8efe203046933cf0dbfd82bb33c94f56a67",
+          "bytes": 178
+        }
+      },
+      "finished": "2026-10-29T06:19:21.224812+00:00"
+    },
+    {
+      "name": "restart-audit",
+      "kind": "check",
+      "started": "2026-10-29T06:19:21.773471+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/source-v10/tst/hyperbolic_shift_3d/aurora/preflight.py",
+        "--root",
+        "/home/hzhu/hyperbolic-core-shell-20261028",
+        "--plan",
+        "campaigns/preflight-angular-v1/plan.json",
+        "--output-prefix",
+        "campaigns/preflight-angular-v1/output/restart-audit",
+        "--seconds",
+        "120",
+        "restart",
+        "--reference",
+        "campaigns/preflight-angular-v1/output/pulse-direct.checkpoint",
+        "--candidate",
+        "campaigns/preflight-angular-v1/output/pulse-resumed.checkpoint",
+        "--reference-report",
+        "campaigns/preflight-angular-v1/output/pulse-direct.report.json",
+        "--candidate-report",
+        "campaigns/preflight-angular-v1/output/pulse-resumed.report.json"
+      ],
+      "generated_inputs": {
+        "campaigns/preflight-angular-v1/output/pulse-direct.checkpoint": "490184f252a58425fb32c043b01dbdd674bbf8c60a14964beb71bcc4fed72df5",
+        "campaigns/preflight-angular-v1/output/pulse-resumed.checkpoint": "490184f252a58425fb32c043b01dbdd674bbf8c60a14964beb71bcc4fed72df5",
+        "campaigns/preflight-angular-v1/output/pulse-direct.report.json": "ff3644b6d6e759e1b4c9565af2a48a4c6e7c1a9c53ffbcf903f66dbcfcdf7515",
+        "campaigns/preflight-angular-v1/output/pulse-resumed.report.json": "4532fdfa8bbfabb50e2df021413417b274a8caa50982f6f8bd2cc88962cdc60e"
+      },
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 2.4253436010330915,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "completed",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "restart_equivalence"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "header",
+              "magic"
+            ],
+            "op": "eq",
+            "value": "HYP3D_MPI_V3"
+          },
+          "observed": "HYP3D_MPI_V3",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "maximum_absolute_error"
+            ],
+            "op": "eq",
+            "value": 0
+          },
+          "observed": 0.0,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "bitwise_payload_equal"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        }
+      ],
+      "report_status": "completed",
+      "status": "passed",
+      "artifacts": {
+        "campaigns/preflight-angular-v1/output/restart-audit.report.json": {
+          "sha256": "cd41c588084498095e003e66b724d4efd62e635dc7fa9ad47808ed31be70e514",
+          "bytes": 4192
+        },
+        "campaigns/preflight-angular-v1/output/restart-audit.log": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      "finished": "2026-10-29T06:19:24.709458+00:00"
+    },
+    {
+      "name": "puncture-short",
+      "kind": "puncture",
+      "started": "2026-10-29T06:19:25.192842+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-v10/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_projected_angular",
+        "16",
+        "campaigns/preflight-angular-v1/output/puncture-short",
+        "puncture",
+        "0.002",
+        ".0005",
+        "inputs/puncture-n16.txt",
+        "-",
+        "370",
+        "0.002",
+        ".001",
+        "12",
+        "24"
+      ],
+      "generated_inputs": {},
+      "n": 16,
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 12.754757579881698,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "completed",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "diagnostics_current"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "min_lapse"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.015705394750721302,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "min_chi"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.0005505974853001939,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_ghost"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.2212453271046564e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_surface"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 8.881784197127095e-16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_admitted"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_cfl"
+            ],
+            "op": "le",
+            "value": 0.5
+          },
+          "observed": 0.31764949090553773,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "t"
+            ],
+            "op": "eq",
+            "value": 0.002
+          },
+          "observed": 0.002,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_found"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_expansion_rms"
+            ],
+            "op": "le",
+            "value": 0.001
+          },
+          "observed": 0.00032517731876865964,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.047940120176503946,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "M_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.05767082469458553,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.024830170348307905,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "M_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.05767817169886908,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "algebraic_projection"
+            ],
+            "op": "eq",
+            "value": "final_stage_standard"
+          },
+          "observed": "final_stage_standard",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_schema"
+            ],
+            "op": "eq",
+            "value": "HYP3D_MPI_V3"
+          },
+          "observed": "HYP3D_MPI_V3",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_determinant_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.1102230246251565e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_tracefree_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 3.1086244689504383e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_angular_stencil"
+            ],
+            "op": "eq",
+            "value": "cross_face_centered5"
+          },
+          "observed": "cross_face_centered5",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "steps"
+            ],
+            "op": "eq",
+            "value": 4
+          },
+          "observed": 4,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_lmax"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_ntheta"
+            ],
+            "op": "eq",
+            "value": 24
+          },
+          "observed": 24,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_nphi"
+            ],
+            "op": "eq",
+            "value": 48
+          },
+          "observed": 48,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_complete_surface"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_radius"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.06294960071768506,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_mass"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.33333503542805387,
+          "passed": true
+        }
+      ],
+      "report_status": "completed",
+      "status": "passed",
+      "artifacts": {
+        "campaigns/preflight-angular-v1/output/puncture-short.report.json": {
+          "sha256": "ef6c3459fa47cebff592c17f4c2cf9cec068fba3e704ee3e76a45d8704706dd3",
+          "bytes": 2185
+        },
+        "campaigns/preflight-angular-v1/output/puncture-short.history.csv": {
+          "sha256": "5a194d84d444dfd85db7696dd20ac2fcf7db2a627b392be01fdd58174b093bbe",
+          "bytes": 1577
+        },
+        "campaigns/preflight-angular-v1/output/puncture-short.checkpoint": {
+          "sha256": "9c4cd71b456f5b7e7d6a6fc623b0b8c18cfec570968fdf393550c118fac08166",
+          "bytes": 39362632
+        },
+        "campaigns/preflight-angular-v1/output/puncture-short.checkpoint.horizon-seed.txt": {
+          "sha256": "de6e7aff671a59efff442de1c869aa9c6e61ca34bbd679aab43e5b0133d55636",
+          "bytes": 58
+        },
+        "campaigns/preflight-angular-v1/output/puncture-short.fastflow.horizon_summary_0.txt": {
+          "sha256": "a08ed934de645c5650f0fdaeee80266b95f8c8d4703952f9427662b9b9d50ec0",
+          "bytes": 546
+        },
+        "campaigns/preflight-angular-v1/output/puncture-short.fastflow.horizon_shape_0.txt": {
+          "sha256": "58faec01235433a722a3789ec8802a8dda016e1995b79acd7201ab43d5fc76fb",
+          "bytes": 4597
+        },
+        "campaigns/preflight-angular-v1/output/puncture-short.log": {
+          "sha256": "e1765a3160b789423fcad09e311bd07deff140bd4093c56a9adfb5c0bf0a82ec",
+          "bytes": 176
+        }
+      },
+      "finished": "2026-10-29T06:19:38.488656+00:00"
+    },
+    {
+      "name": "communication",
+      "kind": "check",
+      "started": "2026-10-29T06:19:38.975984+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-v10/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+        "--output",
+        "campaigns/preflight-angular-v1/output/communication.report.json",
+        "--n",
+        "16",
+        "--n",
+        "24",
+        "--n",
+        "32",
+        "--repeats",
+        "24",
+        "--warmup",
+        "3",
+        "--mix-repeats",
+        "6",
+        "--mode",
+        "both",
+        "--expect-ranks",
+        "12",
+        "--expect-backend",
+        "SYCL"
+      ],
+      "generated_inputs": {},
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 175.21461517806165,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "completed",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "benchmark"
+            ],
+            "op": "eq",
+            "value": "mpi_allgatherv"
+          },
+          "observed": "mpi_allgatherv",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "real_bytes"
+            ],
+            "op": "eq",
+            "value": 8
+          },
+          "observed": 8,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "layout_only"
+            ],
+            "op": "eq",
+            "value": false
+          },
+          "observed": false,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "full_array_validation_passed"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "same_device_host_memory_space"
+            ],
+            "op": "eq",
+            "value": false
+          },
+          "observed": false,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "repeats"
+            ],
+            "op": "eq",
+            "value": 24
+          },
+          "observed": 24,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "warmup"
+            ],
+            "op": "eq",
+            "value": 3
+          },
+          "observed": 3,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mix_repeats"
+            ],
+            "op": "eq",
+            "value": 6
+          },
+          "observed": 6,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mode"
+            ],
+            "op": "eq",
+            "value": "both"
+          },
+          "observed": "both",
+          "passed": true
+        }
+      ],
+      "report_status": "completed",
+      "status": "passed",
+      "artifacts": {
+        "campaigns/preflight-angular-v1/output/communication.report.json": {
+          "sha256": "648d367d79bea540df247ad195234a5efb6c5be1b331fd4cad368bb9b7cb6bfd",
+          "bytes": 5479270
+        },
+        "campaigns/preflight-angular-v1/output/communication.log": {
+          "sha256": "7d83e70f1bb359e6796e261f8973865beadf6c82a6d169d36e40abcad9ee0c0c",
+          "bytes": 426
+        }
+      },
+      "finished": "2026-10-29T06:22:34.741062+00:00"
+    }
+  ],
+  "storage_at_start": {
+    "bytes": 1076810861,
+    "entries": 8767,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 100000000,
+    "planned_bytes": 750000000,
+    "headroom_bytes": 3073189139
+  },
+  "affinity": {
+    "returncode": 0,
+    "timed_out": false,
+    "storage_error": null,
+    "elapsed_seconds": 0.3185295781586319,
+    "records": [
+      {
+        "host": "x4112c4s0b0n0",
+        "rank": 8,
+        "mask": "4.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4112c4s0b0n0",
+        "rank": 7,
+        "mask": "3.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4112c4s0b0n0",
+        "rank": 10,
+        "mask": "5.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4112c4s0b0n0",
+        "rank": 9,
+        "mask": "4.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4112c4s0b0n0",
+        "rank": 11,
+        "mask": "5.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4112c4s0b0n0",
+        "rank": 1,
+        "mask": "0.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4112c4s0b0n0",
+        "rank": 2,
+        "mask": "1.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4112c4s0b0n0",
+        "rank": 4,
+        "mask": "2.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4112c4s0b0n0",
+        "rank": 0,
+        "mask": "0.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4112c4s0b0n0",
+        "rank": 3,
+        "mask": "1.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4112c4s0b0n0",
+        "rank": 5,
+        "mask": "2.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4112c4s0b0n0",
+        "rank": 6,
+        "mask": "3.0",
+        "hierarchy": "COMPOSITE"
+      }
+    ],
+    "passed": true
+  },
+  "finished": "2026-10-29T06:22:34.751422+00:00",
+  "elapsed_seconds": 261.6968051441945,
+  "storage_at_finish": {
+    "bytes": 1279667098,
+    "entries": 8867
+  }
+}
