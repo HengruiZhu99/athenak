@@ -1,0 +1,65 @@
+Start testing: Oct 29 00:26 PDT
+----------------------------------------------------------
+8/16 Testing: hyperbolic_shift_3d_scri_device
+8/16 Test: hyperbolic_shift_3d_scri_device
+Command: "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_scri_device"
+Directory: /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d
+"hyperbolic_shift_3d_scri_device" start time: Oct 29 00:26 PDT
+Output:
+----------------------------------------------------------
+backend=Serial
+sampling=staged
+perturb=0 projection_error=0 rate_error=0 dependent_trace_error=0 null=9.9920072216264128e-16 pole=1.3322676295501882e-15 clock=2.0303723022837376e-14 compatibility=4.7331654313260708e-30 max_cfl=0.02880000000000001 D_input_and_order_independent=1
+perturb=1 projection_error=0 rate_error=0 dependent_trace_error=0 null=8.8839810125899829e-16 pole=0.0035214943560920439 clock=0.099437082624411283 compatibility=2.7755575615628914e-17 max_cfl=0.02880000000000001 D_input_and_order_independent=1
+CPU/device scri projection, native rates, D independence and partition parity passed on 216 rows
+<end of output>
+Test time =   1.53 sec
+----------------------------------------------------------
+Test Passed.
+"hyperbolic_shift_3d_scri_device" end time: Oct 29 00:26 PDT
+"hyperbolic_shift_3d_scri_device" time elapsed: 00:00:01
+----------------------------------------------------------
+
+11/16 Testing: hyperbolic_shift_3d_angular_dissipation
+11/16 Test: hyperbolic_shift_3d_angular_dissipation
+Command: "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_angular_dissipation"
+Directory: /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d
+"hyperbolic_shift_3d_angular_dissipation" start time: Oct 29 00:26 PDT
+Output:
+----------------------------------------------------------
+backend=Serial
+n=6 degree=7 points=216 epsilon=1.25 coefficient_reference_error=1.4051260155412137e-15 source_reference_error=4.6685649042069834e-14 device_residual_error=0 device_source_error=0 partition_error=0 energy_error=3.8883035126812079e-15 adjoint_error=6.8482088440438962e-15 constant_error=0 max_moment_error=7.3205330686221259e-16 max_condition_bound=592.45048097750475 max_coefficient_l1=3.4360620389366363 max_neighbors=79 spectral_upper_bound=32.87179925985162
+n=8 degree=7 points=384 epsilon=1.25 coefficient_reference_error=0 source_reference_error=0 device_residual_error=0 device_source_error=0 partition_error=0 energy_error=3.8682805175938679e-16 adjoint_error=1.0901914498325862e-15 constant_error=0 max_moment_error=8.6302492929846153e-16 max_condition_bound=1069.9803097991833 max_coefficient_l1=3.3947678965967136 max_neighbors=79 spectral_upper_bound=29.945861598058549
+n=6 degree=5 points=216 epsilon=1.25 coefficient_reference_error=0 source_reference_error=0 device_residual_error=0 device_source_error=0 partition_error=0 energy_error=1.1175596941219122e-15 adjoint_error=1.5639269676956962e-16 constant_error=0 max_moment_error=6.6786853825107073e-16 max_condition_bound=153.41083736053949 max_coefficient_l1=2.9146859457698775 max_neighbors=49 spectral_upper_bound=19.982074484167942
+Angular dissipation CPU/device, energy, constants, partitions and reference parity passed
+<end of output>
+Test time =   3.79 sec
+----------------------------------------------------------
+Test Passed.
+"hyperbolic_shift_3d_angular_dissipation" end time: Oct 29 00:26 PDT
+"hyperbolic_shift_3d_angular_dissipation" time elapsed: 00:00:03
+----------------------------------------------------------
+
+12/16 Testing: hyperbolic_shift_3d_scri_dissipation_closure
+12/16 Test: hyperbolic_shift_3d_scri_dissipation_closure
+Command: "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_scri_dissipation_closure"
+Directory: /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d
+"hyperbolic_shift_3d_scri_dissipation_closure" start time: Oct 29 00:26 PDT
+Output:
+----------------------------------------------------------
+backend=Serial
+closure_case=synthetic additive_rate_error=0 dependent_D_response_error=2.5465198526253285e-17 compatibility=2.4286128663675299e-17 cpu_rate_error=0 cpu_trace_error=0 partition_parity=1 zero_off=1 rejection_checks=1
+plan_perturb=0 host_rate_error=0 angular_cfl=0.0059169238667732922 null=9.9920072216264128e-16 compatibility=1.1044052673094165e-29
+closure_case=plan additive_rate_error=0 dependent_D_response_error=2.8354851425811331e-17 compatibility=2.7755575615628914e-17 cpu_rate_error=0 cpu_trace_error=0 partition_parity=1 zero_off=1 rejection_checks=1
+plan_perturb=1 host_rate_error=0 angular_cfl=0.0059169238667732922 null=1.1101848448075473e-15 compatibility=2.7755575615628914e-17
+cfl_rejection=1 cross_face_guard=1 epsilon_validation=1 shared_plan=1
+Optional additive scri closure checks passed
+<end of output>
+Test time =   6.68 sec
+----------------------------------------------------------
+Test Passed.
+"hyperbolic_shift_3d_scri_dissipation_closure" end time: Oct 29 00:26 PDT
+"hyperbolic_shift_3d_scri_dissipation_closure" time elapsed: 00:00:06
+----------------------------------------------------------
+
+End testing: Oct 29 00:26 PDT

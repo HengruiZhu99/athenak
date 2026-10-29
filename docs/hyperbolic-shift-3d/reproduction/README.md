@@ -97,6 +97,8 @@ confirm a bitwise V3/zero-epsilon payload match, one-rank direct versus
 two-rank restarted equality of all four checkpoint arrays, and configuration,
 admission and CFL rejection. These are Kokkos-Serial tests; actual SYCL
 preflight and sustained evolution remain pending. No V4 100 M result is claimed.
+The [native verification package](angular-dissipation-native-v1/README.md)
+retains the final source bindings, small raw outputs and checkpoint hashes.
 
 The original J-disabled, bulk-mu=4 1D control is confirmed to have completed coordinate `33.3333984375 = 100.0001953125 M`. Its N513/N1025 continuation chains and frozen-source identities were checked. A [portable N513 time series](original-1d-reference/history.csv) and [provenance](original-1d-reference/provenance.json) preserve the matching horizon/exterior-constraint reference. Late gauge settling and uniform puncture convergence were not established by that original control.
 

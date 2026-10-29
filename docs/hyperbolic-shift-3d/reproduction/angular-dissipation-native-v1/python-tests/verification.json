@@ -1,0 +1,34 @@
+{
+  "scope": "Offline Python policy/header/export/component/socket tests. No MPI/GPU execution or remote actions.",
+  "status": "passed",
+  "controller_tests": 38,
+  "preflight_tests": 31,
+  "commands": [
+    {
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "-B",
+        "tst/hyperbolic_shift_3d/aurora/test_control.py"
+      ],
+      "returncode": 0,
+      "log": "test_control.py.log"
+    },
+    {
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "-B",
+        "tst/hyperbolic_shift_3d/aurora/test_preflight.py"
+      ],
+      "returncode": 0,
+      "log": "test_preflight.py.log"
+    }
+  ],
+  "sources": {
+    "tst/hyperbolic_shift_3d/checkpoint_export.py": "f7e602b819066c1e74e6c77abbb003d1d5b590311d99358002bd55d3d89993f2",
+    "tst/hyperbolic_shift_3d/aurora/control.py": "535561105bee26ddef635eb4d80fc750e382cd637bd5919022984467a42343e8",
+    "tst/hyperbolic_shift_3d/aurora/preflight.py": "4e00b8ad87e7d64decd0177dd4470d865ee5e0622b5cf7b4c860a40eff071dc5",
+    "tst/hyperbolic_shift_3d/aurora/test_control.py": "5662ca2f630ed30e2fdfb1f93edbd3815512b03b140ac83bc3d53dbb36a3f210",
+    "tst/hyperbolic_shift_3d/aurora/test_preflight.py": "82775ca3d7508cf489354d97ae3abe5f18e7d02dc5be825bc695153c1616908c",
+    "tst/hyperbolic_shift_3d/aurora/README.md": "2158443781adc7eb33d1684ecbfc0038afc9a7849809af04e2fc868f86f24fd1"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "status": "passed",
+  "source_commit": "d98e2a99bbf1d5546956be3d724c82715ca704ec",
+  "scope": "Kokkos-Serial native component and short-step MPI validation only; no SYCL, sustained stability, 100M or convergence result",
+  "native_mpi_cases": 15,
+  "python_tests": 69,
+  "source_files": {
+    "src/mesh/cubed_sphere/angular_dissipation.hpp": "73366c70879b3a4020744a2885b92b54d80eee64cd7a719e7412554795f426b1",
+    "src/z4c/hyperboloidal/hyperbolic_angular_dissipation_device.hpp": "1045ea037e78806bed276b401c9652f6e7487e651113d188e9d6a5bf14027564",
+    "src/z4c/hyperboloidal/hyperbolic_composite.hpp": "e79c1b5058ce227ea8878bd1b2e10f67f4559e2bf50fdcbad320af4231a4388b",
+    "src/z4c/hyperboloidal/hyperbolic_scri_device.hpp": "507b9773c8d8f9d3d99ed6ceb7363186fb25f1816c5112a6a5614f0f8bca04b2",
+    "tst/hyperbolic_shift_3d/coupled_mpi.cpp": "01cd9cf0b77b97714c25f808bb4b5513c9af20a52233da8be99efc9892964999",
+    "tst/hyperbolic_shift_3d/CMakeLists.txt": "a21441eb54b814f6cfe2ec80f13025576a6667cfda5dd5f97f99dda82ab7457b",
+    "tst/hyperbolic_shift_3d/test_dissipative_mpi.py": "2c7d73630fbd5fe6d2b9a3ffd4968a59749a9bd8f406a93a9b22d86f036127fe",
+    "tst/hyperbolic_shift_3d/test_angular_dissipation.cpp": "f576520716caf7d8ba83d43c9b03dcefa1bd6e29c29b8bf7391d1d4144d88c46",
+    "tst/hyperbolic_shift_3d/test_scri_dissipation_closure.cpp": "748985f0e54f40b086da93e953a87ea2a718a5fd5a125030d6fb5d1bf6091dc4",
+    "tst/hyperbolic_shift_3d/angular_dissipation_reference.hpp": "928f5a4f4053d2b871819f6e5fe3df84cda944637045cd67698dc4e2d5a08bfa",
+    "tst/hyperbolic_shift_3d/checkpoint_export.py": "f7e602b819066c1e74e6c77abbb003d1d5b590311d99358002bd55d3d89993f2",
+    "tst/hyperbolic_shift_3d/aurora/control.py": "535561105bee26ddef635eb4d80fc750e382cd637bd5919022984467a42343e8",
+    "tst/hyperbolic_shift_3d/aurora/preflight.py": "4e00b8ad87e7d64decd0177dd4470d865ee5e0622b5cf7b4c860a40eff071dc5"
+  },
+  "component_binaries": {
+    "angular_dissipation": "00ec007a4da43967b60b9787be608520571e8386c65779caf848bb6bfc62457f",
+    "scri_dissipation_closure": "b94dd87713d0b18d70e5524bff1a3a80c8dddf08d536d31d0398c26af56bc748",
+    "scri_device": "57ac1e52c7054b6c07f788e5f09041c5537a93b6a02902102412a90760e06b81"
+  }
+}

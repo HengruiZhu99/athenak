@@ -1,0 +1,538 @@
+{
+  "status": "passed",
+  "scope": "native short-step integration and restart checks only",
+  "zero_strength_matches_v3_payload_bitwise": true,
+  "two_rank_restart_matches_one_rank_direct_bitwise": true,
+  "backend": "Serial",
+  "commands": [
+    {
+      "name": "v3-control",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_projected_angular",
+        "6",
+        "output/hyperbolic-core-shell/angular-dissipation-native-mpi-v2/v3-control",
+        "pulse",
+        "0.001",
+        "0.00025",
+        "-",
+        "-",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "v4-zero",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_dissipative",
+        "6",
+        "output/hyperbolic-core-shell/angular-dissipation-native-mpi-v2/v4-zero",
+        "pulse",
+        "0.001",
+        "0.00025",
+        "-",
+        "-",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12",
+        "0"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "v4-part-one",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_dissipative",
+        "6",
+        "output/hyperbolic-core-shell/angular-dissipation-native-mpi-v2/v4-part-one",
+        "pulse",
+        "0.0005",
+        "0.00025",
+        "-",
+        "-",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12",
+        "2"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "v4-restarted",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_dissipative",
+        "6",
+        "output/hyperbolic-core-shell/angular-dissipation-native-mpi-v2/v4-restarted",
+        "pulse",
+        "0.001",
+        "0.00025",
+        "-",
+        "output/hyperbolic-core-shell/angular-dissipation-native-mpi-v2/v4-part-one.checkpoint",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12",
+        "2"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "v4-direct-one-rank",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "1",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_dissipative",
+        "6",
+        "output/hyperbolic-core-shell/angular-dissipation-native-mpi-v2/v4-direct-one-rank",
+        "pulse",
+        "0.001",
+        "0.00025",
+        "-",
+        "-",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12",
+        "2"
+      ],
+      "returncode": 0
+    },
+    {
+      "name": "epsilon-mismatch",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_dissipative",
+        "6",
+        "output/hyperbolic-core-shell/angular-dissipation-native-mpi-v2/epsilon-mismatch",
+        "pulse",
+        "0.001",
+        "0.00025",
+        "-",
+        "output/hyperbolic-core-shell/angular-dissipation-native-mpi-v2/v4-part-one.checkpoint",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12",
+        "1"
+      ],
+      "returncode": 1
+    },
+    {
+      "name": "v3-rejected-by-v4",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_dissipative",
+        "6",
+        "output/hyperbolic-core-shell/angular-dissipation-native-mpi-v2/v3-rejected-by-v4",
+        "pulse",
+        "0.001",
+        "0.00025",
+        "-",
+        "output/hyperbolic-core-shell/angular-dissipation-native-mpi-v2/v3-control.checkpoint",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12",
+        "2"
+      ],
+      "returncode": 1
+    },
+    {
+      "name": "v4-rejected-by-v3",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_projected_angular",
+        "6",
+        "output/hyperbolic-core-shell/angular-dissipation-native-mpi-v2/v4-rejected-by-v3",
+        "pulse",
+        "0.001",
+        "0.00025",
+        "-",
+        "output/hyperbolic-core-shell/angular-dissipation-native-mpi-v2/v4-part-one.checkpoint",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12"
+      ],
+      "returncode": 1
+    },
+    {
+      "name": "invalid-negative",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_dissipative",
+        "6",
+        "output/hyperbolic-core-shell/angular-dissipation-native-mpi-v2/invalid-negative",
+        "pulse",
+        "0.001",
+        "0.00025",
+        "-",
+        "-",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12",
+        "-1"
+      ],
+      "returncode": 1
+    },
+    {
+      "name": "invalid-nan",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_dissipative",
+        "6",
+        "output/hyperbolic-core-shell/angular-dissipation-native-mpi-v2/invalid-nan",
+        "pulse",
+        "0.001",
+        "0.00025",
+        "-",
+        "-",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12",
+        "nan"
+      ],
+      "returncode": 1
+    },
+    {
+      "name": "invalid-infinite",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_dissipative",
+        "6",
+        "output/hyperbolic-core-shell/angular-dissipation-native-mpi-v2/invalid-infinite",
+        "pulse",
+        "0.001",
+        "0.00025",
+        "-",
+        "-",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12",
+        "inf"
+      ],
+      "returncode": 1
+    },
+    {
+      "name": "invalid-suffix",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_dissipative",
+        "6",
+        "output/hyperbolic-core-shell/angular-dissipation-native-mpi-v2/invalid-suffix",
+        "pulse",
+        "0.001",
+        "0.00025",
+        "-",
+        "-",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12",
+        "2junk"
+      ],
+      "returncode": 1
+    },
+    {
+      "name": "cfl-rejected",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_dissipative",
+        "6",
+        "output/hyperbolic-core-shell/angular-dissipation-native-mpi-v2/cfl-rejected",
+        "pulse",
+        "0.001",
+        "0.00025",
+        "-",
+        "-",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12",
+        "1000"
+      ],
+      "returncode": 2
+    },
+    {
+      "name": "unadmitted-rejected",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_dissipative",
+        "6",
+        "output/hyperbolic-core-shell/angular-dissipation-native-mpi-v2/unadmitted-rejected",
+        "pulse",
+        "0.001",
+        "0.00025",
+        "-",
+        "output/hyperbolic-core-shell/angular-dissipation-native-mpi-v2/cfl-rejected.checkpoint",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12",
+        "1000"
+      ],
+      "returncode": 1
+    },
+    {
+      "name": "cfl-overflow-rejected",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_dissipative",
+        "6",
+        "output/hyperbolic-core-shell/angular-dissipation-native-mpi-v2/cfl-overflow-rejected",
+        "pulse",
+        "0.001",
+        "1",
+        "-",
+        "-",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12",
+        "1e308"
+      ],
+      "returncode": 2
+    }
+  ],
+  "binaries": {
+    "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_dissipative": "968b3e692f90b5c59ca05077047387affdd8ccf1f39c332d04f24dea215cbced",
+    "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_projected_angular": "7af731682dd25ad3962e87a39f6ce82733ff3980de5cb00eacd63ee297eb3764"
+  },
+  "artifacts": [
+    {
+      "path": "cfl-overflow-rejected.checkpoint",
+      "bytes": 2142808,
+      "sha256": "197247e736505ebf17da1fc020715ed12883b49b41e0b3bbad435a0486bcca60"
+    },
+    {
+      "path": "cfl-overflow-rejected.history.csv",
+      "bytes": 500,
+      "sha256": "66e755ee7d8d06a4f13dab5543c990460d0a91426045952cc9ae775863ccbe49"
+    },
+    {
+      "path": "cfl-overflow-rejected.log",
+      "bytes": 429,
+      "sha256": "7c6118735a841907e1290231e36848ef08153d2e74f6355283ac1cd77b1a4df3"
+    },
+    {
+      "path": "cfl-overflow-rejected.report.json",
+      "bytes": 2219,
+      "sha256": "57264d3639bb85218e68881906bf8a4bbca19291b73a68578f107b8cec987d4b"
+    },
+    {
+      "path": "cfl-rejected.checkpoint",
+      "bytes": 2142808,
+      "sha256": "07bb6c4e0097990c401f49281e8190a13da94772c3a569de368fc3d1e35b31c3"
+    },
+    {
+      "path": "cfl-rejected.history.csv",
+      "bytes": 500,
+      "sha256": "66e755ee7d8d06a4f13dab5543c990460d0a91426045952cc9ae775863ccbe49"
+    },
+    {
+      "path": "cfl-rejected.log",
+      "bytes": 429,
+      "sha256": "8864d758729611dffb7a1ce852712711671d29a2ef582542efea0e31335aa118"
+    },
+    {
+      "path": "cfl-rejected.report.json",
+      "bytes": 2266,
+      "sha256": "50bd3e1b7feedfc26a274d633e8c5a08d2a916e8c42fe9ae9c462b2a622e7915"
+    },
+    {
+      "path": "epsilon-mismatch.log",
+      "bytes": 490,
+      "sha256": "1bdb89e895fe4bc16d5e7d8c10ddf2bdd64050b37900270f18f246eca9c70c80"
+    },
+    {
+      "path": "invalid-infinite.log",
+      "bytes": 502,
+      "sha256": "0bb2ea8b1fa45191a0a4259c68d69423d113800d947a0734d5f91a59f52d3375"
+    },
+    {
+      "path": "invalid-nan.log",
+      "bytes": 502,
+      "sha256": "e5e5264f0d62587b1cb604c8e032f4c7d0fd5f2a5a0c1431a0a2aedd9da33820"
+    },
+    {
+      "path": "invalid-negative.log",
+      "bytes": 502,
+      "sha256": "96a45b2706126a7adcd058e84ab666a7fea7d621fe14cd1dcab4903378b5effb"
+    },
+    {
+      "path": "invalid-suffix.log",
+      "bytes": 456,
+      "sha256": "6b09b53bc0c8b8b733b8e311cdbdaadcd6ba8a54eb34bddaa3a1ce4027cb66a4"
+    },
+    {
+      "path": "unadmitted-rejected.log",
+      "bytes": 484,
+      "sha256": "5ca4d58755822ffb7eaafdc30e75f32fa3136931cf7e0b2f76eae9666dbf3e07"
+    },
+    {
+      "path": "v3-control.checkpoint",
+      "bytes": 2142792,
+      "sha256": "f8e4cdba43d453570519550667ec6108a6d9fc80562b3182bb6909cf40ed1a51"
+    },
+    {
+      "path": "v3-control.history.csv",
+      "bytes": 1335,
+      "sha256": "57f6136f3ab99d5de936153dfda9bad664dac7b4a6f33c653ba913f55567d098"
+    },
+    {
+      "path": "v3-control.log",
+      "bytes": 177,
+      "sha256": "453c016f75fb1e407de91071f42d6dd536579d331e74854c1920b6fa99615582"
+    },
+    {
+      "path": "v3-control.report.json",
+      "bytes": 2560,
+      "sha256": "4fcc14aa624af80eff9a0c443aa00d5cbd9e3f65feabb3d2df42858bd1cc33bf"
+    },
+    {
+      "path": "v3-rejected-by-v4.log",
+      "bytes": 484,
+      "sha256": "a58a3821924415338bf3871470d0d52ce5e4cbaa5d7c9979fea9af132eb33c0f"
+    },
+    {
+      "path": "v4-direct-one-rank.checkpoint",
+      "bytes": 2142808,
+      "sha256": "bf02e52892c1527127d44b4465c5037899ede36740eb1b6c1842c5a318438d5e"
+    },
+    {
+      "path": "v4-direct-one-rank.history.csv",
+      "bytes": 1345,
+      "sha256": "a157d554c38d971e469ea5f1cc6a403a9e08ea88a83ce5f69c54f2c625c5cd67"
+    },
+    {
+      "path": "v4-direct-one-rank.log",
+      "bytes": 176,
+      "sha256": "377a7f28ecf830c0670ab05d725fbd04a6873004ed2ac2b04c765c108d52605a"
+    },
+    {
+      "path": "v4-direct-one-rank.report.json",
+      "bytes": 2685,
+      "sha256": "ee2ecf92472b37da81d869410fc2315b5b2373e0285ecfe84daf187469b95200"
+    },
+    {
+      "path": "v4-part-one.checkpoint",
+      "bytes": 2142808,
+      "sha256": "067fc296f59f493a40451fe48cc5001212e994358f03da1601384764a1ab1c4d"
+    },
+    {
+      "path": "v4-part-one.history.csv",
+      "bytes": 1381,
+      "sha256": "34507dc9f68b269d78f2169f7281828e7484d90fd8a70a06d62a4243429d606f"
+    },
+    {
+      "path": "v4-part-one.log",
+      "bytes": 179,
+      "sha256": "12ff1d02ee88b85b348d504d5ffa21f452cc74fbd2bc38c2254a559d84c99fae"
+    },
+    {
+      "path": "v4-part-one.report.json",
+      "bytes": 2767,
+      "sha256": "7fe3d128b830b9ccfbcc42a50ac7f5a62417ad0646eb907ba75b6c3d851454b3"
+    },
+    {
+      "path": "v4-rejected-by-v3.log",
+      "bytes": 484,
+      "sha256": "5d412ec93e6ae3dc87095ddb40d90f1d92a3f48c1c09864466b484131e9b4086"
+    },
+    {
+      "path": "v4-restarted.checkpoint",
+      "bytes": 2142808,
+      "sha256": "bf02e52892c1527127d44b4465c5037899ede36740eb1b6c1842c5a318438d5e"
+    },
+    {
+      "path": "v4-restarted.history.csv",
+      "bytes": 1647,
+      "sha256": "297db6e0b0257315f105d069dd6ecd1278c042dca80a265f452c51b803eebfe5"
+    },
+    {
+      "path": "v4-restarted.log",
+      "bytes": 183,
+      "sha256": "c4560493527bbc9be0b8f9c45f188b73ca0b5bc15d15fca191e265b1b8f19381"
+    },
+    {
+      "path": "v4-restarted.report.json",
+      "bytes": 2714,
+      "sha256": "40e16d97991e3aaf311032928fbf2e647846dd592496697d2f05a5eca92a5948"
+    },
+    {
+      "path": "v4-zero.checkpoint",
+      "bytes": 2142808,
+      "sha256": "5cad5e947aedee84caeddd53988295fa900260f63e955b02912394d5fe61fe6f"
+    },
+    {
+      "path": "v4-zero.history.csv",
+      "bytes": 1349,
+      "sha256": "170e43da3f0ff99205e9420a38eae27871f08a8063a5c5dc87a85c335ac80e60"
+    },
+    {
+      "path": "v4-zero.log",
+      "bytes": 176,
+      "sha256": "f13c17daf4699f740d95ce598055ef9beb24f97d39dfe6e461ab64a7cb40c790"
+    },
+    {
+      "path": "v4-zero.report.json",
+      "bytes": 2603,
+      "sha256": "b28784449ccb7d77ea7611398f0adae5951a3d09148d31bfad9a827f2ee7576c"
+    }
+  ]
+}
