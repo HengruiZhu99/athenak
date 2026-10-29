@@ -26,7 +26,7 @@ target_include_directories(hyperbolic_shift_3d_reanalyze PRIVATE ${CMAKE_SOURCE_
 target_link_libraries(hyperbolic_shift_3d_reanalyze PRIVATE Kokkos::kokkos Threads::Threads)
 target_compile_options(hyperbolic_shift_3d_reanalyze PRIVATE -Wall -Wextra -ffp-contract=off)
 include(horizon.cmake)
-foreach(test composite_device composite_exchange scri_device scri_angular algebraic_projection angular_dissipation scri_dissipation_closure)
+foreach(test composite_device composite_exchange scri_device scri_angular algebraic_projection angular_dissipation scri_dissipation_closure sampled_normal_device)
   add_executable(hyperbolic_shift_3d_${test} test_${test}.cpp)
   target_include_directories(hyperbolic_shift_3d_${test} PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
   target_link_libraries(hyperbolic_shift_3d_${test} PRIVATE Kokkos::kokkos Threads::Threads)
@@ -84,6 +84,18 @@ if(ENABLE_MPI)
   target_compile_options(hyperbolic_shift_3d_mpi_dissipative PRIVATE -Wall -Wextra -ffp-contract=off)
   target_compile_definitions(hyperbolic_shift_3d_mpi_dissipative PRIVATE
     HYPERBOLIC_ALGEBRAIC_FINAL_PROJECTION=1 HYPERBOLIC_SCRI_ANGULAR_EXCHANGE=1 HYPERBOLIC_SCRI_ANGULAR_DISSIPATION=1)
+  add_executable(hyperbolic_shift_3d_mpi_sampled_normal coupled_mpi.cpp)
+  target_link_libraries(hyperbolic_shift_3d_mpi_sampled_normal PRIVATE hyperboloidal_fastflow MPI::MPI_CXX)
+  target_compile_options(hyperbolic_shift_3d_mpi_sampled_normal PRIVATE -Wall -Wextra -ffp-contract=off)
+  target_compile_definitions(hyperbolic_shift_3d_mpi_sampled_normal PRIVATE
+    HYPERBOLIC_ALGEBRAIC_FINAL_PROJECTION=1 HYPERBOLIC_SCRI_ANGULAR_EXCHANGE=1
+    HYPERBOLIC_SCRI_ANGULAR_DISSIPATION=1 HYPERBOLIC_SCRI_SAMPLED_NORMAL=1)
+  add_test(NAME hyperbolic_shift_3d_sampled_normal_mpi
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_sampled_normal_mpi.py
+      --binary $<TARGET_FILE:hyperbolic_shift_3d_mpi_sampled_normal>
+      --control $<TARGET_FILE:hyperbolic_shift_3d_mpi_dissipative>
+      --mpiexec ${MPIEXEC_EXECUTABLE})
+  set_tests_properties(hyperbolic_shift_3d_sampled_normal_mpi PROPERTIES RUN_SERIAL TRUE TIMEOUT 420)
   add_test(NAME hyperbolic_shift_3d_dissipative_mpi
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_dissipative_mpi.py
       --binary $<TARGET_FILE:hyperbolic_shift_3d_mpi_dissipative>
