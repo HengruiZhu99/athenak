@@ -1,0 +1,364 @@
+{
+  "status": "passed",
+  "scope": "Local communication correctness and CLI validation; no GPU performance inference.",
+  "backend": "Serial",
+  "mpi_size": 1,
+  "binary_sha256": "d394e886b7759ad9b69ffde836735cb7ec2e0cd50d3f4242efa6366ace51d772",
+  "commands": [
+    {
+      "name": "help",
+      "command": [
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+        "--help"
+      ],
+      "returncode": 0,
+      "expected_success": true
+    },
+    {
+      "name": "layout",
+      "command": [
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+        "--output",
+        "output/hyperbolic-core-shell/communication-benchmark-local-v1/serial-cli/layout.json",
+        "--layout-only",
+        "--expect-ranks",
+        "1"
+      ],
+      "returncode": 0,
+      "expected_success": true
+    },
+    {
+      "name": "measured",
+      "command": [
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+        "--output",
+        "output/hyperbolic-core-shell/communication-benchmark-local-v1/serial-cli/measured.json",
+        "--repeats",
+        "2",
+        "--warmup",
+        "1",
+        "--mix-repeats",
+        "1",
+        "--expect-ranks",
+        "1",
+        "--n",
+        "16"
+      ],
+      "returncode": 0,
+      "expected_success": true
+    },
+    {
+      "name": "overwrite",
+      "command": [
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+        "--output",
+        "output/hyperbolic-core-shell/communication-benchmark-local-v1/serial-cli/layout.json",
+        "--layout-only"
+      ],
+      "returncode": 2,
+      "expected_success": false
+    },
+    {
+      "name": "invalid-0",
+      "command": [
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication"
+      ],
+      "returncode": 2,
+      "expected_success": false
+    },
+    {
+      "name": "invalid-1",
+      "command": [
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+        "--output",
+        "output/hyperbolic-core-shell/communication-benchmark-local-v1/serial-cli/invalid-1.json",
+        "--repeats",
+        "0"
+      ],
+      "returncode": 2,
+      "expected_success": false
+    },
+    {
+      "name": "invalid-2",
+      "command": [
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+        "--output",
+        "output/hyperbolic-core-shell/communication-benchmark-local-v1/serial-cli/invalid-2.json",
+        "--repeats",
+        "201"
+      ],
+      "returncode": 2,
+      "expected_success": false
+    },
+    {
+      "name": "invalid-3",
+      "command": [
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+        "--output",
+        "output/hyperbolic-core-shell/communication-benchmark-local-v1/serial-cli/invalid-3.json",
+        "--repeats",
+        "1.5"
+      ],
+      "returncode": 2,
+      "expected_success": false
+    },
+    {
+      "name": "invalid-4",
+      "command": [
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+        "--output",
+        "output/hyperbolic-core-shell/communication-benchmark-local-v1/serial-cli/invalid-4.json",
+        "--repeats",
+        "-1"
+      ],
+      "returncode": 2,
+      "expected_success": false
+    },
+    {
+      "name": "invalid-5",
+      "command": [
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+        "--output",
+        "output/hyperbolic-core-shell/communication-benchmark-local-v1/serial-cli/invalid-5.json",
+        "--warmup",
+        "21"
+      ],
+      "returncode": 2,
+      "expected_success": false
+    },
+    {
+      "name": "invalid-6",
+      "command": [
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+        "--output",
+        "output/hyperbolic-core-shell/communication-benchmark-local-v1/serial-cli/invalid-6.json",
+        "--mix-repeats",
+        "21"
+      ],
+      "returncode": 2,
+      "expected_success": false
+    },
+    {
+      "name": "invalid-7",
+      "command": [
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+        "--output",
+        "output/hyperbolic-core-shell/communication-benchmark-local-v1/serial-cli/invalid-7.json",
+        "--n",
+        "18"
+      ],
+      "returncode": 2,
+      "expected_success": false
+    },
+    {
+      "name": "invalid-8",
+      "command": [
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+        "--output",
+        "output/hyperbolic-core-shell/communication-benchmark-local-v1/serial-cli/invalid-8.json",
+        "--n",
+        "16",
+        "--n",
+        "16"
+      ],
+      "returncode": 2,
+      "expected_success": false
+    },
+    {
+      "name": "invalid-9",
+      "command": [
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+        "--output",
+        "output/hyperbolic-core-shell/communication-benchmark-local-v1/serial-cli/invalid-9.json",
+        "--n",
+        "999999999999999999999"
+      ],
+      "returncode": 2,
+      "expected_success": false
+    },
+    {
+      "name": "invalid-10",
+      "command": [
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+        "--output",
+        "output/hyperbolic-core-shell/communication-benchmark-local-v1/serial-cli/invalid-10.json",
+        "--mode",
+        "unknown"
+      ],
+      "returncode": 2,
+      "expected_success": false
+    },
+    {
+      "name": "invalid-11",
+      "command": [
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+        "--output",
+        "output/hyperbolic-core-shell/communication-benchmark-local-v1/serial-cli/invalid-11.json",
+        "--unknown"
+      ],
+      "returncode": 2,
+      "expected_success": false
+    },
+    {
+      "name": "invalid-12",
+      "command": [
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+        "--output",
+        "output/hyperbolic-core-shell/communication-benchmark-local-v1/serial-cli/invalid-12.json",
+        "--repeats"
+      ],
+      "returncode": 2,
+      "expected_success": false
+    },
+    {
+      "name": "invalid-13",
+      "command": [
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+        "--output",
+        "output/hyperbolic-core-shell/communication-benchmark-local-v1/serial-cli/invalid-13.json",
+        "--expect-ranks",
+        "2"
+      ],
+      "returncode": 2,
+      "expected_success": false
+    },
+    {
+      "name": "invalid-14",
+      "command": [
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+        "--output",
+        "output/hyperbolic-core-shell/communication-benchmark-local-v1/serial-cli/invalid-14.json",
+        "--expect-backend",
+        "nonexistent"
+      ],
+      "returncode": 2,
+      "expected_success": false
+    },
+    {
+      "name": "invalid-15",
+      "command": [
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+        "--output",
+        "output/hyperbolic-core-shell/communication-benchmark-local-v1/serial-cli/invalid-15.json",
+        "--repeats",
+        "1",
+        "--repeats",
+        "2"
+      ],
+      "returncode": 2,
+      "expected_success": false
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "help.log",
+      "bytes": 688,
+      "sha256": "25504c5c29e92753dccd18e7d15b394bcab83e4bea91950a6dd4f9ff88d6291f"
+    },
+    {
+      "path": "invalid-0.log",
+      "bytes": 482,
+      "sha256": "e5c3c3cd816a093e7cde08d6168ceb187a21d7e4a8d69c00a77d5b42497c281b"
+    },
+    {
+      "path": "invalid-1.log",
+      "bytes": 502,
+      "sha256": "37070ddb13484129eaf19792ae616f8d77b971cc13402b87f7c91b9e210f97fe"
+    },
+    {
+      "path": "invalid-10.log",
+      "bytes": 471,
+      "sha256": "04d7a2955700acbd23c94729e6e0b7e17c64e7857b7b9e94e33e05e4b4d721fd"
+    },
+    {
+      "path": "invalid-11.log",
+      "bytes": 481,
+      "sha256": "ebfd247d4d68a23f6db2c77827e37369847d03924e0ae6304ab19c81a2918217"
+    },
+    {
+      "path": "invalid-12.log",
+      "bytes": 484,
+      "sha256": "e65be02283fef9c72c64a46cf31ab43a2832c266fa15ab43b905946343dced6d"
+    },
+    {
+      "path": "invalid-13.log",
+      "bytes": 482,
+      "sha256": "61c0c85ad7838882cac83d494bdead5c27535abcbdae93dd49589c8d93fb608c"
+    },
+    {
+      "path": "invalid-14.log",
+      "bytes": 482,
+      "sha256": "426dc37cbae0ad2622b7c3b75ff6af12310f724b3a44bec389a00225529a5ab3"
+    },
+    {
+      "path": "invalid-15.log",
+      "bytes": 484,
+      "sha256": "e5d88fa841743e9a3af906bb404cd4c253c80ff2e5506853de8d72617d9cc49f"
+    },
+    {
+      "path": "invalid-2.log",
+      "bytes": 502,
+      "sha256": "8dae80e07a8c4728bb8c8d76f19dd0a38c01f8c76223710a7d93c18ead83d362"
+    },
+    {
+      "path": "invalid-3.log",
+      "bytes": 497,
+      "sha256": "caf4941f14fbb75ca7b7403046bac56855f73176aef3bddd64f202b638969d1d"
+    },
+    {
+      "path": "invalid-4.log",
+      "bytes": 496,
+      "sha256": "286d9a92dd63fa504276c3d0a16ca519834d6ef3550ed6f73acd7ca422949270"
+    },
+    {
+      "path": "invalid-5.log",
+      "bytes": 502,
+      "sha256": "58853466060abdeb8a6d696cc86a3ab283573e42949bdff45b2f5911a2372c63"
+    },
+    {
+      "path": "invalid-6.log",
+      "bytes": 502,
+      "sha256": "297611e3d3ba3977407aeb3129b623adb17f583a0f86cc622587ea5b3e9d9719"
+    },
+    {
+      "path": "invalid-7.log",
+      "bytes": 488,
+      "sha256": "ace343984be097c0ac7ee84dd40af92e3646f20c6966db4de02592862187d33f"
+    },
+    {
+      "path": "invalid-8.log",
+      "bytes": 471,
+      "sha256": "bab5cee7014d8c4e2a6c0ca0609a59e409b602a0841654cc28bacf815544621b"
+    },
+    {
+      "path": "invalid-9.log",
+      "bytes": 476,
+      "sha256": "21b6d39148947d305accfac9b2954467f0e043c27af40b2c71cbd45b9f3da4ac"
+    },
+    {
+      "path": "layout.json",
+      "bytes": 3453,
+      "sha256": "091626242838e986ca6c475149acbcfc1cca31f431c13a94be26b642f2629501"
+    },
+    {
+      "path": "layout.log",
+      "bytes": 190,
+      "sha256": "e9073259eeaa5cc7771c17388c744a5e392d76d50477f5f7b5c83fc562fe97e1"
+    },
+    {
+      "path": "measured.json",
+      "bytes": 40075,
+      "sha256": "85ebc5486f56d3595c982b8e45116fa0ee49fa1f81e50dba3330b55f27bf1a22"
+    },
+    {
+      "path": "measured.log",
+      "bytes": 193,
+      "sha256": "5b40e13f762c4e8393e4f901bdb6ee3afd5b0f26ab793382122f98e807acc3d4"
+    },
+    {
+      "path": "overwrite.log",
+      "bytes": 496,
+      "sha256": "e5e285528802c7b4e73e9fd18de65de6d1e0bea64a2fa2dbcb43ec49d61fc009"
+    }
+  ]
+}

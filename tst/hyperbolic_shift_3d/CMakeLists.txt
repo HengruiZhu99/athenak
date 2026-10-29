@@ -40,6 +40,22 @@ target_compile_options(hyperbolic_shift_3d_scri_device_inline PRIVATE -Wall -Wex
 target_compile_definitions(hyperbolic_shift_3d_scri_device_inline PRIVATE HYPERBOLIC_SCRI_INLINE_SAMPLING=1)
 add_test(NAME hyperbolic_shift_3d_scri_device_inline COMMAND hyperbolic_shift_3d_scri_device_inline)
 if(ENABLE_MPI)
+  add_executable(hyperbolic_shift_3d_mpi_communication benchmark_communication.cpp)
+  target_include_directories(hyperbolic_shift_3d_mpi_communication PRIVATE
+    ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+  target_link_libraries(hyperbolic_shift_3d_mpi_communication PRIVATE
+    Kokkos::kokkos Threads::Threads MPI::MPI_CXX)
+  target_compile_options(hyperbolic_shift_3d_mpi_communication PRIVATE
+    -Wall -Wextra -ffp-contract=off)
+  add_test(NAME hyperbolic_shift_3d_communication_cli
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_communication.py
+      --binary $<TARGET_FILE:hyperbolic_shift_3d_mpi_communication> --cli-tests)
+  add_test(NAME hyperbolic_shift_3d_communication_mpi
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_communication.py
+      --binary $<TARGET_FILE:hyperbolic_shift_3d_mpi_communication>
+      --mpiexec ${MPIEXEC_EXECUTABLE} --ranks 2)
+  set_tests_properties(hyperbolic_shift_3d_communication_cli hyperbolic_shift_3d_communication_mpi
+    PROPERTIES RUN_SERIAL TRUE TIMEOUT 240)
   add_executable(hyperbolic_shift_3d_mpi coupled_mpi.cpp)
   target_link_libraries(hyperbolic_shift_3d_mpi PRIVATE hyperboloidal_fastflow MPI::MPI_CXX)
   target_compile_options(hyperbolic_shift_3d_mpi PRIVATE -Wall -Wextra -ffp-contract=off)

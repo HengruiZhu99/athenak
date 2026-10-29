@@ -2,9 +2,10 @@
 
 This read-only audit finds a sharp increase in recorded collective time as
 the blocks grow. The current evidence does **not** identify an MPI defect
-or establish a transport optimization. No communication benchmark has yet
-been implemented or run. The proposed experiment below preserves the
-evolution equations and boundary discretization.
+or establish a transport optimization. The experiment proposed below is
+now implemented as a [standalone communication control](mpi-communication-benchmark.md);
+local Serial/MPI checks do not establish Aurora performance. It preserves
+the evolution equations and boundary discretization.
 
 The three Minkowski runs use the same original executable, SHA-256
 `6e7553b556dd9c4f8b56f81eb0f43c15cf0517a0b81776320a9a6c6d3c29ccef`,

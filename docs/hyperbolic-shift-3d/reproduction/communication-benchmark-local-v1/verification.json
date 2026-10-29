@@ -1,0 +1,147 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "scope": "Local communication correctness and CLI checks only. Serial uses HostSpace for both named routes; no Aurora timing claim.",
+  "build_commands": [
+    "cmake -S . -B build-hyperbolic-mpi",
+    "cmake --build build-hyperbolic-mpi --target hyperbolic_shift_3d_mpi_communication -j64"
+  ],
+  "binary_sha256": "d394e886b7759ad9b69ffde836735cb7ec2e0cd50d3f4242efa6366ace51d772",
+  "source_sha256": {
+    "tst/hyperbolic_shift_3d/benchmark_communication.cpp": "dc77a7df151a8af3b6e81fd7ecb427907477accc98b609f04a626dbb1c3fa0a5",
+    "tst/hyperbolic_shift_3d/test_communication.py": "c5ebe3574fd4781a4845dcf6c6dcc9cd3bd0e87cd1ceedd334f145df64242d7e",
+    "tst/hyperbolic_shift_3d/CMakeLists.txt": "2bac6f5a6d62e108349245ea317c73e6cf05b2d55e0d39f3ea5d1a46cbc1ab2e"
+  },
+  "tests": [
+    {
+      "case": "serial-cli",
+      "report_path": "output/hyperbolic-core-shell/communication-benchmark-local-v1/serial-cli/measured.json",
+      "report_sha256": "85ebc5486f56d3595c982b8e45116fa0ee49fa1f81e50dba3330b55f27bf1a22",
+      "report_bytes": 40075,
+      "backend": "Serial",
+      "device_memory_space": "Host",
+      "host_memory_space": "HostSpace",
+      "mpi_size": 1,
+      "n_values": [
+        16
+      ],
+      "groups": 6,
+      "timed_samples_per_rank": 30,
+      "timed_rank_samples": 30,
+      "timed_values_checked_all_ranks": 59043840,
+      "mismatches": 0,
+      "command": [
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+        "--output",
+        "output/hyperbolic-core-shell/communication-benchmark-local-v1/serial-cli/measured.json",
+        "--repeats",
+        "2",
+        "--warmup",
+        "1",
+        "--mix-repeats",
+        "1",
+        "--expect-ranks",
+        "1",
+        "--n",
+        "16"
+      ],
+      "counts_displacements_checked": true,
+      "all_rank_metrics_and_maxima_checked": true,
+      "max_then_quantiles_checked": true,
+      "full_array_validation_checked": true
+    },
+    {
+      "case": "mpi3-all-grids",
+      "report_path": "output/hyperbolic-core-shell/communication-benchmark-local-v1/mpi3-all-grids/measured.json",
+      "report_sha256": "c939aa7a4e096722d1336e6390d91ce606108d40802dd310774ad6972916e23b",
+      "report_bytes": 190392,
+      "backend": "Serial",
+      "device_memory_space": "Host",
+      "host_memory_space": "HostSpace",
+      "mpi_size": 3,
+      "n_values": [
+        16,
+        24,
+        32
+      ],
+      "groups": 18,
+      "timed_samples_per_rank": 90,
+      "timed_rank_samples": 270,
+      "timed_values_checked_all_ranks": 2174432256,
+      "mismatches": 0,
+      "command": [
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+        "--output",
+        "output/hyperbolic-core-shell/communication-benchmark-local-v1/mpi3-all-grids/measured.json",
+        "--repeats",
+        "2",
+        "--warmup",
+        "1",
+        "--mix-repeats",
+        "1",
+        "--expect-ranks",
+        "3",
+        "--n",
+        "16",
+        "--n",
+        "24",
+        "--n",
+        "32"
+      ],
+      "counts_displacements_checked": true,
+      "all_rank_metrics_and_maxima_checked": true,
+      "max_then_quantiles_checked": true,
+      "full_array_validation_checked": true
+    },
+    {
+      "case": "mpi12-n16",
+      "report_path": "output/hyperbolic-core-shell/communication-benchmark-local-v1/mpi12-n16.report.json",
+      "report_sha256": "8752b0d56aa4784e1bc278600f6162457b46ab4bdbe609694eeb9fc3651e4aed",
+      "report_bytes": 462377,
+      "backend": "Serial",
+      "device_memory_space": "Host",
+      "host_memory_space": "HostSpace",
+      "mpi_size": 12,
+      "n_values": [
+        16
+      ],
+      "groups": 6,
+      "timed_samples_per_rank": 78,
+      "timed_rank_samples": 936,
+      "timed_values_checked_all_ranks": 1653227520,
+      "mismatches": 0,
+      "command": [
+        "build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+        "--output",
+        "output/hyperbolic-core-shell/communication-benchmark-local-v1/mpi12-n16.report.json",
+        "--n",
+        "16",
+        "--repeats",
+        "6",
+        "--warmup",
+        "1",
+        "--mix-repeats",
+        "1",
+        "--mode",
+        "both",
+        "--expect-ranks",
+        "12",
+        "--expect-backend",
+        "Serial"
+      ],
+      "counts_displacements_checked": true,
+      "all_rank_metrics_and_maxima_checked": true,
+      "max_then_quantiles_checked": true,
+      "full_array_validation_checked": true,
+      "launcher_command": "/opt/homebrew/bin/mpiexec --oversubscribe -n 12 build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication --output output/hyperbolic-core-shell/communication-benchmark-local-v1/mpi12-n16.report.json --n 16 --repeats 6 --warmup 1 --mix-repeats 1 --mode both --expect-ranks 12 --expect-backend Serial"
+    }
+  ],
+  "ctest_mpi2": {
+    "command": "ctest --test-dir build-hyperbolic-mpi -R '^hyperbolic_shift_3d_communication_mpi$' --output-on-failure",
+    "passed": true,
+    "retained_log": "ctest-mpi.log"
+  },
+  "raw_per_rank_timing_reports_retained_locally": true,
+  "raw_per_rank_timing_reports_copied_into_documentation": false,
+  "note": "Local reports are bound by hashes and can be regenerated with the retained native/Python source. Their CPU timings are not performance evidence for GPUs."
+}

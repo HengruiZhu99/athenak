@@ -1,0 +1,91 @@
+{
+  "status": "passed",
+  "scope": "Local communication correctness and CLI validation; no GPU performance inference.",
+  "backend": "Serial",
+  "mpi_size": 3,
+  "binary_sha256": "d394e886b7759ad9b69ffde836735cb7ec2e0cd50d3f4242efa6366ace51d772",
+  "commands": [
+    {
+      "name": "help",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "3",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+        "--help"
+      ],
+      "returncode": 0,
+      "expected_success": true
+    },
+    {
+      "name": "layout",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "3",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+        "--output",
+        "output/hyperbolic-core-shell/communication-benchmark-local-v1/mpi3-all-grids/layout.json",
+        "--layout-only",
+        "--expect-ranks",
+        "3"
+      ],
+      "returncode": 0,
+      "expected_success": true
+    },
+    {
+      "name": "measured",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "3",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_communication",
+        "--output",
+        "output/hyperbolic-core-shell/communication-benchmark-local-v1/mpi3-all-grids/measured.json",
+        "--repeats",
+        "2",
+        "--warmup",
+        "1",
+        "--mix-repeats",
+        "1",
+        "--expect-ranks",
+        "3",
+        "--n",
+        "16",
+        "--n",
+        "24",
+        "--n",
+        "32"
+      ],
+      "returncode": 0,
+      "expected_success": true
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "help.log",
+      "bytes": 688,
+      "sha256": "25504c5c29e92753dccd18e7d15b394bcab83e4bea91950a6dd4f9ff88d6291f"
+    },
+    {
+      "path": "layout.json",
+      "bytes": 5862,
+      "sha256": "2912f939410e1a46d4d1285e15bbcbe6c01b17c47f24839bec90dda672926046"
+    },
+    {
+      "path": "layout.log",
+      "bytes": 194,
+      "sha256": "1a7d4a78e2aa27b281c65a79d072774a0863c38f3b30865d235e01bfae601c43"
+    },
+    {
+      "path": "measured.json",
+      "bytes": 190392,
+      "sha256": "c939aa7a4e096722d1336e6390d91ce606108d40802dd310774ad6972916e23b"
+    },
+    {
+      "path": "measured.log",
+      "bytes": 198,
+      "sha256": "78402eaa7acde5885c582d77febd1ede485031220166894651a34b9359a1a3d1"
+    }
+  ]
+}
