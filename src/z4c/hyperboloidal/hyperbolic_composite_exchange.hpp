@@ -22,9 +22,10 @@ class HyperbolicCompositeExchange {
   struct Entry {int point;Real weight;};
   template<class T>using View=Kokkos::View<T*,Device::MemorySpace>;
   int count,total;
-  Buffer padded,surface;
+  Buffer padded,surface,positive_ko;
  private:
-  IntBuffer active,scri_active;
+  IntBuffer active,scri_active,source_ids;
+  Buffer positive_references;
   View<Halo> rows;View<Entry> terms;View<Boundary> boundary;
   Buffer boundary_values,null_before,null_after,scri_samples;
   IntBuffer boundary_bad;
@@ -35,20 +36,31 @@ class HyperbolicCompositeExchange {
     for(size_t i=0;i<data.size();++i)host(i)=data[i];Kokkos::deep_copy(view,host);return view;
   }
  public:
-  HyperbolicCompositeExchange(const HyperbolicComposite&e,int first_block,int end_block)
+  HyperbolicCompositeExchange(const HyperbolicComposite&e,int first_block,int end_block,
+      const std::vector<int>&selected_blocks={},bool selective=false,bool build_positive=true)
     :count(e.grid.count),total(e.grid.active.size()),
      padded("hyperbolic padded",nf*count),surface("hyperbolic scri",e.scri.values.size()),
      host_surface("host scri",e.scri.values.size()) {
     if(first_block<0||end_block<first_block||size_t(end_block)>e.grid.mesh.blocks.size())
       throw std::invalid_argument("invalid device halo block range");
-    active=Upload("active indices",e.grid.active);
+    auto selected=[&](int block){return block>=first_block&&block<end_block&&
+      (selected_blocks.empty()||std::find(selected_blocks.begin(),selected_blocks.end(),block)!=selected_blocks.end());};
+    std::set<int> needed;
+    if(selective)for(int p=0;p<total;++p)if(selected(e.grid.cells[p].block)){
+      needed.insert(p);
+      // Cross-leaf Cartesian KO reads active values beyond the three FD ghosts.
+      if(e.grid.mesh.continuous_cartesian_core&&e.grid.mesh.blocks[e.grid.cells[p].block].face<0)
+        for(int a=0;a<3;++a)for(int d=-4;d<=4;++d){const int q=e.grid.ShiftActive(p,a,d);if(q>=0)needed.insert(q);}
+    }
     std::vector<Halo> hs;std::vector<Entry> es;std::vector<Boundary> bs;
     std::map<std::array<Real,3>,int> boundary_ids;
     const int blocksize=e.grid.padded*e.grid.padded*e.grid.padded;
     for(const auto&row:e.grid.halos){const int block=row.target/blocksize;
-      if(block<first_block||block>=end_block)continue;
+      if(!selected(block))continue;
       Halo h{row.target,int(es.size()),0,-1,row.boundary_weight};
-      for(const auto&t:row.entries)es.push_back({t.point,t.weight});h.end=es.size();
+      for(const auto&t:row.entries){es.push_back({t.point,t.weight});
+        if(selective){const int p=e.grid.inverse_active[t.point];if(p<0)throw std::runtime_error("halo donor is not active");needed.insert(p);}}
+      h.end=es.size();
       if(row.boundary_weight!=0){auto it=boundary_ids.find(row.boundary);
         if(it==boundary_ids.end()){
           Boundary b{};for(int d=0;d<3;++d)b.x[d]=row.boundary[d];
@@ -64,13 +76,24 @@ class HyperbolicCompositeExchange {
         }h.boundary=it->second;
       }hs.push_back(h);
     }
+    std::vector<int> ids,indices;
+    if(selective)ids.assign(needed.begin(),needed.end());else{ids.resize(total);for(int p=0;p<total;++p)ids[p]=p;}
+    for(int p:ids)indices.push_back(e.grid.active[p]);
+    active=Upload("active indices",indices);source_ids=Upload("active source indices",ids);
+    if(e.positive_dissipation&&build_positive){
+      positive_ko=Buffer("positive KO chart",2*count);std::vector<Real> references;
+      for(int p:ids){const Real r=e.Radius(e.grid.geometry[p].x);
+        references.push_back(PositiveReference(r*r,0,e.puncture_reference));
+        references.push_back(PositiveReference(r*r,18,e.puncture_reference));references.push_back((1+r*r)/2);}
+      positive_references=Upload("positive reference factors",references);
+    }
     rows=Upload("owned halo rows",hs);terms=Upload("owned halo entries",es);boundary=Upload("boundary plans",bs);
     boundary_values=Buffer("boundary interpolants",bs.size()*nf);
     null_before=Buffer("boundary null before",bs.size());null_after=Buffer("boundary null after",bs.size());
     boundary_bad=IntBuffer("boundary errors",bs.size());
-    std::set<int> selected;for(const auto&row:e.scri.rows)for(const auto&t:row.terms)if(!t.boundary)selected.insert(t.point);
+    std::set<int> scri_selected;for(const auto&row:e.scri.rows)for(const auto&t:row.terms)if(!t.boundary)scri_selected.insert(t.point);
     std::vector<int> inverse(count,-1);for(int p=0;p<total;++p)inverse[e.grid.active[p]]=p;
-    std::vector<int> points;for(int p:selected){
+    std::vector<int> points;for(int p:scri_selected){
       if(p<0||p>=count||inverse[p]<0)throw std::runtime_error("scri volume donor is not active");
       scri_padded_indices.push_back(p);points.push_back(inverse[p]);}
     scri_active=Upload("scri active donors",points);
@@ -89,11 +112,18 @@ class HyperbolicCompositeExchange {
     for(size_t p=0;p<scri_padded_indices.size();++p)for(int f=0;f<nf;++f)
       host_padded[f*count+scri_padded_indices[p]]=host_samples(p*nf+f);
   }
+  size_t ActiveCopies()const{return active.extent(0);}
+  size_t HaloRows()const{return rows.extent(0);}
   struct Summary {Real before=0,after=0;int invalid=0;};
   Summary Fill(ConstBuffer state){
     if(state.extent(0)!=size_t(nf)*total)throw std::invalid_argument("active device state size mismatch");
-    const auto a=active;const auto out=padded;const int size=count;
-    Kokkos::parallel_for("active transpose",Kokkos::RangePolicy<>(0,total*nf),KOKKOS_LAMBDA(int i){out((i%nf)*size+a(i/nf))=state(i);});
+    const auto a=active,ids=source_ids;const auto out=padded;const int size=count;
+    Kokkos::parallel_for("active transpose",Kokkos::RangePolicy<>(0,a.extent(0)*nf),KOKKOS_LAMBDA(int i){out((i%nf)*size+a(i/nf))=state(ids(i/nf)*nf+i%nf);});
+    if(positive_ko.extent(0)){const auto chart=positive_ko,ref=positive_references;
+      Kokkos::parallel_for("positive dissipation chart",Kokkos::RangePolicy<>(0,a.extent(0)),KOKKOS_LAMBDA(int i){
+        chart(a(i))=PositiveLog(state(nf*ids(i)),ref(3*i));
+        chart(size+a(i))=PositiveLog(state(nf*ids(i)+18)+ref(3*i+2),ref(3*i+1));});}
+
     const auto b=boundary;const auto s=surface;const auto vals=boundary_values;
     const auto before=null_before,after=null_after;const auto bad=boundary_bad;
     Kokkos::parallel_for("scri nonlinear interpolation",Kokkos::RangePolicy<>(0,b.extent(0)),KOKKOS_LAMBDA(int p){

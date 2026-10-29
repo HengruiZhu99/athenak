@@ -12,6 +12,7 @@
 #include "mesh/cubed_sphere/angular_dissipation.hpp"
 #include "z4c/hyperboloidal/hyperbolic_shift.hpp"
 #include "z4c/hyperboloidal/tensor_scri.hpp"
+#include "z4c/hyperboloidal/positive_variables.hpp"
 
 namespace z4c::hyperboloidal {
 // CPU coupled evolution on actual Cartesian/core and mapped shell cells. No
@@ -36,6 +37,7 @@ class HyperbolicComposite {
   int failed_stage=0;
   bool adaptive;
   Real ko=.5;
+  bool positive_dissipation=false,puncture_reference=false;
   Real angular_epsilon=0,angular_cfl=0,angular_cfl_max=0;
   std::shared_ptr<const cubed_sphere::AngularDissipationPlan> angular_plan;
   int workers=1;
@@ -317,10 +319,15 @@ class HyperbolicComposite {
         for(int d=0;d<3;++d)inverse_length+=grid.geometry[p].J[A][d]*grid.geometry[p].J[A][d];
         const Real r=Radius(grid.geometry[p].x),taper=std::pow(std::max(Real(0),1-r*r/.64),6);
         weight+=grid.volumes[p]*std::sqrt(inverse_length)*taper/5;}
-      for(int f=0;f<nf;++f){Real fourth=0;const Real anchor=v[nf*start+f];
-        for(int a=0;a<5;++a)fourth+=b[a]*(v[nf*donors[a]+f]-anchor);
-        for(int a=0;a<5;++a){const size_t p=donors[a];
-          rhs[nf*p+f]-=ko*n*b[a]*weight*fourth/(256*grid.volumes[p]);}}
+      for(int f=0;f<nf;++f){
+        const bool logarithmic=positive_dissipation&&(f==0||f==18);
+        auto value=[&](size_t p){const Real r=Radius(grid.geometry[p].x),A=(1+r*r)/2;
+          return logarithmic?PositiveLog(v[nf*p+f]+(f==18?A:0),PositiveReference(r*r,f,puncture_reference)):v[nf*p+f];};
+        Real fourth=0;const Real anchor=value(start);
+        for(int a=0;a<5;++a)fourth+=b[a]*(value(donors[a])-anchor);
+        for(int a=0;a<5;++a){const size_t p=donors[a];const Real r=Radius(grid.geometry[p].x);
+          const Real factor=logarithmic?v[nf*p+f]+(f==18?(1+r*r)/2:0):1;
+          rhs[nf*p+f]-=factor*ko*n*b[a]*weight*fourth/(256*grid.volumes[p]);}}
     }
   }
   V RHS(const V&values,Real dt,V&edge_rate){

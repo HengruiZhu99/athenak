@@ -88,7 +88,9 @@ template<class F>static void Reject(F operation,const char*message){
 static void Check(bool perturb,int refinement=0,int core_subdivisions=1){
   auto mesh=cubed_sphere::CompositeMesh(.125,{.45,.75,1},1,HYPERBOLIC_TEST_OVERLAP?12:6,3,core_subdivisions);
   mesh.evolved_overlap=HYPERBOLIC_TEST_OVERLAP;
-#ifdef HYPERBOLIC_TEST_SPHERICAL_OVERLAP
+#if defined(HYPERBOLIC_TEST_CONTINUOUS_POSITIVE)
+  mesh=hyperbolic_reproduction::ContinuousCoreMesh(12);core_subdivisions=2;
+#elif defined(HYPERBOLIC_TEST_SPHERICAL_OVERLAP)
   mesh=hyperbolic_reproduction::SphericalOverlapMesh(12);core_subdivisions=2;
 #endif
   if(refinement>0)mesh.RefineCartesian(0);
@@ -104,6 +106,9 @@ static void Check(bool perturb,int refinement=0,int core_subdivisions=1){
   Model model(mesh,false,true,2,Model::NormalDerivative::sampled_numerator,
     donor_seven?Model::RadialClosure::donor_seven:Model::RadialClosure::ghost_lift);
   if(inner_transition)model.grid.SetInnerTransitionLogical(true);
+#ifdef HYPERBOLIC_TEST_CONTINUOUS_POSITIVE
+  model.positive_dissipation=true;
+#endif
   const int donors=model.scri.radial_nodes-1;
   Seed(model,perturb);const int total=model.scri.rows.size();const Real dt=.0001;
   const auto projected=model.scri.values,padded=model.Padded(model.state);
@@ -190,13 +195,28 @@ static void Check(bool perturb,int refinement=0,int core_subdivisions=1){
     const auto cpu_bulk=model.EvaluateRHS(model.state,dt,cpu_edge);
     h::HyperbolicCompositeDevice bulk(model.grid,0,model.grid.active.size(),model.radial_plan.get());
     const auto final_surface=Upload(model.scri.values);auto final_padding=model.Padded(model.state);
+    Exchange positive_halos(model,0,model.grid.mesh.blocks.size());positive_halos.Fill(active);
     if(inner_transition){
       Exchange all_halos(model,0,model.grid.mesh.blocks.size());all_halos.SetSurface(model.scri.values);
       Require(all_halos.Fill(active).invalid==0,"inner transition device exchange failed");
       const Real halo_error=Compare(final_padding,Download(all_halos.padded));
-      Require(bulk.Evaluate(all_halos.padded,dt,false,.5,final_surface).bad_cells==0,"inner transition exchanged bulk failed");
+      Require(bulk.Evaluate(all_halos.padded,dt,false,.5,final_surface,positive_halos.positive_ko).bad_cells==0,"inner transition exchanged bulk failed");
       const Real exchanged_bulk_error=Compare(cpu_bulk,bulk.DownloadRHS());
       Require(halo_error<2e-10&&exchanged_bulk_error<2e-10,"inner transition device halo/bulk parity failed");
+#ifdef HYPERBOLIC_TEST_CONTINUOUS_POSITIVE
+      for(int rank=0;rank<12;++rank){
+        const int first=model.grid.active.size()*rank/12,end=model.grid.active.size()*(rank+1)/12;
+        std::set<int> mask;for(int p=first;p<end;++p)mask.insert(model.grid.cells[p].block);
+        Exchange selective(model,0,model.grid.mesh.blocks.size(),std::vector<int>(mask.begin(),mask.end()),true);
+        selective.SetSurface(model.scri.values);Kokkos::deep_copy(selective.padded,std::numeric_limits<Real>::quiet_NaN());
+        Kokkos::deep_copy(selective.positive_ko,std::numeric_limits<Real>::quiet_NaN());
+        Require(selective.Fill(active).invalid==0,"selective halo failure");
+        h::HyperbolicCompositeDevice owned(model.grid,first,end-first,model.radial_plan.get());
+        Require(owned.Evaluate(selective.padded,dt,false,.5,final_surface,selective.positive_ko).bad_cells==0,"selective owned RHS failure");
+        Require(Compare(cpu_bulk,owned.DownloadRHS(),31*first)<2e-10,"selective exchange changes RHS");
+        std::cout<<"rank="<<rank<<" copied_active="<<selective.ActiveCopies()<<" halo_rows="<<selective.HaloRows()<<'\n';
+      }
+#endif
       std::cout<<"inner_transition_exchange_error="<<halo_error<<" bulk_error="<<exchanged_bulk_error<<'\n';
     }
     // Every exterior radial ghost is unused by the seven-node bulk closure,
@@ -205,7 +225,7 @@ static void Check(bool perturb,int refinement=0,int core_subdivisions=1){
     for(int m=first_outer;m<end_outer;++m)for(int k=-g.ng;k<g.n+g.ng;++k)for(int j=-g.ng;j<g.n+g.ng;++j)
       for(int i=g.n;i<g.n+g.ng;++i)for(int f=0;f<31;++f)
         final_padding[f*g.count+g.Index(m,i,j,k)]=std::numeric_limits<Real>::quiet_NaN();
-    Require(bulk.Evaluate(Upload(final_padding),dt,false,.5,final_surface).bad_cells==0,"direct radial bulk read exterior ghosts");
+    Require(bulk.Evaluate(Upload(final_padding),dt,false,.5,final_surface,positive_halos.positive_ko).bad_cells==0,"direct radial bulk read exterior ghosts");
     const Real bulk_error=Compare(cpu_bulk,bulk.DownloadRHS());
     Require(bulk_error<2e-10,"direct radial complete bulk RHS differs from CPU");
     const auto constraints=bulk.Diagnostics(Upload(final_padding),0,final_surface);
@@ -223,6 +243,9 @@ static void Check(bool perturb,int refinement=0,int core_subdivisions=1){
   if(core_subdivisions==2)std::cout<<" cartesian_core_subdivisions=2 mesh_blocks=26";
 #ifdef HYPERBOLIC_TEST_SPHERICAL_OVERLAP
   std::cout<<" shell_geometry=spherical_equiangular core_half_width=0.18 shell_inner_radius=0.16";
+#endif
+#ifdef HYPERBOLIC_TEST_CONTINUOUS_POSITIVE
+  std::cout<<" positive_variables=log_chi_log_lapse_rk_and_ko cartesian_seams=uniform_global_stencil selective_exchange_partitions=12";
 #endif
   std::cout<<'\n';
 }

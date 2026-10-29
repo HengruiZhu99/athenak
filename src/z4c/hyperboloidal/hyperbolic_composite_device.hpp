@@ -90,6 +90,7 @@ class HyperbolicCompositeDevice {
     Real dt, ko;
     bool adaptive;
     ScriRadialDevice::Kernel radial;
+    ConstBuffer positive_ko;
 
     KOKKOS_INLINE_FUNCTION int Offset(int axis, int amount) const {
       return amount*(axis == 0 ? 1 : (axis == 1 ? width : width*width));
@@ -162,15 +163,19 @@ class HyperbolicCompositeDevice {
       if (ko==0) return 0;
       constexpr int b[5] = {1,-4,6,-4,1};
       Real result = 0;
-      const int base = f*padded_count;
+      const bool logarithmic=positive_ko.extent(0)&&(f==0||f==18);
+      const int base = (logarithmic?(f==0?0:1):f)*padded_count;
+      const auto data=logarithmic?positive_ko:padded;
       for (int i=offsets(local);i<offsets(local+1);++i) {
         const auto &term=terms(i);
-        const Real anchor=padded(base+term.point[0]);
+        const Real anchor=data(base+term.point[0]);
         Real fourth=0;
         for (int a=0;a<5;++a)
-          fourth += b[a]*(padded(base+term.point[a])-anchor);
+          fourth += b[a]*(data(base+term.point[a])-anchor);
         result -= ko*n*term.target_coefficient*term.weight*fourth/(256*volume(local));
       }
+      if(logarithmic){const auto&x=geometry(local).x;const Real r=sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);
+        result*=padded(f*padded_count+active(local))+(f==18?(1+r*r)/2:0);}
       return result;
     }
     KOKKOS_INLINE_FUNCTION int BuildJet(int local,const cubed_sphere::Point &map,
@@ -465,13 +470,15 @@ class HyperbolicCompositeDevice {
     Kokkos::deep_copy(ko_terms_,host_terms);
   }
 
-  Summary Evaluate(ConstBuffer padded,Real dt,bool adaptive=false,Real ko=.5,ConstBuffer surface={}) {
+  Summary Evaluate(ConstBuffer padded,Real dt,bool adaptive=false,Real ko=.5,ConstBuffer surface={},ConstBuffer positive_ko={}) {
     if (padded.extent(0)!=size_t(nf)*padded_count_ || !(dt>0) || !std::isfinite(dt)
         || !(ko>=0) || !std::isfinite(ko))
       throw std::invalid_argument("invalid device RHS storage/timestep/dissipation");
     PointKernel kernel{padded,active_,ko_offsets_,status_,geometry_,ko_terms_,
         volumes_,rhs_,gap_,cfl_,n_,width_,padded_count_,dt,ko,adaptive};
     if(radial_plan_)kernel.radial=radial_plan_->Bind(padded,surface);
+    if(positive_ko.extent(0)&&positive_ko.extent(0)!=size_t(2)*padded_count_)throw std::invalid_argument("positive KO storage mismatch");
+    kernel.positive_ko=positive_ko;
     Kokkos::parallel_for("hyperboloidal owned bulk RHS",
         Kokkos::RangePolicy<ExecutionSpace>(0,local_),kernel);
     Summary result;

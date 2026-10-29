@@ -17,5 +17,8 @@ inline cubed_sphere::CompositeMesh SphericalOverlapMesh(int n) {
   mesh.evolved_overlap=3;mesh.spherical_inner_boundary=true;
   mesh.equiangular=true;mesh.inner_radius=.16;return mesh;
 }
+inline cubed_sphere::CompositeMesh ContinuousCoreMesh(int n) {
+  auto mesh=SphericalOverlapMesh(n);mesh.continuous_cartesian_core=true;return mesh;
+}
 }
 #endif

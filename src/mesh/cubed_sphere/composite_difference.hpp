@@ -29,6 +29,10 @@ class CompositeDifference {
   std::vector<Cell> cells;
   std::vector<int> inverse_active;
   size_t nominal_count=0;
+  int cartesian_n=0,cartesian_width=0;
+  Real cartesian_h=0;
+  std::vector<int> cartesian_points;
+  std::vector<std::array<int,3>> cartesian_coordinates;
   std::vector<Point> geometry;
   std::vector<Real> volumes;
   std::vector<Row> halos;
@@ -69,6 +73,7 @@ class CompositeDifference {
       for(int k=Lower(m,2);k<Upper(m,2);++k)for(int j=Lower(m,1);j<Upper(m,1);++j)for(int i=Lower(m,0);i<Upper(m,0);++i)
         if(i<0||i>=n||j<0||j>=n||k<0||k>=n)append(m,i,j,k);
     }
+    BuildCartesianLookup();
     BuildHalos();
   }
   int Index(int m, int i, int j, int k) const {
@@ -76,9 +81,20 @@ class CompositeDifference {
   }
   int Overlap(int m)const{return mesh.blocks[m].layer<=0?mesh.evolved_overlap:0;}
   int Lower(int m,int axis)const{
-    return mesh.spherical_inner_boundary&&mesh.blocks[m].layer==0&&axis==0?0:-Overlap(m);
+    const auto&b=mesh.blocks[m];
+    if(mesh.continuous_cartesian_core&&b.face<0&&b.lo[axis]>-mesh.half_width+1e-14)return 0;
+    return mesh.spherical_inner_boundary&&b.layer==0&&axis==0?0:-Overlap(m);
   }
-  int Upper(int m,int /*axis*/)const{return n+Overlap(m);}
+  int Upper(int m,int axis)const{
+    const auto&b=mesh.blocks[m];
+    if(mesh.continuous_cartesian_core&&b.face<0&&b.hi[axis]<mesh.half_width-1e-14)return n;
+    return n+Overlap(m);
+  }
+  int CartesianPoint(int i,int j,int k)const{
+    const int o=mesh.evolved_overlap;
+    if(i< -o||j< -o||k< -o||i>=cartesian_n+o||j>=cartesian_n+o||k>=cartesian_n+o)return -1;
+    return cartesian_points[((k+o)*cartesian_width+j+o)*cartesian_width+i+o];
+  }
   int ActiveIndex(int m,int i,int j,int k)const{
     if(i<Lower(m,0)||i>=Upper(m,0)||j<Lower(m,1)||j>=Upper(m,1)||k<Lower(m,2)||k>=Upper(m,2))return -1;
     return inverse_active[Index(m,i,j,k)];
@@ -86,6 +102,9 @@ class CompositeDifference {
   // Map a logical stencil offset to its independently evolved cell, or -1.
   int ShiftActive(size_t p,int axis,int amount)const{
     auto c=cells.at(p);
+    if(mesh.continuous_cartesian_core&&mesh.blocks[c.block].face<0){
+      auto q=cartesian_coordinates.at(p);q[axis]+=amount;return CartesianPoint(q[0],q[1],q[2]);
+    }
     if(axis==0)c.i+=amount;else if(axis==1)c.j+=amount;else c.k+=amount;
     return ActiveIndex(c.block,c.i,c.j,c.k);
   }
@@ -269,11 +288,48 @@ class CompositeDifference {
 
  private:
   bool inner_transition_logical=false;
+  void BuildCartesianLookup(){
+    if(!mesh.continuous_cartesian_core)return;
+    for(const auto&b:mesh.blocks)if(b.face<0){cartesian_h=(b.hi[0]-b.lo[0])/n;break;}
+    if(!(cartesian_h>0))throw std::invalid_argument("continuous core has no Cartesian blocks");
+    cartesian_n=std::lround(2*mesh.half_width/cartesian_h);cartesian_width=cartesian_n+2*mesh.evolved_overlap;
+    cartesian_points.assign(cartesian_width*cartesian_width*cartesian_width,-1);
+    cartesian_coordinates.resize(active.size());
+    for(size_t p=0;p<active.size();++p){const auto&b=mesh.blocks[cells[p].block];if(b.face>=0)continue;
+      auto&q=cartesian_coordinates[p];
+      for(int a=0;a<3;++a){
+        if(std::abs((b.hi[a]-b.lo[a])/n-cartesian_h)>1e-14)throw std::invalid_argument("continuous core requires a uniform Cartesian level");
+        const Real t=(geometry[p].x[a]+mesh.half_width)/cartesian_h-.5;q[a]=std::lround(t);
+        if(std::abs(t-q[a])>1e-10)throw std::invalid_argument("misaligned continuous Cartesian grid");
+      }
+      const int o=mesh.evolved_overlap;auto&target=cartesian_points[((q[2]+o)*cartesian_width+q[1]+o)*cartesian_width+q[0]+o];
+      if(target>=0)throw std::invalid_argument("duplicate continuous Cartesian point");target=p;
+    }
+    for(int p:cartesian_points)if(p<0)throw std::invalid_argument("hole in continuous Cartesian grid");
+  }
+  std::vector<Entry> InterpolateCartesian(const Real x[3],int width)const{
+    if(!mesh.continuous_cartesian_core)return {};
+    int first[3],length[3];Real t[3],w[3][6]{};const int o=mesh.evolved_overlap;
+    for(int a=0;a<3;++a){t[a]=(x[a]+mesh.half_width)/cartesian_h-.5;
+      const bool exact=std::abs(t[a]-std::round(t[a]))<=64*std::numeric_limits<Real>::epsilon()*std::max(Real(1),std::abs(t[a]));
+      length[a]=exact?1:width;first[a]=exact?int(std::round(t[a])):int(std::floor(t[a]))-width/2+1;
+      if(first[a]<-o||first[a]+length[a]>cartesian_n+o)return {};
+      for(int i=0;i<length[a];++i){w[a][i]=1;for(int j=0;j<length[a];++j)if(j!=i)w[a][i]*=(t[a]-first[a]-j)/Real(i-j);}
+    }
+    std::vector<Entry> out;
+    for(int k=0;k<length[2];++k)for(int j=0;j<length[1];++j)for(int i=0;i<length[0];++i){
+      const int p=CartesianPoint(first[0]+i,first[1]+j,first[2]+k);const Real weight=w[0][i]*w[1][j]*w[2][k];
+      if(p<0)throw std::runtime_error("missing Cartesian stencil donor");
+      if(std::abs(weight)>1e-18)out.push_back({active[p],weight});
+    }
+    return out;
+  }
   std::vector<Entry> InterpolateOverlap(const Real x[3],int width)const{
+    auto cartesian=InterpolateCartesian(x,width);if(!cartesian.empty())return cartesian;
     const int preferred=mesh.Owner(x);int selected=-1,best_first[3]{},best_width[3]{};
     Real best_q[3]{},best_margin=-1e300;
     for(int m=0;m<int(mesh.blocks.size());++m){
-      const auto&b=mesh.blocks[m];if(b.layer>0)continue;
+      const auto&b=mesh.blocks[m];if(b.layer>0||(mesh.continuous_cartesian_core&&b.face<0))continue;
       if(b.face>=0&&(b.face%2?-x[b.face/2]:x[b.face/2])<=0)continue;
       Real q[3];mesh.Inverse(m,x,q);int first[3],length[3];Real margin=1e300;bool valid=true;
       bool aligned=true;

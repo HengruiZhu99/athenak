@@ -213,3 +213,29 @@ if(ENABLE_MPI)
     HYPERBOLIC_SCRI_DONOR_SEVEN=1 HYPERBOLIC_INNER_TRANSITION_LOGICAL=1
     HYPERBOLIC_CORE_SUBDIVISIONS=2 HYPERBOLIC_EVOLVED_OVERLAP=3 HYPERBOLIC_SPHERICAL_OVERLAP=1)
 endif()
+
+foreach(kind IN ITEMS geometry device)
+  if(kind STREQUAL "geometry")
+    set(spherical_source test_evolved_overlap.cpp)
+  else()
+    set(spherical_source test_sampled_normal_device.cpp)
+  endif()
+  add_executable(hyperbolic_shift_3d_continuous_positive_${kind} ${spherical_source})
+  target_include_directories(hyperbolic_shift_3d_continuous_positive_${kind} PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+  target_link_libraries(hyperbolic_shift_3d_continuous_positive_${kind} PRIVATE Kokkos::kokkos Threads::Threads)
+  target_compile_options(hyperbolic_shift_3d_continuous_positive_${kind} PRIVATE -Wall -Wextra -ffp-contract=off)
+  target_compile_definitions(hyperbolic_shift_3d_continuous_positive_${kind} PRIVATE HYPERBOLIC_TEST_CONTINUOUS_POSITIVE=1 HYPERBOLIC_TEST_SPHERICAL_OVERLAP=1 HYPERBOLIC_TEST_DONOR_SEVEN=1 HYPERBOLIC_TEST_INNER_TRANSITION=1 HYPERBOLIC_TEST_OVERLAP=3)
+  add_test(NAME hyperbolic_shift_3d_continuous_positive_${kind} COMMAND hyperbolic_shift_3d_continuous_positive_${kind})
+  set_tests_properties(hyperbolic_shift_3d_continuous_positive_${kind} PROPERTIES RUN_SERIAL TRUE TIMEOUT 420)
+endforeach()
+
+if(ENABLE_MPI)
+  add_executable(hyperbolic_shift_3d_mpi_continuous_positive coupled_mpi.cpp)
+  target_link_libraries(hyperbolic_shift_3d_mpi_continuous_positive PRIVATE hyperboloidal_fastflow MPI::MPI_CXX)
+  target_compile_options(hyperbolic_shift_3d_mpi_continuous_positive PRIVATE -Wall -Wextra -ffp-contract=off)
+  target_compile_definitions(hyperbolic_shift_3d_mpi_continuous_positive PRIVATE
+    HYPERBOLIC_ALGEBRAIC_FINAL_PROJECTION=1 HYPERBOLIC_SCRI_ANGULAR_EXCHANGE=1
+    HYPERBOLIC_SCRI_ANGULAR_DISSIPATION=1 HYPERBOLIC_SCRI_SAMPLED_NORMAL=1
+    HYPERBOLIC_SCRI_DONOR_SEVEN=1 HYPERBOLIC_INNER_TRANSITION_LOGICAL=1
+    HYPERBOLIC_CORE_SUBDIVISIONS=2 HYPERBOLIC_EVOLVED_OVERLAP=3 HYPERBOLIC_SPHERICAL_OVERLAP=1 HYPERBOLIC_CONTINUOUS_POSITIVE=1)
+endif()

@@ -36,17 +36,18 @@ def rank_info():
 def read_checkpoint(path):
     with path.open('rb') as stream:
         data = stream.read(HEADER.size)
-        extra = stream.read(V4_CONFIG.size) if data[:16] in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6',b'HYP3D_MPI_V7',b'HYP3D_MPI_V8',b'HYP3D_MPI_V9',b'HYP3D_MPI_V10']] else b''
-        normal = stream.read(V5_NORMAL_CONFIG.size) if data[:16] in [b'HYP3D_MPI_V5'.ljust(16,b'\0'),b'HYP3D_MPI_V6'.ljust(16,b'\0'),b'HYP3D_MPI_V7'.ljust(16,b'\0'),b'HYP3D_MPI_V8'.ljust(16,b'\0'),b'HYP3D_MPI_V9'.ljust(16,b'\0'),b'HYP3D_MPI_V10'.ljust(16,b'\0')] else b''
-        mesh = stream.read(16) if data[:16] in [b'HYP3D_MPI_V8'.ljust(16,b'\0'),b'HYP3D_MPI_V9'.ljust(16,b'\0'),b'HYP3D_MPI_V10'.ljust(16,b'\0')] else b''
-        geometry = stream.read(16) if data[:16]==b'HYP3D_MPI_V10'.ljust(16,b'\0') else b''
+        extra = stream.read(V4_CONFIG.size) if data[:16] in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6',b'HYP3D_MPI_V7',b'HYP3D_MPI_V8',b'HYP3D_MPI_V9',b'HYP3D_MPI_V10',b'HYP3D_MPI_V11']] else b''
+        normal = stream.read(V5_NORMAL_CONFIG.size) if data[:16] in [b'HYP3D_MPI_V5'.ljust(16,b'\0'),b'HYP3D_MPI_V6'.ljust(16,b'\0'),b'HYP3D_MPI_V7'.ljust(16,b'\0'),b'HYP3D_MPI_V8'.ljust(16,b'\0'),b'HYP3D_MPI_V9'.ljust(16,b'\0'),b'HYP3D_MPI_V10'.ljust(16,b'\0'),b'HYP3D_MPI_V11'.ljust(16,b'\0')] else b''
+        mesh = stream.read(16) if data[:16] in [b'HYP3D_MPI_V8'.ljust(16,b'\0'),b'HYP3D_MPI_V9'.ljust(16,b'\0'),b'HYP3D_MPI_V10'.ljust(16,b'\0'),b'HYP3D_MPI_V11'.ljust(16,b'\0')] else b''
+        geometry = stream.read(16) if data[:16] in [b'HYP3D_MPI_V10'.ljust(16,b'\0'),b'HYP3D_MPI_V11'.ljust(16,b'\0')] else b''
+        positive = stream.read(16) if data[:16]==b'HYP3D_MPI_V11'.ljust(16,b'\0') else b''
     if len(data) != HEADER.size:
         raise ValueError('Checkpoint header truncated')
     result = dict(zip(KEYS, HEADER.unpack(data)))
-    if result['magic'] not in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V1',b'HYP3D_MPI_V2',b'HYP3D_MPI_V3',b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6',b'HYP3D_MPI_V7',b'HYP3D_MPI_V8',b'HYP3D_MPI_V9',b'HYP3D_MPI_V10']] or result['nf'] != 31 or result['admitted'] != 1:
+    if result['magic'] not in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V1',b'HYP3D_MPI_V2',b'HYP3D_MPI_V3',b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6',b'HYP3D_MPI_V7',b'HYP3D_MPI_V8',b'HYP3D_MPI_V9',b'HYP3D_MPI_V10',b'HYP3D_MPI_V11']] or result['nf'] != 31 or result['admitted'] != 1:
         raise ValueError('Unknown or unadmitted checkpoint schema')
     result.update(header_bytes=HEADER.size,scri_dissipation_epsilon=0.0,scri_dissipation_degree=0)
-    if result['magic'] in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6',b'HYP3D_MPI_V7',b'HYP3D_MPI_V8',b'HYP3D_MPI_V9',b'HYP3D_MPI_V10']]:
+    if result['magic'] in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6',b'HYP3D_MPI_V7',b'HYP3D_MPI_V8',b'HYP3D_MPI_V9',b'HYP3D_MPI_V10',b'HYP3D_MPI_V11']]:
         if len(extra) != V4_CONFIG.size:
             raise ValueError('V4 checkpoint configuration truncated')
         epsilon,degree,reserved = V4_CONFIG.unpack(extra)
@@ -54,8 +55,8 @@ def read_checkpoint(path):
             raise ValueError('Invalid V4 checkpoint dissipation configuration')
         result.update(header_bytes=HEADER.size+V4_CONFIG.size,
                       scri_dissipation_epsilon=epsilon,scri_dissipation_degree=degree)
-    if result['magic'] in [b'HYP3D_MPI_V5'.ljust(16,b'\0'),b'HYP3D_MPI_V6'.ljust(16,b'\0'),b'HYP3D_MPI_V7'.ljust(16,b'\0'),b'HYP3D_MPI_V8'.ljust(16,b'\0'),b'HYP3D_MPI_V9'.ljust(16,b'\0'),b'HYP3D_MPI_V10'.ljust(16,b'\0')]:
-        inner=result['magic'] in [b'HYP3D_MPI_V7'.ljust(16,b'\0'),b'HYP3D_MPI_V8'.ljust(16,b'\0'),b'HYP3D_MPI_V9'.ljust(16,b'\0'),b'HYP3D_MPI_V10'.ljust(16,b'\0')]
+    if result['magic'] in [b'HYP3D_MPI_V5'.ljust(16,b'\0'),b'HYP3D_MPI_V6'.ljust(16,b'\0'),b'HYP3D_MPI_V7'.ljust(16,b'\0'),b'HYP3D_MPI_V8'.ljust(16,b'\0'),b'HYP3D_MPI_V9'.ljust(16,b'\0'),b'HYP3D_MPI_V10'.ljust(16,b'\0'),b'HYP3D_MPI_V11'.ljust(16,b'\0')]:
+        inner=result['magic'] in [b'HYP3D_MPI_V7'.ljust(16,b'\0'),b'HYP3D_MPI_V8'.ljust(16,b'\0'),b'HYP3D_MPI_V9'.ljust(16,b'\0'),b'HYP3D_MPI_V10'.ljust(16,b'\0'),b'HYP3D_MPI_V11'.ljust(16,b'\0')]
         radial=inner or result['magic']==b'HYP3D_MPI_V6'.ljust(16,b'\0')
         if len(normal) != V5_NORMAL_CONFIG.size:
             raise ValueError('V5 checkpoint normal configuration truncated')
@@ -74,14 +75,18 @@ def read_checkpoint(path):
         n=result['n']
         result.update(header_bytes=120,evolved_overlap=3,nominal_cells=19*n**3)
         if n<10 or result['cells']!=12*n**3+7*(n+6)**3 or result['surface']!=31*6*n*n:raise ValueError('V9 dimensions disagree with topology')
-    if result['magic']==b'HYP3D_MPI_V10'.ljust(16,b'\0'):
-        if len(mesh)!=16 or struct.unpack('<4i',mesh)!=(3,2,3,3):raise ValueError('Invalid V10 spherical-overlap topology')
+    if result['magic'] in [b'HYP3D_MPI_V10'.ljust(16,b'\0'),b'HYP3D_MPI_V11'.ljust(16,b'\0')]:
+        continuous=bool(positive)
+        if len(mesh)!=16 or struct.unpack('<4i',mesh)!=((4,2,3,3) if continuous else (3,2,3,3)):raise ValueError('Invalid V10 spherical-overlap topology')
         if len(geometry)!=16 or struct.unpack('<2d',geometry)!=(.18,.16):raise ValueError('Invalid V10 spherical geometry')
         n=result['n']
-        result.update(header_bytes=136,evolved_overlap=3,nominal_cells=26*n**3,
+        result.update(header_bytes=152 if continuous else 136,evolved_overlap=3,nominal_cells=26*n**3,
                       mesh_topology='cartesian_2x2x2_shells3',cartesian_core_subdivisions=2,mesh_blocks=26,
                       shell_geometry='spherical_equiangular',core_half_width=.18,shell_inner_radius=.16,overlap_quadrature='radial_quintic_partition')
-        if n<12 or result['cells']!=12*n**3+8*(n+6)**3+6*(n+3)*(n+6)**2 or result['surface']!=31*6*n*n:raise ValueError('V10 dimensions disagree with topology')
+        if n<12 or result['cells']!=12*n**3+8*(n+(3 if continuous else 6))**3+6*(n+3)*(n+6)**2 or result['surface']!=31*6*n*n:raise ValueError('V10 dimensions disagree with topology')
+    if result['magic']==b'HYP3D_MPI_V11'.ljust(16,b'\0'):
+        if len(positive)!=16 or struct.unpack('<dii',positive)!=(1e-10,1,0):raise ValueError('Invalid V11 positive-variable configuration')
+        result.update(cartesian_seams='uniform_global_stencil',positive_variables='log_chi_log_lapse_rk_and_ko',physical_lapse_floor=1e-10)
     if result['n'] < 6 or result['n'] % 2 or result['cells'] <= 0 or result['surface'] <= 0:
         raise ValueError('Invalid checkpoint dimensions')
     if not math.isfinite(result['time']) or result['time'] < 0 or not math.isfinite(result['dt']) or result['dt'] <= 0:
@@ -181,8 +186,8 @@ def run_binary(args, rank, root, checked, argv):
 def parse_component(content, kind, code):
     if kind=='sampled_normal_device':
         return parse_sampled_normal_component(content,code)
-    if kind in ['inner_transition_device','core2_device','overlap_device','spherical_overlap_device']:
-        result=parse_donor_seven_component(content,code,expected_n=12 if kind in ['overlap_device','spherical_overlap_device'] else 6)
+    if kind in ['inner_transition_device','core2_device','overlap_device','spherical_overlap_device','continuous_positive_device']:
+        result=parse_donor_seven_component(content,code,expected_n=12 if kind in ['overlap_device','spherical_overlap_device','continuous_positive_device'] else 6)
         rows=[line for line in content.splitlines() if line.startswith('sampled_case=')]
         if len(rows)!=2 or any('interpatch_interpolation=logical_inner_transition' not in line for line in rows):
             raise ValueError('Missing inner-transition component configuration')
@@ -197,17 +202,22 @@ def parse_component(content, kind, code):
         if len(exchange)!=2:raise ValueError('Missing inner transition full exchange checks')
         result['inner_transition_exchange_checks']=exchange
         result['interpatch_interpolation']='logical_inner_transition'
-        if kind in ['overlap_device','spherical_overlap_device']:
+        if kind in ['overlap_device','spherical_overlap_device','continuous_positive_device']:
             for line in rows:
                 tokens=line.split()
                 if tokens.count('overlap=3')!=1 or tokens.count('n=12')!=1:
                     raise ValueError('Missing evolved-overlap component configuration')
             result.update(evolved_overlap=3)
-        if kind=='spherical_overlap_device':
+        if kind in ['spherical_overlap_device','continuous_positive_device']:
             for line in rows:
                 if line.split().count('shell_geometry=spherical_equiangular')!=1:raise ValueError('Missing spherical geometry marker')
             result.update(shell_geometry='spherical_equiangular',core_half_width=.18,shell_inner_radius=.16)
-        if kind in ['core2_device','spherical_overlap_device']:
+        if kind=='continuous_positive_device':
+            for line in rows:
+                for marker in ['positive_variables=log_chi_log_lapse_rk_and_ko','cartesian_seams=uniform_global_stencil','selective_exchange_partitions=12']:
+                    if line.split().count(marker)!=1:raise ValueError('Missing continuous positive component marker')
+            result.update(positive_variables='log_chi_log_lapse_rk_and_ko',cartesian_seams='uniform_global_stencil',selective_exchange_partitions=12)
+        if kind in ['core2_device','spherical_overlap_device','continuous_positive_device']:
             for line in rows:
                 tokens=line.split()
                 for marker in ['cartesian_core_subdivisions=2','mesh_blocks=26']:
@@ -459,7 +469,7 @@ def restart(args, rank, root, checked):
         raise ValueError('Evolution kind does not describe the checkpoint')
     for report in reports:
         scheme='none' if header['magic']=='HYP3D_MPI_V1' else 'final_stage_standard'
-        angular='cross_face_centered5' if header['magic'] in ['HYP3D_MPI_V3','HYP3D_MPI_V4','HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7','HYP3D_MPI_V8','HYP3D_MPI_V9','HYP3D_MPI_V10'] else 'face_local6'
+        angular='cross_face_centered5' if header['magic'] in ['HYP3D_MPI_V3','HYP3D_MPI_V4','HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7','HYP3D_MPI_V8','HYP3D_MPI_V9','HYP3D_MPI_V10','HYP3D_MPI_V11'] else 'face_local6'
         if (report.get('checkpoint_schema',header['magic'])!=header['magic']
                 or report.get('algebraic_projection','none')!=scheme
                 or report.get('scri_angular_stencil','face_local6')!=angular):
@@ -469,13 +479,13 @@ def restart(args, rank, root, checked):
             expected=header[header_key]
             # Legacy reports may predate these fields. V4 must state its exact
             # runtime configuration; a V3 or missing-config report cannot pass.
-            value=report.get(key) if header['magic'] in ['HYP3D_MPI_V4','HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7','HYP3D_MPI_V8','HYP3D_MPI_V9','HYP3D_MPI_V10'] else report.get(key,expected)
+            value=report.get(key) if header['magic'] in ['HYP3D_MPI_V4','HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7','HYP3D_MPI_V8','HYP3D_MPI_V9','HYP3D_MPI_V10','HYP3D_MPI_V11'] else report.get(key,expected)
             if type(value) not in [int,float] or not math.isfinite(value) or value!=expected:
                 raise ValueError('Evolution report/checkpoint dissipation configuration mismatch: '+key)
-        if header['magic'] in ['HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7','HYP3D_MPI_V8','HYP3D_MPI_V9','HYP3D_MPI_V10']:
+        if header['magic'] in ['HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7','HYP3D_MPI_V8','HYP3D_MPI_V9','HYP3D_MPI_V10','HYP3D_MPI_V11']:
             if report.get('checkpoint_schema')!=header['magic']:
                 raise ValueError('V5 evolution report must state its checkpoint schema')
-            for key in ['scri_normal_derivative','scri_normal_radial_nodes','scri_normal_bulk_derivative_order'] + (['scri_radial_closure','scri_radial_bulk_rows'] if header['magic'] in ['HYP3D_MPI_V6','HYP3D_MPI_V7','HYP3D_MPI_V8','HYP3D_MPI_V9','HYP3D_MPI_V10'] else []) + (['interpatch_interpolation'] if header['magic'] in ['HYP3D_MPI_V7','HYP3D_MPI_V8','HYP3D_MPI_V9','HYP3D_MPI_V10'] else []) + (['mesh_topology','cartesian_core_subdivisions','mesh_blocks'] if header['magic'] in ['HYP3D_MPI_V8','HYP3D_MPI_V10'] else []) + (['evolved_overlap','nominal_cells'] if header['magic'] in ['HYP3D_MPI_V9','HYP3D_MPI_V10'] else []) + (['shell_geometry','core_half_width','shell_inner_radius','overlap_quadrature'] if header['magic']=='HYP3D_MPI_V10' else []):
+            for key in ['scri_normal_derivative','scri_normal_radial_nodes','scri_normal_bulk_derivative_order'] + (['scri_radial_closure','scri_radial_bulk_rows'] if header['magic'] in ['HYP3D_MPI_V6','HYP3D_MPI_V7','HYP3D_MPI_V8','HYP3D_MPI_V9','HYP3D_MPI_V10','HYP3D_MPI_V11'] else []) + (['interpatch_interpolation'] if header['magic'] in ['HYP3D_MPI_V7','HYP3D_MPI_V8','HYP3D_MPI_V9','HYP3D_MPI_V10','HYP3D_MPI_V11'] else []) + (['mesh_topology','cartesian_core_subdivisions','mesh_blocks'] if header['magic'] in ['HYP3D_MPI_V8','HYP3D_MPI_V10','HYP3D_MPI_V11'] else []) + (['evolved_overlap','nominal_cells'] if header['magic'] in ['HYP3D_MPI_V9','HYP3D_MPI_V10','HYP3D_MPI_V11'] else []) + (['shell_geometry','core_half_width','shell_inner_radius','overlap_quadrature'] if header['magic'] in ['HYP3D_MPI_V10','HYP3D_MPI_V11'] else []) + (['cartesian_seams','positive_variables','physical_lapse_floor'] if header['magic']=='HYP3D_MPI_V11' else []):
                 if type(report.get(key)) is not type(header[key]) or report[key]!=header[key]:
                     raise ValueError('Evolution report/checkpoint normal configuration mismatch: '+key)
         for report_key,header_key in [('n','n'),('t','time'),('dt','dt'),('steps','steps')]:
@@ -603,7 +613,7 @@ def main():
     comp=sub.add_parser('component')
     comp.add_argument('--component',choices=['device','exchange','scri','algebraic','angular',
                                             'angular_dissipation','scri_dissipation_closure',
-                                            'sampled_normal_device','donor_seven_device','inner_transition_device','core2_device','overlap_device','spherical_overlap_device'],required=True)
+                                            'sampled_normal_device','donor_seven_device','inner_transition_device','core2_device','overlap_device','spherical_overlap_device','continuous_positive_device'],required=True)
     comp.add_argument('--test-binary',required=True)
     comp.add_argument('--cmake-cache',required=True)
     bench=sub.add_parser('benchmark')

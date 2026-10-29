@@ -34,6 +34,7 @@ class CompositeMesh {
   // coordinates; tensor components remain Cartesian. The core covers r<inner_radius.
   bool spherical_inner_boundary = false, equiangular = false;
   Real inner_radius = 0;
+  bool continuous_cartesian_core = false;
   Real AngularRatio(Real q) const {return equiangular?std::tan(std::acos(-1.)*q/4):q;}
 
 

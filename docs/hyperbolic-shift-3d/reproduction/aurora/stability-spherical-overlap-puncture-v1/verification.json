@@ -1,0 +1,801 @@
+{
+  "verification_passed": true,
+  "scientific_checks_passed": false,
+  "job_id": "8986048.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "scheduler_state": "F",
+  "scheduler_exit_status": 1,
+  "worker_status": "failed",
+  "report": {
+    "status": "failed",
+    "error": "device RHS failure at active cell 4095 reason 1",
+    "kind": "puncture",
+    "backend": "SYCL",
+    "mpi_size": 12,
+    "n": 16,
+    "cells": 189512,
+    "algebraic_projection": "final_stage_standard",
+    "checkpoint_schema": "HYP3D_MPI_V10",
+    "scri_angular_stencil": "cross_face_centered5",
+    "scri_dissipation_scheme": "degree7_weighted_negative_square",
+    "scri_dissipation_epsilon": 2,
+    "scri_dissipation_degree": 7,
+    "scri_dissipation_spectral_upper_bound": 23.840428055711882,
+    "scri_dissipation_cfl": 0.38144684889139013,
+    "scri_dissipation_cfl_max": 0.38144684889139013,
+    "scri_dissipation_max_neighbors": 79,
+    "scri_dissipation_max_incoming": 85,
+    "scri_dissipation_max_moment_error": 7.901665433074356e-16,
+    "scri_dissipation_max_coefficient_l1": 3.213389927495406,
+    "checkpoint_header_bytes": 136,
+    "scri_normal_derivative": "sampled_native_numerator7",
+    "scri_normal_radial_nodes": 7,
+    "scri_normal_bulk_derivative_order": 4,
+    "evolved_overlap": 3,
+    "nominal_cells": 106496,
+    "shell_geometry": "spherical_equiangular",
+    "core_half_width": 0.18,
+    "shell_inner_radius": 0.16,
+    "overlap_quadrature": "radial_quintic_partition",
+    "interpatch_interpolation": "logical_inner_transition",
+    "mesh_topology": "cartesian_2x2x2_shells3",
+    "cartesian_core_subdivisions": 2,
+    "mesh_blocks": 26,
+    "scri_radial_closure": "donor_seven_last3",
+    "scri_radial_bulk_rows": 3,
+    "minimum_owned_cells": 15792,
+    "maximum_owned_cells": 15793,
+    "t": 0.09950000000000007,
+    "start_time": 0,
+    "target_time": 1,
+    "t_over_M": 0.2985000000000002,
+    "dt": 0.0005,
+    "steps": 199,
+    "segment_steps": 199,
+    "seconds": 149.521518979,
+    "checkpoint_written": true,
+    "checkpoint_admitted": false,
+    "diagnostic_time": 0.05000000000000004,
+    "diagnostics_current": false,
+    "constraint_measure": "normalized compactified Cartesian coordinate volume",
+    "exterior_method": "coordinate sphere at mean fast-flow radius for spherical-data comparison",
+    "initial_rhs": 51.80692290843453,
+    "last_rhs": 1019.8323422844138,
+    "min_chi": 6.978952002835052e-05,
+    "min_lapse": 0.009484395192963568,
+    "max_determinant_residual": 1.1102230246251565e-15,
+    "max_tracefree_residual": 3.552713678800501e-15,
+    "max_state_deviation": 5.619160203086105,
+    "max_null_surface": 1.1102230249689897e-15,
+    "max_null_ghost": 1.5543121764715617e-15,
+    "max_null_before_ghost_closure": 3.0071523565124286e-10,
+    "max_pole": 0.007762216405582679,
+    "max_clock": 0.0023167097506217853,
+    "max_cfl": 0.3111635490102286,
+    "min_speed_gap": 0.827605310045517,
+    "H_L2": 0.12486743877821062,
+    "M_L2": 0.09195561494517661,
+    "M_physical_L2": 0.024073596810920136,
+    "H_exterior_L2": 0.045446242256074444,
+    "M_exterior_L2": 0.09196672588933374,
+    "Mr_L2": 0.09403763614978569,
+    "Mr_exterior_L2": 0.09346377859072943,
+    "Theta_exterior_L2": 0.0041598049265879865,
+    "Zr_L2": 0.021215793444846892,
+    "Zr_exterior_L2": 0.02121838886712637,
+    "exterior_coordinate_cutoff": 0.06376068087557706,
+    "horizon_found": true,
+    "horizon_radius": 0.06376068087557706,
+    "horizon_areal_radius": 0.6666680757665724,
+    "horizon_mass": 0.3333340378832862,
+    "horizon_expansion_rms": 8.04900180159735e-05,
+    "horizon_irreducible_mass": 0.3333340378832862,
+    "horizon_trial_radius": 0.06376068087557706,
+    "horizon_trial_expansion_rms": 8.04900180159735e-05,
+    "horizon_complete_surface": true,
+    "horizon_iterations": 91,
+    "horizon_seed_radius": 0.07,
+    "horizon_seed_loaded": false,
+    "horizon_expansion_tolerance": 0.001,
+    "horizon_lmax": 12,
+    "horizon_ntheta": 24,
+    "horizon_nphi": 48,
+    "rhs_seconds": 23.739558519000006,
+    "exchange_seconds": 65.54425618900011,
+    "closure_seconds": 39.043112507000025,
+    "diagnostic_seconds": 4.708591779
+  },
+  "checkpoint": {
+    "magic": "HYP3D_MPI_V10",
+    "n": 16,
+    "nf": 31,
+    "kind": 2,
+    "admitted": false,
+    "cells": 189512,
+    "nominal_cells": 106496,
+    "surface_size": 47616,
+    "steps": 199,
+    "time": 0.09950000000000007,
+    "dt": 0.0005,
+    "header_bytes": 136,
+    "scri_dissipation_epsilon": 2.0,
+    "scri_dissipation_degree": 7,
+    "base_except_magic_sha256": "7864013d9a0f2685fd48c6382c38861c66902e3e4c5fa3386f86b10217463ec6",
+    "arrays": [
+      {
+        "name": "volume_state",
+        "doubles": 5874872,
+        "sha256": "ca23b209d32813bd4e60e78752d940f1fe1c2109d5127cec4cc7436c994d8a2c"
+      },
+      {
+        "name": "volume_compensation",
+        "doubles": 5874872,
+        "sha256": "e72c956ee3326bf016663905ca392b0551b0b6f53a5b18f99d87428ef1af7b1a"
+      },
+      {
+        "name": "scri_state",
+        "doubles": 47616,
+        "sha256": "8757f0fbd888329a126a197e72f4f5e76327bffdbaa3568474ad5f89983bf365"
+      },
+      {
+        "name": "scri_compensation",
+        "doubles": 47616,
+        "sha256": "f1a6044e6d98ca99ba9ed7118276eb03850c3a69a75b6120f0105d09f5a4b17d"
+      }
+    ],
+    "bytes": 94759944,
+    "sha256": "e67d31b145f2c1fe71b72738a04070afc5718ebeca9781e94479ab6362d55d26",
+    "scri_normal_derivative": "sampled_native_numerator7",
+    "scri_normal_radial_nodes": 7,
+    "scri_normal_bulk_derivative_order": 4,
+    "scri_radial_closure": "donor_seven_last3",
+    "scri_radial_bulk_rows": 3,
+    "interpatch_interpolation": "logical_inner_transition",
+    "evolved_overlap": 3,
+    "mesh_topology": "cartesian_2x2x2_shells3",
+    "cartesian_core_subdivisions": 2,
+    "mesh_blocks": 26,
+    "shell_geometry": "spherical_equiangular",
+    "core_half_width": 0.18,
+    "shell_inner_radius": 0.16,
+    "overlap_quadrature": "radial_quintic_partition"
+  },
+  "checks": [
+    {
+      "check": {
+        "path": [
+          "status"
+        ],
+        "op": "eq",
+        "value": "completed"
+      },
+      "observed": "failed",
+      "passed": false
+    },
+    {
+      "check": {
+        "path": [
+          "backend"
+        ],
+        "op": "eq",
+        "value": "SYCL"
+      },
+      "observed": "SYCL",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "mpi_size"
+        ],
+        "op": "eq",
+        "value": 12
+      },
+      "observed": 12,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "n"
+        ],
+        "op": "eq",
+        "value": 16
+      },
+      "observed": 16,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "min_lapse"
+        ],
+        "op": "ge",
+        "value": 1e-12
+      },
+      "observed": 0.009484395192963568,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "min_chi"
+        ],
+        "op": "ge",
+        "value": 1e-12
+      },
+      "observed": 6.978952002835052e-05,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "diagnostics_current"
+        ],
+        "op": "eq",
+        "value": true
+      },
+      "observed": false,
+      "passed": false
+    },
+    {
+      "check": {
+        "path": [
+          "checkpoint_admitted"
+        ],
+        "op": "eq",
+        "value": true
+      },
+      "observed": false,
+      "passed": false
+    },
+    {
+      "check": {
+        "path": [
+          "max_null_surface"
+        ],
+        "op": "le",
+        "value": 1e-12
+      },
+      "observed": 1.1102230249689897e-15,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "max_null_ghost"
+        ],
+        "op": "le",
+        "value": 1e-12
+      },
+      "observed": 1.5543121764715617e-15,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "max_cfl"
+        ],
+        "op": "le",
+        "value": 0.4
+      },
+      "observed": 0.3111635490102286,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "H_L2"
+        ],
+        "op": "finite"
+      },
+      "observed": 0.12486743877821062,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "M_L2"
+        ],
+        "op": "finite"
+      },
+      "observed": 0.09195561494517661,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "H_exterior_L2"
+        ],
+        "op": "finite"
+      },
+      "observed": 0.045446242256074444,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "M_exterior_L2"
+        ],
+        "op": "finite"
+      },
+      "observed": 0.09196672588933374,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "H_exterior_L2"
+        ],
+        "op": "le",
+        "value": 1
+      },
+      "observed": 0.045446242256074444,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "M_exterior_L2"
+        ],
+        "op": "le",
+        "value": 1
+      },
+      "observed": 0.09196672588933374,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "max_pole"
+        ],
+        "op": "le",
+        "value": 0.1
+      },
+      "observed": 0.007762216405582679,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "horizon_found"
+        ],
+        "op": "eq",
+        "value": true
+      },
+      "observed": true,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "horizon_expansion_rms"
+        ],
+        "op": "le",
+        "value": 0.001
+      },
+      "observed": 8.04900180159735e-05,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "horizon_mass"
+        ],
+        "op": "ge",
+        "value": 0.33
+      },
+      "observed": 0.3333340378832862,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "horizon_mass"
+        ],
+        "op": "le",
+        "value": 0.33666666666666667
+      },
+      "observed": 0.3333340378832862,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "algebraic_projection"
+        ],
+        "op": "eq",
+        "value": "final_stage_standard"
+      },
+      "observed": "final_stage_standard",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "checkpoint_schema"
+        ],
+        "op": "eq",
+        "value": "HYP3D_MPI_V10"
+      },
+      "observed": "HYP3D_MPI_V10",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_angular_stencil"
+        ],
+        "op": "eq",
+        "value": "cross_face_centered5"
+      },
+      "observed": "cross_face_centered5",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_dissipation_epsilon"
+        ],
+        "op": "eq",
+        "value": 2.0
+      },
+      "observed": 2,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_dissipation_degree"
+        ],
+        "op": "eq",
+        "value": 7
+      },
+      "observed": 7,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "checkpoint_header_bytes"
+        ],
+        "op": "eq",
+        "value": 136
+      },
+      "observed": 136,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_normal_derivative"
+        ],
+        "op": "eq",
+        "value": "sampled_native_numerator7"
+      },
+      "observed": "sampled_native_numerator7",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_normal_radial_nodes"
+        ],
+        "op": "eq",
+        "value": 7
+      },
+      "observed": 7,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_normal_bulk_derivative_order"
+        ],
+        "op": "eq",
+        "value": 4
+      },
+      "observed": 4,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_radial_closure"
+        ],
+        "op": "eq",
+        "value": "donor_seven_last3"
+      },
+      "observed": "donor_seven_last3",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_radial_bulk_rows"
+        ],
+        "op": "eq",
+        "value": 3
+      },
+      "observed": 3,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "t"
+        ],
+        "op": "eq",
+        "value": 1.0
+      },
+      "observed": 0.09950000000000007,
+      "passed": false
+    },
+    {
+      "check": {
+        "path": [
+          "dt"
+        ],
+        "op": "eq",
+        "value": 0.0005
+      },
+      "observed": 0.0005,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "steps"
+        ],
+        "op": "eq",
+        "value": 2001
+      },
+      "observed": 199,
+      "passed": false
+    },
+    {
+      "check": {
+        "path": [
+          "segment_steps"
+        ],
+        "op": "eq",
+        "value": 2001
+      },
+      "observed": 199,
+      "passed": false
+    },
+    {
+      "check": {
+        "path": [
+          "start_time"
+        ],
+        "op": "eq",
+        "value": 0.0
+      },
+      "observed": 0,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "horizon_lmax"
+        ],
+        "op": "eq",
+        "value": 12
+      },
+      "observed": 12,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "horizon_ntheta"
+        ],
+        "op": "eq",
+        "value": 24
+      },
+      "observed": 24,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "horizon_nphi"
+        ],
+        "op": "eq",
+        "value": 48
+      },
+      "observed": 48,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "horizon_complete_surface"
+        ],
+        "op": "eq",
+        "value": true
+      },
+      "observed": true,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "max_determinant_residual"
+        ],
+        "op": "le",
+        "value": 1e-12
+      },
+      "observed": 1.1102230246251565e-15,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "max_tracefree_residual"
+        ],
+        "op": "le",
+        "value": 1e-12
+      },
+      "observed": 3.552713678800501e-15,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_dissipation_cfl_max"
+        ],
+        "op": "le",
+        "value": 2.7
+      },
+      "observed": 0.38144684889139013,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "interpatch_interpolation"
+        ],
+        "op": "eq",
+        "value": "logical_inner_transition"
+      },
+      "observed": "logical_inner_transition",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "evolved_overlap"
+        ],
+        "op": "eq",
+        "value": 3
+      },
+      "observed": 3,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "nominal_cells"
+        ],
+        "op": "eq",
+        "value": 106496
+      },
+      "observed": 106496,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "cells"
+        ],
+        "op": "eq",
+        "value": 189512
+      },
+      "observed": 189512,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "shell_geometry"
+        ],
+        "op": "eq",
+        "value": "spherical_equiangular"
+      },
+      "observed": "spherical_equiangular",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "core_half_width"
+        ],
+        "op": "eq",
+        "value": 0.18
+      },
+      "observed": 0.18,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "shell_inner_radius"
+        ],
+        "op": "eq",
+        "value": 0.16
+      },
+      "observed": 0.16,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "overlap_quadrature"
+        ],
+        "op": "eq",
+        "value": "radial_quintic_partition"
+      },
+      "observed": "radial_quintic_partition",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "mesh_blocks"
+        ],
+        "op": "eq",
+        "value": 26
+      },
+      "observed": 26,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "cartesian_core_subdivisions"
+        ],
+        "op": "eq",
+        "value": 2
+      },
+      "observed": 2,
+      "passed": true
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "campaigns/stability-spherical-overlap-puncture-v1/output/puncture.report.json",
+      "sha256": "6f2ae652a5a9c83d9b9916479a097cf8170e721de3f3ccef9a98c313638fb307",
+      "bytes": 3421
+    },
+    {
+      "path": "campaigns/stability-spherical-overlap-puncture-v1/output/puncture.history.csv",
+      "sha256": "b580378fa0075ddf3ca3ff5c49c15374864d9fc022f412ac4c2ec36a80c63b85",
+      "bytes": 1770
+    },
+    {
+      "path": "campaigns/stability-spherical-overlap-puncture-v1/output/puncture.checkpoint",
+      "sha256": "e67d31b145f2c1fe71b72738a04070afc5718ebeca9781e94479ab6362d55d26",
+      "bytes": 94759944
+    },
+    {
+      "path": "campaigns/stability-spherical-overlap-puncture-v1/output/puncture.checkpoint.horizon-seed.txt",
+      "sha256": "53218631216b400e61355e2ba790caa72b453913afa81d7f7fb32543440452bd",
+      "bytes": 90
+    },
+    {
+      "path": "campaigns/stability-spherical-overlap-puncture-v1/output/puncture.fastflow.horizon_summary_0.txt",
+      "sha256": "58f6ef022bd51213d9fb1f19d58d8a6bcc059c45ae9ff557a1c2680bfc38773d",
+      "bytes": 549
+    },
+    {
+      "path": "campaigns/stability-spherical-overlap-puncture-v1/output/puncture.fastflow.horizon_shape_0.txt",
+      "sha256": "c2517e616d5587b9626120979ff72bcc65070a3f3f183c3bd68f99a0e41bb80e",
+      "bytes": 4618
+    }
+  ],
+  "source_manifest_sha256": "6b04f174c0173eba6fd8d5ffdedcc93257a24918adcdfcf91c40e203ba81ca88",
+  "binary_sha256": "7b7764f0cce4f23221c93ab8b6b188cd455fed74c94252e7e152a5c1f95f9f2a",
+  "plan_sha256": "303e93cd821bafe79f0ff2aad89f29a042718df15d8fccd87f46f76816784b24",
+  "script_sha256": "0f70a66e5ea1ca4e803266c072b6b411c9abe8e18eab02ecacac738f9b540b12"
+}

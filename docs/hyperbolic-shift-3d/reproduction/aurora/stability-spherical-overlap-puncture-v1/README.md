@@ -1,4 +1,4 @@
-# V10 puncture stability pilot — submitted, result pending
+# V10 puncture stability pilot — failed: negative chi near the puncture
 
 Aurora job 8986048 was submitted after the independently verified V10 preflight.
 One debug node, twelve MPI ranks/GPU tiles, CompactBinaryMerger; immutable
@@ -21,3 +21,13 @@ The matching Minkowski t=1 plan is prepared locally at
 output/hyperbolic-core-shell/aurora-staging/stability-spherical-overlap-minkowski-v1-plan.json
 (SHA256 2b78a72613f549f7891c40b54009b0f46e10d68a717c72420116b23b667b9ffe)
 and remotely at the campaign root, but is not submitted. Do not overlap allocations.
+
+## Collected result
+
+Terminal F, exit 1, 199 accepted steps, coordinate t=0.0995=0.2985M.
+The native error is invalid input at active cell 4095: eight chi values became
+negative, while lapse remained positive and all state values were finite.
+The last accepted checkpoint is unadmitted and cannot be resumed. Independent
+verification passed the evidence audit and reports scientific_checks_passed=false.
+All artifacts were archived and the allocation lock released. See
+../../continuous-positive-v1 for the diagnosis and separately versioned candidate.

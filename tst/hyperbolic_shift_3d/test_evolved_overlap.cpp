@@ -3,16 +3,47 @@
 #include <fstream>
 #include "mesh/cubed_sphere/composite_difference.hpp"
 #include "fixed_composite_mesh.hpp"
+#include "z4c/hyperboloidal/positive_variables.hpp"
 #include "z4c/hyperboloidal/hyperbolic_shift.hpp"
 int main(int argc,char**argv){
  try{
   const int n=argc>1?std::stoi(argv[1]):12,o=argc>2?std::stoi(argv[2]):3;
-#ifdef HYPERBOLIC_TEST_SPHERICAL_OVERLAP
+#if defined(HYPERBOLIC_TEST_CONTINUOUS_POSITIVE)
+  auto mesh=hyperbolic_reproduction::ContinuousCoreMesh(n);
+#elif defined(HYPERBOLIC_TEST_SPHERICAL_OVERLAP)
   auto mesh=hyperbolic_reproduction::SphericalOverlapMesh(n);
 #else
   cubed_sphere::CompositeMesh mesh(.125,{.45,.75,1},1,n,3);mesh.evolved_overlap=o;
 #endif
   cubed_sphere::CompositeDifference g(mesh,4,true);g.SetInnerTransitionLogical(true);
+#ifdef HYPERBOLIC_TEST_CONTINUOUS_POSITIVE
+  bool floored=false;const Real A=.6;
+  auto alpha=z4c::hyperboloidal::MaterializePositive(-1000,A,18,1e-10,floored)+A;
+  if(!floored||std::abs(alpha-4e-11)>2e-16)throw std::runtime_error("physical lapse floor conversion failed");
+  auto chi=z4c::hyperboloidal::MaterializePositive(-30,A,0,1e-10,floored);
+  if(floored||chi!=std::exp(-30.))throw std::runtime_error("chi was floored");
+  auto invalid=z4c::hyperboloidal::MaterializePositive(std::numeric_limits<Real>::quiet_NaN(),A,18,1e-10,floored);
+  if(floored||std::isfinite(invalid))throw std::runtime_error("floor concealed nonfinite stage");
+  if(g.cartesian_points.size()!=size_t((2*n+6)*(2*n+6)*(2*n+6)))throw std::runtime_error("wrong unique core count");
+  // All eight cells adjacent to the intersection of the internal block seams
+  // must have the same complete 15-row negative-square KO stencil. V10 did not.
+  for(int k=n-1;k<=n;++k)for(int j=n-1;j<=n;++j)for(int i=n-1;i<=n;++i){
+    int p=g.CartesianPoint(i,j,k),terms=0;
+    for(int a=0;a<3;++a)for(int shift=-4;shift<=0;++shift){
+      int start=g.ShiftActive(p,a,shift);
+      if(start>=0&&g.ShiftActive(start,a,4)>=0)++terms;
+    }
+    if(terms!=15)throw std::runtime_error("Cartesian seam truncates KO");
+    const auto&cell=g.cells[p];
+    for(int a=0;a<3;++a)for(int shift=-3;shift<=3;++shift){
+      auto q=cell;if(a==0)q.i+=shift;else if(a==1)q.j+=shift;else q.k+=shift;
+      const auto&x=g.geometry[g.ShiftActive(p,a,shift)].x;
+      auto row=g.Interpolate(x,6);
+      if(row.size()!=1||row[0].point!=g.active[g.ShiftActive(p,a,shift)]||row[0].weight!=1)
+        throw std::runtime_error("aligned Cartesian seam is not an exact copy");
+    }
+  }
+#endif
   double inverse_error=0,jacobian_error=0,hessian_error=0,total_volume=0,max_core_frequency=0,max_shell_frequency=0;
   for(size_t p=0;p<g.active.size();++p){
     const auto&geo=g.geometry[p];const auto&cell=g.cells[p];const int m=cell.block;
