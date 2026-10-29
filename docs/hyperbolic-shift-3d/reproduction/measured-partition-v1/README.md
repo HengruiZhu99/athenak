@@ -37,3 +37,9 @@ no load-balancing speedup is claimed here.
 Validation also includes four planner tests, the C++ descriptor-reader negative
 controls, and all 103 offline Aurora controller/worker tests. GPU timing of
 this balanced target has not yet been performed.
+
+The next GPU candidate is frozen at `85b8ba91a45dca07496d941e765ea6929006c352`
+(source-v22). `inputs/partition-n16-v21-r12.txt` is generated from the verified
+sparse run in job 8987177; its sidecar records the cost estimate and source
+report digest. The profile is also retained alongside the cuts. This input is
+prepared for the twelve-tile comparison, not yet validated as a speedup.

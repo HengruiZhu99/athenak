@@ -55,7 +55,7 @@ rollback, and full failed-stage capture. It is not a stability experiment.
 Local evidence is in `local/`. These are short correctness tests, not evidence
 of a GPU speedup, long-time trumpet accuracy, or convergence. The previous 3M
 run's rejected late horizon samples and unresolved constraint accuracy remain
-unchanged. GPU comparison and performance conclusions are pending.
+unchanged. The same-node GPU comparison is now independently verified below.
 
 ## Report fields
 
@@ -73,3 +73,32 @@ unchanged. GPU comparison and performance conclusions are pending.
 MPI timings include waiting for other ranks. Neither these timings nor startup
 costs alone identify transfer bandwidth or load imbalance. The requested goal
 of RHS-dominated execution remains open.
+
+## Verified Aurora comparison
+
+Job 8987177 passed ten cases and all 409 independently replayed checks. The
+100-step n16 puncture run decreased from **74.504 s to 45.435 s** including
+startup, with **identical full checkpoints**. After the initial diagnostic,
+seconds/step decreased from **0.63006 to 0.32860** (1.92x speedup; includes the
+final diagnostic). This is one same-node pair against the frozen uncached V11
+executable; both sparse exchange and boundary reuse are enabled in the candidate.
+It is not a replicated statistical comparison or a fast-only isolation test.
+
+Logical requested remote values decreased by **53.66%**. On the respective
+longest-accounted ranks, recorded communication/waiting fell from 27.56 s to
+1.44 s while bulk RHS stayed near 12.0 s. These communication timers include
+waiting but exclude some standalone synchronization calls. Sparse-plan setup
+was performed once per rank; its measured time includes waiting for other ranks
+to finish earlier startup phases. No per-stage stencil reconstruction occurs.
+
+Bulk RHS accounts for 26.5% of native wall time on the longest-accounted rank,
+and its slowest/fastest rank ratio remains 2.31. Measured fixed ownership is the
+next candidate; boundary work and synchronization need finer attribution before
+claiming that RHS dominates. Remaining scientific limitations are unchanged.
+
+![Sparse exchange comparison](gpu-performance.png)
+
+The raw small evidence, immutable build receipts, reviewed plan, and independent
+verifier are under `../aurora/preflight-sparse-stage-v1/`. Whole checkpoints are
+archived locally with verified checksums; redundant remote copies are purged
+only after verification. The archive hash is recorded in the cleanup receipt.

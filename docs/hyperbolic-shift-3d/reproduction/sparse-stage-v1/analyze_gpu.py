@@ -54,7 +54,7 @@ b.set(xlabel='MPI rank',ylabel='Bulk RHS seconds',title='Remaining compute imbal
 c.bar(range(ranks),transfer['receive_points_by_rank'],color='#0072B2',label='Sparse donors')
 remote=[cells-(cells*(r+1)//ranks-cells*r//ranks) for r in range(ranks)]
 c.plot(range(ranks),remote,'--',color='#777777',label='Full gather')
-c.set(xlabel='MPI rank',ylabel='Remote points per stage',title='Logical data requested');c.legend()
+c.set(xlabel='MPI rank',ylabel='Remote points per stage',title='Logical data requested');c.legend(loc='upper right',bbox_to_anchor=(1,.87))
 a.set(xlabel='Seconds, longest accounted rank',title='Exclusive phase costs');a.invert_yaxis()
 a.legend(fontsize=8,loc='upper center',bbox_to_anchor=(.5,-.2),ncol=2)
 fig.suptitle('100-step puncture: same node, 12 GPU tiles, identical checkpoints')
