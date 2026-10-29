@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "controls": "contiguous fit selection, four-point minimum, missing metric/rate, changed admission rejected",
+  "full_raw_artifacts_verified": 5,
+  "portable_source": "analysis/raw-v4",
+  "portable_replay": [
+    {
+      "artifact": "summary.csv",
+      "bitwise_identical": true,
+      "sha256": "7579e74dbda73c62d41f4a5410be3026725c70cdde7cfae3f3f42828a5a1d623"
+    },
+    {
+      "artifact": "recorded-diagnostics.csv",
+      "bitwise_identical": true,
+      "sha256": "954bf131b0b7d8e9629cdd9de04b75f7ab0a03b26a15a4a6fbc2e81cc93aa5a3"
+    },
+    {
+      "artifact": "comparison.png",
+      "bitwise_identical": true,
+      "sha256": "631e6d26140b1660977b1e7f4b2fd0ed68d329b084ca0730809ebf9a5be4e3b9"
+    }
+  ],
+  "scope": "Scientific outputs reproduce from small retained records; full raw payload hashes were separately verified before packaging."
+}

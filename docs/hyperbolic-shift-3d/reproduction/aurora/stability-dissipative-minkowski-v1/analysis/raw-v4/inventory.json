@@ -1,0 +1,121 @@
+{
+  "retained_originals": [
+    {
+      "path": "plan.json",
+      "sha256": "daf10ec4f22cfd961c27582895fb9d1e5cfb205f7d3f71458c6882185f8207f2",
+      "bytes": 6377
+    },
+    {
+      "path": "binding.json",
+      "sha256": "0902883bd4bd3d36c3145c9bf23f4215c981235098c17b95e32c1948e2f861cd",
+      "bytes": 1474
+    },
+    {
+      "path": "worker-status.json",
+      "sha256": "f1855b5f851b0c41371503e335e0088a6ce0c5b0605e22a7c7e1e3836fb2b83f",
+      "bytes": 12781
+    },
+    {
+      "path": "run_debug.pbs",
+      "sha256": "dbac64051d51efaed5874bf4cb8f99bbcbc92f16924b9adae0b496087f4352ee",
+      "bytes": 804
+    },
+    {
+      "path": "allocation-released.json",
+      "sha256": "66cd24968838b8542561504e9b94bf36cf3c1926d3a73fcedc3d1516d7b44396",
+      "bytes": 108
+    },
+    {
+      "path": "output/minkowski.report.json",
+      "sha256": "6199a589aa0a38b97cf8b23aeed04e3661528631721f58e4b52739d4f322c546",
+      "bytes": 2733
+    },
+    {
+      "path": "output/minkowski.history.csv",
+      "sha256": "b5c0b7d7d06fc1de9a34ce2d9b2a70fa0ff127fa816882948f0e23c3ee525240",
+      "bytes": 6626
+    },
+    {
+      "path": "output/minkowski.log",
+      "sha256": "ba37b678f4ac2d862d23f175218727a3f84faf4995f01045efc5a062299edab1",
+      "bytes": 958
+    },
+    {
+      "path": "output/affinity.log",
+      "sha256": "79ea2d31077fffc1c4f6d5b6435515ca272e0d278f1e042b63c412dc73607555",
+      "bytes": 1106
+    }
+  ],
+  "full_artifact_verification": [
+    {
+      "remote_path": "campaigns/stability-dissipative-minkowski-v1/output/minkowski.report.json",
+      "sha256": "6199a589aa0a38b97cf8b23aeed04e3661528631721f58e4b52739d4f322c546",
+      "bytes": 2733,
+      "bytes_verified": true,
+      "local": {
+        "path": "output/hyperbolic-core-shell/aurora/stability-dissipative-minkowski-v1/output/minkowski.report.json",
+        "sha256": "6199a589aa0a38b97cf8b23aeed04e3661528631721f58e4b52739d4f322c546",
+        "bytes": 2733
+      }
+    },
+    {
+      "remote_path": "campaigns/stability-dissipative-minkowski-v1/output/minkowski.history.csv",
+      "sha256": "b5c0b7d7d06fc1de9a34ce2d9b2a70fa0ff127fa816882948f0e23c3ee525240",
+      "bytes": 6626,
+      "bytes_verified": true,
+      "local": {
+        "path": "output/hyperbolic-core-shell/aurora/stability-dissipative-minkowski-v1/output/minkowski.history.csv",
+        "sha256": "b5c0b7d7d06fc1de9a34ce2d9b2a70fa0ff127fa816882948f0e23c3ee525240",
+        "bytes": 6626
+      }
+    },
+    {
+      "remote_path": "campaigns/stability-dissipative-minkowski-v1/output/minkowski.checkpoint",
+      "sha256": "61353557c22096bbf02b55eac278a1f92751cd961944bc6eca94e7a390f6a7cb",
+      "bytes": 39362648,
+      "bytes_verified": true,
+      "local": {
+        "path": "output/hyperbolic-core-shell/aurora/stability-dissipative-minkowski-v1/output/minkowski.checkpoint",
+        "sha256": "61353557c22096bbf02b55eac278a1f92751cd961944bc6eca94e7a390f6a7cb",
+        "bytes": 39362648
+      }
+    },
+    {
+      "remote_path": "campaigns/stability-dissipative-minkowski-v1/output/minkowski.failed-stage.bin",
+      "sha256": "f5524b0742f403841cbbe280c62efe0f6fc96b2fcc7a5166d55e54d098b7535e",
+      "bytes": 19681280,
+      "bytes_verified": true,
+      "local": {
+        "path": "output/hyperbolic-core-shell/aurora/stability-dissipative-minkowski-v1/output/minkowski.failed-stage.bin",
+        "sha256": "f5524b0742f403841cbbe280c62efe0f6fc96b2fcc7a5166d55e54d098b7535e",
+        "bytes": 19681280
+      }
+    },
+    {
+      "remote_path": "campaigns/stability-dissipative-minkowski-v1/output/minkowski.log",
+      "sha256": "ba37b678f4ac2d862d23f175218727a3f84faf4995f01045efc5a062299edab1",
+      "bytes": 958,
+      "bytes_verified": true,
+      "local": {
+        "path": "output/hyperbolic-core-shell/aurora/stability-dissipative-minkowski-v1/output/minkowski.log",
+        "sha256": "ba37b678f4ac2d862d23f175218727a3f84faf4995f01045efc5a062299edab1",
+        "bytes": 958
+      }
+    }
+  ],
+  "analysis": {
+    "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-dissipative-minkowski-v1/analysis/final-v1/comparison.json",
+    "sha256": "25b83ba65bbcde3f9e64afff2b57d51208a4c83569cb9097ea561b70713d9285",
+    "bytes": 75467
+  },
+  "packaging_source": {
+    "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-dissipative-minkowski-v1/analysis/package_evidence.py",
+    "sha256": "49e7df16a63d2928f7c095c41bf08b4ab4d4b88cee12acf48fd2e048eb0d65bc",
+    "bytes": 4543
+  },
+  "omitted": [
+    "minkowski.checkpoint",
+    "minkowski.failed-stage.bin",
+    "raw scheduler records"
+  ]
+}
