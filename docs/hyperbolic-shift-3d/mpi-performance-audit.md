@@ -38,13 +38,14 @@ The frozen inputs to this audit are:
   and [history](reproduction/aurora/stability-v1/output/minkowski.history.csv),
   with report SHA-256
   `590230abbb4e597e6bba8355a42dcb318c76a7217a2b916b8f2edead75a7b090`.
-- n24 local `output/hyperbolic-core-shell/aurora/resolution-control-v2/output/minkowski-n24.report.json`
-  and adjacent `.history.csv`; report SHA-256
+- n24 [report](reproduction/aurora/resolution-control-v2/output/minkowski-n24.report.json)
+  and [history](reproduction/aurora/resolution-control-v2/output/minkowski-n24.history.csv); report SHA-256
   `c1570c4fdca35e86158642fe361bb0383daec315c178db2d01599338125e0ebd`,
   history SHA-256
   `a567fd8d3f389afc4a414b738b53fdc22198eec665ff67435b406dfe9c025182`.
-  This completed case was read while the follow-up campaign remained
-  active; its terminal evidence package is pending.
+  This completed case was first read while the follow-up campaign remained
+  active; its [terminal evidence package](reproduction/aurora/resolution-control-v2/README.md)
+  is now retained and verified.
 - n32 [report](reproduction/aurora/resolution-control-v1/output/minkowski-n32.report.json)
   and [history](reproduction/aurora/resolution-control-v1/output/minkowski-n32.history.csv),
   with report SHA-256
