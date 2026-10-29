@@ -1,0 +1,35 @@
+{
+  "passed": true,
+  "scope": "Read-only coordinate-volume native diagnostic parity; not evolution accuracy",
+  "rows": [
+    {
+      "field": "H_L2",
+      "reanalyzed": 0.04794012017650396,
+      "native_sycl": 0.04794012017650393,
+      "absolute_error": 2.7755575615628914e-17
+    },
+    {
+      "field": "M_L2",
+      "reanalyzed": 0.05767082469458413,
+      "native_sycl": 0.05767082469458427,
+      "absolute_error": 1.3877787807814457e-16
+    },
+    {
+      "field": "H_exterior_L2",
+      "reanalyzed": 0.024830170348307947,
+      "native_sycl": 0.02483017034830787,
+      "absolute_error": 7.632783294297951e-17
+    },
+    {
+      "field": "M_exterior_L2",
+      "reanalyzed": 0.05767817169886768,
+      "native_sycl": 0.05767817169886782,
+      "absolute_error": 1.3877787807814457e-16
+    }
+  ],
+  "bulk_diagnostic_operator": "donor_seven_last3",
+  "ray_diagnostic_operator": "interpolated_jets",
+  "source_checkpoint_sha256": "94811571a9828403fdb184fcd4dd409bcdb28d8ba8f2b19ffad6888076810dc5",
+  "export_manifest_sha256": "2c7568ab957fa8a7c3d1108ad7abca51a83d784045ebdd7df8097d3450bf261c",
+  "script_sha256": "6226b002760a85934250379c3a572d6d1f413381834b5f8b53d01829615746b4"
+}

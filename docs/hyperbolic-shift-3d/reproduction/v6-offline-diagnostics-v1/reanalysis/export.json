@@ -1,0 +1,140 @@
+{
+  "schema": 1,
+  "status": "completed",
+  "checkpoint": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/aurora/preflight-donor-seven-v1/output/puncture-short.checkpoint",
+  "checkpoint_sha256": "94811571a9828403fdb184fcd4dd409bcdb28d8ba8f2b19ffad6888076810dc5",
+  "source_report_sha256": "beb89e964073d6579bbdc7d644ce4d6319e789e45b8b8d7beb4e73dcaeabe02e",
+  "header_bytes": 104,
+  "header": {
+    "magic": "HYP3D_MPI_V6",
+    "n": 16,
+    "nf": 31,
+    "kind": 2,
+    "admitted": 1,
+    "cells": 77824,
+    "surface": 47616,
+    "steps": 4,
+    "t": 0.002,
+    "dt": 0.0005,
+    "header_bytes": 104,
+    "scri_dissipation_epsilon": 2.0,
+    "scri_dissipation_degree": 7,
+    "scri_normal_derivative": "sampled_native_numerator7",
+    "scri_normal_radial_nodes": 7,
+    "scri_normal_bulk_derivative_order": 4,
+    "scri_radial_closure": "donor_seven_last3",
+    "scri_radial_bulk_rows": 3
+  },
+  "arrays": [
+    {
+      "name": "state",
+      "count": 2412544,
+      "offset": 104,
+      "sha256": "c8a4af7de65ad8364bdab49fbd38829f521bdef039c7d9789f714b2c4956cea8"
+    },
+    {
+      "name": "compensation",
+      "count": 2412544,
+      "offset": 19300456,
+      "sha256": "084b7999e321b992bf1b829426306eeaf0ab6ca76ded0b271c4590d8441cb7d7"
+    },
+    {
+      "name": "boundary",
+      "count": 47616,
+      "offset": 38600808,
+      "sha256": "8310eb7bfdbcbd1c7dffb4fab18198562aab59b0fd452ab97accd94e994ce811"
+    },
+    {
+      "name": "boundary-compensation",
+      "count": 47616,
+      "offset": 38981736,
+      "sha256": "dd318468523d397427c80f827aece874ea298390bdba1676da2de53ead7259b6"
+    }
+  ],
+  "provenance": {
+    "execution_artifacts_verified": true,
+    "source_manifest_verified": true,
+    "source_files_verified": false,
+    "case": "puncture-short",
+    "case_status": "passed",
+    "worker_status": "passed",
+    "worker_status_sha256": "7e7338dc83523406c3cb1843cd0ce2988e9510b484e4525eeca43587d4eed48d",
+    "checkpoint_artifact": "campaigns/preflight-donor-seven-v1/output/puncture-short.checkpoint",
+    "report_artifact": "campaigns/preflight-donor-seven-v1/output/puncture-short.report.json",
+    "source_manifest_sha256": "1493f0552235b296de1fbaecea3b7c3a60425b54484582b9292e34a7d1505196",
+    "binaries": {
+      "source-v13/tst/hyperbolic_shift_3d/aurora/preflight.py": "97612243e44852de346a501e1bf28884d7be8a5be859484d65d90b9ce2d1a77e",
+      "build-sycl-mpi-v13/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_donor_seven": "acfa9ffc56caa5f736ab2ffb62c56b1121f6037118c2580e93a15e5c78490263"
+    },
+    "plan_sha256": "f71ad1398113f2b5972356b9066d8c9d464309d100b89f53c29159ea790e14be"
+  },
+  "momentum_conventions": {
+    "radial": "M_r = (x^i/r) M_i; coordinate radial component, not invariant",
+    "conformal": "M_norm = sqrt(gbar^{ij} M_i M_j), gbar_ij = gtilde_ij/chi",
+    "physical": "M_physical_norm = Omega*M_norm, Omega=(1-r^2)/2",
+    "spherical_reduction": "M_norm = sqrt(chi/g_rr)*abs(M_r) only for radial momentum",
+    "measure": "normalized compactified Cartesian coordinate volume",
+    "mpi_names": "M_L2 is conformal invariant; M_physical_L2 is physical invariant",
+    "comparison_names": "compare_coupled plots M_r; constraint_rms keeps M_r and M_norm separate"
+  },
+  "coordinate_measure": "analytic Jacobian of the fixed unrefined composite map",
+  "script_sha256": "249a0c4cd72d718841a71ed1f4d7e050a5b0c6ddcde6156c1b77eea17659632d",
+  "output_files": {
+    "evolution.boundary.csv": {
+      "bytes": 977133,
+      "sha256": "72ed7b2a25285faf240f73a9b72959885d933bbbc91efe297cfa44c6ac15866e"
+    },
+    "reanalyze.log": {
+      "bytes": 85,
+      "sha256": "fc3f25f271a9a466eb9bdf0aea9cbba1e468d1a8e38a3f063c997f6f35674bf3"
+    },
+    "evolution.rays.csv": {
+      "bytes": 1328612,
+      "sha256": "ce9f849ec0e6a8c1009f93d3f49f7006fc65eb944de560368d92935e9d646ee3"
+    },
+    "evolution.coordinates.csv": {
+      "bytes": 7844207,
+      "sha256": "b7fe654c184ce6e30f430e482a654792a9cf719a7564a31da67aed50e148dcc6"
+    },
+    "source.report.json": {
+      "bytes": 3016,
+      "sha256": "beb89e964073d6579bbdc7d644ce4d6319e789e45b8b8d7beb4e73dcaeabe02e"
+    },
+    "evolution.diagnostics.csv": {
+      "bytes": 37686868,
+      "sha256": "7f55fff36d1e6f5b86bdb143c7e73fc5cc4444a877e424fbe5d5e3e9feeceb38"
+    },
+    "source.manifest.json": {
+      "bytes": 343624,
+      "sha256": "1493f0552235b296de1fbaecea3b7c3a60425b54484582b9292e34a7d1505196"
+    },
+    "evolution.state.csv": {
+      "bytes": 49909267,
+      "sha256": "53dac276b86930daa5a8fa65b1a87ded88eb494acfb26ad6cb7eed753ddb220b"
+    },
+    "evolution.json": {
+      "bytes": 1641,
+      "sha256": "d4dd707c14b611f20650ed1ba304d235d5cab62aea19801976fad58527a413be"
+    },
+    "source.worker-status.json": {
+      "bytes": 62302,
+      "sha256": "7e7338dc83523406c3cb1843cd0ce2988e9510b484e4525eeca43587d4eed48d"
+    }
+  },
+  "removed_intermediates": [
+    "evolution.state.csv",
+    "evolution.boundary.csv"
+  ],
+  "reanalyze": {
+    "command": [
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_reanalyze",
+      "16",
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/v6-reanalysis-check-v1/export/evolution",
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/v6-reanalysis-check-v1/export/evolution",
+      "donor_seven"
+    ],
+    "executable_sha256": "7db3ca47c15498e4f81e53174c1f20ceac8cc32627d07b6067a353aace3cb69d",
+    "bulk_diagnostic_operator": "donor_seven_last3",
+    "ray_diagnostic_operator": "interpolated_jets"
+  }
+}

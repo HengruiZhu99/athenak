@@ -40,7 +40,7 @@ inline void Write(h::HyperbolicComposite&e,const std::string&prefix){
   std::vector<Real>v(e.nf);std::vector<std::array<Real,3>>d(e.nf);
   std::vector<std::array<std::array<Real,3>,3>>dd(e.nf);
   for(size_t p=0;p<e.grid.active.size();++p){const auto*x=e.grid.geometry[p].x;
-    for(int f=0;f<e.nf;++f){v[f]=e.state[p*e.nf+f];Real df[3],ddf[3][3];e.grid.Derivatives(padded,f,p,df,ddf);
+    for(int f=0;f<e.nf;++f){v[f]=e.state[p*e.nf+f];Real df[3],ddf[3][3];e.BulkDerivatives(padded,f,p,df,ddf);
       for(int a=0;a<3;++a){d[f][a]=df[a];for(int b=0;b<3;++b)dd[f][a][b]=ddf[a][b];}}
     const auto u=e.Jet(x,v,d,dd);Row(out,x,u,e.Omega(x,u),v);
   }

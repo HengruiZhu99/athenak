@@ -29,6 +29,9 @@ at byte104 and its sampled-native-numerator scheme cannot mix with V1-V4.
 V6 has the same byte offset but requires the exact tuple (2,7,4,3), binding
 seven-node sampled normal derivatives and direct radial derivatives in the
 last three volume rows. V5 and V6 checkpoints cannot be interchanged.
+V6 reanalysis explicitly requests the donor_seven bulk diagnostic operator;
+an older reanalysis binary rejects that extra argument. Ray diagnostics still
+use independent interpolated jets and are not native cell constraints.
 The header contains no topology descriptor. This exporter therefore
 supports only the current unrefined 19-block layout: core half-width .125,
 shell radii .45/.75/1, one core block and six faces per shell layer. All four
@@ -389,16 +392,25 @@ def main():
                 shutil.copyfile(path, args.output/name)
         if args.reanalyze:
             command = [str(args.reanalyze), str(h['n']), str(prefix), str(prefix)]
-            manifest['reanalyze'] = dict(command=command, executable_sha256=analyzer_hash)
+            radial=h['magic']=='HYP3D_MPI_V6'
+            if radial:command.append('donor_seven')
+            manifest['reanalyze'] = dict(command=command, executable_sha256=analyzer_hash,
+                bulk_diagnostic_operator='donor_seven_last3' if radial else 'legacy_grid',
+                ray_diagnostic_operator='interpolated_jets')
             with (args.output/'reanalyze.log').open('x') as log:
                 result = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, timeout=args.timeout)
             if result.returncode:
                 raise RuntimeError(f'Diagnostic reanalysis exited {result.returncode}; see reanalyze.log')
+            if radial and 'bulk_diagnostic_operator=donor_seven_last3 ray_diagnostic_operator=interpolated_jets' not in (args.output/'reanalyze.log').read_text().splitlines():
+                raise RuntimeError('Reanalysis did not confirm the requested V6 diagnostic operator')
             for suffix in ['.diagnostics.csv', '.rays.csv']:
                 if not prefix.with_suffix(suffix).is_file():
                     raise RuntimeError('Reanalysis did not create the expected diagnostics')
         output_report = compatible_report(h, source, provenance)
         output_report['diagnostics_generated'] = bool(args.reanalyze)
+        if args.reanalyze:
+            for key in ['bulk_diagnostic_operator','ray_diagnostic_operator']:
+                output_report[key]=manifest['reanalyze'][key]
         atomic_json(prefix.with_suffix('.json'), output_report)
         for path in args.output.iterdir():
             if path.is_file() and path.name != 'export.json':
