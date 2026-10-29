@@ -1,4 +1,4 @@
-# Boundary and error-synchronization profile — build verified, allocation pending
+# Boundary and error-synchronization profile — job 8987400 submitted
 
 Frozen source: `555ad41facd84c90a303f2f80f794ed3b917efaa` (source-v23).
 Manifest SHA256: `d53c69a0e13581d58e55b333b6775c29d147c84845d2834e6d02ca2694cdd4c3`.
@@ -9,10 +9,10 @@ equal-cell sparse ownership; the measured-cut experiment did not improve speed.
 The separate SYCL/MPI build uses the retained environment and `make -j64`.
 The build passed in 253.20 seconds; all 2,653 main/Kokkos source blobs, the
 three named executable hashes, cache and launch bindings were independently
-verified. The 21 offline evidence-reader tests also passed. No profile job has
-yet been submitted: the scheduler guard rejected the attempt before qsub because
-job 8987368 (`preflight-thin-core-v1`) occupied the allocation. Its owner must
-collect/release the allocation before this campaign can proceed.
+verified. The 21 offline evidence-reader tests also passed. The scheduler guard initially rejected submission before qsub while job
+8987368 (`preflight-thin-core-v1`) occupied the allocation. After that job became
+terminal and its owner released the allocation, this campaign was submitted as
+**8987400**. No profiling result has yet been collected.
 The prepared ten-case plan has 410 checks and uses CompactBinaryMerger, one debug
 node, all twelve ranks/GPU tiles. Source/build/binary verification and pins are
 retained beside this plan and were completed before the attempted submission. Startup, 100-step puncture timing and checkpoint
