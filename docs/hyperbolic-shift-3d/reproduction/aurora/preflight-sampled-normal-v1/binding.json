@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "plan_sha256": "fab8596d0dae70a6bf0ba92d6f5e300cf66d36a612dd38ca236b56100590fc5c",
+  "source_manifest": "source-v12-manifest.json",
+  "source_manifest_sha256": "8dd9936710dafbdd145f5ee95ba4d48da47e295afff805b7f3f380e0afd15b36",
+  "binaries": {
+    "source-v12/tst/hyperbolic_shift_3d/aurora/preflight.py": "8536873143b142c3ce1650c06d5c332ece56c02a1c43b556e65da4781b84d9db",
+    "build-sycl-mpi-v12/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_sampled_normal": "08fee8c5c9b5fa1815f52ec63e968bba75dbf04762dba991bf359c2ecb3c078d"
+  },
+  "inputs": {
+    "build-sycl-mpi-v12/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_sampled_normal_device": "ddd597d7271be6175bf9cddae8a8f79098d74b81113016a89bbf8f26fbf3f6b1",
+    "build-sycl-mpi-v12/CMakeCache.txt": "d6f2bac9ef630ebbf1cad12a9462dde107568cd52b4bd0037986216fa3ceb193",
+    "inputs/puncture-n16.txt": "c8ffa46d9007ee8b643db41980cfa4a08f9ab3f2f1c2383978a002f067f9db31"
+  },
+  "pbs_sha256": "b217d63911d98f8ea55ee45ca6def918f0ff49bdd42b730a654893a0c7806e22",
+  "admission": null,
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "00:30:00"
+  },
+  "storage_at_bind": {
+    "bytes": 1889300480,
+    "entries": 13425,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 100000000,
+    "planned_bytes": 500000000,
+    "headroom_bytes": 2510699520
+  },
+  "launcher": {
+    "control.py": "f066cd8ede3500418b8d8585550205bbcd3a38a8910f746758257f711b380c52",
+    "worker.py": "62b5346a7815dca5954a95c705ec1c43eaf87ec5bf1442318f5c259d9d3685b1",
+    "run_debug.pbs": "1d5df790cf6c8cdc96e9d330b9b337ce755b30e057959586bcd661dc9ce885a6",
+    "storage.py": "fdcf2abc2533b8fed91220d9c18d8b9d723660820949a72e956fb9c8866afd39"
+  },
+  "allocation_seconds": 1800,
+  "worker_seconds": 1710
+}
