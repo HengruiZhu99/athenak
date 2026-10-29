@@ -33,7 +33,7 @@ def main():
     except Exception as ex:status='failed';error=str(ex)
     np.savez_compressed(a.output/'state.npz',q=q,r=e.r,t=t,compensation=getattr(e,'compensation',np.zeros_like(q)))
     (a.output/'history.json').write_text(json.dumps(history,indent=2)+'\n')
-    report=dict(status=status,error=error,kind=a.kind,n=a.n,t=t,t_over_M=3*t,steps=steps,dt=dt,configuration=KW,
+    report=dict(status=status,error=error,kind=a.kind,n=a.n,t=t,t_over_M=3*t if a.kind=='puncture' else None,steps=steps,dt=dt,configuration=KW,
                 library_sha256=hashlib.sha256(a.library.read_bytes()).hexdigest(),seconds=time.monotonic()-begin,pid=os.getpid())
     (a.output/'report.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report))
 if __name__=='__main__':main()
