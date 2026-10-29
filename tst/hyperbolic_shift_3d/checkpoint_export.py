@@ -14,9 +14,11 @@ checks that manifest's hash against the worker source binding; --source-root
 can verify every source file when a corresponding local source copy exists.
 Without execution evidence, provenance is explicitly marked unverified.
 
-The V1 checkpoint is little-endian binary64 with a 72-byte header and four
+The V1/V2 checkpoints are little-endian binary64 with a 72-byte header and four
 contiguous arrays: volume state, volume RK compensation, scri state, scri RK
-compensation. It contains no topology descriptor. This exporter therefore
+compensation. V1 is the unprojected control; V2 applies standard algebraic tensor
+repair at accepted RK steps. The evolution binaries reject cross-scheme restarts.
+The header contains no topology descriptor. This exporter therefore
 supports only the current unrefined 19-block layout: core half-width .125,
 shell radii .45/.75/1, one core block and six faces per shell layer. All four
 arrays are checked for finite values even when compensation is not exported.
@@ -98,7 +100,7 @@ def validate_checkpoint(path, expected_hash=None, expected_time=None):
         if len(raw) != HEADER.size:
             raise ValueError('Truncated checkpoint header')
         h = dict(zip(HEADER_KEYS, HEADER.unpack(raw)))
-        if h['magic'] != b'HYP3D_MPI_V1'.ljust(16, b'\0') or h['nf'] != 31:
+        if h['magic'] not in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V1',b'HYP3D_MPI_V2']] or h['nf'] != 31:
             raise ValueError('Unsupported checkpoint magic/schema/precision')
         n = h['n']
         if h['admitted'] != 1 or h['kind'] not in KINDS:
@@ -135,7 +137,7 @@ def validate_checkpoint(path, expected_hash=None, expected_time=None):
         sha = checksum.hexdigest()
         if expected_hash is not None and sha != expected_hash:
             raise ValueError('Checkpoint SHA256 does not match the expected input')
-    h['magic'] = 'HYP3D_MPI_V1'
+    h['magic'] = h['magic'].rstrip(b'\0').decode('ascii')
     return h, arrays, sha
 
 
@@ -148,6 +150,10 @@ def validate_report(path, h):
             raise ValueError(f'Source report/checkpoint mismatch: {key}')
     if report.get('kind') != KINDS[h['kind']]:
         raise ValueError('Source report/checkpoint physical kind mismatch')
+    scheme = 'final_stage_standard' if h['magic']=='HYP3D_MPI_V2' else 'none'
+    if (report.get('checkpoint_schema',h['magic']) != h['magic']
+            or report.get('algebraic_projection','none') != scheme):
+        raise ValueError('Source report/checkpoint algebraic scheme mismatch')
     for key in ['checkpoint_written', 'checkpoint_admitted']:
         if key in report and report[key] is not True:
             raise ValueError(f'Source report rejects {key}')

@@ -37,7 +37,7 @@ def read_checkpoint(path):
     if len(data) != HEADER.size:
         raise ValueError('Checkpoint header truncated')
     result = dict(zip(KEYS, HEADER.unpack(data)))
-    if result['magic'] != b'HYP3D_MPI_V1'.ljust(16,b'\0') or result['nf'] != 31 or result['admitted'] != 1:
+    if result['magic'] not in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V1',b'HYP3D_MPI_V2']] or result['nf'] != 31 or result['admitted'] != 1:
         raise ValueError('Unknown or unadmitted checkpoint schema')
     if result['n'] < 6 or result['n'] % 2 or result['cells'] <= 0 or result['surface'] <= 0:
         raise ValueError('Invalid checkpoint dimensions')
@@ -46,7 +46,7 @@ def read_checkpoint(path):
     expected = HEADER.size + 16*(31*result['cells']+result['surface'])
     if path.stat().st_size != expected:
         raise ValueError('Checkpoint payload truncated or contains trailing data')
-    result['magic'] = 'HYP3D_MPI_V1'
+    result['magic'] = result['magic'].rstrip(b'\0').decode('ascii')
     result['payload_doubles'] = (expected-HEADER.size)//8
     return result
 
@@ -173,6 +173,10 @@ def restart(args, rank, root, checked):
     if header['kind']!={'minkowski':0,'pulse':1,'puncture':2}.get(reports[0]['kind']):
         raise ValueError('Evolution kind does not describe the checkpoint')
     for report in reports:
+        scheme='final_stage_standard' if header['magic']=='HYP3D_MPI_V2' else 'none'
+        if (report.get('checkpoint_schema',header['magic'])!=header['magic']
+                or report.get('algebraic_projection','none')!=scheme):
+            raise ValueError('Evolution report/checkpoint algebraic scheme mismatch')
         for report_key,header_key in [('n','n'),('t','time'),('dt','dt'),('steps','steps')]:
             if report[report_key]!=header[header_key]:
                 raise ValueError('Evolution report does not describe the checkpoint')

@@ -22,9 +22,9 @@ class CheckpointTests(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.root=Path(self.temp.name)
 
-    def checkpoint(self,name='state',value=0.125,steps=4,tail=b''):
+    def checkpoint(self,name='state',value=0.125,steps=4,tail=b'',magic=b'HYP3D_MPI_V1'):
         path=self.root/name
-        header=preflight.HEADER.pack(b'HYP3D_MPI_V1'.ljust(16,b'\0'),6,31,1,1,1,1,steps,0.0004,0.0001)
+        header=preflight.HEADER.pack(magic.ljust(16,b'\0'),6,31,1,1,1,1,steps,0.0004,0.0001)
         path.write_bytes(header+struct.pack('<64d',*([value]*64))+tail)
         return path
 
@@ -40,6 +40,14 @@ class CheckpointTests(unittest.TestCase):
         a,b=self.checkpoint('a'),self.checkpoint('b',0.125000001)
         self.assertFalse(preflight.compare_checkpoints(a,b)['restart_equivalence'])
         self.assertTrue(preflight.compare_checkpoints(a,b,atol=1e-8)['restart_equivalence'])
+
+    def test_projected_schema_cannot_mix_with_original(self):
+        a=self.checkpoint('a',magic=b'HYP3D_MPI_V2')
+        b=self.checkpoint('b',magic=b'HYP3D_MPI_V2')
+        self.assertTrue(preflight.compare_checkpoints(a,b)['restart_equivalence'])
+        b=self.checkpoint('b')
+        with self.assertRaises(ValueError):
+            preflight.compare_checkpoints(a,b)
 
     def test_nonfinite_and_mismatched_metadata_rejected(self):
         a=self.checkpoint('a')
@@ -80,7 +88,8 @@ class SocketIntegrationTests(unittest.TestCase):
                       report='runs/output/component.report.json',checks=[dict(path=['status'],op='eq',value='completed')])])
             control.atomic(root/'runs/plan.json',plan)
             control.atomic(root/'manifest.json',{'source/preflight.py':control.digest(root/'source/preflight.py')})
-            binding=control.bind(root,'runs/plan.json','manifest.json')
+            with patch.object(control,'__file__',str(root/'source/control.py')):
+                binding=control.bind(root,'runs/plan.json','manifest.json')
             (root/'runs/output').mkdir()
             control.atomic(root/'runs/worker-status.json',dict(plan_sha256=binding['plan_sha256'],
                 source_manifest_sha256=binding['source_manifest_sha256'],cases=[dict(name='component',generated_inputs={})]))

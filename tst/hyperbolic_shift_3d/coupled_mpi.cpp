@@ -10,10 +10,17 @@
 #include "z4c/hyperboloidal/horizon_geometry.hpp"
 #include "z4c/hyperboloidal/hyperbolic_composite_exchange.hpp"
 #include "z4c/hyperboloidal/hyperbolic_scri_device.hpp"
+#include "z4c/hyperboloidal/algebraic_projection.hpp"
+#ifndef HYPERBOLIC_ALGEBRAIC_FINAL_PROJECTION
+#define HYPERBOLIC_ALGEBRAIC_FINAL_PROJECTION 0
+#endif
 namespace h=z4c::hyperboloidal;
 using Buffer=h::HyperbolicCompositeDevice::Buffer;
 using HostBuffer=Kokkos::View<Real*,Kokkos::HostSpace>;
 using V=std::vector<Real>;
+constexpr bool algebraic_final_projection=HYPERBOLIC_ALGEBRAIC_FINAL_PROJECTION;
+constexpr const char*checkpoint_magic=algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
+constexpr const char*algebraic_scheme=algebraic_final_projection?"final_stage_standard":"none";
 struct Header {
   char magic[16]{};int n=0,nf=31,kind=0,admitted=0;
   uint64_t cells=0,surface=0,steps=0;Real time=0,dt=0;
@@ -101,6 +108,22 @@ class Evolution {
     Kokkos::parallel_reduce("RHS maximum",Kokkos::RangePolicy<>(0,31*local),KOKKOS_LAMBDA(int i,Real&v){v=fmax(v,fabs(rate(i)));},Kokkos::Max<Real>(maximum));
     last_rhs=maximum;MPI_Allreduce(MPI_IN_PLACE,&last_rhs,1,MPI_ATHENA_REAL,MPI_MAX,MPI_COMM_WORLD);return rate;
   }
+  // Repair owned accepted point tensors before rebuilding derivatives. Surface
+  // null values and dependent D are recomputed by the following RefreshBoundary.
+  // Interpolated ghost tensors are not separately projected. Independent Lambda
+  // is retained; this is the standard algebraic repair, not a geometry-preserving
+  // redefinition of the conformal variables. Invalid candidates are never floored.
+  int ProjectAccepted(Buffer values,Buffer residual,int points){
+    int invalid=0;
+    if constexpr(algebraic_final_projection){
+      Kokkos::parallel_reduce("accepted algebraic tensor projection",Kokkos::RangePolicy<>(0,points),
+        KOKKOS_LAMBDA(int p,int&bad){
+          const auto result=h::ProjectAlgebraicNativeState(&values(31*p),&residual(31*p));
+          if(!result.valid)++bad;
+        },invalid);
+    }
+    return invalid;
+  }
   void Step(Real dt){
     Kokkos::deep_copy(base,state);Kokkos::deep_copy(surface_base,surface);
     auto stage=[&](int s,Real h){const auto out=local_state,begin=base,k=rates[s];const int offset=31*first;
@@ -114,12 +137,16 @@ class Evolution {
       const auto k1=rates[0],k2=rates[1],k3=rates[2],k4=rates[3];
       Kokkos::parallel_for("compensated RK acceptance",Kokkos::RangePolicy<>(0,31*local),KOKKOS_LAMBDA(int i){
         const Real increment=dt*(k1(i)+2*k2(i)+2*k3(i)+k4(i))/6-old(i);
-        out(i)=begin(offset+i)+increment;next(i)=(out(i)-begin(offset+i))-increment;});Gather(out,state);
+        out(i)=begin(offset+i)+increment;next(i)=(out(i)-begin(offset+i))-increment;});
+      const int volume_projection_bad=ProjectAccepted(out,next,local);Gather(out,state);
+      if constexpr(algebraic_final_projection)SynchronizeError(volume_projection_bad,"invalid accepted volume algebraic projection");
       const auto es=surface_stage,eb=surface_base,ec=surface_compensation,en=next_surface_compensation;const int eo=31*surface_first;
       const auto a=edge_rates[0],b=edge_rates[1],c=edge_rates[2],d=edge_rates[3];
       Kokkos::parallel_for("compensated surface RK acceptance",Kokkos::RangePolicy<>(0,31*surface_local),KOKKOS_LAMBDA(int i){
         const Real increment=dt*(a(i)+2*b(i)+2*c(i)+d(i))/6-ec(i);
-        es(i)=eb(eo+i)+increment;const int f=i%31;en(i)=(f==18||f>=22)?0:(es(i)-eb(eo+i))-increment;});Gather(es,surface,true);
+        es(i)=eb(eo+i)+increment;const int f=i%31;en(i)=(f==18||f>=22)?0:(es(i)-eb(eo+i))-increment;});
+      const int surface_projection_bad=ProjectAccepted(es,en,surface_local);Gather(es,surface,true);
+      if constexpr(algebraic_final_projection)SynchronizeError(surface_projection_bad,"invalid accepted surface algebraic projection");
       int invalid=0;const auto current=state,alpha0=reference_lapse;const int f=first;
       Kokkos::parallel_reduce("validate accepted geometry",Kokkos::RangePolicy<>(0,local),KOKKOS_LAMBDA(int p,int&bad){
         const int i=31*(f+p);const Real A=1+current(i+1),B=current(i+2),C=current(i+3),D=1+current(i+4),E=current(i+5),F=1+current(i+6);
@@ -136,7 +163,7 @@ class Evolution {
   void WriteCheckpoint(const std::string&path,int kind,Real dt,bool admitted){
     Buffer comp_global("global compensation",state.extent(0)),edge_comp_global("global surface compensation",surface.extent(0));
     Gather(compensation,comp_global);Gather(surface_compensation,edge_comp_global,true);int bad=0;std::string reason;
-    if(rank==0)try{Header header;std::memcpy(header.magic,"HYP3D_MPI_V1",12);header.n=n;header.kind=kind;header.admitted=admitted;
+    if(rank==0)try{Header header;std::memcpy(header.magic,checkpoint_magic,12);header.n=n;header.kind=kind;header.admitted=admitted;
       header.cells=total;header.surface=surface.extent(0);header.steps=steps;header.time=time;header.dt=dt;
       const auto values=Download(state),comps=Download(comp_global),edge=Download(surface),edge_comps=Download(edge_comp_global);std::ofstream out(path+".tmp",std::ios::binary);
       out.write(reinterpret_cast<const char*>(&header),sizeof(header));
@@ -147,7 +174,7 @@ class Evolution {
   void LoadCheckpoint(const std::string&path,int kind,Real dt){
     Header header{};V values(31*total),comps(31*total),edge(31*surface_total),edge_comps(31*surface_total);int bad=0;std::string reason;
     if(rank==0)try{std::ifstream in(path,std::ios::binary);in.read(reinterpret_cast<char*>(&header),sizeof(header));
-      if(!in||std::memcmp(header.magic,"HYP3D_MPI_V1",12)||header.n!=n||header.nf!=31||header.kind!=kind||header.admitted!=1||header.cells!=size_t(total)||header.surface!=surface.extent(0)||header.dt!=dt)
+      if(!in||std::memcmp(header.magic,checkpoint_magic,12)||header.n!=n||header.nf!=31||header.kind!=kind||header.admitted!=1||header.cells!=size_t(total)||header.surface!=surface.extent(0)||header.dt!=dt)
         throw std::runtime_error("checkpoint schema/configuration/admission mismatch");
       for(auto*v:{&values,&comps,&edge,&edge_comps})in.read(reinterpret_cast<char*>(v->data()),v->size()*sizeof(Real));
       char tail;if(!in||in.read(&tail,1))throw std::runtime_error("checkpoint truncated or trailing data");
@@ -280,7 +307,7 @@ int main(int argc,char**argv){
     std::ofstream history;
     CollectiveLocal([&]{if(e.rank==0){
       history.open(output+".history.csv");history<<std::setprecision(17)
-        <<"t,t_over_M,steps,min_chi,min_lapse,state_deviation,H_L2,M_L2,M_physical_L2,Theta_L2,Z_L2,H_exterior_L2,M_exterior_L2,exterior_cutoff,horizon_found,horizon_radius,horizon_areal_radius,horizon_mass,horizon_expansion_rms,horizon_trial_radius,horizon_trial_expansion_rms,horizon_complete_surface,horizon_iterations,null_surface,null_ghost,pole_max,clock_max,cfl_max,wall_seconds\n";
+        <<"t,t_over_M,steps,min_chi,min_lapse,state_deviation,H_L2,M_L2,M_physical_L2,Theta_L2,Z_L2,H_exterior_L2,M_exterior_L2,exterior_cutoff,horizon_found,horizon_radius,horizon_areal_radius,horizon_mass,horizon_expansion_rms,horizon_trial_radius,horizon_trial_expansion_rms,horizon_complete_surface,horizon_iterations,null_surface,null_ghost,pole_max,clock_max,cfl_max,wall_seconds,determinant_residual,tracefree_residual\n";
       history.flush();if(!history)throw std::runtime_error("history open/header write failed");
     }});
     Diagnostic diagnostic{};bool diagnostic_valid=false;Real diagnostic_time=nan;
@@ -324,7 +351,8 @@ int main(int argc,char**argv){
           <<','<<Norm(diagnostic.exterior.h2,diagnostic.exterior.volume)<<','<<Norm(diagnostic.exterior.m2,diagnostic.exterior.volume)<<','<<cutoff
           <<','<<horizon_found<<','<<horizon_radius<<','<<horizon_areal<<','<<horizon_mass<<','<<horizon_expansion
           <<','<<trial_radius<<','<<trial_expansion<<','<<horizon_complete<<','<<horizon_iterations
-          <<','<<e.model.null_max<<','<<e.null_ghost<<','<<e.model.pole_max<<','<<e.model.clock_max<<','<<e.cfl<<','<<elapsed()<<'\n';
+          <<','<<e.model.null_max<<','<<e.null_ghost<<','<<e.model.pole_max<<','<<e.model.clock_max<<','<<e.cfl<<','<<elapsed()
+          <<','<<diagnostic.max_determinant_residual<<','<<diagnostic.max_tracefree_residual<<'\n';
         history.flush();if(!history)throw std::runtime_error("history append failed");
         std::cout<<"t="<<e.time<<" steps="<<e.steps<<" min_alpha="<<diagnostic.min_lapse<<" H="<<Norm(diagnostic.total.h2,diagnostic.total.volume)<<" horizon="<<horizon_found<<" seconds="<<elapsed()<<std::endl;
       }});
@@ -373,6 +401,7 @@ int main(int argc,char**argv){
       std::ofstream report(output+".report.json.tmp");report<<std::setprecision(17)
         <<"{\"status\":"<<JsonString(status)<<",\"error\":"<<JsonString(error)<<",\"kind\":"<<JsonString(kind_name)
         <<",\"backend\":"<<JsonString(Kokkos::DefaultExecutionSpace::name())<<",\"mpi_size\":"<<e.size<<",\"n\":"<<n<<",\"cells\":"<<e.total
+        <<",\"algebraic_projection\":"<<JsonString(algebraic_scheme)<<",\"checkpoint_schema\":"<<JsonString(checkpoint_magic)
         <<",\"minimum_owned_cells\":"<<e.total/e.size<<",\"maximum_owned_cells\":"<<(e.total+e.size-1)/e.size
         <<",\"t\":"<<e.time<<",\"start_time\":"<<start_time<<",\"target_time\":"<<end<<",\"t_over_M\":"<<(kind==2?e.time*3:e.time)
         <<",\"dt\":"<<dt<<",\"steps\":"<<e.steps<<",\"segment_steps\":"<<e.steps-start_steps<<",\"seconds\":"<<elapsed()
@@ -382,6 +411,8 @@ int main(int argc,char**argv){
         <<",\"exterior_method\":\"coordinate sphere at mean fast-flow radius for spherical-data comparison\""
         <<",\"initial_rhs\":"<<JsonNumber(initial_rhs)<<",\"last_rhs\":"<<JsonNumber(e.last_rhs)
         <<",\"min_chi\":"<<valid_number(diagnostic.min_chi)<<",\"min_lapse\":"<<valid_number(diagnostic.min_lapse)
+        <<",\"max_determinant_residual\":"<<valid_number(diagnostic.max_determinant_residual)
+        <<",\"max_tracefree_residual\":"<<valid_number(diagnostic.max_tracefree_residual)
         <<",\"max_state_deviation\":"<<valid_number(diagnostic.max_state_deviation)<<",\"max_null_surface\":"<<JsonNumber(e.model.null_max)
         <<",\"max_null_ghost\":"<<JsonNumber(e.null_ghost)<<",\"max_null_before_ghost_closure\":"<<JsonNumber(e.null_before)
         <<",\"max_pole\":"<<JsonNumber(e.model.pole_max)<<",\"max_clock\":"<<JsonNumber(e.model.clock_max)

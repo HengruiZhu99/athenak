@@ -40,9 +40,14 @@ class HyperbolicScriDevice {
   using Rows=View<Row>;
   using Terms=View<Term>;
   using Diagnostics=View<RowDiagnostic>;
+  using Jets=View<ScalarJet<Real>>;
+  // Only fields 0..24 enter the native scri equations. D is dependent and J
+  // vanishes in the outer collar; their six stencils were never sampled.
+  static constexpr int sampled_fields=25;
   int first_,local_,total_,active_total_;
   Rows rows_;
   Terms terms_;
+  Jets samples_;
   Buffer local_surface_,local_rhs_;
   Diagnostics diagnostics_;
 
@@ -65,38 +70,55 @@ class HyperbolicScriDevice {
       }
       return result;
     }
-    KOKKOS_INLINE_FUNCTION void Jet(int local,Z4cJet<Real>&u,VectorJet<Real>&B,
-                                    Real shift_derivative[3][3]) const {
-      const auto row=rows(local);const auto*x=row.x;
-      const Real r=sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);
-      u.chi=(*this)(local,0);u.trace=(*this)(local,13);u.trace.value-=3;
-      u.theta=(*this)(local,14);u.alpha=(*this)(local,18);u.alpha.value+=(1+r*r)/2;
-      for(int a=0;a<3;++a){u.alpha.d[a]+=x[a];u.alpha.dd[a][a]+=1;}
-      constexpr int ti[6]={0,0,0,1,1,2},tj[6]={0,1,2,1,2,2};
-      for(int t=0;t<6;++t) {
-        const int i=ti[t],j=tj[t];
-        const auto metric=(*this)(local,1+t),curvature=(*this)(local,7+t);
-        u.metric.g[i][j]=u.metric.g[j][i]=metric.value+(i==j);
-        u.a.k[i][j]=u.a.k[j][i]=curvature.value;
-        for(int a=0;a<3;++a) {
-          u.metric.dg[a][i][j]=u.metric.dg[a][j][i]=metric.d[a];
-          u.a.dk[a][i][j]=u.a.dk[a][j][i]=curvature.d[a];
-          for(int b=0;b<3;++b)u.metric.ddg[a][b][i][j]=u.metric.ddg[a][b][j][i]=metric.dd[a][b];
-        }
+  };
+  // Each work item performs one field stencil in precisely the original term
+  // order. This exposes field-level parallelism and keeps the stencil state
+  // out of the substantially larger native tensor/normal-AD kernel.
+  struct CacheSamples {
+    Sample sample;Jets output;
+    KOKKOS_INLINE_FUNCTION void operator()(int index) const {
+      output(index)=sample(index/sampled_fields,index%sampled_fields);
+    }
+  };
+  struct CachedSample {
+    ConstBuffer surface;Rows rows;Jets samples;
+    KOKKOS_INLINE_FUNCTION ScalarJet<Real> operator()(int local,int f) const {
+      return samples(sampled_fields*local+f);
+    }
+  };
+  template<class Sampling>
+  KOKKOS_INLINE_FUNCTION static void Jet(const Sampling&sample,int local,
+                                        Z4cJet<Real>&u,VectorJet<Real>&B,
+                                        Real shift_derivative[3][3]) {
+    const auto row=sample.rows(local);const auto*x=row.x;
+    const Real r=sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);
+    u.chi=sample(local,0);u.trace=sample(local,13);u.trace.value-=3;
+    u.theta=sample(local,14);u.alpha=sample(local,18);u.alpha.value+=(1+r*r)/2;
+    for(int a=0;a<3;++a){u.alpha.d[a]+=x[a];u.alpha.dd[a][a]+=1;}
+    constexpr int ti[6]={0,0,0,1,1,2},tj[6]={0,1,2,1,2,2};
+    for(int t=0;t<6;++t) {
+      const int i=ti[t],j=tj[t];
+      const auto metric=sample(local,1+t),curvature=sample(local,7+t);
+      u.metric.g[i][j]=u.metric.g[j][i]=metric.value+(i==j);
+      u.a.k[i][j]=u.a.k[j][i]=curvature.value;
+      for(int a=0;a<3;++a) {
+        u.metric.dg[a][i][j]=u.metric.dg[a][j][i]=metric.d[a];
+        u.a.dk[a][i][j]=u.a.dk[a][j][i]=curvature.d[a];
+        for(int b=0;b<3;++b)u.metric.ddg[a][b][i][j]=u.metric.ddg[a][b][j][i]=metric.dd[a][b];
       }
-      for(int i=0;i<3;++i) {
-        const auto shift=(*this)(local,22+i),connection=(*this)(local,15+i),flux=(*this)(local,19+i);
-        u.beta.value[i]=shift.value-x[i];u.lambda.value[i]=connection.value;B.value[i]=flux.value;
-        for(int a=0;a<3;++a) {
-          u.beta.d[a][i]=shift.d[a]-(a==i);u.lambda.d[a][i]=connection.d[a];
-          B.d[a][i]=flux.d[a];shift_derivative[a][i]=shift.d[a];
-          for(int b=0;b<3;++b) {
-            u.beta.dd[a][b][i]=shift.dd[a][b];u.lambda.dd[a][b][i]=connection.dd[a][b];
-          }
+    }
+    for(int i=0;i<3;++i) {
+      const auto shift=sample(local,22+i),connection=sample(local,15+i),flux=sample(local,19+i);
+      u.beta.value[i]=shift.value-x[i];u.lambda.value[i]=connection.value;B.value[i]=flux.value;
+      for(int a=0;a<3;++a) {
+        u.beta.d[a][i]=shift.d[a]-(a==i);u.lambda.d[a][i]=connection.d[a];
+        B.d[a][i]=flux.d[a];shift_derivative[a][i]=shift.d[a];
+        for(int b=0;b<3;++b) {
+          u.beta.dd[a][b][i]=shift.dd[a][b];u.lambda.dd[a][b][i]=connection.dd[a][b];
         }
       }
     }
-  };
+  }
   struct ProjectRows {
     ConstBuffer input;Buffer output;Rows rows;Diagnostics diagnostics;int first;
     KOKKOS_INLINE_FUNCTION void operator()(int local) const {
@@ -125,8 +147,8 @@ class HyperbolicScriDevice {
       diagnostics(local)=info;
     }
   };
-  struct EvaluateRows {
-    Sample sample;Buffer surface,rhs;Diagnostics diagnostics;int first;Real dt;
+  template<class Sampling>struct EvaluateRows {
+    Sampling sample;Buffer surface,rhs;Diagnostics diagnostics;int first;Real dt;
     KOKKOS_INLINE_FUNCTION void operator()(int local) const {
       RowDiagnostic info{};const auto row=sample.rows(local);const auto*x=row.x;
       bool finite=true;
@@ -136,7 +158,7 @@ class HyperbolicScriDevice {
       }
       if(!finite){info.status=invalid_input;diagnostics(local)=info;return;}
       Z4cJet<Real> u{};VectorJet<Real>B{};Real shift_derivative[3][3]{};
-      sample.Jet(local,u,B,shift_derivative);
+      Jet(sample,local,u,B,shift_derivative);
       if(!(u.chi.value>0&&u.alpha.value>0)){info.status=invalid_input;diagnostics(local)=info;return;}
       const auto g=Geometry(u.metric);
       if(!g.valid){info.status=invalid_geometry;diagnostics(local)=info;return;}
@@ -243,6 +265,9 @@ class HyperbolicScriDevice {
     rows_=Rows("scri owned rows",local_);diagnostics_=Diagnostics("scri owned diagnostics",local_);
     local_surface_=Buffer("scri owned surface",size_t(nf)*local_);
     local_rhs_=Buffer("scri owned RHS",size_t(nf)*local_);
+#if !defined(HYPERBOLIC_SCRI_INLINE_SAMPLING) || !HYPERBOLIC_SCRI_INLINE_SAMPLING
+    samples_=Jets("scri owned field jets",size_t(sampled_fields)*local_);
+#endif
     auto rows=Kokkos::create_mirror_view(rows_);std::vector<Term>terms;
     std::vector<int>active(model.grid.count,-1);
     for(int p=0;p<active_total_;++p)active[model.grid.active[p]]=p;
@@ -285,9 +310,20 @@ class HyperbolicScriDevice {
       throw std::invalid_argument("invalid device scri active state/timestep");
     if(projected_surface.data()==local_surface_.data())
       throw std::invalid_argument("device scri atlas input must not alias the owned output");
-    const Sample sample{global_active,projected_surface,rows_,terms_};
+    const Sample source{global_active,projected_surface,rows_,terms_};
+#if defined(HYPERBOLIC_SCRI_INLINE_SAMPLING) && HYPERBOLIC_SCRI_INLINE_SAMPLING
+    // Controlled performance reference only: compile the same equations and
+    // field summation order with the original in-kernel sampling organization.
+    Kokkos::parallel_for("scri owned native rates inline sampling",
+        Kokkos::RangePolicy<ExecutionSpace>(0,local_),
+        EvaluateRows<Sample>{source,local_surface_,local_rhs_,diagnostics_,first_,dt});
+#else
+    Kokkos::parallel_for("scri owned field sampling",
+        Kokkos::RangePolicy<ExecutionSpace>(0,sampled_fields*local_),CacheSamples{source,samples_});
+    const CachedSample sample{projected_surface,rows_,samples_};
     Kokkos::parallel_for("scri owned native rates",Kokkos::RangePolicy<ExecutionSpace>(0,local_),
-                        EvaluateRows{sample,local_surface_,local_rhs_,diagnostics_,first_,dt});
+        EvaluateRows<CachedSample>{sample,local_surface_,local_rhs_,diagnostics_,first_,dt});
+#endif
     return Reduce();
   }
   const Buffer&LocalSurface() const{return local_surface_;}

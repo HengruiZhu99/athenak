@@ -225,10 +225,13 @@ def bind(root, relative, manifest):
     inputs = {p: digest(local_path(root, p)) for c in plan['commands'] for p in c.get('inputs', [])}
     admission = validate_admission(root, plan, source_sha, binaries)
     template = Path(__file__).with_name('run_debug.pbs').read_text()
-    if template.count('@WALLTIME@') != 1:
+    if template.count('@WALLTIME@') != 1 or template.count('@WORKER_PATH@') != 1:
         raise ValueError('Unexpected PBS template')
+    worker = Path(__file__).with_name('worker.py').resolve().relative_to(root.resolve()).as_posix()
+    if not re.fullmatch(r'[A-Za-z0-9_./-]+',worker):
+        raise ValueError('Worker path must be a plain campaign-relative path')
     pbs = path.with_name('run_debug.pbs')
-    pbs.write_text(template.replace('@WALLTIME@', plan['resources']['walltime']))
+    pbs.write_text(template.replace('@WALLTIME@', plan['resources']['walltime']).replace('@WORKER_PATH@',worker))
     binding = dict(schema=1, plan_sha256=digest(path), source_manifest=manifest,
                    source_manifest_sha256=source_sha, binaries=binaries, inputs=inputs,
                    pbs_sha256=digest(pbs), admission=admission, resources=plan['resources'],

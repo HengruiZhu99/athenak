@@ -4,6 +4,7 @@ import copy
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import tempfile
 import unittest
@@ -28,6 +29,15 @@ class ControllerTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
+        self.launcher_relative = Path('source-v4/tst/hyperbolic_shift_3d/aurora')
+        launcher = self.root/self.launcher_relative
+        launcher.mkdir(parents=True)
+        for name in ['control.py', 'worker.py', 'storage.py', 'preflight.py',
+                     'run_debug.pbs']:
+            shutil.copyfile(Path(__file__).resolve().parent/name, launcher/name)
+        launcher_file = patch.object(control, '__file__', str(launcher/'control.py'))
+        launcher_file.start()
+        self.addCleanup(launcher_file.stop)
         for path, content in [('build/evolve', 'executable'), ('source/file', 'science'),
                               ('inputs/initial', 'initial')]:
             target = self.root/path
@@ -84,6 +94,9 @@ class ControllerTests(unittest.TestCase):
 
     def test_every_bound_input_is_immutable(self):
         self.bound()
+        pbs = (self.root/'runs/one/run_debug.pbs').read_text()
+        self.assertIn(f'exec /usr/bin/python3.11 "{self.launcher_relative}/worker.py"', pbs)
+        self.assertNotIn('@WORKER_PATH@', pbs)
         for name in ['build/evolve','source/file','inputs/initial','runs/one/plan.json',
                      'runs/one/run_debug.pbs']:
             target = self.root/name

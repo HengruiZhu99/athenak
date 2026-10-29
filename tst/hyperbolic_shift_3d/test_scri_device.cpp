@@ -1,5 +1,8 @@
 #include <cmath>
+#include <chrono>
+#include <cstdlib>
 #include <iomanip>
+#include <initializer_list>
 #include <iostream>
 #include <stdexcept>
 #include "z4c/hyperboloidal/hyperbolic_scri_device.hpp"
@@ -38,11 +41,102 @@ static void Seed(h::HyperbolicComposite&cpu,bool perturb) {
 static void ResetDiagnostics(h::HyperbolicComposite&cpu) {
   cpu.null_max=cpu.pole_max=cpu.clock_max=cpu.compatibility_max=0;
 }
+static int EnvironmentInt(std::initializer_list<const char*> names,int fallback,std::string&source) {
+  for(const char*name:names)if(const char*value=std::getenv(name)) {
+    size_t used=0;const int result=std::stoi(value,&used);
+    Require(used==std::string(value).size(),"invalid benchmark rank environment");
+    source=name;return result;
+  }
+  source="serial";return fallback;
+}
+static std::array<int,2> OwnedRange(int total,int rank,int ranks) {
+  Require(ranks>0&&rank>=0&&rank<ranks,"invalid benchmark rank range");
+  return {total*rank/ranks,total*(rank+1)/ranks};
+}
+static void Benchmark(int n,int repeats,int rank,int ranks,const std::string&rank_source,
+                      const std::string&size_source) {
+  Require(n>=6&&n<=64&&repeats>0&&repeats<=10000&&ranks>0&&rank>=0&&rank<ranks,
+          "invalid scri benchmark settings");
+  h::HyperbolicComposite cpu(cubed_sphere::CompositeMesh(.125,{.45,.75,1},1,n,3));
+  Seed(cpu,true);cpu.BoundaryValues();
+  const int total=cpu.scri.rows.size();const auto range=OwnedRange(total,rank,ranks);
+  const int first=range[0],end=range[1];
+  Device owned(cpu,first,end-first);const auto active=Upload(cpu.state),surface=Upload(cpu.scri.values);
+  const Real dt=.0001;Device::Summary summary;
+  for(int i=0;i<3;++i) {
+    summary=owned.Evaluate(active,surface,dt);Require(summary.bad_rows==0,"scri benchmark warmup failed");
+  }
+  const auto expected=Download(owned.LocalRHS()),expected_surface=Download(owned.LocalSurface());
+  Kokkos::fence();const auto begin=std::chrono::steady_clock::now();
+  for(int i=0;i<repeats;++i) {
+    summary=owned.Evaluate(active,surface,dt);Require(summary.bad_rows==0,"scri benchmark evaluation failed");
+  }
+  Kokkos::fence();const Real seconds=std::chrono::duration<Real>(std::chrono::steady_clock::now()-begin).count();
+  const auto rhs=Download(owned.LocalRHS()),trace=Download(owned.LocalSurface());
+  Require(Compare(expected,rhs)==0&&Compare(expected_surface,trace)==0,"repeated scri evaluation changed output");
+  Real rhs_norm=0,trace_norm=0;for(Real value:rhs)rhs_norm+=value*value;
+  for(Real value:trace)trace_norm+=value*value;
+#if defined(HYPERBOLIC_SCRI_INLINE_SAMPLING) && HYPERBOLIC_SCRI_INLINE_SAMPLING
+  constexpr size_t jet_bytes_per_row=0;
+#else
+  constexpr size_t jet_bytes_per_row=25*sizeof(h::ScalarJet<Real>);
+#endif
+  std::cout<<"benchmark_repeats="<<repeats<<" n="<<n<<" rank="<<rank<<" ranks="<<ranks
+           <<" rank_source="<<rank_source<<" size_source="<<size_source
+           <<" first_row="<<first<<" owned_rows="<<end-first<<" sampled_fields=25"
+           <<" staged_jet_bytes="<<(end-first)*jet_bytes_per_row
+           <<" evaluate_seconds_total="<<seconds<<" evaluate_seconds_mean="<<seconds/repeats
+           <<" rhs_norm2="<<rhs_norm<<" surface_norm2="<<trace_norm
+           <<" repeat_error=0\nScri repeated-Evaluate benchmark completed\n";
+}
 int main(int argc,char**argv) {
   Kokkos::initialize(argc,argv);int result=0;
   try {
     std::cout<<"backend="<<Kokkos::DefaultExecutionSpace::name()<<std::endl;
     std::cout<<std::setprecision(17);
+#if defined(HYPERBOLIC_SCRI_INLINE_SAMPLING) && HYPERBOLIC_SCRI_INLINE_SAMPLING
+    std::cout<<"sampling=inline\n";
+#else
+    std::cout<<"sampling=staged\n";
+#endif
+    int benchmark_repeats=0,benchmark_n=16;bool layout_only=false,explicit_ranks=false;
+    std::string rank_source,size_source;
+    int rank=EnvironmentInt({"PMI_RANK","OMPI_COMM_WORLD_RANK","MPI_LOCALRANKID","PALS_LOCAL_RANKID"},0,rank_source);
+    int ranks=EnvironmentInt({"PMI_SIZE","OMPI_COMM_WORLD_SIZE"},1,size_source);
+    for(int i=1;i<argc;++i) {
+      const std::string arg=argv[i];
+      if(arg=="--benchmark-layout-only"){layout_only=true;continue;}
+      if(arg=="--benchmark-repeats"||arg=="--benchmark-n"||arg=="--benchmark-rank"||arg=="--benchmark-ranks") {
+        Require(i+1<argc,"missing scri benchmark option value");const int value=std::stoi(argv[++i]);
+        if(arg=="--benchmark-repeats")benchmark_repeats=value;
+        if(arg=="--benchmark-n")benchmark_n=value;
+        if(arg=="--benchmark-rank"){rank=value;rank_source="argument";}
+        if(arg=="--benchmark-ranks"){ranks=value;size_source="argument";explicit_ranks=true;}
+      }
+    }
+    if(benchmark_repeats||layout_only) {
+      // The verified Aurora/PALS wrapper exposes LOCAL ranks. Their use as
+      // global indices is valid only for an explicitly sized single-node run.
+      const bool local_rank=rank_source=="MPI_LOCALRANKID"||rank_source=="PALS_LOCAL_RANKID";
+      Require(!local_rank||explicit_ranks,
+              "local-rank benchmark requires explicit --benchmark-ranks for a single-node launch");
+      Require(rank_source=="serial"||size_source!="serial",
+              "rank detected without size; supply --benchmark-ranks");
+      Require(ranks==1||rank_source!="serial",
+              "distributed benchmark has no rank identity; refusing replicated row-zero work");
+      Require(benchmark_n>=6&&benchmark_n<=64,"invalid scri benchmark grid size");
+      if(layout_only) {
+        // This fixed mesh has six outer faces; no geometry/evolution is built.
+        const int total=6*benchmark_n*benchmark_n;const auto range=OwnedRange(total,rank,ranks);
+        std::cout<<"layout_only=1 n="<<benchmark_n<<" rank="<<rank<<" ranks="<<ranks
+                 <<" rank_source="<<rank_source<<" size_source="<<size_source
+                 <<" total_rows="<<total<<" first_row="<<range[0]<<" owned_rows="<<range[1]-range[0]<<'\n';
+      }else {
+      // This measures only owned native scri calls and their host reductions,
+      // excluding construction, transfers and warmup. No evolution is run.
+      Benchmark(benchmark_n,benchmark_repeats,rank,ranks,rank_source,size_source);
+      }
+    }else {
     h::HyperbolicComposite cpu(cubed_sphere::CompositeMesh(.125,{.45,.75,1},1,6,3));
     const int total=cpu.scri.rows.size(),split=total/2+7;const Real dt=.0001;
     Device full(cpu,0,total),left(cpu,0,split),right(cpu,split,total-split),empty(cpu,total,0);
@@ -116,6 +210,7 @@ int main(int argc,char**argv) {
     }
     std::cout<<"CPU/device scri projection, native rates, D independence and partition parity passed on "
              <<total<<" rows\n";
+    }
   }catch(const std::exception&ex){std::cerr<<ex.what()<<'\n';result=1;}
   Kokkos::finalize();return result;
 }
