@@ -1,0 +1,412 @@
+{
+  "schema": 1,
+  "status": "failed",
+  "started": "2026-10-29T05:47:21.694986+00:00",
+  "job_id": "8982735.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "launcher_host": "x4309c5s6b0n0",
+  "allocation_nodes": [
+    "x4309c5s6b0n0.hsn.cm.aurora.alcf.anl.gov"
+  ],
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "00:20:00"
+  },
+  "source_manifest_sha256": "8d0eba426c84cdf9997864cf7471a44914cc590b9a4d4ea2efe022b944287c93",
+  "binaries": {
+    "build-sycl-mpi-v5/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_projected": "362093fc8c998576c7d88a14afdc2c5ebcdcb6a68f408b7fdaf92ad62b7b1486"
+  },
+  "plan_sha256": "d05fca5a152090ba3e718a210c5fc350b47bb2b414f302b591c6ebb511d16c6b",
+  "phase": "stability",
+  "n": 16,
+  "cases": [
+    {
+      "name": "minkowski",
+      "kind": "minkowski",
+      "started": "2026-10-29T05:47:26.988834+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-v5/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_projected",
+        "16",
+        "campaigns/stability-projected-minkowski-v1/output/minkowski",
+        "minkowski",
+        "1",
+        ".0005",
+        "-",
+        "-",
+        "1020",
+        ".05"
+      ],
+      "generated_inputs": {},
+      "returncode": 2,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 119.27239638799801,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "failed",
+          "passed": false
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "n"
+            ],
+            "op": "eq",
+            "value": 16
+          },
+          "observed": 16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "min_lapse"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.5000915527343748,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "min_chi"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.9951004400405586,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "diagnostics_current"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": false,
+          "passed": false
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_admitted"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": false,
+          "passed": false
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_surface"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.1102230246251514e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_ghost"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.2212471469153967e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_cfl"
+            ],
+            "op": "le",
+            "value": 0.5
+          },
+          "observed": 0.3239200538644448,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.0003266275131391853,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "M_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.02047964797277241,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.0003266275131391853,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "M_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.02047964797277241,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_state_deviation"
+            ],
+            "op": "le",
+            "value": 1e-08
+          },
+          "observed": 1.314463449818039,
+          "passed": false
+        },
+        {
+          "check": {
+            "path": [
+              "H_L2"
+            ],
+            "op": "le",
+            "value": 1e-07
+          },
+          "observed": 0.0003266275131391853,
+          "passed": false
+        },
+        {
+          "check": {
+            "path": [
+              "M_L2"
+            ],
+            "op": "le",
+            "value": 1e-07
+          },
+          "observed": 0.02047964797277241,
+          "passed": false
+        },
+        {
+          "check": {
+            "path": [
+              "algebraic_projection"
+            ],
+            "op": "eq",
+            "value": "final_stage_standard"
+          },
+          "observed": "final_stage_standard",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_schema"
+            ],
+            "op": "eq",
+            "value": "HYP3D_MPI_V2"
+          },
+          "observed": "HYP3D_MPI_V2",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_determinant_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.1102230246251565e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_tracefree_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 4.440892098500626e-16,
+          "passed": true
+        }
+      ],
+      "report_status": "failed",
+      "status": "failed",
+      "artifacts": {
+        "campaigns/stability-projected-minkowski-v1/output/minkowski.report.json": {
+          "sha256": "6e503518a0e6e387cc90d4abf3dc083ef97d5f579facabdd5507cf053318d333",
+          "bytes": 1996
+        },
+        "campaigns/stability-projected-minkowski-v1/output/minkowski.history.csv": {
+          "sha256": "8d4fe43d4ab0d44577aca593202cbb64650f71442c96ab600b61ca784b4c2e1e",
+          "bytes": 4904
+        },
+        "campaigns/stability-projected-minkowski-v1/output/minkowski.checkpoint": {
+          "sha256": "6d345343a7cdc6df4ebb23fef9a7ce6c306dd300fde88425c1b977863228094a",
+          "bytes": 39362632
+        },
+        "campaigns/stability-projected-minkowski-v1/output/minkowski.failed-stage.bin": {
+          "sha256": "b0225733130ffa83b87b98e014c21e97fbd828138521ba35da93408f2c43b884",
+          "bytes": 19681280
+        }
+      },
+      "finished": "2026-10-29T05:49:29.880732+00:00"
+    }
+  ],
+  "storage_at_start": {
+    "bytes": 940499456,
+    "entries": 6639,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 100000000,
+    "planned_bytes": 130000000,
+    "headroom_bytes": 3829500544
+  },
+  "affinity": {
+    "returncode": 0,
+    "timed_out": false,
+    "storage_error": null,
+    "elapsed_seconds": 0.32087738905102015,
+    "records": [
+      {
+        "host": "x4309c5s6b0n0",
+        "rank": 11,
+        "mask": "5.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4309c5s6b0n0",
+        "rank": 1,
+        "mask": "0.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4309c5s6b0n0",
+        "rank": 5,
+        "mask": "2.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4309c5s6b0n0",
+        "rank": 2,
+        "mask": "1.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4309c5s6b0n0",
+        "rank": 6,
+        "mask": "3.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4309c5s6b0n0",
+        "rank": 3,
+        "mask": "1.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4309c5s6b0n0",
+        "rank": 0,
+        "mask": "0.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4309c5s6b0n0",
+        "rank": 10,
+        "mask": "5.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4309c5s6b0n0",
+        "rank": 7,
+        "mask": "3.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4309c5s6b0n0",
+        "rank": 8,
+        "mask": "4.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4309c5s6b0n0",
+        "rank": 9,
+        "mask": "4.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4309c5s6b0n0",
+        "rank": 4,
+        "mask": "2.0",
+        "hierarchy": "COMPOSITE"
+      }
+    ],
+    "passed": true
+  },
+  "finished": "2026-10-29T05:49:29.880747+00:00",
+  "elapsed_seconds": 128.18576847901568,
+  "storage_at_finish": {
+    "bytes": 982444052,
+    "entries": 6647
+  }
+}
