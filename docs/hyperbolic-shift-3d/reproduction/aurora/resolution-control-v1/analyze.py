@@ -5,6 +5,10 @@ Run from any directory. NumPy and Matplotlib are required. Missing new runs
 remain pending; --require-all rejects partial or unbound evidence. Input CSVs are never
 rewritten. --new-dir may select either the downloaded campaign/output directory
 or a portable copy of its small records. No checkpoints are opened or admitted.
+
+For separately launched controls, repeat --case-dir CASE OUTPUT_DIRECTORY,
+for example --case-dir minkowski-n24 /path/to/followup/output. Each directory
+uses its own parent/worker-status.json; worker records are never combined.
 """
 
 import argparse
@@ -219,7 +223,8 @@ def throughput(data, cells):
 def analyze_case(spec, directory, low, high):
     key, label, prefix, n, dt = spec
     summary = {"case": key, "label": label, "n": n, "dt": dt,
-               "n_times_dt": n * dt, "active_cells": 19 * n**3, "outcome": "pending"}
+               "n_times_dt": n * dt, "active_cells": 19 * n**3, "outcome": "pending",
+               "input_directory": str(directory.resolve())}
     history_path, report_path = [directory / (prefix + suffix)
                                  for suffix in (".history.csv", ".report.json")]
     worker, worker_evidence = load_worker(directory)
@@ -382,6 +387,9 @@ def main():
     downloaded = (REPO / "output/hyperbolic-core-shell/aurora/resolution-control-v1/output"
                   if REPO else HERE / "output")
     parser.add_argument("--new-dir", type=Path, default=HERE / "output" if (HERE / "output").exists() else downloaded)
+    parser.add_argument("--case-dir", action="append", nargs=2, default=[],
+                        metavar=("CASE", "OUTPUT_DIRECTORY"),
+                        help="Override one case's input directory and its own worker provenance; repeat for distinct cases")
     parser.add_argument("--out", type=Path, default=HERE / "analysis")
     parser.add_argument("--state-min", type=float, default=1e-10)
     parser.add_argument("--state-max", type=float, default=1e-3)
@@ -389,10 +397,18 @@ def main():
     args = parser.parse_args()
     if not 0 < args.state_min < args.state_max:
         parser.error("State window must satisfy 0 < minimum < maximum")
+    overrides = {}
+    known_cases = {spec[0] for spec in CASES}
+    for case, directory in args.case_dir:
+        if case not in known_cases:
+            parser.error(f"Unknown case {case!r}; choose one of {', '.join(sorted(known_cases))}")
+        if case in overrides:
+            parser.error(f"Duplicate --case-dir override for {case!r}")
+        overrides[case] = Path(directory)
     results, histories = [], []
     for i, spec in enumerate(CASES):
-        result, data = analyze_case(spec, args.baseline_dir if i == 0 else args.new_dir,
-                                    args.state_min, args.state_max)
+        directory = overrides.get(spec[0], args.baseline_dir if i == 0 else args.new_dir)
+        result, data = analyze_case(spec, directory, args.state_min, args.state_max)
         results.append(result)
         histories.append(data)
     baseline_rate = results[0].get("growth", {}).get("state_deviation", {}).get("rate")
