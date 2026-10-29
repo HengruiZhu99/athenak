@@ -37,11 +37,16 @@ def mpi_command(executable, args):
             'gpu_tile_compact.sh', str(executable), *args]
 
 
-def run_bounded(command, root, log, seconds, plan=None):
+def run_bounded(command, root, log, seconds, plan=None, environment=None):
     start = time.monotonic()
+    env=None
+    if environment is not None:
+        env=dict(os.environ)
+        for name in [*control.TRACE_ENV,'HYPERBOLIC_SPARSE_POISON']:env.pop(name,None)
+        env.update(environment)
     with log.open('w') as stream:
         process = subprocess.Popen(command, cwd=root, stdout=stream, stderr=subprocess.STDOUT,
-                                   start_new_session=True)
+                                   start_new_session=True, env=env)
         timed_out = False
         storage_error = None
         try:
@@ -207,12 +212,12 @@ def run(root, relative):
             generated = {name:control.digest(control.local_path(root, name))
                          for name in command.get('generated_inputs', [])}
             case = dict(name=command['name'], kind=command['kind'], started=stamp(), argv=launched,
-                        generated_inputs=generated)
+                        generated_inputs=generated,environment=control.command_environment(command))
             if command['kind'] != 'check':
                 case['n'] = command.get('n', plan['n'])
             status['cases'].append(case)
             control.atomic(status_path, status)
-            case.update(run_bounded(launched, root, output/(command['name']+'.log'), timeout, plan))
+            case.update(run_bounded(launched, root, output/(command['name']+'.log'), timeout, plan,case['environment']))
             storage.require_capacity(root,plan)
             report_path = control.local_path(root, command['report'])
             report = {}

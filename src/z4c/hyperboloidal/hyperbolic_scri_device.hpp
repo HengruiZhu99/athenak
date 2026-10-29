@@ -52,6 +52,7 @@ class HyperbolicScriDevice {
   Buffer local_surface_,local_rhs_;
   Buffer normal_weights_;
   Diagnostics diagnostics_;
+  std::vector<int> active_dependencies_;
 
   struct Sample {
     ConstBuffer active,surface;
@@ -355,7 +356,11 @@ class HyperbolicScriDevice {
     terms_=Terms("scri owned sample terms",terms.size());auto host_terms=Kokkos::create_mirror_view(terms_);
     for(size_t i=0;i<terms.size();++i)host_terms(i)=terms[i];
     Kokkos::deep_copy(rows_,rows);Kokkos::deep_copy(terms_,host_terms);
+    for(const auto&term:terms)if(!term.boundary)active_dependencies_.push_back(term.point);
+    std::sort(active_dependencies_.begin(),active_dependencies_.end());
+    active_dependencies_.erase(std::unique(active_dependencies_.begin(),active_dependencies_.end()),active_dependencies_.end());
   }
+  const std::vector<int>& ActiveDependencies()const{return active_dependencies_;}
   Summary Project(ConstBuffer global_surface) {
     CheckSurface(global_surface);
     Kokkos::parallel_for("scri owned null projection",Kokkos::RangePolicy<ExecutionSpace>(0,local_),

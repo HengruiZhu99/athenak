@@ -31,6 +31,7 @@ class HyperbolicCompositeExchange {
   IntBuffer boundary_bad;
   HostBuffer host_surface,host_samples;
   std::vector<int> scri_padded_indices;
+  std::vector<int> active_dependencies;
   template<class T>static View<T> Upload(const std::string&name,const std::vector<T>&data){
     View<T> view(name,data.size());auto host=Kokkos::create_mirror_view(view);
     for(size_t i=0;i<data.size();++i)host(i)=data[i];Kokkos::deep_copy(view,host);return view;
@@ -78,6 +79,7 @@ class HyperbolicCompositeExchange {
     }
     std::vector<int> ids,indices;
     if(selective)ids.assign(needed.begin(),needed.end());else{ids.resize(total);for(int p=0;p<total;++p)ids[p]=p;}
+    active_dependencies=ids;
     for(int p:ids)indices.push_back(e.grid.active[p]);
     active=Upload("active indices",indices);source_ids=Upload("active source indices",ids);
     if(e.positive_dissipation&&build_positive){
@@ -113,6 +115,9 @@ class HyperbolicCompositeExchange {
       host_padded[f*count+scri_padded_indices[p]]=host_samples(p*nf+f);
   }
   size_t ActiveCopies()const{return active.extent(0);}
+  // Complete active-state read set of Fill, including internal-leaf KO donors.
+  // Retained on the host for a persistent rank-to-rank communication plan.
+  const std::vector<int>& ActiveDependencies()const{return active_dependencies;}
   size_t HaloRows()const{return rows.extent(0);}
   struct Summary {Real before=0,after=0;int invalid=0;};
   Summary Fill(ConstBuffer state){

@@ -94,7 +94,9 @@ execution uses batched chart conversion, trace residual and deterministic
 per-target transposed lift. No atomics enter evolution sums. A rank retains
 only rows whose lifts contribute to its owned points; dependencies are
 exposed for integration with the sparse stage exchange. There is no
-per-cell kernel launch. Current V12 uses the preserved full gather control.
+per-cell kernel launch. The initial V12 comparison uses the preserved full gather control. The
+separate sparse target adds trace dependencies to the union and has passed
+local two-rank poisoned-buffer equivalence; GPU qualification remains open.
 
 Trace diagnostic rows belong to the rank owning the first donor of that
 row, independent of the number of ranks storing it. Norms include both

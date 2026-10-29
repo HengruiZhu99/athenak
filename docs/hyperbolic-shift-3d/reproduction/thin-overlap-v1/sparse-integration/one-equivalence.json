@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "command": [
+    "/opt/homebrew/bin/mpiexec",
+    "-n",
+    "1",
+    "build-thin-overlap/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_thin_trace_sparse",
+    "12",
+    "output/thin-overlap-v1/sparse-integration/one",
+    "oblique",
+    ".002",
+    ".00025",
+    "-",
+    "-",
+    "120",
+    ".01",
+    ".001",
+    "6",
+    "12",
+    "2"
+  ],
+  "checkpoint_sha256": "c451c1772801ed458effabd904dc5689c6aa276e6e02123c7adb04baf1cd52b0",
+  "scope": "one rank integration; multi-rank poisoned dependencies still pending"
+}

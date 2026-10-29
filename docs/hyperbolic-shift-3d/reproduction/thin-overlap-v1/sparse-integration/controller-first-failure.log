@@ -1,0 +1,16 @@
+test_active_or_held_own_task_blocks (test_control.ControllerTests) ... ok
+test_actual_arguments_must_match_reviewed_metadata (test_control.ControllerTests) ... ok
+test_all_resolution_controls_can_pass_without_stability_admission (test_control.ControllerTests) ... FAIL
+
+======================================================================
+FAIL: test_all_resolution_controls_can_pass_without_stability_admission (test_control.ControllerTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/hz0693/.codex/worktrees/9328/hyperboloidal/tst/hyperbolic_shift_3d/aurora/test_control.py", line 751, in test_all_resolution_controls_can_pass_without_stability_admission
+    self.assertEqual(code, 0)
+AssertionError: 1 != 0
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.041s
+
+FAILED (failures=1)

@@ -22,6 +22,11 @@ constexpr bool thin_trace=HYPERBOLIC_THIN_TRACE;
 struct TraceConfig {int32_t scheme=1,layers=1,shifted=1,reserved=0;Real kappa=0,normal_ratio=.25;};
 static_assert(sizeof(TraceConfig)==32,"trace config layout");
 TraceConfig trace_config;
+#include "z4c/hyperboloidal/sparse_stage_exchange.hpp"
+#ifndef HYPERBOLIC_SPARSE_STAGE
+#define HYPERBOLIC_SPARSE_STAGE 0
+#endif
+constexpr bool sparse_stage=HYPERBOLIC_SPARSE_STAGE;
 #ifndef HYPERBOLIC_ALGEBRAIC_FINAL_PROJECTION
 #define HYPERBOLIC_ALGEBRAIC_FINAL_PROJECTION 0
 #endif
@@ -112,9 +117,11 @@ class Evolution {
  public:
   int rank,size,n,total,first,last,local,first_block,last_block;
   int surface_total,surface_first,surface_local;
+  const std::chrono::steady_clock::time_point construction_started=std::chrono::steady_clock::now();
+  double setup_seconds[8]={};
   h::HyperbolicComposite model;
   std::unique_ptr<h::PairedTraceDevice> trace_penalty;
-  double interface_seconds=0;
+  double interface_seconds=0,trace_setup_seconds=0;
   std::unique_ptr<h::HyperbolicCompositeDevice> kernel;
   std::unique_ptr<h::HyperbolicCompositeExchange> exchange;
   std::unique_ptr<h::HyperbolicCompositeExchange> normal_exchange;
@@ -122,6 +129,9 @@ class Evolution {
   std::unique_ptr<h::HyperbolicSampledNormalDevice> sampled_normal;
   std::unique_ptr<h::HyperbolicAngularDissipationDevice> angular_dissipation;
   Buffer angular_residual;
+  std::unique_ptr<h::SparseStageExchange> sparse;
+  h::MeshPlanEpoch mesh_epoch{};
+  bool sparse_poison=false;
   std::unique_ptr<h::HyperbolicScriDevice> global_projector;
   bool boundary_cached=false;
   Real boundary_cached_dt=0;
@@ -141,6 +151,8 @@ class Evolution {
   explicit Evolution(int resolution,Real epsilon=0,int kind=0):n(resolution),model(thin_trace?hyperbolic_reproduction::ThinCoreMesh(n,trace_config.layers,trace_config.shifted):continuous_positive?hyperbolic_reproduction::ContinuousCoreMesh(n):spherical_overlap?hyperbolic_reproduction::SphericalOverlapMesh(n):hyperbolic_reproduction::FixedMesh(n,core_subdivisions,evolved_overlap),false,scri_angular_exchange,epsilon,
     scri_sampled_normal?h::HyperbolicComposite::NormalDerivative::sampled_numerator:h::HyperbolicComposite::NormalDerivative::analytic_jets,
     scri_donor_seven?h::HyperbolicComposite::RadialClosure::donor_seven:h::HyperbolicComposite::RadialClosure::ghost_lift),angular_epsilon(epsilon){
+    auto setup_tick=construction_started;
+    auto setup_phase=[&](int i){const auto now=std::chrono::steady_clock::now();setup_seconds[i]=std::chrono::duration<double>(now-setup_tick).count();setup_tick=now;};
     if constexpr(inner_transition_logical)model.grid.SetInnerTransitionLogical(true);
     model.positive_dissipation=continuous_positive;model.puncture_reference=kind==2;
     MPI_Comm_rank(MPI_COMM_WORLD,&rank);MPI_Comm_size(MPI_COMM_WORLD,&size);
@@ -153,12 +165,16 @@ class Evolution {
     counts.resize(size);displacements.resize(size);surface_counts.resize(size);surface_displacements.resize(size);
     for(int r=0;r<size;++r){displacements[r]=total*r/size*31;counts[r]=(total*(r+1)/size-total*r/size)*31;
       surface_displacements[r]=surface_total*r/size*31;surface_counts[r]=(surface_total*(r+1)/size-surface_total*r/size)*31;}
+    setup_phase(0);
     kernel=std::make_unique<h::HyperbolicCompositeDevice>(model.grid,first,local,model.radial_plan.get());
     std::vector<int> owned_blocks;
     if constexpr(continuous_positive){std::set<int> blocks;for(int p=first;p<last;++p)blocks.insert(model.grid.cells[p].block);owned_blocks.assign(blocks.begin(),blocks.end());}
+    setup_phase(1);
     exchange=std::make_unique<h::HyperbolicCompositeExchange>(model,first_block,last_block,owned_blocks,continuous_positive);
+    setup_phase(2);
     boundary=std::make_unique<h::HyperbolicScriDevice>(model,surface_first,surface_local);
     if constexpr(boundary_reuse)global_projector=std::make_unique<h::HyperbolicScriDevice>(model,0,surface_total);
+    setup_phase(3);
     if constexpr(scri_sampled_normal){
       // Surface ownership is independent of bulk ownership. Its five radial
       // donors therefore require their own native halo plan, not this rank's
@@ -166,6 +182,7 @@ class Evolution {
       sampled_normal=std::make_unique<h::HyperbolicSampledNormalDevice>(model,surface_first,surface_local);
       normal_exchange=std::make_unique<h::HyperbolicCompositeExchange>(model,sampled_normal->FirstBlock(),sampled_normal->EndBlock(),std::vector<int>{},continuous_positive,false);
     }
+    setup_phase(4);
     if(angular_epsilon>0){
       angular_dissipation=std::make_unique<h::HyperbolicAngularDissipationDevice>(*model.angular_plan,boundary_reuse?0:surface_first,boundary_reuse?surface_total:surface_local);
       angular_upper_bound=model.angular_plan->SpectralUpperBound();
@@ -173,10 +190,24 @@ class Evolution {
       residual_counts.resize(size);residual_displacements.resize(size);
       for(int r=0;r<size;++r){residual_counts[r]=surface_counts[r]/31*21;residual_displacements[r]=surface_displacements[r]/31*21;}
     }
+    setup_phase(5);
     if constexpr(thin_trace){
+      const auto started=std::chrono::steady_clock::now();
       const cubed_sphere::PairedTracePenalty plan(model.grid);
       trace_penalty=std::make_unique<h::PairedTraceDevice>(model.grid,plan,first,local);
+      setup_tick=std::chrono::steady_clock::now();
+      trace_setup_seconds=std::chrono::duration<double>(setup_tick-started).count();
     }
+    if constexpr(sparse_stage){
+      std::vector<int> needed=exchange->ActiveDependencies();
+      const auto&normal=normal_exchange->ActiveDependencies();needed.insert(needed.end(),normal.begin(),normal.end());
+      const auto&scri=boundary->ActiveDependencies();needed.insert(needed.end(),scri.begin(),scri.end());
+      if constexpr(thin_trace){const auto&trace=trace_penalty->ActiveDependencies();needed.insert(needed.end(),trace.begin(),trace.end());}
+      std::vector<int> cuts(size+1);for(int r=0;r<=size;++r)cuts[r]=total*r/size;
+      sparse=std::make_unique<h::SparseStageExchange>();sparse->Rebuild(mesh_epoch,cuts,31,needed);
+      const char*poison=std::getenv("HYPERBOLIC_SPARSE_POISON");sparse_poison=poison&&std::string(poison)=="1";
+    }
+    setup_phase(6);
     state=Buffer("global active stage",31*total);base=Buffer("accepted stage",31*total);
     local_state=Buffer("local stage",31*local);compensation=Buffer("local RK compensation",31*local);
     next_compensation=Buffer("next RK compensation",31*local);Kokkos::deep_copy(compensation,Real(0));
@@ -190,6 +221,7 @@ class Evolution {
     for(int p=0;p<local;++p){const Real r=model.Radius(model.grid.geometry[first+p].x);lapse(p)=(1+r*r)/2;}
     Kokkos::deep_copy(reference_lapse,lapse);
     floor_statistics=Buffer("physical lapse floor statistics",2);Kokkos::deep_copy(floor_statistics,Real(0));
+    setup_phase(7);
   }
   void SynchronizeError(int failed,std::string message){
     int all=0;MPI_Allreduce(&failed,&all,1,MPI_INT,MPI_MAX,MPI_COMM_WORLD);
@@ -201,7 +233,20 @@ class Evolution {
     if(values.size()!=target.extent(0))throw std::runtime_error("device upload size mismatch");
     HostBuffer host("host upload",target.extent(0));for(size_t i=0;i<values.size();++i)host(i)=values[i];Kokkos::deep_copy(target,host);
   }
-  void Upload(const V&values){boundary_cached=false;CopyFromHost(values,state);}
+  void Upload(const V&values){boundary_cached=false;CopyFromHost(values,state);
+    if constexpr(sparse_stage){Kokkos::deep_copy(local_state,Kokkos::subview(state,std::make_pair(size_t(31*first),size_t(31*last))));ExchangeStage();}}
+  void ExchangeStage(){
+    boundary_cached=false;
+    if constexpr(sparse_stage){const auto t=sparse->Exchange(local_state,state,mesh_epoch,sparse_poison);
+      exchange_seconds+=t.pack+t.mpi+t.unpack;
+    }else Gather(local_state,state);
+  }
+  Buffer CompleteState(Buffer partial){
+    if constexpr(!sparse_stage)return partial;
+    Buffer complete("complete snapshot state",partial.extent(0));
+    Buffer owned=Kokkos::subview(partial,std::make_pair(size_t(31*first),size_t(31*last)));
+    Gather(owned,complete);return complete;
+  }
   V Download(Buffer data){auto host=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),data);V values(data.extent(0));
     for(size_t i=0;i<values.size();++i)values[i]=host(i);return values;}
   void Gather(Buffer local_values,Buffer global,bool edge=false){
@@ -316,7 +361,7 @@ class Evolution {
           out(i)=z4c::hyperboloidal::MaterializePositive(log(begin(offset+i)+(f==18?A(p):0))+h*k(i),A(p),f,physical_lapse_floor,floored);
           if(floored){Kokkos::atomic_add(&fs(0),Real(1));Kokkos::atomic_max(&fs(1),sqrt(2*A(p)-1));}
         }else out(i)=begin(offset+i)+h*k(i);
-      });Gather(out,state);
+      });ExchangeStage();
       const auto es=surface_stage,eb=surface_base,ek=edge_rates[s];const int eo=31*surface_first;
       Kokkos::parallel_for("local surface RK stage",Kokkos::RangePolicy<>(0,31*surface_local),KOKKOS_LAMBDA(int i){es(i)=continuous_positive&&i%31==0?exp(log(eb(eo+i))+h*ek(i)):eb(eo+i)+h*ek(i);});Gather(es,surface,true);};
     try{
@@ -337,7 +382,7 @@ class Evolution {
           if(floored){Kokkos::atomic_add(&fs(0),Real(1));Kokkos::atomic_max(&fs(1),sqrt(2*A(p)-1));}
         }else{out(i)=begin(offset+i)+increment;next(i)=(out(i)-begin(offset+i))-increment;}
       });
-      const int volume_projection_bad=ProjectAccepted(out,next,local);Gather(out,state);
+      const int volume_projection_bad=ProjectAccepted(out,next,local);ExchangeStage();
       if constexpr(algebraic_final_projection)SynchronizeError(volume_projection_bad,"invalid accepted volume algebraic projection");
       const auto es=surface_stage,eb=surface_base,ec=surface_compensation,en=next_surface_compensation;const int eo=31*surface_first;
       const auto a=edge_rates[0],b=edge_rates[1],c=edge_rates[2],d=edge_rates[3];
@@ -364,10 +409,11 @@ class Evolution {
   }
   void WriteCheckpoint(const std::string&path,int kind,Real dt,bool admitted){
     Buffer comp_global("global compensation",state.extent(0)),edge_comp_global("global surface compensation",surface.extent(0));
+    const auto complete=CompleteState(state);
     Gather(compensation,comp_global);Gather(surface_compensation,edge_comp_global,true);int bad=0;std::string reason;
     if(rank==0)try{Header header;std::memcpy(header.magic,checkpoint_magic,std::strlen(checkpoint_magic)+1);header.n=n;header.kind=kind;header.admitted=admitted;
       header.cells=total;header.surface=surface.extent(0);header.steps=steps;header.time=time;header.dt=dt;
-      const auto values=Download(state),comps=Download(comp_global),edge=Download(surface),edge_comps=Download(edge_comp_global);std::ofstream out(path+".tmp",std::ios::binary);
+      const auto values=Download(complete),comps=Download(comp_global),edge=Download(surface),edge_comps=Download(edge_comp_global);std::ofstream out(path+".tmp",std::ios::binary);
       out.write(reinterpret_cast<const char*>(&header),sizeof(header));
       if constexpr(scri_angular_dissipation){const DissipationConfig config{angular_epsilon,7,0};
         out.write(reinterpret_cast<const char*>(&config),sizeof(config));}
@@ -667,16 +713,23 @@ int main(int argc,char**argv){
     if constexpr(continuous_positive){auto f=e.Download(e.floor_statistics);floor_totals[0]=f[0];floor_totals[1]=f[1];
       MPI_Allreduce(MPI_IN_PLACE,floor_totals,1,MPI_ATHENA_REAL,MPI_SUM,MPI_COMM_WORLD);
       MPI_Allreduce(MPI_IN_PLACE,floor_totals+1,1,MPI_ATHENA_REAL,MPI_MAX,MPI_COMM_WORLD);}
+    const Buffer complete_failed=e.failed_state.extent(0)?e.CompleteState(e.failed_state):Buffer{};
     double timing[5]={e.rhs_seconds,e.exchange_seconds,e.closure_seconds,e.diagnostic_seconds,e.halo_seconds};
     std::vector<double> rank_collectives(3*e.size);std::vector<uint64_t> rank_collective_calls(3*e.size);
     MPI_Gather(e.collective_seconds,3,MPI_DOUBLE,rank_collectives.data(),3,MPI_DOUBLE,0,MPI_COMM_WORLD);
     MPI_Gather(e.collective_calls,3,MPI_UINT64_T,rank_collective_calls.data(),3,MPI_UINT64_T,0,MPI_COMM_WORLD);
     std::vector<double> interface_timings(e.size);MPI_Gather(&e.interface_seconds,1,MPI_DOUBLE,interface_timings.data(),1,MPI_DOUBLE,0,MPI_COMM_WORLD);
+    std::vector<double> trace_setup(e.size);MPI_Gather(&e.trace_setup_seconds,1,MPI_DOUBLE,trace_setup.data(),1,MPI_DOUBLE,0,MPI_COMM_WORLD);
+    std::vector<double> rank_setup(8*e.size);MPI_Gather(e.setup_seconds,8,MPI_DOUBLE,rank_setup.data(),8,MPI_DOUBLE,0,MPI_COMM_WORLD);
+    double sparse_data[7]={};
+    if(e.sparse){const auto t=e.sparse->Seconds();sparse_data[0]=t.pack;sparse_data[1]=t.mpi;sparse_data[2]=t.unpack;
+      sparse_data[3]=e.sparse->SendPoints();sparse_data[4]=e.sparse->ReceivePoints();sparse_data[5]=e.sparse->Calls();sparse_data[6]=e.sparse->Builds();}
+    std::vector<double> rank_sparse(7*e.size);MPI_Gather(sparse_data,7,MPI_DOUBLE,rank_sparse.data(),7,MPI_DOUBLE,0,MPI_COMM_WORLD);
     std::vector<double> rank_timings(5*e.size);MPI_Gather(timing,5,MPI_DOUBLE,rank_timings.data(),5,MPI_DOUBLE,0,MPI_COMM_WORLD);
     MPI_Allreduce(MPI_IN_PLACE,timing,5,MPI_DOUBLE,MPI_MAX,MPI_COMM_WORLD);
     CollectiveLocal([&]{if(e.rank==0){
       if(e.failed_state.extent(0)){
-        const auto failed=e.Download(e.failed_state);std::ofstream capture(output+".failed-stage.bin",std::ios::binary);
+        const auto failed=e.Download(complete_failed);std::ofstream capture(output+".failed-stage.bin",std::ios::binary);
         capture.write(reinterpret_cast<const char*>(failed.data()),failed.size()*sizeof(Real));
         capture.write(reinterpret_cast<const char*>(e.failed_edge.data()),e.failed_edge.size()*sizeof(Real));
         capture.close();if(!capture)throw std::runtime_error("failed-stage capture write failed");
@@ -706,8 +759,14 @@ int main(int argc,char**argv){
           <<",\"trace_normal_ratio\":"<<trace_config.normal_ratio<<",\"trace_upper_value\":"<<e.trace_penalty->upper_value
           <<",\"trace_upper_normal\":"<<e.trace_penalty->upper_normal<<",\"interface_seconds_by_rank\":[";
         for(int r=0;r<e.size;++r){if(r)report<<',';report<<interface_timings[r];}report<<']';
+        report<<",\"trace_setup_seconds_by_rank\":[";for(int r=0;r<e.size;++r){if(r)report<<',';report<<trace_setup[r];}report<<']';
       }
       if constexpr(evolved_overlap)report<<",\"evolved_overlap\":"<<evolved_overlap<<",\"nominal_cells\":"<<e.model.grid.nominal_count;
+      report<<",\"mesh_plan_setup_seconds_by_rank\":[";
+      for(int rank=0;rank<e.size;++rank){if(rank)report<<',';report<<'[';for(int k=0;k<8;++k){if(k)report<<',';report<<rank_setup[8*rank+k];}report<<']';}report<<']';
+      report<<",\"volume_exchange\":\""<<(sparse_stage?"cached_sparse_alltoallv":"full_allgatherv")<<"\",\"sparse_poison_unused\":"<<(e.sparse_poison?"true":"false");
+      report<<",\"sparse_exchange_by_rank\":[";
+      for(int rank=0;rank<e.size;++rank){if(rank)report<<',';report<<'[';for(int k=0;k<7;++k){if(k)report<<',';report<<rank_sparse[7*rank+k];}report<<']';}report<<']';
       report<<",\"boundary_execution\":\""<<(boundary_reuse?"cached_global_projection_angular":"partitioned_uncached")<<"\",\"boundary_cache_hits\":"<<e.boundary_cache_hits;
       if constexpr(continuous_positive)report<<",\"cartesian_seams\":\"uniform_global_stencil\",\"positive_variables\":\"log_chi_log_lapse_rk_and_ko\",\"physical_lapse_floor\":"<<physical_lapse_floor;
       if constexpr(spherical_overlap)report<<",\"shell_geometry\":\"spherical_equiangular\",\"core_half_width\":0.18,\"shell_inner_radius\":0.16,\"overlap_quadrature\":\"radial_quintic_partition\"";

@@ -67,17 +67,62 @@ Runtime variables, only for the experimental target:
 The extra `oblique` initial condition is a compact off-center lapse pulse;
 its continuous evolution is not an exact analytic solution.
 
+## Bounded oblique probe and sparse integration
+
+The prototype source is `b9685c413`; the following longer probe uses the same
+frozen executable as the first preflight. All three cases completed 80 steps
+to coordinate t=.04 with dt=.0005, n12, and identical diagnostics:
+
+| Variant | Native seconds | H L2 at .04 | M L2 at .04 |
+|---|---:|---:|---:|
+| Three-layer control | 235.91 | .00442054 | .00922456 |
+| One layer, zero penalty | 210.38 | .00442873 | .00926886 |
+| One layer, kappa=1, eta=.25 | 240.82 | .00440651 | .00914741 |
+
+All retained null errors <=1.12e-15 and used zero lapse-floor interventions.
+The added penalty used 28.73 seconds. Its small constraint reduction has not
+shown enough benefit to offset that cost on this short CPU case. These are
+exploratory local timings with other local work present, not a dedicated GPU
+benchmark. The pulse is off-center and evolves through the interface region;
+reflected characteristic amplitudes and independent time/space convergence
+remain unmeasured. The three-layer result is a coarse control, not truth.
+
+![Matched oblique probe](oblique-probe/comparison.png)
+
+`oblique-probe/comparison.json` also records volume-weighted lapse, chi,
+radial-shift and tangential-shift differences on common nominal sample
+coordinates. The diagnostic partition and cutoff are the same. Trace mismatch
+plots have different physical Cartesian trace locations as layer count changes;
+their absolute values are not a common-location error comparison.
+
+The separately committed sparse work `fd522df9248c4911c9352057156b3ec58e7dc02b`
+is integrated through a distinct `hyperbolic_shift_3d_mpi_thin_trace_sparse`
+target. Its dependency union includes trace interpolation AND adjoint-lift
+support, in addition to bulk, sampled-normal, scri and diagnostic dependencies.
+Poisoned two-rank oblique, restart and short puncture runs reproduce complete
+non-sparse checkpoint bytes. The puncture fixture reaches only .0015M, not 3M.
+Its initial data agree exactly with all 143,632 corresponding V11 samples.
+
+The Aurora controller now binds each thin geometry/penalty configuration and
+whitelists per-case environment variables. It rejects stale V11 or changed
+V12 admission parameters. Worker tests were updated for the new explicit
+environment argument; the initial mock-signature failure is retained beside
+the repaired controller tests. All 106 controller/preflight tests subsequently
+passed. No physical acceptance threshold was changed.
+No GPU job has been submitted from this experimental fork yet.
+
 ## Remaining gates
 
 1. Longer oblique and spherical interface probes, reflection/error diagnostics
    and independent timestep refinement. Preserve failed cases.
-2. Merge the separately validated sparse-exchange work; include trace donors
-   in its persistent dependency union and repeat poisoned dependency tests.
+2. Qualify the integrated sparse trace target on all 12 GPU ranks; local
+   poisoned two-rank trajectory equivalence has passed.
 3. Fresh frozen SYCL+MPI source/build and a 12-tile, single-debug-node preflight,
    sharing the existing campaign allocation/storage guards.
 4. Isotropic puncture through at least 3M, with matching 1D norm conventions
    and accepted horizons only. The n16 thin initial data have been generated,
-   with provenance retained, but no successful duration test is claimed.
+   with provenance retained; a two-step equivalence fixture passed, but no
+   successful duration test is claimed.
 5. Comparable-accuracy performance and convergence comparison; AMR evolution
    remains a separate unresolved infrastructure limitation.
 
