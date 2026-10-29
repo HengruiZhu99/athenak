@@ -216,8 +216,23 @@ poisoned exterior-ghost checks pass; default V5 full-array actions remain
 bitwise unchanged. Its action opposes the saved volume directions but
 increases their surface projections, with large shape residuals. It is not
 a demonstrated stability improvement. A bounded fresh n6 duration comparison
-is separate from these component/action results; there is no new GPU or
-production admission.
+is separate from these component/action results.
+
+The subsequent [native V6 implementation](scri-donor-seven-native-v1/README.md)
+adds owned device radial plans and an explicit MPI target/checkpoint format.
+Its [Aurora preflight](aurora/preflight-donor-seven-v1/README.md), job8984220,
+passed179 checks on twelve GPU tiles, including complete CPU/SYCL bulk and
+surface parity and bitwise direct/restarted pulse checkpoints. This admits
+duration testing only. Fresh n16 Minkowski job8984226 targets coordinate t=1;
+no stable-duration, convergence or100M claim has been made for V6.
+
+[Offline V6 reanalysis](v6-offline-diagnostics-v1/README.md) now explicitly
+uses the matching seven-node bulk derivatives. Whole-volume and exterior
+constraint RMS agree with the native GPU puncture report to1.4e-16 absolute.
+A fresh unchanged N513 donor reference at t=1=3M matches the archived donor
+horizon radius to4.3e-14 and is retained for a later puncture comparison.
+Ray diagnostics remain independently interpolated and are not native cell
+constraints or general apparent-horizon solves.
 
 The original J-disabled, bulk-mu=4 1D control is confirmed to have completed coordinate `33.3333984375 = 100.0001953125 M`. Its N513/N1025 continuation chains and frozen-source identities were checked. A [portable N513 time series](original-1d-reference/history.csv) and [provenance](original-1d-reference/provenance.json) preserve the matching horizon/exterior-constraint reference. Late gauge settling and uniform puncture convergence were not established by that original control.
 

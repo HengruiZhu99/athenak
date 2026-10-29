@@ -8,7 +8,7 @@ V1–V5 retain their existing invocation. Ray diagnostics remain independent
 interpolated jets, with this distinction recorded in the exported metadata.
 This changes offline diagnostics, not the frozen source-v13 evolution job.
 
-The collected four-step n16 puncture checkpoint from Aurora job8984220 was
+The collected four-step n16 puncture checkpoint from Aurora job 8984220 was
 exported with worker/source binding and reanalyzed locally. Normalized
 coordinate-volume RMS values agree with the native GPU diagnostics:
 
@@ -22,8 +22,8 @@ coordinate-volume RMS values agree with the native GPU diagnostics:
 The exterior cutoff is the native contemporaneous mean horizon radius.
 M uses the Penrose/conformal metric norm, not the radial component or the
 physical norm. This checks diagnostic implementation parity, not evolution
-accuracy. The export completed in9.35s, within its250s analyzer/400s external
-bound. The82 existing offline regressions also pass. Source, executable,
+accuracy. The export completed in 9.35 s, within its 250 s analyzer / 400 s external
+bound. The 82 existing offline regressions also pass. Source, executable,
 input and output hashes are retained under [reanalysis](reanalysis).
 
 Reproduce the final check after exporting the complete checkpoint with the
@@ -35,19 +35,25 @@ python3 tst/hyperbolic_shift_3d/check_reanalysis.py \
   --out output/v6-reanalysis-parity-new.json
 ```
 
-A fresh **unchanged N513 1D donor** run reached coordinate t=1=3M in158.04s,
-with dt=.025/512 and20481 steps including the final remainder. Its library
-SHA256 and22 dependency source hashes match the preserved donor used for
-the previous comparisons. The run used a400s native/420s external bound,
+A fresh **unchanged N513 1D donor** run reached coordinate t=1=3M in 158.04 s,
+with dt=.025/512 and 20481 steps including the final remainder. Its library
+SHA256 and 22 dependency source hashes match the preserved donor used for
+the previous comparisons. The run used a 400 s native / 420 s external bound,
 one process, fresh output, and no restart. The controller verifies that the
 sources remained unchanged. Its final local-polynomial apparent-horizon
 radius is **.07507475825193644**, areal radius **.6666666666843031**, and mass
-**.33333333334215154**. Its null residual is2.22e-16.
+**.33333333334215154**. Its null residual is 2.22e-16.
 
 [Initial/final profiles and reports](donor/n513) provide the matched-time
-reference for a future successful V6 puncture duration. The full1D state and
+reference for a future successful V6 puncture duration. The full 1D state and
 compensation archive remains in local ignored output and is hash-bound in
-the execution record. This is a3M reference, not a new100M validation or a
-claim that the3D puncture has reached this time. The1D reported exterior
-radial constraint RMS must not be equated directly with the3D invariant
+the execution record. This is a 3 M reference, not a new 100 M validation or a
+claim that the 3D puncture has reached this time. The 1D reported exterior
+radial constraint RMS must not be equated directly with the 3D invariant
 momentum norm without the documented metric conversion.
+
+The fresh endpoint also reproduces the archived 100 M campaign at its saved
+t=1 row: horizon-radius difference 4.25e-14, mass difference 1.05e-15,
+and exterior H/M radial RMS differences below 4.8e-15.
+[archive-comparison.json](donor/archive-comparison.json) binds that history
+and retains every difference; this is not a full-state bitwise replay.
