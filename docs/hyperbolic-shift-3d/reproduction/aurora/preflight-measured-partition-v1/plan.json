@@ -1,0 +1,3557 @@
+{
+  "schema": 1,
+  "reviewed": true,
+  "phase": "preflight",
+  "n": 16,
+  "low_resolution_n": 16,
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "00:30:00"
+  },
+  "storage": {
+    "limit_bytes": 5000000000,
+    "planned_new_bytes": 520000000,
+    "atomic_checkpoint_reserve_bytes": 100000000
+  },
+  "worker_seconds": 1710,
+  "output_dir": "campaigns/preflight-measured-partition-v1/output",
+  "commands": [
+    {
+      "name": "sparse-plan-lifecycle",
+      "kind": "check",
+      "executable": "build-sycl-mpi-v22/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_sparse_exchange",
+      "args": [
+        "--report",
+        "campaigns/preflight-measured-partition-v1/output/sparse-plan-lifecycle.report.json"
+      ],
+      "timeout_seconds": 60,
+      "report": "campaigns/preflight-measured-partition-v1/output/sparse-plan-lifecycle.report.json",
+      "artifacts": [
+        "campaigns/preflight-measured-partition-v1/output/sparse-plan-lifecycle.report.json"
+      ],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "lifecycle_passed"
+          ],
+          "op": "eq",
+          "value": true
+        }
+      ]
+    },
+    {
+      "name": "parity-continuous-positive",
+      "kind": "check",
+      "executable": "source-v22/tst/hyperbolic_shift_3d/aurora/preflight.py",
+      "args": [
+        "--root",
+        "/home/hzhu/hyperbolic-core-shell-20261028",
+        "--plan",
+        "campaigns/preflight-measured-partition-v1/plan.json",
+        "--output-prefix",
+        "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive",
+        "--seconds",
+        "@WALL_SECONDS@",
+        "component",
+        "--component",
+        "continuous_positive_device",
+        "--test-binary",
+        "build-sycl-mpi-v22/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_continuous_positive_device",
+        "--cmake-cache",
+        "build-sycl-mpi-v22/CMakeCache.txt"
+      ],
+      "timeout_seconds": 250,
+      "report": "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive.report.json",
+      "artifacts": [
+        "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive.rank-00.log",
+        "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive.rank-01.log",
+        "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive.rank-02.log",
+        "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive.rank-03.log",
+        "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive.rank-04.log",
+        "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive.rank-05.log",
+        "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive.rank-06.log",
+        "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive.rank-07.log",
+        "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive.rank-08.log",
+        "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive.rank-09.log",
+        "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive.rank-10.log",
+        "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive.rank-11.log",
+        "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive.report.json",
+        "campaigns/preflight-measured-partition-v1/output/parity-continuous-positive.log"
+      ],
+      "inputs": [
+        "build-sycl-mpi-v22/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_continuous_positive_device",
+        "build-sycl-mpi-v22/CMakeCache.txt"
+      ],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "gpu_cpu_parity"
+          ],
+          "op": "eq",
+          "value": true
+        }
+      ]
+    },
+    {
+      "name": "minkowski-short",
+      "kind": "minkowski",
+      "executable": "build-sycl-mpi-v22/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive_balanced",
+      "args": [
+        "16",
+        "campaigns/preflight-measured-partition-v1/output/minkowski-short",
+        "minkowski",
+        "0.001",
+        ".00025",
+        "-",
+        "-",
+        "@WALL_SECONDS@",
+        "0.001",
+        ".001",
+        "6",
+        "12",
+        "2",
+        "inputs/partition-n16-v21-r12.txt"
+      ],
+      "timeout_seconds": 180,
+      "report": "campaigns/preflight-measured-partition-v1/output/minkowski-short.report.json",
+      "artifacts": [
+        "campaigns/preflight-measured-partition-v1/output/minkowski-short.history.csv",
+        "campaigns/preflight-measured-partition-v1/output/minkowski-short.checkpoint",
+        "campaigns/preflight-measured-partition-v1/output/minkowski-short.report.json",
+        "campaigns/preflight-measured-partition-v1/output/minkowski-short.failed-stage.bin",
+        "campaigns/preflight-measured-partition-v1/output/minkowski-short.log"
+      ],
+      "inputs": [
+        "inputs/partition-n16-v21-r12.txt",
+        "inputs/partition-n16-v21-r12-source.report.json"
+      ],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "diagnostics_current"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "min_lapse"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "min_chi"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "max_cfl"
+          ],
+          "op": "le",
+          "value": 0.5
+        },
+        {
+          "path": [
+            "t"
+          ],
+          "op": "eq",
+          "value": 0.001
+        },
+        {
+          "path": [
+            "max_state_deviation"
+          ],
+          "op": "le",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "le",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "H_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "algebraic_projection"
+          ],
+          "op": "eq",
+          "value": "final_stage_standard"
+        },
+        {
+          "path": [
+            "checkpoint_schema"
+          ],
+          "op": "eq",
+          "value": "HYP3D_MPI_V11"
+        },
+        {
+          "path": [
+            "max_determinant_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_tracefree_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "scri_angular_stencil"
+          ],
+          "op": "eq",
+          "value": "cross_face_centered5"
+        },
+        {
+          "path": [
+            "steps"
+          ],
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "path": [
+            "scri_dissipation_epsilon"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "scri_dissipation_degree"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "checkpoint_header_bytes"
+          ],
+          "op": "eq",
+          "value": 152
+        },
+        {
+          "path": [
+            "scri_dissipation_cfl_max"
+          ],
+          "op": "le",
+          "value": 2.7
+        },
+        {
+          "path": [
+            "scri_normal_derivative"
+          ],
+          "op": "eq",
+          "value": "sampled_native_numerator7"
+        },
+        {
+          "path": [
+            "scri_normal_radial_nodes"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "scri_normal_bulk_derivative_order"
+          ],
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "path": [
+            "scri_radial_closure"
+          ],
+          "op": "eq",
+          "value": "donor_seven_last3"
+        },
+        {
+          "path": [
+            "scri_radial_bulk_rows"
+          ],
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "path": [
+            "interpatch_interpolation"
+          ],
+          "op": "eq",
+          "value": "logical_inner_transition"
+        },
+        {
+          "path": [
+            "evolved_overlap"
+          ],
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "path": [
+            "nominal_cells"
+          ],
+          "op": "eq",
+          "value": 106496
+        },
+        {
+          "path": [
+            "shell_geometry"
+          ],
+          "op": "eq",
+          "value": "spherical_equiangular"
+        },
+        {
+          "path": [
+            "core_half_width"
+          ],
+          "op": "eq",
+          "value": 0.18
+        },
+        {
+          "path": [
+            "shell_inner_radius"
+          ],
+          "op": "eq",
+          "value": 0.16
+        },
+        {
+          "path": [
+            "overlap_quadrature"
+          ],
+          "op": "eq",
+          "value": "radial_quintic_partition"
+        },
+        {
+          "path": [
+            "mesh_blocks"
+          ],
+          "op": "eq",
+          "value": 26
+        },
+        {
+          "path": [
+            "cartesian_core_subdivisions"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "cartesian_seams"
+          ],
+          "op": "eq",
+          "value": "uniform_global_stencil"
+        },
+        {
+          "path": [
+            "positive_variables"
+          ],
+          "op": "eq",
+          "value": "log_chi_log_lapse_rk_and_ko"
+        },
+        {
+          "path": [
+            "physical_lapse_floor"
+          ],
+          "op": "eq",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "lapse_floor_node_interventions"
+          ],
+          "op": "eq",
+          "value": 0
+        },
+        {
+          "path": [
+            "cells"
+          ],
+          "op": "eq",
+          "value": 159200
+        },
+        {
+          "path": [
+            "timing_per_rank_exclusive"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "boundary_execution"
+          ],
+          "op": "eq",
+          "value": "cached_global_projection_angular"
+        },
+        {
+          "path": [
+            "boundary_cache_hits"
+          ],
+          "op": "ge",
+          "value": 1
+        },
+        {
+          "path": [
+            "volume_exchange"
+          ],
+          "op": "eq",
+          "value": "cached_sparse_alltoallv"
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            0,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            1,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            2,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            3,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            4,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            5,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            6,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            7,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            8,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            9,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            10,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            11,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "ownership_partition"
+          ],
+          "op": "eq",
+          "value": "measured_fixed_contiguous"
+        },
+        {
+          "path": [
+            "ownership_cuts"
+          ],
+          "op": "eq",
+          "value": [
+            0,
+            17546,
+            35013,
+            52595,
+            70140,
+            83132,
+            90803,
+            98470,
+            106135,
+            113766,
+            123992,
+            141585,
+            159200
+          ]
+        },
+        {
+          "path": [
+            "partition_source_report_sha256"
+          ],
+          "op": "eq",
+          "value": "b91ef02712d26a223873bb5eb009785d4f596a524968301ae6a42dfb8850cc4b"
+        }
+      ]
+    },
+    {
+      "name": "pulse-half",
+      "kind": "pulse",
+      "executable": "build-sycl-mpi-v22/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive_balanced",
+      "args": [
+        "16",
+        "campaigns/preflight-measured-partition-v1/output/pulse-half",
+        "pulse",
+        "0.0005",
+        ".00025",
+        "-",
+        "-",
+        "@WALL_SECONDS@",
+        "0.0005",
+        ".001",
+        "6",
+        "12",
+        "2",
+        "inputs/partition-n16-v21-r12.txt"
+      ],
+      "timeout_seconds": 180,
+      "report": "campaigns/preflight-measured-partition-v1/output/pulse-half.report.json",
+      "artifacts": [
+        "campaigns/preflight-measured-partition-v1/output/pulse-half.history.csv",
+        "campaigns/preflight-measured-partition-v1/output/pulse-half.checkpoint",
+        "campaigns/preflight-measured-partition-v1/output/pulse-half.report.json",
+        "campaigns/preflight-measured-partition-v1/output/pulse-half.failed-stage.bin",
+        "campaigns/preflight-measured-partition-v1/output/pulse-half.log"
+      ],
+      "inputs": [
+        "inputs/partition-n16-v21-r12.txt",
+        "inputs/partition-n16-v21-r12-source.report.json"
+      ],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "diagnostics_current"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "min_lapse"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "min_chi"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "max_cfl"
+          ],
+          "op": "le",
+          "value": 0.5
+        },
+        {
+          "path": [
+            "t"
+          ],
+          "op": "eq",
+          "value": 0.0005
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "H_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "algebraic_projection"
+          ],
+          "op": "eq",
+          "value": "final_stage_standard"
+        },
+        {
+          "path": [
+            "checkpoint_schema"
+          ],
+          "op": "eq",
+          "value": "HYP3D_MPI_V11"
+        },
+        {
+          "path": [
+            "max_determinant_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_tracefree_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "scri_angular_stencil"
+          ],
+          "op": "eq",
+          "value": "cross_face_centered5"
+        },
+        {
+          "path": [
+            "steps"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "scri_dissipation_epsilon"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "scri_dissipation_degree"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "checkpoint_header_bytes"
+          ],
+          "op": "eq",
+          "value": 152
+        },
+        {
+          "path": [
+            "scri_dissipation_cfl_max"
+          ],
+          "op": "le",
+          "value": 2.7
+        },
+        {
+          "path": [
+            "scri_normal_derivative"
+          ],
+          "op": "eq",
+          "value": "sampled_native_numerator7"
+        },
+        {
+          "path": [
+            "scri_normal_radial_nodes"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "scri_normal_bulk_derivative_order"
+          ],
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "path": [
+            "scri_radial_closure"
+          ],
+          "op": "eq",
+          "value": "donor_seven_last3"
+        },
+        {
+          "path": [
+            "scri_radial_bulk_rows"
+          ],
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "path": [
+            "interpatch_interpolation"
+          ],
+          "op": "eq",
+          "value": "logical_inner_transition"
+        },
+        {
+          "path": [
+            "evolved_overlap"
+          ],
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "path": [
+            "nominal_cells"
+          ],
+          "op": "eq",
+          "value": 106496
+        },
+        {
+          "path": [
+            "shell_geometry"
+          ],
+          "op": "eq",
+          "value": "spherical_equiangular"
+        },
+        {
+          "path": [
+            "core_half_width"
+          ],
+          "op": "eq",
+          "value": 0.18
+        },
+        {
+          "path": [
+            "shell_inner_radius"
+          ],
+          "op": "eq",
+          "value": 0.16
+        },
+        {
+          "path": [
+            "overlap_quadrature"
+          ],
+          "op": "eq",
+          "value": "radial_quintic_partition"
+        },
+        {
+          "path": [
+            "mesh_blocks"
+          ],
+          "op": "eq",
+          "value": 26
+        },
+        {
+          "path": [
+            "cartesian_core_subdivisions"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "cartesian_seams"
+          ],
+          "op": "eq",
+          "value": "uniform_global_stencil"
+        },
+        {
+          "path": [
+            "positive_variables"
+          ],
+          "op": "eq",
+          "value": "log_chi_log_lapse_rk_and_ko"
+        },
+        {
+          "path": [
+            "physical_lapse_floor"
+          ],
+          "op": "eq",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "lapse_floor_node_interventions"
+          ],
+          "op": "eq",
+          "value": 0
+        },
+        {
+          "path": [
+            "cells"
+          ],
+          "op": "eq",
+          "value": 159200
+        },
+        {
+          "path": [
+            "timing_per_rank_exclusive"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "boundary_execution"
+          ],
+          "op": "eq",
+          "value": "cached_global_projection_angular"
+        },
+        {
+          "path": [
+            "boundary_cache_hits"
+          ],
+          "op": "ge",
+          "value": 1
+        },
+        {
+          "path": [
+            "volume_exchange"
+          ],
+          "op": "eq",
+          "value": "cached_sparse_alltoallv"
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            0,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            1,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            2,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            3,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            4,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            5,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            6,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            7,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            8,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            9,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            10,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            11,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "ownership_partition"
+          ],
+          "op": "eq",
+          "value": "measured_fixed_contiguous"
+        },
+        {
+          "path": [
+            "ownership_cuts"
+          ],
+          "op": "eq",
+          "value": [
+            0,
+            17546,
+            35013,
+            52595,
+            70140,
+            83132,
+            90803,
+            98470,
+            106135,
+            113766,
+            123992,
+            141585,
+            159200
+          ]
+        },
+        {
+          "path": [
+            "partition_source_report_sha256"
+          ],
+          "op": "eq",
+          "value": "b91ef02712d26a223873bb5eb009785d4f596a524968301ae6a42dfb8850cc4b"
+        }
+      ]
+    },
+    {
+      "name": "pulse-resumed",
+      "kind": "pulse",
+      "executable": "build-sycl-mpi-v22/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive_balanced",
+      "args": [
+        "16",
+        "campaigns/preflight-measured-partition-v1/output/pulse-resumed",
+        "pulse",
+        "0.001",
+        ".00025",
+        "-",
+        "campaigns/preflight-measured-partition-v1/output/pulse-half.checkpoint",
+        "@WALL_SECONDS@",
+        "0.001",
+        ".001",
+        "6",
+        "12",
+        "2",
+        "inputs/partition-n16-v21-r12.txt"
+      ],
+      "timeout_seconds": 180,
+      "report": "campaigns/preflight-measured-partition-v1/output/pulse-resumed.report.json",
+      "artifacts": [
+        "campaigns/preflight-measured-partition-v1/output/pulse-resumed.history.csv",
+        "campaigns/preflight-measured-partition-v1/output/pulse-resumed.checkpoint",
+        "campaigns/preflight-measured-partition-v1/output/pulse-resumed.report.json",
+        "campaigns/preflight-measured-partition-v1/output/pulse-resumed.failed-stage.bin",
+        "campaigns/preflight-measured-partition-v1/output/pulse-resumed.log"
+      ],
+      "inputs": [
+        "inputs/partition-n16-v21-r12.txt",
+        "inputs/partition-n16-v21-r12-source.report.json"
+      ],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "diagnostics_current"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "min_lapse"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "min_chi"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "max_cfl"
+          ],
+          "op": "le",
+          "value": 0.5
+        },
+        {
+          "path": [
+            "t"
+          ],
+          "op": "eq",
+          "value": 0.001
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "H_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "algebraic_projection"
+          ],
+          "op": "eq",
+          "value": "final_stage_standard"
+        },
+        {
+          "path": [
+            "checkpoint_schema"
+          ],
+          "op": "eq",
+          "value": "HYP3D_MPI_V11"
+        },
+        {
+          "path": [
+            "max_determinant_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_tracefree_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "scri_angular_stencil"
+          ],
+          "op": "eq",
+          "value": "cross_face_centered5"
+        },
+        {
+          "path": [
+            "steps"
+          ],
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "path": [
+            "scri_dissipation_epsilon"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "scri_dissipation_degree"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "checkpoint_header_bytes"
+          ],
+          "op": "eq",
+          "value": 152
+        },
+        {
+          "path": [
+            "scri_dissipation_cfl_max"
+          ],
+          "op": "le",
+          "value": 2.7
+        },
+        {
+          "path": [
+            "scri_normal_derivative"
+          ],
+          "op": "eq",
+          "value": "sampled_native_numerator7"
+        },
+        {
+          "path": [
+            "scri_normal_radial_nodes"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "scri_normal_bulk_derivative_order"
+          ],
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "path": [
+            "scri_radial_closure"
+          ],
+          "op": "eq",
+          "value": "donor_seven_last3"
+        },
+        {
+          "path": [
+            "scri_radial_bulk_rows"
+          ],
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "path": [
+            "interpatch_interpolation"
+          ],
+          "op": "eq",
+          "value": "logical_inner_transition"
+        },
+        {
+          "path": [
+            "evolved_overlap"
+          ],
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "path": [
+            "nominal_cells"
+          ],
+          "op": "eq",
+          "value": 106496
+        },
+        {
+          "path": [
+            "shell_geometry"
+          ],
+          "op": "eq",
+          "value": "spherical_equiangular"
+        },
+        {
+          "path": [
+            "core_half_width"
+          ],
+          "op": "eq",
+          "value": 0.18
+        },
+        {
+          "path": [
+            "shell_inner_radius"
+          ],
+          "op": "eq",
+          "value": 0.16
+        },
+        {
+          "path": [
+            "overlap_quadrature"
+          ],
+          "op": "eq",
+          "value": "radial_quintic_partition"
+        },
+        {
+          "path": [
+            "mesh_blocks"
+          ],
+          "op": "eq",
+          "value": 26
+        },
+        {
+          "path": [
+            "cartesian_core_subdivisions"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "cartesian_seams"
+          ],
+          "op": "eq",
+          "value": "uniform_global_stencil"
+        },
+        {
+          "path": [
+            "positive_variables"
+          ],
+          "op": "eq",
+          "value": "log_chi_log_lapse_rk_and_ko"
+        },
+        {
+          "path": [
+            "physical_lapse_floor"
+          ],
+          "op": "eq",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "lapse_floor_node_interventions"
+          ],
+          "op": "eq",
+          "value": 0
+        },
+        {
+          "path": [
+            "cells"
+          ],
+          "op": "eq",
+          "value": 159200
+        },
+        {
+          "path": [
+            "timing_per_rank_exclusive"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "boundary_execution"
+          ],
+          "op": "eq",
+          "value": "cached_global_projection_angular"
+        },
+        {
+          "path": [
+            "boundary_cache_hits"
+          ],
+          "op": "ge",
+          "value": 1
+        },
+        {
+          "path": [
+            "volume_exchange"
+          ],
+          "op": "eq",
+          "value": "cached_sparse_alltoallv"
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            0,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            1,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            2,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            3,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            4,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            5,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            6,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            7,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            8,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            9,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            10,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            11,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "ownership_partition"
+          ],
+          "op": "eq",
+          "value": "measured_fixed_contiguous"
+        },
+        {
+          "path": [
+            "ownership_cuts"
+          ],
+          "op": "eq",
+          "value": [
+            0,
+            17546,
+            35013,
+            52595,
+            70140,
+            83132,
+            90803,
+            98470,
+            106135,
+            113766,
+            123992,
+            141585,
+            159200
+          ]
+        },
+        {
+          "path": [
+            "partition_source_report_sha256"
+          ],
+          "op": "eq",
+          "value": "b91ef02712d26a223873bb5eb009785d4f596a524968301ae6a42dfb8850cc4b"
+        }
+      ],
+      "generated_inputs": [
+        "campaigns/preflight-measured-partition-v1/output/pulse-half.checkpoint"
+      ]
+    },
+    {
+      "name": "pulse-direct",
+      "kind": "pulse",
+      "executable": "build-sycl-mpi-v22/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive_balanced",
+      "args": [
+        "16",
+        "campaigns/preflight-measured-partition-v1/output/pulse-direct",
+        "pulse",
+        "0.001",
+        ".00025",
+        "-",
+        "-",
+        "@WALL_SECONDS@",
+        "0.001",
+        ".001",
+        "6",
+        "12",
+        "2",
+        "inputs/partition-n16-v21-r12.txt"
+      ],
+      "timeout_seconds": 180,
+      "report": "campaigns/preflight-measured-partition-v1/output/pulse-direct.report.json",
+      "artifacts": [
+        "campaigns/preflight-measured-partition-v1/output/pulse-direct.history.csv",
+        "campaigns/preflight-measured-partition-v1/output/pulse-direct.checkpoint",
+        "campaigns/preflight-measured-partition-v1/output/pulse-direct.report.json",
+        "campaigns/preflight-measured-partition-v1/output/pulse-direct.failed-stage.bin",
+        "campaigns/preflight-measured-partition-v1/output/pulse-direct.log"
+      ],
+      "inputs": [
+        "inputs/partition-n16-v21-r12.txt",
+        "inputs/partition-n16-v21-r12-source.report.json"
+      ],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "diagnostics_current"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "min_lapse"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "min_chi"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "max_cfl"
+          ],
+          "op": "le",
+          "value": 0.5
+        },
+        {
+          "path": [
+            "t"
+          ],
+          "op": "eq",
+          "value": 0.001
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "H_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "algebraic_projection"
+          ],
+          "op": "eq",
+          "value": "final_stage_standard"
+        },
+        {
+          "path": [
+            "checkpoint_schema"
+          ],
+          "op": "eq",
+          "value": "HYP3D_MPI_V11"
+        },
+        {
+          "path": [
+            "max_determinant_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_tracefree_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "scri_angular_stencil"
+          ],
+          "op": "eq",
+          "value": "cross_face_centered5"
+        },
+        {
+          "path": [
+            "steps"
+          ],
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "path": [
+            "scri_dissipation_epsilon"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "scri_dissipation_degree"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "checkpoint_header_bytes"
+          ],
+          "op": "eq",
+          "value": 152
+        },
+        {
+          "path": [
+            "scri_dissipation_cfl_max"
+          ],
+          "op": "le",
+          "value": 2.7
+        },
+        {
+          "path": [
+            "scri_normal_derivative"
+          ],
+          "op": "eq",
+          "value": "sampled_native_numerator7"
+        },
+        {
+          "path": [
+            "scri_normal_radial_nodes"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "scri_normal_bulk_derivative_order"
+          ],
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "path": [
+            "scri_radial_closure"
+          ],
+          "op": "eq",
+          "value": "donor_seven_last3"
+        },
+        {
+          "path": [
+            "scri_radial_bulk_rows"
+          ],
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "path": [
+            "interpatch_interpolation"
+          ],
+          "op": "eq",
+          "value": "logical_inner_transition"
+        },
+        {
+          "path": [
+            "evolved_overlap"
+          ],
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "path": [
+            "nominal_cells"
+          ],
+          "op": "eq",
+          "value": 106496
+        },
+        {
+          "path": [
+            "shell_geometry"
+          ],
+          "op": "eq",
+          "value": "spherical_equiangular"
+        },
+        {
+          "path": [
+            "core_half_width"
+          ],
+          "op": "eq",
+          "value": 0.18
+        },
+        {
+          "path": [
+            "shell_inner_radius"
+          ],
+          "op": "eq",
+          "value": 0.16
+        },
+        {
+          "path": [
+            "overlap_quadrature"
+          ],
+          "op": "eq",
+          "value": "radial_quintic_partition"
+        },
+        {
+          "path": [
+            "mesh_blocks"
+          ],
+          "op": "eq",
+          "value": 26
+        },
+        {
+          "path": [
+            "cartesian_core_subdivisions"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "cartesian_seams"
+          ],
+          "op": "eq",
+          "value": "uniform_global_stencil"
+        },
+        {
+          "path": [
+            "positive_variables"
+          ],
+          "op": "eq",
+          "value": "log_chi_log_lapse_rk_and_ko"
+        },
+        {
+          "path": [
+            "physical_lapse_floor"
+          ],
+          "op": "eq",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "lapse_floor_node_interventions"
+          ],
+          "op": "eq",
+          "value": 0
+        },
+        {
+          "path": [
+            "cells"
+          ],
+          "op": "eq",
+          "value": 159200
+        },
+        {
+          "path": [
+            "timing_per_rank_exclusive"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "boundary_execution"
+          ],
+          "op": "eq",
+          "value": "cached_global_projection_angular"
+        },
+        {
+          "path": [
+            "boundary_cache_hits"
+          ],
+          "op": "ge",
+          "value": 1
+        },
+        {
+          "path": [
+            "volume_exchange"
+          ],
+          "op": "eq",
+          "value": "cached_sparse_alltoallv"
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            0,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            1,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            2,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            3,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            4,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            5,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            6,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            7,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            8,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            9,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            10,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            11,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "ownership_partition"
+          ],
+          "op": "eq",
+          "value": "measured_fixed_contiguous"
+        },
+        {
+          "path": [
+            "ownership_cuts"
+          ],
+          "op": "eq",
+          "value": [
+            0,
+            17546,
+            35013,
+            52595,
+            70140,
+            83132,
+            90803,
+            98470,
+            106135,
+            113766,
+            123992,
+            141585,
+            159200
+          ]
+        },
+        {
+          "path": [
+            "partition_source_report_sha256"
+          ],
+          "op": "eq",
+          "value": "b91ef02712d26a223873bb5eb009785d4f596a524968301ae6a42dfb8850cc4b"
+        }
+      ]
+    },
+    {
+      "name": "restart-audit",
+      "kind": "check",
+      "executable": "source-v22/tst/hyperbolic_shift_3d/aurora/preflight.py",
+      "args": [
+        "--root",
+        "/home/hzhu/hyperbolic-core-shell-20261028",
+        "--plan",
+        "campaigns/preflight-measured-partition-v1/plan.json",
+        "--output-prefix",
+        "campaigns/preflight-measured-partition-v1/output/restart-audit",
+        "--seconds",
+        "@WALL_SECONDS@",
+        "restart",
+        "--reference",
+        "campaigns/preflight-measured-partition-v1/output/pulse-direct.checkpoint",
+        "--candidate",
+        "campaigns/preflight-measured-partition-v1/output/pulse-resumed.checkpoint",
+        "--reference-report",
+        "campaigns/preflight-measured-partition-v1/output/pulse-direct.report.json",
+        "--candidate-report",
+        "campaigns/preflight-measured-partition-v1/output/pulse-resumed.report.json"
+      ],
+      "timeout_seconds": 120,
+      "report": "campaigns/preflight-measured-partition-v1/output/restart-audit.report.json",
+      "artifacts": [
+        "campaigns/preflight-measured-partition-v1/output/restart-audit.report.json",
+        "campaigns/preflight-measured-partition-v1/output/restart-audit.log"
+      ],
+      "inputs": [],
+      "generated_inputs": [
+        "campaigns/preflight-measured-partition-v1/output/pulse-direct.checkpoint",
+        "campaigns/preflight-measured-partition-v1/output/pulse-resumed.checkpoint",
+        "campaigns/preflight-measured-partition-v1/output/pulse-direct.report.json",
+        "campaigns/preflight-measured-partition-v1/output/pulse-resumed.report.json"
+      ],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "restart_equivalence"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "header",
+            "magic"
+          ],
+          "op": "eq",
+          "value": "HYP3D_MPI_V11"
+        },
+        {
+          "path": [
+            "maximum_absolute_error"
+          ],
+          "op": "eq",
+          "value": 0
+        },
+        {
+          "path": [
+            "bitwise_payload_equal"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "header",
+            "scri_dissipation_epsilon"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "header",
+            "scri_dissipation_degree"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "header",
+            "header_bytes"
+          ],
+          "op": "eq",
+          "value": 152
+        },
+        {
+          "path": [
+            "header",
+            "scri_normal_derivative"
+          ],
+          "op": "eq",
+          "value": "sampled_native_numerator7"
+        },
+        {
+          "path": [
+            "header",
+            "scri_normal_radial_nodes"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "header",
+            "scri_normal_bulk_derivative_order"
+          ],
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "path": [
+            "header",
+            "scri_radial_closure"
+          ],
+          "op": "eq",
+          "value": "donor_seven_last3"
+        },
+        {
+          "path": [
+            "header",
+            "scri_radial_bulk_rows"
+          ],
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "path": [
+            "header",
+            "shell_geometry"
+          ],
+          "op": "eq",
+          "value": "spherical_equiangular"
+        },
+        {
+          "path": [
+            "header",
+            "core_half_width"
+          ],
+          "op": "eq",
+          "value": 0.18
+        },
+        {
+          "path": [
+            "header",
+            "shell_inner_radius"
+          ],
+          "op": "eq",
+          "value": 0.16
+        }
+      ]
+    },
+    {
+      "name": "puncture-control",
+      "kind": "puncture",
+      "executable": "build-sycl-mpi-v21/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive_sparse",
+      "args": [
+        "16",
+        "campaigns/preflight-measured-partition-v1/output/puncture-control",
+        "puncture",
+        ".05",
+        ".0005",
+        "inputs/puncture-continuous-n16.txt",
+        "-",
+        "@WALL_SECONDS@",
+        ".05",
+        ".001",
+        "12",
+        "24",
+        "2"
+      ],
+      "timeout_seconds": 400,
+      "report": "campaigns/preflight-measured-partition-v1/output/puncture-control.report.json",
+      "artifacts": [
+        "campaigns/preflight-measured-partition-v1/output/puncture-control.history.csv",
+        "campaigns/preflight-measured-partition-v1/output/puncture-control.checkpoint",
+        "campaigns/preflight-measured-partition-v1/output/puncture-control.checkpoint.horizon-seed.txt",
+        "campaigns/preflight-measured-partition-v1/output/puncture-control.fastflow.horizon_summary_0.txt",
+        "campaigns/preflight-measured-partition-v1/output/puncture-control.fastflow.horizon_shape_0.txt",
+        "campaigns/preflight-measured-partition-v1/output/puncture-control.report.json",
+        "campaigns/preflight-measured-partition-v1/output/puncture-control.failed-stage.bin",
+        "campaigns/preflight-measured-partition-v1/output/puncture-control.log"
+      ],
+      "inputs": [
+        "inputs/puncture-continuous-n16.txt",
+        "source-v21-provenance.json",
+        "source-v21-manifest.json",
+        "build-logs/v21/build-status.json"
+      ],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "diagnostics_current"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "min_lapse"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "min_chi"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "max_cfl"
+          ],
+          "op": "le",
+          "value": 0.5
+        },
+        {
+          "path": [
+            "t"
+          ],
+          "op": "eq",
+          "value": 0.05
+        },
+        {
+          "path": [
+            "horizon_found"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "horizon_expansion_rms"
+          ],
+          "op": "le",
+          "value": 0.001
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "H_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "algebraic_projection"
+          ],
+          "op": "eq",
+          "value": "final_stage_standard"
+        },
+        {
+          "path": [
+            "checkpoint_schema"
+          ],
+          "op": "eq",
+          "value": "HYP3D_MPI_V11"
+        },
+        {
+          "path": [
+            "max_determinant_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_tracefree_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "scri_angular_stencil"
+          ],
+          "op": "eq",
+          "value": "cross_face_centered5"
+        },
+        {
+          "path": [
+            "steps"
+          ],
+          "op": "eq",
+          "value": 100
+        },
+        {
+          "path": [
+            "horizon_lmax"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "horizon_ntheta"
+          ],
+          "op": "eq",
+          "value": 24
+        },
+        {
+          "path": [
+            "horizon_nphi"
+          ],
+          "op": "eq",
+          "value": 48
+        },
+        {
+          "path": [
+            "horizon_complete_surface"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "horizon_radius"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "horizon_mass"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "scri_dissipation_epsilon"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "scri_dissipation_degree"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "checkpoint_header_bytes"
+          ],
+          "op": "eq",
+          "value": 152
+        },
+        {
+          "path": [
+            "scri_dissipation_cfl_max"
+          ],
+          "op": "le",
+          "value": 2.7
+        },
+        {
+          "path": [
+            "scri_normal_derivative"
+          ],
+          "op": "eq",
+          "value": "sampled_native_numerator7"
+        },
+        {
+          "path": [
+            "scri_normal_radial_nodes"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "scri_normal_bulk_derivative_order"
+          ],
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "path": [
+            "scri_radial_closure"
+          ],
+          "op": "eq",
+          "value": "donor_seven_last3"
+        },
+        {
+          "path": [
+            "scri_radial_bulk_rows"
+          ],
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "path": [
+            "interpatch_interpolation"
+          ],
+          "op": "eq",
+          "value": "logical_inner_transition"
+        },
+        {
+          "path": [
+            "evolved_overlap"
+          ],
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "path": [
+            "nominal_cells"
+          ],
+          "op": "eq",
+          "value": 106496
+        },
+        {
+          "path": [
+            "shell_geometry"
+          ],
+          "op": "eq",
+          "value": "spherical_equiangular"
+        },
+        {
+          "path": [
+            "core_half_width"
+          ],
+          "op": "eq",
+          "value": 0.18
+        },
+        {
+          "path": [
+            "shell_inner_radius"
+          ],
+          "op": "eq",
+          "value": 0.16
+        },
+        {
+          "path": [
+            "overlap_quadrature"
+          ],
+          "op": "eq",
+          "value": "radial_quintic_partition"
+        },
+        {
+          "path": [
+            "mesh_blocks"
+          ],
+          "op": "eq",
+          "value": 26
+        },
+        {
+          "path": [
+            "cartesian_core_subdivisions"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "cartesian_seams"
+          ],
+          "op": "eq",
+          "value": "uniform_global_stencil"
+        },
+        {
+          "path": [
+            "positive_variables"
+          ],
+          "op": "eq",
+          "value": "log_chi_log_lapse_rk_and_ko"
+        },
+        {
+          "path": [
+            "physical_lapse_floor"
+          ],
+          "op": "eq",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "lapse_floor_node_interventions"
+          ],
+          "op": "eq",
+          "value": 0
+        },
+        {
+          "path": [
+            "cells"
+          ],
+          "op": "eq",
+          "value": 159200
+        },
+        {
+          "path": [
+            "timing_per_rank_exclusive"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "boundary_execution"
+          ],
+          "op": "eq",
+          "value": "cached_global_projection_angular"
+        },
+        {
+          "path": [
+            "boundary_cache_hits"
+          ],
+          "op": "ge",
+          "value": 1
+        },
+        {
+          "path": [
+            "volume_exchange"
+          ],
+          "op": "eq",
+          "value": "cached_sparse_alltoallv"
+        }
+      ]
+    },
+    {
+      "name": "puncture-fast",
+      "kind": "puncture",
+      "executable": "build-sycl-mpi-v22/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive_balanced",
+      "args": [
+        "16",
+        "campaigns/preflight-measured-partition-v1/output/puncture-fast",
+        "puncture",
+        ".05",
+        ".0005",
+        "inputs/puncture-continuous-n16.txt",
+        "-",
+        "@WALL_SECONDS@",
+        ".05",
+        ".001",
+        "12",
+        "24",
+        "2",
+        "inputs/partition-n16-v21-r12.txt"
+      ],
+      "timeout_seconds": 400,
+      "report": "campaigns/preflight-measured-partition-v1/output/puncture-fast.report.json",
+      "artifacts": [
+        "campaigns/preflight-measured-partition-v1/output/puncture-fast.history.csv",
+        "campaigns/preflight-measured-partition-v1/output/puncture-fast.checkpoint",
+        "campaigns/preflight-measured-partition-v1/output/puncture-fast.checkpoint.horizon-seed.txt",
+        "campaigns/preflight-measured-partition-v1/output/puncture-fast.fastflow.horizon_summary_0.txt",
+        "campaigns/preflight-measured-partition-v1/output/puncture-fast.fastflow.horizon_shape_0.txt",
+        "campaigns/preflight-measured-partition-v1/output/puncture-fast.report.json",
+        "campaigns/preflight-measured-partition-v1/output/puncture-fast.failed-stage.bin",
+        "campaigns/preflight-measured-partition-v1/output/puncture-fast.log"
+      ],
+      "inputs": [
+        "inputs/puncture-continuous-n16.txt",
+        "inputs/partition-n16-v21-r12.txt",
+        "inputs/partition-n16-v21-r12-source.report.json"
+      ],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "diagnostics_current"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "min_lapse"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "min_chi"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "max_cfl"
+          ],
+          "op": "le",
+          "value": 0.5
+        },
+        {
+          "path": [
+            "t"
+          ],
+          "op": "eq",
+          "value": 0.05
+        },
+        {
+          "path": [
+            "horizon_found"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "horizon_expansion_rms"
+          ],
+          "op": "le",
+          "value": 0.001
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "H_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "algebraic_projection"
+          ],
+          "op": "eq",
+          "value": "final_stage_standard"
+        },
+        {
+          "path": [
+            "checkpoint_schema"
+          ],
+          "op": "eq",
+          "value": "HYP3D_MPI_V11"
+        },
+        {
+          "path": [
+            "max_determinant_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_tracefree_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "scri_angular_stencil"
+          ],
+          "op": "eq",
+          "value": "cross_face_centered5"
+        },
+        {
+          "path": [
+            "steps"
+          ],
+          "op": "eq",
+          "value": 100
+        },
+        {
+          "path": [
+            "horizon_lmax"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "horizon_ntheta"
+          ],
+          "op": "eq",
+          "value": 24
+        },
+        {
+          "path": [
+            "horizon_nphi"
+          ],
+          "op": "eq",
+          "value": 48
+        },
+        {
+          "path": [
+            "horizon_complete_surface"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "horizon_radius"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "horizon_mass"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "scri_dissipation_epsilon"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "scri_dissipation_degree"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "checkpoint_header_bytes"
+          ],
+          "op": "eq",
+          "value": 152
+        },
+        {
+          "path": [
+            "scri_dissipation_cfl_max"
+          ],
+          "op": "le",
+          "value": 2.7
+        },
+        {
+          "path": [
+            "scri_normal_derivative"
+          ],
+          "op": "eq",
+          "value": "sampled_native_numerator7"
+        },
+        {
+          "path": [
+            "scri_normal_radial_nodes"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "scri_normal_bulk_derivative_order"
+          ],
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "path": [
+            "scri_radial_closure"
+          ],
+          "op": "eq",
+          "value": "donor_seven_last3"
+        },
+        {
+          "path": [
+            "scri_radial_bulk_rows"
+          ],
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "path": [
+            "interpatch_interpolation"
+          ],
+          "op": "eq",
+          "value": "logical_inner_transition"
+        },
+        {
+          "path": [
+            "evolved_overlap"
+          ],
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "path": [
+            "nominal_cells"
+          ],
+          "op": "eq",
+          "value": 106496
+        },
+        {
+          "path": [
+            "shell_geometry"
+          ],
+          "op": "eq",
+          "value": "spherical_equiangular"
+        },
+        {
+          "path": [
+            "core_half_width"
+          ],
+          "op": "eq",
+          "value": 0.18
+        },
+        {
+          "path": [
+            "shell_inner_radius"
+          ],
+          "op": "eq",
+          "value": 0.16
+        },
+        {
+          "path": [
+            "overlap_quadrature"
+          ],
+          "op": "eq",
+          "value": "radial_quintic_partition"
+        },
+        {
+          "path": [
+            "mesh_blocks"
+          ],
+          "op": "eq",
+          "value": 26
+        },
+        {
+          "path": [
+            "cartesian_core_subdivisions"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "cartesian_seams"
+          ],
+          "op": "eq",
+          "value": "uniform_global_stencil"
+        },
+        {
+          "path": [
+            "positive_variables"
+          ],
+          "op": "eq",
+          "value": "log_chi_log_lapse_rk_and_ko"
+        },
+        {
+          "path": [
+            "physical_lapse_floor"
+          ],
+          "op": "eq",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "lapse_floor_node_interventions"
+          ],
+          "op": "eq",
+          "value": 0
+        },
+        {
+          "path": [
+            "cells"
+          ],
+          "op": "eq",
+          "value": 159200
+        },
+        {
+          "path": [
+            "timing_per_rank_exclusive"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "boundary_execution"
+          ],
+          "op": "eq",
+          "value": "cached_global_projection_angular"
+        },
+        {
+          "path": [
+            "boundary_cache_hits"
+          ],
+          "op": "ge",
+          "value": 1
+        },
+        {
+          "path": [
+            "volume_exchange"
+          ],
+          "op": "eq",
+          "value": "cached_sparse_alltoallv"
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            0,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            1,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            2,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            3,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            4,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            5,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            6,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            7,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            8,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            9,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            10,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            11,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "ownership_partition"
+          ],
+          "op": "eq",
+          "value": "measured_fixed_contiguous"
+        },
+        {
+          "path": [
+            "ownership_cuts"
+          ],
+          "op": "eq",
+          "value": [
+            0,
+            17546,
+            35013,
+            52595,
+            70140,
+            83132,
+            90803,
+            98470,
+            106135,
+            113766,
+            123992,
+            141585,
+            159200
+          ]
+        },
+        {
+          "path": [
+            "partition_source_report_sha256"
+          ],
+          "op": "eq",
+          "value": "b91ef02712d26a223873bb5eb009785d4f596a524968301ae6a42dfb8850cc4b"
+        }
+      ]
+    },
+    {
+      "name": "execution-audit",
+      "kind": "check",
+      "executable": "source-v22/tst/hyperbolic_shift_3d/aurora/preflight.py",
+      "args": [
+        "--root",
+        "/home/hzhu/hyperbolic-core-shell-20261028",
+        "--plan",
+        "campaigns/preflight-measured-partition-v1/plan.json",
+        "--output-prefix",
+        "campaigns/preflight-measured-partition-v1/output/execution-audit",
+        "--seconds",
+        "@WALL_SECONDS@",
+        "restart",
+        "--reference",
+        "campaigns/preflight-measured-partition-v1/output/puncture-control.checkpoint",
+        "--candidate",
+        "campaigns/preflight-measured-partition-v1/output/puncture-fast.checkpoint",
+        "--reference-report",
+        "campaigns/preflight-measured-partition-v1/output/puncture-control.report.json",
+        "--candidate-report",
+        "campaigns/preflight-measured-partition-v1/output/puncture-fast.report.json"
+      ],
+      "timeout_seconds": 120,
+      "report": "campaigns/preflight-measured-partition-v1/output/execution-audit.report.json",
+      "artifacts": [
+        "campaigns/preflight-measured-partition-v1/output/execution-audit.report.json",
+        "campaigns/preflight-measured-partition-v1/output/execution-audit.log"
+      ],
+      "inputs": [],
+      "generated_inputs": [
+        "campaigns/preflight-measured-partition-v1/output/puncture-control.checkpoint",
+        "campaigns/preflight-measured-partition-v1/output/puncture-fast.checkpoint",
+        "campaigns/preflight-measured-partition-v1/output/puncture-control.report.json",
+        "campaigns/preflight-measured-partition-v1/output/puncture-fast.report.json"
+      ],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "restart_equivalence"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "header",
+            "magic"
+          ],
+          "op": "eq",
+          "value": "HYP3D_MPI_V11"
+        },
+        {
+          "path": [
+            "maximum_absolute_error"
+          ],
+          "op": "eq",
+          "value": 0
+        },
+        {
+          "path": [
+            "bitwise_payload_equal"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "header",
+            "scri_dissipation_epsilon"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "header",
+            "scri_dissipation_degree"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "header",
+            "header_bytes"
+          ],
+          "op": "eq",
+          "value": 152
+        },
+        {
+          "path": [
+            "header",
+            "scri_normal_derivative"
+          ],
+          "op": "eq",
+          "value": "sampled_native_numerator7"
+        },
+        {
+          "path": [
+            "header",
+            "scri_normal_radial_nodes"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "header",
+            "scri_normal_bulk_derivative_order"
+          ],
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "path": [
+            "header",
+            "scri_radial_closure"
+          ],
+          "op": "eq",
+          "value": "donor_seven_last3"
+        },
+        {
+          "path": [
+            "header",
+            "scri_radial_bulk_rows"
+          ],
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "path": [
+            "header",
+            "shell_geometry"
+          ],
+          "op": "eq",
+          "value": "spherical_equiangular"
+        },
+        {
+          "path": [
+            "header",
+            "core_half_width"
+          ],
+          "op": "eq",
+          "value": 0.18
+        },
+        {
+          "path": [
+            "header",
+            "shell_inner_radius"
+          ],
+          "op": "eq",
+          "value": 0.16
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Measured fixed ownership, using bulk RHS timing from verified job 8987177; fixed mesh and unchanged V11 equations.",
+    "Same-node n16 puncture pair: frozen V21 sparse equal-cell control versus V22 measured ownership. Same time step, input, diagnostics and scientific gates; whole checkpoint equality required.",
+    "Profile and cuts are explicit bound inputs. Lifecycle and device parity, Minkowski, and pulse restart precede timing. No in-flight AMR/repartition, async overlap, long-time accuracy or convergence claim."
+  ]
+}
