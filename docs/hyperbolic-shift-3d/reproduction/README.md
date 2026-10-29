@@ -223,8 +223,11 @@ adds owned device radial plans and an explicit MPI target/checkpoint format.
 Its [Aurora preflight](aurora/preflight-donor-seven-v1/README.md), job8984220,
 passed179 checks on twelve GPU tiles, including complete CPU/SYCL bulk and
 surface parity and bitwise direct/restarted pulse checkpoints. This admits
-duration testing only. Fresh n16 Minkowski job8984226 targets coordinate t=1;
-no stable-duration, convergence or100M claim has been made for V6.
+duration testing only. Fresh n16 [Minkowski job8984226](aurora/stability-donor-seven-minkowski-v1/README.md)
+completed coordinate t=1 with state deviation6.39e-9 and all declared limits
+passing. Its late error still grows at16.6 per coordinate time, versus V5's
+41.8. This is a bounded test pass, not long-time stability, convergence or100M
+qualification. The remaining actual V6 mode still needs diagnosis.
 
 [Offline V6 reanalysis](v6-offline-diagnostics-v1/README.md) now explicitly
 uses the matching seven-node bulk derivatives. Whole-volume and exterior

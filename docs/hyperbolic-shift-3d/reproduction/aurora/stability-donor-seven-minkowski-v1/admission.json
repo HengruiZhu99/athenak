@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "phase": "preflight",
+  "low_resolution_n": 16,
+  "source_manifest_sha256": "1493f0552235b296de1fbaecea3b7c3a60425b54484582b9292e34a7d1505196",
+  "binaries": {
+    "source-v13/tst/hyperbolic_shift_3d/aurora/preflight.py": "97612243e44852de346a501e1bf28884d7be8a5be859484d65d90b9ce2d1a77e",
+    "build-sycl-mpi-v13/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_donor_seven": "acfa9ffc56caa5f736ab2ffb62c56b1121f6037118c2580e93a15e5c78490263"
+  },
+  "gpu_cpu_parity": true,
+  "restart_equivalence": true,
+  "normal_derivative_configs": [
+    {
+      "checkpoint_schema": "HYP3D_MPI_V6",
+      "checkpoint_header_bytes": 104,
+      "scri_dissipation_epsilon": 2.0,
+      "scri_dissipation_degree": 7,
+      "scri_normal_derivative": "sampled_native_numerator7",
+      "scri_normal_radial_nodes": 7,
+      "scri_normal_bulk_derivative_order": 4,
+      "scri_radial_closure": "donor_seven_last3",
+      "scri_radial_bulk_rows": 3,
+      "executable": "build-sycl-mpi-v13/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_donor_seven"
+    }
+  ],
+  "job_id": "8984220.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "verification_sha256": "f241e326bb449855885265f9024c33a994d503d30999a7f135aaafc10bba53e2",
+  "verifier_sha256": "707ba51ee1d58d5de3a2a128584f43f7b00b106f90575e11d59b98c87b8fa4d3",
+  "scope": "Four-step CPU/SYCL and twelve-rank ownership/restart qualification only; no duration stability, convergence or100M result."
+}
