@@ -65,7 +65,8 @@ The source was committed as 77277bd25 and built on Aurora with SYCL/MPI
 source-file hashes against Git and the build configuration/binary identities.
 GPU preflight job 8985881 passed on one debug node, 12 ranks/tiles,
 CompactBinaryMerger. All seven cases and 227 gates passed independent verification;
-see ../aurora/preflight-spherical-overlap-v1. Duration stability remains pending. No wormhole-to-trumpet stability,
+see ../aurora/preflight-spherical-overlap-v1. Duration stability remains pending. Puncture pilot job 8986048 targets coordinate
+t=1 (3M) at dt=0.0005; see ../aurora/stability-spherical-overlap-puncture-v1. No wormhole-to-trumpet stability,
 100M result, dynamic AMR validation or evolution convergence is claimed.
 
 ![Spatial accuracy and CFL contribution](spatial-and-cfl.png)

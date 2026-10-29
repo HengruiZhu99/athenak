@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "plan_sha256": "303e93cd821bafe79f0ff2aad89f29a042718df15d8fccd87f46f76816784b24",
+  "source_manifest": "source-v18-manifest.json",
+  "source_manifest_sha256": "6b04f174c0173eba6fd8d5ffdedcc93257a24918adcdfcf91c40e203ba81ca88",
+  "binaries": {
+    "build-sycl-mpi-v18/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_spherical_overlap": "7b7764f0cce4f23221c93ab8b6b188cd455fed74c94252e7e152a5c1f95f9f2a"
+  },
+  "inputs": {
+    "inputs/puncture-spherical-overlap-n16.txt": "860e728b9cac39e3bc8e2a3e5eb93c9fa29cedcf9386a86a5000c3650b604abf"
+  },
+  "pbs_sha256": "5b631155f4c601fab521648a0919e466007b3baf12f1a4d8e3daf145798b475d",
+  "admission": {
+    "path": "admissions/preflight-spherical-overlap-v1.json",
+    "sha256": "2f87e55d379be509a37a6a5646ed9a840817d02f2b60511bcf5ec151ae8112eb"
+  },
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "00:30:00"
+  },
+  "storage_at_bind": {
+    "bytes": 4090873086,
+    "entries": 27759,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 100000000,
+    "planned_bytes": 200000000,
+    "headroom_bytes": 609126914
+  },
+  "launcher": {
+    "control.py": "925644d6f8b0bf24b016f83fe0746d0c6d35b4a5d73cdebe26a810c33c44bdf2",
+    "worker.py": "62b5346a7815dca5954a95c705ec1c43eaf87ec5bf1442318f5c259d9d3685b1",
+    "run_debug.pbs": "1d5df790cf6c8cdc96e9d330b9b337ce755b30e057959586bcd661dc9ce885a6",
+    "storage.py": "fdcf2abc2533b8fed91220d9c18d8b9d723660820949a72e956fb9c8866afd39"
+  },
+  "allocation_seconds": 1800,
+  "worker_seconds": 1710
+}
