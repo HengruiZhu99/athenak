@@ -1,0 +1,37 @@
+{
+  "status": "passed_component_tests",
+  "experimental": true,
+  "default_enabled": false,
+  "backend": "Serial",
+  "metrics": {
+    "default_configurations": 3.0,
+    "default_fixtures": 6.0,
+    "explicit_AD_bitwise": 1.0,
+    "minkowski_bulk": 1.220998144905067e-12,
+    "minkowski_surface": 1.074103302184046e-12,
+    "D_only_bitwise": 1.0,
+    "current_stage_only": 1.0,
+    "independent_state_preserved": 1.0,
+    "replacement_error": 4.614364446098307e-16,
+    "dependent_D_error": 2.0855645227295383e-17,
+    "final_D_ghost_error": 0.0,
+    "stale_D_counterfactual": 2.8437505205523523,
+    "Lambda_response": 0.005270957322309462,
+    "Theta_response": 0.01588501451113089,
+    "null": 1.1101848448075473e-15,
+    "compatibility": 2.42861286636753e-17,
+    "validation_checks": 1.0
+  },
+  "frozen_default_comparison": {
+    "bitwise_identical": true,
+    "bytes_each": 6749712,
+    "current_sha256": "484852e6c4a48ebd35921671bd90ef7451b07cdd9b85e6b0e693f08f6e504a98",
+    "frozen_sha256": "484852e6c4a48ebd35921671bd90ef7451b07cdd9b85e6b0e693f08f6e504a98",
+    "seconds": 20.098554791999998
+  },
+  "limitations": [
+    "CPU-only optional normal-factorization change; no production GPU/MPI selector or checkpoint integration.",
+    "Independent manufactured accuracy measures roughly third-order complete sampled boundary rates; this is not demonstrated fourth-order closure.",
+    "No trajectory stability, wormhole-to-trumpet fidelity, long-time convergence, or restart claim follows from these RHS tests."
+  ]
+}

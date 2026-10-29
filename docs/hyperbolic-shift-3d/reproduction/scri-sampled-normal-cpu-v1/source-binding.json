@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "source_files": {
+    "docs/hyperbolic-shift-3d/reproduction/scri-normal-discretization-audit-v1/source/three-d/hyperbolic_composite.hpp": "e79c1b5058ce227ea8878bd1b2e10f67f4559e2bf50fdcbad320af4231a4388b",
+    "src/athena.hpp": "322dd4f67ac4a718edf2afebe0e20aa302546cf96dd13640784fbbe4ced8d3d6",
+    "src/mesh/cubed_sphere/angular_dissipation.hpp": "73366c70879b3a4020744a2885b92b54d80eee64cd7a719e7412554795f426b1",
+    "src/mesh/cubed_sphere/composite.hpp": "1850e39ba00f37563dbb708c2c708e87b4fc3032e286605c2e41653680d2fb05",
+    "src/mesh/cubed_sphere/composite_difference.hpp": "ac3dd6532334b1fa2a9644f52d6bd7ecf82657dc767529b0a965281e69f3819e",
+    "src/mesh/cubed_sphere/map.hpp": "3c0dbf467a00eeb0a28c2fc005e7a140b49c91219edb0d6532fa837fa06d2ee8",
+    "src/mesh/cubed_sphere/scri_surface.hpp": "0cbdc593855d5e1023e22eec2ba60e9bbe66ddd5161c7c15856b0fb86698f473",
+    "src/z4c/hyperboloidal/algebraic_projection.hpp": "b2643c247ef37ad9141df41cfe99976301823ec93da71a9c5bbc05a13fdceb15",
+    "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+    "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+    "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+    "src/z4c/hyperboloidal/hyperbolic_composite.hpp": "99298c2febe0262650907b09303101df50d2c70ca2b11ec5fe86375572ac96ec",
+    "src/z4c/hyperboloidal/hyperbolic_shift.hpp": "33833d30381484d580ee5be3905d67a98b67c001a3802fce74a2896c55130b6a",
+    "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+    "src/z4c/hyperboloidal/tensor_scri.hpp": "e959c1a1b401f958f409a37517d40572e956996011dce114d81480dd53dbec17",
+    "tst/hyperbolic_shift_3d/CMakeLists.txt": "25ed7f8605c543375f6b320edf8387af82cb8aee9ac3247e86ed2778e9811c6d",
+    "tst/hyperbolic_shift_3d/scri_sampled_normal.cpp": "db292453456a6a98c060cc27c271e772cbb2789cdb5d0fc6bbdc8ee1f0e8d940"
+  },
+  "external_libraries": {
+    "build-hyperbolic-mpi/kokkos/containers/src/libkokkoscontainers.a": "75dc4f7425e1d50b439e8576fad60fec2db6c7c7e8b9d74aa11d49098d4ba7e6",
+    "build-hyperbolic-mpi/kokkos/algorithms/src/libkokkosalgorithms.a": "e8c928d93a1699fb1d83e40c1fa01db24af01bc825a327427e307131e9e6154e",
+    "build-hyperbolic-mpi/kokkos/core/src/libkokkoscore.a": "215e4b18bf0381222a348b7a813a9cb28997b99c062b30413d666bfebef135cd",
+    "build-hyperbolic-mpi/kokkos/simd/src/libkokkossimd.a": "5c49732a0260c71f2858dce7f7cec07193de0bd15c8e140b66abddf7f30b6a06"
+  },
+  "compiler_version": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+  "recorded_repository_root": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal",
+  "scope": "Native CPU RHS/closure component test only. No evolution, GPU execution, or checkpoint/restart exercise.",
+  "local_executables": {
+    "scri_sampled_normal": {
+      "sha256": "cac4ee7c6c192c1d064409de4576683fcfee866a034411fa8605810a9fda691f",
+      "bytes": 715792
+    },
+    "frozen_default": {
+      "sha256": "ab6eefffbc1ea257ab4134f2f9858d0c7adc177789fceebcf707073eff81d1d9",
+      "bytes": 696592
+    }
+  }
+}

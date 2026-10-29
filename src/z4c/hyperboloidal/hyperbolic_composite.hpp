@@ -20,6 +20,10 @@ namespace z4c::hyperboloidal {
 class HyperbolicComposite {
  public:
   using V=std::vector<Real>;
+  // CPU-only normal-factorization control. Existing callers retain the native
+  // analytic-jet derivative; neither choice resets any regularity constraint.
+  enum class NormalDerivative {analytic_jets, sampled_numerator};
+  const NormalDerivative normal_derivative;
   static constexpr int nf=31;
   inline static constexpr int ti[6]={0,0,0,1,1,2},tj[6]={0,1,2,1,2,2};
   cubed_sphere::CompositeDifference grid;
@@ -36,10 +40,14 @@ class HyperbolicComposite {
   Real gap_min=std::numeric_limits<Real>::infinity(),cfl_max=0;
   size_t steps=0;
   HyperbolicComposite(cubed_sphere::CompositeMesh mesh,bool source=false,bool cross_face_scri=false,
-                      Real angular_strength=0)
-      :grid(std::move(mesh),4,true),scri(grid,nf,6,cross_face_scri),
+                      Real angular_strength=0,
+                      NormalDerivative normal=NormalDerivative::analytic_jets)
+      :normal_derivative(normal),grid(std::move(mesh),4,true),scri(grid,nf,6,cross_face_scri),
        state(nf*grid.active.size(),0),compensation(state.size(),0),
        edge_compensation(scri.values.size(),0),adaptive(source),angular_epsilon(angular_strength) {
+    if(normal_derivative!=NormalDerivative::analytic_jets&&
+       normal_derivative!=NormalDerivative::sampled_numerator)
+      throw std::invalid_argument("invalid scri normal derivative selector");
     if(!std::isfinite(angular_epsilon)||angular_epsilon<0)
       throw std::invalid_argument("invalid angular dissipation strength");
     if(angular_epsilon>0){
@@ -128,6 +136,60 @@ class HyperbolicComposite {
     for(int w=1;w<count;++w)pool.emplace_back(fill,w);fill(0);for(auto&t:pool)t.join();
   }
   V Padded(const V&values)const{auto out=ActivePadded(values);FillGhosts(out);return out;}
+  // +d_n N on the SAME five half-cell radial nodes and endpoint as ScriSurface.
+  // `padded` must contain the current stage values and geometric ghosts. The
+  // interior nodes use the native bulk jets, actual Omega and complete damped
+  // pole numerator, without dividing by Omega. No B/D/J field enters this
+  // geometric numerator. The endpoint may be supplied to avoid reevaluating it.
+  // This factorization is intentionally distinct from differentiating the
+  // nonlinear numerator algebra with the endpoint's direct second jets.
+  Z4cRHS<Real> SampledPoleNormalDerivative(size_t point,const V&padded,
+                                         const Z4cRHS<Real>*endpoint_pole=nullptr)const{
+    if(padded.size()!=nf*size_t(grid.count)||scri.radial_nodes!=6)
+      throw std::invalid_argument("sampled scri normal state shape/radial width");
+    const auto&row=scri.rows.at(point);const int n=grid.n;
+    static const auto weights=[](){
+      const Real offsets[6]={-4.5,-3.5,-2.5,-1.5,-.5,0};std::array<Real,5> w{};
+      for(int i=0;i<5;++i){cubed_sphere::Jet basis(1);
+        for(int j=0;j<6;++j)if(i!=j)
+          basis=basis*(cubed_sphere::Jet::Variable(0,0)-cubed_sphere::Jet(offsets[j]))/
+                      cubed_sphere::Jet(offsets[i]-offsets[j]);
+        w[i]=basis.d[0];}
+      return w;
+    }();
+    Z4cRHS<Real> endpoint{};
+    if(endpoint_pole)endpoint=*endpoint_pole;
+    else{
+      const auto sample=scri.Sample(point,padded,scri.values,nf);const auto*x=row.geometry.x;
+      const auto u=Jet(x,sample.value,sample.d,sample.dd);const auto o=Omega(x,u,true);
+      auto parts=ConformalRHS(u,o,4.,-.99);
+      if(!HyperbolicDamping(x,u,o,parts))throw std::runtime_error("invalid sampled scri endpoint source");
+      endpoint=parts.pole;
+    }
+    Z4cRHS<Real> out{};V value(nf);
+    std::vector<std::array<Real,3>> d(nf);
+    std::vector<std::array<std::array<Real,3>,3>> dd(nf);
+    for(int s=0;s<5;++s){
+      const size_t active=size_t(row.block)*n*n*n+(row.k*n+row.j)*n+n-5+s;
+      const auto*x=grid.geometry[active].x;
+      for(int f=0;f<nf;++f)if(f<=18||(f>=22&&f<25)){
+        value[f]=padded[f*grid.count+grid.active[active]];Real df[3],ddf[3][3];
+        grid.Derivatives(padded,f,active,df,ddf,f<=6||f==18||(f>=22&&f<25));
+        for(int a=0;a<3;++a){d[f][a]=df[a];for(int b=0;b<3;++b)dd[f][a][b]=ddf[a][b];}
+      }
+      const auto u=Jet(x,value,d,dd);const auto o=Omega(x,u,false);
+      auto parts=ConformalRHS(u,o,4.,-.99);
+      if(!HyperbolicDamping(x,u,o,parts))throw std::runtime_error("invalid sampled scri interior source");
+      // Anchor differences annihilate constant numerators exactly. Keep the
+      // endpoint value itself in BoundaryRates' unchanged weak 4 N / h term.
+      const auto&p=parts.pole;const Real w=weights[s]/row.radial_spacing;
+      out.chi+=w*(p.chi-endpoint.chi);out.trace+=w*(p.trace-endpoint.trace);
+      out.theta+=w*(p.theta-endpoint.theta);
+      for(int a=0;a<3;++a){out.lambda[a]+=w*(p.lambda[a]-endpoint.lambda[a]);
+        for(int b=0;b<3;++b)out.a[a][b]+=w*(p.a[a][b]-endpoint.a[a][b]);}
+    }
+    return out;
+  }
   // Conservative isolated-Q bound only; this is not a combined PDE/RK proof.
   // Shared by the CPU reference and callers orchestrating the device operator.
   void CheckAngularCFL(Real dt){
@@ -152,7 +214,14 @@ class HyperbolicComposite {
       const auto sample=scri.Sample(p,padded,scri.values,nf);const auto u=Jet(x,sample.value,sample.d,sample.dd);
       const auto o=Omega(x,u,true);const auto g=Geometry(u.metric);
       auto parts=ConformalRHS(u,o,4.,-.99);if(!HyperbolicDamping(x,u,o,parts))throw std::runtime_error("scri source invalid");
-      const auto pole=TensorPoleNormalJet(u,o,x,x,4.,-.99,1.,1.,true,true);
+      auto pole=TensorPoleNormalJet(u,o,x,x,4.,-.99,1.,1.,true,true);
+      if(normal_derivative==NormalDerivative::sampled_numerator){
+        const auto normal=SampledPoleNormalDerivative(p,padded,&parts.pole);
+        pole.geometry.chi.derivative=normal.chi;pole.geometry.trace.derivative=normal.trace;
+        pole.geometry.theta.derivative=normal.theta;
+        for(int a=0;a<3;++a){pole.geometry.lambda[a].derivative=normal.lambda[a];
+          for(int b=0;b<3;++b)pole.geometry.a[a][b].derivative=normal.a[a][b];}
+      }
       auto rate=TensorScriLimit(parts.regular,pole,-1.);const auto trace=ScriRegularityTraces(u,o);
       const Real h=row.radial_spacing;if(dt*12/h>.5)throw std::runtime_error("scri explicit penalty CFL");
       Real q=0;for(int i=0;i<3;++i)for(int j=0;j<3;++j)q+=g.inverse[i][j]*x[i]*x[j];
@@ -230,7 +299,12 @@ class HyperbolicComposite {
     catch(...){failed_state=values;failed_boundary=scri.values;throw;}
   }
   V EvaluateRHS(const V&values,Real dt,V&edge_rate){
-    BoundaryValues();auto padded=ActivePadded(values);edge_rate=BoundaryRates(padded,dt);
+    BoundaryValues();auto padded=ActivePadded(values);
+    // Sampled interior numerators need current geometric ghosts before the
+    // dependent-D trace is known. Their native kernels do not read D. Refill
+    // below after BoundaryRates so bulk gauge derivatives see the final D.
+    if(normal_derivative==NormalDerivative::sampled_numerator)FillGhosts(padded);
+    edge_rate=BoundaryRates(padded,dt);
     // Dependent D traces must be present before all volume derivative evaluations.
     FillGhosts(padded);V out(values.size(),0);
     const int count=std::max(1,std::min(workers,int(grid.active.size())));
