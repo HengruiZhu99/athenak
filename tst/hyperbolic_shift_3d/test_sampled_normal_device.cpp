@@ -10,6 +10,7 @@
 #include "z4c/hyperboloidal/hyperbolic_scri_device.hpp"
 #include "z4c/hyperboloidal/algebraic_projection.hpp"
 #include "frozen_d98_scri_device.hpp"
+#include "fixed_composite_mesh.hpp"
 
 #ifndef HYPERBOLIC_TEST_DONOR_SEVEN
 #define HYPERBOLIC_TEST_DONOR_SEVEN 0
@@ -87,6 +88,9 @@ template<class F>static void Reject(F operation,const char*message){
 static void Check(bool perturb,int refinement=0,int core_subdivisions=1){
   auto mesh=cubed_sphere::CompositeMesh(.125,{.45,.75,1},1,HYPERBOLIC_TEST_OVERLAP?12:6,3,core_subdivisions);
   mesh.evolved_overlap=HYPERBOLIC_TEST_OVERLAP;
+#ifdef HYPERBOLIC_TEST_SPHERICAL_OVERLAP
+  mesh=hyperbolic_reproduction::SphericalOverlapMesh(12);core_subdivisions=2;
+#endif
   if(refinement>0)mesh.RefineCartesian(0);
   // Refine one child again to exercise a genuine coarse/fine Cartesian seam.
   // The shell geometry, cell count and outer-boundary operator stay fixed.
@@ -217,6 +221,9 @@ static void Check(bool perturb,int refinement=0,int core_subdivisions=1){
   if(inner_transition)std::cout<<" interpatch_interpolation=logical_inner_transition";
   if(refinement)std::cout<<" core_refinement="<<refinement<<" blocks="<<mesh.blocks.size();
   if(core_subdivisions==2)std::cout<<" cartesian_core_subdivisions=2 mesh_blocks=26";
+#ifdef HYPERBOLIC_TEST_SPHERICAL_OVERLAP
+  std::cout<<" shell_geometry=spherical_equiangular core_half_width=0.18 shell_inner_radius=0.16";
+#endif
   std::cout<<'\n';
 }
 int main(int argc,char**argv){

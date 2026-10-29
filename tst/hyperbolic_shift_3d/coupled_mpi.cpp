@@ -38,6 +38,10 @@
 #ifndef HYPERBOLIC_EVOLVED_OVERLAP
 #define HYPERBOLIC_EVOLVED_OVERLAP 0
 #endif
+#ifndef HYPERBOLIC_SPHERICAL_OVERLAP
+#define HYPERBOLIC_SPHERICAL_OVERLAP 0
+#endif
+constexpr bool spherical_overlap=HYPERBOLIC_SPHERICAL_OVERLAP;
 namespace h=z4c::hyperboloidal;
 using Buffer=h::HyperbolicCompositeDevice::Buffer;
 using HostBuffer=Kokkos::View<Real*,Kokkos::HostSpace>;
@@ -51,14 +55,15 @@ constexpr bool inner_transition_logical=HYPERBOLIC_INNER_TRANSITION_LOGICAL;
 constexpr int evolved_overlap=HYPERBOLIC_EVOLVED_OVERLAP;
 static_assert(evolved_overlap==0||(evolved_overlap==3&&inner_transition_logical),"overlap experiment requires V7 operators and three evolved layers");
 constexpr int core_subdivisions=HYPERBOLIC_CORE_SUBDIVISIONS;
-static_assert(!evolved_overlap||core_subdivisions==1,"V9 currently binds a single Cartesian core");
+static_assert(!evolved_overlap||core_subdivisions==1||spherical_overlap,"V9 currently binds a single Cartesian core");
 static_assert(core_subdivisions==1||(core_subdivisions==2&&inner_transition_logical),"core2 control requires V7 operators");
 static_assert(!inner_transition_logical||scri_donor_seven,"inner transition candidate requires V6 scri closure");
 static_assert(!scri_angular_exchange||algebraic_final_projection,"angular candidate requires algebraic repair");
 static_assert(!scri_angular_dissipation||scri_angular_exchange,"dissipation candidate requires cross-face jets");
 static_assert(!scri_sampled_normal||scri_angular_dissipation,"sampled-normal candidate requires V4 geometry/closure");
 static_assert(!scri_donor_seven||scri_sampled_normal,"direct radial candidate requires sampled numerator");
-constexpr const char*checkpoint_magic=evolved_overlap?"HYP3D_MPI_V9":core_subdivisions==2?"HYP3D_MPI_V8":inner_transition_logical?"HYP3D_MPI_V7":scri_donor_seven?"HYP3D_MPI_V6":scri_sampled_normal?"HYP3D_MPI_V5":scri_angular_dissipation?"HYP3D_MPI_V4":scri_angular_exchange?"HYP3D_MPI_V3":algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
+static_assert(!spherical_overlap||(evolved_overlap==3&&core_subdivisions==2),"spherical overlap requires eight core blocks and three overlap cells");
+constexpr const char*checkpoint_magic=spherical_overlap?"HYP3D_MPI_V10":evolved_overlap?"HYP3D_MPI_V9":core_subdivisions==2?"HYP3D_MPI_V8":inner_transition_logical?"HYP3D_MPI_V7":scri_donor_seven?"HYP3D_MPI_V6":scri_sampled_normal?"HYP3D_MPI_V5":scri_angular_dissipation?"HYP3D_MPI_V4":scri_angular_exchange?"HYP3D_MPI_V3":algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
 constexpr const char*algebraic_scheme=algebraic_final_projection?"final_stage_standard":"none";
 constexpr const char*scri_angular_scheme=scri_angular_exchange?"cross_face_centered5":"face_local6";
 constexpr const char*scri_dissipation_scheme=scri_angular_dissipation?"degree7_weighted_negative_square":"none";
@@ -77,8 +82,10 @@ struct NormalConfig { int32_t scheme=inner_transition_logical?3:scri_donor_seven
   bulk_derivative_order=4,reserved=scri_donor_seven?3:0; };
 // V8 appends this fixed-topology identity. Older schemas retain every
 // byte. The descriptor excludes arbitrary leaf trees and dynamic regridding.
-struct MeshConfig { int32_t scheme=evolved_overlap?2:1,core_subdivisions=::core_subdivisions,
+struct MeshConfig { int32_t scheme=spherical_overlap?3:evolved_overlap?2:1,core_subdivisions=::core_subdivisions,
   shell_layers=3,reserved=evolved_overlap; };
+struct GeometryConfig { Real core_half_width=.18,inner_radius=.16; };
+static_assert(sizeof(GeometryConfig)==16,"geometry layout requires float64");
 static_assert(sizeof(MeshConfig)==16,"mesh configuration layout requires four int32 values");
 static_assert(sizeof(Header)==72&&sizeof(DissipationConfig)==16&&sizeof(NormalConfig)==16,"checkpoint layout requires float64");
 class Evolution {
@@ -103,7 +110,7 @@ class Evolution {
   Real angular_epsilon=0,angular_upper_bound=0,angular_cfl=0,angular_cfl_max=0;
   uint64_t steps=0;
   double rhs_seconds=0,exchange_seconds=0,closure_seconds=0,diagnostic_seconds=0;
-  explicit Evolution(int resolution,Real epsilon=0):n(resolution),model(hyperbolic_reproduction::FixedMesh(n,core_subdivisions,evolved_overlap),false,scri_angular_exchange,epsilon,
+  explicit Evolution(int resolution,Real epsilon=0):n(resolution),model(spherical_overlap?hyperbolic_reproduction::SphericalOverlapMesh(n):hyperbolic_reproduction::FixedMesh(n,core_subdivisions,evolved_overlap),false,scri_angular_exchange,epsilon,
     scri_sampled_normal?h::HyperbolicComposite::NormalDerivative::sampled_numerator:h::HyperbolicComposite::NormalDerivative::analytic_jets,
     scri_donor_seven?h::HyperbolicComposite::RadialClosure::donor_seven:h::HyperbolicComposite::RadialClosure::ghost_lift),angular_epsilon(epsilon){
     if constexpr(inner_transition_logical)model.grid.SetInnerTransitionLogical(true);
@@ -277,7 +284,7 @@ class Evolution {
   void WriteCheckpoint(const std::string&path,int kind,Real dt,bool admitted){
     Buffer comp_global("global compensation",state.extent(0)),edge_comp_global("global surface compensation",surface.extent(0));
     Gather(compensation,comp_global);Gather(surface_compensation,edge_comp_global,true);int bad=0;std::string reason;
-    if(rank==0)try{Header header;std::memcpy(header.magic,checkpoint_magic,12);header.n=n;header.kind=kind;header.admitted=admitted;
+    if(rank==0)try{Header header;std::memcpy(header.magic,checkpoint_magic,std::strlen(checkpoint_magic)+1);header.n=n;header.kind=kind;header.admitted=admitted;
       header.cells=total;header.surface=surface.extent(0);header.steps=steps;header.time=time;header.dt=dt;
       const auto values=Download(state),comps=Download(comp_global),edge=Download(surface),edge_comps=Download(edge_comp_global);std::ofstream out(path+".tmp",std::ios::binary);
       out.write(reinterpret_cast<const char*>(&header),sizeof(header));
@@ -287,6 +294,8 @@ class Evolution {
         out.write(reinterpret_cast<const char*>(&config),sizeof(config));}
       if constexpr(core_subdivisions==2||evolved_overlap){const MeshConfig config;
         out.write(reinterpret_cast<const char*>(&config),sizeof(config));}
+      if constexpr(spherical_overlap){const GeometryConfig config;
+        out.write(reinterpret_cast<const char*>(&config),sizeof(config));}
       for(const V*v:{&values,&comps,&edge,&edge_comps})out.write(reinterpret_cast<const char*>(v->data()),v->size()*sizeof(Real));
       out.close();if(!out)throw std::runtime_error("checkpoint write failed");std::filesystem::rename(path+".tmp",path);
     }catch(const std::exception&e){bad=1;reason=e.what();}SynchronizeError(bad,reason);
@@ -294,7 +303,7 @@ class Evolution {
   void LoadCheckpoint(const std::string&path,int kind,Real dt){
     Header header{};V values(31*total),comps(31*total),edge(31*surface_total),edge_comps(31*surface_total);int bad=0;std::string reason;
     if(rank==0)try{std::ifstream in(path,std::ios::binary);in.read(reinterpret_cast<char*>(&header),sizeof(header));
-      if(!in||std::memcmp(header.magic,checkpoint_magic,12)||header.n!=n||header.nf!=31||header.kind!=kind||header.admitted!=1||header.cells!=size_t(total)||header.surface!=surface.extent(0)||header.dt!=dt)
+      if(!in||std::memcmp(header.magic,checkpoint_magic,std::strlen(checkpoint_magic)+1)||header.n!=n||header.nf!=31||header.kind!=kind||header.admitted!=1||header.cells!=size_t(total)||header.surface!=surface.extent(0)||header.dt!=dt)
         throw std::runtime_error("checkpoint schema/configuration/admission mismatch");
       if constexpr(scri_angular_dissipation){DissipationConfig config;
         in.read(reinterpret_cast<char*>(&config),sizeof(config));
@@ -311,6 +320,10 @@ class Evolution {
         const MeshConfig expected;
         if(!in||config.scheme!=expected.scheme||config.core_subdivisions!=expected.core_subdivisions||config.shell_layers!=3||config.reserved!=expected.reserved)
           throw std::runtime_error("checkpoint fixed-core topology mismatch");}
+      if constexpr(spherical_overlap){GeometryConfig config;
+        in.read(reinterpret_cast<char*>(&config),sizeof(config));const GeometryConfig expected;
+        if(!in||config.core_half_width!=expected.core_half_width||config.inner_radius!=expected.inner_radius)
+          throw std::runtime_error("checkpoint spherical geometry mismatch");}
       for(auto*v:{&values,&comps,&edge,&edge_comps})in.read(reinterpret_cast<char*>(v->data()),v->size()*sizeof(Real));
       char tail;if(!in||in.read(&tail,1))throw std::runtime_error("checkpoint truncated or trailing data");
       for(const auto*v:{&values,&comps,&edge,&edge_comps})for(Real x:*v)if(!std::isfinite(x))throw std::runtime_error("checkpoint nonfinite data");
@@ -569,10 +582,11 @@ int main(int argc,char**argv){
         <<",\"scri_dissipation_max_incoming\":"<<(e.model.angular_plan?e.model.angular_plan->Stats().max_incoming:0)
         <<",\"scri_dissipation_max_moment_error\":"<<(e.model.angular_plan?e.model.angular_plan->Stats().max_moment_error:0)
         <<",\"scri_dissipation_max_coefficient_l1\":"<<(e.model.angular_plan?e.model.angular_plan->Stats().max_coefficient_l1:0)
-        <<",\"checkpoint_header_bytes\":"<<(sizeof(Header)+(scri_angular_dissipation?sizeof(DissipationConfig):0)+(scri_sampled_normal?sizeof(NormalConfig):0)+((core_subdivisions==2||evolved_overlap)?sizeof(MeshConfig):0));
+        <<",\"checkpoint_header_bytes\":"<<(sizeof(Header)+(scri_angular_dissipation?sizeof(DissipationConfig):0)+(scri_sampled_normal?sizeof(NormalConfig):0)+((core_subdivisions==2||evolved_overlap)?sizeof(MeshConfig):0)+(spherical_overlap?sizeof(GeometryConfig):0));
       if constexpr(scri_sampled_normal)report<<",\"scri_normal_derivative\":\"sampled_native_numerator"<<(scri_donor_seven?7:6)<<"\""
         <<",\"scri_normal_radial_nodes\":"<<(scri_donor_seven?7:6)<<",\"scri_normal_bulk_derivative_order\":4";
       if constexpr(evolved_overlap)report<<",\"evolved_overlap\":"<<evolved_overlap<<",\"nominal_cells\":"<<e.model.grid.nominal_count;
+      if constexpr(spherical_overlap)report<<",\"shell_geometry\":\"spherical_equiangular\",\"core_half_width\":0.18,\"shell_inner_radius\":0.16,\"overlap_quadrature\":\"radial_quintic_partition\"";
       if constexpr(inner_transition_logical)report<<",\"interpatch_interpolation\":\"logical_inner_transition\"";
       if constexpr(core_subdivisions==2)report<<",\"mesh_topology\":\"cartesian_2x2x2_shells3\",\"cartesian_core_subdivisions\":2,\"mesh_blocks\":26";
       if constexpr(scri_donor_seven)report<<",\"scri_radial_closure\":\"donor_seven_last3\",\"scri_radial_bulk_rows\":3";

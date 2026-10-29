@@ -116,8 +116,8 @@ class AngularDissipationPlan {
       if(!std::isfinite(radius_squared)||std::abs(radius_squared-1)>2e-12)
         throw std::invalid_argument("angular dissipation requires unit reference sphere");
       faces[i]=block.face;
-      const Real ul=-1+Real(2*row.j)/n,uh=-1+Real(2*(row.j+1))/n;
-      const Real vl=-1+Real(2*row.k)/n,vh=-1+Real(2*(row.k+1))/n;
+      const Real ul=surface.grid.mesh.AngularRatio(-1+Real(2*row.j)/n),uh=surface.grid.mesh.AngularRatio(-1+Real(2*(row.j+1))/n);
+      const Real vl=surface.grid.mesh.AngularRatio(-1+Real(2*row.k)/n),vh=surface.grid.mesh.AngularRatio(-1+Real(2*(row.k+1))/n);
       areas_[i]=Primitive(uh,vh)-Primitive(ul,vh)-Primitive(uh,vl)+Primitive(ul,vl);
       if(!(areas_[i]>0)||!std::isfinite(areas_[i]))throw std::runtime_error("nonpositive angular reference area");
       statistics_.min_area=std::min(statistics_.min_area,areas_[i]);

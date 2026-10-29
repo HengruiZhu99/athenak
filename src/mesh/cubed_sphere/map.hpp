@@ -68,6 +68,14 @@ KOKKOS_INLINE_FUNCTION Jet Log(const Jet &a) {
   return c;
 }
 
+KOKKOS_INLINE_FUNCTION Jet Atan(const Jet &a) {
+  Jet c(atan(a.f));
+  const Real df=1/(1+a.f*a.f), ddf=-2*a.f*df*df;
+  for(int i=0;i<3;++i){c.d[i]=df*a.d[i];
+    for(int j=0;j<3;++j)c.h[i][j]=df*a.h[i][j]+ddf*a.d[i]*a.d[j];}
+  return c;
+}
+
 // Patch order +X,-X,+Y,-Y,+Z,-Z. q=(s,u,v), 0<=s<=1,
 // -1<=u,v<=1. At s=0 the six faces match a Cartesian cube of half width L;
 // at s=1 they tile the smooth sphere of radius R. R>sqrt(3)*L.

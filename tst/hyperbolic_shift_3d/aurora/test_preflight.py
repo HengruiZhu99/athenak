@@ -479,6 +479,49 @@ class OverlapCheckpointTests(unittest.TestCase):
                 with self.subTest(offset=offset),self.assertRaises(ValueError):preflight.read_checkpoint(path)
 
 
+class SphericalOverlapCheckpointTests(unittest.TestCase):
+    def test_v10_restart_report_binding(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);n=12;cells=12*n**3+8*(n+6)**3+6*(n+3)*(n+6)**2;surface=31*6*n*n
+            header=preflight.HEADER.pack(b'HYP3D_MPI_V10'.ljust(16,b'\0'),n,31,1,1,cells,surface,2,.0005,.00025)
+            header+=struct.pack('<dii4i4i2d',2.,7,0,3,7,4,3,3,2,3,3,.18,.16)
+            for name in ['a','b']:
+                with (root/name).open('wb') as out:
+                    out.write(header);out.truncate(136+16*(31*cells+surface))
+            args=SimpleNamespace(reference='a',candidate='b',reference_report='a.json',candidate_report='b.json',atol=0,rtol=0)
+            report=dict(status='completed',backend='SYCL',mpi_size=12,n=n,kind='pulse',t=.0005,
+                target_time=.0005,dt=.00025,steps=2,checkpoint_schema='HYP3D_MPI_V10',
+                algebraic_projection='final_stage_standard',scri_angular_stencil='cross_face_centered5',
+                scri_dissipation_epsilon=2.,scri_dissipation_degree=7,checkpoint_header_bytes=136,
+                scri_normal_derivative='sampled_native_numerator7',scri_normal_radial_nodes=7,
+                scri_normal_bulk_derivative_order=4,scri_radial_closure='donor_seven_last3',scri_radial_bulk_rows=3,
+                shell_geometry='spherical_equiangular',core_half_width=.18,shell_inner_radius=.16,overlap_quadrature='radial_quintic_partition',mesh_topology='cartesian_2x2x2_shells3',cartesian_core_subdivisions=2,mesh_blocks=26,interpatch_interpolation='logical_inner_transition',evolved_overlap=3,nominal_cells=26*n**3)
+            (root/'a.json').write_text(json.dumps(report));(root/'b.json').write_text(json.dumps(report))
+            self.assertTrue(preflight.restart(args,0,root,lambda p:root/p)['passed'])
+            for key,bad in [('core_half_width',.2),('shell_inner_radius',.125),('shell_geometry','cube'),('overlap_quadrature','none'),('evolved_overlap',0),('evolved_overlap',3.0),('nominal_cells',cells),('checkpoint_schema','HYP3D_MPI_V7'),('scri_angular_stencil','face_local6')]:
+                for remove in [False,True]:
+                    changed=dict(report)
+                    if remove:changed.pop(key)
+                    else:changed[key]=bad
+                    (root/'b.json').write_text(json.dumps(changed))
+                    with self.subTest(key=key,bad=bad,remove=remove),self.assertRaises(ValueError):preflight.restart(args,0,root,lambda p:root/p)
+
+    def test_v10_shape_and_descriptor(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'state.checkpoint';n=12;cells=12*n**3+8*(n+6)**3+6*(n+3)*(n+6)**2;surface=31*6*n*n
+            header=preflight.HEADER.pack(b'HYP3D_MPI_V10'.ljust(16,b'\0'),n,31,0,1,cells,surface,2,.0005,.00025)
+            header+=struct.pack('<dii4i4i2d',2.,7,0,3,7,4,3,3,2,3,3,.18,.16)
+            with path.open('wb') as out:
+                out.write(header);out.truncate(136+16*(31*cells+surface))
+            result=preflight.read_checkpoint(path)
+            self.assertEqual(result['evolved_overlap'],3);self.assertEqual(result['nominal_cells'],26*n**3)
+            self.assertEqual(result['header_bytes'],136)
+            for offset,value in [(104,1),(108,1),(112,2),(116,0),(32,26*n**3)]:
+                with path.open('r+b') as out:
+                    out.write(header);out.seek(offset);out.write(struct.pack('<i',value))
+                with self.subTest(offset=offset),self.assertRaises(ValueError):preflight.read_checkpoint(path)
+
+
 class ExportCheckpointTests(unittest.TestCase):
     """Actual fixed-topology payloads catch byte-offset and streaming-hash bugs."""
     def setUp(self):

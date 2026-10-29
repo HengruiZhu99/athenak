@@ -30,6 +30,12 @@ class CompositeMesh {
   // The Cartesian core and cube-to-sphere layer evolve this many extra cells
   // on each side; interpolation ghosts lie outside that evolved region.
   int evolved_overlap = 0;
+  // Optional overlapping spherical annulus. Angles are equiangular face
+  // coordinates; tensor components remain Cartesian. The core covers r<inner_radius.
+  bool spherical_inner_boundary = false, equiangular = false;
+  Real inner_radius = 0;
+  Real AngularRatio(Real q) const {return equiangular?std::tan(std::acos(-1.)*q/4):q;}
+
 
   CompositeMesh(Real width, std::vector<Real> shell_radii, int subdivisions,
                 int active_cells, int halo = 2, int bulk_subdivisions = 1)
@@ -72,9 +78,11 @@ class CompositeMesh {
     Real q[3];
     for (int a = 0; a < 3; ++a) q[a] = b.lo[a]+local[a]*(b.hi[a]-b.lo[a]);
     if (b.face < 0) {for (int a = 0; a < 3; ++a) x[a] = q[a]; return;}
-    if (b.layer == 0) {Map{half_width, radii[0], 0}.Forward(b.face, q, x); return;}
+    if (b.layer == 0 && !spherical_inner_boundary) {Map{half_width, radii[0], 0}.Forward(b.face, q, x); return;}
     const int a = b.face/2, c = (a+1)%3, d = (a+2)%3;
-    const Real radius = radii[b.layer-1]+q[0]*(radii[b.layer]-radii[b.layer-1]);
+    q[1]=AngularRatio(q[1]);q[2]=AngularRatio(q[2]);
+    const Real lower=b.layer==0?inner_radius:radii[b.layer-1];
+    const Real radius = lower+q[0]*(radii[b.layer]-lower);
     const Real scale = radius/std::sqrt(1+q[1]*q[1]+q[2]*q[2]);
     x[a] = b.face%2 ? -scale : scale;
     x[c] = scale*q[1]; x[d] = scale*q[2];
@@ -84,14 +92,16 @@ class CompositeMesh {
     const auto &b = blocks.at(id);
     Real q[3];
     if (b.face < 0) {for (int a = 0; a < 3; ++a) q[a] = x[a];}
-    else if (b.layer == 0) Map{half_width, radii[0], 0}.Inverse(b.face, x, q);
+    else if (b.layer == 0 && !spherical_inner_boundary) Map{half_width, radii[0], 0}.Inverse(b.face, x, q);
     else {
       const int a = b.face/2;
       const Real scale = b.face%2 ? -x[a] : x[a];
       const Real radius = std::sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);
-      q[0] = (radius-radii[b.layer-1])/(radii[b.layer]-radii[b.layer-1]);
+      const Real lower=b.layer==0?inner_radius:radii[b.layer-1];
+      q[0] = (radius-lower)/(radii[b.layer]-lower);
       q[1] = x[(a+1)%3]/scale; q[2] = x[(a+2)%3]/scale;
     }
+    if(b.face>=0&&equiangular)for(int a=1;a<3;++a)q[a]=4*std::atan(q[a])/std::acos(-1.);
     for (int a = 0; a < 3; ++a) local[a] = (q[a]-b.lo[a])/(b.hi[a]-b.lo[a]);
   }
 
@@ -103,7 +113,7 @@ class CompositeMesh {
       for (int a = 0; a < 3; ++a) out.J[a][a] = 1/(b.hi[a]-b.lo[a]);
       return out;
     }
-    if (b.layer == 0) {
+    if (b.layer == 0 && !spherical_inner_boundary) {
       Real q[3];
       for (int a = 0; a < 3; ++a) q[a] = b.lo[a]+local[a]*(b.hi[a]-b.lo[a]);
       out = Map{half_width, radii[0], 0}.Geometry(b.face, q);
@@ -118,9 +128,11 @@ class CompositeMesh {
     for (int a = 0; a < 3; ++a) x[a] = Jet::Variable(out.x[a], a);
     const int a = b.face/2;
     const Jet scale = x[a]*Jet(b.face%2 ? -1 : 1);
+    const Real lower=b.layer==0?inner_radius:radii[b.layer-1];
     Jet q[3] = {(Power(x[0]*x[0]+x[1]*x[1]+x[2]*x[2], .5)
-        -Jet(radii[b.layer-1]))/Jet(radii[b.layer]-radii[b.layer-1]),
+        -Jet(lower))/Jet(radii[b.layer]-lower),
         x[(a+1)%3]/scale, x[(a+2)%3]/scale};
+    if(equiangular)for(int A=1;A<3;++A)q[A]=Jet(4/std::acos(-1.))*Atan(q[A]);
     for (int A = 0; A < 3; ++A)
     for (int i = 0; i < 3; ++i) {
       out.J[A][i] = q[A].d[i]/(b.hi[A]-b.lo[A]);

@@ -11,5 +11,11 @@ inline cubed_sphere::CompositeMesh FixedMesh(int n,int core_subdivisions=1,int o
   auto mesh=cubed_sphere::CompositeMesh(.125,{.45,.75,1},1,n,3,core_subdivisions);
   mesh.evolved_overlap=overlap;return mesh;
 }
+// V10 research geometry: the core sets the initial characteristic CFL at n16.
+inline cubed_sphere::CompositeMesh SphericalOverlapMesh(int n) {
+  auto mesh=cubed_sphere::CompositeMesh(.18,{.45,.75,1},1,n,3,2);
+  mesh.evolved_overlap=3;mesh.spherical_inner_boundary=true;
+  mesh.equiangular=true;mesh.inner_radius=.16;return mesh;
+}
 }
 #endif

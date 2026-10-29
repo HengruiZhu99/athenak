@@ -2,11 +2,43 @@
 #include <iomanip>
 #include <fstream>
 #include "mesh/cubed_sphere/composite_difference.hpp"
+#include "fixed_composite_mesh.hpp"
+#include "z4c/hyperboloidal/hyperbolic_shift.hpp"
 int main(int argc,char**argv){
  try{
   const int n=argc>1?std::stoi(argv[1]):12,o=argc>2?std::stoi(argv[2]):3;
+#ifdef HYPERBOLIC_TEST_SPHERICAL_OVERLAP
+  auto mesh=hyperbolic_reproduction::SphericalOverlapMesh(n);
+#else
   cubed_sphere::CompositeMesh mesh(.125,{.45,.75,1},1,n,3);mesh.evolved_overlap=o;
+#endif
   cubed_sphere::CompositeDifference g(mesh,4,true);g.SetInnerTransitionLogical(true);
+  double inverse_error=0,jacobian_error=0,hessian_error=0,total_volume=0,max_core_frequency=0,max_shell_frequency=0;
+  for(size_t p=0;p<g.active.size();++p){
+    const auto&geo=g.geometry[p];const auto&cell=g.cells[p];const int m=cell.block;
+    const Real q[3]={(cell.i+.5)/n,(cell.j+.5)/n,(cell.k+.5)/n};Real recovered[3];mesh.Inverse(m,geo.x,recovered);
+    for(int a=0;a<3;++a)inverse_error=std::max(inverse_error,std::abs(q[a]-recovered[a]));
+    total_volume+=g.DiagnosticVolume(p);
+    const Real r=std::sqrt(geo.x[0]*geo.x[0]+geo.x[1]*geo.x[1]+geo.x[2]*geo.x[2]);
+    const auto coeff=z4c::hyperboloidal::ShiftCoefficients(r,(1+r*r)/2,1.);Real frequency=0;
+    for(int a=0;a<3;++a){Real Q=0,beta=0;for(int d=0;d<3;++d){Q+=geo.J[a][d]*geo.J[a][d];beta-=geo.J[a][d]*geo.x[d];}
+      frequency+=std::abs(beta)+std::sqrt(std::max(4*coeff.mu*Q/3,(coeff.F+coeff.eta*.25*coeff.w*coeff.w)*Q));}
+    auto&maximum=mesh.blocks[m].face<0?max_core_frequency:max_shell_frequency;maximum=std::max(maximum,n*frequency);
+  }
+  // Independently difference the inverse map and its analytic Jacobian in
+  // physical Cartesian directions at interior and extended angular points.
+  for(int m=0;m<int(mesh.blocks.size());++m)for(Real angle:{-.1,.3,.9,1.1}){
+    const Real q[3]={.37,angle,.61};const auto geo=mesh.Geometry(m,q);const Real eps=1e-6;
+    for(int d=0;d<3;++d){Real xp[3],xm[3],qp[3],qm[3];
+      for(int a=0;a<3;++a){xp[a]=geo.x[a];xm[a]=geo.x[a];}xp[d]+=eps;xm[d]-=eps;
+      mesh.Inverse(m,xp,qp);mesh.Inverse(m,xm,qm);const auto gp=mesh.Geometry(m,qp),gm=mesh.Geometry(m,qm);
+      for(int A=0;A<3;++A){jacobian_error=std::max(jacobian_error,std::abs((qp[A]-qm[A])/(2*eps)-geo.J[A][d]));
+        for(int a=0;a<3;++a)hessian_error=std::max(hessian_error,std::abs((gp.J[A][a]-gm.J[A][a])/(2*eps)-geo.H[A][a][d]));}}
+  }
+  if(inverse_error>2e-13||jacobian_error>2e-8||hessian_error>2e-6)throw std::runtime_error("map inverse/Jacobian/Hessian check failed");
+  std::cout<<std::setprecision(17)<<"map_inverse_error="<<inverse_error<<" jacobian_error="<<jacobian_error<<" map_hessian_error="<<hessian_error
+    <<" volume="<<total_volume<<" volume_error="<<std::abs(total_volume-4*std::acos(-1.)/3)
+    <<" core_cfl_dt_00025="<<max_core_frequency*.00025<<" shell_cfl_dt_00025="<<max_shell_frequency*.00025<<'\n';
   if(argc>3){std::ofstream out(argv[3]);out<<std::setprecision(17)<<"x,y,z,r,volume\n";
     for(size_t p=0;p<g.active.size();++p){const auto*x=g.geometry[p].x;
       out<<x[0]<<','<<x[1]<<','<<x[2]<<','<<std::sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2])<<','<<g.DiagnosticVolume(p)<<'\n';}
