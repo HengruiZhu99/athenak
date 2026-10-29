@@ -1,5 +1,10 @@
 # Optional seven-node radial closure: CPU control, not stability admission
 
+This is the historical CPU-only snapshot. Subsequent bounded evolution results
+and the separate native device/MPI implementation are recorded in the
+[native follow-up](../scri-donor-seven-native-v1/README.md); the original results
+and source bindings below are retained.
+
 This control replaces the last **three radial cell rows** of the outer shell with direct one-sided derivatives using six active centers and the evolved scri endpoint. It also uses seven radial nodes for surface jets and sampled complete pole-numerator differentiation. Penalty coefficients remain **4 N/h − 8 C/h**. Angular differences remain centered five-point with cross-face Cartesian-component interpolation. All first, second and mixed Cartesian chain-rule terms are retained; radial transport uses the same one-sided derivative in this region, while existing upwinding remains elsewhere.
 
 The purpose is to test the ghost-free radial coupling used by the successful 1D approach. It is **not an exact copy of the N513 donor operator**: the 3D half-cell layout, mapped angular derivatives, bulk fourth-order discretization and coordinate geometry remain different. This is not an SBP operator or a discrete-energy stability proof. No regularity field is reset, no spherical averaging is introduced, and the independent Lambda/Theta and final dependent-D ordering are preserved.

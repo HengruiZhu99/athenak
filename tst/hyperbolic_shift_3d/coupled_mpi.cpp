@@ -25,6 +25,9 @@
 #ifndef HYPERBOLIC_SCRI_SAMPLED_NORMAL
 #define HYPERBOLIC_SCRI_SAMPLED_NORMAL 0
 #endif
+#ifndef HYPERBOLIC_SCRI_DONOR_SEVEN
+#define HYPERBOLIC_SCRI_DONOR_SEVEN 0
+#endif
 namespace h=z4c::hyperboloidal;
 using Buffer=h::HyperbolicCompositeDevice::Buffer;
 using HostBuffer=Kokkos::View<Real*,Kokkos::HostSpace>;
@@ -33,10 +36,12 @@ constexpr bool algebraic_final_projection=HYPERBOLIC_ALGEBRAIC_FINAL_PROJECTION;
 constexpr bool scri_angular_exchange=HYPERBOLIC_SCRI_ANGULAR_EXCHANGE;
 constexpr bool scri_angular_dissipation=HYPERBOLIC_SCRI_ANGULAR_DISSIPATION;
 constexpr bool scri_sampled_normal=HYPERBOLIC_SCRI_SAMPLED_NORMAL;
+constexpr bool scri_donor_seven=HYPERBOLIC_SCRI_DONOR_SEVEN;
 static_assert(!scri_angular_exchange||algebraic_final_projection,"angular candidate requires algebraic repair");
 static_assert(!scri_angular_dissipation||scri_angular_exchange,"dissipation candidate requires cross-face jets");
 static_assert(!scri_sampled_normal||scri_angular_dissipation,"sampled-normal candidate requires V4 geometry/closure");
-constexpr const char*checkpoint_magic=scri_sampled_normal?"HYP3D_MPI_V5":scri_angular_dissipation?"HYP3D_MPI_V4":scri_angular_exchange?"HYP3D_MPI_V3":algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
+static_assert(!scri_donor_seven||scri_sampled_normal,"direct radial candidate requires sampled numerator");
+constexpr const char*checkpoint_magic=scri_donor_seven?"HYP3D_MPI_V6":scri_sampled_normal?"HYP3D_MPI_V5":scri_angular_dissipation?"HYP3D_MPI_V4":scri_angular_exchange?"HYP3D_MPI_V3":algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
 constexpr const char*algebraic_scheme=algebraic_final_projection?"final_stage_standard":"none";
 constexpr const char*scri_angular_scheme=scri_angular_exchange?"cross_face_centered5":"face_local6";
 constexpr const char*scri_dissipation_scheme=scri_angular_dissipation?"degree7_weighted_negative_square":"none";
@@ -48,7 +53,10 @@ struct Header {
 // operator strength and degree before reading any of the four state arrays.
 struct DissipationConfig { Real epsilon=0;int32_t degree=7,reserved=0; };
 // V5 appends an exact normal-factorization identity, never reinterpreting V4.
-struct NormalConfig { int32_t scheme=1,radial_nodes=6,bulk_derivative_order=4,reserved=0; };
+// V6 binds both the seven-node normal derivative and the last-three-row bulk
+// radial closure. The fourth word retains zero in V5 and is three only in V6.
+struct NormalConfig { int32_t scheme=scri_donor_seven?2:1,radial_nodes=scri_donor_seven?7:6,
+  bulk_derivative_order=4,reserved=scri_donor_seven?3:0; };
 static_assert(sizeof(Header)==72&&sizeof(DissipationConfig)==16&&sizeof(NormalConfig)==16,"checkpoint layout requires float64");
 class Evolution {
  public:
@@ -73,7 +81,8 @@ class Evolution {
   uint64_t steps=0;
   double rhs_seconds=0,exchange_seconds=0,closure_seconds=0,diagnostic_seconds=0;
   explicit Evolution(int resolution,Real epsilon=0):n(resolution),model(cubed_sphere::CompositeMesh(.125,{.45,.75,1},1,n,3),false,scri_angular_exchange,epsilon,
-    scri_sampled_normal?h::HyperbolicComposite::NormalDerivative::sampled_numerator:h::HyperbolicComposite::NormalDerivative::analytic_jets),angular_epsilon(epsilon){
+    scri_sampled_normal?h::HyperbolicComposite::NormalDerivative::sampled_numerator:h::HyperbolicComposite::NormalDerivative::analytic_jets,
+    scri_donor_seven?h::HyperbolicComposite::RadialClosure::donor_seven:h::HyperbolicComposite::RadialClosure::ghost_lift),angular_epsilon(epsilon){
     MPI_Comm_rank(MPI_COMM_WORLD,&rank);MPI_Comm_size(MPI_COMM_WORLD,&size);
     total=model.grid.active.size();first=total*rank/size;last=total*(rank+1)/size;local=last-first;
     surface_total=model.scri.rows.size();surface_first=surface_total*rank/size;surface_local=surface_total*(rank+1)/size-surface_first;
@@ -82,7 +91,7 @@ class Evolution {
     counts.resize(size);displacements.resize(size);surface_counts.resize(size);surface_displacements.resize(size);
     for(int r=0;r<size;++r){displacements[r]=total*r/size*31;counts[r]=(total*(r+1)/size-total*r/size)*31;
       surface_displacements[r]=surface_total*r/size*31;surface_counts[r]=(surface_total*(r+1)/size-surface_total*r/size)*31;}
-    kernel=std::make_unique<h::HyperbolicCompositeDevice>(model.grid,first,local);
+    kernel=std::make_unique<h::HyperbolicCompositeDevice>(model.grid,first,local,model.radial_plan.get());
     exchange=std::make_unique<h::HyperbolicCompositeExchange>(model,first_block,last_block);
     boundary=std::make_unique<h::HyperbolicScriDevice>(model,surface_first,surface_local);
     if constexpr(scri_sampled_normal){
@@ -149,7 +158,7 @@ class Evolution {
       const auto halo=normal_exchange->Fill(state);
       null_ghost=std::max(null_ghost,halo.after);null_before=std::max(null_before,halo.before);
       SynchronizeError(halo.invalid,"nonpositive interpolated scri geometry");
-      const auto normal=sampled_normal->Evaluate(normal_exchange->padded);
+      const auto normal=sampled_normal->Evaluate(normal_exchange->padded,surface);
       SynchronizeError(normal.bad_rows,"device sampled-normal numerator failure at row "+std::to_string(normal.first_bad)+" reason "+h::HyperbolicSampledNormalDevice::Reason(normal.reason));
       pole_samples=sampled_normal->LocalPoleSamples();
     }
@@ -179,7 +188,7 @@ class Evolution {
     edge_rate=RefreshBoundary(dt);auto halo=exchange->Fill(state);
     null_ghost=std::max(null_ghost,halo.after);null_before=std::max(null_before,halo.before);
     SynchronizeError(halo.invalid,"nonpositive interpolated scri geometry");
-    const auto start=std::chrono::steady_clock::now();const auto stats=kernel->Evaluate(exchange->padded,dt,false,.5);
+    const auto start=std::chrono::steady_clock::now();const auto stats=kernel->Evaluate(exchange->padded,dt,false,.5,surface);
     rhs_seconds+=std::chrono::duration<double>(std::chrono::steady_clock::now()-start).count();
     gap=std::min(gap,stats.min_gap);cfl=std::max(cfl,stats.max_cfl);
     SynchronizeError(stats.bad_cells,"device RHS failure at active cell "+std::to_string(stats.first_bad)+" reason "+std::to_string(stats.reason));
@@ -265,7 +274,9 @@ class Evolution {
           throw std::runtime_error("checkpoint angular dissipation configuration mismatch");}
       if constexpr(scri_sampled_normal){NormalConfig config;
         in.read(reinterpret_cast<char*>(&config),sizeof(config));
-        if(!in||config.scheme!=1||config.radial_nodes!=6||config.bulk_derivative_order!=4||config.reserved!=0)
+        const NormalConfig expected;
+        if(!in||config.scheme!=expected.scheme||config.radial_nodes!=expected.radial_nodes||
+           config.bulk_derivative_order!=expected.bulk_derivative_order||config.reserved!=expected.reserved)
           throw std::runtime_error("checkpoint sampled-normal configuration mismatch");}
       for(auto*v:{&values,&comps,&edge,&edge_comps})in.read(reinterpret_cast<char*>(v->data()),v->size()*sizeof(Real));
       char tail;if(!in||in.read(&tail,1))throw std::runtime_error("checkpoint truncated or trailing data");
@@ -445,7 +456,7 @@ int main(int argc,char**argv){
       // Failure to locate a horizon is not a volume-evolution failure. Still
       // measure the full domain; with no reliable cutoff, exterior norms are NaN.
       Diagnostic next{};
-      CollectiveLocal([&]{next=e.kernel->Diagnostics(e.exchange->padded,std::isfinite(cutoff)?cutoff:0);});
+      CollectiveLocal([&]{next=e.kernel->Diagnostics(e.exchange->padded,std::isfinite(cutoff)?cutoff:0,e.surface);});
       next=ReduceDiagnostic(next);
       e.SynchronizeError(next.invalid_cells,"invalid diagnostic volume geometry");
       if(!std::isfinite(cutoff))next.exterior=h::HyperbolicCompositeDevice::DiagnosticSums{};
@@ -526,8 +537,9 @@ int main(int argc,char**argv){
         <<",\"scri_dissipation_max_moment_error\":"<<(e.model.angular_plan?e.model.angular_plan->Stats().max_moment_error:0)
         <<",\"scri_dissipation_max_coefficient_l1\":"<<(e.model.angular_plan?e.model.angular_plan->Stats().max_coefficient_l1:0)
         <<",\"checkpoint_header_bytes\":"<<(sizeof(Header)+(scri_angular_dissipation?sizeof(DissipationConfig):0)+(scri_sampled_normal?sizeof(NormalConfig):0));
-      if constexpr(scri_sampled_normal)report<<",\"scri_normal_derivative\":\"sampled_native_numerator6\""
-        <<",\"scri_normal_radial_nodes\":6,\"scri_normal_bulk_derivative_order\":4";
+      if constexpr(scri_sampled_normal)report<<",\"scri_normal_derivative\":\"sampled_native_numerator"<<(scri_donor_seven?7:6)<<"\""
+        <<",\"scri_normal_radial_nodes\":"<<(scri_donor_seven?7:6)<<",\"scri_normal_bulk_derivative_order\":4";
+      if constexpr(scri_donor_seven)report<<",\"scri_radial_closure\":\"donor_seven_last3\",\"scri_radial_bulk_rows\":3";
       report<<",\"minimum_owned_cells\":"<<e.total/e.size<<",\"maximum_owned_cells\":"<<(e.total+e.size-1)/e.size
         <<",\"t\":"<<e.time<<",\"start_time\":"<<start_time<<",\"target_time\":"<<end<<",\"t_over_M\":"<<(kind==2?e.time*3:e.time)
         <<",\"dt\":"<<dt<<",\"steps\":"<<e.steps<<",\"segment_steps\":"<<e.steps-start_steps<<",\"seconds\":"<<elapsed()

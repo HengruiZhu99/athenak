@@ -62,8 +62,29 @@ SAMPLED_NORMAL_FIXTURE = ('backend=SYCL\n'+''.join(
     for name in ['minkowski','nonspherical'])+
     'Sampled-normal device, ownership, default and closure parity passed\n')
 
+DONOR_SEVEN_FIXTURE = SAMPLED_NORMAL_FIXTURE.replace(
+    'rejection_checks=1','rejection_checks=1 radial_nodes=7 radial_bulk_rows=3').replace(
+    'Sampled-normal device','Donor-seven device') + (
+    'donor_seven_bulk_error=1e-14 exterior_radial_poison=1\n'*2)
+
 
 class ComponentParserTests(unittest.TestCase):
+    def test_donor_seven_requires_bulk_boundary_and_backend(self):
+        parsed=preflight.parse_component(DONOR_SEVEN_FIXTURE,'donor_seven_device',0)
+        self.assertTrue(parsed['passed']);self.assertEqual(parsed['maxima']['cpu_bulk_error'],1e-14)
+        self.assertEqual(parsed['scri_radial_bulk_rows'],3)
+        for content,code in [(DONOR_SEVEN_FIXTURE.replace('SYCL','Serial'),0),(DONOR_SEVEN_FIXTURE,1)]:
+            parsed=preflight.parse_component(content,'donor_seven_device',code)
+            self.assertFalse(parsed['passed']);self.assertFalse(parsed['gpu_cpu_parity'])
+        for before,after in [('Donor-seven device','Sampled-normal device'),('radial_nodes=7','radial_nodes=6'),
+                             ('radial_bulk_rows=3','radial_bulk_rows=3.0'),('exterior_radial_poison=1','exterior_radial_poison=0'),
+                             ('donor_seven_bulk_error=1e-14','donor_seven_bulk_error=nan'),
+                             ('donor_seven_bulk_error=1e-14','donor_seven_bulk_error=3e-10')]:
+            with self.subTest(before=before),self.assertRaises(ValueError):
+                preflight.parse_component(DONOR_SEVEN_FIXTURE.replace(before,after),'donor_seven_device',0)
+        with self.assertRaises(ValueError):
+            preflight.parse_component(DONOR_SEVEN_FIXTURE.rsplit('\n',2)[0]+'\n','donor_seven_device',0)
+
     def test_sampled_normal_requires_backend_exact_marker_and_success(self):
         parsed=preflight.parse_component(SAMPLED_NORMAL_FIXTURE,'sampled_normal_device',0)
         self.assertTrue(parsed['passed']);self.assertTrue(parsed['gpu_cpu_parity'])
@@ -216,8 +237,8 @@ class CheckpointTests(unittest.TestCase):
     def checkpoint(self,name='state',value=0.125,steps=4,tail=b'',magic=b'HYP3D_MPI_V1',config=(2.0,7,0),normal=(1,6,4,0)):
         path=self.root/name
         header=preflight.HEADER.pack(magic.ljust(16,b'\0'),6,31,1,1,1,1,steps,0.0004,0.0001)
-        if magic in [b'HYP3D_MPI_V4',b'HYP3D_MPI_V5']:header+=preflight.V4_CONFIG.pack(*config)
-        if magic==b'HYP3D_MPI_V5':header+=preflight.V5_NORMAL_CONFIG.pack(*normal)
+        if magic in [b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6']:header+=preflight.V4_CONFIG.pack(*config)
+        if magic in [b'HYP3D_MPI_V5',b'HYP3D_MPI_V6']:header+=preflight.V5_NORMAL_CONFIG.pack(*normal)
         path.write_bytes(header+struct.pack('<64d',*([value]*64))+tail)
         return path
 
@@ -228,6 +249,15 @@ class CheckpointTests(unittest.TestCase):
         self.assertTrue(result['restart_equivalence'])
         self.assertTrue(result['bitwise_payload_equal'])
         self.assertEqual(result['compared_doubles'],64)
+
+    def test_v6_exact_header_and_no_cross_schema_comparison(self):
+        a=self.checkpoint('a',magic=b'HYP3D_MPI_V6',normal=(2,7,4,3))
+        self.assertTrue(preflight.compare_checkpoints(a,a)['restart_equivalence'])
+        b=self.checkpoint('b',magic=b'HYP3D_MPI_V5')
+        with self.assertRaises(ValueError):preflight.compare_checkpoints(a,b)
+        for normal in [(1,6,4,0),(2,6,4,3),(2,7,2,3),(2,7,4,0)]:
+            b=self.checkpoint('b',magic=b'HYP3D_MPI_V6',normal=normal)
+            with self.subTest(normal=normal),self.assertRaises(ValueError):preflight.compare_checkpoints(b,b)
 
     def test_difference_and_tolerance(self):
         a,b=self.checkpoint('a'),self.checkpoint('b',0.125000001)
@@ -379,8 +409,8 @@ class ExportCheckpointTests(unittest.TestCase):
     def fixture(self,magic=b'HYP3D_MPI_V4',config=(2.0,7,0),normal=(1,6,4,0)):
         n=6;cells=19*n**3;ns=31*6*n*n;nv=31*cells
         header=checkpoint_export.HEADER.pack(magic.ljust(16,b'\0'),n,31,0,1,cells,ns,4,.0004,.0001)
-        if magic in [b'HYP3D_MPI_V4',b'HYP3D_MPI_V5']:header+=checkpoint_export.V4_CONFIG.pack(*config)
-        if magic==b'HYP3D_MPI_V5':header+=checkpoint_export.V5_NORMAL_CONFIG.pack(*normal)
+        if magic in [b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6']:header+=checkpoint_export.V4_CONFIG.pack(*config)
+        if magic in [b'HYP3D_MPI_V5',b'HYP3D_MPI_V6']:header+=checkpoint_export.V5_NORMAL_CONFIG.pack(*normal)
         path=self.root/'state.checkpoint'
         payload=b''.join(struct.pack('<d',value)*count for value,count in [(1.25,nv),(-0.0,nv),(2.5,ns),(3.75,ns)])
         path.write_bytes(header+payload)
@@ -468,6 +498,34 @@ class ExportCheckpointTests(unittest.TestCase):
             with self.subTest(key=key),self.assertRaises(ValueError):checkpoint_export.validate_report(target,h)
         changed=dict(report);changed.pop('checkpoint_schema');target.write_text(json.dumps(changed))
         with self.assertRaises(ValueError):checkpoint_export.validate_report(target,h)
+
+    def test_v6_payload_and_required_radial_report_metadata(self):
+        path=self.fixture(b'HYP3D_MPI_V6',normal=(2,7,4,3))
+        h,arrays,_=checkpoint_export.validate_checkpoint(path)
+        self.assertEqual(h['header_bytes'],104);self.assertEqual(arrays[0]['offset'],104)
+        report=dict(status='completed',n=h['n'],cells=h['cells'],steps=h['steps'],t=h['t'],dt=h['dt'],
+                    kind='minkowski',checkpoint_schema='HYP3D_MPI_V6',algebraic_projection='final_stage_standard',
+                    scri_angular_stencil='cross_face_centered5',scri_dissipation_epsilon=2,
+                    scri_dissipation_degree=7,checkpoint_header_bytes=104,
+                    scri_normal_derivative='sampled_native_numerator7',scri_normal_radial_nodes=7,
+                    scri_normal_bulk_derivative_order=4,scri_radial_closure='donor_seven_last3',scri_radial_bulk_rows=3)
+        target=self.root/'report.json';target.write_text(json.dumps(report));checkpoint_export.validate_report(target,h)
+        exported=checkpoint_export.compatible_report(h,report,dict(execution_artifacts_verified=False))
+        for key in ['scri_radial_closure','scri_radial_bulk_rows']:
+            self.assertEqual(exported[key],h[key])
+            changed=dict(report);changed.pop(key);target.write_text(json.dumps(changed))
+            with self.subTest(missing=key),self.assertRaises(ValueError):checkpoint_export.validate_report(target,h)
+        for key,bad in [('scri_radial_bulk_rows',3.0),('scri_radial_bulk_rows',True),
+                        ('scri_radial_closure','ghost_lift'),('checkpoint_schema','HYP3D_MPI_V5')]:
+            target.write_text(json.dumps(dict(report,**{key:bad})))
+            with self.subTest(key=key),self.assertRaises(ValueError):checkpoint_export.validate_report(target,h)
+        raw=path.read_bytes()
+        for data in [raw[:103],raw[:-1],raw+b'x',raw[:104]+struct.pack('<d',float('nan'))+raw[112:]]:
+            path.write_bytes(data)
+            with self.subTest(size=len(data)),self.assertRaises(ValueError):checkpoint_export.validate_checkpoint(path)
+        for normal in [(1,6,4,0),(2,6,4,3),(2,7,2,3),(2,7,4,0)]:
+            path=self.fixture(b'HYP3D_MPI_V6',normal=normal)
+            with self.subTest(normal=normal),self.assertRaises(ValueError):checkpoint_export.validate_checkpoint(path)
 
 
 class SocketIntegrationTests(unittest.TestCase):

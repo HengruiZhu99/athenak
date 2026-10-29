@@ -1,0 +1,74 @@
+{
+  "scope": "Local n6 CPU controls; no long-duration, GPU or convergence admission",
+  "cases": [
+    {
+      "name": "v5",
+      "report": {
+        "status": "bounded",
+        "error": "",
+        "variant": 1,
+        "n": 6,
+        "t": 0.3733333333333346,
+        "target": 2,
+        "dt": 0.0013333333333333333,
+        "steps": 280,
+        "diagnostic_time": 0.3733333333333346,
+        "state": 3.804427011224657e-12,
+        "H_L2": 2.123659339613221e-14,
+        "M_L2": 2.1917378383270556e-14,
+        "null_surface": 1.1102230246251558e-15,
+        "null_ghost": 1.1102230246251554e-15,
+        "seconds": 325.608602416,
+        "checkpoint_admitted": false
+      },
+      "execution_returncode": 2,
+      "recorded_gates": {
+        "state": true,
+        "H_L2": true,
+        "M_L2": true,
+        "null_surface": true,
+        "null_ghost": true
+      },
+      "completed_target": false,
+      "scientifically_admitted": false,
+      "artifact_hashes_verified": true,
+      "arrays_finite": true
+    },
+    {
+      "name": "donor-seven",
+      "report": {
+        "status": "bounded",
+        "error": "",
+        "variant": 2,
+        "n": 6,
+        "t": 0.3653333333333345,
+        "target": 2,
+        "dt": 0.0013333333333333333,
+        "steps": 274,
+        "diagnostic_time": 0.3653333333333345,
+        "state": 4.16094805973445e-14,
+        "H_L2": 1.9495755301274685e-14,
+        "M_L2": 8.105726143592915e-15,
+        "null_surface": 9.992007221626413e-16,
+        "null_ghost": 1.1102230246251534e-15,
+        "seconds": 325.409358916,
+        "checkpoint_admitted": false
+      },
+      "execution_returncode": 2,
+      "recorded_gates": {
+        "state": true,
+        "H_L2": true,
+        "M_L2": true,
+        "null_surface": true,
+        "null_ghost": true
+      },
+      "completed_target": false,
+      "scientifically_admitted": false,
+      "artifact_hashes_verified": true,
+      "arrays_finite": true
+    }
+  ],
+  "source_sha256": "d66981fdedda6de40ce8a2aab0171f91d17685edde990c42f4f9007375accee4",
+  "analysis_sha256": "83bd3fe68c35a629d5993d0f372419f3ae5f87f8c879c7274f7b645d3aed52a1",
+  "growth_fit": "Not fitted: measured errors remain near floating-point truncation/cancellation scales"
+}

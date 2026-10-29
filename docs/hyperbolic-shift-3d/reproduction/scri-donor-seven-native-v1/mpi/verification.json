@@ -1,0 +1,620 @@
+{
+  "status": "passed",
+  "experimental": true,
+  "scope": "four-step native MPI ownership/restart component tests only; no duration or convergence admission",
+  "one_vs_two_rank_checkpoint_bitwise": true,
+  "two_rank_restart_vs_one_rank_direct_bitwise": true,
+  "frozen_control_checkpoint_bitwise": true,
+  "candidate_version": 6,
+  "control_version": 5,
+  "normal_configuration_rejection_checks": 5,
+  "cross_schema_rejections": 2,
+  "backend": "Serial",
+  "commands": [
+    {
+      "name": "v6-direct-one-rank",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "1",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_donor_seven",
+        "6",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-donor-seven-mpi-v1/v6-direct-one-rank",
+        "pulse",
+        "0.001",
+        "0.00025",
+        "-",
+        "-",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12"
+      ],
+      "returncode": 0,
+      "seconds": 5.1473299169999995
+    },
+    {
+      "name": "v6-direct-two-ranks",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_donor_seven",
+        "6",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-donor-seven-mpi-v1/v6-direct-two-ranks",
+        "pulse",
+        "0.001",
+        "0.00025",
+        "-",
+        "-",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12",
+        "2"
+      ],
+      "returncode": 0,
+      "seconds": 2.9796098750000004
+    },
+    {
+      "name": "v6-part-one",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_donor_seven",
+        "6",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-donor-seven-mpi-v1/v6-part-one",
+        "pulse",
+        "0.0005",
+        "0.00025",
+        "-",
+        "-",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12",
+        "2"
+      ],
+      "returncode": 0,
+      "seconds": 2.1378065
+    },
+    {
+      "name": "v6-restarted",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_donor_seven",
+        "6",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-donor-seven-mpi-v1/v6-restarted",
+        "pulse",
+        "0.001",
+        "0.00025",
+        "-",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-donor-seven-mpi-v1/v6-part-one.checkpoint",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12",
+        "2"
+      ],
+      "returncode": 0,
+      "seconds": 2.1810850000000013
+    },
+    {
+      "name": "v6-epsilon-zero",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_donor_seven",
+        "6",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-donor-seven-mpi-v1/v6-epsilon-zero",
+        "pulse",
+        "0.0005",
+        "0.00025",
+        "-",
+        "-",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12",
+        "0"
+      ],
+      "returncode": 0,
+      "seconds": 2.134562624999999
+    },
+    {
+      "name": "v6-minkowski",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_donor_seven",
+        "6",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-donor-seven-mpi-v1/v6-minkowski",
+        "minkowski",
+        "0.0005",
+        "0.00025",
+        "-",
+        "-",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12",
+        "2"
+      ],
+      "returncode": 0,
+      "seconds": 2.173468125000001
+    },
+    {
+      "name": "v5-control",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_sampled_normal",
+        "6",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-donor-seven-mpi-v1/v5-control",
+        "pulse",
+        "0.0005",
+        "0.00025",
+        "-",
+        "-",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12",
+        "2"
+      ],
+      "returncode": 0,
+      "seconds": 2.883685290999999
+    },
+    {
+      "name": "v5-rejected-by-v6",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_donor_seven",
+        "6",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-donor-seven-mpi-v1/v5-rejected-by-v6",
+        "pulse",
+        "0.001",
+        "0.00025",
+        "-",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-donor-seven-mpi-v1/v5-control.checkpoint",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12",
+        "2"
+      ],
+      "returncode": 1,
+      "seconds": 1.1028147080000004
+    },
+    {
+      "name": "v6-rejected-by-v5",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_sampled_normal",
+        "6",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-donor-seven-mpi-v1/v6-rejected-by-v5",
+        "pulse",
+        "0.001",
+        "0.00025",
+        "-",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-donor-seven-mpi-v1/v6-part-one.checkpoint",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12",
+        "2"
+      ],
+      "returncode": 1,
+      "seconds": 1.0730866249999984
+    },
+    {
+      "name": "epsilon-mismatch",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_donor_seven",
+        "6",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-donor-seven-mpi-v1/epsilon-mismatch",
+        "pulse",
+        "0.001",
+        "0.00025",
+        "-",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-donor-seven-mpi-v1/v6-part-one.checkpoint",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12",
+        "1"
+      ],
+      "returncode": 1,
+      "seconds": 1.0870442090000019
+    },
+    {
+      "name": "rejected-scheme",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_donor_seven",
+        "6",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-donor-seven-mpi-v1/rejected-scheme",
+        "pulse",
+        "0.001",
+        "0.00025",
+        "-",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-donor-seven-mpi-v1/wrong-scheme.checkpoint",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12",
+        "2"
+      ],
+      "returncode": 1,
+      "seconds": 1.0876212500000015
+    },
+    {
+      "name": "rejected-radial-nodes",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_donor_seven",
+        "6",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-donor-seven-mpi-v1/rejected-radial-nodes",
+        "pulse",
+        "0.001",
+        "0.00025",
+        "-",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-donor-seven-mpi-v1/wrong-radial-nodes.checkpoint",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12",
+        "2"
+      ],
+      "returncode": 1,
+      "seconds": 1.089671666000001
+    },
+    {
+      "name": "rejected-bulk-order",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_donor_seven",
+        "6",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-donor-seven-mpi-v1/rejected-bulk-order",
+        "pulse",
+        "0.001",
+        "0.00025",
+        "-",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-donor-seven-mpi-v1/wrong-bulk-order.checkpoint",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12",
+        "2"
+      ],
+      "returncode": 1,
+      "seconds": 1.086963749999999
+    },
+    {
+      "name": "rejected-reserved",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_donor_seven",
+        "6",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-donor-seven-mpi-v1/rejected-reserved",
+        "pulse",
+        "0.001",
+        "0.00025",
+        "-",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-donor-seven-mpi-v1/wrong-reserved.checkpoint",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12",
+        "2"
+      ],
+      "returncode": 1,
+      "seconds": 1.0905246250000005
+    },
+    {
+      "name": "truncated-rejected",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_donor_seven",
+        "6",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-donor-seven-mpi-v1/truncated-rejected",
+        "pulse",
+        "0.001",
+        "0.00025",
+        "-",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-donor-seven-mpi-v1/truncated-normal.checkpoint",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12",
+        "2"
+      ],
+      "returncode": 1,
+      "seconds": 1.0944390410000011
+    },
+    {
+      "name": "unadmitted-rejected",
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_donor_seven",
+        "6",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-donor-seven-mpi-v1/unadmitted-rejected",
+        "pulse",
+        "0.001",
+        "0.00025",
+        "-",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-donor-seven-mpi-v1/unadmitted-copy.checkpoint",
+        "150",
+        ".001",
+        ".001",
+        "6",
+        "12",
+        "2"
+      ],
+      "returncode": 1,
+      "seconds": 1.11300125
+    }
+  ],
+  "binaries": {
+    "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_donor_seven": "f932b68f5c4e3efc0b35ca2c9bbe9f91232e9ca255ff96137911f403759c4837",
+    "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_sampled_normal": "00aab76c16b7b38d1ba05adca5c9e715d78da17a27478d869ab5b2a280c4db3b"
+  },
+  "artifacts": [
+    {
+      "path": "epsilon-mismatch.log",
+      "bytes": 490,
+      "sha256": "bb78a4cb319c344e1789d62e2c6d3ccb71fa7564a8acf4e053dab8347972b421"
+    },
+    {
+      "path": "rejected-bulk-order.log",
+      "bytes": 480,
+      "sha256": "63315b17e3bbce46cf0d9df5725e9429979d4a5e0ee2bde2a40ec096708a9bf7"
+    },
+    {
+      "path": "rejected-radial-nodes.log",
+      "bytes": 480,
+      "sha256": "81bfac1d1dab6cfda03be409ec4a71f8539a6dd2e7e9bf0d45612ca5b3aa74fc"
+    },
+    {
+      "path": "rejected-reserved.log",
+      "bytes": 480,
+      "sha256": "e48c472ef622481155c2c444917fae6c578f533f015bfcbac90fef40fce4859b"
+    },
+    {
+      "path": "rejected-scheme.log",
+      "bytes": 480,
+      "sha256": "0f52d04f8f08d8cbf4fbb58a0c54dd53f7b637a782a4d78c18c37f420ecf34f6"
+    },
+    {
+      "path": "truncated-normal.checkpoint",
+      "bytes": 100,
+      "sha256": "0522943deb04dd434333bee3d17ed71caba76639d7167a3566fe9c20803e939c"
+    },
+    {
+      "path": "truncated-rejected.log",
+      "bytes": 480,
+      "sha256": "4454a266c4e0cde86efc2a6de7b55f921d238377a5ee042f123fd63be0fc4387"
+    },
+    {
+      "path": "unadmitted-copy.checkpoint",
+      "bytes": 2142824,
+      "sha256": "927dba4eba447f8aed2417bdab0bbaa7d14af59296b49d3d57f78509e2dddc1c"
+    },
+    {
+      "path": "unadmitted-rejected.log",
+      "bytes": 484,
+      "sha256": "69e2bda8cb629d7979683c435c6a517e213d36ac6b207bc67a96ea4a8f77bf6c"
+    },
+    {
+      "path": "v5-control.checkpoint",
+      "bytes": 2142824,
+      "sha256": "014449812bb1a433c3eff50c82443a027b6f515cf4fa262ccf756697d958f171"
+    },
+    {
+      "path": "v5-control.history.csv",
+      "bytes": 1372,
+      "sha256": "18829c877a131e86dfcbe3a517ab19de55a806bfb747201e4b7a7dcfd821bc0e"
+    },
+    {
+      "path": "v5-control.log",
+      "bytes": 179,
+      "sha256": "294f312046e0286197fb9b47187278beed5dc122d230d84b8df58faa60cf6e77"
+    },
+    {
+      "path": "v5-control.report.json",
+      "bytes": 2884,
+      "sha256": "388a9f675923c7656be64fa60b64e750c85563a2e1716cdbf9ea44c0e497920c"
+    },
+    {
+      "path": "v5-rejected-by-v6.log",
+      "bytes": 484,
+      "sha256": "0b9891c9e0ea880097a20d046ca26e41a3ac5fc77827f7202b3529da791d3161"
+    },
+    {
+      "path": "v6-direct-one-rank.checkpoint",
+      "bytes": 2142824,
+      "sha256": "765e0cb524a5098c3daff9b7a50618308d4d026a6b0f0a2ff8cd76514a1e2e6d"
+    },
+    {
+      "path": "v6-direct-one-rank.history.csv",
+      "bytes": 1348,
+      "sha256": "fb14b3f4d1b25537c42a5c3e857c865229afeaf6bd59b6c6103cbd0835a09177"
+    },
+    {
+      "path": "v6-direct-one-rank.log",
+      "bytes": 177,
+      "sha256": "e350041f3109ca4363ce0ca10128d4f813a1eadc285dc191e9e89e2038cf27c5"
+    },
+    {
+      "path": "v6-direct-one-rank.report.json",
+      "bytes": 2885,
+      "sha256": "f9e80a3d06d04d5f57579c523f557676fb066f6ef15e4478266f44c70bd56999"
+    },
+    {
+      "path": "v6-direct-two-ranks.checkpoint",
+      "bytes": 2142824,
+      "sha256": "765e0cb524a5098c3daff9b7a50618308d4d026a6b0f0a2ff8cd76514a1e2e6d"
+    },
+    {
+      "path": "v6-direct-two-ranks.history.csv",
+      "bytes": 1347,
+      "sha256": "7efc0cb7f47d3253d9733ff44a542de31d977272c76a576360a56e6583c482d9"
+    },
+    {
+      "path": "v6-direct-two-ranks.log",
+      "bytes": 177,
+      "sha256": "71d3021abe700514e21f5e0acd6e9ebedc3858a87e5fe93555bd5a6744263ce1"
+    },
+    {
+      "path": "v6-direct-two-ranks.report.json",
+      "bytes": 2878,
+      "sha256": "b753455c53974dc5ddfc5c19cfdc7fdd6e91f2462eaf6c0c9c1c86c0353a4c92"
+    },
+    {
+      "path": "v6-epsilon-zero.checkpoint",
+      "bytes": 2142824,
+      "sha256": "9d5e8d84c18bcd23b4c07cd5329ee8c545c9252e9b641b82193cc93fb22399a1"
+    },
+    {
+      "path": "v6-epsilon-zero.history.csv",
+      "bytes": 1385,
+      "sha256": "564c2eb13f20569d2d0cbe5b01ecf81c2c9f0d630d455b1ae6bd8e45b1ba825c"
+    },
+    {
+      "path": "v6-epsilon-zero.log",
+      "bytes": 179,
+      "sha256": "dba72a541dd36c5619163875d9d9d135071852acbe5765553ca5de086f1ab9b9"
+    },
+    {
+      "path": "v6-epsilon-zero.report.json",
+      "bytes": 2849,
+      "sha256": "5eb2c560d12e388d56304016058cd25f42085a6626b2d2344c0d9d53db30dc27"
+    },
+    {
+      "path": "v6-minkowski.checkpoint",
+      "bytes": 2142824,
+      "sha256": "816abcef069de2ddf2c1b94478b08e4f5fdd7969c47bf69cbbd767bdeeffc078"
+    },
+    {
+      "path": "v6-minkowski.history.csv",
+      "bytes": 1319,
+      "sha256": "ff33ea86f426bf2781f992dc3f50500bd11b80b99fa21f940ddf10aeb1f0acbf"
+    },
+    {
+      "path": "v6-minkowski.log",
+      "bytes": 178,
+      "sha256": "7ef3215e645dd73f67cff8814d4b69ffab0f7ebe41861882c06d396b3cd18b66"
+    },
+    {
+      "path": "v6-minkowski.report.json",
+      "bytes": 2925,
+      "sha256": "074d8a9143f3cb8e9755078495d3a40b0a9a036b2bbc72fdb25c6d99f68f4473"
+    },
+    {
+      "path": "v6-part-one.checkpoint",
+      "bytes": 2142824,
+      "sha256": "721c7ff7baeb50775191e45aa8f5c7515bdffe40f37b95e2aeb2d872f15d0201"
+    },
+    {
+      "path": "v6-part-one.history.csv",
+      "bytes": 1384,
+      "sha256": "51711748ad1ea88e370244c542a0d81d7c37ff95f1bf889cb10f179f2f355328"
+    },
+    {
+      "path": "v6-part-one.log",
+      "bytes": 179,
+      "sha256": "3e94e0e9a5f89d0f1c8e921d395a45fb57cd60cdb5e627ba9286ce052b81bda4"
+    },
+    {
+      "path": "v6-part-one.report.json",
+      "bytes": 2942,
+      "sha256": "d3bb1f08bab7f3b75070e46c53f9cf5c5ab04a74b09eb116a2f8c2a2ce581730"
+    },
+    {
+      "path": "v6-rejected-by-v5.log",
+      "bytes": 484,
+      "sha256": "10224517452b3421301e2b1bb5b07d24068632b1403a6b52fabef8b35508e6bf"
+    },
+    {
+      "path": "v6-restarted.checkpoint",
+      "bytes": 2142824,
+      "sha256": "765e0cb524a5098c3daff9b7a50618308d4d026a6b0f0a2ff8cd76514a1e2e6d"
+    },
+    {
+      "path": "v6-restarted.history.csv",
+      "bytes": 1650,
+      "sha256": "dc118b1e8abbfae7644dda1096d48ddeefa772ed7f51c74ddc7092a0d2c41edc"
+    },
+    {
+      "path": "v6-restarted.log",
+      "bytes": 183,
+      "sha256": "705958231e5af63a9a4fae1b03ad5a2e8a6d7e58e908fa2b6b1442e52f0a968a"
+    },
+    {
+      "path": "v6-restarted.report.json",
+      "bytes": 2891,
+      "sha256": "57066c2ccae1ad34ff125c54f87904aa8b2ee7beca8b2ee7a00be1119f6d4ca2"
+    },
+    {
+      "path": "wrong-bulk-order.checkpoint",
+      "bytes": 2142824,
+      "sha256": "5950c620d3d656c83b3cee2ab28609f3cb589dc6e05621cd21d7a9c14ca738c2"
+    },
+    {
+      "path": "wrong-radial-nodes.checkpoint",
+      "bytes": 2142824,
+      "sha256": "9968c7520c137f9545253edc1526acea21df868d877c81e14b5c89551afa5f99"
+    },
+    {
+      "path": "wrong-reserved.checkpoint",
+      "bytes": 2142824,
+      "sha256": "089a24126c3c2ec38de118642381ba8da47f5075fbd4e2152bdb4f4b9487fb93"
+    },
+    {
+      "path": "wrong-scheme.checkpoint",
+      "bytes": 2142824,
+      "sha256": "de74b8d933e4391bf80e8ab30bdd6a20632cb7b3308d59d902d69cf90c8127a6"
+    }
+  ],
+  "frozen_v5_checkpoint_bitwise": true
+}

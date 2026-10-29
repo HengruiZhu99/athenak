@@ -194,6 +194,39 @@ class ControllerTests(unittest.TestCase):
         for c in plan['commands']:c['executable']='build/'+control.SAMPLED_NORMAL_TARGET
         with self.assertRaisesRegex(ValueError,'does not inherit'):control.validate_plan(self.root,plan)
 
+    def test_v6_plan_and_distinct_admission(self):
+        plan=example();plan.update(phase='stability',admission='admission.json')
+        command=plan['commands'][0];command['executable']='build/'+control.DONOR_SEVEN_TARGET
+        command['args'].extend(['.05','.001','6','12','2'])
+        control.validate_plan(self.root,plan)
+        config=control.normal_derivative_config(command)
+        self.assertEqual(config['checkpoint_schema'],'HYP3D_MPI_V6')
+        self.assertEqual(config['scri_normal_radial_nodes'],7)
+        self.assertEqual(config['scri_radial_closure'],'donor_seven_last3')
+        self.assertEqual(config['scri_radial_bulk_rows'],3)
+        source='a'*64;binary='b'*64
+        admission=dict(passed=True,phase='preflight',source_manifest_sha256=source,low_resolution_n=16,
+                       binaries={command['executable']:binary},gpu_cpu_parity=True,restart_equivalence=True,
+                       normal_derivative_configs=[config])
+        control.atomic(self.root/'admission.json',admission)
+        control.validate_admission(self.root,plan,source,{command['executable']:binary})
+        for key,value in [('checkpoint_schema','HYP3D_MPI_V5'),('scri_normal_radial_nodes',6),
+                          ('scri_normal_derivative','sampled_native_numerator6'),
+                          ('scri_radial_closure','ghost_lift'),('scri_radial_bulk_rows',3.0),
+                          ('scri_radial_bulk_rows',True),('scri_radial_bulk_rows',None)]:
+            admission['normal_derivative_configs']=[dict(config,**{key:value})]
+            control.atomic(self.root/'admission.json',admission)
+            with self.subTest(key=key,value=value),self.assertRaises(ValueError):
+                control.validate_admission(self.root,plan,source,{command['executable']:binary})
+        for epsilon in ['nan','inf','-1','invalid']:
+            command['args'][12]=epsilon
+            with self.subTest(epsilon=epsilon),self.assertRaises(ValueError):control.validate_plan(self.root,plan)
+        command['args'][12]='2';command['args'].append('1')
+        with self.assertRaises(ValueError):control.validate_plan(self.root,plan)
+        plan=resolution_example()
+        for command in plan['commands']:command['executable']='build/'+control.DONOR_SEVEN_TARGET
+        with self.assertRaisesRegex(ValueError,'does not inherit'):control.validate_plan(self.root,plan)
+
     def test_v4_invalid_epsilon_and_failure_continuation_rejected(self):
         for epsilon in ['-1','nan','inf','-inf','invalid','']:
             plan=example();command=plan['commands'][0]

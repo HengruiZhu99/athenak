@@ -44,7 +44,7 @@ class HyperbolicScriDevice {
   // Only fields 0..24 enter the native scri equations. D is dependent and J
   // vanishes in the outer collar; their six stencils were never sampled.
   static constexpr int sampled_fields=25;
-  int first_,local_,total_,active_total_;
+  int first_,local_,total_,active_total_,normal_donors_;
   bool sampled_normal_;
   Rows rows_;
   Terms terms_;
@@ -183,7 +183,8 @@ class HyperbolicScriDevice {
       auto pole=TensorPoleNormalJet(u,omega,x,x,Real(4),Real(-.99),Real(1),Real(1),true,true);
       if(sampled_poles.extent(0)!=0){
         Z4cRHS<Real> normal{};constexpr int ni[6]={0,0,0,1,1,2},nj[6]={0,1,2,1,2,2};
-        for(int s=0;s<5;++s){const int offset=nf*(5*local+s);const Real w=normal_weights(s)/row.h;
+        const int donors=normal_weights.extent(0);
+        for(int s=0;s<donors;++s){const int offset=nf*(donors*local+s);const Real w=normal_weights(s)/row.h;
           for(int f=0;f<nf;++f){const Real value=sampled_poles(offset+f);const bool geometric=f==0||(f>=7&&f<=17);
             if(!Kokkos::isfinite(value)||(!geometric&&value!=0)){info.status=invalid_input;diagnostics(local)=info;return;}}
           normal.chi+=w*(sampled_poles(offset)-parts.pole.chi);
@@ -307,7 +308,7 @@ class HyperbolicScriDevice {
  public:
   HyperbolicScriDevice(const HyperbolicComposite&model,int first_surface,int local_count)
       :first_(first_surface),local_(local_count),total_(model.scri.rows.size()),
-       active_total_(model.grid.active.size()),
+       active_total_(model.grid.active.size()),normal_donors_(model.scri.radial_nodes-1),
        sampled_normal_(model.normal_derivative==HyperbolicComposite::NormalDerivative::sampled_numerator) {
     if(first_<0||local_<0||size_t(first_)+size_t(local_)>model.scri.rows.size())
       throw std::invalid_argument("invalid device scri owned row range");
@@ -315,11 +316,12 @@ class HyperbolicScriDevice {
     local_surface_=Buffer("scri owned surface",size_t(nf)*local_);
     local_rhs_=Buffer("scri owned RHS",size_t(nf)*local_);
     if(sampled_normal_){
-      if(model.scri.radial_nodes!=6)throw std::invalid_argument("sampled-normal device requires six radial nodes");
-      normal_weights_=Buffer("scri normal derivative weights",5);auto weights=Kokkos::create_mirror_view(normal_weights_);
-      const Real nodes[6]={-4.5,-3.5,-2.5,-1.5,-.5,0};
-      for(int i=0;i<5;++i){cubed_sphere::Jet basis(1);
-        for(int j=0;j<6;++j)if(i!=j)basis=basis*(cubed_sphere::Jet::Variable(0,0)-cubed_sphere::Jet(nodes[j]))/cubed_sphere::Jet(nodes[i]-nodes[j]);
+      const bool radial=model.radial_closure==HyperbolicComposite::RadialClosure::donor_seven;
+      if(model.scri.radial_nodes!=(radial?7:6))throw std::invalid_argument("sampled-normal device radial selector mismatch");
+      normal_weights_=Buffer("scri normal derivative weights",normal_donors_);auto weights=Kokkos::create_mirror_view(normal_weights_);
+      Real nodes[7]{};for(int i=0;i<normal_donors_;++i)nodes[i]=i-normal_donors_+.5;
+      for(int i=0;i<normal_donors_;++i){cubed_sphere::Jet basis(1);
+        for(int j=0;j<=normal_donors_;++j)if(i!=j)basis=basis*(cubed_sphere::Jet::Variable(0,0)-cubed_sphere::Jet(nodes[j]))/cubed_sphere::Jet(nodes[i]-nodes[j]);
         weights(i)=basis.d[0];}Kokkos::deep_copy(normal_weights_,weights);}
 #if !defined(HYPERBOLIC_SCRI_INLINE_SAMPLING) || !HYPERBOLIC_SCRI_INLINE_SAMPLING
     samples_=Jets("scri owned field jets",size_t(sampled_fields)*local_);
@@ -373,7 +375,7 @@ class HyperbolicScriDevice {
       if(additive_rates.data()==local_surface_.data()||additive_rates.data()==local_rhs_.data())
         throw std::invalid_argument("device scri additive rates must not alias writable outputs");
     }
-    if((sampled_normal_&&sampled_poles.extent(0)!=size_t(nf)*5*local_)||
+    if((sampled_normal_&&sampled_poles.extent(0)!=size_t(nf)*normal_donors_*local_)||
        (!sampled_normal_&&sampled_poles.extent(0)!=0))
       throw std::invalid_argument("device scri sampled-normal input/mode mismatch");
     if(sampled_poles.extent(0)!=0&&(sampled_poles.data()==local_surface_.data()||sampled_poles.data()==local_rhs_.data()))

@@ -11,6 +11,10 @@
 #include "z4c/hyperboloidal/algebraic_projection.hpp"
 #include "frozen_d98_scri_device.hpp"
 
+#ifndef HYPERBOLIC_TEST_DONOR_SEVEN
+#define HYPERBOLIC_TEST_DONOR_SEVEN 0
+#endif
+constexpr bool donor_seven=HYPERBOLIC_TEST_DONOR_SEVEN;
 namespace h=z4c::hyperboloidal;
 using Model=h::HyperbolicComposite;
 using Device=h::HyperbolicScriDevice;
@@ -46,20 +50,21 @@ static void Seed(Model&model,bool perturb){
 // Reuse the native CPU derivative/jet/source helpers as an independent execution
 // oracle. There is no alternate equation implementation in this fixture.
 static V CPUPoles(const Model&model,const V&padded){
-  V result(model.scri.rows.size()*5*31,0),value(31);
+  const int donors=model.scri.radial_nodes-1;
+  V result(model.scri.rows.size()*donors*31,0),value(31);
   std::vector<std::array<Real,3>> d(31);
   std::vector<std::array<std::array<Real,3>,3>> dd(31);
   const int n=model.grid.n;
-  for(size_t row=0;row<model.scri.rows.size();++row)for(int s=0;s<5;++s){
-    const auto&r=model.scri.rows[row];const size_t p=size_t(r.block)*n*n*n+(r.k*n+r.j)*n+n-5+s;
+  for(size_t row=0;row<model.scri.rows.size();++row)for(int s=0;s<donors;++s){
+    const auto&r=model.scri.rows[row];const size_t p=size_t(r.block)*n*n*n+(r.k*n+r.j)*n+n-donors+s;
     const auto*x=model.grid.geometry[p].x;
     for(int f=0;f<31;++f){value[f]=padded[f*model.grid.count+model.grid.active[p]];Real df[3],ddf[3][3];
-      model.grid.Derivatives(padded,f,p,df,ddf,f<=6||f==18||(f>=22&&f<25));
+      model.BulkDerivatives(padded,f,p,df,ddf,f<=6||f==18||(f>=22&&f<25));
       for(int a=0;a<3;++a){d[f][a]=df[a];for(int b=0;b<3;++b)dd[f][a][b]=ddf[a][b];}}
     const auto u=Model::Jet(x,value,d,dd);const auto omega=Model::Omega(x,u,false);
     auto parts=h::ConformalRHS(u,omega,4.,-.99);
     Require(h::HyperbolicDamping(x,u,omega,parts),"invalid CPU numerator");
-    Model::StoreGeometry(parts.pole,&result[31*(row*5+s)]);
+    Model::StoreGeometry(parts.pole,&result[31*(row*donors+s)]);
   }
   return result;
 }
@@ -68,7 +73,9 @@ template<class F>static void Reject(F operation,const char*message){
 }
 static void Check(bool perturb){
   const auto mesh=cubed_sphere::CompositeMesh(.125,{.45,.75,1},1,6,3);
-  Model model(mesh,false,true,2,Model::NormalDerivative::sampled_numerator);
+  Model model(mesh,false,true,2,Model::NormalDerivative::sampled_numerator,
+    donor_seven?Model::RadialClosure::donor_seven:Model::RadialClosure::ghost_lift);
+  const int donors=model.scri.radial_nodes-1;
   Seed(model,perturb);const int total=model.scri.rows.size();const Real dt=.0001;
   const auto projected=model.scri.values,padded=model.Padded(model.state);
   const auto cpu_poles=CPUPoles(model,padded),q=model.angular_plan->Apply(projected,2);
@@ -84,7 +91,7 @@ static void Check(bool perturb){
   Require(core_owner.Fill(active).invalid==0,"core-owner exchange failed");
   exchange.SetSurface(projected);const auto halo=exchange.Fill(active);
   Require(halo.invalid==0,"surface-owner exchange failed");
-  Require(samples.Evaluate(exchange.padded).bad_rows==0,"native device samples failed");
+  Require(samples.Evaluate(exchange.padded,surface).bad_rows==0,"native device samples failed");
   const auto full_poles=Download(samples.LocalPoleSamples());
   const Real pole_error=Compare(cpu_poles,full_poles);
   const auto summary=full.Evaluate(active,surface,dt,rates,samples.LocalPoleSamples());
@@ -99,10 +106,10 @@ static void Check(bool perturb){
     // Poison unfilled halos so accidental dependence on nonowned blocks cannot
     // be hidden by zero-initialized allocation. Fill writes all active values.
     Kokkos::deep_copy(halos.padded,std::numeric_limits<Real>::quiet_NaN());
-    Require(halos.Fill(active).invalid==0&&local.Evaluate(halos.padded).bad_rows==0,"partition samples failed");
+    Require(halos.Fill(active).invalid==0&&local.Evaluate(halos.padded,surface).bad_rows==0,"partition samples failed");
     const V local_q(q.begin()+31*first,q.begin()+31*(first+count));
     Require(boundary.Evaluate(active,surface,dt,Upload(local_q),local.LocalPoleSamples()).bad_rows==0,"partition closure failed");
-    partition_error=std::max({partition_error,Compare(full_poles,Download(local.LocalPoleSamples()),size_t(first)*5*31),
+    partition_error=std::max({partition_error,Compare(full_poles,Download(local.LocalPoleSamples()),size_t(first)*donors*31),
       Compare(actual,Download(boundary.LocalRHS()),31*first),Compare(trace,Download(boundary.LocalSurface()),31*first)});
   };
   for(int rank=0;rank<12;++rank)partition(total*rank/12,total*(rank+1)/12-total*rank/12);
@@ -115,7 +122,7 @@ static void Check(bool perturb){
   for(size_t p=0;p<changed.size()/31;++p)for(int a=0;a<3;++a)changed[31*p+25+a]+=.17*std::sin(.13*p+a);
   for(size_t p=0;p<changed_surface.size()/31;++p)for(int a=0;a<3;++a)changed_surface[31*p+25+a]-=.29*std::cos(.19*p+a);
   exchange.SetSurface(changed_surface);Require(exchange.Fill(Upload(changed)).invalid==0,"D-only halo fill failed");
-  Require(samples.Evaluate(exchange.padded).bad_rows==0,"finite D-only sample change rejected");
+  Require(samples.Evaluate(exchange.padded,Upload(changed_surface)).bad_rows==0,"finite D-only sample change rejected");
   const auto changed_poles=Download(samples.LocalPoleSamples());const Real d_error=Compare(full_poles,changed_poles);
   Require(Bits(full_poles,changed_poles),"geometric numerator depends on finite D storage");
   Require(full.Evaluate(Upload(changed),Upload(changed_surface),dt,rates,samples.LocalPoleSamples()).bad_rows==0,
@@ -132,10 +139,10 @@ static void Check(bool perturb){
   Reject([&]{current.Evaluate(active,surface,dt,rates,samples.LocalPoleSamples());},"default accepted sample input");
   Reject([&]{samples.Evaluate(Upload(V(3)));},"sampled kernel accepted wrong padded shape");
   Reject([&]{Sampled invalid(model,-1,2);},"sampled kernel accepted negative ownership");
-  auto invalid=full_poles;invalid[31*5*3+1]=1;
+  auto invalid=full_poles;invalid[31*donors*3+1]=1;
   auto bad=full.Evaluate(active,surface,dt,rates,Upload(invalid));
   Require(bad.bad_rows==1&&bad.first_bad==3&&bad.reason==Device::invalid_input,"forbidden numerator channel accepted");
-  invalid=full_poles;invalid[31*5*2]=std::numeric_limits<Real>::quiet_NaN();
+  invalid=full_poles;invalid[31*donors*2]=std::numeric_limits<Real>::quiet_NaN();
   bad=full.Evaluate(active,surface,dt,rates,Upload(invalid));
   Require(bad.bad_rows==1&&bad.first_bad==2&&bad.reason==Device::invalid_input,"nonfinite numerator accepted");
   // Nonfinite D is rejected by native jet validation even though finite D has
@@ -143,20 +150,42 @@ static void Check(bool perturb){
   auto invalid_padded=padded;const auto&row=model.scri.rows[0];
   const size_t donor=size_t(row.block)*6*6*6+(row.k*6+row.j)*6+1;
   invalid_padded[25*model.grid.count+model.grid.active[donor]]=std::numeric_limits<Real>::quiet_NaN();
-  const auto bad_sample=samples.Evaluate(Upload(invalid_padded));
+  const auto bad_sample=samples.Evaluate(Upload(invalid_padded),surface);
   Require(bad_sample.bad_rows>0&&bad_sample.first_bad==0&&bad_sample.reason==Sampled::invalid_input,
           "nonfinite native donor accepted");
   const Real null=std::max({halo.after,summary.null_after,model.null_max});
   Require(null<3e-14&&summary.compatibility<2e-12,"sampled null/dependent D closure inaccurate");
+  if(donor_seven){
+    model.scri.values=projected;V cpu_edge;
+    const auto cpu_bulk=model.EvaluateRHS(model.state,dt,cpu_edge);
+    h::HyperbolicCompositeDevice bulk(model.grid,0,model.grid.active.size(),model.radial_plan.get());
+    const auto final_surface=Upload(model.scri.values);auto final_padding=model.Padded(model.state);
+    // Every exterior radial ghost is unused by the seven-node bulk closure,
+    // including its native transport correction and sampled numerator jets.
+    const auto&g=model.grid;
+    for(int m=13;m<19;++m)for(int k=-g.ng;k<g.n+g.ng;++k)for(int j=-g.ng;j<g.n+g.ng;++j)
+      for(int i=g.n;i<g.n+g.ng;++i)for(int f=0;f<31;++f)
+        final_padding[f*g.count+g.Index(m,i,j,k)]=std::numeric_limits<Real>::quiet_NaN();
+    Require(bulk.Evaluate(Upload(final_padding),dt,false,.5,final_surface).bad_cells==0,"direct radial bulk read exterior ghosts");
+    const Real bulk_error=Compare(cpu_bulk,bulk.DownloadRHS());
+    Require(bulk_error<2e-10,"direct radial complete bulk RHS differs from CPU");
+    const auto constraints=bulk.Diagnostics(Upload(final_padding),0,final_surface);
+    Require(constraints.invalid_cells==0&&std::isfinite(constraints.total.h2)&&std::isfinite(constraints.total.m2),
+            "direct radial device constraints failed");
+    std::cout<<"donor_seven_bulk_error="<<bulk_error<<" exterior_radial_poison=1\n";
+  }
   std::cout<<"sampled_case="<<(perturb?"nonspherical":"minkowski")<<" n=6 epsilon=2 cpu_pole_error="<<pole_error
     <<" cpu_rate_error="<<rate_error<<" cpu_trace_error="<<trace_error<<" partition_error="<<partition_error
     <<" finite_D_error="<<d_error<<" null="<<null<<" compatibility="<<summary.compatibility
-    <<" default_bitwise=1 partitions=12 rejection_checks=1\n";
+    <<" default_bitwise=1 partitions=12 rejection_checks=1";
+  if(donor_seven)std::cout<<" radial_nodes=7 radial_bulk_rows=3";
+  std::cout<<'\n';
 }
 int main(int argc,char**argv){
   Kokkos::initialize(argc,argv);int result=0;
   try{std::cout<<std::setprecision(17)<<"backend="<<Kokkos::DefaultExecutionSpace::name()<<'\n';
-    Check(false);Check(true);std::cout<<"Sampled-normal device, ownership, default and closure parity passed\n";
+    Check(false);Check(true);std::cout<<(donor_seven?"Donor-seven device, ownership, default and closure parity passed\n":
+      "Sampled-normal device, ownership, default and closure parity passed\n");
   }catch(const std::exception&e){std::cerr<<e.what()<<'\n';result=1;}
   Kokkos::finalize();return result;
 }
