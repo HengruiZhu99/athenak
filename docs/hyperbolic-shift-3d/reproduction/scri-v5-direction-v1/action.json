@@ -1,0 +1,661 @@
+{
+  "status": "completed",
+  "scope": "Observed V5 direction; tangent generator at Minkowski, not an eigenvalue or stability proof",
+  "norm": "Unweighted point-coordinate Euclidean; Frobenius tracefree tensors, not physical energy",
+  "checkpoint": {
+    "magic": "HYP3D_MPI_V5",
+    "n": 16,
+    "nf": 31,
+    "kind": 0,
+    "admitted": true,
+    "cells": 77824,
+    "surface_size": 47616,
+    "steps": 1201,
+    "time": 0.6,
+    "dt": 0.0005,
+    "header_bytes": 104,
+    "scri_dissipation_epsilon": 2.0,
+    "scri_dissipation_degree": 7,
+    "base_except_magic_sha256": "b1c420d29c5e4191c27f695867a794bfae3d830a96d7f83adf73398e0d4b4c51",
+    "arrays": [
+      {
+        "name": "volume_state",
+        "doubles": 2412544,
+        "sha256": "b3a5552231fb2313fd8b46f7215bb681d11cbc01e21839faf65038b4287dc337"
+      },
+      {
+        "name": "volume_compensation",
+        "doubles": 2412544,
+        "sha256": "099bfce52dfa1aee071013cdd227b095608801aadce923d31b49975f4f6fed19"
+      },
+      {
+        "name": "scri_state",
+        "doubles": 47616,
+        "sha256": "54e70f7a1130d7f43b6e7a4bb3719b5de95a8193df9cfbdd48c9f7853a1d9be2"
+      },
+      {
+        "name": "scri_compensation",
+        "doubles": 47616,
+        "sha256": "660c2ef6e75e96305e6222e802fed37de936954eb090f081d3ede1913820f326"
+      }
+    ],
+    "bytes": 39362664,
+    "sha256": "6105b3866d9b8db0e8c7aaedb3a267c05ff7a55c7b7bb1e42c49866f3d685494",
+    "scri_normal_derivative": "sampled_native_numerator6",
+    "scri_normal_radial_nodes": 6,
+    "scri_normal_bulk_derivative_order": 4,
+    "worker_sha256": "23128552a7d2fe9f0ea662b3fd74ff5f949a7d7b2eee3d8a9ad17d9fe1a2ad76",
+    "bound_artifact": [
+      [
+        "minkowski",
+        "campaigns/stability-sampled-normal-minkowski-v1/output/minkowski.checkpoint"
+      ]
+    ],
+    "scientifically_admitted": false,
+    "tangent_norm": 0.044208954120989165,
+    "trace_discard_relative": 7.894906864939093e-06
+  },
+  "rows": [
+    {
+      "amplitude": 0.0001,
+      "AD": {
+        "all": {
+          "coordinate_norm": 0.9999999999999999,
+          "action_norm": 139.5380766991007,
+          "projected_rate": 135.77615574965884,
+          "relative_shape_residual": 0.23063564639950204
+        },
+        "volume": {
+          "coordinate_norm": 0.32173777434713025,
+          "action_norm": 13.697875540951935,
+          "projected_rate": 42.57046605620464,
+          "relative_shape_residual": 0.01403167359569218
+        },
+        "outer_shell": {
+          "coordinate_norm": 0.32173777434713025,
+          "action_norm": 13.697875540951909,
+          "projected_rate": 42.570466056204644,
+          "relative_shape_residual": 0.014031673595558607
+        },
+        "surface": {
+          "coordinate_norm": 0.9468288148119253,
+          "action_norm": 138.8641172317338,
+          "projected_rate": 146.53841868579985,
+          "relative_shape_residual": 0.04109738155447024
+        },
+        "volume_Lambda": {
+          "coordinate_norm": 0.06766653330430669,
+          "action_norm": 2.8530202544341745,
+          "projected_rate": 42.154095859981965,
+          "relative_shape_residual": 0.020485792037054855
+        },
+        "volume_D": {
+          "coordinate_norm": 0.04222336899772971,
+          "action_norm": 1.78078209395344,
+          "projected_rate": 42.16654654686881,
+          "relative_shape_residual": 0.020340910060800563
+        }
+      },
+      "V5": {
+        "all": {
+          "coordinate_norm": 0.9999999999999999,
+          "action_norm": 42.57236592534143,
+          "projected_rate": 42.568045028894836,
+          "relative_shape_residual": 0.014247117752270487
+        },
+        "volume": {
+          "coordinate_norm": 0.32173777434713025,
+          "action_norm": 13.697880615667017,
+          "projected_rate": 42.570482094505465,
+          "relative_shape_residual": 0.014031226650989105
+        },
+        "outer_shell": {
+          "coordinate_norm": 0.32173777434713025,
+          "action_norm": 13.69788061566699,
+          "projected_rate": 42.57048209450547,
+          "relative_shape_residual": 0.014031226650855533
+        },
+        "surface": {
+          "coordinate_norm": 0.9468288148119253,
+          "action_norm": 40.30849050907396,
+          "projected_rate": 42.567763626107286,
+          "relative_shape_residual": 0.014271824120651302
+        },
+        "volume_Lambda": {
+          "coordinate_norm": 0.06766653330430669,
+          "action_norm": 2.8530202544341745,
+          "projected_rate": 42.154095859981965,
+          "relative_shape_residual": 0.020485792037054855
+        },
+        "volume_D": {
+          "coordinate_norm": 0.04222336899772971,
+          "action_norm": 1.780821128525299,
+          "projected_rate": 42.167477776307074,
+          "relative_shape_residual": 0.0203328173584441
+        }
+      },
+      "fields": {
+        "volume_chi": {
+          "norm_squared_fraction": 5.60909146880648e-11,
+          "projected_rate": 41.169273522677834,
+          "action_norm": 0.00030852428451433566
+        },
+        "volume_metric": {
+          "norm_squared_fraction": 0.00015518416714173624,
+          "projected_rate": 42.586089188911956,
+          "action_norm": 0.5305573444145685
+        },
+        "volume_A": {
+          "norm_squared_fraction": 0.0969984203947293,
+          "projected_rate": 42.597519643779975,
+          "action_norm": 13.26798256506621
+        },
+        "volume_trace": {
+          "norm_squared_fraction": 8.61983530496214e-11,
+          "projected_rate": 41.646670009493775,
+          "action_norm": 0.00038786679621917783
+        },
+        "volume_Theta": {
+          "norm_squared_fraction": 7.63829386080843e-11,
+          "projected_rate": 40.75582800925613,
+          "action_norm": 0.000357455568983802
+        },
+        "volume_Lambda": {
+          "norm_squared_fraction": 0.004578759729422847,
+          "projected_rate": 42.154095859981965,
+          "action_norm": 2.8530202544341745
+        },
+        "volume_B": {
+          "norm_squared_fraction": 4.2395426271581465e-28,
+          "projected_rate": -7.926198839434043,
+          "action_norm": 7.31077592062394e-13
+        },
+        "volume_lapse": {
+          "norm_squared_fraction": 1.3837630442501703e-12,
+          "projected_rate": 40.89426987316062,
+          "action_norm": 4.8127386101027684e-05
+        },
+        "volume_beta": {
+          "norm_squared_fraction": 1.8040976578615126e-08,
+          "projected_rate": 42.15862941819808,
+          "action_norm": 0.005663807958625416
+        },
+        "volume_D": {
+          "norm_squared_fraction": 0.0017828128895184426,
+          "projected_rate": 42.167477776307074,
+          "action_norm": 1.780821128525299
+        },
+        "surface_chi": {
+          "norm_squared_fraction": 1.584246808354411e-10,
+          "projected_rate": 41.401716093611334,
+          "action_norm": 0.0005213175206748929
+        },
+        "surface_metric": {
+          "norm_squared_fraction": 2.5119321882029685e-05,
+          "projected_rate": 42.619731635463175,
+          "action_norm": 0.21362283768002394
+        },
+        "surface_A": {
+          "norm_squared_fraction": 0.8935613380041073,
+          "projected_rate": 42.569062528228315,
+          "action_norm": 40.243921744323494
+        },
+        "surface_trace": {
+          "norm_squared_fraction": 1.326760593335141e-10,
+          "projected_rate": 40.94589688961898,
+          "action_norm": 0.00047449267178825433
+        },
+        "surface_Theta": {
+          "norm_squared_fraction": 1.1451696329333797e-11,
+          "projected_rate": 42.621805253528734,
+          "action_norm": 0.000151097952462573
+        },
+        "surface_Lambda": {
+          "norm_squared_fraction": 0.002898346929613395,
+          "projected_rate": 42.16686140587978,
+          "action_norm": 2.27058021667333
+        },
+        "surface_B": {
+          "norm_squared_fraction": 8.926662981808115e-43,
+          "projected_rate": -3.1858284470076472,
+          "action_norm": 8.017623914824718e-20
+        }
+      },
+      "relative_AD_change": 3.47168423471872e-08,
+      "relative_V5_change": 1.0957259142214377e-07
+    },
+    {
+      "amplitude": 1e-05,
+      "AD": {
+        "all": {
+          "coordinate_norm": 0.9999999999999999,
+          "action_norm": 139.5380767168529,
+          "projected_rate": 135.77615576752044,
+          "relative_shape_residual": 0.23063564638172523
+        },
+        "volume": {
+          "coordinate_norm": 0.32173777434713025,
+          "action_norm": 13.697875545235217,
+          "projected_rate": 42.570466069637924,
+          "relative_shape_residual": 0.014031673392092936
+        },
+        "outer_shell": {
+          "coordinate_norm": 0.32173777434713025,
+          "action_norm": 13.69787554523519,
+          "projected_rate": 42.57046606963793,
+          "relative_shape_residual": 0.014031673391959168
+        },
+        "surface": {
+          "coordinate_norm": 0.9468288148119253,
+          "action_norm": 138.86411724914961,
+          "projected_rate": 146.53841870417276,
+          "relative_shape_residual": 0.04109738155537332
+        },
+        "volume_Lambda": {
+          "coordinate_norm": 0.06766653330430669,
+          "action_norm": 2.853020260505914,
+          "projected_rate": 42.15409595210764,
+          "relative_shape_residual": 0.020485789242603646
+        },
+        "volume_D": {
+          "coordinate_norm": 0.04222336899772971,
+          "action_norm": 1.7807820922516577,
+          "projected_rate": 42.166546509793086,
+          "relative_shape_residual": 0.020340906307900843
+        }
+      },
+      "V5": {
+        "all": {
+          "coordinate_norm": 0.9999999999999999,
+          "action_norm": 42.57236593602771,
+          "projected_rate": 42.56804503962086,
+          "relative_shape_residual": 0.01424711768494253
+        },
+        "volume": {
+          "coordinate_norm": 0.32173777434713025,
+          "action_norm": 13.697880619876216,
+          "projected_rate": 42.570482107726626,
+          "relative_shape_residual": 0.014031226417114259
+        },
+        "outer_shell": {
+          "coordinate_norm": 0.32173777434713025,
+          "action_norm": 13.697880619876189,
+          "projected_rate": 42.57048210772663,
+          "relative_shape_residual": 0.014031226416980482
+        },
+        "surface": {
+          "coordinate_norm": 0.9468288148119253,
+          "action_norm": 40.30849051893003,
+          "projected_rate": 42.567763636545216,
+          "relative_shape_residual": 0.014271824072204016
+        },
+        "volume_Lambda": {
+          "coordinate_norm": 0.06766653330430669,
+          "action_norm": 2.853020260505914,
+          "projected_rate": 42.15409595210764,
+          "relative_shape_residual": 0.020485789242603646
+        },
+        "volume_D": {
+          "coordinate_norm": 0.04222336899772971,
+          "action_norm": 1.7808211262537497,
+          "projected_rate": 42.167477726913695,
+          "relative_shape_residual": 0.020332812235797058
+        }
+      },
+      "fields": {
+        "volume_chi": {
+          "norm_squared_fraction": 5.60909146880648e-11,
+          "projected_rate": 41.16922174577375,
+          "action_norm": 0.00030852389718691585
+        },
+        "volume_metric": {
+          "norm_squared_fraction": 0.00015518416714173624,
+          "projected_rate": 42.586089192354514,
+          "action_norm": 0.530557344456815
+        },
+        "volume_A": {
+          "norm_squared_fraction": 0.0969984203947293,
+          "projected_rate": 42.59751965444293,
+          "action_norm": 13.267982568409373
+        },
+        "volume_trace": {
+          "norm_squared_fraction": 8.61983530496214e-11,
+          "projected_rate": 41.64667127283179,
+          "action_norm": 0.00038786684578943545
+        },
+        "volume_Theta": {
+          "norm_squared_fraction": 7.63829386080843e-11,
+          "projected_rate": 40.755787620604714,
+          "action_norm": 0.0003574552732307056
+        },
+        "volume_Lambda": {
+          "norm_squared_fraction": 0.004578759729422847,
+          "projected_rate": 42.15409595210764,
+          "action_norm": 2.853020260505914
+        },
+        "volume_B": {
+          "norm_squared_fraction": 4.2395426271581465e-28,
+          "projected_rate": -41.8611905811497,
+          "action_norm": 9.992234973497857e-13
+        },
+        "volume_lapse": {
+          "norm_squared_fraction": 1.3837630442501703e-12,
+          "projected_rate": 40.894409150276836,
+          "action_norm": 4.812755019934591e-05
+        },
+        "volume_beta": {
+          "norm_squared_fraction": 1.8040976578615126e-08,
+          "projected_rate": 42.15862984669709,
+          "action_norm": 0.005663808015501664
+        },
+        "volume_D": {
+          "norm_squared_fraction": 0.0017828128895184426,
+          "projected_rate": 42.167477726913695,
+          "action_norm": 1.7808211262537497
+        },
+        "surface_chi": {
+          "norm_squared_fraction": 1.584246808354411e-10,
+          "projected_rate": 41.401828166975214,
+          "action_norm": 0.0005213189152645217
+        },
+        "surface_metric": {
+          "norm_squared_fraction": 2.5119321882029685e-05,
+          "projected_rate": 42.61973164601924,
+          "action_norm": 0.2136228377331848
+        },
+        "surface_A": {
+          "norm_squared_fraction": 0.8935613380041073,
+          "projected_rate": 42.56906253926583,
+          "action_norm": 40.24392175475012
+        },
+        "surface_trace": {
+          "norm_squared_fraction": 1.326760593335141e-10,
+          "projected_rate": 40.94626770177583,
+          "action_norm": 0.00047449699918357977
+        },
+        "surface_Theta": {
+          "norm_squared_fraction": 1.1451696329333797e-11,
+          "projected_rate": 42.623090392973225,
+          "action_norm": 0.0001511022753327754
+        },
+        "surface_Lambda": {
+          "norm_squared_fraction": 0.002898346929613395,
+          "projected_rate": 42.16686123143774,
+          "action_norm": 2.2705802068344525
+        },
+        "surface_B": {
+          "norm_squared_fraction": 8.926662981808115e-43,
+          "projected_rate": -3.1858284470075313,
+          "action_norm": 8.01762391482473e-20
+        }
+      },
+      "relative_AD_change": 0.0,
+      "relative_V5_change": 0.0
+    },
+    {
+      "amplitude": 1e-06,
+      "AD": {
+        "all": {
+          "coordinate_norm": 0.9999999999999999,
+          "action_norm": 139.5380770217714,
+          "projected_rate": 135.7761560610596,
+          "relative_shape_residual": 0.23063564647723012
+        },
+        "volume": {
+          "coordinate_norm": 0.32173777434713025,
+          "action_norm": 13.69787552876958,
+          "projected_rate": 42.57046601917745,
+          "relative_shape_residual": 0.01403167220092102
+        },
+        "outer_shell": {
+          "coordinate_norm": 0.32173777434713025,
+          "action_norm": 13.697875528769554,
+          "projected_rate": 42.57046601917746,
+          "relative_shape_residual": 0.014031672200787227
+        },
+        "surface": {
+          "coordinate_norm": 0.9468288148119253,
+          "action_norm": 138.86411755717222,
+          "projected_rate": 146.53841903743285,
+          "relative_shape_residual": 0.041097380193637456
+        },
+        "volume_Lambda": {
+          "coordinate_norm": 0.06766653330430669,
+          "action_norm": 2.8530201796093,
+          "projected_rate": 42.15409478090101,
+          "relative_shape_residual": 0.020485761391362378
+        },
+        "volume_D": {
+          "coordinate_norm": 0.04222336899772971,
+          "action_norm": 1.7807819067327657,
+          "projected_rate": 42.16654213519218,
+          "relative_shape_residual": 0.020340885051583175
+        }
+      },
+      "V5": {
+        "all": {
+          "coordinate_norm": 0.9999999999999999,
+          "action_norm": 42.57236615980465,
+          "projected_rate": 42.5680452636874,
+          "relative_shape_residual": 0.014247117170098089
+        },
+        "volume": {
+          "coordinate_norm": 0.32173777434713025,
+          "action_norm": 13.697880604170022,
+          "projected_rate": 42.57048206019155,
+          "relative_shape_residual": 0.014031224279829656
+        },
+        "outer_shell": {
+          "coordinate_norm": 0.32173777434713025,
+          "action_norm": 13.697880604169997,
+          "projected_rate": 42.57048206019156,
+          "relative_shape_residual": 0.01403122427969586
+        },
+        "surface": {
+          "coordinate_norm": 0.9468288148119253,
+          "action_norm": 40.3084907606125,
+          "projected_rate": 42.56776389197301,
+          "relative_shape_residual": 0.01427182374449838
+        },
+        "volume_Lambda": {
+          "coordinate_norm": 0.06766653330430669,
+          "action_norm": 2.8530201796093,
+          "projected_rate": 42.15409478090101,
+          "relative_shape_residual": 0.020485761391362378
+        },
+        "volume_D": {
+          "coordinate_norm": 0.04222336899772971,
+          "action_norm": 1.7808209465803884,
+          "projected_rate": 42.16747352217035,
+          "relative_shape_residual": 0.020332754312335576
+        }
+      },
+      "fields": {
+        "volume_chi": {
+          "norm_squared_fraction": 5.60909146880648e-11,
+          "projected_rate": 41.168907913727885,
+          "action_norm": 0.00030852151113740185
+        },
+        "volume_metric": {
+          "norm_squared_fraction": 0.00015518416714173624,
+          "projected_rate": 42.586089196540286,
+          "action_norm": 0.5305573445106312
+        },
+        "volume_A": {
+          "norm_squared_fraction": 0.0969984203947293,
+          "projected_rate": 42.59751973627608,
+          "action_norm": 13.267982593702932
+        },
+        "volume_trace": {
+          "norm_squared_fraction": 8.61983530496214e-11,
+          "projected_rate": 41.646530128795824,
+          "action_norm": 0.0003878662432855529
+        },
+        "volume_Theta": {
+          "norm_squared_fraction": 7.63829386080843e-11,
+          "projected_rate": 40.75571669199645,
+          "action_norm": 0.0003574557540160138
+        },
+        "volume_Lambda": {
+          "norm_squared_fraction": 0.004578759729422847,
+          "projected_rate": 42.15409478090101,
+          "action_norm": 2.8530201796093
+        },
+        "volume_B": {
+          "norm_squared_fraction": 4.2395426271581465e-28,
+          "projected_rate": -49.48476099543096,
+          "action_norm": 1.032870685405314e-12
+        },
+        "volume_lapse": {
+          "norm_squared_fraction": 1.3837630442501703e-12,
+          "projected_rate": 40.89403624235928,
+          "action_norm": 4.8127227111005975e-05
+        },
+        "volume_beta": {
+          "norm_squared_fraction": 1.8040976578615126e-08,
+          "projected_rate": 42.15863226600467,
+          "action_norm": 0.0056638083567876595
+        },
+        "volume_D": {
+          "norm_squared_fraction": 0.0017828128895184426,
+          "projected_rate": 42.16747352217035,
+          "action_norm": 1.7808209465803884
+        },
+        "surface_chi": {
+          "norm_squared_fraction": 1.584246808354411e-10,
+          "projected_rate": 41.40337590856972,
+          "action_norm": 0.0005213385880052592
+        },
+        "surface_metric": {
+          "norm_squared_fraction": 2.5119321882029685e-05,
+          "projected_rate": 42.61973181879364,
+          "action_norm": 0.21362283859718956
+        },
+        "surface_A": {
+          "norm_squared_fraction": 0.8935613380041073,
+          "projected_rate": 42.569062814197444,
+          "action_norm": 40.24392201463693
+        },
+        "surface_trace": {
+          "norm_squared_fraction": 1.326760593335141e-10,
+          "projected_rate": 40.94463445277162,
+          "action_norm": 0.00047447991852200746
+        },
+        "surface_Theta": {
+          "norm_squared_fraction": 1.1451696329333797e-11,
+          "projected_rate": 42.6199173331871,
+          "action_norm": 0.0001510985596905844
+        },
+        "surface_Lambda": {
+          "norm_squared_fraction": 0.002898346929613395,
+          "projected_rate": 42.166855474550594,
+          "action_norm": 2.270579890970064
+        },
+        "surface_B": {
+          "norm_squared_fraction": 8.926662981808115e-43,
+          "projected_rate": -3.1858284470075247,
+          "action_norm": 8.01762391482473e-20
+        }
+      },
+      "relative_AD_change": 3.411428909289004e-07,
+      "relative_V5_change": 1.0762445486190646e-06
+    }
+  ],
+  "surface_terms": {
+    "regular": {
+      "projected_contribution": -23.81442452174924,
+      "action_norm": 23.341226575577625
+    },
+    "sampled_normal": {
+      "projected_contribution": -50.83621955288903,
+      "action_norm": 54.89070789146796
+    },
+    "weak_numerator": {
+      "projected_contribution": 58.8709232294451,
+      "action_norm": 59.339538877709394
+    },
+    "regularity": {
+      "projected_contribution": 59.40680563258973,
+      "action_norm": 57.69978009711911
+    },
+    "angular_Q": {
+      "projected_contribution": -1.0593211508513194,
+      "action_norm": 4.045146458984597
+    },
+    "B_flux": {
+      "projected_contribution": 1.6416375848289546e-41,
+      "action_norm": 8.316858815601524e-20
+    }
+  },
+  "surface_reconstruction_relative_error": 4.108132102648089e-12,
+  "term_diagnostics": [
+    [
+      [
+        4.336808689942018e-19,
+        0.001459239259216979,
+        6.661338147750939e-16,
+        1.312881577700008e-21
+      ],
+      [
+        4.263256414560601e-14,
+        0.0,
+        6.661338147750939e-16,
+        1.312881577700008e-21,
+        3.5746031746031743
+      ]
+    ],
+    [
+      [
+        4.336808689942018e-19,
+        0.0014592387149288731,
+        6.661338147750939e-16,
+        1.72756373057822e-21
+      ],
+      [
+        4.263256414560601e-14,
+        0.0,
+        6.661338147750939e-16,
+        1.72756373057822e-21,
+        3.5746031746031743
+      ]
+    ]
+  ],
+  "default_full_array_frozen_parity_evaluations": 6,
+  "native_diagnostics": {
+    "AD": {
+      "null_surface": 1.1102230246250005e-15,
+      "dependent_D_compatibility": 1.2961144716881675e-21,
+      "retracted_det": 6.661338147750939e-16,
+      "retracted_A_trace": 1.37725256950588e-20,
+      "pole": 1.6205362132430906e-05,
+      "clock": 4.013720959097037e-07,
+      "angular_cfl": 0.4022733599430785,
+      "null_ghost": 1.221245327088186e-15,
+      "null_ghost_before": 3.5673819319512395e-09,
+      "bulk_gap": 0.8331650885219433,
+      "bulk_cfl": 0.3239200538644446
+    },
+    "V5": {
+      "null_surface": 1.1102230246250005e-15,
+      "dependent_D_compatibility": 9.994797492084091e-22,
+      "retracted_det": 6.661338147750939e-16,
+      "retracted_A_trace": 1.37725256950588e-20,
+      "pole": 1.6205362132430906e-05,
+      "clock": 4.013720959097037e-07,
+      "angular_cfl": 0.4022733599430785,
+      "null_ghost": 1.221245327088186e-15,
+      "null_ghost_before": 3.5673819319512395e-09,
+      "bulk_gap": 0.8331650885219433,
+      "bulk_cfl": 0.3239200538644446
+    }
+  },
+  "library_sha256": "e88b7a61a01050eb4c17d15fc5f23fb890100554fe3c2e24db08f256d92a1bfb",
+  "source_manifest_sha256": "b45f8b17da5db44d21c69e639969104e00a00fa77fdfbc0e89721f4b9224e0c5",
+  "frozen_library_sha256": "dd2187aa7f1338855332863d6ef6af5d239f10fa57d138a5ecd76d8b962b71f0",
+  "script_sha256": "f647b99b82ff4e612652bdc388ec7d139fc5ea19d684f8ea0bf1ae918df967ff",
+  "imported_script_sha256": {
+    "tst/hyperbolic_shift_3d/scri_directional_replay.py": "a5abda1d0831a236730250f8160ff54eede351a003ca25e2c9fc2f0c97a60b35",
+    "tst/hyperbolic_shift_3d/scri_candidate_replay.py": "48344a41dfbdb92dffdd0467de04d3e526fec17c860297eb651be21690ffb397"
+  },
+  "seconds": 32.913346708
+}

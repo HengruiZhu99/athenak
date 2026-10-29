@@ -199,6 +199,16 @@ normal-closure contribution without establishing a stable scheme. The V5
 checkpoint is scientifically rejected despite its native completion bit;
 the remaining coupled growing direction still needs diagnosis.
 
+The [actual V5 direction diagnostic](scri-v5-direction-v1/README.md) finds a
+full coupled projection +42.5680 with shape residual .01425, consistent with
+the observed growth. Surface and volume rates agree. Curvature A carries
+99.06% of its unweighted squared coordinate norm. In this direction the
+sampled normal term contributes -50.84, while the numerator and regularity
+penalties together contribute +118.28. Their native term sum reproduces the
+full surface action to 4.11e-12 relative error. This identifies the coupled
+A/metric regularity penalty as the next target; it does not justify stronger
+penalties or claim that removing them would stabilize the scheme.
+
 The original J-disabled, bulk-mu=4 1D control is confirmed to have completed coordinate `33.3333984375 = 100.0001953125 M`. Its N513/N1025 continuation chains and frozen-source identities were checked. A [portable N513 time series](original-1d-reference/history.csv) and [provenance](original-1d-reference/provenance.json) preserve the matching horizon/exterior-constraint reference. Late gauge settling and uniform puncture convergence were not established by that original control.
 
 ## Archived pause point
