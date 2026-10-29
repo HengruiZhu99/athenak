@@ -33,6 +33,16 @@ ALGEBRAIC_FIXTURE = ('backend=SYCL\nrotation_covariance_max=8.88e-16\n'
 
 
 class ComponentParserTests(unittest.TestCase):
+    def test_angular_requires_sycl_success_and_metrics(self):
+        log=('backend=SYCL\nfine_gradient_order=4 fine_hessian_order=4 fine_mixed_order=4\n'
+             'projection_error=0 rate_error=1e-14 dependent_trace_error=1e-14 null=1e-15 compatibility=1e-16\n'
+             'Cross-face scri constants, active donors, nonspherical jets and native device parity passed\n')
+        self.assertTrue(preflight.parse_component(log,'angular',0)['passed'])
+        self.assertFalse(preflight.parse_component(log,'angular',1)['passed'])
+        self.assertFalse(preflight.parse_component(log.replace('backend=SYCL','backend=Serial'),'angular',0)['passed'])
+        with self.assertRaises(ValueError):
+            preflight.parse_component(log.replace('rate_error=1e-14','rate_error=nan'),'angular',0)
+
     def test_algebraic_requires_sycl_success_and_finite_metrics(self):
         parsed=preflight.parse_component(ALGEBRAIC_FIXTURE,'algebraic',0)
         self.assertTrue(parsed['gpu_cpu_parity'])
@@ -116,6 +126,10 @@ class CheckpointTests(unittest.TestCase):
         b=self.checkpoint('b')
         with self.assertRaises(ValueError):
             preflight.compare_checkpoints(a,b)
+        c=self.checkpoint('c',magic=b'HYP3D_MPI_V3')
+        self.assertTrue(preflight.compare_checkpoints(c,c)['restart_equivalence'])
+        with self.assertRaises(ValueError):
+            preflight.compare_checkpoints(a,c)
 
     def test_nonfinite_and_mismatched_metadata_rejected(self):
         a=self.checkpoint('a')

@@ -14,13 +14,19 @@
 #ifndef HYPERBOLIC_ALGEBRAIC_FINAL_PROJECTION
 #define HYPERBOLIC_ALGEBRAIC_FINAL_PROJECTION 0
 #endif
+#ifndef HYPERBOLIC_SCRI_ANGULAR_EXCHANGE
+#define HYPERBOLIC_SCRI_ANGULAR_EXCHANGE 0
+#endif
 namespace h=z4c::hyperboloidal;
 using Buffer=h::HyperbolicCompositeDevice::Buffer;
 using HostBuffer=Kokkos::View<Real*,Kokkos::HostSpace>;
 using V=std::vector<Real>;
 constexpr bool algebraic_final_projection=HYPERBOLIC_ALGEBRAIC_FINAL_PROJECTION;
-constexpr const char*checkpoint_magic=algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
+constexpr bool scri_angular_exchange=HYPERBOLIC_SCRI_ANGULAR_EXCHANGE;
+static_assert(!scri_angular_exchange||algebraic_final_projection,"angular candidate requires algebraic repair");
+constexpr const char*checkpoint_magic=scri_angular_exchange?"HYP3D_MPI_V3":algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
 constexpr const char*algebraic_scheme=algebraic_final_projection?"final_stage_standard":"none";
+constexpr const char*scri_angular_scheme=scri_angular_exchange?"cross_face_centered5":"face_local6";
 struct Header {
   char magic[16]{};int n=0,nf=31,kind=0,admitted=0;
   uint64_t cells=0,surface=0,steps=0;Real time=0,dt=0;
@@ -41,7 +47,7 @@ class Evolution {
   Real time=0,gap=1e300,cfl=0,null_ghost=0,null_before=0,last_rhs=0;
   uint64_t steps=0;
   double rhs_seconds=0,exchange_seconds=0,closure_seconds=0,diagnostic_seconds=0;
-  explicit Evolution(int resolution):n(resolution),model(cubed_sphere::CompositeMesh(.125,{.45,.75,1},1,n,3),false){
+  explicit Evolution(int resolution):n(resolution),model(cubed_sphere::CompositeMesh(.125,{.45,.75,1},1,n,3),false,scri_angular_exchange){
     MPI_Comm_rank(MPI_COMM_WORLD,&rank);MPI_Comm_size(MPI_COMM_WORLD,&size);
     total=model.grid.active.size();first=total*rank/size;last=total*(rank+1)/size;local=last-first;
     surface_total=model.scri.rows.size();surface_first=surface_total*rank/size;surface_local=surface_total*(rank+1)/size-surface_first;
@@ -307,7 +313,7 @@ int main(int argc,char**argv){
     std::ofstream history;
     CollectiveLocal([&]{if(e.rank==0){
       history.open(output+".history.csv");history<<std::setprecision(17)
-        <<"t,t_over_M,steps,min_chi,min_lapse,state_deviation,H_L2,M_L2,M_physical_L2,Theta_L2,Z_L2,H_exterior_L2,M_exterior_L2,exterior_cutoff,horizon_found,horizon_radius,horizon_areal_radius,horizon_mass,horizon_expansion_rms,horizon_trial_radius,horizon_trial_expansion_rms,horizon_complete_surface,horizon_iterations,null_surface,null_ghost,pole_max,clock_max,cfl_max,wall_seconds,determinant_residual,tracefree_residual\n";
+        <<"t,t_over_M,steps,min_chi,min_lapse,state_deviation,H_L2,M_L2,M_physical_L2,Theta_L2,Z_L2,H_exterior_L2,M_exterior_L2,exterior_cutoff,horizon_found,horizon_radius,horizon_areal_radius,horizon_mass,horizon_expansion_rms,horizon_trial_radius,horizon_trial_expansion_rms,horizon_complete_surface,horizon_iterations,null_surface,null_ghost,pole_max,clock_max,cfl_max,wall_seconds,determinant_residual,tracefree_residual,Mr_L2,Mr_exterior_L2\n";
       history.flush();if(!history)throw std::runtime_error("history open/header write failed");
     }});
     Diagnostic diagnostic{};bool diagnostic_valid=false;Real diagnostic_time=nan;
@@ -352,7 +358,8 @@ int main(int argc,char**argv){
           <<','<<horizon_found<<','<<horizon_radius<<','<<horizon_areal<<','<<horizon_mass<<','<<horizon_expansion
           <<','<<trial_radius<<','<<trial_expansion<<','<<horizon_complete<<','<<horizon_iterations
           <<','<<e.model.null_max<<','<<e.null_ghost<<','<<e.model.pole_max<<','<<e.model.clock_max<<','<<e.cfl<<','<<elapsed()
-          <<','<<diagnostic.max_determinant_residual<<','<<diagnostic.max_tracefree_residual<<'\n';
+          <<','<<diagnostic.max_determinant_residual<<','<<diagnostic.max_tracefree_residual
+          <<','<<Norm(diagnostic.total.mr2,diagnostic.total.volume)<<','<<Norm(diagnostic.exterior.mr2,diagnostic.exterior.volume)<<'\n';
         history.flush();if(!history)throw std::runtime_error("history append failed");
         std::cout<<"t="<<e.time<<" steps="<<e.steps<<" min_alpha="<<diagnostic.min_lapse<<" H="<<Norm(diagnostic.total.h2,diagnostic.total.volume)<<" horizon="<<horizon_found<<" seconds="<<elapsed()<<std::endl;
       }});
@@ -402,6 +409,7 @@ int main(int argc,char**argv){
         <<"{\"status\":"<<JsonString(status)<<",\"error\":"<<JsonString(error)<<",\"kind\":"<<JsonString(kind_name)
         <<",\"backend\":"<<JsonString(Kokkos::DefaultExecutionSpace::name())<<",\"mpi_size\":"<<e.size<<",\"n\":"<<n<<",\"cells\":"<<e.total
         <<",\"algebraic_projection\":"<<JsonString(algebraic_scheme)<<",\"checkpoint_schema\":"<<JsonString(checkpoint_magic)
+        <<",\"scri_angular_stencil\":"<<JsonString(scri_angular_scheme)
         <<",\"minimum_owned_cells\":"<<e.total/e.size<<",\"maximum_owned_cells\":"<<(e.total+e.size-1)/e.size
         <<",\"t\":"<<e.time<<",\"start_time\":"<<start_time<<",\"target_time\":"<<end<<",\"t_over_M\":"<<(kind==2?e.time*3:e.time)
         <<",\"dt\":"<<dt<<",\"steps\":"<<e.steps<<",\"segment_steps\":"<<e.steps-start_steps<<",\"seconds\":"<<elapsed()
@@ -422,6 +430,8 @@ int main(int argc,char**argv){
         <<",\"M_physical_L2\":"<<valid_number(Norm(diagnostic.total.m2_physical,diagnostic.total.volume))
         <<",\"H_exterior_L2\":"<<valid_number(Norm(diagnostic.exterior.h2,diagnostic.exterior.volume))
         <<",\"M_exterior_L2\":"<<valid_number(Norm(diagnostic.exterior.m2,diagnostic.exterior.volume))
+        <<",\"Mr_L2\":"<<valid_number(Norm(diagnostic.total.mr2,diagnostic.total.volume))
+        <<",\"Mr_exterior_L2\":"<<valid_number(Norm(diagnostic.exterior.mr2,diagnostic.exterior.volume))
         <<",\"exterior_coordinate_cutoff\":"<<JsonNumber(cutoff)<<",\"horizon_found\":"<<(horizon_found?"true":"false")
         <<",\"horizon_radius\":"<<JsonNumber(horizon_radius)<<",\"horizon_areal_radius\":"<<JsonNumber(horizon_areal)
         <<",\"horizon_mass\":"<<JsonNumber(horizon_mass)<<",\"horizon_expansion_rms\":"<<JsonNumber(horizon_expansion)

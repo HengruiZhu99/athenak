@@ -31,8 +31,8 @@ class HyperbolicComposite {
   mutable Real interpolated_null_max=0,interpolated_null_before_max=0;
   Real gap_min=std::numeric_limits<Real>::infinity(),cfl_max=0;
   size_t steps=0;
-  HyperbolicComposite(cubed_sphere::CompositeMesh mesh,bool source=false)
-      :grid(std::move(mesh),4,true),scri(grid,nf,6),
+  HyperbolicComposite(cubed_sphere::CompositeMesh mesh,bool source=false,bool cross_face_scri=false)
+      :grid(std::move(mesh),4,true),scri(grid,nf,6,cross_face_scri),
        state(nf*grid.active.size(),0),compensation(state.size(),0),
        edge_compensation(scri.values.size(),0),adaptive(source) {
     for(size_t p=0;p<grid.active.size();++p)state[nf*p]=1;

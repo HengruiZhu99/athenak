@@ -37,7 +37,7 @@ def read_checkpoint(path):
     if len(data) != HEADER.size:
         raise ValueError('Checkpoint header truncated')
     result = dict(zip(KEYS, HEADER.unpack(data)))
-    if result['magic'] not in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V1',b'HYP3D_MPI_V2']] or result['nf'] != 31 or result['admitted'] != 1:
+    if result['magic'] not in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V1',b'HYP3D_MPI_V2',b'HYP3D_MPI_V3']] or result['nf'] != 31 or result['admitted'] != 1:
         raise ValueError('Unknown or unadmitted checkpoint schema')
     if result['n'] < 6 or result['n'] % 2 or result['cells'] <= 0 or result['surface'] <= 0:
         raise ValueError('Invalid checkpoint dimensions')
@@ -142,7 +142,9 @@ def parse_component(content, kind, code):
         'exchange':['scaled_error','scri_jet_error','null_before','null_after'],
         'scri':['projection_error','rate_error','dependent_trace_error','null','pole','clock','compatibility','max_cfl'],
         'algebraic':['rotation_covariance_max','scri_null_before_reclosure','after','ghost',
-                     'D_compatibility','null_time_derivative']
+                     'D_compatibility','null_time_derivative'],
+        'angular':['projection_error','rate_error','dependent_trace_error','null','compatibility',
+                   'fine_gradient_order','fine_hessian_order','fine_mixed_order']
     }[kind]
     maxima={}
     for key in fields:
@@ -154,7 +156,8 @@ def parse_component(content, kind, code):
         'device':'CPU/device and partition parity passed on',
         'exchange':'CPU/device halo, off-node null closure and sparse scri donor parity passed',
         'scri':'CPU/device scri projection, native rates, D independence and partition parity passed on',
-        'algebraic':'algebraic projection: tensors, rejection, device, unchanged fields, compensation, scri passed'
+        'algebraic':'algebraic projection: tensors, rejection, device, unchanged fields, compensation, scri passed',
+        'angular':'Cross-face scri constants, active donors, nonspherical jets and native device parity passed'
     }[kind]
     independent=(kind!='scri' or re.findall(r'D_input_and_order_independent=(\d+)',content)==['1','1'])
     passed=code==0 and backend==['SYCL'] and marker in content and independent
@@ -235,9 +238,11 @@ def restart(args, rank, root, checked):
     if header['kind']!={'minkowski':0,'pulse':1,'puncture':2}.get(reports[0]['kind']):
         raise ValueError('Evolution kind does not describe the checkpoint')
     for report in reports:
-        scheme='final_stage_standard' if header['magic']=='HYP3D_MPI_V2' else 'none'
+        scheme='none' if header['magic']=='HYP3D_MPI_V1' else 'final_stage_standard'
+        angular='cross_face_centered5' if header['magic']=='HYP3D_MPI_V3' else 'face_local6'
         if (report.get('checkpoint_schema',header['magic'])!=header['magic']
-                or report.get('algebraic_projection','none')!=scheme):
+                or report.get('algebraic_projection','none')!=scheme
+                or report.get('scri_angular_stencil','face_local6')!=angular):
             raise ValueError('Evolution report/checkpoint algebraic scheme mismatch')
         for report_key,header_key in [('n','n'),('t','time'),('dt','dt'),('steps','steps')]:
             if report[report_key]!=header[header_key]:
@@ -362,7 +367,7 @@ def main():
     parser.add_argument('--seconds',type=int,required=True)
     sub=parser.add_subparsers(dest='mode',required=True)
     comp=sub.add_parser('component')
-    comp.add_argument('--component',choices=['device','exchange','scri','algebraic'],required=True)
+    comp.add_argument('--component',choices=['device','exchange','scri','algebraic','angular'],required=True)
     comp.add_argument('--test-binary',required=True)
     comp.add_argument('--cmake-cache',required=True)
     bench=sub.add_parser('benchmark')

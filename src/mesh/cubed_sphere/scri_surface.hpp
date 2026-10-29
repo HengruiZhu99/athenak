@@ -32,9 +32,12 @@ class ScriSurface {
   std::vector<Real> values, beta;
   int components;
   int radial_nodes;
+  bool cross_face_angular;
 
-  explicit ScriSurface(const CompositeDifference &g,int fields,int radial_points=6)
-      :grid(g),base(g.mesh.blocks.size(),-1),components(fields),radial_nodes(radial_points) {
+  explicit ScriSurface(const CompositeDifference &g,int fields,int radial_points=6,
+                       bool cross_face=false)
+      :grid(g),base(g.mesh.blocks.size(),-1),components(fields),radial_nodes(radial_points),
+       cross_face_angular(cross_face) {
     if(g.n<6)throw std::invalid_argument("regular tensor scri needs six nodes per block axis");
     if(radial_nodes<6||radial_nodes>8||radial_nodes>g.n+1)
       throw std::invalid_argument("scri radial reconstruction needs 6..8 points including endpoint");
@@ -99,6 +102,7 @@ class ScriSurface {
 
  private:
   void Build(Row &row){
+    if(cross_face_angular){BuildCrossFace(row);return;}
     const int n=grid.n;int first[3]={n-(radial_nodes-1),std::clamp(row.j-2,0,n-6),std::clamp(row.k-2,0,n-6)};
     const int width[3]={radial_nodes,6,6};
     const Real q[3]={1,(row.j+.5)/n,(row.k+.5)/n};Jet basis[3][8];
@@ -114,6 +118,64 @@ class ScriSurface {
         for(int b=0;b<3;++b){term.dd[a][b]+=row.geometry.H[A][a][b]*w.d[A];
           for(int B=0;B<3;++B)term.dd[a][b]+=row.geometry.J[A][a]*row.geometry.J[B][b]*w.h[A][B];}}
       row.terms.push_back(term);
+    }
+  }
+
+  // Scalar donor values are in the common Cartesian component basis. The
+  // destination chart supplies derivative directions through its J/H below;
+  // the donor interpolation weights are values, not coordinate derivatives.
+  std::vector<CompositeDifference::Entry> SurfaceDonors(const Real x[3]) const {
+    const int owner=grid.mesh.Owner(x),n=grid.n;
+    if(owner<0||base[owner]<0)throw std::runtime_error("cross-face scri surface donor");
+    Real q[3];grid.mesh.Inverse(owner,x,q);int first[2];Real weights[2][6];
+    for(int a=0;a<2;++a){const Real t=n*q[a+1]-.5;first[a]=std::clamp(int(std::floor(t))-2,0,n-6);
+      for(int i=0;i<6;++i){weights[a][i]=1;for(int j=0;j<6;++j)if(i!=j)weights[a][i]*=(t-first[a]-j)/Real(i-j);}}
+    std::vector<CompositeDifference::Entry> out;
+    for(int k=0;k<6;++k)for(int j=0;j<6;++j)
+      out.push_back({base[owner]+first[0]+j+n*(first[1]+k),weights[0][j]*weights[1][k]});
+    return out;
+  }
+
+  void BuildCrossFace(Row &row){
+    const int n=grid.n,first[3]={n-(radial_nodes-1),row.j-2,row.k-2};
+    const int width[3]={radial_nodes,5,5};
+    const Real q[3]={1,(row.j+.5)/n,(row.k+.5)/n};Jet basis[3][8];
+    for(int a=0;a<3;++a)for(int i=0;i<width[a];++i){
+      const Real node=a==0&&i==radial_nodes-1?1:Real(first[a]+i+.5)/n;basis[a][i]=Jet(1);
+      for(int j=0;j<width[a];++j)if(i!=j){const Real other=a==0&&j==radial_nodes-1?1:Real(first[a]+j+.5)/n;
+        basis[a][i]=basis[a][i]*(Jet::Variable(q[a],a)-Jet(other))/Jet(node-other);}}
+    // The direct boundary value anchors every sum, preserving that value and
+    // constant fields exactly even after interpolation coefficients are merged.
+    Term anchor{};anchor.boundary=true;anchor.point=base[row.block]+row.j+n*row.k;
+    row.terms.push_back(anchor);
+    std::map<std::pair<bool,int>,size_t> positions{{{true,anchor.point},0}};
+    auto add=[&](const Term &source,int point,Real weight){
+      if(weight==0)return;
+      const auto key=std::make_pair(source.boundary,point);
+      auto inserted=positions.emplace(key,row.terms.size());
+      if(inserted.second){Term term{};term.boundary=source.boundary;term.point=point;row.terms.push_back(term);}
+      auto &term=row.terms[inserted.first->second];term.w+=weight*source.w;
+      for(int a=0;a<3;++a){term.d[a]+=weight*source.d[a];
+        for(int b=0;b<3;++b)term.dd[a][b]+=weight*source.dd[a][b];}
+    };
+    for(int k=0;k<5;++k)for(int j=0;j<5;++j)for(int i=0;i<radial_nodes;++i){
+      const Jet w=basis[0][i]*basis[1][j]*basis[2][k];Term term{};
+      term.boundary=i==radial_nodes-1;term.w=w.f;bool nonzero=w.f!=0;
+      for(int a=0;a<3;++a)for(int A=0;A<3;++A){term.d[a]+=row.geometry.J[A][a]*w.d[A];
+        for(int b=0;b<3;++b){term.dd[a][b]+=row.geometry.H[A][a][b]*w.d[A];
+          for(int B=0;B<3;++B)term.dd[a][b]+=row.geometry.J[A][a]*row.geometry.J[B][b]*w.h[A][B];}}
+      for(int a=0;a<3;++a){nonzero=nonzero||term.d[a]!=0;
+        for(int b=0;b<3;++b)nonzero=nonzero||term.dd[a][b]!=0;}
+      if(!nonzero)continue;
+      const int aj=first[1]+j,ak=first[2]+k;
+      if(aj>=0&&aj<n&&ak>=0&&ak<n){
+        add(term,term.boundary?base[row.block]+aj+n*ak:grid.Index(row.block,first[0]+i,aj,ak),1);
+      }else{
+        const Real local[3]={term.boundary?1:Real(first[0]+i+.5)/n,Real(aj+.5)/n,Real(ak+.5)/n};
+        Real x[3];grid.mesh.Forward(row.block,local,x);
+        const auto donors=term.boundary?SurfaceDonors(x):grid.Interpolate(x,6);
+        for(const auto &donor:donors)add(term,donor.point,donor.weight);
+      }
     }
   }
 };
