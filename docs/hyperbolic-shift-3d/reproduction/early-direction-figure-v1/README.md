@@ -28,8 +28,9 @@ best-fit amplification; a single eigenmode has not been certified.
 
 The [data table](data.json) and retained [comparison input](comparison-input.json)
 contain hashes and values. The comparison input is retained historical output;
-the exact intermediate Python wrapper identified by its script hash was not
-archived here. Its angular-response values use the separately retained
+the exact intermediate Python wrapper was subsequently
+[recovered with its original SHA256](../scri-directional-replay-v1/v1/comparison-wrapper-c181bb6a.py)
+and retained in the directional-replay package. Its angular-response values use the separately retained
 [operator analysis](../scri-collar-response-v1/analyze.py). The plotting and
 raw radial extraction scripts in this package are preserved in full.
 `python3 plot.py` recreates the PNG and PDF using
