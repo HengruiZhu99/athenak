@@ -1,20 +1,18 @@
-# V7 puncture timestep-halving control: first segment submitted
+# V7 puncture timestep-halving control: first segment passed
 
-Fresh job **8984574** runs n16 V7 with **dt=.00025**, half the previous timestep,
-from the same isotropic initial data to coordinate t=.5=1.5M. Spatial operators,
-bulk KO.5, surface epsilon2, horizon settings, diagnostic cadence and all
-physical acceptance limits are unchanged. It uses one CompactBinaryMerger/debug
-node,12 MPI ranks and12 GPU tiles. The native expected step count is2001.
+Aurora job8984574 completed n16 V7 with dt=.00025 through coordinate.5=1.5M,
+2001 accepted steps. All46 predefined checks passed and were independently
+replayed; all worker artifact hashes and all four finite checkpoint arrays
+were verified. PBS finished with exit0 and the allocation was released.
 
-This is the first segment of the timestep control. The target is chosen to
-permit a subsequent separately scheduled continuation past the known2.9M
-failure while respecting the debug allocation bound. Only an independently
-verified, scientifically accepted checkpoint may be used for continuation.
-A failed or rejected segment will not be restarted. **This first segment alone
-cannot settle the cause of the later lapse failure.** No result is available yet.
+The horizon was found with radius.06423476739, mass.33330139565 and expansion
+RMS.00063235288. Minimum lapse was.04229094. Maximum surface/ghost null errors
+were1.11e-15/1.23e-15. This is a bounded early-time result, not evidence of
+stability through the known2.9M failure or through100M.
 
-The previous V7 allocation8984472 is terminal, independently verified and
-released before this submission. The retained plan/binding/submission and
-preflight admission pin the source-v14 binary and initial data. Campaign
-footprint at binding is3,838,943,547 bytes, with the declared output and atomic
-checkpoint reserves fitting below5GB. No standard Z4c campaign is run.
+The same source-v14 V7 binary, initial data, spatial operators, bulk KO.5,
+surface epsilon2, horizon settings and physical limits as the full-dt control
+were retained. One CompactBinaryMerger/debug node used12 MPI ranks and12 GPU
+tiles. The independently accepted checkpoint and horizon seed are explicitly
+hash-bound inputs of continuation job8984609, target coordinate1=3M.
+No rejected state is resumed. Raw checkpoints remain outside Git.

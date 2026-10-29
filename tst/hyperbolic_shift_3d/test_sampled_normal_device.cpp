@@ -20,6 +20,9 @@
 #ifndef HYPERBOLIC_TEST_REFINED_CORE
 #define HYPERBOLIC_TEST_REFINED_CORE 0
 #endif
+#ifndef HYPERBOLIC_TEST_CORE2
+#define HYPERBOLIC_TEST_CORE2 0
+#endif
 constexpr bool inner_transition=HYPERBOLIC_TEST_INNER_TRANSITION;
 constexpr bool donor_seven=HYPERBOLIC_TEST_DONOR_SEVEN;
 namespace h=z4c::hyperboloidal;
@@ -78,8 +81,8 @@ static V CPUPoles(const Model&model,const V&padded){
 template<class F>static void Reject(F operation,const char*message){
   bool rejected=false;try{operation();}catch(const std::invalid_argument&){rejected=true;}Require(rejected,message);
 }
-static void Check(bool perturb,int refinement=0){
-  auto mesh=cubed_sphere::CompositeMesh(.125,{.45,.75,1},1,6,3);
+static void Check(bool perturb,int refinement=0,int core_subdivisions=1){
+  auto mesh=cubed_sphere::CompositeMesh(.125,{.45,.75,1},1,6,3,core_subdivisions);
   if(refinement>0)mesh.RefineCartesian(0);
   // Refine one child again to exercise a genuine coarse/fine Cartesian seam.
   // The shell geometry, cell count and outer-boundary operator stay fixed.
@@ -208,12 +211,15 @@ static void Check(bool perturb,int refinement=0){
   if(donor_seven)std::cout<<" radial_nodes=7 radial_bulk_rows=3";
   if(inner_transition)std::cout<<" interpatch_interpolation=logical_inner_transition";
   if(refinement)std::cout<<" core_refinement="<<refinement<<" blocks="<<mesh.blocks.size();
+  if(core_subdivisions==2)std::cout<<" cartesian_core_subdivisions=2 mesh_blocks=26";
   std::cout<<'\n';
 }
 int main(int argc,char**argv){
   Kokkos::initialize(argc,argv);int result=0;
   try{std::cout<<std::setprecision(17)<<"backend="<<Kokkos::DefaultExecutionSpace::name()<<'\n';
-    if constexpr(HYPERBOLIC_TEST_REFINED_CORE){
+    if constexpr(HYPERBOLIC_TEST_CORE2){
+      Check(false,0,2);Check(true,0,2);
+    }else if constexpr(HYPERBOLIC_TEST_REFINED_CORE){
       Check(false,1);Check(true,1);Check(false,2);Check(true,2);
     }else{Check(false);Check(true);}
     std::cout<<(donor_seven?"Donor-seven device, ownership, default and closure parity passed\n":

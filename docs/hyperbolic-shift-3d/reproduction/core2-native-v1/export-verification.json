@@ -1,0 +1,123 @@
+{
+  "schema": 1,
+  "status": "completed",
+  "checkpoint": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/core2-native-local-v1/mpi/v8-direct-one-rank.checkpoint",
+  "checkpoint_sha256": "9d3ad1b8d903f8158435d552580ec3a637a26f5713366c6901f90777f7723557",
+  "source_report_sha256": "aaaf5d94d425e78fd0ac05c0f0a0006489044324de8c221fe6fc6750ab295f6c",
+  "header_bytes": 120,
+  "header": {
+    "magic": "HYP3D_MPI_V8",
+    "n": 6,
+    "nf": 31,
+    "kind": 1,
+    "admitted": 1,
+    "cells": 5616,
+    "surface": 6696,
+    "steps": 4,
+    "t": 0.001,
+    "dt": 0.00025,
+    "header_bytes": 120,
+    "scri_dissipation_epsilon": 2.0,
+    "scri_dissipation_degree": 7,
+    "scri_normal_derivative": "sampled_native_numerator7",
+    "scri_normal_radial_nodes": 7,
+    "scri_normal_bulk_derivative_order": 4,
+    "scri_radial_closure": "donor_seven_last3",
+    "scri_radial_bulk_rows": 3,
+    "interpatch_interpolation": "logical_inner_transition",
+    "mesh_topology": "cartesian_2x2x2_shells3",
+    "cartesian_core_subdivisions": 2,
+    "mesh_blocks": 26
+  },
+  "arrays": [
+    {
+      "name": "state",
+      "count": 174096,
+      "offset": 120,
+      "sha256": "470e1ee3664094194ee42b22ac6388f1c50b4f453e7c2b2a18c1da39485b4341"
+    },
+    {
+      "name": "compensation",
+      "count": 174096,
+      "offset": 1392888,
+      "sha256": "6e9a17605a3d0c43940e703cb1a8198d761f192d01e401f05a147c6065d9e7d0"
+    },
+    {
+      "name": "boundary",
+      "count": 6696,
+      "offset": 2785656,
+      "sha256": "fafa10b2a0049bd0634f3d67ffad1cfbcacc8ea3c21bd11cecbafc3a968c5913"
+    },
+    {
+      "name": "boundary-compensation",
+      "count": 6696,
+      "offset": 2839224,
+      "sha256": "d9d1842ed5f4bf0b2a0ece7943e95e224dc44de7880978f42b1bf3033dd8b502"
+    }
+  ],
+  "provenance": {
+    "execution_artifacts_verified": false,
+    "source_manifest_verified": false,
+    "source_files_verified": false
+  },
+  "momentum_conventions": {
+    "radial": "M_r = (x^i/r) M_i; coordinate radial component, not invariant",
+    "conformal": "M_norm = sqrt(gbar^{ij} M_i M_j), gbar_ij = gtilde_ij/chi",
+    "physical": "M_physical_norm = Omega*M_norm, Omega=(1-r^2)/2",
+    "spherical_reduction": "M_norm = sqrt(chi/g_rr)*abs(M_r) only for radial momentum",
+    "measure": "normalized compactified Cartesian coordinate volume",
+    "mpi_names": "M_L2 is conformal invariant; M_physical_L2 is physical invariant",
+    "comparison_names": "compare_coupled plots M_r; constraint_rms keeps M_r and M_norm separate"
+  },
+  "coordinate_measure": "analytic Jacobian of the fixed unrefined composite map",
+  "script_sha256": "0e80de3ee2c6c868cc3de82db6471abf85cf01bae591a4310d8512af484c91ec",
+  "output_files": {
+    "evolution.boundary.csv": {
+      "bytes": 137310,
+      "sha256": "8499537d3e4ebf1c9b49f90f28293cc488195edf2dbb5afe9d38e82627eedd71"
+    },
+    "reanalyze.log": {
+      "bytes": 173,
+      "sha256": "df5b9248c5ecf037c1140a9dea0e6390877ae57ab2b1683ad09649325575a460"
+    },
+    "evolution.rays.csv": {
+      "bytes": 1331672,
+      "sha256": "934eb96b30596f27040347a1a4a9356623c5cddc9e06f7186c239cb9715ce158"
+    },
+    "evolution.coordinates.csv": {
+      "bytes": 562473,
+      "sha256": "c57a7f1a044cd8aa8bfda47cf6b39f840cc02be228af8d3178fdb7ee32e4763c"
+    },
+    "source.report.json": {
+      "bytes": 3024,
+      "sha256": "aaaf5d94d425e78fd0ac05c0f0a0006489044324de8c221fe6fc6750ab295f6c"
+    },
+    "evolution.diagnostics.csv": {
+      "bytes": 2711065,
+      "sha256": "d0f0b25001fd36969fbd404c2ceb45c339cfe1aa1e154c39a26285346cfb15dc"
+    },
+    "evolution.state.csv": {
+      "bytes": 3679590,
+      "sha256": "3e99226eab0f9af23f55f9fb6ae1fc2fed83674569b82fa4e0a3d1d16f7126e6"
+    },
+    "evolution.json": {
+      "bytes": 1689,
+      "sha256": "502aabdc330e967c17e8de58f2dbbf476ae98b08f91c46fcefe5b846433a596e"
+    }
+  },
+  "removed_intermediates": [],
+  "reanalyze": {
+    "command": [
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_reanalyze",
+      "6",
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/core2-native-local-v1/export/evolution",
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/core2-native-local-v1/export/evolution",
+      "core2"
+    ],
+    "executable_sha256": "354a5aae63e8068116e1331d379711cf5159debb82328785123d41a9c275315f",
+    "bulk_diagnostic_operator": "donor_seven_last3",
+    "ray_diagnostic_operator": "interpolated_jets",
+    "mesh_topology": "cartesian_2x2x2_shells3",
+    "interpatch_interpolation": "logical_inner_transition"
+  }
+}

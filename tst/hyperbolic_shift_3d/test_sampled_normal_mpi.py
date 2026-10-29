@@ -18,7 +18,7 @@ NORMAL = struct.Struct('<4i')
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--version', type=int, choices=(5,6,7), default=5)
+    parser.add_argument('--version', type=int, choices=(5,6,7,8), default=5)
     parser.add_argument('--frozen-control-checkpoint', type=Path)
     parser.add_argument('--binary', type=Path, required=True)
     parser.add_argument('--control', type=Path, required=True)
@@ -27,7 +27,7 @@ def main():
     parser.add_argument('--output-dir', type=Path)
     args = parser.parse_args()
     version, control_version = args.version, args.version-1
-    normal_config = {5:(1,6,4,0),6:(2,7,4,3),7:(3,7,4,3)}
+    normal_config = {5:(1,6,4,0),6:(2,7,4,3),7:(3,7,4,3),8:(3,7,4,3)}
     temporary = tempfile.TemporaryDirectory(prefix='sampled-normal-mpi-')
     output = (args.output_dir or Path(temporary.name)).resolve()
     output.mkdir(parents=True, exist_ok=True)
@@ -69,21 +69,24 @@ def main():
             assert report['scri_dissipation_cfl_max'] <= 2.7
             if executable == binary:
                 assert report['checkpoint_schema'] == f'HYP3D_MPI_V{version}'
-                assert report['checkpoint_header_bytes'] == 104
+                assert report['checkpoint_header_bytes'] == (120 if version==8 else 104)
                 assert report['scri_normal_derivative'] == f'sampled_native_numerator{normal_config[version][1]}'
                 assert report['scri_normal_radial_nodes'] == normal_config[version][1]
                 assert report['scri_normal_bulk_derivative_order'] == 4
                 if version >= 6:
                     assert report['scri_radial_closure'] == 'donor_seven_last3'
                     assert report['scri_radial_bulk_rows'] == 3
-                if version==7: assert report['interpatch_interpolation']=='logical_inner_transition'
+                if version>=7: assert report['interpatch_interpolation']=='logical_inner_transition'
+                if version==8:
+                    assert report['mesh_topology']=='cartesian_2x2x2_shells3' and report['cartesian_core_subdivisions']==2 and report['mesh_blocks']==26
+                    assert report['cells']==26*6**3
             else:
                 assert report['checkpoint_schema'] == f'HYP3D_MPI_V{control_version}'
                 assert report['checkpoint_header_bytes'] == (104 if control_version >= 5 else 88)
                 if control_version == 4:
                     assert 'scri_normal_derivative' not in report
                 else:
-                    assert report['scri_normal_derivative'] == ('sampled_native_numerator7' if control_version==6 else 'sampled_native_numerator6')
+                    assert report['scri_normal_derivative'] == ('sampled_native_numerator7' if control_version>=6 else 'sampled_native_numerator6')
                     if control_version==5: assert 'scri_radial_closure' not in report
         return prefix.with_suffix('.checkpoint'), report
 
@@ -92,11 +95,14 @@ def main():
         header = HEADER.unpack_from(data)
         assert header[0].rstrip(b'\0') == f'HYP3D_MPI_V{version}'.encode()
         assert header[1:5] == (6, 31, 1, 1)
-        offset = 104 if version >= 5 else 88
+        offset = 120 if version==8 else 104 if version >= 5 else 88
         assert len(data) == offset+16*(31*header[5]+header[6])
         assert DISSIPATION.unpack_from(data, 72)[1:] == (7, 0)
         if version >= 5:
             assert NORMAL.unpack_from(data, 88) == normal_config[version]
+        if version==8:
+            assert NORMAL.unpack_from(data,104)==(1,2,3,0)
+            assert header[5:7]==(26*6**3,31*6*6**2)
         values = array('d'); values.frombytes(data[offset:])
         assert all(map(math.isfinite, values)), 'nonfinite checkpoint state/compensation'
         return header, data[offset:]
@@ -144,6 +150,13 @@ def main():
         path = output/f'wrong-{label}.checkpoint'; path.write_bytes(data)
         run('rejected-'+label, restart=path, success=False,
             error='checkpoint sampled-normal configuration mismatch')
+    if version==8:
+        for index in range(4):
+            data=bytearray(first.read_bytes());struct.pack_into('<i',data,104+4*index,-1)
+            path=output/f'wrong-mesh-{index}.checkpoint';path.write_bytes(data)
+            run(f'rejected-mesh-{index}',restart=path,success=False,error='checkpoint fixed-core topology mismatch')
+        path=output/'truncated-mesh.checkpoint';path.write_bytes(first.read_bytes()[:116])
+        run('truncated-mesh-rejected',restart=path,success=False,error='checkpoint fixed-core topology mismatch')
     truncated = output/'truncated-normal.checkpoint'
     truncated.write_bytes(first.read_bytes()[:100])
     run('truncated-rejected', restart=truncated, success=False,
@@ -159,7 +172,7 @@ def main():
                    one_vs_two_rank_checkpoint_bitwise=True,
                    two_rank_restart_vs_one_rank_direct_bitwise=True,
                    frozen_control_checkpoint_bitwise=frozen_match, candidate_version=version, control_version=control_version,
-                   normal_configuration_rejection_checks=5, cross_schema_rejections=2,
+                   normal_configuration_rejection_checks=5, mesh_configuration_rejection_checks=5 if version==8 else 0,cross_schema_rejections=2,
                    backend=direct_report['backend'], commands=records,
                    binaries={str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in binaries},
                    artifacts=[dict(path=p.name, bytes=p.stat().st_size,

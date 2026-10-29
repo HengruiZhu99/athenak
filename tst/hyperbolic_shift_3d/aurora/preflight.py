@@ -36,15 +36,16 @@ def rank_info():
 def read_checkpoint(path):
     with path.open('rb') as stream:
         data = stream.read(HEADER.size)
-        extra = stream.read(V4_CONFIG.size) if data[:16] in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6',b'HYP3D_MPI_V7']] else b''
-        normal = stream.read(V5_NORMAL_CONFIG.size) if data[:16] in [b'HYP3D_MPI_V5'.ljust(16,b'\0'),b'HYP3D_MPI_V6'.ljust(16,b'\0'),b'HYP3D_MPI_V7'.ljust(16,b'\0')] else b''
+        extra = stream.read(V4_CONFIG.size) if data[:16] in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6',b'HYP3D_MPI_V7',b'HYP3D_MPI_V8']] else b''
+        normal = stream.read(V5_NORMAL_CONFIG.size) if data[:16] in [b'HYP3D_MPI_V5'.ljust(16,b'\0'),b'HYP3D_MPI_V6'.ljust(16,b'\0'),b'HYP3D_MPI_V7'.ljust(16,b'\0'),b'HYP3D_MPI_V8'.ljust(16,b'\0')] else b''
+        mesh = stream.read(16) if data[:16]==b'HYP3D_MPI_V8'.ljust(16,b'\0') else b''
     if len(data) != HEADER.size:
         raise ValueError('Checkpoint header truncated')
     result = dict(zip(KEYS, HEADER.unpack(data)))
-    if result['magic'] not in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V1',b'HYP3D_MPI_V2',b'HYP3D_MPI_V3',b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6',b'HYP3D_MPI_V7']] or result['nf'] != 31 or result['admitted'] != 1:
+    if result['magic'] not in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V1',b'HYP3D_MPI_V2',b'HYP3D_MPI_V3',b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6',b'HYP3D_MPI_V7',b'HYP3D_MPI_V8']] or result['nf'] != 31 or result['admitted'] != 1:
         raise ValueError('Unknown or unadmitted checkpoint schema')
     result.update(header_bytes=HEADER.size,scri_dissipation_epsilon=0.0,scri_dissipation_degree=0)
-    if result['magic'] in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6',b'HYP3D_MPI_V7']]:
+    if result['magic'] in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6',b'HYP3D_MPI_V7',b'HYP3D_MPI_V8']]:
         if len(extra) != V4_CONFIG.size:
             raise ValueError('V4 checkpoint configuration truncated')
         epsilon,degree,reserved = V4_CONFIG.unpack(extra)
@@ -52,8 +53,8 @@ def read_checkpoint(path):
             raise ValueError('Invalid V4 checkpoint dissipation configuration')
         result.update(header_bytes=HEADER.size+V4_CONFIG.size,
                       scri_dissipation_epsilon=epsilon,scri_dissipation_degree=degree)
-    if result['magic'] in [b'HYP3D_MPI_V5'.ljust(16,b'\0'),b'HYP3D_MPI_V6'.ljust(16,b'\0'),b'HYP3D_MPI_V7'.ljust(16,b'\0')]:
-        inner=result['magic']==b'HYP3D_MPI_V7'.ljust(16,b'\0')
+    if result['magic'] in [b'HYP3D_MPI_V5'.ljust(16,b'\0'),b'HYP3D_MPI_V6'.ljust(16,b'\0'),b'HYP3D_MPI_V7'.ljust(16,b'\0'),b'HYP3D_MPI_V8'.ljust(16,b'\0')]:
+        inner=result['magic'] in [b'HYP3D_MPI_V7'.ljust(16,b'\0'),b'HYP3D_MPI_V8'.ljust(16,b'\0')]
         radial=inner or result['magic']==b'HYP3D_MPI_V6'.ljust(16,b'\0')
         if len(normal) != V5_NORMAL_CONFIG.size:
             raise ValueError('V5 checkpoint normal configuration truncated')
@@ -63,6 +64,10 @@ def read_checkpoint(path):
                       scri_normal_radial_nodes=7 if radial else 6,scri_normal_bulk_derivative_order=4)
         if radial:result.update(scri_radial_closure='donor_seven_last3',scri_radial_bulk_rows=3)
         if inner:result.update(interpatch_interpolation='logical_inner_transition')
+    if result['magic']==b'HYP3D_MPI_V8'.ljust(16,b'\0'):
+        if len(mesh)!=16 or struct.unpack('<4i',mesh)!=(1,2,3,0):raise ValueError('Invalid V8 fixed-core topology')
+        result.update(header_bytes=120,mesh_topology='cartesian_2x2x2_shells3',cartesian_core_subdivisions=2,mesh_blocks=26)
+        if result['cells']!=26*result['n']**3 or result['surface']!=31*6*result['n']**2:raise ValueError('V8 dimensions disagree with topology')
     if result['n'] < 6 or result['n'] % 2 or result['cells'] <= 0 or result['surface'] <= 0:
         raise ValueError('Invalid checkpoint dimensions')
     if not math.isfinite(result['time']) or result['time'] < 0 or not math.isfinite(result['dt']) or result['dt'] <= 0:
@@ -162,7 +167,7 @@ def run_binary(args, rank, root, checked, argv):
 def parse_component(content, kind, code):
     if kind=='sampled_normal_device':
         return parse_sampled_normal_component(content,code)
-    if kind=='inner_transition_device':
+    if kind in ['inner_transition_device','core2_device']:
         result=parse_donor_seven_component(content,code)
         rows=[line for line in content.splitlines() if line.startswith('sampled_case=')]
         if len(rows)!=2 or any('interpatch_interpolation=logical_inner_transition' not in line for line in rows):
@@ -178,6 +183,13 @@ def parse_component(content, kind, code):
         if len(exchange)!=2:raise ValueError('Missing inner transition full exchange checks')
         result['inner_transition_exchange_checks']=exchange
         result['interpatch_interpolation']='logical_inner_transition'
+        if kind=='core2_device':
+            for line in rows:
+                tokens=line.split()
+                for marker in ['cartesian_core_subdivisions=2','mesh_blocks=26']:
+                    if tokens.count(marker)!=1:
+                        raise ValueError('Missing or invalid fixed-core component topology')
+            result.update(mesh_topology='cartesian_2x2x2_shells3',cartesian_core_subdivisions=2,mesh_blocks=26)
         return result
     if kind=='donor_seven_device':
         return parse_donor_seven_component(content,code)
@@ -423,7 +435,7 @@ def restart(args, rank, root, checked):
         raise ValueError('Evolution kind does not describe the checkpoint')
     for report in reports:
         scheme='none' if header['magic']=='HYP3D_MPI_V1' else 'final_stage_standard'
-        angular='cross_face_centered5' if header['magic'] in ['HYP3D_MPI_V3','HYP3D_MPI_V4','HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7'] else 'face_local6'
+        angular='cross_face_centered5' if header['magic'] in ['HYP3D_MPI_V3','HYP3D_MPI_V4','HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7','HYP3D_MPI_V8'] else 'face_local6'
         if (report.get('checkpoint_schema',header['magic'])!=header['magic']
                 or report.get('algebraic_projection','none')!=scheme
                 or report.get('scri_angular_stencil','face_local6')!=angular):
@@ -433,13 +445,13 @@ def restart(args, rank, root, checked):
             expected=header[header_key]
             # Legacy reports may predate these fields. V4 must state its exact
             # runtime configuration; a V3 or missing-config report cannot pass.
-            value=report.get(key) if header['magic'] in ['HYP3D_MPI_V4','HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7'] else report.get(key,expected)
+            value=report.get(key) if header['magic'] in ['HYP3D_MPI_V4','HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7','HYP3D_MPI_V8'] else report.get(key,expected)
             if type(value) not in [int,float] or not math.isfinite(value) or value!=expected:
                 raise ValueError('Evolution report/checkpoint dissipation configuration mismatch: '+key)
-        if header['magic'] in ['HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7']:
+        if header['magic'] in ['HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7','HYP3D_MPI_V8']:
             if report.get('checkpoint_schema')!=header['magic']:
                 raise ValueError('V5 evolution report must state its checkpoint schema')
-            for key in ['scri_normal_derivative','scri_normal_radial_nodes','scri_normal_bulk_derivative_order'] + (['scri_radial_closure','scri_radial_bulk_rows'] if header['magic'] in ['HYP3D_MPI_V6','HYP3D_MPI_V7'] else []) + (['interpatch_interpolation'] if header['magic']=='HYP3D_MPI_V7' else []):
+            for key in ['scri_normal_derivative','scri_normal_radial_nodes','scri_normal_bulk_derivative_order'] + (['scri_radial_closure','scri_radial_bulk_rows'] if header['magic'] in ['HYP3D_MPI_V6','HYP3D_MPI_V7','HYP3D_MPI_V8'] else []) + (['interpatch_interpolation'] if header['magic'] in ['HYP3D_MPI_V7','HYP3D_MPI_V8'] else []) + (['mesh_topology','cartesian_core_subdivisions','mesh_blocks'] if header['magic']=='HYP3D_MPI_V8' else []):
                 if type(report.get(key)) is not type(header[key]) or report[key]!=header[key]:
                     raise ValueError('Evolution report/checkpoint normal configuration mismatch: '+key)
         for report_key,header_key in [('n','n'),('t','time'),('dt','dt'),('steps','steps')]:
@@ -567,7 +579,7 @@ def main():
     comp=sub.add_parser('component')
     comp.add_argument('--component',choices=['device','exchange','scri','algebraic','angular',
                                             'angular_dissipation','scri_dissipation_closure',
-                                            'sampled_normal_device','donor_seven_device','inner_transition_device'],required=True)
+                                            'sampled_normal_device','donor_seven_device','inner_transition_device','core2_device'],required=True)
     comp.add_argument('--test-binary',required=True)
     comp.add_argument('--cmake-cache',required=True)
     bench=sub.add_parser('benchmark')

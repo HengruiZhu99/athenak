@@ -13,6 +13,7 @@
 #include "z4c/hyperboloidal/hyperbolic_angular_dissipation_device.hpp"
 #include "z4c/hyperboloidal/hyperbolic_sampled_normal_device.hpp"
 #include "z4c/hyperboloidal/algebraic_projection.hpp"
+#include "fixed_composite_mesh.hpp"
 #ifndef HYPERBOLIC_ALGEBRAIC_FINAL_PROJECTION
 #define HYPERBOLIC_ALGEBRAIC_FINAL_PROJECTION 0
 #endif
@@ -31,6 +32,9 @@
 #ifndef HYPERBOLIC_INNER_TRANSITION_LOGICAL
 #define HYPERBOLIC_INNER_TRANSITION_LOGICAL 0
 #endif
+#ifndef HYPERBOLIC_CORE_SUBDIVISIONS
+#define HYPERBOLIC_CORE_SUBDIVISIONS 1
+#endif
 namespace h=z4c::hyperboloidal;
 using Buffer=h::HyperbolicCompositeDevice::Buffer;
 using HostBuffer=Kokkos::View<Real*,Kokkos::HostSpace>;
@@ -41,12 +45,14 @@ constexpr bool scri_angular_dissipation=HYPERBOLIC_SCRI_ANGULAR_DISSIPATION;
 constexpr bool scri_sampled_normal=HYPERBOLIC_SCRI_SAMPLED_NORMAL;
 constexpr bool scri_donor_seven=HYPERBOLIC_SCRI_DONOR_SEVEN;
 constexpr bool inner_transition_logical=HYPERBOLIC_INNER_TRANSITION_LOGICAL;
+constexpr int core_subdivisions=HYPERBOLIC_CORE_SUBDIVISIONS;
+static_assert(core_subdivisions==1||(core_subdivisions==2&&inner_transition_logical),"core2 control requires V7 operators");
 static_assert(!inner_transition_logical||scri_donor_seven,"inner transition candidate requires V6 scri closure");
 static_assert(!scri_angular_exchange||algebraic_final_projection,"angular candidate requires algebraic repair");
 static_assert(!scri_angular_dissipation||scri_angular_exchange,"dissipation candidate requires cross-face jets");
 static_assert(!scri_sampled_normal||scri_angular_dissipation,"sampled-normal candidate requires V4 geometry/closure");
 static_assert(!scri_donor_seven||scri_sampled_normal,"direct radial candidate requires sampled numerator");
-constexpr const char*checkpoint_magic=inner_transition_logical?"HYP3D_MPI_V7":scri_donor_seven?"HYP3D_MPI_V6":scri_sampled_normal?"HYP3D_MPI_V5":scri_angular_dissipation?"HYP3D_MPI_V4":scri_angular_exchange?"HYP3D_MPI_V3":algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
+constexpr const char*checkpoint_magic=core_subdivisions==2?"HYP3D_MPI_V8":inner_transition_logical?"HYP3D_MPI_V7":scri_donor_seven?"HYP3D_MPI_V6":scri_sampled_normal?"HYP3D_MPI_V5":scri_angular_dissipation?"HYP3D_MPI_V4":scri_angular_exchange?"HYP3D_MPI_V3":algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
 constexpr const char*algebraic_scheme=algebraic_final_projection?"final_stage_standard":"none";
 constexpr const char*scri_angular_scheme=scri_angular_exchange?"cross_face_centered5":"face_local6";
 constexpr const char*scri_dissipation_scheme=scri_angular_dissipation?"degree7_weighted_negative_square":"none";
@@ -63,6 +69,10 @@ struct DissipationConfig { Real epsilon=0;int32_t degree=7,reserved=0; };
 // V6 and V7 retain the same last-three-row scri closure.
 struct NormalConfig { int32_t scheme=inner_transition_logical?3:scri_donor_seven?2:1,radial_nodes=scri_donor_seven?7:6,
   bulk_derivative_order=4,reserved=scri_donor_seven?3:0; };
+// V8 alone appends this fixed-topology identity. Older schemas retain every
+// byte. The descriptor excludes arbitrary leaf trees and dynamic regridding.
+struct MeshConfig { int32_t scheme=1,core_subdivisions=2,shell_layers=3,reserved=0; };
+static_assert(sizeof(MeshConfig)==16,"mesh configuration layout requires four int32 values");
 static_assert(sizeof(Header)==72&&sizeof(DissipationConfig)==16&&sizeof(NormalConfig)==16,"checkpoint layout requires float64");
 class Evolution {
  public:
@@ -86,7 +96,7 @@ class Evolution {
   Real angular_epsilon=0,angular_upper_bound=0,angular_cfl=0,angular_cfl_max=0;
   uint64_t steps=0;
   double rhs_seconds=0,exchange_seconds=0,closure_seconds=0,diagnostic_seconds=0;
-  explicit Evolution(int resolution,Real epsilon=0):n(resolution),model(cubed_sphere::CompositeMesh(.125,{.45,.75,1},1,n,3),false,scri_angular_exchange,epsilon,
+  explicit Evolution(int resolution,Real epsilon=0):n(resolution),model(hyperbolic_reproduction::FixedMesh(n,core_subdivisions),false,scri_angular_exchange,epsilon,
     scri_sampled_normal?h::HyperbolicComposite::NormalDerivative::sampled_numerator:h::HyperbolicComposite::NormalDerivative::analytic_jets,
     scri_donor_seven?h::HyperbolicComposite::RadialClosure::donor_seven:h::HyperbolicComposite::RadialClosure::ghost_lift),angular_epsilon(epsilon){
     if constexpr(inner_transition_logical)model.grid.SetInnerTransitionLogical(true);
@@ -266,6 +276,8 @@ class Evolution {
         out.write(reinterpret_cast<const char*>(&config),sizeof(config));}
       if constexpr(scri_sampled_normal){const NormalConfig config;
         out.write(reinterpret_cast<const char*>(&config),sizeof(config));}
+      if constexpr(core_subdivisions==2){const MeshConfig config;
+        out.write(reinterpret_cast<const char*>(&config),sizeof(config));}
       for(const V*v:{&values,&comps,&edge,&edge_comps})out.write(reinterpret_cast<const char*>(v->data()),v->size()*sizeof(Real));
       out.close();if(!out)throw std::runtime_error("checkpoint write failed");std::filesystem::rename(path+".tmp",path);
     }catch(const std::exception&e){bad=1;reason=e.what();}SynchronizeError(bad,reason);
@@ -285,6 +297,10 @@ class Evolution {
         if(!in||config.scheme!=expected.scheme||config.radial_nodes!=expected.radial_nodes||
            config.bulk_derivative_order!=expected.bulk_derivative_order||config.reserved!=expected.reserved)
           throw std::runtime_error("checkpoint sampled-normal configuration mismatch");}
+      if constexpr(core_subdivisions==2){MeshConfig config;
+        in.read(reinterpret_cast<char*>(&config),sizeof(config));
+        if(!in||config.scheme!=1||config.core_subdivisions!=2||config.shell_layers!=3||config.reserved!=0)
+          throw std::runtime_error("checkpoint fixed-core topology mismatch");}
       for(auto*v:{&values,&comps,&edge,&edge_comps})in.read(reinterpret_cast<char*>(v->data()),v->size()*sizeof(Real));
       char tail;if(!in||in.read(&tail,1))throw std::runtime_error("checkpoint truncated or trailing data");
       for(const auto*v:{&values,&comps,&edge,&edge_comps})for(Real x:*v)if(!std::isfinite(x))throw std::runtime_error("checkpoint nonfinite data");
@@ -543,10 +559,11 @@ int main(int argc,char**argv){
         <<",\"scri_dissipation_max_incoming\":"<<(e.model.angular_plan?e.model.angular_plan->Stats().max_incoming:0)
         <<",\"scri_dissipation_max_moment_error\":"<<(e.model.angular_plan?e.model.angular_plan->Stats().max_moment_error:0)
         <<",\"scri_dissipation_max_coefficient_l1\":"<<(e.model.angular_plan?e.model.angular_plan->Stats().max_coefficient_l1:0)
-        <<",\"checkpoint_header_bytes\":"<<(sizeof(Header)+(scri_angular_dissipation?sizeof(DissipationConfig):0)+(scri_sampled_normal?sizeof(NormalConfig):0));
+        <<",\"checkpoint_header_bytes\":"<<(sizeof(Header)+(scri_angular_dissipation?sizeof(DissipationConfig):0)+(scri_sampled_normal?sizeof(NormalConfig):0)+(core_subdivisions==2?sizeof(MeshConfig):0));
       if constexpr(scri_sampled_normal)report<<",\"scri_normal_derivative\":\"sampled_native_numerator"<<(scri_donor_seven?7:6)<<"\""
         <<",\"scri_normal_radial_nodes\":"<<(scri_donor_seven?7:6)<<",\"scri_normal_bulk_derivative_order\":4";
       if constexpr(inner_transition_logical)report<<",\"interpatch_interpolation\":\"logical_inner_transition\"";
+      if constexpr(core_subdivisions==2)report<<",\"mesh_topology\":\"cartesian_2x2x2_shells3\",\"cartesian_core_subdivisions\":2,\"mesh_blocks\":26";
       if constexpr(scri_donor_seven)report<<",\"scri_radial_closure\":\"donor_seven_last3\",\"scri_radial_bulk_rows\":3";
       report<<",\"minimum_owned_cells\":"<<e.total/e.size<<",\"maximum_owned_cells\":"<<(e.total+e.size-1)/e.size
         <<",\"t\":"<<e.time<<",\"start_time\":"<<start_time<<",\"target_time\":"<<end<<",\"t_over_M\":"<<(kind==2?e.time*3:e.time)

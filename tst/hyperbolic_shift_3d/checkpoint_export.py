@@ -34,8 +34,10 @@ halos. V7 reanalysis explicitly selects that halo policy.
 V6 reanalysis explicitly requests the donor_seven bulk diagnostic operator;
 an older reanalysis binary rejects that extra argument. Ray diagnostics still
 use independent interpolated jets and are not native cell constraints.
-The header contains no topology descriptor. This exporter therefore
-supports only the current unrefined 19-block layout: core half-width .125,
+V8 appends16 bytes<4i=(1,2,3,0), binding a static2x2x2 Cartesian core
+with26 total blocks and the unchanged V7 shell operators. Its payload starts
+at byte120. Earlier headers contain no topology descriptor and support only
+the unrefined19-block layout: core half-width .125,
 shell radii .45/.75/1, one core block and six faces per shell layer. All four
 arrays are checked for finite values even when compensation is not exported.
 
@@ -119,10 +121,10 @@ def validate_checkpoint(path, expected_hash=None, expected_time=None):
         if len(raw) != HEADER.size:
             raise ValueError('Truncated checkpoint header')
         h = dict(zip(HEADER_KEYS, HEADER.unpack(raw)))
-        if h['magic'] not in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V1',b'HYP3D_MPI_V2',b'HYP3D_MPI_V3',b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6',b'HYP3D_MPI_V7']] or h['nf'] != 31:
+        if h['magic'] not in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V1',b'HYP3D_MPI_V2',b'HYP3D_MPI_V3',b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6',b'HYP3D_MPI_V7',b'HYP3D_MPI_V8']] or h['nf'] != 31:
             raise ValueError('Unsupported checkpoint magic/schema/precision')
         h.update(header_bytes=HEADER.size,scri_dissipation_epsilon=0.0,scri_dissipation_degree=0)
-        if h['magic'] in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6',b'HYP3D_MPI_V7']]:
+        if h['magic'] in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6',b'HYP3D_MPI_V7',b'HYP3D_MPI_V8']]:
             extra = stream.read(V4_CONFIG.size)
             if len(extra) != V4_CONFIG.size:
                 raise ValueError('Truncated V4 checkpoint configuration')
@@ -132,8 +134,8 @@ def validate_checkpoint(path, expected_hash=None, expected_time=None):
             raw += extra
             h.update(header_bytes=HEADER.size+V4_CONFIG.size,
                      scri_dissipation_epsilon=epsilon,scri_dissipation_degree=degree)
-        if h['magic'] in [b'HYP3D_MPI_V5'.ljust(16,b'\0'),b'HYP3D_MPI_V6'.ljust(16,b'\0'),b'HYP3D_MPI_V7'.ljust(16,b'\0')]:
-            inner=h['magic']==b'HYP3D_MPI_V7'.ljust(16,b'\0')
+        if h['magic'] in [b'HYP3D_MPI_V5'.ljust(16,b'\0'),b'HYP3D_MPI_V6'.ljust(16,b'\0'),b'HYP3D_MPI_V7'.ljust(16,b'\0'),b'HYP3D_MPI_V8'.ljust(16,b'\0')]:
+            inner=h['magic'] in [b'HYP3D_MPI_V7'.ljust(16,b'\0'),b'HYP3D_MPI_V8'.ljust(16,b'\0')]
             radial=inner or h['magic']==b'HYP3D_MPI_V6'.ljust(16,b'\0')
             extra = stream.read(V5_NORMAL_CONFIG.size)
             if len(extra) != V5_NORMAL_CONFIG.size:
@@ -145,11 +147,17 @@ def validate_checkpoint(path, expected_hash=None, expected_time=None):
                      scri_normal_radial_nodes=7 if radial else 6,scri_normal_bulk_derivative_order=4)
             if radial:h.update(scri_radial_closure='donor_seven_last3',scri_radial_bulk_rows=3)
             if inner:h.update(interpatch_interpolation='logical_inner_transition')
+        if h['magic']==b'HYP3D_MPI_V8'.ljust(16,b'\0'):
+            extra=stream.read(16)
+            if len(extra)!=16 or struct.unpack('<4i',extra)!=(1,2,3,0):
+                raise ValueError('Invalid V8 fixed-core topology')
+            raw+=extra
+            h.update(header_bytes=120,mesh_topology='cartesian_2x2x2_shells3',cartesian_core_subdivisions=2,mesh_blocks=26)
         n = h['n']
         if h['admitted'] != 1 or h['kind'] not in KINDS:
             raise ValueError('Checkpoint is unadmitted or has an unknown physical kind')
-        if n < 6 or n % 2 or h['cells'] != 19*n**3 or h['surface'] != 31*6*n*n:
-            raise ValueError('Unsupported topology: expected fixed unrefined 19-block composite grid')
+        if n < 6 or n % 2 or h['cells'] != h.get('mesh_blocks',19)*n**3 or h['surface'] != 31*6*n*n:
+            raise ValueError('Unsupported topology: expected the schema-bound fixed composite grid')
         if not math.isfinite(h['t']) or h['t'] < 0 or not math.isfinite(h['dt']) or h['dt'] <= 0:
             raise ValueError('Invalid checkpoint clock')
         if expected_time is not None:
@@ -194,7 +202,7 @@ def validate_report(path, h):
     if report.get('kind') != KINDS[h['kind']]:
         raise ValueError('Source report/checkpoint physical kind mismatch')
     scheme = 'none' if h['magic']=='HYP3D_MPI_V1' else 'final_stage_standard'
-    angular = 'cross_face_centered5' if h['magic'] in ['HYP3D_MPI_V3','HYP3D_MPI_V4','HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7'] else 'face_local6'
+    angular = 'cross_face_centered5' if h['magic'] in ['HYP3D_MPI_V3','HYP3D_MPI_V4','HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7','HYP3D_MPI_V8'] else 'face_local6'
     if (report.get('checkpoint_schema',h['magic']) != h['magic']
             or report.get('algebraic_projection','none') != scheme
             or report.get('scri_angular_stencil','face_local6') != angular):
@@ -202,13 +210,13 @@ def validate_report(path, h):
     for key in ['scri_dissipation_epsilon','scri_dissipation_degree','checkpoint_header_bytes']:
         header_key='header_bytes' if key=='checkpoint_header_bytes' else key
         expected=h[header_key]
-        value=report.get(key) if h['magic'] in ['HYP3D_MPI_V4','HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7'] else report.get(key,expected)
+        value=report.get(key) if h['magic'] in ['HYP3D_MPI_V4','HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7','HYP3D_MPI_V8'] else report.get(key,expected)
         if type(value) not in [int,float] or not math.isfinite(value) or value!=expected:
             raise ValueError('Source report/checkpoint dissipation configuration mismatch: '+key)
-    if h['magic'] in ['HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7']:
+    if h['magic'] in ['HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7','HYP3D_MPI_V8']:
         if report.get('checkpoint_schema')!=h['magic']:
             raise ValueError('V5 source report must state its checkpoint schema')
-        for key in ['scri_normal_derivative','scri_normal_radial_nodes','scri_normal_bulk_derivative_order'] + (['scri_radial_closure','scri_radial_bulk_rows'] if h['magic'] in ['HYP3D_MPI_V6','HYP3D_MPI_V7'] else []) + (['interpatch_interpolation'] if h['magic']=='HYP3D_MPI_V7' else []):
+        for key in ['scri_normal_derivative','scri_normal_radial_nodes','scri_normal_bulk_derivative_order'] + (['scri_radial_closure','scri_radial_bulk_rows'] if h['magic'] in ['HYP3D_MPI_V6','HYP3D_MPI_V7','HYP3D_MPI_V8'] else []) + (['interpatch_interpolation'] if h['magic'] in ['HYP3D_MPI_V7','HYP3D_MPI_V8'] else []) + (['mesh_topology','cartesian_core_subdivisions','mesh_blocks'] if h['magic']=='HYP3D_MPI_V8' else []):
             if type(report.get(key)) is not type(h[key]) or report[key]!=h[key]:
                 raise ValueError('Source report/checkpoint normal configuration mismatch: '+key)
     for key in ['checkpoint_written', 'checkpoint_admitted']:
@@ -281,18 +289,21 @@ def export_array(stream, item, destination):
             output.write(','.join(format(x, '.17g') for x in values)+'\n')
 
 
-def coordinates(n):
+def coordinates(n,core_subdivisions=1):
     """Same block/cell order as CompositeMesh; analytic coordinate-volume Jacobian."""
     length, radii = .125, (.45, .75, 1.)
-    for block in range(19):
-        layer, face = ((block-1)//6, (block-1) % 6) if block else (-1, -1)
+    if core_subdivisions not in [1,2]:raise ValueError('Unsupported core subdivision')
+    cores=core_subdivisions**3
+    for block in range(cores+18):
+        layer, face = ((block-cores)//6, (block-cores)%6) if block>=cores else (-1,-1)
         for k in range(n):
             for j in range(n):
                 for i in range(n):
                     local = ((i+.5)/n, (j+.5)/n, (k+.5)/n)
-                    if not block:
-                        x = [-length+q*(2*length) for q in local]
-                        volume = (2*length)**3/n**3
+                    if block<cores:
+                        cell=(block%core_subdivisions,(block//core_subdivisions)%core_subdivisions,block//core_subdivisions**2)
+                        x=[-length+(cell[a]+q)*(2*length/core_subdivisions) for a,q in enumerate(local)]
+                        volume=(2*length/core_subdivisions)**3/n**3
                     else:
                         s, u, v = local[0], -1+2*local[1], -1+2*local[2]
                         norm = math.sqrt(1+u*u+v*v)
@@ -328,8 +339,8 @@ def compatible_report(h, source, provenance):
                 native_fastflow={k: v for k, v in source.items()
                                  if k.startswith('horizon_') or k == 'diagnostic_time'},
                 execution_provenance_verified=provenance['execution_artifacts_verified'])
-    if h['magic'] in ['HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7']:
-        for key in ['scri_normal_derivative','scri_normal_radial_nodes','scri_normal_bulk_derivative_order'] + (['scri_radial_closure','scri_radial_bulk_rows'] if h['magic'] in ['HYP3D_MPI_V6','HYP3D_MPI_V7'] else []) + (['interpatch_interpolation'] if h['magic']=='HYP3D_MPI_V7' else []):
+    if h['magic'] in ['HYP3D_MPI_V5','HYP3D_MPI_V6','HYP3D_MPI_V7','HYP3D_MPI_V8']:
+        for key in ['scri_normal_derivative','scri_normal_radial_nodes','scri_normal_bulk_derivative_order'] + (['scri_radial_closure','scri_radial_bulk_rows'] if h['magic'] in ['HYP3D_MPI_V6','HYP3D_MPI_V7','HYP3D_MPI_V8'] else []) + (['interpatch_interpolation'] if h['magic'] in ['HYP3D_MPI_V7','HYP3D_MPI_V8'] else []) + (['mesh_topology','cartesian_core_subdivisions','mesh_blocks'] if h['magic']=='HYP3D_MPI_V8' else []):
             result[key]=h[key]
     return result
 
@@ -370,7 +381,7 @@ def main():
                     checkpoint_sha256=checkpoint_hash, source_report_sha256=report_hash,
                     header_bytes=h['header_bytes'], header=h, arrays=arrays, provenance=provenance,
                     momentum_conventions=MOMENTUM,
-                    coordinate_measure='analytic Jacobian of the fixed unrefined composite map',
+                    coordinate_measure='analytic Jacobian of the schema-bound fixed composite map',
                     script_sha256=digest(Path(__file__)), output_files={}, removed_intermediates=[])
     atomic_json(args.output/'export.json', manifest)
     intermediates = []
@@ -388,7 +399,7 @@ def main():
         with prefix.with_suffix('.coordinates.csv').open('x', newline='') as output:
             writer = csv.writer(output, lineterminator='\n')
             writer.writerow(['x', 'y', 'z', 'r', 'volume'])
-            writer.writerows(tuple(format(x, '.17g') for x in row) for row in coordinates(h['n']))
+            writer.writerows(tuple(format(x, '.17g') for x in row) for row in coordinates(h['n'],h.get('cartesian_core_subdivisions',1)))
         shutil.copyfile(args.report, args.output/'source.report.json')
         for path, name in [(args.worker_status, 'source.worker-status.json'),
                            (args.source_manifest, 'source.manifest.json')]:
@@ -396,9 +407,9 @@ def main():
                 shutil.copyfile(path, args.output/name)
         if args.reanalyze:
             command = [str(args.reanalyze), str(h['n']), str(prefix), str(prefix)]
-            inner=h['magic']=='HYP3D_MPI_V7'
+            inner=h['magic'] in ['HYP3D_MPI_V7','HYP3D_MPI_V8']
             radial=inner or h['magic']=='HYP3D_MPI_V6'
-            if radial:command.append('inner_transition' if inner else 'donor_seven')
+            if radial:command.append('core2' if h['magic']=='HYP3D_MPI_V8' else 'inner_transition' if inner else 'donor_seven')
             manifest['reanalyze'] = dict(command=command, executable_sha256=analyzer_hash,
                 bulk_diagnostic_operator='donor_seven_last3' if radial else 'legacy_grid',
                 ray_diagnostic_operator='interpolated_jets')
@@ -407,6 +418,9 @@ def main():
             if result.returncode:
                 raise RuntimeError(f'Diagnostic reanalysis exited {result.returncode}; see reanalyze.log')
             marker='bulk_diagnostic_operator=donor_seven_last3 ray_diagnostic_operator=interpolated_jets'+(' interpatch_interpolation=logical_inner_transition' if inner else '')
+            if h['magic']=='HYP3D_MPI_V8':
+                marker+=' mesh_topology=cartesian_2x2x2_shells3'
+                manifest['reanalyze']['mesh_topology']='cartesian_2x2x2_shells3'
             if inner:manifest['reanalyze']['interpatch_interpolation']='logical_inner_transition'
             if radial and marker not in (args.output/'reanalyze.log').read_text().splitlines():
                 raise RuntimeError('Reanalysis did not confirm the requested V6 diagnostic operator')

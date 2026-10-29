@@ -80,6 +80,15 @@ class ComponentParserTests(unittest.TestCase):
                 preflight.parse_component(fixture.replace(before,after),'inner_transition_device',0)
         with self.assertRaises(ValueError):preflight.parse_component(DONOR_SEVEN_FIXTURE,'inner_transition_device',0)
 
+    def test_core2_requires_both_topology_markers(self):
+        fixture=DONOR_SEVEN_FIXTURE.replace('radial_bulk_rows=3','radial_bulk_rows=3 interpatch_interpolation=logical_inner_transition cartesian_core_subdivisions=2 mesh_blocks=26')+('inner_transition_exchange_error=1e-14 bulk_error=1e-14\n'*2)
+        self.assertTrue(preflight.parse_component(fixture,'core2_device',0)['passed'])
+        for before,after in [('cartesian_core_subdivisions=2','cartesian_core_subdivisions=1'),
+                             ('mesh_blocks=26','mesh_blocks=19'),('mesh_blocks=26',''),
+                             ('mesh_blocks=26','mesh_blocks=26 mesh_blocks=26')]:
+            with self.subTest(before=before,after=after),self.assertRaises(ValueError):
+                preflight.parse_component(fixture.replace(before,after),'core2_device',0)
+
     def test_donor_seven_requires_bulk_boundary_and_backend(self):
         parsed=preflight.parse_component(DONOR_SEVEN_FIXTURE,'donor_seven_device',0)
         self.assertTrue(parsed['passed']);self.assertEqual(parsed['maxima']['cpu_bulk_error'],1e-14)
@@ -426,11 +435,12 @@ class ExportCheckpointTests(unittest.TestCase):
         self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
         self.root=Path(self.temp.name)
 
-    def fixture(self,magic=b'HYP3D_MPI_V4',config=(2.0,7,0),normal=(1,6,4,0)):
-        n=6;cells=19*n**3;ns=31*6*n*n;nv=31*cells
+    def fixture(self,magic=b'HYP3D_MPI_V4',config=(2.0,7,0),normal=(1,6,4,0),mesh=(1,2,3,0)):
+        n=6;cells=(26 if magic==b'HYP3D_MPI_V8' else 19)*n**3;ns=31*6*n*n;nv=31*cells
         header=checkpoint_export.HEADER.pack(magic.ljust(16,b'\0'),n,31,0,1,cells,ns,4,.0004,.0001)
-        if magic in [b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6',b'HYP3D_MPI_V7']:header+=checkpoint_export.V4_CONFIG.pack(*config)
-        if magic in [b'HYP3D_MPI_V5',b'HYP3D_MPI_V6',b'HYP3D_MPI_V7']:header+=checkpoint_export.V5_NORMAL_CONFIG.pack(*normal)
+        if magic in [b'HYP3D_MPI_V4',b'HYP3D_MPI_V5',b'HYP3D_MPI_V6',b'HYP3D_MPI_V7',b'HYP3D_MPI_V8']:header+=checkpoint_export.V4_CONFIG.pack(*config)
+        if magic in [b'HYP3D_MPI_V5',b'HYP3D_MPI_V6',b'HYP3D_MPI_V7',b'HYP3D_MPI_V8']:header+=checkpoint_export.V5_NORMAL_CONFIG.pack(*normal)
+        if magic==b'HYP3D_MPI_V8':header+=struct.pack('<4i',*mesh)
         path=self.root/'state.checkpoint'
         payload=b''.join(struct.pack('<d',value)*count for value,count in [(1.25,nv),(-0.0,nv),(2.5,ns),(3.75,ns)])
         path.write_bytes(header+payload)
@@ -547,6 +557,25 @@ class ExportCheckpointTests(unittest.TestCase):
             path=self.fixture(b'HYP3D_MPI_V6',normal=normal)
             with self.subTest(normal=normal),self.assertRaises(ValueError):checkpoint_export.validate_checkpoint(path)
 
+    def test_v8_mesh_header_and_independent_decoders(self):
+        path=self.fixture(b'HYP3D_MPI_V8',normal=(3,7,4,3))
+        h,arrays,sha=checkpoint_export.validate_checkpoint(path)
+        other=preflight.read_checkpoint(path)
+        self.assertEqual(h['header_bytes'],120);self.assertEqual(arrays[0]['offset'],120)
+        self.assertEqual(h['cells'],26*6**3);self.assertEqual(sha,control.digest(path))
+        for key in ['header_bytes','cells','mesh_blocks','mesh_topology','cartesian_core_subdivisions']:
+            self.assertEqual(h[key],other[key])
+        raw=path.read_bytes()
+        for i in range(4):
+            mesh=[1,2,3,0];mesh[i]+=1
+            path.write_bytes(raw[:104]+struct.pack('<4i',*mesh)+raw[120:])
+            for decoder in [checkpoint_export.validate_checkpoint,preflight.read_checkpoint]:
+                with self.subTest(index=i,decoder=decoder.__name__),self.assertRaises(ValueError):decoder(path)
+        for data in [raw[:119],raw[:-1],raw+b'x',raw[:32]+struct.pack('<Q',19*6**3)+raw[40:]]:
+            path.write_bytes(data)
+            for decoder in [checkpoint_export.validate_checkpoint,preflight.read_checkpoint]:
+                with self.subTest(size=len(data),decoder=decoder.__name__),self.assertRaises(ValueError):decoder(path)
+
     def test_v7_payload_and_required_radial_report_metadata(self):
         path=self.fixture(b'HYP3D_MPI_V7',normal=(3,7,4,3))
         h,arrays,_=checkpoint_export.validate_checkpoint(path)
@@ -573,6 +602,34 @@ class ExportCheckpointTests(unittest.TestCase):
             with self.subTest(size=len(data)),self.assertRaises(ValueError):checkpoint_export.validate_checkpoint(path)
         for normal in [(2,7,4,3),(1,6,4,0),(2,6,4,3),(2,7,2,3),(2,7,4,0)]:
             path=self.fixture(b'HYP3D_MPI_V7',normal=normal)
+            with self.subTest(normal=normal),self.assertRaises(ValueError):checkpoint_export.validate_checkpoint(path)
+
+    def test_v8_payload_and_required_mesh_report_metadata(self):
+        path=self.fixture(b'HYP3D_MPI_V8',normal=(3,7,4,3))
+        h,arrays,_=checkpoint_export.validate_checkpoint(path)
+        self.assertEqual(h['header_bytes'],120);self.assertEqual(arrays[0]['offset'],120)
+        report=dict(status='completed',n=h['n'],cells=h['cells'],steps=h['steps'],t=h['t'],dt=h['dt'],
+                    kind='minkowski',checkpoint_schema='HYP3D_MPI_V8',algebraic_projection='final_stage_standard',
+                    scri_angular_stencil='cross_face_centered5',scri_dissipation_epsilon=2,
+                    scri_dissipation_degree=7,checkpoint_header_bytes=120,
+                    scri_normal_derivative='sampled_native_numerator7',scri_normal_radial_nodes=7,
+                    scri_normal_bulk_derivative_order=4,scri_radial_closure='donor_seven_last3',scri_radial_bulk_rows=3,interpatch_interpolation='logical_inner_transition',mesh_topology='cartesian_2x2x2_shells3',cartesian_core_subdivisions=2,mesh_blocks=26)
+        target=self.root/'report.json';target.write_text(json.dumps(report));checkpoint_export.validate_report(target,h)
+        exported=checkpoint_export.compatible_report(h,report,dict(execution_artifacts_verified=False))
+        for key in ['mesh_topology','cartesian_core_subdivisions','mesh_blocks','scri_radial_closure','scri_radial_bulk_rows','interpatch_interpolation']:
+            self.assertEqual(exported[key],h[key])
+            changed=dict(report);changed.pop(key);target.write_text(json.dumps(changed))
+            with self.subTest(missing=key),self.assertRaises(ValueError):checkpoint_export.validate_report(target,h)
+        for key,bad in [('mesh_topology','wrong'),('mesh_blocks',26.0),('mesh_blocks',19),('cartesian_core_subdivisions',1),('cartesian_core_subdivisions',2.0),('interpatch_interpolation','logical_all'),('scri_radial_bulk_rows',3.0),('scri_radial_bulk_rows',True),
+                        ('scri_radial_closure','ghost_lift'),('checkpoint_schema','HYP3D_MPI_V5')]:
+            target.write_text(json.dumps(dict(report,**{key:bad})))
+            with self.subTest(key=key),self.assertRaises(ValueError):checkpoint_export.validate_report(target,h)
+        raw=path.read_bytes()
+        for data in [raw[:119],raw[:-1],raw+b'x',raw[:120]+struct.pack('<d',float('nan'))+raw[128:]]:
+            path.write_bytes(data)
+            with self.subTest(size=len(data)),self.assertRaises(ValueError):checkpoint_export.validate_checkpoint(path)
+        for normal in [(2,7,4,3),(1,6,4,0),(2,6,4,3),(2,7,2,3),(2,7,4,0)]:
+            path=self.fixture(b'HYP3D_MPI_V8',normal=normal)
             with self.subTest(normal=normal),self.assertRaises(ValueError):checkpoint_export.validate_checkpoint(path)
 
 

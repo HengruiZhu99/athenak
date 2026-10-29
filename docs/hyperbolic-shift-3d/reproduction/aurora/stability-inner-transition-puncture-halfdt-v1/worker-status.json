@@ -1,0 +1,689 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "started": "2026-10-29T13:57:13.976935+00:00",
+  "job_id": "8984574.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "launcher_host": "x4300c6s3b0n0",
+  "allocation_nodes": [
+    "x4300c6s3b0n0.hsn.cm.aurora.alcf.anl.gov"
+  ],
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "00:30:00"
+  },
+  "source_manifest_sha256": "da9304ba17ad5a1336aef4468dc88ce375622104bac2c69cc1d3cc534abcb2a4",
+  "binaries": {
+    "build-sycl-mpi-v14/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_inner_transition": "c6873ac0a8fef73b03ed272c60736f2027e342b56ca85d2bafa62605c1584eb0"
+  },
+  "plan_sha256": "c2def604700098988e1c2f4506aae4e0c25588c24ba3d23c062eac9c1b745969",
+  "phase": "stability",
+  "n": 16,
+  "cases": [
+    {
+      "name": "puncture",
+      "kind": "puncture",
+      "started": "2026-10-29T13:57:22.132529+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-v14/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_inner_transition",
+        "16",
+        "campaigns/stability-inner-transition-puncture-halfdt-v1/output/puncture",
+        "puncture",
+        ".5",
+        ".00025",
+        "inputs/puncture-n16.txt",
+        "-",
+        "1590",
+        ".05",
+        ".001",
+        "12",
+        "24",
+        "2"
+      ],
+      "generated_inputs": {},
+      "n": 16,
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 790.0847306570504,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "completed",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "n"
+            ],
+            "op": "eq",
+            "value": 16
+          },
+          "observed": 16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "min_lapse"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.04229094176169923,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "min_chi"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.00010083663343310907,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "diagnostics_current"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_admitted"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_surface"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.1102230245849718e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_ghost"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.2212981783701856e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_cfl"
+            ],
+            "op": "le",
+            "value": 0.5
+          },
+          "observed": 0.16377810826009367,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.8928129482651348,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "M_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.08507880118581998,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.021102086457340543,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "M_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.037215564473818,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_exterior_L2"
+            ],
+            "op": "le",
+            "value": 1
+          },
+          "observed": 0.021102086457340543,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "M_exterior_L2"
+            ],
+            "op": "le",
+            "value": 1
+          },
+          "observed": 0.037215564473818,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_pole"
+            ],
+            "op": "le",
+            "value": 0.1
+          },
+          "observed": 0.018097570491813184,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_found"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_expansion_rms"
+            ],
+            "op": "le",
+            "value": 0.001
+          },
+          "observed": 0.0006323528810504337,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_mass"
+            ],
+            "op": "ge",
+            "value": 0.33
+          },
+          "observed": 0.33330139565405537,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_mass"
+            ],
+            "op": "le",
+            "value": 0.33666666666666667
+          },
+          "observed": 0.33330139565405537,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "algebraic_projection"
+            ],
+            "op": "eq",
+            "value": "final_stage_standard"
+          },
+          "observed": "final_stage_standard",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_schema"
+            ],
+            "op": "eq",
+            "value": "HYP3D_MPI_V7"
+          },
+          "observed": "HYP3D_MPI_V7",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_angular_stencil"
+            ],
+            "op": "eq",
+            "value": "cross_face_centered5"
+          },
+          "observed": "cross_face_centered5",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_epsilon"
+            ],
+            "op": "eq",
+            "value": 2.0
+          },
+          "observed": 2,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_degree"
+            ],
+            "op": "eq",
+            "value": 7
+          },
+          "observed": 7,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_header_bytes"
+            ],
+            "op": "eq",
+            "value": 104
+          },
+          "observed": 104,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_derivative"
+            ],
+            "op": "eq",
+            "value": "sampled_native_numerator7"
+          },
+          "observed": "sampled_native_numerator7",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_radial_nodes"
+            ],
+            "op": "eq",
+            "value": 7
+          },
+          "observed": 7,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_bulk_derivative_order"
+            ],
+            "op": "eq",
+            "value": 4
+          },
+          "observed": 4,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_radial_closure"
+            ],
+            "op": "eq",
+            "value": "donor_seven_last3"
+          },
+          "observed": "donor_seven_last3",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_radial_bulk_rows"
+            ],
+            "op": "eq",
+            "value": 3
+          },
+          "observed": 3,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "t"
+            ],
+            "op": "eq",
+            "value": 0.5
+          },
+          "observed": 0.5,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "dt"
+            ],
+            "op": "eq",
+            "value": 0.00025
+          },
+          "observed": 0.00025,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "steps"
+            ],
+            "op": "eq",
+            "value": 2001
+          },
+          "observed": 2001,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "segment_steps"
+            ],
+            "op": "eq",
+            "value": 2001
+          },
+          "observed": 2001,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "start_time"
+            ],
+            "op": "eq",
+            "value": 0.0
+          },
+          "observed": 0,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_lmax"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_ntheta"
+            ],
+            "op": "eq",
+            "value": 24
+          },
+          "observed": 24,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_nphi"
+            ],
+            "op": "eq",
+            "value": 48
+          },
+          "observed": 48,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_complete_surface"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_determinant_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 8.881784197001252e-16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_tracefree_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 6.661338147750939e-16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_cfl_max"
+            ],
+            "op": "le",
+            "value": 2.7
+          },
+          "observed": 0.20113667997153922,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "interpatch_interpolation"
+            ],
+            "op": "eq",
+            "value": "logical_inner_transition"
+          },
+          "observed": "logical_inner_transition",
+          "passed": true
+        }
+      ],
+      "report_status": "completed",
+      "status": "passed",
+      "artifacts": {
+        "campaigns/stability-inner-transition-puncture-halfdt-v1/output/puncture.report.json": {
+          "sha256": "bfa271f0cd23e6ba87b2b1f01f7d01527781d0807050633d5c5df7b34e32b995",
+          "bytes": 3046
+        },
+        "campaigns/stability-inner-transition-puncture-halfdt-v1/output/puncture.history.csv": {
+          "sha256": "5859c214c6e3d4847833f39a8dae1d476c66d6e17a53faebf9fff41095de434a",
+          "bytes": 8834
+        },
+        "campaigns/stability-inner-transition-puncture-halfdt-v1/output/puncture.checkpoint": {
+          "sha256": "1f26aae1476ffbeca21eefb56fa5ecc4b6cd46734d9066190114a94f4a8332fe",
+          "bytes": 39362664
+        },
+        "campaigns/stability-inner-transition-puncture-halfdt-v1/output/puncture.checkpoint.horizon-seed.txt": {
+          "sha256": "813efbbbf3666e3a5ffaca805e27a911ed6251fa3f167ae659b97bfdf7fc410c",
+          "bytes": 57
+        },
+        "campaigns/stability-inner-transition-puncture-halfdt-v1/output/puncture.fastflow.horizon_summary_0.txt": {
+          "sha256": "cceb7fde8ca73a86c3aab1ed0ea19b58fa2ef0f6846aa5dfa66523daece72aab",
+          "bytes": 2864
+        },
+        "campaigns/stability-inner-transition-puncture-halfdt-v1/output/puncture.fastflow.horizon_shape_0.txt": {
+          "sha256": "7139e47020e0d37065450f504eefcd5394a278cdc42d1f78bfad2207f86ac81c",
+          "bytes": 27665
+        }
+      },
+      "finished": "2026-10-29T14:10:36.218106+00:00"
+    }
+  ],
+  "storage_at_start": {
+    "bytes": 3841278464,
+    "entries": 18225,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 100000000,
+    "planned_bytes": 150000000,
+    "headroom_bytes": 908721536
+  },
+  "affinity": {
+    "returncode": 0,
+    "timed_out": false,
+    "storage_error": null,
+    "elapsed_seconds": 0.321029293932952,
+    "records": [
+      {
+        "host": "x4300c6s3b0n0",
+        "rank": 7,
+        "mask": "3.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4300c6s3b0n0",
+        "rank": 10,
+        "mask": "5.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4300c6s3b0n0",
+        "rank": 2,
+        "mask": "1.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4300c6s3b0n0",
+        "rank": 3,
+        "mask": "1.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4300c6s3b0n0",
+        "rank": 0,
+        "mask": "0.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4300c6s3b0n0",
+        "rank": 1,
+        "mask": "0.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4300c6s3b0n0",
+        "rank": 5,
+        "mask": "2.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4300c6s3b0n0",
+        "rank": 8,
+        "mask": "4.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4300c6s3b0n0",
+        "rank": 9,
+        "mask": "4.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4300c6s3b0n0",
+        "rank": 11,
+        "mask": "5.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4300c6s3b0n0",
+        "rank": 4,
+        "mask": "2.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4300c6s3b0n0",
+        "rank": 6,
+        "mask": "3.0",
+        "hierarchy": "COMPOSITE"
+      }
+    ],
+    "passed": true
+  },
+  "finished": "2026-10-29T14:10:36.226570+00:00",
+  "elapsed_seconds": 802.2496490960475,
+  "storage_at_finish": {
+    "bytes": 3863609191,
+    "entries": 18235
+  }
+}
