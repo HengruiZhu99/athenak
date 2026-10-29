@@ -25,8 +25,12 @@ treatment, horizon search and lack of patch interpolation would still differ.
 The 3D horizon follows the 1D early increase, dip, and recovery. Across the 22
 accepted 3D samples, the largest radius difference from linearly time-interpolated
 1D data is 0.419%. There are 12 rejected horizon samples; the last accepted
-measurement is at 1.95M. Rejected trial radii are gray crosses in the radius
-panel only; they are not accepted measurements or a basis for exterior norms.
+measurement is at 1.95M. Following the requested provisional interpretation, open circles show trial
+radii where the tolerance was missed, and the radius curve includes them. The
+full radius series remains within 0.419% of the time-aligned 1D history; at 3M
+the provisional difference is 0.154%. Their residuals remain quality flags.
+Mass and exterior norms were not recorded for those samples and are not filled
+by assuming a radius. Native acceptance flags remain unchanged.
 
 At 1.95M, the last accepted horizon:
 
@@ -78,3 +82,14 @@ The script verifies retained history hashes against prior audits, checks time
 ordering and missing-data masks, and produces comparison.png/pdf, matched-times.csv
 and comparison.json. The original 3M scientific validation remains failed on
 horizon-dependent criteria; this comparison does not change that result.
+
+## Meaning of gaps and dashed lines
+
+The dashed blue null curve is the separate interpolated-ghost closure check;
+the solid blue curve is the surface closure. It is not a missing-data segment.
+Missing mass/constraint points arose when FastFlow missed its 1e-3 expansion
+RMS criterion (rejected samples span about 1.04e-3–2.16e-3). Volume evolution
+continued. Treating the radii provisionally is useful for the current stability
+study, but does not recover unrecorded mass or volume-integral data. Future
+diagnostics can retain candidate-area mass and exterior norms separately, using
+the candidate radius as a provisional cutoff and retaining the residual flag.
