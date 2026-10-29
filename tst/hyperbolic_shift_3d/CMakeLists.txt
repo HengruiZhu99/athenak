@@ -250,3 +250,21 @@ if(ENABLE_MPI)
     HYPERBOLIC_SCRI_DONOR_SEVEN=1 HYPERBOLIC_INNER_TRANSITION_LOGICAL=1
     HYPERBOLIC_CORE_SUBDIVISIONS=2 HYPERBOLIC_EVOLVED_OVERLAP=3 HYPERBOLIC_SPHERICAL_OVERLAP=1 HYPERBOLIC_CONTINUOUS_POSITIVE=1 HYPERBOLIC_BOUNDARY_REUSE=1)
 endif()
+
+if(ENABLE_MPI)
+  add_executable(hyperbolic_shift_3d_mpi_continuous_positive_sparse coupled_mpi.cpp)
+  target_link_libraries(hyperbolic_shift_3d_mpi_continuous_positive_sparse PRIVATE hyperboloidal_fastflow MPI::MPI_CXX)
+  target_compile_options(hyperbolic_shift_3d_mpi_continuous_positive_sparse PRIVATE -Wall -Wextra -ffp-contract=off)
+  target_compile_definitions(hyperbolic_shift_3d_mpi_continuous_positive_sparse PRIVATE
+    HYPERBOLIC_ALGEBRAIC_FINAL_PROJECTION=1 HYPERBOLIC_SCRI_ANGULAR_EXCHANGE=1
+    HYPERBOLIC_SCRI_ANGULAR_DISSIPATION=1 HYPERBOLIC_SCRI_SAMPLED_NORMAL=1
+    HYPERBOLIC_SCRI_DONOR_SEVEN=1 HYPERBOLIC_INNER_TRANSITION_LOGICAL=1
+    HYPERBOLIC_CORE_SUBDIVISIONS=2 HYPERBOLIC_EVOLVED_OVERLAP=3 HYPERBOLIC_SPHERICAL_OVERLAP=1 HYPERBOLIC_CONTINUOUS_POSITIVE=1 HYPERBOLIC_BOUNDARY_REUSE=1 HYPERBOLIC_SPARSE_STAGE=1)
+endif()
+
+if(ENABLE_MPI)
+  add_executable(hyperbolic_shift_3d_sparse_exchange test_sparse_stage_exchange.cpp)
+  target_include_directories(hyperbolic_shift_3d_sparse_exchange PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+  target_link_libraries(hyperbolic_shift_3d_sparse_exchange PRIVATE Kokkos::kokkos MPI::MPI_CXX Threads::Threads)
+  target_compile_options(hyperbolic_shift_3d_sparse_exchange PRIVATE -Wall -Wextra -ffp-contract=off)
+endif()
