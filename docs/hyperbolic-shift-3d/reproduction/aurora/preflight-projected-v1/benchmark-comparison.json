@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "scope": "per-rank repeated Evaluate microbenchmark; no inter-rank start barrier",
+  "n": 16,
+  "ranks": 12,
+  "total_surface_rows": 1536,
+  "owned_rows_per_rank": 128,
+  "sampled_fields": 25,
+  "warmup_evaluations": 3,
+  "timed_repeats": 20,
+  "variant_order": [
+    "staged",
+    "inline"
+  ],
+  "staged_evaluate_seconds_rank_mean": 0.0037201933874999996,
+  "inline_evaluate_seconds_rank_mean": 0.04764004367916667,
+  "ratio_of_rank_means": 12.805797633864719,
+  "paired_rank_ratio_min": 12.543907209342398,
+  "paired_rank_ratio_max": 13.006812183675182,
+  "per_rank_rhs_and_surface_norms_exactly_equal": true,
+  "cross_variant_full_array_comparison_performed": false,
+  "repeats_within_each_variant_unchanged": true,
+  "staged_jet_bytes_per_rank": 332800,
+  "source_manifest_sha256": "8d0eba426c84cdf9997864cf7471a44914cc590b9a4d4ea2efe022b944287c93",
+  "staged_binary_sha256": "a73431caa07b4f3265830c012c118023d1bee48572767aa7c80a11821206877a",
+  "inline_binary_sha256": "f69344c3684a458216973366b214fc4b2faed81a4909d1b0fbf590ab1623528e",
+  "cmake_cache_sha256": "fae676e8a7ee5a686c1a65f54237c4adf5185e5597fb2a6d2b172549919ecdac",
+  "limitations": [
+    "Output norms agree exactly as parsed floating-point values; equal norms do not prove equal full arrays.",
+    "Each variant separately verifies unchanged full outputs across its repeats; this is distinct from cross-variant equality.",
+    "Three warmups, state upload and setup are outside the timed interval; explicit Kokkos fences bracket timed Evaluate calls.",
+    "The timed method includes its per-call host summary reduction, but no MPI exchange or coupled evolution.",
+    "Staged precedes inline, with no inter-rank timing-start barrier; shared GPU resources can affect overlap.",
+    "This ratio is not a whole-node throughput, allocation wall-time, or coupled evolution speedup claim."
+  ]
+}

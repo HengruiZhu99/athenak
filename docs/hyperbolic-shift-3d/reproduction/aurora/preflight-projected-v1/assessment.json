@@ -1,0 +1,144 @@
+{
+  "schema": 1,
+  "status": "passed_bounded_preflight",
+  "candidate_status": "deferred_while_unchanged_driver_resolution_controls_are_prioritized",
+  "job_id": "8982210.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "cases_passed": 12,
+  "cases_total": 12,
+  "backend": "SYCL",
+  "mpi_size": 12,
+  "n": 16,
+  "cells": 77824,
+  "maximum_evolution_steps": 4,
+  "maximum_coordinate_time": 0.002,
+  "puncture_maximum_time_over_M": 0.006,
+  "scientific_stability_pass": false,
+  "trumpet_transition_demonstrated": false,
+  "convergence_claim": false,
+  "algebraic_projection": "final_stage_standard",
+  "checkpoint_schema": "HYP3D_MPI_V2",
+  "angular_scri": "original_same_face_stencil",
+  "numerical_source_commit": "fdcb9f44f32aad9028ffc76d51113a9927d97a35",
+  "launcher_source_commit": "3c8fa2451b3dc41207fdba10c4010f847d87ea45",
+  "source_manifest_sha256": "8d0eba426c84cdf9997864cf7471a44914cc590b9a4d4ea2efe022b944287c93",
+  "projected_binary_sha256": "362093fc8c998576c7d88a14afdc2c5ebcdcb6a68f408b7fdaf92ad62b7b1486",
+  "case_summary": [
+    {
+      "name": "parity-device",
+      "status": "passed",
+      "report": "output/parity-device.report.json",
+      "checks": 4
+    },
+    {
+      "name": "parity-exchange",
+      "status": "passed",
+      "report": "output/parity-exchange.report.json",
+      "checks": 4
+    },
+    {
+      "name": "parity-scri",
+      "status": "passed",
+      "report": "output/parity-scri.report.json",
+      "checks": 4
+    },
+    {
+      "name": "parity-algebraic",
+      "status": "passed",
+      "report": "output/parity-algebraic.report.json",
+      "checks": 4
+    },
+    {
+      "name": "benchmark-staged",
+      "status": "passed",
+      "report": "output/benchmark-staged.report.json",
+      "checks": 6
+    },
+    {
+      "name": "benchmark-inline",
+      "status": "passed",
+      "report": "output/benchmark-inline.report.json",
+      "checks": 6
+    },
+    {
+      "name": "minkowski-short",
+      "status": "passed",
+      "report": "output/minkowski-short.report.json",
+      "checks": 21
+    },
+    {
+      "name": "pulse-half",
+      "status": "passed",
+      "report": "output/pulse-half.report.json",
+      "checks": 19
+    },
+    {
+      "name": "pulse-resumed",
+      "status": "passed",
+      "report": "output/pulse-resumed.report.json",
+      "checks": 19
+    },
+    {
+      "name": "pulse-direct",
+      "status": "passed",
+      "report": "output/pulse-direct.report.json",
+      "checks": 19
+    },
+    {
+      "name": "restart-audit",
+      "status": "passed",
+      "report": "output/restart-audit.report.json",
+      "checks": 3
+    },
+    {
+      "name": "puncture-short",
+      "status": "passed",
+      "report": "output/puncture-short.report.json",
+      "checks": 21
+    }
+  ],
+  "component_maxima": {
+    "parity-device": {
+      "diagnostic_scaled_error": 3.746669307108981e-15,
+      "scaled_error": 3.3972820822290164e-14,
+      "partition_error": 3.3972820822290164e-14,
+      "partition_sum_error": 4.235150661017241e-22,
+      "worst_scaled_error": 3.3972820822290164e-14
+    },
+    "parity-exchange": {
+      "scaled_error": 0.0,
+      "scri_jet_error": 0.0,
+      "null_after": 1.1099144265614566e-15,
+      "null_before": 0.01561473342378682
+    },
+    "parity-scri": {
+      "pole": 0.003521494356092044,
+      "max_cfl": 0.02880000000000001,
+      "clock": 0.09943708262441184,
+      "compatibility": 2.7755575615628914e-17,
+      "dependent_trace_error": 1.8919706587481366e-14,
+      "projection_error": 0.0,
+      "null": 9.992007221626413e-16,
+      "rate_error": 7.818505917731196e-14
+    },
+    "parity-algebraic": {
+      "D_compatibility": 2.3071822230491534e-16,
+      "rotation_covariance_max": 6.661338147750939e-16,
+      "ghost": 1.110201495756099e-15,
+      "scri_null_before_reclosure": 0.001273691481490251,
+      "after": 1.1091860267423246e-15,
+      "null_time_derivative": 7.216449660063518e-16
+    }
+  },
+  "restart": {
+    "bitwise_payload_equal": true,
+    "compared_doubles": 4920320,
+    "reference_sha256": "cdcaf117cd8f7e0e211f775a83d2f2a02e9d25cb3ebe277b27644ad1fd2e15e3",
+    "candidate_sha256": "cdcaf117cd8f7e0e211f775a83d2f2a02e9d25cb3ebe277b27644ad1fd2e15e3"
+  },
+  "limitations": [
+    "Four accepted steps are a preflight only; no projection-candidate duration result is established here.",
+    "GPU microbenchmark timing is per-rank Evaluate without an inter-rank start barrier, not whole-node throughput or coupled evolution speedup.",
+    "Cross-variant output norm equality is not a full-array bitwise comparison.",
+    "No later cross-face angular numerical change is included."
+  ]
+}

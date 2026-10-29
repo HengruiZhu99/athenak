@@ -52,6 +52,12 @@ interpolated-ghost null closure remain at 1.1102e-15 and 1.2507e-15. Their
 smallness does not establish stable bulk or boundary evolution. No diagnostic
 curve is extended from 1.05 M to the geometry rejection at 1.107 M.
 
+The frozen H history is the evolved-variable Hamiltonian diagnostic, whose
+formula assumes `tr_g A=0`. If that algebraic constraint drifts, it is not the
+fully reconstructed off-constraint ADM Hamiltonian. The separate
+[algebraic audit](../../../algebraic-projection-audit.md) gives the correction;
+no corrected values are substituted into this frozen trajectory.
+
 The exterior H comparison uses approximately corresponding coordinate-volume
 norms: 1D normalizes the radial sum weighted by `r**2 * jac` (including its
 endpoint quadrature), while 3D normalizes Cartesian coordinate-volume cell
