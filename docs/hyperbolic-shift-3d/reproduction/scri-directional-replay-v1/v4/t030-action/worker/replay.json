@@ -1,0 +1,377 @@
+{
+  "status": "completed",
+  "scope": "Full native tangent generator applied to one measured direction, no eigenvalue certification or evolution",
+  "norm": "Unweighted point-coordinate Euclidean; tensors Frobenius orthonormal; not a physical symmetrizer",
+  "checkpoint": {
+    "path": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/aurora/linear-window-dissipative-v2/output/snapshot-030.checkpoint",
+    "sha256": "bec96f27ceff0dee07923f0e8ee1ad92effa4e0fc0c2b946e4f19147332ced16",
+    "worker_sha256": "e504873a8a273eb5bc4e887b6567baffe9007d1e08fe83a34f81305741d5c61e",
+    "worker_status": "passed",
+    "bound_case": "snapshot-030",
+    "bound_artifact": "campaigns/linear-window-dissipative-v2/output/snapshot-030.checkpoint",
+    "native_checkpoint_admitted": true,
+    "n": 16,
+    "time": 0.3,
+    "dt": 0.0005,
+    "steps": 600,
+    "epsilon": 2.0,
+    "degree": 7,
+    "tangent_norm": 0.0005236339185685089,
+    "maximum_coordinate": 4.2435144040847835e-05,
+    "raw_volume_maximum_deviation": 5.359370087783153e-06,
+    "raw_surface_maximum_deviation": 3.0006178111911417e-05,
+    "embedding_trace_discard_norm": 1.0519089360078962e-11,
+    "embedding_trace_discard_relative": 2.0088632510353147e-08,
+    "full_independent_frobenius_norm": 0.000523633918568509,
+    "trace_discarded_max": 6.816769371198461e-14,
+    "A_trace_discarded_max": 2.1316263313140806e-12
+  },
+  "library_sha256": "dd2187aa7f1338855332863d6ef6af5d239f10fa57d138a5ecd76d8b962b71f0",
+  "script_sha256": "a5abda1d0831a236730250f8160ff54eede351a003ca25e2c9fc2f0c97a60b35",
+  "background_rhs_max": 7.70946607565293e-12,
+  "rows": [
+    {
+      "amplitude": 0.0001,
+      "V4": {
+        "all": {
+          "coordinate_norm": 1.0,
+          "action_norm": 72.97070391678018,
+          "projected_rate": 72.96352869976842,
+          "relative_shape_residual": 0.01402321440019271
+        },
+        "volume": {
+          "coordinate_norm": 0.21601031170717508,
+          "action_norm": 15.757323454458254,
+          "projected_rate": 72.93915719384883,
+          "relative_shape_residual": 0.014746466594527234
+        },
+        "outer_shell": {
+          "coordinate_norm": 0.21601031170717508,
+          "action_norm": 15.757323454458236,
+          "projected_rate": 72.93915719384884,
+          "relative_shape_residual": 0.014746466594454532
+        },
+        "surface": {
+          "coordinate_norm": 0.9763910821162641,
+          "action_norm": 71.24907288984171,
+          "projected_rate": 72.96472154397084,
+          "relative_shape_residual": 0.013986675388757286
+        }
+      },
+      "epsilon0": {
+        "all": {
+          "coordinate_norm": 1.0,
+          "action_norm": 73.5699746946371,
+          "projected_rate": 73.54496325289384,
+          "relative_shape_residual": 0.02607336852795376
+        },
+        "volume": {
+          "coordinate_norm": 0.21601031170717508,
+          "action_norm": 15.757293992159981,
+          "projected_rate": 72.9390068105924,
+          "relative_shape_residual": 0.01475947881177814
+        },
+        "outer_shell": {
+          "coordinate_norm": 0.21601031170717508,
+          "action_norm": 15.757293992159966,
+          "projected_rate": 72.9390068105924,
+          "relative_shape_residual": 0.0147594788117055
+        },
+        "surface": {
+          "coordinate_norm": 0.9763910821162641,
+          "action_norm": 71.86270842804481,
+          "projected_rate": 73.57462131471046,
+          "relative_shape_residual": 0.02643013536934512
+        }
+      },
+      "difference": {
+        "all": {
+          "coordinate_norm": 1.0,
+          "action_norm": 2.779595382182888,
+          "projected_rate": -0.5814345531254128,
+          "relative_shape_residual": 0.9778772466703824
+        },
+        "volume": {
+          "coordinate_norm": 0.21601031170717508,
+          "action_norm": 0.00755312808598744,
+          "projected_rate": 0.00015038325643679796,
+          "relative_shape_residual": 0.9999907516075479
+        },
+        "outer_shell": {
+          "coordinate_norm": 0.21601031170717508,
+          "action_norm": 0.00755312808598744,
+          "projected_rate": 0.000150383256436798,
+          "relative_shape_residual": 0.9999907516075479
+        },
+        "surface": {
+          "coordinate_norm": 0.9763910821162641,
+          "action_norm": 2.779585119925014,
+          "projected_rate": -0.6098997707396135,
+          "relative_shape_residual": 0.9767808635285897
+        }
+      },
+      "V4_relative_change_from_1e_5": 6.856756857133472e-08,
+      "epsilon0_relative_change_from_1e_5": 6.799343211087709e-08
+    },
+    {
+      "amplitude": 3e-05,
+      "V4": {
+        "all": {
+          "coordinate_norm": 1.0,
+          "action_norm": 72.97070390308168,
+          "projected_rate": 72.96352868597951,
+          "relative_shape_residual": 0.014023214489845328
+        },
+        "volume": {
+          "coordinate_norm": 0.21601031170717508,
+          "action_norm": 15.757323452634008,
+          "projected_rate": 72.93915718539102,
+          "relative_shape_residual": 0.014746466607122581
+        },
+        "outer_shell": {
+          "coordinate_norm": 0.21601031170717508,
+          "action_norm": 15.757323452633992,
+          "projected_rate": 72.93915718539104,
+          "relative_shape_residual": 0.014746466607049586
+        },
+        "surface": {
+          "coordinate_norm": 0.9763910821162641,
+          "action_norm": 71.24907287621566,
+          "projected_rate": 72.96472152992102,
+          "relative_shape_residual": 0.013986675482475043
+        }
+      },
+      "epsilon0": {
+        "all": {
+          "coordinate_norm": 1.0,
+          "action_norm": 73.5699746806904,
+          "projected_rate": 73.5449632391049,
+          "relative_shape_residual": 0.026073368448192316
+        },
+        "volume": {
+          "coordinate_norm": 0.21601031170717508,
+          "action_norm": 15.757293990345822,
+          "projected_rate": 72.93900680213392,
+          "relative_shape_residual": 0.014759478868343863
+        },
+        "outer_shell": {
+          "coordinate_norm": 0.21601031170717508,
+          "action_norm": 15.757293990345806,
+          "projected_rate": 72.93900680213393,
+          "relative_shape_residual": 0.014759478868270936
+        },
+        "surface": {
+          "coordinate_norm": 0.9763910821162641,
+          "action_norm": 71.86270841416454,
+          "projected_rate": 73.57462130066064,
+          "relative_shape_residual": 0.02643013528655689
+        }
+      },
+      "difference": {
+        "all": {
+          "coordinate_norm": 1.0,
+          "action_norm": 2.7795953821826727,
+          "projected_rate": -0.5814345531253802,
+          "relative_shape_residual": 0.9778772466703816
+        },
+        "volume": {
+          "coordinate_norm": 0.21601031170717508,
+          "action_norm": 0.0075531280083289565,
+          "projected_rate": 0.00015038325711453084,
+          "relative_shape_residual": 0.9999907516072745
+        },
+        "outer_shell": {
+          "coordinate_norm": 0.21601031170717508,
+          "action_norm": 0.0075531280083289565,
+          "projected_rate": 0.0001503832571145308,
+          "relative_shape_residual": 0.9999907516072744
+        },
+        "surface": {
+          "coordinate_norm": 0.9763910821162641,
+          "action_norm": 2.779585119925009,
+          "projected_rate": -0.6098997707396125,
+          "relative_shape_residual": 0.97678086352859
+        }
+      },
+      "V4_relative_change_from_1e_5": 6.765665905249576e-08,
+      "epsilon0_relative_change_from_1e_5": 6.70900109264613e-08
+    },
+    {
+      "amplitude": 1e-05,
+      "V4": {
+        "all": {
+          "coordinate_norm": 1.0,
+          "action_norm": 72.97070391694257,
+          "projected_rate": 72.96352869996039,
+          "relative_shape_residual": 0.014023214371248607
+        },
+        "volume": {
+          "coordinate_norm": 0.21601031170717508,
+          "action_norm": 15.757323449016207,
+          "projected_rate": 72.93915716844305,
+          "relative_shape_residual": 0.01474646679444249
+        },
+        "outer_shell": {
+          "coordinate_norm": 0.21601031170717508,
+          "action_norm": 15.757323449016193,
+          "projected_rate": 72.93915716844306,
+          "relative_shape_residual": 0.014746466794372772
+        },
+        "surface": {
+          "coordinate_norm": 0.9763910821162641,
+          "action_norm": 71.24907289121157,
+          "projected_rate": 72.9647215454157,
+          "relative_shape_residual": 0.01398667534760546
+        }
+      },
+      "epsilon0": {
+        "all": {
+          "coordinate_norm": 1.0,
+          "action_norm": 73.56997469501047,
+          "projected_rate": 73.54496325308564,
+          "relative_shape_residual": 0.02607336862249099
+        },
+        "volume": {
+          "coordinate_norm": 0.21601031170717508,
+          "action_norm": 15.757293986753492,
+          "projected_rate": 72.93900678518335,
+          "relative_shape_residual": 0.014759479167404433
+        },
+        "outer_shell": {
+          "coordinate_norm": 0.21601031170717508,
+          "action_norm": 15.757293986753478,
+          "projected_rate": 72.93900678518337,
+          "relative_shape_residual": 0.014759479167334779
+        },
+        "surface": {
+          "coordinate_norm": 0.9763910821162641,
+          "action_norm": 71.86270842961252,
+          "projected_rate": 73.5746213161553,
+          "relative_shape_residual": 0.026430135451675378
+        }
+      },
+      "difference": {
+        "all": {
+          "coordinate_norm": 1.0,
+          "action_norm": 2.779595382182614,
+          "projected_rate": -0.5814345531252605,
+          "relative_shape_residual": 0.97787724667039
+        },
+        "volume": {
+          "coordinate_norm": 0.21601031170717508,
+          "action_norm": 0.007553127986724505,
+          "projected_rate": 0.00015038325970139654,
+          "relative_shape_residual": 0.9999907516069034
+        },
+        "outer_shell": {
+          "coordinate_norm": 0.21601031170717508,
+          "action_norm": 0.007553127986724505,
+          "projected_rate": 0.0001503832597013966,
+          "relative_shape_residual": 0.9999907516069034
+        },
+        "surface": {
+          "coordinate_norm": 0.9763910821162641,
+          "action_norm": 2.7795851199250095,
+          "projected_rate": -0.6098997707396135,
+          "relative_shape_residual": 0.97678086352859
+        }
+      },
+      "V4_relative_change_from_1e_5": 0.0,
+      "epsilon0_relative_change_from_1e_5": 0.0
+    },
+    {
+      "amplitude": 3e-06,
+      "V4": {
+        "all": {
+          "coordinate_norm": 1.0,
+          "action_norm": 72.9707039238262,
+          "projected_rate": 72.96352870624662,
+          "relative_shape_residual": 0.014023214954360737
+        },
+        "volume": {
+          "coordinate_norm": 0.21601031170717508,
+          "action_norm": 15.757323468143467,
+          "projected_rate": 72.93915725815317,
+          "relative_shape_residual": 0.014746465705192837
+        },
+        "outer_shell": {
+          "coordinate_norm": 0.21601031170717508,
+          "action_norm": 15.75732346814345,
+          "projected_rate": 72.93915725815317,
+          "relative_shape_residual": 0.014746465705123186
+        },
+        "surface": {
+          "coordinate_norm": 0.9763910821162641,
+          "action_norm": 71.24907289403141,
+          "projected_rate": 72.96472154761882,
+          "relative_shape_residual": 0.013986676018322486
+        }
+      },
+      "epsilon0": {
+        "all": {
+          "coordinate_norm": 1.0,
+          "action_norm": 73.56997470042518,
+          "projected_rate": 73.54496325937212,
+          "relative_shape_residual": 0.026073368167222357
+        },
+        "volume": {
+          "coordinate_norm": 0.21601031170717508,
+          "action_norm": 15.757294005952378,
+          "projected_rate": 72.93900687489892,
+          "relative_shape_residual": 0.014759478381934619
+        },
+        "outer_shell": {
+          "coordinate_norm": 0.21601031170717508,
+          "action_norm": 15.757294005952362,
+          "projected_rate": 72.93900687489894,
+          "relative_shape_residual": 0.014759478381865029
+        },
+        "surface": {
+          "coordinate_norm": 0.9763910821162641,
+          "action_norm": 71.86270843094614,
+          "projected_rate": 73.57462131835841,
+          "relative_shape_residual": 0.026430135021186765
+        }
+      },
+      "difference": {
+        "all": {
+          "coordinate_norm": 1.0,
+          "action_norm": 2.779595382183031,
+          "projected_rate": -0.5814345531255155,
+          "relative_shape_residual": 0.977877246670377
+        },
+        "volume": {
+          "coordinate_norm": 0.21601031170717508,
+          "action_norm": 0.0075531281453952576,
+          "projected_rate": 0.0001503832542360753,
+          "relative_shape_residual": 0.9999907516079641
+        },
+        "outer_shell": {
+          "coordinate_norm": 0.21601031170717508,
+          "action_norm": 0.0075531281453952576,
+          "projected_rate": 0.00015038325423607533,
+          "relative_shape_residual": 0.9999907516079641
+        },
+        "surface": {
+          "coordinate_norm": 0.9763910821162641,
+          "action_norm": 2.7795851199249952,
+          "projected_rate": -0.6098997707396137,
+          "relative_shape_residual": 0.9767808635285896
+        }
+      },
+      "V4_relative_change_from_1e_5": 2.273320663719791e-07,
+      "epsilon0_relative_change_from_1e_5": 2.2544063272464804e-07
+    }
+  ],
+  "native_rhs_evaluations": 17,
+  "maximum_native_checks": [
+    1.1102230246248516e-15,
+    8.615086079739783e-22,
+    6.661338147750939e-16,
+    1.3519476130815903e-20,
+    4.323655038617996e-06,
+    1.518598735186989e-07,
+    0.4022733599430785
+  ],
+  "seconds": 19.29595841700211
+}

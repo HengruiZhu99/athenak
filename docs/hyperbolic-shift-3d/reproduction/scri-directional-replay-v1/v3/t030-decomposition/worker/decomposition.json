@@ -1,0 +1,825 @@
+{
+  "status": "completed",
+  "scope": "Surface free-field native term-action decomposition; induced dependent-D and bulk feedback excluded",
+  "generator": "T0 RHS(P(U0+Ez)) at Minkowski; not accepted RK map or nonlinear-checkpoint Jacobian",
+  "norm": "Unweighted surface19 point-coordinate norm; Frobenius tracefree tensors; no physical symmetrizer",
+  "checkpoint": {
+    "path": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/aurora/linear-window-dissipative-v2/output/snapshot-030.checkpoint",
+    "sha256": "bec96f27ceff0dee07923f0e8ee1ad92effa4e0fc0c2b946e4f19147332ced16",
+    "worker_sha256": "e504873a8a273eb5bc4e887b6567baffe9007d1e08fe83a34f81305741d5c61e",
+    "worker_status": "passed",
+    "bound_case": "snapshot-030",
+    "bound_artifact": "campaigns/linear-window-dissipative-v2/output/snapshot-030.checkpoint",
+    "native_checkpoint_admitted": true,
+    "n": 16,
+    "time": 0.3,
+    "dt": 0.0005,
+    "steps": 600,
+    "epsilon": 2.0,
+    "degree": 7,
+    "tangent_norm": 0.0005236339185685089,
+    "maximum_coordinate": 4.2435144040847835e-05,
+    "raw_volume_maximum_deviation": 5.359370087783153e-06,
+    "raw_surface_maximum_deviation": 3.0006178111911417e-05,
+    "embedding_trace_discard_norm": 1.0519089360078962e-11,
+    "embedding_trace_discard_relative": 2.0088632510353147e-08,
+    "full_independent_frobenius_norm": 0.000523633918568509,
+    "trace_discarded_max": 6.816769371198461e-14,
+    "A_trace_discarded_max": 2.1316263313140806e-12
+  },
+  "library_sha256": "4cf817ea62b0b9a477a7429adda66311561887f0305c80a09d725538e7d17d85",
+  "script_sha256": "35f58954cda3e0df22d4d612e912e617a629c5b38b7045661745d250924a7566",
+  "rows": [
+    {
+      "amplitude": 0.0001,
+      "full_surface": {
+        "all": {
+          "projected_rate": 72.96472154397084,
+          "action_norm": 71.24907288984171,
+          "relative_shape_residual": 0.013986675388757286
+        },
+        "metric": {
+          "projected_rate": 72.72948899330292,
+          "action_norm": 0.03343159967385101,
+          "relative_shape_residual": 0.02197649763539971
+        },
+        "A": {
+          "projected_rate": 72.9651798939903,
+          "action_norm": 71.22427808073874,
+          "relative_shape_residual": 0.013974383168672158
+        },
+        "Lambda": {
+          "projected_rate": 72.31774994293576,
+          "action_norm": 1.8792236613559739,
+          "relative_shape_residual": 0.024682226236391065
+        },
+        "B": {
+          "projected_rate": 1.704442132803648,
+          "action_norm": 2.1111961083246196e-18,
+          "relative_shape_residual": 0.9997916675943134
+        }
+      },
+      "terms": {
+        "regular_R": {
+          "all": {
+            "projected_rate": -53.4474782665241,
+            "action_norm": 52.58896891968705,
+            "relative_shape_residual": 0.12361251365972994
+          },
+          "metric": {
+            "projected_rate": 73.64918021922873,
+            "action_norm": 0.03387190057719495,
+            "relative_shape_residual": 0.03896431986418439
+          },
+          "A": {
+            "projected_rate": -53.59924344867948,
+            "action_norm": 52.41823141790711,
+            "relative_shape_residual": 0.06264012378747857
+          },
+          "Lambda": {
+            "projected_rate": 160.75724225076786,
+            "action_norm": 4.234088753693561,
+            "relative_shape_residual": 0.16492359003147009
+          },
+          "B": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          }
+        },
+        "minus_AD_normal_N": {
+          "all": {
+            "projected_rate": 110.98052634050748,
+            "action_norm": 109.84125449208848,
+            "relative_shape_residual": 0.1636516096120805
+          },
+          "metric": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          },
+          "A": {
+            "projected_rate": 110.4940410132964,
+            "action_norm": 107.86426434772855,
+            "relative_shape_residual": 0.01779068625602508
+          },
+          "Lambda": {
+            "projected_rate": 797.7787570158488,
+            "action_norm": 20.746121721586185,
+            "relative_shape_residual": 0.04566137028497783
+          },
+          "B": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          }
+        },
+        "weak_4N_over_h": {
+          "all": {
+            "projected_rate": 7.9535274979108515,
+            "action_norm": 17.164049189805628,
+            "relative_shape_residual": 0.8917933408088865
+          },
+          "metric": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          },
+          "A": {
+            "projected_rate": 8.36848559438577,
+            "action_norm": 8.282289838229243,
+            "relative_shape_residual": 0.16553885944684
+          },
+          "Lambda": {
+            "projected_rate": -577.8336724813486,
+            "action_norm": 15.033569483711823,
+            "relative_shape_residual": 0.05500665368639619
+          },
+          "B": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          }
+        },
+        "regularity_minus_8C_over_h": {
+          "all": {
+            "projected_rate": 8.08804574281622,
+            "action_norm": 12.514313129978694,
+            "relative_shape_residual": 0.775746161141355
+          },
+          "metric": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          },
+          "A": {
+            "projected_rate": 8.31085067259752,
+            "action_norm": 9.635050836827784,
+            "relative_shape_residual": 0.5396307024775229
+          },
+          "Lambda": {
+            "projected_rate": -306.43955702656547,
+            "action_norm": 7.985851233232683,
+            "relative_shape_residual": 0.07945312479348042
+          },
+          "B": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          }
+        },
+        "angular_Q": {
+          "all": {
+            "projected_rate": -0.6098997707396139,
+            "action_norm": 2.779585119925014,
+            "relative_shape_residual": 0.97678086352859
+          },
+          "metric": {
+            "projected_rate": -0.9196912259257872,
+            "action_norm": 0.0019610412797032954,
+            "relative_shape_residual": 0.9764983912035364
+          },
+          "A": {
+            "projected_rate": -0.6089539376099009,
+            "action_norm": 2.7755754745288495,
+            "relative_shape_residual": 0.9768025909909493
+          },
+          "Lambda": {
+            "projected_rate": -1.9450198157668557,
+            "action_norm": 0.14923260299511706,
+            "relative_shape_residual": 0.9409375377902998
+          },
+          "B": {
+            "projected_rate": -20.64419470738283,
+            "action_norm": 6.89574980210436e-19,
+            "relative_shape_residual": 0.6535406965395245
+          }
+        },
+        "B_flux": {
+          "all": {
+            "projected_rate": 1.4984340886031477e-38,
+            "action_norm": 2.234535384853059e-18,
+            "relative_shape_residual": 1.0
+          },
+          "metric": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          },
+          "A": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          },
+          "Lambda": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          },
+          "B": {
+            "projected_rate": 22.34863684018648,
+            "action_norm": 2.234535384853059e-18,
+            "relative_shape_residual": 0.9675027607254024
+          }
+        }
+      },
+      "Jv_sum_relative_error": 1.912161375971677e-16,
+      "action_norm_cancellation_factor": 2.7353081653820497,
+      "full_relative_change_from_1e_5": 6.3605570874356e-08
+    },
+    {
+      "amplitude": 3e-05,
+      "full_surface": {
+        "all": {
+          "projected_rate": 72.96472152992102,
+          "action_norm": 71.24907287621566,
+          "relative_shape_residual": 0.013986675482475043
+        },
+        "metric": {
+          "projected_rate": 72.72948895112292,
+          "action_norm": 0.03343159965497114,
+          "relative_shape_residual": 0.021976498327912115
+        },
+        "A": {
+          "projected_rate": 72.96517987997468,
+          "action_norm": 71.22427806714732,
+          "relative_shape_residual": 0.013974383258877319
+        },
+        "Lambda": {
+          "projected_rate": 72.31774988063393,
+          "action_norm": 1.8792236598643834,
+          "relative_shape_residual": 0.024682228980603054
+        },
+        "B": {
+          "projected_rate": 1.7044421328036492,
+          "action_norm": 2.1111961083246196e-18,
+          "relative_shape_residual": 0.9997916675943134
+        }
+      },
+      "terms": {
+        "regular_R": {
+          "all": {
+            "projected_rate": -53.44747826995412,
+            "action_norm": 52.58896892327095,
+            "relative_shape_residual": 0.12361251369138658
+          },
+          "metric": {
+            "projected_rate": 73.64918017610738,
+            "action_norm": 0.033871900557482036,
+            "relative_shape_residual": 0.03896431995419821
+          },
+          "A": {
+            "projected_rate": -53.5992434520482,
+            "action_norm": 52.41823142116858,
+            "relative_shape_residual": 0.06264012377746052
+          },
+          "Lambda": {
+            "projected_rate": 160.75724216080985,
+            "action_norm": 4.23408875783012,
+            "relative_shape_residual": 0.16492359909482285
+          },
+          "B": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          }
+        },
+        "minus_AD_normal_N": {
+          "all": {
+            "projected_rate": 110.9805263471936,
+            "action_norm": 109.84125449766132,
+            "relative_shape_residual": 0.16365160955552271
+          },
+          "metric": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          },
+          "A": {
+            "projected_rate": 110.4940410201335,
+            "action_norm": 107.86426435438656,
+            "relative_shape_residual": 0.01779068624751487
+          },
+          "Lambda": {
+            "projected_rate": 797.7787568094095,
+            "action_norm": 20.746121716475034,
+            "relative_shape_residual": 0.04566137055600043
+          },
+          "B": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          }
+        },
+        "weak_4N_over_h": {
+          "all": {
+            "projected_rate": 7.953527489205298,
+            "action_norm": 17.164049181670045,
+            "relative_shape_residual": 0.891793340951332
+          },
+          "metric": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          },
+          "A": {
+            "projected_rate": 8.368485585591133,
+            "action_norm": 8.282289827546535,
+            "relative_shape_residual": 0.16553885804320875
+          },
+          "Lambda": {
+            "projected_rate": -577.8336723642988,
+            "action_norm": 15.033569480308334,
+            "relative_shape_residual": 0.05500665325456118
+          },
+          "B": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          }
+        },
+        "regularity_minus_8C_over_h": {
+          "all": {
+            "projected_rate": 8.088045734215866,
+            "action_norm": 12.514313121382077,
+            "relative_shape_residual": 0.7757461613345736
+          },
+          "metric": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          },
+          "A": {
+            "projected_rate": 8.310850663908157,
+            "action_norm": 9.63505082855991,
+            "relative_shape_residual": 0.5396307027237236
+          },
+          "Lambda": {
+            "projected_rate": -306.4395569095198,
+            "action_norm": 7.985851229736582,
+            "relative_shape_residual": 0.07945312409519291
+          },
+          "B": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          }
+        },
+        "angular_Q": {
+          "all": {
+            "projected_rate": -0.6098997707396134,
+            "action_norm": 2.77958511992501,
+            "relative_shape_residual": 0.9767808635285897
+          },
+          "metric": {
+            "projected_rate": -0.9196912249844557,
+            "action_norm": 0.0019610412771996328,
+            "relative_shape_residual": 0.9764983911914933
+          },
+          "A": {
+            "projected_rate": -0.6089539376099006,
+            "action_norm": 2.7755754745288472,
+            "relative_shape_residual": 0.9768025909909493
+          },
+          "Lambda": {
+            "projected_rate": -1.9450198157668557,
+            "action_norm": 0.14923260299511706,
+            "relative_shape_residual": 0.9409375377902998
+          },
+          "B": {
+            "projected_rate": -20.64419470738283,
+            "action_norm": 6.89574980210436e-19,
+            "relative_shape_residual": 0.6535406965395245
+          }
+        },
+        "B_flux": {
+          "all": {
+            "projected_rate": 1.498434088603148e-38,
+            "action_norm": 2.234535384853059e-18,
+            "relative_shape_residual": 1.0
+          },
+          "metric": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          },
+          "A": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          },
+          "Lambda": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          },
+          "B": {
+            "projected_rate": 22.348636840186483,
+            "action_norm": 2.234535384853059e-18,
+            "relative_shape_residual": 0.9675027607254024
+          }
+        }
+      },
+      "Jv_sum_relative_error": 1.8771435637338697e-16,
+      "action_norm_cancellation_factor": 2.7353081657988407,
+      "full_relative_change_from_1e_5": 6.283961923617311e-08
+    },
+    {
+      "amplitude": 1e-05,
+      "full_surface": {
+        "all": {
+          "projected_rate": 72.9647215454157,
+          "action_norm": 71.24907289121157,
+          "relative_shape_residual": 0.01398667534760546
+        },
+        "metric": {
+          "projected_rate": 72.7294891399586,
+          "action_norm": 0.033431599741173906,
+          "relative_shape_residual": 0.021976497512433118
+        },
+        "A": {
+          "projected_rate": 72.9651798946827,
+          "action_norm": 71.22427808140291,
+          "relative_shape_residual": 0.013974383156901924
+        },
+        "Lambda": {
+          "projected_rate": 72.3177510065533,
+          "action_norm": 1.8792236881192887,
+          "relative_shape_residual": 0.024682207373102234
+        },
+        "B": {
+          "projected_rate": 1.7044421328036512,
+          "action_norm": 2.1111961083246196e-18,
+          "relative_shape_residual": 0.9997916675943134
+        }
+      },
+      "terms": {
+        "regular_R": {
+          "all": {
+            "projected_rate": -53.44747826705812,
+            "action_norm": 52.5889689214031,
+            "relative_shape_residual": 0.1236125138400825
+          },
+          "metric": {
+            "projected_rate": 73.6491803647055,
+            "action_norm": 0.033871900642064245,
+            "relative_shape_residual": 0.03896431832330285
+          },
+          "A": {
+            "projected_rate": -53.5992434488538,
+            "action_norm": 52.41823141854684,
+            "relative_shape_residual": 0.06264012392982922
+          },
+          "Lambda": {
+            "projected_rate": 160.75724174240725,
+            "action_norm": 4.234088767087081,
+            "relative_shape_residual": 0.1649236273426413
+          },
+          "B": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          }
+        },
+        "minus_AD_normal_N": {
+          "all": {
+            "projected_rate": 110.98052634105167,
+            "action_norm": 109.84125448722158,
+            "relative_shape_residual": 0.1636516093194218
+          },
+          "metric": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          },
+          "A": {
+            "projected_rate": 110.49404101490742,
+            "action_norm": 107.86426434935062,
+            "relative_shape_residual": 0.01779068628175561
+          },
+          "Lambda": {
+            "projected_rate": 797.7787555103421,
+            "action_norm": 20.74612168738445,
+            "relative_shape_residual": 0.04566137549816285
+          },
+          "B": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          }
+        },
+        "weak_4N_over_h": {
+          "all": {
+            "projected_rate": 7.953527498440456,
+            "action_norm": 17.164049159387442,
+            "relative_shape_residual": 0.8917933403868055
+          },
+          "metric": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          },
+          "A": {
+            "projected_rate": 8.368485593825756,
+            "action_norm": 8.282289835394685,
+            "relative_shape_residual": 0.1655388578292187
+          },
+          "Lambda": {
+            "projected_rate": -577.833670942604,
+            "action_norm": 15.033569450544015,
+            "relative_shape_residual": 0.05500666196398897
+          },
+          "B": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          }
+        },
+        "regularity_minus_8C_over_h": {
+          "all": {
+            "projected_rate": 8.088045743721299,
+            "action_norm": 12.514313102164175,
+            "relative_shape_residual": 0.7757461599429636
+          },
+          "metric": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          },
+          "A": {
+            "projected_rate": 8.310850672413224,
+            "action_norm": 9.635050829739574,
+            "relative_shape_residual": 0.5396307015403567
+          },
+          "Lambda": {
+            "projected_rate": -306.4395554878252,
+            "action_norm": 7.985851198197803,
+            "relative_shape_residual": 0.0794531327255414
+          },
+          "B": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          }
+        },
+        "angular_Q": {
+          "all": {
+            "projected_rate": -0.6098997707396134,
+            "action_norm": 2.7795851199250095,
+            "relative_shape_residual": 0.9767808635285897
+          },
+          "metric": {
+            "projected_rate": -0.9196912247469048,
+            "action_norm": 0.001961041276711145,
+            "relative_shape_residual": 0.9764983911919308
+          },
+          "A": {
+            "projected_rate": -0.6089539376099006,
+            "action_norm": 2.7755754745288472,
+            "relative_shape_residual": 0.9768025909909492
+          },
+          "Lambda": {
+            "projected_rate": -1.9450198157668552,
+            "action_norm": 0.14923260299511706,
+            "relative_shape_residual": 0.9409375377902995
+          },
+          "B": {
+            "projected_rate": -20.64419470738283,
+            "action_norm": 6.89574980210436e-19,
+            "relative_shape_residual": 0.6535406965395245
+          }
+        },
+        "B_flux": {
+          "all": {
+            "projected_rate": 1.498434088603148e-38,
+            "action_norm": 2.234535384853059e-18,
+            "relative_shape_residual": 1.0
+          },
+          "metric": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          },
+          "A": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          },
+          "Lambda": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          },
+          "B": {
+            "projected_rate": 22.348636840186483,
+            "action_norm": 2.234535384853059e-18,
+            "relative_shape_residual": 0.9675027607254024
+          }
+        }
+      },
+      "Jv_sum_relative_error": 2.0117111570739462e-16,
+      "action_norm_cancellation_factor": 2.735308164467925,
+      "full_relative_change_from_1e_5": 0.0
+    },
+    {
+      "amplitude": 3e-06,
+      "full_surface": {
+        "all": {
+          "projected_rate": 72.96472154761882,
+          "action_norm": 71.24907289403141,
+          "relative_shape_residual": 0.013986676018322486
+        },
+        "metric": {
+          "projected_rate": 72.72948875259486,
+          "action_norm": 0.03343159956301938,
+          "relative_shape_residual": 0.02197649738340642
+        },
+        "A": {
+          "projected_rate": 72.96517990408563,
+          "action_norm": 71.22427809134953,
+          "relative_shape_residual": 0.013974383928426036
+        },
+        "Lambda": {
+          "projected_rate": 72.31774084496382,
+          "action_norm": 1.8792234180459872,
+          "relative_shape_residual": 0.02468207771126672
+        },
+        "B": {
+          "projected_rate": 1.7044421328036505,
+          "action_norm": 2.1111961083246196e-18,
+          "relative_shape_residual": 0.9997916675943134
+        }
+      },
+      "terms": {
+        "regular_R": {
+          "all": {
+            "projected_rate": -53.447478264474306,
+            "action_norm": 52.58896891528748,
+            "relative_shape_residual": 0.12361251329879905
+          },
+          "metric": {
+            "projected_rate": 73.64917997613784,
+            "action_norm": 0.03387190044966706,
+            "relative_shape_residual": 0.03896430796507367
+          },
+          "A": {
+            "projected_rate": -53.59924344527614,
+            "action_norm": 52.41823140976896,
+            "relative_shape_residual": 0.06264012232837808
+          },
+          "Lambda": {
+            "projected_rate": 160.75724034212763,
+            "action_norm": 4.234088799800098,
+            "relative_shape_residual": 0.16492372429388263
+          },
+          "B": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          }
+        },
+        "minus_AD_normal_N": {
+          "all": {
+            "projected_rate": 110.98052632945947,
+            "action_norm": 109.84125450686733,
+            "relative_shape_residual": 0.16365161100422665
+          },
+          "metric": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          },
+          "A": {
+            "projected_rate": 110.49404099810475,
+            "action_norm": 107.86426433235849,
+            "relative_shape_residual": 0.01779068597472483
+          },
+          "Lambda": {
+            "projected_rate": 797.7787628542242,
+            "action_norm": 20.746121879745093,
+            "relative_shape_residual": 0.045661376956163624
+          },
+          "B": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          }
+        },
+        "weak_4N_over_h": {
+          "all": {
+            "projected_rate": 7.953527505072901,
+            "action_norm": 17.164049364526708,
+            "relative_shape_residual": 0.8917933429388112
+          },
+          "metric": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          },
+          "A": {
+            "projected_rate": 8.368485606167159,
+            "action_norm": 8.282289863841408,
+            "relative_shape_residual": 0.16553886934427856
+          },
+          "Lambda": {
+            "projected_rate": -577.8336789952,
+            "action_norm": 15.03356966908313,
+            "relative_shape_residual": 0.0550066728551461
+          },
+          "B": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          }
+        },
+        "regularity_minus_8C_over_h": {
+          "all": {
+            "projected_rate": 8.088045748300363,
+            "action_norm": 12.514313260636296,
+            "relative_shape_residual": 0.7757461661528411
+          },
+          "metric": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          },
+          "A": {
+            "projected_rate": 8.310850682699751,
+            "action_norm": 9.635050838590793,
+            "relative_shape_residual": 0.5396307011212561
+          },
+          "Lambda": {
+            "projected_rate": -306.43956354042126,
+            "action_norm": 7.98585143585424,
+            "relative_shape_residual": 0.07945317627046213
+          },
+          "B": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          }
+        },
+        "angular_Q": {
+          "all": {
+            "projected_rate": -0.6098997707396132,
+            "action_norm": 2.7795851199249952,
+            "relative_shape_residual": 0.9767808635285896
+          },
+          "metric": {
+            "projected_rate": -0.9196912235429946,
+            "action_norm": 0.001961041256268674,
+            "relative_shape_residual": 0.9764983907583286
+          },
+          "A": {
+            "projected_rate": -0.6089539376099007,
+            "action_norm": 2.7755754745288472,
+            "relative_shape_residual": 0.9768025909909493
+          },
+          "Lambda": {
+            "projected_rate": -1.9450198157668557,
+            "action_norm": 0.14923260299511706,
+            "relative_shape_residual": 0.9409375377902998
+          },
+          "B": {
+            "projected_rate": -20.64419470738283,
+            "action_norm": 6.89574980210436e-19,
+            "relative_shape_residual": 0.6535406965395245
+          }
+        },
+        "B_flux": {
+          "all": {
+            "projected_rate": 1.498434088603148e-38,
+            "action_norm": 2.234535384853059e-18,
+            "relative_shape_residual": 1.0
+          },
+          "metric": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          },
+          "A": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          },
+          "Lambda": {
+            "projected_rate": 0.0,
+            "action_norm": 0.0,
+            "relative_shape_residual": 0
+          },
+          "B": {
+            "projected_rate": 22.348636840186483,
+            "action_norm": 2.234535384853059e-18,
+            "relative_shape_residual": 0.9675027607254026
+          }
+        }
+      },
+      "Jv_sum_relative_error": 1.8912725539998687e-16,
+      "action_norm_cancellation_factor": 2.7353081696529515,
+      "full_relative_change_from_1e_5": 2.103559643375352e-07
+    }
+  ],
+  "native_term_sum_absolute_error_max": 2.6020852139652106e-18,
+  "full_coupled_surface_Jv_relative_error": 0.0,
+  "seconds": 7.374102208996192
+}

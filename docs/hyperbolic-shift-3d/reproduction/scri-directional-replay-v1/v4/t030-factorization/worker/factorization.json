@@ -1,0 +1,301 @@
+{
+  "status": "completed",
+  "scope": "Same-node numerator-factorization surface action only; all other surface terms held fixed; no dependent-D refresh/bulk counterfactual/evolution",
+  "generator": "Minkowski tangent T0 RHS(P(U0+Ez)); not nonlinear-checkpoint Jacobian or accepted RK map",
+  "checkpoint": {
+    "path": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/aurora/linear-window-dissipative-v2/output/snapshot-030.checkpoint",
+    "sha256": "bec96f27ceff0dee07923f0e8ee1ad92effa4e0fc0c2b946e4f19147332ced16",
+    "worker_sha256": "e504873a8a273eb5bc4e887b6567baffe9007d1e08fe83a34f81305741d5c61e",
+    "worker_status": "passed",
+    "bound_case": "snapshot-030",
+    "bound_artifact": "campaigns/linear-window-dissipative-v2/output/snapshot-030.checkpoint",
+    "native_checkpoint_admitted": true,
+    "n": 16,
+    "time": 0.3,
+    "dt": 0.0005,
+    "steps": 600,
+    "epsilon": 2.0,
+    "degree": 7,
+    "tangent_norm": 0.0005236339185685089,
+    "maximum_coordinate": 4.2435144040847835e-05,
+    "raw_volume_maximum_deviation": 5.359370087783153e-06,
+    "raw_surface_maximum_deviation": 3.0006178111911417e-05,
+    "embedding_trace_discard_norm": 1.0519089360078962e-11,
+    "embedding_trace_discard_relative": 2.0088632510353147e-08,
+    "full_independent_frobenius_norm": 0.000523633918568509,
+    "trace_discarded_max": 6.816769371198461e-14,
+    "A_trace_discarded_max": 2.1316263313140806e-12
+  },
+  "library_sha256": "dd2187aa7f1338855332863d6ef6af5d239f10fa57d138a5ecd76d8b962b71f0",
+  "script_sha256": "a5abda1d0831a236730250f8160ff54eede351a003ca25e2c9fc2f0c97a60b35",
+  "rows": [
+    {
+      "amplitude": 0.0001,
+      "native_AD_normal": {
+        "unweighted": {
+          "projected_rate": 110.98052634050748,
+          "action_norm": 109.84125449208848,
+          "relative_shape_residual": 0.1636516096120805
+        },
+        "area_weighted": {
+          "projected_rate": 110.94813147601242,
+          "action_norm": 10.868609877116528,
+          "relative_shape_residual": 0.16028612215598753
+        }
+      },
+      "sampled_N_normal": {
+        "unweighted": {
+          "projected_rate": 10.99274016130545,
+          "action_norm": 22.78450500472996,
+          "relative_shape_residual": 0.8820930959838368
+        },
+        "area_weighted": {
+          "projected_rate": 10.967702185662255,
+          "action_norm": 2.217174775407211,
+          "relative_shape_residual": 0.8781859756480549
+        }
+      },
+      "normal_action_difference": {
+        "unweighted": {
+          "projected_rate": -99.98778617920202,
+          "action_norm": 97.65929787337477,
+          "relative_shape_residual": 0.02564350096906935
+        },
+        "area_weighted": {
+          "projected_rate": -99.98042929035019,
+          "action_norm": 9.67060946453307,
+          "relative_shape_residual": 0.02507963219052442
+        }
+      },
+      "native_full_surface": {
+        "unweighted": {
+          "projected_rate": 72.96472154397084,
+          "action_norm": 71.24907288984171,
+          "relative_shape_residual": 0.013986675388757286
+        },
+        "area_weighted": {
+          "projected_rate": 72.94615935391025,
+          "action_norm": 7.054136052951506,
+          "relative_shape_residual": 0.013431587113199224
+        }
+      },
+      "held_other_terms_surface_sum": {
+        "unweighted": {
+          "projected_rate": -27.02306463523119,
+          "action_norm": 26.512346607864032,
+          "relative_shape_residual": 0.09786502087771204
+        },
+        "area_weighted": {
+          "projected_rate": -27.034269936439923,
+          "action_norm": 2.6260220708702153,
+          "relative_shape_residual": 0.09530820948779006
+        }
+      },
+      "moment_error": 4.263256414560601e-14,
+      "sampled_action_relative_change_from_1e_5": 2.236051418493673e-07
+    },
+    {
+      "amplitude": 3e-05,
+      "native_AD_normal": {
+        "unweighted": {
+          "projected_rate": 110.9805263471936,
+          "action_norm": 109.84125449766132,
+          "relative_shape_residual": 0.16365160955552271
+        },
+        "area_weighted": {
+          "projected_rate": 110.9481314817937,
+          "action_norm": 10.868609877548657,
+          "relative_shape_residual": 0.16028612208092627
+        }
+      },
+      "sampled_N_normal": {
+        "unweighted": {
+          "projected_rate": 10.992740171273923,
+          "action_norm": 22.784505000162696,
+          "relative_shape_residual": 0.882093095705274
+        },
+        "area_weighted": {
+          "projected_rate": 10.967702194258068,
+          "action_norm": 2.217174774554474,
+          "relative_shape_residual": 0.878185975343672
+        }
+      },
+      "normal_action_difference": {
+        "unweighted": {
+          "projected_rate": -99.98778617591968,
+          "action_norm": 97.6592978701,
+          "relative_shape_residual": 0.02564350094159465
+        },
+        "area_weighted": {
+          "projected_rate": -99.98042928753563,
+          "action_norm": 9.670609464252847,
+          "relative_shape_residual": 0.025079632157605444
+        }
+      },
+      "native_full_surface": {
+        "unweighted": {
+          "projected_rate": 72.96472152992102,
+          "action_norm": 71.24907287621566,
+          "relative_shape_residual": 0.013986675482475043
+        },
+        "area_weighted": {
+          "projected_rate": 72.9461593418268,
+          "action_norm": 7.05413605179372,
+          "relative_shape_residual": 0.013431587226342523
+        }
+      },
+      "held_other_terms_surface_sum": {
+        "unweighted": {
+          "projected_rate": -27.02306464599864,
+          "action_norm": 26.51234661845464,
+          "relative_shape_residual": 0.09786502088788586
+        },
+        "area_weighted": {
+          "projected_rate": -27.034269945708818,
+          "action_norm": 2.626022071777813,
+          "relative_shape_residual": 0.09530820951648371
+        }
+      },
+      "moment_error": 4.263256414560601e-14,
+      "sampled_action_relative_change_from_1e_5": 2.1832323638623204e-07
+    },
+    {
+      "amplitude": 1e-05,
+      "native_AD_normal": {
+        "unweighted": {
+          "projected_rate": 110.98052634105167,
+          "action_norm": 109.84125448722158,
+          "relative_shape_residual": 0.1636516093194218
+        },
+        "area_weighted": {
+          "projected_rate": 110.94813147609501,
+          "action_norm": 10.868609876577755,
+          "relative_shape_residual": 0.1602861218501408
+        }
+      },
+      "sampled_N_normal": {
+        "unweighted": {
+          "projected_rate": 10.992740165543578,
+          "action_norm": 22.784504961449347,
+          "relative_shape_residual": 0.8820930954089643
+        },
+        "area_weighted": {
+          "projected_rate": 10.967702188434737,
+          "action_norm": 2.21717477067741,
+          "relative_shape_residual": 0.8781859750264313
+        }
+      },
+      "normal_action_difference": {
+        "unweighted": {
+          "projected_rate": -99.98778617550808,
+          "action_norm": 97.65929786946646,
+          "relative_shape_residual": 0.025643500849195724
+        },
+        "area_weighted": {
+          "projected_rate": -99.98042928766027,
+          "action_norm": 9.670609464236602,
+          "relative_shape_residual": 0.02507963204100003
+        }
+      },
+      "native_full_surface": {
+        "unweighted": {
+          "projected_rate": 72.9647215454157,
+          "action_norm": 71.24907289121157,
+          "relative_shape_residual": 0.01398667534760546
+        },
+        "area_weighted": {
+          "projected_rate": 72.9461593551559,
+          "action_norm": 7.054136053075488,
+          "relative_shape_residual": 0.01343158715036931
+        }
+      },
+      "held_other_terms_surface_sum": {
+        "unweighted": {
+          "projected_rate": -27.023064630092406,
+          "action_norm": 26.51234660685917,
+          "relative_shape_residual": 0.09786502241864073
+        },
+        "area_weighted": {
+          "projected_rate": -27.03426993250437,
+          "action_norm": 2.6260220708647846,
+          "relative_shape_residual": 0.0953082109798447
+        }
+      },
+      "moment_error": 4.263256414560601e-14,
+      "sampled_action_relative_change_from_1e_5": 0.0
+    },
+    {
+      "amplitude": 3e-06,
+      "native_AD_normal": {
+        "unweighted": {
+          "projected_rate": 110.98052632945947,
+          "action_norm": 109.84125450686733,
+          "relative_shape_residual": 0.16365161100422665
+        },
+        "area_weighted": {
+          "projected_rate": 110.94813146902793,
+          "action_norm": 10.868609879036658,
+          "relative_shape_residual": 0.1602861236125346
+        }
+      },
+      "sampled_N_normal": {
+        "unweighted": {
+          "projected_rate": 10.992740159702832,
+          "action_norm": 22.784505230339313,
+          "relative_shape_residual": 0.8820930985115689
+        },
+        "area_weighted": {
+          "projected_rate": 10.967702187298574,
+          "action_norm": 2.217174797995734,
+          "relative_shape_residual": 0.8781859782634084
+        }
+      },
+      "normal_action_difference": {
+        "unweighted": {
+          "projected_rate": -99.98778616975663,
+          "action_norm": 97.65929786576419,
+          "relative_shape_residual": 0.025643501613478552
+        },
+        "area_weighted": {
+          "projected_rate": -99.98042928172934,
+          "action_norm": 9.670609463816097,
+          "relative_shape_residual": 0.02507963267211418
+        }
+      },
+      "native_full_surface": {
+        "unweighted": {
+          "projected_rate": 72.96472154761882,
+          "action_norm": 71.24907289403141,
+          "relative_shape_residual": 0.013986676018322486
+        },
+        "area_weighted": {
+          "projected_rate": 72.9461593474085,
+          "action_norm": 7.054136052340795,
+          "relative_shape_residual": 0.013431587303459438
+        }
+      },
+      "held_other_terms_surface_sum": {
+        "unweighted": {
+          "projected_rate": -27.023064622137824,
+          "action_norm": 26.512346584747874,
+          "relative_shape_residual": 0.09786501695735277
+        },
+        "area_weighted": {
+          "projected_rate": -27.034269934320836,
+          "action_norm": 2.6260220694480187,
+          "relative_shape_residual": 0.09530820467199126
+        }
+      },
+      "moment_error": 4.263256414560601e-14,
+      "sampled_action_relative_change_from_1e_5": 7.48737580925466e-07
+    }
+  ],
+  "background_numerator_polynomial_error": 8.881784197001252e-16,
+  "background_sampled_minus_AD_max": 5.95967719618784e-13,
+  "degree0_to5_endpoint_weight_moment_error": 4.263256414560601e-14,
+  "endpoint_diagonal_dimensionless": 3.5746031746031743,
+  "volume_and_surface_D_only_numerator_and_action_invariance_exact": true,
+  "D_only_preliminary_geometric_padded_error": 0.0,
+  "native_AD_decomposition_relative_error": 0.0,
+  "seconds": 11.228719167062081
+}
