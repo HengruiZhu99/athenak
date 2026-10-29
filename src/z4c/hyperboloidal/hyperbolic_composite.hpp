@@ -8,6 +8,7 @@
 #include <thread>
 #include <exception>
 #include "mesh/cubed_sphere/scri_surface.hpp"
+#include "mesh/cubed_sphere/scri_radial_difference.hpp"
 #include "mesh/cubed_sphere/angular_dissipation.hpp"
 #include "z4c/hyperboloidal/hyperbolic_shift.hpp"
 #include "z4c/hyperboloidal/tensor_scri.hpp"
@@ -24,10 +25,13 @@ class HyperbolicComposite {
   // analytic-jet derivative; neither choice resets any regularity constraint.
   enum class NormalDerivative {analytic_jets, sampled_numerator};
   const NormalDerivative normal_derivative;
+  enum class RadialClosure {ghost_lift, donor_seven};
+  const RadialClosure radial_closure;
   static constexpr int nf=31;
   inline static constexpr int ti[6]={0,0,0,1,1,2},tj[6]={0,1,2,1,2,2};
   cubed_sphere::CompositeDifference grid;
   cubed_sphere::ScriSurface scri;
+  std::unique_ptr<const cubed_sphere::ScriRadialDifference> radial_plan;
   V state,compensation,edge_compensation,failed_state,failed_boundary;
   int failed_stage=0;
   bool adaptive;
@@ -41,13 +45,22 @@ class HyperbolicComposite {
   size_t steps=0;
   HyperbolicComposite(cubed_sphere::CompositeMesh mesh,bool source=false,bool cross_face_scri=false,
                       Real angular_strength=0,
-                      NormalDerivative normal=NormalDerivative::analytic_jets)
-      :normal_derivative(normal),grid(std::move(mesh),4,true),scri(grid,nf,6,cross_face_scri),
+                      NormalDerivative normal=NormalDerivative::analytic_jets,
+                      RadialClosure radial=RadialClosure::ghost_lift)
+      :normal_derivative(normal),radial_closure(radial),grid(std::move(mesh),4,true),
+       scri(grid,nf,radial==RadialClosure::donor_seven?7:6,cross_face_scri),
        state(nf*grid.active.size(),0),compensation(state.size(),0),
        edge_compensation(scri.values.size(),0),adaptive(source),angular_epsilon(angular_strength) {
     if(normal_derivative!=NormalDerivative::analytic_jets&&
        normal_derivative!=NormalDerivative::sampled_numerator)
       throw std::invalid_argument("invalid scri normal derivative selector");
+    if(radial_closure!=RadialClosure::ghost_lift&&radial_closure!=RadialClosure::donor_seven)
+      throw std::invalid_argument("invalid scri radial closure selector");
+    if(radial_closure==RadialClosure::donor_seven){
+      if(normal_derivative!=NormalDerivative::sampled_numerator)
+        throw std::invalid_argument("donor radial closure requires sampled numerator");
+      radial_plan=std::make_unique<const cubed_sphere::ScriRadialDifference>(grid,scri);
+    }
     if(!std::isfinite(angular_epsilon)||angular_epsilon<0)
       throw std::invalid_argument("invalid angular dissipation strength");
     if(angular_epsilon>0){
@@ -58,6 +71,10 @@ class HyperbolicComposite {
     for(size_t p=0;p<scri.rows.size();++p)scri.values[nf*p]=1;
   }
   static Real Radius(const Real*x){return std::sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);}
+  void BulkDerivatives(const V&padded,int f,size_t p,Real d[3],Real dd[3][3],bool second=true)const{
+    if(radial_plan&&radial_plan->Contains(p))radial_plan->Derivatives(padded,scri.values,f,p,d,dd,second);
+    else grid.Derivatives(padded,f,p,d,dd,second);
+  }
   static Z4cJet<Real> Jet(const Real*x,const V&v,
       const std::vector<std::array<Real,3>>&d,
       const std::vector<std::array<std::array<Real,3>,3>>&dd) {
@@ -145,7 +162,8 @@ class HyperbolicComposite {
   // nonlinear numerator algebra with the endpoint's direct second jets.
   Z4cRHS<Real> SampledPoleNormalDerivative(size_t point,const V&padded,
                                          const Z4cRHS<Real>*endpoint_pole=nullptr)const{
-    if(padded.size()!=nf*size_t(grid.count)||scri.radial_nodes!=6)
+    if(padded.size()!=nf*size_t(grid.count)||
+       scri.radial_nodes!=(radial_closure==RadialClosure::donor_seven?7:6))
       throw std::invalid_argument("sampled scri normal state shape/radial width");
     const auto&row=scri.rows.at(point);const int n=grid.n;
     static const auto weights=[](){
@@ -156,6 +174,14 @@ class HyperbolicComposite {
                       cubed_sphere::Jet(offsets[i]-offsets[j]);
         w[i]=basis.d[0];}
       return w;
+    }();
+    static const auto donor_weights=[](){
+      const Real offsets[7]={-5.5,-4.5,-3.5,-2.5,-1.5,-.5,0};std::array<Real,6>w{};
+      for(int i=0;i<6;++i){cubed_sphere::Jet basis(1);
+        for(int j=0;j<7;++j)if(i!=j)
+          basis=basis*(cubed_sphere::Jet::Variable(0,0)-cubed_sphere::Jet(offsets[j]))/
+                      cubed_sphere::Jet(offsets[i]-offsets[j]);
+        w[i]=basis.d[0];}return w;
     }();
     Z4cRHS<Real> endpoint{};
     if(endpoint_pole)endpoint=*endpoint_pole;
@@ -169,12 +195,13 @@ class HyperbolicComposite {
     Z4cRHS<Real> out{};V value(nf);
     std::vector<std::array<Real,3>> d(nf);
     std::vector<std::array<std::array<Real,3>,3>> dd(nf);
-    for(int s=0;s<5;++s){
-      const size_t active=size_t(row.block)*n*n*n+(row.k*n+row.j)*n+n-5+s;
+    const int donors=scri.radial_nodes-1;
+    for(int s=0;s<donors;++s){
+      const size_t active=size_t(row.block)*n*n*n+(row.k*n+row.j)*n+n-donors+s;
       const auto*x=grid.geometry[active].x;
       for(int f=0;f<nf;++f)if(f<=18||(f>=22&&f<25)){
         value[f]=padded[f*grid.count+grid.active[active]];Real df[3],ddf[3][3];
-        grid.Derivatives(padded,f,active,df,ddf,f<=6||f==18||(f>=22&&f<25));
+        BulkDerivatives(padded,f,active,df,ddf,f<=6||f==18||(f>=22&&f<25));
         for(int a=0;a<3;++a){d[f][a]=df[a];for(int b=0;b<3;++b)dd[f][a][b]=ddf[a][b];}
       }
       const auto u=Jet(x,value,d,dd);const auto o=Omega(x,u,false);
@@ -182,7 +209,7 @@ class HyperbolicComposite {
       if(!HyperbolicDamping(x,u,o,parts))throw std::runtime_error("invalid sampled scri interior source");
       // Anchor differences annihilate constant numerators exactly. Keep the
       // endpoint value itself in BoundaryRates' unchanged weak 4 N / h term.
-      const auto&p=parts.pole;const Real w=weights[s]/row.radial_spacing;
+      const auto&p=parts.pole;const Real w=(donors==5?weights[s]:donor_weights[s])/row.radial_spacing;
       out.chi+=w*(p.chi-endpoint.chi);out.trace+=w*(p.trace-endpoint.trace);
       out.theta+=w*(p.theta-endpoint.theta);
       for(int a=0;a<3;++a){out.lambda[a]+=w*(p.lambda[a]-endpoint.lambda[a]);
@@ -265,6 +292,9 @@ class HyperbolicComposite {
   Real TransportCorrection(const V &padded,int f,size_t p,const Real beta[3])const{
     const int point=f*grid.count+grid.active[p];Real correction=0;
     for(int A=0;A<3;++A){Real b=0;for(int i=0;i<3;++i)b+=grid.geometry[p].J[A][i]*beta[i];
+      // The one-sided radial derivative already enters every native transport
+      // term through BulkDerivatives. Preserve existing upwinding elsewhere.
+      if(A==0&&radial_plan&&radial_plan->Contains(p))continue;
       const int sign=b>=0?1:-1;const Real anchor=padded[point];
       auto value=[&](int j){return padded[point+grid.Offset(A,sign*j)]-anchor;};
       const Real biased=sign*grid.n*(-3*value(-1)+18*value(1)-6*value(2)+value(3))/12;
@@ -315,7 +345,7 @@ class HyperbolicComposite {
       V v(nf);std::vector<std::array<Real,3>> d(nf);
       std::vector<std::array<std::array<Real,3>,3>> dd(nf);
       try{for(size_t p=grid.active.size()*worker/count;p<grid.active.size()*(worker+1)/count;++p){const auto*x=grid.geometry[p].x;
-      for(int f=0;f<nf;++f){v[f]=values[p*nf+f];Real df[3],ddf[3][3];grid.Derivatives(padded,f,p,df,ddf,f<=6||f==18||(f>=22&&f<25));
+      for(int f=0;f<nf;++f){v[f]=values[p*nf+f];Real df[3],ddf[3][3];BulkDerivatives(padded,f,p,df,ddf,f<=6||f==18||(f>=22&&f<25));
         for(int a=0;a<3;++a){d[f][a]=df[a];for(int b=0;b<3;++b)dd[f][a][b]=ddf[a][b];}}
       const auto u=Jet(x,v,d,dd);const auto o=Omega(x,u);auto parts=ConformalRHS(u,o,4.,-.99);
       if(!HyperbolicDamping(x,u,o,parts))throw std::runtime_error("invalid bulk source");

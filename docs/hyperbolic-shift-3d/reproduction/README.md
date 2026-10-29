@@ -209,6 +209,16 @@ full surface action to 4.11e-12 relative error. This identifies the coupled
 A/metric regularity penalty as the next target; it does not justify stronger
 penalties or claim that removing them would stabilize the scheme.
 
+An [optional seven-node CPU radial control](scri-donor-seven-cpu-v1/README.md)
+now tests direct active-plus-endpoint derivatives in the last three radial
+cell rows, keeping penalty coefficients fixed. Analytic derivative and
+poisoned exterior-ghost checks pass; default V5 full-array actions remain
+bitwise unchanged. Its action opposes the saved volume directions but
+increases their surface projections, with large shape residuals. It is not
+a demonstrated stability improvement. A bounded fresh n6 duration comparison
+is separate from these component/action results; there is no new GPU or
+production admission.
+
 The original J-disabled, bulk-mu=4 1D control is confirmed to have completed coordinate `33.3333984375 = 100.0001953125 M`. Its N513/N1025 continuation chains and frozen-source identities were checked. A [portable N513 time series](original-1d-reference/history.csv) and [provenance](original-1d-reference/provenance.json) preserve the matching horizon/exterior-constraint reference. Late gauge settling and uniform puncture convergence were not established by that original control.
 
 ## Archived pause point

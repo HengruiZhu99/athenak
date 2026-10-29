@@ -22,10 +22,12 @@ void Basis(int a,Real b[3][3]) {
 struct Probe {
   h::HyperbolicComposite model;
   Real dt;
-  Probe(int n,Real epsilon,Real time_step,bool sampled):
+  Probe(int n,Real epsilon,Real time_step,int variant):
       model(cubed_sphere::CompositeMesh(.125,{.45,.75,1},1,n,3),false,true,epsilon,
-        sampled?h::HyperbolicComposite::NormalDerivative::sampled_numerator:
-                h::HyperbolicComposite::NormalDerivative::analytic_jets),dt(time_step) {}
+        variant?h::HyperbolicComposite::NormalDerivative::sampled_numerator:
+                h::HyperbolicComposite::NormalDerivative::analytic_jets,
+        variant==2?h::HyperbolicComposite::RadialClosure::donor_seven:
+                   h::HyperbolicComposite::RadialClosure::ghost_lift),dt(time_step) {}
   int VolumeSize()const{return 26*model.grid.active.size();}
   int Size()const{return VolumeSize()+19*model.scri.rows.size();}
   static void Retract(const Real*input,std::vector<Real>&values,int fields,Real&det,Real&trace) {
@@ -82,8 +84,8 @@ extern "C" void* scri_candidate_create(int n,double epsilon,double dt,int sample
   static_assert(sizeof(Real)==sizeof(double),"candidate diagnostic requires FP64");
   try{
     if((n!=6&&n!=16)||epsilon!=2||!std::isfinite(dt)||!(dt>0)||dt>.0005||
-       (sampled!=0&&sampled!=1))throw std::runtime_error("invalid bounded candidate configuration");
-    return new Probe(n,epsilon,dt,sampled!=0);
+       (sampled<0||sampled>2))throw std::runtime_error("invalid bounded candidate configuration");
+    return new Probe(n,epsilon,dt,sampled);
   }catch(const std::exception&e){error=e.what();return nullptr;}
 }
 extern "C" void scri_candidate_destroy(void*p){delete static_cast<Probe*>(p);}
