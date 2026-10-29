@@ -1,0 +1,502 @@
+{
+  "acquisition_passed": true,
+  "scientific_not_admitted": true,
+  "scientific_restart_admitted": false,
+  "stability_qualification": false,
+  "issues": [],
+  "cases": [
+    {
+      "name": "snapshot-025",
+      "status": "passed",
+      "issues": [],
+      "acquisition_checks_recomputed": 32,
+      "scientific_not_admitted": true,
+      "scientific_restart_admitted": false,
+      "failed_acquisition_checks": [],
+      "reference_stability": {
+        "all_reference_limits_passed": false,
+        "checks": [
+          {
+            "field": "max_state_deviation",
+            "value": 1.4450260271976012e-07,
+            "limit": 1e-08,
+            "passed": false
+          },
+          {
+            "field": "H_L2",
+            "value": 7.296693840387072e-12,
+            "limit": 1e-07,
+            "passed": true
+          },
+          {
+            "field": "M_L2",
+            "value": 6.255993552830877e-10,
+            "limit": 1e-07,
+            "passed": true
+          }
+        ],
+        "scientific_not_admitted": true,
+        "meaning": "Reference equilibrium limits only; no scientific continuation or stability admission."
+      },
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V4",
+        "n": 16,
+        "nf": 31,
+        "kind": 0,
+        "admitted": true,
+        "cells": 77824,
+        "surface_size": 47616,
+        "steps": 500,
+        "time": 0.25,
+        "dt": 0.0005,
+        "header_bytes": 88,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "5196ebab55fd2b5fe45b8db940492fba5d39bc99ca6fbb5e4031b58f61e9322d",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 2412544,
+            "sha256": "303c09aacf7196b4c6e28ac8b72e14f0c24742639f2ad85ea3e2814ed45b5018"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 2412544,
+            "sha256": "73960b4349faebde252b3fff632231c1791706e266694497378bea2a4485f89c"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "2537cb7e919bcfdf4b63059736d97132e99432b76715eb14fbdfc794d2fbea85"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "87b3e677f0a55dd351b045799dba429b2479e437e746a627adfa71a912db7d47"
+          }
+        ],
+        "bytes": 39362648,
+        "sha256": "cbda174e6d00b193cbdc6cb9a8b04997bc00fc2e27ca9e7610e425ff5a421893"
+      },
+      "native_checkpoint_admitted_flag": true,
+      "amplitudes": {
+        "max_state_deviation": 1.4450260271976012e-07,
+        "H_L2": 7.296693840387072e-12,
+        "M_L2": 6.255993552830877e-10,
+        "H_exterior_L2": 7.296693840387072e-12,
+        "M_exterior_L2": 6.255993552830877e-10,
+        "max_null_surface": 1.1102230246251544e-15,
+        "max_null_ghost": 1.1102230246445564e-15,
+        "max_determinant_residual": 4.440892098500626e-16,
+        "max_tracefree_residual": 3.970466940254533e-23
+      },
+      "time": 0.25,
+      "steps": 500,
+      "timing": {
+        "native_seconds": 65.344233104,
+        "worker_case_seconds": 66.463256936986,
+        "native_seconds_per_step": 0.13068846620799998,
+        "scope": "Whole native run divided by accepted steps; includes setup and diagnostics, not kernel throughput."
+      },
+      "history": {
+        "samples": 6,
+        "last_time": 0.25,
+        "reference_limits_on_history": [
+          {
+            "field": "state_deviation",
+            "limit": 1e-08,
+            "all_recorded_samples_passed": false,
+            "first_failed_recorded_time": 0.25,
+            "maximum": 1.4450260271976012e-07
+          },
+          {
+            "field": "H_L2",
+            "limit": 1e-07,
+            "all_recorded_samples_passed": true,
+            "first_failed_recorded_time": null,
+            "maximum": 7.296693840387072e-12
+          },
+          {
+            "field": "M_L2",
+            "limit": 1e-07,
+            "all_recorded_samples_passed": true,
+            "first_failed_recorded_time": null,
+            "maximum": 6.255993552830877e-10
+          }
+        ],
+        "note": "Checks recorded diagnostics only; no interpolation between samples."
+      }
+    },
+    {
+      "name": "snapshot-030",
+      "status": "passed",
+      "issues": [],
+      "acquisition_checks_recomputed": 32,
+      "scientific_not_admitted": true,
+      "scientific_restart_admitted": false,
+      "failed_acquisition_checks": [],
+      "reference_stability": {
+        "all_reference_limits_passed": false,
+        "checks": [
+          {
+            "field": "max_state_deviation",
+            "value": 5.359370087783153e-06,
+            "limit": 1e-08,
+            "passed": false
+          },
+          {
+            "field": "H_L2",
+            "value": 2.520710445241131e-10,
+            "limit": 1e-07,
+            "passed": true
+          },
+          {
+            "field": "M_L2",
+            "value": 2.3156590347270507e-08,
+            "limit": 1e-07,
+            "passed": true
+          }
+        ],
+        "scientific_not_admitted": true,
+        "meaning": "Reference equilibrium limits only; no scientific continuation or stability admission."
+      },
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V4",
+        "n": 16,
+        "nf": 31,
+        "kind": 0,
+        "admitted": true,
+        "cells": 77824,
+        "surface_size": 47616,
+        "steps": 600,
+        "time": 0.3,
+        "dt": 0.0005,
+        "header_bytes": 88,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "af89c9f1477be5b13e6235540e9914c55eb9585cc5c2b5d8b576102060035da6",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 2412544,
+            "sha256": "7c7b27e2541c6081ebe5e354b709dbd370db0720ce66201fce9857f98d2dd388"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 2412544,
+            "sha256": "ed843f1835f4a850f5b11682aa414080d2c401769faea832d70dd0dd6d2f9556"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "26e9f4f182cc196dd7b2e2da5c3c485c83405b0c20603ccb7c2989d497bf935c"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "d7bf49899c31ee15167e3cd81d3ccfa50560ddf0993651e9537f75d12e6b0aa3"
+          }
+        ],
+        "bytes": 39362648,
+        "sha256": "bec96f27ceff0dee07923f0e8ee1ad92effa4e0fc0c2b946e4f19147332ced16"
+      },
+      "native_checkpoint_admitted_flag": true,
+      "amplitudes": {
+        "max_state_deviation": 5.359370087783153e-06,
+        "H_L2": 2.520710445241131e-10,
+        "M_L2": 2.3156590347270507e-08,
+        "H_exterior_L2": 2.520710445241131e-10,
+        "M_exterior_L2": 2.3156590347270507e-08,
+        "max_null_surface": 1.1102230246251544e-15,
+        "max_null_ghost": 1.221245327088236e-15,
+        "max_determinant_residual": 6.661338147750939e-16,
+        "max_tracefree_residual": 8.470329472543003e-22
+      },
+      "time": 0.3,
+      "steps": 600,
+      "timing": {
+        "native_seconds": 77.157612424,
+        "worker_case_seconds": 78.27733816404361,
+        "native_seconds_per_step": 0.12859602070666667,
+        "scope": "Whole native run divided by accepted steps; includes setup and diagnostics, not kernel throughput."
+      },
+      "history": {
+        "samples": 7,
+        "last_time": 0.3,
+        "reference_limits_on_history": [
+          {
+            "field": "state_deviation",
+            "limit": 1e-08,
+            "all_recorded_samples_passed": false,
+            "first_failed_recorded_time": 0.25000000000000017,
+            "maximum": 5.359370087783153e-06
+          },
+          {
+            "field": "H_L2",
+            "limit": 1e-07,
+            "all_recorded_samples_passed": true,
+            "first_failed_recorded_time": null,
+            "maximum": 2.520710445241131e-10
+          },
+          {
+            "field": "M_L2",
+            "limit": 1e-07,
+            "all_recorded_samples_passed": true,
+            "first_failed_recorded_time": null,
+            "maximum": 2.3156590347270507e-08
+          }
+        ],
+        "note": "Checks recorded diagnostics only; no interpolation between samples."
+      }
+    },
+    {
+      "name": "snapshot-035",
+      "status": "passed",
+      "issues": [],
+      "acquisition_checks_recomputed": 32,
+      "scientific_not_admitted": true,
+      "scientific_restart_admitted": false,
+      "failed_acquisition_checks": [],
+      "reference_stability": {
+        "all_reference_limits_passed": false,
+        "checks": [
+          {
+            "field": "max_state_deviation",
+            "value": 0.00020669660763613238,
+            "limit": 1e-08,
+            "passed": false
+          },
+          {
+            "field": "H_L2",
+            "value": 9.00600367090872e-09,
+            "limit": 1e-07,
+            "passed": true
+          },
+          {
+            "field": "M_L2",
+            "value": 8.674761818531768e-07,
+            "limit": 1e-07,
+            "passed": false
+          }
+        ],
+        "scientific_not_admitted": true,
+        "meaning": "Reference equilibrium limits only; no scientific continuation or stability admission."
+      },
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V4",
+        "n": 16,
+        "nf": 31,
+        "kind": 0,
+        "admitted": true,
+        "cells": 77824,
+        "surface_size": 47616,
+        "steps": 700,
+        "time": 0.35,
+        "dt": 0.0005,
+        "header_bytes": 88,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "0b5f1108ea2c2425972d6b91b56a6bffe13744f348652cc99903fa47a08d76fe",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 2412544,
+            "sha256": "7da23edf0a5760ef8c2d9403ede5a379df57a3ff772069b0fd8bc9504b54cd41"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 2412544,
+            "sha256": "ec327c743416edddd7917afd80a5858bf12cc71b431222ba3e415e49d4805b04"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "2a4693482bab42b7524813d8372addc75e32201b37eb8bc91c63f7a4b78dc2c8"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "9592111d6e6adbb1b9c04902d0125cf4cda62c60693e3a5a70e0a218923b9a56"
+          }
+        ],
+        "bytes": 39362648,
+        "sha256": "5ac7cd09624d2d67678ef52aaf290dfad9605425ee800ac0cdbbe86af09a3e14"
+      },
+      "native_checkpoint_admitted_flag": true,
+      "amplitudes": {
+        "max_state_deviation": 0.00020669660763613238,
+        "H_L2": 9.00600367090872e-09,
+        "M_L2": 8.674761818531768e-07,
+        "H_exterior_L2": 9.00600367090872e-09,
+        "M_exterior_L2": 8.674761818531768e-07,
+        "max_null_surface": 1.1102230246251544e-15,
+        "max_null_ghost": 1.2212453270988776e-15,
+        "max_determinant_residual": 8.881784197001252e-16,
+        "max_tracefree_residual": 4.0657581468206416e-20
+      },
+      "time": 0.35,
+      "steps": 700,
+      "timing": {
+        "native_seconds": 89.414602617,
+        "worker_case_seconds": 90.48655761801638,
+        "native_seconds_per_step": 0.12773514659571428,
+        "scope": "Whole native run divided by accepted steps; includes setup and diagnostics, not kernel throughput."
+      },
+      "history": {
+        "samples": 8,
+        "last_time": 0.35,
+        "reference_limits_on_history": [
+          {
+            "field": "state_deviation",
+            "limit": 1e-08,
+            "all_recorded_samples_passed": false,
+            "first_failed_recorded_time": 0.25000000000000017,
+            "maximum": 0.00020669660763613238
+          },
+          {
+            "field": "H_L2",
+            "limit": 1e-07,
+            "all_recorded_samples_passed": true,
+            "first_failed_recorded_time": null,
+            "maximum": 9.00600367090872e-09
+          },
+          {
+            "field": "M_L2",
+            "limit": 1e-07,
+            "all_recorded_samples_passed": false,
+            "first_failed_recorded_time": 0.35,
+            "maximum": 8.674761818531768e-07
+          }
+        ],
+        "note": "Checks recorded diagnostics only; no interpolation between samples."
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "remote_path": "campaigns/linear-window-dissipative-v2/output/snapshot-025.report.json",
+      "bytes": 2710,
+      "sha256": "969e427a6b424d7e38faad10fc2d97b3d7f3de4fdf17769086975b8b226f2517"
+    },
+    {
+      "remote_path": "campaigns/linear-window-dissipative-v2/output/snapshot-025.history.csv",
+      "bytes": 3705,
+      "sha256": "c3396ff3538e6e85a0290f350b966e6831c02d0ebf4638e7109f902c51c91605"
+    },
+    {
+      "remote_path": "campaigns/linear-window-dissipative-v2/output/snapshot-025.checkpoint",
+      "bytes": 39362648,
+      "sha256": "cbda174e6d00b193cbdc6cb9a8b04997bc00fc2e27ca9e7610e425ff5a421893"
+    },
+    {
+      "remote_path": "campaigns/linear-window-dissipative-v2/output/snapshot-025.log",
+      "bytes": 479,
+      "sha256": "792b8418257c5a8974a0d8d0095290c0ae5966e9e20827dccc6eb8e1529db13f"
+    },
+    {
+      "remote_path": "campaigns/linear-window-dissipative-v2/output/snapshot-030.report.json",
+      "bytes": 2768,
+      "sha256": "9b88e1a3f281dc9361f65dbc269871f725e0a2b5e8c2c379984c8ae8dd8e4d2f"
+    },
+    {
+      "remote_path": "campaigns/linear-window-dissipative-v2/output/snapshot-030.history.csv",
+      "bytes": 4294,
+      "sha256": "d501ff5167d1c060e0356074bcd10740ccdcb1f1fcfa772b34196e4965ea2dfa"
+    },
+    {
+      "remote_path": "campaigns/linear-window-dissipative-v2/output/snapshot-030.checkpoint",
+      "bytes": 39362648,
+      "sha256": "bec96f27ceff0dee07923f0e8ee1ad92effa4e0fc0c2b946e4f19147332ced16"
+    },
+    {
+      "remote_path": "campaigns/linear-window-dissipative-v2/output/snapshot-030.log",
+      "bytes": 554,
+      "sha256": "7d5dba214edda50cbebb2590f392e8547b2479446bb229c0c165cc1a7c626f06"
+    },
+    {
+      "remote_path": "campaigns/linear-window-dissipative-v2/output/snapshot-035.report.json",
+      "bytes": 2761,
+      "sha256": "2f3fb546ceea559fde637d704b06fa852c0fa3d94586d082f630c9a401a3bf49"
+    },
+    {
+      "remote_path": "campaigns/linear-window-dissipative-v2/output/snapshot-035.history.csv",
+      "bytes": 4907,
+      "sha256": "50b51cb74a1e8c12782bdf41b37670ab8b723907ff9ddd14adc0f331852a17f8"
+    },
+    {
+      "remote_path": "campaigns/linear-window-dissipative-v2/output/snapshot-035.checkpoint",
+      "bytes": 39362648,
+      "sha256": "5ac7cd09624d2d67678ef52aaf290dfad9605425ee800ac0cdbbe86af09a3e14"
+    },
+    {
+      "remote_path": "campaigns/linear-window-dissipative-v2/output/snapshot-035.log",
+      "bytes": 627,
+      "sha256": "576e3f772e7165d1cfef8cd55d8fd0b30cae1b7e07eae4605fb012a48493aeac"
+    }
+  ],
+  "verifier_sha256": "0d02613cc1243ef0d5d9b040c9a22060b4a4d0b91f32ff21658905e9d44972fc",
+  "scope": "Diagnostic acquisition only; reference stability limits retained separately. Native header admission does not imply scientific admission.",
+  "surface_amplitude_caveat": "max_state_deviation screens volume fields only; separate field analysis must inspect surface amplitudes.",
+  "build": {
+    "source_commit": "d98e2a99bbf1d5546956be3d724c82715ca704ec",
+    "kokkos_pin": "6739bc623081648af9e752b616d9671527922cbf",
+    "source_manifest_sha256": "0e7967f1f33559ed79b9f97d6416dacc296f0f14663d35c682177a9ac07db60f",
+    "git_blob_hashes_verified": 2613,
+    "build_receipt_sha256": "0f8ac6a276149835ede35eb495ed692e95876bf4cc5549b90eb6eeab9cd002c0",
+    "cache_sha256": "1c571ff056eac7b36beadf1ea2d5cf55b11a94914d5e9e50a7fda56a3821a0cd",
+    "binaries": {
+      "build-sycl-mpi-v11/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_dissipative": "fc8d8074351a01ade6fd05dcf460555c935cf4ffe66c9bda31cc517679500fff",
+      "build-sycl-mpi-v11/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_projected_angular": "8ab8813d5d3bed2cf8c42d0e0e2c99bfefe822e8e205aed9c9443c8900b5c5e3",
+      "build-sycl-mpi-v11/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_composite_device": "a56f58832b2c519c8dcb010399d537ea9340217d46c6474b2847af560176b94f",
+      "build-sycl-mpi-v11/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_composite_exchange": "f4100792ceef8f2cb210f44cdd51cc72c7db99bb3559678ae7364bd2b48ee008",
+      "build-sycl-mpi-v11/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_scri_device": "b9ba4f2efcaa8654b35d14453adbe5cf9bec2b7ddf697b0ecdf73fc84b7da499",
+      "build-sycl-mpi-v11/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_scri_angular": "f05f83bd916e198a8e8e285678373ce9e481c14ef8518ea291236c773ee8b526",
+      "build-sycl-mpi-v11/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_algebraic_projection": "f56fe938fce75f333fa6acb408586a0f6bbfad26893fe30b46646bd6af824b1c",
+      "build-sycl-mpi-v11/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_angular_dissipation": "7ced82776139920387ac97cb8b07dfa30c2a8165573b315fe6d112687e48c774",
+      "build-sycl-mpi-v11/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_scri_dissipation_closure": "46b9bf67d8e2a9de96cf8c2c468440bbf14d6ceeca5bb568e0da91592f94917a"
+    },
+    "records": {
+      "CMakeCache.txt": "1c571ff056eac7b36beadf1ea2d5cf55b11a94914d5e9e50a7fda56a3821a0cd",
+      "build-v11.sh": "6743e3aec7bfd417e7d14b87a8ca81f5df1a0664bae99633f50869c1ae2034bb",
+      "source-v11-manifest.json": "0e7967f1f33559ed79b9f97d6416dacc296f0f14663d35c682177a9ac07db60f",
+      "source-v11-non-kokkos-manifest.json": "5c836a94955ac82034e95f5f0244bb088b7fff86fe38c11638069e9cc3148b33",
+      "source-v11-provenance.json": "6e5a8ae27e96bfd95499d8a175efb2a28ffc49bdc29b793e9716a912ddb7051f",
+      "v11/build-status.json": "0f8ac6a276149835ede35eb495ed692e95876bf4cc5549b90eb6eeab9cd002c0",
+      "v11/build.log": "f79cb8fc7e300d9ca8e5b9f9a23d38ba3bd6a8b7aecee7c8a08042943e92af4f",
+      "v11/compiler.txt": "6f41d08dd542e36e2f41b7b105da56d84c00bd6eb99a7c324ef8ef06635cbe26",
+      "v11/configure.log": "6de554b5dfd8e6eaa49acc20f21776fff058ab83f6119d34bc3557f253923d1b",
+      "v11/modules.txt": "cf3fde5892e6950a2ec013c75688552bf45cd2c81a1c7e4bdce32cb81f224156",
+      "v11/mpi-wrapper.txt": "35ee2ba9df330d781abc430dd144e1728a49ceb7215380336a8682af0ed5a88d"
+    }
+  },
+  "admission_chain": {
+    "sha256": "32cc0fed05319e204f41edea3b62f614138f07a801079e6348536a07650713a1",
+    "supporting_hashes_verified": 18,
+    "scope": "Prior implementation/restart preflight only; no duration admission."
+  },
+  "one_node_twelve_tiles_verified": true,
+  "terminal": {
+    "job_id": "8983924.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "state": "F",
+    "exit_status": 0,
+    "allocation_released": true
+  },
+  "storage_at_finish": {
+    "bytes": 1955649304,
+    "entries": 11240
+  },
+  "worker_elapsed_seconds": 257.0697902990505,
+  "checks_recomputed": 96,
+  "artifacts_verified": 12,
+  "metadata_sha256": {
+    "plan.json": "a950caacf4d8202c9475be2a92413025033f22abd40b6c3656ead83e415f6e25",
+    "binding.json": "ac402be7beb630ab46711655b11af5343229243dee1c1a80fea549df331b23a0",
+    "worker-status.json": "e504873a8a273eb5bc4e887b6567baffe9007d1e08fe83a34f81305741d5c61e",
+    "run_debug.pbs": "dbac64051d51efaed5874bf4cb8f99bbcbc92f16924b9adae0b496087f4352ee",
+    "submission.json": "f7d91212f1e7923e7bea84833bfa40f860d4733ecf876e3aab36713993b59d0e",
+    "allocation-released.json": "1958ae566db345bd06f878d5905a0c94db1cd309306878dcf1a82a744652f4e6",
+    "collected.json": "51fbaa71a0445e49c3ba591b4a99d17ade13522e07c07fd8ad6387caa163989e",
+    "output/affinity.log": "c351fa31b9baa21b9df13089ca38ce597de06da563b44b00fa4c557ed6fe9fba"
+  },
+  "nonfinite_metadata_paths": []
+}
