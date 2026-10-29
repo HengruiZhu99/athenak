@@ -53,3 +53,13 @@ Gauge coefficients match: mu_bulk=4, ratio=2, D damping=1, restoring=4, telegrap
 The main remaining fidelity differences are disclosed discretization choices, not a discovered coefficient bug: the donor uses a logarithmic/rescaled puncture chart, seven-point radial derivatives, an asymptotic r=0 coefficient slot and odd regular-shift treatment; 3D evolves direct fields on an even cell-centered Cartesian core, fourth-order mapped derivatives, seam interpolation and block-local KO8. The 1D floor was inactive in the preserved 100 M control; 3D has no lapse floor. The donor parametrization enforces unit determinant/traceless curvature at all stages, whereas the V2/V3 candidate projects only accepted final stages. Spatial resolution and finite-time stability must therefore be established for the 3D discretization itself; pointwise equation parity is not a transferred 100 M stability result.
 
 Before a long-time comparison: retain matched physical times and source/input identities; select the explicit exterior/radial diagnostics (or reanalyze old snapshots); compare area-derived mass and the same horizon root; state the exterior mask convention; preserve failed-horizon and stale-diagnostic nulls; and keep angular variation alongside radial-profile errors. These are concrete outstanding comparison requirements, not changes to the frozen source-v10 preflight.
+
+## Current V11 comparison through 3M
+
+The discretization discussion above describes the earlier V2/V3 control. V11
+now has logarithmic chi/lapse RK and reference KO, continuous Cartesian seams,
+and a counted physical lapse floor. Its near-horizon spacing is 5.76 times
+coarser and timestep 10.24 times larger than the preserved N513 1D trajectory.
+[The current comparison and plots](reproduction/continuous-positive-vs-1d/README.md)
+use radial momentum and irreducible mass consistently, preserve failed horizon
+samples, and distinguish behavioral agreement from equal-resolution accuracy.
