@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "plan_sha256": "c2def604700098988e1c2f4506aae4e0c25588c24ba3d23c062eac9c1b745969",
+  "source_manifest": "source-v14-manifest.json",
+  "source_manifest_sha256": "da9304ba17ad5a1336aef4468dc88ce375622104bac2c69cc1d3cc534abcb2a4",
+  "binaries": {
+    "build-sycl-mpi-v14/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_inner_transition": "c6873ac0a8fef73b03ed272c60736f2027e342b56ca85d2bafa62605c1584eb0"
+  },
+  "inputs": {
+    "inputs/puncture-n16.txt": "c8ffa46d9007ee8b643db41980cfa4a08f9ab3f2f1c2383978a002f067f9db31"
+  },
+  "pbs_sha256": "edb426d330de87f9bfb79029df86cc586ddfc28f701c7a26350a43995023285a",
+  "admission": {
+    "path": "admissions/preflight-inner-transition-v1.json",
+    "sha256": "9d32893f2c49f40a313b303b3c692cb9cfd642b2269258f531641726b460b004"
+  },
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "00:30:00"
+  },
+  "storage_at_bind": {
+    "bytes": 3838943547,
+    "entries": 18214,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 100000000,
+    "planned_bytes": 150000000,
+    "headroom_bytes": 911056453
+  },
+  "launcher": {
+    "control.py": "2ed84d44b97ce9e0848b05c7d7da7c590b2681f6df9bec8f1b4d046c0463693d",
+    "worker.py": "62b5346a7815dca5954a95c705ec1c43eaf87ec5bf1442318f5c259d9d3685b1",
+    "run_debug.pbs": "1d5df790cf6c8cdc96e9d330b9b337ce755b30e057959586bcd661dc9ce885a6",
+    "storage.py": "fdcf2abc2533b8fed91220d9c18d8b9d723660820949a72e956fb9c8866afd39"
+  },
+  "allocation_seconds": 1800,
+  "worker_seconds": 1710
+}
