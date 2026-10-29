@@ -1,0 +1,285 @@
+{
+  "schema": 1,
+  "reviewed": true,
+  "phase": "stability",
+  "n": 16,
+  "low_resolution_n": 16,
+  "admission": "admissions/preflight-dissipative-v1.json",
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "00:20:00"
+  },
+  "storage": {
+    "limit_bytes": 5000000000,
+    "planned_new_bytes": 130000000,
+    "atomic_checkpoint_reserve_bytes": 100000000
+  },
+  "worker_seconds": 1110,
+  "output_dir": "campaigns/stability-dissipative-minkowski-v1/output",
+  "commands": [
+    {
+      "name": "minkowski",
+      "kind": "minkowski",
+      "executable": "build-sycl-mpi-v11/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_dissipative",
+      "args": [
+        "16",
+        "campaigns/stability-dissipative-minkowski-v1/output/minkowski",
+        "minkowski",
+        "1",
+        ".0005",
+        "-",
+        "-",
+        "@WALL_SECONDS@",
+        ".05",
+        ".001",
+        "6",
+        "12",
+        "2"
+      ],
+      "timeout_seconds": 1050,
+      "report": "campaigns/stability-dissipative-minkowski-v1/output/minkowski.report.json",
+      "artifacts": [
+        "campaigns/stability-dissipative-minkowski-v1/output/minkowski.report.json",
+        "campaigns/stability-dissipative-minkowski-v1/output/minkowski.history.csv",
+        "campaigns/stability-dissipative-minkowski-v1/output/minkowski.checkpoint",
+        "campaigns/stability-dissipative-minkowski-v1/output/minkowski.failed-stage.bin",
+        "campaigns/stability-dissipative-minkowski-v1/output/minkowski.log"
+      ],
+      "inputs": [],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "n"
+          ],
+          "op": "eq",
+          "value": 16
+        },
+        {
+          "path": [
+            "min_lapse"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "min_chi"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "diagnostics_current"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_cfl"
+          ],
+          "op": "le",
+          "value": 0.5
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "H_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "max_state_deviation"
+          ],
+          "op": "le",
+          "value": 1e-08
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "le",
+          "value": 1e-07
+        },
+        {
+          "path": [
+            "M_L2"
+          ],
+          "op": "le",
+          "value": 1e-07
+        },
+        {
+          "path": [
+            "algebraic_projection"
+          ],
+          "op": "eq",
+          "value": "final_stage_standard"
+        },
+        {
+          "path": [
+            "checkpoint_schema"
+          ],
+          "op": "eq",
+          "value": "HYP3D_MPI_V4"
+        },
+        {
+          "path": [
+            "max_determinant_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_tracefree_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "scri_angular_stencil"
+          ],
+          "op": "eq",
+          "value": "cross_face_centered5"
+        },
+        {
+          "path": [
+            "t"
+          ],
+          "op": "eq",
+          "value": 1.0
+        },
+        {
+          "path": [
+            "steps"
+          ],
+          "op": "eq",
+          "value": 2001
+        },
+        {
+          "path": [
+            "dt"
+          ],
+          "op": "eq",
+          "value": 0.0005
+        },
+        {
+          "path": [
+            "start_time"
+          ],
+          "op": "eq",
+          "value": 0.0
+        },
+        {
+          "path": [
+            "segment_steps"
+          ],
+          "op": "eq",
+          "value": 2001
+        },
+        {
+          "path": [
+            "scri_dissipation_epsilon"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "scri_dissipation_degree"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "checkpoint_header_bytes"
+          ],
+          "op": "eq",
+          "value": 88
+        },
+        {
+          "path": [
+            "scri_dissipation_cfl_max"
+          ],
+          "op": "le",
+          "value": 2.7
+        },
+        {
+          "path": [
+            "scri_dissipation_scheme"
+          ],
+          "op": "eq",
+          "value": "degree7_weighted_negative_square"
+        }
+      ]
+    }
+  ],
+  "notes": "Coordinator-reviewed bounded V4 degree7 epsilon2 duration comparison, following independently verified source-v11 GPU preflight job8983792. Fresh analytic n16 Minkowski, nominal dt=.0005 to exact coordinate t=1. Retains previous V3 scientific thresholds and physics coefficients. Frozen time accumulation expects2001 accepted steps including the final endpoint remainder. Not a puncture/100M/convergence admission. Requires the exact source, executable and epsilon2 preflight admission binding."
+}

@@ -1,0 +1,89 @@
+{
+  "passed": true,
+  "phase": "preflight",
+  "low_resolution_n": 16,
+  "source_manifest_sha256": "0e7967f1f33559ed79b9f97d6416dacc296f0f14663d35c682177a9ac07db60f",
+  "binaries": {
+    "source-v11/tst/hyperbolic_shift_3d/aurora/preflight.py": "4e00b8ad87e7d64decd0177dd4470d865ee5e0622b5cf7b4c860a40eff071dc5",
+    "build-sycl-mpi-v11/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_dissipative": "fc8d8074351a01ade6fd05dcf460555c935cf4ffe66c9bda31cc517679500fff",
+    "build-sycl-mpi-v11/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_projected_angular": "8ab8813d5d3bed2cf8c42d0e0e2c99bfefe822e8e205aed9c9443c8900b5c5e3"
+  },
+  "gpu_cpu_parity": true,
+  "restart_equivalence": true,
+  "job_id": "8983792.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "worker_status_sha256": "6b2c03ddaf1f6a7e868ee93cdf33ba3617635bb578d929f626bc4d3f53a69ab4",
+  "verification_sha256": "083a9911861b343276fe6aacb058f185d882184ef2fc70d2467097f2774774cf",
+  "verifier_sha256": "430712dd878d319db28727de78403b331bf724c42bec8a23830b03c4c183ed80",
+  "scri_dissipation_configs": [
+    {
+      "executable": "build-sycl-mpi-v11/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_dissipative",
+      "checkpoint_schema": "HYP3D_MPI_V4",
+      "scri_dissipation_epsilon": 2.0,
+      "scri_dissipation_degree": 7,
+      "checkpoint_header_bytes": 88
+    }
+  ],
+  "supporting_reports": {
+    "parity-device": {
+      "path": "campaigns/preflight-dissipative-v1/output/parity-device.report.json",
+      "sha256": "9319d5255df73f7e4d64fbdbb24c1eb4bb604d340be326e07a11ff1c420e62c9"
+    },
+    "parity-exchange": {
+      "path": "campaigns/preflight-dissipative-v1/output/parity-exchange.report.json",
+      "sha256": "04c819ed5fd7b019ada48a78957c2cbd70b8669638bb3602c9d6c038216642f3"
+    },
+    "parity-scri": {
+      "path": "campaigns/preflight-dissipative-v1/output/parity-scri.report.json",
+      "sha256": "0916a7f0525a4617621f99344500f50e10995d9617fb119f83cdf6f24dfcd407"
+    },
+    "parity-algebraic": {
+      "path": "campaigns/preflight-dissipative-v1/output/parity-algebraic.report.json",
+      "sha256": "058a8e754b24d05870b5029685f3b500ff394f7677440b6b544bd7cf8a4c8c8b"
+    },
+    "parity-angular": {
+      "path": "campaigns/preflight-dissipative-v1/output/parity-angular.report.json",
+      "sha256": "15bcb2dab43ef82829c03dde20329d582a354632e10e465064ee7970e97a851c"
+    },
+    "parity-dissipation-closure": {
+      "path": "campaigns/preflight-dissipative-v1/output/parity-dissipation-closure.report.json",
+      "sha256": "fa9d36f69759495b54006412822a586b97de7a63c2c6974c11e0a1d94869144a"
+    },
+    "parity-dissipation": {
+      "path": "campaigns/preflight-dissipative-v1/output/parity-dissipation.report.json",
+      "sha256": "a1280fe93d00998fbbeb4da2d7cb8c905b4ef0b3e14888ad81520f19f2a6afbc"
+    },
+    "control-v4-zero": {
+      "path": "campaigns/preflight-dissipative-v1/output/control-v4-zero.report.json",
+      "sha256": "8b20d4016a4f4b2ec1ea289988d4b75b40cf100857e52fa9c45451239e5f6315"
+    },
+    "control-v3": {
+      "path": "campaigns/preflight-dissipative-v1/output/control-v3.report.json",
+      "sha256": "21d38ebba86a5644cca371fdcd93dea7ae08efe778c5e60e7d381efb947b57fb"
+    },
+    "minkowski-short": {
+      "path": "campaigns/preflight-dissipative-v1/output/minkowski-short.report.json",
+      "sha256": "58534523d4499ddee0380b73a4b097bc8437b32ef80597aa2cb605c2fc17b9be"
+    },
+    "pulse-half": {
+      "path": "campaigns/preflight-dissipative-v1/output/pulse-half.report.json",
+      "sha256": "9c38ba14a41489a64096ff1c4a9cf24e2897fa5b23cccf3453054d3192d9b471"
+    },
+    "pulse-resumed": {
+      "path": "campaigns/preflight-dissipative-v1/output/pulse-resumed.report.json",
+      "sha256": "fe626f5f54e3161edf29577554596e58d89cade5df5a4af5f35691822927029e"
+    },
+    "pulse-direct": {
+      "path": "campaigns/preflight-dissipative-v1/output/pulse-direct.report.json",
+      "sha256": "879b6da35c05a77d7dc17e77f5a1f6252e1cc9b5c20648e3eeca115450c3d70d"
+    },
+    "restart-audit": {
+      "path": "campaigns/preflight-dissipative-v1/output/restart-audit.report.json",
+      "sha256": "957fddfe4c3abf7fe6d5972f48ab7d11f83a27e43cc92837673ee966ab752c72"
+    },
+    "puncture-short": {
+      "path": "campaigns/preflight-dissipative-v1/output/puncture-short.report.json",
+      "sha256": "a155a58c7a5b82cc9e40578c75fc0d3ee77b405bd868573052f8b141f2773d4f"
+    }
+  },
+  "scope": "Admits bounded longer n16 stability tests of frozen source-v11 V4 degree7 epsilon2 only. Four-step implementation/restart preflight; no sustained stability, 100M, AMR or convergence qualification. Epsilon0 is a comparison control only."
+}

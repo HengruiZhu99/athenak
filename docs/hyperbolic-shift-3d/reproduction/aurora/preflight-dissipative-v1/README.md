@@ -24,7 +24,7 @@ manifest SHA-256 is
 The V4 MPI/SYCL executable SHA-256 is
 `fc8d8074351a01ade6fd05dcf460555c935cf4ffe66c9bda31cc517679500fff`.
 The reviewed plan and full build provenance are preserved under `raw/` and
-`build/`. The prior [protocol](protocol.md) defines the acceptance scope.
+`compile-evidence/`. The prior [protocol](protocol.md) defines the acceptance scope.
 
 All evolution cases use n16 and dt=0.0005. The following final diagnostics
 are current at t=0.002, after four steps; they are not duration measurements.
@@ -68,7 +68,9 @@ an off-control comparison, not permission for cross-schema restart.
 The successful result makes **epsilon 2 alone** eligible for a separately
 reviewed bounded duration plan at the same low resolution. Epsilon 0 is an
 off-control here and lacks separate GPU restart qualification; epsilon 1 was
-not evolved in this preflight. No admission is created by this verifier.
+not evolved in this preflight. No admission is created by this verifier. The coordinator separately issued
+[the epsilon-two admission](admission.json), bound to the hardened verification
+and the exact executable; it admits only bounded n16 duration testing.
 
 The package retains small reports, histories, rank logs, horizon sidecars,
 plan/binding/worker receipts and build records. `raw/terminal-whitelist.json`
