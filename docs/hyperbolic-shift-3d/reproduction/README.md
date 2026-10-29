@@ -18,6 +18,35 @@ The first Aurora allocation, job `8981303`, verified twelve distinct GPU tiles a
 
 The fresh `build-sycl-mpi-v4` preflight, job `8981414`, passed all nine cases on 12 distinct GPU tiles using frozen source equivalent to commit `113aaff783008204e1ff8cbf2fb8bb5f2af2204c`. Native RHS CPU/SYCL scaled differences are at most `3.40e-14`, and scri-rate differences `7.82e-14`. Direct four-step and restarted two-plus-two-step pulse checkpoints are bitwise identical, including both compensation arrays. Minkowski and the isotropic puncture completed only `t=0.002` at `n=16`, `dt=0.0005`; the puncture duration is **0.006 M**. Surface/ghost null residuals remain at most `1.23e-15`. Actual FastFlow finds the puncture horizon with expansion RMS `4.50e-4` under the recorded coarse-grid tolerance `1e-3`. All 58 worker-bound artifact hashes and 94 report checks were independently verified. See the [portable preflight assessment](aurora/preflight-v2/README.md). These are preflight results, not sustained-stability or convergence results.
 
+The longer original-scheme n16 runs failed: [Minkowski](aurora/stability-v1/README.md)
+at coordinate t=0.4895 and the [puncture](aurora/stability-puncture-v1/README.md)
+at t=0.369=1.107 M, both with nonpositive interpolated scri geometry. Null closure
+remained near roundoff while field and constraint errors grew. The Minkowski
+failure is strongly concentrated at outer-shell face edges/corners; this
+localization does not by itself rule out a coarse-grid effect or identify the
+unique unstable operator. At the user's request, the next priority is the
+[unchanged-executable n16/n24/n32 spatial and timestep control](aurora/resolution-control-v1/protocol.md),
+including throughput measurements with larger blocks. It is a stability
+discriminator, not a convergence admission.
+
+The puncture horizon rejection has a separately demonstrated measurement
+limitation. On its fixed unadmitted t=0.369 state, lmax6/ntheta12 stalls at
+expansion RMS 0.00574 after both 300 and 1000 iterations, while lmax12/ntheta24
+finds a horizon at RMS 0.000221 with the original 0.001 tolerance. See the
+[fixed-snapshot audit](horizon-angular-audit-v1/interpretation.md). This does not
+admit the failed evolution or establish spatial accuracy.
+
+Two optional repairs are preserved for controlled later comparisons:
+[standard final-stage tensor projection](../algebraic-projection-audit.md) and
+[cross-face scri angular reconstruction](../scri-angular-exchange.md). Their
+checkpoint schemas are distinct from the original control. Projection-only
+Aurora preflight job 8982210 passed all twelve component, benchmark and four-step
+checks; no long-time stability claim follows. The staged scri sampling
+microbenchmark reduced mean Evaluate time from 47.64 ms to 3.72 ms per rank
+(12.81x), with matching per-rank output norms. This is a kernel microbenchmark,
+not a measured whole-evolution speedup. Candidate evolution tests are deferred
+until the unchanged-scheme resolution question is addressed.
+
 The original J-disabled, bulk-mu=4 1D control is confirmed to have completed coordinate `33.3333984375 = 100.0001953125 M`. Its N513/N1025 continuation chains and frozen-source identities were checked. A [portable N513 time series](original-1d-reference/history.csv) and [provenance](original-1d-reference/provenance.json) preserve the matching horizon/exterior-constraint reference. Late gauge settling and uniform puncture convergence were not established by that original control.
 
 ## Archived pause point
@@ -40,7 +69,7 @@ The grid currently has core half-width 0.125 and shell radii 0.45, 0.75, and 1. 
 
 ## Scri boundary
 
-An explicit atlas stores fields at actual Omega=0, separate from cell-centered volume fields. At every stage, lapse is one, and the coordinate tangential shift is zero. With outward coordinate covector n=x, the remaining shift is reconstructed as `beta=-sqrt(chi*g^{nn})*x`. The D trace is eliminated using the differentiated null relation and the same live geometric boundary rate. Independent Lambda and the geometric values are not projected. The restoring-term limit is differentiated from the actual shift deviation.
+An explicit atlas stores fields at actual Omega=0, separate from cell-centered volume fields. At every stage, lapse is one, and the coordinate tangential shift is zero. With outward coordinate covector n=x, the remaining shift is reconstructed as `beta=-sqrt(chi*g^{nn})*x`. The D trace is eliminated using the differentiated null relation and the same live geometric boundary rate. In the original control, independent Lambda and the geometric values are not projected; the optional tensor-repair candidate still retains independent Lambda. The restoring-term limit is differentiated from the actual shift deviation.
 
 Geometric boundary rates use the full tensor pole's radial derivative, including angular derivatives in its underlying jets. Weak numerator and regularity penalties follow the spherical donor's coefficients. This is an implemented boundary prescription, **not a proof of a stable general 3D boundary problem**. Nullness, dependent-driver compatibility, pole numerators, and the discarded lapse-clock residual are recorded separately. Small null error cannot excuse large geometric pole errors.
 

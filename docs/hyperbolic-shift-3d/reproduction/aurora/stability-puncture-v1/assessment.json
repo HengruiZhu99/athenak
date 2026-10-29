@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "job_id": "8982136.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "worker_status": "failed",
+  "case": "puncture",
+  "n": 16,
+  "cells": 77824,
+  "mpi_size": 12,
+  "backend": "SYCL",
+  "mass": 0.3333333333333333,
+  "dt": 0.0005,
+  "target_coordinate_time": 1,
+  "target_time_over_M": 3.0,
+  "final_accepted_time": 0.36900000000000027,
+  "final_accepted_time_over_M": 1.1070000000000009,
+  "accepted_steps": 738,
+  "failure": "nonpositive interpolated scri geometry",
+  "last_diagnostic_time": 0.35000000000000026,
+  "last_diagnostic_time_over_M": 1.0500000000000007,
+  "diagnostics_current": false,
+  "checkpoint_written": true,
+  "checkpoint_admitted": false,
+  "last_accepted_horizon": {
+    "t": 0.1500000000000001,
+    "t_over_M": 0.4500000000000003,
+    "coordinate_radius": 0.06564658291219475,
+    "mass": 0.3333871504267465,
+    "absolute_relative_mass_error": 0.00016145128023953292,
+    "expansion_rms": 0.0008115562662073064,
+    "H_exterior_L2": 0.049444615915865055
+  },
+  "first_rejected_horizon_time_over_M": 0.6000000000000004,
+  "accepted_horizon_samples": 4,
+  "missing_horizon_samples": 4,
+  "last_diagnostic_values": {
+    "H_L2": 2.7721788611094906,
+    "M_L2": 1.0446629586374456,
+    "state_deviation": 6.698813073372772,
+    "null_surface": 1.1102230246127407e-15,
+    "null_ghost": 1.2507401263375786e-15
+  },
+  "launched_cases": [
+    "puncture"
+  ],
+  "not_launched_cases": [
+    "pulse"
+  ],
+  "scientific_stability_pass": false,
+  "trumpet_transition_demonstrated": false,
+  "convergence_claim": false,
+  "source_manifest_sha256": "3f367265e2e627aa770d0ae78be4fac912f4c0980a09471382cf9b295c677d7f",
+  "binary_sha256": "6e7553b556dd9c4f8b56f81eb0f43c15cf0517a0b81776320a9a6c6d3c29ccef",
+  "interpretation": [
+    "Original hyperbolic control, adaptive J disabled; no final-stage algebraic projection or cross-face angular prototype.",
+    "Null closure remains near roundoff in recorded history despite constraint growth and eventual geometry rejection.",
+    "A failed horizon finder does not imply physical horizon disappearance. Missing horizon-dependent diagnostics remain missing.",
+    "3D H uses normalized compactified Cartesian coordinate volume; 1D uses normalized radial r^2 dr weighting. These are roughly comparable for spherical data but use different grids and horizon quadrature.",
+    "3D invariant momentum and 1D radial momentum norms are not overlaid.",
+    "This single low-resolution failed trajectory does not establish a wormhole-to-trumpet transition or convergence."
+  ]
+}

@@ -1,0 +1,355 @@
+{
+  "schema": 1,
+  "reviewed": true,
+  "phase": "stability",
+  "n": 16,
+  "low_resolution_n": 16,
+  "admission": "admissions/preflight-v2.json",
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "01:00:00"
+  },
+  "storage": {
+    "limit_bytes": 5000000000,
+    "planned_new_bytes": 500000000,
+    "atomic_checkpoint_reserve_bytes": 100000000
+  },
+  "worker_seconds": 3510,
+  "output_dir": "campaigns/stability-puncture-v1/output",
+  "commands": [
+    {
+      "name": "puncture",
+      "kind": "puncture",
+      "executable": "build-sycl-mpi-v4/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi",
+      "args": [
+        "16",
+        "campaigns/stability-puncture-v1/output/puncture",
+        "puncture",
+        "1",
+        ".0005",
+        "inputs/puncture-n16.txt",
+        "-",
+        "@WALL_SECONDS@",
+        ".05"
+      ],
+      "timeout_seconds": 1100,
+      "report": "campaigns/stability-puncture-v1/output/puncture.report.json",
+      "artifacts": [
+        "campaigns/stability-puncture-v1/output/puncture.report.json",
+        "campaigns/stability-puncture-v1/output/puncture.history.csv",
+        "campaigns/stability-puncture-v1/output/puncture.checkpoint",
+        "campaigns/stability-puncture-v1/output/puncture.checkpoint.horizon-seed.txt",
+        "campaigns/stability-puncture-v1/output/puncture.fastflow.horizon_summary_0.txt",
+        "campaigns/stability-puncture-v1/output/puncture.fastflow.horizon_shape_0.txt"
+      ],
+      "inputs": [
+        "inputs/puncture-n16.txt"
+      ],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "n"
+          ],
+          "op": "eq",
+          "value": 16
+        },
+        {
+          "path": [
+            "min_lapse"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "min_chi"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "diagnostics_current"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_cfl"
+          ],
+          "op": "le",
+          "value": 0.5
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "H_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "H_exterior_L2"
+          ],
+          "op": "le",
+          "value": 1
+        },
+        {
+          "path": [
+            "M_exterior_L2"
+          ],
+          "op": "le",
+          "value": 1
+        },
+        {
+          "path": [
+            "max_pole"
+          ],
+          "op": "le",
+          "value": 0.1
+        },
+        {
+          "path": [
+            "horizon_found"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "horizon_expansion_rms"
+          ],
+          "op": "le",
+          "value": 0.001
+        },
+        {
+          "path": [
+            "horizon_mass"
+          ],
+          "op": "ge",
+          "value": 0.33
+        },
+        {
+          "path": [
+            "horizon_mass"
+          ],
+          "op": "le",
+          "value": 0.33666666666666667
+        }
+      ]
+    },
+    {
+      "name": "pulse",
+      "kind": "pulse",
+      "executable": "build-sycl-mpi-v4/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi",
+      "args": [
+        "16",
+        "campaigns/stability-puncture-v1/output/pulse",
+        "pulse",
+        "1",
+        ".0005",
+        "-",
+        "-",
+        "@WALL_SECONDS@",
+        ".05"
+      ],
+      "timeout_seconds": 1100,
+      "report": "campaigns/stability-puncture-v1/output/pulse.report.json",
+      "artifacts": [
+        "campaigns/stability-puncture-v1/output/pulse.report.json",
+        "campaigns/stability-puncture-v1/output/pulse.history.csv",
+        "campaigns/stability-puncture-v1/output/pulse.checkpoint"
+      ],
+      "inputs": [],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "n"
+          ],
+          "op": "eq",
+          "value": 16
+        },
+        {
+          "path": [
+            "min_lapse"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "min_chi"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "diagnostics_current"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_cfl"
+          ],
+          "op": "le",
+          "value": 0.5
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "H_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "H_exterior_L2"
+          ],
+          "op": "le",
+          "value": 1
+        },
+        {
+          "path": [
+            "M_exterior_L2"
+          ],
+          "op": "le",
+          "value": 1
+        },
+        {
+          "path": [
+            "max_pole"
+          ],
+          "op": "le",
+          "value": 0.1
+        }
+      ]
+    }
+  ],
+  "notes": "Independent fresh puncture and pulse duration tests at unchanged n=16, dt=0.0005, coordinate target t=1 (3 M for puncture). Uses the same frozen-v3 source/build, preflight admission, initial data and scientific checks as stability-v1; it does not depend on the preceding Minkowski case passing. The original Minkowski outcome remains separate evidence. This is neither a 100 M stability claim nor a convergence claim. Atomic checkpoint reserve is expressed in allocated bytes and covers the observed two Lustre mirrors."
+}

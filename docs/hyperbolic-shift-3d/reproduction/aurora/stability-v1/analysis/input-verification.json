@@ -1,0 +1,31 @@
+{
+  "scope": "Read-only failure localization; no checkpoint payload retained, admitted or restarted",
+  "worker_bound_artifacts": [
+    {
+      "path": "campaigns/stability-v1/output/minkowski.report.json",
+      "sha256": "590230abbb4e597e6bba8355a42dcb318c76a7217a2b916b8f2edead75a7b090",
+      "bytes": 1785,
+      "matches_worker": true
+    },
+    {
+      "path": "campaigns/stability-v1/output/minkowski.history.csv",
+      "sha256": "8ddf741e336086d8b0347b60036fff03faf4169a9b22143233c86905530e2ff5",
+      "bytes": 4449,
+      "matches_worker": true
+    },
+    {
+      "path": "campaigns/stability-v1/output/minkowski.checkpoint",
+      "sha256": "c590ea38f2ea7736a78c63f28fcac9c82fee08eebc0b04f9eee27747ca0ae40d",
+      "bytes": 39362632,
+      "matches_worker": true
+    }
+  ],
+  "failed_stage": {
+    "bytes": 19681280,
+    "sha256": "53998eea9f5e87577858b062a24abff0650ff19c001c0575ae9efc5471b8babe",
+    "matches_remote_supplement": true,
+    "binding": "post-collection supplemental remote hash, not original worker artifact binding"
+  },
+  "coordinates": "fixed original n16 composite mesh; core halfwidth .125 and shell radii .45,.75,1",
+  "unchanged_parent_readme_sha256": "aa942a79eeb70ecbeeff420a4e6cbaa089f37ff564256d526748f7bc22c8f149"
+}

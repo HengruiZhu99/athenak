@@ -1,0 +1,61 @@
+{
+  "snapshot_sha256": "52a95a429dc88734e0f3f869821ca0576e3df4f1b39f4eca4304b52c52031a8a",
+  "executable_sha256": "a05eaed4aa13d3e0e39491433b3f8897463d87553723e42a70e15714451dd38e",
+  "diagnostic_source_sha256": "9532d7609010a8b4c449b0b3e290710e4775699e05ec19f9287ee7295f2a5aa5",
+  "runs": [
+    {
+      "argv": [
+        "output/hyperbolic-core-shell/aurora/puncture-horizon-audit-v1/horizon_snapshot",
+        "16",
+        "output/hyperbolic-core-shell/aurora/stability-puncture-v1/output/puncture.checkpoint",
+        "output/hyperbolic-core-shell/aurora/puncture-horizon-audit-v1/l6-n12-cap300",
+        ".001",
+        "6",
+        "12",
+        "300",
+        ".066",
+        ".1"
+      ],
+      "seconds": 6.902070875,
+      "returncode": 2,
+      "timed_out": false,
+      "result": "n=16 lmax=6 ntheta=12 rms_tol=0.001 found=0 complete=1 iterations=300 mass=nan areal_radius=nan coordinate_radius=nan expansion_rms=nan last_expansion_rms=0.0057376863478590112 last_mean_radius=0.064284361177555288 snapshot_time=0.36900000000000027 snapshot_admitted=0 seed_radius=0.066000000000000003 samples=86400 rejected_core_stencils=0 active_core_only=1\n"
+    },
+    {
+      "argv": [
+        "output/hyperbolic-core-shell/aurora/puncture-horizon-audit-v1/horizon_snapshot",
+        "16",
+        "output/hyperbolic-core-shell/aurora/stability-puncture-v1/output/puncture.checkpoint",
+        "output/hyperbolic-core-shell/aurora/puncture-horizon-audit-v1/l6-n12-cap1000",
+        ".001",
+        "6",
+        "12",
+        "1000",
+        ".066",
+        ".1"
+      ],
+      "seconds": 12.17663075,
+      "returncode": 2,
+      "timed_out": false,
+      "result": "n=16 lmax=6 ntheta=12 rms_tol=0.001 found=0 complete=1 iterations=1000 mass=nan areal_radius=nan coordinate_radius=nan expansion_rms=nan last_expansion_rms=0.0057376863478590364 last_mean_radius=0.064284361177555288 snapshot_time=0.36900000000000027 snapshot_admitted=0 seed_radius=0.066000000000000003 samples=288000 rejected_core_stencils=0 active_core_only=1\n"
+    },
+    {
+      "argv": [
+        "output/hyperbolic-core-shell/aurora/puncture-horizon-audit-v1/horizon_snapshot",
+        "16",
+        "output/hyperbolic-core-shell/aurora/stability-puncture-v1/output/puncture.checkpoint",
+        "output/hyperbolic-core-shell/aurora/puncture-horizon-audit-v1/l12-n24-cap1000",
+        ".001",
+        "12",
+        "24",
+        "1000",
+        ".066",
+        ".1"
+      ],
+      "seconds": 7.557525791,
+      "returncode": 0,
+      "timed_out": false,
+      "result": "n=16 lmax=12 ntheta=24 rms_tol=0.001 found=1 complete=1 iterations=111 mass=0.33349712796571895 areal_radius=0.66699425593143791 coordinate_radius=0.064283753315889369 expansion_rms=0.00022089994284660175 last_expansion_rms=0.00022089994284660175 last_mean_radius=0.064283753315889369 snapshot_time=0.36900000000000027 snapshot_admitted=0 seed_radius=0.066000000000000003 samples=127872 rejected_core_stencils=0 active_core_only=1\n"
+    }
+  ]
+}

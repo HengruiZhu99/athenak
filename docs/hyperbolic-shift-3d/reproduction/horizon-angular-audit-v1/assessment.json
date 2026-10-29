@@ -1,0 +1,188 @@
+{
+  "job_id": "8982136.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "source_files": {
+    "output/puncture.history.csv": {
+      "sha256": "3c90e60a0af69e6cf43ccd99904ce6e0d322889c715ab4cd411fb1c68813bb1a",
+      "bytes": 4095
+    },
+    "output/puncture.fastflow.horizon_summary_0.txt": {
+      "sha256": "fbc135049ec981e8a0dc21d217dc113bcbd43fa41ce945a9920c23bf03febcb3",
+      "bytes": 1203
+    },
+    "output/puncture.log": {
+      "sha256": "ae11e077c3f41d46ce752efbee6dc50613df7f727b78cc1d0901b4942a209031",
+      "bytes": 720
+    },
+    "output/puncture.report.json": {
+      "sha256": "0a7905c65a700f4adab8e62865a2397628d0af836d0ddba50e720f4c739a10c8",
+      "bytes": 1781
+    },
+    "worker-status.json": {
+      "sha256": "8a03dbfd1009a09c321e31649eebac63c4f263ee8a820462ab87cc5c738d80de",
+      "bytes": 9860
+    }
+  },
+  "history": [
+    {
+      "t": 0.0,
+      "t_over_M": 0.0,
+      "horizon_found": 1.0,
+      "horizon_trial_radius": 0.06291893820341317,
+      "horizon_trial_expansion_rms": 0.0004707859698532455,
+      "horizon_complete_surface": 1.0,
+      "horizon_iterations": 61.0
+    },
+    {
+      "t": 0.05000000000000004,
+      "t_over_M": 0.1500000000000001,
+      "horizon_found": 1.0,
+      "horizon_trial_radius": 0.0637971042384774,
+      "horizon_trial_expansion_rms": 0.00034877537930387033,
+      "horizon_complete_surface": 1.0,
+      "horizon_iterations": 89.0
+    },
+    {
+      "t": 0.10000000000000007,
+      "t_over_M": 0.3000000000000002,
+      "horizon_found": 1.0,
+      "horizon_trial_radius": 0.06470319297925961,
+      "horizon_trial_expansion_rms": 0.00043335225647656863,
+      "horizon_complete_surface": 1.0,
+      "horizon_iterations": 94.0
+    },
+    {
+      "t": 0.1500000000000001,
+      "t_over_M": 0.4500000000000003,
+      "horizon_found": 1.0,
+      "horizon_trial_radius": 0.06564658291219475,
+      "horizon_trial_expansion_rms": 0.0008115562662073064,
+      "horizon_complete_surface": 1.0,
+      "horizon_iterations": 97.0
+    },
+    {
+      "t": 0.20000000000000015,
+      "t_over_M": 0.6000000000000004,
+      "horizon_found": 0.0,
+      "horizon_trial_radius": 0.0664228127520506,
+      "horizon_trial_expansion_rms": 0.001483968564320569,
+      "horizon_complete_surface": 1.0,
+      "horizon_iterations": 300.0
+    },
+    {
+      "t": 0.25000000000000017,
+      "t_over_M": 0.7500000000000004,
+      "horizon_found": 0.0,
+      "horizon_trial_radius": 0.06287826054399263,
+      "horizon_trial_expansion_rms": 0.002580868093797585,
+      "horizon_complete_surface": 1.0,
+      "horizon_iterations": 300.0
+    },
+    {
+      "t": 0.3000000000000002,
+      "t_over_M": 0.9000000000000006,
+      "horizon_found": 0.0,
+      "horizon_trial_radius": 0.05933138870674797,
+      "horizon_trial_expansion_rms": 0.003935847182713756,
+      "horizon_complete_surface": 1.0,
+      "horizon_iterations": 300.0
+    },
+    {
+      "t": 0.35000000000000026,
+      "t_over_M": 1.0500000000000007,
+      "horizon_found": 0.0,
+      "horizon_trial_radius": 0.06367198544327417,
+      "horizon_trial_expansion_rms": 0.004118874022659111,
+      "horizon_complete_surface": 1.0,
+      "horizon_iterations": 300.0
+    }
+  ],
+  "evolution_status": "failed",
+  "evolution_stop_time": 0.36900000000000027,
+  "evolution_error": "nonpositive interpolated scri geometry",
+  "horizon_failure_assessment": "At t=.20 and later, complete valid sampling reaches the 300-iteration cap with expansion RMS above .001. Current output cannot distinguish floor from slow iteration; no disappearance claim.",
+  "no_modifications": "No tolerance, code, ongoing job, checkpoint or remote files changed; no evolution or restart performed.",
+  "worker_verified_small_artifacts": [
+    "output/puncture.report.json",
+    "output/puncture.history.csv",
+    "output/puncture.fastflow.horizon_summary_0.txt"
+  ],
+  "fixed_snapshot_measurement": {
+    "time": 0.36900000000000027,
+    "steps": 738,
+    "admitted": 0,
+    "sha256": "52a95a429dc88734e0f3f869821ca0576e3df4f1b39f4eca4304b52c52031a8a",
+    "unchanged_after_diagnostics": true,
+    "sampler": "Same physical ADM conversion and six-point SampleJets, restricted and guarded to active Cartesian-core stencils. All padded ghosts set NaN; no outer boundary reclosure. No evolution, restart, or admission.",
+    "runs": [
+      {
+        "n": 16,
+        "lmax": 6,
+        "ntheta": 12,
+        "rms_tol": 0.001,
+        "found": 0,
+        "complete": 1,
+        "iterations": 300,
+        "mass": null,
+        "areal_radius": null,
+        "coordinate_radius": null,
+        "expansion_rms": null,
+        "last_expansion_rms": 0.005737686347859011,
+        "last_mean_radius": 0.06428436117755529,
+        "snapshot_time": 0.36900000000000027,
+        "snapshot_admitted": 0,
+        "seed_radius": 0.066,
+        "samples": 86400,
+        "rejected_core_stencils": 0,
+        "active_core_only": 1,
+        "seconds": 6.902070875
+      },
+      {
+        "n": 16,
+        "lmax": 6,
+        "ntheta": 12,
+        "rms_tol": 0.001,
+        "found": 0,
+        "complete": 1,
+        "iterations": 1000,
+        "mass": null,
+        "areal_radius": null,
+        "coordinate_radius": null,
+        "expansion_rms": null,
+        "last_expansion_rms": 0.005737686347859036,
+        "last_mean_radius": 0.06428436117755529,
+        "snapshot_time": 0.36900000000000027,
+        "snapshot_admitted": 0,
+        "seed_radius": 0.066,
+        "samples": 288000,
+        "rejected_core_stencils": 0,
+        "active_core_only": 1,
+        "seconds": 12.17663075
+      },
+      {
+        "n": 16,
+        "lmax": 12,
+        "ntheta": 24,
+        "rms_tol": 0.001,
+        "found": 1,
+        "complete": 1,
+        "iterations": 111,
+        "mass": 0.33349712796571895,
+        "areal_radius": 0.6669942559314379,
+        "coordinate_radius": 0.06428375331588937,
+        "expansion_rms": 0.00022089994284660175,
+        "last_expansion_rms": 0.00022089994284660175,
+        "last_mean_radius": 0.06428375331588937,
+        "snapshot_time": 0.36900000000000027,
+        "snapshot_admitted": 0,
+        "seed_radius": 0.066,
+        "samples": 127872,
+        "rejected_core_stencils": 0,
+        "active_core_only": 1,
+        "seconds": 7.557525791
+      }
+    ],
+    "conclusion": "The current lmax6/ntheta12 search reaches the same RMS floor at300 and1000 iterations. Increasing to lmax12/ntheta24 passes the unchanged .001 RMS and1e-10 mass-change criteria in111 iterations. This establishes an angular measurement-resolution limitation for this fixed late snapshot; it does not isolate angular truncation from quadrature or certify evolution/continuum accuracy.",
+    "further_experiments": "Stopped after these three runs per user resolution-first steering.",
+    "checkpoint_matches_original_worker": true
+  }
+}

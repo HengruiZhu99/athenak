@@ -1,0 +1,416 @@
+{
+  "schema": 1,
+  "status": "failed",
+  "started": "2026-10-29T04:08:43.824677+00:00",
+  "job_id": "8982136.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "launcher_host": "x4105c4s5b0n0",
+  "allocation_nodes": [
+    "x4105c4s5b0n0.hsn.cm.aurora.alcf.anl.gov"
+  ],
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "01:00:00"
+  },
+  "source_manifest_sha256": "3f367265e2e627aa770d0ae78be4fac912f4c0980a09471382cf9b295c677d7f",
+  "binaries": {
+    "build-sycl-mpi-v4/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi": "6e7553b556dd9c4f8b56f81eb0f43c15cf0517a0b81776320a9a6c6d3c29ccef"
+  },
+  "plan_sha256": "8dbd87636631dc8f7ace0928a2e7d327f0b3472e460d518237786f46df05dfb3",
+  "phase": "stability",
+  "n": 16,
+  "cases": [
+    {
+      "name": "puncture",
+      "kind": "puncture",
+      "started": "2026-10-29T04:08:49.044715+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-v4/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi",
+        "16",
+        "campaigns/stability-puncture-v1/output/puncture",
+        "puncture",
+        "1",
+        ".0005",
+        "inputs/puncture-n16.txt",
+        "-",
+        "1070",
+        ".05"
+      ],
+      "generated_inputs": {},
+      "returncode": 2,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 279.16789097106084,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "failed",
+          "passed": false
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "n"
+            ],
+            "op": "eq",
+            "value": 16
+          },
+          "observed": 16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "min_lapse"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.025148467162530386,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "min_chi"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 3.625420602610518e-05,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "diagnostics_current"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": false,
+          "passed": false
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_admitted"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": false,
+          "passed": false
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_surface"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.1102230246127407e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_ghost"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.2507401263375786e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_cfl"
+            ],
+            "op": "le",
+            "value": 0.5
+          },
+          "observed": 0.32755610539519203,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 2.7721788611094906,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "M_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 1.0446629586374456,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": null,
+          "passed": false
+        },
+        {
+          "check": {
+            "path": [
+              "M_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": null,
+          "passed": false
+        },
+        {
+          "check": {
+            "path": [
+              "H_exterior_L2"
+            ],
+            "op": "le",
+            "value": 1
+          },
+          "observed": null,
+          "passed": false
+        },
+        {
+          "check": {
+            "path": [
+              "M_exterior_L2"
+            ],
+            "op": "le",
+            "value": 1
+          },
+          "observed": null,
+          "passed": false
+        },
+        {
+          "check": {
+            "path": [
+              "max_pole"
+            ],
+            "op": "le",
+            "value": 0.1
+          },
+          "observed": 151.94678868348873,
+          "passed": false
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_found"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": false,
+          "passed": false
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_expansion_rms"
+            ],
+            "op": "le",
+            "value": 0.001
+          },
+          "observed": null,
+          "passed": false
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_mass"
+            ],
+            "op": "ge",
+            "value": 0.33
+          },
+          "observed": null,
+          "passed": false
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_mass"
+            ],
+            "op": "le",
+            "value": 0.33666666666666667
+          },
+          "observed": null,
+          "passed": false
+        }
+      ],
+      "report_status": "failed",
+      "status": "failed",
+      "artifacts": {
+        "campaigns/stability-puncture-v1/output/puncture.report.json": {
+          "sha256": "0a7905c65a700f4adab8e62865a2397628d0af836d0ddba50e720f4c739a10c8",
+          "bytes": 1781
+        },
+        "campaigns/stability-puncture-v1/output/puncture.history.csv": {
+          "sha256": "3c90e60a0af69e6cf43ccd99904ce6e0d322889c715ab4cd411fb1c68813bb1a",
+          "bytes": 4095
+        },
+        "campaigns/stability-puncture-v1/output/puncture.checkpoint": {
+          "sha256": "52a95a429dc88734e0f3f869821ca0576e3df4f1b39f4eca4304b52c52031a8a",
+          "bytes": 39362632
+        },
+        "campaigns/stability-puncture-v1/output/puncture.fastflow.horizon_summary_0.txt": {
+          "sha256": "fbc135049ec981e8a0dc21d217dc113bcbd43fa41ce945a9920c23bf03febcb3",
+          "bytes": 1203
+        },
+        "campaigns/stability-puncture-v1/output/puncture.fastflow.horizon_shape_0.txt": {
+          "sha256": "8defe6b78a55efb6c31149998017be50cb36eb852a8137540f54b7acaf1461e0",
+          "bytes": 2748
+        }
+      },
+      "finished": "2026-10-29T04:13:31.886392+00:00"
+    }
+  ],
+  "storage_at_start": {
+    "bytes": 622883328,
+    "entries": 6413,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 100000000,
+    "planned_bytes": 500000000,
+    "headroom_bytes": 3777116672
+  },
+  "affinity": {
+    "returncode": 0,
+    "timed_out": false,
+    "storage_error": null,
+    "elapsed_seconds": 0.32152603194117546,
+    "records": [
+      {
+        "host": "x4105c4s5b0n0",
+        "rank": 0,
+        "mask": "0.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4105c4s5b0n0",
+        "rank": 1,
+        "mask": "0.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4105c4s5b0n0",
+        "rank": 2,
+        "mask": "1.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4105c4s5b0n0",
+        "rank": 3,
+        "mask": "1.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4105c4s5b0n0",
+        "rank": 8,
+        "mask": "4.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4105c4s5b0n0",
+        "rank": 9,
+        "mask": "4.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4105c4s5b0n0",
+        "rank": 10,
+        "mask": "5.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4105c4s5b0n0",
+        "rank": 4,
+        "mask": "2.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4105c4s5b0n0",
+        "rank": 5,
+        "mask": "2.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4105c4s5b0n0",
+        "rank": 6,
+        "mask": "3.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4105c4s5b0n0",
+        "rank": 7,
+        "mask": "3.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4105c4s5b0n0",
+        "rank": 11,
+        "mask": "5.1",
+        "hierarchy": "COMPOSITE"
+      }
+    ],
+    "passed": true
+  },
+  "finished": "2026-10-29T04:13:31.886409+00:00",
+  "elapsed_seconds": 288.06174059491605,
+  "storage_at_finish": {
+    "bytes": 714803005,
+    "entries": 6428
+  }
+}

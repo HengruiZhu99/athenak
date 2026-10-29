@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "worker_bound_artifacts_checked": 5,
+  "worker_bound_artifacts_matching": 5,
+  "artifacts": [
+    {
+      "path": "output/puncture.report.json",
+      "sha256": "0a7905c65a700f4adab8e62865a2397628d0af836d0ddba50e720f4c739a10c8",
+      "bytes": 1781,
+      "matches_worker": true,
+      "retained_in_package": true
+    },
+    {
+      "path": "output/puncture.history.csv",
+      "sha256": "3c90e60a0af69e6cf43ccd99904ce6e0d322889c715ab4cd411fb1c68813bb1a",
+      "bytes": 4095,
+      "matches_worker": true,
+      "retained_in_package": true
+    },
+    {
+      "path": "output/puncture.checkpoint",
+      "sha256": "52a95a429dc88734e0f3f869821ca0576e3df4f1b39f4eca4304b52c52031a8a",
+      "bytes": 39362632,
+      "matches_worker": true,
+      "retained_in_package": false
+    },
+    {
+      "path": "output/puncture.fastflow.horizon_summary_0.txt",
+      "sha256": "fbc135049ec981e8a0dc21d217dc113bcbd43fa41ce945a9920c23bf03febcb3",
+      "bytes": 1203,
+      "matches_worker": true,
+      "retained_in_package": true
+    },
+    {
+      "path": "output/puncture.fastflow.horizon_shape_0.txt",
+      "sha256": "8defe6b78a55efb6c31149998017be50cb36eb852a8137540f54b7acaf1461e0",
+      "bytes": 2748,
+      "matches_worker": true,
+      "retained_in_package": true
+    }
+  ],
+  "checkpoint_header": {
+    "magic": "HYP3D_MPI_V1",
+    "n": 16,
+    "nf": 31,
+    "kind": 2,
+    "admitted": 0,
+    "cells": 77824,
+    "surface": 47616,
+    "steps": 738,
+    "time": 0.36900000000000027,
+    "dt": 0.0005
+  },
+  "plan_binding_matches": true,
+  "source_and_binary_match_preflight_v2": true,
+  "affinity_twelve_distinct_tiles": true,
+  "checkpoint_payload_retained": false,
+  "scheduler_record_included": false,
+  "acceptance_checks_recomputed": 22,
+  "acceptance_checks_match_worker": true,
+  "rejected_check_paths": [
+    [
+      "status"
+    ],
+    [
+      "diagnostics_current"
+    ],
+    [
+      "checkpoint_admitted"
+    ],
+    [
+      "H_exterior_L2"
+    ],
+    [
+      "M_exterior_L2"
+    ],
+    [
+      "H_exterior_L2"
+    ],
+    [
+      "M_exterior_L2"
+    ],
+    [
+      "max_pole"
+    ],
+    [
+      "horizon_found"
+    ],
+    [
+      "horizon_expansion_rms"
+    ],
+    [
+      "horizon_mass"
+    ],
+    [
+      "horizon_mass"
+    ]
+  ],
+  "original_1d_reference": {
+    "history": "../../original-1d-reference/history.csv",
+    "history_sha256": "95267982d749ea69c1bf397e6fc80407239f40e25d43240bf77b18828cfe3b6d",
+    "provenance_sha256": "864bdd7c3f4fada8eda9d066fa18d97d43b18270e468650ef413e318a23c0ba6",
+    "n": 513,
+    "mass": 0.3333333333333333,
+    "J_enabled": false,
+    "bulk_mu": 4,
+    "completed_t_over_M": 100.00019531250001
+  },
+  "notes": [
+    "Checkpoint SHA-256 and native header verified locally; full payload omitted.",
+    "No raw scheduler/account records are retained; no terminal scheduler claim is made.",
+    "Plan and worker records retain their original planned allocation fields."
+  ]
+}
