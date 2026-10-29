@@ -51,7 +51,8 @@ cost and was 1.3% slower per step; those cuts remain experimental. Do not treat
 MPI waiting as intrinsic per-cell work or multiply cross-job speedups.
 
 V23 adds boundary subphase and all-error-synchronization timers to distinguish
-actual boundary application from waiting. Those results are still pending.
+actual boundary application from waiting. The verified job 8987400 profile identifies sampled-normal numerator RHS
+(11–12 s per 100 steps) as the dominant boundary cost; see the adjacent README.
 Per-stage sparse communication is already small in the V21/V22 profiles, so an
 asynchronous exchange is not automatically worthwhile. Any overlap experiment
 must preserve producer/consumer and collective ordering, drain pending requests

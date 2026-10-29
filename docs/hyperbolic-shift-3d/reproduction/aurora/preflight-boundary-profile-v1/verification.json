@@ -1,0 +1,882 @@
+{
+  "passed": true,
+  "admission_written": false,
+  "issues": [],
+  "cases": [
+    {
+      "name": "sparse-plan-lifecycle",
+      "status": "passed",
+      "checks_recomputed": 4,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": []
+    },
+    {
+      "name": "parity-continuous-positive",
+      "status": "passed",
+      "checks_recomputed": 4,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "component": {
+        "component": "continuous_positive_device",
+        "ranks_verified": 12,
+        "maxima": {
+          "cpu_pole_error": 8.236281941653411e-16,
+          "cpu_rate_error": 2.111971841314933e-13,
+          "cpu_trace_error": 6.800364729772313e-14,
+          "partition_error": 0,
+          "finite_D_error": 0,
+          "null": 1.1102162777403758e-15,
+          "compatibility": 4.683753385137379e-17,
+          "cpu_bulk_error": 6.772360450213235e-14
+        }
+      }
+    },
+    {
+      "name": "minkowski-short",
+      "status": "passed",
+      "checks_recomputed": 62,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "boundary_timers": {
+        "ranks": 12,
+        "boundary_columns": 6,
+        "finite_nonnegative": true,
+        "subphases_bounded_by_closure": true,
+        "all_error_sync_overlaps_other_buckets": true
+      },
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V11",
+        "n": 16,
+        "nf": 31,
+        "kind": 0,
+        "admitted": true,
+        "cells": 159200,
+        "nominal_cells": 106496,
+        "surface_size": 47616,
+        "steps": 4,
+        "time": 0.001,
+        "dt": 0.00025,
+        "header_bytes": 152,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "a5607aa766e9e42678034b14ab71af21b1ef5d76a078b2a391f64f2743f82db0",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 4935200,
+            "sha256": "ea56835fdb5ddcb0ef4395a4cb90a2cf8dfed5566930f325e2900cc57e7fc43c"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 4935200,
+            "sha256": "a102f1978835b72edfd4fac8e483fff6c335fb91e521337700aae5a0cb292b1c"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "21a38de14a9763f6a86a4c0330570b018cd232576a3af0c1017eceb80c889ecf"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "6335ba282d5a32c003e8496fd5d80aade68ff61b13a5f14ae791f4cee1653f58"
+          }
+        ],
+        "bytes": 79725208,
+        "sha256": "6bbad5d9f4047f9ada4194ba2a7f1decb9e7bd807608a776833b58cd34463844",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3,
+        "mesh_topology": "cartesian_2x2x2_shells3",
+        "cartesian_core_subdivisions": 2,
+        "mesh_blocks": 26,
+        "shell_geometry": "spherical_equiangular",
+        "core_half_width": 0.18,
+        "shell_inner_radius": 0.16,
+        "overlap_quadrature": "radial_quintic_partition",
+        "cartesian_seams": "uniform_global_stencil",
+        "positive_variables": "log_chi_log_lapse_rk_and_ko",
+        "physical_lapse_floor": 1e-10
+      }
+    },
+    {
+      "name": "pulse-half",
+      "status": "passed",
+      "checks_recomputed": 60,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "boundary_timers": {
+        "ranks": 12,
+        "boundary_columns": 6,
+        "finite_nonnegative": true,
+        "subphases_bounded_by_closure": true,
+        "all_error_sync_overlaps_other_buckets": true
+      },
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V11",
+        "n": 16,
+        "nf": 31,
+        "kind": 1,
+        "admitted": true,
+        "cells": 159200,
+        "nominal_cells": 106496,
+        "surface_size": 47616,
+        "steps": 2,
+        "time": 0.0005,
+        "dt": 0.00025,
+        "header_bytes": 152,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "ee8cb57715bd57aee972e743b366b60e1f6b28b9e124b294e51852c1f402b577",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 4935200,
+            "sha256": "96bf01bc994231c01d4eca93aa74589dfc75ce45b7fb9f2cf94092737841b706"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 4935200,
+            "sha256": "4b34166f87b13b3c7e3725663261d2a2cc3796aa62cf77f2cff8925e40a89096"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "053bef0780916c46f7945a07374d2583550502e3d73aa0b5545d09b9b0cf38cd"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "bc5f40e7735f5dae47e7c38f69dbf6322981ebcbf374d1d8cd598620c292f9b9"
+          }
+        ],
+        "bytes": 79725208,
+        "sha256": "a7bdb3dddf3c102686022f683a5e3c9daec9cfbf9d8af471ef1bca8fa63127ea",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3,
+        "mesh_topology": "cartesian_2x2x2_shells3",
+        "cartesian_core_subdivisions": 2,
+        "mesh_blocks": 26,
+        "shell_geometry": "spherical_equiangular",
+        "core_half_width": 0.18,
+        "shell_inner_radius": 0.16,
+        "overlap_quadrature": "radial_quintic_partition",
+        "cartesian_seams": "uniform_global_stencil",
+        "positive_variables": "log_chi_log_lapse_rk_and_ko",
+        "physical_lapse_floor": 1e-10
+      }
+    },
+    {
+      "name": "pulse-resumed",
+      "status": "passed",
+      "checks_recomputed": 60,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "boundary_timers": {
+        "ranks": 12,
+        "boundary_columns": 6,
+        "finite_nonnegative": true,
+        "subphases_bounded_by_closure": true,
+        "all_error_sync_overlaps_other_buckets": true
+      },
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V11",
+        "n": 16,
+        "nf": 31,
+        "kind": 1,
+        "admitted": true,
+        "cells": 159200,
+        "nominal_cells": 106496,
+        "surface_size": 47616,
+        "steps": 4,
+        "time": 0.001,
+        "dt": 0.00025,
+        "header_bytes": 152,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "0e9a44fec8cbb26884013ca7780adfe78867ea1488e08b4081e45138bf107696",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 4935200,
+            "sha256": "bb5c4ce993402091c6f3e8dc177b7d692b69e1fca4ef7b36597cc056898b1e26"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 4935200,
+            "sha256": "f85511bb96e52d5d233324c74d143e474212d333e1e6e97670c87bd109a6f51f"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "25d59d359ed8888f814f56484602e1182426a18d09664c15eab6cfb46c9b5c5a"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "b0ebf04721fa1341150a6450e38be986049a44abc6d8ae7f115456a540cadfc9"
+          }
+        ],
+        "bytes": 79725208,
+        "sha256": "3cd1336de3f233840af002ac130772c3689d8d16b6a3a9275e6c3526c346d971",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3,
+        "mesh_topology": "cartesian_2x2x2_shells3",
+        "cartesian_core_subdivisions": 2,
+        "mesh_blocks": 26,
+        "shell_geometry": "spherical_equiangular",
+        "core_half_width": 0.18,
+        "shell_inner_radius": 0.16,
+        "overlap_quadrature": "radial_quintic_partition",
+        "cartesian_seams": "uniform_global_stencil",
+        "positive_variables": "log_chi_log_lapse_rk_and_ko",
+        "physical_lapse_floor": 1e-10
+      }
+    },
+    {
+      "name": "pulse-direct",
+      "status": "passed",
+      "checks_recomputed": 60,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "boundary_timers": {
+        "ranks": 12,
+        "boundary_columns": 6,
+        "finite_nonnegative": true,
+        "subphases_bounded_by_closure": true,
+        "all_error_sync_overlaps_other_buckets": true
+      },
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V11",
+        "n": 16,
+        "nf": 31,
+        "kind": 1,
+        "admitted": true,
+        "cells": 159200,
+        "nominal_cells": 106496,
+        "surface_size": 47616,
+        "steps": 4,
+        "time": 0.001,
+        "dt": 0.00025,
+        "header_bytes": 152,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "0e9a44fec8cbb26884013ca7780adfe78867ea1488e08b4081e45138bf107696",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 4935200,
+            "sha256": "bb5c4ce993402091c6f3e8dc177b7d692b69e1fca4ef7b36597cc056898b1e26"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 4935200,
+            "sha256": "f85511bb96e52d5d233324c74d143e474212d333e1e6e97670c87bd109a6f51f"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "25d59d359ed8888f814f56484602e1182426a18d09664c15eab6cfb46c9b5c5a"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "b0ebf04721fa1341150a6450e38be986049a44abc6d8ae7f115456a540cadfc9"
+          }
+        ],
+        "bytes": 79725208,
+        "sha256": "3cd1336de3f233840af002ac130772c3689d8d16b6a3a9275e6c3526c346d971",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3,
+        "mesh_topology": "cartesian_2x2x2_shells3",
+        "cartesian_core_subdivisions": 2,
+        "mesh_blocks": 26,
+        "shell_geometry": "spherical_equiangular",
+        "core_half_width": 0.18,
+        "shell_inner_radius": 0.16,
+        "overlap_quadrature": "radial_quintic_partition",
+        "cartesian_seams": "uniform_global_stencil",
+        "positive_variables": "log_chi_log_lapse_rk_and_ko",
+        "physical_lapse_floor": 1e-10
+      }
+    },
+    {
+      "name": "restart-audit",
+      "status": "passed",
+      "checks_recomputed": 18,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": []
+    },
+    {
+      "name": "puncture-control",
+      "status": "passed",
+      "checks_recomputed": 56,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V11",
+        "n": 16,
+        "nf": 31,
+        "kind": 2,
+        "admitted": true,
+        "cells": 159200,
+        "nominal_cells": 106496,
+        "surface_size": 47616,
+        "steps": 100,
+        "time": 0.05,
+        "dt": 0.0005,
+        "header_bytes": 152,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "0afdcb562e7cf6a5c60fbba453d07b7a8396de814f02a75e13029aea7e2e71fa",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 4935200,
+            "sha256": "43658fc5bfa49e1b44112d7fedd0f4d93085a25679dbac3aaf5db2b2be28a007"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 4935200,
+            "sha256": "23893c6c0a7c6762a747a0421e7b6f96018d4a6829a3ab4baa917bff53189994"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "55d35f312e4fa4cd3d71a66bc7ac95ab6f05694db7da8c57f0c8f3a229dfbccb"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "4c51b024fe21f2eef459a6770ef6ee0d01e10516496b4caea12301e4a162d6c7"
+          }
+        ],
+        "bytes": 79725208,
+        "sha256": "f63926b4db9b24f9233e3a6041646c4ffddce6a9712ab050bd06e86159479d8a",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3,
+        "mesh_topology": "cartesian_2x2x2_shells3",
+        "cartesian_core_subdivisions": 2,
+        "mesh_blocks": 26,
+        "shell_geometry": "spherical_equiangular",
+        "core_half_width": 0.18,
+        "shell_inner_radius": 0.16,
+        "overlap_quadrature": "radial_quintic_partition",
+        "cartesian_seams": "uniform_global_stencil",
+        "positive_variables": "log_chi_log_lapse_rk_and_ko",
+        "physical_lapse_floor": 1e-10
+      }
+    },
+    {
+      "name": "puncture-fast",
+      "status": "passed",
+      "checks_recomputed": 68,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "boundary_timers": {
+        "ranks": 12,
+        "boundary_columns": 6,
+        "finite_nonnegative": true,
+        "subphases_bounded_by_closure": true,
+        "all_error_sync_overlaps_other_buckets": true
+      },
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V11",
+        "n": 16,
+        "nf": 31,
+        "kind": 2,
+        "admitted": true,
+        "cells": 159200,
+        "nominal_cells": 106496,
+        "surface_size": 47616,
+        "steps": 100,
+        "time": 0.05,
+        "dt": 0.0005,
+        "header_bytes": 152,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "0afdcb562e7cf6a5c60fbba453d07b7a8396de814f02a75e13029aea7e2e71fa",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 4935200,
+            "sha256": "43658fc5bfa49e1b44112d7fedd0f4d93085a25679dbac3aaf5db2b2be28a007"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 4935200,
+            "sha256": "23893c6c0a7c6762a747a0421e7b6f96018d4a6829a3ab4baa917bff53189994"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "55d35f312e4fa4cd3d71a66bc7ac95ab6f05694db7da8c57f0c8f3a229dfbccb"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "4c51b024fe21f2eef459a6770ef6ee0d01e10516496b4caea12301e4a162d6c7"
+          }
+        ],
+        "bytes": 79725208,
+        "sha256": "f63926b4db9b24f9233e3a6041646c4ffddce6a9712ab050bd06e86159479d8a",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3,
+        "mesh_topology": "cartesian_2x2x2_shells3",
+        "cartesian_core_subdivisions": 2,
+        "mesh_blocks": 26,
+        "shell_geometry": "spherical_equiangular",
+        "core_half_width": 0.18,
+        "shell_inner_radius": 0.16,
+        "overlap_quadrature": "radial_quintic_partition",
+        "cartesian_seams": "uniform_global_stencil",
+        "positive_variables": "log_chi_log_lapse_rk_and_ko",
+        "physical_lapse_floor": 1e-10
+      }
+    },
+    {
+      "name": "execution-audit",
+      "status": "passed",
+      "checks_recomputed": 18,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": []
+    }
+  ],
+  "artifacts": [
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/sparse-plan-lifecycle.report.json",
+      "sha256": "3503b5d6293de739f686579618683dffa63e8595f7548a2089a26f9e6a229ffc",
+      "bytes": 78
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/parity-continuous-positive.report.json",
+      "sha256": "fcd490f4ed93dc636403e86d912b41543ab948b887dc04a500c994b62cecd9f3",
+      "bytes": 51703
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/parity-continuous-positive.rank-00.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/parity-continuous-positive.rank-01.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/parity-continuous-positive.rank-02.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/parity-continuous-positive.rank-03.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/parity-continuous-positive.rank-04.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/parity-continuous-positive.rank-05.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/parity-continuous-positive.rank-06.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/parity-continuous-positive.rank-07.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/parity-continuous-positive.rank-08.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/parity-continuous-positive.rank-09.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/parity-continuous-positive.rank-10.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/parity-continuous-positive.rank-11.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/parity-continuous-positive.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/minkowski-short.report.json",
+      "sha256": "b151f53d9ba014fcba40a42b42276915837e33f492a3403446861c3e451c409c",
+      "bytes": 10573
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/minkowski-short.history.csv",
+      "sha256": "2efce599ce4fb514cd7432f18fac20b06d50db25b3596d47753b9d1ca1901304",
+      "bytes": 1282
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/minkowski-short.checkpoint",
+      "sha256": "6bbad5d9f4047f9ada4194ba2a7f1decb9e7bd807608a776833b58cd34463844",
+      "bytes": 79725208
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/minkowski-short.log",
+      "sha256": "893542f326c4bb38e318e8bc261f165a1ba5a8e15fd89c5a9325ef75cf6aebc1",
+      "bytes": 178
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/pulse-half.report.json",
+      "sha256": "0f24973a7e059063322e278a47f1ba5df30dd80eeff6b9bc02155ded5fa258bf",
+      "bytes": 10521
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/pulse-half.history.csv",
+      "sha256": "38a4975e54f5937cc0b21edc653a8a199c4092b2b18f4f9510477a48518faa12",
+      "bytes": 1367
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/pulse-half.checkpoint",
+      "sha256": "a7bdb3dddf3c102686022f683a5e3c9daec9cfbf9d8af471ef1bca8fa63127ea",
+      "bytes": 79725208
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/pulse-half.log",
+      "sha256": "b6465b2c45e0ee757d64b8d96d07d08ab3899db1b6f66f0988ff8cf5e4667a75",
+      "bytes": 179
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/pulse-resumed.report.json",
+      "sha256": "002cad175239089345baf928972a707598f74177b0d367a78b9b498a25f9294a",
+      "bytes": 10499
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/pulse-resumed.history.csv",
+      "sha256": "0609ef768eee2d5002dd3313f94fba4c4c9de80188cff81f3887b4d8c0ee79d2",
+      "bytes": 1655
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/pulse-resumed.checkpoint",
+      "sha256": "3cd1336de3f233840af002ac130772c3689d8d16b6a3a9275e6c3526c346d971",
+      "bytes": 79725208
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/pulse-resumed.log",
+      "sha256": "5dc89cd773e6711a88984cfbbf8fbb1bf7d1d3e8286822b7cd4fa4cd0b64fc89",
+      "bytes": 183
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/pulse-direct.report.json",
+      "sha256": "d3475c16990eddd0639940226cc1942ed5ca16408cbfcd4a2c64741c45fb53dd",
+      "bytes": 10537
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/pulse-direct.history.csv",
+      "sha256": "480ddb47f2db52b692d555d25f99ca30bc23c68cfa72a9188d9993c5776ca56d",
+      "bytes": 1337
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/pulse-direct.checkpoint",
+      "sha256": "3cd1336de3f233840af002ac130772c3689d8d16b6a3a9275e6c3526c346d971",
+      "bytes": 79725208
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/pulse-direct.log",
+      "sha256": "5827218c3e0a510ee53272945996b6298b255f47d6bfdf42d2b44dcd000d17e1",
+      "bytes": 178
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/restart-audit.report.json",
+      "sha256": "db3935323c22d0c40a860e20e1f38d4a203833a56414a49fd9f87ede71715d08",
+      "bytes": 6006
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/restart-audit.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/puncture-control.report.json",
+      "sha256": "1bd0a61d88f06b5f4605c7137d5da7ef37aa680ccd00bbbb65f9a1c143372665",
+      "bytes": 8656
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/puncture-control.history.csv",
+      "sha256": "0295812535f0d49fac40b636e429f10f7eb6946994c95087aa23b48c645bfd69",
+      "bytes": 1771
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/puncture-control.checkpoint",
+      "sha256": "f63926b4db9b24f9233e3a6041646c4ffddce6a9712ab050bd06e86159479d8a",
+      "bytes": 79725208
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/puncture-control.checkpoint.horizon-seed.txt",
+      "sha256": "38aafd8ca307fc7d51663d86f29621faf0c9fb2aec7913f28d14b5500b98faf1",
+      "bytes": 90
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/puncture-control.fastflow.horizon_summary_0.txt",
+      "sha256": "a9325c142408dad2c7a038bccc23d020d6badd43c2b577063ba2172e55e895ba",
+      "bytes": 548
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/puncture-control.fastflow.horizon_shape_0.txt",
+      "sha256": "be9ef35a634d5ea2b94842a3888f57f07244a12af19b5837bf9a9632b951aab7",
+      "bytes": 4611
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/puncture-control.log",
+      "sha256": "1414b450aecce27051e4be3bb3161ba148f1be30a95be49de056344e2993d998",
+      "bytes": 177
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/puncture-fast.report.json",
+      "sha256": "c0efca8df9e6a353161b6fdeb586d9fb4672969c0115e4cd959f58dd1c8be03e",
+      "bytes": 10533
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/puncture-fast.history.csv",
+      "sha256": "86e2a31175b6dd2738a64d4df0eb698a1d44813b623db18006d0449becf91004",
+      "bytes": 1765
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/puncture-fast.checkpoint",
+      "sha256": "f63926b4db9b24f9233e3a6041646c4ffddce6a9712ab050bd06e86159479d8a",
+      "bytes": 79725208
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/puncture-fast.checkpoint.horizon-seed.txt",
+      "sha256": "38aafd8ca307fc7d51663d86f29621faf0c9fb2aec7913f28d14b5500b98faf1",
+      "bytes": 90
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/puncture-fast.fastflow.horizon_summary_0.txt",
+      "sha256": "a9325c142408dad2c7a038bccc23d020d6badd43c2b577063ba2172e55e895ba",
+      "bytes": 548
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/puncture-fast.fastflow.horizon_shape_0.txt",
+      "sha256": "be9ef35a634d5ea2b94842a3888f57f07244a12af19b5837bf9a9632b951aab7",
+      "bytes": 4611
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/puncture-fast.log",
+      "sha256": "4521b0c6561b0367631318a0d10566f0d8ac1e725edb35bbc4134e038ba77fe0",
+      "bytes": 178
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/execution-audit.report.json",
+      "sha256": "7442128b0240c8feac81720bc3178b3e7cbc74c441f3ccec921e7fea19e4ad46",
+      "bytes": 6006
+    },
+    {
+      "remote_path": "campaigns/preflight-boundary-profile-v1/output/execution-audit.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  ],
+  "verifier_sha256": "9cdf7ad97a9f3386bffede807c636c74415e013d4c5e3d337abdabacbd43073d",
+  "source_manifest_sha256": "d53c69a0e13581d58e55b333b6775c29d147c84845d2834e6d02ca2694cdd4c3",
+  "plan_sha256": "a23c41c595ecfc986c05c67345f75e57630ae8146d075cb142e343bd151ed4a0",
+  "scope": "Implementation/restart preflight only; no duration, convergence, AMR or nonspherical stability claim.",
+  "component_replay": "Frozen source-v23 parser replays hash-bound logs; checkpoint decoder is independent.",
+  "pins_sha256": "8c9ab69b75f727e0703ad949ece95434c2275852df904ff03784492e1232f865",
+  "build": {
+    "source_commit": "555ad41facd84c90a303f2f80f794ed3b917efaa",
+    "kokkos_pin": "6739bc623081648af9e752b616d9671527922cbf",
+    "source_manifest_sha256": "d53c69a0e13581d58e55b333b6775c29d147c84845d2834e6d02ca2694cdd4c3",
+    "git_blob_hashes_verified": 2653,
+    "build_receipt_sha256": "005d73c0151fcb25fa6ac001824a5a139734b40bb65f1a0ecd6969d2e732fc94",
+    "cache_sha256": "a469143ab89b2bf83a83fa79b9997eee36df09ccefd196570086bca05067b94c",
+    "binaries": {
+      "build-sycl-mpi-v23/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive_sparse": "c348cdc6f3f095b00264ea13c650316920c48d608e564985a01b18046e95656a",
+      "build-sycl-mpi-v23/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_sparse_exchange": "44cf1f92ce5862b7ba7f89aea6be6c13c1a502f4978f1a5a161b2f08eb3c3b58",
+      "build-sycl-mpi-v23/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_continuous_positive_device": "81380622d1206c51e6dd5630b5a608726d6bc243454ca85abdf24911db0e737d"
+    },
+    "records": {
+      "CMakeCache.txt": "a469143ab89b2bf83a83fa79b9997eee36df09ccefd196570086bca05067b94c",
+      "build-v23.sh": "d551906653185f361c760bf69bbcbfc3ae6aa1b4c329618ab6efa963fb14f0a8",
+      "source-v23-manifest.json": "d53c69a0e13581d58e55b333b6775c29d147c84845d2834e6d02ca2694cdd4c3",
+      "source-v23-non-kokkos-manifest.json": "b38cc5d5d76b09952635ff4fa239deb4b4be29325be9c4664e868577b0358914",
+      "source-v23-provenance.json": "ae5119916e73f636a3e8bbbc8ba445f22156d830258e22cc9aedc3cc7112a14f",
+      "v23/build-status.json": "005d73c0151fcb25fa6ac001824a5a139734b40bb65f1a0ecd6969d2e732fc94",
+      "v23/build.log": "71e1b9038eaa1c5942f8c7bd7eb9685a4c4129c54d5191a6cf17bf709edef23a",
+      "v23/compiler.txt": "6f41d08dd542e36e2f41b7b105da56d84c00bd6eb99a7c324ef8ef06635cbe26",
+      "v23/configure.log": "7cabec5eeef1a06f7b03889fed4656eeadece55de871cfb3e4a138ce70a371f7",
+      "v23/launch.json": "a031e487ac9ca8ac4081433633626effecccea8be05b3357865a7d302a2e1e1c",
+      "v23/launcher.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "v23/modules.txt": "cf3fde5892e6950a2ec013c75688552bf45cd2c81a1c7e4bdce32cb81f224156",
+      "v23/mpi-wrapper.txt": "35ee2ba9df330d781abc430dd144e1728a49ceb7215380336a8682af0ed5a88d",
+      "v23/runner.log": "49ffc1d0b96bd484714286e7edc3bd9647b05bbe938142420cf570066d87b487"
+    }
+  },
+  "frozen_control": {
+    "build-sycl-mpi-v21/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive_sparse": "dadc194251e43e9503e4c194a89086fbdd4a8692b077d1f55172c92ce12d3606",
+    "source-v21-provenance.json": "8bf0cf032181f7d28f176a80582e5784f9844e451a971089619c5db8be4b8721",
+    "source-v21-manifest.json": "5870a4f1290ded6e9cca2a6a592276119e1b46e5c52ee61fad71c8ba07e94fd2",
+    "build-logs/v21/build-status.json": "8d2a2b9b35c6b52391be2145c78807a96ca0a3f889a2b1c3b70953d0b3d703cd"
+  },
+  "initial_data": {
+    "sha256": "35c1b65aeaaefac34552f9a63b279cabe839b09326adc9af1d2c767ecc29c8ca",
+    "bytes": 29181172
+  },
+  "storage_at_finish": {
+    "bytes": 4761999092,
+    "entries": 42931
+  },
+  "affinity_log_sha256": "ed0c4e273bc534759e71efafbcc9906d734156b19c010798e58932b9727ea594",
+  "one_node_twelve_tiles_verified": true,
+  "terminal": {
+    "job_id": "8987400.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "state": "F",
+    "exit_status": 0,
+    "allocation_released": true
+  },
+  "epsilon2_restart": {
+    "passed": true,
+    "whole_file_equal": true,
+    "four_arrays_equal": true,
+    "core_header_equal": true,
+    "arrays": [
+      {
+        "name": "volume_state",
+        "doubles": 4935200,
+        "sha256": "bb5c4ce993402091c6f3e8dc177b7d692b69e1fca4ef7b36597cc056898b1e26"
+      },
+      {
+        "name": "volume_compensation",
+        "doubles": 4935200,
+        "sha256": "f85511bb96e52d5d233324c74d143e474212d333e1e6e97670c87bd109a6f51f"
+      },
+      {
+        "name": "scri_state",
+        "doubles": 47616,
+        "sha256": "25d59d359ed8888f814f56484602e1182426a18d09664c15eab6cfb46c9b5c5a"
+      },
+      {
+        "name": "scri_compensation",
+        "doubles": 47616,
+        "sha256": "b0ebf04721fa1341150a6450e38be986049a44abc6d8ae7f115456a540cadfc9"
+      }
+    ],
+    "streaming_byte_equality": true
+  },
+  "execution_equivalence": {
+    "passed": true,
+    "whole_file_equal": true,
+    "four_arrays_equal": true,
+    "core_header_equal": true,
+    "arrays": [
+      {
+        "name": "volume_state",
+        "doubles": 4935200,
+        "sha256": "43658fc5bfa49e1b44112d7fedd0f4d93085a25679dbac3aaf5db2b2be28a007"
+      },
+      {
+        "name": "volume_compensation",
+        "doubles": 4935200,
+        "sha256": "23893c6c0a7c6762a747a0421e7b6f96018d4a6829a3ab4baa917bff53189994"
+      },
+      {
+        "name": "scri_state",
+        "doubles": 47616,
+        "sha256": "55d35f312e4fa4cd3d71a66bc7ac95ab6f05694db7da8c57f0c8f3a229dfbccb"
+      },
+      {
+        "name": "scri_compensation",
+        "doubles": 47616,
+        "sha256": "4c51b024fe21f2eef459a6770ef6ee0d01e10516496b4caea12301e4a162d6c7"
+      }
+    ],
+    "streaming_byte_equality": true
+  },
+  "metadata_sha256": {
+    "plan.json": "a23c41c595ecfc986c05c67345f75e57630ae8146d075cb142e343bd151ed4a0",
+    "binding.json": "edfe8578c6f3bc5f27e9b112da8ddaf7be78b642603f65bc0b3441bad07f6df5",
+    "worker-status.json": "67363f2e9ece63c48976f02086df7a602d6f546c9b18b8ddc92f9f7f3ea0d577",
+    "run_debug.pbs": "3506f975473257ee68766b6e95ad6ea177606efde76ed16b513483da6b372e43",
+    "submission.json": "1392848ca9079cd2e0720251afcc87931a17a4135fe5992622382291de09de83",
+    "collected.json": "efe1bb7a2dd19d02dfd844618711dbe60d0af11c43200c28a15306d714893eeb",
+    "allocation-released.json": "b8f35bc13b43dc3a62cbe8921b72ee3ccdc6eaf7c4a5575b0dfa105f62909b16"
+  },
+  "checks_recomputed": 410,
+  "artifacts_verified": 49,
+  "verified_preflight_configurations": [
+    {
+      "checkpoint_schema": "HYP3D_MPI_V11",
+      "checkpoint_header_bytes": 152,
+      "scri_dissipation_epsilon": 2.0,
+      "scri_dissipation_degree": 7,
+      "scri_normal_derivative": "sampled_native_numerator7",
+      "scri_normal_radial_nodes": 7,
+      "scri_normal_bulk_derivative_order": 4,
+      "scri_radial_closure": "donor_seven_last3",
+      "scri_radial_bulk_rows": 3,
+      "interpatch_interpolation": "logical_inner_transition",
+      "evolved_overlap": 3,
+      "mesh_topology": "cartesian_2x2x2_shells3",
+      "cartesian_core_subdivisions": 2,
+      "mesh_blocks": 26,
+      "shell_geometry": "spherical_equiangular",
+      "core_half_width": 0.18,
+      "shell_inner_radius": 0.16,
+      "overlap_quadrature": "radial_quintic_partition",
+      "cartesian_seams": "uniform_global_stencil",
+      "positive_variables": "log_chi_log_lapse_rk_and_ko",
+      "physical_lapse_floor": 1e-10
+    }
+  ]
+}
