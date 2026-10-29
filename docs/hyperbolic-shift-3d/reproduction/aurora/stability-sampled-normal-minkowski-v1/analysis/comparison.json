@@ -1,0 +1,2731 @@
+{
+  "analysis": {
+    "path": "output/hyperbolic-core-shell/v5-duration-comparison-draft-v1/compare.py",
+    "sha256": "84715810e88c74f9b865b7b8e69a7f7b47cd037cd6cc02fd042d472d2a4a1549",
+    "bytes": 11620
+  },
+  "reused_analysis": {
+    "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-dissipative-minkowski-v1/analysis/analyze.py",
+    "sha256": "685f65de88ea4065dde8f213f8151c518f4c4aa63411e7f55067e10ef18a666d",
+    "bytes": 26901
+  },
+  "scope": "Bounded same-grid Minkowski controls; no puncture, 100M, AMR or convergence admission",
+  "fit_selection": "Unchanged frozen growth() function: longest contiguous amplitude window1e-10..1e-3, four samples minimum",
+  "accuracy": "Sampled complete closure has roughly third-order measured manufactured rates; no fourth-order accuracy claim",
+  "norms": "Reported formulation H and invariant conformal M, normalized compactified coordinate-volume RMS; no H fit near roundoff",
+  "timing_caveat": "Cumulative timing buckets overlap and are independently MPI_MAX reduced; they cannot be summed or subtracted as disjoint wall time. Closure includes surface gathers also charged to exchange; V4/V5 add the 21-field residual gather. V5 additionally includes provisional local halo filling and five native numerator samples per row. Diagnostics contain a boundary refresh. Per-accepted-step cumulative values amortize initialization, diagnostics and failed-stage work, and are not isolated kernel timings. Full-step history rates include diagnostics; these separate allocations do not establish a causal GPU throughput improvement.",
+  "cases": [
+    {
+      "case": "original",
+      "label": "Original",
+      "outcome": "numerical_failure",
+      "evidence_verified": true,
+      "source_manifest_sha256": "3f367265e2e627aa770d0ae78be4fac912f4c0980a09471382cf9b295c677d7f",
+      "binary_sha256": "6e7553b556dd9c4f8b56f81eb0f43c15cf0517a0b81776320a9a6c6d3c29ccef",
+      "job_id": "8982042.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+      "native_status": "failed",
+      "worker_case_status": "failed",
+      "error": "nonpositive interpolated scri geometry",
+      "returncode": 2,
+      "timed_out": false,
+      "storage_error": null,
+      "accepted_endpoint": 0.4895000000000004,
+      "accepted_steps": 979,
+      "last_fresh_diagnostic": 0.45000000000000034,
+      "diagnostics_current": false,
+      "checkpoint_admitted": false,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "failed",
+          "passed": false,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "n"
+            ],
+            "op": "eq",
+            "value": 16
+          },
+          "observed": 16,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "min_lapse"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.5000915527343748,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "min_chi"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.9948714241688155,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "diagnostics_current"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": false,
+          "passed": false,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_admitted"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": false,
+          "passed": false,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_surface"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.1102230246251504e-15,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_ghost"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.222138904088118e-15,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "max_cfl"
+            ],
+            "op": "le",
+            "value": 0.5
+          },
+          "observed": 0.3239200538644451,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "H_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.00022923478433789575,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "M_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.02119754330825022,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "H_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.00022923478433789575,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "M_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.02119754330825022,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "max_state_deviation"
+            ],
+            "op": "le",
+            "value": 1e-08
+          },
+          "observed": 1.0567408911906813,
+          "passed": false,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "H_L2"
+            ],
+            "op": "le",
+            "value": 1e-07
+          },
+          "observed": 0.00022923478433789575,
+          "passed": false,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "M_L2"
+            ],
+            "op": "le",
+            "value": 1e-07
+          },
+          "observed": 0.02119754330825022,
+          "passed": false,
+          "category": "science"
+        }
+      ],
+      "all_declared_checks_passed": false,
+      "science_checks_passed": false,
+      "execution_succeeded": false,
+      "all_v4_recorded_trajectory_limits_passed": false,
+      "inputs": [
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-v1/worker-status.json",
+          "sha256": "fbcee84091d2877383d8abf270fcb6372cdf28bb568d3b14fef06693278ca4b0",
+          "bytes": 8517
+        },
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-v1/binding.json",
+          "sha256": "a2108b34280ed1af19f2e766eab78ddc5ecfd466d6b5599937f3f48c96e5a487",
+          "bytes": 1543
+        },
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-v1/plan.json",
+          "sha256": "7c785708f0a984f070952596969792fbf1041fc61e1d7fdf9fd1a2a174bd1128",
+          "bytes": 10414
+        }
+      ],
+      "artifacts": [
+        {
+          "remote_path": "campaigns/stability-v1/output/minkowski.report.json",
+          "sha256": "590230abbb4e597e6bba8355a42dcb318c76a7217a2b916b8f2edead75a7b090",
+          "bytes": 1785,
+          "bytes_verified": true,
+          "local": {
+            "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-v1/output/minkowski.report.json",
+            "sha256": "590230abbb4e597e6bba8355a42dcb318c76a7217a2b916b8f2edead75a7b090",
+            "bytes": 1785
+          }
+        },
+        {
+          "remote_path": "campaigns/stability-v1/output/minkowski.history.csv",
+          "sha256": "8ddf741e336086d8b0347b60036fff03faf4169a9b22143233c86905530e2ff5",
+          "bytes": 4449,
+          "bytes_verified": true,
+          "local": {
+            "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-v1/output/minkowski.history.csv",
+            "sha256": "8ddf741e336086d8b0347b60036fff03faf4169a9b22143233c86905530e2ff5",
+            "bytes": 4449
+          }
+        },
+        {
+          "remote_path": "campaigns/stability-v1/output/minkowski.checkpoint",
+          "sha256": "c590ea38f2ea7736a78c63f28fcac9c82fee08eebc0b04f9eee27747ca0ae40d",
+          "bytes": 39362632,
+          "bytes_verified": false
+        }
+      ],
+      "growth": {
+        "status": "fitted",
+        "points": 5,
+        "minimum_points": 4,
+        "sample_indexes": [
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "times": [
+          0.1500000000000001,
+          0.20000000000000015,
+          0.25000000000000017,
+          0.3000000000000002,
+          0.35000000000000026
+        ],
+        "amplitudes": [
+          1.549160094966191e-10,
+          5.630809194741189e-09,
+          2.0913868876002534e-07,
+          9.240555343120453e-06,
+          0.00046810978696634905
+        ],
+        "rate": 74.49152948025743,
+        "r_squared": 0.9996257058777576,
+        "selection": "longest contiguous recorded state_deviation interval in [1e-10,1e-3]; earliest tie",
+        "method": "unweighted OLS log(state_deviation)=intercept+rate*coordinate_time",
+        "time_range": [
+          0.1500000000000001,
+          0.35000000000000026
+        ],
+        "intercept": -33.86730940859887,
+        "descriptive_rate_standard_error": 0.832212164862076,
+        "centered_time_sum_of_squares": 0.025000000000000036,
+        "log10_dynamic_range": 6.480251419792846,
+        "monotone_nondecreasing": true,
+        "caveat": "Correlated diagnostic samples: OLS error is descriptive, not a confidence interval. Growth rates are not inferred from failure times."
+      },
+      "v4_limits_on_recorded_history": [
+        {
+          "field": "state_deviation",
+          "op": "le",
+          "limit": 1e-08,
+          "status": "failed",
+          "samples": 10,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": 0.25000000000000017,
+          "extreme": 1.0567408911906813
+        },
+        {
+          "field": "H_L2",
+          "op": "le",
+          "limit": 1e-07,
+          "status": "failed",
+          "samples": 10,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": 0.4000000000000003,
+          "extreme": 0.00022923478433789575
+        },
+        {
+          "field": "M_L2",
+          "op": "le",
+          "limit": 1e-07,
+          "status": "failed",
+          "samples": 10,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": 0.3000000000000002,
+          "extreme": 0.02119754330825022
+        },
+        {
+          "field": "null_surface",
+          "op": "le",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 10,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 1.1102230246251504e-15
+        },
+        {
+          "field": "null_ghost",
+          "op": "le",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 10,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 1.222138904088118e-15
+        },
+        {
+          "field": "determinant_residual",
+          "op": "le",
+          "limit": 1e-12,
+          "status": "unavailable"
+        },
+        {
+          "field": "tracefree_residual",
+          "op": "le",
+          "limit": 1e-12,
+          "status": "unavailable"
+        },
+        {
+          "field": "min_chi",
+          "op": "ge",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 10,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 0.9948714241688155
+        },
+        {
+          "field": "min_lapse",
+          "op": "ge",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 10,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 0.5000915527343748
+        },
+        {
+          "field": "cfl_max",
+          "op": "le",
+          "limit": 0.5,
+          "status": "passed_recorded_samples",
+          "samples": 10,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 0.3239200538644451
+        }
+      ],
+      "terminal": {
+        "one_node_twelve_tiles_verified": true,
+        "terminal_verified": false
+      },
+      "last_fresh": {
+        "state_deviation": 1.0567408911906813,
+        "H_L2": 0.00022923478433789575,
+        "M_L2": 0.02119754330825022,
+        "Z_L2": 0.004140352258185902,
+        "Theta_L2": 2.119376891070232e-05,
+        "null_surface": 1.1102230246251504e-15,
+        "null_ghost": 1.222138904088118e-15
+      },
+      "history_max": {
+        "state_deviation": 1.0567408911906813,
+        "H_L2": 0.00022923478433789575,
+        "M_L2": 0.02119754330825022,
+        "Z_L2": 0.004140352258185902,
+        "Theta_L2": 2.119376891070232e-05,
+        "null_surface": 1.1102230246251504e-15,
+        "null_ghost": 1.222138904088118e-15
+      },
+      "unavailable_history_fields": [
+        "determinant_residual",
+        "tracefree_residual"
+      ],
+      "reported_running_bounds": {
+        "min_lapse": 0.5000915527343748,
+        "min_chi": 0.9948714241688155,
+        "H_exterior_L2": 0.00022923478433789575,
+        "max_state_deviation": 1.0567408911906813,
+        "M_exterior_L2": 0.02119754330825022,
+        "M_L2": 0.02119754330825022,
+        "H_L2": 0.00022923478433789575,
+        "max_null_ghost": 1.222138904088118e-15,
+        "max_cfl": 0.3239200538644451,
+        "max_null_surface": 1.1102230246251504e-15
+      },
+      "scientifically_admitted_for_this_bounded_test": false,
+      "native_checkpoint_admitted": false,
+      "timing": {
+        "cumulative": {
+          "seconds": 338.410779,
+          "rhs_seconds": 48.74915317699998,
+          "exchange_seconds": 30.028635129999813,
+          "closure_seconds": 242.08117593600045,
+          "diagnostic_seconds": 0.5891810430000001
+        },
+        "cumulative_per_accepted_step": {
+          "seconds": 0.3456698457609806,
+          "rhs_seconds": 0.04979484492032685,
+          "exchange_seconds": 0.03067276315628173,
+          "closure_seconds": 0.24727392843309545,
+          "diagnostic_seconds": 0.0006018192471910113
+        },
+        "accepted_steps": 979,
+        "full_step_interval_count": 8,
+        "discarded_initial_interval": true,
+        "median_history_seconds_per_step": 0.3399919512399999,
+        "median_history_coordinate_advance_per_second": 0.0014706230526916964,
+        "median_diagnostic_coordinate_interval": 0.050000000000000044,
+        "interpretation": "Cumulative timing buckets overlap and are independently MPI_MAX reduced; they cannot be summed or subtracted as disjoint wall time. Closure includes surface gathers also charged to exchange; V4/V5 add the 21-field residual gather. V5 additionally includes provisional local halo filling and five native numerator samples per row. Diagnostics contain a boundary refresh. Per-accepted-step cumulative values amortize initialization, diagnostics and failed-stage work, and are not isolated kernel timings. Full-step history rates include diagnostics; these separate allocations do not establish a causal GPU throughput improvement."
+      }
+    },
+    {
+      "case": "v3",
+      "label": "V3: cross-face angular jets",
+      "outcome": "numerical_failure",
+      "evidence_verified": true,
+      "source_manifest_sha256": "86b602e7e68fc93e6a76e16c9bd5c4aea9fcef64363670c5f95c6b0adf30fc13",
+      "binary_sha256": "a557b2090b8c41c6999969a008f1731e743eea21caa3fa257af386ab15b1847d",
+      "job_id": "8983405.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+      "native_status": "failed",
+      "worker_case_status": "failed",
+      "error": "nonpositive interpolated scri geometry",
+      "returncode": 2,
+      "timed_out": false,
+      "storage_error": null,
+      "accepted_endpoint": 0.5204999999999981,
+      "accepted_steps": 1041,
+      "last_fresh_diagnostic": 0.5000000000000003,
+      "diagnostics_current": false,
+      "checkpoint_admitted": false,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "failed",
+          "passed": false,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "n"
+            ],
+            "op": "eq",
+            "value": 16
+          },
+          "observed": 16,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "min_lapse"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.5000915527343749,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "min_chi"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.8667679351634653,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "diagnostics_current"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": false,
+          "passed": false,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_admitted"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": false,
+          "passed": false,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_surface"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.1102230246251544e-15,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_ghost"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.2215113466068477e-15,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "max_cfl"
+            ],
+            "op": "le",
+            "value": 0.5
+          },
+          "observed": 0.32392005386444506,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "H_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.07128031959642481,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "M_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 1.920186827108293,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "H_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.07128031959642481,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "M_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 1.920186827108293,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "max_state_deviation"
+            ],
+            "op": "le",
+            "value": 1e-08
+          },
+          "observed": 29.764182010167712,
+          "passed": false,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "H_L2"
+            ],
+            "op": "le",
+            "value": 1e-07
+          },
+          "observed": 0.07128031959642481,
+          "passed": false,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "M_L2"
+            ],
+            "op": "le",
+            "value": 1e-07
+          },
+          "observed": 1.920186827108293,
+          "passed": false,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "algebraic_projection"
+            ],
+            "op": "eq",
+            "value": "final_stage_standard"
+          },
+          "observed": "final_stage_standard",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_schema"
+            ],
+            "op": "eq",
+            "value": "HYP3D_MPI_V3"
+          },
+          "observed": "HYP3D_MPI_V3",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "max_determinant_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.1102230246251565e-15,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "max_tracefree_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 5.329070518200751e-15,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_angular_stencil"
+            ],
+            "op": "eq",
+            "value": "cross_face_centered5"
+          },
+          "observed": "cross_face_centered5",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "t"
+            ],
+            "op": "eq",
+            "value": 1.0
+          },
+          "observed": 0.5204999999999981,
+          "passed": false,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "steps"
+            ],
+            "op": "eq",
+            "value": 2001
+          },
+          "observed": 1041,
+          "passed": false,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "dt"
+            ],
+            "op": "eq",
+            "value": 0.0005
+          },
+          "observed": 0.0005,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "start_time"
+            ],
+            "op": "eq",
+            "value": 0.0
+          },
+          "observed": 0,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "segment_steps"
+            ],
+            "op": "eq",
+            "value": 2001
+          },
+          "observed": 1041,
+          "passed": false,
+          "category": "completion_or_configuration"
+        }
+      ],
+      "all_declared_checks_passed": false,
+      "science_checks_passed": false,
+      "execution_succeeded": false,
+      "all_v4_recorded_trajectory_limits_passed": false,
+      "inputs": [
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-angular-minkowski-v1/worker-status.json",
+          "sha256": "17c8cef0e0458398eb724543e0aeb22b9c95c9db9219be05341ad1b6ff3f8d7e",
+          "bytes": 11478
+        },
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-angular-minkowski-v1/binding.json",
+          "sha256": "8f2b83c623d9ce00f6b31ebd1f2e893dd268d1af9a4feea2a573ef1286b083d1",
+          "bytes": 1475
+        },
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-angular-minkowski-v1/plan.json",
+          "sha256": "bddaabbbc2b6e1fa9da8ce6726c01f4edee3f58f0c7cd956641e28f803a36396",
+          "bytes": 5696
+        },
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-angular-minkowski-v1/admission.json",
+          "sha256": "8dd384fd6c0cb25bf97c6fa2a6f8d8b3d9a43f4b90e4b9dbf5fbb4056dc2aaa5",
+          "bytes": 3493
+        }
+      ],
+      "artifacts": [
+        {
+          "remote_path": "campaigns/stability-angular-minkowski-v1/output/minkowski.report.json",
+          "sha256": "e332ef223e7d7953328d96263a5e11bd71809bb0eecb1fb2141784fac8e40687",
+          "bytes": 2123,
+          "bytes_verified": true,
+          "local": {
+            "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-angular-minkowski-v1/output/minkowski.report.json",
+            "sha256": "e332ef223e7d7953328d96263a5e11bd71809bb0eecb1fb2141784fac8e40687",
+            "bytes": 2123
+          }
+        },
+        {
+          "remote_path": "campaigns/stability-angular-minkowski-v1/output/minkowski.history.csv",
+          "sha256": "fb23b6ae99274312ff21f1f22bd77ed6115405c22a02fddc6e11ae07da9f1cce",
+          "bytes": 5832,
+          "bytes_verified": true,
+          "local": {
+            "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-angular-minkowski-v1/output/minkowski.history.csv",
+            "sha256": "fb23b6ae99274312ff21f1f22bd77ed6115405c22a02fddc6e11ae07da9f1cce",
+            "bytes": 5832
+          }
+        },
+        {
+          "remote_path": "campaigns/stability-angular-minkowski-v1/output/minkowski.checkpoint",
+          "sha256": "65aa86f0a34d9909609d5c68aa45b6e87960c5353636c9f1720828ac1503b6f5",
+          "bytes": 39362632,
+          "bytes_verified": false
+        },
+        {
+          "remote_path": "campaigns/stability-angular-minkowski-v1/output/minkowski.failed-stage.bin",
+          "sha256": "e21b8d31d872db6114e54121e255eeeecfae57d45c02ebdc4e2367b5363cddd1",
+          "bytes": 19681280,
+          "bytes_verified": false
+        },
+        {
+          "remote_path": "campaigns/stability-angular-minkowski-v1/output/minkowski.log",
+          "sha256": "7dc8dd5f2b2d8e451e6857d83dd263cefcd839ebddba4ba907daf39883993e20",
+          "bytes": 959,
+          "bytes_verified": true,
+          "local": {
+            "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-angular-minkowski-v1/output/minkowski.log",
+            "sha256": "7dc8dd5f2b2d8e451e6857d83dd263cefcd839ebddba4ba907daf39883993e20",
+            "bytes": 959
+          }
+        }
+      ],
+      "growth": {
+        "status": "fitted",
+        "points": 5,
+        "minimum_points": 4,
+        "sample_indexes": [
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "times": [
+          0.1500000000000001,
+          0.20000000000000015,
+          0.25000000000000017,
+          0.3000000000000002,
+          0.35000000000000026
+        ],
+        "amplitudes": [
+          1.3347047908882436e-10,
+          4.88035063493922e-09,
+          1.825071155732693e-07,
+          6.881747385196005e-06,
+          0.00026022431909637864
+        ],
+        "rate": 72.43551865996105,
+        "r_squared": 0.999996599455714,
+        "selection": "longest contiguous recorded state_deviation interval in [1e-10,1e-3]; earliest tie",
+        "method": "unweighted OLS log(state_deviation)=intercept+rate*coordinate_time",
+        "time_range": [
+          0.1500000000000001,
+          0.35000000000000026
+        ],
+        "intercept": -33.61533381048347,
+        "descriptive_rate_standard_error": 0.07711980144903213,
+        "centered_time_sum_of_squares": 0.025000000000000036,
+        "log10_dynamic_range": 6.289962661474391,
+        "monotone_nondecreasing": true,
+        "caveat": "Correlated diagnostic samples: OLS error is descriptive, not a confidence interval. Growth rates are not inferred from failure times."
+      },
+      "v4_limits_on_recorded_history": [
+        {
+          "field": "state_deviation",
+          "op": "le",
+          "limit": 1e-08,
+          "status": "failed",
+          "samples": 11,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": 0.25000000000000017,
+          "extreme": 29.764182010167712
+        },
+        {
+          "field": "H_L2",
+          "op": "le",
+          "limit": 1e-07,
+          "status": "failed",
+          "samples": 11,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": 0.4000000000000003,
+          "extreme": 0.07128031959642481
+        },
+        {
+          "field": "M_L2",
+          "op": "le",
+          "limit": 1e-07,
+          "status": "failed",
+          "samples": 11,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": 0.35000000000000026,
+          "extreme": 1.920186827108293
+        },
+        {
+          "field": "null_surface",
+          "op": "le",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 11,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 1.1102230246251544e-15
+        },
+        {
+          "field": "null_ghost",
+          "op": "le",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 11,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 1.2215113466068477e-15
+        },
+        {
+          "field": "determinant_residual",
+          "op": "le",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 11,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 1.1102230246251565e-15
+        },
+        {
+          "field": "tracefree_residual",
+          "op": "le",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 11,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 5.329070518200751e-15
+        },
+        {
+          "field": "min_chi",
+          "op": "ge",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 11,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 0.8667679351634653
+        },
+        {
+          "field": "min_lapse",
+          "op": "ge",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 11,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 0.5000915527343748
+        },
+        {
+          "field": "cfl_max",
+          "op": "le",
+          "limit": 0.5,
+          "status": "passed_recorded_samples",
+          "samples": 11,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 0.3239200538644449
+        }
+      ],
+      "terminal": {
+        "one_node_twelve_tiles_verified": true,
+        "terminal_verified": true,
+        "scheduler_state": "F",
+        "scheduler_exit_status": 1,
+        "allocation_released": true,
+        "records": [
+          {
+            "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-angular-minkowski-v1/terminal.json",
+            "sha256": "984971faf830ba5366546638e27d8d12f086de877a3ee1dd1cd0279856f237cf",
+            "bytes": 398
+          },
+          {
+            "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-angular-minkowski-v1/allocation-released.json",
+            "sha256": "d583b199acd8e8013aab37b6e37b7d34b8da3b2de78d41575d0a2fce5d361e7b",
+            "bytes": 108
+          }
+        ]
+      },
+      "last_fresh": {
+        "state_deviation": 29.764182010167712,
+        "H_L2": 0.07128031959642481,
+        "M_L2": 1.920186827108293,
+        "Z_L2": 0.35090146125569055,
+        "Theta_L2": 0.006275699173240166,
+        "determinant_residual": 1.1102230246251565e-15,
+        "tracefree_residual": 5.329070518200751e-15,
+        "null_surface": 1.1102230246251544e-15,
+        "null_ghost": 1.2215113466068477e-15
+      },
+      "history_max": {
+        "state_deviation": 29.764182010167712,
+        "H_L2": 0.07128031959642481,
+        "M_L2": 1.920186827108293,
+        "Z_L2": 0.35090146125569055,
+        "Theta_L2": 0.006275699173240166,
+        "determinant_residual": 1.1102230246251565e-15,
+        "tracefree_residual": 5.329070518200751e-15,
+        "null_surface": 1.1102230246251544e-15,
+        "null_ghost": 1.2215113466068477e-15
+      },
+      "unavailable_history_fields": [],
+      "reported_running_bounds": {
+        "min_lapse": 0.5000915527343749,
+        "min_chi": 0.8667679351634653,
+        "max_tracefree_residual": 5.329070518200751e-15,
+        "H_exterior_L2": 0.07128031959642481,
+        "max_state_deviation": 29.764182010167712,
+        "M_exterior_L2": 1.920186827108293,
+        "max_determinant_residual": 1.1102230246251565e-15,
+        "M_L2": 1.920186827108293,
+        "H_L2": 0.07128031959642481,
+        "max_null_ghost": 1.2215113466068477e-15,
+        "max_cfl": 0.32392005386444506,
+        "max_null_surface": 1.1102230246251544e-15
+      },
+      "scientifically_admitted_for_this_bounded_test": false,
+      "native_checkpoint_admitted": false,
+      "timing": {
+        "cumulative": {
+          "seconds": 128.489588206,
+          "rhs_seconds": 51.819569161000025,
+          "exchange_seconds": 31.389178391000033,
+          "closure_seconds": 26.103666814000086,
+          "diagnostic_seconds": 0.15593785999999998
+        },
+        "cumulative_per_accepted_step": {
+          "seconds": 0.12342899923727187,
+          "rhs_seconds": 0.04977864472718542,
+          "exchange_seconds": 0.030152909117195037,
+          "closure_seconds": 0.025075568505283464,
+          "diagnostic_seconds": 0.00014979621517771373
+        },
+        "accepted_steps": 1041,
+        "full_step_interval_count": 9,
+        "discarded_initial_interval": true,
+        "median_history_seconds_per_step": 0.11815497673999996,
+        "median_history_coordinate_advance_per_second": 0.004231730340908537,
+        "median_diagnostic_coordinate_interval": 0.050000000000000044,
+        "interpretation": "Cumulative timing buckets overlap and are independently MPI_MAX reduced; they cannot be summed or subtracted as disjoint wall time. Closure includes surface gathers also charged to exchange; V4/V5 add the 21-field residual gather. V5 additionally includes provisional local halo filling and five native numerator samples per row. Diagnostics contain a boundary refresh. Per-accepted-step cumulative values amortize initialization, diagnostics and failed-stage work, and are not isolated kernel timings. Full-step history rates include diagnostics; these separate allocations do not establish a causal GPU throughput improvement."
+      }
+    },
+    {
+      "case": "v4",
+      "label": "V4: angular dissipation, epsilon=2",
+      "outcome": "numerical_failure",
+      "evidence_verified": true,
+      "source_manifest_sha256": "0e7967f1f33559ed79b9f97d6416dacc296f0f14663d35c682177a9ac07db60f",
+      "binary_sha256": "fc8d8074351a01ade6fd05dcf460555c935cf4ffe66c9bda31cc517679500fff",
+      "admission_references": [
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/preflight-dissipative-v1/admission.json",
+          "sha256": "32cc0fed05319e204f41edea3b62f614138f07a801079e6348536a07650713a1",
+          "bytes": 4630
+        },
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/preflight-dissipative-v1/raw/worker-status.json",
+          "sha256": "6b2c03ddaf1f6a7e868ee93cdf33ba3617635bb578d929f626bc4d3f53a69ab4",
+          "bytes": 100357
+        },
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/preflight-dissipative-v1/verification-v2.json",
+          "sha256": "083a9911861b343276fe6aacb058f185d882184ef2fc70d2467097f2774774cf",
+          "bytes": 49746
+        },
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/preflight-dissipative-v1/verify.py",
+          "sha256": "430712dd878d319db28727de78403b331bf724c42bec8a23830b03c4c183ed80",
+          "bytes": 28463
+        },
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/preflight-dissipative-v1/compile-evidence/source-v11-manifest.json",
+          "sha256": "0e7967f1f33559ed79b9f97d6416dacc296f0f14663d35c682177a9ac07db60f",
+          "bytes": 341066
+        },
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/preflight-dissipative-v1/compile-evidence/v11/build-status.json",
+          "sha256": "0f8ac6a276149835ede35eb495ed692e95876bf4cc5549b90eb6eeab9cd002c0",
+          "bytes": 2225
+        },
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/preflight-dissipative-v1/compile-evidence/CMakeCache.txt",
+          "sha256": "1c571ff056eac7b36beadf1ea2d5cf55b11a94914d5e9e50a7fda56a3821a0cd",
+          "bytes": 39741
+        },
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/preflight-dissipative-v1/raw/output/parity-device.report.json",
+          "sha256": "9319d5255df73f7e4d64fbdbb24c1eb4bb604d340be326e07a11ff1c420e62c9",
+          "bytes": 14243
+        },
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/preflight-dissipative-v1/raw/output/parity-exchange.report.json",
+          "sha256": "04c819ed5fd7b019ada48a78957c2cbd70b8669638bb3602c9d6c038216642f3",
+          "bytes": 12780
+        },
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/preflight-dissipative-v1/raw/output/parity-scri.report.json",
+          "sha256": "0916a7f0525a4617621f99344500f50e10995d9617fb119f83cdf6f24dfcd407",
+          "bytes": 15187
+        },
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/preflight-dissipative-v1/raw/output/parity-algebraic.report.json",
+          "sha256": "058a8e754b24d05870b5029685f3b500ff394f7677440b6b544bd7cf8a4c8c8b",
+          "bytes": 14875
+        },
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/preflight-dissipative-v1/raw/output/parity-angular.report.json",
+          "sha256": "15bcb2dab43ef82829c03dde20329d582a354632e10e465064ee7970e97a851c",
+          "bytes": 15590
+        },
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/preflight-dissipative-v1/raw/output/parity-dissipation-closure.report.json",
+          "sha256": "fa9d36f69759495b54006412822a586b97de7a63c2c6974c11e0a1d94869144a",
+          "bytes": 33450
+        },
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/preflight-dissipative-v1/raw/output/parity-dissipation.report.json",
+          "sha256": "a1280fe93d00998fbbeb4da2d7cb8c905b4ef0b3e14888ad81520f19f2a6afbc",
+          "bytes": 45630
+        },
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/preflight-dissipative-v1/raw/output/control-v4-zero.report.json",
+          "sha256": "8b20d4016a4f4b2ec1ea289988d4b75b40cf100857e52fa9c45451239e5f6315",
+          "bytes": 2590
+        },
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/preflight-dissipative-v1/raw/output/control-v3.report.json",
+          "sha256": "21d38ebba86a5644cca371fdcd93dea7ae08efe778c5e60e7d381efb947b57fb",
+          "bytes": 2546
+        },
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/preflight-dissipative-v1/raw/output/minkowski-short.report.json",
+          "sha256": "58534523d4499ddee0380b73a4b097bc8437b32ef80597aa2cb605c2fc17b9be",
+          "bytes": 2693
+        },
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/preflight-dissipative-v1/raw/output/pulse-half.report.json",
+          "sha256": "9c38ba14a41489a64096ff1c4a9cf24e2897fa5b23cccf3453054d3192d9b471",
+          "bytes": 2689
+        },
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/preflight-dissipative-v1/raw/output/pulse-resumed.report.json",
+          "sha256": "fe626f5f54e3161edf29577554596e58d89cade5df5a4af5f35691822927029e",
+          "bytes": 2697
+        },
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/preflight-dissipative-v1/raw/output/pulse-direct.report.json",
+          "sha256": "879b6da35c05a77d7dc17e77f5a1f6252e1cc9b5c20648e3eeca115450c3d70d",
+          "bytes": 2692
+        },
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/preflight-dissipative-v1/raw/output/restart-audit.report.json",
+          "sha256": "957fddfe4c3abf7fe6d5972f48ab7d11f83a27e43cc92837673ee966ab752c72",
+          "bytes": 4400
+        },
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/preflight-dissipative-v1/raw/output/puncture-short.report.json",
+          "sha256": "a155a58c7a5b82cc9e40578c75fc0d3ee77b405bd868573052f8b141f2773d4f",
+          "bytes": 2833
+        }
+      ],
+      "job_id": "8983855.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+      "native_status": "failed",
+      "worker_case_status": "failed",
+      "error": "nonpositive interpolated scri geometry",
+      "returncode": 2,
+      "timed_out": false,
+      "storage_error": null,
+      "accepted_endpoint": 0.5224999999999979,
+      "accepted_steps": 1045,
+      "last_fresh_diagnostic": 0.5000000000000003,
+      "diagnostics_current": false,
+      "checkpoint_admitted": false,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "failed",
+          "passed": false,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "n"
+            ],
+            "op": "eq",
+            "value": 16
+          },
+          "observed": 16,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "min_lapse"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.5000915527343749,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "min_chi"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.898851667379735,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "diagnostics_current"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": false,
+          "passed": false,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_admitted"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": false,
+          "passed": false,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_surface"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.1102230246251544e-15,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_ghost"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.221333430652924e-15,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "max_cfl"
+            ],
+            "op": "le",
+            "value": 0.5
+          },
+          "observed": 0.3239200538644453,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "H_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.05654915794761436,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "M_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 1.6542601081383856,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "H_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.05654915794761436,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "M_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 1.6542601081383856,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "max_state_deviation"
+            ],
+            "op": "le",
+            "value": 1e-08
+          },
+          "observed": 21.276138132990628,
+          "passed": false,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "H_L2"
+            ],
+            "op": "le",
+            "value": 1e-07
+          },
+          "observed": 0.05654915794761436,
+          "passed": false,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "M_L2"
+            ],
+            "op": "le",
+            "value": 1e-07
+          },
+          "observed": 1.6542601081383856,
+          "passed": false,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "algebraic_projection"
+            ],
+            "op": "eq",
+            "value": "final_stage_standard"
+          },
+          "observed": "final_stage_standard",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_schema"
+            ],
+            "op": "eq",
+            "value": "HYP3D_MPI_V4"
+          },
+          "observed": "HYP3D_MPI_V4",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "max_determinant_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.1102230246251565e-15,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "max_tracefree_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 4.440892098500626e-15,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_angular_stencil"
+            ],
+            "op": "eq",
+            "value": "cross_face_centered5"
+          },
+          "observed": "cross_face_centered5",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "t"
+            ],
+            "op": "eq",
+            "value": 1.0
+          },
+          "observed": 0.5224999999999979,
+          "passed": false,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "steps"
+            ],
+            "op": "eq",
+            "value": 2001
+          },
+          "observed": 1045,
+          "passed": false,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "dt"
+            ],
+            "op": "eq",
+            "value": 0.0005
+          },
+          "observed": 0.0005,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "start_time"
+            ],
+            "op": "eq",
+            "value": 0.0
+          },
+          "observed": 0,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "segment_steps"
+            ],
+            "op": "eq",
+            "value": 2001
+          },
+          "observed": 1045,
+          "passed": false,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_epsilon"
+            ],
+            "op": "eq",
+            "value": 2
+          },
+          "observed": 2,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_degree"
+            ],
+            "op": "eq",
+            "value": 7
+          },
+          "observed": 7,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_header_bytes"
+            ],
+            "op": "eq",
+            "value": 88
+          },
+          "observed": 88,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_cfl_max"
+            ],
+            "op": "le",
+            "value": 2.7
+          },
+          "observed": 0.40227335994307845,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_scheme"
+            ],
+            "op": "eq",
+            "value": "degree7_weighted_negative_square"
+          },
+          "observed": "degree7_weighted_negative_square",
+          "passed": true,
+          "category": "completion_or_configuration"
+        }
+      ],
+      "all_declared_checks_passed": false,
+      "science_checks_passed": false,
+      "execution_succeeded": false,
+      "all_v4_recorded_trajectory_limits_passed": false,
+      "inputs": [
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-dissipative-minkowski-v1/analysis/raw-v4/worker-status.json",
+          "sha256": "f1855b5f851b0c41371503e335e0088a6ce0c5b0605e22a7c7e1e3836fb2b83f",
+          "bytes": 12781
+        },
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-dissipative-minkowski-v1/analysis/raw-v4/binding.json",
+          "sha256": "0902883bd4bd3d36c3145c9bf23f4215c981235098c17b95e32c1948e2f861cd",
+          "bytes": 1474
+        },
+        {
+          "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-dissipative-minkowski-v1/analysis/raw-v4/plan.json",
+          "sha256": "daf10ec4f22cfd961c27582895fb9d1e5cfb205f7d3f71458c6882185f8207f2",
+          "bytes": 6377
+        }
+      ],
+      "artifacts": [
+        {
+          "remote_path": "campaigns/stability-dissipative-minkowski-v1/output/minkowski.report.json",
+          "sha256": "6199a589aa0a38b97cf8b23aeed04e3661528631721f58e4b52739d4f322c546",
+          "bytes": 2733,
+          "bytes_verified": true,
+          "local": {
+            "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-dissipative-minkowski-v1/analysis/raw-v4/output/minkowski.report.json",
+            "sha256": "6199a589aa0a38b97cf8b23aeed04e3661528631721f58e4b52739d4f322c546",
+            "bytes": 2733
+          }
+        },
+        {
+          "remote_path": "campaigns/stability-dissipative-minkowski-v1/output/minkowski.history.csv",
+          "sha256": "b5c0b7d7d06fc1de9a34ce2d9b2a70fa0ff127fa816882948f0e23c3ee525240",
+          "bytes": 6626,
+          "bytes_verified": true,
+          "local": {
+            "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-dissipative-minkowski-v1/analysis/raw-v4/output/minkowski.history.csv",
+            "sha256": "b5c0b7d7d06fc1de9a34ce2d9b2a70fa0ff127fa816882948f0e23c3ee525240",
+            "bytes": 6626
+          }
+        },
+        {
+          "remote_path": "campaigns/stability-dissipative-minkowski-v1/output/minkowski.checkpoint",
+          "sha256": "61353557c22096bbf02b55eac278a1f92751cd961944bc6eca94e7a390f6a7cb",
+          "bytes": 39362648,
+          "bytes_verified": false
+        },
+        {
+          "remote_path": "campaigns/stability-dissipative-minkowski-v1/output/minkowski.failed-stage.bin",
+          "sha256": "f5524b0742f403841cbbe280c62efe0f6fc96b2fcc7a5166d55e54d098b7535e",
+          "bytes": 19681280,
+          "bytes_verified": false
+        },
+        {
+          "remote_path": "campaigns/stability-dissipative-minkowski-v1/output/minkowski.log",
+          "sha256": "ba37b678f4ac2d862d23f175218727a3f84faf4995f01045efc5a062299edab1",
+          "bytes": 958,
+          "bytes_verified": true,
+          "local": {
+            "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-dissipative-minkowski-v1/analysis/raw-v4/output/minkowski.log",
+            "sha256": "ba37b678f4ac2d862d23f175218727a3f84faf4995f01045efc5a062299edab1",
+            "bytes": 958
+          }
+        }
+      ],
+      "growth": {
+        "status": "fitted",
+        "points": 5,
+        "minimum_points": 4,
+        "sample_indexes": [
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "times": [
+          0.1500000000000001,
+          0.20000000000000015,
+          0.25000000000000017,
+          0.3000000000000002,
+          0.35000000000000026
+        ],
+        "amplitudes": [
+          1.1042581137244277e-10,
+          3.950880556171071e-09,
+          1.4450260271976214e-07,
+          5.359370087783239e-06,
+          0.00020669660763613658
+        ],
+        "rate": 72.19500132236513,
+        "r_squared": 0.9999849011784268,
+        "selection": "longest contiguous recorded state_deviation interval in [1e-10,1e-3]; earliest tie",
+        "method": "unweighted OLS log(state_deviation)=intercept+rate*coordinate_time",
+        "time_range": [
+          0.1500000000000001,
+          0.35000000000000026
+        ],
+        "intercept": -33.77812943055524,
+        "descriptive_rate_standard_error": 0.16196504891318195,
+        "centered_time_sum_of_squares": 0.025000000000000036,
+        "log10_dynamic_range": 6.272262749925712,
+        "monotone_nondecreasing": true,
+        "caveat": "Correlated diagnostic samples: OLS error is descriptive, not a confidence interval. Growth rates are not inferred from failure times."
+      },
+      "v4_limits_on_recorded_history": [
+        {
+          "field": "state_deviation",
+          "op": "le",
+          "limit": 1e-08,
+          "status": "failed",
+          "samples": 11,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": 0.25000000000000017,
+          "extreme": 21.276138132990628
+        },
+        {
+          "field": "H_L2",
+          "op": "le",
+          "limit": 1e-07,
+          "status": "failed",
+          "samples": 11,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": 0.4000000000000003,
+          "extreme": 0.05654915794761436
+        },
+        {
+          "field": "M_L2",
+          "op": "le",
+          "limit": 1e-07,
+          "status": "failed",
+          "samples": 11,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": 0.35000000000000026,
+          "extreme": 1.6542601081383856
+        },
+        {
+          "field": "null_surface",
+          "op": "le",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 11,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 1.1102230246251544e-15
+        },
+        {
+          "field": "null_ghost",
+          "op": "le",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 11,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 1.221333430652924e-15
+        },
+        {
+          "field": "determinant_residual",
+          "op": "le",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 11,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 1.1102230246251565e-15
+        },
+        {
+          "field": "tracefree_residual",
+          "op": "le",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 11,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 4.440892098500626e-15
+        },
+        {
+          "field": "min_chi",
+          "op": "ge",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 11,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 0.898851667379735
+        },
+        {
+          "field": "min_lapse",
+          "op": "ge",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 11,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 0.5000915527343748
+        },
+        {
+          "field": "cfl_max",
+          "op": "le",
+          "limit": 0.5,
+          "status": "passed_recorded_samples",
+          "samples": 11,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 0.323920053864445
+        }
+      ],
+      "terminal": {
+        "one_node_twelve_tiles_verified": true,
+        "terminal_verified": true,
+        "scheduler_state": "F",
+        "scheduler_exit_status": 1,
+        "allocation_released": true,
+        "records": [
+          {
+            "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-dissipative-minkowski-v1/analysis/raw-v4/terminal.json",
+            "sha256": "f0fa8e81ead78c3265b6fb15096961e438565d3fe281caddbf97d61a7533e3b5",
+            "bytes": 603
+          },
+          {
+            "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-dissipative-minkowski-v1/analysis/raw-v4/allocation-released.json",
+            "sha256": "66cd24968838b8542561504e9b94bf36cf3c1926d3a73fcedc3d1516d7b44396",
+            "bytes": 108
+          }
+        ]
+      },
+      "last_fresh": {
+        "state_deviation": 21.276138132990628,
+        "H_L2": 0.05654915794761436,
+        "M_L2": 1.6542601081383856,
+        "Z_L2": 0.28599632594641805,
+        "Theta_L2": 0.00492747349424571,
+        "determinant_residual": 1.1102230246251565e-15,
+        "tracefree_residual": 4.440892098500626e-15,
+        "null_surface": 1.1102230246251544e-15,
+        "null_ghost": 1.221333430652924e-15
+      },
+      "history_max": {
+        "state_deviation": 21.276138132990628,
+        "H_L2": 0.05654915794761436,
+        "M_L2": 1.6542601081383856,
+        "Z_L2": 0.28599632594641805,
+        "Theta_L2": 0.00492747349424571,
+        "determinant_residual": 1.1102230246251565e-15,
+        "tracefree_residual": 4.440892098500626e-15,
+        "null_surface": 1.1102230246251544e-15,
+        "null_ghost": 1.221333430652924e-15
+      },
+      "unavailable_history_fields": [],
+      "reported_running_bounds": {
+        "min_lapse": 0.5000915527343749,
+        "min_chi": 0.898851667379735,
+        "max_tracefree_residual": 4.440892098500626e-15,
+        "H_exterior_L2": 0.05654915794761436,
+        "max_state_deviation": 21.276138132990628,
+        "M_exterior_L2": 1.6542601081383856,
+        "max_determinant_residual": 1.1102230246251565e-15,
+        "scri_dissipation_cfl_max": 0.40227335994307845,
+        "M_L2": 1.6542601081383856,
+        "H_L2": 0.05654915794761436,
+        "max_null_ghost": 1.221333430652924e-15,
+        "max_cfl": 0.3239200538644453,
+        "max_null_surface": 1.1102230246251544e-15
+      },
+      "scientifically_admitted_for_this_bounded_test": false,
+      "native_checkpoint_admitted": false,
+      "timing": {
+        "cumulative": {
+          "seconds": 131.10004174,
+          "rhs_seconds": 52.58316571900006,
+          "exchange_seconds": 32.21237816099984,
+          "closure_seconds": 27.166299016000035,
+          "diagnostic_seconds": 0.153440989
+        },
+        "cumulative_per_accepted_step": {
+          "seconds": 0.12545458539712917,
+          "rhs_seconds": 0.050318818869856514,
+          "exchange_seconds": 0.03082524225932999,
+          "closure_seconds": 0.02599645838851678,
+          "diagnostic_seconds": 0.00014683348229665072
+        },
+        "accepted_steps": 1045,
+        "full_step_interval_count": 9,
+        "discarded_initial_interval": true,
+        "median_history_seconds_per_step": 0.11989658403000007,
+        "median_history_coordinate_advance_per_second": 0.004170260596205913,
+        "median_diagnostic_coordinate_interval": 0.050000000000000044,
+        "interpretation": "Cumulative timing buckets overlap and are independently MPI_MAX reduced; they cannot be summed or subtracted as disjoint wall time. Closure includes surface gathers also charged to exchange; V4/V5 add the 21-field residual gather. V5 additionally includes provisional local halo filling and five native numerator samples per row. Diagnostics contain a boundary refresh. Per-accepted-step cumulative values amortize initialization, diagnostics and failed-stage work, and are not isolated kernel timings. Full-step history rates include diagnostics; these separate allocations do not establish a causal GPU throughput improvement."
+      }
+    },
+    {
+      "case": "v5",
+      "label": "V5: sampled native normal numerator",
+      "outcome": "completed_science_failure",
+      "evidence_verified": true,
+      "source_manifest_sha256": "8dd9936710dafbdd145f5ee95ba4d48da47e295afff805b7f3f380e0afd15b36",
+      "binary_sha256": "08fee8c5c9b5fa1815f52ec63e968bba75dbf04762dba991bf359c2ecb3c078d",
+      "job_id": "8984126.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+      "native_status": "completed",
+      "worker_case_status": "failed",
+      "error": "",
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "accepted_endpoint": 0.6,
+      "accepted_steps": 1201,
+      "last_fresh_diagnostic": 0.6,
+      "diagnostics_current": true,
+      "checkpoint_admitted": true,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "completed",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "n"
+            ],
+            "op": "eq",
+            "value": 16
+          },
+          "observed": 16,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "min_lapse"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.5000915527343749,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "min_chi"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.9999999699461232,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "diagnostics_current"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_admitted"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_surface"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.1102230246251544e-15,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_ghost"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.2212454259424197e-15,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "max_cfl"
+            ],
+            "op": "le",
+            "value": 0.5
+          },
+          "observed": 0.32392005386444656,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "H_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 3.7162913110233704e-08,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "M_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 2.5347378973490964e-06,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "H_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 3.7162913110233704e-08,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "M_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 2.5347378973490964e-06,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "max_state_deviation"
+            ],
+            "op": "le",
+            "value": 1e-08
+          },
+          "observed": 0.0007203609712298064,
+          "passed": false,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "H_L2"
+            ],
+            "op": "le",
+            "value": 1e-07
+          },
+          "observed": 3.7162913110233704e-08,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "M_L2"
+            ],
+            "op": "le",
+            "value": 1e-07
+          },
+          "observed": 2.5347378973490964e-06,
+          "passed": false,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "algebraic_projection"
+            ],
+            "op": "eq",
+            "value": "final_stage_standard"
+          },
+          "observed": "final_stage_standard",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_schema"
+            ],
+            "op": "eq",
+            "value": "HYP3D_MPI_V5"
+          },
+          "observed": "HYP3D_MPI_V5",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "max_determinant_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 6.661338147750939e-16,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "max_tracefree_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.6263032587282567e-19,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_angular_stencil"
+            ],
+            "op": "eq",
+            "value": "cross_face_centered5"
+          },
+          "observed": "cross_face_centered5",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "t"
+            ],
+            "op": "eq",
+            "value": 0.6
+          },
+          "observed": 0.6,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "steps"
+            ],
+            "op": "eq",
+            "value": 1201
+          },
+          "observed": 1201,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "dt"
+            ],
+            "op": "eq",
+            "value": 0.0005
+          },
+          "observed": 0.0005,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "start_time"
+            ],
+            "op": "eq",
+            "value": 0.0
+          },
+          "observed": 0,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "segment_steps"
+            ],
+            "op": "eq",
+            "value": 1201
+          },
+          "observed": 1201,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_epsilon"
+            ],
+            "op": "eq",
+            "value": 2
+          },
+          "observed": 2,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_degree"
+            ],
+            "op": "eq",
+            "value": 7
+          },
+          "observed": 7,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_header_bytes"
+            ],
+            "op": "eq",
+            "value": 104
+          },
+          "observed": 104,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_cfl_max"
+            ],
+            "op": "le",
+            "value": 2.7
+          },
+          "observed": 0.40227335994307845,
+          "passed": true,
+          "category": "science"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_scheme"
+            ],
+            "op": "eq",
+            "value": "degree7_weighted_negative_square"
+          },
+          "observed": "degree7_weighted_negative_square",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_derivative"
+            ],
+            "op": "eq",
+            "value": "sampled_native_numerator6"
+          },
+          "observed": "sampled_native_numerator6",
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_radial_nodes"
+            ],
+            "op": "eq",
+            "value": 6
+          },
+          "observed": 6,
+          "passed": true,
+          "category": "completion_or_configuration"
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_bulk_derivative_order"
+            ],
+            "op": "eq",
+            "value": 4
+          },
+          "observed": 4,
+          "passed": true,
+          "category": "completion_or_configuration"
+        }
+      ],
+      "all_declared_checks_passed": false,
+      "science_checks_passed": false,
+      "execution_succeeded": true,
+      "all_v4_recorded_trajectory_limits_passed": false,
+      "inputs": [
+        {
+          "path": "output/hyperbolic-core-shell/aurora/stability-sampled-normal-minkowski-v1/worker-status.json",
+          "sha256": "23128552a7d2fe9f0ea662b3fd74ff5f949a7d7b2eee3d8a9ad17d9fe1a2ad76",
+          "bytes": 13347
+        },
+        {
+          "path": "output/hyperbolic-core-shell/aurora/stability-sampled-normal-minkowski-v1/binding.json",
+          "sha256": "31b330593a07775fe857dd1bd95b2c6c67e2c981bad0eaf133b9a9ac804b146f",
+          "bytes": 1480
+        },
+        {
+          "path": "output/hyperbolic-core-shell/aurora/stability-sampled-normal-minkowski-v1/plan.json",
+          "sha256": "8586ed80b80970530b544186f5a57bbc000246a104632ded962696c9f007d8f7",
+          "bytes": 6804
+        }
+      ],
+      "artifacts": [
+        {
+          "remote_path": "campaigns/stability-sampled-normal-minkowski-v1/output/minkowski.report.json",
+          "sha256": "53ec5083e9ce4775a952cce981efc792c7faf560c9bd34ec32eb84238214b60a",
+          "bytes": 2889,
+          "bytes_verified": true,
+          "local": {
+            "path": "output/hyperbolic-core-shell/aurora/stability-sampled-normal-minkowski-v1/output/minkowski.report.json",
+            "sha256": "53ec5083e9ce4775a952cce981efc792c7faf560c9bd34ec32eb84238214b60a",
+            "bytes": 2889
+          }
+        },
+        {
+          "remote_path": "campaigns/stability-sampled-normal-minkowski-v1/output/minkowski.history.csv",
+          "sha256": "276395a27847bceb3c3c78362784bd26272e0f5cade276772c8ef952b96680be",
+          "bytes": 8460,
+          "bytes_verified": true,
+          "local": {
+            "path": "output/hyperbolic-core-shell/aurora/stability-sampled-normal-minkowski-v1/output/minkowski.history.csv",
+            "sha256": "276395a27847bceb3c3c78362784bd26272e0f5cade276772c8ef952b96680be",
+            "bytes": 8460
+          }
+        },
+        {
+          "remote_path": "campaigns/stability-sampled-normal-minkowski-v1/output/minkowski.checkpoint",
+          "sha256": "6105b3866d9b8db0e8c7aaedb3a267c05ff7a55c7b7bb1e42c49866f3d685494",
+          "bytes": 39362664,
+          "bytes_verified": false
+        },
+        {
+          "remote_path": "campaigns/stability-sampled-normal-minkowski-v1/output/minkowski.log",
+          "sha256": "6fd95639fff764a26cc85f5cadd1bf47405f0ff28560af3daf195f486bd1a89b",
+          "bytes": 1083,
+          "bytes_verified": true,
+          "local": {
+            "path": "output/hyperbolic-core-shell/aurora/stability-sampled-normal-minkowski-v1/output/minkowski.log",
+            "sha256": "6fd95639fff764a26cc85f5cadd1bf47405f0ff28560af3daf195f486bd1a89b",
+            "bytes": 1083
+          }
+        }
+      ],
+      "growth": {
+        "status": "fitted",
+        "points": 9,
+        "minimum_points": 4,
+        "sample_indexes": [
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ],
+        "times": [
+          0.25000000000000017,
+          0.3000000000000002,
+          0.35000000000000026,
+          0.4000000000000003,
+          0.45000000000000034,
+          0.5000000000000003,
+          0.5499999999999948,
+          0.5999999999999893,
+          0.6
+        ],
+        "amplitudes": [
+          3.2990909004742483e-10,
+          2.4873082686777685e-09,
+          1.9012377898371134e-08,
+          1.4920106440133796e-07,
+          1.242270163472121e-06,
+          1.0351202830691805e-05,
+          8.631832279610012e-05,
+          0.0007203609712294806,
+          0.0007203609712298064
+        ],
+        "rate": 41.84187259653044,
+        "r_squared": 0.9999090794985218,
+        "selection": "longest contiguous recorded state_deviation interval in [1e-10,1e-3]; earliest tie",
+        "method": "unweighted OLS log(state_deviation)=intercept+rate*coordinate_time",
+        "time_range": [
+          0.25000000000000017,
+          0.6
+        ],
+        "intercept": -32.37931872577653,
+        "descriptive_rate_standard_error": 0.15080396072145663,
+        "centered_time_sum_of_squares": 0.13222222222221763,
+        "log10_dynamic_range": 6.339155893035286,
+        "monotone_nondecreasing": true,
+        "caveat": "Correlated diagnostic samples: OLS error is descriptive, not a confidence interval. Growth rates are not inferred from failure times."
+      },
+      "v4_limits_on_recorded_history": [
+        {
+          "field": "state_deviation",
+          "op": "le",
+          "limit": 1e-08,
+          "status": "failed",
+          "samples": 14,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": 0.35000000000000026,
+          "extreme": 0.0007203609712298064
+        },
+        {
+          "field": "H_L2",
+          "op": "le",
+          "limit": 1e-07,
+          "status": "passed_recorded_samples",
+          "samples": 14,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 3.7162913110233704e-08
+        },
+        {
+          "field": "M_L2",
+          "op": "le",
+          "limit": 1e-07,
+          "status": "failed",
+          "samples": 14,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": 0.5499999999999948,
+          "extreme": 2.5347378973490964e-06
+        },
+        {
+          "field": "null_surface",
+          "op": "le",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 14,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 1.1102230246251544e-15
+        },
+        {
+          "field": "null_ghost",
+          "op": "le",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 14,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 1.2212454259424197e-15
+        },
+        {
+          "field": "determinant_residual",
+          "op": "le",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 14,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 8.881784197001252e-16
+        },
+        {
+          "field": "tracefree_residual",
+          "op": "le",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 14,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 1.8973538018496328e-19
+        },
+        {
+          "field": "min_chi",
+          "op": "ge",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 14,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 0.9999999699461232
+        },
+        {
+          "field": "min_lapse",
+          "op": "ge",
+          "limit": 1e-12,
+          "status": "passed_recorded_samples",
+          "samples": 14,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 0.5000915527343748
+        },
+        {
+          "field": "cfl_max",
+          "op": "le",
+          "limit": 0.5,
+          "status": "passed_recorded_samples",
+          "samples": 14,
+          "nonfinite_samples": 0,
+          "first_failed_recorded_time": null,
+          "extreme": 0.32392005386444656
+        }
+      ],
+      "terminal": {
+        "one_node_twelve_tiles_verified": true,
+        "terminal_verified": true,
+        "scheduler_state": "F",
+        "scheduler_exit_status": 1,
+        "allocation_released": true,
+        "records": [
+          {
+            "path": "output/hyperbolic-core-shell/aurora/stability-sampled-normal-minkowski-v1/collected.json",
+            "sha256": "e6e7a178e6f64d1d2cd203d58b1ba18be810d9ee80263ac33811b5015bbbef3b",
+            "bytes": 21972
+          },
+          {
+            "path": "output/hyperbolic-core-shell/aurora/stability-sampled-normal-minkowski-v1/allocation-released.json",
+            "sha256": "bd1e41fda0f5f4954c1e7a84935bb57a2f45d73e8d24ef4e0275fbb60fc811dd",
+            "bytes": 107
+          }
+        ]
+      },
+      "last_fresh": {
+        "state_deviation": 0.0007203609712298064,
+        "H_L2": 3.7162913110233704e-08,
+        "M_L2": 2.5347378973490964e-06,
+        "Z_L2": 3.716107007016558e-07,
+        "Theta_L2": 2.0311261352319787e-09,
+        "determinant_residual": 6.661338147750939e-16,
+        "tracefree_residual": 1.6263032587282567e-19,
+        "null_surface": 1.1102230246251544e-15,
+        "null_ghost": 1.2212454259424197e-15
+      },
+      "history_max": {
+        "state_deviation": 0.0007203609712298064,
+        "H_L2": 3.7162913110233704e-08,
+        "M_L2": 2.5347378973490964e-06,
+        "Z_L2": 3.716107007016558e-07,
+        "Theta_L2": 2.0311261352319787e-09,
+        "determinant_residual": 8.881784197001252e-16,
+        "tracefree_residual": 1.8973538018496328e-19,
+        "null_surface": 1.1102230246251544e-15,
+        "null_ghost": 1.2212454259424197e-15
+      },
+      "unavailable_history_fields": [],
+      "reported_running_bounds": {
+        "min_lapse": 0.5000915527343749,
+        "min_chi": 0.9999999699461232,
+        "max_tracefree_residual": 1.6263032587282567e-19,
+        "H_exterior_L2": 3.7162913110233704e-08,
+        "max_state_deviation": 0.0007203609712298064,
+        "M_exterior_L2": 2.5347378973490964e-06,
+        "max_determinant_residual": 6.661338147750939e-16,
+        "scri_dissipation_cfl_max": 0.40227335994307845,
+        "M_L2": 2.5347378973490964e-06,
+        "H_L2": 3.7162913110233704e-08,
+        "max_null_ghost": 1.2212454259424197e-15,
+        "max_cfl": 0.32392005386444656,
+        "max_null_surface": 1.1102230246251544e-15
+      },
+      "scientifically_admitted_for_this_bounded_test": false,
+      "native_checkpoint_admitted": true,
+      "target_time": 0.6,
+      "expected_steps": [
+        1201
+      ],
+      "preflight_admission": {
+        "path": "output/hyperbolic-core-shell/aurora-staging/preflight-sampled-normal-v1-admission.json",
+        "sha256": "2e7f85b592c2417b2775d8223f469bbf3405ec0aa62863d3fe3aabe13779c8e7",
+        "bytes": 1371
+      },
+      "reviewed_identity": {
+        "path": "output/hyperbolic-core-shell/v5-duration-comparison-draft-v1/identity.json",
+        "sha256": "b36e36987a09b887365f1b229e92aacd5c90ae05f47f6af788de931f1f7ee5f9",
+        "bytes": 424
+      },
+      "timing": {
+        "cumulative": {
+          "seconds": 210.617398574,
+          "rhs_seconds": 60.19053795600013,
+          "exchange_seconds": 36.92661464999982,
+          "closure_seconds": 92.33226602899981,
+          "diagnostic_seconds": 0.33707841200000005
+        },
+        "cumulative_per_accepted_step": {
+          "seconds": 0.17536835851290591,
+          "rhs_seconds": 0.05011701744879278,
+          "exchange_seconds": 0.030746556744379535,
+          "closure_seconds": 0.07687948878351358,
+          "diagnostic_seconds": 0.0002806647893422149
+        },
+        "accepted_steps": 1201,
+        "full_step_interval_count": 12,
+        "discarded_initial_interval": true,
+        "median_history_seconds_per_step": 0.17059387391500008,
+        "median_history_coordinate_advance_per_second": 0.002930937604390477,
+        "median_diagnostic_coordinate_interval": 0.05000000000000004,
+        "interpretation": "Cumulative timing buckets overlap and are independently MPI_MAX reduced; they cannot be summed or subtracted as disjoint wall time. Closure includes surface gathers also charged to exchange; V4/V5 add the 21-field residual gather. V5 additionally includes provisional local halo filling and five native numerator samples per row. Diagnostics contain a boundary refresh. Per-accepted-step cumulative values amortize initialization, diagnostics and failed-stage work, and are not isolated kernel timings. Full-step history rates include diagnostics; these separate allocations do not establish a causal GPU throughput improvement."
+      }
+    }
+  ]
+}

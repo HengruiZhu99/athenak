@@ -1,0 +1,224 @@
+{
+  "evidence_verified": true,
+  "scientifically_admitted": false,
+  "reason": "Completed native evolution violates unchanged state and momentum limits",
+  "checkpoint": {
+    "magic": "HYP3D_MPI_V5",
+    "n": 16,
+    "nf": 31,
+    "kind": 0,
+    "admitted": true,
+    "cells": 77824,
+    "surface_size": 47616,
+    "steps": 1201,
+    "time": 0.6,
+    "dt": 0.0005,
+    "header_bytes": 104,
+    "scri_dissipation_epsilon": 2.0,
+    "scri_dissipation_degree": 7,
+    "base_except_magic_sha256": "b1c420d29c5e4191c27f695867a794bfae3d830a96d7f83adf73398e0d4b4c51",
+    "arrays": [
+      {
+        "name": "volume_state",
+        "doubles": 2412544,
+        "sha256": "b3a5552231fb2313fd8b46f7215bb681d11cbc01e21839faf65038b4287dc337"
+      },
+      {
+        "name": "volume_compensation",
+        "doubles": 2412544,
+        "sha256": "099bfce52dfa1aee071013cdd227b095608801aadce923d31b49975f4f6fed19"
+      },
+      {
+        "name": "scri_state",
+        "doubles": 47616,
+        "sha256": "54e70f7a1130d7f43b6e7a4bb3719b5de95a8193df9cfbdd48c9f7853a1d9be2"
+      },
+      {
+        "name": "scri_compensation",
+        "doubles": 47616,
+        "sha256": "660c2ef6e75e96305e6222e802fed37de936954eb090f081d3ede1913820f326"
+      }
+    ],
+    "bytes": 39362664,
+    "sha256": "6105b3866d9b8db0e8c7aaedb3a267c05ff7a55c7b7bb1e42c49866f3d685494",
+    "scri_normal_derivative": "sampled_native_numerator6",
+    "scri_normal_radial_nodes": 6,
+    "scri_normal_bulk_derivative_order": 4
+  },
+  "artifact_verification": [
+    {
+      "remote_path": "campaigns/stability-sampled-normal-minkowski-v1/output/minkowski.report.json",
+      "sha256": "53ec5083e9ce4775a952cce981efc792c7faf560c9bd34ec32eb84238214b60a",
+      "bytes": 2889,
+      "bytes_verified": true,
+      "local": {
+        "path": "output/hyperbolic-core-shell/aurora/stability-sampled-normal-minkowski-v1/output/minkowski.report.json",
+        "sha256": "53ec5083e9ce4775a952cce981efc792c7faf560c9bd34ec32eb84238214b60a",
+        "bytes": 2889
+      }
+    },
+    {
+      "remote_path": "campaigns/stability-sampled-normal-minkowski-v1/output/minkowski.history.csv",
+      "sha256": "276395a27847bceb3c3c78362784bd26272e0f5cade276772c8ef952b96680be",
+      "bytes": 8460,
+      "bytes_verified": true,
+      "local": {
+        "path": "output/hyperbolic-core-shell/aurora/stability-sampled-normal-minkowski-v1/output/minkowski.history.csv",
+        "sha256": "276395a27847bceb3c3c78362784bd26272e0f5cade276772c8ef952b96680be",
+        "bytes": 8460
+      }
+    },
+    {
+      "remote_path": "campaigns/stability-sampled-normal-minkowski-v1/output/minkowski.checkpoint",
+      "sha256": "6105b3866d9b8db0e8c7aaedb3a267c05ff7a55c7b7bb1e42c49866f3d685494",
+      "bytes": 39362664,
+      "bytes_verified": true,
+      "local": {
+        "path": "output/hyperbolic-core-shell/aurora/stability-sampled-normal-minkowski-v1/output/minkowski.checkpoint",
+        "sha256": "6105b3866d9b8db0e8c7aaedb3a267c05ff7a55c7b7bb1e42c49866f3d685494",
+        "bytes": 39362664
+      }
+    },
+    {
+      "remote_path": "campaigns/stability-sampled-normal-minkowski-v1/output/minkowski.log",
+      "sha256": "6fd95639fff764a26cc85f5cadd1bf47405f0ff28560af3daf195f486bd1a89b",
+      "bytes": 1083,
+      "bytes_verified": true,
+      "local": {
+        "path": "output/hyperbolic-core-shell/aurora/stability-sampled-normal-minkowski-v1/output/minkowski.log",
+        "sha256": "6fd95639fff764a26cc85f5cadd1bf47405f0ff28560af3daf195f486bd1a89b",
+        "bytes": 1083
+      }
+    }
+  ],
+  "terminal": {
+    "one_node_twelve_tiles_verified": true,
+    "terminal_verified": true,
+    "scheduler_state": "F",
+    "scheduler_exit_status": 1,
+    "allocation_released": true,
+    "records": [
+      {
+        "path": "output/hyperbolic-core-shell/aurora/stability-sampled-normal-minkowski-v1/collected.json",
+        "sha256": "e6e7a178e6f64d1d2cd203d58b1ba18be810d9ee80263ac33811b5015bbbef3b",
+        "bytes": 21972
+      },
+      {
+        "path": "output/hyperbolic-core-shell/aurora/stability-sampled-normal-minkowski-v1/allocation-released.json",
+        "sha256": "bd1e41fda0f5f4954c1e7a84935bb57a2f45d73e8d24ef4e0275fbb60fc811dd",
+        "bytes": 107
+      }
+    ]
+  },
+  "native_completion_is_not_scientific_admission": true,
+  "original_fit": {
+    "status": "fitted",
+    "points": 9,
+    "minimum_points": 4,
+    "sample_indexes": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13
+    ],
+    "times": [
+      0.25000000000000017,
+      0.3000000000000002,
+      0.35000000000000026,
+      0.4000000000000003,
+      0.45000000000000034,
+      0.5000000000000003,
+      0.5499999999999948,
+      0.5999999999999893,
+      0.6
+    ],
+    "amplitudes": [
+      3.2990909004742483e-10,
+      2.4873082686777685e-09,
+      1.9012377898371134e-08,
+      1.4920106440133796e-07,
+      1.242270163472121e-06,
+      1.0351202830691805e-05,
+      8.631832279610012e-05,
+      0.0007203609712294806,
+      0.0007203609712298064
+    ],
+    "rate": 41.84187259653044,
+    "r_squared": 0.9999090794985218,
+    "selection": "longest contiguous recorded state_deviation interval in [1e-10,1e-3]; earliest tie",
+    "method": "unweighted OLS log(state_deviation)=intercept+rate*coordinate_time",
+    "time_range": [
+      0.25000000000000017,
+      0.6
+    ],
+    "intercept": -32.37931872577653,
+    "descriptive_rate_standard_error": 0.15080396072145663,
+    "centered_time_sum_of_squares": 0.13222222222221763,
+    "log10_dynamic_range": 6.339155893035286,
+    "monotone_nondecreasing": true,
+    "caveat": "Correlated diagnostic samples: OLS error is descriptive, not a confidence interval. Growth rates are not inferred from failure times."
+  },
+  "endpoint_sensitivity": {
+    "rule": "Drop later sample when adjacent time gap <= dt*1e-6",
+    "removed_indices": [
+      13
+    ],
+    "fit": {
+      "status": "fitted",
+      "points": 8,
+      "minimum_points": 4,
+      "sample_indexes": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "times": [
+        0.25000000000000017,
+        0.3000000000000002,
+        0.35000000000000026,
+        0.4000000000000003,
+        0.45000000000000034,
+        0.5000000000000003,
+        0.5499999999999948,
+        0.5999999999999893
+      ],
+      "amplitudes": [
+        3.2990909004742483e-10,
+        2.4873082686777685e-09,
+        1.9012377898371134e-08,
+        1.4920106440133796e-07,
+        1.242270163472121e-06,
+        1.0351202830691805e-05,
+        8.631832279610012e-05,
+        0.0007203609712294806
+      ],
+      "rate": 41.777810854528774,
+      "r_squared": 0.999896576928323,
+      "selection": "longest contiguous recorded state_deviation interval in [1e-10,1e-3]; earliest tie",
+      "method": "unweighted OLS log(state_deviation)=intercept+rate*coordinate_time",
+      "time_range": [
+        0.25000000000000017,
+        0.5999999999999893
+      ],
+      "intercept": -32.35689711607594,
+      "descriptive_rate_standard_error": 0.1734607538389386,
+      "centered_time_sum_of_squares": 0.10499999999999488,
+      "log10_dynamic_range": 6.339155893035088,
+      "monotone_nondecreasing": true,
+      "caveat": "Correlated diagnostic samples: OLS error is descriptive, not a confidence interval. Growth rates are not inferred from failure times."
+    }
+  },
+  "decoder_sha256": "e6697f5fb0a7d487b1eae3e6297433159bccacde1b6836a49a04767cc08713c8",
+  "analysis_sha256": "685f65de88ea4065dde8f213f8151c518f4c4aa63411e7f55067e10ef18a666d",
+  "verifier_sha256": "b0ecf77a77d0be4cf514a9604f35fc89204df02296f07ec7fbdd2b49aeaac746"
+}
