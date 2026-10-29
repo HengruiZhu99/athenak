@@ -96,3 +96,19 @@ for subsequent measured optimization. A 3M run is estimated at 22–25 minutes a
 this resolution if stable, excluding queue time.
 
 ![Puncture positivity and exclusive cost](diagnosis-and-cost.png)
+
+## Continuation to 3M
+
+The same V19 executable reached t=3M with no RHS error and no lapse-floor
+interventions, total 2001 steps. Minimum chi .0001208043 and conformal lapse
+.00937907 remain positive; null closure <=1.56e-15. Measured evolution time for
+both segments is 22.92 minutes. Full-domain H/M norms are .0518183/.0371362.
+
+Overall scientific validation still fails: the horizon finder misses its
+unchanged .001 expansion tolerance at the final sample (.00139189), so final
+horizon mass and exterior norms are unavailable. Accepted horizon samples are
+shown with gaps; no rejected trial is promoted to a measurement. This establishes
+that the original negative-chi RHS failure has been bypassed to 3M, not faithful
+long-time trumpet evolution or convergence.
+
+![Puncture evolution through 3M](puncture-duration.png)

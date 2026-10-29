@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "plan_sha256": "4da4236bde3275d4ca02993b94578eef597a3c7269bbeb2a0128a6d3250fd297",
+  "source_manifest": "source-v19-manifest.json",
+  "source_manifest_sha256": "137409668e9253da36f318254663342314426955ed1b7b59114262453bf519e8",
+  "binaries": {
+    "build-sycl-mpi-v19/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive": "c6418b4891bc3886741d79c464627d4c00c877c0bc251aaae41a498a3f4727e1"
+  },
+  "inputs": {
+    "campaigns/stability-continuous-positive-puncture-v1/output/puncture.checkpoint": "9cc9279a8c6ad6b69d748b67d7b5f535f0d8a9dbfe1bffca1ba1b13b5963adbc",
+    "campaigns/stability-continuous-positive-puncture-v1/output/puncture.checkpoint.horizon-seed.txt": "0777f336bf8bf887bdd1c50aa4fb05e21afca726d4d9ce5f2400ef498f4952d3",
+    "campaigns/stability-continuous-positive-puncture-v1/pilot-metadata-audit.json": "ef4a8eea2ecc8afd9e1de3015594fd84452832575b5dbfb6c67348fd6d2268e9"
+  },
+  "pbs_sha256": "45e0663a554a1f7f7a01de888c6c1bf2b7ff37f4a45112c740ba57ac18872a9d",
+  "admission": {
+    "path": "admissions/preflight-continuous-positive-v2.json",
+    "sha256": "d864bcb6325074a273a93b11bc0f54cace0c5e3dc11a777b489c2d7979d73f41"
+  },
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "00:30:00"
+  },
+  "storage_at_bind": {
+    "bytes": 4346998784,
+    "entries": 30333,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 100000000,
+    "planned_bytes": 200000000,
+    "headroom_bytes": 353001216
+  },
+  "launcher": {
+    "control.py": "9765d98673038b7bf93826d99cca170bc0e27ac09c3fc5319ff73992db772bf6",
+    "worker.py": "62b5346a7815dca5954a95c705ec1c43eaf87ec5bf1442318f5c259d9d3685b1",
+    "run_debug.pbs": "1d5df790cf6c8cdc96e9d330b9b337ce755b30e057959586bcd661dc9ce885a6",
+    "storage.py": "fdcf2abc2533b8fed91220d9c18d8b9d723660820949a72e956fb9c8866afd39"
+  },
+  "allocation_seconds": 1800,
+  "worker_seconds": 1710
+}
