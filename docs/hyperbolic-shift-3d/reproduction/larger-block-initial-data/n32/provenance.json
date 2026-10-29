@@ -1,0 +1,146 @@
+{
+  "status": "prepared_initial_data_only",
+  "n": 32,
+  "cells": 622592,
+  "fields": 31,
+  "mass": 0.3333333333333333,
+  "initial_time": 0,
+  "initial_shift_quadrature_nodes": 4097,
+  "wormhole_quadrature_order": 96,
+  "geometry": {
+    "core_half_width": 0.125,
+    "shell_radii": [
+      0.45,
+      0.75,
+      1.0
+    ],
+    "blocks": 19,
+    "order": "block, k, j, i (i fastest); core first, then six signed Cartesian faces per shell"
+  },
+  "donor_configuration": {
+    "ratio": 2.0,
+    "damping": 1.0,
+    "ko": 0.5,
+    "restoring": 4.0,
+    "inner_shift": 0.0,
+    "lapse_floor": 1e-10,
+    "shift_source": "reference",
+    "connection_driver": "evolved",
+    "shift_gauge": "moving-puncture",
+    "gamma_coefficient": 4.0,
+    "grid_stretch": 0.0,
+    "shift_inner_stencil": "odd",
+    "inner_z4_damping": 8.0
+  },
+  "generator": {
+    "path": "tst/hyperbolic_shift_3d/initial_data.py",
+    "sha256": "f41ae527ca348694c1b73cabe7135c38809fd2a14bef5fec7f1d412ec65b7cd4",
+    "bytes": 3072
+  },
+  "library": {
+    "path": "build-hyperbolic-core-shell/tst/hyperbolic_shift_3d/libhyperbolic_shift_3d_native.dylib",
+    "sha256": "a25a42547c9d1f0dcb303114cb51b21e88d2d653fac38bab0ffba0c80a436c0e",
+    "bytes": 70592
+  },
+  "coordinate_generator": {
+    "path": "tst/hyperbolic_shift_3d/checkpoint_export.py",
+    "sha256": "deb165228a8d586ff2cc83751023a1199dbed4a545daf2d8fde718037b581940",
+    "bytes": 20221
+  },
+  "preparation_script": {
+    "path": "output/hyperbolic-core-shell/initial-data-larger-blocks-v1/prepare.py",
+    "sha256": "2d9ec06759c244e736e9e2b6294846a6289dbc7334b4621e4b6e1dbb517264a7",
+    "bytes": 4824
+  },
+  "n16_reference_inputs": [
+    {
+      "path": "output/hyperbolic-core-shell/puncture-v3/n16/initial.json",
+      "sha256": "33d07e79adbcf147e1089f81624638b6dc2052b99657e8a176d4f60349227afd",
+      "bytes": 861
+    },
+    {
+      "path": "output/hyperbolic-core-shell/puncture-v3/n16/initial.txt",
+      "sha256": "c8ffa46d9007ee8b643db41980cfa4a08f9ab3f2f1c2383978a002f067f9db31",
+      "bytes": 14225648
+    },
+    {
+      "path": "output/hyperbolic-core-shell/puncture-v3/n16/evolution.coordinates.csv",
+      "sha256": "552899c85042dc7ea784b737f42efcf101778408dcd511a26f57c6d4b05ae192",
+      "bytes": 7844583
+    },
+    {
+      "path": "output/hyperbolic-core-shell/puncture-v3/n16/manifest.json",
+      "sha256": "0986144500f4b62f584f88b361f47feed254fd0f4c0ebf9a7b3e6545800e6f8c",
+      "bytes": 233375
+    }
+  ],
+  "donor_source_sha256": {
+    "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+    "tst/elliptic_shift_1d/numerics.py": "c62ee8d579cf22758768a91348b3adc890b9955cb7e64f1a3e27e65d833fbb61",
+    "tst/elliptic_shift_1d/fast.py": "7d3af82de44311c13c0a08d523a0fd87ae82a82ca87e56180c18a6c88976a9ec",
+    "tst/elliptic_shift_1d/gauge.py": "12a72a023c3ae3f2a802d6595f3a0cbc8f69b0be6484ba71763ec944c5554237",
+    "tst/elliptic_shift_1d/telegraph.py": "0a791243897a3d97fff5ee9a16c59d3f71756f32daa7ef94e7d40996dc33d096",
+    "tst/elliptic_shift_1d/elliptic.py": "7ad89763e49cd7e1b4b3a0ec974c0867e77e69feeb1b5eb5718cd783550bc714",
+    "tst/hyperbolic_shift_1d/boundary.py": "90c93aed362fb4be739799d300b789d795383fe24a479dd2e8df59af0f4e7608",
+    "tst/hyperbolic_shift_1d/principal.py": "e5cd1bf98a95cad07eee640d1362d6c23142a1bfa8824deea69ea6027ac1c79d",
+    "tst/hyperbolic_shift_1d/shift_source.py": "4e47c4c9a15a08b26940173d7b921810658c61dcd7b32adcc0423e03fb471f18",
+    "tst/hyperbolic_shift_1d/metric_driver.py": "688d8fb5d476acd02c14c561ecf2686dfc8198c4bf49673bc48a17ae2603cc8d",
+    "tst/hyperbolic_shift_1d/gamma_driver.py": "7f1ed7b3e9046ae05c308861ca85683779a65bf8627a83d18edf7391610cb705",
+    "tst/hyperbolic_shift_1d/constraint_damping.py": "30dccdd806c6152c77623485df9e02ef99c822f4abc6a36ea6f559772af44849",
+    "tst/hyperbolic_shift_1d/evolution.py": "eeb7d4d196224860f93d0ab21601d0c8fad39bf35e1e61358381607eb5f58288",
+    "tst/elliptic_shift_1d/horizon.py": "70a1f334ca3e377b8eaaedf2b996f79b5e4a70722c0fc16cf6c7a5c17626f1eb",
+    "tst/elliptic_shift_1d/time_lattice.py": "94214ed7e50e92cf32477215d9932492b34f3497649194afdd83809dfe7aad4f",
+    "tst/elliptic_shift_1d/evolve.py": "a69291e981ac98542058a17f6bdec8738803ccb406544865ee12368a6e98a22d",
+    "tst/elliptic_shift_1d/wormhole_data.py": "b7e8125715c6658a0574feb4c262b741dda03e825d8376c37a1d6cb181875969",
+    "tst/elliptic_shift_1d/g1_rhs.py": "6a3fcf7716cdbaaefb13f477b0d60348956f9a971cac68584b0cbb9074e6540c",
+    "tst/elliptic_shift_1d/scri_limits.py": "33c82da68e486c54e6eff4932936cc8de1b3ac512b06e20344ebd714e6c696bc",
+    "tst/elliptic_shift_1d/puncture_chart.py": "36f08f5d02dbed6add8f851d89f399ae4da9a9a90c0bc67c4f7201f18dec18c6",
+    "tst/elliptic_shift_1d/wormhole_isotropic.py": "5103cd3480a113df2f2bf42d98914f0dec823ef58730eeacabd2d633d3b5b4b9",
+    "tst/hyperbolic_shift_1d/puncture.py": "890f8ff1517b3988d0864977f97fdca0be2eb37c570344b3ccde0db2ef5e5f35"
+  },
+  "n16_coordinate_replay_max_absolute_error": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0,
+    "r": 0.0,
+    "volume": 1.0842021724855044e-19
+  },
+  "coordinate_replay_note": "x/y/z/r bitwise equal at n16; coordinate-volume roundoff difference is unused by initial_data.py",
+  "coordinate_data": {
+    "path": "output/hyperbolic-core-shell/initial-data-larger-blocks-v1/n32/coordinates.csv",
+    "sha256": "5983f5d5540fc6441626a1c9ecb314e2fc4a6a968641dfe870d617a0eb0c0696",
+    "bytes": 63751760
+  },
+  "initial_data": {
+    "path": "output/hyperbolic-core-shell/initial-data-larger-blocks-v1/n32/initial.txt",
+    "sha256": "3d36d1a63f9221d49c4d51ecede4049a70600e6447feca947061d59f8c0b922f",
+    "bytes": 112446689
+  },
+  "initial_metadata": {
+    "path": "output/hyperbolic-core-shell/initial-data-larger-blocks-v1/n32/initial.json",
+    "sha256": "94fe580223151840ef761035c9419b8bd91f6b2e947e19ce0915b5f03c627ec6",
+    "bytes": 860
+  },
+  "environment": {
+    "python": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]",
+    "numpy": "2.0.2",
+    "platform": "macOS-26.7.1-arm64-arm-64bit"
+  },
+  "command": [
+    "/Library/Developer/CommandLineTools/usr/bin/python3",
+    "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/initial_data.py",
+    "--coordinates",
+    "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/initial-data-larger-blocks-v1/n32/coordinates.csv",
+    "--library",
+    "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-core-shell/tst/hyperbolic_shift_3d/libhyperbolic_shift_3d_native.dylib",
+    "--output",
+    "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/initial-data-larger-blocks-v1/n32/initial.txt"
+  ],
+  "seconds": 11.383215959000001,
+  "external_wall_limit_seconds": 410,
+  "finite_values": true,
+  "positive_chi": true,
+  "evolution_run": false,
+  "uploaded": false,
+  "substantive_difference_from_n16": "Resolution and sampled coordinates only; same donor source, library, mass, quadrature and configuration."
+}

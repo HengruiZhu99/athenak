@@ -1,0 +1,90 @@
+{
+  "status": "local_preparation_completed",
+  "scope": "initial data only; no evolution or upload",
+  "cases": [
+    {
+      "n": 24,
+      "cells": 262656,
+      "seconds": 6.274296208,
+      "initial": {
+        "path": "output/hyperbolic-core-shell/initial-data-larger-blocks-v1/n24/initial.txt",
+        "sha256": "47d0ac4831994e82fe041ce7435bb92549761174282591d124be2498c4336341",
+        "bytes": 47640768
+      },
+      "coordinates": {
+        "path": "output/hyperbolic-core-shell/initial-data-larger-blocks-v1/n24/coordinates.csv",
+        "sha256": "13951032951115f6b6558f735d966e4477f8dfd9c76b180fa24222f75511b23b",
+        "bytes": 27348557
+      },
+      "metadata": {
+        "mass": 0.3333333333333333,
+        "initial_shift_quadrature_nodes": 4097,
+        "shift_interpolation_refinement_max": 6.17725307243671e-06,
+        "chi_min": 0.0001409592268627737,
+        "lapse_min": 0.007860408426216988,
+        "donor_configuration": {
+          "ratio": 2.0,
+          "damping": 1.0,
+          "ko": 0.5,
+          "restoring": 4.0,
+          "inner_shift": 0.0,
+          "lapse_floor": 1e-10,
+          "shift_source": "reference",
+          "connection_driver": "evolved",
+          "shift_gauge": "moving-puncture",
+          "gamma_coefficient": 4.0,
+          "grid_stretch": 0.0,
+          "shift_inner_stencil": "odd",
+          "inner_z4_damping": 8.0
+        },
+        "coordinates_sha256": "13951032951115f6b6558f735d966e4477f8dfd9c76b180fa24222f75511b23b",
+        "library_sha256": "a25a42547c9d1f0dcb303114cb51b21e88d2d653fac38bab0ffba0c80a436c0e",
+        "initial_sha256": "47d0ac4831994e82fe041ce7435bb92549761174282591d124be2498c4336341"
+      },
+      "provenance_sha256": "c20b5b253332ce694bda33277d683c44f2dd20c00c62814ffbcb65438779a92e"
+    },
+    {
+      "n": 32,
+      "cells": 622592,
+      "seconds": 11.383215959000001,
+      "initial": {
+        "path": "output/hyperbolic-core-shell/initial-data-larger-blocks-v1/n32/initial.txt",
+        "sha256": "3d36d1a63f9221d49c4d51ecede4049a70600e6447feca947061d59f8c0b922f",
+        "bytes": 112446689
+      },
+      "coordinates": {
+        "path": "output/hyperbolic-core-shell/initial-data-larger-blocks-v1/n32/coordinates.csv",
+        "sha256": "5983f5d5540fc6441626a1c9ecb314e2fc4a6a968641dfe870d617a0eb0c0696",
+        "bytes": 63751760
+      },
+      "metadata": {
+        "mass": 0.3333333333333333,
+        "initial_shift_quadrature_nodes": 4097,
+        "shift_interpolation_refinement_max": 5.684757152880915e-06,
+        "chi_min": 5.065643553588579e-05,
+        "lapse_min": 0.004712448300624976,
+        "donor_configuration": {
+          "ratio": 2.0,
+          "damping": 1.0,
+          "ko": 0.5,
+          "restoring": 4.0,
+          "inner_shift": 0.0,
+          "lapse_floor": 1e-10,
+          "shift_source": "reference",
+          "connection_driver": "evolved",
+          "shift_gauge": "moving-puncture",
+          "gamma_coefficient": 4.0,
+          "grid_stretch": 0.0,
+          "shift_inner_stencil": "odd",
+          "inner_z4_damping": 8.0
+        },
+        "coordinates_sha256": "5983f5d5540fc6441626a1c9ecb314e2fc4a6a968641dfe870d617a0eb0c0696",
+        "library_sha256": "a25a42547c9d1f0dcb303114cb51b21e88d2d653fac38bab0ffba0c80a436c0e",
+        "initial_sha256": "3d36d1a63f9221d49c4d51ecede4049a70600e6447feca947061d59f8c0b922f"
+      },
+      "provenance_sha256": "77de858cf07cce53c9d93ac492ed927c0d22389bb650778ffacefe585648f8e9"
+    }
+  ],
+  "n16_initial_shift_refinement_max": 3.2249328370675956e-06,
+  "note": "The 2049-versus-4097 shift quadrature comparison is evaluated at each grid cell set; its sampled maximum can increase with resolution even though the generator is unchanged. This preparation is not an initial-data convergence test."
+}
