@@ -465,6 +465,38 @@ class ControllerTests(unittest.TestCase):
         for command in plan['commands']:command['executable']='build/'+control.SPARSE_POSITIVE_TARGET
         with self.assertRaisesRegex(ValueError,'does not inherit'):control.validate_plan(self.root,plan)
 
+    def test_measured_partition_requires_bound_admitted_bytes(self):
+        plan=example();plan.update(phase='stability',admission='admission.json')
+        command=plan['commands'][0];command['executable']='build/'+control.BALANCED_POSITIVE_TARGET
+        command['args'].extend(['.05','.001','6','12','1','inputs/cuts'])
+        with self.assertRaisesRegex(ValueError,'explicit bound input'):control.validate_plan(self.root,plan)
+        command['inputs'].append('inputs/cuts');(self.root/'inputs/cuts').write_text('reviewed cuts')
+        control.validate_plan(self.root,plan)
+        config=control.normal_derivative_config(command)
+        self.assertEqual(config['scri_dissipation_epsilon'],1)
+        self.assertEqual(config['ownership_partition'],'measured_fixed_contiguous')
+        source='a'*64;binary='b'*64
+        admission=dict(passed=True,phase='preflight',source_manifest_sha256=source,low_resolution_n=16,
+                       binaries={command['executable']:binary},gpu_cpu_parity=True,restart_equivalence=True,
+                       normal_derivative_configs=[config])
+        control.atomic(self.root/'admission.json',admission)
+        with self.assertRaisesRegex(ValueError,'partition bytes'):
+            control.validate_admission(self.root,plan,source,{command['executable']:binary})
+        admission['partition_inputs']={'inputs/cuts':control.digest(self.root/'inputs/cuts')}
+        control.atomic(self.root/'admission.json',admission)
+        control.validate_admission(self.root,plan,source,{command['executable']:binary})
+        for key,value in [('ownership_partition','equal_cells'),('partition_file',''),('volume_exchange','full_allgatherv')]:
+            admission['normal_derivative_configs']=[dict(config,**{key:value})]
+            control.atomic(self.root/'admission.json',admission)
+            with self.subTest(key=key),self.assertRaises(ValueError):
+                control.validate_admission(self.root,plan,source,{command['executable']:binary})
+        admission['normal_derivative_configs']=[config];control.atomic(self.root/'admission.json',admission)
+        (self.root/'inputs/cuts').write_text('different cuts at the same path')
+        with self.assertRaisesRegex(ValueError,'partition bytes'):
+            control.validate_admission(self.root,plan,source,{command['executable']:binary})
+        command['args'].pop()
+        with self.assertRaises(ValueError):control.validate_plan(self.root,plan)
+
     def test_v4_invalid_epsilon_and_failure_continuation_rejected(self):
         for epsilon in ['-1','nan','inf','-inf','invalid','']:
             plan=example();command=plan['commands'][0]

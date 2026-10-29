@@ -268,3 +268,18 @@ if(ENABLE_MPI)
   target_link_libraries(hyperbolic_shift_3d_sparse_exchange PRIVATE Kokkos::kokkos MPI::MPI_CXX Threads::Threads)
   target_compile_options(hyperbolic_shift_3d_sparse_exchange PRIVATE -Wall -Wextra -ffp-contract=off)
 endif()
+
+if(ENABLE_MPI)
+  add_executable(hyperbolic_shift_3d_mpi_continuous_positive_balanced coupled_mpi.cpp)
+  target_link_libraries(hyperbolic_shift_3d_mpi_continuous_positive_balanced PRIVATE hyperboloidal_fastflow MPI::MPI_CXX)
+  target_compile_options(hyperbolic_shift_3d_mpi_continuous_positive_balanced PRIVATE -Wall -Wextra -ffp-contract=off)
+  target_compile_definitions(hyperbolic_shift_3d_mpi_continuous_positive_balanced PRIVATE
+    HYPERBOLIC_ALGEBRAIC_FINAL_PROJECTION=1 HYPERBOLIC_SCRI_ANGULAR_EXCHANGE=1
+    HYPERBOLIC_SCRI_ANGULAR_DISSIPATION=1 HYPERBOLIC_SCRI_SAMPLED_NORMAL=1
+    HYPERBOLIC_SCRI_DONOR_SEVEN=1 HYPERBOLIC_INNER_TRANSITION_LOGICAL=1
+    HYPERBOLIC_CORE_SUBDIVISIONS=2 HYPERBOLIC_EVOLVED_OVERLAP=3 HYPERBOLIC_SPHERICAL_OVERLAP=1 HYPERBOLIC_CONTINUOUS_POSITIVE=1 HYPERBOLIC_BOUNDARY_REUSE=1 HYPERBOLIC_SPARSE_STAGE=1 HYPERBOLIC_MEASURED_PARTITION=1)
+endif()
+
+add_executable(hyperbolic_shift_3d_measured_partition test_measured_partition.cpp)
+target_include_directories(hyperbolic_shift_3d_measured_partition PRIVATE ${CMAKE_SOURCE_DIR}/src)
+target_compile_options(hyperbolic_shift_3d_measured_partition PRIVATE -Wall -Wextra)

@@ -15,6 +15,11 @@
 #include "z4c/hyperboloidal/algebraic_projection.hpp"
 #include "fixed_composite_mesh.hpp"
 #include "z4c/hyperboloidal/sparse_stage_exchange.hpp"
+#include "z4c/hyperboloidal/measured_partition.hpp"
+#ifndef HYPERBOLIC_MEASURED_PARTITION
+#define HYPERBOLIC_MEASURED_PARTITION 0
+#endif
+constexpr bool measured_partition=HYPERBOLIC_MEASURED_PARTITION;
 #ifndef HYPERBOLIC_SPARSE_STAGE
 #define HYPERBOLIC_SPARSE_STAGE 0
 #endif
@@ -132,13 +137,15 @@ class Evolution {
   Buffer surface,surface_base,surface_stage,surface_compensation,next_surface_compensation;
   std::array<Buffer,4> rates,edge_rates;
   V failed_edge,owned_padding;
+  std::vector<int> ownership_cuts;
+  std::string partition_source_report;
   std::vector<int> counts,displacements,surface_counts,surface_displacements;
   std::vector<int> residual_counts,residual_displacements;
   Real time=0,gap=1e300,cfl=0,null_ghost=0,null_before=0,last_rhs=0;
   Real angular_epsilon=0,angular_upper_bound=0,angular_cfl=0,angular_cfl_max=0;
   uint64_t steps=0;
   double rhs_seconds=0,exchange_seconds=0,closure_seconds=0,diagnostic_seconds=0,halo_seconds=0;
-  explicit Evolution(int resolution,Real epsilon=0,int kind=0):n(resolution),model(continuous_positive?hyperbolic_reproduction::ContinuousCoreMesh(n):spherical_overlap?hyperbolic_reproduction::SphericalOverlapMesh(n):hyperbolic_reproduction::FixedMesh(n,core_subdivisions,evolved_overlap),false,scri_angular_exchange,epsilon,
+  explicit Evolution(int resolution,Real epsilon=0,int kind=0,const std::string&partition_file=""):n(resolution),model(continuous_positive?hyperbolic_reproduction::ContinuousCoreMesh(n):spherical_overlap?hyperbolic_reproduction::SphericalOverlapMesh(n):hyperbolic_reproduction::FixedMesh(n,core_subdivisions,evolved_overlap),false,scri_angular_exchange,epsilon,
     scri_sampled_normal?h::HyperbolicComposite::NormalDerivative::sampled_numerator:h::HyperbolicComposite::NormalDerivative::analytic_jets,
     scri_donor_seven?h::HyperbolicComposite::RadialClosure::donor_seven:h::HyperbolicComposite::RadialClosure::ghost_lift),angular_epsilon(epsilon){
     auto setup_tick=construction_started;
@@ -146,14 +153,27 @@ class Evolution {
     if constexpr(inner_transition_logical)model.grid.SetInnerTransitionLogical(true);
     model.positive_dissipation=continuous_positive;model.puncture_reference=kind==2;
     MPI_Comm_rank(MPI_COMM_WORLD,&rank);MPI_Comm_size(MPI_COMM_WORLD,&size);
-    total=model.grid.active.size();first=total*rank/size;last=total*(rank+1)/size;local=last-first;
+    total=model.grid.active.size();ownership_cuts.resize(size+1);
+    for(int r=0;r<=size;++r)ownership_cuts[r]=total*r/size;
+    if constexpr(measured_partition){
+      int bad=0;std::string reason;char source[65]{};
+      if(rank==0)try{
+        std::ifstream input(partition_file);const auto descriptor=h::ReadMeasuredPartition(input,n,total,size);
+        ownership_cuts=descriptor.cuts;std::strncpy(source,descriptor.source_report_sha256.c_str(),64);
+      }catch(const std::exception&error){bad=1;reason=error.what();}
+      SynchronizeError(bad,reason);
+      MPI_Bcast(ownership_cuts.data(),size+1,MPI_INT,0,MPI_COMM_WORLD);
+      MPI_Bcast(source,65,MPI_CHAR,0,MPI_COMM_WORLD);partition_source_report=source;
+      mesh_epoch.partition=1;
+    }
+    first=ownership_cuts[rank];last=ownership_cuts[rank+1];local=last-first;
     surface_total=model.scri.rows.size();surface_first=surface_total*rank/size;surface_local=surface_total*(rank+1)/size-surface_first;
     if(local==0||surface_local==0)throw std::runtime_error("rank has no active cells/surface rows");
     first_block=model.grid.mesh.blocks.size();last_block=0;
     for(int p=first;p<last;++p){const int block=model.grid.cells[p].block;
       first_block=std::min(first_block,block);last_block=std::max(last_block,block+1);}
     counts.resize(size);displacements.resize(size);surface_counts.resize(size);surface_displacements.resize(size);
-    for(int r=0;r<size;++r){displacements[r]=total*r/size*31;counts[r]=(total*(r+1)/size-total*r/size)*31;
+    for(int r=0;r<size;++r){displacements[r]=ownership_cuts[r]*31;counts[r]=(ownership_cuts[r+1]-ownership_cuts[r])*31;
       surface_displacements[r]=surface_total*r/size*31;surface_counts[r]=(surface_total*(r+1)/size-surface_total*r/size)*31;}
     setup_phase(0);
     kernel=std::make_unique<h::HyperbolicCompositeDevice>(model.grid,first,local,model.radial_plan.get());
@@ -185,8 +205,7 @@ class Evolution {
       std::vector<int> needed=exchange->ActiveDependencies();
       const auto&normal=normal_exchange->ActiveDependencies();needed.insert(needed.end(),normal.begin(),normal.end());
       const auto&scri=boundary->ActiveDependencies();needed.insert(needed.end(),scri.begin(),scri.end());
-      std::vector<int> cuts(size+1);for(int r=0;r<=size;++r)cuts[r]=total*r/size;
-      sparse=std::make_unique<h::SparseStageExchange>();sparse->Rebuild(mesh_epoch,cuts,31,needed);
+      sparse=std::make_unique<h::SparseStageExchange>();sparse->Rebuild(mesh_epoch,ownership_cuts,31,needed);
       const char*poison=std::getenv("HYPERBOLIC_SPARSE_POISON");sparse_poison=poison&&std::string(poison)=="1";
     }
     setup_phase(6);
@@ -488,7 +507,7 @@ int main(int argc,char**argv){
   try{
     if(const char*expected=std::getenv("HYPERBOLIC_EXPECT_MPI_SIZE"))
       if(global_variable::nranks!=std::stoi(expected))throw std::runtime_error("MPI rank count differs from the bound launch plan");
-    if(argc<9||argc>(scri_angular_dissipation?14:13))throw std::invalid_argument("usage: mpi n output kind target dt initial|- restart|- wall_seconds [diagnostic_interval=.1] [horizon_rms_tol=.001] [horizon_lmax=6] [horizon_ntheta=12] [angular_epsilon=2 (V4/V5 only)]");
+    if(argc<9||argc>(measured_partition?15:scri_angular_dissipation?14:13)||(measured_partition&&argc!=15))throw std::invalid_argument("usage: mpi n output kind target dt initial|- restart|- wall_seconds [diagnostic_interval=.1] [horizon_rms_tol=.001] [horizon_lmax=6] [horizon_ntheta=12] [angular_epsilon=2 (V4/V5 only)] [cost partition file (measured target only)]");
     const int n=std::stoi(argv[1]);const std::string output=argv[2],kind_name=argv[3],initial=argv[6],restart=argv[7];
     const int kind=kind_name=="minkowski"?0:kind_name=="pulse"?1:kind_name=="puncture"?2:-1;
     const Real end=std::stod(argv[4]),dt=std::stod(argv[5]),wall=std::stod(argv[8]);
@@ -517,7 +536,7 @@ int main(int argc,char**argv){
     if(initial!="-"&&restart!="-")throw std::invalid_argument("supply initial data or restart, not both");
     const auto started=std::chrono::steady_clock::now();
     std::unique_ptr<Evolution> evolution;
-    CollectiveLocal([&]{evolution=std::make_unique<Evolution>(n,angular_epsilon,kind);});
+    CollectiveLocal([&]{evolution=std::make_unique<Evolution>(n,angular_epsilon,kind,measured_partition?argv[14]:"");});
     auto&e=*evolution;
     std::string error,status="completed";
     CollectiveLocal([&]{if(e.rank==0){
@@ -716,7 +735,11 @@ int main(int argc,char**argv){
       if constexpr(inner_transition_logical)report<<",\"interpatch_interpolation\":\"logical_inner_transition\"";
       if constexpr(core_subdivisions==2)report<<",\"mesh_topology\":\"cartesian_2x2x2_shells3\",\"cartesian_core_subdivisions\":2,\"mesh_blocks\":26";
       if constexpr(scri_donor_seven)report<<",\"scri_radial_closure\":\"donor_seven_last3\",\"scri_radial_bulk_rows\":3";
-      report<<",\"minimum_owned_cells\":"<<e.total/e.size<<",\"maximum_owned_cells\":"<<(e.total+e.size-1)/e.size
+      report<<",\"ownership_partition\":"<<JsonString(measured_partition?"measured_fixed_contiguous":"equal_cells")
+        <<",\"partition_source_report_sha256\":"<<JsonString(e.partition_source_report)<<",\"ownership_cuts\":[";
+      for(size_t r=0;r<e.ownership_cuts.size();++r){if(r)report<<',';report<<e.ownership_cuts[r];}report<<']';
+      report<<",\"minimum_owned_cells\":"<<*std::min_element(e.counts.begin(),e.counts.end())/31
+        <<",\"maximum_owned_cells\":"<<*std::max_element(e.counts.begin(),e.counts.end())/31
         <<",\"t\":"<<e.time<<",\"start_time\":"<<start_time<<",\"target_time\":"<<end<<",\"t_over_M\":"<<(kind==2?e.time*3:e.time)
         <<",\"dt\":"<<dt<<",\"steps\":"<<e.steps<<",\"segment_steps\":"<<e.steps-start_steps<<",\"seconds\":"<<elapsed()
         <<",\"checkpoint_written\":"<<(checkpoint_written?"true":"false")<<",\"checkpoint_admitted\":"<<(checkpoint_written&&checkpoint_admitted?"true":"false")

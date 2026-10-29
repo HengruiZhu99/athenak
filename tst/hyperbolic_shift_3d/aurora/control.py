@@ -32,6 +32,7 @@ OVERLAP_TARGET = 'hyperbolic_shift_3d_mpi_overlap'
 CONTINUOUS_POSITIVE_TARGET = 'hyperbolic_shift_3d_mpi_continuous_positive'
 FAST_POSITIVE_TARGET = 'hyperbolic_shift_3d_mpi_continuous_positive_fast'
 SPARSE_POSITIVE_TARGET = 'hyperbolic_shift_3d_mpi_continuous_positive_sparse'
+BALANCED_POSITIVE_TARGET = 'hyperbolic_shift_3d_mpi_continuous_positive_balanced'
 SPHERICAL_OVERLAP_TARGET = 'hyperbolic_shift_3d_mpi_spherical_overlap'
 
 
@@ -48,12 +49,12 @@ def dissipation_config(command):
 
 def normal_derivative_config(command):
     """V5 normal operator and angular coefficient require their own admission."""
-    if command['kind']=='check' or Path(command['executable']).name not in [SAMPLED_NORMAL_TARGET,DONOR_SEVEN_TARGET,INNER_TRANSITION_TARGET,CORE2_TARGET,OVERLAP_TARGET,SPHERICAL_OVERLAP_TARGET,CONTINUOUS_POSITIVE_TARGET,FAST_POSITIVE_TARGET,SPARSE_POSITIVE_TARGET]:
+    if command['kind']=='check' or Path(command['executable']).name not in [SAMPLED_NORMAL_TARGET,DONOR_SEVEN_TARGET,INNER_TRANSITION_TARGET,CORE2_TARGET,OVERLAP_TARGET,SPHERICAL_OVERLAP_TARGET,CONTINUOUS_POSITIVE_TARGET,FAST_POSITIVE_TARGET,SPARSE_POSITIVE_TARGET,BALANCED_POSITIVE_TARGET]:
         return None
-    epsilon=float(command['args'][12]) if len(command['args'])==13 else 2.0
+    epsilon=float(command['args'][12]) if len(command['args'])>=13 else 2.0
     if not math.isfinite(epsilon) or epsilon < 0:
         raise ValueError('V5 scri dissipation epsilon must be finite and nonnegative')
-    positive=Path(command['executable']).name in [CONTINUOUS_POSITIVE_TARGET,FAST_POSITIVE_TARGET,SPARSE_POSITIVE_TARGET]
+    positive=Path(command['executable']).name in [CONTINUOUS_POSITIVE_TARGET,FAST_POSITIVE_TARGET,SPARSE_POSITIVE_TARGET,BALANCED_POSITIVE_TARGET]
     spherical=positive or Path(command['executable']).name==SPHERICAL_OVERLAP_TARGET
     overlap=spherical or Path(command['executable']).name==OVERLAP_TARGET
     core2=spherical or Path(command['executable']).name==CORE2_TARGET
@@ -69,10 +70,13 @@ def normal_derivative_config(command):
     if core2:result.update(mesh_topology='cartesian_2x2x2_shells3',cartesian_core_subdivisions=2,mesh_blocks=26)
     if spherical:result.update(shell_geometry='spherical_equiangular',core_half_width=.18,shell_inner_radius=.16,overlap_quadrature='radial_quintic_partition')
     if positive:result.update(cartesian_seams='uniform_global_stencil',positive_variables='log_chi_log_lapse_rk_and_ko',physical_lapse_floor=1e-10)
-    if Path(command['executable']).name in [FAST_POSITIVE_TARGET,SPARSE_POSITIVE_TARGET]:
+    if Path(command['executable']).name in [FAST_POSITIVE_TARGET,SPARSE_POSITIVE_TARGET,BALANCED_POSITIVE_TARGET]:
         result['boundary_execution']='cached_global_projection_angular'
-    if Path(command['executable']).name==SPARSE_POSITIVE_TARGET:
+    if Path(command['executable']).name in [SPARSE_POSITIVE_TARGET,BALANCED_POSITIVE_TARGET]:
         result['volume_exchange']='cached_sparse_alltoallv'
+    if Path(command['executable']).name==BALANCED_POSITIVE_TARGET:
+        if len(command['args'])!=14:raise ValueError('Balanced target requires a bound partition file')
+        result.update(ownership_partition='measured_fixed_contiguous',partition_file=command['args'][13])
     return result
 
 
@@ -187,8 +191,9 @@ def validate_plan(root, plan):
                 raise ValueError('Generated inputs must be declared artifacts of an earlier case')
         if command['kind'] != 'check':
             v4 = Path(command['executable']).name == DISSIPATIVE_TARGET
-            v5 = Path(command['executable']).name in [SAMPLED_NORMAL_TARGET,DONOR_SEVEN_TARGET,INNER_TRANSITION_TARGET,CORE2_TARGET,OVERLAP_TARGET,SPHERICAL_OVERLAP_TARGET,CONTINUOUS_POSITIVE_TARGET,FAST_POSITIVE_TARGET,SPARSE_POSITIVE_TARGET]
-            if not 8 <= len(argv) <= (13 if v4 or v5 else 12) or argv[0] != str(case_n) or argv[2] != command['kind']:
+            v5 = Path(command['executable']).name in [SAMPLED_NORMAL_TARGET,DONOR_SEVEN_TARGET,INNER_TRANSITION_TARGET,CORE2_TARGET,OVERLAP_TARGET,SPHERICAL_OVERLAP_TARGET,CONTINUOUS_POSITIVE_TARGET,FAST_POSITIVE_TARGET,SPARSE_POSITIVE_TARGET,BALANCED_POSITIVE_TARGET]
+            balanced = Path(command['executable']).name == BALANCED_POSITIVE_TARGET
+            if not 8 <= len(argv) <= (14 if balanced else 13 if v4 or v5 else 12) or argv[0] != str(case_n) or argv[2] != command['kind']:
                 raise ValueError('Evolution arguments must match the declared grid and physical case')
             if v4:
                 dissipation_config(command)
@@ -217,6 +222,8 @@ def validate_plan(root, plan):
             declared = command.get('inputs', []) + command.get('generated_inputs', [])
             if any(p != '-' and p not in declared for p in argv[5:7]):
                 raise ValueError('Initial and restart files must be explicitly bound inputs')
+            if balanced and (len(argv)!=14 or argv[13] not in command.get('inputs', [])):
+                raise ValueError('Measured partition must be an explicit bound input')
             if argv[7] != '@WALL_SECONDS@':
                 raise ValueError('Evolution must use the worker-bounded @WALL_SECONDS@ deadline')
             if command.get('continue_after_failure') and argv[1] + '.checkpoint' not in command.get('artifacts', []):
@@ -265,6 +272,11 @@ def validate_admission(root, plan, source_digest, binary_hashes):
     for name, sha in binary_hashes.items():
         if admitted.get(name) != sha:
             raise ValueError('Admission executable binding does not match the requested run')
+    for command in plan['commands']:
+        if command['kind']!='check' and Path(command['executable']).name==BALANCED_POSITIVE_TARGET:
+            path=command['args'][13]
+            if admission.get('partition_inputs',{}).get(path)!=digest(local_path(root,path)):
+                raise ValueError('Admission does not bind these measured partition bytes')
     requested_configs = [config for config in map(dissipation_config,plan['commands']) if config is not None]
     if requested_configs:
         configs=admission.get('scri_dissipation_configs')
@@ -293,7 +305,7 @@ def validate_admission(root, plan, source_digest, binary_hashes):
             if not isinstance(config,dict):
                 raise ValueError('Invalid V5 admission configuration')
             epsilon=config.get('scri_dissipation_epsilon')
-            positive=Path(config.get('executable','')).name in [CONTINUOUS_POSITIVE_TARGET,FAST_POSITIVE_TARGET,SPARSE_POSITIVE_TARGET]
+            positive=Path(config.get('executable','')).name in [CONTINUOUS_POSITIVE_TARGET,FAST_POSITIVE_TARGET,SPARSE_POSITIVE_TARGET,BALANCED_POSITIVE_TARGET]
             spherical=positive or Path(config.get('executable','')).name==SPHERICAL_OVERLAP_TARGET
             overlap=spherical or Path(config.get('executable','')).name==OVERLAP_TARGET
             core2=spherical or Path(config.get('executable','')).name==CORE2_TARGET
@@ -306,13 +318,14 @@ def validate_admission(root, plan, source_digest, binary_hashes):
                            [('scri_dissipation_degree',7),('checkpoint_header_bytes',152 if positive else 136 if spherical else 120 if core2 or overlap else 104),
                             ('scri_normal_radial_nodes',7 if radial else 6),('scri_normal_bulk_derivative_order',4)])
                     or config.get('executable') not in admitted
-                    or Path(config.get('executable','')).name not in [SAMPLED_NORMAL_TARGET,DONOR_SEVEN_TARGET,INNER_TRANSITION_TARGET,CORE2_TARGET,OVERLAP_TARGET,SPHERICAL_OVERLAP_TARGET,CONTINUOUS_POSITIVE_TARGET,FAST_POSITIVE_TARGET,SPARSE_POSITIVE_TARGET]
+                    or Path(config.get('executable','')).name not in [SAMPLED_NORMAL_TARGET,DONOR_SEVEN_TARGET,INNER_TRANSITION_TARGET,CORE2_TARGET,OVERLAP_TARGET,SPHERICAL_OVERLAP_TARGET,CONTINUOUS_POSITIVE_TARGET,FAST_POSITIVE_TARGET,SPARSE_POSITIVE_TARGET,BALANCED_POSITIVE_TARGET]
                     or (overlap and (type(config.get('evolved_overlap')) is not int or config['evolved_overlap']!=3 or type(config.get('nominal_cells')) is not int or config['nominal_cells']!=(26 if spherical else 19)*plan['n']**3))
                     or (core2 and (config.get('mesh_topology')!='cartesian_2x2x2_shells3' or type(config.get('cartesian_core_subdivisions')) is not int or config['cartesian_core_subdivisions']!=2 or type(config.get('mesh_blocks')) is not int or config['mesh_blocks']!=26))
                     or (spherical and any(config.get(k)!=v for k,v in dict(shell_geometry='spherical_equiangular',core_half_width=.18,shell_inner_radius=.16,overlap_quadrature='radial_quintic_partition').items()))
                     or (positive and any(config.get(k)!=v for k,v in dict(cartesian_seams='uniform_global_stencil',positive_variables='log_chi_log_lapse_rk_and_ko',physical_lapse_floor=1e-10).items()))
-                    or (Path(config.get('executable','')).name in [FAST_POSITIVE_TARGET,SPARSE_POSITIVE_TARGET] and config.get('boundary_execution')!='cached_global_projection_angular')
-                    or (Path(config.get('executable','')).name==SPARSE_POSITIVE_TARGET and config.get('volume_exchange')!='cached_sparse_alltoallv')
+                    or (Path(config.get('executable','')).name in [FAST_POSITIVE_TARGET,SPARSE_POSITIVE_TARGET,BALANCED_POSITIVE_TARGET] and config.get('boundary_execution')!='cached_global_projection_angular')
+                    or (Path(config.get('executable','')).name in [SPARSE_POSITIVE_TARGET,BALANCED_POSITIVE_TARGET] and config.get('volume_exchange')!='cached_sparse_alltoallv')
+                    or (Path(config.get('executable','')).name==BALANCED_POSITIVE_TARGET and (config.get('ownership_partition')!='measured_fixed_contiguous' or not isinstance(config.get('partition_file'),str) or not config['partition_file']))
                     or (inner and config.get('interpatch_interpolation')!='logical_inner_transition')
                     or (radial and (config.get('scri_radial_closure')!='donor_seven_last3'
                                     or type(config.get('scri_radial_bulk_rows')) is not int or config['scri_radial_bulk_rows']!=3))):

@@ -14,12 +14,28 @@ from pathlib import Path
 p = argparse.ArgumentParser(description=__doc__)
 for name in ('binary', 'control', 'mpiexec', 'initial', 'output-dir'):
     p.add_argument('--' + name, type=Path, required=True)
+p.add_argument('--measured-partition', action='store_true', help='Test the balanced target with deliberately unequal synthetic cuts, not performance weights')
 a = p.parse_args()
 out = a.output_dir.resolve()
 out.mkdir(parents=True, exist_ok=True)
 assert not any(out.iterdir()), 'Use a fresh evidence directory'
 deadline = time.monotonic() + 410
 records = []
+
+def partition(n, ranks):
+    if not a.measured_partition:
+        return []
+    cells=12*n**3+8*(n+3)**3+6*(n+3)*(n+6)**2
+    assert ranks in (1, 2)
+    cuts=[0,cells] if ranks==1 else [0,int(.61*cells),cells]
+    path=out/f'partition-test-n{n}-r{ranks}.txt'
+    text=f'HYP3D_COST_PARTITION_V1\n{n} {cells} {ranks}\n'+('0'*64)+'\n'+' '.join(map(str,cuts))+'\n'
+    if path.exists():
+        assert path.read_text()==text
+    else:
+        path.write_text(text)
+    return [str(path)]
+
 
 def run(name, kind='pulse', fast=True, ranks=1, end=.00075, restart='-'):
     prefix = out / name
@@ -29,6 +45,7 @@ def run(name, kind='pulse', fast=True, ranks=1, end=.00075, restart='-'):
            kind, str(end), '.00025',
            str(a.initial.resolve()) if kind == 'puncture' else '-', str(restart),
            '120', '.001', '.001', '6', '12', '2']
+    if fast:cmd += partition(n, ranks)
     start = time.monotonic()
     result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                             text=True, timeout=min(150, deadline-start),
@@ -41,6 +58,10 @@ def run(name, kind='pulse', fast=True, ranks=1, end=.00075, restart='-'):
     assert report['lapse_floor_node_interventions'] == 0
     assert report['max_null_surface'] < 5e-13 and report['max_null_ghost'] < 5e-13
     if fast:
+        if a.measured_partition:
+            assert report['ownership_partition']=='measured_fixed_contiguous'
+            assert report['partition_source_report_sha256']=='0'*64
+            if ranks==2:assert report['minimum_owned_cells'] != report['maximum_owned_cells']
         assert report['boundary_execution'] == 'cached_global_projection_angular'
         assert report['boundary_cache_hits'] > 0
         assert report['volume_exchange'] == 'cached_sparse_alltoallv'
@@ -84,6 +105,7 @@ for fast, ranks in ((False, 1), (True, 2)):
     cmd = [str(a.mpiexec.resolve()), '-n', str(ranks),
            str((a.binary if fast else a.control).resolve()), '12', str(prefix),
            'pulse', '.00025', '.00025', str(stress), '-', '120', '.001', '.001', '6', '12', '2']
+    if fast:cmd += partition(12, ranks)
     start = time.monotonic()
     result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                             text=True, timeout=min(150, deadline-start),
