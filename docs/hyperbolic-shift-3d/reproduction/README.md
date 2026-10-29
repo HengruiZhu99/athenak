@@ -108,7 +108,14 @@ four-array payload exactly. Minkowski state deviation is 1.01e-14 at t=.002;
 the puncture reaches only .006 M, with null residual <=1.23e-15 and horizon
 expansion RMS .000325. Epsilon two alone is admitted for a
 [bounded fresh Minkowski duration comparison](aurora/stability-dissipative-minkowski-v1/protocol.md).
-No V4 sustained-stability or 100 M result is claimed by this preflight.
+The [V4 duration test](aurora/stability-dissipative-minkowski-v1/README.md)
+subsequently failed at t=.5225 with nonpositive interpolated scri geometry.
+Its measured growth rate, 72.195, is only 0.332% below V3's, and the same rapid
+instability persists. At the last diagnostic t=.5, state deviation is 21.28
+and H/M RMS are .05655/1.65426, despite null closure near 1e-15. An exact
+replay finds positive metrics at all stored scri nodes but an indefinite
+ghost interpolation; this identifies the immediate rejection, not the initial
+growth's cause. V4 is not a stable-duration or 100 M result.
 
 The original J-disabled, bulk-mu=4 1D control is confirmed to have completed coordinate `33.3333984375 = 100.0001953125 M`. Its N513/N1025 continuation chains and frozen-source identities were checked. A [portable N513 time series](original-1d-reference/history.csv) and [provenance](original-1d-reference/provenance.json) preserve the matching horizon/exterior-constraint reference. Late gauge settling and uniform puncture convergence were not established by that original control.
 
