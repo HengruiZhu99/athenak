@@ -70,6 +70,34 @@ The recorded all-direction shift/lapse speed-gap diagnostic remains positive
 tangential-speed collision. This diagnostic alone is not a complete
 hyperbolicity or boundary-stability proof.
 
+The next optional candidate adds degree-seven angular dissipation on actual
+scri nodes, using `Q=-epsilon*n*M^-1*B^T*M*B`. The
+[standalone operator study](scri-dissipation-prototype-v1/README.md) checks
+polynomial consistency, energy, cross-face support and reference-sphere areas.
+The native plan uses twice-orthogonalized QR and paired donor/anchor transpose
+contributions; its conservative incidence-based spectral bound is larger than
+the prototype's combined-diagonal bound. The added operator is dissipative in
+its fixed area-weighted norm, which is not a stability proof for the coupled
+equations, nonlinear projection or signed ghost interpolation.
+
+The optional `hyperbolic_shift_3d_mpi_dissipative` target applies Q to the 21
+free surface fields before reconstructing dependent D. Lapse, shift, D and J
+are not independently filtered. It retains the V3 cross-face jets and accepted
+tensor projection; the original V1/V2/V3 executables remain available. Its
+default strength is epsilon=2, with an optional thirteenth positional argument
+after the horizon angular settings. Epsilon=0 provides a disabled control.
+The V4 checkpoint adds a 16-byte epsilon/degree/reserved configuration after
+the original 72-byte header and rejects cross-scheme or different-strength
+restarts. An isolated-Q RK4 guard requires
+`dt*epsilon*n*spectral_upper_bound <= 2.7`; this guard does not admit a coupled
+timestep. Local native operator and closure tests pass, including nonspherical
+rates, exact constant preservation, weighted energy, CPU/device-interface
+parity and twelve ownership partitions. Fifteen bounded native MPI cases
+confirm a bitwise V3/zero-epsilon payload match, one-rank direct versus
+two-rank restarted equality of all four checkpoint arrays, and configuration,
+admission and CFL rejection. These are Kokkos-Serial tests; actual SYCL
+preflight and sustained evolution remain pending. No V4 100 M result is claimed.
+
 The original J-disabled, bulk-mu=4 1D control is confirmed to have completed coordinate `33.3333984375 = 100.0001953125 M`. Its N513/N1025 continuation chains and frozen-source identities were checked. A [portable N513 time series](original-1d-reference/history.csv) and [provenance](original-1d-reference/provenance.json) preserve the matching horizon/exterior-constraint reference. Late gauge settling and uniform puncture convergence were not established by that original control.
 
 ## Archived pause point

@@ -10,6 +10,7 @@
 #include "z4c/hyperboloidal/horizon_geometry.hpp"
 #include "z4c/hyperboloidal/hyperbolic_composite_exchange.hpp"
 #include "z4c/hyperboloidal/hyperbolic_scri_device.hpp"
+#include "z4c/hyperboloidal/hyperbolic_angular_dissipation_device.hpp"
 #include "z4c/hyperboloidal/algebraic_projection.hpp"
 #ifndef HYPERBOLIC_ALGEBRAIC_FINAL_PROJECTION
 #define HYPERBOLIC_ALGEBRAIC_FINAL_PROJECTION 0
@@ -17,20 +18,30 @@
 #ifndef HYPERBOLIC_SCRI_ANGULAR_EXCHANGE
 #define HYPERBOLIC_SCRI_ANGULAR_EXCHANGE 0
 #endif
+#ifndef HYPERBOLIC_SCRI_ANGULAR_DISSIPATION
+#define HYPERBOLIC_SCRI_ANGULAR_DISSIPATION 0
+#endif
 namespace h=z4c::hyperboloidal;
 using Buffer=h::HyperbolicCompositeDevice::Buffer;
 using HostBuffer=Kokkos::View<Real*,Kokkos::HostSpace>;
 using V=std::vector<Real>;
 constexpr bool algebraic_final_projection=HYPERBOLIC_ALGEBRAIC_FINAL_PROJECTION;
 constexpr bool scri_angular_exchange=HYPERBOLIC_SCRI_ANGULAR_EXCHANGE;
+constexpr bool scri_angular_dissipation=HYPERBOLIC_SCRI_ANGULAR_DISSIPATION;
 static_assert(!scri_angular_exchange||algebraic_final_projection,"angular candidate requires algebraic repair");
-constexpr const char*checkpoint_magic=scri_angular_exchange?"HYP3D_MPI_V3":algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
+static_assert(!scri_angular_dissipation||scri_angular_exchange,"dissipation candidate requires cross-face jets");
+constexpr const char*checkpoint_magic=scri_angular_dissipation?"HYP3D_MPI_V4":scri_angular_exchange?"HYP3D_MPI_V3":algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
 constexpr const char*algebraic_scheme=algebraic_final_projection?"final_stage_standard":"none";
 constexpr const char*scri_angular_scheme=scri_angular_exchange?"cross_face_centered5":"face_local6";
+constexpr const char*scri_dissipation_scheme=scri_angular_dissipation?"degree7_weighted_negative_square":"none";
 struct Header {
   char magic[16]{};int n=0,nf=31,kind=0,admitted=0;
   uint64_t cells=0,surface=0,steps=0;Real time=0,dt=0;
 };
+// V1--V3 retain their original bytes. V4 binds every restart to the added
+// operator strength and degree before reading any of the four state arrays.
+struct DissipationConfig { Real epsilon=0;int32_t degree=7,reserved=0; };
+static_assert(sizeof(Header)==72&&sizeof(DissipationConfig)==16,"checkpoint layout requires float64");
 class Evolution {
  public:
   int rank,size,n,total,first,last,local,first_block,last_block;
@@ -39,15 +50,19 @@ class Evolution {
   std::unique_ptr<h::HyperbolicCompositeDevice> kernel;
   std::unique_ptr<h::HyperbolicCompositeExchange> exchange;
   std::unique_ptr<h::HyperbolicScriDevice> boundary;
+  std::unique_ptr<h::HyperbolicAngularDissipationDevice> angular_dissipation;
+  Buffer angular_residual;
   Buffer state,base,local_state,compensation,next_compensation,reference_lapse,failed_state;
   Buffer surface,surface_base,surface_stage,surface_compensation,next_surface_compensation;
   std::array<Buffer,4> rates,edge_rates;
   V failed_edge,owned_padding;
   std::vector<int> counts,displacements,surface_counts,surface_displacements;
+  std::vector<int> residual_counts,residual_displacements;
   Real time=0,gap=1e300,cfl=0,null_ghost=0,null_before=0,last_rhs=0;
+  Real angular_epsilon=0,angular_upper_bound=0,angular_cfl=0,angular_cfl_max=0;
   uint64_t steps=0;
   double rhs_seconds=0,exchange_seconds=0,closure_seconds=0,diagnostic_seconds=0;
-  explicit Evolution(int resolution):n(resolution),model(cubed_sphere::CompositeMesh(.125,{.45,.75,1},1,n,3),false,scri_angular_exchange){
+  explicit Evolution(int resolution,Real epsilon=0):n(resolution),model(cubed_sphere::CompositeMesh(.125,{.45,.75,1},1,n,3),false,scri_angular_exchange,epsilon),angular_epsilon(epsilon){
     MPI_Comm_rank(MPI_COMM_WORLD,&rank);MPI_Comm_size(MPI_COMM_WORLD,&size);
     total=model.grid.active.size();first=total*rank/size;last=total*(rank+1)/size;local=last-first;
     surface_total=model.scri.rows.size();surface_first=surface_total*rank/size;surface_local=surface_total*(rank+1)/size-surface_first;
@@ -59,6 +74,13 @@ class Evolution {
     kernel=std::make_unique<h::HyperbolicCompositeDevice>(model.grid,first,local);
     exchange=std::make_unique<h::HyperbolicCompositeExchange>(model,first_block,last_block);
     boundary=std::make_unique<h::HyperbolicScriDevice>(model,surface_first,surface_local);
+    if(angular_epsilon>0){
+      angular_dissipation=std::make_unique<h::HyperbolicAngularDissipationDevice>(*model.angular_plan,surface_first,surface_local);
+      angular_upper_bound=model.angular_plan->SpectralUpperBound();
+      angular_residual=Buffer("global angular residual",21*surface_total);
+      residual_counts.resize(size);residual_displacements.resize(size);
+      for(int r=0;r<size;++r){residual_counts[r]=surface_counts[r]/31*21;residual_displacements[r]=surface_displacements[r]/31*21;}
+    }
     state=Buffer("global active stage",31*total);base=Buffer("accepted stage",31*total);
     local_state=Buffer("local stage",31*local);compensation=Buffer("local RK compensation",31*local);
     next_compensation=Buffer("next RK compensation",31*local);Kokkos::deep_copy(compensation,Real(0));
@@ -91,10 +113,31 @@ class Evolution {
     exchange_seconds+=std::chrono::duration<double>(std::chrono::steady_clock::now()-start).count();
   }
   Buffer RefreshBoundary(Real dt){
+    // This is an isolated negative-real-axis RK4 bound with margin. Passing it
+    // does not establish stability of the coupled evolution or interpolation.
+    if(angular_dissipation){
+      angular_cfl=dt*angular_epsilon*n*angular_upper_bound;
+      angular_cfl_max=std::max(angular_cfl_max,angular_cfl);
+      SynchronizeError(!(dt>0)||!std::isfinite(angular_cfl)||angular_cfl>2.7,"angular dissipation RK4 bound exceeded");
+    }
     const auto start=std::chrono::steady_clock::now();const auto projected=boundary->Project(surface);
     SynchronizeError(projected.bad_rows,"device scri projection failure at row "+std::to_string(projected.first_bad)+" reason "+h::HyperbolicScriDevice::Reason(projected.reason));
     Gather(boundary->LocalSurface(),surface,true);
-    const auto q=boundary->Evaluate(state,surface,dt);
+    Buffer additive;
+    if(angular_dissipation){
+      const auto residual=angular_dissipation->Residual(surface);
+      SynchronizeError(residual.bad_values,"nonfinite angular residual at row "+std::to_string(residual.first_bad));
+      Kokkos::fence();const auto gather_start=std::chrono::steady_clock::now();
+      MPI_Allgatherv(angular_dissipation->LocalResidual().data(),residual_counts[rank],MPI_ATHENA_REAL,
+        angular_residual.data(),residual_counts.data(),residual_displacements.data(),MPI_ATHENA_REAL,MPI_COMM_WORLD);
+      exchange_seconds+=std::chrono::duration<double>(std::chrono::steady_clock::now()-gather_start).count();
+      const auto applied=angular_dissipation->Apply(angular_residual,angular_epsilon);
+      SynchronizeError(applied.bad_values,"nonfinite angular rate at row "+std::to_string(applied.first_bad));
+      additive=angular_dissipation->LocalRHS();
+    }
+    // Dependent D is reconstructed from geometric rates including Q. Appending
+    // Q after this call would violate the differentiated moving-normal closure.
+    const auto q=boundary->Evaluate(state,surface,dt,additive);
     SynchronizeError(q.bad_rows,"device scri rate failure at row "+std::to_string(q.first_bad)+" reason "+h::HyperbolicScriDevice::Reason(q.reason));
     Gather(boundary->LocalSurface(),surface,true);
     Real stats[4]={projected.null_after,q.pole,q.clock,q.compatibility};MPI_Allreduce(MPI_IN_PLACE,stats,4,MPI_ATHENA_REAL,MPI_MAX,MPI_COMM_WORLD);
@@ -173,6 +216,8 @@ class Evolution {
       header.cells=total;header.surface=surface.extent(0);header.steps=steps;header.time=time;header.dt=dt;
       const auto values=Download(state),comps=Download(comp_global),edge=Download(surface),edge_comps=Download(edge_comp_global);std::ofstream out(path+".tmp",std::ios::binary);
       out.write(reinterpret_cast<const char*>(&header),sizeof(header));
+      if constexpr(scri_angular_dissipation){const DissipationConfig config{angular_epsilon,7,0};
+        out.write(reinterpret_cast<const char*>(&config),sizeof(config));}
       for(const V*v:{&values,&comps,&edge,&edge_comps})out.write(reinterpret_cast<const char*>(v->data()),v->size()*sizeof(Real));
       out.close();if(!out)throw std::runtime_error("checkpoint write failed");std::filesystem::rename(path+".tmp",path);
     }catch(const std::exception&e){bad=1;reason=e.what();}SynchronizeError(bad,reason);
@@ -182,6 +227,10 @@ class Evolution {
     if(rank==0)try{std::ifstream in(path,std::ios::binary);in.read(reinterpret_cast<char*>(&header),sizeof(header));
       if(!in||std::memcmp(header.magic,checkpoint_magic,12)||header.n!=n||header.nf!=31||header.kind!=kind||header.admitted!=1||header.cells!=size_t(total)||header.surface!=surface.extent(0)||header.dt!=dt)
         throw std::runtime_error("checkpoint schema/configuration/admission mismatch");
+      if constexpr(scri_angular_dissipation){DissipationConfig config;
+        in.read(reinterpret_cast<char*>(&config),sizeof(config));
+        if(!in||!std::isfinite(config.epsilon)||config.epsilon!=angular_epsilon||config.degree!=7||config.reserved!=0)
+          throw std::runtime_error("checkpoint angular dissipation configuration mismatch");}
       for(auto*v:{&values,&comps,&edge,&edge_comps})in.read(reinterpret_cast<char*>(v->data()),v->size()*sizeof(Real));
       char tail;if(!in||in.read(&tail,1))throw std::runtime_error("checkpoint truncated or trailing data");
       for(const auto*v:{&values,&comps,&edge,&edge_comps})for(Real x:*v)if(!std::isfinite(x))throw std::runtime_error("checkpoint nonfinite data");
@@ -241,7 +290,7 @@ int main(int argc,char**argv){
   try{
     if(const char*expected=std::getenv("HYPERBOLIC_EXPECT_MPI_SIZE"))
       if(global_variable::nranks!=std::stoi(expected))throw std::runtime_error("MPI rank count differs from the bound launch plan");
-    if(argc<9||argc>13)throw std::invalid_argument("usage: mpi n output kind target dt initial|- restart|- wall_seconds [diagnostic_interval=.1] [horizon_rms_tol=.001] [horizon_lmax=6] [horizon_ntheta=12]");
+    if(argc<9||argc>(scri_angular_dissipation?14:13))throw std::invalid_argument("usage: mpi n output kind target dt initial|- restart|- wall_seconds [diagnostic_interval=.1] [horizon_rms_tol=.001] [horizon_lmax=6] [horizon_ntheta=12] [angular_epsilon=2 (V4 only)]");
     const int n=std::stoi(argv[1]);const std::string output=argv[2],kind_name=argv[3],initial=argv[6],restart=argv[7];
     const int kind=kind_name=="minkowski"?0:kind_name=="pulse"?1:kind_name=="puncture"?2:-1;
     const Real end=std::stod(argv[4]),dt=std::stod(argv[5]),wall=std::stod(argv[8]);
@@ -254,6 +303,11 @@ int main(int argc,char**argv){
     };
     const int horizon_lmax=argc>11?angular_integer(argv[11]):6;
     const int horizon_ntheta=argc>12?angular_integer(argv[12]):12;
+    Real angular_epsilon=scri_angular_dissipation?2:0;
+    if(argc>13){size_t used=0;angular_epsilon=std::stod(argv[13],&used);
+      if(used!=std::strlen(argv[13]))throw std::invalid_argument("invalid angular dissipation strength");}
+    if(!std::isfinite(angular_epsilon)||angular_epsilon<0)
+      throw std::invalid_argument("angular dissipation strength must be finite and nonnegative");
     // GaussLegendreGrid stores 2*ntheta*ntheta in an int.
     if(horizon_lmax<1||horizon_ntheta<=horizon_lmax||horizon_ntheta>32767)
       throw std::invalid_argument("horizon angular resolution requires 1 <= lmax < ntheta <= 32767");
@@ -265,7 +319,7 @@ int main(int argc,char**argv){
     if(initial!="-"&&restart!="-")throw std::invalid_argument("supply initial data or restart, not both");
     const auto started=std::chrono::steady_clock::now();
     std::unique_ptr<Evolution> evolution;
-    CollectiveLocal([&]{evolution=std::make_unique<Evolution>(n);});
+    CollectiveLocal([&]{evolution=std::make_unique<Evolution>(n,angular_epsilon);});
     auto&e=*evolution;
     std::string error,status="completed";
     CollectiveLocal([&]{if(e.rank==0){
@@ -425,6 +479,17 @@ int main(int argc,char**argv){
         <<",\"backend\":"<<JsonString(Kokkos::DefaultExecutionSpace::name())<<",\"mpi_size\":"<<e.size<<",\"n\":"<<n<<",\"cells\":"<<e.total
         <<",\"algebraic_projection\":"<<JsonString(algebraic_scheme)<<",\"checkpoint_schema\":"<<JsonString(checkpoint_magic)
         <<",\"scri_angular_stencil\":"<<JsonString(scri_angular_scheme)
+        <<",\"scri_dissipation_scheme\":"<<JsonString(scri_dissipation_scheme)
+        <<",\"scri_dissipation_epsilon\":"<<e.angular_epsilon
+        <<",\"scri_dissipation_degree\":"<<(scri_angular_dissipation?7:0)
+        <<",\"scri_dissipation_spectral_upper_bound\":"<<e.angular_upper_bound
+        <<",\"scri_dissipation_cfl\":"<<JsonNumber(e.angular_cfl)
+        <<",\"scri_dissipation_cfl_max\":"<<JsonNumber(e.angular_cfl_max)
+        <<",\"scri_dissipation_max_neighbors\":"<<(e.model.angular_plan?e.model.angular_plan->Stats().max_neighbors:0)
+        <<",\"scri_dissipation_max_incoming\":"<<(e.model.angular_plan?e.model.angular_plan->Stats().max_incoming:0)
+        <<",\"scri_dissipation_max_moment_error\":"<<(e.model.angular_plan?e.model.angular_plan->Stats().max_moment_error:0)
+        <<",\"scri_dissipation_max_coefficient_l1\":"<<(e.model.angular_plan?e.model.angular_plan->Stats().max_coefficient_l1:0)
+        <<",\"checkpoint_header_bytes\":"<<(sizeof(Header)+(scri_angular_dissipation?sizeof(DissipationConfig):0))
         <<",\"minimum_owned_cells\":"<<e.total/e.size<<",\"maximum_owned_cells\":"<<(e.total+e.size-1)/e.size
         <<",\"t\":"<<e.time<<",\"start_time\":"<<start_time<<",\"target_time\":"<<end<<",\"t_over_M\":"<<(kind==2?e.time*3:e.time)
         <<",\"dt\":"<<dt<<",\"steps\":"<<e.steps<<",\"segment_steps\":"<<e.steps-start_steps<<",\"seconds\":"<<elapsed()
