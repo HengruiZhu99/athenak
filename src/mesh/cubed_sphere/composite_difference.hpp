@@ -57,7 +57,15 @@ class CompositeDifference {
     const int owner = mesh.Owner(x);
     if (owner < 0) throw std::runtime_error("interpolation outside scri");
     Real q[3]; mesh.Inverse(owner, x, q);
-    if(radial_interface_stencils&&mesh.blocks[owner].face>=0)
+    // Optional control for the cube-to-sphere layer. Physical-radius lines
+    // have angle-dependent inner endpoints here; fixed-radius interpolation
+    // can extrapolate far past those endpoints near cube corners. Use local
+    // mapped coordinates unless the centered donor stencil crosses the outer
+    // radial seam, where the cross-layer physical-radius chain is retained.
+    const int radial_begin=static_cast<int>(std::floor(n*q[0]-.5))-width/2+1;
+    const bool logical_inner=inner_transition_logical&&mesh.blocks[owner].layer==0&&
+        radial_begin+width<=n;
+    if(radial_interface_stencils&&mesh.blocks[owner].face>=0&&!logical_inner)
       return InterpolateShellRadius(owner,x,q,width);
     std::vector<Entry> entries;
     int first[3];
@@ -86,6 +94,11 @@ class CompositeDifference {
   // radius dependence. Every donor is an active cell; no ghost cycles enter.
   void SetRadialInterfaceStencils(bool enabled){
     if(enabled==radial_interface_stencils)return;radial_interface_stencils=enabled;BuildHalos();
+  }
+  // Diagnostic selector only: defaults preserve every existing evolution.
+  void SetInnerTransitionLogical(bool enabled){
+    if(enabled==inner_transition_logical)return;
+    inner_transition_logical=enabled;BuildHalos();
   }
   void Fill(std::vector<Real> &field, int components,
       const std::function<Real(int, const std::array<Real, 3> &)> &boundary = {}, int first_component=0, int last_component=-1) const {
@@ -204,6 +217,7 @@ class CompositeDifference {
   }
 
  private:
+  bool inner_transition_logical=false;
   std::vector<Entry> InterpolateShellRadius(int owner,const Real x[3],const Real local[3],int width) const {
     const auto &block=mesh.blocks[owner];width=std::min(width,n);
     std::vector<int> chain;

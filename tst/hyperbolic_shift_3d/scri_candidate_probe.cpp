@@ -26,8 +26,14 @@ struct Probe {
       model(cubed_sphere::CompositeMesh(.125,{.45,.75,1},1,n,3),false,true,epsilon,
         variant?h::HyperbolicComposite::NormalDerivative::sampled_numerator:
                 h::HyperbolicComposite::NormalDerivative::analytic_jets,
-        variant==2?h::HyperbolicComposite::RadialClosure::donor_seven:
-                   h::HyperbolicComposite::RadialClosure::ghost_lift),dt(time_step) {}
+        variant>=2?h::HyperbolicComposite::RadialClosure::donor_seven:
+                   h::HyperbolicComposite::RadialClosure::ghost_lift),dt(time_step) {
+    // Read-only interface diagnostic: keep the V6 scri closure and replace
+    // physical-radius donor chains by the existing logical-coordinate halo
+    // interpolant. This selector is not exposed by any evolution executable.
+    if(variant==3)model.grid.SetRadialInterfaceStencils(false);
+    if(variant==4)model.grid.SetInnerTransitionLogical(true);
+  }
   int VolumeSize()const{return 26*model.grid.active.size();}
   int Size()const{return VolumeSize()+19*model.scri.rows.size();}
   static void Retract(const Real*input,std::vector<Real>&values,int fields,Real&det,Real&trace) {
@@ -84,7 +90,7 @@ extern "C" void* scri_candidate_create(int n,double epsilon,double dt,int sample
   static_assert(sizeof(Real)==sizeof(double),"candidate diagnostic requires FP64");
   try{
     if((n!=6&&n!=16)||epsilon!=2||!std::isfinite(dt)||!(dt>0)||dt>.0005||
-       (sampled<0||sampled>2))throw std::runtime_error("invalid bounded candidate configuration");
+       (sampled<0||sampled>4))throw std::runtime_error("invalid bounded candidate configuration");
     return new Probe(n,epsilon,dt,sampled);
   }catch(const std::exception&e){error=e.what();return nullptr;}
 }

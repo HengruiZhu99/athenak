@@ -4,6 +4,14 @@ The new hyperboloidal equations now evolve coupled 3D fields on a Cartesian core
 
 Branch: `codex/hyperbolic-core-shell`, based on `4b4cef316411932a12cbbbf2bcbb110a70f1df90` (`codex/hyperbolic-shift-scri-3d`). The equation/control donor is `c0ae7472a7aecc92cc72312c33d4cdc417a26291` (`codex/hyperboloidal-hyperbolic-shift`). No standard-Z4c validation campaign was run.
 
+
+The [V6 interior-direction diagnostic](scri-v6-interface-diagnosis-v1/README.md)
+locates the remaining Minkowski disturbance at the inner transition-shell
+angular edges, dominated by Lambda and D. A targeted interpolation control
+changes its projected growth to decay while retaining the outer radial seam
+stencils. This is a read-only RHS result, not a stable evolution or an adopted
+production closure.
+
 ## Aurora work resumed on 2026-10-28
 
 The user authorized one Aurora debug node at a time, using the `CompactBinaryMerger` allocation, all 12 MPI ranks and all 12 GPU tiles. The campaign lives under `/home/hzhu/hyperbolic-core-shell-20261028`, with a 5,000,000,000-byte campaign storage cap, explicit output/checkpoint reserves, and retained small diagnostics. Builds use MPI and SYCL with `make -j64`. Long-time stability of both Minkowski and the isotropic wormhole comes before a convergence campaign.

@@ -1,0 +1,247 @@
+{
+  "status": "completed",
+  "scope": "Localization and two-vector projected tangent RHS; projected eigenvalues require small residuals and are not full-spectrum stability results",
+  "norm": "Unweighted point-coordinate Euclidean, not physical energy",
+  "checkpoint": {
+    "magic": "HYP3D_MPI_V6",
+    "n": 16,
+    "nf": 31,
+    "kind": 0,
+    "admitted": true,
+    "cells": 77824,
+    "surface_size": 47616,
+    "steps": 2001,
+    "time": 1.0,
+    "dt": 0.0005,
+    "header_bytes": 104,
+    "scri_dissipation_epsilon": 2.0,
+    "scri_dissipation_degree": 7,
+    "base_except_magic_sha256": "051bfcdad0f1a6dcdcc9a44beb8540df348d4cc2c47d0be7380d63e6cb6f5d20",
+    "arrays": [
+      {
+        "name": "volume_state",
+        "doubles": 2412544,
+        "sha256": "21d3a0309c545b902746a9d423533e7d5787ebdec7ff54a5288b51feffc0d427"
+      },
+      {
+        "name": "volume_compensation",
+        "doubles": 2412544,
+        "sha256": "4f5f5645e04a1dc23405c3f7be76ea0cc51484b5d2d109c373fbaff6b4b4d068"
+      },
+      {
+        "name": "scri_state",
+        "doubles": 47616,
+        "sha256": "9a9e4ff9075e306a87ed4a718ca529873e798f24453f324edf1d5c6d3a1e02af"
+      },
+      {
+        "name": "scri_compensation",
+        "doubles": 47616,
+        "sha256": "5a8050b7d5e0c6971f19a82bf7bf328e8e75165053256fbc979b99ab76ab8e1c"
+      }
+    ],
+    "bytes": 39362664,
+    "sha256": "ad256d7320a025cf0914b3deccd3f95878e13edfe4b88eebdee0157c1ffd2318",
+    "scri_normal_derivative": "sampled_native_numerator7",
+    "scri_normal_radial_nodes": 7,
+    "scri_normal_bulk_derivative_order": 4,
+    "scri_radial_closure": "donor_seven_last3",
+    "scri_radial_bulk_rows": 3,
+    "worker_sha256": "ea18d33c368865c7aceae673ff821e3d6ec61901e8027a515d37957cd6d4b261",
+    "bound_artifact": [
+      [
+        "minkowski",
+        "campaigns/stability-donor-seven-minkowski-v1/output/minkowski.checkpoint"
+      ]
+    ],
+    "scientifically_admitted": false,
+    "tangent_norm": 5.891520871033184e-08,
+    "trace_discard_relative": 3.915273423998942e-07
+  },
+  "localization": {
+    "regions": {
+      "Cartesian": {
+        "norm_squared_fraction": 0.005838018956802525,
+        "i_row_fractions": [
+          0.002501615759344701,
+          0.0003985492861183444,
+          0.000872212950236886,
+          0.00024372236173595888,
+          4.667201303592685e-05,
+          1.2414457709273789e-05,
+          8.218070973483758e-06,
+          1.5429016591607462e-06,
+          2.101920612836921e-06,
+          2.1654912807853118e-06,
+          8.268801049165345e-06,
+          2.160211403350192e-05,
+          0.00010069007189016071,
+          0.0003502605665702079,
+          0.00017647109789026115,
+          0.0010915110926618713
+        ]
+      },
+      "transition_shell": {
+        "norm_squared_fraction": 0.9941619513147008,
+        "i_row_fractions": [
+          0.18783607343419076,
+          0.22875957008466666,
+          0.25326936403794814,
+          0.1758834925706532,
+          0.08302328107189196,
+          0.044685050415722856,
+          0.013882640357582198,
+          0.004416922051294139,
+          0.0018568931589020825,
+          0.00037957976623566737,
+          0.00011454038433816857,
+          4.462820561720751e-05,
+          6.9235954720578225e-06,
+          2.0556262715104025e-06,
+          8.438747042474297e-07,
+          9.267920908880846e-08
+        ]
+      },
+      "middle_shell": {
+        "norm_squared_fraction": 2.6685581577934405e-08,
+        "i_row_fractions": [
+          2.2576671086990405e-08,
+          3.6984177005266893e-09,
+          2.563328584211775e-10,
+          7.718434669424826e-11,
+          2.6343814339613144e-11,
+          8.186558283477497e-12,
+          5.736433211139451e-12,
+          5.210460015002063e-12,
+          4.8390901501837264e-12,
+          4.52128705664177e-12,
+          4.308331121200716e-12,
+          4.129445498951383e-12,
+          3.910597743971944e-12,
+          3.5922158754823423e-12,
+          3.2431983095725315e-12,
+          2.9541536966168046e-12
+        ]
+      },
+      "outer_shell": {
+        "norm_squared_fraction": 1.1773458012516762e-09,
+        "i_row_fractions": [
+          2.9012805397368566e-12,
+          2.8138202811200145e-12,
+          2.7175596155471797e-12,
+          2.5999757984820194e-12,
+          2.4624352751792044e-12,
+          2.5801759963793805e-12,
+          3.037157614241687e-12,
+          6.68109659417563e-12,
+          8.763262848027133e-12,
+          1.0379967302434242e-11,
+          1.694882968541646e-11,
+          2.7425103307515298e-11,
+          5.2655470382306127e-11,
+          1.7670072861641458e-10,
+          2.2135103044494963e-10,
+          6.373279069497522e-10
+        ]
+      }
+    },
+    "block_norm_squared_fractions": [
+      0.005838018956802525,
+      0.14805993803377698,
+      0.31196959322825346,
+      0.16309621240687847,
+      0.18519507266778942,
+      0.05389841835254782,
+      0.13194271662545456,
+      4.0465523656481745e-09,
+      6.849359059419843e-09,
+      6.180486506171433e-09,
+      2.9478528184251797e-09,
+      3.017363144976013e-09,
+      3.643967683293759e-09,
+      2.1491845059473468e-10,
+      1.9650171019535122e-10,
+      2.059949517437764e-10,
+      1.6836594073382865e-10,
+      1.9871626362094854e-10,
+      1.9284848436303669e-10
+    ],
+    "surface_norm_squared_fraction": 1.8655691570410506e-09,
+    "transition_angular_outer_two_rows_fraction": 0.969187356007393,
+    "peak_block_k_j_i": [
+      2,
+      0,
+      0,
+      2
+    ]
+  },
+  "rows": [
+    {
+      "amplitude": 1e-05,
+      "projected_matrix": [
+        [
+          18.37471314423287,
+          -551.8010959379911
+        ],
+        [
+          557.5837588575828,
+          14.296118100588554
+        ]
+      ],
+      "column_relative_residuals": [
+        2.1385160720627742e-16,
+        0.06912825929136406
+      ],
+      "projected_eigenvalues": [
+        {
+          "real": 16.335415622410746,
+          "imag": 554.6811430727173
+        },
+        {
+          "real": 16.335415622410746,
+          "imag": -554.6811430727173
+        }
+      ]
+    },
+    {
+      "amplitude": 1e-06,
+      "projected_matrix": [
+        [
+          18.374713961904444,
+          -551.8010956483973
+        ],
+        [
+          557.583758902982,
+          14.296119477259662
+        ]
+      ],
+      "column_relative_residuals": [
+        4.1234523874118414e-16,
+        0.06912825897382888
+      ],
+      "projected_eigenvalues": [
+        {
+          "real": 16.33541671958207,
+          "imag": 554.681142950772
+        },
+        {
+          "real": 16.33541671958207,
+          "imag": -554.681142950772
+        }
+      ]
+    }
+  ],
+  "library_sha256": "79368e254c2262ad54d620521d203525b5f192cd9f00ed052dfa9f7918d3ab29",
+  "source_manifest_sha256": "632abfaa3a870a4a68cb12dd2cb80f681994109a58694d3e4e87b98ea3067aed",
+  "script_sha256": "68a54991608dd409c7fca1abfe5d43ece46fdeaeadbb6ddad3596fae5cb53d63",
+  "imported_script_sha256": {
+    "tst/hyperbolic_shift_3d/scri_v6_direction.py": "c267ca250f2ec23cc7b30bfa55252719c15ca930527b21072269c0f8b2dfb9c7",
+    "tst/hyperbolic_shift_3d/scri_directional_replay.py": "a5abda1d0831a236730250f8160ff54eede351a003ca25e2c9fc2f0c97a60b35",
+    "tst/hyperbolic_shift_3d/scri_candidate_replay.py": "48344a41dfbdb92dffdd0467de04d3e526fec17c860297eb651be21690ffb397"
+  },
+  "ordering_source_sha256": {
+    "src/mesh/cubed_sphere/composite.hpp": "1850e39ba00f37563dbb708c2c708e87b4fc3032e286605c2e41653680d2fb05",
+    "src/mesh/cubed_sphere/composite_difference.hpp": "ac3dd6532334b1fa2a9644f52d6bd7ecf82657dc767529b0a965281e69f3819e"
+  },
+  "calls": 8,
+  "seconds": 15.221304833
+}
