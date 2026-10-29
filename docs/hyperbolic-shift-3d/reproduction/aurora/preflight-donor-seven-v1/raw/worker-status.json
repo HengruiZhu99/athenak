@@ -1,0 +1,2533 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "started": "2026-10-29T11:25:45.894658+00:00",
+  "job_id": "8984220.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "launcher_host": "x4217c0s0b0n0",
+  "allocation_nodes": [
+    "x4217c0s0b0n0.hsn.cm.aurora.alcf.anl.gov"
+  ],
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "00:30:00"
+  },
+  "source_manifest_sha256": "1493f0552235b296de1fbaecea3b7c3a60425b54484582b9292e34a7d1505196",
+  "binaries": {
+    "source-v13/tst/hyperbolic_shift_3d/aurora/preflight.py": "97612243e44852de346a501e1bf28884d7be8a5be859484d65d90b9ce2d1a77e",
+    "build-sycl-mpi-v13/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_donor_seven": "acfa9ffc56caa5f736ab2ffb62c56b1121f6037118c2580e93a15e5c78490263"
+  },
+  "plan_sha256": "f71ad1398113f2b5972356b9066d8c9d464309d100b89f53c29159ea790e14be",
+  "phase": "preflight",
+  "n": 16,
+  "cases": [
+    {
+      "name": "parity-donor-seven",
+      "kind": "check",
+      "started": "2026-10-29T11:25:54.088119+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/source-v13/tst/hyperbolic_shift_3d/aurora/preflight.py",
+        "--root",
+        "/home/hzhu/hyperbolic-core-shell-20261028",
+        "--plan",
+        "campaigns/preflight-donor-seven-v1/plan.json",
+        "--output-prefix",
+        "campaigns/preflight-donor-seven-v1/output/parity-donor-seven",
+        "--seconds",
+        "220",
+        "component",
+        "--component",
+        "donor_seven_device",
+        "--test-binary",
+        "build-sycl-mpi-v13/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_donor_seven_device",
+        "--cmake-cache",
+        "build-sycl-mpi-v13/CMakeCache.txt"
+      ],
+      "generated_inputs": {},
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 8.796703204046935,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "completed",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "gpu_cpu_parity"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        }
+      ],
+      "report_status": "completed",
+      "status": "passed",
+      "artifacts": {
+        "campaigns/preflight-donor-seven-v1/output/parity-donor-seven.report.json": {
+          "sha256": "10451e4041c226215b0f0da71718be03abd3ac41e1fd25a63ba3c630aed65afb",
+          "bytes": 31371
+        },
+        "campaigns/preflight-donor-seven-v1/output/parity-donor-seven.rank-00.log": {
+          "sha256": "9bbafd29ab5aa4ea9793f2249677fdabc33551179315c7a08ae61108bbbe7296",
+          "bytes": 897
+        },
+        "campaigns/preflight-donor-seven-v1/output/parity-donor-seven.rank-01.log": {
+          "sha256": "9bbafd29ab5aa4ea9793f2249677fdabc33551179315c7a08ae61108bbbe7296",
+          "bytes": 897
+        },
+        "campaigns/preflight-donor-seven-v1/output/parity-donor-seven.rank-02.log": {
+          "sha256": "9bbafd29ab5aa4ea9793f2249677fdabc33551179315c7a08ae61108bbbe7296",
+          "bytes": 897
+        },
+        "campaigns/preflight-donor-seven-v1/output/parity-donor-seven.rank-03.log": {
+          "sha256": "9bbafd29ab5aa4ea9793f2249677fdabc33551179315c7a08ae61108bbbe7296",
+          "bytes": 897
+        },
+        "campaigns/preflight-donor-seven-v1/output/parity-donor-seven.rank-04.log": {
+          "sha256": "9bbafd29ab5aa4ea9793f2249677fdabc33551179315c7a08ae61108bbbe7296",
+          "bytes": 897
+        },
+        "campaigns/preflight-donor-seven-v1/output/parity-donor-seven.rank-05.log": {
+          "sha256": "9bbafd29ab5aa4ea9793f2249677fdabc33551179315c7a08ae61108bbbe7296",
+          "bytes": 897
+        },
+        "campaigns/preflight-donor-seven-v1/output/parity-donor-seven.rank-06.log": {
+          "sha256": "9bbafd29ab5aa4ea9793f2249677fdabc33551179315c7a08ae61108bbbe7296",
+          "bytes": 897
+        },
+        "campaigns/preflight-donor-seven-v1/output/parity-donor-seven.rank-07.log": {
+          "sha256": "9bbafd29ab5aa4ea9793f2249677fdabc33551179315c7a08ae61108bbbe7296",
+          "bytes": 897
+        },
+        "campaigns/preflight-donor-seven-v1/output/parity-donor-seven.rank-08.log": {
+          "sha256": "9bbafd29ab5aa4ea9793f2249677fdabc33551179315c7a08ae61108bbbe7296",
+          "bytes": 897
+        },
+        "campaigns/preflight-donor-seven-v1/output/parity-donor-seven.rank-09.log": {
+          "sha256": "9bbafd29ab5aa4ea9793f2249677fdabc33551179315c7a08ae61108bbbe7296",
+          "bytes": 897
+        },
+        "campaigns/preflight-donor-seven-v1/output/parity-donor-seven.rank-10.log": {
+          "sha256": "9bbafd29ab5aa4ea9793f2249677fdabc33551179315c7a08ae61108bbbe7296",
+          "bytes": 897
+        },
+        "campaigns/preflight-donor-seven-v1/output/parity-donor-seven.rank-11.log": {
+          "sha256": "9bbafd29ab5aa4ea9793f2249677fdabc33551179315c7a08ae61108bbbe7296",
+          "bytes": 897
+        },
+        "campaigns/preflight-donor-seven-v1/output/parity-donor-seven.log": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      "finished": "2026-10-29T11:26:10.334949+00:00"
+    },
+    {
+      "name": "minkowski-short",
+      "kind": "minkowski",
+      "started": "2026-10-29T11:26:16.086843+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-v13/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_donor_seven",
+        "16",
+        "campaigns/preflight-donor-seven-v1/output/minkowski-short",
+        "minkowski",
+        "0.002",
+        ".0005",
+        "-",
+        "-",
+        "150",
+        "0.002",
+        ".001",
+        "6",
+        "12",
+        "2"
+      ],
+      "generated_inputs": {},
+      "n": 16,
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 8.48037880891934,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "completed",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "diagnostics_current"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "min_lapse"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.500091552734375,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "min_chi"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.9999999999999999,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_ghost"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 8.88178419700126e-16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_surface"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 6.661338147750941e-16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_admitted"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_cfl"
+            ],
+            "op": "le",
+            "value": 0.5
+          },
+          "observed": 0.32392005386444456,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "t"
+            ],
+            "op": "eq",
+            "value": 0.002
+          },
+          "observed": 0.002,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_state_deviation"
+            ],
+            "op": "le",
+            "value": 1e-10
+          },
+          "observed": 8.815917856828432e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_L2"
+            ],
+            "op": "le",
+            "value": 1e-10
+          },
+          "observed": 7.529387845222962e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 7.529387845222962e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "M_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 3.791363146890193e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 7.529387845222962e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "M_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 3.791363146890193e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "algebraic_projection"
+            ],
+            "op": "eq",
+            "value": "final_stage_standard"
+          },
+          "observed": "final_stage_standard",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_schema"
+            ],
+            "op": "eq",
+            "value": "HYP3D_MPI_V6"
+          },
+          "observed": "HYP3D_MPI_V6",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_determinant_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 0,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_tracefree_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 9.860761315262648e-32,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_angular_stencil"
+            ],
+            "op": "eq",
+            "value": "cross_face_centered5"
+          },
+          "observed": "cross_face_centered5",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "steps"
+            ],
+            "op": "eq",
+            "value": 4
+          },
+          "observed": 4,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_epsilon"
+            ],
+            "op": "eq",
+            "value": 2
+          },
+          "observed": 2,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_degree"
+            ],
+            "op": "eq",
+            "value": 7
+          },
+          "observed": 7,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_header_bytes"
+            ],
+            "op": "eq",
+            "value": 104
+          },
+          "observed": 104,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_cfl_max"
+            ],
+            "op": "le",
+            "value": 2.7
+          },
+          "observed": 0.40227335994307845,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_derivative"
+            ],
+            "op": "eq",
+            "value": "sampled_native_numerator7"
+          },
+          "observed": "sampled_native_numerator7",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_radial_nodes"
+            ],
+            "op": "eq",
+            "value": 7
+          },
+          "observed": 7,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_bulk_derivative_order"
+            ],
+            "op": "eq",
+            "value": 4
+          },
+          "observed": 4,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_radial_closure"
+            ],
+            "op": "eq",
+            "value": "donor_seven_last3"
+          },
+          "observed": "donor_seven_last3",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_radial_bulk_rows"
+            ],
+            "op": "eq",
+            "value": 3
+          },
+          "observed": 3,
+          "passed": true
+        }
+      ],
+      "report_status": "completed",
+      "status": "passed",
+      "artifacts": {
+        "campaigns/preflight-donor-seven-v1/output/minkowski-short.report.json": {
+          "sha256": "535990c984ca66610db41f366c2bb631a818e07d63ac78151257b5263cb5f89a",
+          "bytes": 2873
+        },
+        "campaigns/preflight-donor-seven-v1/output/minkowski-short.history.csv": {
+          "sha256": "0e68f0c63cf793913d49e4c80aaa55bc8d9b104ee3661fed5ef0a86128e2f688",
+          "bytes": 1300
+        },
+        "campaigns/preflight-donor-seven-v1/output/minkowski-short.checkpoint": {
+          "sha256": "fad0fd330e2d2ea021d4cbb2c90f01731ad1b6808b7ee5acbd024f026b111fc4",
+          "bytes": 39362664
+        },
+        "campaigns/preflight-donor-seven-v1/output/minkowski-short.log": {
+          "sha256": "69518cb245c2ae18705d9496b1fcfa89f978009a79c2eff8ea9e926670b9ab2d",
+          "bytes": 178
+        }
+      },
+      "finished": "2026-10-29T11:26:27.277714+00:00"
+    },
+    {
+      "name": "pulse-half",
+      "kind": "pulse",
+      "started": "2026-10-29T11:26:27.876411+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-v13/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_donor_seven",
+        "16",
+        "campaigns/preflight-donor-seven-v1/output/pulse-half",
+        "pulse",
+        "0.001",
+        ".0005",
+        "-",
+        "-",
+        "150",
+        "0.001",
+        ".001",
+        "6",
+        "12",
+        "2"
+      ],
+      "generated_inputs": {},
+      "n": 16,
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 7.676795738982037,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "completed",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "diagnostics_current"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "min_lapse"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.500091552734375,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "min_chi"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.9999526546433576,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_ghost"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 8.881784197001256e-16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_surface"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 6.661338147750941e-16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_admitted"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_cfl"
+            ],
+            "op": "le",
+            "value": 0.5
+          },
+          "observed": 0.3239200579567997,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "t"
+            ],
+            "op": "eq",
+            "value": 0.001
+          },
+          "observed": 0.001,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.00016080713803411496,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "M_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.003472312636061747,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.00016080713803411496,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "M_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.003472312636061747,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "algebraic_projection"
+            ],
+            "op": "eq",
+            "value": "final_stage_standard"
+          },
+          "observed": "final_stage_standard",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_schema"
+            ],
+            "op": "eq",
+            "value": "HYP3D_MPI_V6"
+          },
+          "observed": "HYP3D_MPI_V6",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_determinant_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 6.661338147750939e-16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_tracefree_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.734723475976807e-18,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_angular_stencil"
+            ],
+            "op": "eq",
+            "value": "cross_face_centered5"
+          },
+          "observed": "cross_face_centered5",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "steps"
+            ],
+            "op": "eq",
+            "value": 2
+          },
+          "observed": 2,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_epsilon"
+            ],
+            "op": "eq",
+            "value": 2
+          },
+          "observed": 2,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_degree"
+            ],
+            "op": "eq",
+            "value": 7
+          },
+          "observed": 7,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_header_bytes"
+            ],
+            "op": "eq",
+            "value": 104
+          },
+          "observed": 104,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_cfl_max"
+            ],
+            "op": "le",
+            "value": 2.7
+          },
+          "observed": 0.40227335994307845,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_derivative"
+            ],
+            "op": "eq",
+            "value": "sampled_native_numerator7"
+          },
+          "observed": "sampled_native_numerator7",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_radial_nodes"
+            ],
+            "op": "eq",
+            "value": 7
+          },
+          "observed": 7,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_bulk_derivative_order"
+            ],
+            "op": "eq",
+            "value": 4
+          },
+          "observed": 4,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_radial_closure"
+            ],
+            "op": "eq",
+            "value": "donor_seven_last3"
+          },
+          "observed": "donor_seven_last3",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_radial_bulk_rows"
+            ],
+            "op": "eq",
+            "value": 3
+          },
+          "observed": 3,
+          "passed": true
+        }
+      ],
+      "report_status": "completed",
+      "status": "passed",
+      "artifacts": {
+        "campaigns/preflight-donor-seven-v1/output/pulse-half.report.json": {
+          "sha256": "bd7040d6bab3b76e58c3767604ecb29671edac7d025b7bd6436d2454160f48e5",
+          "bytes": 2876
+        },
+        "campaigns/preflight-donor-seven-v1/output/pulse-half.history.csv": {
+          "sha256": "2d9fb06f5bdc11d0a98944b4aef1d218a8fae08e12c0681af4d9b3ae30efd4a1",
+          "bytes": 1342
+        },
+        "campaigns/preflight-donor-seven-v1/output/pulse-half.checkpoint": {
+          "sha256": "3274432d2c25024e7473dd2a1783ae501ed01242167387f9ba3815abff9fee25",
+          "bytes": 39362664
+        },
+        "campaigns/preflight-donor-seven-v1/output/pulse-half.log": {
+          "sha256": "32072286d448bfc27e193490058cfc09aea060265ab13b20740a9537831cb4ea",
+          "bytes": 178
+        }
+      },
+      "finished": "2026-10-29T11:26:36.232955+00:00"
+    },
+    {
+      "name": "pulse-resumed",
+      "kind": "pulse",
+      "started": "2026-10-29T11:26:36.869156+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-v13/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_donor_seven",
+        "16",
+        "campaigns/preflight-donor-seven-v1/output/pulse-resumed",
+        "pulse",
+        "0.002",
+        ".0005",
+        "-",
+        "campaigns/preflight-donor-seven-v1/output/pulse-half.checkpoint",
+        "150",
+        "0.002",
+        ".001",
+        "6",
+        "12",
+        "2"
+      ],
+      "generated_inputs": {
+        "campaigns/preflight-donor-seven-v1/output/pulse-half.checkpoint": "3274432d2c25024e7473dd2a1783ae501ed01242167387f9ba3815abff9fee25"
+      },
+      "n": 16,
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 7.976929272059351,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "completed",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "diagnostics_current"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "min_lapse"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.500091552734375,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "min_chi"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.9999061727679877,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_ghost"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 8.88178419700126e-16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_surface"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 6.661338147750941e-16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_admitted"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_cfl"
+            ],
+            "op": "le",
+            "value": 0.5
+          },
+          "observed": 0.3239200766419578,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "t"
+            ],
+            "op": "eq",
+            "value": 0.002
+          },
+          "observed": 0.002,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.0005967336854184529,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "M_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.006534446407175112,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.0005967336854184529,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "M_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.006534446407175112,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "algebraic_projection"
+            ],
+            "op": "eq",
+            "value": "final_stage_standard"
+          },
+          "observed": "final_stage_standard",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_schema"
+            ],
+            "op": "eq",
+            "value": "HYP3D_MPI_V6"
+          },
+          "observed": "HYP3D_MPI_V6",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_determinant_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 8.881784197001252e-16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_tracefree_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 3.469446951953614e-18,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_angular_stencil"
+            ],
+            "op": "eq",
+            "value": "cross_face_centered5"
+          },
+          "observed": "cross_face_centered5",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "steps"
+            ],
+            "op": "eq",
+            "value": 4
+          },
+          "observed": 4,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_epsilon"
+            ],
+            "op": "eq",
+            "value": 2
+          },
+          "observed": 2,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_degree"
+            ],
+            "op": "eq",
+            "value": 7
+          },
+          "observed": 7,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_header_bytes"
+            ],
+            "op": "eq",
+            "value": 104
+          },
+          "observed": 104,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_cfl_max"
+            ],
+            "op": "le",
+            "value": 2.7
+          },
+          "observed": 0.40227335994307845,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_derivative"
+            ],
+            "op": "eq",
+            "value": "sampled_native_numerator7"
+          },
+          "observed": "sampled_native_numerator7",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_radial_nodes"
+            ],
+            "op": "eq",
+            "value": 7
+          },
+          "observed": 7,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_bulk_derivative_order"
+            ],
+            "op": "eq",
+            "value": 4
+          },
+          "observed": 4,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_radial_closure"
+            ],
+            "op": "eq",
+            "value": "donor_seven_last3"
+          },
+          "observed": "donor_seven_last3",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_radial_bulk_rows"
+            ],
+            "op": "eq",
+            "value": 3
+          },
+          "observed": 3,
+          "passed": true
+        }
+      ],
+      "report_status": "completed",
+      "status": "passed",
+      "artifacts": {
+        "campaigns/preflight-donor-seven-v1/output/pulse-resumed.report.json": {
+          "sha256": "208396c5ebafc1bd939a5c060ee3b3fdd56c33d9574ea20b2225b957370f830f",
+          "bytes": 2876
+        },
+        "campaigns/preflight-donor-seven-v1/output/pulse-resumed.history.csv": {
+          "sha256": "b4c8b79cfe07841fb6f7cf7c0e94d4c5226411f1c9f43b73a375d3bc13501942",
+          "bytes": 1610
+        },
+        "campaigns/preflight-donor-seven-v1/output/pulse-resumed.checkpoint": {
+          "sha256": "8dac60823fafd6c2fa25b5b59cb3512e16ce68676854756b8ec6e180d0bf9d17",
+          "bytes": 39362664
+        },
+        "campaigns/preflight-donor-seven-v1/output/pulse-resumed.log": {
+          "sha256": "b2218e00932c1acca745f0f5715427b6dc0706ae5363de326134ff09f68a8d11",
+          "bytes": 182
+        }
+      },
+      "finished": "2026-10-29T11:26:45.523381+00:00"
+    },
+    {
+      "name": "pulse-direct",
+      "kind": "pulse",
+      "started": "2026-10-29T11:26:46.124943+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-v13/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_donor_seven",
+        "16",
+        "campaigns/preflight-donor-seven-v1/output/pulse-direct",
+        "pulse",
+        "0.002",
+        ".0005",
+        "-",
+        "-",
+        "150",
+        "0.002",
+        ".001",
+        "6",
+        "12",
+        "2"
+      ],
+      "generated_inputs": {},
+      "n": 16,
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 8.377370896982029,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "completed",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "diagnostics_current"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "min_lapse"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.500091552734375,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "min_chi"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.9999061727679877,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_ghost"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 8.88178419700126e-16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_surface"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 6.661338147750941e-16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_admitted"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_cfl"
+            ],
+            "op": "le",
+            "value": 0.5
+          },
+          "observed": 0.3239200766419578,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "t"
+            ],
+            "op": "eq",
+            "value": 0.002
+          },
+          "observed": 0.002,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.0005967336854184529,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "M_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.006534446407175112,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.0005967336854184529,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "M_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.006534446407175112,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "algebraic_projection"
+            ],
+            "op": "eq",
+            "value": "final_stage_standard"
+          },
+          "observed": "final_stage_standard",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_schema"
+            ],
+            "op": "eq",
+            "value": "HYP3D_MPI_V6"
+          },
+          "observed": "HYP3D_MPI_V6",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_determinant_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 8.881784197001252e-16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_tracefree_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 3.469446951953614e-18,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_angular_stencil"
+            ],
+            "op": "eq",
+            "value": "cross_face_centered5"
+          },
+          "observed": "cross_face_centered5",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "steps"
+            ],
+            "op": "eq",
+            "value": 4
+          },
+          "observed": 4,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_epsilon"
+            ],
+            "op": "eq",
+            "value": 2
+          },
+          "observed": 2,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_degree"
+            ],
+            "op": "eq",
+            "value": 7
+          },
+          "observed": 7,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_header_bytes"
+            ],
+            "op": "eq",
+            "value": 104
+          },
+          "observed": 104,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_cfl_max"
+            ],
+            "op": "le",
+            "value": 2.7
+          },
+          "observed": 0.40227335994307845,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_derivative"
+            ],
+            "op": "eq",
+            "value": "sampled_native_numerator7"
+          },
+          "observed": "sampled_native_numerator7",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_radial_nodes"
+            ],
+            "op": "eq",
+            "value": 7
+          },
+          "observed": 7,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_bulk_derivative_order"
+            ],
+            "op": "eq",
+            "value": 4
+          },
+          "observed": 4,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_radial_closure"
+            ],
+            "op": "eq",
+            "value": "donor_seven_last3"
+          },
+          "observed": "donor_seven_last3",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_radial_bulk_rows"
+            ],
+            "op": "eq",
+            "value": 3
+          },
+          "observed": 3,
+          "passed": true
+        }
+      ],
+      "report_status": "completed",
+      "status": "passed",
+      "artifacts": {
+        "campaigns/preflight-donor-seven-v1/output/pulse-direct.report.json": {
+          "sha256": "e25ff7cadb4c127bc79b96c411ccc98edae73c843b3ade666d38e79f6297402b",
+          "bytes": 2880
+        },
+        "campaigns/preflight-donor-seven-v1/output/pulse-direct.history.csv": {
+          "sha256": "6ad69120d758c4e754de0545ea5cd00898af751b5312cc26cdd56c1d90b424f1",
+          "bytes": 1339
+        },
+        "campaigns/preflight-donor-seven-v1/output/pulse-direct.checkpoint": {
+          "sha256": "8dac60823fafd6c2fa25b5b59cb3512e16ce68676854756b8ec6e180d0bf9d17",
+          "bytes": 39362664
+        },
+        "campaigns/preflight-donor-seven-v1/output/pulse-direct.log": {
+          "sha256": "bea90472f2d599900b8eb95c9366f5e9f4e15462d18add341ce93ba14b1b06d9",
+          "bytes": 178
+        }
+      },
+      "finished": "2026-10-29T11:26:55.172253+00:00"
+    },
+    {
+      "name": "restart-audit",
+      "kind": "check",
+      "started": "2026-10-29T11:26:55.846541+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/source-v13/tst/hyperbolic_shift_3d/aurora/preflight.py",
+        "--root",
+        "/home/hzhu/hyperbolic-core-shell-20261028",
+        "--plan",
+        "campaigns/preflight-donor-seven-v1/plan.json",
+        "--output-prefix",
+        "campaigns/preflight-donor-seven-v1/output/restart-audit",
+        "--seconds",
+        "90",
+        "restart",
+        "--reference",
+        "campaigns/preflight-donor-seven-v1/output/pulse-direct.checkpoint",
+        "--candidate",
+        "campaigns/preflight-donor-seven-v1/output/pulse-resumed.checkpoint",
+        "--reference-report",
+        "campaigns/preflight-donor-seven-v1/output/pulse-direct.report.json",
+        "--candidate-report",
+        "campaigns/preflight-donor-seven-v1/output/pulse-resumed.report.json"
+      ],
+      "generated_inputs": {
+        "campaigns/preflight-donor-seven-v1/output/pulse-direct.checkpoint": "8dac60823fafd6c2fa25b5b59cb3512e16ce68676854756b8ec6e180d0bf9d17",
+        "campaigns/preflight-donor-seven-v1/output/pulse-resumed.checkpoint": "8dac60823fafd6c2fa25b5b59cb3512e16ce68676854756b8ec6e180d0bf9d17",
+        "campaigns/preflight-donor-seven-v1/output/pulse-direct.report.json": "e25ff7cadb4c127bc79b96c411ccc98edae73c843b3ade666d38e79f6297402b",
+        "campaigns/preflight-donor-seven-v1/output/pulse-resumed.report.json": "208396c5ebafc1bd939a5c060ee3b3fdd56c33d9574ea20b2225b957370f830f"
+      },
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 2.4253836451098323,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "completed",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "restart_equivalence"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "header",
+              "magic"
+            ],
+            "op": "eq",
+            "value": "HYP3D_MPI_V6"
+          },
+          "observed": "HYP3D_MPI_V6",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "maximum_absolute_error"
+            ],
+            "op": "eq",
+            "value": 0
+          },
+          "observed": 0.0,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "bitwise_payload_equal"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "header",
+              "scri_dissipation_epsilon"
+            ],
+            "op": "eq",
+            "value": 2
+          },
+          "observed": 2.0,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "header",
+              "scri_dissipation_degree"
+            ],
+            "op": "eq",
+            "value": 7
+          },
+          "observed": 7,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "header",
+              "header_bytes"
+            ],
+            "op": "eq",
+            "value": 104
+          },
+          "observed": 104,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "header",
+              "scri_normal_derivative"
+            ],
+            "op": "eq",
+            "value": "sampled_native_numerator7"
+          },
+          "observed": "sampled_native_numerator7",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "header",
+              "scri_normal_radial_nodes"
+            ],
+            "op": "eq",
+            "value": 7
+          },
+          "observed": 7,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "header",
+              "scri_normal_bulk_derivative_order"
+            ],
+            "op": "eq",
+            "value": 4
+          },
+          "observed": 4,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "header",
+              "scri_radial_closure"
+            ],
+            "op": "eq",
+            "value": "donor_seven_last3"
+          },
+          "observed": "donor_seven_last3",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "header",
+              "scri_radial_bulk_rows"
+            ],
+            "op": "eq",
+            "value": 3
+          },
+          "observed": 3,
+          "passed": true
+        }
+      ],
+      "report_status": "completed",
+      "status": "passed",
+      "artifacts": {
+        "campaigns/preflight-donor-seven-v1/output/restart-audit.report.json": {
+          "sha256": "6b16df24d7262237246ae56c76ae82e4bed82e7ce1a860478d9a8af373191d2d",
+          "bytes": 4868
+        },
+        "campaigns/preflight-donor-seven-v1/output/restart-audit.log": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      },
+      "finished": "2026-10-29T11:26:58.908974+00:00"
+    },
+    {
+      "name": "puncture-short",
+      "kind": "puncture",
+      "started": "2026-10-29T11:26:59.507555+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-v13/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_donor_seven",
+        "16",
+        "campaigns/preflight-donor-seven-v1/output/puncture-short",
+        "puncture",
+        "0.002",
+        ".0005",
+        "inputs/puncture-n16.txt",
+        "-",
+        "370",
+        "0.002",
+        ".001",
+        "12",
+        "24",
+        "2"
+      ],
+      "generated_inputs": {},
+      "n": 16,
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 14.425719850929454,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "completed",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "diagnostics_current"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "min_lapse"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.015705394750721302,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "min_chi"
+            ],
+            "op": "ge",
+            "value": 1e-12
+          },
+          "observed": 0.0005505974853001939,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_ghost"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.1102230246352118e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_surface"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 8.88178419708174e-16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_admitted"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_cfl"
+            ],
+            "op": "le",
+            "value": 0.5
+          },
+          "observed": 0.31764949090553773,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "t"
+            ],
+            "op": "eq",
+            "value": 0.002
+          },
+          "observed": 0.002,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_found"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_expansion_rms"
+            ],
+            "op": "le",
+            "value": 0.001
+          },
+          "observed": 0.00032517731876865964,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.04794012017650393,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "M_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.05767082469458427,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.02483017034830787,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "M_exterior_L2"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.05767817169886782,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "algebraic_projection"
+            ],
+            "op": "eq",
+            "value": "final_stage_standard"
+          },
+          "observed": "final_stage_standard",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_schema"
+            ],
+            "op": "eq",
+            "value": "HYP3D_MPI_V6"
+          },
+          "observed": "HYP3D_MPI_V6",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_determinant_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 1.1102230246251565e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_tracefree_residual"
+            ],
+            "op": "le",
+            "value": 1e-12
+          },
+          "observed": 3.1086244689504383e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_angular_stencil"
+            ],
+            "op": "eq",
+            "value": "cross_face_centered5"
+          },
+          "observed": "cross_face_centered5",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "steps"
+            ],
+            "op": "eq",
+            "value": 4
+          },
+          "observed": 4,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_lmax"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_ntheta"
+            ],
+            "op": "eq",
+            "value": 24
+          },
+          "observed": 24,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_nphi"
+            ],
+            "op": "eq",
+            "value": 48
+          },
+          "observed": 48,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_complete_surface"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_radius"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.06294960071768506,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "horizon_mass"
+            ],
+            "op": "finite"
+          },
+          "observed": 0.33333503542805387,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_epsilon"
+            ],
+            "op": "eq",
+            "value": 2
+          },
+          "observed": 2,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_degree"
+            ],
+            "op": "eq",
+            "value": 7
+          },
+          "observed": 7,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_header_bytes"
+            ],
+            "op": "eq",
+            "value": 104
+          },
+          "observed": 104,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_dissipation_cfl_max"
+            ],
+            "op": "le",
+            "value": 2.7
+          },
+          "observed": 0.40227335994307845,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_derivative"
+            ],
+            "op": "eq",
+            "value": "sampled_native_numerator7"
+          },
+          "observed": "sampled_native_numerator7",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_radial_nodes"
+            ],
+            "op": "eq",
+            "value": 7
+          },
+          "observed": 7,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_normal_bulk_derivative_order"
+            ],
+            "op": "eq",
+            "value": 4
+          },
+          "observed": 4,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_radial_closure"
+            ],
+            "op": "eq",
+            "value": "donor_seven_last3"
+          },
+          "observed": "donor_seven_last3",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_radial_bulk_rows"
+            ],
+            "op": "eq",
+            "value": 3
+          },
+          "observed": 3,
+          "passed": true
+        }
+      ],
+      "report_status": "completed",
+      "status": "passed",
+      "artifacts": {
+        "campaigns/preflight-donor-seven-v1/output/puncture-short.report.json": {
+          "sha256": "beb89e964073d6579bbdc7d644ce4d6319e789e45b8b8d7beb4e73dcaeabe02e",
+          "bytes": 3016
+        },
+        "campaigns/preflight-donor-seven-v1/output/puncture-short.history.csv": {
+          "sha256": "9cd6611cb51e9ab630d8b0bf22b88a13de7254fc789df838de2be424ac3a8dad",
+          "bytes": 1750
+        },
+        "campaigns/preflight-donor-seven-v1/output/puncture-short.checkpoint": {
+          "sha256": "94811571a9828403fdb184fcd4dd409bcdb28d8ba8f2b19ffad6888076810dc5",
+          "bytes": 39362664
+        },
+        "campaigns/preflight-donor-seven-v1/output/puncture-short.checkpoint.horizon-seed.txt": {
+          "sha256": "de6e7aff671a59efff442de1c869aa9c6e61ca34bbd679aab43e5b0133d55636",
+          "bytes": 58
+        },
+        "campaigns/preflight-donor-seven-v1/output/puncture-short.fastflow.horizon_summary_0.txt": {
+          "sha256": "a08ed934de645c5650f0fdaeee80266b95f8c8d4703952f9427662b9b9d50ec0",
+          "bytes": 546
+        },
+        "campaigns/preflight-donor-seven-v1/output/puncture-short.fastflow.horizon_shape_0.txt": {
+          "sha256": "58faec01235433a722a3789ec8802a8dda016e1995b79acd7201ab43d5fc76fb",
+          "bytes": 4597
+        },
+        "campaigns/preflight-donor-seven-v1/output/puncture-short.log": {
+          "sha256": "cbbb4148337a1a7998d5ca9e14afc77faf38bdde88a3f0160b651a940e3d41f2",
+          "bytes": 176
+        }
+      },
+      "finished": "2026-10-29T11:27:14.605254+00:00"
+    }
+  ],
+  "storage_at_start": {
+    "bytes": 2524848640,
+    "entries": 15761,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 100000000,
+    "planned_bytes": 500000000,
+    "headroom_bytes": 1875151360
+  },
+  "affinity": {
+    "returncode": 0,
+    "timed_out": false,
+    "storage_error": null,
+    "elapsed_seconds": 0.3720153011381626,
+    "records": [
+      {
+        "host": "x4217c0s0b0n0",
+        "rank": 1,
+        "mask": "0.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4217c0s0b0n0",
+        "rank": 2,
+        "mask": "1.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4217c0s0b0n0",
+        "rank": 5,
+        "mask": "2.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4217c0s0b0n0",
+        "rank": 3,
+        "mask": "1.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4217c0s0b0n0",
+        "rank": 9,
+        "mask": "4.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4217c0s0b0n0",
+        "rank": 10,
+        "mask": "5.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4217c0s0b0n0",
+        "rank": 7,
+        "mask": "3.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4217c0s0b0n0",
+        "rank": 11,
+        "mask": "5.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4217c0s0b0n0",
+        "rank": 6,
+        "mask": "3.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4217c0s0b0n0",
+        "rank": 8,
+        "mask": "4.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4217c0s0b0n0",
+        "rank": 0,
+        "mask": "0.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4217c0s0b0n0",
+        "rank": 4,
+        "mask": "2.0",
+        "hierarchy": "COMPOSITE"
+      }
+    ],
+    "passed": true
+  },
+  "finished": "2026-10-29T11:27:14.615445+00:00",
+  "elapsed_seconds": 88.7208036610391,
+  "storage_at_finish": {
+    "bytes": 2721879980,
+    "entries": 15803
+  }
+}

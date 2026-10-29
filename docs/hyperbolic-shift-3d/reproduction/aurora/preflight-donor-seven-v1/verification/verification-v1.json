@@ -1,0 +1,606 @@
+{
+  "passed": true,
+  "admission_written": false,
+  "issues": [],
+  "cases": [
+    {
+      "name": "parity-donor-seven",
+      "status": "passed",
+      "checks_recomputed": 4,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "component": {
+        "component": "donor_seven_device",
+        "ranks_verified": 12,
+        "maxima": {
+          "cpu_pole_error": 5.669989031061851e-16,
+          "cpu_rate_error": 7.899374949090663e-14,
+          "cpu_trace_error": 1.9270155682866604e-14,
+          "partition_error": 0,
+          "finite_D_error": 0,
+          "null": 1.1101861976998643e-15,
+          "compatibility": 2.242265617971584e-17,
+          "cpu_bulk_error": 3.3614524843258325e-14
+        }
+      }
+    },
+    {
+      "name": "minkowski-short",
+      "status": "passed",
+      "checks_recomputed": 32,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V6",
+        "n": 16,
+        "nf": 31,
+        "kind": 0,
+        "admitted": true,
+        "cells": 77824,
+        "surface_size": 47616,
+        "steps": 4,
+        "time": 0.002,
+        "dt": 0.0005,
+        "header_bytes": 104,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "80c8e42ff4c0972dd21763c0e02bde5f2613023f3ddad89d2c9f4d72946b0746",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 2412544,
+            "sha256": "d59b71957583b5680e433868dec8a6a18ad957cce200b5ebb31cd8e74fe0ef3c"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 2412544,
+            "sha256": "44e4b70a35e0ef89f44a3114cee1bb8334f7883b433dc3112239f82fc3bf7b88"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "8f0ee15937736e96f931232b0386cb916fca94be6646256dd5d7e6910d05ea33"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "4893884e8c668b31490a76d2b921cd674e4e56ab034e998324d8e0a2c7d4b225"
+          }
+        ],
+        "bytes": 39362664,
+        "sha256": "fad0fd330e2d2ea021d4cbb2c90f01731ad1b6808b7ee5acbd024f026b111fc4",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3
+      }
+    },
+    {
+      "name": "pulse-half",
+      "status": "passed",
+      "checks_recomputed": 30,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V6",
+        "n": 16,
+        "nf": 31,
+        "kind": 1,
+        "admitted": true,
+        "cells": 77824,
+        "surface_size": 47616,
+        "steps": 2,
+        "time": 0.001,
+        "dt": 0.0005,
+        "header_bytes": 104,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "b37b6829d08abfce12f6266ea238c6bd16c8fc17907bb0ef3f8040b9f285db00",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 2412544,
+            "sha256": "215d026ee1980e7c96cdde6a6fe220c9fcfb0c2f1835329d8662a83ec651e980"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 2412544,
+            "sha256": "89d776a19b304cb68548202dcad562b979afdb9bbcc337f530a539338326afb7"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "9fb33eb7ee7acade8442fc0182e3a439446cee870116f9f9f1feb860f800b825"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "748d1143f5eeef1e7733f758891d37634c5d1d5778a5a66432d223d71a165660"
+          }
+        ],
+        "bytes": 39362664,
+        "sha256": "3274432d2c25024e7473dd2a1783ae501ed01242167387f9ba3815abff9fee25",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3
+      }
+    },
+    {
+      "name": "pulse-resumed",
+      "status": "passed",
+      "checks_recomputed": 30,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V6",
+        "n": 16,
+        "nf": 31,
+        "kind": 1,
+        "admitted": true,
+        "cells": 77824,
+        "surface_size": 47616,
+        "steps": 4,
+        "time": 0.002,
+        "dt": 0.0005,
+        "header_bytes": 104,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "8e1c614a3a75bec7cfc020f4ba9030514b4a59e4c11c53013e21a7aa8f590903",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 2412544,
+            "sha256": "d9851e3c5a2979ff82a123ca677aaa4811326ad32ef4a1aeeb8adcf6f2609115"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 2412544,
+            "sha256": "d8ba96fbf970c9ff294e76ae5b0df4257be9ea03935539a4a66a7f25c27c850a"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "82bc3baa720c41043f84c67fc8098a487e3a6c69f5fdb67ac1a89350fed15d5b"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "f59bdc284d776e0c344251a61b5d4a04dab9242f4e317dee853d48344f68ce15"
+          }
+        ],
+        "bytes": 39362664,
+        "sha256": "8dac60823fafd6c2fa25b5b59cb3512e16ce68676854756b8ec6e180d0bf9d17",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3
+      }
+    },
+    {
+      "name": "pulse-direct",
+      "status": "passed",
+      "checks_recomputed": 30,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V6",
+        "n": 16,
+        "nf": 31,
+        "kind": 1,
+        "admitted": true,
+        "cells": 77824,
+        "surface_size": 47616,
+        "steps": 4,
+        "time": 0.002,
+        "dt": 0.0005,
+        "header_bytes": 104,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "8e1c614a3a75bec7cfc020f4ba9030514b4a59e4c11c53013e21a7aa8f590903",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 2412544,
+            "sha256": "d9851e3c5a2979ff82a123ca677aaa4811326ad32ef4a1aeeb8adcf6f2609115"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 2412544,
+            "sha256": "d8ba96fbf970c9ff294e76ae5b0df4257be9ea03935539a4a66a7f25c27c850a"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "82bc3baa720c41043f84c67fc8098a487e3a6c69f5fdb67ac1a89350fed15d5b"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "f59bdc284d776e0c344251a61b5d4a04dab9242f4e317dee853d48344f68ce15"
+          }
+        ],
+        "bytes": 39362664,
+        "sha256": "8dac60823fafd6c2fa25b5b59cb3512e16ce68676854756b8ec6e180d0bf9d17",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3
+      }
+    },
+    {
+      "name": "restart-audit",
+      "status": "passed",
+      "checks_recomputed": 15,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": []
+    },
+    {
+      "name": "puncture-short",
+      "status": "passed",
+      "checks_recomputed": 38,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V6",
+        "n": 16,
+        "nf": 31,
+        "kind": 2,
+        "admitted": true,
+        "cells": 77824,
+        "surface_size": 47616,
+        "steps": 4,
+        "time": 0.002,
+        "dt": 0.0005,
+        "header_bytes": 104,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "2b049028299538aa4181b9acf3d0aaf76027d17c4f64d98612cddd3c82f43b84",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 2412544,
+            "sha256": "c8a4af7de65ad8364bdab49fbd38829f521bdef039c7d9789f714b2c4956cea8"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 2412544,
+            "sha256": "084b7999e321b992bf1b829426306eeaf0ab6ca76ded0b271c4590d8441cb7d7"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "8310eb7bfdbcbd1c7dffb4fab18198562aab59b0fd452ab97accd94e994ce811"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "dd318468523d397427c80f827aece874ea298390bdba1676da2de53ead7259b6"
+          }
+        ],
+        "bytes": 39362664,
+        "sha256": "94811571a9828403fdb184fcd4dd409bcdb28d8ba8f2b19ffad6888076810dc5",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/parity-donor-seven.report.json",
+      "sha256": "10451e4041c226215b0f0da71718be03abd3ac41e1fd25a63ba3c630aed65afb",
+      "bytes": 31371
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/parity-donor-seven.rank-00.log",
+      "sha256": "9bbafd29ab5aa4ea9793f2249677fdabc33551179315c7a08ae61108bbbe7296",
+      "bytes": 897
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/parity-donor-seven.rank-01.log",
+      "sha256": "9bbafd29ab5aa4ea9793f2249677fdabc33551179315c7a08ae61108bbbe7296",
+      "bytes": 897
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/parity-donor-seven.rank-02.log",
+      "sha256": "9bbafd29ab5aa4ea9793f2249677fdabc33551179315c7a08ae61108bbbe7296",
+      "bytes": 897
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/parity-donor-seven.rank-03.log",
+      "sha256": "9bbafd29ab5aa4ea9793f2249677fdabc33551179315c7a08ae61108bbbe7296",
+      "bytes": 897
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/parity-donor-seven.rank-04.log",
+      "sha256": "9bbafd29ab5aa4ea9793f2249677fdabc33551179315c7a08ae61108bbbe7296",
+      "bytes": 897
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/parity-donor-seven.rank-05.log",
+      "sha256": "9bbafd29ab5aa4ea9793f2249677fdabc33551179315c7a08ae61108bbbe7296",
+      "bytes": 897
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/parity-donor-seven.rank-06.log",
+      "sha256": "9bbafd29ab5aa4ea9793f2249677fdabc33551179315c7a08ae61108bbbe7296",
+      "bytes": 897
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/parity-donor-seven.rank-07.log",
+      "sha256": "9bbafd29ab5aa4ea9793f2249677fdabc33551179315c7a08ae61108bbbe7296",
+      "bytes": 897
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/parity-donor-seven.rank-08.log",
+      "sha256": "9bbafd29ab5aa4ea9793f2249677fdabc33551179315c7a08ae61108bbbe7296",
+      "bytes": 897
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/parity-donor-seven.rank-09.log",
+      "sha256": "9bbafd29ab5aa4ea9793f2249677fdabc33551179315c7a08ae61108bbbe7296",
+      "bytes": 897
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/parity-donor-seven.rank-10.log",
+      "sha256": "9bbafd29ab5aa4ea9793f2249677fdabc33551179315c7a08ae61108bbbe7296",
+      "bytes": 897
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/parity-donor-seven.rank-11.log",
+      "sha256": "9bbafd29ab5aa4ea9793f2249677fdabc33551179315c7a08ae61108bbbe7296",
+      "bytes": 897
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/parity-donor-seven.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/minkowski-short.report.json",
+      "sha256": "535990c984ca66610db41f366c2bb631a818e07d63ac78151257b5263cb5f89a",
+      "bytes": 2873
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/minkowski-short.history.csv",
+      "sha256": "0e68f0c63cf793913d49e4c80aaa55bc8d9b104ee3661fed5ef0a86128e2f688",
+      "bytes": 1300
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/minkowski-short.checkpoint",
+      "sha256": "fad0fd330e2d2ea021d4cbb2c90f01731ad1b6808b7ee5acbd024f026b111fc4",
+      "bytes": 39362664
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/minkowski-short.log",
+      "sha256": "69518cb245c2ae18705d9496b1fcfa89f978009a79c2eff8ea9e926670b9ab2d",
+      "bytes": 178
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/pulse-half.report.json",
+      "sha256": "bd7040d6bab3b76e58c3767604ecb29671edac7d025b7bd6436d2454160f48e5",
+      "bytes": 2876
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/pulse-half.history.csv",
+      "sha256": "2d9fb06f5bdc11d0a98944b4aef1d218a8fae08e12c0681af4d9b3ae30efd4a1",
+      "bytes": 1342
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/pulse-half.checkpoint",
+      "sha256": "3274432d2c25024e7473dd2a1783ae501ed01242167387f9ba3815abff9fee25",
+      "bytes": 39362664
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/pulse-half.log",
+      "sha256": "32072286d448bfc27e193490058cfc09aea060265ab13b20740a9537831cb4ea",
+      "bytes": 178
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/pulse-resumed.report.json",
+      "sha256": "208396c5ebafc1bd939a5c060ee3b3fdd56c33d9574ea20b2225b957370f830f",
+      "bytes": 2876
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/pulse-resumed.history.csv",
+      "sha256": "b4c8b79cfe07841fb6f7cf7c0e94d4c5226411f1c9f43b73a375d3bc13501942",
+      "bytes": 1610
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/pulse-resumed.checkpoint",
+      "sha256": "8dac60823fafd6c2fa25b5b59cb3512e16ce68676854756b8ec6e180d0bf9d17",
+      "bytes": 39362664
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/pulse-resumed.log",
+      "sha256": "b2218e00932c1acca745f0f5715427b6dc0706ae5363de326134ff09f68a8d11",
+      "bytes": 182
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/pulse-direct.report.json",
+      "sha256": "e25ff7cadb4c127bc79b96c411ccc98edae73c843b3ade666d38e79f6297402b",
+      "bytes": 2880
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/pulse-direct.history.csv",
+      "sha256": "6ad69120d758c4e754de0545ea5cd00898af751b5312cc26cdd56c1d90b424f1",
+      "bytes": 1339
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/pulse-direct.checkpoint",
+      "sha256": "8dac60823fafd6c2fa25b5b59cb3512e16ce68676854756b8ec6e180d0bf9d17",
+      "bytes": 39362664
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/pulse-direct.log",
+      "sha256": "bea90472f2d599900b8eb95c9366f5e9f4e15462d18add341ce93ba14b1b06d9",
+      "bytes": 178
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/restart-audit.report.json",
+      "sha256": "6b16df24d7262237246ae56c76ae82e4bed82e7ce1a860478d9a8af373191d2d",
+      "bytes": 4868
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/restart-audit.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/puncture-short.report.json",
+      "sha256": "beb89e964073d6579bbdc7d644ce4d6319e789e45b8b8d7beb4e73dcaeabe02e",
+      "bytes": 3016
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/puncture-short.history.csv",
+      "sha256": "9cd6611cb51e9ab630d8b0bf22b88a13de7254fc789df838de2be424ac3a8dad",
+      "bytes": 1750
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/puncture-short.checkpoint",
+      "sha256": "94811571a9828403fdb184fcd4dd409bcdb28d8ba8f2b19ffad6888076810dc5",
+      "bytes": 39362664
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/puncture-short.checkpoint.horizon-seed.txt",
+      "sha256": "de6e7aff671a59efff442de1c869aa9c6e61ca34bbd679aab43e5b0133d55636",
+      "bytes": 58
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/puncture-short.fastflow.horizon_summary_0.txt",
+      "sha256": "a08ed934de645c5650f0fdaeee80266b95f8c8d4703952f9427662b9b9d50ec0",
+      "bytes": 546
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/puncture-short.fastflow.horizon_shape_0.txt",
+      "sha256": "58faec01235433a722a3789ec8802a8dda016e1995b79acd7201ab43d5fc76fb",
+      "bytes": 4597
+    },
+    {
+      "remote_path": "campaigns/preflight-donor-seven-v1/output/puncture-short.log",
+      "sha256": "cbbb4148337a1a7998d5ca9e14afc77faf38bdde88a3f0160b651a940e3d41f2",
+      "bytes": 176
+    }
+  ],
+  "verifier_sha256": "707ba51ee1d58d5de3a2a128584f43f7b00b106f90575e11d59b98c87b8fa4d3",
+  "source_manifest_sha256": "1493f0552235b296de1fbaecea3b7c3a60425b54484582b9292e34a7d1505196",
+  "plan_sha256": "f71ad1398113f2b5972356b9066d8c9d464309d100b89f53c29159ea790e14be",
+  "scope": "Implementation/restart preflight only; no duration, convergence, AMR or nonspherical stability claim.",
+  "component_replay": "Frozen source-v13 parser replays hash-bound logs; checkpoint decoder is independent.",
+  "pins_sha256": "e6a9b7956ad89b9a9f54d93d9bc11257d6ac2f31d920f922e2a8664df23e3828",
+  "build": {
+    "source_commit": "7a9d83d4a16e0e43d2439c02478235996a2a7dcf",
+    "kokkos_pin": "6739bc623081648af9e752b616d9671527922cbf",
+    "source_manifest_sha256": "1493f0552235b296de1fbaecea3b7c3a60425b54484582b9292e34a7d1505196",
+    "git_blob_hashes_verified": 2632,
+    "build_receipt_sha256": "472a079737393301a6afa97f236b4fd4eb00625b5f8be1bbbcbbcd6d52e3f050",
+    "cache_sha256": "a9b14aa5b354eea52ed78d53dd3be12b89b043e777c6ddd96096df316337a04c",
+    "binaries": {
+      "build-sycl-mpi-v13/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_donor_seven": "acfa9ffc56caa5f736ab2ffb62c56b1121f6037118c2580e93a15e5c78490263",
+      "build-sycl-mpi-v13/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_sampled_normal": "d2df5bdfaea3d7fdf88adfac2ba02134cbaed4b224130628a6d030a408963f66",
+      "build-sycl-mpi-v13/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_donor_seven_device": "02a9c7477d6174ae4af03d98b70a0bb51683718fd362dd54fde682365c7586c8",
+      "build-sycl-mpi-v13/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_scri_radial_device": "d6390048ea21246b505b33ba67c5c3834346c81656516262aa9e1eaa9cab5536",
+      "build-sycl-mpi-v13/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_composite_device": "7ad87b166a7488d9fea8ca272eef6e839896307268695d398fea3239015c8c65",
+      "build-sycl-mpi-v13/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_composite_exchange": "037e2c3df813c4ced434ea4a75367f0a3aa0809be85a5028cf2413d5ec2c7206",
+      "build-sycl-mpi-v13/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_scri_device": "c4716ea32da37d6f4626f599b77dbd2094fd3c7d993aeba80994b56003f70c1d"
+    },
+    "records": {
+      "CMakeCache.txt": "a9b14aa5b354eea52ed78d53dd3be12b89b043e777c6ddd96096df316337a04c",
+      "build-v13.sh": "3a6df3b5a9191b55517a3759f5c593596c246b06897453dc1ac95ecac5a12470",
+      "source-v13-manifest.json": "1493f0552235b296de1fbaecea3b7c3a60425b54484582b9292e34a7d1505196",
+      "source-v13-non-kokkos-manifest.json": "46d487a3ae0fdbe960c9d19b2117c5299f869ab5c878419b57ecc8116ff2477c",
+      "source-v13-provenance.json": "89327e9a01114f10edfff7fe1d61951b8afe8bc65bd68604db4bf98eb8df9095",
+      "v13/build-status.json": "472a079737393301a6afa97f236b4fd4eb00625b5f8be1bbbcbbcd6d52e3f050",
+      "v13/build.log": "98919e4f91606b1efb204d4684409dca061bd628aeaf9aaaab859ea193926640",
+      "v13/compiler.txt": "6f41d08dd542e36e2f41b7b105da56d84c00bd6eb99a7c324ef8ef06635cbe26",
+      "v13/configure.log": "065dc648aeba056c668116954bc5c5822dadccdb7a17c1c6a28e1e0d6e67e86f",
+      "v13/launch.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "v13/modules.txt": "cf3fde5892e6950a2ec013c75688552bf45cd2c81a1c7e4bdce32cb81f224156",
+      "v13/mpi-wrapper.txt": "35ee2ba9df330d781abc430dd144e1728a49ceb7215380336a8682af0ed5a88d",
+      "v13/runner.log": "49ffc1d0b96bd484714286e7edc3bd9647b05bbe938142420cf570066d87b487"
+    }
+  },
+  "initial_data": {
+    "sha256": "c8ffa46d9007ee8b643db41980cfa4a08f9ab3f2f1c2383978a002f067f9db31",
+    "bytes": 14225648
+  },
+  "storage_at_finish": {
+    "bytes": 2721879980,
+    "entries": 15803
+  },
+  "affinity_log_sha256": "1a8b3e42f14bd2d2ce6b36909d5dbcb106858f0726a143be1b7f6e598867e253",
+  "one_node_twelve_tiles_verified": true,
+  "terminal": {
+    "job_id": "8984220.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "state": "F",
+    "exit_status": 0,
+    "allocation_released": true
+  },
+  "epsilon2_restart": {
+    "passed": true,
+    "whole_file_equal": true,
+    "four_arrays_equal": true,
+    "core_header_equal": true,
+    "arrays": [
+      {
+        "name": "volume_state",
+        "doubles": 2412544,
+        "sha256": "d9851e3c5a2979ff82a123ca677aaa4811326ad32ef4a1aeeb8adcf6f2609115"
+      },
+      {
+        "name": "volume_compensation",
+        "doubles": 2412544,
+        "sha256": "d8ba96fbf970c9ff294e76ae5b0df4257be9ea03935539a4a66a7f25c27c850a"
+      },
+      {
+        "name": "scri_state",
+        "doubles": 47616,
+        "sha256": "82bc3baa720c41043f84c67fc8098a487e3a6c69f5fdb67ac1a89350fed15d5b"
+      },
+      {
+        "name": "scri_compensation",
+        "doubles": 47616,
+        "sha256": "f59bdc284d776e0c344251a61b5d4a04dab9242f4e317dee853d48344f68ce15"
+      }
+    ],
+    "streaming_byte_equality": true
+  },
+  "metadata_sha256": {
+    "plan.json": "f71ad1398113f2b5972356b9066d8c9d464309d100b89f53c29159ea790e14be",
+    "binding.json": "19509e31d1fba3f2fed856bbdb266a8cde15e87fd0194b6017d1ed058df93eec",
+    "worker-status.json": "7e7338dc83523406c3cb1843cd0ce2988e9510b484e4525eeca43587d4eed48d",
+    "run_debug.pbs": "57d2a182a949593a296d01bff3fcea940ebe5f212a5b8db44217e6aeff650cb6",
+    "submission.json": "34bc4779b05d45598f372b054cf8201b61c58c464bb99a90f63b993ae1b49768",
+    "collected.json": "2d1151b94fb08304f726ca1c64048450d50b6ba63eb70d17b5b810d886b29fdf",
+    "allocation-released.json": "109ed303dd0cf8c4fa51833b582d05ee6a044747a729001c143386f67f422c9c"
+  },
+  "checks_recomputed": 179,
+  "artifacts_verified": 39,
+  "verified_preflight_configurations": [
+    {
+      "checkpoint_schema": "HYP3D_MPI_V6",
+      "checkpoint_header_bytes": 104,
+      "scri_dissipation_epsilon": 2.0,
+      "scri_dissipation_degree": 7,
+      "scri_normal_derivative": "sampled_native_numerator7",
+      "scri_normal_radial_nodes": 7,
+      "scri_normal_bulk_derivative_order": 4,
+      "scri_radial_closure": "donor_seven_last3",
+      "scri_radial_bulk_rows": 3
+    }
+  ]
+}
