@@ -70,7 +70,7 @@ The recorded all-direction shift/lapse speed-gap diagnostic remains positive
 tangential-speed collision. This diagnostic alone is not a complete
 hyperbolicity or boundary-stability proof.
 
-The next optional candidate adds degree-seven angular dissipation on actual
+An optional V4 candidate adds degree-seven angular dissipation on actual
 scri nodes, using `Q=-epsilon*n*M^-1*B^T*M*B`. The
 [standalone operator study](scri-dissipation-prototype-v1/README.md) checks
 polynomial consistency, energy, cross-face support and reference-sphere areas.
@@ -106,7 +106,7 @@ frozen source/build identity. The four-step epsilon-two pulse restart is
 bitwise identical to its direct run, and V4 epsilon zero reproduces the V3
 four-array payload exactly. Minkowski state deviation is 1.01e-14 at t=.002;
 the puncture reaches only .006 M, with null residual <=1.23e-15 and horizon
-expansion RMS .000325. Epsilon two alone is admitted for a
+expansion RMS .000325. This preflight admitted epsilon two for a
 [bounded fresh Minkowski duration comparison](aurora/stability-dissipative-minkowski-v1/protocol.md).
 The [V4 duration test](aurora/stability-dissipative-minkowski-v1/README.md)
 subsequently failed at t=.5225 with nonpositive interpolated scri geometry.
@@ -116,6 +116,16 @@ and H/M RMS are .05655/1.65426, despite null closure near 1e-15. An exact
 replay finds positive metrics at all stored scri nodes but an indefinite
 ghost interpolation; this identifies the immediate rejection, not the initial
 growth's cause. V4 is not a stable-duration or 100 M result.
+
+Three [fresh diagnostic captures](aurora/linear-window-dissipative-v2/acquisition/README.md)
+at t=.25/.30/.35 completed with the same V4 binary and parameters. Their
+acquisition checks passed, but every snapshot violates the original state-error
+limit and the last also violates the momentum limit. They are retained to
+analyze the growing direction, with no scientific restart admission. The
+[saved-state angular-response study](scri-collar-response-v1/README.md) does
+not justify extending the current angular filter into a volume collar. Large
+superseded V4 payloads were [archived and purged with verified hashes](aurora/v4-retention-v1/README.md);
+the three diagnostic captures remain available.
 
 The original J-disabled, bulk-mu=4 1D control is confirmed to have completed coordinate `33.3333984375 = 100.0001953125 M`. Its N513/N1025 continuation chains and frozen-source identities were checked. A [portable N513 time series](original-1d-reference/history.csv) and [provenance](original-1d-reference/provenance.json) preserve the matching horizon/exterior-constraint reference. Late gauge settling and uniform puncture convergence were not established by that original control.
 
