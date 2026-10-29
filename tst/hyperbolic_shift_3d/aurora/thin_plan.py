@@ -52,11 +52,12 @@ def build(root,source,build,campaign,initial):
  compare('puncture-equivalence','puncture-full','puncture-sparse')
  plan=dict(schema=1,reviewed=True,phase='preflight',n=16,low_resolution_n=16,
   resources=dict(queue='debug',account='CompactBinaryMerger',nodes=1,ranks=12,ranks_per_node=12,walltime='00:30:00'),
-  storage=dict(limit_bytes=5000000000,planned_new_bytes=1100000000,atomic_checkpoint_reserve_bytes=100000000),
+  storage=dict(limit_bytes=5000000000,planned_new_bytes=900000000,atomic_checkpoint_reserve_bytes=100000000),
   worker_seconds=1710,output_dir=out,commands=commands,
   notes=['V12 isolated ghost-plus-paired-penalty preflight; numerical equations, log positivity, counted floor and scri closure preserved.',
    'Six short equilibrium checks; L1 paired oblique restart and poisoned sparse/full checkpoint equality; short n16 puncture equality to 0.15M.',
-   'Not a 3M stability, reflection or convergence qualification. Horizon acceptance remains 1e-3.'])
+   'Not a 3M stability, reflection or convergence qualification. Horizon acceptance remains 1e-3.',
+   'Eleven final checkpoint payloads total 814775272 bytes. Reserve 900MB for output plus independent 100MB for atomic replacement; source/build/initial data are already present at bind time.'])
  control.validate_plan(root,plan)
  return plan
 if __name__=='__main__':

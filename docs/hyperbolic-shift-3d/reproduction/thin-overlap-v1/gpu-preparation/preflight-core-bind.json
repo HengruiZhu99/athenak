@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/home/hzhu/hyperbolic-core-shell-20261028/source-thin-v1/tst/hyperbolic_shift_3d/aurora/control.py", line 565, in <module>
+    main()
+  File "/home/hzhu/hyperbolic-core-shell-20261028/source-thin-v1/tst/hyperbolic_shift_3d/aurora/control.py", line 554, in main
+    value = bind(root, args.plan, args.source_manifest)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hzhu/hyperbolic-core-shell-20261028/source-thin-v1/tst/hyperbolic_shift_3d/aurora/control.py", line 411, in bind
+    space = storage.require_capacity(root, plan, prospective=True)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hzhu/hyperbolic-core-shell-20261028/source-thin-v1/tst/hyperbolic_shift_3d/aurora/storage.py", line 53, in require_capacity
+    raise RuntimeError('Campaign storage cap/reserve exceeded: '+str(result))
+RuntimeError: Campaign storage cap/reserve exceeded: {'bytes': 4593104861, 'entries': 40352, 'limit_bytes': 5000000000, 'reserve_bytes': 100000000, 'planned_bytes': 460000000, 'headroom_bytes': -153104861}

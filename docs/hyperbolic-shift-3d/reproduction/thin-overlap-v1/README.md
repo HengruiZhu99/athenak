@@ -148,3 +148,35 @@ python3 tst/hyperbolic_shift_3d/aurora/thin_plan.py --output plan.json
 
 The proposed frozen source/build names are `source-thin-v1` and
 `build-sycl-mpi-thin-v1`, separate from the ongoing control/performance work.
+
+The frozen Aurora build at source commit
+`c530acdac932d1925f7c76810deec88280511b4d` succeeded with SYCL+MPI,
+Intel compiler 2025.3.2, and `make -j64` in 309.48 seconds. Source manifest
+SHA256 is `e8a3d5c2839797c60c32874e930eca2631beaac4f414f22e5e098502cb54b8ac`.
+The 108 local controller/auditor tests passed; the independent V12 decoder
+also verified all 9,000,416 doubles of the existing CPU puncture pair.
+Build and test receipts are in `gpu-preparation/`.
+
+The first submission attempts did not launch a thin-overlap evolution. The
+first submit was rejected before submission because the existing performance
+task occupied the sole debug allocation. A subsequent nine-case split plan
+(`preflight-thin-core-v1`) was rejected at bind because the simultaneous
+result packaging left insufficient storage for its six checkpoints plus
+reserve. Both rejection records are retained. No locks or other task data
+were deleted to bypass these checks.
+
+The nine-case split plan preserves the device test, L1/kappa1 equilibrium,
+oblique full/sparse restart and puncture pair. The remaining five equilibrium
+configurations still need a second batch. `verify_gpu.py`, `analyze_gpu.py`,
+and `compare_1d.py` prepare independent artifact, timing and accepted-horizon
+analysis; they are not evidence of a completed GPU campaign. The 1D plotter
+has been exercised against the existing short CPU history only. Missing
+horizon samples remain unavailable, including coordinate radius.
+
+
+After the previous task collected its evidence and storage became available,
+the nine-case plan was bound, verified and submitted as Aurora job
+**8987368** (`CompactBinaryMerger`, debug, one node, 12 ranks/tiles).
+Plan SHA256: `77cf85eb32825b3225e63b236352616b22f0ef1d34655eb445ad576b643144ac`.
+Submission is not scientific completion; results remain pending until the
+worker and independent artifact/checkpoint verification both finish.
