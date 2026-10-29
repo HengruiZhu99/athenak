@@ -126,6 +126,13 @@ analyze the growing direction, with no scientific restart admission. The
 not justify extending the current angular filter into a volume collar. Large
 superseded V4 payloads were [archived and purged with verified hashes](aurora/v4-retention-v1/README.md);
 the three diagnostic captures remain available.
+Their [early error profiles](early-direction-figure-v1/README.md) show a nearly
+unchanged radial surface/interior mismatch. The independently reviewed
+[normal-discretization audit](scri-normal-discretization-audit-v1/README.md)
+identifies differences from the successful 1D endpoint operator: radial node
+layout, sampled-numerator versus direct-jet differentiation, and outer ghost
+feedback. It proposes an isolated control; none of those differences has yet
+been established as the unique instability cause or repaired by that audit.
 
 The original J-disabled, bulk-mu=4 1D control is confirmed to have completed coordinate `33.3333984375 = 100.0001953125 M`. Its N513/N1025 continuation chains and frozen-source identities were checked. A [portable N513 time series](original-1d-reference/history.csv) and [provenance](original-1d-reference/provenance.json) preserve the matching horizon/exterior-constraint reference. Late gauge settling and uniform puncture convergence were not established by that original control.
 
