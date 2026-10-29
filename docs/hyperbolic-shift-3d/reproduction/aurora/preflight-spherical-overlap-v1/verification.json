@@ -1,0 +1,41 @@
+{
+  "passed": false,
+  "admission_written": false,
+  "issues": [
+    "ValueError: Puncture input differs"
+  ],
+  "cases": [],
+  "artifacts": [],
+  "verifier_sha256": "25e315fa551622ea7b291aafaa8651aede9c7f107ea667dacec832fdf829a83d",
+  "source_manifest_sha256": "6b04f174c0173eba6fd8d5ffdedcc93257a24918adcdfcf91c40e203ba81ca88",
+  "plan_sha256": "afaaa36c76116040283a640181d6620f484d357107cd1facc1a9982185197c28",
+  "scope": "Implementation/restart preflight only; no duration, convergence, AMR or nonspherical stability claim.",
+  "component_replay": "Frozen source-v18 parser replays hash-bound logs; checkpoint decoder is independent.",
+  "pins_sha256": "1819e4a6b63e6da6a274c55bf5855ab408849e3b7330e459e7dc9a8dc3517cd6",
+  "build": {
+    "source_commit": "77277bd25f47f3dc38dee36a200eb6ba68166ccf",
+    "kokkos_pin": "6739bc623081648af9e752b616d9671527922cbf",
+    "source_manifest_sha256": "6b04f174c0173eba6fd8d5ffdedcc93257a24918adcdfcf91c40e203ba81ca88",
+    "git_blob_hashes_verified": 2643,
+    "build_receipt_sha256": "d968fe3ead04bb2b67d26033ca87f4f6ee9b02ab39502ad571465bb2a01cf8b9",
+    "cache_sha256": "6c8ecfe232f129ed5b4dcf170e515c7d7a2bbf878246943a14627806d9fa59f2",
+    "binaries": {
+      "build-sycl-mpi-v18/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_spherical_overlap": "7b7764f0cce4f23221c93ab8b6b188cd455fed74c94252e7e152a5c1f95f9f2a",
+      "build-sycl-mpi-v18/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_spherical_overlap_device": "49970bee7a1b4e2fde6b4623ecdd8853d7e1f270eab38b6376c512ae3a8fdae5"
+    },
+    "records": {
+      "CMakeCache.txt": "6c8ecfe232f129ed5b4dcf170e515c7d7a2bbf878246943a14627806d9fa59f2",
+      "build-v18.sh": "50f091fe1811fc221cecf85ba61cd28f354f943fb6c2f4e807393221618b6427",
+      "source-v18-manifest.json": "6b04f174c0173eba6fd8d5ffdedcc93257a24918adcdfcf91c40e203ba81ca88",
+      "source-v18-non-kokkos-manifest.json": "42f9606407ea5b78eed7a57461e7d56924215cf4641fb6bc97f3e0edde31b591",
+      "source-v18-provenance.json": "928930c47d861b5b5636770b8b6944769a790549d6778ec5dbbe0a900ca26eb8",
+      "v18/build-status.json": "d968fe3ead04bb2b67d26033ca87f4f6ee9b02ab39502ad571465bb2a01cf8b9",
+      "v18/build.log": "8cefdbf4e02716465026a9c03a5fff956de6ce24478649bef0d9f18e3f384c5e",
+      "v18/compiler.txt": "6f41d08dd542e36e2f41b7b105da56d84c00bd6eb99a7c324ef8ef06635cbe26",
+      "v18/configure.log": "380d57be93a8e21d08b7e7ca263e802a1c2e3684b997ce35df96569eb7bbc48f",
+      "v18/modules.txt": "cf3fde5892e6950a2ec013c75688552bf45cd2c81a1c7e4bdce32cb81f224156",
+      "v18/mpi-wrapper.txt": "35ee2ba9df330d781abc430dd144e1728a49ceb7215380336a8682af0ed5a88d",
+      "v18/runner.log": "49ffc1d0b96bd484714286e7edc3bd9647b05bbe938142420cf570066d87b487"
+    }
+  }
+}

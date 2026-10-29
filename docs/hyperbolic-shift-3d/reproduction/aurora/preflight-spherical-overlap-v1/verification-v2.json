@@ -1,0 +1,659 @@
+{
+  "passed": true,
+  "admission_written": false,
+  "issues": [],
+  "cases": [
+    {
+      "name": "parity-spherical-overlap",
+      "status": "passed",
+      "checks_recomputed": 4,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "component": {
+        "component": "spherical_overlap_device",
+        "ranks_verified": 12,
+        "maxima": {
+          "cpu_pole_error": 8.236281941653411e-16,
+          "cpu_rate_error": 2.111971841314933e-13,
+          "cpu_trace_error": 6.800364729772313e-14,
+          "partition_error": 0,
+          "finite_D_error": 0,
+          "null": 1.1102162777403758e-15,
+          "compatibility": 4.683753385137379e-17,
+          "cpu_bulk_error": 6.772360450213235e-14
+        }
+      }
+    },
+    {
+      "name": "minkowski-short",
+      "status": "passed",
+      "checks_recomputed": 41,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V10",
+        "n": 16,
+        "nf": 31,
+        "kind": 0,
+        "admitted": true,
+        "cells": 189512,
+        "nominal_cells": 106496,
+        "surface_size": 47616,
+        "steps": 4,
+        "time": 0.001,
+        "dt": 0.00025,
+        "header_bytes": 136,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "46517301fc263a2999d7de48447e66584e9c68061ef9a50cb1ab4e8182e5add6",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 5874872,
+            "sha256": "2f3d0d810fd877c0d4252c07dc7aa300a57f44717f8a2cec0304ac2e2e08d100"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 5874872,
+            "sha256": "df44e0ce75c7431b146ba0771f85d1e685c783ad4bf43a4310bc359ea13c6de1"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "162366a304fbf1c8a6bcb81b8caf592443ff497be128dfee7b6c61c959d9f41b"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "6687106818b9705438fd11163d399bf3c17ee054b9b69c43dc9c2ea769928b42"
+          }
+        ],
+        "bytes": 94759944,
+        "sha256": "a6e7f2f3e1c18da1c8e82eb562a95ec0703ac3058aba2e83641904342879873f",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3,
+        "mesh_topology": "cartesian_2x2x2_shells3",
+        "cartesian_core_subdivisions": 2,
+        "mesh_blocks": 26,
+        "shell_geometry": "spherical_equiangular",
+        "core_half_width": 0.18,
+        "shell_inner_radius": 0.16,
+        "overlap_quadrature": "radial_quintic_partition"
+      }
+    },
+    {
+      "name": "pulse-half",
+      "status": "passed",
+      "checks_recomputed": 39,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V10",
+        "n": 16,
+        "nf": 31,
+        "kind": 1,
+        "admitted": true,
+        "cells": 189512,
+        "nominal_cells": 106496,
+        "surface_size": 47616,
+        "steps": 2,
+        "time": 0.0005,
+        "dt": 0.00025,
+        "header_bytes": 136,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "a8639551bfef176bbe5bfdaba0d95a6ef9d98e6bda7fc85040131e030d879fed",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 5874872,
+            "sha256": "b7ea29c65cb650f957a9109a9bc1c737432673b7500e8cd5e3bc30ed7c644df3"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 5874872,
+            "sha256": "3762fc21738ae2f8939d27ec1f2d3c9ce85f27b0e8cc7b24bcc8ff51aadd5de1"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "34db4a4deec903d945eb72d9e765c00c69538fc77b4d2173452f855c598e4291"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "29408ec4c317da0cb8c3d0fbfa096d76a6f545ef1d0a897eeb3c41ab704ab4ac"
+          }
+        ],
+        "bytes": 94759944,
+        "sha256": "34c1339127716b72074331f3449a6038361adf6310ae8bded6bb6ffc1809503f",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3,
+        "mesh_topology": "cartesian_2x2x2_shells3",
+        "cartesian_core_subdivisions": 2,
+        "mesh_blocks": 26,
+        "shell_geometry": "spherical_equiangular",
+        "core_half_width": 0.18,
+        "shell_inner_radius": 0.16,
+        "overlap_quadrature": "radial_quintic_partition"
+      }
+    },
+    {
+      "name": "pulse-resumed",
+      "status": "passed",
+      "checks_recomputed": 39,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V10",
+        "n": 16,
+        "nf": 31,
+        "kind": 1,
+        "admitted": true,
+        "cells": 189512,
+        "nominal_cells": 106496,
+        "surface_size": 47616,
+        "steps": 4,
+        "time": 0.001,
+        "dt": 0.00025,
+        "header_bytes": 136,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "f284ac628b85a62f4cf0de50b49ea1e8a97ea6c0d9de65f1eeb2faa22905941c",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 5874872,
+            "sha256": "03c9f426fdd0b100ed1dc4e0a838f3a1e1b5a4cc7ea47fdfa3b0c07a15ed7bf8"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 5874872,
+            "sha256": "b1fb0dcb469d1f537a7f5b99ca870531fb627720a5d93381abd506356d47a65f"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "850bc749dcd817985bb2bf0c763dcff3500d08eab1318e86ad4a87cba5c8cc97"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "f0d0a4351050187e6f71dcc0f8420c58dd97c565283d5eb3d1a771afbb43d47d"
+          }
+        ],
+        "bytes": 94759944,
+        "sha256": "24c85a37a059c57fa7ac6b637c80c8bf1eecaab607f34670bd9c7e443ed5c036",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3,
+        "mesh_topology": "cartesian_2x2x2_shells3",
+        "cartesian_core_subdivisions": 2,
+        "mesh_blocks": 26,
+        "shell_geometry": "spherical_equiangular",
+        "core_half_width": 0.18,
+        "shell_inner_radius": 0.16,
+        "overlap_quadrature": "radial_quintic_partition"
+      }
+    },
+    {
+      "name": "pulse-direct",
+      "status": "passed",
+      "checks_recomputed": 39,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V10",
+        "n": 16,
+        "nf": 31,
+        "kind": 1,
+        "admitted": true,
+        "cells": 189512,
+        "nominal_cells": 106496,
+        "surface_size": 47616,
+        "steps": 4,
+        "time": 0.001,
+        "dt": 0.00025,
+        "header_bytes": 136,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "f284ac628b85a62f4cf0de50b49ea1e8a97ea6c0d9de65f1eeb2faa22905941c",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 5874872,
+            "sha256": "03c9f426fdd0b100ed1dc4e0a838f3a1e1b5a4cc7ea47fdfa3b0c07a15ed7bf8"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 5874872,
+            "sha256": "b1fb0dcb469d1f537a7f5b99ca870531fb627720a5d93381abd506356d47a65f"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "850bc749dcd817985bb2bf0c763dcff3500d08eab1318e86ad4a87cba5c8cc97"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "f0d0a4351050187e6f71dcc0f8420c58dd97c565283d5eb3d1a771afbb43d47d"
+          }
+        ],
+        "bytes": 94759944,
+        "sha256": "24c85a37a059c57fa7ac6b637c80c8bf1eecaab607f34670bd9c7e443ed5c036",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3,
+        "mesh_topology": "cartesian_2x2x2_shells3",
+        "cartesian_core_subdivisions": 2,
+        "mesh_blocks": 26,
+        "shell_geometry": "spherical_equiangular",
+        "core_half_width": 0.18,
+        "shell_inner_radius": 0.16,
+        "overlap_quadrature": "radial_quintic_partition"
+      }
+    },
+    {
+      "name": "restart-audit",
+      "status": "passed",
+      "checks_recomputed": 18,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": []
+    },
+    {
+      "name": "puncture-short",
+      "status": "passed",
+      "checks_recomputed": 47,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V10",
+        "n": 16,
+        "nf": 31,
+        "kind": 2,
+        "admitted": true,
+        "cells": 189512,
+        "nominal_cells": 106496,
+        "surface_size": 47616,
+        "steps": 4,
+        "time": 0.001,
+        "dt": 0.00025,
+        "header_bytes": 136,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "d919de7b6a6c40bdca0089014d5e91aecad14e4de9b3e5cd1109c6e496d1f9b0",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 5874872,
+            "sha256": "16845d7bf38edb3b1c469c3c4ab9a59b20b3a844db2703caf451ecf39230772d"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 5874872,
+            "sha256": "64b7deb5e580070577bcf291f2585875679778448d46e3b4f642f3ea804a7286"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "4afd5433c68357fb7cf2aa047311741345b3dde8bbaf3b527e46ce0297e002b4"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "8096f9bc2d48bc25fc41fb0bf49f685d5ebd4433ade1da1d53f8c5ecfed35cb3"
+          }
+        ],
+        "bytes": 94759944,
+        "sha256": "50a8bca1337d21197531af81418655220f4e4e63da88cb3ef0253b5bfd5dfff3",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3,
+        "mesh_topology": "cartesian_2x2x2_shells3",
+        "cartesian_core_subdivisions": 2,
+        "mesh_blocks": 26,
+        "shell_geometry": "spherical_equiangular",
+        "core_half_width": 0.18,
+        "shell_inner_radius": 0.16,
+        "overlap_quadrature": "radial_quintic_partition"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/parity-spherical-overlap.report.json",
+      "sha256": "20033d54f6e588531cc507054c56a898b7169ad90387ae2813e6b5414d1acad0",
+      "bytes": 45605
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/parity-spherical-overlap.rank-00.log",
+      "sha256": "ac3643044ac737fb17d8d6a91169e850da7e9542258d0de97a4b7e81d51d848c",
+      "bytes": 1407
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/parity-spherical-overlap.rank-01.log",
+      "sha256": "ac3643044ac737fb17d8d6a91169e850da7e9542258d0de97a4b7e81d51d848c",
+      "bytes": 1407
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/parity-spherical-overlap.rank-02.log",
+      "sha256": "ac3643044ac737fb17d8d6a91169e850da7e9542258d0de97a4b7e81d51d848c",
+      "bytes": 1407
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/parity-spherical-overlap.rank-03.log",
+      "sha256": "ac3643044ac737fb17d8d6a91169e850da7e9542258d0de97a4b7e81d51d848c",
+      "bytes": 1407
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/parity-spherical-overlap.rank-04.log",
+      "sha256": "ac3643044ac737fb17d8d6a91169e850da7e9542258d0de97a4b7e81d51d848c",
+      "bytes": 1407
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/parity-spherical-overlap.rank-05.log",
+      "sha256": "ac3643044ac737fb17d8d6a91169e850da7e9542258d0de97a4b7e81d51d848c",
+      "bytes": 1407
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/parity-spherical-overlap.rank-06.log",
+      "sha256": "ac3643044ac737fb17d8d6a91169e850da7e9542258d0de97a4b7e81d51d848c",
+      "bytes": 1407
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/parity-spherical-overlap.rank-07.log",
+      "sha256": "ac3643044ac737fb17d8d6a91169e850da7e9542258d0de97a4b7e81d51d848c",
+      "bytes": 1407
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/parity-spherical-overlap.rank-08.log",
+      "sha256": "ac3643044ac737fb17d8d6a91169e850da7e9542258d0de97a4b7e81d51d848c",
+      "bytes": 1407
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/parity-spherical-overlap.rank-09.log",
+      "sha256": "ac3643044ac737fb17d8d6a91169e850da7e9542258d0de97a4b7e81d51d848c",
+      "bytes": 1407
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/parity-spherical-overlap.rank-10.log",
+      "sha256": "ac3643044ac737fb17d8d6a91169e850da7e9542258d0de97a4b7e81d51d848c",
+      "bytes": 1407
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/parity-spherical-overlap.rank-11.log",
+      "sha256": "ac3643044ac737fb17d8d6a91169e850da7e9542258d0de97a4b7e81d51d848c",
+      "bytes": 1407
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/parity-spherical-overlap.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/minkowski-short.report.json",
+      "sha256": "b475fa09095a0af029dfbdfb7e69570dc084d64c4241f5268ceaff1dc977e5c7",
+      "bytes": 3195
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/minkowski-short.history.csv",
+      "sha256": "a70a105abf8a3134f5724bfa27813735786a8558c7ed47f29e4483acc8965b37",
+      "bytes": 1307
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/minkowski-short.checkpoint",
+      "sha256": "a6e7f2f3e1c18da1c8e82eb562a95ec0703ac3058aba2e83641904342879873f",
+      "bytes": 94759944
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/minkowski-short.log",
+      "sha256": "cea1615c0eb05609e5c56078e64fba1958b36f61164b1da2264c661bd2928fb9",
+      "bytes": 178
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/pulse-half.report.json",
+      "sha256": "a24451cbca55c2de6d039a4370688716e8f9a81e878a71076cf764e9cbb5889e",
+      "bytes": 3271
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/pulse-half.history.csv",
+      "sha256": "d10803804b78bdab834ee54e0b731c80e0a9983c2b19bffc1cba1146c2e6a655",
+      "bytes": 1381
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/pulse-half.checkpoint",
+      "sha256": "34c1339127716b72074331f3449a6038361adf6310ae8bded6bb6ffc1809503f",
+      "bytes": 94759944
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/pulse-half.log",
+      "sha256": "994f58ab7d6bd5c06b40cd8e8ad459d55d7fbe19c8b5a4e871885e4289d56b8d",
+      "bytes": 179
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/pulse-resumed.report.json",
+      "sha256": "007bb4ae03af3d8d732654aa106969abdf746cf91d2167d599ad61cced2a63f3",
+      "bytes": 3234
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/pulse-resumed.history.csv",
+      "sha256": "e318b56b475d0af9ba7fb43720bc138785c52d0f0561a604b9b9b6548cf8bdc8",
+      "bytes": 1655
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/pulse-resumed.checkpoint",
+      "sha256": "24c85a37a059c57fa7ac6b637c80c8bf1eecaab607f34670bd9c7e443ed5c036",
+      "bytes": 94759944
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/pulse-resumed.log",
+      "sha256": "7ce19a5d2aacedf0f1be25c8415934663c3378f077ec6da8d6ba7ca74d545260",
+      "bytes": 183
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/pulse-direct.report.json",
+      "sha256": "3dca0baa87aa717e19e1660cff9192629f2a4de398637d139bc536fd43569aa7",
+      "bytes": 3214
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/pulse-direct.history.csv",
+      "sha256": "36902cf1c02513d3c85668efbac384c8d820bdbb47f1ce746392a02e29e50b4d",
+      "bytes": 1344
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/pulse-direct.checkpoint",
+      "sha256": "24c85a37a059c57fa7ac6b637c80c8bf1eecaab607f34670bd9c7e443ed5c036",
+      "bytes": 94759944
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/pulse-direct.log",
+      "sha256": "08d8ce94f12c9ef880ce777975eacea00a7112d6da3f3f0d14dccb4d0f50c30c",
+      "bytes": 178
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/restart-audit.report.json",
+      "sha256": "c1c00e76cfb2a48ce49640b04b856abd4f037f1968026fbe5238c743c618514a",
+      "bytes": 5710
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/restart-audit.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/puncture-short.report.json",
+      "sha256": "eb27632ac90226ff80f14e3ec4288a3f808302663936179312ec2bedd97e060a",
+      "bytes": 3348
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/puncture-short.history.csv",
+      "sha256": "da5eec2427a2678452e9337b8bfdeb62116d7a1f0b652b6fbd610927168edef0",
+      "bytes": 1743
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/puncture-short.checkpoint",
+      "sha256": "50a8bca1337d21197531af81418655220f4e4e63da88cb3ef0253b5bfd5dfff3",
+      "bytes": 94759944
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/puncture-short.checkpoint.horizon-seed.txt",
+      "sha256": "dba9e8c59e3c0ca65b388938cb69b1fd44a78792f371257d6e9a9b5db1ee87dd",
+      "bytes": 58
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/puncture-short.fastflow.horizon_summary_0.txt",
+      "sha256": "52819323a580660b8de8e148bc46ede5ff1c68d590005d7c29b7a5444e6fd823",
+      "bytes": 548
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/puncture-short.fastflow.horizon_shape_0.txt",
+      "sha256": "8e9bc1feb2cadbea423938ac766d982be2334ea507e349e3d598020a24c2cecc",
+      "bytes": 4611
+    },
+    {
+      "remote_path": "campaigns/preflight-spherical-overlap-v1/output/puncture-short.log",
+      "sha256": "658f8121740b78951befc77a497eba6e10e743b1869b56d816e216827899c0a5",
+      "bytes": 176
+    }
+  ],
+  "verifier_sha256": "3957af0cf7b126af89694f03ff170a7b25a2f8902688e3e19e882383267bdab5",
+  "source_manifest_sha256": "6b04f174c0173eba6fd8d5ffdedcc93257a24918adcdfcf91c40e203ba81ca88",
+  "plan_sha256": "afaaa36c76116040283a640181d6620f484d357107cd1facc1a9982185197c28",
+  "scope": "Implementation/restart preflight only; no duration, convergence, AMR or nonspherical stability claim.",
+  "component_replay": "Frozen source-v18 parser replays hash-bound logs; checkpoint decoder is independent.",
+  "pins_sha256": "1819e4a6b63e6da6a274c55bf5855ab408849e3b7330e459e7dc9a8dc3517cd6",
+  "build": {
+    "source_commit": "77277bd25f47f3dc38dee36a200eb6ba68166ccf",
+    "kokkos_pin": "6739bc623081648af9e752b616d9671527922cbf",
+    "source_manifest_sha256": "6b04f174c0173eba6fd8d5ffdedcc93257a24918adcdfcf91c40e203ba81ca88",
+    "git_blob_hashes_verified": 2643,
+    "build_receipt_sha256": "d968fe3ead04bb2b67d26033ca87f4f6ee9b02ab39502ad571465bb2a01cf8b9",
+    "cache_sha256": "6c8ecfe232f129ed5b4dcf170e515c7d7a2bbf878246943a14627806d9fa59f2",
+    "binaries": {
+      "build-sycl-mpi-v18/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_spherical_overlap": "7b7764f0cce4f23221c93ab8b6b188cd455fed74c94252e7e152a5c1f95f9f2a",
+      "build-sycl-mpi-v18/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_spherical_overlap_device": "49970bee7a1b4e2fde6b4623ecdd8853d7e1f270eab38b6376c512ae3a8fdae5"
+    },
+    "records": {
+      "CMakeCache.txt": "6c8ecfe232f129ed5b4dcf170e515c7d7a2bbf878246943a14627806d9fa59f2",
+      "build-v18.sh": "50f091fe1811fc221cecf85ba61cd28f354f943fb6c2f4e807393221618b6427",
+      "source-v18-manifest.json": "6b04f174c0173eba6fd8d5ffdedcc93257a24918adcdfcf91c40e203ba81ca88",
+      "source-v18-non-kokkos-manifest.json": "42f9606407ea5b78eed7a57461e7d56924215cf4641fb6bc97f3e0edde31b591",
+      "source-v18-provenance.json": "928930c47d861b5b5636770b8b6944769a790549d6778ec5dbbe0a900ca26eb8",
+      "v18/build-status.json": "d968fe3ead04bb2b67d26033ca87f4f6ee9b02ab39502ad571465bb2a01cf8b9",
+      "v18/build.log": "8cefdbf4e02716465026a9c03a5fff956de6ce24478649bef0d9f18e3f384c5e",
+      "v18/compiler.txt": "6f41d08dd542e36e2f41b7b105da56d84c00bd6eb99a7c324ef8ef06635cbe26",
+      "v18/configure.log": "380d57be93a8e21d08b7e7ca263e802a1c2e3684b997ce35df96569eb7bbc48f",
+      "v18/modules.txt": "cf3fde5892e6950a2ec013c75688552bf45cd2c81a1c7e4bdce32cb81f224156",
+      "v18/mpi-wrapper.txt": "35ee2ba9df330d781abc430dd144e1728a49ceb7215380336a8682af0ed5a88d",
+      "v18/runner.log": "49ffc1d0b96bd484714286e7edc3bd9647b05bbe938142420cf570066d87b487"
+    }
+  },
+  "initial_data": {
+    "sha256": "860e728b9cac39e3bc8e2a3e5eb93c9fa29cedcf9386a86a5000c3650b604abf",
+    "bytes": 34026590
+  },
+  "storage_at_finish": {
+    "bytes": 4073443507,
+    "entries": 27754
+  },
+  "affinity_log_sha256": "05daf4a12ff31a75b98cc35118255b86d5ac0b50d2c9f2ff4dd9bb6d781eeb0e",
+  "one_node_twelve_tiles_verified": true,
+  "terminal": {
+    "job_id": "8985881.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "state": "F",
+    "exit_status": 0,
+    "allocation_released": true
+  },
+  "epsilon2_restart": {
+    "passed": true,
+    "whole_file_equal": true,
+    "four_arrays_equal": true,
+    "core_header_equal": true,
+    "arrays": [
+      {
+        "name": "volume_state",
+        "doubles": 5874872,
+        "sha256": "03c9f426fdd0b100ed1dc4e0a838f3a1e1b5a4cc7ea47fdfa3b0c07a15ed7bf8"
+      },
+      {
+        "name": "volume_compensation",
+        "doubles": 5874872,
+        "sha256": "b1fb0dcb469d1f537a7f5b99ca870531fb627720a5d93381abd506356d47a65f"
+      },
+      {
+        "name": "scri_state",
+        "doubles": 47616,
+        "sha256": "850bc749dcd817985bb2bf0c763dcff3500d08eab1318e86ad4a87cba5c8cc97"
+      },
+      {
+        "name": "scri_compensation",
+        "doubles": 47616,
+        "sha256": "f0d0a4351050187e6f71dcc0f8420c58dd97c565283d5eb3d1a771afbb43d47d"
+      }
+    ],
+    "streaming_byte_equality": true
+  },
+  "metadata_sha256": {
+    "plan.json": "afaaa36c76116040283a640181d6620f484d357107cd1facc1a9982185197c28",
+    "binding.json": "4c6180b970c9f97f0c7858a9da82fd363b8095dc6158cb8190547fdafff60582",
+    "worker-status.json": "26c312245c0b7b001f1f38324fa53563e72614b82212d043e4ebe1e1edd48d4e",
+    "run_debug.pbs": "5b631155f4c601fab521648a0919e466007b3baf12f1a4d8e3daf145798b475d",
+    "submission.json": "ed1851ca260d764bb383350a26e4f41dc46c83d235fe6284ae0044c3f7400614",
+    "collected.json": "6ec01f90d0041d2760aac0c25aa17b5fc087ae37ee9cf72620836dc7a6d6cd97",
+    "allocation-released.json": "a52691b82b737692fb824e7ceefb4312893f45f944ef31ab49a6b38a5bdb81fe"
+  },
+  "checks_recomputed": 227,
+  "artifacts_verified": 39,
+  "verified_preflight_configurations": [
+    {
+      "checkpoint_schema": "HYP3D_MPI_V10",
+      "checkpoint_header_bytes": 136,
+      "scri_dissipation_epsilon": 2.0,
+      "scri_dissipation_degree": 7,
+      "scri_normal_derivative": "sampled_native_numerator7",
+      "scri_normal_radial_nodes": 7,
+      "scri_normal_bulk_derivative_order": 4,
+      "scri_radial_closure": "donor_seven_last3",
+      "scri_radial_bulk_rows": 3,
+      "interpatch_interpolation": "logical_inner_transition",
+      "evolved_overlap": 3,
+      "mesh_topology": "cartesian_2x2x2_shells3",
+      "cartesian_core_subdivisions": 2,
+      "mesh_blocks": 26,
+      "shell_geometry": "spherical_equiangular",
+      "core_half_width": 0.18,
+      "shell_inner_radius": 0.16,
+      "overlap_quadrature": "radial_quintic_partition"
+    }
+  ]
+}

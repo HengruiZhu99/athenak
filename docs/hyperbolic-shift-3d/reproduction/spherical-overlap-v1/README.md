@@ -63,8 +63,9 @@ is found at both samples (t=0 and 0.001). These do not establish duration stabil
 The source was committed as 77277bd25 and built on Aurora with SYCL/MPI
 (make -j64, 269 seconds). An independent read-only audit verified all 2643
 source-file hashes against Git and the build configuration/binary identities.
-GPU preflight job 8985881 has been submitted on one debug node, 12 ranks/tiles,
-CompactBinaryMerger. GPU qualification and duration tests remain pending. No wormhole-to-trumpet stability,
+GPU preflight job 8985881 passed on one debug node, 12 ranks/tiles,
+CompactBinaryMerger. All seven cases and 227 gates passed independent verification;
+see ../aurora/preflight-spherical-overlap-v1. Duration stability remains pending. No wormhole-to-trumpet stability,
 100M result, dynamic AMR validation or evolution convergence is claimed.
 
 ![Spatial accuracy and CFL contribution](spatial-and-cfl.png)

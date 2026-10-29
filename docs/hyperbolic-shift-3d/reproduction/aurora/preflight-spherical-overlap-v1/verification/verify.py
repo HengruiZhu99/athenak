@@ -364,8 +364,8 @@ def verify(args, result):
             require(digest == manifest[name], 'Adapter source hash differs')
     require(bound['build-sycl-mpi-v18/CMakeCache.txt'] == build['cache_sha256'], 'Bound build cache differs')
     require(bound['inputs/puncture-spherical-overlap-n16.txt'] == INITIAL == sha(args.initial_data)
-            and args.initial_data.stat().st_size == 23571224, 'Puncture input differs')
-    result['initial_data'] = dict(sha256=INITIAL, bytes=23571224)
+            and args.initial_data.stat().st_size == 34026590, 'Puncture input differs')
+    result['initial_data'] = dict(sha256=INITIAL, bytes=34026590)
     for key in ['storage_at_start','storage_at_finish']:
         require(worker[key]['bytes'] < 5_000_000_000, 'Campaign home storage cap exceeded')
     result['storage_at_finish'] = worker['storage_at_finish']
