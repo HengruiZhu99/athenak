@@ -1,0 +1,1557 @@
+{
+  "schema": 1,
+  "reviewed": true,
+  "phase": "preflight",
+  "n": 16,
+  "low_resolution_n": 16,
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "00:30:00"
+  },
+  "storage": {
+    "limit_bytes": 5000000000,
+    "planned_new_bytes": 500000000,
+    "atomic_checkpoint_reserve_bytes": 100000000
+  },
+  "worker_seconds": 1710,
+  "output_dir": "campaigns/preflight-inner-transition-v1/output",
+  "commands": [
+    {
+      "name": "parity-inner-transition",
+      "kind": "check",
+      "executable": "source-v14/tst/hyperbolic_shift_3d/aurora/preflight.py",
+      "args": [
+        "--root",
+        "/home/hzhu/hyperbolic-core-shell-20261028",
+        "--plan",
+        "campaigns/preflight-inner-transition-v1/plan.json",
+        "--output-prefix",
+        "campaigns/preflight-inner-transition-v1/output/parity-inner-transition",
+        "--seconds",
+        "@WALL_SECONDS@",
+        "component",
+        "--component",
+        "inner_transition_device",
+        "--test-binary",
+        "build-sycl-mpi-v14/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_inner_transition_device",
+        "--cmake-cache",
+        "build-sycl-mpi-v14/CMakeCache.txt"
+      ],
+      "timeout_seconds": 250,
+      "report": "campaigns/preflight-inner-transition-v1/output/parity-inner-transition.report.json",
+      "artifacts": [
+        "campaigns/preflight-inner-transition-v1/output/parity-inner-transition.rank-00.log",
+        "campaigns/preflight-inner-transition-v1/output/parity-inner-transition.rank-01.log",
+        "campaigns/preflight-inner-transition-v1/output/parity-inner-transition.rank-02.log",
+        "campaigns/preflight-inner-transition-v1/output/parity-inner-transition.rank-03.log",
+        "campaigns/preflight-inner-transition-v1/output/parity-inner-transition.rank-04.log",
+        "campaigns/preflight-inner-transition-v1/output/parity-inner-transition.rank-05.log",
+        "campaigns/preflight-inner-transition-v1/output/parity-inner-transition.rank-06.log",
+        "campaigns/preflight-inner-transition-v1/output/parity-inner-transition.rank-07.log",
+        "campaigns/preflight-inner-transition-v1/output/parity-inner-transition.rank-08.log",
+        "campaigns/preflight-inner-transition-v1/output/parity-inner-transition.rank-09.log",
+        "campaigns/preflight-inner-transition-v1/output/parity-inner-transition.rank-10.log",
+        "campaigns/preflight-inner-transition-v1/output/parity-inner-transition.rank-11.log",
+        "campaigns/preflight-inner-transition-v1/output/parity-inner-transition.report.json",
+        "campaigns/preflight-inner-transition-v1/output/parity-inner-transition.log"
+      ],
+      "inputs": [
+        "build-sycl-mpi-v14/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_inner_transition_device",
+        "build-sycl-mpi-v14/CMakeCache.txt"
+      ],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "gpu_cpu_parity"
+          ],
+          "op": "eq",
+          "value": true
+        }
+      ]
+    },
+    {
+      "name": "minkowski-short",
+      "kind": "minkowski",
+      "executable": "build-sycl-mpi-v14/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_inner_transition",
+      "args": [
+        "16",
+        "campaigns/preflight-inner-transition-v1/output/minkowski-short",
+        "minkowski",
+        "0.002",
+        ".0005",
+        "-",
+        "-",
+        "@WALL_SECONDS@",
+        "0.002",
+        ".001",
+        "6",
+        "12",
+        "2"
+      ],
+      "timeout_seconds": 180,
+      "report": "campaigns/preflight-inner-transition-v1/output/minkowski-short.report.json",
+      "artifacts": [
+        "campaigns/preflight-inner-transition-v1/output/minkowski-short.history.csv",
+        "campaigns/preflight-inner-transition-v1/output/minkowski-short.checkpoint",
+        "campaigns/preflight-inner-transition-v1/output/minkowski-short.report.json",
+        "campaigns/preflight-inner-transition-v1/output/minkowski-short.failed-stage.bin",
+        "campaigns/preflight-inner-transition-v1/output/minkowski-short.log"
+      ],
+      "inputs": [],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "diagnostics_current"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "min_lapse"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "min_chi"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "max_cfl"
+          ],
+          "op": "le",
+          "value": 0.5
+        },
+        {
+          "path": [
+            "t"
+          ],
+          "op": "eq",
+          "value": 0.002
+        },
+        {
+          "path": [
+            "max_state_deviation"
+          ],
+          "op": "le",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "le",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "H_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "algebraic_projection"
+          ],
+          "op": "eq",
+          "value": "final_stage_standard"
+        },
+        {
+          "path": [
+            "checkpoint_schema"
+          ],
+          "op": "eq",
+          "value": "HYP3D_MPI_V7"
+        },
+        {
+          "path": [
+            "max_determinant_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_tracefree_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "scri_angular_stencil"
+          ],
+          "op": "eq",
+          "value": "cross_face_centered5"
+        },
+        {
+          "path": [
+            "steps"
+          ],
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "path": [
+            "scri_dissipation_epsilon"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "scri_dissipation_degree"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "checkpoint_header_bytes"
+          ],
+          "op": "eq",
+          "value": 104
+        },
+        {
+          "path": [
+            "scri_dissipation_cfl_max"
+          ],
+          "op": "le",
+          "value": 2.7
+        },
+        {
+          "path": [
+            "scri_normal_derivative"
+          ],
+          "op": "eq",
+          "value": "sampled_native_numerator7"
+        },
+        {
+          "path": [
+            "scri_normal_radial_nodes"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "scri_normal_bulk_derivative_order"
+          ],
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "path": [
+            "scri_radial_closure"
+          ],
+          "op": "eq",
+          "value": "donor_seven_last3"
+        },
+        {
+          "path": [
+            "scri_radial_bulk_rows"
+          ],
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "path": [
+            "interpatch_interpolation"
+          ],
+          "op": "eq",
+          "value": "logical_inner_transition"
+        }
+      ]
+    },
+    {
+      "name": "pulse-half",
+      "kind": "pulse",
+      "executable": "build-sycl-mpi-v14/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_inner_transition",
+      "args": [
+        "16",
+        "campaigns/preflight-inner-transition-v1/output/pulse-half",
+        "pulse",
+        "0.001",
+        ".0005",
+        "-",
+        "-",
+        "@WALL_SECONDS@",
+        "0.001",
+        ".001",
+        "6",
+        "12",
+        "2"
+      ],
+      "timeout_seconds": 180,
+      "report": "campaigns/preflight-inner-transition-v1/output/pulse-half.report.json",
+      "artifacts": [
+        "campaigns/preflight-inner-transition-v1/output/pulse-half.history.csv",
+        "campaigns/preflight-inner-transition-v1/output/pulse-half.checkpoint",
+        "campaigns/preflight-inner-transition-v1/output/pulse-half.report.json",
+        "campaigns/preflight-inner-transition-v1/output/pulse-half.failed-stage.bin",
+        "campaigns/preflight-inner-transition-v1/output/pulse-half.log"
+      ],
+      "inputs": [],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "diagnostics_current"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "min_lapse"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "min_chi"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "max_cfl"
+          ],
+          "op": "le",
+          "value": 0.5
+        },
+        {
+          "path": [
+            "t"
+          ],
+          "op": "eq",
+          "value": 0.001
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "H_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "algebraic_projection"
+          ],
+          "op": "eq",
+          "value": "final_stage_standard"
+        },
+        {
+          "path": [
+            "checkpoint_schema"
+          ],
+          "op": "eq",
+          "value": "HYP3D_MPI_V7"
+        },
+        {
+          "path": [
+            "max_determinant_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_tracefree_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "scri_angular_stencil"
+          ],
+          "op": "eq",
+          "value": "cross_face_centered5"
+        },
+        {
+          "path": [
+            "steps"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "scri_dissipation_epsilon"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "scri_dissipation_degree"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "checkpoint_header_bytes"
+          ],
+          "op": "eq",
+          "value": 104
+        },
+        {
+          "path": [
+            "scri_dissipation_cfl_max"
+          ],
+          "op": "le",
+          "value": 2.7
+        },
+        {
+          "path": [
+            "scri_normal_derivative"
+          ],
+          "op": "eq",
+          "value": "sampled_native_numerator7"
+        },
+        {
+          "path": [
+            "scri_normal_radial_nodes"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "scri_normal_bulk_derivative_order"
+          ],
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "path": [
+            "scri_radial_closure"
+          ],
+          "op": "eq",
+          "value": "donor_seven_last3"
+        },
+        {
+          "path": [
+            "scri_radial_bulk_rows"
+          ],
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "path": [
+            "interpatch_interpolation"
+          ],
+          "op": "eq",
+          "value": "logical_inner_transition"
+        }
+      ]
+    },
+    {
+      "name": "pulse-resumed",
+      "kind": "pulse",
+      "executable": "build-sycl-mpi-v14/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_inner_transition",
+      "args": [
+        "16",
+        "campaigns/preflight-inner-transition-v1/output/pulse-resumed",
+        "pulse",
+        "0.002",
+        ".0005",
+        "-",
+        "campaigns/preflight-inner-transition-v1/output/pulse-half.checkpoint",
+        "@WALL_SECONDS@",
+        "0.002",
+        ".001",
+        "6",
+        "12",
+        "2"
+      ],
+      "timeout_seconds": 180,
+      "report": "campaigns/preflight-inner-transition-v1/output/pulse-resumed.report.json",
+      "artifacts": [
+        "campaigns/preflight-inner-transition-v1/output/pulse-resumed.history.csv",
+        "campaigns/preflight-inner-transition-v1/output/pulse-resumed.checkpoint",
+        "campaigns/preflight-inner-transition-v1/output/pulse-resumed.report.json",
+        "campaigns/preflight-inner-transition-v1/output/pulse-resumed.failed-stage.bin",
+        "campaigns/preflight-inner-transition-v1/output/pulse-resumed.log"
+      ],
+      "inputs": [],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "diagnostics_current"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "min_lapse"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "min_chi"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "max_cfl"
+          ],
+          "op": "le",
+          "value": 0.5
+        },
+        {
+          "path": [
+            "t"
+          ],
+          "op": "eq",
+          "value": 0.002
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "H_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "algebraic_projection"
+          ],
+          "op": "eq",
+          "value": "final_stage_standard"
+        },
+        {
+          "path": [
+            "checkpoint_schema"
+          ],
+          "op": "eq",
+          "value": "HYP3D_MPI_V7"
+        },
+        {
+          "path": [
+            "max_determinant_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_tracefree_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "scri_angular_stencil"
+          ],
+          "op": "eq",
+          "value": "cross_face_centered5"
+        },
+        {
+          "path": [
+            "steps"
+          ],
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "path": [
+            "scri_dissipation_epsilon"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "scri_dissipation_degree"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "checkpoint_header_bytes"
+          ],
+          "op": "eq",
+          "value": 104
+        },
+        {
+          "path": [
+            "scri_dissipation_cfl_max"
+          ],
+          "op": "le",
+          "value": 2.7
+        },
+        {
+          "path": [
+            "scri_normal_derivative"
+          ],
+          "op": "eq",
+          "value": "sampled_native_numerator7"
+        },
+        {
+          "path": [
+            "scri_normal_radial_nodes"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "scri_normal_bulk_derivative_order"
+          ],
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "path": [
+            "scri_radial_closure"
+          ],
+          "op": "eq",
+          "value": "donor_seven_last3"
+        },
+        {
+          "path": [
+            "scri_radial_bulk_rows"
+          ],
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "path": [
+            "interpatch_interpolation"
+          ],
+          "op": "eq",
+          "value": "logical_inner_transition"
+        }
+      ],
+      "generated_inputs": [
+        "campaigns/preflight-inner-transition-v1/output/pulse-half.checkpoint"
+      ]
+    },
+    {
+      "name": "pulse-direct",
+      "kind": "pulse",
+      "executable": "build-sycl-mpi-v14/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_inner_transition",
+      "args": [
+        "16",
+        "campaigns/preflight-inner-transition-v1/output/pulse-direct",
+        "pulse",
+        "0.002",
+        ".0005",
+        "-",
+        "-",
+        "@WALL_SECONDS@",
+        "0.002",
+        ".001",
+        "6",
+        "12",
+        "2"
+      ],
+      "timeout_seconds": 180,
+      "report": "campaigns/preflight-inner-transition-v1/output/pulse-direct.report.json",
+      "artifacts": [
+        "campaigns/preflight-inner-transition-v1/output/pulse-direct.history.csv",
+        "campaigns/preflight-inner-transition-v1/output/pulse-direct.checkpoint",
+        "campaigns/preflight-inner-transition-v1/output/pulse-direct.report.json",
+        "campaigns/preflight-inner-transition-v1/output/pulse-direct.failed-stage.bin",
+        "campaigns/preflight-inner-transition-v1/output/pulse-direct.log"
+      ],
+      "inputs": [],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "diagnostics_current"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "min_lapse"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "min_chi"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "max_cfl"
+          ],
+          "op": "le",
+          "value": 0.5
+        },
+        {
+          "path": [
+            "t"
+          ],
+          "op": "eq",
+          "value": 0.002
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "H_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "algebraic_projection"
+          ],
+          "op": "eq",
+          "value": "final_stage_standard"
+        },
+        {
+          "path": [
+            "checkpoint_schema"
+          ],
+          "op": "eq",
+          "value": "HYP3D_MPI_V7"
+        },
+        {
+          "path": [
+            "max_determinant_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_tracefree_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "scri_angular_stencil"
+          ],
+          "op": "eq",
+          "value": "cross_face_centered5"
+        },
+        {
+          "path": [
+            "steps"
+          ],
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "path": [
+            "scri_dissipation_epsilon"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "scri_dissipation_degree"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "checkpoint_header_bytes"
+          ],
+          "op": "eq",
+          "value": 104
+        },
+        {
+          "path": [
+            "scri_dissipation_cfl_max"
+          ],
+          "op": "le",
+          "value": 2.7
+        },
+        {
+          "path": [
+            "scri_normal_derivative"
+          ],
+          "op": "eq",
+          "value": "sampled_native_numerator7"
+        },
+        {
+          "path": [
+            "scri_normal_radial_nodes"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "scri_normal_bulk_derivative_order"
+          ],
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "path": [
+            "scri_radial_closure"
+          ],
+          "op": "eq",
+          "value": "donor_seven_last3"
+        },
+        {
+          "path": [
+            "scri_radial_bulk_rows"
+          ],
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "path": [
+            "interpatch_interpolation"
+          ],
+          "op": "eq",
+          "value": "logical_inner_transition"
+        }
+      ]
+    },
+    {
+      "name": "restart-audit",
+      "kind": "check",
+      "executable": "source-v14/tst/hyperbolic_shift_3d/aurora/preflight.py",
+      "args": [
+        "--root",
+        "/home/hzhu/hyperbolic-core-shell-20261028",
+        "--plan",
+        "campaigns/preflight-inner-transition-v1/plan.json",
+        "--output-prefix",
+        "campaigns/preflight-inner-transition-v1/output/restart-audit",
+        "--seconds",
+        "@WALL_SECONDS@",
+        "restart",
+        "--reference",
+        "campaigns/preflight-inner-transition-v1/output/pulse-direct.checkpoint",
+        "--candidate",
+        "campaigns/preflight-inner-transition-v1/output/pulse-resumed.checkpoint",
+        "--reference-report",
+        "campaigns/preflight-inner-transition-v1/output/pulse-direct.report.json",
+        "--candidate-report",
+        "campaigns/preflight-inner-transition-v1/output/pulse-resumed.report.json"
+      ],
+      "timeout_seconds": 120,
+      "report": "campaigns/preflight-inner-transition-v1/output/restart-audit.report.json",
+      "artifacts": [
+        "campaigns/preflight-inner-transition-v1/output/restart-audit.report.json",
+        "campaigns/preflight-inner-transition-v1/output/restart-audit.log"
+      ],
+      "inputs": [],
+      "generated_inputs": [
+        "campaigns/preflight-inner-transition-v1/output/pulse-direct.checkpoint",
+        "campaigns/preflight-inner-transition-v1/output/pulse-resumed.checkpoint",
+        "campaigns/preflight-inner-transition-v1/output/pulse-direct.report.json",
+        "campaigns/preflight-inner-transition-v1/output/pulse-resumed.report.json"
+      ],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "restart_equivalence"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "header",
+            "magic"
+          ],
+          "op": "eq",
+          "value": "HYP3D_MPI_V7"
+        },
+        {
+          "path": [
+            "maximum_absolute_error"
+          ],
+          "op": "eq",
+          "value": 0
+        },
+        {
+          "path": [
+            "bitwise_payload_equal"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "header",
+            "scri_dissipation_epsilon"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "header",
+            "scri_dissipation_degree"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "header",
+            "header_bytes"
+          ],
+          "op": "eq",
+          "value": 104
+        },
+        {
+          "path": [
+            "header",
+            "scri_normal_derivative"
+          ],
+          "op": "eq",
+          "value": "sampled_native_numerator7"
+        },
+        {
+          "path": [
+            "header",
+            "scri_normal_radial_nodes"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "header",
+            "scri_normal_bulk_derivative_order"
+          ],
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "path": [
+            "header",
+            "scri_radial_closure"
+          ],
+          "op": "eq",
+          "value": "donor_seven_last3"
+        },
+        {
+          "path": [
+            "header",
+            "scri_radial_bulk_rows"
+          ],
+          "op": "eq",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "name": "puncture-short",
+      "kind": "puncture",
+      "executable": "build-sycl-mpi-v14/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_inner_transition",
+      "args": [
+        "16",
+        "campaigns/preflight-inner-transition-v1/output/puncture-short",
+        "puncture",
+        "0.002",
+        ".0005",
+        "inputs/puncture-n16.txt",
+        "-",
+        "@WALL_SECONDS@",
+        "0.002",
+        ".001",
+        "12",
+        "24",
+        "2"
+      ],
+      "timeout_seconds": 400,
+      "report": "campaigns/preflight-inner-transition-v1/output/puncture-short.report.json",
+      "artifacts": [
+        "campaigns/preflight-inner-transition-v1/output/puncture-short.history.csv",
+        "campaigns/preflight-inner-transition-v1/output/puncture-short.checkpoint",
+        "campaigns/preflight-inner-transition-v1/output/puncture-short.checkpoint.horizon-seed.txt",
+        "campaigns/preflight-inner-transition-v1/output/puncture-short.fastflow.horizon_summary_0.txt",
+        "campaigns/preflight-inner-transition-v1/output/puncture-short.fastflow.horizon_shape_0.txt",
+        "campaigns/preflight-inner-transition-v1/output/puncture-short.report.json",
+        "campaigns/preflight-inner-transition-v1/output/puncture-short.failed-stage.bin",
+        "campaigns/preflight-inner-transition-v1/output/puncture-short.log"
+      ],
+      "inputs": [
+        "inputs/puncture-n16.txt"
+      ],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "diagnostics_current"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "min_lapse"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "min_chi"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "max_cfl"
+          ],
+          "op": "le",
+          "value": 0.5
+        },
+        {
+          "path": [
+            "t"
+          ],
+          "op": "eq",
+          "value": 0.002
+        },
+        {
+          "path": [
+            "horizon_found"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "horizon_expansion_rms"
+          ],
+          "op": "le",
+          "value": 0.001
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "H_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "algebraic_projection"
+          ],
+          "op": "eq",
+          "value": "final_stage_standard"
+        },
+        {
+          "path": [
+            "checkpoint_schema"
+          ],
+          "op": "eq",
+          "value": "HYP3D_MPI_V7"
+        },
+        {
+          "path": [
+            "max_determinant_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_tracefree_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "scri_angular_stencil"
+          ],
+          "op": "eq",
+          "value": "cross_face_centered5"
+        },
+        {
+          "path": [
+            "steps"
+          ],
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "path": [
+            "horizon_lmax"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "horizon_ntheta"
+          ],
+          "op": "eq",
+          "value": 24
+        },
+        {
+          "path": [
+            "horizon_nphi"
+          ],
+          "op": "eq",
+          "value": 48
+        },
+        {
+          "path": [
+            "horizon_complete_surface"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "horizon_radius"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "horizon_mass"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "scri_dissipation_epsilon"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "scri_dissipation_degree"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "checkpoint_header_bytes"
+          ],
+          "op": "eq",
+          "value": 104
+        },
+        {
+          "path": [
+            "scri_dissipation_cfl_max"
+          ],
+          "op": "le",
+          "value": 2.7
+        },
+        {
+          "path": [
+            "scri_normal_derivative"
+          ],
+          "op": "eq",
+          "value": "sampled_native_numerator7"
+        },
+        {
+          "path": [
+            "scri_normal_radial_nodes"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "scri_normal_bulk_derivative_order"
+          ],
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "path": [
+            "scri_radial_closure"
+          ],
+          "op": "eq",
+          "value": "donor_seven_last3"
+        },
+        {
+          "path": [
+            "scri_radial_bulk_rows"
+          ],
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "path": [
+            "interpatch_interpolation"
+          ],
+          "op": "eq",
+          "value": "logical_inner_transition"
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Fresh V7 implementation preflight only: no duration stability or 100M admission.",
+    "Retains V6 radial scri closure and changes grid halos near the inner transition.",
+    "Verify 12 GPU tiles, CPU/device full halo and bulk arithmetic, direct/restart checkpoint equivalence, and fresh short Minkowski/puncture."
+  ]
+}

@@ -46,3 +46,8 @@ checkpoints and binaries remain in
 Build the `hyperbolic_shift_3d_inner_transition_device` and
 `hyperbolic_shift_3d_mpi_inner_transition` targets. The complete MPI commands
 and binary/artifact hashes are recorded in `mpi-verification.json`.
+
+Offline V7 constraint reconstruction on the local pulse checkpoint matches
+the native coordinate-volume H/M norms within3.5e-17 absolute error. This
+check is bound to the local MPI artifact receipt and explicitly uses the
+V7 halo policy; it is not a GPU or evolution-accuracy result.
