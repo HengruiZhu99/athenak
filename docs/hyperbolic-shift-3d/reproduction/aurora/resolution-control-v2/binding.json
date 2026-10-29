@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "plan_sha256": "e0ee9359013b735279a2e0b87f21348244353c9b78e83ac88bd063357287b49b",
+  "source_manifest": "source-manifest.json",
+  "source_manifest_sha256": "3f367265e2e627aa770d0ae78be4fac912f4c0980a09471382cf9b295c677d7f",
+  "binaries": {
+    "build-sycl-mpi-v4/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi": "6e7553b556dd9c4f8b56f81eb0f43c15cf0517a0b81776320a9a6c6d3c29ccef"
+  },
+  "inputs": {},
+  "pbs_sha256": "cfcb11a51b556facd1595e0ca367efe90b4d886e32c2b771433074720e81f99b",
+  "admission": {
+    "path": "admissions/preflight-v2.json",
+    "sha256": "c23eb6cbcd13d90895c786238d487ba943b9916290d2b80669a620ef4d48a8c2"
+  },
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "00:40:00"
+  },
+  "storage_at_bind": {
+    "bytes": 962763776,
+    "entries": 6602,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 300000000,
+    "planned_bytes": 650000000,
+    "headroom_bytes": 3087236224
+  },
+  "launcher": {
+    "control.py": "e427676ae8fc763d120465c039f878f9de99c262817ad0271f69793e90b7cb60",
+    "worker.py": "62b5346a7815dca5954a95c705ec1c43eaf87ec5bf1442318f5c259d9d3685b1",
+    "run_debug.pbs": "1d5df790cf6c8cdc96e9d330b9b337ce755b30e057959586bcd661dc9ce885a6",
+    "storage.py": "fdcf2abc2533b8fed91220d9c18d8b9d723660820949a72e956fb9c8866afd39"
+  },
+  "allocation_seconds": 2400,
+  "worker_seconds": 2310
+}

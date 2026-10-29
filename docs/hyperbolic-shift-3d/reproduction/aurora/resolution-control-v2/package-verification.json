@@ -1,0 +1,113 @@
+{
+  "schema": 1,
+  "scope": "Small-record packaging verification; immutable full-payload verification.json retained separately.",
+  "copied_originals": [
+    {
+      "path": "plan.json",
+      "sha256": "e0ee9359013b735279a2e0b87f21348244353c9b78e83ac88bd063357287b49b",
+      "matches_download": true
+    },
+    {
+      "path": "binding.json",
+      "sha256": "b6b1954569ad9453dabb54362923e324e27e1eaba739aad649ebe5b98d0ff708",
+      "matches_download": true
+    },
+    {
+      "path": "worker-status.json",
+      "sha256": "0d90d5b732fd7542a304b576eeedeaf665fb5bd12ef98086eedec1c317dd5982",
+      "matches_download": true
+    },
+    {
+      "path": "run_debug.pbs",
+      "sha256": "cfcb11a51b556facd1595e0ca367efe90b4d886e32c2b771433074720e81f99b",
+      "matches_download": true
+    },
+    {
+      "path": "verification.json",
+      "sha256": "e64d04871d6c9fad6170126db5794e7901f958780a7343f3aebbefbf86f0b646",
+      "matches_download": true
+    },
+    {
+      "path": "output/affinity.log",
+      "sha256": "9c72b80950126d19cda661403a5a32ddfdb3362d53b99397c817cc3587417492",
+      "matches_download": true
+    },
+    {
+      "path": "output/minkowski-n24.log",
+      "sha256": "93601fb464a468b9761245184ce3ea186fb8b1e2cbb33604ebf768e7208436bf",
+      "matches_download": true
+    },
+    {
+      "path": "output/minkowski-n24.report.json",
+      "sha256": "c1570c4fdca35e86158642fe361bb0383daec315c178db2d01599338125e0ebd",
+      "matches_download": true
+    },
+    {
+      "path": "output/minkowski-n24.history.csv",
+      "sha256": "a567fd8d3f389afc4a414b738b53fdc22198eec665ff67435b406dfe9c025182",
+      "matches_download": true
+    },
+    {
+      "path": "output/minkowski-n16-half-dt.log",
+      "sha256": "850102c20e65d1d628765633203d99346e12248e9b924b689bdb86aedfd5a8f0",
+      "matches_download": true
+    },
+    {
+      "path": "output/minkowski-n16-half-dt.report.json",
+      "sha256": "6c93fed06fcfed32881f6c9134478c00a412e4632869d12e7125e80e2f0d54f1",
+      "matches_download": true
+    },
+    {
+      "path": "output/minkowski-n16-half-dt.history.csv",
+      "sha256": "0f80b09248878ef9d15f6394cbe8886cbac17595dbfe91481084b36e02e4a80b",
+      "matches_download": true
+    },
+    {
+      "path": "purge-resolution-controls-manifest.json",
+      "original_download_path": "output/hyperbolic-core-shell/aurora-staging/purge-resolution-controls-manifest.json",
+      "sha256": "6dbfde4048daa0a9c04c226e7b0eb01c9a1e0bab0b5195299c153820cde8fdbe",
+      "matches_download": true
+    },
+    {
+      "path": "purge-resolution-controls-receipt.json",
+      "original_download_path": "output/hyperbolic-core-shell/aurora-staging/purge-resolution-controls-receipt.json",
+      "sha256": "5d982b51a07a94988cda8e32c008e735f16ab80e5563817cabb98035f4cc3bfe",
+      "matches_download": true
+    }
+  ],
+  "retained_worker_artifacts_rechecked": [
+    {
+      "path": "output/minkowski-n24.report.json",
+      "sha256": "c1570c4fdca35e86158642fe361bb0383daec315c178db2d01599338125e0ebd",
+      "bytes": 1809,
+      "matches_full_payload_verification": true
+    },
+    {
+      "path": "output/minkowski-n24.history.csv",
+      "sha256": "a567fd8d3f389afc4a414b738b53fdc22198eec665ff67435b406dfe9c025182",
+      "bytes": 5728,
+      "matches_full_payload_verification": true
+    },
+    {
+      "path": "output/minkowski-n16-half-dt.report.json",
+      "sha256": "6c93fed06fcfed32881f6c9134478c00a412e4632869d12e7125e80e2f0d54f1",
+      "bytes": 1798,
+      "matches_full_payload_verification": true
+    },
+    {
+      "path": "output/minkowski-n16-half-dt.history.csv",
+      "sha256": "0f80b09248878ef9d15f6394cbe8886cbac17595dbfe91481084b36e02e4a80b",
+      "bytes": 8694,
+      "matches_full_payload_verification": true
+    }
+  ],
+  "all_eight_worker_artifact_records_match_full_payload_verification": true,
+  "large_payloads_rehashed_during_packaging": false,
+  "large_payloads_retained": false,
+  "all_36_worker_report_checks_recomputed": true,
+  "plan_binding_matches": true,
+  "pbs_binding_matches": true,
+  "worker_source_binary_binding_matches": true,
+  "root_full_payload_verification_sha256": "e64d04871d6c9fad6170126db5794e7901f958780a7343f3aebbefbf86f0b646",
+  "purge_manifest_and_receipt_match_five_previously_verified_payload_records": true
+}

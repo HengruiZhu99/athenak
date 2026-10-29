@@ -1,0 +1,86 @@
+{
+  "scope": "Read-only full-payload verification. Both checkpoints are unadmitted; no restart.",
+  "artifacts": [
+    {
+      "path": "campaigns/resolution-control-v2/output/minkowski-n24.report.json",
+      "sha256": "c1570c4fdca35e86158642fe361bb0383daec315c178db2d01599338125e0ebd",
+      "bytes": 1809,
+      "verified": true
+    },
+    {
+      "path": "campaigns/resolution-control-v2/output/minkowski-n24.history.csv",
+      "sha256": "a567fd8d3f389afc4a414b738b53fdc22198eec665ff67435b406dfe9c025182",
+      "bytes": 5728,
+      "verified": true
+    },
+    {
+      "path": "campaigns/resolution-control-v2/output/minkowski-n24.checkpoint",
+      "sha256": "2ec2db9c2bde6bc063caa2d005e022930556332a5e53c9b87b08ff120286e926",
+      "bytes": 131991624,
+      "verified": true
+    },
+    {
+      "path": "campaigns/resolution-control-v2/output/minkowski-n24.failed-stage.bin",
+      "sha256": "2e87c639c904908f70d010c4a3197d48762fb1049765d0331c00ecddf3df1f4b",
+      "bytes": 65995776,
+      "verified": true
+    },
+    {
+      "path": "campaigns/resolution-control-v2/output/minkowski-n16-half-dt.report.json",
+      "sha256": "6c93fed06fcfed32881f6c9134478c00a412e4632869d12e7125e80e2f0d54f1",
+      "bytes": 1798,
+      "verified": true
+    },
+    {
+      "path": "campaigns/resolution-control-v2/output/minkowski-n16-half-dt.history.csv",
+      "sha256": "0f80b09248878ef9d15f6394cbe8886cbac17595dbfe91481084b36e02e4a80b",
+      "bytes": 8694,
+      "verified": true
+    },
+    {
+      "path": "campaigns/resolution-control-v2/output/minkowski-n16-half-dt.checkpoint",
+      "sha256": "29fa09e7cb22cf491bb2d5e4fde6796255a34c9fec9a2ba5fb546806f42ded3c",
+      "bytes": 39362632,
+      "verified": true
+    },
+    {
+      "path": "campaigns/resolution-control-v2/output/minkowski-n16-half-dt.failed-stage.bin",
+      "sha256": "b2a28a9ead3c68a569fb5f7c1d7f10d6daa160f4c71ebab770ebc07280cbb376",
+      "bytes": 19681280,
+      "verified": true
+    }
+  ],
+  "checkpoint_headers": [
+    {
+      "path": "campaigns/resolution-control-v2/output/minkowski-n24.checkpoint",
+      "magic": "HYP3D_MPI_V1",
+      "n": 24,
+      "nf": 31,
+      "kind": 0,
+      "admitted": 0,
+      "cells": 262656,
+      "surface_doubles": 107136,
+      "steps": 941,
+      "t": 0.31366666666666765,
+      "dt": 0.0003333333333333333
+    },
+    {
+      "path": "campaigns/resolution-control-v2/output/minkowski-n16-half-dt.checkpoint",
+      "magic": "HYP3D_MPI_V1",
+      "n": 16,
+      "nf": 31,
+      "kind": 0,
+      "admitted": 0,
+      "cells": 77824,
+      "surface_doubles": 47616,
+      "steps": 1944,
+      "t": 0.4859999999999742,
+      "dt": 0.00025
+    }
+  ],
+  "terminal": {
+    "job": "8982461.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "scheduler_state": "F",
+    "exit_status": 1
+  }
+}

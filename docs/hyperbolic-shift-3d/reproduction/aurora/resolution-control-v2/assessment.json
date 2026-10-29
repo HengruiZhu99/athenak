@@ -1,0 +1,186 @@
+{
+  "schema": 1,
+  "scope": "Terminal original-driver Minkowski resolution/timestep controls. Both numerical cases failed before target time; no stability, restart or convergence admission.",
+  "worker_status": "failed",
+  "stability_admission_eligible": false,
+  "continued_failures": [
+    "minkowski-n24"
+  ],
+  "source_manifest_sha256": "3f367265e2e627aa770d0ae78be4fac912f4c0980a09471382cf9b295c677d7f",
+  "binary_sha256": "6e7553b556dd9c4f8b56f81eb0f43c15cf0517a0b81776320a9a6c6d3c29ccef",
+  "cases": [
+    {
+      "name": "minkowski-n24",
+      "native_report_status": "failed",
+      "native_error": "nonpositive interpolated scri geometry",
+      "accepted_time": 0.31366666666666765,
+      "accepted_steps": 941,
+      "target_time": 0.6,
+      "dt": 0.0003333333333333333,
+      "diagnostic_time": 0.3000000000000002,
+      "diagnostics_current": false,
+      "checkpoint_admitted": false,
+      "worker_case_status": "failed",
+      "launcher_returncode": 2,
+      "worker_timed_out": false,
+      "worker_storage_error": null,
+      "continued_after_failure": true,
+      "failed_report_checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "limit": "completed",
+          "observed": "failed"
+        },
+        {
+          "path": [
+            "diagnostics_current"
+          ],
+          "op": "eq",
+          "limit": true,
+          "observed": false
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "limit": true,
+          "observed": false
+        },
+        {
+          "path": [
+            "max_state_deviation"
+          ],
+          "op": "le",
+          "limit": 1e-08,
+          "observed": 4.8742126654633875
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "le",
+          "limit": 1e-07,
+          "observed": 0.00045451802156805317
+        },
+        {
+          "path": [
+            "M_L2"
+          ],
+          "op": "le",
+          "limit": 1e-07,
+          "observed": 0.06453160146343982
+        }
+      ],
+      "last_reported_diagnostics": {
+        "max_state_deviation": 4.8742126654633875,
+        "H_L2": 0.00045451802156805317,
+        "M_L2": 0.06453160146343982,
+        "min_chi": 0.9757627745694641,
+        "min_lapse": 0.5000406901041665
+      },
+      "reported_running_null_maxima": {
+        "max_null_surface": 1.5543122344752044e-15,
+        "max_null_ghost": 1.554312234464881e-15
+      }
+    },
+    {
+      "name": "minkowski-n16-half-dt",
+      "native_report_status": "failed",
+      "native_error": "nonpositive interpolated scri geometry",
+      "accepted_time": 0.4859999999999742,
+      "accepted_steps": 1944,
+      "target_time": 0.6,
+      "dt": 0.00025,
+      "diagnostic_time": 0.4749999999999754,
+      "diagnostics_current": false,
+      "checkpoint_admitted": false,
+      "worker_case_status": "failed",
+      "launcher_returncode": 143,
+      "worker_timed_out": false,
+      "worker_storage_error": null,
+      "continued_after_failure": false,
+      "failed_report_checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "limit": "completed",
+          "observed": "failed"
+        },
+        {
+          "path": [
+            "diagnostics_current"
+          ],
+          "op": "eq",
+          "limit": true,
+          "observed": false
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "limit": true,
+          "observed": false
+        },
+        {
+          "path": [
+            "max_state_deviation"
+          ],
+          "op": "le",
+          "limit": 1e-08,
+          "observed": 12.717926424489365
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "le",
+          "limit": 1e-07,
+          "observed": 0.008200741555632168
+        },
+        {
+          "path": [
+            "M_L2"
+          ],
+          "op": "le",
+          "limit": 1e-07,
+          "observed": 0.4015199114269835
+        }
+      ],
+      "last_reported_diagnostics": {
+        "max_state_deviation": 12.717926424489365,
+        "H_L2": 0.008200741555632168,
+        "M_L2": 0.4015199114269835,
+        "min_chi": 0.8633245609897898,
+        "min_lapse": 0.5000915527343749
+      },
+      "reported_running_null_maxima": {
+        "max_null_surface": 1.1102230246251504e-15,
+        "max_null_ghost": 1.2419969118035465e-15
+      }
+    }
+  ],
+  "n16_launcher_exit_interpretation": {
+    "native_log_status": "failed",
+    "native_log_time": 0.486,
+    "native_log_error": "nonpositive interpolated scri geometry",
+    "observed_rank_exit_codes": {
+      "11": 2
+    },
+    "observed_rank_signals": {
+      "4": 15
+    },
+    "launcher_returncode": 143,
+    "worker_timed_out": false,
+    "worker_storage_error": null,
+    "uniform_native_exit_code_claimed": false,
+    "guarded_continuation_claimed": false,
+    "note": "The log and report establish numerical rejection. The recorded mixed-rank shutdown does not establish a uniform native exit code or the cause of signal 15."
+  }
+}
