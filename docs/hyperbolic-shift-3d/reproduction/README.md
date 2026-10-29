@@ -24,8 +24,12 @@ passed184 checks and39 artifact verifications. The [fresh V7 t=2 Minkowski
 control](aurora/stability-inner-transition-minkowski-v1/README.md), job8984359,
 reached t2 but failed the unchanged state-error limit, with growth10.77 per
 coordinate time. Its remaining disturbance is concentrated at the inner
-transition-shell edges, not scri. A matched fresh puncture control follows
-the released allocation; no long-time stability is established.
+transition-shell edges, not scri. The [matched fresh V7 puncture control](aurora/stability-inner-transition-puncture-v1/README.md)
+failed at2.9085M with another negative core lapse; its horizon acceptance
+still fails from1.95M. Both allocations are released. No long-time stability
+is established. A [larger midpoint-operator test](scri-interface-krylov-v1/README.md)
+and [fixed doubled-KO control](scri-interface-ko-control-v1/README.md) do not
+qualify either proposed stabilization as a repair.
 The [static refined-core component checks](refined-core-components-v1/README.md)
 also pass locally, without implying AMR evolution or checkpoint support.
 

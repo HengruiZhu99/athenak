@@ -28,9 +28,8 @@ struct Probe {
                 h::HyperbolicComposite::NormalDerivative::analytic_jets,
         variant>=2?h::HyperbolicComposite::RadialClosure::donor_seven:
                    h::HyperbolicComposite::RadialClosure::ghost_lift),dt(time_step) {
-    // Read-only interface diagnostic: keep the V6 scri closure and replace
-    // physical-radius donor chains by the existing logical-coordinate halo
-    // interpolant. This selector is not exposed by any evolution executable.
+    // Read-only interface diagnostic. Variant4 matches optional V7 evolution;
+    // variant3 replaces all physical-radius chains by logical interpolation.
     if(variant==3)model.grid.SetRadialInterfaceStencils(false);
     if(variant==4)model.grid.SetInnerTransitionLogical(true);
   }
@@ -97,6 +96,12 @@ extern "C" void* scri_candidate_create(int n,double epsilon,double dt,int sample
 extern "C" void scri_candidate_destroy(void*p){delete static_cast<Probe*>(p);}
 extern "C" int scri_candidate_size(void*p){return static_cast<Probe*>(p)->Size();}
 extern "C" int scri_candidate_volume_size(void*p){return static_cast<Probe*>(p)->VolumeSize();}
+// Fixed read-only control of the existing conservative bulk dissipation.
+// This adapter never evolves or changes an evolution executable's coefficient.
+extern "C" int scri_candidate_bulk_ko_control(void*p,double ko){
+  if(!p||(ko!=.5&&ko!=1)){error="bulk KO control accepts only baseline .5 or doubled 1";return 1;}
+  static_cast<Probe*>(p)->model.ko=ko;return 0;
+}
 extern "C" int scri_candidate_evaluate(void*p,const double*input,double*output,double*statistics){
   try{static_cast<Probe*>(p)->Evaluate(input,output,statistics);return 0;}
   catch(const std::exception&e){error=e.what();return 1;}
