@@ -19,15 +19,20 @@ first generates it. The curves connect discrete measurements; no intermediate
 radial solution is inferred.
 
 The last panel shows the isolated angular-Q energy quotient, not an eigenvalue
-shift. Its decline from 0.959 to 0.467 explains why merely extending the same
-angular filter is not currently supported. The independently measured whole
+shift. Its decline from 0.959 to 0.467, together with the failed duration test,
+gives no support for merely extending the same angular filter. The independently measured whole
 direction amplification is about 73 per coordinate time. These are different
 norms and measurements, and must not be subtracted as a stability estimate.
 The end-to-end direction correlation is 0.99459, with a 10.39% residual after
 best-fit amplification; a single eigenmode has not been certified.
 
 The [data table](data.json) and retained [comparison input](comparison-input.json)
-contain hashes and values. `python3 plot.py` recreates the PNG and PDF using
+contain hashes and values. The comparison input is retained historical output;
+the exact intermediate Python wrapper identified by its script hash was not
+archived here. Its angular-response values use the separately retained
+[operator analysis](../scri-collar-response-v1/analyze.py). The plotting and
+raw radial extraction scripts in this package are preserved in full.
+`python3 plot.py` recreates the PNG and PDF using
 only small retained data. `python3 extract.py`, from any working directory,
 rechecks the three local full-checkpoint hashes against their worker records
 and regenerates the table; those archived full checkpoints are required for

@@ -15,7 +15,9 @@ for metadata, pattern in zip(comparison['inputs'], comparison['angular_patterns'
     path = Path(metadata['path'])
     digest = hashlib.sha256(path.read_bytes()).hexdigest()
     assert digest == metadata['sha256']
-    worker = json.loads((path.parent.parent/'worker-status.json').read_text())
+    worker_path = path.parent.parent/'worker-status.json'
+    assert hashlib.sha256(worker_path.read_bytes()).hexdigest() == metadata['worker_sha256']
+    worker = json.loads(worker_path.read_text())
     binding = [v for c in worker['cases'] for k,v in c['artifacts'].items()
                if k == metadata['bound_artifact']]
     assert len(binding) == 1 and binding[0]['sha256'] == digest
