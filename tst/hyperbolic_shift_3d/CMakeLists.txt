@@ -45,6 +45,15 @@ target_link_libraries(hyperbolic_shift_3d_inner_transition_device PRIVATE Kokkos
 target_compile_options(hyperbolic_shift_3d_inner_transition_device PRIVATE -Wall -Wextra -ffp-contract=off)
 target_compile_definitions(hyperbolic_shift_3d_inner_transition_device PRIVATE HYPERBOLIC_TEST_DONOR_SEVEN=1 HYPERBOLIC_TEST_INNER_TRANSITION=1)
 add_test(NAME hyperbolic_shift_3d_inner_transition_device COMMAND hyperbolic_shift_3d_inner_transition_device)
+# Component qualification on static Cartesian leaves, including a coarse/fine
+# seam. This does not exercise regridding, field transfer or evolution restart.
+add_executable(hyperbolic_shift_3d_refined_core_device test_sampled_normal_device.cpp)
+target_include_directories(hyperbolic_shift_3d_refined_core_device PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+target_link_libraries(hyperbolic_shift_3d_refined_core_device PRIVATE Kokkos::kokkos Threads::Threads)
+target_compile_options(hyperbolic_shift_3d_refined_core_device PRIVATE -Wall -Wextra -ffp-contract=off)
+target_compile_definitions(hyperbolic_shift_3d_refined_core_device PRIVATE HYPERBOLIC_TEST_DONOR_SEVEN=1 HYPERBOLIC_TEST_INNER_TRANSITION=1 HYPERBOLIC_TEST_REFINED_CORE=1)
+add_test(NAME hyperbolic_shift_3d_refined_core_device COMMAND hyperbolic_shift_3d_refined_core_device)
+set_tests_properties(hyperbolic_shift_3d_refined_core_device PROPERTIES RUN_SERIAL TRUE TIMEOUT 420)
 add_executable(hyperbolic_shift_3d_scri_sampled_normal scri_sampled_normal.cpp)
 target_include_directories(hyperbolic_shift_3d_scri_sampled_normal PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
 target_link_libraries(hyperbolic_shift_3d_scri_sampled_normal PRIVATE Kokkos::kokkos Threads::Threads)

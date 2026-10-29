@@ -17,6 +17,9 @@
 #ifndef HYPERBOLIC_TEST_INNER_TRANSITION
 #define HYPERBOLIC_TEST_INNER_TRANSITION 0
 #endif
+#ifndef HYPERBOLIC_TEST_REFINED_CORE
+#define HYPERBOLIC_TEST_REFINED_CORE 0
+#endif
 constexpr bool inner_transition=HYPERBOLIC_TEST_INNER_TRANSITION;
 constexpr bool donor_seven=HYPERBOLIC_TEST_DONOR_SEVEN;
 namespace h=z4c::hyperboloidal;
@@ -75,8 +78,18 @@ static V CPUPoles(const Model&model,const V&padded){
 template<class F>static void Reject(F operation,const char*message){
   bool rejected=false;try{operation();}catch(const std::invalid_argument&){rejected=true;}Require(rejected,message);
 }
-static void Check(bool perturb){
-  const auto mesh=cubed_sphere::CompositeMesh(.125,{.45,.75,1},1,6,3);
+static void Check(bool perturb,int refinement=0){
+  auto mesh=cubed_sphere::CompositeMesh(.125,{.45,.75,1},1,6,3);
+  if(refinement>0)mesh.RefineCartesian(0);
+  // Refine one child again to exercise a genuine coarse/fine Cartesian seam.
+  // The shell geometry, cell count and outer-boundary operator stay fixed.
+  if(refinement>1)mesh.RefineCartesian(18);
+  int first_core=-1,first_outer=-1,end_outer=-1;
+  for(size_t b=0;b<mesh.blocks.size();++b){
+    if(mesh.blocks[b].face<0&&first_core<0)first_core=b;
+    if(mesh.blocks[b].layer==2){if(first_outer<0)first_outer=b;end_outer=b+1;}
+  }
+  Require(first_core>=0&&end_outer-first_outer==6,"invalid test topology");
   Model model(mesh,false,true,2,Model::NormalDerivative::sampled_numerator,
     donor_seven?Model::RadialClosure::donor_seven:Model::RadialClosure::ghost_lift);
   if(inner_transition)model.grid.SetInnerTransitionLogical(true);
@@ -88,11 +101,11 @@ static void Check(bool perturb){
   model.scri.values=projected;
   const auto active=Upload(model.state),surface=Upload(projected),rates=Upload(q);
   Sampled samples(model,0,total);Device full(model,0,total);
-  Require(samples.FirstBlock()==13&&samples.EndBlock()==19,"wrong surface-owned donor blocks");
+  Require(samples.FirstBlock()==first_outer&&samples.EndBlock()==end_outer,"wrong surface-owned donor blocks");
   Exchange exchange(model,samples.FirstBlock(),samples.EndBlock());
   // The independent volume owner may cover only the Cartesian core. Do not use
   // its unrelated halos: sampled donors require the dedicated outer blocks.
-  Exchange core_owner(model,0,1);core_owner.SetSurface(projected);
+  Exchange core_owner(model,first_core,first_core+1);core_owner.SetSurface(projected);
   Require(core_owner.Fill(active).invalid==0,"core-owner exchange failed");
   exchange.SetSurface(projected);const auto halo=exchange.Fill(active);
   Require(halo.invalid==0,"surface-owner exchange failed");
@@ -177,7 +190,7 @@ static void Check(bool perturb){
     // Every exterior radial ghost is unused by the seven-node bulk closure,
     // including its native transport correction and sampled numerator jets.
     const auto&g=model.grid;
-    for(int m=13;m<19;++m)for(int k=-g.ng;k<g.n+g.ng;++k)for(int j=-g.ng;j<g.n+g.ng;++j)
+    for(int m=first_outer;m<end_outer;++m)for(int k=-g.ng;k<g.n+g.ng;++k)for(int j=-g.ng;j<g.n+g.ng;++j)
       for(int i=g.n;i<g.n+g.ng;++i)for(int f=0;f<31;++f)
         final_padding[f*g.count+g.Index(m,i,j,k)]=std::numeric_limits<Real>::quiet_NaN();
     Require(bulk.Evaluate(Upload(final_padding),dt,false,.5,final_surface).bad_cells==0,"direct radial bulk read exterior ghosts");
@@ -194,12 +207,16 @@ static void Check(bool perturb){
     <<" default_bitwise=1 partitions=12 rejection_checks=1";
   if(donor_seven)std::cout<<" radial_nodes=7 radial_bulk_rows=3";
   if(inner_transition)std::cout<<" interpatch_interpolation=logical_inner_transition";
+  if(refinement)std::cout<<" core_refinement="<<refinement<<" blocks="<<mesh.blocks.size();
   std::cout<<'\n';
 }
 int main(int argc,char**argv){
   Kokkos::initialize(argc,argv);int result=0;
   try{std::cout<<std::setprecision(17)<<"backend="<<Kokkos::DefaultExecutionSpace::name()<<'\n';
-    Check(false);Check(true);std::cout<<(donor_seven?"Donor-seven device, ownership, default and closure parity passed\n":
+    if constexpr(HYPERBOLIC_TEST_REFINED_CORE){
+      Check(false,1);Check(true,1);Check(false,2);Check(true,2);
+    }else{Check(false);Check(true);}
+    std::cout<<(donor_seven?"Donor-seven device, ownership, default and closure parity passed\n":
       "Sampled-normal device, ownership, default and closure parity passed\n");
   }catch(const std::exception&e){std::cerr<<e.what()<<'\n';result=1;}
   Kokkos::finalize();return result;
