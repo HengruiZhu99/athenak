@@ -1,0 +1,29 @@
+{
+  "command": [
+    "/Library/Developer/CommandLineTools/usr/bin/python3",
+    "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/scri_linear_audit.py",
+    "--worker",
+    "--library",
+    "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-linear-audit-v1/coupled-n6-120/probe.dylib",
+    "--n",
+    "6",
+    "--scheme",
+    "v3",
+    "--operator",
+    "coupled",
+    "--vectors",
+    "120",
+    "--epsilon",
+    "1e-05",
+    "--seed",
+    "738123",
+    "--budget",
+    "370.0",
+    "--output",
+    "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-linear-audit-v1/coupled-n6-120/v3"
+  ],
+  "returncode": 0,
+  "stdout": "{\"status\": \"completed\", \"output\": \"/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/scri-linear-audit-v1/coupled-n6-120/v3\", \"calls\": 273, \"seconds\": 40.14419650000001}\n",
+  "stderr": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/scri_linear_audit.py:104: RuntimeWarning: divide by zero encountered in matmul\n  coefficients=q[:,:column+1].T@z;h[:column+1,column]+=coefficients;z-=q[:,:column+1]@coefficients\n/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/scri_linear_audit.py:104: RuntimeWarning: overflow encountered in matmul\n  coefficients=q[:,:column+1].T@z;h[:column+1,column]+=coefficients;z-=q[:,:column+1]@coefficients\n/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/scri_linear_audit.py:104: RuntimeWarning: invalid value encountered in matmul\n  coefficients=q[:,:column+1].T@z;h[:column+1,column]+=coefficients;z-=q[:,:column+1]@coefficients\n/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/scri_linear_audit.py:118: RuntimeWarning: divide by zero encountered in matmul\n  mode=q[:,:m]@eigenvectors[:,index];mode/=np.linalg.norm(mode)\n/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/scri_linear_audit.py:118: RuntimeWarning: overflow encountered in matmul\n  mode=q[:,:m]@eigenvectors[:,index];mode/=np.linalg.norm(mode)\n/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/scri_linear_audit.py:118: RuntimeWarning: invalid value encountered in matmul\n  mode=q[:,:m]@eigenvectors[:,index];mode/=np.linalg.norm(mode)\n/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/scri_linear_audit.py:138: RuntimeWarning: divide by zero encountered in matmul\n  gram=q[:,:m].T@q[:,:m]-np.eye(m)\n/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/scri_linear_audit.py:138: RuntimeWarning: overflow encountered in matmul\n  gram=q[:,:m].T@q[:,:m]-np.eye(m)\n/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/scri_linear_audit.py:138: RuntimeWarning: invalid value encountered in matmul\n  gram=q[:,:m].T@q[:,:m]-np.eye(m)\n",
+  "seconds": 41.08593879200001
+}

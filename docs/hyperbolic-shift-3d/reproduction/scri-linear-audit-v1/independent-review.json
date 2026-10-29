@@ -1,0 +1,197 @@
+{
+  "scope": "Independent direct ctypes saved-mode replay; no trajectory, no Krylov sweep, no evolution or input mutation.",
+  "source_manifest": "22563472e07689b67017f04596d58457072e3fef65bfe3b33520ce60ca1020fc",
+  "source_entries_verified": 39,
+  "library_sha256": "3145d2a8173705caef75aff2b61f4b6d491aa008dacdeeec9991a81d1345fa2d",
+  "previous_non_blas_replay_sha256": "67222179f3c9601f0c363004d0731472f71945a729da80fd7eade5c5d520242e",
+  "norm": "math.fsum real^2+imag^2; no BLAS norm or Rayleigh contraction",
+  "basis_gram": [
+    [
+      0.9999999999999998,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0000000000000002,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.9999999999999998,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.9999999999999998,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.9999999999999998
+    ]
+  ],
+  "cases": [
+    {
+      "scheme": "v2",
+      "report_sha256": "1a6b6ff5130414138bebada5813343b0309f7d11b4f828f3319a8ffda086c4fb",
+      "modes_sha256": "0db088ad386007f7acd0c10e401b931f53ff22562ff82a36526b1901eb7d04d6",
+      "all_saved_values_finite": true,
+      "reset_evaluation_bitwise_equal": true,
+      "background_rhs_max": 1.0570672756654085e-12,
+      "background_rhs_l2": 7.390957597326987e-12,
+      "native_rhs_evaluations": 29,
+      "modes": [
+        {
+          "index": 0,
+          "reported_eigenvalue": [
+            7.556946586522486,
+            1.568429122735628e-07
+          ],
+          "saved_mode_norm": 1.0000000000000002,
+          "samples": [
+            {
+              "epsilon": 0.0001,
+              "relative_residual": 2.6495784019258834e-08,
+              "rayleigh": [
+                7.556946592890746,
+                1.5429144312679075e-07
+              ]
+            },
+            {
+              "epsilon": 5e-05,
+              "relative_residual": 2.7009171510172112e-08,
+              "rayleigh": [
+                7.556946591728756,
+                1.5332437038692412e-07
+              ]
+            },
+            {
+              "epsilon": 1e-05,
+              "relative_residual": 4.627844208699626e-08,
+              "rayleigh": [
+                7.556946583515208,
+                1.4937487555728537e-07
+              ]
+            },
+            {
+              "epsilon": 2e-06,
+              "relative_residual": 1.8208214008736156e-07,
+              "rayleigh": [
+                7.556946567692152,
+                1.553523045666469e-07
+              ]
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "reported_eigenvalue": [
+            7.4434814083808565,
+            0.0
+          ],
+          "saved_mode_norm": 1.0000000000000002,
+          "samples": [
+            {
+              "epsilon": 0.0001,
+              "relative_residual": 8.118816264901159e-08,
+              "rayleigh": [
+                7.443481407305845,
+                0.0
+              ]
+            },
+            {
+              "epsilon": 5e-05,
+              "relative_residual": 8.123675158926144e-08,
+              "rayleigh": [
+                7.443481409055788,
+                0.0
+              ]
+            },
+            {
+              "epsilon": 1e-05,
+              "relative_residual": 8.704628208378543e-08,
+              "rayleigh": [
+                7.443481415622867,
+                0.0
+              ]
+            },
+            {
+              "epsilon": 2e-06,
+              "relative_residual": 1.8922354420058006e-07,
+              "rayleigh": [
+                7.44348146681177,
+                0.0
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "scheme": "v3",
+      "report_sha256": "eec7e3dba1f25e0b10ace2d248f2a1aabd4538aa7655641dfeb38e4b1c99e268",
+      "modes_sha256": "b7f4eb185d0ed949fe95a877a220ff2595e3c2df3caf5184e2a0eef545337ed4",
+      "all_saved_values_finite": true,
+      "reset_evaluation_bitwise_equal": true,
+      "background_rhs_max": 1.074103302184046e-12,
+      "background_rhs_l2": 7.271175347630193e-12,
+      "native_rhs_evaluations": 13,
+      "modes": [
+        {
+          "index": 0,
+          "reported_eigenvalue": [
+            6.977836145800506,
+            0.0
+          ],
+          "saved_mode_norm": 1.0,
+          "samples": [
+            {
+              "epsilon": 0.0001,
+              "relative_residual": 3.758663666218893e-05,
+              "rayleigh": [
+                6.977836149123415,
+                0.0
+              ]
+            },
+            {
+              "epsilon": 5e-05,
+              "relative_residual": 3.75866488678876e-05,
+              "rayleigh": [
+                6.977836149471893,
+                0.0
+              ]
+            },
+            {
+              "epsilon": 1e-05,
+              "relative_residual": 3.7586834575174095e-05,
+              "rayleigh": [
+                6.977836153065719,
+                0.0
+              ]
+            },
+            {
+              "epsilon": 2e-06,
+              "relative_residual": 3.758631668535532e-05,
+              "rayleigh": [
+                6.977836154166786,
+                0.0
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

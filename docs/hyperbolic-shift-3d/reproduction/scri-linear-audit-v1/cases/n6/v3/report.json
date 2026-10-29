@@ -1,0 +1,307 @@
+{
+  "status": "completed",
+  "scope": "frozen Minkowski volume, tangent-projected surface RHS",
+  "n": 6,
+  "scheme": "v3",
+  "dimension": 4104,
+  "epsilon_max_coordinate": 2e-06,
+  "basis": [
+    "chi",
+    "g_diag1",
+    "g_diag2",
+    "g_xy",
+    "g_xz",
+    "g_yz",
+    "A_diag1",
+    "A_diag2",
+    "A_xy",
+    "A_xz",
+    "A_yz",
+    "P",
+    "Theta",
+    "Lambda_x",
+    "Lambda_y",
+    "Lambda_z",
+    "B_x",
+    "B_y",
+    "B_z"
+  ],
+  "library_sha256": "a36822126f3af716fd6b188e6075a3abdcf893d008d0e509b1b83413bfb0ed1d",
+  "seed": 738123,
+  "maximum_arnoldi_vectors": 40,
+  "budget_seconds": 370.0,
+  "background_rhs_max": 1.074103302184046e-12,
+  "background_rhs_l2": 7.271175347630193e-12,
+  "epsilon_checks": [
+    {
+      "epsilon": 9.999999999999999e-06,
+      "relative_change": 6.798854080507002e-11
+    },
+    {
+      "epsilon": 2e-06,
+      "relative_change": 0.0
+    },
+    {
+      "epsilon": 4e-07,
+      "relative_change": 2.7638909603926353e-10
+    }
+  ],
+  "linearity_checks": {
+    "negation": 0.0,
+    "scaling": 0.0,
+    "additivity": 5.5021961499292676e-11
+  },
+  "arnoldi_progress": [
+    {
+      "vectors": 10,
+      "rightmost_ritz": [
+        [
+          3.1106380955634125,
+          0.0
+        ],
+        [
+          -49.336153775790805,
+          0.0
+        ],
+        [
+          -65.28548884713778,
+          0.0
+        ]
+      ]
+    },
+    {
+      "vectors": 20,
+      "rightmost_ritz": [
+        [
+          4.904100223173474,
+          0.0
+        ],
+        [
+          2.6756841988611133,
+          1.3876594963227113
+        ],
+        [
+          2.6756841988611133,
+          -1.3876594963227113
+        ]
+      ]
+    },
+    {
+      "vectors": 30,
+      "rightmost_ritz": [
+        [
+          6.107380970123857,
+          0.0
+        ],
+        [
+          5.887626888384731,
+          0.0
+        ],
+        [
+          4.531796528269496,
+          0.632352174032217
+        ]
+      ]
+    },
+    {
+      "vectors": 40,
+      "rightmost_ritz": [
+        [
+          6.454288025835967,
+          0.0
+        ],
+        [
+          6.105045698244672,
+          0.0
+        ],
+        [
+          4.5688096903747795,
+          1.228904265312552
+        ]
+      ]
+    }
+  ],
+  "arnoldi_vectors": 40,
+  "basis_orthogonality_max": 3.4416913763379853e-15,
+  "modes": [
+    {
+      "eigenvalue": [
+        6.454288025835967,
+        0.0
+      ],
+      "absolute_true_jvp_residual": 0.49831527109569773,
+      "relative_true_jvp_residual": 0.03854606984777198,
+      "hessenberg_residual_estimate": 0.49831523734432126,
+      "epsilon_relative_change": 7.422277231970581e-07,
+      "residual_and_epsilon_pass": false,
+      "field_squared_norm": {
+        "chi": 1.2432338051087572e-09,
+        "g_diag1": 6.292101055153372e-05,
+        "g_diag2": 8.46219560407597e-05,
+        "g_xy": 0.00011958443994547518,
+        "g_xz": 8.881196639314617e-05,
+        "g_yz": 0.00010868742597864729,
+        "A_diag1": 0.13505318471209557,
+        "A_diag2": 0.18204246467294696,
+        "A_xy": 0.2568552978601381,
+        "A_xz": 0.19088171410481458,
+        "A_yz": 0.2333989517545551,
+        "P": 1.925460062744581e-09,
+        "Theta": 4.20880896762951e-09,
+        "Lambda_x": 0.0004741605532409893,
+        "Lambda_y": 0.0003142710873360699,
+        "Lambda_z": 0.0005153206995189043,
+        "B_x": 1.2186518970335532e-10,
+        "B_y": 1.20338138688234e-10,
+        "B_z": 1.3673797651078414e-10
+      },
+      "edge_band_squared_norm": 0.8970599144602871,
+      "maximum_row": 36,
+      "maximum_row_geometry": [
+        -0.6469966392206304,
+        -0.539163866017192,
+        -0.539163866017192,
+        1.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "eigenvalue": [
+        6.105045698244672,
+        0.0
+      ],
+      "absolute_true_jvp_residual": 0.8217759772864708,
+      "relative_true_jvp_residual": 0.06700088475600763,
+      "hessenberg_residual_estimate": 0.821775925790836,
+      "epsilon_relative_change": 1.0174619735420575e-06,
+      "residual_and_epsilon_pass": false,
+      "field_squared_norm": {
+        "chi": 3.58368211793279e-09,
+        "g_diag1": 6.152345348120589e-05,
+        "g_diag2": 8.635442534813453e-05,
+        "g_xy": 0.00011620183722405521,
+        "g_xz": 8.843085516042735e-05,
+        "g_yz": 0.00011320732036146843,
+        "A_diag1": 0.13153725692711882,
+        "A_diag2": 0.18547690740107214,
+        "A_xy": 0.24902575416481493,
+        "A_xz": 0.18969504787573677,
+        "A_yz": 0.24222390104586425,
+        "P": 5.7703517404933615e-09,
+        "Theta": 1.312028141263053e-08,
+        "Lambda_x": 0.0006043265220988274,
+        "Lambda_y": 0.00043999601869409733,
+        "Lambda_z": 0.0005310686430776095,
+        "B_x": 3.330530102915837e-10,
+        "B_y": 3.2887963692180633e-10,
+        "B_z": 3.736997809542176e-10
+      },
+      "edge_band_squared_norm": 0.9036137444394706,
+      "maximum_row": 36,
+      "maximum_row_geometry": [
+        -0.6469966392206304,
+        -0.539163866017192,
+        -0.539163866017192,
+        1.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "eigenvalue": [
+        4.5688096903747795,
+        1.228904265312552
+      ],
+      "absolute_true_jvp_residual": 2.0982990684972735,
+      "relative_true_jvp_residual": 0.21180345924110228,
+      "hessenberg_residual_estimate": 2.0982991152130768,
+      "epsilon_relative_change": 1.1420979862154216e-06,
+      "residual_and_epsilon_pass": false,
+      "field_squared_norm": {
+        "chi": 2.4272339467323502e-08,
+        "g_diag1": 6.943270701631956e-05,
+        "g_diag2": 8.434776958315073e-05,
+        "g_xy": 0.00011419090933691877,
+        "g_xz": 9.50359226204268e-05,
+        "g_yz": 0.0001102225257859476,
+        "A_diag1": 0.14628364803353527,
+        "A_diag2": 0.1783776947355476,
+        "A_xy": 0.23985791146614585,
+        "A_xz": 0.1994278794920932,
+        "A_yz": 0.2319544635566257,
+        "P": 3.7832569726185615e-08,
+        "Theta": 7.892288078389446e-08,
+        "Lambda_x": 0.001389689923461202,
+        "Lambda_y": 0.0010829178560822078,
+        "Lambda_z": 0.0011524171742762195,
+        "B_x": 2.2190297187823264e-09,
+        "B_y": 2.191223816271977e-09,
+        "B_z": 2.489846643673593e-09
+      },
+      "edge_band_squared_norm": 0.9400845608184648,
+      "maximum_row": 108,
+      "maximum_row_geometry": [
+        -0.539163866017192,
+        -0.6469966392206304,
+        -0.539163866017192,
+        3.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "eigenvalue": [
+        4.203760648089149,
+        0.0
+      ],
+      "absolute_true_jvp_residual": 1.5300759557218278,
+      "relative_true_jvp_residual": 0.17633046883333664,
+      "hessenberg_residual_estimate": 1.5300760300280403,
+      "epsilon_relative_change": 1.8632382331430729e-06,
+      "residual_and_epsilon_pass": false,
+      "field_squared_norm": {
+        "chi": 1.648818933158602e-08,
+        "g_diag1": 8.084964850381376e-05,
+        "g_diag2": 7.615714944152712e-05,
+        "g_xy": 0.00011139155852827039,
+        "g_xz": 9.868898162679416e-05,
+        "g_yz": 0.00011797254631808929,
+        "A_diag1": 0.16523912902786428,
+        "A_diag2": 0.1573785843920074,
+        "A_xy": 0.2287554974957598,
+        "A_xz": 0.2030873659887041,
+        "A_yz": 0.2415717190227139,
+        "P": 3.315047559431787e-08,
+        "Theta": 7.939938111338414e-08,
+        "Lambda_x": 0.0011052467129665981,
+        "Lambda_y": 0.0011972337365247533,
+        "Lambda_z": 0.0011800310125622646,
+        "B_x": 1.186177338008926e-09,
+        "B_y": 1.171313755452435e-09,
+        "B_z": 1.3309419152187135e-09
+      },
+      "edge_band_squared_norm": 0.953519819370214,
+      "maximum_row": 180,
+      "maximum_row_geometry": [
+        -0.539163866017192,
+        -0.539163866017192,
+        -0.6469966392206304,
+        5.0,
+        0.0,
+        0.0
+      ]
+    }
+  ],
+  "interpretation": "Only modes passing fresh residual and epsilon checks are converged candidates; no full-system or finite-dt stability inference.",
+  "seconds": 2.0791265,
+  "native_rhs_evaluations": 117,
+  "max_checks": {
+    "null": 1.2212453311003976e-15,
+    "dependent_D_compatibility": 3.2526065174565133e-19,
+    "determinant_error": 6.661338147750939e-16,
+    "A_trace": 2.81012964247297e-21,
+    "pole": 0.001496755868404023,
+    "clock": 0.0010577112524293557
+  }
+}
