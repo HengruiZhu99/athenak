@@ -1,0 +1,233 @@
+{
+  "evidence_verified": true,
+  "scientific_status": "failed",
+  "source_manifest_sha256": "0e7967f1f33559ed79b9f97d6416dacc296f0f14663d35c682177a9ac07db60f",
+  "binary_sha256": "fc8d8074351a01ade6fd05dcf460555c935cf4ffe66c9bda31cc517679500fff",
+  "checks_recomputed": 33,
+  "failed_checks": [
+    {
+      "check": {
+        "path": [
+          "status"
+        ],
+        "op": "eq",
+        "value": "completed"
+      },
+      "observed": "failed",
+      "passed": false
+    },
+    {
+      "check": {
+        "path": [
+          "diagnostics_current"
+        ],
+        "op": "eq",
+        "value": true
+      },
+      "observed": false,
+      "passed": false
+    },
+    {
+      "check": {
+        "path": [
+          "checkpoint_admitted"
+        ],
+        "op": "eq",
+        "value": true
+      },
+      "observed": false,
+      "passed": false
+    },
+    {
+      "check": {
+        "path": [
+          "max_state_deviation"
+        ],
+        "op": "le",
+        "value": 1e-08
+      },
+      "observed": 21.276138132990628,
+      "passed": false
+    },
+    {
+      "check": {
+        "path": [
+          "H_L2"
+        ],
+        "op": "le",
+        "value": 1e-07
+      },
+      "observed": 0.05654915794761436,
+      "passed": false
+    },
+    {
+      "check": {
+        "path": [
+          "M_L2"
+        ],
+        "op": "le",
+        "value": 1e-07
+      },
+      "observed": 1.6542601081383856,
+      "passed": false
+    },
+    {
+      "check": {
+        "path": [
+          "t"
+        ],
+        "op": "eq",
+        "value": 1.0
+      },
+      "observed": 0.5224999999999979,
+      "passed": false
+    },
+    {
+      "check": {
+        "path": [
+          "steps"
+        ],
+        "op": "eq",
+        "value": 2001
+      },
+      "observed": 1045,
+      "passed": false
+    },
+    {
+      "check": {
+        "path": [
+          "segment_steps"
+        ],
+        "op": "eq",
+        "value": 2001
+      },
+      "observed": 1045,
+      "passed": false
+    }
+  ],
+  "source_git_blobs_verified": 2613,
+  "build_receipt_sha256": "0f8ac6a276149835ede35eb495ed692e95876bf4cc5549b90eb6eeab9cd002c0",
+  "admission_sha256": "32cc0fed05319e204f41edea3b62f614138f07a801079e6348536a07650713a1",
+  "preflight_supporting_hashes_verified": 17,
+  "terminal": {
+    "job_id": "8983855.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "state": "F",
+    "exit_status": 1,
+    "allocation_released": true
+  },
+  "one_node_twelve_tiles_verified": true,
+  "artifacts": [
+    {
+      "remote_path": "campaigns/stability-dissipative-minkowski-v1/output/minkowski.report.json",
+      "local_path": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/aurora/stability-dissipative-minkowski-v1/output/minkowski.report.json",
+      "bytes": 2733,
+      "sha256": "6199a589aa0a38b97cf8b23aeed04e3661528631721f58e4b52739d4f322c546",
+      "unchanged_after_read": true
+    },
+    {
+      "remote_path": "campaigns/stability-dissipative-minkowski-v1/output/minkowski.history.csv",
+      "local_path": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/aurora/stability-dissipative-minkowski-v1/output/minkowski.history.csv",
+      "bytes": 6626,
+      "sha256": "b5c0b7d7d06fc1de9a34ce2d9b2a70fa0ff127fa816882948f0e23c3ee525240",
+      "unchanged_after_read": true
+    },
+    {
+      "remote_path": "campaigns/stability-dissipative-minkowski-v1/output/minkowski.checkpoint",
+      "local_path": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/aurora/stability-dissipative-minkowski-v1/output/minkowski.checkpoint",
+      "bytes": 39362648,
+      "sha256": "61353557c22096bbf02b55eac278a1f92751cd961944bc6eca94e7a390f6a7cb",
+      "unchanged_after_read": true
+    },
+    {
+      "remote_path": "campaigns/stability-dissipative-minkowski-v1/output/minkowski.failed-stage.bin",
+      "local_path": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/aurora/stability-dissipative-minkowski-v1/output/minkowski.failed-stage.bin",
+      "bytes": 19681280,
+      "sha256": "f5524b0742f403841cbbe280c62efe0f6fc96b2fcc7a5166d55e54d098b7535e",
+      "unchanged_after_read": true
+    },
+    {
+      "remote_path": "campaigns/stability-dissipative-minkowski-v1/output/minkowski.log",
+      "local_path": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/aurora/stability-dissipative-minkowski-v1/output/minkowski.log",
+      "bytes": 958,
+      "sha256": "ba37b678f4ac2d862d23f175218727a3f84faf4995f01045efc5a062299edab1",
+      "unchanged_after_read": true
+    }
+  ],
+  "metadata_sha256": {
+    "plan.json": "daf10ec4f22cfd961c27582895fb9d1e5cfb205f7d3f71458c6882185f8207f2",
+    "binding.json": "0902883bd4bd3d36c3145c9bf23f4215c981235098c17b95e32c1948e2f861cd",
+    "worker-status.json": "f1855b5f851b0c41371503e335e0088a6ce0c5b0605e22a7c7e1e3836fb2b83f",
+    "collected.json": "45d489fbc699224bb30b1191d03d4fe037e3ae580a4f18eaa2162901cf46416e",
+    "submission.json": "5b030f02dacba255f01726e2cbb5017beb26682983034741000a53cadda50148",
+    "allocation-released.json": "66cd24968838b8542561504e9b94bf36cf3c1926d3a73fcedc3d1516d7b44396",
+    "run_debug.pbs": "dbac64051d51efaed5874bf4cb8f99bbcbc92f16924b9adae0b496087f4352ee",
+    "output/affinity.log": "79ea2d31077fffc1c4f6d5b6435515ca272e0d278f1e042b63c412dc73607555"
+  },
+  "checkpoint": {
+    "magic": "HYP3D_MPI_V4",
+    "n": 16,
+    "nf": 31,
+    "kind": 0,
+    "admitted": false,
+    "cells": 77824,
+    "surface_size": 47616,
+    "steps": 1045,
+    "time": 0.5224999999999979,
+    "dt": 0.0005,
+    "header_bytes": 88,
+    "scri_dissipation_epsilon": 2.0,
+    "scri_dissipation_degree": 7,
+    "base_except_magic_sha256": "1526730ea2462df572cf1e599a303b080e52c84948bbd3d758519639ebe73a3b",
+    "arrays": [
+      {
+        "name": "volume_state",
+        "doubles": 2412544,
+        "sha256": "0990573e09111705f6a5f8d095757c7aaa9cce7f44fcee25a72fac587289825b"
+      },
+      {
+        "name": "volume_compensation",
+        "doubles": 2412544,
+        "sha256": "744f6a5717dbe41bb1a82bab274dd4713080a2771e683e5103275057de98a5b6"
+      },
+      {
+        "name": "scri_state",
+        "doubles": 47616,
+        "sha256": "e202b381f3f2ef880b3129d4881b5de48a6ff30cfc6907ead9a4de46c4807eb6"
+      },
+      {
+        "name": "scri_compensation",
+        "doubles": 47616,
+        "sha256": "7e30bc7df7cb40eb361b53bc2e8b5f0c4e91976854e749812e2ccfaa1969498e"
+      }
+    ],
+    "bytes": 39362648,
+    "sha256": "61353557c22096bbf02b55eac278a1f92751cd961944bc6eca94e7a390f6a7cb"
+  },
+  "helpers": [
+    {
+      "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-dissipative-minkowski-v1/positivity-audit/run_audit.py",
+      "sha256": "231fd6c1268ad9017f2157059c729a8bfa8306a8d5c8f984f5e169db791f7d93"
+    },
+    {
+      "path": "docs/hyperbolic-shift-3d/reproduction/aurora/scri-positivity-audit-v1/run_audit.py",
+      "sha256": "f6e8a4a26d5746deef847fc3f82bdf412682334afa939a6d6f9ec884dfc56234"
+    },
+    {
+      "path": "docs/hyperbolic-shift-3d/reproduction/aurora/stability-projected-minkowski-v1/analyze.py",
+      "sha256": "c3a0b979a46f007f8b1c9828b016f23089ad547a0c47f63071f21792bb1a9dd9"
+    },
+    {
+      "path": "docs/hyperbolic-shift-3d/reproduction/aurora/resolution-control-v1/analyze.py",
+      "sha256": "2da7fb327a068c6442cf4dc0ea91225502d3c5f83d07f2dd3ef936d9aa35ebb1"
+    },
+    {
+      "path": "docs/hyperbolic-shift-3d/reproduction/aurora/preflight-dissipative-v1/verify.py",
+      "sha256": "430712dd878d319db28727de78403b331bf724c42bec8a23830b03c4c183ed80"
+    },
+    {
+      "path": "docs/hyperbolic-shift-3d/reproduction/aurora/scri-positivity-audit-v1/scri_interpolation_audit.cpp",
+      "sha256": "585cc254bf28beae859f845a718dd357e94dc12e2dfecb20e2e34f6576985910"
+    }
+  ],
+  "scope": "Read-only immediate rejection localization, not the initial growing-mode cause; no evolution, repair, restart or admission."
+}
