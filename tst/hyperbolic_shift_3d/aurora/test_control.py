@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import shutil
+import struct
 import subprocess
 import tempfile
 import unittest
@@ -22,6 +23,23 @@ def example():
                 '0.01', '0.0001', 'inputs/initial', '-', '@WALL_SECONDS@'],
                 timeout_seconds=120, report='runs/one/output/minkowski.report.json',
                 inputs=['inputs/initial'], checks=[dict(path=['status'], op='eq', value='completed')])])
+
+
+def resolution_example():
+    plan = example()
+    plan.update(phase='resolution_control', n=32, admission='admission.json', worker_seconds=3510)
+    plan['resources']['walltime'] = '01:00:00'
+    template = plan['commands'][0]
+    plan['commands'] = []
+    for n in [32, 24, 16]:
+        command = copy.deepcopy(template)
+        prefix = f'runs/one/output/minkowski-n{n}'
+        command.update(name=f'minkowski-n{n}', n=n, continue_after_failure=True,
+                       report=prefix+'.report.json', artifacts=[prefix+'.checkpoint'])
+        command['args'][0:2] = [str(n), prefix]
+        command['checks'].append(dict(path=['H_L2'], op='le', value=1e-7))
+        plan['commands'].append(command)
+    return plan
 
 
 class ControllerTests(unittest.TestCase):
@@ -183,6 +201,230 @@ class ControllerTests(unittest.TestCase):
         admission['puncture_completed_t_over_M']=100
         control.atomic(self.root/'admission.json',admission)
         control.validate_admission(self.root,plan,'sha',{})
+
+    def test_resolution_controls_allow_explicit_grids_in_reviewed_range(self):
+        plan = resolution_example()
+        control.validate_plan(self.root, plan)
+        # The bounds come from the plan and its admission, not hardcoded grids.
+        plan['low_resolution_n'], plan['n'] = 8, 40
+        for command, n in zip(plan['commands'], [40, 20, 8]):
+            command['n'], command['args'][0] = n, str(n)
+        control.validate_plan(self.root, plan)
+
+    def test_resolution_controls_reject_ambiguous_grid_or_binary(self):
+        for value in [None, 14, 33, 34, True]:
+            plan = resolution_example()
+            command = plan['commands'][0]
+            if value is None:
+                command.pop('n')
+            else:
+                command['n'] = value
+                command['args'][0] = str(value)
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                control.validate_plan(self.root, plan)
+        plan = resolution_example()
+        plan['commands'][0]['args'][0] = '24'
+        with self.assertRaises(ValueError):
+            control.validate_plan(self.root, plan)
+        plan = resolution_example()
+        plan['commands'][0]['executable'] = 'build/another-evolution'
+        with self.assertRaises(ValueError):
+            control.validate_plan(self.root, plan)
+
+    def test_continuation_requires_resolution_phase_evolution_and_boolean(self):
+        for phase in ['preflight', 'stability', 'convergence']:
+            plan = example()
+            plan['phase'] = phase
+            plan['commands'][0]['continue_after_failure'] = True
+            with self.subTest(phase=phase), self.assertRaises(ValueError):
+                control.validate_plan(self.root, plan)
+        plan = resolution_example()
+        plan['commands'][0]['continue_after_failure'] = 'true'
+        with self.assertRaises(ValueError):
+            control.validate_plan(self.root, plan)
+        plan = resolution_example()
+        plan['commands'][0]['kind'] = 'check'
+        with self.assertRaises(ValueError):
+            control.validate_plan(self.root, plan)
+        plan = resolution_example()
+        plan['commands'][0]['artifacts'] = []
+        with self.assertRaises(ValueError):
+            control.validate_plan(self.root, plan)
+        plan = example()
+        plan['commands'][0]['n'] = 24
+        plan['commands'][0]['args'][0] = '24'
+        with self.assertRaises(ValueError):
+            control.validate_plan(self.root, plan)
+
+    def resolution_admission(self):
+        return dict(passed=True, phase='preflight', low_resolution_n=16,
+                    source_manifest_sha256=control.digest(self.root/'source-manifest.json'),
+                    binaries={'build/evolve': control.digest(self.root/'build/evolve')},
+                    gpu_cpu_parity=True, restart_equivalence=True)
+
+    def test_resolution_requires_exact_preflight_source_and_executable(self):
+        plan = resolution_example()
+        admission = self.resolution_admission()
+        control.atomic(self.root/'admission.json', admission)
+        control.validate_admission(self.root, plan, admission['source_manifest_sha256'], admission['binaries'])
+        for key, value in [('phase', 'stability'), ('source_manifest_sha256', 'changed'),
+                           ('binaries', {'build/evolve': 'changed'}), ('low_resolution_n', 8),
+                           ('gpu_cpu_parity', False), ('restart_equivalence', False)]:
+            changed = dict(admission, **{key: value})
+            control.atomic(self.root/'admission.json', changed)
+            with self.subTest(key=key), self.assertRaises(ValueError):
+                control.validate_admission(self.root, plan, admission['source_manifest_sha256'], admission['binaries'])
+
+    def run_resolution_worker(self, outcomes, continue_first=True):
+        plan = resolution_example()
+        plan['commands'][0]['continue_after_failure'] = continue_first
+        control.atomic(self.root/self.relative, plan)
+        control.atomic(self.root/'admission.json', self.resolution_admission())
+        self.bound()
+        admission_before = (self.root/'admission.json').read_bytes()
+        launched = []
+
+        def simulated_evolution(argv, root, log, seconds, active_plan):
+            command = active_plan['commands'][len(launched)]
+            mode = outcomes[len(launched)]
+            launched.append(command['name'])
+            log.write_text('Offline simulated evolution result\n')
+            native_status = ('completed' if mode in ['completed', 'completed_checks_fail']
+                             else 'checkpointed' if mode == 'checkpointed' else 'failed')
+            admitted = native_status != 'failed' or mode == 'wrong_admission'
+            accepted_time = .01 if native_status == 'completed' else .0001
+            steps = 100 if native_status == 'completed' else 1
+            reason = 'history append failed' if mode == 'io_error' else 'nonpositive interpolated scri geometry'
+            report = dict(status=native_status, error=reason if native_status == 'failed' else '',
+                          kind='minkowski', n=command['n'], cells=1, backend='SYCL', mpi_size=12,
+                          checkpoint_written=True, checkpoint_admitted=admitted,
+                          t=accepted_time, dt=.0001, steps=steps,
+                          H_L2=1 if mode == 'completed_checks_fail' else 0)
+            report_path = root/command['report']
+            if mode == 'bad_report':
+                report_path.write_text('{')
+            else:
+                control.atomic(report_path, report)
+            checkpoint = root/(command['args'][1]+'.checkpoint')
+            header = struct.pack('<16s4i3Q2d', b'HYP3D_MPI_V1'.ljust(16,b'\0'),
+                                 command['n'],31,0,int(admitted or mode == 'header_admitted'),
+                                 1,1,steps,accepted_time,.0001)
+            checkpoint.write_bytes(header+struct.pack('<64d',*([0.0]*64)))
+            if mode == 'changed_source':
+                (root/'source/file').write_text('changed source')
+            if mode == 'changed_binary':
+                (root/'build/evolve').write_text('changed executable')
+            return dict(returncode=0 if native_status != 'failed' else 1 if mode == 'launcher_error' else 2,
+                        timed_out=mode == 'timeout', storage_error='reserve exhausted' if mode == 'storage_error' else None,
+                        elapsed_seconds=.01)
+
+        environment = dict(PBS_JOBID='123.server', OMP_NUM_THREADS='1', ZE_FLAT_DEVICE_HIERARCHY='COMPOSITE',
+                           ZE_ENABLE_PCI_ID_DEVICE_ORDER='1', ONEAPI_DEVICE_SELECTOR='level_zero:gpu',
+                           MPIR_CVAR_ENABLE_GPU='1')
+        with patch.object(worker, 'allocation_node', return_value=['test-node']), \
+             patch.object(worker.Path, 'home', return_value=self.root), \
+             patch.dict(os.environ, environment), \
+             patch.object(worker, 'probe_affinity', return_value=dict(passed=True)), \
+             patch.object(worker, 'run_bounded', side_effect=simulated_evolution):
+            code = worker.run(self.root, self.relative)
+        status = json.loads((self.root/'runs/one/worker-status.json').read_text())
+        self.assertEqual((self.root/'admission.json').read_bytes(), admission_before)
+        self.assertFalse(status['stability_admission_eligible'])
+        self.assertEqual(status['phase'], 'resolution_control')
+        return code, status, launched
+
+    def test_numerical_failure_continues_but_overall_result_stays_failed(self):
+        code, status, launched = self.run_resolution_worker(['failed','completed','completed'])
+        self.assertEqual(code, 1)
+        self.assertEqual(launched, ['minkowski-n32','minkowski-n24','minkowski-n16'])
+        self.assertEqual(status['status'], 'failed')
+        self.assertEqual([c['status'] for c in status['cases']], ['failed','passed','passed'])
+        self.assertTrue(status['cases'][0]['continued_after_failure'])
+        self.assertFalse(status['cases'][0]['continuation_evidence']['checkpoint_admitted'])
+        self.assertEqual(status['continued_failures'], ['minkowski-n32'])
+
+    def test_all_resolution_controls_can_pass_without_stability_admission(self):
+        code, status, launched = self.run_resolution_worker(['completed']*3)
+        self.assertEqual(code, 0)
+        self.assertEqual(status['status'], 'passed')
+        self.assertEqual(len(launched), 3)
+        self.assertEqual(status['continued_failures'], [])
+
+    def test_unreviewed_failure_continuation_stops(self):
+        code, status, launched = self.run_resolution_worker(['failed'], continue_first=False)
+        self.assertEqual(code, 1)
+        self.assertEqual(status['status'], 'failed')
+        self.assertEqual(len(launched), 1)
+
+    def test_completed_evolution_failing_checks_does_not_continue(self):
+        code, status, launched = self.run_resolution_worker(['completed_checks_fail'])
+        self.assertEqual(code, 1)
+        self.assertEqual(len(launched), 1)
+        self.assertEqual(status['status'], 'failed')
+        self.assertEqual(status['cases'][0]['report_status'], 'completed')
+
+    def test_timeout_stops_even_with_valid_numerical_failure_record(self):
+        code, status, launched = self.run_resolution_worker(['timeout'])
+        self.assertEqual(code, 1)
+        self.assertEqual(status['status'], 'external_timeout')
+        self.assertEqual(len(launched), 1)
+
+    def test_storage_error_stops_continuation(self):
+        code, status, launched = self.run_resolution_worker(['storage_error'])
+        self.assertEqual(code, 1)
+        self.assertEqual(len(launched), 1)
+
+    def test_report_io_error_stops_continuation(self):
+        code, status, launched = self.run_resolution_worker(['io_error'])
+        self.assertEqual(code, 1)
+        self.assertEqual(len(launched), 1)
+
+    def test_invalid_report_stops_continuation(self):
+        code, status, launched = self.run_resolution_worker(['bad_report'])
+        self.assertEqual(code, 1)
+        self.assertEqual(len(launched), 1)
+
+    def test_launcher_failure_stops_continuation(self):
+        code, status, launched = self.run_resolution_worker(['launcher_error'])
+        self.assertEqual(code, 1)
+        self.assertEqual(len(launched), 1)
+
+    def test_incorrectly_admitted_failure_checkpoint_stops(self):
+        code, status, launched = self.run_resolution_worker(['header_admitted'])
+        self.assertEqual(code, 1)
+        self.assertEqual(len(launched), 1)
+        self.assertIn('incorrectly admitted', status['reason'])
+
+    def test_report_admits_failure_checkpoint_stops(self):
+        code, status, launched = self.run_resolution_worker(['wrong_admission'])
+        self.assertEqual(code, 1)
+        self.assertEqual(len(launched), 1)
+
+    def test_source_hash_change_stops_before_next_resolution(self):
+        code, status, launched = self.run_resolution_worker(['changed_source'])
+        self.assertEqual(code, 1)
+        self.assertEqual(len(launched), 1)
+        self.assertIn('Source changed', status['reason'])
+
+    def test_binary_hash_change_stops_before_next_resolution(self):
+        code, status, launched = self.run_resolution_worker(['changed_binary'])
+        self.assertEqual(code, 1)
+        self.assertEqual(len(launched), 1)
+        self.assertIn('Executable changed', status['reason'])
+
+    def test_checkpoint_after_prior_failure_stops_and_retains_failed_overall(self):
+        code, status, launched = self.run_resolution_worker(['failed','checkpointed'])
+        self.assertEqual(code, 1)
+        self.assertEqual(len(launched), 2)
+        self.assertEqual(status['status'], 'failed')
+        self.assertEqual(status['cases'][1]['status'], 'checkpointed')
+        self.assertEqual(status['stop_reason_status'], 'checkpointed')
+
+    def test_checkpoint_without_prior_failure_retains_existing_semantics(self):
+        code, status, launched = self.run_resolution_worker(['checkpointed'])
+        self.assertEqual(code, 3)
+        self.assertEqual(len(launched), 1)
+        self.assertEqual(status['status'], 'checkpointed')
 
 
 if __name__ == '__main__':

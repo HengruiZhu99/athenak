@@ -21,7 +21,7 @@ JOB_NAME = 'hyper-scri-3d'
 ACCOUNT = 'CompactBinaryMerger'
 CPU_BIND = '1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100'
 FIXED = dict(queue='debug', account=ACCOUNT, nodes=1, ranks=12, ranks_per_node=12)
-PHASES = {'preflight', 'stability', 'convergence'}
+PHASES = {'preflight', 'stability', 'convergence', 'resolution_control'}
 
 
 def digest(path):
@@ -80,6 +80,9 @@ def validate_plan(root, plan):
         raise ValueError('Declare the original low-resolution stability grid')
     if plan['phase'] in {'preflight', 'stability'} and n != plan['low_resolution_n']:
         raise ValueError('Preflight/stability must stay on the declared low-resolution grid')
+    resolution_control = plan['phase'] == 'resolution_control'
+    if resolution_control and (plan['low_resolution_n'] % 2 or n < plan['low_resolution_n']):
+        raise ValueError('Resolution controls require an even baseline no larger than plan.n')
     output = local_path(root, plan['output_dir'])
     commands = plan.get('commands')
     if not isinstance(commands, list) or not commands:
@@ -93,6 +96,19 @@ def validate_plan(root, plan):
         names.add(name)
         if command.get('kind') not in {'check', 'minkowski', 'pulse', 'puncture'}:
             raise ValueError('Unknown physical case')
+        if 'continue_after_failure' in command:
+            if not resolution_control or command['kind'] == 'check':
+                raise ValueError('Failure continuation is only allowed for resolution-control evolutions')
+            if type(command['continue_after_failure']) is not bool:
+                raise ValueError('Failure continuation must be an explicit reviewed boolean')
+        case_n = command.get('n', n)
+        if command['kind'] != 'check':
+            if resolution_control:
+                if ('n' not in command or type(case_n) is not int or case_n % 2
+                        or not plan['low_resolution_n'] <= case_n <= n):
+                    raise ValueError('Each resolution control needs explicit even n between low_resolution_n and plan.n')
+            elif case_n != n:
+                raise ValueError('Per-case resolution must equal plan.n outside resolution controls')
         local_path(root, command['executable'])
         argv = command.get('args')
         if not isinstance(argv, list) or not all(isinstance(x, str) for x in argv):
@@ -118,7 +134,7 @@ def validate_plan(root, plan):
             if path not in preceding_artifacts:
                 raise ValueError('Generated inputs must be declared artifacts of an earlier case')
         if command['kind'] != 'check':
-            if len(argv) not in [8, 9] or argv[0] != str(n) or argv[2] != command['kind']:
+            if len(argv) not in [8, 9] or argv[0] != str(case_n) or argv[2] != command['kind']:
                 raise ValueError('Evolution arguments must match the declared grid and physical case')
             if command['report'] != argv[1] + '.report.json':
                 raise ValueError('Evolution report must match its output prefix')
@@ -130,10 +146,16 @@ def validate_plan(root, plan):
                 raise ValueError('Initial and restart files must be explicitly bound inputs')
             if argv[7] != '@WALL_SECONDS@':
                 raise ValueError('Evolution must use the worker-bounded @WALL_SECONDS@ deadline')
+            if command.get('continue_after_failure') and argv[1] + '.checkpoint' not in command.get('artifacts', []):
+                raise ValueError('Failure continuation requires a declared checkpoint artifact')
         for path in command.get('artifacts', []):
             if not local_path(root, path).is_relative_to(output):
                 raise ValueError('Artifacts must be inside the fresh output directory')
             preceding_artifacts.add(path)
+    if resolution_control:
+        evolutions = [c for c in commands if c['kind'] != 'check']
+        if not evolutions or len({c['executable'] for c in evolutions}) != 1:
+            raise ValueError('Resolution controls must compare one unchanged evolution executable')
     storage.policy(plan)
     return allocation, budget
 
@@ -159,7 +181,7 @@ def validate_admission(root, plan, source_digest, binary_hashes):
     admission = json.loads(admission_path.read_text())
     if admission.get('passed') is not True:
         raise ValueError('A passed scientific admission is required for this phase')
-    required = 'preflight' if plan['phase'] == 'stability' else 'stability'
+    required = 'preflight' if plan['phase'] in {'stability', 'resolution_control'} else 'stability'
     if admission.get('phase') != required:
         raise ValueError(f'{required} admission required')
     if admission.get('source_manifest_sha256') != source_digest:

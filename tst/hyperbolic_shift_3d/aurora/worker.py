@@ -3,10 +3,13 @@
 import argparse
 import datetime
 import json
+import math
 import os
 from pathlib import Path
+import re
 import signal
 import socket
+import struct
 import subprocess
 import time
 
@@ -101,6 +104,60 @@ def classify(returncode, timed_out, report, checks):
     return 'failed'
 
 
+def continuation_evidence(root, plan, command, case, report):
+    """Permit only a recorded numerical rejection, never an infrastructure error.
+
+    A resolution control remains failed. Its unadmitted checkpoint is retained
+    as evidence and cannot become an accepted restart merely by continuing.
+    Source/executable hashes are checked by the caller before this decision.
+    """
+    if (plan['phase'] != 'resolution_control' or not command.get('continue_after_failure')
+            or command['kind'] == 'check' or case['status'] != 'failed'
+            or case.get('timed_out') or case.get('storage_error') or case.get('report_error')
+            or case.get('returncode') != 2 or report.get('status') != 'failed'
+            or report.get('checkpoint_written') is not True
+            or report.get('checkpoint_admitted') is not False):
+        return None
+    # The native runner also catches I/O/device-allocation exceptions. A
+    # generic status=failed is therefore insufficient evidence of a numerical
+    # failure. Compound messages (e.g. a later checkpoint-write failure) stop.
+    numerical_reason = re.fullmatch(
+        r'(?:nonpositive interpolated scri geometry|invalid diagnostic halo|'
+        r'invalid diagnostic volume geometry|invalid accepted volume geometry|'
+        r'invalid accepted (?:volume|surface) algebraic projection|'
+        r'device RHS failure at active cell -?\d+ reason \d+|'
+        r'device scri (?:projection|rate) failure at row -?\d+ reason [^;\r\n]+)',
+        report.get('error', ''))
+    if not numerical_reason:
+        return None
+    if (report.get('kind') != command['kind'] or report.get('n') != command['n']
+            or report.get('backend') != 'SYCL' or report.get('mpi_size') != 12):
+        raise ValueError('Failure report identity differs from the bound resolution control')
+    relative = command['args'][1] + '.checkpoint'
+    checkpoint = control.local_path(root, relative)
+    layout = struct.Struct('<16s4i3Q2d')
+    with checkpoint.open('rb') as stream:
+        header = stream.read(layout.size)
+    if len(header) != layout.size:
+        raise ValueError('Numerical-failure checkpoint header is truncated')
+    magic, n, nf, kind, admitted, cells, surface, steps, accepted_time, dt = layout.unpack(header)
+    if (magic != b'HYP3D_MPI_V1'.ljust(16, b'\0') or n != command['n'] or nf != 31
+            or kind != {'minkowski': 0, 'pulse': 1, 'puncture': 2}[command['kind']]
+            or admitted != 0 or cells <= 0 or surface <= 0
+            or cells != report.get('cells') or steps != report.get('steps')
+            or not math.isfinite(accepted_time) or not 0 <= accepted_time <= float(command['args'][3])
+            or accepted_time != report.get('t') or dt != float(command['args'][4])
+            or dt != report.get('dt')
+            or checkpoint.stat().st_size != layout.size + 16 * (nf * cells + surface)):
+        raise ValueError('Numerical-failure checkpoint is inconsistent or incorrectly admitted')
+    artifact = case['artifacts'].get(relative)
+    if not artifact:
+        raise ValueError('Numerical-failure checkpoint was not recorded as an artifact')
+    return dict(reason=report['error'], checkpoint=relative,
+                checkpoint_sha256=artifact['sha256'], checkpoint_admitted=False,
+                accepted_time=accepted_time, steps=steps)
+
+
 def run(root, relative):
     path, plan, binding = control.read_bound(root, relative)
     nodes = allocation_node()
@@ -125,6 +182,9 @@ def run(root, relative):
                   source_manifest_sha256=binding['source_manifest_sha256'], binaries=binding['binaries'],
                   plan_sha256=binding['plan_sha256'], phase=plan['phase'], n=plan['n'], cases=[],
                   storage_at_start=initial_space)
+    if plan['phase'] == 'resolution_control':
+        status.update(stability_admission_eligible=False, continued_failures=[])
+    had_continued_failure = False
     control.atomic(status_path, status)
     try:
         status['affinity'] = probe_affinity(root, output, deadline)
@@ -137,7 +197,8 @@ def run(root, relative):
             remaining = int(deadline-time.monotonic())
             timeout = min(command['timeout_seconds'], remaining-10)
             if timeout < 45:
-                status['status'] = 'incomplete'
+                status['status'] = 'failed' if had_continued_failure else 'incomplete'
+                status['stop_reason_status'] = 'incomplete'
                 status['reason'] = 'Insufficient worker time to start the next bounded case'
                 break
             args = [str(timeout-30) if a == '@WALL_SECONDS@' else a for a in command['args']]
@@ -147,6 +208,8 @@ def run(root, relative):
                          for name in command.get('generated_inputs', [])}
             case = dict(name=command['name'], kind=command['kind'], started=stamp(), argv=launched,
                         generated_inputs=generated)
+            if command['kind'] != 'check':
+                case['n'] = command.get('n', plan['n'])
             status['cases'].append(case)
             control.atomic(status_path, status)
             case.update(run_bounded(launched, root, output/(command['name']+'.log'), timeout, plan))
@@ -178,11 +241,20 @@ def run(root, relative):
             control.read_bound(root, relative)
             case['finished'] = stamp()
             if case['status'] != 'passed':
-                status['status'] = case['status']
+                evidence = continuation_evidence(root, plan, command, case, report)
+                if evidence is not None:
+                    case['continued_after_failure'] = True
+                    case['continuation_evidence'] = evidence
+                    had_continued_failure = True
+                    status['continued_failures'].append(case['name'])
+                    control.atomic(status_path, status)
+                    continue
+                status['status'] = 'failed' if had_continued_failure else case['status']
+                status['stop_reason_status'] = case['status']
                 break
             control.atomic(status_path, status)
         else:
-            status['status'] = 'passed'
+            status['status'] = 'failed' if had_continued_failure else 'passed'
     except Exception as error:
         status['status'] = 'failed'
         status['reason'] = f'{type(error).__name__}: {error}'
