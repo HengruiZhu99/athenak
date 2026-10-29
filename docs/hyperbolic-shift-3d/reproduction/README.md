@@ -165,7 +165,27 @@ the surface rate is -27.0231. The whole-state shape residual increases to
 0.6888, so this is not a negative eigenvalue or a stable evolution. The volume
 instantaneous action remains nearly unchanged. All nine default-path arrays
 match the frozen V4 oracle bitwise, and candidate surface/ghost null residuals
-stay at or below 1.11e-15. An actual candidate trajectory is still required.
+stay at or below 1.11e-15. A candidate duration test is still required.
+
+The optional V5 `hyperbolic_shift_3d_mpi_sampled_normal` target now provides
+[device numerator sampling](sampled-normal-device-local-v1/README.md) and
+[coupled MPI integration](scri-sampled-normal-mpi-v1/README.md). A separate halo
+plan supplies the blocks owned by each rank's surface rows; it does not assume
+those blocks match volume ownership. Native bulk jets produce five numerator
+samples per surface row, then the endpoint derivative enters before the final D
+trace and refreshed volume ghosts. The V5 checkpoint binds its normal scheme,
+six-node layout and bulk derivative order in a distinct 104-byte header.
+[Controller and reader checks](scri-sampled-normal-launcher-v1/README.md) prevent
+older-closure evidence or checkpoints from qualifying this candidate.
+
+Local Serial component tests give exact CPU/device-interface agreement for
+numerators, surface rates and final D, including twelve simulated ownership
+partitions. One-/two-rank four-step MPI checkpoints and a two-plus-two-step
+restart agree bitwise, as does rebuilt V4 against its frozen executable.
+These are short implementation checks, not actual GPU or sustained-stability
+results. The manufactured third-order boundary accuracy remains a limitation.
+The scientific source is frozen at `9d72318c14a2099b5aea118cca62e9fbd8773350`
+for a fresh MPI/SYCL build and separate Aurora validation.
 
 The original J-disabled, bulk-mu=4 1D control is confirmed to have completed coordinate `33.3333984375 = 100.0001953125 M`. Its N513/N1025 continuation chains and frozen-source identities were checked. A [portable N513 time series](original-1d-reference/history.csv) and [provenance](original-1d-reference/provenance.json) preserve the matching horizon/exterior-constraint reference. Late gauge settling and uniform puncture convergence were not established by that original control.
 
