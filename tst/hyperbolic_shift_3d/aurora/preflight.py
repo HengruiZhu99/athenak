@@ -21,6 +21,7 @@ import control
 
 HEADER = struct.Struct('<16s4i3Q2d')
 V4_CONFIG = struct.Struct('<dii')
+V5_NORMAL_CONFIG = struct.Struct('<4i')
 KEYS = ['magic', 'n', 'nf', 'kind', 'admitted', 'cells', 'surface', 'steps', 'time', 'dt']
 
 
@@ -35,14 +36,15 @@ def rank_info():
 def read_checkpoint(path):
     with path.open('rb') as stream:
         data = stream.read(HEADER.size)
-        extra = stream.read(V4_CONFIG.size) if data[:16] == b'HYP3D_MPI_V4'.ljust(16,b'\0') else b''
+        extra = stream.read(V4_CONFIG.size) if data[:16] in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V4',b'HYP3D_MPI_V5']] else b''
+        normal = stream.read(V5_NORMAL_CONFIG.size) if data[:16] == b'HYP3D_MPI_V5'.ljust(16,b'\0') else b''
     if len(data) != HEADER.size:
         raise ValueError('Checkpoint header truncated')
     result = dict(zip(KEYS, HEADER.unpack(data)))
-    if result['magic'] not in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V1',b'HYP3D_MPI_V2',b'HYP3D_MPI_V3',b'HYP3D_MPI_V4']] or result['nf'] != 31 or result['admitted'] != 1:
+    if result['magic'] not in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V1',b'HYP3D_MPI_V2',b'HYP3D_MPI_V3',b'HYP3D_MPI_V4',b'HYP3D_MPI_V5']] or result['nf'] != 31 or result['admitted'] != 1:
         raise ValueError('Unknown or unadmitted checkpoint schema')
     result.update(header_bytes=HEADER.size,scri_dissipation_epsilon=0.0,scri_dissipation_degree=0)
-    if result['magic'] == b'HYP3D_MPI_V4'.ljust(16,b'\0'):
+    if result['magic'] in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V4',b'HYP3D_MPI_V5']]:
         if len(extra) != V4_CONFIG.size:
             raise ValueError('V4 checkpoint configuration truncated')
         epsilon,degree,reserved = V4_CONFIG.unpack(extra)
@@ -50,6 +52,13 @@ def read_checkpoint(path):
             raise ValueError('Invalid V4 checkpoint dissipation configuration')
         result.update(header_bytes=HEADER.size+V4_CONFIG.size,
                       scri_dissipation_epsilon=epsilon,scri_dissipation_degree=degree)
+    if result['magic'] == b'HYP3D_MPI_V5'.ljust(16,b'\0'):
+        if len(normal) != V5_NORMAL_CONFIG.size:
+            raise ValueError('V5 checkpoint normal configuration truncated')
+        if V5_NORMAL_CONFIG.unpack(normal) != (1,6,4,0):
+            raise ValueError('Invalid V5 checkpoint normal derivative configuration')
+        result.update(header_bytes=104,scri_normal_derivative=control.SAMPLED_NORMAL_SCHEME,
+                      scri_normal_radial_nodes=6,scri_normal_bulk_derivative_order=4)
     if result['n'] < 6 or result['n'] % 2 or result['cells'] <= 0 or result['surface'] <= 0:
         raise ValueError('Invalid checkpoint dimensions')
     if not math.isfinite(result['time']) or result['time'] < 0 or not math.isfinite(result['dt']) or result['dt'] <= 0:
@@ -147,6 +156,8 @@ def run_binary(args, rank, root, checked, argv):
 
 
 def parse_component(content, kind, code):
+    if kind=='sampled_normal_device':
+        return parse_sampled_normal_component(content,code)
     if kind in ['angular_dissipation','scri_dissipation_closure']:
         return parse_dissipation_component(content,kind,code)
     backend=re.findall(r'^backend=(\S+)\s*$',content,re.M)
@@ -254,6 +265,41 @@ def parse_dissipation_component(content,kind,code):
                 maxima=maxima,cases=records)
 
 
+def parse_sampled_normal_component(content,code):
+    """Validate the fixed V5 normal-closure test contract on one GPU tile."""
+    backend=re.findall(r'^backend=(\S+)\s*$',content,re.M)
+    marker='Sampled-normal device, ownership, default and closure parity passed'
+    maxima={};records=[]
+    bounds=dict(cpu_pole_error=2e-10,cpu_rate_error=2e-10,cpu_trace_error=2e-10,
+                partition_error=2e-13,finite_D_error=0,null=3e-14,compatibility=2e-12)
+    for line in content.splitlines():
+        if not line.startswith('sampled_case='):continue
+        tokens=line.split()
+        if any(token.count('=')!=1 for token in tokens):
+            raise ValueError('Malformed sampled-normal component row')
+        row=dict(token.split('=') for token in tokens)
+        if len(row)!=len(tokens):raise ValueError('Duplicate sampled-normal component metric')
+        if any(row.get(key)!=value for key,value in
+               [('n','6'),('default_bitwise','1'),('partitions','12'),('rejection_checks','1')]):
+            raise ValueError('Sampled-normal shape, default, partition or rejection check failed')
+        try:epsilon=float(row['epsilon'])
+        except (KeyError,ValueError):raise ValueError('Missing/invalid sampled-normal epsilon')
+        if not math.isfinite(epsilon) or epsilon!=2:
+            raise ValueError('Sampled-normal component must test epsilon 2')
+        for key,upper in bounds.items():
+            try:value=float(row[key])
+            except (KeyError,ValueError):raise ValueError('Missing/invalid sampled-normal metric '+key)
+            if not math.isfinite(value) or value<0 or value>upper:
+                raise ValueError('Sampled-normal metric out of bounds: '+key)
+            maxima[key]=max(maxima.get(key,0),value)
+        records.append(row)
+    if len(records)!=2 or {r.get('sampled_case') for r in records}!={'minkowski','nonspherical'}:
+        raise ValueError('Sampled-normal component requires equilibrium and nonspherical cases')
+    passed=code==0 and backend==['SYCL'] and content.splitlines().count(marker)==1
+    return dict(passed=passed,gpu_cpu_parity=passed,backend=backend[0] if len(backend)==1 else None,
+                maxima=maxima,cases=records)
+
+
 def component(args, rank, root, checked):
     content,execution=run_binary(args,rank,root,checked,[])
     return dict(execution,**parse_component(content,args.component,execution['returncode']))
@@ -328,7 +374,7 @@ def restart(args, rank, root, checked):
         raise ValueError('Evolution kind does not describe the checkpoint')
     for report in reports:
         scheme='none' if header['magic']=='HYP3D_MPI_V1' else 'final_stage_standard'
-        angular='cross_face_centered5' if header['magic'] in ['HYP3D_MPI_V3','HYP3D_MPI_V4'] else 'face_local6'
+        angular='cross_face_centered5' if header['magic'] in ['HYP3D_MPI_V3','HYP3D_MPI_V4','HYP3D_MPI_V5'] else 'face_local6'
         if (report.get('checkpoint_schema',header['magic'])!=header['magic']
                 or report.get('algebraic_projection','none')!=scheme
                 or report.get('scri_angular_stencil','face_local6')!=angular):
@@ -338,9 +384,15 @@ def restart(args, rank, root, checked):
             expected=header[header_key]
             # Legacy reports may predate these fields. V4 must state its exact
             # runtime configuration; a V3 or missing-config report cannot pass.
-            value=report.get(key) if header['magic']=='HYP3D_MPI_V4' else report.get(key,expected)
+            value=report.get(key) if header['magic'] in ['HYP3D_MPI_V4','HYP3D_MPI_V5'] else report.get(key,expected)
             if type(value) not in [int,float] or not math.isfinite(value) or value!=expected:
                 raise ValueError('Evolution report/checkpoint dissipation configuration mismatch: '+key)
+        if header['magic']=='HYP3D_MPI_V5':
+            if report.get('checkpoint_schema')!=header['magic']:
+                raise ValueError('V5 evolution report must state its checkpoint schema')
+            for key in ['scri_normal_derivative','scri_normal_radial_nodes','scri_normal_bulk_derivative_order']:
+                if type(report.get(key)) is not type(header[key]) or report[key]!=header[key]:
+                    raise ValueError('Evolution report/checkpoint normal configuration mismatch: '+key)
         for report_key,header_key in [('n','n'),('t','time'),('dt','dt'),('steps','steps')]:
             if report[report_key]!=header[header_key]:
                 raise ValueError('Evolution report does not describe the checkpoint')
@@ -465,7 +517,8 @@ def main():
     sub=parser.add_subparsers(dest='mode',required=True)
     comp=sub.add_parser('component')
     comp.add_argument('--component',choices=['device','exchange','scri','algebraic','angular',
-                                            'angular_dissipation','scri_dissipation_closure'],required=True)
+                                            'angular_dissipation','scri_dissipation_closure',
+                                            'sampled_normal_device'],required=True)
     comp.add_argument('--test-binary',required=True)
     comp.add_argument('--cmake-cache',required=True)
     bench=sub.add_parser('benchmark')

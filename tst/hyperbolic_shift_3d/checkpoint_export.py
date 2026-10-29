@@ -23,6 +23,9 @@ header: finite nonnegative scri-dissipation epsilon, degree 7, reserved zero.
 Its arrays therefore start at byte 88. V4 retains projection and cross-face
 stencils even at epsilon zero. The evolution binaries reject cross-scheme
 restarts and V4 rejects a different epsilon.
+V5 retains that dissipation record and adds 16 bytes <4i for the normal closure:
+scheme=1, radial_nodes=6, bulk_derivative_order=4, reserved=0. Its payload begins
+at byte104 and its sampled-native-numerator scheme cannot mix with V1-V4.
 The header contains no topology descriptor. This exporter therefore
 supports only the current unrefined 19-block layout: core half-width .125,
 shell radii .45/.75/1, one core block and six faces per shell layer. All four
@@ -65,6 +68,8 @@ import sys
 
 HEADER = struct.Struct('<16s4i3Q2d')
 V4_CONFIG = struct.Struct('<dii')
+V5_NORMAL_CONFIG = struct.Struct('<4i')
+SAMPLED_NORMAL_SCHEME = 'sampled_native_numerator6'
 HEADER_KEYS = ('magic', 'n', 'nf', 'kind', 'admitted', 'cells', 'surface', 'steps', 't', 'dt')
 KINDS = {0: 'minkowski', 1: 'pulse', 2: 'puncture'}
 CHUNK = 1 << 20
@@ -106,10 +111,10 @@ def validate_checkpoint(path, expected_hash=None, expected_time=None):
         if len(raw) != HEADER.size:
             raise ValueError('Truncated checkpoint header')
         h = dict(zip(HEADER_KEYS, HEADER.unpack(raw)))
-        if h['magic'] not in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V1',b'HYP3D_MPI_V2',b'HYP3D_MPI_V3',b'HYP3D_MPI_V4']] or h['nf'] != 31:
+        if h['magic'] not in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V1',b'HYP3D_MPI_V2',b'HYP3D_MPI_V3',b'HYP3D_MPI_V4',b'HYP3D_MPI_V5']] or h['nf'] != 31:
             raise ValueError('Unsupported checkpoint magic/schema/precision')
         h.update(header_bytes=HEADER.size,scri_dissipation_epsilon=0.0,scri_dissipation_degree=0)
-        if h['magic'] == b'HYP3D_MPI_V4'.ljust(16,b'\0'):
+        if h['magic'] in [s.ljust(16,b'\0') for s in [b'HYP3D_MPI_V4',b'HYP3D_MPI_V5']]:
             extra = stream.read(V4_CONFIG.size)
             if len(extra) != V4_CONFIG.size:
                 raise ValueError('Truncated V4 checkpoint configuration')
@@ -119,6 +124,15 @@ def validate_checkpoint(path, expected_hash=None, expected_time=None):
             raw += extra
             h.update(header_bytes=HEADER.size+V4_CONFIG.size,
                      scri_dissipation_epsilon=epsilon,scri_dissipation_degree=degree)
+        if h['magic'] == b'HYP3D_MPI_V5'.ljust(16,b'\0'):
+            extra = stream.read(V5_NORMAL_CONFIG.size)
+            if len(extra) != V5_NORMAL_CONFIG.size:
+                raise ValueError('Truncated V5 checkpoint normal configuration')
+            if V5_NORMAL_CONFIG.unpack(extra) != (1,6,4,0):
+                raise ValueError('Invalid V5 checkpoint normal derivative configuration')
+            raw += extra
+            h.update(header_bytes=104,scri_normal_derivative=SAMPLED_NORMAL_SCHEME,
+                     scri_normal_radial_nodes=6,scri_normal_bulk_derivative_order=4)
         n = h['n']
         if h['admitted'] != 1 or h['kind'] not in KINDS:
             raise ValueError('Checkpoint is unadmitted or has an unknown physical kind')
@@ -168,7 +182,7 @@ def validate_report(path, h):
     if report.get('kind') != KINDS[h['kind']]:
         raise ValueError('Source report/checkpoint physical kind mismatch')
     scheme = 'none' if h['magic']=='HYP3D_MPI_V1' else 'final_stage_standard'
-    angular = 'cross_face_centered5' if h['magic'] in ['HYP3D_MPI_V3','HYP3D_MPI_V4'] else 'face_local6'
+    angular = 'cross_face_centered5' if h['magic'] in ['HYP3D_MPI_V3','HYP3D_MPI_V4','HYP3D_MPI_V5'] else 'face_local6'
     if (report.get('checkpoint_schema',h['magic']) != h['magic']
             or report.get('algebraic_projection','none') != scheme
             or report.get('scri_angular_stencil','face_local6') != angular):
@@ -176,9 +190,15 @@ def validate_report(path, h):
     for key in ['scri_dissipation_epsilon','scri_dissipation_degree','checkpoint_header_bytes']:
         header_key='header_bytes' if key=='checkpoint_header_bytes' else key
         expected=h[header_key]
-        value=report.get(key) if h['magic']=='HYP3D_MPI_V4' else report.get(key,expected)
+        value=report.get(key) if h['magic'] in ['HYP3D_MPI_V4','HYP3D_MPI_V5'] else report.get(key,expected)
         if type(value) not in [int,float] or not math.isfinite(value) or value!=expected:
             raise ValueError('Source report/checkpoint dissipation configuration mismatch: '+key)
+    if h['magic']=='HYP3D_MPI_V5':
+        if report.get('checkpoint_schema')!=h['magic']:
+            raise ValueError('V5 source report must state its checkpoint schema')
+        for key in ['scri_normal_derivative','scri_normal_radial_nodes','scri_normal_bulk_derivative_order']:
+            if type(report.get(key)) is not type(h[key]) or report[key]!=h[key]:
+                raise ValueError('Source report/checkpoint normal configuration mismatch: '+key)
     for key in ['checkpoint_written', 'checkpoint_admitted']:
         if key in report and report[key] is not True:
             raise ValueError(f'Source report rejects {key}')
@@ -283,7 +303,7 @@ def compatible_report(h, source, provenance):
     # This status belongs to the completed export. Preserve source campaign
     # completion independently, including an accepted walltime checkpoint.
     target = source.get('target_time', h['t'])
-    return dict(status='completed', status_scope='snapshot export, not source campaign completion',
+    result = dict(status='completed', status_scope='snapshot export, not source campaign completion',
                 snapshot_only=True, source_status=source['status'], source_target_time=target,
                 source_target_reached=source['status'] == 'completed' and h['t'] >= target-1e-12,
                 n=h['n'], cells=h['cells'], kind=KINDS[h['kind']], t=h['t'], dt=h['dt'],
@@ -296,6 +316,10 @@ def compatible_report(h, source, provenance):
                 native_fastflow={k: v for k, v in source.items()
                                  if k.startswith('horizon_') or k == 'diagnostic_time'},
                 execution_provenance_verified=provenance['execution_artifacts_verified'])
+    if h['magic']=='HYP3D_MPI_V5':
+        for key in ['scri_normal_derivative','scri_normal_radial_nodes','scri_normal_bulk_derivative_order']:
+            result[key]=h[key]
+    return result
 
 
 def main():

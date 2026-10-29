@@ -23,6 +23,8 @@ CPU_BIND = '1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-10
 FIXED = dict(queue='debug', account=ACCOUNT, nodes=1, ranks=12, ranks_per_node=12)
 PHASES = {'preflight', 'stability', 'convergence', 'resolution_control'}
 DISSIPATIVE_TARGET = 'hyperbolic_shift_3d_mpi_dissipative'
+SAMPLED_NORMAL_TARGET = 'hyperbolic_shift_3d_mpi_sampled_normal'
+SAMPLED_NORMAL_SCHEME = 'sampled_native_numerator6'
 
 
 def dissipation_config(command):
@@ -34,6 +36,19 @@ def dissipation_config(command):
         raise ValueError('V4 scri dissipation epsilon must be finite and nonnegative')
     return dict(executable=command['executable'],checkpoint_schema='HYP3D_MPI_V4',
                 scri_dissipation_epsilon=epsilon,scri_dissipation_degree=7,checkpoint_header_bytes=88)
+
+
+def normal_derivative_config(command):
+    """V5 normal operator and angular coefficient require their own admission."""
+    if command['kind']=='check' or Path(command['executable']).name != SAMPLED_NORMAL_TARGET:
+        return None
+    epsilon=float(command['args'][12]) if len(command['args'])==13 else 2.0
+    if not math.isfinite(epsilon) or epsilon < 0:
+        raise ValueError('V5 scri dissipation epsilon must be finite and nonnegative')
+    return dict(executable=command['executable'],checkpoint_schema='HYP3D_MPI_V5',
+                scri_dissipation_epsilon=epsilon,scri_dissipation_degree=7,checkpoint_header_bytes=104,
+                scri_normal_derivative=SAMPLED_NORMAL_SCHEME,scri_normal_radial_nodes=6,
+                scri_normal_bulk_derivative_order=4)
 
 
 def digest(path):
@@ -147,12 +162,17 @@ def validate_plan(root, plan):
                 raise ValueError('Generated inputs must be declared artifacts of an earlier case')
         if command['kind'] != 'check':
             v4 = Path(command['executable']).name == DISSIPATIVE_TARGET
-            if not 8 <= len(argv) <= (13 if v4 else 12) or argv[0] != str(case_n) or argv[2] != command['kind']:
+            v5 = Path(command['executable']).name == SAMPLED_NORMAL_TARGET
+            if not 8 <= len(argv) <= (13 if v4 or v5 else 12) or argv[0] != str(case_n) or argv[2] != command['kind']:
                 raise ValueError('Evolution arguments must match the declared grid and physical case')
             if v4:
                 dissipation_config(command)
                 if command.get('continue_after_failure'):
                     raise ValueError('V4 does not inherit original V1 numerical-failure continuation')
+            if v5:
+                normal_derivative_config(command)
+                if command.get('continue_after_failure'):
+                    raise ValueError('V5 does not inherit original V1 numerical-failure continuation')
             if command['report'] != argv[1] + '.report.json':
                 raise ValueError('Evolution report must match its output prefix')
             target, dt = float(argv[3]), float(argv[4])
@@ -239,6 +259,26 @@ def validate_admission(root, plan, source_digest, binary_hashes):
                 raise ValueError('Invalid V4 admission configuration')
         if any(config not in configs for config in requested_configs):
             raise ValueError('Admission does not cover the exact requested V4 scri dissipation epsilon')
+    requested_normal = [config for config in map(normal_derivative_config,plan['commands']) if config is not None]
+    if requested_normal:
+        configs=admission.get('normal_derivative_configs')
+        if not isinstance(configs,list) or not configs:
+            raise ValueError('V5 admission must explicitly bind the normal derivative configuration')
+        for config in configs:
+            if not isinstance(config,dict):
+                raise ValueError('Invalid V5 admission configuration')
+            epsilon=config.get('scri_dissipation_epsilon')
+            if (type(epsilon) not in [int,float] or not math.isfinite(epsilon) or epsilon<0
+                    or config.get('checkpoint_schema')!='HYP3D_MPI_V5'
+                    or config.get('scri_normal_derivative')!=SAMPLED_NORMAL_SCHEME
+                    or any(type(config.get(k)) is not int or config[k]!=v for k,v in
+                           [('scri_dissipation_degree',7),('checkpoint_header_bytes',104),
+                            ('scri_normal_radial_nodes',6),('scri_normal_bulk_derivative_order',4)])
+                    or config.get('executable') not in admitted
+                    or Path(config.get('executable','')).name!=SAMPLED_NORMAL_TARGET):
+                raise ValueError('Invalid V5 admission configuration')
+        if any(config not in configs for config in requested_normal):
+            raise ValueError('Admission does not cover the exact requested V5 normal derivative configuration')
     if required == 'preflight':
         for key in ['gpu_cpu_parity', 'restart_equivalence']:
             if admission.get(key) is not True:

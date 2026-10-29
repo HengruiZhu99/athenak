@@ -57,7 +57,8 @@ Copy `plan.example.json` into a fresh `campaigns/<name>/plan.json`. It is delibe
 n output_prefix kind target_time dt initial_file|- restart_checkpoint|- wall_seconds [diagnostic_interval [horizon_rms_tolerance [horizon_lmax [horizon_ntheta]]]]
 ```
 
-Only the optional target named `hyperbolic_shift_3d_mpi_dissipative` accepts a
+The optional targets `hyperbolic_shift_3d_mpi_dissipative` (V4) and
+`hyperbolic_shift_3d_mpi_sampled_normal` (V5) accept a
 13th positional argument, `scri_dissipation_epsilon`, after all twelve arguments
 above. Its default is 2 when omitted. Epsilon must be finite and nonnegative;
 epsilon zero retains the V4 schema and degree 7. All older targets reject a
@@ -65,6 +66,14 @@ epsilon zero retains the V4 schema and degree 7. All older targets reject a
 `scri_dissipation_degree` and `checkpoint_header_bytes`; add exact checks for
 these fields to every reviewed V4 evolution plan. The original V1
 resolution-control failure-continuation policy is not available to V4.
+It is also unavailable to V5. V5 has no normal-closure CLI switch: its target
+selects the sampled-native-numerator scheme, independently of epsilon. Its
+reports must explicitly state `scri_normal_derivative=sampled_native_numerator6`,
+`scri_normal_radial_nodes=6`, `scri_normal_bulk_derivative_order=4` and
+`checkpoint_header_bytes=104`. The optional CPU manufactured study observes
+roughly third-order complete surface-rate errors on its tested fixtures;
+neither that result nor a favorable projected directional rate is a stability
+or trajectory-convergence admission.
 
 `kind` is `minkowski`, `pulse`, or `puncture`. The puncture donor mass is `M=1/3`; 100 M means target coordinate time `100/3`, not 100. Every command needs a JSON report with `status=completed|checkpointed|failed`. Checks use explicit JSON paths and `eq`, `le`, `ge`, or `finite`; configure checks against the final executable schema. `inputs` are existing initial/checkpoint files bound before submission. `artifacts` are output files hashed after execution. A later case may name earlier artifacts as `generated_inputs`; the worker records their hashes immediately before use. Evolution argument grid, kind, output prefix, initial/restart declarations, and bounded deadline are checked against plan metadata. Source, executables, inputs, command plan, launcher files, PBS script, and admission evidence are bound and reverified.
 
@@ -112,6 +121,28 @@ match. Omitting the runtime epsilon requests the default 2 and still requires
 that record. Existing V1–V3 admissions remain unchanged. Admissions are written
 only after reviewing the corresponding source-bound reports and restart
 comparisons; this list is not proof by itself.
+
+V5 instead requires its own `normal_derivative_configs` list. A V4
+`scri_dissipation_configs` record cannot qualify V5, even if epsilon is equal.
+Each V5 record binds all of the following, in addition to the usual exact
+source/binary/preflight evidence:
+
+```json
+{
+  "executable": "build-sycl-mpi-v12/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_sampled_normal",
+  "checkpoint_schema": "HYP3D_MPI_V5",
+  "scri_dissipation_epsilon": 2.0,
+  "scri_dissipation_degree": 7,
+  "checkpoint_header_bytes": 104,
+  "scri_normal_derivative": "sampled_native_numerator6",
+  "scri_normal_radial_nodes": 6,
+  "scri_normal_bulk_derivative_order": 4
+}
+```
+
+This is a schema example, not an admission. There is no implicit reuse of a
+failed V4 duration checkpoint. A new V5 duration begins from fresh analytic
+initial data after its source-bound GPU parity and exact-restart preflight.
 
 Offline launcher tests (no SSH or scheduler calls):
 
@@ -161,6 +192,16 @@ standalone targets:
 Both require the exact native success marker and actual SYCL backend on every
 rank. These adapters do not add a communication-benchmark rerun requirement.
 
+V5 adds `--component sampled_normal_device`, using the target
+`hyperbolic_shift_3d_sampled_normal_device`. Each tile must report both n6,
+epsilon-2 equilibrium and nonspherical cases. The adapter requires CPU/device
+pole, rate and dependent-trace errors at most `2e-10`, twelve-partition error
+at most `2e-13`, exactly zero finite-D dependence, null error at most `3e-14`,
+and compatibility error at most `2e-12`. It also requires exact default-path
+bitwise and rejection-check flags, actual `backend=SYCL`, successful process
+exit, and the exact native success marker. This component is a bounded parity
+check; a passed component report does not admit duration stability.
+
 Restart comparison uses the same common arguments followed by:
 
 ```text
@@ -182,6 +223,15 @@ degree, clock and step metadata even when nonzero payload tolerances are
 requested. Equal V3 and epsilon-zero V4 arrays do not make their schemas
 interchangeable. Export metadata retains the schema, configuration and actual
 header size.
+
+V5 uses magic `HYP3D_MPI_V5`, the same 72-byte base and 16-byte dissipation
+record, then a 16-byte little-endian `<4i>` normal-operator record. Its fields
+are exactly `(scheme=1, radial_nodes=6, bulk_derivative_order=4, reserved=0)`.
+All four arrays begin at byte **104**. Unknown normal identifiers, widths,
+orders or reserved values, truncated/trailing data and mismatched/missing
+normal report fields are rejected. Payload tolerances never relax schema or
+configuration equality. The exporter retains all three normal metadata keys;
+V1–V4 checkpoint bytes and reader behavior remain unchanged.
 
 Additional offline tests exercise checkpoint corruption, exact/tolerant comparison, all three metric adapters, 12-process success/failure propagation, and storage accounting:
 

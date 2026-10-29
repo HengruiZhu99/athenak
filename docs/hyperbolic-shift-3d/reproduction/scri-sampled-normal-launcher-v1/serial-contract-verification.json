@@ -1,0 +1,53 @@
+{
+  "status": "format_verified",
+  "gpu_admission": false,
+  "scope": "Actual Serial stdout metrics accepted; SYCL admission correctly rejected",
+  "log_sha256": "15d519de28b9e770003573edc7c4bf4cc9354a5a13ecd138da3790c43b4ececb",
+  "parser_sha256": "8536873143b142c3ce1650c06d5c332ece56c02a1c43b556e65da4781b84d9db",
+  "result": {
+    "passed": false,
+    "gpu_cpu_parity": false,
+    "backend": "Serial",
+    "maxima": {
+      "cpu_pole_error": 0,
+      "cpu_rate_error": 0,
+      "cpu_trace_error": 0,
+      "partition_error": 0,
+      "finite_D_error": 0,
+      "null": 1.1101861976998643e-15,
+      "compatibility": 2.42861286636753e-17
+    },
+    "cases": [
+      {
+        "sampled_case": "minkowski",
+        "n": "6",
+        "epsilon": "2",
+        "cpu_pole_error": "0",
+        "cpu_rate_error": "0",
+        "cpu_trace_error": "0",
+        "partition_error": "0",
+        "finite_D_error": "0",
+        "null": "9.9920072216264128e-16",
+        "compatibility": "6.7053176943786003e-30",
+        "default_bitwise": "1",
+        "partitions": "12",
+        "rejection_checks": "1"
+      },
+      {
+        "sampled_case": "nonspherical",
+        "n": "6",
+        "epsilon": "2",
+        "cpu_pole_error": "0",
+        "cpu_rate_error": "0",
+        "cpu_trace_error": "0",
+        "partition_error": "0",
+        "finite_D_error": "0",
+        "null": "1.1101861976998643e-15",
+        "compatibility": "2.4286128663675299e-17",
+        "default_bitwise": "1",
+        "partitions": "12",
+        "rejection_checks": "1"
+      }
+    ]
+  }
+}

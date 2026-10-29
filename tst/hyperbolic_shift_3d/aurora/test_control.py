@@ -148,6 +148,52 @@ class ControllerTests(unittest.TestCase):
             with self.subTest(executable=executable),self.assertRaises(ValueError):
                 control.validate_plan(self.root,plan)
 
+    def test_v5_plan_and_exact_normal_admission(self):
+        plan=example();plan.update(phase='stability',admission='admission.json')
+        command=plan['commands'][0];command['executable']='build/'+control.SAMPLED_NORMAL_TARGET
+        control.validate_plan(self.root,plan)
+        config=control.normal_derivative_config(command)
+        self.assertEqual(config['checkpoint_schema'],'HYP3D_MPI_V5')
+        self.assertEqual(config['checkpoint_header_bytes'],104)
+        self.assertEqual(config['scri_dissipation_epsilon'],2.)
+        self.assertEqual(config['scri_normal_derivative'],'sampled_native_numerator6')
+        command['args'].extend(['.05','.001','6','12','2'])
+        self.assertEqual(config,control.normal_derivative_config(command))
+        source='a'*64;binary='b'*64
+        admission=dict(passed=True,phase='preflight',source_manifest_sha256=source,low_resolution_n=16,
+                       binaries={command['executable']:binary},gpu_cpu_parity=True,restart_equivalence=True,
+                       scri_dissipation_configs=[dict(config,checkpoint_schema='HYP3D_MPI_V4',checkpoint_header_bytes=88)])
+        control.atomic(self.root/'admission.json',admission)
+        with self.assertRaisesRegex(ValueError,'V5 admission must explicitly'):
+            control.validate_admission(self.root,plan,source,{command['executable']:binary})
+        admission['normal_derivative_configs']=[config];control.atomic(self.root/'admission.json',admission)
+        control.validate_admission(self.root,plan,source,{command['executable']:binary})
+        for key,value in [('checkpoint_schema','HYP3D_MPI_V4'),('checkpoint_header_bytes',88),
+                          ('scri_normal_derivative','analytic_jets'),('scri_normal_radial_nodes',6.0),
+                          ('scri_normal_bulk_derivative_order',True),('scri_dissipation_epsilon',1),
+                          ('scri_dissipation_degree',5)]:
+            admission['normal_derivative_configs']=[dict(config,**{key:value})]
+            control.atomic(self.root/'admission.json',admission)
+            with self.subTest(key=key),self.assertRaises(ValueError):
+                control.validate_admission(self.root,plan,source,{command['executable']:binary})
+        admission['normal_derivative_configs']=[config];control.atomic(self.root/'admission.json',admission)
+        for epsilon in ['0','1','2.0000000000000004']:
+            command['args'][12]=epsilon
+            with self.subTest(epsilon=epsilon),self.assertRaisesRegex(ValueError,'exact requested V5'):
+                control.validate_admission(self.root,plan,source,{command['executable']:binary})
+
+    def test_v5_rejects_invalid_epsilon_extra_args_and_failure_continuation(self):
+        for epsilon in ['nan','inf','-1','invalid']:
+            plan=example();c=plan['commands'][0];c['executable']='build/'+control.SAMPLED_NORMAL_TARGET
+            c['args'].extend(['.05','.001','6','12',epsilon])
+            with self.subTest(epsilon=epsilon),self.assertRaises(ValueError):control.validate_plan(self.root,plan)
+        plan=example();c=plan['commands'][0];c['executable']='build/'+control.SAMPLED_NORMAL_TARGET
+        c['args'].extend(['.05','.001','6','12','2','1'])
+        with self.assertRaises(ValueError):control.validate_plan(self.root,plan)
+        plan=resolution_example()
+        for c in plan['commands']:c['executable']='build/'+control.SAMPLED_NORMAL_TARGET
+        with self.assertRaisesRegex(ValueError,'does not inherit'):control.validate_plan(self.root,plan)
+
     def test_v4_invalid_epsilon_and_failure_continuation_rejected(self):
         for epsilon in ['-1','nan','inf','-inf','invalid','']:
             plan=example();command=plan['commands'][0]

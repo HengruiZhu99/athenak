@@ -1,0 +1,25 @@
+{
+  "status": "passed",
+  "scope": "Offline Python parser, controller and checkpoint tests; no SSH, MPI evolution or SYCL execution",
+  "command": [
+    "/Library/Developer/CommandLineTools/usr/bin/python3",
+    "-m",
+    "unittest",
+    "test_control.ControllerTests",
+    "test_preflight.ComponentParserTests",
+    "test_preflight.CheckpointTests",
+    "test_preflight.ExportCheckpointTests"
+  ],
+  "returncode": 0,
+  "seconds": 0.8122352500000001,
+  "recorded_utc": "2026-10-29T09:42:50.236776+00:00",
+  "tests_log_sha256": "f4d417f919bfb33f563467e623e6f9bf23f08040aae7bdd9b7f770648f5c670c",
+  "source_sha256": {
+    "tst/hyperbolic_shift_3d/aurora/README.md": "e5e24a66e9da041fb416ca43e9d14d10a7bd43dd8f1fd5133acdf75c3d6c394a",
+    "tst/hyperbolic_shift_3d/aurora/control.py": "f066cd8ede3500418b8d8585550205bbcd3a38a8910f746758257f711b380c52",
+    "tst/hyperbolic_shift_3d/aurora/preflight.py": "8536873143b142c3ce1650c06d5c332ece56c02a1c43b556e65da4781b84d9db",
+    "tst/hyperbolic_shift_3d/aurora/test_control.py": "7a59a23d019faac9f4417ce8b40956a51ec2817b5b01d52bd8d42b337c5cb6bd",
+    "tst/hyperbolic_shift_3d/aurora/test_preflight.py": "11ec73b193961a26e62e8cd8a5f25a8bc510bc2b7245c023ed0d7688521096fa",
+    "tst/hyperbolic_shift_3d/checkpoint_export.py": "50aa8d0f01be594101172d3edbeff00e3d05fa3854a5d79993a0fb0acd592d34"
+  }
+}
