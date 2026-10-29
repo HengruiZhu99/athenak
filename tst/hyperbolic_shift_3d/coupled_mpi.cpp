@@ -116,6 +116,14 @@ class Evolution {
   int surface_total,surface_first,surface_local;
   const std::chrono::steady_clock::time_point construction_started=std::chrono::steady_clock::now();
   double setup_seconds[8]={};
+  // Subdivision of closure_seconds, not additional exclusive evolution phases:
+  // projection, normal halo, sampled-normal RHS, angular work, scri RHS, MPI.
+  double boundary_phase_seconds[6]={};
+  double error_sync_seconds=0;
+  template<class Action> auto TimeBoundary(int phase,Action action){
+    const double began=MPI_Wtime();auto result=action();
+    boundary_phase_seconds[phase]+=MPI_Wtime()-began;return result;
+  }
   h::HyperbolicComposite model;
   std::unique_ptr<h::HyperbolicCompositeDevice> kernel;
   std::unique_ptr<h::HyperbolicCompositeExchange> exchange;
@@ -225,10 +233,11 @@ class Evolution {
     setup_phase(7);
   }
   void SynchronizeError(int failed,std::string message){
-    int all=0;MPI_Allreduce(&failed,&all,1,MPI_INT,MPI_MAX,MPI_COMM_WORLD);
+    const double began=MPI_Wtime();int all=0;MPI_Allreduce(&failed,&all,1,MPI_INT,MPI_MAX,MPI_COMM_WORLD);
     if(all){int owner=failed?rank:size;MPI_Allreduce(MPI_IN_PLACE,&owner,1,MPI_INT,MPI_MIN,MPI_COMM_WORLD);
       char text[512]{};if(rank==owner)std::strncpy(text,message.c_str(),sizeof(text)-1);
-      MPI_Bcast(text,sizeof(text),MPI_CHAR,owner,MPI_COMM_WORLD);throw std::runtime_error(text);}
+      MPI_Bcast(text,sizeof(text),MPI_CHAR,owner,MPI_COMM_WORLD);error_sync_seconds+=MPI_Wtime()-began;throw std::runtime_error(text);}
+    error_sync_seconds+=MPI_Wtime()-began;
   }
   static void CopyFromHost(const V&values,Buffer target){
     if(values.size()!=target.extent(0))throw std::runtime_error("device upload size mismatch");
@@ -270,8 +279,8 @@ class Evolution {
       angular_cfl_max=std::max(angular_cfl_max,angular_cfl);
       SynchronizeError(!(dt>0)||!std::isfinite(angular_cfl)||angular_cfl>2.7,"angular dissipation RK4 bound exceeded");
     }
-    const auto start=std::chrono::steady_clock::now();const double exchange_before=exchange_seconds;
-    const auto projected=boundary_reuse?global_projector->Project(surface):boundary->Project(surface);
+    const auto start=std::chrono::steady_clock::now();const double exchange_before=exchange_seconds,error_sync_before=error_sync_seconds;
+    const auto projected=TimeBoundary(0,[&]{return boundary_reuse?global_projector->Project(surface):boundary->Project(surface);});
     SynchronizeError(projected.bad_rows,"device scri projection failure at row "+std::to_string(projected.first_bad)+" reason "+h::HyperbolicScriDevice::Reason(projected.reason));
     if constexpr(boundary_reuse)Kokkos::deep_copy(surface,global_projector->LocalSurface());
     else Gather(boundary->LocalSurface(),surface,true);
@@ -279,16 +288,16 @@ class Evolution {
     if constexpr(scri_sampled_normal){
       // Current geometric ghosts precede native interior numerator sampling.
       // The geometric numerator is independent of finite provisional D values.
-      const auto halo=normal_exchange->Fill(state);
+      const auto halo=TimeBoundary(1,[&]{return normal_exchange->Fill(state);});
       null_ghost=std::max(null_ghost,halo.after);null_before=std::max(null_before,halo.before);
       SynchronizeError(halo.invalid,"nonpositive interpolated scri geometry");
-      const auto normal=sampled_normal->Evaluate(normal_exchange->padded,surface);
+      const auto normal=TimeBoundary(2,[&]{return sampled_normal->Evaluate(normal_exchange->padded,surface);});
       SynchronizeError(normal.bad_rows,"device sampled-normal numerator failure at row "+std::to_string(normal.first_bad)+" reason "+h::HyperbolicSampledNormalDevice::Reason(normal.reason));
       pole_samples=sampled_normal->LocalPoleSamples();
     }
     Buffer additive;
     if(angular_dissipation){
-      const auto residual=angular_dissipation->Residual(surface);
+      const auto residual=TimeBoundary(3,[&]{return angular_dissipation->Residual(surface);});
       SynchronizeError(residual.bad_values,"nonfinite angular residual at row "+std::to_string(residual.first_bad));
       Buffer residual_input;
       if constexpr(boundary_reuse)residual_input=angular_dissipation->LocalResidual();
@@ -299,7 +308,7 @@ class Evolution {
         const double seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-gather_start).count();
         exchange_seconds+=seconds;collective_seconds[2]+=seconds;++collective_calls[2];residual_input=angular_residual;
       }
-      const auto applied=angular_dissipation->Apply(residual_input,angular_epsilon);
+      const auto applied=TimeBoundary(3,[&]{return angular_dissipation->Apply(residual_input,angular_epsilon);});
       SynchronizeError(applied.bad_values,"nonfinite angular rate at row "+std::to_string(applied.first_bad));
       if constexpr(boundary_reuse)additive=Kokkos::subview(angular_dissipation->LocalRHS(),
         std::make_pair(size_t(31*surface_first),size_t(31*(surface_first+surface_local))));
@@ -307,10 +316,12 @@ class Evolution {
     }
     // Dependent D is reconstructed from geometric rates including Q. Appending
     // Q after this call would violate the differentiated moving-normal closure.
-    const auto q=boundary->Evaluate(state,surface,dt,additive,pole_samples);
+    const auto q=TimeBoundary(4,[&]{return boundary->Evaluate(state,surface,dt,additive,pole_samples);});
     SynchronizeError(q.bad_rows,"device scri rate failure at row "+std::to_string(q.first_bad)+" reason "+h::HyperbolicScriDevice::Reason(q.reason));
     Gather(boundary->LocalSurface(),surface,true);
-    Real stats[4]={projected.null_after,q.pole,q.clock,q.compatibility};MPI_Allreduce(MPI_IN_PLACE,stats,4,MPI_ATHENA_REAL,MPI_MAX,MPI_COMM_WORLD);
+    Real stats[4]={projected.null_after,q.pole,q.clock,q.compatibility};const double stats_started=MPI_Wtime();
+    MPI_Allreduce(MPI_IN_PLACE,stats,4,MPI_ATHENA_REAL,MPI_MAX,MPI_COMM_WORLD);
+    boundary_phase_seconds[5]+=MPI_Wtime()-stats_started+error_sync_seconds-error_sync_before;
     model.null_max=std::max(model.null_max,stats[0]);model.pole_max=std::max(model.pole_max,stats[1]);
     model.clock_max=std::max(model.clock_max,stats[2]);model.compatibility_max=std::max(model.compatibility_max,stats[3]);
     boundary_cached=true;boundary_cached_dt=dt;
@@ -691,6 +702,9 @@ int main(int argc,char**argv){
     MPI_Gather(e.collective_seconds,3,MPI_DOUBLE,rank_collectives.data(),3,MPI_DOUBLE,0,MPI_COMM_WORLD);
     MPI_Gather(e.collective_calls,3,MPI_UINT64_T,rank_collective_calls.data(),3,MPI_UINT64_T,0,MPI_COMM_WORLD);
     std::vector<double> rank_setup(8*e.size);MPI_Gather(e.setup_seconds,8,MPI_DOUBLE,rank_setup.data(),8,MPI_DOUBLE,0,MPI_COMM_WORLD);
+    std::vector<double> rank_boundary_phases(6*e.size),rank_error_sync(e.size);
+    MPI_Gather(e.boundary_phase_seconds,6,MPI_DOUBLE,rank_boundary_phases.data(),6,MPI_DOUBLE,0,MPI_COMM_WORLD);
+    MPI_Gather(&e.error_sync_seconds,1,MPI_DOUBLE,rank_error_sync.data(),1,MPI_DOUBLE,0,MPI_COMM_WORLD);
     double sparse_data[7]={};
     if(e.sparse){const auto t=e.sparse->Seconds();sparse_data[0]=t.pack;sparse_data[1]=t.mpi;sparse_data[2]=t.unpack;
       sparse_data[3]=e.sparse->SendPoints();sparse_data[4]=e.sparse->ReceivePoints();sparse_data[5]=e.sparse->Calls();sparse_data[6]=e.sparse->Builds();}
@@ -724,6 +738,10 @@ int main(int argc,char**argv){
       if constexpr(scri_sampled_normal)report<<",\"scri_normal_derivative\":\"sampled_native_numerator"<<(scri_donor_seven?7:6)<<"\""
         <<",\"scri_normal_radial_nodes\":"<<(scri_donor_seven?7:6)<<",\"scri_normal_bulk_derivative_order\":4";
       if constexpr(evolved_overlap)report<<",\"evolved_overlap\":"<<evolved_overlap<<",\"nominal_cells\":"<<e.model.grid.nominal_count;
+      report<<",\"boundary_phase_seconds_by_rank\":[";
+      for(int rank=0;rank<e.size;++rank){if(rank)report<<',';report<<'[';for(int k=0;k<6;++k){if(k)report<<',';report<<rank_boundary_phases[6*rank+k];}report<<']';}report<<']';
+      report<<",\"error_sync_seconds_by_rank\":[";
+      for(int rank=0;rank<e.size;++rank){if(rank)report<<',';report<<rank_error_sync[rank];}report<<']';
       report<<",\"mesh_plan_setup_seconds_by_rank\":[";
       for(int rank=0;rank<e.size;++rank){if(rank)report<<',';report<<'[';for(int k=0;k<8;++k){if(k)report<<',';report<<rank_setup[8*rank+k];}report<<']';}report<<']';
       report<<",\"volume_exchange\":\""<<(sparse_stage?"cached_sparse_alltoallv":"full_allgatherv")<<"\",\"sparse_poison_unused\":"<<(e.sparse_poison?"true":"false");

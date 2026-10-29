@@ -1,0 +1,51 @@
+{
+  "passed": true,
+  "reference": "output/hyperbolic-core-shell/sparse-stage-local-v1/balanced-bitwise/two.checkpoint",
+  "checkpoint_sha256": "944ee7c7e04f423dbabf9b21c4bc9fbd3186788d726930ceb4c443b33d150f44",
+  "checkpoint_bytes": 38569112,
+  "boundary_phase_seconds_by_rank": [
+    [
+      0.004029000000003613,
+      0.19217099999999832,
+      0.20590699999999806,
+      0.04199999999999271,
+      0.06173799999999918,
+      0.04426700000001382
+    ],
+    [
+      0.0040480000000000516,
+      0.2291640000000017,
+      0.2081679999999979,
+      0.041814000000003126,
+      0.06648900000000069,
+      0.0004499999999998394
+    ]
+  ],
+  "error_sync_seconds_by_rank": [
+    0.08758000000002308,
+    2.089871999999998
+  ],
+  "phase_seconds_by_rank": [
+    [
+      2.939395001,
+      0.042158960999997316,
+      0.5503171640000001,
+      0.853140209,
+      3.411504127
+    ],
+    [
+      1.735310167,
+      0.07096200299999952,
+      0.5503173729999999,
+      0.853139792,
+      2.5876453759999998
+    ]
+  ],
+  "checks": [
+    "full checkpoint byte equality",
+    "completed pulse",
+    "finite nonnegative timer values",
+    "two ranks, six boundary phases per rank",
+    "boundary subphases bounded by aggregate closure time"
+  ]
+}
