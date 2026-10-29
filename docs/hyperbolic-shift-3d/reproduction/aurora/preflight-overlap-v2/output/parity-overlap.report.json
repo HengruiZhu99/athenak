@@ -1,0 +1,1019 @@
+{
+  "status": "completed",
+  "mode": "component",
+  "mpi_size": 12,
+  "backend": "SYCL",
+  "placement_passed": true,
+  "ranks": [
+    {
+      "rank": 0,
+      "host": "x4418c3s7b0n0",
+      "mask": "0.0",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 31.846947479061782,
+        "log": "campaigns/preflight-overlap-v2/output/parity-overlap.rank-00.log",
+        "log_sha256": "0030597f20c6e9b86d8931db863fe45eae0e387513849593467b47c39a70fd6e",
+        "binary": "build-sycl-mpi-v17/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_overlap_device",
+        "binary_sha256": "24360868a3aace9694c5eeeb78f400387a24ab0d7551fffb9d518451a8066737",
+        "cache_sha256": "4fe4e74fedf077f74fbf2465eb463b17c19587dd35cfef86e547cb848041224b",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "maxima": {
+          "cpu_pole_error": 8.236281941653411e-16,
+          "cpu_rate_error": 1.6875389974299547e-13,
+          "cpu_trace_error": 5.177133313373778e-14,
+          "partition_error": 0,
+          "finite_D_error": 0,
+          "null": 1.2214933248757754e-15,
+          "compatibility": 5.637851296924623e-17,
+          "cpu_bulk_error": 6.772360450213255e-14
+        },
+        "cases": [
+          {
+            "sampled_case": "minkowski",
+            "n": "12",
+            "overlap": "3",
+            "epsilon": "2",
+            "cpu_pole_error": "8.2362819416534115e-16",
+            "cpu_rate_error": "1.6875389974299547e-13",
+            "cpu_trace_error": "5.1771333133737782e-14",
+            "partition_error": "0",
+            "finite_D_error": "0",
+            "null": "8.8817841970012484e-16",
+            "compatibility": "2.0510383535746307e-29",
+            "default_bitwise": "1",
+            "partitions": "12",
+            "rejection_checks": "1",
+            "radial_nodes": "7",
+            "radial_bulk_rows": "3",
+            "interpatch_interpolation": "logical_inner_transition"
+          },
+          {
+            "sampled_case": "nonspherical",
+            "n": "12",
+            "overlap": "3",
+            "epsilon": "2",
+            "cpu_pole_error": "8.2284135124101737e-16",
+            "cpu_rate_error": "1.5054300344802577e-13",
+            "cpu_trace_error": "4.0127918809126487e-14",
+            "partition_error": "0",
+            "finite_D_error": "0",
+            "null": "1.2214933248757754e-15",
+            "compatibility": "5.6378512969246231e-17",
+            "default_bitwise": "1",
+            "partitions": "12",
+            "rejection_checks": "1",
+            "radial_nodes": "7",
+            "radial_bulk_rows": "3",
+            "interpatch_interpolation": "logical_inner_transition"
+          }
+        ],
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "inner_transition_exchange_checks": [
+          [
+            0.0,
+            6.772360450213255e-14
+          ],
+          [
+            0.0,
+            6.740863448883698e-14
+          ]
+        ],
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3
+      }
+    },
+    {
+      "rank": 1,
+      "host": "x4418c3s7b0n0",
+      "mask": "0.1",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 31.786712566157803,
+        "log": "campaigns/preflight-overlap-v2/output/parity-overlap.rank-01.log",
+        "log_sha256": "0030597f20c6e9b86d8931db863fe45eae0e387513849593467b47c39a70fd6e",
+        "binary": "build-sycl-mpi-v17/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_overlap_device",
+        "binary_sha256": "24360868a3aace9694c5eeeb78f400387a24ab0d7551fffb9d518451a8066737",
+        "cache_sha256": "4fe4e74fedf077f74fbf2465eb463b17c19587dd35cfef86e547cb848041224b",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "maxima": {
+          "cpu_pole_error": 8.236281941653411e-16,
+          "cpu_rate_error": 1.6875389974299547e-13,
+          "cpu_trace_error": 5.177133313373778e-14,
+          "partition_error": 0,
+          "finite_D_error": 0,
+          "null": 1.2214933248757754e-15,
+          "compatibility": 5.637851296924623e-17,
+          "cpu_bulk_error": 6.772360450213255e-14
+        },
+        "cases": [
+          {
+            "sampled_case": "minkowski",
+            "n": "12",
+            "overlap": "3",
+            "epsilon": "2",
+            "cpu_pole_error": "8.2362819416534115e-16",
+            "cpu_rate_error": "1.6875389974299547e-13",
+            "cpu_trace_error": "5.1771333133737782e-14",
+            "partition_error": "0",
+            "finite_D_error": "0",
+            "null": "8.8817841970012484e-16",
+            "compatibility": "2.0510383535746307e-29",
+            "default_bitwise": "1",
+            "partitions": "12",
+            "rejection_checks": "1",
+            "radial_nodes": "7",
+            "radial_bulk_rows": "3",
+            "interpatch_interpolation": "logical_inner_transition"
+          },
+          {
+            "sampled_case": "nonspherical",
+            "n": "12",
+            "overlap": "3",
+            "epsilon": "2",
+            "cpu_pole_error": "8.2284135124101737e-16",
+            "cpu_rate_error": "1.5054300344802577e-13",
+            "cpu_trace_error": "4.0127918809126487e-14",
+            "partition_error": "0",
+            "finite_D_error": "0",
+            "null": "1.2214933248757754e-15",
+            "compatibility": "5.6378512969246231e-17",
+            "default_bitwise": "1",
+            "partitions": "12",
+            "rejection_checks": "1",
+            "radial_nodes": "7",
+            "radial_bulk_rows": "3",
+            "interpatch_interpolation": "logical_inner_transition"
+          }
+        ],
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "inner_transition_exchange_checks": [
+          [
+            0.0,
+            6.772360450213255e-14
+          ],
+          [
+            0.0,
+            6.740863448883698e-14
+          ]
+        ],
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3
+      }
+    },
+    {
+      "rank": 2,
+      "host": "x4418c3s7b0n0",
+      "mask": "1.0",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 31.98708678293042,
+        "log": "campaigns/preflight-overlap-v2/output/parity-overlap.rank-02.log",
+        "log_sha256": "0030597f20c6e9b86d8931db863fe45eae0e387513849593467b47c39a70fd6e",
+        "binary": "build-sycl-mpi-v17/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_overlap_device",
+        "binary_sha256": "24360868a3aace9694c5eeeb78f400387a24ab0d7551fffb9d518451a8066737",
+        "cache_sha256": "4fe4e74fedf077f74fbf2465eb463b17c19587dd35cfef86e547cb848041224b",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "maxima": {
+          "cpu_pole_error": 8.236281941653411e-16,
+          "cpu_rate_error": 1.6875389974299547e-13,
+          "cpu_trace_error": 5.177133313373778e-14,
+          "partition_error": 0,
+          "finite_D_error": 0,
+          "null": 1.2214933248757754e-15,
+          "compatibility": 5.637851296924623e-17,
+          "cpu_bulk_error": 6.772360450213255e-14
+        },
+        "cases": [
+          {
+            "sampled_case": "minkowski",
+            "n": "12",
+            "overlap": "3",
+            "epsilon": "2",
+            "cpu_pole_error": "8.2362819416534115e-16",
+            "cpu_rate_error": "1.6875389974299547e-13",
+            "cpu_trace_error": "5.1771333133737782e-14",
+            "partition_error": "0",
+            "finite_D_error": "0",
+            "null": "8.8817841970012484e-16",
+            "compatibility": "2.0510383535746307e-29",
+            "default_bitwise": "1",
+            "partitions": "12",
+            "rejection_checks": "1",
+            "radial_nodes": "7",
+            "radial_bulk_rows": "3",
+            "interpatch_interpolation": "logical_inner_transition"
+          },
+          {
+            "sampled_case": "nonspherical",
+            "n": "12",
+            "overlap": "3",
+            "epsilon": "2",
+            "cpu_pole_error": "8.2284135124101737e-16",
+            "cpu_rate_error": "1.5054300344802577e-13",
+            "cpu_trace_error": "4.0127918809126487e-14",
+            "partition_error": "0",
+            "finite_D_error": "0",
+            "null": "1.2214933248757754e-15",
+            "compatibility": "5.6378512969246231e-17",
+            "default_bitwise": "1",
+            "partitions": "12",
+            "rejection_checks": "1",
+            "radial_nodes": "7",
+            "radial_bulk_rows": "3",
+            "interpatch_interpolation": "logical_inner_transition"
+          }
+        ],
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "inner_transition_exchange_checks": [
+          [
+            0.0,
+            6.772360450213255e-14
+          ],
+          [
+            0.0,
+            6.740863448883698e-14
+          ]
+        ],
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3
+      }
+    },
+    {
+      "rank": 3,
+      "host": "x4418c3s7b0n0",
+      "mask": "1.1",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 31.87543021189049,
+        "log": "campaigns/preflight-overlap-v2/output/parity-overlap.rank-03.log",
+        "log_sha256": "0030597f20c6e9b86d8931db863fe45eae0e387513849593467b47c39a70fd6e",
+        "binary": "build-sycl-mpi-v17/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_overlap_device",
+        "binary_sha256": "24360868a3aace9694c5eeeb78f400387a24ab0d7551fffb9d518451a8066737",
+        "cache_sha256": "4fe4e74fedf077f74fbf2465eb463b17c19587dd35cfef86e547cb848041224b",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "maxima": {
+          "cpu_pole_error": 8.236281941653411e-16,
+          "cpu_rate_error": 1.6875389974299547e-13,
+          "cpu_trace_error": 5.177133313373778e-14,
+          "partition_error": 0,
+          "finite_D_error": 0,
+          "null": 1.2214933248757754e-15,
+          "compatibility": 5.637851296924623e-17,
+          "cpu_bulk_error": 6.772360450213255e-14
+        },
+        "cases": [
+          {
+            "sampled_case": "minkowski",
+            "n": "12",
+            "overlap": "3",
+            "epsilon": "2",
+            "cpu_pole_error": "8.2362819416534115e-16",
+            "cpu_rate_error": "1.6875389974299547e-13",
+            "cpu_trace_error": "5.1771333133737782e-14",
+            "partition_error": "0",
+            "finite_D_error": "0",
+            "null": "8.8817841970012484e-16",
+            "compatibility": "2.0510383535746307e-29",
+            "default_bitwise": "1",
+            "partitions": "12",
+            "rejection_checks": "1",
+            "radial_nodes": "7",
+            "radial_bulk_rows": "3",
+            "interpatch_interpolation": "logical_inner_transition"
+          },
+          {
+            "sampled_case": "nonspherical",
+            "n": "12",
+            "overlap": "3",
+            "epsilon": "2",
+            "cpu_pole_error": "8.2284135124101737e-16",
+            "cpu_rate_error": "1.5054300344802577e-13",
+            "cpu_trace_error": "4.0127918809126487e-14",
+            "partition_error": "0",
+            "finite_D_error": "0",
+            "null": "1.2214933248757754e-15",
+            "compatibility": "5.6378512969246231e-17",
+            "default_bitwise": "1",
+            "partitions": "12",
+            "rejection_checks": "1",
+            "radial_nodes": "7",
+            "radial_bulk_rows": "3",
+            "interpatch_interpolation": "logical_inner_transition"
+          }
+        ],
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "inner_transition_exchange_checks": [
+          [
+            0.0,
+            6.772360450213255e-14
+          ],
+          [
+            0.0,
+            6.740863448883698e-14
+          ]
+        ],
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3
+      }
+    },
+    {
+      "rank": 4,
+      "host": "x4418c3s7b0n0",
+      "mask": "2.0",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 31.688323166919872,
+        "log": "campaigns/preflight-overlap-v2/output/parity-overlap.rank-04.log",
+        "log_sha256": "0030597f20c6e9b86d8931db863fe45eae0e387513849593467b47c39a70fd6e",
+        "binary": "build-sycl-mpi-v17/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_overlap_device",
+        "binary_sha256": "24360868a3aace9694c5eeeb78f400387a24ab0d7551fffb9d518451a8066737",
+        "cache_sha256": "4fe4e74fedf077f74fbf2465eb463b17c19587dd35cfef86e547cb848041224b",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "maxima": {
+          "cpu_pole_error": 8.236281941653411e-16,
+          "cpu_rate_error": 1.6875389974299547e-13,
+          "cpu_trace_error": 5.177133313373778e-14,
+          "partition_error": 0,
+          "finite_D_error": 0,
+          "null": 1.2214933248757754e-15,
+          "compatibility": 5.637851296924623e-17,
+          "cpu_bulk_error": 6.772360450213255e-14
+        },
+        "cases": [
+          {
+            "sampled_case": "minkowski",
+            "n": "12",
+            "overlap": "3",
+            "epsilon": "2",
+            "cpu_pole_error": "8.2362819416534115e-16",
+            "cpu_rate_error": "1.6875389974299547e-13",
+            "cpu_trace_error": "5.1771333133737782e-14",
+            "partition_error": "0",
+            "finite_D_error": "0",
+            "null": "8.8817841970012484e-16",
+            "compatibility": "2.0510383535746307e-29",
+            "default_bitwise": "1",
+            "partitions": "12",
+            "rejection_checks": "1",
+            "radial_nodes": "7",
+            "radial_bulk_rows": "3",
+            "interpatch_interpolation": "logical_inner_transition"
+          },
+          {
+            "sampled_case": "nonspherical",
+            "n": "12",
+            "overlap": "3",
+            "epsilon": "2",
+            "cpu_pole_error": "8.2284135124101737e-16",
+            "cpu_rate_error": "1.5054300344802577e-13",
+            "cpu_trace_error": "4.0127918809126487e-14",
+            "partition_error": "0",
+            "finite_D_error": "0",
+            "null": "1.2214933248757754e-15",
+            "compatibility": "5.6378512969246231e-17",
+            "default_bitwise": "1",
+            "partitions": "12",
+            "rejection_checks": "1",
+            "radial_nodes": "7",
+            "radial_bulk_rows": "3",
+            "interpatch_interpolation": "logical_inner_transition"
+          }
+        ],
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "inner_transition_exchange_checks": [
+          [
+            0.0,
+            6.772360450213255e-14
+          ],
+          [
+            0.0,
+            6.740863448883698e-14
+          ]
+        ],
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3
+      }
+    },
+    {
+      "rank": 5,
+      "host": "x4418c3s7b0n0",
+      "mask": "2.1",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 31.839117445982993,
+        "log": "campaigns/preflight-overlap-v2/output/parity-overlap.rank-05.log",
+        "log_sha256": "0030597f20c6e9b86d8931db863fe45eae0e387513849593467b47c39a70fd6e",
+        "binary": "build-sycl-mpi-v17/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_overlap_device",
+        "binary_sha256": "24360868a3aace9694c5eeeb78f400387a24ab0d7551fffb9d518451a8066737",
+        "cache_sha256": "4fe4e74fedf077f74fbf2465eb463b17c19587dd35cfef86e547cb848041224b",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "maxima": {
+          "cpu_pole_error": 8.236281941653411e-16,
+          "cpu_rate_error": 1.6875389974299547e-13,
+          "cpu_trace_error": 5.177133313373778e-14,
+          "partition_error": 0,
+          "finite_D_error": 0,
+          "null": 1.2214933248757754e-15,
+          "compatibility": 5.637851296924623e-17,
+          "cpu_bulk_error": 6.772360450213255e-14
+        },
+        "cases": [
+          {
+            "sampled_case": "minkowski",
+            "n": "12",
+            "overlap": "3",
+            "epsilon": "2",
+            "cpu_pole_error": "8.2362819416534115e-16",
+            "cpu_rate_error": "1.6875389974299547e-13",
+            "cpu_trace_error": "5.1771333133737782e-14",
+            "partition_error": "0",
+            "finite_D_error": "0",
+            "null": "8.8817841970012484e-16",
+            "compatibility": "2.0510383535746307e-29",
+            "default_bitwise": "1",
+            "partitions": "12",
+            "rejection_checks": "1",
+            "radial_nodes": "7",
+            "radial_bulk_rows": "3",
+            "interpatch_interpolation": "logical_inner_transition"
+          },
+          {
+            "sampled_case": "nonspherical",
+            "n": "12",
+            "overlap": "3",
+            "epsilon": "2",
+            "cpu_pole_error": "8.2284135124101737e-16",
+            "cpu_rate_error": "1.5054300344802577e-13",
+            "cpu_trace_error": "4.0127918809126487e-14",
+            "partition_error": "0",
+            "finite_D_error": "0",
+            "null": "1.2214933248757754e-15",
+            "compatibility": "5.6378512969246231e-17",
+            "default_bitwise": "1",
+            "partitions": "12",
+            "rejection_checks": "1",
+            "radial_nodes": "7",
+            "radial_bulk_rows": "3",
+            "interpatch_interpolation": "logical_inner_transition"
+          }
+        ],
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "inner_transition_exchange_checks": [
+          [
+            0.0,
+            6.772360450213255e-14
+          ],
+          [
+            0.0,
+            6.740863448883698e-14
+          ]
+        ],
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3
+      }
+    },
+    {
+      "rank": 6,
+      "host": "x4418c3s7b0n0",
+      "mask": "3.0",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 31.754840760026127,
+        "log": "campaigns/preflight-overlap-v2/output/parity-overlap.rank-06.log",
+        "log_sha256": "0030597f20c6e9b86d8931db863fe45eae0e387513849593467b47c39a70fd6e",
+        "binary": "build-sycl-mpi-v17/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_overlap_device",
+        "binary_sha256": "24360868a3aace9694c5eeeb78f400387a24ab0d7551fffb9d518451a8066737",
+        "cache_sha256": "4fe4e74fedf077f74fbf2465eb463b17c19587dd35cfef86e547cb848041224b",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "maxima": {
+          "cpu_pole_error": 8.236281941653411e-16,
+          "cpu_rate_error": 1.6875389974299547e-13,
+          "cpu_trace_error": 5.177133313373778e-14,
+          "partition_error": 0,
+          "finite_D_error": 0,
+          "null": 1.2214933248757754e-15,
+          "compatibility": 5.637851296924623e-17,
+          "cpu_bulk_error": 6.772360450213255e-14
+        },
+        "cases": [
+          {
+            "sampled_case": "minkowski",
+            "n": "12",
+            "overlap": "3",
+            "epsilon": "2",
+            "cpu_pole_error": "8.2362819416534115e-16",
+            "cpu_rate_error": "1.6875389974299547e-13",
+            "cpu_trace_error": "5.1771333133737782e-14",
+            "partition_error": "0",
+            "finite_D_error": "0",
+            "null": "8.8817841970012484e-16",
+            "compatibility": "2.0510383535746307e-29",
+            "default_bitwise": "1",
+            "partitions": "12",
+            "rejection_checks": "1",
+            "radial_nodes": "7",
+            "radial_bulk_rows": "3",
+            "interpatch_interpolation": "logical_inner_transition"
+          },
+          {
+            "sampled_case": "nonspherical",
+            "n": "12",
+            "overlap": "3",
+            "epsilon": "2",
+            "cpu_pole_error": "8.2284135124101737e-16",
+            "cpu_rate_error": "1.5054300344802577e-13",
+            "cpu_trace_error": "4.0127918809126487e-14",
+            "partition_error": "0",
+            "finite_D_error": "0",
+            "null": "1.2214933248757754e-15",
+            "compatibility": "5.6378512969246231e-17",
+            "default_bitwise": "1",
+            "partitions": "12",
+            "rejection_checks": "1",
+            "radial_nodes": "7",
+            "radial_bulk_rows": "3",
+            "interpatch_interpolation": "logical_inner_transition"
+          }
+        ],
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "inner_transition_exchange_checks": [
+          [
+            0.0,
+            6.772360450213255e-14
+          ],
+          [
+            0.0,
+            6.740863448883698e-14
+          ]
+        ],
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3
+      }
+    },
+    {
+      "rank": 7,
+      "host": "x4418c3s7b0n0",
+      "mask": "3.1",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 31.843073169933632,
+        "log": "campaigns/preflight-overlap-v2/output/parity-overlap.rank-07.log",
+        "log_sha256": "0030597f20c6e9b86d8931db863fe45eae0e387513849593467b47c39a70fd6e",
+        "binary": "build-sycl-mpi-v17/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_overlap_device",
+        "binary_sha256": "24360868a3aace9694c5eeeb78f400387a24ab0d7551fffb9d518451a8066737",
+        "cache_sha256": "4fe4e74fedf077f74fbf2465eb463b17c19587dd35cfef86e547cb848041224b",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "maxima": {
+          "cpu_pole_error": 8.236281941653411e-16,
+          "cpu_rate_error": 1.6875389974299547e-13,
+          "cpu_trace_error": 5.177133313373778e-14,
+          "partition_error": 0,
+          "finite_D_error": 0,
+          "null": 1.2214933248757754e-15,
+          "compatibility": 5.637851296924623e-17,
+          "cpu_bulk_error": 6.772360450213255e-14
+        },
+        "cases": [
+          {
+            "sampled_case": "minkowski",
+            "n": "12",
+            "overlap": "3",
+            "epsilon": "2",
+            "cpu_pole_error": "8.2362819416534115e-16",
+            "cpu_rate_error": "1.6875389974299547e-13",
+            "cpu_trace_error": "5.1771333133737782e-14",
+            "partition_error": "0",
+            "finite_D_error": "0",
+            "null": "8.8817841970012484e-16",
+            "compatibility": "2.0510383535746307e-29",
+            "default_bitwise": "1",
+            "partitions": "12",
+            "rejection_checks": "1",
+            "radial_nodes": "7",
+            "radial_bulk_rows": "3",
+            "interpatch_interpolation": "logical_inner_transition"
+          },
+          {
+            "sampled_case": "nonspherical",
+            "n": "12",
+            "overlap": "3",
+            "epsilon": "2",
+            "cpu_pole_error": "8.2284135124101737e-16",
+            "cpu_rate_error": "1.5054300344802577e-13",
+            "cpu_trace_error": "4.0127918809126487e-14",
+            "partition_error": "0",
+            "finite_D_error": "0",
+            "null": "1.2214933248757754e-15",
+            "compatibility": "5.6378512969246231e-17",
+            "default_bitwise": "1",
+            "partitions": "12",
+            "rejection_checks": "1",
+            "radial_nodes": "7",
+            "radial_bulk_rows": "3",
+            "interpatch_interpolation": "logical_inner_transition"
+          }
+        ],
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "inner_transition_exchange_checks": [
+          [
+            0.0,
+            6.772360450213255e-14
+          ],
+          [
+            0.0,
+            6.740863448883698e-14
+          ]
+        ],
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3
+      }
+    },
+    {
+      "rank": 8,
+      "host": "x4418c3s7b0n0",
+      "mask": "4.0",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 31.69157158699818,
+        "log": "campaigns/preflight-overlap-v2/output/parity-overlap.rank-08.log",
+        "log_sha256": "0030597f20c6e9b86d8931db863fe45eae0e387513849593467b47c39a70fd6e",
+        "binary": "build-sycl-mpi-v17/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_overlap_device",
+        "binary_sha256": "24360868a3aace9694c5eeeb78f400387a24ab0d7551fffb9d518451a8066737",
+        "cache_sha256": "4fe4e74fedf077f74fbf2465eb463b17c19587dd35cfef86e547cb848041224b",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "maxima": {
+          "cpu_pole_error": 8.236281941653411e-16,
+          "cpu_rate_error": 1.6875389974299547e-13,
+          "cpu_trace_error": 5.177133313373778e-14,
+          "partition_error": 0,
+          "finite_D_error": 0,
+          "null": 1.2214933248757754e-15,
+          "compatibility": 5.637851296924623e-17,
+          "cpu_bulk_error": 6.772360450213255e-14
+        },
+        "cases": [
+          {
+            "sampled_case": "minkowski",
+            "n": "12",
+            "overlap": "3",
+            "epsilon": "2",
+            "cpu_pole_error": "8.2362819416534115e-16",
+            "cpu_rate_error": "1.6875389974299547e-13",
+            "cpu_trace_error": "5.1771333133737782e-14",
+            "partition_error": "0",
+            "finite_D_error": "0",
+            "null": "8.8817841970012484e-16",
+            "compatibility": "2.0510383535746307e-29",
+            "default_bitwise": "1",
+            "partitions": "12",
+            "rejection_checks": "1",
+            "radial_nodes": "7",
+            "radial_bulk_rows": "3",
+            "interpatch_interpolation": "logical_inner_transition"
+          },
+          {
+            "sampled_case": "nonspherical",
+            "n": "12",
+            "overlap": "3",
+            "epsilon": "2",
+            "cpu_pole_error": "8.2284135124101737e-16",
+            "cpu_rate_error": "1.5054300344802577e-13",
+            "cpu_trace_error": "4.0127918809126487e-14",
+            "partition_error": "0",
+            "finite_D_error": "0",
+            "null": "1.2214933248757754e-15",
+            "compatibility": "5.6378512969246231e-17",
+            "default_bitwise": "1",
+            "partitions": "12",
+            "rejection_checks": "1",
+            "radial_nodes": "7",
+            "radial_bulk_rows": "3",
+            "interpatch_interpolation": "logical_inner_transition"
+          }
+        ],
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "inner_transition_exchange_checks": [
+          [
+            0.0,
+            6.772360450213255e-14
+          ],
+          [
+            0.0,
+            6.740863448883698e-14
+          ]
+        ],
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3
+      }
+    },
+    {
+      "rank": 9,
+      "host": "x4418c3s7b0n0",
+      "mask": "4.1",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 31.83577673509717,
+        "log": "campaigns/preflight-overlap-v2/output/parity-overlap.rank-09.log",
+        "log_sha256": "0030597f20c6e9b86d8931db863fe45eae0e387513849593467b47c39a70fd6e",
+        "binary": "build-sycl-mpi-v17/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_overlap_device",
+        "binary_sha256": "24360868a3aace9694c5eeeb78f400387a24ab0d7551fffb9d518451a8066737",
+        "cache_sha256": "4fe4e74fedf077f74fbf2465eb463b17c19587dd35cfef86e547cb848041224b",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "maxima": {
+          "cpu_pole_error": 8.236281941653411e-16,
+          "cpu_rate_error": 1.6875389974299547e-13,
+          "cpu_trace_error": 5.177133313373778e-14,
+          "partition_error": 0,
+          "finite_D_error": 0,
+          "null": 1.2214933248757754e-15,
+          "compatibility": 5.637851296924623e-17,
+          "cpu_bulk_error": 6.772360450213255e-14
+        },
+        "cases": [
+          {
+            "sampled_case": "minkowski",
+            "n": "12",
+            "overlap": "3",
+            "epsilon": "2",
+            "cpu_pole_error": "8.2362819416534115e-16",
+            "cpu_rate_error": "1.6875389974299547e-13",
+            "cpu_trace_error": "5.1771333133737782e-14",
+            "partition_error": "0",
+            "finite_D_error": "0",
+            "null": "8.8817841970012484e-16",
+            "compatibility": "2.0510383535746307e-29",
+            "default_bitwise": "1",
+            "partitions": "12",
+            "rejection_checks": "1",
+            "radial_nodes": "7",
+            "radial_bulk_rows": "3",
+            "interpatch_interpolation": "logical_inner_transition"
+          },
+          {
+            "sampled_case": "nonspherical",
+            "n": "12",
+            "overlap": "3",
+            "epsilon": "2",
+            "cpu_pole_error": "8.2284135124101737e-16",
+            "cpu_rate_error": "1.5054300344802577e-13",
+            "cpu_trace_error": "4.0127918809126487e-14",
+            "partition_error": "0",
+            "finite_D_error": "0",
+            "null": "1.2214933248757754e-15",
+            "compatibility": "5.6378512969246231e-17",
+            "default_bitwise": "1",
+            "partitions": "12",
+            "rejection_checks": "1",
+            "radial_nodes": "7",
+            "radial_bulk_rows": "3",
+            "interpatch_interpolation": "logical_inner_transition"
+          }
+        ],
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "inner_transition_exchange_checks": [
+          [
+            0.0,
+            6.772360450213255e-14
+          ],
+          [
+            0.0,
+            6.740863448883698e-14
+          ]
+        ],
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3
+      }
+    },
+    {
+      "rank": 10,
+      "host": "x4418c3s7b0n0",
+      "mask": "5.0",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 32.03803906706162,
+        "log": "campaigns/preflight-overlap-v2/output/parity-overlap.rank-10.log",
+        "log_sha256": "0030597f20c6e9b86d8931db863fe45eae0e387513849593467b47c39a70fd6e",
+        "binary": "build-sycl-mpi-v17/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_overlap_device",
+        "binary_sha256": "24360868a3aace9694c5eeeb78f400387a24ab0d7551fffb9d518451a8066737",
+        "cache_sha256": "4fe4e74fedf077f74fbf2465eb463b17c19587dd35cfef86e547cb848041224b",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "maxima": {
+          "cpu_pole_error": 8.236281941653411e-16,
+          "cpu_rate_error": 1.6875389974299547e-13,
+          "cpu_trace_error": 5.177133313373778e-14,
+          "partition_error": 0,
+          "finite_D_error": 0,
+          "null": 1.2214933248757754e-15,
+          "compatibility": 5.637851296924623e-17,
+          "cpu_bulk_error": 6.772360450213255e-14
+        },
+        "cases": [
+          {
+            "sampled_case": "minkowski",
+            "n": "12",
+            "overlap": "3",
+            "epsilon": "2",
+            "cpu_pole_error": "8.2362819416534115e-16",
+            "cpu_rate_error": "1.6875389974299547e-13",
+            "cpu_trace_error": "5.1771333133737782e-14",
+            "partition_error": "0",
+            "finite_D_error": "0",
+            "null": "8.8817841970012484e-16",
+            "compatibility": "2.0510383535746307e-29",
+            "default_bitwise": "1",
+            "partitions": "12",
+            "rejection_checks": "1",
+            "radial_nodes": "7",
+            "radial_bulk_rows": "3",
+            "interpatch_interpolation": "logical_inner_transition"
+          },
+          {
+            "sampled_case": "nonspherical",
+            "n": "12",
+            "overlap": "3",
+            "epsilon": "2",
+            "cpu_pole_error": "8.2284135124101737e-16",
+            "cpu_rate_error": "1.5054300344802577e-13",
+            "cpu_trace_error": "4.0127918809126487e-14",
+            "partition_error": "0",
+            "finite_D_error": "0",
+            "null": "1.2214933248757754e-15",
+            "compatibility": "5.6378512969246231e-17",
+            "default_bitwise": "1",
+            "partitions": "12",
+            "rejection_checks": "1",
+            "radial_nodes": "7",
+            "radial_bulk_rows": "3",
+            "interpatch_interpolation": "logical_inner_transition"
+          }
+        ],
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "inner_transition_exchange_checks": [
+          [
+            0.0,
+            6.772360450213255e-14
+          ],
+          [
+            0.0,
+            6.740863448883698e-14
+          ]
+        ],
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3
+      }
+    },
+    {
+      "rank": 11,
+      "host": "x4418c3s7b0n0",
+      "mask": "5.1",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 31.78671191819012,
+        "log": "campaigns/preflight-overlap-v2/output/parity-overlap.rank-11.log",
+        "log_sha256": "0030597f20c6e9b86d8931db863fe45eae0e387513849593467b47c39a70fd6e",
+        "binary": "build-sycl-mpi-v17/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_overlap_device",
+        "binary_sha256": "24360868a3aace9694c5eeeb78f400387a24ab0d7551fffb9d518451a8066737",
+        "cache_sha256": "4fe4e74fedf077f74fbf2465eb463b17c19587dd35cfef86e547cb848041224b",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "maxima": {
+          "cpu_pole_error": 8.236281941653411e-16,
+          "cpu_rate_error": 1.6875389974299547e-13,
+          "cpu_trace_error": 5.177133313373778e-14,
+          "partition_error": 0,
+          "finite_D_error": 0,
+          "null": 1.2214933248757754e-15,
+          "compatibility": 5.637851296924623e-17,
+          "cpu_bulk_error": 6.772360450213255e-14
+        },
+        "cases": [
+          {
+            "sampled_case": "minkowski",
+            "n": "12",
+            "overlap": "3",
+            "epsilon": "2",
+            "cpu_pole_error": "8.2362819416534115e-16",
+            "cpu_rate_error": "1.6875389974299547e-13",
+            "cpu_trace_error": "5.1771333133737782e-14",
+            "partition_error": "0",
+            "finite_D_error": "0",
+            "null": "8.8817841970012484e-16",
+            "compatibility": "2.0510383535746307e-29",
+            "default_bitwise": "1",
+            "partitions": "12",
+            "rejection_checks": "1",
+            "radial_nodes": "7",
+            "radial_bulk_rows": "3",
+            "interpatch_interpolation": "logical_inner_transition"
+          },
+          {
+            "sampled_case": "nonspherical",
+            "n": "12",
+            "overlap": "3",
+            "epsilon": "2",
+            "cpu_pole_error": "8.2284135124101737e-16",
+            "cpu_rate_error": "1.5054300344802577e-13",
+            "cpu_trace_error": "4.0127918809126487e-14",
+            "partition_error": "0",
+            "finite_D_error": "0",
+            "null": "1.2214933248757754e-15",
+            "compatibility": "5.6378512969246231e-17",
+            "default_bitwise": "1",
+            "partitions": "12",
+            "rejection_checks": "1",
+            "radial_nodes": "7",
+            "radial_bulk_rows": "3",
+            "interpatch_interpolation": "logical_inner_transition"
+          }
+        ],
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "inner_transition_exchange_checks": [
+          [
+            0.0,
+            6.772360450213255e-14
+          ],
+          [
+            0.0,
+            6.740863448883698e-14
+          ]
+        ],
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3
+      }
+    }
+  ],
+  "source_manifest_sha256": "d959a7cb8a587314d80ba6af7af9d692ddbef1815925f09bb46ef062429d3641",
+  "plan_sha256": "b038a5dc71bc458ecb0f414618335a5ec0b7fbc63865212b50af79cb943b6382",
+  "gpu_cpu_parity": true,
+  "component": "overlap_device",
+  "maxima": {
+    "partition_error": 0,
+    "cpu_pole_error": 8.236281941653411e-16,
+    "finite_D_error": 0,
+    "cpu_bulk_error": 6.772360450213255e-14,
+    "compatibility": 5.637851296924623e-17,
+    "cpu_trace_error": 5.177133313373778e-14,
+    "null": 1.2214933248757754e-15,
+    "cpu_rate_error": 1.6875389974299547e-13
+  }
+}

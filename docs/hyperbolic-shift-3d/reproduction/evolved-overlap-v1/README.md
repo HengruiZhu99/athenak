@@ -50,5 +50,11 @@ accepts n, overlap-width and optional coordinate CSV path. test_overlap_mpi.py
 records exact command lines and checksums in its verification.json. Raw evidence
 is under output/hyperbolic-core-shell/evolved-overlap-local-v1.
 
-Long-time Minkowski/puncture stability and dynamic AMR compatibility are not yet
-established. GPU preflight and the matched n16 stability experiment are next.
+GPU preflight now passed all7 cases on12 ranks/12 tiles, independently verified
+with194 scientific checks; see ../aurora/preflight-overlap-v2. The first n16
+Minkowski duration segment is being run at dt=.0003 to obey the native CFL=.4
+guard. Long-time Minkowski/puncture stability and dynamic AMR compatibility
+remain unestablished. The spatial-only spherical/equiangular comparison is
+documented separately in map-cfl-notes.md.
+
+![Spatial interpolation and derivative comparison](spatial-comparison.png)

@@ -1,0 +1,2276 @@
+{
+  "job_id": "8984990.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "collected": 1793292309.0439584,
+  "returncode": 0,
+  "stdout": "{\n    \"timestamp\": 1793292302,\n    \"pbs_version\": \"2026.1.0.20260821184519\",\n    \"pbs_server\": \"aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov\",\n    \"Jobs\": {\n        \"8984990.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov\": {\n            \"Job_Name\": \"hyper-scri-3d\",\n            \"Job_Owner\": \"hzhu@aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov\",\n            \"resources_used\": {\n                \"cpupercent\": 330,\n                \"cput\": \"00:17:32\",\n                \"mem\": \"2602104kb\",\n                \"ncpus\": 208,\n                \"ngpus\": 0,\n                \"vmem\": \"45784kb\",\n                \"walltime\": \"00:03:17\"\n            },\n            \"job_state\": \"F\",\n            \"queue\": \"debug\",\n            \"server\": \"aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov\",\n            \"Account_Name\": \"CompactBinaryMerger\",\n            \"Checkpoint\": \"u\",\n            \"ctime\": \"Thu Oct 29 15:43:02 2026\",\n            \"Error_Path\": \"aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov:/home/hzhu/hyperbolic-core-shell-20261028/hyper-scri-3d.e8984990\",\n            \"exec_host\": \"x4309c5s6b0n0/0*208\",\n            \"exec_vnode\": \"(x4309c5s6b0n0:ncpus=208)\",\n            \"Hold_Types\": \"n\",\n            \"Join_Path\": \"oe\",\n            \"Keep_Files\": \"doe\",\n            \"Mail_Points\": \"a\",\n            \"Mail_Users\": \"hz0693@princeton.edu\",\n            \"mtime\": \"Thu Oct 29 15:48:30 2026\",\n            \"Output_Path\": \"aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov:/home/hzhu/hyperbolic-core-shell-20261028/hyper-scri-3d.o8984990\",\n            \"Priority\": 0,\n            \"qtime\": \"Thu Oct 29 15:43:02 2026\",\n            \"Rerunable\": \"False\",\n            \"Resource_List\": {\n                \"allow_account_check_failure\": \"True\",\n                \"allow_negative_allocation\": \"True\",\n                \"award_category\": \"INCITE\",\n                \"award_type\": \"INCITE-2026\",\n                \"backfill_factor\": 84600,\n                \"backfill_max\": 50,\n                \"base_score\": 51,\n                \"bkc_definition\": \"compute_aurora_prod_20261002T162246_af5b0375_b4fd227\",\n                \"burn_ratio\": 0.8798,\n                \"current_allocation\": 2597177856,\n                \"enable_2nd_fp64\": \"True\",\n                \"enable_backfill\": 0,\n                \"enable_fifo\": 1,\n                \"enable_wfp\": 0,\n                \"fifo_factor\": 1800,\n                \"filesystems\": \"home\",\n                \"hbm_mode\": \"flat\",\n                \"home_fs\": \"True\",\n                \"ncpus\": 208,\n                \"ni_resource\": \"aurora\",\n                \"nodect\": 1,\n                \"overburn\": \"False\",\n                \"place\": \"scatter\",\n                \"project_priority\": 25,\n                \"route_backfill\": \"False\",\n                \"score_boost\": 0,\n                \"select\": 1,\n                \"snc_mode\": \"quad\",\n                \"total_allocation\": 21600000000,\n                \"total_cpus\": 10624,\n                \"walltime\": \"00:30:00\",\n                \"wfp_factor\": 100000\n            },\n            \"stime\": \"Thu Oct 29 15:44:39 2026\",\n            \"obittime\": \"Thu Oct 29 15:48:30 2026\",\n            \"session_id\": 3901137,\n            \"jobdir\": \"/home/hzhu\",\n            \"substate\": 93,\n            \"euser\": \"hzhu\",\n            \"egroup\": \"users\",\n            \"comment\": \"Job run at Thu Oct 29 at 15:44 on (x4309c5s6b0n0:ncpus=208) and failed\",\n            \"etime\": \"Thu Oct 29 15:43:02 2026\",\n            \"umask\": 22,\n            \"run_count\": 1,\n            \"eligible_time\": \"00:01:39\",\n            \"Stageout_status\": 1,\n            \"Exit_status\": 1,\n            \"Submit_arguments\": \"-v HYPERBOLIC_PLAN=campaigns/preflight-overlap-v1/plan.json /home/hzhu/hyperbolic-core-shell-20261028/campaigns/preflight-overlap-v1/run_debug.pbs\",\n            \"history_timestamp\": 1793288910,\n            \"project\": \"CompactBinaryMerger\",\n            \"Submit_Host\": \"aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov\"\n        }\n    }\n}\n",
+  "stderr": "",
+  "scheduler": {
+    "Job_Name": "hyper-scri-3d",
+    "Job_Owner": "hzhu@aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov",
+    "resources_used": {
+      "cpupercent": 330,
+      "cput": "00:17:32",
+      "mem": "2602104kb",
+      "ncpus": 208,
+      "ngpus": 0,
+      "vmem": "45784kb",
+      "walltime": "00:03:17"
+    },
+    "job_state": "F",
+    "queue": "debug",
+    "server": "aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "Account_Name": "CompactBinaryMerger",
+    "Checkpoint": "u",
+    "ctime": "Thu Oct 29 15:43:02 2026",
+    "Error_Path": "aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov:/home/hzhu/hyperbolic-core-shell-20261028/hyper-scri-3d.e8984990",
+    "exec_host": "x4309c5s6b0n0/0*208",
+    "exec_vnode": "(x4309c5s6b0n0:ncpus=208)",
+    "Hold_Types": "n",
+    "Join_Path": "oe",
+    "Keep_Files": "doe",
+    "Mail_Points": "a",
+    "Mail_Users": "hz0693@princeton.edu",
+    "mtime": "Thu Oct 29 15:48:30 2026",
+    "Output_Path": "aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov:/home/hzhu/hyperbolic-core-shell-20261028/hyper-scri-3d.o8984990",
+    "Priority": 0,
+    "qtime": "Thu Oct 29 15:43:02 2026",
+    "Rerunable": "False",
+    "Resource_List": {
+      "allow_account_check_failure": "True",
+      "allow_negative_allocation": "True",
+      "award_category": "INCITE",
+      "award_type": "INCITE-2026",
+      "backfill_factor": 84600,
+      "backfill_max": 50,
+      "base_score": 51,
+      "bkc_definition": "compute_aurora_prod_20261002T162246_af5b0375_b4fd227",
+      "burn_ratio": 0.8798,
+      "current_allocation": 2597177856,
+      "enable_2nd_fp64": "True",
+      "enable_backfill": 0,
+      "enable_fifo": 1,
+      "enable_wfp": 0,
+      "fifo_factor": 1800,
+      "filesystems": "home",
+      "hbm_mode": "flat",
+      "home_fs": "True",
+      "ncpus": 208,
+      "ni_resource": "aurora",
+      "nodect": 1,
+      "overburn": "False",
+      "place": "scatter",
+      "project_priority": 25,
+      "route_backfill": "False",
+      "score_boost": 0,
+      "select": 1,
+      "snc_mode": "quad",
+      "total_allocation": 21600000000,
+      "total_cpus": 10624,
+      "walltime": "00:30:00",
+      "wfp_factor": 100000
+    },
+    "stime": "Thu Oct 29 15:44:39 2026",
+    "obittime": "Thu Oct 29 15:48:30 2026",
+    "session_id": 3901137,
+    "jobdir": "/home/hzhu",
+    "substate": 93,
+    "euser": "hzhu",
+    "egroup": "users",
+    "comment": "Job run at Thu Oct 29 at 15:44 on (x4309c5s6b0n0:ncpus=208) and failed",
+    "etime": "Thu Oct 29 15:43:02 2026",
+    "umask": 22,
+    "run_count": 1,
+    "eligible_time": "00:01:39",
+    "Stageout_status": 1,
+    "Exit_status": 1,
+    "Submit_arguments": "-v HYPERBOLIC_PLAN=campaigns/preflight-overlap-v1/plan.json /home/hzhu/hyperbolic-core-shell-20261028/campaigns/preflight-overlap-v1/run_debug.pbs",
+    "history_timestamp": 1793288910,
+    "project": "CompactBinaryMerger",
+    "Submit_Host": "aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov"
+  },
+  "worker": {
+    "schema": 1,
+    "status": "failed",
+    "started": "2026-10-29T15:45:50.825275+00:00",
+    "job_id": "8984990.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "launcher_host": "x4309c5s6b0n0",
+    "allocation_nodes": [
+      "x4309c5s6b0n0.hsn.cm.aurora.alcf.anl.gov"
+    ],
+    "resources": {
+      "queue": "debug",
+      "account": "CompactBinaryMerger",
+      "nodes": 1,
+      "ranks": 12,
+      "ranks_per_node": 12,
+      "walltime": "00:30:00"
+    },
+    "source_manifest_sha256": "d959a7cb8a587314d80ba6af7af9d692ddbef1815925f09bb46ef062429d3641",
+    "binaries": {
+      "source-v17/tst/hyperbolic_shift_3d/aurora/preflight.py": "f4fd79e8ef9f30e3fc6b7798256db8b77ddc5b2bc007bda0673584b943904fc4",
+      "build-sycl-mpi-v17/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_overlap": "a4cc1748bd1e0042ede7d2fcfa84ed2d483c9ac4bb5600559cc1694f5b06c51a"
+    },
+    "plan_sha256": "1c97cb408ae9ccdee8b2ea556e1e037962631afa2b4b35a6ae6be33d93b928c8",
+    "phase": "preflight",
+    "n": 16,
+    "cases": [
+      {
+        "name": "parity-overlap",
+        "kind": "check",
+        "started": "2026-10-29T15:46:01.983096+00:00",
+        "argv": [
+          "mpiexec",
+          "-n",
+          "12",
+          "-ppn",
+          "12",
+          "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+          "gpu_tile_compact.sh",
+          "/home/hzhu/hyperbolic-core-shell-20261028/source-v17/tst/hyperbolic_shift_3d/aurora/preflight.py",
+          "--root",
+          "/home/hzhu/hyperbolic-core-shell-20261028",
+          "--plan",
+          "campaigns/preflight-overlap-v1/plan.json",
+          "--output-prefix",
+          "campaigns/preflight-overlap-v1/output/parity-overlap",
+          "--seconds",
+          "220",
+          "component",
+          "--component",
+          "overlap_device",
+          "--test-binary",
+          "build-sycl-mpi-v17/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_overlap_device",
+          "--cmake-cache",
+          "build-sycl-mpi-v17/CMakeCache.txt"
+        ],
+        "generated_inputs": {},
+        "returncode": 0,
+        "timed_out": false,
+        "storage_error": null,
+        "elapsed_seconds": 31.992276520002633,
+        "checks": [
+          {
+            "check": {
+              "path": [
+                "status"
+              ],
+              "op": "eq",
+              "value": "completed"
+            },
+            "observed": "completed",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "mpi_size"
+              ],
+              "op": "eq",
+              "value": 12
+            },
+            "observed": 12,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "backend"
+              ],
+              "op": "eq",
+              "value": "SYCL"
+            },
+            "observed": "SYCL",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "gpu_cpu_parity"
+              ],
+              "op": "eq",
+              "value": true
+            },
+            "observed": true,
+            "passed": true
+          }
+        ],
+        "report_status": "completed",
+        "status": "passed",
+        "artifacts": {
+          "campaigns/preflight-overlap-v1/output/parity-overlap.report.json": {
+            "sha256": "7257477cc627e2c27555a5e90d2f79980bc98af7e3e262fdb38caab23ed5897c",
+            "bytes": 37172
+          },
+          "campaigns/preflight-overlap-v1/output/parity-overlap.rank-00.log": {
+            "sha256": "0030597f20c6e9b86d8931db863fe45eae0e387513849593467b47c39a70fd6e",
+            "bytes": 1155
+          },
+          "campaigns/preflight-overlap-v1/output/parity-overlap.rank-01.log": {
+            "sha256": "0030597f20c6e9b86d8931db863fe45eae0e387513849593467b47c39a70fd6e",
+            "bytes": 1155
+          },
+          "campaigns/preflight-overlap-v1/output/parity-overlap.rank-02.log": {
+            "sha256": "0030597f20c6e9b86d8931db863fe45eae0e387513849593467b47c39a70fd6e",
+            "bytes": 1155
+          },
+          "campaigns/preflight-overlap-v1/output/parity-overlap.rank-03.log": {
+            "sha256": "0030597f20c6e9b86d8931db863fe45eae0e387513849593467b47c39a70fd6e",
+            "bytes": 1155
+          },
+          "campaigns/preflight-overlap-v1/output/parity-overlap.rank-04.log": {
+            "sha256": "0030597f20c6e9b86d8931db863fe45eae0e387513849593467b47c39a70fd6e",
+            "bytes": 1155
+          },
+          "campaigns/preflight-overlap-v1/output/parity-overlap.rank-05.log": {
+            "sha256": "0030597f20c6e9b86d8931db863fe45eae0e387513849593467b47c39a70fd6e",
+            "bytes": 1155
+          },
+          "campaigns/preflight-overlap-v1/output/parity-overlap.rank-06.log": {
+            "sha256": "0030597f20c6e9b86d8931db863fe45eae0e387513849593467b47c39a70fd6e",
+            "bytes": 1155
+          },
+          "campaigns/preflight-overlap-v1/output/parity-overlap.rank-07.log": {
+            "sha256": "0030597f20c6e9b86d8931db863fe45eae0e387513849593467b47c39a70fd6e",
+            "bytes": 1155
+          },
+          "campaigns/preflight-overlap-v1/output/parity-overlap.rank-08.log": {
+            "sha256": "0030597f20c6e9b86d8931db863fe45eae0e387513849593467b47c39a70fd6e",
+            "bytes": 1155
+          },
+          "campaigns/preflight-overlap-v1/output/parity-overlap.rank-09.log": {
+            "sha256": "0030597f20c6e9b86d8931db863fe45eae0e387513849593467b47c39a70fd6e",
+            "bytes": 1155
+          },
+          "campaigns/preflight-overlap-v1/output/parity-overlap.rank-10.log": {
+            "sha256": "0030597f20c6e9b86d8931db863fe45eae0e387513849593467b47c39a70fd6e",
+            "bytes": 1155
+          },
+          "campaigns/preflight-overlap-v1/output/parity-overlap.rank-11.log": {
+            "sha256": "0030597f20c6e9b86d8931db863fe45eae0e387513849593467b47c39a70fd6e",
+            "bytes": 1155
+          },
+          "campaigns/preflight-overlap-v1/output/parity-overlap.log": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        "finished": "2026-10-29T15:46:38.133741+00:00"
+      },
+      {
+        "name": "minkowski-short",
+        "kind": "minkowski",
+        "started": "2026-10-29T15:46:42.226299+00:00",
+        "argv": [
+          "mpiexec",
+          "-n",
+          "12",
+          "-ppn",
+          "12",
+          "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+          "gpu_tile_compact.sh",
+          "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-v17/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_overlap",
+          "16",
+          "campaigns/preflight-overlap-v1/output/minkowski-short",
+          "minkowski",
+          "0.001",
+          ".00025",
+          "-",
+          "-",
+          "150",
+          "0.001",
+          ".001",
+          "6",
+          "12",
+          "2"
+        ],
+        "generated_inputs": {},
+        "n": 16,
+        "returncode": 0,
+        "timed_out": false,
+        "storage_error": null,
+        "elapsed_seconds": 14.485437046037987,
+        "checks": [
+          {
+            "check": {
+              "path": [
+                "status"
+              ],
+              "op": "eq",
+              "value": "completed"
+            },
+            "observed": "completed",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "mpi_size"
+              ],
+              "op": "eq",
+              "value": 12
+            },
+            "observed": 12,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "backend"
+              ],
+              "op": "eq",
+              "value": "SYCL"
+            },
+            "observed": "SYCL",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "diagnostics_current"
+              ],
+              "op": "eq",
+              "value": true
+            },
+            "observed": true,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "min_lapse"
+              ],
+              "op": "ge",
+              "value": 1e-12
+            },
+            "observed": 0.500091552734375,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "min_chi"
+              ],
+              "op": "ge",
+              "value": 1e-12
+            },
+            "observed": 0.9999999999999999,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_null_ghost"
+              ],
+              "op": "le",
+              "value": 1e-12
+            },
+            "observed": 8.881784197001256e-16,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_null_surface"
+              ],
+              "op": "le",
+              "value": 1e-12
+            },
+            "observed": 6.661338147750941e-16,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "checkpoint_admitted"
+              ],
+              "op": "eq",
+              "value": true
+            },
+            "observed": true,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_cfl"
+              ],
+              "op": "le",
+              "value": 0.5
+            },
+            "observed": 0.2715292368999276,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "t"
+              ],
+              "op": "eq",
+              "value": 0.001
+            },
+            "observed": 0.001,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_state_deviation"
+              ],
+              "op": "le",
+              "value": 1e-10
+            },
+            "observed": 5.542220747240695e-15,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "H_L2"
+              ],
+              "op": "le",
+              "value": 1e-10
+            },
+            "observed": 7.546549826863921e-15,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "H_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 7.546549826863921e-15,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "M_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 2.692705544992761e-15,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "H_exterior_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 7.546549826863921e-15,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "M_exterior_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 2.692705544992761e-15,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "algebraic_projection"
+              ],
+              "op": "eq",
+              "value": "final_stage_standard"
+            },
+            "observed": "final_stage_standard",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "checkpoint_schema"
+              ],
+              "op": "eq",
+              "value": "HYP3D_MPI_V9"
+            },
+            "observed": "HYP3D_MPI_V9",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_determinant_residual"
+              ],
+              "op": "le",
+              "value": 1e-12
+            },
+            "observed": 0,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_tracefree_residual"
+              ],
+              "op": "le",
+              "value": 1e-12
+            },
+            "observed": 9.860761315262648e-32,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_angular_stencil"
+              ],
+              "op": "eq",
+              "value": "cross_face_centered5"
+            },
+            "observed": "cross_face_centered5",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "steps"
+              ],
+              "op": "eq",
+              "value": 4
+            },
+            "observed": 4,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_dissipation_epsilon"
+              ],
+              "op": "eq",
+              "value": 2
+            },
+            "observed": 2,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_dissipation_degree"
+              ],
+              "op": "eq",
+              "value": 7
+            },
+            "observed": 7,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "checkpoint_header_bytes"
+              ],
+              "op": "eq",
+              "value": 120
+            },
+            "observed": 120,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_dissipation_cfl_max"
+              ],
+              "op": "le",
+              "value": 2.7
+            },
+            "observed": 0.20113667997153922,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_normal_derivative"
+              ],
+              "op": "eq",
+              "value": "sampled_native_numerator7"
+            },
+            "observed": "sampled_native_numerator7",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_normal_radial_nodes"
+              ],
+              "op": "eq",
+              "value": 7
+            },
+            "observed": 7,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_normal_bulk_derivative_order"
+              ],
+              "op": "eq",
+              "value": 4
+            },
+            "observed": 4,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_radial_closure"
+              ],
+              "op": "eq",
+              "value": "donor_seven_last3"
+            },
+            "observed": "donor_seven_last3",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_radial_bulk_rows"
+              ],
+              "op": "eq",
+              "value": 3
+            },
+            "observed": 3,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "interpatch_interpolation"
+              ],
+              "op": "eq",
+              "value": "logical_inner_transition"
+            },
+            "observed": "logical_inner_transition",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "evolved_overlap"
+              ],
+              "op": "eq",
+              "value": 3
+            },
+            "observed": 3,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "nominal_cells"
+              ],
+              "op": "eq",
+              "value": 77824
+            },
+            "observed": 77824,
+            "passed": true
+          }
+        ],
+        "report_status": "completed",
+        "status": "passed",
+        "artifacts": {
+          "campaigns/preflight-overlap-v1/output/minkowski-short.report.json": {
+            "sha256": "f8ce14616c321c5038d4c452ef9d6864f1a14cffa147254034fb9dd4ab56ef24",
+            "bytes": 2964
+          },
+          "campaigns/preflight-overlap-v1/output/minkowski-short.history.csv": {
+            "sha256": "63a3e6eee5bade0f86446ac6e0ca22cd7b10080b0bc0bab8ccdf387f96433a2c",
+            "bytes": 1300
+          },
+          "campaigns/preflight-overlap-v1/output/minkowski-short.checkpoint": {
+            "sha256": "816ad474be3fc0dddf96a1a2705064ff0172350b3179c30715eb174ae0eb119f",
+            "bytes": 62111224
+          },
+          "campaigns/preflight-overlap-v1/output/minkowski-short.log": {
+            "sha256": "60327c4d883127c61b8e55e9ce483a5212a6f968eea7ab275f6827e2ba85bc30",
+            "bytes": 178
+          }
+        },
+        "finished": "2026-10-29T15:47:00.713196+00:00"
+      },
+      {
+        "name": "pulse-half",
+        "kind": "pulse",
+        "started": "2026-10-29T15:47:03.399033+00:00",
+        "argv": [
+          "mpiexec",
+          "-n",
+          "12",
+          "-ppn",
+          "12",
+          "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+          "gpu_tile_compact.sh",
+          "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-v17/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_overlap",
+          "16",
+          "campaigns/preflight-overlap-v1/output/pulse-half",
+          "pulse",
+          "0.0005",
+          ".00025",
+          "-",
+          "-",
+          "150",
+          "0.0005",
+          ".001",
+          "6",
+          "12",
+          "2"
+        ],
+        "generated_inputs": {},
+        "n": 16,
+        "returncode": 0,
+        "timed_out": false,
+        "storage_error": null,
+        "elapsed_seconds": 13.68015914503485,
+        "checks": [
+          {
+            "check": {
+              "path": [
+                "status"
+              ],
+              "op": "eq",
+              "value": "completed"
+            },
+            "observed": "completed",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "mpi_size"
+              ],
+              "op": "eq",
+              "value": 12
+            },
+            "observed": 12,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "backend"
+              ],
+              "op": "eq",
+              "value": "SYCL"
+            },
+            "observed": "SYCL",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "diagnostics_current"
+              ],
+              "op": "eq",
+              "value": true
+            },
+            "observed": true,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "min_lapse"
+              ],
+              "op": "ge",
+              "value": 1e-12
+            },
+            "observed": 0.500091552734375,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "min_chi"
+              ],
+              "op": "ge",
+              "value": 1e-12
+            },
+            "observed": 0.999976219227719,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_null_ghost"
+              ],
+              "op": "le",
+              "value": 1e-12
+            },
+            "observed": 8.881784197001248e-16,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_null_surface"
+              ],
+              "op": "le",
+              "value": 1e-12
+            },
+            "observed": 6.661338147750941e-16,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "checkpoint_admitted"
+              ],
+              "op": "eq",
+              "value": true
+            },
+            "observed": true,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_cfl"
+              ],
+              "op": "le",
+              "value": 0.5
+            },
+            "observed": 0.27152923703883985,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "t"
+              ],
+              "op": "eq",
+              "value": 0.0005
+            },
+            "observed": 0.0005,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "H_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 2.7572191652014814e-05,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "M_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 0.001968518166000633,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "H_exterior_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 2.7572191652014814e-05,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "M_exterior_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 0.001968518166000633,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "algebraic_projection"
+              ],
+              "op": "eq",
+              "value": "final_stage_standard"
+            },
+            "observed": "final_stage_standard",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "checkpoint_schema"
+              ],
+              "op": "eq",
+              "value": "HYP3D_MPI_V9"
+            },
+            "observed": "HYP3D_MPI_V9",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_determinant_residual"
+              ],
+              "op": "le",
+              "value": 1e-12
+            },
+            "observed": 6.661338147750939e-16,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_tracefree_residual"
+              ],
+              "op": "le",
+              "value": 1e-12
+            },
+            "observed": 1.3010426069826053e-18,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_angular_stencil"
+              ],
+              "op": "eq",
+              "value": "cross_face_centered5"
+            },
+            "observed": "cross_face_centered5",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "steps"
+              ],
+              "op": "eq",
+              "value": 2
+            },
+            "observed": 2,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_dissipation_epsilon"
+              ],
+              "op": "eq",
+              "value": 2
+            },
+            "observed": 2,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_dissipation_degree"
+              ],
+              "op": "eq",
+              "value": 7
+            },
+            "observed": 7,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "checkpoint_header_bytes"
+              ],
+              "op": "eq",
+              "value": 120
+            },
+            "observed": 120,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_dissipation_cfl_max"
+              ],
+              "op": "le",
+              "value": 2.7
+            },
+            "observed": 0.20113667997153922,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_normal_derivative"
+              ],
+              "op": "eq",
+              "value": "sampled_native_numerator7"
+            },
+            "observed": "sampled_native_numerator7",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_normal_radial_nodes"
+              ],
+              "op": "eq",
+              "value": 7
+            },
+            "observed": 7,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_normal_bulk_derivative_order"
+              ],
+              "op": "eq",
+              "value": 4
+            },
+            "observed": 4,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_radial_closure"
+              ],
+              "op": "eq",
+              "value": "donor_seven_last3"
+            },
+            "observed": "donor_seven_last3",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_radial_bulk_rows"
+              ],
+              "op": "eq",
+              "value": 3
+            },
+            "observed": 3,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "interpatch_interpolation"
+              ],
+              "op": "eq",
+              "value": "logical_inner_transition"
+            },
+            "observed": "logical_inner_transition",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "evolved_overlap"
+              ],
+              "op": "eq",
+              "value": 3
+            },
+            "observed": 3,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "nominal_cells"
+              ],
+              "op": "eq",
+              "value": 77824
+            },
+            "observed": 77824,
+            "passed": true
+          }
+        ],
+        "report_status": "completed",
+        "status": "passed",
+        "artifacts": {
+          "campaigns/preflight-overlap-v1/output/pulse-half.report.json": {
+            "sha256": "795ac77ba85c27695831f8d436173eb997463bfc03c46bf385959aecc539aa99",
+            "bytes": 3047
+          },
+          "campaigns/preflight-overlap-v1/output/pulse-half.history.csv": {
+            "sha256": "0f25a80d1586d57c28757ec758ddabf099584304104867b87930879addd4a986",
+            "bytes": 1365
+          },
+          "campaigns/preflight-overlap-v1/output/pulse-half.checkpoint": {
+            "sha256": "9da474cf95a5e9deb9dc7ea2199ba969c53fb2fc0c37db0808cc1e4700f76079",
+            "bytes": 62111224
+          },
+          "campaigns/preflight-overlap-v1/output/pulse-half.log": {
+            "sha256": "e169dfc481c451047d77010e4f8f3e1ec57f4bbd9f9bfd9f1f8f2bdc3c721e81",
+            "bytes": 180
+          }
+        },
+        "finished": "2026-10-29T15:47:18.048123+00:00"
+      },
+      {
+        "name": "pulse-resumed",
+        "kind": "pulse",
+        "started": "2026-10-29T15:47:18.960225+00:00",
+        "argv": [
+          "mpiexec",
+          "-n",
+          "12",
+          "-ppn",
+          "12",
+          "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+          "gpu_tile_compact.sh",
+          "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-v17/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_overlap",
+          "16",
+          "campaigns/preflight-overlap-v1/output/pulse-resumed",
+          "pulse",
+          "0.001",
+          ".00025",
+          "-",
+          "campaigns/preflight-overlap-v1/output/pulse-half.checkpoint",
+          "150",
+          "0.001",
+          ".001",
+          "6",
+          "12",
+          "2"
+        ],
+        "generated_inputs": {
+          "campaigns/preflight-overlap-v1/output/pulse-half.checkpoint": "9da474cf95a5e9deb9dc7ea2199ba969c53fb2fc0c37db0808cc1e4700f76079"
+        },
+        "n": 16,
+        "returncode": 0,
+        "timed_out": false,
+        "storage_error": null,
+        "elapsed_seconds": 13.788888172013685,
+        "checks": [
+          {
+            "check": {
+              "path": [
+                "status"
+              ],
+              "op": "eq",
+              "value": "completed"
+            },
+            "observed": "completed",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "mpi_size"
+              ],
+              "op": "eq",
+              "value": 12
+            },
+            "observed": 12,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "backend"
+              ],
+              "op": "eq",
+              "value": "SYCL"
+            },
+            "observed": "SYCL",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "diagnostics_current"
+              ],
+              "op": "eq",
+              "value": true
+            },
+            "observed": true,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "min_lapse"
+              ],
+              "op": "ge",
+              "value": 1e-12
+            },
+            "observed": 0.500091552734375,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "min_chi"
+              ],
+              "op": "ge",
+              "value": 1e-12
+            },
+            "observed": 0.9999526546582143,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_null_ghost"
+              ],
+              "op": "le",
+              "value": 1e-12
+            },
+            "observed": 8.881784197001256e-16,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_null_surface"
+              ],
+              "op": "le",
+              "value": 1e-12
+            },
+            "observed": 6.661338147750941e-16,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "checkpoint_admitted"
+              ],
+              "op": "eq",
+              "value": true
+            },
+            "observed": true,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_cfl"
+              ],
+              "op": "le",
+              "value": 0.5
+            },
+            "observed": 0.2715292380100028,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "t"
+              ],
+              "op": "eq",
+              "value": 0.001
+            },
+            "observed": 0.001,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "H_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 0.00010712253775954166,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "M_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 0.0038251536392091435,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "H_exterior_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 0.00010712253775954166,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "M_exterior_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 0.0038251536392091435,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "algebraic_projection"
+              ],
+              "op": "eq",
+              "value": "final_stage_standard"
+            },
+            "observed": "final_stage_standard",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "checkpoint_schema"
+              ],
+              "op": "eq",
+              "value": "HYP3D_MPI_V9"
+            },
+            "observed": "HYP3D_MPI_V9",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_determinant_residual"
+              ],
+              "op": "le",
+              "value": 1e-12
+            },
+            "observed": 6.661338147750939e-16,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_tracefree_residual"
+              ],
+              "op": "le",
+              "value": 1e-12
+            },
+            "observed": 2.168404344971009e-18,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_angular_stencil"
+              ],
+              "op": "eq",
+              "value": "cross_face_centered5"
+            },
+            "observed": "cross_face_centered5",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "steps"
+              ],
+              "op": "eq",
+              "value": 4
+            },
+            "observed": 4,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_dissipation_epsilon"
+              ],
+              "op": "eq",
+              "value": 2
+            },
+            "observed": 2,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_dissipation_degree"
+              ],
+              "op": "eq",
+              "value": 7
+            },
+            "observed": 7,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "checkpoint_header_bytes"
+              ],
+              "op": "eq",
+              "value": 120
+            },
+            "observed": 120,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_dissipation_cfl_max"
+              ],
+              "op": "le",
+              "value": 2.7
+            },
+            "observed": 0.20113667997153922,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_normal_derivative"
+              ],
+              "op": "eq",
+              "value": "sampled_native_numerator7"
+            },
+            "observed": "sampled_native_numerator7",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_normal_radial_nodes"
+              ],
+              "op": "eq",
+              "value": 7
+            },
+            "observed": 7,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_normal_bulk_derivative_order"
+              ],
+              "op": "eq",
+              "value": 4
+            },
+            "observed": 4,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_radial_closure"
+              ],
+              "op": "eq",
+              "value": "donor_seven_last3"
+            },
+            "observed": "donor_seven_last3",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_radial_bulk_rows"
+              ],
+              "op": "eq",
+              "value": 3
+            },
+            "observed": 3,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "interpatch_interpolation"
+              ],
+              "op": "eq",
+              "value": "logical_inner_transition"
+            },
+            "observed": "logical_inner_transition",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "evolved_overlap"
+              ],
+              "op": "eq",
+              "value": 3
+            },
+            "observed": 3,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "nominal_cells"
+              ],
+              "op": "eq",
+              "value": 77824
+            },
+            "observed": 77824,
+            "passed": true
+          }
+        ],
+        "report_status": "completed",
+        "status": "passed",
+        "artifacts": {
+          "campaigns/preflight-overlap-v1/output/pulse-resumed.report.json": {
+            "sha256": "b9bedc8c9f1745f861ffa173f31a563b6e45277561eaa50f964c2827ee853e94",
+            "bytes": 3004
+          },
+          "campaigns/preflight-overlap-v1/output/pulse-resumed.history.csv": {
+            "sha256": "cac9f44a151a5afce7f8f1532c19a4b31e665d5e15a3da9950100bd6090d69a5",
+            "bytes": 1644
+          },
+          "campaigns/preflight-overlap-v1/output/pulse-resumed.checkpoint": {
+            "sha256": "dab50e90e79d870eebc16e3dc6eb313c1f520620bc4d16c6aa65f449d0a19e9e",
+            "bytes": 62111224
+          },
+          "campaigns/preflight-overlap-v1/output/pulse-resumed.log": {
+            "sha256": "85aa251088eddcc60c707851dff84b2c4f5b593758770f343f7b03ba41904067",
+            "bytes": 182
+          }
+        },
+        "finished": "2026-10-29T15:47:33.718526+00:00"
+      },
+      {
+        "name": "pulse-direct",
+        "kind": "pulse",
+        "started": "2026-10-29T15:47:34.573578+00:00",
+        "argv": [
+          "mpiexec",
+          "-n",
+          "12",
+          "-ppn",
+          "12",
+          "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+          "gpu_tile_compact.sh",
+          "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-v17/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_overlap",
+          "16",
+          "campaigns/preflight-overlap-v1/output/pulse-direct",
+          "pulse",
+          "0.001",
+          ".00025",
+          "-",
+          "-",
+          "150",
+          "0.001",
+          ".001",
+          "6",
+          "12",
+          "2"
+        ],
+        "generated_inputs": {},
+        "n": 16,
+        "returncode": 0,
+        "timed_out": false,
+        "storage_error": null,
+        "elapsed_seconds": 14.469787400914356,
+        "checks": [
+          {
+            "check": {
+              "path": [
+                "status"
+              ],
+              "op": "eq",
+              "value": "completed"
+            },
+            "observed": "completed",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "mpi_size"
+              ],
+              "op": "eq",
+              "value": 12
+            },
+            "observed": 12,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "backend"
+              ],
+              "op": "eq",
+              "value": "SYCL"
+            },
+            "observed": "SYCL",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "diagnostics_current"
+              ],
+              "op": "eq",
+              "value": true
+            },
+            "observed": true,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "min_lapse"
+              ],
+              "op": "ge",
+              "value": 1e-12
+            },
+            "observed": 0.500091552734375,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "min_chi"
+              ],
+              "op": "ge",
+              "value": 1e-12
+            },
+            "observed": 0.9999526546582143,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_null_ghost"
+              ],
+              "op": "le",
+              "value": 1e-12
+            },
+            "observed": 8.881784197001256e-16,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_null_surface"
+              ],
+              "op": "le",
+              "value": 1e-12
+            },
+            "observed": 6.661338147750941e-16,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "checkpoint_admitted"
+              ],
+              "op": "eq",
+              "value": true
+            },
+            "observed": true,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_cfl"
+              ],
+              "op": "le",
+              "value": 0.5
+            },
+            "observed": 0.2715292380100028,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "t"
+              ],
+              "op": "eq",
+              "value": 0.001
+            },
+            "observed": 0.001,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "H_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 0.00010712253775954166,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "M_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 0.0038251536392091435,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "H_exterior_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 0.00010712253775954166,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "M_exterior_L2"
+              ],
+              "op": "finite"
+            },
+            "observed": 0.0038251536392091435,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "algebraic_projection"
+              ],
+              "op": "eq",
+              "value": "final_stage_standard"
+            },
+            "observed": "final_stage_standard",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "checkpoint_schema"
+              ],
+              "op": "eq",
+              "value": "HYP3D_MPI_V9"
+            },
+            "observed": "HYP3D_MPI_V9",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_determinant_residual"
+              ],
+              "op": "le",
+              "value": 1e-12
+            },
+            "observed": 6.661338147750939e-16,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_tracefree_residual"
+              ],
+              "op": "le",
+              "value": 1e-12
+            },
+            "observed": 2.168404344971009e-18,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_angular_stencil"
+              ],
+              "op": "eq",
+              "value": "cross_face_centered5"
+            },
+            "observed": "cross_face_centered5",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "steps"
+              ],
+              "op": "eq",
+              "value": 4
+            },
+            "observed": 4,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_dissipation_epsilon"
+              ],
+              "op": "eq",
+              "value": 2
+            },
+            "observed": 2,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_dissipation_degree"
+              ],
+              "op": "eq",
+              "value": 7
+            },
+            "observed": 7,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "checkpoint_header_bytes"
+              ],
+              "op": "eq",
+              "value": 120
+            },
+            "observed": 120,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_dissipation_cfl_max"
+              ],
+              "op": "le",
+              "value": 2.7
+            },
+            "observed": 0.20113667997153922,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_normal_derivative"
+              ],
+              "op": "eq",
+              "value": "sampled_native_numerator7"
+            },
+            "observed": "sampled_native_numerator7",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_normal_radial_nodes"
+              ],
+              "op": "eq",
+              "value": 7
+            },
+            "observed": 7,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_normal_bulk_derivative_order"
+              ],
+              "op": "eq",
+              "value": 4
+            },
+            "observed": 4,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_radial_closure"
+              ],
+              "op": "eq",
+              "value": "donor_seven_last3"
+            },
+            "observed": "donor_seven_last3",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_radial_bulk_rows"
+              ],
+              "op": "eq",
+              "value": 3
+            },
+            "observed": 3,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "interpatch_interpolation"
+              ],
+              "op": "eq",
+              "value": "logical_inner_transition"
+            },
+            "observed": "logical_inner_transition",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "evolved_overlap"
+              ],
+              "op": "eq",
+              "value": 3
+            },
+            "observed": 3,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "nominal_cells"
+              ],
+              "op": "eq",
+              "value": 77824
+            },
+            "observed": 77824,
+            "passed": true
+          }
+        ],
+        "report_status": "completed",
+        "status": "passed",
+        "artifacts": {
+          "campaigns/preflight-overlap-v1/output/pulse-direct.report.json": {
+            "sha256": "55d173ad759e920495c6a2d774d56667592edf7f8df002adf4ba0875cc439900",
+            "bytes": 2977
+          },
+          "campaigns/preflight-overlap-v1/output/pulse-direct.history.csv": {
+            "sha256": "5406d2f78e451277bf27fa0c4bba372a8811d2cc5d0a5c387d19543baa857f89",
+            "bytes": 1337
+          },
+          "campaigns/preflight-overlap-v1/output/pulse-direct.checkpoint": {
+            "sha256": "dab50e90e79d870eebc16e3dc6eb313c1f520620bc4d16c6aa65f449d0a19e9e",
+            "bytes": 62111224
+          },
+          "campaigns/preflight-overlap-v1/output/pulse-direct.log": {
+            "sha256": "d30fcb54886dce3858c53cf521b59d561f8fc8a98cbe3a447b43e380aaf530b9",
+            "bytes": 176
+          }
+        },
+        "finished": "2026-10-29T15:47:50.003679+00:00"
+      },
+      {
+        "name": "restart-audit",
+        "kind": "check",
+        "started": "2026-10-29T15:47:50.954903+00:00",
+        "argv": [
+          "mpiexec",
+          "-n",
+          "12",
+          "-ppn",
+          "12",
+          "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+          "gpu_tile_compact.sh",
+          "/home/hzhu/hyperbolic-core-shell-20261028/source-v17/tst/hyperbolic_shift_3d/aurora/preflight.py",
+          "--root",
+          "/home/hzhu/hyperbolic-core-shell-20261028",
+          "--plan",
+          "campaigns/preflight-overlap-v1/plan.json",
+          "--output-prefix",
+          "campaigns/preflight-overlap-v1/output/restart-audit",
+          "--seconds",
+          "90",
+          "restart",
+          "--reference",
+          "campaigns/preflight-overlap-v1/output/pulse-direct.checkpoint",
+          "--candidate",
+          "campaigns/preflight-overlap-v1/output/pulse-resumed.checkpoint",
+          "--reference-report",
+          "campaigns/preflight-overlap-v1/output/pulse-direct.report.json",
+          "--candidate-report",
+          "campaigns/preflight-overlap-v1/output/pulse-resumed.report.json"
+        ],
+        "generated_inputs": {
+          "campaigns/preflight-overlap-v1/output/pulse-direct.checkpoint": "dab50e90e79d870eebc16e3dc6eb313c1f520620bc4d16c6aa65f449d0a19e9e",
+          "campaigns/preflight-overlap-v1/output/pulse-resumed.checkpoint": "dab50e90e79d870eebc16e3dc6eb313c1f520620bc4d16c6aa65f449d0a19e9e",
+          "campaigns/preflight-overlap-v1/output/pulse-direct.report.json": "55d173ad759e920495c6a2d774d56667592edf7f8df002adf4ba0875cc439900",
+          "campaigns/preflight-overlap-v1/output/pulse-resumed.report.json": "b9bedc8c9f1745f861ffa173f31a563b6e45277561eaa50f964c2827ee853e94"
+        },
+        "returncode": 0,
+        "timed_out": false,
+        "storage_error": null,
+        "elapsed_seconds": 3.5300205908715725,
+        "checks": [
+          {
+            "check": {
+              "path": [
+                "status"
+              ],
+              "op": "eq",
+              "value": "completed"
+            },
+            "observed": "completed",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "mpi_size"
+              ],
+              "op": "eq",
+              "value": 12
+            },
+            "observed": 12,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "restart_equivalence"
+              ],
+              "op": "eq",
+              "value": true
+            },
+            "observed": true,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "backend"
+              ],
+              "op": "eq",
+              "value": "SYCL"
+            },
+            "observed": "SYCL",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "header",
+                "magic"
+              ],
+              "op": "eq",
+              "value": "HYP3D_MPI_V9"
+            },
+            "observed": "HYP3D_MPI_V9",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "maximum_absolute_error"
+              ],
+              "op": "eq",
+              "value": 0
+            },
+            "observed": 0.0,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "bitwise_payload_equal"
+              ],
+              "op": "eq",
+              "value": true
+            },
+            "observed": true,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "header",
+                "scri_dissipation_epsilon"
+              ],
+              "op": "eq",
+              "value": 2
+            },
+            "observed": 2.0,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "header",
+                "scri_dissipation_degree"
+              ],
+              "op": "eq",
+              "value": 7
+            },
+            "observed": 7,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "header",
+                "header_bytes"
+              ],
+              "op": "eq",
+              "value": 104
+            },
+            "observed": 120,
+            "passed": false
+          },
+          {
+            "check": {
+              "path": [
+                "header",
+                "scri_normal_derivative"
+              ],
+              "op": "eq",
+              "value": "sampled_native_numerator7"
+            },
+            "observed": "sampled_native_numerator7",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "header",
+                "scri_normal_radial_nodes"
+              ],
+              "op": "eq",
+              "value": 7
+            },
+            "observed": 7,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "header",
+                "scri_normal_bulk_derivative_order"
+              ],
+              "op": "eq",
+              "value": 4
+            },
+            "observed": 4,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "header",
+                "scri_radial_closure"
+              ],
+              "op": "eq",
+              "value": "donor_seven_last3"
+            },
+            "observed": "donor_seven_last3",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "header",
+                "scri_radial_bulk_rows"
+              ],
+              "op": "eq",
+              "value": 3
+            },
+            "observed": 3,
+            "passed": true
+          }
+        ],
+        "report_status": "completed",
+        "status": "failed",
+        "artifacts": {
+          "campaigns/preflight-overlap-v1/output/restart-audit.report.json": {
+            "sha256": "f06771bc7137d16984c3992480ec8a00d4e3ef9cbfe4ff42a904f820b965e6bf",
+            "bytes": 5118
+          },
+          "campaigns/preflight-overlap-v1/output/restart-audit.log": {
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          }
+        },
+        "finished": "2026-10-29T15:47:55.386056+00:00"
+      }
+    ],
+    "storage_at_start": {
+      "bytes": 3311153664,
+      "entries": 25227,
+      "limit_bytes": 5000000000,
+      "reserve_bytes": 100000000,
+      "planned_bytes": 400000000,
+      "headroom_bytes": 1188846336
+    },
+    "affinity": {
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 0.3206364328507334,
+      "records": [
+        {
+          "host": "x4309c5s6b0n0",
+          "rank": 6,
+          "mask": "3.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4309c5s6b0n0",
+          "rank": 8,
+          "mask": "4.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4309c5s6b0n0",
+          "rank": 1,
+          "mask": "0.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4309c5s6b0n0",
+          "rank": 2,
+          "mask": "1.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4309c5s6b0n0",
+          "rank": 4,
+          "mask": "2.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4309c5s6b0n0",
+          "rank": 10,
+          "mask": "5.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4309c5s6b0n0",
+          "rank": 0,
+          "mask": "0.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4309c5s6b0n0",
+          "rank": 9,
+          "mask": "4.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4309c5s6b0n0",
+          "rank": 3,
+          "mask": "1.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4309c5s6b0n0",
+          "rank": 7,
+          "mask": "3.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4309c5s6b0n0",
+          "rank": 11,
+          "mask": "5.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4309c5s6b0n0",
+          "rank": 5,
+          "mask": "2.1",
+          "hierarchy": "COMPOSITE"
+        }
+      ],
+      "passed": true
+    },
+    "stop_reason_status": "failed",
+    "finished": "2026-10-29T15:47:55.386075+00:00",
+    "elapsed_seconds": 124.5608105249703,
+    "storage_at_finish": {
+      "bytes": 3542668799,
+      "entries": 25262
+    }
+  }
+}

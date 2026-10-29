@@ -1,0 +1,33 @@
+{
+  "passed": true,
+  "phase": "preflight",
+  "low_resolution_n": 16,
+  "source_manifest_sha256": "d959a7cb8a587314d80ba6af7af9d692ddbef1815925f09bb46ef062429d3641",
+  "binaries": {
+    "source-v17/tst/hyperbolic_shift_3d/aurora/preflight.py": "f4fd79e8ef9f30e3fc6b7798256db8b77ddc5b2bc007bda0673584b943904fc4",
+    "build-sycl-mpi-v17/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_overlap": "a4cc1748bd1e0042ede7d2fcfa84ed2d483c9ac4bb5600559cc1694f5b06c51a"
+  },
+  "gpu_cpu_parity": true,
+  "restart_equivalence": true,
+  "normal_derivative_configs": [
+    {
+      "checkpoint_schema": "HYP3D_MPI_V9",
+      "checkpoint_header_bytes": 120,
+      "scri_dissipation_epsilon": 2.0,
+      "scri_dissipation_degree": 7,
+      "scri_normal_derivative": "sampled_native_numerator7",
+      "scri_normal_radial_nodes": 7,
+      "scri_normal_bulk_derivative_order": 4,
+      "scri_radial_closure": "donor_seven_last3",
+      "scri_radial_bulk_rows": 3,
+      "interpatch_interpolation": "logical_inner_transition",
+      "evolved_overlap": 3,
+      "executable": "build-sycl-mpi-v17/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_overlap",
+      "nominal_cells": 77824
+    }
+  ],
+  "job_id": "8985223.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "verification_sha256": "3b2f7adfac84cb5f527f359c8e6c4330d10cedb91fa0873a5d9a626876893f5f",
+  "verifier_sha256": "ff590b2d9ffe6fd48d3ca5474a14311c32d2ea9a84f5036aa8c3b6b38f3cb495",
+  "scope": "V9 four-step CPU/SYCL and twelve-rank ownership/restart qualification only; no duration or convergence result."
+}
