@@ -95,10 +95,20 @@ rates, exact constant preservation, weighted energy, CPU/device-interface
 parity and twelve ownership partitions. Fifteen bounded native MPI cases
 confirm a bitwise V3/zero-epsilon payload match, one-rank direct versus
 two-rank restarted equality of all four checkpoint arrays, and configuration,
-admission and CFL rejection. These are Kokkos-Serial tests; actual SYCL
-preflight and sustained evolution remain pending. No V4 100 M result is claimed.
+admission and CFL rejection. These local checks use Kokkos Serial.
 The [native verification package](angular-dissipation-native-v1/README.md)
 retains the final source bindings, small raw outputs and checkpoint hashes.
+
+The subsequent [V4 SYCL preflight](aurora/preflight-dissipative-v1/README.md),
+job 8983792, passed all fifteen cases on twelve GPU tiles. Independent review
+verified 221 checks, 131 artifacts, all 84 component rank logs and the complete
+frozen source/build identity. The four-step epsilon-two pulse restart is
+bitwise identical to its direct run, and V4 epsilon zero reproduces the V3
+four-array payload exactly. Minkowski state deviation is 1.01e-14 at t=.002;
+the puncture reaches only .006 M, with null residual <=1.23e-15 and horizon
+expansion RMS .000325. Epsilon two alone is admitted for a
+[bounded fresh Minkowski duration comparison](aurora/stability-dissipative-minkowski-v1/protocol.md).
+No V4 sustained-stability or 100 M result is claimed by this preflight.
 
 The original J-disabled, bulk-mu=4 1D control is confirmed to have completed coordinate `33.3333984375 = 100.0001953125 M`. Its N513/N1025 continuation chains and frozen-source identities were checked. A [portable N513 time series](original-1d-reference/history.csv) and [provenance](original-1d-reference/provenance.json) preserve the matching horizon/exterior-constraint reference. Late gauge settling and uniform puncture convergence were not established by that original control.
 
