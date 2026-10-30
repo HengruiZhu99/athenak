@@ -1,0 +1,135 @@
+{
+  "t_over_M": 9.14100000000072,
+  "failure": "invalid accepted volume geometry",
+  "diagnostic_t_over_M": 9.000000000000671,
+  "lapse_floor_interventions": 0,
+  "max_null_surface": 1.2212592910403957e-15,
+  "max_null_ghost": 1.5543120435302486e-15,
+  "checkpoint_admitted": false,
+  "artifacts_verified": [
+    {
+      "path": "campaigns/n16-to20m-v1-segment01/output/puncture.report.json",
+      "sha256": "a2026e4c7debcc8a5d3495240abe90e40a55f15b0186c8913aad3ea90fe64ade",
+      "bytes": 10954
+    },
+    {
+      "path": "campaigns/n16-to20m-v1-segment01/output/puncture.checkpoint",
+      "sha256": "52f2743febb2eebd3e26b69983183f7578c49fd4c959a4b186731324fa93c285",
+      "bytes": 79725208
+    },
+    {
+      "path": "campaigns/n16-to20m-v1-segment01/output/puncture.history.csv",
+      "sha256": "bb07ead3b03b6536cb5906277630fde9e1f1da86f5f6097026736b32d854eea7",
+      "bytes": 22088
+    },
+    {
+      "path": "campaigns/n16-to20m-v1-segment01/output/puncture.failed-stage.bin",
+      "sha256": "8ed6840ae9f925ce8a5a4cbbfce624c8a53d06726583469a03c49cc3c316e714",
+      "bytes": 39862528
+    },
+    {
+      "path": "campaigns/n16-to20m-v1-segment01/output/puncture.fastflow.horizon_summary_0.txt",
+      "sha256": "7a2f1545863e377307f7d99bad5d6d765ddb20734328593fa7c1e9b79556707d",
+      "bytes": 2299
+    }
+  ],
+  "failed_state": {
+    "nonpositive_chi": {
+      "count": 8,
+      "indices": [
+        4095,
+        8176,
+        12047,
+        16128,
+        16639,
+        20720,
+        24591,
+        28672
+      ],
+      "r_range": [
+        0.00974278579257492,
+        0.009742785792574935
+      ],
+      "positions": [
+        [
+          -0.005624999999999991,
+          -0.005624999999999991,
+          -0.005624999999999991
+        ],
+        [
+          0.005625,
+          -0.005624999999999991,
+          -0.005624999999999991
+        ],
+        [
+          -0.005624999999999991,
+          0.005625,
+          -0.005624999999999991
+        ],
+        [
+          0.005625,
+          0.005625,
+          -0.005624999999999991
+        ],
+        [
+          -0.005624999999999991,
+          -0.005624999999999991,
+          0.005625
+        ],
+        [
+          0.005625,
+          -0.005624999999999991,
+          0.005625
+        ],
+        [
+          -0.005624999999999991,
+          0.005625,
+          0.005625
+        ],
+        [
+          0.005625,
+          0.005625,
+          0.005625
+        ]
+      ],
+      "failed_values": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "last_accepted_values": [
+        3.9388394003100636e-07,
+        3.9388394003285914e-07,
+        3.938839400346244e-07,
+        3.9388394003613223e-07,
+        3.9388394003495745e-07,
+        3.9388394003666396e-07,
+        3.9388394003883787e-07,
+        3.9388394004037576e-07
+      ]
+    },
+    "nonpositive_lapse": {
+      "count": 0,
+      "indices": [],
+      "r_range": null,
+      "positions": []
+    },
+    "nonfinite_field": {
+      "count": 0,
+      "indices": [],
+      "r_range": null,
+      "positions": []
+    },
+    "nonpositive_metric": {
+      "count": 0,
+      "indices": [],
+      "r_range": null,
+      "positions": []
+    }
+  }
+}

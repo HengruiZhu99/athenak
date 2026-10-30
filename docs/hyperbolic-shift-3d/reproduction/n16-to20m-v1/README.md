@@ -30,3 +30,32 @@ ambiguous scheduler failures require inspection; never treat them as walltime.
 Check all user debug jobs before submission and avoid concurrent allocations.
 On 20M completion collect and verify evidence, report results, pause the monitor.
 If SSH expires, request renewal without repeated submissions.
+
+## Result: numerical failure at 9.141M
+
+Job 8989499 terminated with `invalid accepted volume geometry`, after 4094
+additional accepted steps from 3M (6095 total), at coordinate t=3.047. Native
+runtime was 896.906 seconds. It did not reach 20M or the walltime limit. The
+failed run's checkpoint is explicitly unadmitted, and was not resubmitted.
+The 30-minute monitor was paused on inspection.
+
+All recorded artifacts were SHA256-verified after local collection. In the
+rejected volume candidate, chi is exactly zero in the eight closest cells at
+coordinates (±.005625, ±.005625, ±.005625), radius .00974278579. Their chi values
+in the last accepted checkpoint were about 3.93884e-7. No other nonpositive chi,
+nonpositive lapse, nonfinite field, or nonpositive conformal-metric eigenvalue
+was found. Chi is materialized by exponentiating its evolved logarithm, so the
+zeros indicate numerical underflow; the cause of the extreme update remains
+to be diagnosed. Do not infer that a chi floor would repair the instability.
+
+Original numerical penalty coefficients remained unchanged (scale=1). Maximum
+scri null residual was 1.22126e-15; ghost residual 1.55431e-15. There were zero
+lapse-floor interventions. The last complete ordinary diagnostic is at 9M,
+not the failure time: min lapse .0196473, full-volume Hamiltonian RMS .113289.
+The last complete horizon candidate has radius .1065993 and expansion RMS
+.00282462, exceeding the .001 acceptance threshold; accepted exterior norms
+are therefore absent. This failure does not establish the horizon disappeared.
+
+This extends the previously verified 3M result but does not establish long-time
+stability. The next diagnostic target is the puncture-cell chi/RHS update. No
+new evolution or numerical repair was launched during this status check.
