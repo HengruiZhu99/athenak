@@ -1,0 +1,195 @@
+[
+  {
+    "name": "legacy-refactored",
+    "command": [
+      "/opt/homebrew/Cellar/open-mpi/5.0.10/bin/mpirun",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive_radial_batch",
+      "12",
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/mesh-plan-evolution-local-v1/rebuilds/legacy-refactored",
+      "pulse",
+      "0.00075",
+      ".00025",
+      "-",
+      "-",
+      "140",
+      ".001",
+      ".001",
+      "6",
+      "12",
+      "2"
+    ],
+    "returncode": 0,
+    "seconds": 13.153715833000001,
+    "environment": {
+      "HYPERBOLIC_SPARSE_POISON": "1",
+      "HYPERBOLIC_PLAN_REBUILD_INTERVAL": "0"
+    },
+    ".checkpoint": {
+      "sha256": "944ee7c7e04f423dbabf9b21c4bc9fbd3186788d726930ceb4c443b33d150f44",
+      "reference": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/mesh-plan-evolution-local-v1/parity/cases/control.checkpoint",
+      "reference_sha256": "944ee7c7e04f423dbabf9b21c4bc9fbd3186788d726930ceb4c443b33d150f44"
+    }
+  },
+  {
+    "name": "pulse-rebuild",
+    "command": [
+      "/opt/homebrew/Cellar/open-mpi/5.0.10/bin/mpirun",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive_planned",
+      "12",
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/mesh-plan-evolution-local-v1/rebuilds/pulse-rebuild",
+      "pulse",
+      "0.00075",
+      ".00025",
+      "-",
+      "-",
+      "140",
+      ".001",
+      ".001",
+      "6",
+      "12",
+      "2"
+    ],
+    "returncode": 0,
+    "seconds": 28.873807874999997,
+    "environment": {
+      "HYPERBOLIC_SPARSE_POISON": "1",
+      "HYPERBOLIC_PLAN_REBUILD_INTERVAL": "1"
+    },
+    ".checkpoint": {
+      "sha256": "944ee7c7e04f423dbabf9b21c4bc9fbd3186788d726930ceb4c443b33d150f44",
+      "reference": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/mesh-plan-evolution-local-v1/parity/cases/control.checkpoint",
+      "reference_sha256": "944ee7c7e04f423dbabf9b21c4bc9fbd3186788d726930ceb4c443b33d150f44"
+    }
+  },
+  {
+    "name": "restart-rebuild",
+    "command": [
+      "/opt/homebrew/Cellar/open-mpi/5.0.10/bin/mpirun",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive_planned",
+      "12",
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/mesh-plan-evolution-local-v1/rebuilds/restart-rebuild",
+      "pulse",
+      "0.00075",
+      ".00025",
+      "-",
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/mesh-plan-evolution-local-v1/parity/cases/part.checkpoint",
+      "140",
+      ".001",
+      ".001",
+      "6",
+      "12",
+      "2"
+    ],
+    "returncode": 0,
+    "seconds": 21.576216832999997,
+    "environment": {
+      "HYPERBOLIC_SPARSE_POISON": "1",
+      "HYPERBOLIC_PLAN_REBUILD_INTERVAL": "1"
+    },
+    ".checkpoint": {
+      "sha256": "944ee7c7e04f423dbabf9b21c4bc9fbd3186788d726930ceb4c443b33d150f44",
+      "reference": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/mesh-plan-evolution-local-v1/parity/cases/control.checkpoint",
+      "reference_sha256": "944ee7c7e04f423dbabf9b21c4bc9fbd3186788d726930ceb4c443b33d150f44"
+    }
+  },
+  {
+    "name": "minkowski-rebuild",
+    "command": [
+      "/opt/homebrew/Cellar/open-mpi/5.0.10/bin/mpirun",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive_planned",
+      "12",
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/mesh-plan-evolution-local-v1/rebuilds/minkowski-rebuild",
+      "minkowski",
+      "0.0005",
+      ".00025",
+      "-",
+      "-",
+      "140",
+      ".001",
+      ".001",
+      "6",
+      "12",
+      "2"
+    ],
+    "returncode": 0,
+    "seconds": 21.371659333000004,
+    "environment": {
+      "HYPERBOLIC_SPARSE_POISON": "1",
+      "HYPERBOLIC_PLAN_REBUILD_INTERVAL": "1"
+    },
+    ".checkpoint": {
+      "sha256": "e8710ff60295a9d8007c900a3fb9dde2385d12a7e1be6260a5826221b4e2796a",
+      "reference": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/mesh-plan-evolution-local-v1/parity/cases/minkowski-control.checkpoint",
+      "reference_sha256": "e8710ff60295a9d8007c900a3fb9dde2385d12a7e1be6260a5826221b4e2796a"
+    }
+  },
+  {
+    "name": "puncture-rebuild",
+    "command": [
+      "/opt/homebrew/Cellar/open-mpi/5.0.10/bin/mpirun",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive_planned",
+      "16",
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/mesh-plan-evolution-local-v1/rebuilds/puncture-rebuild",
+      "puncture",
+      "0.0005",
+      ".00025",
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/continuous-positive-local-v1/puncture-n16.txt",
+      "-",
+      "140",
+      ".001",
+      ".001",
+      "6",
+      "12",
+      "2"
+    ],
+    "returncode": 0,
+    "seconds": 36.908141666000006,
+    "environment": {
+      "HYPERBOLIC_SPARSE_POISON": "1",
+      "HYPERBOLIC_PLAN_REBUILD_INTERVAL": "1"
+    },
+    ".checkpoint": {
+      "sha256": "cb59d6f116b98fd674577c7d4175d5a387f180e049e06565afd2baae91c2780c",
+      "reference": "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/mesh-plan-evolution-local-v1/parity/cases/puncture-control.checkpoint",
+      "reference_sha256": "cb59d6f116b98fd674577c7d4175d5a387f180e049e06565afd2baae91c2780c"
+    }
+  },
+  {
+    "name": "failure-rebuild",
+    "command": [
+      "/opt/homebrew/Cellar/open-mpi/5.0.10/bin/mpirun",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive_planned",
+      "12",
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/mesh-plan-evolution-local-v1/rebuilds/failure-rebuild",
+      "pulse",
+      "0.00025",
+      ".00025",
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/mesh-plan-evolution-local-v1/parity/cases/stress.txt",
+      "-",
+      "140",
+      ".001",
+      ".001",
+      "6",
+      "12",
+      "2"
+    ],
+    "returncode": 2,
+    "seconds": 13.618494625000011,
+    "environment": {
+      "HYPERBOLIC_SPARSE_POISON": "1",
+      "HYPERBOLIC_PLAN_REBUILD_INTERVAL": "1"
+    }
+  }
+]

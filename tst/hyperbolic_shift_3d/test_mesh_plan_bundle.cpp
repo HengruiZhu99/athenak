@@ -85,20 +85,25 @@ int main(int argc,char**argv){
   MPI_Comm_rank(MPI_COMM_WORLD,&rank);MPI_Comm_size(MPI_COMM_WORLD,&size);
   try{
     Bundle bundle;Bundle::Options options;h::MeshPlanEpoch epoch{};uint64_t expected_builds=0;int comparisons=0;
+    Reject([&]{bundle.Borrow(epoch);});
     auto check=[&](const cubed_sphere::CompositeMesh&mesh,bool repartition=false){
       const auto cuts=Cuts(mesh,size,repartition);
       if(rank==0)std::cout<<"CHECK generation "<<epoch.topology<<","<<epoch.geometry<<","<<epoch.partition<<" blocks="<<mesh.blocks.size()<<" cells="<<mesh.cells<<std::endl;
       bundle.Rebuild(mesh,options,cuts,epoch);++expected_builds;
-      Bundle fresh;fresh.Rebuild(mesh,options,cuts,epoch);
+      // Exercise automatic ownership without constructing a second host grid
+      // merely to determine cuts. Explicit repartitioning still uses its cuts.
+      Bundle fresh;fresh.Rebuild(mesh,options,repartition?cuts:std::vector<int>{},epoch);
       for(int stage=0;stage<2;++stage){Require(Bits(Evaluate(bundle,epoch,stage),Evaluate(fresh,epoch,stage)),"rebuilt/fresh native fields differ");++comparisons;}
       bundle.Rebuild(mesh,options,cuts,epoch);Require(bundle.Builds()==expected_builds,"unchanged plan was rebuilt");
       if(rank==0)bundle.Invalidate();
       Reject([&]{bundle.Use(epoch,[](auto&){});});
       bundle.Rebuild(mesh,options,cuts,epoch);++expected_builds;
       auto stale=epoch;if(rank==0)++stale.geometry;Reject([&]{bundle.Use(stale,[](auto&){});});
+      auto wrong=epoch;++wrong.topology;Reject([&]{bundle.Borrow(wrong);});
       // Changing coordinates without advancing the epoch fails even at identical shape.
       auto changed=mesh;changed.radii[0]+=.001;
       Reject([&]{bundle.Rebuild(changed,options,cuts,epoch);});Reject([&]{bundle.Use(epoch,[](auto&){});});
+      Reject([&]{bundle.Borrow(epoch);});
       Reject([&]{bundle.Exchange(epoch,Buffer{},Buffer{});});Reject([&]{bundle.Gather(epoch,Buffer{},Buffer{},true);});
       bundle.Rebuild(mesh,options,cuts,epoch);++expected_builds;
       // Inject a local state-staging rejection after device construction, before MPI-plan construction.

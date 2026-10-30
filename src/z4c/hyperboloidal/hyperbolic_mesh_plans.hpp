@@ -120,9 +120,9 @@ class HyperbolicMeshPlans {
     if(all_reuse){ready_=true;return;}
     std::unique_ptr<Generation> next;
     Local([&]{
-      if(cuts.size()!=size_t(size_+1)||cuts.front()!=0||!std::isfinite(options.angular_epsilon)||options.angular_epsilon<0)
+      if((!cuts.empty()&&(cuts.size()!=size_t(size_+1)||cuts.front()!=0))||!std::isfinite(options.angular_epsilon)||options.angular_epsilon<0)
         throw std::invalid_argument("invalid mesh-plan options or ownership");
-      for(int r=0;r<size_;++r)if(cuts[r+1]<=cuts[r])throw std::invalid_argument("empty mesh-plan ownership");
+      for(int r=0;!cuts.empty()&&r<size_;++r)if(cuts[r+1]<=cuts[r])throw std::invalid_argument("empty mesh-plan ownership");
       next=std::make_unique<Generation>();
       next->model_=std::make_unique<Model>(mesh,false,true,options.angular_epsilon,
           Model::NormalDerivative::sampled_numerator,Model::RadialClosure::donor_seven);
@@ -131,7 +131,13 @@ class HyperbolicMeshPlans {
       auto&l=next->layout;l.rank=rank_;l.size=size_;l.cuts=cuts;
       if(m.grid.active.size()>size_t(INT_MAX/31)||m.scri.rows.size()>size_t(INT_MAX/31))
         throw std::invalid_argument("mesh-plan field size exceeds MPI count");
-      l.total=m.grid.active.size();l.first=cuts[rank_];l.local=cuts[rank_+1]-l.first;
+      l.total=m.grid.active.size();
+      // Empty cuts select deterministic equal-cell ownership after constructing
+      // the host grid once. Explicit cuts remain part of the exact descriptor.
+      if(l.cuts.empty()){l.cuts.resize(size_+1);for(int r=0;r<=size_;++r)l.cuts[r]=int(int64_t(l.total)*r/size_);}
+      const auto&cuts=l.cuts;
+      l.first=cuts[rank_];l.local=cuts[rank_+1]-l.first;
+      if(l.local==0)throw std::invalid_argument("empty mesh-plan ownership");
       if(cuts.back()!=l.total)throw std::invalid_argument("ownership does not cover rebuilt mesh");
       l.surface_total=m.scri.rows.size();l.surface_first=l.surface_total*rank_/size_;
       l.surface_local=l.surface_total*(rank_+1)/size_-l.surface_first;
@@ -167,7 +173,7 @@ class HyperbolicMeshPlans {
     Local([&]{needed=next->halo->ActiveDependencies();
       for(const auto*readset:{&next->normal_halo->ActiveDependencies(),&next->boundary->ActiveDependencies()})
         needed.insert(needed.end(),readset->begin(),readset->end());});
-    next->sparse->Rebuild(epoch,cuts,31,needed);
+    next->sparse->Rebuild(epoch,next->layout.cuts,31,needed);
     current_.swap(next);descriptor_.swap(descriptor);epoch_=epoch;published_=ready_=true;++builds_;
   }
   // Call collectively before every stage/diagnostic use. Do not retain borrowed
@@ -178,6 +184,13 @@ class HyperbolicMeshPlans {
   template<class Action> void Use(MeshPlanEpoch epoch,Action action){
     Require(ready_&&epoch==epoch_,"stale or incomplete hyperbolic mesh-plan generation");
     Local([&]{action(*current_);});
+  }
+  // For local operator calls already enclosed by a caller's collective error
+  // boundary. Re-fetch on every call; never retain the returned reference over
+  // Rebuild/Invalidate. This check itself performs no MPI communication.
+  Generation& Borrow(MeshPlanEpoch epoch){
+    if(!ready_||!(epoch==epoch_))throw std::invalid_argument("stale or incomplete hyperbolic mesh-plan generation");
+    return *current_;
   }
   SparseStageExchange::Timing Exchange(MeshPlanEpoch epoch,Buffer owned,Buffer global,bool poison=false){
     Require(ready_&&epoch==epoch_,"stale or incomplete hyperbolic mesh-plan generation");

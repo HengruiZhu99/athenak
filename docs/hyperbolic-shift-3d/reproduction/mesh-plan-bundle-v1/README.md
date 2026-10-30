@@ -3,8 +3,10 @@
 `HyperbolicMeshPlans` owns one complete generation of host geometry, radial and
 angular plans, device operators, halo plans, MPI ownership/counts, sparse donor
 exchange, and reference lapse. It supports the sampled-normal, donor-seven
-formulation. This library is tested independently; **the evolution driver does
-not yet use it**. The existing measured V24 execution path remains unchanged.
+formulation. The library was first tested independently. It is now used by the
+opt-in [planned evolution target](../mesh-plan-evolution-v1/README.md), including
+fixed-layout accepted-step rebuilds. The measured V24 target retains its existing
+independent plan ownership.
 
 Rebuilds compare exact mesh/options/ownership descriptors across ranks and require
 monotone topology, geometry and partition generations. An unchanged generation
@@ -73,11 +75,11 @@ support the configured MPI launcher.
 
 ## Remaining integration
 
-The evolution driver must adopt this owner together with its field storage,
-RK compensation, halo surface bindings, and boundary-stage cache invalidation.
-Replacement field storage must be staged before publishing a new generation.
-The driver also needs a lifecycle for diagnostic/checkpoint references. Fixed-mesh
-CPU/MPI restart and rejected-stage fidelity must then be compared with V24, followed
-by SYCL/MPI qualification and a controlled performance comparison. Additional
-collective guards must be measured in that comparison. None of this library-only
-work adds an AMR evolution claim or changes the existing lapse-floor policy.
+The planned evolution target now checks fixed-mesh CPU/MPI restart and rejected
+stages against V24, including replacement of all plans on an unchanged layout.
+Changing ownership or the physical mesh still requires replacement field storage
+and a transfer policy before publishing a generation, with corresponding
+diagnostic/checkpoint support. SYCL/MPI qualification and a controlled performance
+comparison of that integration remain outstanding. Additional collective guards
+must be measured in that comparison. These lifecycle checks do not add an AMR
+evolution claim or change the existing lapse-floor policy.

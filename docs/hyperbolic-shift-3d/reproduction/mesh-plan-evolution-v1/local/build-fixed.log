@@ -1,0 +1,46 @@
+[  9%] Built target kokkossimd
+[ 63%] Built target kokkoscore
+[ 72%] Built target kokkosalgorithms
+[ 72%] Built target kokkoscontainers
+[ 90%] Built target hyperboloidal_fastflow
+[ 90%] Building CXX object tst/hyperbolic_shift_3d/CMakeFiles/hyperbolic_shift_3d_mpi_continuous_positive_planned.dir/coupled_mpi.cpp.o
+In file included from /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/coupled_mpi.cpp:11:
+In file included from /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/src/z4c/hyperboloidal/hyperbolic_composite_exchange.hpp:7:
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/src/z4c/hyperboloidal/hyperbolic_composite_device.hpp:478:71: warning: missing field 'radial' initializer [-Wmissing-field-initializers]
+  478 |         volumes_,rhs_,gap_,cfl_,n_,width_,padded_count_,dt,ko,adaptive};
+      |                                                                       ^
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/src/z4c/hyperboloidal/hyperbolic_composite_device.hpp:495:77: warning: missing field 'radial' initializer [-Wmissing-field-initializers]
+  495 |         diagnostic_volumes_,rhs_,gap_,cfl_,n_,width_,padded_count_,0,0,false};
+      |                                                                             ^
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/coupled_mpi.cpp:496:59: warning: misleading indentation; statement is not part of the previous 'if' [-Wmisleading-indentation]
+  496 |     }catch(const std::exception&e){bad=1;reason=e.what();}SynchronizeError(bad,reason);
+      |                                                           ^
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/coupled_mpi.cpp:481:5: note: previous statement is here
+  481 |     if(rank==0)try{Header header;std::memcpy(header.magic,checkpoint_magic,std::strlen(checkpoint_magic)+1);header.n=n;header.kind=kind;header.admitted=admitted;
+      |     ^
+3 warnings generated.
+[100%] Linking CXX executable hyperbolic_shift_3d_mpi_continuous_positive_planned
+[100%] Built target hyperbolic_shift_3d_mpi_continuous_positive_planned
+[ 10%] Built target kokkossimd
+[ 70%] Built target kokkoscore
+[ 80%] Built target kokkosalgorithms
+[ 80%] Built target kokkoscontainers
+[100%] Built target hyperboloidal_fastflow
+[100%] Building CXX object tst/hyperbolic_shift_3d/CMakeFiles/hyperbolic_shift_3d_mpi_continuous_positive_radial_batch.dir/coupled_mpi.cpp.o
+In file included from /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/coupled_mpi.cpp:11:
+In file included from /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/src/z4c/hyperboloidal/hyperbolic_composite_exchange.hpp:7:
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/src/z4c/hyperboloidal/hyperbolic_composite_device.hpp:478:71: warning: missing field 'radial' initializer [-Wmissing-field-initializers]
+  478 |         volumes_,rhs_,gap_,cfl_,n_,width_,padded_count_,dt,ko,adaptive};
+      |                                                                       ^
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/src/z4c/hyperboloidal/hyperbolic_composite_device.hpp:495:77: warning: missing field 'radial' initializer [-Wmissing-field-initializers]
+  495 |         diagnostic_volumes_,rhs_,gap_,cfl_,n_,width_,padded_count_,0,0,false};
+      |                                                                             ^
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/coupled_mpi.cpp:496:59: warning: misleading indentation; statement is not part of the previous 'if' [-Wmisleading-indentation]
+  496 |     }catch(const std::exception&e){bad=1;reason=e.what();}SynchronizeError(bad,reason);
+      |                                                           ^
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/coupled_mpi.cpp:481:5: note: previous statement is here
+  481 |     if(rank==0)try{Header header;std::memcpy(header.magic,checkpoint_magic,std::strlen(checkpoint_magic)+1);header.n=n;header.kind=kind;header.admitted=admitted;
+      |     ^
+3 warnings generated.
+[100%] Linking CXX executable hyperbolic_shift_3d_mpi_continuous_positive_radial_batch
+[100%] Built target hyperbolic_shift_3d_mpi_continuous_positive_radial_batch
