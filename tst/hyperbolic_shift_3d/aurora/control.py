@@ -36,7 +36,8 @@ THIN_TARGET = 'hyperbolic_shift_3d_mpi_thin_trace'
 THIN_SPARSE_TARGET = 'hyperbolic_shift_3d_mpi_thin_trace_sparse'
 THIN_TARGETS = {THIN_TARGET,THIN_SPARSE_TARGET}
 TRACE_ENV = {'HYPERBOLIC_TRACE_LAYERS':'1','HYPERBOLIC_TRACE_SHIFTED':'1',
-             'HYPERBOLIC_TRACE_KAPPA':'0','HYPERBOLIC_TRACE_NORMAL_RATIO':'.25'}
+             'HYPERBOLIC_TRACE_KAPPA':'0','HYPERBOLIC_TRACE_NORMAL_RATIO':'.25',
+             'HYPERBOLIC_TRACE_PROFILES':'0'}
 SPHERICAL_OVERLAP_TARGET = 'hyperbolic_shift_3d_mpi_spherical_overlap'
 
 
@@ -51,6 +52,7 @@ def command_environment(command):
     if values.get('HYPERBOLIC_SPARSE_POISON','0') not in {'0','1'}:raise ValueError('Invalid sparse poison flag')
     if target in THIN_TARGETS:
         values=dict(TRACE_ENV,**values)
+        if values['HYPERBOLIC_TRACE_PROFILES'] not in {'0','1'}:raise ValueError('Invalid trace profile flag')
         layers=float(values['HYPERBOLIC_TRACE_LAYERS']);shifted=float(values['HYPERBOLIC_TRACE_SHIFTED'])
         if layers not in {1.,2.,3.} or shifted not in {0.,1.}:raise ValueError('Invalid thin trace geometry')
         for k in ['HYPERBOLIC_TRACE_KAPPA','HYPERBOLIC_TRACE_NORMAL_RATIO']:

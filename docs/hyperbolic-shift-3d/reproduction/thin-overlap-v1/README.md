@@ -342,10 +342,51 @@ differences, but do not isolate their causes or establish reflection levels.
 
 ![Same-time 0.15M field differences](gpu-puncture-profile-comparison/profiles.png)
 
-The nine-case layer/control batch is now submitted as **8987986**, plan hash
+The nine-case layer/control batch **8987986** passed independent verification, plan hash
 `12d47a6ddd8c5ddf979612ab9eb0d7beb599f3726be9d2d8c5c0711aeadd1d39`.
 It covers the five remaining short Minkowski configurations, L1 zero/paired
 spherical pulses, and matched V12 L3/zero/shifted-off and preserved V11 pulse
-controls. Its results and independent cross-schema comparison are pending.
+controls. `gpu-matrix-v1/` records all nine completed cases. The matched V12/V11
+control has bitwise-equal shared headers and all 9,965,632 payload doubles.
+All five remaining Minkowski cases retain H RMS below 2.42e-15 and momentum
+RMS below 1.13e-14. Every case has zero floor interventions and maximum scri
+null residual 8.89e-16. Pulse results stop at coordinate 0.005 (20 steps);
+these are preflight results, not interface-crossing or reflection evidence.
+
+Using the unchanged frozen executable, the L1 paired Minkowski stability
+run was submitted as **8988125**, target coordinate time 1 with 2,048 steps
+of exactly representable dt=1/2048. Its plan hash is
+`c82280864c7eafa19ba4693c743ce538dc281341d9229110449b33161fbf8dca`.
+The scoped `admit_paired_lowres.py` admission combines the independently
+verified operator, clock/restart, sparse-equivalence and short-puncture
+checks; it does not relabel the earlier failed batch as passed.
+This longer run is pending, and uses one CompactBinaryMerger debug node
+with all twelve ranks/tiles.
 Longer interface-crossing waves, new 3M thin-overlap punctures, timestep/spatial
 convergence, and an accuracy-matched cost recommendation remain open.
+
+### Optional cached time-series profiles (CPU qualified)
+
+`HYPERBOLIC_TRACE_PROFILES=1` enables the existing fixed-location values and
+radial derivatives at each diagnostic time for V12 grids with n >= 12.
+`thin_profile_samples.hpp` shares the offline reader's sampling construction;
+all locations, stencils and weights are built once for the immutable grid.
+The output is `<prefix>.profiles.csv`, with separate Cartesian/shell copies
+and 1,462 rows per sample. A mesh or geometry change requires rebuilding the
+sampler; this does not add adaptive mesh support.
+
+Only at diagnostic times, owned values are copied into persistent host buffers
+and gathered to root for sampling. This diagnostic gather is separate from
+sparse RK communication and never invalidates the evolution boundary cache.
+Collection and sampling/write timers are reported separately and are included
+in diagnostic time; construction is reported separately as setup. The feature
+defaults off. The controller binds and sanitizes its explicit environment flag.
+
+`profile-evolution-audit/` records bounded CPU tests: frozen/new disabled/full
+and new enabled/two-rank poisoned-sparse evolutions have byte-identical complete
+checkpoints. Online final samples match both the new reader and the frozen
+independent reader byte for byte, and sampled Minkowski values/derivatives
+remain at roundoff. Seven controller tests passed. GPU observer invariance and
+long wave use still require a new separately frozen build and preflight. These
+profiles enable future reflection analysis; their existence is not a completed
+reflection measurement.

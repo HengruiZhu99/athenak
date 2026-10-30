@@ -1,0 +1,16 @@
+old-full passed
+new-disabled passed
+new-enabled-sparse passed
+minkowski-enabled-sparse passed
+{
+  "status": "passed",
+  "comparisons": {
+    "old_vs_new_disabled": true,
+    "old_vs_sparse_profiles": true,
+    "online_vs_snapshot_profiles": true,
+    "minkowski_profiles": true
+  },
+  "checkpoint_sha256": "42616692d1e01bdd7639d9a2a74171f8aff30f1de5764d22536872c7681ab762",
+  "profile_binary_sha256": "739a4c4edb13ada7269b7533a96a9e67e124a18194d99a0f424361242b1b8389",
+  "scope": "Bounded CPU diagnostic invariance across one full and two sparse ranks; no GPU or long-time stability claim."
+}

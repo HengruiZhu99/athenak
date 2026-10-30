@@ -1,0 +1,52 @@
+{
+  "passed": true,
+  "phase": "preflight",
+  "source_manifest_sha256": "e8a3d5c2839797c60c32874e930eca2631beaac4f414f22e5e098502cb54b8ac",
+  "low_resolution_n": 16,
+  "binaries": {
+    "build-sycl-mpi-thin-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_thin_trace_sparse": "c6e981ef335df2c04b97304a244b3e15685dbe8b860058b26b927d79ec62ea5a"
+  },
+  "normal_derivative_configs": [
+    {
+      "executable": "build-sycl-mpi-thin-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_thin_trace_sparse",
+      "checkpoint_schema": "HYP3D_MPI_V12",
+      "scri_dissipation_epsilon": 2.0,
+      "scri_dissipation_degree": 7,
+      "checkpoint_header_bytes": 184,
+      "scri_normal_derivative": "sampled_native_numerator7",
+      "scri_normal_radial_nodes": 7,
+      "scri_normal_bulk_derivative_order": 4,
+      "scri_radial_closure": "donor_seven_last3",
+      "scri_radial_bulk_rows": 3,
+      "interpatch_interpolation": "logical_inner_transition",
+      "evolved_overlap": 3,
+      "nominal_cells": 106496,
+      "mesh_topology": "cartesian_2x2x2_shells3",
+      "cartesian_core_subdivisions": 2,
+      "mesh_blocks": 26,
+      "shell_geometry": "spherical_equiangular",
+      "core_half_width": 0.18,
+      "shell_inner_radius": 0.16,
+      "overlap_quadrature": "radial_quintic_partition",
+      "cartesian_seams": "uniform_global_stencil",
+      "positive_variables": "log_chi_log_lapse_rk_and_ko",
+      "physical_lapse_floor": 1e-10,
+      "boundary_execution": "cached_global_projection_angular",
+      "volume_exchange": "cached_sparse_alltoallv",
+      "interface_method": "experimental_ghost_plus_adjoint_trace_penalty",
+      "core_evolved_layers": 1,
+      "shifted_overlap_donors": true,
+      "trace_kappa": 1.0,
+      "trace_normal_ratio": 0.25
+    }
+  ],
+  "gpu_cpu_parity": true,
+  "restart_equivalence": true,
+  "evidence": {
+    "core-initial-audit.json": "0fcb070b5bf3af8d2c30aedb960a75b30e77c57390d2211ab5e9761e04c9e6e8",
+    "clock-independent-audit.json": "47acb34ec90cac003bf763eab0b0d96dc898a95d91fc68be8b3b1eb4f7fd441a",
+    "puncture-independent-audit.json": "e6de8e1487db8a8321ec6ef114b8cdd6e55a6ea32673d1f8699ed451b04bd27f"
+  },
+  "evidence_relative_to_admission": true,
+  "scope": "Only frozen n16 L1/kappa1 sparse V12 for bounded stability work. GPU/CPU parity covers the added paired operator; complete-state GPU communication and restart equality are separately verified. Not a full trajectory CPU/GPU parity, stability theorem, or convergence admission. Original decimal restart failure remains recorded."
+}

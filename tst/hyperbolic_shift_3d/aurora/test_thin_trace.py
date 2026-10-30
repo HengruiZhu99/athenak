@@ -22,7 +22,8 @@ class ThinTraceAdmissionTests(unittest.TestCase):
  def test_reject_invalid_environment(self):
   for key,value in [('HYPERBOLIC_TRACE_LAYERS','1.5'),('HYPERBOLIC_TRACE_LAYERS','0'),('HYPERBOLIC_TRACE_SHIFTED','2'),
                     ('HYPERBOLIC_TRACE_KAPPA','nan'),('HYPERBOLIC_TRACE_KAPPA','-1'),('HYPERBOLIC_TRACE_NORMAL_RATIO','inf'),
-                    ('HYPERBOLIC_SPARSE_POISON','yes'),('LD_PRELOAD','evil'),('HYPERBOLIC_TRACE_KAPPA',True)]:
+                    ('HYPERBOLIC_SPARSE_POISON','yes'),('LD_PRELOAD','evil'),('HYPERBOLIC_TRACE_KAPPA',True),
+                    ('HYPERBOLIC_TRACE_PROFILES','2'),('HYPERBOLIC_TRACE_PROFILES','nan')]:
    self.command['environment']={key:value}
    with self.subTest(key=key,value=value),self.assertRaises(ValueError):control.validate_plan(self.root,self.plan)
  def test_admission_binds_exact_penalty_geometry(self):
@@ -43,6 +44,11 @@ class ThinTraceAdmissionTests(unittest.TestCase):
    result=worker.run_bounded([sys.executable,'-c','import os,json;print(json.dumps({k:v for k,v in os.environ.items() if k.startswith("HYPERBOLIC_TRACE_") or k=="HYPERBOLIC_SPARSE_POISON"}))'],self.root,log,10,environment=control.command_environment(self.command))
   self.assertEqual(result['returncode'],0)
   self.assertEqual(json.loads(log.read_text()),control.TRACE_ENV)
+ def test_profiles_are_explicit_read_only_output_option(self):
+  before=control.normal_derivative_config(self.command)
+  self.command['environment']={'HYPERBOLIC_TRACE_PROFILES':'1'}
+  self.assertEqual(control.command_environment(self.command)['HYPERBOLIC_TRACE_PROFILES'],'1')
+  self.assertEqual(control.normal_derivative_config(self.command),before)
 class ThinTracePreflightTests(unittest.TestCase):
  def test_gpu_component_contract(self):
   fixture='backend=SYCL\nPASS: CPU/device physical RHS, partition norms, zero coefficient and exact Minkowski; max_error=1e-16 scaled_error=1e-16 norm_error=1e-17\n'

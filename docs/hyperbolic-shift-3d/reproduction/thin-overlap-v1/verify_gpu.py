@@ -7,6 +7,26 @@ repo=Path(__file__).resolve().parents[4]
 sys.path.insert(0,str(repo/'tst/hyperbolic_shift_3d/aurora'))
 import control,preflight
 
+def cross_schema_control(root,output):
+ paths=[root/output/(name+'.checkpoint') for name in ['pulse-l3-control','pulse-v11-control']]
+ headers=[preflight.read_checkpoint(path) for path in paths]
+ thin,legacy=headers
+ assert thin['magic']=='HYP3D_MPI_V12' and legacy['magic']=='HYP3D_MPI_V11'
+ assert thin['core_evolved_layers']==3 and thin['trace_kappa']==0 and not thin['shifted_overlap_donors']
+ with paths[0].open('rb') as first,paths[1].open('rb') as second:
+  assert first.read(152)[16:]==second.read(152)[16:]
+ for key,value in legacy.items():
+  if key not in ['magic','header_bytes']:assert thin[key]==value,key
+ bits=[np.fromfile(path,dtype='<u8',offset=header['header_bytes']) for path,header in zip(paths,headers)]
+ assert bits[0].shape==bits[1].shape
+ for values in bits:assert np.isfinite(values.view('<f8')).all()
+ difference=float(np.max(abs(bits[0].view('<f8')-bits[1].view('<f8'))))
+ equal=bool(np.array_equal(*bits))
+ assert equal,('V12/V11 control payload differs',difference)
+ return dict(bitwise_payload_equal=equal,maximum_absolute_error=difference,compared_doubles=len(bits[0]),
+  excluded_header_bytes=[h['header_bytes'] for h in headers],checkpoint_sha256=[control.digest(p) for p in paths],
+  scope='Only the schema tag and deliberate 32-byte V12 descriptor extension differ; all shared header fields and four payload arrays match.')
+
 def verify(root,campaign,mode='complete-preflight'):
  directory=root/campaign
  read=lambda name:json.loads((directory/name).read_text())
@@ -20,6 +40,8 @@ def verify(root,campaign,mode='complete-preflight'):
   assert [c['name'] for c in plan['commands']]==['oblique-sparse-direct','direct-communication','oblique-full-resume','resumed-communication','dyadic-full','dyadic-part','dyadic-resume','dyadic-restart']
  if mode=='puncture-pair':
   assert [c['name'] for c in plan['commands']]==['puncture-full','puncture-sparse','puncture-equivalence']
+ if mode=='matrix':
+  assert [c['name'] for c in plan['commands']]==['minkowski-l1-k0','minkowski-l2-k0','minkowski-l2-k1','minkowski-l3-k0','minkowski-l3-k1','pulse-l1-zero','pulse-l1-paired','pulse-l3-control','pulse-v11-control']
  artifacts={};reports={};summaries=[]
  for command,case in zip(plan['commands'],worker['cases']):
   assert command['name']==case['name'] and case['status']=='passed'
@@ -34,8 +56,9 @@ def verify(root,campaign,mode='complete-preflight'):
    assert np.isfinite(np.fromfile(checkpoint,dtype='<f8',offset=header['header_bytes'])).all()
    assert report['backend']=='SYCL' and report['mpi_size']==12
    assert header['time']==report['t'] and header['steps']==report['steps']
-   for key in ['core_evolved_layers','shifted_overlap_donors','trace_kappa','trace_normal_ratio']:
-    assert header[key]==report[key]
+   if header['magic']=='HYP3D_MPI_V12':
+    for key in ['core_evolved_layers','shifted_overlap_donors','trace_kappa','trace_normal_ratio']:
+     assert header[key]==report[key]
    summaries.append(dict(name=command['name'],t=report['t'],kind=report['kind'],steps=report['steps'],seconds=report['seconds'],
     cells=report['cells'],H_L2=report['H_L2'],M_L2=report['M_L2'],floor=report['lapse_floor_node_interventions'],
     max_null=max(report['max_null_surface'],report['max_null_ghost']),horizon_found=report.get('horizon_found')))
@@ -55,17 +78,21 @@ def verify(root,campaign,mode='complete-preflight'):
   for key,value in pairs[name].items():assert reports[name][key]==value,(name,key)
  if mode=='complete-preflight':assert {'oblique-equivalence','puncture-equivalence'}<=set(pairs)
  elif mode=='clock-isolation':assert set(pairs)=={'direct-communication','resumed-communication','dyadic-restart'}
- else:assert set(pairs)=={'puncture-equivalence'}
+ elif mode=='puncture-pair':assert set(pairs)=={'puncture-equivalence'}
+ else:
+  assert not pairs
+  pairs['v12-v11-control']=cross_schema_control(root,plan['output_dir'])
  scopes={'complete-preflight':'V12 12-tile preflight through 0.15M only. No 3M, reflection, accuracy-matched cost or convergence qualification.',
          'clock-isolation':'V12 twelve-tile clock/communication isolation only; this batch contains no puncture or device-parity admission.',
-         'puncture-pair':'V12 twelve-tile short puncture full/sparse equality through 0.15M only. This batch does not itself qualify 3M stability or full preflight admission.'}
+         'puncture-pair':'V12 twelve-tile short puncture full/sparse equality through 0.15M only. This batch does not itself qualify 3M stability or full preflight admission.',
+         'matrix':'Five remaining short Minkowski configurations and four short spherical pulses; exact V12/V11 matched control. No long interface crossing, 3M stability, reflection or convergence qualification.'}
  return dict(status='passed',source_manifest_sha256=binding['source_manifest_sha256'],plan_sha256=binding['plan_sha256'],
   job_id=collected['job_id'],cases=summaries,comparisons=pairs,verified_artifacts=artifacts,
   scope=scopes[mode])
 if __name__=='__main__':
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--root',type=Path,required=True)
  p.add_argument('--campaign',default='campaigns/preflight-thin-v1');p.add_argument('--output',type=Path,required=True)
- p.add_argument('--mode',choices=['complete-preflight','clock-isolation','puncture-pair'],default='complete-preflight')
+ p.add_argument('--mode',choices=['complete-preflight','clock-isolation','puncture-pair','matrix'],default='complete-preflight')
  a=p.parse_args();result=verify(a.root,a.campaign,a.mode)
  with a.output.open('x') as stream:json.dump(result,stream,indent=2);stream.write('\n')
  print(json.dumps({k:result[k] for k in ['status','job_id','scope']},indent=2))

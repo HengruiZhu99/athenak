@@ -14,6 +14,7 @@
 #include "z4c/hyperboloidal/hyperbolic_sampled_normal_device.hpp"
 #include "z4c/hyperboloidal/algebraic_projection.hpp"
 #include "fixed_composite_mesh.hpp"
+#include "thin_profile_samples.hpp"
 #include "z4c/hyperboloidal/paired_trace_device.hpp"
 #ifndef HYPERBOLIC_THIN_TRACE
 #define HYPERBOLIC_THIN_TRACE 0
@@ -546,6 +547,7 @@ int main(int argc,char**argv){
       throw std::invalid_argument("invalid resolution/kind/time parameters");
     if(kind==2&&initial=="-"&&restart=="-")throw std::invalid_argument("puncture requires initial data or a bound checkpoint");
     if(initial!="-"&&restart!="-")throw std::invalid_argument("supply initial data or restart, not both");
+    bool trace_profiles=false;
     if constexpr(thin_trace){
       const auto parameter=[](const char*name,Real fallback){const char*text=std::getenv(name);if(!text)return fallback;
         size_t used=0;Real value=std::stod(text,&used);if(used!=std::strlen(text)||!std::isfinite(value))throw std::invalid_argument("invalid trace parameter");return value;};
@@ -554,6 +556,10 @@ int main(int argc,char**argv){
       if(layers<1||layers>3||layers!=std::floor(layers)||(shifted!=0&&shifted!=1)||trace_config.kappa<0||trace_config.normal_ratio<0)
         throw std::invalid_argument("invalid trace layers/penalty");
       trace_config.layers=int(layers);trace_config.shifted=int(shifted);
+      const Real profiles=parameter("HYPERBOLIC_TRACE_PROFILES",0);
+      if(profiles!=0&&profiles!=1)throw std::invalid_argument("invalid trace profile flag");
+      trace_profiles=profiles==1;
+      if(trace_profiles&&n<12)throw std::invalid_argument("fixed trace profiles require n >= 12");
     }
     const auto started=std::chrono::steady_clock::now();
     std::unique_ptr<Evolution> evolution;
@@ -564,7 +570,7 @@ int main(int argc,char**argv){
       const auto parent=std::filesystem::path(output).parent_path();
       if(!parent.empty())std::filesystem::create_directories(parent);
       for(const char*suffix:{".report.json",".report.json.tmp",".checkpoint",".checkpoint.tmp",
-                            ".history.csv",".fastflow.horizon_summary_0.txt",
+                            ".history.csv",".profiles.csv",".fastflow.horizon_summary_0.txt",
                             ".fastflow.horizon_shape_0.txt",".checkpoint.horizon-seed.txt"})
         if(std::filesystem::exists(output+suffix))throw std::runtime_error("refusing to overwrite result: "+output+suffix);
       if(initial!="-"){std::ifstream in(initial);size_t count=0;in>>count;
@@ -614,7 +620,23 @@ int main(int argc,char**argv){
         }catch(const std::exception&){q={};}return true;
       });
     });
-    std::ofstream history;
+    std::ofstream history,profiles;
+    std::unique_ptr<hyperbolic_reproduction::ProfileSamples> profile_samples;
+    HostBuffer profile_owned;V profile_global;
+    double profile_seconds[3]={};uint64_t profile_calls=0;
+    if(trace_profiles){
+      const auto begin=std::chrono::steady_clock::now();
+      CollectiveLocal([&]{
+        profile_owned=HostBuffer("diagnostic owned profile state",31*e.local);
+        if(e.rank==0){
+          profile_samples=std::make_unique<hyperbolic_reproduction::ProfileSamples>(e.model.grid);
+          profile_global.resize(31*e.total);profiles.open(output+".profiles.csv");
+          profile_samples->Header(profiles);profiles.flush();
+          if(!profiles)throw std::runtime_error("profile header write failed");
+        }
+      });
+      profile_seconds[0]=std::chrono::duration<double>(std::chrono::steady_clock::now()-begin).count();
+    }
     CollectiveLocal([&]{if(e.rank==0){
       history.open(output+".history.csv");history<<std::setprecision(17)
         <<"t,t_over_M,steps,min_chi,min_lapse,state_deviation,H_L2,M_L2,M_physical_L2,Theta_L2,Z_L2,H_exterior_L2,M_exterior_L2,exterior_cutoff,horizon_found,horizon_radius,horizon_areal_radius,horizon_mass,horizon_expansion_rms,horizon_trial_radius,horizon_trial_expansion_rms,horizon_complete_surface,horizon_iterations,null_surface,null_ghost,pole_max,clock_max,cfl_max,wall_seconds,determinant_residual,tracefree_residual,Mr_L2,Mr_exterior_L2,Theta_exterior_L2,Zr_L2,Zr_exterior_L2,horizon_irreducible_mass";
@@ -677,6 +699,23 @@ int main(int argc,char**argv){
         history.flush();if(!history)throw std::runtime_error("history append failed");
         std::cout<<"t="<<e.time<<" steps="<<e.steps<<" min_alpha="<<diagnostic.min_lapse<<" H="<<Norm(diagnostic.total.h2,diagnostic.total.volume)<<" horizon="<<horizon_found<<" seconds="<<elapsed()<<std::endl;
       }});
+      if(trace_profiles){
+        auto tick=std::chrono::steady_clock::now();
+        // Read only authoritative owned cells. Do not call Gather/CompleteState:
+        // they invalidate the boundary cache as part of evolution/snapshot work.
+        CollectiveLocal([&]{Kokkos::deep_copy(profile_owned,Kokkos::subview(e.state,
+          std::make_pair(size_t(31*e.first),size_t(31*e.last))));Kokkos::fence();});
+        MPI_Gatherv(profile_owned.data(),e.counts[e.rank],MPI_ATHENA_REAL,
+          profile_global.data(),e.counts.data(),e.displacements.data(),MPI_ATHENA_REAL,0,MPI_COMM_WORLD);
+        auto now=std::chrono::steady_clock::now();
+        profile_seconds[1]+=std::chrono::duration<double>(now-tick).count();tick=now;
+        CollectiveLocal([&]{if(e.rank==0){
+          profile_samples->Write(profiles,e.time,profile_global);profiles.flush();
+          if(!profiles)throw std::runtime_error("profile append failed");
+        }});
+        profile_seconds[2]+=std::chrono::duration<double>(std::chrono::steady_clock::now()-tick).count();
+        ++profile_calls;
+      }
       const double local_seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-begin).count();
       e.diagnostic_seconds+=local_seconds-(e.closure_seconds+e.exchange_seconds-counted);last_diag_seconds=local_seconds;
       MPI_Allreduce(MPI_IN_PLACE,&last_diag_seconds,1,MPI_DOUBLE,MPI_MAX,MPI_COMM_WORLD);
@@ -727,6 +766,7 @@ int main(int argc,char**argv){
     std::vector<double> rank_sparse(7*e.size);MPI_Gather(sparse_data,7,MPI_DOUBLE,rank_sparse.data(),7,MPI_DOUBLE,0,MPI_COMM_WORLD);
     std::vector<double> rank_timings(5*e.size);MPI_Gather(timing,5,MPI_DOUBLE,rank_timings.data(),5,MPI_DOUBLE,0,MPI_COMM_WORLD);
     MPI_Allreduce(MPI_IN_PLACE,timing,5,MPI_DOUBLE,MPI_MAX,MPI_COMM_WORLD);
+    MPI_Allreduce(MPI_IN_PLACE,profile_seconds,3,MPI_DOUBLE,MPI_MAX,MPI_COMM_WORLD);
     CollectiveLocal([&]{if(e.rank==0){
       if(e.failed_state.extent(0)){
         const auto failed=e.Download(complete_failed);std::ofstream capture(output+".failed-stage.bin",std::ios::binary);
@@ -773,6 +813,10 @@ int main(int argc,char**argv){
       if constexpr(inner_transition_logical)report<<",\"interpatch_interpolation\":\"logical_inner_transition\"";
       if constexpr(core_subdivisions==2)report<<",\"mesh_topology\":\"cartesian_2x2x2_shells3\",\"cartesian_core_subdivisions\":2,\"mesh_blocks\":26";
       if constexpr(scri_donor_seven)report<<",\"scri_radial_closure\":\"donor_seven_last3\",\"scri_radial_bulk_rows\":3";
+      if constexpr(thin_trace)report<<",\"profiles_enabled\":"<<(trace_profiles?"true":"false")
+        <<",\"profile_rows_per_sample\":"<<(profile_samples?profile_samples->Size():0)<<",\"profile_samples\":"<<profile_calls
+        <<",\"profile_setup_seconds\":"<<profile_seconds[0]<<",\"profile_collect_seconds\":"<<profile_seconds[1]
+        <<",\"profile_sample_write_seconds\":"<<profile_seconds[2]<<",\"profile_application_in_diagnostic_seconds\":true";
       report<<",\"minimum_owned_cells\":"<<e.total/e.size<<",\"maximum_owned_cells\":"<<(e.total+e.size-1)/e.size
         <<",\"t\":"<<e.time<<",\"start_time\":"<<start_time<<",\"target_time\":"<<end<<",\"t_over_M\":"<<(kind==2?e.time*3:e.time)
         <<",\"dt\":"<<dt<<",\"steps\":"<<e.steps<<",\"segment_steps\":"<<e.steps-start_steps<<",\"seconds\":"<<elapsed()

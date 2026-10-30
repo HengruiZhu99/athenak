@@ -1,0 +1,360 @@
+{
+  "status": "verified_recorded_failure",
+  "job_id": "8987368.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "cases": [
+    {
+      "name": "minkowski-l1-k1",
+      "t": 0.001,
+      "steps": 4,
+      "seconds": 12.010550395,
+      "max_state_deviation": 8.054814009616601e-15,
+      "H_L2": 2.411246060992614e-15,
+      "M_L2": 1.1274092517657576e-14,
+      "max_null": 8.881784197001248e-16,
+      "floor": 0
+    },
+    {
+      "name": "oblique-full",
+      "t": 0.005,
+      "steps": 20,
+      "seconds": 17.453533849,
+      "max_state_deviation": 0.05682464137333039,
+      "H_L2": 0.003876636382302615,
+      "M_L2": 0.009873227451926148,
+      "max_null": 8.881784197001248e-16,
+      "floor": 0
+    },
+    {
+      "name": "oblique-part",
+      "t": 0.0025,
+      "steps": 10,
+      "seconds": 14.246316731,
+      "max_state_deviation": 0.031052179996155553,
+      "H_L2": 0.0014555860250897372,
+      "M_L2": 0.006610904972702839,
+      "max_null": 8.881784197001248e-16,
+      "floor": 0
+    },
+    {
+      "name": "oblique-resume",
+      "t": 0.005,
+      "steps": 20,
+      "seconds": 14.338994739,
+      "max_state_deviation": 0.0568246413733304,
+      "H_L2": 0.0038766363823026155,
+      "M_L2": 0.00987322745192615,
+      "max_null": 8.881784197001248e-16,
+      "floor": 0
+    }
+  ],
+  "component_maxima": {
+    "norm_error": 1.8214596497756474e-17,
+    "scaled_error": 3.86108781388088e-18,
+    "max_error": 3.86108781388088e-18
+  },
+  "comparison": {
+    "restart_equivalence": false,
+    "bitwise_payload_equal": false,
+    "maximum_absolute_error": 6.130512764102036e-15,
+    "maximum_scaled_error": 5.956303827602297e-15,
+    "atol": 0,
+    "rtol": 0,
+    "compared_doubles": 9000416,
+    "header": {
+      "magic": "HYP3D_MPI_V12",
+      "n": 16,
+      "nf": 31,
+      "kind": 3,
+      "admitted": 1,
+      "cells": 143632,
+      "surface": 47616,
+      "steps": 20,
+      "time": 0.005,
+      "dt": 0.00025,
+      "header_bytes": 184,
+      "scri_dissipation_epsilon": 2.0,
+      "scri_dissipation_degree": 7,
+      "scri_normal_derivative": "sampled_native_numerator7",
+      "scri_normal_radial_nodes": 7,
+      "scri_normal_bulk_derivative_order": 4,
+      "scri_radial_closure": "donor_seven_last3",
+      "scri_radial_bulk_rows": 3,
+      "interpatch_interpolation": "logical_inner_transition",
+      "interface_method": "experimental_ghost_plus_adjoint_trace_penalty",
+      "core_evolved_layers": 1,
+      "shifted_overlap_donors": true,
+      "trace_kappa": 1.0,
+      "trace_normal_ratio": 0.25,
+      "evolved_overlap": 3,
+      "nominal_cells": 106496,
+      "mesh_topology": "cartesian_2x2x2_shells3",
+      "cartesian_core_subdivisions": 2,
+      "mesh_blocks": 26,
+      "shell_geometry": "spherical_equiangular",
+      "core_half_width": 0.18,
+      "shell_inner_radius": 0.16,
+      "overlap_quadrature": "radial_quintic_partition",
+      "cartesian_seams": "uniform_global_stencil",
+      "positive_variables": "log_chi_log_lapse_rk_and_ko",
+      "physical_lapse_floor": 1e-10,
+      "payload_doubles": 9000416
+    },
+    "reference_sha256": "5419283a9c850b6b1842cc0bed61d27de52dd82aca5bfa3031917bd6d58d35b4",
+    "candidate_sha256": "1ece550711e311c60459b3007d40a3bf93956a2b651c29f34a44db1f191b352d"
+  },
+  "decimal_schedule_differences": [
+    {
+      "step": 10,
+      "direct": {
+        "t": 0.0022500000000000003,
+        "dt": 0.00025
+      },
+      "split": {
+        "t": 0.0022500000000000003,
+        "dt": 0.0002499999999999998
+      }
+    },
+    {
+      "step": 11,
+      "direct": {
+        "t": 0.0025000000000000005,
+        "dt": 0.00025
+      },
+      "split": {
+        "t": 0.0025,
+        "dt": 0.00025
+      }
+    },
+    {
+      "step": 12,
+      "direct": {
+        "t": 0.0027500000000000007,
+        "dt": 0.00025
+      },
+      "split": {
+        "t": 0.00275,
+        "dt": 0.00025
+      }
+    },
+    {
+      "step": 13,
+      "direct": {
+        "t": 0.003000000000000001,
+        "dt": 0.00025
+      },
+      "split": {
+        "t": 0.003,
+        "dt": 0.00025
+      }
+    },
+    {
+      "step": 14,
+      "direct": {
+        "t": 0.003250000000000001,
+        "dt": 0.00025
+      },
+      "split": {
+        "t": 0.0032500000000000003,
+        "dt": 0.00025
+      }
+    },
+    {
+      "step": 15,
+      "direct": {
+        "t": 0.0035000000000000014,
+        "dt": 0.00025
+      },
+      "split": {
+        "t": 0.0035000000000000005,
+        "dt": 0.00025
+      }
+    },
+    {
+      "step": 16,
+      "direct": {
+        "t": 0.0037500000000000016,
+        "dt": 0.00025
+      },
+      "split": {
+        "t": 0.0037500000000000007,
+        "dt": 0.00025
+      }
+    },
+    {
+      "step": 17,
+      "direct": {
+        "t": 0.004000000000000002,
+        "dt": 0.00025
+      },
+      "split": {
+        "t": 0.004000000000000001,
+        "dt": 0.00025
+      }
+    },
+    {
+      "step": 18,
+      "direct": {
+        "t": 0.004250000000000002,
+        "dt": 0.00025
+      },
+      "split": {
+        "t": 0.004250000000000001,
+        "dt": 0.00025
+      }
+    },
+    {
+      "step": 19,
+      "direct": {
+        "t": 0.004500000000000002,
+        "dt": 0.00025
+      },
+      "split": {
+        "t": 0.004500000000000001,
+        "dt": 0.00025
+      }
+    },
+    {
+      "step": 20,
+      "direct": {
+        "t": 0.0047500000000000025,
+        "dt": 0.0002499999999999976
+      },
+      "split": {
+        "t": 0.004750000000000002,
+        "dt": 0.0002499999999999985
+      }
+    }
+  ],
+  "dyadic_schedule_exact": true,
+  "verified_artifacts": {
+    "campaigns/preflight-thin-core-v1/output/paired-device.report.json": {
+      "sha256": "fa9657c36e258d4671b594d7e771b067493c54285a7542bdc70c5d60a1abe30e",
+      "bytes": 11922
+    },
+    "campaigns/preflight-thin-core-v1/output/paired-device.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "campaigns/preflight-thin-core-v1/output/paired-device.rank-00.log": {
+      "sha256": "4dfc1170da57f289b01d913d57a826569c298cb159849e2fc16c842e420790e4",
+      "bytes": 202
+    },
+    "campaigns/preflight-thin-core-v1/output/paired-device.rank-01.log": {
+      "sha256": "3077ec90a428ceadaa9eb1e66ca04ee59e19a8e7987d70927e861eceb6171732",
+      "bytes": 202
+    },
+    "campaigns/preflight-thin-core-v1/output/paired-device.rank-02.log": {
+      "sha256": "70319a8b65bc0cd2c5b3435e309d0c902f97c58c5ad83bb2581747ab7507423c",
+      "bytes": 202
+    },
+    "campaigns/preflight-thin-core-v1/output/paired-device.rank-03.log": {
+      "sha256": "d42d0a82762c97cd2361f1391205d50fd7e0c89341d99832aea7586955f6d8d7",
+      "bytes": 202
+    },
+    "campaigns/preflight-thin-core-v1/output/paired-device.rank-04.log": {
+      "sha256": "868e2b1f67c467440f85c064747f2a7d8efc7108642e7f9dc50f4564df22f1b5",
+      "bytes": 202
+    },
+    "campaigns/preflight-thin-core-v1/output/paired-device.rank-05.log": {
+      "sha256": "09b08b4a95a66efc841c071a935a2dab8bc4d96d0b4e52f22d5a80585a95f3ed",
+      "bytes": 202
+    },
+    "campaigns/preflight-thin-core-v1/output/paired-device.rank-06.log": {
+      "sha256": "40036601fc27b87633cc171d7b238717876a07b039b26be06db9846dd8853e81",
+      "bytes": 202
+    },
+    "campaigns/preflight-thin-core-v1/output/paired-device.rank-07.log": {
+      "sha256": "85dd6635cfd9e6cf3baef45902be059d217879f661d5754e330c48787c0012d3",
+      "bytes": 202
+    },
+    "campaigns/preflight-thin-core-v1/output/paired-device.rank-08.log": {
+      "sha256": "adb71e48adceecdd85d0272c7e5af1e6b72825546f0bcb4185a22cac70a389a7",
+      "bytes": 202
+    },
+    "campaigns/preflight-thin-core-v1/output/paired-device.rank-09.log": {
+      "sha256": "19e9458b971cac8261e29f335f5a1a1065ba0b8959ab30f87dfdf2f94d0f9e30",
+      "bytes": 201
+    },
+    "campaigns/preflight-thin-core-v1/output/paired-device.rank-10.log": {
+      "sha256": "3b68630dae5c569b33d35c7ba7a92f8aacf433fa25f72a2f024739bb2f656b39",
+      "bytes": 202
+    },
+    "campaigns/preflight-thin-core-v1/output/paired-device.rank-11.log": {
+      "sha256": "d42d0a82762c97cd2361f1391205d50fd7e0c89341d99832aea7586955f6d8d7",
+      "bytes": 202
+    },
+    "campaigns/preflight-thin-core-v1/output/minkowski-l1-k1.report.json": {
+      "sha256": "357db2789b489b05bdccc00a5867d0a9d4716c4a12468f0e628fa482f7f399c9",
+      "bytes": 9163
+    },
+    "campaigns/preflight-thin-core-v1/output/minkowski-l1-k1.history.csv": {
+      "sha256": "3602cac75e07d385e44de1ecfdc7a4efc98a3f6e64b92b1243e1ee6a60ed3577",
+      "bytes": 1470
+    },
+    "campaigns/preflight-thin-core-v1/output/minkowski-l1-k1.checkpoint": {
+      "sha256": "82472496cd50053c44b0b229631a85841f75139fcdb335c412e923cc87411162",
+      "bytes": 72003512
+    },
+    "campaigns/preflight-thin-core-v1/output/minkowski-l1-k1.log": {
+      "sha256": "d23ab7093d42c90c3b92a5441af6840d5f1150e4a2a92cb009d69e9d05eb4a59",
+      "bytes": 177
+    },
+    "campaigns/preflight-thin-core-v1/output/oblique-full.report.json": {
+      "sha256": "717f1225206cc5a5bd12d9769bec9a8de5abbc23704d5189513dbeb91a203bbd",
+      "bytes": 8572
+    },
+    "campaigns/preflight-thin-core-v1/output/oblique-full.history.csv": {
+      "sha256": "619cafacb3161d4e1aecc513aba321f68347cd89d5d4266004229b5c1a6cf90a",
+      "bytes": 1645
+    },
+    "campaigns/preflight-thin-core-v1/output/oblique-full.checkpoint": {
+      "sha256": "5419283a9c850b6b1842cc0bed61d27de52dd82aca5bfa3031917bd6d58d35b4",
+      "bytes": 72003512
+    },
+    "campaigns/preflight-thin-core-v1/output/oblique-full.log": {
+      "sha256": "cf26bdd041def3b1393b565580ef94808c42b7d8aeb015f1c8acddd279f88846",
+      "bytes": 178
+    },
+    "campaigns/preflight-thin-core-v1/output/oblique-part.report.json": {
+      "sha256": "a18d34b9c0a9f3354af6207267453cf0e974a50f7327e140a5d31f6587d98aca",
+      "bytes": 9332
+    },
+    "campaigns/preflight-thin-core-v1/output/oblique-part.history.csv": {
+      "sha256": "b423e2edfb55b39acc36548449214fdff33bae6d86a5558fc707d22e4b4313ae",
+      "bytes": 1638
+    },
+    "campaigns/preflight-thin-core-v1/output/oblique-part.checkpoint": {
+      "sha256": "761c6f1531684f8a2428d3d3a4e286a5ff7367ece900d409876ff4a203a94d51",
+      "bytes": 72003512
+    },
+    "campaigns/preflight-thin-core-v1/output/oblique-part.log": {
+      "sha256": "a813b0cb2e92cdc5aa34036a9d399fcd27ebfecf60921d79bb33ce472fa34f70",
+      "bytes": 180
+    },
+    "campaigns/preflight-thin-core-v1/output/oblique-resume.report.json": {
+      "sha256": "57e8293102005e1542331004811aa463b002f026bfb9468c8032707a3fd8e900",
+      "bytes": 9406
+    },
+    "campaigns/preflight-thin-core-v1/output/oblique-resume.history.csv": {
+      "sha256": "a258a22bf34fc5e003d5b2244b048461dcbe81c89970d1aa8a314f190dc909a5",
+      "bytes": 1936
+    },
+    "campaigns/preflight-thin-core-v1/output/oblique-resume.checkpoint": {
+      "sha256": "1ece550711e311c60459b3007d40a3bf93956a2b651c29f34a44db1f191b352d",
+      "bytes": 72003512
+    },
+    "campaigns/preflight-thin-core-v1/output/oblique-resume.log": {
+      "sha256": "ca7ffd32b869ef9e0a1204d84bad8ca6513d50afb49d9c92e8b0c49964127423",
+      "bytes": 183
+    },
+    "campaigns/preflight-thin-core-v1/output/oblique-equivalence.report.json": {
+      "sha256": "73fea87d27a0f45562e134fff197ee79c0c93bf105ed07ee4550de4f2e78568f",
+      "bytes": 6500
+    },
+    "campaigns/preflight-thin-core-v1/output/oblique-equivalence.log": {
+      "sha256": "64acb6e09660b1b8800ff12cc2fa4835de1f6549f8fc099610db27cb110fb8dc",
+      "bytes": 68
+    }
+  },
+  "conclusion": "Decimal-time direct/split runs have different clipped timesteps. This is a candidate explanation, not a proven cause until independent direct/full-sparse and dyadic-restart runs complete. No tolerance or scientific acceptance was changed; no GPU puncture ran in this stopped plan."
+}

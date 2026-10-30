@@ -1,0 +1,130 @@
+[
+  {
+    "name": "old-full",
+    "command": [
+      "/opt/homebrew/Cellar/open-mpi/5.0.10/bin/mpirun",
+      "-n",
+      "1",
+      "/Users/hz0693/.codex/worktrees/9328/hyperboloidal/output/thin-overlap-v1/probe-parity/bin/hyperbolic_shift_3d_mpi_thin_trace",
+      "12",
+      "/Users/hz0693/.codex/worktrees/9328/hyperboloidal/output/thin-overlap-v1/probe-parity/runs/old-full",
+      "oblique",
+      "0.00244140625",
+      "0.000244140625",
+      "-",
+      "-",
+      "120",
+      "0.001220703125",
+      ".001",
+      "6",
+      "12",
+      "2"
+    ],
+    "returncode": 0,
+    "environment": {
+      "HYPERBOLIC_TRACE_LAYERS": "1",
+      "HYPERBOLIC_TRACE_SHIFTED": "1",
+      "HYPERBOLIC_TRACE_KAPPA": "1",
+      "HYPERBOLIC_TRACE_NORMAL_RATIO": ".25",
+      "HYPERBOLIC_TRACE_PROFILES": "0",
+      "HYPERBOLIC_SPARSE_POISON": "1"
+    },
+    "binary_sha256": "7a86a943824aefd40faae2229b5ff4a5fc4b25b77bfbf441f8bd987b679cd52a"
+  },
+  {
+    "name": "new-disabled",
+    "command": [
+      "/opt/homebrew/Cellar/open-mpi/5.0.10/bin/mpirun",
+      "-n",
+      "1",
+      "/Users/hz0693/.codex/worktrees/9328/hyperboloidal/build-thin-overlap/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_thin_trace",
+      "12",
+      "/Users/hz0693/.codex/worktrees/9328/hyperboloidal/output/thin-overlap-v1/probe-parity/runs/new-disabled",
+      "oblique",
+      "0.00244140625",
+      "0.000244140625",
+      "-",
+      "-",
+      "120",
+      "0.001220703125",
+      ".001",
+      "6",
+      "12",
+      "2"
+    ],
+    "returncode": 0,
+    "environment": {
+      "HYPERBOLIC_TRACE_LAYERS": "1",
+      "HYPERBOLIC_TRACE_SHIFTED": "1",
+      "HYPERBOLIC_TRACE_KAPPA": "1",
+      "HYPERBOLIC_TRACE_NORMAL_RATIO": ".25",
+      "HYPERBOLIC_TRACE_PROFILES": "0",
+      "HYPERBOLIC_SPARSE_POISON": "1"
+    },
+    "binary_sha256": "454962ffc4f0fe62a8b85329936bd5169e540ce58b964cbe92b0c4152f82ea87"
+  },
+  {
+    "name": "new-enabled-sparse",
+    "command": [
+      "/opt/homebrew/Cellar/open-mpi/5.0.10/bin/mpirun",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/9328/hyperboloidal/build-thin-overlap/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_thin_trace_sparse",
+      "12",
+      "/Users/hz0693/.codex/worktrees/9328/hyperboloidal/output/thin-overlap-v1/probe-parity/runs/new-enabled-sparse",
+      "oblique",
+      "0.00244140625",
+      "0.000244140625",
+      "-",
+      "-",
+      "120",
+      "0.001220703125",
+      ".001",
+      "6",
+      "12",
+      "2"
+    ],
+    "returncode": 0,
+    "environment": {
+      "HYPERBOLIC_TRACE_LAYERS": "1",
+      "HYPERBOLIC_TRACE_SHIFTED": "1",
+      "HYPERBOLIC_TRACE_KAPPA": "1",
+      "HYPERBOLIC_TRACE_NORMAL_RATIO": ".25",
+      "HYPERBOLIC_TRACE_PROFILES": "1",
+      "HYPERBOLIC_SPARSE_POISON": "1"
+    },
+    "binary_sha256": "e3feeaa37e29db9638b70d986bb4e6979406396e689f430ef8ee9f6c8ea7939c"
+  },
+  {
+    "name": "minkowski-enabled-sparse",
+    "command": [
+      "/opt/homebrew/Cellar/open-mpi/5.0.10/bin/mpirun",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/9328/hyperboloidal/build-thin-overlap/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_thin_trace_sparse",
+      "12",
+      "/Users/hz0693/.codex/worktrees/9328/hyperboloidal/output/thin-overlap-v1/probe-parity/runs/minkowski-enabled-sparse",
+      "minkowski",
+      "0.0009765625",
+      "0.000244140625",
+      "-",
+      "-",
+      "120",
+      "0.00048828125",
+      ".001",
+      "6",
+      "12",
+      "2"
+    ],
+    "returncode": 0,
+    "environment": {
+      "HYPERBOLIC_TRACE_LAYERS": "1",
+      "HYPERBOLIC_TRACE_SHIFTED": "1",
+      "HYPERBOLIC_TRACE_KAPPA": "1",
+      "HYPERBOLIC_TRACE_NORMAL_RATIO": ".25",
+      "HYPERBOLIC_TRACE_PROFILES": "1",
+      "HYPERBOLIC_SPARSE_POISON": "1"
+    },
+    "binary_sha256": "e3feeaa37e29db9638b70d986bb4e6979406396e689f430ef8ee9f6c8ea7939c"
+  }
+]

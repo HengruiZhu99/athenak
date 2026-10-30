@@ -5,45 +5,10 @@
 #include <iostream>
 #include "mesh/cubed_sphere/composite_difference.hpp"
 #include "fixed_composite_mesh.hpp"
+#include "thin_profile_samples.hpp"
 namespace {
 template<class T>T Load(const char*b,int offset){T v;std::memcpy(&v,b+offset,sizeof(T));return v;}
-struct Term {int point;Real value,radial;};
-std::vector<Term> Stencil(const cubed_sphere::CompositeDifference&g,const Real*x,bool core){
- constexpr int width=6;int block=-1,first[3],lo[3],hi[3];Real t[3],jac[3][3]{},r=0;
- for(int a=0;a<3;++a)r+=x[a]*x[a];r=std::sqrt(r);
- if(core){
-  for(int a=0;a<3;++a){lo[a]=-g.mesh.CoreOverlap();hi[a]=g.cartesian_n+g.mesh.CoreOverlap();
-   t[a]=(x[a]+g.mesh.half_width)/g.cartesian_h-.5;jac[a][a]=1/g.cartesian_h;}
- }else{
-  const int face=cubed_sphere::Map{}.Owner(x);
-  for(int m=0;m<int(g.mesh.blocks.size());++m)if(g.mesh.blocks[m].layer==0&&g.mesh.blocks[m].face==face){block=m;break;}
-  if(block<0)throw std::runtime_error("missing first-shell profile block");
-  Real q[3];g.mesh.Inverse(block,x,q);const auto geo=g.mesh.Geometry(block,q);
-  for(int a=0;a<3;++a){lo[a]=g.Lower(block,a);hi[a]=g.Upper(block,a);t[a]=g.n*q[a]-.5;
-   for(int d=0;d<3;++d)jac[a][d]=g.n*geo.J[a][d];}
- }
- Real w[3][width]{},dw[3][width]{};
- for(int a=0;a<3;++a){
-  if(!std::isfinite(t[a])||t[a]<lo[a]-1e-11||t[a]>hi[a]-1+1e-11)throw std::runtime_error("profile would extrapolate beyond evolved donor hull");
-  first[a]=std::clamp(int(std::floor(t[a]))-2,lo[a],hi[a]-width);
-  for(int i=0;i<width;++i){
-   w[a][i]=1;for(int j=0;j<width;++j)if(j!=i)w[a][i]*=(t[a]-first[a]-j)/Real(i-j);
-   for(int k=0;k<width;++k)if(k!=i){Real value=1/Real(i-k);
-    for(int j=0;j<width;++j)if(j!=i&&j!=k)value*=(t[a]-first[a]-j)/Real(i-j);dw[a][i]+=value;}
-  }
- }
- std::vector<Term> out;Real constant=0,derivative=0;
- for(int k=0;k<width;++k)for(int j=0;j<width;++j)for(int i=0;i<width;++i){
-  const int point=core?g.CartesianPoint(first[0]+i,first[1]+j,first[2]+k):g.ActiveIndex(block,first[0]+i,first[1]+j,first[2]+k);
-  if(point<0)throw std::runtime_error("profile reads a ghost instead of an evolved value");
-  const int c[3]={i,j,k};Real dn=0;
-  for(int a=0;a<3;++a){Real v=dw[a][c[a]];for(int b=0;b<3;++b)if(a!=b)v*=w[b][c[b]];
-   for(int d=0;d<3;++d)dn+=x[d]/r*jac[a][d]*v;}
-  const Real value=w[0][i]*w[1][j]*w[2][k];out.push_back({point,value,dn});constant+=value;derivative+=dn;
- }
- if(std::abs(constant-1)>1e-11||std::abs(derivative)>1e-9)throw std::runtime_error("profile constant/derivative consistency failed");
- return out;
-}
+
 }
 int main(int argc,char**argv){
  try{
@@ -79,21 +44,10 @@ int main(int argc,char**argv){
    if(!input)throw std::runtime_error("truncated V12 trailing arrays");
    for(uint64_t i=0;i<count;++i)if(!std::isfinite(buffer[i]))throw std::runtime_error("nonfinite V12 trailing array");remaining-=count;}
   char extra;if(input.get(extra))throw std::runtime_error("V12 checkpoint has trailing bytes");
-  const Real rays[16][3]={{1,0,0},{-1,0,0},{0,1,0},{0,-1,0},{0,0,1},{0,0,-1},
-   {1,1,1},{1,1,-1},{1,-1,1},{1,-1,-1},{-1,1,1},{-1,1,-1},{-1,-1,1},{-1,-1,-1},{12,4,-3},{-12,-4,3}};
-  std::ofstream output(argv[2]);output<<std::setprecision(17)<<"t,domain,ray,r,x,y,z";
-  for(int f=0;f<31;++f)output<<",v"<<f;for(int f=0;f<31;++f)output<<",dr_v"<<f;output<<'\n';
-  int rows=0;
-  for(int ray=0;ray<16;++ray)for(int ir=5;ir<=80;++ir){
-   const Real r=ir/200.,length=std::sqrt(rays[ray][0]*rays[ray][0]+rays[ray][1]*rays[ray][1]+rays[ray][2]*rays[ray][2]);
-   Real x[3];bool inside=true;for(int a=0;a<3;++a){x[a]=r*rays[ray][a]/length;inside=inside&&std::abs(x[a])<=.18+1e-14;}
-   for(int domain=0;domain<2;++domain){if(domain==0?!inside:r<.175)continue;
-    const auto terms=Stencil(grid,x,domain==0);Real value[31]{},derivative[31]{};
-    for(const auto&term:terms)for(int f=0;f<31;++f){value[f]+=term.value*state[31*term.point+f];derivative[f]+=term.radial*state[31*term.point+f];}
-    output<<Load<Real>(raw,56)<<','<<domain<<','<<ray<<','<<r<<','<<x[0]<<','<<x[1]<<','<<x[2];
-    for(Real v:value)output<<','<<v;for(Real v:derivative)output<<','<<v;output<<'\n';++rows;
-   }
-  }
+  const hyperbolic_reproduction::ProfileSamples samples(grid);
+  std::ofstream output(argv[2]);samples.Header(output);
+  samples.Write(output,Load<Real>(raw,56),state);
+  const int rows=samples.Size();
   output.close();if(!output)throw std::runtime_error("profile write failed");
   std::cout<<"profile_rows="<<rows<<" n="<<n<<" layers="<<layers<<" shifted="<<shifted<<" time="<<Load<Real>(raw,56)<<'\n';
  }catch(const std::exception&e){std::cerr<<e.what()<<'\n';return 1;}

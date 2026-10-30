@@ -96,7 +96,9 @@ only rows whose lifts contribute to its owned points; dependencies are
 exposed for integration with the sparse stage exchange. There is no
 per-cell kernel launch. The initial V12 comparison uses the preserved full gather control. The
 separate sparse target adds trace dependencies to the union and has passed
-local two-rank poisoned-buffer equivalence; GPU qualification remains open.
+local two-rank poisoned-buffer equivalence. Short twelve-tile L1/kappa1
+oblique and puncture communication/restart comparisons now pass exactly;
+longer stability and accuracy qualification remain open (see README).
 
 Trace diagnostic rows belong to the rank owning the first donor of that
 row, independent of the number of ranks storing it. Norms include both
@@ -124,7 +126,8 @@ measurement. The mapped-shell research driver is not a MeshBlockPack VC
 client, so its Cartesian neighbor class is not directly usable unchanged.
 Reuse here is the cached sparse-plan/explicit ownership pattern; gauge, RHS,
 subcycling and puncture treatment are not imported. Actual sparse exchange
-integration remains separately testable in the original performance task.
+integration is now incorporated as a separately testable V12 target, with
+the original performance task's controls retained.
 
 The donor's `docs/investigations/z4c_vc_amr_correctness_performance_20260822/REPORT.md`
 explicitly records rejected r=0 puncture initialization (divergent analytic
