@@ -1,0 +1,35 @@
+{
+  "status": "complete",
+  "source_commit": "b27f76f37",
+  "source_manifest": "source-smooth-gauge-v1-manifest.json",
+  "source_manifest_sha256": "7308e7e5c3f54d960c0b4bae9b6cf92127a9aa2d66d7f46a5c88c0baaad64fdb",
+  "plan": "campaigns/n16-n24-smooth-gauge-v1-attempt02/plan.json",
+  "controller": "source-smooth-gauge-v1/tst/hyperbolic_shift_3d/aurora/control.py",
+  "blocking_original_job": null,
+  "target_t_over_M": 3,
+  "resolution_order": [
+    16,
+    24
+  ],
+  "updated": 1793398260.73844,
+  "binary_sha256": {
+    "build-sycl-mpi-smooth-gauge-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_smooth_gauge": "53eda0563a1b48846ac7372422906c35569f6ed685b75bb1dc980ccea83567f1"
+  },
+  "plan_sha256": "1a08591ccb110c5a1f802efe5cf441af1ba720d02517199b1082dfddf311c488",
+  "job_id": "8993603.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "startup_failure": {
+    "job_id": "8993278",
+    "plan": "campaigns/n16-n24-smooth-gauge-v1/plan.json",
+    "reason": "storage reservation guard before any evolution",
+    "receipt": "campaigns/n16-n24-smooth-gauge-v1/storage-retirement.json"
+  },
+  "completed_resolutions": [
+    16,
+    24
+  ],
+  "comparison": "campaigns/n16-n24-smooth-gauge-v1-attempt02/comparison.json",
+  "comparison_sha256": "5411f41c076ec6b140b93ffe7cd51b7337fb5f6c702d9be82289296b151faf1b",
+  "local_verification": "campaigns/n16-n24-smooth-gauge-v1-attempt02/local-verification.json",
+  "remote_checkpoint_purge": "campaigns/n16-n24-smooth-gauge-v1-attempt02/purge-receipt.json",
+  "continuation_authorized": false
+}

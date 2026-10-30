@@ -13,7 +13,7 @@ for (variant,n),r in reports.items():
  if variant=='new':assert r['gauge_blend']=='smoothstep9_w_056_080' and r['checkpoint_schema']=='HYP3D_MPI_GW1'
 radii=[r['horizon_trial_radius'] for r in reports.values()];assert all(math.isfinite(r) and 0<r<.16 for r in radii)
 cut=max(.0753,math.ceil(max(radii)*10000)/10000+.0001)
-bands=sorted(set([0,.03,.06,cut,.1,.13,.16,.18,.22,.3,.4,.6,.8,.9,.95,.98,1]))
+bands=sorted(set([0,.03,.06,cut,.1,.13,.16,.18,.22,.3,.4,.6,.65,.675,.7,.725,.75,.775,.8,.85,.9,.95,.98,1]))
 paths={('old',16):ROOT/'output/hyperbolic-core-shell/n16-timestep-to3m-v1/n16-original-dt-reproduction-v1/output/puncture.checkpoint',('old',24):ROOT/'output/hyperbolic-core-shell/resolution-20m-v1/n24-dt1-segment01/output/puncture.checkpoint'}
 for n in [16,24]:paths['new',n]=RAW/f'output/n{n}.checkpoint'
 out=HERE/'radial';out.mkdir(exist_ok=True);records=[]

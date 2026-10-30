@@ -1,0 +1,560 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "started": "2026-10-30T21:13:21.866225+00:00",
+  "job_id": "8993603.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "launcher_host": "x4220c3s2b0n0",
+  "allocation_nodes": [
+    "x4220c3s2b0n0.hsn.cm.aurora.alcf.anl.gov"
+  ],
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "01:00:00"
+  },
+  "source_manifest_sha256": "7308e7e5c3f54d960c0b4bae9b6cf92127a9aa2d66d7f46a5c88c0baaad64fdb",
+  "binaries": {
+    "build-sycl-mpi-smooth-gauge-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_smooth_gauge": "53eda0563a1b48846ac7372422906c35569f6ed685b75bb1dc980ccea83567f1"
+  },
+  "plan_sha256": "1a08591ccb110c5a1f802efe5cf441af1ba720d02517199b1082dfddf311c488",
+  "phase": "gauge_blend_comparison",
+  "n": 24,
+  "cases": [
+    {
+      "name": "n16",
+      "kind": "puncture",
+      "started": "2026-10-30T21:13:36.812852+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-smooth-gauge-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_smooth_gauge",
+        "16",
+        "campaigns/n16-n24-smooth-gauge-v1-attempt02/output/n16",
+        "puncture",
+        "1",
+        "0.0005",
+        "inputs/puncture-continuous-n16-smooth-v1.txt",
+        "-",
+        "2920",
+        "0.05",
+        "0.001",
+        "12",
+        "24",
+        "2"
+      ],
+      "generated_inputs": {},
+      "n": 16,
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 417.99849017709494,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "completed",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "n"
+            ],
+            "op": "eq",
+            "value": 16
+          },
+          "observed": 16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "t_over_M"
+            ],
+            "op": "eq",
+            "value": 3
+          },
+          "observed": 3,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "complete_candidate_exterior_enabled"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_schema"
+            ],
+            "op": "eq",
+            "value": "HYP3D_MPI_GW1"
+          },
+          "observed": "HYP3D_MPI_GW1",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_admitted"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_surface"
+            ],
+            "op": "le",
+            "value": 1e-10
+          },
+          "observed": 1.2212852989047116e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_ghost"
+            ],
+            "op": "le",
+            "value": 1e-10
+          },
+          "observed": 1.5543120576396184e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_exterior_L2"
+            ],
+            "op": "finite",
+            "value": 0
+          },
+          "observed": 0.018660697217227525,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "Mr_exterior_L2"
+            ],
+            "op": "finite",
+            "value": 0
+          },
+          "observed": 0.037725235805088866,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_penalty_scale_min"
+            ],
+            "op": "eq",
+            "value": 1
+          },
+          "observed": 1,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "angular_epsilon_min"
+            ],
+            "op": "eq",
+            "value": 2
+          },
+          "observed": 2,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "gauge_blend"
+            ],
+            "op": "eq",
+            "value": "smoothstep9_w_056_080"
+          },
+          "observed": "smoothstep9_w_056_080",
+          "passed": true
+        }
+      ],
+      "report_status": "completed",
+      "status": "passed",
+      "artifacts": {
+        "campaigns/n16-n24-smooth-gauge-v1-attempt02/output/n16.report.json": {
+          "sha256": "ba4d92b58fb085a6e38acffc0c47bf4e16c7a297cdcb870206a73e514b287e6d",
+          "bytes": 11354
+        },
+        "campaigns/n16-n24-smooth-gauge-v1-attempt02/output/n16.checkpoint": {
+          "sha256": "35dcab50a93551a9db98e1ac71dd4034f0730f396fd06ea1ed7d01cca60aa7d4",
+          "bytes": 79725208
+        },
+        "campaigns/n16-n24-smooth-gauge-v1-attempt02/output/n16.history.csv": {
+          "sha256": "5f211c4b17f1455abd8405bf4b3e073fa8ad28790efbf5cc663e1f3a2abea47d",
+          "bytes": 14972
+        }
+      },
+      "finished": "2026-10-30T21:20:39.518489+00:00"
+    },
+    {
+      "name": "n24",
+      "kind": "puncture",
+      "started": "2026-10-30T21:20:44.110493+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-smooth-gauge-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_smooth_gauge",
+        "24",
+        "campaigns/n16-n24-smooth-gauge-v1-attempt02/output/n24",
+        "puncture",
+        "1",
+        "0.0003333333333333333",
+        "inputs/puncture-continuous-n24-smooth-v1.txt",
+        "-",
+        "2567",
+        "0.05",
+        "0.001",
+        "12",
+        "24",
+        "2"
+      ],
+      "generated_inputs": {},
+      "n": 24,
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 687.0683303410187,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "completed",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "n"
+            ],
+            "op": "eq",
+            "value": 24
+          },
+          "observed": 24,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "t_over_M"
+            ],
+            "op": "eq",
+            "value": 3
+          },
+          "observed": 3,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "complete_candidate_exterior_enabled"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_schema"
+            ],
+            "op": "eq",
+            "value": "HYP3D_MPI_GW1"
+          },
+          "observed": "HYP3D_MPI_GW1",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_admitted"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_surface"
+            ],
+            "op": "le",
+            "value": 1e-10
+          },
+          "observed": 1.5543122014679749e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_ghost"
+            ],
+            "op": "le",
+            "value": 1e-10
+          },
+          "observed": 1.5543122344734559e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "H_exterior_L2"
+            ],
+            "op": "finite",
+            "value": 0
+          },
+          "observed": 0.011751005139143317,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "Mr_exterior_L2"
+            ],
+            "op": "finite",
+            "value": 0
+          },
+          "observed": 0.02382535743757675,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_penalty_scale_min"
+            ],
+            "op": "eq",
+            "value": 1
+          },
+          "observed": 1,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "angular_epsilon_min"
+            ],
+            "op": "eq",
+            "value": 2
+          },
+          "observed": 2,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "gauge_blend"
+            ],
+            "op": "eq",
+            "value": "smoothstep9_w_056_080"
+          },
+          "observed": "smoothstep9_w_056_080",
+          "passed": true
+        }
+      ],
+      "report_status": "completed",
+      "status": "passed",
+      "artifacts": {
+        "campaigns/n16-n24-smooth-gauge-v1-attempt02/output/n24.report.json": {
+          "sha256": "d2106f8dc864fa5e1c0af1b9a52fe36a3a1ecb7ec9f7c470f31c566067fad473",
+          "bytes": 11309
+        },
+        "campaigns/n16-n24-smooth-gauge-v1-attempt02/output/n24.checkpoint": {
+          "sha256": "409edeabf401d76426d9010fb2175c4141cfbad992d98c2f226dd5f142b10545",
+          "bytes": 234413720
+        },
+        "campaigns/n16-n24-smooth-gauge-v1-attempt02/output/n24.history.csv": {
+          "sha256": "5c1364dd8a463356aa068452f89d2ee6b0aa1e9b6e5076657c1d6d79db32fe6b",
+          "bytes": 15080
+        }
+      },
+      "finished": "2026-10-30T21:32:17.065330+00:00"
+    }
+  ],
+  "storage_at_start": {
+    "bytes": 2762666496,
+    "entries": 47843,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 245000000,
+    "planned_bytes": 650000000,
+    "headroom_bytes": 1342333504
+  },
+  "stability_admission_eligible": false,
+  "experimental_policy": "n16_n24_smoothstep9_to3M",
+  "affinity": {
+    "returncode": 0,
+    "timed_out": false,
+    "storage_error": null,
+    "elapsed_seconds": 0.37101470306515694,
+    "records": [
+      {
+        "host": "x4220c3s2b0n0",
+        "rank": 8,
+        "mask": "4.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4220c3s2b0n0",
+        "rank": 9,
+        "mask": "4.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4220c3s2b0n0",
+        "rank": 0,
+        "mask": "0.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4220c3s2b0n0",
+        "rank": 6,
+        "mask": "3.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4220c3s2b0n0",
+        "rank": 2,
+        "mask": "1.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4220c3s2b0n0",
+        "rank": 10,
+        "mask": "5.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4220c3s2b0n0",
+        "rank": 4,
+        "mask": "2.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4220c3s2b0n0",
+        "rank": 5,
+        "mask": "2.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4220c3s2b0n0",
+        "rank": 1,
+        "mask": "0.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4220c3s2b0n0",
+        "rank": 11,
+        "mask": "5.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4220c3s2b0n0",
+        "rank": 3,
+        "mask": "1.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4220c3s2b0n0",
+        "rank": 7,
+        "mask": "3.1",
+        "hierarchy": "COMPOSITE"
+      }
+    ],
+    "passed": true
+  },
+  "finished": "2026-10-30T21:32:17.072798+00:00",
+  "elapsed_seconds": 1135.2065882720053,
+  "storage_at_finish": {
+    "bytes": 3076996846,
+    "entries": 47858
+  }
+}

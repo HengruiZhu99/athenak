@@ -1,0 +1,304 @@
+{
+  "schema": 1,
+  "reviewed": true,
+  "phase": "gauge_blend_comparison",
+  "experimental_policy": "n16_n24_smoothstep9_to3M",
+  "n": 24,
+  "low_resolution_n": 16,
+  "native_exit_reserve_seconds": 180,
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "01:00:00"
+  },
+  "worker_seconds": 3200,
+  "storage": {
+    "limit_bytes": 5000000000,
+    "planned_new_bytes": 650000000,
+    "atomic_checkpoint_reserve_bytes": 245000000
+  },
+  "output_dir": "campaigns/n16-n24-smooth-gauge-v1-attempt02/output",
+  "commands": [
+    {
+      "name": "n16",
+      "kind": "puncture",
+      "executable": "build-sycl-mpi-smooth-gauge-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_smooth_gauge",
+      "args": [
+        "16",
+        "campaigns/n16-n24-smooth-gauge-v1-attempt02/output/n16",
+        "puncture",
+        "1",
+        "0.0005",
+        "inputs/puncture-continuous-n16-smooth-v1.txt",
+        "-",
+        "@WALL_SECONDS@",
+        "0.05",
+        "0.001",
+        "12",
+        "24",
+        "2"
+      ],
+      "timeout_seconds": 3100,
+      "report": "campaigns/n16-n24-smooth-gauge-v1-attempt02/output/n16.report.json",
+      "inputs": [
+        "inputs/puncture-continuous-n16-smooth-v1.txt"
+      ],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "n"
+          ],
+          "op": "eq",
+          "value": 16
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "t_over_M"
+          ],
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "path": [
+            "complete_candidate_exterior_enabled"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "checkpoint_schema"
+          ],
+          "op": "eq",
+          "value": "HYP3D_MPI_GW1"
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "H_exterior_L2"
+          ],
+          "op": "finite",
+          "value": 0
+        },
+        {
+          "path": [
+            "Mr_exterior_L2"
+          ],
+          "op": "finite",
+          "value": 0
+        },
+        {
+          "path": [
+            "scri_penalty_scale_min"
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "angular_epsilon_min"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "gauge_blend"
+          ],
+          "op": "eq",
+          "value": "smoothstep9_w_056_080"
+        }
+      ],
+      "artifacts": [
+        "campaigns/n16-n24-smooth-gauge-v1-attempt02/output/n16.checkpoint",
+        "campaigns/n16-n24-smooth-gauge-v1-attempt02/output/n16.history.csv",
+        "campaigns/n16-n24-smooth-gauge-v1-attempt02/output/n16.failed-stage.bin",
+        "campaigns/n16-n24-smooth-gauge-v1-attempt02/output/n16.checkpoint.horizon-seed.txt"
+      ],
+      "n": 16
+    },
+    {
+      "name": "n24",
+      "kind": "puncture",
+      "executable": "build-sycl-mpi-smooth-gauge-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_smooth_gauge",
+      "args": [
+        "24",
+        "campaigns/n16-n24-smooth-gauge-v1-attempt02/output/n24",
+        "puncture",
+        "1",
+        "0.0003333333333333333",
+        "inputs/puncture-continuous-n24-smooth-v1.txt",
+        "-",
+        "@WALL_SECONDS@",
+        "0.05",
+        "0.001",
+        "12",
+        "24",
+        "2"
+      ],
+      "timeout_seconds": 3100,
+      "report": "campaigns/n16-n24-smooth-gauge-v1-attempt02/output/n24.report.json",
+      "inputs": [
+        "inputs/puncture-continuous-n24-smooth-v1.txt"
+      ],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "n"
+          ],
+          "op": "eq",
+          "value": 24
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "t_over_M"
+          ],
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "path": [
+            "complete_candidate_exterior_enabled"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "checkpoint_schema"
+          ],
+          "op": "eq",
+          "value": "HYP3D_MPI_GW1"
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "H_exterior_L2"
+          ],
+          "op": "finite",
+          "value": 0
+        },
+        {
+          "path": [
+            "Mr_exterior_L2"
+          ],
+          "op": "finite",
+          "value": 0
+        },
+        {
+          "path": [
+            "scri_penalty_scale_min"
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "angular_epsilon_min"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "gauge_blend"
+          ],
+          "op": "eq",
+          "value": "smoothstep9_w_056_080"
+        }
+      ],
+      "artifacts": [
+        "campaigns/n16-n24-smooth-gauge-v1-attempt02/output/n24.checkpoint",
+        "campaigns/n16-n24-smooth-gauge-v1-attempt02/output/n24.history.csv",
+        "campaigns/n16-n24-smooth-gauge-v1-attempt02/output/n24.failed-stage.bin",
+        "campaigns/n16-n24-smooth-gauge-v1-attempt02/output/n24.checkpoint.horizon-seed.txt"
+      ],
+      "n": 24
+    }
+  ]
+}

@@ -15,7 +15,7 @@ for variant in ['old','new']:
   p=(OLD/f'n{n}.history.csv') if variant=='old' else (RAW/f'output/n{n}.history.csv')
   rows=list(csv.DictReader(p.open()))
   if variant=='old' and n==16:
-   early=HERE.parent/'n16-timestep-to3m-v1/n16-original-dt-reproduction-v1/output/puncture-initial.history.csv';rows=list(csv.DictReader(early.open()))+rows
+   early=HERE.parent/'n16-timestep-to3m-v1/n16-original-dt-reproduction-v1/output/puncture-initial.history.csv';rows=list(csv.DictReader(early.open()))+rows;sources[str(early)]=hashlib.sha256(early.read_bytes()).hexdigest()
   unique={round(float(r['t_over_M']),9):r for r in rows};rows=[unique[t] for t in sorted(unique)]
   a={k:np.array([float(r[k]) for r in rows]) for k in ['t_over_M']+keys};data[variant,n]=a
   assert a['t_over_M'][0]==0 and a['t_over_M'][-1]==3
@@ -35,7 +35,7 @@ for ax,k,title in zip(axes.flat,keys,['Hamiltonian','Radial momentum','Conformal
 for ax in axes[1]:ax.set_xlabel('t/M')
 axes[0,0].legend(fontsize=9,ncol=2);fig.suptitle('Broader gauge blend: matched N16 / N24 evolution to 3M',fontsize=16)
 fig.subplots_adjust(top=.90,bottom=.14,hspace=.27,wspace=.25)
-fig.text(.5,.035,'Only w(r) and its analytic derivative changed. Same initial data, grid, dt, log variables and boundary coefficients.\nComplete horizon candidates define each run’s exterior cutoff; acceptance flags are preserved. No interpolation of missing values.',ha='center',fontsize=9)
+fig.text(.5,.035,'Changed w(r) affects gauge coupling and Z4 damping. Same initial data, grid, dt, log variables and boundary coefficients.\nComplete horizon candidates define each run’s exterior cutoff; acceptance flags are preserved. No interpolation of missing values.',ha='center',fontsize=9)
 for ext in ['png','pdf']:fig.savefig(HERE/f'constraint-history-comparison.{ext}',dpi=180)
 radial={};summary={};common=None
 for variant in ['old','new']:
@@ -55,4 +55,15 @@ for ax,k,title in zip(axes,['H2','Mr2'],['Hamiltonian band RMS at 3M','Radial mo
  ax.axvspan(.6,.8,color='#e9bf36',alpha=.13);ax.axvline(.75,color='.5',ls=':');ax.set(title=title,xlim=(common,1),yscale='log',xlabel='Compactified radius r',ylabel='Band RMS');ax.grid(alpha=.2);ax.legend(fontsize=9,ncol=2)
 fig.tight_layout()
 for ext in ['png','pdf']:fig.savefig(HERE/f'radial-comparison.{ext}',dpi=180)
-(HERE/'comparison.json').write_text(json.dumps(dict(summary=summary,sources=sources),indent=2)+'\n');print(json.dumps(summary,indent=2))
+regions={}
+for variant in ['old','new']:
+ for n in [16,24]:
+  d=radial[variant,n];c={v['cutoff']:v for v in d['radial_cumulative']};regions[f'{variant}-n{n}']={}
+  for lo,hi in [(.16,.18),(.4,.6),(.4,.675),(.6,.8),(.675,.75)]:
+   dv=c[lo]['volume']-c[hi]['volume'];row={}
+   for k in ['H2','Mr2','M2']:
+    integral=c[lo][k]-c[hi][k]
+    row[k]={'rms':float(np.sqrt(max(0,integral)/dv)),'exterior_squared_integral_fraction':integral/c[common][k]}
+   regions[f'{variant}-n{n}'][f'{lo}-{hi}']=row
+ratios={variant:{k:radial[variant,24]['norms']['exterior'][k]/radial[variant,16]['norms']['exterior'][k] for k in ['H_L2','Mr_L2','M_L2','Theta_L2']} for variant in ['old','new']}
+(HERE/'comparison.json').write_text(json.dumps(dict(summary=summary,radial_regions=regions,n24_over_n16=ratios,sources=sources),indent=2)+'\n');print(json.dumps(dict(summary=summary,n24_over_n16=ratios),indent=2))

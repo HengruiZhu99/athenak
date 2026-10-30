@@ -156,3 +156,65 @@ are preserved in startup-failure/; retry provenance is in retry-submission/.
 Attempt02 was submitted as job8993603 after an empty all-user debug query.
 Its bound plan SHA256 is1a08591ccb110c5a1f802efe5cf441af1ba720d02517199b1082dfddf311c488.
 The hourly monitor tracks this job and retains the3M stopping requirement.
+
+## Verified results: both grids completed 3M
+
+Job8993603 completed both fresh runs and exited0. The local verifier checked
+source/executable/plan bindings, worker artifact hashes and lengths, both admitted
+GW1 headers/configurations, exact3M times and finite payloads. The diagnostic
+readers left all four old/new checkpoints unchanged; execution records and
+binary hashes are in radial/execution.json. Both runs stopped at3M as requested.
+N16 took418.0 seconds and N24 took687.1 seconds for the native commands including
+launch; scheduler walltime including setup was20m57s.
+
+At3M the same spherical cutoff r>0.0753 is used for all four states. These are
+normalized compactified-coordinate volume RMS norms, not proper-volume norms.
+
+| Grid | Constraint | Original | Smooth | Reduction |
+| --- | --- | ---: | ---: | ---: |
+| N16 | Hamiltonian | 0.022100108 | 0.017641948 | 20.2% |
+| N16 | Radial momentum | 0.047862431 | 0.037134104 | 22.4% |
+| N16 | Conformal invariant momentum | 0.035359183 | 0.022126784 | 37.4% |
+| N16 | Theta | 0.0005786923 | 0.00034147275 | 41.0% |
+| N24 | Hamiltonian | 0.021932896 | 0.011750837 | 46.4% |
+| N24 | Radial momentum | 0.048151125 | 0.023819271 | 50.5% |
+| N24 | Conformal invariant momentum | 0.042231721 | 0.018102214 | 57.1% |
+| N24 | Theta | 0.00057136842 | 0.00022150662 | 61.2% |
+
+The smooth N24/N16 norm ratios are0.666 for H,0.641 for radial momentum and0.818
+for invariant momentum. Original ratios were0.992,1.006 and1.194 respectively.
+Thus the endpoint refinement trend improves, but two grids do not establish
+an asymptotic convergence order. The time histories are not uniformly improved:
+the smooth profile produces larger early H/momentum transients before its
+later reduction. History curves use each run's own provisional candidate cutoff;
+the endpoint table and radial plots use the common fixed cutoff. Connecting
+sampled points does not fill missing diagnostic values.
+
+In the r=0.6–0.8 shell, H/radial-momentum band RMS falls by50.2%/52.2% at N16
+and67.5%/70.4% at N24. In the previously dominant r=0.675–0.75 peak, the N24
+reductions are86.8%/87.0%. The N24 share of exterior H squared integral in that
+peak drops from78.8% to4.8%. The core-shell r=0.16–0.18 band changes by less than
+1% in H/radial momentum at either resolution, consistent with the main benefit
+being in the outer gauge transition. This is evidence for the shared weight as
+an important contributor, not proof that gauge gradients alone caused the error:
+the same weight changes Z4 damping as explained above.
+
+A remaining shoulder around r=0.4–0.675 is nearly unchanged between N16 and N24
+in the smooth run; its H/radial-momentum RMS is larger than in the original run.
+This limits claims of restored convergence, even though the old sharp outer peak
+is strongly reduced. No longer evolution or broader-support profile was tested.
+
+The largest new surface/ghost null-closure residual is1.5544e-15. Neither run
+activated the lapse floor; no chi floor was enabled. Final chi/lapse minima were
+1.2143e-4/9.3720e-3 at N16 and2.5695e-5/4.6572e-3 at N24. Complete horizon
+candidates were retained as requested, but neither final candidate met the.001
+finder tolerance: expansion RMS was.0013764/.0014280. Their radii were
+.07518875/.07502866. These quality flags remain in the reports; the norm
+comparison is conditional on using those candidate cutoffs.
+
+Plots: constraint-history-comparison.png and radial-comparison.png (PDF copies
+also saved). Exact endpoint and band results: comparison.json. Raw histories and
+native reports are included here; full checkpoints remain locally under
+output/hyperbolic-core-shell/smooth-gauge-v1/aurora. Only after local hash/length
+verification were remote checkpoint copies purged. The task footprint after
+purge was2.407GB; allocation lock release and purge receipts are in completion/.
