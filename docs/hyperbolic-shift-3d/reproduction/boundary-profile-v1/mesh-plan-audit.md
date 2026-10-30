@@ -57,3 +57,41 @@ Per-stage sparse communication is already small in the V21/V22 profiles, so an
 asynchronous exchange is not automatically worthwhile. Any overlap experiment
 must preserve producer/consumer and collective ordering, drain pending requests
 on failure, and compare complete checkpoints and failure captures.
+
+## Rebuild integration requirements found during V24 qualification
+
+The optimized continuous Cartesian core has an additional restriction beyond
+cache invalidation: `CompositeDifference::BuildCartesianLookup` explicitly
+rejects mixed Cartesian spacings. Therefore, a local leaf-refinement event cannot
+currently rebuild this particular discretization successfully. The older mapped
+core component fixtures support coarse/fine layouts, but those fixtures do not
+establish mixed-level support in the continuous-core evolution runner. A safe
+cache owner must propagate this rejection to every rank and prevent use of a
+partially rebuilt mesh; it must not quietly switch Cartesian discretizations.
+
+A coordinated device-plan owner must include the two halo applications, bulk
+operator and its radial plan, surface operator and global projector, sampled
+normal operator and its radial plan, angular operator, sparse exchange,
+reference-lapse array, positive-dissipation references, and ownership-dependent
+counts/displacements and diagnostic sampling ownership. The host difference,
+surface and radial plans must also be constructed together: the surface/radial
+objects reference their host grid, so moving or mutating the host descriptor
+underneath them is not a safe rebuild mechanism.
+
+The implementation must construct a replacement bundle at a synchronization
+point, synchronize local-construction failures before entering any new MPI
+collectives, then construct the communication plan. It may publish the bundle
+only after all ranks agree and current fields/compensation have the new layout.
+An unsuccessful rebuild must leave the proposed generation unusable on every
+rank. Stage-dependent projected boundary values and derivative samples must be
+invalidated even when the new state has the same array shape. Reference geometry
+and ownership must come from the same generation as stencil plans.
+
+Required verification includes same-shape geometry and ownership changes, mesh
+size changes, rebuild failure on one rank, and fresh-versus-rebuilt full operator
+comparisons. For the current continuous-core discretization, unsupported
+mixed-level refinement must be explicitly rejected. A complete AMR evolution
+would additionally need a supported coarse/fine derivative policy, field and
+compensation transfer, and trajectory validation; a plan-bundle test alone does
+not establish those features. This section describes remaining implementation
+requirements, not completed functionality.
