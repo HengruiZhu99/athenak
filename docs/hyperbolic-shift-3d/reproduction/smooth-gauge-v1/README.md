@@ -3,8 +3,8 @@
 The user authorized a matching N16/N24 test of a smoother, better-resolved gauge
 blend, and explicitly limited this comparison to3M. Both cases start from the
 same original generator inputs as their donor runs. No restart or direct-variable
-continuation is used. This is a separate equation experiment, not a replacement
-for the frozen N32 campaign.
+continuation is used. This is a separate equation experiment. The original N24 and N32 campaigns
+are terminal numerical failures and will not be resumed.
 
 Only the telegrapher coupling weight w and its analytic derivative change.
 The original w=S8((0.8-r)/0.24), S8(t)=t^8/(t^8+(1-t)^8), is replaced by
@@ -36,13 +36,14 @@ header stays152 bytes with the original DT1 configuration blocks. The existing
 targets default to the original weight. A matching diagnostic-only checkpoint
 reader is hyperbolic_shift_3d_checkpoint_constraints_smooth.
 
-Plan: campaigns/n16-n24-smooth-gauge-v1/plan.json. It runs N16 then N24 in one
+Current plan: campaigns/n16-n24-smooth-gauge-v1-attempt02/plan.json.
+It runs N16 then N24 in one
 allocation, one node/12 MPI ranks/GPU tiles, CompactBinaryMerger/debug. Native
 walltime reserve180s and worker budget3200s are retained. The controller restricts
 this phase to fresh N16 then N24 inputs, exact3M targets and the matched dt and
-diagnostic settings. Preserve the5GB task footprint cap, current N32 inputs,
-and all source/binary provenance; archive and verify obsolete data before purge.
-Do not overlap debug allocations or silently modify the running N32 experiment.
+diagnostic settings. Preserve the5GB task footprint cap and all source/binary
+provenance; archive and verify obsolete data before purge. Do not overlap debug
+allocations or resume either original failed fine-grid experiment.
 
 Compare time histories with the original candidate-diagnostic replay and radial
 constraint integrals at3M using the same r=0.0753 cutoff and bands. Record horizon
@@ -72,19 +73,12 @@ checkpoint. The controller/preflight suite passed112 tests, and the added
 bounded-policy test passed separately. These are preparation checks, not3M
 stability results.
 
-State file: remote smooth-gauge-comparison-state.json. Its current status is
-ready_waiting_for_debug_slot. The original N32 job8992832 occupies the allocation;
-let it finish normally. The existing hourly monitor gives this comparison
-priority before any original N32 continuation. Do not submit twice: inspect the
-new plan's submission.json/submission-pending.json and the root lock first.
-
-After original N32 becomes terminal, collect/verify its evidence under its frozen
-protocol and release only its matching terminal lock. Check ALL user debug jobs.
-When none remain, submit the bound new plan with
-source-smooth-gauge-v1/tst/hyperbolic_shift_3d/aurora/control.py, then update the
-smooth-gauge state with its job id. The controller rechecks hashes and storage.
-Never resume an original failed N32 checkpoint. Do not discard original N32
-results or mix its checkpoint schema with this experiment.
+State file: remote smooth-gauge-comparison-state.json. Inspect its current plan,
+saved submission and root lock before scheduler actions. The original N32 run
+failed at5.92425M; its evidence was verified locally and its terminal lock released.
+The first smooth job8993278 failed at startup on the storage reservation guard,
+before any evolution. The retry uses a fresh attempt02 plan with identical
+scientific source, executable, inputs and parameters; only output paths change.
 
 On terminal completion, collect using the new controller. Copy the entire new
 campaign directory locally to
@@ -101,9 +95,8 @@ then evaluates old and new checkpoints with their matching diagnostic binaries.
 It records hashes before and after and requires all states at exactly3M. Plot
 both history and radial comparisons, inspect figures, report measured changes,
 commit/push evidence and mark the comparison complete. Stop this experiment at3M.
-The original N32 campaign may then resume only if its latest original-schema
-checkpoint passed the original admission protocol; preserve its existing monitor
-until all previously authorized work is handled.
+Delete the hourly monitor once both bounded cases and their comparison have
+been fully handled. Neither original failed fine-grid state may be resumed.
 
 
 ## Submission
@@ -111,8 +104,9 @@ until all previously authorized work is handled.
 Job8993278 was submitted after the original N32 allocation terminated, its
 failure evidence was hash-verified locally, its large failed outputs were purged,
 and its matching terminal lock was released. All-user debug query was empty.
-The new state is submitted; inspect its saved submission before any scheduler
-action. The hourly monitor aurora-n24-n32-convergence-to20m now tracks this
+That first submission subsequently failed before evolution; see the startup
+retry record below. Inspect the current state and saved submission before any
+scheduler action. The hourly monitor aurora-n24-n32-convergence-to20m now tracks this
 bounded comparison, with the display name Aurora smoother gauge N16 N24 to3M.
 Original N32 failed at5.92425M near the puncture; neither failed fine-grid
 original state will be resumed. Both new cases still stop at3M.
@@ -137,3 +131,28 @@ possible future experiment, not an adopted parameter change or a demonstrated
 safe width. Gauge changes can propagate inward even with the local inner
 coefficients unchanged. The submitted experiment keeps0.56–0.8 for a controlled
 comparison of profile shape.
+
+## Startup storage failure and unchanged retry
+
+Job8993278 exited1 before producing any worker status or native evolution output.
+The compute-node guard measured4,169,152,022 bytes, which exceeded the cap after
+reserving650,000,000 bytes for outputs and245,000,000 for atomic checkpoints
+(headroom -64,152,022 bytes). Submission had measured3,617,957,850 bytes.
+Subsequent login-node scans changed from3,618,106,606 to2,914,779,136 bytes with
+no task file deletion between them. The accounting uses max(logical size,
+allocated blocks); the N32 checkpoint and initial-data block counts were observed
+to change from roughly twice logical size to once logical size. The underlying
+filesystem reason for that variation is unconfirmed. This is a startup storage
+failure, not evidence of numerical instability in the smoother profile.
+
+The obsolete original N32 3M DT1 checkpoint and initial text were SHA256/length
+verified against existing local copies, then removed remotely. The receipt records
+both originals and retained local paths. Afterwards the measured task footprint
+was2,211,454,976 bytes. The fresh attempt02 binding left1,893,527,032 bytes of
+headroom after the same895MB of output/atomic reservations. The cap and reserves
+were not relaxed. The original failed submission and its terminal lock release
+are preserved in startup-failure/; retry provenance is in retry-submission/.
+
+Attempt02 was submitted as job8993603 after an empty all-user debug query.
+Its bound plan SHA256 is1a08591ccb110c5a1f802efe5cf441af1ba720d02517199b1082dfddf311c488.
+The hourly monitor tracks this job and retains the3M stopping requirement.
