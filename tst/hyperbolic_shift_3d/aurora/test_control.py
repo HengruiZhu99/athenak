@@ -465,6 +465,31 @@ class ControllerTests(unittest.TestCase):
         for command in plan['commands']:command['executable']='build/'+control.SPARSE_POSITIVE_TARGET
         with self.assertRaisesRegex(ValueError,'does not inherit'):control.validate_plan(self.root,plan)
 
+    def test_planned_requires_distinct_generation_admission(self):
+        plan=example();plan.update(phase='stability',admission='admission.json')
+        command=plan['commands'][0];command['executable']='build/'+control.PLANNED_TARGET
+        command['args'].extend(['.05','.001','6','12','2'])
+        control.validate_plan(self.root,plan)
+        config=control.normal_derivative_config(command)
+        self.assertEqual(config['checkpoint_schema'],'HYP3D_MPI_V11')
+        self.assertEqual(config['radial_derivative_execution'],'stage_field_batch')
+        self.assertEqual(config['mesh_plan_lifetime'],'coordinated_generation')
+        source='a'*64;binary='b'*64
+        admission=dict(passed=True,phase='preflight',source_manifest_sha256=source,low_resolution_n=16,
+                       binaries={command['executable']:binary},gpu_cpu_parity=True,restart_equivalence=True,
+                       normal_derivative_configs=[config])
+        control.atomic(self.root/'admission.json',admission)
+        control.validate_admission(self.root,plan,source,{command['executable']:binary})
+        mutations=[('mesh_plan_lifetime','independent_fixed'),('ownership_partition','repartitioned_contiguous'),
+                   ('radial_derivative_execution','inline_per_point'),('volume_exchange','full_allgatherv')]
+        for key in ['mesh_plan_generations','plan_rebuild_interval','forced_plan_rebuilds','plan_repartition_interval','ownership_changes','rejected_repartitions']:
+            mutations.extend((key,value) for value in [None,True,False,2])
+        for key,value in mutations:
+            admission['normal_derivative_configs']=[dict(config,**{key:value})]
+            control.atomic(self.root/'admission.json',admission)
+            with self.subTest(key=key,value=value),self.assertRaises(ValueError):
+                control.validate_admission(self.root,plan,source,{command['executable']:binary})
+
     def test_radial_batch_requires_distinct_execution_admission(self):
         plan=example();plan.update(phase='stability',admission='admission.json')
         command=plan['commands'][0];command['executable']='build/'+control.RADIAL_BATCH_TARGET

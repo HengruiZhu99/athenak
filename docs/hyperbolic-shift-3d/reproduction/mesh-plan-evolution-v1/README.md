@@ -98,8 +98,9 @@ additional rebuild case is bounded by 150 seconds.
 
 ## Remaining work
 
-Live repartitioning requires transfer of owned fields and RK compensation before
-publishing a changed layout. Geometry/topology changes additionally require a
+Live repartitioning and accepted-field/compensation transfer are now implemented
+and locally verified in [the follow-up](../mesh-plan-repartition-v1/README.md).
+Geometry/topology changes still require a
 field-transfer policy and a checkpoint schema describing the changed mesh. This
 driver entry point cannot yet perform those operations. The independent bundle
 fixture covers construction/rejection after refinement, coarsening, geometry and

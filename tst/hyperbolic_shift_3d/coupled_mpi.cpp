@@ -137,6 +137,11 @@ class Evolution {
   Real null_max=0,pole_max=0,clock_max=0,compatibility_max=0;
   uint64_t forced_plan_rebuilds=0;
   int plan_rebuild_interval=0;
+  int plan_repartition_interval=0;
+  uint64_t ownership_changes=0;
+  uint64_t rejected_repartitions=0;
+  std::vector<std::vector<int>> ownership_history;
+  std::vector<Real> ownership_change_times;
   double plan_rebuild_seconds=0;
   std::unique_ptr<h::HyperbolicCompositeDevice> legacy_kernel;
   h::HyperbolicCompositeDevice* kernel(){if constexpr(coordinated_plans)return plans.Borrow(mesh_epoch).bulk.get();else return legacy_kernel.get();}
@@ -184,7 +189,7 @@ class Evolution {
     if constexpr(coordinated_plans){
       ValidatePlans();const double began=MPI_Wtime();boundary_cached=false;
       auto next_epoch=mesh_epoch;++next_epoch.geometry;
-      plans.Rebuild(hyperbolic_reproduction::ContinuousCoreMesh(n),plan_options,{},next_epoch,
+      plans.Rebuild(hyperbolic_reproduction::ContinuousCoreMesh(n),plan_options,ownership_cuts,next_epoch,
         [&](const auto&g){const auto&l=g.layout;
           if(l.total!=total||l.first!=first||l.local!=local||l.surface_total!=surface_total||
              l.surface_first!=surface_first||l.surface_local!=surface_local||l.cuts!=ownership_cuts)
@@ -195,6 +200,73 @@ class Evolution {
       auto&g=plans.Borrow(mesh_epoch);reference_lapse=g.reference_lapse;angular_residual=g.angular_residual;
       owned_padding.clear();++forced_plan_rebuilds;plan_rebuild_seconds+=MPI_Wtime()-began;
     }
+  }
+  // A synchronization-point ownership change on the same physical grid. Gather
+  // old owners' accepted values and log-variable RK compensation, then stage
+  // all replacement storage before publishing the new plan generation. No
+  // interpolation, projection, or reordering of physical cells is involved.
+  void Repartition(const std::vector<int>&new_cuts){
+    if constexpr(coordinated_plans){
+      ValidatePlans();const double began=MPI_Wtime();boundary_cached=false;
+      Buffer complete,complete_comp,new_local,new_comp,new_next;
+      std::array<Buffer,4> new_rates;
+      h::HyperbolicMeshPlans::Layout staged_layout;
+      std::vector<std::vector<int>> staged_history;
+      std::vector<Real> staged_times;
+      plans.Use(mesh_epoch,[&](auto&){
+        complete=Buffer("repartition accepted state",31*total);
+        complete_comp=Buffer("repartition accepted compensation",31*total);
+      });
+      const Buffer owned=Kokkos::subview(state,std::make_pair(size_t(31*first),size_t(31*last)));
+      Gather(owned,complete);Gather(compensation,complete_comp);
+      auto next_epoch=mesh_epoch;++next_epoch.partition;
+      try{plans.Rebuild(hyperbolic_reproduction::ContinuousCoreMesh(n),plan_options,new_cuts,next_epoch,
+        [&](const auto&g){const auto&l=g.layout;
+          if(l.total!=total||l.surface_total!=surface_total||l.surface_first!=surface_first||l.surface_local!=surface_local)
+            throw std::invalid_argument("repartition changed the physical mesh or surface ownership");
+          staged_layout=l;staged_history=ownership_history;staged_history.push_back(l.cuts);
+          staged_times=ownership_change_times;staged_times.push_back(time);
+          new_local=Buffer("repartition local state",31*l.local);
+          new_comp=Buffer("repartition local compensation",31*l.local);
+          new_next=Buffer("repartition next compensation",31*l.local);
+          for(auto&rate:new_rates)rate=Buffer("repartition RK rate",31*l.local);
+          const auto slice=std::make_pair(size_t(31*l.first),size_t(31*(l.first+l.local)));
+          Kokkos::deep_copy(new_local,Kokkos::subview(complete,slice));
+          Kokkos::deep_copy(new_comp,Kokkos::subview(complete_comp,slice));
+          g.halo->surface=surface;g.normal_halo->surface=surface;
+        });}catch(...){
+        // Field publication has not happened. Recover a complete old-layout
+        // generation explicitly, so failure capture/checkpointing can still
+        // read the accepted state without accessing an invalidated plan.
+        const auto failure=std::current_exception();auto recovery=mesh_epoch;++recovery.geometry;
+        plans.Rebuild(hyperbolic_reproduction::ContinuousCoreMesh(n),plan_options,ownership_cuts,recovery,
+          [&](const auto&g){g.halo->surface=surface;g.normal_halo->surface=surface;});
+        mesh_epoch=recovery;auto&g=plans.Borrow(mesh_epoch);
+        reference_lapse=g.reference_lapse;angular_residual=g.angular_residual;owned_padding.clear();
+        ++rejected_repartitions;plan_rebuild_seconds+=MPI_Wtime()-began;std::rethrow_exception(failure);
+      }
+      // Publication contains no allocation or field calculation. Existing full
+      // base/surface/RK-surface storage has unchanged shape and ownership.
+      mesh_epoch=next_epoch;
+      first=staged_layout.first;local=staged_layout.local;last=first+local;
+      first_block=staged_layout.first_block;last_block=staged_layout.end_block;
+      ownership_cuts.swap(staged_layout.cuts);counts.swap(staged_layout.counts);displacements.swap(staged_layout.displacements);
+      ownership_history.swap(staged_history);ownership_change_times.swap(staged_times);
+      state=complete;local_state=new_local;compensation=new_comp;next_compensation=new_next;rates=new_rates;
+      auto&g=plans.Borrow(mesh_epoch);reference_lapse=g.reference_lapse;angular_residual=g.angular_residual;
+      owned_padding.clear();++ownership_changes;ExchangeStage();
+      plan_rebuild_seconds+=MPI_Wtime()-began;
+    }else throw std::invalid_argument("repartition requires coordinated plans");
+  }
+  // Deterministic stress policy, not a measured-cost load-balancing model. The
+  // general Repartition API accepts independently selected contiguous cuts.
+  void AlternateTestPartition(){
+    std::vector<int> cuts;
+    plans.Use(mesh_epoch,[&](auto&){cuts.resize(size+1);
+      for(int r=0;r<=size;++r)cuts[r]=int(int64_t(total)*r/size);
+      if(ownership_changes%2==0)for(int r=1;r<size;++r)cuts[r]=int(int64_t(total)*r/(5*size));
+    });
+    Repartition(cuts);
   }
   explicit Evolution(int resolution,Real epsilon=0,int kind=0,const std::string&partition_file=""):n(resolution),angular_epsilon(epsilon){
     auto setup_tick=construction_started;
@@ -618,6 +690,12 @@ int main(int argc,char**argv){
         throw std::invalid_argument("invalid coordinated plan rebuild interval");
     }}});
     MPI_Bcast(&e.plan_rebuild_interval,1,MPI_INT,0,MPI_COMM_WORLD);
+    CollectiveLocal([&]{if(e.rank==0){if(const char*value=std::getenv("HYPERBOLIC_PLAN_REPARTITION_INTERVAL")){
+      size_t used=0;const std::string text=value;e.plan_repartition_interval=std::stoi(text,&used);
+      if(used!=text.size()||e.plan_repartition_interval<0||(!coordinated_plans&&e.plan_repartition_interval)||
+         (e.plan_repartition_interval&&e.size<2))throw std::invalid_argument("invalid coordinated plan repartition interval");
+    }}});
+    MPI_Bcast(&e.plan_repartition_interval,1,MPI_INT,0,MPI_COMM_WORLD);
     std::string error,status="completed";
     CollectiveLocal([&]{if(e.rank==0){
       const auto parent=std::filesystem::path(output).parent_path();
@@ -741,6 +819,7 @@ int main(int argc,char**argv){
         double used=elapsed();MPI_Allreduce(MPI_IN_PLACE,&used,1,MPI_DOUBLE,MPI_MAX,MPI_COMM_WORLD);
         // Every term in this branch must be identical on every rank.
         if(used+std::max(15.,last_diag_seconds*1.5)+2*step_seconds>=wall){status="checkpointed";break;}
+        if(e.plan_repartition_interval&&e.steps>0&&e.steps%e.plan_repartition_interval==0)e.AlternateTestPartition();
         if(e.plan_rebuild_interval&&e.steps%e.plan_rebuild_interval==0)e.RebuildCurrentPlans();
         const auto tick=std::chrono::steady_clock::now();e.Step(std::min(dt,end-e.time));
         step_seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-tick).count();
@@ -822,16 +901,23 @@ int main(int argc,char**argv){
       report<<",\"volume_exchange\":\""<<(sparse_stage?"cached_sparse_alltoallv":"full_allgatherv")<<"\",\"sparse_poison_unused\":"<<(e.sparse_poison?"true":"false");
       report<<",\"sparse_exchange_by_rank\":[";
       for(int rank=0;rank<e.size;++rank){if(rank)report<<',';report<<'[';for(int k=0;k<7;++k){if(k)report<<',';report<<rank_sparse[7*rank+k];}report<<']';}report<<']';
+      report<<",\"sparse_counter_scope\":\"current_plan_generation\"";
       report<<",\"mesh_plan_lifetime\":\""<<(coordinated_plans?"coordinated_generation":"independent_fixed")<<"\",\"mesh_plan_generations\":"<<(coordinated_plans?e.plans.Builds():1)<<",\"forced_plan_rebuilds\":"<<e.forced_plan_rebuilds;
       report<<",\"plan_rebuild_interval\":"<<e.plan_rebuild_interval<<",\"plan_rebuild_seconds_rank0\":"<<e.plan_rebuild_seconds
         <<",\"mesh_plan_setup_layout\":\""<<(coordinated_plans?"bundle_in_slot6_fields_in_slot7":"eight_separate_phases")<<"\"";
+      report<<",\"plan_repartition_interval\":"<<e.plan_repartition_interval<<",\"ownership_changes\":"<<e.ownership_changes
+        <<",\"rejected_repartitions\":"<<e.rejected_repartitions<<",\"ownership_change_times\":[";
+      for(size_t i=0;i<e.ownership_change_times.size();++i){if(i)report<<',';report<<e.ownership_change_times[i];}report<<']';
+      report<<",\"ownership_history\":[";
+      for(size_t i=0;i<e.ownership_history.size();++i){if(i)report<<',';report<<'[';
+        for(size_t r=0;r<e.ownership_history[i].size();++r){if(r)report<<',';report<<e.ownership_history[i][r];}report<<']';}report<<']';
       report<<",\"boundary_execution\":\""<<(boundary_reuse?"cached_global_projection_angular":"partitioned_uncached")<<"\",\"boundary_cache_hits\":"<<e.boundary_cache_hits;
       if constexpr(continuous_positive)report<<",\"cartesian_seams\":\"uniform_global_stencil\",\"positive_variables\":\"log_chi_log_lapse_rk_and_ko\",\"physical_lapse_floor\":"<<physical_lapse_floor;
       if constexpr(spherical_overlap)report<<",\"shell_geometry\":\"spherical_equiangular\",\"core_half_width\":0.18,\"shell_inner_radius\":0.16,\"overlap_quadrature\":\"radial_quintic_partition\"";
       if constexpr(inner_transition_logical)report<<",\"interpatch_interpolation\":\"logical_inner_transition\"";
       if constexpr(core_subdivisions==2)report<<",\"mesh_topology\":\"cartesian_2x2x2_shells3\",\"cartesian_core_subdivisions\":2,\"mesh_blocks\":26";
       if constexpr(scri_donor_seven)report<<",\"scri_radial_closure\":\"donor_seven_last3\",\"scri_radial_bulk_rows\":3";
-      report<<",\"ownership_partition\":"<<JsonString(measured_partition?"measured_fixed_contiguous":"equal_cells")
+      report<<",\"ownership_partition\":"<<JsonString(e.ownership_changes?"repartitioned_contiguous":measured_partition?"measured_fixed_contiguous":"equal_cells")
         <<",\"partition_source_report_sha256\":"<<JsonString(e.partition_source_report)<<",\"ownership_cuts\":[";
       for(size_t r=0;r<e.ownership_cuts.size();++r){if(r)report<<',';report<<e.ownership_cuts[r];}report<<']';
       report<<",\"minimum_owned_cells\":"<<*std::min_element(e.counts.begin(),e.counts.end())/31

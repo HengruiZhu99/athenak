@@ -333,4 +333,9 @@ if(ENABLE_MPI)
     HYPERBOLIC_CORE_SUBDIVISIONS=2 HYPERBOLIC_EVOLVED_OVERLAP=3 HYPERBOLIC_SPHERICAL_OVERLAP=1
     HYPERBOLIC_CONTINUOUS_POSITIVE=1 HYPERBOLIC_BOUNDARY_REUSE=1 HYPERBOLIC_SPARSE_STAGE=1
     HYPERBOLIC_RADIAL_FIELD_BATCH=1 HYPERBOLIC_COORDINATED_PLANS=1)
+  add_executable(hyperbolic_shift_3d_repartition_transaction test_repartition_transaction.cpp)
+  target_link_libraries(hyperbolic_shift_3d_repartition_transaction PRIVATE hyperboloidal_fastflow MPI::MPI_CXX)
+  target_compile_options(hyperbolic_shift_3d_repartition_transaction PRIVATE -Wall -Wextra -ffp-contract=off)
+  get_target_property(hyperbolic_planned_definitions hyperbolic_shift_3d_mpi_continuous_positive_planned COMPILE_DEFINITIONS)
+  target_compile_definitions(hyperbolic_shift_3d_repartition_transaction PRIVATE ${hyperbolic_planned_definitions})
 endif()

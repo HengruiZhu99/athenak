@@ -77,9 +77,10 @@ support the configured MPI launcher.
 
 The planned evolution target now checks fixed-mesh CPU/MPI restart and rejected
 stages against V24, including replacement of all plans on an unchanged layout.
-Changing ownership or the physical mesh still requires replacement field storage
-and a transfer policy before publishing a generation, with corresponding
-diagnostic/checkpoint support. SYCL/MPI qualification and a controlled performance
+Live ownership changes now stage fields and compensation before publication;
+see the [repartition tests](../mesh-plan-repartition-v1/README.md). Changing the
+physical mesh still requires a transfer policy and corresponding checkpoint
+support. SYCL/MPI qualification and a controlled performance
 comparison of that integration remain outstanding. Additional collective guards
 must be measured in that comparison. These lifecycle checks do not add an AMR
 evolution claim or change the existing lapse-floor policy.
