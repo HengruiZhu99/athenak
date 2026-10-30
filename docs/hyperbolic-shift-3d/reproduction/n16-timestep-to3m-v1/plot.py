@@ -14,7 +14,7 @@ old=read(base/'aurora/stability-continuous-positive-puncture-v1/output/puncture.
 later=read(base/'aurora/stability-continuous-positive-puncture-to3m-v1/output/puncture.history.csv')
 old=np.concatenate([old,later[later['t']>old['t'][-1]+1e-12]])
 new=[]
-for ratio,color in [('04','#D55E00'),('02','#0072B2')]:
+for ratio,color in [('04','#D55E00'),('02','#0072B2'),('01','#009E73')]:
  d=out/f'n16-dtdx{ratio}-to3m-v1';v=json.loads((d/'verification.json').read_text());a=read(d/'output/puncture.history.csv')
  new.append((v,a,color))
 stop=max(v['t_over_M'] for v,a,c in new)*1.12

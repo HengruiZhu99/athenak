@@ -57,14 +57,14 @@ The evolution executable and its original source manifest remain frozen. The
 updated launcher is separately committed and hash-bound in each new job; there
 is no rebuild or change to the evolution binary for this policy extension.
 
-## Verified results so far
+## Verified results
 
 | dt/dx | dt | Last accepted t/M | Outcome | Job |
 |---|---|---|---|---|
 | 0.4 | .0045 | .108 | Invalid scri metric, stage after step 8 | 8988261 |
 | 0.2 | .00225 | .14175 | Invalid scri metric, stage after step 21 | 8988303 |
 | .0444444 | .0005 | 3 | Completed, original result exactly reproduced | 8988342 |
-| 0.1 | .001125 | pending | Submitted after reproduction | 8988417 |
+| 0.1 | .001125 | .57375 | Invalid accepted volume algebraic projection, after step 170 | 8988417 |
 
 At both .4 and .2 all 1536 scri surface metric tensors have a negative eigenvalue
 in the captured rejected stage. This is a numerical failure, not a horizon
@@ -101,3 +101,30 @@ See `comparison.png` for the first failed attempts, `reproduction.png` for the
 reproduced 3M trajectory against 1D, and the per-job verification files for hashes.
 The 1D reference is the preserved N513 result; its radial spacing is 5.76 times
 finer than the 3D core. Missing measurements are not interpolated or filled.
+
+The .1 attempt kept angular epsilon 2, with angular estimate .858255410006;
+its common scri penalty scale was .578703703703125 and applied penalty estimate
+.4999999999995. The rejected accepted-volume candidate has 4608 nonpositive
+metric tensors, exactly in the outermost three radial rows at radii .9609375,
+.9765625, and .9921875. The scri metric stays positive in that saved state.
+No nonfinite volume metric entries or lapse-floor interventions were recorded.
+The final ordinary diagnostics precede rejection: they are at `.54675M`.
+This localizes that failure to the outer radial closure region, not the Cartesian
+puncture or Cartesian/shell overlap. It does not identify a unique causal term.
+
+The tested stable choice is the original `.0444444` step. This sweep is not a
+measurement of the exact largest stable CFL, because the numerical penalty
+strength varies when the cap is active. For a larger faithful timestep, a next
+experiment should preserve the original penalty strength and change its time
+integration, such as a consistently coupled boundary subcycle or an implicit
+treatment, rather than inferring stability from the scalar cap alone. No such
+new evolution was launched here.
+
+All four jobs are terminal. The requested n16-to-3M work is complete; stop here
+and pause the persistent performance goal. Large checkpoints/failure states
+are retained locally, with SHA256-verified remote cleanup receipts per job.
+
+The .4/.2 trials used horizon lmax=6, ntheta=12; the original-step reproduction
+and .1 trial used lmax=12, ntheta=24. These diagnostic settings do not affect
+the evolved fields. Final remote campaign footprint was 3,613,004,288 bytes.
+All four allocation locks were released after terminal scheduler confirmation.

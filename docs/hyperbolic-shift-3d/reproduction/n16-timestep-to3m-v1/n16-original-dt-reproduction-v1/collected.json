@@ -1,0 +1,600 @@
+{
+  "job_id": "8988342.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "collected": 1793332463.503121,
+  "returncode": 0,
+  "stdout": "{\n    \"timestamp\": 1793332453,\n    \"pbs_version\": \"2026.1.0.20260821184519\",\n    \"pbs_server\": \"aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov\",\n    \"Jobs\": {\n        \"8988342.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov\": {\n            \"Job_Name\": \"hyper-scri-3d\",\n            \"Job_Owner\": \"hzhu@aurora-uan-0012.hostmgmt1000.cm.aurora.alcf.anl.gov\",\n            \"resources_used\": {\n                \"cpupercent\": 1715,\n                \"cput\": \"01:30:57\",\n                \"mem\": \"1596536kb\",\n                \"ncpus\": 208,\n                \"ngpus\": 0,\n                \"vmem\": \"50268kb\",\n                \"walltime\": \"00:10:04\"\n            },\n            \"job_state\": \"F\",\n            \"queue\": \"debug\",\n            \"server\": \"aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov\",\n            \"Account_Name\": \"CompactBinaryMerger\",\n            \"Checkpoint\": \"u\",\n            \"ctime\": \"Fri Oct 30 03:40:57 2026\",\n            \"Error_Path\": \"aurora-uan-0012.hostmgmt1000.cm.aurora.alcf.anl.gov:/home/hzhu/hyperbolic-core-shell-20261028/hyper-scri-3d.e8988342\",\n            \"exec_host\": \"x4300c4s7b0n0/0*208\",\n            \"exec_vnode\": \"(x4300c4s7b0n0:ncpus=208)\",\n            \"Hold_Types\": \"n\",\n            \"Join_Path\": \"oe\",\n            \"Keep_Files\": \"doe\",\n            \"Mail_Points\": \"a\",\n            \"Mail_Users\": \"hz0693@princeton.edu\",\n            \"mtime\": \"Fri Oct 30 03:53:42 2026\",\n            \"Output_Path\": \"aurora-uan-0012.hostmgmt1000.cm.aurora.alcf.anl.gov:/home/hzhu/hyperbolic-core-shell-20261028/hyper-scri-3d.o8988342\",\n            \"Priority\": 0,\n            \"qtime\": \"Fri Oct 30 03:40:58 2026\",\n            \"Rerunable\": \"False\",\n            \"Resource_List\": {\n                \"allow_account_check_failure\": \"True\",\n                \"allow_negative_allocation\": \"True\",\n                \"award_category\": \"INCITE\",\n                \"award_type\": \"INCITE-2026\",\n                \"backfill_factor\": 84600,\n                \"backfill_max\": 50,\n                \"base_score\": 51,\n                \"bkc_definition\": \"compute_aurora_prod_20261002T162246_af5b0375_b4fd227\",\n                \"burn_ratio\": 0.8802,\n                \"current_allocation\": 2587030272,\n                \"enable_2nd_fp64\": \"True\",\n                \"enable_backfill\": 0,\n                \"enable_fifo\": 1,\n                \"enable_wfp\": 0,\n                \"fifo_factor\": 1800,\n                \"filesystems\": \"home\",\n                \"hbm_mode\": \"flat\",\n                \"home_fs\": \"True\",\n                \"ncpus\": 208,\n                \"ni_resource\": \"aurora\",\n                \"nodect\": 1,\n                \"overburn\": \"False\",\n                \"place\": \"scatter\",\n                \"project_priority\": 25,\n                \"route_backfill\": \"False\",\n                \"score_boost\": 0,\n                \"select\": 1,\n                \"snc_mode\": \"quad\",\n                \"total_allocation\": 21600000000,\n                \"total_cpus\": 10624,\n                \"walltime\": \"00:30:00\",\n                \"wfp_factor\": 100000\n            },\n            \"stime\": \"Fri Oct 30 03:43:08 2026\",\n            \"obittime\": \"Fri Oct 30 03:53:42 2026\",\n            \"session_id\": 336346,\n            \"jobdir\": \"/home/hzhu\",\n            \"substate\": 92,\n            \"euser\": \"hzhu\",\n            \"egroup\": \"users\",\n            \"comment\": \"Job run at Fri Oct 30 at 03:43 on (x4300c4s7b0n0:ncpus=208) and finished\",\n            \"etime\": \"Fri Oct 30 03:40:58 2026\",\n            \"umask\": 22,\n            \"run_count\": 1,\n            \"eligible_time\": \"00:02:16\",\n            \"Stageout_status\": 1,\n            \"Exit_status\": 0,\n            \"Submit_arguments\": \"-v HYPERBOLIC_PLAN=campaigns/n16-original-dt-reproduction-v1/plan.json /home/hzhu/hyperbolic-core-shell-20261028/campaigns/n16-original-dt-reproduction-v1/run_debug.pbs\",\n            \"history_timestamp\": 1793332422,\n            \"project\": \"CompactBinaryMerger\",\n            \"Submit_Host\": \"aurora-uan-0012.hostmgmt1000.cm.aurora.alcf.anl.gov\"\n        }\n    }\n}\n",
+  "stderr": "",
+  "scheduler": {
+    "Job_Name": "hyper-scri-3d",
+    "Job_Owner": "hzhu@aurora-uan-0012.hostmgmt1000.cm.aurora.alcf.anl.gov",
+    "resources_used": {
+      "cpupercent": 1715,
+      "cput": "01:30:57",
+      "mem": "1596536kb",
+      "ncpus": 208,
+      "ngpus": 0,
+      "vmem": "50268kb",
+      "walltime": "00:10:04"
+    },
+    "job_state": "F",
+    "queue": "debug",
+    "server": "aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "Account_Name": "CompactBinaryMerger",
+    "Checkpoint": "u",
+    "ctime": "Fri Oct 30 03:40:57 2026",
+    "Error_Path": "aurora-uan-0012.hostmgmt1000.cm.aurora.alcf.anl.gov:/home/hzhu/hyperbolic-core-shell-20261028/hyper-scri-3d.e8988342",
+    "exec_host": "x4300c4s7b0n0/0*208",
+    "exec_vnode": "(x4300c4s7b0n0:ncpus=208)",
+    "Hold_Types": "n",
+    "Join_Path": "oe",
+    "Keep_Files": "doe",
+    "Mail_Points": "a",
+    "Mail_Users": "hz0693@princeton.edu",
+    "mtime": "Fri Oct 30 03:53:42 2026",
+    "Output_Path": "aurora-uan-0012.hostmgmt1000.cm.aurora.alcf.anl.gov:/home/hzhu/hyperbolic-core-shell-20261028/hyper-scri-3d.o8988342",
+    "Priority": 0,
+    "qtime": "Fri Oct 30 03:40:58 2026",
+    "Rerunable": "False",
+    "Resource_List": {
+      "allow_account_check_failure": "True",
+      "allow_negative_allocation": "True",
+      "award_category": "INCITE",
+      "award_type": "INCITE-2026",
+      "backfill_factor": 84600,
+      "backfill_max": 50,
+      "base_score": 51,
+      "bkc_definition": "compute_aurora_prod_20261002T162246_af5b0375_b4fd227",
+      "burn_ratio": 0.8802,
+      "current_allocation": 2587030272,
+      "enable_2nd_fp64": "True",
+      "enable_backfill": 0,
+      "enable_fifo": 1,
+      "enable_wfp": 0,
+      "fifo_factor": 1800,
+      "filesystems": "home",
+      "hbm_mode": "flat",
+      "home_fs": "True",
+      "ncpus": 208,
+      "ni_resource": "aurora",
+      "nodect": 1,
+      "overburn": "False",
+      "place": "scatter",
+      "project_priority": 25,
+      "route_backfill": "False",
+      "score_boost": 0,
+      "select": 1,
+      "snc_mode": "quad",
+      "total_allocation": 21600000000,
+      "total_cpus": 10624,
+      "walltime": "00:30:00",
+      "wfp_factor": 100000
+    },
+    "stime": "Fri Oct 30 03:43:08 2026",
+    "obittime": "Fri Oct 30 03:53:42 2026",
+    "session_id": 336346,
+    "jobdir": "/home/hzhu",
+    "substate": 92,
+    "euser": "hzhu",
+    "egroup": "users",
+    "comment": "Job run at Fri Oct 30 at 03:43 on (x4300c4s7b0n0:ncpus=208) and finished",
+    "etime": "Fri Oct 30 03:40:58 2026",
+    "umask": 22,
+    "run_count": 1,
+    "eligible_time": "00:02:16",
+    "Stageout_status": 1,
+    "Exit_status": 0,
+    "Submit_arguments": "-v HYPERBOLIC_PLAN=campaigns/n16-original-dt-reproduction-v1/plan.json /home/hzhu/hyperbolic-core-shell-20261028/campaigns/n16-original-dt-reproduction-v1/run_debug.pbs",
+    "history_timestamp": 1793332422,
+    "project": "CompactBinaryMerger",
+    "Submit_Host": "aurora-uan-0012.hostmgmt1000.cm.aurora.alcf.anl.gov"
+  },
+  "worker": {
+    "schema": 1,
+    "status": "passed",
+    "started": "2026-10-30T03:45:09.260983+00:00",
+    "job_id": "8988342.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "launcher_host": "x4300c4s7b0n0",
+    "allocation_nodes": [
+      "x4300c4s7b0n0.hsn.cm.aurora.alcf.anl.gov"
+    ],
+    "resources": {
+      "queue": "debug",
+      "account": "CompactBinaryMerger",
+      "nodes": 1,
+      "ranks": 12,
+      "ranks_per_node": 12,
+      "walltime": "00:30:00"
+    },
+    "source_manifest_sha256": "42bd9b41105e8f3bfb9901eb67e15d8f05d5f62d307c6bcb383750e1e3385ca2",
+    "binaries": {
+      "build-sycl-mpi-timestep-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_radial_batch_timestep_experiment": "6fa27b3a479ee25adb44d4025cbadfbe6a1a7bb5578d774e34995dd386fa48e4"
+    },
+    "plan_sha256": "60fb62b3063f593187aa2fb9467239876160d9543b0269743471ec572dded18a",
+    "phase": "timestep_experiment",
+    "n": 16,
+    "cases": [
+      {
+        "name": "puncture-initial",
+        "kind": "puncture",
+        "started": "2026-10-30T03:45:25.968138+00:00",
+        "argv": [
+          "mpiexec",
+          "-n",
+          "12",
+          "-ppn",
+          "12",
+          "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+          "gpu_tile_compact.sh",
+          "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-timestep-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_radial_batch_timestep_experiment",
+          "16",
+          "campaigns/n16-original-dt-reproduction-v1/output/puncture-initial",
+          "puncture",
+          "0.15",
+          "0.0005",
+          "inputs/puncture-continuous-n16.txt",
+          "-",
+          "270",
+          "0.01",
+          "0.001",
+          "12",
+          "24",
+          "2"
+        ],
+        "generated_inputs": {},
+        "n": 16,
+        "returncode": 0,
+        "timed_out": false,
+        "storage_error": null,
+        "elapsed_seconds": 86.78720503859222,
+        "checks": [
+          {
+            "check": {
+              "path": [
+                "status"
+              ],
+              "op": "eq",
+              "value": "completed"
+            },
+            "observed": "completed",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "backend"
+              ],
+              "op": "eq",
+              "value": "SYCL"
+            },
+            "observed": "SYCL",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "mpi_size"
+              ],
+              "op": "eq",
+              "value": 12
+            },
+            "observed": 12,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "n"
+              ],
+              "op": "eq",
+              "value": 16
+            },
+            "observed": 16,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "experimental_timestep"
+              ],
+              "op": "eq",
+              "value": true
+            },
+            "observed": true,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "timestep_aware_penalty"
+              ],
+              "op": "eq",
+              "value": true
+            },
+            "observed": true,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "bulk_cfl_guard_enabled"
+              ],
+              "op": "eq",
+              "value": false
+            },
+            "observed": false,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "checkpoint_schema"
+              ],
+              "op": "eq",
+              "value": "HYP3D_MPI_DT1"
+            },
+            "observed": "HYP3D_MPI_DT1",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_penalty_cfl_max"
+              ],
+              "op": "le",
+              "value": 0.5
+            },
+            "observed": 0.3840000000000001,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_null_surface"
+              ],
+              "op": "le",
+              "value": 1e-10
+            },
+            "observed": 1.110229146649995e-15,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_penalty_scale_min"
+              ],
+              "op": "eq",
+              "value": 1
+            },
+            "observed": 1,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "angular_epsilon_min"
+              ],
+              "op": "eq",
+              "value": 2
+            },
+            "observed": 2,
+            "passed": true
+          }
+        ],
+        "report_status": "completed",
+        "status": "passed",
+        "artifacts": {
+          "campaigns/n16-original-dt-reproduction-v1/output/puncture-initial.report.json": {
+            "sha256": "068c06286d12f9ea76d58d7e36fd64145ca75b8658e6008eb41f7f57458c6621",
+            "bytes": 11210
+          },
+          "campaigns/n16-original-dt-reproduction-v1/output/puncture-initial.checkpoint": {
+            "sha256": "0db3671abd59939bacbdf692abb5b7f3f3327b87847357b6a5d1c7fb0bb66f9b",
+            "bytes": 79725208
+          },
+          "campaigns/n16-original-dt-reproduction-v1/output/puncture-initial.history.csv": {
+            "sha256": "631ed45782efe91f94733c182bd00e32bda7f890b9ceab3ed9dd4d126bc4a295",
+            "bytes": 11711
+          },
+          "campaigns/n16-original-dt-reproduction-v1/output/puncture-initial.checkpoint.horizon-seed.txt": {
+            "sha256": "0777f336bf8bf887bdd1c50aa4fb05e21afca726d4d9ce5f2400ef498f4952d3",
+            "bytes": 88
+          },
+          "campaigns/n16-original-dt-reproduction-v1/output/puncture-initial.fastflow.horizon_summary_0.txt": {
+            "sha256": "767c424b15e65ad03699b7b9d8ca283d7acdc2c85a5bab79b31a93ac1a2e16f4",
+            "bytes": 3780
+          }
+        },
+        "finished": "2026-10-30T03:46:57.512298+00:00"
+      },
+      {
+        "name": "puncture",
+        "kind": "puncture",
+        "started": "2026-10-30T03:47:02.223318+00:00",
+        "argv": [
+          "mpiexec",
+          "-n",
+          "12",
+          "-ppn",
+          "12",
+          "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+          "gpu_tile_compact.sh",
+          "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-timestep-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_radial_batch_timestep_experiment",
+          "16",
+          "campaigns/n16-original-dt-reproduction-v1/output/puncture",
+          "puncture",
+          "1",
+          "0.0005",
+          "-",
+          "campaigns/n16-original-dt-reproduction-v1/output/puncture-initial.checkpoint",
+          "1270",
+          "0.05",
+          "0.001",
+          "12",
+          "24",
+          "2"
+        ],
+        "generated_inputs": {
+          "campaigns/n16-original-dt-reproduction-v1/output/puncture-initial.checkpoint": "0db3671abd59939bacbdf692abb5b7f3f3327b87847357b6a5d1c7fb0bb66f9b",
+          "campaigns/n16-original-dt-reproduction-v1/output/puncture-initial.checkpoint.horizon-seed.txt": "0777f336bf8bf887bdd1c50aa4fb05e21afca726d4d9ce5f2400ef498f4952d3"
+        },
+        "n": 16,
+        "returncode": 0,
+        "timed_out": false,
+        "storage_error": null,
+        "elapsed_seconds": 362.98042551381513,
+        "checks": [
+          {
+            "check": {
+              "path": [
+                "status"
+              ],
+              "op": "eq",
+              "value": "completed"
+            },
+            "observed": "completed",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "backend"
+              ],
+              "op": "eq",
+              "value": "SYCL"
+            },
+            "observed": "SYCL",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "mpi_size"
+              ],
+              "op": "eq",
+              "value": 12
+            },
+            "observed": 12,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "n"
+              ],
+              "op": "eq",
+              "value": 16
+            },
+            "observed": 16,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "experimental_timestep"
+              ],
+              "op": "eq",
+              "value": true
+            },
+            "observed": true,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "timestep_aware_penalty"
+              ],
+              "op": "eq",
+              "value": true
+            },
+            "observed": true,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "bulk_cfl_guard_enabled"
+              ],
+              "op": "eq",
+              "value": false
+            },
+            "observed": false,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "checkpoint_schema"
+              ],
+              "op": "eq",
+              "value": "HYP3D_MPI_DT1"
+            },
+            "observed": "HYP3D_MPI_DT1",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_penalty_cfl_max"
+              ],
+              "op": "le",
+              "value": 0.5
+            },
+            "observed": 0.3840000000000001,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_null_surface"
+              ],
+              "op": "le",
+              "value": 1e-10
+            },
+            "observed": 1.2212921145380294e-15,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_penalty_scale_min"
+              ],
+              "op": "eq",
+              "value": 1
+            },
+            "observed": 1,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "angular_epsilon_min"
+              ],
+              "op": "eq",
+              "value": 2
+            },
+            "observed": 2,
+            "passed": true
+          }
+        ],
+        "report_status": "completed",
+        "status": "passed",
+        "artifacts": {
+          "campaigns/n16-original-dt-reproduction-v1/output/puncture.report.json": {
+            "sha256": "535fbf3439b492a4e5f82341be8db115922c2d00626c5e56c7821e99aed638fb",
+            "bytes": 10941
+          },
+          "campaigns/n16-original-dt-reproduction-v1/output/puncture.checkpoint": {
+            "sha256": "628c2109bdf7ca6624afff58b65e8a28baca724e9e73de17b517454b26fe6a31",
+            "bytes": 79725208
+          },
+          "campaigns/n16-original-dt-reproduction-v1/output/puncture.history.csv": {
+            "sha256": "7713da277af563a829b0a79d513c6f79c9e9ae16ee54b2bc65b389c9d5b05323",
+            "bytes": 11760
+          },
+          "campaigns/n16-original-dt-reproduction-v1/output/puncture.fastflow.horizon_summary_0.txt": {
+            "sha256": "e70d17811b8219fa671dcd201a94f83cd431294b98f9a1c87cf5b9275f8e00d4",
+            "bytes": 2296
+          }
+        },
+        "finished": "2026-10-30T03:53:10.130936+00:00"
+      }
+    ],
+    "storage_at_start": {
+      "bytes": 3611825152,
+      "entries": 50803,
+      "limit_bytes": 5000000000,
+      "reserve_bytes": 100000000,
+      "planned_bytes": 260000000,
+      "headroom_bytes": 1028174848
+    },
+    "stability_admission_eligible": false,
+    "experimental_policy": "n16_reduce_dt_dx_to_0.0444_reproduce_3M",
+    "affinity": {
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 0.424827269744128,
+      "records": [
+        {
+          "host": "x4300c4s7b0n0",
+          "rank": 2,
+          "mask": "1.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4300c4s7b0n0",
+          "rank": 0,
+          "mask": "0.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4300c4s7b0n0",
+          "rank": 8,
+          "mask": "4.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4300c4s7b0n0",
+          "rank": 9,
+          "mask": "4.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4300c4s7b0n0",
+          "rank": 10,
+          "mask": "5.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4300c4s7b0n0",
+          "rank": 11,
+          "mask": "5.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4300c4s7b0n0",
+          "rank": 1,
+          "mask": "0.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4300c4s7b0n0",
+          "rank": 6,
+          "mask": "3.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4300c4s7b0n0",
+          "rank": 3,
+          "mask": "1.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4300c4s7b0n0",
+          "rank": 4,
+          "mask": "2.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4300c4s7b0n0",
+          "rank": 5,
+          "mask": "2.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4300c4s7b0n0",
+          "rank": 7,
+          "mask": "3.1",
+          "hierarchy": "COMPOSITE"
+        }
+      ],
+      "passed": true
+    },
+    "finished": "2026-10-30T03:53:10.138901+00:00",
+    "elapsed_seconds": 480.87793302722275,
+    "storage_at_finish": {
+      "bytes": 3759136841,
+      "entries": 50820
+    }
+  }
+}

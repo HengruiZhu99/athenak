@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "plan_sha256": "907b0211150bb9ef2dddc9e1d37f25730109ef84857a8f621eab5eac3929d136",
+  "source_manifest": "source-timestep-v1-manifest.json",
+  "source_manifest_sha256": "42bd9b41105e8f3bfb9901eb67e15d8f05d5f62d307c6bcb383750e1e3385ca2",
+  "binaries": {
+    "build-sycl-mpi-timestep-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_radial_batch_timestep_experiment": "6fa27b3a479ee25adb44d4025cbadfbe6a1a7bb5578d774e34995dd386fa48e4"
+  },
+  "inputs": {
+    "inputs/puncture-continuous-n16.txt": "35c1b65aeaaefac34552f9a63b279cabe839b09326adc9af1d2c767ecc29c8ca"
+  },
+  "pbs_sha256": "01fd8844652c3cd4b4f8b85be1ff2e647929727f9bd86ff204ba1fe7c9bdaa4f",
+  "admission": null,
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "00:30:00"
+  },
+  "storage_at_bind": {
+    "bytes": 3772009403,
+    "entries": 50824,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 100000000,
+    "planned_bytes": 160000000,
+    "headroom_bytes": 967990597
+  },
+  "launcher": {
+    "control.py": "b32e6d66907f5424131de2510ce13ed34aac658e75b7c095c824834c2abda470",
+    "worker.py": "be6ed92143ab48a20c17c60c04bb0e48323aee3a3f61784ed4d2f0a79b8aea51",
+    "run_debug.pbs": "1d5df790cf6c8cdc96e9d330b9b337ce755b30e057959586bcd661dc9ce885a6",
+    "storage.py": "fdcf2abc2533b8fed91220d9c18d8b9d723660820949a72e956fb9c8866afd39"
+  },
+  "allocation_seconds": 1800,
+  "worker_seconds": 1710
+}
