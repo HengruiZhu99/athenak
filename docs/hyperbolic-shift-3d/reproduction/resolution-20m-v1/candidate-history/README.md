@@ -23,10 +23,10 @@ with the original records. Local runs were too slow; the full replay uses Aurora
 Remote root `/home/hzhu/hyperbolic-core-shell-20261028`.
 Source `source-candidate-history-v1`, copied from the direct-chi/lapse scientific
 snapshot with explicitly overlaid diagnostic target and controller changes.
-Manifest `source-candidate-history-v1-manifest.json`, SHA256
-`b77e264af8c830374211e49e83d8c927f682e03feba7d3f10b2cc1df60b0abad`.
+Current manifest `source-candidate-history-v1-clean-manifest.json`, SHA256
+`d0ec3281be30e03af4d7fadc12be7fcc1cb92027dc4ae534b7a1a5afd878bfe1`.
 Use `source-candidate-history-v1/tst/hyperbolic_shift_3d/aurora/control.py`.
-Plan `campaigns/n16-n24-candidate-history-v1/plan.json` executes N16 then N24
+Current plan `campaigns/n16-n24-candidate-history-v1-attempt02/plan.json` executes N16 then N24
 on one debug node using12 MPI ranks/GPU tiles, CompactBinaryMerger. The separate
 target is `build-sycl-mpi-candidate-history-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_candidate_diagnostics`.
 `build.sh` uses the existing SYCL/MPI settings and `make -j64`.
@@ -71,3 +71,18 @@ All54 existing controller tests passed; altered replay target, dt and angular
 coefficient were separately rejected. The hourly monitor now prioritizes this
 replay before the already authorized N32 run. No complete time series is claimed
 until the replay and validation finish.
+
+## Startup manifest repair
+
+Job8991110 failed before starting any MPI evolution. The manifest accidentally
+included three generated Python bytecode files inherited from the source-copy
+operation. Importing the worker regenerated control.cpython-311.pyc, correctly
+triggering the source-change guard. The first manifest and failure trace remain
+preserved. A new manifest excludes only those three __pycache__/*.pyc files;
+every other source hash and the evolution binary hash were explicitly verified
+unchanged. A fresh attempt02 plan retains the same inputs and parameters.
+This is an infrastructure retry, not a numerical-failure restart.
+
+Replacement job8991129 was submitted using the fresh attempt02 plan. Worker
+import followed by repeated full binding validation passed before submission.
+Task storage at binding was3.497GB, with the requested output/atomic-write reserve.
