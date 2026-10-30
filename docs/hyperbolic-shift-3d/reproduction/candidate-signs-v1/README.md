@@ -21,10 +21,9 @@ or failure; no-event rows are omitted and absent first-negative/first-zero times
 are null. Only event rows are gathered across ranks. Existing total floor hits
 still include positive candidates below the floor; those are not negative hits.
 
-Job8990333 continues with its original frozen executable. It cannot gain this
-instrumentation while running. Use the instrumented binary for the next healthy
-checkpoint continuation, or an explicitly identified diagnostic replay from the
-verified3M input if that trial fails; never restart its unadmitted failure state.
+Job8990333 used its original frozen executable and failed at9.0975M. The new
+instrumented diagnostic replay starts from the verified3M input, never from its
+unadmitted failure state.
 Do not label uninstrumented portions as having zero negative candidates.
 
 Validation: unit cases cover negative/zero/positive/nonfinite candidates,
@@ -32,3 +31,37 @@ separate stage/final counts, extrema and first times, and exposed chi underflow
 without changing clipping. A two-rank n16 puncture step from3M produced a
 checkpoint bitwise identical to the uninstrumented AL1 run, including RK
 compensation. The new report correctly contained an empty event list there.
+
+A synthetic two-rank final-update test deliberately changed the compensation
+at cell4095 to create zero chi and negative conformal lapse before flooring.
+The native run recorded one zero-chi final event and one negative-lapse final
+event (minimum-.9906041013 at coordinate time1.0005), clipped both, and completed
+the step. Empty ranks were handled by the sparse event gather. This is a
+reporting/floor-path test, not evidence of physical evolution stability.
+
+Frozen instrumented source:1a2cd441ca0cdf04d58116fcdf891b3781f3a35a.
+Remote root:/home/hzhu/hyperbolic-core-shell-20261028.
+Source:source-candidate-signs-v1; manifest:source-candidate-signs-v1-manifest.json.
+Binary:build-sycl-mpi-candidate-signs-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_direct_lapse.
+Controller:source-candidate-signs-v1/tst/hyperbolic_shift_3d/aurora/control.py.
+The input/checkpoint format and experimental policy remain AL1 and
+n16_direct_lapse_retry_to_20M. A next segment must bind this source/binary
+explicitly; never mutate the old frozen source or an already-bound plan.
+
+Two obsolete DT1/CF1 imported restart copies were removed remotely after
+rechecking local and remote SHA256/size and confirming the active allocation
+uses neither. The active AL1 input was retained. See obsolete-inputs-cleanup.json.
+
+
+## Instrumented replay submission
+
+The SYCL/MPI build passed with make -j64 in194.18 seconds. Job8990381 was
+submitted from campaigns/n16-candidate-signs-to20m-v1-segment01/plan.json on
+one CompactBinaryMerger debug node with12 MPI ranks/GPU tiles. It uses the
+same3M AL1 input, unchanged floors/RK/equations/timestep, and target20M. The
+purpose is to expose candidates before clipping; it is not a stability repair.
+The existing30-minute monitor now follows this job, continues only healthy
+walltime checkpoints, and stops after numerical failure or verified20M completion.
+No further automatic fresh numerical-failure replay is scheduled. Candidate
+counts from earlier uninstrumented runs remain unavailable. Exact hashes and
+policy are in build-status.json, binding.json, submission.json and monitor.json.

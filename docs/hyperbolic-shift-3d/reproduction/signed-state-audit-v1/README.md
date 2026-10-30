@@ -45,5 +45,6 @@ There are two distinct experiments: retain floors and count negative candidates
 before clipping, or store signed lapse/chi with an explicitly defined extension
 of the RHS/diagnostics through unphysical states. The latter requires changing
 variable representation and deciding how to evaluate singular/invalid quantities.
-A clarification was requested before that mathematical change. The current
-running frozen-source AL1 trial and its20M monitor remain intact meanwhile.
+The user clarified: keep floors and log negative candidates. No signed-state
+PDE extension was made. See ../candidate-signs-v1 for the implemented diagnostics
+and the subsequent instrumented20M replay.

@@ -100,4 +100,24 @@ allocation. The30-minute monitor aurora-n16-direct-lapse-to20m is ACTIVE with
 healthy-walltime continuation and stop-on-numerical-failure policy. Home campaign
 footprint at binding was4,319,555,584 bytes, below5GB. See build-status.json,
 binding.json, submission.json and monitor.json for exact provenance and policy.
-No long-time result has yet been measured for this variant.
+The result is reported below.
+
+## Result: direct lapse trial failed at9.0975M
+
+Job8990333 stopped with invalid accepted volume geometry at coordinate t3.0325,
+9.0975M, and checkpoint_admitted=false. The rejected state contains positive
+infinite chi at global cells15616,28704,29184, near radius.02923. Their positions
+and finite last-accepted chi are recorded in segment01/verification.json.
+No other nonfinite volume field or nonpositive conformal-metric eigenvalue was
+found. There were216 stage and101 final chi-floor interventions and8 lapse-floor
+interventions. The old floor counts do not determine how many candidates were
+negative, since positive values below the floor are counted too.
+
+The recorded last RHS maximum was1.19038e120. Maximum null residuals remained
+1.22126e-15(surface) and1.55431e-15(ghost). The last ordinary diagnostic was at9M;
+its minima must not be reported as failure-state extrema. This was numerical
+failure, not walltime or a finite-negative stopping condition. The failed state
+was not used as a restart. Raw artifacts were copied locally and SHA256-verified
+before remote checkpoint/failed-stage purge; the matching terminal lock was
+released. A separate diagnostics-only replay, job8990381, starts from the same
+verified3M AL1 input with pre-floor sign logging. See ../candidate-signs-v1.
