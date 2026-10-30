@@ -99,3 +99,27 @@ quality flags, and distinguish each run's own-horizon exterior norms from a trul
 common-domain convergence norm. Grid ratios are unequal (16/24/32), so do not use
 a factor-two convergence formula. Initial quadrature, fixed horizon angular
 resolution and changed horizon integration cutoffs can limit measured convergence.
+
+
+## Initial submission
+
+N24 preparation job8990772 was submitted and is running. Its first plan is
+`campaigns/n24-resolution20m-v1-dt1_to3m-segment01/plan.json`. The prepared N32
+initial plan is `campaigns/n32-resolution20m-v1-dt1_to3m-segment01/plan.json`;
+it has not been submitted, preserving one-node-at-a-time execution. The hourly
+monitor `aurora-n24-n32-convergence-to20m` is ACTIVE and follows
+`resolution20m-campaign-state.json`. The launcher is frozen at commit
+88f72f13ffff57cd79cda266b70ac5d2168d459b; its exact file hashes are in
+launcher-provenance.json. Both remote initial-data hashes were verified.
+
+After archival cleanup and both fine-grid inputs, the task footprint was
+2,610,689,363 bytes. The local build archive is
+`output/hyperbolic-core-shell/resolution-20m-v1/archive/obsolete-builds.tar.gz`.
+Its21787 member paths/types and all regular-file SHA256s were verified against
+remote originals before deletion. A preliminary whole-tar-stream hash comparison
+differed, so that comparison was not used to authorize deletion; the successful
+member-by-member check is the recorded verification. The two active scientific
+builds and all their source manifests remain on Aurora. Controller/preflight
+suite109 tests and three focused migration tests passed. The prior N16 importer
+parity and initial-data parity are also recorded. No N24/N32 convergence result
+is claimed at submission.
