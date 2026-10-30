@@ -89,7 +89,7 @@ static_assert(!scri_donor_seven||scri_sampled_normal,"direct radial candidate re
 static_assert(!spherical_overlap||(evolved_overlap==3&&core_subdivisions==2),"spherical overlap requires eight core blocks and three overlap cells");
 static_assert(!continuous_positive||(spherical_overlap&&core_subdivisions==2),"positive scheme requires continuous spherical-overlap mesh");
 static_assert(!coordinated_plans||(continuous_positive&&boundary_reuse&&sparse_stage&&!measured_partition),"coordinated plan target requires the equal-cell positive sparse formulation");
-constexpr const char*checkpoint_magic=continuous_positive?"HYP3D_MPI_V11":spherical_overlap?"HYP3D_MPI_V10":evolved_overlap?"HYP3D_MPI_V9":core_subdivisions==2?"HYP3D_MPI_V8":inner_transition_logical?"HYP3D_MPI_V7":scri_donor_seven?"HYP3D_MPI_V6":scri_sampled_normal?"HYP3D_MPI_V5":scri_angular_dissipation?"HYP3D_MPI_V4":scri_angular_exchange?"HYP3D_MPI_V3":algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
+constexpr const char*checkpoint_magic=HYPERBOLIC_EXPERIMENTAL_TIMESTEP?"HYP3D_MPI_DT1":continuous_positive?"HYP3D_MPI_V11":spherical_overlap?"HYP3D_MPI_V10":evolved_overlap?"HYP3D_MPI_V9":core_subdivisions==2?"HYP3D_MPI_V8":inner_transition_logical?"HYP3D_MPI_V7":scri_donor_seven?"HYP3D_MPI_V6":scri_sampled_normal?"HYP3D_MPI_V5":scri_angular_dissipation?"HYP3D_MPI_V4":scri_angular_exchange?"HYP3D_MPI_V3":algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
 constexpr const char*algebraic_scheme=algebraic_final_projection?"final_stage_standard":"none";
 constexpr const char*scri_angular_scheme=scri_angular_exchange?"cross_face_centered5":"face_local6";
 constexpr const char*scri_dissipation_scheme=scri_angular_dissipation?"degree7_weighted_negative_square":"none";
@@ -177,6 +177,8 @@ class Evolution {
   std::vector<int> residual_counts,residual_displacements;
   Real time=0,gap=1e300,cfl=0,null_ghost=0,null_before=0,last_rhs=0;
   Real angular_epsilon=0,angular_upper_bound=0,angular_cfl=0,angular_cfl_max=0;
+  Real angular_unlimited_cfl_max=0,angular_epsilon_min=std::numeric_limits<Real>::infinity();
+  Real scri_penalty_cfl_max=0,scri_unlimited_penalty_cfl_max=0,scri_penalty_scale_min=1;
   uint64_t steps=0;
   double rhs_seconds=0,exchange_seconds=0,closure_seconds=0,diagnostic_seconds=0,halo_seconds=0;
   const h::HyperbolicComposite& Model(){if constexpr(coordinated_plans)return plans.Borrow(mesh_epoch).Host();else return *legacy_model;}
@@ -408,8 +410,17 @@ class Evolution {
     if(boundary_reuse&&boundary_cached&&boundary_cached_dt==dt){++boundary_cache_hits;return boundary()->LocalRHS();}
     // This is an isolated negative-real-axis RK4 bound with margin. Passing it
     // does not establish stability of the coupled evolution or interpolation.
+    Real stage_angular_epsilon=angular_epsilon;
     if(angular_dissipation()){
       angular_cfl=dt*angular_epsilon*n*angular_upper_bound;
+      angular_unlimited_cfl_max=std::max(angular_unlimited_cfl_max,angular_cfl);
+      // Reserve 0.5 of the isolated 2.7 negative-real-axis budget for scri
+      // penalties. This does not prove stability of the full coupled operator.
+      if(HYPERBOLIC_EXPERIMENTAL_TIMESTEP&&angular_cfl>2.2*(1-1e-12)){
+        stage_angular_epsilon*=2.2*(1-1e-12)/angular_cfl;
+        angular_cfl=dt*stage_angular_epsilon*n*angular_upper_bound;
+      }
+      angular_epsilon_min=std::min(angular_epsilon_min,stage_angular_epsilon);
       angular_cfl_max=std::max(angular_cfl_max,angular_cfl);
       SynchronizeError(!(dt>0)||!std::isfinite(angular_cfl)||angular_cfl>2.7,"angular dissipation RK4 bound exceeded");
     }
@@ -442,7 +453,7 @@ class Evolution {
         const double seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-gather_start).count();
         exchange_seconds+=seconds;collective_seconds[2]+=seconds;++collective_calls[2];residual_input=angular_residual;
       }
-      const auto applied=TimeBoundary(3,[&]{return angular_dissipation()->Apply(residual_input,angular_epsilon);});
+      const auto applied=TimeBoundary(3,[&]{return angular_dissipation()->Apply(residual_input,stage_angular_epsilon);});
       SynchronizeError(applied.bad_values,"nonfinite angular rate at row "+std::to_string(applied.first_bad));
       if constexpr(boundary_reuse)additive=Kokkos::subview(angular_dissipation()->LocalRHS(),
         std::make_pair(size_t(31*surface_first),size_t(31*(surface_first+surface_local))));
@@ -453,11 +464,13 @@ class Evolution {
     const auto q=TimeBoundary(4,[&]{return boundary()->Evaluate(state,surface,dt,additive,pole_samples);});
     SynchronizeError(q.bad_rows,"device scri rate failure at row "+std::to_string(q.first_bad)+" reason "+h::HyperbolicScriDevice::Reason(q.reason));
     Gather(boundary()->LocalSurface(),surface,true);
-    Real stats[4]={projected.null_after,q.pole,q.clock,q.compatibility};const double stats_started=MPI_Wtime();
-    MPI_Allreduce(MPI_IN_PLACE,stats,4,MPI_ATHENA_REAL,MPI_MAX,MPI_COMM_WORLD);
+    Real stats[7]={projected.null_after,q.pole,q.clock,q.compatibility,q.max_cfl,q.max_unlimited_cfl,1-q.min_penalty_scale};const double stats_started=MPI_Wtime();
+    MPI_Allreduce(MPI_IN_PLACE,stats,7,MPI_ATHENA_REAL,MPI_MAX,MPI_COMM_WORLD);
     boundary_phase_seconds[5]+=MPI_Wtime()-stats_started+error_sync_seconds-error_sync_before;
     null_max=std::max(null_max,stats[0]);pole_max=std::max(pole_max,stats[1]);
     clock_max=std::max(clock_max,stats[2]);compatibility_max=std::max(compatibility_max,stats[3]);
+    scri_penalty_cfl_max=std::max(scri_penalty_cfl_max,stats[4]);scri_unlimited_penalty_cfl_max=std::max(scri_unlimited_penalty_cfl_max,stats[5]);
+    scri_penalty_scale_min=std::min(scri_penalty_scale_min,1-stats[6]);
     boundary_cached=true;boundary_cached_dt=dt;
     closure_seconds+=std::chrono::duration<double>(std::chrono::steady_clock::now()-start).count()-(exchange_seconds-exchange_before);return boundary()->LocalRHS();
   }
@@ -903,6 +916,13 @@ int main(int argc,char**argv){
       for(int rank=0;rank<e.size;++rank){if(rank)report<<',';report<<'[';for(int k=0;k<7;++k){if(k)report<<',';report<<rank_sparse[7*rank+k];}report<<']';}report<<']';
       report<<",\"sparse_counter_scope\":\"current_plan_generation\"";
       report<<",\"mesh_plan_lifetime\":\""<<(coordinated_plans?"coordinated_generation":"independent_fixed")<<"\",\"mesh_plan_generations\":"<<(coordinated_plans?e.plans.Builds():1)<<",\"forced_plan_rebuilds\":"<<e.forced_plan_rebuilds;
+      report<<",\"experimental_timestep\":"<<(HYPERBOLIC_EXPERIMENTAL_TIMESTEP?"true":"false")
+        <<",\"cartesian_dt_over_dx\":"<<dt/(.18/n)
+        <<",\"bulk_cfl_guard_enabled\":"<<(HYPERBOLIC_EXPERIMENTAL_TIMESTEP?"false":"true")
+        <<",\"timestep_aware_penalty\":"<<(HYPERBOLIC_EXPERIMENTAL_TIMESTEP?"true":"false")
+        <<",\"scri_penalty_cfl_max\":"<<e.scri_penalty_cfl_max<<",\"scri_unlimited_penalty_cfl_max\":"<<e.scri_unlimited_penalty_cfl_max
+        <<",\"scri_penalty_scale_min\":"<<e.scri_penalty_scale_min<<",\"angular_unlimited_cfl_max\":"<<e.angular_unlimited_cfl_max
+        <<",\"angular_epsilon_min\":"<<JsonNumber(e.angular_epsilon_min);
       report<<",\"plan_rebuild_interval\":"<<e.plan_rebuild_interval<<",\"plan_rebuild_seconds_rank0\":"<<e.plan_rebuild_seconds
         <<",\"mesh_plan_setup_layout\":\""<<(coordinated_plans?"bundle_in_slot6_fields_in_slot7":"eight_separate_phases")<<"\"";
       report<<",\"plan_repartition_interval\":"<<e.plan_repartition_interval<<",\"ownership_changes\":"<<e.ownership_changes

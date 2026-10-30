@@ -182,6 +182,8 @@ def run(root, relative):
                   source_manifest_sha256=binding['source_manifest_sha256'], binaries=binding['binaries'],
                   plan_sha256=binding['plan_sha256'], phase=plan['phase'], n=plan['n'], cases=[],
                   storage_at_start=initial_space)
+    if plan['phase'] == 'timestep_experiment':
+        status.update(stability_admission_eligible=False, experimental_policy=plan['experimental_policy'])
     if plan['phase'] == 'resolution_control':
         status.update(stability_admission_eligible=False, continued_failures=[])
     had_continued_failure = False

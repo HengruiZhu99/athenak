@@ -70,6 +70,23 @@ class ControllerTests(unittest.TestCase):
     def bound(self):
         return control.bind(self.root, self.relative, 'source-manifest.json')
 
+    def test_bounded_timestep_experiment(self):
+        plan = example()
+        plan.update(phase='timestep_experiment', experimental_policy='n16_dt_dx_0.4_then_0.2_to_3M_pause')
+        command = plan['commands'][0]
+        command.update(kind='puncture', executable='build/'+control.TIMESTEP_TARGET)
+        command['args'][2:5] = ['puncture', '1', '0.0045']
+        control.validate_plan(self.root, plan)
+        self.assertIsNone(control.validate_admission(self.root, plan, '', {}))
+        for index, bad in [(3, '3.333333'), (4, '0.001')]:
+            invalid = copy.deepcopy(plan)
+            invalid['commands'][0]['args'][index] = bad
+            with self.assertRaises(ValueError): control.validate_plan(self.root, invalid)
+        command['args'][4] = '0.00225'
+        control.validate_plan(self.root, plan)
+        plan['phase'] = 'preflight'
+        with self.assertRaises(ValueError): control.validate_plan(self.root, plan)
+
     def test_resource_policy(self):
         for key, wrong in [('queue','capacity'), ('nodes',2), ('ranks',1), ('ranks_per_node',6)]:
             plan = example()

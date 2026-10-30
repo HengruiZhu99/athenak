@@ -11,6 +11,9 @@
 #include "mesh/cubed_sphere/composite_difference.hpp"
 #include "z4c/hyperboloidal/hyperbolic_shift.hpp"
 #include "z4c/hyperboloidal/scri_radial_device.hpp"
+#ifndef HYPERBOLIC_EXPERIMENTAL_TIMESTEP
+#define HYPERBOLIC_EXPERIMENTAL_TIMESTEP 0
+#endif
 
 namespace z4c::hyperboloidal {
 
@@ -287,7 +290,7 @@ class HyperbolicCompositeDevice {
             u.chi.value*(coefficient.F*Q+coefficient.eta*.25*coefficient.w*coefficient.w*E)));
       }
       cfl(local)=dt*n*speed;
-      if (cfl(local)>.4 || dt/.02>.25) status(local)=cfl_exceeded;
+      if ((!HYPERBOLIC_EXPERIMENTAL_TIMESTEP && cfl(local)>.4) || dt/.02>.25) status(local)=cfl_exceeded;
       for (int f=0;f<nf;++f) {
         rhs(nf*local+f)=rate[f];
         if (!Kokkos::isfinite(rate[f])) status(local)=nonfinite_rhs;

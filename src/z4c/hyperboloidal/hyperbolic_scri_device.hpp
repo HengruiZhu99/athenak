@@ -27,6 +27,7 @@ class HyperbolicScriDevice {
   };
   struct Summary {
     Real null_before=0,null_after=0,pole=0,clock=0,compatibility=0,max_cfl=0;
+    Real max_unlimited_cfl=0,min_penalty_scale=1;
     int bad_rows=0,first_bad=-1,reason=success;
   };
 
@@ -35,6 +36,7 @@ class HyperbolicScriDevice {
   struct Term {int point;bool boundary;Real w,d[3],dd[3][3];};
   struct RowDiagnostic {
     Real null_before=0,null_after=0,pole=0,clock=0,compatibility=0,cfl=0;
+    Real unlimited_cfl=0,penalty_scale=1;
     int status=success;
   };
   using Rows=View<Row>;
@@ -201,18 +203,23 @@ class HyperbolicScriDevice {
       }
       auto rate=TensorScriLimit(parts.regular,pole,Real(-1));
       const auto trace=ScriRegularityTraces(u,omega);const Real h=row.h;
-      info.cfl=dt*12/h;
+      info.unlimited_cfl=dt*12/h;info.cfl=info.unlimited_cfl;
+      Real p4=4/h,p8=8/h;
+      if(HYPERBOLIC_EXPERIMENTAL_TIMESTEP&&info.cfl>.5*(1-1e-12)){
+        info.penalty_scale=(.5*(1-1e-12))/info.cfl;
+        p4*=info.penalty_scale;p8*=info.penalty_scale;info.cfl*=info.penalty_scale;
+      }
       if(info.cfl>.5){info.status=cfl_exceeded;diagnostics(local)=info;return;}
       Real q=0;for(int i=0;i<3;++i)for(int j=0;j<3;++j)q+=g.inverse[i][j]*x[i]*x[j];
-      rate.chi+=4/h*parts.pole.chi-8/h*(u.chi.value-1/q);
-      rate.trace+=4/h*parts.pole.trace-8/h*(u.trace.value+3);
-      rate.theta+=4/h*parts.pole.theta-8/h*u.theta.value;
+      rate.chi+=p4*parts.pole.chi-p8*(u.chi.value-1/q);
+      rate.trace+=p4*parts.pole.trace-p8*(u.trace.value+3);
+      rate.theta+=p4*parts.pole.theta-p8*u.theta.value;
       info.pole=fmax(fabs(parts.pole.chi),fmax(fabs(parts.pole.trace),fabs(parts.pole.theta)));
       for(int i=0;i<3;++i) {
-        rate.lambda[i]+=4/h*parts.pole.lambda[i]-8/h*trace.lambda[i];
+        rate.lambda[i]+=p4*parts.pole.lambda[i]-p8*trace.lambda[i];
         info.pole=fmax(info.pole,fabs(parts.pole.lambda[i]));
         for(int j=0;j<3;++j) {
-          rate.a[i][j]+=4/h*parts.pole.a[i][j]-8/h*trace.a[i][j];
+          rate.a[i][j]+=p4*parts.pole.a[i][j]-p8*trace.a[i][j];
           info.pole=fmax(info.pole,fabs(parts.pole.a[i][j]));
         }
       }
@@ -280,6 +287,7 @@ class HyperbolicScriDevice {
       a.null_before=fmax(a.null_before,b.null_before);a.null_after=fmax(a.null_after,b.null_after);
       a.pole=fmax(a.pole,b.pole);a.clock=fmax(a.clock,b.clock);
       a.compatibility=fmax(a.compatibility,b.compatibility);a.max_cfl=fmax(a.max_cfl,b.max_cfl);
+      a.max_unlimited_cfl=fmax(a.max_unlimited_cfl,b.max_unlimited_cfl);a.min_penalty_scale=fmin(a.min_penalty_scale,b.min_penalty_scale);
       a.bad_rows+=b.bad_rows;
       if(b.first_bad<a.first_bad){a.first_bad=b.first_bad;a.reason=b.reason;}
     }
@@ -288,6 +296,7 @@ class HyperbolicScriDevice {
       out.null_before=fmax(out.null_before,info.null_before);out.null_after=fmax(out.null_after,info.null_after);
       out.pole=fmax(out.pole,info.pole);out.clock=fmax(out.clock,info.clock);
       out.compatibility=fmax(out.compatibility,info.compatibility);out.max_cfl=fmax(out.max_cfl,info.cfl);
+      out.max_unlimited_cfl=fmax(out.max_unlimited_cfl,info.unlimited_cfl);out.min_penalty_scale=fmin(out.min_penalty_scale,info.penalty_scale);
       if(info.status!=success) {
         ++out.bad_rows;
         if(first+local<out.first_bad){out.first_bad=first+local;out.reason=info.status;}

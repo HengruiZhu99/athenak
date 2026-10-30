@@ -21,7 +21,7 @@ JOB_NAME = 'hyper-scri-3d'
 ACCOUNT = 'CompactBinaryMerger'
 CPU_BIND = '1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100'
 FIXED = dict(queue='debug', account=ACCOUNT, nodes=1, ranks=12, ranks_per_node=12)
-PHASES = {'preflight', 'stability', 'convergence', 'resolution_control'}
+PHASES = {'preflight', 'stability', 'convergence', 'resolution_control', 'timestep_experiment'}
 DISSIPATIVE_TARGET = 'hyperbolic_shift_3d_mpi_dissipative'
 SAMPLED_NORMAL_TARGET = 'hyperbolic_shift_3d_mpi_sampled_normal'
 SAMPLED_NORMAL_SCHEME = 'sampled_native_numerator6'
@@ -34,6 +34,7 @@ FAST_POSITIVE_TARGET = 'hyperbolic_shift_3d_mpi_continuous_positive_fast'
 SPARSE_POSITIVE_TARGET = 'hyperbolic_shift_3d_mpi_continuous_positive_sparse'
 BALANCED_POSITIVE_TARGET = 'hyperbolic_shift_3d_mpi_continuous_positive_balanced'
 RADIAL_BATCH_TARGET = 'hyperbolic_shift_3d_mpi_continuous_positive_radial_batch'
+TIMESTEP_TARGET = 'hyperbolic_shift_3d_mpi_radial_batch_timestep_experiment'
 PLANNED_TARGET = 'hyperbolic_shift_3d_mpi_continuous_positive_planned'
 SPHERICAL_OVERLAP_TARGET = 'hyperbolic_shift_3d_mpi_spherical_overlap'
 
@@ -144,6 +145,11 @@ def validate_plan(root, plan):
         raise ValueError('Declare the original low-resolution stability grid')
     if plan['phase'] in {'preflight', 'stability'} and n != plan['low_resolution_n']:
         raise ValueError('Preflight/stability must stay on the declared low-resolution grid')
+    if plan['phase'] == 'timestep_experiment':
+        if (n != 16 or plan['low_resolution_n'] != 16
+                or plan.get('experimental_policy') != 'n16_dt_dx_0.4_then_0.2_to_3M_pause'
+                or len(plan.get('commands', [])) != 1):
+            raise ValueError('Timestep experiment requires the explicit bounded n16 user policy')
     resolution_control = plan['phase'] == 'resolution_control'
     if resolution_control and (plan['low_resolution_n'] % 2 or n < plan['low_resolution_n']):
         raise ValueError('Resolution controls require an even baseline no larger than plan.n')
@@ -198,10 +204,16 @@ def validate_plan(root, plan):
             if path not in preceding_artifacts:
                 raise ValueError('Generated inputs must be declared artifacts of an earlier case')
         if command['kind'] != 'check':
+            experimental = Path(command['executable']).name == TIMESTEP_TARGET
+            if experimental != (plan['phase'] == 'timestep_experiment'):
+                raise ValueError('Experimental target requires its own explicit phase')
+            if experimental and (command['kind'] != 'puncture' or float(argv[3]) != 1.0
+                    or float(argv[4]) not in (0.0045, 0.00225)):
+                raise ValueError('Experiment is restricted to puncture 3M with dt/dx 0.4 or 0.2')
             v4 = Path(command['executable']).name == DISSIPATIVE_TARGET
             v5 = Path(command['executable']).name in [SAMPLED_NORMAL_TARGET,DONOR_SEVEN_TARGET,INNER_TRANSITION_TARGET,CORE2_TARGET,OVERLAP_TARGET,SPHERICAL_OVERLAP_TARGET,CONTINUOUS_POSITIVE_TARGET,FAST_POSITIVE_TARGET,SPARSE_POSITIVE_TARGET,BALANCED_POSITIVE_TARGET,RADIAL_BATCH_TARGET,PLANNED_TARGET]
             balanced = Path(command['executable']).name == BALANCED_POSITIVE_TARGET
-            if not 8 <= len(argv) <= (14 if balanced else 13 if v4 or v5 else 12) or argv[0] != str(case_n) or argv[2] != command['kind']:
+            if not 8 <= len(argv) <= (14 if balanced else 13 if v4 or v5 or experimental else 12) or argv[0] != str(case_n) or argv[2] != command['kind']:
                 raise ValueError('Evolution arguments must match the declared grid and physical case')
             if v4:
                 dissipation_config(command)
@@ -263,7 +275,8 @@ def verify_source(root, relative):
 
 def validate_admission(root, plan, source_digest, binary_hashes):
     """Admissions are reviewed evidence, never inferred from a process exit code."""
-    if plan['phase'] == 'preflight':
+    if plan['phase'] in {'preflight', 'timestep_experiment'}:
+        # Direct user-requested experiment, not a scientifically admitted run.
         return None
     admission_path = local_path(root, plan['admission'])
     admission = json.loads(admission_path.read_text())
