@@ -1,0 +1,49 @@
+{
+  "sources": [
+    {
+      "path": "n16-timestep-to3m-v1/n16-original-dt-reproduction-v1/output/puncture-initial.history.csv",
+      "sha256": "631ed45782efe91f94733c182bd00e32bda7f890b9ceab3ed9dd4d126bc4a295",
+      "bytes": 11711
+    },
+    {
+      "path": "n16-timestep-to3m-v1/n16-original-dt-reproduction-v1/output/puncture.history.csv",
+      "sha256": "7713da277af563a829b0a79d513c6f79c9e9ae16ee54b2bc65b389c9d5b05323",
+      "bytes": 11760
+    },
+    {
+      "path": "resolution-20m-v1/n24-at3m/puncture.history.csv",
+      "sha256": "eb2c5863693c38bbbdba052698f5fd8661705f954984e1adb6e8899e040e98ec",
+      "bytes": 13935
+    }
+  ],
+  "final": {
+    "16": {
+      "t_over_M": 3.0,
+      "H_L2": 0.05181831250359454,
+      "Mr_L2": 0.09002473245425936,
+      "horizon_trial_radius": 0.07519062316027353,
+      "horizon_trial_expansion_rms": 0.0013918862068467424,
+      "null_surface": 1.2212921145380294e-15,
+      "null_ghost": 1.5543116943724098e-15,
+      "accepted_horizon_samples": 22,
+      "samples": 33
+    },
+    "24": {
+      "t_over_M": 3.0,
+      "H_L2": 0.03461507205465374,
+      "Mr_L2": 0.07522663298155895,
+      "horizon_trial_radius": 0.07502425967234379,
+      "horizon_trial_expansion_rms": 0.0014558637263673983,
+      "null_surface": 1.5543122000288431e-15,
+      "null_ghost": 1.5543122344747687e-15,
+      "accepted_horizon_samples": 11,
+      "samples": 21
+    }
+  },
+  "matching": "Same-time samples within 1e-8 M; no interpolation.",
+  "final_reduction_fraction": {
+    "H_L2": 0.3319915222586117,
+    "Mr_L2": 0.1643781555276399
+  },
+  "final_candidate_radius_relative_difference": -0.002212556312708447
+}
