@@ -23,6 +23,16 @@ try{
   Require(h::FloorDirectLapse(-2,1,1e-10,clipped)==-2&&!clipped,"direct lapse floor imposed at scri");
   Require(std::isinf(h::FloorDirectLapse(std::numeric_limits<Real>::infinity(),A,1e-10,clipped))&&!clipped,"direct overflow was rescued");
   Require(std::isnan(h::FloorDirectLapse(std::numeric_limits<Real>::quiet_NaN(),A,1e-10,clipped))&&!clipped,"direct NaN was rescued");
-  std::cout<<"chi floor: underflow, inactive parity, spatial support, nonfinite rejection and log/direct lapse policies passed\n";
+  Real raw=1,stats[8]={};
+  Require(h::MaterializePositive(-1e6,A,0,1e-10,clipped,floor,radius,&raw)==floor&&raw==0&&clipped,"raw chi underflow not exposed");
+  h::RecordCandidateSign(raw,2.,false,stats);
+  h::RecordCandidateSign(-.1,2.5,true,stats);
+  h::RecordCandidateSign(-.2,3.,false,stats);
+  h::RecordCandidateSign(1.,4.,false,stats);
+  h::RecordCandidateSign(std::numeric_limits<Real>::quiet_NaN(),5.,false,stats);
+  Require(stats[0]==1&&stats[1]==1&&stats[2]==1&&stats[3]==0,"candidate counts wrong");
+  Require(stats[4]==-.2&&stats[5]==2.&&stats[6]==2.5&&stats[7]==2.,"candidate extrema/times wrong");
+  Require(h::MaterializePositive(logarithm,A,0,1e-10,clipped,floor,radius,&raw)==std::exp(logarithm)&&raw==std::exp(logarithm)&&!clipped,"observing raw candidate changed update");
+  std::cout<<"chi floor: underflow, inactive parity, spatial support, nonfinite rejection log/direct lapse policies and pre-floor sign records passed\n";
 }catch(const std::exception&e){std::cerr<<e.what()<<'\n';code=1;}
 Kokkos::finalize();return code;}

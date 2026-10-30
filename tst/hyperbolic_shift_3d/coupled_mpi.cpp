@@ -180,7 +180,7 @@ class Evolution {
   uint64_t boundary_cache_hits=0;
   double collective_seconds[3]={0,0,0};  // volume, surface, angular residual
   uint64_t collective_calls[3]={0,0,0};
-  Buffer state,base,local_state,compensation,next_compensation,reference_lapse,failed_state,floor_statistics;
+  Buffer state,base,local_state,compensation,next_compensation,reference_lapse,failed_state,floor_statistics,candidate_statistics;
   Buffer surface,surface_base,surface_stage,surface_compensation,next_surface_compensation;
   std::array<Buffer,4> rates,edge_rates;
   V failed_edge,owned_padding;
@@ -377,6 +377,7 @@ class Evolution {
     for(int p=0;p<local;++p){const Real r=Model().Radius(Model().grid.geometry[first+p].x);lapse(p)=(1+r*r)/2;}
     Kokkos::deep_copy(reference_lapse,lapse);}
     floor_statistics=Buffer("physical lapse floor statistics",8+local);Kokkos::deep_copy(floor_statistics,Real(0));
+    if constexpr(direct_lapse){candidate_statistics=Buffer("pre-floor candidate sign statistics",16*local);Kokkos::deep_copy(candidate_statistics,Real(0));}
     setup_phase(7);
   }
   void SynchronizeError(int failed,std::string message){
@@ -519,18 +520,22 @@ class Evolution {
   void Step(Real dt){
     ValidatePlans();
     Kokkos::deep_copy(base,state);Kokkos::deep_copy(surface_base,surface);
-    auto stage=[&](int s,Real h){const auto out=local_state,begin=base,k=rates[s],A=reference_lapse,fs=floor_statistics;const int offset=31*first;
+    const Real base_time=time;
+    auto stage=[&](int s,Real h){const auto out=local_state,begin=base,k=rates[s],A=reference_lapse,fs=floor_statistics,cs=candidate_statistics;const int offset=31*first;
       Kokkos::parallel_for("local RK stage",Kokkos::RangePolicy<>(0,31*local),KOKKOS_LAMBDA(int i){
         const int f=i%31,p=i/31;
-        if(continuous_positive&&(f==0||(f==18&&!direct_lapse))){bool floored=false;
-          out(i)=z4c::hyperboloidal::MaterializePositive(log(begin(offset+i)+(f==18?A(p):0))+h*k(i),A(p),f,physical_lapse_floor,floored,puncture_chi_floor,puncture_chi_floor_radius);
+        if(continuous_positive&&(f==0||(f==18&&!direct_lapse))){bool floored=false;Real raw=0;
+          out(i)=z4c::hyperboloidal::MaterializePositive(log(begin(offset+i)+(f==18?A(p):0))+h*k(i),A(p),f,physical_lapse_floor,floored,puncture_chi_floor,puncture_chi_floor_radius,direct_lapse?&raw:nullptr);
+          if constexpr(direct_lapse)z4c::hyperboloidal::RecordCandidateSign(raw,base_time+h,false,&cs(16*p));
           if(floored){const Real radius=sqrt(2*A(p)-1);
             if(f==18){Kokkos::atomic_add(&fs(0),Real(1));Kokkos::atomic_max(&fs(1),radius);}
             else{Kokkos::atomic_add(&fs(2),Real(1));Kokkos::atomic_max(&fs(4),radius);
               Kokkos::atomic_add(&fs(8+p),Real(1));}
           }
         }else if(direct_lapse&&f==18){bool floored=false;
-          out(i)=h::FloorDirectLapse(begin(offset+i)+h*k(i),A(p),physical_lapse_floor,floored);
+          const Real candidate=begin(offset+i)+h*k(i);
+          z4c::hyperboloidal::RecordCandidateSign(candidate+A(p),base_time+h,false,&cs(16*p+8));
+          out(i)=h::FloorDirectLapse(candidate,A(p),physical_lapse_floor,floored);
           if(floored){Kokkos::atomic_add(&fs(0),Real(1));Kokkos::atomic_max(&fs(1),sqrt(2*A(p)-1));}
         }else out(i)=begin(offset+i)+h*k(i);
       });ExchangeStage();
@@ -549,20 +554,24 @@ class Evolution {
           Kokkos::parallel_for("positive surface RK rates",Kokkos::RangePolicy<>(0,31*surface_local),KOKKOS_LAMBDA(int i){ek(i)=edge(i)/(i%31==0?sv(31*eb+i):1);});
         }else{Kokkos::deep_copy(rates[s],rhs);Kokkos::deep_copy(edge_rates[s],edge);}
         if(s<3)stage(s,s<2?dt/2:dt);}
-      const auto out=local_state,begin=base,old=compensation,next=next_compensation,A=reference_lapse,fs=floor_statistics;const int offset=31*first;
+      const auto out=local_state,begin=base,old=compensation,next=next_compensation,A=reference_lapse,fs=floor_statistics,cs=candidate_statistics;const int offset=31*first;
       const auto k1=rates[0],k2=rates[1],k3=rates[2],k4=rates[3];
       Kokkos::parallel_for("compensated RK acceptance",Kokkos::RangePolicy<>(0,31*local),KOKKOS_LAMBDA(int i){
         const Real increment=dt*(k1(i)+2*k2(i)+2*k3(i)+k4(i))/6-old(i);
         const int f=i%31,p=i/31;
-        if(continuous_positive&&(f==0||(f==18&&!direct_lapse))){const Real base_log=log(begin(offset+i)+(f==18?A(p):0)),candidate=base_log+increment;bool floored=false;
-          out(i)=h::MaterializePositive(candidate,A(p),f,physical_lapse_floor,floored,puncture_chi_floor,puncture_chi_floor_radius);next(i)=floored?0:(candidate-base_log)-increment;
+        if(continuous_positive&&(f==0||(f==18&&!direct_lapse))){const Real base_log=log(begin(offset+i)+(f==18?A(p):0)),candidate=base_log+increment;bool floored=false;Real raw=0;
+          out(i)=h::MaterializePositive(candidate,A(p),f,physical_lapse_floor,floored,puncture_chi_floor,puncture_chi_floor_radius,direct_lapse?&raw:nullptr);
+          if constexpr(direct_lapse)h::RecordCandidateSign(raw,base_time+dt,true,&cs(16*p));
+          next(i)=floored?0:(candidate-base_log)-increment;
           if(floored){const Real radius=sqrt(2*A(p)-1);
             if(f==18){Kokkos::atomic_add(&fs(0),Real(1));Kokkos::atomic_max(&fs(1),radius);}
             else{Kokkos::atomic_add(&fs(3),Real(1));Kokkos::atomic_max(&fs(4),radius);
               Kokkos::atomic_add(&fs(8+p),Real(1));}
           }
         }else if(direct_lapse&&f==18){bool floored=false;
-          out(i)=h::FloorDirectLapse(begin(offset+i)+increment,A(p),physical_lapse_floor,floored);
+          const Real candidate=begin(offset+i)+increment;
+          h::RecordCandidateSign(candidate+A(p),base_time+dt,true,&cs(16*p+8));
+          out(i)=h::FloorDirectLapse(candidate,A(p),physical_lapse_floor,floored);
           next(i)=floored?0:(out(i)-begin(offset+i))-increment;
           if(floored){Kokkos::atomic_add(&fs(0),Real(1));Kokkos::atomic_max(&fs(1),sqrt(2*A(p)-1));}
         }else{out(i)=begin(offset+i)+increment;next(i)=(out(i)-begin(offset+i))-increment;}
@@ -905,6 +914,19 @@ int main(int argc,char**argv){
       if(e.rank==0)chi_floor_cells.resize(e.total);
       MPI_Gatherv(f.data()+8,e.local,MPI_ATHENA_REAL,chi_floor_cells.data(),counts.data(),displacements.data(),MPI_ATHENA_REAL,0,MPI_COMM_WORLD);
     }
+    // Gather only cells with events; diagnostics do not enter RK/checkpoint data.
+    V candidate_events;
+    if constexpr(direct_lapse){const auto f=e.Download(e.candidate_statistics);V events;
+      for(int p=0;p<e.local;++p)for(int field=0;field<2;++field){const int at=16*p+8*field;
+        if(f[at]+f[at+1]+f[at+2]+f[at+3]==0)continue;
+        events.push_back(e.first+p);events.push_back(field==0?0:18);
+        for(int k=0;k<8;++k)events.push_back(f[at+k]);
+      }
+      const int count=events.size();std::vector<int> counts(e.size),offsets(e.size);
+      MPI_Gather(&count,1,MPI_INT,counts.data(),1,MPI_INT,0,MPI_COMM_WORLD);
+      if(e.rank==0){int total=0;for(int r=0;r<e.size;++r){offsets[r]=total;total+=counts[r];}candidate_events.resize(total);}
+      MPI_Gatherv(events.data(),count,MPI_ATHENA_REAL,candidate_events.data(),counts.data(),offsets.data(),MPI_ATHENA_REAL,0,MPI_COMM_WORLD);
+    }
     const Buffer complete_failed=e.failed_state.extent(0)?e.CompleteState(e.failed_state):Buffer{};
     double timing[5]={e.rhs_seconds,e.exchange_seconds,e.closure_seconds,e.diagnostic_seconds,e.halo_seconds};
     std::vector<double> rank_collectives(3*e.size);std::vector<uint64_t> rank_collective_calls(3*e.size);
@@ -968,6 +990,20 @@ int main(int argc,char**argv){
         if(!first_floor)report<<',';first_floor=false;report<<'['<<p<<','<<chi_floor_cells[p]<<','<<e.Model().Radius(e.Model().grid.geometry[p].x)<<']';
       }
       report<<']';
+      if constexpr(direct_lapse){
+        report<<",\"candidate_sign_scope\":\"pre_floor_volume_attempts_this_segment_including_rejected_step\",\"candidate_sign_units\":\"conformal_lapse_or_chi_and_coordinate_time\",\"candidate_sign_columns\":[\"global_cell\",\"field\",\"x\",\"y\",\"z\",\"negative_stage\",\"negative_final\",\"zero_stage\",\"zero_final\",\"minimum\",\"first_nonpositive_time\",\"first_negative_time\",\"first_zero_time\"],\"candidate_sign_events\":[";
+        for(size_t j=0;j<candidate_events.size();j+=10){if(j)report<<',';
+          const auto&x=e.Model().grid.geometry[int(candidate_events[j])].x;
+          report<<'['<<candidate_events[j]<<','<<candidate_events[j+1];
+          for(int d=0;d<3;++d)report<<','<<x[d];
+          for(int k=2;k<10;++k){report<<',';
+            const bool absent=(k==8&&candidate_events[j+2]+candidate_events[j+3]==0)
+                ||(k==9&&candidate_events[j+4]+candidate_events[j+5]==0);
+            if(absent)report<<"null";else report<<candidate_events[j+k];
+          }report<<']';
+        }report<<']';
+        if(!candidate_events.empty())std::cout<<"Recorded pre-floor nonpositive candidates in "<<candidate_events.size()/10<<" cell/field pairs; see candidate_sign_events"<<std::endl;
+      }
       report<<",\"sparse_counter_scope\":\"current_plan_generation\"";
       report<<",\"mesh_plan_lifetime\":\""<<(coordinated_plans?"coordinated_generation":"independent_fixed")<<"\",\"mesh_plan_generations\":"<<(coordinated_plans?e.plans.Builds():1)<<",\"forced_plan_rebuilds\":"<<e.forced_plan_rebuilds;
       report<<",\"experimental_timestep\":"<<(HYPERBOLIC_EXPERIMENTAL_TIMESTEP?"true":"false")
