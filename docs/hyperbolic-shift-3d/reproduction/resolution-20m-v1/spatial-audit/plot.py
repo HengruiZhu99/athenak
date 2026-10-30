@@ -23,7 +23,7 @@ for n,d in data.items():
  for i in range(len(bandvol)):rows.append(dict(n=n,r_lower=r[i],r_upper=r[i+1],coordinate_volume=bandvol[i],**{k.replace('2','_RMS'):float(vals[k][i]) for k in fields}))
  values[n]=vals
 with (HERE/'radial-bands.csv').open('w') as f:
- w=csv.DictWriter(f,fieldnames=list(rows[0]));w.writeheader();w.writerows(rows)
+ w=csv.DictWriter(f,fieldnames=list(rows[0]),lineterminator="\n");w.writeheader();w.writerows(rows)
 # Original full-domain diagnostics provide an independent parity check.
 for n,d in data.items():
  path={16:HERE.parent/'candidate-history/n16.history.csv',24:HERE.parent/'candidate-history/n24.history.csv',32:HERE.parent/'n32-at3m/puncture.history.csv'}[n]

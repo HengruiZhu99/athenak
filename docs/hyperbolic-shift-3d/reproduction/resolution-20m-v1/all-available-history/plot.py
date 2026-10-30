@@ -21,7 +21,7 @@ for n,paths in sources.items():
    if t not in rows or sum(np.isfinite(float(row[k])) for k in keys)>=sum(np.isfinite(float(rows[t][k])) for k in keys):rows[t]=row
  rows=[rows[t] for t in sorted(rows)];data[n]={k:np.array([float(r[k]) for r in rows]) for k in ['t_over_M']+keys}
  with (HERE/f'n{n}-merged.csv').open('w') as f:
-  w=csv.DictWriter(f,fieldnames=list(rows[0]));w.writeheader();w.writerows(rows)
+  w=csv.DictWriter(f,fieldnames=list(rows[0]),lineterminator="\n");w.writeheader();w.writerows(rows)
  audit[n]={'last_diagnostic_t_over_M':float(data[n]['t_over_M'][-1]),'rows':len(rows),'finite_exterior_rows':int(np.isfinite(data[n][keys[0]]).sum()),'sources':{str(p.relative_to(REP)):hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}}
 plt.rcParams.update({'font.size':11,'axes.spines.top':False,'axes.spines.right':False})
 labels=[r'$\|H\|_{2,\rm ext}$',r'$\|M_r\|_{2,\rm ext}$',r'$\|M\|_{2,\rm ext}$',r'$\|\Theta\|_{2,\rm ext}$']
