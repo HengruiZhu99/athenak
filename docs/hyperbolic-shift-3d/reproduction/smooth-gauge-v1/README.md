@@ -116,3 +116,24 @@ action. The hourly monitor aurora-n24-n32-convergence-to20m now tracks this
 bounded comparison, with the display name Aurora smoother gauge N16 N24 to3M.
 Original N32 failed at5.92425M near the puncture; neither failed fine-grid
 original state will be resumed. Both new cases still stop at3M.
+
+## Interpretation of the shared weight
+
+The existing w is also consumed by HyperbolicDamping: delta =
+w*(inner_z4*reference_alpha - kappa1*alpha). Therefore changing w changes both
+the telegrapher coupling and the spatial blend of Z4 constraint damping. The
+constant damping parameters remain fixed, but the resulting spatial damping
+coefficient does not. Any reduction in constraint errors cannot be attributed
+solely to better numerical resolution of gauge gradients without a further
+experiment separating these two uses. No change to the submitted experiment
+is made by this clarification.
+
+There is no equation requirement for the original narrow central transition.
+For a broader-support follow-up, retain w=1 in an inner neighborhood and w=0
+by r=0.8, preserving its disjoint support from the harmonic collar on0.8–0.9.
+For example, the same polynomial on0.4–0.8 would have10–90% width0.159225,
+approximately8.49/12.74 middle-shell radial spacings at N16/N24. This is a
+possible future experiment, not an adopted parameter change or a demonstrated
+safe width. Gauge changes can propagate inward even with the local inner
+coefficients unchanged. The submitted experiment keeps0.56–0.8 for a controlled
+comparison of profile shape.
