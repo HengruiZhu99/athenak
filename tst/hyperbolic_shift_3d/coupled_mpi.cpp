@@ -66,6 +66,11 @@ constexpr bool boundary_reuse=HYPERBOLIC_BOUNDARY_REUSE;
 constexpr bool continuous_positive=HYPERBOLIC_CONTINUOUS_POSITIVE;
 constexpr bool spherical_overlap=HYPERBOLIC_SPHERICAL_OVERLAP;
 constexpr Real physical_lapse_floor=1e-10;
+#ifndef HYPERBOLIC_DIRECT_LAPSE
+#define HYPERBOLIC_DIRECT_LAPSE 0
+#endif
+constexpr bool direct_lapse=HYPERBOLIC_DIRECT_LAPSE;
+static_assert(!direct_lapse||continuous_positive,"direct lapse retains log chi");
 #ifndef HYPERBOLIC_PUNCTURE_CHI_FLOOR
 #define HYPERBOLIC_PUNCTURE_CHI_FLOOR 0
 #endif
@@ -95,7 +100,7 @@ static_assert(!scri_donor_seven||scri_sampled_normal,"direct radial candidate re
 static_assert(!spherical_overlap||(evolved_overlap==3&&core_subdivisions==2),"spherical overlap requires eight core blocks and three overlap cells");
 static_assert(!continuous_positive||(spherical_overlap&&core_subdivisions==2),"positive scheme requires continuous spherical-overlap mesh");
 static_assert(!coordinated_plans||(continuous_positive&&boundary_reuse&&sparse_stage&&!measured_partition),"coordinated plan target requires the equal-cell positive sparse formulation");
-constexpr const char*checkpoint_magic=puncture_chi_floor>0?"HYP3D_MPI_CF1":HYPERBOLIC_EXPERIMENTAL_TIMESTEP?"HYP3D_MPI_DT1":continuous_positive?"HYP3D_MPI_V11":spherical_overlap?"HYP3D_MPI_V10":evolved_overlap?"HYP3D_MPI_V9":core_subdivisions==2?"HYP3D_MPI_V8":inner_transition_logical?"HYP3D_MPI_V7":scri_donor_seven?"HYP3D_MPI_V6":scri_sampled_normal?"HYP3D_MPI_V5":scri_angular_dissipation?"HYP3D_MPI_V4":scri_angular_exchange?"HYP3D_MPI_V3":algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
+constexpr const char*checkpoint_magic=direct_lapse?"HYP3D_MPI_AL1":puncture_chi_floor>0?"HYP3D_MPI_CF1":HYPERBOLIC_EXPERIMENTAL_TIMESTEP?"HYP3D_MPI_DT1":continuous_positive?"HYP3D_MPI_V11":spherical_overlap?"HYP3D_MPI_V10":evolved_overlap?"HYP3D_MPI_V9":core_subdivisions==2?"HYP3D_MPI_V8":inner_transition_logical?"HYP3D_MPI_V7":scri_donor_seven?"HYP3D_MPI_V6":scri_sampled_normal?"HYP3D_MPI_V5":scri_angular_dissipation?"HYP3D_MPI_V4":scri_angular_exchange?"HYP3D_MPI_V3":algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
 constexpr const char*algebraic_scheme=algebraic_final_projection?"final_stage_standard":"none";
 constexpr const char*scri_angular_scheme=scri_angular_exchange?"cross_face_centered5":"face_local6";
 constexpr const char*scri_dissipation_scheme=scri_angular_dissipation?"degree7_weighted_negative_square":"none";
@@ -116,7 +121,7 @@ struct NormalConfig { int32_t scheme=inner_transition_logical?3:scri_donor_seven
 // byte. The descriptor excludes arbitrary leaf trees and dynamic regridding.
 struct MeshConfig { int32_t scheme=continuous_positive?4:spherical_overlap?3:evolved_overlap?2:1,core_subdivisions=::core_subdivisions,
   shell_layers=3,reserved=evolved_overlap; };
-struct PositiveConfig { Real physical_lapse_floor=::physical_lapse_floor;int32_t scheme=1,reserved=0; };
+struct PositiveConfig { Real physical_lapse_floor=::physical_lapse_floor;int32_t scheme=direct_lapse?2:1,reserved=0; };
 static_assert(sizeof(PositiveConfig)==16,"positive-variable configuration layout");
 struct ChiFloorConfig { Real value=puncture_chi_floor,radius=puncture_chi_floor_radius; };
 static_assert(sizeof(ChiFloorConfig)==16,"chi floor configuration layout");
@@ -487,7 +492,7 @@ class Evolution {
     halo_seconds+=std::chrono::duration<double>(std::chrono::steady_clock::now()-halo_start).count();
     null_ghost=std::max(null_ghost,halo.after);null_before=std::max(null_before,halo.before);
     SynchronizeError(halo.invalid,"nonpositive interpolated scri geometry");
-    const auto start=std::chrono::steady_clock::now();const auto stats=kernel()->Evaluate(exchange()->padded,dt,false,.5,surface,exchange()->positive_ko);
+    const auto start=std::chrono::steady_clock::now();const auto stats=kernel()->Evaluate(exchange()->padded,dt,false,.5,surface,exchange()->positive_ko,direct_lapse);
     rhs_seconds+=std::chrono::duration<double>(std::chrono::steady_clock::now()-start).count();
     gap=std::min(gap,stats.min_gap);cfl=std::max(cfl,stats.max_cfl);
     SynchronizeError(stats.bad_cells,"device RHS failure at active cell "+std::to_string(stats.first_bad)+" reason "+std::to_string(stats.reason));
@@ -517,13 +522,16 @@ class Evolution {
     auto stage=[&](int s,Real h){const auto out=local_state,begin=base,k=rates[s],A=reference_lapse,fs=floor_statistics;const int offset=31*first;
       Kokkos::parallel_for("local RK stage",Kokkos::RangePolicy<>(0,31*local),KOKKOS_LAMBDA(int i){
         const int f=i%31,p=i/31;
-        if(continuous_positive&&(f==0||f==18)){bool floored=false;
+        if(continuous_positive&&(f==0||(f==18&&!direct_lapse))){bool floored=false;
           out(i)=z4c::hyperboloidal::MaterializePositive(log(begin(offset+i)+(f==18?A(p):0))+h*k(i),A(p),f,physical_lapse_floor,floored,puncture_chi_floor,puncture_chi_floor_radius);
           if(floored){const Real radius=sqrt(2*A(p)-1);
             if(f==18){Kokkos::atomic_add(&fs(0),Real(1));Kokkos::atomic_max(&fs(1),radius);}
             else{Kokkos::atomic_add(&fs(2),Real(1));Kokkos::atomic_max(&fs(4),radius);
               Kokkos::atomic_add(&fs(8+p),Real(1));}
           }
+        }else if(direct_lapse&&f==18){bool floored=false;
+          out(i)=h::FloorDirectLapse(begin(offset+i)+h*k(i),A(p),physical_lapse_floor,floored);
+          if(floored){Kokkos::atomic_add(&fs(0),Real(1));Kokkos::atomic_max(&fs(1),sqrt(2*A(p)-1));}
         }else out(i)=begin(offset+i)+h*k(i);
       });ExchangeStage();
       const auto es=surface_stage,eb=surface_base,ek=edge_rates[s];const int eo=31*surface_first;
@@ -532,7 +540,7 @@ class Evolution {
       for(int s=0;s<4;++s){Buffer edge;const auto rhs=RHS(dt,edge);
         if constexpr(continuous_positive){const auto k=rates[s],ek=edge_rates[s],v=state,sv=surface,A=reference_lapse;const int begin=first,eb=surface_first;
           Kokkos::parallel_for("positive volume RK rates",Kokkos::RangePolicy<>(0,31*local),KOKKOS_LAMBDA(int i){
-            const int f=i%31,p=i/31;k(i)=rhs(i)/((f==0||f==18)?v(31*begin+i)+(f==18?A(p):0):1);});
+            const int f=i%31,p=i/31;k(i)=rhs(i)/((f==0||(f==18&&!direct_lapse))?v(31*begin+i)+(f==18?A(p):0):1);});
           if constexpr(puncture_chi_floor>0){int first_bad=INT_MAX;
             Kokkos::parallel_reduce("validate logarithmic volume rates",Kokkos::RangePolicy<>(0,31*local),
               KOKKOS_LAMBDA(int i,int&bad){if(!Kokkos::isfinite(k(i)))bad=i<bad?i:bad;},Kokkos::Min<int>(first_bad));
@@ -546,13 +554,17 @@ class Evolution {
       Kokkos::parallel_for("compensated RK acceptance",Kokkos::RangePolicy<>(0,31*local),KOKKOS_LAMBDA(int i){
         const Real increment=dt*(k1(i)+2*k2(i)+2*k3(i)+k4(i))/6-old(i);
         const int f=i%31,p=i/31;
-        if(continuous_positive&&(f==0||f==18)){const Real base_log=log(begin(offset+i)+(f==18?A(p):0)),candidate=base_log+increment;bool floored=false;
+        if(continuous_positive&&(f==0||(f==18&&!direct_lapse))){const Real base_log=log(begin(offset+i)+(f==18?A(p):0)),candidate=base_log+increment;bool floored=false;
           out(i)=h::MaterializePositive(candidate,A(p),f,physical_lapse_floor,floored,puncture_chi_floor,puncture_chi_floor_radius);next(i)=floored?0:(candidate-base_log)-increment;
           if(floored){const Real radius=sqrt(2*A(p)-1);
             if(f==18){Kokkos::atomic_add(&fs(0),Real(1));Kokkos::atomic_max(&fs(1),radius);}
             else{Kokkos::atomic_add(&fs(3),Real(1));Kokkos::atomic_max(&fs(4),radius);
               Kokkos::atomic_add(&fs(8+p),Real(1));}
           }
+        }else if(direct_lapse&&f==18){bool floored=false;
+          out(i)=h::FloorDirectLapse(begin(offset+i)+increment,A(p),physical_lapse_floor,floored);
+          next(i)=floored?0:(out(i)-begin(offset+i))-increment;
+          if(floored){Kokkos::atomic_add(&fs(0),Real(1));Kokkos::atomic_max(&fs(1),sqrt(2*A(p)-1));}
         }else{out(i)=begin(offset+i)+increment;next(i)=(out(i)-begin(offset+i))-increment;}
       });
       const int volume_projection_bad=ProjectAccepted(out,next,local);ExchangeStage();
@@ -627,7 +639,7 @@ class Evolution {
         if(!in||config.core_half_width!=expected.core_half_width||config.inner_radius!=expected.inner_radius)
           throw std::runtime_error("checkpoint spherical geometry mismatch");}
       if constexpr(continuous_positive){PositiveConfig config;in.read(reinterpret_cast<char*>(&config),sizeof(config));const PositiveConfig expected;
-        if(!in||config.physical_lapse_floor!=expected.physical_lapse_floor||config.scheme!=1||config.reserved!=0)
+        if(!in||config.physical_lapse_floor!=expected.physical_lapse_floor||config.scheme!=expected.scheme||config.reserved!=0)
           throw std::runtime_error("checkpoint positive-variable configuration mismatch");}
       if constexpr(puncture_chi_floor>0){ChiFloorConfig config;in.read(reinterpret_cast<char*>(&config),sizeof(config));
         if(!in||config.value!=puncture_chi_floor||config.radius!=puncture_chi_floor_radius)
@@ -974,7 +986,7 @@ int main(int argc,char**argv){
       for(size_t i=0;i<e.ownership_history.size();++i){if(i)report<<',';report<<'[';
         for(size_t r=0;r<e.ownership_history[i].size();++r){if(r)report<<',';report<<e.ownership_history[i][r];}report<<']';}report<<']';
       report<<",\"boundary_execution\":\""<<(boundary_reuse?"cached_global_projection_angular":"partitioned_uncached")<<"\",\"boundary_cache_hits\":"<<e.boundary_cache_hits;
-      if constexpr(continuous_positive)report<<",\"cartesian_seams\":\"uniform_global_stencil\",\"positive_variables\":\"log_chi_log_lapse_rk_and_ko\",\"physical_lapse_floor\":"<<physical_lapse_floor;
+      if constexpr(continuous_positive)report<<",\"cartesian_seams\":\"uniform_global_stencil\",\"positive_variables\":\""<<(direct_lapse?"log_chi_direct_lapse_rk_and_ko":"log_chi_log_lapse_rk_and_ko")<<"\",\"physical_lapse_floor\":"<<physical_lapse_floor;
       if constexpr(spherical_overlap)report<<",\"shell_geometry\":\"spherical_equiangular\",\"core_half_width\":0.18,\"shell_inner_radius\":0.16,\"overlap_quadrature\":\"radial_quintic_partition\"";
       if constexpr(inner_transition_logical)report<<",\"interpatch_interpolation\":\"logical_inner_transition\"";
       if constexpr(core_subdivisions==2)report<<",\"mesh_topology\":\"cartesian_2x2x2_shells3\",\"cartesian_core_subdivisions\":2,\"mesh_blocks\":26";

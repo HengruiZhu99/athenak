@@ -94,6 +94,7 @@ class HyperbolicCompositeDevice {
     bool adaptive;
     ScriRadialDevice::BoundKernel radial;
     ConstBuffer positive_ko;
+    bool direct_lapse_dissipation=false;
 
     KOKKOS_INLINE_FUNCTION int Offset(int axis, int amount) const {
       return amount*(axis == 0 ? 1 : (axis == 1 ? width : width*width));
@@ -166,7 +167,7 @@ class HyperbolicCompositeDevice {
       if (ko==0) return 0;
       constexpr int b[5] = {1,-4,6,-4,1};
       Real result = 0;
-      const bool logarithmic=positive_ko.extent(0)&&(f==0||f==18);
+      const bool logarithmic=positive_ko.extent(0)&&(f==0||(f==18&&!direct_lapse_dissipation));
       const int base = (logarithmic?(f==0?0:1):f)*padded_count;
       const auto data=logarithmic?positive_ko:padded;
       for (int i=offsets(local);i<offsets(local+1);++i) {
@@ -473,7 +474,7 @@ class HyperbolicCompositeDevice {
     Kokkos::deep_copy(ko_terms_,host_terms);
   }
 
-  Summary Evaluate(ConstBuffer padded,Real dt,bool adaptive=false,Real ko=.5,ConstBuffer surface={},ConstBuffer positive_ko={}) {
+  Summary Evaluate(ConstBuffer padded,Real dt,bool adaptive=false,Real ko=.5,ConstBuffer surface={},ConstBuffer positive_ko={},bool direct_lapse_dissipation=false) {
     if (padded.extent(0)!=size_t(nf)*padded_count_ || !(dt>0) || !std::isfinite(dt)
         || !(ko>=0) || !std::isfinite(ko))
       throw std::invalid_argument("invalid device RHS storage/timestep/dissipation");
@@ -482,6 +483,7 @@ class HyperbolicCompositeDevice {
     if(radial_plan_)kernel.radial=radial_plan_->Prepare(padded,surface);
     if(positive_ko.extent(0)&&positive_ko.extent(0)!=size_t(2)*padded_count_)throw std::invalid_argument("positive KO storage mismatch");
     kernel.positive_ko=positive_ko;
+    kernel.direct_lapse_dissipation=direct_lapse_dissipation;
     Kokkos::parallel_for("hyperboloidal owned bulk RHS",
         Kokkos::RangePolicy<ExecutionSpace>(0,local_),kernel);
     Summary result;

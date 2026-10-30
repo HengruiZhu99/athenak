@@ -17,6 +17,12 @@ try{
   Require(std::isnan(h::MaterializePositive(std::numeric_limits<Real>::quiet_NaN(),A,0,1e-10,clipped,floor,radius))&&!clipped,"NaN was rescued");
   const Real old_lapse=h::MaterializePositive(-1e6,A,18,1e-10,clipped);Require(clipped,"lapse floor missing");
   Require(h::MaterializePositive(-1e6,A,18,1e-10,clipped,floor,radius)==old_lapse&&clipped,"lapse policy changed");
-  std::cout<<"chi floor: underflow, inactive parity, spatial support, nonfinite rejection and lapse policy passed\n";
+  const Real lower=1e-10*(1-A)-A;
+  Require(h::FloorDirectLapse(-A-1,A,1e-10,clipped)==lower&&clipped,"direct lapse undershoot not floored");
+  Require(h::FloorDirectLapse(.2-A,A,1e-10,clipped)==.2-A&&!clipped,"inactive direct lapse changed");
+  Require(h::FloorDirectLapse(-2,1,1e-10,clipped)==-2&&!clipped,"direct lapse floor imposed at scri");
+  Require(std::isinf(h::FloorDirectLapse(std::numeric_limits<Real>::infinity(),A,1e-10,clipped))&&!clipped,"direct overflow was rescued");
+  Require(std::isnan(h::FloorDirectLapse(std::numeric_limits<Real>::quiet_NaN(),A,1e-10,clipped))&&!clipped,"direct NaN was rescued");
+  std::cout<<"chi floor: underflow, inactive parity, spatial support, nonfinite rejection and log/direct lapse policies passed\n";
 }catch(const std::exception&e){std::cerr<<e.what()<<'\n';code=1;}
 Kokkos::finalize();return code;}
