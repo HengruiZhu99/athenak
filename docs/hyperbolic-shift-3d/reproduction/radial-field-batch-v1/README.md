@@ -1,4 +1,4 @@
-# Field-batched direct radial derivatives — local prototype
+# Field-batched direct radial derivatives — verified short GPU comparison
 
 The V21/V22 ownership audit found that ranks with any direct radial closure rows
 were expensive, even when only 69 such rows were owned. Reducing their cell count
@@ -61,10 +61,10 @@ python3 tst/hyperbolic_shift_3d/test_sparse_stage_mpi.py \
 Use a fresh output directory. The MPI runner has a 410-second aggregate deadline;
 individual local tests are bounded by 420 seconds. Small logs, reports and binary
 hashes are retained in `local/`; large state/failure files remain in local output.
-This is **local fidelity evidence only**. SYCL fidelity, same-node performance,
-and full GPU failure/restart qualification remain pending. It is separate from
-the already frozen V23 timer-only job 8987400. Do not promote this prototype or
-infer long-time stability, convergence or AMR evolution from these checks.
+These are local fidelity checks. The separate SYCL comparison below now covers
+device parity and pulse restart, but a full GPU rejected-RK-stage capture remains
+outstanding. These checks do not establish long-time stability, convergence or
+AMR evolution.
 
 The broader native operator target `hyperbolic_shift_3d_radial_batch_device` also
 passed the existing Minkowski/nonspherical parity matrix: bulk RHS, complete scri
@@ -80,3 +80,53 @@ derivative equality, all 110,019 field-row comparisons, three changed-stage
 refreshes, and CPU scaled error <=2e-12 (the native derivative test tolerance).
 All 105 offline controller/worker tests passed; the final admission and parser
 changes were checked again with two focused tests. No GPU admission was issued.
+
+## Verified Aurora result
+
+Job **8987760**, frozen source `146fb4b251274c4a5f90ee57b688ae63e73e510a`,
+passed all eleven cases and **419 independently replayed checks**. The reader
+verified 63 artifacts, every component rank log, complete pulse restart and
+puncture control/candidate checkpoint equality, and timer accounting. All twelve
+MPI ranks were bound to distinct GPU tiles on one debug node. The preceding
+job 8987469 stopped at its startup storage guard before running tests; the retry
+changed the output directory and storage allowance only.
+
+The same-node n16 puncture comparison holds initial data, timestep, ownership,
+sparse exchange and diagnostics fixed, with 100 steps to 0.15 M:
+
+| Measurement | Frozen V23 inline control | V24 field batching |
+|---|---:|---:|
+| Seconds/step after initial diagnostics | 0.329252 | 0.171426 |
+| Total native wall time, including startup | 45.319 s | 29.342 s |
+| Slowest-rank bulk RHS, 100 steps | 12.024 s | 5.311 s |
+| Sampled-normal RHS range across ranks | 11.287–12.103 s | 3.189–3.249 s |
+| Largest null-closure residual | 1.55e-15 | 1.55e-15 |
+| Lapse-floor node interventions | 0 | 0 |
+
+This is a **1.921x per-step speedup**, or a 47.9% reduction in step time, relative
+to the already optimized sparse/boundary-reuse driver. Total native wall time
+improves by 1.545x. This single pair does not supply uncertainty bars, and its
+speedup must not be multiplied by earlier speedups measured in other jobs to
+claim a controlled comparison against the original uncached V11 executable.
+
+The expensive-rank bulk RHS penalty disappears in this run: all twelve ranks
+now take about 5.2–5.3 seconds; the maximum/minimum bulk-RHS ratio falls
+from 2.326 to 1.025. This confirms that the execution organization
+was a major cost; it does not identify register spilling, occupancy or a compiler
+mechanism without additional hardware profiling. All rank points are present
+in the plot; line styles distinguish the two execution paths.
+
+![Same-node radial batching comparison](gpu-comparison.png)
+
+The new component test passes 110,019 field-row derivative comparisons per tile
+with exact direct-device equality, three changed-stage refreshes, noncontiguous
+and empty ownership, and poison/rejection checks. Minkowski, nonspherical native
+operator parity and pulse restart also pass. The complete puncture state and
+compensation arrays match the control byte for byte. This preserves the short
+trajectory; it does not repair the baseline's late horizon-quality, constraint,
+resolution-comparison or long-time convergence limitations.
+
+Reproduce the plot with `python3 docs/hyperbolic-shift-3d/reproduction/radial-field-batch-v1/analyze_gpu.py`.
+The [raw evidence, source/build pins, verifier and cleanup records](../aurora/preflight-radial-field-batch-v2/README.md)
+are retained. Mesh-change bundle integration and GPU failure-capture qualification
+remain outstanding; default targets have not been silently switched.

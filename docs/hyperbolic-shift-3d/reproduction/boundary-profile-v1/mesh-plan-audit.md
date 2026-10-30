@@ -95,3 +95,11 @@ would additionally need a supported coarse/fine derivative policy, field and
 compensation transfer, and trajectory validation; a plan-bundle test alone does
 not establish those features. This section describes remaining implementation
 requirements, not completed functionality.
+
+The V24 field-batching comparison (job 8987760) subsequently passed device and
+checkpoint fidelity and reduced per-step time by 1.921x against V23 on the same
+node. It reduced sampled-normal RHS from 11–12 seconds to about 3.2 seconds per
+100 steps and the bulk max/min rank-time ratio from 2.326 to 1.025. It preserved
+equal-cell ownership. This supports keeping measured repartitioning experimental
+and addressing execution organization first. It does not implement the coordinated
+mesh-change lifecycle described above.

@@ -1,0 +1,965 @@
+{
+  "passed": true,
+  "admission_written": false,
+  "issues": [],
+  "cases": [
+    {
+      "name": "sparse-plan-lifecycle",
+      "status": "passed",
+      "checks_recomputed": 4,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": []
+    },
+    {
+      "name": "parity-continuous-positive",
+      "status": "passed",
+      "checks_recomputed": 4,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "component": {
+        "component": "continuous_positive_device",
+        "ranks_verified": 12,
+        "maxima": {
+          "cpu_pole_error": 8.236281941653411e-16,
+          "cpu_rate_error": 2.111971841314933e-13,
+          "cpu_trace_error": 6.800364729772313e-14,
+          "partition_error": 0,
+          "finite_D_error": 0,
+          "null": 1.1102162777403758e-15,
+          "compatibility": 4.683753385137379e-17,
+          "cpu_bulk_error": 6.772360450213235e-14
+        }
+      }
+    },
+    {
+      "name": "parity-radial-field-batch",
+      "status": "passed",
+      "checks_recomputed": 4,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "component": {
+        "component": "radial_field_batch",
+        "ranks_verified": 12,
+        "maxima": {}
+      }
+    },
+    {
+      "name": "minkowski-short",
+      "status": "passed",
+      "checks_recomputed": 63,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "boundary_timers": {
+        "ranks": 12,
+        "boundary_columns": 6,
+        "finite_nonnegative": true,
+        "subphases_bounded_by_closure": true,
+        "all_error_sync_overlaps_other_buckets": true
+      },
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V11",
+        "n": 16,
+        "nf": 31,
+        "kind": 0,
+        "admitted": true,
+        "cells": 159200,
+        "nominal_cells": 106496,
+        "surface_size": 47616,
+        "steps": 4,
+        "time": 0.001,
+        "dt": 0.00025,
+        "header_bytes": 152,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "a5607aa766e9e42678034b14ab71af21b1ef5d76a078b2a391f64f2743f82db0",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 4935200,
+            "sha256": "ea56835fdb5ddcb0ef4395a4cb90a2cf8dfed5566930f325e2900cc57e7fc43c"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 4935200,
+            "sha256": "a102f1978835b72edfd4fac8e483fff6c335fb91e521337700aae5a0cb292b1c"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "21a38de14a9763f6a86a4c0330570b018cd232576a3af0c1017eceb80c889ecf"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "6335ba282d5a32c003e8496fd5d80aade68ff61b13a5f14ae791f4cee1653f58"
+          }
+        ],
+        "bytes": 79725208,
+        "sha256": "6bbad5d9f4047f9ada4194ba2a7f1decb9e7bd807608a776833b58cd34463844",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3,
+        "mesh_topology": "cartesian_2x2x2_shells3",
+        "cartesian_core_subdivisions": 2,
+        "mesh_blocks": 26,
+        "shell_geometry": "spherical_equiangular",
+        "core_half_width": 0.18,
+        "shell_inner_radius": 0.16,
+        "overlap_quadrature": "radial_quintic_partition",
+        "cartesian_seams": "uniform_global_stencil",
+        "positive_variables": "log_chi_log_lapse_rk_and_ko",
+        "physical_lapse_floor": 1e-10
+      }
+    },
+    {
+      "name": "pulse-half",
+      "status": "passed",
+      "checks_recomputed": 61,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "boundary_timers": {
+        "ranks": 12,
+        "boundary_columns": 6,
+        "finite_nonnegative": true,
+        "subphases_bounded_by_closure": true,
+        "all_error_sync_overlaps_other_buckets": true
+      },
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V11",
+        "n": 16,
+        "nf": 31,
+        "kind": 1,
+        "admitted": true,
+        "cells": 159200,
+        "nominal_cells": 106496,
+        "surface_size": 47616,
+        "steps": 2,
+        "time": 0.0005,
+        "dt": 0.00025,
+        "header_bytes": 152,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "ee8cb57715bd57aee972e743b366b60e1f6b28b9e124b294e51852c1f402b577",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 4935200,
+            "sha256": "96bf01bc994231c01d4eca93aa74589dfc75ce45b7fb9f2cf94092737841b706"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 4935200,
+            "sha256": "4b34166f87b13b3c7e3725663261d2a2cc3796aa62cf77f2cff8925e40a89096"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "053bef0780916c46f7945a07374d2583550502e3d73aa0b5545d09b9b0cf38cd"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "bc5f40e7735f5dae47e7c38f69dbf6322981ebcbf374d1d8cd598620c292f9b9"
+          }
+        ],
+        "bytes": 79725208,
+        "sha256": "a7bdb3dddf3c102686022f683a5e3c9daec9cfbf9d8af471ef1bca8fa63127ea",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3,
+        "mesh_topology": "cartesian_2x2x2_shells3",
+        "cartesian_core_subdivisions": 2,
+        "mesh_blocks": 26,
+        "shell_geometry": "spherical_equiangular",
+        "core_half_width": 0.18,
+        "shell_inner_radius": 0.16,
+        "overlap_quadrature": "radial_quintic_partition",
+        "cartesian_seams": "uniform_global_stencil",
+        "positive_variables": "log_chi_log_lapse_rk_and_ko",
+        "physical_lapse_floor": 1e-10
+      }
+    },
+    {
+      "name": "pulse-resumed",
+      "status": "passed",
+      "checks_recomputed": 61,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "boundary_timers": {
+        "ranks": 12,
+        "boundary_columns": 6,
+        "finite_nonnegative": true,
+        "subphases_bounded_by_closure": true,
+        "all_error_sync_overlaps_other_buckets": true
+      },
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V11",
+        "n": 16,
+        "nf": 31,
+        "kind": 1,
+        "admitted": true,
+        "cells": 159200,
+        "nominal_cells": 106496,
+        "surface_size": 47616,
+        "steps": 4,
+        "time": 0.001,
+        "dt": 0.00025,
+        "header_bytes": 152,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "0e9a44fec8cbb26884013ca7780adfe78867ea1488e08b4081e45138bf107696",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 4935200,
+            "sha256": "bb5c4ce993402091c6f3e8dc177b7d692b69e1fca4ef7b36597cc056898b1e26"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 4935200,
+            "sha256": "f85511bb96e52d5d233324c74d143e474212d333e1e6e97670c87bd109a6f51f"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "25d59d359ed8888f814f56484602e1182426a18d09664c15eab6cfb46c9b5c5a"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "b0ebf04721fa1341150a6450e38be986049a44abc6d8ae7f115456a540cadfc9"
+          }
+        ],
+        "bytes": 79725208,
+        "sha256": "3cd1336de3f233840af002ac130772c3689d8d16b6a3a9275e6c3526c346d971",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3,
+        "mesh_topology": "cartesian_2x2x2_shells3",
+        "cartesian_core_subdivisions": 2,
+        "mesh_blocks": 26,
+        "shell_geometry": "spherical_equiangular",
+        "core_half_width": 0.18,
+        "shell_inner_radius": 0.16,
+        "overlap_quadrature": "radial_quintic_partition",
+        "cartesian_seams": "uniform_global_stencil",
+        "positive_variables": "log_chi_log_lapse_rk_and_ko",
+        "physical_lapse_floor": 1e-10
+      }
+    },
+    {
+      "name": "pulse-direct",
+      "status": "passed",
+      "checks_recomputed": 61,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "boundary_timers": {
+        "ranks": 12,
+        "boundary_columns": 6,
+        "finite_nonnegative": true,
+        "subphases_bounded_by_closure": true,
+        "all_error_sync_overlaps_other_buckets": true
+      },
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V11",
+        "n": 16,
+        "nf": 31,
+        "kind": 1,
+        "admitted": true,
+        "cells": 159200,
+        "nominal_cells": 106496,
+        "surface_size": 47616,
+        "steps": 4,
+        "time": 0.001,
+        "dt": 0.00025,
+        "header_bytes": 152,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "0e9a44fec8cbb26884013ca7780adfe78867ea1488e08b4081e45138bf107696",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 4935200,
+            "sha256": "bb5c4ce993402091c6f3e8dc177b7d692b69e1fca4ef7b36597cc056898b1e26"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 4935200,
+            "sha256": "f85511bb96e52d5d233324c74d143e474212d333e1e6e97670c87bd109a6f51f"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "25d59d359ed8888f814f56484602e1182426a18d09664c15eab6cfb46c9b5c5a"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "b0ebf04721fa1341150a6450e38be986049a44abc6d8ae7f115456a540cadfc9"
+          }
+        ],
+        "bytes": 79725208,
+        "sha256": "3cd1336de3f233840af002ac130772c3689d8d16b6a3a9275e6c3526c346d971",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3,
+        "mesh_topology": "cartesian_2x2x2_shells3",
+        "cartesian_core_subdivisions": 2,
+        "mesh_blocks": 26,
+        "shell_geometry": "spherical_equiangular",
+        "core_half_width": 0.18,
+        "shell_inner_radius": 0.16,
+        "overlap_quadrature": "radial_quintic_partition",
+        "cartesian_seams": "uniform_global_stencil",
+        "positive_variables": "log_chi_log_lapse_rk_and_ko",
+        "physical_lapse_floor": 1e-10
+      }
+    },
+    {
+      "name": "restart-audit",
+      "status": "passed",
+      "checks_recomputed": 18,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": []
+    },
+    {
+      "name": "puncture-control",
+      "status": "passed",
+      "checks_recomputed": 56,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V11",
+        "n": 16,
+        "nf": 31,
+        "kind": 2,
+        "admitted": true,
+        "cells": 159200,
+        "nominal_cells": 106496,
+        "surface_size": 47616,
+        "steps": 100,
+        "time": 0.05,
+        "dt": 0.0005,
+        "header_bytes": 152,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "0afdcb562e7cf6a5c60fbba453d07b7a8396de814f02a75e13029aea7e2e71fa",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 4935200,
+            "sha256": "43658fc5bfa49e1b44112d7fedd0f4d93085a25679dbac3aaf5db2b2be28a007"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 4935200,
+            "sha256": "23893c6c0a7c6762a747a0421e7b6f96018d4a6829a3ab4baa917bff53189994"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "55d35f312e4fa4cd3d71a66bc7ac95ab6f05694db7da8c57f0c8f3a229dfbccb"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "4c51b024fe21f2eef459a6770ef6ee0d01e10516496b4caea12301e4a162d6c7"
+          }
+        ],
+        "bytes": 79725208,
+        "sha256": "f63926b4db9b24f9233e3a6041646c4ffddce6a9712ab050bd06e86159479d8a",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3,
+        "mesh_topology": "cartesian_2x2x2_shells3",
+        "cartesian_core_subdivisions": 2,
+        "mesh_blocks": 26,
+        "shell_geometry": "spherical_equiangular",
+        "core_half_width": 0.18,
+        "shell_inner_radius": 0.16,
+        "overlap_quadrature": "radial_quintic_partition",
+        "cartesian_seams": "uniform_global_stencil",
+        "positive_variables": "log_chi_log_lapse_rk_and_ko",
+        "physical_lapse_floor": 1e-10
+      }
+    },
+    {
+      "name": "puncture-fast",
+      "status": "passed",
+      "checks_recomputed": 69,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": [],
+      "boundary_timers": {
+        "ranks": 12,
+        "boundary_columns": 6,
+        "finite_nonnegative": true,
+        "subphases_bounded_by_closure": true,
+        "all_error_sync_overlaps_other_buckets": true
+      },
+      "checkpoint": {
+        "magic": "HYP3D_MPI_V11",
+        "n": 16,
+        "nf": 31,
+        "kind": 2,
+        "admitted": true,
+        "cells": 159200,
+        "nominal_cells": 106496,
+        "surface_size": 47616,
+        "steps": 100,
+        "time": 0.05,
+        "dt": 0.0005,
+        "header_bytes": 152,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "base_except_magic_sha256": "0afdcb562e7cf6a5c60fbba453d07b7a8396de814f02a75e13029aea7e2e71fa",
+        "arrays": [
+          {
+            "name": "volume_state",
+            "doubles": 4935200,
+            "sha256": "43658fc5bfa49e1b44112d7fedd0f4d93085a25679dbac3aaf5db2b2be28a007"
+          },
+          {
+            "name": "volume_compensation",
+            "doubles": 4935200,
+            "sha256": "23893c6c0a7c6762a747a0421e7b6f96018d4a6829a3ab4baa917bff53189994"
+          },
+          {
+            "name": "scri_state",
+            "doubles": 47616,
+            "sha256": "55d35f312e4fa4cd3d71a66bc7ac95ab6f05694db7da8c57f0c8f3a229dfbccb"
+          },
+          {
+            "name": "scri_compensation",
+            "doubles": 47616,
+            "sha256": "4c51b024fe21f2eef459a6770ef6ee0d01e10516496b4caea12301e4a162d6c7"
+          }
+        ],
+        "bytes": 79725208,
+        "sha256": "f63926b4db9b24f9233e3a6041646c4ffddce6a9712ab050bd06e86159479d8a",
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition",
+        "evolved_overlap": 3,
+        "mesh_topology": "cartesian_2x2x2_shells3",
+        "cartesian_core_subdivisions": 2,
+        "mesh_blocks": 26,
+        "shell_geometry": "spherical_equiangular",
+        "core_half_width": 0.18,
+        "shell_inner_radius": 0.16,
+        "overlap_quadrature": "radial_quintic_partition",
+        "cartesian_seams": "uniform_global_stencil",
+        "positive_variables": "log_chi_log_lapse_rk_and_ko",
+        "physical_lapse_floor": 1e-10
+      }
+    },
+    {
+      "name": "execution-audit",
+      "status": "passed",
+      "checks_recomputed": 18,
+      "issues": [],
+      "returncode": 0,
+      "failed_checks": []
+    }
+  ],
+  "artifacts": [
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/sparse-plan-lifecycle.report.json",
+      "sha256": "3503b5d6293de739f686579618683dffa63e8595f7548a2089a26f9e6a229ffc",
+      "bytes": 78
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/parity-continuous-positive.report.json",
+      "sha256": "b0639accd0523edf977422b5386c536eb8d17586c0d62f9df1bbfc68dfea3cc1",
+      "bytes": 51646
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/parity-continuous-positive.rank-00.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/parity-continuous-positive.rank-01.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/parity-continuous-positive.rank-02.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/parity-continuous-positive.rank-03.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/parity-continuous-positive.rank-04.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/parity-continuous-positive.rank-05.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/parity-continuous-positive.rank-06.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/parity-continuous-positive.rank-07.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/parity-continuous-positive.rank-08.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/parity-continuous-positive.rank-09.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/parity-continuous-positive.rank-10.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/parity-continuous-positive.rank-11.log",
+      "sha256": "af4cbcda71d233cc959fb294fef88bd4eacaea439733afc77f867c565af20dfc",
+      "bytes": 2681
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/parity-continuous-positive.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/parity-radial-field-batch.report.json",
+      "sha256": "a4285c1355c893f6ccf6f25b479396649003d8900a0f2b2f8b59175f655749d8",
+      "bytes": 15030
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/parity-radial-field-batch.rank-00.log",
+      "sha256": "5101b6e7ed5df4d0bb412f52595049dbddd467d1ba98cf9b4728cdf073668831",
+      "bytes": 257
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/parity-radial-field-batch.rank-01.log",
+      "sha256": "5101b6e7ed5df4d0bb412f52595049dbddd467d1ba98cf9b4728cdf073668831",
+      "bytes": 257
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/parity-radial-field-batch.rank-02.log",
+      "sha256": "5101b6e7ed5df4d0bb412f52595049dbddd467d1ba98cf9b4728cdf073668831",
+      "bytes": 257
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/parity-radial-field-batch.rank-03.log",
+      "sha256": "5101b6e7ed5df4d0bb412f52595049dbddd467d1ba98cf9b4728cdf073668831",
+      "bytes": 257
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/parity-radial-field-batch.rank-04.log",
+      "sha256": "5101b6e7ed5df4d0bb412f52595049dbddd467d1ba98cf9b4728cdf073668831",
+      "bytes": 257
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/parity-radial-field-batch.rank-05.log",
+      "sha256": "5101b6e7ed5df4d0bb412f52595049dbddd467d1ba98cf9b4728cdf073668831",
+      "bytes": 257
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/parity-radial-field-batch.rank-06.log",
+      "sha256": "5101b6e7ed5df4d0bb412f52595049dbddd467d1ba98cf9b4728cdf073668831",
+      "bytes": 257
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/parity-radial-field-batch.rank-07.log",
+      "sha256": "5101b6e7ed5df4d0bb412f52595049dbddd467d1ba98cf9b4728cdf073668831",
+      "bytes": 257
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/parity-radial-field-batch.rank-08.log",
+      "sha256": "5101b6e7ed5df4d0bb412f52595049dbddd467d1ba98cf9b4728cdf073668831",
+      "bytes": 257
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/parity-radial-field-batch.rank-09.log",
+      "sha256": "5101b6e7ed5df4d0bb412f52595049dbddd467d1ba98cf9b4728cdf073668831",
+      "bytes": 257
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/parity-radial-field-batch.rank-10.log",
+      "sha256": "5101b6e7ed5df4d0bb412f52595049dbddd467d1ba98cf9b4728cdf073668831",
+      "bytes": 257
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/parity-radial-field-batch.rank-11.log",
+      "sha256": "5101b6e7ed5df4d0bb412f52595049dbddd467d1ba98cf9b4728cdf073668831",
+      "bytes": 257
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/parity-radial-field-batch.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/minkowski-short.report.json",
+      "sha256": "b62568c266cfdc682d967e631c48585d1b1df728909b09677a09b0e8b284fd99",
+      "bytes": 10501
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/minkowski-short.history.csv",
+      "sha256": "7c6fc12c9de0d5743aa3e59bb88239aa011c75868679657a7d2685f2acef9b75",
+      "bytes": 1282
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/minkowski-short.checkpoint",
+      "sha256": "6bbad5d9f4047f9ada4194ba2a7f1decb9e7bd807608a776833b58cd34463844",
+      "bytes": 79725208
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/minkowski-short.log",
+      "sha256": "436e83b3ad0f02ecc52016abd43c572e8e94213ad5acaa57a35d4a6c8c61accc",
+      "bytes": 178
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/pulse-half.report.json",
+      "sha256": "4e9a5357af29443c667a54ebbe085a0dd7b121bb474769aaed6e3489cb711293",
+      "bytes": 10581
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/pulse-half.history.csv",
+      "sha256": "56cf3fddbacb9786c090a61f389fb217ffcc2c0ea4ff8ba69e204f38284ee887",
+      "bytes": 1374
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/pulse-half.checkpoint",
+      "sha256": "a7bdb3dddf3c102686022f683a5e3c9daec9cfbf9d8af471ef1bca8fa63127ea",
+      "bytes": 79725208
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/pulse-half.log",
+      "sha256": "572f7d3e2016767dc7962842547804333262ef7f7c683d387366a27e523c1354",
+      "bytes": 177
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/pulse-resumed.report.json",
+      "sha256": "d6921ca4e51c87f10f9fb95bc2d5b2deafd00d1bcb415c9a2f58c7df4121bcda",
+      "bytes": 10578
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/pulse-resumed.history.csv",
+      "sha256": "51c85bf858985600afb0dbbcc7bbd0b662c11c8ccfc98f5cd0c4ca5a7e277310",
+      "bytes": 1655
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/pulse-resumed.checkpoint",
+      "sha256": "3cd1336de3f233840af002ac130772c3689d8d16b6a3a9275e6c3526c346d971",
+      "bytes": 79725208
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/pulse-resumed.log",
+      "sha256": "9a2d278d03b3b3bfd2e7ffd9b5a9b8c96ff113449f360aa2312ca92134a41741",
+      "bytes": 183
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/pulse-direct.report.json",
+      "sha256": "388517a9a719a9573aadb855a8965f0e7d9f8114bd5bab276f4494fe5a6e1bed",
+      "bytes": 10485
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/pulse-direct.history.csv",
+      "sha256": "8e2422317852caff0cb31554dfeaee0f5620b278391a5f8839ce25bdd767ef3c",
+      "bytes": 1350
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/pulse-direct.checkpoint",
+      "sha256": "3cd1336de3f233840af002ac130772c3689d8d16b6a3a9275e6c3526c346d971",
+      "bytes": 79725208
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/pulse-direct.log",
+      "sha256": "0822bf0a5f8919db597990f3f5a842db817d2a0144134407ebf97760a1b34b02",
+      "bytes": 178
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/restart-audit.report.json",
+      "sha256": "bd6b7d8d32699bd132ca4cde586618351602a4662216f8a4abb81df0679d469c",
+      "bytes": 6006
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/restart-audit.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/puncture-control.report.json",
+      "sha256": "2e5e70d0327a8c772ff5223bd9bcad94afc464430da18e71c6f825b805c48516",
+      "bytes": 10550
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/puncture-control.history.csv",
+      "sha256": "a5914106840745f9ad74d32bcf3fc34e5474c78d416fd45237324efbd858d72f",
+      "bytes": 1764
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/puncture-control.checkpoint",
+      "sha256": "f63926b4db9b24f9233e3a6041646c4ffddce6a9712ab050bd06e86159479d8a",
+      "bytes": 79725208
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/puncture-control.checkpoint.horizon-seed.txt",
+      "sha256": "38aafd8ca307fc7d51663d86f29621faf0c9fb2aec7913f28d14b5500b98faf1",
+      "bytes": 90
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/puncture-control.fastflow.horizon_summary_0.txt",
+      "sha256": "a9325c142408dad2c7a038bccc23d020d6badd43c2b577063ba2172e55e895ba",
+      "bytes": 548
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/puncture-control.fastflow.horizon_shape_0.txt",
+      "sha256": "be9ef35a634d5ea2b94842a3888f57f07244a12af19b5837bf9a9632b951aab7",
+      "bytes": 4611
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/puncture-control.log",
+      "sha256": "063f6eeec34a27d6cd9195ab4ee054322447902d550543b7d08e8a40fb933900",
+      "bytes": 178
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/puncture-fast.report.json",
+      "sha256": "9ac536031763fe9abf27d22ee8e4f7f891665a6298eafdc8d306f89472e2cff0",
+      "bytes": 10572
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/puncture-fast.history.csv",
+      "sha256": "da499565944e75084da62449cae36ca99f9dfdf551783c2198443e48e76afc06",
+      "bytes": 1765
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/puncture-fast.checkpoint",
+      "sha256": "f63926b4db9b24f9233e3a6041646c4ffddce6a9712ab050bd06e86159479d8a",
+      "bytes": 79725208
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/puncture-fast.checkpoint.horizon-seed.txt",
+      "sha256": "38aafd8ca307fc7d51663d86f29621faf0c9fb2aec7913f28d14b5500b98faf1",
+      "bytes": 90
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/puncture-fast.fastflow.horizon_summary_0.txt",
+      "sha256": "a9325c142408dad2c7a038bccc23d020d6badd43c2b577063ba2172e55e895ba",
+      "bytes": 548
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/puncture-fast.fastflow.horizon_shape_0.txt",
+      "sha256": "be9ef35a634d5ea2b94842a3888f57f07244a12af19b5837bf9a9632b951aab7",
+      "bytes": 4611
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/puncture-fast.log",
+      "sha256": "e2147d160cd0e748551319c61ef49dcc1e6d2168285161e5b39ae5c8e24f2cf1",
+      "bytes": 178
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/execution-audit.report.json",
+      "sha256": "5ab3c2e9660076f15c936bca6d97470a64d2242df7dee0de4cfc55ab094c255c",
+      "bytes": 6006
+    },
+    {
+      "remote_path": "campaigns/preflight-radial-field-batch-v2/output/execution-audit.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  ],
+  "verifier_sha256": "1d6ea5645d6677921074be0fa063f44ac5c053bbc6a47c5448c146a7ea2ece7e",
+  "source_manifest_sha256": "15205ac9cec832ee6e72b04759b1209fc58e81ddcc58cd6dd7470d3eecb77b67",
+  "plan_sha256": "3a7b96723a9028d3ba9370a8e449ec2dfca3c08e29d57397430b7222618a37c7",
+  "scope": "Implementation/restart preflight only; no duration, convergence, AMR or nonspherical stability claim.",
+  "component_replay": "Frozen source-v24 parser replays hash-bound logs; checkpoint decoder is independent.",
+  "pins_sha256": "d091b2ebf6ba68152f6e4f01d25f9b65b52c86b36df50ceb28ac502bed8ac120",
+  "build": {
+    "source_commit": "146fb4b251274c4a5f90ee57b688ae63e73e510a",
+    "kokkos_pin": "6739bc623081648af9e752b616d9671527922cbf",
+    "source_manifest_sha256": "15205ac9cec832ee6e72b04759b1209fc58e81ddcc58cd6dd7470d3eecb77b67",
+    "git_blob_hashes_verified": 2654,
+    "build_receipt_sha256": "089ff8de4f4bf388d26d1f403081901ab1bc7e1bdf30b05b6744769f75b7ede8",
+    "cache_sha256": "9c673fa66e4dc247ccac4da28d32ed9f7d426389dfbd3e7e8c107533165eb4f3",
+    "binaries": {
+      "build-sycl-mpi-v24/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive_radial_batch": "ef2f14f438ed39bc5143f923f8d1141a2ceb300a82d39cd70dbf8b18b0f06803",
+      "build-sycl-mpi-v24/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_sparse_exchange": "ecd759af78370097a63a0385d5bdd27663f7dd967426c5088969c548d7f02eaf",
+      "build-sycl-mpi-v24/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_radial_batch_device": "2a73912ef4ef2c46609aab1031de8f96e82dee7fb90b288b0e4673e9be91fab1",
+      "build-sycl-mpi-v24/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_radial_field_batch": "88e65fc1f2384bb818033808e8349fa6956312960a5a05d4513edcf5b5a25a18"
+    },
+    "records": {
+      "CMakeCache.txt": "9c673fa66e4dc247ccac4da28d32ed9f7d426389dfbd3e7e8c107533165eb4f3",
+      "build-v24.sh": "bef12018cea975975d6299aea75b78715b838803252169f9b141301f2deb467b",
+      "source-v24-manifest.json": "15205ac9cec832ee6e72b04759b1209fc58e81ddcc58cd6dd7470d3eecb77b67",
+      "source-v24-non-kokkos-manifest.json": "4a84f1633d80f57844f2fc2ff62d45fa4d6da66c88ec37d94411c0a32c503809",
+      "source-v24-provenance.json": "9d4b0955835992089c9da722de0ca85250d779919d508a743d295ec4ae582630",
+      "v24/build-status.json": "089ff8de4f4bf388d26d1f403081901ab1bc7e1bdf30b05b6744769f75b7ede8",
+      "v24/build.log": "09195922ceccdfd2f5094c812c9cd6f482237f4cd9e74b4db0fc2878c508f89c",
+      "v24/compiler.txt": "6f41d08dd542e36e2f41b7b105da56d84c00bd6eb99a7c324ef8ef06635cbe26",
+      "v24/configure.log": "b6dc4036cd41200ac3aadd73664d104a9b88317ce31a00474ec62b872e060f24",
+      "v24/driver.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "v24/modules.txt": "cf3fde5892e6950a2ec013c75688552bf45cd2c81a1c7e4bdce32cb81f224156",
+      "v24/mpi-wrapper.txt": "35ee2ba9df330d781abc430dd144e1728a49ceb7215380336a8682af0ed5a88d",
+      "v24/runner.log": "49ffc1d0b96bd484714286e7edc3bd9647b05bbe938142420cf570066d87b487"
+    }
+  },
+  "frozen_control": {
+    "build-sycl-mpi-v23/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive_sparse": "c348cdc6f3f095b00264ea13c650316920c48d608e564985a01b18046e95656a",
+    "source-v23-provenance.json": "ae5119916e73f636a3e8bbbc8ba445f22156d830258e22cc9aedc3cc7112a14f",
+    "source-v23-manifest.json": "d53c69a0e13581d58e55b333b6775c29d147c84845d2834e6d02ca2694cdd4c3",
+    "build-logs/v23/build-status.json": "005d73c0151fcb25fa6ac001824a5a139734b40bb65f1a0ecd6969d2e732fc94"
+  },
+  "initial_data": {
+    "sha256": "35c1b65aeaaefac34552f9a63b279cabe839b09326adc9af1d2c767ecc29c8ca",
+    "bytes": 29181172
+  },
+  "storage_at_finish": {
+    "bytes": 3895753997,
+    "entries": 45476
+  },
+  "affinity_log_sha256": "1794caa4aad0ec265db36de6e716c46efee26896124d4752335df9466294c19a",
+  "one_node_twelve_tiles_verified": true,
+  "terminal": {
+    "job_id": "8987760.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "state": "F",
+    "exit_status": 0,
+    "allocation_released": true
+  },
+  "epsilon2_restart": {
+    "passed": true,
+    "whole_file_equal": true,
+    "four_arrays_equal": true,
+    "core_header_equal": true,
+    "arrays": [
+      {
+        "name": "volume_state",
+        "doubles": 4935200,
+        "sha256": "bb5c4ce993402091c6f3e8dc177b7d692b69e1fca4ef7b36597cc056898b1e26"
+      },
+      {
+        "name": "volume_compensation",
+        "doubles": 4935200,
+        "sha256": "f85511bb96e52d5d233324c74d143e474212d333e1e6e97670c87bd109a6f51f"
+      },
+      {
+        "name": "scri_state",
+        "doubles": 47616,
+        "sha256": "25d59d359ed8888f814f56484602e1182426a18d09664c15eab6cfb46c9b5c5a"
+      },
+      {
+        "name": "scri_compensation",
+        "doubles": 47616,
+        "sha256": "b0ebf04721fa1341150a6450e38be986049a44abc6d8ae7f115456a540cadfc9"
+      }
+    ],
+    "streaming_byte_equality": true
+  },
+  "execution_equivalence": {
+    "passed": true,
+    "whole_file_equal": true,
+    "four_arrays_equal": true,
+    "core_header_equal": true,
+    "arrays": [
+      {
+        "name": "volume_state",
+        "doubles": 4935200,
+        "sha256": "43658fc5bfa49e1b44112d7fedd0f4d93085a25679dbac3aaf5db2b2be28a007"
+      },
+      {
+        "name": "volume_compensation",
+        "doubles": 4935200,
+        "sha256": "23893c6c0a7c6762a747a0421e7b6f96018d4a6829a3ab4baa917bff53189994"
+      },
+      {
+        "name": "scri_state",
+        "doubles": 47616,
+        "sha256": "55d35f312e4fa4cd3d71a66bc7ac95ab6f05694db7da8c57f0c8f3a229dfbccb"
+      },
+      {
+        "name": "scri_compensation",
+        "doubles": 47616,
+        "sha256": "4c51b024fe21f2eef459a6770ef6ee0d01e10516496b4caea12301e4a162d6c7"
+      }
+    ],
+    "streaming_byte_equality": true
+  },
+  "metadata_sha256": {
+    "plan.json": "3a7b96723a9028d3ba9370a8e449ec2dfca3c08e29d57397430b7222618a37c7",
+    "binding.json": "2dc70bdc537fbf58c732dfc0826186a53235bc91397aa0757eb3310023fa8386",
+    "worker-status.json": "3a330efb8371f078bea63398cc9681a8a540e54cdcb93e0d192c03b86e017551",
+    "run_debug.pbs": "ce2387fc093f0fb64b8648276727e2e8577b103ed2652748c5b847be25adb568",
+    "submission.json": "06553b3e979421c6656c70d0fe6bf72ec6cd93a9576627c4d2f65cbf6bd02f78",
+    "collected.json": "14a54610b73c363e9e22c7ac605f8910e81c78ec8790a01afc44ed88d463be9c",
+    "allocation-released.json": "d316f8970d3dc5e1fa52f2dcb565ce06351e63fc98b88c32bd2b850519a8e957"
+  },
+  "checks_recomputed": 419,
+  "artifacts_verified": 63,
+  "verified_preflight_configurations": [
+    {
+      "checkpoint_schema": "HYP3D_MPI_V11",
+      "checkpoint_header_bytes": 152,
+      "scri_dissipation_epsilon": 2.0,
+      "scri_dissipation_degree": 7,
+      "scri_normal_derivative": "sampled_native_numerator7",
+      "scri_normal_radial_nodes": 7,
+      "scri_normal_bulk_derivative_order": 4,
+      "scri_radial_closure": "donor_seven_last3",
+      "scri_radial_bulk_rows": 3,
+      "interpatch_interpolation": "logical_inner_transition",
+      "evolved_overlap": 3,
+      "mesh_topology": "cartesian_2x2x2_shells3",
+      "cartesian_core_subdivisions": 2,
+      "mesh_blocks": 26,
+      "shell_geometry": "spherical_equiangular",
+      "core_half_width": 0.18,
+      "shell_inner_radius": 0.16,
+      "overlap_quadrature": "radial_quintic_partition",
+      "cartesian_seams": "uniform_global_stencil",
+      "positive_variables": "log_chi_log_lapse_rk_and_ko",
+      "physical_lapse_floor": 1e-10
+    }
+  ]
+}

@@ -1,0 +1,386 @@
+{
+  "status": "completed",
+  "mode": "component",
+  "mpi_size": 12,
+  "backend": "SYCL",
+  "placement_passed": true,
+  "ranks": [
+    {
+      "rank": 0,
+      "host": "x4311c0s0b0n0",
+      "mask": "0.0",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 2.337073008995503,
+        "log": "campaigns/preflight-radial-field-batch-v2/output/parity-radial-field-batch.rank-00.log",
+        "log_sha256": "5101b6e7ed5df4d0bb412f52595049dbddd467d1ba98cf9b4728cdf073668831",
+        "binary": "build-sycl-mpi-v24/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_radial_field_batch",
+        "binary_sha256": "88e65fc1f2384bb818033808e8349fa6956312960a5a05d4513edcf5b5a25a18",
+        "cache_sha256": "9c673fa66e4dc247ccac4da28d32ed9f7d426389dfbd3e7e8c107533165eb4f3",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "radial_field_batch_checks": {
+          "passed": true,
+          "backend": "SYCL",
+          "max_scaled_error": 0,
+          "tested_field_rows": 110019,
+          "stage_refreshes_per_plan": 3,
+          "exact_direct_equality": true,
+          "simulated_partitions": 12,
+          "sparse_and_empty_ownership": true,
+          "radial_ghost_poison": true,
+          "invalid_inputs_rejected": true
+        }
+      }
+    },
+    {
+      "rank": 1,
+      "host": "x4311c0s0b0n0",
+      "mask": "0.1",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 2.334015074186027,
+        "log": "campaigns/preflight-radial-field-batch-v2/output/parity-radial-field-batch.rank-01.log",
+        "log_sha256": "5101b6e7ed5df4d0bb412f52595049dbddd467d1ba98cf9b4728cdf073668831",
+        "binary": "build-sycl-mpi-v24/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_radial_field_batch",
+        "binary_sha256": "88e65fc1f2384bb818033808e8349fa6956312960a5a05d4513edcf5b5a25a18",
+        "cache_sha256": "9c673fa66e4dc247ccac4da28d32ed9f7d426389dfbd3e7e8c107533165eb4f3",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "radial_field_batch_checks": {
+          "passed": true,
+          "backend": "SYCL",
+          "max_scaled_error": 0,
+          "tested_field_rows": 110019,
+          "stage_refreshes_per_plan": 3,
+          "exact_direct_equality": true,
+          "simulated_partitions": 12,
+          "sparse_and_empty_ownership": true,
+          "radial_ghost_poison": true,
+          "invalid_inputs_rejected": true
+        }
+      }
+    },
+    {
+      "rank": 2,
+      "host": "x4311c0s0b0n0",
+      "mask": "1.0",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 2.378436273895204,
+        "log": "campaigns/preflight-radial-field-batch-v2/output/parity-radial-field-batch.rank-02.log",
+        "log_sha256": "5101b6e7ed5df4d0bb412f52595049dbddd467d1ba98cf9b4728cdf073668831",
+        "binary": "build-sycl-mpi-v24/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_radial_field_batch",
+        "binary_sha256": "88e65fc1f2384bb818033808e8349fa6956312960a5a05d4513edcf5b5a25a18",
+        "cache_sha256": "9c673fa66e4dc247ccac4da28d32ed9f7d426389dfbd3e7e8c107533165eb4f3",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "radial_field_batch_checks": {
+          "passed": true,
+          "backend": "SYCL",
+          "max_scaled_error": 0,
+          "tested_field_rows": 110019,
+          "stage_refreshes_per_plan": 3,
+          "exact_direct_equality": true,
+          "simulated_partitions": 12,
+          "sparse_and_empty_ownership": true,
+          "radial_ghost_poison": true,
+          "invalid_inputs_rejected": true
+        }
+      }
+    },
+    {
+      "rank": 3,
+      "host": "x4311c0s0b0n0",
+      "mask": "1.1",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 2.386828796006739,
+        "log": "campaigns/preflight-radial-field-batch-v2/output/parity-radial-field-batch.rank-03.log",
+        "log_sha256": "5101b6e7ed5df4d0bb412f52595049dbddd467d1ba98cf9b4728cdf073668831",
+        "binary": "build-sycl-mpi-v24/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_radial_field_batch",
+        "binary_sha256": "88e65fc1f2384bb818033808e8349fa6956312960a5a05d4513edcf5b5a25a18",
+        "cache_sha256": "9c673fa66e4dc247ccac4da28d32ed9f7d426389dfbd3e7e8c107533165eb4f3",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "radial_field_batch_checks": {
+          "passed": true,
+          "backend": "SYCL",
+          "max_scaled_error": 0,
+          "tested_field_rows": 110019,
+          "stage_refreshes_per_plan": 3,
+          "exact_direct_equality": true,
+          "simulated_partitions": 12,
+          "sparse_and_empty_ownership": true,
+          "radial_ghost_poison": true,
+          "invalid_inputs_rejected": true
+        }
+      }
+    },
+    {
+      "rank": 4,
+      "host": "x4311c0s0b0n0",
+      "mask": "2.0",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 2.3267231099307537,
+        "log": "campaigns/preflight-radial-field-batch-v2/output/parity-radial-field-batch.rank-04.log",
+        "log_sha256": "5101b6e7ed5df4d0bb412f52595049dbddd467d1ba98cf9b4728cdf073668831",
+        "binary": "build-sycl-mpi-v24/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_radial_field_batch",
+        "binary_sha256": "88e65fc1f2384bb818033808e8349fa6956312960a5a05d4513edcf5b5a25a18",
+        "cache_sha256": "9c673fa66e4dc247ccac4da28d32ed9f7d426389dfbd3e7e8c107533165eb4f3",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "radial_field_batch_checks": {
+          "passed": true,
+          "backend": "SYCL",
+          "max_scaled_error": 0,
+          "tested_field_rows": 110019,
+          "stage_refreshes_per_plan": 3,
+          "exact_direct_equality": true,
+          "simulated_partitions": 12,
+          "sparse_and_empty_ownership": true,
+          "radial_ghost_poison": true,
+          "invalid_inputs_rejected": true
+        }
+      }
+    },
+    {
+      "rank": 5,
+      "host": "x4311c0s0b0n0",
+      "mask": "2.1",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 2.335119462106377,
+        "log": "campaigns/preflight-radial-field-batch-v2/output/parity-radial-field-batch.rank-05.log",
+        "log_sha256": "5101b6e7ed5df4d0bb412f52595049dbddd467d1ba98cf9b4728cdf073668831",
+        "binary": "build-sycl-mpi-v24/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_radial_field_batch",
+        "binary_sha256": "88e65fc1f2384bb818033808e8349fa6956312960a5a05d4513edcf5b5a25a18",
+        "cache_sha256": "9c673fa66e4dc247ccac4da28d32ed9f7d426389dfbd3e7e8c107533165eb4f3",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "radial_field_batch_checks": {
+          "passed": true,
+          "backend": "SYCL",
+          "max_scaled_error": 0,
+          "tested_field_rows": 110019,
+          "stage_refreshes_per_plan": 3,
+          "exact_direct_equality": true,
+          "simulated_partitions": 12,
+          "sparse_and_empty_ownership": true,
+          "radial_ghost_poison": true,
+          "invalid_inputs_rejected": true
+        }
+      }
+    },
+    {
+      "rank": 6,
+      "host": "x4311c0s0b0n0",
+      "mask": "3.0",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 2.3293490319047123,
+        "log": "campaigns/preflight-radial-field-batch-v2/output/parity-radial-field-batch.rank-06.log",
+        "log_sha256": "5101b6e7ed5df4d0bb412f52595049dbddd467d1ba98cf9b4728cdf073668831",
+        "binary": "build-sycl-mpi-v24/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_radial_field_batch",
+        "binary_sha256": "88e65fc1f2384bb818033808e8349fa6956312960a5a05d4513edcf5b5a25a18",
+        "cache_sha256": "9c673fa66e4dc247ccac4da28d32ed9f7d426389dfbd3e7e8c107533165eb4f3",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "radial_field_batch_checks": {
+          "passed": true,
+          "backend": "SYCL",
+          "max_scaled_error": 0,
+          "tested_field_rows": 110019,
+          "stage_refreshes_per_plan": 3,
+          "exact_direct_equality": true,
+          "simulated_partitions": 12,
+          "sparse_and_empty_ownership": true,
+          "radial_ghost_poison": true,
+          "invalid_inputs_rejected": true
+        }
+      }
+    },
+    {
+      "rank": 7,
+      "host": "x4311c0s0b0n0",
+      "mask": "3.1",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 2.327314493013546,
+        "log": "campaigns/preflight-radial-field-batch-v2/output/parity-radial-field-batch.rank-07.log",
+        "log_sha256": "5101b6e7ed5df4d0bb412f52595049dbddd467d1ba98cf9b4728cdf073668831",
+        "binary": "build-sycl-mpi-v24/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_radial_field_batch",
+        "binary_sha256": "88e65fc1f2384bb818033808e8349fa6956312960a5a05d4513edcf5b5a25a18",
+        "cache_sha256": "9c673fa66e4dc247ccac4da28d32ed9f7d426389dfbd3e7e8c107533165eb4f3",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "radial_field_batch_checks": {
+          "passed": true,
+          "backend": "SYCL",
+          "max_scaled_error": 0,
+          "tested_field_rows": 110019,
+          "stage_refreshes_per_plan": 3,
+          "exact_direct_equality": true,
+          "simulated_partitions": 12,
+          "sparse_and_empty_ownership": true,
+          "radial_ghost_poison": true,
+          "invalid_inputs_rejected": true
+        }
+      }
+    },
+    {
+      "rank": 8,
+      "host": "x4311c0s0b0n0",
+      "mask": "4.0",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 2.381408754037693,
+        "log": "campaigns/preflight-radial-field-batch-v2/output/parity-radial-field-batch.rank-08.log",
+        "log_sha256": "5101b6e7ed5df4d0bb412f52595049dbddd467d1ba98cf9b4728cdf073668831",
+        "binary": "build-sycl-mpi-v24/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_radial_field_batch",
+        "binary_sha256": "88e65fc1f2384bb818033808e8349fa6956312960a5a05d4513edcf5b5a25a18",
+        "cache_sha256": "9c673fa66e4dc247ccac4da28d32ed9f7d426389dfbd3e7e8c107533165eb4f3",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "radial_field_batch_checks": {
+          "passed": true,
+          "backend": "SYCL",
+          "max_scaled_error": 0,
+          "tested_field_rows": 110019,
+          "stage_refreshes_per_plan": 3,
+          "exact_direct_equality": true,
+          "simulated_partitions": 12,
+          "sparse_and_empty_ownership": true,
+          "radial_ghost_poison": true,
+          "invalid_inputs_rejected": true
+        }
+      }
+    },
+    {
+      "rank": 9,
+      "host": "x4311c0s0b0n0",
+      "mask": "4.1",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 2.3392474132124335,
+        "log": "campaigns/preflight-radial-field-batch-v2/output/parity-radial-field-batch.rank-09.log",
+        "log_sha256": "5101b6e7ed5df4d0bb412f52595049dbddd467d1ba98cf9b4728cdf073668831",
+        "binary": "build-sycl-mpi-v24/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_radial_field_batch",
+        "binary_sha256": "88e65fc1f2384bb818033808e8349fa6956312960a5a05d4513edcf5b5a25a18",
+        "cache_sha256": "9c673fa66e4dc247ccac4da28d32ed9f7d426389dfbd3e7e8c107533165eb4f3",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "radial_field_batch_checks": {
+          "passed": true,
+          "backend": "SYCL",
+          "max_scaled_error": 0,
+          "tested_field_rows": 110019,
+          "stage_refreshes_per_plan": 3,
+          "exact_direct_equality": true,
+          "simulated_partitions": 12,
+          "sparse_and_empty_ownership": true,
+          "radial_ghost_poison": true,
+          "invalid_inputs_rejected": true
+        }
+      }
+    },
+    {
+      "rank": 10,
+      "host": "x4311c0s0b0n0",
+      "mask": "5.0",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 2.3320934348739684,
+        "log": "campaigns/preflight-radial-field-batch-v2/output/parity-radial-field-batch.rank-10.log",
+        "log_sha256": "5101b6e7ed5df4d0bb412f52595049dbddd467d1ba98cf9b4728cdf073668831",
+        "binary": "build-sycl-mpi-v24/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_radial_field_batch",
+        "binary_sha256": "88e65fc1f2384bb818033808e8349fa6956312960a5a05d4513edcf5b5a25a18",
+        "cache_sha256": "9c673fa66e4dc247ccac4da28d32ed9f7d426389dfbd3e7e8c107533165eb4f3",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "radial_field_batch_checks": {
+          "passed": true,
+          "backend": "SYCL",
+          "max_scaled_error": 0,
+          "tested_field_rows": 110019,
+          "stage_refreshes_per_plan": 3,
+          "exact_direct_equality": true,
+          "simulated_partitions": 12,
+          "sparse_and_empty_ownership": true,
+          "radial_ghost_poison": true,
+          "invalid_inputs_rejected": true
+        }
+      }
+    },
+    {
+      "rank": 11,
+      "host": "x4311c0s0b0n0",
+      "mask": "5.1",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "returncode": 0,
+        "seconds": 2.3790573589503765,
+        "log": "campaigns/preflight-radial-field-batch-v2/output/parity-radial-field-batch.rank-11.log",
+        "log_sha256": "5101b6e7ed5df4d0bb412f52595049dbddd467d1ba98cf9b4728cdf073668831",
+        "binary": "build-sycl-mpi-v24/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_radial_field_batch",
+        "binary_sha256": "88e65fc1f2384bb818033808e8349fa6956312960a5a05d4513edcf5b5a25a18",
+        "cache_sha256": "9c673fa66e4dc247ccac4da28d32ed9f7d426389dfbd3e7e8c107533165eb4f3",
+        "binary_args": [],
+        "passed": true,
+        "gpu_cpu_parity": true,
+        "backend": "SYCL",
+        "radial_field_batch_checks": {
+          "passed": true,
+          "backend": "SYCL",
+          "max_scaled_error": 0,
+          "tested_field_rows": 110019,
+          "stage_refreshes_per_plan": 3,
+          "exact_direct_equality": true,
+          "simulated_partitions": 12,
+          "sparse_and_empty_ownership": true,
+          "radial_ghost_poison": true,
+          "invalid_inputs_rejected": true
+        }
+      }
+    }
+  ],
+  "source_manifest_sha256": "15205ac9cec832ee6e72b04759b1209fc58e81ddcc58cd6dd7470d3eecb77b67",
+  "plan_sha256": "3a7b96723a9028d3ba9370a8e449ec2dfca3c08e29d57397430b7222618a37c7",
+  "gpu_cpu_parity": true,
+  "component": "radial_field_batch",
+  "maxima": {}
+}

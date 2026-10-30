@@ -77,8 +77,8 @@ interpolation overhead, or imply the full performance goal is finished.
 
 The next execution experiment is [field-batched direct radial derivatives](../radial-field-batch-v1/README.md),
 which changes GPU work organization for both bulk and sampled-normal paths while
-retaining the same stencil summation. It passed local fidelity checks but has no
-GPU speed result yet. Asynchronous stage exchange remains deferred: the residual
+retaining the same stencil summation. It subsequently passed GPU qualification in job 8987760 and reduced per-step
+time by 1.921x against the profiled sparse control; see the linked comparison. Asynchronous stage exchange remains deferred: the residual
 sparse volume MPI cost is much smaller than the measured radial-path cost, and
 introducing asynchronous dependencies/failure cleanup is not justified as the
 first optimization from this profile. Coherent all-operator mesh-change rebuild
