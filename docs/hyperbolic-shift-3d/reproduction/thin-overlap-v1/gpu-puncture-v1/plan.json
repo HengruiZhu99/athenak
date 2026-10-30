@@ -1,0 +1,993 @@
+{
+  "schema": 1,
+  "reviewed": true,
+  "phase": "preflight",
+  "n": 16,
+  "low_resolution_n": 16,
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "00:30:00"
+  },
+  "storage": {
+    "limit_bytes": 5000000000,
+    "planned_new_bytes": 160000000,
+    "atomic_checkpoint_reserve_bytes": 100000000
+  },
+  "worker_seconds": 1710,
+  "output_dir": "campaigns/preflight-thin-puncture-v1/output",
+  "commands": [
+    {
+      "name": "puncture-full",
+      "kind": "puncture",
+      "executable": "build-sycl-mpi-thin-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_thin_trace",
+      "args": [
+        "16",
+        "campaigns/preflight-thin-puncture-v1/output/puncture-full",
+        "puncture",
+        "0.05",
+        "0.0005",
+        "inputs/puncture-thin-n16-l1.txt",
+        "-",
+        "@WALL_SECONDS@",
+        "0.05",
+        ".001",
+        "12",
+        "24",
+        "2"
+      ],
+      "environment": {
+        "HYPERBOLIC_TRACE_LAYERS": "1",
+        "HYPERBOLIC_TRACE_SHIFTED": "1",
+        "HYPERBOLIC_TRACE_KAPPA": "1",
+        "HYPERBOLIC_TRACE_NORMAL_RATIO": ".25"
+      },
+      "timeout_seconds": 360,
+      "report": "campaigns/preflight-thin-puncture-v1/output/puncture-full.report.json",
+      "artifacts": [
+        "campaigns/preflight-thin-puncture-v1/output/puncture-full.history.csv",
+        "campaigns/preflight-thin-puncture-v1/output/puncture-full.checkpoint",
+        "campaigns/preflight-thin-puncture-v1/output/puncture-full.report.json",
+        "campaigns/preflight-thin-puncture-v1/output/puncture-full.failed-stage.bin",
+        "campaigns/preflight-thin-puncture-v1/output/puncture-full.log"
+      ],
+      "inputs": [
+        "inputs/puncture-thin-n16-l1.txt"
+      ],
+      "generated_inputs": [],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "checkpoint_schema"
+          ],
+          "op": "eq",
+          "value": "HYP3D_MPI_V12"
+        },
+        {
+          "path": [
+            "scri_dissipation_epsilon"
+          ],
+          "op": "eq",
+          "value": 2.0
+        },
+        {
+          "path": [
+            "scri_dissipation_degree"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "checkpoint_header_bytes"
+          ],
+          "op": "eq",
+          "value": 184
+        },
+        {
+          "path": [
+            "scri_normal_derivative"
+          ],
+          "op": "eq",
+          "value": "sampled_native_numerator7"
+        },
+        {
+          "path": [
+            "scri_normal_radial_nodes"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "scri_normal_bulk_derivative_order"
+          ],
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "path": [
+            "scri_radial_closure"
+          ],
+          "op": "eq",
+          "value": "donor_seven_last3"
+        },
+        {
+          "path": [
+            "scri_radial_bulk_rows"
+          ],
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "path": [
+            "interpatch_interpolation"
+          ],
+          "op": "eq",
+          "value": "logical_inner_transition"
+        },
+        {
+          "path": [
+            "evolved_overlap"
+          ],
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "path": [
+            "nominal_cells"
+          ],
+          "op": "eq",
+          "value": 106496
+        },
+        {
+          "path": [
+            "mesh_topology"
+          ],
+          "op": "eq",
+          "value": "cartesian_2x2x2_shells3"
+        },
+        {
+          "path": [
+            "cartesian_core_subdivisions"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "mesh_blocks"
+          ],
+          "op": "eq",
+          "value": 26
+        },
+        {
+          "path": [
+            "shell_geometry"
+          ],
+          "op": "eq",
+          "value": "spherical_equiangular"
+        },
+        {
+          "path": [
+            "core_half_width"
+          ],
+          "op": "eq",
+          "value": 0.18
+        },
+        {
+          "path": [
+            "shell_inner_radius"
+          ],
+          "op": "eq",
+          "value": 0.16
+        },
+        {
+          "path": [
+            "overlap_quadrature"
+          ],
+          "op": "eq",
+          "value": "radial_quintic_partition"
+        },
+        {
+          "path": [
+            "cartesian_seams"
+          ],
+          "op": "eq",
+          "value": "uniform_global_stencil"
+        },
+        {
+          "path": [
+            "positive_variables"
+          ],
+          "op": "eq",
+          "value": "log_chi_log_lapse_rk_and_ko"
+        },
+        {
+          "path": [
+            "physical_lapse_floor"
+          ],
+          "op": "eq",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "boundary_execution"
+          ],
+          "op": "eq",
+          "value": "cached_global_projection_angular"
+        },
+        {
+          "path": [
+            "interface_method"
+          ],
+          "op": "eq",
+          "value": "experimental_ghost_plus_adjoint_trace_penalty"
+        },
+        {
+          "path": [
+            "core_evolved_layers"
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "shifted_overlap_donors"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "trace_kappa"
+          ],
+          "op": "eq",
+          "value": 1.0
+        },
+        {
+          "path": [
+            "trace_normal_ratio"
+          ],
+          "op": "eq",
+          "value": 0.25
+        },
+        {
+          "path": [
+            "t"
+          ],
+          "op": "eq",
+          "value": 0.05
+        },
+        {
+          "path": [
+            "diagnostics_current"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_cfl"
+          ],
+          "op": "le",
+          "value": 0.5
+        },
+        {
+          "path": [
+            "min_chi"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "min_lapse"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "lapse_floor_node_interventions"
+          ],
+          "op": "eq",
+          "value": 0
+        },
+        {
+          "path": [
+            "max_determinant_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_tracefree_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "cells"
+          ],
+          "op": "eq",
+          "value": 143632
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "horizon_found"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "horizon_expansion_rms"
+          ],
+          "op": "le",
+          "value": 0.001
+        },
+        {
+          "path": [
+            "H_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "Mr_exterior_L2"
+          ],
+          "op": "finite"
+        }
+      ]
+    },
+    {
+      "name": "puncture-sparse",
+      "kind": "puncture",
+      "executable": "build-sycl-mpi-thin-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_thin_trace_sparse",
+      "args": [
+        "16",
+        "campaigns/preflight-thin-puncture-v1/output/puncture-sparse",
+        "puncture",
+        "0.05",
+        "0.0005",
+        "inputs/puncture-thin-n16-l1.txt",
+        "-",
+        "@WALL_SECONDS@",
+        "0.05",
+        ".001",
+        "12",
+        "24",
+        "2"
+      ],
+      "environment": {
+        "HYPERBOLIC_TRACE_LAYERS": "1",
+        "HYPERBOLIC_TRACE_SHIFTED": "1",
+        "HYPERBOLIC_TRACE_KAPPA": "1",
+        "HYPERBOLIC_TRACE_NORMAL_RATIO": ".25",
+        "HYPERBOLIC_SPARSE_POISON": "1"
+      },
+      "timeout_seconds": 360,
+      "report": "campaigns/preflight-thin-puncture-v1/output/puncture-sparse.report.json",
+      "artifacts": [
+        "campaigns/preflight-thin-puncture-v1/output/puncture-sparse.history.csv",
+        "campaigns/preflight-thin-puncture-v1/output/puncture-sparse.checkpoint",
+        "campaigns/preflight-thin-puncture-v1/output/puncture-sparse.report.json",
+        "campaigns/preflight-thin-puncture-v1/output/puncture-sparse.failed-stage.bin",
+        "campaigns/preflight-thin-puncture-v1/output/puncture-sparse.log"
+      ],
+      "inputs": [
+        "inputs/puncture-thin-n16-l1.txt"
+      ],
+      "generated_inputs": [],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "checkpoint_schema"
+          ],
+          "op": "eq",
+          "value": "HYP3D_MPI_V12"
+        },
+        {
+          "path": [
+            "scri_dissipation_epsilon"
+          ],
+          "op": "eq",
+          "value": 2.0
+        },
+        {
+          "path": [
+            "scri_dissipation_degree"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "checkpoint_header_bytes"
+          ],
+          "op": "eq",
+          "value": 184
+        },
+        {
+          "path": [
+            "scri_normal_derivative"
+          ],
+          "op": "eq",
+          "value": "sampled_native_numerator7"
+        },
+        {
+          "path": [
+            "scri_normal_radial_nodes"
+          ],
+          "op": "eq",
+          "value": 7
+        },
+        {
+          "path": [
+            "scri_normal_bulk_derivative_order"
+          ],
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "path": [
+            "scri_radial_closure"
+          ],
+          "op": "eq",
+          "value": "donor_seven_last3"
+        },
+        {
+          "path": [
+            "scri_radial_bulk_rows"
+          ],
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "path": [
+            "interpatch_interpolation"
+          ],
+          "op": "eq",
+          "value": "logical_inner_transition"
+        },
+        {
+          "path": [
+            "evolved_overlap"
+          ],
+          "op": "eq",
+          "value": 3
+        },
+        {
+          "path": [
+            "nominal_cells"
+          ],
+          "op": "eq",
+          "value": 106496
+        },
+        {
+          "path": [
+            "mesh_topology"
+          ],
+          "op": "eq",
+          "value": "cartesian_2x2x2_shells3"
+        },
+        {
+          "path": [
+            "cartesian_core_subdivisions"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "mesh_blocks"
+          ],
+          "op": "eq",
+          "value": 26
+        },
+        {
+          "path": [
+            "shell_geometry"
+          ],
+          "op": "eq",
+          "value": "spherical_equiangular"
+        },
+        {
+          "path": [
+            "core_half_width"
+          ],
+          "op": "eq",
+          "value": 0.18
+        },
+        {
+          "path": [
+            "shell_inner_radius"
+          ],
+          "op": "eq",
+          "value": 0.16
+        },
+        {
+          "path": [
+            "overlap_quadrature"
+          ],
+          "op": "eq",
+          "value": "radial_quintic_partition"
+        },
+        {
+          "path": [
+            "cartesian_seams"
+          ],
+          "op": "eq",
+          "value": "uniform_global_stencil"
+        },
+        {
+          "path": [
+            "positive_variables"
+          ],
+          "op": "eq",
+          "value": "log_chi_log_lapse_rk_and_ko"
+        },
+        {
+          "path": [
+            "physical_lapse_floor"
+          ],
+          "op": "eq",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "boundary_execution"
+          ],
+          "op": "eq",
+          "value": "cached_global_projection_angular"
+        },
+        {
+          "path": [
+            "volume_exchange"
+          ],
+          "op": "eq",
+          "value": "cached_sparse_alltoallv"
+        },
+        {
+          "path": [
+            "interface_method"
+          ],
+          "op": "eq",
+          "value": "experimental_ghost_plus_adjoint_trace_penalty"
+        },
+        {
+          "path": [
+            "core_evolved_layers"
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "shifted_overlap_donors"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "trace_kappa"
+          ],
+          "op": "eq",
+          "value": 1.0
+        },
+        {
+          "path": [
+            "trace_normal_ratio"
+          ],
+          "op": "eq",
+          "value": 0.25
+        },
+        {
+          "path": [
+            "t"
+          ],
+          "op": "eq",
+          "value": 0.05
+        },
+        {
+          "path": [
+            "diagnostics_current"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_cfl"
+          ],
+          "op": "le",
+          "value": 0.5
+        },
+        {
+          "path": [
+            "min_chi"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "min_lapse"
+          ],
+          "op": "ge",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "lapse_floor_node_interventions"
+          ],
+          "op": "eq",
+          "value": 0
+        },
+        {
+          "path": [
+            "max_determinant_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "max_tracefree_residual"
+          ],
+          "op": "le",
+          "value": 1e-12
+        },
+        {
+          "path": [
+            "cells"
+          ],
+          "op": "eq",
+          "value": 143632
+        },
+        {
+          "path": [
+            "H_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "M_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "sparse_poison_unused"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            0,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            1,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            2,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            3,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            4,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            5,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            6,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            7,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            8,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            9,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            10,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "sparse_exchange_by_rank",
+            11,
+            6
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "horizon_found"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "horizon_expansion_rms"
+          ],
+          "op": "le",
+          "value": 0.001
+        },
+        {
+          "path": [
+            "H_exterior_L2"
+          ],
+          "op": "finite"
+        },
+        {
+          "path": [
+            "Mr_exterior_L2"
+          ],
+          "op": "finite"
+        }
+      ]
+    },
+    {
+      "name": "puncture-equivalence",
+      "kind": "check",
+      "executable": "source-thin-v1/tst/hyperbolic_shift_3d/aurora/preflight.py",
+      "args": [
+        "--root",
+        "/home/hzhu/hyperbolic-core-shell-20261028",
+        "--plan",
+        "campaigns/preflight-thin-puncture-v1/plan.json",
+        "--output-prefix",
+        "campaigns/preflight-thin-puncture-v1/output/puncture-equivalence",
+        "--seconds",
+        "@WALL_SECONDS@",
+        "restart",
+        "--reference",
+        "campaigns/preflight-thin-puncture-v1/output/puncture-full.checkpoint",
+        "--candidate",
+        "campaigns/preflight-thin-puncture-v1/output/puncture-sparse.checkpoint",
+        "--reference-report",
+        "campaigns/preflight-thin-puncture-v1/output/puncture-full.report.json",
+        "--candidate-report",
+        "campaigns/preflight-thin-puncture-v1/output/puncture-sparse.report.json"
+      ],
+      "timeout_seconds": 120,
+      "report": "campaigns/preflight-thin-puncture-v1/output/puncture-equivalence.report.json",
+      "inputs": [],
+      "generated_inputs": [
+        "campaigns/preflight-thin-puncture-v1/output/puncture-full.checkpoint",
+        "campaigns/preflight-thin-puncture-v1/output/puncture-sparse.checkpoint",
+        "campaigns/preflight-thin-puncture-v1/output/puncture-full.report.json",
+        "campaigns/preflight-thin-puncture-v1/output/puncture-sparse.report.json"
+      ],
+      "artifacts": [
+        "campaigns/preflight-thin-puncture-v1/output/puncture-equivalence.report.json",
+        "campaigns/preflight-thin-puncture-v1/output/puncture-equivalence.log"
+      ],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "restart_equivalence"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "bitwise_payload_equal"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "header",
+            "magic"
+          ],
+          "op": "eq",
+          "value": "HYP3D_MPI_V12"
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Complete the previously unexecuted same-clock full/sparse puncture pair: 100 steps to coordinate 0.05 (0.15M), followed by exact comparison.",
+    "Two new checkpoints total 144007024 bytes; 160MB output budget plus 100MB atomic reserve. This is short preflight, not 3M stability."
+  ]
+}

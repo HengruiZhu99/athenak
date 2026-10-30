@@ -1,0 +1,26 @@
+{
+  "inputs": {
+    "output/thin-overlap-v1/aurora-staging/collected/campaigns/preflight-thin-puncture-v1/output/puncture-sparse.checkpoint": "a9875b77f3c2971b2851540e1ce7217aef1f891132d90f3e48ac183e3f965a64",
+    "output/thin-overlap-v1/gpu-puncture-015m.profiles.csv": "e91ceec93f030bc0ee7426f20b93bd518586979085c66dc1288a3b114303f53a",
+    "build-thin-overlap/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_thin_snapshot_profile": "12ce3c9db429505de4f979ddffe7f3a8dc7cf6255ef48edd64f89d93140acbe0"
+  },
+  "extraction_command": [
+    "build-thin-overlap/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_thin_snapshot_profile",
+    "output/thin-overlap-v1/aurora-staging/collected/campaigns/preflight-thin-puncture-v1/output/puncture-sparse.checkpoint",
+    "output/thin-overlap-v1/gpu-puncture-015m.profiles.csv"
+  ],
+  "comparison_command": [
+    "python3",
+    "docs/hyperbolic-shift-3d/reproduction/thin-overlap-v1/compare_profiles.py",
+    "--profile",
+    "output/thin-overlap-v1/gpu-puncture-015m.profiles.csv",
+    "--evolution-report",
+    "output/thin-overlap-v1/aurora-staging/collected/campaigns/preflight-thin-puncture-v1/output/puncture-sparse.report.json",
+    "--reference",
+    "output/thin-overlap-v1/baseline-1d-n513-to015m/final.csv",
+    "--reference-report",
+    "output/thin-overlap-v1/baseline-1d-n513-to015m/report.json",
+    "--out",
+    "output/thin-overlap-v1/gpu-puncture-profile-comparison"
+  ]
+}

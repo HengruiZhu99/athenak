@@ -1,0 +1,38 @@
+{
+  "time": 0.049999999999999246,
+  "time_over_M": 0.14999999999999775,
+  "rows": 1462,
+  "inputs": {
+    "output/thin-overlap-v1/gpu-puncture-015m.profiles.csv": "e91ceec93f030bc0ee7426f20b93bd518586979085c66dc1288a3b114303f53a",
+    "output/thin-overlap-v1/aurora-staging/collected/campaigns/preflight-thin-puncture-v1/output/puncture-sparse.report.json": "ad39443bfaac2293b477dfe264af0c692d811a5958cf12c9fb65c93160803dab",
+    "output/thin-overlap-v1/baseline-1d-n513-to015m/final.csv": "d16ae98f3e153904ca3966cd777701e90e3648b91c30e49905eb8e356e5e28a2",
+    "output/thin-overlap-v1/baseline-1d-n513-to015m/report.json": "d03558b1ed3fefa65b93c590523c2d63e50ad75868ef93ea46465d7672f43377"
+  },
+  "resolutions": {
+    "n_3d": 16,
+    "n_1d": 513,
+    "dt_3d": 0.0005,
+    "dt_1d": 4.8828125e-05,
+    "core_layers": 1,
+    "trace_kappa": 1
+  },
+  "max_abs_difference_by_domain": {
+    "0": {
+      "chi": 6.385967508003472e-05,
+      "alpha": 0.0001801053994133356,
+      "beta_r": 9.309170533808309e-06,
+      "g_rr": 8.186184460967638e-06,
+      "A_rr": 0.0009416215185061236,
+      "Theta": 0.0016258877724756962
+    },
+    "1": {
+      "chi": 2.0853632175965586e-05,
+      "alpha": 8.837113667337082e-06,
+      "beta_r": 3.831426966395546e-05,
+      "g_rr": 7.86060846464931e-05,
+      "A_rr": 0.0019504227312860042,
+      "Theta": 0.00042607100531599513
+    }
+  },
+  "scope": "Same-time behavioral comparison, not convergence. Six-point 1D radial interpolation; unweighted available-ray statistics with radius-dependent coverage. No horizon acceptance, constraint norm, or characteristic reflection inference."
+}

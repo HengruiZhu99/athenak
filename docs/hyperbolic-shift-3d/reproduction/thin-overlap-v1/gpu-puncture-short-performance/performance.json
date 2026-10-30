@@ -1,0 +1,52 @@
+{
+  "scope": "Single sequential same-node 12-tile pair at t=0.15M; communication-only comparison. Other/startup includes unseparated synchronization. No accuracy-matched discretization claim.",
+  "rows": [
+    {
+      "name": "puncture-full",
+      "wall_seconds": 50.393215531,
+      "representative_rank": 8,
+      "seconds": {
+        "Bulk RHS": 11.900141096999995,
+        "Communication": 5.8612591259999975,
+        "Boundary/checks": 16.14614093500001,
+        "Diagnostics": 3.610999827999998,
+        "Bulk halo": 1.4778703320000002,
+        "Paired penalty": 0.0879667030000001,
+        "Other / startup": 11.308837510000004
+      },
+      "rhs_share": 0.23614569881295783,
+      "trace_setup_seconds": 0.865380487,
+      "trace_application_seconds_max": 0.306434842,
+      "cells": 143632,
+      "floor": 0,
+      "max_null": 1.5543120993463367e-15
+    },
+    {
+      "name": "puncture-sparse",
+      "wall_seconds": 45.748360719,
+      "representative_rank": 8,
+      "seconds": {
+        "Bulk RHS": 11.90663036200001,
+        "Communication": 1.5796063122106063,
+        "Boundary/checks": 16.139373856999995,
+        "Diagnostics": 3.5817309350000013,
+        "Bulk halo": 1.4742608379999989,
+        "Paired penalty": 0.08620934300000005,
+        "Other / startup": 10.980549071789383
+      },
+      "rhs_share": 0.26026354113831673,
+      "trace_setup_seconds": 0.851076181,
+      "trace_application_seconds_max": 0.3039034429999999,
+      "cells": 143632,
+      "floor": 0,
+      "max_null": 1.5543120993463367e-15
+    }
+  ],
+  "wall_speedup": 1.1015305191049376,
+  "transfer": {
+    "logical_remote_bytes_per_stage_sparse": 187300264,
+    "logical_remote_bytes_per_stage_full": 391828096,
+    "reduction_fraction": 0.5219835792479772,
+    "scope": "Logical remote payload, not measured network traffic."
+  }
+}

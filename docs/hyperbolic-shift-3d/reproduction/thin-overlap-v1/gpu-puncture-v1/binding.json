@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "plan_sha256": "94fea609b78880af24a767e492bf1b6868ef06d0f5c81f332d3013b50c4f6587",
+  "source_manifest": "source-thin-v1-manifest.json",
+  "source_manifest_sha256": "e8a3d5c2839797c60c32874e930eca2631beaac4f414f22e5e098502cb54b8ac",
+  "binaries": {
+    "build-sycl-mpi-thin-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_thin_trace": "9bd316fefcfeca7283e8b06119d5bfa1db36e70c8891f73bf77ffacc0513f4d4",
+    "build-sycl-mpi-thin-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_thin_trace_sparse": "c6e981ef335df2c04b97304a244b3e15685dbe8b860058b26b927d79ec62ea5a",
+    "source-thin-v1/tst/hyperbolic_shift_3d/aurora/preflight.py": "2f240d0a8dfe95923d53427884a54bd9ee5cce9356a54539afe2cc3fb4b4ca95"
+  },
+  "inputs": {
+    "inputs/puncture-thin-n16-l1.txt": "4c76ba76b0a1ae52ead958d7c077ecec499dc291deefe5b8ca18e09a4cb8d0c8"
+  },
+  "pbs_sha256": "a2f19df0a1a4d462fac4460575294c07783f3818e1216d6938f2666dafd02b35",
+  "admission": null,
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "00:30:00"
+  },
+  "storage_at_bind": {
+    "bytes": 4341482616,
+    "entries": 45516,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 100000000,
+    "planned_bytes": 160000000,
+    "headroom_bytes": 398517384
+  },
+  "launcher": {
+    "control.py": "e1e8ee3e14cd981da5086d5fd3cc4628c0b7e62a4e242833b56f46c663f45085",
+    "worker.py": "4f37ae8e06e15561ce1878bb5aec428c67325e8f50cfea33a9335979dfa4e123",
+    "run_debug.pbs": "1d5df790cf6c8cdc96e9d330b9b337ce755b30e057959586bcd661dc9ce885a6",
+    "storage.py": "fdcf2abc2533b8fed91220d9c18d8b9d723660820949a72e956fb9c8866afd39"
+  },
+  "allocation_seconds": 1800,
+  "worker_seconds": 1710
+}

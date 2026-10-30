@@ -302,3 +302,50 @@ The short puncture pair is submitted as **8987916**, plan hash
 It uses 100 matched timesteps through 0.15M and a full/sparse exact comparison.
 This is preflight; the new 3M puncture, layer matrix, reflection and convergence
 comparisons remain outstanding.
+
+### Short GPU puncture pair verified
+
+Job **8987916** finished successfully. Both n=16, L1/kappa1 runs completed
+100 steps through 0.15M. The independent local audit verified all hashes and
+finite arrays and compared all 9,000,416 doubles exactly. Both horizons were
+accepted using the unchanged tolerance; floor interventions were zero and
+the maximum scri/ghost residual was 1.55e-15. Evidence is in `gpu-puncture-v1/`.
+
+At the endpoint the accepted radius is 0.063745812, 0.0164% below the
+time-interpolated preserved 1D reference. The relative irreducible-mass error
+is 6.00e-6. Exterior H and radial-momentum RMS are 0.0454503 and 0.0934656;
+the corresponding time-interpolated 1D values are 0.000239381 and 0.000442225.
+The 3D core spacing is 5.76 times the 1D spacing, the quadratures and accepted
+horizon cutoffs differ, and only two 3D diagnostic times were saved. These
+results establish neither adequate constraint accuracy nor convergence.
+
+![Short GPU puncture versus preserved 1D](gpu-puncture-short-comparison/comparison.png)
+
+The same-node sequential communication-only pair took 50.393 s with full
+gather and 45.748 s with sparse exchange: 1.102x throughput in this single
+pair. Logical remote payload per stage fell 52.2%; this is not a measured
+network-traffic count. The representative sparse rank spent 11.907 s in bulk
+RHS, 16.139 s in boundary/check work and 1.580 s in communication. RHS is
+only 26.0% of total wall time, so it does not yet dominate. Maximum per-rank
+penalty application and trace construction were 0.304 s and 0.851 s. Boundary
+work is the next measured bottleneck; repeated timing and comparable-accuracy
+layer comparisons remain necessary. Use `analyze_gpu.py --pair-only` to
+reproduce this plot without implying that the layer matrix has completed.
+
+![Short GPU communication timing](gpu-puncture-short-performance/performance.png)
+
+`gpu-puncture-profile-comparison/` also compares separate Cartesian and shell
+copies at 0.15M against a fresh same-time preserved-library 1D evolution.
+`baseline-1d-n513-to015m/` retains that reference and its provenance. These
+fixed-ray differences expose angular variation near the puncture and shell
+differences, but do not isolate their causes or establish reflection levels.
+
+![Same-time 0.15M field differences](gpu-puncture-profile-comparison/profiles.png)
+
+The nine-case layer/control batch is now submitted as **8987986**, plan hash
+`12d47a6ddd8c5ddf979612ab9eb0d7beb599f3726be9d2d8c5c0711aeadd1d39`.
+It covers the five remaining short Minkowski configurations, L1 zero/paired
+spherical pulses, and matched V12 L3/zero/shifted-off and preserved V11 pulse
+controls. Its results and independent cross-schema comparison are pending.
+Longer interface-crossing waves, new 3M thin-overlap punctures, timestep/spatial
+convergence, and an accuracy-matched cost recommendation remain open.

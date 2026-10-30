@@ -49,7 +49,7 @@ axes[0,0].legend(fontsize=8);axes[0,2].axhline(0,color='black',lw=.7)
 fig.suptitle(f'Unequal-resolution puncture comparison: 3D n={a.n}, 1D N=513\nRejected horizons remain unavailable; no interpolation across missing 3D samples')
 fig.savefig(a.out/'comparison.png',dpi=180);fig.savefig(a.out/'comparison.pdf')
 with (a.out/'matched-times.csv').open('w') as stream:
- writer=csv.DictWriter(stream,fieldnames=list(rows[0]));writer.writeheader();writer.writerows(rows)
+ writer=csv.DictWriter(stream,fieldnames=list(rows[0]),lineterminator='\n');writer.writeheader();writer.writerows(rows)
 result=dict(inputs=inputs,cases=summary,resolution=dict(n_3d=a.n,dx_3d=.36/(2*a.n),dr_1d=1/512,spacing_ratio=(.36/(2*a.n))*512,dt_3d=a.dt,dt_1d=4.8828125e-5),
  scope='Linear time interpolation of retained 1D history only; no 3D gap filling. Own accepted horizon cutoffs and coordinate-volume quadratures differ. This is a behavioral comparison, not an accuracy or convergence measurement.')
 (a.out/'comparison.json').write_text(json.dumps(result,indent=2,allow_nan=False)+'\n');print(json.dumps(result['cases'],indent=2))

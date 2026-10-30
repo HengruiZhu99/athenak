@@ -18,6 +18,8 @@ def verify(root,campaign,mode='complete-preflight'):
  for name,digest in binding['inputs'].items():assert control.digest(root/name)==digest,name
  if mode=='clock-isolation':
   assert [c['name'] for c in plan['commands']]==['oblique-sparse-direct','direct-communication','oblique-full-resume','resumed-communication','dyadic-full','dyadic-part','dyadic-resume','dyadic-restart']
+ if mode=='puncture-pair':
+  assert [c['name'] for c in plan['commands']]==['puncture-full','puncture-sparse','puncture-equivalence']
  artifacts={};reports={};summaries=[]
  for command,case in zip(plan['commands'],worker['cases']):
   assert command['name']==case['name'] and case['status']=='passed'
@@ -52,14 +54,18 @@ def verify(root,campaign,mode='complete-preflight'):
   assert pairs[name]['restart_equivalence'] and pairs[name]['bitwise_payload_equal']
   for key,value in pairs[name].items():assert reports[name][key]==value,(name,key)
  if mode=='complete-preflight':assert {'oblique-equivalence','puncture-equivalence'}<=set(pairs)
- else:assert set(pairs)=={'direct-communication','resumed-communication','dyadic-restart'}
+ elif mode=='clock-isolation':assert set(pairs)=={'direct-communication','resumed-communication','dyadic-restart'}
+ else:assert set(pairs)=={'puncture-equivalence'}
+ scopes={'complete-preflight':'V12 12-tile preflight through 0.15M only. No 3M, reflection, accuracy-matched cost or convergence qualification.',
+         'clock-isolation':'V12 twelve-tile clock/communication isolation only; this batch contains no puncture or device-parity admission.',
+         'puncture-pair':'V12 twelve-tile short puncture full/sparse equality through 0.15M only. This batch does not itself qualify 3M stability or full preflight admission.'}
  return dict(status='passed',source_manifest_sha256=binding['source_manifest_sha256'],plan_sha256=binding['plan_sha256'],
   job_id=collected['job_id'],cases=summaries,comparisons=pairs,verified_artifacts=artifacts,
-  scope=('V12 twelve-tile clock/communication isolation only; this batch contains no puncture or device-parity admission.' if mode=='clock-isolation' else 'V12 12-tile preflight through 0.15M only. No 3M, reflection, accuracy-matched cost or convergence qualification.'))
+  scope=scopes[mode])
 if __name__=='__main__':
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--root',type=Path,required=True)
  p.add_argument('--campaign',default='campaigns/preflight-thin-v1');p.add_argument('--output',type=Path,required=True)
- p.add_argument('--mode',choices=['complete-preflight','clock-isolation'],default='complete-preflight')
+ p.add_argument('--mode',choices=['complete-preflight','clock-isolation','puncture-pair'],default='complete-preflight')
  a=p.parse_args();result=verify(a.root,a.campaign,a.mode)
  with a.output.open('x') as stream:json.dump(result,stream,indent=2);stream.write('\n')
  print(json.dumps({k:result[k] for k in ['status','job_id','scope']},indent=2))

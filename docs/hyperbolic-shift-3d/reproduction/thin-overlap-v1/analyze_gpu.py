@@ -6,7 +6,9 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-p=argparse.ArgumentParser(description=__doc__);p.add_argument('--raw',type=Path,required=True);p.add_argument('--out',type=Path,required=True);a=p.parse_args();a.out.mkdir(parents=True,exist_ok=True)
+p=argparse.ArgumentParser(description=__doc__);p.add_argument('--raw',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
+p.add_argument('--pair-only',action='store_true',help='Analyze the puncture pair without requiring the separate Minkowski layer matrix')
+a=p.parse_args();a.out.mkdir(parents=True,exist_ok=True)
 rows=[];reports=[]
 for name in ['puncture-full','puncture-sparse']:
  r=json.loads((a.raw/(name+'.report.json')).read_text());reports.append(r)
@@ -26,15 +28,16 @@ summary=dict(scope='Single sequential same-node 12-tile pair at t=0.15M; communi
  transfer=dict(logical_remote_bytes_per_stage_sparse=received*31*8,logical_remote_bytes_per_stage_full=full*31*8,
                reduction_fraction=1-received/full,scope='Logical remote payload, not measured network traffic.'))
 (a.out/'performance.json').write_text(json.dumps(summary,indent=2)+'\n')
-fig,axes=plt.subplots(1,2,figsize=(10,4.5),layout='constrained');bottom=np.zeros(2)
+fig,axes=plt.subplots(1,1 if a.pair_only else 2,figsize=(6,5) if a.pair_only else (10,4.5),layout='constrained');axes=np.atleast_1d(axes);bottom=np.zeros(2)
 for key in rows[0]['seconds']:
  values=[r['seconds'][key] for r in rows];axes[0].bar([0,1],values,bottom=bottom,label=key);bottom+=values
 axes[0].set_xticks([0,1],['Full gather','Cached sparse']);axes[0].set(ylabel='Wall seconds',title='L1 paired puncture: 100 steps');axes[0].legend(fontsize=7)
-for kappa,style in [(0,'o-'),(1,'s-')]:
- data=[json.loads((a.raw/f'minkowski-l{layer}-k{kappa}.report.json').read_text()) for layer in (1,2,3)]
- assert all(r['status']=='completed' and r['lapse_floor_node_interventions']==0 for r in data)
- axes[1].semilogy([1,2,3],[r['max_state_deviation'] for r in data],style,label=f'kappa={kappa}')
-axes[1].set(xlabel='Extra Cartesian evolved layers',ylabel='Maximum state deviation',title='Short Minkowski preservation',xticks=[1,2,3]);axes[1].legend()
+if not a.pair_only:
+ for kappa,style in [(0,'o-'),(1,'s-')]:
+  data=[json.loads((a.raw/f'minkowski-l{layer}-k{kappa}.report.json').read_text()) for layer in (1,2,3)]
+  assert all(r['status']=='completed' and r['lapse_floor_node_interventions']==0 for r in data)
+  axes[1].semilogy([1,2,3],[r['max_state_deviation'] for r in data],style,label=f'kappa={kappa}')
+ axes[1].set(xlabel='Extra Cartesian evolved layers',ylabel='Maximum state deviation',title='Short Minkowski preservation',xticks=[1,2,3]);axes[1].legend()
 for axis in axes:axis.grid(alpha=.2)
 fig.suptitle('GPU preflight: short tests, not 3M stability or convergence')
 fig.savefig(a.out/'performance.png',dpi=180);fig.savefig(a.out/'performance.pdf')

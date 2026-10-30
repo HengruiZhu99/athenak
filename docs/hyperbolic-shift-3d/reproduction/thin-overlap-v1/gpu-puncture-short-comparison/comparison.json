@@ -1,0 +1,24 @@
+{
+  "inputs": {
+    "/Users/hz0693/.codex/worktrees/9328/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/original-1d-reference/history.csv": "95267982d749ea69c1bf397e6fc80407239f40e25d43240bf77b18828cfe3b6d",
+    "output/thin-overlap-v1/aurora-staging/collected/campaigns/preflight-thin-puncture-v1/output/puncture-sparse.history.csv": "574ac0f50aefff6592d01f72fe38b6ac6ba7e12b25901e2b23a9254707f81af7"
+  },
+  "cases": {
+    "L1 paired, sparse GPU": {
+      "accepted": 2,
+      "rejected": 0,
+      "end_t_over_M": 0.15000000000000002,
+      "last_accepted_t_over_M": 0.15000000000000002,
+      "max_accepted_radius_difference_percent": 0.01640405052270033
+    }
+  },
+  "resolution": {
+    "n_3d": 16,
+    "dx_3d": 0.01125,
+    "dr_1d": 0.001953125,
+    "spacing_ratio": 5.76,
+    "dt_3d": 0.0005,
+    "dt_1d": 4.8828125e-05
+  },
+  "scope": "Linear time interpolation of retained 1D history only; no 3D gap filling. Own accepted horizon cutoffs and coordinate-volume quadratures differ. This is a behavioral comparison, not an accuracy or convergence measurement."
+}
