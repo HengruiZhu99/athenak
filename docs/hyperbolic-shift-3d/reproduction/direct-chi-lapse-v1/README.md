@@ -80,3 +80,26 @@ was refused before evolution; distinct input/output names resolved that harness
 error. An expected incompatible-checkpoint rejection emits no report; the harness
 was corrected to capture its error log. Scientific runs were not repeated for
 these harness fixes. See local-test-results.json and local-tests.py.
+
+
+Frozen scientific source:5b379718c344c23ed4b5f859c5cbc2b4bd9ce7a3.
+Remote root:/home/hzhu/hyperbolic-core-shell-20261028.
+Source:source-direct-chi-lapse-v1; manifest:source-direct-chi-lapse-v1-manifest.json.
+Controller:source-direct-chi-lapse-v1/tst/hyperbolic_shift_3d/aurora/control.py.
+Binary:build-sycl-mpi-direct-chi-lapse-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_direct_chi_lapse.
+First plan:campaigns/n16-direct-chi-lapse-to20m-v1-segment01/plan.json.
+Minkowski's two-step maximum field drift was6.51063e-15; maximum surface and
+ghost null residuals were6.66e-16 and1.11e-15. These are roundoff-scale short
+checks, not a long-time convergence result.
+
+
+## Submission
+
+SYCL/MPI build passed in277.88 seconds using make -j64. Job8990504 was submitted
+on one CompactBinaryMerger debug node with12 MPI ranks/GPU tiles, target20M.
+All-user debug queue inspection found no competing job before submission. The
+30-minute monitor aurora-n16-direct-lapse-to20m now follows this AC1 trial and
+continues only verified healthy walltime checkpoints. Exact source/binary/plan
+hashes, storage reserve and monitor policy are saved beside this file. The task
+footprint at binding/submission remains below5GB. Submission is not evidence of
+long-time stability; no20M result is claimed here.

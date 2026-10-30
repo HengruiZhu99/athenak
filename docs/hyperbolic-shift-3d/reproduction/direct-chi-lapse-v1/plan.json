@@ -1,0 +1,199 @@
+{
+  "schema": 1,
+  "reviewed": true,
+  "phase": "timestep_experiment",
+  "experimental_policy": "n16_direct_chi_lapse_retry_to_20M",
+  "n": 16,
+  "low_resolution_n": 16,
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "01:00:00"
+  },
+  "worker_seconds": 3510,
+  "storage": {
+    "limit_bytes": 5000000000,
+    "planned_new_bytes": 160000000,
+    "atomic_checkpoint_reserve_bytes": 100000000
+  },
+  "output_dir": "campaigns/n16-direct-chi-lapse-to20m-v1-segment01/output",
+  "commands": [
+    {
+      "name": "puncture",
+      "kind": "puncture",
+      "executable": "build-sycl-mpi-direct-chi-lapse-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_direct_chi_lapse",
+      "args": [
+        "16",
+        "campaigns/n16-direct-chi-lapse-to20m-v1-segment01/output/puncture",
+        "puncture",
+        "6.666666666666667",
+        "0.0005",
+        "-",
+        "inputs/puncture-ac1-verified-at3m.checkpoint",
+        "@WALL_SECONDS@",
+        "0.05",
+        "0.001",
+        "12",
+        "24",
+        "2"
+      ],
+      "timeout_seconds": 3400,
+      "report": "campaigns/n16-direct-chi-lapse-to20m-v1-segment01/output/puncture.report.json",
+      "inputs": [
+        "inputs/puncture-ac1-verified-at3m.checkpoint"
+      ],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "n"
+          ],
+          "op": "eq",
+          "value": 16
+        },
+        {
+          "path": [
+            "experimental_timestep"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "timestep_aware_penalty"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "bulk_cfl_guard_enabled"
+          ],
+          "op": "eq",
+          "value": false
+        },
+        {
+          "path": [
+            "checkpoint_schema"
+          ],
+          "op": "eq",
+          "value": "HYP3D_MPI_AC1"
+        },
+        {
+          "path": [
+            "scri_penalty_cfl_max"
+          ],
+          "op": "le",
+          "value": 0.5
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "scri_penalty_scale_min"
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "angular_epsilon_min"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "checkpoint_header_bytes"
+          ],
+          "op": "eq",
+          "value": 168
+        },
+        {
+          "path": [
+            "puncture_chi_floor"
+          ],
+          "op": "eq",
+          "value": 1e-08
+        },
+        {
+          "path": [
+            "puncture_chi_floor_radius"
+          ],
+          "op": "eq",
+          "value": 0.03
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "positive_variables"
+          ],
+          "op": "eq",
+          "value": "direct_chi_direct_lapse_rk_and_ko"
+        },
+        {
+          "path": [
+            "candidate_sign_scope"
+          ],
+          "op": "eq",
+          "value": "pre_floor_volume_and_surface_attempts_this_segment_including_rejected_step"
+        },
+        {
+          "path": [
+            "physical_lapse_floor"
+          ],
+          "op": "eq",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "chi_nonpositive_policy"
+          ],
+          "op": "eq",
+          "value": "record_and_floor_finite_candidates_everywhere"
+        }
+      ],
+      "artifacts": [
+        "campaigns/n16-direct-chi-lapse-to20m-v1-segment01/output/puncture.checkpoint",
+        "campaigns/n16-direct-chi-lapse-to20m-v1-segment01/output/puncture.history.csv",
+        "campaigns/n16-direct-chi-lapse-to20m-v1-segment01/output/puncture.failed-stage.bin",
+        "campaigns/n16-direct-chi-lapse-to20m-v1-segment01/output/puncture.checkpoint.horizon-seed.txt",
+        "campaigns/n16-direct-chi-lapse-to20m-v1-segment01/output/puncture.fastflow.horizon_summary_0.txt"
+      ]
+    }
+  ]
+}
