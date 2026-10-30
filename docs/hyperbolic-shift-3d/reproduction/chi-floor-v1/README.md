@@ -75,8 +75,42 @@ below 5,000,000,000 bytes and preserve unrelated jobs and files.
 
 Aurora build passed with SYCL/MPI and make -j64 (172.34 seconds). Job **8989676**
 was submitted on one CompactBinaryMerger debug node with 12 MPI ranks/GPU tiles.
-The existing 30-minute monitor is ACTIVE; it automatically continues healthy
-walltime checkpoints and pauses on numerical failure or verified 20M completion.
+The existing 30-minute monitor was activated at submission. It was removed
+after the numerical failure reported below; no further retry is scheduled.
 The campaign footprint at binding was 3,968,929,760 bytes, below the 5 GB limit.
 See build-status.json, binding.json, submission.json and monitor.json for the
 exact hashes, resources and monitoring policy. No long-time result is yet claimed.
+
+## Result: floor did not establish stability
+
+Job 8989676 failed at coordinate t=3.052 = **9.156M**, after 4104 new accepted
+steps (6105 total), with `invalid accepted volume geometry`. Native elapsed time
+was 906.79 seconds. This is ten steps / .015M beyond the original no-chi-floor
+failure at 9.141M. There was no walltime or storage failure, and no resubmission.
+The checkpoint is explicitly unadmitted and must not be used for restart.
+
+SHA256-verified failed-state inspection found positive chi everywhere, no
+nonpositive conformal-metric eigenvalues, and **positive-infinite lapse in the
+eight nearest puncture cells**, at all combinations of coordinates ±.005625.
+These are the same cells where the original run lost chi positivity. Chi in
+the last accepted state equals 1e-8 there; the rejected candidate has chi about
+.04349. The only nonfinite volume field is lapse (field18). Thus the chi floor
+prevented the immediate zero-chi failure but the coupled update still diverged;
+a lower lapse floor cannot prevent this positive overflow. The recorded last
+RHS maximum is 1.83359e21. These observations do not yet identify the upstream
+cause of that growth.
+
+There were 216 intermediate-stage chi clips and 104 final-update clips across
+32 cells, all at r<=.0186561; counts include the rejected attempted step. There
+were no lapse-floor interventions. Maximum scri null residuals remained
+1.22126e-15 (surface) and 1.55431e-15 (ghost). The last complete ordinary
+diagnostic was at9.15M, not9.156M: H_L2=2.73304, minimum lapse=.0209898.
+The horizon candidate radius=.1066379 has expansion RMS=.00287336, above the
+.001 acceptance threshold, so accepted exterior constraint norms remain absent.
+
+The terminal root allocation lock was released. Large remote failed-state and
+checkpoint files were deleted only after verifying local copies against the
+worker SHA256 records; small evidence is retained here and raw data locally in
+output/hyperbolic-core-shell/chi-floor-v1/segment01. See verification.json and
+verified-cleanup.json. The automatic retry monitor was deleted after this
+numerical failure. No further parameter changes or evolutions were launched.

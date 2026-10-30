@@ -1,0 +1,464 @@
+{
+  "job_id": "8989676.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "collected": 1793354778.8489532,
+  "returncode": 0,
+  "stdout": "{\n    \"timestamp\": 1793354777,\n    \"pbs_version\": \"2026.1.0.20260821184519\",\n    \"pbs_server\": \"aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov\",\n    \"Jobs\": {\n        \"8989676.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov\": {\n            \"Job_Name\": \"hyper-scri-3d\",\n            \"Job_Owner\": \"hzhu@aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov\",\n            \"resources_used\": {\n                \"cpupercent\": 3651,\n                \"cput\": \"03:04:24\",\n                \"mem\": \"1594628kb\",\n                \"ncpus\": 208,\n                \"ngpus\": 0,\n                \"vmem\": \"48880kb\",\n                \"walltime\": \"00:17:34\"\n            },\n            \"job_state\": \"F\",\n            \"queue\": \"debug\",\n            \"server\": \"aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov\",\n            \"Account_Name\": \"CompactBinaryMerger\",\n            \"Checkpoint\": \"u\",\n            \"ctime\": \"Fri Oct 30 09:35:02 2026\",\n            \"Error_Path\": \"aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov:/home/hzhu/hyperbolic-core-shell-20261028/hyper-scri-3d.e8989676\",\n            \"exec_host\": \"x4020c7s0b0n0/0*208\",\n            \"exec_vnode\": \"(x4020c7s0b0n0:ncpus=208)\",\n            \"Hold_Types\": \"n\",\n            \"Join_Path\": \"oe\",\n            \"Keep_Files\": \"doe\",\n            \"Mail_Points\": \"a\",\n            \"Mail_Users\": \"hz0693@princeton.edu\",\n            \"mtime\": \"Fri Oct 30 09:55:37 2026\",\n            \"Output_Path\": \"aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov:/home/hzhu/hyperbolic-core-shell-20261028/hyper-scri-3d.o8989676\",\n            \"Priority\": 0,\n            \"qtime\": \"Fri Oct 30 09:35:02 2026\",\n            \"Rerunable\": \"False\",\n            \"Resource_List\": {\n                \"allow_account_check_failure\": \"True\",\n                \"allow_negative_allocation\": \"True\",\n                \"award_category\": \"INCITE\",\n                \"award_type\": \"INCITE-2026\",\n                \"backfill_factor\": 84600,\n                \"backfill_max\": 50,\n                \"base_score\": 51,\n                \"bkc_definition\": \"compute_aurora_prod_20261002T162246_af5b0375_b4fd227\",\n                \"burn_ratio\": 0.8807,\n                \"current_allocation\": 2577078528,\n                \"enable_2nd_fp64\": \"True\",\n                \"enable_backfill\": 0,\n                \"enable_fifo\": 1,\n                \"enable_wfp\": 0,\n                \"fifo_factor\": 1800,\n                \"filesystems\": \"home\",\n                \"hbm_mode\": \"flat\",\n                \"home_fs\": \"True\",\n                \"ncpus\": 208,\n                \"ni_resource\": \"aurora\",\n                \"nodect\": 1,\n                \"overburn\": \"False\",\n                \"place\": \"scatter\",\n                \"project_priority\": 25,\n                \"route_backfill\": \"False\",\n                \"score_boost\": 0,\n                \"select\": 1,\n                \"snc_mode\": \"quad\",\n                \"total_allocation\": 21600000000,\n                \"total_cpus\": 10624,\n                \"walltime\": \"01:00:00\",\n                \"wfp_factor\": 100000\n            },\n            \"stime\": \"Fri Oct 30 09:37:31 2026\",\n            \"obittime\": \"Fri Oct 30 09:55:37 2026\",\n            \"session_id\": 1659861,\n            \"jobdir\": \"/home/hzhu\",\n            \"substate\": 93,\n            \"euser\": \"hzhu\",\n            \"egroup\": \"users\",\n            \"comment\": \"Job run at Fri Oct 30 at 09:37 on (x4020c7s0b0n0:ncpus=208) and failed\",\n            \"etime\": \"Fri Oct 30 09:35:02 2026\",\n            \"umask\": 22,\n            \"run_count\": 1,\n            \"eligible_time\": \"00:02:34\",\n            \"Stageout_status\": 1,\n            \"Exit_status\": 1,\n            \"Submit_arguments\": \"-v HYPERBOLIC_PLAN=campaigns/n16-chi-floor-to20m-v1-segment01/plan.json /home/hzhu/hyperbolic-core-shell-20261028/campaigns/n16-chi-floor-to20m-v1-segment01/run_debug.pbs\",\n            \"history_timestamp\": 1793354137,\n            \"project\": \"CompactBinaryMerger\",\n            \"Submit_Host\": \"aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov\"\n        }\n    }\n}\n",
+  "stderr": "",
+  "scheduler": {
+    "Job_Name": "hyper-scri-3d",
+    "Job_Owner": "hzhu@aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov",
+    "resources_used": {
+      "cpupercent": 3651,
+      "cput": "03:04:24",
+      "mem": "1594628kb",
+      "ncpus": 208,
+      "ngpus": 0,
+      "vmem": "48880kb",
+      "walltime": "00:17:34"
+    },
+    "job_state": "F",
+    "queue": "debug",
+    "server": "aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "Account_Name": "CompactBinaryMerger",
+    "Checkpoint": "u",
+    "ctime": "Fri Oct 30 09:35:02 2026",
+    "Error_Path": "aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov:/home/hzhu/hyperbolic-core-shell-20261028/hyper-scri-3d.e8989676",
+    "exec_host": "x4020c7s0b0n0/0*208",
+    "exec_vnode": "(x4020c7s0b0n0:ncpus=208)",
+    "Hold_Types": "n",
+    "Join_Path": "oe",
+    "Keep_Files": "doe",
+    "Mail_Points": "a",
+    "Mail_Users": "hz0693@princeton.edu",
+    "mtime": "Fri Oct 30 09:55:37 2026",
+    "Output_Path": "aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov:/home/hzhu/hyperbolic-core-shell-20261028/hyper-scri-3d.o8989676",
+    "Priority": 0,
+    "qtime": "Fri Oct 30 09:35:02 2026",
+    "Rerunable": "False",
+    "Resource_List": {
+      "allow_account_check_failure": "True",
+      "allow_negative_allocation": "True",
+      "award_category": "INCITE",
+      "award_type": "INCITE-2026",
+      "backfill_factor": 84600,
+      "backfill_max": 50,
+      "base_score": 51,
+      "bkc_definition": "compute_aurora_prod_20261002T162246_af5b0375_b4fd227",
+      "burn_ratio": 0.8807,
+      "current_allocation": 2577078528,
+      "enable_2nd_fp64": "True",
+      "enable_backfill": 0,
+      "enable_fifo": 1,
+      "enable_wfp": 0,
+      "fifo_factor": 1800,
+      "filesystems": "home",
+      "hbm_mode": "flat",
+      "home_fs": "True",
+      "ncpus": 208,
+      "ni_resource": "aurora",
+      "nodect": 1,
+      "overburn": "False",
+      "place": "scatter",
+      "project_priority": 25,
+      "route_backfill": "False",
+      "score_boost": 0,
+      "select": 1,
+      "snc_mode": "quad",
+      "total_allocation": 21600000000,
+      "total_cpus": 10624,
+      "walltime": "01:00:00",
+      "wfp_factor": 100000
+    },
+    "stime": "Fri Oct 30 09:37:31 2026",
+    "obittime": "Fri Oct 30 09:55:37 2026",
+    "session_id": 1659861,
+    "jobdir": "/home/hzhu",
+    "substate": 93,
+    "euser": "hzhu",
+    "egroup": "users",
+    "comment": "Job run at Fri Oct 30 at 09:37 on (x4020c7s0b0n0:ncpus=208) and failed",
+    "etime": "Fri Oct 30 09:35:02 2026",
+    "umask": 22,
+    "run_count": 1,
+    "eligible_time": "00:02:34",
+    "Stageout_status": 1,
+    "Exit_status": 1,
+    "Submit_arguments": "-v HYPERBOLIC_PLAN=campaigns/n16-chi-floor-to20m-v1-segment01/plan.json /home/hzhu/hyperbolic-core-shell-20261028/campaigns/n16-chi-floor-to20m-v1-segment01/run_debug.pbs",
+    "history_timestamp": 1793354137,
+    "project": "CompactBinaryMerger",
+    "Submit_Host": "aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov"
+  },
+  "worker": {
+    "schema": 1,
+    "status": "failed",
+    "started": "2026-10-30T09:39:32.966635+00:00",
+    "job_id": "8989676.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "launcher_host": "x4020c7s0b0n0",
+    "allocation_nodes": [
+      "x4020c7s0b0n0.hsn.cm.aurora.alcf.anl.gov"
+    ],
+    "resources": {
+      "queue": "debug",
+      "account": "CompactBinaryMerger",
+      "nodes": 1,
+      "ranks": 12,
+      "ranks_per_node": 12,
+      "walltime": "01:00:00"
+    },
+    "source_manifest_sha256": "7eccb9218bf520eb4815332fd5dbfb952778b5c479994e1a9b0d2f95fc90c83b",
+    "binaries": {
+      "build-sycl-mpi-chi-floor-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_puncture_chi_floor": "2c922f9e66797f57e16806d20c9bdd7f506679a1832fd5eddff85e8d02e8c738"
+    },
+    "plan_sha256": "3e134ad85380fbb162907bc3d8abcf481cd3ee9f3bc934a2e438ef78fb113c5b",
+    "phase": "timestep_experiment",
+    "n": 16,
+    "cases": [
+      {
+        "name": "puncture",
+        "kind": "puncture",
+        "started": "2026-10-30T09:39:50.300271+00:00",
+        "argv": [
+          "mpiexec",
+          "-n",
+          "12",
+          "-ppn",
+          "12",
+          "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+          "gpu_tile_compact.sh",
+          "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-chi-floor-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_puncture_chi_floor",
+          "16",
+          "campaigns/n16-chi-floor-to20m-v1-segment01/output/puncture",
+          "puncture",
+          "6.666666666666667",
+          "0.0005",
+          "-",
+          "inputs/puncture-cf1-verified-at3m.checkpoint",
+          "3370",
+          "0.05",
+          "0.001",
+          "12",
+          "24",
+          "2"
+        ],
+        "generated_inputs": {},
+        "n": 16,
+        "returncode": 2,
+        "timed_out": false,
+        "storage_error": null,
+        "elapsed_seconds": 907.9501165500842,
+        "checks": [
+          {
+            "check": {
+              "path": [
+                "status"
+              ],
+              "op": "eq",
+              "value": "completed"
+            },
+            "observed": "failed",
+            "passed": false
+          },
+          {
+            "check": {
+              "path": [
+                "backend"
+              ],
+              "op": "eq",
+              "value": "SYCL"
+            },
+            "observed": "SYCL",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "mpi_size"
+              ],
+              "op": "eq",
+              "value": 12
+            },
+            "observed": 12,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "n"
+              ],
+              "op": "eq",
+              "value": 16
+            },
+            "observed": 16,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "experimental_timestep"
+              ],
+              "op": "eq",
+              "value": true
+            },
+            "observed": true,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "timestep_aware_penalty"
+              ],
+              "op": "eq",
+              "value": true
+            },
+            "observed": true,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "bulk_cfl_guard_enabled"
+              ],
+              "op": "eq",
+              "value": false
+            },
+            "observed": false,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "checkpoint_schema"
+              ],
+              "op": "eq",
+              "value": "HYP3D_MPI_CF1"
+            },
+            "observed": "HYP3D_MPI_CF1",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_penalty_cfl_max"
+              ],
+              "op": "le",
+              "value": 0.5
+            },
+            "observed": 0.3840000000000001,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_null_surface"
+              ],
+              "op": "le",
+              "value": 1e-10
+            },
+            "observed": 1.2212592910403957e-15,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_penalty_scale_min"
+              ],
+              "op": "eq",
+              "value": 1
+            },
+            "observed": 1,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "angular_epsilon_min"
+              ],
+              "op": "eq",
+              "value": 2
+            },
+            "observed": 2,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "checkpoint_header_bytes"
+              ],
+              "op": "eq",
+              "value": 168
+            },
+            "observed": 168,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "puncture_chi_floor"
+              ],
+              "op": "eq",
+              "value": 1e-08
+            },
+            "observed": 1e-08,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "puncture_chi_floor_radius"
+              ],
+              "op": "eq",
+              "value": 0.03
+            },
+            "observed": 0.03,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "chi_floor_max_radius"
+              ],
+              "op": "le",
+              "value": 0.03
+            },
+            "observed": 0.018656014445746355,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_null_ghost"
+              ],
+              "op": "le",
+              "value": 1e-10
+            },
+            "observed": 1.5543120435302486e-15,
+            "passed": true
+          }
+        ],
+        "report_status": "failed",
+        "status": "failed",
+        "artifacts": {
+          "campaigns/n16-chi-floor-to20m-v1-segment01/output/puncture.report.json": {
+            "sha256": "2b7f106753b860d716f2d69cfffa7e802367241401b4faec376e674b00ebb66c",
+            "bytes": 12261
+          },
+          "campaigns/n16-chi-floor-to20m-v1-segment01/output/puncture.checkpoint": {
+            "sha256": "b33faf4997fc6dbd517ad3446606be6814f6477bb7826deb67d1e64d358c100d",
+            "bytes": 79725224
+          },
+          "campaigns/n16-chi-floor-to20m-v1-segment01/output/puncture.history.csv": {
+            "sha256": "191949622acf201586f6e9b99d62b8194588c52459074fefabb834adab0251ae",
+            "bytes": 22571
+          },
+          "campaigns/n16-chi-floor-to20m-v1-segment01/output/puncture.failed-stage.bin": {
+            "sha256": "258a1163afa020abe06af8db0a28db69b6dab4be40fe95e40469d5daf8dadab9",
+            "bytes": 39862528
+          },
+          "campaigns/n16-chi-floor-to20m-v1-segment01/output/puncture.fastflow.horizon_summary_0.txt": {
+            "sha256": "076df10827c98fa6eddcbe3eaeae9f05a74430bdb20e0192414ac15119da166c",
+            "bytes": 2349
+          }
+        },
+        "finished": "2026-10-30T09:55:02.688930+00:00"
+      }
+    ],
+    "storage_at_start": {
+      "bytes": 3986100736,
+      "entries": 53453,
+      "limit_bytes": 5000000000,
+      "reserve_bytes": 100000000,
+      "planned_bytes": 160000000,
+      "headroom_bytes": 753899264
+    },
+    "stability_admission_eligible": false,
+    "experimental_policy": "n16_chi_floor_retry_to_20M",
+    "affinity": {
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 0.3707398409023881,
+      "records": [
+        {
+          "host": "x4020c7s0b0n0",
+          "rank": 4,
+          "mask": "2.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4020c7s0b0n0",
+          "rank": 11,
+          "mask": "5.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4020c7s0b0n0",
+          "rank": 0,
+          "mask": "0.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4020c7s0b0n0",
+          "rank": 2,
+          "mask": "1.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4020c7s0b0n0",
+          "rank": 10,
+          "mask": "5.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4020c7s0b0n0",
+          "rank": 9,
+          "mask": "4.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4020c7s0b0n0",
+          "rank": 7,
+          "mask": "3.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4020c7s0b0n0",
+          "rank": 6,
+          "mask": "3.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4020c7s0b0n0",
+          "rank": 8,
+          "mask": "4.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4020c7s0b0n0",
+          "rank": 1,
+          "mask": "0.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4020c7s0b0n0",
+          "rank": 3,
+          "mask": "1.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4020c7s0b0n0",
+          "rank": 5,
+          "mask": "2.1",
+          "hierarchy": "COMPOSITE"
+        }
+      ],
+      "passed": true
+    },
+    "stop_reason_status": "failed",
+    "finished": "2026-10-30T09:55:02.688955+00:00",
+    "elapsed_seconds": 929.7223438010551,
+    "storage_at_finish": {
+      "bytes": 4168549261,
+      "entries": 53463
+    }
+  }
+}
