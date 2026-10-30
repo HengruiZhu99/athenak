@@ -169,3 +169,37 @@ continuation toward20M. After verified local archival and removal of retired
 inputs/checkpoints, remote footprint at binding was2.796GB; the N32 planned-output
 and atomic-checkpoint reserve fit within5GB. One debug node,12 GPU ranks and
 CompactBinaryMerger remain unchanged.
+
+## N32 reached 3M; N24 failure location and plot audit
+
+N32 job8991329 completed 4001 steps to exactly3M in1435.999 native seconds.
+Its admitted checkpoint and all worker artifacts were copied and hash-verified
+locally; the frozen helper verified schema, configuration, payload and provenance.
+The final horizon met the fixed acceptance tolerance (expansion RMS0.000777184).
+The exterior H and radial Mr norms were0.02075599 and0.04564455, respectively.
+Null surface closure was1.5543e-15. See n32-at3m/.
+
+The N24 failed candidate contains one indefinite conformal metric near the
+puncture at r=0.01243734, with minimum eigenvalue -0.0780890. All captured volume
+fields are finite. This is a volume metric-positivity failure; the message does
+not refer to scri null closure. See n24-failure/README.md and its hashed analysis.
+N24 has not reached20M. N16 remains the only completed20M resolution.
+
+The apparent change in the3M constraint results comes from comparing full-domain
+norms with exterior norms. The original figure's lower panels omitted unaccepted
+horizon times; the candidate replay supplies measured exterior values there.
+Every shared finite exterior value is unchanged, and both replay checkpoints
+are identical to the originals. See candidate-history/plot-reconciliation.md
+and exterior-shared-values-verification.json. No convergence claim follows from
+the full-domain decrease alone.
+
+N32 AC1 continuation job8992832 is submitted under
+`campaigns/n32-resolution20m-v1-ac1_to20m-segment01/plan.json` with unchanged
+scientific executable, timestep and floors. The verified conversion SHA256 is
+0604741f745df0f30ce687f2b854e3e549a616f8663790abb76856d94acf70e6.
+Storage at submission was2.917GB, with0.529GB atomic-checkpoint reserve and
+0.840GB planned outputs, leaving0.714GB headroom under5GB. Ten obsolete inputs
+and old thin-grid checkpoints were archived locally and individually SHA256/size
+verified before removal; receipts are in n32-ac1-submission/. All current N32
+restart inputs, initial data and active scientific builds remain remotely.
+The hourly monitor and remote campaign state now follow job8992832.
