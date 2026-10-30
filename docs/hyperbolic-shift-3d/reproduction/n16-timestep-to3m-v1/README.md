@@ -56,3 +56,48 @@ checkpoints; the DT1 identity itself differs intentionally from V11. Then test
 The evolution executable and its original source manifest remain frozen. The
 updated launcher is separately committed and hash-bound in each new job; there
 is no rebuild or change to the evolution binary for this policy extension.
+
+## Verified results so far
+
+| dt/dx | dt | Last accepted t/M | Outcome | Job |
+|---|---|---|---|---|
+| 0.4 | .0045 | .108 | Invalid scri metric, stage after step 8 | 8988261 |
+| 0.2 | .00225 | .14175 | Invalid scri metric, stage after step 21 | 8988303 |
+| .0444444 | .0005 | 3 | Completed, original result exactly reproduced | 8988342 |
+| 0.1 | .001125 | pending | Submitted after reproduction | 8988417 |
+
+At both .4 and .2 all 1536 scri surface metric tensors have a negative eigenvalue
+in the captured rejected stage. This is a numerical failure, not a horizon
+quality flag. The applied penalty estimate stayed below .5. At .4 the angular
+coefficient was 1.28166975375; at .2 it remained 2. Lapse-floor interventions were
+zero. The .2 report's ordinary diagnostics belong to its last recorded time
+`.10125M`, not its later last accepted time `.14175M`.
+
+The original-step run exactly reproduces all saved scientific history columns
+(excluding wall time), and all volume/surface state and RK compensation bytes
+at both `.45M` and `3M`. Header configuration is identical except the intentional
+DT1 magic. Both caps are inactive: penalty estimate .384, angular estimate
+.381446848891, angular epsilon 2. Null surface maximum through the two segments
+is 1.22129211454e-15; ghost maximum 1.55431212293e-15. No floor interventions.
+
+The native runtime total is 446.628 seconds (7.44 minutes), versus the retained
+1375.468 seconds (22.92 minutes), an observed 3.080x speedup across different
+allocations. This includes diagnostics and both native startups but excludes
+queue and launcher verification overhead; it is not a same-node controlled
+benchmark. Inclusive throughput is 713254 actual evolved zone-cycles/s.
+
+This establishes preservation of the original evolution by the performance
+changes. It does not establish convergence or repair the original accuracy
+limitations. At 3M the complete horizon candidate has radius .07519062316 and
+expansion RMS .00139188621, exceeding the .001 acceptance threshold. Its radius
+can be used provisionally; accepted mass and exterior constraints are absent
+at that sample. The earlier 1D comparison and resolution mismatch remain.
+
+The capped large-step variants change the boundary semidiscretization, so their
+failures cannot be attributed solely to the larger dt, nor do isolated penalty
+bounds prove stability of the coupled geometric/regularity system.
+
+See `comparison.png` for the first failed attempts, `reproduction.png` for the
+reproduced 3M trajectory against 1D, and the per-job verification files for hashes.
+The 1D reference is the preserved N513 result; its radial spacing is 5.76 times
+finer than the 3D core. Missing measurements are not interpolated or filled.

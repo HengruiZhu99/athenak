@@ -1,0 +1,129 @@
+{
+  "schema": 1,
+  "reviewed": true,
+  "phase": "timestep_experiment",
+  "experimental_policy": "n16_dt_dx_0.4_then_0.2_to_3M_pause",
+  "n": 16,
+  "low_resolution_n": 16,
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "00:30:00"
+  },
+  "worker_seconds": 1710,
+  "storage": {
+    "limit_bytes": 5000000000,
+    "planned_new_bytes": 160000000,
+    "atomic_checkpoint_reserve_bytes": 100000000
+  },
+  "output_dir": "campaigns/n16-dtdx04-to3m-v1/output",
+  "commands": [
+    {
+      "name": "puncture",
+      "kind": "puncture",
+      "executable": "build-sycl-mpi-timestep-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_radial_batch_timestep_experiment",
+      "args": [
+        "16",
+        "campaigns/n16-dtdx04-to3m-v1/output/puncture",
+        "puncture",
+        "1",
+        "0.0045",
+        "inputs/puncture-continuous-n16.txt",
+        "-",
+        "@WALL_SECONDS@",
+        "0.03333333333333333",
+        "0.001",
+        "6",
+        "12",
+        "2"
+      ],
+      "timeout_seconds": 1600,
+      "report": "campaigns/n16-dtdx04-to3m-v1/output/puncture.report.json",
+      "inputs": [
+        "inputs/puncture-continuous-n16.txt"
+      ],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "n"
+          ],
+          "op": "eq",
+          "value": 16
+        },
+        {
+          "path": [
+            "experimental_timestep"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "timestep_aware_penalty"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "bulk_cfl_guard_enabled"
+          ],
+          "op": "eq",
+          "value": false
+        },
+        {
+          "path": [
+            "checkpoint_schema"
+          ],
+          "op": "eq",
+          "value": "HYP3D_MPI_DT1"
+        },
+        {
+          "path": [
+            "scri_penalty_cfl_max"
+          ],
+          "op": "le",
+          "value": 0.5
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-10
+        }
+      ],
+      "artifacts": [
+        "campaigns/n16-dtdx04-to3m-v1/output/puncture.checkpoint",
+        "campaigns/n16-dtdx04-to3m-v1/output/puncture.history.csv",
+        "campaigns/n16-dtdx04-to3m-v1/output/puncture.failed-stage.bin",
+        "campaigns/n16-dtdx04-to3m-v1/output/puncture.checkpoint.horizon-seed.txt",
+        "campaigns/n16-dtdx04-to3m-v1/output/puncture.fastflow.horizon_summary_0.txt"
+      ]
+    }
+  ]
+}

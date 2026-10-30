@@ -1,0 +1,300 @@
+{
+  "schema": 1,
+  "status": "failed",
+  "started": "2026-10-30T03:36:43.129496+00:00",
+  "job_id": "8988303.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "launcher_host": "x4502c7s3b0n0",
+  "allocation_nodes": [
+    "x4502c7s3b0n0.hsn.cm.aurora.alcf.anl.gov"
+  ],
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "00:30:00"
+  },
+  "source_manifest_sha256": "42bd9b41105e8f3bfb9901eb67e15d8f05d5f62d307c6bcb383750e1e3385ca2",
+  "binaries": {
+    "build-sycl-mpi-timestep-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_radial_batch_timestep_experiment": "6fa27b3a479ee25adb44d4025cbadfbe6a1a7bb5578d774e34995dd386fa48e4"
+  },
+  "plan_sha256": "274b71ec6aba39d2e3eaffc80f735b8cf61f4792c9fc028631a80e03a26f0c56",
+  "phase": "timestep_experiment",
+  "n": 16,
+  "cases": [
+    {
+      "name": "puncture",
+      "kind": "puncture",
+      "started": "2026-10-30T03:36:59.352699+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-timestep-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_radial_batch_timestep_experiment",
+        "16",
+        "campaigns/n16-dtdx02-to3m-v1/output/puncture",
+        "puncture",
+        "1",
+        "0.00225",
+        "inputs/puncture-continuous-n16.txt",
+        "-",
+        "1570",
+        "0.03333333333333333",
+        "0.001",
+        "6",
+        "12",
+        "2"
+      ],
+      "generated_inputs": {},
+      "n": 16,
+      "returncode": 143,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 15.966239469009452,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "failed",
+          "passed": false
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "n"
+            ],
+            "op": "eq",
+            "value": 16
+          },
+          "observed": 16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "experimental_timestep"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "timestep_aware_penalty"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "bulk_cfl_guard_enabled"
+            ],
+            "op": "eq",
+            "value": false
+          },
+          "observed": false,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_schema"
+            ],
+            "op": "eq",
+            "value": "HYP3D_MPI_DT1"
+          },
+          "observed": "HYP3D_MPI_DT1",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_penalty_cfl_max"
+            ],
+            "op": "le",
+            "value": 0.5
+          },
+          "observed": 0.49999999999950007,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_surface"
+            ],
+            "op": "le",
+            "value": 1e-10
+          },
+          "observed": 1.1102230243829218e-15,
+          "passed": true
+        }
+      ],
+      "report_status": "failed",
+      "status": "failed",
+      "artifacts": {
+        "campaigns/n16-dtdx02-to3m-v1/output/puncture.report.json": {
+          "sha256": "471760d6d1c0d16be70fc7651744faae0860c76c57e6b9b479c96de29f0ab2d2",
+          "bytes": 11192
+        },
+        "campaigns/n16-dtdx02-to3m-v1/output/puncture.checkpoint": {
+          "sha256": "563fc5c680d172bdcf892bc730aae8662815eba09a14ddf2294bb8aa88fb0028",
+          "bytes": 79725208
+        },
+        "campaigns/n16-dtdx02-to3m-v1/output/puncture.history.csv": {
+          "sha256": "8b17a7a635c8a7cef11dd3db3ba25b1f58e4fe35456890d8cc38f0d23fcd0bc7",
+          "bytes": 1758
+        },
+        "campaigns/n16-dtdx02-to3m-v1/output/puncture.failed-stage.bin": {
+          "sha256": "375a9a0c388d56e8811c5d7b72fde66a7ec51ca7381f6d13e39fe2a73f7ebf2e",
+          "bytes": 39862528
+        },
+        "campaigns/n16-dtdx02-to3m-v1/output/puncture.checkpoint.horizon-seed.txt": {
+          "sha256": "7763bb11d6c9475fbe8168c305d39d72168c30db2a4daefa69effba6d4688a42",
+          "bytes": 89
+        },
+        "campaigns/n16-dtdx02-to3m-v1/output/puncture.fastflow.horizon_summary_0.txt": {
+          "sha256": "e4a5b59925e6878300ec87fd5ec63068f09ccc6cf424d92d6830403b43f0d79a",
+          "bytes": 551
+        }
+      },
+      "finished": "2026-10-30T03:37:30.720049+00:00"
+    }
+  ],
+  "storage_at_start": {
+    "bytes": 3547251200,
+    "entries": 50758,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 100000000,
+    "planned_bytes": 160000000,
+    "headroom_bytes": 1192748800
+  },
+  "stability_admission_eligible": false,
+  "experimental_policy": "n16_dt_dx_0.4_then_0.2_to_3M_pause",
+  "affinity": {
+    "returncode": 0,
+    "timed_out": false,
+    "storage_error": null,
+    "elapsed_seconds": 0.3223824460292235,
+    "records": [
+      {
+        "host": "x4502c7s3b0n0",
+        "rank": 10,
+        "mask": "5.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4502c7s3b0n0",
+        "rank": 0,
+        "mask": "0.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4502c7s3b0n0",
+        "rank": 3,
+        "mask": "1.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4502c7s3b0n0",
+        "rank": 5,
+        "mask": "2.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4502c7s3b0n0",
+        "rank": 9,
+        "mask": "4.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4502c7s3b0n0",
+        "rank": 7,
+        "mask": "3.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4502c7s3b0n0",
+        "rank": 1,
+        "mask": "0.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4502c7s3b0n0",
+        "rank": 4,
+        "mask": "2.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4502c7s3b0n0",
+        "rank": 6,
+        "mask": "3.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4502c7s3b0n0",
+        "rank": 8,
+        "mask": "4.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4502c7s3b0n0",
+        "rank": 2,
+        "mask": "1.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4502c7s3b0n0",
+        "rank": 11,
+        "mask": "5.1",
+        "hierarchy": "COMPOSITE"
+      }
+    ],
+    "passed": true
+  },
+  "stop_reason_status": "failed",
+  "finished": "2026-10-30T03:37:30.720068+00:00",
+  "elapsed_seconds": 47.590581408003345,
+  "storage_at_finish": {
+    "bytes": 3649759055,
+    "entries": 50771
+  }
+}
