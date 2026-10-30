@@ -21,6 +21,15 @@ JOB_NAME = 'hyper-scri-3d'
 ACCOUNT = 'CompactBinaryMerger'
 CPU_BIND = '1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100'
 FIXED = dict(queue='debug', account=ACCOUNT, nodes=1, ranks=12, ranks_per_node=12)
+QUEUES = {'debug': JOB_NAME, 'debug-scaling': 'hyper-scri-thin'}
+
+
+def allocation_lock(root, queue):
+    if queue not in QUEUES:
+        raise ValueError('Unsupported debug queue')
+    return root / ('.hyperbolic-' + queue + '-allocation-lock')
+
+
 PHASES = {'preflight', 'stability', 'convergence', 'resolution_control'}
 DISSIPATIVE_TARGET = 'hyperbolic_shift_3d_mpi_dissipative'
 SAMPLED_NORMAL_TARGET = 'hyperbolic_shift_3d_mpi_sampled_normal'
@@ -154,8 +163,10 @@ def validate_plan(root, plan):
     if plan.get('reviewed') is not True:
         raise ValueError('Coordinator must review the concrete command plan before binding it')
     resources = plan.get('resources', {})
+    if resources.get('queue') not in QUEUES:
+        raise ValueError('Only debug or debug-scaling is permitted')
     for key, value in FIXED.items():
-        if resources.get(key) != value:
+        if key != 'queue' and resources.get(key) != value:
             raise ValueError(f'Resource policy mismatch: {key} must be {value}')
     allocation = wall_seconds(resources.get('walltime'))
     budget = plan.get('worker_seconds', allocation - 90)
@@ -418,13 +429,14 @@ def bind(root, relative, manifest):
     inputs = {p: digest(local_path(root, p)) for c in plan['commands'] for p in c.get('inputs', [])}
     admission = validate_admission(root, plan, source_sha, binaries)
     template = Path(__file__).with_name('run_debug.pbs').read_text()
-    if template.count('@WALLTIME@') != 1 or template.count('@WORKER_PATH@') != 1:
+    if any(template.count(key) != 1 for key in ['@WALLTIME@','@WORKER_PATH@','@QUEUE@','@JOB_NAME@']):
         raise ValueError('Unexpected PBS template')
     worker = Path(__file__).with_name('worker.py').resolve().relative_to(root.resolve()).as_posix()
     if not re.fullmatch(r'[A-Za-z0-9_./-]+',worker):
         raise ValueError('Worker path must be a plain campaign-relative path')
     pbs = path.with_name('run_debug.pbs')
-    pbs.write_text(template.replace('@WALLTIME@', plan['resources']['walltime']).replace('@WORKER_PATH@',worker))
+    pbs.write_text(template.replace('@WALLTIME@', plan['resources']['walltime']).replace('@WORKER_PATH@',worker)
+                  .replace('@QUEUE@',plan['resources']['queue']).replace('@JOB_NAME@',QUEUES[plan['resources']['queue']]))
     binding = dict(schema=1, plan_sha256=digest(path), source_manifest=manifest,
                    source_manifest_sha256=source_sha, binaries=binaries, inputs=inputs,
                    pbs_sha256=digest(pbs), admission=admission, resources=plan['resources'],
@@ -435,8 +447,13 @@ def bind(root, relative, manifest):
     return binding
 
 
-def scheduler_snapshot(user):
-    selected = subprocess.run(['qselect', '-u', user, '-N', JOB_NAME], capture_output=True, text=True)
+def scheduler_snapshot(user, queue='debug'):
+    if queue not in QUEUES:
+        raise ValueError('Unsupported debug queue')
+    selection = ['qselect', '-u', user, '-N', QUEUES[queue]]
+    if queue != 'debug':
+        selection += ['-q', queue]
+    selected = subprocess.run(selection, capture_output=True, text=True)
     if selected.returncode not in [0, 153]:
         raise RuntimeError('Cannot establish task allocation state: ' + selected.stderr.strip())
     ids = selected.stdout.split()
@@ -465,12 +482,14 @@ def submit(root, relative):
             raise RuntimeError('Submission already attempted; inspect the saved outcome, never duplicate it')
     space = storage.require_capacity(root, plan, prospective=True)
     atomic(path.with_name('storage-before.json'), space)
-    snapshot = scheduler_snapshot(os.environ['USER'])
+    queue = plan['resources']['queue']
+    snapshot = scheduler_snapshot(os.environ['USER'], queue)
     atomic(path.with_name('scheduler-before.json'), snapshot)
     if snapshot['blocking']:
         raise RuntimeError('Another task allocation exists: ' + ', '.join(snapshot['blocking']))
-    # A root-wide lock also closes concurrent qselect/qsub races between plans.
-    global_lock = root / '.hyperbolic-debug-allocation-lock'
+    # One allocation per queue lane. The user authorized this thin-overlap
+    # task's scaling lane independently of the preserved debug campaign.
+    global_lock = allocation_lock(root, queue)
     global_lock.mkdir()
     path.with_name('.submission-lock').mkdir()
     atomic(global_lock / 'owner.json', dict(plan=relative, created=time.time()))
@@ -511,10 +530,11 @@ def collect(root, relative, release=False):
         state = record.get('scheduler', {}).get('job_state')
         if state not in ['F', 'X']:
             raise RuntimeError('Only an explicitly terminal scheduler result permits lock release')
-        snapshot = scheduler_snapshot(os.environ['USER'])
+        queue = submission['resources']['queue']
+        snapshot = scheduler_snapshot(os.environ['USER'], queue)
         if snapshot['blocking']:
             raise RuntimeError('A task allocation is still active')
-        lock = root / '.hyperbolic-debug-allocation-lock'
+        lock = allocation_lock(root, queue)
         owner = json.loads((lock / 'owner.json').read_text())
         if owner['plan'] != relative:
             raise RuntimeError('Root allocation lock belongs to another plan')

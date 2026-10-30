@@ -21,14 +21,14 @@ def stamp():
     return datetime.datetime.now(datetime.timezone.utc).isoformat()
 
 
-def allocation_node():
+def allocation_node(queue='debug'):
     if not os.environ.get('PBS_JOBID') or not os.environ.get('PBS_NODEFILE'):
         raise RuntimeError('Worker requires a PBS allocation and node file')
     nodes = set(Path(os.environ['PBS_NODEFILE']).read_text().split())
     if len(nodes) != 1:
         raise RuntimeError('This campaign permits exactly one allocated node')
-    if os.environ.get('PBS_QUEUE', 'debug') != 'debug':
-        raise RuntimeError('This campaign permits only the debug queue')
+    if queue not in control.QUEUES or os.environ.get('PBS_QUEUE') != queue:
+        raise RuntimeError('Allocation queue differs from the bound debug queue')
     return sorted(nodes)
 
 
@@ -165,7 +165,7 @@ def continuation_evidence(root, plan, command, case, report):
 
 def run(root, relative):
     path, plan, binding = control.read_bound(root, relative)
-    nodes = allocation_node()
+    nodes = allocation_node(plan['resources']['queue'])
     if not root.is_relative_to(Path.home()):
         raise RuntimeError('All new campaign work must reside under the Aurora home directory')
     initial_space = storage.require_capacity(root,plan,prospective=True)

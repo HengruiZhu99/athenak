@@ -77,6 +77,45 @@ class ControllerTests(unittest.TestCase):
             with self.subTest(key=key), self.assertRaises(ValueError):
                 control.validate_plan(self.root, plan)
 
+    def test_scaling_queue_is_bound_and_separately_locked(self):
+        plan = example()
+        plan['resources']['queue'] = 'debug-scaling'
+        control.atomic(self.root/self.relative, plan)
+        self.bound()
+        pbs = (self.root/'runs/one/run_debug.pbs').read_text()
+        self.assertIn('#PBS -q debug-scaling\n', pbs)
+        self.assertIn('#PBS -N hyper-scri-thin\n', pbs)
+        self.assertIn('#PBS -l select=1\n', pbs)
+        (self.root/'.hyperbolic-debug-allocation-lock').mkdir()
+        result = subprocess.CompletedProcess([], 0, '123.server\n', '')
+        with patch.object(control, 'scheduler_snapshot', return_value=dict(jobs={},blocking=[])) as selection, \
+             patch.object(control.subprocess, 'run', return_value=result):
+            control.submit(self.root, self.relative)
+        self.assertEqual(selection.call_args.args[1], 'debug-scaling')
+        self.assertTrue((self.root/'.hyperbolic-debug-scaling-allocation-lock').is_dir())
+        self.assertTrue((self.root/'.hyperbolic-debug-allocation-lock').is_dir())
+
+    def test_scaling_scheduler_selection_and_worker_queue(self):
+        result = subprocess.CompletedProcess([], 153, '', '')
+        with patch.object(control.subprocess, 'run', return_value=result) as call:
+            self.assertEqual(control.scheduler_snapshot('test','debug-scaling')['blocking'], [])
+            self.assertEqual(call.call_args.args[0], ['qselect','-u','test','-N','hyper-scri-thin','-q','debug-scaling'])
+        nodes = self.root/'nodes'; nodes.write_text('test-node\n')
+        with patch.dict(os.environ,dict(PBS_NODEFILE=str(nodes),PBS_JOBID='123.server',PBS_QUEUE='debug-scaling')):
+            self.assertEqual(worker.allocation_node('debug-scaling'), ['test-node'])
+            with self.assertRaises(RuntimeError):worker.allocation_node('debug')
+
+    def test_scaling_terminal_release_preserves_debug_lock(self):
+        control.atomic(self.root/'runs/one/submission.json',dict(job_id='123.server',resources=dict(queue='debug-scaling')))
+        debug = self.root/'.hyperbolic-debug-allocation-lock'; debug.mkdir()
+        lock = control.allocation_lock(self.root,'debug-scaling'); lock.mkdir()
+        control.atomic(lock/'owner.json',dict(plan=self.relative))
+        result = subprocess.CompletedProcess([],0,json.dumps({'Jobs':{'123.server':{'job_state':'F'}}}),'')
+        with patch.object(control.subprocess,'run',return_value=result), \
+             patch.object(control,'scheduler_snapshot',return_value=dict(jobs={},blocking=[])):
+            control.collect(self.root,self.relative,release=True)
+        self.assertFalse(lock.exists()); self.assertTrue(debug.is_dir())
+
     def test_low_resolution_and_review_required(self):
         for key, wrong in [('n',32), ('reviewed',False)]:
             plan = example()
