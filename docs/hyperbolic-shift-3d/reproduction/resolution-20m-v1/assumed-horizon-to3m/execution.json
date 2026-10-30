@@ -1,0 +1,50 @@
+[
+  {
+    "case": "n16-parity",
+    "checkpoint": "output/hyperbolic-core-shell/n16-timestep-to3m-v1/n16-original-dt-reproduction-v1/output/puncture-initial.checkpoint",
+    "checkpoint_sha256": "0db3671abd59939bacbdf692abb5b7f3f3327b87847357b6a5d1c7fb0bb66f9b",
+    "command": [
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_checkpoint_constraints",
+      "16",
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/n16-timestep-to3m-v1/n16-original-dt-reproduction-v1/output/puncture-initial.checkpoint",
+      "0.0005",
+      "0.06546042043417752",
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/assumed-horizon-constraints-v1/n16-parity.json"
+    ],
+    "returncode": 0,
+    "seconds": 10.603641583,
+    "executable_sha256": "ed596e1ba88ec562783594a8716012e04ced7c04287b5f965923b50a757acf96"
+  },
+  {
+    "case": "n16-final",
+    "checkpoint": "output/hyperbolic-core-shell/n16-timestep-to3m-v1/n16-original-dt-reproduction-v1/output/puncture.checkpoint",
+    "checkpoint_sha256": "628c2109bdf7ca6624afff58b65e8a28baca724e9e73de17b517454b26fe6a31",
+    "command": [
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_checkpoint_constraints",
+      "16",
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/n16-timestep-to3m-v1/n16-original-dt-reproduction-v1/output/puncture.checkpoint",
+      "0.0005",
+      "0.07519062316027353",
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/assumed-horizon-constraints-v1/n16-final.json"
+    ],
+    "returncode": 0,
+    "seconds": 10.037133375,
+    "executable_sha256": "ed596e1ba88ec562783594a8716012e04ced7c04287b5f965923b50a757acf96"
+  },
+  {
+    "case": "n24-final",
+    "checkpoint": "output/hyperbolic-core-shell/resolution-20m-v1/n24-dt1-segment01/output/puncture.checkpoint",
+    "checkpoint_sha256": "f43b0bc9081ea8bb923a34fbad567ef10ef183932d742fc3da1636865d22f9ef",
+    "command": [
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_checkpoint_constraints",
+      "24",
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/resolution-20m-v1/n24-dt1-segment01/output/puncture.checkpoint",
+      "0.0003333333333333333",
+      "0.07502425967234379",
+      "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/assumed-horizon-constraints-v1/n24-final.json"
+    ],
+    "returncode": 0,
+    "seconds": 21.736380708000002,
+    "executable_sha256": "ed596e1ba88ec562783594a8716012e04ced7c04287b5f965923b50a757acf96"
+  }
+]
