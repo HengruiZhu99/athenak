@@ -1,0 +1,732 @@
+{
+  "status": "verified_native_completion_with_interrupted_worker",
+  "job_id": "8988125.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "scheduler_exit": 143,
+  "worker_status": "running",
+  "native_status": "completed",
+  "t": 1,
+  "steps": 2048,
+  "seconds": 643.442778512,
+  "checks": [
+    {
+      "check": {
+        "path": [
+          "status"
+        ],
+        "op": "eq",
+        "value": "completed"
+      },
+      "observed": "completed",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "backend"
+        ],
+        "op": "eq",
+        "value": "SYCL"
+      },
+      "observed": "SYCL",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "mpi_size"
+        ],
+        "op": "eq",
+        "value": 12
+      },
+      "observed": 12,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "checkpoint_schema"
+        ],
+        "op": "eq",
+        "value": "HYP3D_MPI_V12"
+      },
+      "observed": "HYP3D_MPI_V12",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_dissipation_epsilon"
+        ],
+        "op": "eq",
+        "value": 2.0
+      },
+      "observed": 2,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_dissipation_degree"
+        ],
+        "op": "eq",
+        "value": 7
+      },
+      "observed": 7,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "checkpoint_header_bytes"
+        ],
+        "op": "eq",
+        "value": 184
+      },
+      "observed": 184,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_normal_derivative"
+        ],
+        "op": "eq",
+        "value": "sampled_native_numerator7"
+      },
+      "observed": "sampled_native_numerator7",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_normal_radial_nodes"
+        ],
+        "op": "eq",
+        "value": 7
+      },
+      "observed": 7,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_normal_bulk_derivative_order"
+        ],
+        "op": "eq",
+        "value": 4
+      },
+      "observed": 4,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_radial_closure"
+        ],
+        "op": "eq",
+        "value": "donor_seven_last3"
+      },
+      "observed": "donor_seven_last3",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_radial_bulk_rows"
+        ],
+        "op": "eq",
+        "value": 3
+      },
+      "observed": 3,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "interpatch_interpolation"
+        ],
+        "op": "eq",
+        "value": "logical_inner_transition"
+      },
+      "observed": "logical_inner_transition",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "evolved_overlap"
+        ],
+        "op": "eq",
+        "value": 3
+      },
+      "observed": 3,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "nominal_cells"
+        ],
+        "op": "eq",
+        "value": 106496
+      },
+      "observed": 106496,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "mesh_topology"
+        ],
+        "op": "eq",
+        "value": "cartesian_2x2x2_shells3"
+      },
+      "observed": "cartesian_2x2x2_shells3",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "cartesian_core_subdivisions"
+        ],
+        "op": "eq",
+        "value": 2
+      },
+      "observed": 2,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "mesh_blocks"
+        ],
+        "op": "eq",
+        "value": 26
+      },
+      "observed": 26,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "shell_geometry"
+        ],
+        "op": "eq",
+        "value": "spherical_equiangular"
+      },
+      "observed": "spherical_equiangular",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "core_half_width"
+        ],
+        "op": "eq",
+        "value": 0.18
+      },
+      "observed": 0.18,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "shell_inner_radius"
+        ],
+        "op": "eq",
+        "value": 0.16
+      },
+      "observed": 0.16,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "overlap_quadrature"
+        ],
+        "op": "eq",
+        "value": "radial_quintic_partition"
+      },
+      "observed": "radial_quintic_partition",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "cartesian_seams"
+        ],
+        "op": "eq",
+        "value": "uniform_global_stencil"
+      },
+      "observed": "uniform_global_stencil",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "positive_variables"
+        ],
+        "op": "eq",
+        "value": "log_chi_log_lapse_rk_and_ko"
+      },
+      "observed": "log_chi_log_lapse_rk_and_ko",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "physical_lapse_floor"
+        ],
+        "op": "eq",
+        "value": 1e-10
+      },
+      "observed": 1e-10,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "boundary_execution"
+        ],
+        "op": "eq",
+        "value": "cached_global_projection_angular"
+      },
+      "observed": "cached_global_projection_angular",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "volume_exchange"
+        ],
+        "op": "eq",
+        "value": "cached_sparse_alltoallv"
+      },
+      "observed": "cached_sparse_alltoallv",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "interface_method"
+        ],
+        "op": "eq",
+        "value": "experimental_ghost_plus_adjoint_trace_penalty"
+      },
+      "observed": "experimental_ghost_plus_adjoint_trace_penalty",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "core_evolved_layers"
+        ],
+        "op": "eq",
+        "value": 1
+      },
+      "observed": 1,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "shifted_overlap_donors"
+        ],
+        "op": "eq",
+        "value": true
+      },
+      "observed": true,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "trace_kappa"
+        ],
+        "op": "eq",
+        "value": 1.0
+      },
+      "observed": 1,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "trace_normal_ratio"
+        ],
+        "op": "eq",
+        "value": 0.25
+      },
+      "observed": 0.25,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "t"
+        ],
+        "op": "eq",
+        "value": 1.0
+      },
+      "observed": 1,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "diagnostics_current"
+        ],
+        "op": "eq",
+        "value": true
+      },
+      "observed": true,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "checkpoint_admitted"
+        ],
+        "op": "eq",
+        "value": true
+      },
+      "observed": true,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "max_null_surface"
+        ],
+        "op": "le",
+        "value": 1e-12
+      },
+      "observed": 8.881784197001252e-16,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "max_null_ghost"
+        ],
+        "op": "le",
+        "value": 1e-12
+      },
+      "observed": 1.1102230246251558e-15,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "max_cfl"
+        ],
+        "op": "le",
+        "value": 0.5
+      },
+      "observed": 0.32487318707793006,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "min_chi"
+        ],
+        "op": "ge",
+        "value": 1e-12
+      },
+      "observed": 0.9999999999999996,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "min_lapse"
+        ],
+        "op": "ge",
+        "value": 1e-12
+      },
+      "observed": 0.5000474609375022,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "lapse_floor_node_interventions"
+        ],
+        "op": "eq",
+        "value": 0
+      },
+      "observed": 0,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "max_determinant_residual"
+        ],
+        "op": "le",
+        "value": 1e-12
+      },
+      "observed": 4.440892098500626e-16,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "max_tracefree_residual"
+        ],
+        "op": "le",
+        "value": 1e-12
+      },
+      "observed": 7.573064690121713e-29,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "cells"
+        ],
+        "op": "eq",
+        "value": 143632
+      },
+      "observed": 143632,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "H_L2"
+        ],
+        "op": "finite"
+      },
+      "observed": 2.49061737874737e-13,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "M_L2"
+        ],
+        "op": "finite"
+      },
+      "observed": 3.7566418138735043e-13,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "sparse_poison_unused"
+        ],
+        "op": "eq",
+        "value": true
+      },
+      "observed": true,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "sparse_exchange_by_rank",
+          0,
+          6
+        ],
+        "op": "eq",
+        "value": 1
+      },
+      "observed": 1,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "sparse_exchange_by_rank",
+          1,
+          6
+        ],
+        "op": "eq",
+        "value": 1
+      },
+      "observed": 1,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "sparse_exchange_by_rank",
+          2,
+          6
+        ],
+        "op": "eq",
+        "value": 1
+      },
+      "observed": 1,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "sparse_exchange_by_rank",
+          3,
+          6
+        ],
+        "op": "eq",
+        "value": 1
+      },
+      "observed": 1,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "sparse_exchange_by_rank",
+          4,
+          6
+        ],
+        "op": "eq",
+        "value": 1
+      },
+      "observed": 1,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "sparse_exchange_by_rank",
+          5,
+          6
+        ],
+        "op": "eq",
+        "value": 1
+      },
+      "observed": 1,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "sparse_exchange_by_rank",
+          6,
+          6
+        ],
+        "op": "eq",
+        "value": 1
+      },
+      "observed": 1,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "sparse_exchange_by_rank",
+          7,
+          6
+        ],
+        "op": "eq",
+        "value": 1
+      },
+      "observed": 1,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "sparse_exchange_by_rank",
+          8,
+          6
+        ],
+        "op": "eq",
+        "value": 1
+      },
+      "observed": 1,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "sparse_exchange_by_rank",
+          9,
+          6
+        ],
+        "op": "eq",
+        "value": 1
+      },
+      "observed": 1,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "sparse_exchange_by_rank",
+          10,
+          6
+        ],
+        "op": "eq",
+        "value": 1
+      },
+      "observed": 1,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "sparse_exchange_by_rank",
+          11,
+          6
+        ],
+        "op": "eq",
+        "value": 1
+      },
+      "observed": 1,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "max_state_deviation"
+        ],
+        "op": "le",
+        "value": 1e-10
+      },
+      "observed": 2.7860302180347036e-13,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "H_L2"
+        ],
+        "op": "le",
+        "value": 1e-10
+      },
+      "observed": 2.49061737874737e-13,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "steps"
+        ],
+        "op": "eq",
+        "value": 2048
+      },
+      "observed": 2048,
+      "passed": true
+    }
+  ],
+  "history_samples": 33,
+  "history_maxima": {
+    "state_deviation": 3.335173152860853e-13,
+    "H_L2": 2.624864944513909e-13,
+    "M_L2": 3.901484658710798e-13,
+    "null_surface": 8.881784197001252e-16,
+    "null_ghost": 1.1102230246251558e-15,
+    "determinant_residual": 4.440892098500626e-16,
+    "tracefree_residual": 1.0097419586828951e-28
+  },
+  "checkpoint_sha256": "97b5332160f63e809d6cf03d9e03d8ec726acc260820da35aa2c1bb9d612367b",
+  "finite_payload_doubles": 9000416,
+  "terminal_output_manifest_sha256": "78d010a18241b3ec1b590ab572f44e46121b5ac01c6a3ff293b931161c6d2a17",
+  "source_manifest_sha256": "e8a3d5c2839797c60c32874e930eca2631beaac4f414f22e5e098502cb54b8ac",
+  "plan_sha256": "c82280864c7eafa19ba4693c743ce538dc281341d9229110449b33161fbf8dca",
+  "scope": "Native L1 paired Minkowski completion through coordinate time 1 verified from terminal outputs. PBS exit143 and unfinished worker are retained. No whole-batch pass, admission, perturbed stability, puncture or convergence claim."
+}

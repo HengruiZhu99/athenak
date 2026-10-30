@@ -1,0 +1,165 @@
+{
+  "scope": "Manufactured scalar spatial derivatives only. Common physical masks but mesh-specific midpoint quadratures and nodes. Does not measure paired-penalty dynamics, reflected waves, puncture fidelity or global stability.",
+  "n16": {
+    "oblique/core-outer": {
+      "matched-nonoverlap": {
+        "coupled": 0.0015759028971718723,
+        "analytic_ghosts": 2.0645941501976864e-07,
+        "interpolation_contribution": 0.001575913828402009
+      },
+      "control-l3": {
+        "coupled": 2.0645941479073006e-07,
+        "analytic_ghosts": 2.0645941501976864e-07,
+        "interpolation_contribution": 1.420295824293201e-13
+      },
+      "thin-l1": {
+        "coupled": 3.102226987099729e-05,
+        "analytic_ghosts": 2.0645941501976864e-07,
+        "interpolation_contribution": 3.10316404016311e-05
+      }
+    },
+    "oblique/shell-common-edges": {
+      "matched-nonoverlap": {
+        "coupled": 0.006342191136389344,
+        "analytic_ghosts": 0.005519466245130384,
+        "interpolation_contribution": 0.0031702092979685684
+      },
+      "control-l3": {
+        "coupled": 0.0028677414736879817,
+        "analytic_ghosts": 0.0028677414736879817,
+        "interpolation_contribution": 0
+      },
+      "thin-l1": {
+        "coupled": 0.0028677414736879817,
+        "analytic_ghosts": 0.0028677414736879817,
+        "interpolation_contribution": 0
+      }
+    },
+    "radial/core-outer": {
+      "matched-nonoverlap": {
+        "coupled": 0.005142079395465735,
+        "analytic_ghosts": 0.00029302048661848244,
+        "interpolation_contribution": 0.0051161707961834765
+      },
+      "control-l3": {
+        "coupled": 0.00029302048661848705,
+        "analytic_ghosts": 0.00029302048661848244,
+        "interpolation_contribution": 5.785276130852856e-14
+      },
+      "thin-l1": {
+        "coupled": 0.0002959811225354896,
+        "analytic_ghosts": 0.00029302048661848244,
+        "interpolation_contribution": 2.6912513000592783e-05
+      }
+    },
+    "radial/shell-common-edges": {
+      "matched-nonoverlap": {
+        "coupled": 0.0035842471046607705,
+        "analytic_ghosts": 0.003709359897204436,
+        "interpolation_contribution": 0.0005358569480401632
+      },
+      "control-l3": {
+        "coupled": 0.0003884175447229298,
+        "analytic_ghosts": 0.0003884175447229298,
+        "interpolation_contribution": 0
+      },
+      "thin-l1": {
+        "coupled": 0.0003884175447229298,
+        "analytic_ghosts": 0.0003884175447229298,
+        "interpolation_contribution": 0
+      }
+    }
+  },
+  "apparent_orders_16_to_24": {
+    "oblique/core-outer": {
+      "matched-nonoverlap": 6.453036721333324,
+      "control-l3": 3.95995026938048,
+      "thin-l1": 4.267641477575789
+    },
+    "oblique/shell-common-edges": {
+      "matched-nonoverlap": 4.3279124112040295,
+      "control-l3": 4.1198431752739575,
+      "thin-l1": 4.1198431752739575
+    },
+    "radial/core-outer": {
+      "matched-nonoverlap": 4.234341972951692,
+      "control-l3": 4.038551268857603,
+      "thin-l1": 4.03898114813465
+    },
+    "radial/shell-common-edges": {
+      "matched-nonoverlap": 3.9022183350767436,
+      "control-l3": 4.004800279886731,
+      "thin-l1": 4.004800279886731
+    }
+  },
+  "evolved_interface_n16": {
+    "oblique/core-interface-stencil": {
+      "matched-nonoverlap": {
+        "coupled": 0.002085604502725732,
+        "analytic_ghosts": 2.1689724660272652e-07,
+        "interpolation_contribution": 0.0020856189761144315
+      },
+      "control-l3": {
+        "coupled": 0.0009332691376763922,
+        "analytic_ghosts": 2.516815087616835e-07,
+        "interpolation_contribution": 0.000933262282190062
+      },
+      "thin-l1": {
+        "coupled": 0.0006880451828976645,
+        "analytic_ghosts": 2.289155602981464e-07,
+        "interpolation_contribution": 0.0006880367321495048
+      }
+    },
+    "oblique/shell-interface-stencil": {
+      "matched-nonoverlap": {
+        "coupled": 0.006342191136389344,
+        "analytic_ghosts": 0.005519466245130384,
+        "interpolation_contribution": 0.0031702092979685684
+      },
+      "control-l3": {
+        "coupled": 0.024992762379682905,
+        "analytic_ghosts": 0.024986013947798643,
+        "interpolation_contribution": 8.963477242449648e-05
+      },
+      "thin-l1": {
+        "coupled": 0.024995076290535493,
+        "analytic_ghosts": 0.024986013947798643,
+        "interpolation_contribution": 9.24038293536439e-05
+      }
+    },
+    "radial/core-interface-stencil": {
+      "matched-nonoverlap": {
+        "coupled": 0.006799711557920344,
+        "analytic_ghosts": 0.0002750114112027469,
+        "interpolation_contribution": 0.0067709177400788485
+      },
+      "control-l3": {
+        "coupled": 0.00030880245305694304,
+        "analytic_ghosts": 0.00018816473390951405,
+        "interpolation_contribution": 0.0002726364942264704
+      },
+      "thin-l1": {
+        "coupled": 0.00048498008433028937,
+        "analytic_ghosts": 0.00024774786714646123,
+        "interpolation_contribution": 0.00044348231575160784
+      }
+    },
+    "radial/shell-interface-stencil": {
+      "matched-nonoverlap": {
+        "coupled": 0.0035842471046607705,
+        "analytic_ghosts": 0.003709359897204436,
+        "interpolation_contribution": 0.0005358569480401632
+      },
+      "control-l3": {
+        "coupled": 0.0005027072135754029,
+        "analytic_ghosts": 0.0005023418807145423,
+        "interpolation_contribution": 4.713263305462396e-06
+      },
+      "thin-l1": {
+        "coupled": 0.0005027137246338015,
+        "analytic_ghosts": 0.0005023418807145423,
+        "interpolation_contribution": 3.5674294744159833e-06
+      }
+    }
+  }
+}

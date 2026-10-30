@@ -1,0 +1,253 @@
+{
+  "status": "passed",
+  "source_manifest_sha256": "95fc83ec800737e55afede9ced848f9d3bacda91385896e0d28fdd00d90c64a9",
+  "plan_sha256": "c34b49f25351b0a71b0e48383e6228620a44f7b614fae63d6bf6215d43e96299",
+  "job_id": "8988222.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "cases": [
+    {
+      "name": "old-full",
+      "t": 0.0048828125,
+      "kind": "oblique",
+      "steps": 20,
+      "seconds": 17.477890387,
+      "cells": 143632,
+      "H_L2": 0.0037789517598528933,
+      "M_L2": 0.009799498493385236,
+      "floor": 0,
+      "max_null": 8.881784197001248e-16,
+      "horizon_found": false
+    },
+    {
+      "name": "new-disabled",
+      "t": 0.0048828125,
+      "kind": "oblique",
+      "steps": 20,
+      "seconds": 17.003314509,
+      "cells": 143632,
+      "H_L2": 0.0037789517598528933,
+      "M_L2": 0.009799498493385236,
+      "floor": 0,
+      "max_null": 8.881784197001248e-16,
+      "horizon_found": false
+    },
+    {
+      "name": "new-enabled",
+      "t": 0.0048828125,
+      "kind": "oblique",
+      "steps": 20,
+      "seconds": 17.155385947,
+      "cells": 143632,
+      "H_L2": 0.0037789517598528933,
+      "M_L2": 0.009799498493385236,
+      "floor": 0,
+      "max_null": 8.881784197001248e-16,
+      "horizon_found": false
+    },
+    {
+      "name": "minkowski-enabled",
+      "t": 0.0009765625,
+      "kind": "minkowski",
+      "steps": 4,
+      "seconds": 12.237019087,
+      "cells": 143632,
+      "H_L2": 2.411109497917638e-15,
+      "M_L2": 1.1023535193792462e-14,
+      "floor": 0,
+      "max_null": 8.881784197001248e-16,
+      "horizon_found": false
+    }
+  ],
+  "comparisons": {
+    "compiled-observer-invariance": {
+      "restart_equivalence": true,
+      "bitwise_payload_equal": true,
+      "maximum_absolute_error": 0.0,
+      "maximum_scaled_error": 0.0,
+      "atol": 0,
+      "rtol": 0,
+      "compared_doubles": 9000416,
+      "header": {
+        "magic": "HYP3D_MPI_V12",
+        "n": 16,
+        "nf": 31,
+        "kind": 3,
+        "admitted": 1,
+        "cells": 143632,
+        "surface": 47616,
+        "steps": 20,
+        "time": 0.0048828125,
+        "dt": 0.000244140625,
+        "header_bytes": 184,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition",
+        "interface_method": "experimental_ghost_plus_adjoint_trace_penalty",
+        "core_evolved_layers": 1,
+        "shifted_overlap_donors": true,
+        "trace_kappa": 1.0,
+        "trace_normal_ratio": 0.25,
+        "evolved_overlap": 3,
+        "nominal_cells": 106496,
+        "mesh_topology": "cartesian_2x2x2_shells3",
+        "cartesian_core_subdivisions": 2,
+        "mesh_blocks": 26,
+        "shell_geometry": "spherical_equiangular",
+        "core_half_width": 0.18,
+        "shell_inner_radius": 0.16,
+        "overlap_quadrature": "radial_quintic_partition",
+        "cartesian_seams": "uniform_global_stencil",
+        "positive_variables": "log_chi_log_lapse_rk_and_ko",
+        "physical_lapse_floor": 1e-10,
+        "payload_doubles": 9000416
+      },
+      "reference_sha256": "59e6be74a7a2c0340635e7b4593c39f7922f86ccc95cdb84223483ef4b454138",
+      "candidate_sha256": "59e6be74a7a2c0340635e7b4593c39f7922f86ccc95cdb84223483ef4b454138"
+    },
+    "enabled-observer-invariance": {
+      "restart_equivalence": true,
+      "bitwise_payload_equal": true,
+      "maximum_absolute_error": 0.0,
+      "maximum_scaled_error": 0.0,
+      "atol": 0,
+      "rtol": 0,
+      "compared_doubles": 9000416,
+      "header": {
+        "magic": "HYP3D_MPI_V12",
+        "n": 16,
+        "nf": 31,
+        "kind": 3,
+        "admitted": 1,
+        "cells": 143632,
+        "surface": 47616,
+        "steps": 20,
+        "time": 0.0048828125,
+        "dt": 0.000244140625,
+        "header_bytes": 184,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition",
+        "interface_method": "experimental_ghost_plus_adjoint_trace_penalty",
+        "core_evolved_layers": 1,
+        "shifted_overlap_donors": true,
+        "trace_kappa": 1.0,
+        "trace_normal_ratio": 0.25,
+        "evolved_overlap": 3,
+        "nominal_cells": 106496,
+        "mesh_topology": "cartesian_2x2x2_shells3",
+        "cartesian_core_subdivisions": 2,
+        "mesh_blocks": 26,
+        "shell_geometry": "spherical_equiangular",
+        "core_half_width": 0.18,
+        "shell_inner_radius": 0.16,
+        "overlap_quadrature": "radial_quintic_partition",
+        "cartesian_seams": "uniform_global_stencil",
+        "positive_variables": "log_chi_log_lapse_rk_and_ko",
+        "physical_lapse_floor": 1e-10,
+        "payload_doubles": 9000416
+      },
+      "reference_sha256": "59e6be74a7a2c0340635e7b4593c39f7922f86ccc95cdb84223483ef4b454138",
+      "candidate_sha256": "59e6be74a7a2c0340635e7b4593c39f7922f86ccc95cdb84223483ef4b454138"
+    }
+  },
+  "verified_artifacts": {
+    "campaigns/preflight-thin-probes-v1/output/old-full.report.json": {
+      "sha256": "0efcfdb2b63d6928a32c695ff9695edb9dd29539b7ef12f4d0c53ca4f4fd8b1e",
+      "bytes": 8437
+    },
+    "campaigns/preflight-thin-probes-v1/output/old-full.history.csv": {
+      "sha256": "c3c42ff32d281ff4c73fcfc3de85766b359d13353be0a7dfc9a63275b57b7bc1",
+      "bytes": 2281
+    },
+    "campaigns/preflight-thin-probes-v1/output/old-full.checkpoint": {
+      "sha256": "59e6be74a7a2c0340635e7b4593c39f7922f86ccc95cdb84223483ef4b454138",
+      "bytes": 72003512
+    },
+    "campaigns/preflight-thin-probes-v1/output/old-full.log": {
+      "sha256": "c3d06568c85b1b28f5a5ddb0302db58999b2b8f2c3699957accab86cc8bf1941",
+      "bytes": 268
+    },
+    "campaigns/preflight-thin-probes-v1/output/new-disabled.report.json": {
+      "sha256": "bd16c98b3be6685f5011e29e76208d771b2cb02fb91555792d02d9043d5734ec",
+      "bytes": 9475
+    },
+    "campaigns/preflight-thin-probes-v1/output/new-disabled.history.csv": {
+      "sha256": "fbdbb34f5909c0481430213a1a800767d38498eb0605272e39979eaddb33dfb6",
+      "bytes": 2292
+    },
+    "campaigns/preflight-thin-probes-v1/output/new-disabled.checkpoint": {
+      "sha256": "59e6be74a7a2c0340635e7b4593c39f7922f86ccc95cdb84223483ef4b454138",
+      "bytes": 72003512
+    },
+    "campaigns/preflight-thin-probes-v1/output/new-disabled.log": {
+      "sha256": "b724de0c7ef9812801df1a441759b956644751f039e1f4c2748f74e8a12ea436",
+      "bytes": 268
+    },
+    "campaigns/preflight-thin-probes-v1/output/new-enabled.report.json": {
+      "sha256": "9fece3fb21c4f13ca69c2d663cdfc6db487e0e2db22a85df263441e2c10c6a0f",
+      "bytes": 9549
+    },
+    "campaigns/preflight-thin-probes-v1/output/new-enabled.history.csv": {
+      "sha256": "3fc637d0418449a231ae723d236f8a3dd9963637c02ef02a5d4329dcdca2164d",
+      "bytes": 2286
+    },
+    "campaigns/preflight-thin-probes-v1/output/new-enabled.checkpoint": {
+      "sha256": "59e6be74a7a2c0340635e7b4593c39f7922f86ccc95cdb84223483ef4b454138",
+      "bytes": 72003512
+    },
+    "campaigns/preflight-thin-probes-v1/output/new-enabled.log": {
+      "sha256": "5cd31414418dac3859be1cc3cbe0a760c0c699b27806f604b6cedbd6a9d98832",
+      "bytes": 268
+    },
+    "campaigns/preflight-thin-probes-v1/output/new-enabled.profiles.csv": {
+      "sha256": "a5359d59fa4034e81d3d4f0c2a1e3a327f8469e16feb567055bab94e47ffc94d",
+      "bytes": 4284934
+    },
+    "campaigns/preflight-thin-probes-v1/output/minkowski-enabled.report.json": {
+      "sha256": "b6fd5338462688f8c60b0762dbd17460c38146c8fe919e69ce0c532b38eb6ebd",
+      "bytes": 9559
+    },
+    "campaigns/preflight-thin-probes-v1/output/minkowski-enabled.history.csv": {
+      "sha256": "546ccb7a195303f392528e574d1b066f15fc3ae06437dd2560e7e299365aab29",
+      "bytes": 2114
+    },
+    "campaigns/preflight-thin-probes-v1/output/minkowski-enabled.checkpoint": {
+      "sha256": "3f97155ab5bd3e749fff60c0f9f1633885a39d9ada5572aec05cc315e05f604d",
+      "bytes": 72003512
+    },
+    "campaigns/preflight-thin-probes-v1/output/minkowski-enabled.log": {
+      "sha256": "c40f2e2d3a8ad99721e3bee9c799d9186ff0af56ccf431853cd10fc51c1cf932",
+      "bytes": 271
+    },
+    "campaigns/preflight-thin-probes-v1/output/minkowski-enabled.profiles.csv": {
+      "sha256": "494f6a0fc6cd6e24b700177bbe2eae1aad55e2805a62ab273eaddb1c9f85953f",
+      "bytes": 4041444
+    },
+    "campaigns/preflight-thin-probes-v1/output/compiled-observer-invariance.report.json": {
+      "sha256": "d04a9ef2b1bb10274a48355dabe152eb8903ab1f364076d6ccc505de500a892e",
+      "bytes": 6456
+    },
+    "campaigns/preflight-thin-probes-v1/output/compiled-observer-invariance.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "campaigns/preflight-thin-probes-v1/output/enabled-observer-invariance.report.json": {
+      "sha256": "d04a9ef2b1bb10274a48355dabe152eb8903ab1f364076d6ccc505de500a892e",
+      "bytes": 6456
+    },
+    "campaigns/preflight-thin-probes-v1/output/enabled-observer-invariance.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  },
+  "scope": "Short 12-tile GPU observer invariance and finite cached time-series/Minkowski profiles. Offline sample reconstruction is a separate audit. No long stability or reflection qualification."
+}

@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "plan_sha256": "ad599d4e6718fb0561fb1d1f68c83a5842c14b66cc947dc5478d1ea14916aa23",
+  "source_manifest": "source-thin-v1-manifest.json",
+  "source_manifest_sha256": "e8a3d5c2839797c60c32874e930eca2631beaac4f414f22e5e098502cb54b8ac",
+  "binaries": {
+    "build-sycl-mpi-thin-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_thin_trace_sparse": "c6e981ef335df2c04b97304a244b3e15685dbe8b860058b26b927d79ec62ea5a"
+  },
+  "inputs": {
+    "inputs/puncture-thin-n16-l1.txt": "4c76ba76b0a1ae52ead958d7c077ecec499dc291deefe5b8ca18e09a4cb8d0c8",
+    "admissions/thin-l1-paired-v1/core-initial-audit.json": "0fcb070b5bf3af8d2c30aedb960a75b30e77c57390d2211ab5e9761e04c9e6e8",
+    "admissions/thin-l1-paired-v1/clock-independent-audit.json": "47acb34ec90cac003bf763eab0b0d96dc898a95d91fc68be8b3b1eb4f7fd441a",
+    "admissions/thin-l1-paired-v1/puncture-independent-audit.json": "e6de8e1487db8a8321ec6ef114b8cdd6e55a6ea32673d1f8699ed451b04bd27f"
+  },
+  "pbs_sha256": "fa32dc7a0fa383fded8290368465b7b6307e76b0724347737551c4acf2f9a7c0",
+  "admission": {
+    "path": "admissions/thin-l1-paired-v1/admission.json",
+    "sha256": "c3b8ecb7e56057599a217538d9874de06771afb183919dbc494338e00878b1b5"
+  },
+  "resources": {
+    "queue": "debug-scaling",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "00:30:00"
+  },
+  "storage_at_bind": {
+    "bytes": 3958746384,
+    "entries": 50738,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 100000000,
+    "planned_bytes": 180000000,
+    "headroom_bytes": 761253616
+  },
+  "launcher": {
+    "control.py": "b744c2d4359fb64452a8a110ec6db4829223798266ca084ab977fb845dc4e1e4",
+    "worker.py": "1e424671b686b0805bbd7778691fed507b2a28acd7ccac43048d2280feb033f5",
+    "run_debug.pbs": "2c9ff8a5b6a8e4ddc4a626fffeaac30e5888e040c7ba726330bb949a2a4719f6",
+    "storage.py": "fdcf2abc2533b8fed91220d9c18d8b9d723660820949a72e956fb9c8866afd39"
+  },
+  "allocation_seconds": 1800,
+  "worker_seconds": 1710
+}

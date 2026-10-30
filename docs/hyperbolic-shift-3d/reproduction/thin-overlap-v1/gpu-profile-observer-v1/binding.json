@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "plan_sha256": "c34b49f25351b0a71b0e48383e6228620a44f7b614fae63d6bf6215d43e96299",
+  "source_manifest": "source-thin-probes-v1-manifest.json",
+  "source_manifest_sha256": "95fc83ec800737e55afede9ced848f9d3bacda91385896e0d28fdd00d90c64a9",
+  "binaries": {
+    "build-sycl-mpi-thin-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_thin_trace": "9bd316fefcfeca7283e8b06119d5bfa1db36e70c8891f73bf77ffacc0513f4d4",
+    "build-sycl-mpi-thin-probes-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_thin_trace_sparse": "d5a95be75d375dede595885a1fe9fc8f0ed3b9b41744de6ad0a9754c307aad9f",
+    "launchers/thin-debug-scaling-v1/preflight.py": "2f240d0a8dfe95923d53427884a54bd9ee5cce9356a54539afe2cc3fb4b4ca95"
+  },
+  "inputs": {
+    "source-thin-v1-manifest.json": "e8a3d5c2839797c60c32874e930eca2631beaac4f414f22e5e098502cb54b8ac",
+    "source-thin-v1-provenance.json": "67a8ceb158e175f4e3381109c8c31164ae7c6d6c7d8e56a2f5706d0f5df52000",
+    "build-logs/thin-v1/build-status.json": "794d2b616359c0c1769f3caaa94a1e13d6f5f0409390a693254887f6b19d712d",
+    "build-sycl-mpi-thin-v1/CMakeCache.txt": "5e6d8129a25f2252e7927e8ce2b21cbec9f1bc06e58df8982e6289e654349d8a"
+  },
+  "pbs_sha256": "fa32dc7a0fa383fded8290368465b7b6307e76b0724347737551c4acf2f9a7c0",
+  "admission": null,
+  "resources": {
+    "queue": "debug-scaling",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "00:30:00"
+  },
+  "storage_at_bind": {
+    "bytes": 3439218775,
+    "entries": 48127,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 100000000,
+    "planned_bytes": 360000000,
+    "headroom_bytes": 1100781225
+  },
+  "launcher": {
+    "control.py": "b744c2d4359fb64452a8a110ec6db4829223798266ca084ab977fb845dc4e1e4",
+    "worker.py": "1e424671b686b0805bbd7778691fed507b2a28acd7ccac43048d2280feb033f5",
+    "run_debug.pbs": "2c9ff8a5b6a8e4ddc4a626fffeaac30e5888e040c7ba726330bb949a2a4719f6",
+    "storage.py": "fdcf2abc2533b8fed91220d9c18d8b9d723660820949a72e956fb9c8866afd39"
+  },
+  "allocation_seconds": 1800,
+  "worker_seconds": 1710
+}

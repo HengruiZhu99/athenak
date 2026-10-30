@@ -33,7 +33,8 @@ At n16 the one-layer configuration has 143,632 evolved points, compared with
 159,200 for the control: 9.78% fewer. Shell angular and radial extensions are
 unchanged. This is not elimination of geometric overlap, nor an accuracy-
 matched speedup. The initial serial CPU measurements show additional penalty
-work; no GPU speedup is established.
+work. The later GPU communication-only comparison below does not establish an
+accuracy-matched speedup for changing overlap width or adding the penalty.
 
 ![Preliminary checks](preliminary.png)
 
@@ -109,20 +110,21 @@ V12 admission parameters. Worker tests were updated for the new explicit
 environment argument; the initial mock-signature failure is retained beside
 the repaired controller tests. All 106 controller/preflight tests subsequently
 passed. No physical acceptance threshold was changed.
-No GPU job has been submitted from this experimental fork yet.
+At that initial local stage no GPU job had been submitted from this fork;
+subsequent GPU evidence is recorded below.
 
 ## Remaining gates
 
 1. Longer oblique and spherical interface probes, reflection/error diagnostics
    and independent timestep refinement. Preserve failed cases.
-2. Qualify the integrated sparse trace target on all 12 GPU ranks; local
-   poisoned two-rank trajectory equivalence has passed.
-3. Fresh frozen SYCL+MPI source/build and a 12-tile, single-debug-node preflight,
-   sharing the existing campaign allocation/storage guards.
+2. Extend the now-verified twelve-tile sparse equivalence to longer interface
+   and puncture tests.
+3. Qualify the optional diagnostic observer on the separately frozen GPU build;
+   subsequent allocations use debug-scaling with the existing storage guard.
 4. Isotropic puncture through at least 3M, with matching 1D norm conventions
    and accepted horizons only. The n16 thin initial data have been generated,
-   with provenance retained; a two-step equivalence fixture passed, but no
-   successful duration test is claimed.
+   with provenance retained; short GPU evolution reaches 0.15M, but the thin
+   variant has not yet completed a 3M test.
 5. Comparable-accuracy performance and convergence comparison; AMR evolution
    remains a separate unresolved infrastructure limitation.
 
@@ -360,12 +362,18 @@ of exactly representable dt=1/2048. Its plan hash is
 The scoped `admit_paired_lowres.py` admission combines the independently
 verified operator, clock/restart, sparse-equivalence and short-puncture
 checks; it does not relabel the earlier failed batch as passed.
-This longer run is pending, and uses one CompactBinaryMerger debug node
-with all twelve ranks/tiles.
+Native evolution reached coordinate time 1 in 643.44 seconds, but PBS records
+external termination (exit 143) before the enclosing worker completed collection.
+The original unfinished worker is retained. `audit_terminal_minkowski.py` verifies
+the terminal checkpoint, all 33 saved diagnostic times, native report gates and
+twelve distinct tile bindings without relabeling the batch as passed. Maximum
+saved state deviation/H/M RMS are 3.34e-13 / 2.63e-13 / 3.91e-13; null error is
+at most 1.12e-15, and no lapse floor was used. This does not rule out the old
+interface disturbance at later times; the V7 control grew significantly by t=2.
 Longer interface-crossing waves, new 3M thin-overlap punctures, timestep/spatial
 convergence, and an accuracy-matched cost recommendation remain open.
 
-### Optional cached time-series profiles (CPU qualified)
+### Optional cached time-series profiles
 
 `HYPERBOLIC_TRACE_PROFILES=1` enables the existing fixed-location values and
 radial derivatives at each diagnostic time for V12 grids with n >= 12.
@@ -386,7 +394,47 @@ defaults off. The controller binds and sanitizes its explicit environment flag.
 and new enabled/two-rank poisoned-sparse evolutions have byte-identical complete
 checkpoints. Online final samples match both the new reader and the frozen
 independent reader byte for byte, and sampled Minkowski values/derivatives
-remain at roundoff. Seven controller tests passed. GPU observer invariance and
-long wave use still require a new separately frozen build and preflight. These
-profiles enable future reflection analysis; their existence is not a completed
-reflection measurement.
+remain at roundoff. Seven controller tests passed. The later [GPU observer audit](gpu-profile-observer-v1/README.md) also passes
+exact trajectory equality and independent final-snapshot reconstruction. Long
+wave use remains open. These profiles enable future reflection analysis; their
+existence is not a completed reflection measurement.
+
+
+### Current scheduling and user direction
+
+Subsequent runs use **debug-scaling**, CompactBinaryMerger, with the isolated
+launcher described in `gpu-preparation/debug-scaling/`. The user permits up to
+two nodes; the current bounded tests use one node with twelve ranks/tiles.
+The optional-profile SYCL/MPI build from `c95023d2c` completed in 234.39 seconds
+using `make -j64`. Its GPU observer preflight is job **8988222**, plan hash
+`c34b49f25351b0a71b0e48383e6228620a44f7b614fae63d6bf6215d43e96299`;
+all six cases and independent trajectory/profile audits passed. See
+`gpu-probes-preparation-v1/` and `gpu-profile-observer-v1/`.
+
+The user explicitly confirmed that cell centering is acceptable and requested
+no vertex-centered tests for now. No vertex-grid implementation is active here.
+The focus is the existing thin interface, distinct from the other task's larger
+overlap and performance work. Transition accuracy is being audited against
+analytic fields with both interpolated and exact analytic ghosts, including
+extra evolved points that have zero partition weight in physical diagnostics.
+
+
+### Transition accuracy audit
+
+[The cell-centered spatial audit](transition-accuracy-v1/README.md) measures
+analytic radial and oblique fields on the old map, a control with matched core
+spacing, and current one/three-core-layer overlap geometries at n12/16/24.
+It includes extra evolved interface copies, not only nominal diagnostic cells.
+The result is mixed: radial-field and nominal-shell errors improve, but the
+extended shell angular rows retain larger oblique error that is nearly unchanged
+with exact analytic ghosts. Core-interface interpolation is a separate leading
+contribution. The transition problem is **not established as resolved**.
+
+![Evolved interface spatial errors](transition-accuracy-v1/analysis/evolved-interface-errors.png)
+
+
+The fresh L1 paired puncture stability test through **3M** is now submitted as
+**8988310** on debug-scaling with all twelve ranks/tiles. It uses the unchanged
+frozen c530 evolution executable, dt=1/2048 and unchanged horizon criteria.
+[Plan and source bindings](gpu-puncture-3m-v1/README.md) are retained; results
+are pending. Verified observer-output cleanup left the campaign at 3.59GB.

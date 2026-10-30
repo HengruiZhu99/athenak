@@ -1,0 +1,227 @@
+{
+  "status": "completed",
+  "mode": "restart",
+  "mpi_size": 12,
+  "backend": "SYCL",
+  "placement_passed": true,
+  "ranks": [
+    {
+      "rank": 0,
+      "host": "x4300c3s7b0n0",
+      "mask": "0.0",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "restart_equivalence": true,
+        "bitwise_payload_equal": true,
+        "maximum_absolute_error": 0.0,
+        "maximum_scaled_error": 0.0,
+        "atol": 0,
+        "rtol": 0,
+        "compared_doubles": 9000416,
+        "header": {
+          "magic": "HYP3D_MPI_V12",
+          "n": 16,
+          "nf": 31,
+          "kind": 3,
+          "admitted": 1,
+          "cells": 143632,
+          "surface": 47616,
+          "steps": 20,
+          "time": 0.0048828125,
+          "dt": 0.000244140625,
+          "header_bytes": 184,
+          "scri_dissipation_epsilon": 2.0,
+          "scri_dissipation_degree": 7,
+          "scri_normal_derivative": "sampled_native_numerator7",
+          "scri_normal_radial_nodes": 7,
+          "scri_normal_bulk_derivative_order": 4,
+          "scri_radial_closure": "donor_seven_last3",
+          "scri_radial_bulk_rows": 3,
+          "interpatch_interpolation": "logical_inner_transition",
+          "interface_method": "experimental_ghost_plus_adjoint_trace_penalty",
+          "core_evolved_layers": 1,
+          "shifted_overlap_donors": true,
+          "trace_kappa": 1.0,
+          "trace_normal_ratio": 0.25,
+          "evolved_overlap": 3,
+          "nominal_cells": 106496,
+          "mesh_topology": "cartesian_2x2x2_shells3",
+          "cartesian_core_subdivisions": 2,
+          "mesh_blocks": 26,
+          "shell_geometry": "spherical_equiangular",
+          "core_half_width": 0.18,
+          "shell_inner_radius": 0.16,
+          "overlap_quadrature": "radial_quintic_partition",
+          "cartesian_seams": "uniform_global_stencil",
+          "positive_variables": "log_chi_log_lapse_rk_and_ko",
+          "physical_lapse_floor": 1e-10,
+          "payload_doubles": 9000416
+        },
+        "reference_sha256": "59e6be74a7a2c0340635e7b4593c39f7922f86ccc95cdb84223483ef4b454138",
+        "candidate_sha256": "59e6be74a7a2c0340635e7b4593c39f7922f86ccc95cdb84223483ef4b454138",
+        "passed": true,
+        "backend": "SYCL"
+      }
+    },
+    {
+      "rank": 1,
+      "host": "x4300c3s7b0n0",
+      "mask": "0.1",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "passed": true,
+        "role": "rank-zero-checkpoint-comparison"
+      }
+    },
+    {
+      "rank": 2,
+      "host": "x4300c3s7b0n0",
+      "mask": "1.0",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "passed": true,
+        "role": "rank-zero-checkpoint-comparison"
+      }
+    },
+    {
+      "rank": 3,
+      "host": "x4300c3s7b0n0",
+      "mask": "1.1",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "passed": true,
+        "role": "rank-zero-checkpoint-comparison"
+      }
+    },
+    {
+      "rank": 4,
+      "host": "x4300c3s7b0n0",
+      "mask": "2.0",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "passed": true,
+        "role": "rank-zero-checkpoint-comparison"
+      }
+    },
+    {
+      "rank": 5,
+      "host": "x4300c3s7b0n0",
+      "mask": "2.1",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "passed": true,
+        "role": "rank-zero-checkpoint-comparison"
+      }
+    },
+    {
+      "rank": 6,
+      "host": "x4300c3s7b0n0",
+      "mask": "3.0",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "passed": true,
+        "role": "rank-zero-checkpoint-comparison"
+      }
+    },
+    {
+      "rank": 7,
+      "host": "x4300c3s7b0n0",
+      "mask": "3.1",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "passed": true,
+        "role": "rank-zero-checkpoint-comparison"
+      }
+    },
+    {
+      "rank": 8,
+      "host": "x4300c3s7b0n0",
+      "mask": "4.0",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "passed": true,
+        "role": "rank-zero-checkpoint-comparison"
+      }
+    },
+    {
+      "rank": 9,
+      "host": "x4300c3s7b0n0",
+      "mask": "4.1",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "passed": true,
+        "role": "rank-zero-checkpoint-comparison"
+      }
+    },
+    {
+      "rank": 10,
+      "host": "x4300c3s7b0n0",
+      "mask": "5.0",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "passed": true,
+        "role": "rank-zero-checkpoint-comparison"
+      }
+    },
+    {
+      "rank": 11,
+      "host": "x4300c3s7b0n0",
+      "mask": "5.1",
+      "hierarchy": "COMPOSITE",
+      "result": {
+        "passed": true,
+        "role": "rank-zero-checkpoint-comparison"
+      }
+    }
+  ],
+  "source_manifest_sha256": "95fc83ec800737e55afede9ced848f9d3bacda91385896e0d28fdd00d90c64a9",
+  "plan_sha256": "c34b49f25351b0a71b0e48383e6228620a44f7b614fae63d6bf6215d43e96299",
+  "restart_equivalence": true,
+  "bitwise_payload_equal": true,
+  "maximum_absolute_error": 0.0,
+  "maximum_scaled_error": 0.0,
+  "atol": 0,
+  "rtol": 0,
+  "compared_doubles": 9000416,
+  "header": {
+    "magic": "HYP3D_MPI_V12",
+    "n": 16,
+    "nf": 31,
+    "kind": 3,
+    "admitted": 1,
+    "cells": 143632,
+    "surface": 47616,
+    "steps": 20,
+    "time": 0.0048828125,
+    "dt": 0.000244140625,
+    "header_bytes": 184,
+    "scri_dissipation_epsilon": 2.0,
+    "scri_dissipation_degree": 7,
+    "scri_normal_derivative": "sampled_native_numerator7",
+    "scri_normal_radial_nodes": 7,
+    "scri_normal_bulk_derivative_order": 4,
+    "scri_radial_closure": "donor_seven_last3",
+    "scri_radial_bulk_rows": 3,
+    "interpatch_interpolation": "logical_inner_transition",
+    "interface_method": "experimental_ghost_plus_adjoint_trace_penalty",
+    "core_evolved_layers": 1,
+    "shifted_overlap_donors": true,
+    "trace_kappa": 1.0,
+    "trace_normal_ratio": 0.25,
+    "evolved_overlap": 3,
+    "nominal_cells": 106496,
+    "mesh_topology": "cartesian_2x2x2_shells3",
+    "cartesian_core_subdivisions": 2,
+    "mesh_blocks": 26,
+    "shell_geometry": "spherical_equiangular",
+    "core_half_width": 0.18,
+    "shell_inner_radius": 0.16,
+    "overlap_quadrature": "radial_quintic_partition",
+    "cartesian_seams": "uniform_global_stencil",
+    "positive_variables": "log_chi_log_lapse_rk_and_ko",
+    "physical_lapse_floor": 1e-10,
+    "payload_doubles": 9000416
+  },
+  "reference_sha256": "59e6be74a7a2c0340635e7b4593c39f7922f86ccc95cdb84223483ef4b454138",
+  "candidate_sha256": "59e6be74a7a2c0340635e7b4593c39f7922f86ccc95cdb84223483ef4b454138"
+}

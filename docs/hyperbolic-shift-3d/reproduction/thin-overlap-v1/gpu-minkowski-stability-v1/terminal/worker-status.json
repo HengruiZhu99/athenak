@@ -1,0 +1,153 @@
+{
+  "schema": 1,
+  "status": "running",
+  "started": "2026-10-30T02:42:12.379374+00:00",
+  "job_id": "8988125.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "launcher_host": "x4615c3s6b0n0",
+  "allocation_nodes": [
+    "x4615c3s6b0n0.hsn.cm.aurora.alcf.anl.gov"
+  ],
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "00:30:00"
+  },
+  "source_manifest_sha256": "e8a3d5c2839797c60c32874e930eca2631beaac4f414f22e5e098502cb54b8ac",
+  "binaries": {
+    "build-sycl-mpi-thin-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_thin_trace_sparse": "c6e981ef335df2c04b97304a244b3e15685dbe8b860058b26b927d79ec62ea5a"
+  },
+  "plan_sha256": "c82280864c7eafa19ba4693c743ce538dc281341d9229110449b33161fbf8dca",
+  "phase": "stability",
+  "n": 16,
+  "cases": [
+    {
+      "name": "minkowski-l1-paired",
+      "kind": "minkowski",
+      "started": "2026-10-30T02:42:32.859281+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-thin-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_thin_trace_sparse",
+        "16",
+        "campaigns/stability-thin-minkowski-v1/output/minkowski-l1-paired",
+        "minkowski",
+        "1.0",
+        "0.00048828125",
+        "-",
+        "-",
+        "1470",
+        "0.03125",
+        ".001",
+        "6",
+        "12",
+        "2"
+      ],
+      "generated_inputs": {},
+      "environment": {
+        "HYPERBOLIC_TRACE_LAYERS": "1",
+        "HYPERBOLIC_TRACE_SHIFTED": "1",
+        "HYPERBOLIC_TRACE_KAPPA": "1",
+        "HYPERBOLIC_TRACE_NORMAL_RATIO": ".25",
+        "HYPERBOLIC_SPARSE_POISON": "1"
+      },
+      "n": 16
+    }
+  ],
+  "storage_at_start": {
+    "bytes": 3358989403,
+    "entries": 47002,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 100000000,
+    "planned_bytes": 180000000,
+    "headroom_bytes": 1361010597
+  },
+  "affinity": {
+    "returncode": 0,
+    "timed_out": false,
+    "storage_error": null,
+    "elapsed_seconds": 0.3710679990472272,
+    "records": [
+      {
+        "host": "x4615c3s6b0n0",
+        "rank": 7,
+        "mask": "3.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4615c3s6b0n0",
+        "rank": 10,
+        "mask": "5.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4615c3s6b0n0",
+        "rank": 6,
+        "mask": "3.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4615c3s6b0n0",
+        "rank": 11,
+        "mask": "5.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4615c3s6b0n0",
+        "rank": 8,
+        "mask": "4.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4615c3s6b0n0",
+        "rank": 9,
+        "mask": "4.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4615c3s6b0n0",
+        "rank": 0,
+        "mask": "0.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4615c3s6b0n0",
+        "rank": 2,
+        "mask": "1.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4615c3s6b0n0",
+        "rank": 4,
+        "mask": "2.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4615c3s6b0n0",
+        "rank": 1,
+        "mask": "0.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4615c3s6b0n0",
+        "rank": 3,
+        "mask": "1.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4615c3s6b0n0",
+        "rank": 5,
+        "mask": "2.1",
+        "hierarchy": "COMPOSITE"
+      }
+    ],
+    "passed": true
+  }
+}

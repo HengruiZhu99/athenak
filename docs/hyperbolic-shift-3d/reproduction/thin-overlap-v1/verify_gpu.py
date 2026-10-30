@@ -32,9 +32,14 @@ def verify(root,campaign,mode='complete-preflight'):
  read=lambda name:json.loads((directory/name).read_text())
  plan=read('plan.json');binding=read('binding.json');worker=read('worker-status.json');collected=read('collected.json')
  assert control.digest(directory/'plan.json')==binding['plan_sha256']
+ assert control.digest(root/binding['source_manifest'])==binding['source_manifest_sha256']
  assert worker['plan_sha256']==binding['plan_sha256'] and worker['source_manifest_sha256']==binding['source_manifest_sha256']
  assert worker['status']=='passed' and len(worker['cases'])==len(plan['commands'])
  assert collected['scheduler']['job_state'] in ['F','X'] and collected['scheduler']['Exit_status']==0
+ affinity=worker['affinity']['records']
+ assert worker['affinity']['passed'] and len(affinity)==12
+ assert {r['rank'] for r in affinity}==set(range(12)) and len({r['host'] for r in affinity})==1
+ assert all(r['mask']==f"{r['rank']//2}.{r['rank']%2}" and r['hierarchy']=='COMPOSITE' for r in affinity)
  for name,digest in binding['inputs'].items():assert control.digest(root/name)==digest,name
  if mode=='clock-isolation':
   assert [c['name'] for c in plan['commands']]==['oblique-sparse-direct','direct-communication','oblique-full-resume','resumed-communication','dyadic-full','dyadic-part','dyadic-resume','dyadic-restart']
@@ -42,6 +47,11 @@ def verify(root,campaign,mode='complete-preflight'):
   assert [c['name'] for c in plan['commands']]==['puncture-full','puncture-sparse','puncture-equivalence']
  if mode=='matrix':
   assert [c['name'] for c in plan['commands']]==['minkowski-l1-k0','minkowski-l2-k0','minkowski-l2-k1','minkowski-l3-k0','minkowski-l3-k1','pulse-l1-zero','pulse-l1-paired','pulse-l3-control','pulse-v11-control']
+ if mode=='minkowski-stability':
+  assert [c['name'] for c in plan['commands']]==['minkowski-l1-paired']
+  assert plan['phase']=='stability' and plan['n']==16
+ if mode=='profile-observer':
+  assert [c['name'] for c in plan['commands']]==['old-full','new-disabled','new-enabled','minkowski-enabled','compiled-observer-invariance','enabled-observer-invariance']
  artifacts={};reports={};summaries=[]
  for command,case in zip(plan['commands'],worker['cases']):
   assert command['name']==case['name'] and case['status']=='passed'
@@ -79,20 +89,63 @@ def verify(root,campaign,mode='complete-preflight'):
  if mode=='complete-preflight':assert {'oblique-equivalence','puncture-equivalence'}<=set(pairs)
  elif mode=='clock-isolation':assert set(pairs)=={'direct-communication','resumed-communication','dyadic-restart'}
  elif mode=='puncture-pair':assert set(pairs)=={'puncture-equivalence'}
- else:
+ elif mode=='profile-observer':
+  assert set(pairs)=={'compiled-observer-invariance','enabled-observer-invariance'}
+  for name in ['old-full','new-disabled']:
+   assert not (root/plan['output_dir']/(name+'.profiles.csv')).exists()
+  assert not reports['new-disabled']['profiles_enabled']
+  assert reports['new-disabled']['profile_samples']==0
+  for name in ['new-enabled','minkowski-enabled']:
+   report=reports[name]
+   assert report['profiles_enabled'] and report['profile_samples']==3 and report['profile_rows_per_sample']==1462
+   data=np.atleast_1d(np.genfromtxt(root/plan['output_dir']/(name+'.profiles.csv'),delimiter=',',names=True))
+   assert len(data)==3*1462 and np.isfinite(data.view(float)).all()
+   np.testing.assert_array_equal(np.unique(data['t']),[0,report['t']/2,report['t']])
+   geometry=None
+   for time in np.unique(data['t']):
+    frame=data[data['t']==time]
+    assert len(frame)==1462 and len(set(zip(frame['domain'],frame['ray'],frame['r'])))==1462
+    current=np.column_stack([frame[k] for k in ['domain','ray','r','x','y','z']])
+    if geometry is not None:np.testing.assert_array_equal(current,geometry)
+    geometry=current
+   if name=='minkowski-enabled':
+    assert np.max(abs(data['v0']-1))<1e-11
+    assert max(np.max(abs(data[f'v{f}'])) for f in range(1,31))<1e-11
+    assert max(np.max(abs(data[f'dr_v{f}'])) for f in range(31))<1e-9
+ elif mode=='matrix':
   assert not pairs
   pairs['v12-v11-control']=cross_schema_control(root,plan['output_dir'])
+ elif mode=='minkowski-stability':
+  assert not pairs
+  report=reports['minkowski-l1-paired']
+  assert report['t']==1 and report['dt']==1/2048 and report['steps']==2048
+  history_path=root/plan['output_dir']/'minkowski-l1-paired.history.csv'
+  history=np.atleast_1d(np.genfromtxt(history_path,delimiter=',',names=True))
+  np.testing.assert_array_equal(history['t'],np.arange(33)/32)
+  np.testing.assert_array_equal(history['steps'],np.arange(33)*64)
+  maxima={}
+  for key,bound in [('state_deviation',1e-10),('H_L2',1e-10),('M_L2',1e-10),
+                    ('null_surface',1e-12),('null_ghost',1e-12),
+                    ('determinant_residual',1e-12),('tracefree_residual',1e-12)]:
+   assert np.isfinite(history[key]).all() and np.all(abs(history[key])<=bound),key
+   maxima[key]=float(np.max(abs(history[key])))
+  assert np.all(history['min_chi']>0) and np.all(history['min_lapse']>0)
+  assert report['lapse_floor_node_interventions']==0
+  pairs['equilibrium-history']=dict(samples=len(history),maxima=maxima,
+   scope='All saved equilibrium samples; not a perturbation or puncture stability test.')
  scopes={'complete-preflight':'V12 12-tile preflight through 0.15M only. No 3M, reflection, accuracy-matched cost or convergence qualification.',
          'clock-isolation':'V12 twelve-tile clock/communication isolation only; this batch contains no puncture or device-parity admission.',
          'puncture-pair':'V12 twelve-tile short puncture full/sparse equality through 0.15M only. This batch does not itself qualify 3M stability or full preflight admission.',
-         'matrix':'Five remaining short Minkowski configurations and four short spherical pulses; exact V12/V11 matched control. No long interface crossing, 3M stability, reflection or convergence qualification.'}
+         'matrix':'Five remaining short Minkowski configurations and four short spherical pulses; exact V12/V11 matched control. No long interface crossing, 3M stability, reflection or convergence qualification.',
+         'profile-observer':'Short 12-tile GPU observer invariance and finite cached time-series/Minkowski profiles. Offline sample reconstruction is a separate audit. No long stability or reflection qualification.',
+         'minkowski-stability':'Fixed n16 L1 paired Minkowski preservation to coordinate time 1 only. Does not establish perturbed, puncture, AMR or convergence behavior.'}
  return dict(status='passed',source_manifest_sha256=binding['source_manifest_sha256'],plan_sha256=binding['plan_sha256'],
   job_id=collected['job_id'],cases=summaries,comparisons=pairs,verified_artifacts=artifacts,
   scope=scopes[mode])
 if __name__=='__main__':
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--root',type=Path,required=True)
  p.add_argument('--campaign',default='campaigns/preflight-thin-v1');p.add_argument('--output',type=Path,required=True)
- p.add_argument('--mode',choices=['complete-preflight','clock-isolation','puncture-pair','matrix'],default='complete-preflight')
+ p.add_argument('--mode',choices=['complete-preflight','clock-isolation','puncture-pair','matrix','minkowski-stability','profile-observer'],default='complete-preflight')
  a=p.parse_args();result=verify(a.root,a.campaign,a.mode)
  with a.output.open('x') as stream:json.dump(result,stream,indent=2);stream.write('\n')
  print(json.dumps({k:result[k] for k in ['status','job_id','scope']},indent=2))

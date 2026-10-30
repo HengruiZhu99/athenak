@@ -1,0 +1,44 @@
+
+Due to MODULEPATH changes, the following have been reloaded:
+  1) gcc/14.3.0     2) mpich/prd/5.0.0.aurora_test.87e2045
+
+The following have been reloaded with a version change:
+  1) oneapi/release/2026.1.0 => oneapi/release/2025.3.1
+
+{
+  "status": "passed",
+  "binary_sha256": "d21491327a2b44f0fcce41e9f75c935cc03babd76f3903468aa93279b22e18d4",
+  "records": [
+    {
+      "name": "new-enabled",
+      "command": [
+        "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-thin-probes-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_thin_snapshot_profile",
+        "/home/hzhu/hyperbolic-core-shell-20261028/campaigns/preflight-thin-probes-v1/output/new-enabled.checkpoint",
+        "/home/hzhu/hyperbolic-core-shell-20261028/campaigns/preflight-thin-probes-v1/offline-audit/new-enabled.snapshot.csv"
+      ],
+      "returncode": 0,
+      "seconds": 4.522972068050876,
+      "checkpoint_sha256": "59e6be74a7a2c0340635e7b4593c39f7922f86ccc95cdb84223483ef4b454138",
+      "online_sha256": "a5359d59fa4034e81d3d4f0c2a1e3a327f8469e16feb567055bab94e47ffc94d",
+      "snapshot_sha256": "48389a88efedef8c1144d5febff4de2769e0adeda179598c76854da25fe3364f",
+      "online_final_sha256": "48389a88efedef8c1144d5febff4de2769e0adeda179598c76854da25fe3364f",
+      "byte_equal": true
+    },
+    {
+      "name": "minkowski-enabled",
+      "command": [
+        "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-thin-probes-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_thin_snapshot_profile",
+        "/home/hzhu/hyperbolic-core-shell-20261028/campaigns/preflight-thin-probes-v1/output/minkowski-enabled.checkpoint",
+        "/home/hzhu/hyperbolic-core-shell-20261028/campaigns/preflight-thin-probes-v1/offline-audit/minkowski-enabled.snapshot.csv"
+      ],
+      "returncode": 0,
+      "seconds": 4.458641428966075,
+      "checkpoint_sha256": "3f97155ab5bd3e749fff60c0f9f1633885a39d9ada5572aec05cc315e05f604d",
+      "online_sha256": "494f6a0fc6cd6e24b700177bbe2eae1aad55e2805a62ab273eaddb1c9f85953f",
+      "snapshot_sha256": "eb88674416689aa07b813708a8158e7964cdb38becebc01738fc43be2d17bac7",
+      "online_final_sha256": "eb88674416689aa07b813708a8158e7964cdb38becebc01738fc43be2d17bac7",
+      "byte_equal": true
+    }
+  ],
+  "scope": "Independent host reconstruction of final samples from completed GPU checkpoints. Exact CSV bytes, no evolution or repair performed."
+}

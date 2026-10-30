@@ -1,4 +1,8 @@
 find_package(Threads REQUIRED)
+add_executable(hyperbolic_shift_3d_transition_accuracy transition_accuracy.cpp)
+target_include_directories(hyperbolic_shift_3d_transition_accuracy PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+target_link_libraries(hyperbolic_shift_3d_transition_accuracy PRIVATE Kokkos::kokkos Threads::Threads)
+target_compile_options(hyperbolic_shift_3d_transition_accuracy PRIVATE -Wall -Wextra -ffp-contract=off)
 add_library(hyperbolic_shift_3d_native SHARED native_api.cpp ../elliptic_shift_1d/spherical_api.cpp)
 target_include_directories(hyperbolic_shift_3d_native PRIVATE ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(hyperbolic_shift_3d_native PRIVATE Kokkos::kokkos Threads::Threads)
