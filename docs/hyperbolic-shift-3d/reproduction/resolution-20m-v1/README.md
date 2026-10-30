@@ -203,3 +203,17 @@ and old thin-grid checkpoints were archived locally and individually SHA256/size
 verified before removal; receipts are in n32-ac1-submission/. All current N32
 restart inputs, initial data and active scientific builds remain remotely.
 The hourly monitor and remote campaign state now follow job8992832.
+
+## Exterior history comparison and spatial localization
+
+The all-available-history/ figures combine all retained N16/N24 diagnostics and
+an N32 live snapshot through3.6M, explicitly preserving missing exterior values.
+N24 has no saved exterior diagnostics after3M; its evolved history ends5.869M.
+The spatial-audit/ measurements use identical radial bands on all three3M
+checkpoints. The outer band0.6–0.8 supplies95.3% of N32's exterior Hamiltonian
+squared integral and94.0% of radial momentum, while inner/overlap errors improve
+strongly. The sharp gauge blend centered0.68 is only3.49 cells wide between its
+10% and90% levels at N32; it and the nearby0.75 shell interface are concrete
+suspects, not proven causes. See the audit for measured ratios, verification,
+finer radial localization and controlled follow-up suggestions. The campaign
+scientific executables, timestep, floors and equations remain unchanged.
