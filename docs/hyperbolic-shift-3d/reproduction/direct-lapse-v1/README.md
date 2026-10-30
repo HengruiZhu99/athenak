@@ -46,3 +46,58 @@ SYCL+MPI, make -j64, and home footprint below5,000,000,000 bytes. Freeze a fresh
 source/build and bind hashes before submission. Continue only healthy walltime
 checkpoints; numerical failures must stop and be reported. Large remote evidence
 must be copied and SHA256-verified locally before purge.
+
+## Local validation
+
+All53 controller tests and log/direct floor unit tests passed. Two-rank n16
+local tests completed a puncture step from3M and a subsequent restart, rejected
+a CF1 checkpoint in the AL1 executable, and preserved Minkowski for two steps
+with maximum field drift6.5106e-15 and H_L2=2.2791e-15. The local smoke runs used reduced horizon lmax1/ntheta4 for cost; the Aurora
+comparison retains lmax12/ntheta24. These are short smoke
+checks, not a long-time Minkowski or puncture result.
+
+A split versus uninterrupted two-step comparison is bitwise identical, including
+RK compensation, when the step sizes are identical. The first comparison using
+exact decimal end-time targets differed by up to5.5e-15 in volume fields because
+the driver's existing final-step clipping gave slightly different floating-point
+step sizes; using nextafter endpoints to keep full dt removed that difference.
+This endpoint behavior was not changed. The first-step lapse difference from
+the log-lapse/KO control is2.43269e-5; bitwise equality between these different
+numerical schemes is not expected.
+
+Frozen scientific source:145515fcee36132bb6a1bc7e1ea095ffb8256f48.
+Remote root:/home/hzhu/hyperbolic-core-shell-20261028.
+Source:source-direct-lapse-v1; manifest:source-direct-lapse-v1-manifest.json.
+Controller:source-direct-lapse-v1/tst/hyperbolic_shift_3d/aurora/control.py.
+Binary:build-sycl-mpi-direct-lapse-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_direct_lapse.
+First plan:campaigns/n16-direct-lapse-to20m-v1-segment01/plan.json.
+Initial AL1 checkpoint SHA256:
+7187756d749abedd0f3c6d2e4f1d731ba21e5ad6e7366b8cb80699e5a099c2f3.
+
+## Automatic continuation protocol
+
+After a terminal healthy walltime stop, validate the admitted AL1 checkpoint
+against the native report and worker artifact hash: n16,nf31,kind2,admitted1,
+dt.0005,time in[1,20/3),header168 bytes,length168+16*(31*cells+surface),
+PositiveConfig.scheme2 at144,chi floor1e-8/radius.03 at152. Preserve all source,
+executable and coefficient identities. Carry a horizon-seed sidecar only if
+bound to that exact checkpoint; retain candidate-quality flags. Sum per-segment
+floor counts rather than interpreting them as cumulative across restarts.
+
+Use collect --release-terminal-lock on the matching terminal plan, check all
+user debug jobs, create a fresh sequential segment plan with policy
+n16_direct_lapse_retry_to_20M, bind, then submit. Do not resume numerical or
+storage failures, unadmitted checkpoints or ambiguous scheduler outcomes.
+On numerical failure or verified20M completion collect evidence, commit/push
+results, report and stop the monitor. Keep verified-copy-before-purge and5GB
+storage guards. If SSH expires request renewal rather than repeatedly submitting.
+
+## Submission
+
+SYCL/MPI build passed with make -j64 in173.16 seconds. Job8990333 was submitted
+on one CompactBinaryMerger debug node with12 MPI ranks/GPU tiles and a one-hour
+allocation. The30-minute monitor aurora-n16-direct-lapse-to20m is ACTIVE with
+healthy-walltime continuation and stop-on-numerical-failure policy. Home campaign
+footprint at binding was4,319,555,584 bytes, below5GB. See build-status.json,
+binding.json, submission.json and monitor.json for exact provenance and policy.
+No long-time result has yet been measured for this variant.

@@ -1,0 +1,13 @@
+{
+  "split_restart_bitwise_equal": true,
+  "same_timestep_lattice": true,
+  "one_step_max_abs_difference_vs_log_lapse": 2.4326871197632993e-05,
+  "one_step_lapse_max_abs_difference": 2.4326871197632993e-05,
+  "initial_endpoint_clipped_test": {
+    "bitwise_equal": false,
+    "volume_max_abs_difference": 5.495603971894525e-15,
+    "payload_max_abs_difference": 2.0175527915000657e-13,
+    "reason": "end-time clipping gives slightly different step sizes for decimal endpoint targets; repeated with nextafter endpoints to keep identical full dt"
+  },
+  "comparison": "same verified3M initial state, dt.0005; direct lapse RK and KO versus log-lapse RK and KO"
+}
