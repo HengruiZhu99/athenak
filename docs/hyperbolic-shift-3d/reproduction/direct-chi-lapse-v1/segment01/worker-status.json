@@ -1,0 +1,405 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "started": "2026-10-30T15:19:42.741680+00:00",
+  "job_id": "8990504.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "launcher_host": "x4107c2s4b0n0",
+  "allocation_nodes": [
+    "x4107c2s4b0n0.hsn.cm.aurora.alcf.anl.gov"
+  ],
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "01:00:00"
+  },
+  "source_manifest_sha256": "56706997821cb434e142cbac3a217ac7360d4b7fdfc2efe9858e97df9f191b29",
+  "binaries": {
+    "build-sycl-mpi-direct-chi-lapse-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_direct_chi_lapse": "b8814162c43d2319f9d6db2370b54f270f592a5f7101adf36bf94a83b101d5b8"
+  },
+  "plan_sha256": "24ed84af12f5b272f8fbe923f9217c543e6a1f2c70d5673b3e1725d29c6cbd89",
+  "phase": "timestep_experiment",
+  "n": 16,
+  "cases": [
+    {
+      "name": "puncture",
+      "kind": "puncture",
+      "started": "2026-10-30T15:20:01.611556+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-direct-chi-lapse-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_direct_chi_lapse",
+        "16",
+        "campaigns/n16-direct-chi-lapse-to20m-v1-segment01/output/puncture",
+        "puncture",
+        "6.666666666666667",
+        "0.0005",
+        "-",
+        "inputs/puncture-ac1-verified-at3m.checkpoint",
+        "3370",
+        "0.05",
+        "0.001",
+        "12",
+        "24",
+        "2"
+      ],
+      "generated_inputs": {},
+      "n": 16,
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 2149.2026565163396,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "completed",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "n"
+            ],
+            "op": "eq",
+            "value": 16
+          },
+          "observed": 16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "experimental_timestep"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "timestep_aware_penalty"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "bulk_cfl_guard_enabled"
+            ],
+            "op": "eq",
+            "value": false
+          },
+          "observed": false,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_schema"
+            ],
+            "op": "eq",
+            "value": "HYP3D_MPI_AC1"
+          },
+          "observed": "HYP3D_MPI_AC1",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_penalty_cfl_max"
+            ],
+            "op": "le",
+            "value": 0.5
+          },
+          "observed": 0.3840000000000001,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_surface"
+            ],
+            "op": "le",
+            "value": 1e-10
+          },
+          "observed": 1.2212646538368814e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_penalty_scale_min"
+            ],
+            "op": "eq",
+            "value": 1
+          },
+          "observed": 1,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "angular_epsilon_min"
+            ],
+            "op": "eq",
+            "value": 2
+          },
+          "observed": 2,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_header_bytes"
+            ],
+            "op": "eq",
+            "value": 168
+          },
+          "observed": 168,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "puncture_chi_floor"
+            ],
+            "op": "eq",
+            "value": 1e-08
+          },
+          "observed": 1e-08,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "puncture_chi_floor_radius"
+            ],
+            "op": "eq",
+            "value": 0.03
+          },
+          "observed": 0.03,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_ghost"
+            ],
+            "op": "le",
+            "value": 1e-10
+          },
+          "observed": 1.5543117599756231e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "positive_variables"
+            ],
+            "op": "eq",
+            "value": "direct_chi_direct_lapse_rk_and_ko"
+          },
+          "observed": "direct_chi_direct_lapse_rk_and_ko",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "candidate_sign_scope"
+            ],
+            "op": "eq",
+            "value": "pre_floor_volume_and_surface_attempts_this_segment_including_rejected_step"
+          },
+          "observed": "pre_floor_volume_and_surface_attempts_this_segment_including_rejected_step",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "physical_lapse_floor"
+            ],
+            "op": "eq",
+            "value": 1e-10
+          },
+          "observed": 1e-10,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "chi_nonpositive_policy"
+            ],
+            "op": "eq",
+            "value": "record_and_floor_finite_candidates_everywhere"
+          },
+          "observed": "record_and_floor_finite_candidates_everywhere",
+          "passed": true
+        }
+      ],
+      "report_status": "completed",
+      "status": "passed",
+      "artifacts": {
+        "campaigns/n16-direct-chi-lapse-to20m-v1-segment01/output/puncture.report.json": {
+          "sha256": "e1a156e8a70ff1c646ab24eaa38f8b5c632759035e6a762027936396a8d3654e",
+          "bytes": 21125
+        },
+        "campaigns/n16-direct-chi-lapse-to20m-v1-segment01/output/puncture.checkpoint": {
+          "sha256": "88f9d63c6eb0dc2eaf93543d4457df0f698f9072f7a66b1513fedfe4b041253f",
+          "bytes": 79725224
+        },
+        "campaigns/n16-direct-chi-lapse-to20m-v1-segment01/output/puncture.history.csv": {
+          "sha256": "cfc4e16c063a94119d575f01c84ee0b65509f64dd853860dce47680b66a839df",
+          "bytes": 73818
+        },
+        "campaigns/n16-direct-chi-lapse-to20m-v1-segment01/output/puncture.checkpoint.horizon-seed.txt": {
+          "sha256": "9f375531f95e7d50e275141699264bd3690206f901b03e102b68c81079bc862a",
+          "bytes": 85
+        },
+        "campaigns/n16-direct-chi-lapse-to20m-v1-segment01/output/puncture.fastflow.horizon_summary_0.txt": {
+          "sha256": "6c3a3cdf649e1edec2343e3e44f065d1956eb447fdae56526b4cfbad2c67aacd",
+          "bytes": 19745
+        }
+      },
+      "finished": "2026-10-30T15:55:55.973950+00:00"
+    }
+  ],
+  "storage_at_start": {
+    "bytes": 4336800256,
+    "entries": 61233,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 100000000,
+    "planned_bytes": 160000000,
+    "headroom_bytes": 403199744
+  },
+  "stability_admission_eligible": false,
+  "experimental_policy": "n16_direct_chi_lapse_retry_to_20M",
+  "affinity": {
+    "returncode": 0,
+    "timed_out": false,
+    "storage_error": null,
+    "elapsed_seconds": 0.3712467667646706,
+    "records": [
+      {
+        "host": "x4107c2s4b0n0",
+        "rank": 0,
+        "mask": "0.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4107c2s4b0n0",
+        "rank": 9,
+        "mask": "4.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4107c2s4b0n0",
+        "rank": 11,
+        "mask": "5.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4107c2s4b0n0",
+        "rank": 1,
+        "mask": "0.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4107c2s4b0n0",
+        "rank": 10,
+        "mask": "5.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4107c2s4b0n0",
+        "rank": 8,
+        "mask": "4.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4107c2s4b0n0",
+        "rank": 6,
+        "mask": "3.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4107c2s4b0n0",
+        "rank": 2,
+        "mask": "1.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4107c2s4b0n0",
+        "rank": 3,
+        "mask": "1.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4107c2s4b0n0",
+        "rank": 4,
+        "mask": "2.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4107c2s4b0n0",
+        "rank": 7,
+        "mask": "3.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4107c2s4b0n0",
+        "rank": 5,
+        "mask": "2.1",
+        "hierarchy": "COMPOSITE"
+      }
+    ],
+    "passed": true
+  },
+  "finished": "2026-10-30T15:55:55.981394+00:00",
+  "elapsed_seconds": 2173.2397279529832,
+  "storage_at_finish": {
+    "bytes": 4454555274,
+    "entries": 61243
+  }
+}

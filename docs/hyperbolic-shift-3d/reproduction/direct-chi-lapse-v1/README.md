@@ -103,3 +103,41 @@ continues only verified healthy walltime checkpoints. Exact source/binary/plan
 hashes, storage reserve and monitor policy are saved beside this file. The task
 footprint at binding/submission remains below5GB. Submission is not evidence of
 long-time stability; no20M result is claimed here.
+
+
+## Verified completion at 20M
+
+Job 8990504 finished normally (PBS exit 0, worker passed). Native evolution from
+3M to 20M took 2148.09 seconds, 11334 steps, about 8.40e5 evolved-volume zone-cycles
+per second including native setup/diagnostics. The final AC1 checkpoint is
+admitted at coordinate 20/3 with 13335 cumulative steps. Its SHA256 is
+88f9d63c6eb0dc2eaf93543d4457df0f698f9072f7a66b1513fedfe4b041253f.
+All worker-bound artifacts were copied locally and hash/size verified. Header,
+configuration, dimensions, time/steps and horizon-seed binding were checked.
+All checkpoint fields/compensation are finite; volume/surface chi are positive,
+and the minimum final volume conformal-metric eigenvalue is .96253.
+
+The segment recorded 80 stage plus 32 final negative-chi candidates in 8 cells,
+first at 3.054M, minimum -6.278e-6, maximum radius .009743. It recorded 56064 stage
+plus 18720 final negative-lapse candidates in 48 cells, first at 4.6005M,
+minimum -2.42153e-4, maximum radius .051246. These were clipped and did not stop
+evolution. There were no zero candidates or surface/interpolated-scri chi clips.
+These counts refer to candidates, not distinct timesteps; repeated cells count
+repeatedly. Surface lapse is a dependent clock and has no independent RK update.
+The volume floor counts equal the negative counts in this particular run.
+Final min chi=.00160838 and min conformal lapse=.0262096 are above the floors.
+
+Maximum surface/ghost null residuals were 1.2213e-15 / 1.5543e-15. Final horizon
+search was complete and accepted, expansion RMS 1.4281e-4 against tolerance .001,
+coordinate radius .115831206 and areal radius .666987349. The final areal-radius
+error relative to 2M is .04810%. Final exterior H and radial-momentum RMS are
+.0205938 and.0405740. These are compact-coordinate-volume norms, not physical
+proper-volume norms. The comparison with the much finer preserved 1D reference
+is in comparison-1d/README.md and its plots; stability through20M alone does
+not establish convergence, accuracy, or a settled trumpet.
+
+The terminal root lock was released and the completed 30-minute automation was
+deleted. The final checkpoint remains available both locally and on Aurora for
+possible future continuation; the remote task footprint at completion was
+4,454,555,274 bytes, below 5GB. No new job was submitted. Small results and the
+comparison are committed; large checkpoint data remain outside Git.

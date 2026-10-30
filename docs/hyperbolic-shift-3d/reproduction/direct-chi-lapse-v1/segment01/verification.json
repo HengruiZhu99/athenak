@@ -1,0 +1,122 @@
+{
+  "status": "verified_completed_20M",
+  "t_over_M": 20,
+  "checkpoint": {
+    "schema": "HYP3D_MPI_AC1",
+    "admitted": true,
+    "header_bytes": 168,
+    "config_matches_initial": true,
+    "all_payload_finite": true,
+    "positive_chi_volume_and_surface": true,
+    "minimum_metric_eigenvalue": 0.9625326968380108,
+    "steps": 13335,
+    "segment_steps": 11334
+  },
+  "artifacts_verified": [
+    {
+      "path": "campaigns/n16-direct-chi-lapse-to20m-v1-segment01/output/puncture.report.json",
+      "sha256": "e1a156e8a70ff1c646ab24eaa38f8b5c632759035e6a762027936396a8d3654e",
+      "bytes": 21125
+    },
+    {
+      "path": "campaigns/n16-direct-chi-lapse-to20m-v1-segment01/output/puncture.checkpoint",
+      "sha256": "88f9d63c6eb0dc2eaf93543d4457df0f698f9072f7a66b1513fedfe4b041253f",
+      "bytes": 79725224
+    },
+    {
+      "path": "campaigns/n16-direct-chi-lapse-to20m-v1-segment01/output/puncture.history.csv",
+      "sha256": "cfc4e16c063a94119d575f01c84ee0b65509f64dd853860dce47680b66a839df",
+      "bytes": 73818
+    },
+    {
+      "path": "campaigns/n16-direct-chi-lapse-to20m-v1-segment01/output/puncture.checkpoint.horizon-seed.txt",
+      "sha256": "9f375531f95e7d50e275141699264bd3690206f901b03e102b68c81079bc862a",
+      "bytes": 85
+    },
+    {
+      "path": "campaigns/n16-direct-chi-lapse-to20m-v1-segment01/output/puncture.fastflow.horizon_summary_0.txt",
+      "sha256": "6c3a3cdf649e1edec2343e3e44f065d1956eb447fdae56526b4cfbad2c67aacd",
+      "bytes": 19745
+    }
+  ],
+  "candidate_summary": {
+    "volume_chi": {
+      "cell_field_pairs": 8,
+      "negative_stage": 80,
+      "negative_final": 32,
+      "zero_stage": 0,
+      "zero_final": 0,
+      "minimum": -6.2779152573263705e-06,
+      "first_time_over_M": 3.053999999999994,
+      "max_radius": 0.009742785792574935
+    },
+    "volume_lapse": {
+      "cell_field_pairs": 48,
+      "negative_stage": 56064,
+      "negative_final": 18720,
+      "zero_stage": 0,
+      "zero_final": 0,
+      "minimum": -0.00024215264446125762,
+      "first_time_over_M": 4.6004999999998235,
+      "max_radius": 0.051246188882686686
+    },
+    "surface_chi": {
+      "cell_field_pairs": 0,
+      "negative_stage": 0,
+      "negative_final": 0,
+      "zero_stage": 0,
+      "zero_final": 0,
+      "minimum": null,
+      "first_time_over_M": null,
+      "max_radius": null
+    },
+    "surface_lapse": {
+      "cell_field_pairs": 0,
+      "negative_stage": 0,
+      "negative_final": 0,
+      "zero_stage": 0,
+      "zero_final": 0,
+      "minimum": null,
+      "first_time_over_M": null,
+      "max_radius": null
+    }
+  },
+  "final_diagnostics": {
+    "min_chi": 0.0016083847074728022,
+    "min_lapse": 0.02620955979339351,
+    "H_L2": 0.03001260470354567,
+    "M_L2": 0.04932359480285131,
+    "H_exterior_L2": 0.020593804209100158,
+    "M_exterior_L2": 0.039230778885417844,
+    "Theta_exterior_L2": 0.0005032730481456902,
+    "Zr_exterior_L2": 0.004445192546404103,
+    "horizon_found": true,
+    "horizon_complete_surface": true,
+    "horizon_radius": 0.11583120553983613,
+    "horizon_areal_radius": 0.6669873494740746,
+    "horizon_mass": 0.3334936747370373,
+    "horizon_irreducible_mass": 0.3334936747370373,
+    "horizon_expansion_rms": 0.00014280846805631833,
+    "max_null_surface": 1.2212646538368814e-15,
+    "max_null_ghost": 1.5543117599756231e-15,
+    "lapse_floor_node_interventions": 74784,
+    "lapse_floor_max_radius": 0.05124618888268695,
+    "chi_floor_stage_interventions": 80,
+    "chi_floor_acceptance_interventions": 32,
+    "chi_floor_max_radius": 0.009742785792571415,
+    "surface_chi_floor_stage_interventions": 0,
+    "surface_chi_floor_final_interventions": 0,
+    "scri_interpolated_chi_negative_count": 0,
+    "scri_interpolated_chi_zero_count": 0,
+    "scri_interpolated_chi_minimum": 0,
+    "rhs_seconds": 607.1400096720027,
+    "exchange_seconds": 98.38091267643158,
+    "closure_seconds": 808.1502345130049,
+    "diagnostic_seconds": 429.753438143,
+    "bulk_halo_seconds": 184.81234923199884
+  },
+  "native_seconds": 2148.089304514,
+  "worker_case_seconds": 2149.2026565163396,
+  "evolved_zone_cycles_per_second": 839989.657882606,
+  "horizon_areal_radius_fractional_error_vs_2M": 0.0004810242111119578
+}

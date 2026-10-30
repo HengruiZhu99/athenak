@@ -1,0 +1,496 @@
+{
+  "job_id": "8990504.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "collected": 1793375996.5083637,
+  "returncode": 0,
+  "stdout": "{\n    \"timestamp\": 1793375976,\n    \"pbs_version\": \"2026.1.0.20260821184519\",\n    \"pbs_server\": \"aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov\",\n    \"Jobs\": {\n        \"8990504.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov\": {\n            \"Job_Name\": \"hyper-scri-3d\",\n            \"Job_Owner\": \"hzhu@aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov\",\n            \"resources_used\": {\n                \"cpupercent\": 8627,\n                \"cput\": \"07:17:17\",\n                \"mem\": \"1616708kb\",\n                \"ncpus\": 208,\n                \"ngpus\": 0,\n                \"vmem\": \"49904kb\",\n                \"walltime\": \"00:38:44\"\n            },\n            \"job_state\": \"F\",\n            \"queue\": \"debug\",\n            \"server\": \"aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov\",\n            \"Account_Name\": \"CompactBinaryMerger\",\n            \"Checkpoint\": \"u\",\n            \"ctime\": \"Fri Oct 30 15:16:24 2026\",\n            \"Error_Path\": \"aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov:/home/hzhu/hyperbolic-core-shell-20261028/hyper-scri-3d.e8990504\",\n            \"exec_host\": \"x4107c2s4b0n0/0*208\",\n            \"exec_vnode\": \"(x4107c2s4b0n0:ncpus=208)\",\n            \"Hold_Types\": \"n\",\n            \"Join_Path\": \"oe\",\n            \"Keep_Files\": \"doe\",\n            \"Mail_Points\": \"a\",\n            \"Mail_Users\": \"hz0693@princeton.edu\",\n            \"mtime\": \"Fri Oct 30 15:56:32 2026\",\n            \"Output_Path\": \"aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov:/home/hzhu/hyperbolic-core-shell-20261028/hyper-scri-3d.o8990504\",\n            \"Priority\": 0,\n            \"qtime\": \"Fri Oct 30 15:16:24 2026\",\n            \"Rerunable\": \"False\",\n            \"Resource_List\": {\n                \"allow_account_check_failure\": \"True\",\n                \"allow_negative_allocation\": \"True\",\n                \"award_category\": \"INCITE\",\n                \"award_type\": \"INCITE-2026\",\n                \"backfill_factor\": 84600,\n                \"backfill_max\": 50,\n                \"base_score\": 51,\n                \"bkc_definition\": \"compute_aurora_prod_20261002T162246_af5b0375_b4fd227\",\n                \"burn_ratio\": 0.8809,\n                \"current_allocation\": 2572555008,\n                \"enable_2nd_fp64\": \"True\",\n                \"enable_backfill\": 0,\n                \"enable_fifo\": 1,\n                \"enable_wfp\": 0,\n                \"fifo_factor\": 1800,\n                \"filesystems\": \"home\",\n                \"hbm_mode\": \"flat\",\n                \"home_fs\": \"True\",\n                \"ncpus\": 208,\n                \"ni_resource\": \"aurora\",\n                \"nodect\": 1,\n                \"overburn\": \"False\",\n                \"place\": \"scatter\",\n                \"project_priority\": 25,\n                \"route_backfill\": \"False\",\n                \"score_boost\": 0,\n                \"select\": 1,\n                \"snc_mode\": \"quad\",\n                \"total_allocation\": 21600000000,\n                \"total_cpus\": 10624,\n                \"walltime\": \"01:00:00\",\n                \"wfp_factor\": 100000\n            },\n            \"stime\": \"Fri Oct 30 15:17:15 2026\",\n            \"obittime\": \"Fri Oct 30 15:56:32 2026\",\n            \"session_id\": 352144,\n            \"jobdir\": \"/home/hzhu\",\n            \"substate\": 92,\n            \"euser\": \"hzhu\",\n            \"egroup\": \"users\",\n            \"comment\": \"Job run at Fri Oct 30 at 15:17 on (x4107c2s4b0n0:ncpus=208) and finished\",\n            \"etime\": \"Fri Oct 30 15:16:24 2026\",\n            \"umask\": 22,\n            \"run_count\": 1,\n            \"eligible_time\": \"00:00:53\",\n            \"Stageout_status\": 1,\n            \"Exit_status\": 0,\n            \"Submit_arguments\": \"-v HYPERBOLIC_PLAN=campaigns/n16-direct-chi-lapse-to20m-v1-segment01/plan.json /home/hzhu/hyperbolic-core-shell-20261028/campaigns/n16-direct-chi-lapse-to20m-v1-segment01/run_debug.pbs\",\n            \"history_timestamp\": 1793375792,\n            \"project\": \"CompactBinaryMerger\",\n            \"Submit_Host\": \"aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov\"\n        }\n    }\n}\n",
+  "stderr": "",
+  "scheduler": {
+    "Job_Name": "hyper-scri-3d",
+    "Job_Owner": "hzhu@aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov",
+    "resources_used": {
+      "cpupercent": 8627,
+      "cput": "07:17:17",
+      "mem": "1616708kb",
+      "ncpus": 208,
+      "ngpus": 0,
+      "vmem": "49904kb",
+      "walltime": "00:38:44"
+    },
+    "job_state": "F",
+    "queue": "debug",
+    "server": "aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "Account_Name": "CompactBinaryMerger",
+    "Checkpoint": "u",
+    "ctime": "Fri Oct 30 15:16:24 2026",
+    "Error_Path": "aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov:/home/hzhu/hyperbolic-core-shell-20261028/hyper-scri-3d.e8990504",
+    "exec_host": "x4107c2s4b0n0/0*208",
+    "exec_vnode": "(x4107c2s4b0n0:ncpus=208)",
+    "Hold_Types": "n",
+    "Join_Path": "oe",
+    "Keep_Files": "doe",
+    "Mail_Points": "a",
+    "Mail_Users": "hz0693@princeton.edu",
+    "mtime": "Fri Oct 30 15:56:32 2026",
+    "Output_Path": "aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov:/home/hzhu/hyperbolic-core-shell-20261028/hyper-scri-3d.o8990504",
+    "Priority": 0,
+    "qtime": "Fri Oct 30 15:16:24 2026",
+    "Rerunable": "False",
+    "Resource_List": {
+      "allow_account_check_failure": "True",
+      "allow_negative_allocation": "True",
+      "award_category": "INCITE",
+      "award_type": "INCITE-2026",
+      "backfill_factor": 84600,
+      "backfill_max": 50,
+      "base_score": 51,
+      "bkc_definition": "compute_aurora_prod_20261002T162246_af5b0375_b4fd227",
+      "burn_ratio": 0.8809,
+      "current_allocation": 2572555008,
+      "enable_2nd_fp64": "True",
+      "enable_backfill": 0,
+      "enable_fifo": 1,
+      "enable_wfp": 0,
+      "fifo_factor": 1800,
+      "filesystems": "home",
+      "hbm_mode": "flat",
+      "home_fs": "True",
+      "ncpus": 208,
+      "ni_resource": "aurora",
+      "nodect": 1,
+      "overburn": "False",
+      "place": "scatter",
+      "project_priority": 25,
+      "route_backfill": "False",
+      "score_boost": 0,
+      "select": 1,
+      "snc_mode": "quad",
+      "total_allocation": 21600000000,
+      "total_cpus": 10624,
+      "walltime": "01:00:00",
+      "wfp_factor": 100000
+    },
+    "stime": "Fri Oct 30 15:17:15 2026",
+    "obittime": "Fri Oct 30 15:56:32 2026",
+    "session_id": 352144,
+    "jobdir": "/home/hzhu",
+    "substate": 92,
+    "euser": "hzhu",
+    "egroup": "users",
+    "comment": "Job run at Fri Oct 30 at 15:17 on (x4107c2s4b0n0:ncpus=208) and finished",
+    "etime": "Fri Oct 30 15:16:24 2026",
+    "umask": 22,
+    "run_count": 1,
+    "eligible_time": "00:00:53",
+    "Stageout_status": 1,
+    "Exit_status": 0,
+    "Submit_arguments": "-v HYPERBOLIC_PLAN=campaigns/n16-direct-chi-lapse-to20m-v1-segment01/plan.json /home/hzhu/hyperbolic-core-shell-20261028/campaigns/n16-direct-chi-lapse-to20m-v1-segment01/run_debug.pbs",
+    "history_timestamp": 1793375792,
+    "project": "CompactBinaryMerger",
+    "Submit_Host": "aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov"
+  },
+  "worker": {
+    "schema": 1,
+    "status": "passed",
+    "started": "2026-10-30T15:19:42.741680+00:00",
+    "job_id": "8990504.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "launcher_host": "x4107c2s4b0n0",
+    "allocation_nodes": [
+      "x4107c2s4b0n0.hsn.cm.aurora.alcf.anl.gov"
+    ],
+    "resources": {
+      "queue": "debug",
+      "account": "CompactBinaryMerger",
+      "nodes": 1,
+      "ranks": 12,
+      "ranks_per_node": 12,
+      "walltime": "01:00:00"
+    },
+    "source_manifest_sha256": "56706997821cb434e142cbac3a217ac7360d4b7fdfc2efe9858e97df9f191b29",
+    "binaries": {
+      "build-sycl-mpi-direct-chi-lapse-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_direct_chi_lapse": "b8814162c43d2319f9d6db2370b54f270f592a5f7101adf36bf94a83b101d5b8"
+    },
+    "plan_sha256": "24ed84af12f5b272f8fbe923f9217c543e6a1f2c70d5673b3e1725d29c6cbd89",
+    "phase": "timestep_experiment",
+    "n": 16,
+    "cases": [
+      {
+        "name": "puncture",
+        "kind": "puncture",
+        "started": "2026-10-30T15:20:01.611556+00:00",
+        "argv": [
+          "mpiexec",
+          "-n",
+          "12",
+          "-ppn",
+          "12",
+          "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+          "gpu_tile_compact.sh",
+          "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-direct-chi-lapse-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_direct_chi_lapse",
+          "16",
+          "campaigns/n16-direct-chi-lapse-to20m-v1-segment01/output/puncture",
+          "puncture",
+          "6.666666666666667",
+          "0.0005",
+          "-",
+          "inputs/puncture-ac1-verified-at3m.checkpoint",
+          "3370",
+          "0.05",
+          "0.001",
+          "12",
+          "24",
+          "2"
+        ],
+        "generated_inputs": {},
+        "n": 16,
+        "returncode": 0,
+        "timed_out": false,
+        "storage_error": null,
+        "elapsed_seconds": 2149.2026565163396,
+        "checks": [
+          {
+            "check": {
+              "path": [
+                "status"
+              ],
+              "op": "eq",
+              "value": "completed"
+            },
+            "observed": "completed",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "backend"
+              ],
+              "op": "eq",
+              "value": "SYCL"
+            },
+            "observed": "SYCL",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "mpi_size"
+              ],
+              "op": "eq",
+              "value": 12
+            },
+            "observed": 12,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "n"
+              ],
+              "op": "eq",
+              "value": 16
+            },
+            "observed": 16,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "experimental_timestep"
+              ],
+              "op": "eq",
+              "value": true
+            },
+            "observed": true,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "timestep_aware_penalty"
+              ],
+              "op": "eq",
+              "value": true
+            },
+            "observed": true,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "bulk_cfl_guard_enabled"
+              ],
+              "op": "eq",
+              "value": false
+            },
+            "observed": false,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "checkpoint_schema"
+              ],
+              "op": "eq",
+              "value": "HYP3D_MPI_AC1"
+            },
+            "observed": "HYP3D_MPI_AC1",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_penalty_cfl_max"
+              ],
+              "op": "le",
+              "value": 0.5
+            },
+            "observed": 0.3840000000000001,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_null_surface"
+              ],
+              "op": "le",
+              "value": 1e-10
+            },
+            "observed": 1.2212646538368814e-15,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_penalty_scale_min"
+              ],
+              "op": "eq",
+              "value": 1
+            },
+            "observed": 1,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "angular_epsilon_min"
+              ],
+              "op": "eq",
+              "value": 2
+            },
+            "observed": 2,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "checkpoint_header_bytes"
+              ],
+              "op": "eq",
+              "value": 168
+            },
+            "observed": 168,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "puncture_chi_floor"
+              ],
+              "op": "eq",
+              "value": 1e-08
+            },
+            "observed": 1e-08,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "puncture_chi_floor_radius"
+              ],
+              "op": "eq",
+              "value": 0.03
+            },
+            "observed": 0.03,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_null_ghost"
+              ],
+              "op": "le",
+              "value": 1e-10
+            },
+            "observed": 1.5543117599756231e-15,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "positive_variables"
+              ],
+              "op": "eq",
+              "value": "direct_chi_direct_lapse_rk_and_ko"
+            },
+            "observed": "direct_chi_direct_lapse_rk_and_ko",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "candidate_sign_scope"
+              ],
+              "op": "eq",
+              "value": "pre_floor_volume_and_surface_attempts_this_segment_including_rejected_step"
+            },
+            "observed": "pre_floor_volume_and_surface_attempts_this_segment_including_rejected_step",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "physical_lapse_floor"
+              ],
+              "op": "eq",
+              "value": 1e-10
+            },
+            "observed": 1e-10,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "chi_nonpositive_policy"
+              ],
+              "op": "eq",
+              "value": "record_and_floor_finite_candidates_everywhere"
+            },
+            "observed": "record_and_floor_finite_candidates_everywhere",
+            "passed": true
+          }
+        ],
+        "report_status": "completed",
+        "status": "passed",
+        "artifacts": {
+          "campaigns/n16-direct-chi-lapse-to20m-v1-segment01/output/puncture.report.json": {
+            "sha256": "e1a156e8a70ff1c646ab24eaa38f8b5c632759035e6a762027936396a8d3654e",
+            "bytes": 21125
+          },
+          "campaigns/n16-direct-chi-lapse-to20m-v1-segment01/output/puncture.checkpoint": {
+            "sha256": "88f9d63c6eb0dc2eaf93543d4457df0f698f9072f7a66b1513fedfe4b041253f",
+            "bytes": 79725224
+          },
+          "campaigns/n16-direct-chi-lapse-to20m-v1-segment01/output/puncture.history.csv": {
+            "sha256": "cfc4e16c063a94119d575f01c84ee0b65509f64dd853860dce47680b66a839df",
+            "bytes": 73818
+          },
+          "campaigns/n16-direct-chi-lapse-to20m-v1-segment01/output/puncture.checkpoint.horizon-seed.txt": {
+            "sha256": "9f375531f95e7d50e275141699264bd3690206f901b03e102b68c81079bc862a",
+            "bytes": 85
+          },
+          "campaigns/n16-direct-chi-lapse-to20m-v1-segment01/output/puncture.fastflow.horizon_summary_0.txt": {
+            "sha256": "6c3a3cdf649e1edec2343e3e44f065d1956eb447fdae56526b4cfbad2c67aacd",
+            "bytes": 19745
+          }
+        },
+        "finished": "2026-10-30T15:55:55.973950+00:00"
+      }
+    ],
+    "storage_at_start": {
+      "bytes": 4336800256,
+      "entries": 61233,
+      "limit_bytes": 5000000000,
+      "reserve_bytes": 100000000,
+      "planned_bytes": 160000000,
+      "headroom_bytes": 403199744
+    },
+    "stability_admission_eligible": false,
+    "experimental_policy": "n16_direct_chi_lapse_retry_to_20M",
+    "affinity": {
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 0.3712467667646706,
+      "records": [
+        {
+          "host": "x4107c2s4b0n0",
+          "rank": 0,
+          "mask": "0.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4107c2s4b0n0",
+          "rank": 9,
+          "mask": "4.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4107c2s4b0n0",
+          "rank": 11,
+          "mask": "5.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4107c2s4b0n0",
+          "rank": 1,
+          "mask": "0.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4107c2s4b0n0",
+          "rank": 10,
+          "mask": "5.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4107c2s4b0n0",
+          "rank": 8,
+          "mask": "4.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4107c2s4b0n0",
+          "rank": 6,
+          "mask": "3.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4107c2s4b0n0",
+          "rank": 2,
+          "mask": "1.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4107c2s4b0n0",
+          "rank": 3,
+          "mask": "1.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4107c2s4b0n0",
+          "rank": 4,
+          "mask": "2.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4107c2s4b0n0",
+          "rank": 7,
+          "mask": "3.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4107c2s4b0n0",
+          "rank": 5,
+          "mask": "2.1",
+          "hierarchy": "COMPOSITE"
+        }
+      ],
+      "passed": true
+    },
+    "finished": "2026-10-30T15:55:55.981394+00:00",
+    "elapsed_seconds": 2173.2397279529832,
+    "storage_at_finish": {
+      "bytes": 4454555274,
+      "entries": 61243
+    }
+  }
+}
