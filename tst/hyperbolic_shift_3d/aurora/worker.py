@@ -182,7 +182,7 @@ def run(root, relative):
                   source_manifest_sha256=binding['source_manifest_sha256'], binaries=binding['binaries'],
                   plan_sha256=binding['plan_sha256'], phase=plan['phase'], n=plan['n'], cases=[],
                   storage_at_start=initial_space)
-    if plan['phase'] == 'timestep_experiment':
+    if plan['phase'] in ['timestep_experiment','direct_variable_resolution']:
         status.update(stability_admission_eligible=False, experimental_policy=plan['experimental_policy'])
     if plan['phase'] == 'resolution_control':
         status.update(stability_admission_eligible=False, continued_failures=[])
@@ -203,7 +203,9 @@ def run(root, relative):
                 status['stop_reason_status'] = 'incomplete'
                 status['reason'] = 'Insufficient worker time to start the next bounded case'
                 break
-            args = [str(timeout-30) if a == '@WALL_SECONDS@' else a for a in command['args']]
+            reserve = plan.get('native_exit_reserve_seconds',30) if plan['phase']=='direct_variable_resolution' else 30
+            if timeout-reserve < 45:raise RuntimeError('Insufficient time for native evolution and exit reserve')
+            args = [str(timeout-reserve) if a == '@WALL_SECONDS@' else a for a in command['args']]
             executable = control.local_path(root, command['executable'])
             launched = mpi_command(executable, args)
             generated = {name:control.digest(control.local_path(root, name))

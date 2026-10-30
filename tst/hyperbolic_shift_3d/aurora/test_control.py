@@ -115,6 +115,23 @@ class ControllerTests(unittest.TestCase):
             invalid['commands'][0]['args'][index] = bad
             with self.assertRaises(ValueError): control.validate_plan(self.root, invalid)
 
+    def test_direct_variable_resolution_policy(self):
+        for n in [24,32]:
+            plan=example();plan.update(phase='direct_variable_resolution',n=n,experimental_policy='n24_n32_matched_protocol_to20M',campaign_stage='DT1_to3M',native_exit_reserve_seconds=180)
+            c=plan['commands'][0];c.update(kind='puncture',executable='build/'+control.TIMESTEP_TARGET)
+            c['args']=[str(n),'runs/one/output/minkowski','puncture','1',str(.0005*16/n),'inputs/initial','-','@WALL_SECONDS@','0.05','0.001','12','24','2']
+            control.validate_plan(self.root,plan)
+            self.assertIsNone(control.validate_admission(self.root,plan,'',{}))
+            for index,value in [(0,'16'),(3,'2'),(4,'.0005'),(8,'.1'),(10,'6'),(12,'1')]:
+                bad=copy.deepcopy(plan);bad['commands'][0]['args'][index]=value
+                with self.assertRaises(ValueError):control.validate_plan(self.root,bad)
+            plan['campaign_stage']='AC1_to20M';c['executable']='build/'+control.DIRECT_CHI_LAPSE_TARGET
+            c['args'][3]=str(20/3);c['args'][5:7]=['-','inputs/initial'];control.validate_plan(self.root,plan)
+            c['args'][5:7]=['inputs/initial','-']
+            with self.assertRaises(ValueError):control.validate_plan(self.root,plan)
+        plan['n']=48
+        with self.assertRaises(ValueError):control.validate_plan(self.root,plan)
+
     def test_resource_policy(self):
         for key, wrong in [('queue','capacity'), ('nodes',2), ('ranks',1), ('ranks_per_node',6)]:
             plan = example()

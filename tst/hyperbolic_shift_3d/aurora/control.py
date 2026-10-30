@@ -21,7 +21,7 @@ JOB_NAME = 'hyper-scri-3d'
 ACCOUNT = 'CompactBinaryMerger'
 CPU_BIND = '1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100'
 FIXED = dict(queue='debug', account=ACCOUNT, nodes=1, ranks=12, ranks_per_node=12)
-PHASES = {'preflight', 'stability', 'convergence', 'resolution_control', 'timestep_experiment'}
+PHASES = {'preflight', 'stability', 'convergence', 'resolution_control', 'timestep_experiment', 'direct_variable_resolution'}
 DISSIPATIVE_TARGET = 'hyperbolic_shift_3d_mpi_dissipative'
 SAMPLED_NORMAL_TARGET = 'hyperbolic_shift_3d_mpi_sampled_normal'
 SAMPLED_NORMAL_SCHEME = 'sampled_native_numerator6'
@@ -153,6 +153,13 @@ def validate_plan(root, plan):
                 or plan.get('experimental_policy') not in {'n16_dt_dx_0.4_then_0.2_to_3M_pause', 'n16_reduce_dt_dx_to_0.0444_reproduce_3M', 'n16_original_dt_continue_to_20M', 'n16_chi_floor_retry_to_20M', 'n16_direct_lapse_retry_to_20M', 'n16_direct_chi_lapse_retry_to_20M'}
                 or len(plan.get('commands', [])) not in ((1, 2) if plan.get('experimental_policy') == 'n16_reduce_dt_dx_to_0.0444_reproduce_3M' else (1,))):
             raise ValueError('Timestep experiment requires the explicit bounded n16 user policy')
+    refined = plan['phase'] == 'direct_variable_resolution'
+    if refined and (n not in [24,32] or plan['low_resolution_n'] != 16
+            or plan.get('experimental_policy') != 'n24_n32_matched_protocol_to20M'
+            or plan.get('campaign_stage') not in ['DT1_to3M','AC1_to20M']
+            or len(plan.get('commands',[])) != 1
+            or plan.get('native_exit_reserve_seconds') != 180):
+        raise ValueError('Resolution campaign requires explicit N24/N32 matched-protocol policy')
     resolution_control = plan['phase'] == 'resolution_control'
     if resolution_control and (plan['low_resolution_n'] % 2 or n < plan['low_resolution_n']):
         raise ValueError('Resolution controls require an even baseline no larger than plan.n')
@@ -212,11 +219,21 @@ def validate_plan(root, plan):
                 raise ValueError('Chi floor executable requires its explicit retry policy')
             if (Path(command['executable']).name == DIRECT_LAPSE_TARGET) != (plan.get('experimental_policy') == 'n16_direct_lapse_retry_to_20M'):
                 raise ValueError('Direct lapse executable requires its explicit retry policy')
-            if (Path(command['executable']).name == DIRECT_CHI_LAPSE_TARGET) != (plan.get('experimental_policy') == 'n16_direct_chi_lapse_retry_to_20M'):
+            if (Path(command['executable']).name == DIRECT_CHI_LAPSE_TARGET) != (plan.get('experimental_policy') == 'n16_direct_chi_lapse_retry_to_20M' or (refined and plan['campaign_stage']=='AC1_to20M')):
                 raise ValueError('Direct chi/lapse executable requires its explicit retry policy')
-            if experimental != (plan['phase'] == 'timestep_experiment'):
+            if experimental != (plan['phase'] in ['timestep_experiment','direct_variable_resolution']):
                 raise ValueError('Experimental target requires its own explicit phase')
-            if experimental and plan.get('experimental_policy') in {'n16_original_dt_continue_to_20M','n16_chi_floor_retry_to_20M', 'n16_direct_lapse_retry_to_20M', 'n16_direct_chi_lapse_retry_to_20M'}:
+            if refined:
+                direct = plan['campaign_stage']=='AC1_to20M'
+                expected = DIRECT_CHI_LAPSE_TARGET if direct else TIMESTEP_TARGET
+                if (Path(command['executable']).name != expected or command['kind']!='puncture'
+                        or len(argv)!=13 or float(argv[3])!=(20/3 if direct else 1.)
+                        or float(argv[4])!=.0005*16/n
+                        or argv[8:]!=['0.05','0.001','12','24','2']
+                        or (direct and (argv[5]!='-' or argv[6]=='-'))
+                        or (not direct and ((argv[5]=='-') == (argv[6]=='-')))):
+                    raise ValueError('Resolution stage must preserve target, dt/dx, diagnostics and initial/restart policy')
+            elif experimental and plan.get('experimental_policy') in {'n16_original_dt_continue_to_20M','n16_chi_floor_retry_to_20M', 'n16_direct_lapse_retry_to_20M', 'n16_direct_chi_lapse_retry_to_20M'}:
                 if (command['kind'] != 'puncture' or len(argv) < 8
                         or float(argv[3]) != 20/3 or float(argv[4]) != .0005
                         or argv[5] != '-' or argv[6] == '-'):
@@ -294,7 +311,7 @@ def verify_source(root, relative):
 
 def validate_admission(root, plan, source_digest, binary_hashes):
     """Admissions are reviewed evidence, never inferred from a process exit code."""
-    if plan['phase'] in {'preflight', 'timestep_experiment'}:
+    if plan['phase'] in {'preflight', 'timestep_experiment', 'direct_variable_resolution'}:
         # Direct user-requested experiment, not a scientifically admitted run.
         return None
     admission_path = local_path(root, plan['admission'])
