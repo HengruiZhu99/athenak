@@ -43,9 +43,10 @@ def build(root,source,build,campaign,initial):
   adapter(name,'restart',[a for pair in zip(['--reference','--candidate','--reference-report','--candidate-report'],paths) for a in pair],generated=paths)
  for layers in (1,2,3):
   for kappa in (0,1):evolution(f'minkowski-l{layers}-k{kappa}','minkowski',layers,kappa)
- evolution('oblique-full','oblique',sparse=False,end=.005)
- evolution('oblique-part','oblique',end=.0025)
- evolution('oblique-resume','oblique',end=.005,restart=out+'/oblique-part.checkpoint')
+ # Binary-exact endpoints keep the direct and split timestep sequences equal.
+ evolution('oblique-full','oblique',sparse=False,end=20/4096,dt=1/4096)
+ evolution('oblique-part','oblique',end=10/4096,dt=1/4096)
+ evolution('oblique-resume','oblique',end=20/4096,dt=1/4096,restart=out+'/oblique-part.checkpoint')
  compare('oblique-equivalence','oblique-full','oblique-resume')
  evolution('puncture-full','puncture',sparse=False,end=.05,dt=.0005)
  evolution('puncture-sparse','puncture',end=.05,dt=.0005)

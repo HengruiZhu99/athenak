@@ -1,0 +1,56 @@
+{
+  "status": "verified_recorded_failure",
+  "job_id": "8987368.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "cases": [
+    {
+      "name": "minkowski-l1-k1",
+      "t": 0.001,
+      "steps": 4,
+      "seconds": 12.010550395,
+      "max_state_deviation": 8.054814009616601e-15,
+      "H_L2": 2.411246060992614e-15,
+      "M_L2": 1.1274092517657576e-14,
+      "max_null": 8.881784197001248e-16,
+      "floor": 0
+    },
+    {
+      "name": "oblique-full",
+      "t": 0.005,
+      "steps": 20,
+      "seconds": 17.453533849,
+      "max_state_deviation": 0.05682464137333039,
+      "H_L2": 0.003876636382302615,
+      "M_L2": 0.009873227451926148,
+      "max_null": 8.881784197001248e-16,
+      "floor": 0
+    },
+    {
+      "name": "oblique-part",
+      "t": 0.0025,
+      "steps": 10,
+      "seconds": 14.246316731,
+      "max_state_deviation": 0.031052179996155553,
+      "H_L2": 0.0014555860250897372,
+      "M_L2": 0.006610904972702839,
+      "max_null": 8.881784197001248e-16,
+      "floor": 0
+    },
+    {
+      "name": "oblique-resume",
+      "t": 0.005,
+      "steps": 20,
+      "seconds": 14.338994739,
+      "max_state_deviation": 0.0568246413733304,
+      "H_L2": 0.0038766363823026155,
+      "M_L2": 0.00987322745192615,
+      "max_null": 8.881784197001248e-16,
+      "floor": 0
+    }
+  ],
+  "component_maxima": {
+    "norm_error": 1.8214596497756474e-17,
+    "scaled_error": 3.86108781388088e-18,
+    "max_error": 3.86108781388088e-18
+  },
+  "conclusion": "Decimal-time direct/split runs have different clipped timesteps. This is a candidate explanation, not a proven cause until independent direct/full-sparse and dyadic-restart runs complete. No tolerance or scientific acceptance was changed; no GPU puncture ran in this stopped plan."
+}

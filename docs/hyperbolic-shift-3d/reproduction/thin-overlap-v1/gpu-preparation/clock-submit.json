@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/home/hzhu/hyperbolic-core-shell-20261028/source-thin-v1/tst/hyperbolic_shift_3d/aurora/control.py", line 565, in <module>
+    main()
+  File "/home/hzhu/hyperbolic-core-shell-20261028/source-thin-v1/tst/hyperbolic_shift_3d/aurora/control.py", line 558, in main
+    value = submit(root, args.plan)
+            ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hzhu/hyperbolic-core-shell-20261028/source-thin-v1/tst/hyperbolic_shift_3d/aurora/control.py", line 469, in submit
+    raise RuntimeError('Another task allocation exists: ' + ', '.join(snapshot['blocking']))
+RuntimeError: Another task allocation exists: 8987760.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov

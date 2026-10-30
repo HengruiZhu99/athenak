@@ -180,3 +180,100 @@ the nine-case plan was bound, verified and submitted as Aurora job
 Plan SHA256: `77cf85eb32825b3225e63b236352616b22f0ef1d34655eb445ad576b643144ac`.
 Submission is not scientific completion; results remain pending until the
 worker and independent artifact/checkpoint verification both finish.
+
+
+### First GPU preflight: retained failed restart comparison
+
+Job 8987368 finished with the expected failure exit after the strict oblique
+restart comparison failed. The penalty CPU/device check passed on all twelve
+tiles (maximum scaled rate error 3.86e-18); L1/kappa1 Minkowski and all three
+oblique segments completed. Minkowski state drift was 8.05e-15. Every completed
+evolution had zero counted floor interventions and scri/ghost null residual
+at most 8.89e-16. The two puncture cases were not reached.
+
+The direct/split oblique checkpoints differed by at most 6.13e-15 over
+9,000,416 doubles. This is retained as a **failed exact comparison**, not
+promoted to a pass. The source uses `Step(min(dt,end-time))`: decimal .0025
+lands on a clipped step in the split run, while the direct .005 run uses a
+full step there. Replaying that clock shows different step sizes at steps
+10 and 20. This is a candidate explanation; communication and restart are
+being isolated in a new bound plan without changing tolerances or equations.
+
+`gpu-core-v1/` contains the verified reports, histories, component logs,
+worker/scheduler records, hashes and independent recorded-failure audit.
+All four raw checkpoints were copied locally and hash verified. The redundant
+remote Minkowski checkpoint was then removed with a recorded receipt.
+The updated plan generator uses dyadic endpoints for its exact restart test;
+that test change is not a change in the evolution discretization.
+
+
+The local clock isolation now completed: decimal full/split runs differ by
+6.90e-16, while the dyadic full/split runs match **all 4,236,832 payload doubles
+exactly**, despite changing from one full-gather rank to two sparse ranks.
+`clock-restart/` retains commands, binary hashes, reports, histories and the
+independent comparison. This establishes the clock explanation locally;
+GPU direct/communication and dyadic-restart isolation is still pending.
+
+### Common-location snapshot profiles
+
+The read-only `hyperbolic_shift_3d_thin_snapshot_profile` target reads admitted
+V12 snapshots and writes values plus physical radial derivatives for all 31
+stored Cartesian components. It verifies the exact descriptor/length and
+finiteness of all four arrays, including unused compensation/surface arrays.
+It never advances, floors or repairs the input state.
+
+The 1,462 rows use the same physical points for every grid: radii .025 to .4
+in .005 increments, six axes, eight cube diagonals, and the oblique pulse axis
+and its opposite. Cartesian and first-shell copies are kept separate. Core
+samples remain inside the nominal cube; spherical samples start at .175.
+Six-point polynomial stencils stay inside the evolved donor hull. The values
+are raw native deviations: alpha=v18+(1+r^2)/2 and beta_i=v(22+i)-x_i.
+These are fixed-ray samples, not a complete angular quadrature, native-cell
+constraint evaluation, or a characteristic reflection measurement.
+
+```sh
+cmake --build build-thin-overlap --target hyperbolic_shift_3d_thin_snapshot_profile -j2
+build-thin-overlap/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_thin_snapshot_profile   run.checkpoint run.profiles.csv
+```
+
+`profile-audit/` records equilibrium, manufactured Cartesian-linear fields,
+physical radial derivatives, descriptor rejection and an unchanged-input hash.
+The manufactured shell value/derivative errors are 2.42e-9 / 6.05e-9; Cartesian
+errors are at roundoff. These validate the analysis tool, not evolution
+convergence.
+
+The fresh preserved-library 1D reference completed through coordinate time 1
+(3M) in 20,481 steps and 147.92 seconds, with zero counted floor interventions.
+Its maximum relative null residual was 2.22e-16. `baseline-1d-n513-to3m/`
+retains initial/final field profiles, diagnostics, library and source hashes,
+and the command. This supplements, rather than replaces, the preserved 100M
+history. The extra step comes from the endpoint-clipped decimal clock.
+
+`compare_profiles.py` contracts the Cartesian tensors/vectors into radial
+components and compares six physical fields against six-point interpolation
+of a same-time 1D profile. It rejects mismatched times and extrapolation.
+`profile-comparison-short/` exercises it on the existing two-step CPU puncture
+at **0.0015M**, using a fresh same-time 1D control. This is analysis-tool and
+short-time evidence only. The shaded bands show min/max among the available
+rays, whose coverage changes with radius; they are not sphere quadratures.
+Tensor-contraction and polynomial-interpolation tests passed. The derivative
+sampler is tested separately in `profile-audit/`.
+
+![Short-time separate-domain field differences](profile-comparison-short/profiles.png)
+
+The follow-up GPU clock plan has now passed binding and verification. Its
+submission was rejected before qsub because another authorized one-node debug
+job (8987760) occupies the shared allocation slot. The plan uses the frozen
+native binaries and does not change equations, timestep acceptance, or exact
+comparison tolerances. `gpu-preparation/clock-*.json` records the preparation
+and rejection. GPU clock isolation, puncture preflight, the remaining layer
+matrix, and the new 3M thin-overlap evolution are still pending.
+
+After that job finished and its owner released the allocation lock, the clock
+batch submitted as **8987796**, with plan hash
+`7d18a14cad22ffcb9bd68b97550e3f960d5ab4d00668f4d7972bf0e52a3d5399`.
+The 108 local controller/preflight tests passed again after the dyadic plan
+change. Submission does not qualify the result; `verify_gpu.py --mode
+clock-isolation` independently audits the collected eight-case batch and its
+three exact comparisons. This mode explicitly does not issue puncture or full
+preflight admission.

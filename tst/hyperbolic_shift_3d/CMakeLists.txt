@@ -300,3 +300,9 @@ if(ENABLE_MPI)
     HYPERBOLIC_SCRI_DONOR_SEVEN=1 HYPERBOLIC_INNER_TRANSITION_LOGICAL=1
     HYPERBOLIC_CORE_SUBDIVISIONS=2 HYPERBOLIC_EVOLVED_OVERLAP=3 HYPERBOLIC_SPHERICAL_OVERLAP=1 HYPERBOLIC_CONTINUOUS_POSITIVE=1 HYPERBOLIC_BOUNDARY_REUSE=1 HYPERBOLIC_THIN_TRACE=1 HYPERBOLIC_SPARSE_STAGE=1)
 endif()
+
+# Offline fixed-location profiles; no evolution or horizon reinterpretation.
+add_executable(hyperbolic_shift_3d_thin_snapshot_profile thin_snapshot_profile.cpp)
+target_include_directories(hyperbolic_shift_3d_thin_snapshot_profile PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+target_link_libraries(hyperbolic_shift_3d_thin_snapshot_profile PRIVATE Kokkos::kokkos Threads::Threads)
+target_compile_options(hyperbolic_shift_3d_thin_snapshot_profile PRIVATE -Wall -Wextra -ffp-contract=off)

@@ -1,0 +1,38 @@
+{
+  "time": 0.0005,
+  "time_over_M": 0.0015,
+  "rows": 1462,
+  "inputs": {
+    "output/thin-overlap-v1/puncture-short.profiles.csv": "292a0647ebef58f4f6500cbc9674536ce156a9ac259e4082d8a19d7b2933f008",
+    "output/thin-overlap-v1/sparse-mpi/puncture-control.report.json": "2db2db1269e4b28c28ecf191b788d0b0263afc3785abfb496d52df199b4dcd4e",
+    "output/thin-overlap-v1/baseline-1d-n513-short/final.csv": "a292c8d5cb097146497695750b56855b3645c70201e094d63f5e4c9ae1866ce6",
+    "output/thin-overlap-v1/baseline-1d-n513-short/report.json": "7ccec9d7f7a3782ca8c8c5292ec8cc4a773b6f09dcc664ba38aa36ba009ca442"
+  },
+  "resolutions": {
+    "n_3d": 16,
+    "n_1d": 513,
+    "dt_3d": 0.00025,
+    "dt_1d": 4.8828125e-05,
+    "core_layers": 1,
+    "trace_kappa": 1
+  },
+  "max_abs_difference_by_domain": {
+    "0": {
+      "chi": 9.181738227817884e-06,
+      "alpha": 5.51865547019012e-05,
+      "beta_r": 1.2480464856023943e-09,
+      "g_rr": 4.0546321855572387e-10,
+      "A_rr": 1.3124849135612618e-05,
+      "Theta": 1.4276068433202078e-05
+    },
+    "1": {
+      "chi": 3.103054180830789e-07,
+      "alpha": 3.0748175569028646e-06,
+      "beta_r": 4.143473430862077e-06,
+      "g_rr": 1.2764710284329794e-06,
+      "A_rr": 0.00063123557099515,
+      "Theta": 9.596669757055818e-08
+    }
+  },
+  "scope": "Same-time behavioral comparison, not convergence. Six-point 1D radial interpolation; unweighted available-ray statistics with radius-dependent coverage. No horizon acceptance, constraint norm, or characteristic reflection inference."
+}
