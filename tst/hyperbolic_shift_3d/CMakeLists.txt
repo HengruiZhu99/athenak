@@ -311,3 +311,13 @@ target_compile_options(hyperbolic_shift_3d_radial_batch_device PRIVATE -Wall -We
 target_compile_definitions(hyperbolic_shift_3d_radial_batch_device PRIVATE HYPERBOLIC_RADIAL_FIELD_BATCH=1 HYPERBOLIC_TEST_CONTINUOUS_POSITIVE=1 HYPERBOLIC_TEST_SPHERICAL_OVERLAP=1 HYPERBOLIC_TEST_DONOR_SEVEN=1 HYPERBOLIC_TEST_INNER_TRANSITION=1 HYPERBOLIC_TEST_OVERLAP=3)
 add_test(NAME hyperbolic_shift_3d_radial_batch_device COMMAND hyperbolic_shift_3d_radial_batch_device)
 set_tests_properties(hyperbolic_shift_3d_radial_batch_device PROPERTIES RUN_SERIAL TRUE TIMEOUT 420)
+
+if(ENABLE_MPI)
+  add_executable(hyperbolic_shift_3d_mesh_plan_bundle test_mesh_plan_bundle.cpp)
+  target_include_directories(hyperbolic_shift_3d_mesh_plan_bundle PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+  target_link_libraries(hyperbolic_shift_3d_mesh_plan_bundle PRIVATE Kokkos::kokkos MPI::MPI_CXX Threads::Threads)
+  target_compile_options(hyperbolic_shift_3d_mesh_plan_bundle PRIVATE -Wall -Wextra -ffp-contract=off)
+  target_compile_definitions(hyperbolic_shift_3d_mesh_plan_bundle PRIVATE HYPERBOLIC_RADIAL_FIELD_BATCH=1)
+  add_test(NAME hyperbolic_shift_3d_mesh_plan_bundle_mpi COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 2 ${MPIEXEC_PREFLAGS} $<TARGET_FILE:hyperbolic_shift_3d_mesh_plan_bundle> ${MPIEXEC_POSTFLAGS})
+  set_tests_properties(hyperbolic_shift_3d_mesh_plan_bundle_mpi PROPERTIES RUN_SERIAL TRUE TIMEOUT 420 PROCESSORS 2)
+endif()

@@ -51,6 +51,10 @@ class SparseStageExchange {
     int bad=!valid,any=0;MPI_Allreduce(&bad,&any,1,MPI_INT,MPI_MAX,comm_);
     if(any)throw std::invalid_argument(reason);
   }
+  template<class Action>void ConstructCollective(Action action,const char*reason)const {
+    bool okay=true;try{action();}catch(...){okay=false;}
+    RequireCollective(okay,reason);
+  }
   static Indices Upload(const char*name,const std::vector<int>&ids){
     Indices out(std::string(name),ids.size());auto host=Kokkos::create_mirror_view(out);
     for(size_t i=0;i<ids.size();++i)host(i)=ids[i];Kokkos::deep_copy(out,host);return out;
@@ -60,14 +64,15 @@ class SparseStageExchange {
     MPI_Comm_rank(comm_,&rank_);MPI_Comm_size(comm_,&size_);
   }
   void Rebuild(MeshPlanEpoch epoch,const std::vector<int>&cuts,int fields,
-               std::vector<int> needed){
+               const std::vector<int>&requested_points){
     // Mark the old plan invalid even if the new descriptor is rejected.
     ready_=false;
     bool valid=cuts.size()==size_t(size_+1)&&fields>0;
     if(valid){valid=cuts.front()==0&&cuts.back()>0&&cuts.back()<=INT_MAX/fields;
       for(int r=0;r<size_;++r)valid=valid&&cuts[r+1]>cuts[r];}
     RequireCollective(valid,"invalid sparse ownership descriptor");
-    std::vector<int> lo=cuts,hi=cuts;
+    std::vector<int> lo,hi;
+    ConstructCollective([&]{lo=cuts;hi=cuts;},"sparse ownership allocation failed on a rank");
     MPI_Allreduce(MPI_IN_PLACE,lo.data(),lo.size(),MPI_INT,MPI_MIN,comm_);
     MPI_Allreduce(MPI_IN_PLACE,hi.data(),hi.size(),MPI_INT,MPI_MAX,comm_);
     int fmin=fields,fmax=fields;MPI_Allreduce(MPI_IN_PLACE,&fmin,1,MPI_INT,MPI_MIN,comm_);
@@ -77,27 +82,35 @@ class SparseStageExchange {
     MPI_Allreduce(MPI_IN_PLACE,emax,3,MPI_UINT64_T,MPI_MAX,comm_);
     RequireCollective(lo==hi&&fmin==fmax&&std::equal(emin,emin+3,emax),"inconsistent sparse mesh/partition epoch");
     nf_=fields;total_=cuts.back();first_=cuts[rank_];local_=cuts[rank_+1]-first_;
-    std::sort(needed.begin(),needed.end());needed.erase(std::unique(needed.begin(),needed.end()),needed.end());
+    std::vector<int> needed;
+    ConstructCollective([&]{needed=requested_points;std::sort(needed.begin(),needed.end());
+      needed.erase(std::unique(needed.begin(),needed.end()),needed.end());},"sparse donor allocation failed on a rank");
     RequireCollective(needed.empty()||(needed.front()>=0&&needed.back()<total_),"sparse donor outside mesh");
-    std::vector<int> requested,requests(size_,0),incoming(size_,0),request_offsets(size_,0),incoming_offsets(size_,0);
-    for(int point:needed){const int owner=std::upper_bound(cuts.begin(),cuts.end(),point)-cuts.begin()-1;
-      if(owner!=rank_){requested.push_back(point);++requests[owner];}}
+    std::vector<int> requested,requests,incoming,request_offsets,incoming_offsets;
+    ConstructCollective([&]{requests.assign(size_,0);incoming.assign(size_,0);
+      request_offsets.assign(size_,0);incoming_offsets.assign(size_,0);
+      for(int point:needed){const int owner=std::upper_bound(cuts.begin(),cuts.end(),point)-cuts.begin()-1;
+        if(owner!=rank_){requested.push_back(point);++requests[owner];}}
+    },"sparse request allocation failed on a rank");
     MPI_Alltoall(requests.data(),1,MPI_INT,incoming.data(),1,MPI_INT,comm_);
     int64_t sent64=0,received64=0;
     for(int r=0;r<size_;++r){sent64+=incoming[r];received64+=requests[r];}
     RequireCollective(sent64<=INT_MAX/nf_&&received64<=INT_MAX/nf_,"sparse message exceeds MPI int count");
     int sent=0,received=0;
     for(int r=0;r<size_;++r){request_offsets[r]=received;incoming_offsets[r]=sent;received+=requests[r];sent+=incoming[r];}
-    std::vector<int> offered(sent);
+    std::vector<int> offered;
+    ConstructCollective([&]{offered.resize(sent);},"sparse receive-index allocation failed on a rank");
     MPI_Alltoallv(requested.data(),requests.data(),request_offsets.data(),MPI_INT,
                   offered.data(),incoming.data(),incoming_offsets.data(),MPI_INT,comm_);
     valid=true;for(int&point:offered){valid=valid&&point>=first_&&point<first_+local_;point-=first_;}
     RequireCollective(valid,"sparse request sent to wrong owner");
-    send_ids_=Upload("persistent sparse send indices",offered);recv_ids_=Upload("persistent sparse receive indices",requested);
-    send_=Buffer("persistent sparse send values",std::max(1,sent*nf_));
-    recv_=Buffer("persistent sparse receive values",std::max(1,received*nf_));
-    send_counts_=incoming;send_offsets_=incoming_offsets;recv_counts_=requests;recv_offsets_=request_offsets;
-    for(auto*v:{&send_counts_,&send_offsets_,&recv_counts_,&recv_offsets_})for(int&n:*v)n*=nf_;
+    ConstructCollective([&]{
+      send_ids_=Upload("persistent sparse send indices",offered);recv_ids_=Upload("persistent sparse receive indices",requested);
+      send_=Buffer("persistent sparse send values",std::max(1,sent*nf_));
+      recv_=Buffer("persistent sparse receive values",std::max(1,received*nf_));
+      send_counts_=incoming;send_offsets_=incoming_offsets;recv_counts_=requests;recv_offsets_=request_offsets;
+      for(auto*v:{&send_counts_,&send_offsets_,&recv_counts_,&recv_offsets_})for(int&n:*v)n*=nf_;
+    },"sparse device-plan allocation failed on a rank");
     epoch_=epoch;ready_=true;++builds_;
   }
   Timing Exchange(ConstBuffer owned,Buffer global,MeshPlanEpoch epoch,bool poison_unused=false){

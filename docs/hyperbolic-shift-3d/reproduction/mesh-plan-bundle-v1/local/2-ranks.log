@@ -1,0 +1,7 @@
+CHECK generation 0,0,0 blocks=19 cells=6
+CHECK generation 1,0,0 blocks=26 cells=6
+CHECK generation 2,0,0 blocks=19 cells=6
+CHECK generation 2,1,0 blocks=19 cells=6
+CHECK generation 2,1,1 blocks=19 cells=6
+CHECK generation 3,2,1 blocks=26 cells=12
+PASS: full host/device bundle; 18 fresh/rebuilt native comparisons; refine/coarsen, geometry, repartition, unchanged reuse, one-rank stale key, descriptor mismatch, local staging failure/recovery and unsupported continuous-core refinement rejection; ranks=2 builds=30 backend=Serial
