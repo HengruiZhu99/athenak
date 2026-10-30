@@ -13,13 +13,19 @@ KOKKOS_INLINE_FUNCTION Real PositiveReference(Real r2,int field,bool puncture){
 }
 KOKKOS_INLINE_FUNCTION Real PositiveLog(Real value,Real reference){return log(value/reference);}
 // Physical-lapse floor, as in the donor: conformal alpha >= floor*Omega.
-// Never rescue nonfinite logarithms. Chi has no floor.
+// Never rescue nonfinite logarithms. Optional chi floor is restricted to a
+// puncture ball; defaults preserve the original unfloored chi scheme.
 KOKKOS_INLINE_FUNCTION Real MaterializePositive(Real logarithm,Real A,int field,
-                                               Real physical_floor,bool &floored){
+                                               Real physical_floor,bool &floored,
+                                               Real chi_floor=0,Real chi_radius=0){
   floored=false;
   if(field==18&&physical_floor>0&&A<1&&Kokkos::isfinite(logarithm)){
     const Real lower=log(physical_floor*(1-A));
     if(logarithm<lower){logarithm=lower;floored=true;}
+  }
+  if(field==0&&chi_floor>0&&2*A-1<chi_radius*chi_radius&&Kokkos::isfinite(logarithm)){
+    const Real lower=log(chi_floor);
+    if(logarithm<lower){floored=true;return chi_floor;}
   }
   return exp(logarithm)-(field==18?A:0);
 }

@@ -98,6 +98,10 @@ class ControllerTests(unittest.TestCase):
         c.update(kind='puncture', executable='build/'+control.TIMESTEP_TARGET)
         c['args'][2:7] = ['puncture', str(20/3), '.0005', '-', 'inputs/initial']
         control.validate_plan(self.root, plan)
+        plan['experimental_policy'] = 'n16_chi_floor_retry_to_20M'
+        with self.assertRaises(ValueError): control.validate_plan(self.root, plan)
+        c['executable'] = 'build/'+control.CHI_FLOOR_TARGET
+        control.validate_plan(self.root, plan)
         for index, bad in [(3, '7'), (4, '.001125'), (5, 'inputs/initial'), (6, '-')]:
             invalid = copy.deepcopy(plan)
             invalid['commands'][0]['args'][index] = bad
