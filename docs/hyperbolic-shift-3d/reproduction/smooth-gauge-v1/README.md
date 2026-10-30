@@ -104,3 +104,15 @@ commit/push evidence and mark the comparison complete. Stop this experiment at3M
 The original N32 campaign may then resume only if its latest original-schema
 checkpoint passed the original admission protocol; preserve its existing monitor
 until all previously authorized work is handled.
+
+
+## Submission
+
+Job8993278 was submitted after the original N32 allocation terminated, its
+failure evidence was hash-verified locally, its large failed outputs were purged,
+and its matching terminal lock was released. All-user debug query was empty.
+The new state is submitted; inspect its saved submission before any scheduler
+action. The hourly monitor aurora-n24-n32-convergence-to20m now tracks this
+bounded comparison, with the display name Aurora smoother gauge N16 N24 to3M.
+Original N32 failed at5.92425M near the puncture; neither failed fine-grid
+original state will be resumed. Both new cases still stop at3M.
