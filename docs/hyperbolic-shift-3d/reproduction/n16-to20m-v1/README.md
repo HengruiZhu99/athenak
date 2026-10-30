@@ -45,8 +45,9 @@ coordinates (±.005625, ±.005625, ±.005625), radius .00974278579. Their chi va
 in the last accepted checkpoint were about 3.93884e-7. No other nonpositive chi,
 nonpositive lapse, nonfinite field, or nonpositive conformal-metric eigenvalue
 was found. Chi is materialized by exponentiating its evolved logarithm, so the
-zeros indicate numerical underflow; the cause of the extreme update remains
-to be diagnosed. Do not infer that a chi floor would repair the instability.
+zeros arise in that conversion. The saved physical fields alone cannot
+distinguish exponential underflow from a nonfinite logarithmic increment;
+the update still needs diagnosis. Do not infer that a chi floor would repair the instability.
 
 Original numerical penalty coefficients remained unchanged (scale=1). Maximum
 scri null residual was 1.22126e-15; ghost residual 1.55431e-15. There were zero
