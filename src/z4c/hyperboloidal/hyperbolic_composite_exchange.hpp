@@ -22,7 +22,8 @@ class HyperbolicCompositeExchange {
   struct Entry {int point;Real weight;};
   template<class T>using View=Kokkos::View<T*,Device::MemorySpace>;
   int count,total;
-  Buffer padded,surface,positive_ko;
+  Buffer padded,surface,positive_ko,chi_sign_statistics;
+  Real nonpositive_chi_floor=0;
  private:
   IntBuffer active,scri_active,source_ids;
   Buffer positive_references;
@@ -101,6 +102,11 @@ class HyperbolicCompositeExchange {
     scri_active=Upload("scri active donors",points);
     scri_samples=Buffer("scri samples",points.size()*nf);host_samples=HostBuffer("host scri samples",points.size()*nf);
   }
+  void EnableNonpositiveChiFloor(Real floor){
+    nonpositive_chi_floor=floor;
+    chi_sign_statistics=Buffer("interpolated chi sign counts",3*boundary.extent(0));
+    Kokkos::deep_copy(chi_sign_statistics,Real(0));
+  }
   void SetSurface(const std::vector<Real>&values){
     if(values.size()!=host_surface.extent(0))throw std::runtime_error("surface size mismatch");
     for(size_t i=0;i<values.size();++i)host_surface(i)=values[i];Kokkos::deep_copy(surface,host_surface);
@@ -130,12 +136,16 @@ class HyperbolicCompositeExchange {
         chart(size+a(i))=PositiveLog(state(nf*ids(i)+18)+ref(3*i+2),ref(3*i+1));});}
 
     const auto b=boundary;const auto s=surface;const auto vals=boundary_values;
+    const Real chi_floor=nonpositive_chi_floor;const auto signs=chi_sign_statistics;
     const auto before=null_before,after=null_after;const auto bad=boundary_bad;
     Kokkos::parallel_for("scri nonlinear interpolation",Kokkos::RangePolicy<>(0,b.extent(0)),KOKKOS_LAMBDA(int p){
       Real v[nf];const auto plan=b(p);bad(p)=0;bool finite=true;
       for(int f=0;f<nf;++f){const Real anchor=s(plan.point[0]*nf+f);v[f]=anchor;
         for(int k=0;k<36;++k)v[f]+=plan.weight[k]*(s(plan.point[k]*nf+f)-anchor);
         finite=finite&&Kokkos::isfinite(v[f]);}
+      if(chi_floor>0&&Kokkos::isfinite(v[0])&&v[0]<=0){
+        signs(3*p+(v[0]<0?0:1))+=1;signs(3*p+2)=fmin(signs(3*p+2),v[0]);v[0]=chi_floor;
+      }
       MetricJet<Real> metric{};const int ti[6]={0,0,0,1,1,2},tj[6]={0,1,2,1,2,2};
       for(int f=0;f<6;++f)metric.g[ti[f]][tj[f]]=metric.g[tj[f]][ti[f]]=v[1+f]+(ti[f]==tj[f]);
       const auto g=Geometry(metric);Real q=0,normal=0;

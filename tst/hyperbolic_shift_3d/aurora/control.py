@@ -34,6 +34,7 @@ FAST_POSITIVE_TARGET = 'hyperbolic_shift_3d_mpi_continuous_positive_fast'
 SPARSE_POSITIVE_TARGET = 'hyperbolic_shift_3d_mpi_continuous_positive_sparse'
 BALANCED_POSITIVE_TARGET = 'hyperbolic_shift_3d_mpi_continuous_positive_balanced'
 RADIAL_BATCH_TARGET = 'hyperbolic_shift_3d_mpi_continuous_positive_radial_batch'
+DIRECT_CHI_LAPSE_TARGET = 'hyperbolic_shift_3d_mpi_direct_chi_lapse'
 DIRECT_LAPSE_TARGET = 'hyperbolic_shift_3d_mpi_direct_lapse'
 CHI_FLOOR_TARGET = 'hyperbolic_shift_3d_mpi_puncture_chi_floor'
 TIMESTEP_TARGET = 'hyperbolic_shift_3d_mpi_radial_batch_timestep_experiment'
@@ -149,7 +150,7 @@ def validate_plan(root, plan):
         raise ValueError('Preflight/stability must stay on the declared low-resolution grid')
     if plan['phase'] == 'timestep_experiment':
         if (n != 16 or plan['low_resolution_n'] != 16
-                or plan.get('experimental_policy') not in {'n16_dt_dx_0.4_then_0.2_to_3M_pause', 'n16_reduce_dt_dx_to_0.0444_reproduce_3M', 'n16_original_dt_continue_to_20M', 'n16_chi_floor_retry_to_20M', 'n16_direct_lapse_retry_to_20M'}
+                or plan.get('experimental_policy') not in {'n16_dt_dx_0.4_then_0.2_to_3M_pause', 'n16_reduce_dt_dx_to_0.0444_reproduce_3M', 'n16_original_dt_continue_to_20M', 'n16_chi_floor_retry_to_20M', 'n16_direct_lapse_retry_to_20M', 'n16_direct_chi_lapse_retry_to_20M'}
                 or len(plan.get('commands', [])) not in ((1, 2) if plan.get('experimental_policy') == 'n16_reduce_dt_dx_to_0.0444_reproduce_3M' else (1,))):
             raise ValueError('Timestep experiment requires the explicit bounded n16 user policy')
     resolution_control = plan['phase'] == 'resolution_control'
@@ -206,14 +207,16 @@ def validate_plan(root, plan):
             if path not in preceding_artifacts:
                 raise ValueError('Generated inputs must be declared artifacts of an earlier case')
         if command['kind'] != 'check':
-            experimental = Path(command['executable']).name in {TIMESTEP_TARGET, CHI_FLOOR_TARGET, DIRECT_LAPSE_TARGET}
+            experimental = Path(command['executable']).name in {TIMESTEP_TARGET, CHI_FLOOR_TARGET, DIRECT_LAPSE_TARGET, DIRECT_CHI_LAPSE_TARGET}
             if (Path(command['executable']).name == CHI_FLOOR_TARGET) != (plan.get('experimental_policy') == 'n16_chi_floor_retry_to_20M'):
                 raise ValueError('Chi floor executable requires its explicit retry policy')
             if (Path(command['executable']).name == DIRECT_LAPSE_TARGET) != (plan.get('experimental_policy') == 'n16_direct_lapse_retry_to_20M'):
                 raise ValueError('Direct lapse executable requires its explicit retry policy')
+            if (Path(command['executable']).name == DIRECT_CHI_LAPSE_TARGET) != (plan.get('experimental_policy') == 'n16_direct_chi_lapse_retry_to_20M'):
+                raise ValueError('Direct chi/lapse executable requires its explicit retry policy')
             if experimental != (plan['phase'] == 'timestep_experiment'):
                 raise ValueError('Experimental target requires its own explicit phase')
-            if experimental and plan.get('experimental_policy') in {'n16_original_dt_continue_to_20M','n16_chi_floor_retry_to_20M', 'n16_direct_lapse_retry_to_20M'}:
+            if experimental and plan.get('experimental_policy') in {'n16_original_dt_continue_to_20M','n16_chi_floor_retry_to_20M', 'n16_direct_lapse_retry_to_20M', 'n16_direct_chi_lapse_retry_to_20M'}:
                 if (command['kind'] != 'puncture' or len(argv) < 8
                         or float(argv[3]) != 20/3 or float(argv[4]) != .0005
                         or argv[5] != '-' or argv[6] == '-'):

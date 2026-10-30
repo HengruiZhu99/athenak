@@ -65,3 +65,23 @@ walltime checkpoints, and stops after numerical failure or verified20M completio
 No further automatic fresh numerical-failure replay is scheduled. Candidate
 counts from earlier uninstrumented runs remain unavailable. Exact hashes and
 policy are in build-status.json, binding.json, submission.json and monitor.json.
+
+
+## Instrumented result and newly authorized fallback
+
+Job8990381 failed at9.0975M with positive-infinite chi in the same three cells
+as job8990333. Both checkpoint and failed-stage payloads are bitwise identical
+to that uninstrumented run. The checkpoint is unadmitted and is not a restart.
+The sign log records88 stage and69 final zero-chi candidates, first at9.09M;
+there are no finite negative chi candidates in the logarithmic chart. Eight
+finite negative lapse candidates occurred in the rejected final update at9.099M,
+with minimum about-3.745e53. They were floored; they were not the termination
+criterion. The last accepted time9.0975M differs from the rejected candidate
+update time9.099M. These enormous candidates show growth beyond a small sign
+undershoot. The original chi floor counts also include positive below-floor
+values. See segment01/candidate-totals.json and verification.json.
+
+After this failure the user authorized one fresh direct-chi/direct-lapse trial,
+retaining floors and counting negative candidates without terminating on sign.
+See ../direct-chi-lapse-v1. This supersedes the earlier no-further-replay monitor
+instruction. The scientific source and results of this replay remain frozen.

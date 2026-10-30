@@ -44,6 +44,16 @@ KOKKOS_INLINE_FUNCTION Real FloorDirectLapse(Real perturbation,Real A,
   return perturbation;
 }
 
+// Retain the localized positive chi floor, but rescue finite nonpositive
+// direct-chi candidates anywhere (including scri) instead of terminating.
+KOKKOS_INLINE_FUNCTION Real FloorDirectChi(Real candidate,Real r2,Real floor,
+                                          Real radius,bool &floored){
+  floored=false;
+  if(floor>0&&Kokkos::isfinite(candidate)&&
+      (candidate<=0||(r2<radius*radius&&candidate<floor))){floored=true;return floor;}
+  return candidate;
+}
+
 // Eight per-cell/per-field counters, owned by a single cell thread. No atomics
 // or per-cell launches: this runs inside the existing bulk RK stage kernel.
 // [negative_stage,negative_final,zero_stage,zero_final,min_candidate,

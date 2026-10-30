@@ -23,6 +23,12 @@ try{
   Require(h::FloorDirectLapse(-2,1,1e-10,clipped)==-2&&!clipped,"direct lapse floor imposed at scri");
   Require(std::isinf(h::FloorDirectLapse(std::numeric_limits<Real>::infinity(),A,1e-10,clipped))&&!clipped,"direct overflow was rescued");
   Require(std::isnan(h::FloorDirectLapse(std::numeric_limits<Real>::quiet_NaN(),A,1e-10,clipped))&&!clipped,"direct NaN was rescued");
+  Require(h::FloorDirectChi(-.1,1,floor,radius,clipped)==floor&&clipped,"negative direct chi at scri not floored");
+  Require(h::FloorDirectChi(0,.1,floor,radius,clipped)==floor&&clipped,"zero direct chi outside ball not floored");
+  Require(h::FloorDirectChi(1e-10,.0001,floor,radius,clipped)==floor&&clipped,"localized positive chi floor missing");
+  Require(h::FloorDirectChi(1e-10,.1,floor,radius,clipped)==1e-10&&!clipped,"positive chi floor escaped ball");
+  Require(std::isinf(h::FloorDirectChi(-std::numeric_limits<Real>::infinity(),0,floor,radius,clipped))&&!clipped,"nonfinite chi rescued");
+  Require(std::isnan(h::FloorDirectChi(std::numeric_limits<Real>::quiet_NaN(),0,floor,radius,clipped))&&!clipped,"chi NaN rescued");
   Real raw=1,stats[8]={};
   Require(h::MaterializePositive(-1e6,A,0,1e-10,clipped,floor,radius,&raw)==floor&&raw==0&&clipped,"raw chi underflow not exposed");
   h::RecordCandidateSign(raw,2.,false,stats);
