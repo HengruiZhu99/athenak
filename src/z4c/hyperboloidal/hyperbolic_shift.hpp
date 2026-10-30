@@ -5,7 +5,25 @@
 
 #include "z4c/hyperboloidal/reference_gauge.hpp"
 
+#ifndef HYPERBOLIC_SMOOTH_GAUGE_BLEND
+#define HYPERBOLIC_SMOOTH_GAUGE_BLEND 0
+#endif
+
 namespace z4c::hyperboloidal {
+
+constexpr bool smooth_gauge_blend = HYPERBOLIC_SMOOTH_GAUGE_BLEND;
+static_assert(HYPERBOLIC_SMOOTH_GAUGE_BLEND == 0 || HYPERBOLIC_SMOOTH_GAUGE_BLEND == 1);
+
+// Integral of 630*t^4*(1-t)^4: a broad C4 transition, with exact constants
+// outside [0,1]. Symmetry avoids cancellation near the upper endpoint.
+template<class T> KOKKOS_INLINE_FUNCTION
+T Smoothstep9(T t) {
+  if (t<=0) return 0;
+  if (t>=1) return 1;
+  const T x=t>T(.5)?1-t:t;
+  const T value=x*x*x*x*x*(126+x*(-420+x*(540+x*(-315+70*x))));
+  return t>T(.5)?1-value:value;
+}
 
 // Point kernels for the donor c0ae7472 gauge, in GLOBAL CARTESIAN components.
 // Not an admission of this gauge into the production task graph. In particular,
@@ -39,10 +57,18 @@ HyperbolicCoefficients<T> ShiftCoefficients(T r, T alpha, T chi,
   HyperbolicCoefficients<T> c{};
   c.omega=(1-r*r)/2; c.reference_alpha=(1+r*r)/2;
   const T y=(T(.8)-r)/T(.24);
-  c.w=SmoothCollar(y);
-  if (y>0 && y<1) {
-    const T a=pow(y,8),b=pow(1-y,8);
-    c.dw_dr=-8*pow(y,7)*pow(1-y,7)/((a+b)*(a+b)*T(.24));
+  if constexpr(smooth_gauge_blend) {
+    c.w=Smoothstep9(y);
+    if (y>0 && y<1) {
+      const T q=y*(1-y),q2=q*q;
+      c.dw_dr=-630*q2*q2/T(.24);
+    }
+  } else {
+    c.w=SmoothCollar(y);
+    if (y>0 && y<1) {
+      const T a=pow(y,8),b=pow(1-y,8);
+      c.dw_dr=-8*pow(y,7)*pow(1-y,7)/((a+b)*(a+b)*T(.24));
+    }
   }
   c.collar=SmoothCollar((r-T(.8))/T(.1));
   c.F=alpha*alpha+4*c.omega*c.omega*alpha;

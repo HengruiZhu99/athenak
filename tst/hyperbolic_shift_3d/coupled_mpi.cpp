@@ -108,7 +108,8 @@ static_assert(!scri_donor_seven||scri_sampled_normal,"direct radial candidate re
 static_assert(!spherical_overlap||(evolved_overlap==3&&core_subdivisions==2),"spherical overlap requires eight core blocks and three overlap cells");
 static_assert(!continuous_positive||(spherical_overlap&&core_subdivisions==2),"positive scheme requires continuous spherical-overlap mesh");
 static_assert(!coordinated_plans||(continuous_positive&&boundary_reuse&&sparse_stage&&!measured_partition),"coordinated plan target requires the equal-cell positive sparse formulation");
-constexpr const char*checkpoint_magic=direct_chi?"HYP3D_MPI_AC1":direct_lapse?"HYP3D_MPI_AL1":puncture_chi_floor>0?"HYP3D_MPI_CF1":HYPERBOLIC_EXPERIMENTAL_TIMESTEP?"HYP3D_MPI_DT1":continuous_positive?"HYP3D_MPI_V11":spherical_overlap?"HYP3D_MPI_V10":evolved_overlap?"HYP3D_MPI_V9":core_subdivisions==2?"HYP3D_MPI_V8":inner_transition_logical?"HYP3D_MPI_V7":scri_donor_seven?"HYP3D_MPI_V6":scri_sampled_normal?"HYP3D_MPI_V5":scri_angular_dissipation?"HYP3D_MPI_V4":scri_angular_exchange?"HYP3D_MPI_V3":algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
+constexpr const char*checkpoint_magic=h::smooth_gauge_blend?"HYP3D_MPI_GW1":direct_chi?"HYP3D_MPI_AC1":direct_lapse?"HYP3D_MPI_AL1":puncture_chi_floor>0?"HYP3D_MPI_CF1":HYPERBOLIC_EXPERIMENTAL_TIMESTEP?"HYP3D_MPI_DT1":continuous_positive?"HYP3D_MPI_V11":spherical_overlap?"HYP3D_MPI_V10":evolved_overlap?"HYP3D_MPI_V9":core_subdivisions==2?"HYP3D_MPI_V8":inner_transition_logical?"HYP3D_MPI_V7":scri_donor_seven?"HYP3D_MPI_V6":scri_sampled_normal?"HYP3D_MPI_V5":scri_angular_dissipation?"HYP3D_MPI_V4":scri_angular_exchange?"HYP3D_MPI_V3":algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
+static_assert(!h::smooth_gauge_blend||(HYPERBOLIC_EXPERIMENTAL_TIMESTEP&&continuous_positive&&!direct_lapse&&puncture_chi_floor==0),"GW1 binds the smooth-weight DT1 experiment");
 constexpr const char*algebraic_scheme=algebraic_final_projection?"final_stage_standard":"none";
 constexpr const char*scri_angular_scheme=scri_angular_exchange?"cross_face_centered5":"face_local6";
 constexpr const char*scri_dissipation_scheme=scri_angular_dissipation?"degree7_weighted_negative_square":"none";
@@ -1001,6 +1002,7 @@ int main(int argc,char**argv){
       std::ofstream report(output+".report.json.tmp");report<<std::setprecision(17)
         <<"{\"status\":"<<JsonString(status)<<",\"error\":"<<JsonString(error)<<",\"kind\":"<<JsonString(kind_name)
         <<",\"backend\":"<<JsonString(Kokkos::DefaultExecutionSpace::name())<<",\"mpi_size\":"<<e.size<<",\"n\":"<<n<<",\"cells\":"<<e.total
+        <<",\"gauge_blend\":"<<JsonString(h::smooth_gauge_blend?"smoothstep9_w_056_080":"donor_power8_w_056_080")
         <<",\"algebraic_projection\":"<<JsonString(algebraic_scheme)<<",\"checkpoint_schema\":"<<JsonString(checkpoint_magic)
         <<",\"scri_angular_stencil\":"<<JsonString(scri_angular_scheme)
         <<",\"scri_dissipation_scheme\":"<<JsonString(scri_dissipation_scheme)

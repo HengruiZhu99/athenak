@@ -21,7 +21,8 @@ JOB_NAME = 'hyper-scri-3d'
 ACCOUNT = 'CompactBinaryMerger'
 CPU_BIND = '1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100'
 FIXED = dict(queue='debug', account=ACCOUNT, nodes=1, ranks=12, ranks_per_node=12)
-PHASES = {'preflight', 'stability', 'convergence', 'resolution_control', 'timestep_experiment', 'direct_variable_resolution', 'candidate_history_replay'}
+PHASES = {'preflight', 'stability', 'convergence', 'resolution_control', 'timestep_experiment', 'direct_variable_resolution', 'candidate_history_replay', 'gauge_blend_comparison'}
+SMOOTH_GAUGE_TARGET = 'hyperbolic_shift_3d_mpi_smooth_gauge'
 CANDIDATE_HISTORY_TARGET = 'hyperbolic_shift_3d_mpi_candidate_diagnostics'
 DISSIPATIVE_TARGET = 'hyperbolic_shift_3d_mpi_dissipative'
 SAMPLED_NORMAL_TARGET = 'hyperbolic_shift_3d_mpi_sampled_normal'
@@ -161,6 +162,13 @@ def validate_plan(root, plan):
             or len(plan.get('commands',[])) != 1
             or plan.get('native_exit_reserve_seconds') != 180):
         raise ValueError('Resolution campaign requires explicit N24/N32 matched-protocol policy')
+    smooth_comparison = plan['phase'] == 'gauge_blend_comparison'
+    if smooth_comparison and (n != 24 or plan['low_resolution_n'] != 16
+            or plan.get('experimental_policy') != 'n16_n24_smoothstep9_to3M'
+            or plan.get('native_exit_reserve_seconds') != 180
+            or len(plan.get('commands', [])) != 2
+            or [c.get('n') for c in plan['commands']] != [16,24]):
+        raise ValueError('Smooth gauge comparison requires fresh N16 then N24 through3M')
     resolution_control = plan['phase'] == 'resolution_control'
     candidate_replay = plan['phase'] == 'candidate_history_replay'
     if candidate_replay and (n != 24 or plan['low_resolution_n'] != 16
@@ -191,7 +199,7 @@ def validate_plan(root, plan):
                 raise ValueError('Failure continuation must be an explicit reviewed boolean')
         case_n = command.get('n', n)
         if command['kind'] != 'check':
-            if resolution_control or candidate_replay:
+            if resolution_control or candidate_replay or smooth_comparison:
                 if ('n' not in command or type(case_n) is not int or case_n % 2
                         or not plan['low_resolution_n'] <= case_n <= n):
                     raise ValueError('Each resolution control needs explicit even n between low_resolution_n and plan.n')
@@ -222,7 +230,9 @@ def validate_plan(root, plan):
             if path not in preceding_artifacts:
                 raise ValueError('Generated inputs must be declared artifacts of an earlier case')
         if command['kind'] != 'check':
-            experimental = Path(command['executable']).name in {TIMESTEP_TARGET, CHI_FLOOR_TARGET, DIRECT_LAPSE_TARGET, DIRECT_CHI_LAPSE_TARGET, CANDIDATE_HISTORY_TARGET}
+            experimental = Path(command['executable']).name in {TIMESTEP_TARGET, CHI_FLOOR_TARGET, DIRECT_LAPSE_TARGET, DIRECT_CHI_LAPSE_TARGET, CANDIDATE_HISTORY_TARGET, SMOOTH_GAUGE_TARGET}
+            if (Path(command['executable']).name == SMOOTH_GAUGE_TARGET) != smooth_comparison:
+                raise ValueError('Smooth gauge executable requires its explicit comparison policy')
             if (Path(command['executable']).name == CANDIDATE_HISTORY_TARGET) != candidate_replay:
                 raise ValueError('Candidate diagnostics executable requires its explicit replay policy')
             if (Path(command['executable']).name == CHI_FLOOR_TARGET) != (plan.get('experimental_policy') == 'n16_chi_floor_retry_to_20M'):
@@ -231,9 +241,15 @@ def validate_plan(root, plan):
                 raise ValueError('Direct lapse executable requires its explicit retry policy')
             if (Path(command['executable']).name == DIRECT_CHI_LAPSE_TARGET) != (plan.get('experimental_policy') == 'n16_direct_chi_lapse_retry_to_20M' or (refined and plan['campaign_stage']=='AC1_to20M')):
                 raise ValueError('Direct chi/lapse executable requires its explicit retry policy')
-            if experimental != (plan['phase'] in ['timestep_experiment','direct_variable_resolution','candidate_history_replay']):
+            if experimental != (plan['phase'] in ['timestep_experiment','direct_variable_resolution','candidate_history_replay','gauge_blend_comparison']):
                 raise ValueError('Experimental target requires its own explicit phase')
-            if candidate_replay:
+            if smooth_comparison:
+                if (command['kind'] != 'puncture' or len(argv) != 13
+                        or float(argv[3]) != 1. or float(argv[4]) != .0005*16/case_n
+                        or argv[5] == '-' or argv[6] != '-'
+                        or argv[8:] != ['0.05','0.001','12','24','2']):
+                    raise ValueError('Smooth gauge comparison must preserve fresh inputs, dt and diagnostics')
+            elif candidate_replay:
                 if (command['kind'] != 'puncture' or len(argv) != 13
                         or float(argv[3]) != 1. or float(argv[4]) != .0005*16/case_n
                         or argv[8:] != ['0.05','0.001','12','24','2']
@@ -328,7 +344,7 @@ def verify_source(root, relative):
 
 def validate_admission(root, plan, source_digest, binary_hashes):
     """Admissions are reviewed evidence, never inferred from a process exit code."""
-    if plan['phase'] in {'preflight', 'timestep_experiment', 'direct_variable_resolution', 'candidate_history_replay'}:
+    if plan['phase'] in {'preflight', 'timestep_experiment', 'direct_variable_resolution', 'candidate_history_replay', 'gauge_blend_comparison'}:
         # Direct user-requested experiment, not a scientifically admitted run.
         return None
     admission_path = local_path(root, plan['admission'])

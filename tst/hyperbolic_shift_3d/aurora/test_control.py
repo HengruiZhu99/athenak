@@ -70,6 +70,24 @@ class ControllerTests(unittest.TestCase):
     def bound(self):
         return control.bind(self.root, self.relative, 'source-manifest.json')
 
+    def test_smooth_gauge_comparison_is_bounded_and_fresh(self):
+        plan=example()
+        plan.update(phase='gauge_blend_comparison',experimental_policy='n16_n24_smoothstep9_to3M',n=24,low_resolution_n=16,native_exit_reserve_seconds=180)
+        template=plan['commands'][0];plan['commands']=[]
+        for n in [16,24]:
+            c=copy.deepcopy(template);prefix=f'runs/one/output/n{n}'
+            c.update(n=n,name=f'n{n}',kind='puncture',executable='build/'+control.SMOOTH_GAUGE_TARGET,report=prefix+'.report.json',args=[str(n),prefix,'puncture','1',str(.0005*16/n),'inputs/initial','-','@WALL_SECONDS@','0.05','0.001','12','24','2'])
+            plan['commands'].append(c)
+        control.validate_plan(self.root,plan)
+        self.assertIsNone(control.validate_admission(self.root,plan,'',{}))
+        for index,value in [(3,'2'),(4,'0.001'),(5,'-'),(6,'inputs/restart')]:
+            bad=copy.deepcopy(plan);bad['commands'][0]['args'][index]=value
+            with self.assertRaises(ValueError):control.validate_plan(self.root,bad)
+        bad=copy.deepcopy(plan);bad['commands'].reverse()
+        with self.assertRaises(ValueError):control.validate_plan(self.root,bad)
+        bad=copy.deepcopy(plan);bad['commands'][0]['executable']='build/'+control.CANDIDATE_HISTORY_TARGET
+        with self.assertRaises(ValueError):control.validate_plan(self.root,bad)
+
     def test_bounded_timestep_experiment(self):
         plan = example()
         plan.update(phase='timestep_experiment', experimental_policy='n16_dt_dx_0.4_then_0.2_to_3M_pause')
