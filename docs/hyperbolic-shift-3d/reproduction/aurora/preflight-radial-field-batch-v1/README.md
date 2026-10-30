@@ -1,4 +1,4 @@
-# Field-batched radial derivatives — GPU qualification pending
+# Field-batched radial derivatives — startup storage guard rejection
 
 Frozen source: `146fb4b251274c4a5f90ee57b688ae63e73e510a` (source-v24).
 Manifest SHA256: `15205ac9cec832ee6e72b04759b1209fc58e81ddcc58cd6dd7470d3eecb77b67`.
@@ -34,3 +34,19 @@ No GPU test result or performance gain is claimed yet. The
 storage guard enforces the 5 GB cap. Long-time evolution, horizon-quality,
 convergence and coherent all-operator mesh-change lifecycle remain separate
 outstanding requirements; this campaign does not establish AMR evolution.
+
+## Terminal outcome
+
+Job 8987469 finished in PBS state F, exit 1, after 1:46. The worker
+rejected the prospective storage budget before creating its status file or
+running affinity, correctness or evolution tests. The root footprint at worker
+startup was 4,404,302,336 bytes; adding the unchanged 520 MB output allowance
+and 100 MB atomic-checkpoint reserve exceeded 5 GB by 24,302,336 bytes.
+The footprint had grown after submission. No test failure or speed result can
+be inferred. The native stdout and scheduler/release records are retained.
+
+A fresh [v2 retry](../preflight-radial-field-batch-v2/README.md) keeps the same
+frozen source, binaries, physics, input, checks and resource limits. Verified
+redundant old stability checkpoints/failure captures were removed to give
+it substantially more storage headroom; the retry also uses a larger allocated-byte
+output estimate. The failed plan is not reused.

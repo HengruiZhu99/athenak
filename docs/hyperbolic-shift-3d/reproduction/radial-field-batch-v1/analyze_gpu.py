@@ -7,7 +7,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 root=next(p for p in Path(__file__).resolve().parents if (p/'CMakeLists.txt').is_file())
-raw=root/'output/hyperbolic-core-shell/aurora/preflight-radial-field-batch-v1'
+raw=root/'output/hyperbolic-core-shell/aurora/preflight-radial-field-batch-v2'
 v=json.loads((raw/'verification.json').read_text())
 assert v['passed'] and v['execution_equivalence']['streaming_byte_equality']
 artifacts={Path(x['remote_path']).name:x for x in v['artifacts']}
