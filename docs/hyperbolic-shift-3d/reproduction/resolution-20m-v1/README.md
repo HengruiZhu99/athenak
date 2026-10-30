@@ -103,7 +103,7 @@ resolution and changed horizon integration cutoffs can limit measured convergenc
 
 ## Initial submission
 
-N24 preparation job8990772 was submitted and is running. Its first plan is
+N24 preparation job8990772 completed its 3M target normally. Its first plan is
 `campaigns/n24-resolution20m-v1-dt1_to3m-segment01/plan.json`. The prepared N32
 initial plan is `campaigns/n32-resolution20m-v1-dt1_to3m-segment01/plan.json`;
 it has not been submitted, preserving one-node-at-a-time execution. The hourly
@@ -123,3 +123,29 @@ builds and all their source manifests remain on Aurora. Controller/preflight
 suite109 tests and three focused migration tests passed. The prior N16 importer
 parity and initial-data parity are also recorded. No N24/N32 convergence result
 is claimed at submission.
+
+## N24 preparation reached 3M
+
+Job8990772 completed 3001 steps to coordinate time1 (3M) without numerical
+failure. The native runtime was679.656seconds (11.33minutes), approximately
+2.072million evolved zone-cycles/s including native setup/diagnostics. Scheduler
+allocation runtime was13minutes26seconds. All four worker-hashed artifacts were
+copied locally and SHA256/size verified; the admitted DT1 checkpoint passed
+schema/configuration, finite-payload, time and dimension checks.
+
+Null closure remained1.5544e-15 or smaller for surface and ghost diagnostics.
+At3M the horizon candidate's expansion RMS was.00145586, above the fixed.001
+acceptance tolerance. Keep its radius provisional and the corresponding exterior
+norms missing. This is a horizon diagnostic limitation, not an evolution failure
+or proof of convergence. Full-grid H_L2 at3M was.0346151.
+
+The verified conversion to AC1 preserves physical fields and resets only the
+three compensation components documented above. Its SHA256 is
+5e94516836300ca6645594b95910e2172613dc33d7321651cb66bb6672253926.
+The continuation plan is
+`campaigns/n24-resolution20m-v1-ac1_to20m-segment01/plan.json`.
+N32 remains pending until N24 completes or encounters numerical failure.
+
+Continuation job8990986 was submitted after checking that no user debug jobs
+were queued/running. The hourly monitor now follows this AC1 stage through the
+updated remote campaign-state file. Task storage at binding was3.192GB.
