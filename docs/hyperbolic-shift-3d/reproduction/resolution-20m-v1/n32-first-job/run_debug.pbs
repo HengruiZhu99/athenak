@@ -1,0 +1,25 @@
+#!/bin/bash -l
+#PBS -N hyper-scri-3d
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=1
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home
+#PBS -j oe
+# Rendered by control.py bind. This template cannot be submitted directly.
+set -euo pipefail
+ulimit -c 0
+module load oneapi/release/2025.3.1
+cd "${PBS_O_WORKDIR:?}"
+export OMP_NUM_THREADS=1
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export ZE_ENABLE_PCI_ID_DEVICE_ORDER=1
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+export MPIR_CVAR_ENABLE_GPU=1
+export NEO_CACHE_DIR="$PWD/runtime-cache/neo"
+export SYCL_CACHE_DIR="$PWD/runtime-cache/sycl"
+mkdir -p "$NEO_CACHE_DIR" "$SYCL_CACHE_DIR"
+unset ZE_AFFINITY_MASK
+module list
+exec /usr/bin/python3.11 "launcher-resolution-20m-v1/worker.py" \
+  --root "$PWD" --plan "${HYPERBOLIC_PLAN:?}"

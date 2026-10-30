@@ -86,3 +86,27 @@ This is an infrastructure retry, not a numerical-failure restart.
 Replacement job8991129 was submitted using the fresh attempt02 plan. Worker
 import followed by repeated full binding validation passed before submission.
 Task storage at binding was3.497GB, with the requested output/atomic-write reserve.
+
+## Completed time series
+
+Job8991129 completed both replays normally. Native runtimes were362.851seconds
+for N16 (.45–3M) and681.606seconds for N24 (0–3M). Every downloaded worker artifact
+was SHA256/length verified. Both final checkpoints, including headers, physical
+volume/surface state and all RK compensation, are byte-for-byte identical to
+their original checkpoints. Full-domain diagnostics, minimum fields and candidate
+radii match the original histories exactly at all33 N16 and21 N24 unique saved
+times. The recovered exterior time series therefore adds measurements without
+altering either underlying evolution. The source and data checks are retained
+in checkpoint-comparison.json, history-verification.json and local-verification.json.
+
+The figure exterior-constraint-history.png/pdf shows Hamiltonian, radial
+momentum, conformal invariant momentum and Theta norms. Every point is measured;
+none fills a missing value by interpolation. Each run uses its own mean candidate
+radius. N16 has denser early sampling (.03M through.45M versus N24's.15M), so
+sampled early peaks are not directly comparable as resolved maxima. N24's early
+constraint reduction largely disappears by3M; its invariant momentum norm
+crosses above N16 between2.10M and2.25M. No uniform exterior convergence is shown.
+
+The two replay checkpoints were copied and verified locally before remote
+removal; they duplicate the already preserved original endpoints. N24's failed
+long evolution is not restarted. The authorized N32 campaign follows this replay.

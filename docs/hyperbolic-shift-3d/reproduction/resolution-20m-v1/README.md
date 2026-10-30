@@ -149,3 +149,23 @@ N32 remains pending until N24 completes or encounters numerical failure.
 Continuation job8990986 was submitted after checking that no user debug jobs
 were queued/running. The hourly monitor now follows this AC1 stage through the
 updated remote campaign-state file. Task storage at binding was3.192GB.
+
+## N24 failure, recovered constraint histories, and N32 submission
+
+N24 AC1 job8990986 failed at5.869M with invalid accepted volume algebraic
+projection. Its checkpoint is unadmitted; failure evidence is locally hash-verified
+and recorded in n24-failure/. No restart from that state was attempted.
+
+The requested N16/N24 exterior-constraint time series through3M is now measured
+using complete provisional horizon candidates. Diagnostic replay job8991129
+completed both cases and exactly reproduced each original3M checkpoint, including
+all physical fields and RK compensation. See candidate-history/ for the complete
+PNG/PDF plot, histories and verification. No missing-value interpolation is used.
+
+N32 preparation job8991329 was submitted with its original initial data and
+frozen DT1 binary, dt=.00025, target3M. The hourly monitor follows its saved plan
+and remote campaign state, then will convert the verified checkpoint for AC1
+continuation toward20M. After verified local archival and removal of retired
+inputs/checkpoints, remote footprint at binding was2.796GB; the N32 planned-output
+and atomic-checkpoint reserve fit within5GB. One debug node,12 GPU ranks and
+CompactBinaryMerger remain unchanged.
