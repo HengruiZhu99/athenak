@@ -1,0 +1,332 @@
+{
+  "status": "passed",
+  "source_manifest_sha256": "e8a3d5c2839797c60c32874e930eca2631beaac4f414f22e5e098502cb54b8ac",
+  "plan_sha256": "7d18a14cad22ffcb9bd68b97550e3f960d5ab4d00668f4d7972bf0e52a3d5399",
+  "job_id": "8987796.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "cases": [
+    {
+      "name": "oblique-sparse-direct",
+      "t": 0.005,
+      "kind": "oblique",
+      "steps": 20,
+      "seconds": 17.292775783,
+      "cells": 143632,
+      "H_L2": 0.003876636382302615,
+      "M_L2": 0.009873227451926148,
+      "floor": 0,
+      "max_null": 8.881784197001248e-16,
+      "horizon_found": false
+    },
+    {
+      "name": "oblique-full-resume",
+      "t": 0.005,
+      "kind": "oblique",
+      "steps": 20,
+      "seconds": 14.021801317,
+      "cells": 143632,
+      "H_L2": 0.0038766363823026155,
+      "M_L2": 0.00987322745192615,
+      "floor": 0,
+      "max_null": 8.881784197001248e-16,
+      "horizon_found": false
+    },
+    {
+      "name": "dyadic-full",
+      "t": 0.0048828125,
+      "kind": "oblique",
+      "steps": 20,
+      "seconds": 17.369500277,
+      "cells": 143632,
+      "H_L2": 0.0037789517598528933,
+      "M_L2": 0.009799498493385236,
+      "floor": 0,
+      "max_null": 8.881784197001248e-16,
+      "horizon_found": false
+    },
+    {
+      "name": "dyadic-part",
+      "t": 0.00244140625,
+      "kind": "oblique",
+      "steps": 10,
+      "seconds": 13.910321738,
+      "cells": 143632,
+      "H_L2": 0.0013990490900707376,
+      "M_L2": 0.0064914462532097,
+      "floor": 0,
+      "max_null": 8.881784197001248e-16,
+      "horizon_found": false
+    },
+    {
+      "name": "dyadic-resume",
+      "t": 0.0048828125,
+      "kind": "oblique",
+      "steps": 20,
+      "seconds": 14.071907088,
+      "cells": 143632,
+      "H_L2": 0.0037789517598528933,
+      "M_L2": 0.009799498493385236,
+      "floor": 0,
+      "max_null": 8.881784197001248e-16,
+      "horizon_found": false
+    }
+  ],
+  "comparisons": {
+    "direct-communication": {
+      "restart_equivalence": true,
+      "bitwise_payload_equal": true,
+      "maximum_absolute_error": 0.0,
+      "maximum_scaled_error": 0.0,
+      "atol": 0,
+      "rtol": 0,
+      "compared_doubles": 9000416,
+      "header": {
+        "magic": "HYP3D_MPI_V12",
+        "n": 16,
+        "nf": 31,
+        "kind": 3,
+        "admitted": 1,
+        "cells": 143632,
+        "surface": 47616,
+        "steps": 20,
+        "time": 0.005,
+        "dt": 0.00025,
+        "header_bytes": 184,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition",
+        "interface_method": "experimental_ghost_plus_adjoint_trace_penalty",
+        "core_evolved_layers": 1,
+        "shifted_overlap_donors": true,
+        "trace_kappa": 1.0,
+        "trace_normal_ratio": 0.25,
+        "evolved_overlap": 3,
+        "nominal_cells": 106496,
+        "mesh_topology": "cartesian_2x2x2_shells3",
+        "cartesian_core_subdivisions": 2,
+        "mesh_blocks": 26,
+        "shell_geometry": "spherical_equiangular",
+        "core_half_width": 0.18,
+        "shell_inner_radius": 0.16,
+        "overlap_quadrature": "radial_quintic_partition",
+        "cartesian_seams": "uniform_global_stencil",
+        "positive_variables": "log_chi_log_lapse_rk_and_ko",
+        "physical_lapse_floor": 1e-10,
+        "payload_doubles": 9000416
+      },
+      "reference_sha256": "5419283a9c850b6b1842cc0bed61d27de52dd82aca5bfa3031917bd6d58d35b4",
+      "candidate_sha256": "5419283a9c850b6b1842cc0bed61d27de52dd82aca5bfa3031917bd6d58d35b4"
+    },
+    "resumed-communication": {
+      "restart_equivalence": true,
+      "bitwise_payload_equal": true,
+      "maximum_absolute_error": 0.0,
+      "maximum_scaled_error": 0.0,
+      "atol": 0,
+      "rtol": 0,
+      "compared_doubles": 9000416,
+      "header": {
+        "magic": "HYP3D_MPI_V12",
+        "n": 16,
+        "nf": 31,
+        "kind": 3,
+        "admitted": 1,
+        "cells": 143632,
+        "surface": 47616,
+        "steps": 20,
+        "time": 0.005,
+        "dt": 0.00025,
+        "header_bytes": 184,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition",
+        "interface_method": "experimental_ghost_plus_adjoint_trace_penalty",
+        "core_evolved_layers": 1,
+        "shifted_overlap_donors": true,
+        "trace_kappa": 1.0,
+        "trace_normal_ratio": 0.25,
+        "evolved_overlap": 3,
+        "nominal_cells": 106496,
+        "mesh_topology": "cartesian_2x2x2_shells3",
+        "cartesian_core_subdivisions": 2,
+        "mesh_blocks": 26,
+        "shell_geometry": "spherical_equiangular",
+        "core_half_width": 0.18,
+        "shell_inner_radius": 0.16,
+        "overlap_quadrature": "radial_quintic_partition",
+        "cartesian_seams": "uniform_global_stencil",
+        "positive_variables": "log_chi_log_lapse_rk_and_ko",
+        "physical_lapse_floor": 1e-10,
+        "payload_doubles": 9000416
+      },
+      "reference_sha256": "1ece550711e311c60459b3007d40a3bf93956a2b651c29f34a44db1f191b352d",
+      "candidate_sha256": "1ece550711e311c60459b3007d40a3bf93956a2b651c29f34a44db1f191b352d"
+    },
+    "dyadic-restart": {
+      "restart_equivalence": true,
+      "bitwise_payload_equal": true,
+      "maximum_absolute_error": 0.0,
+      "maximum_scaled_error": 0.0,
+      "atol": 0,
+      "rtol": 0,
+      "compared_doubles": 9000416,
+      "header": {
+        "magic": "HYP3D_MPI_V12",
+        "n": 16,
+        "nf": 31,
+        "kind": 3,
+        "admitted": 1,
+        "cells": 143632,
+        "surface": 47616,
+        "steps": 20,
+        "time": 0.0048828125,
+        "dt": 0.000244140625,
+        "header_bytes": 184,
+        "scri_dissipation_epsilon": 2.0,
+        "scri_dissipation_degree": 7,
+        "scri_normal_derivative": "sampled_native_numerator7",
+        "scri_normal_radial_nodes": 7,
+        "scri_normal_bulk_derivative_order": 4,
+        "scri_radial_closure": "donor_seven_last3",
+        "scri_radial_bulk_rows": 3,
+        "interpatch_interpolation": "logical_inner_transition",
+        "interface_method": "experimental_ghost_plus_adjoint_trace_penalty",
+        "core_evolved_layers": 1,
+        "shifted_overlap_donors": true,
+        "trace_kappa": 1.0,
+        "trace_normal_ratio": 0.25,
+        "evolved_overlap": 3,
+        "nominal_cells": 106496,
+        "mesh_topology": "cartesian_2x2x2_shells3",
+        "cartesian_core_subdivisions": 2,
+        "mesh_blocks": 26,
+        "shell_geometry": "spherical_equiangular",
+        "core_half_width": 0.18,
+        "shell_inner_radius": 0.16,
+        "overlap_quadrature": "radial_quintic_partition",
+        "cartesian_seams": "uniform_global_stencil",
+        "positive_variables": "log_chi_log_lapse_rk_and_ko",
+        "physical_lapse_floor": 1e-10,
+        "payload_doubles": 9000416
+      },
+      "reference_sha256": "59e6be74a7a2c0340635e7b4593c39f7922f86ccc95cdb84223483ef4b454138",
+      "candidate_sha256": "59e6be74a7a2c0340635e7b4593c39f7922f86ccc95cdb84223483ef4b454138"
+    }
+  },
+  "verified_artifacts": {
+    "campaigns/preflight-thin-clock-v1/output/oblique-sparse-direct.report.json": {
+      "sha256": "1c275c6640bd6d694cf6c3df684ab45441a93e4dfd09be05b4ddea2c79ccddd3",
+      "bytes": 9370
+    },
+    "campaigns/preflight-thin-clock-v1/output/oblique-sparse-direct.history.csv": {
+      "sha256": "0d1359a211ae448048021f99039f182e2cd341e4fbb5591f01a1e262cbacdc59",
+      "bytes": 1640
+    },
+    "campaigns/preflight-thin-clock-v1/output/oblique-sparse-direct.checkpoint": {
+      "sha256": "5419283a9c850b6b1842cc0bed61d27de52dd82aca5bfa3031917bd6d58d35b4",
+      "bytes": 72003512
+    },
+    "campaigns/preflight-thin-clock-v1/output/oblique-sparse-direct.log": {
+      "sha256": "43253f30932bddea4f805c8086e0ad89e273ce0bd74519b32c4d8ab906844fab",
+      "bytes": 178
+    },
+    "campaigns/preflight-thin-clock-v1/output/direct-communication.report.json": {
+      "sha256": "63be0d7cc4bccf29927ebed482cb21ba1e2a8fb0dd23797abe3e24dce58b3db2",
+      "bytes": 6428
+    },
+    "campaigns/preflight-thin-clock-v1/output/direct-communication.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "campaigns/preflight-thin-clock-v1/output/oblique-full-resume.report.json": {
+      "sha256": "9d609a0e3a6548b74a81d15903bec6f44b0a196e32c0c127103b58ae2eece054",
+      "bytes": 8641
+    },
+    "campaigns/preflight-thin-clock-v1/output/oblique-full-resume.history.csv": {
+      "sha256": "77b758cd750edc8657ec4b15505bb1a24486ee01a4cde2616952270a2d1c97c8",
+      "bytes": 1946
+    },
+    "campaigns/preflight-thin-clock-v1/output/oblique-full-resume.checkpoint": {
+      "sha256": "1ece550711e311c60459b3007d40a3bf93956a2b651c29f34a44db1f191b352d",
+      "bytes": 72003512
+    },
+    "campaigns/preflight-thin-clock-v1/output/oblique-full-resume.log": {
+      "sha256": "e5856532f099f8a661e94af35b6f01dc33d70d386da035c59202fffcfcc3d685",
+      "bytes": 183
+    },
+    "campaigns/preflight-thin-clock-v1/output/resumed-communication.report.json": {
+      "sha256": "3d0004cfbefdcacd89a6dfedeae89335162ea1d14f215eac9b5aa4c892baf963",
+      "bytes": 6428
+    },
+    "campaigns/preflight-thin-clock-v1/output/resumed-communication.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "campaigns/preflight-thin-clock-v1/output/dyadic-full.report.json": {
+      "sha256": "1cc4b91a2f7ba77b5c4472a0344d9f4e72c1d0d886d2a186535b4d4759a6866d",
+      "bytes": 8480
+    },
+    "campaigns/preflight-thin-clock-v1/output/dyadic-full.history.csv": {
+      "sha256": "f05d3e5c86699c0ebaec35ee90796315886a7968fe09b62b6fb9c51acd2b1d9a",
+      "bytes": 1629
+    },
+    "campaigns/preflight-thin-clock-v1/output/dyadic-full.checkpoint": {
+      "sha256": "59e6be74a7a2c0340635e7b4593c39f7922f86ccc95cdb84223483ef4b454138",
+      "bytes": 72003512
+    },
+    "campaigns/preflight-thin-clock-v1/output/dyadic-full.log": {
+      "sha256": "48089babfd0a6222b97b7448b710252f362bb6f148e20f73bb637142ec545703",
+      "bytes": 188
+    },
+    "campaigns/preflight-thin-clock-v1/output/dyadic-part.report.json": {
+      "sha256": "56589429c12634e30abc9a9bd6d8b8b34d84545ba3b538ce5e12dfa46c590c28",
+      "bytes": 9291
+    },
+    "campaigns/preflight-thin-clock-v1/output/dyadic-part.history.csv": {
+      "sha256": "7301f8843a740ac94cccf230621842f2e22453f9e928e9fa12d4090272327269",
+      "bytes": 1623
+    },
+    "campaigns/preflight-thin-clock-v1/output/dyadic-part.checkpoint": {
+      "sha256": "e3c4828e6d33ee125dbcaac526dbd5243ec4b4b38a48e893b57ab17305bef365",
+      "bytes": 72003512
+    },
+    "campaigns/preflight-thin-clock-v1/output/dyadic-part.log": {
+      "sha256": "6bb9f6805bb583a2b229390191ae8c66876ad0caa9ffba9aa95b8f43274aaf8b",
+      "bytes": 188
+    },
+    "campaigns/preflight-thin-clock-v1/output/dyadic-resume.report.json": {
+      "sha256": "a98baa2414bd2336b970f13e920b1cf73654afb1eeb772c947ef9a1bc20b0058",
+      "bytes": 9280
+    },
+    "campaigns/preflight-thin-clock-v1/output/dyadic-resume.history.csv": {
+      "sha256": "a95f96baa80f3e45b8b475bc702864eb9bd3863cc75a6bec2689daa08fc9a9cd",
+      "bytes": 1900
+    },
+    "campaigns/preflight-thin-clock-v1/output/dyadic-resume.checkpoint": {
+      "sha256": "59e6be74a7a2c0340635e7b4593c39f7922f86ccc95cdb84223483ef4b454138",
+      "bytes": 72003512
+    },
+    "campaigns/preflight-thin-clock-v1/output/dyadic-resume.log": {
+      "sha256": "cb3e8058fb939905724d1cfd6f0dc60be69f1af2c8dd585a2f68e57e08db1cf8",
+      "bytes": 196
+    },
+    "campaigns/preflight-thin-clock-v1/output/dyadic-restart.report.json": {
+      "sha256": "7005a3fea3a2d88941c346272abcf3952d00da690d5dbf29c4c4eb12bbe27663",
+      "bytes": 6456
+    },
+    "campaigns/preflight-thin-clock-v1/output/dyadic-restart.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  },
+  "scope": "V12 twelve-tile clock/communication isolation only; this batch contains no puncture or device-parity admission."
+}

@@ -277,3 +277,28 @@ change. Submission does not qualify the result; `verify_gpu.py --mode
 clock-isolation` independently audits the collected eight-case batch and its
 three exact comparisons. This mode explicitly does not issue puncture or full
 preflight admission.
+
+### GPU clock isolation verified
+
+Job **8987796** finished successfully. All eight cases passed, and the local
+independent audit verified artifact hashes, finite checkpoint arrays, and all
+three exact payload comparisons: direct full versus sparse, resumed full
+versus sparse, and direct versus restarted dyadic evolution. Each comparison
+covers all 9,000,416 payload doubles with zero difference. Thus the original
+tiny mismatch is reproduced by changing the decimal endpoint-clipped timestep
+sequence; matched-clock communication and restart are exact in these tests.
+The original failed comparison remains recorded. No evolution equation or
+acceptance tolerance was changed.
+
+`gpu-clock-v1/` retains the plan, worker and scheduler records, reports,
+histories, artifact hashes and independent audit. All runs had zero counted
+floor interventions and maximum null residual 8.89e-16. Eight terminal raw
+checkpoints (576,028,096 logical bytes) were copied and hash verified locally,
+then removed remotely with a second hash check; the post-cleanup campaign
+footprint was 2,995,664,486 bytes. No active-job input was removed.
+
+The short puncture pair is submitted as **8987916**, plan hash
+`94fea609b78880af24a767e492bf1b6868ef06d0f5c81f332d3013b50c4f6587`.
+It uses 100 matched timesteps through 0.15M and a full/sparse exact comparison.
+This is preflight; the new 3M puncture, layer matrix, reflection and convergence
+comparisons remain outstanding.
