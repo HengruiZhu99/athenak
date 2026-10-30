@@ -33,3 +33,50 @@ Re-enable the existing 30-minute monitor after successful submission. Resume
 only healthy admitted walltime checkpoints with unchanged CF1 policy and source.
 Stop and report numerical failure. Keep remote home footprint below 5 GB and
 hash-verify local evidence before purging large remote outputs.
+
+## Validation and restart protocol
+
+The unit tests passed. A two-rank local one-step comparison from 3M to 3.0015M
+has bitwise-identical evolved fields and RK compensation to the original DT1
+executable, with zero floor interventions. A subsequent CF1 restart passed;
+wrong-floor and unmigrated DT1 checkpoints were rejected. See local-parity.json
+and restart-tests.json. These short local checks do not test the late puncture
+failure or establish GPU long-time stability.
+
+Frozen scientific source: 95e1d54029517a1532d7aecc0fb5576cee1a6ee2.
+Remote root: /home/hzhu/hyperbolic-core-shell-20261028.
+Source: source-chi-floor-v1; manifest: source-chi-floor-v1-manifest.json.
+Controller: source-chi-floor-v1/tst/hyperbolic_shift_3d/aurora/control.py.
+Binary: build-sycl-mpi-chi-floor-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_puncture_chi_floor.
+First plan: campaigns/n16-chi-floor-to20m-v1-segment01/plan.json.
+The imported checkpoint SHA256 is
+ a4685b88a6b7c89baa24117617981b5114c84934d322aee31824d2aab703df7b.
+
+For each automatic continuation, require a terminal healthy walltime stop and
+an admitted CF1 checkpoint: n=16, nf=31, kind=2, admitted=1, dt=.0005,
+finite time in [1,20/3), length 168+16*(31*cells+surface). The last two doubles
+of the 168-byte header must be chi_floor=1e-8 and radius=.03. Match checkpoint
+header time/steps/admission to its report and verify artifact SHA256. Retain
+source and executable hashes, all coefficients, horizon lmax=12/ntheta=24,
+and diagnostic interval .05. Carry a horizon-seed sidecar only when bound to
+the matching checkpoint. Floor counts are per segment and must be summed
+across segments for campaign totals. Preserve horizon quality flags.
+
+Collect the terminal plan and release its matching root lock with
+collect --release-terminal-lock. Check all user debug jobs, prepare and bind
+a fresh sequential segment plan, and submit only when no allocation is active.
+Do not resume a numerical, storage or ambiguous scheduler failure. At verified
+20M completion collect the scientific evidence and pause the monitor. Copy and
+hash-verify large artifacts locally before purging remote outputs; retain any
+inputs still needed by queued/running successors. Keep the remote footprint
+below 5,000,000,000 bytes and preserve unrelated jobs and files.
+
+## Submission
+
+Aurora build passed with SYCL/MPI and make -j64 (172.34 seconds). Job **8989676**
+was submitted on one CompactBinaryMerger debug node with 12 MPI ranks/GPU tiles.
+The existing 30-minute monitor is ACTIVE; it automatically continues healthy
+walltime checkpoints and pauses on numerical failure or verified 20M completion.
+The campaign footprint at binding was 3,968,929,760 bytes, below the 5 GB limit.
+See build-status.json, binding.json, submission.json and monitor.json for the
+exact hashes, resources and monitoring policy. No long-time result is yet claimed.
