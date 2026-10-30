@@ -1,0 +1,35 @@
+CMake Warning (dev) at CMakeLists.txt:51 (find_package):
+  Policy CMP0074 is not set: find_package uses <PackageName>_ROOT variables.
+  Run "cmake --help-policy CMP0074" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+
+  Environment variable MPI_ROOT is set to:
+
+    /opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.87e2045-po72xy6
+
+  For compatibility, CMake is ignoring the variable.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Setting default Kokkos CXX standard to 17
+-- Kokkos version: 4.7.2
+-- The project name is: Kokkos
+-- Using internal gtest for testing
+-- Using -std=c++17 for C++17 standard as feature
+-- Built-in Execution Spaces:
+--     Device Parallel: Kokkos::SYCL
+--     Host Parallel: NoTypeDefined
+--       Host Serial: SERIAL
+-- 
+-- Architectures:
+--  INTEL_PVC
+-- Using internal desul_atomics copy
+-- Performing Test KOKKOS_LINK_OPTIONS_CHECK
+-- Performing Test KOKKOS_LINK_OPTIONS_CHECK - Success
+-- Performing Test KOKKOS_COMPILE_OPTIONS_CHECK
+-- Performing Test KOKKOS_COMPILE_OPTIONS_CHECK - Success
+-- Experimental mdspan support is enabled
+-- Using internal mdspan directory /home/hzhu/hyperbolic-core-shell-20261028/source-smooth-gauge-v1/kokkos/tpls/mdspan/include
+-- Kokkos Backends: SERIAL;SYCL
+-- Configuring done (2.9s)
+-- Generating done (1.9s)
+-- Build files have been written to: /home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-smooth-gauge-v1

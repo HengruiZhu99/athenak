@@ -49,3 +49,58 @@ constraint integrals at3M using the same r=0.0753 cutoff and bands. Record horiz
 quality, null closure, lapse/floor diagnostics and any numerical failure. Do not
 infer convergence from two resolutions or from a change of gauge alone. Stop
 after the matched3M comparison; no20M smooth-weight continuation is authorized.
+
+## Prepared Aurora binding
+
+Scientific source commit b27f76f37; manifest source-smooth-gauge-v1-manifest.json
+SHA2567308e7e5c3f54d960c0b4bae9b6cf92127a9aa2d66d7f46a5c88c0baaad64fdb.
+Executable build-sycl-mpi-smooth-gauge-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_smooth_gauge
+SHA25653eda0563a1b48846ac7372422906c35569f6ed685b75bb1dc980ccea83567f1.
+The1180 non-Kokkos source files were compared to their exact Git blobs; every
+Kokkos file copied from the prior Aurora source is also bound by the manifest.
+The initial configure failed because the first source archive omitted the root
+config.hpp.in template; it was copied from the same commit before rebuilding.
+Both configure records and manifests are preserved. No numerical run used the
+incomplete source snapshot.
+
+Both input files have the same hashes as the originals, recorded in
+original-inputs.json and submission/binding.json. Local checks passed: analytic
+weight derivative vs fourth-order finite differences (maximum error1.14e-10),
+monotonicity, normalization, endpoint/collar conditions, a two-step puncture
+run with null closure~1e-15, successful GW1 restart, and rejection of a DT1
+checkpoint. The controller/preflight suite passed112 tests, and the added
+bounded-policy test passed separately. These are preparation checks, not3M
+stability results.
+
+State file: remote smooth-gauge-comparison-state.json. Its current status is
+ready_waiting_for_debug_slot. The original N32 job8992832 occupies the allocation;
+let it finish normally. The existing hourly monitor gives this comparison
+priority before any original N32 continuation. Do not submit twice: inspect the
+new plan's submission.json/submission-pending.json and the root lock first.
+
+After original N32 becomes terminal, collect/verify its evidence under its frozen
+protocol and release only its matching terminal lock. Check ALL user debug jobs.
+When none remain, submit the bound new plan with
+source-smooth-gauge-v1/tst/hyperbolic_shift_3d/aurora/control.py, then update the
+smooth-gauge state with its job id. The controller rechecks hashes and storage.
+Never resume an original failed N32 checkpoint. Do not discard original N32
+results or mix its checkpoint schema with this experiment.
+
+On terminal completion, collect using the new controller. Copy the entire new
+campaign directory locally to
+output/hyperbolic-core-shell/smooth-gauge-v1/aurora, excluding no scientific
+artifacts. Run verify_results.py on that local directory to validate worker
+hashes, header/configuration, admission, time, steps, dimensions and finite
+payload. Copy/hash-verify before any remote purge. Release only the matching
+terminal root lock. If either case failed or checkpointed instead, preserve its
+evidence and diagnose; do not claim a completed comparison or blindly rerun it.
+
+After both pass, run analyze_checkpoints.py then compare.py from this directory.
+The analysis script picks one radius outside all four mean horizon candidates,
+then evaluates old and new checkpoints with their matching diagnostic binaries.
+It records hashes before and after and requires all states at exactly3M. Plot
+both history and radial comparisons, inspect figures, report measured changes,
+commit/push evidence and mark the comparison complete. Stop this experiment at3M.
+The original N32 campaign may then resume only if its latest original-schema
+checkpoint passed the original admission protocol; preserve its existing monitor
+until all previously authorized work is handled.
