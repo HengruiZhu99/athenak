@@ -17,6 +17,9 @@
 #include "z4c/hyperboloidal/sparse_stage_exchange.hpp"
 #include "z4c/hyperboloidal/measured_partition.hpp"
 #include "z4c/hyperboloidal/hyperbolic_mesh_plans.hpp"
+#ifndef HYPERBOLIC_ASSUMED_HORIZON_DIAGNOSTICS
+#define HYPERBOLIC_ASSUMED_HORIZON_DIAGNOSTICS 0
+#endif
 #ifndef HYPERBOLIC_COORDINATED_PLANS
 #define HYPERBOLIC_COORDINATED_PLANS 0
 #endif
@@ -864,6 +867,12 @@ int main(int argc,char**argv){
         if(result.found){horizon_radius=result.mean_radius;horizon_areal=result.areal_radius;
           horizon_mass=result.mass;horizon_irreducible_mass=result.irreducible_mass;
           horizon_expansion=result.expansion_rms;cutoff=result.mean_radius;}
+        // Diagnostic replay only: retain the native finder flag, but permit its
+        // complete candidate to define the requested exterior integration cut.
+        if constexpr(HYPERBOLIC_ASSUMED_HORIZON_DIAGNOSTICS){
+          if(!result.found&&result.complete_surface&&std::isfinite(trial_radius)
+             &&trial_radius>0&&trial_radius<1)cutoff=trial_radius;
+        }
       }
       // Failure to locate a horizon is not a volume-evolution failure. Still
       // measure the full domain; with no reliable cutoff, exterior norms are NaN.
@@ -1084,6 +1093,7 @@ int main(int argc,char**argv){
         <<",\"diagnostic_time\":"<<JsonNumber(diagnostic_time)<<",\"diagnostics_current\":"<<(diagnostic_valid&&diagnostic_time==e.time?"true":"false")
         <<",\"constraint_measure\":\"normalized compactified Cartesian coordinate volume\""
         <<",\"exterior_method\":\"coordinate sphere at mean fast-flow radius for spherical-data comparison\""
+        <<",\"complete_candidate_exterior_enabled\":"<<(HYPERBOLIC_ASSUMED_HORIZON_DIAGNOSTICS?"true":"false")
         <<",\"initial_rhs\":"<<JsonNumber(initial_rhs)<<",\"last_rhs\":"<<JsonNumber(e.last_rhs)
         <<",\"min_chi\":"<<valid_number(diagnostic.min_chi)<<",\"min_lapse\":"<<valid_number(diagnostic.min_lapse)
         <<",\"max_determinant_residual\":"<<valid_number(diagnostic.max_determinant_residual)
