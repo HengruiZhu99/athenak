@@ -147,8 +147,8 @@ def validate_plan(root, plan):
         raise ValueError('Preflight/stability must stay on the declared low-resolution grid')
     if plan['phase'] == 'timestep_experiment':
         if (n != 16 or plan['low_resolution_n'] != 16
-                or plan.get('experimental_policy') != 'n16_dt_dx_0.4_then_0.2_to_3M_pause'
-                or len(plan.get('commands', [])) != 1):
+                or plan.get('experimental_policy') not in {'n16_dt_dx_0.4_then_0.2_to_3M_pause', 'n16_reduce_dt_dx_to_0.0444_reproduce_3M'}
+                or len(plan.get('commands', [])) not in ((1, 2) if plan.get('experimental_policy') == 'n16_reduce_dt_dx_to_0.0444_reproduce_3M' else (1,))):
             raise ValueError('Timestep experiment requires the explicit bounded n16 user policy')
     resolution_control = plan['phase'] == 'resolution_control'
     if resolution_control and (plan['low_resolution_n'] % 2 or n < plan['low_resolution_n']):
@@ -207,9 +207,14 @@ def validate_plan(root, plan):
             experimental = Path(command['executable']).name == TIMESTEP_TARGET
             if experimental != (plan['phase'] == 'timestep_experiment'):
                 raise ValueError('Experimental target requires its own explicit phase')
-            if experimental and (command['kind'] != 'puncture' or float(argv[3]) != 1.0
-                    or float(argv[4]) not in (0.0045, 0.00225)):
-                raise ValueError('Experiment is restricted to puncture 3M with dt/dx 0.4 or 0.2')
+            if experimental and (command['kind'] != 'puncture'
+                    or (float(argv[3]) != 1.0 and not (
+                        plan.get('experimental_policy') == 'n16_reduce_dt_dx_to_0.0444_reproduce_3M'
+                        and float(argv[3]) == .15 and float(argv[4]) == .0005))
+                    or float(argv[4]) not in ((0.0045, 0.00225, 0.001125, 0.0005)
+                       if plan.get('experimental_policy') == 'n16_reduce_dt_dx_to_0.0444_reproduce_3M'
+                       else (0.0045, 0.00225))):
+                raise ValueError('Experiment is restricted to puncture 3M at the explicitly declared timesteps')
             v4 = Path(command['executable']).name == DISSIPATIVE_TARGET
             v5 = Path(command['executable']).name in [SAMPLED_NORMAL_TARGET,DONOR_SEVEN_TARGET,INNER_TRANSITION_TARGET,CORE2_TARGET,OVERLAP_TARGET,SPHERICAL_OVERLAP_TARGET,CONTINUOUS_POSITIVE_TARGET,FAST_POSITIVE_TARGET,SPARSE_POSITIVE_TARGET,BALANCED_POSITIVE_TARGET,RADIAL_BATCH_TARGET,PLANNED_TARGET]
             balanced = Path(command['executable']).name == BALANCED_POSITIVE_TARGET

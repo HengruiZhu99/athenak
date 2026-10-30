@@ -1,6 +1,6 @@
 # n16 literal dt/dx experiment, stopping at 3M
 
-User-requested direct experiment: run only n16 puncture initial data to coordinate
+Initial user-requested direct experiment: run only n16 puncture initial data to coordinate
 `t=1` (`3M`, mass `1/3`) with `dx=.18/16=.01125`, initially `dt=.0045`
 (`dt/dx=.4`). On a recorded numerical failure, restart from initial data once at
 `dt=.00225` (`dt/dx=.2`). Infrastructure interruptions are not numerical failures;
@@ -40,3 +40,19 @@ Aurora resources: CompactBinaryMerger, one debug node at a time, 12 MPI ranks on
 12 GPU tiles, SYCL/MPI Release build with `make -j64`. All campaign files remain
 under the home root with the existing 5 GB storage guard. Large failed states and
 checkpoints will be copied and hash-verified before remote cleanup.
+
+## Updated timestep sweep
+
+After the first two attempts, the user requested lowering `dt/dx` down to the
+original `0.0444` and explicitly checking reproduction with the optimized code.
+The expanded controller policy admits `dt=.0045,.00225,.001125,.0005`; the previous
+policy remains restricted to its original two steps. The next priority is a
+`dt=.0005` reproduction split at coordinate `.15` and `1`, with horizon
+`lmax=12, ntheta=24`, matching the earlier run. Both numerical caps are inactive
+at this step. Compare state and RK compensation against the retained original
+checkpoints; the DT1 identity itself differs intentionally from V11. Then test
+`dt/dx=.1` to narrow the stable range. The target remains n16 through 3M.
+
+The evolution executable and its original source manifest remain frozen. The
+updated launcher is separately committed and hash-bound in each new job; there
+is no rebuild or change to the evolution binary for this policy extension.

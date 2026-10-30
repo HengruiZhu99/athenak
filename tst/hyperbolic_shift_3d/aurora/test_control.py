@@ -84,6 +84,10 @@ class ControllerTests(unittest.TestCase):
             with self.assertRaises(ValueError): control.validate_plan(self.root, invalid)
         command['args'][4] = '0.00225'
         control.validate_plan(self.root, plan)
+        plan['experimental_policy'] = 'n16_reduce_dt_dx_to_0.0444_reproduce_3M'
+        for dt in ['0.001125', '0.0005']:
+            command['args'][4] = dt
+            control.validate_plan(self.root, plan)
         plan['phase'] = 'preflight'
         with self.assertRaises(ValueError): control.validate_plan(self.root, plan)
 
