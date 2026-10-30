@@ -91,6 +91,18 @@ class ControllerTests(unittest.TestCase):
         plan['phase'] = 'preflight'
         with self.assertRaises(ValueError): control.validate_plan(self.root, plan)
 
+    def test_original_dt_continuation_to_20m(self):
+        plan = example()
+        plan.update(phase='timestep_experiment', experimental_policy='n16_original_dt_continue_to_20M')
+        c = plan['commands'][0]
+        c.update(kind='puncture', executable='build/'+control.TIMESTEP_TARGET)
+        c['args'][2:7] = ['puncture', str(20/3), '.0005', '-', 'inputs/initial']
+        control.validate_plan(self.root, plan)
+        for index, bad in [(3, '7'), (4, '.001125'), (5, 'inputs/initial'), (6, '-')]:
+            invalid = copy.deepcopy(plan)
+            invalid['commands'][0]['args'][index] = bad
+            with self.assertRaises(ValueError): control.validate_plan(self.root, invalid)
+
     def test_resource_policy(self):
         for key, wrong in [('queue','capacity'), ('nodes',2), ('ranks',1), ('ranks_per_node',6)]:
             plan = example()

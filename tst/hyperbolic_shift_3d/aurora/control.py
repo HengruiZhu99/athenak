@@ -147,7 +147,7 @@ def validate_plan(root, plan):
         raise ValueError('Preflight/stability must stay on the declared low-resolution grid')
     if plan['phase'] == 'timestep_experiment':
         if (n != 16 or plan['low_resolution_n'] != 16
-                or plan.get('experimental_policy') not in {'n16_dt_dx_0.4_then_0.2_to_3M_pause', 'n16_reduce_dt_dx_to_0.0444_reproduce_3M'}
+                or plan.get('experimental_policy') not in {'n16_dt_dx_0.4_then_0.2_to_3M_pause', 'n16_reduce_dt_dx_to_0.0444_reproduce_3M', 'n16_original_dt_continue_to_20M'}
                 or len(plan.get('commands', [])) not in ((1, 2) if plan.get('experimental_policy') == 'n16_reduce_dt_dx_to_0.0444_reproduce_3M' else (1,))):
             raise ValueError('Timestep experiment requires the explicit bounded n16 user policy')
     resolution_control = plan['phase'] == 'resolution_control'
@@ -207,7 +207,12 @@ def validate_plan(root, plan):
             experimental = Path(command['executable']).name == TIMESTEP_TARGET
             if experimental != (plan['phase'] == 'timestep_experiment'):
                 raise ValueError('Experimental target requires its own explicit phase')
-            if experimental and (command['kind'] != 'puncture'
+            if experimental and plan.get('experimental_policy') == 'n16_original_dt_continue_to_20M':
+                if (command['kind'] != 'puncture' or len(argv) < 8
+                        or float(argv[3]) != 20/3 or float(argv[4]) != .0005
+                        or argv[5] != '-' or argv[6] == '-'):
+                    raise ValueError('20M continuation requires the original dt and a bound restart')
+            elif experimental and (command['kind'] != 'puncture'
                     or (float(argv[3]) != 1.0 and not (
                         plan.get('experimental_policy') == 'n16_reduce_dt_dx_to_0.0444_reproduce_3M'
                         and float(argv[3]) == .15 and float(argv[4]) == .0005))
