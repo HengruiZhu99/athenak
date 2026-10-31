@@ -80,3 +80,24 @@ monitor. Reaching20M alone does not establish accuracy or convergence.
 If SSH expires, request renewal once and leave the monitor active; do not make
 repeated submission attempts. Stay quiet for unchanged/non-actionable states;
 notify on meaningful progress, continuation, completion, failure or required action.
+
+## Initial submission
+
+N16 job9009718 is submitted under the new continuation policy. Plan:
+campaigns/n16-smooth-gauge-to20m-v1-segment01/plan.json, SHA256
+4b1b315ec4fe06cdd3a02335718037daeccf3f5ca6687607c2d7a4ea037daba2.
+N24's admitted3M input is restored/hash-verified and its segment01 plan is
+prepared but unbound/unsubmitted, waiting for N16 completion or numerical failure.
+The submission-time all-user debug query was empty. Binding measured3.154GB,
+leaving1.618GB headroom after N16 output/atomic reservations; N24 upload completed
+subsequently and is included in later accounting.
+
+Frozen launcher commit: d5d82db30213942327184ed1078b81d1cd689d0f.
+Controller/preflight/resolution suite:114 tests passed. Final focused controller
+and GW1 checkpoint tests:57 passed, including rejection of changed target/dt,
+wrong-variable executable, unadmitted/wrong-schema/wrong-config/nonfinite input
+and preserving healthy walltime classification while rejecting other failed checks.
+Both actual starting checkpoints passed the same GW1 validator.
+
+Hourly heartbeat monitor: aurora-smooth-gauge-n16-then-n24-to-20m, ACTIVE at
+submission. State and small initial submission records are in submission/.
