@@ -101,3 +101,18 @@ Both actual starting checkpoints passed the same GW1 validator.
 
 Hourly heartbeat monitor: aurora-smooth-gauge-n16-then-n24-to-20m, ACTIVE at
 submission. State and small initial submission records are in submission/.
+
+## N16 terminal failure; N24 submitted
+
+N16 job9009718 failed numerically at last accepted9.1575M (last diagnostics9.15M):
+nonfinite bulk RHS at active cell3071, reason7. It was not a walltime or storage
+stop, and the saved checkpoint is unadmitted. See n16-failure/ for verified
+artifacts, failure location and diagnostic qualifications. Large failed outputs
+were locally hash/length verified before remote purge; terminal lock released.
+No N16 numerical retry is authorized.
+
+N24 job9013517 is now submitted from its own verified3M GW1 checkpoint with all
+scientific settings unchanged. Plan SHA256
+b802985d061c5ab6855805270ec6d656bb7b8f9e379f9bf7046518641022339d.
+The all-user debug query was empty before submission. The hourly monitor now
+tracks N24 and must not resume the failed N16 state.

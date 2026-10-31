@@ -1,9 +1,9 @@
 {
   "status": "submitted",
-  "current_n": 16,
+  "current_n": 24,
   "current_segment": 1,
-  "plan": "campaigns/n16-smooth-gauge-to20m-v1-segment01/plan.json",
-  "job_id": "9009718.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "plan": "campaigns/n24-smooth-gauge-to20m-v1-segment01/plan.json",
+  "job_id": "9013517.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
   "target_t_over_M": 20,
   "resolution_order": [
     16,
@@ -12,19 +12,27 @@
   "launcher": "launcher-smooth-gauge-20m-v1",
   "launcher_commit": "d5d82db30213942327184ed1078b81d1cd689d0f",
   "scientific_manifest": "source-smooth-gauge-v1-manifest.json",
-  "updated": 1793471970.8054328,
+  "updated": 1793486974.101964,
   "resolutions": {
     "16": {
-      "status": "submitted",
-      "start_t_over_M": 3
+      "status": "numerically_failed",
+      "start_t_over_M": 3,
+      "job_id": "9009718.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+      "last_accepted_t_over_M": 9.157500000000724,
+      "diagnostic_t_over_M": 9.150000000000722,
+      "error": "device RHS failure at active cell 3071 reason 7",
+      "evidence": "campaigns/n16-smooth-gauge-to20m-v1-segment01"
     },
     "24": {
-      "status": "prepared_waiting_for_n16",
+      "status": "submitted",
       "start_t_over_M": 3,
       "plan": "campaigns/n24-smooth-gauge-to20m-v1-segment01/plan.json",
-      "restart_sha256": "409edeabf401d76426d9010fb2175c4141cfbad992d98c2f226dd5f142b10545"
+      "restart_sha256": "409edeabf401d76426d9010fb2175c4141cfbad992d98c2f226dd5f142b10545",
+      "job_id": "9013517.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov"
     }
   },
   "completed": [],
-  "failed": []
+  "failed": [
+    16
+  ]
 }
