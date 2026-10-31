@@ -1,0 +1,32 @@
+{
+  "completed": [],
+  "current_n": 16,
+  "current_plan": "campaigns/n16-smooth-direct-fresh20m-v1-segment01/plan.json",
+  "failed": [],
+  "next_plan": "campaigns/n24-smooth-direct-fresh20m-v1-segment01/plan.json",
+  "science": {
+    "binary": "build-sycl-mpi-smooth-direct-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_smooth_direct",
+    "binary_sha256": "1cb01219a803623d877ef9bac8a8fb3cc3619866da2ba776239ed825f7b9d942",
+    "source_commit": "cbad68bbda93ff08949945630425217a1e62ebf1",
+    "source_manifest": "source-smooth-direct-v1-manifest.json",
+    "source_manifest_sha256": "a7c265d827621328406992e1fb8f175d5a629eba6ddd618066e482c824d27b2c"
+  },
+  "start": "fresh wormhole initial data at t=0 for each resolution",
+  "status": "submitted",
+  "current_job": "9013744.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "submission": {
+    "job_id": "9013744.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "submitted": 1793488245.4305444,
+    "plan": "campaigns/n16-smooth-direct-fresh20m-v1-segment01/plan.json",
+    "plan_sha256": "b7cfd56141302eba8ac81748e215498ac0fa0ddd6d88e585d91bbec913945966",
+    "source_manifest_sha256": "a7c265d827621328406992e1fb8f175d5a629eba6ddd618066e482c824d27b2c",
+    "resources": {
+      "queue": "debug",
+      "account": "CompactBinaryMerger",
+      "nodes": 1,
+      "ranks": 12,
+      "ranks_per_node": 12,
+      "walltime": "01:00:00"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "controller_tests_passed": 56,
+  "campaign_tests_passed": 6,
+  "chi_floor_native_test": "passed",
+  "fresh_native": {
+    "t": 0.001,
+    "steps": 2,
+    "status": "completed"
+  },
+  "restart_native": {
+    "t": 0.0015,
+    "steps": 3,
+    "status": "completed"
+  },
+  "long_time_stability": "not_established",
+  "native_old_GW1_rejection": "passed",
+  "direct_update_audit": {
+    "volume_chi": "base_chi + RK_increment, pre-floor sign logging, then chi floor",
+    "volume_alpha": "stored lapse perturbation + RK_increment, sign logging on perturbation+reference lapse, then physical lapse floor",
+    "surface_chi": "direct RK update and finite nonpositive rescue",
+    "dissipation": "positive_dissipation=false disables log KO for both fields",
+    "compensation": "direct-variable units from step0; reset when clipped"
+  }
+}
