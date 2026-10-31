@@ -88,6 +88,25 @@ class ControllerTests(unittest.TestCase):
         bad=copy.deepcopy(plan);bad['commands'][0]['executable']='build/'+control.CANDIDATE_HISTORY_TARGET
         with self.assertRaises(ValueError):control.validate_plan(self.root,bad)
 
+    def test_smooth_continuation_keeps_equations_and_allows_walltime_stop(self):
+        import smooth_campaign as campaign
+        from unittest.mock import patch
+        for n in [16,24]:
+            with patch.object(campaign,'inspect_checkpoint',return_value=dict(n=n,time=1.,steps=2001,dt=.0005*16/n,bytes=100000,sha256='a'*64)):
+                made=campaign.make_plan(self.root,n,1,'inputs/initial','a'*64)
+            plan=json.loads((self.root/made['plan']).read_text())
+            control.validate_plan(self.root,plan)
+            self.assertIsNone(control.validate_admission(self.root,plan,'',{}))
+            for index,value in [(3,'7'),(4,'.001'),(5,'inputs/initial'),(6,'-'),(12,'1')]:
+                bad=copy.deepcopy(plan);bad['commands'][0]['args'][index]=value
+                with self.assertRaises(ValueError):control.validate_plan(self.root,bad)
+            bad=copy.deepcopy(plan);bad['commands'][0]['executable']='build/'+control.DIRECT_CHI_LAPSE_TARGET
+            with self.assertRaises(ValueError):control.validate_plan(self.root,bad)
+            checks=[dict(check=c,passed=c['path']!=['status']) for c in plan['commands'][0]['checks']]
+            self.assertEqual(worker.classify(3,False,dict(status='checkpointed'),checks),'checkpointed')
+            checks[-1]['passed']=False
+            self.assertEqual(worker.classify(3,False,dict(status='checkpointed'),checks),'failed')
+
     def test_bounded_timestep_experiment(self):
         plan = example()
         plan.update(phase='timestep_experiment', experimental_policy='n16_dt_dx_0.4_then_0.2_to_3M_pause')
