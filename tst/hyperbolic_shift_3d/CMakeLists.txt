@@ -451,3 +451,11 @@ target_include_directories(hyperbolic_shift_3d_direct_outer_characteristics PRIV
 target_link_libraries(hyperbolic_shift_3d_direct_outer_characteristics PRIVATE Kokkos::kokkos Threads::Threads)
 target_compile_definitions(hyperbolic_shift_3d_direct_outer_characteristics PRIVATE HYPERBOLIC_INNER_TELEGRAPHER=1 HYPERBOLIC_DIRECT_OUTER=1 HYPERBOLIC_SMOOTH_GAUGE_BLEND=1)
 target_compile_options(hyperbolic_shift_3d_direct_outer_characteristics PRIVATE -Wall -Wextra -ffp-contract=off)
+
+if(Python3_Interpreter_FOUND)
+  add_test(NAME hyperbolic_shift_3d_direct_outer_characteristics
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/compare_direct_outer_symbol.py
+      --audit $<TARGET_FILE:hyperbolic_shift_3d_inner_characteristics>
+      --implementation $<TARGET_FILE:hyperbolic_shift_3d_direct_outer_characteristics>
+      --output ${CMAKE_CURRENT_BINARY_DIR}/direct-outer-characteristic-equivalence.json)
+endif()
