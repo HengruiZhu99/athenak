@@ -1,5 +1,5 @@
 {
-  "status": "submitted",
+  "status": "completed",
   "n": 16,
   "target_t_over_M": 10,
   "plan": "campaigns/n16-inner-telegrapher-fresh10m-v1-segment01/plan.json",
@@ -18,5 +18,41 @@
       "ranks_per_node": 12,
       "walltime": "01:00:00"
     }
-  }
+  },
+  "verification": {
+    "verified": true,
+    "checkpoint": "campaigns/n16-inner-telegrapher-fresh10m-v1-segment01/output/puncture.checkpoint",
+    "completed": true,
+    "t_over_M": 10.0,
+    "source_manifest_sha256": "80fb05c6cc9d89bf8f5533869b573343a6bcab65710490e2e149ce2c22e0b47b",
+    "artifact_hashes": {
+      "campaigns/n16-inner-telegrapher-fresh10m-v1-segment01/output/puncture.report.json": {
+        "sha256": "b42d621c4c1c3ca6ff4f9f9653d5833e4bd81060f276d3f77a7182ce414310f5",
+        "bytes": 13842
+      },
+      "campaigns/n16-inner-telegrapher-fresh10m-v1-segment01/output/puncture.checkpoint": {
+        "sha256": "37665a7936afc1e404c653a1ea8fc1051a437a31f3bc907dc5cadec76c483d9f",
+        "bytes": 79725224
+      },
+      "campaigns/n16-inner-telegrapher-fresh10m-v1-segment01/output/puncture.history.csv": {
+        "sha256": "80d980764e52e113c44268eba93988b585d2d03513a73b2f94152b51427fb406",
+        "bytes": 47682
+      },
+      "campaigns/n16-inner-telegrapher-fresh10m-v1-segment01/output/puncture.checkpoint.horizon-seed.txt": {
+        "sha256": "53d613bb24a919a2d673ddc0f2259bcf472156eaacd82c6b6241cc19abb62866",
+        "bytes": 87
+      },
+      "campaigns/n16-inner-telegrapher-fresh10m-v1-segment01/output/puncture.fastflow.horizon_summary_0.txt": {
+        "sha256": "61e8f840ecb4341aa31e639d97375fc4ad911b8c7db7d9b362e64638c5ccfc76",
+        "bytes": 14195
+      }
+    },
+    "n": 16,
+    "time": 3.3333333333333335,
+    "steps": 6667,
+    "dt": 0.0005,
+    "bytes": 79725224,
+    "sha256": "37665a7936afc1e404c653a1ea8fc1051a437a31f3bc907dc5cadec76c483d9f"
+  },
+  "remote_checkpoint_retired": true
 }

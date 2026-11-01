@@ -415,3 +415,15 @@ target_link_libraries(hyperbolic_shift_3d_inner_telegrapher_device PRIVATE Kokko
 target_compile_definitions(hyperbolic_shift_3d_inner_telegrapher_device PRIVATE HYPERBOLIC_INNER_TELEGRAPHER=1 HYPERBOLIC_SMOOTH_GAUGE_BLEND=1)
 target_compile_options(hyperbolic_shift_3d_inner_telegrapher_device PRIVATE -Wall -Wextra -ffp-contract=off)
 add_test(NAME hyperbolic_shift_3d_inner_telegrapher_device COMMAND hyperbolic_shift_3d_inner_telegrapher_device)
+
+# Read-only comparison of donor, IT1 and a proposed direct-to-outer gauge.
+add_library(hyperbolic_shift_3d_inner_characteristics SHARED native_api.cpp characteristics_api.cpp)
+target_include_directories(hyperbolic_shift_3d_inner_characteristics PRIVATE ${CMAKE_SOURCE_DIR}/src)
+target_link_libraries(hyperbolic_shift_3d_inner_characteristics PRIVATE Kokkos::kokkos Threads::Threads)
+target_compile_definitions(hyperbolic_shift_3d_inner_characteristics PRIVATE HYPERBOLIC_INNER_TELEGRAPHER=1 HYPERBOLIC_SMOOTH_GAUGE_BLEND=1)
+target_compile_options(hyperbolic_shift_3d_inner_characteristics PRIVATE -Wall -Wextra -ffp-contract=off)
+
+add_test(NAME hyperbolic_shift_3d_inner_characteristics
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/audit_inner_characteristics.py
+  --library $<TARGET_FILE:hyperbolic_shift_3d_inner_characteristics>
+  --output ${CMAKE_BINARY_DIR}/Testing/inner_characteristics)

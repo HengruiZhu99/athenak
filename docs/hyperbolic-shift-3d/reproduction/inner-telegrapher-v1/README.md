@@ -145,3 +145,41 @@ Job9015938 was submitted for fresh N16 toward10M. Hourly heartbeat
 aurora-inner-telegrapher-n16-to-10m is active for status, evidence collection and
 verified healthy-walltime continuation only. Submission does not establish
 stability. Saved plan/binding/submission and launcher provenance are in submission/.
+
+## Verified N16 completion and characteristic follow-up
+
+Job9015938 completed10M from fresh data in6667 steps,1268.20s native runtime.
+Remote and independent local helper verification passed, including every worker
+artifact hash/length and the admitted IT1 checkpoint. SHA256
+37665a7936afc1e404c653a1ea8fc1051a437a31f3bc907dc5cadec76c483d9f.
+All raw outputs, including the checkpoint, are locally preserved under
+output/hyperbolic-core-shell/inner-telegrapher-v1/aurora/campaigns/.
+
+There were40 negative chi candidates (32 stage,8 final) across the eight closest
+cells, r=.0097428; all were floored. First event was.30225M, minimum-5.12e-7.
+There were no lapse-floor or surface-chi-floor interventions. Maximum null
+residuals were1.22e-15 on the surface and1.55e-15 in the ghosts. At10M the
+accepted horizon has coordinate radius.0971391, areal radius.6670188 and
+irreducible mass.3335094 (fractional mass error5.28e-4). Finder acceptance holds
+on59 of68 history rows; preserve the other flags/gaps.
+
+Completion is not an accuracy/convergence result. At the shared9.9M diagnostic,
+IT1 exterior Hamiltonian RMS=.00812652 versus GD1=.00567342; radial-momentum
+RMS=.0132098 versus.00780102. IT1 is smoother/lower earlier, but these two exterior
+norms are higher by factors1.43 and1.69 near10M. Each history uses its own candidate
+horizon cutoff. See comparison.png/pdf and n16-completed/ for full evidence.
+
+The follow-up characteristics/ audit compares donor, IT1 and an AUDIT-ONLY
+single direct-to-outer blend. It does not modify this completed run or launch
+another one. On the actual verified IT1 10M snapshot,528 sampled directional
+symbols have real speeds and complete bases for all three gauges. All159200
+cells have positive worst-direction lapse/longitudinal-shift separation: minimum
+normalized margin.75416 for IT1 and.43960 for the candidate. Exact counterexamples
+on other admissible states still exist; see characteristics/README.md. N16
+completion does not establish that the previous finer-grid instability is fixed.
+
+The matching terminal root lock is released and the completed hourly monitor
+has been deleted. The79,725,224-byte remote final checkpoint was retired only
+after full local artifact verification; its local original remains intact.
+Remote task footprint after cleanup was3,287,142,489 bytes. Purge/release receipts
+are in n16-completed/ and the saved campaign state now records completion.
