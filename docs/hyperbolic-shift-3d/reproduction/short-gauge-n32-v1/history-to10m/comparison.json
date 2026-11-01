@@ -1,0 +1,117 @@
+{
+  "scope": "Complete measured histories to10M. History/report artifacts verified against worker SHA256 and length. N32 large checkpoint downloads and common-cutoff radial reconstruction remain pending.",
+  "cutoff": "Each run uses its own complete candidate horizon; not a common-cutoff reconstruction.",
+  "resolutions": {
+    "16": {
+      "history_report_artifacts": [
+        {
+          "file": "n16-segment01.history.csv",
+          "sha256": "c5681eb0e4e8331d7c477be24c3564c79320fd920f13084f56abf8e8b9f250a4",
+          "bytes": 46194
+        },
+        {
+          "file": "n16-segment01.report.json",
+          "sha256": "b39f4e33cd15977d4addda12e8ff073218661811d8e1d9d230e3c6d08dfc1029",
+          "bytes": 13915
+        }
+      ],
+      "restart_diagnostic_repeats": [],
+      "rows": 68,
+      "endpoint": {
+        "t_over_M": 10.0,
+        "H_exterior_L2": 0.015414970227319157,
+        "M_exterior_L2": 0.029007641034797502,
+        "Mr_exterior_L2": 0.03081596860877569,
+        "exterior_cutoff": 0.10973823820805612,
+        "horizon_found": 1.0,
+        "horizon_irreducible_mass": 0.3344710851250562,
+        "null_surface": 1.2213016760400222e-15,
+        "null_ghost": 1.5543120825858253e-15
+      }
+    },
+    "24": {
+      "history_report_artifacts": [
+        {
+          "file": "n24-segment01.history.csv",
+          "sha256": "97fa96100e2f26a2aa1c6cb129a5d9043a9a1930bb82a65da58a7095b4df63ce",
+          "bytes": 47242
+        },
+        {
+          "file": "n24-segment01.report.json",
+          "sha256": "c60f7d63f2d180ecee2bd8cc6ffc087697904dd5d19057a73db3ed026a5469d8",
+          "bytes": 13930
+        }
+      ],
+      "restart_diagnostic_repeats": [],
+      "rows": 68,
+      "endpoint": {
+        "t_over_M": 10.0,
+        "H_exterior_L2": 0.00820525130976899,
+        "M_exterior_L2": 0.025505802162002045,
+        "Mr_exterior_L2": 0.02610774989780555,
+        "exterior_cutoff": 0.1092690201200305,
+        "horizon_found": 1.0,
+        "horizon_irreducible_mass": 0.33323772504616456,
+        "null_surface": 1.5543121998062461e-15,
+        "null_ghost": 1.55431223447299e-15
+      }
+    },
+    "32": {
+      "history_report_artifacts": [
+        {
+          "file": "n32-segment01.history.csv",
+          "sha256": "2cec82008b0c75b34b7ad761ec3e838ab3ee881bc50802b3af0c1a923bcda029",
+          "bytes": 32010
+        },
+        {
+          "file": "n32-segment01.report.json",
+          "sha256": "0edcbee69db62e164fdb72f009083cc1a1592dd27ca0bf1f4ae22d8b9240630e",
+          "bytes": 14059
+        },
+        {
+          "file": "n32-segment02.history.csv",
+          "sha256": "c31a2f22e6b35e8cb493b9f344793c545d2e84225cc9e722e387628754eabfeb",
+          "bytes": 17479
+        },
+        {
+          "file": "n32-segment02.report.json",
+          "sha256": "3336bbc9e94b9f8615ec8e33b5e4572876f48a722c1df6638179cfeda181a9f5",
+          "bytes": 12408
+        }
+      ],
+      "restart_diagnostic_repeats": [
+        {
+          "t_over_M": 6.562500000000442,
+          "changed_segment_or_finder_columns": [
+            "exterior_cutoff",
+            "horizon_radius",
+            "horizon_areal_radius",
+            "horizon_mass",
+            "horizon_expansion_rms",
+            "horizon_trial_radius",
+            "horizon_trial_expansion_rms",
+            "horizon_iterations",
+            "pole_max",
+            "clock_max",
+            "cfl_max",
+            "wall_seconds",
+            "horizon_irreducible_mass"
+          ],
+          "retained": "preceding segment final observation"
+        }
+      ],
+      "rows": 68,
+      "endpoint": {
+        "t_over_M": 10.0,
+        "H_exterior_L2": 0.006855409535801423,
+        "M_exterior_L2": 0.02456262079662659,
+        "Mr_exterior_L2": 0.024899755831905446,
+        "exterior_cutoff": 0.109290095094961,
+        "horizon_found": 1.0,
+        "horizon_irreducible_mass": 0.33321322996962777,
+        "null_surface": 1.5543100773284e-15,
+        "null_ghost": 1.5543100882336436e-15
+      }
+    }
+  }
+}
