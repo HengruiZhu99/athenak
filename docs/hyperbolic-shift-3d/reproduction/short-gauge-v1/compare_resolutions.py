@@ -37,6 +37,34 @@ def require(condition, message):
         raise ValueError(message)
 
 
+def merge_histories(histories):
+    data = np.concatenate(histories)
+    keep, repeated = [], []
+    # These are recomputed from the physical volume fields, independent of the
+    # restarted finder and segment-local maxima. Exterior cuts/finder iterations
+    # can differ when the same state is measured again using a new finder seed.
+    invariant = ['t', 't_over_M', 'steps', 'min_chi', 'min_lapse', 'state_deviation',
+                 'H_L2', 'M_L2', 'M_physical_L2', 'Theta_L2', 'Z_L2', 'Mr_L2',
+                 'Zr_L2', 'determinant_residual', 'tracefree_residual']
+    for i in range(len(data)):
+        if keep and abs(data['t'][i] - data['t'][keep[-1]]) < 1e-12:
+            prior = keep[-1]
+            changed = []
+            for key in data.dtype.names:
+                equal = np.isclose(data[key][i], data[key][prior], rtol=1e-10, atol=1e-12, equal_nan=True)
+                if key in invariant:
+                    require(equal, 'Restart volume diagnostic mismatch: ' + key)
+                elif not equal:
+                    changed.append(key)
+            repeated.append(dict(t_over_M=float(data['t_over_M'][i]),
+                                 changed_segment_or_finder_columns=changed,
+                                 retained='preceding segment final observation'))
+        else:
+            require(not keep or data['t'][i] > data['t'][keep[-1]], 'Overlapping histories')
+            keep.append(i)
+    return data[keep], repeated
+
+
 def load_campaign(raw, plans, n):
     """Require terminal, hash-verified artifacts; retain numerical failures as evidence."""
     reports, histories, records = [], [], []
@@ -81,19 +109,9 @@ def load_campaign(raw, plans, n):
         reports.append(report)
         histories.append(history)
         previous = report
-    data = np.concatenate(histories)
-    # A restart repeats its first diagnostic. Keep the preceding observation;
-    # require all physical diagnostic fields to agree, excluding elapsed wall time.
-    keep = []
-    for i in range(len(data)):
-        if keep and abs(data['t'][i] - data['t'][keep[-1]]) < 1e-12:
-            for key in data.dtype.names:
-                if key != 'wall_seconds':
-                    require(np.isclose(data[key][i], data[key][keep[-1]], rtol=1e-10, atol=1e-12, equal_nan=True), 'Restart diagnostic mismatch: ' + key)
-        else:
-            require(not keep or data['t'][i] > data['t'][keep[-1]], 'Overlapping histories')
-            keep.append(i)
-    return dict(n=n, reports=reports, history=data[keep], records=records, folder=path.parent)
+    data, repeated = merge_histories(histories)
+    return dict(n=n, reports=reports, history=data, records=records, folder=path.parent,
+                restart_diagnostic_repeats=repeated)
 
 
 def counters(reports):
@@ -139,6 +157,7 @@ def compare(raw, plans16, plans24, out):
         summary[n] = dict(last_accepted_t_over_M=last['t_over_M'], last_diagnostic_t_over_M=float(data['t_over_M'][-1]),
                           status=last['status'], accepted_horizon_rows=int(np.sum(data['horizon_found'] == 1)),
                           rows=len(data), counters=counters(case['reports']), segments=case['records'],
+                          restart_diagnostic_repeats=case['restart_diagnostic_repeats'],
                           final_accepted_mass_error=(3 * last['horizon_irreducible_mass'] - 1)
                           if last['horizon_found'] and last['horizon_irreducible_mass'] is not None else None)
     axes[0, 0].legend()

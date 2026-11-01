@@ -298,3 +298,14 @@ live-scheduler inputs were rejected. See
 `checks/resolution-comparison-preparation.log`. Full N24 reconstruction and
 rendered-figure review await collected N24 results; this preparation is not a
 new scientific result.
+
+
+Restart-history handling follows `coupled_mpi.cpp`'s `record()` semantics:
+segment-local null/CFL maxima reset, and a newly initialized horizon finder may
+report a different iteration count or candidate cutoff at the same physical
+state. The merger requires repeated full-domain physical diagnostics to match,
+retains the preceding segment's final observation, and records all differing
+segment/finder columns explicitly. It does not reject a legitimate restart just
+because a cumulative maximum reset, nor hide a changed full-domain constraint.
+A synthetic merger check exercised both cases; synthetic rows were not saved as
+scientific results.
