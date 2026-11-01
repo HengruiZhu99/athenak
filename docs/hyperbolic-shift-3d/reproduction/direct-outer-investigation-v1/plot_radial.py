@@ -16,8 +16,8 @@ r=np.linspace(0,.999,500);o=(1-r*r)/2;alpha=(1+r*r)/2;w=smooth((.8-r)/.24)
 for label,s,old in [('IT1',smooth((.56-r)/.36),4*alpha+w*(8*alpha-4*alpha)),('DO1',smooth((.9-r)/.7),4*alpha)]:
  rate=((1-s)*old*1.01+s*.06*alpha)/o
  axs[2].plot(r,rate,label=label)
-for ax,title in zip(axs,['Hamiltonian RMS in radial bands at10M','Momentum magnitude RMS in radial bands at10M','Theta damping coefficient on initial CMC reference']):
+for ax,title in zip(axs,['Hamiltonian RMS in radial bands at10M','Momentum magnitude RMS in radial bands at10M','Reference Theta damping rate']):
  ax.set(xlabel='compactified radius',title=title,yscale='log');ax.grid(alpha=.2);ax.axvspan(.16,.18,alpha=.12,color='k',label='core/shell overlap' if ax==axs[0] else None);ax.legend(fontsize=8)
 axs[2].set_ylim(.03,1e3)
-fig.suptitle('N16 controlled comparison: common grid and cutoff r>0.1');fig.tight_layout();fig.savefig(HERE/'radial-and-damping.png',dpi=150)
+fig.suptitle('N16 at10M: radial error bands and reference damping');fig.tight_layout();fig.savefig(HERE/'radial-and-damping.png',dpi=150)
 (HERE/'radial-summary.json').write_text(json.dumps(summary,indent=2)+'\n');print(json.dumps(summary,indent=2))

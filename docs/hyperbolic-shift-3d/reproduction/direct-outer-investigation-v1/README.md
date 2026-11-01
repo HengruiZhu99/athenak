@@ -69,3 +69,14 @@ retain horizon quality flags and check horizon mass/radius against the baseline.
 Do not advance to N24 automatically based solely on native/worker completion.
 The initial DG1 run is diagnostic; review evidence before declaring a successful
 formulation or choosing the next modification. The full objective remains active.
+
+At r=.30,.35,.40 on the initial CMC reference, the old/new Theta damping-rate
+ratios are8.36,15.15,13.29. This is a coefficient comparison, not an observed
+growth-rate fit. The damping-only DG1 test separates this change from gauge
+placement. Short local DG1 evolution reached coordinate.001 in two steps;
+a DG1 restart reached.0015 in three total steps, with null residual<=1.12e-15.
+
+All123 controller/worker/campaign tests passed. The new campaign helper rejects
+N24 plans and incompatible DO1/IT1/GD1 restart schemas. Frozen source for DG1:
+35004000d25e34767069a8da1d2ad45bdc42c3c1. Later documentation does not alter
+the built source snapshot.
