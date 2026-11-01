@@ -1,0 +1,36 @@
+{
+  "status": "submitted",
+  "science": {
+    "source_commit": "e7c0b8ce2bdd639cfb9532b196fa5badb2b1c3b0",
+    "binary": "build-sycl-mpi-late-gauge-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_late_gauge",
+    "binary_sha256": "d64e108a0d0ce213ca30ae97709a54f2f61f9f8d771d308b0aacc0f3ad3c7c0a",
+    "source_manifest": "source-late-gauge-v1-manifest.json",
+    "source_manifest_sha256": "eafc0f7b133f961ffaf0dfc28bf02610b17bd3be406e7d794cb2417e4bf287c7"
+  },
+  "plan": "campaigns/n16-late-gauge-fresh10m-v1-segment01/plan.json",
+  "plan_sha256": "30fc9facaeaa32feb7f8d4f9d1449e36e2bca56b884b0a4d1fcbfd1818be3e81",
+  "storage_at_bind": {
+    "bytes": 3559388349,
+    "entries": 65894,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 89725224,
+    "planned_bytes": 137560359,
+    "headroom_bytes": 1213326068
+  },
+  "n24_gate": "No N24 before reviewed N16 accuracy success",
+  "submission": {
+    "job_id": "9018058.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "submitted": 1793510415.5618212,
+    "plan": "campaigns/n16-late-gauge-fresh10m-v1-segment01/plan.json",
+    "plan_sha256": "30fc9facaeaa32feb7f8d4f9d1449e36e2bca56b884b0a4d1fcbfd1818be3e81",
+    "source_manifest_sha256": "eafc0f7b133f961ffaf0dfc28bf02610b17bd3be406e7d794cb2417e4bf287c7",
+    "resources": {
+      "queue": "debug",
+      "account": "CompactBinaryMerger",
+      "nodes": 1,
+      "ranks": 12,
+      "ranks_per_node": 12,
+      "walltime": "01:00:00"
+    }
+  }
+}

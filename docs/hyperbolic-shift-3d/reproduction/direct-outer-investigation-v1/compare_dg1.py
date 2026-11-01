@@ -41,13 +41,14 @@ for label,(report,checkpoint,target,sha) in cases.items():
  radial[label]=d;execution.append(dict(label=label,command=command,binary_sha256=digest(exe),checkpoint_sha256=sha))
 histories={'DG1':np.concatenate(dg_hist)}
 for label,variant in [('IT1','inner-telegrapher-v1'),('DO1','direct-outer-v1')]:histories[label]=np.atleast_1d(np.genfromtxt(HERE.parent/variant/'n16-completed/puncture.history.csv',delimiter=',',names=True))
+display={'IT1':'Earlier gauge (IT1)','DO1':'Direct outer (DO1)','DG1':'Restored damping (DG1)'}
 fig,axes=plt.subplots(2,3,figsize=(13,7));summary={}
 fields=[('H_L2','Full-domain Hamiltonian RMS',1),('M_L2','Full-domain momentum RMS',1),('Theta_L2','Full-domain Theta RMS',1),('H_exterior_L2','Candidate-exterior Hamiltonian RMS',1),('Mr_exterior_L2','Candidate-exterior radial momentum RMS',1),('horizon_areal_radius','Accepted horizon areal radius / M',3)]
 for label,color in [('IT1','#777777'),('DO1','#b55315'),('DG1','#1769aa')]:
  d=histories[label];d=d[np.argsort(d['t_over_M'],kind='stable')];_,ids=np.unique(d['t_over_M'],return_index=True);d=d[ids]
- for ax,(key,title,scale) in zip(axes.flat,fields):ax.plot(d['t_over_M'],d[key]*scale,label=label,color=color);ax.set(xlabel='t / M',ylabel=title);ax.grid(alpha=.2)
+ for ax,(key,title,scale) in zip(axes.flat,fields):ax.plot(d['t_over_M'],d[key]*scale,label=display[label],color=color);ax.set(xlabel='t / M',ylabel=title);ax.grid(alpha=.2)
  late=d[d['t_over_M']>=4-1e-8];summary[label]=dict(common_exterior=radial[label]['norms']['exterior'],late_history_max={key:float(np.nanmax(late[key])) for key in ['H_L2','M_L2','Theta_L2','H_exterior_L2','Mr_exterior_L2']},accepted_horizon_rows=int(np.sum(d['horizon_found'])),history_rows=len(d),final_horizon_accepted=bool(d[-1]['horizon_found']))
-axes[0,0].legend();fig.suptitle('N16 damping-only ablation: same new gauge, restored previous damping');fig.tight_layout(rect=(0,.06,1,.96));fig.text(.5,.015,'Histories use each run’s own candidate cutoff; final common-cutoff norms are recorded separately. Missing horizon values remain gaps.',ha='center',fontsize=9);fig.savefig(out/'histories.png',dpi=150)
+axes[0,0].set_yscale('log');axes[0,0].legend(fontsize=8);fig.suptitle('N16 damping-only ablation: same new gauge, restored previous damping');fig.tight_layout(rect=(0,.06,1,.96));fig.text(.5,.015,'Histories use each run’s own candidate cutoff; final common-cutoff norms are recorded separately. Missing horizon values remain gaps.',ha='center',fontsize=9);fig.savefig(out/'histories.png',dpi=150)
 # Segment counters include rejected attempts; keep boundary-interpolation counts
 # separate from volume/surface candidate events and from positive floor hits.
 def counters(segment_reports):
@@ -71,11 +72,11 @@ for label,color in [('IT1','#777777'),('DO1','#b55315'),('DG1','#1769aa')]:
  rows=radial[label]['radial_cumulative'];r=np.array([x['cutoff'] for x in rows]);volume=np.diff(-np.array([x['volume'] for x in rows]))
  for ax,key in zip(axes,['H2','M2']):
   power=np.diff(-np.array([x[key] for x in rows]));assert np.all(volume>0)
-  ax.stairs(np.sqrt(np.maximum(power,0)/volume),r,label=label,color=color)
+  ax.stairs(np.sqrt(np.maximum(power,0)/volume),r,label=display[label],color=color)
  summary[label]['fraction_H2_r016_030']=(next(x['H2'] for x in rows if x['cutoff']==.16)-next(x['H2'] for x in rows if x['cutoff']==.3))/rows[0]['H2']
  summary[label]['counters']=counters(reports if label=='DG1' else [cases[label][0]])
 for ax,title in zip(axes,['Hamiltonian RMS','Momentum magnitude RMS']):
- ax.set(xlabel='compactified radius',ylabel=title,yscale='log');ax.grid(alpha=.2);ax.axvspan(.16,.18,color='k',alpha=.12);ax.legend()
+ ax.set(xlabel='compactified radius',ylabel=title,yscale='log');ax.grid(alpha=.2);ax.axvspan(.16,.18,color='k',alpha=.12);ax.legend(fontsize=8)
 fig.suptitle('N16 at 10M: damping-only ablation, radial constraint distribution');fig.tight_layout();fig.savefig(out/'radial.png',dpi=150)
 result=dict(common_cutoff=cut,candidate_radii=radii,summary=summary,execution=execution,segments=records,n24_admitted=False,review_required=True)
 (out/'comparison.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(summary,indent=2))

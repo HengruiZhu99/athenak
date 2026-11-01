@@ -165,3 +165,31 @@ and compares histories without filling missing horizon values. Its matching DG1
 diagnostic executable builds locally. The actual DG1 comparison remains pending;
 syntax/build checks are not evidence of a successful duration test. This script
 always records n24_admitted=false and requires scientific review before promotion.
+
+## Verified DG1 result: damping is not the dominant cause
+
+DG1 job9017478 completed10M,6667steps,1415.64native seconds. Frozen remote and
+local verification passed for every artifact and admitted DG1 checkpoint SHA256
+b582e457f8a8ba9b143436225bb57318b7e28a241fb495b913eea4787bfa04cf,
+79,725,224bytes. The terminal lock was released; the large remote checkpoint was
+retired only after the local copy and finite payload were verified. Local original
+remains under output/hyperbolic-core-shell/damping-ablation-v1/aurora/campaigns/.
+
+At common cutoffr>.1, DG1 Hamiltonian RMS=.22596124 and momentum magnitude
+RMS=.30670343, compared with DO1 .23426143/.32180363 and IT1 .00810299/.01244080.
+Restoring damping reduces these norms only3.54%/4.69%. Post4M growth persists,
+with66.50% of full H-squared integral still in.16<r<.30. Both new-gauge variants
+accept27/68 horizon rows and fail final acceptance; IT1 accepts59/68 and its final
+horizon. All three have the same32stage+8final negative chi candidate interventions
+in the nearest8cells, no lapse floor hits and no boundary-interpolation sign hits.
+DG1 scri closure maxima are1.22e-15(surface) and1.55e-15(ghost enforcement points).
+
+Thus weaker damping contributes modestly but does not explain the principal
+accuracy loss. This is not proof of where errors first originate: the radial data
+are final snapshots. The N16 accuracy gate FAILED despite endpoint completion;
+N24 remains forbidden until a modified N16 meets the reviewed gate. Next isolated
+experiment LG1 moves only the gauge start radius from.2 to.4, retaining.9 endpoint
+and DG1's fixed damping. See ../late-gauge-v1/README.md for frozen science/protocol.
+Final diagnostic data, plots and execution hashes are in dg1-comparison/; concise
+native/worker/scheduler evidence is in dg1-completed/. Histories retain candidate
+cutoff distinctions and missing accepted-horizon data; final norms share one domain.

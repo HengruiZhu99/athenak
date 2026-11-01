@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "plan_sha256": "d061c354ab5e34b7dda6895983f89ce4836788a7c704c31b6ef35f72666ecdf2",
+  "source_manifest": "source-damping-ablation-v1-manifest.json",
+  "source_manifest_sha256": "8904fc301478ea754a498e55bd5d92bbfb2a5ca8357e2266205f299c675ce857",
+  "binaries": {
+    "build-sycl-mpi-damping-ablation-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_damping_ablation": "bedd3268cfb507cda3ff50616fbcaf1c2ea6829af1d44794f9dd5cd7baaf206b"
+  },
+  "inputs": {
+    "inputs/puncture-continuous-n16-smooth-v1.txt": "35c1b65aeaaefac34552f9a63b279cabe839b09326adc9af1d2c767ecc29c8ca"
+  },
+  "pbs_sha256": "bfa9a3ec597a418ad104d700136a7ca173586e6eab8c457c2cda36dbdca46aa0",
+  "admission": null,
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "01:00:00"
+  },
+  "storage_at_bind": {
+    "bytes": 3342691777,
+    "entries": 62204,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 89725224,
+    "planned_bytes": 137560359,
+    "headroom_bytes": 1430022640
+  },
+  "launcher": {
+    "control.py": "131e829b870c2c39faba3ac6e1e1143c09b3766586e30560f73c6fbc7cafb9af",
+    "worker.py": "428efcd6e20a33fe5b0e25046792391b12b66857c56df441925e09b5aa251a28",
+    "run_debug.pbs": "1d5df790cf6c8cdc96e9d330b9b337ce755b30e057959586bcd661dc9ce885a6",
+    "storage.py": "fdcf2abc2533b8fed91220d9c18d8b9d723660820949a72e956fb9c8866afd39"
+  },
+  "allocation_seconds": 3600,
+  "worker_seconds": 3200
+}

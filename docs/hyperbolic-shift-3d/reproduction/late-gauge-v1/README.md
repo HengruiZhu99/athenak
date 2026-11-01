@@ -27,9 +27,10 @@ interval.05. Retain negative/zero candidate counts and horizon quality flags.
 The N16-only helper and controller reject N24,wrong schemas,modified dt/settings,
 and failed/unadmitted checkpoints. Local point tests cover physical gauge rates,
 independent .4--.9 placement,unchanged outer limit and fixed damping; device parity
-also passes. Build/evolution validation and remote execution records will be added
-when completed. This is a prepared experiment, not a validated formulation.
-No LG1 remote job is submitted yet. Do not duplicate or interrupt the live DG1 run.
+also passes. Remote build and binding records are preserved in build/ and n16-prepared/.
+This is a prepared experiment, not a validated formulation.
+LG1 N16 job9018058 is submitted after DG1 completed and failed accuracy review.
+Do not duplicate its saved submission or restart the completed DG1 experiment.
 
 Local fresh LG1 reached coordinate.001 in2steps; its LG1 restart reached.0015
 in3total steps. Both completed with null residual below1.3e-15. These smoke
@@ -45,3 +46,45 @@ verification. The first remote configure attempt omitted the donor spherical
 API directory; its error log is retained remotely. That directory was added
 from the same frozen commit before restarting configuration. No science changed
 and no LG1 scheduler job was submitted during this build repair.
+
+## Frozen execution and collection
+
+The Aurora SYCL/PVC+MPI build completed. All544 archived scientific/build source
+files match the frozen Git archive;1486 Kokkos files match the prior manifest.
+Binary SHA256 d64e108a0d0ce213ca30ae97709a54f2f61f9f8d771d308b0aacc0f3ad3c7c0a.
+Manifest source-late-gauge-v1-manifest.json SHA256
+ eafc0f7b133f961ffaf0dfc28bf02610b17bd3be406e7d794cb2417e4bf287c7.
+Frozen launcher launcher-late-gauge-v1/control.py and late_gauge_campaign.py;
+verify every file against provenance.json, including late-gauge-science.json.
+Prepared N16 plan campaigns/n16-late-gauge-fresh10m-v1-segment01/plan.json SHA256
+30fc9facaeaa32feb7f8d4f9d1449e36e2bca56b884b0a4d1fcbfd1818be3e81.
+Binding measured3,559,388,349bytes with1,213,326,068bytes headroom after reservations.
+
+Follow late-gauge-10m-state.json and the plan's saved submission before taking
+any action. No duplicate queued/running/ambiguous submissions. Submit only after
+the DG1 allocation is terminal, evidence collected/verified, matching lock released,
+and final constraints reviewed. Check ALL user debug jobs; preserve unrelated jobs.
+One CompactBinaryMerger/debug node,12 MPI ranks/GPU tiles;worker3200s,command3100s,
+native exit reserve180s. Home task cap5,000,000,000bytes including planned output
+and atomic checkpoint reserves; do not weaken storage checks.
+
+After terminal evolution collect using the frozen controller; copy the full campaign
+locally retaining campaigns/... layout. SHA256/length-verify every worker artifact
+before any remote purge. Healthy completion/walltime stops require frozen helper
+verify --root ROOT --plan PLAN: admitted LG1 header168,scheme3,exact configuration,
+dt/dimensions,time/steps matching report,finite payload and forward progress.
+N16 checkpoint length79,725,224bytes. Release only the matching terminal root lock
+once. Healthy walltime stops below10M may continue sequential N16 plans with
+--restart verified_checkpoint --sha256 verified_hash and a bound horizon-seed
+sidecar where present. Numerical failures are preserved and never resumed; do not
+silently change dt,equations or floors. Resolve infrastructure/integrity failures
+before another job. Keep required restart data until its successor is verified.
+
+At10M compare LG1 with IT1,DO1 and DG1 using matching checkpoint diagnostics and
+a common cutoff outside all four candidate horizons. Inspect full/candidate-exterior
+histories,radial error bands,horizon quality and sign/floor counts. Finite evolution
+alone does not admit N24. Review accuracy against IT1 and then either investigate
+further or explicitly admit a matching N24 test under the active goal.
+
+Current LG1 job9018058 follows the frozen N16 plan above. The existing20-minute
+monitor was updated to this trial; N24 remains gated on reviewed N16 accuracy.
