@@ -23,6 +23,9 @@ CPU_BIND = '1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-10
 FIXED = dict(queue='debug', account=ACCOUNT, nodes=1, ranks=12, ranks_per_node=12)
 PHASES = {'preflight', 'stability', 'convergence', 'resolution_control', 'timestep_experiment', 'direct_variable_resolution', 'candidate_history_replay', 'gauge_blend_comparison', 'smooth_gauge_continuation', 'smooth_direct_evolution', 'inner_telegrapher_evolution', 'direct_outer_evolution', 'damping_ablation_evolution', 'late_gauge_evolution', 'short_gauge_evolution'}
 SHORT_GAUGE_TARGET = 'hyperbolic_shift_3d_mpi_short_gauge'
+SHORT_GAUGE_POLICIES = {16: 'n16_short_gauge_fresh_to10M',
+                        24: 'n24_short_gauge_fresh_to10M_after_n16_review',
+                        32: 'n32_user_authorized_short_gauge_fresh_to10M'}
 LATE_GAUGE_TARGET = 'hyperbolic_shift_3d_mpi_late_gauge'
 DAMPING_ABLATION_TARGET = 'hyperbolic_shift_3d_mpi_damping_ablation'
 DIRECT_OUTER_TARGET = 'hyperbolic_shift_3d_mpi_direct_outer'
@@ -174,8 +177,8 @@ def validate_plan(root, plan):
     late_gauge = plan['phase'] == 'late_gauge_evolution'
     short_gauge = plan['phase'] == 'short_gauge_evolution'
     smooth_direct = plan['phase'] == 'smooth_direct_evolution' or inner_telegrapher or direct_outer or damping_ablation or late_gauge or short_gauge
-    if smooth_direct and (n not in ([16] if inner_telegrapher or damping_ablation or late_gauge else [16,24]) or plan['low_resolution_n'] != 16
-            or plan.get('experimental_policy') != (('n16_short_gauge_fresh_to10M' if n==16 else 'n24_short_gauge_fresh_to10M_after_n16_review') if short_gauge else 'n16_late_gauge_fresh_to10M' if late_gauge else 'n16_damping_ablation_fresh_to10M' if damping_ablation else 'n16_then_n24_direct_outer_fresh_to10M' if direct_outer else 'n16_inner_telegrapher_fresh_to10M' if inner_telegrapher else 'n16_then_n24_smooth_direct_fresh_to20M')
+    if smooth_direct and (n not in ([16,24,32] if short_gauge else [16] if inner_telegrapher or damping_ablation or late_gauge else [16,24]) or plan['low_resolution_n'] != 16
+            or plan.get('experimental_policy') != (SHORT_GAUGE_POLICIES.get(n) if short_gauge else 'n16_late_gauge_fresh_to10M' if late_gauge else 'n16_damping_ablation_fresh_to10M' if damping_ablation else 'n16_then_n24_direct_outer_fresh_to10M' if direct_outer else 'n16_inner_telegrapher_fresh_to10M' if inner_telegrapher else 'n16_then_n24_smooth_direct_fresh_to20M')
             or plan.get('native_exit_reserve_seconds') != 180
             or type(plan.get('segment')) is not int or plan['segment'] < 1
             or len(plan.get('commands', [])) != 1):

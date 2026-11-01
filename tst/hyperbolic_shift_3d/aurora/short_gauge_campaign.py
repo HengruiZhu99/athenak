@@ -12,7 +12,8 @@ from resolution_campaign import DT_CONFIG, cells
 BINARY = 'build-sycl-mpi-short-gauge-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_short_gauge'
 INITIAL_SHA = {
     16: '35c1b65aeaaefac34552f9a63b279cabe839b09326adc9af1d2c767ecc29c8ca',
-    24: '6c265e8dc309c70a2c7017a80eddd2d76f3a185b4f1d6108cc65b8bfc85be914'}
+    24: '6c265e8dc309c70a2c7017a80eddd2d76f3a185b4f1d6108cc65b8bfc85be914',
+    32: 'acc4f740feb68a3378dc6129a2f897422fb77e07ca97aa8a469cc5162b9ccaa1'}
 CONFIG = bytearray(DT_CONFIG)
 struct.pack_into('<i', CONFIG, 72, 3)
 CONFIG += struct.pack('<2d',1e-8,.03)
@@ -31,7 +32,7 @@ END = 10/3
 
 
 def inspect_checkpoint(path, n, expected_sha):
-    if n not in [16,24] or control.digest(path) != expected_sha:
+    if n not in [16,24,32] or control.digest(path) != expected_sha:
         raise ValueError('Unverified checkpoint identity')
     data = Path(path).read_bytes()
     h = struct.unpack('<16s4i3Q2d', data[:72])
@@ -54,9 +55,9 @@ def inspect_checkpoint(path, n, expected_sha):
 
 
 def make_plan(root,n,segment,initial=None,restart=None,expected_sha=None,review=None):
-    if n not in [16,24] or segment<1 or bool(initial)==bool(restart):
-        raise ValueError('Supply N16/N24 and exactly one initial/restart input')
-    if (n==24 and not review) or (n==16 and review):
+    if n not in [16,24,32] or segment<1 or bool(initial)==bool(restart):
+        raise ValueError('Supply N16/N24/N32 and exactly one initial/restart input')
+    if (n==24 and not review) or (n!=24 and review):
         raise ValueError('Only N24 requires the explicit N16 accuracy review')
     if initial:
         if segment != 1 or control.digest(control.local_path(root,initial)) != INITIAL_SHA[n]:
@@ -84,7 +85,7 @@ def make_plan(root,n,segment,initial=None,restart=None,expected_sha=None,review=
         ('scri_penalty_scale_min','eq',1),('angular_epsilon_min','eq',2),
         ('complete_candidate_exterior_enabled','eq',True)]]
     plan=dict(schema=1,reviewed=True,phase='short_gauge_evolution',segment=segment,
-        experimental_policy='n16_short_gauge_fresh_to10M' if n==16 else 'n24_short_gauge_fresh_to10M_after_n16_review',n=n,low_resolution_n=16,
+        experimental_policy=control.SHORT_GAUGE_POLICIES[n],n=n,low_resolution_n=16,
         native_exit_reserve_seconds=180,resources=dict(control.FIXED,walltime='01:00:00'),
         worker_seconds=3200,storage=dict(limit_bytes=5_000_000_000,
             planned_new_bytes=math.ceil(1.6*cp)+10_000_000,atomic_checkpoint_reserve_bytes=cp+10_000_000),
@@ -147,7 +148,7 @@ def verify(root,relative):
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('action',choices=['plan','verify'])
-    p.add_argument('--root',type=Path,required=True);p.add_argument('--n',type=int,choices=[16,24])
+    p.add_argument('--root',type=Path,required=True);p.add_argument('--n',type=int,choices=[16,24,32])
     p.add_argument('--segment',type=int,default=1);p.add_argument('--initial');p.add_argument('--restart');p.add_argument('--sha256');p.add_argument('--plan');p.add_argument('--review')
     a=p.parse_args();root=a.root.resolve()
     print(json.dumps(make_plan(root,a.n,a.segment,a.initial,a.restart,a.sha256,a.review) if a.action=='plan' else verify(root,a.plan),indent=2))

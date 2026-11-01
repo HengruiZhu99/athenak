@@ -27,7 +27,7 @@ class DirectCampaignTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);(root/'initial').write_text('original')
             sha=control.digest(root/'initial')
-            for n in [16]:
+            for n in [16,32]:
                 with patch.dict(c.INITIAL_SHA,{n:sha}):
                     made=c.make_plan(root,n,1,initial='initial')
                 import json
@@ -38,6 +38,8 @@ class DirectCampaignTests(unittest.TestCase):
                 for index,value in [(3,'1'),(3,str(20/3)),(4,'.001'),(5,'-'),(6,'old3M'),(12,'1')]:
                     bad=copy.deepcopy(plan);bad['commands'][0]['args'][index]=value
                     with self.assertRaises(ValueError):control.validate_plan(root,bad)
+                bad=copy.deepcopy(plan);bad['experimental_policy']='n32_unreviewed_generic'
+                with self.assertRaises(ValueError):control.validate_plan(root,bad)
                 bad=copy.deepcopy(plan);bad['n']=24
                 with self.assertRaises(ValueError):control.validate_plan(root,bad)
                 bad=copy.deepcopy(plan);bad['commands'][0]['executable']='build/'+control.SMOOTH_GAUGE_TARGET
@@ -88,14 +90,15 @@ class DirectCampaignTests(unittest.TestCase):
             with self.assertRaises(ValueError):control.validate_plan(root,plan)
 
     def test_n24_checkpoint_dt_schema_and_floor_binding(self):
-        n=24;nc=2;ns=6*n*n*31
-        data=bytearray(struct.pack('<16s4i3Q2d',b'HYP3D_MPI_SG1',n,31,2,1,nc,ns,30,.01,1/3000)+c.CONFIG)
-        data+=struct.pack('<d',1.)*(2*(31*nc+ns))
-        with tempfile.TemporaryDirectory() as tmp,patch.object(c,'cells',return_value=nc):
-            p=Path(tmp)/'input';p.write_bytes(data)
-            self.assertEqual(c.inspect_checkpoint(p,n,control.digest(p))['dt'],1/3000)
-            for offset,fmt,value in [(0,'<16s',b'HYP3D_MPI_DO1'),(28,'<i',0),(64,'<d',.0005),(152,'<d',0.)]:
-                bad=bytearray(data);struct.pack_into(fmt,bad,offset,value);p.write_bytes(bad)
-                with self.assertRaises(ValueError):c.inspect_checkpoint(p,n,control.digest(p))
+        for n in [24,32]:
+            nc=2;ns=6*n*n*31
+            data=bytearray(struct.pack('<16s4i3Q2d',b'HYP3D_MPI_SG1',n,31,2,1,nc,ns,30,.01,.0005*16/n)+c.CONFIG)
+            data+=struct.pack('<d',1.)*(2*(31*nc+ns))
+            with tempfile.TemporaryDirectory() as tmp,patch.object(c,'cells',return_value=nc):
+                p=Path(tmp)/'input';p.write_bytes(data)
+                self.assertEqual(c.inspect_checkpoint(p,n,control.digest(p))['dt'],.0005*16/n)
+                for offset,fmt,value in [(0,'<16s',b'HYP3D_MPI_DO1'),(28,'<i',0),(64,'<d',.0005),(152,'<d',0.)]:
+                    bad=bytearray(data);struct.pack_into(fmt,bad,offset,value);p.write_bytes(bad)
+                    with self.assertRaises(ValueError):c.inspect_checkpoint(p,n,control.digest(p))
 
 if __name__=='__main__':unittest.main()

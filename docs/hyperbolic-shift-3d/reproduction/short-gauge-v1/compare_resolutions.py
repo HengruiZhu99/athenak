@@ -135,8 +135,10 @@ def counters(reports):
                 scope='Segment-local counts include rejected attempts; event times are coordinate time. Boundary interpolation counts are separate.')
 
 
-def compare(raw, plans16, plans24, out):
+def compare(raw, plans16, plans24, out, plans32=None):
     cases = {n: load_campaign(raw, plans, n) for n, plans in [(16, plans16), (24, plans24)]}
+    if plans32:
+        cases[32] = load_campaign(raw, plans32, 32)
     out.mkdir(parents=True, exist_ok=True)
     summary = {}
     fig, axes = plt.subplots(2, 3, figsize=(13, 7))
@@ -145,7 +147,7 @@ def compare(raw, plans16, plans24, out):
               ('Mr_exterior_L2', 'Exterior radial momentum RMS'),
               ('H_L2', 'Full-domain Hamiltonian RMS'), ('M_L2', 'Full-domain momentum RMS'),
               ('horizon_irreducible_mass', 'Accepted horizon mass / M − 1')]
-    colors = {16: '#b55315', 24: '#1769aa'}
+    colors = {16: '#b55315', 24: '#1769aa', 32: '#228844'}
     for n, case in cases.items():
         data, last = case['history'], case['reports'][-1]
         for ax, (field, label) in zip(axes.flat, fields):
@@ -164,9 +166,9 @@ def compare(raw, plans16, plans24, out):
     axes[0, 0].legend()
     for ax in axes[1, :2]:
         ax.set_yscale('log')
-    fig.suptitle('SG1: matched fresh N16 and N24 evolutions, fixed dt/dx')
+    fig.suptitle('SG1: matched fresh ' + ' / '.join(f'N{n}' for n in cases) + ', fixed dt/dx')
     fig.tight_layout(rect=(0, .07, 1, .96))
-    fig.text(.5, .02, 'Exterior histories use each run’s candidate horizon; missing diagnostics remain gaps. Two grids do not establish convergence order.', ha='center', fontsize=9)
+    fig.text(.5, .02, 'Exterior histories use each run’s candidate horizon; missing diagnostics remain gaps. Resolution trends alone do not establish asymptotic convergence.', ha='center', fontsize=9)
     fig.savefig(out / 'histories.png', dpi=150)
     # Only compare endpoints at the SAME accepted time and with verified healthy
     # checkpoints. A failed checkpoint must never be treated as an accepted state.
@@ -215,11 +217,13 @@ def compare(raw, plans16, plans24, out):
             ax.grid(alpha=.2)
             ax.legend()
             ax.axvspan(.16, .18, color='k', alpha=.1)
-        fig.suptitle('SG1 constraints at 10M: N16 versus N24')
+        fig.suptitle('SG1 constraints at 10M: ' + ' / '.join(f'N{n}' for n in cases))
         fig.tight_layout()
         fig.savefig(out / 'radial.png', dpi=150)
         ratios = {key: endpoints[16]['norms']['exterior'][key] / endpoints[24]['norms']['exterior'][key] for key in ['H_L2', 'M_L2', 'Mr_L2', 'Theta_L2'] if endpoints[24]['norms']['exterior'][key] > 0}
         result['common_endpoint'] = dict(t_over_M=10, cutoff=cutoff, candidate_radii=radii, diagnostic_binary_sha256=digest(exe), endpoints=endpoints, n16_over_n24_ratios=ratios)
+        if 32 in endpoints:
+            result['common_endpoint']['n24_over_n32_ratios'] = {key: endpoints[24]['norms']['exterior'][key] / endpoints[32]['norms']['exterior'][key] for key in ['H_L2', 'M_L2', 'Mr_L2', 'Theta_L2'] if endpoints[32]['norms']['exterior'][key] > 0}
     (out / 'comparison.json').write_text(json.dumps(result, indent=2) + '\n')
     return result
 
@@ -229,6 +233,7 @@ if __name__ == '__main__':
     parser.add_argument('--root', type=Path, required=True)
     parser.add_argument('--n16-plans', nargs='+', required=True)
     parser.add_argument('--n24-plans', nargs='+', required=True)
+    parser.add_argument('--n32-plans', nargs='+')
     parser.add_argument('--output', type=Path, default=HERE / 'resolution-comparison')
     args = parser.parse_args()
-    compare(args.root.resolve(), args.n16_plans, args.n24_plans, args.output.resolve())
+    compare(args.root.resolve(), args.n16_plans, args.n24_plans, args.output.resolve(), args.n32_plans)
