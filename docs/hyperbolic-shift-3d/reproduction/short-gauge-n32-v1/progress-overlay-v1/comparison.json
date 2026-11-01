@@ -1,0 +1,53 @@
+{
+  "scope": "Provisional live history snapshot through latest complete row; not a terminal report, checkpoint verification, or completed10M result.",
+  "job": "9027014",
+  "captured_utc": "2026-11-01T17:22:55.418880+00:00",
+  "history_sha256": {
+    "16": "c5681eb0e4e8331d7c477be24c3564c79320fd920f13084f56abf8e8b9f250a4",
+    "24": "97fa96100e2f26a2aa1c6cb129a5d9043a9a1930bb82a65da58a7095b4df63ce",
+    "32": "4e2ce2995236a35e9ace5af5ee4a99ec14eae63777d4326dd7da452f00cd1faa"
+  },
+  "cutoff": "Each resolution uses its own complete candidate horizon, including unaccepted candidates; not a common-cutoff comparison.",
+  "shared_end_t_over_M": 3.7500000000000036,
+  "resolutions": {
+    "16": {
+      "available_t_over_M": 10.0,
+      "shared_endpoint": {
+        "H_exterior_L2": 0.01753194101466793,
+        "M_exterior_L2": 0.031399844327650216,
+        "Mr_exterior_L2": 0.04276908157903203
+      },
+      "candidate_radius": 0.08252309207361834
+    },
+    "24": {
+      "available_t_over_M": 10.0,
+      "shared_endpoint": {
+        "H_exterior_L2": 0.010866968800171461,
+        "M_exterior_L2": 0.029904605979469586,
+        "Mr_exterior_L2": 0.032938419077481546
+      },
+      "candidate_radius": 0.08262991656078965
+    },
+    "32": {
+      "available_t_over_M": 3.7500000000000036,
+      "shared_endpoint": {
+        "H_exterior_L2": 0.008744720096261285,
+        "M_exterior_L2": 0.027622591984146804,
+        "Mr_exterior_L2": 0.029696657528961733
+      },
+      "candidate_radius": 0.08263527046348039
+    }
+  },
+  "ratios_at_shared_endpoint": {
+    "N16/N24": {
+      "H_exterior_L2": 1.6133239486609463,
+      "M_exterior_L2": 1.050000269162789,
+      "Mr_exterior_L2": 1.2984558086538904
+    },
+    "N24/N32": {
+      "H_exterior_L2": 1.2426891519166545,
+      "M_exterior_L2": 1.0826140427600885,
+      "Mr_exterior_L2": 1.109162505758713
+    }
+  }
+}
