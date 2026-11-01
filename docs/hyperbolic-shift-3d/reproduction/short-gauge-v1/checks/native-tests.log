@@ -1,0 +1,171 @@
+Start testing: Oct 31 23:00 PDT
+----------------------------------------------------------
+42/50 Testing: hyperbolic_shift_3d_direct_outer
+42/50 Test: hyperbolic_shift_3d_direct_outer
+Command: "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_direct_outer"
+Directory: /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d
+"hyperbolic_shift_3d_direct_outer" start time: Oct 31 23:00 PDT
+Output:
+----------------------------------------------------------
+Physical gauge oracle, guarded chi, damping, blend, outer/scri identity and speed estimates passed
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"hyperbolic_shift_3d_direct_outer" end time: Oct 31 23:00 PDT
+"hyperbolic_shift_3d_direct_outer" time elapsed: 00:00:00
+----------------------------------------------------------
+
+43/50 Testing: hyperbolic_shift_3d_direct_outer_device
+43/50 Test: hyperbolic_shift_3d_direct_outer_device
+Command: "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_direct_outer_device"
+Directory: /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d
+"hyperbolic_shift_3d_direct_outer_device" start time: Oct 31 23:00 PDT
+Output:
+----------------------------------------------------------
+backend=Serial
+adaptive=0 ko=0 scaled_error=0 partition_error=0 min_gap=0.33454651180795159 max_cfl=0.010764853143317946
+adaptive=0 ko=0.5 scaled_error=0 partition_error=0 min_gap=0.33454651180795159 max_cfl=0.010764853143317946
+adaptive=1 ko=0 scaled_error=0 partition_error=0 min_gap=0.33454651180795159 max_cfl=0.010764853143317946
+adaptive=1 ko=0.5 scaled_error=0 partition_error=0 min_gap=0.33454651180795159 max_cfl=0.010764853143317946
+diagnostic_scaled_error=0 partition_sum_error=1.5327283529082196e-15 coordinate_volume=4.2152788601671984 exterior_volume=4.1028383262800006
+CPU/device and partition parity passed on 4104 cells; worst_scaled_error=0
+<end of output>
+Test time =   2.34 sec
+----------------------------------------------------------
+Test Passed.
+"hyperbolic_shift_3d_direct_outer_device" end time: Oct 31 23:00 PDT
+"hyperbolic_shift_3d_direct_outer_device" time elapsed: 00:00:02
+----------------------------------------------------------
+
+44/50 Testing: hyperbolic_shift_3d_direct_outer_characteristics
+44/50 Test: hyperbolic_shift_3d_direct_outer_characteristics
+Command: "/usr/bin/python3" "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/compare_direct_outer_symbol.py" "--audit" "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/libhyperbolic_shift_3d_inner_characteristics.dylib" "--implementation" "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/libhyperbolic_shift_3d_direct_outer_characteristics.dylib" "--output" "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/direct-outer-characteristic-equivalence.json"
+Directory: /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d
+"hyperbolic_shift_3d_direct_outer_characteristics" start time: Oct 31 23:00 PDT
+Output:
+----------------------------------------------------------
+{"passed": true, "libraries_sha256": {"/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/libhyperbolic_shift_3d_inner_characteristics.dylib": "3da9fe7170d064db6fc081586e8a0b68634eac088742a1bb5f21f0a9f1016de4", "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/libhyperbolic_shift_3d_direct_outer_characteristics.dylib": "61aeb1fbb196a329894cc323f9002ceae5d754bc5bb55f57683e9d013930cf4c"}, "states": 401, "max_matrix_difference": 8.881784197001252e-16, "description": "Independent audit candidate versus implemented evolution gauge; not a global hyperbolicity proof"}
+<end of output>
+Test time =   0.91 sec
+----------------------------------------------------------
+Test Passed.
+"hyperbolic_shift_3d_direct_outer_characteristics" end time: Oct 31 23:00 PDT
+"hyperbolic_shift_3d_direct_outer_characteristics" time elapsed: 00:00:00
+----------------------------------------------------------
+
+45/50 Testing: hyperbolic_shift_3d_damping_ablation_device
+45/50 Test: hyperbolic_shift_3d_damping_ablation_device
+Command: "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_damping_ablation_device"
+Directory: /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d
+"hyperbolic_shift_3d_damping_ablation_device" start time: Oct 31 23:00 PDT
+Output:
+----------------------------------------------------------
+backend=Serial
+adaptive=0 ko=0 scaled_error=0 partition_error=0 min_gap=0.33454651180795159 max_cfl=0.010764853143317946
+adaptive=0 ko=0.5 scaled_error=0 partition_error=0 min_gap=0.33454651180795159 max_cfl=0.010764853143317946
+adaptive=1 ko=0 scaled_error=0 partition_error=0 min_gap=0.33454651180795159 max_cfl=0.010764853143317946
+adaptive=1 ko=0.5 scaled_error=0 partition_error=0 min_gap=0.33454651180795159 max_cfl=0.010764853143317946
+diagnostic_scaled_error=0 partition_sum_error=1.5327283529082196e-15 coordinate_volume=4.2152788601671984 exterior_volume=4.1028383262800006
+CPU/device and partition parity passed on 4104 cells; worst_scaled_error=0
+<end of output>
+Test time =   2.38 sec
+----------------------------------------------------------
+Test Passed.
+"hyperbolic_shift_3d_damping_ablation_device" end time: Oct 31 23:00 PDT
+"hyperbolic_shift_3d_damping_ablation_device" time elapsed: 00:00:02
+----------------------------------------------------------
+
+46/50 Testing: hyperbolic_shift_3d_late_gauge_device
+46/50 Test: hyperbolic_shift_3d_late_gauge_device
+Command: "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_late_gauge_device"
+Directory: /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d
+"hyperbolic_shift_3d_late_gauge_device" start time: Oct 31 23:00 PDT
+Output:
+----------------------------------------------------------
+backend=Serial
+adaptive=0 ko=0 scaled_error=0 partition_error=0 min_gap=0.33454651180795159 max_cfl=0.010764852849936554
+adaptive=0 ko=0.5 scaled_error=0 partition_error=0 min_gap=0.33454651180795159 max_cfl=0.010764852849936554
+adaptive=1 ko=0 scaled_error=0 partition_error=0 min_gap=0.33454651180795159 max_cfl=0.010764852849936554
+adaptive=1 ko=0.5 scaled_error=0 partition_error=0 min_gap=0.33454651180795159 max_cfl=0.010764852849936554
+diagnostic_scaled_error=0 partition_sum_error=1.5327283529082196e-15 coordinate_volume=4.2152788601671984 exterior_volume=4.1028383262800006
+CPU/device and partition parity passed on 4104 cells; worst_scaled_error=0
+<end of output>
+Test time =   2.37 sec
+----------------------------------------------------------
+Test Passed.
+"hyperbolic_shift_3d_late_gauge_device" end time: Oct 31 23:00 PDT
+"hyperbolic_shift_3d_late_gauge_device" time elapsed: 00:00:02
+----------------------------------------------------------
+
+47/50 Testing: hyperbolic_shift_3d_short_gauge_device
+47/50 Test: hyperbolic_shift_3d_short_gauge_device
+Command: "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_short_gauge_device"
+Directory: /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d
+"hyperbolic_shift_3d_short_gauge_device" start time: Oct 31 23:00 PDT
+Output:
+----------------------------------------------------------
+backend=Serial
+adaptive=0 ko=0 scaled_error=0 partition_error=0 min_gap=0.33454651180795159 max_cfl=0.010764860474440878
+adaptive=0 ko=0.5 scaled_error=0 partition_error=0 min_gap=0.33454651180795159 max_cfl=0.010764860474440878
+adaptive=1 ko=0 scaled_error=0 partition_error=0 min_gap=0.33454651180795159 max_cfl=0.010764860474440878
+adaptive=1 ko=0.5 scaled_error=0 partition_error=0 min_gap=0.33454651180795159 max_cfl=0.010764860474440878
+diagnostic_scaled_error=0 partition_sum_error=1.5327283529082196e-15 coordinate_volume=4.2152788601671984 exterior_volume=4.1028383262800006
+CPU/device and partition parity passed on 4104 cells; worst_scaled_error=0
+<end of output>
+Test time =   2.87 sec
+----------------------------------------------------------
+Test Passed.
+"hyperbolic_shift_3d_short_gauge_device" end time: Oct 31 23:00 PDT
+"hyperbolic_shift_3d_short_gauge_device" time elapsed: 00:00:02
+----------------------------------------------------------
+
+48/50 Testing: hyperbolic_shift_3d_damping_ablation
+48/50 Test: hyperbolic_shift_3d_damping_ablation
+Command: "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_damping_ablation"
+Directory: /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d
+"hyperbolic_shift_3d_damping_ablation" start time: Oct 31 23:00 PDT
+Output:
+----------------------------------------------------------
+Physical gauge oracle, guarded chi, damping, blend, outer/scri identity and speed estimates passed
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"hyperbolic_shift_3d_damping_ablation" end time: Oct 31 23:00 PDT
+"hyperbolic_shift_3d_damping_ablation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+49/50 Testing: hyperbolic_shift_3d_late_gauge
+49/50 Test: hyperbolic_shift_3d_late_gauge
+Command: "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_late_gauge"
+Directory: /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d
+"hyperbolic_shift_3d_late_gauge" start time: Oct 31 23:00 PDT
+Output:
+----------------------------------------------------------
+Physical gauge oracle, guarded chi, damping, blend, outer/scri identity and speed estimates passed
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"hyperbolic_shift_3d_late_gauge" end time: Oct 31 23:00 PDT
+"hyperbolic_shift_3d_late_gauge" time elapsed: 00:00:00
+----------------------------------------------------------
+
+50/50 Testing: hyperbolic_shift_3d_short_gauge
+50/50 Test: hyperbolic_shift_3d_short_gauge
+Command: "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_short_gauge"
+Directory: /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d
+"hyperbolic_shift_3d_short_gauge" start time: Oct 31 23:00 PDT
+Output:
+----------------------------------------------------------
+Physical gauge oracle, guarded chi, damping, blend, outer/scri identity and speed estimates passed
+<end of output>
+Test time =   0.56 sec
+----------------------------------------------------------
+Test Passed.
+"hyperbolic_shift_3d_short_gauge" end time: Oct 31 23:00 PDT
+"hyperbolic_shift_3d_short_gauge" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Oct 31 23:00 PDT

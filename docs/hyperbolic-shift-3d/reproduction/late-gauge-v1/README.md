@@ -146,7 +146,9 @@ The exact initial-data source comparison in `audit_initial_forcing.py` shows tha
 extending the Cauchy inner gauge into the hyperboloidal slice transition increases
 the radial shift forcing departure from IT1: RMS1.370 over.4<r<.7 versus.560 for
 DO1/DG1. Advection is common and cancels in these initial lapse/shift differences;
-B forcing is not claimed identical. The strong shift pulse and metric distortion
+B forcing is not claimed identical. The last accepted radial means (`accepted-radial-means.json`) have radial
+metric0.06057 and Theta212.2 on the failing shell, with strongly varying radial
+shift across adjacent shells. The strong initial shift pulse and later metric distortion
 suggest a gauge/initial-slice incompatibility, not a proven root cause. A timestep
 or interface contribution has not been excluded.
 
