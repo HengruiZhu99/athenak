@@ -1,5 +1,9 @@
 # SG1: restore the earlier gauge interval, retain the direct outer driver
 
+**Current:** N16 completed10M and passed review. Fresh N24 job9019406 is
+submitted toward10M using the same scientific source and binary. See the terminal result and accuracy-review record below. Earlier pending
+sections retain preparation chronology and do not override that decision.
+
 The N16 accuracy investigation continues after LG1 failed at 2.9715M. The next
 controlled test uses the IT1 interpolation interval 0.2--0.56 with the DO1 direct
 outer driver and the DG1 restored IT1 constraint damping. Only the gauge weight
@@ -225,3 +229,47 @@ review does not authorize changing equations, timestep ratio or floors, nor
 restarting numerical failures. It does not claim global strong hyperbolicity or
 convergence. The persistent goal remains active until the N24 investigation is
 finished and assessed.
+
+At the10M SG1 endpoint, r=0.775--0.9 contributes62.20% of the exterior H-squared
+integral and75.02% of the exterior M-squared integral (common cutoff0.1099).
+The.16--.30 region contributes23.44%/8.98% respectively. These are residual error
+locations to compare at N24; they do not by themselves identify an outer-collar
+or interface defect. The generated comparison keeps `n24_admitted:false` because
+it cannot grant admission; the later explicit accuracy review is authoritative.
+
+
+## N24 submitted after N16 review
+
+Job **9019406** is already submitted. Current state is
+`short-gauge-n24-10m-state.json`; plan
+`campaigns/n24-short-gauge-fresh10m-v1-segment01/plan.json`, SHA256
+`8290c012f0c3a5a982f5eb53a29bf6d85b6a17dd467d5a5be60ae63efaceccf6`.
+Do not duplicate the saved submission. Fresh original N24 text starts at t=0,
+dt=1/3000, target coordinate10/3. Scientific source, binary, gauge, floors and
+diagnostics are identical to N16. There is no N24 result yet.
+
+Use the new frozen `launcher-short-gauge-n24-v1`, from launcher commit
+`ef70f5dc9809062ebb388f253beb58e8488ef804`; verify its provenance before use.
+The older launcher is N16-only. Every N24 segment requires
+`--review admissions/n16-short-gauge-10m-review-v1.json`, SHA256
+`723e5cda25c9496b12b487bbe7f37c6578f95a2743feecb682c1fbb673ccc224`.
+This review is bound as an input and must match the frozen scientific hashes.
+Submission/binding/storage records and launcher provenance are in
+`n24-submitted/`. Binding measured3,682,934,615bytes, with687,589,671bytes
+headroom after planned output and atomic reserves. No user debug jobs were
+present before submission. N16's terminal lock was released and its remote
+checkpoint retired only after independent local SHA256/length verification.
+
+The existing20-minute monitor now follows N24 and may continue healthy walltime
+checkpoints only. Collect and independently verify artifacts and admitted SG1
+configuration before continuation; N24 checkpoint length is234,413,736bytes.
+Keep campaign-relative paths locally, preserve horizon-seed sidecars and the
+bound review, check all user debug jobs, and release only the matching terminal
+lock. Never resume numerical failures or change science automatically.
+
+After N24 terminates, compare actual N16/N24 histories and any admitted endpoints
+with matching SG1 diagnostics and one common exterior cutoff. Existing
+`compare.py` compares N16 gauge variants; it is not a resolution-comparison
+script. Retain horizon flags, missing data and separate floor/sign counters.
+Assess the residual outer-shell and overlap-region errors and accepted horizon
+mass errors without inferring an asymptotic order from two resolutions alone.
