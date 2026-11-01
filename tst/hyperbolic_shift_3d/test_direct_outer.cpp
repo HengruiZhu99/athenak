@@ -41,6 +41,11 @@ int main(int argc,char**argv){
    const auto now=h::HyperbolicGauge(x,u,B,D);
    Check(old.valid&&now.valid,"valid point rejected");
    const double s=h::InnerTelegrapherWeight(r);
+   if constexpr(h::short_inner_gauge) {
+    Near(s,h::Smoothstep9((.56-r)/.36),"short gauge prescribed placement");
+    Check(r>.2 || s==1,"short inner plateau not exact");
+    Check(r<.56 || s==0,"short outer plateau not exact");
+   }
    if constexpr(h::late_inner_gauge) {
     Near(s,h::Smoothstep9((.9-r)/.5),"late gauge prescribed placement");
     Check(r>.4 || s==1,"late inner plateau not exact");

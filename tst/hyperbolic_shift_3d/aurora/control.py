@@ -21,7 +21,8 @@ JOB_NAME = 'hyper-scri-3d'
 ACCOUNT = 'CompactBinaryMerger'
 CPU_BIND = '1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100'
 FIXED = dict(queue='debug', account=ACCOUNT, nodes=1, ranks=12, ranks_per_node=12)
-PHASES = {'preflight', 'stability', 'convergence', 'resolution_control', 'timestep_experiment', 'direct_variable_resolution', 'candidate_history_replay', 'gauge_blend_comparison', 'smooth_gauge_continuation', 'smooth_direct_evolution', 'inner_telegrapher_evolution', 'direct_outer_evolution', 'damping_ablation_evolution', 'late_gauge_evolution'}
+PHASES = {'preflight', 'stability', 'convergence', 'resolution_control', 'timestep_experiment', 'direct_variable_resolution', 'candidate_history_replay', 'gauge_blend_comparison', 'smooth_gauge_continuation', 'smooth_direct_evolution', 'inner_telegrapher_evolution', 'direct_outer_evolution', 'damping_ablation_evolution', 'late_gauge_evolution', 'short_gauge_evolution'}
+SHORT_GAUGE_TARGET = 'hyperbolic_shift_3d_mpi_short_gauge'
 LATE_GAUGE_TARGET = 'hyperbolic_shift_3d_mpi_late_gauge'
 DAMPING_ABLATION_TARGET = 'hyperbolic_shift_3d_mpi_damping_ablation'
 DIRECT_OUTER_TARGET = 'hyperbolic_shift_3d_mpi_direct_outer'
@@ -171,9 +172,10 @@ def validate_plan(root, plan):
     direct_outer = plan['phase'] == 'direct_outer_evolution'
     damping_ablation = plan['phase'] == 'damping_ablation_evolution'
     late_gauge = plan['phase'] == 'late_gauge_evolution'
-    smooth_direct = plan['phase'] == 'smooth_direct_evolution' or inner_telegrapher or direct_outer or damping_ablation or late_gauge
-    if smooth_direct and (n not in ([16] if inner_telegrapher or damping_ablation or late_gauge else [16,24]) or plan['low_resolution_n'] != 16
-            or plan.get('experimental_policy') != ('n16_late_gauge_fresh_to10M' if late_gauge else 'n16_damping_ablation_fresh_to10M' if damping_ablation else 'n16_then_n24_direct_outer_fresh_to10M' if direct_outer else 'n16_inner_telegrapher_fresh_to10M' if inner_telegrapher else 'n16_then_n24_smooth_direct_fresh_to20M')
+    short_gauge = plan['phase'] == 'short_gauge_evolution'
+    smooth_direct = plan['phase'] == 'smooth_direct_evolution' or inner_telegrapher or direct_outer or damping_ablation or late_gauge or short_gauge
+    if smooth_direct and (n not in ([16] if inner_telegrapher or damping_ablation or late_gauge or short_gauge else [16,24]) or plan['low_resolution_n'] != 16
+            or plan.get('experimental_policy') != ('n16_short_gauge_fresh_to10M' if short_gauge else 'n16_late_gauge_fresh_to10M' if late_gauge else 'n16_damping_ablation_fresh_to10M' if damping_ablation else 'n16_then_n24_direct_outer_fresh_to10M' if direct_outer else 'n16_inner_telegrapher_fresh_to10M' if inner_telegrapher else 'n16_then_n24_smooth_direct_fresh_to20M')
             or plan.get('native_exit_reserve_seconds') != 180
             or type(plan.get('segment')) is not int or plan['segment'] < 1
             or len(plan.get('commands', [])) != 1):
@@ -252,7 +254,9 @@ def validate_plan(root, plan):
             if path not in preceding_artifacts:
                 raise ValueError('Generated inputs must be declared artifacts of an earlier case')
         if command['kind'] != 'check':
-            experimental = Path(command['executable']).name in {TIMESTEP_TARGET, CHI_FLOOR_TARGET, DIRECT_LAPSE_TARGET, DIRECT_CHI_LAPSE_TARGET, CANDIDATE_HISTORY_TARGET, SMOOTH_GAUGE_TARGET, SMOOTH_DIRECT_TARGET, INNER_TELEGRAPHER_TARGET, DIRECT_OUTER_TARGET, DAMPING_ABLATION_TARGET, LATE_GAUGE_TARGET}
+            experimental = Path(command['executable']).name in {TIMESTEP_TARGET, CHI_FLOOR_TARGET, DIRECT_LAPSE_TARGET, DIRECT_CHI_LAPSE_TARGET, CANDIDATE_HISTORY_TARGET, SMOOTH_GAUGE_TARGET, SMOOTH_DIRECT_TARGET, INNER_TELEGRAPHER_TARGET, DIRECT_OUTER_TARGET, DAMPING_ABLATION_TARGET, LATE_GAUGE_TARGET, SHORT_GAUGE_TARGET}
+            if (Path(command['executable']).name == SHORT_GAUGE_TARGET) != short_gauge:
+                raise ValueError('Short gauge executable/phase mismatch')
             if (Path(command['executable']).name == LATE_GAUGE_TARGET) != late_gauge:
                 raise ValueError('Late gauge is an N16-only 10M experiment')
             if (Path(command['executable']).name == DAMPING_ABLATION_TARGET) != damping_ablation:
@@ -261,7 +265,7 @@ def validate_plan(root, plan):
                 raise ValueError('Direct outer target requires its N16/N24 10M policy')
             if (Path(command['executable']).name == INNER_TELEGRAPHER_TARGET) != inner_telegrapher:
                 raise ValueError('Inner telegrapher target requires its N16 10M policy')
-            if (Path(command['executable']).name == SMOOTH_DIRECT_TARGET) != (smooth_direct and not inner_telegrapher and not direct_outer and not damping_ablation and not late_gauge):
+            if (Path(command['executable']).name == SMOOTH_DIRECT_TARGET) != (smooth_direct and not inner_telegrapher and not direct_outer and not damping_ablation and not late_gauge and not short_gauge):
                 raise ValueError('Smooth direct executable requires its explicit fresh campaign policy')
             if (Path(command['executable']).name == SMOOTH_GAUGE_TARGET) != (smooth_comparison or smooth_continuation):
                 raise ValueError('Smooth gauge executable requires its explicit comparison policy')
@@ -273,12 +277,12 @@ def validate_plan(root, plan):
                 raise ValueError('Direct lapse executable requires its explicit retry policy')
             if (Path(command['executable']).name == DIRECT_CHI_LAPSE_TARGET) != (plan.get('experimental_policy') == 'n16_direct_chi_lapse_retry_to_20M' or (refined and plan['campaign_stage']=='AC1_to20M')):
                 raise ValueError('Direct chi/lapse executable requires its explicit retry policy')
-            if experimental != (plan['phase'] in ['timestep_experiment','direct_variable_resolution','candidate_history_replay','gauge_blend_comparison','smooth_gauge_continuation', 'smooth_direct_evolution', 'inner_telegrapher_evolution', 'direct_outer_evolution', 'damping_ablation_evolution', 'late_gauge_evolution']):
+            if experimental != (plan['phase'] in ['timestep_experiment','direct_variable_resolution','candidate_history_replay','gauge_blend_comparison','smooth_gauge_continuation', 'smooth_direct_evolution', 'inner_telegrapher_evolution', 'direct_outer_evolution', 'damping_ablation_evolution', 'late_gauge_evolution', 'short_gauge_evolution']):
                 raise ValueError('Experimental target requires its own explicit phase')
             if smooth_direct:
                 fresh = plan['segment'] == 1
                 if (command['kind'] != 'puncture' or len(argv) != 13
-                        or float(argv[3]) != (10/3 if inner_telegrapher or direct_outer or damping_ablation or late_gauge else 20/3) or float(argv[4]) != .0005*16/n
+                        or float(argv[3]) != (10/3 if inner_telegrapher or direct_outer or damping_ablation or late_gauge or short_gauge else 20/3) or float(argv[4]) != .0005*16/n
                         or (fresh and (argv[5] == '-' or argv[6] != '-'))
                         or (not fresh and (argv[5] != '-' or argv[6] == '-'))
                         or argv[8:] != ['0.05','0.001','12','24','2']):
@@ -390,7 +394,7 @@ def verify_source(root, relative):
 
 def validate_admission(root, plan, source_digest, binary_hashes):
     """Admissions are reviewed evidence, never inferred from a process exit code."""
-    if plan['phase'] in {'preflight', 'timestep_experiment', 'direct_variable_resolution', 'candidate_history_replay', 'gauge_blend_comparison', 'smooth_gauge_continuation', 'smooth_direct_evolution', 'inner_telegrapher_evolution', 'direct_outer_evolution', 'damping_ablation_evolution', 'late_gauge_evolution'}:
+    if plan['phase'] in {'preflight', 'timestep_experiment', 'direct_variable_resolution', 'candidate_history_replay', 'gauge_blend_comparison', 'smooth_gauge_continuation', 'smooth_direct_evolution', 'inner_telegrapher_evolution', 'direct_outer_evolution', 'damping_ablation_evolution', 'late_gauge_evolution', 'short_gauge_evolution'}:
         # Direct user-requested experiment, not a scientifically admitted run.
         return None
     admission_path = local_path(root, plan['admission'])

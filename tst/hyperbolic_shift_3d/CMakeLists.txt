@@ -379,6 +379,11 @@ if(ENABLE_MPI)
   target_compile_options(hyperbolic_shift_3d_checkpoint_constraints_late_gauge PRIVATE -Wall -Wextra -ffp-contract=off)
   target_compile_definitions(hyperbolic_shift_3d_checkpoint_constraints_late_gauge PRIVATE ${hyperbolic_radial_batch_definitions} HYPERBOLIC_EXPERIMENTAL_TIMESTEP=1 HYPERBOLIC_ASSUMED_HORIZON_DIAGNOSTICS=1 HYPERBOLIC_SMOOTH_GAUGE_BLEND=1 HYPERBOLIC_INNER_TELEGRAPHER=1 HYPERBOLIC_DIRECT_OUTER=1 HYPERBOLIC_RESTORE_INNER_DAMPING=1 HYPERBOLIC_LATE_INNER_GAUGE=1 HYPERBOLIC_DIRECT_CHI=1 HYPERBOLIC_DIRECT_LAPSE=1 HYPERBOLIC_PUNCTURE_CHI_FLOOR=1e-8)
 
+  add_executable(hyperbolic_shift_3d_checkpoint_constraints_short_gauge checkpoint_constraints.cpp)
+  target_link_libraries(hyperbolic_shift_3d_checkpoint_constraints_short_gauge PRIVATE hyperboloidal_fastflow MPI::MPI_CXX)
+  target_compile_options(hyperbolic_shift_3d_checkpoint_constraints_short_gauge PRIVATE -Wall -Wextra -ffp-contract=off)
+  target_compile_definitions(hyperbolic_shift_3d_checkpoint_constraints_short_gauge PRIVATE ${hyperbolic_radial_batch_definitions} HYPERBOLIC_EXPERIMENTAL_TIMESTEP=1 HYPERBOLIC_ASSUMED_HORIZON_DIAGNOSTICS=1 HYPERBOLIC_SMOOTH_GAUGE_BLEND=1 HYPERBOLIC_INNER_TELEGRAPHER=1 HYPERBOLIC_DIRECT_OUTER=1 HYPERBOLIC_RESTORE_INNER_DAMPING=1 HYPERBOLIC_SHORT_INNER_GAUGE=1 HYPERBOLIC_DIRECT_CHI=1 HYPERBOLIC_DIRECT_LAPSE=1 HYPERBOLIC_PUNCTURE_CHI_FLOOR=1e-8)
+
   add_executable(hyperbolic_shift_3d_mpi_damping_ablation coupled_mpi.cpp)
   target_link_libraries(hyperbolic_shift_3d_mpi_damping_ablation PRIVATE hyperboloidal_fastflow MPI::MPI_CXX)
   target_compile_options(hyperbolic_shift_3d_mpi_damping_ablation PRIVATE -Wall -Wextra -ffp-contract=off)
@@ -388,6 +393,11 @@ if(ENABLE_MPI)
   target_link_libraries(hyperbolic_shift_3d_mpi_late_gauge PRIVATE hyperboloidal_fastflow MPI::MPI_CXX)
   target_compile_options(hyperbolic_shift_3d_mpi_late_gauge PRIVATE -Wall -Wextra -ffp-contract=off)
   target_compile_definitions(hyperbolic_shift_3d_mpi_late_gauge PRIVATE ${hyperbolic_radial_batch_definitions} HYPERBOLIC_EXPERIMENTAL_TIMESTEP=1 HYPERBOLIC_ASSUMED_HORIZON_DIAGNOSTICS=1 HYPERBOLIC_SMOOTH_GAUGE_BLEND=1 HYPERBOLIC_INNER_TELEGRAPHER=1 HYPERBOLIC_DIRECT_OUTER=1 HYPERBOLIC_RESTORE_INNER_DAMPING=1 HYPERBOLIC_LATE_INNER_GAUGE=1 HYPERBOLIC_DIRECT_CHI=1 HYPERBOLIC_DIRECT_LAPSE=1 HYPERBOLIC_PUNCTURE_CHI_FLOOR=1e-8)
+
+  add_executable(hyperbolic_shift_3d_mpi_short_gauge coupled_mpi.cpp)
+  target_link_libraries(hyperbolic_shift_3d_mpi_short_gauge PRIVATE hyperboloidal_fastflow MPI::MPI_CXX)
+  target_compile_options(hyperbolic_shift_3d_mpi_short_gauge PRIVATE -Wall -Wextra -ffp-contract=off)
+  target_compile_definitions(hyperbolic_shift_3d_mpi_short_gauge PRIVATE ${hyperbolic_radial_batch_definitions} HYPERBOLIC_EXPERIMENTAL_TIMESTEP=1 HYPERBOLIC_ASSUMED_HORIZON_DIAGNOSTICS=1 HYPERBOLIC_SMOOTH_GAUGE_BLEND=1 HYPERBOLIC_INNER_TELEGRAPHER=1 HYPERBOLIC_DIRECT_OUTER=1 HYPERBOLIC_RESTORE_INNER_DAMPING=1 HYPERBOLIC_SHORT_INNER_GAUGE=1 HYPERBOLIC_DIRECT_CHI=1 HYPERBOLIC_DIRECT_LAPSE=1 HYPERBOLIC_PUNCTURE_CHI_FLOOR=1e-8)
 
   add_executable(hyperbolic_shift_3d_mpi_direct_outer coupled_mpi.cpp)
   target_link_libraries(hyperbolic_shift_3d_mpi_direct_outer PRIVATE hyperboloidal_fastflow MPI::MPI_CXX)
@@ -503,6 +513,13 @@ target_compile_definitions(hyperbolic_shift_3d_late_gauge_device PRIVATE HYPERBO
 target_compile_options(hyperbolic_shift_3d_late_gauge_device PRIVATE -Wall -Wextra -ffp-contract=off)
 add_test(NAME hyperbolic_shift_3d_late_gauge_device COMMAND hyperbolic_shift_3d_late_gauge_device)
 
+add_executable(hyperbolic_shift_3d_short_gauge_device test_composite_device.cpp)
+target_include_directories(hyperbolic_shift_3d_short_gauge_device PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+target_link_libraries(hyperbolic_shift_3d_short_gauge_device PRIVATE Kokkos::kokkos Threads::Threads)
+target_compile_definitions(hyperbolic_shift_3d_short_gauge_device PRIVATE HYPERBOLIC_INNER_TELEGRAPHER=1 HYPERBOLIC_DIRECT_OUTER=1 HYPERBOLIC_RESTORE_INNER_DAMPING=1 HYPERBOLIC_SHORT_INNER_GAUGE=1 HYPERBOLIC_SMOOTH_GAUGE_BLEND=1)
+target_compile_options(hyperbolic_shift_3d_short_gauge_device PRIVATE -Wall -Wextra -ffp-contract=off)
+add_test(NAME hyperbolic_shift_3d_short_gauge_device COMMAND hyperbolic_shift_3d_short_gauge_device)
+
 add_executable(hyperbolic_shift_3d_damping_ablation test_direct_outer.cpp)
 target_include_directories(hyperbolic_shift_3d_damping_ablation PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
 target_link_libraries(hyperbolic_shift_3d_damping_ablation PRIVATE Kokkos::kokkos Threads::Threads)
@@ -516,3 +533,10 @@ target_link_libraries(hyperbolic_shift_3d_late_gauge PRIVATE Kokkos::kokkos Thre
 target_compile_definitions(hyperbolic_shift_3d_late_gauge PRIVATE HYPERBOLIC_INNER_TELEGRAPHER=1 HYPERBOLIC_DIRECT_OUTER=1 HYPERBOLIC_RESTORE_INNER_DAMPING=1 HYPERBOLIC_LATE_INNER_GAUGE=1 HYPERBOLIC_SMOOTH_GAUGE_BLEND=1)
 target_compile_options(hyperbolic_shift_3d_late_gauge PRIVATE -Wall -Wextra -ffp-contract=off)
 add_test(NAME hyperbolic_shift_3d_late_gauge COMMAND hyperbolic_shift_3d_late_gauge)
+
+add_executable(hyperbolic_shift_3d_short_gauge test_direct_outer.cpp)
+target_include_directories(hyperbolic_shift_3d_short_gauge PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+target_link_libraries(hyperbolic_shift_3d_short_gauge PRIVATE Kokkos::kokkos Threads::Threads)
+target_compile_definitions(hyperbolic_shift_3d_short_gauge PRIVATE HYPERBOLIC_INNER_TELEGRAPHER=1 HYPERBOLIC_DIRECT_OUTER=1 HYPERBOLIC_RESTORE_INNER_DAMPING=1 HYPERBOLIC_SHORT_INNER_GAUGE=1 HYPERBOLIC_SMOOTH_GAUGE_BLEND=1)
+target_compile_options(hyperbolic_shift_3d_short_gauge PRIVATE -Wall -Wextra -ffp-contract=off)
+add_test(NAME hyperbolic_shift_3d_short_gauge COMMAND hyperbolic_shift_3d_short_gauge)
