@@ -104,3 +104,21 @@ They do not exclude future collisions, establish global strong hyperbolicity,
 or prove stability or accuracy. The earlier LG1 audit was also benign on older
 states before its actual trajectory developed reversed speed ordering and failed.
 The running SG1 evolution remains necessary evidence.
+
+## Provisional first evolution comparison
+
+Scheduler job9018835 and its worker are running. The captured history reaches
+0.30M; it is a live snapshot, not terminal evidence. At matched0.30M the exterior
+Hamiltonian/momentum RMS values are SG1 0.094445/0.160757, DG1 0.097005/0.172294,
+DO1 0.106743/0.188707 and IT1 0.059336/0.108752. All four accept a candidate horizon
+at radius0.0647689519 (agreement to about1e-11). Thus the difference at this early
+sample is not plausibly explained by materially different radial cutoffs.
+The large full-domain Hamiltonian transient is shared: all four are approximately
+17.9364. No new instability is inferred from that transient alone.
+
+The shorter interval only modestly reduces the early exterior error relative to
+DG1 and remains above IT1. That suggests transition extent alone does not remove
+the initial discrepancy; it does not yet identify which remaining outer-driver
+term matters or predict the later result. `progress/comparison-0p30M.json` records
+exact values and source hashes. The fixed10M experiment continues unchanged;
+N24 remains gated on terminal accuracy review.
