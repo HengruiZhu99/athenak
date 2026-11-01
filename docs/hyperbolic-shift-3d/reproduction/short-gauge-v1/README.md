@@ -122,3 +122,12 @@ the initial discrepancy; it does not yet identify which remaining outer-driver
 term matters or predict the later result. `progress/comparison-0p30M.json` records
 exact values and source hashes. The fixed10M experiment continues unchanged;
 N24 remains gated on terminal accuracy review.
+
+The final comparison also records the accepted irreducible mass relative to the
+known Schwarzschild mass M=1/3, including the final signed fractional error and
+maximum absolute fractional error after4M. Failed horizon solves remain missing;
+using their candidate surface as an exterior cutoff does not create a reliable
+mass measurement. This supplements coordinate-volume constraint norms and avoids
+using coordinate horizon radius alone to judge differing gauges. The native IT1
+reference final fractional mass error is5.28210e-4; its DO1 counterpart is missing
+because final horizon acceptance failed. The SG1 endpoint remains pending.

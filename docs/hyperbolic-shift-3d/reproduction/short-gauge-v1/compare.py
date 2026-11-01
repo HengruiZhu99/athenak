@@ -50,11 +50,22 @@ for label,variant in [('IT1','inner-telegrapher-v1'),('DO1','direct-outer-v1')]:
 histories['DG1']=np.atleast_1d(np.genfromtxt(dg_dir/'puncture.history.csv',delimiter=',',names=True))
 display={'IT1':'Earlier gauge (IT1)','DO1':'Direct outer (DO1)','DG1':'Restored damping (DG1)','SG1':'Original interval (SG1)'}
 fig,axes=plt.subplots(2,3,figsize=(13,7));summary={}
-fields=[('H_L2','Full-domain Hamiltonian RMS',1),('M_L2','Full-domain momentum RMS',1),('Theta_L2','Full-domain Theta RMS',1),('H_exterior_L2','Candidate-exterior Hamiltonian RMS',1),('Mr_exterior_L2','Candidate-exterior radial momentum RMS',1),('horizon_areal_radius','Accepted horizon areal radius / M',3)]
+fields=[('H_L2','Full-domain Hamiltonian RMS',1),('M_L2','Full-domain momentum RMS',1),('Theta_L2','Full-domain Theta RMS',1),('H_exterior_L2','Candidate-exterior Hamiltonian RMS',1),('Mr_exterior_L2','Candidate-exterior radial momentum RMS',1),('horizon_irreducible_mass','Accepted irreducible mass / M − 1',3)]
 for label,color in [('IT1','#777777'),('DO1','#b55315'),('DG1','#1769aa'),('SG1','#228844')]:
  d=histories[label];d=d[np.argsort(d['t_over_M'],kind='stable')];_,ids=np.unique(d['t_over_M'],return_index=True);d=d[ids]
- for ax,(key,title,scale) in zip(axes.flat,fields):ax.plot(d['t_over_M'],d[key]*scale,label=display[label],color=color);ax.set(xlabel='t / M',ylabel=title);ax.grid(alpha=.2)
+ for ax,(key,title,scale) in zip(axes.flat,fields):
+  values=d[key]*scale
+  if key=='horizon_irreducible_mass':values=np.where(d['horizon_found']==1,values-1,np.nan)
+  ax.plot(d['t_over_M'],values,label=display[label],color=color);ax.set(xlabel='t / M',ylabel=title);ax.grid(alpha=.2)
  late=d[d['t_over_M']>=4-1e-8];summary[label]=dict(common_exterior=radial[label]['norms']['exterior'],late_history_max={key:float(np.nanmax(late[key])) for key in ['H_L2','M_L2','Theta_L2','H_exterior_L2','Mr_exterior_L2']},accepted_horizon_rows=int(np.sum(d['horizon_found'])),history_rows=len(d),final_horizon_accepted=bool(d[-1]['horizon_found']))
+ # Schwarzschild invariant check, using accepted finder results only. The
+ # candidate used to define a norm cutoff does not manufacture a mass result.
+ accepted_mass=late['horizon_irreducible_mass'][(late['horizon_found']==1)&np.isfinite(late['horizon_irreducible_mass'])]
+ final_report=cases[label][0]
+ summary[label]['accepted_mass_error']=dict(reference_mass=1/3,
+  final_relative_error=(3*final_report['horizon_irreducible_mass']-1) if final_report['horizon_found'] and final_report['horizon_irreducible_mass'] is not None else None,
+  max_absolute_relative_error_after4M=float(np.max(np.abs(3*accepted_mass-1))) if len(accepted_mass) else None,
+  accepted_rows_after4M=len(accepted_mass))
 axes[0,0].set_yscale('log');axes[0,0].legend(fontsize=8);fig.suptitle('N16 original gauge interval: r=0.2–0.56, damping fixed');fig.tight_layout(rect=(0,.06,1,.96));fig.text(.5,.015,'Histories use each run’s own candidate cutoff; final common-cutoff norms are recorded separately. Missing horizon values remain gaps.',ha='center',fontsize=9);fig.savefig(out/'histories.png',dpi=150)
 # Segment counters include rejected attempts; keep boundary-interpolation counts
 # separate from volume/surface candidate events and from positive floor hits.
