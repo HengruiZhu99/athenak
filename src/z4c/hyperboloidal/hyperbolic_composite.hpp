@@ -13,6 +13,7 @@
 #include "z4c/hyperboloidal/hyperbolic_shift.hpp"
 #include "z4c/hyperboloidal/tensor_scri.hpp"
 #include "z4c/hyperboloidal/positive_variables.hpp"
+#include "z4c/hyperboloidal/composite_dissipation.hpp"
 
 namespace z4c::hyperboloidal {
 // CPU coupled evolution on actual Cartesian/core and mapped shell cells. No
@@ -303,31 +304,32 @@ class HyperbolicComposite {
       correction+=b*(biased-grid.First(padded,point,A));
     }return correction;
   }
-  // Block-local KO8 in conservative -V^-1 B^T W B form. Positive physical
+  // Block-local KO8 (or the separately enabled KO10 consistency control)
+  // in conservative -V^-1 B^T W B form. Positive physical
   // volume weights give a nonpositive discrete energy contribution, including
   // core/shell block edges. It vanishes on the analytic constant background.
   // Unlike the 1D stencil it does not couple dissipation across block seams;
   // the transport and geometric derivatives DO exchange across every seam.
   void Dissipate(const V&v,V&rhs)const{
     if(ko==0)return;
-    constexpr int b[5]={1,-4,6,-4,1};const int n=grid.n;
+    using Stencil=CompositeDissipation;const int n=grid.n;
     for(size_t start=0;start<grid.active.size();++start)
-    for(int A=0;A<3;++A){if(grid.ShiftActive(start,A,4)<0)continue;
-      int donors[5];for(int a=0;a<5;++a)donors[a]=grid.ShiftActive(start,A,a);
+    for(int A=0;A<3;++A){if(grid.ShiftActive(start,A,Stencil::order)<0)continue;
+      int donors[Stencil::points];for(int a=0;a<Stencil::points;++a)donors[a]=grid.ShiftActive(start,A,a);
       Real weight=0;
-      for(int a=0;a<5;++a){const size_t p=donors[a];Real inverse_length=0;
+      for(int a=0;a<Stencil::points;++a){const size_t p=donors[a];Real inverse_length=0;
         for(int d=0;d<3;++d)inverse_length+=grid.geometry[p].J[A][d]*grid.geometry[p].J[A][d];
         const Real r=Radius(grid.geometry[p].x),taper=std::pow(std::max(Real(0),1-r*r/.64),6);
-        weight+=grid.volumes[p]*std::sqrt(inverse_length)*taper/5;}
+        weight+=grid.volumes[p]*std::sqrt(inverse_length)*taper/Stencil::points;}
       for(int f=0;f<nf;++f){
         const bool logarithmic=positive_dissipation&&(f==0||f==18);
         auto value=[&](size_t p){const Real r=Radius(grid.geometry[p].x),A=(1+r*r)/2;
           return logarithmic?PositiveLog(v[nf*p+f]+(f==18?A:0),PositiveReference(r*r,f,puncture_reference)):v[nf*p+f];};
-        Real fourth=0;const Real anchor=value(start);
-        for(int a=0;a<5;++a)fourth+=b[a]*(value(donors[a])-anchor);
-        for(int a=0;a<5;++a){const size_t p=donors[a];const Real r=Radius(grid.geometry[p].x);
+        Real difference=0;const Real anchor=value(start);
+        for(int a=0;a<Stencil::points;++a)difference+=Stencil::Coefficient(a)*(value(donors[a])-anchor);
+        for(int a=0;a<Stencil::points;++a){const size_t p=donors[a];const Real r=Radius(grid.geometry[p].x);
           const Real factor=logarithmic?v[nf*p+f]+(f==18?(1+r*r)/2:0):1;
-          rhs[nf*p+f]-=factor*ko*n*b[a]*weight*fourth/(256*grid.volumes[p]);}}
+          rhs[nf*p+f]-=factor*ko*n*Stencil::Coefficient(a)*weight*difference/(Stencil::normalization*grid.volumes[p]);}}
     }
   }
   V RHS(const V&values,Real dt,V&edge_rate){

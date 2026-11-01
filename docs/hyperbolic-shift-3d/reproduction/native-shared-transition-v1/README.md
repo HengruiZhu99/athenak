@@ -1,3 +1,7 @@
+# Active convergence investigation
+
+The persistent goal has started on `codex/native-initializer-shared-transition`. Read [STATUS.md](STATUS.md) and [goal-specification.txt](goal-specification.txt) for the current requirements, including the additional KO consistency repair. The earlier queued specification below is retained as history; the active goal takes precedence.
+
 # Queued native initializer and shared-transition investigation
 
 Status: queued after the existing SG1 N32-to-10M campaign reaches its terminal disposition and its evidence/comparison are preserved. No new scientific changes or jobs have been made for this follow-up.

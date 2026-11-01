@@ -10,6 +10,7 @@
 #include <vector>
 #include "mesh/cubed_sphere/composite_difference.hpp"
 #include "z4c/hyperboloidal/hyperbolic_shift.hpp"
+#include "z4c/hyperboloidal/composite_dissipation.hpp"
 #include "z4c/hyperboloidal/scri_radial_device.hpp"
 #ifndef HYPERBOLIC_EXPERIMENTAL_TIMESTEP
 #define HYPERBOLIC_EXPERIMENTAL_TIMESTEP 0
@@ -67,7 +68,7 @@ class HyperbolicCompositeDevice {
   // on its surface-owned donor points; the default bulk path is unchanged.
   friend class HyperbolicSampledNormalDevice;
   struct KOTerm {
-    int point[5];
+    int point[CompositeDissipation::points];
     int target_coefficient;
     Real weight;
   };
@@ -165,7 +166,7 @@ class HyperbolicCompositeDevice {
     }
     KOKKOS_INLINE_FUNCTION Real Dissipation(int local,int f) const {
       if (ko==0) return 0;
-      constexpr int b[5] = {1,-4,6,-4,1};
+      using Stencil=CompositeDissipation;
       Real result = 0;
       const bool logarithmic=positive_ko.extent(0)&&(f==0||(f==18&&!direct_lapse_dissipation));
       const int base = (logarithmic?(f==0?0:1):f)*padded_count;
@@ -173,10 +174,10 @@ class HyperbolicCompositeDevice {
       for (int i=offsets(local);i<offsets(local+1);++i) {
         const auto &term=terms(i);
         const Real anchor=data(base+term.point[0]);
-        Real fourth=0;
-        for (int a=0;a<5;++a)
-          fourth += b[a]*(data(base+term.point[a])-anchor);
-        result -= ko*n*term.target_coefficient*term.weight*fourth/(256*volume(local));
+        Real difference=0;
+        for (int a=0;a<Stencil::points;++a)
+          difference += Stencil::Coefficient(a)*(data(base+term.point[a])-anchor);
+        result -= ko*n*term.target_coefficient*term.weight*difference/(Stencil::normalization*volume(local));
       }
       if(logarithmic){const auto&x=geometry(local).x;const Real r=sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);
         result*=padded(f*padded_count+active(local))+(f==18?(1+r*r)/2:0);}
@@ -431,7 +432,7 @@ class HyperbolicCompositeDevice {
     auto diagnostic_volumes=Kokkos::create_mirror_view(diagnostic_volumes_);
     auto offsets=Kokkos::create_mirror_view(ko_offsets_);
     std::vector<KOTerm> terms;
-    constexpr int b[5]={1,-4,6,-4,1};
+    using Stencil=CompositeDissipation;
     struct Candidate {int start,axis,target;};
     for (int local=0;local<local_;++local) {
       const int p=first_+local;
@@ -439,9 +440,9 @@ class HyperbolicCompositeDevice {
       diagnostic_volumes(local)=grid.DiagnosticVolume(p);
       offsets(local)=terms.size();
       std::vector<Candidate> candidates;
-      for (int A=0;A<3;++A) for (int a=0;a<5;++a) {
+      for (int A=0;A<3;++A) for (int a=0;a<Stencil::points;++a) {
         const int start=grid.ShiftActive(p,A,-a);
-        if(start<0||grid.ShiftActive(start,A,4)<0)continue;
+        if(start<0||grid.ShiftActive(start,A,Stencil::order)<0)continue;
         candidates.push_back({start,A,a});
       }
       // Match the CPU scatter's global-start, then axis, accumulation order.
@@ -449,8 +450,8 @@ class HyperbolicCompositeDevice {
         return a.start<b.start || (a.start==b.start && a.axis<b.axis);
       });
       for (const auto &candidate:candidates) {
-        KOTerm term{};term.target_coefficient=b[candidate.target];
-        for (int a=0;a<5;++a) {
+        KOTerm term{};term.target_coefficient=Stencil::Coefficient(candidate.target);
+        for (int a=0;a<Stencil::points;++a) {
           const int donor=grid.ShiftActive(candidate.start,candidate.axis,a);
           term.point[a]=grid.active[donor];
           const auto &map=grid.geometry[donor];Real inverse_length=0,r2=0;
@@ -460,7 +461,7 @@ class HyperbolicCompositeDevice {
           }
           // Preserve the prototype's sqrt(r2), then r*r expression exactly.
           const Real r=std::sqrt(r2),taper=std::pow(std::max(Real(0),1-r*r/.64),6);
-          term.weight+=grid.volumes[donor]*std::sqrt(inverse_length)*taper/5;
+          term.weight+=grid.volumes[donor]*std::sqrt(inverse_length)*taper/Stencil::points;
         }
         terms.push_back(term);
       }
