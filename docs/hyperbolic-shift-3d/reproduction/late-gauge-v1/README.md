@@ -34,3 +34,7 @@ No LG1 remote job is submitted yet. Do not duplicate or interrupt the live DG1 r
 Local fresh LG1 reached coordinate.001 in2steps; its LG1 restart reached.0015
 in3total steps. Both completed with null residual below1.3e-15. These smoke
 checks establish executable/schema/restart operation, not duration accuracy.
+
+All125 controller/campaign tests passed. Frozen scientific source commit:
+e7c0b8ce2bdd639cfb9532b196fa5badb2b1c3b0. Remote build uses the existing
+SYCL/PVC+MPI configuration,oneapi/release/2025.3.1 and make -j64.
