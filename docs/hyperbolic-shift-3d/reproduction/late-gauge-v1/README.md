@@ -38,3 +38,10 @@ checks establish executable/schema/restart operation, not duration accuracy.
 All125 controller/campaign tests passed. Frozen scientific source commit:
 e7c0b8ce2bdd639cfb9532b196fa5badb2b1c3b0. Remote build uses the existing
 SYCL/PVC+MPI configuration,oneapi/release/2025.3.1 and make -j64.
+
+The provisional DG1 history supporting the4.65M decision is preserved in
+checks/dg1-progress-through4p65M.csv. It is a live-run snapshot, not terminal
+verification. The first remote configure attempt omitted the donor spherical
+API directory; its error log is retained remotely. That directory was added
+from the same frozen commit before restarting configuration. No science changed
+and no LG1 scheduler job was submitted during this build repair.
