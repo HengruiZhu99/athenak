@@ -33,7 +33,7 @@ initialization, dt/schema/floor binding, forbidden changes and continuations.
 
 Checkpoint HYP3D_MPI_SG1, header168,scheme3; N32 length518,617,768bytes. After a
 terminal healthy walltime stop, collect with the new frozen controller and copy
-the full campaign locally under output/hyperbolic-core-shell/short-gauge-n32-v1/aurora,
+the full campaign locally under output/hyperbolic-core-shell/short-gauge-v1/aurora,
 retaining campaigns/... paths and launcher. Hash/length-verify every artifact and
 run the frozen helper verify. Require admitted exact configuration, finite
 payload, matching report/header time/steps and forward progress. Release only
@@ -61,3 +61,24 @@ Assess radial residuals near0.16--0.30 and0.775--0.9. Three grids have unequal
 spacing ratios; do not infer a single order by assuming factor-two refinement.
 Stop/delete the20-minute monitor after collecting, comparing and publishing the
 trial disposition. A10M completion alone does not establish long-time accuracy.
+
+
+## Submitted trial
+
+Job **9027014** is already submitted, plan
+`campaigns/n32-short-gauge-fresh10m-v1-segment01/plan.json`, SHA256
+`125aa58211bcf47b3cdc74b1daf0d65e2f90bec3d3b7da63e32ab35751271120`.
+Follow `short-gauge-n32-10m-state.json` and saved submissions for the current
+segment before any action. Never submit another copy. Frozen launcher commit is
+`bca0dcfb9a7f54718f26448760a665a4dfdfc38a`; its provenance is preserved in
+`submitted/launcher-provenance.json`. Source/binary/input binding passed.
+
+There were no user debug jobs before submission. Storage measured2,717,757,952
+bytes; planned outputs839,788,429bytes and atomic reserve528,617,768bytes leave
+913,835,851bytes headroom. Verified local and remote input-retirement receipts
+are preserved. No scientific fields, equations, floors or coefficients changed.
+
+The active20-minute monitor is `aurora-sg1-n32-to-10m`. It continues only fully
+verified healthy walltime checkpoints, stops on numerical failure, and compares
+all available N16/N24/N32 evidence after terminal disposition. No N32 result is
+yet claimed by this submission record.

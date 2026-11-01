@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "plan_sha256": "125aa58211bcf47b3cdc74b1daf0d65e2f90bec3d3b7da63e32ab35751271120",
+  "source_manifest": "source-short-gauge-v1-manifest.json",
+  "source_manifest_sha256": "a5fd4a1cf9924927dfa19ddf9d27e91c6d13a91a0d12b8e997e6868853801cff",
+  "binaries": {
+    "build-sycl-mpi-short-gauge-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_short_gauge": "1b75a50ec11f8b3908de9172bd5baec57eb8bc17d382d1fba25173ab4352996f"
+  },
+  "inputs": {
+    "inputs/puncture-continuous-n32-short-gauge-v1.txt": "acc4f740feb68a3378dc6129a2f897422fb77e07ca97aa8a469cc5162b9ccaa1"
+  },
+  "pbs_sha256": "b301a16dac6cb9d7bba0b0f53400d12c14c2f1e5589047c2060a8d3cc911fd02",
+  "admission": null,
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "01:00:00"
+  },
+  "storage_at_bind": {
+    "bytes": 2742361530,
+    "entries": 69730,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 528617768,
+    "planned_bytes": 839788429,
+    "headroom_bytes": 889232273
+  },
+  "launcher": {
+    "control.py": "cc7f8dfe29c13fd9179b840bc5c93f61638dcd232fb4d23f4d62ebe5bcde37ec",
+    "worker.py": "428efcd6e20a33fe5b0e25046792391b12b66857c56df441925e09b5aa251a28",
+    "run_debug.pbs": "1d5df790cf6c8cdc96e9d330b9b337ce755b30e057959586bcd661dc9ce885a6",
+    "storage.py": "fdcf2abc2533b8fed91220d9c18d8b9d723660820949a72e956fb9c8866afd39"
+  },
+  "allocation_seconds": 3600,
+  "worker_seconds": 3200
+}
