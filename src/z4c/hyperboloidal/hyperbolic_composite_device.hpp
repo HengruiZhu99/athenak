@@ -287,8 +287,8 @@ class HyperbolicCompositeDevice {
           transport+=map.J[A][i]*u.beta.value[i];E+=map.J[A][i]*map.J[A][i];
           for (int j=0;j<3;++j) Q+=g.inverse[i][j]*map.J[A][i]*map.J[A][j];
         }
-        speed+=fabs(transport)+sqrt(fmax(4*coefficient.mu*Q/3,
-            u.chi.value*(coefficient.F*Q+coefficient.eta*.25*coefficient.w*coefficient.w*E)));
+        speed+=fabs(transport)+sqrt(fmax(GaugeShiftSpeedSquared(coefficient,Q),
+            GaugeLapseSpeedSquared(u.alpha.value,u.chi.value,coefficient,Q,E)));
       }
       cfl(local)=dt*n*speed;
       if ((!HYPERBOLIC_EXPERIMENTAL_TIMESTEP && cfl(local)>.4) || dt/.02>.25) status(local)=cfl_exceeded;

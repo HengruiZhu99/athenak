@@ -376,7 +376,7 @@ class HyperbolicComposite {
       Real speed=0;for(int A=0;A<3;++A){Real transport=0,Q=0,E=0;
         for(int i=0;i<3;++i){transport+=grid.geometry[p].J[A][i]*u.beta.value[i];E+=grid.geometry[p].J[A][i]*grid.geometry[p].J[A][i];
           for(int j=0;j<3;++j)Q+=g.inverse[i][j]*grid.geometry[p].J[A][i]*grid.geometry[p].J[A][j];}
-        speed+=std::abs(transport)+std::sqrt(std::max(4*c.mu*Q/3,u.chi.value*(c.F*Q+c.eta*.25*c.w*c.w*E)));}
+        speed+=std::abs(transport)+std::sqrt(std::max(GaugeShiftSpeedSquared(c,Q),GaugeLapseSpeedSquared(u.alpha.value,u.chi.value,c,Q,E)));}
       local.cfl=std::max(local.cfl,dt*grid.n*speed);
       if(dt*grid.n*speed>.4||dt/.02>.25)throw std::runtime_error("hyperbolic composite CFL exceeded");
     }
