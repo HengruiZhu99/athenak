@@ -1,0 +1,66 @@
+Please improve the convergence of the current SG1 hyperboloidal scheme, focusing on the sharp outer shift-restoring collar, native initialization, and demonstrated lower-order numerical treatments.
+
+Preserve existing results and frozen builds. Work on a separate branch from codex/hyperbolic-core-shell. Check current jobs before submitting anything; do not duplicate or silently cancel them.
+
+1. Simplify the shift gauge.
+
+The current bulk equation is
+
+  (∂t − βʲ∂j)βⁱ =
+    (1−W)(Λⁱ − 6βⁱ)
+    + W[−xⁱ + μDⁱ − 4C(r)(βⁱ+xⁱ)/Ω],
+
+where W transitions over r=0.2–0.56, while C transitions separately over r=0.8–0.9. C’s 10%–90% rise spans only about 0.87 radial cells at N16 and 1.31 at N24.
+
+First remove the separate C(r) activation, using the same smooth W for lapse, shift, and restoration:
+
+  (∂t − βʲ∂j)βⁱ =
+    (1−W)(Λⁱ − 6βⁱ)
+    + W[−xⁱ + μDⁱ − 4(βⁱ+xⁱ)/Ω].
+
+Apply W exactly once, not W². Preserve the tested inner plateau, μ, auxiliary-D equation, and near-scri limits.
+
+Distinguish removing the redundant collar from deleting restoration entirely. Assess whether restoration itself is necessary; do not silently delete it without deriving the corresponding scri limiting equations and dependent-D closure. Preserve null closure to numerical precision.
+
+2. Initialize puncture data natively in C++.
+
+Implement the same isotropic hyperboloidal wormhole directly in the initializer/pgen used by the actual evolution executable, evaluated at the real Cartesian and shell grid coordinates and scri surface.
+
+Preserve the physical initial slice, mass, coordinate map, gauge, and tensor/storage conventions. Replace the fixed 4097-point radial shift table and linear Python interpolation with direct, sufficiently accurate native evaluation of the defining integral. Verify quadrature and coordinate-inversion tolerance independence. Python can remain for analysis, not production initialization.
+
+3. Check initial-data convergence before long evolution.
+
+Use N16, N24, and N32, with finer initial-data-only or bounded regional tests if necessary. Compare:
+- continuum constraints using analytic/AD or independent high-accuracy derivatives;
+- native discrete constraints;
+- effects of patch exchange, scri initialization, and projection.
+
+The implemented Hamiltonian and momentum constraints do not directly depend on lapse or shift. Therefore, replacing shift interpolation alone cannot explain or fix their poor t=0 convergence.
+
+Use one common exterior cutoff and report H, momentum magnitude, and radial momentum norms, effective orders, radial profiles, and maximum-error locations. Separate the core, overlap, shell seams, initial slicing transition, and scri-adjacent region. Control norm-quadrature/cutoff artifacts independently.
+
+4. Fix the confirmed lower-order dissipation closure.
+
+The block-local KO8 construction drops difference lines crossing block boundaries. At an edge, a polynomial u=x⁴ produces Q_h u ∝ h³: a locally third-order RHS contribution.
+
+Replace or redesign this closure so smooth-field consistency is at least fourth order while retaining suitable dissipation/stability properties. Verify it with polynomial and smooth-function refinement tests across actual patch boundaries. Keep this change separately identifiable.
+
+Do not assume it explains the dominant outer error: the existing KO taper vanishes for r≥0.8.
+
+5. Audit scri’s full truncation order.
+
+Roundoff null closure is not proof of accurate boundary evolution. The highest-priority audit is the sampled normal derivative of pole numerators that already contain numerical derivatives. Also check the 1/h regularity penalties and interior pole/Ω assembly near scri.
+
+Use nontrivial smooth data satisfying the required regularity conditions and known reference derivatives. Measure errors in the complete surface RHS and adjacent volume rows across resolutions, including cross-face interpolation. Determine whether cancellations preserve fourth order or whether errors are amplified by 1/h. Fix demonstrated defects; do not label an operator lower order from dimensional reasoning alone.
+
+6. Run controlled N16 evolutions to 10M after the consistency checks.
+
+Separate initialization, numerical-operator, and gauge changes so their effects can be attributed. Include an appropriate native-initialization control with the original collar and a matched run with the shared transition. Compare against preserved SG1 results.
+
+Keep dt, floors, damping, horizon settings, and diagnostics matched except for explicitly identified changes. Continue direct chi/lapse evolution and pre-floor sign logging. Never restart a failed or unadmitted state.
+
+Report exterior constraint histories, radial error localization—especially r=0.775–0.9—accepted horizon mass errors, scri null/regularity residuals, and floor counts. Do not claim convergence from survival alone.
+
+Use the established Aurora allocation, one-node/12-rank GPU configuration, and 5GB storage cap. Preserve and verify evidence before cleanup. Push the implementation, reproducible tests, plots, and conclusions to the remote branch.
+
+Do not start new long N24/N32 evolutions under this request; initial-data and bounded consistency tests at those resolutions are authorized. If initial-data or scri consistency remains unresolved, report the obstruction before presenting a long run as a convergence demonstration.

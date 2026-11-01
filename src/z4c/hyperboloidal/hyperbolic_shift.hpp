@@ -29,7 +29,13 @@
 #define HYPERBOLIC_SHORT_INNER_GAUGE 0
 #endif
 
+#ifndef HYPERBOLIC_SHARED_RESTORATION
+#define HYPERBOLIC_SHARED_RESTORATION 0
+#endif
+
 namespace z4c::hyperboloidal {
+constexpr bool shared_restoration=HYPERBOLIC_SHARED_RESTORATION;
+static_assert(!shared_restoration || HYPERBOLIC_SHORT_INNER_GAUGE);
 constexpr bool short_inner_gauge=HYPERBOLIC_SHORT_INNER_GAUGE;
 static_assert(!short_inner_gauge || HYPERBOLIC_RESTORE_INNER_DAMPING);
 static_assert(!(short_inner_gauge && HYPERBOLIC_LATE_INNER_GAUGE));
@@ -239,6 +245,12 @@ HyperbolicGaugeParts<T> OuterHyperbolicGauge(const T x[3],const Z4cJet<T>&u,
   const VectorJet<T> zero{};
   auto out=DonorHyperbolicGauge(x,u,zero,D,p);
   for(int i=0;i<3;++i) {
+    // The complete outer RHS is multiplied by W=1-inner exactly once in
+    // HyperbolicGauge. Remove only the separate C(r) activation, not the
+    // restoring source. For r>=.9 this is identical to the original source,
+    // including the scri pole and dependent-D limiting equation.
+    if constexpr(shared_restoration)
+      out.shift_pole[i]=-p.restoring*(u.beta.value[i]+x[i]);
     out.flux_rate[i]=-B.value[i]/p.tau;
     for(int j=0;j<3;++j)out.flux_rate[i]+=u.beta.value[j]*B.d[j][i];
     out.valid=out.valid&&Kokkos::isfinite(out.flux_rate[i]);
