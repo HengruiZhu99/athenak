@@ -66,10 +66,12 @@ int main(int argc,char**argv){
    for(int i=0;i<3;++i)parts.pole.lambda[i]=-u.alpha.value*4*u.lambda.value[i];
    Check(h::HyperbolicDamping(x,u,omega,parts),"damping rejected");
    const double A=(1+r*r)/2;
-   const double outer=h::direct_outer?4*u.alpha.value:8*A;
-   Near(parts.pole.trace/o,((1-s)*outer*1.99/o+s*a*.03)*u.theta.value,"trace damping");
-   Near(parts.pole.theta/o,-((1-s)*outer*1.01/o+s*a*.06)*u.theta.value,"theta damping");
-   for(int i=0;i<3;++i)Near(parts.pole.lambda[i]/o,-((1-s)*outer/o+s*a*.06)*u.lambda.value[i],"connection damping");
+   const double ds=h::restore_inner_damping?h::Smoothstep9((.56-r)/.36):s;
+   const double w=h::Smoothstep9((.8-r)/.24);
+   const double outer=h::restore_inner_damping?4*u.alpha.value+w*(8*A-4*u.alpha.value):h::direct_outer?4*u.alpha.value:8*A;
+   Near(parts.pole.trace/o,((1-ds)*outer*1.99/o+ds*a*.03)*u.theta.value,"trace damping");
+   Near(parts.pole.theta/o,-((1-ds)*outer*1.01/o+ds*a*.06)*u.theta.value,"theta damping");
+   for(int i=0;i<3;++i)Near(parts.pole.lambda[i]/o,-((1-ds)*outer/o+ds*a*.06)*u.lambda.value[i],"connection damping");
    auto c=h::ShiftCoefficients(r,u.alpha.value,u.chi.value);
    const double Q=1.7,E=1.2;
    Check(std::isfinite(h::GaugeLapseSpeedSquared(u.alpha.value,u.chi.value,c,Q,E)),"invalid lapse speed estimate");

@@ -17,7 +17,13 @@
 #define HYPERBOLIC_DIRECT_OUTER 0
 #endif
 
+#ifndef HYPERBOLIC_RESTORE_INNER_DAMPING
+#define HYPERBOLIC_RESTORE_INNER_DAMPING 0
+#endif
+
 namespace z4c::hyperboloidal {
+constexpr bool restore_inner_damping=HYPERBOLIC_RESTORE_INNER_DAMPING;
+static_assert(!restore_inner_damping || HYPERBOLIC_DIRECT_OUTER);
 
 constexpr bool direct_outer = HYPERBOLIC_DIRECT_OUTER;
 static_assert(!direct_outer || HYPERBOLIC_INNER_TELEGRAPHER);
@@ -273,7 +279,7 @@ bool HyperbolicDamping(const T x[3], const Z4cJet<T> &u,
   if (!parts.valid || !g.valid) return false;
   T r2=0; for (int i=0;i<3;++i) r2+=x[i]*x[i];
   const auto c=ShiftCoefficients(sqrt(r2),u.alpha.value,u.chi.value,p);
-  const T delta=(direct_outer || p.inner_z4==0) ? T(0) :
+  const T delta=((direct_outer && !restore_inner_damping) || p.inner_z4==0) ? T(0) :
       c.w*(p.inner_z4*c.reference_alpha-p.kappa1*u.alpha.value);
   parts.pole.theta+=3*u.alpha.value*omega.normal*u.theta.value;
   parts.pole.trace+=delta*(1-p.kappa2)*u.theta.value;
@@ -281,7 +287,7 @@ bool HyperbolicDamping(const T x[3], const Z4cJet<T> &u,
   for (int i=0;i<3;++i)
     parts.pole.lambda[i]-=delta*(u.lambda.value[i]-g.contracted[i]);
   if constexpr(inner_telegrapher) {
-    const T s=InnerTelegrapherWeight(sqrt(r2));
+    const T s=restore_inner_damping ? Smoothstep9((T(.56)-sqrt(r2))/T(.36)) : InnerTelegrapherWeight(sqrt(r2));
     if(s>0) {
       const T old=p.kappa1*u.alpha.value+delta;
       const T target=T(InnerTelegrapher::kappa1)*u.alpha.value;
