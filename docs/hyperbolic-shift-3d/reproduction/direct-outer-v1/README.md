@@ -91,3 +91,35 @@ also completed; maximum null residual was1.12e-15 across these checks. A native
 IT1 restart attempt was rejected with schema/configuration/admission mismatch.
 All121 controller/worker/campaign tests passed. These short tests establish
 implementation/setup consistency, not long-time stability or convergence.
+
+## Frozen Aurora campaign
+
+Scientific source e1ec5803bd5c0694b91f019e016407386cd7f538.
+Manifest source-direct-outer-v1-manifest.json SHA256
+7f7dd0783f042e7786c1332bff604d710879f27a8453b9fcc0f689e3332e24a3.
+Binary build-sycl-mpi-direct-outer-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_direct_outer
+SHA256640fab47d261055f90aeb5d41d8c5090352a2da7282f5f37f99703cdd529c902.
+Built with oneapi/release/2025.3.1, SYCL/PVC+MPI, make -j64; all1486 copied
+Kokkos source files match the previous frozen manifest. Source manifest excludes
+Python bytecode/cache files. Later test/documentation commits do not change this
+frozen runtime source or binary.
+
+N16 job9016957 is submitted, plan
+campaigns/n16-direct-outer-fresh10m-v1-segment01/plan.json,
+SHA2561415b8558768b8ce21f92bde4db67026bbb959d06987b4373bb94b0eaa3c65a7.
+N24 campaigns/n24-direct-outer-fresh10m-v1-segment01/plan.json is prepared,
+unsubmitted. Follow remote direct-outer-10m-state.json and saved submissions.
+Launcher: launcher-direct-outer-v1; verify files against provenance.json and
+use its direct_outer_campaign.py/control.py. N16 binding measured3,296,782,529
+bytes, with1,475,931,888 bytes headroom after output and atomic reservations.
+All user debug jobs were checked before submission; unrelated held capacity
+jobs remain unchanged. Hourly monitor aurora-direct-outer-n16-then-n24-to-10m
+is active for healthy continuations and sequential N24 dispatch. Submission
+alone establishes no duration result.
+
+Original input hashes:
+
+- N16 inputs/puncture-continuous-n16-smooth-v1.txt:
+  35c1b65aeaaefac34552f9a63b279cabe839b09326adc9af1d2c767ecc29c8ca
+- N24 inputs/puncture-continuous-n24-smooth-v1.txt:
+  6c265e8dc309c70a2c7017a80eddd2d76f3a185b4f1d6108cc65b8bfc85be914

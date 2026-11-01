@@ -1,0 +1,52 @@
+{
+  "status": "submitted",
+  "n": 16,
+  "target_t_over_M": 10,
+  "science": {
+    "source_commit": "e1ec5803bd5c0694b91f019e016407386cd7f538",
+    "binary": "build-sycl-mpi-direct-outer-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_direct_outer",
+    "binary_sha256": "640fab47d261055f90aeb5d41d8c5090352a2da7282f5f37f99703cdd529c902",
+    "source_manifest": "source-direct-outer-v1-manifest.json",
+    "source_manifest_sha256": "7f7dd0783f042e7786c1332bff604d710879f27a8453b9fcc0f689e3332e24a3"
+  },
+  "plans": {
+    "16": {
+      "plan": "campaigns/n16-direct-outer-fresh10m-v1-segment01/plan.json",
+      "restart": {
+        "n": 16,
+        "time": 0.0,
+        "steps": 0,
+        "dt": 0.0005,
+        "sha256": "35c1b65aeaaefac34552f9a63b279cabe839b09326adc9af1d2c767ecc29c8ca",
+        "kind": "fresh_wormhole"
+      }
+    },
+    "24": {
+      "plan": "campaigns/n24-direct-outer-fresh10m-v1-segment01/plan.json",
+      "restart": {
+        "n": 24,
+        "time": 0.0,
+        "steps": 0,
+        "dt": 0.0003333333333333333,
+        "sha256": "6c265e8dc309c70a2c7017a80eddd2d76f3a185b4f1d6108cc65b8bfc85be914",
+        "kind": "fresh_wormhole"
+      }
+    }
+  },
+  "plan": "campaigns/n16-direct-outer-fresh10m-v1-segment01/plan.json",
+  "submission": {
+    "job_id": "9016957.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "submitted": 1793505443.3505774,
+    "plan": "campaigns/n16-direct-outer-fresh10m-v1-segment01/plan.json",
+    "plan_sha256": "1415b8558768b8ce21f92bde4db67026bbb959d06987b4373bb94b0eaa3c65a7",
+    "source_manifest_sha256": "7f7dd0783f042e7786c1332bff604d710879f27a8453b9fcc0f689e3332e24a3",
+    "resources": {
+      "queue": "debug",
+      "account": "CompactBinaryMerger",
+      "nodes": 1,
+      "ranks": 12,
+      "ranks_per_node": 12,
+      "walltime": "01:00:00"
+    }
+  }
+}
