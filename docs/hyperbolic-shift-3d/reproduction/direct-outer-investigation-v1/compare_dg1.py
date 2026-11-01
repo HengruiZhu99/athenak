@@ -48,5 +48,34 @@ for label,color in [('IT1','#777777'),('DO1','#b55315'),('DG1','#1769aa')]:
  for ax,(key,title,scale) in zip(axes.flat,fields):ax.plot(d['t_over_M'],d[key]*scale,label=label,color=color);ax.set(xlabel='t / M',ylabel=title);ax.grid(alpha=.2)
  late=d[d['t_over_M']>=4-1e-8];summary[label]=dict(common_exterior=radial[label]['norms']['exterior'],late_history_max={key:float(np.nanmax(late[key])) for key in ['H_L2','M_L2','Theta_L2','H_exterior_L2','Mr_exterior_L2']},accepted_horizon_rows=int(np.sum(d['horizon_found'])),history_rows=len(d),final_horizon_accepted=bool(d[-1]['horizon_found']))
 axes[0,0].legend();fig.suptitle('N16 damping-only ablation: same new gauge, restored previous damping');fig.tight_layout(rect=(0,.06,1,.96));fig.text(.5,.015,'Histories use each run’s own candidate cutoff; final common-cutoff norms are recorded separately. Missing horizon values remain gaps.',ha='center',fontsize=9);fig.savefig(out/'histories.png',dpi=150)
+# Segment counters include rejected attempts; keep boundary-interpolation counts
+# separate from volume/surface candidate events and from positive floor hits.
+def counters(segment_reports):
+ keys=['chi_floor_stage_interventions','chi_floor_acceptance_interventions',
+       'surface_chi_floor_stage_interventions','surface_chi_floor_final_interventions',
+       'lapse_floor_node_interventions','scri_interpolated_chi_negative_count',
+       'scri_interpolated_chi_zero_count']
+ totals={k:sum(r[k] for r in segment_reports) for k in keys}
+ events={}
+ for report in segment_reports:
+  for row in report['candidate_sign_events']:
+   event=dict(zip(report['candidate_sign_columns'],row))
+   key=('surface' if event['point_id']<0 else 'volume')+'_field_'+str(event['field'])
+   item=events.setdefault(key,dict(negative_stage=0,negative_final=0,zero_stage=0,zero_final=0,minimum=None,first_negative_time=None,first_zero_time=None))
+   for count in ['negative_stage','negative_final','zero_stage','zero_final']:item[count]+=event[count]
+   for value in ['minimum','first_negative_time','first_zero_time']:
+    if event[value] is not None:item[value]=event[value] if item[value] is None else min(item[value],event[value])
+ return dict(totals=totals,candidate_groups=events,scope='segment-local counts summed, including rejected attempts; event times are coordinate time')
+fig,axes=plt.subplots(1,2,figsize=(11,4))
+for label,color in [('IT1','#777777'),('DO1','#b55315'),('DG1','#1769aa')]:
+ rows=radial[label]['radial_cumulative'];r=np.array([x['cutoff'] for x in rows]);volume=np.diff(-np.array([x['volume'] for x in rows]))
+ for ax,key in zip(axes,['H2','M2']):
+  power=np.diff(-np.array([x[key] for x in rows]));assert np.all(volume>0)
+  ax.stairs(np.sqrt(np.maximum(power,0)/volume),r,label=label,color=color)
+ summary[label]['fraction_H2_r016_030']=(next(x['H2'] for x in rows if x['cutoff']==.16)-next(x['H2'] for x in rows if x['cutoff']==.3))/rows[0]['H2']
+ summary[label]['counters']=counters(reports if label=='DG1' else [cases[label][0]])
+for ax,title in zip(axes,['Hamiltonian RMS','Momentum magnitude RMS']):
+ ax.set(xlabel='compactified radius',ylabel=title,yscale='log');ax.grid(alpha=.2);ax.axvspan(.16,.18,color='k',alpha=.12);ax.legend()
+fig.suptitle('N16 at 10M: damping-only ablation, radial constraint distribution');fig.tight_layout();fig.savefig(out/'radial.png',dpi=150)
 result=dict(common_cutoff=cut,candidate_radii=radii,summary=summary,execution=execution,segments=records,n24_admitted=False,review_required=True)
 (out/'comparison.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(summary,indent=2))

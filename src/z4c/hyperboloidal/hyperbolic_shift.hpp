@@ -21,7 +21,13 @@
 #define HYPERBOLIC_RESTORE_INNER_DAMPING 0
 #endif
 
+#ifndef HYPERBOLIC_LATE_INNER_GAUGE
+#define HYPERBOLIC_LATE_INNER_GAUGE 0
+#endif
+
 namespace z4c::hyperboloidal {
+constexpr bool late_inner_gauge=HYPERBOLIC_LATE_INNER_GAUGE;
+static_assert(!late_inner_gauge || HYPERBOLIC_RESTORE_INNER_DAMPING);
 constexpr bool restore_inner_damping=HYPERBOLIC_RESTORE_INNER_DAMPING;
 static_assert(!restore_inner_damping || HYPERBOLIC_DIRECT_OUTER);
 
@@ -34,7 +40,7 @@ static_assert(HYPERBOLIC_INNER_TELEGRAPHER == 0 || HYPERBOLIC_INNER_TELEGRAPHER 
 // Our puncture mass is 1/3 in coordinate units. B stores a physical covector
 // in the inner plateau; the same Cartesian slots interpolate to donor B outside.
 struct InnerTelegrapher {
-  static constexpr double mass=1./3., begin=.2, end=direct_outer?.9:.56;
+  static constexpr double mass=1./3., begin=late_inner_gauge?.4:.2, end=direct_outer?.9:.56;
   static constexpr double tau=.1*mass, kappa=.2*mass;
   static constexpr double shift_gamma=1., shift_eta=2./mass, kappa1=.01/mass;
   static constexpr double chi_guard=1.e-5;

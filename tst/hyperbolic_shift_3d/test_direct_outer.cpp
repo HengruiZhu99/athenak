@@ -11,7 +11,7 @@ int main(int argc,char**argv){
  try {
   // Independent physical-variable oracle, including nonradial shift, gradients,
   // a nonflat metric and chi below the branch's coefficient guard.
-  for(double r:{.012,.15,.2,.25,.38,.55,.56,.75,.93,1.})
+  for(double r:{.012,.15,.2,.25,.38,.4,.45,.55,.56,.75,.93,1.})
   for(double chi_phys:{2e-7,.12}) {
    double x[3]={.6*r,.8*r,0},o=(1-r*r)/2;
    h::Z4cJet<double> u{};h::VectorJet<double>B{};double D[3]={.3,-.2,.1};
@@ -41,6 +41,10 @@ int main(int argc,char**argv){
    const auto now=h::HyperbolicGauge(x,u,B,D);
    Check(old.valid&&now.valid,"valid point rejected");
    const double s=h::InnerTelegrapherWeight(r);
+   if constexpr(h::late_inner_gauge) {
+    Near(s,h::Smoothstep9((.9-r)/.5),"late gauge prescribed placement");
+    Check(r>.4 || s==1,"late inner plateau not exact");
+   }
    if(r>=h::InnerTelegrapher::end){
     Check(s==0&&old.lapse_regular==now.lapse_regular&&old.lapse_pole==now.lapse_pole,"outer lapse changed");
     for(int i=0;i<3;++i)Check(old.shift_regular[i]==now.shift_regular[i]&&old.shift_pole[i]==now.shift_pole[i]&&old.flux_rate[i]==now.flux_rate[i],"outer gauge changed");
