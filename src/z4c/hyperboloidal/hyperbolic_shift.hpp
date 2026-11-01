@@ -13,7 +13,14 @@
 #define HYPERBOLIC_INNER_TELEGRAPHER 0
 #endif
 
+#ifndef HYPERBOLIC_DIRECT_OUTER
+#define HYPERBOLIC_DIRECT_OUTER 0
+#endif
+
 namespace z4c::hyperboloidal {
+
+constexpr bool direct_outer = HYPERBOLIC_DIRECT_OUTER;
+static_assert(!direct_outer || HYPERBOLIC_INNER_TELEGRAPHER);
 
 constexpr bool inner_telegrapher = HYPERBOLIC_INNER_TELEGRAPHER;
 static_assert(HYPERBOLIC_INNER_TELEGRAPHER == 0 || HYPERBOLIC_INNER_TELEGRAPHER == 1);
@@ -21,7 +28,7 @@ static_assert(HYPERBOLIC_INNER_TELEGRAPHER == 0 || HYPERBOLIC_INNER_TELEGRAPHER 
 // Our puncture mass is 1/3 in coordinate units. B stores a physical covector
 // in the inner plateau; the same Cartesian slots interpolate to donor B outside.
 struct InnerTelegrapher {
-  static constexpr double mass=1./3., begin=.2, end=.56;
+  static constexpr double mass=1./3., begin=.2, end=direct_outer?.9:.56;
   static constexpr double tau=.1*mass, kappa=.2*mass;
   static constexpr double shift_gamma=1., shift_eta=2./mass, kappa1=.01/mass;
   static constexpr double chi_guard=1.e-5;
@@ -99,6 +106,7 @@ HyperbolicCoefficients<T> ShiftCoefficients(T r, T alpha, T chi,
   // contributes to the blended coefficient. No direction or radial metric
   // component is necessary. This is identical to the coefficient-four donor.
   c.mu=(1-c.collar)*p.bulk_mu+c.collar*T(.75)*p.ratio*chi*c.F;
+  if constexpr(direct_outer) c.mu=T(.75)*p.ratio*chi*c.F;
   c.xi=1+2*pow(1-r*r,4);
   return c;
 }
@@ -108,6 +116,13 @@ HyperbolicCoefficients<T> ShiftCoefficients(T r, T alpha, T chi,
 template<class T> KOKKOS_INLINE_FUNCTION
 T GaugeLapseSpeedSquared(T alpha,T chi,const HyperbolicCoefficients<T>&c,T Q,T E,
                         const HyperbolicShiftParameters<T>&p={}) {
+  if constexpr(direct_outer) {
+    const T s=c.inner,o=c.omega;
+    if(s==0) return chi*c.F*Q;
+    const T guard=fmax(o*o*chi,T(InnerTelegrapher::chi_guard));
+    return (chi*((1-s)*c.F+s*2*o*alpha)
+        +s*s*guard*T(InnerTelegrapher::kappa/InnerTelegrapher::tau))*Q;
+  }
   if (c.inner==0) return chi*(c.F*Q+c.eta*(p.kappa/p.tau)*c.w*c.w*E);
   const T s=c.inner,o=c.omega,guard=fmax(o*o*chi,T(InnerTelegrapher::chi_guard));
   const T lapse_k=(1-s)*c.F+s*2*o*alpha;
@@ -145,6 +160,7 @@ T LargestMetricEigenvalue(const T g[3][3]) {
 template<class T> KOKKOS_INLINE_FUNCTION
 T AllDirectionShiftLapseGap(const T g[3][3],T chi,
     const HyperbolicCoefficients<T> &c,const HyperbolicShiftParameters<T> &p={}) {
+  if (c.inner==0 && direct_outer) return 4*c.mu/3-chi*c.F;
   if (c.inner==0) return 4*c.mu/3-chi*c.F-chi*c.eta*p.kappa*c.w*c.w/p.tau*LargestMetricEigenvalue(g);
   // Recover alpha from F=alpha^2+4 Omega^2 alpha without cancellation.
   const T q=2*c.omega*c.omega;
@@ -194,7 +210,24 @@ HyperbolicGaugeParts<T> DonorHyperbolicGauge(const T x[3], const Z4cJet<T> &u,
   return out;
 }
 
-// Exact physical Cauchy gauge on r<=.2, donor on r>=.56. Blend complete
+// Direct outer branch: preserve reference sources and the original restoring
+// collar; remove Euclidean B/lapse coupling and B-gradient forcing. Its mu is
+// the outer 1.5 chi F throughout. Blend complete RHSs, never weighted fluxes.
+template<class T> KOKKOS_INLINE_FUNCTION
+HyperbolicGaugeParts<T> OuterHyperbolicGauge(const T x[3],const Z4cJet<T>&u,
+    const VectorJet<T>&B,const T D[3],const HyperbolicShiftParameters<T>&p={}) {
+  if constexpr(!direct_outer) return DonorHyperbolicGauge(x,u,B,D,p);
+  const VectorJet<T> zero{};
+  auto out=DonorHyperbolicGauge(x,u,zero,D,p);
+  for(int i=0;i<3;++i) {
+    out.flux_rate[i]=-B.value[i]/p.tau;
+    for(int j=0;j<3;++j)out.flux_rate[i]+=u.beta.value[j]*B.d[j][i];
+    out.valid=out.valid&&Kokkos::isfinite(out.flux_rate[i]);
+  }
+  return out;
+}
+
+// Exact physical Cauchy gauge on r<=.2; outer plateau is .56 (IT1) or .9 (DO1). Blend complete
 // local RHSs, not fluxes: no spurious derivative-of-weight source is added.
 // For stationary Omega, dt(alpha_bar)=beta.grad(alpha_bar)
 // -alpha_phys beta.grad(Omega)+Omega*(nonadvective physical lapse RHS).
@@ -204,10 +237,10 @@ HyperbolicGaugeParts<T> HyperbolicGauge(const T x[3],const Z4cJet<T>&u,
   if constexpr(!inner_telegrapher) return DonorHyperbolicGauge(x,u,B,D,p);
   T r2=0;for(int i=0;i<3;++i)r2+=x[i]*x[i];
   const T s=InnerTelegrapherWeight(sqrt(r2));
-  if (s==0) return DonorHyperbolicGauge(x,u,B,D,p); // no Omega division at scri
+  if (s==0) return OuterHyperbolicGauge(x,u,B,D,p); // no Omega division at scri
   HyperbolicGaugeParts<T> out{};
   // Do not evaluate inactive donor sources on the inner plateau.
-  if(s<1) out=DonorHyperbolicGauge(x,u,B,D,p);
+  if(s<1) out=OuterHyperbolicGauge(x,u,B,D,p);
   else out.valid=u.alpha.value>0&&u.chi.value>0;
   const T o=(1-r2)/2,alpha=u.alpha.value/o;
   const auto g=Geometry(u.metric);
@@ -240,7 +273,7 @@ bool HyperbolicDamping(const T x[3], const Z4cJet<T> &u,
   if (!parts.valid || !g.valid) return false;
   T r2=0; for (int i=0;i<3;++i) r2+=x[i]*x[i];
   const auto c=ShiftCoefficients(sqrt(r2),u.alpha.value,u.chi.value,p);
-  const T delta=p.inner_z4==0 ? T(0) :
+  const T delta=(direct_outer || p.inner_z4==0) ? T(0) :
       c.w*(p.inner_z4*c.reference_alpha-p.kappa1*u.alpha.value);
   parts.pole.theta+=3*u.alpha.value*omega.normal*u.theta.value;
   parts.pole.trace+=delta*(1-p.kappa2)*u.theta.value;
