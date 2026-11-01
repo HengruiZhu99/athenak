@@ -329,3 +329,15 @@ the successful SG1 endpoint. It does not cover every direction, the time
 trajectory, the puncture region r<=0.1 or scri, and is not a global hyperbolicity
 proof. The matrix reconstruction remains checked against the native DO1 control
 block before replacing the gauge coefficients. No evolution source changed.
+
+## Provisional N24 progress through 3M
+
+`progress-to3m-n24/` contains a hash-verified live history snapshot, measured
+plots and provenance. N24 was running at capture and continues toward10M.
+At3M its candidate-exterior H, momentum-magnitude and radial-momentum RMS are
+0.6869,0.9636 and0.7589times N16 respectively. Each uses its own candidate
+cutoff. Full-domain H is instead2.583times N16 at that instant and its history
+remains irregular. Thus exterior errors improve to different degrees, but no
+clean full-domain convergence or asymptotic order is established. Preserve the
+unaccepted N16 horizon-mass gap at3M. Final common-cutoff and radial comparison
+still requires collected, verified matched10M checkpoints.

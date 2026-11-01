@@ -1,0 +1,53 @@
+{
+  "job": "9019406",
+  "captured_utc": "2026-11-01T06:59:17.226449+00:00",
+  "scope": "Provisional live history snapshot through3M; not a terminal report, checkpoint verification, or completed10M result.",
+  "plan_sha256": "8290c012f0c3a5a982f5eb53a29bf6d85b6a17dd467d5a5be60ae63efaceccf6",
+  "binding": {
+    "schema": 1,
+    "plan_sha256": "8290c012f0c3a5a982f5eb53a29bf6d85b6a17dd467d5a5be60ae63efaceccf6",
+    "source_manifest": "source-short-gauge-v1-manifest.json",
+    "source_manifest_sha256": "a5fd4a1cf9924927dfa19ddf9d27e91c6d13a91a0d12b8e997e6868853801cff",
+    "binaries": {
+      "build-sycl-mpi-short-gauge-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_short_gauge": "1b75a50ec11f8b3908de9172bd5baec57eb8bc17d382d1fba25173ab4352996f"
+    },
+    "inputs": {
+      "inputs/puncture-continuous-n24-smooth-v1.txt": "6c265e8dc309c70a2c7017a80eddd2d76f3a185b4f1d6108cc65b8bfc85be914",
+      "admissions/n16-short-gauge-10m-review-v1.json": "723e5cda25c9496b12b487bbe7f37c6578f95a2743feecb682c1fbb673ccc224"
+    },
+    "pbs_sha256": "69e83abdc2e7c2d0f6fd9dfb332579ad17ee560197f3eb5e8cf2b4f1547c1205",
+    "admission": {
+      "path": "admissions/n16-short-gauge-10m-review-v1.json",
+      "sha256": "723e5cda25c9496b12b487bbe7f37c6578f95a2743feecb682c1fbb673ccc224"
+    },
+    "resources": {
+      "queue": "debug",
+      "account": "CompactBinaryMerger",
+      "nodes": 1,
+      "ranks": 12,
+      "ranks_per_node": 12,
+      "walltime": "01:00:00"
+    },
+    "storage_at_bind": {
+      "bytes": 3682934615,
+      "entries": 69691,
+      "limit_bytes": 5000000000,
+      "reserve_bytes": 244413736,
+      "planned_bytes": 385061978,
+      "headroom_bytes": 687589671
+    },
+    "launcher": {
+      "control.py": "3a1ef800984f3fe4817166555f7fb7982d108e1abf6dd922ed80fd885b1527bf",
+      "worker.py": "428efcd6e20a33fe5b0e25046792391b12b66857c56df441925e09b5aa251a28",
+      "run_debug.pbs": "1d5df790cf6c8cdc96e9d330b9b337ce755b30e057959586bcd661dc9ce885a6",
+      "storage.py": "fdcf2abc2533b8fed91220d9c18d8b9d723660820949a72e956fb9c8866afd39"
+    },
+    "allocation_seconds": 3600,
+    "worker_seconds": 3200
+  },
+  "worker_status": "running",
+  "scheduler": "Job Id: 9019406.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov\n    Job_Name = hyper-scri-3d\n    Job_Owner = hzhu@aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov\n    resources_used.cpupercent = 18\n    resources_used.cput = 00:02:27\n    resources_used.mem = 35796kb\n    resources_used.ncpus = 208\n    resources_used.ngpus = 0\n    resources_used.vmem = 50960kb\n    resources_used.walltime = 00:14:43\n    job_state = R\n    queue = debug\n    server = aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov\n    Account_Name = CompactBinaryMerger\n    Checkpoint = u\n    ctime = Sun Nov  1 06:42:42 2026\n    Error_Path = aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov:/home/hzhu\n\t/hyperbolic-core-shell-20261028/hyper-scri-3d.e9019406\n    exec_host = x4216c3s5b0n0/0*208\n    exec_vnode = (x4216c3s5b0n0:ncpus=208)\n    Hold_Types = n\n    Join_Path = oe\n    Keep_Files = doe\n    Mail_Points = a\n    Mail_Users = hz0693@princeton.edu\n    mtime = Sun Nov  1 06:58:58 2026\n    Output_Path = aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov:/home/hzh\n\tu/hyperbolic-core-shell-20261028/hyper-scri-3d.o9019406\n    Priority = 0\n    qtime = Sun Nov  1 06:42:42 2026\n    Rerunable = False\n    Resource_List.allow_account_check_failure = True\n    Resource_List.allow_negative_allocation = True\n    Resource_List.award_category = INCITE\n    Resource_List.award_type = INCITE-2026\n    Resource_List.backfill_factor = 84600\n    Resource_List.backfill_max = 50\n    Resource_List.base_score = 51\n    Resource_List.bkc_definition = compute_aurora_prod_20261002T162246_af5b0375\n\t_b4fd227\n    Resource_List.burn_ratio = 0.8818\n    Resource_List.current_allocation = 2552662016\n    Resource_List.enable_2nd_fp64 = True\n    Resource_List.enable_backfill = 0\n    Resource_List.enable_fifo = 1\n    Resource_List.enable_wfp = 0\n    Resource_List.fifo_factor = 1800\n    Resource_List.filesystems = home\n    Resource_List.hbm_mode = flat\n    Resource_List.home_fs = True\n    Resource_List.ncpus = 208\n    Resource_List.ni_resource = aurora\n    Resource_List.nodect = 1\n    Resource_List.overburn = False\n    Resource_List.place = scatter\n    Resource_List.project_priority = 25\n    Resource_List.route_backfill = False\n    Resource_List.score_boost = 0\n    Resource_List.select = 1\n    Resource_List.snc_mode = quad\n    Resource_List.total_allocation = 21600000000\n    Resource_List.total_cpus = 10624\n    Resource_List.walltime = 01:00:00\n    Resource_List.wfp_factor = 100000\n    stime = Sun Nov  1 06:44:15 2026\n    session_id = 399941\n    jobdir = /home/hzhu\n    substate = 42\n    euser = hzhu\n    egroup = users\n    comment = Job run at Sun Nov 01 at 06:44 on (x4216c3s5b0n0:ncpus=208)\n    etime = Sun Nov  1 06:42:42 2026\n    umask = 22\n    run_count = 1\n    eligible_time = 00:01:35\n    Submit_arguments = -v HYPERBOLIC_PLAN=campaigns/n24-short-gauge-fresh10m-v1\n\t-segment01/plan.json /home/hzhu/hyperbolic-core-shell-20261028/campaign\n\ts/n24-short-gauge-fresh10m-v1-segment01/run_debug.pbs\n    project = CompactBinaryMerger\n    Submit_Host = aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov\n\n",
+  "rows": 21,
+  "bytes": 14781,
+  "sha256": "904121500fc0bdfeef3ccac20d79050723b037e5d3e1316670443ac6c157a3f3"
+}
