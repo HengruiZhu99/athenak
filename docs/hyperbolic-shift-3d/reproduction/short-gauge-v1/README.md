@@ -273,3 +273,28 @@ with matching SG1 diagnostics and one common exterior cutoff. Existing
 script. Retain horizon flags, missing data and separate floor/sign counters.
 Assess the residual outer-shell and overlap-region errors and accepted horizon
 mass errors without inferring an asymptotic order from two resolutions alone.
+
+
+## Prepared N16/N24 comparison
+
+`compare_resolutions.py` is the separate resolution comparison. It takes
+`--root` pointing to the collected Aurora mirror and ordered `--n16-plans` and
+`--n24-plans` lists. It requires terminal scheduler records and hash-verifies all
+worker artifacts, frozen science, the N24 admission review and restart sequence.
+It rejects resolution mixing, duplicate segments and live partial output.
+
+Histories preserve each run's candidate cutoff and accepted horizon flags;
+missing values are not interpolated. Segment sign/floor counts are summed, with
+boundary interpolation events separate. Only two healthy, verified10M endpoints
+trigger the native N-dependent SG1 reconstruction and common-cutoff comparison.
+The endpoint diagnostic is checked against native full-domain norms. Failed
+states are not reconstructed as accepted endpoints. Radial plots and fractions
+for0.16--0.30 and0.775--0.9 locate the remaining error. Ratios are reported without
+claiming an asymptotic convergence order from only two resolutions.
+
+Preparation checks loaded the actual verified68-row N16 history and reproduced
+its reviewed sign/floor aggregates. Wrong-resolution, duplicated-segment and
+live-scheduler inputs were rejected. See
+`checks/resolution-comparison-preparation.log`. Full N24 reconstruction and
+rendered-figure review await collected N24 results; this preparation is not a
+new scientific result.
