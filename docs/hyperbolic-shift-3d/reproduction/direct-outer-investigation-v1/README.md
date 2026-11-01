@@ -130,3 +130,38 @@ Binding measured3,342,691,777bytes, leaving1,430,022,640bytes after output/atomi
 reservations. Saved submission and launcher provenance are in dg1-submission/.
 The20-minute monitor aurora-n16-damping-investigation-to-10m is active for this
 N16 trial and healthy walltime continuation only; scientific N24 gate remains.
+
+## Later-placement audit while DG1 waits
+
+The previous goal turn made concrete progress: same-domain localization, N24
+cancellation, damping isolation and frozen DG1 submission. A fresh scheduler
+query in this follow-up confirmed job9017478 still queued; it was not restarted.
+
+scan_blend_placement.py is READ-ONLY. It evaluates proposed .4--.9,.5--.9 and
+.56--.9 gauge weights on the preserved IT1/DO1 N16 10M states, keeping the outer
+endpoint fixed. At the current .2--.9 weight, its principal matrix is checked
+against the native audited candidate. The geometric principal block is reused;
+only the derived gauge coefficients change. All159200 cells in each snapshot
+retain a positive normalized lapse/longitudinal-shift gap for these placements.
+200 directional symbols per snapshot/placement (coordinate, diagonal and radial
+directions) have real expected spectra and complete sampled eigenspaces.
+Known exact collisions on other states still exist; this is not a global proof
+or a forecast of a modified evolution.
+
+On the degraded DO1 snapshot the minimum normalized gap increases from.243834
+for .2--.9 to.307030 for .4--.9,.355173 for .5--.9 and.392076 for .56--.9.
+Maximum frozen lapse/longitudinal-shift speeds remain1.32312/1.87118, dominated
+outside the altered region. Moving the inner endpoint outward also steepens the
+weight: maximum slopes3.5156,4.9219,6.1523,7.2381 respectively. Thus .4--.9 is a
+reasonable first later-placement candidate if DG1 leaves significant growth;
+pushing directly to .56 requires a sharper transition and does not automatically
+improve spatial resolution. No later placement has been evolved or adopted yet.
+
+compare_dg1.py is prepared for verified terminal DG1 data. It checks every
+segment artifact hash, requires a verified admitted10M checkpoint, selects a
+COMMON cutoff outside all three horizon candidates, runs the matching native
+read-only diagnostic targets, checks full-domain norms against original reports,
+and compares histories without filling missing horizon values. Its matching DG1
+diagnostic executable builds locally. The actual DG1 comparison remains pending;
+syntax/build checks are not evidence of a successful duration test. This script
+always records n24_admitted=false and requires scientific review before promotion.
