@@ -1,0 +1,71 @@
+Please implement and test a native initializer and a shared gauge transition, starting with initial-data convergence and then matched N16 evolution to 10M.
+
+Keep existing campaigns and their frozen scientific builds intact. Inspect the current main-thread state before submitting anything; do not duplicate or silently cancel an existing job. Work on a separate branch from the current SG1 implementation and preserve reproducible comparisons.
+
+1. Replace Python-generated puncture initialization with native C++ pgen initialization.
+
+Evaluate the same isotropic hyperboloidal Schwarzschild wormhole directly at the actual Cartesian-core and spherical-shell grid coordinates. Preserve the mass, slice, coordinate map, initial gauge, tensor conventions, and background/deviation storage conventions.
+
+Initialize all volume fields and the actual scri surface consistently. Implement the correct asymptotic limits rather than evaluating singular expressions at scri.
+
+Remove the fixed 4097-node table and linear interpolation used for the initial shift. Evaluate its defining integral directly at the required radii using sufficiently accurate quadrature, or an equivalently verified native construction. Do not replace it with another fixed-resolution interpolation table. Control quadrature and coordinate-inversion errors well below spatial truncation error, and demonstrate tolerance independence.
+
+The C++ generator must be used by the actual evolution executable—not merely added as an unused pgen. Python may remain for plotting and independent validation, but not for generating the production initial fields.
+
+2. Establish initial-data convergence BEFORE long evolution.
+
+Measure N16, N24, and N32 at t=0; add finer initial-data-only or regional tests if needed to determine whether these grids are asymptotic.
+
+Separate:
+- continuum initial-data accuracy, checked using analytic/AD derivatives or an independent high-accuracy reference;
+- errors introduced by native finite differences;
+- errors introduced by patch exchange, boundary reconstruction, projection, or initialization of dependent fields;
+- errors in norm quadrature and the exterior cutoff.
+
+The implemented H and momentum constraints are independent of lapse and shift, so do not attribute their t=0 error to shift interpolation without evidence.
+
+Use a common exterior cutoff outside the analytic initial horizon, identical across resolutions. Report H, momentum magnitude, and radial momentum norms, plus radial error profiles and pointwise maxima with locations. Preserve the current production norms, but supplement them with an independent measurement that controls cutoff/quadrature artifacts.
+
+Inspect the core, core-shell overlap, shell radial seams, angular seams, initial slicing transition, and scri-adjacent rows separately. Use actual grid-spacing ratios. Do not assume fourth-order behavior merely because the bulk stencil is FD4.
+
+3. Audit scri consistency separately from null closure.
+
+Keep null closure enforced to roundoff, but verify the truncation order of the complete scri evolution operator.
+
+Use smooth nontrivial fields with known derivatives and appropriate scri regularity—not only constant or exactly preserved Minkowski data. Test surface derivatives, the last-three-row radial closure, sampled pole-normal derivatives, geometric regularity penalties, cross-face exchange, and the interior pole/Omega assembly.
+
+In particular, determine whether differentiating already-discretized numerators or multiplying residuals by 1/h or 1/Omega lowers the order. Measure boundary and near-boundary errors across resolutions. Passing an algebraic null residual is not an accuracy test.
+
+If this exposes a genuine inconsistency, diagnose and fix it as a separately documented change before attributing subsequent improvements to gauge blending.
+
+4. Remove the separate sharp shift-restoring collar.
+
+Use the existing SG1 common blend W(r), increasing from 0 to 1 over r=0.2–0.56, for both lapse and shift. Retain its ninth-degree smoothstep and the tested inner gauge.
+
+The intended bulk shift equation is
+
+  (∂t − βʲ∂j)βⁱ
+    = (1−W)(Λⁱ − 6βⁱ)
+      + W[−xⁱ + μDⁱ − 4(βⁱ+xⁱ)/Ω],
+
+with the existing μ and auxiliary-D equation unchanged.
+
+This removes only the additional C(r) collar at r=0.8–0.9. Apply the restoring term with ONE factor of W, not W². Preserve the exact inner plateau and the original near-scri equations/null closure. Verify both limits explicitly.
+
+5. Perform a controlled N16 comparison to 10M.
+
+After the initial-data and boundary audits, compare:
+A. Native initialization with the original SG1 collar.
+B. Identical native initialization with the shared-transition restoration.
+
+Compare both against the preserved SG1 N16 result. This separates initialization changes from the collar change.
+
+Keep dt, floors, KO, damping, grid, horizon settings, and diagnostics matched unless an independently demonstrated defect requires a separately identified change. Preserve direct chi/lapse evolution and pre-floor sign logging. Never restart a failed or unadmitted state.
+
+Report exterior constraint histories, radial localization, accepted horizon mass errors, null and geometric scri residuals, and floor counts. Explain whether removing the collar reduces the r≈0.775–0.9 error concentration.
+
+Do not launch new long N24/N32 evolutions under this request; their initial-data and bounded operator audits are authorized.
+
+Use the established Aurora allocation, one-node/12-rank GPU setup and 5GB storage cap. Continue healthy walltime stops through verified checkpoints under the established monitoring protocol. Preserve evidence and stop on numerical failure. Push the implementation, tests, plots, and concise conclusions to the remote branch.
+
+If initial-data or scri tests fail to demonstrate the required consistency, report the measured obstruction before proceeding with a long evolution presented as a convergence test.
