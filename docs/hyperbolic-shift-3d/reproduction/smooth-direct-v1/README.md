@@ -145,3 +145,13 @@ Completion does not demonstrate convergence; the matched N24 run is pending.
 No large remote outputs were purged at this transition because sufficient
 storage headroom remained. Full local campaign is preserved under
 output/hyperbolic-core-shell/smooth-direct-v1/aurora/campaigns/.
+
+## N24 submitted after N16 completion
+
+N24 job9014872 is submitted from its own fresh t=0 initial data toward20M.
+Plan SHA256:a7a19fb1ee54c3ffab5e24f5de207b48b4518d3079e35e3285df93f272860922.
+The all-user debug query was empty. Binding measured3.144GB with1.227GB headroom
+following N24 output/atomic reservations. The hourly monitor now follows N24;
+N16 is terminal and must not be rerun. Frozen source/binary, floors and all
+scientific settings remain unchanged. Small submission records are in
+submission/n24/ and the current campaign state is preserved in submission/.

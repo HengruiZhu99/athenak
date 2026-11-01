@@ -1,9 +1,11 @@
 {
-  "completed": [],
-  "current_n": 16,
-  "current_plan": "campaigns/n16-smooth-direct-fresh20m-v1-segment01/plan.json",
+  "completed": [
+    16
+  ],
+  "current_n": 24,
+  "current_plan": "campaigns/n24-smooth-direct-fresh20m-v1-segment01/plan.json",
   "failed": [],
-  "next_plan": "campaigns/n24-smooth-direct-fresh20m-v1-segment01/plan.json",
+  "next_plan": null,
   "science": {
     "binary": "build-sycl-mpi-smooth-direct-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_smooth_direct",
     "binary_sha256": "1cb01219a803623d877ef9bac8a8fb3cc3619866da2ba776239ed825f7b9d942",
@@ -13,12 +15,47 @@
   },
   "start": "fresh wormhole initial data at t=0 for each resolution",
   "status": "submitted",
-  "current_job": "9013744.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "n16_result": {
+    "verified": true,
+    "checkpoint": "campaigns/n16-smooth-direct-fresh20m-v1-segment01/output/puncture.checkpoint",
+    "completed": true,
+    "t_over_M": 20.0,
+    "source_manifest_sha256": "a7c265d827621328406992e1fb8f175d5a629eba6ddd618066e482c824d27b2c",
+    "artifact_hashes": {
+      "campaigns/n16-smooth-direct-fresh20m-v1-segment01/output/puncture.report.json": {
+        "sha256": "abbe12be8ae63ace78e212646ba92d961be9b152d40f6ba0746cee37c500d9bd",
+        "bytes": 13869
+      },
+      "campaigns/n16-smooth-direct-fresh20m-v1-segment01/output/puncture.checkpoint": {
+        "sha256": "6e36cb7b160be61223c7e2e5e1b6009c2bf41abefde27e6e30ea900da40d19f9",
+        "bytes": 79725224
+      },
+      "campaigns/n16-smooth-direct-fresh20m-v1-segment01/output/puncture.history.csv": {
+        "sha256": "9fb89d72b32053dcb760b7e250f38ed1fb200bdc2f076e96b696b2794e57b61f",
+        "bytes": 93309
+      },
+      "campaigns/n16-smooth-direct-fresh20m-v1-segment01/output/puncture.checkpoint.horizon-seed.txt": {
+        "sha256": "e05513fd40967c39c876edea374b86f2a887adecc1c764200dfd6277f8ee7056",
+        "bytes": 85
+      },
+      "campaigns/n16-smooth-direct-fresh20m-v1-segment01/output/puncture.fastflow.horizon_summary_0.txt": {
+        "sha256": "5cbf0d7853b43636927eee615a4b1f0e268264ad5324d95f1646d15877f89cbd",
+        "bytes": 27114
+      }
+    },
+    "n": 16,
+    "time": 6.666666666666667,
+    "steps": 13334,
+    "dt": 0.0005,
+    "bytes": 79725224,
+    "sha256": "6e36cb7b160be61223c7e2e5e1b6009c2bf41abefde27e6e30ea900da40d19f9"
+  },
+  "current_job": "9014872.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
   "submission": {
-    "job_id": "9013744.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
-    "submitted": 1793488245.4305444,
-    "plan": "campaigns/n16-smooth-direct-fresh20m-v1-segment01/plan.json",
-    "plan_sha256": "b7cfd56141302eba8ac81748e215498ac0fa0ddd6d88e585d91bbec913945966",
+    "job_id": "9014872.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "submitted": 1793494465.7511325,
+    "plan": "campaigns/n24-smooth-direct-fresh20m-v1-segment01/plan.json",
+    "plan_sha256": "a7a19fb1ee54c3ffab5e24f5de207b48b4518d3079e35e3285df93f272860922",
     "source_manifest_sha256": "a7c265d827621328406992e1fb8f175d5a629eba6ddd618066e482c824d27b2c",
     "resources": {
       "queue": "debug",
