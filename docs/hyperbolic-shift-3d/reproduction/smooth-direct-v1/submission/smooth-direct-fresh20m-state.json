@@ -4,7 +4,9 @@
   ],
   "current_n": 24,
   "current_plan": "campaigns/n24-smooth-direct-fresh20m-v1-segment01/plan.json",
-  "failed": [],
+  "failed": [
+    24
+  ],
   "next_plan": null,
   "science": {
     "binary": "build-sycl-mpi-smooth-direct-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_smooth_direct",
@@ -14,7 +16,7 @@
     "source_manifest_sha256": "a7c265d827621328406992e1fb8f175d5a629eba6ddd618066e482c824d27b2c"
   },
   "start": "fresh wormhole initial data at t=0 for each resolution",
-  "status": "submitted",
+  "status": "terminal",
   "n16_result": {
     "verified": true,
     "checkpoint": "campaigns/n16-smooth-direct-fresh20m-v1-segment01/output/puncture.checkpoint",
@@ -65,5 +67,51 @@
       "ranks_per_node": 12,
       "walltime": "01:00:00"
     }
-  }
+  },
+  "n24_failure": {
+    "job": "9014872",
+    "last_accepted_t_over_M": 3.7259999999997895,
+    "last_diagnostic_t_over_M": 3.5999999999998034,
+    "error": "invalid accepted volume algebraic projection",
+    "bad_metric_cells": [
+      {
+        "cell": 69648,
+        "x": 0.00375,
+        "y": -0.01125000000000001,
+        "z": 0.00375,
+        "r": 0.012437342963832759,
+        "finite": true,
+        "determinant": -0.06510362424895218,
+        "eigenvalues": [
+          -0.012497983499645135,
+          1.7737283163139919,
+          2.9368253463897975
+        ],
+        "chi": 0.000340552301145406,
+        "conformal_lapse": 0.5522168427741349,
+        "previous_chi": 0.00031518831551148976,
+        "previous_conformal_lapse": 0.5571270816564449
+      },
+      {
+        "cell": 70248,
+        "x": 0.00375,
+        "y": -0.0037500000000000033,
+        "z": 0.01125,
+        "r": 0.01243734296383275,
+        "finite": true,
+        "determinant": -0.28513431876215173,
+        "eigenvalues": [
+          -0.05127162486511136,
+          2.17215168318645,
+          2.560249334868035
+        ],
+        "chi": 0.0005318574093820635,
+        "conformal_lapse": 0.5418411977817393,
+        "previous_chi": 0.0003984606424799189,
+        "previous_conformal_lapse": 0.5474966425331688
+      }
+    ],
+    "checkpoint_admitted": false
+  },
+  "comparison": "complete; local plots and evidence committed separately"
 }

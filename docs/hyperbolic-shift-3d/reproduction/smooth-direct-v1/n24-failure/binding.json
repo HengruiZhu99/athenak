@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "plan_sha256": "a7a19fb1ee54c3ffab5e24f5de207b48b4518d3079e35e3285df93f272860922",
+  "source_manifest": "source-smooth-direct-v1-manifest.json",
+  "source_manifest_sha256": "a7c265d827621328406992e1fb8f175d5a629eba6ddd618066e482c824d27b2c",
+  "binaries": {
+    "build-sycl-mpi-smooth-direct-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_smooth_direct": "1cb01219a803623d877ef9bac8a8fb3cc3619866da2ba776239ed825f7b9d942"
+  },
+  "inputs": {
+    "inputs/puncture-continuous-n24-smooth-v1.txt": "6c265e8dc309c70a2c7017a80eddd2d76f3a185b4f1d6108cc65b8bfc85be914"
+  },
+  "pbs_sha256": "74626084257b99ed52e160eb9208409f0c1ea15790103c4667b156986c500c20",
+  "admission": null,
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "01:00:00"
+  },
+  "storage_at_bind": {
+    "bytes": 3144015872,
+    "entries": 51420,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 244413736,
+    "planned_bytes": 385061978,
+    "headroom_bytes": 1226508414
+  },
+  "launcher": {
+    "control.py": "edfd2c81b933cbee90a806d6cb88e2364204f731823aa0f8bf4ba02b66df4065",
+    "worker.py": "27fc463a9bf4c1c3b143afd6ad0a25772fbc1b894ea9208acaebd92d11f6c8a6",
+    "run_debug.pbs": "1d5df790cf6c8cdc96e9d330b9b337ce755b30e057959586bcd661dc9ce885a6",
+    "storage.py": "fdcf2abc2533b8fed91220d9c18d8b9d723660820949a72e956fb9c8866afd39"
+  },
+  "allocation_seconds": 3600,
+  "worker_seconds": 3200
+}

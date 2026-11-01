@@ -155,3 +155,60 @@ following N24 output/atomic reservations. The hourly monitor now follows N24;
 N16 is terminal and must not be rerun. Frozen source/binary, floors and all
 scientific settings remain unchanged. Small submission records are in
 submission/n24/ and the current campaign state is preserved in submission/.
+
+## Terminal N24 failure and comparison
+
+N24 job9014872 failed numerically after the last accepted3.726M(step3726),
+with `invalid accepted volume algebraic projection`. Its rejected final-step
+candidate corresponds to3.727M. Last saved diagnostic time is3.6M; report norm
+and horizon fields refer to that older diagnostic, not the failing candidate.
+This was neither a walltime stop nor a storage failure. No failed restart is
+admitted. All worker artifact hashes and lengths were independently verified
+in the copied local campaign; see n24-failure/verification-and-location.json.
+
+The saved rejected volume state is finite but has two indefinite conformal
+metrics: cells69648 and70248, at(.00375,-.01125,.00375) and
+(.00375,-.00375,.01125), both r=.01243734. Their minimum metric eigenvalues are
+-.0124980 and-.0512716; determinants-.0651036 and-.2851343. Both chi and conformal
+lapse are positive there. These are inner Cartesian points, well inside the
+last candidate horizon radius.0825255. The determinant/trace algebraic repair
+cannot admit these tensors. This identifies the immediate failure, not the
+cause of their preceding growth. It is not a negative-chi/lapse stopping test
+or a failure of null closure at scri(maximum residual1.55e-15).
+
+N24 recorded1230 negative chi candidate updates(914 stage,316 final) in8 points,
+with first occurrence.1545M and minimum-3.48358e-6. Its chi floor fired1261 times
+(941 stage,320 final), also including positive below-floor values. It recorded
+109396 negative lapse candidates(82040 stage,27356 final) across48 points, first
+at1.744M; all were floored. No zero candidates or nonpositive scri-interpolated
+chi were logged. Counters include the rejected attempt. These differ sharply
+from N16's64 chi interventions and zero lapse interventions.
+
+`constraints-final.png/pdf` compares every retained new N16/N24 exterior norm
+with the preserved much finer N513 baseline; `protocol-comparison.png/pdf`
+compares earlier original and smooth-log histories. Candidate exterior cutoffs
+and original finder acceptance flags are retained. There is no interpolation
+across missing values or extrapolation past the final diagnostics. Scripts
+and source hashes accompany the figures. Native coordinate export uses the
+same ContinuousCoreMesh and active-cell ordering as the evolution.
+
+N24 exterior norms are smaller than N16 over much of their shared history,
+but N24 loses metric positivity inside the horizon. N16's late Hamiltonian
+exterior norm rises again toward20M. The combination does not establish a
+stable convergent3D scheme. Direct-variable evolution with floors removes the
+previous log-chi underflow failure path but is not sufficient for finer-grid
+strong-field stability. The campaign terminates with N16 completed and N24
+failed; no numerical retry or parameter change is made automatically.
+
+Terminal cleanup: the failed N24 checkpoint and rejected-state capture were
+copied locally and hash/length verified before remote removal; purge receipt
+and matching terminal-lock release are retained in n24-failure/. Post-cleanup
+remote task footprint was3.224GB. Both requested resolutions are terminal and
+the hourly automation was deleted. No failed state was restarted.
+
+To reproduce the coordinate export used by analyze_terminal.py:
+
+    build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_continuous_positive_geometry 24 3 output/hyperbolic-core-shell/smooth-direct-v1/coordinates-n24.csv
+
+Then run analyze_terminal.py and compare_terminal.py using the locally retained
+raw campaign. The scripts produce evidence/plots only, never evolve or submit.
