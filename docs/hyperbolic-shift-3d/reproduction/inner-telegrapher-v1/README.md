@@ -99,3 +99,49 @@ one more step to.0015. Maximum null residual across these checks was1.12e-15.
 A native attempt to load GD1 was rejected with checkpoint schema/configuration/
 admission mismatch. The physical oracle and CPU/device partition tests passed;
 the existing tensor-scri test also passed. See checks/.
+
+All119 controller/worker/campaign tests passed after the N16-only policy test
+was corrected. A two-step Minkowski check completed at coordinate.001: full
+Hamiltonian RMS rose from2.28e-15 to2.77e-7 under the intentionally nonstationary
+inner gauge. This is a short smoke check, not a Minkowski accuracy study.
+After verified collection, compare.py HISTORY makes an N16 comparison against
+the previous fresh-direct smooth-gauge history, preserving diagnostic gaps.
+
+## Frozen Aurora science
+
+Source commit316f1ac9e0ab5f54f4c1321916b6ed05dd402787.
+Remote root /home/hzhu/hyperbolic-core-shell-20261028.
+Manifest source-inner-telegrapher-v1-manifest.json SHA256
+80fb05c6cc9d89bf8f5533869b573343a6bcab65710490e2e149ce2c22e0b47b.
+Binary build-sycl-mpi-inner-telegrapher-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_inner_telegrapher
+SHA256702f753a54d09a787acf78737d62549d0531a5e8cea0dbec20ebe0d54570d8a5.
+Built with oneapi/release/2025.3.1, SYCL/PVC+MPI and make -j64.
+
+Use launcher-inner-telegrapher-v1/control.py and inner_telegrapher_campaign.py;
+verify launcher files against provenance.json. First plan:
+campaigns/n16-inner-telegrapher-fresh10m-v1-segment01/plan.json,
+SHA256df0502af53bd109d12a9794c64625fef342636df4f083aa0079963658a6ef0c4.
+Binding measured3.287GB, leaving1.486GB after output/atomic reservations.
+
+Follow inner-telegrapher-10m-state.json and saved submission, never duplicate a
+queued/running/ambiguous submission. On terminal status, collect with control.py,
+copy the full campaign locally preserving campaigns/... layout and verify all
+worker artifact SHA256/lengths. For a healthy checkpoint/completion run:
+
+    python3.11 launcher-inner-telegrapher-v1/inner_telegrapher_campaign.py verify --root ROOT --plan PLAN
+
+It checks frozen bindings, worker/native status, IT1 header168/scheme3/floors,
+dimensions, finite payload, dt, matching time/steps and forward progress.
+Release only the matching terminal lock with control.py collect
+--release-terminal-lock, once. If healthy but below10M, create a new sequential
+segment via helper plan --n 16 --segment NEXT --restart CHECKPOINT --sha256 SHA, preserve/bind any seed sidecar, bind
+unchanged science, check ALL user debug jobs and submit once. Use worker3200s,
+command3100s and native exit reserve180s. Do not resume numerical failures.
+On verified10M completion or numerical failure collect/report, compare available
+history with previous N16 using compare.py, and delete the monitor. No N24 is
+authorized by this bounded experiment.
+
+Job9015938 was submitted for fresh N16 toward10M. Hourly heartbeat
+aurora-inner-telegrapher-n16-to-10m is active for status, evidence collection and
+verified healthy-walltime continuation only. Submission does not establish
+stability. Saved plan/binding/submission and launcher provenance are in submission/.
