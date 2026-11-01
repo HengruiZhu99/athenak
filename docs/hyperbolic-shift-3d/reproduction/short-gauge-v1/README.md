@@ -131,3 +131,17 @@ mass measurement. This supplements coordinate-volume constraint norms and avoids
 using coordinate horizon radius alone to judge differing gauges. The native IT1
 reference final fractional mass error is5.28210e-4; its DO1 counterpart is missing
 because final horizon acceptance failed. The SG1 endpoint remains pending.
+
+## Live measured comparison through3M
+
+The SG1 history has passed3M, beyond the LG1 accepted failure time2.9715M.
+This is not terminal success or N24 admission. `plot_progress.py` preserves the
+captured history, hashes and measured comparison in `progress-to3m/`, without
+interpolating missing mass data or extrapolating LG1 beyond2.85M.
+
+At3M, SG1 candidate-exterior H/M/Theta RMS are0.018706/0.029535/0.00067265;
+DG1 gives0.018066/0.054447/0.0023416 and IT1 gives0.012461/0.017604/0.00045626.
+SG1's final candidate radius0.07948 is close to IT1's0.07982, but DG1's is0.05501.
+These different cutoffs prevent treating the raw ratios as a same-domain
+accuracy comparison. SG1's3M finder is unaccepted, so no mass value is supplied.
+The final10M common-cutoff reconstruction and accepted mass review remain required.
