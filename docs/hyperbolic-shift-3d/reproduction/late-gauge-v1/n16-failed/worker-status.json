@@ -1,0 +1,419 @@
+{
+  "schema": 1,
+  "status": "failed",
+  "started": "2026-11-01T05:25:04.541516+00:00",
+  "job_id": "9018058.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "launcher_host": "x4113c6s3b0n0",
+  "allocation_nodes": [
+    "x4113c6s3b0n0.hsn.cm.aurora.alcf.anl.gov"
+  ],
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "01:00:00"
+  },
+  "source_manifest_sha256": "eafc0f7b133f961ffaf0dfc28bf02610b17bd3be406e7d794cb2417e4bf287c7",
+  "binaries": {
+    "build-sycl-mpi-late-gauge-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_late_gauge": "d64e108a0d0ce213ca30ae97709a54f2f61f9f8d771d308b0aacc0f3ad3c7c0a"
+  },
+  "plan_sha256": "30fc9facaeaa32feb7f8d4f9d1449e36e2bca56b884b0a4d1fcbfd1818be3e81",
+  "phase": "late_gauge_evolution",
+  "n": 16,
+  "cases": [
+    {
+      "name": "puncture",
+      "kind": "puncture",
+      "started": "2026-11-01T05:25:21.723915+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-late-gauge-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_late_gauge",
+        "16",
+        "campaigns/n16-late-gauge-fresh10m-v1-segment01/output/puncture",
+        "puncture",
+        "3.3333333333333335",
+        "0.0005",
+        "inputs/puncture-continuous-n16-smooth-v1.txt",
+        "-",
+        "3070",
+        "0.05",
+        "0.001",
+        "12",
+        "24",
+        "2"
+      ],
+      "generated_inputs": {},
+      "n": 16,
+      "returncode": 143,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 402.1176275940379,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "failed",
+          "passed": false
+        },
+        {
+          "check": {
+            "path": [
+              "t"
+            ],
+            "op": "le",
+            "value": 3.3333333333333335
+          },
+          "observed": 0.9904999999999463,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "t"
+            ],
+            "op": "ge",
+            "value": 0.0
+          },
+          "observed": 0.9904999999999463,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "n"
+            ],
+            "op": "eq",
+            "value": 16
+          },
+          "observed": 16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_schema"
+            ],
+            "op": "eq",
+            "value": "HYP3D_MPI_LG1"
+          },
+          "observed": "HYP3D_MPI_LG1",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_admitted"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": false,
+          "passed": false
+        },
+        {
+          "check": {
+            "path": [
+              "inner_gauge"
+            ],
+            "op": "eq",
+            "value": "direct_outer_r040_090_it1_damping_v1"
+          },
+          "observed": "direct_outer_r040_090_it1_damping_v1",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "gauge_blend"
+            ],
+            "op": "eq",
+            "value": "smoothstep9_w_056_080"
+          },
+          "observed": "smoothstep9_w_056_080",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "positive_variables"
+            ],
+            "op": "eq",
+            "value": "direct_chi_direct_lapse_rk_and_ko"
+          },
+          "observed": "direct_chi_direct_lapse_rk_and_ko",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "physical_lapse_floor"
+            ],
+            "op": "eq",
+            "value": 1e-10
+          },
+          "observed": 1e-10,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "puncture_chi_floor"
+            ],
+            "op": "eq",
+            "value": 1e-08
+          },
+          "observed": 1e-08,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "puncture_chi_floor_radius"
+            ],
+            "op": "eq",
+            "value": 0.03
+          },
+          "observed": 0.03,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_header_bytes"
+            ],
+            "op": "eq",
+            "value": 168
+          },
+          "observed": 168,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "chi_nonpositive_policy"
+            ],
+            "op": "eq",
+            "value": "record_and_floor_finite_candidates_everywhere"
+          },
+          "observed": "record_and_floor_finite_candidates_everywhere",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_surface"
+            ],
+            "op": "le",
+            "value": 1e-10
+          },
+          "observed": 1.2212934112904159e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_ghost"
+            ],
+            "op": "le",
+            "value": 1e-10
+          },
+          "observed": 1.5543121727018271e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_penalty_scale_min"
+            ],
+            "op": "eq",
+            "value": 1
+          },
+          "observed": 1,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "angular_epsilon_min"
+            ],
+            "op": "eq",
+            "value": 2
+          },
+          "observed": 2,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "complete_candidate_exterior_enabled"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        }
+      ],
+      "report_status": "failed",
+      "status": "failed",
+      "artifacts": {
+        "campaigns/n16-late-gauge-fresh10m-v1-segment01/output/puncture.report.json": {
+          "sha256": "422b6eee70a940e97c46ffbb17d33a45d12deac3fc16ff18816024d37ef445b7",
+          "bytes": 13934
+        },
+        "campaigns/n16-late-gauge-fresh10m-v1-segment01/output/puncture.checkpoint": {
+          "sha256": "9377aec332f36504e4d9a96479a7b9c0ae67a58d95a17995da75a92e189aab5f",
+          "bytes": 79725224
+        },
+        "campaigns/n16-late-gauge-fresh10m-v1-segment01/output/puncture.history.csv": {
+          "sha256": "f03c2062f505b7e8ae9727b1a554a395dc9ce7338d81c4c96aa798fb891cb963",
+          "bytes": 13734
+        },
+        "campaigns/n16-late-gauge-fresh10m-v1-segment01/output/puncture.failed-stage.bin": {
+          "sha256": "465d36d4de806078402bd696984131ecbee520fa2da01b5dae95955c1c2a8ca4",
+          "bytes": 39862528
+        },
+        "campaigns/n16-late-gauge-fresh10m-v1-segment01/output/puncture.checkpoint.horizon-seed.txt": {
+          "sha256": "9ea76b1279dd60ea2bfe8b271b0093756cbee15b54b4b09d161e508b82c10d63",
+          "bytes": 89
+        },
+        "campaigns/n16-late-gauge-fresh10m-v1-segment01/output/puncture.fastflow.horizon_summary_0.txt": {
+          "sha256": "da345319685ccc50db4c5e2c876246abfbc4ed43473008d9f31feafb36c77850",
+          "bytes": 3429
+        }
+      },
+      "finished": "2026-11-01T05:32:08.126912+00:00"
+    }
+  ],
+  "storage_at_start": {
+    "bytes": 3559653888,
+    "entries": 65914,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 89725224,
+    "planned_bytes": 137560359,
+    "headroom_bytes": 1213060529
+  },
+  "affinity": {
+    "returncode": 0,
+    "timed_out": false,
+    "storage_error": null,
+    "elapsed_seconds": 0.3713800339610316,
+    "records": [
+      {
+        "host": "x4113c6s3b0n0",
+        "rank": 0,
+        "mask": "0.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4113c6s3b0n0",
+        "rank": 1,
+        "mask": "0.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4113c6s3b0n0",
+        "rank": 2,
+        "mask": "1.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4113c6s3b0n0",
+        "rank": 3,
+        "mask": "1.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4113c6s3b0n0",
+        "rank": 4,
+        "mask": "2.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4113c6s3b0n0",
+        "rank": 7,
+        "mask": "3.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4113c6s3b0n0",
+        "rank": 8,
+        "mask": "4.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4113c6s3b0n0",
+        "rank": 9,
+        "mask": "4.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4113c6s3b0n0",
+        "rank": 11,
+        "mask": "5.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4113c6s3b0n0",
+        "rank": 5,
+        "mask": "2.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4113c6s3b0n0",
+        "rank": 6,
+        "mask": "3.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4113c6s3b0n0",
+        "rank": 10,
+        "mask": "5.0",
+        "hierarchy": "COMPOSITE"
+      }
+    ],
+    "passed": true
+  },
+  "stop_reason_status": "failed",
+  "finished": "2026-11-01T05:32:08.126934+00:00",
+  "elapsed_seconds": 423.5854344010004,
+  "storage_at_finish": {
+    "bytes": 3679501334,
+    "entries": 65925
+  }
+}

@@ -1,11 +1,11 @@
 # LG1: move the gauge transition outward, keep damping fixed
 
-The active goal is to diagnose the DO1 constraint growth and admit N24 only
-following reviewed N16 accuracy success. The damping-only DG1 run is still
-running. At the matching4.65M diagnostic its full Hamiltonian norm is.331950,
-compared with DO1 .335618 and IT1 .065295; both DG1 and DO1 lose horizon acceptance.
-This provisional result indicates that stronger damping alone does not remove
-the growth. Final10M common-domain analysis remains required.
+**Terminal result:** LG1 job9018058 failed at last accepted2.9715M. Its final
+measured diagnostic is2.85M; the failed RK candidate time was not separately
+recorded. No failed checkpoint may be restarted. N24 remains gated on reviewed
+N16 accuracy success. The earlier DG1 damping-only control completed10M but
+reduced common-domain Hamiltonian RMS by only3.54% relative to DO1, remaining
+about28 times larger than IT1.
 
 LG1 changes only the inner endpoint of the gauge blend, from.2 to.4, retaining
 outer endpoint.9 and C4 smoothstep9. The physical telegrapher gauge is exact
@@ -122,3 +122,42 @@ records sign/floor counters and horizon acceptance gaps; empty radial bins remai
 missing. Its N24 flag stays false pending scientific review. The matching local
 LG1 diagnostic executable is built. Syntax checks alone do not validate a new
 10M result; no LG1 endpoint comparison has been performed yet.
+
+## Verified failure and next controlled comparison
+
+All worker artifacts were copied locally and SHA256/length-verified. The failed
+checkpoint is explicitly unadmitted; it was inspected read-only, never restarted.
+`inspect_failure.py` checks its schema, configuration, time/steps and raw failed-stage
+capture. `n16-failed/failure-analysis.json` preserves the results. The terminal
+allocation lock was released; large failed outputs were retired remotely only
+following verified local preservation.
+
+The rejected stage has1,416 indefinite volume metrics, all at spherical radius
+.4228125; no nonfinite volume metric or invalid surface metric was found. Cell32798
+has eigenvalues[-.0155967,7.69374,7.70037],positive chi.741788 and conformal lapse
+1.96229. This shell is1.5 radial spacings inside the.45 block interface. Location
+alone does not identify an interface defect. The last accepted state is still
+positive definite but has816 cells with reversed transverse-shift/lapse speed
+ordering on the same radial shell. This does not prove a characteristic collision
+caused the failure. Scri residuals remain near roundoff(surface1.22e-15,ghost1.55e-15).
+There are no new lapse-floor or boundary-sign interventions.
+
+The exact initial-data source comparison in `audit_initial_forcing.py` shows that
+extending the Cauchy inner gauge into the hyperboloidal slice transition increases
+the radial shift forcing departure from IT1: RMS1.370 over.4<r<.7 versus.560 for
+DO1/DG1. Advection is common and cancels in these initial lapse/shift differences;
+B forcing is not claimed identical. The strong shift pulse and metric distortion
+suggest a gauge/initial-slice incompatibility, not a proven root cause. A timestep
+or interface contribution has not been excluded.
+
+`audit_radial_scatter.py` shows that at10M, about73% of DG1 Theta squared norm
+inside.16<r<.30 is coherent across equal-radius samples; the rest is angular
+scatter. This is not a full spherical-harmonic decomposition or an onset analysis.
+
+The next distinct test restores the IT1 gauge interpolation interval.2--.56 while
+retaining the direct outer driver and fixed IT1 damping. It starts from original
+wormhole data, not LG1. This separates the extended inner-gauge placement from the
+new outer-driver terms. The narrower interval is steeper, but it is the interval
+already used by IT1; accuracy and stability must be measured. No N24 admission is
+implied. Earlier sections above retain the original trial preparation chronology;
+this terminal result supersedes their running/submitted status.

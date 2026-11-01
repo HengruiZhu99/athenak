@@ -1,0 +1,129 @@
+{
+  "artifact_hashes_verified": true,
+  "artifacts": {
+    "campaigns/n16-late-gauge-fresh10m-v1-segment01/output/puncture.report.json": {
+      "sha256": "422b6eee70a940e97c46ffbb17d33a45d12deac3fc16ff18816024d37ef445b7",
+      "bytes": 13934
+    },
+    "campaigns/n16-late-gauge-fresh10m-v1-segment01/output/puncture.checkpoint": {
+      "sha256": "9377aec332f36504e4d9a96479a7b9c0ae67a58d95a17995da75a92e189aab5f",
+      "bytes": 79725224
+    },
+    "campaigns/n16-late-gauge-fresh10m-v1-segment01/output/puncture.history.csv": {
+      "sha256": "f03c2062f505b7e8ae9727b1a554a395dc9ce7338d81c4c96aa798fb891cb963",
+      "bytes": 13734
+    },
+    "campaigns/n16-late-gauge-fresh10m-v1-segment01/output/puncture.failed-stage.bin": {
+      "sha256": "465d36d4de806078402bd696984131ecbee520fa2da01b5dae95955c1c2a8ca4",
+      "bytes": 39862528
+    },
+    "campaigns/n16-late-gauge-fresh10m-v1-segment01/output/puncture.checkpoint.horizon-seed.txt": {
+      "sha256": "9ea76b1279dd60ea2bfe8b271b0093756cbee15b54b4b09d161e508b82c10d63",
+      "bytes": 89
+    },
+    "campaigns/n16-late-gauge-fresh10m-v1-segment01/output/puncture.fastflow.horizon_summary_0.txt": {
+      "sha256": "da345319685ccc50db4c5e2c876246abfbc4ed43473008d9f31feafb36c77850",
+      "bytes": 3429
+    }
+  },
+  "checkpoint_admitted": false,
+  "last_accepted_t_over_M": 2.971499999999839,
+  "last_diagnostic_t_over_M": 2.849999999999852,
+  "failed_candidate_stage_time": "not recorded; do not equate with last accepted or diagnostic time",
+  "error": "device RHS failure at active cell 32798 reason 2",
+  "reported_cell": {
+    "cell": 32798,
+    "coordinates": [
+      0.2745587392168735,
+      -0.20362663892395552,
+      -0.24884553601867954
+    ],
+    "radius": 0.4228125000000001,
+    "chi": 0.741787826890775,
+    "conformal_lapse": 1.9622949759980495,
+    "metric": [
+      [
+        4.4550884419731185,
+        2.408452172345428,
+        2.945941082920574
+      ],
+      [
+        2.408452172345428,
+        5.905834396349338,
+        -2.194112549653188
+      ],
+      [
+        2.945941082920574,
+        -2.194112549653188,
+        5.017592705011332
+      ]
+    ],
+    "metric_eigenvalues": [
+      -0.015596676032489619,
+      7.693743189176485,
+      7.7003690301897905
+    ],
+    "Theta": 798.2037804495556
+  },
+  "bad_volume_metric_cells": 1416,
+  "bad_volume_metric_radius_range": [
+    0.4228125,
+    0.42281250000000015
+  ],
+  "nonfinite_volume_metric_cells": 0,
+  "bad_surface_metric_cells": 0,
+  "nonfinite_surface_metric_cells": 0,
+  "minimum_volume_metric_eigenvalue": -0.17819241702159075,
+  "last_recorded_horizon_radius": 0.050042636824540083,
+  "max_null_surface": 1.2212934112904159e-15,
+  "max_null_ghost": 1.5543121727018271e-15,
+  "floor_counts": {
+    "chi_floor_stage_interventions": 32,
+    "chi_floor_acceptance_interventions": 8,
+    "lapse_floor_node_interventions": 0,
+    "surface_chi_floor_stage_interventions": 0,
+    "surface_chi_floor_final_interventions": 0,
+    "scri_interpolated_chi_negative_count": 0,
+    "scri_interpolated_chi_zero_count": 0
+  },
+  "last_accepted_state_audit": {
+    "read_only_unadmitted_checkpoint": true,
+    "minimum_metric_eigenvalue": 0.025253910925304587,
+    "reported_cell_metric_eigenvalues": [
+      0.04827883918170811,
+      4.549395173346888,
+      4.552914745681148
+    ],
+    "reported_cell_chi": 0.41891908025553654,
+    "reported_cell_conformal_lapse": 2.345014655961712,
+    "normalized_squared_speed_gaps_on_r010_095": {
+      "transverse_shift_minus_lapse": {
+        "minimum": -0.20231497413501476,
+        "minimum_radius": 0.4228125000000001,
+        "negative_cells": 816,
+        "negative_radius_range": [
+          0.4228125,
+          0.4228125000000001
+        ]
+      },
+      "longitudinal_shift_minus_lapse": {
+        "minimum": 0.1310484923843518,
+        "minimum_radius": 0.4228125000000001,
+        "negative_cells": 0,
+        "negative_radius_range": null
+      },
+      "lapse_minus_physical": {
+        "minimum": -1.641278707953655,
+        "minimum_radius": 0.40468750000000003,
+        "negative_cells": 110856,
+        "negative_radius_range": [
+          0.13346786832417754,
+          0.5343750000000002
+        ]
+      }
+    },
+    "scope": "Last accepted state only. Sign changes indicate lost separation, not proof that a characteristic collision caused failure."
+  },
+  "reported_running_cfl_max": 0.26143723884424014,
+  "reported_last_rhs_max": 1495390893.9539545
+}
