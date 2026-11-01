@@ -145,3 +145,31 @@ SG1's final candidate radius0.07948 is close to IT1's0.07982, but DG1's is0.0550
 These different cutoffs prevent treating the raw ratios as a same-domain
 accuracy comparison. SG1's3M finder is unaccepted, so no mass value is supplied.
 The final10M common-cutoff reconstruction and accepted mass review remain required.
+
+## Prepared N24 gate (not admission)
+
+The local launcher code now supports N24 only with an explicit N16 accuracy review
+supplied via `short_gauge_campaign.py --review PATH`. This does not modify the
+running frozen N16 launcher or scientific source/binary. A new frozen launcher
+would be created only after terminal N16 review; no N24 plan or admission exists
+at preparation time.
+
+The review must record verified N16 completion at10M, exact checkpoint/comparison
+hashes, matching scientific source-manifest/binary hashes, a written rationale,
+and explicit review of geometry, exterior constraints, accepted horizon mass and
+floor/sign counts. It must set `n24_admitted:true` after actual evidence inspection.
+The record is included among hash-bound N24 inputs. Structural checks alone are
+not scientific proof and cannot create the review. The helper preserves fresh
+original N24 data, dt=1/3000, SG1 schema and all other settings; healthy continuation
+requires the same review. Missing/failed reviews, changed science, wrong timestep,
+wrong schema and unadmitted checkpoints are rejected by focused tests.
+
+Read-only preparation verified the original N24 text SHA256
+`6c265e8dc309c70a2c7017a80eddd2d76f3a185b4f1d6108cc65b8bfc85be914`
+(84,249,758bytes). A current footprint scan was3,766,644,736bytes; N24 planned
+output plus atomic reserves are629,475,714bytes, leaving603,879,550bytes at that
+instant. Capacity must be rechecked before actual binding/submission.
+
+All129 controller/campaign tests passed after adding the N24 review gate. This
+validates launcher behavior only; no N24 scientific admission has been issued.
+The frozen running N16 source/binary/launcher remain unchanged.

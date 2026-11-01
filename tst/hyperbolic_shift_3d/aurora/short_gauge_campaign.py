@@ -31,7 +31,7 @@ END = 10/3
 
 
 def inspect_checkpoint(path, n, expected_sha):
-    if n not in [16] or control.digest(path) != expected_sha:
+    if n not in [16,24] or control.digest(path) != expected_sha:
         raise ValueError('Unverified checkpoint identity')
     data = Path(path).read_bytes()
     h = struct.unpack('<16s4i3Q2d', data[:72])
@@ -53,9 +53,11 @@ def inspect_checkpoint(path, n, expected_sha):
     return dict(n=n,time=h[8],steps=h[7],dt=h[9],bytes=len(data),sha256=expected_sha)
 
 
-def make_plan(root,n,segment,initial=None,restart=None,expected_sha=None):
-    if n not in [16] or segment<1 or bool(initial)==bool(restart):
-        raise ValueError('Supply N16 and exactly one initial/restart input')
+def make_plan(root,n,segment,initial=None,restart=None,expected_sha=None,review=None):
+    if n not in [16,24] or segment<1 or bool(initial)==bool(restart):
+        raise ValueError('Supply N16/N24 and exactly one initial/restart input')
+    if (n==24 and not review) or (n==16 and review):
+        raise ValueError('Only N24 requires the explicit N16 accuracy review')
     if initial:
         if segment != 1 or control.digest(control.local_path(root,initial)) != INITIAL_SHA[n]:
             raise ValueError('First segment requires verified original wormhole generator data')
@@ -67,6 +69,7 @@ def make_plan(root,n,segment,initial=None,restart=None,expected_sha=None):
     if start['time']>=END: raise ValueError('Already completed10M')
     prefix=f'campaigns/n{n}-short-gauge-fresh10m-v1-segment{segment:02d}'
     out=prefix+'/output'; name=out+'/puncture'; inputs=[initial or restart]
+    if review: inputs.append(review)
     if restart and (root/(restart+'.horizon-seed.txt')).exists(): inputs.append(restart+'.horizon-seed.txt')
     cp=168+16*(31*cells(n)+6*n*n*31)
     checks=[dict(path=[k],op=op,value=v) for k,op,v in [
@@ -81,7 +84,7 @@ def make_plan(root,n,segment,initial=None,restart=None,expected_sha=None):
         ('scri_penalty_scale_min','eq',1),('angular_epsilon_min','eq',2),
         ('complete_candidate_exterior_enabled','eq',True)]]
     plan=dict(schema=1,reviewed=True,phase='short_gauge_evolution',segment=segment,
-        experimental_policy='n16_short_gauge_fresh_to10M',n=n,low_resolution_n=16,
+        experimental_policy='n16_short_gauge_fresh_to10M' if n==16 else 'n24_short_gauge_fresh_to10M_after_n16_review',n=n,low_resolution_n=16,
         native_exit_reserve_seconds=180,resources=dict(control.FIXED,walltime='01:00:00'),
         worker_seconds=3200,storage=dict(limit_bytes=5_000_000_000,
             planned_new_bytes=math.ceil(1.6*cp)+10_000_000,atomic_checkpoint_reserve_bytes=cp+10_000_000),
@@ -92,6 +95,7 @@ def make_plan(root,n,segment,initial=None,restart=None,expected_sha=None):
             timeout_seconds=3100,report=name+'.report.json',inputs=inputs,checks=checks,
             artifacts=[name+x for x in ['.checkpoint','.history.csv','.failed-stage.bin',
                                       '.checkpoint.horizon-seed.txt','.fastflow.horizon_summary_0.txt']])])
+    if review: plan['n16_accuracy_review']=review
     control.validate_plan(root,plan)
     path=root/prefix/'plan.json';path.parent.mkdir(parents=True,exist_ok=False)
     control.atomic(path,plan);return dict(plan=str(path.relative_to(root)),restart=start)
@@ -110,6 +114,9 @@ def verify(root,relative):
             or binding['source_manifest_sha256']!=SOURCE_SHA or worker['source_manifest_sha256']!=SOURCE_SHA
             or binding['binaries']!={BINARY:BINARY_SHA} or worker['binaries']!={BINARY:BINARY_SHA}):
         raise ValueError('Frozen scientific binding mismatch')
+    admission=control.validate_admission(root,plan,SOURCE_SHA,{BINARY:BINARY_SHA})
+    if binding.get('admission')!=admission:
+        raise ValueError('N16 accuracy review binding changed')
     if worker['status'] not in ['passed','checkpointed'] or len(worker['cases'])!=1:
         raise ValueError('Unhealthy worker; never resume')
     if binding['inputs'].get(cmd['args'][5] if plan['segment']==1 else cmd['args'][6])!=plan['start_verification']['sha256']:
@@ -140,10 +147,10 @@ def verify(root,relative):
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('action',choices=['plan','verify'])
-    p.add_argument('--root',type=Path,required=True);p.add_argument('--n',type=int,choices=[16])
-    p.add_argument('--segment',type=int,default=1);p.add_argument('--initial');p.add_argument('--restart');p.add_argument('--sha256');p.add_argument('--plan')
+    p.add_argument('--root',type=Path,required=True);p.add_argument('--n',type=int,choices=[16,24])
+    p.add_argument('--segment',type=int,default=1);p.add_argument('--initial');p.add_argument('--restart');p.add_argument('--sha256');p.add_argument('--plan');p.add_argument('--review')
     a=p.parse_args();root=a.root.resolve()
-    print(json.dumps(make_plan(root,a.n,a.segment,a.initial,a.restart,a.sha256) if a.action=='plan' else verify(root,a.plan),indent=2))
+    print(json.dumps(make_plan(root,a.n,a.segment,a.initial,a.restart,a.sha256,a.review) if a.action=='plan' else verify(root,a.plan),indent=2))
 
 
 if __name__=='__main__': main()

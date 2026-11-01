@@ -174,12 +174,14 @@ def validate_plan(root, plan):
     late_gauge = plan['phase'] == 'late_gauge_evolution'
     short_gauge = plan['phase'] == 'short_gauge_evolution'
     smooth_direct = plan['phase'] == 'smooth_direct_evolution' or inner_telegrapher or direct_outer or damping_ablation or late_gauge or short_gauge
-    if smooth_direct and (n not in ([16] if inner_telegrapher or damping_ablation or late_gauge or short_gauge else [16,24]) or plan['low_resolution_n'] != 16
-            or plan.get('experimental_policy') != ('n16_short_gauge_fresh_to10M' if short_gauge else 'n16_late_gauge_fresh_to10M' if late_gauge else 'n16_damping_ablation_fresh_to10M' if damping_ablation else 'n16_then_n24_direct_outer_fresh_to10M' if direct_outer else 'n16_inner_telegrapher_fresh_to10M' if inner_telegrapher else 'n16_then_n24_smooth_direct_fresh_to20M')
+    if smooth_direct and (n not in ([16] if inner_telegrapher or damping_ablation or late_gauge else [16,24]) or plan['low_resolution_n'] != 16
+            or plan.get('experimental_policy') != (('n16_short_gauge_fresh_to10M' if n==16 else 'n24_short_gauge_fresh_to10M_after_n16_review') if short_gauge else 'n16_late_gauge_fresh_to10M' if late_gauge else 'n16_damping_ablation_fresh_to10M' if damping_ablation else 'n16_then_n24_direct_outer_fresh_to10M' if direct_outer else 'n16_inner_telegrapher_fresh_to10M' if inner_telegrapher else 'n16_then_n24_smooth_direct_fresh_to20M')
             or plan.get('native_exit_reserve_seconds') != 180
             or type(plan.get('segment')) is not int or plan['segment'] < 1
             or len(plan.get('commands', [])) != 1):
         raise ValueError('Smooth direct campaign requires fresh N16/N24 followed by GD1 continuations')
+    if short_gauge and n==24:
+        short_gauge_accuracy_review(root,plan)
     smooth_continuation = plan['phase'] == 'smooth_gauge_continuation'
     if smooth_continuation and (n not in [16,24] or plan['low_resolution_n'] != 16
             or plan.get('experimental_policy') != 'n16_then_n24_smoothstep9_to20M'
@@ -392,8 +394,43 @@ def verify_source(root, relative):
     return digest(manifest)
 
 
+def short_gauge_accuracy_review(root,plan):
+    """Require an immutable scientific review, not merely finite N16 completion.
+
+    The reviewer must inspect the named numerical evidence before writing this
+    record. These structural checks do not themselves establish accuracy.
+    """
+    name=plan.get('n16_accuracy_review')
+    if not isinstance(name,str) or not name:
+        raise ValueError('N24 SG1 requires a completed N16 accuracy review')
+    path=local_path(root,name);review=json.loads(path.read_text())
+    if (review.get('schema')!=1 or review.get('n16_completed_t_over_M')!=10
+            or review.get('n16_n')!=16 or review.get('n24_admitted') is not True
+            or not isinstance(review.get('rationale'),str) or not review['rationale'].strip()):
+        raise ValueError('N16 SG1 review has not admitted N24')
+    for key in ['n16_checkpoint_sha256','n16_comparison_sha256',
+                'source_manifest_sha256','binary_sha256']:
+        if not isinstance(review.get(key),str) or not re.fullmatch('[0-9a-f]{64}',review[key]):
+            raise ValueError('Unbound N16 SG1 review evidence: '+key)
+    for key in ['numerical_completion','finite_geometry','exterior_constraints_reviewed',
+                'horizon_mass_reviewed','sign_floor_counts_reviewed']:
+        if review.get('checks',{}).get(key) is not True:
+            raise ValueError('Incomplete N16 SG1 accuracy review: '+key)
+    if any(name not in c.get('inputs',[]) for c in plan['commands']):
+        raise ValueError('N16 review must be a hash-bound N24 input')
+    return review
+
+
 def validate_admission(root, plan, source_digest, binary_hashes):
     """Admissions are reviewed evidence, never inferred from a process exit code."""
+    if plan['phase']=='short_gauge_evolution' and plan['n']==24:
+        review=short_gauge_accuracy_review(root,plan)
+        if (review['source_manifest_sha256']!=source_digest or not binary_hashes
+                or any(Path(name).name!=SHORT_GAUGE_TARGET or sha!=review['binary_sha256']
+                       for name,sha in binary_hashes.items())):
+            raise ValueError('N24 SG1 science does not match the reviewed N16 science')
+        return dict(path=plan['n16_accuracy_review'],
+                    sha256=digest(local_path(root,plan['n16_accuracy_review'])))
     if plan['phase'] in {'preflight', 'timestep_experiment', 'direct_variable_resolution', 'candidate_history_replay', 'gauge_blend_comparison', 'smooth_gauge_continuation', 'smooth_direct_evolution', 'inner_telegrapher_evolution', 'direct_outer_evolution', 'damping_ablation_evolution', 'late_gauge_evolution', 'short_gauge_evolution'}:
         # Direct user-requested experiment, not a scientifically admitted run.
         return None
