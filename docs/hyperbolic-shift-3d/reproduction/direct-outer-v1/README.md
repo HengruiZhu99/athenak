@@ -84,3 +84,10 @@ separate boundary counters and horizon flags. Commit/push concise evidence and
 plots, report results and delete the monitor. Completion alone does not establish
 accuracy or convergence. Copy/hash-verify large evidence before remote purge;
 retain required restart inputs until successors have verified outputs.
+
+Local puncture smoke evolution completed two steps to coordinate .001 and a
+DO1 restart completed the third step to .0015. A two-step Minkowski evolution
+also completed; maximum null residual was1.12e-15 across these checks. A native
+IT1 restart attempt was rejected with schema/configuration/admission mismatch.
+All121 controller/worker/campaign tests passed. These short tests establish
+implementation/setup consistency, not long-time stability or convergence.
