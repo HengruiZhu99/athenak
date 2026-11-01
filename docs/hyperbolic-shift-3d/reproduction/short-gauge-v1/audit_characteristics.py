@@ -5,9 +5,12 @@ three gauge rows/blocks using the SG1 interval. The .2--.9 control is checked
 against the native direct-outer matrix. This is not a global hyperbolicity proof.
 """
 from pathlib import Path
-import ctypes as C, hashlib, json, sys
+import argparse, ctypes as C, hashlib, json, sys
 import numpy as np
 HERE=Path(__file__).resolve().parent; ROOT=HERE.parents[3]
+parser=argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--include-sg1-endpoint',action='store_true',help='Also audit the verified N16 SG1 10M checkpoint, preserving the original audit file.')
+args=parser.parse_args()
 sys.path.insert(0,str(ROOT/'tst/hyperbolic_shift_3d'))
 from audit_inner_characteristics import spaces
 
@@ -31,7 +34,12 @@ for label,variant,trial,sha in [
  ('DO1_10M','direct-outer-v1','n16-direct-outer-fresh10m-v1-segment01','edc58b0df7ef0391567221d8b95990e82ab05aad6264bc87d7e4a49ff2449c5c'),
  ('DG1_10M','damping-ablation-v1','n16-damping-ablation-fresh10m-v1-segment01','b582e457f8a8ba9b143436225bb57318b7e28a241fb495b913eea4787bfa04cf')]:
     cases.append((label,ROOT/'output/hyperbolic-core-shell'/variant/'aurora/campaigns'/trial/'output/puncture.checkpoint',sha))
-result=dict(scope='SG1 coefficients on original initial data and frozen older 10M states; not an SG1 evolution or global hyperbolicity proof',interval=[.2,.56],radius_audited=[.1,.95],coordinates_sha256=digest(coords_path),native_library_sha256=digest(libpath),states={})
+if args.include_sg1_endpoint:
+    cases.append(('SG1_10M',ROOT/'output/hyperbolic-core-shell/short-gauge-v1/aurora/campaigns/n16-short-gauge-fresh10m-v1-segment01/output/puncture.checkpoint','d581c2860a1049c5a79568c90658b56463ebe8487229e06f7df3d34b27f80749'))
+scope='SG1 coefficients on original initial data and frozen older 10M states; not an SG1 evolution or global hyperbolicity proof'
+if args.include_sg1_endpoint:
+    scope='SG1 coefficients on initial, older controls and verified SG1 10M endpoint; sampled directions at 0.1<r<0.95 only. Not a full-trajectory, puncture, scri or global hyperbolicity proof.'
+result=dict(scope=scope,interval=[.2,.56],radius_audited=[.1,.95],coordinates_sha256=digest(coords_path),native_library_sha256=digest(libpath),states={})
 for label,path,sha in cases:
     assert digest(path)==sha
     a=np.loadtxt(path,skiprows=1) if label=='initial' else np.memmap(path,dtype='<f8',mode='r',offset=168,shape=(len(r),31))
@@ -61,5 +69,6 @@ for label,path,sha in cases:
             if not z['complete']:record['incomplete'].append(dict(cell=int(k),radius=radius,normal=n.tolist(),audit=z))
             else:record['max_balanced_basis_condition']=max(record['max_balanced_basis_condition'],z['balanced_basis_condition'])
     assert digest(path)==sha;result['states'][label]=record
-(HERE/'characteristic-audit.json').write_text(json.dumps(result,indent=2)+'\n')
+output=HERE/('characteristic-audit-sg1-endpoint.json' if args.include_sg1_endpoint else 'characteristic-audit.json')
+output.write_text(json.dumps(result,indent=2)+'\n')
 for label,v in result['states'].items():print(label,{k:v[k] for k in ['sampled_symbols','max_spectrum_error','max_balanced_basis_condition']},'incomplete',len(v['incomplete']),{k:g['minimum'] for k,g in v['gaps'].items()})

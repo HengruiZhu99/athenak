@@ -309,3 +309,23 @@ segment/finder columns explicitly. It does not reject a legitimate restart just
 because a cumulative maximum reset, nor hide a changed full-domain constraint.
 A synthetic merger check exercised both cases; synthetic rows were not saved as
 scientific results.
+
+
+## Characteristic samples on the completed SG1 state
+
+The read-only `audit_characteristics.py --include-sg1-endpoint` adds the
+hash-verified N16 SG110M checkpoint to the preserved initial/control audit.
+Results are in `characteristic-audit-sg1-endpoint.json`; the earlier audit is
+unchanged. All200 directional symbols sampled on SG1 had the expected real
+spectrum and complete eigenspaces. Maximum spectrum discrepancy was3.78e-15;
+maximum balanced eigenbasis condition was7.91. Over all active stored cells in
+0.1<r<0.95, minimum transverse-shift-minus-lapse squared-speed coefficient gap
+was0.11843, longitudinal-shift-minus-lapse0.23136, and lapse-minus-physical0.01367;
+none was negative or zero. These are coefficient gaps before directional metric
+factors, not coordinate speed differences.
+
+This gives no evidence of a new sampled exterior characteristic collision in
+the successful SG1 endpoint. It does not cover every direction, the time
+trajectory, the puncture region r<=0.1 or scri, and is not a global hyperbolicity
+proof. The matrix reconstruction remains checked against the native DO1 control
+block before replacing the gauge coefficients. No evolution source changed.
