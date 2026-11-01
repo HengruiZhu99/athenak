@@ -1,0 +1,80 @@
+{
+  "schema": 1,
+  "n16_n": 16,
+  "n16_completed_t_over_M": 10,
+  "n24_admitted": true,
+  "n16_checkpoint_sha256": "d581c2860a1049c5a79568c90658b56463ebe8487229e06f7df3d34b27f80749",
+  "n16_comparison_sha256": "c03d5370ecedce1d288f18d8b5dbf8996a10be7ffc2eb4ca56d527aa19d3afb7",
+  "source_manifest_sha256": "a5fd4a1cf9924927dfa19ddf9d27e91c6d13a91a0d12b8e997e6868853801cff",
+  "binary_sha256": "1b75a50ec11f8b3908de9172bd5baec57eb8bc17d382d1fba25173ab4352996f",
+  "checks": {
+    "numerical_completion": true,
+    "finite_geometry": true,
+    "exterior_constraints_reviewed": true,
+    "horizon_mass_reviewed": true,
+    "sign_floor_counts_reviewed": true
+  },
+  "rationale": "Admit the requested N24 resolution test after verified N16 completion to10M: all stored volume metrics are positive definite, late exterior norms remain bounded rather than exhibiting the wide-blend growth, and same-cutoff H/M errors are reduced14.57/10.57 times relative to DG1. Final horizon is accepted with0.3413percent mass error. Negative chi candidates are confined to the nearest8puncture cells; no lapse/surface/boundary clipping masked exterior errors. This is sufficient for the next resolution test, not an assertion of convergence or final formulation accuracy. Residual exterior H/M norms are1.91/2.34 times IT1 and mass drift is worse; N24 must test whether these decrease.",
+  "common_cutoff": 0.1099,
+  "n16_metrics": {
+    "common_exterior": {
+      "volume": 4.1850360468363235,
+      "H_L2": 0.015414970227319257,
+      "M_L2": 0.02900764103479748,
+      "Mr_L2": 0.03081596860877591,
+      "Theta_L2": 0.0008129273867115463,
+      "Zr_L2": 0.01717371985075609
+    },
+    "late_history_max": {
+      "H_L2": 0.04793460774081707,
+      "M_L2": 0.05029488661106469,
+      "Theta_L2": 0.0014643527013101557,
+      "H_exterior_L2": 0.01769542484374043,
+      "Mr_exterior_L2": 0.041069277683157865
+    },
+    "accepted_horizon_rows": 45,
+    "history_rows": 68,
+    "final_horizon_accepted": true,
+    "accepted_mass_error": {
+      "reference_mass": 0.3333333333333333,
+      "final_relative_error": 0.003413255375168678,
+      "max_absolute_relative_error_after4M": 0.003413255375168678,
+      "accepted_rows_after4M": 36
+    },
+    "fraction_H2_r016_030": 0.028336901003047005,
+    "counters": {
+      "totals": {
+        "chi_floor_stage_interventions": 56,
+        "chi_floor_acceptance_interventions": 8,
+        "surface_chi_floor_stage_interventions": 0,
+        "surface_chi_floor_final_interventions": 0,
+        "lapse_floor_node_interventions": 0,
+        "scri_interpolated_chi_negative_count": 0,
+        "scri_interpolated_chi_zero_count": 0
+      },
+      "candidate_groups": {
+        "volume_field_0": {
+          "negative_stage": 56,
+          "negative_final": 8,
+          "zero_stage": 0,
+          "zero_final": 0,
+          "minimum": -7.786532952604854e-07,
+          "first_negative_time": 0.10075000000000008,
+          "first_zero_time": null
+        }
+      },
+      "scope": "segment-local counts summed, including rejected attempts; event times are coordinate time"
+    }
+  },
+  "regional_fractions_of_exterior_squared_norm": {
+    "0.16-0.3": {
+      "H2": 0.23442737495237237,
+      "M2": 0.08975677209136125
+    },
+    "0.775-0.9": {
+      "H2": 0.6219759085210532,
+      "M2": 0.7502414812616992
+    }
+  },
+  "scope": "Authorization for fresh same-science N24 to10M only, including healthy walltime continuations; no numerical-failure restart or science changes."
+}

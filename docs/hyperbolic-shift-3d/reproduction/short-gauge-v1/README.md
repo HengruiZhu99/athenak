@@ -173,3 +173,55 @@ instant. Capacity must be rechecked before actual binding/submission.
 All129 controller/campaign tests passed after adding the N24 review gate. This
 validates launcher behavior only; no N24 scientific admission has been issued.
 The frozen running N16 source/binary/launcher remain unchanged.
+
+## Verified N16 result and decision to run N24
+
+Job9018835 completed10M in6667steps. Scheduler is terminal, worker passed, and
+remote plus independent local artifact/header/configuration/finite-payload
+verification passed. Admitted SG1 checkpoint SHA256
+`d581c2860a1049c5a79568c90658b56463ebe8487229e06f7df3d34b27f80749`
+has79,725,224bytes. All stored volume metrics are positive definite (minimum
+metric eigenvalue0.8730); chi and lapse are positive. Small terminal records and
+checkpoint geometry audit are preserved in `n16-completed/`. Large original
+checkpoint remains local under output/hyperbolic-core-shell/short-gauge-v1/aurora.
+
+`comparison/` contains verified native reconstruction on common cutoffr>0.1099,
+outside every final candidate horizon. Final H/M-magnitude RMS:
+
+| Gauge | Exterior H RMS | Exterior M RMS |
+|---|---:|---:|
+| Earlier IT1 |0.00808023|0.01240101|
+| Wide DO1 |0.23278860|0.32155526|
+| Wide DG1, restored damping |0.22462459|0.30648240|
+| Original interval SG1 |0.01541497|0.02900764|
+
+Relative to DG1, SG1 reduces H/M by14.57/10.57 times with only the gauge interval
+changed. The former.16--.30 region contributes2.83% of full H-squared instead of
+66.50%; this is a final-state localization, not proof of where errors originated.
+The initial-source audit and the failure of moving the interval outward support
+a strong gauge transient as the trigger. Narrowing the interval improves the
+result despite a steeper weight, so insufficient resolution of the weight alone
+is not an adequate explanation. The precise discretization/interface mechanism
+has not been isolated.
+
+SG1 accepts45/68horizon rows, including the final one; unaccepted rows remain
+missing. Final fractional irreducible-mass error is+0.00341326 (0.3413%), worse
+than IT1's0.0528%. Late exterior constraints are bounded but remain1.91/2.34times
+IT1. Thus this is not a convergence or final-formulation accuracy claim.
+
+There were56negative chi stage candidates and8negative final candidates, all at
+the nearest8puncture points, r=0.00974279, beginning at coordinate0.10075. These
+counts include rejected RK candidates. There were no lapse floor hits, surface
+chi floor hits, or boundary-interpolation sign events. Scri residual maxima are
+1.22e-15(surface) and1.55e-15(ghost enforcement). Extra inner chi interventions
+relative to IT1/DG1 are recorded, not concealed.
+
+After reviewing these results and the rendered figures, `n16-accuracy-review.json`
+admits the user-requested fresh N24 test using identical science and dt/dx. The
+reason is stable finite10M evolution, removal of the large overlap-region error
+and bounded coarse-grid exterior errors with an accepted final horizon. N24 is
+needed to determine whether the remaining error and mass drift decrease. The
+review does not authorize changing equations, timestep ratio or floors, nor
+restarting numerical failures. It does not claim global strong hyperbolicity or
+convergence. The persistent goal remains active until the N24 investigation is
+finished and assessed.

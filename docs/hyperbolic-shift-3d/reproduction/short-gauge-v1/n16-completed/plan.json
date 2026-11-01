@@ -1,0 +1,216 @@
+{
+  "schema": 1,
+  "reviewed": true,
+  "phase": "short_gauge_evolution",
+  "segment": 1,
+  "experimental_policy": "n16_short_gauge_fresh_to10M",
+  "n": 16,
+  "low_resolution_n": 16,
+  "native_exit_reserve_seconds": 180,
+  "resources": {
+    "queue": "debug",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "01:00:00"
+  },
+  "worker_seconds": 3200,
+  "storage": {
+    "limit_bytes": 5000000000,
+    "planned_new_bytes": 137560359,
+    "atomic_checkpoint_reserve_bytes": 89725224
+  },
+  "output_dir": "campaigns/n16-short-gauge-fresh10m-v1-segment01/output",
+  "start_verification": {
+    "n": 16,
+    "time": 0.0,
+    "steps": 0,
+    "dt": 0.0005,
+    "sha256": "35c1b65aeaaefac34552f9a63b279cabe839b09326adc9af1d2c767ecc29c8ca",
+    "kind": "fresh_wormhole"
+  },
+  "commands": [
+    {
+      "name": "puncture",
+      "kind": "puncture",
+      "executable": "build-sycl-mpi-short-gauge-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_short_gauge",
+      "args": [
+        "16",
+        "campaigns/n16-short-gauge-fresh10m-v1-segment01/output/puncture",
+        "puncture",
+        "3.3333333333333335",
+        "0.0005",
+        "inputs/puncture-continuous-n16-smooth-v1.txt",
+        "-",
+        "@WALL_SECONDS@",
+        "0.05",
+        "0.001",
+        "12",
+        "24",
+        "2"
+      ],
+      "timeout_seconds": 3100,
+      "report": "campaigns/n16-short-gauge-fresh10m-v1-segment01/output/puncture.report.json",
+      "inputs": [
+        "inputs/puncture-continuous-n16-smooth-v1.txt"
+      ],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "t"
+          ],
+          "op": "le",
+          "value": 3.3333333333333335
+        },
+        {
+          "path": [
+            "t"
+          ],
+          "op": "ge",
+          "value": 0.0
+        },
+        {
+          "path": [
+            "n"
+          ],
+          "op": "eq",
+          "value": 16
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "checkpoint_schema"
+          ],
+          "op": "eq",
+          "value": "HYP3D_MPI_SG1"
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "inner_gauge"
+          ],
+          "op": "eq",
+          "value": "direct_outer_r020_056_it1_damping_v1"
+        },
+        {
+          "path": [
+            "gauge_blend"
+          ],
+          "op": "eq",
+          "value": "smoothstep9_w_056_080"
+        },
+        {
+          "path": [
+            "positive_variables"
+          ],
+          "op": "eq",
+          "value": "direct_chi_direct_lapse_rk_and_ko"
+        },
+        {
+          "path": [
+            "physical_lapse_floor"
+          ],
+          "op": "eq",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "puncture_chi_floor"
+          ],
+          "op": "eq",
+          "value": 1e-08
+        },
+        {
+          "path": [
+            "puncture_chi_floor_radius"
+          ],
+          "op": "eq",
+          "value": 0.03
+        },
+        {
+          "path": [
+            "checkpoint_header_bytes"
+          ],
+          "op": "eq",
+          "value": 168
+        },
+        {
+          "path": [
+            "chi_nonpositive_policy"
+          ],
+          "op": "eq",
+          "value": "record_and_floor_finite_candidates_everywhere"
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "scri_penalty_scale_min"
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "angular_epsilon_min"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "complete_candidate_exterior_enabled"
+          ],
+          "op": "eq",
+          "value": true
+        }
+      ],
+      "artifacts": [
+        "campaigns/n16-short-gauge-fresh10m-v1-segment01/output/puncture.checkpoint",
+        "campaigns/n16-short-gauge-fresh10m-v1-segment01/output/puncture.history.csv",
+        "campaigns/n16-short-gauge-fresh10m-v1-segment01/output/puncture.failed-stage.bin",
+        "campaigns/n16-short-gauge-fresh10m-v1-segment01/output/puncture.checkpoint.horizon-seed.txt",
+        "campaigns/n16-short-gauge-fresh10m-v1-segment01/output/puncture.fastflow.horizon_summary_0.txt"
+      ]
+    }
+  ]
+}
