@@ -119,3 +119,29 @@ and1.768GB headroom after N16 output/atomic
 reservations. Hourly monitor `aurora-smooth-gauge-n16-then-n24-to-20m` is ACTIVE,
 renamed Aurora fresh direct N16 then N24 to20M and updated to this new protocol.
 It must not continue the superseded log-variable jobs.
+
+## N16 verified completion
+
+Job9013744 completed20M from fresh wormhole data in13334 RK steps. Native runtime
+was2438.93s (40.65 minutes), with SYCL and12 MPI ranks. All configured worker
+checks passed, and the admitted GD1 checkpoint was independently verified both
+remotely and in the local copied campaign, including every recorded artifact's
+SHA256/length, checkpoint configuration, finite payload and exact terminal time.
+Checkpoint SHA256:6e36cb7b160be61223c7e2e5e1b6009c2bf41abefde27e6e30ea900da40d19f9.
+
+There were48 negative chi stage candidates and16 negative final candidates, all
+in the eight nearest puncture cells at r=.0097427858; all64 were floored. First
+negative candidates occurred at0.3M and the minimum was-1.57669115e-6. There were
+no zero candidates, lapse-floor interventions, surface-chi floor interventions
+or negative scri-interpolated chi events. Counters count cell updates, not unique
+timesteps. The configured floor remained active throughout the run.
+
+Maximum null residuals:surface1.2213e-15,ghost1.5543e-15. At20M the finder accepted
+the horizon(expansion RMS4.9086e-4); coordinate radius.1157804,areal radius.6668811,
+irreducible mass.33344054. Final candidate-exterior H_L2=.02803899 and radial
+Mr_L2=.006704283; full momentum-vector exterior M_L2=.01404840 is a different
+diagnostic. Preserve the full history and finder flags in n16-completed/.
+Completion does not demonstrate convergence; the matched N24 run is pending.
+No large remote outputs were purged at this transition because sufficient
+storage headroom remained. Full local campaign is preserved under
+output/hyperbolic-core-shell/smooth-direct-v1/aurora/campaigns/.
