@@ -140,18 +140,19 @@ def compare(raw, plans16, plans24, out):
     out.mkdir(parents=True, exist_ok=True)
     summary = {}
     fig, axes = plt.subplots(2, 3, figsize=(13, 7))
-    fields = [('H_exterior_L2', 'Candidate-exterior Hamiltonian RMS'),
-              ('M_exterior_L2', 'Candidate-exterior momentum magnitude RMS'),
-              ('Mr_exterior_L2', 'Candidate-exterior radial momentum RMS'),
-              ('H_L2', 'Full-domain Hamiltonian RMS'), ('M_L2', 'Full-domain momentum magnitude RMS'),
+    fields = [('H_exterior_L2', 'Exterior Hamiltonian RMS'),
+              ('M_exterior_L2', 'Exterior momentum magnitude RMS'),
+              ('Mr_exterior_L2', 'Exterior radial momentum RMS'),
+              ('H_L2', 'Full-domain Hamiltonian RMS'), ('M_L2', 'Full-domain momentum RMS'),
               ('horizon_irreducible_mass', 'Accepted horizon mass / M − 1')]
+    colors = {16: '#b55315', 24: '#1769aa'}
     for n, case in cases.items():
         data, last = case['history'], case['reports'][-1]
         for ax, (field, label) in zip(axes.flat, fields):
             value = data[field]
             if field == 'horizon_irreducible_mass':
                 value = np.where(data['horizon_found'] == 1, 3 * value - 1, np.nan)
-            ax.plot(data['t_over_M'], value, '.-', ms=3, label=f'N{n}')
+            ax.plot(data['t_over_M'], value, '.-', ms=3, label=f'N{n}', color=colors[n])
             ax.set(xlabel='t / M', ylabel=label)
             ax.grid(alpha=.2)
         summary[n] = dict(last_accepted_t_over_M=last['t_over_M'], last_diagnostic_t_over_M=float(data['t_over_M'][-1]),
@@ -161,6 +162,8 @@ def compare(raw, plans16, plans24, out):
                           final_accepted_mass_error=(3 * last['horizon_irreducible_mass'] - 1)
                           if last['horizon_found'] and last['horizon_irreducible_mass'] is not None else None)
     axes[0, 0].legend()
+    for ax in axes[1, :2]:
+        ax.set_yscale('log')
     fig.suptitle('SG1: matched fresh N16 and N24 evolutions, fixed dt/dx')
     fig.tight_layout(rect=(0, .07, 1, .96))
     fig.text(.5, .02, 'Exterior histories use each run’s candidate horizon; missing diagnostics remain gaps. Two grids do not establish convergence order.', ha='center', fontsize=9)
@@ -197,7 +200,7 @@ def compare(raw, plans16, plans24, out):
                 power = -np.diff([row[key] for row in cumulative])
                 value = np.full_like(volume, np.nan)
                 np.divide(np.maximum(power, 0), volume, out=value, where=volume > 0)
-                ax.stairs(np.sqrt(value), r, label=f'N{n}')
+                ax.stairs(np.sqrt(value), r, label=f'N{n}', color=colors[n])
             regions = {}
             for lower, upper in [(.16, .3), (.775, .9)]:
                 below = next(row for row in cumulative if row['cutoff'] == lower)

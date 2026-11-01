@@ -1,0 +1,505 @@
+{
+  "job_id": "9019406.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "collected": 1793549820.0332658,
+  "returncode": 0,
+  "stdout": "{\n    \"timestamp\": 1793549815,\n    \"pbs_version\": \"2026.1.0.20260821184519\",\n    \"pbs_server\": \"aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov\",\n    \"Jobs\": {\n        \"9019406.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov\": {\n            \"Job_Name\": \"hyper-scri-3d\",\n            \"Job_Owner\": \"hzhu@aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov\",\n            \"resources_used\": {\n                \"cpupercent\": 8746,\n                \"cput\": \"07:23:42\",\n                \"mem\": \"2972168kb\",\n                \"ncpus\": 208,\n                \"ngpus\": 0,\n                \"vmem\": \"50960kb\",\n                \"walltime\": \"00:39:20\"\n            },\n            \"job_state\": \"F\",\n            \"queue\": \"debug\",\n            \"server\": \"aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov\",\n            \"Account_Name\": \"CompactBinaryMerger\",\n            \"Checkpoint\": \"u\",\n            \"ctime\": \"Sun Nov  1 06:42:42 2026\",\n            \"Error_Path\": \"aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov:/home/hzhu/hyperbolic-core-shell-20261028/hyper-scri-3d.e9019406\",\n            \"exec_host\": \"x4216c3s5b0n0/0*208\",\n            \"exec_vnode\": \"(x4216c3s5b0n0:ncpus=208)\",\n            \"Hold_Types\": \"n\",\n            \"Join_Path\": \"oe\",\n            \"Keep_Files\": \"doe\",\n            \"Mail_Points\": \"a\",\n            \"Mail_Users\": \"hz0693@princeton.edu\",\n            \"mtime\": \"Sun Nov  1 07:24:09 2026\",\n            \"Output_Path\": \"aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov:/home/hzhu/hyperbolic-core-shell-20261028/hyper-scri-3d.o9019406\",\n            \"Priority\": 0,\n            \"qtime\": \"Sun Nov  1 06:42:42 2026\",\n            \"Rerunable\": \"False\",\n            \"Resource_List\": {\n                \"allow_account_check_failure\": \"True\",\n                \"allow_negative_allocation\": \"True\",\n                \"award_category\": \"INCITE\",\n                \"award_type\": \"INCITE-2026\",\n                \"backfill_factor\": 84600,\n                \"backfill_max\": 50,\n                \"base_score\": 51,\n                \"bkc_definition\": \"compute_aurora_prod_20261002T162246_af5b0375_b4fd227\",\n                \"burn_ratio\": 0.8818,\n                \"current_allocation\": 2552662016,\n                \"enable_2nd_fp64\": \"True\",\n                \"enable_backfill\": 0,\n                \"enable_fifo\": 1,\n                \"enable_wfp\": 0,\n                \"fifo_factor\": 1800,\n                \"filesystems\": \"home\",\n                \"hbm_mode\": \"flat\",\n                \"home_fs\": \"True\",\n                \"ncpus\": 208,\n                \"ni_resource\": \"aurora\",\n                \"nodect\": 1,\n                \"overburn\": \"False\",\n                \"place\": \"scatter\",\n                \"project_priority\": 25,\n                \"route_backfill\": \"False\",\n                \"score_boost\": 0,\n                \"select\": 1,\n                \"snc_mode\": \"quad\",\n                \"total_allocation\": 21600000000,\n                \"total_cpus\": 10624,\n                \"walltime\": \"01:00:00\",\n                \"wfp_factor\": 100000\n            },\n            \"stime\": \"Sun Nov  1 06:44:15 2026\",\n            \"obittime\": \"Sun Nov  1 07:24:09 2026\",\n            \"session_id\": 399941,\n            \"jobdir\": \"/home/hzhu\",\n            \"substate\": 92,\n            \"euser\": \"hzhu\",\n            \"egroup\": \"users\",\n            \"comment\": \"Job run at Sun Nov 01 at 06:44 on (x4216c3s5b0n0:ncpus=208) and finished\",\n            \"etime\": \"Sun Nov  1 06:42:42 2026\",\n            \"umask\": 22,\n            \"run_count\": 1,\n            \"eligible_time\": \"00:01:35\",\n            \"Stageout_status\": 1,\n            \"Exit_status\": 0,\n            \"Submit_arguments\": \"-v HYPERBOLIC_PLAN=campaigns/n24-short-gauge-fresh10m-v1-segment01/plan.json /home/hzhu/hyperbolic-core-shell-20261028/campaigns/n24-short-gauge-fresh10m-v1-segment01/run_debug.pbs\",\n            \"history_timestamp\": 1793517849,\n            \"project\": \"CompactBinaryMerger\",\n            \"Submit_Host\": \"aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov\"\n        }\n    }\n}\n",
+  "stderr": "",
+  "scheduler": {
+    "Job_Name": "hyper-scri-3d",
+    "Job_Owner": "hzhu@aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov",
+    "resources_used": {
+      "cpupercent": 8746,
+      "cput": "07:23:42",
+      "mem": "2972168kb",
+      "ncpus": 208,
+      "ngpus": 0,
+      "vmem": "50960kb",
+      "walltime": "00:39:20"
+    },
+    "job_state": "F",
+    "queue": "debug",
+    "server": "aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "Account_Name": "CompactBinaryMerger",
+    "Checkpoint": "u",
+    "ctime": "Sun Nov  1 06:42:42 2026",
+    "Error_Path": "aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov:/home/hzhu/hyperbolic-core-shell-20261028/hyper-scri-3d.e9019406",
+    "exec_host": "x4216c3s5b0n0/0*208",
+    "exec_vnode": "(x4216c3s5b0n0:ncpus=208)",
+    "Hold_Types": "n",
+    "Join_Path": "oe",
+    "Keep_Files": "doe",
+    "Mail_Points": "a",
+    "Mail_Users": "hz0693@princeton.edu",
+    "mtime": "Sun Nov  1 07:24:09 2026",
+    "Output_Path": "aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov:/home/hzhu/hyperbolic-core-shell-20261028/hyper-scri-3d.o9019406",
+    "Priority": 0,
+    "qtime": "Sun Nov  1 06:42:42 2026",
+    "Rerunable": "False",
+    "Resource_List": {
+      "allow_account_check_failure": "True",
+      "allow_negative_allocation": "True",
+      "award_category": "INCITE",
+      "award_type": "INCITE-2026",
+      "backfill_factor": 84600,
+      "backfill_max": 50,
+      "base_score": 51,
+      "bkc_definition": "compute_aurora_prod_20261002T162246_af5b0375_b4fd227",
+      "burn_ratio": 0.8818,
+      "current_allocation": 2552662016,
+      "enable_2nd_fp64": "True",
+      "enable_backfill": 0,
+      "enable_fifo": 1,
+      "enable_wfp": 0,
+      "fifo_factor": 1800,
+      "filesystems": "home",
+      "hbm_mode": "flat",
+      "home_fs": "True",
+      "ncpus": 208,
+      "ni_resource": "aurora",
+      "nodect": 1,
+      "overburn": "False",
+      "place": "scatter",
+      "project_priority": 25,
+      "route_backfill": "False",
+      "score_boost": 0,
+      "select": 1,
+      "snc_mode": "quad",
+      "total_allocation": 21600000000,
+      "total_cpus": 10624,
+      "walltime": "01:00:00",
+      "wfp_factor": 100000
+    },
+    "stime": "Sun Nov  1 06:44:15 2026",
+    "obittime": "Sun Nov  1 07:24:09 2026",
+    "session_id": 399941,
+    "jobdir": "/home/hzhu",
+    "substate": 92,
+    "euser": "hzhu",
+    "egroup": "users",
+    "comment": "Job run at Sun Nov 01 at 06:44 on (x4216c3s5b0n0:ncpus=208) and finished",
+    "etime": "Sun Nov  1 06:42:42 2026",
+    "umask": 22,
+    "run_count": 1,
+    "eligible_time": "00:01:35",
+    "Stageout_status": 1,
+    "Exit_status": 0,
+    "Submit_arguments": "-v HYPERBOLIC_PLAN=campaigns/n24-short-gauge-fresh10m-v1-segment01/plan.json /home/hzhu/hyperbolic-core-shell-20261028/campaigns/n24-short-gauge-fresh10m-v1-segment01/run_debug.pbs",
+    "history_timestamp": 1793517849,
+    "project": "CompactBinaryMerger",
+    "Submit_Host": "aurora-uan-0010.hostmgmt1000.cm.aurora.alcf.anl.gov"
+  },
+  "worker": {
+    "schema": 1,
+    "status": "passed",
+    "started": "2026-11-01T06:46:46.315092+00:00",
+    "job_id": "9019406.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "launcher_host": "x4216c3s5b0n0",
+    "allocation_nodes": [
+      "x4216c3s5b0n0.hsn.cm.aurora.alcf.anl.gov"
+    ],
+    "resources": {
+      "queue": "debug",
+      "account": "CompactBinaryMerger",
+      "nodes": 1,
+      "ranks": 12,
+      "ranks_per_node": 12,
+      "walltime": "01:00:00"
+    },
+    "source_manifest_sha256": "a5fd4a1cf9924927dfa19ddf9d27e91c6d13a91a0d12b8e997e6868853801cff",
+    "binaries": {
+      "build-sycl-mpi-short-gauge-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_short_gauge": "1b75a50ec11f8b3908de9172bd5baec57eb8bc17d382d1fba25173ab4352996f"
+    },
+    "plan_sha256": "8290c012f0c3a5a982f5eb53a29bf6d85b6a17dd467d5a5be60ae63efaceccf6",
+    "phase": "short_gauge_evolution",
+    "n": 24,
+    "cases": [
+      {
+        "name": "puncture",
+        "kind": "puncture",
+        "started": "2026-11-01T06:47:03.930268+00:00",
+        "argv": [
+          "mpiexec",
+          "-n",
+          "12",
+          "-ppn",
+          "12",
+          "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+          "gpu_tile_compact.sh",
+          "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-short-gauge-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_short_gauge",
+          "24",
+          "campaigns/n24-short-gauge-fresh10m-v1-segment01/output/puncture",
+          "puncture",
+          "3.3333333333333335",
+          "0.0003333333333333333",
+          "inputs/puncture-continuous-n24-smooth-v1.txt",
+          "-",
+          "3070",
+          "0.05",
+          "0.001",
+          "12",
+          "24",
+          "2"
+        ],
+        "generated_inputs": {},
+        "n": 24,
+        "returncode": 0,
+        "timed_out": false,
+        "storage_error": null,
+        "elapsed_seconds": 2178.7358545879833,
+        "checks": [
+          {
+            "check": {
+              "path": [
+                "status"
+              ],
+              "op": "eq",
+              "value": "completed"
+            },
+            "observed": "completed",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "t"
+              ],
+              "op": "le",
+              "value": 3.3333333333333335
+            },
+            "observed": 3.3333333333333335,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "t"
+              ],
+              "op": "ge",
+              "value": 0.0
+            },
+            "observed": 3.3333333333333335,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "n"
+              ],
+              "op": "eq",
+              "value": 24
+            },
+            "observed": 24,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "backend"
+              ],
+              "op": "eq",
+              "value": "SYCL"
+            },
+            "observed": "SYCL",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "mpi_size"
+              ],
+              "op": "eq",
+              "value": 12
+            },
+            "observed": 12,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "checkpoint_schema"
+              ],
+              "op": "eq",
+              "value": "HYP3D_MPI_SG1"
+            },
+            "observed": "HYP3D_MPI_SG1",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "checkpoint_admitted"
+              ],
+              "op": "eq",
+              "value": true
+            },
+            "observed": true,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "inner_gauge"
+              ],
+              "op": "eq",
+              "value": "direct_outer_r020_056_it1_damping_v1"
+            },
+            "observed": "direct_outer_r020_056_it1_damping_v1",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "gauge_blend"
+              ],
+              "op": "eq",
+              "value": "smoothstep9_w_056_080"
+            },
+            "observed": "smoothstep9_w_056_080",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "positive_variables"
+              ],
+              "op": "eq",
+              "value": "direct_chi_direct_lapse_rk_and_ko"
+            },
+            "observed": "direct_chi_direct_lapse_rk_and_ko",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "physical_lapse_floor"
+              ],
+              "op": "eq",
+              "value": 1e-10
+            },
+            "observed": 1e-10,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "puncture_chi_floor"
+              ],
+              "op": "eq",
+              "value": 1e-08
+            },
+            "observed": 1e-08,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "puncture_chi_floor_radius"
+              ],
+              "op": "eq",
+              "value": 0.03
+            },
+            "observed": 0.03,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "checkpoint_header_bytes"
+              ],
+              "op": "eq",
+              "value": 168
+            },
+            "observed": 168,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "chi_nonpositive_policy"
+              ],
+              "op": "eq",
+              "value": "record_and_floor_finite_candidates_everywhere"
+            },
+            "observed": "record_and_floor_finite_candidates_everywhere",
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_null_surface"
+              ],
+              "op": "le",
+              "value": 1e-10
+            },
+            "observed": 1.5543121998062461e-15,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "max_null_ghost"
+              ],
+              "op": "le",
+              "value": 1e-10
+            },
+            "observed": 1.55431223447299e-15,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "scri_penalty_scale_min"
+              ],
+              "op": "eq",
+              "value": 1
+            },
+            "observed": 1,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "angular_epsilon_min"
+              ],
+              "op": "eq",
+              "value": 2
+            },
+            "observed": 2,
+            "passed": true
+          },
+          {
+            "check": {
+              "path": [
+                "complete_candidate_exterior_enabled"
+              ],
+              "op": "eq",
+              "value": true
+            },
+            "observed": true,
+            "passed": true
+          }
+        ],
+        "report_status": "completed",
+        "status": "passed",
+        "artifacts": {
+          "campaigns/n24-short-gauge-fresh10m-v1-segment01/output/puncture.report.json": {
+            "sha256": "c60f7d63f2d180ecee2bd8cc6ffc087697904dd5d19057a73db3ed026a5469d8",
+            "bytes": 13930
+          },
+          "campaigns/n24-short-gauge-fresh10m-v1-segment01/output/puncture.checkpoint": {
+            "sha256": "7082e7706c18c8e3e84f24c04f6c56492b45c372a8c1e3012e35a578aaf6a5e2",
+            "bytes": 234413736
+          },
+          "campaigns/n24-short-gauge-fresh10m-v1-segment01/output/puncture.history.csv": {
+            "sha256": "97fa96100e2f26a2aa1c6cb129a5d9043a9a1930bb82a65da58a7095b4df63ce",
+            "bytes": 47242
+          },
+          "campaigns/n24-short-gauge-fresh10m-v1-segment01/output/puncture.checkpoint.horizon-seed.txt": {
+            "sha256": "fd2689bb1b2f657b759e405d3b07fe731714b849a5210baeeafc126a4fa9f1b6",
+            "bytes": 87
+          },
+          "campaigns/n24-short-gauge-fresh10m-v1-segment01/output/puncture.fastflow.horizon_summary_0.txt": {
+            "sha256": "ed6d6d322fb1ab8fc3f836f76fe0cf2cd09d78c7f677895277c7d8e2b5489043",
+            "bytes": 14017
+          }
+        },
+        "finished": "2026-11-01T07:23:32.038964+00:00"
+      }
+    ],
+    "storage_at_start": {
+      "bytes": 3683025408,
+      "entries": 69703,
+      "limit_bytes": 5000000000,
+      "reserve_bytes": 244413736,
+      "planned_bytes": 385061978,
+      "headroom_bytes": 687498878
+    },
+    "affinity": {
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 0.3716014442034066,
+      "records": [
+        {
+          "host": "x4216c3s5b0n0",
+          "rank": 1,
+          "mask": "0.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4216c3s5b0n0",
+          "rank": 2,
+          "mask": "1.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4216c3s5b0n0",
+          "rank": 0,
+          "mask": "0.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4216c3s5b0n0",
+          "rank": 4,
+          "mask": "2.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4216c3s5b0n0",
+          "rank": 5,
+          "mask": "2.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4216c3s5b0n0",
+          "rank": 6,
+          "mask": "3.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4216c3s5b0n0",
+          "rank": 7,
+          "mask": "3.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4216c3s5b0n0",
+          "rank": 8,
+          "mask": "4.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4216c3s5b0n0",
+          "rank": 9,
+          "mask": "4.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4216c3s5b0n0",
+          "rank": 10,
+          "mask": "5.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4216c3s5b0n0",
+          "rank": 11,
+          "mask": "5.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4216c3s5b0n0",
+          "rank": 3,
+          "mask": "1.1",
+          "hierarchy": "COMPOSITE"
+        }
+      ],
+      "passed": true
+    },
+    "finished": "2026-11-01T07:23:32.046549+00:00",
+    "elapsed_seconds": 2205.7314781169407,
+    "storage_at_finish": {
+      "bytes": 3946229414,
+      "entries": 69713
+    }
+  }
+}

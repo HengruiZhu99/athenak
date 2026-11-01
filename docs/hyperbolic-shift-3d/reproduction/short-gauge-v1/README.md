@@ -1,8 +1,9 @@
 # SG1: restore the earlier gauge interval, retain the direct outer driver
 
-**Current:** N16 completed10M and passed review. Fresh N24 job9019406 is
-submitted toward10M using the same scientific source and binary. See the terminal result and accuracy-review record below. Earlier pending
-sections retain preparation chronology and do not override that decision.
+**Current:** Both fresh SG1 runs completed10M: N16 job9018835 and N24
+job9019406. Both checkpoints and all worker artifacts passed remote/local
+verification. See the final resolution comparison below. Earlier pending
+sections are preparation chronology, not the current campaign state.
 
 The N16 accuracy investigation continues after LG1 failed at 2.9715M. The next
 controlled test uses the IT1 interpolation interval 0.2--0.56 with the DO1 direct
@@ -341,3 +342,95 @@ remains irregular. Thus exterior errors improve to different degrees, but no
 clean full-domain convergence or asymptotic order is established. Preserve the
 unaccepted N16 horizon-mass gap at3M. Final common-cutoff and radial comparison
 still requires collected, verified matched10M checkpoints.
+
+
+## Final matched N16/N24 result at 10M
+
+N24 job9019406 completed in one allocation (PBS exit0,worker passed), with10001
+steps, dt=1/3000 and target coordinate10/3. Native execution took2178.74seconds
+(36.31minutes); scheduler walltime was39m20s. It used12MPI ranks bound to12GPU
+tiles. Source/binary/launcher/review provenance and all artifact hashes were
+verified. The admitted SG1 checkpoint has234,413,736bytes, SHA256
+`7082e7706c18c8e3e84f24c04f6c56492b45c372a8c1e3012e35a578aaf6a5e2`.
+Independent local frozen-helper verification passed; every stored volume metric
+is positive definite (minimum eigenvalue0.873066). Small records are in
+`n24-completed/`; the full checkpoint is retained in the local output mirror.
+
+`resolution-comparison/` contains measured histories and matching native
+checkpoint reconstructions. Both native full-domain reconstructions agree with
+the original reports. Use the common coordinate cutoff r>0.1099, outside both
+final candidate horizons. These are normalized compactified-coordinate-volume
+RMS norms, not proper-volume norms.
+
+| Diagnostic at10M | N16 | N24 | N16/N24 |
+|---|---:|---:|---:|
+| Exterior Hamiltonian RMS |0.01541497|0.00820183|1.879|
+| Exterior momentum magnitude RMS |0.02900764|0.02550556|1.137|
+| Exterior radial momentum RMS |0.03081597|0.02610776|1.180|
+| Exterior Theta RMS |0.00081293|0.00040453|2.010|
+| Accepted fractional horizon mass error |+0.00341326|-0.00028682|—|
+
+Both final horizons are accepted. N24 accepts58/68history rows versus45/68atN16;
+all missing accepted mass values remain gaps. The N24 final mass error is
+-0.02868%, versus+0.34133%atN16. This reduction at one time does not establish
+an asymptotic convergence order; histories have gauge transients and mass
+oscillations. Full-domain Hamiltonian transients also remain irregular, even
+though final full-domain H/M improve. The final shorter-interval runs survive
+10M at both resolutions with bounded late exterior errors.
+
+### Remaining error location and floors
+
+The0.16--0.30 band now contributes10.33% of N24 exterior H-squared and1.58% of
+M-squared (N16:23.44%/8.98%). The0.775--0.9 outer-shell band contributes81.65%
+and93.72% (N16:62.20%/75.02%). The momentum-magnitude peak in that radial band changes
+little with refinement, limiting the overall momentum improvement to12%. This
+localizes the remaining weak resolution trend; it does not yet isolate whether
+its source is the gauge collar, shell discretization, or another truncation term.
+
+N24 records968negative chi stage candidates and344negative final candidates.
+Total chi-floor counts are1064stage and368final, including96/24positive
+below-floor candidates respectively. Every intervention is at the nearest8
+puncture cells, r=0.00649519; first negative candidate is at0.1545M. N16 had
+56/8negative candidates. These segment-local counts include attempted stages
+and are not directly an accuracy metric across different grids/timestep counts.
+There were no lapse floor hits, surface chi floor hits, or boundary-interpolation
+negative/zero events in either trial. The increase in puncture interventions and
+irregular interior transient remain limitations; exterior improvement is not
+explained by clipping exterior cells. `floor-localization.json` preserves the
+counts/radii. Maximum N24 surface/ghost null residuals are1.55432e-15.
+
+### What the controlled experiments establish
+
+Moving the inner gauge farther outward was not the successful modification:
+LG1's0.4--0.9 placement failed at2.9715M with an indefinite metric near r=.4228.
+Restoring damping alone (DG1) had only a small effect. Restoring the earlier
+0.2--0.56 gauge interval while retaining the direct outer driver and fixed
+damping (SG1) reduced the N16 exterior H/M errors by14.57/10.57times and enabled
+these matched fresh N16/N24 runs to10M. N24 was submitted only after explicit
+N16 accuracy review; no failed state was resumed.
+
+The leading explanation is the strong gauge transient generated when the
+Cauchy inner gauge is extended into the initial hyperboloidal transition. The
+exact initial forcing audit and controlled interval changes support it. The
+shorter, steeper interval performs better, so an underresolved weight alone is
+not an adequate explanation. Scri closure stayed at roundoff, and the sampled
+SG1 exterior characteristic audit found no defect; neither observation excludes
+other numerical mechanisms. The precise continuous-versus-discrete origin is
+not proven, and the remaining outer-shell momentum error still needs separate
+work. This completes the requested bounded gauge-placement investigation and
+N16-then-N24 test, not a claim of global hyperbolicity, established high-order
+convergence, or20M/100M stability.
+
+### Collection and disposition
+
+Both terminal allocation locks were released. The N24 remote checkpoint was
+removed only after independent local SHA256/length/configuration/finite-payload
+verification; the local original remains. The measured remote task footprint
+after retirement was3,821,523,789bytes, below the5GB cap. Receipts are preserved
+in `n24-completed/`. No continuation or replacement job is needed for this10M
+trial. The monitor is retired after final comparison and evidence publication.
+
+The native diagnostic deliberately refuses an existing output path. The first
+verified rendering was preserved locally when regenerating the shorter figure
+labels/consistent colors; the final rendering uses a fresh output directory.
+No checkpoint or scientific executable was changed during figure preparation.
