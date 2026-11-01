@@ -88,3 +88,37 @@ further or explicitly admit a matching N24 test under the active goal.
 
 Current LG1 job9018058 follows the frozen N16 plan above. The existing20-minute
 monitor was updated to this trial; N24 remains gated on reviewed N16 accuracy.
+
+## Additional frozen-state check while LG1 runs
+
+The prior goal turn made concrete progress: DG1 completed and was verified, its
+accuracy failure was quantified, and LG1 was submitted. Fresh scheduler evidence
+now confirms LG1 job9018058 is running; worker status is running and its first
+native history reaches.6M. No continuation or duplicate was submitted.
+
+The read-only audit_frozen_gaps.py evaluates direct-outer coefficients on the
+preserved DO1 and DG1 10M checkpoints, for both .2--.9 and .4--.9 placements.
+It checks three squared-speed differences divided by the positive inverse-metric
+normal contraction Q: transverse-shift minus lapse, longitudinal-shift minus
+lapse, and lapse minus physical. All are positive at every inspected cell in
+.1<r<.95, including the separate .13<r<.35 overlap-neighborhood selection.
+For DG1 with its actual .2--.9 gauge, minimum exterior gaps are respectively
+.131066,.243416,.0131169; in the overlap neighborhood they are.873289,1.199322,
+and.0443238. The hypothetical .4--.9 placement on the same frozen state retains
+positive gaps. Exact checkpoint/coordinate hashes and node counts are saved in
+frozen-gap-audit.json. State labels describe checkpoints; all evaluated gauge
+coefficients in this audit are the direct-outer formula, not the old IT1 formula.
+
+This does not establish global strong hyperbolicity, exclude other degeneracies,
+or determine earlier-time behavior. It provides no evidence for a lapse/shift
+speed collision in the error-dominated region at the final snapshots. We still
+need the LG1 evolution result to test gauge placement causally.
+
+compare.py is prepared for verified LG1 completion: use --root LOCAL_RAW_ROOT
+--plans SEGMENT_PLAN_PATHS_IN_ORDER. It verifies artifact hashes, requires a
+verified admitted10M LG1 checkpoint, and compares IT1,DO1,DG1,LG1 histories and
+native constraints on one common cutoff outside all candidate horizons. It
+records sign/floor counters and horizon acceptance gaps; empty radial bins remain
+missing. Its N24 flag stays false pending scientific review. The matching local
+LG1 diagnostic executable is built. Syntax checks alone do not validate a new
+10M result; no LG1 endpoint comparison has been performed yet.
