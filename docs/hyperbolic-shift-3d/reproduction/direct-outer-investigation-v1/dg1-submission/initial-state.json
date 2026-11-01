@@ -1,0 +1,42 @@
+{
+  "status": "submitted",
+  "n24_gate": "No N24 before reviewed N16 accuracy success",
+  "n": 16,
+  "target_t_over_M": 10,
+  "science": {
+    "source_commit": "35004000d25e34767069a8da1d2ad45bdc42c3c1",
+    "binary": "build-sycl-mpi-damping-ablation-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_damping_ablation",
+    "binary_sha256": "bedd3268cfb507cda3ff50616fbcaf1c2ea6829af1d44794f9dd5cd7baaf206b",
+    "source_manifest": "source-damping-ablation-v1-manifest.json",
+    "source_manifest_sha256": "8904fc301478ea754a498e55bd5d92bbfb2a5ca8357e2266205f299c675ce857"
+  },
+  "plans": {
+    "16": {
+      "plan": "campaigns/n16-damping-ablation-fresh10m-v1-segment01/plan.json",
+      "restart": {
+        "n": 16,
+        "time": 0.0,
+        "steps": 0,
+        "dt": 0.0005,
+        "sha256": "35c1b65aeaaefac34552f9a63b279cabe839b09326adc9af1d2c767ecc29c8ca",
+        "kind": "fresh_wormhole"
+      }
+    }
+  },
+  "plan": "campaigns/n16-damping-ablation-fresh10m-v1-segment01/plan.json",
+  "submission": {
+    "job_id": "9017478.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "submitted": 1793508315.8832,
+    "plan": "campaigns/n16-damping-ablation-fresh10m-v1-segment01/plan.json",
+    "plan_sha256": "d061c354ab5e34b7dda6895983f89ce4836788a7c704c31b6ef35f72666ecdf2",
+    "source_manifest_sha256": "8904fc301478ea754a498e55bd5d92bbfb2a5ca8357e2266205f299c675ce857",
+    "resources": {
+      "queue": "debug",
+      "account": "CompactBinaryMerger",
+      "nodes": 1,
+      "ranks": 12,
+      "ranks_per_node": 12,
+      "walltime": "01:00:00"
+    }
+  }
+}

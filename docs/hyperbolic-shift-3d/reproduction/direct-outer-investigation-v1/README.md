@@ -80,3 +80,53 @@ All123 controller/worker/campaign tests passed. The new campaign helper rejects
 N24 plans and incompatible DO1/IT1/GD1 restart schemas. Frozen source for DG1:
 35004000d25e34767069a8da1d2ad45bdc42c3c1. Later documentation does not alter
 the built source snapshot.
+
+## DG1 execution protocol
+
+Remote root /home/hzhu/hyperbolic-core-shell-20261028. Frozen launcher
+launcher-damping-ablation-v1/control.py and damping_ablation_campaign.py; verify
+all launcher files against provenance.json including damping-ablation-science.json.
+Manifest source-damping-ablation-v1-manifest.json SHA256
+8904fc301478ea754a498e55bd5d92bbfb2a5ca8357e2266205f299c675ce857.
+Binary build-sycl-mpi-damping-ablation-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_damping_ablation
+SHA256bedd3268cfb507cda3ff50616fbcaf1c2ea6829af1d44794f9dd5cd7baaf206b.
+SYCL/PVC+MPI,oneapi/release/2025.3.1,make -j64; copied Kokkos files match the
+previous frozen manifest. Only original N16 input is admitted for segment01,
+inputs/puncture-continuous-n16-smooth-v1.txt SHA256
+35c1b65aeaaefac34552f9a63b279cabe839b09326adc9af1d2c767ecc29c8ca.
+
+First plan campaigns/n16-damping-ablation-fresh10m-v1-segment01/plan.json.
+Follow damping-ablation-10m-state.json and saved submissions. Never duplicate
+queued/running/ambiguous submissions. One CompactBinaryMerger/debug node,
+12 MPI ranks/GPU tiles; preserve unrelated jobs. Worker3200s,command3100s,
+native exit reserve180s. Home task cap5,000,000,000bytes including outputs and
+atomic checkpoint reserve. Keep source,binary,equations,dt,floors fixed.
+
+After a terminal job collect with frozen control.py, copy full campaign locally
+under output/hyperbolic-core-shell/damping-ablation-v1/aurora/campaigns/, verify
+SHA256/length of every worker artifact. For healthy walltime/completion run
+frozen damping_ablation_campaign.py verify --root ROOT --plan PLAN. Require
+admitted DG1 header168,scheme3,N16 length79,725,224,exact configuration,finite
+payload,report-matching time/steps/dt and forward progress. Release only the
+matching terminal root lock once. A healthy stop below10M may continue using
+fresh sequential same-N plans with --restart verified_checkpoint --sha256 HASH;
+preserve/bind any horizon seed sidecar, bind frozen manifest, check ALL user
+debug jobs then submit once. Never resume a numerical failure or unadmitted
+checkpoint; diagnose infrastructure/storage/integrity problems before retry.
+Copy/hash-verify large files before remote purge; retain required restart inputs.
+
+At10M or numerical failure collect/verify and compare with DO1/IT1. For10M use
+the matching checkpoint_constraints_damping_ablation target at common cutoff.1,
+with the same radial bands as analyze.py. Compare histories, spatial bands,
+horizon quality and floor counts; do not call scientific success from the
+worker's completion flag. NO automatic N24 submission: inspect the N16 accuracy
+evidence under the active investigation goal first. Delete this trial's monitor
+when collected, while keeping the overall investigation goal active if further
+work is needed. Subsequent modifications get distinct frozen sources/schemas.
+
+DG1 N16 job9017478 is submitted. Plan SHA256
+d061c354ab5e34b7dda6895983f89ce4836788a7c704c31b6ef35f72666ecdf2.
+Binding measured3,342,691,777bytes, leaving1,430,022,640bytes after output/atomic
+reservations. Saved submission and launcher provenance are in dg1-submission/.
+The20-minute monitor aurora-n16-damping-investigation-to-10m is active for this
+N16 trial and healthy walltime continuation only; scientific N24 gate remains.
