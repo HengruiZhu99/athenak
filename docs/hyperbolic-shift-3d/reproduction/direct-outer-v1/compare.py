@@ -6,9 +6,11 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 HERE=Path(__file__).resolve().parent
-p=argparse.ArgumentParser();p.add_argument('--n16',type=Path,nargs='+',required=True);p.add_argument('--n24',type=Path,nargs='+',required=True);a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--n16',type=Path,nargs='+',required=True);p.add_argument('--n24',type=Path,nargs='+');a=p.parse_args()
 baseline=HERE.parent/'inner-telegrapher-v1/n16-completed/puncture.history.csv'
-series=[('DO1 N16',a.n16,'#b55315'),('DO1 N24',a.n24,'#1769aa'),('Previous IT1 N16',[baseline],'#777777')]
+series=[('DO1 N16',a.n16,'#b55315'),('Previous IT1 N16',[baseline],'#777777')]
+if a.n24: series.insert(1,('DO1 N24',a.n24,'#1769aa'))
+stem='comparison' if a.n24 else 'comparison-n16'
 fig,axes=plt.subplots(2,2,figsize=(11,7))
 fields=[('H_exterior_L2','Exterior Hamiltonian RMS',1),('Mr_exterior_L2','Exterior radial-momentum RMS',1),('horizon_areal_radius','Accepted horizon areal radius / M',3),('null_surface','Running maximum scri null residual',1)]
 sources={}; endpoints={}
@@ -26,5 +28,5 @@ axes[0,0].legend(fontsize=8)
 fig.suptitle('Direct telegrapher-to-outer transition: fresh evolution to 10M')
 fig.tight_layout(rect=(0,.08,1,.95))
 fig.text(.5,.025,'Measured samples; missing diagnostics remain gaps. Exterior cutoffs use each run’s complete horizon candidate.\nLast diagnostic can precede last accepted step. Completion alone does not establish convergence.',ha='center',fontsize=9)
-for ext in ['png','pdf']:fig.savefig(HERE/f'comparison.{ext}',dpi=170)
-(HERE/'comparison-sources.json').write_text(json.dumps(dict(sha256=sources,last_diagnostic_t_over_M=endpoints),indent=2)+'\n')
+for ext in ['png','pdf']:fig.savefig(HERE/f'{stem}.{ext}',dpi=170)
+(HERE/f'{stem}-sources.json').write_text(json.dumps(dict(sha256=sources,last_diagnostic_t_over_M=endpoints),indent=2)+'\n')

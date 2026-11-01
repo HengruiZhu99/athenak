@@ -113,7 +113,7 @@ Launcher: launcher-direct-outer-v1; verify files against provenance.json and
 use its direct_outer_campaign.py/control.py. N16 binding measured3,296,782,529
 bytes, with1,475,931,888 bytes headroom after output and atomic reservations.
 All user debug jobs were checked before submission; unrelated held capacity
-jobs remain unchanged. Hourly monitor aurora-direct-outer-n16-then-n24-to-10m
+jobs remain unchanged. The20-minute monitor aurora-direct-outer-n16-then-n24-to-10m
 is active for healthy continuations and sequential N24 dispatch. Submission
 alone establishes no duration result.
 
@@ -123,3 +123,50 @@ Original input hashes:
   35c1b65aeaaefac34552f9a63b279cabe839b09326adc9af1d2c767ecc29c8ca
 - N24 inputs/puncture-continuous-n24-smooth-v1.txt:
   6c265e8dc309c70a2c7017a80eddd2d76f3a185b4f1d6108cc65b8bfc85be914
+
+
+## Verified N16 completion
+
+Job9016957 completed10M from fresh wormhole data in6667 steps and1412.68s
+native runtime. Scheduler exit0, worker passed, and remote plus independent
+local helper verification passed, including every worker artifact hash/length
+and the admitted DO1 finite checkpoint. Final checkpoint SHA256
+edc58b0df7ef0391567221d8b95990e82ab05aad6264bc87d7e4a49ff2449c5c,
+79,725,224bytes, remains locally under output/hyperbolic-core-shell/direct-outer-v1/
+aurora/campaigns/n16-direct-outer-fresh10m-v1-segment01/output/. The remote copy
+was retired only after local verification. Terminal lock release/purge receipts
+are preserved. N24 uses its own original initial data, not this checkpoint.
+
+This completed evolution is NOT an accuracy pass. Exterior Hamiltonian RMS
+at10M is.238725 and radial-momentum RMS.677112. The previous IT1 N16 values
+were.00812664 and.0134158, respectively: ratios29.38 and50.47 using each run's
+own candidate cutoff, so these are not common-domain error ratios. DO1 has
+strong constraint growth starting around4M. The new and old cutoffs at10M
+are.0535646 and.0971391; a common-cutoff spatial analysis remains outstanding.
+See comparison-n16.png/pdf and the measured source histories.
+
+The horizon finder accepted27/68 history rows, last at4.5M. At10M its complete
+candidate has expansion RMS.00301035, above tolerance.001; accepted horizon
+radius/mass diagnostics remain unavailable. Candidate-based exterior norms
+remain recorded per the user's requested diagnostic convention.
+
+There were40 negative chi candidates across the eight closest cells (32 stage,
+8 final), at radius.0097428, first at.30225M; minimum-5.12e-7. All were floored.
+No lapse-floor, surface-chi-floor or interpolated-boundary chi-sign events were
+recorded. Maximum null residuals were1.22e-15 at surface nodes and1.55e-15 at
+boundary interpolants; these algebraic closure checks do not diagnose accuracy.
+The matched N24 run retains the frozen equations, timestep scaling and floors.
+
+Full-domain norms also deteriorate: DO1 versus IT1 at10M gives Hamiltonian
+.245212 versus.0412359 (5.95 times), and momentum magnitude.324730 versus.0390266
+(8.32 times). These comparisons use the same full grid and do not depend on
+horizon cutoff selection. The exterior-cutoff difference therefore cannot be
+the sole explanation for the degradation.
+
+N24 job9017333 is now submitted from original t=0 data toward10M, plan
+campaigns/n24-direct-outer-fresh10m-v1-segment01/plan.json SHA256
+0d18594c3d074ca0fe258cd54c42d5ffa8109d83835ce100c7e5d8b752dbeeb6.
+Binding measured3,410,505,546bytes and960,018,740bytes remaining after planned
+output/atomic reservations. No other user debug job was active. The20-minute
+monitor now follows N24; do not resubmit N16 or duplicate N24. See
+n16-completed/ for verified evidence and n24-submission/ for the next job.
