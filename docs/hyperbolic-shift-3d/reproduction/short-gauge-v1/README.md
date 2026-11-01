@@ -83,3 +83,24 @@ There were no user debug jobs before submission; unrelated capacity jobs remain
 held. The new20-minute monitor is `aurora-n16-original-interval-gauge-to-10m`.
 It may continue healthy walltime checkpoints only; delete it after verified
 trial disposition. The persistent investigation remains active.
+
+## Frozen-state characteristic audit while SG1 evolves
+
+`audit_characteristics.py` applies the SG1 gauge coefficients to the original
+wormhole data and preserved IT1/DO1/DG1 10M states. It uses the audited native
+geometric principal block, independently replaces the gauge block, and checks
+the unchanged0.2--0.9 control against the native direct-outer matrix. Source-data,
+coordinate and library hashes are recorded in `characteristic-audit.json`.
+
+All active cells in0.1<r<0.95 retain positive normalized squared-speed gaps
+(transverse-shift minus lapse, longitudinal-shift minus lapse, and lapse minus
+physical) on these four sampled states. The smallest transverse/longitudinal
+gaps across them are0.0487721/0.0967603, both on DG1. For each state,200 directional
+26-variable symbols have the expected real spectrum and complete eigenspaces;
+maximum spectral discrepancy is3.8e-15 and maximum balanced basis condition7.59.
+
+These are SG1 coefficients on initial/older snapshots, not a trajectory of SG1.
+They do not exclude future collisions, establish global strong hyperbolicity,
+or prove stability or accuracy. The earlier LG1 audit was also benign on older
+states before its actual trajectory developed reversed speed ordering and failed.
+The running SG1 evolution remains necessary evidence.
