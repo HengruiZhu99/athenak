@@ -15,5 +15,6 @@ cases={
  'A-broad-smooth':h.load_native(new,'A',a.plans,load(new/'launcher-restored-wide-smooth-v1/native_transition_campaign.py'))}
 h.LABELS['A-wide']='A: collar 0.7–0.9, original slice';h.COLORS['A-wide']='#1769aa'
 h.LABELS['A-broad-smooth']='A: collar 0.6–0.9, C6 slice 4M–12M';h.COLORS['A-broad-smooth']='#b02871'
-result=h.render(cases,a.output,title='N16 retained restoration: broader collar and improved initial slice')
+result=h.render(cases,a.output,title='N16 retained restoration: broader collar and improved initial slice',
+ footer='Exterior norms use each run’s candidate horizon; accepted mass gaps are retained.\nBroad-smooth combines collar width and initial slicing changes; one N16 run does not establish convergence.')
 print(json.dumps({k:{key:v[key] for key in ['status','last_accepted_t_over_M','accepted_horizon_rows','final_accepted_mass_error']} for k,v in result['cases'].items()},indent=2))

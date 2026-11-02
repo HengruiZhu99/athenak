@@ -1,5 +1,5 @@
 {
-  "status": "evolution_submitted",
+  "status": "completed10M_comparison_complete",
   "build_pid": 3239077,
   "build_host": "aurora-uan-0010",
   "started": 1793654937.8334656,
@@ -9,10 +9,10 @@
   "launcher": "launcher-restored-wide-smooth-v1",
   "build_log": "restored-wide-smooth-build.stdout.log",
   "scope": "Fresh N16 candidate A: restoration coefficient4 retained; collar .6-.9; C6 polynomial native slice areal4M-12M; KO8/originalscri unchanged. No GPU smoke gate.",
-  "next": "Monitor existing N16 NB1 evolution, no duplicate build, smoke or fresh submission. At terminal verify/preserve. Continue only healthy admitted same-case walltime checkpoints below10M; failed states terminal. Compare originalA and A-wide after disposition.",
+  "next": "Experiment and requested comparisons complete. Monitor deleted; no further evolution scheduled.",
   "science_sha256": "df434e41324a31ffeaf0d053022a06969911df95819886174b85f08c0a1e4742",
   "build_status": "completed_and_frozen",
-  "updated": 1793656434.5124724,
+  "updated": 1793659266.520898,
   "current_plan": "campaigns/n16-restored-wide-smooth-v1-a-evolution-segment01/plan.json",
   "plan_sha256": "a7cc18c8b2908246557099bba5518707db75bdc3022a2c98dad5ab0640a65f75",
   "current_submission": {
@@ -30,5 +30,34 @@
       "walltime": "01:00:00"
     }
   },
-  "monitor": "aurora-restored-wide-smooth-a-to-10m"
+  "monitor": "aurora-restored-wide-smooth-a-to-10m",
+  "disposition": {
+    "job_id": "9033692",
+    "status": "completed",
+    "t_over_M": 10,
+    "steps": 6667,
+    "checkpoint_admitted": true,
+    "checkpoint_sha256": "9176e8d6323b774fb01ec3ccd1238941e008ed5054636337bdd74ba47d1ab4e2",
+    "all_six_artifacts_locally_verified": true,
+    "terminal_lock_released": true
+  },
+  "analysis": {
+    "fixed_cutoff": 0.12,
+    "H_rms": 0.022716449583468176,
+    "M_rms": 0.05755221414191048,
+    "H_percent_vs_A": 48.182040746408084,
+    "M_percent_vs_A": 98.65245319101723,
+    "accepted_mass_error_percent": 0.15798295722073696,
+    "chi_floor_stage": 0,
+    "chi_floor_final": 0,
+    "dominant_error_region": [
+      0.7,
+      0.775
+    ],
+    "user_requested_slices_complete": true,
+    "all_six_figures_inspected": true,
+    "resolution_convergence_established": false,
+    "fixed_cutoff_intermediate_histories_available": false
+  },
+  "monitor_deleted": true
 }
