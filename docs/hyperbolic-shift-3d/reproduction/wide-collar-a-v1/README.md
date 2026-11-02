@@ -19,3 +19,7 @@ Comparison must retain accepted mass gaps, full/own-candidate constraints, scri 
 Source6894a0e322146bf479e5aab5296fda0a0d012273 is staged and the separate Aurora build is running (PID2327861 on aurora-uan-0010); inspect remote wide-collar-a-state.json for the current disposition. No allocation was submitted at build start. Local one-rank SERIAL Minkowski/puncture references both passed two steps and exact NW1 helper admission; see serial-smokes.json and serial-checkpoint-verified.json. Generated launcher files and package recipe are preserved here. Manifest SHA2562d2f514c89bc9819fe5b3f09d5f86fb9de50162e814c114bcd4e9f754bf6aa25.
 
 The20-minute heartbeat aurora-a-wider-collar-to-10m is active, with automatic smoke collection/parity, fresh long submission, healthy continuation, and final comparison. It never retries a numerical failure or changes parameters. Do not confuse this current A-width experiment with the completed A–E matrix.
+
+N16 resolution qualification: the unchanged S8 profile rises from10% to90% across0.013647(original) or0.027294(wide) in compact radius. The outer nominal radial spacing is0.015625, giving0.873 or1.747cells across that rise. Neither width by itself guarantees an asymptotic regime; collar-profile.png marks actual outer cell centers.
+
+Before GPU allocation, completed C/D endpoint copies were reverified locally and remotely, then only the two remote checkpoint copies were retired. Their original local files remain. Receipt retired-before-wide-collar.json records hashes, logical sizes and318930944allocated bytes freed.

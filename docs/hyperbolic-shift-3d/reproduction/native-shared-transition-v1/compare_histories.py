@@ -101,7 +101,7 @@ are preserved evidence, never parsed as an accepted evolution endpoint.
     return dict(history=data,reports=reports,records=records,restart_diagnostic_repeats=repeats)
 
 
-def render(cases,output):
+def render(cases,output,title="Native N16 controls versus preserved SG1"):
     output=Path(output);output.mkdir(parents=True,exist_ok=False)
     summary=dict(scope='Measured histories; own-candidate exterior cutoffs. No missing-value interpolation or endpoint radial reconstruction.',cases={})
     for name,case in cases.items():
@@ -132,7 +132,7 @@ def render(cases,output):
                 ax.plot(data['t_over_M'],values,'.-',ms=2.5,lw=1.2,color=COLORS[name],label=name)
                 ax.set(xlabel='t / M',ylabel=label);ax.grid(alpha=.2)
                 if key in ['null_surface','null_ghost','pole_max','clock_max']:ax.set_yscale('log')
-        axes[0,0].legend(ncol=3);fig.suptitle('Native N16 controls versus preserved SG1')
+        axes[0,0].legend(ncol=3);fig.suptitle(title)
         fig.tight_layout(rect=(0,.09,1,.96))
         fig.text(.5,.025,'Exterior norms use each run’s candidate horizon. Accepted mass gaps are retained.\nSame dt and floors; each named case isolates the documented initializer/gauge/operator change.',ha='center',fontsize=10)
         fig.savefig(output/filename,dpi=160);plt.close(fig)
