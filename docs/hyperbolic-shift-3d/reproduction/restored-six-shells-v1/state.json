@@ -1,5 +1,5 @@
 {
-  "status": "build_started",
+  "status": "evolution_submitted",
   "build_pid": 3799500,
   "build_host": "aurora-uan-0010",
   "started": 1793660199.6824882,
@@ -18,5 +18,25 @@
   },
   "monitor": "aurora-restored-six-shells-to-10m",
   "scope": "Fresh N16 six-shell broad-smooth A to10M, same dt.0005 and physical settings; no GPU smoke gate.",
-  "next": "Inspect this build, never duplicate. After successful freeze preserve all launcher/build provenance then bind fresh A evolution, check queues and submit once. No evolution submitted yet."
+  "next": "Monitor existing submitted N16 six-shell job; never duplicate. At terminal collect/verify N61 using frozen helper and preserve artifacts. Automatically continue only healthy admitted same-case walltime checkpoints below10M; terminal numerical failures never restart. After disposition compare against NB1 and original A, inspect/push evidence and delete monitor.",
+  "build_status": "completed_and_frozen",
+  "science_sha256": "72ab6ef1bfc3d096bc6ab36d37c578e0925268bb2746d021983cbd13a012b74a",
+  "updated": 1793660588.0367515,
+  "current_plan": "campaigns/n16-restored-six-shells-v1-a-evolution-segment01/plan.json",
+  "plan_sha256": "feb93394476235b3d97178705c7a4deddbd0bd2266ae38ff02a9612dc5d0e749",
+  "current_submission": {
+    "job_id": "9033869.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "submitted": 1793660588.0326405,
+    "plan": "campaigns/n16-restored-six-shells-v1-a-evolution-segment01/plan.json",
+    "plan_sha256": "feb93394476235b3d97178705c7a4deddbd0bd2266ae38ff02a9612dc5d0e749",
+    "source_manifest_sha256": "bb16e53c43e5012ff84e8e1031f8dd9f604e3d68f2c6e2afa977ae3e54f60661",
+    "resources": {
+      "queue": "debug-scaling",
+      "account": "CompactBinaryMerger",
+      "nodes": 1,
+      "ranks": 12,
+      "ranks_per_node": 12,
+      "walltime": "01:00:00"
+    }
+  }
 }

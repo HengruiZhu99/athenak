@@ -25,3 +25,11 @@ Fresh N16 t0 has232928 evolved volume cells (180224 primary),44blocks,6layers an
 Remote obsolete E failed capture/checkpoint and completed NB1 checkpoint copies were locally reverified and remotely rehashed before retirement;318935040allocated bytes freed. All local originals and scientific snapshots retained, receipt retired-before-restored-six-shells.json.
 
 At t0 with independent common cutoff r>.063, six-shell H/M/Mr RMS are .00122524737/.00127521885/.00128804296 versus three-shell .01433266963/.01923371422/.01948501616. This is an encouraging91.45%/93.37% H/M reduction under radial refinement, not evolved accuracy or a uniform fourth-order convergence claim. Diagnostic quadrature volumes differ slightly with radial resolution; both raw integrals/norms are preserved. See checks/initial-comparison.json.
+
+## Aurora submission
+
+Build completed with make-j64 and both evolution/diagnostic targets passed freeze. Frozen scientific source `812667b2e4124929cab1aae663ab6db5c480ce62`; manifest SHA256 `bb16e53c43e5012ff84e8e1031f8dd9f604e3d68f2c6e2afa977ae3e54f60661`; science SHA256 `72ab6ef1bfc3d096bc6ab36d37c578e0925268bb2746d021983cbd13a012b74a`. All frozen launcher files and manifest locally verified; compiler/build/provenance/science records in aurora-build/, mirrored launcher in output/restored-six-shells/aurora. No rebuild or GPU smoke.
+
+Fresh N16 N61 job **9033869** submitted on debug-scaling,one node/12ranks. Plan `campaigns/n16-restored-six-shells-v1-a-evolution-segment01/plan.json`, SHA256 `feb93394476235b3d97178705c7a4deddbd0bd2266ae38ff02a9612dc5d0e749`. Both user debug queues were empty immediately before submission; unrelated held capacity jobs untouched. Storage at binding4,317,516,854bytes, planned196,070,900 plus atomic126,294,312 leaves360,117,934bytes headroom. No further retirement required. Follow state.json and saved submission; never duplicate.
+
+Quiet20-minute heartbeat `aurora-restored-six-shells-to-10m` is ACTIVE. Continue healthy fully verified same-case walltime checkpoints to10M; numerical failure terminal. Comparisons/analysis remain pending this run. `compare.py` loads distinct A/NB1/N61 helpers and roots without relabeling checkpoints. No long-time result yet.

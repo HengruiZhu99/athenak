@@ -1,0 +1,53 @@
+{
+  "storage_before": {
+    "bytes": 4259560597,
+    "entries": 94828,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 100000000,
+    "planned_bytes": 400000000,
+    "headroom_bytes": 240439403
+  },
+  "commands": [
+    {
+      "command": [
+        "cmake",
+        "-S",
+        "source-restored-six-shells-v1",
+        "-B",
+        "build-sycl-mpi-restored-six-shells-v1",
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DCMAKE_CXX_COMPILER=icpx",
+        "-DCMAKE_CXX_FLAGS=-fp-model=precise -fno-sycl-id-queries-fit-in-int",
+        "-DCMAKE_CXX_FLAGS_RELEASE=-O2",
+        "-DAthena_ENABLE_MPI=ON",
+        "-DAthena_SINGLE_PRECISION=OFF",
+        "-DAthena_ENABLE_HYPERBOLIC_SHIFT_3D_TESTS=ON",
+        "-DKokkos_ENABLE_SYCL=ON",
+        "-DKokkos_ENABLE_SERIAL=ON",
+        "-DKokkos_ARCH_INTEL_PVC=ON"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 33.0346656111069
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "build-sycl-mpi-restored-six-shells-v1",
+        "-j64",
+        "hyperbolic_shift_3d_mpi_native_control_broad_smooth_six_shells",
+        "hyperbolic_shift_3d_checkpoint_constraints_native_control_broad_smooth_six_shells"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 197.42878686799668
+    }
+  ],
+  "storage_after": {
+    "bytes": 4317487656,
+    "entries": 96807
+  }
+}
