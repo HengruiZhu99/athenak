@@ -1,5 +1,5 @@
 {
-  "status": "b_evolution_submitted",
+  "status": "c_smoke_submitted",
   "build_attempt": 2,
   "remote_build_pid": 641035,
   "remote_host": "aurora-uan-0012",
@@ -65,7 +65,7 @@
       "verification": "campaigns/n16-native-transition-v2-a-evolution-segment01/checkpoint-verified.json"
     },
     "B": {
-      "status": "evolution_submitted",
+      "status": "numerically_failed",
       "smoke_plan": "campaigns/n16-native-transition-v1-b-smoke-segment01/plan.json",
       "evolution_plan": "campaigns/n16-native-transition-v1-b-evolution-segment01/plan.json",
       "smoke_submission": {
@@ -99,12 +99,31 @@
           "ranks_per_node": 12,
           "walltime": "01:00:00"
         }
-      }
+      },
+      "last_accepted_t_over_M": 9.391500000000638,
+      "error": "device RHS failure at active cell57352 reason2",
+      "restart_admitted": false,
+      "local_artifacts_verified": true
     },
     "C": {
-      "status": "not_submitted",
+      "status": "smoke_submitted",
       "smoke_plan": "campaigns/n16-native-transition-v1-c-smoke-segment01/plan.json",
-      "evolution_plan": "campaigns/n16-native-transition-v1-c-evolution-segment01/plan.json"
+      "evolution_plan": "campaigns/n16-native-transition-v1-c-evolution-segment01/plan.json",
+      "smoke_submission": {
+        "job_id": "9031971.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+        "submitted": 1793598946.4297395,
+        "plan": "campaigns/n16-native-transition-v1-c-smoke-segment01/plan.json",
+        "plan_sha256": "980b9bdb1275cbcd5405ad5bd9c9d705eb32f048119e7a6392387c6e1a914f14",
+        "source_manifest_sha256": "7bd61dc86efe172c73e6363e237b36cdb36160eddb986110b75f0c78a46f36f0",
+        "resources": {
+          "queue": "debug-scaling",
+          "account": "CompactBinaryMerger",
+          "nodes": 1,
+          "ranks": 12,
+          "ranks_per_node": 12,
+          "walltime": "01:00:00"
+        }
+      }
     },
     "D": {
       "status": "not_submitted",
@@ -117,15 +136,15 @@
       "evolution_plan": "campaigns/n16-native-transition-v1-e-evolution-segment01/plan.json"
     }
   },
-  "note": "B smoke passed both two-step cases, all9 artifacts locally hash/length verified and physical SERIAL/GPU parity1.35e-13 or better. Fresh B t0-to10M submitted; do not duplicate or restart smoke. Science/settings unchanged. A completed10M preserved.",
+  "note": "B failed invalid metric at8 shell cells r=.609375. All6 artifacts including rejected capture locally hash/length verified; failed/unadmitted state never resumes. Terminal lock released. C original-collar/KO10/original-scri fresh physics smoke submitted; science/dt/floors unchanged.",
   "parallel_authorization": "User permits debug-scaling up to five nodes. Existing plans remain one-node/debug; any multi-case allocation must preserve separate case admission/storage/resources and be explicitly implemented/tested.",
   "build_status": "completed_and_frozen",
-  "current_plan": "campaigns/n16-native-transition-v1-b-evolution-segment01/plan.json",
+  "current_plan": "campaigns/n16-native-transition-v1-c-smoke-segment01/plan.json",
   "submission": {
-    "job_id": "9031894.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
-    "submitted": 1793596559.8975685,
-    "plan": "campaigns/n16-native-transition-v1-b-evolution-segment01/plan.json",
-    "plan_sha256": "3ce975744577a0727794d852c9deacb4910295e3b395aa2b68b4d5667f632073",
+    "job_id": "9031971.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "submitted": 1793598946.4297395,
+    "plan": "campaigns/n16-native-transition-v1-c-smoke-segment01/plan.json",
+    "plan_sha256": "980b9bdb1275cbcd5405ad5bd9c9d705eb32f048119e7a6392387c6e1a914f14",
     "source_manifest_sha256": "7bd61dc86efe172c73e6363e237b36cdb36160eddb986110b75f0c78a46f36f0",
     "resources": {
       "queue": "debug-scaling",
