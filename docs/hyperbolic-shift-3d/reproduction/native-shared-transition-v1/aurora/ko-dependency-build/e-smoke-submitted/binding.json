@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "plan_sha256": "4af3f436ae309424795e49d1cb743cd9955916c25a18f09f36faf8cc9487ddcb",
+  "source_manifest": "source-native-transition-ko-dependencies-v1-manifest.json",
+  "source_manifest_sha256": "6d81b6803fe811d57a4789a8d10a60e920f7f56c48e4458f7ff50836c2dd611d",
+  "binaries": {
+    "build-sycl-mpi-native-transition-ko-dependencies-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_shared_ko10_scri6": "48bd1030a8f55575b680f2ff511989b58f8f4c2867e2e71a30edda9dc6c43a6a"
+  },
+  "inputs": {
+    "launcher-native-transition-ko-dependencies-v1/native-transition-science.json": "2f503e9822b2c119b12cf49d92d7abbfb70d4d02c27848be945db7b50105c352"
+  },
+  "pbs_sha256": "8721f6dc616dbfb9c24e55bba2d210c3dc697a4140a36171f3008bf3193b1684",
+  "admission": {
+    "path": "launcher-native-transition-ko-dependencies-v1/native-transition-science.json",
+    "sha256": "2f503e9822b2c119b12cf49d92d7abbfb70d4d02c27848be945db7b50105c352"
+  },
+  "resources": {
+    "queue": "debug-scaling",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "01:00:00"
+  },
+  "storage_at_bind": {
+    "bytes": 4387658336,
+    "entries": 80291,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 89725224,
+    "planned_bytes": 217285583,
+    "headroom_bytes": 305330857
+  },
+  "launcher": {
+    "control.py": "70c5d4aa2d6d4ebbee1878f227960cc75a385f649ab1761d195468c5c6e97794",
+    "worker.py": "a1c483641ccf3ac1cc657eb90d6076fc286d2e4a8e2d40580a8f6ecd2a2b4fb8",
+    "run_debug.pbs": "1d5df790cf6c8cdc96e9d330b9b337ce755b30e057959586bcd661dc9ce885a6",
+    "storage.py": "fdcf2abc2533b8fed91220d9c18d8b9d723660820949a72e956fb9c8866afd39",
+    "native_transition_campaign.py": "7880eed35dc00ea43fccb139e5a04951f5aec08755aed763b77ec60482c73e75"
+  },
+  "allocation_seconds": 3600,
+  "worker_seconds": 3200
+}

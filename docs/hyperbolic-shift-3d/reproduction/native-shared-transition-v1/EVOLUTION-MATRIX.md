@@ -1,6 +1,6 @@
 # Controlled N16 evolution matrix (GPU smoke validation started)
 
-Current handoff (2026-11-02): A and repaired C completed10M; B failed9.3915M. C leaves dominant outer-shell error essentially unchanged. D GPU parity passed within2.01e-13; fresh D10M job9032129 is submitted with first6 scri derivatives. E pending. Use repaired bindings for C/D/E. Historical entries below retain chronology.
+Current handoff (2026-11-02): A, repaired C and D completed10M; B failed9.3915M. D native momentum norm is higher than C, concentrated outside; common diagnostic-operator control is pending before pure evolved-state attribution. E smoke9032174 is submitted with sharedW/KO10/first6. Historical entries below retain chronology.
 
 All new cases start from the same native wormhole at t=0 and target10M. They use N16, dt=.0005, direct chi/alpha RK and physical-variable KO, the existing lapse/chi floors and pre-floor sign logging, unchanged damping, angular epsilon2, scri penalty scale1, horizon lmax12/ntheta24/tolerance.001, and diagnostic interval.05. No evolved coarse/failing checkpoint or log-to-direct conversion is used. Healthy walltime continuations must use that case's own admitted checkpoint and exact configuration.
 
