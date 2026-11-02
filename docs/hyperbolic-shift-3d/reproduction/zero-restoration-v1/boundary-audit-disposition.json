@@ -1,0 +1,22 @@
+{
+  "job_id": "9033442.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "worker_status": "failed",
+  "native_returncode": 0,
+  "recorded_checks_passed": true,
+  "success_messages": 12,
+  "report_status_missing": true,
+  "only_rank0_report_present": [
+    "campaigns/zero-restoration-v1-boundary-audit/output/closure.rank0.json"
+  ],
+  "artifacts": {
+    "campaigns/zero-restoration-v1-boundary-audit/output/closure.rank0.json": {
+      "sha256": "a88d876c0526858c641aefa74e5df2dc11d4f9fc19a0f24dde510d7376d919c4",
+      "bytes": 72
+    }
+  },
+  "terminal_lock_released": {
+    "job_id": "9033442.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "released": 1793652181.8808534
+  },
+  "interpretation": "Native numerical checks passed; report lacks status=completed expected by worker and all processes reported fallback rank0. This is not a fully admitted 12-report audit. User explicitly waived further GPU checks; preserve without rerun. No evolution checkpoint exists from this audit."
+}
