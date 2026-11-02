@@ -1,0 +1,53 @@
+{
+  "storage_before": {
+    "bytes": 4328640512,
+    "entries": 82504,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 100000000,
+    "planned_bytes": 400000000,
+    "headroom_bytes": 171359488
+  },
+  "commands": [
+    {
+      "command": [
+        "cmake",
+        "-S",
+        "source-wide-collar-a-v1",
+        "-B",
+        "build-sycl-mpi-wide-collar-a-v1",
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DCMAKE_CXX_COMPILER=icpx",
+        "-DCMAKE_CXX_FLAGS=-fp-model=precise -fno-sycl-id-queries-fit-in-int",
+        "-DCMAKE_CXX_FLAGS_RELEASE=-O2",
+        "-DAthena_ENABLE_MPI=ON",
+        "-DAthena_SINGLE_PRECISION=OFF",
+        "-DAthena_ENABLE_HYPERBOLIC_SHIFT_3D_TESTS=ON",
+        "-DKokkos_ENABLE_SYCL=ON",
+        "-DKokkos_ENABLE_SERIAL=ON",
+        "-DKokkos_ARCH_INTEL_PVC=ON"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 31.874144294066355
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "build-sycl-mpi-wide-collar-a-v1",
+        "-j64",
+        "hyperbolic_shift_3d_mpi_native_control_wide_collar",
+        "hyperbolic_shift_3d_checkpoint_constraints_native_control_wide_collar"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 306.0264626580756
+    }
+  ],
+  "storage_after": {
+    "bytes": 4066757517,
+    "entries": 84353
+  }
+}
