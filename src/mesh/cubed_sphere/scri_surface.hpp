@@ -137,8 +137,9 @@ class ScriSurface {
   }
 
   void BuildCrossFace(Row &row){
-    const int n=grid.n,first[3]={n-(radial_nodes-1),row.j-2,row.k-2};
-    const int width[3]={radial_nodes,5,5};
+    constexpr int angular_width=scri_first6?7:5;
+    const int n=grid.n,first[3]={n-(radial_nodes-1),row.j-angular_width/2,row.k-angular_width/2};
+    const int width[3]={radial_nodes,angular_width,angular_width};
     const Real q[3]={1,(row.j+.5)/n,(row.k+.5)/n};Jet basis[3][8];
     for(int a=0;a<3;++a)for(int i=0;i<width[a];++i){
       const Real node=a==0&&i==radial_nodes-1?1:Real(first[a]+i+.5)/n;basis[a][i]=Jet(1);
@@ -158,7 +159,7 @@ class ScriSurface {
       for(int a=0;a<3;++a){term.d[a]+=weight*source.d[a];
         for(int b=0;b<3;++b)term.dd[a][b]+=weight*source.dd[a][b];}
     };
-    for(int k=0;k<5;++k)for(int j=0;j<5;++j)for(int i=0;i<radial_nodes;++i){
+    for(int k=0;k<angular_width;++k)for(int j=0;j<angular_width;++j)for(int i=0;i<radial_nodes;++i){
       const Jet w=basis[0][i]*basis[1][j]*basis[2][k];Term term{};
       term.boundary=i==radial_nodes-1;term.w=w.f;bool nonzero=w.f!=0;
       for(int a=0;a<3;++a)for(int A=0;A<3;++A){term.d[a]+=row.geometry.J[A][a]*w.d[A];

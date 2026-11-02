@@ -8,7 +8,14 @@
 #include <utility>
 #include "mesh/cubed_sphere/composite.hpp"
 
+#ifndef HYPERBOLIC_SCRI_FIRST6
+#define HYPERBOLIC_SCRI_FIRST6 0
+#endif
+
 namespace cubed_sphere {
+// Separate consistency control: first derivatives feeding singular numerators
+// need extra accuracy near scri. Original targets retain their exact stencils.
+inline constexpr bool scri_first6=HYPERBOLIC_SCRI_FIRST6;
 
 // Bounded CPU reference implementation. Plans read active leaf values only,
 // including corner/edge halos; no ordering dependency between ghost exchanges.
@@ -241,6 +248,15 @@ class CompositeDifference {
   }
   Real First(const std::vector<Real> &field, int point, int a) const {
     if (order == 2) return n*(field[point+Offset(a, 1)]-field[point+Offset(a, -1)])/2;
+    if constexpr(scri_first6){
+      const int p=inverse_active.at(point%count);
+      if(p>=0&&mesh.blocks[cells[p].block].layer==int(mesh.radii.size())-1){
+        if(ng<3)throw std::logic_error("sixth-order outer first derivatives need three halos");
+        return n*((field[point+Offset(a,3)]-field[point+Offset(a,-3)])
+          -9*(field[point+Offset(a,2)]-field[point+Offset(a,-2)])
+          +45*(field[point+Offset(a,1)]-field[point+Offset(a,-1)]))/60;
+      }
+    }
     return n*(field[point+Offset(a, -2)]-8*field[point+Offset(a, -1)]
         +8*field[point+Offset(a, 1)]-field[point+Offset(a, 2)])/12;
   }

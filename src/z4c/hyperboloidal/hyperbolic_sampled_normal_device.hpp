@@ -18,6 +18,7 @@ class HyperbolicSampledNormalDevice {
   struct Summary {int bad_rows=0,first_bad=-1,reason=success;};
  private:
   int first_,local_,first_block_=0,end_block_=0,n_,width_,padded_count_,donors_;
+  Real outer_radius2_;
   Device::IntBuffer active_,status_;
   Device::GeometryBuffer geometry_;
   Buffer poles_;
@@ -58,7 +59,7 @@ class HyperbolicSampledNormalDevice {
  public:
   HyperbolicSampledNormalDevice(const HyperbolicComposite&model,int first_surface,int local_count)
       :first_(first_surface),local_(local_count),n_(model.grid.n),width_(model.grid.padded),padded_count_(model.grid.count),
-       donors_(model.scri.radial_nodes-1){
+       donors_(model.scri.radial_nodes-1),outer_radius2_(std::pow(model.grid.mesh.radii.size()>1?model.grid.mesh.radii[model.grid.mesh.radii.size()-2]:model.grid.mesh.inner_radius,2)){
     const bool radial=model.radial_closure==HyperbolicComposite::RadialClosure::donor_seven;
     if(first_<0||local_<0||size_t(first_)+size_t(local_)>model.scri.rows.size()||model.scri.radial_nodes!=(radial?7:6)||
        model.grid.order!=4||model.grid.ng<3)throw std::invalid_argument("invalid sampled-normal owned range/grid");
@@ -83,6 +84,7 @@ class HyperbolicSampledNormalDevice {
     if(padded.extent(0)!=size_t(nf)*padded_count_)throw std::invalid_argument("sampled-normal padded shape mismatch");
     Device::PointKernel point{};point.padded=padded;point.active=active_;point.n=n_;
     point.width=width_;point.padded_count=padded_count_;
+    point.outer_radius2=outer_radius2_;
     if(radial_plan_)point.radial=radial_plan_->Prepare(padded,surface);
     Kokkos::parallel_for("owned scri interior pole samples",Kokkos::RangePolicy<ExecutionSpace>(0,donors_*local_),
                         Kernel{point,geometry_,poles_,status_});

@@ -77,6 +77,7 @@ class HyperbolicCompositeDevice {
   using HostBuffer = Kokkos::View<Real *, Kokkos::HostSpace>;
 
   int first_, local_, n_, width_, padded_count_;
+  Real outer_radius2_;
   IntBuffer active_, ko_offsets_, status_;
   GeometryBuffer geometry_;
   Buffer volumes_, diagnostic_volumes_, rhs_, gap_, cfl_, uploaded_padded_;
@@ -96,11 +97,16 @@ class HyperbolicCompositeDevice {
     ScriRadialDevice::BoundKernel radial;
     ConstBuffer positive_ko;
     bool direct_lapse_dissipation=false;
+    Real outer_radius2=std::numeric_limits<Real>::max();
 
     KOKKOS_INLINE_FUNCTION int Offset(int axis, int amount) const {
       return amount*(axis == 0 ? 1 : (axis == 1 ? width : width*width));
     }
-    KOKKOS_INLINE_FUNCTION Real First(int point, int axis) const {
+    KOKKOS_INLINE_FUNCTION Real First(int point, int axis,bool sixth=false) const {
+      if constexpr(cubed_sphere::scri_first6)if(sixth)
+        return n*((padded(point+Offset(axis,3))-padded(point+Offset(axis,-3)))
+          -9*(padded(point+Offset(axis,2))-padded(point+Offset(axis,-2)))
+          +45*(padded(point+Offset(axis,1))-padded(point+Offset(axis,-1))))/60;
       return n*(padded(point+Offset(axis,-2))-8*padded(point+Offset(axis,-1))
           +8*padded(point+Offset(axis,1))-padded(point+Offset(axis,2)))/12;
     }
@@ -124,6 +130,8 @@ class HyperbolicCompositeDevice {
         Real &transport_correction) const {
       ScalarJet<Real> result{};
       const int point = f*padded_count+active(local);
+      const bool sixth=cubed_sphere::scri_first6&&
+        map.x[0]*map.x[0]+map.x[1]*map.x[1]+map.x[2]*map.x[2]>outer_radius2;
       result.value = padded(point);
       if(radial.HasRow(local)){
         radial.Derivatives(f,local,result.d,result.dd,need_second);
@@ -135,14 +143,14 @@ class HyperbolicCompositeDevice {
           const Real v2=padded(point+Offset(a,2*sign))-result.value;
           const Real v3=padded(point+Offset(a,3*sign))-result.value;
           const Real biased=sign*n*(-3*vm+18*v1-6*v2+v3)/12;
-          transport_correction+=b*(biased-First(point,a));
+          transport_correction+=b*(biased-First(point,a,sixth));
         }
         return result;
       }
       Real first[3]{}, second[3][3]{};
       transport_correction = 0;
       for (int a=0;a<3;++a) {
-        first[a] = First(point,a);
+        first[a] = First(point,a,sixth);
         if (need_second) for (int b=0;b<3;++b) second[a][b] = Second(point,a,b);
         Real b = 0;
         for (int i=0;i<3;++i) b += map.J[a][i]*beta[i];
@@ -411,7 +419,7 @@ class HyperbolicCompositeDevice {
                             int first_active,int local_count,
                             const cubed_sphere::ScriRadialDifference *radial=nullptr)
       :first_(first_active),local_(local_count),n_(grid.n),width_(grid.padded),
-       padded_count_(grid.count),active_("owned active indices",local_count),
+       padded_count_(grid.count),outer_radius2_(std::pow(grid.mesh.radii.size()>1?grid.mesh.radii[grid.mesh.radii.size()-2]:grid.mesh.inner_radius,2)),active_("owned active indices",local_count),
        ko_offsets_("owned KO offsets",local_count+1),status_("owned RHS status",local_count),
        geometry_("owned mapped geometry",local_count),volumes_("owned volumes",local_count),
        diagnostic_volumes_("unique coverage volumes",local_count),
@@ -485,6 +493,7 @@ class HyperbolicCompositeDevice {
     if(positive_ko.extent(0)&&positive_ko.extent(0)!=size_t(2)*padded_count_)throw std::invalid_argument("positive KO storage mismatch");
     kernel.positive_ko=positive_ko;
     kernel.direct_lapse_dissipation=direct_lapse_dissipation;
+    kernel.outer_radius2=outer_radius2_;
     Kokkos::parallel_for("hyperboloidal owned bulk RHS",
         Kokkos::RangePolicy<ExecutionSpace>(0,local_),kernel);
     Summary result;
@@ -499,6 +508,7 @@ class HyperbolicCompositeDevice {
       throw std::invalid_argument("invalid device diagnostic storage/exterior cutoff");
     PointKernel kernel{padded,active_,ko_offsets_,status_,geometry_,ko_terms_,
         diagnostic_volumes_,rhs_,gap_,cfl_,n_,width_,padded_count_,0,0,false};
+    kernel.outer_radius2=outer_radius2_;
     if(radial_plan_)kernel.radial=radial_plan_->Prepare(padded,surface);
     DiagnosticSummary result;
     Kokkos::parallel_reduce("hyperboloidal owned constraints",

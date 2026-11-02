@@ -46,7 +46,8 @@ class ScriRadialDifference {
 
  private:
   std::vector<Term> Build(int m,int i,int j,int k,size_t p)const{
-    const int n=grid.n,first[3]={n-6,j-2,k-2},width[3]={7,5,5};
+    constexpr int angular_width=scri_first6?7:5;
+    const int n=grid.n,first[3]={n-6,j-angular_width/2,k-angular_width/2},width[3]={7,angular_width,angular_width};
     const Real q[3]={(i+.5)/n,(j+.5)/n,(k+.5)/n};Jet basis[3][7];
     for(int a=0;a<3;++a)for(int b=0;b<width[a];++b){
       const Real node=a==0&&b==6?1:Real(first[a]+b+.5)/n;basis[a][b]=Jet(1);
@@ -64,7 +65,7 @@ class ScriRadialDifference {
         for(int b=0;b<3;++b)entry.dd[a][b]+=weight*t.dd[a][b];}
     };
     const auto &geometry=grid.geometry[p];
-    for(int c=0;c<5;++c)for(int b=0;b<5;++b)for(int a=0;a<7;++a){
+    for(int c=0;c<angular_width;++c)for(int b=0;b<angular_width;++b)for(int a=0;a<7;++a){
       const Jet w=basis[0][a]*basis[1][b]*basis[2][c];Term t{};t.boundary=a==6;
       for(int x=0;x<3;++x)for(int A=0;A<3;++A){t.d[x]+=geometry.J[A][x]*w.d[A];
         for(int y=0;y<3;++y){t.dd[x][y]+=geometry.H[A][x][y]*w.d[A];
