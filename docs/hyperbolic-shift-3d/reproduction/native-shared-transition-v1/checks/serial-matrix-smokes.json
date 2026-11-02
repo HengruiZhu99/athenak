@@ -1,0 +1,470 @@
+{
+  "scope": "Two-step Serial, one MPI rank; not GPU or long stability evidence",
+  "source_commit": "fd4652ff69d55ec973b61029b4e77609e49f0860",
+  "cases": [
+    {
+      "variant": "A",
+      "kind": "minkowski",
+      "command": [
+        "mpiexec",
+        "-n",
+        "1",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-native-shared-transition/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_control",
+        "16",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/native-shared-transition/serial-matrix-smoke/attempt02/a-minkowski",
+        "minkowski",
+        ".001",
+        ".0005",
+        "-",
+        "-",
+        "600",
+        ".05",
+        ".001",
+        "12",
+        "24",
+        "2"
+      ],
+      "binary_sha256": "33561f998d1b2afca3bb7dceb499944034d1127e6cec4f2c345d55ee668717ca",
+      "verification": {
+        "variant": "A",
+        "schema": "HYP3D_MPI_NI1",
+        "n": 16,
+        "time": 0.001,
+        "steps": 2,
+        "dt": 0.0005,
+        "bytes": 79725224,
+        "sha256": "69546101da4efab601482e3489be701eb848270e01832011886ba363067ddb74"
+      },
+      "artifacts": {
+        "a-minkowski.log": {
+          "bytes": 178,
+          "sha256": "273e8629741d81bbb101687c52905334c93d1932a417e68707f24a4cb666a67f"
+        },
+        "a-minkowski.history.csv": {
+          "bytes": 1318,
+          "sha256": "500d0570135ec8d685e811f9c17336ad59dfb494c9cff718cb7042efdab3299d"
+        },
+        "a-minkowski.checkpoint": {
+          "bytes": 79725224,
+          "sha256": "69546101da4efab601482e3489be701eb848270e01832011886ba363067ddb74"
+        },
+        "a-minkowski.report.json": {
+          "bytes": 6715,
+          "sha256": "b31802992a3acfd8196f726981a65776cd3256c7b0cb3798e6954bf2321c30cc"
+        }
+      }
+    },
+    {
+      "variant": "A",
+      "kind": "puncture",
+      "command": [
+        "mpiexec",
+        "-n",
+        "1",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-native-shared-transition/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_control",
+        "16",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/native-shared-transition/serial-matrix-smoke/attempt02/a-puncture",
+        "puncture",
+        ".001",
+        ".0005",
+        "-",
+        "-",
+        "600",
+        ".05",
+        ".001",
+        "12",
+        "24",
+        "2"
+      ],
+      "binary_sha256": "33561f998d1b2afca3bb7dceb499944034d1127e6cec4f2c345d55ee668717ca",
+      "verification": {
+        "variant": "A",
+        "schema": "HYP3D_MPI_NI1",
+        "n": 16,
+        "time": 0.001,
+        "steps": 2,
+        "dt": 0.0005,
+        "bytes": 79725224,
+        "sha256": "e09c4fa13fc8493f9ed406461c95fc753aa46f61c15808cb547970126b3f2809"
+      },
+      "artifacts": {
+        "a-puncture.checkpoint.horizon-seed.txt": {
+          "bytes": 58,
+          "sha256": "4dbc580f0a8d1bc19e2ed38a5b2d8d4ca40d7e61cdc9381ce34533c6fd460872"
+        },
+        "a-puncture.report.json": {
+          "bytes": 6885,
+          "sha256": "84b40f7290543c720e7245e37c0c596a9404d7ac8afeec5f5437b9f1365ee9fe"
+        },
+        "a-puncture.checkpoint": {
+          "bytes": 79725224,
+          "sha256": "e09c4fa13fc8493f9ed406461c95fc753aa46f61c15808cb547970126b3f2809"
+        },
+        "a-puncture.history.csv": {
+          "bytes": 1758,
+          "sha256": "f2a1494fc48f090600a8bb90645e5e969038f38721d6e345303af58bd293f742"
+        },
+        "a-puncture.fastflow.horizon_shape_0.txt": {
+          "bytes": 4602,
+          "sha256": "a864b09b2fdbc8a6f3063e30a5c58307956b1f4889ce4ac6bc9df8849fc8957d"
+        },
+        "a-puncture.fastflow.horizon_summary_0.txt": {
+          "bytes": 547,
+          "sha256": "5d9872fa379eacf64507901ad503f0e8a15649781c1cf7a309c437a42f52c603"
+        },
+        "a-puncture.log": {
+          "bytes": 178,
+          "sha256": "e01983d0443e296302579678404a175f8271985f0f95d66c976d89837234a346"
+        }
+      }
+    },
+    {
+      "variant": "B",
+      "kind": "minkowski",
+      "command": [
+        "mpiexec",
+        "-n",
+        "1",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-native-shared-transition/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_shared",
+        "16",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/native-shared-transition/serial-matrix-smoke/attempt02/b-minkowski",
+        "minkowski",
+        ".001",
+        ".0005",
+        "-",
+        "-",
+        "600",
+        ".05",
+        ".001",
+        "12",
+        "24",
+        "2"
+      ],
+      "binary_sha256": "da882b25d415c9741a616112245680e2e99da538cb97bdc8f9dc02a9ab82c383",
+      "verification": {
+        "variant": "B",
+        "schema": "HYP3D_MPI_NT1",
+        "n": 16,
+        "time": 0.001,
+        "steps": 2,
+        "dt": 0.0005,
+        "bytes": 79725224,
+        "sha256": "235e1602bc3a270a3103e53bcfc2d234d5760363651f56cbeef762ec8a2bd932"
+      },
+      "artifacts": {
+        "b-minkowski.log": {
+          "bytes": 178,
+          "sha256": "89d0c9c02d8a5bc122ea8e1ff539053dcbad5749b47867aa96fd2aad05f3ce9c"
+        },
+        "b-minkowski.history.csv": {
+          "bytes": 1318,
+          "sha256": "148556842640904248406b4edf706eea6fb624dc8c236aa7934220a781195fb5"
+        },
+        "b-minkowski.report.json": {
+          "bytes": 6736,
+          "sha256": "dd122e7e178feddb89eb43da655e021c20748b32a9adfc263794c0f9dd8855f0"
+        },
+        "b-minkowski.checkpoint": {
+          "bytes": 79725224,
+          "sha256": "235e1602bc3a270a3103e53bcfc2d234d5760363651f56cbeef762ec8a2bd932"
+        }
+      }
+    },
+    {
+      "variant": "B",
+      "kind": "puncture",
+      "command": [
+        "mpiexec",
+        "-n",
+        "1",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-native-shared-transition/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_shared",
+        "16",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/native-shared-transition/serial-matrix-smoke/attempt02/b-puncture",
+        "puncture",
+        ".001",
+        ".0005",
+        "-",
+        "-",
+        "600",
+        ".05",
+        ".001",
+        "12",
+        "24",
+        "2"
+      ],
+      "binary_sha256": "da882b25d415c9741a616112245680e2e99da538cb97bdc8f9dc02a9ab82c383",
+      "verification": {
+        "variant": "B",
+        "schema": "HYP3D_MPI_NT1",
+        "n": 16,
+        "time": 0.001,
+        "steps": 2,
+        "dt": 0.0005,
+        "bytes": 79725224,
+        "sha256": "ebac4210a2b4059724caae8d12c4144fafc3a8a477a9e6df64263ec3b85118dd"
+      },
+      "artifacts": {
+        "b-puncture.checkpoint": {
+          "bytes": 79725224,
+          "sha256": "ebac4210a2b4059724caae8d12c4144fafc3a8a477a9e6df64263ec3b85118dd"
+        },
+        "b-puncture.log": {
+          "bytes": 178,
+          "sha256": "b5c7d5b1026f16e4b50a27c206de08b5f1e73f04b178e21a631e6f16307ea705"
+        },
+        "b-puncture.history.csv": {
+          "bytes": 1761,
+          "sha256": "2f5689fd5353e05d0719467e3b92b0ebf522f152fbfdb277abb3e4c100612c0e"
+        },
+        "b-puncture.fastflow.horizon_shape_0.txt": {
+          "bytes": 4602,
+          "sha256": "f7a3f539bf4a62ab3933a39b2e51becba529566983b5dd4b61f3ef271ce69c0f"
+        },
+        "b-puncture.checkpoint.horizon-seed.txt": {
+          "bytes": 58,
+          "sha256": "4dbc580f0a8d1bc19e2ed38a5b2d8d4ca40d7e61cdc9381ce34533c6fd460872"
+        },
+        "b-puncture.fastflow.horizon_summary_0.txt": {
+          "bytes": 547,
+          "sha256": "509c1c0c3a5f24198b4d89fa11d1cb105aabf2fe6fb416c4f810d6f63365268d"
+        },
+        "b-puncture.report.json": {
+          "bytes": 6891,
+          "sha256": "89d2f18728a6c8cf9d86faec45ad786bf0cd285a56856acd6054cf9e32ef2830"
+        }
+      }
+    },
+    {
+      "variant": "C",
+      "kind": "minkowski",
+      "command": [
+        "mpiexec",
+        "-n",
+        "1",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-native-shared-transition/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_control_ko10",
+        "16",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/native-shared-transition/serial-matrix-smoke/attempt02/c-minkowski",
+        "minkowski",
+        ".001",
+        ".0005",
+        "-",
+        "-",
+        "600",
+        ".05",
+        ".001",
+        "12",
+        "24",
+        "2"
+      ],
+      "binary_sha256": "e5068c59fefa716aa7126971a2a20c6d13f92327ec9cc4aece23507384ee2c59",
+      "verification": {
+        "variant": "C",
+        "schema": "HYP3D_MPI_NI2",
+        "n": 16,
+        "time": 0.001,
+        "steps": 2,
+        "dt": 0.0005,
+        "bytes": 79725224,
+        "sha256": "bbcf62ded85ba2f9b224368c4597dbfee7201eedb87ff4ef2ec8ee4f3981204d"
+      },
+      "artifacts": {
+        "c-minkowski.checkpoint": {
+          "bytes": 79725224,
+          "sha256": "bbcf62ded85ba2f9b224368c4597dbfee7201eedb87ff4ef2ec8ee4f3981204d"
+        },
+        "c-minkowski.history.csv": {
+          "bytes": 1332,
+          "sha256": "e474b82d59f4925ad024c2f81b927fdf89399e03aba33ae60fa37a7e83dedc92"
+        },
+        "c-minkowski.report.json": {
+          "bytes": 6705,
+          "sha256": "dfe4af6aefabeea7cb800e91dd6d566462524349accc3e08d412c6524bb1e043"
+        },
+        "c-minkowski.log": {
+          "bytes": 177,
+          "sha256": "357d02d41bcfc5b9e05c90e12adaf0aa32a26f98e6d955bdffc8de2d33313692"
+        }
+      }
+    },
+    {
+      "variant": "C",
+      "kind": "puncture",
+      "command": [
+        "mpiexec",
+        "-n",
+        "1",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-native-shared-transition/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_control_ko10",
+        "16",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/native-shared-transition/serial-matrix-smoke/attempt02/c-puncture",
+        "puncture",
+        ".001",
+        ".0005",
+        "-",
+        "-",
+        "600",
+        ".05",
+        ".001",
+        "12",
+        "24",
+        "2"
+      ],
+      "binary_sha256": "e5068c59fefa716aa7126971a2a20c6d13f92327ec9cc4aece23507384ee2c59",
+      "verification": {
+        "variant": "C",
+        "schema": "HYP3D_MPI_NI2",
+        "n": 16,
+        "time": 0.001,
+        "steps": 2,
+        "dt": 0.0005,
+        "bytes": 79725224,
+        "sha256": "fb3f1212a2ae9744204d9060543584b133ccd3e9833c0e7eb4245322c777aeb2"
+      },
+      "artifacts": {
+        "c-puncture.checkpoint": {
+          "bytes": 79725224,
+          "sha256": "fb3f1212a2ae9744204d9060543584b133ccd3e9833c0e7eb4245322c777aeb2"
+        },
+        "c-puncture.log": {
+          "bytes": 178,
+          "sha256": "aada88dd0e4769251fa540e710a6e04fa840e5ea345954212c1a117f5180dbc4"
+        },
+        "c-puncture.fastflow.horizon_shape_0.txt": {
+          "bytes": 4607,
+          "sha256": "d6c737f288359b51eef7d0e808f3a24fee77d29e70171b741179c1ddfb508e29"
+        },
+        "c-puncture.report.json": {
+          "bytes": 6873,
+          "sha256": "c957c3ff5650230b326680b9314b3ddb437bb4f5ae27764a945369fd6667cc15"
+        },
+        "c-puncture.history.csv": {
+          "bytes": 1753,
+          "sha256": "17a5074c364cc9339e9094afec7072fbf665d83778c861902aaa9a18e8436df8"
+        },
+        "c-puncture.checkpoint.horizon-seed.txt": {
+          "bytes": 58,
+          "sha256": "1b4eb24fdefe08a6febb88e36cdfe3435d4f09f025f0efcf6be7957432df69dc"
+        },
+        "c-puncture.fastflow.horizon_summary_0.txt": {
+          "bytes": 547,
+          "sha256": "7493f3bb7eed721f73b35ad5ff6a7b2de6276b813268faf15604ced2fa459776"
+        }
+      }
+    },
+    {
+      "variant": "D",
+      "kind": "minkowski",
+      "command": [
+        "mpiexec",
+        "-n",
+        "1",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-native-shared-transition/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_control_ko10_scri6",
+        "16",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/native-shared-transition/serial-matrix-smoke/attempt02/d-minkowski",
+        "minkowski",
+        ".001",
+        ".0005",
+        "-",
+        "-",
+        "600",
+        ".05",
+        ".001",
+        "12",
+        "24",
+        "2"
+      ],
+      "binary_sha256": "ccdb0d1973ff5c6bc01adf82bde17e57c447757abd663f8ed55284cf6950ab79",
+      "verification": {
+        "variant": "D",
+        "schema": "HYP3D_MPI_NC2",
+        "n": 16,
+        "time": 0.001,
+        "steps": 2,
+        "dt": 0.0005,
+        "bytes": 79725224,
+        "sha256": "63d9ca76c13aa254722cea5202e43ba03766de24f4bfec9369b2d054a496cfe2"
+      },
+      "artifacts": {
+        "d-minkowski.report.json": {
+          "bytes": 6723,
+          "sha256": "8670cb6a48c0cd500a95a16373b0ca6bd8a07b57863faa44693216aad0f612b4"
+        },
+        "d-minkowski.history.csv": {
+          "bytes": 1326,
+          "sha256": "45869f77f4c454cea072aee8615a081d7f487e08ff480b82e28f26b4f0b668b4"
+        },
+        "d-minkowski.checkpoint": {
+          "bytes": 79725224,
+          "sha256": "63d9ca76c13aa254722cea5202e43ba03766de24f4bfec9369b2d054a496cfe2"
+        },
+        "d-minkowski.log": {
+          "bytes": 178,
+          "sha256": "88d059ac10fe7ff803c2b42c5130d0aa5d6ac42eaf45e17a7ddd189f9a6e8dad"
+        }
+      }
+    },
+    {
+      "variant": "D",
+      "kind": "puncture",
+      "command": [
+        "mpiexec",
+        "-n",
+        "1",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-native-shared-transition/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_control_ko10_scri6",
+        "16",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/native-shared-transition/serial-matrix-smoke/attempt02/d-puncture",
+        "puncture",
+        ".001",
+        ".0005",
+        "-",
+        "-",
+        "600",
+        ".05",
+        ".001",
+        "12",
+        "24",
+        "2"
+      ],
+      "binary_sha256": "ccdb0d1973ff5c6bc01adf82bde17e57c447757abd663f8ed55284cf6950ab79",
+      "verification": {
+        "variant": "D",
+        "schema": "HYP3D_MPI_NC2",
+        "n": 16,
+        "time": 0.001,
+        "steps": 2,
+        "dt": 0.0005,
+        "bytes": 79725224,
+        "sha256": "a76f4b152b0c2dec1b073ae0f9d3722a0be8d8a116757e24c3c6e187c14e0a5c"
+      },
+      "artifacts": {
+        "d-puncture.report.json": {
+          "bytes": 6891,
+          "sha256": "f630dd1cffb2a6e89fc30c92a007b9f361b74e4c5f3054315ca76c27011745d9"
+        },
+        "d-puncture.log": {
+          "bytes": 178,
+          "sha256": "1fdc17c6578db2889727e7186a51e20c71b4a40d0d5350ba1c7e6d9b99b7ecca"
+        },
+        "d-puncture.checkpoint": {
+          "bytes": 79725224,
+          "sha256": "a76f4b152b0c2dec1b073ae0f9d3722a0be8d8a116757e24c3c6e187c14e0a5c"
+        },
+        "d-puncture.history.csv": {
+          "bytes": 1761,
+          "sha256": "2df1b8f13cc60071a644ce92f6d3c05732d26e8bb1f02a4a35b96ad8bddc4553"
+        },
+        "d-puncture.fastflow.horizon_shape_0.txt": {
+          "bytes": 4607,
+          "sha256": "d6c737f288359b51eef7d0e808f3a24fee77d29e70171b741179c1ddfb508e29"
+        },
+        "d-puncture.fastflow.horizon_summary_0.txt": {
+          "bytes": 547,
+          "sha256": "7493f3bb7eed721f73b35ad5ff6a7b2de6276b813268faf15604ced2fa459776"
+        },
+        "d-puncture.checkpoint.horizon-seed.txt": {
+          "bytes": 58,
+          "sha256": "1b4eb24fdefe08a6febb88e36cdfe3435d4f09f025f0efcf6be7957432df69dc"
+        }
+      }
+    }
+  ]
+}

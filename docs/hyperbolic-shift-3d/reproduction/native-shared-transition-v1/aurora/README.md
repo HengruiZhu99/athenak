@@ -94,3 +94,25 @@ local clean configuration now passes. The old package/build/logs remain under
 `retired-native-transition-build-attempt01` on Aurora; attempt01 provenance and
 configuration evidence are preserved here. This is a packaging repair, not a
 scientific change.
+
+## Analysis and backend controls
+
+`../serial_smokes.py` records two-step SERIAL/MPI-one references against the
+previously bound local binary hashes. Cases A–D each passed Minkowski and
+puncture (eight executions); case E's prior combined-control smoke is preserved
+in checks/scri-full. These are local results, not Aurora validation.
+`../compare_smokes.py` compares admitted two-step physical fields against the
+12-rank SYCL outputs, separately reporting compensated-RK bookkeeping. It reports
+per-field differences normalized by1+maximum field magnitude; the1e-10 parity
+threshold checks backend agreement, not physical accuracy.
+
+`../compare_histories.py` accepts repeated `--case A=plan01,plan02` arguments,
+`--root` for the collected native mirror, `--baseline-root` for preserved SG1,
+and a fresh `--output`. It verifies artifact/science identities and case/segment
+continuity, retains numerical-failure histories without admitting failed
+checkpoints, preserves accepted-mass gaps and unavailable boundary diagnostics,
+and sums segment-local sign/floor counters separately from boundary counters.
+Its own-candidate history plots do not replace the required common-cutoff
+endpoint radial reconstruction with each matching diagnostic executable. Four
+synthetic validation tests cover changed scientific settings, wrong scheduler
+state, out-of-range histories, missing smoke cases and physical disagreement.
