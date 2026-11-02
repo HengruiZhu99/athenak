@@ -39,7 +39,8 @@ def stage(repo,destination,revision):
     kokkos=git(repo,'ls-tree',campaign.SOURCE_COMMIT,'kokkos').decode().split()[2]
     destination.mkdir(parents=True)
     for repository,commit,prefix,paths in [
-        (repo,campaign.SOURCE_COMMIT,SOURCE_DIR+'/', ['CMakeLists.txt','config.hpp.in','LICENSE','src','tst/hyperbolic_shift_3d']),
+        (repo,campaign.SOURCE_COMMIT,SOURCE_DIR+'/', ['CMakeLists.txt','config.hpp.in','LICENSE','src',
+            'tst/hyperbolic_shift_3d','tst/elliptic_shift_1d/spherical_api.cpp']),
         (repo/'kokkos',kokkos,SOURCE_DIR+'/kokkos/',[])]:
         archive=git(repository,'archive','--format=tar','--prefix='+prefix,commit,*paths)
         with tarfile.open(fileobj=io.BytesIO(archive)) as tar:
