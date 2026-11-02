@@ -1,0 +1,382 @@
+{
+  "resolutions": {
+    "16": {
+      "last_accepted_t_over_M": 10,
+      "last_diagnostic_t_over_M": 10.0,
+      "status": "completed",
+      "accepted_horizon_rows": 45,
+      "rows": 68,
+      "counters": {
+        "totals": {
+          "chi_floor_stage_interventions": 56,
+          "chi_floor_acceptance_interventions": 8,
+          "surface_chi_floor_stage_interventions": 0,
+          "surface_chi_floor_final_interventions": 0,
+          "lapse_floor_node_interventions": 0,
+          "scri_interpolated_chi_negative_count": 0,
+          "scri_interpolated_chi_zero_count": 0
+        },
+        "candidate_groups": {
+          "volume_field_0": {
+            "negative_stage": 56,
+            "negative_final": 8,
+            "zero_stage": 0,
+            "zero_final": 0,
+            "minimum": -7.786532952604854e-07,
+            "first_negative_time": 0.10075000000000008,
+            "first_zero_time": null
+          }
+        },
+        "scope": "Segment-local counts include rejected attempts; event times are coordinate time. Boundary interpolation counts are separate."
+      },
+      "segments": [
+        {
+          "plan": "campaigns/n16-short-gauge-fresh10m-v1-segment01/plan.json",
+          "status": "passed",
+          "report_status": "completed",
+          "checkpoint_sha256": "d581c2860a1049c5a79568c90658b56463ebe8487229e06f7df3d34b27f80749",
+          "artifacts": {
+            "campaigns/n16-short-gauge-fresh10m-v1-segment01/output/puncture.report.json": {
+              "sha256": "b39f4e33cd15977d4addda12e8ff073218661811d8e1d9d230e3c6d08dfc1029",
+              "bytes": 13915
+            },
+            "campaigns/n16-short-gauge-fresh10m-v1-segment01/output/puncture.checkpoint": {
+              "sha256": "d581c2860a1049c5a79568c90658b56463ebe8487229e06f7df3d34b27f80749",
+              "bytes": 79725224
+            },
+            "campaigns/n16-short-gauge-fresh10m-v1-segment01/output/puncture.history.csv": {
+              "sha256": "c5681eb0e4e8331d7c477be24c3564c79320fd920f13084f56abf8e8b9f250a4",
+              "bytes": 46194
+            },
+            "campaigns/n16-short-gauge-fresh10m-v1-segment01/output/puncture.checkpoint.horizon-seed.txt": {
+              "sha256": "e1c95022dbe4c61f6fc487046d751c8b696e74027544d841d0fd5d86c3dda877",
+              "bytes": 86
+            },
+            "campaigns/n16-short-gauge-fresh10m-v1-segment01/output/puncture.fastflow.horizon_summary_0.txt": {
+              "sha256": "0f6624bcb9902402539b95dd0c2b96b032aff842063cff1199390489904fef3f",
+              "bytes": 11624
+            }
+          }
+        }
+      ],
+      "restart_diagnostic_repeats": [],
+      "final_accepted_mass_error": 0.003413255375168678
+    },
+    "24": {
+      "last_accepted_t_over_M": 10,
+      "last_diagnostic_t_over_M": 10.0,
+      "status": "completed",
+      "accepted_horizon_rows": 58,
+      "rows": 68,
+      "counters": {
+        "totals": {
+          "chi_floor_stage_interventions": 1064,
+          "chi_floor_acceptance_interventions": 368,
+          "surface_chi_floor_stage_interventions": 0,
+          "surface_chi_floor_final_interventions": 0,
+          "lapse_floor_node_interventions": 0,
+          "scri_interpolated_chi_negative_count": 0,
+          "scri_interpolated_chi_zero_count": 0
+        },
+        "candidate_groups": {
+          "volume_field_0": {
+            "negative_stage": 968,
+            "negative_final": 344,
+            "zero_stage": 0,
+            "zero_final": 0,
+            "minimum": -6.676516852728699e-07,
+            "first_negative_time": 0.05149999999999994,
+            "first_zero_time": null
+          }
+        },
+        "scope": "Segment-local counts include rejected attempts; event times are coordinate time. Boundary interpolation counts are separate."
+      },
+      "segments": [
+        {
+          "plan": "campaigns/n24-short-gauge-fresh10m-v1-segment01/plan.json",
+          "status": "passed",
+          "report_status": "completed",
+          "checkpoint_sha256": "7082e7706c18c8e3e84f24c04f6c56492b45c372a8c1e3012e35a578aaf6a5e2",
+          "artifacts": {
+            "campaigns/n24-short-gauge-fresh10m-v1-segment01/output/puncture.report.json": {
+              "sha256": "c60f7d63f2d180ecee2bd8cc6ffc087697904dd5d19057a73db3ed026a5469d8",
+              "bytes": 13930
+            },
+            "campaigns/n24-short-gauge-fresh10m-v1-segment01/output/puncture.checkpoint": {
+              "sha256": "7082e7706c18c8e3e84f24c04f6c56492b45c372a8c1e3012e35a578aaf6a5e2",
+              "bytes": 234413736
+            },
+            "campaigns/n24-short-gauge-fresh10m-v1-segment01/output/puncture.history.csv": {
+              "sha256": "97fa96100e2f26a2aa1c6cb129a5d9043a9a1930bb82a65da58a7095b4df63ce",
+              "bytes": 47242
+            },
+            "campaigns/n24-short-gauge-fresh10m-v1-segment01/output/puncture.checkpoint.horizon-seed.txt": {
+              "sha256": "fd2689bb1b2f657b759e405d3b07fe731714b849a5210baeeafc126a4fa9f1b6",
+              "bytes": 87
+            },
+            "campaigns/n24-short-gauge-fresh10m-v1-segment01/output/puncture.fastflow.horizon_summary_0.txt": {
+              "sha256": "ed6d6d322fb1ab8fc3f836f76fe0cf2cd09d78c7f677895277c7d8e2b5489043",
+              "bytes": 14017
+            }
+          }
+        }
+      ],
+      "restart_diagnostic_repeats": [],
+      "final_accepted_mass_error": -0.0002868248615063296
+    },
+    "32": {
+      "last_accepted_t_over_M": 10,
+      "last_diagnostic_t_over_M": 10.0,
+      "status": "completed",
+      "accepted_horizon_rows": 67,
+      "rows": 68,
+      "counters": {
+        "totals": {
+          "chi_floor_stage_interventions": 11416,
+          "chi_floor_acceptance_interventions": 3856,
+          "surface_chi_floor_stage_interventions": 0,
+          "surface_chi_floor_final_interventions": 0,
+          "lapse_floor_node_interventions": 0,
+          "scri_interpolated_chi_negative_count": 0,
+          "scri_interpolated_chi_zero_count": 0
+        },
+        "candidate_groups": {
+          "volume_field_0": {
+            "negative_stage": 9536,
+            "negative_final": 3496,
+            "zero_stage": 0,
+            "zero_final": 0,
+            "minimum": -9.155398503873806e-07,
+            "first_negative_time": 0.03875000000000003,
+            "first_zero_time": null
+          }
+        },
+        "scope": "Segment-local counts include rejected attempts; event times are coordinate time. Boundary interpolation counts are separate."
+      },
+      "segments": [
+        {
+          "plan": "campaigns/n32-short-gauge-fresh10m-v1-segment01/plan.json",
+          "status": "checkpointed",
+          "report_status": "checkpointed",
+          "checkpoint_sha256": "b9eca54fa87bb8291bb42dabb82d1baf814236f12d2403c2d500536f1d54c852",
+          "artifacts": {
+            "campaigns/n32-short-gauge-fresh10m-v1-segment01/output/puncture.report.json": {
+              "sha256": "0edcbee69db62e164fdb72f009083cc1a1592dd27ca0bf1f4ae22d8b9240630e",
+              "bytes": 14059
+            },
+            "campaigns/n32-short-gauge-fresh10m-v1-segment01/output/puncture.checkpoint": {
+              "sha256": "b9eca54fa87bb8291bb42dabb82d1baf814236f12d2403c2d500536f1d54c852",
+              "bytes": 518617768
+            },
+            "campaigns/n32-short-gauge-fresh10m-v1-segment01/output/puncture.history.csv": {
+              "sha256": "2cec82008b0c75b34b7ad761ec3e838ab3ee881bc50802b3af0c1a923bcda029",
+              "bytes": 32010
+            },
+            "campaigns/n32-short-gauge-fresh10m-v1-segment01/output/puncture.checkpoint.horizon-seed.txt": {
+              "sha256": "1db2dc00bc2d8a200967420e8b2b15e5a63a74cf854d7e5b2c5553e7e5f2986b",
+              "bytes": 86
+            },
+            "campaigns/n32-short-gauge-fresh10m-v1-segment01/output/puncture.fastflow.horizon_summary_0.txt": {
+              "sha256": "1b808aa078abf2ed4f2bf80d33455a5de0b9682e25e305be5100a361c35b088f",
+              "bytes": 10354
+            }
+          }
+        },
+        {
+          "plan": "campaigns/n32-short-gauge-fresh10m-v1-segment02/plan.json",
+          "status": "passed",
+          "report_status": "completed",
+          "checkpoint_sha256": "f50bad4369f327a60e29342503358141ae93de54da0e08894f823cd6e58a7dfc",
+          "artifacts": {
+            "campaigns/n32-short-gauge-fresh10m-v1-segment02/output/puncture.report.json": {
+              "sha256": "3336bbc9e94b9f8615ec8e33b5e4572876f48a722c1df6638179cfeda181a9f5",
+              "bytes": 12408
+            },
+            "campaigns/n32-short-gauge-fresh10m-v1-segment02/output/puncture.checkpoint": {
+              "sha256": "f50bad4369f327a60e29342503358141ae93de54da0e08894f823cd6e58a7dfc",
+              "bytes": 518617768
+            },
+            "campaigns/n32-short-gauge-fresh10m-v1-segment02/output/puncture.history.csv": {
+              "sha256": "c31a2f22e6b35e8cb493b9f344793c545d2e84225cc9e722e387628754eabfeb",
+              "bytes": 17479
+            },
+            "campaigns/n32-short-gauge-fresh10m-v1-segment02/output/puncture.checkpoint.horizon-seed.txt": {
+              "sha256": "9d7b8582dcf39bbaae860d60469098fa57e72122c11aaf0fa7eac0a814ee3f0a",
+              "bytes": 85
+            },
+            "campaigns/n32-short-gauge-fresh10m-v1-segment02/output/puncture.fastflow.horizon_summary_0.txt": {
+              "sha256": "1105b7059ca5dbdf72fcf460db874ac3fe4b1e81029e63d5e7d80064b1696431",
+              "bytes": 5738
+            }
+          }
+        }
+      ],
+      "restart_diagnostic_repeats": [
+        {
+          "t_over_M": 6.562500000000442,
+          "changed_segment_or_finder_columns": [
+            "exterior_cutoff",
+            "horizon_radius",
+            "horizon_areal_radius",
+            "horizon_mass",
+            "horizon_expansion_rms",
+            "horizon_trial_radius",
+            "horizon_trial_expansion_rms",
+            "horizon_iterations",
+            "pole_max",
+            "clock_max",
+            "cfl_max",
+            "wall_seconds",
+            "horizon_irreducible_mass"
+          ],
+          "retained": "preceding segment final observation"
+        }
+      ],
+      "final_accepted_mass_error": -0.0003603100911167001
+    }
+  },
+  "common_endpoint": {
+    "t_over_M": 10,
+    "cutoff": 0.1099,
+    "candidate_radii": [
+      0.10973823820805612,
+      0.1092690201200305,
+      0.109290095094961
+    ],
+    "diagnostic_binary_sha256": "ca6070b55b929416730087623a66958822f575053aceb040ac519fb3c5885ca2",
+    "endpoints": {
+      "16": {
+        "norms": {
+          "total": {
+            "volume": 4.19060606246132,
+            "H_L2": 0.04430797062182595,
+            "M_L2": 0.0472461890384053,
+            "Mr_L2": 0.35120660984998575,
+            "Theta_L2": 0.0009428386483930983,
+            "Zr_L2": 0.02363603425002225
+          },
+          "exterior": {
+            "volume": 4.1850360468363235,
+            "H_L2": 0.015414970227319257,
+            "M_L2": 0.02900764103479748,
+            "Mr_L2": 0.03081596860877591,
+            "Theta_L2": 0.0008129273867115463,
+            "Zr_L2": 0.01717371985075609
+          }
+        },
+        "checkpoint_sha256": "d581c2860a1049c5a79568c90658b56463ebe8487229e06f7df3d34b27f80749",
+        "command": [
+          "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_checkpoint_constraints_short_gauge",
+          "16",
+          "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/short-gauge-v1/aurora/campaigns/n16-short-gauge-fresh10m-v1-segment01/output/puncture.checkpoint",
+          "0.0005",
+          "0.1099",
+          "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/short-gauge-n32-v1/comparison/n16-radial.json",
+          "0,0.03,0.06,0.1099,0.13,0.16,0.18,0.2,0.25,0.3,0.4,0.45,0.55,0.6,0.675,0.7,0.725,0.75,0.775,0.8,0.85,0.9,0.95,1"
+        ],
+        "regional_fractions_of_exterior_squared_norm": {
+          "0.16-0.3": {
+            "H2": 0.23442737495237237,
+            "M2": 0.08975677209136125
+          },
+          "0.775-0.9": {
+            "H2": 0.6219759085210532,
+            "M2": 0.7502414812616992
+          }
+        }
+      },
+      "24": {
+        "norms": {
+          "total": {
+            "volume": 4.189688721214122,
+            "H_L2": 0.025904009140662015,
+            "M_L2": 0.03615961879994318,
+            "Mr_L2": 0.3450084854934662,
+            "Theta_L2": 0.0004206777618944576,
+            "Zr_L2": 0.012737407902714892
+          },
+          "exterior": {
+            "volume": 4.1841638462141235,
+            "H_L2": 0.008201827775028722,
+            "M_L2": 0.025505561917813648,
+            "Mr_L2": 0.02610775809925303,
+            "Theta_L2": 0.0004045265023768072,
+            "Zr_L2": 0.009589658451232434
+          }
+        },
+        "checkpoint_sha256": "7082e7706c18c8e3e84f24c04f6c56492b45c372a8c1e3012e35a578aaf6a5e2",
+        "command": [
+          "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_checkpoint_constraints_short_gauge",
+          "24",
+          "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/short-gauge-v1/aurora/campaigns/n24-short-gauge-fresh10m-v1-segment01/output/puncture.checkpoint",
+          "0.0003333333333333333",
+          "0.1099",
+          "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/short-gauge-n32-v1/comparison/n24-radial.json",
+          "0,0.03,0.06,0.1099,0.13,0.16,0.18,0.2,0.25,0.3,0.4,0.45,0.55,0.6,0.675,0.7,0.725,0.75,0.775,0.8,0.85,0.9,0.95,1"
+        ],
+        "regional_fractions_of_exterior_squared_norm": {
+          "0.16-0.3": {
+            "H2": 0.10329455110033729,
+            "M2": 0.015814554970870642
+          },
+          "0.775-0.9": {
+            "H2": 0.816537165097369,
+            "M2": 0.9372063754308882
+          }
+        }
+      },
+      "32": {
+        "norms": {
+          "total": {
+            "volume": 4.189299225001416,
+            "H_L2": 0.01833968292894704,
+            "M_L2": 0.031178075889285055,
+            "Mr_L2": 0.32644100043712204,
+            "Theta_L2": 0.00025993384396010423,
+            "Zr_L2": 0.009470203687992439
+          },
+          "exterior": {
+            "volume": 4.183756262110748,
+            "H_L2": 0.006855110303481826,
+            "M_L2": 0.024562748430777936,
+            "Mr_L2": 0.02489983340386734,
+            "Theta_L2": 0.0002532918171238373,
+            "Zr_L2": 0.007076854889476283
+          }
+        },
+        "checkpoint_sha256": "f50bad4369f327a60e29342503358141ae93de54da0e08894f823cd6e58a7dfc",
+        "command": [
+          "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/build-hyperbolic-mpi/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_checkpoint_constraints_short_gauge",
+          "32",
+          "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/hyperbolic-core-shell/short-gauge-v1/aurora/campaigns/n32-short-gauge-fresh10m-v1-segment02/output/puncture.checkpoint",
+          "0.00025",
+          "0.1099",
+          "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/short-gauge-n32-v1/comparison/n32-radial.json",
+          "0,0.03,0.06,0.1099,0.13,0.16,0.18,0.2,0.25,0.3,0.4,0.45,0.55,0.6,0.675,0.7,0.725,0.75,0.775,0.8,0.85,0.9,0.95,1"
+        ],
+        "regional_fractions_of_exterior_squared_norm": {
+          "0.16-0.3": {
+            "H2": 0.02895755923917387,
+            "M2": 0.0034684076476309026
+          },
+          "0.775-0.9": {
+            "H2": 0.9507686436819,
+            "M2": 0.9879350263708851
+          }
+        }
+      }
+    },
+    "n16_over_n24_ratios": {
+      "H_L2": 1.879455488476808,
+      "M_L2": 1.1373064874347232,
+      "Mr_L2": 1.1803376027778343,
+      "Theta_L2": 2.009577572631627
+    },
+    "n24_over_n32_ratios": {
+      "H_L2": 1.1964545298217704,
+      "M_L2": 1.0383838758798805,
+      "Mr_L2": 1.0485113565136577,
+      "Theta_L2": 1.5970768695580462
+    }
+  }
+}
