@@ -1,6 +1,6 @@
 # Controlled N16 evolution matrix (GPU smoke validation started)
 
-Current handoff (2026-11-02): A completed10M; B failed9.3915M. Old C smoke exposed a KO10 MPI fifth-donor omission. The repair is locally exact against one-rank references, its separate Aurora build is complete, and corrected C smoke9032033 is queued. Use the new launcher/source/binary bindings in aurora/ko-dependency-build; no C/D/E long runs yet. Historical entries below retain their original chronology.
+Current handoff (2026-11-02): A completed10M; B failed9.3915M. KO10 MPI fifth-donor repair passed corrected GPU smoke9032033 (SERIAL agreement <=1.35e-13). Fresh corrected C evolution9032055 is submitted toward10M; D/E pending. Use repaired launcher/source/binary bindings in aurora/ko-dependency-build for C/D/E. Historical entries below retain their original chronology.
 
 All new cases start from the same native wormhole at t=0 and target10M. They use N16, dt=.0005, direct chi/alpha RK and physical-variable KO, the existing lapse/chi floors and pre-floor sign logging, unchanged damping, angular epsilon2, scri penalty scale1, horizon lmax12/ntheta24/tolerance.001, and diagnostic interval.05. No evolved coarse/failing checkpoint or log-to-direct conversion is used. Healthy walltime continuations must use that case's own admitted checkpoint and exact configuration.
 
