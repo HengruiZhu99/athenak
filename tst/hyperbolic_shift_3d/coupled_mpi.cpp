@@ -117,7 +117,8 @@ static_assert(!cubed_sphere::scri_first6||native_wormhole,"scri first6 evolution
 static_assert(!h::broad_smooth_a || (native_wormhole && !h::CompositeDissipation::consistent && !cubed_sphere::scri_first6));
 static_assert(!h::wide_restoring_collar || (native_wormhole && !h::CompositeDissipation::consistent && !cubed_sphere::scri_first6));
 static_assert(!h::zero_shift_restoration || (native_wormhole && !h::CompositeDissipation::consistent && !cubed_sphere::scri_first6));
-constexpr const char*checkpoint_magic=h::broad_smooth_a?"HYP3D_MPI_NB1":h::zero_shift_restoration?"HYP3D_MPI_NZ1":h::wide_restoring_collar?"HYP3D_MPI_NW1":cubed_sphere::scri_first6?(h::CompositeDissipation::consistent?(h::shared_restoration?"HYP3D_MPI_NS2":"HYP3D_MPI_NC2"):(h::shared_restoration?"HYP3D_MPI_NS1":"HYP3D_MPI_NC1")):native_wormhole?(h::CompositeDissipation::consistent?(h::shared_restoration?"HYP3D_MPI_NT2":"HYP3D_MPI_NI2"):(h::shared_restoration?"HYP3D_MPI_NT1":"HYP3D_MPI_NI1")):h::CompositeDissipation::consistent?(h::shared_restoration?"HYP3D_MPI_ST2":"HYP3D_MPI_SG2"):h::shared_restoration?"HYP3D_MPI_ST1":h::short_inner_gauge?"HYP3D_MPI_SG1":h::late_inner_gauge?"HYP3D_MPI_LG1":h::restore_inner_damping?"HYP3D_MPI_DG1":h::direct_outer?"HYP3D_MPI_DO1":h::inner_telegrapher?"HYP3D_MPI_IT1":h::smooth_gauge_blend&&direct_chi?"HYP3D_MPI_GD1":h::smooth_gauge_blend?"HYP3D_MPI_GW1":direct_chi?"HYP3D_MPI_AC1":direct_lapse?"HYP3D_MPI_AL1":puncture_chi_floor>0?"HYP3D_MPI_CF1":HYPERBOLIC_EXPERIMENTAL_TIMESTEP?"HYP3D_MPI_DT1":continuous_positive?"HYP3D_MPI_V11":spherical_overlap?"HYP3D_MPI_V10":evolved_overlap?"HYP3D_MPI_V9":core_subdivisions==2?"HYP3D_MPI_V8":inner_transition_logical?"HYP3D_MPI_V7":scri_donor_seven?"HYP3D_MPI_V6":scri_sampled_normal?"HYP3D_MPI_V5":scri_angular_dissipation?"HYP3D_MPI_V4":scri_angular_exchange?"HYP3D_MPI_V3":algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
+static_assert(!hyperbolic_reproduction::six_shells || (h::broad_smooth_a && continuous_positive));
+constexpr const char*checkpoint_magic=hyperbolic_reproduction::six_shells?"HYP3D_MPI_N61":h::broad_smooth_a?"HYP3D_MPI_NB1":h::zero_shift_restoration?"HYP3D_MPI_NZ1":h::wide_restoring_collar?"HYP3D_MPI_NW1":cubed_sphere::scri_first6?(h::CompositeDissipation::consistent?(h::shared_restoration?"HYP3D_MPI_NS2":"HYP3D_MPI_NC2"):(h::shared_restoration?"HYP3D_MPI_NS1":"HYP3D_MPI_NC1")):native_wormhole?(h::CompositeDissipation::consistent?(h::shared_restoration?"HYP3D_MPI_NT2":"HYP3D_MPI_NI2"):(h::shared_restoration?"HYP3D_MPI_NT1":"HYP3D_MPI_NI1")):h::CompositeDissipation::consistent?(h::shared_restoration?"HYP3D_MPI_ST2":"HYP3D_MPI_SG2"):h::shared_restoration?"HYP3D_MPI_ST1":h::short_inner_gauge?"HYP3D_MPI_SG1":h::late_inner_gauge?"HYP3D_MPI_LG1":h::restore_inner_damping?"HYP3D_MPI_DG1":h::direct_outer?"HYP3D_MPI_DO1":h::inner_telegrapher?"HYP3D_MPI_IT1":h::smooth_gauge_blend&&direct_chi?"HYP3D_MPI_GD1":h::smooth_gauge_blend?"HYP3D_MPI_GW1":direct_chi?"HYP3D_MPI_AC1":direct_lapse?"HYP3D_MPI_AL1":puncture_chi_floor>0?"HYP3D_MPI_CF1":HYPERBOLIC_EXPERIMENTAL_TIMESTEP?"HYP3D_MPI_DT1":continuous_positive?"HYP3D_MPI_V11":spherical_overlap?"HYP3D_MPI_V10":evolved_overlap?"HYP3D_MPI_V9":core_subdivisions==2?"HYP3D_MPI_V8":inner_transition_logical?"HYP3D_MPI_V7":scri_donor_seven?"HYP3D_MPI_V6":scri_sampled_normal?"HYP3D_MPI_V5":scri_angular_dissipation?"HYP3D_MPI_V4":scri_angular_exchange?"HYP3D_MPI_V3":algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
 static_assert(!h::inner_telegrapher||(h::smooth_gauge_blend&&direct_chi&&direct_lapse),"IT1 requires smooth direct variables");
 static_assert(!h::smooth_gauge_blend||(HYPERBOLIC_EXPERIMENTAL_TIMESTEP&&continuous_positive&&((!direct_lapse&&puncture_chi_floor==0)||(direct_chi&&puncture_chi_floor==1e-8))),"Smooth weight requires GW1 log variables or GD1 direct variables with floors");
 constexpr const char*algebraic_scheme=algebraic_final_projection?"final_stage_standard":"none";
@@ -139,7 +140,7 @@ struct NormalConfig { int32_t scheme=inner_transition_logical?3:scri_donor_seven
 // V8 appends this fixed-topology identity. Older schemas retain every
 // byte. The descriptor excludes arbitrary leaf trees and dynamic regridding.
 struct MeshConfig { int32_t scheme=continuous_positive?4:spherical_overlap?3:evolved_overlap?2:1,core_subdivisions=::core_subdivisions,
-  shell_layers=3,reserved=evolved_overlap; };
+  shell_layers=hyperbolic_reproduction::shell_layers,reserved=evolved_overlap; };
 struct PositiveConfig { Real physical_lapse_floor=::physical_lapse_floor;int32_t scheme=direct_chi?3:direct_lapse?2:1,reserved=0; };
 static_assert(sizeof(PositiveConfig)==16,"positive-variable configuration layout");
 struct ChiFloorConfig { Real value=puncture_chi_floor,radius=puncture_chi_floor_radius; };
@@ -680,7 +681,7 @@ class Evolution {
       if constexpr(core_subdivisions==2||evolved_overlap){MeshConfig config;
         in.read(reinterpret_cast<char*>(&config),sizeof(config));
         const MeshConfig expected;
-        if(!in||config.scheme!=expected.scheme||config.core_subdivisions!=expected.core_subdivisions||config.shell_layers!=3||config.reserved!=expected.reserved)
+        if(!in||config.scheme!=expected.scheme||config.core_subdivisions!=expected.core_subdivisions||config.shell_layers!=expected.shell_layers||config.reserved!=expected.reserved)
           throw std::runtime_error("checkpoint fixed-core topology mismatch");}
       if constexpr(spherical_overlap){GeometryConfig config;
         in.read(reinterpret_cast<char*>(&config),sizeof(config));const GeometryConfig expected;
@@ -1131,7 +1132,12 @@ int main(int argc,char**argv){
       if constexpr(continuous_positive)report<<",\"cartesian_seams\":\"uniform_global_stencil\",\"positive_variables\":\""<<(direct_chi?"direct_chi_direct_lapse_rk_and_ko":direct_lapse?"log_chi_direct_lapse_rk_and_ko":"log_chi_log_lapse_rk_and_ko")<<"\",\"physical_lapse_floor\":"<<physical_lapse_floor;
       if constexpr(spherical_overlap)report<<",\"shell_geometry\":\"spherical_equiangular\",\"core_half_width\":0.18,\"shell_inner_radius\":0.16,\"overlap_quadrature\":\"radial_quintic_partition\"";
       if constexpr(inner_transition_logical)report<<",\"interpatch_interpolation\":\"logical_inner_transition\"";
-      if constexpr(core_subdivisions==2)report<<",\"mesh_topology\":\"cartesian_2x2x2_shells3\",\"cartesian_core_subdivisions\":2,\"mesh_blocks\":26";
+      if constexpr(core_subdivisions==2){
+        report<<",\"mesh_topology\":\"cartesian_2x2x2_shells"<<hyperbolic_reproduction::shell_layers<<"\",\"cartesian_core_subdivisions\":2,\"mesh_blocks\":"<<e.Model().grid.mesh.blocks.size();
+        report<<",\"shell_layers\":"<<hyperbolic_reproduction::shell_layers<<",\"shell_outer_radii\":[";
+        for(size_t i=0;i<e.Model().grid.mesh.radii.size();++i){if(i)report<<",";report<<e.Model().grid.mesh.radii[i];}
+        report<<"]";
+      }
       if constexpr(scri_donor_seven)report<<",\"scri_radial_closure\":\"donor_seven_last3\",\"scri_radial_bulk_rows\":3";
       report<<",\"ownership_partition\":"<<JsonString(e.ownership_changes?"repartitioned_contiguous":measured_partition?"measured_fixed_contiguous":"equal_cells")
         <<",\"partition_source_report_sha256\":"<<JsonString(e.partition_source_report)<<",\"ownership_cuts\":[";

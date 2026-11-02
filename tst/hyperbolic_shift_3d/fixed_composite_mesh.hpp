@@ -1,7 +1,12 @@
 #ifndef HYPERBOLIC_REPRODUCTION_FIXED_COMPOSITE_MESH_HPP_
 #define HYPERBOLIC_REPRODUCTION_FIXED_COMPOSITE_MESH_HPP_
 #include "mesh/cubed_sphere/composite.hpp"
+#ifndef HYPERBOLIC_SIX_SHELLS
+#define HYPERBOLIC_SIX_SHELLS 0
+#endif
 namespace hyperbolic_reproduction {
+inline constexpr bool six_shells=HYPERBOLIC_SIX_SHELLS;
+inline constexpr int shell_layers=six_shells?6:3;
 // Static spatial-resolution control. The shell map and shell cell count stay
 // fixed; core2 divides the same Cartesian cube into eight equal leaf blocks.
 // This descriptor does not implement dynamic AMR or field transfer.
@@ -13,7 +18,9 @@ inline cubed_sphere::CompositeMesh FixedMesh(int n,int core_subdivisions=1,int o
 }
 // V10 research geometry: the core sets the initial characteristic CFL at n16.
 inline cubed_sphere::CompositeMesh SphericalOverlapMesh(int n) {
-  auto mesh=cubed_sphere::CompositeMesh(.18,{.45,.75,1},1,n,3,2);
+  // Bisect each original spherical layer; keep the original radial interfaces.
+  auto mesh=six_shells?cubed_sphere::CompositeMesh(.18,{.305,.45,.6,.75,.875,1},1,n,3,2,.16)
+                       :cubed_sphere::CompositeMesh(.18,{.45,.75,1},1,n,3,2);
   mesh.evolved_overlap=3;mesh.spherical_inner_boundary=true;
   mesh.equiangular=true;mesh.inner_radius=.16;return mesh;
 }

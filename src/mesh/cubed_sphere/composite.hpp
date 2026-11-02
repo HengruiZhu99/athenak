@@ -39,10 +39,15 @@ class CompositeMesh {
 
 
   CompositeMesh(Real width, std::vector<Real> shell_radii, int subdivisions,
-                int active_cells, int halo = 2, int bulk_subdivisions = 1)
+                int active_cells, int halo = 2, int bulk_subdivisions = 1,
+                Real spherical_radius = 0)
       : half_width(width), radii(std::move(shell_radii)),
-        face_subdivisions(subdivisions), cells(active_cells), ghosts(halo) {
-    if (!(width > 0) || radii.empty() || !(radii[0] > std::sqrt(3.)*width)
+        face_subdivisions(subdivisions), cells(active_cells), ghosts(halo),
+        spherical_inner_boundary(spherical_radius>0), equiangular(spherical_radius>0),
+        inner_radius(spherical_radius) {
+    if (!(width > 0) || radii.empty() || !std::isfinite(spherical_radius) || spherical_radius<0
+        || (spherical_radius>0 && !(spherical_radius<width))
+        || !(radii[0] > (spherical_radius>0?spherical_radius:std::sqrt(3.)*width))
         || subdivisions < 1 || active_cells < 2 || halo < 1 || bulk_subdivisions < 1)
       throw std::invalid_argument("invalid composite block geometry/shape");
     for (size_t i = 0; i < radii.size(); ++i)
