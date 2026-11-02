@@ -20,7 +20,7 @@ Bounded radial refinement to N256 gives Hamiltonian order 3.95 for N192→256. M
 
 The fixed1024/fixed2048 controls evaluate the FD residual at integration points independent of h, using native fields at each shifted stencil point, with no interpolation of a solution. Changing the integration grid changes norms by at most 1e-6 relative. Coarse production radial centers undersample this continuous residual: H norms are lower by 64%, 43%, and 23% at N16/24/32. The dense quadrature is a diagnostic of the truncation-error function, not a replacement value for the production discrete norm. Both are retained.
 
-`radial-profile-n*.csv` gives dense signed H/Mr and momentum-magnitude profiles and `radial-fixed2048.csv` includes maxima and radii for this radial control. Full 3D maximum-error locations and explicit exact-halo/projection/cutoff-volume controls remain outstanding; the radial control must not be labeled as their completion.
+`radial-profile-n*.csv` gives dense signed H/Mr and momentum-magnitude profiles and `radial-fixed2048.csv` includes maxima and radii for this radial control. The subsequent explicit 3D controls below now report maximum-error locations, exact-interior-halo/projection effects and cutoff-volume sensitivity separately; the radial control alone is not their evidence.
 
 ## Reproduction
 
@@ -54,3 +54,23 @@ python3 docs/hyperbolic-shift-3d/reproduction/native-shared-transition-v1/checks
 ```
 
 No local audit result authorizes a claim of long-time convergence. Full scri consistency and controlled N16 evolutions remain required.
+
+## Explicit patch, projection, and cutoff controls
+
+`test_initial_patch_audit.cpp` now measures the actual SG1 composite operator with native initial data at N16/N24/N32. Its production norms reproduce the separate actual MPI checkpoint diagnostic to the printed precision. It records full 3D maximum values/Cartesian coordinates/block IDs, radial bins, and core/overlap/seam/initial-transition/scri-row/outer-collar regions. Regions overlap: their squared fractions must not be summed. The seam band is two angular cells and changes physical width with resolution.
+
+The exact-interior-halo control replaces halo values at r<1 with direct native values at those halo coordinates. It retains the outer ghost lift and the direct scri radial plans' own cross-face donor interpolation, so it must not be described as removing every boundary approximation. All scri/halo closure steps run before diagnostics, including dependent D, even though D does not enter H/M.
+
+| N | Relative H norm change with exact interior halos | Relative M norm change | Largest projection field change |
+|---|---:|---:|---:|
+| 16 | +9.98e-8 | -6.31e-7 | 1.33e-15 |
+| 24 | +1.31e-8 | -2.56e-8 | 1.33e-15 |
+| 32 | +3.50e-9 | -3.72e-9 | 1.78e-15 |
+
+The norm of the **difference field**, a distinct quantity from the change of a norm, is also preserved. For H it is1.30e-6/2.50e-7/7.31e-8; for momentum magnitude5.75e-6/1.19e-7/1.12e-8. Projection rebuilds all derivatives from projected values; its constraint differences remain at roundoff. Native scri constraint-bearing fields remain exactly unchanged by closure/projection. These initial-data results do not predict the size of evolved nonspherical interpolation errors.
+
+More than99.995% of exterior H squared norm and99.997% of M squared norm is in r=.45–.75 at every tested resolution. Full 3D Hamiltonian maxima occur at radii .665625/.65625/.6609375, with absolute values .1081043/.0876852/.0433895. Momentum maxima are .2408191/.0802525/.0390931, at .684375/.65625/.6609375. Exact Cartesian locations are in `patch-summary.json` and raw reports.
+
+Cutoffs .062/.063/.064 independently test cell inclusion; .062 is a sensitivity control slightly inside the analytic horizon, not the claimed exterior norm. The reported exterior cutoff remains .063. Its measured coordinate-volume excess over exact4*pi*(1-cutoff^3)/3 is .04389%/.02189%/.01207%. Normalizing by exact volume changes RMS norms by at most .022%. Moving the cutoff across that interval changes the original norm by less than1.5e-5 relative. Neither effect explains the observed low initial H order. This complements the independent dense radial norm quadrature already reported above, which exposes much larger peak undersampling.
+
+`patch-n*.json` are raw controls, `patch-summary.json` retains exact maxima, differences and cutoff values, and `patch-controls.png` shows localization and exchange differences. Empty radial bins and exact zero residuals are omitted from logarithmic plots; they are never interpolated. Build `hyperbolic_shift_3d_initial_patch_audit`, run `N fresh_output.json` for16,24,32, then `python3 .../checks/initial-grid/analyze_patches.py`. `patch-binding.json` records source/binary/flag and raw artifact hashes. The audit changes diagnostics only and has no checkpoint/evolution output.

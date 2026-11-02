@@ -666,3 +666,15 @@ target_compile_definitions(hyperbolic_shift_3d_scri_first6_device PRIVATE HYPERB
 target_compile_options(hyperbolic_shift_3d_scri_first6_device PRIVATE -Wall -Wextra -ffp-contract=off)
 add_test(NAME hyperbolic_shift_3d_scri_first6_device COMMAND hyperbolic_shift_3d_scri_first6_device)
 set_tests_properties(hyperbolic_shift_3d_scri_first6_device PROPERTIES RUN_SERIAL TRUE TIMEOUT 420)
+
+add_executable(hyperbolic_shift_3d_initial_patch_audit test_initial_patch_audit.cpp)
+target_include_directories(hyperbolic_shift_3d_initial_patch_audit PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+target_link_libraries(hyperbolic_shift_3d_initial_patch_audit PRIVATE Kokkos::kokkos Threads::Threads)
+target_compile_definitions(hyperbolic_shift_3d_initial_patch_audit PRIVATE ${scri_audit_defs})
+target_compile_options(hyperbolic_shift_3d_initial_patch_audit PRIVATE -Wall -Wextra -ffp-contract=off)
+
+add_executable(hyperbolic_shift_3d_ko_shell_refinement test_ko_shell_refinement.cpp)
+target_include_directories(hyperbolic_shift_3d_ko_shell_refinement PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+target_link_libraries(hyperbolic_shift_3d_ko_shell_refinement PRIVATE Kokkos::kokkos Threads::Threads)
+target_compile_definitions(hyperbolic_shift_3d_ko_shell_refinement PRIVATE HYPERBOLIC_CONSISTENT_KO=1)
+target_compile_options(hyperbolic_shift_3d_ko_shell_refinement PRIVATE -Wall -Wextra -ffp-contract=off)
