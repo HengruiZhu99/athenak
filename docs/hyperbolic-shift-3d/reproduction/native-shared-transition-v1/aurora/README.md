@@ -209,3 +209,10 @@ A separate frozen Aurora SYCL/MPI build is underway from that commit in build-sy
 To maintain the 5GB remote cap, nine obsolete large output copies (677,664,320 logical bytes) were locally hash/length verified and remotely rehashed before retirement; receipt aurora/retired-before-ko-dependency-build.json. All originals remain locally. No active restart was removed.
 
 Analysis now accepts an explicit provenance-checked frozen helper: compare_smokes.py --campaign-helper PATH, and compare_histories.py --case-helper C=PATH (repeat D/E). Defaults preserve original A/B science; this permits old and repaired identities in one attributable comparison without relaxing binding checks.
+
+
+## Corrected KO10 GPU test queued
+
+The isolated donor-repair SYCL/MPI build completed successfully: configure and make returned zero, and all five evolution plus five matching diagnostic targets passed frozen configuration/provenance checks. Source is e7d55b008c86774580386dbc3e13028fa72b7e24. New science SHA256 is 2f503e9822b2c119b12cf49d92d7abbfb70d4d02c27848be945db7b50105c352; corrected C executable SHA256 is dfb97dc0865bbf9c0e56d376bbd0477926d25489394aa5757fb7436db71d559e. Full hashes and compiler/build logs are preserved in aurora/ko-dependency-build (relative to this reproduction directory).
+
+Fresh corrected C smoke job9032033 is queued on debug-scaling, one node/12 ranks. Plan campaigns/n16-native-transition-ko-dependencies-v1-c-smoke-segment01/plan.json, SHA25653f52e2f8c7050a701d9f4b6b8b2855d39fee526f9d57691c0771ba1de87aaec. Both user debug queues were empty before submission. Binding measured3.516GB with1.177GB headroom after output/atomic reservations. The new frozen launcher-native-transition-ko-dependencies-v1 supplies the matching scientific identity; old C/D/E executables are not used. No corrected GPU result or C long evolution yet. The20-minute monitor follows this saved submission and will proceed to fresh C10M only after successful two-step Minkowski/puncture admission and SERIAL/GPU comparison. Subsequent D/E controls and healthy checkpoint continuations remain authorized.

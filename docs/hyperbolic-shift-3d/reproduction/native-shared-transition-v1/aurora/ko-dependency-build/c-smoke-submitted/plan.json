@@ -1,0 +1,514 @@
+{
+  "schema": 1,
+  "reviewed": true,
+  "phase": "native_transition_evolution",
+  "experimental_policy": "n16_native_initializer_shared_transition_controls_to10M",
+  "variant": "C",
+  "purpose": "smoke",
+  "segment": 1,
+  "n": 16,
+  "low_resolution_n": 16,
+  "native_exit_reserve_seconds": 180,
+  "resources": {
+    "queue": "debug-scaling",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "01:00:00"
+  },
+  "worker_seconds": 3200,
+  "storage": {
+    "limit_bytes": 5000000000,
+    "planned_new_bytes": 217285583,
+    "atomic_checkpoint_reserve_bytes": 89725224
+  },
+  "output_dir": "campaigns/n16-native-transition-ko-dependencies-v1-c-smoke-segment01/output",
+  "start_verification": {
+    "variant": "C",
+    "schema": "HYP3D_MPI_NI2",
+    "n": 16,
+    "time": 0.0,
+    "steps": 0,
+    "dt": 0.0005,
+    "kind": "native_fresh"
+  },
+  "commands": [
+    {
+      "name": "minkowski",
+      "kind": "minkowski",
+      "executable": "build-sycl-mpi-native-transition-ko-dependencies-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_control_ko10",
+      "args": [
+        "16",
+        "campaigns/n16-native-transition-ko-dependencies-v1-c-smoke-segment01/output/minkowski",
+        "minkowski",
+        "0.001",
+        "0.0005",
+        "-",
+        "-",
+        "@WALL_SECONDS@",
+        "0.05",
+        "0.001",
+        "12",
+        "24",
+        "2"
+      ],
+      "timeout_seconds": 3100,
+      "report": "campaigns/n16-native-transition-ko-dependencies-v1-c-smoke-segment01/output/minkowski.report.json",
+      "inputs": [
+        "launcher-native-transition-ko-dependencies-v1/native-transition-science.json"
+      ],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "kind"
+          ],
+          "op": "eq",
+          "value": "minkowski"
+        },
+        {
+          "path": [
+            "n"
+          ],
+          "op": "eq",
+          "value": 16
+        },
+        {
+          "path": [
+            "cells"
+          ],
+          "op": "eq",
+          "value": 159200
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "checkpoint_schema"
+          ],
+          "op": "eq",
+          "value": "HYP3D_MPI_NI2"
+        },
+        {
+          "path": [
+            "checkpoint_header_bytes"
+          ],
+          "op": "eq",
+          "value": 168
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "initial_data_provider"
+          ],
+          "op": "eq",
+          "value": "builtin"
+        },
+        {
+          "path": [
+            "native_initialization_tolerance"
+          ],
+          "op": "eq",
+          "value": 2e-13
+        },
+        {
+          "path": [
+            "inner_gauge"
+          ],
+          "op": "eq",
+          "value": "direct_outer_r020_056_it1_damping_v1"
+        },
+        {
+          "path": [
+            "gauge_blend"
+          ],
+          "op": "eq",
+          "value": "smoothstep9_w_056_080"
+        },
+        {
+          "path": [
+            "scri_first6"
+          ],
+          "op": "eq",
+          "value": false
+        },
+        {
+          "path": [
+            "bulk_dissipation"
+          ],
+          "op": "eq",
+          "value": "block_energy_ko10"
+        },
+        {
+          "path": [
+            "positive_variables"
+          ],
+          "op": "eq",
+          "value": "direct_chi_direct_lapse_rk_and_ko"
+        },
+        {
+          "path": [
+            "physical_lapse_floor"
+          ],
+          "op": "eq",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "puncture_chi_floor"
+          ],
+          "op": "eq",
+          "value": 1e-08
+        },
+        {
+          "path": [
+            "puncture_chi_floor_radius"
+          ],
+          "op": "eq",
+          "value": 0.03
+        },
+        {
+          "path": [
+            "chi_nonpositive_policy"
+          ],
+          "op": "eq",
+          "value": "record_and_floor_finite_candidates_everywhere"
+        },
+        {
+          "path": [
+            "scri_penalty_scale_min"
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "angular_epsilon_min"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "complete_candidate_exterior_enabled"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "dt"
+          ],
+          "op": "eq",
+          "value": 0.0005
+        },
+        {
+          "path": [
+            "algebraic_projection"
+          ],
+          "op": "eq",
+          "value": "final_stage_standard"
+        },
+        {
+          "path": [
+            "t"
+          ],
+          "op": "le",
+          "value": 0.001
+        },
+        {
+          "path": [
+            "t"
+          ],
+          "op": "ge",
+          "value": 0
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-10
+        }
+      ],
+      "artifacts": [
+        "campaigns/n16-native-transition-ko-dependencies-v1-c-smoke-segment01/output/minkowski.checkpoint",
+        "campaigns/n16-native-transition-ko-dependencies-v1-c-smoke-segment01/output/minkowski.history.csv",
+        "campaigns/n16-native-transition-ko-dependencies-v1-c-smoke-segment01/output/minkowski.failed-stage.bin",
+        "campaigns/n16-native-transition-ko-dependencies-v1-c-smoke-segment01/output/minkowski.checkpoint.horizon-seed.txt",
+        "campaigns/n16-native-transition-ko-dependencies-v1-c-smoke-segment01/output/minkowski.fastflow.horizon_summary_0.txt",
+        "campaigns/n16-native-transition-ko-dependencies-v1-c-smoke-segment01/output/minkowski.fastflow.horizon_shape_0.txt"
+      ]
+    },
+    {
+      "name": "puncture",
+      "kind": "puncture",
+      "executable": "build-sycl-mpi-native-transition-ko-dependencies-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_control_ko10",
+      "args": [
+        "16",
+        "campaigns/n16-native-transition-ko-dependencies-v1-c-smoke-segment01/output/puncture",
+        "puncture",
+        "0.001",
+        "0.0005",
+        "-",
+        "-",
+        "@WALL_SECONDS@",
+        "0.05",
+        "0.001",
+        "12",
+        "24",
+        "2"
+      ],
+      "timeout_seconds": 3100,
+      "report": "campaigns/n16-native-transition-ko-dependencies-v1-c-smoke-segment01/output/puncture.report.json",
+      "inputs": [
+        "launcher-native-transition-ko-dependencies-v1/native-transition-science.json"
+      ],
+      "checks": [
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "kind"
+          ],
+          "op": "eq",
+          "value": "puncture"
+        },
+        {
+          "path": [
+            "n"
+          ],
+          "op": "eq",
+          "value": 16
+        },
+        {
+          "path": [
+            "cells"
+          ],
+          "op": "eq",
+          "value": 159200
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "checkpoint_schema"
+          ],
+          "op": "eq",
+          "value": "HYP3D_MPI_NI2"
+        },
+        {
+          "path": [
+            "checkpoint_header_bytes"
+          ],
+          "op": "eq",
+          "value": 168
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "initial_data_provider"
+          ],
+          "op": "eq",
+          "value": "native_isotropic_wormhole_quadrature"
+        },
+        {
+          "path": [
+            "native_initialization_tolerance"
+          ],
+          "op": "eq",
+          "value": 2e-13
+        },
+        {
+          "path": [
+            "inner_gauge"
+          ],
+          "op": "eq",
+          "value": "direct_outer_r020_056_it1_damping_v1"
+        },
+        {
+          "path": [
+            "gauge_blend"
+          ],
+          "op": "eq",
+          "value": "smoothstep9_w_056_080"
+        },
+        {
+          "path": [
+            "scri_first6"
+          ],
+          "op": "eq",
+          "value": false
+        },
+        {
+          "path": [
+            "bulk_dissipation"
+          ],
+          "op": "eq",
+          "value": "block_energy_ko10"
+        },
+        {
+          "path": [
+            "positive_variables"
+          ],
+          "op": "eq",
+          "value": "direct_chi_direct_lapse_rk_and_ko"
+        },
+        {
+          "path": [
+            "physical_lapse_floor"
+          ],
+          "op": "eq",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "puncture_chi_floor"
+          ],
+          "op": "eq",
+          "value": 1e-08
+        },
+        {
+          "path": [
+            "puncture_chi_floor_radius"
+          ],
+          "op": "eq",
+          "value": 0.03
+        },
+        {
+          "path": [
+            "chi_nonpositive_policy"
+          ],
+          "op": "eq",
+          "value": "record_and_floor_finite_candidates_everywhere"
+        },
+        {
+          "path": [
+            "scri_penalty_scale_min"
+          ],
+          "op": "eq",
+          "value": 1
+        },
+        {
+          "path": [
+            "angular_epsilon_min"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "complete_candidate_exterior_enabled"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "dt"
+          ],
+          "op": "eq",
+          "value": 0.0005
+        },
+        {
+          "path": [
+            "algebraic_projection"
+          ],
+          "op": "eq",
+          "value": "final_stage_standard"
+        },
+        {
+          "path": [
+            "t"
+          ],
+          "op": "le",
+          "value": 0.001
+        },
+        {
+          "path": [
+            "t"
+          ],
+          "op": "ge",
+          "value": 0
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-10
+        }
+      ],
+      "artifacts": [
+        "campaigns/n16-native-transition-ko-dependencies-v1-c-smoke-segment01/output/puncture.checkpoint",
+        "campaigns/n16-native-transition-ko-dependencies-v1-c-smoke-segment01/output/puncture.history.csv",
+        "campaigns/n16-native-transition-ko-dependencies-v1-c-smoke-segment01/output/puncture.failed-stage.bin",
+        "campaigns/n16-native-transition-ko-dependencies-v1-c-smoke-segment01/output/puncture.checkpoint.horizon-seed.txt",
+        "campaigns/n16-native-transition-ko-dependencies-v1-c-smoke-segment01/output/puncture.fastflow.horizon_summary_0.txt",
+        "campaigns/n16-native-transition-ko-dependencies-v1-c-smoke-segment01/output/puncture.fastflow.horizon_shape_0.txt"
+      ]
+    }
+  ]
+}

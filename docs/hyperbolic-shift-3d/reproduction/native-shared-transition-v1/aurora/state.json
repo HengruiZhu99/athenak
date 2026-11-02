@@ -1,5 +1,5 @@
 {
-  "status": "ko_dependency_repair_building",
+  "status": "corrected_c_smoke_submitted",
   "build_attempt": 2,
   "remote_build_pid": 641035,
   "remote_host": "aurora-uan-0012",
@@ -106,10 +106,27 @@
       "local_artifacts_verified": true
     },
     "C": {
-      "status": "old_smoke_completed_partition_parity_failed",
-      "smoke_plan": "campaigns/n16-native-transition-v1-c-smoke-segment01/plan.json",
+      "status": "corrected_smoke_submitted",
+      "smoke_plan": "campaigns/n16-native-transition-ko-dependencies-v1-c-smoke-segment01/plan.json",
       "evolution_plan": "campaigns/n16-native-transition-v1-c-evolution-segment01/plan.json",
       "smoke_submission": {
+        "job_id": "9032033.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+        "submitted": 1793602508.8081007,
+        "plan": "campaigns/n16-native-transition-ko-dependencies-v1-c-smoke-segment01/plan.json",
+        "plan_sha256": "53f52e2f8c7050a701d9f4b6b8b2855d39fee526f9d57691c0771ba1de87aaec",
+        "source_manifest_sha256": "6d81b6803fe811d57a4789a8d10a60e920f7f56c48e4458f7ff50836c2dd611d",
+        "resources": {
+          "queue": "debug-scaling",
+          "account": "CompactBinaryMerger",
+          "nodes": 1,
+          "ranks": 12,
+          "ranks_per_node": 12,
+          "walltime": "01:00:00"
+        }
+      },
+      "restart_admitted_for_campaign": false,
+      "old_smoke_plan": "campaigns/n16-native-transition-v1-c-smoke-segment01/plan.json",
+      "old_smoke_submission": {
         "job_id": "9031971.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
         "submitted": 1793598946.4297395,
         "plan": "campaigns/n16-native-transition-v1-c-smoke-segment01/plan.json",
@@ -123,8 +140,7 @@
           "ranks_per_node": 12,
           "walltime": "01:00:00"
         }
-      },
-      "restart_admitted_for_campaign": false
+      }
     },
     "D": {
       "status": "not_submitted",
@@ -137,16 +153,16 @@
       "evolution_plan": "campaigns/n16-native-transition-v1-e-evolution-segment01/plan.json"
     }
   },
-  "note": "No current evolution job. C old12-rank smoke completed but differs from serial due to missing fifth Cartesian KO10 donors. Local repaired12-rank Minkowski/puncture checkpoints byte-identical to frozen1-rank. Separate repaired source/build now starts. Do not submit old C/D/E binaries. Old builds remain frozen; nine obsolete output copies retired only after local hash/length verification.",
+  "note": "Corrected KO10 dependency build completed/frozen; C fresh GPU parity test submitted. Preserve old parity failure. No C long run yet.",
   "parallel_authorization": "User permits debug-scaling up to five nodes. Existing plans remain one-node/debug; any multi-case allocation must preserve separate case admission/storage/resources and be explicitly implemented/tested.",
   "build_status": "completed_and_frozen",
-  "current_plan": "campaigns/n16-native-transition-v1-c-smoke-segment01/plan.json",
+  "current_plan": "campaigns/n16-native-transition-ko-dependencies-v1-c-smoke-segment01/plan.json",
   "submission": {
-    "job_id": "9031971.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
-    "submitted": 1793598946.4297395,
-    "plan": "campaigns/n16-native-transition-v1-c-smoke-segment01/plan.json",
-    "plan_sha256": "980b9bdb1275cbcd5405ad5bd9c9d705eb32f048119e7a6392387c6e1a914f14",
-    "source_manifest_sha256": "7bd61dc86efe172c73e6363e237b36cdb36160eddb986110b75f0c78a46f36f0",
+    "job_id": "9032033.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "submitted": 1793602508.8081007,
+    "plan": "campaigns/n16-native-transition-ko-dependencies-v1-c-smoke-segment01/plan.json",
+    "plan_sha256": "53f52e2f8c7050a701d9f4b6b8b2855d39fee526f9d57691c0771ba1de87aaec",
+    "source_manifest_sha256": "6d81b6803fe811d57a4789a8d10a60e920f7f56c48e4458f7ff50836c2dd611d",
     "resources": {
       "queue": "debug-scaling",
       "account": "CompactBinaryMerger",
@@ -161,7 +177,9 @@
     "host": "aurora-uan-0012",
     "launcher": "launcher-native-transition-ko-dependencies-v1",
     "source_commit": "e7d55b008c86774580386dbc3e13028fa72b7e24",
-    "status": "started",
+    "status": "completed_and_frozen",
     "source_manifest": "source-native-transition-ko-dependencies-v1-manifest.json"
-  }
+  },
+  "active_launcher": "launcher-native-transition-ko-dependencies-v1",
+  "active_science": "launcher-native-transition-ko-dependencies-v1/native-transition-science.json"
 }
