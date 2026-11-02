@@ -1,5 +1,5 @@
 {
-  "status": "corrected_e_smoke_submitted",
+  "status": "corrected_e_evolution_submitted",
   "build_attempt": 2,
   "remote_build_pid": 641035,
   "remote_host": "aurora-uan-0012",
@@ -201,9 +201,9 @@
       "local_artifacts_verified": true
     },
     "E": {
-      "status": "corrected_smoke_submitted",
+      "status": "evolution_submitted",
       "smoke_plan": "campaigns/n16-native-transition-ko-dependencies-v1-e-smoke-segment01/plan.json",
-      "evolution_plan": "campaigns/n16-native-transition-v1-e-evolution-segment01/plan.json",
+      "evolution_plan": "campaigns/n16-native-transition-ko-dependencies-v1-e-evolution-segment01/plan.json",
       "smoke_submission": {
         "job_id": "9032174.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
         "submitted": 1793609716.1554544,
@@ -218,18 +218,35 @@
           "ranks_per_node": 12,
           "walltime": "01:00:00"
         }
+      },
+      "smoke_status": "passed_verified_local_and_remote",
+      "smoke_parity": "e-smoke-parity.json",
+      "evolution_submission": {
+        "job_id": "9032187.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+        "submitted": 1793611206.943211,
+        "plan": "campaigns/n16-native-transition-ko-dependencies-v1-e-evolution-segment01/plan.json",
+        "plan_sha256": "68a673727fadc4341ab816d965fbabbb6b7c8798022add9494f6ed138b03abd3",
+        "source_manifest_sha256": "6d81b6803fe811d57a4789a8d10a60e920f7f56c48e4458f7ff50836c2dd611d",
+        "resources": {
+          "queue": "debug-scaling",
+          "account": "CompactBinaryMerger",
+          "nodes": 1,
+          "ranks": 12,
+          "ranks_per_node": 12,
+          "walltime": "01:00:00"
+        }
       }
     }
   },
-  "note": "D completed10M, all5artifacts locally hash/lengthverified, common-cutoff matching diagnostic complete. E smoke9032174 active. D H/M=.0166453349554/.0408930994559; native diagnostic operator changes with first6, common-operator control still needed before pure state-error attribution.",
+  "note": "E two-step smoke admitted and all9 artifacts locally verified; SERIAL/GPU physical parity passed. Fresh E10M submitted. Common-operator offline C/D diagnostic control in progress.",
   "parallel_authorization": "User permits debug-scaling up to five nodes. Existing plans remain one-node/debug; any multi-case allocation must preserve separate case admission/storage/resources and be explicitly implemented/tested.",
   "build_status": "completed_and_frozen",
-  "current_plan": "campaigns/n16-native-transition-ko-dependencies-v1-e-smoke-segment01/plan.json",
+  "current_plan": "campaigns/n16-native-transition-ko-dependencies-v1-e-evolution-segment01/plan.json",
   "submission": {
-    "job_id": "9032174.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
-    "submitted": 1793609716.1554544,
-    "plan": "campaigns/n16-native-transition-ko-dependencies-v1-e-smoke-segment01/plan.json",
-    "plan_sha256": "4af3f436ae309424795e49d1cb743cd9955916c25a18f09f36faf8cc9487ddcb",
+    "job_id": "9032187.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "submitted": 1793611206.943211,
+    "plan": "campaigns/n16-native-transition-ko-dependencies-v1-e-evolution-segment01/plan.json",
+    "plan_sha256": "68a673727fadc4341ab816d965fbabbb6b7c8798022add9494f6ed138b03abd3",
     "source_manifest_sha256": "6d81b6803fe811d57a4789a8d10a60e920f7f56c48e4458f7ff50836c2dd611d",
     "resources": {
       "queue": "debug-scaling",

@@ -11,15 +11,22 @@ int main(int argc, char **argv) {
   Kokkos::initialize(argc, argv);
   int code = 0;
   try {
-    if (argc != 6 && argc != 7) throw std::invalid_argument(
-        "usage: checkpoint_constraints n checkpoint dt cutoff output.json [radial_cutoffs_csv]");
+    if (argc < 6 || argc > 8) throw std::invalid_argument(
+        "usage: checkpoint_constraints n checkpoint dt cutoff output.json [radial_cutoffs_csv [native|first4|first6]]");
+    int outer_first_order=0;
+    if(argc==8){
+      const std::string choice=argv[7];
+      if(choice=="first4")outer_first_order=4;
+      else if(choice=="first6")outer_first_order=6;
+      else if(choice!="native")throw std::invalid_argument("unknown diagnostic stencil override");
+    }
     const int n = std::stoi(argv[1]);
     const Real dt = std::stod(argv[3]), cutoff = std::stod(argv[4]);
     if (n < 6 || n % 2 || !std::isfinite(dt) || dt <= 0 ||
         !std::isfinite(cutoff) || cutoff < 0 || cutoff >= 1)
       throw std::invalid_argument("invalid resolution/dt/cutoff");
     std::vector<Real> radial_cutoffs;
-    if (argc == 7) {
+    if (argc >= 7) {
       std::stringstream list(argv[6]); std::string item;
       while (std::getline(list,item,',')) {
         size_t consumed=0; const Real r=std::stod(item,&consumed);
@@ -43,13 +50,13 @@ int main(int argc, char **argv) {
     CollectiveLocal([&] { halo = e.exchange()->Fill(e.state); });
     e.SynchronizeError(halo.invalid, "invalid diagnostic halo");
     Diagnostic d{};
-    CollectiveLocal([&] { d = e.kernel()->Diagnostics(e.exchange()->padded, cutoff, e.surface); });
+    CollectiveLocal([&] { d = e.kernel()->Diagnostics(e.exchange()->padded, cutoff, e.surface, outer_first_order); });
     d = ReduceDiagnostic(d);
     e.SynchronizeError(d.invalid_cells, "invalid diagnostic volume geometry");
     std::vector<Diagnostic> radial;
     for (const Real r:radial_cutoffs) {
       Diagnostic sample{};
-      CollectiveLocal([&] { sample=e.kernel()->Diagnostics(e.exchange()->padded,r,e.surface); });
+      CollectiveLocal([&] { sample=e.kernel()->Diagnostics(e.exchange()->padded,r,e.surface,outer_first_order); });
       sample=ReduceDiagnostic(sample);
       e.SynchronizeError(sample.invalid_cells,"invalid radial diagnostic geometry");
       radial.push_back(sample);
@@ -61,6 +68,8 @@ int main(int argc, char **argv) {
           << ",\"t\":" << e.time << ",\"t_over_M\":" << 3*e.time
           << ",\"steps\":" << e.steps << ",\"cutoff\":" << cutoff
           << ",\"checkpoint_schema\":" << JsonString(checkpoint_magic)
+          << ",\"diagnostic_outer_first_order\":" << outer_first_order
+          << ",\"boundary_refresh_operator\":\"native\""
           << ",\"horizon_acceptance_assumed\":true,\"norms\":{";
       auto emit = [&](const char *name, const auto &s) {
         out << JsonString(name) << ":{\"volume\":" << s.volume

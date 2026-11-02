@@ -98,12 +98,14 @@ class HyperbolicCompositeDevice {
     ConstBuffer positive_ko;
     bool direct_lapse_dissipation=false;
     Real outer_radius2=std::numeric_limits<Real>::max();
+    // Only Diagnostics sets this override; evolution retains its compiled stencil.
+    int diagnostic_outer_first_order=0;
 
     KOKKOS_INLINE_FUNCTION int Offset(int axis, int amount) const {
       return amount*(axis == 0 ? 1 : (axis == 1 ? width : width*width));
     }
     KOKKOS_INLINE_FUNCTION Real First(int point, int axis,bool sixth=false) const {
-      if constexpr(cubed_sphere::scri_first6)if(sixth)
+      if(sixth)
         return n*((padded(point+Offset(axis,3))-padded(point+Offset(axis,-3)))
           -9*(padded(point+Offset(axis,2))-padded(point+Offset(axis,-2)))
           +45*(padded(point+Offset(axis,1))-padded(point+Offset(axis,-1))))/60;
@@ -130,7 +132,8 @@ class HyperbolicCompositeDevice {
         Real &transport_correction) const {
       ScalarJet<Real> result{};
       const int point = f*padded_count+active(local);
-      const bool sixth=cubed_sphere::scri_first6&&
+      const bool sixth=(diagnostic_outer_first_order ?
+        diagnostic_outer_first_order==6 : cubed_sphere::scri_first6)&&
         map.x[0]*map.x[0]+map.x[1]*map.x[1]+map.x[2]*map.x[2]>outer_radius2;
       result.value = padded(point);
       if(radial.HasRow(local)){
@@ -502,13 +505,17 @@ class HyperbolicCompositeDevice {
     if (result.first_bad==INT_MAX) result.first_bad=-1;
     return result;
   }
-  DiagnosticSummary Diagnostics(ConstBuffer padded,Real exterior_radius=0,ConstBuffer surface={}) {
+  DiagnosticSummary Diagnostics(ConstBuffer padded,Real exterior_radius=0,ConstBuffer surface={},
+                                int outer_first_order=0) {
     if (padded.extent(0)!=size_t(nf)*padded_count_ || !(exterior_radius>=0)
         || !std::isfinite(exterior_radius))
       throw std::invalid_argument("invalid device diagnostic storage/exterior cutoff");
+    if(outer_first_order!=0 && outer_first_order!=4 && outer_first_order!=6)
+      throw std::invalid_argument("diagnostic outer first derivative order must be native, 4 or 6");
     PointKernel kernel{padded,active_,ko_offsets_,status_,geometry_,ko_terms_,
         diagnostic_volumes_,rhs_,gap_,cfl_,n_,width_,padded_count_,0,0,false};
     kernel.outer_radius2=outer_radius2_;
+    kernel.diagnostic_outer_first_order=outer_first_order;
     if(radial_plan_)kernel.radial=radial_plan_->Prepare(padded,surface);
     DiagnosticSummary result;
     Kokkos::parallel_reduce("hyperboloidal owned constraints",
