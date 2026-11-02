@@ -130,3 +130,29 @@ No user debug/debug-scaling jobs were present before submission. Binding reserve
 Submission does not establish GPU correctness; native reports/checkpoints and
 SERIAL comparison remain to collect. See state.json/current remote state before
 any further action. Never submit this plan again.
+
+## CaseA GPU smoke result
+
+Job9031714 completed with PBS exit0 and worker passed. Both native NI1
+checkpoints are admitted and passed exact configuration/finite-payload/hash
+checks remotely and locally. All9 recorded artifacts are locally preserved.
+The Minkowski/puncture physical-state comparisons with the bound SERIAL
+references have largest scaled differences9.19e-14/1.34e-13, respectively;
+RK-compensation differences are below4.45e-16. Null surface/ghost maxima are
+at most1.12e-15. See a-smoke-verified/, a-smoke-local-verification.json and
+a-smoke-parity.json. This validates the native-initializer control on12GPU
+ranks for TWO steps, not the later repair variants or long-time accuracy.
+
+Metadata qualification: frozen coupled_mpi.cpp retains legacy static
+`scri_angular_stencil` and `scri_normal_bulk_derivative_order` strings/numbers.
+For casesD/E, the explicit `scri_first6` flag, unique checkpoint schema and
+bound compilation definitions identify the first6 repair. The legacy baseline
+labels do not override the source-defined outer-shell/surface stencils. No
+scientific executable is modified mid-campaign to change those labels.
+
+CaseA fresh10M evolution is now submitted as job9031739, plan
+`campaigns/n16-native-transition-v1-a-evolution-segment01/plan.json`, SHA256
+`0926118fd24a73633d7d846db174bc46a6d9d43a3f058a1be8cc40dd1fe0f6fc`.
+It starts from native wormhole data at t=0, not from the smoke checkpoint. The
+smoke terminal lock was released after verification; both user debug queues
+were checked before submission. No long-time result yet.
