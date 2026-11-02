@@ -1,0 +1,98 @@
+[ 12%] Built target kokkossimd
+[ 62%] Built target kokkoscore
+[ 75%] Built target kokkosalgorithms
+[ 75%] Built target kokkoscontainers
+[ 87%] Built target hyperboloidal_fastflow
+[100%] Building CXX object tst/hyperbolic_shift_3d/CMakeFiles/hyperbolic_shift_3d_mpi_native_control.dir/coupled_mpi.cpp.o
+In file included from /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/coupled_mpi.cpp:11:
+In file included from /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/src/z4c/hyperboloidal/hyperbolic_composite_exchange.hpp:7:
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/src/z4c/hyperboloidal/hyperbolic_composite_device.hpp:491:71: warning: missing field 'radial' initializer [-Wmissing-field-initializers]
+  491 |         volumes_,rhs_,gap_,cfl_,n_,width_,padded_count_,dt,ko,adaptive};
+      |                                                                       ^
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/src/z4c/hyperboloidal/hyperbolic_composite_device.hpp:510:77: warning: missing field 'radial' initializer [-Wmissing-field-initializers]
+  510 |         diagnostic_volumes_,rhs_,gap_,cfl_,n_,width_,padded_count_,0,0,false};
+      |                                                                             ^
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/coupled_mpi.cpp:660:59: warning: misleading indentation; statement is not part of the previous 'if' [-Wmisleading-indentation]
+  660 |     }catch(const std::exception&e){bad=1;reason=e.what();}SynchronizeError(bad,reason);
+      |                                                           ^
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/coupled_mpi.cpp:644:5: note: previous statement is here
+  644 |     if(rank==0)try{Header header;std::memcpy(header.magic,checkpoint_magic,std::strlen(checkpoint_magic)+1);header.n=n;header.kind=kind;header.admitted=admitted;
+      |     ^
+3 warnings generated.
+[100%] Linking CXX executable hyperbolic_shift_3d_mpi_native_control
+[100%] Built target hyperbolic_shift_3d_mpi_native_control
+[ 12%] Built target kokkossimd
+[ 62%] Built target kokkoscore
+[ 75%] Built target kokkosalgorithms
+[ 75%] Built target kokkoscontainers
+[ 87%] Built target hyperboloidal_fastflow
+[ 87%] Building CXX object tst/hyperbolic_shift_3d/CMakeFiles/hyperbolic_shift_3d_mpi_native_shared.dir/coupled_mpi.cpp.o
+In file included from /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/coupled_mpi.cpp:11:
+In file included from /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/src/z4c/hyperboloidal/hyperbolic_composite_exchange.hpp:7:
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/src/z4c/hyperboloidal/hyperbolic_composite_device.hpp:491:71: warning: missing field 'radial' initializer [-Wmissing-field-initializers]
+  491 |         volumes_,rhs_,gap_,cfl_,n_,width_,padded_count_,dt,ko,adaptive};
+      |                                                                       ^
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/src/z4c/hyperboloidal/hyperbolic_composite_device.hpp:510:77: warning: missing field 'radial' initializer [-Wmissing-field-initializers]
+  510 |         diagnostic_volumes_,rhs_,gap_,cfl_,n_,width_,padded_count_,0,0,false};
+      |                                                                             ^
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/coupled_mpi.cpp:660:59: warning: misleading indentation; statement is not part of the previous 'if' [-Wmisleading-indentation]
+  660 |     }catch(const std::exception&e){bad=1;reason=e.what();}SynchronizeError(bad,reason);
+      |                                                           ^
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/coupled_mpi.cpp:644:5: note: previous statement is here
+  644 |     if(rank==0)try{Header header;std::memcpy(header.magic,checkpoint_magic,std::strlen(checkpoint_magic)+1);header.n=n;header.kind=kind;header.admitted=admitted;
+      |     ^
+3 warnings generated.
+[100%] Linking CXX executable hyperbolic_shift_3d_mpi_native_shared
+[100%] Built target hyperbolic_shift_3d_mpi_native_shared
+[ 14%] Built target kokkossimd
+[ 71%] Built target kokkoscore
+[ 85%] Built target kokkosalgorithms
+[ 85%] Built target kokkoscontainers
+[100%] Built target hyperboloidal_fastflow
+[100%] Building CXX object tst/hyperbolic_shift_3d/CMakeFiles/hyperbolic_shift_3d_mpi_native_control_ko10.dir/coupled_mpi.cpp.o
+In file included from /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/coupled_mpi.cpp:11:
+In file included from /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/src/z4c/hyperboloidal/hyperbolic_composite_exchange.hpp:7:
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/src/z4c/hyperboloidal/hyperbolic_composite_device.hpp:491:71: warning: missing field 'radial' initializer [-Wmissing-field-initializers]
+  491 |         volumes_,rhs_,gap_,cfl_,n_,width_,padded_count_,dt,ko,adaptive};
+      |                                                                       ^
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/src/z4c/hyperboloidal/hyperbolic_composite_device.hpp:510:77: warning: missing field 'radial' initializer [-Wmissing-field-initializers]
+  510 |         diagnostic_volumes_,rhs_,gap_,cfl_,n_,width_,padded_count_,0,0,false};
+      |                                                                             ^
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/coupled_mpi.cpp:660:59: warning: misleading indentation; statement is not part of the previous 'if' [-Wmisleading-indentation]
+  660 |     }catch(const std::exception&e){bad=1;reason=e.what();}SynchronizeError(bad,reason);
+      |                                                           ^
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/coupled_mpi.cpp:644:5: note: previous statement is here
+  644 |     if(rank==0)try{Header header;std::memcpy(header.magic,checkpoint_magic,std::strlen(checkpoint_magic)+1);header.n=n;header.kind=kind;header.admitted=admitted;
+      |     ^
+3 warnings generated.
+[100%] Linking CXX executable hyperbolic_shift_3d_mpi_native_control_ko10
+[100%] Built target hyperbolic_shift_3d_mpi_native_control_ko10
+[ 12%] Built target kokkossimd
+[ 62%] Built target kokkoscore
+[ 75%] Built target kokkosalgorithms
+[ 75%] Built target kokkoscontainers
+[ 87%] Built target hyperboloidal_fastflow
+[100%] Building CXX object tst/hyperbolic_shift_3d/CMakeFiles/hyperbolic_shift_3d_mpi_native_control_ko10_scri6.dir/coupled_mpi.cpp.o
+In file included from /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/coupled_mpi.cpp:11:
+In file included from /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/src/z4c/hyperboloidal/hyperbolic_composite_exchange.hpp:7:
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/src/z4c/hyperboloidal/hyperbolic_composite_device.hpp:491:71: warning: missing field 'radial' initializer [-Wmissing-field-initializers]
+  491 |         volumes_,rhs_,gap_,cfl_,n_,width_,padded_count_,dt,ko,adaptive};
+      |                                                                       ^
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/src/z4c/hyperboloidal/hyperbolic_composite_device.hpp:510:77: warning: missing field 'radial' initializer [-Wmissing-field-initializers]
+  510 |         diagnostic_volumes_,rhs_,gap_,cfl_,n_,width_,padded_count_,0,0,false};
+      |                                                                             ^
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/coupled_mpi.cpp:660:59: warning: misleading indentation; statement is not part of the previous 'if' [-Wmisleading-indentation]
+  660 |     }catch(const std::exception&e){bad=1;reason=e.what();}SynchronizeError(bad,reason);
+      |                                                           ^
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/coupled_mpi.cpp:644:5: note: previous statement is here
+  644 |     if(rank==0)try{Header header;std::memcpy(header.magic,checkpoint_magic,std::strlen(checkpoint_magic)+1);header.n=n;header.kind=kind;header.admitted=admitted;
+      |     ^
+3 warnings generated.
+[100%] Linking CXX executable hyperbolic_shift_3d_mpi_native_control_ko10_scri6
+[100%] Built target hyperbolic_shift_3d_mpi_native_control_ko10_scri6
+[ 14%] Built target kokkossimd
+[ 71%] Built target kokkoscore
+[ 85%] Built target kokkosalgorithms
+[ 85%] Built target kokkoscontainers
+[100%] Built target hyperboloidal_fastflow
+[100%] Built target hyperbolic_shift_3d_mpi_native_shared_ko10_scri6
