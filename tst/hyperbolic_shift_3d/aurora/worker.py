@@ -21,20 +21,34 @@ def stamp():
     return datetime.datetime.now(datetime.timezone.utc).isoformat()
 
 
-def allocation_node():
+def allocation_node(expected_queue='debug'):
     if not os.environ.get('PBS_JOBID') or not os.environ.get('PBS_NODEFILE'):
         raise RuntimeError('Worker requires a PBS allocation and node file')
     nodes = set(Path(os.environ['PBS_NODEFILE']).read_text().split())
     if len(nodes) != 1:
         raise RuntimeError('This campaign permits exactly one allocated node')
-    if os.environ.get('PBS_QUEUE', 'debug') != 'debug':
-        raise RuntimeError('This campaign permits only the debug queue')
+    if expected_queue not in ['debug', 'debug-scaling'] or os.environ.get('PBS_QUEUE', 'debug') != expected_queue:
+        raise RuntimeError('Allocation queue differs from the bound plan')
     return sorted(nodes)
 
 
 def mpi_command(executable, args):
     return ['mpiexec', '-n', '12', '-ppn', '12', '--cpu-bind=list:' + control.CPU_BIND,
             'gpu_tile_compact.sh', str(executable), *args]
+
+
+def native_exit_reserve(plan):
+    """Honor the validated native control's requested checkpoint exit margin.
+
+    Older frozen workers remain unchanged. All other campaign defaults retain
+    their previous behavior; this new phase must not silently fall back to30s.
+    """
+    configured_phases = ['direct_variable_resolution', 'candidate_history_replay',
+                         'gauge_blend_comparison', 'smooth_gauge_continuation',
+                         'smooth_direct_evolution', 'inner_telegrapher_evolution',
+                         'direct_outer_evolution', 'damping_ablation_evolution',
+                         'native_transition_evolution']
+    return plan.get('native_exit_reserve_seconds',30) if plan['phase'] in configured_phases else 30
 
 
 def run_bounded(command, root, log, seconds, plan=None):
@@ -160,7 +174,7 @@ def continuation_evidence(root, plan, command, case, report):
 
 def run(root, relative):
     path, plan, binding = control.read_bound(root, relative)
-    nodes = allocation_node()
+    nodes = allocation_node(plan['resources']['queue'])
     if not root.is_relative_to(Path.home()):
         raise RuntimeError('All new campaign work must reside under the Aurora home directory')
     initial_space = storage.require_capacity(root,plan,prospective=True)
@@ -203,7 +217,7 @@ def run(root, relative):
                 status['stop_reason_status'] = 'incomplete'
                 status['reason'] = 'Insufficient worker time to start the next bounded case'
                 break
-            reserve = plan.get('native_exit_reserve_seconds',30) if plan['phase'] in ['direct_variable_resolution','candidate_history_replay','gauge_blend_comparison','smooth_gauge_continuation','smooth_direct_evolution','inner_telegrapher_evolution','direct_outer_evolution','damping_ablation_evolution'] else 30
+            reserve = native_exit_reserve(plan)
             if timeout-reserve < 45:raise RuntimeError('Insufficient time for native evolution and exit reserve')
             args = [str(timeout-reserve) if a == '@WALL_SECONDS@' else a for a in command['args']]
             executable = control.local_path(root, command['executable'])

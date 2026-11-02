@@ -1,5 +1,6 @@
 import copy
 import json
+import os
 from pathlib import Path
 import shutil
 import struct
@@ -99,6 +100,48 @@ class NativeTransitionTests(unittest.TestCase):
 
     def restart(self):
         p,sha=self.write_cp(self.checkpoint());return str(p.relative_to(self.root)),sha
+
+    def test_worker_applies_native_180_second_exit_reserve(self):
+        made=c.make_plan(self.root,'A','evolution');relative=made['plan']
+        plan=json.loads((self.root/relative).read_text());control.bind(self.root,relative,c.MANIFEST)
+        launched=[]
+        def execute(argv,root,log,seconds,active):
+            launched.append((argv,seconds));command=active['commands'][0]
+            log.write_text('Synthetic launcher argument test\n')
+            r={x['path'][0]:x['value'] for x in command['checks'] if x['op']=='eq'}
+            r.update(t=c.END,steps=6667,dt=c.DT,max_null_surface=0.,max_null_ghost=0.)
+            control.atomic(root/command['report'],r)
+            Path(str(root/command['args'][1])+'.checkpoint').write_bytes(self.checkpoint(time=c.END,steps=6667))
+            return dict(returncode=0,timed_out=False,storage_error=None,elapsed_seconds=.01)
+        env=dict(PBS_JOBID='123.server',OMP_NUM_THREADS='1',ZE_FLAT_DEVICE_HIERARCHY='COMPOSITE',
+                 ZE_ENABLE_PCI_ID_DEVICE_ORDER='1',ONEAPI_DEVICE_SELECTOR='level_zero:gpu',MPIR_CVAR_ENABLE_GPU='1')
+        with patch.object(worker,'allocation_node',return_value=['test-node']), \
+             patch.object(Path,'home',return_value=self.root.resolve()),patch.dict(os.environ,env), \
+             patch.object(worker,'probe_affinity',return_value=dict(passed=True)), \
+             patch.object(worker,'run_bounded',side_effect=execute):
+            self.assertEqual(worker.run(self.root.resolve(),relative),0)
+        self.assertEqual(len(launched),1)
+        argv,timeout=launched[0];self.assertEqual(timeout,3100)
+        exe=argv.index(str(self.root.resolve()/c.binary('A')))
+        self.assertEqual(argv[exe+1+7],'2920')
+        self.assertEqual(worker.native_exit_reserve(dict(phase='preflight',native_exit_reserve_seconds=180)),30)
+
+    def test_scaling_queue_keeps_one_node_and_twelve_ranks(self):
+        made=c.make_plan(self.root,'A','evolution');path=self.root/made['plan'];plan=json.loads(path.read_text())
+        plan['resources']['queue']='debug-scaling';control.atomic(path,plan)
+        control.bind(self.root,made['plan'],c.MANIFEST)
+        pbs=path.with_name('run_debug.pbs').read_text()
+        self.assertIn('#PBS -q debug-scaling\n',pbs)
+        self.assertIn('#PBS -l select=1\n',pbs)
+        for key,value in [('queue','prod'),('nodes',5),('ranks',60),('account','other')]:
+            bad=copy.deepcopy(plan);bad['resources'][key]=value
+            with self.assertRaises(ValueError):control.validate_plan(self.root,bad)
+        nodefile=self.root/'nodes';nodefile.write_text('node1\n')
+        with patch.dict(os.environ,dict(PBS_JOBID='123.server',PBS_NODEFILE=str(nodefile),PBS_QUEUE='debug-scaling')):
+            self.assertEqual(worker.allocation_node('debug-scaling'),['node1'])
+            with self.assertRaises(RuntimeError):worker.allocation_node('debug')
+            nodefile.write_text('node1\nnode2\n')
+            with self.assertRaises(RuntimeError):worker.allocation_node('debug-scaling')
 
     def finish(self,variant='A',purpose='evolution',segment=1,restart=None,sha=None):
         made=c.make_plan(self.root,variant,purpose,segment,restart,sha);relative=made['plan'];path=self.root/relative
