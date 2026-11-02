@@ -1,0 +1,17 @@
+In file included from /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/zero-restoration-v1/investigation/probe-a.cpp:5:
+In file included from /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/coupled_mpi.cpp:11:
+In file included from /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/src/z4c/hyperboloidal/hyperbolic_composite_exchange.hpp:7:
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/src/z4c/hyperboloidal/hyperbolic_composite_device.hpp:521:71: warning: missing field 'radial' initializer [-Wmissing-field-initializers]
+  521 |         volumes_,rhs_,gap_,cfl_,n_,width_,padded_count_,dt,ko,adaptive};
+      |                                                                       ^
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/src/z4c/hyperboloidal/hyperbolic_composite_device.hpp:543:77: warning: missing field 'radial' initializer [-Wmissing-field-initializers]
+  543 |         diagnostic_volumes_,rhs_,gap_,cfl_,n_,width_,padded_count_,0,0,false};
+      |                                                                             ^
+In file included from /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/zero-restoration-v1/investigation/probe-a.cpp:5:
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/coupled_mpi.cpp:662:59: warning: misleading indentation; statement is not part of the previous 'if' [-Wmisleading-indentation]
+  662 |     }catch(const std::exception&e){bad=1;reason=e.what();}SynchronizeError(bad,reason);
+      |                                                           ^
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/coupled_mpi.cpp:646:5: note: previous statement is here
+  646 |     if(rank==0)try{Header header;std::memcpy(header.magic,checkpoint_magic,std::strlen(checkpoint_magic)+1);header.n=n;header.kind=kind;header.admitted=admitted;
+      |     ^
+3 warnings generated.

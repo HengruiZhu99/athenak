@@ -1,0 +1,83 @@
+{
+  "source_commit": "10a0cc40a1e8f0af5f5440d63c22afee40699c4c",
+  "matching_src_tst_files": 540,
+  "files": {
+    "docs/hyperbolic-shift-3d/reproduction/zero-restoration-v1/investigation/probe.cpp": {
+      "bytes": 4324,
+      "sha256": "7266b1e2cbc30904a47c0e92fc0ac2ac079986d1f85812afcc417e5261b97051"
+    },
+    "docs/hyperbolic-shift-3d/reproduction/zero-restoration-v1/investigation/probe-a.cpp": {
+      "bytes": 4324,
+      "sha256": "96032f9cd60b968fe0fa11e0e1dcf5f7bccb98c66d7182801b3f4dca0c470c5b"
+    },
+    "output/zero-restoration/investigation/probe": {
+      "bytes": 1730552,
+      "sha256": "5167d659069746846aaeec12438bf247c09ba879d8955f9ccd30f7baba777fa5"
+    },
+    "output/zero-restoration/investigation/probe-a": {
+      "bytes": 1730552,
+      "sha256": "501d7f7adda3a1e9635cbe5b0aa83176ada2aec2425a1fcdda17fb78407794e3"
+    },
+    "output/zero-restoration/investigation/last-valid-e9.csv": {
+      "bytes": 739587,
+      "sha256": "e61be44d5d73aa5ee5f7883a37fa885f63328d9665b94c844357950e81b84c89"
+    },
+    "output/zero-restoration/investigation/last-valid-e8.csv": {
+      "bytes": 739607,
+      "sha256": "362c80bf708901b17d7dfd87a7586855954dc39deda6aac89ce2c6db516949e5"
+    },
+    "output/zero-restoration/investigation/a10m-e8.csv": {
+      "bytes": 781217,
+      "sha256": "3653338b4a06662f4e872cb3f42d4a1c2da4ed6c19bc7603dc16bc90f6857692"
+    },
+    "output/zero-restoration/investigation/early-e8.csv": {
+      "bytes": 802714,
+      "sha256": "6f3cca5e89b60844fb64e5f3a3d001927b60ecaa71d17d693da1c0fbac8f3767"
+    },
+    "output/zero-restoration/investigation/last-valid-e8.json": {
+      "bytes": 165,
+      "sha256": "9a1b68f8286e85ead8c03e614b88b8054c832d65aaa1241f581d402cea8240b5"
+    },
+    "output/zero-restoration/investigation/last-valid-e9.json": {
+      "bytes": 182,
+      "sha256": "8e64d353446bc15cb6ca6747efb9ad1057bcda16419d7ff854c3b3c23f54d383"
+    },
+    "output/zero-restoration/investigation/a10m-e8.json": {
+      "bytes": 167,
+      "sha256": "fffd05611cdfb4e37132c3b054c77132b27ee338d6bccf88f5574f6e0320cb13"
+    },
+    "output/zero-restoration/investigation/early-e8.json": {
+      "bytes": 156,
+      "sha256": "80aef22d6fc47e3ba7130169f2ec9cb09e7a4aeb96b40a1af1ba8c95806f4aca"
+    }
+  },
+  "commands": [
+    [
+      "output/zero-restoration/investigation/probe",
+      "output/zero-restoration/aurora/campaigns/n16-zero-restoration-v1-z16-evolution-segment01/output/puncture.checkpoint",
+      "output/zero-restoration/investigation/last-valid-e8",
+      "1e-8"
+    ],
+    [
+      "output/zero-restoration/investigation/probe",
+      "output/zero-restoration/aurora/campaigns/n16-zero-restoration-v1-z16-evolution-segment01/output/puncture.checkpoint",
+      "output/zero-restoration/investigation/last-valid-e9",
+      "5e-9"
+    ],
+    [
+      "output/zero-restoration/investigation/probe",
+      "output/zero-restoration/serial/n16-puncture.checkpoint",
+      "output/zero-restoration/investigation/early-e8",
+      "1e-8"
+    ],
+    [
+      "output/zero-restoration/investigation/probe-a",
+      "output/native-shared-transition/aurora/campaigns/n16-native-transition-v2-a-evolution-segment01/output/puncture.checkpoint",
+      "output/zero-restoration/investigation/a10m-e8",
+      "1e-8"
+    ]
+  ],
+  "no_time_steps": true,
+  "unadmitted_checkpoint_remains_unadmitted": true,
+  "original_artifacts_rehashed_unchanged": true
+}
