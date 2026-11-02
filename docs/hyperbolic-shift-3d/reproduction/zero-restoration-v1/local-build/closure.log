@@ -1,0 +1,16 @@
+[ 20%] Built target kokkossimd
+[100%] Built target kokkoscore
+[100%] Built target kokkosalgorithms
+[100%] Built target kokkoscontainers
+[100%] Building CXX object tst/hyperbolic_shift_3d/CMakeFiles/hyperbolic_shift_3d_zero_scri_dissipation_closure.dir/test_scri_dissipation_closure.cpp.o
+In file included from /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/tst/hyperbolic_shift_3d/test_scri_dissipation_closure.cpp:9:
+In file included from /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/src/z4c/hyperboloidal/hyperbolic_scri_device.hpp:6:
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/src/z4c/hyperboloidal/hyperbolic_composite_device.hpp:521:71: warning: missing field 'radial' initializer [-Wmissing-field-initializers]
+  521 |         volumes_,rhs_,gap_,cfl_,n_,width_,padded_count_,dt,ko,adaptive};
+      |                                                                       ^
+/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/src/z4c/hyperboloidal/hyperbolic_composite_device.hpp:543:77: warning: missing field 'radial' initializer [-Wmissing-field-initializers]
+  543 |         diagnostic_volumes_,rhs_,gap_,cfl_,n_,width_,padded_count_,0,0,false};
+      |                                                                             ^
+2 warnings generated.
+[100%] Linking CXX executable hyperbolic_shift_3d_zero_scri_dissipation_closure
+[100%] Built target hyperbolic_shift_3d_zero_scri_dissipation_closure

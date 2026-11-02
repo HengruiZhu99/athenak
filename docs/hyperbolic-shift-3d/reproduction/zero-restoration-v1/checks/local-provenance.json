@@ -1,0 +1,17 @@
+{
+  "source_commit": "10a0cc40a1e8f0af5f5440d63c22afee40699c4c",
+  "backend": "Serial",
+  "binary_sha256": {
+    "build-zero-restoration-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_zero_zero_restoration": "6cc531b01a0f097ee3851ced9e8e0f046185ca479cfacb3ea98b9c4ec000886f",
+    "build-zero-restoration-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_zero_scri_dissipation_closure": "6749058f49fda1d9057e0743e24ac0565c9799c9e123b6f016b2a8c5ab6c9ead",
+    "build-zero-restoration-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_zero_scri_full_consistency": "2b72635c0a7b3a5b5461d6f771123fbc0432b65ba1aa89e79285dece7256a7f7",
+    "build-zero-restoration-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_control_zero_restoration": "adc133ee1f72a557569a6d3efad8139b7aa87b04a89e4c9f48dba24773615165",
+    "build-zero-restoration-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_checkpoint_constraints_native_control_zero_restoration": "12470880b79637de3a1426691adf295181995ca1aa11197610b3ef6cf6da40e3"
+  },
+  "commands": [
+    "hyperbolic_shift_3d_zero_zero_restoration",
+    "hyperbolic_shift_3d_zero_scri_dissipation_closure",
+    "hyperbolic_shift_3d_zero_scri_full_consistency N fresh.json, for N=16,24,32",
+    "mpiexec -n 1 hyperbolic_shift_3d_mpi_native_control_zero_restoration N prefix kind 2*dt dt - - 600 .05 .001 12 24 2, for N=16,24 and kind=minkowski,puncture"
+  ]
+}
