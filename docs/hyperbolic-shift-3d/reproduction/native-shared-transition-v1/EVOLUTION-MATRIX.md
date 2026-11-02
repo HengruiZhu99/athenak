@@ -28,3 +28,12 @@ All five production variants compiled successfully in the fresh local SERIAL/MPI
 
 
 Current submission uses corrected frozen launcher v2 (`d446f75c6505b47f26f8b4beabada722da423552`) on debug-scaling, one node/12 ranks. The original job9031739 was cancelled while queued, before any evolution: the worker omitted this phase from the configured180-second exit-reserve selection. V2 honors180seconds (native2920seconds inside command3100seconds); scientific executables/settings remain unchanged. Current plan is `campaigns/n16-native-transition-v2-a-evolution-segment01/plan.json`. The20-minute monitor is ACTIVE and will automatically continue healthy admitted checkpoints. Prioritize measured puncture errors and convergence controls; do not repeat launcher tests without a demonstrated blocker.
+
+
+## Native initializer control completed10M; shared-transition GPU trial submitted
+
+CaseA job9031760 completed10M/6667steps, with native return0, worker passed and PBS exit0. Frozen endpoint verification passed (NI1,168-byte header,scheme3); all six worker artifacts were copied and hash/length-verified locally. Checkpoint SHA256 ab26ed9fce097b965cb19217f7599efb47c8c119df39ea49dc4d536d5e77cddb. No remote purge was needed. Terminal lock released.
+
+Measured own-candidate exterior H/M/Mr histories nearly overlay SG1: maximum relative changes2.20e-5/4.52e-6/5.80e-6. At10M H=.0154149684,M=.0290076414; accepted horizon mass error+.3413204% with45/68rows accepted. Negative chi stage/final counts56/8 match SG1; no lapse, surface or boundary sign interventions. Surface/ghost null maxima remain below1.56e-15, while pole/clock maxima are.0281679363/.0220012275. Native initialization alone does not materially improve the evolved exterior errors. See aurora/a-versus-sg1 for inspected history plots and counters. Independent common-cutoff regional endpoint reconstruction remains pending; these history norms use each run’s candidate cutoff.
+
+CaseB two-step GPU physics smoke is submitted as job9031861 on debug-scaling,one node/12ranks. Plan campaigns/n16-native-transition-v1-b-smoke-segment01/plan.json, SHA256 b6829754eafaac006479a41492305f5053ff212aef9d46a48a5aaf46d1de0502. Use launcher v2 despite folder spelling. After verified smoke/parity, start fresh shared-W/KO8/original-scri N16 to10M; no caseB long run submitted yet. The20-minute monitor was updated to this job and will automatically continue admitted healthy walltime states.

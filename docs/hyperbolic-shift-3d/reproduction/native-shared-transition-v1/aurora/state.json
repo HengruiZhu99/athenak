@@ -1,5 +1,5 @@
 {
-  "status": "a_evolution_submitted",
+  "status": "b_smoke_submitted",
   "build_attempt": 2,
   "remote_build_pid": 641035,
   "remote_host": "aurora-uan-0012",
@@ -12,7 +12,7 @@
   "build": "build-sycl-mpi-native-transition-v1",
   "cases": {
     "A": {
-      "status": "evolution_submitted",
+      "status": "completed_10M_verified",
       "smoke_plan": "campaigns/n16-native-transition-v1-a-smoke-segment01/plan.json",
       "evolution_plan": "campaigns/n16-native-transition-v2-a-evolution-segment01/plan.json",
       "smoke_submission": {
@@ -61,12 +61,28 @@
           "ranks_per_node": 12,
           "walltime": "01:00:00"
         }
-      }
+      },
+      "verification": "campaigns/n16-native-transition-v2-a-evolution-segment01/checkpoint-verified.json"
     },
     "B": {
-      "status": "not_submitted",
+      "status": "smoke_submitted",
       "smoke_plan": "campaigns/n16-native-transition-v1-b-smoke-segment01/plan.json",
-      "evolution_plan": "campaigns/n16-native-transition-v1-b-evolution-segment01/plan.json"
+      "evolution_plan": "campaigns/n16-native-transition-v1-b-evolution-segment01/plan.json",
+      "smoke_submission": {
+        "job_id": "9031861.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+        "submitted": 1793595336.6606197,
+        "plan": "campaigns/n16-native-transition-v1-b-smoke-segment01/plan.json",
+        "plan_sha256": "b6829754eafaac006479a41492305f5053ff212aef9d46a48a5aaf46d1de0502",
+        "source_manifest_sha256": "7bd61dc86efe172c73e6363e237b36cdb36160eddb986110b75f0c78a46f36f0",
+        "resources": {
+          "queue": "debug-scaling",
+          "account": "CompactBinaryMerger",
+          "nodes": 1,
+          "ranks": 12,
+          "ranks_per_node": 12,
+          "walltime": "01:00:00"
+        }
+      }
     },
     "C": {
       "status": "not_submitted",
@@ -84,15 +100,15 @@
       "evolution_plan": "campaigns/n16-native-transition-v1-e-evolution-segment01/plan.json"
     }
   },
-  "note": "Replacement fresh t0 run uses corrected launcher180s native exit reserve and authorized debug-scaling1node/12ranks. Original queued job9031739 never started and was cancelled with announcement; records retained. Scientific source,binaries,dt,floors,gauge unchanged.",
-  "parallel_authorization": "User permits debug-scaling up to five nodes. Current launcher supports one node/12 ranks on debug or debug-scaling; current case uses debug-scaling. Prioritize physics rather than additional orchestration.",
+  "note": "A completed10M, frozen remote verification passed and all six artifacts locally hash/length verified. Terminal lock released. B GPU physics smoke submitted; never duplicate. Use launcher v2; scientific files remain frozen.",
+  "parallel_authorization": "User permits debug-scaling up to five nodes. Existing plans remain one-node/debug; any multi-case allocation must preserve separate case admission/storage/resources and be explicitly implemented/tested.",
   "build_status": "completed_and_frozen",
-  "current_plan": "campaigns/n16-native-transition-v2-a-evolution-segment01/plan.json",
+  "current_plan": "campaigns/n16-native-transition-v1-b-smoke-segment01/plan.json",
   "submission": {
-    "job_id": "9031760.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
-    "submitted": 1793592578.4993372,
-    "plan": "campaigns/n16-native-transition-v2-a-evolution-segment01/plan.json",
-    "plan_sha256": "c91f0ae67f647188f217002d43c9a8455493536ee7c5ce6abebb6245e6a5eb53",
+    "job_id": "9031861.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "submitted": 1793595336.6606197,
+    "plan": "campaigns/n16-native-transition-v1-b-smoke-segment01/plan.json",
+    "plan_sha256": "b6829754eafaac006479a41492305f5053ff212aef9d46a48a5aaf46d1de0502",
     "source_manifest_sha256": "7bd61dc86efe172c73e6363e237b36cdb36160eddb986110b75f0c78a46f36f0",
     "resources": {
       "queue": "debug-scaling",
@@ -102,13 +118,5 @@
       "ranks_per_node": 12,
       "walltime": "01:00:00"
     }
-  },
-  "monitor": {
-    "id": "aurora-sg1-n32-to-10m",
-    "status": "ACTIVE",
-    "interval_minutes": 20,
-    "healthy_walltime_auto_continuation": true,
-    "latest_scheduler_state": "Q",
-    "latest_scheduler_comment": "Not Running: Node is in an ineligible state: offline"
   }
 }
