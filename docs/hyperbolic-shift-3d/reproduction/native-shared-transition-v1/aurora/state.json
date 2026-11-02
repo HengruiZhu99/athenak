@@ -1,5 +1,5 @@
 {
-  "status": "c_smoke_submitted",
+  "status": "ko_dependency_repair_building",
   "build_attempt": 2,
   "remote_build_pid": 641035,
   "remote_host": "aurora-uan-0012",
@@ -106,7 +106,7 @@
       "local_artifacts_verified": true
     },
     "C": {
-      "status": "smoke_submitted",
+      "status": "old_smoke_completed_partition_parity_failed",
       "smoke_plan": "campaigns/n16-native-transition-v1-c-smoke-segment01/plan.json",
       "evolution_plan": "campaigns/n16-native-transition-v1-c-evolution-segment01/plan.json",
       "smoke_submission": {
@@ -123,7 +123,8 @@
           "ranks_per_node": 12,
           "walltime": "01:00:00"
         }
-      }
+      },
+      "restart_admitted_for_campaign": false
     },
     "D": {
       "status": "not_submitted",
@@ -136,7 +137,7 @@
       "evolution_plan": "campaigns/n16-native-transition-v1-e-evolution-segment01/plan.json"
     }
   },
-  "note": "B failed invalid metric at8 shell cells r=.609375. All6 artifacts including rejected capture locally hash/length verified; failed/unadmitted state never resumes. Terminal lock released. C original-collar/KO10/original-scri fresh physics smoke submitted; science/dt/floors unchanged.",
+  "note": "No current evolution job. C old12-rank smoke completed but differs from serial due to missing fifth Cartesian KO10 donors. Local repaired12-rank Minkowski/puncture checkpoints byte-identical to frozen1-rank. Separate repaired source/build now starts. Do not submit old C/D/E binaries. Old builds remain frozen; nine obsolete output copies retired only after local hash/length verification.",
   "parallel_authorization": "User permits debug-scaling up to five nodes. Existing plans remain one-node/debug; any multi-case allocation must preserve separate case admission/storage/resources and be explicitly implemented/tested.",
   "build_status": "completed_and_frozen",
   "current_plan": "campaigns/n16-native-transition-v1-c-smoke-segment01/plan.json",
@@ -154,5 +155,13 @@
       "ranks_per_node": 12,
       "walltime": "01:00:00"
     }
+  },
+  "next_build": {
+    "pid": 2584700,
+    "host": "aurora-uan-0012",
+    "launcher": "launcher-native-transition-ko-dependencies-v1",
+    "source_commit": "e7d55b008c86774580386dbc3e13028fa72b7e24",
+    "status": "started",
+    "source_manifest": "source-native-transition-ko-dependencies-v1-manifest.json"
   }
 }

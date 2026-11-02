@@ -32,13 +32,14 @@ LABELS={'SG1':'SG1 external initializer','A':'A native, original collar',
 COLORS={'SG1':'#222222','A':'#b55315','B':'#1769aa','C':'#228844','D':'#8055aa','E':'#cc3344'}
 
 
-def load_native(raw,variant,plans):
+def load_native(raw,variant,plans,campaign_module=None):
     """Use local mirrors, without requiring the remote executable to be copied.
 
 Verify every recorded artifact and frozen identity. Healthy checkpoint payloads
 are admitted only by the exact schema/configuration inspector. Failed payloads
 are preserved evidence, never parsed as an accepted evolution endpoint.
 """
+    campaign=campaign_module or globals()['campaign']
     raw=Path(raw).resolve();science=campaign.science(raw)
     require(variant in campaign.VARIANTS and plans,'Unknown/empty case')
     require(digest(raw/campaign.MANIFEST)==science['source_manifest_sha256'],'Source manifest identity changed')
@@ -142,13 +143,20 @@ def render(cases,output):
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--root',type=Path,required=True)
     p.add_argument('--case',action='append',required=True,help='A=relative-plan01,relative-plan02 (repeat for other cases)')
+    p.add_argument('--case-helper',action='append',default=[],help='C=/absolute/frozen/native_transition_campaign.py (repeat per case)')
     p.add_argument('--baseline-root',type=Path,required=True)
     p.add_argument('--baseline-plan',default='campaigns/n16-short-gauge-fresh10m-v1-segment01/plan.json')
     p.add_argument('--output',type=Path,required=True);a=p.parse_args()
+    from frozen_campaign import load
+    helpers={}
+    for value in a.case_helper:
+        name,path=value.split('=',1);require(name not in helpers,'Duplicate case helper')
+        helpers[name]=load(path)
+    require(set(helpers).issubset({x.split('=',1)[0] for x in a.case}),'Helper has no requested case')
     cases={'SG1':sg1.load_campaign(a.baseline_root.resolve(),[a.baseline_plan],16)}
     for value in a.case:
         name,paths=value.split('=',1);require(name not in cases,'Duplicate case')
-        cases[name]=load_native(a.root,name,paths.split(','))
+        cases[name]=load_native(a.root,name,paths.split(','),helpers.get(name))
     render(cases,a.output)
 
 

@@ -11,7 +11,8 @@ import control
 import native_transition_campaign as c
 
 
-def compare(serial_prefix,gpu_root,gpu_plan):
+def compare(serial_prefix,gpu_root,gpu_plan,campaign_module=None):
+    c=campaign_module or globals()['c']
     plan_path=control.local_path(gpu_root,gpu_plan);plan=json.loads(plan_path.read_text())
     assert plan['purpose']=='smoke'
     v=plan['variant'];worker=json.loads(plan_path.with_name('worker-status.json').read_text())
@@ -62,9 +63,12 @@ def compare(serial_prefix,gpu_root,gpu_plan):
 def main():
     p=argparse.ArgumentParser();p.add_argument('--serial-prefix',type=Path,required=True)
     p.add_argument('--gpu-root',type=Path,required=True);p.add_argument('--gpu-plan',required=True)
+    p.add_argument('--campaign-helper',type=Path,help='Matching frozen helper; default preserves original science')
     p.add_argument('--output',type=Path,required=True);a=p.parse_args()
     if a.output.exists():raise ValueError('Preserve existing comparison output')
-    r=compare(a.serial_prefix.resolve(),a.gpu_root.resolve(),a.gpu_plan)
+    from frozen_campaign import load
+    helper=load(a.campaign_helper) if a.campaign_helper else None
+    r=compare(a.serial_prefix.resolve(),a.gpu_root.resolve(),a.gpu_plan,helper)
     a.output.write_text(json.dumps(r,indent=2,allow_nan=False)+'\n')
     if not all(x['physical_parity_within_1e_10'] for x in r['cases']):raise RuntimeError('Investigate measured backend/partition disagreement')
 
