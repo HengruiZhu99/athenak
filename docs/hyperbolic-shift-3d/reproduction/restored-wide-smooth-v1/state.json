@@ -1,5 +1,5 @@
 {
-  "status": "build_started",
+  "status": "evolution_submitted",
   "build_pid": 3239077,
   "build_host": "aurora-uan-0010",
   "started": 1793654937.8334656,
@@ -9,6 +9,26 @@
   "launcher": "launcher-restored-wide-smooth-v1",
   "build_log": "restored-wide-smooth-build.stdout.log",
   "scope": "Fresh N16 candidate A: restoration coefficient4 retained; collar .6-.9; C6 polynomial native slice areal4M-12M; KO8/originalscri unchanged. No GPU smoke gate.",
-  "next": "Monitor this build only. On successful freeze preserve actual binary/provenance hashes, check all debug queues and saved submissions, then fresh N16 evolution to10M once.",
+  "next": "Monitor existing N16 NB1 evolution, no duplicate build, smoke or fresh submission. At terminal verify/preserve. Continue only healthy admitted same-case walltime checkpoints below10M; failed states terminal. Compare originalA and A-wide after disposition.",
+  "science_sha256": "df434e41324a31ffeaf0d053022a06969911df95819886174b85f08c0a1e4742",
+  "build_status": "completed_and_frozen",
+  "updated": 1793656434.5124724,
+  "current_plan": "campaigns/n16-restored-wide-smooth-v1-a-evolution-segment01/plan.json",
+  "plan_sha256": "a7cc18c8b2908246557099bba5518707db75bdc3022a2c98dad5ab0640a65f75",
+  "current_submission": {
+    "job_id": "9033692.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "submitted": 1793656434.509777,
+    "plan": "campaigns/n16-restored-wide-smooth-v1-a-evolution-segment01/plan.json",
+    "plan_sha256": "a7cc18c8b2908246557099bba5518707db75bdc3022a2c98dad5ab0640a65f75",
+    "source_manifest_sha256": "8ced85447586f49970c8e13f9e3433d250854f92cef9c815d485f1de27fcfaef",
+    "resources": {
+      "queue": "debug-scaling",
+      "account": "CompactBinaryMerger",
+      "nodes": 1,
+      "ranks": 12,
+      "ranks_per_node": 12,
+      "walltime": "01:00:00"
+    }
+  },
   "monitor": "aurora-restored-wide-smooth-a-to-10m"
 }
