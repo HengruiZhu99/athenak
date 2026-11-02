@@ -56,6 +56,9 @@ class HyperbolicCompositeDevice {
   };
   struct DiagnosticSummary {
     DiagnosticSums total{}, exterior{};
+    // Read-only zero-restoration research diagnostics; not an evolution source.
+    DiagnosticSums fixed[3]{}; // coordinate radii .12, .16, .25
+    Real gauge_max[5]{}; // |beta+x|, |grad(beta+x)|, |D|, |grad D|, |D-Lambda| (Euclidean/Frobenius)
     Real min_chi = std::numeric_limits<Real>::max();
     Real min_lapse = std::numeric_limits<Real>::max();
     Real max_determinant_residual = 0, max_tracefree_residual = 0;
@@ -345,6 +348,8 @@ class HyperbolicCompositeDevice {
     Real exterior_radius;
     KOKKOS_INLINE_FUNCTION void init(DiagnosticSummary &result) const {
       result.total=DiagnosticSums{};result.exterior=DiagnosticSums{};
+      for(int k=0;k<3;++k)result.fixed[k]=DiagnosticSums{};
+      for(int k=0;k<5;++k)result.gauge_max[k]=0;
       result.min_chi=std::numeric_limits<Real>::max();result.min_lapse=result.min_chi;
       result.max_determinant_residual=0;result.max_tracefree_residual=0;
       result.max_state_deviation=0;result.invalid_cells=0;
@@ -357,6 +362,10 @@ class HyperbolicCompositeDevice {
     }
     KOKKOS_INLINE_FUNCTION void join(DiagnosticSummary &a,const DiagnosticSummary &b) const {
       Add(a.total,b.total);Add(a.exterior,b.exterior);
+      if constexpr(zero_shift_restoration){
+        for(int k=0;k<3;++k)Add(a.fixed[k],b.fixed[k]);
+        for(int k=0;k<5;++k)a.gauge_max[k]=fmax(a.gauge_max[k],b.gauge_max[k]);
+      }
       if (b.min_chi<a.min_chi) a.min_chi=b.min_chi;
       if (b.min_lapse<a.min_lapse) a.min_lapse=b.min_lapse;
       if (b.max_determinant_residual>a.max_determinant_residual)
@@ -379,6 +388,9 @@ class HyperbolicCompositeDevice {
       // weight. Invalid samples are still counted on every evolved cell.
       result.total.volume+=weight;
       if (r>exterior_radius) result.exterior.volume+=weight;
+      const Real fixed_cuts[3]={.12,.16,.25};
+      if constexpr(zero_shift_restoration)for(int k=0;k<3;++k)
+        if(r>fixed_cuts[k])result.fixed[k].volume+=weight;
       const int active=point.active(local);
       const Real chi=point.padded(active);
       const Real lapse=point.padded(18*point.padded_count+active)+reference_alpha;
@@ -392,6 +404,19 @@ class HyperbolicCompositeDevice {
       Z4cJet<Real> u{};VectorJet<Real> B{},D{};Real correction[nf]{};
       const int status=point.BuildJet(local,map,reference_alpha,u,B,D,correction);
       if (status!=success) {Fail(local,status,result);return;}
+      if constexpr(zero_shift_restoration){
+        Real norms[5]{};
+        for(int i=0;i<3;++i){
+          norms[0]+=(u.beta.value[i]+x[i])*(u.beta.value[i]+x[i]);
+          norms[2]+=D.value[i]*D.value[i];
+          norms[4]+=(D.value[i]-u.lambda.value[i])*(D.value[i]-u.lambda.value[i]);
+          for(int j=0;j<3;++j){
+            const Real grad=u.beta.d[j][i]+(i==j?1:0);
+            norms[1]+=grad*grad;norms[3]+=D.d[j][i]*D.d[j][i];
+          }
+        }
+        for(int k=0;k<5;++k)result.gauge_max[k]=fmax(result.gauge_max[k],sqrt(norms[k]));
+      }
       OmegaJet<Real> omega{};omega.omega=(1-r*r)/2;
       for (int i=0;i<3;++i) {omega.gradient[i]=-x[i];omega.hessian[i][i]=-1;}
       SetStationaryOmegaNormal(u.alpha.value,u.beta.value,u.alpha.d,u.beta.d,omega);
@@ -410,6 +435,8 @@ class HyperbolicCompositeDevice {
       sums.z2=weight*constraints.z4.z_conformal_norm2;
       sums.z2_physical=weight*constraints.z4.z_physical_norm2;
       Add(result.total,sums);if (r>exterior_radius) Add(result.exterior,sums);
+      if constexpr(zero_shift_restoration)for(int k=0;k<3;++k)
+        if(r>fixed_cuts[k])Add(result.fixed[k],sums);
       if (fabs(constraints.z4.determinant_residual)>result.max_determinant_residual)
         result.max_determinant_residual=fabs(constraints.z4.determinant_residual);
       if (fabs(constraints.z4.tracefree_residual)>result.max_tracefree_residual)

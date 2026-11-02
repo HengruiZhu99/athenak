@@ -36,16 +36,16 @@ def compare(serial_prefix,gpu_root,gpu_plan,campaign_module=None):
             for check in c.required_checks(v,'smoke',kind):
                 if check['path'] in [['backend'],['mpi_size']]:continue
                 assert control.evaluate_check(report,check)['passed'],check
-            assert report['t']==.001 and report['steps']==2
+            assert report['t']==float(command['args'][3]) and report['steps']==2
         checkpoints=[Path(str(p)+'.checkpoint') for p in [serial,gpu]]
-        for p in checkpoints:c.inspect_checkpoint(p,v,control.digest(p),kind,.001)
+        for p in checkpoints:c.inspect_checkpoint(p,v,control.digest(p),kind,float(command['args'][3]))
         for name in [command['report'],command['args'][1]+'.checkpoint']:
             expected=case['artifacts'][name];p=gpu_root/name
             assert p.stat().st_size==expected['bytes'] and control.digest(p)==expected['sha256']
         admitted=next(x for x in verified['cases'] if x['kind']==kind)
         assert admitted['completed'] and admitted['sha256']==control.digest(checkpoints[1])
         arrays=[np.fromfile(p,dtype='<f8',offset=168) for p in checkpoints]
-        nc=c.cells();ns=6*16*16;fields={}
+        nc=c.cells(plan['n']);ns=6*plan['n']**2;fields={}
         # Compare physical states separately from compensated-RK bookkeeping.
         for label,start,count in [('volume',0,nc),('volume_compensation',31*nc,nc),
                                   ('surface',62*nc,ns),('surface_compensation',62*nc+31*ns,ns)]:

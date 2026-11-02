@@ -37,7 +37,16 @@
 #define HYPERBOLIC_WIDE_RESTORING_COLLAR 0
 #endif
 
+#ifndef HYPERBOLIC_ZERO_SHIFT_RESTORATION
+#define HYPERBOLIC_ZERO_SHIFT_RESTORATION 0
+#endif
+
 namespace z4c::hyperboloidal {
+// Experimental removal of only the extra singular shift source. The lapse,
+// inner shift damping, auxiliary damping and geometric damping are unchanged.
+constexpr bool zero_shift_restoration=HYPERBOLIC_ZERO_SHIFT_RESTORATION;
+static_assert(!zero_shift_restoration || (HYPERBOLIC_SHORT_INNER_GAUGE &&
+    !HYPERBOLIC_SHARED_RESTORATION && !HYPERBOLIC_WIDE_RESTORING_COLLAR));
 constexpr bool wide_restoring_collar=HYPERBOLIC_WIDE_RESTORING_COLLAR;
 static_assert(!wide_restoring_collar || (HYPERBOLIC_SHORT_INNER_GAUGE && !HYPERBOLIC_SHARED_RESTORATION));
 constexpr bool shared_restoration=HYPERBOLIC_SHARED_RESTORATION;
@@ -227,7 +236,7 @@ HyperbolicGaugeParts<T> DonorHyperbolicGauge(const T x[3], const Z4cJet<T> &u,
         +c.eta*chi*(c.w*B.d[i][i]+dw*B.value[i]);
     out.lapse_pole+=x[i]*(alpha*u.beta.value[i]+c.reference_alpha*x[i]);
     out.shift_regular[i]=-x[i]+c.mu*D[i];
-    out.shift_pole[i]=-p.restoring*c.collar*(u.beta.value[i]+x[i]);
+    out.shift_pole[i]=zero_shift_restoration ? T(0) : -p.restoring*c.collar*(u.beta.value[i]+x[i]);
     out.flux_rate[i]=(p.kappa*c.w*(u.alpha.d[i]-x[i])-B.value[i])/p.tau;
     for (int j=0;j<3;++j) {
       out.shift_regular[i]+=u.beta.value[j]*u.beta.d[j][i];

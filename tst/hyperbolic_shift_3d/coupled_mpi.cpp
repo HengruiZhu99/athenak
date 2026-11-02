@@ -115,7 +115,8 @@ static_assert(!continuous_positive||(spherical_overlap&&core_subdivisions==2),"p
 static_assert(!coordinated_plans||(continuous_positive&&boundary_reuse&&sparse_stage&&!measured_partition),"coordinated plan target requires the equal-cell positive sparse formulation");
 static_assert(!cubed_sphere::scri_first6||native_wormhole,"scri first6 evolution requires its distinct native-initializer checkpoint target");
 static_assert(!h::wide_restoring_collar || (native_wormhole && !h::CompositeDissipation::consistent && !cubed_sphere::scri_first6));
-constexpr const char*checkpoint_magic=h::wide_restoring_collar?"HYP3D_MPI_NW1":cubed_sphere::scri_first6?(h::CompositeDissipation::consistent?(h::shared_restoration?"HYP3D_MPI_NS2":"HYP3D_MPI_NC2"):(h::shared_restoration?"HYP3D_MPI_NS1":"HYP3D_MPI_NC1")):native_wormhole?(h::CompositeDissipation::consistent?(h::shared_restoration?"HYP3D_MPI_NT2":"HYP3D_MPI_NI2"):(h::shared_restoration?"HYP3D_MPI_NT1":"HYP3D_MPI_NI1")):h::CompositeDissipation::consistent?(h::shared_restoration?"HYP3D_MPI_ST2":"HYP3D_MPI_SG2"):h::shared_restoration?"HYP3D_MPI_ST1":h::short_inner_gauge?"HYP3D_MPI_SG1":h::late_inner_gauge?"HYP3D_MPI_LG1":h::restore_inner_damping?"HYP3D_MPI_DG1":h::direct_outer?"HYP3D_MPI_DO1":h::inner_telegrapher?"HYP3D_MPI_IT1":h::smooth_gauge_blend&&direct_chi?"HYP3D_MPI_GD1":h::smooth_gauge_blend?"HYP3D_MPI_GW1":direct_chi?"HYP3D_MPI_AC1":direct_lapse?"HYP3D_MPI_AL1":puncture_chi_floor>0?"HYP3D_MPI_CF1":HYPERBOLIC_EXPERIMENTAL_TIMESTEP?"HYP3D_MPI_DT1":continuous_positive?"HYP3D_MPI_V11":spherical_overlap?"HYP3D_MPI_V10":evolved_overlap?"HYP3D_MPI_V9":core_subdivisions==2?"HYP3D_MPI_V8":inner_transition_logical?"HYP3D_MPI_V7":scri_donor_seven?"HYP3D_MPI_V6":scri_sampled_normal?"HYP3D_MPI_V5":scri_angular_dissipation?"HYP3D_MPI_V4":scri_angular_exchange?"HYP3D_MPI_V3":algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
+static_assert(!h::zero_shift_restoration || (native_wormhole && !h::CompositeDissipation::consistent && !cubed_sphere::scri_first6));
+constexpr const char*checkpoint_magic=h::zero_shift_restoration?"HYP3D_MPI_NZ1":h::wide_restoring_collar?"HYP3D_MPI_NW1":cubed_sphere::scri_first6?(h::CompositeDissipation::consistent?(h::shared_restoration?"HYP3D_MPI_NS2":"HYP3D_MPI_NC2"):(h::shared_restoration?"HYP3D_MPI_NS1":"HYP3D_MPI_NC1")):native_wormhole?(h::CompositeDissipation::consistent?(h::shared_restoration?"HYP3D_MPI_NT2":"HYP3D_MPI_NI2"):(h::shared_restoration?"HYP3D_MPI_NT1":"HYP3D_MPI_NI1")):h::CompositeDissipation::consistent?(h::shared_restoration?"HYP3D_MPI_ST2":"HYP3D_MPI_SG2"):h::shared_restoration?"HYP3D_MPI_ST1":h::short_inner_gauge?"HYP3D_MPI_SG1":h::late_inner_gauge?"HYP3D_MPI_LG1":h::restore_inner_damping?"HYP3D_MPI_DG1":h::direct_outer?"HYP3D_MPI_DO1":h::inner_telegrapher?"HYP3D_MPI_IT1":h::smooth_gauge_blend&&direct_chi?"HYP3D_MPI_GD1":h::smooth_gauge_blend?"HYP3D_MPI_GW1":direct_chi?"HYP3D_MPI_AC1":direct_lapse?"HYP3D_MPI_AL1":puncture_chi_floor>0?"HYP3D_MPI_CF1":HYPERBOLIC_EXPERIMENTAL_TIMESTEP?"HYP3D_MPI_DT1":continuous_positive?"HYP3D_MPI_V11":spherical_overlap?"HYP3D_MPI_V10":evolved_overlap?"HYP3D_MPI_V9":core_subdivisions==2?"HYP3D_MPI_V8":inner_transition_logical?"HYP3D_MPI_V7":scri_donor_seven?"HYP3D_MPI_V6":scri_sampled_normal?"HYP3D_MPI_V5":scri_angular_dissipation?"HYP3D_MPI_V4":scri_angular_exchange?"HYP3D_MPI_V3":algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
 static_assert(!h::inner_telegrapher||(h::smooth_gauge_blend&&direct_chi&&direct_lapse),"IT1 requires smooth direct variables");
 static_assert(!h::smooth_gauge_blend||(HYPERBOLIC_EXPERIMENTAL_TIMESTEP&&continuous_positive&&((!direct_lapse&&puncture_chi_floor==0)||(direct_chi&&puncture_chi_floor==1e-8))),"Smooth weight requires GW1 log variables or GD1 direct variables with floors");
 constexpr const char*algebraic_scheme=algebraic_final_projection?"final_stage_standard":"none";
@@ -730,6 +731,10 @@ Diagnostic ReduceDiagnostic(Diagnostic q){
   static_assert(sizeof(q.total)==9*sizeof(Real),"diagnostic reduction layout");
   MPI_Allreduce(MPI_IN_PLACE,&q.total,9,MPI_ATHENA_REAL,MPI_SUM,MPI_COMM_WORLD);
   MPI_Allreduce(MPI_IN_PLACE,&q.exterior,9,MPI_ATHENA_REAL,MPI_SUM,MPI_COMM_WORLD);
+  if constexpr(h::zero_shift_restoration){
+    for(int k=0;k<3;++k)MPI_Allreduce(MPI_IN_PLACE,&q.fixed[k],9,MPI_ATHENA_REAL,MPI_SUM,MPI_COMM_WORLD);
+    MPI_Allreduce(MPI_IN_PLACE,q.gauge_max,5,MPI_ATHENA_REAL,MPI_MAX,MPI_COMM_WORLD);
+  }
   MPI_Allreduce(MPI_IN_PLACE,&q.min_chi,1,MPI_ATHENA_REAL,MPI_MIN,MPI_COMM_WORLD);
   MPI_Allreduce(MPI_IN_PLACE,&q.min_lapse,1,MPI_ATHENA_REAL,MPI_MIN,MPI_COMM_WORLD);
   for(Real*v:{&q.max_determinant_residual,&q.max_tracefree_residual,&q.max_state_deviation})
@@ -863,7 +868,9 @@ int main(int argc,char**argv){
     std::ofstream history;
     CollectiveLocal([&]{if(e.rank==0){
       history.open(output+".history.csv");history<<std::setprecision(17)
-        <<"t,t_over_M,steps,min_chi,min_lapse,state_deviation,H_L2,M_L2,M_physical_L2,Theta_L2,Z_L2,H_exterior_L2,M_exterior_L2,exterior_cutoff,horizon_found,horizon_radius,horizon_areal_radius,horizon_mass,horizon_expansion_rms,horizon_trial_radius,horizon_trial_expansion_rms,horizon_complete_surface,horizon_iterations,null_surface,null_ghost,pole_max,clock_max,cfl_max,wall_seconds,determinant_residual,tracefree_residual,Mr_L2,Mr_exterior_L2,Theta_exterior_L2,Zr_L2,Zr_exterior_L2,horizon_irreducible_mass\n";
+        <<"t,t_over_M,steps,min_chi,min_lapse,state_deviation,H_L2,M_L2,M_physical_L2,Theta_L2,Z_L2,H_exterior_L2,M_exterior_L2,exterior_cutoff,horizon_found,horizon_radius,horizon_areal_radius,horizon_mass,horizon_expansion_rms,horizon_trial_radius,horizon_trial_expansion_rms,horizon_complete_surface,horizon_iterations,null_surface,null_ghost,pole_max,clock_max,cfl_max,wall_seconds,determinant_residual,tracefree_residual,Mr_L2,Mr_exterior_L2,Theta_exterior_L2,Zr_L2,Zr_exterior_L2,horizon_irreducible_mass";
+      if constexpr(h::zero_shift_restoration)history<<",H_fixed012_L2,M_fixed012_L2,Mr_fixed012_L2,H_fixed016_L2,M_fixed016_L2,Mr_fixed016_L2,H_fixed025_L2,M_fixed025_L2,Mr_fixed025_L2,shift_deviation_max,shift_deviation_gradient_max,D_max,D_gradient_max,D_minus_Lambda_max";
+      history<<'\n';
       history.flush();if(!history)throw std::runtime_error("history open/header write failed");
     }});
     Diagnostic diagnostic{};bool diagnostic_valid=false;Real diagnostic_time=nan;
@@ -919,7 +926,12 @@ int main(int argc,char**argv){
           <<','<<Norm(diagnostic.total.mr2,diagnostic.total.volume)<<','<<Norm(diagnostic.exterior.mr2,diagnostic.exterior.volume)
           <<','<<Norm(diagnostic.exterior.theta2,diagnostic.exterior.volume)
           <<','<<Norm(diagnostic.total.zr2,diagnostic.total.volume)<<','<<Norm(diagnostic.exterior.zr2,diagnostic.exterior.volume)
-          <<','<<horizon_irreducible_mass<<'\n';
+          <<','<<horizon_irreducible_mass;
+        if constexpr(h::zero_shift_restoration){
+          for(const auto&f:diagnostic.fixed)history<<','<<Norm(f.h2,f.volume)<<','<<Norm(f.m2,f.volume)<<','<<Norm(f.mr2,f.volume);
+          for(Real v:diagnostic.gauge_max)history<<','<<v;
+        }
+        history<<'\n';
         history.flush();if(!history)throw std::runtime_error("history append failed");
         std::cout<<"t="<<e.time<<" steps="<<e.steps<<" min_alpha="<<diagnostic.min_lapse<<" H="<<Norm(diagnostic.total.h2,diagnostic.total.volume)<<" horizon="<<horizon_found<<" seconds="<<elapsed()<<std::endl;
       }});
@@ -1028,7 +1040,8 @@ int main(int argc,char**argv){
         <<",\"scri_first6\":"<<(cubed_sphere::scri_first6?"true":"false")
         <<",\"native_initialization_tolerance\":"<<(native_wormhole?2e-13:0)
         <<",\"restoring_collar_begin\":"<<(h::wide_restoring_collar?.7:.8)
-        <<",\"restoring_collar_end\":0.9,\"restoring_coefficient\":4"
+        <<",\"restoring_collar_end\":0.9,\"restoring_coefficient\":"<<(h::zero_shift_restoration?0:4)
+        <<",\"zero_shift_restoration\":"<<(h::zero_shift_restoration?"true":"false")
         <<",\"native_initializer_cached_radii\":"<<initializer_cached_radii
         <<",\"bulk_dissipation\":"<<JsonString(h::CompositeDissipation::consistent?"block_energy_ko10":"block_energy_ko8")
         <<",\"inner_gauge\":"<<JsonString(h::shared_restoration?"shared_restoration_r020_056_it1_damping_v1":h::short_inner_gauge?"direct_outer_r020_056_it1_damping_v1":h::late_inner_gauge?"direct_outer_r040_090_it1_damping_v1":h::restore_inner_damping?"direct_outer_r020_090_it1_damping_v1":h::direct_outer?"telegrapher_direct_outer_r020_090_v1":h::inner_telegrapher?"telegrapher_b99e27f_M1over3_r020_056_v1":"donor")

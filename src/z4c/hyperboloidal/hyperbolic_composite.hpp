@@ -283,7 +283,7 @@ class HyperbolicComposite {
       const Real speed=std::sqrt(u.chi.value*q),speed_t=(rate.chi*q+u.chi.value*qdot)/(2*speed);
       const Real mu=ShiftCoefficients(Real(1),Real(1),u.chi.value).mu;
       for(int a=0;a<3;++a){Real regular=-x[a],restoring_limit=0;
-        for(int b=0;b<3;++b){regular+=u.beta.value[b]*u.beta.d[b][a];restoring_limit+=4*x[b]*sample.d[22+a][b];}
+        for(int b=0;b<3;++b){regular+=u.beta.value[b]*u.beta.d[b][a];if constexpr(!zero_shift_restoration) restoring_limit+=4*x[b]*sample.d[22+a][b];}
         const Real target=-speed_t*x[a];
         scri.values[p*nf+25+a]=(target-regular-restoring_limit)/mu;
         compatibility_max=std::max(compatibility_max,std::abs(regular+restoring_limit+mu*scri.values[p*nf+25+a]-target));

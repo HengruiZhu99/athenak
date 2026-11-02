@@ -2,6 +2,8 @@
 #include <cmath>
 #include <iomanip>
 #include <iostream>
+#include <fstream>
+#include <cstdlib>
 #include <limits>
 #include <stdexcept>
 #include "z4c/hyperboloidal/hyperbolic_scri_device.hpp"
@@ -57,6 +59,35 @@ static Real CheckTraceResponse(const Model&model,const V&projected,const V&q,
   }
   Require(change>1e-9,"fixture does not exercise moving-normal dependent D");return error;
 }
+// Independent absolute zero-restoration closure oracle, using actual geometric
+// rates (including Q/penalties) and nonzero physical shift gradients.
+static void CheckZeroTrace(const Model&model,const V&projected,const V&rate,const V&trace){
+  if constexpr(!h::zero_shift_restoration)return;
+  const auto padded=model.ActivePadded(model.state);Real error=0,null_rate=0,old_limit=0,geometry_rate=0;
+  for(size_t p=0;p<model.scri.rows.size();++p){
+    const auto*x=model.scri.rows[p].geometry.x;
+    const auto sample=model.scri.Sample(p,padded,projected,31);
+    const auto u=Model::Jet(x,sample.value,sample.d,sample.dd);const auto g=h::Geometry(u.metric);
+    Real invn[3]{},q=0,qdot=0;
+    for(int i=0;i<3;++i)for(int j=0;j<3;++j)invn[i]+=g.inverse[i][j]*x[j];
+    for(int i=0;i<3;++i)q+=x[i]*invn[i];
+    for(int t=0;t<6;++t){int i=Model::ti[t],j=Model::tj[t];qdot-=(i==j?1:2)*invn[i]*rate[31*p+1+t]*invn[j];}
+    const Real speed=std::sqrt(u.chi.value*q),sdot=(rate[31*p]*q+u.chi.value*qdot)/(2*speed);
+    Real beta_normal=0,beta_normal_rate=0;
+    for(int i=0;i<3;++i){Real adv=0,old=0;
+      for(int j=0;j<3;++j){adv+=u.beta.value[j]*u.beta.d[j][i];old+=4*x[j]*sample.d[22+i][j];}
+      const Real beta_rate=adv-x[i]+1.5*u.chi.value*trace[31*p+25+i];
+      error=std::max(error,std::abs(beta_rate+sdot*x[i]));old_limit=std::max(old_limit,std::abs(old));
+      beta_normal+=x[i]*u.beta.value[i];beta_normal_rate+=x[i]*beta_rate;
+    }
+    null_rate=std::max(null_rate,std::abs(2*beta_normal*beta_normal_rate-rate[31*p]*q-u.chi.value*qdot));
+    geometry_rate=std::max(geometry_rate,std::abs(sdot));
+  }
+  Require(error<3e-11&&null_rate<3e-11,"zero-restoration absolute/differentiated null compatibility failed");
+  Require(old_limit>1e-8&&geometry_rate>1e-8,"zero-restoration fixture is trivial");
+  std::cout<<"zero_absolute_trace_error="<<error<<" differentiated_null_error="<<null_rate
+           <<" removed_limit_nonzero="<<old_limit<<" geometry_speed_rate="<<geometry_rate<<'\n';
+}
 static void DeviceChecks(Model&model,const V&q,const V*cpu_expected=nullptr,const V*cpu_trace=nullptr){
   const int total=model.scri.rows.size(),split=total/2+7;const Real dt=.0001;
   const auto projected=model.scri.values;const auto active=Upload(model.state),surface=Upload(projected);
@@ -73,6 +104,7 @@ static void DeviceChecks(Model&model,const V&q,const V*cpu_expected=nullptr,cons
   const auto rate=Upload(q);const auto summary=full.Evaluate(active,surface,dt,rate);
   Require(summary.bad_rows==0&&summary.compatibility<2e-12,"additive native closure failed");
   const auto actual=Download(full.LocalRHS()),trace=Download(full.LocalSurface());
+  CheckZeroTrace(model,projected,actual,trace);
   const Real additive_error=Compare(expected,actual),trace_error=CheckTraceResponse(model,projected,q,baseline_trace,trace);
   Require(additive_error<2e-13&&trace_error<3e-12,"additive rate or dependent-D response incorrect");
   const V qleft(q.begin(),q.begin()+31*split),qright(q.begin()+31*split,q.end());
@@ -104,8 +136,8 @@ static void PlanChecks(){
   Model implicit_off(mesh,false,true),explicit_off(mesh,false,true,0),enabled(mesh,false,true,.3);
   Require(!implicit_off.angular_plan&&!explicit_off.angular_plan&&enabled.angular_plan,
           "angular plan construction does not respect zero-off setting");
-  const auto shared=enabled;
-  Require(shared.angular_plan==enabled.angular_plan,"copy did not retain immutable shared angular plan");
+  const auto shared=enabled.angular_plan;
+  Require(shared==enabled.angular_plan,"copy did not retain immutable shared angular plan");
   const Real dt=.0001;
   for(bool perturb:{false,true}){
     Seed(implicit_off,perturb);Seed(explicit_off,perturb);Seed(enabled,perturb);
@@ -147,6 +179,10 @@ static void PlanChecks(){
 }
 int main(int argc,char**argv){
   Kokkos::initialize(argc,argv);int result=0;
+  const char*local_rank=std::getenv("MPI_LOCALRANKID");
+  const std::string rank=local_rank?local_rank:"0";
+  const std::string report=argc==2?std::string(argv[1])+".rank"+rank+".json":"";
+  if(!report.empty()&&std::ifstream(report).good()){Kokkos::finalize();return 2;}
   try{
     std::cout<<std::setprecision(17)<<"backend="<<Kokkos::DefaultExecutionSpace::name()<<'\n';
     Model model(cubed_sphere::CompositeMesh(.125,{.45,.75,1},1,6,3),false,true);
@@ -157,5 +193,11 @@ int main(int argc,char**argv){
     PlanChecks();
     std::cout<<"Optional additive scri closure checks passed\n";
   }catch(const std::exception&e){std::cerr<<e.what()<<'\n';result=1;}
+  if(!report.empty()){
+    std::ofstream out(report);out<<"{\"passed\":"<<(result==0?"true":"false")
+      <<",\"backend\":\""<<Kokkos::DefaultExecutionSpace::name()<<"\",\"rank\":"<<rank
+      <<",\"zero_shift_restoration\":"<<(h::zero_shift_restoration?"true":"false")<<"}\n";
+    if(!out)result=1;
+  }
   Kokkos::finalize();return result;
 }

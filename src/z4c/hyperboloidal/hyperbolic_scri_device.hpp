@@ -264,7 +264,7 @@ class HyperbolicScriDevice {
       for(int a=0;a<3;++a) {
         Real regular=-x[a],restoring_limit=0;
         for(int b=0;b<3;++b) {
-          regular+=u.beta.value[b]*u.beta.d[b][a];restoring_limit+=4*x[b]*shift_derivative[b][a];
+          regular+=u.beta.value[b]*u.beta.d[b][a];if constexpr(!zero_shift_restoration) restoring_limit+=4*x[b]*shift_derivative[b][a];
         }
         const Real target=-speed_t*x[a];
         surface(nf*local+25+a)=(target-regular-restoring_limit)/mu;
