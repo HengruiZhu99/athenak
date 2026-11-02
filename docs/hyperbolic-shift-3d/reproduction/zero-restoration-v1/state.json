@@ -1,5 +1,5 @@
 {
-  "status": "build_started_attempt02",
+  "status": "boundary_audit_submitted",
   "build_pid": 2816405,
   "build_host": "aurora-uan-0010",
   "source_commit": "10a0cc40a1e8f0af5f5440d63c22afee40699c4c",
@@ -13,5 +13,24 @@
     "log": "zero-restoration-build.stdout.log",
     "reason": "Required root argument omitted; shell exited before module/compiler/build."
   },
-  "build_log": "zero-restoration-build-attempt02.stdout.log"
+  "build_log": "zero-restoration-build-attempt02.stdout.log",
+  "current_submission": {
+    "job_id": "9033442.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "submitted": 1793651426.0522103,
+    "plan": "campaigns/zero-restoration-v1-boundary-audit/plan.json",
+    "plan_sha256": "c3c98f00d353ee91426656ae315502c4f5a4c23c06d586a75a3023bc1820798c",
+    "source_manifest_sha256": "071e33a574c9ee892d1310ba7e8dd816ab1f1e21e8a5f1d62dd608b6f1a22555",
+    "resources": {
+      "queue": "debug",
+      "account": "CompactBinaryMerger",
+      "nodes": 1,
+      "ranks": 12,
+      "ranks_per_node": 12,
+      "walltime": "00:20:00"
+    }
+  },
+  "science_sha256": "e70b4643e3d8b7bbafd7867c1b479682ea105bc9d4679247927c8c9b94485829",
+  "build_status": "completed_and_frozen",
+  "updated": 1793651460.4788246,
+  "next": "Verify boundary audit then Z16 smoke, fresh N16 to10M, Z24 smoke and fresh N24 to10M; original native A slice, unchanged matched settings. Healthy verified continuations automatic."
 }
