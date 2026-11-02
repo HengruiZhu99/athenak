@@ -1,0 +1,54 @@
+{
+  "cutoff": 0.063,
+  "time": 0,
+  "baseline": {
+    "path": "docs/hyperbolic-shift-3d/reproduction/restored-wide-smooth-v1/initial-radial.json",
+    "sha256": "f351ad488dab7f463b9bf3b15129bbc7cc5fe1ce617452c7e521f775999697f5",
+    "norms": {
+      "total": {
+        "volume": 4.19060606246132,
+        "H_L2": 0.026254323578675846,
+        "M_L2": 0.01923136148295565,
+        "Mr_L2": 0.019482632682507998,
+        "Theta_L2": 0,
+        "Zr_L2": 0
+      },
+      "exterior": {
+        "volume": 4.1895809062113205,
+        "H_L2": 0.014332669633058261,
+        "M_L2": 0.019233714217629476,
+        "Mr_L2": 0.01948501615730723,
+        "Theta_L2": 0,
+        "Zr_L2": 0
+      }
+    }
+  },
+  "six_shells": {
+    "path": "docs/hyperbolic-shift-3d/reproduction/restored-six-shells-v1/checks/initial-radial.json",
+    "sha256": "98c97ad8d503b9f76a39930cf46478c2dc6db5e57337fd34e775c1f267fcca70",
+    "norms": {
+      "total": {
+        "volume": 4.191145293822592,
+        "H_L2": 0.02203072729274425,
+        "M_L2": 0.0012750628792742719,
+        "Mr_L2": 0.0012878854244639728,
+        "Theta_L2": 0,
+        "Zr_L2": 0
+      },
+      "exterior": {
+        "volume": 4.190120137572591,
+        "H_L2": 0.0012252473699715604,
+        "M_L2": 0.0012752188483987179,
+        "Mr_L2": 0.0012880429620766704,
+        "Theta_L2": 0,
+        "Zr_L2": 0
+      }
+    }
+  },
+  "percent_changes": {
+    "H_L2": -91.45136669343489,
+    "M_L2": -93.36987732078362,
+    "Mr_L2": -93.38957200918907
+  },
+  "qualification": "Native common-cutoff initial data only; radial shell refinement with added interfaces, not uniform3D resolution or evolved convergence."
+}
