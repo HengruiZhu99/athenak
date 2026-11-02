@@ -21,7 +21,7 @@ JOB_NAME = 'hyper-scri-3d'
 ACCOUNT = 'CompactBinaryMerger'
 CPU_BIND = '1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100'
 FIXED = dict(queue='debug', account=ACCOUNT, nodes=1, ranks=12, ranks_per_node=12)
-PHASES = {'preflight', 'stability', 'convergence', 'resolution_control', 'timestep_experiment', 'direct_variable_resolution', 'candidate_history_replay', 'gauge_blend_comparison', 'smooth_gauge_continuation', 'smooth_direct_evolution', 'inner_telegrapher_evolution', 'direct_outer_evolution', 'damping_ablation_evolution', 'late_gauge_evolution', 'short_gauge_evolution'}
+PHASES = {'native_transition_evolution', 'preflight', 'stability', 'convergence', 'resolution_control', 'timestep_experiment', 'direct_variable_resolution', 'candidate_history_replay', 'gauge_blend_comparison', 'smooth_gauge_continuation', 'smooth_direct_evolution', 'inner_telegrapher_evolution', 'direct_outer_evolution', 'damping_ablation_evolution', 'late_gauge_evolution', 'short_gauge_evolution'}
 SHORT_GAUGE_TARGET = 'hyperbolic_shift_3d_mpi_short_gauge'
 SHORT_GAUGE_POLICIES = {16: 'n16_short_gauge_fresh_to10M',
                         24: 'n24_short_gauge_fresh_to10M_after_n16_review',
@@ -171,6 +171,10 @@ def validate_plan(root, plan):
             or len(plan.get('commands',[])) != 1
             or plan.get('native_exit_reserve_seconds') != 180):
         raise ValueError('Resolution campaign requires explicit N24/N32 matched-protocol policy')
+    native_transition = plan['phase'] == 'native_transition_evolution'
+    if native_transition:
+        from native_transition_campaign import validate_native_plan
+        validate_native_plan(root,plan)
     inner_telegrapher = plan['phase'] == 'inner_telegrapher_evolution'
     direct_outer = plan['phase'] == 'direct_outer_evolution'
     damping_ablation = plan['phase'] == 'damping_ablation_evolution'
@@ -235,6 +239,9 @@ def validate_plan(root, plan):
             elif case_n != n:
                 raise ValueError('Per-case resolution must equal plan.n outside resolution controls')
         local_path(root, command['executable'])
+        native_target = Path(command['executable']).name.startswith('hyperbolic_shift_3d_mpi_native_')
+        if native_target != native_transition:
+            raise ValueError('Native initializer target requires its independent bounded phase')
         argv = command.get('args')
         if not isinstance(argv, list) or not all(isinstance(x, str) for x in argv):
             raise ValueError('Command arguments must be an explicit list of strings')
@@ -259,7 +266,7 @@ def validate_plan(root, plan):
             if path not in preceding_artifacts:
                 raise ValueError('Generated inputs must be declared artifacts of an earlier case')
         if command['kind'] != 'check':
-            experimental = Path(command['executable']).name in {TIMESTEP_TARGET, CHI_FLOOR_TARGET, DIRECT_LAPSE_TARGET, DIRECT_CHI_LAPSE_TARGET, CANDIDATE_HISTORY_TARGET, SMOOTH_GAUGE_TARGET, SMOOTH_DIRECT_TARGET, INNER_TELEGRAPHER_TARGET, DIRECT_OUTER_TARGET, DAMPING_ABLATION_TARGET, LATE_GAUGE_TARGET, SHORT_GAUGE_TARGET}
+            experimental = native_target or Path(command['executable']).name in {TIMESTEP_TARGET, CHI_FLOOR_TARGET, DIRECT_LAPSE_TARGET, DIRECT_CHI_LAPSE_TARGET, CANDIDATE_HISTORY_TARGET, SMOOTH_GAUGE_TARGET, SMOOTH_DIRECT_TARGET, INNER_TELEGRAPHER_TARGET, DIRECT_OUTER_TARGET, DAMPING_ABLATION_TARGET, LATE_GAUGE_TARGET, SHORT_GAUGE_TARGET}
             if (Path(command['executable']).name == SHORT_GAUGE_TARGET) != short_gauge:
                 raise ValueError('Short gauge executable/phase mismatch')
             if (Path(command['executable']).name == LATE_GAUGE_TARGET) != late_gauge:
@@ -282,9 +289,11 @@ def validate_plan(root, plan):
                 raise ValueError('Direct lapse executable requires its explicit retry policy')
             if (Path(command['executable']).name == DIRECT_CHI_LAPSE_TARGET) != (plan.get('experimental_policy') == 'n16_direct_chi_lapse_retry_to_20M' or (refined and plan['campaign_stage']=='AC1_to20M')):
                 raise ValueError('Direct chi/lapse executable requires its explicit retry policy')
-            if experimental != (plan['phase'] in ['timestep_experiment','direct_variable_resolution','candidate_history_replay','gauge_blend_comparison','smooth_gauge_continuation', 'smooth_direct_evolution', 'inner_telegrapher_evolution', 'direct_outer_evolution', 'damping_ablation_evolution', 'late_gauge_evolution', 'short_gauge_evolution']):
+            if experimental != (plan['phase'] in ['native_transition_evolution','timestep_experiment','direct_variable_resolution','candidate_history_replay','gauge_blend_comparison','smooth_gauge_continuation', 'smooth_direct_evolution', 'inner_telegrapher_evolution', 'direct_outer_evolution', 'damping_ablation_evolution', 'late_gauge_evolution', 'short_gauge_evolution']):
                 raise ValueError('Experimental target requires its own explicit phase')
-            if smooth_direct:
+            if native_transition:
+                pass  # Full argument/input/check validation above, including the fresh native pgen.
+            elif smooth_direct:
                 fresh = plan['segment'] == 1
                 if (command['kind'] != 'puncture' or len(argv) != 13
                         or float(argv[3]) != (10/3 if inner_telegrapher or direct_outer or damping_ablation or late_gauge or short_gauge else 20/3) or float(argv[4]) != .0005*16/n
@@ -426,6 +435,9 @@ def short_gauge_accuracy_review(root,plan):
 
 def validate_admission(root, plan, source_digest, binary_hashes):
     """Admissions are reviewed evidence, never inferred from a process exit code."""
+    if plan['phase']=='native_transition_evolution':
+        from native_transition_campaign import validate_science_binding
+        return validate_science_binding(root,plan,source_digest,binary_hashes)
     if plan['phase']=='short_gauge_evolution' and plan['n']==24:
         review=short_gauge_accuracy_review(root,plan)
         if (review['source_manifest_sha256']!=source_digest or not binary_hashes
@@ -584,7 +596,8 @@ def bind(root, relative, manifest):
                    source_manifest_sha256=source_sha, binaries=binaries, inputs=inputs,
                    pbs_sha256=digest(pbs), admission=admission, resources=plan['resources'],
                    storage_at_bind=space, launcher={name:digest(Path(__file__).with_name(name))
-                             for name in ['control.py', 'worker.py', 'run_debug.pbs', 'storage.py']},
+                             for name in ['control.py', 'worker.py', 'run_debug.pbs', 'storage.py']
+                             + (['native_transition_campaign.py'] if plan['phase']=='native_transition_evolution' else [])},
                    allocation_seconds=allocation, worker_seconds=budget)
     atomic(path.with_name('binding.json'), binding)
     return binding
