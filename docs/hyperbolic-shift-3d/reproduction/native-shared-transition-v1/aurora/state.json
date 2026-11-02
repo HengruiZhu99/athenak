@@ -1,5 +1,5 @@
 {
-  "status": "corrected_c_evolution_submitted",
+  "status": "corrected_d_smoke_submitted",
   "build_attempt": 2,
   "remote_build_pid": 641035,
   "remote_host": "aurora-uan-0012",
@@ -106,7 +106,7 @@
       "local_artifacts_verified": true
     },
     "C": {
-      "status": "corrected_evolution_submitted",
+      "status": "completed_10M_verified_local_and_remote",
       "smoke_plan": "campaigns/n16-native-transition-ko-dependencies-v1-c-smoke-segment01/plan.json",
       "evolution_plan": "campaigns/n16-native-transition-ko-dependencies-v1-c-evolution-segment01/plan.json",
       "smoke_submission": {
@@ -157,12 +157,29 @@
           "ranks_per_node": 12,
           "walltime": "01:00:00"
         }
-      }
+      },
+      "checkpoint_sha256": "68da8cf6f560ec1e91eb5268e0b4d57c20df76c1b8a4a29353343223c0934689",
+      "local_artifacts_verified": true
     },
     "D": {
-      "status": "not_submitted",
-      "smoke_plan": "campaigns/n16-native-transition-v1-d-smoke-segment01/plan.json",
-      "evolution_plan": "campaigns/n16-native-transition-v1-d-evolution-segment01/plan.json"
+      "status": "corrected_smoke_submitted",
+      "smoke_plan": "campaigns/n16-native-transition-ko-dependencies-v1-d-smoke-segment01/plan.json",
+      "evolution_plan": "campaigns/n16-native-transition-v1-d-evolution-segment01/plan.json",
+      "smoke_submission": {
+        "job_id": "9032109.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+        "submitted": 1793606120.8591788,
+        "plan": "campaigns/n16-native-transition-ko-dependencies-v1-d-smoke-segment01/plan.json",
+        "plan_sha256": "ae7a022a31c228c19aa30ec2034190dfbea16e4d7d011210fb91a299fa75b2d3",
+        "source_manifest_sha256": "6d81b6803fe811d57a4789a8d10a60e920f7f56c48e4458f7ff50836c2dd611d",
+        "resources": {
+          "queue": "debug-scaling",
+          "account": "CompactBinaryMerger",
+          "nodes": 1,
+          "ranks": 12,
+          "ranks_per_node": 12,
+          "walltime": "01:00:00"
+        }
+      }
     },
     "E": {
       "status": "not_submitted",
@@ -170,15 +187,15 @@
       "evolution_plan": "campaigns/n16-native-transition-v1-e-evolution-segment01/plan.json"
     }
   },
-  "note": "Corrected C smoke9032033 admitted, all9artifacts locally verified, SERIAL/GPU parity <=1.35e-13. Fresh C10M now submitted; D/E pending. No old C binary or smoke checkpoint used.",
+  "note": "C completed10M, all5artifacts locally hash/length verified; D smoke9032109 active. Common-cutoff C H/M=.0165178658283/.0299467550359, slightly above A. No C continuation needed.",
   "parallel_authorization": "User permits debug-scaling up to five nodes. Existing plans remain one-node/debug; any multi-case allocation must preserve separate case admission/storage/resources and be explicitly implemented/tested.",
   "build_status": "completed_and_frozen",
-  "current_plan": "campaigns/n16-native-transition-ko-dependencies-v1-c-evolution-segment01/plan.json",
+  "current_plan": "campaigns/n16-native-transition-ko-dependencies-v1-d-smoke-segment01/plan.json",
   "submission": {
-    "job_id": "9032055.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
-    "submitted": 1793603808.986209,
-    "plan": "campaigns/n16-native-transition-ko-dependencies-v1-c-evolution-segment01/plan.json",
-    "plan_sha256": "2b9ac185cddddaa50919f51dd7076f5465518da7fcab1f0849bd9a24ec51b57c",
+    "job_id": "9032109.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "submitted": 1793606120.8591788,
+    "plan": "campaigns/n16-native-transition-ko-dependencies-v1-d-smoke-segment01/plan.json",
+    "plan_sha256": "ae7a022a31c228c19aa30ec2034190dfbea16e4d7d011210fb91a299fa75b2d3",
     "source_manifest_sha256": "6d81b6803fe811d57a4789a8d10a60e920f7f56c48e4458f7ff50836c2dd611d",
     "resources": {
       "queue": "debug-scaling",
