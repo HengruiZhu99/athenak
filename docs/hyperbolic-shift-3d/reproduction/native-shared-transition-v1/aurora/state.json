@@ -7,14 +7,14 @@
   "source_commit": "fd4652ff69d55ec973b61029b4e77609e49f0860",
   "source_manifest": "source-native-transition-v1-manifest.json",
   "source_manifest_sha256": "7bd61dc86efe172c73e6363e237b36cdb36160eddb986110b75f0c78a46f36f0",
-  "launcher_commit": "6d1f582e4beab213ff1657646d1f553ba9edbe9c",
-  "launcher": "launcher-native-transition-v1",
+  "launcher_commit": "d446f75c6505b47f26f8b4beabada722da423552",
+  "launcher": "launcher-native-transition-v2",
   "build": "build-sycl-mpi-native-transition-v1",
   "cases": {
     "A": {
       "status": "evolution_submitted",
       "smoke_plan": "campaigns/n16-native-transition-v1-a-smoke-segment01/plan.json",
-      "evolution_plan": "campaigns/n16-native-transition-v1-a-evolution-segment01/plan.json",
+      "evolution_plan": "campaigns/n16-native-transition-v2-a-evolution-segment01/plan.json",
       "smoke_submission": {
         "job_id": "9031714.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
         "submitted": 1793591277.3231485,
@@ -33,6 +33,21 @@
       "smoke_status": "passed_verified_local_and_remote",
       "smoke_parity": "a-smoke-parity.json",
       "evolution_submission": {
+        "job_id": "9031760.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+        "submitted": 1793592578.4993372,
+        "plan": "campaigns/n16-native-transition-v2-a-evolution-segment01/plan.json",
+        "plan_sha256": "c91f0ae67f647188f217002d43c9a8455493536ee7c5ce6abebb6245e6a5eb53",
+        "source_manifest_sha256": "7bd61dc86efe172c73e6363e237b36cdb36160eddb986110b75f0c78a46f36f0",
+        "resources": {
+          "queue": "debug-scaling",
+          "account": "CompactBinaryMerger",
+          "nodes": 1,
+          "ranks": 12,
+          "ranks_per_node": 12,
+          "walltime": "01:00:00"
+        }
+      },
+      "cancelled_submission": {
         "job_id": "9031739.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
         "submitted": 1793591932.7647283,
         "plan": "campaigns/n16-native-transition-v1-a-evolution-segment01/plan.json",
@@ -69,23 +84,31 @@
       "evolution_plan": "campaigns/n16-native-transition-v1-e-evolution-segment01/plan.json"
     }
   },
-  "note": "No plans yet generated/bound/submitted. Poll actual build PID/result before any retry. Attempt01 packaging failure preserved; same scientific source, missing support file added.",
-  "parallel_authorization": "User permits debug-scaling up to five nodes. Existing plans remain one-node/debug; any multi-case allocation must preserve separate case admission/storage/resources and be explicitly implemented/tested.",
+  "note": "Replacement fresh t0 run uses corrected launcher180s native exit reserve and authorized debug-scaling1node/12ranks. Original queued job9031739 never started and was cancelled with announcement; records retained. Scientific source,binaries,dt,floors,gauge unchanged.",
+  "parallel_authorization": "User permits debug-scaling up to five nodes. Current launcher supports one node/12 ranks on debug or debug-scaling; current case uses debug-scaling. Prioritize physics rather than additional orchestration.",
   "build_status": "completed_and_frozen",
-  "current_plan": "campaigns/n16-native-transition-v1-a-evolution-segment01/plan.json",
+  "current_plan": "campaigns/n16-native-transition-v2-a-evolution-segment01/plan.json",
   "submission": {
-    "job_id": "9031739.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
-    "submitted": 1793591932.7647283,
-    "plan": "campaigns/n16-native-transition-v1-a-evolution-segment01/plan.json",
-    "plan_sha256": "0926118fd24a73633d7d846db174bc46a6d9d43a3f058a1be8cc40dd1fe0f6fc",
+    "job_id": "9031760.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "submitted": 1793592578.4993372,
+    "plan": "campaigns/n16-native-transition-v2-a-evolution-segment01/plan.json",
+    "plan_sha256": "c91f0ae67f647188f217002d43c9a8455493536ee7c5ce6abebb6245e6a5eb53",
     "source_manifest_sha256": "7bd61dc86efe172c73e6363e237b36cdb36160eddb986110b75f0c78a46f36f0",
     "resources": {
-      "queue": "debug",
+      "queue": "debug-scaling",
       "account": "CompactBinaryMerger",
       "nodes": 1,
       "ranks": 12,
       "ranks_per_node": 12,
       "walltime": "01:00:00"
     }
+  },
+  "monitor": {
+    "id": "aurora-sg1-n32-to-10m",
+    "status": "ACTIVE",
+    "interval_minutes": 20,
+    "healthy_walltime_auto_continuation": true,
+    "latest_scheduler_state": "Q",
+    "latest_scheduler_comment": "Not Running: Node is in an ineligible state: offline"
   }
 }

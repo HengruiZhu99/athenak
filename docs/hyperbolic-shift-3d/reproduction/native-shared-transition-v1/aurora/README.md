@@ -7,7 +7,7 @@ not a resolution convergence demonstration. No long N24/N32 runs are authorized.
 The source package is exactly commit
 `fd4652ff69d55ec973b61029b4e77609e49f0860`, including pinned Kokkos
 `6739bc623081648af9e752b616d9671527922cbf`. The separate launcher comes from
-`6d1f582e4beab213ff1657646d1f553ba9edbe9c`. `package-provenance.json` binds every
+`d446f75c6505b47f26f8b4beabada722da423552` (launcher v2). `provenance.json` binds every
 launcher file and scientific manifest. The source manifest is
 `source-native-transition-v1-manifest.json`, SHA256
 `7bd61dc86efe172c73e6363e237b36cdb36160eddb986110b75f0c78a46f36f0`.
@@ -41,15 +41,15 @@ by its fresh puncture evolution to10M. Run cases sequentially A→B→C→D→E.
 The helper only creates plans and verifies; it never submits. For each case:
 
 ```sh
-python3.11 launcher-native-transition-v1/native_transition_campaign.py plan --root "$PWD" --variant A --purpose smoke
-python3.11 launcher-native-transition-v1/control.py bind --root "$PWD" --plan campaigns/n16-native-transition-v1-a-smoke-segment01/plan.json --source-manifest source-native-transition-v1-manifest.json
+python3.11 launcher-native-transition-v2/native_transition_campaign.py plan --root "$PWD" --variant A --purpose smoke
+python3.11 launcher-native-transition-v2/control.py bind --root "$PWD" --plan campaigns/n16-native-transition-v1-a-smoke-segment01/plan.json --source-manifest source-native-transition-v1-manifest.json
 qselect -u hzhu -q debug
 # Require no other user debug job, then submit once with control.py submit.
 ```
 
 Inspect saved submission/worker/native/scheduler state before every action. A
 queue or running state is not permission to submit another copy. Use
-CompactBinaryMerger/debug, one node,12 MPI ranks/GPU tiles. Smoke verification
+CompactBinaryMerger/debug or debug-scaling, one node,12 MPI ranks/GPU tiles. Smoke verification
 requires both cases completed and admitted. Only then prepare/bind/submit the
 same variant with `--purpose evolution`. All start fresh at t=0, direct chi/lapse,
 dt=.0005, physical lapse floor1e-10, positive chi floor1e-8 at r<.03, nonpositive
@@ -64,7 +64,7 @@ Healthy verification writes `checkpoint-verified.json`. Release only the matchin
 terminal root lock with `control.py collect --release-terminal-lock`. Generate
 the next same-case plan with `--segment NEXT --restart CHECKPOINT --sha256 HASH`;
 the helper includes any horizon-seed sidecar. Bind unchanged science and check
-all user debug jobs before submitting. Remote verification can precede local
+all user debug and debug-scaling jobs before submitting. Remote verification can precede local
 collection, but no purge can precede local length/SHA256 preservation.
 
 On numerical failure collect and localize it; never restart its failed state or
@@ -156,3 +156,12 @@ CaseA fresh10M evolution is now submitted as job9031739, plan
 It starts from native wormhole data at t=0, not from the smoke checkpoint. The
 smoke terminal lock was released after verification; both user debug queues
 were checked before submission. No long-time result yet.
+
+
+## Current replacement and automatic continuation
+
+Job9031739 was cancelled while still queued; it ran no evolution. The old worker selected30seconds rather than the configured180seconds for the new phase. Cancellation and terminal lock release are recorded in a-evolution-cancelled-before-start/. Launcher v2 fixes this and permits one-node debug-scaling. Its provenance is launcher-v2-provenance.json; use the v2 controller/helper for all further work. The helper intentionally still binds the unchanged `launcher-native-transition-v1/native-transition-science.json`. No scientific rebuild or parameter change occurred.
+
+Replacement job9031760 is submitted on debug-scaling with one node/12 ranks. Plan `campaigns/n16-native-transition-v2-a-evolution-segment01/plan.json`, SHA256 `c91f0ae67f647188f217002d43c9a8455493536ee7c5ce6abebb6245e6a5eb53`. It differs only in output prefix/queue; the corrected worker supplies2920seconds native time within the3100second command. Latest scheduler check: queued, node offline. Follow saved state/submissions before any action.
+
+The existing monitor is ACTIVE every20minutes and automatically submits healthy same-case checkpoint continuations until10M, then advances the authorized case matrix. Numerical failures require evidence preservation/localization and cannot resume a failed checkpoint. No further routine launcher tests are needed: prioritize actual evolution histories, common-cutoff regional errors and the high-order convergence objective. These five N16 attribution controls alone cannot demonstrate resolution convergence.
