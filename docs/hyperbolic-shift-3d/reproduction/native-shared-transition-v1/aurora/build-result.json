@@ -1,0 +1,61 @@
+{
+  "storage_before": {
+    "bytes": 2974841751,
+    "entries": 74171,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 500000000,
+    "planned_bytes": 1000000000,
+    "headroom_bytes": 525158249
+  },
+  "commands": [
+    {
+      "command": [
+        "cmake",
+        "-S",
+        "source-native-transition-v1",
+        "-B",
+        "build-sycl-mpi-native-transition-v1",
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DCMAKE_CXX_COMPILER=icpx",
+        "-DCMAKE_CXX_FLAGS=-fp-model=precise -fno-sycl-id-queries-fit-in-int",
+        "-DCMAKE_CXX_FLAGS_RELEASE=-O2",
+        "-DAthena_ENABLE_MPI=ON",
+        "-DAthena_SINGLE_PRECISION=OFF",
+        "-DAthena_ENABLE_HYPERBOLIC_SHIFT_3D_TESTS=ON",
+        "-DKokkos_ENABLE_SYCL=ON",
+        "-DKokkos_ENABLE_SERIAL=ON",
+        "-DKokkos_ARCH_INTEL_PVC=ON"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 31.534691005013883
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "build-sycl-mpi-native-transition-v1",
+        "-j64",
+        "hyperbolic_shift_3d_mpi_native_control",
+        "hyperbolic_shift_3d_mpi_native_shared",
+        "hyperbolic_shift_3d_mpi_native_control_ko10",
+        "hyperbolic_shift_3d_mpi_native_control_ko10_scri6",
+        "hyperbolic_shift_3d_mpi_native_shared_ko10_scri6",
+        "hyperbolic_shift_3d_checkpoint_constraints_native_control",
+        "hyperbolic_shift_3d_checkpoint_constraints_native_shared",
+        "hyperbolic_shift_3d_checkpoint_constraints_native_control_ko10",
+        "hyperbolic_shift_3d_checkpoint_constraints_native_control_ko10_scri6",
+        "hyperbolic_shift_3d_checkpoint_constraints_native_shared_ko10_scri6"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 799.3631741402205
+    }
+  ],
+  "storage_after": {
+    "bytes": 3148973629,
+    "entries": 76015
+  }
+}

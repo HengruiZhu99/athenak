@@ -116,3 +116,17 @@ Its own-candidate history plots do not replace the required common-cutoff
 endpoint radial reconstruction with each matching diagnostic executable. Four
 synthetic validation tests cover changed scientific settings, wrong scheduler
 state, out-of-range histories, missing smoke cases and physical disagreement.
+
+## First GPU submission
+
+Build attempt02 completed successfully; both configure/build commands returned0
+and all ten targets passed freeze checks. See build-result.json, provenance.json
+and native-transition-science.json for actual hashes. Footprint after build was
+3,148,973,629bytes. CaseA smoke job9031714 is submitted, plan
+`campaigns/n16-native-transition-v1-a-smoke-segment01/plan.json`, SHA256
+`f8ce85176041faa30396348adff831f32e2d3951a57c0bc403b9aae87d82177e`.
+No user debug/debug-scaling jobs were present before submission. Binding reserved
+217,285,583bytes outputs plus89,725,224bytes atomic space, leaving1.544GB headroom.
+Submission does not establish GPU correctness; native reports/checkpoints and
+SERIAL comparison remain to collect. See state.json/current remote state before
+any further action. Never submit this plan again.
