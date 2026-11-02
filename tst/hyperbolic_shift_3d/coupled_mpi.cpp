@@ -14,6 +14,11 @@
 #include "z4c/hyperboloidal/hyperbolic_sampled_normal_device.hpp"
 #include "z4c/hyperboloidal/algebraic_projection.hpp"
 #include "fixed_composite_mesh.hpp"
+#include "z4c/hyperboloidal/native_wormhole.hpp"
+#ifndef HYPERBOLIC_NATIVE_WORMHOLE
+#define HYPERBOLIC_NATIVE_WORMHOLE 0
+#endif
+constexpr bool native_wormhole=HYPERBOLIC_NATIVE_WORMHOLE;
 #include "z4c/hyperboloidal/sparse_stage_exchange.hpp"
 #include "z4c/hyperboloidal/measured_partition.hpp"
 #include "z4c/hyperboloidal/hyperbolic_mesh_plans.hpp"
@@ -108,7 +113,7 @@ static_assert(!scri_donor_seven||scri_sampled_normal,"direct radial candidate re
 static_assert(!spherical_overlap||(evolved_overlap==3&&core_subdivisions==2),"spherical overlap requires eight core blocks and three overlap cells");
 static_assert(!continuous_positive||(spherical_overlap&&core_subdivisions==2),"positive scheme requires continuous spherical-overlap mesh");
 static_assert(!coordinated_plans||(continuous_positive&&boundary_reuse&&sparse_stage&&!measured_partition),"coordinated plan target requires the equal-cell positive sparse formulation");
-constexpr const char*checkpoint_magic=h::CompositeDissipation::consistent?(h::shared_restoration?"HYP3D_MPI_ST2":"HYP3D_MPI_SG2"):h::shared_restoration?"HYP3D_MPI_ST1":h::short_inner_gauge?"HYP3D_MPI_SG1":h::late_inner_gauge?"HYP3D_MPI_LG1":h::restore_inner_damping?"HYP3D_MPI_DG1":h::direct_outer?"HYP3D_MPI_DO1":h::inner_telegrapher?"HYP3D_MPI_IT1":h::smooth_gauge_blend&&direct_chi?"HYP3D_MPI_GD1":h::smooth_gauge_blend?"HYP3D_MPI_GW1":direct_chi?"HYP3D_MPI_AC1":direct_lapse?"HYP3D_MPI_AL1":puncture_chi_floor>0?"HYP3D_MPI_CF1":HYPERBOLIC_EXPERIMENTAL_TIMESTEP?"HYP3D_MPI_DT1":continuous_positive?"HYP3D_MPI_V11":spherical_overlap?"HYP3D_MPI_V10":evolved_overlap?"HYP3D_MPI_V9":core_subdivisions==2?"HYP3D_MPI_V8":inner_transition_logical?"HYP3D_MPI_V7":scri_donor_seven?"HYP3D_MPI_V6":scri_sampled_normal?"HYP3D_MPI_V5":scri_angular_dissipation?"HYP3D_MPI_V4":scri_angular_exchange?"HYP3D_MPI_V3":algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
+constexpr const char*checkpoint_magic=native_wormhole?(h::CompositeDissipation::consistent?(h::shared_restoration?"HYP3D_MPI_NT2":"HYP3D_MPI_NI2"):(h::shared_restoration?"HYP3D_MPI_NT1":"HYP3D_MPI_NI1")):h::CompositeDissipation::consistent?(h::shared_restoration?"HYP3D_MPI_ST2":"HYP3D_MPI_SG2"):h::shared_restoration?"HYP3D_MPI_ST1":h::short_inner_gauge?"HYP3D_MPI_SG1":h::late_inner_gauge?"HYP3D_MPI_LG1":h::restore_inner_damping?"HYP3D_MPI_DG1":h::direct_outer?"HYP3D_MPI_DO1":h::inner_telegrapher?"HYP3D_MPI_IT1":h::smooth_gauge_blend&&direct_chi?"HYP3D_MPI_GD1":h::smooth_gauge_blend?"HYP3D_MPI_GW1":direct_chi?"HYP3D_MPI_AC1":direct_lapse?"HYP3D_MPI_AL1":puncture_chi_floor>0?"HYP3D_MPI_CF1":HYPERBOLIC_EXPERIMENTAL_TIMESTEP?"HYP3D_MPI_DT1":continuous_positive?"HYP3D_MPI_V11":spherical_overlap?"HYP3D_MPI_V10":evolved_overlap?"HYP3D_MPI_V9":core_subdivisions==2?"HYP3D_MPI_V8":inner_transition_logical?"HYP3D_MPI_V7":scri_donor_seven?"HYP3D_MPI_V6":scri_sampled_normal?"HYP3D_MPI_V5":scri_angular_dissipation?"HYP3D_MPI_V4":scri_angular_exchange?"HYP3D_MPI_V3":algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
 static_assert(!h::inner_telegrapher||(h::smooth_gauge_blend&&direct_chi&&direct_lapse),"IT1 requires smooth direct variables");
 static_assert(!h::smooth_gauge_blend||(HYPERBOLIC_EXPERIMENTAL_TIMESTEP&&continuous_positive&&((!direct_lapse&&puncture_chi_floor==0)||(direct_chi&&puncture_chi_floor==1e-8))),"Smooth weight requires GW1 log variables or GD1 direct variables with floors");
 constexpr const char*algebraic_scheme=algebraic_final_projection?"final_stage_standard":"none";
@@ -767,7 +772,8 @@ int main(int argc,char**argv){
        ||!std::isfinite(dt)||!std::isfinite(end)||!std::isfinite(wall)
        ||!std::isfinite(interval)||!std::isfinite(horizon_tolerance))
       throw std::invalid_argument("invalid resolution/kind/time parameters");
-    if(kind==2&&initial=="-"&&restart=="-")throw std::invalid_argument("puncture requires initial data or a bound checkpoint");
+    if(kind==2&&!native_wormhole&&initial=="-"&&restart=="-")throw std::invalid_argument("puncture requires initial data or a bound checkpoint");
+    if(native_wormhole&&kind==2&&initial!="-")throw std::invalid_argument("native puncture target does not read generated field files");
     if(initial!="-"&&restart!="-")throw std::invalid_argument("supply initial data or restart, not both");
     const auto started=std::chrono::steady_clock::now();
     std::unique_ptr<Evolution> evolution;
@@ -786,6 +792,7 @@ int main(int argc,char**argv){
     }}});
     MPI_Bcast(&e.plan_repartition_interval,1,MPI_INT,0,MPI_COMM_WORLD);
     std::string error,status="completed";
+    size_t initializer_cached_radii=0;
     CollectiveLocal([&]{if(e.rank==0){
       const auto parent=std::filesystem::path(output).parent_path();
       if(!parent.empty())std::filesystem::create_directories(parent);
@@ -793,7 +800,13 @@ int main(int argc,char**argv){
                             ".history.csv",".fastflow.horizon_summary_0.txt",
                             ".fastflow.horizon_shape_0.txt",".checkpoint.horizon-seed.txt"})
         if(std::filesystem::exists(output+suffix))throw std::runtime_error("refusing to overwrite result: "+output+suffix);
-      if(initial!="-"){std::ifstream in(initial);size_t count=0;in>>count;
+      if(native_wormhole&&kind==2&&restart=="-"){
+        h::NativeWormhole pgen;
+        for(int p=0;p<e.total;++p){const auto fields=pgen.Fields(e.Model().grid.geometry[p].x);
+          for(int f=0;f<31;++f)e.initial_state[31*p+f]=fields[f];}
+        initializer_cached_radii=pgen.CachedRadii();
+      }
+      else if(initial!="-"){std::ifstream in(initial);size_t count=0;in>>count;
         if(count!=e.initial_state.size())throw std::runtime_error("initial field count mismatch");
         for(auto&x:e.initial_state)if(!(in>>x)||!std::isfinite(x))throw std::runtime_error("invalid initial state");
         std::string trailing;if(in>>trailing)throw std::runtime_error("trailing initial data");}
@@ -802,6 +815,12 @@ int main(int argc,char**argv){
     }});
     MPI_Bcast(e.initial_state.data(),e.initial_state.size(),MPI_ATHENA_REAL,0,MPI_COMM_WORLD);
     CollectiveLocal([&]{e.Upload(e.initial_state);});
+    if(native_wormhole&&kind==2&&restart=="-")CollectiveLocal([&]{
+      const auto limit=h::NativeWormhole::ScriFields();
+      V initial_surface(31*e.surface_total);
+      for(int p=0;p<e.surface_total;++p)for(int f=0;f<31;++f)initial_surface[31*p+f]=limit[f];
+      e.CopyFromHost(initial_surface,e.surface);
+    });
     if(restart!="-")e.LoadCheckpoint(restart,kind,dt);
     if(e.time>end+1e-14)throw std::runtime_error("checkpoint later than requested end");
     const Real start_time=e.time;const uint64_t start_steps=e.steps;
@@ -1003,6 +1022,9 @@ int main(int argc,char**argv){
       std::ofstream report(output+".report.json.tmp");report<<std::setprecision(17)
         <<"{\"status\":"<<JsonString(status)<<",\"error\":"<<JsonString(error)<<",\"kind\":"<<JsonString(kind_name)
         <<",\"backend\":"<<JsonString(Kokkos::DefaultExecutionSpace::name())<<",\"mpi_size\":"<<e.size<<",\"n\":"<<n<<",\"cells\":"<<e.total
+        <<",\"initial_data_provider\":"<<JsonString(restart!="-"?"checkpoint":native_wormhole&&kind==2?"native_isotropic_wormhole_quadrature":initial!="-"?"external_fields":"builtin")
+        <<",\"native_initialization_tolerance\":"<<(native_wormhole?2e-13:0)
+        <<",\"native_initializer_cached_radii\":"<<initializer_cached_radii
         <<",\"bulk_dissipation\":"<<JsonString(h::CompositeDissipation::consistent?"block_energy_ko10":"block_energy_ko8")
         <<",\"inner_gauge\":"<<JsonString(h::shared_restoration?"shared_restoration_r020_056_it1_damping_v1":h::short_inner_gauge?"direct_outer_r020_056_it1_damping_v1":h::late_inner_gauge?"direct_outer_r040_090_it1_damping_v1":h::restore_inner_damping?"direct_outer_r020_090_it1_damping_v1":h::direct_outer?"telegrapher_direct_outer_r020_090_v1":h::inner_telegrapher?"telegrapher_b99e27f_M1over3_r020_056_v1":"donor")
         <<",\"gauge_blend\":"<<JsonString(h::smooth_gauge_blend?"smoothstep9_w_056_080":"donor_power8_w_056_080")

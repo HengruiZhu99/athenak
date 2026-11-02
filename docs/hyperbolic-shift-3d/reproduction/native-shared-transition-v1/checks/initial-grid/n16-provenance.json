@@ -1,0 +1,17 @@
+{
+  "checkpoint": "output/native-shared-transition/initial-n16/puncture.checkpoint",
+  "bytes": 79725224,
+  "sha256": "0137a404c0a25359cb6acb73e3d4616f6c28f32781080a7a5994fd40bc2d0085",
+  "command": [
+    "mpiexec",
+    "-n",
+    "1",
+    "build-native-shared-transition/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_checkpoint_constraints_native_control",
+    "16",
+    "output/native-shared-transition/initial-n16/puncture.checkpoint",
+    "0.0005",
+    ".063",
+    "docs/hyperbolic-shift-3d/reproduction/native-shared-transition-v1/checks/initial-grid/n16-radial.json",
+    "0,.03,.063,.13,.16,.18,.2,.3,.4,.45,.56,.6,.675,.7,.75,.775,.8,.9,.95,1"
+  ]
+}
