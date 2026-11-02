@@ -1,5 +1,5 @@
 {
-  "status": "n24_evolution_submitted",
+  "status": "closed_by_user",
   "build_pid": 2816405,
   "build_host": "aurora-uan-0010",
   "source_commit": "10a0cc40a1e8f0af5f5440d63c22afee40699c4c",
@@ -31,8 +31,8 @@
   },
   "science_sha256": "e70b4643e3d8b7bbafd7867c1b479682ea105bc9d4679247927c8c9b94485829",
   "build_status": "completed_and_frozen",
-  "updated": 1793653727.0734005,
-  "next": "Monitor existing fresh N24 job9033565, healthy admitted continuations only. N16 failed terminally and must never restart. No GPU smokes. Preserve and compare after N24 disposition.",
+  "updated": 1793654802.067467,
+  "next": "No further zero-restoration runs or controls. User selected retained restoration, broader collar and smoothed initial slice.",
   "boundary_audit_submission": {
     "job_id": "9033442.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
     "submitted": 1793651426.0522103,
@@ -72,6 +72,16 @@
     "error": "device scri projection failure at row 0 reason invalid scri metric",
     "checkpoint_admitted": false,
     "all_six_artifacts_locally_verified": true,
+    "terminal_lock_released": true,
+    "restart_forbidden": true
+  },
+  "monitor_deleted": true,
+  "n24_disposition": {
+    "status": "failed",
+    "error": "device scri projection failure at row 0 reason invalid scri metric",
+    "steps": 2021,
+    "checkpoint_admitted": false,
+    "all_seven_artifacts_locally_verified": true,
     "terminal_lock_released": true,
     "restart_forbidden": true
   }

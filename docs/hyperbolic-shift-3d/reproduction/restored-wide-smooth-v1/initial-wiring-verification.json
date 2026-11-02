@@ -1,0 +1,54 @@
+{
+  "passed": true,
+  "production_t0_matches_saved_smoothing_exterior_exactly": true,
+  "expected_report": {
+    "status": "completed",
+    "t": 0,
+    "steps": 0,
+    "checkpoint_schema": "HYP3D_MPI_NB1",
+    "checkpoint_admitted": true,
+    "native_initialization_profile": "polynomial_c6",
+    "native_initialization_start_M": 4,
+    "native_initialization_end_M": 12,
+    "restoring_collar_begin": 0.6,
+    "restoring_collar_end": 0.9,
+    "restoring_coefficient": 4,
+    "zero_shift_restoration": false,
+    "broad_smooth_a": true,
+    "scri_first6": false,
+    "bulk_dissipation": "block_energy_ko8"
+  },
+  "exterior_norms": {
+    "volume": 4.1895809062113205,
+    "H_L2": 0.014332669633058261,
+    "M_L2": 0.019233714217629476,
+    "Mr_L2": 0.01948501615730723,
+    "Theta_L2": 0,
+    "Zr_L2": 0
+  },
+  "files": {
+    "output/restored-wide-smooth/initial-check/state.report.json": {
+      "sha256": "f698f40905a743791d0cf4534bd58c30a24a84311e8ad765605881f2ca61b7a8",
+      "bytes": 7026
+    },
+    "output/restored-wide-smooth/initial-check/state.checkpoint": {
+      "sha256": "7044e3def486c4aab63935538cf6b35a17fed8e5b47cad23d921978ff43eee48",
+      "bytes": 79725224
+    },
+    "docs/hyperbolic-shift-3d/reproduction/initial-slicing-width-v1/poly6-4-12-n16.json": {
+      "sha256": "ebe45da7aca001d933615afb83af4ef649fb0b346024f83e8d226b0c79fc7895",
+      "bytes": 59537
+    },
+    "build-restored-wide-smooth-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_control_broad_smooth": {
+      "sha256": "01e667050317395da3515a6a72e538560a222bb1c46089b62c37f0a595ccb586",
+      "bytes": 1729152
+    },
+    "build-restored-wide-smooth-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_checkpoint_constraints_native_control_broad_smooth": {
+      "sha256": "fd3ef1059b3048309e6b4b5d84ae670a7d3cd7717bdfcc1eec0e5fcd80a6a709",
+      "bytes": 1730776
+    }
+  },
+  "backend": "SERIAL",
+  "mpi_ranks": 1,
+  "evolved_steps": 0
+}
