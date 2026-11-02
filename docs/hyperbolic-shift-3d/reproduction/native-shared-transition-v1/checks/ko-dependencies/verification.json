@@ -1,0 +1,45 @@
+{
+  "scope": "Two-step N16 production KO10 MPI partition regression; not long accuracy or convergence.",
+  "old_serial12_vs_serial1": 0.0005084100532283762,
+  "old_serial12_vs_gpu12": 9.187444686215566e-14,
+  "old_serial12": {
+    "bytes": 79725224,
+    "sha256": "1d31de1aef7b1983e6b947ea8cff6548d4dd23144246096ad23fb0a504e4a42e"
+  },
+  "cases": [
+    {
+      "kind": "minkowski",
+      "reference": {
+        "bytes": 79725224,
+        "sha256": "bbcf62ded85ba2f9b224368c4597dbfee7201eedb87ff4ef2ec8ee4f3981204d"
+      },
+      "fixed_12_rank": {
+        "bytes": 79725224,
+        "sha256": "bbcf62ded85ba2f9b224368c4597dbfee7201eedb87ff4ef2ec8ee4f3981204d"
+      },
+      "old_gpu_12_rank": {
+        "bytes": 79725224,
+        "sha256": "26ff2f7dda6dfdd1461aebc20e956e6aa10ffd5a333d45cfcbb3cba1a64d4d8e"
+      },
+      "fixed_checkpoint_byte_identical": true,
+      "old_gpu_difference": 0.0005084100532275494
+    },
+    {
+      "kind": "puncture",
+      "reference": {
+        "bytes": 79725224,
+        "sha256": "fb3f1212a2ae9744204d9060543584b133ccd3e9833c0e7eb4245322c777aeb2"
+      },
+      "fixed_12_rank": {
+        "bytes": 79725224,
+        "sha256": "fb3f1212a2ae9744204d9060543584b133ccd3e9833c0e7eb4245322c777aeb2"
+      },
+      "old_gpu_12_rank": {
+        "bytes": 79725224,
+        "sha256": "af44bf4aadd18b139365a45ab4cfb05a3620710c48b3474b6a7a9bc48045da38"
+      },
+      "fixed_checkpoint_byte_identical": true,
+      "old_gpu_difference": 0.00022210815131136147
+    }
+  ]
+}

@@ -51,8 +51,10 @@ class HyperbolicCompositeExchange {
     if(selective)for(int p=0;p<total;++p)if(selected(e.grid.cells[p].block)){
       needed.insert(p);
       // Cross-leaf Cartesian KO reads active values beyond the three FD ghosts.
+      // B_p^T W B_p reaches p cells in either direction: KO10 needs five,
+      // including the fifth donor when that point belongs to another rank.
       if(e.grid.mesh.continuous_cartesian_core&&e.grid.mesh.blocks[e.grid.cells[p].block].face<0)
-        for(int a=0;a<3;++a)for(int d=-4;d<=4;++d){const int q=e.grid.ShiftActive(p,a,d);if(q>=0)needed.insert(q);}
+        for(int a=0;a<3;++a)for(int d=-CompositeDissipation::order;d<=CompositeDissipation::order;++d){const int q=e.grid.ShiftActive(p,a,d);if(q>=0)needed.insert(q);}
     }
     std::vector<Halo> hs;std::vector<Entry> es;std::vector<Boundary> bs;
     std::map<std::array<Real,3>,int> boundary_ids;
