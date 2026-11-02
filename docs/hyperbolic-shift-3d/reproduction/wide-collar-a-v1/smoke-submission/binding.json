@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "plan_sha256": "9b3d9326e9e08b6277d82b6cdd06c4127b6803f98e5fc6ed35e954bb3e936ab7",
+  "source_manifest": "source-wide-collar-a-v1-manifest.json",
+  "source_manifest_sha256": "2d2f514c89bc9819fe5b3f09d5f86fb9de50162e814c114bcd4e9f754bf6aa25",
+  "binaries": {
+    "build-sycl-mpi-wide-collar-a-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_control_wide_collar": "6c22cd7a388ea138d5a0107ab8d2888a8dd6c735dde68a93f0a6b1ba40c1cb93"
+  },
+  "inputs": {
+    "launcher-wide-collar-a-v1/native-transition-science.json": "36fd12f6606fb04ed6cfa8e760486daa6f483989c3b059418a1724c887ff08ec"
+  },
+  "pbs_sha256": "4a698f4e3863005313718cac33c0ce1ac162cc6104f11350be6969d13a6fb356",
+  "admission": {
+    "path": "launcher-wide-collar-a-v1/native-transition-science.json",
+    "sha256": "36fd12f6606fb04ed6cfa8e760486daa6f483989c3b059418a1724c887ff08ec"
+  },
+  "resources": {
+    "queue": "debug-scaling",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "01:00:00"
+  },
+  "storage_at_bind": {
+    "bytes": 4066795564,
+    "entries": 84357,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 89725224,
+    "planned_bytes": 217285583,
+    "headroom_bytes": 626193629
+  },
+  "launcher": {
+    "control.py": "70c5d4aa2d6d4ebbee1878f227960cc75a385f649ab1761d195468c5c6e97794",
+    "worker.py": "a1c483641ccf3ac1cc657eb90d6076fc286d2e4a8e2d40580a8f6ecd2a2b4fb8",
+    "run_debug.pbs": "1d5df790cf6c8cdc96e9d330b9b337ce755b30e057959586bcd661dc9ce885a6",
+    "storage.py": "fdcf2abc2533b8fed91220d9c18d8b9d723660820949a72e956fb9c8866afd39",
+    "native_transition_campaign.py": "ecd9152e15dcf58baf1a2dc5a56865e47867b4383e5728562863160de58de644"
+  },
+  "allocation_seconds": 3600,
+  "worker_seconds": 3200
+}

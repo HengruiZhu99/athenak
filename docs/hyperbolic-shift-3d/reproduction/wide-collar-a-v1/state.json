@@ -1,0 +1,59 @@
+{
+  "status": "smoke_submitted",
+  "build_pid": 2327861,
+  "host": "aurora-uan-0010",
+  "started": 1793645563.10093,
+  "source_commit": "6894a0e322146bf479e5aab5296fda0a0d012273",
+  "launcher": "launcher-wide-collar-a-v1",
+  "source_manifest": "source-wide-collar-a-v1-manifest.json",
+  "capacity": {
+    "bytes": 4328632320,
+    "entries": 82502,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 100000000,
+    "planned_bytes": 400000000,
+    "headroom_bytes": 171367680
+  },
+  "scope": "Fresh N16 A wider collar .7-.9, original initial slice, KO8/originalscri, dt.0005 to10M after short GPU parity; no zero-restoration trial.",
+  "build_status": "completed_and_frozen",
+  "current_plan": "campaigns/n16-wide-collar-a-v1-a-smoke-segment01/plan.json",
+  "submission": {
+    "job_id": "9033185.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "submitted": 1793646019.0163188,
+    "plan": "campaigns/n16-wide-collar-a-v1-a-smoke-segment01/plan.json",
+    "plan_sha256": "9b3d9326e9e08b6277d82b6cdd06c4127b6803f98e5fc6ed35e954bb3e936ab7",
+    "source_manifest_sha256": "2d2f514c89bc9819fe5b3f09d5f86fb9de50162e814c114bcd4e9f754bf6aa25",
+    "resources": {
+      "queue": "debug-scaling",
+      "account": "CompactBinaryMerger",
+      "nodes": 1,
+      "ranks": 12,
+      "ranks_per_node": 12,
+      "walltime": "01:00:00"
+    }
+  },
+  "science_sha256": "36fd12f6606fb04ed6cfa8e760486daa6f483989c3b059418a1724c887ff08ec",
+  "science": {
+    "schema": 1,
+    "source_commit": "6894a0e322146bf479e5aab5296fda0a0d012273",
+    "source_manifest": "source-wide-collar-a-v1-manifest.json",
+    "source_manifest_sha256": "2d2f514c89bc9819fe5b3f09d5f86fb9de50162e814c114bcd4e9f754bf6aa25",
+    "binaries": {
+      "build-sycl-mpi-wide-collar-a-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_control_wide_collar": "6c22cd7a388ea138d5a0107ab8d2888a8dd6c735dde68a93f0a6b1ba40c1cb93"
+    },
+    "diagnostic_binaries": {
+      "build-sycl-mpi-wide-collar-a-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_checkpoint_constraints_native_control_wide_collar": "66c7f0b10f86ef0fb421e31fcbca3bece6d331cc76b61d7f1148ad88761cc44c"
+    },
+    "build_cache_sha256": "e91dcbbbb854ea8c571713d21b3b319e96ee1c35b02a48af5b6c3bb698bf9822",
+    "flags": {
+      "build-sycl-mpi-wide-collar-a-v1/tst/hyperbolic_shift_3d/CMakeFiles/hyperbolic_shift_3d_mpi_native_control_wide_collar.dir/flags.make": {
+        "bytes": 2674,
+        "sha256": "061c0eff45789a9a995d65c152e58e3e92b45cdc07edfbadedb29a45c19963c1"
+      },
+      "build-sycl-mpi-wide-collar-a-v1/tst/hyperbolic_shift_3d/CMakeFiles/hyperbolic_shift_3d_checkpoint_constraints_native_control_wide_collar.dir/flags.make": {
+        "bytes": 2674,
+        "sha256": "061c0eff45789a9a995d65c152e58e3e92b45cdc07edfbadedb29a45c19963c1"
+      }
+    }
+  }
+}
