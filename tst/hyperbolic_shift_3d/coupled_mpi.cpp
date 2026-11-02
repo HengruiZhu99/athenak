@@ -114,9 +114,10 @@ static_assert(!spherical_overlap||(evolved_overlap==3&&core_subdivisions==2),"sp
 static_assert(!continuous_positive||(spherical_overlap&&core_subdivisions==2),"positive scheme requires continuous spherical-overlap mesh");
 static_assert(!coordinated_plans||(continuous_positive&&boundary_reuse&&sparse_stage&&!measured_partition),"coordinated plan target requires the equal-cell positive sparse formulation");
 static_assert(!cubed_sphere::scri_first6||native_wormhole,"scri first6 evolution requires its distinct native-initializer checkpoint target");
+static_assert(!h::broad_smooth_a || (native_wormhole && !h::CompositeDissipation::consistent && !cubed_sphere::scri_first6));
 static_assert(!h::wide_restoring_collar || (native_wormhole && !h::CompositeDissipation::consistent && !cubed_sphere::scri_first6));
 static_assert(!h::zero_shift_restoration || (native_wormhole && !h::CompositeDissipation::consistent && !cubed_sphere::scri_first6));
-constexpr const char*checkpoint_magic=h::zero_shift_restoration?"HYP3D_MPI_NZ1":h::wide_restoring_collar?"HYP3D_MPI_NW1":cubed_sphere::scri_first6?(h::CompositeDissipation::consistent?(h::shared_restoration?"HYP3D_MPI_NS2":"HYP3D_MPI_NC2"):(h::shared_restoration?"HYP3D_MPI_NS1":"HYP3D_MPI_NC1")):native_wormhole?(h::CompositeDissipation::consistent?(h::shared_restoration?"HYP3D_MPI_NT2":"HYP3D_MPI_NI2"):(h::shared_restoration?"HYP3D_MPI_NT1":"HYP3D_MPI_NI1")):h::CompositeDissipation::consistent?(h::shared_restoration?"HYP3D_MPI_ST2":"HYP3D_MPI_SG2"):h::shared_restoration?"HYP3D_MPI_ST1":h::short_inner_gauge?"HYP3D_MPI_SG1":h::late_inner_gauge?"HYP3D_MPI_LG1":h::restore_inner_damping?"HYP3D_MPI_DG1":h::direct_outer?"HYP3D_MPI_DO1":h::inner_telegrapher?"HYP3D_MPI_IT1":h::smooth_gauge_blend&&direct_chi?"HYP3D_MPI_GD1":h::smooth_gauge_blend?"HYP3D_MPI_GW1":direct_chi?"HYP3D_MPI_AC1":direct_lapse?"HYP3D_MPI_AL1":puncture_chi_floor>0?"HYP3D_MPI_CF1":HYPERBOLIC_EXPERIMENTAL_TIMESTEP?"HYP3D_MPI_DT1":continuous_positive?"HYP3D_MPI_V11":spherical_overlap?"HYP3D_MPI_V10":evolved_overlap?"HYP3D_MPI_V9":core_subdivisions==2?"HYP3D_MPI_V8":inner_transition_logical?"HYP3D_MPI_V7":scri_donor_seven?"HYP3D_MPI_V6":scri_sampled_normal?"HYP3D_MPI_V5":scri_angular_dissipation?"HYP3D_MPI_V4":scri_angular_exchange?"HYP3D_MPI_V3":algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
+constexpr const char*checkpoint_magic=h::broad_smooth_a?"HYP3D_MPI_NB1":h::zero_shift_restoration?"HYP3D_MPI_NZ1":h::wide_restoring_collar?"HYP3D_MPI_NW1":cubed_sphere::scri_first6?(h::CompositeDissipation::consistent?(h::shared_restoration?"HYP3D_MPI_NS2":"HYP3D_MPI_NC2"):(h::shared_restoration?"HYP3D_MPI_NS1":"HYP3D_MPI_NC1")):native_wormhole?(h::CompositeDissipation::consistent?(h::shared_restoration?"HYP3D_MPI_NT2":"HYP3D_MPI_NI2"):(h::shared_restoration?"HYP3D_MPI_NT1":"HYP3D_MPI_NI1")):h::CompositeDissipation::consistent?(h::shared_restoration?"HYP3D_MPI_ST2":"HYP3D_MPI_SG2"):h::shared_restoration?"HYP3D_MPI_ST1":h::short_inner_gauge?"HYP3D_MPI_SG1":h::late_inner_gauge?"HYP3D_MPI_LG1":h::restore_inner_damping?"HYP3D_MPI_DG1":h::direct_outer?"HYP3D_MPI_DO1":h::inner_telegrapher?"HYP3D_MPI_IT1":h::smooth_gauge_blend&&direct_chi?"HYP3D_MPI_GD1":h::smooth_gauge_blend?"HYP3D_MPI_GW1":direct_chi?"HYP3D_MPI_AC1":direct_lapse?"HYP3D_MPI_AL1":puncture_chi_floor>0?"HYP3D_MPI_CF1":HYPERBOLIC_EXPERIMENTAL_TIMESTEP?"HYP3D_MPI_DT1":continuous_positive?"HYP3D_MPI_V11":spherical_overlap?"HYP3D_MPI_V10":evolved_overlap?"HYP3D_MPI_V9":core_subdivisions==2?"HYP3D_MPI_V8":inner_transition_logical?"HYP3D_MPI_V7":scri_donor_seven?"HYP3D_MPI_V6":scri_sampled_normal?"HYP3D_MPI_V5":scri_angular_dissipation?"HYP3D_MPI_V4":scri_angular_exchange?"HYP3D_MPI_V3":algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
 static_assert(!h::inner_telegrapher||(h::smooth_gauge_blend&&direct_chi&&direct_lapse),"IT1 requires smooth direct variables");
 static_assert(!h::smooth_gauge_blend||(HYPERBOLIC_EXPERIMENTAL_TIMESTEP&&continuous_positive&&((!direct_lapse&&puncture_chi_floor==0)||(direct_chi&&puncture_chi_floor==1e-8))),"Smooth weight requires GW1 log variables or GD1 direct variables with floors");
 constexpr const char*algebraic_scheme=algebraic_final_projection?"final_stage_standard":"none";
@@ -808,7 +809,9 @@ int main(int argc,char**argv){
                             ".fastflow.horizon_shape_0.txt",".checkpoint.horizon-seed.txt"})
         if(std::filesystem::exists(output+suffix))throw std::runtime_error("refusing to overwrite result: "+output+suffix);
       if(native_wormhole&&kind==2&&restart=="-"){
-        h::NativeWormhole pgen;
+        h::NativeWormhole pgen(1./3.,2e-13,4.,h::broad_smooth_a?12.:8.,
+            h::broad_smooth_a?h::NativeWormhole::TransitionProfile::polynomial_c6:
+                              h::NativeWormhole::TransitionProfile::bump);
         for(int p=0;p<e.total;++p){const auto fields=pgen.Fields(e.Model().grid.geometry[p].x);
           for(int f=0;f<31;++f)e.initial_state[31*p+f]=fields[f];}
         initializer_cached_radii=pgen.CachedRadii();
@@ -1039,7 +1042,10 @@ int main(int argc,char**argv){
         <<",\"initial_data_provider\":"<<JsonString(restart!="-"?"checkpoint":native_wormhole&&kind==2?"native_isotropic_wormhole_quadrature":initial!="-"?"external_fields":"builtin")
         <<",\"scri_first6\":"<<(cubed_sphere::scri_first6?"true":"false")
         <<",\"native_initialization_tolerance\":"<<(native_wormhole?2e-13:0)
-        <<",\"restoring_collar_begin\":"<<(h::wide_restoring_collar?.7:.8)
+        <<",\"native_initialization_profile\":\""<<(h::broad_smooth_a?"polynomial_c6":"bump")<<"\""
+        <<",\"native_initialization_start_M\":4,\"native_initialization_end_M\":"<<(h::broad_smooth_a?12:8)
+        <<",\"broad_smooth_a\":"<<(h::broad_smooth_a?"true":"false")
+        <<",\"restoring_collar_begin\":"<<(h::broad_smooth_a?.6:h::wide_restoring_collar?.7:.8)
         <<",\"restoring_collar_end\":0.9,\"restoring_coefficient\":"<<(h::zero_shift_restoration?0:4)
         <<",\"zero_shift_restoration\":"<<(h::zero_shift_restoration?"true":"false")
         <<",\"native_initializer_cached_radii\":"<<initializer_cached_radii

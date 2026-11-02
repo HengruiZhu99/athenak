@@ -37,11 +37,20 @@
 #define HYPERBOLIC_WIDE_RESTORING_COLLAR 0
 #endif
 
+#ifndef HYPERBOLIC_BROAD_SMOOTH_A
+#define HYPERBOLIC_BROAD_SMOOTH_A 0
+#endif
+
 #ifndef HYPERBOLIC_ZERO_SHIFT_RESTORATION
 #define HYPERBOLIC_ZERO_SHIFT_RESTORATION 0
 #endif
 
 namespace z4c::hyperboloidal {
+// Combined restored-A experiment: broader restoring collar and native C6 slice.
+constexpr bool broad_smooth_a=HYPERBOLIC_BROAD_SMOOTH_A;
+static_assert(!broad_smooth_a || (HYPERBOLIC_SHORT_INNER_GAUGE &&
+    !HYPERBOLIC_SHARED_RESTORATION && !HYPERBOLIC_WIDE_RESTORING_COLLAR &&
+    !HYPERBOLIC_ZERO_SHIFT_RESTORATION));
 // Experimental removal of only the extra singular shift source. The lapse,
 // inner shift damping, auxiliary damping and geometric damping are unchanged.
 constexpr bool zero_shift_restoration=HYPERBOLIC_ZERO_SHIFT_RESTORATION;
@@ -140,7 +149,7 @@ HyperbolicCoefficients<T> ShiftCoefficients(T r, T alpha, T chi,
     }
   }
   // A-width control: preserve the original profile and outer plateau, widen inward.
-  c.collar=wide_restoring_collar ? SmoothCollar((r-T(.7))/T(.2)) : SmoothCollar((r-T(.8))/T(.1));
+  c.collar=broad_smooth_a ? SmoothCollar((r-T(.6))/T(.3)) : wide_restoring_collar ? SmoothCollar((r-T(.7))/T(.2)) : SmoothCollar((r-T(.8))/T(.1));
   c.F=alpha*alpha+4*c.omega*c.omega*alpha;
   c.eta=(1+p.epsilon)*alpha/(alpha+p.epsilon*c.reference_alpha);
   // w*C == 0 exactly: the donor's radial-g term in mu_separated never
