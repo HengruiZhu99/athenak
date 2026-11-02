@@ -33,7 +33,13 @@
 #define HYPERBOLIC_SHARED_RESTORATION 0
 #endif
 
+#ifndef HYPERBOLIC_WIDE_RESTORING_COLLAR
+#define HYPERBOLIC_WIDE_RESTORING_COLLAR 0
+#endif
+
 namespace z4c::hyperboloidal {
+constexpr bool wide_restoring_collar=HYPERBOLIC_WIDE_RESTORING_COLLAR;
+static_assert(!wide_restoring_collar || (HYPERBOLIC_SHORT_INNER_GAUGE && !HYPERBOLIC_SHARED_RESTORATION));
 constexpr bool shared_restoration=HYPERBOLIC_SHARED_RESTORATION;
 static_assert(!shared_restoration || HYPERBOLIC_SHORT_INNER_GAUGE);
 constexpr bool short_inner_gauge=HYPERBOLIC_SHORT_INNER_GAUGE;
@@ -124,7 +130,8 @@ HyperbolicCoefficients<T> ShiftCoefficients(T r, T alpha, T chi,
       c.dw_dr=-8*pow(y,7)*pow(1-y,7)/((a+b)*(a+b)*T(.24));
     }
   }
-  c.collar=SmoothCollar((r-T(.8))/T(.1));
+  // A-width control: preserve the original profile and outer plateau, widen inward.
+  c.collar=wide_restoring_collar ? SmoothCollar((r-T(.7))/T(.2)) : SmoothCollar((r-T(.8))/T(.1));
   c.F=alpha*alpha+4*c.omega*c.omega*alpha;
   c.eta=(1+p.epsilon)*alpha/(alpha+p.epsilon*c.reference_alpha);
   // w*C == 0 exactly: the donor's radial-g term in mu_separated never
