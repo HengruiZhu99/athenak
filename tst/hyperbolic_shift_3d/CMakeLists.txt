@@ -642,3 +642,10 @@ add_executable(hyperbolic_shift_3d_initial_radial_refinement test_initial_radial
 target_include_directories(hyperbolic_shift_3d_initial_radial_refinement PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
 target_link_libraries(hyperbolic_shift_3d_initial_radial_refinement PRIVATE Kokkos::kokkos Threads::Threads)
 target_compile_options(hyperbolic_shift_3d_initial_radial_refinement PRIVATE -Wall -Wextra -ffp-contract=off)
+
+add_executable(hyperbolic_shift_3d_scri_full_consistency scri_full_consistency.cpp)
+target_include_directories(hyperbolic_shift_3d_scri_full_consistency PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+target_link_libraries(hyperbolic_shift_3d_scri_full_consistency PRIVATE Kokkos::kokkos Threads::Threads)
+get_target_property(scri_audit_defs hyperbolic_shift_3d_short_gauge COMPILE_DEFINITIONS)
+target_compile_definitions(hyperbolic_shift_3d_scri_full_consistency PRIVATE ${scri_audit_defs})
+target_compile_options(hyperbolic_shift_3d_scri_full_consistency PRIVATE -Wall -Wextra -ffp-contract=off)
