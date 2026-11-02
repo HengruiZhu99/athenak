@@ -1,0 +1,248 @@
+{
+  "job_id": "9032187.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "collected": 1793613260.4500418,
+  "returncode": 0,
+  "stdout": "{\n    \"timestamp\": 1793613255,\n    \"pbs_version\": \"2026.1.0.20260821184519\",\n    \"pbs_server\": \"aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov\",\n    \"Jobs\": {\n        \"9032187.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov\": {\n            \"Job_Name\": \"hyper-scri-3d\",\n            \"Job_Owner\": \"hzhu@aurora-uan-0012.hostmgmt1000.cm.aurora.alcf.anl.gov\",\n            \"resources_used\": {\n                \"cpupercent\": 5429,\n                \"cput\": \"04:35:24\",\n                \"mem\": \"1669604kb\",\n                \"ncpus\": 208,\n                \"ngpus\": 0,\n                \"vmem\": \"56236kb\",\n                \"walltime\": \"00:25:33\"\n            },\n            \"job_state\": \"F\",\n            \"queue\": \"debug-scaling\",\n            \"server\": \"aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov\",\n            \"Account_Name\": \"CompactBinaryMerger\",\n            \"Checkpoint\": \"u\",\n            \"ctime\": \"Mon Nov  2 09:20:06 2026\",\n            \"Error_Path\": \"aurora-uan-0012.hostmgmt1000.cm.aurora.alcf.anl.gov:/home/hzhu/hyperbolic-core-shell-20261028/hyper-scri-3d.e9032187\",\n            \"exec_host\": \"x4502c5s3b0n0/0*208\",\n            \"exec_vnode\": \"(x4502c5s3b0n0:ncpus=208)\",\n            \"Hold_Types\": \"n\",\n            \"Join_Path\": \"oe\",\n            \"Keep_Files\": \"doe\",\n            \"Mail_Points\": \"a\",\n            \"Mail_Users\": \"hz0693@princeton.edu\",\n            \"mtime\": \"Mon Nov  2 09:47:36 2026\",\n            \"Output_Path\": \"aurora-uan-0012.hostmgmt1000.cm.aurora.alcf.anl.gov:/home/hzhu/hyperbolic-core-shell-20261028/hyper-scri-3d.o9032187\",\n            \"Priority\": 0,\n            \"qtime\": \"Mon Nov  2 09:20:06 2026\",\n            \"Rerunable\": \"False\",\n            \"Resource_List\": {\n                \"allow_account_check_failure\": \"True\",\n                \"allow_negative_allocation\": \"True\",\n                \"award_category\": \"INCITE\",\n                \"award_type\": \"INCITE-2026\",\n                \"backfill_factor\": 84600,\n                \"backfill_max\": 50,\n                \"base_score\": 51,\n                \"bkc_definition\": \"compute_aurora_prod_20261002T162246_af5b0375_b4fd227\",\n                \"burn_ratio\": 0.8827,\n                \"current_allocation\": 2534228224,\n                \"enable_2nd_fp64\": \"True\",\n                \"enable_backfill\": 0,\n                \"enable_fifo\": 1,\n                \"enable_wfp\": 0,\n                \"fifo_factor\": 1800,\n                \"filesystems\": \"home\",\n                \"hbm_mode\": \"flat\",\n                \"home_fs\": \"True\",\n                \"ncpus\": 208,\n                \"ni_resource\": \"aurora\",\n                \"nodect\": 1,\n                \"overburn\": \"False\",\n                \"place\": \"scatter\",\n                \"project_priority\": 25,\n                \"route_backfill\": \"False\",\n                \"score_boost\": 0,\n                \"select\": 1,\n                \"snc_mode\": \"quad\",\n                \"total_allocation\": 21600000000,\n                \"total_cpus\": 10624,\n                \"walltime\": \"01:00:00\",\n                \"wfp_factor\": 100000\n            },\n            \"stime\": \"Mon Nov  2 09:21:31 2026\",\n            \"obittime\": \"Mon Nov  2 09:47:36 2026\",\n            \"session_id\": 3711226,\n            \"jobdir\": \"/home/hzhu\",\n            \"substate\": 93,\n            \"euser\": \"hzhu\",\n            \"egroup\": \"users\",\n            \"comment\": \"Job run at Mon Nov 02 at 09:21 on (x4502c5s3b0n0:ncpus=208) and failed\",\n            \"etime\": \"Mon Nov  2 09:20:06 2026\",\n            \"umask\": 22,\n            \"run_count\": 1,\n            \"eligible_time\": \"00:01:28\",\n            \"Stageout_status\": 1,\n            \"Exit_status\": 1,\n            \"Submit_arguments\": \"-v HYPERBOLIC_PLAN=campaigns/n16-native-transition-ko-dependencies-v1-e-evolution-segment01/plan.json /home/hzhu/hyperbolic-core-shell-20261028/campaigns/n16-native-transition-ko-dependencies-v1-e-evolution-segment01/run_debug.pbs\",\n            \"history_timestamp\": 1793612856,\n            \"project\": \"CompactBinaryMerger\",\n            \"Submit_Host\": \"aurora-uan-0012.hostmgmt1000.cm.aurora.alcf.anl.gov\"\n        }\n    }\n}\n",
+  "stderr": "",
+  "scheduler": {
+    "Job_Name": "hyper-scri-3d",
+    "Job_Owner": "hzhu@aurora-uan-0012.hostmgmt1000.cm.aurora.alcf.anl.gov",
+    "resources_used": {
+      "cpupercent": 5429,
+      "cput": "04:35:24",
+      "mem": "1669604kb",
+      "ncpus": 208,
+      "ngpus": 0,
+      "vmem": "56236kb",
+      "walltime": "00:25:33"
+    },
+    "job_state": "F",
+    "queue": "debug-scaling",
+    "server": "aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "Account_Name": "CompactBinaryMerger",
+    "Checkpoint": "u",
+    "ctime": "Mon Nov  2 09:20:06 2026",
+    "Error_Path": "aurora-uan-0012.hostmgmt1000.cm.aurora.alcf.anl.gov:/home/hzhu/hyperbolic-core-shell-20261028/hyper-scri-3d.e9032187",
+    "exec_host": "x4502c5s3b0n0/0*208",
+    "exec_vnode": "(x4502c5s3b0n0:ncpus=208)",
+    "Hold_Types": "n",
+    "Join_Path": "oe",
+    "Keep_Files": "doe",
+    "Mail_Points": "a",
+    "Mail_Users": "hz0693@princeton.edu",
+    "mtime": "Mon Nov  2 09:47:36 2026",
+    "Output_Path": "aurora-uan-0012.hostmgmt1000.cm.aurora.alcf.anl.gov:/home/hzhu/hyperbolic-core-shell-20261028/hyper-scri-3d.o9032187",
+    "Priority": 0,
+    "qtime": "Mon Nov  2 09:20:06 2026",
+    "Rerunable": "False",
+    "Resource_List": {
+      "allow_account_check_failure": "True",
+      "allow_negative_allocation": "True",
+      "award_category": "INCITE",
+      "award_type": "INCITE-2026",
+      "backfill_factor": 84600,
+      "backfill_max": 50,
+      "base_score": 51,
+      "bkc_definition": "compute_aurora_prod_20261002T162246_af5b0375_b4fd227",
+      "burn_ratio": 0.8827,
+      "current_allocation": 2534228224,
+      "enable_2nd_fp64": "True",
+      "enable_backfill": 0,
+      "enable_fifo": 1,
+      "enable_wfp": 0,
+      "fifo_factor": 1800,
+      "filesystems": "home",
+      "hbm_mode": "flat",
+      "home_fs": "True",
+      "ncpus": 208,
+      "ni_resource": "aurora",
+      "nodect": 1,
+      "overburn": "False",
+      "place": "scatter",
+      "project_priority": 25,
+      "route_backfill": "False",
+      "score_boost": 0,
+      "select": 1,
+      "snc_mode": "quad",
+      "total_allocation": 21600000000,
+      "total_cpus": 10624,
+      "walltime": "01:00:00",
+      "wfp_factor": 100000
+    },
+    "stime": "Mon Nov  2 09:21:31 2026",
+    "obittime": "Mon Nov  2 09:47:36 2026",
+    "session_id": 3711226,
+    "jobdir": "/home/hzhu",
+    "substate": 93,
+    "euser": "hzhu",
+    "egroup": "users",
+    "comment": "Job run at Mon Nov 02 at 09:21 on (x4502c5s3b0n0:ncpus=208) and failed",
+    "etime": "Mon Nov  2 09:20:06 2026",
+    "umask": 22,
+    "run_count": 1,
+    "eligible_time": "00:01:28",
+    "Stageout_status": 1,
+    "Exit_status": 1,
+    "Submit_arguments": "-v HYPERBOLIC_PLAN=campaigns/n16-native-transition-ko-dependencies-v1-e-evolution-segment01/plan.json /home/hzhu/hyperbolic-core-shell-20261028/campaigns/n16-native-transition-ko-dependencies-v1-e-evolution-segment01/run_debug.pbs",
+    "history_timestamp": 1793612856,
+    "project": "CompactBinaryMerger",
+    "Submit_Host": "aurora-uan-0012.hostmgmt1000.cm.aurora.alcf.anl.gov"
+  },
+  "worker": {
+    "schema": 1,
+    "status": "failed",
+    "started": "2026-11-02T09:24:13.050375+00:00",
+    "job_id": "9032187.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "launcher_host": "x4502c5s3b0n0",
+    "allocation_nodes": [
+      "x4502c5s3b0n0.hsn.cm.aurora.alcf.anl.gov"
+    ],
+    "resources": {
+      "queue": "debug-scaling",
+      "account": "CompactBinaryMerger",
+      "nodes": 1,
+      "ranks": 12,
+      "ranks_per_node": 12,
+      "walltime": "01:00:00"
+    },
+    "source_manifest_sha256": "6d81b6803fe811d57a4789a8d10a60e920f7f56c48e4458f7ff50836c2dd611d",
+    "binaries": {
+      "build-sycl-mpi-native-transition-ko-dependencies-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_shared_ko10_scri6": "48bd1030a8f55575b680f2ff511989b58f8f4c2867e2e71a30edda9dc6c43a6a"
+    },
+    "plan_sha256": "68a673727fadc4341ab816d965fbabbb6b7c8798022add9494f6ed138b03abd3",
+    "phase": "native_transition_evolution",
+    "n": 16,
+    "cases": [
+      {
+        "name": "puncture",
+        "kind": "puncture",
+        "started": "2026-11-02T09:24:29.551264+00:00",
+        "argv": [
+          "mpiexec",
+          "-n",
+          "12",
+          "-ppn",
+          "12",
+          "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+          "gpu_tile_compact.sh",
+          "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-native-transition-ko-dependencies-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_shared_ko10_scri6",
+          "16",
+          "campaigns/n16-native-transition-ko-dependencies-v1-e-evolution-segment01/output/puncture",
+          "puncture",
+          "3.3333333333333335",
+          "0.0005",
+          "-",
+          "-",
+          "2920",
+          "0.05",
+          "0.001",
+          "12",
+          "24",
+          "2"
+        ],
+        "generated_inputs": {},
+        "n": 16,
+        "returncode": 2,
+        "timed_out": false,
+        "storage_error": "Campaign storage cap/reserve exceeded: {'bytes': 4916257448, 'entries': 80338, 'limit_bytes': 5000000000, 'reserve_bytes': 89725224, 'planned_bytes': 0, 'headroom_bytes': -5982672}",
+        "elapsed_seconds": 1351.6865080050193
+      }
+    ],
+    "storage_at_start": {
+      "bytes": 4747940352,
+      "entries": 80330,
+      "limit_bytes": 5000000000,
+      "reserve_bytes": 89725224,
+      "planned_bytes": 137560359,
+      "headroom_bytes": 24774065
+    },
+    "affinity": {
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 0.32035706704482436,
+      "records": [
+        {
+          "host": "x4502c5s3b0n0",
+          "rank": 1,
+          "mask": "0.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4502c5s3b0n0",
+          "rank": 5,
+          "mask": "2.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4502c5s3b0n0",
+          "rank": 0,
+          "mask": "0.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4502c5s3b0n0",
+          "rank": 2,
+          "mask": "1.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4502c5s3b0n0",
+          "rank": 3,
+          "mask": "1.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4502c5s3b0n0",
+          "rank": 4,
+          "mask": "2.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4502c5s3b0n0",
+          "rank": 10,
+          "mask": "5.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4502c5s3b0n0",
+          "rank": 11,
+          "mask": "5.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4502c5s3b0n0",
+          "rank": 6,
+          "mask": "3.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4502c5s3b0n0",
+          "rank": 7,
+          "mask": "3.1",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4502c5s3b0n0",
+          "rank": 8,
+          "mask": "4.0",
+          "hierarchy": "COMPOSITE"
+        },
+        {
+          "host": "x4502c5s3b0n0",
+          "rank": 9,
+          "mask": "4.1",
+          "hierarchy": "COMPOSITE"
+        }
+      ],
+      "passed": true
+    },
+    "reason": "RuntimeError: Campaign storage cap/reserve exceeded: {'bytes': 4956134020, 'entries': 80340, 'limit_bytes': 5000000000, 'reserve_bytes': 89725224, 'planned_bytes': 0, 'headroom_bytes': -45859244}",
+    "finished": "2026-11-02T09:47:02.618277+00:00",
+    "elapsed_seconds": 1369.567923353985,
+    "storage_at_finish": {
+      "bytes": 4956134020,
+      "entries": 80340
+    }
+  }
+}

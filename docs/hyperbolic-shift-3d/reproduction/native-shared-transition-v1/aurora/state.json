@@ -1,5 +1,5 @@
 {
-  "status": "corrected_e_evolution_submitted",
+  "status": "matrix_disposed_convergence_not_achieved",
   "build_attempt": 2,
   "remote_build_pid": 641035,
   "remote_host": "aurora-uan-0012",
@@ -201,7 +201,7 @@
       "local_artifacts_verified": true
     },
     "E": {
-      "status": "evolution_submitted",
+      "status": "numerically_failed_with_storage_guard",
       "smoke_plan": "campaigns/n16-native-transition-ko-dependencies-v1-e-smoke-segment01/plan.json",
       "evolution_plan": "campaigns/n16-native-transition-ko-dependencies-v1-e-evolution-segment01/plan.json",
       "smoke_submission": {
@@ -235,10 +235,13 @@
           "ranks_per_node": 12,
           "walltime": "01:00:00"
         }
-      }
+      },
+      "last_accepted_t_over_M": 9.390000000000638,
+      "restart_admitted": false,
+      "error": "device RHS failure at active cell57352 reason2; concurrent storage reserve guard"
     }
   },
-  "note": "E two-step smoke admitted and all9 artifacts locally verified; SERIAL/GPU physical parity passed. Fresh E10M submitted. Common-operator offline C/D diagnostic control in progress.",
+  "note": "A/C/D completed10M; B/E numerical metric failures near9.39M. E concurrent storage-reserve failure separately documented; all19 postterminal files verified locally, root lock released, six obsolete verified smoke checkpoints retired. No retries or new long runs. Final common-cutoff and bounded common-operator evidence demonstrates no evolution-convergence improvement; shared gauge stability remains unresolved.",
   "parallel_authorization": "User permits debug-scaling up to five nodes. Existing plans remain one-node/debug; any multi-case allocation must preserve separate case admission/storage/resources and be explicitly implemented/tested.",
   "build_status": "completed_and_frozen",
   "current_plan": "campaigns/n16-native-transition-ko-dependencies-v1-e-evolution-segment01/plan.json",
@@ -266,5 +269,24 @@
     "source_manifest": "source-native-transition-ko-dependencies-v1-manifest.json"
   },
   "active_launcher": "launcher-native-transition-ko-dependencies-v1",
-  "active_science": "launcher-native-transition-ko-dependencies-v1/native-transition-science.json"
+  "active_science": "launcher-native-transition-ko-dependencies-v1/native-transition-science.json",
+  "final_remote_audit": {
+    "footprint": {
+      "bytes": 4101115904,
+      "entries": 80337
+    },
+    "root_lock_exists": false,
+    "user_queues": {
+      "debug": {
+        "returncode": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "debug-scaling": {
+        "returncode": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    }
+  }
 }

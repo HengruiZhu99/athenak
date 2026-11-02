@@ -1,0 +1,157 @@
+{
+  "schema": 1,
+  "status": "failed",
+  "started": "2026-11-02T09:24:13.050375+00:00",
+  "job_id": "9032187.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "launcher_host": "x4502c5s3b0n0",
+  "allocation_nodes": [
+    "x4502c5s3b0n0.hsn.cm.aurora.alcf.anl.gov"
+  ],
+  "resources": {
+    "queue": "debug-scaling",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "01:00:00"
+  },
+  "source_manifest_sha256": "6d81b6803fe811d57a4789a8d10a60e920f7f56c48e4458f7ff50836c2dd611d",
+  "binaries": {
+    "build-sycl-mpi-native-transition-ko-dependencies-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_shared_ko10_scri6": "48bd1030a8f55575b680f2ff511989b58f8f4c2867e2e71a30edda9dc6c43a6a"
+  },
+  "plan_sha256": "68a673727fadc4341ab816d965fbabbb6b7c8798022add9494f6ed138b03abd3",
+  "phase": "native_transition_evolution",
+  "n": 16,
+  "cases": [
+    {
+      "name": "puncture",
+      "kind": "puncture",
+      "started": "2026-11-02T09:24:29.551264+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "12",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-native-transition-ko-dependencies-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_shared_ko10_scri6",
+        "16",
+        "campaigns/n16-native-transition-ko-dependencies-v1-e-evolution-segment01/output/puncture",
+        "puncture",
+        "3.3333333333333335",
+        "0.0005",
+        "-",
+        "-",
+        "2920",
+        "0.05",
+        "0.001",
+        "12",
+        "24",
+        "2"
+      ],
+      "generated_inputs": {},
+      "n": 16,
+      "returncode": 2,
+      "timed_out": false,
+      "storage_error": "Campaign storage cap/reserve exceeded: {'bytes': 4916257448, 'entries': 80338, 'limit_bytes': 5000000000, 'reserve_bytes': 89725224, 'planned_bytes': 0, 'headroom_bytes': -5982672}",
+      "elapsed_seconds": 1351.6865080050193
+    }
+  ],
+  "storage_at_start": {
+    "bytes": 4747940352,
+    "entries": 80330,
+    "limit_bytes": 5000000000,
+    "reserve_bytes": 89725224,
+    "planned_bytes": 137560359,
+    "headroom_bytes": 24774065
+  },
+  "affinity": {
+    "returncode": 0,
+    "timed_out": false,
+    "storage_error": null,
+    "elapsed_seconds": 0.32035706704482436,
+    "records": [
+      {
+        "host": "x4502c5s3b0n0",
+        "rank": 1,
+        "mask": "0.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4502c5s3b0n0",
+        "rank": 5,
+        "mask": "2.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4502c5s3b0n0",
+        "rank": 0,
+        "mask": "0.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4502c5s3b0n0",
+        "rank": 2,
+        "mask": "1.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4502c5s3b0n0",
+        "rank": 3,
+        "mask": "1.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4502c5s3b0n0",
+        "rank": 4,
+        "mask": "2.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4502c5s3b0n0",
+        "rank": 10,
+        "mask": "5.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4502c5s3b0n0",
+        "rank": 11,
+        "mask": "5.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4502c5s3b0n0",
+        "rank": 6,
+        "mask": "3.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4502c5s3b0n0",
+        "rank": 7,
+        "mask": "3.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4502c5s3b0n0",
+        "rank": 8,
+        "mask": "4.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4502c5s3b0n0",
+        "rank": 9,
+        "mask": "4.1",
+        "hierarchy": "COMPOSITE"
+      }
+    ],
+    "passed": true
+  },
+  "reason": "RuntimeError: Campaign storage cap/reserve exceeded: {'bytes': 4956134020, 'entries': 80340, 'limit_bytes': 5000000000, 'reserve_bytes': 89725224, 'planned_bytes': 0, 'headroom_bytes': -45859244}",
+  "finished": "2026-11-02T09:47:02.618277+00:00",
+  "elapsed_seconds": 1369.567923353985,
+  "storage_at_finish": {
+    "bytes": 4956134020,
+    "entries": 80340
+  }
+}

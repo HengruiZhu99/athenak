@@ -1,0 +1,141 @@
+{
+  "scope": "Postmortem only: native numerical failure independently demonstrated, concurrent infrastructure reserve failure retained; no healthy admission or restart.",
+  "worker_infrastructure_error": "Campaign storage cap/reserve exceeded: {'bytes': 4916257448, 'entries': 80338, 'limit_bytes': 5000000000, 'reserve_bytes': 89725224, 'planned_bytes': 0, 'headroom_bytes': -5982672}",
+  "worker_final_error": "RuntimeError: Campaign storage cap/reserve exceeded: {'bytes': 4956134020, 'entries': 80340, 'limit_bytes': 5000000000, 'reserve_bytes': 89725224, 'planned_bytes': 0, 'headroom_bytes': -45859244}",
+  "worker_sent_sigterm_on_storage_error": true,
+  "signal_vs_native_failure_order": "Exact ordering not recorded; finite indefinite failed candidate and complete native failure report independently demonstrate numerical failure. Do not claim storage guard absent or pure scheduler numerical disposition.",
+  "inventory_sha256": "5fd099a86e47eb9697d463761bd91b4ec2976f65d497f3d2b7b5c475b433eb06",
+  "last_accepted_t_over_M": 9.390000000000638,
+  "last_diagnostic_t_over_M": 9.300000000000608,
+  "rejected_stage_abscissa": "not recorded",
+  "bad_cells": [
+    {
+      "cell": 57352,
+      "x": 0.3748364113738986,
+      "y": -0.3397319202940294,
+      "z": -0.3397319202940294,
+      "r": 0.609375,
+      "chi": 11.857014214178848,
+      "conformal_lapse": 0.004292799790495017,
+      "metric_eigenvalues": [
+        -0.0028172728752201494,
+        0.7873108248939278,
+        477.0817151465463
+      ],
+      "determinant": -1.0582003686182238
+    },
+    {
+      "cell": 57592,
+      "x": 0.3748364113738986,
+      "y": 0.3397319202940294,
+      "z": -0.3397319202940294,
+      "r": 0.609375,
+      "chi": 11.857014255381728,
+      "conformal_lapse": 0.004292799780016732,
+      "metric_eigenvalues": [
+        -0.002817272879284343,
+        0.787310827735663,
+        477.0817168686932
+      ],
+      "determinant": -1.0582003777841127
+    },
+    {
+      "cell": 61192,
+      "x": 0.3748364113738986,
+      "y": -0.3397319202940294,
+      "z": 0.3397319202940294,
+      "r": 0.609375,
+      "chi": 11.857014279800932,
+      "conformal_lapse": 0.004292799787784629,
+      "metric_eigenvalues": [
+        -0.0028172728805474436,
+        0.7873108291836464,
+        477.08171774977217
+      ],
+      "determinant": -1.0582003821590324
+    },
+    {
+      "cell": 61432,
+      "x": 0.3748364113738986,
+      "y": 0.3397319202940294,
+      "z": 0.3397319202940294,
+      "r": 0.609375,
+      "chi": 11.85701427750914,
+      "conformal_lapse": 0.004292799767252498,
+      "metric_eigenvalues": [
+        -0.0028172728840111174,
+        0.7873108294739841,
+        477.0817179302064
+      ],
+      "determinant": -1.0582003842504784
+    },
+    {
+      "cell": 61448,
+      "x": -0.3748364113738986,
+      "y": -0.3397319202940294,
+      "z": -0.3397319202940294,
+      "r": 0.609375,
+      "chi": 11.857014166625918,
+      "conformal_lapse": 0.004292799811315362,
+      "metric_eigenvalues": [
+        -0.00281727286942423,
+        0.7873108213146143,
+        477.0817129771039
+      ],
+      "determinant": -1.0582003568183898
+    },
+    {
+      "cell": 61688,
+      "x": -0.3748364113738986,
+      "y": 0.3397319202940294,
+      "z": -0.3397319202940294,
+      "r": 0.609375,
+      "chi": 11.857014265030596,
+      "conformal_lapse": 0.004292799781211554,
+      "metric_eigenvalues": [
+        -0.0028172728795909864,
+        0.7873108280631933,
+        477.08171706999093
+      ],
+      "determinant": -1.0582003787860073
+    },
+    {
+      "cell": 65288,
+      "x": -0.3748364113738986,
+      "y": -0.3397319202940294,
+      "z": 0.3397319202940294,
+      "r": 0.609375,
+      "chi": 11.85701421944953,
+      "conformal_lapse": 0.004292799789660351,
+      "metric_eigenvalues": [
+        -0.0028172728753251765,
+        0.7873108252743327,
+        477.0817153804105
+      ],
+      "determinant": -1.058200369687691
+    },
+    {
+      "cell": 65528,
+      "x": -0.3748364113738986,
+      "y": 0.3397319202940294,
+      "z": 0.3397319202940294,
+      "r": 0.609375,
+      "chi": 11.857014237707407,
+      "conformal_lapse": 0.004292799788494728,
+      "metric_eigenvalues": [
+        -0.002817272878129489,
+        0.7873108264010922,
+        477.0817160625453
+      ],
+      "determinant": -1.0582003737684882
+    }
+  ],
+  "volume_nonfinite_values": 0,
+  "surface_min_metric_eigenvalue": 0.284648519088339,
+  "checkpoint_admitted": false,
+  "checkpoint_sha256": "4b3c3d1e1c827b167ba173c2aeb342a6085e32aa6b72fafae3eede53a6df407a",
+  "failed_stage_sha256": "a35936f4155e4031e26fe4161c1657a057204df64e0653eca763fbc965ccddcf",
+  "last_candidate_cutoff": 0.7409950273836696,
+  "last_horizon_accepted": false,
+  "candidate_norm_qualification": "Last rejected candidate cutoff0.740995 lies outside failure radius0.609375. Small candidate-exterior norms exclude the failing shell and are not a matched exterior accuracy improvement."
+}

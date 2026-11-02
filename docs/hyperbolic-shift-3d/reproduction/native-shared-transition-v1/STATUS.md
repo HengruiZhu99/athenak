@@ -129,3 +129,12 @@ A separate local diagnostic-only build adds explicit native/first4/first6 outer 
 ## Bounded common bulk derivative diagnostic control
 
 C/D offline native modes reproduce prior matching diagnostics exactly; explicit defaults do too. With common first4/first6 bulk sampling, D exterior momentum remains33.216%/32.133% above C; .775–.9 squared momentum remains103.808%/97.084% above C. The deterioration is not solely the diagnostic sampling change. Native boundary refresh and donor-seven final-three-row closures remain each case’s own, so this does not isolate the entire boundary operator or establish continuum accuracy. All checkpoints unchanged; separate analysis binaries, commands, source hashes, validation and inspected plot in aurora/common-operator. Remote campaign science remains frozen. E long9032187 is current.
+
+
+## Final matrix disposition (2026-11-02)
+
+See FINAL-ASSESSMENT.md for the complete attributable comparison and evidence. A/C/D reached10M; B/E failed at9.3915M/9.3900M with eight indefinite shell metrics at r=.609375. E also tripped the worker storage-reserve guard during failure output; exact signal ordering is unknown, and the original infrastructure record is retained. All19 post-terminal E files were independently inventoried and locally hash/length verified; failed checkpoint unadmitted, no restart. Terminal lock released. Six obsolete locally verified smoke checkpoints were remotely rehashed/retired to restore reserve; active scientific snapshots and E failed evidence remain.
+
+E null residual stays≤1.56e-15 while pole/clock maxima grow to.74280/.10816. Its last9.3M unaccepted candidate cutoff.740995 excludes the failure radius, so small candidate-exterior norms do not establish improvement. Last accepted mass8.4M, no10M E endpoint. The repaired shared-gauge case does not cure the old shared-gauge instability. Common-cutoff A/C/D and common-bulk C/D diagnostics, full/candidate histories, mass gaps and all counters are preserved in aurora/matrix-final and associated controls.
+
+The authorized control matrix is fully assessed, but the high-order evolved-convergence objective is not achieved. Native initialization alone leaves errors unchanged; KO10 alone does not fix the outer error; first6 improves the manufactured operator tests but increases evolved outer momentum residuals; sharedW produces shell failure in both numerical variants. No long N24/N32 or parameter change follows automatically. Remove the monitor after preservation/push and report this measured obstruction for a new experimental decision.
