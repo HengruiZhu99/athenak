@@ -16,16 +16,25 @@ namespace z4c::hyperboloidal {
 class NativeWormhole {
  public:
   struct Radial {double chi,ar,trace,lapse,shift_ratio,areal;};
-  explicit NativeWormhole(double mass=1./3.,double tolerance=2e-13)
-      : mass_(mass),tol_(tolerance),r0_phys_(4*mass),r1_phys_(8*mass),
-        g8_(Rule(8)),g16_(Rule(16)) {
-    if(!(mass>0)||!std::isfinite(mass)||!(tolerance>0)||tolerance>1e-5)
+  enum class TransitionProfile {bump, polynomial_c6};
+  // Optional areal transition radii in mass units support initial-slice controls.
+  // Defaults preserve the frozen 4M--8M initializer; no evolution gauge changes.
+  explicit NativeWormhole(double mass=1./3.,double tolerance=2e-13,
+                          double transition_start_M=4,double transition_end_M=8,
+                          TransitionProfile profile=TransitionProfile::bump)
+      : mass_(mass),tol_(tolerance),r0_phys_(transition_start_M*mass),r1_phys_(transition_end_M*mass),
+        profile_(profile),g8_(Rule(8)),g16_(Rule(16)) {
+    if(!(mass>0)||!std::isfinite(mass)||!(tolerance>0)||tolerance>1e-5
+        ||!std::isfinite(transition_start_M)||!std::isfinite(transition_end_M)
+        ||!(transition_start_M>2)||!(transition_end_M>transition_start_M)
+        ||(profile!=TransitionProfile::bump&&profile!=TransitionProfile::polynomial_c6))
       throw std::invalid_argument("invalid native wormhole parameters");
     j0_=Integral(1/r0_phys_);r0_=std::exp(-j0_);
     const double rho0=(r0_phys_-mass+std::sqrt(r0_phys_*(r0_phys_-2*mass)))/2;
     scale_=r0_/rho0;inner_shift_=ShiftIntegral(r0_phys_);
   }
   double InnerRadius()const{return r0_;}
+  double OuterTransitionRadius()const{return std::exp(-Integral(1/r1_phys_));}
   double IsotropicScale()const{return scale_;}
   double Mass()const{return mass_;}
   double Tolerance()const{return tol_;}
@@ -64,6 +73,7 @@ class NativeWormhole {
  private:
   struct Gauss {std::vector<double>x,w;};
   double mass_,tol_,r0_phys_,r1_phys_,j0_,r0_,scale_,inner_shift_;
+  TransitionProfile profile_;
   Gauss g8_,g16_;
   std::map<double,Radial>cache_;
   static Gauss Rule(int n){
@@ -99,6 +109,13 @@ class NativeWormhole {
   std::array<double,2> Switch(double R)const{
     if(R<=r0_phys_)return {0,0};if(R>=r1_phys_)return {1,0};
     const double z=(R-r0_phys_)/(r1_phys_-r0_phys_),E=1/z-1/(1-z);
+    if(profile_==TransitionProfile::polynomial_c6){
+      // Integral of 12012*z^6*(1-z)^6; symmetric evaluation avoids cancellation
+      // at the outer plateau. C6 at both endpoints, not an analytic evolution switch.
+      const double t=std::min(z,1-z);
+      const double p=std::pow(t,7)*(1716+t*(-9009+t*(20020+t*(-24024+t*(16380+t*(-6006+924*t))))));
+      return {z<=.5?p:1-p,12012*std::pow(z*(1-z),6)/(r1_phys_-r0_phys_)};
+    }
     const double a=std::exp(-std::abs(E));const double s=E>=0?a/(1+a):1/(1+a);
     const double ds=a/((1+a)*(1+a))*(1/(z*z)+1/((1-z)*(1-z)))/(r1_phys_-r0_phys_);
     return {s,ds};

@@ -4,7 +4,10 @@
 int main(int argc,char**argv){
  try{
   const double tol=argc>1?std::stod(argv[1]):2e-13;
-  z4c::hyperboloidal::NativeWormhole data(1./3.,tol);
+  if(argc>4&&std::string(argv[4])!="bump"&&std::string(argv[4])!="poly6")throw std::invalid_argument("unknown profile");
+  z4c::hyperboloidal::NativeWormhole data(1./3.,tol,argc>2?std::stod(argv[2]):4,
+                                        argc>3?std::stod(argv[3]):8,
+      argc>4&&std::string(argv[4])=="poly6"?z4c::hyperboloidal::NativeWormhole::TransitionProfile::polynomial_c6:z4c::hyperboloidal::NativeWormhole::TransitionProfile::bump);
   std::cout<<std::setprecision(17)<<"r,chi,Ar,K,alpha,shift_ratio,R,r0,scale\n";
   std::vector<double>radii={.0001,.001,.01,.03,.07,.1,.15,.2,.25,.3,.4,.5,.6,.7,.8,.9,.99,.99999,1-1e-10,1};
   for(int i=0;i<=100;++i)radii.push_back(.005+.995*i/100.);

@@ -678,3 +678,9 @@ target_include_directories(hyperbolic_shift_3d_ko_shell_refinement PRIVATE ${CMA
 target_link_libraries(hyperbolic_shift_3d_ko_shell_refinement PRIVATE Kokkos::kokkos Threads::Threads)
 target_compile_definitions(hyperbolic_shift_3d_ko_shell_refinement PRIVATE HYPERBOLIC_CONSISTENT_KO=1)
 target_compile_options(hyperbolic_shift_3d_ko_shell_refinement PRIVATE -Wall -Wextra -ffp-contract=off)
+
+# Initial-slice width audit only. Does not change any evolution target defaults.
+add_executable(hyperbolic_shift_3d_initial_smoothing test_initial_smoothing.cpp)
+target_include_directories(hyperbolic_shift_3d_initial_smoothing PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+target_link_libraries(hyperbolic_shift_3d_initial_smoothing PRIVATE Kokkos::kokkos Threads::Threads)
+target_compile_options(hyperbolic_shift_3d_initial_smoothing PRIVATE -Wall -Wextra -ffp-contract=off)

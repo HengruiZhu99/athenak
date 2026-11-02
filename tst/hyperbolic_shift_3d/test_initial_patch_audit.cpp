@@ -27,11 +27,17 @@ struct Norm {
 int main(int argc,char**argv){
  Kokkos::initialize(argc,argv);int status=0;
  try{
-  if(argc!=3)throw std::invalid_argument("usage: initial_patch_audit N fresh_output.json");
+  if(argc!=3&&argc!=7&&argc!=8)throw std::invalid_argument("usage: initial_patch_audit N fresh_output.json [R0/M R1/M tolerance modes [bump|poly6]]");
   int n=std::stoi(argv[1]);if(std::filesystem::exists(argv[2]))throw std::runtime_error("refusing existing output");
   h::HyperbolicComposite model(hyperbolic_reproduction::ContinuousCoreMesh(n),false,true,2,
       h::HyperbolicComposite::NormalDerivative::sampled_numerator,h::HyperbolicComposite::RadialClosure::donor_seven);
-  auto&g=model.grid;h::NativeWormhole data;const int nf=model.nf;
+  const double start=argc>=7?std::stod(argv[3]):4,end=argc>=7?std::stod(argv[4]):8;
+  const double tol=argc>=7?std::stod(argv[5]):2e-13;const int modes=argc>=7?std::stoi(argv[6]):3;
+  if(modes<1||modes>3)throw std::invalid_argument("modes must be 1..3");
+  const std::string profile=argc==8?argv[7]:"bump";
+  if(profile!="bump"&&profile!="poly6")throw std::invalid_argument("unknown profile");
+  auto&g=model.grid;h::NativeWormhole data(1./3.,tol,start,end,profile=="bump"?h::NativeWormhole::TransitionProfile::bump:h::NativeWormhole::TransitionProfile::polynomial_c6);const int nf=model.nf;
+  if(data.IsotropicScale()/6>=.063)throw std::invalid_argument("initial horizon exceeds fixed cutoff controls");
   for(size_t p=0;p<g.active.size();++p){const auto q=data.Fields(g.geometry[p].x);for(int f=0;f<nf;++f)model.state[nf*p+f]=q[f];}
   const auto limit=data.ScriFields();for(size_t p=0;p<model.scri.rows.size();++p)for(int f=0;f<nf;++f)model.scri.values[nf*p+f]=limit[f];
   const auto original=model.state,original_surface=model.scri.values;
@@ -39,8 +45,9 @@ int main(int argc,char**argv){
   std::vector<std::array<double,3>> reference;
   const std::vector<std::string> names={"exterior","core","overlap_radial_016_018","shell_seams","initial_transition_045_075","scri_adjacent_last3","outer_0775_09"};
   const double cutoffs[]={.062,.063,.064,.13,.16,.18,.2,.3,.45,.56,.6,.675,.7,.75,.775,.8,.9,.95};
-  std::ofstream out(argv[2]);out<<std::setprecision(17)<<"{\"n\":"<<n<<",\"cutoff\":0.063,\"variants\":[";
-  for(int mode=0;mode<3;++mode){
+  std::ofstream out(argv[2]);out<<std::setprecision(17)<<"{\"n\":"<<n<<",\"cutoff\":0.063,\"transition_start_M\":"<<start<<",\"transition_end_M\":"<<end
+    <<",\"initial_horizon\":"<<data.IsotropicScale()/6<<",\"transition_inner_r\":"<<data.InnerRadius()<<",\"transition_outer_r\":"<<data.OuterTransitionRadius()<<",\"profile\":\""<<profile<<"\",\"tolerance\":"<<tol<<",\"variants\":[";
+  for(int mode=0;mode<modes;++mode){
     model.state=original;model.scri.values=original_surface;
     if(mode==2){
       for(size_t p=0;p<g.active.size();++p){auto*q=&model.state[nf*p];auto result=h::ProjectAlgebraicNativeState(q);if(!result.valid)throw std::runtime_error("projection failed");

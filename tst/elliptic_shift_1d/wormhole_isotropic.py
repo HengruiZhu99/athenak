@@ -22,9 +22,14 @@ def expm1(z):
 
 
 class IsotropicWormhole:
-    def __init__(self,mass=.1,quadrature_order=96):
+    def __init__(self,mass=.1,quadrature_order=96,transition_start_M=4,transition_end_M=8,transition_profile="bump"):
         if mass<=0:raise ValueError('Positive Schwarzschild mass required')
-        self.mass=mass;self.R0=4*mass;self.R1=8*mass
+        if not (np.isfinite(transition_start_M) and np.isfinite(transition_end_M)
+                and 2<transition_start_M<transition_end_M):
+            raise ValueError('Require finite 2 < transition_start_M < transition_end_M')
+        if transition_profile not in ["bump","poly6"]:raise ValueError("Unknown transition profile")
+        self.profile=transition_profile
+        self.mass=mass;self.R0=transition_start_M*mass;self.R1=transition_end_M*mass
         self.nodes,self.weights=np.polynomial.legendre.leggauss(quadrature_order)
         self.y0=1/self.R0;self.y1=1/self.R1
         self.J0=float(self.integral(np.array([self.y0]))[0]);self.r0=math.exp(-self.J0)
@@ -34,6 +39,9 @@ class IsotropicWormhole:
     def switch(self,R):
         R=np.asarray(R);result=np.zeros_like(R);result[R>=self.R1]=1
         use=(R>self.R0)&(R<self.R1);z=(R[use]-self.R0)/(self.R1-self.R0)
+        if self.profile=="poly6":
+            t=np.minimum(z,1-z);p=t**7*(1716+t*(-9009+t*(20020+t*(-24024+t*(16380+t*(-6006+924*t))))))
+            result[use]=np.where(z<=.5,p,1-p);return result
         E=1/z-1/(1-z);s=np.zeros_like(z);s[E< -700]=1
         middle=abs(E)<=700;s[middle]=1/(1+np.exp(E[middle]));result[use]=s
         return result
@@ -42,6 +50,9 @@ class IsotropicWormhole:
         if R<=self.R0:return 0.,0.,0.,0.
         if R>=self.R1:return 1.,0.,0.,0.
         width=self.R1-self.R0;z=(R-self.R0)/width;E=1/z-1/(1-z)
+        if self.profile=="poly6":
+            s=float(self.switch(np.array([R]))[0]);v=z*(1-z)
+            return s,12012*v**6/width,12012*6*v**5*(1-2*z)/width**2,12012*(30*v**4*(1-2*z)**2-12*v**5)/width**3
         if E>700:return 0.,0.,0.,0.
         if E< -700:return 1.,0.,0.,0.
         s=1/(1+math.exp(E));E1=-1/z**2-1/(1-z)**2
