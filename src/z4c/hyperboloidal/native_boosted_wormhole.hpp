@@ -7,6 +7,11 @@ namespace z4c::hyperboloidal {
 #define HYPERBOLIC_BOOSTED_PUNCTURE 0
 #endif
 inline constexpr bool boosted_puncture=HYPERBOLIC_BOOSTED_PUNCTURE;
+#ifndef HYPERBOLIC_BOOST_FREE_INITIAL_GAUGE
+#define HYPERBOLIC_BOOST_FREE_INITIAL_GAUGE 0
+#endif
+inline constexpr bool boost_free_initial_gauge=HYPERBOLIC_BOOST_FREE_INITIAL_GAUGE;
+static_assert(!boost_free_initial_gauge||boosted_puncture);
 namespace boost_detail {
 // First spatial derivatives, propagated analytically through the embedding.
 struct D {double v=0;std::array<double,3>d{};D()=default;D(double x):v(x){};};
@@ -27,7 +32,7 @@ template<class T>Mat<T>Mul(const Mat<T>&a,const Mat<T>&b){Mat<T>c{};for(int i=0;
 // Derivation and admissibility controls: reproduction/boosted-puncture-v1.
 class NativeBoostedWormhole {
   using D=boost_detail::D;template<class T>using Mat=boost_detail::Mat<T>;
-  NativeWormhole base_;double m_,v_,lorentz_,rho0_,constant_;
+  NativeWormhole base_;double m_,v_,lorentz_,rho0_,constant_;bool free_gauge_;
   struct Rad {double a,b,ap,bp,h1,h2,u0,u1,u2,B,Bp,Bpp,Q0,Q0p,S,sig,sig1,sig2;};
   static std::array<double,3>Poly(double z){
     if(z<=0)return {0,0,0};if(z>=1)return {1,0,0};
@@ -59,12 +64,18 @@ class NativeBoostedWormhole {
     return q;
   }
  public:
-  explicit NativeBoostedWormhole(double v=.1,double mass=1./3.):base_(mass,2e-13,4,12,NativeWormhole::TransitionProfile::polynomial_c6),m_(mass),v_(v),lorentz_(1/std::sqrt(1-v*v)){
+  explicit NativeBoostedWormhole(double v=.1,double mass=1./3.,bool free_gauge=boost_free_initial_gauge):base_(mass,2e-13,4,12,NativeWormhole::TransitionProfile::polynomial_c6),m_(mass),v_(v),lorentz_(1/std::sqrt(1-v*v)),free_gauge_(free_gauge){
     if(!std::isfinite(v)||std::abs(v)>=.3)throw std::invalid_argument("boost outside audited mild range");
     rho0_=base_.InnerRadius()/base_.IsotropicScale();constant_=-Rstar(4*m_)-Tail(4*m_);
   }
   size_t CachedRadii()const{return base_.CachedRadii();}
-  double InitialVelocity()const{return v_*base_.IsotropicScale();}
+  double ReferenceCoordinateVelocity()const{return v_*base_.IsotropicScale();}
+  double InitialTrackerVelocity()const{return free_gauge_?0:ReferenceCoordinateVelocity();}
+  static double InitialShiftWeight(double r){
+    const double t=(r-.2)/.36;if(t<=0)return 0;if(t>=1)return 1;
+    const double x=std::min(t,1-t),v=std::pow(x,5)*(126+x*(-420+x*(540+x*(-315+70*x))));
+    return t<=.5?v:1-v;
+  }
   std::array<double,31>Fields(const double x[3]){
     using namespace boost_detail;
     const double r=std::sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);if(!(r>0&&r<1))throw std::invalid_argument("boosted bulk point outside open compact ball");
@@ -108,9 +119,19 @@ class NativeBoostedWormhole {
     for(int i=0;i<3;++i)for(int j=0;j<3;++j)gt[i][j]=chi*bar[i][j];const auto gi=Inv(gt);
     auto fields=base_.Fields(x);fields[0]=chi.v;fields[13]=trace+3;int f=1;for(int i=0;i<3;++i)for(int j=i;j<3;++j)fields[f++]=gt[i][j].v-(i==j?1:0);
     f=7;for(int i=0;i<3;++i)for(int j=i;j<3;++j)fields[f++]=chi.v*om.v*(K[i][j]-metric[i][j].v*trace/3);
-    // Lapse is free gauge data; retain the baseline radial precollapsed choice.
-    // Localized compact pullback of -v e_x initializes the moving-puncture shift.
-    const auto pinv=Inv(P);for(int i=0;i<3;++i){fields[15+i]=0;for(int j=0;j<3;++j)fields[15+i]-=gi[i][j].d[j];fields[22+i]-=v_*lab.B*pinv[i][0];}
+    for(int i=0;i<3;++i){fields[15+i]=0;for(int j=0;j<3;++j)fields[15+i]-=gi[i][j].d[j];}
+    if(free_gauge_){
+      // In the inner lab Cartesian chart this is exactly det(gamma_lab)^(-1/6).
+      // The baseline hyperboloidal lapse supplies the regular unit scri limit;
+      // the determinant ratio cancels the spatial compactification Jacobian.
+      fields[18]=bg.lapse*std::sqrt(chi.v/bg.chi)-(1+r*r)/2;
+      const double W=InitialShiftWeight(r);
+      for(int i=0;i<3;++i)fields[22+i]=(1-W)*x[i]; // beta=-W*x; beta=0 inside.
+    }else{
+      // Historical BX1 gauge retained for exact reproduction; not the new default
+      // in BG1. It imposed a localized initial compact coordinate drift.
+      const auto pinv=Inv(P);for(int i=0;i<3;++i)fields[22+i]-=v_*lab.B*pinv[i][0];
+    }
     for(auto z:fields)if(!std::isfinite(z))throw std::runtime_error("nonfinite boosted native initial field");return fields;
   }
 };
