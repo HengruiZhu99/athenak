@@ -1,0 +1,28 @@
+
+Root grid = 2 x 2 x 2 MeshBlocks
+Total number of MeshBlocks = 8
+Number of logical  levels of refinement = 3 (4 levels total)
+Number of physical levels of refinement = 2 (3 levels total)
+  Physical level = 0 (logical level = 1): 8 MeshBlocks, cost = 8
+Number of parallel ranks = 1
+### FATAL ERROR in /Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/src/mesh/refinement_criteria.cpp at line 72
+No <amr_criterion> blocks were found in input file
+Traceback functionality not available
+[PU-KL2XFPVQ0D:55791] *** Process received signal ***
+[PU-KL2XFPVQ0D:55791] Signal: Abort trap: 6 (6)
+[PU-KL2XFPVQ0D:55791] Signal code:  (0)
+[PU-KL2XFPVQ0D:55791] [ 0] 0   libsystem_platform.dylib            0x000000018bbf1744 _sigtramp + 56
+[PU-KL2XFPVQ0D:55791] [ 1] 0   libsystem_pthread.dylib             0x000000018bbe78d8 pthread_kill + 296
+[PU-KL2XFPVQ0D:55791] [ 2] 0   libsystem_c.dylib                   0x000000018baed978 abort + 148
+[PU-KL2XFPVQ0D:55791] [ 3] 0   hyperbolic_shift_3d_amr_transfer    0x0000000102f316d4 _ZN12_GLOBAL__N_119initialize_internalERKN6Kokkos22InitializationSettingsE.cold.1 + 0
+[PU-KL2XFPVQ0D:55791] [ 4] 0   hyperbolic_shift_3d_amr_transfer    0x0000000102982108 _ZN6Kokkos4Impl19checked_narrow_castIxmEET_T0_m + 0
+[PU-KL2XFPVQ0D:55791] [ 5] 0   hyperbolic_shift_3d_amr_transfer    0x0000000102cbff90 _ZN18RefinementCriteriaC2EP4MeshP14ParameterInput + 3028
+[PU-KL2XFPVQ0D:55791] [ 6] 0   hyperbolic_shift_3d_amr_transfer    0x0000000102c9d950 _ZN14MeshRefinementC2EP4MeshP14ParameterInput + 1432
+[PU-KL2XFPVQ0D:55791] [ 7] 0   hyperbolic_shift_3d_amr_transfer    0x000000010297dcc4 main + 2068
+[PU-KL2XFPVQ0D:55791] [ 8] 0   dyld                                0x000000018b81c4e4 start + 6992
+[PU-KL2XFPVQ0D:55791] *** End of error message ***
+--------------------------------------------------------------------------
+
+prterun noticed that process rank 0 with PID 55791 on node PU-KL2XFPVQ0D exited on
+signal 6 (Abort trap: 6).
+--------------------------------------------------------------------------

@@ -18,13 +18,14 @@ class HyperbolicCompositeExchange {
   using HostBuffer=Kokkos::View<Real*,Kokkos::HostSpace>;
   static constexpr int nf=31;
   struct Boundary {Real x[3];int point[36];Real weight[36];};
-  struct Halo {int target,begin,end,boundary;Real boundary_weight;};
+  struct Halo {int target,begin,end,boundary;Real boundary_weight;Real reference_lapse=0;};
   struct Entry {int point;Real weight;};
   template<class T>using View=Kokkos::View<T*,Device::MemorySpace>;
   int count,total;
   Buffer padded,surface,positive_ko,chi_sign_statistics;
   Real nonpositive_chi_floor=0;
  private:
+  bool validate_amr_halos=false;
   IntBuffer active,scri_active,source_ids;
   Buffer positive_references;
   View<Halo> rows;View<Entry> terms;View<Boundary> boundary;
@@ -45,6 +46,7 @@ class HyperbolicCompositeExchange {
      host_surface("host scri",e.scri.values.size()) {
     if(first_block<0||end_block<first_block||size_t(end_block)>e.grid.mesh.blocks.size())
       throw std::invalid_argument("invalid device halo block range");
+    validate_amr_halos=e.grid.mesh.amr_cartesian_core;
     auto selected=[&](int block){return block>=first_block&&block<end_block&&
       (selected_blocks.empty()||std::find(selected_blocks.begin(),selected_blocks.end(),block)!=selected_blocks.end());};
     std::set<int> needed;
@@ -62,6 +64,10 @@ class HyperbolicCompositeExchange {
     for(const auto&row:e.grid.halos){const int block=row.target/blocksize;
       if(!selected(block))continue;
       Halo h{row.target,int(es.size()),0,-1,row.boundary_weight};
+      if(validate_amr_halos){const int offset=row.target%blocksize,w=e.grid.padded,o=e.grid.storage_halo;
+        const Real q[3]={(offset%w-o+.5)/e.grid.n,((offset/w)%w-o+.5)/e.grid.n,(offset/(w*w)-o+.5)/e.grid.n};
+        Real x[3];e.grid.mesh.Forward(block,q,x);h.reference_lapse=(1+x[0]*x[0]+x[1]*x[1]+x[2]*x[2])/2;}
+
       for(const auto&t:row.entries){es.push_back({t.point,t.weight});
         if(selective){const int p=e.grid.inverse_active[t.point];if(p<0)throw std::runtime_error("halo donor is not active");needed.insert(p);}}
       h.end=es.size();
@@ -170,10 +176,22 @@ class HyperbolicCompositeExchange {
       if(row.boundary>=0)value+=row.boundary_weight*(vals(row.boundary*nf+f)-anchor);out(base+row.target)=value;
     });
     Summary result;
+    if(validate_amr_halos){
+      Kokkos::parallel_reduce("validate AMR interpolated geometry",Kokkos::RangePolicy<>(0,h.extent(0)),KOKKOS_LAMBDA(int p,int&bad){
+        const auto row=h(p);const int at=row.target;bool valid=true;
+        for(int f=0;f<nf;++f)valid=valid&&Kokkos::isfinite(out(f*size+at));
+        const Real A=1+out(size+at),B=out(2*size+at),C=out(3*size+at),D=1+out(4*size+at),E=out(5*size+at),F=1+out(6*size+at);
+        valid=valid&&out(at)>0&&out(18*size+at)+row.reference_lapse>0&&A>0&&A*D-B*B>0&&A*(D*F-E*E)-B*(B*F-C*E)+C*(B*E-C*D)>0;
+        if(!valid)++bad;
+      },result.invalid);
+    }
+
     if(b.extent(0)==0){Kokkos::fence();return result;}
     Kokkos::parallel_reduce("null before max",Kokkos::RangePolicy<>(0,b.extent(0)),KOKKOS_LAMBDA(int p,Real&v){v=fmax(v,before(p));},Kokkos::Max<Real>(result.before));
     Kokkos::parallel_reduce("null after max",Kokkos::RangePolicy<>(0,b.extent(0)),KOKKOS_LAMBDA(int p,Real&v){v=fmax(v,after(p));},Kokkos::Max<Real>(result.after));
-    Kokkos::parallel_reduce("null invalid",Kokkos::RangePolicy<>(0,b.extent(0)),KOKKOS_LAMBDA(int p,int&v){v+=bad(p);},result.invalid);
+    int invalid_boundary=0;
+    Kokkos::parallel_reduce("null invalid",Kokkos::RangePolicy<>(0,b.extent(0)),KOKKOS_LAMBDA(int p,int&v){v+=bad(p);},invalid_boundary);
+    result.invalid+=invalid_boundary;
     return result;
   }
 };

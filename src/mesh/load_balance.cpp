@@ -151,6 +151,7 @@ void MeshRefinement::InitRecvAMR(int nleaf) {
   if (pmy_mesh->pmb_pack->pz4c != nullptr) {
     ncc_tosend += (pmy_mesh->pmb_pack->pz4c->nz4c);
   }
+  ncc_tosend += RegisteredComponents();
 
   // Step 2. (InitRecvAMR)
   // loop over new MBs on this rank, initialize recv buffer metadata
@@ -403,6 +404,7 @@ void MeshRefinement::PackAndSendAMR(int nleaf) {
   if (pmy_mesh->pmb_pack->pz4c != nullptr) {
     ncc_tosend += (pmy_mesh->pmb_pack->pz4c->nz4c);
   }
+  ncc_tosend += RegisteredComponents();
 
   // Step 2. (PackAndSendAMR)
   // loop over old MBs on this rank, initialize send buffer metadata
@@ -543,6 +545,10 @@ void MeshRefinement::PackAndSendAMR(int nleaf) {
   if (pz4c != nullptr) {
     PackAMRBuffersCC(pz4c->u0, pz4c->coarse_u0, ncc_sent, nfc_sent);
     ncc_sent += pz4c->nz4c;
+  }
+  for (const auto &f : RegisteredFields()) {
+    PackAMRBuffersCC(*f.fine, *f.coarse, ncc_sent, nfc_sent);
+    ncc_sent += f.fine->extent_int(1);
   }
 
   // Step 4. (PackAndSendAMR)
@@ -833,6 +839,10 @@ void MeshRefinement::ClearRecvAndUnpackAMR() {
   if (pz4c != nullptr) {
     UnpackAMRBuffersCC(pz4c->u0, pz4c->coarse_u0, ncc_recv, nfc_recv);
     ncc_recv += pz4c->nz4c;
+  }
+  for (const auto &f : RegisteredFields()) {
+    UnpackAMRBuffersCC(*f.fine, *f.coarse, ncc_recv, nfc_recv);
+    ncc_recv += f.fine->extent_int(1);
   }
 #endif
   return;

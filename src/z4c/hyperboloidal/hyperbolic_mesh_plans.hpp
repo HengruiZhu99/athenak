@@ -75,7 +75,7 @@ class HyperbolicMeshPlans {
     std::vector<char> out;
     Append(out,m.half_width);Append(out,m.face_subdivisions);Append(out,m.cells);Append(out,m.ghosts);
     Append(out,uint64_t(m.revision));Append(out,m.evolved_overlap);
-    for(bool b:{m.spherical_inner_boundary,m.equiangular,m.continuous_cartesian_core})Append(out,int(b));
+    for(bool b:{m.spherical_inner_boundary,m.equiangular,m.continuous_cartesian_core,m.amr_cartesian_core})Append(out,int(b));
     Append(out,m.inner_radius);Append(out,uint64_t(m.radii.size()));for(Real r:m.radii)Append(out,r);
     Append(out,uint64_t(m.blocks.size()));for(const auto&b:m.blocks){
       Append(out,b.face);Append(out,b.layer);Append(out,b.refinement);

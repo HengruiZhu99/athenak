@@ -1,0 +1,122 @@
+[
+  {
+    "name": "truncated",
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/controls-v1/evolution.bin",
+      "12",
+      "wave",
+      "6",
+      ".00025",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/checkpoint-rejection/truncated",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/checkpoint-rejection/truncated.checkpoint",
+      "dynamic"
+    ],
+    "returncode": 2,
+    "expected_message": "truncated",
+    "passed": false,
+    "sha256": "07a1db8784f97f97a8b38d2d450823d4d7c9bd86cf4f2585b43af4d9872bbd9a"
+  },
+  {
+    "name": "identity",
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/controls-v1/evolution.bin",
+      "12",
+      "wave",
+      "6",
+      ".00025",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/checkpoint-rejection/identity",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/checkpoint-rejection/identity.checkpoint",
+      "dynamic"
+    ],
+    "returncode": 2,
+    "expected_message": "identity mismatch",
+    "passed": false,
+    "sha256": "bb568e58d0c74a1b5ef111cd26bfaa6b6d1264b1fd67e372dc6f57f41dcc9493"
+  },
+  {
+    "name": "field-layout",
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/controls-v1/evolution.bin",
+      "12",
+      "wave",
+      "6",
+      ".00025",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/checkpoint-rejection/field-layout",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/checkpoint-rejection/field-layout.checkpoint",
+      "dynamic"
+    ],
+    "returncode": 2,
+    "expected_message": "field layout mismatch",
+    "passed": false,
+    "sha256": "2a5be651fa8b09a0527abf2b1f25523d426af1fd911d707546157c159dc7e80f"
+  },
+  {
+    "name": "checksum",
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/controls-v1/evolution.bin",
+      "12",
+      "wave",
+      "6",
+      ".00025",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/checkpoint-rejection/checksum",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/checkpoint-rejection/checksum.checkpoint",
+      "dynamic"
+    ],
+    "returncode": 2,
+    "expected_message": "checksum mismatch",
+    "passed": false,
+    "sha256": "fd39debaeeb7e56832432caae4d9b6adb5e0f22ed6a88f03a0b3744ba19359d8"
+  },
+  {
+    "name": "timestep",
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/controls-v1/evolution.bin",
+      "12",
+      "wave",
+      "6",
+      ".0005",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/checkpoint-rejection/timestep",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/checkpoint-rejection/timestep.checkpoint",
+      "dynamic"
+    ],
+    "returncode": 2,
+    "expected_message": "configuration mismatch",
+    "passed": false,
+    "sha256": "a3a73bc6d76fc0d1dc8aa461a3bb8f67b9e59d2333e5842d311abde95376e43e"
+  },
+  {
+    "name": "initial-data",
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/controls-v1/evolution.bin",
+      "12",
+      "boost",
+      "6",
+      ".00025",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/checkpoint-rejection/initial-data",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/checkpoint-rejection/initial-data.checkpoint",
+      "dynamic"
+    ],
+    "returncode": 2,
+    "expected_message": "configuration mismatch",
+    "passed": false,
+    "sha256": "a3a73bc6d76fc0d1dc8aa461a3bb8f67b9e59d2333e5842d311abde95376e43e"
+  }
+]

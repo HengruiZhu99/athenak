@@ -730,3 +730,45 @@ foreach(zero_audit zero_restoration scri_dissipation_closure scri_full_consisten
   target_compile_definitions(${zero_target} PRIVATE ${scri_audit_defs} HYPERBOLIC_ZERO_SHIFT_RESTORATION=1)
   target_compile_options(${zero_target} PRIVATE -Wall -Wextra -ffp-contract=off)
 endforeach()
+
+# Link the real AthenaK lifecycle into the standalone AMR qualification driver.
+# Keep the existing athena target and its optional dependency settings intact.
+if(ENABLE_MPI)
+  get_target_property(amr_athena_sources athena SOURCES)
+  list(REMOVE_ITEM amr_athena_sources main.cpp)
+  list(TRANSFORM amr_athena_sources PREPEND "${CMAKE_SOURCE_DIR}/src/")
+  add_library(hyperbolic_athenak_amr STATIC EXCLUDE_FROM_ALL ${amr_athena_sources})
+  target_include_directories(hyperbolic_athenak_amr PRIVATE
+    $<TARGET_PROPERTY:athena,INCLUDE_DIRECTORIES>)
+  target_link_libraries(hyperbolic_athenak_amr PUBLIC $<TARGET_PROPERTY:athena,LINK_LIBRARIES>)
+  add_executable(hyperbolic_shift_3d_amr_transfer test_amr_transfer.cpp)
+  target_include_directories(hyperbolic_shift_3d_amr_transfer PRIVATE
+    ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+  target_link_libraries(hyperbolic_shift_3d_amr_transfer PRIVATE hyperbolic_athenak_amr)
+endif()
+if(ENABLE_MPI)
+  add_executable(hyperbolic_shift_3d_amr_operators test_amr_operators.cpp)
+  target_include_directories(hyperbolic_shift_3d_amr_operators PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+  target_link_libraries(hyperbolic_shift_3d_amr_operators PRIVATE hyperbolic_athenak_amr)
+endif()
+if(ENABLE_MPI)
+  add_executable(hyperbolic_shift_3d_amr_evolution amr_evolution.cpp)
+  get_target_property(amr_science hyperbolic_shift_3d_mpi_native_control_broad_smooth_six_shells_boosted_free_gauge_refined_core_matched_cfl COMPILE_DEFINITIONS)
+  target_compile_definitions(hyperbolic_shift_3d_amr_evolution PRIVATE ${amr_science})
+  target_include_directories(hyperbolic_shift_3d_amr_evolution PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+  target_link_libraries(hyperbolic_shift_3d_amr_evolution PRIVATE hyperbolic_athenak_amr)
+  target_compile_options(hyperbolic_shift_3d_amr_evolution PRIVATE -ffp-contract=off)
+endif()
+
+if(ENABLE_MPI)
+  foreach(ranks 1 2 4)
+    add_test(NAME hyperbolic_shift_3d_amr_transfer_mpi${ranks}
+      COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${ranks}
+      $<TARGET_FILE:hyperbolic_shift_3d_amr_transfer> 12)
+    set_tests_properties(hyperbolic_shift_3d_amr_transfer_mpi${ranks}
+      PROPERTIES RUN_SERIAL TRUE TIMEOUT 180)
+  endforeach()
+  add_test(NAME hyperbolic_shift_3d_amr_operators
+    COMMAND hyperbolic_shift_3d_amr_operators 12)
+  set_tests_properties(hyperbolic_shift_3d_amr_operators PROPERTIES RUN_SERIAL TRUE TIMEOUT 180)
+endif()

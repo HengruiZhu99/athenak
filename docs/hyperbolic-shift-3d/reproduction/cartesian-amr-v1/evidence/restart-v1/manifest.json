@@ -1,0 +1,83 @@
+[
+  {
+    "binary_sha256": "8d7cc38178fe366fec6f969b26ef3140a1dbafa08763245d1d6a2d689fc23ca9",
+    "name": "wave-full",
+    "command": [
+      "mpiexec",
+      "-n",
+      "1",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/restart-v1/evolution.bin",
+      "12",
+      "wave",
+      "6",
+      ".00025",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/restart-v1/wave-full",
+      "-",
+      "dynamic"
+    ],
+    "returncode": 0,
+    "seconds": 97.752181792,
+    "report.json": {
+      "bytes": 155,
+      "sha256": "e1584154864fff6f23f437fe9427150affca77514e46a9d1f6268b7b640dc338"
+    },
+    "checkpoint": {
+      "bytes": 68740836,
+      "sha256": "8e8d28add8411268d5ba8c83a8f83b4b5b857b2f03f0b024aa1bd67b9a8de69a"
+    }
+  },
+  {
+    "binary_sha256": "8d7cc38178fe366fec6f969b26ef3140a1dbafa08763245d1d6a2d689fc23ca9",
+    "name": "wave-save",
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/restart-v1/evolution.bin",
+      "12",
+      "wave",
+      "3",
+      ".00025",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/restart-v1/wave-save",
+      "-",
+      "dynamic"
+    ],
+    "returncode": 0,
+    "seconds": 58.706224916999986,
+    "report.json": {
+      "bytes": 155,
+      "sha256": "bb4452f8a727d9a49389758d6ac0bac8f4c58c40b85d70cd4ea0f4f189fee25f"
+    },
+    "checkpoint": {
+      "bytes": 89354428,
+      "sha256": "a3a73bc6d76fc0d1dc8aa461a3bb8f67b9e59d2333e5842d311abde95376e43e"
+    }
+  },
+  {
+    "binary_sha256": "8d7cc38178fe366fec6f969b26ef3140a1dbafa08763245d1d6a2d689fc23ca9",
+    "name": "wave-restart",
+    "command": [
+      "mpiexec",
+      "-n",
+      "4",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/restart-v1/evolution.bin",
+      "12",
+      "wave",
+      "6",
+      ".00025",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/restart-v1/wave-restart",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/restart-v1/wave-save.checkpoint",
+      "dynamic"
+    ],
+    "returncode": 0,
+    "seconds": 46.227691542,
+    "report.json": {
+      "bytes": 155,
+      "sha256": "fbe86286828ce4384453781bb0fd169b2a39eec5e6b345a9fe599b34f0e08de1"
+    },
+    "checkpoint": {
+      "bytes": 68740836,
+      "sha256": "8e8d28add8411268d5ba8c83a8f83b4b5b857b2f03f0b024aa1bd67b9a8de69a"
+    }
+  }
+]

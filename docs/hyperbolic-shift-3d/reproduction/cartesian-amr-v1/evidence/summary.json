@@ -1,0 +1,25 @@
+{
+  "status": "experimental integration; dynamic boosted-puncture qualification fails",
+  "robust_unrestricted_boost_amr": false,
+  "backend": "CPU Kokkos SERIAL",
+  "ranks": [
+    1,
+    2,
+    4
+  ],
+  "dynamic_wave_restart": "byte-identical across one-rank uninterrupted, two-rank uninterrupted, and two-to-four-rank restart",
+  "dynamic_boost": "first regrid rejected: native point prolongation makes chi negative from positive donors",
+  "time_limit": {
+    "steps": 6,
+    "dt": 0.00025,
+    "t_over_M": 0.0045
+  },
+  "limitations": [
+    "No global mixed-level KO energy estimate",
+    "Native point transfer is fifth-order in field values; differentiated regrid defects can be lower order",
+    "Replicated host plans and complete-state regrid gathers",
+    "No GPU evidence, long-time stability or evolution convergence proof",
+    "Prescribed regrid schedule; production refinement estimator not qualified",
+    "No nonzero floor-event restart fixture"
+  ]
+}

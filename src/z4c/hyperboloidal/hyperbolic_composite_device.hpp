@@ -81,6 +81,7 @@ class HyperbolicCompositeDevice {
 
   int first_, local_, n_, width_, padded_count_;
   Real outer_radius2_;
+  bool amr_cfl_=false;
   IntBuffer active_, ko_offsets_, status_;
   GeometryBuffer geometry_;
   Buffer volumes_, diagnostic_volumes_, rhs_, gap_, cfl_, uploaded_padded_;
@@ -97,6 +98,7 @@ class HyperbolicCompositeDevice {
     int n, width, padded_count;
     Real dt, ko;
     bool adaptive;
+    bool amr_cfl=false;
     ScriRadialDevice::BoundKernel radial;
     ConstBuffer positive_ko;
     bool direct_lapse_dissipation=false;
@@ -306,7 +308,7 @@ class HyperbolicCompositeDevice {
             GaugeLapseSpeedSquared(u.alpha.value,u.chi.value,coefficient,Q,E)));
       }
       cfl(local)=dt*n*speed;
-      if ((!HYPERBOLIC_EXPERIMENTAL_TIMESTEP && cfl(local)>.4) || dt/.02>.25) status(local)=cfl_exceeded;
+      if (((!HYPERBOLIC_EXPERIMENTAL_TIMESTEP || amr_cfl) && cfl(local)>.4) || dt/.02>.25) status(local)=cfl_exceeded;
       for (int f=0;f<nf;++f) {
         rhs(nf*local+f)=rate[f];
         if (!Kokkos::isfinite(rate[f])) status(local)=nonfinite_rhs;
@@ -468,6 +470,7 @@ class HyperbolicCompositeDevice {
     auto maps=Kokkos::create_mirror_view(geometry_);
     auto volumes=Kokkos::create_mirror_view(volumes_);
     auto diagnostic_volumes=Kokkos::create_mirror_view(diagnostic_volumes_);
+    amr_cfl_=grid.mesh.amr_cartesian_core;
     auto offsets=Kokkos::create_mirror_view(ko_offsets_);
     std::vector<KOTerm> terms;
     using Stencil=CompositeDissipation;
@@ -477,6 +480,12 @@ class HyperbolicCompositeDevice {
       indices(local)=grid.active[p];maps(local)=grid.geometry[p];volumes(local)=grid.volumes[p];
       diagnostic_volumes(local)=grid.DiagnosticVolume(p);
       offsets(local)=terms.size();
+      if(grid.mesh.amr_cartesian_core&&grid.mesh.blocks[grid.cells[p].block].face<0){
+        for(const auto&t:Stencil::CartesianTerms(grid,p)){KOTerm term{};
+          term.target_coefficient=t.target_coefficient;term.weight=t.weight;
+          for(int a=0;a<Stencil::points;++a)term.point[a]=t.point[a];terms.push_back(term);}
+        continue;
+      }
       std::vector<Candidate> candidates;
       for (int A=0;A<3;++A) for (int a=0;a<Stencil::points;++a) {
         const int start=grid.ShiftActive(p,A,-a);
@@ -519,6 +528,7 @@ class HyperbolicCompositeDevice {
       throw std::invalid_argument("invalid device RHS storage/timestep/dissipation");
     PointKernel kernel{padded,active_,ko_offsets_,status_,geometry_,ko_terms_,
         volumes_,rhs_,gap_,cfl_,n_,width_,padded_count_,dt,ko,adaptive};
+    kernel.amr_cfl=amr_cfl_;
     if(radial_plan_)kernel.radial=radial_plan_->Prepare(padded,surface);
     if(positive_ko.extent(0)&&positive_ko.extent(0)!=size_t(2)*padded_count_)throw std::invalid_argument("positive KO storage mismatch");
     kernel.positive_ko=positive_ko;
@@ -543,6 +553,7 @@ class HyperbolicCompositeDevice {
         diagnostic_volumes_,rhs_,gap_,cfl_,n_,width_,padded_count_,0,0,false};
     kernel.outer_radius2=outer_radius2_;
     kernel.diagnostic_outer_first_order=outer_first_order;
+    kernel.amr_cfl=amr_cfl_;
     if(radial_plan_)kernel.radial=radial_plan_->Prepare(padded,surface);
     DiagnosticSummary result;
     Kokkos::parallel_reduce("hyperboloidal owned constraints",

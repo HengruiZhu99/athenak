@@ -311,12 +311,12 @@ class Evolution {
     });
     Repartition(cuts);
   }
-  explicit Evolution(int resolution,Real epsilon=0,int kind=0,const std::string&partition_file=""):n(resolution),angular_epsilon(epsilon){
+  explicit Evolution(int resolution,Real epsilon=0,int kind=0,const std::string&partition_file="",const cubed_sphere::CompositeMesh*custom_mesh=nullptr):n(resolution),angular_epsilon(epsilon){
     auto setup_tick=construction_started;
     auto setup_phase=[&](int i){const auto now=std::chrono::steady_clock::now();setup_seconds[i]=std::chrono::duration<double>(now-setup_tick).count();setup_tick=now;};
     MPI_Comm_rank(MPI_COMM_WORLD,&rank);MPI_Comm_size(MPI_COMM_WORLD,&size);
     if constexpr(!coordinated_plans){
-    legacy_model=std::make_unique<h::HyperbolicComposite>(continuous_positive?hyperbolic_reproduction::ContinuousCoreMesh(n):spherical_overlap?hyperbolic_reproduction::SphericalOverlapMesh(n):hyperbolic_reproduction::FixedMesh(n,core_subdivisions,evolved_overlap),false,scri_angular_exchange,epsilon,
+    legacy_model=std::make_unique<h::HyperbolicComposite>(custom_mesh?*custom_mesh:continuous_positive?hyperbolic_reproduction::ContinuousCoreMesh(n):spherical_overlap?hyperbolic_reproduction::SphericalOverlapMesh(n):hyperbolic_reproduction::FixedMesh(n,core_subdivisions,evolved_overlap),false,scri_angular_exchange,epsilon,
       scri_sampled_normal?h::HyperbolicComposite::NormalDerivative::sampled_numerator:h::HyperbolicComposite::NormalDerivative::analytic_jets,
       scri_donor_seven?h::HyperbolicComposite::RadialClosure::donor_seven:h::HyperbolicComposite::RadialClosure::ghost_lift);
     auto&model=*legacy_model;
@@ -682,6 +682,7 @@ class Evolution {
     }
   }
   void WriteCheckpoint(const std::string&path,int kind,Real dt,bool admitted){
+    if(Model().grid.mesh.amr_cartesian_core)throw std::logic_error("AMR requires its distinct checkpoint writer");
     Buffer comp_global("global compensation",state.extent(0)),edge_comp_global("global surface compensation",surface.extent(0));
     const auto complete=CompleteState(state);
     Gather(compensation,comp_global);Gather(surface_compensation,edge_comp_global,true);int bad=0;std::string reason;
@@ -705,6 +706,7 @@ class Evolution {
     }catch(const std::exception&e){bad=1;reason=e.what();}SynchronizeError(bad,reason);
   }
   void LoadCheckpoint(const std::string&path,int kind,Real dt){
+    if(Model().grid.mesh.amr_cartesian_core)throw std::logic_error("AMR requires its distinct checkpoint reader");
     Header header{};V values(31*total),comps(31*total),edge(31*surface_total),edge_comps(31*surface_total);int bad=0;std::string reason;
     if(rank==0)try{std::ifstream in(path,std::ios::binary);in.read(reinterpret_cast<char*>(&header),sizeof(header));
       if(!in||std::memcmp(header.magic,checkpoint_magic,std::strlen(checkpoint_magic)+1)||header.n!=n||header.nf!=31||header.kind!=kind||header.admitted!=1||header.cells!=size_t(total)||header.surface!=surface.extent(0)||header.dt!=dt)

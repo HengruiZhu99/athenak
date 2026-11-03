@@ -1,5 +1,7 @@
 #ifndef MESH_MESH_REFINEMENT_HPP_
 #define MESH_MESH_REFINEMENT_HPP_
+#include <string>
+#include <vector>
 //========================================================================================
 // AthenaXXX astrophysical plasma code
 // Copyright(C) 2020 James M. Stone <jmstone@ias.edu> and the Athena code team
@@ -89,6 +91,21 @@ class MeshRefinement {
   };
   InterpWeight weights;
 
+  // Additional point-sampled fields owned by a standalone physics driver.
+  // Register collectively in identical order before the first regrid. Views
+  // must outlive this object and include capacity for max_nmb_per_rank. The
+  // caller fills fine halos and synchronizes an accepted step before regridding.
+  // No Z4c field numbering or algebraic projection is applied to these arrays.
+  struct RegisteredCC {
+    std::string name;
+    DvceArray5D<Real> *fine, *coarse;
+    bool high_order;
+  };
+  void RegisterCC(const std::string &name, DvceArray5D<Real> &fine,
+                  DvceArray5D<Real> &coarse, bool high_order=true);
+  const std::vector<RegisteredCC>& RegisteredFields() const { return registered_cc_; }
+  int RegisteredComponents() const;
+
 #if MPI_PARALLEL_ENABLED
   int nmb_send, nmb_recv;
   MPI_Comm amr_comm;                           // unique communicator for AMR
@@ -137,5 +154,6 @@ class MeshRefinement {
  private:
   // data
   Mesh *pmy_mesh;
+  std::vector<RegisteredCC> registered_cc_;
 };
 #endif // MESH_MESH_REFINEMENT_HPP_

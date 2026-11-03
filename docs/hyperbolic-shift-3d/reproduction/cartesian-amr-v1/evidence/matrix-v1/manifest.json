@@ -1,0 +1,132 @@
+[
+  {
+    "name": "wave-1",
+    "command": [
+      "mpiexec",
+      "-n",
+      "1",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/build-amr/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_amr_evolution",
+      "12",
+      "wave",
+      "6",
+      ".00025",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/matrix-v1/wave-1",
+      "-",
+      "dynamic"
+    ],
+    "returncode": 0,
+    "seconds": 104.290642834,
+    "report.json": {
+      "bytes": 155,
+      "sha256": "c6a634236ba2bd0e7366c123ec73b60abb1ebae65700e97e07ae240e23928825"
+    },
+    "checkpoint": {
+      "bytes": 68740811,
+      "sha256": "a02ad40605bf2298446e5b8cf19158708dd2373ea9b6b78bf7c2d8f06e0a22bb"
+    }
+  },
+  {
+    "name": "wave-2",
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/build-amr/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_amr_evolution",
+      "12",
+      "wave",
+      "6",
+      ".00025",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/matrix-v1/wave-2",
+      "-",
+      "dynamic"
+    ],
+    "returncode": 0,
+    "seconds": 79.368656333,
+    "report.json": {
+      "bytes": 155,
+      "sha256": "b7763c452082f19a7fc8b3d56f4f7552783a15f5305c635ff9a121737ef3a6f2"
+    },
+    "checkpoint": {
+      "bytes": 68740811,
+      "sha256": "a02ad40605bf2298446e5b8cf19158708dd2373ea9b6b78bf7c2d8f06e0a22bb"
+    }
+  },
+  {
+    "name": "wave-4",
+    "command": [
+      "mpiexec",
+      "-n",
+      "4",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/build-amr/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_amr_evolution",
+      "12",
+      "wave",
+      "6",
+      ".00025",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/matrix-v1/wave-4",
+      "-",
+      "dynamic"
+    ],
+    "returncode": 0,
+    "seconds": 211.435316584,
+    "report.json": {
+      "bytes": 147,
+      "sha256": "8139d7b43a5facf22f114869c51b37284062c4438d55eaaef9527931193dcf96"
+    },
+    "checkpoint": {
+      "bytes": 68740811,
+      "sha256": "a02ad40605bf2298446e5b8cf19158708dd2373ea9b6b78bf7c2d8f06e0a22bb"
+    }
+  },
+  {
+    "name": "wave-uniform",
+    "command": [
+      "mpiexec",
+      "-n",
+      "1",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/build-amr/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_amr_evolution",
+      "12",
+      "wave",
+      "6",
+      ".00025",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/matrix-v1/wave-uniform",
+      "-",
+      "uniform"
+    ],
+    "returncode": 0,
+    "seconds": 109.98642645799998,
+    "report.json": {
+      "bytes": 155,
+      "sha256": "0f96d25f7179885db66b5e252eb162c2039379e98827c90495557adc5da8b430"
+    },
+    "checkpoint": {
+      "bytes": 151195204,
+      "sha256": "76f35d6ae9696cf8225e1d77fbee5232b654588830f63b7e4520e5aa84be0fbd"
+    }
+  },
+  {
+    "name": "minkowski",
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/build-amr/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_amr_evolution",
+      "12",
+      "minkowski",
+      "6",
+      ".00025",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/matrix-v1/minkowski",
+      "-",
+      "dynamic"
+    ],
+    "returncode": 0,
+    "seconds": 88.85569820899997,
+    "report.json": {
+      "bytes": 155,
+      "sha256": "819cdc3c694fe6ef57542f5c42c7c75c0a5896fdfba6786600716d6d69b48c51"
+    },
+    "checkpoint": {
+      "bytes": 68740836,
+      "sha256": "79ac7c12e80ec3b53060d95921fd4f1a876b1cc1828d706bd6ca77bacb3f6674"
+    }
+  }
+]

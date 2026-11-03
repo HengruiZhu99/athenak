@@ -16,6 +16,7 @@
 #include <iostream>
 #include <cmath>     // abs
 #include <algorithm> // sort
+#include <stdexcept>
 #include <utility>   // pair
 
 #include "athena.hpp"
@@ -136,6 +137,54 @@ MeshRefinement::~MeshRefinement() {
     delete [] nref_rsum;
     delete [] nderef_rsum;
   }
+}
+
+// Registration extends the existing migration path; it does not introduce a
+// second topology, balancer, MPI protocol, or interpolation implementation.
+int MeshRefinement::RegisteredComponents() const {
+  int count = 0;
+  for (const auto &f : registered_cc_) count += f.fine->extent_int(1);
+  return count;
+}
+
+void MeshRefinement::RegisterCC(const std::string &name, DvceArray5D<Real> &fine,
+                               DvceArray5D<Real> &coarse, bool high_order) {
+  const auto &i = pmy_mesh->mb_indcs;
+  int bad = name.empty() || !pmy_mesh->three_d || fine.extent_int(1) < 1
+      || fine.extent(1) != coarse.extent(1)
+      || fine.extent_int(0) < pmy_mesh->nmb_maxperrank
+      || coarse.extent(0) != fine.extent(0)
+      || (high_order && i.ng != 2 && i.ng != 4);
+  for (int d=2; d<5; ++d) {
+    const int n = d==2 ? i.nx3 : d==3 ? i.nx2 : i.nx1;
+    bad |= fine.extent_int(d) != n+2*i.ng
+        || coarse.extent_int(d) != n/2+2*i.ng;
+  }
+  for (const auto &f : registered_cc_) {
+    bad |= f.name == name || f.fine->data() == fine.data()
+        || f.coarse->data() == coarse.data();
+  }
+#if MPI_PARALLEL_ENABLED
+  // Reject inconsistent registrations collectively, before any packing offsets
+  // can disagree. Names and dimensions are compared exactly, not by a hash.
+  std::string schema = name + ":" + std::to_string(fine.extent(1))
+      + ":" + std::to_string(high_order) + ":" + std::to_string(registered_cc_.size());
+  int length = schema.size(), root_length = length;
+  MPI_Bcast(&root_length, 1, MPI_INT, 0, amr_comm);
+  std::string root(root_length, '\0');
+  if (global_variable::my_rank == 0) root = schema;
+  MPI_Bcast(root.data(), root_length, MPI_CHAR, 0, amr_comm);
+  bad |= schema != root;
+  MPI_Allreduce(MPI_IN_PLACE, &bad, 1, MPI_INT, MPI_MAX, amr_comm);
+#endif
+  if (bad) throw std::invalid_argument("invalid or inconsistent AMR field registration");
+  Kokkos::fence();
+#if MPI_PARALLEL_ENABLED
+  const size_t extra = fine.size();
+  Kokkos::realloc(send_data, send_data.extent(0)+extra);
+  Kokkos::realloc(recv_data, recv_data.extent(0)+extra);
+#endif
+  registered_cc_.push_back({name, &fine, &coarse, high_order});
 }
 
 //----------------------------------------------------------------------------------------
@@ -522,6 +571,9 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
     RestrictFC(pmhd->b0, pmhd->coarse_b0);
   }
 
+  // Registered point fields require a current restriction before migration.
+  for (const auto &f : registered_cc_) RestrictCC(*f.fine, *f.coarse, f.high_order);
+
   // Step 4.
   // Allocate send/recv buffers for load balancing, post receives.
   // Pack send buffers for load blancing and send data
@@ -550,6 +602,7 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
     if (pz4c != nullptr) {
       DerefineCCSameRank(pz4c->u0, pz4c->coarse_u0);
     }
+    for (const auto &f : registered_cc_) DerefineCCSameRank(*f.fine, *f.coarse);
   }
 
   // Step 6.
@@ -570,6 +623,7 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
   } else if (padm != nullptr) {
     CopyCC(padm->u_adm);
   }
+  for (const auto &f : registered_cc_) CopyCC(*f.fine);
   // Step 7.
   // Copy evolved physics variables for MBs flagged for refinement from source fine array
   // to target coarse array, when both are on same rank.
@@ -587,6 +641,7 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
     if (pz4c != nullptr) {
       CopyForRefinementCC(pz4c->u0, pz4c->coarse_u0);
     }
+    for (const auto &f : registered_cc_) CopyForRefinementCC(*f.fine, *f.coarse);
   }
 
   // Step 8.
@@ -622,6 +677,7 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
     if (pz4c != nullptr) {
       RefineCC(new_to_old, pz4c->u0, pz4c->coarse_u0, true);
     }
+    for (const auto &f : registered_cc_) RefineCC(new_to_old, *f.fine, *f.coarse, f.high_order);
   }
 
   // Step 10.
