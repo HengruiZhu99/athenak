@@ -31,3 +31,19 @@ N20 segment01 submitted as job9034255; plan SHA256ffbb96bf8824db03e3d84127fe2da4
 N20 job9034255 completed10M/8334steps with native0,workerpassed,PBS0; all original new-policy checks passed including penalty scale0.651041666666. Frozen v1 helper verified the N61 endpoint, SHA2565911a06a00c3ae2deede4de9949846f757a083e3a0941ddef0225abaf8e68536,214780072bytes. Matching terminal lock released. N24 fresh plan is bound with v2/10GB; state.json records its subsequent submission. Own-candidate terminal H/M0.00431561/0.00894635 are preliminary and do not replace the common-cutoff comparison. Native command2341.18s. No N20 continuation.
 
 N24 fresh job **9034491** is SUBMITTED with v2/10GB, plan `campaigns/n24-restored-six-shells-resolution-v1-r24-evolution-segment01/plan.json`, SHA25666c6cf8a8a8fecf6c22f9e7a400851d6f2f72510382547e0bff68ea848783fb5. Both debug queues empty before submission. Binding footprint4,263,859,765bytes and4,785,770,774bytes headroom after output/atomic reserves. N20 all six artifacts are locally hash/length verified. Monitor existing N24; no new N20 run. Full common-cutoff resolution comparisons remain pending.
+
+## N16–N20 measured comparison at 10M
+
+The read-only reconstruction in `n16-n20/` uses the same local N61 diagnostic binary for both native-completed endpoints and fixed compactified cutoff r>0.12. Full-domain reconstruction reproduces each native report. Complete final horizon upper bounds are 0.1084932 and 0.1085550, safely inside the cutoff. Checkpoint hashes are preserved; the old N16 campaign penalty-policy failure remains recorded, not retroactively passed. Both evolutions actually used the same penalty scale 0.651041666666.
+
+| Constraint RMS | N16 | N20 | Reduction | Effective order |
+|---|---:|---:|---:|---:|
+| H | 0.009031433664 | 0.004233688901 | 53.12% | 3.3953 |
+| M | 0.01788015140 | 0.008925155844 | 50.08% | 3.1138 |
+| Mr | 0.02003276416 | 0.009504923800 | 52.55% | 3.3412 |
+
+Here p=ln(E16/E20)/ln(20/16), with E a constraint RMS whose continuum value is zero. Space and timestep refine together; this is a two-point effective residual order, not a solution self-convergence or asymptotic fourth-order proof. Nearby cutoffs 0.1099–0.13 give pH=3.34–3.42 and pM=3.08–3.14. The dominant outer peak remains around r=0.7–0.775, with regional pH=2.924 and pM=3.047. The r=0.775–0.9 band improves faster (4.170/4.377), whereas r>0.9 momentum improves slowly (0.680); its absolute residual is smaller. Thus improvement is substantial but not uniformly fourth order.
+
+Histories use each candidate horizon cutoff and retain mass acceptance gaps; no fixed-cutoff historical orders are inferred. N20 accepted final mass error is -0.06325%, versus +0.13689% at N16. N20 chi floor counts are 48 stage/16 final versus zero at N16; full-domain early transients do not uniformly improve. These qualifications remain part of the resolution assessment.
+
+Reproducer: `python3 docs/hyperbolic-shift-3d/reproduction/restored-six-shells-resolution-v1/compare_n16_n20.py --help` (default output must be fresh). Provenance, cut sensitivity and radial integrals are saved alongside `effective-order.png`, `radial.png`, `histories.png` and `full-and-boundary.png`; all four plots were visually inspected. N24 remains a separate pending comparison under the hourly monitor; do not rerun completed N16/N20 diagnostics unnecessarily.

@@ -1,0 +1,153 @@
+{
+  "scope": "Measured histories; own-candidate exterior cutoffs. No missing-value interpolation or endpoint radial reconstruction. N16 original acceptance failure retained; common clipped-penalty family explicitly selected for N20.",
+  "cases": {
+    "N16*": {
+      "label": "N16 six shells, old policy failure retained",
+      "status": "native_completed_old_penalty_policy_failed",
+      "last_accepted_t_over_M": 10,
+      "last_diagnostic_t_over_M": 10.0,
+      "accepted_horizon_rows": 37,
+      "rows": 68,
+      "final_accepted_mass_error": 0.0013688864916114873,
+      "counters": {
+        "totals": {
+          "chi_floor_stage_interventions": 0,
+          "chi_floor_acceptance_interventions": 0,
+          "surface_chi_floor_stage_interventions": 0,
+          "surface_chi_floor_final_interventions": 0,
+          "lapse_floor_node_interventions": 0,
+          "scri_interpolated_chi_negative_count": 0,
+          "scri_interpolated_chi_zero_count": 0
+        },
+        "candidate_groups": {},
+        "scope": "Segment-local counts include rejected attempts; event times are coordinate time. Boundary interpolation counts are separate."
+      },
+      "segments": [
+        {
+          "plan": "campaigns/n16-restored-six-shells-v1-a-evolution-segment01/plan.json",
+          "job_id": "9033869.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+          "status": "completed_but_penalty_policy_failed",
+          "checkpoint_sha256": "b0b0f5767148d435c9ece954a17fb2746f0e59817bf38aeffb36d42c30e8119d",
+          "artifacts": {
+            "campaigns/n16-restored-six-shells-v1-a-evolution-segment01/output/puncture.report.json": {
+              "sha256": "63361c2ba0e2b0dd1443460dd560fe40327769be409390df5517d7d041995773",
+              "bytes": 12998
+            },
+            "campaigns/n16-restored-six-shells-v1-a-evolution-segment01/output/puncture.checkpoint": {
+              "sha256": "b0b0f5767148d435c9ece954a17fb2746f0e59817bf38aeffb36d42c30e8119d",
+              "bytes": 116294312
+            },
+            "campaigns/n16-restored-six-shells-v1-a-evolution-segment01/output/puncture.history.csv": {
+              "sha256": "dda30413e5a38b06b318746e6b1d2fb095c09af320fb1e3594cae3823c4bd750",
+              "bytes": 45522
+            },
+            "campaigns/n16-restored-six-shells-v1-a-evolution-segment01/output/puncture.checkpoint.horizon-seed.txt": {
+              "sha256": "44b2e798b35dfc7de293aae39cbb4b615fa06f37f35d2cd2ef92b5a5feec5ee5",
+              "bytes": 86
+            },
+            "campaigns/n16-restored-six-shells-v1-a-evolution-segment01/output/puncture.fastflow.horizon_summary_0.txt": {
+              "sha256": "07cf851e8ae9ae3b87d1dfc1565775dba31357f23ebed2b834beeed1f1f498ee",
+              "bytes": 10188
+            },
+            "campaigns/n16-restored-six-shells-v1-a-evolution-segment01/output/puncture.fastflow.horizon_shape_0.txt": {
+              "sha256": "b95196fd542e1332abbcbe1361b000d9aad9bf589a899cdfa2dc3e28caec1412",
+              "bytes": 85363
+            }
+          }
+        }
+      ],
+      "restart_diagnostic_repeats": 0,
+      "boundary_report_maxima": {
+        "max_null_surface": 1.2213764090651353e-15,
+        "max_null_ghost": 1.5543122004269266e-15,
+        "max_pole": 0.1852165074205706,
+        "max_clock": 0.32154787660998485
+      },
+      "missing_boundary_report_values": {
+        "max_null_surface": 0,
+        "max_null_ghost": 0,
+        "max_pole": 0,
+        "max_clock": 0
+      }
+    },
+    "N20": {
+      "label": "N20 six shells, matching clipped-penalty policy",
+      "status": "completed",
+      "last_accepted_t_over_M": 10,
+      "last_diagnostic_t_over_M": 10.0,
+      "accepted_horizon_rows": 39,
+      "rows": 68,
+      "final_accepted_mass_error": -0.0006325354623841761,
+      "counters": {
+        "totals": {
+          "chi_floor_stage_interventions": 48,
+          "chi_floor_acceptance_interventions": 16,
+          "surface_chi_floor_stage_interventions": 0,
+          "surface_chi_floor_final_interventions": 0,
+          "lapse_floor_node_interventions": 0,
+          "scri_interpolated_chi_negative_count": 0,
+          "scri_interpolated_chi_zero_count": 0
+        },
+        "candidate_groups": {
+          "volume_field_0": {
+            "negative_stage": 48,
+            "negative_final": 16,
+            "zero_stage": 0,
+            "zero_final": 0,
+            "minimum": -2.421565796741703e-07,
+            "first_negative_time": 0.07859999999999975,
+            "first_zero_time": null
+          }
+        },
+        "scope": "Segment-local counts include rejected attempts; event times are coordinate time. Boundary interpolation counts are separate."
+      },
+      "segments": [
+        {
+          "plan": "campaigns/n20-restored-six-shells-resolution-v1-r20-evolution-segment01/plan.json",
+          "job_id": "9034255.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+          "status": "passed",
+          "checkpoint_sha256": "5911a06a00c3ae2deede4de9949846f757a083e3a0941ddef0225abaf8e68536",
+          "artifacts": {
+            "campaigns/n20-restored-six-shells-resolution-v1-r20-evolution-segment01/output/puncture.report.json": {
+              "sha256": "e7935d458717fb66f63d99846c5e65a68fa4825b222ae9f384eaa4681c5da3cc",
+              "bytes": 14520
+            },
+            "campaigns/n20-restored-six-shells-resolution-v1-r20-evolution-segment01/output/puncture.checkpoint": {
+              "sha256": "5911a06a00c3ae2deede4de9949846f757a083e3a0941ddef0225abaf8e68536",
+              "bytes": 214780072
+            },
+            "campaigns/n20-restored-six-shells-resolution-v1-r20-evolution-segment01/output/puncture.history.csv": {
+              "sha256": "5d71fe5f6314f287b1113f94c34c3a0a470d53387931925bddc2a6e47250d520",
+              "bytes": 45845
+            },
+            "campaigns/n20-restored-six-shells-resolution-v1-r20-evolution-segment01/output/puncture.checkpoint.horizon-seed.txt": {
+              "sha256": "d7f5912d160132f0c54fabe8ff0bf4e1252cf87588f92ad6d46109c840bfc7f0",
+              "bytes": 86
+            },
+            "campaigns/n20-restored-six-shells-resolution-v1-r20-evolution-segment01/output/puncture.fastflow.horizon_summary_0.txt": {
+              "sha256": "2c35642ffba8bc50b52eae7245c1fbe45120b9bfaf26de05e7fe1a43abd4b52c",
+              "bytes": 10533
+            },
+            "campaigns/n20-restored-six-shells-resolution-v1-r20-evolution-segment01/output/puncture.fastflow.horizon_shape_0.txt": {
+              "sha256": "1c4a327819a42469ca83a778bb70d026f81f0d82be8bfe081f257992c18044d4",
+              "bytes": 90013
+            }
+          }
+        }
+      ],
+      "restart_diagnostic_repeats": [],
+      "boundary_report_maxima": {
+        "max_null_surface": 1.3322676295290182e-15,
+        "max_null_ghost": 1.6654078535851923e-15,
+        "max_pole": 0.13464510714933658,
+        "max_clock": 0.23581150342989446
+      },
+      "missing_boundary_report_values": {
+        "max_null_surface": 0,
+        "max_null_ghost": 0,
+        "max_pole": 0,
+        "max_clock": 0
+      }
+    }
+  }
+}
