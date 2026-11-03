@@ -1,0 +1,409 @@
+{
+  "schema": 1,
+  "reviewed": true,
+  "phase": "native_transition_evolution",
+  "experimental_policy": "n20_then_n24_six_shells_matched_N16_penalty_clipping_to10M",
+  "variant": "R24",
+  "purpose": "evolution",
+  "segment": 1,
+  "n": 24,
+  "low_resolution_n": 24,
+  "native_exit_reserve_seconds": 180,
+  "resources": {
+    "queue": "debug-scaling",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "01:00:00"
+  },
+  "worker_seconds": 3200,
+  "storage": {
+    "limit_bytes": 10000000000,
+    "planned_new_bytes": 582535053,
+    "atomic_checkpoint_reserve_bytes": 367834408
+  },
+  "output_dir": "campaigns/n24-restored-six-shells-resolution-v1-r24-evolution-segment01/output",
+  "start_verification": {
+    "variant": "R24",
+    "schema": "HYP3D_MPI_N61",
+    "n": 24,
+    "time": 0.0,
+    "steps": 0,
+    "dt": 0.0003333333333333333,
+    "kind": "native_fresh"
+  },
+  "commands": [
+    {
+      "name": "puncture",
+      "kind": "puncture",
+      "executable": "build-sycl-mpi-restored-six-shells-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_control_broad_smooth_six_shells",
+      "args": [
+        "24",
+        "campaigns/n24-restored-six-shells-resolution-v1-r24-evolution-segment01/output/puncture",
+        "puncture",
+        "3.3333333333333335",
+        "0.0003333333333333333",
+        "-",
+        "-",
+        "@WALL_SECONDS@",
+        "0.05",
+        "0.001",
+        "12",
+        "24",
+        "2"
+      ],
+      "timeout_seconds": 3100,
+      "report": "campaigns/n24-restored-six-shells-resolution-v1-r24-evolution-segment01/output/puncture.report.json",
+      "inputs": [
+        "launcher-restored-six-shells-v1/native-transition-science.json"
+      ],
+      "checks": [
+        {
+          "path": [
+            "mesh_topology"
+          ],
+          "op": "eq",
+          "value": "cartesian_2x2x2_shells6"
+        },
+        {
+          "path": [
+            "mesh_blocks"
+          ],
+          "op": "eq",
+          "value": 44
+        },
+        {
+          "path": [
+            "shell_layers"
+          ],
+          "op": "eq",
+          "value": 6
+        },
+        {
+          "path": [
+            "shell_outer_radii"
+          ],
+          "op": "eq",
+          "value": [
+            0.305,
+            0.45,
+            0.6,
+            0.75,
+            0.875,
+            1
+          ]
+        },
+        {
+          "path": [
+            "restoring_collar_begin"
+          ],
+          "op": "eq",
+          "value": 0.6
+        },
+        {
+          "path": [
+            "restoring_collar_end"
+          ],
+          "op": "eq",
+          "value": 0.9
+        },
+        {
+          "path": [
+            "restoring_coefficient"
+          ],
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "path": [
+            "zero_shift_restoration"
+          ],
+          "op": "eq",
+          "value": false
+        },
+        {
+          "path": [
+            "broad_smooth_a"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "native_initialization_profile"
+          ],
+          "op": "eq",
+          "value": "polynomial_c6"
+        },
+        {
+          "path": [
+            "native_initialization_start_M"
+          ],
+          "op": "eq",
+          "value": 4
+        },
+        {
+          "path": [
+            "native_initialization_end_M"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "status"
+          ],
+          "op": "eq",
+          "value": "completed"
+        },
+        {
+          "path": [
+            "kind"
+          ],
+          "op": "eq",
+          "value": "puncture"
+        },
+        {
+          "path": [
+            "n"
+          ],
+          "op": "eq",
+          "value": 24
+        },
+        {
+          "path": [
+            "cells"
+          ],
+          "op": "eq",
+          "value": 717984
+        },
+        {
+          "path": [
+            "backend"
+          ],
+          "op": "eq",
+          "value": "SYCL"
+        },
+        {
+          "path": [
+            "mpi_size"
+          ],
+          "op": "eq",
+          "value": 12
+        },
+        {
+          "path": [
+            "checkpoint_schema"
+          ],
+          "op": "eq",
+          "value": "HYP3D_MPI_N61"
+        },
+        {
+          "path": [
+            "checkpoint_header_bytes"
+          ],
+          "op": "eq",
+          "value": 168
+        },
+        {
+          "path": [
+            "checkpoint_admitted"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "initial_data_provider"
+          ],
+          "op": "eq",
+          "value": "native_isotropic_wormhole_quadrature"
+        },
+        {
+          "path": [
+            "native_initialization_tolerance"
+          ],
+          "op": "eq",
+          "value": 2e-13
+        },
+        {
+          "path": [
+            "inner_gauge"
+          ],
+          "op": "eq",
+          "value": "direct_outer_r020_056_it1_damping_v1"
+        },
+        {
+          "path": [
+            "gauge_blend"
+          ],
+          "op": "eq",
+          "value": "smoothstep9_w_056_080"
+        },
+        {
+          "path": [
+            "scri_first6"
+          ],
+          "op": "eq",
+          "value": false
+        },
+        {
+          "path": [
+            "bulk_dissipation"
+          ],
+          "op": "eq",
+          "value": "block_energy_ko8"
+        },
+        {
+          "path": [
+            "positive_variables"
+          ],
+          "op": "eq",
+          "value": "direct_chi_direct_lapse_rk_and_ko"
+        },
+        {
+          "path": [
+            "physical_lapse_floor"
+          ],
+          "op": "eq",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "puncture_chi_floor"
+          ],
+          "op": "eq",
+          "value": 1e-08
+        },
+        {
+          "path": [
+            "puncture_chi_floor_radius"
+          ],
+          "op": "eq",
+          "value": 0.03
+        },
+        {
+          "path": [
+            "chi_nonpositive_policy"
+          ],
+          "op": "eq",
+          "value": "record_and_floor_finite_candidates_everywhere"
+        },
+        {
+          "path": [
+            "timestep_aware_penalty"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "angular_epsilon_min"
+          ],
+          "op": "eq",
+          "value": 2
+        },
+        {
+          "path": [
+            "complete_candidate_exterior_enabled"
+          ],
+          "op": "eq",
+          "value": true
+        },
+        {
+          "path": [
+            "dt"
+          ],
+          "op": "eq",
+          "value": 0.0003333333333333333
+        },
+        {
+          "path": [
+            "algebraic_projection"
+          ],
+          "op": "eq",
+          "value": "final_stage_standard"
+        },
+        {
+          "path": [
+            "scri_penalty_scale_min"
+          ],
+          "op": "ge",
+          "value": 0.6510416666650156
+        },
+        {
+          "path": [
+            "scri_penalty_scale_min"
+          ],
+          "op": "le",
+          "value": 0.6510416666670156
+        },
+        {
+          "path": [
+            "scri_unlimited_penalty_cfl_max"
+          ],
+          "op": "ge",
+          "value": 0.767999999999
+        },
+        {
+          "path": [
+            "scri_unlimited_penalty_cfl_max"
+          ],
+          "op": "le",
+          "value": 0.768000000001
+        },
+        {
+          "path": [
+            "scri_penalty_cfl_max"
+          ],
+          "op": "ge",
+          "value": 0.49999999999850003
+        },
+        {
+          "path": [
+            "scri_penalty_cfl_max"
+          ],
+          "op": "le",
+          "value": 0.5000000000005
+        },
+        {
+          "path": [
+            "t"
+          ],
+          "op": "le",
+          "value": 3.3333333333333335
+        },
+        {
+          "path": [
+            "t"
+          ],
+          "op": "ge",
+          "value": 0
+        },
+        {
+          "path": [
+            "max_null_surface"
+          ],
+          "op": "le",
+          "value": 1e-10
+        },
+        {
+          "path": [
+            "max_null_ghost"
+          ],
+          "op": "le",
+          "value": 1e-10
+        }
+      ],
+      "artifacts": [
+        "campaigns/n24-restored-six-shells-resolution-v1-r24-evolution-segment01/output/puncture.checkpoint",
+        "campaigns/n24-restored-six-shells-resolution-v1-r24-evolution-segment01/output/puncture.history.csv",
+        "campaigns/n24-restored-six-shells-resolution-v1-r24-evolution-segment01/output/puncture.failed-stage.bin",
+        "campaigns/n24-restored-six-shells-resolution-v1-r24-evolution-segment01/output/puncture.checkpoint.horizon-seed.txt",
+        "campaigns/n24-restored-six-shells-resolution-v1-r24-evolution-segment01/output/puncture.fastflow.horizon_summary_0.txt",
+        "campaigns/n24-restored-six-shells-resolution-v1-r24-evolution-segment01/output/puncture.fastflow.horizon_shape_0.txt"
+      ]
+    }
+  ]
+}

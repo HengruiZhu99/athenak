@@ -1,0 +1,63 @@
+{
+  "retrieved_utc": "2026-11-03T04:12:13.301499+00:00",
+  "sources": {
+    "16": {
+      "path": "output/restored-six-shells/aurora/campaigns/n16-restored-six-shells-v1-a-evolution-segment01/output/puncture.history.csv",
+      "sha256": "dda30413e5a38b06b318746e6b1d2fb095c09af320fb1e3594cae3823c4bd750",
+      "bytes": 45522
+    },
+    "20": {
+      "path": "output/restored-six-shells-resolution/aurora/campaigns/n20-restored-six-shells-resolution-v1-r20-evolution-segment01/output/puncture.history.csv",
+      "sha256": "5d71fe5f6314f287b1113f94c34c3a0a470d53387931925bddc2a6e47250d520",
+      "bytes": 45845
+    },
+    "24": {
+      "sha256": "e5f8449034014d8b0fc80c847b653b05115e67cb0bd20a91172d2d70b63b9152",
+      "bytes": 43194
+    }
+  },
+  "matched_rows": 62,
+  "common_last_t_over_M": 9.149999999999192,
+  "n24_last_t_over_M": 9.232999999999183,
+  "max_time_mismatch": 1.3660184094987926e-12,
+  "pair_formula": "ln(E_coarse/E_fine)/ln(N_fine/N_coarse)",
+  "fit_formula": "unweighted least-squares ln(E_N)=a-p ln(N), N=16,20,24",
+  "interpolation": "none",
+  "smoothing": "none",
+  "last": {
+    "H": {
+      "pair16_20": 3.78471596887702,
+      "pair20_24": 3.812047626405375,
+      "fit": 3.7965534847104383,
+      "log_fit_rms": 0.0012906132829576715
+    },
+    "M": {
+      "pair16_20": 2.9661498587344757,
+      "pair20_24": 3.711333929326908,
+      "fit": 3.288893849847284,
+      "log_fit_rms": 0.03518793028770232
+    }
+  },
+  "last_norms": {
+    "16": {
+      "H": 0.008946855951085363,
+      "M": 0.014615636667547982
+    },
+    "20": {
+      "H": 0.003844975450598865,
+      "M": 0.007539943940282487
+    },
+    "24": {
+      "H": 0.0019188935816068808,
+      "M": 0.0038326580382181796
+    }
+  },
+  "qualifications": [
+    "Each resolution uses its own moving candidate-horizon cutoff; no common fixed-domain historical norms exist.",
+    "Candidate norms remain plotted when finder acceptance fails; CSV preserves acceptance flags.",
+    "Residuals converge toward zero in the continuum; fitting their log norms is not Richardson self-convergence of numerical fields.",
+    "Space and time refine together, same clipped penalty family; old N16 campaign policy failure remains preserved.",
+    "N24 snapshot is not a 10M endpoint, and its history collection does not admit a restart checkpoint.",
+    "Adjacent-pair disagreements expose failure of a single power law; three-point fit alone is not asymptotic proof."
+  ]
+}

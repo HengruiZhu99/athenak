@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "plan_sha256": "170fb841234e028c964f2135091517303ff51cde4821d3c8c9d7cc8143bfe2b3",
+  "source_manifest": "source-restored-six-shells-v1-manifest.json",
+  "source_manifest_sha256": "bb16e53c43e5012ff84e8e1031f8dd9f604e3d68f2c6e2afa977ae3e54f60661",
+  "binaries": {
+    "build-sycl-mpi-restored-six-shells-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_control_broad_smooth_six_shells": "1976a65d4bb8ba34f17cd8131847ecdec64db827f25d46b87f2308e0c951839a"
+  },
+  "inputs": {
+    "launcher-restored-six-shells-v1/native-transition-science.json": "72ab6ef1bfc3d096bc6ab36d37c578e0925268bb2746d021983cbd13a012b74a",
+    "campaigns/n24-restored-six-shells-resolution-v1-r24-evolution-segment01/output/puncture.checkpoint": "611d967229bf84754be063450a9775afc5b979f42c4cdac3d20a0e5cb7661a53",
+    "campaigns/n24-restored-six-shells-resolution-v1-r24-evolution-segment01/output/puncture.checkpoint.horizon-seed.txt": "80310ddca853763cd359ce4b384528e599bf2de4c733919a50c914f83d4c85c5"
+  },
+  "pbs_sha256": "81b26626b4a9ca6f35e12196650bfe17c746a64a7e24111f604f25257cda8cff",
+  "admission": {
+    "path": "launcher-restored-six-shells-v1/native-transition-science.json",
+    "sha256": "72ab6ef1bfc3d096bc6ab36d37c578e0925268bb2746d021983cbd13a012b74a"
+  },
+  "resources": {
+    "queue": "debug-scaling",
+    "account": "CompactBinaryMerger",
+    "nodes": 1,
+    "ranks": 12,
+    "ranks_per_node": 12,
+    "walltime": "01:00:00"
+  },
+  "storage_at_bind": {
+    "bytes": 4836909413,
+    "entries": 96910,
+    "limit_bytes": 10000000000,
+    "reserve_bytes": 367834408,
+    "planned_bytes": 582535053,
+    "headroom_bytes": 4212721126
+  },
+  "launcher": {
+    "control.py": "70c5d4aa2d6d4ebbee1878f227960cc75a385f649ab1761d195468c5c6e97794",
+    "worker.py": "a1c483641ccf3ac1cc657eb90d6076fc286d2e4a8e2d40580a8f6ecd2a2b4fb8",
+    "run_debug.pbs": "1d5df790cf6c8cdc96e9d330b9b337ce755b30e057959586bcd661dc9ce885a6",
+    "storage.py": "21a5c93bba7c3f623755f01e5593aba6f1129887419c0da5a8b58d9b789180db",
+    "native_transition_campaign.py": "12ea745f1f7e4f5f72f7b97aeeda271dc1ddbaf8669cb015de5d501d512a2e5e"
+  },
+  "allocation_seconds": 3600,
+  "worker_seconds": 3200
+}

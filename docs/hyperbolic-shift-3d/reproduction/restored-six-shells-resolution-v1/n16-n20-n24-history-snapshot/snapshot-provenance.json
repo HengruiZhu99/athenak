@@ -1,0 +1,129 @@
+{
+  "retrieved_utc": "2026-11-03T04:12:13.301499+00:00",
+  "state": {
+    "status": "n24_submitted",
+    "branch": "codex/restored-six-shells-resolution",
+    "launcher": "launcher-restored-six-shells-resolution-v2",
+    "current_plan": "campaigns/n24-restored-six-shells-resolution-v1-r24-evolution-segment01/plan.json",
+    "plan_sha256": "66c6cf8a8a8fecf6c22f9e7a400851d6f2f72510382547e0bff68ea848783fb5",
+    "science_path": "launcher-restored-six-shells-v1/native-transition-science.json",
+    "science_sha256": "72ab6ef1bfc3d096bc6ab36d37c578e0925268bb2746d021983cbd13a012b74a",
+    "source_manifest": "source-restored-six-shells-v1-manifest.json",
+    "source_manifest_sha256": "bb16e53c43e5012ff84e8e1031f8dd9f604e3d68f2c6e2afa977ae3e54f60661",
+    "scope": "Fresh N20 dt .0004 then N24 dt 1/3000; same six-shell N61 equations and user-selected N16-matched penalty clipping; automatic healthy verified continuation only. Hourly monitoring.",
+    "storage_cap_bytes": 10000000000,
+    "storage_increase_question_pending": false,
+    "next": "Monitor N24 with v2. Automatic healthy verified same-case walltime continuations until10M; N20 completed, no resubmit. Complete endpoint/history comparison after N24 disposition.",
+    "updated": 1793675917.389657,
+    "current_submission": {
+      "job_id": "9034491.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+      "submitted": 1793675850.6838071,
+      "plan": "campaigns/n24-restored-six-shells-resolution-v1-r24-evolution-segment01/plan.json",
+      "plan_sha256": "66c6cf8a8a8fecf6c22f9e7a400851d6f2f72510382547e0bff68ea848783fb5",
+      "source_manifest_sha256": "bb16e53c43e5012ff84e8e1031f8dd9f604e3d68f2c6e2afa977ae3e54f60661",
+      "resources": {
+        "queue": "debug-scaling",
+        "account": "CompactBinaryMerger",
+        "nodes": 1,
+        "ranks": 12,
+        "ranks_per_node": 12,
+        "walltime": "01:00:00"
+      }
+    },
+    "storage_authorization": "User: raise campaign cap to10gb",
+    "future_launcher": "launcher-restored-six-shells-resolution-v2",
+    "current_segment_launcher": "launcher-restored-six-shells-resolution-v2",
+    "current_segment_cap_bytes": 10000000000,
+    "n20_verification": {
+      "verified": true,
+      "variant": "R20",
+      "purpose": "evolution",
+      "source_manifest_sha256": "bb16e53c43e5012ff84e8e1031f8dd9f604e3d68f2c6e2afa977ae3e54f60661",
+      "cases": [
+        {
+          "checkpoint": "campaigns/n20-restored-six-shells-resolution-v1-r20-evolution-segment01/output/puncture.checkpoint",
+          "completed": true,
+          "kind": "puncture",
+          "t_over_M": 10.0,
+          "artifact_hashes": {
+            "campaigns/n20-restored-six-shells-resolution-v1-r20-evolution-segment01/output/puncture.report.json": {
+              "sha256": "e7935d458717fb66f63d99846c5e65a68fa4825b222ae9f384eaa4681c5da3cc",
+              "bytes": 14520
+            },
+            "campaigns/n20-restored-six-shells-resolution-v1-r20-evolution-segment01/output/puncture.checkpoint": {
+              "sha256": "5911a06a00c3ae2deede4de9949846f757a083e3a0941ddef0225abaf8e68536",
+              "bytes": 214780072
+            },
+            "campaigns/n20-restored-six-shells-resolution-v1-r20-evolution-segment01/output/puncture.history.csv": {
+              "sha256": "5d71fe5f6314f287b1113f94c34c3a0a470d53387931925bddc2a6e47250d520",
+              "bytes": 45845
+            },
+            "campaigns/n20-restored-six-shells-resolution-v1-r20-evolution-segment01/output/puncture.checkpoint.horizon-seed.txt": {
+              "sha256": "d7f5912d160132f0c54fabe8ff0bf4e1252cf87588f92ad6d46109c840bfc7f0",
+              "bytes": 86
+            },
+            "campaigns/n20-restored-six-shells-resolution-v1-r20-evolution-segment01/output/puncture.fastflow.horizon_summary_0.txt": {
+              "sha256": "2c35642ffba8bc50b52eae7245c1fbe45120b9bfaf26de05e7fe1a43abd4b52c",
+              "bytes": 10533
+            },
+            "campaigns/n20-restored-six-shells-resolution-v1-r20-evolution-segment01/output/puncture.fastflow.horizon_shape_0.txt": {
+              "sha256": "1c4a327819a42469ca83a778bb70d026f81f0d82be8bfe081f257992c18044d4",
+              "bytes": 90013
+            }
+          },
+          "variant": "R20",
+          "schema": "HYP3D_MPI_N61",
+          "n": 20,
+          "time": 3.3333333333333335,
+          "steps": 8334,
+          "dt": 0.0004,
+          "bytes": 214780072,
+          "sha256": "5911a06a00c3ae2deede4de9949846f757a083e3a0941ddef0225abaf8e68536"
+        }
+      ]
+    },
+    "n20_terminal_lock_released": true,
+    "monitor": "aurora-six-shell-n20-then-n24-to-10m",
+    "monitor_interval": "hourly",
+    "n20_all_artifacts_locally_verified": true,
+    "n16_n20_analysis": {
+      "complete": true,
+      "directory": "docs/hyperbolic-shift-3d/reproduction/restored-six-shells-resolution-v1/n16-n20",
+      "cutoff": 0.12,
+      "time_over_M": 10,
+      "effective_orders": {
+        "H": 3.3952916121224583,
+        "M": 3.1137688909060035,
+        "Mr": 3.3411639184423345
+      },
+      "qualification": "Two-point constraint residual order with matched clipping and joint space/time refinement; old N16 policy failure preserved."
+    }
+  },
+  "files": {
+    "plan.json": {
+      "sha256": "66c6cf8a8a8fecf6c22f9e7a400851d6f2f72510382547e0bff68ea848783fb5",
+      "bytes": 9199
+    },
+    "binding.json": {
+      "sha256": "91c0528fbfdca3a0607b51d1aee59bef6eb0d396b6c38a84a414c0a4e6896761",
+      "bytes": 1815
+    },
+    "submission.json": {
+      "sha256": "5431daa91f873d759b0445fe8497059a0cfbb6c6b7d9fadbd614d3bc69a1db6f",
+      "bytes": 561
+    },
+    "worker-status.json": {
+      "sha256": "6dfd0f49a5def865e045c4180fd65a452e7e0cc29a15360062bf59a32bb9f09f",
+      "bytes": 17526
+    },
+    "output/puncture.history.csv": {
+      "sha256": "e5f8449034014d8b0fc80c847b653b05115e67cb0bd20a91172d2d70b63b9152",
+      "bytes": 43194
+    },
+    "output/puncture.report.json": {
+      "sha256": "1beddb7a37b84119bfa6545c06fe5b62c3a108cf905dc6e706f2fbbdd0204f2d",
+      "bytes": 14553
+    }
+  },
+  "qualification": "Read-only history snapshot; worker/report files may differ in observation time. Does not admit a terminal checkpoint or change campaign state."
+}
