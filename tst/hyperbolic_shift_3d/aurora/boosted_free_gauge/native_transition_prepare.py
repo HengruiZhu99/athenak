@@ -129,7 +129,7 @@ def freeze(root):
             target='hyperbolic_shift_3d_'+kind+'_native_'+v['suffix'];path=BUILD_DIR+'/tst/hyperbolic_shift_3d/'+target
             f=root/BUILD_DIR/'tst/hyperbolic_shift_3d/CMakeFiles'/(target+'.dir')/'flags.make'
             text=f.read_text();defines={m[0]:m[1] for m in re.findall(r'-D(HYPERBOLIC_[A-Z0-9_]+)=([^\s]+)',text)}
-            expected_defs=dict(HYPERBOLIC_BOOSTED_PUNCTURE='1',HYPERBOLIC_SIX_SHELLS='1',HYPERBOLIC_BROAD_SMOOTH_A='1',HYPERBOLIC_NATIVE_WORMHOLE='1',HYPERBOLIC_DIRECT_CHI='1',HYPERBOLIC_DIRECT_LAPSE='1')
+            expected_defs=dict(HYPERBOLIC_BOOST_FREE_INITIAL_GAUGE='1',HYPERBOLIC_BOOSTED_PUNCTURE='1',HYPERBOLIC_SIX_SHELLS='1',HYPERBOLIC_BROAD_SMOOTH_A='1',HYPERBOLIC_NATIVE_WORMHOLE='1',HYPERBOLIC_DIRECT_CHI='1',HYPERBOLIC_DIRECT_LAPSE='1')
             if any(defines.get(k)!=value for k,value in expected_defs.items()):raise ValueError('Missing native/direct-variable definitions')
             for key,enabled in [('HYPERBOLIC_ZERO_SHIFT_RESTORATION',False),('HYPERBOLIC_WIDE_RESTORING_COLLAR',False),('HYPERBOLIC_SHARED_RESTORATION',v['shared']),('HYPERBOLIC_CONSISTENT_KO',v['ko10']),('HYPERBOLIC_SCRI_FIRST6',v['scri6'])]:
                 if (defines.get(key,'0')=='1')!=enabled:raise ValueError('Compiled variant does not match '+case)
