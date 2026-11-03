@@ -1,0 +1,25 @@
+{
+  "resources": {
+    "queue": "debug-scaling",
+    "account": "CompactBinaryMerger",
+    "nodes": 2,
+    "ranks": 24,
+    "ranks_per_node": 12
+  },
+  "mpi_argv": [
+    "mpiexec",
+    "-n",
+    "24",
+    "-ppn",
+    "12",
+    "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+    "gpu_tile_compact.sh",
+    "BINARY"
+  ],
+  "correct_two_node_allocation_accepted": true,
+  "one_node_rejected": true,
+  "cells": 521056,
+  "checkpoint_bytes": 259205840,
+  "penalty_scale": 0.6510416666660156,
+  "qualification": "Local structural checks only, no claim of multi-node GPU execution."
+}

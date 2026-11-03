@@ -40,3 +40,16 @@ gauge effects. Save trajectory, mass/acceptance, constraints, null/pole/clock,
 shift/metric behavior and sign/floor counts. Only admitted endpoints may enter
 common-cutoff reconstruction. Preserve scientific snapshots separately from
 subsequent AMR implementation, and maintain the hourly quiet continuation monitor.
+
+Local pre-submission checks passed with corrected geometry-based tracker ownership:
+521056 evolved cells,100 blocks,259205840-byte BC1 checkpoint. One- and two-rank
+CPU SERIAL two-step checkpoints are byte-identical (SHA256
+f9619aa9baa194a2cec405b60ec26c65b6f68058a62aa668259cb56d001a2ff5).
+Maximum CFL .3080336425, null surface/ghost<=1.111e-15, accepted horizon mass
+.333333343511. The expected .651041666666 penalty scale is unchanged. These
+are local layout/physics checks, not a new GPU smoke or a long stability result.
+The initial local attempt exposed a tracker guard hardcoded to eight core blocks;
+this was corrected to inspect Cartesian block geometry before source freezing.
+The production source is022c2adbfd5d94be3b2a35755bb4a93462b118d8,
+launcher71ac666bab9c17457f847d9f6bf916db903f332f. Earlier local failed artifacts
+are retained under output/boosted-refined-core/serial-one; they were never submitted.
