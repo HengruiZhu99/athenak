@@ -1,10 +1,25 @@
 # Native hyperbolic shift: coupled 3D research implementation
 
-Coupled Cartesian-core / spherical-shell CPU and MPI/SYCL research drivers are
-implemented on `codex/hyperbolic-core-shell`, with a hyperboloidal fast-flow
-horizon finder. See the [implementation, reproduction results and
-remaining work](reproduction/README.md). Production hyperboloidal evolution is
-still disabled; no 100 M 3D wormhole-to-trumpet result is claimed.
+The most up-to-date tested method is the **retained-restoration, broad-collar,
+C6 initial-slice, six-shell formulation** on `codex/restored-six-shells-resolution`.
+Its scientific source is `812667b2e4124929cab1aae663ab6db5c480ce62`; the latest
+analysis before this designation is `a0d2512ed`. See the
+[method and resolution campaign](reproduction/restored-six-shells-resolution-v1/README.md)
+for immutable source/binary bindings and qualifications. It uses the coefficient-four
+restoration on compact r=0.6–0.9, native polynomial C6 initial slice over areal
+R=4M–12M, six radial shells, KO8/original scri operators, and the explicitly
+selected matched boundary-penalty clipping family (scale about0.651).
+
+N16 and N20 reached10M; N24's verified first segment reached9.233M and its
+continuation job9034705 is already running. Do not resubmit that run. Three-resolution
+history estimates through9.15M are encouraging but do not establish uniform
+fourth-order convergence. N16's original penalty-policy rejection remains recorded.
+This designation identifies the latest research method, not production readiness.
+
+The coupled Cartesian-core / spherical-shell CPU and MPI/SYCL implementation
+includes a hyperboloidal fast-flow horizon finder. Earlier history is in the
+[implementation and reproduction index](reproduction/README.md). Production
+hyperboloidal evolution is still disabled; no100M 3D wormhole-to-trumpet result is claimed.
 
 ## Original admission audit at 4b4cef3
 
