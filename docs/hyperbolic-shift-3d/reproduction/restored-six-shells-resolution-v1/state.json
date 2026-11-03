@@ -1,5 +1,5 @@
 {
-  "status": "n24_completed10M_analysis_pending",
+  "status": "completed_analysis_preserved",
   "branch": "codex/restored-six-shells-resolution",
   "launcher": "launcher-restored-six-shells-resolution-v2",
   "current_plan": "campaigns/n24-restored-six-shells-resolution-v1-r24-evolution-segment02/plan.json",
@@ -11,7 +11,7 @@
   "scope": "Fresh N20 dt .0004 then N24 dt 1/3000; same six-shell N61 equations and user-selected N16-matched penalty clipping; automatic healthy verified continuation only. Hourly monitoring.",
   "storage_cap_bytes": 10000000000,
   "storage_increase_question_pending": false,
-  "next": "Both resolutions completed10M. No new evolution. Finish final common-cutoff and time-series/profile comparison; preserve old N16 qualification.",
+  "next": "No unboosted evolution or diagnostics remain. Delete only the completed unboosted monitor; boosted BG1 monitor remains active.",
   "updated": 1793679335.9567144,
   "current_submission": {
     "job_id": "9034705.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
@@ -195,5 +195,7 @@
     ]
   },
   "n24_segment02_all_artifacts_locally_verified": true,
-  "n24_terminal_lock_released": true
+  "n24_terminal_lock_released": true,
+  "analysis": "n16-n20-n24-complete-history; n16-n20-n24-complete-endpoints; n16-n20-n24-complete-profiles",
+  "final_analysis_receipt": "final-analysis-verification.json"
 }

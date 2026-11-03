@@ -10,9 +10,12 @@ restoration on compact r=0.6–0.9, native polynomial C6 initial slice over area
 R=4M–12M, six radial shells, KO8/original scri operators, and the explicitly
 selected matched boundary-penalty clipping family (scale about0.651).
 
-N16, N20 and N24 have now reached10M. N24 continuation9034705 passed its
-frozen verifier and all artifacts are locally preserved; no resubmission is needed. Three-resolution
-history estimates through9.15M are encouraging but do not establish uniform
+N16, N20 and N24 have now reached10M, with all artifacts locally verified.
+The completed common-cutoff comparison at r>0.12 gives H/M fitted residual
+orders3.43/3.28. Constraint peaks near r=.75 decrease; momentum at r>.9 converges
+slowly, and early full-domain transients and increasing puncture-floor counts
+remain qualifications. Final histories, mass-error plots and unsmoothed profiles
+are preserved in the resolution campaign. These results do not establish uniform
 fourth-order convergence. N16's original penalty-policy rejection remains recorded.
 This designation identifies the latest research method, not production readiness.
 

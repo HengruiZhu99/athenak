@@ -7,20 +7,30 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 HERE=Path(__file__).resolve().parent; ROOT=HERE.parents[3]
-OUT=HERE/'n16-n20-n24-history-snapshot'
-prior=json.loads((HERE/'n16-n20/comparison.json').read_text())
-receipt=json.loads((OUT/'snapshot-provenance.json').read_text())
-data={};sources={}
-for n,key,raw in [(16,'N16*','restored-six-shells'),(20,'N20','restored-six-shells-resolution')]:
-    seg,=prior['cases'][key]['segments']
-    name,record=next((k,v) for k,v in seg['artifacts'].items() if k.endswith('/puncture.history.csv'))
-    path=ROOT/'output'/raw/'aurora'/name
-    b=path.read_bytes(); assert len(b)==record['bytes'] and hashlib.sha256(b).hexdigest()==record['sha256']
-    data[n]=np.genfromtxt(io.BytesIO(b),delimiter=',',names=True); sources[n]=dict(path=str(path.relative_to(ROOT)),**record)
-name='output/puncture.history.csv';record=receipt['files'][name];b=(OUT/'snapshot'/name).read_bytes()
-assert len(b)==record['bytes'] and hashlib.sha256(b).hexdigest()==record['sha256']
-data[24]=np.genfromtxt(io.BytesIO(b),delimiter=',',names=True); sources[24]=record
-summary=dict(definition='abs(M_irr/(1/3)-1)',reference_mass=1/3,domain='Accepted apparent-horizon irreducible mass only',sources=sources,cases={},qualifications=['Rejected horizon rows are NaN gaps, not zero errors or interpolated values.','Plot is absolute relative error; signed errors remain in CSV/JSON.','Near-zero dips can reflect crossing the reference mass, not sustained accuracy improvement.','N24 snapshot ends at9.233M; N16/N20 extend to10M.','Horizon angular lmax12 and ntheta24 are fixed across all volume resolutions.','N16 historical campaign penalty-policy failure remains recorded.'])
+import argparse
+parser=argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--complete',action='store_true',help='Use verified complete histories, preserving the earlier snapshot')
+args=parser.parse_args()
+if args.complete:
+    from completed_three_data import histories_and_sources
+    data,sources=histories_and_sources()
+    OUT=HERE/'n16-n20-n24-complete-history'; OUT.mkdir(exist_ok=True)
+    receipt={'retrieved_utc':'Completed immutable campaign records; see source receipts'}
+else:
+    OUT=HERE/'n16-n20-n24-history-snapshot'
+    prior=json.loads((HERE/'n16-n20/comparison.json').read_text())
+    receipt=json.loads((OUT/'snapshot-provenance.json').read_text())
+    data={};sources={}
+    for n,key,raw in [(16,'N16*','restored-six-shells'),(20,'N20','restored-six-shells-resolution')]:
+        seg,=prior['cases'][key]['segments']
+        name,record=next((k,v) for k,v in seg['artifacts'].items() if k.endswith('/puncture.history.csv'))
+        path=ROOT/'output'/raw/'aurora'/name
+        b=path.read_bytes(); assert len(b)==record['bytes'] and hashlib.sha256(b).hexdigest()==record['sha256']
+        data[n]=np.genfromtxt(io.BytesIO(b),delimiter=',',names=True); sources[n]=dict(path=str(path.relative_to(ROOT)),**record)
+    name='output/puncture.history.csv';record=receipt['files'][name];b=(OUT/'snapshot'/name).read_bytes()
+    assert len(b)==record['bytes'] and hashlib.sha256(b).hexdigest()==record['sha256']
+    data[24]=np.genfromtxt(io.BytesIO(b),delimiter=',',names=True); sources[24]=record
+summary=dict(definition='abs(M_irr/(1/3)-1)',reference_mass=1/3,domain='Accepted apparent-horizon irreducible mass only',sources=sources,cases={},qualifications=['Rejected horizon rows are NaN gaps, not zero errors or interpolated values.','Plot is absolute relative error; signed errors remain in CSV/JSON.','Near-zero dips can reflect crossing the reference mass, not sustained accuracy improvement.',('All three histories reach10M; N24 joins two verified healthy segments.' if args.complete else 'N24 snapshot ends at9.233M; N16/N20 extend to10M.'),'Horizon angular lmax12 and ntheta24 are fixed across all volume resolutions.','N16 historical campaign penalty-policy failure remains recorded.'])
 fig,ax=plt.subplots(figsize=(11,5.5));colors={16:'#238b45',20:'#2166ac',24:'#d95f02'}
 for n,d in data.items():
     accepted=(d['horizon_found']==1)&np.isfinite(d['horizon_irreducible_mass'])&(d['horizon_irreducible_mass']>0)
@@ -34,7 +44,7 @@ ax.set(xlabel=r'$t/M$',ylabel=r'$|M_{\mathrm{irr}}/M-1|$',title='Apparent-horizo
 ax.grid(alpha=.2,which='both');ax.legend(ncol=3)
 ax.axvline(data[24]['t_over_M'][-1],ls=':',lw=1,color='gray')
 fig.tight_layout(rect=(0,.13,1,1))
-fig.text(.5,.035,'Accepted surfaces only; gaps mark rejected finder results. Absolute relative error, with no artificial log floor.\nN24 snapshot through 9.233M (dotted line); near-zero dips may be mass-error sign crossings.',ha='center',fontsize=9)
+fig.text(.5,.035,'Accepted surfaces only; gaps mark rejected finder results. Absolute relative error, with no artificial log floor.\n'+('All three resolutions through10M; ' if args.complete else 'N24 snapshot through9.233M; ')+'near-zero dips may be mass-error sign crossings.',ha='center',fontsize=9)
 fig.savefig(OUT/'horizon-mass-error.png',dpi=180);plt.close(fig)
 (OUT/'horizon-mass-error.json').write_text(json.dumps(summary,indent=2)+'\n')
 print(json.dumps(summary['cases'],indent=2))

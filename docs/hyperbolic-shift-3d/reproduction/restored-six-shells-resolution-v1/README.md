@@ -61,3 +61,77 @@ At9.15M: H16/H20/H24=.008946855951/.003844975451/.001918893582, giving pair orde
 N24 segment01 job9034491 stopped normally for walltime at9.233M/9233steps. PBS3 agrees with healthy native/worker checkpointed status; full frozen v2 helper verification passed, all six artifacts locally hash/length verified and terminal lock released. Checkpoint SHA256611d967229bf84754be063450a9775afc5b979f42c4cdac3d20a0e5cb7661a53,357834408bytes. Automatically submitted segment02 as job9034705 using that same-formulation checkpoint and bound horizon seed; plan SHA256170fb841234e028c964f2135091517303ff51cde4821d3c8c9d7cc8143bfe2b3. Both user debug queues empty before submission, v2/10GB, footprint4,836,909,413bytes with4,212,721,126bytes headroom after reservations. No remote outputs retired. Preserve segment01 restart until successor verification. Hourly monitor updated; no duplicate submission.
 
 `plot_horizon_mass_error.py` adds the log-y accepted apparent-horizon irreducible-mass error |M_irr/(1/3)-1| for the same immutable three-resolution snapshot. Rejected finder results remain NaN gaps, no interpolation or artificial log floor; signs, acceptance flags and expansion RMS are preserved in per-resolution CSV files. N24's last accepted9.233M error is-3.9890443e-5 relative (-0.00398904%), whereas the N16/N20 10M values are+0.00136888649 and-0.00063253546 relative; these are different endpoint times and must not be treated as a matched endpoint comparison. Near-zero dips may arise from sign crossings. Fixed horizon lmax12/ntheta24 and acceptance limitations remain. Figure inspected; source history hashes verified against preserved receipts.
+
+
+## Completed three-resolution comparison at 10M
+
+N24 segment02 job9034705 completed at10M and passed the frozen v2 admission;
+all artifacts from both segments are locally hash/length verified. No further
+unboosted evolution is required. The final analyses are in
+`n16-n20-n24-complete-history/` and `n16-n20-n24-complete-endpoints/`.
+The earlier snapshot remains unchanged. Reproduce the histories with
+`plot_three_resolution_histories.py --complete` and
+`plot_horizon_mass_error.py --complete`; `completed_three_data.py` checks each
+campaign with its matching immutable helper. The endpoint script
+`compare_completed_endpoints.py` reuses the completed N16/N20 reconstructions
+and reads only the new admitted N24 checkpoint with the same diagnostic binary.
+It requires a fresh output directory.
+
+At the common cutoff r>0.12, outside all complete final horizon surfaces:
+
+| Constraint RMS | N16 | N20 | N24 | p16–20 | p20–24 | Three-point fit |
+|---|---:|---:|---:|---:|---:|---:|
+| H | .009031433664 | .004233688901 | .002244182889 | 3.3953 | 3.4814 | 3.4326 |
+| M | .017880151400 | .008925155844 | .004707761198 | 3.1138 | 3.5084 | 3.2847 |
+| Mr | .020032764164 | .009504923800 | .004959743369 | 3.3412 | 3.5676 | 3.4392 |
+
+Full-domain reconstructions reproduce each native endpoint report; checkpoint
+hashes remain unchanged. These are effective constraint-residual orders with
+joint spatial/time refinement and matched boundary clipping, not Richardson
+field self-convergence or a uniform fourth-order result. The dominant r=0.7–0.775
+region has H/M three-point orders3.045/3.171. In r>0.9, momentum pair orders
+fall from0.680 to0.328 (fit0.528); the absolute residual there is smaller but
+convergence remains slow. The r=0.775–0.9 region improves faster, with strongly
+varying pair orders, which is also not evidence of a settled asymptotic order.
+
+The final log-y history and mass plots include all recorded data. Exactly63
+times match across the three resolutions (maximum mismatch1.367e-12M).
+N24's restart shifted its diagnostic clock: after9.15M, the next common time
+is10M. The order plot explicitly breaks that gap, without interpolation or
+smoothing. Own-candidate exterior histories give final fitted H/M orders
+3.4187/3.2939, distinct from the fixed-cutoff endpoint numbers above.
+
+Accepted final mass errors are +0.136889%, −0.063254%, −0.019024% for N16/N20/N24;
+accepted rows are37/68,39/68,49/69. Rejected finder results remain gaps. Near-zero
+absolute-error dips can be sign crossings. The fixed angular horizon resolution
+remains a limitation. Native accumulated runtimes are1632.29/2339.95/3190.77s;
+N24 includes two segments and their setup costs, and these are native report
+times rather than queue/allocation charges.
+
+Chi-floor counts increase from0/0 to48/16 to378/144 (attempted stage/final), with
+N24 negative-chi counts348/128. No lapse, surface, or boundary-interpolation sign
+interventions occurred. N24's full-domain H peak is247.77 at2.85M, with radial
+momentum RMS2100.43, despite the improved exterior norms. Thus the full-domain
+evolution is not uniformly better behaved. Null residual maxima stay below
+1.67e-15; pole/clock report maxima decrease from.1852/.3215 to.1346/.2358 to
+.1017/.1799. Boundary history values are segment-running maxima; their drop at
+restart is a counter reset, not an instantaneous physical improvement.
+
+
+The final unsmoothed field, constraint and gradient profiles are in
+`n16-n20-n24-complete-profiles/`, reproduced by `compare_completed_profiles.py`
+with a fresh output directory. It reuses N16 and reads the admitted N20/N24
+checkpoints through the same original-operator slice executable. The independent
+CPU constraint sums reproduce production diagnostic volume integrals within
+2.5e-16 relative. Primary radial cells are plotted once; evolved overlap rows
+remain in the raw CSV. Native near-center/corner ray angles vary slightly with N,
+so these overlays do not support pointwise self-convergence orders.
+
+The fields and first derivatives nearly overlay. The narrow auxiliary-D radial
+gradient remains near r=.75, with sampled near-center maxima53.865/55.355/55.973;
+resolution does not remove this feature. The near-center H and momentum-norm
+constraint peaks in r=.6–.9 decrease from.03484/.08618 through.02075/.04457 to
+.01301/.02718. These are descriptive sample maxima, not regularity norms.
+All final figures were visually inspected. Both unboosted runs, preservation,
+common-cutoff and profile analyses are complete; their monitor can be deleted.
+The boosted BG1 experiment has a separate active monitor and is not complete.
