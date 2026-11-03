@@ -3,7 +3,7 @@
 Branch `codex/boosted-hyperboloidal-puncture`, based on the latest tested method
 `codex/restored-six-shells-resolution` at4aa289795. The latter was committed and
 pushed with an explicit latest-method designation before this experiment began.
-The ongoing unboosted N24 job9034705 is preserved; do not duplicate or cancel it.
+The preserved unboosted N24 job9034705 has completed10M; do not resubmit it.
 This directory is experimental until its checks and evolutions are complete.
 
 User scope: rest mass M=1/3, asymptotic boost v=+0.1 along x, fresh nonspherical
@@ -183,5 +183,38 @@ payloads and tracker positions are byte-identical. At coordinate t=.001 the
 tracker is x=3.05225606e-5; transverse motion is below1e-20. These are bounded
 CPU/communication tests, not GPU or long-time stability results.
 
-Current status: preparing separately frozen Aurora build and N16 evolution.
-No boosted evolution has been submitted; no claim of a completed boosted test.
+Current status: boosted N16 job9034826 submitted; no completed long boosted result yet.
+
+## Frozen build and submitted N16
+
+Scientific source b8b92273e892af327ffb0266c27af5bc74a00be1; source manifest
+SHA256 d64c093724119c805cfaff5cf46179532731be69ae27dc17577de2450858bcec.
+Separate launcher/build namespace boosted-puncture-v1; build started with-j64,
+pid1663629 on aurora-uan-0012. Build/freeze completed successfully. Actual binary identities are preserved in
+aurora-build/native-transition-science.json. Prebuild footprint5.217GB and reserved build/temp500MB fit
+the authorized10GB cap. Hourly quiet monitor is active, with the N16 success
+gate for both higher resolutions. Follow state.json before every action.
+
+The unboosted N24 continuation9034705 completed10M, passed its unchanged
+frozen verifier, and all six artifacts are locally hash/length preserved. Its
+terminal lock is released; no unboosted resubmission was made. The earlier
+resolution monitor remains only to finish the final baseline comparison.
+
+Fresh boosted N16 B16 job **9034826** submitted once on debug-scaling, one
+node/12ranks. Plan campaigns/n16-boosted-puncture-v1-b16-evolution-segment01/plan.json,
+SHA25642cdac9f58a921e0f446b429e1a9f28d4929920c35fed9f1a44b0af9b6b64bd6.
+Frozen science SHA256ac410a374b6c6405460fe2f53dc7fee7e46e03f2529d31b6b5ee2d6c043be097.
+All launcher files and source manifest locally hash/length verified; build records
+and checks in aurora-build/. Source/build/launcher stay immutable. No GPU smoke
+was submitted. There are no other active user debug/debug-scaling jobs at submission.
+Follow state.json and submission.json; never duplicate this job.
+
+A separate local N20 **initialization-only** check also passed, without time steps.
+The initial own-candidate exterior H/M decreases .01787781/.05298161 (N16) to
+.00801790/.02384260 (N20), effective orders3.594/3.578. The enclosing candidate
+cuts differ slightly, so this is not a fixed-domain or evolved-convergence proof.
+At the N16 two-step endpoint, about96.6%/95.5% of exterior H²/M² lies in.7–.775.
+The boosted slice has larger coarse initial residuals than the spherical baseline;
+the independent continuum audit and decreasing sampled residual support proceeding
+with the requested stability trial, not an accuracy claim. N20/N24 long evolutions
+have not been submitted; both require successful verified N16 completion.

@@ -10,11 +10,19 @@ restoration on compact r=0.6–0.9, native polynomial C6 initial slice over area
 R=4M–12M, six radial shells, KO8/original scri operators, and the explicitly
 selected matched boundary-penalty clipping family (scale about0.651).
 
-N16 and N20 reached10M; N24's verified first segment reached9.233M and its
-continuation job9034705 is already running. Do not resubmit that run. Three-resolution
+N16, N20 and N24 have now reached10M. N24 continuation9034705 passed its
+frozen verifier and all artifacts are locally preserved; no resubmission is needed. Three-resolution
 history estimates through9.15M are encouraging but do not establish uniform
 fourth-order convergence. N16's original penalty-policy rejection remains recorded.
 This designation identifies the latest research method, not production readiness.
+
+The current nonspherical extension is on `codex/boosted-hyperboloidal-puncture`:
+[exact v=0.1 boosted initial data and tracked stability campaign](reproduction/boosted-puncture-v1/README.md).
+It retains the six-shell evolution method, adds consistent boosted metric,
+extrinsic curvature and connection data, and follows the puncture with RK4 and
+fast-flow. N16 job9034826 is submitted to10M; N20 and N24 are gated on successful
+N16 completion. This extension has bounded local checks but no completed long
+boosted result yet.
 
 The coupled Cartesian-core / spherical-shell CPU and MPI/SYCL implementation
 includes a hyperboloidal fast-flow horizon finder. Earlier history is in the

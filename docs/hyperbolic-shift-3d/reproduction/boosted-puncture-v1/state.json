@@ -1,0 +1,90 @@
+{
+  "status": "n16_submitted",
+  "branch": "codex/boosted-hyperboloidal-puncture",
+  "source_commit": "b8b92273e892af327ffb0266c27af5bc74a00be1",
+  "source_manifest": "source-boosted-puncture-v1-manifest.json",
+  "source_manifest_sha256": "d64c093724119c805cfaff5cf46179532731be69ae27dc17577de2450858bcec",
+  "launcher": "launcher-boosted-puncture-v1",
+  "storage_cap_bytes": 10000000000,
+  "storage_before": {
+    "bytes": 5217160634,
+    "entries": 99102,
+    "limit_bytes": 10000000000,
+    "reserve_bytes": 100000000,
+    "planned_bytes": 400000000,
+    "headroom_bytes": 4282839366
+  },
+  "queue_snapshot": "\naurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov: \n                                                                 Req'd  Req'd   Elap\nJob ID               Username Queue    Jobname    SessID NDS TSK Memory Time  S Time\n-------------------- -------- -------- ---------- ------ --- --- ------ ----- - -----\n8883678.aurora-pbs-* hzhu     capacity telegraph*    --   16 33*    --  01:00 H   -- \n8888791.aurora-pbs-* hzhu     capacity telegraph*    --    8 16*    --  01:00 H   -- \n8888792.aurora-pbs-* hzhu     capacity telegraph*    --   16 33*    --  01:00 H   -- \n",
+  "updated": 1793681502.2707763,
+  "next": "Monitor existing B16. Healthy verified same-case walltime continuation automatic; numerical failure terminal. Only after successful B16 target completion advance fresh B20 then B24. No repeated build/freeze/smoke.",
+  "scope": "Exact Schwarzschild hyperboloidal embedding v=.1 +x; retained six-shell method, native BX1 tracker, fast-flow follows center. Original unboosted N24 completed and is not resubmitted.",
+  "build_pid": 1663629,
+  "build_host": "aurora-uan-0012",
+  "build_log": "boosted-puncture-build.stdout.log",
+  "current_plan": "campaigns/n16-boosted-puncture-v1-b16-evolution-segment01/plan.json",
+  "plan_sha256": "42cdac9f58a921e0f446b429e1a9f28d4929920c35fed9f1a44b0af9b6b64bd6",
+  "science_path": "launcher-boosted-puncture-v1/native-transition-science.json",
+  "science_sha256": "ac410a374b6c6405460fe2f53dc7fee7e46e03f2529d31b6b5ee2d6c043be097",
+  "binary_sha256": "2cda1f32048518f2a8a83b6a15294baa5c978cf1fa6e02f9d33a05e8e556c7e1",
+  "binding": {
+    "schema": 1,
+    "plan_sha256": "42cdac9f58a921e0f446b429e1a9f28d4929920c35fed9f1a44b0af9b6b64bd6",
+    "source_manifest": "source-boosted-puncture-v1-manifest.json",
+    "source_manifest_sha256": "d64c093724119c805cfaff5cf46179532731be69ae27dc17577de2450858bcec",
+    "binaries": {
+      "build-sycl-mpi-boosted-puncture-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_control_broad_smooth_six_shells_boosted": "2cda1f32048518f2a8a83b6a15294baa5c978cf1fa6e02f9d33a05e8e556c7e1"
+    },
+    "inputs": {
+      "launcher-boosted-puncture-v1/native-transition-science.json": "ac410a374b6c6405460fe2f53dc7fee7e46e03f2529d31b6b5ee2d6c043be097"
+    },
+    "pbs_sha256": "a1716cfc7c729b98bb07a6a6c537e62e95dfe1b20c69615a5b74cc0e3c1f9113",
+    "admission": {
+      "path": "launcher-boosted-puncture-v1/native-transition-science.json",
+      "sha256": "ac410a374b6c6405460fe2f53dc7fee7e46e03f2529d31b6b5ee2d6c043be097"
+    },
+    "resources": {
+      "queue": "debug-scaling",
+      "account": "CompactBinaryMerger",
+      "nodes": 1,
+      "ranks": 12,
+      "ranks_per_node": 12,
+      "walltime": "01:00:00"
+    },
+    "storage_at_bind": {
+      "bytes": 5274073107,
+      "entries": 101117,
+      "limit_bytes": 10000000000,
+      "reserve_bytes": 126294352,
+      "planned_bytes": 196070964,
+      "headroom_bytes": 4403561577
+    },
+    "launcher": {
+      "control.py": "70c5d4aa2d6d4ebbee1878f227960cc75a385f649ab1761d195468c5c6e97794",
+      "worker.py": "a1c483641ccf3ac1cc657eb90d6076fc286d2e4a8e2d40580a8f6ecd2a2b4fb8",
+      "run_debug.pbs": "1d5df790cf6c8cdc96e9d330b9b337ce755b30e057959586bcd661dc9ce885a6",
+      "storage.py": "21a5c93bba7c3f623755f01e5593aba6f1129887419c0da5a8b58d9b789180db",
+      "native_transition_campaign.py": "544b84316506d797c420d5afb93faa444f2b5cf6870391d290280e6b45344618"
+    },
+    "allocation_seconds": 3600,
+    "worker_seconds": 3200
+  },
+  "current_submission": {
+    "job_id": "9034826.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "submitted": 1793681502.2667649,
+    "plan": "campaigns/n16-boosted-puncture-v1-b16-evolution-segment01/plan.json",
+    "plan_sha256": "42cdac9f58a921e0f446b429e1a9f28d4929920c35fed9f1a44b0af9b6b64bd6",
+    "source_manifest_sha256": "d64c093724119c805cfaff5cf46179532731be69ae27dc17577de2450858bcec",
+    "resources": {
+      "queue": "debug-scaling",
+      "account": "CompactBinaryMerger",
+      "nodes": 1,
+      "ranks": 12,
+      "ranks_per_node": 12,
+      "walltime": "01:00:00"
+    }
+  },
+  "monitor": "aurora-boosted-puncture-n16-then-n20-n24",
+  "monitor_interval": "hourly",
+  "build_complete": true,
+  "local_initialization_N20_only": true
+}

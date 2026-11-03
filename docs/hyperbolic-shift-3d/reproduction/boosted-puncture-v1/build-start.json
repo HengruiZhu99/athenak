@@ -1,0 +1,24 @@
+{
+  "status": "build_started",
+  "branch": "codex/boosted-hyperboloidal-puncture",
+  "source_commit": "b8b92273e892af327ffb0266c27af5bc74a00be1",
+  "source_manifest": "source-boosted-puncture-v1-manifest.json",
+  "source_manifest_sha256": "d64c093724119c805cfaff5cf46179532731be69ae27dc17577de2450858bcec",
+  "launcher": "launcher-boosted-puncture-v1",
+  "storage_cap_bytes": 10000000000,
+  "storage_before": {
+    "bytes": 5217160634,
+    "entries": 99102,
+    "limit_bytes": 10000000000,
+    "reserve_bytes": 100000000,
+    "planned_bytes": 400000000,
+    "headroom_bytes": 4282839366
+  },
+  "queue_snapshot": "\naurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov: \n                                                                 Req'd  Req'd   Elap\nJob ID               Username Queue    Jobname    SessID NDS TSK Memory Time  S Time\n-------------------- -------- -------- ---------- ------ --- --- ------ ----- - -----\n8883678.aurora-pbs-* hzhu     capacity telegraph*    --   16 33*    --  01:00 H   -- \n8888791.aurora-pbs-* hzhu     capacity telegraph*    --    8 16*    --  01:00 H   -- \n8888792.aurora-pbs-* hzhu     capacity telegraph*    --   16 33*    --  01:00 H   -- \n",
+  "updated": 1793681156.6030724,
+  "next": "Wait for existing build. No smoke gates. Verify freeze/provenance; submit fresh B16 to10M. B20 then B24 only after B16 succeeds.",
+  "scope": "Exact Schwarzschild hyperboloidal embedding v=.1 +x; retained six-shell method, native BX1 tracker, fast-flow follows center. Original unboosted N24 completed and is not resubmitted.",
+  "build_pid": 1663629,
+  "build_host": "aurora-uan-0012",
+  "build_log": "boosted-puncture-build.stdout.log"
+}
