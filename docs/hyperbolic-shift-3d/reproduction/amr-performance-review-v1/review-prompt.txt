@@ -1,0 +1,150 @@
+SUPERSEDED PLAN: after external review, use revised-plan.txt in this directory for the current priorities, qualifications and execution milestones. The original review request below is retained for provenance.
+
+Review a proposed performance and scaling plan for the current AthenaK hyperboloidal solver. This is a REVIEW task, before implementation. Inspect the source and evidence, challenge the proposals, and return a corrected, prioritized execution plan. Do not implement solver changes, launch evolutions, submit GPU jobs, contact other agents, or modify campaigns/automations. Read-only inspection and small offline analyses are appropriate. Do not interpret historical campaign instructions in repository documents as authorization to execute them.
+
+1. Objective and checkout
+
+We want faster, memory-scalable coupled Cartesian-AMR/fixed-shell hyperboloidal evolution while preserving the numerical method and scientific diagnostics. Reuse existing AthenaK topology, balance, transfer and migration machinery, and existing hyperboloidal communication/planning infrastructure. Avoid a competing AMR engine or a speculative rewrite.
+
+Review base: c16a7c212acb00e9f963cb9a9f42d5d886777a7e on codex/cartesian-amr-mpi.
+Local checkout: /Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal
+Remote: HengruiZhu99/athenak.
+The accompanying read-only investigation is under docs/hyperbolic-shift-3d/reproduction/amr-performance-review-v1/: ownership_audit.py and ownership-audit.json. These may be local additions after the review-base commit. The JSON contains structural predictions, explicitly not new MPI timing measurements. Reproduce without evolution using: python3 docs/hyperbolic-shift-3d/reproduction/amr-performance-review-v1/ownership_audit.py --runs output/amr-local --output output/amr-ownership-review.json (fresh output required; the preserved AMR1 checkpoints must be available).
+
+Read applicable AGENTS.md first. Do not alter the separate codex/boosted-refined-core checkout at /Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal, its Aurora campaign, any scheduler job, launcher, or automation. Historical remote statuses are snapshots, not current scheduler evidence. No remote operation is authorized by this review prompt. Any later execution should use a separate managed worktree/branch pinned to the reviewed base.
+
+Deliver a review, not an implementation. For each proposal mark: accept, revise, defer, or reject; explain evidence, prerequisites, correctness risks, likely affected phase, and the experiment that could falsify the expected benefit. Identify any assumptions in this prompt that the code does not support.
+
+2. Scientific invariants and known failures
+
+Preserve the six fixed spherical layers, interfaces [.305,.45,.6,.75,.875,1], inner radius .16, Cartesian half-width .18, coefficient-four restoration over r=.6-.9, C6 native initial slice over areal R=4M-12M, gauge blend .2-.56, original inner gauge and auxiliary equations, KO8 and original scri derivatives. Preserve direct chi/lapse RK and physical-variable dissipation, existing floor locations/thresholds and pre-floor sign accounting, algebraic acceptance, compensated RK4, puncture tracker, and moving-center FastFlow acceptance. Initial boosted data are exact v=.1 Schwarzschild with the free initial gauge and M=1/3.
+
+The native standalone state has 31 fields, not the regular main Z4c layout: chi; six metric deviations; six A components; P+3; Theta; three Lambda; lapse-reference; three B; three shift-reference; three D; three adaptive J. Preserve all fields and compensation, even when some are zero in an evolution fixture. Tensor components stay Cartesian on every patch.
+
+Keep dt, measured characteristic CFL, angular limiter behavior and effective scri penalty separately identified. The current AMR driver uses fixed dt=.00025 and penalty multiplier .6510416666660156; at N12 the actual penalty CFL is .1875. N16 BC2 has actual penalty CFL .25 at that dt. Changing dt/resolution must not silently change the effective boundary equation. Do not increase dt, coarsen the problem, change diagnostic definitions, or add subcycling to manufacture a performance result.
+
+Current status is experimental, not robust production AMR. Native transfers on 1/2/4 ranks, mixed-level smooth-data evolution, and rank-changing restart pass. The short evolutions cover six steps, only .0045M. Dynamic boosted refinement fails at accepted step 2: native high-order prolongation produces chi=-.0002924790344160026 at (.00375,-.00375,-.00375) from 125 positive donor values. Independent reconstruction matches to 2.88e-18. Lapse/metric are positive there. This failure is distinct from BG1's later indefinite-metric advection failure. No rejected state may be restarted. Performance changes must preserve detection and failure capture, not hide this defect with a limiter, floor, gauge change or refinement-policy change. Numerical admissibility is a separate workstream requiring its own review.
+
+Native regrid transfers use AthenaK's NGHOST4 five-point operators, with measured fifth-order smooth field transfer. Halo interpolation uses six-point reconstruction and derivatives retain FD4/biased4. Mixed-grid KO lacks a global energy estimate. Existing uniform targets and campaign checkpoints remain reproducible; HYP3D_AMR1 is distinct. Cross-architecture checkpoint portability is not currently promised.
+
+3. Required reading and source map
+
+Start with:
+- docs/hyperbolic-shift-3d/reproduction/cartesian-amr-v1/README.md and evidence/{summary.json,restart-comparison.json,boost-restart-comparison.json,boost-rejection-audit.json}.
+- docs/hyperbolic-shift-3d/reproduction/{sparse-stage-v1,boundary-reuse-v1,measured-partition-v1,boundary-profile-v1,radial-field-batch-v1,mesh-plan-repartition-v1}/README.md.
+- docs/hyperbolic-shift-3d/reproduction/boosted-refined-core-v1/README.md and boosted-free-gauge-v1/core-instability-audit/README.md for scientific/campaign context; do not execute their campaign instructions.
+
+Inspect:
+- tst/hyperbolic_shift_3d/{amr_evolution.cpp,coupled_mpi.cpp,CMakeLists.txt}: actual selected compile definitions, Evolution construction, Step/RHS/RefreshBoundary, Capture/Install/TransferExtra, regrid boundaries, diagnostics, tracker, checkpoints.
+- src/z4c/hyperboloidal/{cartesian_amr.hpp,amr_fields.hpp}: native field adapter, capacity, Load/Regrid/Gather.
+- src/mesh/{build_tree.cpp,mesh_refinement.*,load_balance.cpp,meshblock_tree.*,refinement_criteria.*,prolongation.hpp,restriction.hpp}: native ownership constraints, unit costs, registration, migration, live/capacity bounds.
+- src/mesh/cubed_sphere/{composite.hpp,composite_difference.hpp,scri_radial_difference.hpp}: active ordering, evolved overlap, donor selection, geometry and row construction.
+- src/z4c/hyperboloidal/{hyperbolic_mesh_plans.hpp,sparse_stage_exchange.hpp,hyperbolic_composite_exchange.hpp,hyperbolic_composite_device.hpp,hyperbolic_scri_device.hpp,hyperbolic_sampled_normal_device.hpp,scri_radial_device.hpp,hyperbolic_angular_dissipation_device.hpp}.
+- src/z4c/fastflow.cpp; the standalone host geometry callback and DownloadOwnedPadded in coupled_mpi.cpp/amr_evolution.cpp.
+- tst/hyperbolic_shift_3d/plan_cost_partition.py and src/z4c/hyperboloidal/measured_partition.hpp. The existing planner is V11-specific and assumes rank-average bulk cost; it cannot just be fed AMR1 reports.
+
+4. Existing optimization evidence: do not redo solved work or repeat failed assumptions
+
+Current AMR compile definitions already enable sparse stage exchange, boundary reuse, radial field batching, and direct chi/lapse. Coordinated-plan and measured-partition flags are not enabled. Merely enabling the planned target is unsafe: its current Evolution paths construct ContinuousCoreMesh(n), and Options defaults include positive/log dissipation. Supporting a custom AMR descriptor needs explicit adaptation and numerical-policy checks, not just a macro toggle.
+
+Historical fixed-grid GPU evidence, on older V11 scientific cases, establishes useful execution lessons but is not a profile of today's six-shell AMR solver:
+- Sparse exchange plus boundary reuse reduced a 100-step same-node case from .63006 to .32860 s/step, with complete checkpoint equality. Sparse exchange reduced transfer, not globally indexed allocation.
+- Rank-average measured cuts did NOT improve the subsequent case: .33035 to .33456 s/step, with maximum/minimum bulk RHS time about 2.33 in both. This was one sequential pair, not a statistical regression claim. Bulk-only rank-average cost omitted boundary/communication and failed to capture execution-path costs.
+- Only 69 direct-radial rows were enough to put one rank on the expensive RHS path. This suggested kernel organization rather than proportional cell cost; it did not prove register spilling or occupancy as the mechanism.
+- Field-batched radial derivatives subsequently reduced .329252 to .171426 s/step; bulk RHS imbalance fell from about 2.326 to 1.025. This is already enabled in the current target. Do not multiply speedups from different jobs into a new controlled claim.
+- Boundary profiling separated sampled-normal RHS, scri RHS, interpolation, projection, angular work and MPI synchronization. MPI times include waiting. error_sync_seconds overlaps other buckets and must not be added to exclusive totals.
+- Small surface projection/angular work is intentionally replicated to avoid gathers; expensive normal and scri RHS remain partitioned. Redistributing that cheap replicated work could lose to communication.
+
+No current AMR strong/weak scaling curve exists. The local six-step suite included concurrent work and every-step diagnostics; elapsed suite times are not scaling measurements. GPU-aware MPI was already enabled in historical GPU experiments. Do not propose it as a missing toggle without checking the actual future runtime.
+
+5. Confirmed structural issues in the current integration
+
+A. Two unrelated ownership schemes.
+The native AMR Mesh partitions Cartesian leaves in Z order using unit block costs. RedistAndRefineMeshBlocks resets every new cost to 1.0. Shells are outside that tree. Separately, Evolution divides the global active-cell list into equal contiguous ranges; surface rows are evenly split independently. These cell cuts can split blocks and need not match native Cartesian owners. Full-state gathers bridge the representations at regrid. The native balancer therefore does not currently balance total coupled evolution cost.
+
+B. A hard initial rank ceiling.
+The default mixed/dynamic driver constructs 2x2x2 Cartesian roots before refinement. BuildTreeFromScratch rejects fewer blocks than MPI ranks, so this configuration cannot start above eight ranks even though there are 36 shell patches. Restart reconstructs the same root before refining. The stress schedule also coarsens to eight leaves. The uniform policy starts with 4x4x4 roots and has a different ceiling/problem. Increasing ranks or removing the guard is not a valid scaling solution: review initialization, minimum admissible leaves, empty/shell-only ranks, communicators/global rank assumptions and redistribution. Treat the architectural options explicitly.
+
+C. Replicated storage and conservative dependency sets.
+SparseStageExchange transfers requested values but still writes a global-sized workspace; state and base are also global-sized. Each HyperbolicCompositeExchange allocates nf*grid.count padded entries even when only selected blocks are populated. Bulk and sampled-normal have separate such workspaces. Host geometry/halo plans and some diagnostic storage are replicated. Step also deep-copies the full global-sized state into base on every rank at each accepted-step start, although local stage updates read their owned slice. Audit all rollback/failure/diagnostic uses before narrowing that backup. Regrid temporarily retains old/new generations and global snapshots.
+
+The offline ownership audit reconstructs active ordering and verifies total active count against actual AMR1 checkpoint metadata. For N12 with 15 Cartesian leaves plus 36 shell patches:
+- 124,308 evolved cells, four ranks each owning 31,077 cells.
+- Bulk selected whole-block active sets contain 57,888 / 45,360 / 43,443 / 57,105 cells, BEFORE additional halo/normal/scri dependencies. These are not actual remote-send counts.
+- Two full padded workspaces alone allocate 424.006 MiB PER RANK, excluding geometry, plans, state/base, native transfer buffers, scratch and host copies. The corresponding numbers for 8,22,64 Cartesian leaves are 365.809,482.203,831.384 MiB/rank.
+- Nominal cells for all blocks precede appended evolved-overlap cells. A contiguous owned range can therefore touch spatially separated blocks. One four-rank range in the 15-leaf fixture has a min/max block-index span covering all 51 blocks, despite selecting only 22. DownloadOwnedPadded copies every block in that span, once per field, into a full-sized host array.
+- These are structural facts/estimates, not measured speedups or total peak RSS/device memory. Hypothetical 12/24-rank rows in the audit are explicitly not successful dynamic runs.
+
+D. Avoidable regrid work.
+CartesianAMR::Load allocates a row vector even for direct active-cell copies, recomputes missing donor rows, and copies capacity-sized views. RestrictCC iterates u.extent(0), which is allocated capacity. Current capacity is max(32,96/ranks+8), e.g. 104 slots on one rank for a typical 8-22 live-leaf case. State, compensation, coarse arrays and MPI send/receive storage must be accounted for separately. Main code comments explain why persistent buffers avoid repeated device reallocation on Aurora; avoid replacing this with per-step allocation churn.
+
+Regrid invokes native migration, then allgathers core state/compensation and constructs a complete new Evolution. It rebuilds host/device geometry, halos, sampled-normal, surface/angular and sparse plans and initializes reference arrays that will be overwritten. Some shell geometry/operators are invariant, but their global indices, interface donors or rank ownership may change. Fixed geometry does NOT imply every shell communication plan is reusable.
+
+Cartesian InterpolateAMRCartesian linearly scans leaves per queried point. TransferExtra builds a global coordinate map over active cells, including unchanged shells, and searches shell patch identity per destination shell cell. Stable leaf/patch identities and precomputed offsets are alternatives to review.
+
+E. Measurement gaps.
+Evolution already has phase, boundary, sparse and setup timers. The AMR report exports only a small overall duration and basic counts. It replaces Evolution at each regrid, losing earlier objects' timer totals unless explicitly accumulated. Its timer starts after initial construction; suite wall time includes setup and process costs. A useful profile must preserve totals across generations, count calls and distinguish initialization, steady stages, regrid, diagnostics and checkpoint work.
+
+F. Additional execution candidates, not established bottlenecks.
+- Radial Prepare computes full first/second jets for all 31 fields. Current LoadJet samples fields 0-27; only chi, six metric components, lapse and three shifts request second derivatives. Audit every consumer/configuration before a derivative mask; preserve all31 state/transfer fields and generic API semantics. Stage-dependent jets must refresh whenever inputs change.
+- Tracker allocates/uploads a small stencil at each stage and performs three device reductions plus MPI; storage could be persistent. Moving sampling coordinates must still be refreshed.
+- Halo filling transposes point-major state to field-major padded storage. Measure bandwidth/layout and reuse opportunities before changing layouts globally.
+- Sparse exchange is synchronous Alltoallv with collective prechecks and fences. At high rank counts global metadata/latency may dominate even when peer degree is small; current evidence does not establish that yet.
+- Error/status reductions and surface gathers lie on the stage dependency chain. Do not simply remove checks or defer a failure past invalid consumers.
+- Every-step constraints/FastFlow are qualification overhead. Production cadence is a configuration choice and must remain matched in A/B timing. Optional microbenchmarks can isolate their cost but cannot be advertised as equivalent end-to-end speedups.
+
+6. Proposed phased plan to critique
+
+Phase 0 — observability and a frozen baseline, before optimization.
+Add a later, narrowly scoped instrumentation change that reports exclusive per-rank phase times and call counts, memory/allocation high-water marks, owned cells by region/type, direct-radial and normal rows, halo rows/entries, requested/sent/received donor points and bytes, peer counts, surface workload, and actual native/evolution ownership. Preserve totals across plan generations. Distinguish useful compute from MPI waiting and report one actual rank's exclusive accounting rather than summing unrelated maxima. Record generation setup and regrid subphases separately. Confirm timing/fence overhead with a frozen control. Use existing Kokkos labels/tools as appropriate; verify tool compatibility before proposing a specific hardware profiler.
+
+Phase 1 — small changes preserving ownership and arithmetic.
+Consider live-block restriction/copy bounds, direct-copy fast paths, cached native Load halo rows keyed to topology/geometry, precomputed fixed-shell copy offsets, owned-slice accepted-state backups where proven sufficient, persistent tracker/snapshot scratch, and removal of demonstrably unused initialization/copies. Check Kokkos mirror aliasing on host versus separate allocation on GPU and native transfer bounds. Preserve capacity headroom/2:1-balance safety; do not shrink buffers merely to pass a small fixture. Changes to generic AthenaK functions require ordinary Z4c regression coverage. Benchmark each change in its affected phase and end-to-end.
+
+Phase 2 — reduce duplication with explicit index/lifetime contracts.
+Evaluate compact owned-plus-donor buffers, local padded block storage, targeted diagnostic transfers, and immutable shell geometry separated from generation-specific indexing and communication. Retain host reference paths if useful, but avoid global O(N) storage on every rank in a production path. Quantify temporary old+new peak memory and failure rollback requirements. Reuse coordinated-generation/transaction infrastructure where compatible, adapting scientific options explicitly. Do not retain stale views or derivative caches across topology, geometry, ownership, stage, surface or rollback changes.
+
+Phase 3 — coupled ownership and load balancing.
+Compare a minimal measured contiguous partition with a stable block/tile partition that assigns Cartesian leaves, shell work and surface work together. The metric should be critical-path time including halo/boundary work, communication, migration and memory constraints, not equal cells or rank-average bulk cost alone. Use measured per-region/kernel data and size-dependent launch costs; do not assume a linear per-cell model. Favor locality and shell ownership stability when possible, with migration hysteresis and a break-even regrid horizon. Preserve topology/geometry independence from ownership.
+
+Explain how each option uses Mesh::LoadBalance and existing measured/repartition facilities without forcing shells into a fake octree or bypassing native assumptions. Address the two-ownership bridge, shell-only/empty-Cartesian ranks, current one-global-Mesh/static-tree-root constraint, world-communicator assumptions, minimum leaf counts after coarsening, ghost widths, and memory ceilings. If arbitrary/discontiguous ownership is proposed, enumerate every contiguous-range assumption that must change: sparse owner lookup, field layout, horizon/tracker owner selection, checkpoint ordering, dependencies, counters and collective validation. Do not present that as a small patch.
+
+Phase 4 — targeted kernels/communication, only where current profiling justifies it.
+Review masked radial derivative work, geometry-class kernel specialization, transpose packing/fusion, compact normal/bulk donor reuse, persistent peer/neighbor communication, and interior/boundary compute overlap. Establish correctness of MPI progress and device buffer readiness/lifetime, and the all-rank failure/rollback path, before asynchronous execution. Kokkos fusion/reduction-order changes need stricter numerical review than copying or indexing changes. Retain cheap replicated surface work if measurements favor it. Do not claim occupancy/register-spill causes without hardware evidence.
+
+Prioritize phases by measured benefit and engineering risk. Some Phase1 items may be worthwhile before a full Phase0 deployment, but justify any exception. Do not commit to doing every candidate.
+
+7. Benchmark design and acceptance gates
+
+Propose exact feasible local commands/configurations and a separate future GPU plan; do not run either in this review. No Aurora submission or modification is authorized. GPU execution, if later authorized, needs its own isolated checkout/artifacts, fixed device mapping and controlled paired comparisons.
+
+Controls must include fixed uniform-core current-science evolution, fixed mixed-level AMR, dynamic non-symmetric wave with refine/coarsen/migration, Minkowski, a bounded fresh boosted fixed hierarchy, and the known dynamic boosted rejection. Measure failure overhead separately; do not use a terminal numerical failure as a successful throughput sample. Keep matched dt, scientific identity, geometry, diagnostics/horizon settings and actual penalty. Test a longer stable smooth-data throughput window after warmup, separately from six-step correctness fixtures; choose its length from measured timing/noise and stability, not an arbitrary survival claim.
+
+For strong scaling, hold the entire mesh/topology history and numerical work fixed. Start with 1/2/4 ranks and 8 only if hardware/resources and minimum Cartesian leaves permit. Resolve the structural ceiling before extrapolating to 12/24 ranks. Report T1/TP and T1/(P*TP), critical-rank time, useful cells/stages per second, workload counts and memory per rank/node. Compare A/B at each P; do not compare a changed mesh or diagnostic cadence and call it scaling.
+
+For weak scaling, define what grows: Cartesian leaves, shell tiling/resolution, surface rows and total per-rank useful work. A fixed six-shell surface plus growing Cartesian core is partial/core-only scaling, not whole-solver weak scaling. Changing block decomposition with evolved overlap can alter actual numerical work and potentially stencils; demonstrate equivalence or label it a different problem. AMR adds a changing work history: compare identical events and report regrid amortization versus frequency.
+
+Use fresh output directories; freeze source/compile flags/Kokkos backend/compiler/MPI, executable hashes, machine/CPU affinity or GPU-tile binding, topology, inputs and environment. Avoid concurrent comparison runs. Use repeated, alternated A/B order with warmup and uncertainty reporting (at least three completed repeats initially, more if noisy). Separate startup and checkpoint I/O from steady-step time, and also retain matched end-to-end time. An optimization should beat measured variability in its claimed workload and not conceal a memory or alternate-rank regression. No invented universal speedup threshold.
+
+Correctness gates:
+- Whole state/compensation/surface/checkpoint comparisons across ranks, partition changes and restart. Require bitwise equality for changes preserving arithmetic; predeclare justified tolerances and investigate differences for changed reductions. Do not weaken tolerances after seeing failures.
+- All31 nontrivial transfer fields and nonzero compensation; add a nonzero floor/sign-ledger fixture when changing counter migration (current evolved AMR cases have zero events).
+- Mixed-level face/edge/corner FD, mixed derivatives, advection and KO donors; constants/reference states; unique finest ownership and overlap quadrature.
+- Poison unused sparse/padded slots, changed input stages, stale epochs on one rank, failed plan construction/publication, RK rejection/rollback and complete failed-stage capture. Check startup and a regrid after restart, including changed rank count and ownership.
+- Tracker and moving horizon geometry/ownership after repartition; record mass-acceptance gaps. AMR1 persists mean-radius seed, not FastFlow's entire angular warm start: existing boosted restart fields are bitwise equal but final radius differs about8.06e-10 and mass about1.45e-12. Preserve/justify this distinction rather than misclassifying it as a field error.
+- Malformed/truncated/scientifically mismatched/checksum-failed checkpoints remain rejected. Never dump a partial sparse workspace as a full state or relabel legacy BC1/BC2/BG1 files as AMR.
+- Existing relevant main Z4c AMR and hyperboloidal regressions. Use test_amr_transfer.cpp, test_amr_operators.cpp, validate_amr.py, test_amr_checkpoint.py, analyze_amr.py, audit_amr_rejection.py, test_sparse_stage_exchange.cpp, test_sparse_stage_mpi.py, test_radial_field_batch.cpp, test_mesh_plan_bundle.cpp, test_repartition_transaction.cpp and their CMake targets as applicable. Check actual target/configuration compatibility; legacy V11 fixtures are not substitutes for direct-variable AMR1 tests.
+- CPU evidence stays labeled CPU. Backend-specific parity, stale-buffer/failure capture and restart are required before claiming GPU qualification. No long-time stability or convergence claim follows from these performance tests.
+
+8. Requested review output
+
+Return:
+1) A concise verdict on the proposed order, correcting unsupported claims and identifying the biggest architectural blocker.
+2) A source/evidence-backed bottleneck map: measured historical facts, confirmed current structural costs, and unmeasured hypotheses kept separate.
+3) An accept/revise/defer/reject table for each candidate, expected scope of benefit, dependencies, risk and falsification benchmark.
+4) A concrete coupled ownership design recommendation, with an incremental alternative, addressing shell/surface work and the Cartesian minimum-block constraint. Explain why the prior failed rank-average approach will not simply recur.
+5) A minimal instrumentation/report schema, feasible local and future GPU scaling matrix, and explicit scientific/failure/restart gates.
+6) A bounded first implementation milestone, precise stop/rollback criteria, and remaining decisions requiring user input. Do not turn ordinary implementation choices into approval questions.
+7) A revised implementation prompt that a subsequent execution agent can follow only after review. Keep review and execution authorizations distinct; no campaign/remote authorization is implicit.
+
+The review should be candid if no current evidence supports a proposed speedup. The objective is a defensible execution plan with measurable outcomes, not an exhaustive optimization wishlist.

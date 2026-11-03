@@ -4,6 +4,7 @@
 #include "coupled_mpi.cpp"
 #undef main
 #include "z4c/hyperboloidal/cartesian_amr.hpp"
+#include "amr_performance.hpp"
 
 namespace {
 static_assert(hyperbolic_reproduction::six_shells&&h::broad_smooth_a&&h::boost_free_initial_gauge&&native_wormhole&&direct_chi&&direct_lapse);
@@ -157,11 +158,15 @@ int main(int argc,char**argv){
     const int stop=std::stoi(argv[3]);const Real dt=std::stod(argv[4]);const std::string output=argv[5],restart=argv[6],policy=argc>7?argv[7]:"dynamic";
     if(n<12||n%2||kind<0||stop<0||!std::isfinite(dt)||dt<=0||(policy!="dynamic"&&policy!="fixed"&&policy!="uniform"))throw std::invalid_argument("invalid AMR parameters");
     CollectiveLocal([&]{if(global_variable::my_rank==0){std::filesystem::create_directories(std::filesystem::path(output).parent_path());if(std::filesystem::exists(output+".checkpoint"))throw std::runtime_error("refusing AMR checkpoint overwrite");}});
+    AMRPerformance perf(output);
     Snapshot s;if(restart!="-")CollectiveLocal([&]{s=Read(restart,n,kind,dt);});
+    perf.Next("native_setup");
     h::CartesianAMR amr(n,restart!="-"?s.subdivisions:policy=="uniform"?4:2,std::max(32,96/global_variable::nranks+8));
     if(restart!="-")Restore(amr,s);else if(policy!="uniform"){std::vector<int>flags(8);flags[0]=1;amr.Regrid(flags);}
     auto descriptor=amr.Descriptor();std::unique_ptr<Evolution> ev;
+    perf.Next("evolution_setup");
     CollectiveLocal([&]{ev=std::make_unique<Evolution>(n,2,kind,"",&descriptor);});
+    perf.Generation(*ev,amr,"constructed");perf.Next("initial_state");
     if(restart!="-")Install(*ev,s);else{
       ev->Upload(ev->initial_state);
       s=Capture(*ev,amr,kind,dt,0,.07,{});h::NativeBoostedWormhole pgen;
@@ -179,7 +184,7 @@ int main(int argc,char**argv){
         try{V v;std::vector<std::array<Real,3>>d;std::vector<std::array<std::array<Real,3>,3>>dd;e.Model().grid.SampleJets(e.owned_padding,31,x,v,d,dd,true);const auto u=e.Model().Jet(x,v,d,dd);q=h::PhysicalHorizonGeometry(u,e.Model().Omega(x,u));}catch(...){q={};}return true;});}
     std::ofstream history;if(ev->rank==0){history.open(output+".history.jsonl");history<<std::setprecision(17);}
     Real seed=s.seed;V ledger=s.data[7];uint64_t regrids=s.regrids;double began=MPI_Wtime();
-    auto record=[&]{auto&e=*ev;e.RefreshBoundary(dt);auto halo=e.exchange()->Fill(e.state);e.SynchronizeError(halo.invalid,"AMR halo geometry rejected");
+    auto record=[&]{perf.Next("diagnostics");auto&e=*ev;e.RefreshBoundary(dt);auto halo=e.exchange()->Fill(e.state);e.SynchronizeError(halo.invalid,"AMR halo geometry rejected");
       const auto d=ReduceDiagnostic(e.kernel()->Diagnostics(e.exchange()->padded,0,e.surface));bool found=false;Real mass=std::numeric_limits<Real>::quiet_NaN();
       if(finder){e.DownloadOwnedPadded();for(int a=0;a<3;++a)finder->center[a]=e.puncture[a];finder->Find(e.steps,e.time);const auto q=finder->GetResult();found=q.found;if(found){mass=q.irreducible_mass;seed=q.mean_radius;}}
       if(e.rank==0)history<<"{\"step\":"<<e.steps<<",\"time\":"<<e.time<<",\"leaves\":"<<amr.mesh->nmb_total<<",\"H\":"<<Norm(d.total.h2,d.total.volume)<<",\"M\":"<<Norm(d.total.m2,d.total.volume)<<",\"chi\":"<<d.min_chi<<",\"lapse\":"<<d.min_lapse<<",\"det_residual\":"<<d.max_determinant_residual<<",\"null\":"<<e.null_max<<",\"ghost_null\":"<<e.null_ghost<<",\"cfl\":"<<e.cfl<<",\"penalty\":"<<h::fixed_scri_penalty_scale<<",\"penalty_cfl\":"<<e.scri_penalty_cfl_max<<",\"horizon_found\":"<<found<<",\"mass\":"<<JsonNumber(mass)<<",\"tracker\":["<<e.puncture[0]<<','<<e.puncture[1]<<','<<e.puncture[2]<<"]}\n";
@@ -189,33 +194,37 @@ int main(int argc,char**argv){
     try {
     while(ev->steps<uint64_t(stop)){
       if(policy=="dynamic"&&(ev->steps==2||ev->steps==4)){
-        auto old=Capture(*ev,amr,kind,dt,regrids,seed,ledger);CollectiveLocal([&]{amr.Load(ev->Model().grid,old.data[0],old.data[1]);});std::vector<int>flags(amr.mesh->nmb_total);
+        perf.Next("regrid_capture");auto old=Capture(*ev,amr,kind,dt,regrids,seed,ledger);perf.Next("regrid_load");CollectiveLocal([&]{amr.Load(ev->Model().grid,old.data[0],old.data[1]);});std::vector<int>flags(amr.mesh->nmb_total);
         if(ev->steps==2){for(int m=0;m<amr.mesh->nmb_total;++m)if(amr.mesh->lloc_eachmb[m].level==amr.mesh->root_level){flags[m]=1;break;}}
         else for(int m=0;m<amr.mesh->nmb_total;++m)if(amr.mesh->lloc_eachmb[m].level>amr.mesh->root_level)flags[m]=-1;
-        amr.Regrid(flags);descriptor=amr.Descriptor();std::unique_ptr<Evolution> next;
+        perf.Next("regrid_native");amr.Regrid(flags);descriptor=amr.Descriptor();std::unique_ptr<Evolution> next;
         // The replacement only needs the old active interpolation geometry.
         // Retire duplicated host halo rows before allocating another generation.
         ev->legacy_model->grid.halos.clear();ev->legacy_model->grid.halos.shrink_to_fit();
         ev->legacy_model->grid.extrapolated_halos.clear();ev->legacy_model->grid.extrapolated_halos.shrink_to_fit();
-        CollectiveLocal([&]{next=std::make_unique<Evolution>(n,2,kind,"",&descriptor);});
-        const auto core=amr.Gather(),rk=amr.Gather(true);TransferExtra(ev->Model().grid,next->Model().grid,old,core,rk);
-        try{Install(*next,old);}catch(...){
+        perf.Next("regrid_evolution_setup");CollectiveLocal([&]{next=std::make_unique<Evolution>(n,2,kind,"",&descriptor);});
+        perf.Generation(*next,amr,"coexisting");perf.Next("regrid_gather");
+        const auto core=amr.Gather(),rk=amr.Gather(true);perf.Next("regrid_extra");TransferExtra(ev->Model().grid,next->Model().grid,old,core,rk);
+        perf.Next("regrid_install");try{Install(*next,old);}catch(...){
           if(ev->rank==0){std::ofstream rejected(output+".rejected-transfer.bin",std::ios::binary);rejected.write(reinterpret_cast<const char*>(old.data[0].data()),old.data[0].size()*sizeof(Real));}
           throw;
         }
+        perf.Next("regrid_retire");perf.Generation(*ev,amr,"retired");
         ledger=old.data[7];ev.swap(next);++regrids;record();
       }
       // The native RHS measures the actual local characteristic CFL on every
       // new leaf. Reject an excessive requested step; do not change scri scale.
-      ev->Step(dt);for(int m=0;m<amr.mesh->nmb_total;++m)++amr.mesh->pmr->ncyc_since_ref(m);record();
+      perf.Next("step");ev->Step(dt);for(int m=0;m<amr.mesh->nmb_total;++m)++amr.mesh->pmr->ncyc_since_ref(m);record();
     }
     }catch(const std::exception&failure){
+      perf.Next("failure_capture");
       const auto capture=ev->failed_state.extent(0)?ev->Download(ev->CompleteState(ev->failed_state)):ev->Download(ev->CompleteState(ev->state));
       CollectiveLocal([&]{if(ev->rank==0){std::ofstream f(output+".failed-stage.bin",std::ios::binary);f.write(reinterpret_cast<const char*>(capture.data()),capture.size()*sizeof(Real));
         std::ofstream report(output+".failure.json");report<<"{\"status\":\"failed\",\"accepted_steps\":"<<ev->steps<<",\"error\":"<<JsonString(failure.what())<<"}\n";}});
-      throw;
+      perf.Generation(*ev,amr,"failed");perf.Save("failed");throw;
     }
-    auto final=Capture(*ev,amr,kind,dt,regrids,seed,ledger);CollectiveLocal([&]{Write(output+".checkpoint",final);});
+    perf.Next("checkpoint_capture");auto final=Capture(*ev,amr,kind,dt,regrids,seed,ledger);perf.Next("checkpoint_write");CollectiveLocal([&]{Write(output+".checkpoint",final);});
+    perf.Generation(*ev,amr,"final");perf.Save("completed");
     if(ev->rank==0){std::ofstream report(output+".report.json");report<<std::setprecision(17)<<"{\"status\":\"completed\",\"backend\":\""<<Kokkos::DefaultExecutionSpace::name()<<"\",\"ranks\":"<<ev->size<<",\"steps\":"<<ev->steps<<",\"regrids\":"<<regrids<<",\"seconds\":"<<MPI_Wtime()-began<<",\"floor_counts\":["<<final.floors[0]<<','<<final.floors[2]<<','<<final.floors[3]<<"],\"historical_event_records\":"<<ledger.size()/21<<"}\n";}
   }catch(const std::exception&e){std::cerr<<"AMR qualification failed: "<<e.what()<<'\n';code=2;}
   MPI_Allreduce(MPI_IN_PLACE,&code,1,MPI_INT,MPI_MAX,MPI_COMM_WORLD);Kokkos::finalize();MPI_Finalize();return code;

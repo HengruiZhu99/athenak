@@ -772,3 +772,7 @@ if(ENABLE_MPI)
     COMMAND hyperbolic_shift_3d_amr_operators 12)
   set_tests_properties(hyperbolic_shift_3d_amr_operators PROPERTIES RUN_SERIAL TRUE TIMEOUT 180)
 endif()
+
+# Optional allocation census. Never loaded by ordinary timing runs.
+add_library(hyperbolic_amr_allocation_tool MODULE amr_allocation_tool.cpp)
+target_compile_features(hyperbolic_amr_allocation_tool PRIVATE cxx_std_17)

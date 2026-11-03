@@ -167,6 +167,7 @@ class Evolution {
   // projection, normal halo, sampled-normal RHS, angular work, scri RHS, MPI.
   double boundary_phase_seconds[6]={};
   double error_sync_seconds=0;
+  double diagnostic_transfer_seconds=0;uint64_t diagnostic_transfer_calls=0;
   template<class Action> auto TimeBoundary(int phase,Action action){
     const double began=MPI_Wtime();auto result=action();
     boundary_phase_seconds[phase]+=MPI_Wtime()-began;return result;
@@ -750,11 +751,13 @@ class Evolution {
     CopyFromHost(V(edge_comps.begin()+31*surface_first,edge_comps.begin()+31*(surface_first+surface_local)),surface_compensation);time=header.time;steps=header.steps;
   }
   void DownloadOwnedPadded(){
+    const double started=MPI_Wtime();
     if(owned_padding.empty())owned_padding.resize(31*Model().grid.count,0);
     const int width=Model().grid.padded,blocksize=width*width*width;
     const int begin=first_block*blocksize,end=last_block*blocksize;HostBuffer host("owned padded snapshot",end-begin);
     for(int f=0;f<31;++f){auto piece=Kokkos::subview(exchange()->padded,std::make_pair(size_t(f*Model().grid.count+begin),size_t(f*Model().grid.count+end)));
       Kokkos::deep_copy(host,piece);for(int i=begin;i<end;++i)owned_padding[f*Model().grid.count+i]=host(i-begin);}
+    diagnostic_transfer_seconds+=MPI_Wtime()-started;++diagnostic_transfer_calls;
   }
 };
 
