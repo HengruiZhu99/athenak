@@ -81,7 +81,24 @@ def run_bounded(command, root, log, seconds, plan=None):
     return dict(returncode=code, timed_out=timed_out, storage_error=storage_error, elapsed_seconds=time.monotonic()-start)
 
 
-def probe_affinity(root, output, deadline):
+def validate_affinity_records(rows, allocation_nodes):
+    """Validate local ranks and tile masks separately on every allocated host."""
+    hosts = {host.split('.')[0] for host in allocation_nodes}
+    ppn = control.FIXED['ranks_per_node']
+    if (len(hosts) != control.FIXED['nodes'] or len(rows) != control.FIXED['ranks']
+            or {r.get('host', '').split('.')[0] for r in rows} != hosts):
+        return False
+    for host in hosts:
+        local = [r for r in rows if r.get('host', '').split('.')[0] == host]
+        if len(local) != ppn or {r.get('rank') for r in local} != set(range(ppn)):
+            return False
+        if not all(r.get('hierarchy') == 'COMPOSITE' and
+                   r.get('mask') == f"{r['rank']//2}.{r['rank']%2}" for r in local):
+            return False
+    return True
+
+
+def probe_affinity(root, output, deadline, nodes):
     code = ("import json,os,socket; print('AFFINITY_JSON='+json.dumps(dict("
             "host=socket.gethostname(),rank=int(os.environ.get('MPI_LOCALRANKID',"
             "os.environ.get('PALS_LOCAL_RANKID','-1'))),"
@@ -96,10 +113,7 @@ def probe_affinity(root, output, deadline):
             rows.append(json.loads(line.split('=', 1)[1]))
     result['records'] = rows
     result['passed'] = (not result['timed_out'] and result['returncode'] == 0
-                        and len(rows) == control.FIXED['ranks'] and {r['rank'] for r in rows} == set(range(control.FIXED['ranks']))
-                        and len({r['host'] for r in rows}) == 1
-                        and all(r['hierarchy'] == 'COMPOSITE' and
-                                r['mask'] == f"{r['rank']//2}.{r['rank']%2}" for r in rows))
+                        and validate_affinity_records(rows, nodes))
     return result
 
 
@@ -203,10 +217,10 @@ def run(root, relative):
     had_continued_failure = False
     control.atomic(status_path, status)
     try:
-        status['affinity'] = probe_affinity(root, output, deadline)
+        status['affinity'] = probe_affinity(root, output, deadline, nodes)
         control.atomic(status_path, status)
         if not status['affinity']['passed']:
-            raise RuntimeError('Twelve-rank, twelve-tile affinity probe failed')
+            raise RuntimeError('Per-node rank/GPU-tile affinity probe failed')
         for command in plan['commands']:
             control.read_bound(root, relative)
             storage.require_capacity(root,plan)

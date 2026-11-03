@@ -173,7 +173,7 @@ def make_plan(root,variant,purpose='evolution',segment=1,restart=None,expected_s
            else dict(variant=variant,schema=magic(variant),n=N,time=0.,steps=0,dt=DT))
     start['kind']='native_restart' if restart else 'native_fresh'
     if start['time']>=END:raise ValueError('This case already reached10M')
-    prefix=f'campaigns/n{N}-boosted-refined-core-cfl-v1-{variant.lower()}-{purpose}-segment{segment:02d}'
+    prefix=f'campaigns/n{N}-boosted-refined-core-cfl-v2-{variant.lower()}-{purpose}-segment{segment:02d}'
     out=prefix+'/output';commands=[]
     for kind in (['minkowski','puncture'] if purpose=='smoke' else ['puncture']):
         name=out+'/'+kind;inputs=[SCIENCE]
