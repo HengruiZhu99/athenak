@@ -16,13 +16,15 @@ history estimates through9.15M are encouraging but do not establish uniform
 fourth-order convergence. N16's original penalty-policy rejection remains recorded.
 This designation identifies the latest research method, not production readiness.
 
-The current nonspherical extension is on `codex/boosted-hyperboloidal-puncture`:
-[exact v=0.1 boosted initial data and tracked stability campaign](reproduction/boosted-puncture-v1/README.md).
+The current nonspherical extension is on `codex/boosted-free-initial-gauge`:
+[exact v=0.1 boosted geometry with free initial gauge](reproduction/boosted-free-gauge-v1/README.md).
 It retains the six-shell evolution method, adds consistent boosted metric,
 extrinsic curvature and connection data, and follows the puncture with RK4 and
-fast-flow. N16 job9034826 is submitted to10M; N20 and N24 are gated on successful
-N16 completion. This extension has bounded local checks but no completed long
-boosted result yet.
+fast-flow. The inner shift starts at zero and smoothly approaches the scri shift;
+the lapse is the boost-aware hyperboloidal pre-collapsed analog. The superseded
+BX1 job9034826 was cancelled before starting. BG1 will run N16 to10M first;
+N20 and N24 are gated on successful N16 completion. Bounded local checks pass,
+but no completed long boosted result is available yet.
 
 The coupled Cartesian-core / spherical-shell CPU and MPI/SYCL implementation
 includes a hyperboloidal fast-flow horizon finder. Earlier history is in the
