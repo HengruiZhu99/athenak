@@ -22,7 +22,7 @@ It retains the six-shell evolution method, adds consistent boosted metric,
 extrinsic curvature and connection data, and follows the puncture with RK4 and
 fast-flow. The inner shift starts at zero and smoothly approaches the scri shift;
 the lapse is the boost-aware hyperboloidal pre-collapsed analog. The superseded
-BX1 job9034826 was cancelled before starting. BG1 will run N16 to10M first;
+BX1 job9034826 was cancelled before starting. BG1 N16 job9034868 is submitted to10M;
 N20 and N24 are gated on successful N16 completion. Bounded local checks pass,
 but no completed long boosted result is available yet.
 

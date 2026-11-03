@@ -1,0 +1,23 @@
+{
+  "initial_geometry_diagnostics_identical": true,
+  "values": {
+    "H_L2": 0.02836537039943129,
+    "M_L2": 0.052978374783999665,
+    "Mr_L2": 0.04904867110930866,
+    "H_exterior_L2": 0.017877809352569843,
+    "M_exterior_L2": 0.052981612790532366,
+    "horizon_mass": 0.33333455270691364,
+    "horizon_radius": 0.050945133035828497
+  },
+  "inputs": {
+    "output/boosted-puncture/checks/n16-two-step.history.csv": {
+      "bytes": 2130,
+      "sha256": "567ef41273904c57a0170ba41943c643bc8fabe7410c3ab0c256f5d7fd451012"
+    },
+    "output/boosted-free-gauge/checks/n16-two-step.history.csv": {
+      "bytes": 2126,
+      "sha256": "289364e145290087bbfc1f62b901bdf861ccc360d138623bc0c16757e1d8eec8"
+    }
+  },
+  "note": "Only t=0 geometry diagnostics agree; subsequent gauge evolution differs. No long-time stability inference."
+}

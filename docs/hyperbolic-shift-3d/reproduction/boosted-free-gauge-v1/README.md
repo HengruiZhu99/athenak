@@ -5,6 +5,8 @@ use v=+0.1 in the usual asymptotically flat Cartesian boost chart, but choose th
 initial lapse and shift freely, as in ordinary puncture evolutions. Preserve the
 exact boosted geometry and latest six-shell evolution formulation. BX1's imposed
 initial boost-drift shift is superseded, not silently relabeled as this experiment.
+The unchanged exact embedding, induced metric/extrinsic curvature and regular
+outer boost chart are derived in [the geometric construction](../boosted-puncture-v1/README.md).
 The new target has `HYPERBOLIC_BOOST_FREE_INITIAL_GAUGE=1`, schema `HYP3D_MPI_BG1`,
 and a separate immutable source/build/launcher. No GPU smoke gate.
 
@@ -106,4 +108,11 @@ checks passed. Two SERIAL steps produced an admitted finite BG1 checkpoint; hori
 mass .333334653727, null residual <=1.12e-15, tracker displacement -8.334e-12 in x.
 This is not a GPU or long stability result. BX1 job9034826 was cancelled while queued,
 before any evolution; terminal scheduler verified and matching lock released.
-No BG1 evolution submitted yet. Separate immutable Aurora build is next.
+Aurora build completed with make-j64 and frozen SYCL/MPI/PVC target checks.
+All launcher/source-manifest files are locally hash/length verified in aurora-build/.
+Fresh BG1 N16 job **9034868** is submitted to10M on one debug-scaling node/12ranks.
+Plan SHA256 `072847e1eb5d7e1b190b51c78963c04c08781d8b5a0302e5a5cfb594c5a403ee`.
+Scientific source `62cca6e4f1e7e453c0fc443efa8ec7d4e044085a`; science SHA256
+`815010d107d95d860375f32c48deaeee4eff65fb339a4e7fe8f8db1451c7a5db`.
+Hourly monitor follows this job; N20 then N24 remain gated on N16 success.
+No long boosted result yet, no repeat of build/freeze/smoke.

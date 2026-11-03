@@ -1,9 +1,86 @@
 {
-  "status": "package_transferring",
+  "status": "n16_submitted",
   "branch": "codex/boosted-free-initial-gauge",
-  "scientific_source": "62cca6e4f",
+  "source_commit": "62cca6e4f1e7e453c0fc443efa8ec7d4e044085a",
+  "source_manifest": "source-boosted-free-gauge-v1-manifest.json",
+  "source_manifest_sha256": "7c6a4a7bae0167d26dc0d423949f39eec43250d3a385a86b089ab0025168602a",
   "launcher": "launcher-boosted-free-gauge-v1",
-  "previous_job": "9034826",
-  "previous_disposition": "cancelled_before_start_terminal_lock_released",
-  "next": "Inspect remote saved state/build before action; never duplicate build/submission. Fresh BG1 N16 then conditional N20/N24, no smoke."
+  "storage_cap_bytes": 10000000000,
+  "storage_before": {
+    "bytes": 5300200971,
+    "entries": 103306,
+    "limit_bytes": 10000000000,
+    "reserve_bytes": 100000000,
+    "planned_bytes": 400000000,
+    "headroom_bytes": 4199799029
+  },
+  "queue_snapshot": "\naurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov: \n                                                                 Req'd  Req'd   Elap\nJob ID               Username Queue    Jobname    SessID NDS TSK Memory Time  S Time\n-------------------- -------- -------- ---------- ------ --- --- ------ ----- - -----\n8883678.aurora-pbs-* hzhu     capacity telegraph*    --   16 33*    --  01:00 H   -- \n8888791.aurora-pbs-* hzhu     capacity telegraph*    --    8 16*    --  01:00 H   -- \n8888792.aurora-pbs-* hzhu     capacity telegraph*    --   16 33*    --  01:00 H   -- \n",
+  "updated": 1793682498.4819765,
+  "next": "Monitor existing B16. Healthy verified same-case walltime continuation automatic; numerical failure terminal. Only after successful B16 target completion advance fresh B20 then B24. No repeated build/freeze/smoke.",
+  "scope": "Free initial gauge beta=-W*x and boosted determinant pre-collapse; exact Schwarzschild hyperboloidal embedding v=.1 +x; retained six-shell method, native BG1 tracker, fast-flow follows center. Original unboosted N24 completed and is not resubmitted.",
+  "build_pid": 1900949,
+  "build_host": "aurora-uan-0012",
+  "build_log": "boosted-free-gauge-build.stdout.log",
+  "current_plan": "campaigns/n16-boosted-free-gauge-v1-b16-evolution-segment01/plan.json",
+  "plan_sha256": "072847e1eb5d7e1b190b51c78963c04c08781d8b5a0302e5a5cfb594c5a403ee",
+  "science_path": "launcher-boosted-free-gauge-v1/native-transition-science.json",
+  "science_sha256": "815010d107d95d860375f32c48deaeee4eff65fb339a4e7fe8f8db1451c7a5db",
+  "binary_sha256": "fff77019fe7de8c823d4dad9c09c16b521cd083ad95c062128bc840d9bb0b536",
+  "binding": {
+    "schema": 1,
+    "plan_sha256": "072847e1eb5d7e1b190b51c78963c04c08781d8b5a0302e5a5cfb594c5a403ee",
+    "source_manifest": "source-boosted-free-gauge-v1-manifest.json",
+    "source_manifest_sha256": "7c6a4a7bae0167d26dc0d423949f39eec43250d3a385a86b089ab0025168602a",
+    "binaries": {
+      "build-sycl-mpi-boosted-free-gauge-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_control_broad_smooth_six_shells_boosted_free_gauge": "fff77019fe7de8c823d4dad9c09c16b521cd083ad95c062128bc840d9bb0b536"
+    },
+    "inputs": {
+      "launcher-boosted-free-gauge-v1/native-transition-science.json": "815010d107d95d860375f32c48deaeee4eff65fb339a4e7fe8f8db1451c7a5db"
+    },
+    "pbs_sha256": "724e56772549083d56333a7311b79b6a7711deab1c5044578e5268a09c857179",
+    "admission": {
+      "path": "launcher-boosted-free-gauge-v1/native-transition-science.json",
+      "sha256": "815010d107d95d860375f32c48deaeee4eff65fb339a4e7fe8f8db1451c7a5db"
+    },
+    "resources": {
+      "queue": "debug-scaling",
+      "account": "CompactBinaryMerger",
+      "nodes": 1,
+      "ranks": 12,
+      "ranks_per_node": 12,
+      "walltime": "01:00:00"
+    },
+    "storage_at_bind": {
+      "bytes": 5356495262,
+      "entries": 105351,
+      "limit_bytes": 10000000000,
+      "reserve_bytes": 126294352,
+      "planned_bytes": 196070964,
+      "headroom_bytes": 4321139422
+    },
+    "launcher": {
+      "control.py": "70c5d4aa2d6d4ebbee1878f227960cc75a385f649ab1761d195468c5c6e97794",
+      "worker.py": "a1c483641ccf3ac1cc657eb90d6076fc286d2e4a8e2d40580a8f6ecd2a2b4fb8",
+      "run_debug.pbs": "1d5df790cf6c8cdc96e9d330b9b337ce755b30e057959586bcd661dc9ce885a6",
+      "storage.py": "21a5c93bba7c3f623755f01e5593aba6f1129887419c0da5a8b58d9b789180db",
+      "native_transition_campaign.py": "412882ec8e518bbe1b7fad3792f1459212fe3d3e0fb348053277a6e760e6f741"
+    },
+    "allocation_seconds": 3600,
+    "worker_seconds": 3200
+  },
+  "current_submission": {
+    "job_id": "9034868.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "submitted": 1793682498.4784007,
+    "plan": "campaigns/n16-boosted-free-gauge-v1-b16-evolution-segment01/plan.json",
+    "plan_sha256": "072847e1eb5d7e1b190b51c78963c04c08781d8b5a0302e5a5cfb594c5a403ee",
+    "source_manifest_sha256": "7c6a4a7bae0167d26dc0d423949f39eec43250d3a385a86b089ab0025168602a",
+    "resources": {
+      "queue": "debug-scaling",
+      "account": "CompactBinaryMerger",
+      "nodes": 1,
+      "ranks": 12,
+      "ranks_per_node": 12,
+      "walltime": "01:00:00"
+    }
+  }
 }
