@@ -1,3 +1,7 @@
+#include "z4c/hyperboloidal/owned_padded_snapshot.hpp"
+#ifndef HYPERBOLIC_COMPACT_DIAGNOSTIC_TRANSFER
+#define HYPERBOLIC_COMPACT_DIAGNOSTIC_TRANSFER 0
+#endif
 #include <mpi.h>
 #include <chrono>
 #include <cstring>
@@ -213,6 +217,7 @@ class Evolution {
   Buffer surface,surface_base,surface_stage,surface_compensation,next_surface_compensation;
   std::array<Buffer,4> rates,edge_rates;
   V failed_edge,owned_padding;
+  std::unique_ptr<h::OwnedPaddedSnapshot> owned_snapshot;
   std::vector<int> ownership_cuts;
   std::string partition_source_report;
   std::vector<int> counts,displacements,surface_counts,surface_displacements;
@@ -298,7 +303,7 @@ class Evolution {
       ownership_history.swap(staged_history);ownership_change_times.swap(staged_times);
       state=complete;local_state=new_local;compensation=new_comp;next_compensation=new_next;rates=new_rates;
       auto&g=plans.Borrow(mesh_epoch);reference_lapse=g.reference_lapse;angular_residual=g.angular_residual;
-      owned_padding.clear();++ownership_changes;ExchangeStage();
+      owned_padding.clear();owned_snapshot.reset();++ownership_changes;ExchangeStage();
       plan_rebuild_seconds+=MPI_Wtime()-began;
     }else throw std::invalid_argument("repartition requires coordinated plans");
   }
@@ -752,11 +757,23 @@ class Evolution {
   }
   void DownloadOwnedPadded(){
     const double started=MPI_Wtime();
+    if constexpr(HYPERBOLIC_COMPACT_DIAGNOSTIC_TRANSFER){
+      if(!owned_snapshot){
+        std::vector<int> blocks;for(int p=first;p<last;++p)blocks.push_back(Model().grid.cells[p].block);
+        const int w=Model().grid.padded;
+        owned_snapshot=std::make_unique<h::OwnedPaddedSnapshot>(Model().grid.count,w*w*w,31,std::move(blocks));
+      }
+      // A moving FastFlow query is evaluated only by the owner of the nominal
+      // central cell. That rank selects the entire block, including every halo
+      // SampleJets may read; no horizon-position cache is used.
+      owned_snapshot->Download(exchange()->padded,owned_padding,sparse_poison);
+    }else{
     if(owned_padding.empty())owned_padding.resize(31*Model().grid.count,0);
     const int width=Model().grid.padded,blocksize=width*width*width;
     const int begin=first_block*blocksize,end=last_block*blocksize;HostBuffer host("owned padded snapshot",end-begin);
     for(int f=0;f<31;++f){auto piece=Kokkos::subview(exchange()->padded,std::make_pair(size_t(f*Model().grid.count+begin),size_t(f*Model().grid.count+end)));
       Kokkos::deep_copy(host,piece);for(int i=begin;i<end;++i)owned_padding[f*Model().grid.count+i]=host(i-begin);}
+    }
     diagnostic_transfer_seconds+=MPI_Wtime()-started;++diagnostic_transfer_calls;
   }
 };
