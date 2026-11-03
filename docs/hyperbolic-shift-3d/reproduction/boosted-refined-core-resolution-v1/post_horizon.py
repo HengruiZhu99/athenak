@@ -34,7 +34,7 @@ def main():
     assert enriched, 'Empty history'
     a.output.mkdir(parents=True, exist_ok=False)
     with (a.output/'history-post.csv').open('w', newline='') as f:
-        writer = csv.DictWriter(f, fieldnames=list(enriched[0]))
+        writer = csv.DictWriter(f, fieldnames=list(enriched[0]), lineterminator="\n")
         writer.writeheader(); writer.writerows(enriched)
     summary = dict(policy=policy, history=str(a.history.resolve()),
                    history_sha256=hashlib.sha256(data).hexdigest(),
