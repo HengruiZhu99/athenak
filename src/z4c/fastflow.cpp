@@ -762,6 +762,7 @@ FastFlow::Result FastFlow::GetResult() const {
   out.expansion_mean = ah_prop[hhmean]/out.area;
   out.last_expansion_rms = sampled_expansion_rms;
   out.last_mean_radius = sampled_mean_radius;
+  out.last_max_radius = sampled_max_radius;
   return out;
 }
 
@@ -771,7 +772,7 @@ FastFlow::Result FastFlow::GetResult() const {
 void FastFlow::FastFlowLoop() {
   ah_found = false;
   complete_surface = !geometry_sampler;
-  sampled_expansion_rms = sampled_mean_radius = NAN;
+  sampled_expansion_rms = sampled_mean_radius = sampled_max_radius = NAN;
   if (geometry_sampler) {
     // A failed search must not expose properties from a previous found horizon.
     for (int v = 0; v < hnvar; ++v) ah_prop[v] = NAN;
@@ -837,6 +838,10 @@ void FastFlow::FastFlowLoop() {
     meanradius = a0.h_view(0) / Kokkos::sqrt(4.0 * M_PI);
     sampled_expansion_rms = std::sqrt(hrms);
     sampled_mean_radius = meanradius;
+    const auto sampled_rr=rr;Real maximum_radius=0;
+    Kokkos::parallel_reduce("sampled horizon maximum radius", Kokkos::RangePolicy<>(0,rr.extent(0)),
+      KOKKOS_LAMBDA(int i,Real&v){v=fmax(v,sampled_rr(i));},Kokkos::Max<Real>(maximum_radius));
+    sampled_max_radius=maximum_radius;
 
     // Step 4: Check that we get a finite result.
     if (!(Kokkos::isfinite(area))) {

@@ -1,0 +1,213 @@
+{
+  "passed": true,
+  "scope": "SERIAL backend; one/two MPI ranks; not GPU or long-time stability",
+  "records": {
+    "n16-two-step": {
+      "checkpoint": {
+        "bytes": 116294352,
+        "sha256": "c2fc2ddc5aa17044a68aa106d8df7b9f651b0676d76c1fca1ab9f659eb6f3b7a"
+      },
+      "time": 0.001,
+      "steps": 2,
+      "puncture_position": [
+        3.052256061595917e-05,
+        -5.657540868019074e-22,
+        -9.816870446551939e-21
+      ],
+      "horizon_mass": 0.3333346465357607,
+      "horizon_found": "1",
+      "report_header_bytes": 168,
+      "max_cfl": 0.17161651743335235,
+      "null_surface": 1.1102230246083013e-15,
+      "null_ghost": 1.1102230246251445e-15,
+      "files": {
+        "output/boosted-puncture/checks/n16-two-step.log": {
+          "bytes": 176,
+          "sha256": "65afc6635722663b7f5b9254df3fd216ccbdaa7a15d4cfe481d7b95ee440b151"
+        },
+        "output/boosted-puncture/checks/n16-two-step.fastflow.horizon_shape_0.txt": {
+          "bytes": 4606,
+          "sha256": "e00a8cc913ec284b8f844ab357eb688865c90d9d1337a44657e73fa74245ba1e"
+        },
+        "output/boosted-puncture/checks/n16-two-step.checkpoint": {
+          "bytes": 116294352,
+          "sha256": "c2fc2ddc5aa17044a68aa106d8df7b9f651b0676d76c1fca1ab9f659eb6f3b7a"
+        },
+        "output/boosted-puncture/checks/n16-two-step.fastflow.horizon_summary_0.txt": {
+          "bytes": 547,
+          "sha256": "34c011d46595e0de9b54be8de468accfd5f1fe233531311722b0c8ccdbe94091"
+        },
+        "output/boosted-puncture/checks/n16-two-step.history.csv": {
+          "bytes": 2130,
+          "sha256": "567ef41273904c57a0170ba41943c643bc8fabe7410c3ab0c256f5d7fd451012"
+        },
+        "output/boosted-puncture/checks/n16-two-step.report.json": {
+          "bytes": 7333,
+          "sha256": "a360b05943514da293a86401706cc9a864434bde22cfbf80c2d7b943cc656ed6"
+        },
+        "output/boosted-puncture/checks/n16-two-step.checkpoint.horizon-seed.txt": {
+          "bytes": 58,
+          "sha256": "d078b0dace18dd965c348616698b253e4121d3eaa19f4a7f2516ece75ddcf016"
+        }
+      }
+    },
+    "one-step": {
+      "checkpoint": {
+        "bytes": 116294352,
+        "sha256": "eaa4123ed11d3bc7e78dbd104722eb1291a4452b431197b4cdf01098e99ff041"
+      },
+      "time": 0.0005,
+      "steps": 1,
+      "puncture_position": [
+        1.5284175406965325e-05,
+        -1.4705849737005368e-21,
+        -3.830850947008331e-21
+      ],
+      "horizon_mass": 0.3333345998294296,
+      "horizon_found": "1",
+      "report_header_bytes": 208,
+      "max_cfl": 0.17161651743335235,
+      "null_surface": 1.1102230246083013e-15,
+      "null_ghost": 1.1102230246251445e-15,
+      "files": {
+        "output/boosted-puncture/checks/one-step.fastflow.horizon_shape_0.txt": {
+          "bytes": 4597,
+          "sha256": "a072bbc0ee08b62a4776668fc078580653437af6ed57fd79a391407d91c0bbac"
+        },
+        "output/boosted-puncture/checks/one-step.history.csv": {
+          "bytes": 2130,
+          "sha256": "78fc2b98edda0a9e66eb1bcabd58ecfe144a883bf56b01f054034cfd994433f2"
+        },
+        "output/boosted-puncture/checks/one-step.fastflow.horizon_summary_0.txt": {
+          "bytes": 548,
+          "sha256": "b99ae76cf3f4100c01f153adb152ee6df7ce4a9d1cae0882a1abfcaa87db1b75"
+        },
+        "output/boosted-puncture/checks/one-step.report.json": {
+          "bytes": 7373,
+          "sha256": "2a5a6778ddd129891ab5930f03abe1d7d6e298d6f10c202a07497ca6e8135730"
+        },
+        "output/boosted-puncture/checks/one-step.checkpoint.horizon-seed.txt": {
+          "bytes": 92,
+          "sha256": "c9de4cb86b28851c0cc4c3e42b41662253cef388a1a54807aa8bf341e6c54572"
+        },
+        "output/boosted-puncture/checks/one-step.checkpoint": {
+          "bytes": 116294352,
+          "sha256": "eaa4123ed11d3bc7e78dbd104722eb1291a4452b431197b4cdf01098e99ff041"
+        },
+        "output/boosted-puncture/checks/one-step.log": {
+          "bytes": 177,
+          "sha256": "56a793fe9cad333b452fab7ff969dae9c67a1d0f476621f27c5d643ba338d3b5"
+        }
+      }
+    },
+    "restart-two-step": {
+      "checkpoint": {
+        "bytes": 116294352,
+        "sha256": "c2fc2ddc5aa17044a68aa106d8df7b9f651b0676d76c1fca1ab9f659eb6f3b7a"
+      },
+      "time": 0.001,
+      "steps": 2,
+      "puncture_position": [
+        3.052256061595917e-05,
+        -5.657540868019074e-22,
+        -9.816870446551939e-21
+      ],
+      "horizon_mass": 0.3333346469639574,
+      "horizon_found": "1",
+      "report_header_bytes": 208,
+      "max_cfl": 0.171582575989877,
+      "null_surface": 1.1102230246083013e-15,
+      "null_ghost": 1.1102230246241263e-15,
+      "files": {
+        "output/boosted-puncture/checks/restart-two-step.report.json": {
+          "bytes": 7317,
+          "sha256": "abe72c4988437a057a47f3e544bd817a148575d1c872a3af03581dcfce416ff9"
+        },
+        "output/boosted-puncture/checks/restart-two-step.checkpoint.horizon-seed.txt": {
+          "bytes": 58,
+          "sha256": "fbebcd73a3f3b98660f1fd5b4097985c596f1fc7c474881eacd383e0c35b1e14"
+        },
+        "output/boosted-puncture/checks/restart-two-step.fastflow.horizon_shape_0.txt": {
+          "bytes": 4603,
+          "sha256": "d40db584febb61bfae24fce4e2efe51169c0349cfd6bbffa450b6b85f060c05c"
+        },
+        "output/boosted-puncture/checks/restart-two-step.checkpoint": {
+          "bytes": 116294352,
+          "sha256": "c2fc2ddc5aa17044a68aa106d8df7b9f651b0676d76c1fca1ab9f659eb6f3b7a"
+        },
+        "output/boosted-puncture/checks/restart-two-step.history.csv": {
+          "bytes": 2324,
+          "sha256": "d7edbe97e0f9c35abf4b5b33b0f1795fae23419cf7bfe9b4f7e1608bad81fd36"
+        },
+        "output/boosted-puncture/checks/restart-two-step.log": {
+          "bytes": 180,
+          "sha256": "ee55f59fbbc88e76ee3fbed955e99c2afb11f244538d32d9680d44d093fbd0d9"
+        },
+        "output/boosted-puncture/checks/restart-two-step.fastflow.horizon_summary_0.txt": {
+          "bytes": 554,
+          "sha256": "1ac4a93c8ab7965e845108197b1bccf1f43ed614f725deea821ab967ceee0d6b"
+        }
+      }
+    },
+    "mpi2-two-step": {
+      "checkpoint": {
+        "bytes": 116294352,
+        "sha256": "c2fc2ddc5aa17044a68aa106d8df7b9f651b0676d76c1fca1ab9f659eb6f3b7a"
+      },
+      "time": 0.001,
+      "steps": 2,
+      "puncture_position": [
+        3.052256061595917e-05,
+        -5.657540868019074e-22,
+        -9.816870446551939e-21
+      ],
+      "horizon_mass": 0.3333346465357607,
+      "horizon_found": "1",
+      "report_header_bytes": 208,
+      "max_cfl": 0.17161651743335235,
+      "null_surface": 1.1102230246083013e-15,
+      "null_ghost": 1.1102230246251445e-15,
+      "files": {
+        "output/boosted-puncture/checks/mpi2-two-step.fastflow.horizon_summary_0.txt": {
+          "bytes": 547,
+          "sha256": "34c011d46595e0de9b54be8de468accfd5f1fe233531311722b0c8ccdbe94091"
+        },
+        "output/boosted-puncture/checks/mpi2-two-step.fastflow.horizon_shape_0.txt": {
+          "bytes": 4606,
+          "sha256": "e00a8cc913ec284b8f844ab357eb688865c90d9d1337a44657e73fa74245ba1e"
+        },
+        "output/boosted-puncture/checks/mpi2-two-step.checkpoint": {
+          "bytes": 116294352,
+          "sha256": "c2fc2ddc5aa17044a68aa106d8df7b9f651b0676d76c1fca1ab9f659eb6f3b7a"
+        },
+        "output/boosted-puncture/checks/mpi2-two-step.history.csv": {
+          "bytes": 2121,
+          "sha256": "b026945466afad11e58b8466c62bc423587f5f7b298dcada8b194bc0de2a8861"
+        },
+        "output/boosted-puncture/checks/mpi2-two-step.report.json": {
+          "bytes": 7892,
+          "sha256": "8fb953681d4341ce37676c79548e993fa67c498a9e56a28c9fe0c9671416cf58"
+        },
+        "output/boosted-puncture/checks/mpi2-two-step.checkpoint.horizon-seed.txt": {
+          "bytes": 58,
+          "sha256": "d078b0dace18dd965c348616698b253e4121d3eaa19f4a7f2516ece75ddcf016"
+        },
+        "output/boosted-puncture/checks/mpi2-two-step.log": {
+          "bytes": 176,
+          "sha256": "2b3e01990dd33aa086b5a6ce94697b39a2319fdf5da5481a60cae316b86c0dc4"
+        }
+      }
+    }
+  },
+  "comparisons": {
+    "restart-two-step": {
+      "max_scaled_payload_difference": 0.0,
+      "tracker_difference": 0.0
+    },
+    "mpi2-two-step": {
+      "max_scaled_payload_difference": 0.0,
+      "tracker_difference": 0.0
+    }
+  },
+  "qualification": "First two-step report predates reporting-only correction from168 to208; actual BX1 binary header is208 and independently checked. No checkpoint format changed."
+}

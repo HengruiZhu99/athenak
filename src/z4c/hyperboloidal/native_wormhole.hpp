@@ -14,6 +14,7 @@ namespace z4c::hyperboloidal {
 // there is no sampled radial field table or interpolation. Exact duplicate
 // radii may reuse an already evaluated point (common on spherical shells).
 class NativeWormhole {
+  friend class NativeBoostedWormhole;
  public:
   struct Radial {double chi,ar,trace,lapse,shift_ratio,areal;};
   enum class TransitionProfile {bump, polynomial_c6};

@@ -55,7 +55,7 @@ class FastFlow {
     Real expansion_rms, expansion_mean;
     // Last sampled trial surface, including searches that did not converge.
     // These diagnostic values must not be interpreted as a found horizon.
-    Real last_expansion_rms, last_mean_radius;
+    Real last_expansion_rms, last_mean_radius, last_max_radius;
   };
   Result GetResult() const;
 
@@ -175,7 +175,7 @@ class FastFlow {
   DualArray1D<int> havepoint;
   GeometrySampler geometry_sampler;
   bool complete_surface = false;
-  Real sampled_expansion_rms = -1, sampled_mean_radius = -1;
+  Real sampled_expansion_rms = -1, sampled_mean_radius = -1, sampled_max_radius = -1;
 
   // Functions used in the fast-flow algorithm
   void FastFlowLoop();

@@ -15,6 +15,7 @@
 #include "z4c/hyperboloidal/algebraic_projection.hpp"
 #include "fixed_composite_mesh.hpp"
 #include "z4c/hyperboloidal/native_wormhole.hpp"
+#include "z4c/hyperboloidal/native_boosted_wormhole.hpp"
 #ifndef HYPERBOLIC_NATIVE_WORMHOLE
 #define HYPERBOLIC_NATIVE_WORMHOLE 0
 #endif
@@ -118,7 +119,7 @@ static_assert(!h::broad_smooth_a || (native_wormhole && !h::CompositeDissipation
 static_assert(!h::wide_restoring_collar || (native_wormhole && !h::CompositeDissipation::consistent && !cubed_sphere::scri_first6));
 static_assert(!h::zero_shift_restoration || (native_wormhole && !h::CompositeDissipation::consistent && !cubed_sphere::scri_first6));
 static_assert(!hyperbolic_reproduction::six_shells || (h::broad_smooth_a && continuous_positive));
-constexpr const char*checkpoint_magic=hyperbolic_reproduction::six_shells?"HYP3D_MPI_N61":h::broad_smooth_a?"HYP3D_MPI_NB1":h::zero_shift_restoration?"HYP3D_MPI_NZ1":h::wide_restoring_collar?"HYP3D_MPI_NW1":cubed_sphere::scri_first6?(h::CompositeDissipation::consistent?(h::shared_restoration?"HYP3D_MPI_NS2":"HYP3D_MPI_NC2"):(h::shared_restoration?"HYP3D_MPI_NS1":"HYP3D_MPI_NC1")):native_wormhole?(h::CompositeDissipation::consistent?(h::shared_restoration?"HYP3D_MPI_NT2":"HYP3D_MPI_NI2"):(h::shared_restoration?"HYP3D_MPI_NT1":"HYP3D_MPI_NI1")):h::CompositeDissipation::consistent?(h::shared_restoration?"HYP3D_MPI_ST2":"HYP3D_MPI_SG2"):h::shared_restoration?"HYP3D_MPI_ST1":h::short_inner_gauge?"HYP3D_MPI_SG1":h::late_inner_gauge?"HYP3D_MPI_LG1":h::restore_inner_damping?"HYP3D_MPI_DG1":h::direct_outer?"HYP3D_MPI_DO1":h::inner_telegrapher?"HYP3D_MPI_IT1":h::smooth_gauge_blend&&direct_chi?"HYP3D_MPI_GD1":h::smooth_gauge_blend?"HYP3D_MPI_GW1":direct_chi?"HYP3D_MPI_AC1":direct_lapse?"HYP3D_MPI_AL1":puncture_chi_floor>0?"HYP3D_MPI_CF1":HYPERBOLIC_EXPERIMENTAL_TIMESTEP?"HYP3D_MPI_DT1":continuous_positive?"HYP3D_MPI_V11":spherical_overlap?"HYP3D_MPI_V10":evolved_overlap?"HYP3D_MPI_V9":core_subdivisions==2?"HYP3D_MPI_V8":inner_transition_logical?"HYP3D_MPI_V7":scri_donor_seven?"HYP3D_MPI_V6":scri_sampled_normal?"HYP3D_MPI_V5":scri_angular_dissipation?"HYP3D_MPI_V4":scri_angular_exchange?"HYP3D_MPI_V3":algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
+constexpr const char*checkpoint_magic=h::boosted_puncture?"HYP3D_MPI_BX1":hyperbolic_reproduction::six_shells?"HYP3D_MPI_N61":h::broad_smooth_a?"HYP3D_MPI_NB1":h::zero_shift_restoration?"HYP3D_MPI_NZ1":h::wide_restoring_collar?"HYP3D_MPI_NW1":cubed_sphere::scri_first6?(h::CompositeDissipation::consistent?(h::shared_restoration?"HYP3D_MPI_NS2":"HYP3D_MPI_NC2"):(h::shared_restoration?"HYP3D_MPI_NS1":"HYP3D_MPI_NC1")):native_wormhole?(h::CompositeDissipation::consistent?(h::shared_restoration?"HYP3D_MPI_NT2":"HYP3D_MPI_NI2"):(h::shared_restoration?"HYP3D_MPI_NT1":"HYP3D_MPI_NI1")):h::CompositeDissipation::consistent?(h::shared_restoration?"HYP3D_MPI_ST2":"HYP3D_MPI_SG2"):h::shared_restoration?"HYP3D_MPI_ST1":h::short_inner_gauge?"HYP3D_MPI_SG1":h::late_inner_gauge?"HYP3D_MPI_LG1":h::restore_inner_damping?"HYP3D_MPI_DG1":h::direct_outer?"HYP3D_MPI_DO1":h::inner_telegrapher?"HYP3D_MPI_IT1":h::smooth_gauge_blend&&direct_chi?"HYP3D_MPI_GD1":h::smooth_gauge_blend?"HYP3D_MPI_GW1":direct_chi?"HYP3D_MPI_AC1":direct_lapse?"HYP3D_MPI_AL1":puncture_chi_floor>0?"HYP3D_MPI_CF1":HYPERBOLIC_EXPERIMENTAL_TIMESTEP?"HYP3D_MPI_DT1":continuous_positive?"HYP3D_MPI_V11":spherical_overlap?"HYP3D_MPI_V10":evolved_overlap?"HYP3D_MPI_V9":core_subdivisions==2?"HYP3D_MPI_V8":inner_transition_logical?"HYP3D_MPI_V7":scri_donor_seven?"HYP3D_MPI_V6":scri_sampled_normal?"HYP3D_MPI_V5":scri_angular_dissipation?"HYP3D_MPI_V4":scri_angular_exchange?"HYP3D_MPI_V3":algebraic_final_projection?"HYP3D_MPI_V2":"HYP3D_MPI_V1";
 static_assert(!h::inner_telegrapher||(h::smooth_gauge_blend&&direct_chi&&direct_lapse),"IT1 requires smooth direct variables");
 static_assert(!h::smooth_gauge_blend||(HYPERBOLIC_EXPERIMENTAL_TIMESTEP&&continuous_positive&&((!direct_lapse&&puncture_chi_floor==0)||(direct_chi&&puncture_chi_floor==1e-8))),"Smooth weight requires GW1 log variables or GD1 direct variables with floors");
 constexpr const char*algebraic_scheme=algebraic_final_projection?"final_stage_standard":"none";
@@ -149,9 +150,14 @@ struct GeometryConfig { Real core_half_width=.18,inner_radius=.16; };
 static_assert(sizeof(GeometryConfig)==16,"geometry layout requires float64");
 static_assert(sizeof(MeshConfig)==16,"mesh configuration layout requires four int32 values");
 static_assert(sizeof(Header)==72&&sizeof(DissipationConfig)==16&&sizeof(NormalConfig)==16,"checkpoint layout requires float64");
+// BX1 appends 40 bytes to the 168-byte native header: fixed boost and RK tracker.
+struct BoostConfig {Real velocity=.1,position[3]={},support=.16;};
+static_assert(sizeof(BoostConfig)==40);
 class Evolution {
  public:
   int rank,size,n,total,first,last,local,first_block,last_block;
+  std::array<Real,3>puncture{};
+  bool track_puncture=false;
   int surface_total,surface_first,surface_local;
   const std::chrono::steady_clock::time_point construction_started=std::chrono::steady_clock::now();
   double setup_seconds[8]={};
@@ -539,10 +545,36 @@ class Evolution {
     }
     return invalid;
   }
+  // Sixth-point tensor interpolation uses the same filled Cartesian halos as
+  // the bulk/finder. Only 216 weights and three velocities cross the device bus.
+  std::array<Real,3> PunctureVelocity(){
+    std::array<Real,3>velocity{};
+    const int block=Model().grid.mesh.Owner(puncture.data());
+    if(block<0||block>=8)throw std::runtime_error("puncture left Cartesian tracker support");
+    const int owner_cell=block*n*n*n+n*n*n/2;
+    if(owner_cell>=first&&owner_cell<last){
+      Real q[3];Model().grid.mesh.Inverse(block,puncture.data(),q);
+      Real w[3][6];int start[3];
+      for(int a=0;a<3;++a){const Real t=n*q[a]-.5;
+        start[a]=std::clamp(int(std::floor(t))-2,-Model().grid.ng,n+Model().grid.ng-6);
+        for(int i=0;i<6;++i){w[a][i]=1;for(int j=0;j<6;++j)if(i!=j)w[a][i]*=(t-start[a]-j)/(i-j);}}
+      HostBuffer host("tracker stencil",432);int p=0;
+      for(int k=0;k<6;++k)for(int j=0;j<6;++j)for(int i=0;i<6;++i,++p){
+        host(2*p)=Model().grid.Index(block,start[0]+i,start[1]+j,start[2]+k);host(2*p+1)=w[0][i]*w[1][j]*w[2][k];}
+      Buffer stencil("tracker stencil",432);Kokkos::deep_copy(stencil,host);
+      const auto padded=exchange()->padded;const int count=Model().grid.count;
+      for(int a=0;a<3;++a){Real sum=0;
+        Kokkos::parallel_reduce("puncture shift sample",Kokkos::RangePolicy<>(0,216),KOKKOS_LAMBDA(int i,Real&v){v+=stencil(2*i+1)*padded((22+a)*count+int(stencil(2*i)));},sum);
+        velocity[a]=puncture[a]-sum;}
+    }
+    MPI_Allreduce(MPI_IN_PLACE,velocity.data(),3,MPI_ATHENA_REAL,MPI_SUM,MPI_COMM_WORLD);
+    for(auto x:velocity)if(!std::isfinite(x))throw std::runtime_error("nonfinite puncture tracker velocity");
+    return velocity;
+  }
   void Step(Real dt){
     ValidatePlans();
     Kokkos::deep_copy(base,state);Kokkos::deep_copy(surface_base,surface);
-    const Real base_time=time;
+    const Real base_time=time;const auto puncture_base=puncture;std::array<std::array<Real,3>,4>puncture_rates{};
     auto stage=[&](int s,Real h){const auto out=local_state,begin=base,k=rates[s],A=reference_lapse,fs=floor_statistics,cs=candidate_statistics;const int offset=31*first;
       Kokkos::parallel_for("local RK stage",Kokkos::RangePolicy<>(0,31*local),KOKKOS_LAMBDA(int i){
         const int f=i%31,p=i/31;
@@ -574,6 +606,7 @@ class Evolution {
       });Gather(es,surface,true);};
     try{
       for(int s=0;s<4;++s){Buffer edge;const auto rhs=RHS(dt,edge);
+        if constexpr(h::boosted_puncture)if(track_puncture)puncture_rates[s]=PunctureVelocity();
         if constexpr(continuous_positive){const auto k=rates[s],ek=edge_rates[s],v=state,sv=surface,A=reference_lapse;const int begin=first,eb=surface_first;
           Kokkos::parallel_for("positive volume RK rates",Kokkos::RangePolicy<>(0,31*local),KOKKOS_LAMBDA(int i){
             const int f=i%31,p=i/31;k(i)=rhs(i)/(((f==0&&!direct_chi)||(f==18&&!direct_lapse))?v(31*begin+i)+(f==18?A(p):0):1);});
@@ -584,7 +617,11 @@ class Evolution {
           }
           Kokkos::parallel_for("positive surface RK rates",Kokkos::RangePolicy<>(0,31*surface_local),KOKKOS_LAMBDA(int i){ek(i)=edge(i)/(i%31==0&&!direct_chi?sv(31*eb+i):1);});
         }else{Kokkos::deep_copy(rates[s],rhs);Kokkos::deep_copy(edge_rates[s],edge);}
-        if(s<3)stage(s,s<2?dt/2:dt);}
+        if(s<3){stage(s,s<2?dt/2:dt);
+          if constexpr(h::boosted_puncture)if(track_puncture)for(int a=0;a<3;++a)puncture[a]=puncture_base[a]+(s<2?dt/2:dt)*puncture_rates[s][a];}}
+      if constexpr(h::boosted_puncture)if(track_puncture)for(int a=0;a<3;++a){
+        puncture[a]=puncture_base[a]+dt*(puncture_rates[0][a]+2*puncture_rates[1][a]+2*puncture_rates[2][a]+puncture_rates[3][a])/6;
+        if(!std::isfinite(puncture[a])||std::abs(puncture[a])>=.16)throw std::runtime_error("puncture reached conservative Cartesian support limit");}
       const auto out=local_state,begin=base,old=compensation,next=next_compensation,A=reference_lapse,fs=floor_statistics,cs=candidate_statistics;const int offset=31*first;
       const auto k1=rates[0],k2=rates[1],k3=rates[2],k4=rates[3];
       Kokkos::parallel_for("compensated RK acceptance",Kokkos::RangePolicy<>(0,31*local),KOKKOS_LAMBDA(int i){
@@ -637,6 +674,7 @@ class Evolution {
       },invalid);SynchronizeError(invalid,"invalid accepted volume geometry");
       RefreshBoundary(dt);Kokkos::deep_copy(compensation,next_compensation);Kokkos::deep_copy(surface_compensation,next_surface_compensation);time+=dt;++steps;
     }catch(...){
+      puncture=puncture_base;
       failed_state=Buffer("failed stage",state.extent(0));Kokkos::deep_copy(failed_state,state);if(rank==0)failed_edge=Download(surface);
       boundary_cached=false;Kokkos::deep_copy(state,base);Kokkos::deep_copy(surface,surface_base);throw;
     }
@@ -659,6 +697,7 @@ class Evolution {
         out.write(reinterpret_cast<const char*>(&config),sizeof(config));}
       if constexpr(continuous_positive){const PositiveConfig config;out.write(reinterpret_cast<const char*>(&config),sizeof(config));}
       if constexpr(puncture_chi_floor>0){const ChiFloorConfig config;out.write(reinterpret_cast<const char*>(&config),sizeof(config));}
+      if constexpr(h::boosted_puncture){BoostConfig config;for(int a=0;a<3;++a)config.position[a]=puncture[a];out.write(reinterpret_cast<const char*>(&config),sizeof(config));}
       for(const V*v:{&values,&comps,&edge,&edge_comps})out.write(reinterpret_cast<const char*>(v->data()),v->size()*sizeof(Real));
       out.close();if(!out)throw std::runtime_error("checkpoint write failed");std::filesystem::rename(path+".tmp",path);
     }catch(const std::exception&e){bad=1;reason=e.what();}SynchronizeError(bad,reason);
@@ -693,11 +732,15 @@ class Evolution {
       if constexpr(puncture_chi_floor>0){ChiFloorConfig config;in.read(reinterpret_cast<char*>(&config),sizeof(config));
         if(!in||config.value!=puncture_chi_floor||config.radius!=puncture_chi_floor_radius)
           throw std::runtime_error("checkpoint chi floor configuration mismatch");}
+      if constexpr(h::boosted_puncture){BoostConfig config;in.read(reinterpret_cast<char*>(&config),sizeof(config));
+        if(!in||config.velocity!=.1||config.support!=.16)throw std::runtime_error("boost configuration mismatch");
+        for(int a=0;a<3;++a){if(!std::isfinite(config.position[a])||std::abs(config.position[a])>=.16)throw std::runtime_error("invalid tracker checkpoint");puncture[a]=config.position[a];}}
       for(auto*v:{&values,&comps,&edge,&edge_comps})in.read(reinterpret_cast<char*>(v->data()),v->size()*sizeof(Real));
       char tail;if(!in||in.read(&tail,1))throw std::runtime_error("checkpoint truncated or trailing data");
       for(const auto*v:{&values,&comps,&edge,&edge_comps})for(Real x:*v)if(!std::isfinite(x))throw std::runtime_error("checkpoint nonfinite data");
     }catch(const std::exception&e){bad=1;reason=e.what();}
     SynchronizeError(bad,reason);MPI_Bcast(&header,sizeof(header),MPI_BYTE,0,MPI_COMM_WORLD);
+    if constexpr(h::boosted_puncture)MPI_Bcast(puncture.data(),3,MPI_ATHENA_REAL,0,MPI_COMM_WORLD);
     for(auto*v:{&values,&comps,&edge,&edge_comps})MPI_Bcast(v->data(),v->size(),MPI_ATHENA_REAL,0,MPI_COMM_WORLD);
     Upload(values);CopyFromHost(edge,surface);CopyFromHost(V(comps.begin()+31*first,comps.begin()+31*last),compensation);
     CopyFromHost(V(edge_comps.begin()+31*surface_first,edge_comps.begin()+31*(surface_first+surface_local)),surface_compensation);time=header.time;steps=header.steps;
@@ -788,6 +831,7 @@ int main(int argc,char**argv){
     std::unique_ptr<Evolution> evolution;
     CollectiveLocal([&]{evolution=std::make_unique<Evolution>(n,angular_epsilon,kind,measured_partition?argv[14]:"");});
     auto&e=*evolution;
+    e.track_puncture=h::boosted_puncture&&kind==2;
     CollectiveLocal([&]{if(e.rank==0){if(const char*value=std::getenv("HYPERBOLIC_PLAN_REBUILD_INTERVAL")){
       size_t used=0;const std::string text=value;e.plan_rebuild_interval=std::stoi(text,&used);
       if(used!=text.size()||e.plan_rebuild_interval<0||(!coordinated_plans&&e.plan_rebuild_interval))
@@ -810,12 +854,16 @@ int main(int argc,char**argv){
                             ".fastflow.horizon_shape_0.txt",".checkpoint.horizon-seed.txt"})
         if(std::filesystem::exists(output+suffix))throw std::runtime_error("refusing to overwrite result: "+output+suffix);
       if(native_wormhole&&kind==2&&restart=="-"){
+        if constexpr(h::boosted_puncture){h::NativeBoostedWormhole pgen;
+          for(int p=0;p<e.total;++p){const auto fields=pgen.Fields(e.Model().grid.geometry[p].x);for(int f=0;f<31;++f)e.initial_state[31*p+f]=fields[f];}
+          initializer_cached_radii=pgen.CachedRadii();
+        }else{
         h::NativeWormhole pgen(1./3.,2e-13,4.,h::broad_smooth_a?12.:8.,
             h::broad_smooth_a?h::NativeWormhole::TransitionProfile::polynomial_c6:
                               h::NativeWormhole::TransitionProfile::bump);
         for(int p=0;p<e.total;++p){const auto fields=pgen.Fields(e.Model().grid.geometry[p].x);
           for(int f=0;f<31;++f)e.initial_state[31*p+f]=fields[f];}
-        initializer_cached_radii=pgen.CachedRadii();
+        initializer_cached_radii=pgen.CachedRadii();}
       }
       else if(initial!="-"){std::ifstream in(initial);size_t count=0;in>>count;
         if(count!=e.initial_state.size())throw std::runtime_error("initial field count mismatch");
@@ -874,13 +922,14 @@ int main(int argc,char**argv){
       history.open(output+".history.csv");history<<std::setprecision(17)
         <<"t,t_over_M,steps,min_chi,min_lapse,state_deviation,H_L2,M_L2,M_physical_L2,Theta_L2,Z_L2,H_exterior_L2,M_exterior_L2,exterior_cutoff,horizon_found,horizon_radius,horizon_areal_radius,horizon_mass,horizon_expansion_rms,horizon_trial_radius,horizon_trial_expansion_rms,horizon_complete_surface,horizon_iterations,null_surface,null_ghost,pole_max,clock_max,cfl_max,wall_seconds,determinant_residual,tracefree_residual,Mr_L2,Mr_exterior_L2,Theta_exterior_L2,Zr_L2,Zr_exterior_L2,horizon_irreducible_mass";
       if constexpr(h::zero_shift_restoration)history<<",H_fixed012_L2,M_fixed012_L2,Mr_fixed012_L2,H_fixed016_L2,M_fixed016_L2,Mr_fixed016_L2,H_fixed025_L2,M_fixed025_L2,Mr_fixed025_L2,shift_deviation_max,shift_deviation_gradient_max,D_max,D_gradient_max,D_minus_Lambda_max";
+      if constexpr(h::boosted_puncture)history<<",puncture_x,puncture_y,puncture_z,horizon_center_x,horizon_center_y,horizon_center_z,horizon_max_radius";
       history<<'\n';
       history.flush();if(!history)throw std::runtime_error("history open/header write failed");
     }});
     Diagnostic diagnostic{};bool diagnostic_valid=false;Real diagnostic_time=nan;
     Real horizon_radius=nan,horizon_areal=nan,horizon_mass=nan,horizon_irreducible_mass=nan,horizon_expansion=nan;
     Real trial_radius=nan,trial_expansion=nan,cutoff=kind==2?nan:0;
-    bool horizon_found=false,horizon_complete=false;int horizon_iterations=0;
+    Real horizon_max_radius=nan;bool horizon_found=false,horizon_complete=false;int horizon_iterations=0;
     Real initial_rhs=nan;double last_diag_seconds=0;
     auto elapsed=[&]{return std::chrono::duration<double>(std::chrono::steady_clock::now()-started).count();};
     auto record=[&]{
@@ -893,9 +942,10 @@ int main(int argc,char**argv){
       horizon_radius=horizon_areal=horizon_mass=horizon_irreducible_mass=horizon_expansion=nan;
       if(finder){
         CollectiveLocal([&]{e.DownloadOwnedPadded();});
+        if constexpr(h::boosted_puncture)for(int a=0;a<3;++a)finder->center[a]=e.puncture[a];
         finder->Find(e.steps,e.time);
         CollectiveLocal([&]{finder->Write(e.steps,e.time);});
-        const auto result=finder->GetResult();
+        const auto result=finder->GetResult();horizon_max_radius=result.last_max_radius;
         horizon_found=result.found;horizon_complete=result.complete_surface;horizon_iterations=result.iterations;
         trial_expansion=result.last_expansion_rms;trial_radius=result.last_mean_radius;
         if(result.found){horizon_radius=result.mean_radius;horizon_areal=result.areal_radius;
@@ -907,6 +957,13 @@ int main(int argc,char**argv){
           if(!result.found&&result.complete_surface&&std::isfinite(trial_radius)
              &&trial_radius>0&&trial_radius<1)cutoff=trial_radius;
         }
+      }
+      if constexpr(h::boosted_puncture){
+        // Origin-centered diagnostic sphere encloses the entire displaced
+        // sampled candidate, rather than using its mean radius as a false cut.
+        if(std::isfinite(cutoff)&&horizon_complete&&std::isfinite(horizon_max_radius))
+          cutoff=std::sqrt(e.puncture[0]*e.puncture[0]+e.puncture[1]*e.puncture[1]+e.puncture[2]*e.puncture[2])+horizon_max_radius;
+        else cutoff=nan;
       }
       // Failure to locate a horizon is not a volume-evolution failure. Still
       // measure the full domain; with no reliable cutoff, exterior norms are NaN.
@@ -935,6 +992,7 @@ int main(int argc,char**argv){
           for(const auto&f:diagnostic.fixed)history<<','<<Norm(f.h2,f.volume)<<','<<Norm(f.m2,f.volume)<<','<<Norm(f.mr2,f.volume);
           for(Real v:diagnostic.gauge_max)history<<','<<v;
         }
+        if constexpr(h::boosted_puncture){for(auto x:e.puncture)history<<','<<x;for(auto x:e.puncture)history<<','<<x;history<<','<<horizon_max_radius;}
         history<<'\n';
         history.flush();if(!history)throw std::runtime_error("history append failed");
         std::cout<<"t="<<e.time<<" steps="<<e.steps<<" min_alpha="<<diagnostic.min_lapse<<" H="<<Norm(diagnostic.total.h2,diagnostic.total.volume)<<" horizon="<<horizon_found<<" seconds="<<elapsed()<<std::endl;
@@ -1040,10 +1098,12 @@ int main(int argc,char**argv){
       std::ofstream report(output+".report.json.tmp");report<<std::setprecision(17)
         <<"{\"status\":"<<JsonString(status)<<",\"error\":"<<JsonString(error)<<",\"kind\":"<<JsonString(kind_name)
         <<",\"backend\":"<<JsonString(Kokkos::DefaultExecutionSpace::name())<<",\"mpi_size\":"<<e.size<<",\"n\":"<<n<<",\"cells\":"<<e.total
-        <<",\"initial_data_provider\":"<<JsonString(restart!="-"?"checkpoint":native_wormhole&&kind==2?"native_isotropic_wormhole_quadrature":initial!="-"?"external_fields":"builtin")
+        <<",\"initial_data_provider\":"<<JsonString(restart!="-"?"checkpoint":h::boosted_puncture&&kind==2?"native_boosted_wormhole_embedding":native_wormhole&&kind==2?"native_isotropic_wormhole_quadrature":initial!="-"?"external_fields":"builtin")
         <<",\"scri_first6\":"<<(cubed_sphere::scri_first6?"true":"false")
         <<",\"native_initialization_tolerance\":"<<(native_wormhole?2e-13:0)
         <<",\"native_initialization_profile\":\""<<(h::broad_smooth_a?"polynomial_c6":"bump")<<"\""
+        <<",\"puncture_position\":["<<e.puncture[0]<<','<<e.puncture[1]<<','<<e.puncture[2]<<']'
+        <<",\"boost_velocity\":"<<(h::boosted_puncture?.1:0)<<",\"puncture_tracker\":"<<(h::boosted_puncture?"true":"false")
         <<",\"native_initialization_start_M\":4,\"native_initialization_end_M\":"<<(h::broad_smooth_a?12:8)
         <<",\"broad_smooth_a\":"<<(h::broad_smooth_a?"true":"false")
         <<",\"restoring_collar_begin\":"<<(h::broad_smooth_a?.6:h::wide_restoring_collar?.7:.8)
@@ -1065,7 +1125,7 @@ int main(int argc,char**argv){
         <<",\"scri_dissipation_max_incoming\":"<<(e.Model().angular_plan?e.Model().angular_plan->Stats().max_incoming:0)
         <<",\"scri_dissipation_max_moment_error\":"<<(e.Model().angular_plan?e.Model().angular_plan->Stats().max_moment_error:0)
         <<",\"scri_dissipation_max_coefficient_l1\":"<<(e.Model().angular_plan?e.Model().angular_plan->Stats().max_coefficient_l1:0)
-        <<",\"checkpoint_header_bytes\":"<<(sizeof(Header)+(scri_angular_dissipation?sizeof(DissipationConfig):0)+(scri_sampled_normal?sizeof(NormalConfig):0)+((core_subdivisions==2||evolved_overlap)?sizeof(MeshConfig):0)+(spherical_overlap?sizeof(GeometryConfig):0)+(continuous_positive?sizeof(PositiveConfig):0)+(puncture_chi_floor>0?sizeof(ChiFloorConfig):0));
+        <<",\"checkpoint_header_bytes\":"<<(sizeof(Header)+(scri_angular_dissipation?sizeof(DissipationConfig):0)+(scri_sampled_normal?sizeof(NormalConfig):0)+((core_subdivisions==2||evolved_overlap)?sizeof(MeshConfig):0)+(spherical_overlap?sizeof(GeometryConfig):0)+(continuous_positive?sizeof(PositiveConfig):0)+(puncture_chi_floor>0?sizeof(ChiFloorConfig):0)+(h::boosted_puncture?sizeof(BoostConfig):0));
       if constexpr(scri_sampled_normal)report<<",\"scri_normal_derivative\":\"sampled_native_numerator"<<(scri_donor_seven?7:6)<<"\""
         <<",\"scri_normal_radial_nodes\":"<<(scri_donor_seven?7:6)<<",\"scri_normal_bulk_derivative_order\":4";
       if constexpr(evolved_overlap)report<<",\"evolved_overlap\":"<<evolved_overlap<<",\"nominal_cells\":"<<e.Model().grid.nominal_count;
