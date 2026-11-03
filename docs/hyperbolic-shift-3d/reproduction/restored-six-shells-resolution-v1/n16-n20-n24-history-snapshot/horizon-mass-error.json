@@ -1,0 +1,61 @@
+{
+  "definition": "abs(M_irr/(1/3)-1)",
+  "reference_mass": 0.3333333333333333,
+  "domain": "Accepted apparent-horizon irreducible mass only",
+  "sources": {
+    "16": {
+      "path": "output/restored-six-shells/aurora/campaigns/n16-restored-six-shells-v1-a-evolution-segment01/output/puncture.history.csv",
+      "sha256": "dda30413e5a38b06b318746e6b1d2fb095c09af320fb1e3594cae3823c4bd750",
+      "bytes": 45522
+    },
+    "20": {
+      "path": "output/restored-six-shells-resolution/aurora/campaigns/n20-restored-six-shells-resolution-v1-r20-evolution-segment01/output/puncture.history.csv",
+      "sha256": "5d71fe5f6314f287b1113f94c34c3a0a470d53387931925bddc2a6e47250d520",
+      "bytes": 45845
+    },
+    "24": {
+      "sha256": "e5f8449034014d8b0fc80c847b653b05115e67cb0bd20a91172d2d70b63b9152",
+      "bytes": 43194
+    }
+  },
+  "cases": {
+    "16": {
+      "rows": 68,
+      "accepted_rows": 37,
+      "exact_zero_accepted_errors": 0,
+      "last_recorded_time": 10.0,
+      "last_accepted_time": 10.0,
+      "last_signed_relative_error": 0.0013688864916114873,
+      "last_absolute_relative_error": 0.0013688864916114873,
+      "maximum_accepted_absolute_error": 0.0015313293983814091
+    },
+    "20": {
+      "rows": 68,
+      "accepted_rows": 39,
+      "exact_zero_accepted_errors": 0,
+      "last_recorded_time": 10.0,
+      "last_accepted_time": 10.0,
+      "last_signed_relative_error": -0.0006325354623841761,
+      "last_absolute_relative_error": 0.0006325354623841761,
+      "maximum_accepted_absolute_error": 0.0006717962834439373
+    },
+    "24": {
+      "rows": 63,
+      "accepted_rows": 43,
+      "exact_zero_accepted_errors": 0,
+      "last_recorded_time": 9.232999999999183,
+      "last_accepted_time": 9.232999999999183,
+      "last_signed_relative_error": -3.989044307128875e-05,
+      "last_absolute_relative_error": 3.989044307128875e-05,
+      "maximum_accepted_absolute_error": 0.00013341517982468076
+    }
+  },
+  "qualifications": [
+    "Rejected horizon rows are NaN gaps, not zero errors or interpolated values.",
+    "Plot is absolute relative error; signed errors remain in CSV/JSON.",
+    "Near-zero dips can reflect crossing the reference mass, not sustained accuracy improvement.",
+    "N24 snapshot ends at9.233M; N16/N20 extend to10M.",
+    "Horizon angular lmax12 and ntheta24 are fixed across all volume resolutions.",
+    "N16 historical campaign penalty-policy failure remains recorded."
+  ]
+}
