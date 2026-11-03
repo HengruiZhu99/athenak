@@ -39,7 +39,7 @@ struct AMRPerformance {
       if(e.Model().radial_plan&&e.Model().radial_plan->Contains(p))++radial;
     }
     auto&out=generations;
-    out<<"{\"event\":\""<<event<<"\",\"step\":"<<e.steps<<",\"leaves\":"<<a.mesh->nmb_total
+    out<<"{\"event\":\""<<event<<"\",\"step\":"<<e.steps<<",\"leaves\":"<<std::count_if(g.mesh.blocks.begin(),g.mesh.blocks.end(),[](const auto&b){return b.face<0;})
        <<",\"active\":"<<e.local<<",\"overlap\":"<<overlap<<",\"radial_rows\":"<<radial
        <<",\"surface_rows\":"<<e.surface_local<<",\"selected_blocks\":"<<blocks.size()
        <<",\"block_span\":"<<e.last_block-e.first_block<<",\"work\":{";
