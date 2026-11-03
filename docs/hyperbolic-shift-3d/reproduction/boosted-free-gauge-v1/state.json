@@ -1,5 +1,5 @@
 {
-  "status": "n16_submitted",
+  "status": "n16_numerical_failure_preserved",
   "branch": "codex/boosted-free-initial-gauge",
   "source_commit": "62cca6e4f1e7e453c0fc443efa8ec7d4e044085a",
   "source_manifest": "source-boosted-free-gauge-v1-manifest.json",
@@ -16,7 +16,7 @@
   },
   "queue_snapshot": "\naurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov: \n                                                                 Req'd  Req'd   Elap\nJob ID               Username Queue    Jobname    SessID NDS TSK Memory Time  S Time\n-------------------- -------- -------- ---------- ------ --- --- ------ ----- - -----\n8883678.aurora-pbs-* hzhu     capacity telegraph*    --   16 33*    --  01:00 H   -- \n8888791.aurora-pbs-* hzhu     capacity telegraph*    --    8 16*    --  01:00 H   -- \n8888792.aurora-pbs-* hzhu     capacity telegraph*    --   16 33*    --  01:00 H   -- \n",
   "updated": 1793682498.4819765,
-  "next": "Monitor existing B16. Healthy verified same-case walltime continuation automatic; numerical failure terminal. Only after successful B16 target completion advance fresh B20 then B24. No repeated build/freeze/smoke.",
+  "next": "N16 failed at4.23M; N20/N24 conditional gate not satisfied. No restart/replay/parameter change. Failure localized, artifacts preserved, analysis complete; await user direction for a separate experiment.",
   "scope": "Free initial gauge beta=-W*x and boosted determinant pre-collapse; exact Schwarzschild hyperboloidal embedding v=.1 +x; retained six-shell method, native BG1 tracker, fast-flow follows center. Original unboosted N24 completed and is not resubmitted.",
   "build_pid": 1900949,
   "build_host": "aurora-uan-0012",
@@ -82,5 +82,19 @@
       "ranks_per_node": 12,
       "walltime": "01:00:00"
     }
-  }
+  },
+  "updated_utc": "2026-11-03T05:55:37.572931+00:00",
+  "higher_resolutions_authorized": false,
+  "terminal": {
+    "job_id": "9034868.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "last_accepted_t_over_M": 4.2299999999997,
+    "steps": 2820,
+    "error": "device RHS failure at active cell4094 reason2",
+    "checkpoint_admitted": false,
+    "local_preservation": "n16-failure/local-verification.json",
+    "analysis": "n16-failure/summary.json",
+    "lock_released": true,
+    "remote_outputs_retired": false
+  },
+  "monitor": "Deleted aurora-boosted-puncture-n16-then-n20-n24 after N16 terminal failure, full preservation and conditional disposition; N20/N24 gate failed."
 }

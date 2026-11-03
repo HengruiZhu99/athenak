@@ -1,0 +1,162 @@
+{
+  "last_accepted_t_over_M": 4.2299999999997,
+  "steps": 2820,
+  "last_diagnostic_t_over_M": 4.199999999999704,
+  "error": "device RHS failure at active cell 4094 reason 2",
+  "failed_stage_abscissa": "Not separately recorded; report time is last accepted step.",
+  "capture_finite": true,
+  "volume_nonpositive_metric_cells": 4,
+  "surface_min_metric_eigenvalue": 0.7037203964002562,
+  "locations": [
+    {
+      "index": 4094,
+      "xyz": [
+        -0.016875,
+        -0.005624999999999991,
+        -0.005624999999999991
+      ],
+      "r": 0.01865601444574912,
+      "distance_to_last_accepted_tracker": 0.010152296590633391,
+      "metric_eigenvalues": [
+        -0.0014278944614568357,
+        2.004208627670672,
+        8.530617677932522
+      ],
+      "metric_determinant": -0.024412908013651848,
+      "chi": 0.0020175438893379263,
+      "conformal_lapse": 0.10231952906583114,
+      "beta": [
+        0.4345215136088928,
+        -1.3087790495754767,
+        -1.3087794707920046
+      ],
+      "D": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "index": 12046,
+      "xyz": [
+        -0.016875,
+        0.005625,
+        -0.005624999999999991
+      ],
+      "r": 0.018656014445749124,
+      "distance_to_last_accepted_tracker": 0.010152296590633594,
+      "metric_eigenvalues": [
+        -0.0014278944618511874,
+        2.004208627674306,
+        8.53061767794961
+      ],
+      "metric_determinant": -0.024412908020507898,
+      "chi": 0.0020175438893383973,
+      "conformal_lapse": 0.10231952906583475,
+      "beta": [
+        0.4345215136089503,
+        1.308779049575646,
+        -1.3087794707973759
+      ],
+      "D": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "index": 16638,
+      "xyz": [
+        -0.016875,
+        -0.005624999999999991,
+        0.005625
+      ],
+      "r": 0.018656014445749124,
+      "distance_to_last_accepted_tracker": 0.010152296590634042,
+      "metric_eigenvalues": [
+        -0.0014278944628823614,
+        2.0042086276865785,
+        8.530617678001558
+      ],
+      "metric_determinant": -0.02441290803840274,
+      "chi": 0.002017543889340429,
+      "conformal_lapse": 0.10231952906584879,
+      "beta": [
+        0.4345215136087548,
+        -1.3087790495942744,
+        1.3087794707938556
+      ],
+      "D": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "index": 24590,
+      "xyz": [
+        -0.016875,
+        0.005625,
+        0.005625
+      ],
+      "r": 0.018656014445749124,
+      "distance_to_last_accepted_tracker": 0.010152296590634246,
+      "metric_eigenvalues": [
+        -0.0014278944633992815,
+        2.0042086276938194,
+        8.530617678030499
+      ],
+      "metric_determinant": -0.024412908047431712,
+      "chi": 0.002017543889341766,
+      "conformal_lapse": 0.10231952906585778,
+      "beta": [
+        0.434521513608523,
+        1.3087790495955949,
+        1.3087794708003795
+      ],
+      "D": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  ],
+  "puncture_position": [
+    -0.02318276315853688,
+    -1.8040127693629866e-16,
+    -5.830675000533194e-16
+  ],
+  "conservative_support_margin": 0.13681723684146313,
+  "cube_margin": 0.15681723684146312,
+  "null_surface_max": 1.2252276513400006e-15,
+  "null_ghost_max": 1.5543122001903644e-15,
+  "pole_max": 6.040774226504608,
+  "clock_max": 14.017646319077805,
+  "chi_floors_stage": 60,
+  "chi_floors_final": 20,
+  "negative_chi_stage": 60,
+  "negative_chi_final": 20,
+  "lapse_floor": 0,
+  "surface_floors_stage": 0,
+  "surface_floors_final": 0,
+  "accepted_horizon_rows": 4,
+  "horizon_rows": 29,
+  "last_accepted_horizon": {
+    "t_over_M": 1.5000000000000009,
+    "mass": 0.3331821773446164,
+    "relative_mass_error": -0.0004534679661507557
+  },
+  "last_history": {
+    "H_L2": 0.23592999134263296,
+    "M_L2": 0.15268649000626855,
+    "H_exterior_L2": 0.15259548377254767,
+    "M_exterior_L2": 0.1465330988813867,
+    "exterior_cutoff": 0.1469905125655459
+  },
+  "qualification": "Immediate indefinite metric is localized near the puncture, within the original floor patch. This does not establish the root cause or exclude effects propagated from the outer region. No admitted endpoint, fixed-cutoff reconstruction, resolution convergence or long stability claim. Tracker moving negative x is measured gauge motion, not the reference positive Lorentz-chart velocity.",
+  "source_hashes": {
+    "src/mesh/cubed_sphere/composite.hpp": "8656fea9a01134acf2dfb83bc0c2ea9ddd1c2bf6ab2bd377162cbf21cfdb071f",
+    "src/mesh/cubed_sphere/composite_difference.hpp": "b2a85f2a433481ea4e700736481fb9c742c36dd11826304e47acddb912dc17ce",
+    "src/z4c/hyperboloidal/hyperbolic_composite_device.hpp": "38863c0f084ef9330afd5cdb1cc598b2ca767e968e79bc2edb84083aa5daba78"
+  }
+}

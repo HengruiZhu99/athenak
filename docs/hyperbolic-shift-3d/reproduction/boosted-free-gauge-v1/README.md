@@ -103,7 +103,7 @@ hash/length preservation plus remote rehash is required before any output retire
 Hourly quiet monitor must follow this revised gauge; do not advance BX1 higher
 resolutions. Preserve all disposition records and previous unboosted baselines.
 
-Current status: independent main-branch/gauge comparison and bounded N16 production
+Pre-run status (superseded by terminal disposition below): independent main-branch/gauge comparison and bounded N16 production
 checks passed. Two SERIAL steps produced an admitted finite BG1 checkpoint; horizon
 mass .333334653727, null residual <=1.12e-15, tracker displacement -8.334e-12 in x.
 This is not a GPU or long stability result. BX1 job9034826 was cancelled while queued,
@@ -140,3 +140,48 @@ change or recompilation was required. Job9034868 remains the existing submission
 the scheduler check on2026-11-03 reported Q, waiting for an exclusive node.
 The active hourly monitor continues healthy verified checkpoints and advances
 fresh N16, N20, N24 in order, with higher resolutions gated on N16 success.
+
+## Terminal N16 result: numerical failure at4.23M
+
+BG1 job9034868 ran and stopped after2820 accepted steps (coordinate t1.41,
+t/M4.23). The final history row is4.20M; the rejected RK-stage abscissa is not
+separately recorded. Native report and worker both identify failure, PBS exit1;
+the native MPI launcher returns143 after one rank exits2 and peers terminate.
+There was no worker timeout or storage error. The frozen healthy-checkpoint
+helper correctly rejects this disposition; `checkpoint_admitted=false`.
+All six worker artifacts, including the116294352-byte checkpoint and58147072-byte
+failed capture, were copied and locally SHA256/length verified. The controller
+reverified frozen bindings and released only this terminal allocation lock.
+No remote outputs were retired. No failed state was restarted.
+
+The captured state is finite, but four core cells have an indefinite conformal
+metric: x=-.016875, y=z=±.005625 (all four combinations), r=.0186560.
+The minimum eigenvalue is-0.00142789446, determinant-0.0244129; chi≈.00201754
+and conformal lapse≈.102320 remain positive there. These cells lie about.01015
+from the last accepted tracker position x=-.0231828, well inside the Cartesian
+support (remaining margin.136817 to|x|=.16). The immediate failure is therefore
+invalid core metric geometry, not puncture exit, lapse/chi sign rejection, or
+a loss of algebraic scri nullness. It does not establish the initiating cause.
+
+Scri metric remains positive (minimum eigenvalue.703720), and surface/ghost
+null residuals remain≤1.56e-15. Nevertheless pole/clock residual maxima reach
+6.04077/14.0176 early in the run: null projection is not a regularity guarantee,
+and outer effects cannot be excluded by the core failure location. Volume chi
+floors and negative signs each total60 attempted-stage/20 final interventions;
+no lapse or surface floor interventions occurred. Counts include the rejected
+attempt and are separate from boundary interpolation counters.
+
+The finder accepts4/29 history rows; last accepted mass is.3331821773 at1.50M
+(error-0.04535%), not at failure. Acceptance gaps are retained in the plots.
+At4.20M own-candidate H/M=.1525955/.1465331 with enclosing cutoff.1469905.
+These moving domains cannot be treated as common-cutoff error differences.
+`analyze_failure.py` reproduces identity checks, localization and three inspected
+figures in `n16-failure/`: constraint/boundary histories with unboosted context,
+trajectory and accepted mass, and an unsmoothed rejected-stage core slice.
+There is no admitted endpoint or resolution-convergence estimate for BG1.
+
+N16 did not meet the success gate, so N20 and N24 are **not submitted**. The
+conditional campaign ends here with preserved evidence; no automatic replay or
+parameter adjustment. The hourly monitor is retired after this disposition.
+The unboosted six-shell method remains the latest tested successful baseline;
+BG1 is an unsuccessful boosted experiment requiring further diagnosis.

@@ -1,0 +1,605 @@
+{
+  "artifacts": {
+    "campaigns/n16-boosted-free-gauge-v1-b16-evolution-segment01/output/puncture.report.json": {
+      "sha256": "ecfa4ce3f7d9b500cbfe1cfb2e0fa063b384d8eb8fd26225d26317e5438ad6de",
+      "bytes": 15505
+    },
+    "campaigns/n16-boosted-free-gauge-v1-b16-evolution-segment01/output/puncture.checkpoint": {
+      "sha256": "bef2e6c5f4a503215ccc4343c3e7309f8fba814cf3f18553d4dd2b7c797254be",
+      "bytes": 116294352
+    },
+    "campaigns/n16-boosted-free-gauge-v1-b16-evolution-segment01/output/puncture.history.csv": {
+      "sha256": "dd1f00dfa62063ddacc372a3df95699ebfef6a8f070508bac762707b90601eba",
+      "bytes": 22971
+    },
+    "campaigns/n16-boosted-free-gauge-v1-b16-evolution-segment01/output/puncture.failed-stage.bin": {
+      "sha256": "6230b38fae55f21d046c3118460024d36a690c0044f8787f1736ef97ec6211ae",
+      "bytes": 58147072
+    },
+    "campaigns/n16-boosted-free-gauge-v1-b16-evolution-segment01/output/puncture.fastflow.horizon_summary_0.txt": {
+      "sha256": "671d86030d33901a0557d42b04b3220fb0f6d8f9c4f52ad8f6add66e4801d86e",
+      "bytes": 2242
+    },
+    "campaigns/n16-boosted-free-gauge-v1-b16-evolution-segment01/output/puncture.fastflow.horizon_shape_0.txt": {
+      "sha256": "20993e8509077a1e40cbe35cca5f2d2a793d7d263f9b320ca5c9113eec824471",
+      "bytes": 9218
+    }
+  },
+  "all_artifacts_preserved": true,
+  "plan_sha256": "072847e1eb5d7e1b190b51c78963c04c08781d8b5a0302e5a5cfb594c5a403ee",
+  "source_manifest_sha256": "7c6a4a7bae0167d26dc0d423949f39eec43250d3a385a86b089ab0025168602a",
+  "binary": {
+    "build-sycl-mpi-boosted-free-gauge-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_control_broad_smooth_six_shells_boosted_free_gauge": "fff77019fe7de8c823d4dad9c09c16b521cd083ad95c062128bc840d9bb0b536"
+  },
+  "report_checks": [
+    {
+      "check": {
+        "path": [
+          "mesh_topology"
+        ],
+        "op": "eq",
+        "value": "cartesian_2x2x2_shells6"
+      },
+      "observed": "cartesian_2x2x2_shells6",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "mesh_blocks"
+        ],
+        "op": "eq",
+        "value": 44
+      },
+      "observed": 44,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "shell_layers"
+        ],
+        "op": "eq",
+        "value": 6
+      },
+      "observed": 6,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "shell_outer_radii"
+        ],
+        "op": "eq",
+        "value": [
+          0.305,
+          0.45,
+          0.6,
+          0.75,
+          0.875,
+          1
+        ]
+      },
+      "observed": [
+        0.305,
+        0.45,
+        0.6,
+        0.75,
+        0.875,
+        1
+      ],
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "restoring_collar_begin"
+        ],
+        "op": "eq",
+        "value": 0.6
+      },
+      "observed": 0.6,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "restoring_collar_end"
+        ],
+        "op": "eq",
+        "value": 0.9
+      },
+      "observed": 0.9,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "restoring_coefficient"
+        ],
+        "op": "eq",
+        "value": 4
+      },
+      "observed": 4,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "zero_shift_restoration"
+        ],
+        "op": "eq",
+        "value": false
+      },
+      "observed": false,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "broad_smooth_a"
+        ],
+        "op": "eq",
+        "value": true
+      },
+      "observed": true,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "native_initialization_profile"
+        ],
+        "op": "eq",
+        "value": "polynomial_c6"
+      },
+      "observed": "polynomial_c6",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "native_initialization_start_M"
+        ],
+        "op": "eq",
+        "value": 4
+      },
+      "observed": 4,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "native_initialization_end_M"
+        ],
+        "op": "eq",
+        "value": 12
+      },
+      "observed": 12,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "kind"
+        ],
+        "op": "eq",
+        "value": "puncture"
+      },
+      "observed": "puncture",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "n"
+        ],
+        "op": "eq",
+        "value": 16
+      },
+      "observed": 16,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "cells"
+        ],
+        "op": "eq",
+        "value": 232928
+      },
+      "observed": 232928,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "backend"
+        ],
+        "op": "eq",
+        "value": "SYCL"
+      },
+      "observed": "SYCL",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "mpi_size"
+        ],
+        "op": "eq",
+        "value": 12
+      },
+      "observed": 12,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "checkpoint_schema"
+        ],
+        "op": "eq",
+        "value": "HYP3D_MPI_BG1"
+      },
+      "observed": "HYP3D_MPI_BG1",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "checkpoint_header_bytes"
+        ],
+        "op": "eq",
+        "value": 208
+      },
+      "observed": 208,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "boost_velocity"
+        ],
+        "op": "eq",
+        "value": 0.1
+      },
+      "observed": 0.1,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "puncture_tracker"
+        ],
+        "op": "eq",
+        "value": true
+      },
+      "observed": true,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "checkpoint_admitted"
+        ],
+        "op": "eq",
+        "value": true
+      },
+      "observed": false,
+      "passed": false
+    },
+    {
+      "check": {
+        "path": [
+          "initial_shift_policy"
+        ],
+        "op": "eq",
+        "value": "zero_inner_hyperboloidal_outer"
+      },
+      "observed": "zero_inner_hyperboloidal_outer",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "initial_lapse_policy"
+        ],
+        "op": "eq",
+        "value": "boost_determinant_precollapsed_hyperboloidal"
+      },
+      "observed": "boost_determinant_precollapsed_hyperboloidal",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "initial_data_provider"
+        ],
+        "op": "eq",
+        "value": "native_boosted_wormhole_embedding"
+      },
+      "observed": "native_boosted_wormhole_embedding",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "native_initialization_tolerance"
+        ],
+        "op": "eq",
+        "value": 2e-13
+      },
+      "observed": 2e-13,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "inner_gauge"
+        ],
+        "op": "eq",
+        "value": "direct_outer_r020_056_it1_damping_v1"
+      },
+      "observed": "direct_outer_r020_056_it1_damping_v1",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "gauge_blend"
+        ],
+        "op": "eq",
+        "value": "smoothstep9_w_056_080"
+      },
+      "observed": "smoothstep9_w_056_080",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_first6"
+        ],
+        "op": "eq",
+        "value": false
+      },
+      "observed": false,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "bulk_dissipation"
+        ],
+        "op": "eq",
+        "value": "block_energy_ko8"
+      },
+      "observed": "block_energy_ko8",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "positive_variables"
+        ],
+        "op": "eq",
+        "value": "direct_chi_direct_lapse_rk_and_ko"
+      },
+      "observed": "direct_chi_direct_lapse_rk_and_ko",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "physical_lapse_floor"
+        ],
+        "op": "eq",
+        "value": 1e-10
+      },
+      "observed": 1e-10,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "puncture_chi_floor"
+        ],
+        "op": "eq",
+        "value": 1e-08
+      },
+      "observed": 1e-08,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "puncture_chi_floor_radius"
+        ],
+        "op": "eq",
+        "value": 0.03
+      },
+      "observed": 0.03,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "chi_nonpositive_policy"
+        ],
+        "op": "eq",
+        "value": "record_and_floor_finite_candidates_everywhere"
+      },
+      "observed": "record_and_floor_finite_candidates_everywhere",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "timestep_aware_penalty"
+        ],
+        "op": "eq",
+        "value": true
+      },
+      "observed": true,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "angular_epsilon_min"
+        ],
+        "op": "eq",
+        "value": 2
+      },
+      "observed": 2,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "complete_candidate_exterior_enabled"
+        ],
+        "op": "eq",
+        "value": true
+      },
+      "observed": true,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "dt"
+        ],
+        "op": "eq",
+        "value": 0.0005
+      },
+      "observed": 0.0005,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "algebraic_projection"
+        ],
+        "op": "eq",
+        "value": "final_stage_standard"
+      },
+      "observed": "final_stage_standard",
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_penalty_scale_min"
+        ],
+        "op": "ge",
+        "value": 0.6510416666650156
+      },
+      "observed": 0.6510416666660155,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_penalty_scale_min"
+        ],
+        "op": "le",
+        "value": 0.6510416666670156
+      },
+      "observed": 0.6510416666660155,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_unlimited_penalty_cfl_max"
+        ],
+        "op": "ge",
+        "value": 0.767999999999
+      },
+      "observed": 0.7680000000000002,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_unlimited_penalty_cfl_max"
+        ],
+        "op": "le",
+        "value": 0.768000000001
+      },
+      "observed": 0.7680000000000002,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_penalty_cfl_max"
+        ],
+        "op": "ge",
+        "value": 0.49999999999850003
+      },
+      "observed": 0.49999999999950007,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "scri_penalty_cfl_max"
+        ],
+        "op": "le",
+        "value": 0.5000000000005
+      },
+      "observed": 0.49999999999950007,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "t"
+        ],
+        "op": "le",
+        "value": 3.3333333333333335
+      },
+      "observed": 1.4099999999999002,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "t"
+        ],
+        "op": "ge",
+        "value": 0
+      },
+      "observed": 1.4099999999999002,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "max_null_surface"
+        ],
+        "op": "le",
+        "value": 1e-10
+      },
+      "observed": 1.2252276513400006e-15,
+      "passed": true
+    },
+    {
+      "check": {
+        "path": [
+          "max_null_ghost"
+        ],
+        "op": "le",
+        "value": 1e-10
+      },
+      "observed": 1.5543122001903644e-15,
+      "passed": true
+    }
+  ],
+  "disposition": "Terminal numerical failure, not admitted. Frozen helper rejects scheduler exit1 as unhealthy. No restart or higher-resolution submission.",
+  "scheduler_exit": 1,
+  "native_launcher_exit": 143,
+  "storage_error": null,
+  "timed_out": false
+}
