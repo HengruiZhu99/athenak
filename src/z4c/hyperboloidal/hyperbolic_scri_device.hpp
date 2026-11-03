@@ -5,7 +5,12 @@
 #include "z4c/hyperboloidal/hyperbolic_composite.hpp"
 #include "z4c/hyperboloidal/hyperbolic_composite_device.hpp"
 
+#ifndef HYPERBOLIC_REFINED_CORE_MATCHED_CFL
+#define HYPERBOLIC_REFINED_CORE_MATCHED_CFL 0
+#endif
 namespace z4c::hyperboloidal {
+// Preserve the BG1 effective boundary equation while halving the core timestep.
+inline constexpr Real fixed_scri_penalty_scale=HYPERBOLIC_REFINED_CORE_MATCHED_CFL ? .5*(1-1e-12)/.768 : 1;
 
 // Distributed native scri atlas operator. Project() supplies the owned rows of
 // BoundaryValues; gather those rows before Evaluate(). Evaluate reads immutable
@@ -203,11 +208,13 @@ class HyperbolicScriDevice {
       }
       auto rate=TensorScriLimit(parts.regular,pole,Real(-1));
       const auto trace=ScriRegularityTraces(u,omega);const Real h=row.h;
-      info.unlimited_cfl=dt*12/h;info.cfl=info.unlimited_cfl;
-      Real p4=4/h,p8=8/h;
+      info.unlimited_cfl=dt*12/h;info.penalty_scale=fixed_scri_penalty_scale;
+      info.cfl=info.unlimited_cfl*info.penalty_scale;
+      Real p4=(4/h)*info.penalty_scale,p8=(8/h)*info.penalty_scale;
       if(HYPERBOLIC_EXPERIMENTAL_TIMESTEP&&info.cfl>.5*(1-1e-12)){
-        info.penalty_scale=(.5*(1-1e-12))/info.cfl;
-        p4*=info.penalty_scale;p8*=info.penalty_scale;info.cfl*=info.penalty_scale;
+        const Real extra_scale=(.5*(1-1e-12))/info.cfl;
+        info.penalty_scale*=extra_scale;
+        p4*=extra_scale;p8*=extra_scale;info.cfl*=extra_scale;
       }
       if(info.cfl>.5){info.status=cfl_exceeded;diagnostics(local)=info;return;}
       Real q=0;for(int i=0;i<3;++i)for(int j=0;j<3;++j)q+=g.inverse[i][j]*x[i]*x[j];
