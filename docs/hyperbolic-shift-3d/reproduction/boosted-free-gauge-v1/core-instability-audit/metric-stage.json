@@ -1,0 +1,266 @@
+{
+  "input_sha256": {
+    "puncture.checkpoint": "bef2e6c5f4a503215ccc4343c3e7309f8fba814cf3f18553d4dd2b7c797254be",
+    "puncture.failed-stage.bin": "6230b38fae55f21d046c3118460024d36a690c0044f8787f1736ef97ec6211ae"
+  },
+  "analysis_script_sha256": "014d7e94375893d1e25c549299bd979836cf87e123e4df02a03dc5d67c064049",
+  "last_accepted_t": 1.4099999999999002,
+  "full_dt": 0.0005,
+  "inferred_rejected_stage_t": 1.4102499999999003,
+  "stage_inference": "Metric-only reconstruction matches all four failed cells. RK stage number was not recorded in the report.",
+  "points": [
+    {
+      "cell": 4094,
+      "xyz": [
+        -0.016875,
+        -0.005624999999999991,
+        -0.005624999999999991
+      ],
+      "last_accepted_metric_eigenvalues": [
+        0.05577258589966247,
+        2.1139521541544406,
+        8.481722618072371
+      ],
+      "beta": [
+        0.46581270167280764,
+        -1.3210507515441365,
+        -1.3210512207799252
+      ],
+      "chi": 0.0019516745606780626,
+      "baralpha": 0.10157553695253368,
+      "D": [
+        -147.5334849888489,
+        -175.2108232933936,
+        -175.2106758162334
+      ],
+      "rate_projections": {
+        "curvature": -0.36944126916249015,
+        "advection": -378.7824348258391,
+        "Lie stretching": -4.712803444861153,
+        "KO8": 155.16439374276453
+      },
+      "total_rate_projection": -228.70028579709827,
+      "reconstructed_half_stage_eigenvalues": [
+        -0.0014278944614559475,
+        2.004208627670672,
+        8.530617677932526
+      ],
+      "metric_capture_max_abs_difference": 8.881784197001252e-16,
+      "half_full_timestep_first_stage_min_eigenvalue": 0.027178780098471154,
+      "transport_only_counterfactuals": {
+        "upwind1": {
+          "advection_rayleigh_rate": 153.8814319095712,
+          "half_stage_min_eigenvalue": 0.13149659326538118
+        },
+        "biased6_main": {
+          "advection_rayleigh_rate": -677.7575754536751,
+          "half_stage_min_eigenvalue": -0.07615139313422338
+        },
+        "centered4": {
+          "advection_rayleigh_rate": -1197.8119415701303,
+          "half_stage_min_eigenvalue": -0.2063676340521487
+        }
+      },
+      "stencil_max_radius": 0.06238426784855297,
+      "stencil_min_metric_eigenvalue": 0.055772585898717544
+    },
+    {
+      "cell": 12046,
+      "xyz": [
+        -0.016875,
+        0.005624999999999991,
+        -0.005624999999999991
+      ],
+      "last_accepted_metric_eigenvalues": [
+        0.05577258589943538,
+        2.113952154158607,
+        8.48172261809005
+      ],
+      "beta": [
+        0.46581270167290045,
+        1.3210507515440906,
+        -1.3210512207832634
+      ],
+      "chi": 0.0019516745606784193,
+      "baralpha": 0.10157553695253657,
+      "D": [
+        -147.5334849890076,
+        175.21082329463457,
+        -175.21067582492103
+      ],
+      "rate_projections": {
+        "curvature": -0.369441269166114,
+        "advection": -378.7824348266725,
+        "Lie stretching": -4.712803444829779,
+        "KO8": 155.16439374289263
+      },
+      "total_rate_projection": -228.70028579777576,
+      "reconstructed_half_stage_eigenvalues": [
+        -0.0014278944618511874,
+        2.0042086276743056,
+        8.53061767794961
+      ],
+      "metric_capture_max_abs_difference": 2.220446049250313e-16,
+      "half_full_timestep_first_stage_min_eigenvalue": 0.027178780098159848,
+      "transport_only_counterfactuals": {
+        "upwind1": {
+          "advection_rayleigh_rate": 153.88143190977343,
+          "half_stage_min_eigenvalue": 0.13149659326524352
+        },
+        "biased6_main": {
+          "advection_rayleigh_rate": -677.757575455106,
+          "half_stage_min_eigenvalue": -0.07615139313476961
+        },
+        "centered4": {
+          "advection_rayleigh_rate": -1197.8119415726092,
+          "half_stage_min_eigenvalue": -0.2063676340529556
+        }
+      },
+      "stencil_max_radius": 0.06238426784855297,
+      "stencil_min_metric_eigenvalue": 0.055772585898304985
+    },
+    {
+      "cell": 16638,
+      "xyz": [
+        -0.016875,
+        -0.005624999999999991,
+        0.005624999999999991
+      ],
+      "last_accepted_metric_eigenvalues": [
+        0.055772585898717315,
+        2.113952154172468,
+        8.481722618143845
+      ],
+      "beta": [
+        0.4658127016728978,
+        -1.3210507515558285,
+        1.3210512207805922
+      ],
+      "chi": 0.0019516745606801044,
+      "baralpha": 0.10157553695254878,
+      "D": [
+        -147.5334849898861,
+        -175.21082332383105,
+        175.2106758224166
+      ],
+      "rate_projections": {
+        "curvature": -0.3694412691765402,
+        "advection": -378.7824348280383,
+        "Lie stretching": -4.7128034447348,
+        "KO8": 155.1643937429306
+      },
+      "total_rate_projection": -228.70028579901913,
+      "reconstructed_half_stage_eigenvalues": [
+        -0.0014278944628823614,
+        2.0042086276865785,
+        8.530617678001555
+      ],
+      "metric_capture_max_abs_difference": 8.881784197001252e-16,
+      "half_full_timestep_first_stage_min_eigenvalue": 0.027178780097284548,
+      "transport_only_counterfactuals": {
+        "upwind1": {
+          "advection_rayleigh_rate": 153.88143191032054,
+          "half_stage_min_eigenvalue": 0.13149659326469262
+        },
+        "biased6_main": {
+          "advection_rayleigh_rate": -677.7575754575416,
+          "half_stage_min_eigenvalue": -0.07615139313606635
+        },
+        "centered4": {
+          "advection_rayleigh_rate": -1197.8119415768947,
+          "half_stage_min_eigenvalue": -0.20636763405471426
+        }
+      },
+      "stencil_max_radius": 0.06238426784855297,
+      "stencil_min_metric_eigenvalue": 0.055772585898304985
+    },
+    {
+      "cell": 24590,
+      "xyz": [
+        -0.016875,
+        0.005624999999999991,
+        0.005624999999999991
+      ],
+      "last_accepted_metric_eigenvalues": [
+        0.055772585898304736,
+        2.1139521541805837,
+        8.481722618173832
+      ],
+      "beta": [
+        0.46581270167280187,
+        1.3210507515565078,
+        1.3210512207846568
+      ],
+      "chi": 0.001951674560681249,
+      "baralpha": 0.10157553695255689,
+      "D": [
+        -147.53348499050676,
+        175.2108233269603,
+        175.21067583299254
+      ],
+      "rate_projections": {
+        "curvature": -0.36944126918213943,
+        "advection": -378.78243482841594,
+        "Lie stretching": -4.712803444682203,
+        "KO8": 155.16439374283624
+      },
+      "total_rate_projection": -228.70028579944403,
+      "reconstructed_half_stage_eigenvalues": [
+        -0.0014278944634001697,
+        2.0042086276938194,
+        8.530617678030499
+      ],
+      "metric_capture_max_abs_difference": 8.881784197001252e-16,
+      "half_full_timestep_first_stage_min_eigenvalue": 0.02717878009682092,
+      "transport_only_counterfactuals": {
+        "upwind1": {
+          "advection_rayleigh_rate": 153.88143191060323,
+          "half_stage_min_eigenvalue": 0.13149659326434024
+        },
+        "biased6_main": {
+          "advection_rayleigh_rate": -677.7575754582704,
+          "half_stage_min_eigenvalue": -0.07615139313667164
+        },
+        "centered4": {
+          "advection_rayleigh_rate": -1197.8119415782148,
+          "half_stage_min_eigenvalue": -0.2063676340554652
+        }
+      },
+      "stencil_max_radius": 0.06238426784855297,
+      "stencil_min_metric_eigenvalue": 0.055772585898304985
+    }
+  ],
+  "inner_gauge_end_of_plateau": 0.2,
+  "restoring_collar_begin": 0.6,
+  "inner_coordinate_map": "x=k X, t=T; constant k on the inner plateau",
+  "k": 0.306142283363079,
+  "grid": [
+    {
+      "n": 16,
+      "compact_dx": 0.01125,
+      "physical_lab_dx_over_M": 0.11024285710959153,
+      "initial_isotropic_horizon_radius_in_cells": 4.535441235008578
+    },
+    {
+      "n": 20,
+      "compact_dx": 0.009,
+      "physical_lab_dx_over_M": 0.08819428568767322,
+      "initial_isotropic_horizon_radius_in_cells": 5.669301543760723
+    },
+    {
+      "n": 24,
+      "compact_dx": 0.0075,
+      "physical_lab_dx_over_M": 0.07349523807306102,
+      "initial_isotropic_horizon_radius_in_cells": 6.803161852512867
+    }
+  ],
+  "main_commit": "c8d5c33e39089f005e416bf839652f6796fa6e82",
+  "main_source_sha256": {
+    "src/z4c/z4c_calcrhs.cpp": "7c9d5bd4b7b0018f2cf0451a7777c3d7d33438c35406d9bc8153109d497ee9e4",
+    "src/z4c/z4c_tasks.cpp": "5cd44021be2b699cdd332ba11f64d3df84f2a9a22dace0040328f19c8b74e71d",
+    "src/utils/finite_diff.hpp": "203074210997f5d2bf6ce1960b4a9574d96c9c4e2df8a34f89b0b5f023f4cd42",
+    "src/pgen/tests/z4c_boosted_puncture.cpp": "a990c524453970809abb5e2ebb2fa9b21ea4b479185d497eb326c3caf2466f5d",
+    "inputs/z4c/z4c_boosted_puncture.athinput": "39e63f3fe9ae004d1e3d59c2d33ac7d702d438875eb1259a46b6dd4d10eaa1d0"
+  },
+  "qualification": "Read-only failed-run analysis. No restart, admitted endpoint, finer-grid solution, full reduced-dt evolution or causal gauge/resolution A/B test. Alternative advection is substituted only at this fixed state; all other terms held fixed."
+}

@@ -49,7 +49,7 @@ xyz=-.18+.18*np.stack([b%2,(b//2)%2,b//4],axis=1)+(.18/16)*(np.stack([q%16,(q//1
 rad=np.linalg.norm(xyz,axis=1);alpha=u[:32768,18]+(1+rad**2)/2
 tracker=np.array(r['puncture_position']);locations=[]
 for i in bad:
- locations.append(dict(index=int(i),xyz=xyz[i].tolist(),r=float(rad[i]),distance_to_last_accepted_tracker=float(np.linalg.norm(xyz[i]-tracker)),metric_eigenvalues=eig[i].tolist(),metric_determinant=float(np.linalg.det(g[i])),chi=float(u[i,0]),conformal_lapse=float(alpha[i]),beta=(u[i,22:25]-xyz[i]).tolist(),D=u[i,28:31].tolist()))
+ locations.append(dict(index=int(i),xyz=xyz[i].tolist(),r=float(rad[i]),distance_to_last_accepted_tracker=float(np.linalg.norm(xyz[i]-tracker)),metric_eigenvalues=eig[i].tolist(),metric_determinant=float(np.linalg.det(g[i])),chi=float(u[i,0]),conformal_lapse=float(alpha[i]),beta=(u[i,22:25]-xyz[i]).tolist(),D=u[i,25:28].tolist()))
 h=np.genfromtxt(p/'output/puncture.history.csv',delimiter=',',names=True)
 accepted=(h['horizon_found']==1)&np.isfinite(h['horizon_mass']);last=h[accepted][-1]
 signs=r['candidate_sign_events'];negative_stage=sum(v[5] for v in signs if v[1]==0);negative_final=sum(v[6] for v in signs if v[1]==0)

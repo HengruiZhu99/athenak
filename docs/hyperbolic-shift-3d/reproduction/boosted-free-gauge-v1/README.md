@@ -185,3 +185,20 @@ conditional campaign ends here with preserved evidence; no automatic replay or
 parameter adjustment. The hourly monitor is retired after this disposition.
 The unboosted six-shell method remains the latest tested successful baseline;
 BG1 is an unsuccessful boosted experiment requiring further diagnosis.
+
+## Subsequent near-puncture mechanism audit
+
+`audit_metric_stage.py` and `core-instability-audit/` reconstruct the captured
+metric in all four failed cells to8.89e-16 from the pre-step checkpoint. The
+first RK half-stage loses positive definiteness primarily through biased
+shift advection of a sharp inner metric feature; KO opposes the collapse.
+The entire local stencil lies at r<.062385, well inside the r=.2 inner-gauge
+plateau. Direct entry into gauge stitching is ruled out. The core has initial
+physical spacing .11024M (about4.5 cells per reference isotropic horizon radius),
+so under-resolution remains plausible, but is not demonstrated by an actual
+finer-grid evolution. Same-state timestep/transport counterfactuals and a
+source-bound main-Z4c comparison distinguish this immediate mechanism from
+unresolved upstream gauge/resolution effects. No failed state was restarted,
+and no new run was submitted. See the audit README for all qualifications and
+the necessary fixed-effective-boundary-penalty controls. An ancillary D-field
+index in failure localization was corrected from28:31 to25:28.
