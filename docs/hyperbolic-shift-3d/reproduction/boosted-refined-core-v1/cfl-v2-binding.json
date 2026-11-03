@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "plan_sha256": "e42860fa9db75d196e1677db78babfed901aa29d4417abb372456d60e7949537",
+  "source_manifest": "source-boosted-refined-core-cfl-v1-manifest.json",
+  "source_manifest_sha256": "6d1c29a69bcce98d761d1f896b9f230553d7e4852d8a4c86384f33237634847b",
+  "binaries": {
+    "build-sycl-mpi-boosted-refined-core-cfl-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_control_broad_smooth_six_shells_boosted_free_gauge_refined_core_matched_cfl": "fbb8f8d2e9522d1b72fe28ea8b1e857f2b840f4d58365c5042a16727831f59e6"
+  },
+  "inputs": {
+    "launcher-boosted-refined-core-cfl-v1/native-transition-science.json": "b0124b10763a01abc9e1feb0436b6022078f320ad6c53ec40e989231cfdab17c"
+  },
+  "pbs_sha256": "a3305b1f279ac16324a3df7e49cefd5e04f1cb9c53e3fd7263f11bf3d0fdd4ba",
+  "admission": {
+    "path": "launcher-boosted-refined-core-cfl-v1/native-transition-science.json",
+    "sha256": "b0124b10763a01abc9e1feb0436b6022078f320ad6c53ec40e989231cfdab17c"
+  },
+  "resources": {
+    "queue": "debug-scaling",
+    "account": "CompactBinaryMerger",
+    "nodes": 2,
+    "ranks": 24,
+    "ranks_per_node": 12,
+    "walltime": "01:00:00"
+  },
+  "storage_at_bind": {
+    "bytes": 6789313417,
+    "entries": 113952,
+    "limit_bytes": 10000000000,
+    "reserve_bytes": 269205840,
+    "planned_bytes": 424729344,
+    "headroom_bytes": 2516751399
+  },
+  "launcher": {
+    "control.py": "e566c31adeb389d4360527fd5c9d5e77b31ec08059757804daffa768bdb45fb3",
+    "worker.py": "7746ecb77b1950e25237d46554c650a2476e54c99f9bafd1ea363915f2d245bf",
+    "run_debug.pbs": "5d41048f75db017938848857f1f4e033477732e4ae2b52ccef22442ff442edef",
+    "storage.py": "21a5c93bba7c3f623755f01e5593aba6f1129887419c0da5a8b58d9b789180db",
+    "native_transition_campaign.py": "94f8430a3e9759e41946a8499ba0df19d23f01229f89253360ffb320c588eb07"
+  },
+  "allocation_seconds": 3600,
+  "worker_seconds": 3200
+}

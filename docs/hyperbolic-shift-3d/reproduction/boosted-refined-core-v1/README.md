@@ -19,16 +19,30 @@ Current source cb0f47b520afe4f88c98e11569f3ba88e632df9a,
 manifestSHA2566d1c29a69bcce98d761d1f896b9f230553d7e4852d8a4c86384f33237634847b.
 Launcher fef313e5a; inspect state.json for full build/job status.
 
-Current BC2 job **9036342** is submitted (last scheduler Q) on two debug-scaling
-nodes /24 GPU tiles. Fresh native t0 to10M, dt=.00025. Plan
-`campaigns/n16-boosted-refined-core-cfl-v1-c16-evolution-segment01/plan.json`,
-SHA256 efe345dccd124cabd9f328829e1d5cd0fa0dc72990f3324023c682add3f18137.
-Build completed with make-j64; all frozen launcher files locally hash/length
-verified. Science SHA256 b0124b10763a01abc9e1feb0436b6022078f320ad6c53ec40e989231cfdab17c.
-Actual evolution binary SHA256 fbb8f8d2e9522d1b72fe28ea8b1e857f2b840f4d58365c5042a16727831f59e6.
-See aurora-build-cfl/ and cfl-{plan,binding,submission}.json. Both user debug
-queues were empty before submission. Footprint6.788GB, headroom2.518GB after
-output/atomic reserves under authorized10GB. No purge was needed.
+Current BC2 job **9036411** is submitted using frozen launcher
+`launcher-boosted-refined-core-cfl-v2` (commit187b02e037ab9df8d45725858e0509e3b29c3acf).
+Two debug-scaling nodes /24 GPU tiles, fresh t0 to10M, dt=.00025. Plan
+`campaigns/n16-boosted-refined-core-cfl-v2-c16-evolution-segment01/plan.json`,
+SHA256 e42860fa9db75d196e1677db78babfed901aa29d4417abb372456d60e7949537.
+Both queues were empty before retry; footprint6.789GB, headroom2.517GB after
+output/atomic reserves under10GB. Source/build/binaries/science are unchanged;
+v2 intentionally binds the original v1 science file, SHA256
+b0124b10763a01abc9e1feb0436b6022078f320ad6c53ec40e989231cfdab17c.
+Actual evolution binary SHA256
+fbb8f8d2e9522d1b72fe28ea8b1e857f2b840f4d58365c5042a16727831f59e6.
+Use v2 controller/helper for current/future plans; do not rebuild or refreeze.
+
+Prior BC2 job9036342 failed before launching any native evolution. Its affinity
+probe produced correct two-node placement,12 local ranks/unique GPU masks each.
+The old validator incorrectly demanded ranks0-23 on a single host. PBS F/1,
+worker cases=[] and only affinity.log establish an infrastructure failure,
+not a numerical instability. Frozen old records are preserved under
+`affinity-failure/`; matching terminal lock released. The v2 validator checks
+local ranks0-11 and masks on each allocated host. Three focused regression tests
+passed, including the actual saved Aurora probe and negative malformed-placement
+cases. No scientific code or parameters changed. Fresh job9036411 replaces it;
+never resubmit9036342 or mutate its frozen launcher. See cfl-v2-* records and
+launcher-v2-provenance.json. No native checkpoint existed to resume.
 
 Hourly monitor aurora-boosted-refined-core-to-10m is ACTIVE for BC2 only.
 Use the frozen cfl launcher/controller/helper for exact BC2 configuration,

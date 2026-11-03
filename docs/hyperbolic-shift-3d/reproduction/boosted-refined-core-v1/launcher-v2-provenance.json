@@ -1,0 +1,43 @@
+{
+  "source_commit": "cb0f47b520afe4f88c98e11569f3ba88e632df9a",
+  "kokkos_commit": "6739bc623081648af9e752b616d9671527922cbf",
+  "launcher_commit": "187b02e037ab9df8d45725858e0509e3b29c3acf",
+  "source_manifest": "source-boosted-refined-core-cfl-v1-manifest.json",
+  "source_manifest_sha256": "6d1c29a69bcce98d761d1f896b9f230553d7e4852d8a4c86384f33237634847b",
+  "files": {
+    "control.py": {
+      "bytes": 51777,
+      "sha256": "e566c31adeb389d4360527fd5c9d5e77b31ec08059757804daffa768bdb45fb3"
+    },
+    "worker.py": {
+      "bytes": 16248,
+      "sha256": "7746ecb77b1950e25237d46554c650a2476e54c99f9bafd1ea363915f2d245bf"
+    },
+    "storage.py": {
+      "bytes": 2346,
+      "sha256": "21a5c93bba7c3f623755f01e5593aba6f1129887419c0da5a8b58d9b789180db"
+    },
+    "run_debug.pbs": {
+      "bytes": 776,
+      "sha256": "5d41048f75db017938848857f1f4e033477732e4ae2b52ccef22442ff442edef"
+    },
+    "native_transition_campaign.py": {
+      "bytes": 18198,
+      "sha256": "94f8430a3e9759e41946a8499ba0df19d23f01229f89253360ffb320c588eb07"
+    },
+    "native_transition_prepare.py": {
+      "bytes": 9695,
+      "sha256": "fd648d626564dc523d27b39a36538801a1a06317fa5a874658a9ea609eb21a34"
+    },
+    "build_native_transition.sh": {
+      "bytes": 322,
+      "sha256": "041b03febea5a4c989435e22e97bb9921d1be5103a21030fa10337bd871dec92"
+    },
+    "native-transition-science.json": {
+      "bytes": 1586,
+      "sha256": "b0124b10763a01abc9e1feb0436b6022078f320ad6c53ec40e989231cfdab17c"
+    }
+  },
+  "supersedes_launcher": "launcher-boosted-refined-core-cfl-v1",
+  "change": "Validate local ranks/tile masks per allocated host; fresh retry plan namespace. Scientific source and binaries unchanged."
+}
