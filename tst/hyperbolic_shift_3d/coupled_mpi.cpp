@@ -551,7 +551,7 @@ class Evolution {
   std::array<Real,3> PunctureVelocity(){
     std::array<Real,3>velocity{};
     const int block=Model().grid.mesh.Owner(puncture.data());
-    if(block<0||block>=8)throw std::runtime_error("puncture left Cartesian tracker support");
+    if(block<0||Model().grid.mesh.blocks.at(block).face>=0)throw std::runtime_error("puncture left Cartesian tracker support");
     const int owner_cell=block*n*n*n+n*n*n/2;
     if(owner_cell>=first&&owner_cell<last){
       Real q[3];Model().grid.mesh.Inverse(block,puncture.data(),q);
