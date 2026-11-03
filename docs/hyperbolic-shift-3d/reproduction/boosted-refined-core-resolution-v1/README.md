@@ -99,6 +99,17 @@ renewal once per outage. Delete monitor after both runs and follow-up complete.
 
 ## Analysis
 
+**User's updated post-processing tolerance is expansion RMS <=1e-2.**
+Use `horizon-post-policy.json` and `post_horizon.py`; preserve native1e-3 flags
+separately. Do not change online finder arguments, restart seeds, frozen
+plans/binaries or verification. Require a complete sampled candidate and finite
+positive radius. This post expansion-quality selection is not proof that the
+unrecorded native mass-stationarity condition passed. Rejected candidates have
+NaN masses/areas in native summaries; preserve these gaps. Do not manufacture
+mass from coordinate radius. An admitted endpoint may be re-evaluated offline
+at1e-2 with the other finder settings retained. Existing constraint histories
+and integration cutoffs are unchanged by relabeling candidate quality.
+
 Preserve all artifacts, then compare to completed N16 BC2 using its old
 two-node helper/science identity. Preserve trajectory/core margin, accepted
 horizon mass and acceptance gaps, full/own-candidate constraints, scri
