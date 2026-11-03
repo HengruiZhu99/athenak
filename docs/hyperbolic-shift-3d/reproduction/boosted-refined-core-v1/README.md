@@ -53,3 +53,13 @@ this was corrected to inspect Cartesian block geometry before source freezing.
 The production source is022c2adbfd5d94be3b2a35755bb4a93462b118d8,
 launcher71ac666bab9c17457f847d9f6bf916db903f332f. Earlier local failed artifacts
 are retained under output/boosted-refined-core/serial-one; they were never submitted.
+
+Fresh BC1 C16 job **9036322** submitted on2debug-scalingnodes/24GPUtiles.
+Plan `campaigns/n16-boosted-refined-core-v1-c16-evolution-segment01/plan.json`,
+SHA2560200064ec123528d932ba1cd40b19e6e574c91e39c6587755a5f5660aed7a7ee.
+Frozen scienceSHA2564338cd1dcc6378835e773774c2d4ddddf51a1d5719a931cba9f6aa604d8d0e62.
+All launcher and build provenance locally preserved and verified in aurora-build/.
+Both user debugqueues were empty before this single submission. Bindingfootprint
+6.697GB with2.609GB headroom after reserves; no purge. Hourly monitor
+`aurora-boosted-refined-core-to-10m` is active. Scientific snapshots remain
+immutable while subsequent Cartesian AMR integration uses a separate branch.
