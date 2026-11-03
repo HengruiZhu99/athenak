@@ -116,3 +116,27 @@ Scientific source `62cca6e4f1e7e453c0fc443efa8ec7d4e044085a`; science SHA256
 `815010d107d95d860375f32c48deaeee4eff65fb339a4e7fe8f8db1451c7a5db`.
 Hourly monitor follows this job; N20 then N24 remain gated on N16 success.
 No long boosted result yet, no repeat of build/freeze/smoke.
+
+## Explicit initial null-boundary verification
+
+At scri, r=1 and Omega=(1-r²)/2, the conformal inverse metric gives
+
+    gbar^{-1}(dOmega,dOmega) = chi q - (beta dot x)^2/bar-alpha²,
+    q = gtilde^{ij} x_i x_j.
+
+Both CPU and device closures set bar-alpha=1 and
+beta^i=-sqrt(chi q) x^i, with zero coordinate-tangential shift. This makes
+the boundary null using its actual metric. The initial exact asymptotic data
+have chi=1 and gtilde=I, so the bulk prescription beta=-W x reaches the
+required beta=-x at scri. Boundary refresh runs before the initial history,
+and the projection is repeated after angular interpolation for ghost values.
+The compatible dependent-D closure and retained restoring limit are unchanged.
+
+`initial-null-verification.json` binds these sources to the frozen Aurora
+manifest and rechecks the preserved production history: initial surface residual
+6.66134e-16 and ghost residual8.88178e-16. This is local SERIAL evidence plus
+source identity, not a new GPU test or long evolution result. No scientific
+change or recompilation was required. Job9034868 remains the existing submission;
+the scheduler check on2026-11-03 reported Q, waiting for an exclusive node.
+The active hourly monitor continues healthy verified checkpoints and advances
+fresh N16, N20, N24 in order, with higher resolutions gated on N16 success.

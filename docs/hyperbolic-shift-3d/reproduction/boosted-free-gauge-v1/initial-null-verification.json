@@ -1,0 +1,40 @@
+{
+  "scope": "Reverification of preserved production SERIAL initial boundary and frozen CPU/SYCL closure sources; no new run or GPU stability claim",
+  "source_commit": "62cca6e4f1e7e453c0fc443efa8ec7d4e044085a",
+  "history": {
+    "sha256": "289364e145290087bbfc1f62b901bdf861ccc360d138623bc0c16757e1d8eec8",
+    "bytes": 2126,
+    "matches_preserved_receipt": true
+  },
+  "initial_null_surface": 6.661338147750941e-16,
+  "initial_null_ghost": 8.881784197001254e-16,
+  "closure": "At r=1, bar_alpha=1, q=gtilde_inverse_ij*x_i*x_j, beta=-sqrt(chi*q)*x. Hence (beta dot x)^2=chi*q; the initial chi=1 and gtilde=I limit gives beta=-x. Project again after angular interpolation.",
+  "sources": {
+    "src/z4c/hyperboloidal/native_boosted_wormhole.hpp": {
+      "sha256": "061f4ea7da3886e0ee45fd6ac8c6c6ff93087a7ad6b807a38648cbdec730c204",
+      "bytes": 11210,
+      "matches_frozen_manifest": true
+    },
+    "src/z4c/hyperboloidal/native_wormhole.hpp": {
+      "sha256": "0ee05a433359ee36da513203696e6eae7cb18eaa9be426a0eb0fb26c44300008",
+      "bytes": 7676,
+      "matches_frozen_manifest": true
+    },
+    "src/z4c/hyperboloidal/hyperbolic_composite.hpp": {
+      "sha256": "5ef5460eafc7609f923f78a7ac29054ce33766faed4674812fbf24fa9cbc7116",
+      "bytes": 27084,
+      "matches_frozen_manifest": true
+    },
+    "src/z4c/hyperboloidal/hyperbolic_scri_device.hpp": {
+      "sha256": "eec57b3e1769a1587c7dea952e3c5d9a325f2a51a18e974193914f88812dda0d",
+      "bytes": 23226,
+      "matches_frozen_manifest": true
+    },
+    "tst/hyperbolic_shift_3d/coupled_mpi.cpp": {
+      "sha256": "ba035b0db2dc50aa8e663865d5e5aac33252418f25f67399a154f5eca5f282d4",
+      "bytes": 102305,
+      "matches_frozen_manifest": true
+    }
+  },
+  "no_recompile_required": true
+}
