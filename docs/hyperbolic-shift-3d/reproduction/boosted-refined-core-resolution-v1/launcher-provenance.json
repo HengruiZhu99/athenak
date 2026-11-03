@@ -1,0 +1,35 @@
+{
+  "source_commit": "cb0f47b520afe4f88c98e11569f3ba88e632df9a",
+  "kokkos_commit": "6739bc623081648af9e752b616d9671527922cbf",
+  "launcher_commit": "a73da2f129301355c061f6973d1fc63383afb6e3",
+  "source_manifest": "source-boosted-refined-core-cfl-v1-manifest.json",
+  "source_manifest_sha256": "6d1c29a69bcce98d761d1f896b9f230553d7e4852d8a4c86384f33237634847b",
+  "files": {
+    "control.py": {
+      "bytes": 51777,
+      "sha256": "82d6e1a4f229398d23d03985e5ed8070f4e9ebf23bb335eaea38b913b3141237"
+    },
+    "native-transition-science.json": {
+      "bytes": 1586,
+      "sha256": "b0124b10763a01abc9e1feb0436b6022078f320ad6c53ec40e989231cfdab17c"
+    },
+    "native_transition_campaign.py": {
+      "bytes": 18235,
+      "sha256": "8905462eb195369d2bc680be82272d184a74dcf220c675aec83c71e54cbdab1d"
+    },
+    "run_debug.pbs": {
+      "bytes": 776,
+      "sha256": "d8d08b70e33c1dda1d291185f1fd6bee71958f43d53a0fab63657194db4324d5"
+    },
+    "storage.py": {
+      "bytes": 2346,
+      "sha256": "21a5c93bba7c3f623755f01e5593aba6f1129887419c0da5a8b58d9b789180db"
+    },
+    "worker.py": {
+      "bytes": 16249,
+      "sha256": "f57000dfea338d3716c441f82a93676fc907e1b5a7b3861d9024413a0c56260a"
+    }
+  },
+  "supersedes_launcher": "launcher-boosted-refined-core-cfl-v2",
+  "change": "New N20/N24 matched-CFL resolution family on four nodes/48 ranks; reused immutable BC2 science/binaries."
+}

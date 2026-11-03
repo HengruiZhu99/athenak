@@ -6,6 +6,16 @@ Branch `codex/boosted-refined-core-resolution`. Read `state.json`, remote
 No duplicate submissions. Completed N16 BC2 job9036411 remains the baseline;
 do not rerun it or revive failed BG1 / superseded BC1 experiments. No AMR here.
 
+N20 job **9037163** is submitted (last scheduler check Q), plan
+`campaigns/n20-boosted-refined-core-resolution-v1-c20-evolution-segment01/plan.json`,
+SHA2567993b031f3318e97a1578c8dbfaa71fab5fb637ca3c287f5867b84ec1d8ac3a0.
+Both user debug queues were empty before submission; unrelated capacity jobs
+were preserved. Binding footprint7,466,598,296bytes and remaining headroom
+1,260,240,100bytes after output/atomic reserves. No purge was needed. New
+launcher commit a73da2f129301355c061f6973d1fc63383afb6e3; all science is reused.
+Hourly monitor `aurora-boosted-refined-core-n20-then-n24` is ACTIVE. N24 has
+not been submitted; it follows the verified N20 terminal disposition.
+
 ## Science and distribution
 
 Reuse frozen BC2 scientific source cb0f47b520afe4f88c98e11569f3ba88e632df9a
