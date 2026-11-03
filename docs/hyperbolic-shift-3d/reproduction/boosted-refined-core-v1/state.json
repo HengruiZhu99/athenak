@@ -1,14 +1,14 @@
 {
-  "status": "bc2_v2_evolution_running",
+  "status": "bc2_completed_10M_analysis_complete",
   "pid": 3046679,
   "host": "aurora-uan-0012",
   "source_commit": "cb0f47b520afe4f88c98e11569f3ba88e632df9a",
   "source_manifest_sha256": "6d1c29a69bcce98d761d1f896b9f230553d7e4852d8a4c86384f33237634847b",
   "launcher": "launcher-boosted-refined-core-cfl-v2",
-  "updated": 1793732592.6998608,
+  "updated": 1793738215.4906929,
   "branch": "codex/boosted-refined-core",
   "superseded_job": "9036322",
-  "next": "Monitor existing v2-launcher BC2. Healthy verified walltime continuations only; numerical failure terminal. No AMR implementation here.",
+  "next": "Authorized fixed-grid follow-up complete. No resubmission or other resolution. AMR is delegated by user to another thread via AMR-HANDOFF.md; do not implement here.",
   "plan": "campaigns/n16-boosted-refined-core-cfl-v2-c16-evolution-segment01/plan.json",
   "plan_sha256": "e42860fa9db75d196e1677db78babfed901aa29d4417abb372456d60e7949537",
   "science_sha256": "b0124b10763a01abc9e1feb0436b6022078f320ad6c53ec40e989231cfdab17c",
@@ -128,5 +128,10 @@
       "horizon_center_z": "1.7633131571421193e-13",
       "horizon_max_radius": "0.19402457261799047"
     }
-  }
+  },
+  "terminal_verification": "campaigns/n16-boosted-refined-core-cfl-v2-c16-evolution-segment01/terminal-verification.json",
+  "local_preservation": "All five worker artifacts locally verified by exact byte length and SHA256; no remote purge.",
+  "analysis_report": "docs/hyperbolic-shift-3d/reproduction/boosted-refined-core-v1/completed/README.md",
+  "conclusion": "Reached10M after core+time refinement; coarse BG1 failed4.23M. No accepted BC2 horizon after3.75M; substantial chi/lapse floors, near-puncture constraint structure, no accurate-evolution/convergence or pure spatial-fix claim.",
+  "monitor": "Retire hourly monitor after final evidence push and report."
 }

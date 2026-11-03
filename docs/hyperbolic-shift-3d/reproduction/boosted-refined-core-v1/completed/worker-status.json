@@ -1,0 +1,853 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "started": "2026-11-03T19:10:02.366385+00:00",
+  "job_id": "9036411.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "launcher_host": "x4303c1s0b0n0",
+  "allocation_nodes": [
+    "x4303c1s0b0n0.hsn.cm.aurora.alcf.anl.gov",
+    "x4303c1s1b0n0.hsn.cm.aurora.alcf.anl.gov"
+  ],
+  "resources": {
+    "queue": "debug-scaling",
+    "account": "CompactBinaryMerger",
+    "nodes": 2,
+    "ranks": 24,
+    "ranks_per_node": 12,
+    "walltime": "01:00:00"
+  },
+  "source_manifest_sha256": "6d1c29a69bcce98d761d1f896b9f230553d7e4852d8a4c86384f33237634847b",
+  "binaries": {
+    "build-sycl-mpi-boosted-refined-core-cfl-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_control_broad_smooth_six_shells_boosted_free_gauge_refined_core_matched_cfl": "fbb8f8d2e9522d1b72fe28ea8b1e857f2b840f4d58365c5042a16727831f59e6"
+  },
+  "plan_sha256": "e42860fa9db75d196e1677db78babfed901aa29d4417abb372456d60e7949537",
+  "phase": "native_transition_evolution",
+  "n": 16,
+  "cases": [
+    {
+      "name": "puncture",
+      "kind": "puncture",
+      "started": "2026-11-03T19:10:27.972588+00:00",
+      "argv": [
+        "mpiexec",
+        "-n",
+        "24",
+        "-ppn",
+        "12",
+        "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+        "gpu_tile_compact.sh",
+        "/home/hzhu/hyperbolic-core-shell-20261028/build-sycl-mpi-boosted-refined-core-cfl-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_control_broad_smooth_six_shells_boosted_free_gauge_refined_core_matched_cfl",
+        "16",
+        "campaigns/n16-boosted-refined-core-cfl-v2-c16-evolution-segment01/output/puncture",
+        "puncture",
+        "3.3333333333333335",
+        "0.00025",
+        "-",
+        "-",
+        "2920",
+        "0.05",
+        "0.001",
+        "12",
+        "24",
+        "2"
+      ],
+      "generated_inputs": {},
+      "n": 16,
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 2360.385015693959,
+      "checks": [
+        {
+          "check": {
+            "path": [
+              "mesh_topology"
+            ],
+            "op": "eq",
+            "value": "cartesian_4x4x4_shells6"
+          },
+          "observed": "cartesian_4x4x4_shells6",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "cartesian_core_subdivisions"
+            ],
+            "op": "eq",
+            "value": 4
+          },
+          "observed": 4,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mesh_blocks"
+            ],
+            "op": "eq",
+            "value": 100
+          },
+          "observed": 100,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "shell_layers"
+            ],
+            "op": "eq",
+            "value": 6
+          },
+          "observed": 6,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "shell_outer_radii"
+            ],
+            "op": "eq",
+            "value": [
+              0.305,
+              0.45,
+              0.6,
+              0.75,
+              0.875,
+              1
+            ]
+          },
+          "observed": [
+            0.305,
+            0.45,
+            0.6,
+            0.75,
+            0.875,
+            1
+          ],
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "restoring_collar_begin"
+            ],
+            "op": "eq",
+            "value": 0.6
+          },
+          "observed": 0.6,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "restoring_collar_end"
+            ],
+            "op": "eq",
+            "value": 0.9
+          },
+          "observed": 0.9,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "restoring_coefficient"
+            ],
+            "op": "eq",
+            "value": 4
+          },
+          "observed": 4,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "zero_shift_restoration"
+            ],
+            "op": "eq",
+            "value": false
+          },
+          "observed": false,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "broad_smooth_a"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "native_initialization_profile"
+            ],
+            "op": "eq",
+            "value": "polynomial_c6"
+          },
+          "observed": "polynomial_c6",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "native_initialization_start_M"
+            ],
+            "op": "eq",
+            "value": 4
+          },
+          "observed": 4,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "native_initialization_end_M"
+            ],
+            "op": "eq",
+            "value": 12
+          },
+          "observed": 12,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "status"
+            ],
+            "op": "eq",
+            "value": "completed"
+          },
+          "observed": "completed",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "kind"
+            ],
+            "op": "eq",
+            "value": "puncture"
+          },
+          "observed": "puncture",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "n"
+            ],
+            "op": "eq",
+            "value": 16
+          },
+          "observed": 16,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "cells"
+            ],
+            "op": "eq",
+            "value": 521056
+          },
+          "observed": 521056,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "backend"
+            ],
+            "op": "eq",
+            "value": "SYCL"
+          },
+          "observed": "SYCL",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "mpi_size"
+            ],
+            "op": "eq",
+            "value": 24
+          },
+          "observed": 24,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_schema"
+            ],
+            "op": "eq",
+            "value": "HYP3D_MPI_BC2"
+          },
+          "observed": "HYP3D_MPI_BC2",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_header_bytes"
+            ],
+            "op": "eq",
+            "value": 208
+          },
+          "observed": 208,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "boost_velocity"
+            ],
+            "op": "eq",
+            "value": 0.1
+          },
+          "observed": 0.1,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "puncture_tracker"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "checkpoint_admitted"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "initial_shift_policy"
+            ],
+            "op": "eq",
+            "value": "zero_inner_hyperboloidal_outer"
+          },
+          "observed": "zero_inner_hyperboloidal_outer",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "initial_lapse_policy"
+            ],
+            "op": "eq",
+            "value": "boost_determinant_precollapsed_hyperboloidal"
+          },
+          "observed": "boost_determinant_precollapsed_hyperboloidal",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "initial_data_provider"
+            ],
+            "op": "eq",
+            "value": "native_boosted_wormhole_embedding"
+          },
+          "observed": "native_boosted_wormhole_embedding",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "native_initialization_tolerance"
+            ],
+            "op": "eq",
+            "value": 2e-13
+          },
+          "observed": 2e-13,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "inner_gauge"
+            ],
+            "op": "eq",
+            "value": "direct_outer_r020_056_it1_damping_v1"
+          },
+          "observed": "direct_outer_r020_056_it1_damping_v1",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "gauge_blend"
+            ],
+            "op": "eq",
+            "value": "smoothstep9_w_056_080"
+          },
+          "observed": "smoothstep9_w_056_080",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_first6"
+            ],
+            "op": "eq",
+            "value": false
+          },
+          "observed": false,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "bulk_dissipation"
+            ],
+            "op": "eq",
+            "value": "block_energy_ko8"
+          },
+          "observed": "block_energy_ko8",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "positive_variables"
+            ],
+            "op": "eq",
+            "value": "direct_chi_direct_lapse_rk_and_ko"
+          },
+          "observed": "direct_chi_direct_lapse_rk_and_ko",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "physical_lapse_floor"
+            ],
+            "op": "eq",
+            "value": 1e-10
+          },
+          "observed": 1e-10,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "puncture_chi_floor"
+            ],
+            "op": "eq",
+            "value": 1e-08
+          },
+          "observed": 1e-08,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "puncture_chi_floor_radius"
+            ],
+            "op": "eq",
+            "value": 0.03
+          },
+          "observed": 0.03,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "chi_nonpositive_policy"
+            ],
+            "op": "eq",
+            "value": "record_and_floor_finite_candidates_everywhere"
+          },
+          "observed": "record_and_floor_finite_candidates_everywhere",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "timestep_aware_penalty"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_penalty_fixed_scale"
+            ],
+            "op": "eq",
+            "value": 0.6510416666660156
+          },
+          "observed": 0.6510416666660156,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "angular_epsilon_min"
+            ],
+            "op": "eq",
+            "value": 2
+          },
+          "observed": 2,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "complete_candidate_exterior_enabled"
+            ],
+            "op": "eq",
+            "value": true
+          },
+          "observed": true,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "dt"
+            ],
+            "op": "eq",
+            "value": 0.00025
+          },
+          "observed": 0.00025,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "algebraic_projection"
+            ],
+            "op": "eq",
+            "value": "final_stage_standard"
+          },
+          "observed": "final_stage_standard",
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_penalty_scale_min"
+            ],
+            "op": "ge",
+            "value": 0.6510416666650156
+          },
+          "observed": 0.6510416666660156,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_penalty_scale_min"
+            ],
+            "op": "le",
+            "value": 0.6510416666670156
+          },
+          "observed": 0.6510416666660156,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_unlimited_penalty_cfl_max"
+            ],
+            "op": "ge",
+            "value": 0.38399999999900003
+          },
+          "observed": 0.3840000000000001,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_unlimited_penalty_cfl_max"
+            ],
+            "op": "le",
+            "value": 0.384000000001
+          },
+          "observed": 0.3840000000000001,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_penalty_cfl_max"
+            ],
+            "op": "ge",
+            "value": 0.24999999999875
+          },
+          "observed": 0.24999999999975006,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "scri_penalty_cfl_max"
+            ],
+            "op": "le",
+            "value": 0.25000000000075
+          },
+          "observed": 0.24999999999975006,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "t"
+            ],
+            "op": "le",
+            "value": 3.3333333333333335
+          },
+          "observed": 3.3333333333333335,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "t"
+            ],
+            "op": "ge",
+            "value": 0
+          },
+          "observed": 3.3333333333333335,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_surface"
+            ],
+            "op": "le",
+            "value": 1e-10
+          },
+          "observed": 1.2254837954160151e-15,
+          "passed": true
+        },
+        {
+          "check": {
+            "path": [
+              "max_null_ghost"
+            ],
+            "op": "le",
+            "value": 1e-10
+          },
+          "observed": 1.5543122006008414e-15,
+          "passed": true
+        }
+      ],
+      "report_status": "completed",
+      "status": "passed",
+      "artifacts": {
+        "campaigns/n16-boosted-refined-core-cfl-v2-c16-evolution-segment01/output/puncture.report.json": {
+          "sha256": "139638460e151ab48ddad208fcd65d8a488e88d0367edfac9f832e8c2bb5600b",
+          "bytes": 27038
+        },
+        "campaigns/n16-boosted-refined-core-cfl-v2-c16-evolution-segment01/output/puncture.checkpoint": {
+          "sha256": "c59bdeeb6e1330954bd4fa0dba1a5f14d42a370ddc9e8122e9da1978293c1cbf",
+          "bytes": 259205840
+        },
+        "campaigns/n16-boosted-refined-core-cfl-v2-c16-evolution-segment01/output/puncture.history.csv": {
+          "sha256": "c4907df46b5dc6fd4a64c67a46dedf83524587b6cc3cc366519c5d614435af20",
+          "bytes": 54824
+        },
+        "campaigns/n16-boosted-refined-core-cfl-v2-c16-evolution-segment01/output/puncture.fastflow.horizon_summary_0.txt": {
+          "sha256": "dd1952c099ff8af8a82d83419fc84bb5e76817e8f6badff6f3e201427c66f25d",
+          "bytes": 8112
+        },
+        "campaigns/n16-boosted-refined-core-cfl-v2-c16-evolution-segment01/output/puncture.fastflow.horizon_shape_0.txt": {
+          "sha256": "19629bb1167bee20e21bdfce45459856947a85149e6c18a2fbe8481babeeb765",
+          "bytes": 57653
+        }
+      },
+      "finished": "2026-11-03T19:49:58.058647+00:00"
+    }
+  ],
+  "storage_at_start": {
+    "bytes": 6789411328,
+    "entries": 113965,
+    "limit_bytes": 10000000000,
+    "reserve_bytes": 269205840,
+    "planned_bytes": 424729344,
+    "headroom_bytes": 2516653488
+  },
+  "affinity": {
+    "returncode": 0,
+    "timed_out": false,
+    "storage_error": null,
+    "elapsed_seconds": 0.4718652870506048,
+    "records": [
+      {
+        "host": "x4303c1s0b0n0",
+        "rank": 5,
+        "mask": "2.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4303c1s0b0n0",
+        "rank": 2,
+        "mask": "1.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4303c1s0b0n0",
+        "rank": 0,
+        "mask": "0.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4303c1s0b0n0",
+        "rank": 3,
+        "mask": "1.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4303c1s0b0n0",
+        "rank": 4,
+        "mask": "2.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4303c1s0b0n0",
+        "rank": 1,
+        "mask": "0.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4303c1s0b0n0",
+        "rank": 6,
+        "mask": "3.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4303c1s0b0n0",
+        "rank": 7,
+        "mask": "3.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4303c1s0b0n0",
+        "rank": 9,
+        "mask": "4.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4303c1s0b0n0",
+        "rank": 8,
+        "mask": "4.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4303c1s0b0n0",
+        "rank": 10,
+        "mask": "5.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4303c1s0b0n0",
+        "rank": 11,
+        "mask": "5.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4303c1s1b0n0",
+        "rank": 2,
+        "mask": "1.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4303c1s1b0n0",
+        "rank": 9,
+        "mask": "4.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4303c1s1b0n0",
+        "rank": 8,
+        "mask": "4.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4303c1s1b0n0",
+        "rank": 10,
+        "mask": "5.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4303c1s1b0n0",
+        "rank": 7,
+        "mask": "3.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4303c1s1b0n0",
+        "rank": 4,
+        "mask": "2.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4303c1s1b0n0",
+        "rank": 0,
+        "mask": "0.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4303c1s1b0n0",
+        "rank": 11,
+        "mask": "5.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4303c1s1b0n0",
+        "rank": 5,
+        "mask": "2.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4303c1s1b0n0",
+        "rank": 3,
+        "mask": "1.1",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4303c1s1b0n0",
+        "rank": 6,
+        "mask": "3.0",
+        "hierarchy": "COMPOSITE"
+      },
+      {
+        "host": "x4303c1s1b0n0",
+        "rank": 1,
+        "mask": "0.1",
+        "hierarchy": "COMPOSITE"
+      }
+    ],
+    "passed": true
+  },
+  "finished": "2026-11-03T19:49:58.066710+00:00",
+  "elapsed_seconds": 2395.7003484447487,
+  "storage_at_finish": {
+    "bytes": 7181730523,
+    "entries": 113974
+  }
+}

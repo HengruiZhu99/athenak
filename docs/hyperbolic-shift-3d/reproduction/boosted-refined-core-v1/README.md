@@ -19,7 +19,10 @@ Current source cb0f47b520afe4f88c98e11569f3ba88e632df9a,
 manifestSHA2566d1c29a69bcce98d761d1f896b9f230553d7e4852d8a4c86384f33237634847b.
 Launcher fef313e5a; inspect state.json for full build/job status.
 
-Current BC2 job **9036411** is submitted using frozen launcher
+BC2 job **9036411** completed10M and is fully verified/preserved. See
+[completed/README.md](completed/README.md) for qualified conclusions and plots.
+The hourly monitor is retired after this final follow-up; no further runs or AMR
+implementation are authorized here. The run used frozen launcher
 `launcher-boosted-refined-core-cfl-v2` (commit187b02e037ab9df8d45725858e0509e3b29c3acf).
 Two debug-scaling nodes /24 GPU tiles, fresh t0 to10M, dt=.00025. Plan
 `campaigns/n16-boosted-refined-core-cfl-v2-c16-evolution-segment01/plan.json`,
@@ -44,7 +47,8 @@ cases. No scientific code or parameters changed. Fresh job9036411 replaces it;
 never resubmit9036342 or mutate its frozen launcher. See cfl-v2-* records and
 launcher-v2-provenance.json. No native checkpoint existed to resume.
 
-Hourly monitor aurora-boosted-refined-core-to-10m is ACTIVE for BC2 only.
+The following execution protocol is retained as provenance; the completed
+BC2 run needs no continuation and its monitor is retired.
 Use the frozen cfl launcher/controller/helper for exact BC2 configuration,
 finite payload, source/binary/input/artifact hash, dt/time/steps/progress,
 tracker and fixed-penalty verification plus scheduler/worker/native consistency.
