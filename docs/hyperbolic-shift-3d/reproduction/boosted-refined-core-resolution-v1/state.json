@@ -1,20 +1,20 @@
 {
-  "status": "n20_submitted",
+  "status": "n24_submitted",
   "branch": "codex/boosted-refined-core-resolution",
   "launcher": "launcher-boosted-refined-core-resolution-v1",
   "launcher_commit": "a73da2f129301355c061f6973d1fc63383afb6e3",
   "source_commit": "cb0f47b520afe4f88c98e11569f3ba88e632df9a",
   "source_manifest_sha256": "6d1c29a69bcce98d761d1f896b9f230553d7e4852d8a4c86384f33237634847b",
   "science_sha256": "b0124b10763a01abc9e1feb0436b6022078f320ad6c53ec40e989231cfdab17c",
-  "plan": "campaigns/n20-boosted-refined-core-resolution-v1-c20-evolution-segment01/plan.json",
-  "plan_sha256": "7993b031f3318e97a1578c8dbfaa71fab5fb637ca3c287f5867b84ec1d8ac3a0",
-  "updated": 1793745693.4910362,
-  "next": "Monitor this existing C20 job. Auto-continue healthy fully verified same-resolution walltime checkpoints. After N20 terminal disposition and preservation, submit fresh C24 to10M with this frozen four-node launcher. No duplicate jobs.",
+  "plan": "campaigns/n24-boosted-refined-core-resolution-v1-c24-evolution-segment01/plan.json",
+  "plan_sha256": "ac42833394dbc8f3995807a64e2607c444f5db6888ced79e230f238a27d89427",
+  "updated": 1793749081.7455447,
+  "next": "Monitor existing fresh C24 job; automatic healthy fully verified same-case walltime continuation to10M. Numerical failure terminal. Never resume or rerun failed C20. Post-processing horizon expansion tolerance1e-2, preserve online1e-3 flags/mass gaps.",
   "submission": {
-    "job_id": "9037163.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
-    "submitted": 1793745693.4877746,
-    "plan": "campaigns/n20-boosted-refined-core-resolution-v1-c20-evolution-segment01/plan.json",
-    "plan_sha256": "7993b031f3318e97a1578c8dbfaa71fab5fb637ca3c287f5867b84ec1d8ac3a0",
+    "job_id": "9037378.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "submitted": 1793749081.7390945,
+    "plan": "campaigns/n24-boosted-refined-core-resolution-v1-c24-evolution-segment01/plan.json",
+    "plan_sha256": "ac42833394dbc8f3995807a64e2607c444f5db6888ced79e230f238a27d89427",
     "source_manifest_sha256": "6d1c29a69bcce98d761d1f896b9f230553d7e4852d8a4c86384f33237634847b",
     "resources": {
       "queue": "debug-scaling",
@@ -28,6 +28,16 @@
   "monitor": "aurora-boosted-refined-core-n20-then-n24",
   "monitor_frequency": "hourly",
   "post_horizon_expansion_rms_tolerance": 0.01,
-  "post_horizon_policy": "horizon-post-policy.json",
-  "online_horizon_tolerance_unchanged": 0.001
+  "online_horizon_tolerance_unchanged": 0.001,
+  "post_horizon_policy": "See local campaign docs horizon-post-policy.json; preserve native acceptance/mass gaps, no frozen plan changes.",
+  "n20_terminal": {
+    "job": "9037163",
+    "last_accepted_t_over_M": 6.208199999999415,
+    "steps": 10347,
+    "error": "device RHS failure at active cell 328016 reason 2",
+    "local_artifacts_verified": true,
+    "checkpoint_admitted": false,
+    "checkpoint_remote_copy_retired_receipt": "retired-n20-before-n24.json",
+    "root_lock_released": true
+  }
 }

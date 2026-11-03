@@ -6,15 +6,29 @@ Branch `codex/boosted-refined-core-resolution`. Read `state.json`, remote
 No duplicate submissions. Completed N16 BC2 job9036411 remains the baseline;
 do not rerun it or revive failed BG1 / superseded BC1 experiments. No AMR here.
 
-N20 job **9037163** is submitted (last scheduler check Q), plan
+N20 job **9037163** FAILED numerically at last accepted6.2082M/10347steps, plan
 `campaigns/n20-boosted-refined-core-resolution-v1-c20-evolution-segment01/plan.json`,
 SHA2567993b031f3318e97a1578c8dbfaa71fab5fb637ca3c287f5867b84ec1d8ac3a0.
 Both user debug queues were empty before submission; unrelated capacity jobs
 were preserved. Binding footprint7,466,598,296bytes and remaining headroom
 1,260,240,100bytes after output/atomic reserves. No purge was needed. New
 launcher commit a73da2f129301355c061f6973d1fc63383afb6e3; all science is reused.
-Hourly monitor `aurora-boosted-refined-core-n20-then-n24` is ACTIVE. N24 has
-not been submitted; it follows the verified N20 terminal disposition.
+All six artifacts are locally hash/length verified. See `n20-failure/README.md`.
+The failed BC2 checkpoint is unadmitted and MUST NOT resume. Terminal root lock
+released. Its obsolete remote checkpoint copy was retired only after local
+and fresh remote hash/length verification; local original retained, receipt
+`retired-n20-before-n24.json` (481992704 allocated bytes freed).
+
+Fresh N24 job **9037378** is SUBMITTED (last scheduler check Q), plan
+`campaigns/n24-boosted-refined-core-resolution-v1-c24-evolution-segment01/plan.json`,
+SHA256ac42833394dbc8f3995807a64e2607c444f5db6888ced79e230f238a27d89427.
+Four nodes/48ranks, native t0, dt1/6000, target coordinate10/3. Same frozen
+science/source/binary; no rebuild/smoke. Both debug queues empty before submit.
+Binding footprint7683278509bytes, remaining200883663bytes after output/atomic
+reserves. Preserve current N24 checkpoint until a verified successor. Future
+continuation may need retirement of other locally/remote hashverified obsolete
+outputs; never weaken guard. Hourly monitor
+`aurora-boosted-refined-core-n20-then-n24` remains ACTIVE; no duplicate N24 run.
 
 ## Science and distribution
 
