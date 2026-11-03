@@ -1,0 +1,224 @@
+{
+  "scope": "Measured histories; own-candidate exterior cutoffs. No missing-value interpolation or endpoint radial reconstruction.",
+  "cases": {
+    "A": {
+      "label": "A native, original collar",
+      "status": "completed",
+      "last_accepted_t_over_M": 10,
+      "last_diagnostic_t_over_M": 10.0,
+      "accepted_horizon_rows": 45,
+      "rows": 68,
+      "final_accepted_mass_error": 0.003413203999158565,
+      "counters": {
+        "totals": {
+          "chi_floor_stage_interventions": 56,
+          "chi_floor_acceptance_interventions": 8,
+          "surface_chi_floor_stage_interventions": 0,
+          "surface_chi_floor_final_interventions": 0,
+          "lapse_floor_node_interventions": 0,
+          "scri_interpolated_chi_negative_count": 0,
+          "scri_interpolated_chi_zero_count": 0
+        },
+        "candidate_groups": {
+          "volume_field_0": {
+            "negative_stage": 56,
+            "negative_final": 8,
+            "zero_stage": 0,
+            "zero_final": 0,
+            "minimum": -7.782692485747558e-07,
+            "first_negative_time": 0.10075000000000008,
+            "first_zero_time": null
+          }
+        },
+        "scope": "Segment-local counts include rejected attempts; event times are coordinate time. Boundary interpolation counts are separate."
+      },
+      "segments": [
+        {
+          "plan": "campaigns/n16-native-transition-v2-a-evolution-segment01/plan.json",
+          "job_id": "9031760.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+          "status": "passed",
+          "checkpoint_sha256": "ab26ed9fce097b965cb19217f7599efb47c8c119df39ea49dc4d536d5e77cddb",
+          "artifacts": {
+            "campaigns/n16-native-transition-v2-a-evolution-segment01/output/puncture.report.json": {
+              "sha256": "713a1fcd2917e6894214e1a333d1b4804f5f29c1a5504c1da02f8effe27a671c",
+              "bytes": 14126
+            },
+            "campaigns/n16-native-transition-v2-a-evolution-segment01/output/puncture.checkpoint": {
+              "sha256": "ab26ed9fce097b965cb19217f7599efb47c8c119df39ea49dc4d536d5e77cddb",
+              "bytes": 79725224
+            },
+            "campaigns/n16-native-transition-v2-a-evolution-segment01/output/puncture.history.csv": {
+              "sha256": "9602f7f9f1b95e8b649ab0eb1b181564d57dd53619dc88126a833b5247d06707",
+              "bytes": 46186
+            },
+            "campaigns/n16-native-transition-v2-a-evolution-segment01/output/puncture.checkpoint.horizon-seed.txt": {
+              "sha256": "3f8c1d3904357a12e6ae3a09beb4368f5e008afaae0dbfb143db0814ada6665a",
+              "bytes": 86
+            },
+            "campaigns/n16-native-transition-v2-a-evolution-segment01/output/puncture.fastflow.horizon_summary_0.txt": {
+              "sha256": "5fc66f4e8ebbcd25ed823f9a31437891ee447bcf593db7d6926cf6493ccb0829",
+              "bytes": 11632
+            },
+            "campaigns/n16-native-transition-v2-a-evolution-segment01/output/puncture.fastflow.horizon_shape_0.txt": {
+              "sha256": "527a694f7ae2ea2ac7514e5d22794c88cba3146b5317ccf40fda940fc9f101c8",
+              "bytes": 103899
+            }
+          }
+        }
+      ],
+      "restart_diagnostic_repeats": [],
+      "boundary_report_maxima": {
+        "max_null_surface": 1.2212949302177267e-15,
+        "max_null_ghost": 1.5543119860387038e-15,
+        "max_pole": 0.028167936347697636,
+        "max_clock": 0.022001227473127855
+      },
+      "missing_boundary_report_values": {
+        "max_null_surface": 0,
+        "max_null_ghost": 0,
+        "max_pole": 0,
+        "max_clock": 0
+      }
+    },
+    "3 shells": {
+      "label": "Broad + smooth: 3 shells",
+      "status": "completed",
+      "last_accepted_t_over_M": 10,
+      "last_diagnostic_t_over_M": 10.0,
+      "accepted_horizon_rows": 37,
+      "rows": 68,
+      "final_accepted_mass_error": 0.0015798295722073696,
+      "counters": {
+        "totals": {
+          "chi_floor_stage_interventions": 0,
+          "chi_floor_acceptance_interventions": 0,
+          "surface_chi_floor_stage_interventions": 0,
+          "surface_chi_floor_final_interventions": 0,
+          "lapse_floor_node_interventions": 0,
+          "scri_interpolated_chi_negative_count": 0,
+          "scri_interpolated_chi_zero_count": 0
+        },
+        "candidate_groups": {},
+        "scope": "Segment-local counts include rejected attempts; event times are coordinate time. Boundary interpolation counts are separate."
+      },
+      "segments": [
+        {
+          "plan": "campaigns/n16-restored-wide-smooth-v1-a-evolution-segment01/plan.json",
+          "job_id": "9033692.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+          "status": "passed",
+          "checkpoint_sha256": "9176e8d6323b774fb01ec3ccd1238941e008ed5054636337bdd74ba47d1ab4e2",
+          "artifacts": {
+            "campaigns/n16-restored-wide-smooth-v1-a-evolution-segment01/output/puncture.report.json": {
+              "sha256": "f861e60bae586df1edd6dc64504b32d2240d114d5412f00ff871af4f29946ffc",
+              "bytes": 12853
+            },
+            "campaigns/n16-restored-wide-smooth-v1-a-evolution-segment01/output/puncture.checkpoint": {
+              "sha256": "9176e8d6323b774fb01ec3ccd1238941e008ed5054636337bdd74ba47d1ab4e2",
+              "bytes": 79725224
+            },
+            "campaigns/n16-restored-wide-smooth-v1-a-evolution-segment01/output/puncture.history.csv": {
+              "sha256": "7110a1b8ec70f098b0d47587fa4513d55a96cef18d10a580b97003bdceabd0ef",
+              "bytes": 45332
+            },
+            "campaigns/n16-restored-wide-smooth-v1-a-evolution-segment01/output/puncture.checkpoint.horizon-seed.txt": {
+              "sha256": "c3eb8c4c8bacdc195133a7e0773419a3420f3ad120b51fba05046e3b23e0d1a1",
+              "bytes": 86
+            },
+            "campaigns/n16-restored-wide-smooth-v1-a-evolution-segment01/output/puncture.fastflow.horizon_summary_0.txt": {
+              "sha256": "10a5a318419dd57e0424c9399c1680871c072a536a8f6e04c25964287ef6a4f1",
+              "bytes": 10190
+            },
+            "campaigns/n16-restored-wide-smooth-v1-a-evolution-segment01/output/puncture.fastflow.horizon_shape_0.txt": {
+              "sha256": "f5b19a9531703710f8e2d7185d0da6f1a626cd61a1d66efc4f9d545b03d1ac01",
+              "bytes": 85448
+            }
+          }
+        }
+      ],
+      "restart_diagnostic_repeats": [],
+      "boundary_report_maxima": {
+        "max_null_surface": 1.221335717555806e-15,
+        "max_null_ghost": 1.5543121985712435e-15,
+        "max_pole": 0.052004246602203055,
+        "max_clock": 0.038820241609756556
+      },
+      "missing_boundary_report_values": {
+        "max_null_surface": 0,
+        "max_null_ghost": 0,
+        "max_pole": 0,
+        "max_clock": 0
+      }
+    },
+    "6 shells*": {
+      "label": "6 shells: penalty limiter active",
+      "status": "native_completed_but_penalty_policy_failed",
+      "last_accepted_t_over_M": 10,
+      "last_diagnostic_t_over_M": 10.0,
+      "accepted_horizon_rows": 37,
+      "rows": 68,
+      "final_accepted_mass_error": 0.0013688864916114873,
+      "counters": {
+        "totals": {
+          "chi_floor_stage_interventions": 0,
+          "chi_floor_acceptance_interventions": 0,
+          "surface_chi_floor_stage_interventions": 0,
+          "surface_chi_floor_final_interventions": 0,
+          "lapse_floor_node_interventions": 0,
+          "scri_interpolated_chi_negative_count": 0,
+          "scri_interpolated_chi_zero_count": 0
+        },
+        "candidate_groups": {},
+        "scope": "Segment-local counts include rejected attempts; event times are coordinate time. Boundary interpolation counts are separate."
+      },
+      "segments": [
+        {
+          "plan": "campaigns/n16-restored-six-shells-v1-a-evolution-segment01/plan.json",
+          "job_id": "9033869.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+          "status": "completed_but_penalty_policy_failed",
+          "checkpoint_sha256": "b0b0f5767148d435c9ece954a17fb2746f0e59817bf38aeffb36d42c30e8119d",
+          "artifacts": {
+            "campaigns/n16-restored-six-shells-v1-a-evolution-segment01/output/puncture.report.json": {
+              "sha256": "63361c2ba0e2b0dd1443460dd560fe40327769be409390df5517d7d041995773",
+              "bytes": 12998
+            },
+            "campaigns/n16-restored-six-shells-v1-a-evolution-segment01/output/puncture.checkpoint": {
+              "sha256": "b0b0f5767148d435c9ece954a17fb2746f0e59817bf38aeffb36d42c30e8119d",
+              "bytes": 116294312
+            },
+            "campaigns/n16-restored-six-shells-v1-a-evolution-segment01/output/puncture.history.csv": {
+              "sha256": "dda30413e5a38b06b318746e6b1d2fb095c09af320fb1e3594cae3823c4bd750",
+              "bytes": 45522
+            },
+            "campaigns/n16-restored-six-shells-v1-a-evolution-segment01/output/puncture.checkpoint.horizon-seed.txt": {
+              "sha256": "44b2e798b35dfc7de293aae39cbb4b615fa06f37f35d2cd2ef92b5a5feec5ee5",
+              "bytes": 86
+            },
+            "campaigns/n16-restored-six-shells-v1-a-evolution-segment01/output/puncture.fastflow.horizon_summary_0.txt": {
+              "sha256": "07cf851e8ae9ae3b87d1dfc1565775dba31357f23ebed2b834beeed1f1f498ee",
+              "bytes": 10188
+            },
+            "campaigns/n16-restored-six-shells-v1-a-evolution-segment01/output/puncture.fastflow.horizon_shape_0.txt": {
+              "sha256": "b95196fd542e1332abbcbe1361b000d9aad9bf589a899cdfa2dc3e28caec1412",
+              "bytes": 85363
+            }
+          }
+        }
+      ],
+      "restart_diagnostic_repeats": 0,
+      "boundary_report_maxima": {
+        "max_null_surface": 1.2213764090651353e-15,
+        "max_null_ghost": 1.5543122004269266e-15,
+        "max_pole": 0.1852165074205706,
+        "max_clock": 0.32154787660998485
+      },
+      "missing_boundary_report_values": {
+        "max_null_surface": 0,
+        "max_null_ghost": 0,
+        "max_pole": 0,
+        "max_clock": 0
+      },
+      "campaign_accepted": false,
+      "penalty_scale_min": 0.6510416666660155
+    }
+  }
+}

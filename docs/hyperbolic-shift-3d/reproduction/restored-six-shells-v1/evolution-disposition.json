@@ -1,0 +1,63 @@
+{
+  "native_completed": true,
+  "campaign_accepted": false,
+  "restart_allowed": false,
+  "reason": "Frozen acceptance check rejects scri penalty limiter activation; preserve rejection. Native admission supports read-only endpoint diagnostics, not a matched-parameter refinement claim.",
+  "job_id": "9033869.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "scheduler_exit": 1,
+  "worker_status": "failed",
+  "native_returncode": 0,
+  "failed_checks": [
+    {
+      "check": {
+        "path": [
+          "scri_penalty_scale_min"
+        ],
+        "op": "eq",
+        "value": 1
+      },
+      "observed": 0.6510416666660155,
+      "passed": false
+    }
+  ],
+  "checkpoint": {
+    "variant": "A",
+    "schema": "HYP3D_MPI_N61",
+    "n": 16,
+    "time": 3.3333333333333335,
+    "steps": 6667,
+    "dt": 0.0005,
+    "bytes": 116294312,
+    "sha256": "b0b0f5767148d435c9ece954a17fb2746f0e59817bf38aeffb36d42c30e8119d"
+  },
+  "artifacts": {
+    "campaigns/n16-restored-six-shells-v1-a-evolution-segment01/output/puncture.report.json": {
+      "sha256": "63361c2ba0e2b0dd1443460dd560fe40327769be409390df5517d7d041995773",
+      "bytes": 12998
+    },
+    "campaigns/n16-restored-six-shells-v1-a-evolution-segment01/output/puncture.checkpoint": {
+      "sha256": "b0b0f5767148d435c9ece954a17fb2746f0e59817bf38aeffb36d42c30e8119d",
+      "bytes": 116294312
+    },
+    "campaigns/n16-restored-six-shells-v1-a-evolution-segment01/output/puncture.history.csv": {
+      "sha256": "dda30413e5a38b06b318746e6b1d2fb095c09af320fb1e3594cae3823c4bd750",
+      "bytes": 45522
+    },
+    "campaigns/n16-restored-six-shells-v1-a-evolution-segment01/output/puncture.checkpoint.horizon-seed.txt": {
+      "sha256": "44b2e798b35dfc7de293aae39cbb4b615fa06f37f35d2cd2ef92b5a5feec5ee5",
+      "bytes": 86
+    },
+    "campaigns/n16-restored-six-shells-v1-a-evolution-segment01/output/puncture.fastflow.horizon_summary_0.txt": {
+      "sha256": "07cf851e8ae9ae3b87d1dfc1565775dba31357f23ebed2b834beeed1f1f498ee",
+      "bytes": 10188
+    },
+    "campaigns/n16-restored-six-shells-v1-a-evolution-segment01/output/puncture.fastflow.horizon_shape_0.txt": {
+      "sha256": "b95196fd542e1332abbcbe1361b000d9aad9bf589a899cdfa2dc3e28caec1412",
+      "bytes": 85363
+    }
+  },
+  "source_manifest_sha256": "bb16e53c43e5012ff84e8e1031f8dd9f604e3d68f2c6e2afa977ae3e54f60661",
+  "binary_sha256": "1976a65d4bb8ba34f17cd8131847ecdec64db827f25d46b87f2308e0c951839a",
+  "plan_sha256": "feb93394476235b3d97178705c7a4deddbd0bd2266ae38ff02a9612dc5d0e749",
+  "native_elapsed_seconds": 1633.4288045577705
+}

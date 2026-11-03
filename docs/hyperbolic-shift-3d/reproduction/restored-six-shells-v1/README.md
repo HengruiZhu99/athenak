@@ -32,4 +32,61 @@ Build completed with make-j64 and both evolution/diagnostic targets passed freez
 
 Fresh N16 N61 job **9033869** submitted on debug-scaling,one node/12ranks. Plan `campaigns/n16-restored-six-shells-v1-a-evolution-segment01/plan.json`, SHA256 `feb93394476235b3d97178705c7a4deddbd0bd2266ae38ff02a9612dc5d0e749`. Both user debug queues were empty immediately before submission; unrelated held capacity jobs untouched. Storage at binding4,317,516,854bytes, planned196,070,900 plus atomic126,294,312 leaves360,117,934bytes headroom. No further retirement required. Follow state.json and saved submission; never duplicate.
 
-Quiet20-minute heartbeat `aurora-restored-six-shells-to-10m` is ACTIVE. Continue healthy fully verified same-case walltime checkpoints to10M; numerical failure terminal. Comparisons/analysis remain pending this run. `compare.py` loads distinct A/NB1/N61 helpers and roots without relabeling checkpoints. No long-time result yet.
+The run and qualified analysis are complete. No continuation or automatic parameter change is scheduled. The monitor is retired after evidence preservation and reporting; final state records its disposition.
+
+
+## Terminal result: native completion, campaign acceptance failure
+
+Job9033869 reached10M in6667steps, native return0, with a finite native-admitted N61 checkpoint. The worker and PBS nevertheless failed (exit1): the sole failed frozen check is `scri_penalty_scale_min == 1`, observed0.6510416666660155. The unchanged frozen campaign verifier rejected this result. This is not a numerical crash and not an accepted matched-parameter radial-refinement campaign. We do not restart it, weaken verification, or relabel its status.
+
+All six worker artifacts were copied and locally hash/length verified. The native-admitted checkpoint is116294312bytes, SHA256 `b0b0f5767148d435c9ece954a17fb2746f0e59817bf38aeffb36d42c30e8119d`. The matching terminal allocation lock is released. `audit_completed.py` independently checks all identities, all original worker checks and the exact single policy failure before permitting qualified read-only diagnostics. It does not grant campaign acceptance. See evolution-disposition.json, evolution-local-verification.json and frozen-verification-rejection.json. No additional remote output was retired during this follow-up.
+
+### Why the penalty check failed
+
+The existing timestep-aware scri penalty uses c=12 dt/h and multiplies the nominal4/h and8/h penalties by min(1,0.5(1−1e−12)/c). Halving the outer spacing from0.015625 to0.0078125 at unchanged dt0.0005 raises c from0.384 to0.768. The cap therefore applies scale0.651041666666, reducing c to0.5. The effective4/h boundary-penalty coefficient is333.333 rather than the refined-grid nominal512 (three-shell value256). This limiter does not change the separate extra shift-restoration coefficient4 in the bulk collar; that restoration remains present.
+
+This limiter was already active in the saved local initial-state report: preflight review missed that field while inspecting bulk CFL and communication parity. The campaign guard correctly detected the mismatch. It is not a late-time instability event. `penalty-limiter-analysis.json` records the exact source, initial report hash, formula and threshold. To avoid clipping on this grid requires dt below approximately0.000325520833333; dt0.00025 is a possible future controlled test, not an automatically authorized rerun. A clean spatial-attribution study would also check temporal sensitivity or compare both grids at a common smaller timestep.
+
+### Qualified endpoint and time-series comparison
+
+Matching original native constraint operators reproduce full-domain report norms to roundoff. The common coordinate-volume cutoff r>0.12 lies outside all final harmonic horizon surfaces: bounds0.1097764(A),0.1085408(NB1),0.1084931(N61). The small quadrature-volume difference is retained in radial-comparison.json; sensitivities at0.1099 and0.13 are also recorded.
+
+| At10M | Original A | Broad/smooth,3 shells NB1 | Broad/smooth,6 shells N61* |
+|---|---:|---:|---:|
+| H RMS, r>0.12 |0.01533010|0.02271645|0.00903143|
+| M RMS, r>0.12 |0.02897131|0.05755221|0.01788015|
+| Accepted mass error |+0.34132%|+0.15798%|+0.13689%|
+| Accepted horizon rows |45/68|37/68|37/68|
+| Chi stage/final floors |56/8|0/0|0/0|
+| Maximum pole residual |0.028168|0.052004|0.185217|
+| Maximum clock residual |0.022001|0.038820|0.321548|
+| Native command seconds |1331.90|1375.89|1633.43|
+
+*Native completed, but penalty-policy check failed. The six-shell endpoint H/M RMS decreases60.24%/68.93% against NB1 and41.09%/38.28% against A. Native runtime increases18.72% against NB1 (27.22 versus22.93minutes on one12-tile node), not a factor of two. This is a single-run timing comparison, not a throughput benchmark. All reported lapse/surface/boundary sign/floor interventions are zero in NB1 and N61, with boundary interpolation counts kept separate. Surface/ghost null residuals remain below1.56e−15; that algebraic result does not imply small pole/clock residuals or convergence.
+
+The histories show substantially smaller early exterior transients than NB1 and lower late-time exterior constraints, but N61 is not below original A at every time. Full-domain and own-candidate exterior histories, accepted mass gaps and running maximum boundary residuals are plotted separately. These binaries did not emit fixed-cutoff time series; those cannot be recovered from one terminal checkpoint and are not invented. Fixed-cutoff results here are endpoint reconstructions. See comparison/runtime-and-history-scope.json.
+
+### Where the errors and sharp features remain
+
+Against NB1, squared H/M integrals decrease89.54%/91.55% in0.7–0.775,92.18%/93.24% in0.775–0.9, and89.58%/91.65% over0.6–0.9. The inner0.16–0.30 H integral instead rises40.79%, while its M integral changes+0.13%. Against original A, the former outer0.775–0.9 concentration drops97.88%/96.11%, but the inward0.7–0.775 band still exceeds original A. This is substantial redistribution and reduction, not uniform improvement everywhere.
+
+Unsmoothed near-face-center and near-corner rays use the same angular directions,48 versus96 primary radial samples; extra overlap cells remain in CSV but are not double plotted. At the near-center ray, the0.6–0.9 Hamiltonian peak decreases from0.079816(NB1) to0.034836(N61), and the momentum norm peak from0.232054 to0.086185. They remain near the old r=0.75 interface (refined maximum r=0.753906). The sampled contiguous absolute half-peak H width brackets shrink from[0.07031,0.10469] to[0.01641,0.03359]; momentum-width brackets overlap. These are grid-sample brackets without fitted/interpolated widths, not regularity norms.
+
+Primary field profiles and most first gradients almost overlap between NB1 and N61. The auxiliary-D transition is still sharp: near-center max|d_r D_r| increases43.65 to53.87, with its maximum near0.74531. Better sampled gradients can increase while constraints decrease. The larger pole/clock residuals and retained narrow D feature preclude claiming that regularity is resolved. Two rays, one resolution change, added interfaces, changed donor nodes and an active penalty limiter cannot establish fourth-order convergence or isolate the cause of improvement.
+
+### Evidence and reproduction
+
+Figures in comparison/ were rendered and visually inspected: histories.png, full-and-boundary.png, radial.png, field-slices.png, gradient-slices.png and constraint-slices.png. Native slice volume integrals agree with production volume sums at2.27e−16 relative for N61. The checkpoint hashes are checked before and after all diagnostic reads; command, local diagnostic hash and compile definitions are preserved. A/NB1 previously verified slice artifacts are reused with source/hash records, not evolved again.
+
+To reproduce into a fresh directory (with preserved raw campaigns and matching local diagnostic executables available), run from the repository root:
+
+```sh
+python3 docs/hyperbolic-shift-3d/reproduction/restored-six-shells-v1/audit_completed.py
+python3 docs/hyperbolic-shift-3d/reproduction/restored-six-shells-v1/compare.py --plans campaigns/n16-restored-six-shells-v1-a-evolution-segment01/plan.json --output /tmp/six-shell-comparison-new
+python3 docs/hyperbolic-shift-3d/reproduction/restored-six-shells-v1/reconstruct_endpoints.py --output /tmp/six-shell-comparison-new
+python3 docs/hyperbolic-shift-3d/reproduction/restored-six-shells-v1/plot_radial.py --directory /tmp/six-shell-comparison-new
+python3 docs/hyperbolic-shift-3d/reproduction/restored-six-shells-v1/plot_slices.py --directory /tmp/six-shell-comparison-new
+python3 docs/hyperbolic-shift-3d/reproduction/restored-six-shells-v1/summarize.py
+```
+
+Reconstruction deliberately refuses to overwrite existing radial/slice evidence. There is no new long evolution in these commands. The next useful controlled experiment is to remove the timestep-induced penalty mismatch while retaining this formulation/grid, with explicit authorization for any changed timestep. The current evidence supports radial refinement as a promising direction, not a clean convergence result.

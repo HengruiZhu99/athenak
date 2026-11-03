@@ -1,5 +1,5 @@
 {
-  "status": "evolution_submitted",
+  "status": "completed10M_penalty_policy_failed_analysis_complete",
   "build_pid": 3799500,
   "build_host": "aurora-uan-0010",
   "started": 1793660199.6824882,
@@ -18,10 +18,10 @@
   },
   "monitor": "aurora-restored-six-shells-to-10m",
   "scope": "Fresh N16 six-shell broad-smooth A to10M, same dt.0005 and physical settings; no GPU smoke gate.",
-  "next": "Monitor existing submitted N16 six-shell job; never duplicate. At terminal collect/verify N61 using frozen helper and preserve artifacts. Automatically continue only healthy admitted same-case walltime checkpoints below10M; terminal numerical failures never restart. After disposition compare against NB1 and original A, inspect/push evidence and delete monitor.",
+  "next": "No automatic rerun, continuation or parameter changes. Qualified analysis complete; commit/push evidence, report and retire completed monitor.",
   "build_status": "completed_and_frozen",
   "science_sha256": "72ab6ef1bfc3d096bc6ab36d37c578e0925268bb2746d021983cbd13a012b74a",
-  "updated": 1793660588.0367515,
+  "updated": 1793664130.824188,
   "current_plan": "campaigns/n16-restored-six-shells-v1-a-evolution-segment01/plan.json",
   "plan_sha256": "feb93394476235b3d97178705c7a4deddbd0bd2266ae38ff02a9612dc5d0e749",
   "current_submission": {
@@ -38,5 +38,32 @@
       "ranks_per_node": 12,
       "walltime": "01:00:00"
     }
-  }
+  },
+  "disposition": {
+    "native_completed": true,
+    "t_over_M": 10,
+    "steps": 6667,
+    "native_returncode": 0,
+    "worker_status": "failed",
+    "scheduler_exit": 1,
+    "reason": "scri_penalty_scale_min=.6510416666660155, required1; existing limiter active from initialization",
+    "checkpoint_native_admitted": true,
+    "campaign_accepted": false,
+    "restart_allowed": false,
+    "checkpoint_sha256": "b0b0f5767148d435c9ece954a17fb2746f0e59817bf38aeffb36d42c30e8119d",
+    "all_six_artifacts_locally_verified": true,
+    "terminal_lock_released": true
+  },
+  "analysis": {
+    "path": "docs/hyperbolic-shift-3d/reproduction/restored-six-shells-v1/comparison",
+    "common_cutoff": 0.12,
+    "H_L2": 0.009031433663981401,
+    "M_L2": 0.01788015140037561,
+    "six_vs_NB1_H_percent": -60.24275875155245,
+    "six_vs_NB1_M_percent": -68.93229623401234,
+    "caveat": "Penalty limiter active from initialization; campaign acceptance failed. Native-completed finite endpoint only; not matched-parameter convergence. Narrow D feature persists; pole/clock residuals increased.",
+    "all_figures_inspected": true,
+    "no_fixed_cutoff_history_available": true
+  },
+  "monitor_status": "pending_retirement_after_push"
 }

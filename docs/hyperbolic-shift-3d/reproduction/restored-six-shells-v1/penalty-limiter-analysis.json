@@ -1,0 +1,25 @@
+{
+  "formula": "c=12 dt/h; scale=min(1,0.5(1-1e-12)/c); p4=4 scale/h, p8=8 scale/h",
+  "source": "src/z4c/hyperboloidal/hyperbolic_scri_device.hpp",
+  "source_sha256": "eec57b3e1769a1587c7dea952e3c5d9a325f2a51a18e974193914f88812dda0d",
+  "source_lines": [
+    204,
+    212
+  ],
+  "dt": 0.0005,
+  "three_shell_outer_h": 0.015625,
+  "six_shell_outer_h": 0.0078125,
+  "unclipped_dt_upper_bound": 0.00032552083333300784,
+  "three_shell_effective_p4_p8": [
+    256.0,
+    512.0
+  ],
+  "six_shell_effective_p4_p8": [
+    333.3333333329999,
+    666.6666666659999
+  ],
+  "initial_report": "output/restored-six-shells/initial-check/state.report.json",
+  "initial_report_sha256": "84a756d00e1ec0d3c39635e9b4424747c3411acad895f9b7dc119b07f365e509",
+  "initial_penalty_scale_min": 0.6510416666660155,
+  "interpretation": "Already active in local initial-state check, not an onset of late numerical instability. Preflight review missed this existing field. Frozen campaign acceptance remains failed. No timestep/equation changes or restart authorized automatically."
+}
