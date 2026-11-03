@@ -169,7 +169,7 @@ def make_plan(root,variant,purpose='evolution',segment=1,restart=None,expected_s
         raise ValueError('Fresh t=0 first segment, same-case restarts only for later evolution segments')
     science(root)
     if segment==1 and variant!='B16':
-        prerequisite='B16' if variant=='B20' else 'B20'
+        prerequisite='B16'  # User's success gate applies to both higher resolutions.
         candidates=sorted((root/'campaigns').glob('n*-boosted-puncture-v1-'+prerequisite.lower()+'-evolution-segment*/plan.json'))
         if not candidates:raise ValueError('Required lower-resolution success has not been recorded')
         previous=verify(root,str(candidates[-1].relative_to(root)))
