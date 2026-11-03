@@ -93,8 +93,8 @@ def build(root):
         '-DCMAKE_CXX_FLAGS=-fp-model=precise -fno-sycl-id-queries-fit-in-int','-DCMAKE_CXX_FLAGS_RELEASE=-O2',
         '-DAthena_ENABLE_MPI=ON','-DAthena_SINGLE_PRECISION=OFF','-DAthena_ENABLE_HYPERBOLIC_SHIFT_3D_TESTS=ON',
         '-DKokkos_ENABLE_SYCL=ON','-DKokkos_ENABLE_SERIAL=ON','-DKokkos_ARCH_INTEL_PVC=ON']
-    commands=[configure,['make','-C',BUILD_DIR,'-j64',*[Path(campaign.binary(v)).name for v in campaign.VARIANTS],
-       *['hyperbolic_shift_3d_checkpoint_constraints_native_'+v['suffix'] for v in campaign.VARIANTS.values()]]]
+    commands=[configure,['make','-C',BUILD_DIR,'-j64',*sorted({Path(campaign.binary(v)).name for v in campaign.VARIANTS}),
+       *sorted({'hyperbolic_shift_3d_checkpoint_constraints_native_'+v['suffix'] for v in campaign.VARIANTS.values()})]]
     result=dict(storage_before=before,commands=[])
     for label,args in zip(['configure','build'],commands):
         r=worker.run_bounded(args,root,logs/(label+'.log'),3600,policy)
