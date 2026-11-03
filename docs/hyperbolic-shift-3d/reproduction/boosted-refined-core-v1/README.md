@@ -1,5 +1,58 @@
 # Boosted hole: uniform Cartesian core refinement
 
+## Current correction: matched Cartesian CFL (BC2)
+
+The user requested matching the original Cartesian CFL. Use dt=.00025 with
+the doubled core resolution. BC1 job9036322 was cancelled during allocation
+startup (PBS F/143, no worker/native output); its matching root lock is released.
+Do not resubmit BC1. Preserve its frozen records as a superseded experiment.
+
+BC2 keeps the original effective scri penalty coefficient explicitly fixed at
+.5*(1-1e-12)/.768=.6510416666660156. Thus p4/p8 and the boundary equation match
+BG1/BC1, while the actual boundary penalty CFL becomes.25 (unlimited nominal.384).
+Simply halving dt without this override would restore full-strength penalties
+and change the boundary equation. BC2 has distinct checkpoint identity and
+source/build/launcher-boosted-refined-core-cfl-v1. All other science and the
+2node/24rank allocation remain unchanged. No failed-state restart or GPU smoke.
+Local BC2 two-step check passed: CFL<.16, finite admitted checkpoint, null<1.3e-15.
+Current source cb0f47b520afe4f88c98e11569f3ba88e632df9a,
+manifestSHA2566d1c29a69bcce98d761d1f896b9f230553d7e4852d8a4c86384f33237634847b.
+Launcher fef313e5a; inspect state.json for full build/job status.
+
+Current BC2 job **9036342** is submitted (last scheduler Q) on two debug-scaling
+nodes /24 GPU tiles. Fresh native t0 to10M, dt=.00025. Plan
+`campaigns/n16-boosted-refined-core-cfl-v1-c16-evolution-segment01/plan.json`,
+SHA256 efe345dccd124cabd9f328829e1d5cd0fa0dc72990f3324023c682add3f18137.
+Build completed with make-j64; all frozen launcher files locally hash/length
+verified. Science SHA256 b0124b10763a01abc9e1feb0436b6022078f320ad6c53ec40e989231cfdab17c.
+Actual evolution binary SHA256 fbb8f8d2e9522d1b72fe28ea8b1e857f2b840f4d58365c5042a16727831f59e6.
+See aurora-build-cfl/ and cfl-{plan,binding,submission}.json. Both user debug
+queues were empty before submission. Footprint6.788GB, headroom2.518GB after
+output/atomic reserves under authorized10GB. No purge was needed.
+
+Hourly monitor aurora-boosted-refined-core-to-10m is ACTIVE for BC2 only.
+Use the frozen cfl launcher/controller/helper for exact BC2 configuration,
+finite payload, source/binary/input/artifact hash, dt/time/steps/progress,
+tracker and fixed-penalty verification plus scheduler/worker/native consistency.
+Healthy admitted walltime checkpoints below10M continue sequentially with the
+same C16 identity, verified checkpoint/hash and horizon seed, after matching
+terminal lock release; inspect both user queues and saved submissions first.
+Numerical failure is terminal and must be preserved/localized, never replayed.
+Keep current restart until successor verification; no retirement without local
+hash/length preservation and fresh remote rehash receipt. No parameter changes.
+Compare to BG1 through4.23M, preserving horizon gaps, trajectory, constraints,
+null/pole/clock and segment-summed floor/sign counts with boundary counts separate.
+Use matching diagnostics only on admitted endpoints. BC2 refines space and time
+together at fixed effective boundary penalty; survival alone proves neither
+convergence nor purely spatial attribution. Inspect figures, commit/push evidence,
+then remove monitor after full terminal follow-up. No AMR implementation here;
+AMR-HANDOFF.md is the separate-thread/new-worktree prompt requested by the user.
+
+## Historical BC1 preparation (superseded)
+
+
+
+
 Branch `codex/boosted-refined-core`. User authorized uniformly refining the
 Cartesian core and a fresh evolution, followed by work on full Cartesian AMR
 reusing AthenaK infrastructure. This fixed-grid experiment must be submitted
@@ -63,3 +116,6 @@ Both user debugqueues were empty before this single submission. Bindingfootprint
 6.697GB with2.609GB headroom after reserves; no purge. Hourly monitor
 `aurora-boosted-refined-core-to-10m` is active. Scientific snapshots remain
 immutable while subsequent Cartesian AMR integration uses a separate branch.
+
+User subsequently requested AMR implementation in another thread/new worktree.
+No AMR implementation is to be done in this campaign thread; use AMR-HANDOFF.md.
