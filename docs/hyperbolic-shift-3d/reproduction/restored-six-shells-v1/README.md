@@ -32,7 +32,7 @@ Build completed with make-j64 and both evolution/diagnostic targets passed freez
 
 Fresh N16 N61 job **9033869** submitted on debug-scaling,one node/12ranks. Plan `campaigns/n16-restored-six-shells-v1-a-evolution-segment01/plan.json`, SHA256 `feb93394476235b3d97178705c7a4deddbd0bd2266ae38ff02a9612dc5d0e749`. Both user debug queues were empty immediately before submission; unrelated held capacity jobs untouched. Storage at binding4,317,516,854bytes, planned196,070,900 plus atomic126,294,312 leaves360,117,934bytes headroom. No further retirement required. Follow state.json and saved submission; never duplicate.
 
-The run and qualified analysis are complete. No continuation or automatic parameter change is scheduled. The monitor is retired after evidence preservation and reporting; final state records its disposition.
+The run and qualified analysis are complete. No continuation or automatic parameter change is scheduled. The20-minute monitor was deleted after evidence preservation, qualified analysis and push; final state and monitor-retired.json record its disposition.
 
 
 ## Terminal result: native completion, campaign acceptance failure
