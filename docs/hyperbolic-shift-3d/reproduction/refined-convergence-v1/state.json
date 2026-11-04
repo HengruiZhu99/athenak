@@ -1,8 +1,8 @@
 {
-  "status": "paired_stationary20_controls_failed_preserved",
+  "status": "stationary_reference_v2_building",
   "current_job": null,
   "branch": "codex/refined-convergence",
-  "next": "No active evolution. Both controls failed/preserved at .463875M. Implement a distinct coherent stationary-reference outer gauge with compatible positive lapse/shift targets, retain inner Z4c and scri asymptotics, test nontrivial perturbations and CPU/device consistency before fresh stationary run. No failed-state replay or boosted run yet.",
+  "next": "Monitor existing build pid3464707 on aurora-uan-0012 in stationary-reference-v2. No duplicate build/freeze/smoke. After completion preserve/hashverify all source/compiler/build/launcher records, then fresh N16 reference plan via launcher-v6, four debug-scaling nodes48ranks dt.000125 target10/3 after all user queues/submissions check. Never launch unused v1 precursor or restart failed paired controls.",
   "goal_active": true,
   "historical_startup_failure": {
     "job": "9038031",
@@ -12,7 +12,7 @@
     "lock_released": true,
     "reason": "Empty rank environment variables broke affinity parser after296s pre-native startup; no cancellation was issued. Scientific binary unchanged."
   },
-  "remote_root": "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/frame-separation-v1",
+  "remote_root": "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/stationary-reference-v2",
   "future_work": "Resolve stationary exterior growth with initial-resolution and exact-halo/interface controls; principal-symbol coincidence audit preliminary, not a root-cause claim. No boosted run yet.",
   "endpoint_analysis": "Separate local RF2 analysis reader qualified on admitted N12 two-step fixture: same native volume integrals within2.10e-16, saved histories1.57e-16, incompatible config rejected and input hash unchanged. See INTERFACE-AUDIT.md and endpoint-reader-check/. No campaign science changed.",
   "causal_controls": {
@@ -26,56 +26,8 @@
     "initial_gauge_shear": "Same initial geometry/K, pointwise metric RHS has peak41.8879 at r.90875 under free beta=-x; native compatible shift cancels to1.57e-9 with fourth-order derivative-step refinement. Original restoring source then forces native shift byup to26.7459; initial shift alone is not coherent repair. See INITIAL-GAUGE-ATTRIBUTION.md. No evolved stability/convergence proof.",
     "failed_radial_geometry": "Large-center failed stage nearly spherical: last nominal row chi16.68, relativeangularrange.02036%, adjacent radial cellchange25.23%; conformaltangentialmetric.01395. Boundary surface unavailable. See profiles evidence; no endpoint admission.",
     "matched_inner_policy": "Both policies fail same1237steps/.463875M and same floorcounts; nominal r>.875 failed fields differ by maxscaled.00090318. Inner policy does not remove this early failure; not proof of universal irrelevance. All151 constant artifacts preserved, lock released.",
-    "full_initial_stationarity": "Compatible stationary outer gauge cancels all18 geometric RHS components with derivative-probe orders4.007/4.004 before roundoff; free gauge rates persist~1753.43. Pointwise not evolved convergence. See initial-stationary-geometry/."
-  },
-  "active_control": {
-    "root": "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/frame-separation-v1",
-    "source_commit": "342715a90157c3f00498b468646f2adea09bb658",
-    "source_manifest_sha256": "995d2b58e1ce57c8c4fdd859cfe61b9471bb21b458185c57f96d27e3f5c4776f",
-    "launcher": "launcher-v4",
-    "build_pid": 1678738,
-    "build_host": "aurora-uan-0012",
-    "status": "numerical_failure",
-    "current_job": null,
-    "n": 16,
-    "dt": 0.000125,
-    "target_M": 10,
-    "nodes": 4,
-    "ranks": 48,
-    "checkpoint_expected_bytes": 858262627,
-    "build_completed": true,
-    "science": {
-      "source_commit": "342715a90157c3f00498b468646f2adea09bb658",
-      "source_manifest_sha256": "995d2b58e1ce57c8c4fdd859cfe61b9471bb21b458185c57f96d27e3f5c4776f",
-      "binary": "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined_amr",
-      "binary_sha256": "f548c09f458fad9f74508cb629ee0f49e4ec8808c824f211056fe5f186c2f892",
-      "build_cache_sha256": "6004ce11ecaf161901385abab1a9220ad82710be01e4741bfe5434e26579fe86",
-      "flags_sha256": "fe278d43791d83badeed824b5c6de640dd4b8cbb56ec105518e39147e3101f28"
-    },
-    "science_sha256": "8f225e988f8521edc2b675124005c4ede5cf9a5ac8f232b83c749252da8d8ed9",
-    "plan": "campaigns/stationary20-constant-n16-segment01/plan.json",
-    "plan_sha256": "b7ea8d1dd4eda38b8a59e610b4c5c981ee45653267aad0449496ca3e621ff92b",
-    "all30_build_records_locally_verified": true,
-    "storage_footprint_bytes": 36650531419,
-    "storage_headroom_after_reserves_bytes": 10349468581,
-    "execution": "Use launcher-v4/control.py collect; healthy same-case --previous verified plan only. Exact backend-derived identity calibration recorded; frozen v3/science untouched.",
-    "following_control": "Distinct compatible outer gauge only after local equation/perturbation/asymptotic controls; no submission yet.",
-    "variant": "constant",
-    "current_restart": null,
-    "launcher_manifest_sha256": "5a80da12a747e2806ec5ad8a000b0b1b8672f878a8abadfa2541a3234f56db68",
-    "completed_job": "9038285.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
-    "terminal": {
-      "native_returncode": 2,
-      "scheduler_exit": 2,
-      "admitted": false,
-      "accepted_steps": 1237,
-      "last_accepted_M": 0.463875,
-      "last_diagnostic_M": 0.45,
-      "reason": "nonpositive interpolated scri geometry",
-      "matching_lock_released": true,
-      "native_seconds": 344.6453752447851,
-      "all151_artifacts_locally_verified": true
-    }
+    "full_initial_stationarity": "Compatible stationary outer gauge cancels all18 geometric RHS components with derivative-probe orders4.007/4.004 before roundoff; free gauge rates persist~1753.43. Pointwise not evolved convergence. See initial-stationary-geometry/.",
+    "stationary_reference_v2": "Consistent reference lapse/shift and K target; no geometry reset. Pointwise stationary outer gauge balance1.02e-10; geometry/inner initialization identical; nontrivial source perturbation1.78e-15; sampled held-geometry lapse response negative. CPU/device Serial all-field RHS+partition exact. N16 MPI2 two-step admitted, no floors, initial constraints unchanged; no GPU/long evidence."
   },
   "historical_stationary6": {
     "plan": "campaigns/stationary6-n16-v2-segment01/plan.json",
@@ -114,18 +66,12 @@
     "remote_root": "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1"
   },
   "ledger_root": "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1",
-  "plan": "campaigns/stationary20-constant-n16-segment01/plan.json",
-  "plan_sha256": "b7ea8d1dd4eda38b8a59e610b4c5c981ee45653267aad0449496ca3e621ff92b",
   "source": {
-    "source_commit": "342715a90157c3f00498b468646f2adea09bb658",
-    "source_manifest_sha256": "995d2b58e1ce57c8c4fdd859cfe61b9471bb21b458185c57f96d27e3f5c4776f",
-    "binary": "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined_amr",
-    "binary_sha256": "f548c09f458fad9f74508cb629ee0f49e4ec8808c824f211056fe5f186c2f892",
-    "build_cache_sha256": "6004ce11ecaf161901385abab1a9220ad82710be01e4741bfe5434e26579fe86",
-    "flags_sha256": "fe278d43791d83badeed824b5c6de640dd4b8cbb56ec105518e39147e3101f28"
+    "source_commit": "b52f09723b9c5a51340401bf91a7bf4426d8f339",
+    "source_manifest_sha256": "19d2445841e7a6e63588a13ab72855fe0da8cd23698c207742f16b16cb3dc608"
   },
-  "launcher": "launcher-v4",
-  "submission_helper": "launcher-v4/submit_reviewed.py",
+  "launcher": "launcher-v6",
+  "submission_helper": "launcher-v6/submit_reviewed.py",
   "historical_stationary20_separated": {
     "root": "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/frame-separation-v1",
     "source_commit": "342715a90157c3f00498b468646f2adea09bb658",
@@ -175,5 +121,86 @@
       "failed_stage_sha256": "0c0434ea55f1b10c74de657791ea9c46ee43cd06492c9e2517cba0c01e21332e"
     }
   },
-  "local_forensic_change": "Separate failed surface capture and error categories compiled; manufactured invalid surface classification passed. Not included in frozen9038285 binary. Source build must receive a new snapshot if used later."
+  "local_forensic_change": "Separate failed surface capture and error categories compiled; manufactured invalid surface classification passed. Not included in frozen9038285 binary. Source build must receive a new snapshot if used later.",
+  "stationary_reference_precursor_build": {
+    "root": "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/stationary-reference-v1",
+    "pid": 3331582,
+    "host": "aurora-uan-0012",
+    "source": "7929749b9408a362ccb38e6de28ba865385d04c6",
+    "source_manifest_sha256": "0147ab29f79f1d0e89b8cae7445bfd650b63f492df01e78e20464bfbf384ec7f",
+    "status": "completed_unused_precursor",
+    "submit_authorized": false,
+    "reason": "Fixed-reference subtraction retains positive held-geometry lapse response from K_*+3; no evolution submitted.",
+    "binary_sha256": "ecab574cba163f311d2d04fbab7319002e55bbb7bba74454a58b07fbaa858215",
+    "all29_records_locally_verified": true
+  },
+  "historical_stationary20_constant": {
+    "root": "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/frame-separation-v1",
+    "source_commit": "342715a90157c3f00498b468646f2adea09bb658",
+    "source_manifest_sha256": "995d2b58e1ce57c8c4fdd859cfe61b9471bb21b458185c57f96d27e3f5c4776f",
+    "launcher": "launcher-v4",
+    "build_pid": 1678738,
+    "build_host": "aurora-uan-0012",
+    "status": "numerical_failure",
+    "current_job": null,
+    "n": 16,
+    "dt": 0.000125,
+    "target_M": 10,
+    "nodes": 4,
+    "ranks": 48,
+    "checkpoint_expected_bytes": 858262627,
+    "build_completed": true,
+    "science": {
+      "source_commit": "342715a90157c3f00498b468646f2adea09bb658",
+      "source_manifest_sha256": "995d2b58e1ce57c8c4fdd859cfe61b9471bb21b458185c57f96d27e3f5c4776f",
+      "binary": "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined_amr",
+      "binary_sha256": "f548c09f458fad9f74508cb629ee0f49e4ec8808c824f211056fe5f186c2f892",
+      "build_cache_sha256": "6004ce11ecaf161901385abab1a9220ad82710be01e4741bfe5434e26579fe86",
+      "flags_sha256": "fe278d43791d83badeed824b5c6de640dd4b8cbb56ec105518e39147e3101f28"
+    },
+    "science_sha256": "8f225e988f8521edc2b675124005c4ede5cf9a5ac8f232b83c749252da8d8ed9",
+    "plan": "campaigns/stationary20-constant-n16-segment01/plan.json",
+    "plan_sha256": "b7ea8d1dd4eda38b8a59e610b4c5c981ee45653267aad0449496ca3e621ff92b",
+    "all30_build_records_locally_verified": true,
+    "storage_footprint_bytes": 36650531419,
+    "storage_headroom_after_reserves_bytes": 10349468581,
+    "execution": "Use launcher-v4/control.py collect; healthy same-case --previous verified plan only. Exact backend-derived identity calibration recorded; frozen v3/science untouched.",
+    "following_control": "Distinct compatible outer gauge only after local equation/perturbation/asymptotic controls; no submission yet.",
+    "variant": "constant",
+    "current_restart": null,
+    "launcher_manifest_sha256": "5a80da12a747e2806ec5ad8a000b0b1b8672f878a8abadfa2541a3234f56db68",
+    "completed_job": "9038285.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "terminal": {
+      "native_returncode": 2,
+      "scheduler_exit": 2,
+      "admitted": false,
+      "accepted_steps": 1237,
+      "last_accepted_M": 0.463875,
+      "last_diagnostic_M": 0.45,
+      "reason": "nonpositive interpolated scri geometry",
+      "matching_lock_released": true,
+      "native_seconds": 344.6453752447851,
+      "all151_artifacts_locally_verified": true
+    }
+  },
+  "active_control": {
+    "root": "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/stationary-reference-v2",
+    "status": "building",
+    "build_pid": 3464707,
+    "build_host": "aurora-uan-0012",
+    "source_commit": "b52f09723b9c5a51340401bf91a7bf4426d8f339",
+    "source_manifest_sha256": "19d2445841e7a6e63588a13ab72855fe0da8cd23698c207742f16b16cb3dc608",
+    "launcher": "launcher-v6",
+    "current_job": null,
+    "n": 16,
+    "dt": 0.000125,
+    "target_M": 10,
+    "nodes": 4,
+    "ranks": 48,
+    "variant": "reference",
+    "checkpoint_expected_bytes": 858262703,
+    "local_checks": "stationary-reference-v2-checks/",
+    "current_restart": null,
+    "execution": "Use explicit /usr/bin/python3.11 remotely. Build has started once with make-j64. Actual binary hashes only after build completion. Fresh plan --variant reference; no GPU smoke gate. Healthy exact same-formulation verified walltime continuation only, failed states terminal."
+  }
 }
