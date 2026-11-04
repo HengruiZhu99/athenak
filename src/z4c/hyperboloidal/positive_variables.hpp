@@ -35,10 +35,10 @@ KOKKOS_INLINE_FUNCTION Real MaterializePositive(Real logarithm,Real A,int field,
 // so its RK rate is the conformal-lapse rate. Floor only finite candidates;
 // nonfinite values remain visible to the geometry rejection path.
 KOKKOS_INLINE_FUNCTION Real FloorDirectLapse(Real perturbation,Real A,
-                                            Real physical_floor,bool &floored){
+                                            Real physical_floor,bool &floored,Real omega=-1){
   floored=false;
   if(physical_floor>0&&A<1&&Kokkos::isfinite(perturbation)){
-    const Real lower=physical_floor*(1-A)-A;
+    const Real lower=physical_floor*(omega>=0 ? omega : 1-A)-A;
     if(perturbation<lower){floored=true;return lower;}
   }
   return perturbation;

@@ -19,6 +19,7 @@ class HyperbolicMeshPlans {
   using Model = HyperbolicComposite;
   using Buffer = HyperbolicCompositeDevice::Buffer;
   struct Options {
+    HyperbolicShiftParameters<Real> parameters;
     Real angular_epsilon = 2;
     bool inner_logical = true, positive = true, puncture_reference = false;
     bool boundary_reuse = true, selective_halos = true;
@@ -119,6 +120,14 @@ class HyperbolicMeshPlans {
       }
     }
     Append(out, o.angular_epsilon);
+    Append(out, int(o.parameters.profile.flat));
+    Append(out, int(o.parameters.enforce_cfl));
+    for (Real value : {o.parameters.profile.flat_radius, o.parameters.profile.outer_radius,
+                       o.parameters.profile.plateau, o.parameters.inner_begin,
+                       o.parameters.inner_end, o.parameters.inner_gamma, o.parameters.bulk_mu,
+                       o.parameters.ratio, o.parameters.damping, o.parameters.restoring,
+                       o.parameters.kappa, o.parameters.tau, o.parameters.epsilon,
+                       o.parameters.inner_z4, o.parameters.kappa1, o.parameters.kappa2}) Append(out,value);
     for (bool b :
          {o.inner_logical, o.positive, o.puncture_reference, o.boundary_reuse, o.selective_halos})
       Append(out, int(b));
@@ -187,6 +196,7 @@ class HyperbolicMeshPlans {
           mesh, false, true, options.angular_epsilon, Model::NormalDerivative::sampled_numerator,
           Model::RadialClosure::donor_seven, options.inner_logical);
       auto& m = *next->model_;
+      m.Configure(options.parameters);
       m.positive_dissipation = options.positive;
       m.puncture_reference = options.puncture_reference;
       auto& l = next->layout;
@@ -242,6 +252,7 @@ class HyperbolicMeshPlans {
       }
       next->bulk = std::make_unique<HyperbolicCompositeDevice>(m.grid, l.first, l.local,
                                                                m.radial_plan.get());
+      next->bulk->Configure(options.parameters);
       next->halo = std::make_unique<HyperbolicCompositeExchange>(m, l.first_block, l.end_block,
                                                                  blocks, options.selective_halos);
       next->boundary = std::make_unique<HyperbolicScriDevice>(m, l.surface_first, l.surface_local);

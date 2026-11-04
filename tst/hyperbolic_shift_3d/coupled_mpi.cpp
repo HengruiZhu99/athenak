@@ -14,6 +14,7 @@
 #include "z4c/hyperboloidal/hyperbolic_sampled_normal_device.hpp"
 #include "z4c/hyperboloidal/algebraic_projection.hpp"
 #include "fixed_composite_mesh.hpp"
+#include "refined_configuration.hpp"
 #include "z4c/hyperboloidal/native_wormhole.hpp"
 #include "z4c/hyperboloidal/native_boosted_wormhole.hpp"
 #ifndef HYPERBOLIC_NATIVE_WORMHOLE
@@ -146,15 +147,16 @@ static_assert(!hyperbolic_reproduction::refined_core ||
               (h::boost_free_initial_gauge && hyperbolic_reproduction::six_shells));
 static_assert(!HYPERBOLIC_REFINED_CORE_MATCHED_CFL || hyperbolic_reproduction::refined_core);
 constexpr const char* checkpoint_magic =
-    h::normalized_inner_shift               ? "HYP3D_MPI_BN1"
-    : HYPERBOLIC_REFINED_CORE_MATCHED_CFL   ? "HYP3D_MPI_BC2"
-    : hyperbolic_reproduction::refined_core ? "HYP3D_MPI_BC1"
-    : h::boost_free_initial_gauge           ? "HYP3D_MPI_BG1"
-    : h::boosted_puncture                   ? "HYP3D_MPI_BX1"
-    : hyperbolic_reproduction::six_shells   ? "HYP3D_MPI_N61"
-    : h::broad_smooth_a                     ? "HYP3D_MPI_NB1"
-    : h::zero_shift_restoration             ? "HYP3D_MPI_NZ1"
-    : h::wide_restoring_collar              ? "HYP3D_MPI_NW1"
+    hyperbolic_reproduction::configured_formulation ? "HYP3D_MPI_RF1"
+    : h::normalized_inner_shift                     ? "HYP3D_MPI_BN1"
+    : HYPERBOLIC_REFINED_CORE_MATCHED_CFL           ? "HYP3D_MPI_BC2"
+    : hyperbolic_reproduction::refined_core         ? "HYP3D_MPI_BC1"
+    : h::boost_free_initial_gauge                   ? "HYP3D_MPI_BG1"
+    : h::boosted_puncture                           ? "HYP3D_MPI_BX1"
+    : hyperbolic_reproduction::six_shells           ? "HYP3D_MPI_N61"
+    : h::broad_smooth_a                             ? "HYP3D_MPI_NB1"
+    : h::zero_shift_restoration                     ? "HYP3D_MPI_NZ1"
+    : h::wide_restoring_collar                      ? "HYP3D_MPI_NW1"
     : cubed_sphere::scri_first6
         ? (h::CompositeDissipation::consistent
                ? (h::shared_restoration ? "HYP3D_MPI_NS2" : "HYP3D_MPI_NC2")
@@ -361,6 +363,7 @@ class Evolution {
   std::string partition_source_report;
   std::vector<int> counts, displacements, surface_counts, surface_displacements;
   std::vector<int> residual_counts, residual_displacements;
+  Real initial_characteristic_rate = 0;
   Real time = 0, gap = 1e300, cfl = 0, null_ghost = 0, null_before = 0, last_rhs = 0;
   Real angular_epsilon = 0, angular_upper_bound = 0, angular_cfl = 0, angular_cfl_max = 0;
   Real angular_unlimited_cfl_max = 0, angular_epsilon_min = std::numeric_limits<Real>::infinity();
@@ -542,6 +545,11 @@ class Evolution {
           return hyperbolic_reproduction::SphericalOverlapMesh(n);
         return hyperbolic_reproduction::FixedMesh(n, core_subdivisions, evolved_overlap);
       }();
+      if constexpr (hyperbolic_reproduction::configured_formulation) {
+        mesh.radii = hyperbolic_reproduction::refined_configuration.shell_radii;
+        if (mesh.radii.empty())
+          throw std::logic_error("refined configuration was not loaded");
+      }
       using ModelType = h::HyperbolicComposite;
       const auto normal = scri_sampled_normal ? ModelType::NormalDerivative::sampled_numerator
                                               : ModelType::NormalDerivative::analytic_jets;
@@ -551,6 +559,8 @@ class Evolution {
       legacy_model = std::make_unique<ModelType>(std::move(mesh), false, scri_angular_exchange,
                                                  epsilon, normal, radial, inner_transition_logical);
       auto& model = *legacy_model;
+      if constexpr (hyperbolic_reproduction::configured_formulation)
+        model.Configure(hyperbolic_reproduction::refined_configuration.gauge);
       model.positive_dissipation = continuous_positive && !direct_chi;
       model.puncture_reference = kind == 2;
       total = model.grid.active.size();
@@ -605,6 +615,7 @@ class Evolution {
       setup_phase(0);
       legacy_kernel = std::make_unique<h::HyperbolicCompositeDevice>(model.grid, first, local,
                                                                      model.radial_plan.get());
+      legacy_kernel->Configure(model.parameters);
       std::vector<int> owned_blocks;
       if constexpr (continuous_positive) {
         std::set<int> blocks;
@@ -662,6 +673,8 @@ class Evolution {
       }
     } else {
       plan_options.angular_epsilon = epsilon;
+      if constexpr (hyperbolic_reproduction::configured_formulation)
+        plan_options.parameters = hyperbolic_reproduction::refined_configuration.gauge;
       plan_options.puncture_reference = kind == 2;
       plans.Rebuild(hyperbolic_reproduction::ContinuousCoreMesh(n), plan_options, {}, mesh_epoch);
       plans.Use(mesh_epoch, [&](auto& g) {
@@ -1027,6 +1040,7 @@ class Evolution {
     Kokkos::deep_copy(base, state);
     Kokkos::deep_copy(surface_base, surface);
     const Real base_time = time;
+    const auto conformal_profile = Model().parameters.profile;
     const auto puncture_base = puncture;
     std::array<std::array<Real, 3>, 4> puncture_rates{};
     auto stage = [&](int s, Real h) {
@@ -1072,7 +1086,11 @@ class Evolution {
               const Real candidate = begin(offset + i) + h * k(i);
               z4c::hyperboloidal::RecordCandidateSign(candidate + A(p), base_time + h, false,
                                                       &cs(16 * p + 8));
-              out(i) = h::FloorDirectLapse(candidate, A(p), physical_lapse_floor, floored);
+              out(i) = h::FloorDirectLapse(
+                  candidate, A(p), physical_lapse_floor, floored,
+                  conformal_profile.flat
+                      ? conformal_profile.Radial(sqrt(fmax(Real(0), 2 * A(p) - 1))).value
+                      : -1);
               if (floored) {
                 Kokkos::atomic_add(&fs(0), Real(1));
                 Kokkos::atomic_max(&fs(1), sqrt(2 * A(p) - 1));
@@ -1207,7 +1225,11 @@ class Evolution {
               bool floored = false;
               const Real candidate = begin(offset + i) + increment;
               h::RecordCandidateSign(candidate + A(p), base_time + dt, true, &cs(16 * p + 8));
-              out(i) = h::FloorDirectLapse(candidate, A(p), physical_lapse_floor, floored);
+              out(i) = h::FloorDirectLapse(
+                  candidate, A(p), physical_lapse_floor, floored,
+                  conformal_profile.flat
+                      ? conformal_profile.Radial(sqrt(fmax(Real(0), 2 * A(p) - 1))).value
+                      : -1);
               next(i) = floored ? 0 : (out(i) - begin(offset + i)) - increment;
               if (floored) {
                 Kokkos::atomic_add(&fs(0), Real(1));
@@ -1287,6 +1309,24 @@ class Evolution {
       throw;
     }
   }
+  Real SelectTimestep(Real cap, bool continuing = false) {
+    constexpr Real probe = 1e-8;
+    RefreshBoundary(probe);
+    const auto halo = exchange()->Fill(state);
+    SynchronizeError(halo.invalid, "invalid initial halos for timestep audit");
+    const auto stats = kernel()->Evaluate(exchange()->padded, probe, false, .5, surface,
+                                          exchange()->positive_ko, direct_lapse);
+    SynchronizeError(stats.bad_cells, "initial characteristic audit rejected state");
+    Real rate = stats.max_cfl / probe;
+    MPI_Allreduce(MPI_IN_PLACE, &rate, 1, MPI_ATHENA_REAL, MPI_MAX, MPI_COMM_WORLD);
+    SynchronizeError(!(rate > 0) || !std::isfinite(rate), "invalid characteristic rate");
+    initial_characteristic_rate = rate;
+    const auto& cfg = hyperbolic_reproduction::refined_configuration;
+    Real selected = std::min({cap, (continuing ? Real(.4) : cfg.cfl_target) / rate, Real(.005)});
+    if (angular_epsilon > 0 && angular_upper_bound > 0)
+      selected = std::min(selected, Real(2) / (angular_epsilon * n * angular_upper_bound));
+    return selected;
+  }
   void WriteCheckpoint(const std::string& path, int kind, Real dt, bool admitted) {
     if (Model().grid.mesh.amr_cartesian_core)
       throw std::logic_error("AMR requires its distinct checkpoint writer");
@@ -1343,6 +1383,8 @@ class Evolution {
             config.position[a] = puncture[a];
           out.write(reinterpret_cast<const char*>(&config), sizeof(config));
         }
+        if constexpr (hyperbolic_reproduction::configured_formulation)
+          hyperbolic_reproduction::refined_configuration.WriteIdentity(out);
         for (const V* v : {&values, &comps, &edge, &edge_comps})
           out.write(reinterpret_cast<const char*>(v->data()), v->size() * sizeof(Real));
         out.close();
@@ -1431,6 +1473,8 @@ class Evolution {
             puncture[a] = config.position[a];
           }
         }
+        if constexpr (hyperbolic_reproduction::configured_formulation)
+          hyperbolic_reproduction::refined_configuration.ReadIdentity(in);
         for (auto* v : {&values, &comps, &edge, &edge_comps})
           in.read(reinterpret_cast<char*>(v->data()), v->size() * sizeof(Real));
         char tail;
@@ -1562,21 +1606,26 @@ int main(int argc, char** argv) {
       if (global_variable::nranks != std::stoi(expected))
         throw std::runtime_error("MPI rank count differs from the bound launch plan");
     if (argc < 9 ||
-        argc > (measured_partition         ? 15
-                : scri_angular_dissipation ? 14
-                                           : 13) ||
-        (measured_partition && argc != 15))
+        argc > (hyperbolic_reproduction::configured_formulation ? 15
+                : measured_partition                            ? 15
+                : scri_angular_dissipation                      ? 14
+                                                                : 13) ||
+        (measured_partition && argc != 15) ||
+        (hyperbolic_reproduction::configured_formulation && argc != 15))
       throw std::invalid_argument(
           "usage: mpi n output kind target dt initial|- restart|- wall_seconds "
           "[diagnostic_interval=.1] [horizon_rms_tol=.001] [horizon_lmax=6] [horizon_ntheta=12] "
-          "[angular_epsilon=2 (V4/V5 only)] [cost partition file (measured target only)]");
+          "[angular_epsilon=2 (V4/V5 only)] [cost partition file (measured target) or "
+          "configuration file (refined target)]");
     const int n = std::stoi(argv[1]);
     const std::string output = argv[2], kind_name = argv[3], initial = argv[6], restart = argv[7];
     const int kind = kind_name == "minkowski"  ? 0
                      : kind_name == "pulse"    ? 1
                      : kind_name == "puncture" ? 2
                                                : -1;
-    const Real end = std::stod(argv[4]), dt = std::stod(argv[5]), wall = std::stod(argv[8]);
+    const Real end = std::stod(argv[4]), requested_dt = std::stod(argv[5]),
+               wall = std::stod(argv[8]);
+    Real dt = requested_dt;
     const Real interval = argc > 9 ? std::stod(argv[9]) : .1,
                horizon_tolerance = argc > 10 ? std::stod(argv[10]) : .001;
     const auto angular_integer = [](const char* text) {
@@ -1611,6 +1660,21 @@ int main(int argc, char** argv) {
       throw std::invalid_argument("native puncture target does not read generated field files");
     if (initial != "-" && restart != "-")
       throw std::invalid_argument("supply initial data or restart, not both");
+    if constexpr (hyperbolic_reproduction::configured_formulation) {
+      CollectiveLocal([&] {
+        hyperbolic_reproduction::refined_configuration.Load(
+            argv[14], hyperbolic_reproduction::ContinuousCoreMesh(n));
+        if (restart != "-") {
+          Header saved;
+          std::ifstream input(restart, std::ios::binary);
+          input.read(reinterpret_cast<char*>(&saved), sizeof(saved));
+          if (!input || !(saved.dt > 0 && saved.dt <= requested_dt) || !std::isfinite(saved.dt))
+            throw std::invalid_argument("invalid configured restart timestep");
+          dt = saved.dt;
+        }
+      });
+      hyperbolic_reproduction::refined_configuration.CheckCollective();
+    }
     const auto started = std::chrono::steady_clock::now();
     std::unique_ptr<Evolution> evolution;
     CollectiveLocal([&] {
@@ -1663,7 +1727,10 @@ int main(int argc, char** argv) {
           if constexpr (h::boosted_puncture) {
             h::NativeBoostedWormhole pgen;
             for (int p = 0; p < e.total; ++p) {
-              const auto fields = pgen.Fields(e.Model().grid.geometry[p].x);
+              auto fields = pgen.Fields(e.Model().grid.geometry[p].x);
+              if constexpr (hyperbolic_reproduction::configured_formulation)
+                hyperbolic_reproduction::refined_configuration.InitialFields(
+                    e.Model().grid.geometry[p].x, fields);
               for (int f = 0; f < 31; ++f)
                 e.initial_state[31 * p + f] = fields[f];
             }
@@ -1674,7 +1741,10 @@ int main(int argc, char** argv) {
                                        ? h::NativeWormhole::TransitionProfile::polynomial_c6
                                        : h::NativeWormhole::TransitionProfile::bump);
             for (int p = 0; p < e.total; ++p) {
-              const auto fields = pgen.Fields(e.Model().grid.geometry[p].x);
+              auto fields = pgen.Fields(e.Model().grid.geometry[p].x);
+              if constexpr (hyperbolic_reproduction::configured_formulation)
+                hyperbolic_reproduction::refined_configuration.InitialFields(
+                    e.Model().grid.geometry[p].x, fields);
               for (int f = 0; f < 31; ++f)
                 e.initial_state[31 * p + f] = fields[f];
             }
@@ -1713,6 +1783,14 @@ int main(int argc, char** argv) {
       });
     if (restart != "-")
       e.LoadCheckpoint(restart, kind, dt);
+    if constexpr (hyperbolic_reproduction::configured_formulation) {
+      const Real allowed = e.SelectTimestep(requested_dt, restart != "-");
+      if (restart == "-")
+        dt = allowed;
+      else
+        e.SynchronizeError(dt > allowed * (1 + 1e-12),
+                           "restart timestep exceeds the current characteristic bound");
+    }
     if (e.time > end + 1e-14)
       throw std::runtime_error("checkpoint later than requested end");
     const Real start_time = e.time;
@@ -1770,7 +1848,7 @@ int main(int argc, char** argv) {
                 std::vector<std::array<std::array<Real, 3>, 3>> dd;
                 e.Model().grid.SampleJets(e.owned_padding, 31, x, v, d, dd, true);
                 const auto u = e.Model().Jet(x, v, d, dd);
-                q = h::PhysicalHorizonGeometry(u, e.Model().Omega(x, u));
+                q = h::PhysicalHorizonGeometry(u, e.Model().OmegaAt(x, u));
               } catch (const std::exception&) {
                 q = {};
               }
@@ -2151,8 +2229,12 @@ int main(int argc, char** argv) {
                << (h::broad_smooth_a ? "polynomial_c6" : "bump") << "\""
                << ",\"puncture_position\":[" << e.puncture[0] << ',' << e.puncture[1] << ','
                << e.puncture[2] << ']'
+               << (hyperbolic_reproduction::configured_formulation
+                       ? ",\"formulation_identity\":" +
+                             JsonString(hyperbolic_reproduction::refined_configuration.identity)
+                       : "")
                << ",\"normalized_inner_shift\":" << (h::normalized_inner_shift ? "true" : "false")
-               << ",\"inner_shift_gamma\":" << h::InnerTelegrapher::shift_gamma
+               << ",\"inner_shift_gamma\":" << e.Model().parameters.inner_gamma
                << ",\"inner_shift_eta\":" << h::InnerTelegrapher::shift_eta
                << ",\"initial_shift_policy\":"
                << JsonString(h::boost_free_initial_gauge ? "zero_inner_hyperboloidal_outer"
@@ -2345,6 +2427,18 @@ int main(int argc, char** argv) {
                     "-(scri_point+1)\",\"chi_nonpositive_policy\":\"record_and_floor_finite_"
                     "candidates_everywhere\"";
         }
+        if constexpr (hyperbolic_reproduction::configured_formulation) {
+          const auto& cfg = hyperbolic_reproduction::refined_configuration;
+          report << ",\"initial_characteristic_rate\":" << e.initial_characteristic_rate
+                 << ",\"requested_dt_cap\":" << requested_dt << ",\"cfl_target\":" << cfg.cfl_target
+                 << ",\"omega_flat_radius\":" << cfg.gauge.profile.flat_radius
+                 << ",\"omega_outer_radius\":" << cfg.gauge.profile.outer_radius
+                 << ",\"omega_plateau\":" << cfg.gauge.profile.plateau
+                 << ",\"gauge_begin\":" << cfg.gauge.inner_begin
+                 << ",\"gauge_end\":" << cfg.gauge.inner_end
+                 << ",\"native_affine_radius\":" << cfg.affine_radius
+                 << ",\"largest_transition_spacing\":" << cfg.largest_transition_spacing;
+        }
         report << ",\"sparse_counter_scope\":\"current_plan_generation\"";
         report << ",\"mesh_plan_lifetime\":\""
                << (coordinated_plans ? "coordinated_generation" : "independent_fixed")
@@ -2352,8 +2446,15 @@ int main(int argc, char** argv) {
                << ",\"forced_plan_rebuilds\":" << e.forced_plan_rebuilds;
         report << ",\"experimental_timestep\":"
                << (HYPERBOLIC_EXPERIMENTAL_TIMESTEP ? "true" : "false")
-               << ",\"cartesian_dt_over_dx\":" << dt / (.18 / n) << ",\"bulk_cfl_guard_enabled\":"
-               << (HYPERBOLIC_EXPERIMENTAL_TIMESTEP ? "false" : "true")
+               << ",\"cartesian_dt_over_dx\":"
+               << dt / (hyperbolic_reproduction::configured_formulation
+                            ? .36 / (core_subdivisions * n)
+                            : .18 / n)
+               << ",\"bulk_cfl_guard_enabled\":"
+               << (HYPERBOLIC_EXPERIMENTAL_TIMESTEP &&
+                           !hyperbolic_reproduction::configured_formulation
+                       ? "false"
+                       : "true")
                << ",\"timestep_aware_penalty\":"
                << (HYPERBOLIC_EXPERIMENTAL_TIMESTEP ? "true" : "false")
                << ",\"scri_penalty_cfl_max\":" << e.scri_penalty_cfl_max

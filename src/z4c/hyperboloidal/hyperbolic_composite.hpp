@@ -34,6 +34,7 @@ class HyperbolicComposite {
   cubed_sphere::CompositeDifference grid;
   cubed_sphere::ScriSurface scri;
   std::unique_ptr<const cubed_sphere::ScriRadialDifference> radial_plan;
+  HyperbolicShiftParameters<Real> parameters;
   V state,compensation,edge_compensation,failed_state,failed_boundary;
   int failed_stage=0;
   bool adaptive;
@@ -72,6 +73,24 @@ class HyperbolicComposite {
     }
     for(size_t p=0;p<grid.active.size();++p)state[nf*p]=1;
     for(size_t p=0;p<scri.rows.size();++p)scri.values[nf*p]=1;
+  }
+  void Configure(const HyperbolicShiftParameters<Real>& value) {
+    value.Validate();
+    parameters=value;
+    if (!value.profile.flat) return;
+    for (size_t p=0; p<grid.active.size(); ++p) {
+      std::array<double,31> q{};
+      for (int f=0; f<nf; ++f) q[f]=state[nf*p+f];
+      value.profile.TransformFields(Radius(grid.geometry[p].x),q);
+      for (int f=0; f<nf; ++f) state[nf*p+f]=q[f];
+    }
+  }
+  OmegaJet<Real> OmegaAt(const Real*x,const Z4cJet<Real>&u,bool boundary=false) const {
+    if (!parameters.profile.flat) return Omega(x,u,boundary);
+    auto o=parameters.profile.At(x);
+    if (boundary) o.omega=0;
+    SetStationaryOmegaNormal(u.alpha.value,u.beta.value,u.alpha.d,u.beta.d,o);
+    return o;
   }
   static Real Radius(const Real*x){return std::sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);}
   void BulkDerivatives(const V&padded,int f,size_t p,Real d[3],Real dd[3][3],bool second=true)const{
@@ -190,9 +209,9 @@ class HyperbolicComposite {
     if(endpoint_pole)endpoint=*endpoint_pole;
     else{
       const auto sample=scri.Sample(point,padded,scri.values,nf);const auto*x=row.geometry.x;
-      const auto u=Jet(x,sample.value,sample.d,sample.dd);const auto o=Omega(x,u,true);
+      const auto u=Jet(x,sample.value,sample.d,sample.dd);const auto o=OmegaAt(x,u,true);
       auto parts=ConformalRHS(u,o,4.,-.99);
-      if(!HyperbolicDamping(x,u,o,parts))throw std::runtime_error("invalid sampled scri endpoint source");
+      if(!HyperbolicDamping(x,u,o,parts,parameters))throw std::runtime_error("invalid sampled scri endpoint source");
       endpoint=parts.pole;
     }
     Z4cRHS<Real> out{};V value(nf);
@@ -207,9 +226,9 @@ class HyperbolicComposite {
         BulkDerivatives(padded,f,active,df,ddf,f<=6||f==18||(f>=22&&f<25));
         for(int a=0;a<3;++a){d[f][a]=df[a];for(int b=0;b<3;++b)dd[f][a][b]=ddf[a][b];}
       }
-      const auto u=Jet(x,value,d,dd);const auto o=Omega(x,u,false);
+      const auto u=Jet(x,value,d,dd);const auto o=OmegaAt(x,u,false);
       auto parts=ConformalRHS(u,o,4.,-.99);
-      if(!HyperbolicDamping(x,u,o,parts))throw std::runtime_error("invalid sampled scri interior source");
+      if(!HyperbolicDamping(x,u,o,parts,parameters))throw std::runtime_error("invalid sampled scri interior source");
       // Anchor differences annihilate constant numerators exactly. Keep the
       // endpoint value itself in BoundaryRates' unchanged weak 4 N / h term.
       const auto&p=parts.pole;const Real w=(donors==5?weights[s]:donor_weights[s])/row.radial_spacing;
@@ -242,8 +261,8 @@ class HyperbolicComposite {
     const V angular=angular_epsilon>0?angular_plan->Apply(scri.values,angular_epsilon):V{};
     for(size_t p=0;p<scri.rows.size();++p){const auto&row=scri.rows[p];const auto*x=row.geometry.x;
       const auto sample=scri.Sample(p,padded,scri.values,nf);const auto u=Jet(x,sample.value,sample.d,sample.dd);
-      const auto o=Omega(x,u,true);const auto g=Geometry(u.metric);
-      auto parts=ConformalRHS(u,o,4.,-.99);if(!HyperbolicDamping(x,u,o,parts))throw std::runtime_error("scri source invalid");
+      const auto o=OmegaAt(x,u,true);const auto g=Geometry(u.metric);
+      auto parts=ConformalRHS(u,o,4.,-.99);if(!HyperbolicDamping(x,u,o,parts,parameters))throw std::runtime_error("scri source invalid");
       auto pole=TensorPoleNormalJet(u,o,x,x,4.,-.99,1.,1.,true,true);
       if(normal_derivative==NormalDerivative::sampled_numerator){
         const auto normal=SampledPoleNormalDerivative(p,padded,&parts.pole);
@@ -272,7 +291,7 @@ class HyperbolicComposite {
       }
       StoreGeometry(rate,&out[p*nf]);
       const auto B=Vector(19,sample.value,sample.d);
-      const auto gauge=HyperbolicGauge(x,u,B,&sample.value[25]);
+      const auto gauge=HyperbolicGauge(x,u,B,&sample.value[25],parameters);
       clock_max=std::max(clock_max,std::abs(gauge.lapse_regular-pole.lapse.derivative));
       pole_max=std::max(pole_max,std::abs(gauge.lapse_pole));
       for(int a=0;a<3;++a)out[p*nf+19+a]=gauge.flux_rate[a];
@@ -281,7 +300,7 @@ class HyperbolicComposite {
       for(int i=0;i<3;++i)for(int j=0;j<3;++j)invn[i]+=g.inverse[i][j]*x[j];
       for(int i=0;i<3;++i)for(int j=0;j<3;++j)qdot-=invn[i]*rate.metric[i][j]*invn[j];
       const Real speed=std::sqrt(u.chi.value*q),speed_t=(rate.chi*q+u.chi.value*qdot)/(2*speed);
-      const Real mu=ShiftCoefficients(Real(1),Real(1),u.chi.value).mu;
+      const Real mu=ShiftCoefficients(Real(1),Real(1),u.chi.value,parameters).mu;
       for(int a=0;a<3;++a){Real regular=-x[a],restoring_limit=0;
         for(int b=0;b<3;++b){regular+=u.beta.value[b]*u.beta.d[b][a];if constexpr(!zero_shift_restoration) restoring_limit+=4*x[b]*sample.d[22+a][b];}
         const Real target=-speed_t*x[a];
@@ -366,14 +385,14 @@ class HyperbolicComposite {
       try{for(size_t p=grid.active.size()*worker/count;p<grid.active.size()*(worker+1)/count;++p){const auto*x=grid.geometry[p].x;
       for(int f=0;f<nf;++f){v[f]=values[p*nf+f];Real df[3],ddf[3][3];BulkDerivatives(padded,f,p,df,ddf,f<=6||f==18||(f>=22&&f<25));
         for(int a=0;a<3;++a){d[f][a]=df[a];for(int b=0;b<3;++b)dd[f][a][b]=ddf[a][b];}}
-      const auto u=Jet(x,v,d,dd);const auto o=Omega(x,u);auto parts=ConformalRHS(u,o,4.,-.99);
-      if(!HyperbolicDamping(x,u,o,parts))throw std::runtime_error("invalid bulk source");
+      const auto u=Jet(x,v,d,dd);const auto o=OmegaAt(x,u);auto parts=ConformalRHS(u,o,4.,-.99);
+      if(!HyperbolicDamping(x,u,o,parts,parameters))throw std::runtime_error("invalid bulk source");
       Z4cRHS<Real> rate{};if(!AssembleInterior(parts,o.omega,rate))throw std::runtime_error("invalid interior rate");
       StoreGeometry(rate,&out[p*nf]);
-      const auto B=Vector(19,v,d),D=Vector(25,v,d);const auto gauge=HyperbolicGauge(x,u,B,D.value);
+      const auto B=Vector(19,v,d),D=Vector(25,v,d);const auto gauge=HyperbolicGauge(x,u,B,D.value,parameters);
       if(!gauge.valid)throw std::runtime_error("invalid hyperbolic gauge");
       out[p*nf+18]=gauge.lapse_regular+gauge.lapse_pole/o.omega;
-      const Real r=Radius(x);const auto c=ShiftCoefficients(r,u.alpha.value,u.chi.value);
+      const Real r=Radius(x);const auto c=ShiftCoefficients(r,u.alpha.value,u.chi.value,parameters);
       const Real w=adaptive?1-c.collar:0;
       Real driver[3];if(!HyperbolicAuxiliaryRate(u,D,rate.lambda,driver))throw std::runtime_error("invalid D rate");
       for(int a=0;a<3;++a){out[p*nf+19+a]=gauge.flux_rate[a];out[p*nf+25+a]=driver[a];
@@ -389,7 +408,9 @@ class HyperbolicComposite {
       Real speed=0;for(int A=0;A<3;++A){Real transport=0,Q=0,E=0;
         for(int i=0;i<3;++i){transport+=grid.geometry[p].J[A][i]*u.beta.value[i];E+=grid.geometry[p].J[A][i]*grid.geometry[p].J[A][i];
           for(int j=0;j<3;++j)Q+=g.inverse[i][j]*grid.geometry[p].J[A][i]*grid.geometry[p].J[A][j];}
-        speed+=std::abs(transport)+std::sqrt(std::max(GaugeShiftSpeedSquared(c,Q),GaugeLapseSpeedSquared(u.alpha.value,u.chi.value,c,Q,E)));}
+        Real speed2=std::max(GaugeShiftSpeedSquared(c,Q),GaugeLapseSpeedSquared(u.alpha.value,u.chi.value,c,Q,E,parameters));
+        if (parameters.enforce_cfl) speed2=std::max(speed2,u.alpha.value*u.alpha.value*u.chi.value*Q);
+        speed+=std::abs(transport)+std::sqrt(speed2);}
       local.cfl=std::max(local.cfl,dt*grid.n*speed);
       if(dt*grid.n*speed>.4||dt/.02>.25)throw std::runtime_error("hyperbolic composite CFL exceeded");
     }

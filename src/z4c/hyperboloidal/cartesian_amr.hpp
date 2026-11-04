@@ -17,7 +17,9 @@ class CartesianAMR {
   std::unique_ptr<Mesh> mesh;
   DvceArray5D<Real> state,coarse,compensation,coarse_compensation;
   const int n,ng=4;
-  CartesianAMR(int cells,int subdivisions=2,int capacity=64,int levels=3):n(cells){
+  const std::vector<Real> shell_radii;
+  CartesianAMR(int cells,int subdivisions=2,int capacity=64,int levels=3,
+               std::vector<Real> radii={.305,.45,.6,.75,.875,1}):n(cells),shell_radii(std::move(radii)){
     input.SetReal("time","cfl_number",.1);
     for(int a=1;a<=3;++a){const auto x=std::to_string(a);
       input.SetReal("mesh","x"+x+"min",-.18);input.SetReal("mesh","x"+x+"max",.18);
@@ -36,7 +38,7 @@ class CartesianAMR {
     mesh->pmr->RegisterCC("hyperboloidal.compensation31.v1",compensation,coarse_compensation);
   }
   cubed_sphere::CompositeMesh Descriptor()const{
-    cubed_sphere::CompositeMesh out(.18,{.305,.45,.6,.75,.875,1},1,n,4,1,.16);
+    cubed_sphere::CompositeMesh out(.18,shell_radii,1,n,4,1,.16);
     const auto shells=out.blocks;out.blocks.clear();
     for(int m=0;m<mesh->nmb_total;++m){const auto&l=mesh->lloc_eachmb[m];
       cubed_sphere::CompositeBlock b;b.refinement=l.level-mesh->root_level;

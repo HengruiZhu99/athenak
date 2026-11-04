@@ -11,12 +11,16 @@ static_assert(hyperbolic_reproduction::six_shells && h::broad_smooth_a &&
               h::boost_free_initial_gauge && native_wormhole && direct_chi && direct_lapse);
 static_assert(!h::CompositeDissipation::consistent && !cubed_sphere::scri_first6 &&
               h::fixed_scri_penalty_scale == .6510416666660156);
+#if HYPERBOLIC_CONFIGURED_FORMULATION
+constexpr char science[] = "HYP3D_AMR_RF1;checksum-fnv1a64;native31;configured-normalized-boost;";
+#else
 constexpr char science[] =
     "HYP3D_AMR1;checksum-fnv1a64;native31;Cartesian-components;RK4-compensated;FD4-biased4;KO8-"
     "target-spacing;halo-Lagrange6;AthenaK-point-transfer5;six-shells:.16,.305,.45,.6,.75,.875,1;"
     "core:.18;overlap3;C6:4M-12M;restoration4:.6-.9;blend:.2-.56;free-gauge;boost:.1;M:1/"
     "3;direct-chi-lapse;chi-floor:1e-8,.03;lapse-floor:1e-10;scri-original;angular2;penalty:."
     "6510416666660156";
+#endif
 struct Snapshot {
   int n = 0, kind = 0, subdivisions = 2;
   uint64_t steps = 0, regrids = 0;
@@ -190,6 +194,8 @@ void Write(const std::string& path, const Snapshot& s) {
     return;
   std::ofstream o(path + ".tmp", std::ios::binary);
   o.write(science, sizeof(science));
+  if constexpr (hyperbolic_reproduction::configured_formulation)
+    hyperbolic_reproduction::refined_configuration.WriteIdentity(o);
   for (auto name : h::AMRFields::names) {
     o.write(name.data(), name.size());
     o.put('\0');
@@ -233,6 +239,8 @@ Snapshot Read(const std::string& path, int n, int kind, Real dt) {
   i.read(tag, sizeof(tag));
   if (!i || std::memcmp(tag, science, sizeof(tag)))
     throw std::runtime_error("AMR scientific identity mismatch");
+  if constexpr (hyperbolic_reproduction::configured_formulation)
+    hyperbolic_reproduction::refined_configuration.ReadIdentity(i);
   for (auto name : h::AMRFields::names) {
     std::string actual;
     std::getline(i, actual, '\0');
@@ -251,8 +259,10 @@ Snapshot Read(const std::string& path, int n, int kind, Real dt) {
   Get(i, s.tracker);
   Get(i, s.floors);
   Get(i, s.diagnostics);
-  if (s.n != n || s.kind != kind || s.dt != dt || (s.subdivisions != 2 && s.subdivisions != 4) ||
-      !std::isfinite(s.time) || s.time < 0 || !(s.seed > 0 && s.seed < 1))
+  if (s.n != n || s.kind != kind ||
+      (!hyperbolic_reproduction::configured_formulation && s.dt != dt) ||
+      (s.subdivisions != 2 && s.subdivisions != 4) || !std::isfinite(s.time) || s.time < 0 ||
+      !(s.seed > 0 && s.seed < 1))
     throw std::runtime_error("AMR checkpoint configuration mismatch");
   uint64_t count;
   Get(i, count);
@@ -417,16 +427,18 @@ int main(int argc, char** argv) {
   Kokkos::initialize(argc, argv);
   int code = 0;
   try {
-    if (argc < 7 || argc > 8)
+    if (argc < 7 || argc > (hyperbolic_reproduction::configured_formulation ? 9 : 8) ||
+        (hyperbolic_reproduction::configured_formulation && argc != 9))
       throw std::invalid_argument(
           "usage: amr_evolution n minkowski|wave|boost steps dt output [restart|-] "
-          "[dynamic|fixed|uniform]");
+          "[dynamic|fixed|uniform] [configuration file (refined target)]");
     const int n = std::stoi(argv[1]), kind = std::string(argv[2]) == "minkowski" ? 0
                                              : std::string(argv[2]) == "wave"    ? 1
                                              : std::string(argv[2]) == "boost"   ? 2
                                                                                  : -1;
     const int stop = std::stoi(argv[3]);
-    const Real dt = std::stod(argv[4]);
+    const Real requested_dt = std::stod(argv[4]);
+    Real dt = requested_dt;
     const std::string output = argv[5], restart = argv[6], policy = argc > 7 ? argv[7] : "dynamic";
     if (n < 12 || n % 2 || kind < 0 || stop < 0 || !std::isfinite(dt) || dt <= 0 ||
         (policy != "dynamic" && policy != "fixed" && policy != "uniform"))
@@ -438,20 +450,41 @@ int main(int argc, char** argv) {
           throw std::runtime_error("refusing AMR checkpoint overwrite");
       }
     });
+    if constexpr (hyperbolic_reproduction::configured_formulation) {
+      CollectiveLocal([&] {
+        hyperbolic_reproduction::refined_configuration.Load(
+            argv[8], hyperbolic_reproduction::ContinuousCoreMesh(n));
+      });
+      hyperbolic_reproduction::refined_configuration.CheckCollective();
+    }
     AMRPerformance perf(output);
     Snapshot s;
     if (restart != "-")
-      CollectiveLocal([&] { s = Read(restart, n, kind, dt); });
+      CollectiveLocal([&] {
+        s = Read(restart, n, kind, dt);
+        if constexpr (hyperbolic_reproduction::configured_formulation) {
+          if (!(s.dt > 0 && s.dt <= requested_dt) || !std::isfinite(s.dt))
+            throw std::invalid_argument("invalid configured AMR restart timestep");
+          dt = s.dt;
+        }
+      });
     perf.Next("native_setup");
     h::CartesianAMR amr(n,
-                        restart != "-"        ? s.subdivisions
-                        : policy == "uniform" ? 4
-                                              : 2,
-                        std::max(32, 96 / global_variable::nranks + 8));
+                        restart != "-" ? s.subdivisions
+                        : (policy == "uniform" || hyperbolic_reproduction::configured_formulation)
+                            ? 4
+                            : 2,
+                        std::max(32, (hyperbolic_reproduction::configured_formulation ? 256 : 96) /
+                                             global_variable::nranks +
+                                         8),
+                        3,
+                        hyperbolic_reproduction::configured_formulation
+                            ? hyperbolic_reproduction::refined_configuration.shell_radii
+                            : std::vector<Real>{.305, .45, .6, .75, .875, 1});
     if (restart != "-")
       Restore(amr, s);
     else if (policy != "uniform") {
-      std::vector<int> flags(8);
+      std::vector<int> flags(amr.mesh->nmb_total);
       flags[0] = 1;
       amr.Regrid(flags);
     }
@@ -470,7 +503,9 @@ int main(int argc, char** argv) {
       for (size_t p = 0; p < ev->Model().grid.active.size(); ++p) {
         const auto* x = ev->Model().grid.geometry[p].x;
         if (kind == 2) {
-          const auto v = pgen.Fields(x);
+          auto v = pgen.Fields(x);
+          if constexpr (hyperbolic_reproduction::configured_formulation)
+            hyperbolic_reproduction::refined_configuration.InitialFields(x, v);
           for (int f = 0; f < 31; ++f)
             s.data[0][31 * p + f] = v[f];
         }
@@ -478,7 +513,10 @@ int main(int argc, char** argv) {
           const Real r2 = x[0] * x[0] + x[1] * x[1] + x[2] * x[2];
           const Real wave =
               1e-5 * std::exp(-r2 / .025) * std::sin(17 * x[0] + 11 * x[1] - 13 * x[2]);
-          s.data[0][31 * p + 18] = wave;
+          if constexpr (hyperbolic_reproduction::configured_formulation)
+            s.data[0][31 * p + 18] += wave;
+          else
+            s.data[0][31 * p + 18] = wave;
           s.data[0][31 * p + 19] = .1 * wave;
           s.data[0][31 * p + 25] = .2 * wave;
         }
@@ -490,6 +528,14 @@ int main(int argc, char** argv) {
             s.data[2][31 * p + f] = limit[f];
       }
       Install(*ev, s);
+    }
+    if constexpr (hyperbolic_reproduction::configured_formulation) {
+      const Real allowed = ev->SelectTimestep(requested_dt, restart != "-");
+      if (restart == "-")
+        dt = allowed;
+      else
+        ev->SynchronizeError(dt > allowed * (1 + 1e-12),
+                             "AMR restart timestep exceeds current characteristic bound");
     }
     ParameterInput pin;
     std::unique_ptr<FastFlow> finder;
@@ -518,7 +564,7 @@ int main(int argc, char** argv) {
               std::vector<std::array<std::array<Real, 3>, 3>> dd;
               e.Model().grid.SampleJets(e.owned_padding, 31, x, v, d, dd, true);
               const auto u = e.Model().Jet(x, v, d, dd);
-              q = h::PhysicalHorizonGeometry(u, e.Model().Omega(x, u));
+              q = h::PhysicalHorizonGeometry(u, e.Model().OmegaAt(x, u));
             } catch (...) {
               q = {};
             }
@@ -555,6 +601,8 @@ int main(int argc, char** argv) {
           seed = q.mean_radius;
         }
       }
+      if constexpr (hyperbolic_reproduction::configured_formulation)
+        MPI_Allreduce(MPI_IN_PLACE, &e.cfl, 1, MPI_ATHENA_REAL, MPI_MAX, MPI_COMM_WORLD);
       if (e.rank == 0)
         history << "{\"step\":" << e.steps << ",\"time\":" << e.time
                 << ",\"leaves\":" << amr.mesh->nmb_total
@@ -612,6 +660,11 @@ int main(int argc, char** argv) {
           perf.Next("regrid_install");
           try {
             Install(*next, old);
+            if constexpr (hyperbolic_reproduction::configured_formulation) {
+              const Real allowed = next->SelectTimestep(dt, true);
+              next->SynchronizeError(dt > allowed * (1 + 1e-12),
+                                     "regridded characteristic bound rejects timestep");
+            }
           } catch (...) {
             if (ev->rank == 0) {
               std::ofstream rejected(output + ".rejected-transfer.bin", std::ios::binary);

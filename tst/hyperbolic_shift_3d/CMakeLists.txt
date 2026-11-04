@@ -769,6 +769,28 @@ if(ENABLE_MPI)
   target_compile_options(hyperbolic_shift_3d_amr_evolution PRIVATE -ffp-contract=off)
   target_compile_options(hyperbolic_shift_3d_amr_setup_contract PRIVATE -ffp-contract=off)
 
+  # Parameterized research formulation; BN1 and AMR1 remain frozen controls.
+  get_target_property(refined_science
+    hyperbolic_shift_3d_mpi_native_control_broad_smooth_six_shells_boosted_free_gauge_refined_core_matched_cfl_normalized_shift
+    COMPILE_DEFINITIONS)
+  add_hyperbolic_amr_executable(hyperbolic_shift_3d_refined_profile test_refined_profile.cpp)
+  target_compile_definitions(hyperbolic_shift_3d_refined_profile PRIVATE ${refined_science} HYPERBOLIC_CONFIGURED_FORMULATION=1)
+  target_compile_options(hyperbolic_shift_3d_refined_profile PRIVATE -ffp-contract=off)
+  add_hyperbolic_amr_executable(hyperbolic_shift_3d_refined_device test_composite_device.cpp)
+  target_compile_definitions(hyperbolic_shift_3d_refined_device PRIVATE ${refined_science} HYPERBOLIC_CONFIGURED_FORMULATION=1)
+  target_compile_options(hyperbolic_shift_3d_refined_device PRIVATE -ffp-contract=off)
+  foreach(driver refined refined_amr)
+    if(driver STREQUAL "refined")
+      set(driver_source coupled_mpi.cpp)
+    else()
+      set(driver_source amr_evolution.cpp)
+    endif()
+    add_hyperbolic_amr_executable(hyperbolic_shift_3d_${driver} ${driver_source})
+    target_compile_definitions(hyperbolic_shift_3d_${driver} PRIVATE ${refined_science}
+      HYPERBOLIC_CONFIGURED_FORMULATION=1)
+    target_compile_options(hyperbolic_shift_3d_${driver} PRIVATE -ffp-contract=off)
+  endforeach()
+
   foreach(ranks 1 2 4)
     add_test(NAME hyperbolic_shift_3d_amr_transfer_mpi${ranks}
       COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${ranks}

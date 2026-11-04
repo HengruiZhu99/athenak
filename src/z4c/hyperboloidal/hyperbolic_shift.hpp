@@ -4,6 +4,8 @@
 #define Z4C_HYPERBOLOIDAL_HYPERBOLIC_SHIFT_HPP_
 
 #include "z4c/hyperboloidal/reference_gauge.hpp"
+#include "z4c/hyperboloidal/conformal_profile.hpp"
+#include "z4c/hyperboloidal/cartesian_inner_adjustment.hpp"
 
 #ifndef HYPERBOLIC_SMOOTH_GAUGE_BLEND
 #define HYPERBOLIC_SMOOTH_GAUGE_BLEND 0
@@ -109,19 +111,32 @@ T Smoothstep9(T t) {
 }
 
 template<class T> KOKKOS_INLINE_FUNCTION
-T InnerTelegrapherWeight(T r) {
+T InnerTelegrapherWeight(T r, T begin, T end) {
   if constexpr(!inner_telegrapher) return 0;
-  return Smoothstep9((T(InnerTelegrapher::end)-r)/T(InnerTelegrapher::end-InnerTelegrapher::begin));
+  return Smoothstep9((end-r)/(end-begin));
+}
+
+template<class T> KOKKOS_INLINE_FUNCTION
+T InnerTelegrapherWeight(T r) {
+  return InnerTelegrapherWeight(r,T(InnerTelegrapher::begin),T(InnerTelegrapher::end));
 }
 
 // Point kernels for the donor c0ae7472 gauge, in GLOBAL CARTESIAN components.
 // Not an admission of this gauge into the production task graph. In particular,
 // ScriShift is a gauge identity, not the missing full geometric scri closure.
 template<class T> struct HyperbolicShiftParameters {
+  ConformalProfile profile;
+  bool enforce_cfl=false;
+  T inner_begin=InnerTelegrapher::begin, inner_end=InnerTelegrapher::end;
+  T inner_gamma=InnerTelegrapher::shift_gamma;
   T bulk_mu = 4, ratio = 2, damping = 1, restoring = 4;
   T kappa = T(.005), tau = T(.02), epsilon = T(1.e-4);
   T inner_z4 = 8, kappa1 = 4, kappa2 = T(-.99);
   void Validate() const {
+    profile.Validate();
+    if (!std::isfinite(inner_begin) || !std::isfinite(inner_end) ||
+        !std::isfinite(inner_gamma) || !(inner_begin<inner_end && inner_gamma>0))
+      throw std::invalid_argument("invalid inner gauge profile");
     for (T v:{bulk_mu,ratio,damping,restoring,kappa,tau,epsilon,inner_z4,kappa1})
       if (!std::isfinite(v) || v<0) throw std::invalid_argument("invalid hyperbolic gauge parameter");
     if (bulk_mu<=0 || ratio<=0 || tau<=0 || !std::isfinite(kappa2))
@@ -138,13 +153,14 @@ T SmoothCollar(T t) {
 }
 
 template<class T> struct HyperbolicCoefficients {
-  T omega, reference_alpha, w, dw_dr, collar, F, eta, mu, xi, inner;
+  T omega, reference_alpha, w, dw_dr, collar, F, eta, mu, xi, inner, inner_gamma;
 };
 template<class T> KOKKOS_INLINE_FUNCTION
 HyperbolicCoefficients<T> ShiftCoefficients(T r, T alpha, T chi,
     const HyperbolicShiftParameters<T> &p = {}) {
   HyperbolicCoefficients<T> c{};
-  c.omega=(1-r*r)/2; c.reference_alpha=(1+r*r)/2; c.inner=InnerTelegrapherWeight(r);
+  c.omega=p.profile.Radial(r).value; c.reference_alpha=(1+r*r)/2;
+  c.inner=InnerTelegrapherWeight(r,p.inner_begin,p.inner_end); c.inner_gamma=p.inner_gamma;
   const T y=(T(.8)-r)/T(.24);
   if constexpr(smooth_gauge_blend) {
     c.w=Smoothstep9(y);
@@ -194,7 +210,7 @@ T GaugeLapseSpeedSquared(T alpha,T chi,const HyperbolicCoefficients<T>&c,T Q,T E
 template<class T> KOKKOS_INLINE_FUNCTION
 T GaugeShiftSpeedSquared(const HyperbolicCoefficients<T>&c,T Q) {
   if(c.inner==0) return 4*c.mu*Q/3;
-  return T(4./3.)*((1-c.inner)*c.mu+c.inner*T(InnerTelegrapher::shift_gamma))*Q;
+  return T(4./3.)*((1-c.inner)*c.mu+c.inner*c.inner_gamma)*Q;
 }
 
 // Exact extremal eigenvalue of a symmetric 3x3 metric. This supplies a
@@ -303,22 +319,23 @@ HyperbolicGaugeParts<T> HyperbolicGauge(const T x[3],const Z4cJet<T>&u,
     const VectorJet<T>&B,const T D[3],const HyperbolicShiftParameters<T>&p={}) {
   if constexpr(!inner_telegrapher) return DonorHyperbolicGauge(x,u,B,D,p);
   T r2=0;for(int i=0;i<3;++i)r2+=x[i]*x[i];
-  const T s=InnerTelegrapherWeight(sqrt(r2));
+  const T s=InnerTelegrapherWeight(sqrt(r2),p.inner_begin,p.inner_end);
   if (s==0) return OuterHyperbolicGauge(x,u,B,D,p); // no Omega division at scri
   HyperbolicGaugeParts<T> out{};
   // Do not evaluate inactive donor sources on the inner plateau.
   if(s<1) out=OuterHyperbolicGauge(x,u,B,D,p);
   else out.valid=u.alpha.value>0&&u.chi.value>0;
-  const T o=(1-r2)/2,alpha=u.alpha.value/o;
+  const auto omega=p.profile.At(x);
+  const T o=p.profile.flat ? omega.omega : (1-r2)/2,alpha=u.alpha.value/o;
   const auto g=Geometry(u.metric);
   if (!g.valid || !(o>0)) {out.valid=false;return out;}
   const T chi=fmax(o*o*u.chi.value,T(InnerTelegrapher::chi_guard));
   T lapse=-2*u.alpha.value*u.trace.value;
   for(int i=0;i<3;++i) {
-    lapse+=u.beta.value[i]*(u.alpha.d[i]+alpha*x[i]);
+    lapse+=u.beta.value[i]*((p.profile.flat ? u.alpha.d[i]-alpha*omega.gradient[i] : u.alpha.d[i]+alpha*x[i]));
     for(int j=0;j<3;++j)lapse+=o*chi*g.inverse[i][j]*B.d[i][j];
-    T flux=(T(InnerTelegrapher::kappa)*(u.alpha.d[i]+alpha*x[i])/o-B.value[i])/T(InnerTelegrapher::tau);
-    T shift=T(InnerTelegrapher::shift_gamma)*u.lambda.value[i]-T(InnerTelegrapher::shift_eta)*u.beta.value[i];
+    T flux=(T(InnerTelegrapher::kappa)*((p.profile.flat ? u.alpha.d[i]-alpha*omega.gradient[i] : u.alpha.d[i]+alpha*x[i]))/o-B.value[i])/T(InnerTelegrapher::tau);
+    T shift=p.inner_gamma*u.lambda.value[i]-T(InnerTelegrapher::shift_eta)*u.beta.value[i];
     for(int j=0;j<3;++j) {flux+=u.beta.value[j]*B.d[j][i];shift+=u.beta.value[j]*u.beta.d[j][i];}
     out.flux_rate[i]=(1-s)*out.flux_rate[i]+s*flux;
     out.shift_regular[i]=(1-s)*out.shift_regular[i]+s*shift;
@@ -348,13 +365,15 @@ bool HyperbolicDamping(const T x[3], const Z4cJet<T> &u,
   for (int i=0;i<3;++i)
     parts.pole.lambda[i]-=delta*(u.lambda.value[i]-g.contracted[i]);
   if constexpr(inner_telegrapher) {
-    const T s=restore_inner_damping ? Smoothstep9((T(.56)-sqrt(r2))/T(.36)) : InnerTelegrapherWeight(sqrt(r2));
+    const T s=p.profile.flat ? InnerTelegrapherWeight(sqrt(r2),p.inner_begin,p.inner_end) :
+      (restore_inner_damping ? Smoothstep9((T(.56)-sqrt(r2))/T(.36)) : InnerTelegrapherWeight(sqrt(r2)));
     if(s>0) {
       const T old=p.kappa1*u.alpha.value+delta;
       const T target=T(InnerTelegrapher::kappa1)*u.alpha.value;
       parts.pole.trace+=s*(target-old*(1-p.kappa2))*u.theta.value;
       parts.pole.theta+=s*(old*(2+p.kappa2)-2*target)*u.theta.value;
       for(int i=0;i<3;++i)parts.pole.lambda[i]+=s*(old-2*target)*(u.lambda.value[i]-g.contracted[i]);
+      if (p.profile.flat && !CartesianInnerAdjustment(u,omega,s,parts)) return false;
     }
   }
   return true;

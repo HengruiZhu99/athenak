@@ -4,6 +4,12 @@
 #include <stdexcept>
 #include "z4c/hyperboloidal/hyperbolic_composite.hpp"
 #include "z4c/hyperboloidal/hyperbolic_composite_device.hpp"
+#ifndef HYPERBOLIC_CONFIGURED_FORMULATION
+#define HYPERBOLIC_CONFIGURED_FORMULATION 0
+#endif
+#if HYPERBOLIC_CONFIGURED_FORMULATION
+#include "refined_configuration.hpp"
+#endif
 namespace h=z4c::hyperboloidal;
 
 static void Require(bool condition,const char *message) {
@@ -47,7 +53,7 @@ static Device::DiagnosticSummary CPUConstraints(const h::HyperbolicComposite &cp
       result.max_state_deviation=std::max(result.max_state_deviation,
                                          std::abs(values[f]-(f==0 ? 1 : 0)));
     }
-    const auto u=cpu.Jet(x,values,d,dd);const auto c=h::EvolvedConstraints(u,cpu.Omega(x,u));
+    const auto u=cpu.Jet(x,values,d,dd);const auto c=h::EvolvedConstraints(u,cpu.OmegaAt(x,u));
     Require(c.valid,"CPU constraint sample invalid");
     Real mr=0,zr=0;
     if(r>0)for(int i=0;i<3;++i){mr+=x[i]*c.momentum[i]/r;zr+=x[i]*c.z4.z_covector[i]/r;}
@@ -74,6 +80,16 @@ int main(int argc,char**argv) {
     const int cells=cpu.grid.active.size(),split=cells/2+7;
     h::HyperbolicCompositeDevice full(cpu.grid,0,cells),left(cpu.grid,0,split),right(cpu.grid,split,cells-split);
     h::HyperbolicCompositeDevice empty(cpu.grid,cells,0);
+#if HYPERBOLIC_CONFIGURED_FORMULATION
+    {
+      Require(argc==2,"supply flat-profile configuration");
+      hyperbolic_reproduction::RefinedConfiguration config;
+      config.Load(argv[1],hyperbolic_reproduction::ContinuousCoreMesh(16));
+      cpu.Configure(config.gauge);
+      full.Configure(config.gauge);left.Configure(config.gauge);
+      right.Configure(config.gauge);empty.Configure(config.gauge);
+    }
+#endif
     // Nonzero nonspherical data populate every scalar, symmetric tensor and
     // vector component, including the otherwise dormant adaptive-source slots.
     for(int p=0;p<cells;++p) {
@@ -147,7 +163,7 @@ int main(int argc,char**argv) {
     Require(invalid_diagnostic.first_bad==bad && invalid_diagnostic.invalid_cells==1 &&
             invalid_diagnostic.reason==Device::invalid_input,"invalid diagnostic cell not reported");
     stats=right.Evaluate(full.UploadPadded(cpu.Padded(cpu.state)),.01,true,.5);
-    Require(stats.bad_cells==cells-split && stats.reason==h::HyperbolicCompositeDevice::cfl_exceeded,
+    Require((HYPERBOLIC_CONFIGURED_FORMULATION ? stats.bad_cells>0 : stats.bad_cells==cells-split) && stats.reason==h::HyperbolicCompositeDevice::cfl_exceeded,
             "device CFL rejection missing");
     std::cout<<"CPU/device and partition parity passed on "<<cells<<" cells; worst_scaled_error="<<worst<<'\n';
   } catch(const std::exception&ex) {std::cerr<<ex.what()<<'\n';result=1;}
