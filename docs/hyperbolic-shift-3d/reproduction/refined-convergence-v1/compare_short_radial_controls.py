@@ -49,4 +49,27 @@ for key in ('time','radial'):
     for ax,i in zip(axes,(3,4)):ax.semilogy((b[mask,0]+b[mask,1])/2,b[mask,i],'.-',label=labels[key],ms=4)
 for ax,f in zip(axes,('H','M')):ax.set(xlabel='Compact r',ylabel=f+' squared integral per .01 bin');ax.axvspan(.9,.95,color='gray',alpha=.1);ax.grid(alpha=.2);ax.legend(fontsize=8)
 fig.suptitle('Same-dt admitted .6M endpoints: native radial error integrals');fig.savefig(O/'radial-errors.png',dpi=170);fig.savefig(O/'radial-errors.pdf');plt.close(fig)
+# Preserve actual diagnostic nodes: different radial meshes must not be
+# silently resampled onto each other to manufacture field self-convergence.
+fig,axes=plt.subplots(4,2,figsize=(11,12),layout='constrained')
+profile_fields=('alpha','dr_alpha','beta_dev_r','dr_beta_dev_r','metric_rr','K','H','Mr')
+summary['native_ray_profiles']={}
+for key in ('time','radial'):
+    files=sorted(cases[key]['folder'].glob('*.rank*.csv.gz'));assert files
+    q=np.concatenate([np.genfromtxt(p,delimiter=',',names=True) for p in files])
+    q=q[(q['ray']==0)&(q['r']>.85)&(q['r']<.96)];q.sort(order='r')
+    assert len(q)>0 and all(np.isfinite(q[f]).all() for f in profile_fields)
+    summary['native_ray_profiles'][key]=dict(samples=len(q),
+        maxima={f:float(abs(q[f]).max()) for f in profile_fields},
+        input_sha256={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in files})
+    for ax,f in zip(axes.flat,profile_fields):
+        ax.plot(q['r'],q[f],'.-',ms=3,lw=.7,label=labels[key])
+for ax,f in zip(axes.flat,profile_fields):
+    ax.set(xlabel='Compact r, +x native ray',ylabel=f)
+    ax.axvspan(.9,.95,color='gray',alpha=.08);ax.grid(alpha=.2)
+axes[0,0].legend(fontsize=8)
+fig.suptitle('Admitted .6M profiles: native nodes, no smoothing or resampling')
+fig.savefig(O/'native-profiles.png',dpi=170);fig.savefig(O/'native-profiles.pdf');plt.close(fig)
+summary['profile_qualification']='Native unsmoothed ray samples on different radial grids. Sample extrema and visual smoothness are not matched-point self-convergence or uniform regularity proofs.'
+(O/'analysis.json').write_text(json.dumps(summary,indent=2)+'\n')
 print(json.dumps(summary,indent=2))
