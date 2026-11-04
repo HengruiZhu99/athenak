@@ -2,8 +2,9 @@
 
 Branch `codex/refined-convergence`, based on `hyperboloidal_refined`21676d39e.
 The persistent goal in GOAL.md is not complete. Stationary RF2 N16 SMR job9038055
-is submitted on four Aurora debug-scaling nodes. Keep the separate frozen BN1
-campaign unchanged. See state.json before any action; never duplicate a run.
+is running on four Aurora debug-scaling nodes. The separate frozen BN1 campaign
+and its final analysis are complete; its monitor was deleted. See state.json
+before any action; never duplicate a run.
 
 ## What is established
 
@@ -104,6 +105,21 @@ boosted runs, with resolved puncture spacing and controlled timestep, followed
 by common-domain exterior and field-resolution analysis. Survival alone is
 not convergence.
 
+The analysis-only RF2 reader and its qualification are described in
+INTERFACE-AUDIT.md. `build_endpoint_diagnostic.py` builds it locally without
+rebuilding campaign binaries. For an independently admitted checkpoint use
+`reader N checkpoint dt config smr fresh_prefix cutoff` under MPI, then retain
+all rank CSVs and metadata. `check_endpoint_diagnostic.py` verifies the preserved
+N12 fixture against its production history and confirms unchanged checkpoint
+hash and rejection of a different configuration. Current qualified error is
+2.10e-16 for native volume integrals and1.57e-16 for saved-history norms.
+This is operator consistency, not an independent continuum-accuracy test.
+
+SMR retains first-shell and outer-core independently evolved overlap cells.
+Zero overlap in an individual rank's performance record does not mean that
+the global formulation has removed them. The new reader preserves copy IDs
+and positions rather than smoothing them into one curve.
+
 ## Production driver extension
 
 Configured AMR accepts three optional trailing arguments:
@@ -143,8 +159,9 @@ The actual SYCL binary hash is
 All22 source/build/launcher records were locally hash/length verified.
 Stationary6 N16 job9038055 uses four nodes48ranks, dt=.00025, target10M,
 one SMR level, matched plateau.4712 and gauge interval.36–.65. The original
-scri/restoration remains. It may wait behind frozen BN1 N24 job9037997;
-no cancellation or duplicate submission is authorized. No GPU smoke gate.
+scri/restoration remains. Frozen BN1 N24 job9037997 has completed and its
+follow-up is preserved. No cancellation or duplicate submission is authorized.
+No GPU smoke gate.
 
 `launcher/` binds source manifest, actual binary, configuration, launcher,
 PBS script and restart (if present). The streaming verifier checks RF2 framing,

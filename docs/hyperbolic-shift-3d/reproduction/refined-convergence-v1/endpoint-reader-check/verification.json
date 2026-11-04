@@ -1,0 +1,105 @@
+{
+  "passed": true,
+  "checkpoint": {
+    "path": "output/refined-convergence/production-cadence.checkpoint",
+    "sha256": "5c98be41817a7c5e9e9e872e839644c4369ad14dad4fd84b0db9983543bbf81d",
+    "bytes": 212354050,
+    "identity": "RF2;flat-inner-Cartesian-Z4c-v1;native-C6-areal=6,18;M=1/3;v=0;restoration4:.6-.9;KO8;scri-original;penalty=.6510416666660156;chi-floor=1e-8:.03;lapse-floor=1e-10;flat=1;omega=0.23999999999999999,0.29999999999999999,0.47120000000000001;gauge=0.35999999999999999,0.65000000000000002,0.050371630094020035;eta=6;k=0.22443624950978849;cfl=0.20000000000000001;buffer=4;smr=1,0.080000000000000002;subdivisions=4;shell_inner=0.20999999999999999;box=-0.23999999999999999,0.23999999999999999;-0.23999999999999999,0.23999999999999999;-0.23999999999999999,0.23999999999999999;shells=0.28999999999999998,0.38,0.5,0.68000000000000005,0.875,1,;amr_policy=smr",
+    "config": [
+      12,
+      2,
+      4,
+      2,
+      0
+    ],
+    "time": 0.0005,
+    "dt": 0.00025,
+    "seed": 0.03741197222742637,
+    "tracker": [
+      -1.127537795447611e-21,
+      -1.0642665830475219e-21,
+      -1.4566037883686542e-21
+    ],
+    "floors": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "diagnostics": [
+      1.1102230246251494e-15,
+      1.2212453270877949e-15,
+      2.245855989450827e-09,
+      2.9607654459839514e-09,
+      1.0339757656912846e-25,
+      0.06411249880369457,
+      -0.061540525514003186,
+      0.18749999999981254
+    ],
+    "leaves": 120
+  },
+  "checkpoint_unchanged": true,
+  "norms": [
+    [
+      0.037949632482984004,
+      0.043645003992342064,
+      0.04443952940100364
+    ],
+    [
+      0.025709266453205298,
+      0.044230173332836874,
+      0.04503264440945977
+    ]
+  ],
+  "history_norms": [
+    [
+      0.037949632482984004,
+      0.043645003992342064,
+      0.044439529401003645
+    ],
+    [
+      0.025709266453205298,
+      0.044230173332836874,
+      0.04503264440945977
+    ]
+  ],
+  "maximum_relative_history_norm_difference": 1.5614238038601994e-16,
+  "wrong_configuration_rejected": true,
+  "artifacts": [
+    {
+      "file": "build.json",
+      "sha256": "ce801f312336fbd9a56886cd4a58ecf0e5d0a3e03b69566fc2f7abcf04a0fd6d",
+      "bytes": 4486
+    },
+    {
+      "file": "check-current-boundary-n12.json",
+      "sha256": "172bb8f3ba1a26e649c4fcaa5e70bc6e7222da01ad05e1a21a966b8d43be0426",
+      "bytes": 12880
+    },
+    {
+      "file": "check-current-boundary-n12.log",
+      "sha256": "0b2f68951486d7a58442b325c6a054abce2962750aa9867f4834297bad33b3bd",
+      "bytes": 417
+    },
+    {
+      "file": "check-current-boundary-n12.rank0.csv",
+      "sha256": "87d6372727c763bfe2656bf74970602396489ebb5897c32db6658327af14a2a4",
+      "bytes": 36565
+    },
+    {
+      "file": "check-current-boundary-n12.rank1.csv",
+      "sha256": "3067c26810a029614bb7d70db702a671a8223d0ec774dc1a2eb82df83af4efb8",
+      "bytes": 114039
+    },
+    {
+      "file": "reject-wrong-config.log",
+      "sha256": "3b608c7e4818a0305413207b2ba3fd9638f1202f4fc8e474af5038baa0bfa7e0",
+      "bytes": 448
+    }
+  ],
+  "qualification": "Local N12 stationary two-step admitted fixture; analysis-only CPU constraint integrals agree with production device kernel and saved history. No long-run, resolution convergence or independent PDE accuracy claim."
+}

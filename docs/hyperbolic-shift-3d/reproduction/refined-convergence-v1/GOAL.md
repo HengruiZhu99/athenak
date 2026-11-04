@@ -11,16 +11,20 @@ interpret survival or two resolution residual slopes as convergence proof.
 
 Work branch codex/refined-convergence is based on hyperboloidal_refined
 21676d39e, in /Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal.
-The separate original worktree/branch codex/boosted-normalized-shift and active
-BN1 N24 job9037899 retain their frozen science and monitor. Do not modify or
-resubmit that campaign. Preserve terminal verification and analysis obligations.
+The separate original worktree/branch codex/boosted-normalized-shift retains
+its frozen science. All BN1 resolutions are complete, their artifacts verified
+and three-resolution analysis pushed (e8eaa56d2; final state c41a5ef1a).
+Its monitor was deleted after follow-up. Do not resubmit or repeat completed
+BN1 diagnostics. The exterior residuals do not decrease under refinement.
 
 Current progress: enlarged geometry/initial-map parameters and matched-plateau
 controls implemented; local geometry/frame/oracle checks and MPI SMR restart
-qualification passed. See README.md and receipts. No RF2 long evolution yet.
-User explicitly authorizes SMR/AMR as needed and measured performance work;
-reuse existing infrastructure. Complete production SMR diagnostics/walltime
-support before long Aurora experiments.
+qualification passed. Production scheduled diagnostics/walltime support and
+the frozen Aurora build are complete. Stationary6 N16 RF2 job9038055 is running
+on four nodes with native SMR; consult state.json and saved submission before
+acting. User explicitly authorizes SMR/AMR as needed and measured performance
+work; reuse existing infrastructure. Scientific source b41c24e8879 remains
+frozen during this experiment. Analysis tools are separate.
 
 Completion needs: geometry/frame consistency and spacelike/map regularity
 checks; nontrivial inner equivalence with the actual reference Z4c; controlled
