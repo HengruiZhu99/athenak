@@ -1,0 +1,161 @@
+[
+  {
+    "name": "topology-mpi2",
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/shell-angular-candidate-v1/support",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/inputs/hyperbolic_shift_3d/refined_convergence/central20_boosted_smr_tube_angular2_reference.cfg",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/refined-convergence-v1/shell-angular-checks/topology-mpi2.json"
+    ],
+    "returncode": 0,
+    "elapsed_wall": 0.18672585487365723
+  },
+  {
+    "name": "reject-invalid",
+    "command": [
+      "mpiexec",
+      "-n",
+      "1",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/shell-angular-candidate-v1/support",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/shell-angular-candidate-v1/checks/invalid.cfg",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/shell-angular-candidate-v1/checks/unused.json",
+      "config-only"
+    ],
+    "returncode": 2,
+    "elapsed_wall": 0.13350605964660645
+  },
+  {
+    "name": "reject-short",
+    "command": [
+      "mpiexec",
+      "-n",
+      "1",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/shell-angular-candidate-v1/support",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/shell-angular-candidate-v1/checks/short.cfg",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/shell-angular-candidate-v1/checks/unused.json",
+      "config-only"
+    ],
+    "returncode": 2,
+    "elapsed_wall": 0.1334209442138672
+  },
+  {
+    "name": "reject-trailing",
+    "command": [
+      "mpiexec",
+      "-n",
+      "1",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/shell-angular-candidate-v1/support",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/shell-angular-candidate-v1/checks/trailing.cfg",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/shell-angular-candidate-v1/checks/unused.json",
+      "config-only"
+    ],
+    "returncode": 2,
+    "elapsed_wall": 0.0781099796295166
+  },
+  {
+    "name": "reject-core",
+    "command": [
+      "mpiexec",
+      "-n",
+      "1",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/shell-angular-candidate-v1/support",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/shell-angular-candidate-v1/checks/core.cfg",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/shell-angular-candidate-v1/checks/unused.json",
+      "config-only"
+    ],
+    "returncode": 2,
+    "elapsed_wall": 0.13304805755615234
+  },
+  {
+    "name": "reject-scri",
+    "command": [
+      "mpiexec",
+      "-n",
+      "1",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/shell-angular-candidate-v1/support",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/shell-angular-candidate-v1/checks/scri.cfg",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/shell-angular-candidate-v1/checks/unused.json",
+      "config-only"
+    ],
+    "returncode": 2,
+    "elapsed_wall": 0.13084125518798828
+  },
+  {
+    "name": "baseline-old-binary",
+    "command": [
+      "mpiexec",
+      "-n",
+      "1",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/smr-tube-candidate-v1/evolve",
+      "12",
+      "boost",
+      "2",
+      "4.1666666666666665e-05",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/shell-angular-candidate-v1/checks/baseline-old-binary",
+      "-",
+      "uniform",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/shell-angular-candidate-v1/checks/baseline-uniform-core.cfg"
+    ],
+    "returncode": 0,
+    "elapsed_wall": 115.18223786354065
+  },
+  {
+    "name": "angular-mpi1-step2",
+    "command": [
+      "mpiexec",
+      "-n",
+      "1",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/shell-angular-candidate-v1/evolve",
+      "12",
+      "boost",
+      "2",
+      "4.1666666666666665e-05",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/shell-angular-candidate-v1/checks/angular-mpi1-step2",
+      "-",
+      "uniform",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/shell-angular-candidate-v1/checks/angular-uniform-core.cfg"
+    ],
+    "returncode": 0,
+    "elapsed_wall": 228.42894196510315
+  },
+  {
+    "name": "angular-mpi2-step1",
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/shell-angular-candidate-v1/evolve",
+      "12",
+      "boost",
+      "1",
+      "4.1666666666666665e-05",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/shell-angular-candidate-v1/checks/angular-mpi2-step1",
+      "-",
+      "uniform",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/shell-angular-candidate-v1/checks/angular-uniform-core.cfg"
+    ],
+    "returncode": 0,
+    "elapsed_wall": 82.59896802902222
+  },
+  {
+    "name": "angular-mpi2-restart-step2",
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/shell-angular-candidate-v1/evolve",
+      "12",
+      "boost",
+      "2",
+      "4.1666666666666665e-05",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/shell-angular-candidate-v1/checks/angular-mpi2-restart-step2",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/shell-angular-candidate-v1/checks/angular-mpi2-step1.checkpoint",
+      "uniform",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/shell-angular-candidate-v1/checks/angular-uniform-core.cfg"
+    ],
+    "returncode": 0,
+    "elapsed_wall": 77.75002217292786
+  }
+]

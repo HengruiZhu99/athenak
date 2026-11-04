@@ -1,0 +1,27 @@
+{
+  "reason": "File timestamps prove the coordinator launched the first angular MPI1 case with attempt01 before attempt02 existed. The requested local coordinator stop did not prevent that launch. Preserve this as an uncorrected-donor control, never a qualified candidate. MPI2 and all subsequent checks use hash-identified corrected attempt02; compare only matching binaries for admission.",
+  "production_binary_changed": false,
+  "attempt01_angular_evolutions": 1,
+  "active_binary_sha256": "66216ed21f8fa28a42425ed27620a323a8290baf797a1aa33bfd8a4d538f9cd1",
+  "uncorrected_case": "angular-mpi1-step2",
+  "uncorrected_binary_sha256": "27e28e5b43b63811a4383cf88e15becdced612c0ab0734ae7ddbcae06600e7a0",
+  "corrected_binary_sha256": "66216ed21f8fa28a42425ed27620a323a8290baf797a1aa33bfd8a4d538f9cd1",
+  "timestamps": {
+    "attempt01/evolve": {
+      "birth": 1793819323.309532,
+      "mtime": 1793819323.3108006
+    },
+    "attempt02/evolve": {
+      "birth": 1793819658.6107843,
+      "mtime": 1793819658.6118379
+    },
+    "checks/angular-mpi1-step2.history.jsonl": {
+      "birth": 1793819592.4127734,
+      "mtime": 1793819689.5584142
+    },
+    "checks/angular-mpi1-step2.report.json": {
+      "birth": 1793819690.9799764,
+      "mtime": 1793819690.9828033
+    }
+  }
+}

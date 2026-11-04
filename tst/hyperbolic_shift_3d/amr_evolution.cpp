@@ -518,7 +518,8 @@ int main(int argc, char** argv) {
                             ? hyperbolic_reproduction::refined_configuration.shell_radii
                             : std::vector<Real>{.305, .45, .6, .75, .875, 1},
                         hyperbolic_reproduction::configured_formulation?hyperbolic_reproduction::refined_configuration.core_half_width:.18,
-                        hyperbolic_reproduction::configured_formulation?hyperbolic_reproduction::refined_configuration.shell_inner_radius:.16);
+                        hyperbolic_reproduction::configured_formulation?hyperbolic_reproduction::refined_configuration.shell_inner_radius:.16,
+                        hyperbolic_reproduction::configured_formulation?hyperbolic_reproduction::refined_configuration.shell_angular_subdivisions:std::vector<int>{});
     if (restart != "-")
       Restore(amr, s);
     else if(policy=="smr") {

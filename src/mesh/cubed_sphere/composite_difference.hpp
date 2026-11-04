@@ -45,6 +45,8 @@ class CompositeDifference {
   std::vector<Row> halos;
   std::vector<Row> extrapolated_halos;
   bool radial_interface_stencils = false;
+  bool mixed_shell_angles = false;
+  std::vector<std::vector<int>> shell_layer_face_blocks;
 
   CompositeDifference(CompositeMesh descriptor, int derivative_order = 4,bool radial_stencils=false,bool logical_inner=false)
       : mesh(std::move(descriptor)), n(mesh.cells), ng(mesh.ghosts),
@@ -59,6 +61,18 @@ class CompositeDifference {
       throw std::invalid_argument("spherical overlap requires equiangular shells, 0<Rin<core width, and n>=12");
     if(mesh.equiangular&&!mesh.spherical_inner_boundary)
       throw std::invalid_argument("equiangular cube-to-sphere transition is not implemented");
+    shell_layer_face_blocks.resize(6*mesh.radii.size());
+    for(size_t m=0;m<mesh.blocks.size();++m){const auto& b=mesh.blocks[m];
+      if(b.face>=0)shell_layer_face_blocks.at(6*b.layer+b.face).push_back(m);
+    }
+    for(int face=0;face<6;++face){std::vector<std::array<Real,4>> reference;
+      for(size_t layer=0;layer<mesh.radii.size();++layer){std::vector<std::array<Real,4>> bounds;
+        for(int m:shell_layer_face_blocks[6*layer+face]){const auto&b=mesh.blocks[m];bounds.push_back({b.lo[1],b.hi[1],b.lo[2],b.hi[2]});}
+        if(layer==0)reference=bounds;else if(bounds!=reference)mixed_shell_angles=true;
+      }
+    }
+    if(mixed_shell_angles&&!mesh.spherical_inner_boundary)
+      throw std::invalid_argument("mixed shell angular refinement requires spherical inner boundary");
     inverse_active.assign(count,-1);
     auto append=[&](int m,int i,int j,int k){
       const Real q[3] = {(i+.5)/n, (j+.5)/n, (k+.5)/n};
@@ -409,7 +423,47 @@ class CompositeDifference {
     }
     return entries;
   }
+  // Across angular coarse/fine radial interfaces, choose the nearest physical
+  // radial planes first. Each plane interpolates in its OWN angular tile.
+  // Restricting a chain to identical tiles would silently skip adjacent layers.
+  std::vector<Entry> InterpolateMixedShellRadius(int owner,const Real x[3],
+                                                const Real local[3],int width) const {
+    const auto& block=mesh.blocks[owner];width=std::min(width,n);
+    const Real radius=std::sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);
+    const Real angle[2]={block.lo[1]+local[1]*(block.hi[1]-block.lo[1]),
+                         block.lo[2]+local[2]*(block.hi[2]-block.lo[2])};
+    struct Plane{Real radius;int layer,i;};std::vector<Plane> planes;
+    for(size_t layer=0;layer<mesh.radii.size();++layer){
+      const Real lo=layer?mesh.radii[layer-1]:mesh.inner_radius;
+      for(int i=0;i<n;++i)planes.push_back({lo+(i+.5)/n*(mesh.radii[layer]-lo),int(layer),i});
+    }
+    auto pos=std::lower_bound(planes.begin(),planes.end(),radius,
+                             [](const Plane&a,Real r){return a.radius<r;});
+    const int begin=std::clamp(int(pos-planes.begin())-width/2,0,int(planes.size())-width);
+    std::vector<Entry> out;
+    for(int t=0;t<width;++t){const auto& plane=planes[begin+t];int donor=-1;
+      for(int m:shell_layer_face_blocks.at(6*plane.layer+block.face)){const auto&b=mesh.blocks[m];
+        if(angle[0]>=b.lo[1]-2e-13 && angle[0]<=b.hi[1]+2e-13 &&
+           angle[1]>=b.lo[2]-2e-13 && angle[1]<=b.hi[2]+2e-13){donor=m;break;}
+      }
+      if(donor<0)throw std::runtime_error("missing mixed-angular radial-plane donor");
+      const auto& b=mesh.blocks[donor];int first[2];Real weights[2][6]{};
+      for(int a=0;a<2;++a){const Real u=n*(angle[a]-b.lo[a+1])/(b.hi[a+1]-b.lo[a+1])-.5;
+        first[a]=std::clamp(int(std::floor(u))-width/2+1,0,n-width);
+        for(int j=0;j<width;++j){weights[a][j]=1;for(int k=0;k<width;++k)if(k!=j)
+          weights[a][j]*=(u-first[a]-k)/Real(j-k);}
+      }
+      Real radial=1;for(int k=0;k<width;++k)if(k!=t)
+        radial*=(radius-planes[begin+k].radius)/(plane.radius-planes[begin+k].radius);
+      for(int k=0;k<width;++k)for(int j=0;j<width;++j){
+        const Real weight=radial*weights[0][j]*weights[1][k];
+        if(std::abs(weight)>1e-18)out.push_back({Index(donor,plane.i,first[0]+j,first[1]+k),weight});
+      }
+    }
+    return out;
+  }
   std::vector<Entry> InterpolateShellRadius(int owner,const Real x[3],const Real local[3],int width) const {
+    if(mixed_shell_angles)return InterpolateMixedShellRadius(owner,x,local,width);
     const auto &block=mesh.blocks[owner];width=std::min(width,n);
     std::vector<int> chain;
     for(size_t m=0;m<mesh.blocks.size();++m){const auto &b=mesh.blocks[m];

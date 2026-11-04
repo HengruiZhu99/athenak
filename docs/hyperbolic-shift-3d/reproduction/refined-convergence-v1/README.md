@@ -839,3 +839,34 @@ structure as well as the puncture and radial layer. No new Aurora submission
 or production build occurred; existing9038758 remains of unknown disposition
 until SSH access is restored. The absent shared control socket was checked
 again without making another authentication attempt or renewal request.
+
+## Targeted boosted shell candidate — local controls complete
+
+See `SHELL-ANGULAR.md` for the optional per-layer angular subdivision,
+coarse/fine radial-plane donor correction, exact-halo attribution, and records.
+The old angular layout's two-step checkpoint remains byte-identical. Corrected
+MPI1 uninterrupted and MPI2 checkpoint/restart agree byte-for-byte for all eight
+saved arrays; wrong topology identity rejects. The initial uncorrected donor
+control is preserved separately and is not claimed as matching-binary parity.
+
+At fixed r>.3, radial18/angular2 initial H/M=.003100666/.199621473.
+80.13%/99.64% of H²/M² lies in .78–.90. Exact analytic shell ghost values alter
+these norms by only−.04087%/+.005848%, supporting bulk truncation as the dominant
+initial contribution in that band. Native M here is the conformal-metric norm,
+not the physical-M norm in the earlier fixed-point sampling study.
+
+Fourfold additional radial refinement of .78–.90 gives radial24/angular2,
+with initial H/M=.001396980/.012125204 and two-step values
+.001106979/.011909669. Relative to the original radial18 angular layout, these
+are initial reductions10.233x/17.856x and step2 reductions12.644x/17.900x.
+The common timestep1/24000 was unchanged; max CFL.1937154. Figures in
+`boosted-mesh-controls/` and `shell-angular-initial-diagnostic/` were inspected.
+
+These tests deliberately hold the same uniform coarse core fixed to isolate
+exterior resolution. They do not qualify that coarse core for a puncture run,
+establish fourth-order/evolved convergence, or replace the full SMR candidate.
+The proposed combined input retains400 Cartesian SMR leaves plus432 shell
+blocks (832 total), with the original scri grid unchanged. Combined initial/
+short-run qualification and the long stationary/boosted resolution studies
+remain open. Active Aurora job9038758 and its frozen source/binary are unchanged;
+SSH renewal and Git push authentication remain outstanding.

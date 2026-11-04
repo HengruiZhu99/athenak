@@ -1,0 +1,116 @@
+{
+  "cases": [
+    {
+      "case": "radial18_original_angles",
+      "label": "18 layers\noriginal angles",
+      "values": [
+        {
+          "step": 0,
+          "t_over_M": 0,
+          "H": 0.01429526291547036,
+          "M": 0.21651121570352563,
+          "Mr": 0.27014199500078456
+        },
+        {
+          "step": 1,
+          "t_over_M": 0.000125,
+          "H": 0.014095920997888369,
+          "M": 0.21477134775716564,
+          "Mr": 0.26682830082626685
+        },
+        {
+          "step": 2,
+          "t_over_M": 0.00025,
+          "H": 0.01399662766102554,
+          "M": 0.21317801737878844,
+          "Mr": 0.26403291692890285
+        }
+      ],
+      "max_cfl": 0.19274109731433922,
+      "null_surface_max": 1.1102230246250548e-15,
+      "null_ghost_max": 1.3322676295500618e-15
+    },
+    {
+      "case": "radial18_angular2",
+      "label": "18 layers\n2\u00d7 angles",
+      "values": [
+        {
+          "step": 0,
+          "t_over_M": 0,
+          "H": 0.0031006660733039247,
+          "M": 0.19962147281019701,
+          "Mr": 0.26601639054839477
+        },
+        {
+          "step": 1,
+          "t_over_M": 0.000125,
+          "H": 0.002857499457738497,
+          "M": 0.19838103718470293,
+          "Mr": 0.26438485941766815
+        },
+        {
+          "step": 2,
+          "t_over_M": 0.00025,
+          "H": 0.0030894114380216266,
+          "M": 0.1971734629983105,
+          "Mr": 0.2628013575384597
+        }
+      ],
+      "max_cfl": 0.19371543457259374,
+      "null_surface_max": 1.1102230246250548e-15,
+      "null_ghost_max": 1.3322676295500618e-15
+    },
+    {
+      "case": "radial24_angular2",
+      "label": "24 layers\n2\u00d7 angles",
+      "values": [
+        {
+          "step": 0,
+          "t_over_M": 0,
+          "H": 0.0013969799225861342,
+          "M": 0.012125203718208162,
+          "Mr": 0.012093110509037778
+        },
+        {
+          "step": 1,
+          "t_over_M": 0.000125,
+          "H": 0.0011946442083916214,
+          "M": 0.011954973226956302,
+          "Mr": 0.010951396071008661
+        },
+        {
+          "step": 2,
+          "t_over_M": 0.00025,
+          "H": 0.0011069793364381813,
+          "M": 0.011909668807568743,
+          "Mr": 0.009918629772868422
+        }
+      ],
+      "max_cfl": 0.19371543457259374,
+      "null_surface_max": 1.1102230246250548e-15,
+      "null_ghost_max": 1.3322676295500618e-15
+    }
+  ],
+  "initial_baseline_to_radial24_reduction": {
+    "H": 10.23297664078558,
+    "M": 17.85629509699662,
+    "Mr": 22.338503795106654
+  },
+  "step2_baseline_to_radial24_reduction": {
+    "H": 12.643982773934258,
+    "M": 17.899575615680526,
+    "Mr": 26.619898410881582
+  },
+  "initial_angular18_to_radial24_reduction": {
+    "H": 2.219549488988984,
+    "M": 16.463350014518078,
+    "Mr": 21.997350503792024
+  },
+  "nominal_full_smr_blocks": {
+    "core": 400,
+    "radial18_original_angles": 508,
+    "radial18_angular2": 688,
+    "radial24_angular2": 832
+  },
+  "qualification": "Fresh native initial data, same N12 uniform coarse Cartesian core, dt=1/24000, exact boost .1 and physical parameters. Original/core paths proven checkpoint-byte-identical between old/new binary. Corrected angular radial-plane donor policy used for both angular cases. Native M is conformal-metric norm. Independent fixed cut r>.3; only 0..0.00025M. The deliberately coarse core is not adequate for a production puncture evolution. Full candidate retains the separately qualified 400-leaf SMR tube. Two anisotropic mesh changes do not define a global h or establish fourth-order/evolved convergence, GPU parity or long-time stability."
+}

@@ -1,0 +1,57 @@
+{
+  "native_fixed03_norms": [
+    0.0031006660733039247,
+    0.19962147281019701,
+    0.26601639054839477
+  ],
+  "exact_shell_halo_fixed03_norms": [
+    0.0030993988233022247,
+    0.19963314722813455,
+    0.2660321664096991
+  ],
+  "relative_norm_change": [
+    -0.0004087025083451268,
+    5.848277629239007e-05,
+    5.930409502896694e-05
+  ],
+  "replaced_ghosts": 1561952,
+  "regions": {
+    "native": {
+      "0.3-0.78": {
+        "H2_fraction": 0.0029414587349748176,
+        "M2_fraction": 4.18113894457549e-07
+      },
+      "0.78-0.9": {
+        "H2_fraction": 0.8013151661695497,
+        "M2_fraction": 0.9963745444209928
+      },
+      "0.9-0.95": {
+        "H2_fraction": 0.1957433750955145,
+        "M2_fraction": 0.003625037465166959
+      },
+      "0.95-1": {
+        "H2_fraction": 2.896704074353716e-15,
+        "M2_fraction": 2.3457616645028615e-27
+      }
+    },
+    "exact_shell_halos": {
+      "0.3-0.78": {
+        "H2_fraction": 0.002942887108377281,
+        "M2_fraction": 4.194372551849599e-07
+      },
+      "0.78-0.9": {
+        "H2_fraction": 0.8011708206779913,
+        "M2_fraction": 0.9963859551519096
+      },
+      "0.9-0.95": {
+        "H2_fraction": 0.19588629221369364,
+        "M2_fraction": 0.00361362541085572
+      },
+      "0.95-1": {
+        "H2_fraction": 3.667815947085284e-15,
+        "M2_fraction": 2.3379061034769153e-27
+      }
+    }
+  },
+  "qualification": "Exact analytic initial reconstruction on the same verified topology; no evolution or active-field override in the halo comparison. M is the native conformal-metric contraction, not the physical-metric norm plotted in the independent fixed-point stencil controls. Exact initial values replace only ghosts with .70<r<.975; scri untouched. Same bulk/radial diagnostic operators, CPU and native integrals agree. Uniform coarse core is held fixed and excluded with r>.3; not an admitted long-time solution or convergence proof."
+}

@@ -81,6 +81,29 @@ class CompositeMesh {
     }
   }
 
+  // Build-time angular subdivision of individual shell layers. This preserves
+  // the Cartesian leaves, radial maps and each block's local storage shape.
+  // Geometry/donor plans use actual block bounds, never a uniform-layer index.
+  void SubdivideShellAngles(const std::vector<int>& factors) {
+    if(factors.empty())return;
+    if(factors.size()!=radii.size())throw std::invalid_argument("shell angular factor count");
+    for(int f:factors)if(f!=1 && f!=2)throw std::invalid_argument("shell angular factors must be 1 or 2");
+    for(const auto& b:blocks)if(b.face>=0 &&
+        (b.lo[1]!=-1 || b.hi[1]!=1 || b.lo[2]!=-1 || b.hi[2]!=1))
+      throw std::invalid_argument("shell angular subdivision requires unsplit input faces");
+    std::vector<CompositeBlock> split;
+    for(const auto& b:blocks){
+      if(b.face<0){split.push_back(b);continue;}
+      const int f=factors.at(b.layer);
+      for(int v=0;v<f;++v)for(int u=0;u<f;++u){auto q=b;
+        q.lo[1]=-1+Real(2*u)/f;q.hi[1]=-1+Real(2*(u+1))/f;
+        q.lo[2]=-1+Real(2*v)/f;q.hi[2]=-1+Real(2*(v+1))/f;
+        split.push_back(q);
+      }
+    }
+    blocks.swap(split);
+  }
+
   void Forward(int id, const Real local[3], Real x[3]) const {
     const auto &b = blocks.at(id);
     Real q[3];

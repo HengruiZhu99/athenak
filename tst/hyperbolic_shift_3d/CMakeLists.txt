@@ -810,6 +810,19 @@ if(ENABLE_MPI)
       PROPERTIES RUN_SERIAL TRUE TIMEOUT 180)
   endforeach()
 
+  add_hyperbolic_amr_executable(hyperbolic_shift_3d_shell_angular test_shell_angular_refinement.cpp)
+  target_compile_definitions(hyperbolic_shift_3d_shell_angular PRIVATE ${refined_science} HYPERBOLIC_CONFIGURED_FORMULATION=1)
+  target_compile_options(hyperbolic_shift_3d_shell_angular PRIVATE -ffp-contract=off)
+  foreach(ranks 1 2)
+    add_test(NAME hyperbolic_shift_3d_shell_angular_mpi${ranks}
+      COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${ranks}
+      $<TARGET_FILE:hyperbolic_shift_3d_shell_angular>
+      ${CMAKE_SOURCE_DIR}/inputs/hyperbolic_shift_3d/refined_convergence/central20_boosted_smr_tube_angular2_reference.cfg
+      ${CMAKE_CURRENT_BINARY_DIR}/shell-angular-mpi${ranks}.json)
+    set_tests_properties(hyperbolic_shift_3d_shell_angular_mpi${ranks}
+      PROPERTIES RUN_SERIAL TRUE TIMEOUT 180)
+  endforeach()
+
   foreach(driver refined refined_amr)
     if(driver STREQUAL "refined")
       set(driver_source coupled_mpi.cpp)

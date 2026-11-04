@@ -20,10 +20,12 @@ class CartesianAMR {
   DvceArray5D<Real> state,coarse,compensation,coarse_compensation;
   const int n,ng=4;
   const std::vector<Real> shell_radii;
+  const std::vector<int> shell_angular_subdivisions;
   const Real half_width,inner_radius;
   CartesianAMR(int cells,int subdivisions=2,int capacity=64,int levels=3,
-               std::vector<Real> radii={.305,.45,.6,.75,.875,1},Real width=.18,Real inner=.16)
-      :n(cells),shell_radii(std::move(radii)),half_width(width),inner_radius(inner){
+               std::vector<Real> radii={.305,.45,.6,.75,.875,1},Real width=.18,Real inner=.16,
+               std::vector<int> angular_factors={})
+      :n(cells),shell_radii(std::move(radii)),shell_angular_subdivisions(std::move(angular_factors)),half_width(width),inner_radius(inner){
     if(!(width>0 && inner>0 && inner<width))throw std::invalid_argument("invalid AMR core bounds");
     input.SetReal("time","cfl_number",.1);
     for(int a=1;a<=3;++a){const auto x=std::to_string(a);
@@ -44,6 +46,7 @@ class CartesianAMR {
   }
   cubed_sphere::CompositeMesh Descriptor()const{
     cubed_sphere::CompositeMesh out(half_width,shell_radii,1,n,4,1,inner_radius);
+    out.SubdivideShellAngles(shell_angular_subdivisions);
     const auto shells=out.blocks;out.blocks.clear();
     for(int m=0;m<mesh->nmb_total;++m){const auto&l=mesh->lloc_eachmb[m];
       cubed_sphere::CompositeBlock b;b.refinement=l.level-mesh->root_level;

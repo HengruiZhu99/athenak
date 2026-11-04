@@ -602,5 +602,25 @@
     ],
     "production_changed": false,
     "qualification": "Exact analytic stencil values, no halo or evolution; preserve global boost. Future full boosted grid must resolve angular as well as radial structure."
+  },
+  "boosted_shell_angular_preparation": {
+    "status": "local_interface_and_two_step_controls_passed_not_submitted",
+    "candidate_input": "central20_boosted_smr_tube_radial24_angular2_reference.cfg",
+    "candidate_binary_sha256": "66216ed21f8fa28a42425ed27620a323a8290baf797a1aa33bfd8a4d538f9cd1",
+    "source_worktree_separate_from_active_frozen_stationary": true,
+    "interface_evidence": "shell-angular-checks/verification.json",
+    "native_initial_attribution": "shell-angular-initial-diagnostic/analysis.json",
+    "comparison": "boosted-mesh-controls/analysis.json",
+    "default_checkpoint_byte_equal": true,
+    "mpi1_vs_mpi2_restart_all8_arrays_byte_equal": true,
+    "initial_baseline_to_candidate_H_M_reduction": [
+      10.23297664078558,
+      17.85629509699662
+    ],
+    "step2_baseline_to_candidate_H_M_reduction": [
+      12.643982773934258,
+      17.899575615680526
+    ],
+    "qualification": "Controls hold a uniform coarse N12 core fixed for exterior attribution. Full candidate retains400-leaf SMR tube but combined configuration and GPU/10M/resolution convergence remain unverified. No new remote job or rebuild. Existing9038758 unknown after SSH expiry."
   }
 }

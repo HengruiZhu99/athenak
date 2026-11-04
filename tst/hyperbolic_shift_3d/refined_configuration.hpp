@@ -22,6 +22,7 @@ inline constexpr bool configured_formulation = HYPERBOLIC_CONFIGURED_FORMULATION
 struct RefinedConfiguration {
   z4c::hyperboloidal::HyperbolicShiftParameters<Real> gauge;
   std::vector<Real> shell_radii;
+  std::vector<int> shell_angular_subdivisions;
   std::array<Real, 3> lower{}, upper{};
   Real inscribed_radius = 0, inner_map_scale = 0, affine_radius = 0;
   Real cfl_target = .2, buffer_cells = 4, largest_transition_spacing = 0;
@@ -35,6 +36,7 @@ struct RefinedConfiguration {
   std::shared_ptr<z4c::hyperboloidal::StationaryGaugeReference> stationary_reference;
   cubed_sphere::CompositeMesh Mesh(int n) const {
     cubed_sphere::CompositeMesh mesh(core_half_width,shell_radii,1,n,3,core_subdivisions,shell_inner_radius);
+    mesh.SubdivideShellAngles(shell_angular_subdivisions);
     mesh.evolved_overlap=3;mesh.continuous_cartesian_core=true;return mesh;
   }
 
@@ -49,7 +51,7 @@ struct RefinedConfiguration {
     std::map<std::string, std::string> values;
     const std::set<std::string> allowed = {
         "omega_profile", "omega_flat_radius", "omega_outer_radius", "omega_plateau", "gauge_begin",
-        "gauge_end",     "buffer_cells",      "cfl_target",         "shell_radii", "core_half_width", "shell_inner_radius", "core_subdivisions", "initial_start_M", "initial_end_M", "boost_velocity", "smr_levels", "smr_radius", "smr_half_widths", "halo_frame", "shift_speed_policy", "outer_gauge"};
+        "gauge_end",     "buffer_cells",      "cfl_target",         "shell_radii", "core_half_width", "shell_inner_radius", "core_subdivisions", "initial_start_M", "initial_end_M", "boost_velocity", "smr_levels", "smr_radius", "smr_half_widths", "halo_frame", "shift_speed_policy", "outer_gauge", "shell_angular_subdivisions"};
     std::string line;
     while (std::getline(input, line)) {
       line = Trim(line.substr(0, line.find('#')));
@@ -174,6 +176,28 @@ struct RefinedConfiguration {
         shell_radii[shell_radii.size()-2] < .875)
       throw std::invalid_argument(
           "6 to 24 shells ending at 1, with the last inner interface at least .875, are required");
+    shell_angular_subdivisions.clear();
+    if(values.count("shell_angular_subdivisions")){
+      const auto& text=values.at("shell_angular_subdivisions");
+      std::istringstream list(text);std::string word;
+      while(std::getline(list,word,',')){
+        word=Trim(word);size_t used=0;const Real f=std::stod(word,&used);
+        if(used!=word.size() || (f!=1 && f!=2))
+          throw std::invalid_argument("shell angular factors must be 1 or 2");
+        shell_angular_subdivisions.push_back(int(f));
+      }
+      if(text.back()==',' || shell_angular_subdivisions.size()!=shell_radii.size())
+        throw std::invalid_argument("shell angular factor count must match radial layers");
+      // Keep the established Cartesian overlap and outer surface discretization.
+      // Refinement is confined outside every evolved Cartesian corner and does
+      // not alter the angular dissipation plan's one-block-per-face assumption.
+      if(shell_angular_subdivisions.back()!=1)
+        throw std::invalid_argument("outermost angular shell must remain unsubdivided");
+      const Real core_corner=std::sqrt(3.)*core_half_width*(1+6./(core_subdivisions*mesh.cells));
+      for(size_t layer=0;layer<shell_radii.size();++layer)
+        if(shell_angular_subdivisions[layer]>1 && (layer==0 || shell_radii[layer-1]<=core_corner))
+          throw std::invalid_argument("angular shell refinement must lie outside evolved Cartesian core");
+    }
     Real previous = shell_inner_radius;
     largest_transition_spacing = core_spacing;
     for (Real radius : shell_radii) {
@@ -223,6 +247,10 @@ struct RefinedConfiguration {
     if(gauge.separated_shift_speeds)out<<";shift_speed_policy=separated-inner-v1";
     if(gauge.stationary_outer_reference)out<<";outer_gauge=stationary-reference-v2;initial-lapse-blend=flat-to-inner-begin";
     if(smr_box)out<<";smr-box-origin-v1="<<smr_half_widths[0]<<','<<smr_half_widths[1]<<','<<smr_half_widths[2];
+    if(!shell_angular_subdivisions.empty()){
+      out<<";shell-angular-subdivisions-v1=";
+      for(int factor:shell_angular_subdivisions)out<<factor<<',';
+    }
     identity = out.str();
     stationary_reference.reset();
     if(gauge.stationary_outer_reference)stationary_reference=std::make_shared<z4c::hyperboloidal::StationaryGaugeReference>(gauge);
