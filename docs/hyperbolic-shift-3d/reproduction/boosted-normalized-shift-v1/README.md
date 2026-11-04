@@ -12,15 +12,26 @@ checkpoint SHA256 is8e8bfe0fd44f181ac06f62d27e96f6c6349536103b68540d92d289f75e5a
 Native command runtime2195.923s (36.60min); PBS reported41min28s on four nodes.
 No N16 continuation, rebuild, freeze or smoke is needed.
 
-**Fresh N20 S20 job9037706 submitted**, four debug-scaling nodes/48ranks,
-dt.0002,target10M. Plan
-`campaigns/n20-boosted-normalized-shift-v1-s20-evolution-segment01/plan.json`,
-SHA2567df9a0bbae2ddb641d5ef29776204600f6558c1d855f05f4de22ec5853913199.
-Both user debug queues were empty before the single submission. Binding footprint
-8,411,304,084bytes; headroom315,534,312bytes after output/atomic reserves. No purge.
-N24 is not submitted; it follows N20 terminal disposition and preservation.
-The same immutable source/build/launcher/science remains in use.
-Read `state.json` and saved submission before any action.
+**N20 segment01 job9037706 reached9.3174M/15529steps and checkpointed at
+healthy walltime.** Frozen helper admission passed, all five worker artifacts
+are locally hash/length verified, native/worker checkpoint disposition agrees
+with expected PBS exit3, and its matching terminal lock was released.
+Checkpoint481985232bytes, SHA256
+f9e92791038645ca88cfcd8723209e1f71cfb809383199d5b714409a98d7ade5.
+Native command2913.925s; this is not a numerical failure or completed10M result.
+The frozen worker emitted no horizon-seed sidecar for this segment; continuation
+binds the unchanged science and exact checkpoint, without inventing a seed.
+Keep the changed finder initialization/sampling boundary explicit in analysis.
+
+**Same-case segment02 job9037854 is submitted** under the unchanged
+four-node/48-rank policy, dt.0002, target10M. Read `state.json` and saved submission
+for its exact job. No duplicate plan or restart from another formulation.
+Storage initially blocked binding. Two obsolete BC2 N16/unboosted N24 segment01
+checkpoint copies were freshly hash/length verified locally, remotely rehashed,
+and retired with receipt `retired-before-n20-segment02.json`; local originals
+remain. Active BN1 N20 restart and scientific snapshots are retained. Successful
+binding footprint7,919,046,656bytes and headroom807,791,740bytes after reserves.
+N24 remains unsubmitted and follows N20 terminal disposition/preservation.
 
 The monitor checks every30minutes. Evidence in `n16-completed/`,
 `n16-local-verification.json`, `n20-submitted/`, and `n16-comparison/`.
