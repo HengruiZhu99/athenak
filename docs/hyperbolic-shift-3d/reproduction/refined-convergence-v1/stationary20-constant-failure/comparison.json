@@ -1,0 +1,190 @@
+{
+  "artifacts_verified": 151,
+  "failures": {
+    "constant": {
+      "status": "failed",
+      "accepted_steps": 1237,
+      "time": 0.15462499999999682,
+      "dt": 0.000125,
+      "n": 16,
+      "identity": "RF2;flat-inner-Cartesian-Z4c-v1;native-C6-areal=20,40;M=1/3;v=0;restoration4:.6-.9;KO8;scri-original;penalty=.6510416666660156;chi-floor=1e-8:.03;lapse-floor=1e-10;flat=1;omega=0.40000000000000002,0.54000000000000004,0.41999999999999998;gauge=0.62,0.78000000000000003,0.010235092792698271;eta=6;k=0.10116863541976966;cfl=0.20000000000000001;buffer=4;smr=3,0.025000000000000001;subdivisions=4;shell_inner=0.34999999999999998;box=-0.40000000000000002,0.40000000000000002;-0.40000000000000002,0.40000000000000002;-0.40000000000000002,0.40000000000000002;shells=0.40000000000000002,0.42999999999999999,0.46500000000000002,0.5,0.54000000000000004,0.65000000000000002,0.78000000000000003,0.875,0.90000000000000002,0.92500000000000004,0.94999999999999996,1,;halo_frame=legacy-cartesian-to-shell-v1;amr_policy=smr",
+      "checkpoint_admitted": false,
+      "error": "nonpositive interpolated scri geometry",
+      "cumulative_floor_statistics": [
+        0,
+        0,
+        27696,
+        9232,
+        0.0013531646933869306,
+        0,
+        0,
+        0
+      ],
+      "cumulative_bulk_sign_counts": [
+        9232,
+        9232,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cumulative_surface_sign_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "cumulative_boundary_sign_counts": [
+        0,
+        0
+      ],
+      "bulk_sign_order": "chi then lapse: negative_stage,negative_final,zero_stage,zero_final"
+    },
+    "separated": {
+      "status": "failed",
+      "accepted_steps": 1237,
+      "time": 0.15462499999999682,
+      "dt": 0.000125,
+      "n": 16,
+      "identity": "RF2;flat-inner-Cartesian-Z4c-v1;native-C6-areal=20,40;M=1/3;v=0;restoration4:.6-.9;KO8;scri-original;penalty=.6510416666660156;chi-floor=1e-8:.03;lapse-floor=1e-10;flat=1;omega=0.40000000000000002,0.54000000000000004,0.41999999999999998;gauge=0.62,0.78000000000000003,0.010235092792698271;eta=6;k=0.10116863541976966;cfl=0.20000000000000001;buffer=4;smr=3,0.025000000000000001;subdivisions=4;shell_inner=0.34999999999999998;box=-0.40000000000000002,0.40000000000000002;-0.40000000000000002,0.40000000000000002;-0.40000000000000002,0.40000000000000002;shells=0.40000000000000002,0.42999999999999999,0.46500000000000002,0.5,0.54000000000000004,0.65000000000000002,0.78000000000000003,0.875,0.90000000000000002,0.92500000000000004,0.94999999999999996,1,;halo_frame=legacy-cartesian-to-shell-v1;shift_speed_policy=separated-inner-v1;amr_policy=smr",
+      "checkpoint_admitted": false,
+      "error": "nonpositive interpolated scri geometry",
+      "cumulative_floor_statistics": [
+        0,
+        0,
+        27696,
+        9232,
+        0.0013531646933869306,
+        0,
+        0,
+        0
+      ],
+      "cumulative_bulk_sign_counts": [
+        9232,
+        9232,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cumulative_surface_sign_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "cumulative_boundary_sign_counts": [
+        0,
+        0
+      ],
+      "bulk_sign_order": "chi then lapse: negative_stage,negative_final,zero_stage,zero_final"
+    }
+  },
+  "nominal_shell_field_differences": {
+    "0-1": {
+      "cells": 294912,
+      "max_absolute": 10.44655976183482,
+      "max_scaled": 0.8186264593686186,
+      "chi_max_absolute": 0.015564983413639988
+    },
+    "0.6-0.78": {
+      "cells": 35328,
+      "max_absolute": 10.44655976183482,
+      "max_scaled": 0.8186264593686186,
+      "chi_max_absolute": 0.015564983413639988
+    },
+    "0.78-0.875": {
+      "cells": 24576,
+      "max_absolute": 2.680348792589516,
+      "max_scaled": 0.12830195390048427,
+      "chi_max_absolute": 0.006526245987459767
+    },
+    "0.875-1": {
+      "cells": 98304,
+      "max_absolute": 0.013768316846322293,
+      "max_scaled": 0.0009031777134275239,
+      "chi_max_absolute": 0.0001682170964536489
+    }
+  },
+  "exclusive_performance": {
+    "constant": {
+      "diagnostics": {
+        "median_seconds": 5.295385680394247,
+        "min_seconds": 5.2933539263904095,
+        "max_seconds": 5.450739040505141
+      },
+      "evolution_setup": {
+        "median_seconds": 82.48500550305471,
+        "min_seconds": 82.41757106594741,
+        "max_seconds": 82.48809422552586
+      },
+      "failure_capture": {
+        "median_seconds": 2.290870302822441,
+        "min_seconds": 2.2725337613373995,
+        "max_seconds": 2.344495383556932
+      },
+      "initial_state": {
+        "median_seconds": 8.571655139094219,
+        "min_seconds": 8.416024061851203,
+        "max_seconds": 8.573552602902055
+      },
+      "native_setup": {
+        "median_seconds": 0.43224415415897965,
+        "min_seconds": 0.417897536419332,
+        "max_seconds": 0.5008186530321836
+      },
+      "startup": {
+        "median_seconds": 0.011003162479028106,
+        "min_seconds": 0.0011581545695662498,
+        "max_seconds": 0.020087254233658314
+      },
+      "step": {
+        "median_seconds": 238.38420995650813,
+        "min_seconds": 238.35140167269856,
+        "max_seconds": 238.38553802017123
+      }
+    },
+    "separated": {
+      "diagnostics": {
+        "median_seconds": 5.295274584786966,
+        "min_seconds": 5.293890158180147,
+        "max_seconds": 5.444595974404365
+      },
+      "evolution_setup": {
+        "median_seconds": 82.90687422757037,
+        "min_seconds": 82.85476016439497,
+        "max_seconds": 82.91004420956597
+      },
+      "failure_capture": {
+        "median_seconds": 2.2972086407244205,
+        "min_seconds": 2.277356633450836,
+        "max_seconds": 2.3354033301584423
+      },
+      "initial_state": {
+        "median_seconds": 8.447097279829904,
+        "min_seconds": 8.297638901975006,
+        "max_seconds": 8.448250097688287
+      },
+      "native_setup": {
+        "median_seconds": 0.32107876637019217,
+        "min_seconds": 0.30493018589913845,
+        "max_seconds": 0.3706243000924587
+      },
+      "startup": {
+        "median_seconds": 0.010419076541438699,
+        "min_seconds": 0.0014538019895553589,
+        "max_seconds": 0.01948077417910099
+      },
+      "step": {
+        "median_seconds": 238.48023024527356,
+        "min_seconds": 238.41909830505028,
+        "max_seconds": 238.4815161046572
+      }
+    }
+  },
+  "qualification": "Same source, mesh, initial geometry, outer gauge and dt; inner driver policy differs. Failed active fields only, no failed surface saved, no endpoint admission. Exclusive phases may be compared individually; nested timers must not be summed. No controlled scaling or speedup claim."
+}

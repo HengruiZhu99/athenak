@@ -1,8 +1,8 @@
 {
-  "status": "stationary20_constant_n16_submitted",
-  "current_job": "9038285.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "status": "paired_stationary20_controls_failed_preserved",
+  "current_job": null,
   "branch": "codex/refined-convergence",
-  "next": "Monitor existing9038285; no duplicate/rebuild. Finish matched constant disposition and compare with separated failure. New local forensic capture improvement is NOT in frozen job binary; preserve failed surface on future newly bound builds.",
+  "next": "No active evolution. Both controls failed/preserved at .463875M. Implement a distinct coherent stationary-reference outer gauge with compatible positive lapse/shift targets, retain inner Z4c and scri asymptotics, test nontrivial perturbations and CPU/device consistency before fresh stationary run. No failed-state replay or boosted run yet.",
   "goal_active": true,
   "historical_startup_failure": {
     "job": "9038031",
@@ -22,7 +22,11 @@
     "separated_inner_shift": "Optional field-dependent inner coefficient has an analytic positive lapse/longitudinal-shift gap,6363-case actual RHS check and full sampled initial-symbol audit. Other characteristics and nonlinear regularity unproven; outer symbols bit-identical.",
     "spatial_reference": "Independent5x5 restricted block matches production at inner roots within4.45e-16. Reference telegrapher input also has kappa/tau2; inner coincidence is not uniquely hyperboloidal or proven sole cause.",
     "late_frame_postprocessing": "At preserved stationary6 10M, applying production frame interpolation only in analysis leaves fixed r>.3 H/M essentially unchanged (relative7.1e-9/1.4e-10). No active fields changed; specific postprocessing correction cannot remove the late errors, no slicing-cause proof.",
-    "stationary20_separated_failure": "All151artifacts preserved. Lastaccepted.463875M, no admitted endpoint. Every saved active metric/chi positive;3503736 nonboundary halo rows reconstructed valid. Surface-dependent13824 rows excluded because old AMR driver omitted failed surface. This narrows the suspect, not a full causal proof. See stationary20-separated-failure/."
+    "stationary20_separated_failure": "All151artifacts preserved. Lastaccepted.463875M, no admitted endpoint. Every saved active metric/chi positive;3503736 nonboundary halo rows reconstructed valid. Surface-dependent13824 rows excluded because old AMR driver omitted failed surface. This narrows the suspect, not a full causal proof. See stationary20-separated-failure/.",
+    "initial_gauge_shear": "Same initial geometry/K, pointwise metric RHS has peak41.8879 at r.90875 under free beta=-x; native compatible shift cancels to1.57e-9 with fourth-order derivative-step refinement. Original restoring source then forces native shift byup to26.7459; initial shift alone is not coherent repair. See INITIAL-GAUGE-ATTRIBUTION.md. No evolved stability/convergence proof.",
+    "failed_radial_geometry": "Large-center failed stage nearly spherical: last nominal row chi16.68, relativeangularrange.02036%, adjacent radial cellchange25.23%; conformaltangentialmetric.01395. Boundary surface unavailable. See profiles evidence; no endpoint admission.",
+    "matched_inner_policy": "Both policies fail same1237steps/.463875M and same floorcounts; nominal r>.875 failed fields differ by maxscaled.00090318. Inner policy does not remove this early failure; not proof of universal irrelevance. All151 constant artifacts preserved, lock released.",
+    "full_initial_stationarity": "Compatible stationary outer gauge cancels all18 geometric RHS components with derivative-probe orders4.007/4.004 before roundoff; free gauge rates persist~1753.43. Pointwise not evolved convergence. See initial-stationary-geometry/."
   },
   "active_control": {
     "root": "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/frame-separation-v1",
@@ -31,14 +35,14 @@
     "launcher": "launcher-v4",
     "build_pid": 1678738,
     "build_host": "aurora-uan-0012",
-    "status": "submitted",
-    "current_job": "9038285.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "status": "numerical_failure",
+    "current_job": null,
     "n": 16,
     "dt": 0.000125,
     "target_M": 10,
     "nodes": 4,
     "ranks": 48,
-    "checkpoint_expected_bytes": 858262665,
+    "checkpoint_expected_bytes": 858262627,
     "build_completed": true,
     "science": {
       "source_commit": "342715a90157c3f00498b468646f2adea09bb658",
@@ -55,10 +59,23 @@
     "storage_footprint_bytes": 36650531419,
     "storage_headroom_after_reserves_bytes": 10349468581,
     "execution": "Use launcher-v4/control.py collect; healthy same-case --previous verified plan only. Exact backend-derived identity calibration recorded; frozen v3/science untouched.",
-    "following_control": "Await matched constant-driver disposition before choosing a distinct fresh boundary control; no replay of failed separated case.",
+    "following_control": "Distinct compatible outer gauge only after local equation/perturbation/asymptotic controls; no submission yet.",
     "variant": "constant",
     "current_restart": null,
-    "launcher_manifest_sha256": "5a80da12a747e2806ec5ad8a000b0b1b8672f878a8abadfa2541a3234f56db68"
+    "launcher_manifest_sha256": "5a80da12a747e2806ec5ad8a000b0b1b8672f878a8abadfa2541a3234f56db68",
+    "completed_job": "9038285.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "terminal": {
+      "native_returncode": 2,
+      "scheduler_exit": 2,
+      "admitted": false,
+      "accepted_steps": 1237,
+      "last_accepted_M": 0.463875,
+      "last_diagnostic_M": 0.45,
+      "reason": "nonpositive interpolated scri geometry",
+      "matching_lock_released": true,
+      "native_seconds": 344.6453752447851,
+      "all151_artifacts_locally_verified": true
+    }
   },
   "historical_stationary6": {
     "plan": "campaigns/stationary6-n16-v2-segment01/plan.json",

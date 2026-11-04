@@ -9,14 +9,19 @@ currently queued or running from that historical campaign. The separate frozen B
 and its final analysis are complete; its monitor was deleted. See state.json
 before any action; never duplicate a run.
 
-**Current update:** the large-center separated-driver N16 job9038253 failed
-after its last accepted step at0.463875M. All151 artifacts are locally verified;
-its state is terminal and must never restart. Matched constant-driver job9038285
-is submitted on four nodes. Source342715a90 and the successful build are frozen; launcher-v4 uses
-an exact expected identity calibrated to the actual Aurora-derived map scale
-(a1.4e-16 relative difference from the local compiler). The original v3 identity
-and failed run remain unchanged. See `stationary20-separated-failure/`,
-`stationary20-constant-submission/`, `launcher-v4/identity-calibration.json`.
+**Current update:** both enlarged stationary controls failed at the same
+accepted step1237 (0.463875M): separated-driver9038253 and constant-driver9038285.
+All151 artifacts from each run are locally hash/length verified and both terminal
+locks are released. Neither may restart. There is no active evolution.
+The outer failed nominal fields (r>.875) differ by at most9.032e-4 scaled;
+changing the inner driver did not prevent this early failure. See
+`stationary20-constant-failure/` and `compare_driver_failures.py`.
+
+`INITIAL-GAUGE-ATTRIBUTION.md` identifies an independent continuum initial-gauge
+mismatch: the free shift removes the cancellation of the native slicing shear,
+while the original restoration strongly drives a compatible shift away again.
+This suggests a coherent reference-gauge control, not a shift-only replacement.
+The full regularity and convergence goal remains unmet.
 
 The failure message “nonpositive interpolated scri geometry” combines two
 different checks: ordinary AMR halo geometry and surface interpolation. It
@@ -40,7 +45,7 @@ retaining the large center, initial slice, three SMR levels, frame-aware halo
 interpolation, twelve shells and dt.000125. It is not a continuation of the
 failed state. A local diagnostic-only follow-up now separates halo and surface
 error counts and saves failed-surface data separately; it has **not** changed
-the frozen running binary. Existing reduction results are reused, with no
+the frozen failed-run binary. Existing reduction results are reused, with no
 new halo kernel or collective in healthy steps. No measured speedup is claimed.
 
 ## What is established
@@ -355,4 +360,5 @@ and both debug queues; held capacity work was preserved. Storage footprint
 36.046GB leaves10.954GB after2GB output and1GB atomic reserves under the50GB
 combined cap. No purge was needed. Follow the saved job and immutable
 launcher-v3 for terminal verification and healthy same-case continuations.
-No constant-driver companion or boosted run has been submitted yet.
+This historical submission was followed by the matched constant-driver job9038285;
+both are now terminal failures as recorded at the top. No boosted run submitted.

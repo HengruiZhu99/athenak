@@ -1,0 +1,122 @@
+{
+  "samples": [
+    {
+      "mode": 0,
+      "h": 0.0008,
+      "max_geometric_rate": 1753.4349340235362,
+      "metric_rr_rate": 30.98782026170919,
+      "chi_rate": 9.808800103806107,
+      "K_rate": 73.09250307738466,
+      "Theta_rate": 3.32778060467831e-05,
+      "max_A_rate": 689.7503033584265,
+      "max_Lambda_rate": 1753.4349340235362
+    },
+    {
+      "mode": 0,
+      "h": 0.0004,
+      "max_geometric_rate": 1753.4274278285022,
+      "metric_rr_rate": 30.98782026170919,
+      "chi_rate": 9.808802648690708,
+      "K_rate": 73.09263636790718,
+      "Theta_rate": 2.0780070926207372e-06,
+      "max_A_rate": 689.7500798701074,
+      "max_Lambda_rate": 1753.4274278285022
+    },
+    {
+      "mode": 0,
+      "h": 0.0002,
+      "max_geometric_rate": 1753.4269564955239,
+      "metric_rr_rate": 30.98782026170919,
+      "chi_rate": 9.808802805707174,
+      "K_rate": 73.09264437870473,
+      "Theta_rate": 1.3335873916275887e-07,
+      "max_A_rate": 689.7500684410381,
+      "max_Lambda_rate": 1753.4269564955239
+    },
+    {
+      "mode": 0,
+      "h": 0.0001,
+      "max_geometric_rate": 1753.426927003593,
+      "metric_rr_rate": 30.98782026170919,
+      "chi_rate": 9.808802815488473,
+      "K_rate": 73.09264500258433,
+      "Theta_rate": 1.1739786032194388e-08,
+      "max_A_rate": 689.7500678344954,
+      "max_Lambda_rate": 1753.426927003593
+    },
+    {
+      "mode": 0,
+      "h": 5e-05,
+      "max_geometric_rate": 1753.4269251598555,
+      "metric_rr_rate": 30.98782026170919,
+      "chi_rate": 9.808802816100151,
+      "K_rate": 73.0926453386987,
+      "Theta_rate": 6.700255994473991e-08,
+      "max_A_rate": 689.7500702464906,
+      "max_Lambda_rate": 1753.4269251598555
+    },
+    {
+      "mode": 1,
+      "h": 0.0008,
+      "max_geometric_rate": 0.002096520524787593,
+      "metric_rr_rate": 0.00010859344811109395,
+      "chi_rate": 5.046218000259728e-05,
+      "K_rate": 0.0004582874541725346,
+      "Theta_rate": 3.059887211520618e-05,
+      "max_A_rate": 0.002096520524787593,
+      "max_Lambda_rate": 0.0007111402555040058
+    },
+    {
+      "mode": 1,
+      "h": 0.0004,
+      "max_geometric_rate": 0.00013038821987265692,
+      "metric_rr_rate": 6.774541233767195e-06,
+      "chi_rate": 3.1472100818774607e-06,
+      "K_rate": 2.848685621614777e-05,
+      "Theta_rate": 1.9107230997406077e-06,
+      "max_A_rate": 0.00013038821987265692,
+      "max_Lambda_rate": 4.31448101778642e-05
+    },
+    {
+      "mode": 1,
+      "h": 0.0002,
+      "max_geometric_rate": 8.124695455080655e-06,
+      "metric_rr_rate": 4.2321194371197635e-07,
+      "chi_rate": 1.9659659855619793e-07,
+      "K_rate": 1.7598656185668915e-06,
+      "Theta_rate": 1.2262306370303122e-07,
+      "max_A_rate": 8.124695455080655e-06,
+      "max_Lambda_rate": 2.4256416963908123e-06
+    },
+    {
+      "mode": 1,
+      "h": 0.0001,
+      "max_geometric_rate": 1.7382022576839518e-06,
+      "metric_rr_rate": 2.647160357582834e-08,
+      "chi_rate": 1.229731338980855e-08,
+      "K_rate": 4.651132456956475e-08,
+      "Theta_rate": 1.0794693139359879e-08,
+      "max_A_rate": 5.494653692039719e-07,
+      "max_Lambda_rate": 1.7382022576839518e-06
+    },
+    {
+      "mode": 1,
+      "h": 5e-05,
+      "max_geometric_rate": 5.602786899316925e-06,
+      "metric_rr_rate": 1.6720704820727406e-09,
+      "chi_rate": 7.76971376126312e-10,
+      "K_rate": 4.98511710134153e-07,
+      "Theta_rate": 6.160870213989256e-08,
+      "max_A_rate": 2.526021603443951e-06,
+      "max_Lambda_rate": 5.602786899316925e-06
+    }
+  ],
+  "stationary_full_geometry_effective_orders": [
+    4.007111516102965,
+    4.004355986427007,
+    2.2247177719635842,
+    -1.68854865674042
+  ],
+  "csv_sha256": "61e24319395b25d6874f0c108797f2efb4c10e8eec520bc7faff16f73ea9752e",
+  "qualification": "Pointwise stationary geometry only: actual conformal geometry RHS with independently differenced first/second derivatives, no KO/upwind/RK/boundary evolution. Twelve radii .4-.95 outside the puncture. Fourth-order truncation trend followed by cancellation/roundoff; smallest h is not necessarily most accurate. Existing gauge RHS is not stationary and must be changed consistently before an evolution control."
+}
