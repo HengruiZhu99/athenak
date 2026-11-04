@@ -1,0 +1,11 @@
+{
+  "executed_script_sha256": "a63e88e1f01c8b8d370152eae68b625c90b6e822ee65e2531956cb10f37d3860",
+  "correction": "Final read-only validation used nonexistent horizon_finest_margin; native history key is candidate_finest_margin. Reproducer corrected after launch. Native outputs will remain untouched; final read-only verification must use the actual key.",
+  "scope": "Validator naming typo only, no change to executable/configuration/evolution or artifacts.",
+  "coordinator_returncode": 1,
+  "exception": "KeyError: 'horizon_finest_margin'",
+  "all_native_commands_returncode_zero": true,
+  "finalize_script": "finalize_sealed_topology_controls.py",
+  "finalize_returncode": 0,
+  "native_evolution_not_repeated": true
+}

@@ -823,6 +823,16 @@ if(ENABLE_MPI)
       PROPERTIES RUN_SERIAL TRUE TIMEOUT 180)
   endforeach()
 
+  add_hyperbolic_amr_executable(hyperbolic_shift_3d_sealed_topology test_amr_sealed_topology.cpp)
+  foreach(ranks 1 2)
+    add_test(NAME hyperbolic_shift_3d_sealed_topology_mpi${ranks}
+      COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${ranks}
+      $<TARGET_FILE:hyperbolic_shift_3d_sealed_topology>
+      ${CMAKE_CURRENT_BINARY_DIR}/sealed-topology-mpi${ranks}.json)
+    set_tests_properties(hyperbolic_shift_3d_sealed_topology_mpi${ranks}
+      PROPERTIES RUN_SERIAL TRUE TIMEOUT 180)
+  endforeach()
+
   foreach(driver refined refined_amr)
     if(driver STREQUAL "refined")
       set(driver_source coupled_mpi.cpp)

@@ -2,7 +2,7 @@
   "status": "stationary_radial18_n12_submitted",
   "current_job": "9038758.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
   "branch": "codex/refined-convergence",
-  "next": "Renew Aurora access and reconcile9038758; no duplicate. Continue local boosted SMR qualification and initial spatial-error isolation meanwhile.",
+  "next": "Renew Aurora access and reconcile9038758 before any continuation or new submission. Full combined boosted SMR/radial24/angular2 now locally qualified, including MPI1/2 parity; stationary/boosted10M resolution work remains.",
   "goal_active": true,
   "historical_startup_failure": {
     "job": "9038031",
@@ -621,6 +621,35 @@
       12.643982773934258,
       17.899575615680526
     ],
-    "qualification": "Controls hold a uniform coarse N12 core fixed for exterior attribution. Full candidate retains400-leaf SMR tube but combined configuration and GPU/10M/resolution convergence remain unverified. No new remote job or rebuild. Existing9038758 unknown after SSH expiry."
+    "qualification": "Initial coarse-core attribution remains separate; combined400-leaf SMR/radial24/angular2 now locally two-step/MPI1/2 qualified under separate memory-optimized binary. GPU/10M/resolution convergence remain unverified. Existing9038758 unknown after SSH expiry."
+  },
+  "boosted_combined_smr": {
+    "status": "local_two_step_and_mpi_parity_passed_not_submitted",
+    "evidence": "sealed-topology-controls/verification.json and combined-smr-mpi/verification.json",
+    "binary_sha256": "567df95bee6fd0901b76ea37cc70d6525e4a170b78f6d9de29536908e640550b",
+    "config_sha256": "57d0d28cdd7833aabaf2ef91445692c850cdc5ce0b3d1262f797c173d06fa753",
+    "checkpoint_sha256": "0a397ec21f10c4ad212f7cff912802a1b4def346021e5e2bfd11a4c2ede368b9",
+    "checkpoint_bytes": 957169752,
+    "n": 12,
+    "leaves": 400,
+    "total_blocks": 832,
+    "active": 1513728,
+    "steps": 2,
+    "time_M": 0.00025,
+    "dt": 4.1666666666666665e-05,
+    "mpi1_mpi2_checkpoint_byte_equal": true,
+    "horizon_all_accepted": true,
+    "max_cfl": 0.19371543457259374,
+    "inner_r03_fields_byte_equal_to_prior_smr": true,
+    "initial_H_M_reductions": [
+      10.177251922342936,
+      17.856308517437327
+    ],
+    "step2_H_M_reductions": [
+      12.547625801600585,
+      17.899589586928617
+    ],
+    "memory_optimization": "Fixed topology retires native state/coarse/compensation buffers after construction or restore; dynamic unchanged.5,499,552,768 allocated bytes retired for one-rank N12 SMR; matched uniform peakRSS2.63% lower. Separate migration buffers retained.",
+    "qualification": "Local Serial-MPI short qualification only; no new Aurora run, GPU/10M/convergence evidence. Production frozen source/binary and existing9038758 unchanged."
   }
 }

@@ -1,0 +1,171 @@
+{
+  "passed": true,
+  "uniform_checkpoint_byte_equal": true,
+  "smr_restart_all8_arrays_byte_equal": true,
+  "full_smr_checkpoint": {
+    "verified": true,
+    "identity": "RF2;flat-inner-Cartesian-Z4c-v1;native-C6-areal=20,40;M=1/3;v=0.10000000000000001;restoration4:.6-.9;KO8;scri-original;penalty=.6510416666660156;chi-floor=1e-8:.03;lapse-floor=1e-10;flat=1;omega=0.40000000000000002,0.54000000000000004,0.41999999999999998;gauge=0.62,0.78000000000000003,0.010235092792698275;eta=6;k=0.10116863541976967;cfl=0.20000000000000001;buffer=4;smr=3,0.050000000000000003;subdivisions=4;shell_inner=0.34999999999999998;box=-0.40000000000000002,0.40000000000000002;-0.40000000000000002,0.40000000000000002;-0.40000000000000002,0.40000000000000002;shells=0.40000000000000002,0.42999999999999999,0.46500000000000002,0.5,0.54000000000000004,0.65000000000000002,0.78000000000000003,0.80374999999999996,0.82750000000000001,0.85124999999999995,0.875,0.88124999999999998,0.88749999999999996,0.89375000000000004,0.90000000000000002,0.90625,0.91249999999999998,0.91874999999999996,0.92500000000000004,0.93125000000000002,0.9375,0.94374999999999998,0.94999999999999996,1,;halo_frame=legacy-cartesian-to-shell-v1;outer_gauge=stationary-reference-v2;initial-lapse-blend=flat-to-inner-begin;smr-box-origin-v1=0.074999999999999997,0.025000000000000001,0.025000000000000001;shell-angular-subdivisions-v1=1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,;amr_policy=smr",
+    "n": 12,
+    "kind": 2,
+    "subdivisions": 4,
+    "steps": 2,
+    "regrids": 0,
+    "time": 8.333333333333333e-05,
+    "dt": 4.1666666666666665e-05,
+    "leaves": 400,
+    "bytes": 957169752,
+    "min_chi": 5.039442356665946e-06,
+    "tracker": [
+      1.675237159899048e-17,
+      -5.074070377015637e-23,
+      -5.441636975857529e-23
+    ],
+    "scope": "framing/finite/SPD/FNV; also require matching healthy native-worker-scheduler disposition and hashes",
+    "sha256": "0a397ec21f10c4ad212f7cff912802a1b4def346021e5e2bfd11a4c2ede368b9"
+  },
+  "full_smr_initial": {
+    "step": 0,
+    "time": 0,
+    "t_over_M": 0,
+    "leaves": 400,
+    "H": 0.0016528642949759265,
+    "M": 0.011960287584252043,
+    "Mr": 0.011928734550693635,
+    "H_exterior": 0.0013856212928422995,
+    "M_exterior": 0.011960316882412335,
+    "Mr_exterior": 0.011928572559769078,
+    "exterior_cutoff": 0.0168624312788484,
+    "chi": 5.078785121980928e-06,
+    "lapse": 0.003929457608787379,
+    "det_residual": 1.2434497875801753e-14,
+    "tracefree_residual": 6.394884621840902e-13,
+    "null": 8.881784197001248e-16,
+    "ghost_null": 9.992007221626413e-16,
+    "pole_max": 7.924307538498947e-09,
+    "clock_max": 6.792302285106913e-12,
+    "cfl": 0,
+    "penalty": 0.6510416666660156,
+    "penalty_cfl": 0.07812499999992184,
+    "horizon_found": 1,
+    "horizon_complete": 1,
+    "horizon_trial_radius": 0.01683415853505858,
+    "horizon_max_radius": 0.0168624312788484,
+    "horizon_trial_expansion_rms": 9.174192495555335e-05,
+    "horizon_iterations": 91,
+    "mass": 0.33333337896671317,
+    "tracker": [
+      0,
+      0,
+      0
+    ],
+    "finest_level": 3,
+    "finest_spacing": 0.002083333333333335,
+    "finest_support_radius": 0.04999999999999999,
+    "finest_stencil_buffer": 0.00833333333333334,
+    "puncture_finest_margin": 0.04166666666666665,
+    "candidate_finest_margin": 0.02480423538781825,
+    "core_margin": 0.4,
+    "fixed": [
+      {
+        "cut": 0.1,
+        "H": 0.0013862986020800427,
+        "M": 0.011966261431995577,
+        "Mr": 0.011934501282837936
+      },
+      {
+        "cut": 0.3,
+        "H": 0.0014046873524012058,
+        "M": 0.012125056797189653,
+        "Mr": 0.012092873066729612
+      },
+      {
+        "cut": 0.6,
+        "H": 0.00154947934267698,
+        "M": 0.013547104739776484,
+        "Mr": 0.01351089458022552
+      }
+    ],
+    "gauge_max": [
+      0.7918103144005445,
+      30.299943549286105,
+      0,
+      8.560501524357426e-09,
+      289.5008004723058
+    ],
+    "wall_seconds": 138.35232299999998
+  },
+  "full_smr_final": {
+    "step": 2,
+    "time": 8.333333333333333e-05,
+    "t_over_M": 0.00025,
+    "leaves": 400,
+    "H": 0.0014360307208067219,
+    "M": 0.011747683875043623,
+    "Mr": 0.009783874013924514,
+    "H_exterior": 0.0011003891288837346,
+    "M_exterior": 0.011747712651788146,
+    "Mr_exterior": 0.009783639254717787,
+    "exterior_cutoff": 0.016861541622569514,
+    "chi": 5.039442356665946e-06,
+    "lapse": 0.003931837821595174,
+    "det_residual": 1.3322676295501878e-14,
+    "tracefree_residual": 4.618527782440651e-13,
+    "null": 1.1102230246250548e-15,
+    "ghost_null": 1.3322676295500618e-15,
+    "pole_max": 7.924307538498947e-09,
+    "clock_max": 2.4765234434778156e-09,
+    "cfl": 0.19371543457259374,
+    "penalty": 0.6510416666660156,
+    "penalty_cfl": 0.07812499999992184,
+    "horizon_found": 1,
+    "horizon_complete": 1,
+    "horizon_trial_radius": 0.016833605626979053,
+    "horizon_max_radius": 0.016861541622569497,
+    "horizon_trial_expansion_rms": 0.00018557588777538676,
+    "horizon_iterations": 21,
+    "mass": 0.3333333790705697,
+    "tracker": [
+      1.675237159899048e-17,
+      -5.074070377015637e-23,
+      -5.441636975857529e-23
+    ],
+    "finest_level": 3,
+    "finest_spacing": 0.002083333333333335,
+    "finest_support_radius": 0.04999999999999999,
+    "finest_stencil_buffer": 0.00833333333333334,
+    "puncture_finest_margin": 0.04166666666666665,
+    "candidate_finest_margin": 0.024805125044097154,
+    "core_margin": 0.4,
+    "fixed": [
+      {
+        "cut": 0.1,
+        "H": 0.0011009218827756297,
+        "M": 0.01175355153219541,
+        "Mr": 0.009788501886008917
+      },
+      {
+        "cut": 0.3,
+        "H": 0.0011155215991056578,
+        "M": 0.011909524152404252,
+        "Mr": 0.009918394910926368
+      },
+      {
+        "cut": 0.6,
+        "H": 0.001219320155758732,
+        "M": 0.013306292481053923,
+        "Mr": 0.011081314592628774
+      }
+    ],
+    "gauge_max": [
+      0.7918103144935653,
+      30.300345621699645,
+      1.4727232892725564,
+      352.92680949242117,
+      289.5648387020901
+    ],
+    "wall_seconds": 283.795791
+  },
+  "candidate_binary_sha256": "567df95bee6fd0901b76ea37cc70d6525e4a170b78f6d9de29536908e640550b",
+  "config_sha256": "57d0d28cdd7833aabaf2ef91445692c850cdc5ce0b3d1262f797c173d06fa753",
+  "qualification": "Full400-leaf boosted SMR plus radial24/angular2 combined local two-step check. No GPU, long-time, dynamic AMR or convergence claim. Memory retirement changes no numerical identity. Native output untouched; this completion check fixes a coordinator-only history-key typo."
+}

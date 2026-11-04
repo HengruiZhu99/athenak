@@ -22,6 +22,9 @@ class CartesianAMR {
   const std::vector<Real> shell_radii;
   const std::vector<int> shell_angular_subdivisions;
   const Real half_width,inner_radius;
+  // Registered views remain alive, but fixed-topology runs need no transfer
+  // storage once construction/restore has finished. Never regrid after sealing.
+  bool topology_sealed=false;
   CartesianAMR(int cells,int subdivisions=2,int capacity=64,int levels=3,
                std::vector<Real> radii={.305,.45,.6,.75,.875,1},Real width=.18,Real inner=.16,
                std::vector<int> angular_factors={})
@@ -58,11 +61,20 @@ class CartesianAMR {
     for(const auto&b:shells)if(b.face>=0)out.blocks.push_back(b);
     out.evolved_overlap=3;out.amr_cartesian_core=true;out.revision=mesh->GetAMRLoadBalanceUpdateSeq();return out;
   }
+  size_t SealTopology(){
+    const size_t bytes=(state.span()+compensation.span()+coarse.span()+coarse_compensation.span())*sizeof(Real);
+    Kokkos::fence();
+    state=DvceArray5D<Real>();compensation=DvceArray5D<Real>();
+    coarse=DvceArray5D<Real>();coarse_compensation=DvceArray5D<Real>();
+    topology_sealed=true;
+    return bytes;
+  }
   // All input fields are complete ownership-independent accepted snapshots.
   // This boundary adapter supplies the four fine halos required by AthenaK's
   // native five-point prolongation; no rank-local donor assumptions are made.
   void Load(const cubed_sphere::CompositeDifference&g,const std::vector<Real>&u,
             const std::vector<Real>&rk){
+    if(topology_sealed)throw std::logic_error("sealed Cartesian topology has no transfer storage");
     if(u.size()!=31*g.active.size()||rk.size()!=u.size())throw std::invalid_argument("AMR snapshot layout");
     auto h=Kokkos::create_mirror_view(state),r=Kokkos::create_mirror_view(compensation);
     const int first=mesh->gids_eachrank[global_variable::my_rank];
@@ -85,6 +97,7 @@ class CartesianAMR {
   // Caller collectively selects flags only at an accepted-step boundary.
   // AthenaK resolves sibling coarsening, 2:1 balance and rank redistribution.
   bool Regrid(const std::vector<int>&flags){
+    if(topology_sealed)throw std::logic_error("cannot regrid sealed Cartesian topology");
     int bad=flags.size()!=size_t(mesh->nmb_total);MPI_Allreduce(MPI_IN_PLACE,&bad,1,MPI_INT,MPI_MAX,MPI_COMM_WORLD);
     if(bad)throw std::invalid_argument("AMR flag count");
     auto root=flags;MPI_Bcast(root.data(),root.size(),MPI_INT,0,MPI_COMM_WORLD);
@@ -103,6 +116,7 @@ class CartesianAMR {
   // Existing AthenaK location criterion and refinement-interval policy. The
   // standalone driver may move the center using its accepted puncture tracker.
   bool RefineAround(const std::array<Real,3>&center,Real radius,int accepted_cycle){
+    if(topology_sealed)throw std::logic_error("cannot refine sealed Cartesian topology");
     auto&criterion=mesh->pmr->pmrc->rcrit.at(0);
     criterion.rloc_x1=center[0];criterion.rloc_x2=center[1];criterion.rloc_x3=center[2];criterion.rloc_rad=radius;
     mesh->ncycle=accepted_cycle;mesh->pmr->CheckForRefinement(mesh->pmb_pack);
@@ -113,6 +127,7 @@ class CartesianAMR {
   // redistribution and registered field transfer through Regrid. Strict box
   // intersection avoids refining blocks that only touch the requested region.
   bool RefineBox(const std::array<Real,3>&half){
+    if(topology_sealed)throw std::logic_error("cannot refine sealed Cartesian topology");
     for(Real x:half)if(!std::isfinite(x) || !(x>0 && x<inner_radius))
       throw std::invalid_argument("invalid static Cartesian refinement box");
     const auto d=Descriptor();std::vector<int> flags(mesh->nmb_total,0);
@@ -144,6 +159,7 @@ class CartesianAMR {
     return out;
   }
   std::vector<Real> Gather(bool rk=false)const{
+    if(topology_sealed)throw std::logic_error("sealed Cartesian topology has no transfer storage");
     const auto h=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),rk?compensation:state);
     const int block=31*n*n*n;std::vector<Real> local(block*mesh->nmb_thisrank),all(block*mesh->nmb_total);
     for(int m=0;m<mesh->nmb_thisrank;++m)for(int k=0;k<n;++k)for(int j=0;j<n;++j)for(int i=0;i<n;++i)

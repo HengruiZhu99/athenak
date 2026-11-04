@@ -539,6 +539,10 @@ int main(int argc, char** argv) {
       flags[0] = 1;
       amr.Regrid(flags);
     }
+    // Only the dynamic fixture transfers native AMR fields during evolution.
+    // Fixed/SMR checkpoints store the topology and coupled state independently;
+    // restore rebuilds the tree before sealing it again.
+    if(policy!="dynamic") amr.SealTopology();
     auto descriptor = amr.Descriptor();
     std::unique_ptr<Evolution> ev;
     perf.Next("evolution_setup");

@@ -136,3 +136,13 @@ healthy, fully verified same-case walltime checkpoints may continue. Combined
 boosted-SMR qualification, stationary/boosted long runs and resolution studies
 remain open. Git push authentication is also outstanding; local commits retain
 the work meanwhile.
+
+## Subsequent full-SMR qualification
+
+The combined400-leaf/radial24/angular2 N12 configuration now passes a fresh
+two-step local Serial-MPI1/2 test with byte-identical full checkpoints. Fixed-
+topology buffer retirement allows the full mesh to fit locally without changing
+fields; uniform checkpoints and original-SMR restart arrays remain identical.
+See `FULL-BOOSTED-SMR.md` for current evidence, support/horizon checks, measured
+memory and limitations. The earlier coarse-core controls above remain distinct.
+GPU/10M and full resolution convergence are still unverified.

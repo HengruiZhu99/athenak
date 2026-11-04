@@ -1,0 +1,18 @@
+{
+  "command": [
+    "mpiexec",
+    "-n",
+    "1",
+    "output/refined-convergence/sealed-topology-candidate-v1/support",
+    "output/refined-convergence/sealed-topology-candidate-v1/checks/topology-mpi1.json"
+  ],
+  "exit_code": 0,
+  "support_sha256": "d0a5741c6e2c2739f08a3cc15fd1c743dbb4a6fe97141a572461118fa4817eb4",
+  "result": {
+    "passed": true,
+    "retired_bytes_per_rank": 511586304,
+    "leaves": 64,
+    "rejected_transfer_calls": 4
+  },
+  "note": "Completed before coordinator; reused this matching-build result without rerunning."
+}

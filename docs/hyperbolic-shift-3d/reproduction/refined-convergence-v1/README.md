@@ -867,6 +867,39 @@ exterior resolution. They do not qualify that coarse core for a puncture run,
 establish fourth-order/evolved convergence, or replace the full SMR candidate.
 The proposed combined input retains400 Cartesian SMR leaves plus432 shell
 blocks (832 total), with the original scri grid unchanged. Combined initial/
-short-run qualification and the long stationary/boosted resolution studies
-remain open. Active Aurora job9038758 and its frozen source/binary are unchanged;
+short-run qualification was pending at this stage and is now completed below;
+the long stationary/boosted resolution studies remain open. Active Aurora job9038758 and its frozen source/binary are unchanged;
 SSH renewal and Git push authentication remain outstanding.
+
+## Full combined boosted SMR check and memory saving
+
+The832-block N12 candidate (400 Cartesian leaves,432 shell blocks) now passes
+a fresh two-step local Serial-MPI1/2 comparison, with the entire957,169,752-byte
+checkpoint byte-identical. See `FULL-BOOSTED-SMR.md`, `sealed-topology-controls/`
+and `combined-smr-mpi/`. It reaches only0.00025M, not10M. All saved horizons are
+accepted, final mass.33333337907057, no sign/floor interventions, max CFL.1937154,
+and null residuals≤1.34e-15. The horizon plus four-cell stencil buffer remains
+inside the finest SMR coverage.
+
+Against the previous full400-leaf radial18/original-angle control, fixed r>.3
+initial H/M decrease10.1773x/17.8563x and step2 H/M decrease12.5476x/17.8996x.
+All31 field components in nominal Cartesian cells at r<.3 are byte-identical;
+the maximum scaled difference over the entire nominal Cartesian core is
+3.38e-18. Thus the measured short-time exterior improvement does not require
+altering the central gauge or puncture evolution. This is not a long-time
+regularity or global field-self-convergence result.
+
+Fixed-topology runs now release unused native fine/coarse transfer fields
+after constructing/restoring the tree, before coupled evolution. The dynamic
+fixture retains its transfer path. Lifecycle tests, unchanged uniform checkpoints
+and original-SMR restart arrays pass; further transfer on a sealed tree rejects.
+The allocation saving is5.50GB for one-rank N12 SMR; the matched uniform test
+measured2.63% lower peak RSS. Full combined-run peak RSS was30.37GB. No strong-
+scaling or runtime-speedup claim is made. Native MPI migration buffers remain
+allocated separately. Source/build/provenance and the corrected read-only
+validator-key typo are preserved. The nominal grid figure was inspected.
+
+Aurora SSH renewal and Git push authentication remain outstanding. Current
+9038758 disposition is unknown; no duplicate, remote rebuild or submission
+was made. Frozen stationary science remains unchanged. Reconcile that job
+first on access renewal, then finish stationary/boosted10M convergence work.
