@@ -1,0 +1,28 @@
+
+Root grid = 4 x 4 x 4 MeshBlocks
+Total number of MeshBlocks = 64
+Number of logical  levels of refinement = 5 (6 levels total)
+Number of physical levels of refinement = 3 (4 levels total)
+  Physical level = 0 (logical level = 2): 64 MeshBlocks, cost = 64
+Number of parallel ranks = 2
+  Rank = 0: 32 MeshBlocks, cost = 32
+  Rank = 1: 32 MeshBlocks, cost = 32
+Load Balancing:
+  Maximum normalized cost = 1, Average = 1
+requested 8 / 64
+level 1 leaves 120
+requested 8 / 120
+level 2 leaves 176
+requested 64 / 176
+### FATAL ERROR in /Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/src/mesh/mesh_refinement.cpp at line 538
+Number of MeshBlocks in this rank on new tree = 704 on rank = 0 exceeds <mesh_refinement>/max_nmb_per_rank = 264
+### FATAL ERROR in /Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/src/mesh/mesh_refinement.cpp at line 538
+Number of MeshBlocks in this rank on new tree = 704 on rank = 1 exceeds <mesh_refinement>/max_nmb_per_rank = 264
+--------------------------------------------------------------------------
+
+prterun detected that one or more processes exited with non-zero status,
+thus causing the job to be terminated. The first process to do so was:
+
+   Process name: [prterun-PU-KL2XFPVQ0D-12095@1,1]
+   Exit code:    1
+--------------------------------------------------------------------------

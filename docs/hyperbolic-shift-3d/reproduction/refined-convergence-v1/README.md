@@ -1,8 +1,9 @@
 # RF2 enlarged-center investigation (work in progress)
 
 Branch `codex/refined-convergence`, based on `hyperboloidal_refined`21676d39e.
-The persistent goal in GOAL.md is not complete. No RF2 long Aurora evolution
-has been submitted. Keep the separate frozen BN1 campaign unchanged.
+The persistent goal in GOAL.md is not complete. Stationary RF2 N16 SMR job9038031
+is submitted on four Aurora debug-scaling nodes. Keep the separate frozen BN1
+campaign unchanged. See state.json before any action; never duplicate a run.
 
 ## What is established
 
@@ -93,11 +94,10 @@ performing full diagnostics/horizon finding every step adds seconds per step.
 Timers overlap as stated in their native records; do not sum nested and
 exclusive timers or extrapolate this CPU fixture to GPU costs.
 
-Before a production SMR run, extend the qualification driver with scheduled
-rather than every-step diagnostics, walltime checkpoint disposition, complete
-candidate/exterior histories and run provenance. Measure improvements against
-a fixed-state result, preserving physical operators and failure checks. The
-current driver is a qualification harness, not yet the production campaign.
+The production extension below now supplies scheduled diagnostics, healthy
+walltime checkpoints and complete candidate/fixed-cutoff histories. Its local
+field equivalence and restart checks pass; the frozen SYCL build completed
+with make-j64. GPU timing and long-time physics remain to be measured.
 Next causal controls must test interface derivative/overlap behavior and
 monitor evolved slice/metric regularity. Stationary qualification precedes
 boosted runs, with resolved puncture spacing and controlled timestep, followed
@@ -132,3 +132,41 @@ diagnostic cadence and after a healthy walltime checkpoint (MPI2 to MPI1).
 The horizon seed is not bit-identical because finder calls differ. This is
 not a long-time or GPU qualification. Source/build provenance for the next
 Aurora experiment is separate from all frozen RF1 and BN1 snapshots.
+
+
+## Aurora production and deeper SMR control
+
+Scientific commit b41c24e88790562d93a643be9c713631bb93d573 is frozen at
+`/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1`.
+The actual SYCL binary hash is
+`1a694bca3e9bca020bee2a112911fde7ee28032c772972b5d2c05e67480efaca`.
+All22 source/build/launcher records were locally hash/length verified.
+Stationary6 N16 job9038031 uses four nodes48ranks, dt=.00025, target10M,
+one SMR level, matched plateau.4712 and gauge interval.36–.65. The original
+scri/restoration remains. It may wait behind frozen BN1 N24 job9037997;
+no cancellation or duplicate submission is authorized. No GPU smoke gate.
+
+`launcher/` binds source manifest, actual binary, configuration, launcher,
+PBS script and restart (if present). The streaming verifier checks RF2 framing,
+finite payload, positive chi/metric, exact array layout and native checksum;
+matching native/worker/PBS disposition, identity, steps/time, tracker and
+penalty are additionally required. A truncated checkpoint rejects. Failed
+states are never restart inputs. Native return3 denotes a verified healthy
+walltime checkpoint; continuation retains the same scientific identity.
+Preserve every artifact locally with hash/length verification before any purge.
+
+The three-level large-center layout with refinement radius.05 requests
+8,8,64 blocks on successive levels; native balancing expands the third tree
+past the test capacity (704blocks/rank versus264). This is not an evolved
+slicing failure. A narrower .025 location criterion requests8,8,8, producing
+120,176,232 Cartesian leaves; reconstruction of that native tree passes MPI2.
+The narrowing is a separate configuration, not a silent change to .05.
+
+The .025 variant also passes two local Serial MPI2 steps at N12, dt=.000125,
+t=.00075M with no floors, finite/SPD/checksummed admitted RF2 state. Raw
+history, report, checkpoint verification and performance are preserved here.
+It is not a long-time or GPU test. The topology criterion intersects blocks,
+so its input radius is not itself the exact refined coverage boundary; moving
+puncture coverage still needs explicit verification. The large configuration
+changes physical map scale and the physical extent of the fixed .03 chi patch.
+Do not infer stability or improved accuracy from this short control.

@@ -1,0 +1,27 @@
+{
+  "passed": true,
+  "levels": 3,
+  "leaves": [
+    120,
+    176,
+    232
+  ],
+  "configuration": "inputs/hyperbolic_shift_3d/refined_convergence/central20_stationary_smr025.cfg",
+  "configuration_sha256": "4204f1b4b5b9df42f97ced1dedf5cd28a140c0e2e38045b043d32f350834f03a",
+  "source_sha256": "d0bfc994a7065445641e44f777b947327aeb897fe6db11f00fab41ae2b398347",
+  "requested_flags": [
+    8,
+    8,
+    8
+  ],
+  "scope": "MPI2 topology and native Restore only; no evolved-field or moving-puncture qualification",
+  "wide_control": {
+    "radius": 0.05,
+    "requested_flags": [
+      8,
+      8,
+      64
+    ],
+    "failure": "native capacity exceeded:704 blocks/rank >264, before evolution"
+  }
+}
