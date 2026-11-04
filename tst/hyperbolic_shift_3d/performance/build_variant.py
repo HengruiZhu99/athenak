@@ -3,9 +3,17 @@
 
 Replay exact CMake commands, replacing only source root, output, and the named
 experimental definition. All commands are saved before execution.
+This tool replays archived experiments; the current solver has no such switches.
 """
 import argparse,json,pathlib,shlex,subprocess
 p=argparse.ArgumentParser();p.add_argument('--build',required=True);p.add_argument('--old-source',required=True);p.add_argument('--source',required=True);p.add_argument('--output',required=True);p.add_argument('--experiment',choices=['mask','setup'],default='mask');a=p.parse_args()
+source_root=pathlib.Path(a.source).resolve()
+marker_file,marker=(('src/z4c/hyperboloidal/scri_radial_device.hpp','PreparePointJet')
+                    if a.experiment=='mask' else
+                    ('tst/hyperbolic_shift_3d/coupled_mpi.cpp','HYPERBOLIC_DIRECT_HALO_SETUP'))
+if marker not in (source_root/marker_file).read_text():
+ p.error('This experiment requires its frozen pre-promotion source archive. '
+         'Build hyperbolic_shift_3d_amr_evolution directly for the current default solver.')
 build=pathlib.Path(a.build).resolve();out=pathlib.Path(a.output).resolve();out.mkdir(exist_ok=False)
 commands=json.loads((build/'compile_commands.json').read_text())
 specs=[('hyperbolic_shift_3d_amr_evolution','amr_evolution.cpp','HYPERBOLIC_RADIAL_POINT_JET=1','amr_evolution.cpp','hyperbolic_shift_3d_amr_evolution'),('hyperbolic_shift_3d_radial_field_batch','test_radial_field_batch.cpp',None,'test_radial_field_batch.cpp','hyperbolic_shift_3d_radial_field_batch')]

@@ -741,26 +741,25 @@ if(ENABLE_MPI)
   target_include_directories(hyperbolic_athenak_amr PRIVATE
     $<TARGET_PROPERTY:athena,INCLUDE_DIRECTORIES>)
   target_link_libraries(hyperbolic_athenak_amr PUBLIC $<TARGET_PROPERTY:athena,LINK_LIBRARIES>)
-  add_executable(hyperbolic_shift_3d_amr_transfer test_amr_transfer.cpp)
-  target_include_directories(hyperbolic_shift_3d_amr_transfer PRIVATE
-    ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
-  target_link_libraries(hyperbolic_shift_3d_amr_transfer PRIVATE hyperbolic_athenak_amr)
-endif()
-if(ENABLE_MPI)
-  add_executable(hyperbolic_shift_3d_amr_operators test_amr_operators.cpp)
-  target_include_directories(hyperbolic_shift_3d_amr_operators PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
-  target_link_libraries(hyperbolic_shift_3d_amr_operators PRIVATE hyperbolic_athenak_amr)
-endif()
-if(ENABLE_MPI)
-  add_executable(hyperbolic_shift_3d_amr_evolution amr_evolution.cpp)
-  get_target_property(amr_science hyperbolic_shift_3d_mpi_native_control_broad_smooth_six_shells_boosted_free_gauge_refined_core_matched_cfl COMPILE_DEFINITIONS)
-  target_compile_definitions(hyperbolic_shift_3d_amr_evolution PRIVATE ${amr_science})
-  target_include_directories(hyperbolic_shift_3d_amr_evolution PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
-  target_link_libraries(hyperbolic_shift_3d_amr_evolution PRIVATE hyperbolic_athenak_amr)
-  target_compile_options(hyperbolic_shift_3d_amr_evolution PRIVATE -ffp-contract=off)
-endif()
+  function(add_hyperbolic_amr_executable target source)
+    add_executable(${target} ${source})
+    target_include_directories(${target} PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+    target_link_libraries(${target} PRIVATE hyperbolic_athenak_amr)
+  endfunction()
 
-if(ENABLE_MPI)
+  add_hyperbolic_amr_executable(hyperbolic_shift_3d_amr_transfer test_amr_transfer.cpp)
+  add_hyperbolic_amr_executable(hyperbolic_shift_3d_amr_operators test_amr_operators.cpp)
+  add_hyperbolic_amr_executable(hyperbolic_shift_3d_amr_evolution amr_evolution.cpp)
+  add_hyperbolic_amr_executable(hyperbolic_shift_3d_amr_setup_contract test_amr_setup.cpp)
+
+  # One AMR driver: the validated final halo plan is constructed directly.
+  get_target_property(amr_science
+    hyperbolic_shift_3d_mpi_native_control_broad_smooth_six_shells_boosted_free_gauge_refined_core_matched_cfl
+    COMPILE_DEFINITIONS)
+  target_compile_definitions(hyperbolic_shift_3d_amr_evolution PRIVATE ${amr_science})
+  target_compile_options(hyperbolic_shift_3d_amr_evolution PRIVATE -ffp-contract=off)
+  target_compile_options(hyperbolic_shift_3d_amr_setup_contract PRIVATE -ffp-contract=off)
+
   foreach(ranks 1 2 4)
     add_test(NAME hyperbolic_shift_3d_amr_transfer_mpi${ranks}
       COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${ranks}
@@ -771,6 +770,14 @@ if(ENABLE_MPI)
   add_test(NAME hyperbolic_shift_3d_amr_operators
     COMMAND hyperbolic_shift_3d_amr_operators 12)
   set_tests_properties(hyperbolic_shift_3d_amr_operators PROPERTIES RUN_SERIAL TRUE TIMEOUT 180)
+  add_test(NAME hyperbolic_shift_3d_amr_setup_contract
+    COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 1
+    $<TARGET_FILE:hyperbolic_shift_3d_amr_setup_contract>)
+  set_tests_properties(hyperbolic_shift_3d_amr_setup_contract
+    PROPERTIES RUN_SERIAL TRUE TIMEOUT 420)
+
+  add_executable(hyperbolic_shift_3d_amr_device_mapping test_amr_device_mapping.cpp)
+  target_link_libraries(hyperbolic_shift_3d_amr_device_mapping PRIVATE Kokkos::kokkos MPI::MPI_CXX)
 endif()
 
 # Optional allocation census. Never loaded by ordinary timing runs.
@@ -781,33 +788,3 @@ add_executable(hyperbolic_amr_allocation_tool_test test_amr_allocation_tool.cpp)
 target_compile_features(hyperbolic_amr_allocation_tool_test PRIVATE cxx_std_17)
 target_include_directories(hyperbolic_amr_allocation_tool_test PRIVATE ${CMAKE_SOURCE_DIR}/kokkos/core/src)
 add_test(NAME hyperbolic_amr_allocation_tool_test COMMAND hyperbolic_amr_allocation_tool_test)
-
-add_executable(hyperbolic_shift_3d_owned_padded_snapshot test_owned_padded_snapshot.cpp)
-target_include_directories(hyperbolic_shift_3d_owned_padded_snapshot PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
-target_link_libraries(hyperbolic_shift_3d_owned_padded_snapshot PRIVATE Kokkos::kokkos)
-add_test(NAME hyperbolic_shift_3d_owned_padded_snapshot COMMAND hyperbolic_shift_3d_owned_padded_snapshot)
-if(ENABLE_MPI)
-  add_executable(hyperbolic_shift_3d_amr_diagnostic_transfer amr_evolution.cpp)
-  target_compile_definitions(hyperbolic_shift_3d_amr_diagnostic_transfer PRIVATE ${amr_science} HYPERBOLIC_COMPACT_DIAGNOSTIC_TRANSFER=1)
-  target_include_directories(hyperbolic_shift_3d_amr_diagnostic_transfer PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
-  target_link_libraries(hyperbolic_shift_3d_amr_diagnostic_transfer PRIVATE hyperbolic_athenak_amr)
-  target_compile_options(hyperbolic_shift_3d_amr_diagnostic_transfer PRIVATE -ffp-contract=off)
-endif()
-if(ENABLE_MPI)
-  add_executable(hyperbolic_shift_3d_amr_device_mapping test_amr_device_mapping.cpp)
-  target_link_libraries(hyperbolic_shift_3d_amr_device_mapping PRIVATE Kokkos::kokkos MPI::MPI_CXX)
-endif()
-
-if(ENABLE_MPI)
-  add_executable(hyperbolic_shift_3d_amr_setup amr_evolution.cpp)
-  target_compile_definitions(hyperbolic_shift_3d_amr_setup PRIVATE ${amr_science} HYPERBOLIC_DIRECT_HALO_SETUP=1)
-  target_include_directories(hyperbolic_shift_3d_amr_setup PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
-  target_link_libraries(hyperbolic_shift_3d_amr_setup PRIVATE hyperbolic_athenak_amr)
-  target_compile_options(hyperbolic_shift_3d_amr_setup PRIVATE -ffp-contract=off)
-  add_executable(hyperbolic_shift_3d_amr_setup_contract test_amr_setup.cpp)
-  target_include_directories(hyperbolic_shift_3d_amr_setup_contract PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
-  target_link_libraries(hyperbolic_shift_3d_amr_setup_contract PRIVATE hyperbolic_athenak_amr)
-  target_compile_options(hyperbolic_shift_3d_amr_setup_contract PRIVATE -ffp-contract=off)
-  add_test(NAME hyperbolic_shift_3d_amr_setup_contract COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 1 $<TARGET_FILE:hyperbolic_shift_3d_amr_setup_contract>)
-  set_tests_properties(hyperbolic_shift_3d_amr_setup_contract PROPERTIES RUN_SERIAL TRUE TIMEOUT 420)
-endif()

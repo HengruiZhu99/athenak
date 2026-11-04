@@ -1,0 +1,77 @@
+[
+  {
+    "name": "amr",
+    "command": [
+      "python3",
+      "tst/hyperbolic_shift_3d/performance/run_plan.py",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-default-cleanup/plan.json",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-default-cleanup/amr"
+    ],
+    "status": "complete",
+    "returncode": 0,
+    "seconds": 487.615917375
+  },
+  {
+    "name": "checkpoint-rejection",
+    "command": [
+      "python3",
+      "tst/hyperbolic_shift_3d/test_amr_checkpoint.py",
+      "--binary",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-performance/candidate/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_amr_evolution",
+      "--checkpoint",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-default-cleanup/amr/wave-save.checkpoint",
+      "--output",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-default-cleanup/checkpoint-rejection"
+    ],
+    "status": "complete",
+    "returncode": 0,
+    "seconds": 1.9318218749999687
+  },
+  {
+    "name": "contracts",
+    "command": [
+      "ctest",
+      "--test-dir",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-performance/candidate",
+      "--output-on-failure",
+      "-R",
+      "^(hyperbolic_shift_3d_amr_setup_contract|hyperbolic_shift_3d_mesh_plan_bundle_mpi)$"
+    ],
+    "status": "complete",
+    "returncode": 0,
+    "seconds": 174.31739733300003
+  },
+  {
+    "name": "transaction",
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-performance/candidate/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_repartition_transaction",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-default-cleanup/transaction"
+    ],
+    "status": "complete",
+    "returncode": 0,
+    "seconds": 29.669161999999915
+  },
+  {
+    "name": "sparse-integration",
+    "command": [
+      "python3",
+      "tst/hyperbolic_shift_3d/test_sparse_stage_mpi.py",
+      "--binary",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-performance/candidate/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_continuous_positive_sparse",
+      "--control",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-default-cleanup/frozen/legacy-fast",
+      "--mpiexec",
+      "/opt/homebrew/bin/mpiexec",
+      "--initial",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-performance/qualification/puncture-n16.txt",
+      "--output-dir",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-default-cleanup/sparse"
+    ],
+    "status": "complete",
+    "returncode": 0,
+    "seconds": 132.86892416699993
+  }
+]

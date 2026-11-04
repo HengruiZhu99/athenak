@@ -1,0 +1,19 @@
+{
+  "command": [
+    "python3",
+    "tst/hyperbolic_shift_3d/performance/build_variant.py",
+    "--build",
+    "build-performance/control",
+    "--old-source",
+    "build-performance/control-source",
+    "--source",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal",
+    "--output",
+    "build-default-cleanup/rejected-replay",
+    "--experiment",
+    "setup"
+  ],
+  "returncode": 2,
+  "stderr": "usage: build_variant.py [-h] --build BUILD --old-source OLD_SOURCE --source\n                        SOURCE --output OUTPUT [--experiment {mask,setup}]\nbuild_variant.py: error: This experiment requires its frozen pre-promotion source archive. Build hyperbolic_shift_3d_amr_evolution directly for the current default solver.\n",
+  "passed": true
+}
