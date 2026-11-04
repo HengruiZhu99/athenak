@@ -27,18 +27,24 @@ RHS is
 
     G_beta_new(U) = G_beta(U) - G_beta(U_*),
     G_alpha_new(U) = G_alpha(U) - G_alpha(U_*)
-                    + 2 xi (alpha-alpha_*) (alpha_*-A)/Omega,
+                    + 2 xi (alpha-alpha_*) (alpha_*-A)/Omega
+                    + [F(alpha)-F(alpha_*)] (K_*+3)/Omega,
     A = (1+r²)/2.
 
-The last term turns the original lapse restoring factor into
+The lapse-restoring correction turns the original lapse restoring factor into
 -2 xi alpha(alpha-alpha_*)/Omega. At alpha=alpha_*>0, its derivative is negative,
 -2 xi alpha_*/Omega. Simply subtracting the reference RHS without this term
 would leave the possibly positive derivative -2xi(2alpha_*-A)/Omega.
-This sign check is not a nonlinear stability or well-posedness proof.
+The final correction consistently changes the slicing source from K+3 to
+K-K_*. Without it, the v1 fixed-reference subtraction retains a positive local
+lapse response up to27.049 at r=.90875 with geometry held fixed. V1 was caught
+before any evolution submission and is retained only as an unused build.
+With v2, the sampled held-geometry lapse response is negative. These are local
+source checks, not a coupled nonlinear stability or well-posedness proof.
 
 The original complete-RHS weight multiplies the *entire* correction, so the
 inner telegrapher equations and their principal symbol are unchanged. All new
-sources are prescribed positional functions, affine in evolved lapse, and do
+sources are prescribed positional functions, quadratic in evolved lapse, and do
 not change principal derivatives. The actual geometry, Lambda, auxiliary D,
 constraint damping, lapse/chi floors, RK, transport and dissipation are evolved
 normally. No field or constraint is reset to a reference solution. B_* and
@@ -57,7 +63,8 @@ bounded perturbations, while the constant reference subtraction vanishes at
 least quadratically (the sampled stationary tail is fourth order until
 roundoff). Both value and first normal limiting derivative are zero. The
 existing unit lapse, null projection, dependent D and clock diagnostics at
-scri therefore retain their limiting equations. The sources are evaluated as
+scri therefore retain their limiting equations. K_*+3=0 exactly in the S=1
+region, so the new mean-curvature-target correction is identically zero there. The sources are evaluated as
 zero at the exact boundary, not by dividing small numbers there. The measured
 asymptotic control preserves its roundoff floor instead of declaring an order
 from the smallest spacings.
@@ -73,13 +80,13 @@ gauge construction on that exact boosted geometry.
 ## Implementation and performance scope
 
 Set outer_gauge=stationary-reference in a separately bound configuration.
-Its checkpoint identity adds outer_gauge=stationary-reference-v1 and the
+Its checkpoint identity adds outer_gauge=stationary-reference-v2 and the
 initial-lapse blend policy; original identities are unchanged. No old
 checkpoint can silently restart this formulation.
 
 Native inversion/quadrature is evaluated once during setup, with existing
-exact-radius caching. The device stores five prescribed scalars per owned
-point (40 bytes/cell); no extra RK kernel, MPI call or quadrature is introduced.
+exact-radius caching. The device stores six prescribed scalars per owned
+point (48 bytes/cell); no extra RK kernel, MPI call or quadrature is introduced.
 The CPU reference table is created lazily only when the CPU RHS is requested,
 avoiding a replicated global table during native distributed device evolution.
 These are structural cost controls, not a measured speedup claim.

@@ -172,3 +172,18 @@ stage would be avoidable performance overhead. A bounded local test must
 verify reference balance, nonzero perturbation response, inner exact identity,
 asymptotic limits and CPU/device agreement before any separately bound fresh
 stationary evolution. Merely zeroing the background RHS is not sufficient.
+
+
+### Follow-up: consistent curvature target required
+
+The v1 source algebra above cancels the reference and repairs the explicit
+lapse-restoring sign, but a further local perturbation audit found a remaining
+positive lapse response up to27.049 from the unmodified K+3 slicing factor.
+V1 was never submitted for evolution. V2 adds
+[F(alpha)-F(alpha_*)](K_*+3)/Omega to the outer lapse RHS, converting that
+factor to K-K_*. Its sampled held-geometry lapse response is strictly negative;
+it still does not establish coupled stability. The actual geometry/K is never
+reset. The correction vanishes identically in the CMC S=1 neighborhood of
+scri. See STATIONARY-REFERENCE-GAUGE.md, stationary-reference-response/ and
+the versioned v1/v2 local verification records. Original failed campaigns and
+the unused v1 scientific snapshot remain immutable.

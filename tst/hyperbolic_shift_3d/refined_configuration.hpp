@@ -202,7 +202,7 @@ struct RefinedConfiguration {
       out << r << ',';
     if(gauge.conformal_frame_halos)out<<";halo_frame=legacy-cartesian-to-shell-v1";
     if(gauge.separated_shift_speeds)out<<";shift_speed_policy=separated-inner-v1";
-    if(gauge.stationary_outer_reference)out<<";outer_gauge=stationary-reference-v1;initial-lapse-blend=flat-to-inner-begin";
+    if(gauge.stationary_outer_reference)out<<";outer_gauge=stationary-reference-v2;initial-lapse-blend=flat-to-inner-begin";
     identity = out.str();
     stationary_reference.reset();
     if(gauge.stationary_outer_reference)stationary_reference=std::make_shared<z4c::hyperboloidal::StationaryGaugeReference>(gauge);

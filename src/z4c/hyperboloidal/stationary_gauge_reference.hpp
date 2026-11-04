@@ -41,9 +41,13 @@ class StationaryGaugeReference {
     const Real shift_regular=S*S+S*R*a*SR-1;
     const Real W=1-c.inner;
     out.lapse_offset=-W*(lapse_regular+lapse_pole/o.value);
-    out.lapse_linear=W*2*c.xi*da/o.value;
+    out.lapse_quadratic=W*(v.trace+3)/o.value;
+    // F(alpha)-F(alpha_*)=(alpha-alpha_*)(alpha+alpha_*+4 Omega²).
+    // This consistently replaces K+3 by K-K_* in the slicing source.
+    out.lapse_linear=W*2*c.xi*da/o.value
+        +out.lapse_quadratic*(2*out.alpha+4*o.value*o.value);
     out.shift_offset=W*(-shift_regular+p.restoring*c.collar*(1-S)/o.value);
-    for(Real q:{out.lapse_offset,out.lapse_linear,out.shift_offset})
+    for(Real q:{out.lapse_offset,out.lapse_linear,out.lapse_quadratic,out.shift_offset})
       if(!std::isfinite(q))throw std::runtime_error("invalid prescribed gauge source");
     return out;
   }

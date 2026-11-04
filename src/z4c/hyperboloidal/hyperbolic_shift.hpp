@@ -288,12 +288,13 @@ template<class T> struct HyperbolicGaugeParts {
 // Host-precomputed prescribed sources, never inferred from evolved geometry.
 // All three corrections already include the complete-RHS outer blend weight.
 template<class T> struct StationaryGaugeSource {
-  T alpha{}, shift_ratio{}, lapse_offset{}, lapse_linear{}, shift_offset{};
+  T alpha{}, shift_ratio{}, lapse_offset{}, lapse_linear{}, lapse_quadratic{}, shift_offset{};
 };
 template<class T> KOKKOS_INLINE_FUNCTION
 void ApplyStationaryGaugeSource(const T x[3],T alpha,const StationaryGaugeSource<T>&s,
                                HyperbolicGaugeParts<T>&g) {
-  g.lapse_regular+=s.lapse_offset+s.lapse_linear*(alpha-s.alpha);
+  const T delta=alpha-s.alpha;
+  g.lapse_regular+=s.lapse_offset+(s.lapse_linear+s.lapse_quadratic*delta)*delta;
   for(int i=0;i<3;++i)g.shift_regular[i]+=s.shift_offset*x[i];
   g.valid=g.valid&&Kokkos::isfinite(g.lapse_regular);
   for(int i=0;i<3;++i)g.valid=g.valid&&Kokkos::isfinite(g.shift_regular[i]);
