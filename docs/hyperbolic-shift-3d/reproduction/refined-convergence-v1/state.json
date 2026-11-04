@@ -1,8 +1,8 @@
 {
-  "status": "stationary_reference_v2_n16_running",
-  "current_job": "9038410.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "status": "stationary_reference_v2_n16_segment02_running",
+  "current_job": "9038494.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
   "branch": "codex/refined-convergence",
-  "next": "Monitor existing reference v2 job9038410. No duplicate build/freeze/smoke/submission. Collect with frozen launcher-v6/control.py at terminal; preserve/localize failures without replay; healthy admitted same-formulation walltime continues sequentially using verified --previous plan. Stationary regularity and convergence remain unproven; no boosted production yet.",
+  "next": "Monitor existing9038494 to terminal; all152 segment01 artifacts and spatial attribution complete. After reference10M disposition, run the frozen v7 fresh equal-dt .6M radial12/time then radial18 controls sequentially. Aurora debug-scaling max_run is one per user; no parallel submission.",
   "goal_active": true,
   "historical_startup_failure": {
     "job": "9038031",
@@ -45,6 +45,36 @@
       ],
       "checkpoint_sha256": "b3a395eac4309f74148bc23227fbcf44e5a329db636105de69d226a23baa8595",
       "qualification": "Native nonproduction selection from requested .000125 cap; no active campaign settings changed. Proposed matched control dt .00003125 below measured limit."
+    },
+    "reference_v2_evolved_localization": {
+      "time_M": 4.782374999999389,
+      "fixed_cut": 0.3,
+      "band": [
+        0.9,
+        0.95
+      ],
+      "fraction_H2": 0.9986827385,
+      "fraction_M2": 0.9984309779,
+      "peak_bin": [
+        0.92,
+        0.93
+      ],
+      "qualification": "Admitted intermediate checkpoint, unchanged hash, matching native diagnostic; exterior errors overwhelmingly overlap the initial radial truncation band. Evolved radial/time attribution remains pending; not a convergence or continuum regularity proof."
+    },
+    "reference_profile_regularity": {
+      "analysis": "reference-profile-regularity/analysis.json",
+      "time_M": 4.782374999999389,
+      "initial_lapse_gradient_peak": 29.481136117526226,
+      "sampled_halfmax_width": 0.0213,
+      "radial12_cell_widths": 13.632,
+      "radial18_cell_widths": 45.696,
+      "sampled_initial_evolved_max_lapse_gradients": [
+        29.395303261087186,
+        29.27262987768851
+      ],
+      "max_sampled_metric_deviation": 0.005489940582186659,
+      "max_sampled_K_deviation": 0.05504723415316892,
+      "qualification": "Initial regular slice already steep; evolved profiles close with localized oscillatory errors. Supports spatial truncation hypothesis, not yet evolved convergence or nonlinear regularity proof."
     }
   },
   "historical_stationary6": {
@@ -213,7 +243,7 @@
     "source_commit": "b52f09723b9c5a51340401bf91a7bf4426d8f339",
     "source_manifest_sha256": "19d2445841e7a6e63588a13ab72855fe0da8cd23698c207742f16b16cb3dc608",
     "launcher": "launcher-v6",
-    "current_job": "9038410.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "current_job": "9038494.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
     "n": 16,
     "dt": 0.000125,
     "target_M": 10,
@@ -222,11 +252,16 @@
     "variant": "reference",
     "checkpoint_expected_bytes": 858262703,
     "local_checks": "stationary-reference-v2-checks/",
-    "current_restart": null,
+    "current_restart": {
+      "path": "campaigns/stationary20-reference-n16-segment01/output/state.checkpoint",
+      "sha256": "d69b59178fbad05fb8ab8e320e7f5cd07e04d12a086a570f24863a04b114eed3",
+      "steps": 12753,
+      "time": 1.5941249999997964
+    },
     "execution": "Frozen launcher-v6/controller and plan helper only; fresh reference N16 job9038410 submitted once after all user queues checked. Healthy admitted walltime only: --variant reference --previous VERIFIEDPLAN --segment NEXT after matching lock release; no failed restart, no GPU smoke or rebuild.",
     "build_completed": true,
-    "plan": "campaigns/stationary20-reference-n16-segment01/plan.json",
-    "plan_sha256": "e5f7872186b02d477a8eb513dcc29db709244975f14104c5a2195af9b19b6eaf",
+    "plan": "campaigns/stationary20-reference-n16-segment02/plan.json",
+    "plan_sha256": "7fef6cac453653dc91e7a9a6d8806916536c7b93b1ef525e86d946ee9c89f826",
     "science": {
       "source_commit": "b52f09723b9c5a51340401bf91a7bf4426d8f339",
       "source_manifest_sha256": "19d2445841e7a6e63588a13ab72855fe0da8cd23698c207742f16b16cb3dc608",
@@ -237,41 +272,32 @@
     },
     "science_sha256": "726d9d0139698aa5d2ffde34fb6ffed30b7d31fc7efe9e79225d7cd42274df6d",
     "all29_build_records_locally_verified": true,
-    "storage_footprint_bytes": 38583165313,
-    "storage_headroom_after_reserves_bytes": 8416834687,
-    "scheduler_start": "2026-11-04 09:45:55 UTC",
+    "storage_footprint_bytes": 39471237766,
+    "storage_headroom_after_reserves_bytes": 7528762234,
     "latest_live": {
-      "observed": "2026-11-04T10:25:20.976060+00:00",
-      "t_over_M": 3.4500000000001276,
-      "step": 9200,
+      "observed_at": "2026-11-04T11:00:07.774203+00:00",
+      "t_over_M": 6.750374999999631,
+      "step": 18001,
+      "horizon_found": 1,
+      "mass": 0.3333322395543966,
       "fixed03": {
         "cut": 0.3,
-        "H": 0.0967402209700843,
-        "M": 0.6645527793497947,
-        "Mr": 0.6652409314159603
+        "H": 0.10040637240340912,
+        "M": 0.6888877989007116,
+        "Mr": 0.6896079953717845
       },
-      "fixed06": {
-        "cut": 0.6,
-        "H": 0.10789738755813402,
-        "M": 0.741287367263925,
-        "Mr": 0.741993546419402
-      },
-      "horizon_found": 1,
-      "mass": 0.3333334366778949,
-      "pole_max_cumulative": 0.00834450551080709,
-      "clock_max_cumulative": 0.013759821366823594,
-      "qualification": "Live snapshot, not terminal admission; exterior errors remain large despite survival past the original failure."
+      "qualification": "Live history only, not terminal checkpoint or admission."
     },
     "native_started": true,
-    "native_walltime_budget_seconds": 2642.240926113911
+    "scheduler_start": "2026-11-04 10:41:04 UTC"
   },
   "publication": {
     "status": "pending_authentication",
     "last_remote_commit": "c272353097c2f6330a403579f4864eb805aae0f6",
     "reason": "Prior GitHub internal commit_refs_rules rejection; latest SSH attempt has no agent identities and HTTPS no saved credential. User renewal requested once asynchronously. Local commits/scientific Aurora snapshots preserved."
   },
-  "next_analysis": "Radial18 local two-step CFL probe passed and preserved; proposed fresh radial12/radial18 equal-dt .6M controls separate radial and temporal sensitivity after current reference10M disposition. No new Aurora control submitted.",
-  "local_evidence_commit": "2612c1c1d",
+  "next_analysis": "Completed first-segment same-operator spatial reconstruction; next matched-dt evolved radial controls, then stationary resolution/boosted tests contingent on measured regularity.",
+  "local_evidence_commit": "b92ea056f",
   "publication_status": "Local evidence committed; GitHub publication still pending restored authentication (already requested once). Aurora job unaffected.",
   "prepared_radial_controls": {
     "status": "installed_not_submitted",
@@ -283,5 +309,29 @@
     "source_commit": "b52f09723b9c5a51340401bf91a7bf4426d8f339",
     "plan": "RADIAL-CONTROL-PLAN.md",
     "note": "Fresh .6M equal-dt controls only after existing reference10M disposition; no plans or submissions generated. Reuse frozen binary; runtime config and identities separately bound."
+  },
+  "reference_v2_segments": [
+    {
+      "job": "9038410.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+      "plan": "campaigns/stationary20-reference-n16-segment01/plan.json",
+      "plan_sha256": "e5f7872186b02d477a8eb513dcc29db709244975f14104c5a2195af9b19b6eaf",
+      "status": "healthy_walltime_checkpoint",
+      "scheduler_exit": 3,
+      "native_returncode": 3,
+      "remote_admitted": true,
+      "steps": 12753,
+      "t_over_M": 4.782374999999389,
+      "checkpoint_sha256": "d69b59178fbad05fb8ab8e320e7f5cd07e04d12a086a570f24863a04b114eed3",
+      "checkpoint_bytes": 858262703,
+      "matching_terminal_lock_released": true,
+      "local_preservation": "all152 worker artifacts locally hash/length verified; compressed diagnostic samples preserve original decoded hashes",
+      "native_command_seconds": 2592.934407554101,
+      "analysis": "history-cost-analysis.json and spatial-analysis.json complete; native full/fixed norms reproduced within5.8e-14 scaled; all figures inspected."
+    }
+  ],
+  "execution_limits": {
+    "debug_scaling_max_run": "[u:PBS_GENERIC=1]",
+    "observed_current_job": "9038494",
+    "decision": "Keep controls sequential; user8-node permission does not override scheduler limit."
   }
 }

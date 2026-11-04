@@ -1,0 +1,18 @@
+{
+  "command": [
+    "mpiexec",
+    "-n",
+    "1",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/reference-endpoint-reader/reader",
+    "16",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/reference-v2-stationary-n16-mpi2.checkpoint",
+    ".000125",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/inputs/hyperbolic_shift_3d/refined_convergence/central20_stationary_smr025_radial12_reference.cfg",
+    "smr",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/reference-endpoint-reader/local-identity-negative",
+    ".3"
+  ],
+  "returncode": 1,
+  "output": "checkpoint formulation identity mismatch\n--------------------------------------------------------------------------\n\nprterun detected that one or more processes exited with non-zero status,\nthus causing the job to be terminated. The first process to do so was:\n\n   Process name: [prterun-PU-KL2XFPVQ0D-33422@1,0]\n   Exit code:    1\n--------------------------------------------------------------------------\n",
+  "qualification": "Dedicated Aurora reader rejects the local identity rather than silently aliasing inputs. Original checkpoint unchanged; no diagnostic output produced."
+}

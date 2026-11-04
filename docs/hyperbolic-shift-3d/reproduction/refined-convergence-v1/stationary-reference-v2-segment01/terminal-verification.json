@@ -1,0 +1,33 @@
+{
+  "job_id": "9038410.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "scheduler_exit": 3,
+  "worker": "checkpointed",
+  "native_returncode": 3,
+  "terminal": true,
+  "admitted": true,
+  "checkpoint": {
+    "verified": true,
+    "identity": "RF2;flat-inner-Cartesian-Z4c-v1;native-C6-areal=20,40;M=1/3;v=0;restoration4:.6-.9;KO8;scri-original;penalty=.6510416666660156;chi-floor=1e-8:.03;lapse-floor=1e-10;flat=1;omega=0.40000000000000002,0.54000000000000004,0.41999999999999998;gauge=0.62,0.78000000000000003,0.010235092792698271;eta=6;k=0.10116863541976966;cfl=0.20000000000000001;buffer=4;smr=3,0.025000000000000001;subdivisions=4;shell_inner=0.34999999999999998;box=-0.40000000000000002,0.40000000000000002;-0.40000000000000002,0.40000000000000002;-0.40000000000000002,0.40000000000000002;shells=0.40000000000000002,0.42999999999999999,0.46500000000000002,0.5,0.54000000000000004,0.65000000000000002,0.78000000000000003,0.875,0.90000000000000002,0.92500000000000004,0.94999999999999996,1,;halo_frame=legacy-cartesian-to-shell-v1;outer_gauge=stationary-reference-v2;initial-lapse-blend=flat-to-inner-begin;amr_policy=smr",
+    "n": 16,
+    "kind": 2,
+    "subdivisions": 4,
+    "steps": 12753,
+    "regrids": 0,
+    "time": 1.5941249999997964,
+    "dt": 0.000125,
+    "leaves": 232,
+    "bytes": 858262703,
+    "min_chi": 9.312358534741297e-07,
+    "tracker": [
+      -6.040416638904655e-13,
+      -6.001807690084604e-13,
+      -5.162592488317864e-13
+    ],
+    "scope": "framing/finite/SPD/FNV; also require matching healthy native-worker-scheduler disposition and hashes",
+    "sha256": "d69b59178fbad05fb8ab8e320e7f5cd07e04d12a086a570f24863a04b114eed3",
+    "status": "checkpointed",
+    "source_commit": "b52f09723b9c5a51340401bf91a7bf4426d8f339",
+    "plan_sha256": "e5f7872186b02d477a8eb513dcc29db709244975f14104c5a2195af9b19b6eaf",
+    "native_report_sha256": "0db495a0f635e5385b13b294be1946892ff40e56306335819d7ca6607ff94ce3"
+  }
+}

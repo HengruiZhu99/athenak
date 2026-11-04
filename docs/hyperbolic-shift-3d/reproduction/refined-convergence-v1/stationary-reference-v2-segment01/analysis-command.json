@@ -1,0 +1,44 @@
+{
+  "command": [
+    "mpiexec",
+    "-n",
+    "2",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/reference-endpoint-reader/reader",
+    "16",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/stationary-reference-v2-aurora/campaigns/stationary20-reference-n16-segment01/output/state.checkpoint",
+    ".000125",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/inputs/hyperbolic_shift_3d/refined_convergence/central20_stationary_smr025_radial12_reference.cfg",
+    "smr",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/reference-endpoint-reader/segment01",
+    ".3"
+  ],
+  "checkpoint_sha256": "d69b59178fbad05fb8ab8e320e7f5cd07e04d12a086a570f24863a04b114eed3",
+  "source_manifest_sha256": "19d2445841e7a6e63588a13ab72855fe0da8cd23698c207742f16b16cb3dc608",
+  "matching_production_source_files": 633,
+  "analysis_binary_sha256": "166264047f58e1048bbae5258ed7a0719d3092b0b6b278241a7e409cad386ea6",
+  "started": 1793789148.504317,
+  "qualification": "Admitted intermediate walltime checkpoint, not10M endpoint. Dedicated explicit frozen-backend identity calibration; original checkpoint and production code unchanged.",
+  "returncode": 0,
+  "elapsed": 102.02443885803223,
+  "checkpoint_unchanged": true,
+  "native_report_norms_match": [
+    [
+      1.0866236927289882e-14,
+      5.777754632993312e-14
+    ],
+    [
+      5.5328252658576335e-15,
+      3.43587787003498e-14
+    ]
+  ],
+  "full_norms": [
+    0.11494980620156584,
+    0.6679032714053422,
+    1.3268585779641742
+  ],
+  "fixed03_norms": [
+    0.09861974086408339,
+    0.6770262843324225,
+    0.6777371289190308
+  ]
+}

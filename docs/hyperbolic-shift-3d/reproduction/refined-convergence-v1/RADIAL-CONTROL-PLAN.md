@@ -3,7 +3,7 @@
 The radial18 initial-only result isolates a large spatial truncation error in
 .90–.95. It does not establish that this accounts for the evolved exterior
 constraint plateau. Continue the already submitted radial12 reference-v2 run
-9038410 through its authorized disposition; do not alter its dt, source,
+segment02 job9038494 through its authorized disposition; do not alter its dt, source,
 configuration, closure, restart policy or allocation.
 
 After preserving its disposition, the useful bounded comparison is:
@@ -40,3 +40,12 @@ runtime is ~.195s/step, and no refined-grid GPU timing exists yet. Do not turn
 cell counts into a claimed speedup. Use the measured timing and spatial error
 reduction to choose the later full10M/resolution family. No claim of fourth
 order or a resolved boosted puncture follows from this initial control.
+
+The admitted reference-v2 intermediate checkpoint at4.782375M now places
+99.868%/99.843% of the r>.3 H²/M² in .90–.95, with peak .01 bins at .92–.93.
+The unsmoothed field/gradient profiles show sharp radial structure there and
+close face-center/corner agreement. This directly motivates the evolved
+control, while leaving its outcome open. Initial two-step CFL qualification
+has passed; use the already frozen v7 package without another build or smoke.
+Aurora currently advertises max_run=[u:PBS_GENERIC=1] for debug-scaling,
+so controls remain sequential despite authorization for up to eight nodes.

@@ -1,0 +1,77 @@
+{
+  "time_M": 4.782374999999389,
+  "initial_derivative_probe_max_scaled_change": 1.69139373637466e-07,
+  "initial_spacelike_margin_band_min": 0.0025367158386638564,
+  "initial_spacelike_margin_band_max": 0.03911224686093702,
+  "initial_dr_dR_band_min": 0.002498413545911302,
+  "initial_dr_dR_band_max": 0.018507258282421883,
+  "transition_width": {
+    "0.1-0.9": {
+      "first_sample_r": 0.857,
+      "last_sample_r": 0.9138,
+      "sampled_width": 0.05679999999999996,
+      "radial12_equivalent_cell_widths": 27.863578947368367,
+      "radial18_equivalent_cell_widths": 54.359578947368355
+    }
+  },
+  "initial_alpha_gradient_peak": {
+    "peak": 29.481136117526226,
+    "first_halfmax_sample": 0.8954,
+    "last_halfmax_sample": 0.9167,
+    "sampled_halfmax_width": 0.021299999999999986,
+    "radial12_cell_widths": 13.63199999999999,
+    "radial18_cell_widths": 45.69599999999987
+  },
+  "matched_sample_count": 55,
+  "fields": {
+    "chi": {
+      "initial_max_abs": 0.9999866532534659,
+      "evolved_max_abs": 1.0041331318631541,
+      "max_abs_change": 0.004146478609688198,
+      "change_at_r": 0.9578125
+    },
+    "alpha": {
+      "initial_max_abs": 0.9586832109996911,
+      "evolved_max_abs": 0.9579129363299002,
+      "max_abs_change": 0.0030752752742486678,
+      "change_at_r": 0.92734375
+    },
+    "beta_dev_r": {
+      "initial_max_abs": 0.7752457211979114,
+      "evolved_max_abs": 0.7752523995073385,
+      "max_abs_change": 0.0043599342854151275,
+      "change_at_r": 0.92734375
+    },
+    "K": {
+      "initial_max_abs": 6.206004130707679,
+      "evolved_max_abs": 6.197828923521314,
+      "max_abs_change": 0.05504723415316892,
+      "change_at_r": 0.92421875
+    },
+    "metric_rr": {
+      "initial_max_abs": 1.000000000000085,
+      "evolved_max_abs": 1.0054899405821869,
+      "max_abs_change": 0.005489940582186659,
+      "change_at_r": 0.92890625
+    },
+    "dr_chi": {
+      "initial_max_abs": 10.120462649221283,
+      "evolved_max_abs": 10.150626089982744,
+      "max_abs_change": 0.3071115267515113,
+      "change_at_r": 0.91796875
+    },
+    "dr_alpha": {
+      "initial_max_abs": 29.395303261087186,
+      "evolved_max_abs": 29.27262987768851,
+      "max_abs_change": 0.6060227364453589,
+      "change_at_r": 0.92421875
+    },
+    "dr_beta_dev_r": {
+      "initial_max_abs": 30.258530002493877,
+      "evolved_max_abs": 30.09195065984759,
+      "max_abs_change": 1.1748740631467345,
+      "change_at_r": 0.92421875
+    }
+  },
+  "qualification": "Native stationary analytic slice evaluated at exact sampled radii; evolved data unsmoothed from admitted GPU checkpoint. Local/Aurora native quadrature differs at roundoff as separately documented. Width is native S transition from dense samples (0.0001 spacing), not a fitted evolved feature. S10\u201390 width uses dense0.0001 sampling; equivalent cell widths sum actual configured shell spacing piecewise. Alpha-gradient halfmaximum straddles .9; radial18 cell-width count preserves original spacing below .9 and fourfold refinement above it. Counts measure sampling, not a universal resolution threshold. Positive initial spacelike margin does not prove evolved uniform regularity, and sharp gradients alone do not prove numerical failure."
+}

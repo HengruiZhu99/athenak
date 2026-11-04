@@ -17,7 +17,7 @@ and three-resolution analysis pushed (e8eaa56d2; final state c41a5ef1a).
 Its monitor was deleted after follow-up. Do not resubmit or repeat completed
 BN1 diagnostics. The exterior residuals do not decrease under refinement.
 
-Current progress: compatible stationary outer reference gauge v2 is locally qualified and frozen in a separate immutable Aurora snapshot; fresh stationary N16 job9038410 is running on four nodes. Initial N12/N14/N16 exterior constraint residuals decrease with fitted orders3.89/3.66, but no evolved convergence is established. The earlier v1 reference precursor was caught before submission and is unused.  enlarged geometry/initial-map parameters and matched-plateau
+Current progress: compatible stationary outer reference gauge v2 is locally qualified and frozen in a separate immutable Aurora snapshot; stationary N16 segment01 job9038410 ended at a fully admitted healthy walltime checkpoint4.782375M and segment02 job9038494 is running on four nodes. All152 first-segment artifacts are locally verified. At this checkpoint99.868%/99.843% of exterior H²/M² lies in r.90–.95; matched evolved radial controls remain pending. Initial N12/N14/N16 exterior constraint residuals decrease with fitted orders3.89/3.66, but no evolved convergence is established. The earlier v1 reference precursor was caught before submission and is unused.  enlarged geometry/initial-map parameters and matched-plateau
 controls implemented; local geometry/frame/oracle checks and MPI SMR restart
 qualification passed. Production scheduled diagnostics/walltime support and
 the frozen Aurora build are complete. Stationary6 N16 RF2 job9038055 completed10M natively with large exterior

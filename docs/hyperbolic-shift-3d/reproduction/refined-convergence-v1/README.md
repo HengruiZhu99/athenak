@@ -492,3 +492,81 @@ A complete new traversal counted38,583,739,636B over179187 unique inodes in
 57.11s. This is an observed full scan, not a matched comparison with the earlier
 startup delay. No plans/submissions were created and the active job remains
 unchanged. See `radial-controls-preparation/`.
+
+### Admitted reference-v2 first segment and outer error localization
+
+Job9038410 ended in a healthy walltime checkpoint at4.782375M/12753 steps.
+Native/worker checkpointed and PBS3 agree; all152 worker artifacts are locally
+hash/length verified and the matching lock is released. Job9038494 continues
+the exact checkpoint on four nodes with unchanged science and dt; it is not
+a new fresh run. Both input and full evidence remain preserved.
+
+`stationary-reference-v2-segment01/` contains the verified records and
+`analyze_reference_segment.py` / `analyze_reference_spatial.py` reproduce the
+history, timing, radial-integral and unsmoothed profile plots. All33 recorded
+horizons were accepted; maximum absolute mass error is0.00083656%. This
+does not establish exterior accuracy: fixed r>.3 H/M at4.782375M are
+.09861974/.67702628, with99.868%/99.843% of their squared integrals in .90–.95.
+Both peak radial bins are .92–.93. The Omega and gauge joins contribute little
+to this exterior integral at this time. Native profile rays show steep lapse
+and shift gradients plus constraint oscillations in this same band.
+
+The initial radial-only control already reduces this band's native RHS
+residual206–246x. Its overlap with the evolved error strongly motivates
+`RADIAL-CONTROL-PLAN.md`; it does not yet prove that radial refinement cures
+late evolution, that the slicing remains uniformly regular, or that a boosted
+puncture is resolved. No full-domain puncture spike is used as an exterior
+accuracy measure. Scri null residual remains near roundoff; cumulative pole
+and clock maxima are .00834451/.01375982, not instantaneous residuals.
+
+`prepare_reference_endpoint_reader.py` creates a separate analysis-only
+reader with an explicit exact backend identity calibration: native quadrature
+yields local k=.10116863541976967 versus frozen Aurora .10116863541976966,
+and the corresponding gamma differs in the final few bits. Only these known
+values are calibrated; the full frozen identity is still required. Original
+checkpoints, campaign binaries and production admission are never changed.
+The wrong local identity is rejected. The read-only reconstruction reproduces
+GPU full/fixed norms to5.8e-14 scaled and preserves the checkpoint hash;633
+production source files match the frozen manifest. See
+`reference-endpoint-reader/` and `reconstruct_reference_segment01.py`.
+
+Measured four-node native command cost was2592.93s; rank-median stepping
+2445.64s/12753=.19177s per step. Setup82.1s, initial state8.7s, diagnostics45.2s.
+RHS/exchange/closure/halo/error-sync timing categories are nested and overlap;
+they must not be added as an exclusive cost breakdown. No strong-scaling
+speedup is established. RF2 floor/sign counters are cumulative across restart:
+use final totals or segment differences, never sum cumulative reports.
+First-segment chi floor totals are203472 stage/67832 final; lapse floors zero.
+
+Current debug-scaling max_run is one job per user. Therefore the installed v7
+matched-dt .6M controls will follow current reference disposition sequentially;
+no new parallel launcher or duplicate submission is needed.
+
+### Initial versus evolved slicing profiles
+
+`reference_profile_oracle.cpp` evaluates the unchanged native initializer and
+stationary gauge at exact evolved sample radii and a dense reference grid.
+`run_reference_profile_oracle.py` builds this analysis-only program;
+`compare_reference_profiles.py` reproduces the inspected figures and data in
+`reference-profile-regularity/`. There is no evolution or checkpoint rewrite.
+Independent1e-5/5e-6 derivative probes differ by at most1.70e-7 scaled.
+
+The sharp lapse/shift transition is already in the analytic initial slice.
+The initial maximum lapse gradient is29.48 and its sampled halfmaximum width
+is .0213 in compact r: about13.63 original radial cell widths versus45.70 in
+the proposed targeted grid (accounting for unchanged spacing below .9). At
+exact evolved +x sample points, initial/evolved maximum lapse gradients are
+29.395/29.273 and shift-deviation gradients30.259/30.092. Thus the steep
+profile has not arisen from a new order-of-magnitude slicing collapse by
+4.782375M. The metric and K acquire localized oscillatory deviations instead:
+max |delta gtilde_rr|=.005490 and |delta K|=.05505 in the sampled .85–.96 band.
+The evolved lapse differs by at most.003075 at these samples.
+
+The native initial Schwarzschild-chart spacelike margin f/(f+R²S²) is
+positive throughout the sampled .90–.95 band (.002537–.039112), and dr/dR is
+positive (.002498–.018507). These are initial analytic checks, not a proof of
+evolved coordinate regularity. Together with the initial RHS refinement
+result and the evolved exterior localization they favor radial truncation
+of a steep but initially regular slicing transition. The causal evolved
+equal-dt controls remain necessary. No cell-count threshold alone proves
+that a stencil is resolved, and puncture/boosted convergence remains open.

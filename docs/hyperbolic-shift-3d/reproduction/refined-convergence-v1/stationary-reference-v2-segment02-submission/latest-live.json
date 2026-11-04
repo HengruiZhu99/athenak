@@ -1,0 +1,68 @@
+{
+  "time": "2026-11-04T11:00:07.774203+00:00",
+  "qstat": "Job Id: 9038494.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov\n    Job_Name = rf2-ref-reference\n    Job_Owner = hzhu@aurora-uan-0012.hostmgmt1000.cm.aurora.alcf.anl.gov\n    resources_used.cpupercent = 4793\n    resources_used.cput = 13:11:22\n    resources_used.mem = 762630856kb\n    resources_used.ncpus = 832\n    resources_used.ngpus = 0\n    resources_used.vmem = 63808296992kb\n    resources_used.walltime = 00:18:08\n    job_state = R\n    queue = debug-scaling\n    server = aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov\n    Account_Name = CompactBinaryMerger\n    Checkpoint = u\n    ctime = Wed Nov  4 10:38:54 2026\n    Error_Path = aurora-uan-0012.hostmgmt1000.cm.aurora.alcf.anl.gov:/lus/flare\n\t/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/stat\n\tionary-reference-v2/rf2-ref-reference.e9038494\n    exec_host = x4108c2s0b0n0/0*208+x4108c2s1b0n0/0*208+x4108c2s2b0n0/0*208+x41\n\t08c2s4b0n0/0*208\n    exec_vnode = (x4108c2s0b0n0:ncpus=208)+(x4108c2s1b0n0:ncpus=208)+(x4108c2s2\n\tb0n0:ncpus=208)+(x4108c2s4b0n0:ncpus=208)\n    Hold_Types = n\n    Join_Path = oe\n    Keep_Files = doe\n    Mail_Points = a\n    Mail_Users = hz0693@princeton.edu\n    mtime = Wed Nov  4 10:59:30 2026\n    Output_Path = aurora-uan-0012.hostmgmt1000.cm.aurora.alcf.anl.gov:/lus/flar\n\te/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/sta\n\ttionary-reference-v2/campaigns/stationary20-reference-n16-segment02/pbs\n\t.log\n    Priority = 0\n    qtime = Wed Nov  4 10:38:54 2026\n    Rerunable = False\n    Resource_List.allow_account_check_failure = True\n    Resource_List.allow_negative_allocation = True\n    Resource_List.award_category = INCITE\n    Resource_List.award_type = INCITE-2026\n    Resource_List.backfill_factor = 84600\n    Resource_List.backfill_max = 50\n    Resource_List.base_score = 51\n    Resource_List.bkc_definition = compute_aurora_prod_20261002T162246_af5b0375\n\t_b4fd227\n    Resource_List.burn_ratio = 0.8915\n    Resource_List.current_allocation = 2343929088\n    Resource_List.enable_2nd_fp64 = True\n    Resource_List.enable_backfill = 0\n    Resource_List.enable_fifo = 1\n    Resource_List.enable_wfp = 0\n    Resource_List.fifo_factor = 1800\n    Resource_List.filesystems = home:flare\n    Resource_List.flare_fs = True\n    Resource_List.hbm_mode = flat\n    Resource_List.home_fs = True\n    Resource_List.ncpus = 832\n    Resource_List.ni_resource = aurora\n    Resource_List.nodect = 4\n    Resource_List.overburn = False\n    Resource_List.place = scatter\n    Resource_List.project_priority = 25\n    Resource_List.route_backfill = False\n    Resource_List.score_boost = 0\n    Resource_List.select = 4\n    Resource_List.snc_mode = quad\n    Resource_List.total_allocation = 21600000000\n    Resource_List.total_cpus = 10624\n    Resource_List.walltime = 01:00:00\n    Resource_List.wfp_factor = 100000\n    stime = Wed Nov  4 10:41:04 2026\n    session_id = 1077378\n    jobdir = /home/hzhu\n    substate = 42\n    euser = hzhu\n    egroup = users\n    comment = Job run at Wed Nov 04 at 10:41 on (x4108c2s0b0n0:ncpus=208)+(x410\n\t8c2s1b0n0:ncpus=208)+(x4108c2s2b0n0:ncpus=208)+(x4108c2s4b0n0:ncpus=208\n\t)\n    etime = Wed Nov  4 10:38:54 2026\n    umask = 22\n    run_count = 1\n    eligible_time = 00:02:28\n    Submit_arguments = -o /lus/flare/projects/CompactBinaryMerger/hzhu/refined-\n\tconvergence-20261104-v1/stationary-reference-v2/campaigns/stationary20-\n\treference-n16-segment02/pbs.log /lus/flare/projects/CompactBinaryMerger\n\t/hzhu/refined-convergence-20261104-v1/stationary-reference-v2/campaigns\n\t/stationary20-reference-n16-segment02/job.pbs\n    project = CompactBinaryMerger\n    Submit_Host = aurora-uan-0012.hostmgmt1000.cm.aurora.alcf.anl.gov\n\n",
+  "last": {
+    "step": 18001,
+    "time": 2.250124999999877,
+    "t_over_M": 6.750374999999631,
+    "leaves": 232,
+    "H": 0.09905732873374844,
+    "M": 0.6795421629395456,
+    "Mr": 0.6997144869706189,
+    "H_exterior": 0.09904543456556592,
+    "M_exterior": 0.6795477527764614,
+    "Mr_exterior": 0.6802597965271535,
+    "exterior_cutoff": 0.035005621455798094,
+    "chi": 3.550307241643576e-05,
+    "lapse": 0.06677455920542025,
+    "det_residual": 1.3322676295501878e-15,
+    "tracefree_residual": 1.7763568394002505e-14,
+    "null": 1.2212462645543312e-15,
+    "ghost_null": 1.5543122344718732e-15,
+    "pole_max": 0.00834450551080709,
+    "clock_max": 0.013759821366823594,
+    "cfl": 0.18839110783433924,
+    "penalty": 0.6510416666660156,
+    "penalty_cfl": 0.3124999999996873,
+    "horizon_found": 1,
+    "horizon_complete": 1,
+    "horizon_trial_radius": 0.03500560115220292,
+    "horizon_max_radius": 0.035005621455795666,
+    "horizon_trial_expansion_rms": 5.1085120577628695e-05,
+    "horizon_iterations": 120,
+    "mass": 0.3333322395543966,
+    "tracker": [
+      1.4735488328722474e-15,
+      1.4658143746079117e-15,
+      1.2554523799814433e-15
+    ],
+    "fixed": [
+      {
+        "cut": 0.1,
+        "H": 0.09909288386916623,
+        "M": 0.6798733271847114,
+        "Mr": 0.68058570652592
+      },
+      {
+        "cut": 0.3,
+        "H": 0.10040637240340912,
+        "M": 0.6888877989007116,
+        "Mr": 0.6896079953717845
+      },
+      {
+        "cut": 0.6,
+        "H": 0.11198745787977059,
+        "M": 0.7684333574392166,
+        "Mr": 0.7691878655320841
+      }
+    ],
+    "gauge_max": [
+      0.7918102456115038,
+      30.102691689785633,
+      6.435008968712492,
+      1922.8134784236374,
+      8.320895469134681
+    ],
+    "wall_seconds": 1114.8452446381561
+  }
+}

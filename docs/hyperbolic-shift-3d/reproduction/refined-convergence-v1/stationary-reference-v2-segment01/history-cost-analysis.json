@@ -1,0 +1,166 @@
+{
+  "status": "admitted_healthy_walltime_not_accuracy_success",
+  "last_M": 4.782374999999389,
+  "steps": 12753,
+  "online_accepted": 33,
+  "rows": 33,
+  "max_abs_mass_error_percent": 0.0008365564518997282,
+  "final_mass_error_percent": -0.0008365564518997282,
+  "final_fixed03": {
+    "cut": 0.3,
+    "H": 0.09861974086407731,
+    "M": 0.6770262843323649,
+    "Mr": 0.6777371289189831
+  },
+  "final_fixed06": {
+    "cut": 0.6,
+    "H": 0.10999549733148589,
+    "M": 0.7552013933330295,
+    "Mr": 0.7559363040753131
+  },
+  "cumulative_counters": {
+    "cumulative_floor_statistics": [
+      0,
+      0,
+      203472,
+      67832,
+      0.0013531646933869306,
+      0,
+      0,
+      0
+    ],
+    "cumulative_bulk_sign_counts": [
+      60864,
+      60864,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "cumulative_surface_sign_counts": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "cumulative_boundary_sign_counts": [
+      0,
+      0
+    ]
+  },
+  "native_command_seconds": 2592.934407554101,
+  "exclusive_rank_seconds": {
+    "checkpoint_capture": {
+      "min": 1.4334853421896696,
+      "median": 1.4607800655066967,
+      "max": 1.460785495582968
+    },
+    "checkpoint_write": {
+      "min": 1.9127299059182405,
+      "median": 1.927245307713747,
+      "max": 1.9717314564622939
+    },
+    "diagnostics": {
+      "min": 45.1678431481123,
+      "median": 45.16979145933874,
+      "max": 45.29142356151715
+    },
+    "evolution_setup": {
+      "min": 82.0387663138099,
+      "median": 82.11403815075755,
+      "max": 82.1175038726069
+    },
+    "initial_state": {
+      "min": 8.576513566076756,
+      "median": 8.68178996257484,
+      "max": 8.684411952272058
+    },
+    "native_setup": {
+      "min": 0.391061095520854,
+      "median": 0.4099809341132641,
+      "max": 0.48423525178804994
+    },
+    "startup": {
+      "min": 0.0016204253770411015,
+      "median": 0.01210724120028317,
+      "max": 0.020993067417293787
+    },
+    "step": {
+      "min": 2445.6309749656357,
+      "median": 2445.639964562375,
+      "max": 2445.6481916541234
+    }
+  },
+  "step_seconds_per_call": {
+    "min": 0.1917690719803682,
+    "median": 0.19176977688092017,
+    "max": 0.19177042199122743
+  },
+  "nested_rank_seconds": {
+    "rhs": {
+      "min": 662.7613293479909,
+      "median": 1004.0051464304952,
+      "max": 1025.337443462995
+    },
+    "exchange": {
+      "min": 325.146340837956,
+      "median": 344.43193936836155,
+      "max": 355.9996906573478
+    },
+    "diagnostic_transfer": {
+      "min": 0.8250854560174048,
+      "median": 0.9172709088306874,
+      "max": 7.2103950176388025
+    },
+    "closure": {
+      "min": 652.8555050599894,
+      "median": 653.1868187614974,
+      "max": 653.5671350609915
+    },
+    "halo": {
+      "min": 49.36595863900022,
+      "median": 84.94620315299971,
+      "max": 380.623198927999
+    },
+    "error_sync_overlapping": {
+      "min": 56.77260308759287,
+      "median": 368.8110919529572,
+      "max": 761.6604219377041
+    }
+  },
+  "boundary_subphase_rank_seconds": [
+    {
+      "min": 107.76280232239515,
+      "median": 108.65051112486981,
+      "max": 109.83858818886802
+    },
+    {
+      "min": 147.55445318529382,
+      "median": 149.94731145026162,
+      "max": 153.08328000130132
+    },
+    {
+      "min": 159.78096673218533,
+      "median": 160.77917939331383,
+      "max": 163.64980121236295
+    },
+    {
+      "min": 9.955085552763194,
+      "median": 10.106194884050637,
+      "max": 10.376711889635772
+    },
+    {
+      "min": 183.90974957635626,
+      "median": 187.05053718038835,
+      "max": 203.74015785381198
+    },
+    {
+      "min": 12.921295790467411,
+      "median": 35.28266498516314,
+      "max": 42.137251283973455
+    }
+  ],
+  "qualification": "Admitted checkpoint at4.782375M, not10M or convergence. Fixed coordinate norms outside every complete candidate enclosure; not invariant physical domains. Counter arrays and scri maxima persist through RF2 restart: final cumulative totals or differences, never sum successive cumulative reports. Boundary counters separate. Host timers have no added fences; nested timers overlap and must not be summed as exclusive phases. No controlled scaling/speedup claim."
+}
