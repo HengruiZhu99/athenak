@@ -708,3 +708,32 @@ No new performance partition is used in either physical control. Await full
 terminal admission/preservation, then run `reconstruct_radial_control.py
 --variant radial` and `compare_short_radial_controls.py`; never repeat the
 completed time/reference evolutions or diagnostics.
+
+### Bounded GPU ownership comparison prepared
+
+The locally parity-qualified static-SMR ownership probe is now compiled for
+Aurora in the separate `gpu-partition-package-v1` directory, against the
+unchanged frozen libraries. Production source/object/library/binary hashes
+were verified before and after; no existing campaign binary was rebuilt.
+The probe binary SHA256 is
+`c3a2970ddb1cd78908d233f54c45394375c67d1035f0c61653efdb80c0f2eca9`.
+Build commands, source bindings and compiler output are in
+`gpu-partition-build/`. This is not yet GPU parity or a measured speedup.
+
+After the radial control completes and passes full admission, the proposed
+bounded experiment uses its actual rank costs to choose contiguous ownership
+cuts. It compares equal and weighted ownership from the same admitted restart,
+for256 steps on the same four-node allocation, with identical solver, geometry,
+mesh, timestep, effective boundary penalty and diagnostics. The existing
+frozen RF2 verifier checks each result. Full checkpoint byte equality and
+measured stepping time, distinct from startup/diagnostics/I/O, are required
+before considering adoption. Unequal ownership can worsen communication;
+the fitted cost proxy is not evidence of a speedup. No performance job is
+submitted while radial9038626 is active, and no benchmark checkpoint is an
+automatic physics continuation.
+
+The comparison helpers `prepare_partition_pair.py`, `partition_pair_worker.py`
+and `collect_partition_pair.py` preserve the shared allocation lock, explicit
+bindings, queue review, storage reserves and terminal artifact verification.
+The existing reviewed single-submit helper is reused. This adds no smoke gate
+and does not repeat the completed physics controls.

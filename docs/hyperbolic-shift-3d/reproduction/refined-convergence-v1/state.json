@@ -2,7 +2,7 @@
   "status": "stationary_reference_radial_control_running",
   "current_job": "9038626.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
   "branch": "codex/refined-convergence",
-  "next": "Monitor existing radial9038626; never duplicate. Finish local timecontrol preservation/reconstruction. On admitted radial endpoint reconstruct and compare equal-dt radial/time controls. Healthy same-case walltime continuation only.",
+  "next": "Monitor existing radial9038626. Time-control preservation and reconstruction complete. After admitted radial endpoint preserve/reconstruct/compare equal-dt controls. Prepare bounded ownership pair using the radial rank timings; no adoption without GPU parity and measured benefit.",
   "goal_active": true,
   "historical_startup_failure": {
     "job": "9038031",
@@ -279,7 +279,7 @@
     "last_remote_commit": "c272353097c2f6330a403579f4864eb805aae0f6",
     "reason": "Prior GitHub internal commit_refs_rules rejection; latest SSH attempt has no agent identities and HTTPS no saved credential. User renewal requested once asynchronously. Local commits/scientific Aurora snapshots preserved."
   },
-  "next_analysis": "Reference10M endpoint/history reconstruction complete. Time-control9038572 then equal-dt radial18; preserve same-case science. Performance work targets measured halo/work imbalance with parity before use.",
+  "next_analysis": "Time control complete. Radial endpoint and qualified spatial attribution pending. The separate SYCL ownership probe has built successfully, but no GPU benchmark has been submitted.",
   "local_evidence_commit": "6f8bcb5bb",
   "publication_status": "Local evidence committed; GitHub publication still pending restored authentication (already requested once). Aurora job unaffected.",
   "prepared_radial_controls": {
@@ -291,13 +291,13 @@
     "science_unchanged": true,
     "source_commit": "b52f09723b9c5a51340401bf91a7bf4426d8f339",
     "plan": "RADIAL-CONTROL-PLAN.md",
-    "note": "Time9038572 completed.6M admitted, lockreleased; local download ongoing. Fresh radial9038626 submittedonce after all queues/bindings/storage checked. No science/build/partitionchange.",
+    "note": "Time9038572 admitted and all152 artifacts locally verified; endpoint reconstructed. Radial9038626 running unchanged.",
     "time_plan": "campaigns/stationary20-reference-time-dt4-n16-segment01/plan.json",
     "time_plan_sha256": "ba16737cc5deedbfae7a431d130ba7d9dce248205c087fa2242b074d8fa56a2c",
     "job": "9038626.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
     "radial_plan": "campaigns/stationary20-reference-radial-dt4-n16-segment01/plan.json",
     "radial_plan_sha256": "6aa4eee16a6fb122a561803934db61ce117166c140a6e65b9a39f14b88c68c8d",
-    "radial_status": "submitted"
+    "radial_status": "running"
   },
   "reference_v2_segments": [
     {
@@ -406,7 +406,11 @@
     "candidate48": "measured-partition-candidate/candidate.partition",
     "gpu_benchmark_submitted": false,
     "measured_speedup": null,
-    "qualification": "Proxy cost model is not measured speedup; fixed-grid runtime Repartition cannot directly rebuild custom SMR."
+    "qualification": "Proxy cost model is not measured speedup; fixed-grid runtime Repartition cannot directly rebuild custom SMR.",
+    "gpu_build_status": "completed",
+    "gpu_probe_binary_sha256": "c3a2970ddb1cd78908d233f54c45394375c67d1035f0c61653efdb80c0f2eca9",
+    "gpu_probe_namespace": "gpu-partition-package-v1",
+    "benchmark_policy": "Two equal/weighted ownership restarts from admitted radial .6M endpoint, 256 steps, same four-node allocation, matched science. Prepare only after terminal admission; no automatic adoption."
   },
   "completed_time_control": {
     "root": "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/stationary-reference-v2",
