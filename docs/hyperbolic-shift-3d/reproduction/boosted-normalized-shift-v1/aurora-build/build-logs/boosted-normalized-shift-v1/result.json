@@ -1,0 +1,53 @@
+{
+  "storage_before": {
+    "bytes": 8006482235,
+    "entries": 120764,
+    "limit_bytes": 10000000000,
+    "reserve_bytes": 100000000,
+    "planned_bytes": 400000000,
+    "headroom_bytes": 1493517765
+  },
+  "commands": [
+    {
+      "command": [
+        "cmake",
+        "-S",
+        "source-boosted-normalized-shift-v1",
+        "-B",
+        "build-sycl-mpi-boosted-normalized-shift-v1",
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DCMAKE_CXX_COMPILER=icpx",
+        "-DCMAKE_CXX_FLAGS=-fp-model=precise -fno-sycl-id-queries-fit-in-int",
+        "-DCMAKE_CXX_FLAGS_RELEASE=-O2",
+        "-DAthena_ENABLE_MPI=ON",
+        "-DAthena_SINGLE_PRECISION=OFF",
+        "-DAthena_ENABLE_HYPERBOLIC_SHIFT_3D_TESTS=ON",
+        "-DKokkos_ENABLE_SYCL=ON",
+        "-DKokkos_ENABLE_SERIAL=ON",
+        "-DKokkos_ARCH_INTEL_PVC=ON"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 26.519041835796088
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "build-sycl-mpi-boosted-normalized-shift-v1",
+        "-j64",
+        "hyperbolic_shift_3d_mpi_native_control_broad_smooth_six_shells_boosted_free_gauge_refined_core_matched_cfl_normalized_shift",
+        "hyperbolic_shift_3d_checkpoint_constraints_native_control_broad_smooth_six_shells_boosted_free_gauge_refined_core_matched_cfl_normalized_shift"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "storage_error": null,
+      "elapsed_seconds": 188.20349685684778
+    }
+  ],
+  "storage_after": {
+    "bytes": 8069585481,
+    "entries": 122873
+  }
+}
