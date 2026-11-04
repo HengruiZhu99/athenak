@@ -1,5 +1,5 @@
 {
-  "status": "frame_and_separated_shift_controls_locally_verified",
+  "status": "frame_separation_submission_in_progress",
   "current_job": null,
   "plan": "campaigns/stationary6-n16-v2-segment01/plan.json",
   "plan_sha256": "f1c5847369aceee53c3c16f4d045fcf619fc95aaa5841851156303b724df0f51",
@@ -12,7 +12,7 @@
     "flags_sha256": "e58cd3114dcc5b2352dab706ae5c4442f96dc79b01628706d187039bd3831594"
   },
   "branch": "codex/refined-convergence",
-  "next": "Freeze new immutable source/build; fresh stationary20 radial12 frame+separated N16 four-node run to10M, then matched constant-driver companion for attribution.",
+  "next": "Read saved submission and existing submit helper outcome before any action; never duplicate. Fresh separated stationary20 N16 four-node segment01 is being submitted.",
   "goal_active": true,
   "launcher": "launcher-v2",
   "submission_helper": "submit-reviewed.py",
@@ -53,6 +53,37 @@
     "cartesian_to_shell_interpolation": "Production frame-aware halo control now reproduces read-only N16 initial H=.00044628679 versus stored-frame .0421891; local nontrivial polynomial and MPI1/2 tests passed. See FRAME-AND-GAUGE-CONTROLS.md. No long result yet.",
     "principal_symbol": "Two lapse/shift speed coincidences in each stationary initial configuration; numerical nullity(T)=1, nullity(T^2)=2 in radial algebraic-constraint tangent reduction. Amplitude control agrees to2.67e-15. Not a sole-cause attribution or nonlinear proof.",
     "separated_inner_shift": "Optional field-dependent inner coefficient has an analytic positive lapse/longitudinal-shift gap,6363-case actual RHS check and full sampled initial-symbol audit. Other characteristics and nonlinear regularity unproven; outer symbols bit-identical.",
-    "spatial_reference": "Independent5x5 restricted block matches production at inner roots within4.45e-16. Reference telegrapher input also has kappa/tau2; inner coincidence is not uniquely hyperboloidal or proven sole cause."
+    "spatial_reference": "Independent5x5 restricted block matches production at inner roots within4.45e-16. Reference telegrapher input also has kappa/tau2; inner coincidence is not uniquely hyperboloidal or proven sole cause.",
+    "late_frame_postprocessing": "At preserved stationary6 10M, applying production frame interpolation only in analysis leaves fixed r>.3 H/M essentially unchanged (relative7.1e-9/1.4e-10). No active fields changed; specific postprocessing correction cannot remove the late errors, no slicing-cause proof."
+  },
+  "active_control": {
+    "root": "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/frame-separation-v1",
+    "source_commit": "342715a90157c3f00498b468646f2adea09bb658",
+    "source_manifest_sha256": "995d2b58e1ce57c8c4fdd859cfe61b9471bb21b458185c57f96d27e3f5c4776f",
+    "launcher_commit": "0903b1463",
+    "launcher": "launcher-v3",
+    "build_pid": 1678738,
+    "build_host": "aurora-uan-0012",
+    "status": "submission_helper_running",
+    "current_job": null,
+    "n": 16,
+    "dt": 0.000125,
+    "target_M": 10,
+    "nodes": 4,
+    "ranks": 48,
+    "checkpoint_expected_bytes": 858262665,
+    "build_completed": true,
+    "science": {
+      "source_commit": "342715a90157c3f00498b468646f2adea09bb658",
+      "source_manifest_sha256": "995d2b58e1ce57c8c4fdd859cfe61b9471bb21b458185c57f96d27e3f5c4776f",
+      "binary": "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined_amr",
+      "binary_sha256": "f548c09f458fad9f74508cb629ee0f49e4ec8808c824f211056fe5f186c2f892",
+      "build_cache_sha256": "6004ce11ecaf161901385abab1a9220ad82710be01e4741bfe5434e26579fe86",
+      "flags_sha256": "fe278d43791d83badeed824b5c6de640dd4b8cbb56ec105518e39147e3101f28"
+    },
+    "science_sha256": "8f225e988f8521edc2b675124005c4ede5cf9a5ac8f232b83c749252da8d8ed9",
+    "plan": "campaigns/stationary20-separated-n16-segment01/plan.json",
+    "plan_sha256": "8f025838006eabce0407a6f158a9ed703b2c556737fe17c5a22d61dc800d09c1",
+    "all30_build_records_locally_verified": true
   }
 }

@@ -298,3 +298,17 @@ The two-step local N16 control is admitted with CFL .188389, fixed penalty
 the larger center and dt .000125 differ from the completed stationary6 case;
 that historical case is not a one-parameter gauge comparison. No new long
 result or boosted convergence has been established.
+
+The separate Aurora frame-separation-v1 build completed with source342715a90,
+actual SYCL binary f548c09f458fad9f74508cb629ee0f49e4ec8808c824f211056fe5f186c2f892.
+All30 frozen source/build/launcher records, including verifier executable mode,
+are locally verified. Requested module oneapi2025.3.1 resolved compiler
+IntelLLVM2025.3.2; actual compiler/MPI/module records are preserved, not assumed
+identical to an earlier build. Build used-j64. Read state.json and saved
+submission for the current stationary20 separated-control job.
+
+The matching new endpoint reader reproduces the local two-step production
+norms exactly and leaves its checkpoint hash unchanged. A separate read-only
+frame-halo control on the older stationary6 10M state does not reduce its
+large late exterior errors; see late-frame-control/ and the explicit support
+qualification in FRAME-AND-GAUGE-CONTROLS.md.

@@ -22,11 +22,13 @@ controls implemented; local geometry/frame/oracle checks and MPI SMR restart
 qualification passed. Production scheduled diagnostics/walltime support and
 the frozen Aurora build are complete. Stationary6 N16 RF2 job9038055 completed10M natively with large exterior
 errors. Original worker/PBS failure was executable permission, independently
-verified with identical verifier bytes; all151 artifacts are preserved. No active
-job remains. New initial halo and principal-symbol controls isolate separate
-numerical and gauge defects; consult state.json before acting. User explicitly authorizes SMR/AMR as needed and measured performance
-work; reuse existing infrastructure. Scientific source b41c24e8879 remains
-frozen during this experiment. Analysis tools are separate.
+verified with identical verifier bytes; all151 artifacts are preserved. The next immutable frame/separated-speed build is active; consult state.json
+for its pid, root and current job before acting. Initial halo controls isolate
+a numerical frame-interpolation error. The principal audit motivates a
+separate gauge control but does not establish the sole cause of late growth. User explicitly authorizes SMR/AMR as needed and measured performance
+work; reuse existing infrastructure. Historical scientific source b41c24e8879 remains immutable. The new opt-in
+controls freeze source342715a90 in a separate namespace. Analysis tools and
+configuration identities distinguish both experiments.
 
 Completion needs: geometry/frame consistency and spacelike/map regularity
 checks; nontrivial inner equivalence with the actual reference Z4c; controlled

@@ -128,3 +128,18 @@ interface/mesh changes. Compare fixed-domain histories and unsmoothed spatial
 profiles before interpreting survival. Boosted and resolution controls follow
 stationary accuracy assessment; keep existing completed runs as preserved
 context rather than matched one-parameter baselines.
+
+
+## Late-time read-only control
+
+Applying the production frame interpolation only in postprocessing to the
+preserved stationary6 10M checkpoint leaves the exterior r>.3 H/M norms
+essentially unchanged (relative changes7.1e-9 and1.4e-10). This control uses
+actual stored donors, changes no active fields and retains the original
+identity/admission qualification. The modified Omega frame ends at.30 in
+that older configuration, so most exterior halos are unchanged by construction.
+It rules out this specific postprocessing correction as the explanation of
+the large late exterior norms; it does not rule out all diagnostic error,
+undo errors accumulated in evolution, or establish a slicing pathology.
+The paired fresh production evolutions remain necessary. Reproducer and
+inspected radial overlay: analyze_late_frame_control.py and late-frame-control/.

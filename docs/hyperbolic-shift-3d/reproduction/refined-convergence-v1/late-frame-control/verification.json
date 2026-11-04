@@ -1,0 +1,47 @@
+{
+  "passed": true,
+  "input_checkpoint_sha256": "785aea72c6df1960344dda24de63335af5a1a5a315bd617d5008c5b3bff0deda",
+  "production_original_worker_admitted": false,
+  "independent_endpoint_verification": true,
+  "original_norms_full_cut03": [
+    [
+      2.317524664565685,
+      3.1941270792207765,
+      6.457327662688546
+    ],
+    [
+      2.2858438111109005,
+      3.165588428913193,
+      6.372486203371042
+    ]
+  ],
+  "analysis_frame_norms_full_cut03": [
+    [
+      2.317508806473181,
+      3.194127242248179,
+      6.457328110795553
+    ],
+    [
+      2.2858438273521724,
+      3.1655884293566383,
+      6.3724862042736365
+    ]
+  ],
+  "ratios": [
+    [
+      0.9999931573144629,
+      1.0000000510397358,
+      1.0000000693951168
+    ],
+    [
+      1.0000000071051538,
+      1.000000000140083,
+      1.0000000001416394
+    ]
+  ],
+  "analysis_override": "analysis-only production legacy-frame Cartesian-to-shell halos; stored donors at checkpoint time",
+  "replaced_ghosts": 92424,
+  "maximum_ghost_change": 0.0007202982736076446,
+  "cpu_native_integral_relative_error": 3.2526745991045504e-16,
+  "qualification": "Read-only postprocessing change of halo interpolation only. Same admitted-for-analysis old10M state, unchanged active fields, stencil weights and input identity. Does not undo evolution errors or establish slicing regularity. Outside the changed-Omega region most halos are unchanged by construction; this control rules out this specific reconstruction correction as an explanation of the large late exterior norms, not every possible diagnostic discretization error."
+}

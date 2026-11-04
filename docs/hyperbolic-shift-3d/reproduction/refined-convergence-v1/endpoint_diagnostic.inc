@@ -1,5 +1,6 @@
 // Appended to a renamed copy of the production RF2 translation unit.
-// Analysis only: no stepping, checkpoint writing or changed derivative operator.
+// Analysis only: no stepping or checkpoint writing; fixed derivative stencils
+// with explicitly labeled optional halo-only diagnostic controls.
 int main(int argc,char**argv) {
  MPI_Init(&argc,&argv);
  MPI_Comm_rank(MPI_COMM_WORLD,&global_variable::my_rank);
@@ -7,7 +8,8 @@ int main(int argc,char**argv) {
  Kokkos::initialize(argc,argv);int code=0;
  try {
   if(argc!=8&&argc!=9)throw std::invalid_argument("usage: diagnostic N checkpoint dt config smr|uniform fresh_prefix cutoff [analytic-initial-halos]");
-  const bool exact_halos=argc==9;
+  const bool frame_control=argc==9&&std::string(argv[8])=="legacy-frame-production-halos";
+  const bool exact_halos=argc==9&&!frame_control;
   const bool legacy_frame=exact_halos&&std::string(argv[8])=="legacy-frame-cartesian-to-shell-halos";
   const bool physical_frame=legacy_frame||(exact_halos&&std::string(argv[8])=="physical-frame-cartesian-to-shell-halos");
   const bool cartesian_donors=physical_frame||(exact_halos&&std::string(argv[8])=="analytic-cartesian-to-shell-halos");
@@ -38,6 +40,27 @@ int main(int argc,char**argv) {
   const auto& model=e.Model();const auto& g=model.grid;
   const auto production_native=native;
   uint64_t replaced=0;Real halo_maximum=0;
+  if(frame_control){
+   // Analysis-only late-time control: no analytic data, active-field mutation,
+   // radial mask, or identity reinterpretation. Use stored donors exclusively.
+   h::ConformalHaloPlan plan(g,cfg.gauge.profile);
+   std::vector<bool> owned(g.mesh.blocks.size(),false);
+   for(int p=e.first;p<e.last;++p)owned[g.cells[p].block]=true;
+   const int bs=g.padded*g.padded*g.padded;
+   for(const auto&row:g.halos)if(plan.enabled[row.target]&&owned[row.target/bs]){
+    for(int f:{0,7,8,9,10,11,12,18}){
+     const int base=f*g.count,first=row.entries.front().point;
+     const Real anchor=plan.points[first].ToLegacy(f,padded[base+first]);Real value=anchor;
+     for(const auto&entry:row.entries)value+=entry.weight*(plan.points[entry.point].ToLegacy(f,padded[base+entry.point])-anchor);
+     value=plan.points[row.target].FromLegacy(f,value);
+     halo_maximum=std::max(halo_maximum,std::abs(value-padded[base+row.target]));padded[base+row.target]=value;
+    }
+    ++replaced;
+   }
+   Buffer scratch("frame_control_halos",padded.size());e.CopyFromHost(padded,scratch);
+   native=ReduceDiagnostic(e.kernel()->Diagnostics(scratch,cut,e.surface),false);
+   e.SynchronizeError(native.invalid_cells,"frame halo analysis invalid geometry");
+  }
   if(exact_halos){
    std::vector<bool> owned(g.mesh.blocks.size(),false);
    for(int p=e.first;p<e.last;++p)owned[g.cells[p].block]=true;
@@ -135,7 +158,7 @@ int main(int argc,char**argv) {
   if(maximum>1e-9)throw std::runtime_error("CPU/operator volume cross-check failed: "+std::to_string(maximum));
   if(!rank){std::ofstream meta(prefix+".json");meta<<std::setprecision(17);
    meta<<"{\"identity\":"<<JsonString(cfg.identity)<<",\"n\":"<<n<<",\"t_over_M\":"<<3*s.time<<",\"steps\":"<<s.steps
-       <<",\"analysis_override\":"<<JsonString(legacy_frame?"legacy-frame interpolation of t0 Cartesian-to-shell chi,A,lapse ghosts at .33<=r<=.60":(physical_frame?"physical-frame interpolation of t0 Cartesian-to-shell chi,A,lapse ghosts at .33<=r<=.60":(cartesian_donors?"analytic t0 Cartesian-to-shell ghosts only at .33<=r<=.60":(exact_halos?"analytic t0 ghosts only at .33<=r<=.60":"none"))))
+       <<",\"analysis_override\":"<<JsonString(frame_control?"analysis-only production legacy-frame Cartesian-to-shell halos; stored donors at checkpoint time":legacy_frame?"legacy-frame interpolation of t0 Cartesian-to-shell chi,A,lapse ghosts at .33<=r<=.60":(physical_frame?"physical-frame interpolation of t0 Cartesian-to-shell chi,A,lapse ghosts at .33<=r<=.60":(cartesian_donors?"analytic t0 Cartesian-to-shell ghosts only at .33<=r<=.60":(exact_halos?"analytic t0 ghosts only at .33<=r<=.60":"none"))))
        <<",\"replaced_ghosts\":"<<replaced<<",\"maximum_ghost_change\":"<<halo_maximum
        <<",\"production_full_integrals\":["<<production_native.total.volume<<','<<production_native.total.h2<<','<<production_native.total.m2<<','<<production_native.total.mr2<<']'
        <<",\"cutoff\":"<<cut<<",\"native_volume_integral_relative_difference\":"<<maximum
@@ -143,7 +166,7 @@ int main(int argc,char**argv) {
    for(int k=0;k<2;++k){if(k)meta<<',';meta<<'[';for(int f=0;f<4;++f){if(f)meta<<',';meta<<sums[k][f];}meta<<']';}
    meta<<"],\"radial_bins\":[";for(int b=0;b<100;++b){if(b)meta<<',';meta<<'['<<b*.01<<','<<(b+1)*.01;
     for(int f=0;f<4;++f)meta<<','<<bins[b][f];meta<<']';}
-   meta<<"],\"qualification\":\"Read-only native RF2 Restore/Install, same OmegaAt and derivative stencils; if analysis_override is enabled only t0 halo values in the specified annulus are replaced by the explicitly stated analytic or physical-frame control, never active fields or scri; CPU integrals reproduce native kernel. Exterior admission must be checked separately. Rays use native centers without interpolation; Cartesian y,z offset follows local spacing across SMR. Radial bins include full domain; puncture-interior norms are not exterior accuracy measures.\"}\n";
+   meta<<"],\"qualification\":\"Read-only native RF2 Restore/Install, same OmegaAt and derivative stencils; if analysis_override is enabled its label identifies either a t0 annulus control or a checkpoint-time production frame-halo control using stored donors; never changes active fields or scri; CPU integrals reproduce native kernel. Exterior admission must be checked separately. Rays use native centers without interpolation; Cartesian y,z offset follows local spacing across SMR. Radial bins include full domain; puncture-interior norms are not exterior accuracy measures.\"}\n";
    meta.close();if(!meta)throw std::runtime_error("metadata write failed");}
  }catch(const std::exception&x){std::cerr<<x.what()<<'\n';code=1;}
  MPI_Allreduce(MPI_IN_PLACE,&code,1,MPI_INT,MPI_MAX,MPI_COMM_WORLD);

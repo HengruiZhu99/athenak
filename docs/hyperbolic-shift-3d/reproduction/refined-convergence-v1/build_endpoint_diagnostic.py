@@ -1,9 +1,11 @@
 """Build an analysis-only reader from production RF2 source; never rebuild campaign."""
 from pathlib import Path
-import hashlib,json,shlex,subprocess
+import argparse,hashlib,json,shlex,subprocess
 HERE=Path(__file__).resolve().parent
 ROOT=next(p for p in HERE.parents if (p/'CMakeLists.txt').exists())
-OUT=ROOT/'output/refined-convergence/endpoint-diagnostic';OUT.mkdir(exist_ok=True)
+parser=argparse.ArgumentParser();parser.add_argument('--output');args=parser.parse_args()
+OUT=Path(args.output).resolve() if args.output else ROOT/'output/refined-convergence/endpoint-diagnostic'
+OUT.mkdir(exist_ok=not bool(args.output))
 target=ROOT/'build-refined-convergence/tst/hyperbolic_shift_3d'
 src=ROOT/'tst/hyperbolic_shift_3d/amr_evolution.cpp'
 text=src.read_text();needle='int main(int argc, char** argv) {'
