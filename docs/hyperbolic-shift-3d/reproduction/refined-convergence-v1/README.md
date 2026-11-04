@@ -570,3 +570,22 @@ result and the evolved exterior localization they favor radial truncation
 of a steep but initially regular slicing transition. The causal evolved
 equal-dt controls remain necessary. No cell-count threshold alone proves
 that a stencil is resolved, and puncture/boosted convergence remains open.
+
+Rank-level cost evidence (`analyze_reference_rank_cost.py`,
+`reference-rank-cost/`) shows28263–28264 active cells per rank but68096–249728
+halo rows. Host RHS times range662.8–1025.3s and halo times49.4–380.6s.
+Nominal sparse-send and receive payload sums agree exactly at1.399GB per
+call over all48ranks. This is application accounting, not a network bandwidth
+measurement; nested timers overlap and synchronization includes load waiting.
+Existing measured-partition/repartition infrastructure is the appropriate
+place for a later controlled load-balancing test, rather than assuming equal
+cell counts mean balanced work. No running partition was changed. Figure
+inspected, raw per-rank records and reproducer preserved.
+
+A dedicated radial18 endpoint analysis reader is prepared in
+`radial-endpoint-reader/`, using the same explicit frozen-backend k/gamma
+calibration and strict full radial18 identity. The unchanged reference reader
+body is bit-identical after generalizing the preparation CLI. The radial
+reader rejects the local identity as expected. There is no admitted Aurora
+radial18 endpoint yet: positive report/norm reproduction remains required
+before any spatial result is interpreted. No production build changed.

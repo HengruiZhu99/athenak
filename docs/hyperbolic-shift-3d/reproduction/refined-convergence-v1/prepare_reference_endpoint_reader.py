@@ -5,10 +5,13 @@ accepts only the full frozen Aurora reference-v2 identity and only the known
 local configuration, with its two map-roundoff constants calibrated explicitly.
 """
 from pathlib import Path
-import json,hashlib
+import json,hashlib,argparse
 HERE=Path(__file__).resolve().parent;ROOT=next(p for p in HERE.parents if (p/'CMakeLists.txt').exists())
-out=ROOT/'output/refined-convergence/reference-endpoint-reader-source';out.mkdir(exist_ok=False)
-local=json.loads((HERE/'stationary-reference-v2-checks/checkpoint-verification.json').read_text())['identity'];remote=json.loads((HERE/'launcher-v6/qualified-identity-reference.json').read_text())['identity']
+parser=argparse.ArgumentParser();parser.add_argument('--variant',choices=['reference','radial'],default='reference');parser.add_argument('--output');args=parser.parse_args()
+out=Path(args.output).resolve() if args.output else ROOT/'output/refined-convergence'/('reference-endpoint-reader-source' if args.variant=='reference' else 'radial-endpoint-reader-source');out.mkdir(exist_ok=False)
+local_path=HERE/('stationary-reference-v2-checks/checkpoint-verification.json' if args.variant=='reference' else 'reference-radial18-initial/checkpoint-verification.json')
+remote_path=HERE/('launcher-v6/qualified-identity-reference.json' if args.variant=='reference' else 'launcher-v7/qualified-identity-radial.json')
+local=json.loads(local_path.read_text())['identity'];remote=json.loads(remote_path.read_text())['identity']
 a=local.split(';');b=remote.split(';');assert len(a)==len(b)
 diffs=[(x,y) for x,y in zip(a,b) if x!=y];assert [x.split('=')[0] for x,y in diffs]==['gauge','k']
 for x,y in diffs:
@@ -26,5 +29,5 @@ body=body.replace(old,new)
 body=body.replace('<<",\\"analysis_override\\":', '<<",\\"backend_identity_calibration\\":\\"Dedicated frozen Aurora reference-v2 identity; only k and inner_gamma roundoff constants calibrated; production reader remains strict\\""\n       <<",\\"analysis_override\\":')
 assert 'backend_identity_calibration' in body
 (out/'body.inc').write_text(body)
-record=dict(local_identity=local,frozen_identity=remote,differences=diffs,base_body_sha256=hashlib.sha256((HERE/'endpoint_diagnostic.inc').read_bytes()).hexdigest(),analysis_body_sha256=hashlib.sha256(body.encode()).hexdigest(),qualified_identity_sha256=hashlib.sha256((HERE/'launcher-v6/qualified-identity-reference.json').read_bytes()).hexdigest(),qualification='Analysis-only dedicated identity calibration, never checkpoint mutation or restart. Full exact frozen source/config identity still required. Compare reconstructed native norms to admitted report/history before interpreting. Native local quadrature still recomputes reference fields; cross-backend bitwise equality not claimed.')
+record=dict(local_identity=local,frozen_identity=remote,differences=diffs,base_body_sha256=hashlib.sha256((HERE/'endpoint_diagnostic.inc').read_bytes()).hexdigest(),analysis_body_sha256=hashlib.sha256(body.encode()).hexdigest(),qualified_identity_sha256=hashlib.sha256(remote_path.read_bytes()).hexdigest(),qualification='Analysis-only dedicated identity calibration, never checkpoint mutation or restart. Full exact frozen source/config identity still required. Compare reconstructed native norms to admitted report/history before interpreting. Native local quadrature still recomputes reference fields; cross-backend bitwise equality not claimed.')
 (out/'calibration.json').write_text(json.dumps(record,indent=2)+'\n');print(out/'body.inc')

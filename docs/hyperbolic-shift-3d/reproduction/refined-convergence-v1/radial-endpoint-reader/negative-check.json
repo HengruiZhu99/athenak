@@ -1,0 +1,20 @@
+{
+  "command": [
+    "mpiexec",
+    "-n",
+    "1",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/radial-endpoint-reader/reader",
+    "16",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/reference-radial18-initial/state.checkpoint",
+    ".00003125",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/inputs/hyperbolic_shift_3d/refined_convergence/central20_stationary_smr025_radial18_reference.cfg",
+    "smr",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/radial-endpoint-reader/wrong-local-identity",
+    ".3"
+  ],
+  "returncode": 1,
+  "output": "checkpoint formulation identity mismatch\n--------------------------------------------------------------------------\n\nprterun detected that one or more processes exited with non-zero status,\nthus causing the job to be terminated. The first process to do so was:\n\n   Process name: [prterun-PU-KL2XFPVQ0D-34446@1,0]\n   Exit code:    1\n--------------------------------------------------------------------------\n",
+  "checkpoint_unchanged": true,
+  "checkpoint_sha256": "aa045e26668f5a4cc3dd6fd181e4d90d78b8a5a9cdbaaeabd2c16bff6eb368c4",
+  "qualification": "Dedicated frozen Aurora radial18 reader rejects local identity. No positive Aurora radial18 endpoint exists yet; require report/norm reproduction before interpretation."
+}
