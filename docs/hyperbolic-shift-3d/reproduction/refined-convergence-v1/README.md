@@ -452,3 +452,32 @@ Evidence/commands are in `reference-radial18-two-step/` and
 `run_radial_cfl_probe.py`. This is neither a GPU check nor long evolution, and
 its checkpoint will not be used as a fresh experiment's restart input. Runtime
 235.14s is local end-to-end, not a GPU estimate or a scaling measurement.
+
+### Bounded controls and storage traversal preparation
+
+`launcher-v7/` and `prepare_radial_controls.py` prepare the equal-dt fresh
+radial12/radial18 controls in `RADIAL-CONTROL-PLAN.md`. They reuse the exact
+frozen b52 production binary and checkpoint verifier; only runtime grid input,
+requested dt/target/sampling and launcher namespace are separately bound.
+No rebuild, GPU smoke or change to launcher-v6 is required. Both controls
+remain unsubmitted while the existing reference10M run is active.
+
+The measured ~378s pre-native admission delay motivates a separate storage
+traversal in v7. `storage_accounting.py` retains the50GB cap, all roots,
+allocated-versus-logical maximum, inode deduplication and reservations. It
+avoids traversing a directory twice and rejects unreadable directories rather
+than silently missing their contents. `test_storage_accounting.py` checks
+known inventories, nested/overlapping roots, hard links, root and child
+symlinks, cycles, dangling links, missing roots and exact/over-cap behavior.
+It matches the frozen scanner on all valid inventories. No running guard was
+modified.
+
+On an immutable Aurora source/build inventory with a nested duplicate root,
+both implementations counted exactly655642624B/5610 unique inodes. Old/new
+wall times were8.334/1.830s in that order and1.684/4.504s in reverse order.
+These results are cache-sensitive and do **not** establish a reproducible
+speedup or predict full admission time. The deterministic improvement is
+removal of redundant walks; future allocations will record end-to-end startup
+cost. All measurements, source hashes and integrity checks are preserved in
+`storage-performance/`. No additional launcher tests or repeated physics
+checks were performed.

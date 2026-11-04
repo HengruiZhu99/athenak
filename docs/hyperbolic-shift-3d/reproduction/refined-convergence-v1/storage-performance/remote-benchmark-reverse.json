@@ -1,0 +1,33 @@
+{
+  "roots": [
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/stationary-reference-v2/source",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/stationary-reference-v2/build",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/stationary-reference-v2/source/src"
+  ],
+  "old": {
+    "bytes": 655642624,
+    "limit_bytes": 50000000000,
+    "planned_bytes": 0,
+    "reserve_bytes": 0,
+    "headroom_bytes": 49344357376,
+    "roots": [
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/stationary-reference-v2/source",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/stationary-reference-v2/build",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/stationary-reference-v2/source/src"
+    ]
+  },
+  "new": {
+    "bytes": 655642624,
+    "unique_inodes": 5610,
+    "directories_scanned": 557,
+    "entries_scanned": 5608
+  },
+  "old_seconds": 1.683921528980136,
+  "new_seconds": 4.503798664081842,
+  "ratio": 0.3738891665849866,
+  "source_hashes": {
+    "storage_old.py": "338135007af2019499d84a7885869df0bf78dca3c6653cb22de03fca4b366bb2",
+    "storage_new.py": "8548ed42b24f2dbd5f2db93b331daa3e3c60d4ce6bebcb7749e720a5a8cfa9ca"
+  },
+  "qualification": "Read-only immutable source/build trees with an explicitly duplicated nested source root. New then old cache order; complementary warm scan; not a cold-cache or full-production startup benchmark. No running launcher changed."
+}

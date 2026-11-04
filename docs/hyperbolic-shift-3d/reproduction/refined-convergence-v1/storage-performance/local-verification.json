@@ -1,0 +1,73 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "roots": [
+        "a",
+        "a/b",
+        "a"
+      ],
+      "bytes": 16934,
+      "scan": {
+        "bytes": 16934,
+        "unique_inodes": 7,
+        "directories_scanned": 2,
+        "entries_scanned": 7
+      }
+    },
+    {
+      "roots": [
+        "a/b",
+        "a"
+      ],
+      "bytes": 16934,
+      "scan": {
+        "bytes": 16934,
+        "unique_inodes": 7,
+        "directories_scanned": 2,
+        "entries_scanned": 7
+      }
+    },
+    {
+      "roots": [
+        "root-link"
+      ],
+      "bytes": 16836,
+      "scan": {
+        "bytes": 16836,
+        "unique_inodes": 7,
+        "directories_scanned": 2,
+        "entries_scanned": 7
+      }
+    },
+    {
+      "roots": [
+        "a",
+        "a/external-link"
+      ],
+      "bytes": 25126,
+      "scan": {
+        "bytes": 25126,
+        "unique_inodes": 8,
+        "directories_scanned": 3,
+        "entries_scanned": 8
+      }
+    },
+    {
+      "roots": [
+        "a",
+        "outside"
+      ],
+      "bytes": 25222,
+      "scan": {
+        "bytes": 25222,
+        "unique_inodes": 9,
+        "directories_scanned": 3,
+        "entries_scanned": 8
+      }
+    }
+  ],
+  "missing_root_rejected": true,
+  "unreadable_directory_rejected": true,
+  "exact_cap_and_over_cap_checked": true
+}
