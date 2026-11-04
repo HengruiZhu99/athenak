@@ -147,7 +147,7 @@ static_assert(!hyperbolic_reproduction::refined_core ||
               (h::boost_free_initial_gauge && hyperbolic_reproduction::six_shells));
 static_assert(!HYPERBOLIC_REFINED_CORE_MATCHED_CFL || hyperbolic_reproduction::refined_core);
 constexpr const char* checkpoint_magic =
-    hyperbolic_reproduction::configured_formulation ? "HYP3D_MPI_RF1"
+    hyperbolic_reproduction::configured_formulation ? "HYP3D_MPI_RF2"
     : h::normalized_inner_shift                     ? "HYP3D_MPI_BN1"
     : HYPERBOLIC_REFINED_CORE_MATCHED_CFL           ? "HYP3D_MPI_BC2"
     : hyperbolic_reproduction::refined_core         ? "HYP3D_MPI_BC1"
@@ -546,7 +546,8 @@ class Evolution {
         return hyperbolic_reproduction::FixedMesh(n, core_subdivisions, evolved_overlap);
       }();
       if constexpr (hyperbolic_reproduction::configured_formulation) {
-        mesh.radii = hyperbolic_reproduction::refined_configuration.shell_radii;
+        if(custom_mesh)mesh.radii=hyperbolic_reproduction::refined_configuration.shell_radii;
+        else mesh=hyperbolic_reproduction::refined_configuration.Mesh(n);
         if (mesh.radii.empty())
           throw std::logic_error("refined configuration was not loaded");
       }
@@ -1176,7 +1177,7 @@ class Evolution {
                                                  (puncture_rates[0][a] + 2 * puncture_rates[1][a] +
                                                   2 * puncture_rates[2][a] + puncture_rates[3][a]) /
                                                  6;
-            if (!std::isfinite(puncture[a]) || std::abs(puncture[a]) >= .16)
+            if (!std::isfinite(puncture[a]) || std::abs(puncture[a]) >= (hyperbolic_reproduction::configured_formulation?Model().grid.mesh.inner_radius:.16))
               throw std::runtime_error("puncture reached conservative Cartesian support limit");
           }
       const auto out = local_state, begin = base, old = compensation, next = next_compensation,
@@ -1362,11 +1363,11 @@ class Evolution {
           out.write(reinterpret_cast<const char*>(&config), sizeof(config));
         }
         if constexpr (core_subdivisions == 2 || evolved_overlap) {
-          const MeshConfig config;
+          MeshConfig config; if constexpr(hyperbolic_reproduction::configured_formulation)config.core_subdivisions=hyperbolic_reproduction::refined_configuration.core_subdivisions;
           out.write(reinterpret_cast<const char*>(&config), sizeof(config));
         }
         if constexpr (spherical_overlap) {
-          const GeometryConfig config;
+          GeometryConfig config; if constexpr(hyperbolic_reproduction::configured_formulation){config.core_half_width=Model().grid.mesh.half_width;config.inner_radius=Model().grid.mesh.inner_radius;}
           out.write(reinterpret_cast<const char*>(&config), sizeof(config));
         }
         if constexpr (continuous_positive) {
@@ -1379,6 +1380,7 @@ class Evolution {
         }
         if constexpr (h::boosted_puncture) {
           BoostConfig config;
+          if constexpr(hyperbolic_reproduction::configured_formulation){config.velocity=hyperbolic_reproduction::refined_configuration.boost_velocity;config.support=Model().grid.mesh.inner_radius;}
           for (int a = 0; a < 3; ++a)
             config.position[a] = puncture[a];
           out.write(reinterpret_cast<const char*>(&config), sizeof(config));
@@ -1433,7 +1435,7 @@ class Evolution {
         if constexpr (core_subdivisions == 2 || evolved_overlap) {
           MeshConfig config;
           in.read(reinterpret_cast<char*>(&config), sizeof(config));
-          const MeshConfig expected;
+          MeshConfig expected; if constexpr(hyperbolic_reproduction::configured_formulation)expected.core_subdivisions=hyperbolic_reproduction::refined_configuration.core_subdivisions;
           if (!in || config.scheme != expected.scheme ||
               config.core_subdivisions != expected.core_subdivisions ||
               config.shell_layers != expected.shell_layers || config.reserved != expected.reserved)
@@ -1442,7 +1444,7 @@ class Evolution {
         if constexpr (spherical_overlap) {
           GeometryConfig config;
           in.read(reinterpret_cast<char*>(&config), sizeof(config));
-          const GeometryConfig expected;
+          GeometryConfig expected; if constexpr(hyperbolic_reproduction::configured_formulation){expected.core_half_width=Model().grid.mesh.half_width;expected.inner_radius=Model().grid.mesh.inner_radius;}
           if (!in || config.core_half_width != expected.core_half_width ||
               config.inner_radius != expected.inner_radius)
             throw std::runtime_error("checkpoint spherical geometry mismatch");
@@ -1465,10 +1467,10 @@ class Evolution {
         if constexpr (h::boosted_puncture) {
           BoostConfig config;
           in.read(reinterpret_cast<char*>(&config), sizeof(config));
-          if (!in || config.velocity != .1 || config.support != .16)
+          if (!in || config.velocity != (hyperbolic_reproduction::configured_formulation?hyperbolic_reproduction::refined_configuration.boost_velocity:.1) || config.support != (hyperbolic_reproduction::configured_formulation?Model().grid.mesh.inner_radius:.16))
             throw std::runtime_error("boost configuration mismatch");
           for (int a = 0; a < 3; ++a) {
-            if (!std::isfinite(config.position[a]) || std::abs(config.position[a]) >= .16)
+            if (!std::isfinite(config.position[a]) || std::abs(config.position[a]) >= config.support)
               throw std::runtime_error("invalid tracker checkpoint");
             puncture[a] = config.position[a];
           }
@@ -1725,7 +1727,10 @@ int main(int argc, char** argv) {
             throw std::runtime_error("refusing to overwrite result: " + output + suffix);
         if (native_wormhole && kind == 2 && restart == "-") {
           if constexpr (h::boosted_puncture) {
-            h::NativeBoostedWormhole pgen;
+            const auto& cfg=hyperbolic_reproduction::refined_configuration;
+            h::NativeBoostedWormhole pgen(hyperbolic_reproduction::configured_formulation?cfg.boost_velocity:.1,
+              1./3.,h::boost_free_initial_gauge,hyperbolic_reproduction::configured_formulation?cfg.initial_start_M:4,
+              hyperbolic_reproduction::configured_formulation?cfg.initial_end_M:12);
             for (int p = 0; p < e.total; ++p) {
               auto fields = pgen.Fields(e.Model().grid.geometry[p].x);
               if constexpr (hyperbolic_reproduction::configured_formulation)
@@ -2243,10 +2248,15 @@ int main(int argc, char** argv) {
                << JsonString(h::boost_free_initial_gauge
                                  ? "boost_determinant_precollapsed_hyperboloidal"
                                  : "legacy")
-               << ",\"boost_velocity\":" << (h::boosted_puncture ? .1 : 0)
+               << ",\"boost_velocity\":" << (h::boosted_puncture ? (hyperbolic_reproduction::configured_formulation?hyperbolic_reproduction::refined_configuration.boost_velocity:.1) : 0)
                << ",\"puncture_tracker\":" << (h::boosted_puncture ? "true" : "false")
-               << ",\"native_initialization_start_M\":4,\"native_initialization_end_M\":"
-               << (h::broad_smooth_a ? 12 : 8)
+               << ",\"native_initialization_start_M\":"
+               << (hyperbolic_reproduction::configured_formulation
+                       ? hyperbolic_reproduction::refined_configuration.initial_start_M : 4)
+               << ",\"native_initialization_end_M\":"
+               << (hyperbolic_reproduction::configured_formulation
+                       ? hyperbolic_reproduction::refined_configuration.initial_end_M
+                       : (h::broad_smooth_a ? 12 : 8))
                << ",\"broad_smooth_a\":" << (h::broad_smooth_a ? "true" : "false")
                << ",\"restoring_collar_begin\":"
                << (h::broad_smooth_a          ? .6
@@ -2452,7 +2462,7 @@ int main(int argc, char** argv) {
                << (HYPERBOLIC_EXPERIMENTAL_TIMESTEP ? "true" : "false")
                << ",\"cartesian_dt_over_dx\":"
                << dt / (hyperbolic_reproduction::configured_formulation
-                            ? .36 / (core_subdivisions * n)
+                            ? 2*hyperbolic_reproduction::refined_configuration.core_half_width / (hyperbolic_reproduction::refined_configuration.core_subdivisions * n)
                             : .18 / n)
                << ",\"bulk_cfl_guard_enabled\":"
                << (HYPERBOLIC_EXPERIMENTAL_TIMESTEP &&
@@ -2506,15 +2516,14 @@ int main(int argc, char** argv) {
                  << "\",\"physical_lapse_floor\":" << physical_lapse_floor;
         if constexpr (spherical_overlap)
           report
-              << ",\"shell_geometry\":\"spherical_equiangular\",\"core_half_width\":0.18,\"shell_"
-                 "inner_radius\":0.16,\"overlap_quadrature\":\"radial_quintic_partition\"";
+              << ",\"shell_geometry\":\"spherical_equiangular\",\"core_half_width\":"<<e.Model().grid.mesh.half_width<<",\"shell_inner_radius\":"<<e.Model().grid.mesh.inner_radius<<",\"overlap_quadrature\":\"radial_quintic_partition\"";
         if constexpr (inner_transition_logical)
           report << ",\"interpatch_interpolation\":\"logical_inner_transition\"";
         if constexpr (core_subdivisions >= 2) {
-          report << ",\"mesh_topology\":\"cartesian_" << core_subdivisions << "x"
-                 << core_subdivisions << "x" << core_subdivisions << "_shells"
+          report << ",\"mesh_topology\":\"cartesian_" << (hyperbolic_reproduction::configured_formulation?hyperbolic_reproduction::refined_configuration.core_subdivisions:core_subdivisions) << "x"
+                 << (hyperbolic_reproduction::configured_formulation?hyperbolic_reproduction::refined_configuration.core_subdivisions:core_subdivisions) << "x" << (hyperbolic_reproduction::configured_formulation?hyperbolic_reproduction::refined_configuration.core_subdivisions:core_subdivisions) << "_shells"
                  << hyperbolic_reproduction::shell_layers
-                 << "\",\"cartesian_core_subdivisions\":" << core_subdivisions
+                 << "\",\"cartesian_core_subdivisions\":" << (hyperbolic_reproduction::configured_formulation?hyperbolic_reproduction::refined_configuration.core_subdivisions:core_subdivisions)
                  << ",\"mesh_blocks\":" << e.Model().grid.mesh.blocks.size();
           report << ",\"shell_layers\":" << hyperbolic_reproduction::shell_layers
                  << ",\"shell_outer_radii\":[";

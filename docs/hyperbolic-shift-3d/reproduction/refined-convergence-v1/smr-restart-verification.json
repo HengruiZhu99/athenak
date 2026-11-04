@@ -1,0 +1,139 @@
+{
+  "passed": true,
+  "uninterrupted": {
+    "path": "output/refined-convergence/smr-policy-uninterrupted2.checkpoint",
+    "sha256": "0007d50cc01d79ffe17cb8676e1698af59b63b116122b461dbebc89b742c3d4a",
+    "bytes": 212354050,
+    "identity": "RF2;flat-inner-Cartesian-Z4c-v1;native-C6-areal=6,18;M=1/3;v=0;restoration4:.6-.9;KO8;scri-original;penalty=.6510416666660156;chi-floor=1e-8:.03;lapse-floor=1e-10;flat=1;omega=0.23999999999999999,0.29999999999999999,0.47120000000000001;gauge=0.35999999999999999,0.65000000000000002,0.050371630094020035;eta=6;k=0.22443624950978849;cfl=0.20000000000000001;buffer=4;smr=1,0.080000000000000002;subdivisions=4;shell_inner=0.20999999999999999;box=-0.23999999999999999,0.23999999999999999;-0.23999999999999999,0.23999999999999999;-0.23999999999999999,0.23999999999999999;shells=0.28999999999999998,0.38,0.5,0.68000000000000005,0.875,1,;amr_policy=smr",
+    "config": [
+      12,
+      2,
+      4,
+      2,
+      0
+    ],
+    "time": 0.0005,
+    "dt": 0.00025,
+    "seed": 0.03741200338683928,
+    "tracker": [
+      -1.127537795447611e-21,
+      -1.0642665830475219e-21,
+      -1.4566037883686542e-21
+    ],
+    "floors": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "diagnostics": [
+      1.1102230246251494e-15,
+      1.2212453270877949e-15,
+      2.245855989450827e-09,
+      2.9607654459839514e-09,
+      1.0339757656912846e-25,
+      0.06411249880369457,
+      -0.061540525514003186,
+      0.18749999999981254
+    ],
+    "leaves": 120
+  },
+  "restarted": {
+    "path": "output/refined-convergence/smr-policy-resume2.checkpoint",
+    "sha256": "7ed8cbb99320fb66aea1438290e2f533cd01a84b972029992d1f02a938fc91d8",
+    "bytes": 212354050,
+    "identity": "RF2;flat-inner-Cartesian-Z4c-v1;native-C6-areal=6,18;M=1/3;v=0;restoration4:.6-.9;KO8;scri-original;penalty=.6510416666660156;chi-floor=1e-8:.03;lapse-floor=1e-10;flat=1;omega=0.23999999999999999,0.29999999999999999,0.47120000000000001;gauge=0.35999999999999999,0.65000000000000002,0.050371630094020035;eta=6;k=0.22443624950978849;cfl=0.20000000000000001;buffer=4;smr=1,0.080000000000000002;subdivisions=4;shell_inner=0.20999999999999999;box=-0.23999999999999999,0.23999999999999999;-0.23999999999999999,0.23999999999999999;-0.23999999999999999,0.23999999999999999;shells=0.28999999999999998,0.38,0.5,0.68000000000000005,0.875,1,;amr_policy=smr",
+    "config": [
+      12,
+      2,
+      4,
+      2,
+      0
+    ],
+    "time": 0.0005,
+    "dt": 0.00025,
+    "seed": 0.03741203099720572,
+    "tracker": [
+      -1.127537795447611e-21,
+      -1.0642665830475219e-21,
+      -1.4566037883686542e-21
+    ],
+    "floors": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "diagnostics": [
+      1.1102230246251494e-15,
+      1.2212453270877949e-15,
+      2.245855989450827e-09,
+      2.9607654459839514e-09,
+      1.0339757656912846e-25,
+      0.06411249880369457,
+      -0.061540525514003186,
+      0.18749999999981254
+    ],
+    "leaves": 120
+  },
+  "arrays": [
+    {
+      "array": 0,
+      "elements": 10392192,
+      "scaled_max": 0.0,
+      "bit_identical": true
+    },
+    {
+      "array": 1,
+      "elements": 10392192,
+      "scaled_max": 0.0,
+      "bit_identical": true
+    },
+    {
+      "array": 2,
+      "elements": 26784,
+      "scaled_max": 0.0,
+      "bit_identical": true
+    },
+    {
+      "array": 3,
+      "elements": 26784,
+      "scaled_max": 0.0,
+      "bit_identical": true
+    },
+    {
+      "array": 4,
+      "elements": 335232,
+      "scaled_max": 0.0,
+      "bit_identical": true
+    },
+    {
+      "array": 5,
+      "elements": 5363712,
+      "scaled_max": 0.0,
+      "bit_identical": true
+    },
+    {
+      "array": 6,
+      "elements": 6912,
+      "scaled_max": 0.0,
+      "bit_identical": true
+    },
+    {
+      "array": 7,
+      "elements": 0,
+      "scaled_max": 0,
+      "bit_identical": true
+    }
+  ],
+  "policy_mismatch_rejected": true,
+  "qualification": "Two stationary steps at N12; MPI2 uninterrupted vs MPI2 step1 then MPI1 step2. Not long evolution, convergence, GPU or moving AMR validation."
+}

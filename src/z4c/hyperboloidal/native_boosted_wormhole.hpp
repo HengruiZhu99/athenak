@@ -41,7 +41,7 @@ class NativeBoostedWormhole {
   }
   double Rstar(double R)const{return R+2*m_*std::log(R/(2*m_)-1);}
   double Tail(double R)const{
-    const double y=1/R,split=std::min(y,1/(12*m_));
+    const double y=1/R,split=std::min(y,1/base_.r1_phys_);
     const auto f=[&](double z){const double S=z>0?base_.Switch(1/z)[0]:1,A=std::sqrt(z*z-2*m_*z*z*z+S*S);return 1/(A*(A+S));};
     return base_.Integrate(f,0,split,base_.tol_)+base_.Integrate(f,split,y,base_.tol_);
   }
@@ -51,7 +51,9 @@ class NativeBoostedWormhole {
     Rad q{};q.a=(1-c)/psi;q.b=psi*psi;q.ap=m_/(rho*rho*psi*psi);q.bp=-m_*psi/(rho*rho);
     q.B=1-P[0];q.Bp=-P[1]/width;q.Bpp=-P[2]/(width*width);q.Q0=1;q.sig=rho;q.sig1=1;
     if(rho<=rho0_)return q;
-    const auto sw=Poly((R-4*m_)/(8*m_));const double S=sw[0],SR=sw[1]/(8*m_),SRR=sw[2]/(64*m_*m_),Sp=SR*Rp,Spp=SRR*Rp*Rp+SR*Rpp;
+    const bool original=base_.r0_phys_==4*m_ && base_.r1_phys_==12*m_;
+    const double slicing_width=original?8*m_:base_.r1_phys_-base_.r0_phys_;
+    const auto sw=Poly((R-base_.r0_phys_)/slicing_width);const double S=sw[0],SR=sw[1]/slicing_width,SRR=sw[2]/(original?64*m_*m_:slicing_width*slicing_width),Sp=SR*Rp,Spp=SRR*Rp*Rp+SR*Rpp;
     const double f=q.a*q.a,fr=2*m_/(R*R),A=std::sqrt(f+R*R*S*S),AR=(fr+2*R*S*S+2*R*R*S*SR)/(2*A);
     const double hR=R*S/(f*A),hRR=(S+R*SR)/(f*A)-R*S*(fr*A+f*AR)/std::pow(f*A,2);
     q.h1=hR*Rp;q.h2=hRR*Rp*Rp+hR*Rpp;q.S=S;q.Q0=f/(A*A);q.Q0p=(fr/(A*A)-2*f*AR/(A*A*A))*Rp;
@@ -64,10 +66,15 @@ class NativeBoostedWormhole {
     return q;
   }
  public:
-  explicit NativeBoostedWormhole(double v=.1,double mass=1./3.,bool free_gauge=boost_free_initial_gauge):base_(mass,2e-13,4,12,NativeWormhole::TransitionProfile::polynomial_c6),m_(mass),v_(v),lorentz_(1/std::sqrt(1-v*v)),free_gauge_(free_gauge){
+  explicit NativeBoostedWormhole(double v=.1,double mass=1./3.,bool free_gauge=boost_free_initial_gauge,double transition_start_M=4,double transition_end_M=12):base_(mass,2e-13,transition_start_M,transition_end_M,NativeWormhole::TransitionProfile::polynomial_c6),m_(mass),v_(v),lorentz_(1/std::sqrt(1-v*v)),free_gauge_(free_gauge){
     if(!std::isfinite(v)||std::abs(v)>=.3)throw std::invalid_argument("boost outside audited mild range");
-    rho0_=base_.InnerRadius()/base_.IsotropicScale();constant_=-Rstar(4*m_)-Tail(4*m_);
+    rho0_=base_.InnerRadius()/base_.IsotropicScale();constant_=-Rstar(base_.r0_phys_)-Tail(base_.r0_phys_);
   }
+  // Optional read-only diagnostics of the actual initial embedding. Q/Q0
+  // compares the boosted spacelike margin to the unboosted hyperboloidal slice;
+  // Q itself tends to zero at scri even for a regular hyperboloidal embedding.
+  struct InitialGeometryAudit {double spacelike_margin,unboosted_margin,boost_jacobian,
+    physical_map_radial,physical_map_tangential,affine_radius,map_scale;};
   size_t CachedRadii()const{return base_.CachedRadii();}
   double ReferenceCoordinateVelocity()const{return v_*base_.IsotropicScale();}
   double InitialTrackerVelocity()const{return free_gauge_?0:ReferenceCoordinateVelocity();}
@@ -76,7 +83,7 @@ class NativeBoostedWormhole {
     const double x=std::min(t,1-t),v=std::pow(x,5)*(126+x*(-420+x*(540+x*(-315+70*x))));
     return t<=.5?v:1-v;
   }
-  std::array<double,31>Fields(const double x[3]){
+  std::array<double,31>Fields(const double x[3],InitialGeometryAudit* audit=nullptr){
     using namespace boost_detail;
     const double r=std::sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);if(!(r>0&&r<1))throw std::invalid_argument("boosted bulk point outside open compact ball");
     const auto bg=base_.Point(r);double rho,rp,rpp;
@@ -105,6 +112,7 @@ class NativeBoostedWormhole {
     Mat<D>metric{};for(int i=0;i<3;++i)for(int j=0;j<3;++j){D tangent;for(int k=0;k<3;++k)tangent=tangent+(td[k][i]-nd[k]*normal[i])*(td[k][j]-nd[k]*normal[j]);metric[i][j]=b*b*(tangent+Q0*normal[i]*normal[j])-a*a*(h1*(normal[i]*wt[j]+wt[i]*normal[j])+wt[i]*wt[j]);}
     double dot=0,ww=0;for(int i=0;i<3;++i)dot+=nn[i]*w[i].v,ww+=w[i].v*w[i].v;
     const double Q=q.Q0-q.a*q.a/(q.b*q.b)*(2*q.h1*dot+ww);if(!(Q>0))throw std::runtime_error("boost slice is not spacelike");
+    if(audit)*audit={Q,q.Q0,Det(J),lab.sig1*rp,lab.sig/r,base_.InnerRadius(),base_.IsotropicScale()};
     Mat<double>K{},KY{};double F[3],apF=0,bpF=0;for(int i=0;i<3;++i)F[i]=q.h1*nn[i]+w[i].v,apF+=q.ap*nn[i]*F[i],bpF+=q.bp*nn[i]*F[i];
     for(int i=0;i<3;++i)for(int j=0;j<3;++j){const double delta=i==j?1:0;
       const double F2=q.h2*nn[i]*nn[j]+q.h1/rr*(delta-nn[i]*nn[j])-v_*(q.Bp*((i==0?nn[j]:0)+(j==0?nn[i]:0))+Y[0]*(q.Bpp*nn[i]*nn[j]+q.Bp/rr*(delta-nn[i]*nn[j])));

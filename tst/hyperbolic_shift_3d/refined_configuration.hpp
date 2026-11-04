@@ -23,7 +23,15 @@ struct RefinedConfiguration {
   std::array<Real, 3> lower{}, upper{};
   Real inscribed_radius = 0, inner_map_scale = 0, affine_radius = 0;
   Real cfl_target = .2, buffer_cells = 4, largest_transition_spacing = 0;
+  Real core_half_width=.18, shell_inner_radius=.16, initial_start_M=4, initial_end_M=12, boost_velocity=.1;
+  int core_subdivisions=4;
+  bool core_bounds_overridden=false;
+  int smr_levels=0;Real smr_radius=.05;
   std::string identity;
+  cubed_sphere::CompositeMesh Mesh(int n) const {
+    cubed_sphere::CompositeMesh mesh(core_half_width,shell_radii,1,n,3,core_subdivisions,shell_inner_radius);
+    mesh.evolved_overlap=3;mesh.continuous_cartesian_core=true;return mesh;
+  }
 
   static std::string Trim(std::string s) {
     const auto a = s.find_first_not_of(" \t\r\n"), b = s.find_last_not_of(" \t\r\n");
@@ -36,7 +44,7 @@ struct RefinedConfiguration {
     std::map<std::string, std::string> values;
     const std::set<std::string> allowed = {
         "omega_profile", "omega_flat_radius", "omega_outer_radius", "omega_plateau", "gauge_begin",
-        "gauge_end",     "buffer_cells",      "cfl_target",         "shell_radii"};
+        "gauge_end",     "buffer_cells",      "cfl_target",         "shell_radii", "core_half_width", "shell_inner_radius", "core_subdivisions", "initial_start_M", "initial_end_M", "boost_velocity", "smr_levels", "smr_radius"};
     std::string line;
     while (std::getline(input, line)) {
       line = Trim(line.substr(0, line.find('#')));
@@ -69,6 +77,25 @@ struct RefinedConfiguration {
           upper[a] = std::max(upper[a], b.hi[a]);
           core_spacing = std::max(core_spacing, (b.hi[a] - b.lo[a]) / mesh.cells);
         }
+    core_half_width=number("core_half_width",mesh.half_width);
+    shell_inner_radius=number("shell_inner_radius",core_half_width*(.16/.18));
+    const Real subdivisions=number("core_subdivisions",4);
+    if(subdivisions!=2 && subdivisions!=4 && subdivisions!=8)
+      throw std::invalid_argument("core subdivisions must be 2, 4 or 8");
+    core_subdivisions=int(subdivisions);
+    if(!(core_half_width>0 && shell_inner_radius>0 && shell_inner_radius<core_half_width &&
+         std::sqrt(3.)*core_half_width*(1+6./(core_subdivisions*mesh.cells))<.875))
+      throw std::invalid_argument("invalid core/overlap or Cartesian evolved cells reach outer scri shell");
+    core_bounds_overridden=values.count("core_half_width");
+    if(core_bounds_overridden){lower.fill(-core_half_width);upper.fill(core_half_width);}
+    core_spacing=2*core_half_width/(core_subdivisions*mesh.cells);
+    initial_start_M=number("initial_start_M",4);initial_end_M=number("initial_end_M",12);
+    boost_velocity=number("boost_velocity",.1);
+    const Real levels=number("smr_levels",0);smr_radius=number("smr_radius",.05);
+    if(levels!=std::floor(levels) || levels<0 || levels>3 || !(smr_radius>0 && smr_radius<shell_inner_radius))
+      throw std::invalid_argument("invalid static refinement levels/radius");
+    smr_levels=int(levels);
+    if(std::abs(boost_velocity)>=.3)throw std::invalid_argument("boost outside audited mild range");
     inscribed_radius = std::numeric_limits<Real>::infinity();
     for (int a = 0; a < 3; ++a) {
       if (!(lower[a] < 0 && upper[a] > 0))
@@ -108,7 +135,7 @@ struct RefinedConfiguration {
     if (shell_radii.size() != 6 || shell_radii.back() != 1 || shell_radii[4] != .875)
       throw std::invalid_argument(
           "six shells with final interfaces .875 and 1 are required for unchanged scri support");
-    Real previous = mesh.inner_radius;
+    Real previous = shell_inner_radius;
     largest_transition_spacing = core_spacing;
     for (Real radius : shell_radii) {
       if (!(radius > previous))
@@ -119,7 +146,7 @@ struct RefinedConfiguration {
       previous = radius;
     }
     using Native = z4c::hyperboloidal::NativeWormhole;
-    const Native native(1. / 3., 2e-13, 4, 12, Native::TransitionProfile::polynomial_c6);
+    const Native native(1. / 3., 2e-13, initial_start_M, initial_end_M, Native::TransitionProfile::polynomial_c6);
     inner_map_scale = native.IsotropicScale();
     affine_radius = native.InnerRadius();
     // Omega changes the conformal frame, not the native physical coordinate map.
@@ -127,7 +154,7 @@ struct RefinedConfiguration {
     gauge.inner_gamma = gauge.profile.flat ? inner_map_scale * inner_map_scale
                                            : z4c::hyperboloidal::InnerTelegrapher::shift_gamma;
     if (!(cfl_target > 0 && cfl_target <= .4 && buffer_cells >= 4 &&
-          gauge.inner_begin < gauge.inner_end && gauge.inner_end <= .56))
+          gauge.inner_begin < gauge.inner_end && gauge.inner_end <= .8))
       throw std::invalid_argument("invalid gauge/CFL/buffer parameters");
     if (gauge.profile.flat && (!(gauge.inner_begin - gauge.profile.outer_radius >=
                                  buffer_cells * largest_transition_spacing) ||
@@ -137,17 +164,17 @@ struct RefinedConfiguration {
       throw std::invalid_argument(
           "Omega/gauge transitions need resolved widths, an exterior buffer and affine-map gauge "
           "onset");
-    if (!gauge.profile.flat && (gauge.inner_begin != .2 || gauge.inner_end != .56))
+    if (!gauge.profile.flat && (gauge.inner_begin != .2 || gauge.inner_end != .56 || initial_start_M!=4 || initial_end_M!=12))
       throw std::invalid_argument("legacy profile preserves BN1 gauge transitions");
     std::ostringstream out;
     out << std::setprecision(17)
-        << "RF1;flat-inner-Cartesian-Z4c-v1;native-C6-areal4M-12M;M=1/3;v=.1;restoration4:.6-.9;"
+        << "RF2;flat-inner-Cartesian-Z4c-v1;native-C6-areal=" << initial_start_M << "," << initial_end_M << ";M=1/3;v=" << boost_velocity << ";restoration4:.6-.9;"
         << "KO8;scri-original;penalty=.6510416666660156;chi-floor=1e-8:.03;lapse-floor=1e-10;"
         << "flat=" << gauge.profile.flat << ";omega=" << gauge.profile.flat_radius << ','
         << gauge.profile.outer_radius << ',' << gauge.profile.plateau
         << ";gauge=" << gauge.inner_begin << ',' << gauge.inner_end << ',' << gauge.inner_gamma
         << ";eta=6;k=" << inner_map_scale << ";cfl=" << cfl_target << ";buffer=" << buffer_cells
-        << ";box=";
+        << ";smr=" << smr_levels << "," << smr_radius << ";subdivisions=" << core_subdivisions << ";shell_inner=" << shell_inner_radius << ";box=";
     for (int a = 0; a < 3; ++a)
       out << lower[a] << ',' << upper[a] << ';';
     out << "shells=";

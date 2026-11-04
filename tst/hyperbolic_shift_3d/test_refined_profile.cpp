@@ -225,9 +225,9 @@ int main(int argc, char** argv) {
     c.Load(argv[1], mesh);
     c.CheckCollective();
     Check(c.gauge.profile.flat, "profile oracle requires flat configuration");
-    Check(c.gauge.profile.flat_radius == mesh.half_width,
+    Check(c.gauge.profile.flat_radius == c.inscribed_radius,
           "default is not the domain's inscribed sphere");
-    Check(std::sqrt(3.) * mesh.half_width > c.gauge.profile.flat_radius,
+    Check(std::sqrt(3.) * c.core_half_width > c.gauge.profile.flat_radius,
           "cube corners incorrectly included");
     auto narrow = mesh;
     for (auto& b : narrow.blocks)
@@ -237,7 +237,7 @@ int main(int argc, char** argv) {
       }
     hyperbolic_reproduction::RefinedConfiguration nc;
     nc.Load(argv[1], narrow);
-    Check(std::abs(nc.gauge.profile.flat_radius - .17) < 1e-15, "flat radius was hardcoded");
+    Check(std::abs(nc.gauge.profile.flat_radius - (c.core_bounds_overridden?c.inscribed_radius:.17)) < 1e-15, "flat radius was hardcoded");
     double derivative_error = 0, map_error = 0, cartesian_derivative_error = 0;
     const auto profile = c.gauge.profile;
     for (int i = 0; i <= 100; ++i) {
@@ -312,12 +312,12 @@ int main(int argc, char** argv) {
       const auto q = profile.Radial(r);
       Check(q.value == profile.plateau && q.first == 0 && q.second == 0, "nonconstant plateau");
     }
-    for (double r : {profile.outer_radius, .56, .9, 1.}) {
+    for (double r : {profile.outer_radius, (profile.outer_radius+1)/2, .9, 1.}) {
       const auto q = profile.Radial(r);
       Check(q.value == (1 - r * r) / 2 && q.first == -r && q.second == -1,
             "outer/scri profile changed");
     }
-    mesh.radii = c.shell_radii;
+    mesh = c.Mesh(mesh.cells);
     for (size_t b = 0; b < mesh.blocks.size(); ++b)
       for (double u : {.13, .5, .87}) {
         const Real q[3] = {u, .37, .63};
@@ -334,7 +334,7 @@ int main(int argc, char** argv) {
           map_error = std::max(map_error, std::abs(back[a] - q[a]));
       }
     Check(map_error < 2e-13, "map inverse mismatch");
-    h::NativeBoostedWormhole native;
+    h::NativeBoostedWormhole native(c.boost_velocity,1./3.,true,c.initial_start_M,c.initial_end_M);
     for (double r : {.05, .17, .19, .21, .24, .3, .55, .8}) {
       const Real x[3] = {.6 * r, .8 * r, 0};
       auto old = native.Fields(x), now = old;
@@ -355,13 +355,13 @@ int main(int argc, char** argv) {
     const double frame_error = FrameConstraintOracle(profile);
     const double reference_error =
         std::max({ReferenceInner(c.gauge, false, .05), ReferenceInner(c.gauge, true, .05),
-                  ReferenceInner(c.gauge, true, .195), ReferenceInner(c.gauge, true, .215)});
+                  ReferenceInner(c.gauge, true, profile.flat_radius+.25*(profile.outer_radius-profile.flat_radius)), ReferenceInner(c.gauge, true, profile.flat_radius+.75*(profile.outer_radius-profile.flat_radius))});
     if (argc == 3 && global_variable::my_rank == 0) {
       std::ofstream out(argv[2]);
       out << std::setprecision(17);
       out << "compact_r,omega,domega,ddomega,inner_gauge_weight,restoration_collar,background_"
              "areal_R\n";
-      h::NativeWormhole background(1. / 3., 2e-13, 4, 12,
+      h::NativeWormhole background(1. / 3., 2e-13, c.initial_start_M, c.initial_end_M,
                                    h::NativeWormhole::TransitionProfile::polynomial_c6);
       for (int i = 1; i <= 1000; ++i) {
         const double r = i / 1000.;

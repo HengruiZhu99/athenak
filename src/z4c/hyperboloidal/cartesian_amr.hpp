@@ -18,11 +18,14 @@ class CartesianAMR {
   DvceArray5D<Real> state,coarse,compensation,coarse_compensation;
   const int n,ng=4;
   const std::vector<Real> shell_radii;
+  const Real half_width,inner_radius;
   CartesianAMR(int cells,int subdivisions=2,int capacity=64,int levels=3,
-               std::vector<Real> radii={.305,.45,.6,.75,.875,1}):n(cells),shell_radii(std::move(radii)){
+               std::vector<Real> radii={.305,.45,.6,.75,.875,1},Real width=.18,Real inner=.16)
+      :n(cells),shell_radii(std::move(radii)),half_width(width),inner_radius(inner){
+    if(!(width>0 && inner>0 && inner<width))throw std::invalid_argument("invalid AMR core bounds");
     input.SetReal("time","cfl_number",.1);
     for(int a=1;a<=3;++a){const auto x=std::to_string(a);
-      input.SetReal("mesh","x"+x+"min",-.18);input.SetReal("mesh","x"+x+"max",.18);
+      input.SetReal("mesh","x"+x+"min",-half_width);input.SetReal("mesh","x"+x+"max",half_width);
       input.SetInteger("mesh","nx"+x,subdivisions*n);input.SetInteger("meshblock","nx"+x,n);
       input.SetString("mesh","ix"+x+"_bc","outflow");input.SetString("mesh","ox"+x+"_bc","outflow");}
     input.SetInteger("mesh","nghost",ng);input.SetString("mesh_refinement","refinement","adaptive");
@@ -38,13 +41,13 @@ class CartesianAMR {
     mesh->pmr->RegisterCC("hyperboloidal.compensation31.v1",compensation,coarse_compensation);
   }
   cubed_sphere::CompositeMesh Descriptor()const{
-    cubed_sphere::CompositeMesh out(.18,shell_radii,1,n,4,1,.16);
+    cubed_sphere::CompositeMesh out(half_width,shell_radii,1,n,4,1,inner_radius);
     const auto shells=out.blocks;out.blocks.clear();
     for(int m=0;m<mesh->nmb_total;++m){const auto&l=mesh->lloc_eachmb[m];
       cubed_sphere::CompositeBlock b;b.refinement=l.level-mesh->root_level;
       const int loc[3]={l.lx1,l.lx2,l.lx3};
       const int root[3]={mesh->nmb_rootx1,mesh->nmb_rootx2,mesh->nmb_rootx3};
-      for(int a=0;a<3;++a){const Real h=.36/(root[a]*(1<<b.refinement));b.lo[a]=-.18+loc[a]*h;b.hi[a]=-.18+(loc[a]+1)*h;}
+      for(int a=0;a<3;++a){const Real h=2*half_width/(root[a]*(1<<b.refinement));b.lo[a]=-half_width+loc[a]*h;b.hi[a]=-half_width+(loc[a]+1)*h;}
       out.blocks.push_back(b);
     }
     for(const auto&b:shells)if(b.face>=0)out.blocks.push_back(b);

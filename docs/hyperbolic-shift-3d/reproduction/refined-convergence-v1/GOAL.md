@@ -1,0 +1,43 @@
+# Persistent goal: regular and convergent v=0.1 puncture through 10M
+
+User authorization: investigate slicing versus numerical/interface origin of
+nonconvergence; use hyperboloidal_refined, enlarge the Cartesian region and move
+gauge transitions outward as appropriate, compare with telegrapher_lapse inner
+Z4c, keep consistent conformal factors in geometry/initial data/evolution, test
+stationary before boosted holes, vary resolution, and retain scri behavior.
+Four Aurora debug-scaling nodes are authorized; up to eight if necessary with
+several independent cases in parallel, subject to actual queue limits. Never
+interpret survival or two resolution residual slopes as convergence proof.
+
+Work branch codex/refined-convergence is based on hyperboloidal_refined
+21676d39e, in /Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal.
+The separate original worktree/branch codex/boosted-normalized-shift and active
+BN1 N24 job9037899 retain their frozen science and monitor. Do not modify or
+resubmit that campaign. Preserve terminal verification and analysis obligations.
+
+Current progress: enlarged geometry/initial-map parameters and matched-plateau
+controls implemented; local geometry/frame/oracle checks and MPI SMR restart
+qualification passed. See README.md and receipts. No RF2 long evolution yet.
+User explicitly authorizes SMR/AMR as needed and measured performance work;
+reuse existing infrastructure. Complete production SMR diagnostics/walltime
+support before long Aurora experiments.
+
+Completion needs: geometry/frame consistency and spacelike/map regularity
+checks; nontrivial inner equivalence with the actual reference Z4c; controlled
+interface/derivative attribution; stationary then v=.1 production evolutions
+through10M with complete dispositions and provenance; quantitative exterior
+fixed-domain constraint and field-resolution trends; resolved field/derivative
+features throughout evolution; scri null/pole/clock behavior; moving-horizon
+acceptance/mass gaps, trajectory, floor/sign counts and cost. Explicitly report
+remaining limitations and do not mark complete without evidence for all parts.
+
+Initial findings: RF1 narrow Omega join .18–.22 worsens short-time exterior
+constraints. Its parser prevents a wide join because gauge onset must remain
+inside the old affine map radius .297388. Larger useful inner regions require
+consistent physical initial-map/slicing parameters, not bypassing that guard.
+The physical spatial map and conformal frame are distinct. BN1's 10M error is
+localized near first shell interface .305 and the gauge transition, with
+coincident evolved-copy disagreement, not established slicing breakdown.
+Evidence on original branch ab045abef under convergence-localization/ remains
+immutable. New audits will distinguish initial spacelike margins, map
+Jacobians, evolved metric regularity and numerical derivative sensitivity.

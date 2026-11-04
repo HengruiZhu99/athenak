@@ -12,7 +12,7 @@ static_assert(hyperbolic_reproduction::six_shells && h::broad_smooth_a &&
 static_assert(!h::CompositeDissipation::consistent && !cubed_sphere::scri_first6 &&
               h::fixed_scri_penalty_scale == .6510416666660156);
 #if HYPERBOLIC_CONFIGURED_FORMULATION
-constexpr char science[] = "HYP3D_AMR_RF1;checksum-fnv1a64;native31;configured-normalized-boost;";
+constexpr char science[] = "HYP3D_AMR_RF2;checksum-fnv1a64;native31;configured-normalized-boost;";
 #else
 constexpr char science[] =
     "HYP3D_AMR1;checksum-fnv1a64;native31;Cartesian-components;RK4-compensated;FD4-biased4;KO8-"
@@ -261,7 +261,8 @@ Snapshot Read(const std::string& path, int n, int kind, Real dt) {
   Get(i, s.diagnostics);
   if (s.n != n || s.kind != kind ||
       (!hyperbolic_reproduction::configured_formulation && s.dt != dt) ||
-      (s.subdivisions != 2 && s.subdivisions != 4) || !std::isfinite(s.time) || s.time < 0 ||
+      (s.subdivisions != 2 && s.subdivisions != 4 &&
+       !(hyperbolic_reproduction::configured_formulation && s.subdivisions == 8)) || !std::isfinite(s.time) || s.time < 0 ||
       !(s.seed > 0 && s.seed < 1))
     throw std::runtime_error("AMR checkpoint configuration mismatch");
   uint64_t count;
@@ -289,7 +290,7 @@ Snapshot Read(const std::string& path, int n, int kind, Real dt) {
         throw std::runtime_error("nonfinite AMR checkpoint payload");
   }
   for (Real x : s.tracker)
-    if (!std::isfinite(x) || std::abs(x) >= .16)
+    if (!std::isfinite(x) || std::abs(x) >= (hyperbolic_reproduction::configured_formulation?hyperbolic_reproduction::refined_configuration.shell_inner_radius:.16))
       throw std::runtime_error("invalid AMR tracker");
   if (s.data[7].size() % 21)
     throw std::runtime_error("incomplete AMR event ledger");
@@ -431,7 +432,7 @@ int main(int argc, char** argv) {
         (hyperbolic_reproduction::configured_formulation && argc != 9))
       throw std::invalid_argument(
           "usage: amr_evolution n minkowski|wave|boost steps dt output [restart|-] "
-          "[dynamic|fixed|uniform] [configuration file (refined target)]");
+          "[dynamic|fixed|uniform|smr] [configuration file (refined target)]");
     const int n = std::stoi(argv[1]), kind = std::string(argv[2]) == "minkowski" ? 0
                                              : std::string(argv[2]) == "wave"    ? 1
                                              : std::string(argv[2]) == "boost"   ? 2
@@ -441,7 +442,7 @@ int main(int argc, char** argv) {
     Real dt = requested_dt;
     const std::string output = argv[5], restart = argv[6], policy = argc > 7 ? argv[7] : "dynamic";
     if (n < 12 || n % 2 || kind < 0 || stop < 0 || !std::isfinite(dt) || dt <= 0 ||
-        (policy != "dynamic" && policy != "fixed" && policy != "uniform"))
+        (policy != "dynamic" && policy != "fixed" && policy != "uniform" && policy != "smr"))
       throw std::invalid_argument("invalid AMR parameters");
     CollectiveLocal([&] {
       if (global_variable::my_rank == 0) {
@@ -455,8 +456,12 @@ int main(int argc, char** argv) {
         hyperbolic_reproduction::refined_configuration.Load(
             argv[8], hyperbolic_reproduction::ContinuousCoreMesh(n));
       });
+      // The refinement policy changes the evolution and must be restart-bound.
+      hyperbolic_reproduction::refined_configuration.identity += ";amr_policy=" + policy;
       hyperbolic_reproduction::refined_configuration.CheckCollective();
     }
+    if(policy=="smr" && (!hyperbolic_reproduction::configured_formulation || hyperbolic_reproduction::refined_configuration.smr_levels==0))
+      throw std::invalid_argument("SMR requires configured nonzero refinement levels");
     AMRPerformance perf(output);
     Snapshot s;
     if (restart != "-")
@@ -472,17 +477,30 @@ int main(int argc, char** argv) {
     h::CartesianAMR amr(n,
                         restart != "-" ? s.subdivisions
                         : (policy == "uniform" || hyperbolic_reproduction::configured_formulation)
-                            ? 4
+                            ? (hyperbolic_reproduction::configured_formulation?hyperbolic_reproduction::refined_configuration.core_subdivisions:4)
                             : 2,
-                        std::max(32, (hyperbolic_reproduction::configured_formulation ? 256 : 96) /
+                        std::max(32, (hyperbolic_reproduction::configured_formulation ? (policy=="smr"?1024:256) : 96) /
                                              global_variable::nranks +
                                          8),
-                        3,
+                        policy=="smr"?hyperbolic_reproduction::refined_configuration.smr_levels+1:3,
                         hyperbolic_reproduction::configured_formulation
                             ? hyperbolic_reproduction::refined_configuration.shell_radii
-                            : std::vector<Real>{.305, .45, .6, .75, .875, 1});
+                            : std::vector<Real>{.305, .45, .6, .75, .875, 1},
+                        hyperbolic_reproduction::configured_formulation?hyperbolic_reproduction::refined_configuration.core_half_width:.18,
+                        hyperbolic_reproduction::configured_formulation?hyperbolic_reproduction::refined_configuration.shell_inner_radius:.16);
     if (restart != "-")
       Restore(amr, s);
+    else if(policy=="smr") {
+      const auto& cfg=hyperbolic_reproduction::refined_configuration;
+      // This constructs the initial mesh before analytic fields are installed;
+      // the evolution's minimum age between regrids does not apply here.
+      for(int level=0;level<cfg.smr_levels;++level){
+        for(int m=0;m<amr.mesh->nmb_total;++m)
+          amr.mesh->pmr->ncyc_since_ref(m)=amr.mesh->pmr->refinement_interval;
+        if(!amr.RefineAround({0,0,0},cfg.smr_radius,0))
+          throw std::runtime_error("initial SMR level did not refine");
+      }
+    }
     else if (policy != "uniform") {
       std::vector<int> flags(amr.mesh->nmb_total);
       flags[0] = 1;
@@ -499,7 +517,10 @@ int main(int argc, char** argv) {
     else {
       ev->Upload(ev->initial_state);
       s = Capture(*ev, amr, kind, dt, 0, .07, {});
-      h::NativeBoostedWormhole pgen;
+      const auto& cfg=hyperbolic_reproduction::refined_configuration;
+      h::NativeBoostedWormhole pgen(hyperbolic_reproduction::configured_formulation?cfg.boost_velocity:.1,
+        1./3.,h::boost_free_initial_gauge,hyperbolic_reproduction::configured_formulation?cfg.initial_start_M:4,
+        hyperbolic_reproduction::configured_formulation?cfg.initial_end_M:12);
       for (size_t p = 0; p < ev->Model().grid.active.size(); ++p) {
         const auto* x = ev->Model().grid.geometry[p].x;
         if (kind == 2) {
