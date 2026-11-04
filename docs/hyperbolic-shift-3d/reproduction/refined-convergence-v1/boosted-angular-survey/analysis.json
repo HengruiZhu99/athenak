@@ -1,0 +1,178 @@
+{
+  "cases": [
+    {
+      "Nr": 12,
+      "Na": 12,
+      "H": 0.1754236391887245,
+      "H_peak": {
+        "r": 0.915625,
+        "theta_degrees": 82.50000000000001,
+        "azimuth_degrees": 0
+      },
+      "M": 0.038084947090806974,
+      "M_peak": {
+        "r": 0.915625,
+        "theta_degrees": 57.5,
+        "azimuth_degrees": 0
+      },
+      "Mr": 0.47125836289029416,
+      "Mr_peak": {
+        "r": 0.915625,
+        "theta_degrees": 57.5,
+        "azimuth_degrees": 0
+      }
+    },
+    {
+      "Nr": 24,
+      "Na": 12,
+      "H": 0.1707908737491266,
+      "H_peak": {
+        "r": 0.915625,
+        "theta_degrees": 82.50000000000001,
+        "azimuth_degrees": 0
+      },
+      "M": 0.042942205873808086,
+      "M_peak": {
+        "r": 0.915625,
+        "theta_degrees": 57.5,
+        "azimuth_degrees": 0
+      },
+      "Mr": 0.5313614744097568,
+      "Mr_peak": {
+        "r": 0.915625,
+        "theta_degrees": 57.5,
+        "azimuth_degrees": 0
+      }
+    },
+    {
+      "Nr": 12,
+      "Na": 24,
+      "H": 0.01709667393439851,
+      "H_peak": {
+        "r": 0.915625,
+        "theta_degrees": 82.50000000000001,
+        "azimuth_degrees": 0
+      },
+      "M": 0.017568202695651663,
+      "M_peak": {
+        "r": 0.8875,
+        "theta_degrees": 142.5,
+        "azimuth_degrees": 45
+      },
+      "Mr": 0.1654694587964249,
+      "Mr_peak": {
+        "r": 0.8875,
+        "theta_degrees": 142.5,
+        "azimuth_degrees": 45
+      }
+    },
+    {
+      "Nr": 24,
+      "Na": 24,
+      "H": 0.012391497609590907,
+      "H_peak": {
+        "r": 0.915625,
+        "theta_degrees": 82.50000000000001,
+        "azimuth_degrees": 0
+      },
+      "M": 0.002612646455501038,
+      "M_peak": {
+        "r": 0.915625,
+        "theta_degrees": 57.5,
+        "azimuth_degrees": 0
+      },
+      "Mr": 0.032328559850559595,
+      "Mr_peak": {
+        "r": 0.915625,
+        "theta_degrees": 57.5,
+        "azimuth_degrees": 0
+      }
+    },
+    {
+      "Nr": 48,
+      "Na": 48,
+      "H": 0.0007994114664739982,
+      "H_peak": {
+        "r": 0.915625,
+        "theta_degrees": 82.50000000000001,
+        "azimuth_degrees": 0
+      },
+      "M": 0.00016709022767677235,
+      "M_peak": {
+        "r": 0.915625,
+        "theta_degrees": 57.5,
+        "azimuth_degrees": 0
+      },
+      "Mr": 0.002067553539254603,
+      "Mr_peak": {
+        "r": 0.915625,
+        "theta_degrees": 57.5,
+        "azimuth_degrees": 0
+      }
+    },
+    {
+      "Nr": 96,
+      "Na": 96,
+      "H": 5.146179651038807e-05,
+      "H_peak": {
+        "r": 0.915625,
+        "theta_degrees": 82.50000000000001,
+        "azimuth_degrees": 0
+      },
+      "M": 1.0503195119722668e-05,
+      "M_peak": {
+        "r": 0.915625,
+        "theta_degrees": 57.5,
+        "azimuth_degrees": 0
+      },
+      "Mr": 0.00012996522025975467,
+      "Mr_peak": {
+        "r": 0.915625,
+        "theta_degrees": 57.5,
+        "azimuth_degrees": 0
+      }
+    }
+  ],
+  "point_count": 360,
+  "angular_samples_per_meridian": 36,
+  "azimuths_degrees": [
+    0,
+    45
+  ],
+  "radii": [
+    0.8275,
+    0.8875,
+    0.915625,
+    0.946875,
+    0.975
+  ],
+  "minimum_Q_over_Q0": 1.0,
+  "minimum_boost_map_det": 0.6945750906820245,
+  "both_orders": {
+    "H": [
+      3.8234207069277133,
+      3.9542684823800034,
+      3.95736453945113
+    ],
+    "M": [
+      3.8656370746224265,
+      3.9668126472039686,
+      3.9917271852403133
+    ],
+    "Mr": [
+      3.8656370746224265,
+      3.9668126472039686,
+      3.991727185240314
+    ]
+  },
+  "radial_2x_ratio": {
+    "H": 0.9735909854508612,
+    "M": 1.1275374958883313
+  },
+  "angular_2x_ratio": {
+    "H": 0.09745935048129713,
+    "M": 0.4612899331004273
+  },
+  "qualification": "Same fixed physical points, exact native stencil values, production cubed-sphere coordinate maps and fourth-order bulk derivatives. Two meridians, not a full sphere or volume norm. Stencils may cross a face boundary analytically; this does not test actual seam interpolation or exchange. No evolution, KO, scri closure, quadrature or altered boost frame. Pointwise initial constraint residual order is not evolved field self-convergence or a uniform spacelikeness proof.",
+  "input_sha256": "3d56af64d55f5aeecad6bcf27caaad261228e1af83ba5645c5830fc560e48eb9"
+}

@@ -807,3 +807,35 @@ The boosted native initial data have larger exterior errors than the stationary 
 A separate same-map shell-coordinate control isolates bulk truncation at48 fixed physical points using analytic stencil values. Eightfold radial-only refinement leaves max H/M approximately unchanged (ratios.998918/1.001385); angular-only refinement reduces them to.073415/.077833 of baseline before hitting radial error. Refining both directions gives H orders3.83/3.95/3.93 and M3.94/3.99/4.00. Thus puncture SMR and radial-only refinement cannot by themselves resolve the boosted outer angular structure. This control excludes interpolation, seams, scri closure, quadrature and evolution; do not claim it is a full-grid convergence result. Evidence/inspected figure: `boosted-shell-derivative-control/`.
 
 N12 job9038758 was last observed running through.6M. The watcher then lost SSH; a bounded reconnect returned authentication denial. Renewal was requested once. Current terminal disposition is unknown, no collect or resubmission occurred, and the remote active lock must be reconciled before continuation. Local state records the outage; remote state is stale until access returns.
+
+### Dense boosted angular survey
+
+The denser independent bulk-stencil control samples360 fixed physical points
+on two meridians at five radii (2160 evaluations over six radial/angular
+resolution combinations). It uses the same exact boosted native data and
+production shell maps; it does not change the asymptotic boost frame or any
+campaign equation. The reproducible optional `angular-survey` mode and records
+are in `boosted_shell_derivative_control.cpp` and `boosted-angular-survey/`.
+
+The maximum H residual remains at r=.915625 and angle82.5 degrees from+x;
+the maximum physical M residual is at the same radius and57.5 degrees.
+Doubling radial sampling alone changes these global sample maxima by factors
+.973591 and1.12754. Doubling angular sampling alone changes them by.0974594
+and.461290, with the remaining M maximum moving to r=.8875. Refining both
+directions yields H orders3.823/3.954/3.957 and M3.866/3.967/3.992 over
+N=12/24/48/96. Thus the angular contribution is present over a range of angles,
+not merely one specially selected ray. Min sampled Q/Q0=1 and map determinant
+.694575 remain positive. These tests support bulk under-resolution of smooth
+initial geometry, not an ill-behaved initial slice at the sampled points.
+They do not establish global regularity or identify every evolved error source.
+
+The unsmoothed angular plot was inspected. At r=.946875, H is only about
+1e-8 or less and M about1e-13 or less, with irregular refinement trends from
+numerical cancellation/finite precision. Do not assign a convergence order to
+those small tails. Face-crossing stencils here evaluate the analytic field;
+actual halo interpolation, seam communication, scri closure and evolution are
+not tested. A future full boosted resolution family must resolve outer angular
+structure as well as the puncture and radial layer. No new Aurora submission
+or production build occurred; existing9038758 remains of unknown disposition
+until SSH access is restored. The absent shared control socket was checked
+again without making another authentication attempt or renewal request.

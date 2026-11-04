@@ -10,17 +10,29 @@ namespace h=z4c::hyperboloidal;
 int main(int argc,char**argv){
  MPI_Init(&argc,&argv);Kokkos::initialize(argc,argv);int code=0;
  try{
-  if(argc!=3)throw std::invalid_argument("config fresh.csv");
+  if(argc!=3 && argc!=4)throw std::invalid_argument("config fresh.csv [angular-survey]");
+  const bool survey=argc==4;
+  if(survey && std::string(argv[3])!="angular-survey")throw std::invalid_argument("unknown survey");
   hyperbolic_reproduction::RefinedConfiguration cfg;cfg.Load(argv[1],hyperbolic_reproduction::ContinuousCoreMesh(16));
   h::NativeBoostedWormhole native(cfg.boost_velocity,1./3.,true,cfg.initial_start_M,cfg.initial_end_M);
   std::ifstream exists(argv[2]);if(exists.good())throw std::runtime_error("existing output");
   std::ofstream out(argv[2]);out<<std::setprecision(17)<<"Nr,Na,r,ray,x,y,z,H,M,Mr,Q,Q0,detJ\n";
   const double directions[][3]={{1,0,0},{-1,0,0},{0,1,0},{.3,.4,std::sqrt(.75)}};
-  const int resolutions[][2]={{12,12},{24,12},{48,12},{96,12},{12,24},{12,48},{12,96},{24,24},{48,48},{96,96}};
+  std::vector<std::array<int,2>> resolutions={{12,12},{24,12},{48,12},{96,12},{12,24},{12,48},{12,96},{24,24},{48,48},{96,96}};
+  struct Sample{double r;int ray;std::array<double,3> n;};std::vector<Sample> samples;
+  if(survey){
+    resolutions={{12,12},{24,12},{12,24},{24,24},{48,48},{96,96}};
+    for(double r:{.8275,.8875,.915625,.946875,.975})for(int plane=0;plane<2;++plane)for(int i=0;i<36;++i){
+      const double theta=std::acos(-1.)*(i+.5)/36,phi=plane*std::acos(-1.)/4;
+      samples.push_back({r,plane*36+i,{std::cos(theta),std::sin(theta)*std::cos(phi),std::sin(theta)*std::sin(phi)}});
+    }
+  }else for(double r:{.715,.8275,.8875,.903125,.909375,.915625,.921875,.928125,.934375,.940625,.946875,.975})for(int ray=0;ray<4;++ray)
+    samples.push_back({r,ray,{directions[ray][0],directions[ray][1],directions[ray][2]}});
   auto mesh=cfg.Mesh(12);
   for(const auto&res:resolutions)
-   for(Real r:{.715,.8275,.8875,.903125,.909375,.915625,.921875,.928125,.934375,.940625,.946875,.975})for(int ray=0;ray<4;++ray){
-    Real x[3];for(int a=0;a<3;++a)x[a]=r*directions[ray][a];
+   for(const auto& sample:samples){
+    const Real r=sample.r;const int ray=sample.ray;
+    Real x[3];for(int a=0;a<3;++a)x[a]=r*sample.n[a];
     const int block=mesh.Owner(x);Real q[3];mesh.Inverse(block,x,q);const auto geometry=mesh.Geometry(block,q);
     const Real spacing[3]={1./res[0],1./res[1],1./res[1]};
     auto fields=[&](const Real*local){Real y[3];mesh.Forward(block,local,y);auto f=native.Fields(y);cfg.InitialFields(y,f);return f;};
