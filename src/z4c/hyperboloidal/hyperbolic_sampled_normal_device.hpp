@@ -34,10 +34,11 @@ class HyperbolicSampledNormalDevice {
       Z4cJet<Real> u{};VectorJet<Real>B{},D{};Real correction[nf]{};
       if(point.BuildJet(sample,map,(1+r*r)/2,u,B,D,correction)!=Device::success){status(sample)=invalid_input;return;}
       if(!Geometry(u.metric).valid){status(sample)=invalid_geometry;return;}
-      auto omega=point.parameters.profile.At(x);
+      const auto parameters=point.Parameters();
+      auto omega=parameters.profile.At(x);
       SetStationaryOmegaNormal(u.alpha.value,u.beta.value,u.alpha.d,u.beta.d,omega);
       auto parts=ConformalRHS(u,omega,Real(4),Real(-.99));
-      if(!HyperbolicDamping(x,u,omega,parts,point.parameters)){status(sample)=invalid_source;return;}
+      if(!HyperbolicDamping(x,u,omega,parts,parameters)){status(sample)=invalid_source;return;}
       poles(nf*sample)=parts.pole.chi;poles(nf*sample+13)=parts.pole.trace;
       poles(nf*sample+14)=parts.pole.theta;
       constexpr int ti[6]={0,0,0,1,1,2},tj[6]={0,1,2,1,2,2};

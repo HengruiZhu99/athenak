@@ -124,6 +124,11 @@ T InnerTelegrapherWeight(T r) {
 // Point kernels for the donor c0ae7472 gauge, in GLOBAL CARTESIAN components.
 // Not an admission of this gauge into the production task graph. In particular,
 // ScriShift is a gauge identity, not the missing full geometric scri closure.
+#ifndef HYPERBOLIC_CONFIGURED_FORMULATION
+#define HYPERBOLIC_CONFIGURED_FORMULATION 0
+#endif
+inline constexpr bool configured_conformal_frame=HYPERBOLIC_CONFIGURED_FORMULATION;
+
 template<class T> struct HyperbolicShiftParameters {
   ConformalProfile profile;
   bool enforce_cfl=false;
@@ -134,6 +139,8 @@ template<class T> struct HyperbolicShiftParameters {
   T inner_z4 = 8, kappa1 = 4, kappa2 = T(-.99);
   void Validate() const {
     profile.Validate();
+    if (profile.flat && !configured_conformal_frame)
+      throw std::invalid_argument("flat Omega requires the separate configured formulation target");
     if (!std::isfinite(inner_begin) || !std::isfinite(inner_end) ||
         !std::isfinite(inner_gamma) || !(inner_begin<inner_end && inner_gamma>0))
       throw std::invalid_argument("invalid inner gauge profile");
@@ -373,7 +380,9 @@ bool HyperbolicDamping(const T x[3], const Z4cJet<T> &u,
       parts.pole.trace+=s*(target-old*(1-p.kappa2))*u.theta.value;
       parts.pole.theta+=s*(old*(2+p.kappa2)-2*target)*u.theta.value;
       for(int i=0;i<3;++i)parts.pole.lambda[i]+=s*(old-2*target)*(u.lambda.value[i]-g.contracted[i]);
-      if (p.profile.flat && !CartesianInnerAdjustment(u,omega,s,parts)) return false;
+      // Keep the experimental off-constraint algebra out of legacy GPU kernels.
+      if constexpr (configured_conformal_frame)
+        if (p.profile.flat && !CartesianInnerAdjustment(u,omega,s,parts)) return false;
     }
   }
   return true;

@@ -1,0 +1,27 @@
+{
+  "passed": true,
+  "scope": "Serial CPU, local MPI; bounded N16 two-step compatibility and experiment checks, not convergence",
+  "gates": [
+    "profile derivatives and physical-frame constraint invariance",
+    "actual reference Cartesian Z4c RHS, off-constraint varying metric and Omega transition",
+    "CPU/device equations and constraints on Serial backend",
+    "legacy BN1 payload compatibility",
+    "AMR wave MPI2 refinement and MPI4 restart/coarsening, byte-identical full checkpoint",
+    "wrong-profile restart collectively rejected",
+    "flat and redistributed N16 two-step boosted runs complete"
+  ],
+  "limits": [
+    "No convergence claim",
+    "Flat profile increases N16 initial constraints",
+    "Coarse wave fixture used for interfaces, not accuracy",
+    "GPU qualification is separate",
+    "Frozen first Aurora source ddc5b4800 reports fixed prefix checkpoint_header_bytes=208; RF1 adds uint64 identity length and identity bytes. Later report-only correction makes the field include this extension; payloads and serialization are unchanged."
+  ],
+  "available_binary_sha256_at_collection": {
+    "hyperbolic_shift_3d_refined_amr": "d0fa1d7591e610122801298e4aca6b4d508aaf7672429ebb72b835d334a2e9bc",
+    "hyperbolic_shift_3d_refined_device": "21febae362239c720ce59e9b86ed63dd36f54c91332c0cfe78b4c54e19ee0304",
+    "hyperbolic_shift_3d_refined": "0ce3811b2aaf50e5556700691600d94a211aae27e3c566f62fa677ed65d26ac7",
+    "hyperbolic_shift_3d_refined_profile": "2507ab100e06af27698a4eb5ed30054624156bfdde4f9f1856cd8d3cce742569"
+  },
+  "binary_scope": "Hashes describe available binaries at collection. Early local N16 runs precede the report-only variable-header-byte-count correction. Aurora uses a separately frozen exact source and binary manifest."
+}

@@ -2294,7 +2294,11 @@ int main(int argc, char** argv) {
                    (spherical_overlap ? sizeof(GeometryConfig) : 0) +
                    (continuous_positive ? sizeof(PositiveConfig) : 0) +
                    (puncture_chi_floor > 0 ? sizeof(ChiFloorConfig) : 0) +
-                   (h::boosted_puncture ? sizeof(BoostConfig) : 0));
+                   (h::boosted_puncture ? sizeof(BoostConfig) : 0) +
+                   (hyperbolic_reproduction::configured_formulation
+                        ? sizeof(uint64_t) +
+                              hyperbolic_reproduction::refined_configuration.identity.size()
+                        : 0));
         if constexpr (scri_sampled_normal)
           report << ",\"scri_normal_derivative\":\"sampled_native_numerator"
                  << (scri_donor_seven ? 7 : 6) << "\""

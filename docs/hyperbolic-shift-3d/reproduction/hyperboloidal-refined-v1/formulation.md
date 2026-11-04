@@ -22,6 +22,10 @@ Unknown, duplicate, empty and nonfinite values are rejected.
 | `buffer_cells` | 4 | Minimum separation using the largest core/radial spacing in the layer |
 | `cfl_target` | 0.2 | Initial mapped characteristic CFL, capped by requested dt |
 | `shell_radii` | .305,.45,.6,.75,.875,1 | Six outer shell interfaces in compact r |
+| Boost localization | rest isotropic rho=rho0/4 to rho0, C6 | Native rest-coordinate radius; unchanged |
+| Overlap quadrature | r=0.16 to 0.18 | Compact radial partition; Cartesian corners remain outside |
+| Chi-floor support | r<=0.03 | Compact radius; unchanged |
+| Tracker support | r<=0.16 | Compact Cartesian support; unchanged |
 | Native slicing | 4M to 12M, C6 | **Areal R**, unchanged physical initial slice |
 | Shift restoration | coefficient 4, r=0.6 to 0.9 | **Compact r**, unchanged |
 | Donor lapse/gauge weight | r=0.56 to 0.8 | **Compact r**, unchanged outside inner blend |

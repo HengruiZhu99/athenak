@@ -247,7 +247,12 @@ class HyperbolicCompositeDevice {
       }
       return success;
     }
+    KOKKOS_INLINE_FUNCTION HyperbolicShiftParameters<Real> Parameters() const {
+      if constexpr (configured_conformal_frame) return parameters;
+      else return {}; // Preserve compile-time constants in legacy GPU kernels.
+    }
     KOKKOS_INLINE_FUNCTION void operator()(int local) const {
+      const auto p=Parameters();
       status(local)=success;gap(local)=std::numeric_limits<Real>::max();cfl(local)=0;
       for (int f=0;f<nf;++f) rhs(nf*local+f)=0;
       const auto map=geometry(local);
@@ -260,10 +265,10 @@ class HyperbolicCompositeDevice {
       if (input_status!=success) {status(local)=input_status;return;}
       const auto g=Geometry(u.metric);
       if (!g.valid) {status(local)=invalid_geometry;return;}
-      auto omega=parameters.profile.At(x);
+      auto omega=p.profile.At(x);
       SetStationaryOmegaNormal(u.alpha.value,u.beta.value,u.alpha.d,u.beta.d,omega);
       auto parts=ConformalRHS(u,omega,Real(4),Real(-.99));
-      if (!HyperbolicDamping(x,u,omega,parts,parameters)) {status(local)=invalid_geometry;return;}
+      if (!HyperbolicDamping(x,u,omega,parts,p)) {status(local)=invalid_geometry;return;}
       Z4cRHS<Real> geometry_rate{};
       if (!AssembleInterior(parts,omega.omega,geometry_rate)) {status(local)=invalid_assembly;return;}
       rate[0]=geometry_rate.chi;rate[13]=geometry_rate.trace;rate[14]=geometry_rate.theta;
@@ -273,10 +278,10 @@ class HyperbolicCompositeDevice {
         rate[7+t]=geometry_rate.a[ti[t]][tj[t]];
       }
       for (int i=0;i<3;++i) rate[15+i]=geometry_rate.lambda[i];
-      const auto gauge=HyperbolicGauge(x,u,B,D.value,parameters);
+      const auto gauge=HyperbolicGauge(x,u,B,D.value,p);
       if (!gauge.valid) {status(local)=invalid_gauge;return;}
       rate[18]=gauge.lapse_regular+gauge.lapse_pole/omega.omega;
-      const auto coefficient=ShiftCoefficients(r,u.alpha.value,u.chi.value,parameters);
+      const auto coefficient=ShiftCoefficients(r,u.alpha.value,u.chi.value,p);
       const Real weight=adaptive ? 1-coefficient.collar : 0;
       Real driver[3]{};
       if (!HyperbolicAuxiliaryRate(u,D,geometry_rate.lambda,driver)) {
@@ -306,12 +311,12 @@ class HyperbolicCompositeDevice {
           for (int j=0;j<3;++j) Q+=g.inverse[i][j]*map.J[A][i]*map.J[A][j];
         }
         Real speed2=fmax(GaugeShiftSpeedSquared(coefficient,Q),
-            GaugeLapseSpeedSquared(u.alpha.value,u.chi.value,coefficient,Q,E,parameters));
-        if (parameters.enforce_cfl) speed2=fmax(speed2,u.alpha.value*u.alpha.value*u.chi.value*Q);
+            GaugeLapseSpeedSquared(u.alpha.value,u.chi.value,coefficient,Q,E,p));
+        if (p.enforce_cfl) speed2=fmax(speed2,u.alpha.value*u.alpha.value*u.chi.value*Q);
         speed+=fabs(transport)+sqrt(speed2);
       }
       cfl(local)=dt*n*speed;
-      if (((!HYPERBOLIC_EXPERIMENTAL_TIMESTEP || amr_cfl || parameters.enforce_cfl) && cfl(local)>.4) || dt/.02>.25) status(local)=cfl_exceeded;
+      if (((!HYPERBOLIC_EXPERIMENTAL_TIMESTEP || amr_cfl || p.enforce_cfl) && cfl(local)>.4) || dt/.02>.25) status(local)=cfl_exceeded;
       for (int f=0;f<nf;++f) {
         rhs(nf*local+f)=rate[f];
         if (!Kokkos::isfinite(rate[f])) status(local)=nonfinite_rhs;
@@ -422,7 +427,7 @@ class HyperbolicCompositeDevice {
         }
         for(int k=0;k<5;++k)result.gauge_max[k]=fmax(result.gauge_max[k],sqrt(norms[k]));
       }
-      auto omega=point.parameters.profile.At(x);
+      auto omega=point.Parameters().profile.At(x);
       SetStationaryOmegaNormal(u.alpha.value,u.beta.value,u.alpha.d,u.beta.d,omega);
       const auto constraints=EvolvedConstraints(u,omega);
       if (!constraints.valid) {Fail(local,invalid_geometry,result);return;}
