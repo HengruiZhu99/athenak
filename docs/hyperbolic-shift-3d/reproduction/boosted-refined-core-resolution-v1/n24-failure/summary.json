@@ -1,0 +1,63 @@
+{
+  "last_accepted_t_over_M": 6.198499999999681,
+  "steps": 12397,
+  "native_seconds": 2615.387262135,
+  "last_diagnostic_t_over_M": 6.149999999999622,
+  "error": "device RHS failure at active cell 566804 reason 2",
+  "failed_stage_abscissa": "Not separately recorded; report time is last accepted step.",
+  "capture_finite": true,
+  "nonpositive_volume_metric_cells": 1,
+  "locations": [
+    {
+      "cell": 566804,
+      "xyz": [
+        -0.013124999999999998,
+        0.001875,
+        0.001875
+      ],
+      "r": 0.013390178303517842,
+      "distance_to_last_accepted_tracker": 0.007422467823692599,
+      "metric_eigenvalues": [
+        -0.0009618393595797083,
+        13.238063605973192,
+        14.106452925668757
+      ],
+      "metric_determinant": -0.17961592215062705,
+      "chi": 0.00031433876506798254,
+      "conformal_lapse": 0.04217984278122089,
+      "beta": [
+        0.051198877782211084,
+        0.024961098471353554,
+        0.024929284890289984
+      ],
+      "D": [
+        -85.9882067958562,
+        135.86946717852717,
+        136.2157543086863
+      ]
+    }
+  ],
+  "surface_min_metric_eigenvalue": 0.8384197078561508,
+  "puncture_position": [
+    -0.02004712107338896,
+    -2.5907910772919618e-05,
+    -1.2807605095744558e-05
+  ],
+  "support_margin": 0.13995287892661104,
+  "cube_margin": 0.15995287892661103,
+  "null_surface_max": 1.5543122002569572e-15,
+  "null_ghost_max": 1.5543122209831808e-15,
+  "pole_max": 4.4949210209626,
+  "clock_max": 10.036747058225297,
+  "max_cfl": 0.27357909300899313,
+  "chi_floors_stage": 196468,
+  "chi_floors_final": 65563,
+  "lapse_floor_nodes": 0,
+  "surface_floors_stage": 0,
+  "surface_floors_final": 0,
+  "history_rows": 42,
+  "online_accepted_horizon_rows": 26,
+  "post_expansion_pass_rows": 35,
+  "last_expansion_rms": 0.008342222045667494,
+  "qualification": "Immediate finite indefinite metric localized in Cartesian core, not a proven root cause. No admitted endpoint or failed-state restart. N16 survived10M; N20/N24 failures exclude a claim that uniform refinement monotonically cures this instability. Space/time and rank count differ. Post1e-2 expansion pass is not full native finder acceptance; missing masses remain missing."
+}

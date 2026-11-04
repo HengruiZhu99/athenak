@@ -1,5 +1,5 @@
 {
-  "status": "n24_submitted",
+  "status": "campaign_terminal_failures_analyzed",
   "branch": "codex/boosted-refined-core-resolution",
   "launcher": "launcher-boosted-refined-core-resolution-v1",
   "launcher_commit": "a73da2f129301355c061f6973d1fc63383afb6e3",
@@ -8,8 +8,8 @@
   "science_sha256": "b0124b10763a01abc9e1feb0436b6022078f320ad6c53ec40e989231cfdab17c",
   "plan": "campaigns/n24-boosted-refined-core-resolution-v1-c24-evolution-segment01/plan.json",
   "plan_sha256": "ac42833394dbc8f3995807a64e2607c444f5db6888ced79e230f238a27d89427",
-  "updated": 1793749081.7455447,
-  "next": "Monitor existing fresh C24 job; automatic healthy fully verified same-case walltime continuation to10M. Numerical failure terminal. Never resume or rerun failed C20. Post-processing horizon expansion tolerance1e-2, preserve online1e-3 flags/mass gaps.",
+  "updated": 1793753262.476629,
+  "next": "Both authorized higher-resolution runs failed numerically and are preserved/analyzed. Never restart either unadmitted checkpoint. A coordinate-normalized inner shift-driver control was discussed only; no new run authorized or submitted.",
   "submission": {
     "job_id": "9037378.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
     "submitted": 1793749081.7390945,
@@ -39,5 +39,18 @@
     "checkpoint_admitted": false,
     "checkpoint_remote_copy_retired_receipt": "retired-n20-before-n24.json",
     "root_lock_released": true
+  },
+  "monitor_status": "deleted",
+  "final_comparison": "final-histories/README.md",
+  "n24_terminal": {
+    "job": "9037378",
+    "last_accepted_t_over_M": 6.198499999999681,
+    "steps": 12397,
+    "error": "device RHS failure at active cell 566804 reason 2",
+    "local_artifacts_verified": true,
+    "checkpoint_admitted": false,
+    "checkpoint_sha256": "09002ae08bd9a62c3bb989f3b9ab4663df1b84b31308e9ae064b7c6687649082",
+    "root_lock_released": true,
+    "evidence": "n24-failure/README.md"
   }
 }

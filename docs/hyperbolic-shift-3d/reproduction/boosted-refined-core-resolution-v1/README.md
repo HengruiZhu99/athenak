@@ -19,16 +19,26 @@ released. Its obsolete remote checkpoint copy was retired only after local
 and fresh remote hash/length verification; local original retained, receipt
 `retired-n20-before-n24.json` (481992704 allocated bytes freed).
 
-Fresh N24 job **9037378** is SUBMITTED (last scheduler check Q), plan
+N24 job **9037378** FAILED numerically at last accepted **6.1985M/12397steps**,
+last diagnostic6.15M. Plan
 `campaigns/n24-boosted-refined-core-resolution-v1-c24-evolution-segment01/plan.json`,
 SHA256ac42833394dbc8f3995807a64e2607c444f5db6888ced79e230f238a27d89427.
-Four nodes/48ranks, native t0, dt1/6000, target coordinate10/3. Same frozen
-science/source/binary; no rebuild/smoke. Both debug queues empty before submit.
-Binding footprint7683278509bytes, remaining200883663bytes after output/atomic
-reserves. Preserve current N24 checkpoint until a verified successor. Future
-continuation may need retirement of other locally/remote hashverified obsolete
-outputs; never weaken guard. Hourly monitor
-`aurora-boosted-refined-core-n20-then-n24` remains ACTIVE; no duplicate N24 run.
+Four nodes/48ranks, native t0, dt1/6000, unchanged frozen BC2 science.
+Native43.590min, PBS1/workerfailed: one indefinite near-puncture metric with
+positive local chi and lapse. All six artifacts are locally hash/length
+verified, scientific bindings checked, and matching terminal lock released.
+The checkpoint is unadmitted and MUST NOT resume. See `n24-failure/README.md`.
+No remote outputs were purged during final collection.
+
+The requested campaign and comparison are complete with terminal failures,
+not a successful stability result. N20/N24 fail near6.2M despite refinement;
+N16's survival to10M does not establish robustness. `final-histories/README.md`
+contains the inspected three-resolution histories, horizon/mass gaps,
+trajectory, boundary residuals, separate sign/floor counts and cost comparison.
+There are no admitted N20/N24 endpoints for a10M radial comparison. Hourly
+monitor `aurora-boosted-refined-core-n20-then-n24` has been deleted. The proposed
+coordinate-normalized inner shift-driver control was discussed only; no new
+formulation or evolution has been submitted.
 
 ## Science and distribution
 
