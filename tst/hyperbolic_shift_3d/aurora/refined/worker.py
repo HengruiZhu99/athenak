@@ -91,6 +91,11 @@ def main():
                     state['status'] = 'healthy_walltime_checkpoint_requires_verified_continuation'
                     write(out/'state.json', state)
                     break
+            if case.get('checkpoint_sha256'):
+                actual=digest(out/(case['name']+'.checkpoint'))
+                if actual!=case['checkpoint_sha256']:
+                    raise RuntimeError('Repeated baseline checkpoint differs across allocations')
+                record['checkpoint_sha256']=actual
             write(out/'state.json', state)
         else:
             state['status'] = 'completed'

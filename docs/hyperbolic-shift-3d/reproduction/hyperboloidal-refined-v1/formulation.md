@@ -31,8 +31,10 @@ Unknown, duplicate, empty and nonfinite values are rejected.
 | Donor lapse/gauge weight | r=0.56 to 0.8 | **Compact r**, unchanged outside inner blend |
 
 `flat.cfg` changes the conformal frame and adapted inner equations/gauge together.
-`redistributed.cfg` then changes only the shell radii to
-.235,.30,.56,.75,.875,1. The final shell and scri support are unchanged.
+`redistributed.cfg` changes only the shell radii to
+.235,.32,.44,.56,.875,1, concentrating cells in both the Omega and gauge layers.
+The first trial, .235,.30,.56,.75,.875,1, is retained as
+`compactification_only.cfg`; it refined Omega but coarsened part of the gauge layer. The final shell and scri support are unchanged.
 The first compact shell starts at 0.16. Interpolation/KO/FD orders and evolved
 overlap are retained. Actual halo-plan construction rejects unsupported donors.
 The transition width must span at least three of the largest radial/core cells;
@@ -119,3 +121,19 @@ user's updated allowance. Accounting includes the prior performance root and
 the dedicated CompactBinaryMerger/hzhu scratch root, logical/allocated bytes,
 planned outputs and an atomic-checkpoint reserve. It never deletes files.
 BN1 and its monitor are independent and untouched.
+
+![Unsmoothed analytic Omega and gauge profiles](local-gates/unsmoothed-profiles.png)
+
+The large second-derivative extrema in this narrow C6 join are visible in the
+raw profile. Mathematical smoothness does not imply adequate resolution. The
+N16 constraint regression is reported explicitly; wider joins and additional
+resolution would require separate parameter identities and new qualification.
+
+
+The final placement audit counts nominal shell cells intersecting each compact
+radial interval (fractional cells at the endpoints). At N16, the Omega interval
+0.18--0.22 increases from 4.41 to 8.53 radial cells; the adapted gauge interval
+0.28--0.56 increases from 30.49 to 39.53. The tradeoff is a coarser 0.56--0.875
+shell containing parts of the native-map, donor-gauge and restoration layers.
+The final scri shell remains unchanged. This explicitly trades resolution;
+it does not claim improvement everywhere or change stencil orders.

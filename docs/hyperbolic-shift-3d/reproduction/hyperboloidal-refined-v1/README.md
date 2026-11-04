@@ -34,3 +34,34 @@ See [completion](merged-baseline/completed.json), [bindings](merged-baseline/bin
 [commands/logs/raw histories](merged-baseline/raw-evidence.tar.gz).
 These bounded checks establish merge compatibility, not long-time robustness
 or convergence. New formulation validation and Aurora work follow separately.
+
+
+## Separate flat-profile formulation
+
+The parameterized RF1 experiment is described in [the formulation and parameter
+audit](formulation.md). Its initial flat sphere is derived from the Cartesian
+bounds, the old profile remains selectable, and shell interfaces are configurable.
+The physical native spatial map is retained while the conformal frame, geometric
+sources, initial fields and gauges change consistently. Explicit inner source
+adjustments are necessary for nontrivial agreement with reference Cartesian Z4c.
+The new formulation is isolated from legacy GPU compile-time constants.
+
+[Local gates](local-gates/README.md) pass, including physical-frame constraint
+invariance, derivative/map oracles, actual reference Z4c, device parity, MPI/AMR
+restart and collective configuration rejection. A separate mixed-level flat
+boosted AMR test also completes two steps. N16 two-step comparisons show a
+constraint regression for the selected flat profile; radial redistribution
+reduces that error but does not recover the legacy result. No robustness or
+convergence improvement is inferred from these short runs.
+
+## Performance scope
+
+The integrated default constructs the final halo plan directly and removes the
+redundant discarded setup path. Earlier repeated measurements in the merged
+[performance study](../performance-scaling-v1/README.md) found 1.627x fixed and
+1.710x dynamic Aurora process speedups in short setup-heavy fixtures. Uniform
+steady strong scaling reached 3.86x at 12 ranks and 4.08x at 24 ranks versus one
+rank; the extra node reduced steady time by only 5.5%. These are the measured
+performance-fixture results, not claimed speedups of the new flat formulation
+or a long BN1 campaign. The scientific targets and frozen reproduction records
+remain available independently.
