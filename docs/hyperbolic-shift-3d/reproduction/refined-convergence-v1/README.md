@@ -481,3 +481,14 @@ removal of redundant walks; future allocations will record end-to-end startup
 cost. All measurements, source hashes and integrity checks are preserved in
 `storage-performance/`. No additional launcher tests or repeated physics
 checks were performed.
+
+The v7 bounded-control package is now installed alongside v6, not submitted.
+All15 records, modes, reused verifier and unchanged scientific source/manifest/
+binary hashes were checked. Archive SHA256
+`e928da71a072799d74a069184b0fa53c0678b99c574d8335075d50f51f4a1b33`;
+launcher manifest SHA256
+`05f348183df6a55d46ed61d36d95bb7481134b4969793448ef93a5ff4a7e4acc`.
+A complete new traversal counted38,583,739,636B over179187 unique inodes in
+57.11s. This is an observed full scan, not a matched comparison with the earlier
+startup delay. No plans/submissions were created and the active job remains
+unchanged. See `radial-controls-preparation/`.

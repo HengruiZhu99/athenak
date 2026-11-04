@@ -1,0 +1,20 @@
+{
+  "input_launcher_commit": "9738238602ccefdae6d54be91dc68c558ea12d36",
+  "scientific_source_commit": "b52f09723b9c5a51340401bf91a7bf4426d8f339",
+  "scientific_binary_sha256": "4220cf70111f829fc8aa3e244f0cd04ad57e2477ca74c294e08c0bb880c7104c",
+  "source_manifest_sha256": "19d2445841e7a6e63588a13ab72855fe0da8cd23698c207742f16b16cb3dc608",
+  "input_files": {
+    "central20_stationary_smr025_radial12_reference.cfg": {
+      "bytes": 725,
+      "sha256": "b7b8d23c6d60b69ea7a196dd9302e2ca355e107436e3a06963c3b30ae3c95c9a",
+      "mode": "0o644"
+    },
+    "central20_stationary_smr025_radial18_reference.cfg": {
+      "bytes": 852,
+      "sha256": "ef36601d8d492909fd8bf80fa4afc1d496fa863b7b91b674c464309d58b14cff",
+      "mode": "0o644"
+    }
+  },
+  "sole_grid_change": "shell_radii; other parsed parameters identical",
+  "qualification": "Runtime grid input controls under the unchanged frozen reference-v2 binary/source. No source replacement, rebuild, GPU smoke, restart reuse or mutation of launcher-v6. Matched dt .00003125, native fresh t0 to .6M. Identity includes shell layout; existing Aurora map calibration unchanged. New storage traversal preserves cap/roots/reserves and is separately verified."
+}
