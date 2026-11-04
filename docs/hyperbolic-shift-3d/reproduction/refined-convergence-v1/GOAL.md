@@ -53,3 +53,5 @@ coincident evolved-copy disagreement, not established slicing breakdown.
 Evidence on original branch ab045abef under convergence-localization/ remains
 immutable. New audits will distinguish initial spacelike margins, map
 Jacobians, evolved metric regularity and numerical derivative sensitivity.
+
+The admitted .6M radial control now reduces exterior H/M by36.394x/59.355x at the same timestep, while nominal Cartesian fields differ by at most4.24e-22 and floor/sign counters match. This establishes a major early spatial-discretization/interface contribution in .90–.95, not full10M convergence. GPU ownership benchmark9038692 is running on the same four nodes in an isolated namespace; no optimization adopted or speedup claimed before parity/timing.

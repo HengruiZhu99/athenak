@@ -1,8 +1,8 @@
 {
-  "status": "stationary_reference_radial_control_running",
-  "current_job": "9038626.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "status": "radial_attribution_complete_ownership_benchmark_running",
+  "current_job": "9038692.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
   "branch": "codex/refined-convergence",
-  "next": "Monitor existing radial9038626. Time-control preservation and reconstruction complete. After admitted radial endpoint preserve/reconstruct/compare equal-dt controls. Prepare bounded ownership pair using the radial rank timings; no adoption without GPU parity and measured benefit.",
+  "next": "Monitor existing GPU ownership pair9038692, preserve/compare physical parity and measured step cost. Radial/time attribution complete through.6M. Choose stationary long-time resolution family and qualify enlarged symmetric SMR support before boosted v=.1; goal remains active.",
   "goal_active": true,
   "historical_startup_failure": {
     "job": "9038031",
@@ -98,6 +98,18 @@
       "max_relative_exterior_H_change": 1.793213256973125e-05,
       "max_relative_exterior_M_change": 1.4661997926879167e-05,
       "qualification": "Matched recorded times on same grid relative to dt.000125; no interpolation. Time refinement does not materially change early exterior residuals. Radial cause remains to be tested."
+    },
+    "radial_control_06M": {
+      "status": "completed_admitted_and_locally_preserved",
+      "H_reduction_factor": 36.39395776006772,
+      "M_reduction_factor": 59.35461453613035,
+      "fixed03_H": 0.0022567312901866084,
+      "fixed03_M": 0.009536426877583293,
+      "band_090_095_H2_fraction": 0.24818123356417787,
+      "band_090_095_M2_fraction": 0.6318497611136926,
+      "nominal_core_max_scaled_change": 4.235158505485189e-22,
+      "floor_sign_counts_equal": true,
+      "qualification": "Same dt, geometry/gauge/core/angles/scri shell; radial spacing and interfaces changed. Major early spatial contribution established, not full resolution convergence or long-time regularity."
     }
   },
   "historical_stationary6": {
@@ -258,32 +270,16 @@
       "all151_artifacts_locally_verified": true
     }
   },
-  "active_control": {
-    "root": "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/stationary-reference-v2",
-    "status": "running",
-    "current_job": "9038626.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
-    "launcher": "launcher-v7",
-    "variant": "radial",
-    "n": 16,
-    "dt": 3.125e-05,
-    "target_M": 0.6,
-    "nodes": 4,
-    "ranks": 48,
-    "source_commit": "b52f09723b9c5a51340401bf91a7bf4426d8f339",
-    "plan": "campaigns/stationary20-reference-radial-dt4-n16-segment01/plan.json",
-    "plan_sha256": "6aa4eee16a6fb122a561803934db61ce117166c140a6e65b9a39f14b88c68c8d",
-    "current_restart": null
-  },
   "publication": {
     "status": "pending_authentication",
     "last_remote_commit": "c272353097c2f6330a403579f4864eb805aae0f6",
     "reason": "Prior GitHub internal commit_refs_rules rejection; latest SSH attempt has no agent identities and HTTPS no saved credential. User renewal requested once asynchronously. Local commits/scientific Aurora snapshots preserved."
   },
-  "next_analysis": "Time control complete. Radial endpoint and qualified spatial attribution pending. The separate SYCL ownership probe has built successfully, but no GPU benchmark has been submitted.",
+  "next_analysis": "Do not repeat completed reference/time/radial reconstruction. Benchmark parity/timing pending; then stationary long-time/resolution and boosted coverage/physics.",
   "local_evidence_commit": "6f8bcb5bb",
   "publication_status": "Local evidence committed; GitHub publication still pending restored authentication (already requested once). Aurora job unaffected.",
   "prepared_radial_controls": {
-    "status": "time_complete_radial_running",
+    "status": "both_completed",
     "launcher": "launcher-v7",
     "preparation_commit": "973823860",
     "manifest_sha256": "05f348183df6a55d46ed61d36d95bb7481134b4969793448ef93a5ff4a7e4acc",
@@ -294,10 +290,10 @@
     "note": "Time9038572 admitted and all152 artifacts locally verified; endpoint reconstructed. Radial9038626 running unchanged.",
     "time_plan": "campaigns/stationary20-reference-time-dt4-n16-segment01/plan.json",
     "time_plan_sha256": "ba16737cc5deedbfae7a431d130ba7d9dce248205c087fa2242b074d8fa56a2c",
-    "job": "9038626.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "job": null,
     "radial_plan": "campaigns/stationary20-reference-radial-dt4-n16-segment01/plan.json",
     "radial_plan_sha256": "6aa4eee16a6fb122a561803934db61ce117166c140a6e65b9a39f14b88c68c8d",
-    "radial_status": "running"
+    "radial_status": "completed"
   },
   "reference_v2_segments": [
     {
@@ -331,16 +327,16 @@
   ],
   "execution_limits": {
     "debug_scaling_max_run": "[u:PBS_GENERIC=1]",
-    "observed_current_job": "9038626",
+    "observed_current_job": "9038692",
     "decision": "Keep controls sequential; user8-node permission does not override scheduler limit."
   },
   "local_terminal_watcher": {
-    "tool_session_id": 17496,
-    "script": "/tmp/watch-reference-9038626.py",
-    "log": "output/refined-convergence/reference-radial-control-watch.jsonl",
-    "action": "Observe existing9038626 every60s up to60 polls. At schedulerF invoke frozenv7collect once and stop. No submit/replay. Observation failure does not prove terminal."
+    "tool_session_id": 97283,
+    "script": "/tmp/watch-partition-9038692.py",
+    "log": "output/refined-convergence/partition-pair-watch.jsonl",
+    "action": "Observe existing9038692 every60s, at terminal invoke dedicated collector once. No submission/replay/adoption."
   },
-  "radial_analysis_preparation": "Dedicated radial18 reader built; exact local wrong-identity rejection passed, original reference body unchanged. Positive Aurora norm reproduction remains pending an admitted radial control.",
+  "radial_analysis_preparation": "Positive admitted radial18 Aurora norm reproduction verified; dedicated reader preserves checkpoint and reproduces native norms. No rerun needed.",
   "completed_reference_control": {
     "root": "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/stationary-reference-v2",
     "status": "completed",
@@ -395,7 +391,7 @@
     "history_analysis": "stationary-reference-v2-completed/analysis.json"
   },
   "performance_control_preparation": {
-    "status": "local_static_SMR_partition_parity_passed",
+    "status": "GPU_pair_running",
     "source_changes": "analysis copy only; production files/binary unchanged",
     "cases": [
       "two-rank block-aligned unequal",
@@ -404,13 +400,16 @@
     "checkpoint_byte_identical": true,
     "checkpoint_sha256": "9b2a9c32f381baf3708765c2c2a11bed52e38c1237a996657f34ef2dd5386dc8",
     "candidate48": "measured-partition-candidate/candidate.partition",
-    "gpu_benchmark_submitted": false,
+    "gpu_benchmark_submitted": true,
     "measured_speedup": null,
     "qualification": "Proxy cost model is not measured speedup; fixed-grid runtime Repartition cannot directly rebuild custom SMR.",
     "gpu_build_status": "completed",
     "gpu_probe_binary_sha256": "c3a2970ddb1cd78908d233f54c45394375c67d1035f0c61653efdb80c0f2eca9",
     "gpu_probe_namespace": "gpu-partition-package-v1",
-    "benchmark_policy": "Two equal/weighted ownership restarts from admitted radial .6M endpoint, 256 steps, same four-node allocation, matched science. Prepare only after terminal admission; no automatic adoption."
+    "benchmark_policy": "Two equal/weighted ownership restarts from admitted radial .6M endpoint, 256 steps, same four-node allocation, matched science. Prepare only after terminal admission; no automatic adoption.",
+    "current_job": "9038692.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "plan": "campaigns/stationary20-radial18-ownership-pair-v1/plan.json",
+    "plan_sha256": "8146783f417d65d447b1025306f634d7248f88017459490dfbdb1407e5c82be5"
   },
   "completed_time_control": {
     "root": "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/stationary-reference-v2",
@@ -435,5 +434,41 @@
     "matching_terminal_lock_released": true,
     "local_preservation": "all152 worker artifacts locally hash/length verified; native same-operator endpoint reconstruction passed, checkpoint unchanged",
     "analysis": "time-control-comparison/analysis.json and time-control-segment01/analysis-command.json"
+  },
+  "completed_radial_control": {
+    "root": "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/stationary-reference-v2",
+    "status": "completed",
+    "current_job": null,
+    "launcher": "launcher-v7",
+    "variant": "radial",
+    "n": 16,
+    "dt": 3.125e-05,
+    "target_M": 0.6,
+    "nodes": 4,
+    "ranks": 48,
+    "source_commit": "b52f09723b9c5a51340401bf91a7bf4426d8f339",
+    "plan": "campaigns/stationary20-reference-radial-dt4-n16-segment01/plan.json",
+    "plan_sha256": "6aa4eee16a6fb122a561803934db61ce117166c140a6e65b9a39f14b88c68c8d",
+    "current_restart": null,
+    "completed_job": "9038626",
+    "checkpoint_sha256": "f1db846ab81fd3ad936fdeae4479f2e6b4b01525f204211aa85bae1e41713996",
+    "checkpoint_bytes": 951454990,
+    "remote_admitted": true,
+    "matching_terminal_lock_released": true,
+    "local_preservation": "all152 artifacts hash/length verified; matching native reconstruction passed within1.33e-13, input checkpoint unchanged",
+    "analysis": "short-radial-controls-comparison/analysis.json and nominal-core-comparison.json; three figures inspected"
+  },
+  "active_control": {
+    "status": "running",
+    "purpose": "static_ownership_pair",
+    "current_job": "9038692.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "plan": "campaigns/stationary20-radial18-ownership-pair-v1/plan.json",
+    "plan_sha256": "8146783f417d65d447b1025306f634d7248f88017459490dfbdb1407e5c82be5",
+    "nodes": 4,
+    "ranks": 48,
+    "steps_per_case": 256,
+    "source": "separate analysis probe; original production snapshot unchanged",
+    "restart": "campaigns/stationary20-reference-radial-dt4-n16-segment01/output/state.checkpoint",
+    "adopted_for_physics": false
   }
 }

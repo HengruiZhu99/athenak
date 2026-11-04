@@ -34,6 +34,11 @@ summary=dict(history_sha256=inputs,common_recorded_times=matches,case_summaries=
 for key in ('time','radial'):
     c=cases[key];rows=c['rows'];report=c['report'];worker=json.loads((c['folder']/'output/worker.json').read_text());sp=json.loads((c['folder']/'spatial-native.json').read_text());bins=np.array(sp['radial_bins']);integ=np.array(sp['integrals']);band=(bins[:,0]>=.9-1e-12)&(bins[:,1]<=.95+1e-12)
     summary['case_summaries'][key]=dict(dt=c['dt'],online_accepted=sum(x['horizon_found'] for x in rows),rows=len(rows),final_mass=rows[-1]['mass'],final_fixed03=rows[-1]['fixed'][1],native_seconds=worker['native_seconds'],floor_and_sign_counters={k:v for k,v in report.items() if k.startswith('cumulative_')},band_090_095={f:dict(squared_integral=float(bins[band,i].sum()),exterior_fraction=float(bins[band,i].sum()/integ[1,i-2])) for f,i in [('H',3),('M',4),('Mr',5)]})
+    regions=[]
+    for lo,hi in ((.3,.6),(.6,.85),(.85,.9),(.9,.95),(.95,1.)):
+        mask=(bins[:,0]>=lo-1e-12)&(bins[:,1]<=hi+1e-12)
+        regions.append(dict(lo=lo,hi=hi,integrals={f:dict(squared_integral=float(bins[mask,i].sum()),exterior_fraction=float(bins[mask,i].sum()/integ[1,i-2])) for f,i in [('H',3),('M',4)]}))
+    summary['case_summaries'][key]['regions']=regions
 summary['qualification']='Admitted .6M controls, same native operator and fixed coordinate r>.3 outside complete candidate enclosures. Match recorded times only; no interpolation/smoothing. Reference/time isolate dt; time/radial change radial resolution AND interface placement, holding final scri shell/core/angles/geometry/gauge/effective penalty fixed. No long-time, uniform-resolution, field-self-convergence or fourth-order proof. Cumulative counters shown per fresh case, never summed between cases.'
 (O/'analysis.json').write_text(json.dumps(summary,indent=2)+'\n')
 fig,axes=plt.subplots(1,2,figsize=(11,4),layout='constrained')

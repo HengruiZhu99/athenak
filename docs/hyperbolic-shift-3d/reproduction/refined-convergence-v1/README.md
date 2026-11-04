@@ -737,3 +737,55 @@ and `collect_partition_pair.py` preserve the shared allocation lock, explicit
 bindings, queue review, storage reserves and terminal artifact verification.
 The existing reviewed single-submit helper is reused. This adds no smoke gate
 and does not repeat the completed physics controls.
+
+### Evolved radial attribution established through 0.6M
+
+Radial control9038626 completed0.6M/6400steps with native/worker/PBS success
+and frozen admission. All152 artifacts are locally hash/length verified; the
+951454990-byte checkpoint retains SHA256
+`f1db846ab81fd3ad936fdeae4479f2e6b4b01525f204211aa85bae1e41713996`.
+The dedicated radial18 native reader reproduces full/fixed report norms within
+1.33e-13 scaled and leaves the checkpoint unchanged. Its positive Aurora
+calibration is now verified, not merely the earlier rejection test.
+
+At common fixed r>.3 and identical dt=.00003125, the radial12/radial18 endpoint
+H norms are.0821313833/.00225673129 and M norms.5660309414/.00953642688:
+reductions36.394x/59.355x. Squared integrals within .90–.95 fall by factors
+5330/5567 approximately. This band holds24.82%/63.18% of the refined H²/M²,
+instead of99.88%/99.85%. The remaining refined H² is distributed substantially
+in .3–.6 (46.95%) and .85–.9 (27.26%); M² in .85–.9 accounts for30.39%.
+The error reduction is not just a shift of the same large squared integral
+into a different band. See `short-radial-controls-comparison/analysis.json`.
+
+All9 horizon samples are accepted in each control, with identical final mass
+.33333352438971814. Floor/sign totals are identical. Direct read-only comparison
+of950272 nominal Cartesian cells gives maximum scaled primary-field change
+4.24e-22 and compensation change1.22e-21; per-cell floor/sign arrays are
+byte-identical. Appended evolved-overlap rows are explicitly excluded from
+that nominal-core comparison. This is not a statement that all halo data or
+future causal influence are identical.
+
+The unsmoothed native profiles show the large outer metric and constraint
+oscillations greatly reduced. Lapse/shift gradient peaks remain near30; the
+underlying steep but smooth profile was not removed or reset. Together with
+the negligible fourfold timestep effect, these controls demonstrate a major
+early-time contribution from radial spatial discretization/interface placement
+in the original transition band. They do not separate those two spatial
+mechanisms completely, establish a long-time resolution order, or prove
+nonlinear slicing regularity. The full10M stationary/boosted convergence goal
+is still open. All three figures were visually inspected. Reproducers are
+`compare_short_radial_controls.py` and `compare_radial_core.py`; native
+reconstruction is already complete and must not be repeated.
+
+Observed native-command times are1347.08s/1423.96s for time/radial controls,
+including their setup and output; this is not strong scaling. Performance
+job9038692 is now running, with plan SHA256
+`8146783f417d65d447b1025306f634d7248f88017459490dfbdb1407e5c82be5`.
+Both user debug queues were reviewed before the single submission; unrelated
+held work is preserved. Its two256-step cases restart the admitted radial
+endpoint, and use equal versus measured weighted ownership on the same four
+nodes. Binding footprint42.377GB leaves3.623GB after2.8GB output and1.2GB atomic
+reserves, within the50GB task cap. No purge or production adoption occurred.
+The local watcher invokes the dedicated terminal collector once; saved
+submission/state remain authoritative. Raw metadata is in
+`gpu-partition-submission/`; no speedup is claimed until measurement/parity.

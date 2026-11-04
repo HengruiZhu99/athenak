@@ -1,0 +1,44 @@
+{
+  "command": [
+    "mpiexec",
+    "-n",
+    "2",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/radial-endpoint-reader/reader",
+    "16",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/stationary-reference-v2-aurora/campaigns/stationary20-reference-radial-dt4-n16-segment01/output/state.checkpoint",
+    ".00003125",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/inputs/hyperbolic_shift_3d/refined_convergence/central20_stationary_smr025_radial18_reference.cfg",
+    "smr",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/radial-endpoint-reader/radial-control-segment01",
+    ".3"
+  ],
+  "source_manifest_sha256": "19d2445841e7a6e63588a13ab72855fe0da8cd23698c207742f16b16cb3dc608",
+  "matching_production_files": 633,
+  "checkpoint_sha256": "f1db846ab81fd3ad936fdeae4479f2e6b4b01525f204211aa85bae1e41713996",
+  "analysis_binary_sha256": "a75f179ea6a163aaa25d6a92c07528fe1a8e67a5ccacc262b36fd92b67556005",
+  "started": 1793795861.382886,
+  "qualification": "Exact admitted short endpoint and unchanged physical configuration; dedicated explicit known Aurora k/gamma identity calibration. Compare native report norms before interpreting spatial diagnostics; no campaign binary or input checkpoint change.",
+  "returncode": 0,
+  "elapsed": 133.8772530555725,
+  "checkpoint_unchanged": true,
+  "native_report_norms_match": [
+    [
+      1.3237012894187266e-13,
+      7.750538377417728e-16
+    ],
+    [
+      9.692577921591891e-17,
+      1.9245370859011303e-16
+    ]
+  ],
+  "full_norms": [
+    0.22873396292442186,
+    0.009427022444087428,
+    1.1536392242521933
+  ],
+  "fixed03_norms": [
+    0.0022567312901866084,
+    0.009536426877583293,
+    0.013396431918686736
+  ]
+}
