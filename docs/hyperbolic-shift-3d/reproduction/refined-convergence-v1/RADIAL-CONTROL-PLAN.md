@@ -2,20 +2,20 @@
 
 The radial18 initial-only result isolates a large spatial truncation error in
 .90–.95. It does not establish that this accounts for the evolved exterior
-constraint plateau. Continue the already submitted radial12 reference-v2 run
-segment02 job9038494 through its authorized disposition; do not alter its dt, source,
-configuration, closure, restart policy or allocation.
+constraint plateau. The radial12 reference-v2 run completed10M, with final segment02 job9038494
+fully admitted and locally preserved; do not repeat or resume it.
 
-After preserving its disposition, the useful bounded comparison is:
+The bounded comparison is:
 
 | Case | Grid | Requested dt | Target |
 |---|---|---|---|
-| preserved live reference | radial12 | .000125 | existing 10M run |
+| preserved completed reference | radial12 | .000125 | completed 10M run |
 | time-refinement control | radial12 | .00003125 | fresh .6M |
 | radial-refinement control | radial18 | .00003125 | fresh .6M |
 
-The latter two are a proposed next experiment under the persistent goal, **not
-submitted jobs**. Qualify the refined grid's characteristic limit first. Use
+The time-refinement control9038572 is running; the radial-refinement control
+follows its verified terminal disposition. The refined-grid characteristic
+limit is already qualified locally. Use
 the same native scientific binary if its immutable runtime configuration
 support suffices; freeze and hash-bind each distinct input and exact identity.
 The physical frame, initial slice, inner SMR, angular grid and final scri shell
