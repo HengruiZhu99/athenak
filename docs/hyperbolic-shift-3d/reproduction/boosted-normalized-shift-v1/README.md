@@ -182,3 +182,16 @@ AppleDouble files (verify magic/hash/inventory), then explicitly retry make-j64.
 After quarantine the source-file inventory must equal the exact manifest.
 No successful binary or frozen science was overwritten. For future transfers
 use Python tarfile (no filesystem xattr metadata) rather than macOS system tar.
+
+## Convergence localization from preserved endpoints
+
+See `convergence-localization/README.md`, `isolate_convergence.py`,
+`extract_localization.py`, and `plot_localization_slices.py`. At10M the region
+.3<r<.4 holds95.74%/90.34% of N20 exterior squared H/M and worsens36.22%/37.93%,
+whereas the outer collar improves. Native unsmoothed slices expose a growing
+Hamiltonian mismatch between coincident independently evolved copies near the
+first radial-shell interface .305, particularly near angular corners; primary
+chi/lapse/shift-gradient profiles agree closely. This makes interface derivative/
+overlap treatment a concrete suspect, not a proven cause. Original checkpoint
+hashes and native volume integrals verified; no campaign science or run changed.
+Both figures inspected. N24 remains active under the saved submission.
