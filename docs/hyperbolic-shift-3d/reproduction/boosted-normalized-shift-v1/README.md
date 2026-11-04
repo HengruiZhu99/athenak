@@ -87,3 +87,15 @@ unsmoothed radial/field/gradient profiles. Do not invent fixed-cutoff histories.
 Compare survival and accuracy separately; finite resolution trends and survival
 alone do not establish fourth order or prove the stronger driver caused failure.
 Inspect plots, commit/push reproducible evidence and conclusions.
+
+## Build transport repair
+
+Attempt01 failed before scientific targets compiled: macOS system tar generated
+AppleDouble `._*.cpp` metadata entries, picked up by Kokkos source globs. The
+manifest-bound scientific sources and launcher files were unchanged. Preserve
+failed logs/build under `*-failed-attempt01`, quarantine only unmanifested
+AppleDouble files (verify magic/hash/inventory), then explicitly retry make-j64.
+`repair_transport.py` records this one-time repair and rejects a second use.
+After quarantine the source-file inventory must equal the exact manifest.
+No successful binary or frozen science was overwritten. For future transfers
+use Python tarfile (no filesystem xattr metadata) rather than macOS system tar.
