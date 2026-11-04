@@ -1,5 +1,5 @@
 {
-  "status": "n24_submitted",
+  "status": "n24_segment02_submitted",
   "branch": "codex/boosted-normalized-shift",
   "source_commit": "680ce2f812036d6e5bc6009b6d64eaabe126d0cb",
   "launcher_commit": "a308265f7",
@@ -16,8 +16,8 @@
     "S24"
   ],
   "target_t_over_M": 10,
-  "updated": 1793764796.323932,
-  "next": "Monitor existing fresh S24 job9037899; no duplicate. Healthy verified same-case walltime continuation automatic. N16/N20 complete, never rerun. Finish N24 and qualified three-resolution analysis.",
+  "updated": 1793768421.2501569,
+  "next": "Monitor existing N24 segment02 job9037997; no duplicate. N16/N20 complete. Full three-resolution followup remains.",
   "local_checks": "checks/serial-verification.json",
   "monitor_frequency": "every 30 minutes",
   "monitor": "aurora-normalized-shift-n16-n20-n24",
@@ -26,8 +26,8 @@
   "build_log": "boosted-normalized-shift-build-attempt02.stdout.log",
   "build_attempt": 2,
   "transport_repair": "normalized-shift-transport-repair.json",
-  "plan": "campaigns/n24-boosted-normalized-shift-v1-s24-evolution-segment01/plan.json",
-  "plan_sha256": "e6c0b26d2ef345439e7f66483ec9f1ed79d50b5b848d2b13999bcc964772e1cb",
+  "plan": "campaigns/n24-boosted-normalized-shift-v1-s24-evolution-segment02/plan.json",
+  "plan_sha256": "1618333c7371272ae4f8f4160e92892589499c8c54a7d57d5e694c342be82bc1",
   "science_sha256": "ab00e6c2bc6ec44fa25bececd2b9d19c20e094034a81f581e70d3015d2439e0e",
   "science": {
     "schema": 1,
@@ -53,10 +53,10 @@
     }
   },
   "submission": {
-    "job_id": "9037899.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
-    "submitted": 1793764709.9058797,
-    "plan": "campaigns/n24-boosted-normalized-shift-v1-s24-evolution-segment01/plan.json",
-    "plan_sha256": "e6c0b26d2ef345439e7f66483ec9f1ed79d50b5b848d2b13999bcc964772e1cb",
+    "job_id": "9037997.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "submitted": 1793768381.866731,
+    "plan": "campaigns/n24-boosted-normalized-shift-v1-s24-evolution-segment02/plan.json",
+    "plan_sha256": "1618333c7371272ae4f8f4160e92892589499c8c54a7d57d5e694c342be82bc1",
     "source_manifest_sha256": "15003c908c6c2640140045ed0473a93a8ffa9e19ab5dac868cd401358c5c42b5",
     "resources": {
       "queue": "debug-scaling",
@@ -69,10 +69,10 @@
   },
   "build_complete": true,
   "build_records_locally_verified": true,
-  "retirement_receipt": "retired-before-normalized-n24.json",
+  "retirement_receipt": "retired-before-n24-segment02.json",
   "post_horizon_expansion_rms_tolerance": 0.01,
   "online_horizon_tolerance_unchanged": 0.001,
-  "last_scheduler_state": "submitted; inspect scheduler",
+  "last_scheduler_state": "submitted",
   "n16_completed": {
     "job": "9037573",
     "t_over_M": 10,
@@ -104,5 +104,16 @@
     "lock_released": true,
     "native_seconds_all_segments": 3181.5259086957667
   },
-  "n20_common_cutoff_endpoint": "n16-n20/endpoint-comparison.json"
+  "n20_common_cutoff_endpoint": "n16-n20/endpoint-comparison.json",
+  "n24_segment01": {
+    "job": "9037899",
+    "status": "verified_healthy_walltime",
+    "t_over_M": 7.029500000000697,
+    "steps": 14059,
+    "checkpoint_sha256": "b2211c853c8512d25e0996558a363528aba4c55251f10a3e5ef680a8b6aae909",
+    "bytes": 806091472,
+    "remote_verified": true,
+    "lock_released": true,
+    "all_artifacts_locally_verified": true
+  }
 }

@@ -195,3 +195,23 @@ chi/lapse/shift-gradient profiles agree closely. This makes interface derivative
 overlap treatment a concrete suspect, not a proven cause. Original checkpoint
 hashes and native volume integrals verified; no campaign science or run changed.
 Both figures inspected. N24 remains active under the saved submission.
+
+## N24 healthy walltime continuation (2026-11-04)
+
+Segment01 job9037899 reached7.0295M/14059steps with healthy native and worker
+checkpointed disposition and expected PBS3. Exact frozen helper admission
+passed; all five worker artifacts are locally hash/length verified. Matching
+terminal lock released. Segment02 job9037997 was submitted once from that
+checkpoint, SHA256b2211c853c8512d25e0996558a363528aba4c55251f10a3e5ef680a8b6aae909,
+with unchanged four-node BN1 science. Both debug queues were empty. New plan
+SHA2561618333c7371272ae4f8f4160e92892589499c8c54a7d57d5e694c342be82bc1.
+Binding footprint7,010,257,241bytes leaves873,904,931bytes after reserves.
+
+Obsolete completed BN1N20 and unboostedN24 endpoint remote copies were freshly
+verified locally and remotely, then retired; local originals remain. Receipt
+`retired-before-n24-segment02.json`. Preserve current N24 restart until a
+verified successor. The tar transfer warned that the parent directory changed
+as lock-release metadata was added; every recorded worker artifact matches its
+original hash and byte length. No horizon seed sidecar was emitted; preserve
+restart finder initialization and diagnostic sampling discontinuities. This is
+not yet N24 completion or a three-resolution convergence result.
