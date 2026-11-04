@@ -312,3 +312,13 @@ norms exactly and leaves its checkpoint hash unchanged. A separate read-only
 frame-halo control on the older stationary6 10M state does not reduce its
 large late exterior errors; see late-frame-control/ and the explicit support
 qualification in FRAME-AND-GAUGE-CONTROLS.md.
+
+Fresh stationary20 separated-control N16 job9038253 is submitted, plan
+campaigns/stationary20-separated-n16-segment01/plan.json under nested remote
+frame-separation-v1. Four debug-scaling nodes48ranks,dt=.000125,target10M,
+three-level SMR and twelve radial shells. Submission checked all user jobs
+and both debug queues; held capacity work was preserved. Storage footprint
+36.046GB leaves10.954GB after2GB output and1GB atomic reserves under the50GB
+combined cap. No purge was needed. Follow the saved job and immutable
+launcher-v3 for terminal verification and healthy same-case continuations.
+No constant-driver companion or boosted run has been submitted yet.
