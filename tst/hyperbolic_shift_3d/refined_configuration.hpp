@@ -132,9 +132,15 @@ struct RefinedConfiguration {
         shell_radii.push_back(r);
       }
     }
-    if (shell_radii.size() != 6 || shell_radii.back() != 1 || shell_radii[4] != .875)
+    // All radial interfaces, including any refinement of the outermost shell,
+    // are identity-bound. The same original scri operator is evaluated on the
+    // selected grid; its spacing and penalty CFL must be recorded separately.
+    // The six-shell compile flag selects the legacy baseline, not this runtime
+    // descriptor's number of independently specified radial layers.
+    if (shell_radii.size() < 6 || shell_radii.size() > 24 || shell_radii.back() != 1 ||
+        shell_radii[shell_radii.size()-2] < .875)
       throw std::invalid_argument(
-          "six shells with final interfaces .875 and 1 are required for unchanged scri support");
+          "6 to 24 shells ending at 1, with the last inner interface at least .875, are required");
     Real previous = shell_inner_radius;
     largest_transition_spacing = core_spacing;
     for (Real radius : shell_radii) {
