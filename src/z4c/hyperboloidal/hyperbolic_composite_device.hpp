@@ -56,8 +56,8 @@ class HyperbolicCompositeDevice {
   };
   struct DiagnosticSummary {
     DiagnosticSums total{}, exterior{};
-    // Read-only zero-restoration research diagnostics; not an evolution source.
-    DiagnosticSums fixed[3]{}; // coordinate radii .12, .16, .25
+    // Read-only optional research diagnostics; not an evolution source.
+    DiagnosticSums fixed[3]{}; // caller-specified coordinate cuts; defaults .12, .16, .25
     Real gauge_max[5]{}; // |beta+x|, |grad(beta+x)|, |D|, |grad D|, |D-Lambda| (Euclidean/Frobenius)
     Real min_chi = std::numeric_limits<Real>::max();
     Real min_lapse = std::numeric_limits<Real>::max();
@@ -356,6 +356,8 @@ class HyperbolicCompositeDevice {
     PointKernel point;
     int first;
     Real exterior_radius;
+    bool extended=false;
+    Real fixed_cuts[3]={.12,.16,.25};
     KOKKOS_INLINE_FUNCTION void init(DiagnosticSummary &result) const {
       result.total=DiagnosticSums{};result.exterior=DiagnosticSums{};
       for(int k=0;k<3;++k)result.fixed[k]=DiagnosticSums{};
@@ -372,7 +374,7 @@ class HyperbolicCompositeDevice {
     }
     KOKKOS_INLINE_FUNCTION void join(DiagnosticSummary &a,const DiagnosticSummary &b) const {
       Add(a.total,b.total);Add(a.exterior,b.exterior);
-      if constexpr(zero_shift_restoration){
+      if(extended){
         for(int k=0;k<3;++k)Add(a.fixed[k],b.fixed[k]);
         for(int k=0;k<5;++k)a.gauge_max[k]=fmax(a.gauge_max[k],b.gauge_max[k]);
       }
@@ -398,8 +400,7 @@ class HyperbolicCompositeDevice {
       // weight. Invalid samples are still counted on every evolved cell.
       result.total.volume+=weight;
       if (r>exterior_radius) result.exterior.volume+=weight;
-      const Real fixed_cuts[3]={.12,.16,.25};
-      if constexpr(zero_shift_restoration)for(int k=0;k<3;++k)
+      if(extended)for(int k=0;k<3;++k)
         if(r>fixed_cuts[k])result.fixed[k].volume+=weight;
       const int active=point.active(local);
       const Real chi=point.padded(active);
@@ -414,7 +415,7 @@ class HyperbolicCompositeDevice {
       Z4cJet<Real> u{};VectorJet<Real> B{},D{};Real correction[nf]{};
       const int status=point.BuildJet(local,map,reference_alpha,u,B,D,correction);
       if (status!=success) {Fail(local,status,result);return;}
-      if constexpr(zero_shift_restoration){
+      if(extended){
         Real norms[5]{};
         for(int i=0;i<3;++i){
           norms[0]+=(u.beta.value[i]+x[i])*(u.beta.value[i]+x[i]);
@@ -444,7 +445,7 @@ class HyperbolicCompositeDevice {
       sums.z2=weight*constraints.z4.z_conformal_norm2;
       sums.z2_physical=weight*constraints.z4.z_physical_norm2;
       Add(result.total,sums);if (r>exterior_radius) Add(result.exterior,sums);
-      if constexpr(zero_shift_restoration)for(int k=0;k<3;++k)
+      if(extended)for(int k=0;k<3;++k)
         if(r>fixed_cuts[k])Add(result.fixed[k],sums);
       if (fabs(constraints.z4.determinant_residual)>result.max_determinant_residual)
         result.max_determinant_residual=fabs(constraints.z4.determinant_residual);
@@ -553,7 +554,10 @@ class HyperbolicCompositeDevice {
     return result;
   }
   DiagnosticSummary Diagnostics(ConstBuffer padded,Real exterior_radius=0,ConstBuffer surface={},
-                                int outer_first_order=0) {
+                                int outer_first_order=0, bool extended=false,
+                                std::array<Real,3> fixed_cuts={.12,.16,.25}) {
+    for(auto r:fixed_cuts)if(!std::isfinite(r)||r<0||r>=1)
+      throw std::invalid_argument("invalid fixed diagnostic cutoff");
     if (padded.extent(0)!=size_t(nf)*padded_count_ || !(exterior_radius>=0)
         || !std::isfinite(exterior_radius))
       throw std::invalid_argument("invalid device diagnostic storage/exterior cutoff");
@@ -568,7 +572,8 @@ class HyperbolicCompositeDevice {
     if(radial_plan_)kernel.radial=radial_plan_->Prepare(padded,surface);
     DiagnosticSummary result;
     Kokkos::parallel_reduce("hyperboloidal owned constraints",
-        Kokkos::RangePolicy<ExecutionSpace>(0,local_),Diagnose{kernel,first_,exterior_radius},result);
+        Kokkos::RangePolicy<ExecutionSpace>(0,local_),Diagnose{kernel,first_,exterior_radius,extended||zero_shift_restoration,
+          {fixed_cuts[0],fixed_cuts[1],fixed_cuts[2]}},result);
     if (result.first_bad==INT_MAX) result.first_bad=-1;
     return result;
   }

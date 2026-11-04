@@ -103,3 +103,32 @@ monitor evolved slice/metric regularity. Stationary qualification precedes
 boosted runs, with resolved puncture spacing and controlled timestep, followed
 by common-domain exterior and field-resolution analysis. Survival alone is
 not convergence.
+
+## Production driver extension
+
+Configured AMR accepts three optional trailing arguments:
+`max_seconds diagnostic_interval target_time`. With these present, the target
+is coordinate time (10M=10/3), the requested dt is held fixed after its
+characteristic-bound check, and the final step is shortened to hit the target.
+Diagnostics are scheduled on an absolute coordinate-time grid, with initial,
+walltime and final rows preserved. A healthy walltime checkpoint returns3;
+a numerical or I/O failure returns2 and cannot be used as a continuation.
+The old per-step qualification invocation remains available. The synthetic
+`dynamic` regrid fixture is rejected in production mode; production currently
+uses fixed SMR, not a claimed moving adaptive criterion.
+
+One native constraint pass accumulates candidate-enclosing and fixed cuts
+r>.1,.3,.6, with H/M/Mr and shift/D derivative maxima. Full candidate acceptance,
+expansion and mass gaps are recorded. Scri pole/clock values are cumulative
+maxima. Counter snapshots are cumulative across restarts, with bulk, surface
+and boundary events separate; segment differences must be taken rather than
+summing cumulative reports. The native checkpoint retains detailed event data.
+A restart topology reconstruction now explicitly permits initial multi-level
+tree construction without the evolution regrid-age delay.
+
+`check_production_controls.py` verifies identical native/compensation/event
+arrays against the pre-extension two-step stationary test, both with reduced
+diagnostic cadence and after a healthy walltime checkpoint (MPI2 to MPI1).
+The horizon seed is not bit-identical because finder calls differ. This is
+not a long-time or GPU qualification. Source/build provenance for the next
+Aurora experiment is separate from all frozen RF1 and BN1 snapshots.

@@ -1558,11 +1558,11 @@ void CollectiveLocal(F&& action) {
   throw std::runtime_error(text);
 }
 
-Diagnostic ReduceDiagnostic(Diagnostic q) {
+Diagnostic ReduceDiagnostic(Diagnostic q, bool extended=false) {
   static_assert(sizeof(q.total) == 9 * sizeof(Real), "diagnostic reduction layout");
   MPI_Allreduce(MPI_IN_PLACE, &q.total, 9, MPI_ATHENA_REAL, MPI_SUM, MPI_COMM_WORLD);
   MPI_Allreduce(MPI_IN_PLACE, &q.exterior, 9, MPI_ATHENA_REAL, MPI_SUM, MPI_COMM_WORLD);
-  if constexpr (h::zero_shift_restoration) {
+  if (h::zero_shift_restoration || extended) {
     for (int k = 0; k < 3; ++k)
       MPI_Allreduce(MPI_IN_PLACE, &q.fixed[k], 9, MPI_ATHENA_REAL, MPI_SUM, MPI_COMM_WORLD);
     MPI_Allreduce(MPI_IN_PLACE, q.gauge_max, 5, MPI_ATHENA_REAL, MPI_MAX, MPI_COMM_WORLD);

@@ -34,6 +34,24 @@ struct Snapshot {
   // floors, pre-floor signs, boundary signs, immutable historical event ledger.
   std::array<V, 8> data;
 };
+// Counters are cumulative across restarts; compare differences between segment
+// endpoints. Boundary interpolation events are kept separate from bulk/surface.
+void WriteCounters(std::ostream& o,const Snapshot& s){
+  Real bulk[8]={},surface[4]={},boundary[2]={};
+  for(size_t p=0;p<s.data[5].size();p+=16)
+    for(int f=0;f<2;++f)for(int k=0;k<4;++k)bulk[4*f+k]+=s.data[5][p+8*f+k];
+  for(size_t p=0;p<s.data[6].size();p+=8)
+    for(int k=0;k<4;++k)surface[k]+=s.data[6][p+k];
+  for(size_t p=0;p<s.data[7].size();p+=21){
+    if(s.data[7][p]<0){for(int k=0;k<2;++k)boundary[k]+=s.data[7][p+2+k];}
+    else for(int f=0;f<2;++f)for(int k=0;k<4;++k)bulk[4*f+k]+=s.data[7][p+5+8*f+k];
+  }
+  auto array=[&](const char* name,const auto& values){o<<",\""<<name<<"\":[";
+    bool comma=false;for(auto x:values){if(comma)o<<',';comma=true;o<<x;}o<<']';};
+  array("cumulative_floor_statistics",s.floors);array("cumulative_bulk_sign_counts",bulk);
+  array("cumulative_surface_sign_counts",surface);array("cumulative_boundary_sign_counts",boundary);
+  o<<",\"bulk_sign_order\":\"chi then lapse: negative_stage,negative_final,zero_stage,zero_final\"";
+}
 V GatherWidth(Evolution& e, Buffer owned, int width, bool edge = false) {
   const int total = edge ? e.surface_total : e.total;
   const auto source = e.Download(owned);
@@ -327,6 +345,8 @@ void Restore(h::CartesianAMR& a, const Snapshot& s) {
             flags[m] = 1;
         }
     }
+    for(int m=0;m<a.mesh->nmb_total;++m)
+      a.mesh->pmr->ncyc_since_ref(m)=a.mesh->pmr->refinement_interval;
     a.Regrid(flags);
   }
   if (size_t(a.mesh->nmb_total) != s.leaves.size())
@@ -428,11 +448,13 @@ int main(int argc, char** argv) {
   Kokkos::initialize(argc, argv);
   int code = 0;
   try {
-    if (argc < 7 || argc > (hyperbolic_reproduction::configured_formulation ? 9 : 8) ||
-        (hyperbolic_reproduction::configured_formulation && argc != 9))
+    const double invocation_started=MPI_Wtime();
+    const bool production=hyperbolic_reproduction::configured_formulation && argc==12;
+    if (argc < 7 || argc > (hyperbolic_reproduction::configured_formulation ? 12 : 8) ||
+        (hyperbolic_reproduction::configured_formulation && argc != 9 && argc != 12))
       throw std::invalid_argument(
           "usage: amr_evolution n minkowski|wave|boost steps dt output [restart|-] "
-          "[dynamic|fixed|uniform|smr] [configuration file (refined target)]");
+          "[dynamic|fixed|uniform|smr] [configuration file (refined target)] [max_seconds diagnostic_interval target_time]");
     const int n = std::stoi(argv[1]), kind = std::string(argv[2]) == "minkowski" ? 0
                                              : std::string(argv[2]) == "wave"    ? 1
                                              : std::string(argv[2]) == "boost"   ? 2
@@ -440,6 +462,13 @@ int main(int argc, char** argv) {
     const int stop = std::stoi(argv[3]);
     const Real requested_dt = std::stod(argv[4]);
     Real dt = requested_dt;
+    const double max_seconds=production?std::stod(argv[9]):0;
+    const Real diagnostic_interval=production?std::stod(argv[10]):0;
+    const Real target_time=production?std::stod(argv[11]):0;
+    if(production && (!(max_seconds>0)||!std::isfinite(max_seconds)||
+       !(diagnostic_interval>0)||!std::isfinite(diagnostic_interval)||
+       !(target_time>0)||!std::isfinite(target_time)))
+      throw std::invalid_argument("invalid production time controls");
     const std::string output = argv[5], restart = argv[6], policy = argc > 7 ? argv[7] : "dynamic";
     if (n < 12 || n % 2 || kind < 0 || stop < 0 || !std::isfinite(dt) || dt <= 0 ||
         (policy != "dynamic" && policy != "fixed" && policy != "uniform" && policy != "smr"))
@@ -462,6 +491,8 @@ int main(int argc, char** argv) {
     }
     if(policy=="smr" && (!hyperbolic_reproduction::configured_formulation || hyperbolic_reproduction::refined_configuration.smr_levels==0))
       throw std::invalid_argument("SMR requires configured nonzero refinement levels");
+    if(production && policy=="dynamic")
+      throw std::invalid_argument("dynamic fixture policy is not a production refinement criterion");
     AMRPerformance perf(output);
     Snapshot s;
     if (restart != "-")
@@ -552,7 +583,7 @@ int main(int argc, char** argv) {
     }
     if constexpr (hyperbolic_reproduction::configured_formulation) {
       const Real allowed = ev->SelectTimestep(requested_dt, restart != "-");
-      if (restart == "-")
+      if (restart == "-" && !production)
         dt = allowed;
       else
         ev->SynchronizeError(dt > allowed * (1 + 1e-12),
@@ -597,54 +628,97 @@ int main(int argc, char** argv) {
       history.open(output + ".history.jsonl");
       history << std::setprecision(17);
     }
+    if(production && !(target_time>ev->time))
+      throw std::invalid_argument("production restart must advance toward target");
     Real seed = s.seed;
     V ledger = s.data[7];
     uint64_t regrids = s.regrids;
     double began = MPI_Wtime();
+    double last_diag_seconds=0, last_step_seconds=0;
+    uint64_t last_recorded=std::numeric_limits<uint64_t>::max();
+    bool checkpointed=false;
+    const std::array<Real,3> fixed_cuts={.1,.3,.6};
+    Diagnostic last_diagnostic{};
+    Real last_cut=std::numeric_limits<Real>::quiet_NaN();
     auto record = [&] {
+      const double diagnostic_started=MPI_Wtime();
       perf.Next("diagnostics");
       auto& e = *ev;
       e.RefreshBoundary(dt);
       auto halo = e.exchange()->Fill(e.state);
+      e.null_ghost=std::max(e.null_ghost,halo.after);
       e.SynchronizeError(halo.invalid, "AMR halo geometry rejected");
-      const auto d = ReduceDiagnostic(e.kernel()->Diagnostics(e.exchange()->padded, 0, e.surface));
-      bool found = false;
-      Real mass = std::numeric_limits<Real>::quiet_NaN();
+      const Real nan=std::numeric_limits<Real>::quiet_NaN();
+      bool found = false, complete=false;
+      Real mass=nan,trial_radius=nan,trial_max_radius=nan,trial_rms=nan,cut=kind==2?nan:0;
+      int iterations=0;
       if (finder) {
         e.DownloadOwnedPadded();
-        for (int a = 0; a < 3; ++a)
-          finder->center[a] = e.puncture[a];
+        for (int a = 0; a < 3; ++a) finder->center[a] = e.puncture[a];
         finder->Find(e.steps, e.time);
+        finder->Write(e.steps,e.time);
         const auto q = finder->GetResult();
-        found = q.found;
-        if (found) {
-          mass = q.irreducible_mass;
-          seed = q.mean_radius;
-        }
+        found=q.found;complete=q.complete_surface;iterations=q.iterations;
+        trial_radius=q.last_mean_radius;trial_max_radius=q.last_max_radius;
+        trial_rms=q.last_expansion_rms;
+        if(found){mass=q.irreducible_mass;seed=q.mean_radius;}
+        if(complete && std::isfinite(trial_max_radius) && trial_max_radius>0)
+          cut=std::sqrt(e.puncture[0]*e.puncture[0]+e.puncture[1]*e.puncture[1]+
+                        e.puncture[2]*e.puncture[2])+trial_max_radius;
       }
-      if constexpr (hyperbolic_reproduction::configured_formulation)
-        MPI_Allreduce(MPI_IN_PLACE, &e.cfl, 1, MPI_ATHENA_REAL, MPI_MAX, MPI_COMM_WORLD);
-      if (e.rank == 0)
-        history << "{\"step\":" << e.steps << ",\"time\":" << e.time
-                << ",\"leaves\":" << amr.mesh->nmb_total
-                << ",\"H\":" << Norm(d.total.h2, d.total.volume)
-                << ",\"M\":" << Norm(d.total.m2, d.total.volume) << ",\"chi\":" << d.min_chi
-                << ",\"lapse\":" << d.min_lapse
-                << ",\"det_residual\":" << d.max_determinant_residual << ",\"null\":" << e.null_max
-                << ",\"ghost_null\":" << e.null_ghost << ",\"cfl\":" << e.cfl
-                << ",\"penalty\":" << h::fixed_scri_penalty_scale
-                << ",\"penalty_cfl\":" << e.scri_penalty_cfl_max << ",\"horizon_found\":" << found
-                << ",\"mass\":" << JsonNumber(mass) << ",\"tracker\":[" << e.puncture[0] << ','
-                << e.puncture[1] << ',' << e.puncture[2] << "]}\n";
+      auto d=ReduceDiagnostic(e.kernel()->Diagnostics(e.exchange()->padded,
+          std::isfinite(cut)?cut:0,e.surface,0,true,fixed_cuts),true);
+      e.SynchronizeError(d.invalid_cells,"AMR diagnostic volume geometry rejected");
+      if(!std::isfinite(cut)) d.exterior=h::HyperbolicCompositeDevice::DiagnosticSums{};
+      for(auto* v:{&e.null_max,&e.null_ghost,&e.pole_max,&e.clock_max,&e.cfl})
+        MPI_Allreduce(MPI_IN_PLACE,v,1,MPI_ATHENA_REAL,MPI_MAX,MPI_COMM_WORLD);
+      last_diagnostic=d;last_cut=cut;last_recorded=e.steps;
       if (e.rank == 0) {
-        history.flush();
-        std::cout << "accepted step " << e.steps << " leaves " << amr.mesh->nmb_total << " H "
-                  << Norm(d.total.h2, d.total.volume) << std::endl;
+        history << "{\"step\":" << e.steps << ",\"time\":" << e.time
+                << ",\"t_over_M\":" << 3*e.time << ",\"leaves\":" << amr.mesh->nmb_total
+                << ",\"H\":" << JsonNumber(Norm(d.total.h2,d.total.volume))
+                << ",\"M\":" << JsonNumber(Norm(d.total.m2,d.total.volume))
+                << ",\"Mr\":" << JsonNumber(Norm(d.total.mr2,d.total.volume))
+                << ",\"H_exterior\":" << JsonNumber(Norm(d.exterior.h2,d.exterior.volume))
+                << ",\"M_exterior\":" << JsonNumber(Norm(d.exterior.m2,d.exterior.volume))
+                << ",\"Mr_exterior\":" << JsonNumber(Norm(d.exterior.mr2,d.exterior.volume))
+                << ",\"exterior_cutoff\":" << JsonNumber(cut)
+                << ",\"chi\":" << d.min_chi << ",\"lapse\":" << d.min_lapse
+                << ",\"det_residual\":" << d.max_determinant_residual
+                << ",\"tracefree_residual\":" << d.max_tracefree_residual
+                << ",\"null\":" << e.null_max << ",\"ghost_null\":" << e.null_ghost
+                << ",\"pole_max\":" << e.pole_max << ",\"clock_max\":" << e.clock_max
+                << ",\"cfl\":" << e.cfl << ",\"penalty\":" << h::fixed_scri_penalty_scale
+                << ",\"penalty_cfl\":" << e.scri_penalty_cfl_max
+                << ",\"horizon_found\":" << found << ",\"horizon_complete\":" << complete
+                << ",\"horizon_trial_radius\":" << JsonNumber(trial_radius)
+                << ",\"horizon_max_radius\":" << JsonNumber(trial_max_radius)
+                << ",\"horizon_trial_expansion_rms\":" << JsonNumber(trial_rms)
+                << ",\"horizon_iterations\":" << iterations << ",\"mass\":" << JsonNumber(mass)
+                << ",\"tracker\":[" << e.puncture[0] << ',' << e.puncture[1] << ',' << e.puncture[2]
+                << "],\"fixed\":[";
+        for(int k=0;k<3;++k){if(k)history<<',';history<<"{\"cut\":"<<fixed_cuts[k]
+          <<",\"H\":"<<JsonNumber(Norm(d.fixed[k].h2,d.fixed[k].volume))
+          <<",\"M\":"<<JsonNumber(Norm(d.fixed[k].m2,d.fixed[k].volume))
+          <<",\"Mr\":"<<JsonNumber(Norm(d.fixed[k].mr2,d.fixed[k].volume))<<'}';}
+        history<<"],\"gauge_max\":[";
+        for(int k=0;k<5;++k){if(k)history<<',';history<<d.gauge_max[k];}
+        history<<"],\"wall_seconds\":"<<MPI_Wtime()-invocation_started<<"}\n";
+        history.flush();if(!history)throw std::runtime_error("AMR history write failed");
+        std::cout<<"accepted step "<<e.steps<<" time "<<e.time<<" leaves "<<amr.mesh->nmb_total
+                 <<" H "<<Norm(d.total.h2,d.total.volume)<<std::endl;
       }
+      last_diag_seconds=MPI_Wtime()-diagnostic_started;
     };
     record();
+    Real next_diagnostic=production?(std::floor(ev->time/diagnostic_interval+1e-9)+1)*diagnostic_interval:0;
     try {
-      while (ev->steps < uint64_t(stop)) {
+      while (production ? ev->time < target_time-1e-13 : ev->steps < uint64_t(stop)) {
+        if(production){
+          int wall_stop=MPI_Wtime()-invocation_started+last_step_seconds+last_diag_seconds+60>=max_seconds;
+          MPI_Allreduce(MPI_IN_PLACE,&wall_stop,1,MPI_INT,MPI_MAX,MPI_COMM_WORLD);
+          if(wall_stop){checkpointed=true;break;}
+        }
         if (policy == "dynamic" && (ev->steps == 2 || ev->steps == 4)) {
           perf.Next("regrid_capture");
           auto old = Capture(*ev, amr, kind, dt, regrids, seed, ledger);
@@ -704,13 +778,20 @@ int main(int argc, char** argv) {
         // The native RHS measures the actual local characteristic CFL on every
         // new leaf. Reject an excessive requested step; do not change scri scale.
         perf.Next("step");
-        ev->Step(dt);
+        const double step_started=MPI_Wtime();
+        ev->Step(production?std::min(dt,target_time-ev->time):dt);
+        last_step_seconds=MPI_Wtime()-step_started;
         for (int m = 0; m < amr.mesh->nmb_total; ++m)
           ++amr.mesh->pmr->ncyc_since_ref(m);
-        record();
+        if(!production || ev->time+1e-13>=next_diagnostic){
+          record();
+          if(production)next_diagnostic=(std::floor(ev->time/diagnostic_interval+1e-9)+1)*diagnostic_interval;
+        }
       }
+      if(last_recorded!=ev->steps)record();
     } catch (const std::exception& failure) {
       perf.Next("failure_capture");
+      const auto failure_snapshot=Capture(*ev,amr,kind,dt,regrids,seed,ledger);
       const auto capture = ev->failed_state.extent(0)
                                ? ev->Download(ev->CompleteState(ev->failed_state))
                                : ev->Download(ev->CompleteState(ev->state));
@@ -719,8 +800,11 @@ int main(int argc, char** argv) {
           std::ofstream f(output + ".failed-stage.bin", std::ios::binary);
           f.write(reinterpret_cast<const char*>(capture.data()), capture.size() * sizeof(Real));
           std::ofstream report(output + ".failure.json");
-          report << "{\"status\":\"failed\",\"accepted_steps\":" << ev->steps
-                 << ",\"error\":" << JsonString(failure.what()) << "}\n";
+          report << std::setprecision(17) << "{\"status\":\"failed\",\"accepted_steps\":" << ev->steps
+                 << ",\"time\":"<<ev->time<<",\"dt\":"<<dt<<",\"n\":"<<n
+                 << ",\"identity\":"<<JsonString(hyperbolic_reproduction::refined_configuration.identity)
+                 << ",\"checkpoint_admitted\":false,\"error\":" << JsonString(failure.what());
+          WriteCounters(report,failure_snapshot);report<<"}\n";
         }
       });
       perf.Generation(*ev, amr, "failed");
@@ -732,21 +816,35 @@ int main(int argc, char** argv) {
     perf.Next("checkpoint_write");
     CollectiveLocal([&] { Write(output + ".checkpoint", final); });
     perf.Generation(*ev, amr, "final");
-    perf.Save("completed");
+    perf.Save(checkpointed?"checkpointed":"completed");
+    if(checkpointed)code=3;
     if (ev->rank == 0) {
       std::ofstream report(output + ".report.json");
-      report << std::setprecision(17) << "{\"status\":\"completed\",\"backend\":\""
+      report << std::setprecision(17) << "{\"status\":\""<<(checkpointed?"checkpointed":"completed")<<"\",\"backend\":\""
              << Kokkos::DefaultExecutionSpace::name() << "\",\"ranks\":" << ev->size
              << ",\"steps\":" << ev->steps << ",\"regrids\":" << regrids
+             << ",\"time\":"<<ev->time<<",\"t_over_M\":"<<3*ev->time<<",\"dt\":"<<dt
+             << ",\"requested_dt\":"<<requested_dt<<",\"target_time\":"<<target_time
+             << ",\"diagnostic_interval\":"<<diagnostic_interval<<",\"max_seconds\":"<<max_seconds
+             << ",\"identity\":"<<JsonString(hyperbolic_reproduction::refined_configuration.identity)
+             << ",\"H\":"<<JsonNumber(Norm(last_diagnostic.total.h2,last_diagnostic.total.volume))
+             << ",\"M\":"<<JsonNumber(Norm(last_diagnostic.total.m2,last_diagnostic.total.volume))
+             << ",\"exterior_cutoff\":"<<JsonNumber(last_cut)
              << ",\"seconds\":" << MPI_Wtime() - began << ",\"floor_counts\":[" << final.floors[0]
              << ',' << final.floors[2] << ',' << final.floors[3]
-             << "],\"historical_event_records\":" << ledger.size() / 21 << "}\n";
+             << "],\"historical_event_records\":" << final.data[7].size() / 21
+             << ",\"checkpoint_admitted\":true,\"checkpoint_bytes\":"<<std::filesystem::file_size(output+".checkpoint")
+             << ",\"n\":"<<n<<",\"leaves\":"<<amr.mesh->nmb_total;
+      WriteCounters(report,final);report<<"}\n";
     }
   } catch (const std::exception& e) {
     std::cerr << "AMR qualification failed: " << e.what() << '\n';
     code = 2;
   }
+  int failed=code!=0 && code!=3;
+  MPI_Allreduce(MPI_IN_PLACE,&failed,1,MPI_INT,MPI_MAX,MPI_COMM_WORLD);
   MPI_Allreduce(MPI_IN_PLACE, &code, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
+  if(failed)code=2; // A rank-local I/O failure must outrank healthy walltime3.
   Kokkos::finalize();
   MPI_Finalize();
   return code;
