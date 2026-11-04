@@ -785,6 +785,12 @@ if(ENABLE_MPI)
   add_test(NAME hyperbolic_shift_3d_conformal_halo COMMAND hyperbolic_shift_3d_conformal_halo
     ${CMAKE_SOURCE_DIR}/inputs/hyperbolic_shift_3d/refined_convergence/central20_stationary_smr025_radial12_frame.cfg)
   set_tests_properties(hyperbolic_shift_3d_conformal_halo PROPERTIES RUN_SERIAL TRUE TIMEOUT 600)
+  add_hyperbolic_amr_executable(hyperbolic_shift_3d_stationary_gauge test_stationary_gauge.cpp)
+  target_compile_definitions(hyperbolic_shift_3d_stationary_gauge PRIVATE ${refined_science} HYPERBOLIC_CONFIGURED_FORMULATION=1)
+  target_compile_options(hyperbolic_shift_3d_stationary_gauge PRIVATE -ffp-contract=off)
+  add_test(NAME hyperbolic_shift_3d_stationary_gauge COMMAND hyperbolic_shift_3d_stationary_gauge
+    ${CMAKE_SOURCE_DIR}/inputs/hyperbolic_shift_3d/refined_convergence/central20_stationary_smr025_radial12_reference.cfg)
+  set_tests_properties(hyperbolic_shift_3d_stationary_gauge PROPERTIES RUN_SERIAL TRUE TIMEOUT 120)
   add_hyperbolic_amr_executable(hyperbolic_shift_3d_shift_separation test_shift_separation.cpp)
   target_compile_definitions(hyperbolic_shift_3d_shift_separation PRIVATE ${refined_science} HYPERBOLIC_CONFIGURED_FORMULATION=1)
   target_compile_options(hyperbolic_shift_3d_shift_separation PRIVATE -ffp-contract=off)

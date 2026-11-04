@@ -24,7 +24,7 @@ the frozen Aurora build are complete. Stationary6 N16 RF2 job9038055 completed10
 errors. Original worker/PBS failure was executable permission, independently
 verified with identical verifier bytes; all151 artifacts are preserved. The frame/separated-speed build completed. Its stationary20 job9038253 failed
 at0.463875M; all151artifacts are preserved and its state must not restart.
-Matched constant-driver job9038285 is submitted using unchanged frozen binary;
+Matched constant-driver job9038285 also failed at the same accepted step; both are fully preserved and neither may restart.
 consult state.json for current disposition before any action. Initial halo controls isolate
 a numerical frame-interpolation error. The principal audit motivates a
 separate gauge control but does not establish the sole cause of late growth. User explicitly authorizes SMR/AMR as needed and measured performance

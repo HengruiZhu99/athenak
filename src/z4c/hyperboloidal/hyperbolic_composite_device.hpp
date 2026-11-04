@@ -10,6 +10,7 @@
 #include <vector>
 #include "mesh/cubed_sphere/composite_difference.hpp"
 #include "z4c/hyperboloidal/hyperbolic_shift.hpp"
+#include "z4c/hyperboloidal/stationary_gauge_reference.hpp"
 #include "z4c/hyperboloidal/composite_dissipation.hpp"
 #include "z4c/hyperboloidal/scri_radial_device.hpp"
 #ifndef HYPERBOLIC_EXPERIMENTAL_TIMESTEP
@@ -76,6 +77,7 @@ class HyperbolicCompositeDevice {
     Real weight;
   };
   using GeometryBuffer = Kokkos::View<cubed_sphere::Point *, MemorySpace>;
+  using ReferenceBuffer = Kokkos::View<StationaryGaugeSource<Real> *, MemorySpace>;
   using KOTermBuffer = Kokkos::View<KOTerm *, MemorySpace>;
   using HostBuffer = Kokkos::View<Real *, Kokkos::HostSpace>;
 
@@ -85,6 +87,7 @@ class HyperbolicCompositeDevice {
   HyperbolicShiftParameters<Real> parameters_;
   IntBuffer active_, ko_offsets_, status_;
   GeometryBuffer geometry_;
+  ReferenceBuffer stationary_gauge_;
   Buffer volumes_, diagnostic_volumes_, rhs_, gap_, cfl_, uploaded_padded_;
   KOTermBuffer ko_terms_;
   HostBuffer host_rhs_, host_padded_;
@@ -107,6 +110,7 @@ class HyperbolicCompositeDevice {
     // Only Diagnostics sets this override; evolution retains its compiled stencil.
     int diagnostic_outer_first_order=0;
     HyperbolicShiftParameters<Real> parameters;
+    ReferenceBuffer stationary_gauge;
 
     KOKKOS_INLINE_FUNCTION int Offset(int axis, int amount) const {
       return amount*(axis == 0 ? 1 : (axis == 1 ? width : width*width));
@@ -278,7 +282,8 @@ class HyperbolicCompositeDevice {
         rate[7+t]=geometry_rate.a[ti[t]][tj[t]];
       }
       for (int i=0;i<3;++i) rate[15+i]=geometry_rate.lambda[i];
-      const auto gauge=HyperbolicGauge(x,u,B,D.value,p);
+      auto gauge=HyperbolicGauge(x,u,B,D.value,p);
+      if(p.stationary_outer_reference)ApplyStationaryGaugeSource(x,u.alpha.value,stationary_gauge(local),gauge);
       if (!gauge.valid) {status(local)=invalid_gauge;return;}
       rate[18]=gauge.lapse_regular+gauge.lapse_pole/omega.omega;
       const auto coefficient=ShiftCoefficients(r,u.alpha.value,u.chi.value,p);
@@ -530,7 +535,18 @@ class HyperbolicCompositeDevice {
     Kokkos::deep_copy(ko_terms_,host_terms);
   }
 
-  void Configure(const HyperbolicShiftParameters<Real>& p) { p.Validate(); parameters_=p; }
+  void Configure(const HyperbolicShiftParameters<Real>& p) {
+    p.Validate();parameters_=p;stationary_gauge_=ReferenceBuffer();
+    if(p.stationary_outer_reference){
+      StationaryGaugeReference reference(p);
+      stationary_gauge_=ReferenceBuffer("owned prescribed gauge sources",local_);
+      auto source=Kokkos::create_mirror_view(stationary_gauge_);
+      auto maps=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),geometry_);
+      for(int i=0;i<local_;++i){const auto*x=maps(i).x;
+        source(i)=reference.At(std::sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]));}
+      Kokkos::deep_copy(stationary_gauge_,source);
+    }
+  }
 
   Summary Evaluate(ConstBuffer padded,Real dt,bool adaptive=false,Real ko=.5,ConstBuffer surface={},ConstBuffer positive_ko={},bool direct_lapse_dissipation=false) {
     if (padded.extent(0)!=size_t(nf)*padded_count_ || !(dt>0) || !std::isfinite(dt)
@@ -540,6 +556,7 @@ class HyperbolicCompositeDevice {
         volumes_,rhs_,gap_,cfl_,n_,width_,padded_count_,dt,ko,adaptive};
     kernel.amr_cfl=amr_cfl_;
     kernel.parameters=parameters_;
+    kernel.stationary_gauge=stationary_gauge_;
     if(radial_plan_)kernel.radial=radial_plan_->Prepare(padded,surface);
     if(positive_ko.extent(0)&&positive_ko.extent(0)!=size_t(2)*padded_count_)throw std::invalid_argument("positive KO storage mismatch");
     kernel.positive_ko=positive_ko;
@@ -569,6 +586,7 @@ class HyperbolicCompositeDevice {
     kernel.diagnostic_outer_first_order=outer_first_order;
     kernel.amr_cfl=amr_cfl_;
     kernel.parameters=parameters_;
+    kernel.stationary_gauge=stationary_gauge_;
     if(radial_plan_)kernel.radial=radial_plan_->Prepare(padded,surface);
     DiagnosticSummary result;
     Kokkos::parallel_reduce("hyperboloidal owned constraints",

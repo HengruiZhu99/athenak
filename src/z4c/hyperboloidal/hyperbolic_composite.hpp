@@ -11,6 +11,7 @@
 #include "mesh/cubed_sphere/scri_radial_difference.hpp"
 #include "mesh/cubed_sphere/angular_dissipation.hpp"
 #include "z4c/hyperboloidal/hyperbolic_shift.hpp"
+#include "z4c/hyperboloidal/stationary_gauge_reference.hpp"
 #include "z4c/hyperboloidal/tensor_scri.hpp"
 #include "z4c/hyperboloidal/positive_variables.hpp"
 #include "z4c/hyperboloidal/composite_dissipation.hpp"
@@ -37,6 +38,7 @@ class HyperbolicComposite {
   std::unique_ptr<const cubed_sphere::ScriRadialDifference> radial_plan;
   HyperbolicShiftParameters<Real> parameters;
   std::shared_ptr<const ConformalHaloPlan> frame_halos;
+  std::vector<StationaryGaugeSource<Real>> stationary_gauge;
   V state,compensation,edge_compensation,failed_state,failed_boundary;
   int failed_stage=0;
   bool adaptive;
@@ -79,6 +81,7 @@ class HyperbolicComposite {
   void Configure(const HyperbolicShiftParameters<Real>& value) {
     value.Validate();
     parameters=value;
+    stationary_gauge.clear();
     frame_halos=value.conformal_frame_halos?std::make_shared<const ConformalHaloPlan>(grid,value.profile):nullptr;
     if (!value.profile.flat) return;
     for (size_t p=0; p<grid.active.size(); ++p) {
@@ -368,6 +371,12 @@ class HyperbolicComposite {
     }
   }
   V RHS(const V&values,Real dt,V&edge_rate){
+    // CPU reference sources are lazy: native device evolution uses only its
+    // owned source buffer and does not allocate/evaluate a replicated table.
+    if(parameters.stationary_outer_reference && stationary_gauge.empty()){
+      StationaryGaugeReference reference(parameters);stationary_gauge.reserve(grid.active.size());
+      for(const auto&point:grid.geometry)stationary_gauge.push_back(reference.At(Radius(point.x)));
+    }
     try{return EvaluateRHS(values,dt,edge_rate);}
     catch(...){failed_state=values;failed_boundary=scri.values;throw;}
   }
@@ -394,7 +403,8 @@ class HyperbolicComposite {
       if(!HyperbolicDamping(x,u,o,parts,parameters))throw std::runtime_error("invalid bulk source");
       Z4cRHS<Real> rate{};if(!AssembleInterior(parts,o.omega,rate))throw std::runtime_error("invalid interior rate");
       StoreGeometry(rate,&out[p*nf]);
-      const auto B=Vector(19,v,d),D=Vector(25,v,d);const auto gauge=HyperbolicGauge(x,u,B,D.value,parameters);
+      const auto B=Vector(19,v,d),D=Vector(25,v,d);auto gauge=HyperbolicGauge(x,u,B,D.value,parameters);
+      if(parameters.stationary_outer_reference)ApplyStationaryGaugeSource(x,u.alpha.value,stationary_gauge.at(p),gauge);
       if(!gauge.valid)throw std::runtime_error("invalid hyperbolic gauge");
       out[p*nf+18]=gauge.lapse_regular+gauge.lapse_pole/o.omega;
       const Real r=Radius(x);const auto c=ShiftCoefficients(r,u.alpha.value,u.chi.value,parameters);

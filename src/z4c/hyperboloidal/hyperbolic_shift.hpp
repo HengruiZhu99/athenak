@@ -136,6 +136,9 @@ template<class T> struct HyperbolicShiftParameters {
   bool conformal_frame_halos=false;
   // Optional field-dependent inner driver; outer gauge remains unchanged.
   bool separated_shift_speeds=false;
+  // Prescribed stationary outer gauge only; geometric equations are untouched.
+  bool stationary_outer_reference=false;
+  T reference_start_M=4, reference_end_M=12;
   T inner_begin=InnerTelegrapher::begin, inner_end=InnerTelegrapher::end;
   T inner_gamma=InnerTelegrapher::shift_gamma;
   T bulk_mu = 4, ratio = 2, damping = 1, restoring = 4;
@@ -143,6 +146,10 @@ template<class T> struct HyperbolicShiftParameters {
   T inner_z4 = 8, kappa1 = 4, kappa2 = T(-.99);
   void Validate() const {
     profile.Validate();
+    if (stationary_outer_reference && (!configured_conformal_frame || !direct_outer ||
+        !inner_telegrapher || !profile.flat || !std::isfinite(reference_start_M) ||
+        !std::isfinite(reference_end_M) || !(reference_start_M>2 && reference_end_M>reference_start_M)))
+      throw std::invalid_argument("stationary reference requires configured flat direct outer gauge and valid slice");
     if (separated_shift_speeds && (!configured_conformal_frame || !direct_outer || !inner_telegrapher || ratio!=T(2)))
       throw std::invalid_argument("separated shift speeds require configured direct outer gauge with ratio 2");
     if (profile.flat && !configured_conformal_frame)
@@ -277,6 +284,20 @@ template<class T> struct HyperbolicGaugeParts {
   T shift_regular[3]{}, shift_pole[3]{}, flux_rate[3]{};
   bool valid=false;
 };
+
+// Host-precomputed prescribed sources, never inferred from evolved geometry.
+// All three corrections already include the complete-RHS outer blend weight.
+template<class T> struct StationaryGaugeSource {
+  T alpha{}, shift_ratio{}, lapse_offset{}, lapse_linear{}, shift_offset{};
+};
+template<class T> KOKKOS_INLINE_FUNCTION
+void ApplyStationaryGaugeSource(const T x[3],T alpha,const StationaryGaugeSource<T>&s,
+                               HyperbolicGaugeParts<T>&g) {
+  g.lapse_regular+=s.lapse_offset+s.lapse_linear*(alpha-s.alpha);
+  for(int i=0;i<3;++i)g.shift_regular[i]+=s.shift_offset*x[i];
+  g.valid=g.valid&&Kokkos::isfinite(g.lapse_regular);
+  for(int i=0;i<3;++i)g.valid=g.valid&&Kokkos::isfinite(g.shift_regular[i]);
+}
 
 // B is a vector with the fixed Euclidean reference raising operation.
 // D is the shift auxiliary, and is never substituted for u.lambda.

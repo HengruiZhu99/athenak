@@ -1,0 +1,19 @@
+{
+  "command": [
+    "mpiexec",
+    "-n",
+    "2",
+    "build-refined-convergence/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined_amr",
+    "16",
+    "boost",
+    "3",
+    ".000125",
+    "output/refined-convergence/reference-wrong-policy-reject",
+    "output/refined-convergence/reference-stationary-n16-mpi2.checkpoint",
+    "smr",
+    "inputs/hyperbolic_shift_3d/refined_convergence/central20_stationary_smr025_radial12_frame.cfg"
+  ],
+  "returncode": 2,
+  "output": "AMR qualification failed: checkpoint formulation identity mismatch\nAMR qualification failed: checkpoint formulation identity mismatch\n--------------------------------------------------------------------------\n\nprterun detected that one or more processes exited with non-zero status,\nthus causing the job to be terminated. The first process to do so was:\n\n   Process name: [prterun-PU-KL2XFPVQ0D-24071@1,1]\n   Exit code:    2\n--------------------------------------------------------------------------\n",
+  "expected_rejection": true
+}

@@ -7,10 +7,12 @@
 #include <mpi.h>
 #include <iomanip>
 #include <map>
+#include <memory>
 #include <sstream>
 #include "fixed_composite_mesh.hpp"
 #include "z4c/hyperboloidal/hyperbolic_shift.hpp"
 #include "z4c/hyperboloidal/native_wormhole.hpp"
+#include "z4c/hyperboloidal/stationary_gauge_reference.hpp"
 #ifndef HYPERBOLIC_CONFIGURED_FORMULATION
 #define HYPERBOLIC_CONFIGURED_FORMULATION 0
 #endif
@@ -28,6 +30,7 @@ struct RefinedConfiguration {
   bool core_bounds_overridden=false;
   int smr_levels=0;Real smr_radius=.05;
   std::string identity;
+  std::shared_ptr<z4c::hyperboloidal::StationaryGaugeReference> stationary_reference;
   cubed_sphere::CompositeMesh Mesh(int n) const {
     cubed_sphere::CompositeMesh mesh(core_half_width,shell_radii,1,n,3,core_subdivisions,shell_inner_radius);
     mesh.evolved_overlap=3;mesh.continuous_cartesian_core=true;return mesh;
@@ -44,7 +47,7 @@ struct RefinedConfiguration {
     std::map<std::string, std::string> values;
     const std::set<std::string> allowed = {
         "omega_profile", "omega_flat_radius", "omega_outer_radius", "omega_plateau", "gauge_begin",
-        "gauge_end",     "buffer_cells",      "cfl_target",         "shell_radii", "core_half_width", "shell_inner_radius", "core_subdivisions", "initial_start_M", "initial_end_M", "boost_velocity", "smr_levels", "smr_radius", "halo_frame", "shift_speed_policy"};
+        "gauge_end",     "buffer_cells",      "cfl_target",         "shell_radii", "core_half_width", "shell_inner_radius", "core_subdivisions", "initial_start_M", "initial_end_M", "boost_velocity", "smr_levels", "smr_radius", "halo_frame", "shift_speed_policy", "outer_gauge"};
     std::string line;
     while (std::getline(input, line)) {
       line = Trim(line.substr(0, line.find('#')));
@@ -119,6 +122,10 @@ struct RefinedConfiguration {
     const auto shift_policy=values.count("shift_speed_policy")?values.at("shift_speed_policy"):"constant";
     if(shift_policy!="constant"&&shift_policy!="separated")throw std::invalid_argument("shift_speed_policy must be constant or separated");
     gauge.separated_shift_speeds=shift_policy=="separated";
+    const auto outer_gauge=values.count("outer_gauge")?values.at("outer_gauge"):"original";
+    if(outer_gauge!="original"&&outer_gauge!="stationary-reference")throw std::invalid_argument("outer_gauge must be original or stationary-reference");
+    gauge.stationary_outer_reference=outer_gauge=="stationary-reference";
+    gauge.reference_start_M=initial_start_M;gauge.reference_end_M=initial_end_M;
     if(gauge.conformal_frame_halos&&!gauge.profile.flat)throw std::invalid_argument("legacy-frame halo control requires flat profile");
     gauge.inner_begin =
         number("gauge_begin", gauge.profile.flat ? gauge.profile.outer_radius + .06 : .2);
@@ -195,7 +202,10 @@ struct RefinedConfiguration {
       out << r << ',';
     if(gauge.conformal_frame_halos)out<<";halo_frame=legacy-cartesian-to-shell-v1";
     if(gauge.separated_shift_speeds)out<<";shift_speed_policy=separated-inner-v1";
+    if(gauge.stationary_outer_reference)out<<";outer_gauge=stationary-reference-v1;initial-lapse-blend=flat-to-inner-begin";
     identity = out.str();
+    stationary_reference.reset();
+    if(gauge.stationary_outer_reference)stationary_reference=std::make_shared<z4c::hyperboloidal::StationaryGaugeReference>(gauge);
   }
   void CheckCollective() const {
     int rank = 0;
@@ -218,6 +228,13 @@ struct RefinedConfiguration {
                                                         (gauge.inner_end - gauge.inner_begin));
     for (int a = 0; a < 3; ++a)
       fields[22 + a] = (1 - weight) * x[a];
+    if(stationary_reference && r>gauge.profile.flat_radius){
+      const auto reference=stationary_reference->At(r);
+      const Real blend=z4c::hyperboloidal::Smoothstep9((r-gauge.profile.flat_radius)/(gauge.inner_begin-gauge.profile.flat_radius));
+      const Real A=(1+r*r)/2;
+      fields[18]=(1-blend)*(fields[18]+A)+blend*reference.alpha-A;
+      for(int a=0;a<3;++a)fields[22+a]=reference.shift_ratio*x[a];
+    }
   }
   void WriteIdentity(std::ostream& out) const {
     if (identity.empty())
