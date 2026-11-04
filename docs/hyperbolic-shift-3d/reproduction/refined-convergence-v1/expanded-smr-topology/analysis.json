@@ -1,0 +1,101 @@
+{
+  "reference_x_at_10M": 0.03372287847325656,
+  "original_leaves": 232,
+  "original_finest_cube": [
+    -0.05,
+    0.05
+  ],
+  "original_max_enclosing_radius_at_positive_reference_10M": 0.010027121526743446,
+  "cases": {
+    "cube": {
+      "leaves": 1408,
+      "level_counts": {
+        "1": 448,
+        "2": 448,
+        "3": 512
+      },
+      "finest_lower": [
+        -0.09999999999999998,
+        -0.09999999999999998,
+        -0.09999999999999998
+      ],
+      "finest_upper": [
+        0.09999999999999998,
+        0.09999999999999998,
+        0.09999999999999998
+      ],
+      "finest_dx": 0.001562499999999998,
+      "four_cell_buffer": 0.006249999999999992,
+      "max_enclosing_radius_at_reference_10M": {
+        "-1": 0.06002712152674343,
+        "1": 0.06002712152674343
+      },
+      "nominal_core_cell_ratio_to_original": 6.068965517241379,
+      "nominal_total_cell_ratio_with_radial18": 4.458823529411765,
+      "actual_four_node_capacity_blocks_per_rank": 32,
+      "ceil_leaves_per_rank_48": 30,
+      "qualified_volume_disjointness_and_rectangular_finest_union": true
+    },
+    "offset-tube": {
+      "leaves": 316,
+      "level_counts": {
+        "0": 52,
+        "1": 84,
+        "2": 84,
+        "3": 96
+      },
+      "finest_lower": [
+        -0.04999999999999999,
+        -0.04999999999999999,
+        -0.04999999999999999
+      ],
+      "finest_upper": [
+        0.09999999999999998,
+        0.04999999999999999,
+        0.04999999999999999
+      ],
+      "finest_dx": 0.001562499999999998,
+      "four_cell_buffer": 0.006249999999999992,
+      "max_enclosing_radius_at_reference_10M": {
+        "-1": 0.01002712152674344,
+        "1": 0.04375
+      },
+      "nominal_core_cell_ratio_to_original": 1.3620689655172413,
+      "nominal_total_cell_ratio_with_radial18": 1.2470588235294118,
+      "actual_four_node_capacity_blocks_per_rank": 32,
+      "ceil_leaves_per_rank_48": 7,
+      "qualified_volume_disjointness_and_rectangular_finest_union": true
+    },
+    "symmetric-tube": {
+      "leaves": 400,
+      "level_counts": {
+        "0": 48,
+        "1": 112,
+        "2": 112,
+        "3": 128
+      },
+      "finest_lower": [
+        -0.09999999999999998,
+        -0.04999999999999999,
+        -0.04999999999999999
+      ],
+      "finest_upper": [
+        0.09999999999999998,
+        0.04999999999999999,
+        0.04999999999999999
+      ],
+      "finest_dx": 0.001562499999999998,
+      "four_cell_buffer": 0.006249999999999992,
+      "max_enclosing_radius_at_reference_10M": {
+        "-1": 0.04375,
+        "1": 0.04375
+      },
+      "nominal_core_cell_ratio_to_original": 1.7241379310344827,
+      "nominal_total_cell_ratio_with_radial18": 1.4941176470588236,
+      "actual_four_node_capacity_blocks_per_rank": 32,
+      "ceil_leaves_per_rank_48": 9,
+      "qualified_volume_disjointness_and_rectangular_finest_union": true
+    }
+  },
+  "qualification": "Actual N16 AthenaK octree balance/redistribution and native field-transfer lifecycle, MPI2 topology probes, no evolution or admitted physics checkpoint. Wider cube required analysis capacity2048/ranks+8 after original local two-rank capacity rejection; production capacity not changed. Box variants use analysis-only rectangular flags with existing Regrid API and are not implemented as production runtime policies yet. Finest union proven rectangular/disjoint with total core volume. Reference +/- k*v*t used only for coverage estimates; actual gauge motion, horizon shape and gradients must be measured. Nominal cell-count ratios are not memory, runtime or speedup measurements. Same fine spacing is coverage expansion, not resolution refinement."
+}

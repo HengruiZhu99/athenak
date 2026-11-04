@@ -589,3 +589,37 @@ body is bit-identical after generalizing the preparation CLI. The radial
 reader rejects the local identity as expected. There is no admitted Aurora
 radial18 endpoint yet: positive report/norm reproduction remains required
 before any spatial result is interpreted. No production build changed.
+
+### Boosted-follow-up coverage and topology cost
+
+`probe_smr_topology.cpp` exercises the existing AthenaK octree/refinement,
+balance, redistribution and registered native field-transfer lifecycle,
+without evolving physical fields. `analyze_expanded_smr.py` verifies disjoint
+leaf interiors, total core volume and rectangular finest-level unions.
+Evidence and inspected coverage/cost plot: `expanded-smr-topology/`.
+
+A wider all-direction location target produces1408 Cartesian leaves, with
+a finest cube[-.1,.1]^3, versus232 leaves and[-.05,.05]^3 currently. The local
+two-rank probe first exceeded its1040-total allocation capacity; this was a
+topology-probe resource rejection, not numerical evolution failure. A separate
+analysis allocation with2048/ranks+8 capacity completed. The production
+four-node cap32blocks/rank would geometrically fit1408 leaves, but memory and
+runtime have not been measured for this larger evolution. No guard changed.
+
+Static rectangular target flags using the same Regrid API produce316 leaves
+for an offset tube and400 for a symmetric tube. The latter's actual finest
+union is[-.1,.1]×[-.05,.05]², with unchanged fine dx=.0015625. Together with
+radial18 shells, its nominal cell count is1.494x the original narrow-SMR
+radial18 configuration, versus4.459x for the wider cube. These are cell-count
+ratios, not claimed speedups or exact checkpoint/memory estimates.
+
+Under either sign of the reference k*v*t displacement at10M (magnitude.033723),
+the symmetric tube accommodates an enclosing radius up to.04375 plus four
+fine-cell widths; the original patch permits only.01003. The offset tube is
+not robust to reversing the drift sign. These are geometric estimates: the
+live gauge trajectory, evolving horizon and gradients must be checked, and
+coverage is not resolution convergence. Rectangular target flags exist only
+in this analysis tool, not yet as a production input policy. The frozen
+stationary/radial controls are unchanged. Before a boosted run, qualify the
+chosen static policy/initial fields and monitor actual fine-support margins;
+use the existing AMR infrastructure rather than a separate mesh engine.
