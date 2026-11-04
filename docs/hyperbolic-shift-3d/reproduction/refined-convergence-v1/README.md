@@ -482,7 +482,8 @@ cost. All measurements, source hashes and integrity checks are preserved in
 `storage-performance/`. No additional launcher tests or repeated physics
 checks were performed.
 
-The v7 bounded-control package is now installed alongside v6, not submitted.
+The v7 bounded-control package was installed alongside v6 before submission;
+its subsequent job dispositions are recorded below.
 All15 records, modes, reused verifier and unchanged scientific source/manifest/
 binary hashes were checked. Archive SHA256
 `e928da71a072799d74a069184b0fa53c0678b99c574d8335075d50f51f4a1b33`;
@@ -539,7 +540,7 @@ use final totals or segment differences, never sum cumulative reports.
 First-segment chi floor totals are203472 stage/67832 final; lapse floors zero.
 
 Current debug-scaling max_run is one job per user. Therefore the installed v7
-matched-dt .6M controls will follow current reference disposition sequentially;
+matched-dt .6M controls follow the completed reference sequentially;
 no new parallel launcher or duplicate submission is needed.
 
 ### Initial versus evolved slicing profiles
@@ -651,10 +652,10 @@ boundary sign events. These are attempted pre-floor states, not negative
 admitted fields. Their location is distinct from the dominant exterior error;
 this alone does not exclude causal influence. See `reference-sign-localization/`.
 
-Fresh time-control job9038572 is running on four nodes with the frozen v7
-launcher, unchanged radial12 grid and dt=.00003125, targeting.6M. The fresh
-radial18 control will use the same dt/target after its terminal admission and
-preservation. Neither restarts from the completed10M state. No build, freeze,
+Fresh time-control job9038572 used four nodes with the frozen v7 launcher,
+unchanged radial12 grid and dt=.00003125, targeting.6M. It completed and was
+preserved; paired radial18 job9038626 now uses the same dt/target. Neither
+restarts from the completed10M state. No build, freeze,
 smoke or long reference run is repeated.
 
 Performance work is measurement-driven. The observed halo/work imbalance
@@ -687,3 +688,23 @@ costs predicts lower local-work imbalance on segment02's independent timings,
 but no new GPU partition has been run and no speedup is claimed. Explicitly
 separate this performance preparation from the unchanged radial/time physics
 controls.
+
+The time-refinement control9038572 completed.6M/6400steps with native/worker/
+PBS success and frozen admission. All152 artifacts are locally hash/length
+verified; the unchanged checkpoint's native reconstruction reproduces full
+and fixed report norms within1.02e-13 scaled. At the five common recorded
+times0,.15,.30,.45,.60M, fourfold timestep reduction changes exterior H/M by
+at most.0017933%/.0014662%. At.6M, fixed r>.3 H/M are.0821313833/.5660309414.
+Thus the early exterior error is essentially insensitive to this timestep
+refinement; this alone does not establish the spatial cause or time order.
+See `time-control-comparison/`; its plots use only matched recorded times so
+the different diagnostic cadences do not create a misleading visual gap.
+
+Fresh paired radial18 job9038626 is now running on four nodes, with identical
+dt=.00003125 and .6M target. Source, initial geometry/gauge, core/angles,
+effective boundary penalty and final scri shell remain unchanged. Its bound
+plan SHA256 is6aa4eee16a6fb122a561803934db61ce117166c140a6e65b9a39f14b88c68c8d.
+No new performance partition is used in either physical control. Await full
+terminal admission/preservation, then run `reconstruct_radial_control.py
+--variant radial` and `compare_short_radial_controls.py`; never repeat the
+completed time/reference evolutions or diagnostics.

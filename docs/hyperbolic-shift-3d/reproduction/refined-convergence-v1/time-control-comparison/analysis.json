@@ -1,0 +1,157 @@
+{
+  "status": "both_controls_admitted",
+  "history_sha256": [
+    "3679fdb6e93d4fe4ada4cc64a1db4f7b6d65fbdaa9efd68f8a80dbd91c4a3a2b",
+    "781b2184a38e89a7f39cb970d9163b1d85917c6076878af6cb2a5ae2e6679f3b"
+  ],
+  "baseline_dt": 0.000125,
+  "smaller_dt": 3.125e-05,
+  "matched_recorded_times": [
+    {
+      "t_over_M": 0,
+      "max_time_mismatch_M": 0,
+      "relative_fixed03_change": {
+        "H": 0.0,
+        "M": 0.0,
+        "Mr": 0.0
+      },
+      "baseline_fixed03": {
+        "cut": 0.3,
+        "H": 0.00026427384461978783,
+        "M": 0.0014571278549138891,
+        "Mr": 0.0014772758221356331
+      },
+      "smaller_dt_fixed03": {
+        "cut": 0.3,
+        "H": 0.00026427384461978783,
+        "M": 0.0014571278549138891,
+        "Mr": 0.0014772758221356331
+      }
+    },
+    {
+      "t_over_M": 0.1500000000000001,
+      "max_time_mismatch_M": 6.2450045135165055e-15,
+      "relative_fixed03_change": {
+        "H": 1.793213256973125e-05,
+        "M": 1.4661997926879167e-05,
+        "Mr": 1.460516610229945e-05
+      },
+      "baseline_fixed03": {
+        "cut": 0.3,
+        "H": 0.03260490304247056,
+        "M": 0.22180662599006823,
+        "Mr": 0.22198633073373084
+      },
+      "smaller_dt_fixed03": {
+        "cut": 0.3,
+        "H": 0.03260548771791434,
+        "M": 0.22180987811835867,
+        "Mr": 0.22198957288096366
+      }
+    },
+    {
+      "t_over_M": 0.3000000000000002,
+      "max_time_mismatch_M": 2.2815083156046967e-14,
+      "relative_fixed03_change": {
+        "H": 1.7054300384788945e-05,
+        "M": 1.3236303473496136e-05,
+        "Mr": 1.3165927771341401e-05
+      },
+      "baseline_fixed03": {
+        "cut": 0.3,
+        "H": 0.059107391347920556,
+        "M": 0.40505352676963774,
+        "Mr": 0.40534396329464245
+      },
+      "smaller_dt_fixed03": {
+        "cut": 0.3,
+        "H": 0.05910839938312757,
+        "M": 0.4050588881810411,
+        "Mr": 0.4053493000239857
+      }
+    },
+    {
+      "t_over_M": 0.44999999999999196,
+      "max_time_mismatch_M": 2.220446049250313e-15,
+      "relative_fixed03_change": {
+        "H": 1.6421337048599938e-05,
+        "M": 1.2457064620052805e-05,
+        "Mr": 1.2377295774523844e-05
+      },
+      "baseline_fixed03": {
+        "cut": 0.3,
+        "H": 0.0739089290542857,
+        "M": 0.5085483434287779,
+        "Mr": 0.5089182122295254
+      },
+      "smaller_dt_fixed03": {
+        "cut": 0.3,
+        "H": 0.0739101427377206,
+        "M": 0.5085546784483543,
+        "Mr": 0.5089245112607632
+      }
+    },
+    {
+      "t_over_M": 0.5999999999999754,
+      "max_time_mismatch_M": 2.4646951146678475e-14,
+      "relative_fixed03_change": {
+        "H": 1.5781167307160615e-05,
+        "M": 1.1781324369852797e-05,
+        "Mr": 1.1696638356983868e-05
+      },
+      "baseline_fixed03": {
+        "cut": 0.3,
+        "H": 0.08213008714223195,
+        "M": 0.5660242728554012,
+        "Mr": 0.5664200602363605
+      },
+      "smaller_dt_fixed03": {
+        "cut": 0.3,
+        "H": 0.0821313832508781,
+        "M": 0.566030941370961,
+        "Mr": 0.5664266854469632
+      }
+    }
+  ],
+  "max_abs_relative_fixed03_change": {
+    "H": 1.793213256973125e-05,
+    "M": 1.4661997926879167e-05,
+    "Mr": 1.460516610229945e-05
+  },
+  "smaller_dt_rows": 9,
+  "smaller_dt_online_accepted": 9,
+  "smaller_dt_native_seconds": 1347.0777927893214,
+  "smaller_dt_counters": {
+    "cumulative_floor_statistics": [
+      0,
+      0,
+      145520,
+      48512,
+      0.0013531646933869306,
+      0,
+      0,
+      0
+    ],
+    "cumulative_bulk_sign_counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "cumulative_surface_sign_counts": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "cumulative_boundary_sign_counts": [
+      0,
+      0
+    ]
+  },
+  "qualification": "Same radial12 mesh, geometry, gauge, fixed effective boundary penalty and native operator. Fixed r>.3 outside complete recorded candidate enclosures. Exact recorded-time matches, no interpolation/smoothing. Diagnostic cadence differs but does not modify evolved fields. Fourfold dt reduction barely changes exterior residuals through.6M; this does not prove a spatial cause, time-order, long-time accuracy or asymptotic convergence. Baseline terminal counters belong to4.782375M and are not compared to.6M totals."
+}

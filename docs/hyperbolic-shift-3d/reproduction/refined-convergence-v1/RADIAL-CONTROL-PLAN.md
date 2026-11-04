@@ -13,8 +13,8 @@ The bounded comparison is:
 | time-refinement control | radial12 | .00003125 | fresh .6M |
 | radial-refinement control | radial18 | .00003125 | fresh .6M |
 
-The time-refinement control9038572 is running; the radial-refinement control
-follows its verified terminal disposition. The refined-grid characteristic
+The time-refinement control9038572 completed.6M with admission and local
+preservation; radial-refinement control9038626 is running. The refined-grid characteristic
 limit is already qualified locally. Use
 the same native scientific binary if its immutable runtime configuration
 support suffices; freeze and hash-bind each distinct input and exact identity.

@@ -41,7 +41,7 @@ features throughout evolution; scri null/pole/clock behavior; moving-horizon
 acceptance/mass gaps, trajectory, floor/sign counts and cost. Explicitly report
 remaining limitations and do not mark complete without evidence for all parts.
 
-New radial isolation: initial native RHS residuals in .90–.95 decrease with resolution (fitted orders3.64–3.88); selective fourfold radial refinement reduces them206–246x. The corrected outer gauge survives beyond the old failure, but large evolved exterior residuals remain. See RADIAL-CONTROL-PLAN.md: fresh temporal control9038572 is running; radial control follows its verified disposition. The full stationary/boosted convergence goal remains active.
+New radial isolation: initial native RHS residuals in .90–.95 decrease with resolution (fitted orders3.64–3.88); selective fourfold radial refinement reduces them206–246x. The corrected outer gauge survives beyond the old failure, but large evolved exterior residuals remain. See RADIAL-CONTROL-PLAN.md: fresh temporal control9038572 completed.6M and its admitted same-grid comparison shows exterior changes below.002%; paired radial control9038626 is running. The full stationary/boosted convergence goal remains active.
 
 Initial findings: RF1 narrow Omega join .18–.22 worsens short-time exterior
 constraints. Its parser prevents a wide join because gauge onset must remain

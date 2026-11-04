@@ -1,8 +1,8 @@
 {
-  "status": "stationary_reference_time_control_running",
-  "current_job": "9038572.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "status": "stationary_reference_radial_control_running",
+  "current_job": "9038626.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
   "branch": "codex/refined-convergence",
-  "next": "Monitor existing9038572 fresh radial12 dt.00003125 control to.6M. After terminal admission/preservation submit fresh equal-dt radial18 control once. Reference-v2 completed10M; no continuation.",
+  "next": "Monitor existing radial9038626; never duplicate. Finish local timecontrol preservation/reconstruction. On admitted radial endpoint reconstruct and compare equal-dt radial/time controls. Healthy same-case walltime continuation only.",
   "goal_active": true,
   "historical_startup_failure": {
     "job": "9038031",
@@ -87,6 +87,17 @@
       "negative_chi_cells": 8,
       "negative_chi_cell_radius": 0.0013531646934132,
       "qualification": "Admitted unchanged endpoint, central sign events distinct from dominant exterior error; causal radial test pending."
+    },
+    "time_control_06M": {
+      "job": "9038572",
+      "remote_admitted": true,
+      "local_artifacts_verified": true,
+      "dt": 3.125e-05,
+      "target_M": 0.6,
+      "checkpoint_sha256": "84c4ee93d85df0896f07edbc6ea1140f239a7b46e531b49412652714c67c33f9",
+      "max_relative_exterior_H_change": 1.793213256973125e-05,
+      "max_relative_exterior_M_change": 1.4661997926879167e-05,
+      "qualification": "Matched recorded times on same grid relative to dt.000125; no interpolation. Time refinement does not materially change early exterior residuals. Radial cause remains to be tested."
     }
   },
   "historical_stationary6": {
@@ -250,17 +261,17 @@
   "active_control": {
     "root": "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/stationary-reference-v2",
     "status": "running",
-    "current_job": "9038572.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "current_job": "9038626.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
     "launcher": "launcher-v7",
-    "variant": "time",
+    "variant": "radial",
     "n": 16,
     "dt": 3.125e-05,
     "target_M": 0.6,
     "nodes": 4,
     "ranks": 48,
     "source_commit": "b52f09723b9c5a51340401bf91a7bf4426d8f339",
-    "plan": "campaigns/stationary20-reference-time-dt4-n16-segment01/plan.json",
-    "plan_sha256": "ba16737cc5deedbfae7a431d130ba7d9dce248205c087fa2242b074d8fa56a2c",
+    "plan": "campaigns/stationary20-reference-radial-dt4-n16-segment01/plan.json",
+    "plan_sha256": "6aa4eee16a6fb122a561803934db61ce117166c140a6e65b9a39f14b88c68c8d",
     "current_restart": null
   },
   "publication": {
@@ -269,10 +280,10 @@
     "reason": "Prior GitHub internal commit_refs_rules rejection; latest SSH attempt has no agent identities and HTTPS no saved credential. User renewal requested once asynchronously. Local commits/scientific Aurora snapshots preserved."
   },
   "next_analysis": "Reference10M endpoint/history reconstruction complete. Time-control9038572 then equal-dt radial18; preserve same-case science. Performance work targets measured halo/work imbalance with parity before use.",
-  "local_evidence_commit": "7d26fcb72",
+  "local_evidence_commit": "6f8bcb5bb",
   "publication_status": "Local evidence committed; GitHub publication still pending restored authentication (already requested once). Aurora job unaffected.",
   "prepared_radial_controls": {
-    "status": "time_control_running",
+    "status": "time_complete_radial_running",
     "launcher": "launcher-v7",
     "preparation_commit": "973823860",
     "manifest_sha256": "05f348183df6a55d46ed61d36d95bb7481134b4969793448ef93a5ff4a7e4acc",
@@ -280,13 +291,13 @@
     "science_unchanged": true,
     "source_commit": "b52f09723b9c5a51340401bf91a7bf4426d8f339",
     "plan": "RADIAL-CONTROL-PLAN.md",
-    "note": "Time control9038572 active. Fresh paired radial18 bound; submit only after time disposition/preservation and matching lock release.",
+    "note": "Time9038572 completed.6M admitted, lockreleased; local download ongoing. Fresh radial9038626 submittedonce after all queues/bindings/storage checked. No science/build/partitionchange.",
     "time_plan": "campaigns/stationary20-reference-time-dt4-n16-segment01/plan.json",
     "time_plan_sha256": "ba16737cc5deedbfae7a431d130ba7d9dce248205c087fa2242b074d8fa56a2c",
-    "job": "9038572.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "job": "9038626.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
     "radial_plan": "campaigns/stationary20-reference-radial-dt4-n16-segment01/plan.json",
     "radial_plan_sha256": "6aa4eee16a6fb122a561803934db61ce117166c140a6e65b9a39f14b88c68c8d",
-    "radial_status": "bound_not_submitted"
+    "radial_status": "submitted"
   },
   "reference_v2_segments": [
     {
@@ -320,14 +331,14 @@
   ],
   "execution_limits": {
     "debug_scaling_max_run": "[u:PBS_GENERIC=1]",
-    "observed_current_job": "9038572",
+    "observed_current_job": "9038626",
     "decision": "Keep controls sequential; user8-node permission does not override scheduler limit."
   },
   "local_terminal_watcher": {
-    "tool_session_id": 90887,
-    "script": "/tmp/watch-reference-9038572.py",
-    "log": "output/refined-convergence/reference-time-control-watch.jsonl",
-    "action": "Observe9038572 and collect frozenv7 once atterminal. No submit/restart. Observationerrors do not implyterminal."
+    "tool_session_id": 17496,
+    "script": "/tmp/watch-reference-9038626.py",
+    "log": "output/refined-convergence/reference-radial-control-watch.jsonl",
+    "action": "Observe existing9038626 every60s up to60 polls. At schedulerF invoke frozenv7collect once and stop. No submit/replay. Observation failure does not prove terminal."
   },
   "radial_analysis_preparation": "Dedicated radial18 reader built; exact local wrong-identity rejection passed, original reference body unchanged. Positive Aurora norm reproduction remains pending an admitted radial control.",
   "completed_reference_control": {
@@ -396,5 +407,29 @@
     "gpu_benchmark_submitted": false,
     "measured_speedup": null,
     "qualification": "Proxy cost model is not measured speedup; fixed-grid runtime Repartition cannot directly rebuild custom SMR."
+  },
+  "completed_time_control": {
+    "root": "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/stationary-reference-v2",
+    "status": "completed",
+    "current_job": null,
+    "launcher": "launcher-v7",
+    "variant": "time",
+    "n": 16,
+    "dt": 3.125e-05,
+    "target_M": 0.6,
+    "nodes": 4,
+    "ranks": 48,
+    "source_commit": "b52f09723b9c5a51340401bf91a7bf4426d8f339",
+    "plan": "campaigns/stationary20-reference-time-dt4-n16-segment01/plan.json",
+    "plan_sha256": "ba16737cc5deedbfae7a431d130ba7d9dce248205c087fa2242b074d8fa56a2c",
+    "current_restart": null,
+    "completed_job": "9038572",
+    "checkpoint_sha256": "84c4ee93d85df0896f07edbc6ea1140f239a7b46e531b49412652714c67c33f9",
+    "steps": 6400,
+    "time": 0.2,
+    "remote_admitted": true,
+    "matching_terminal_lock_released": true,
+    "local_preservation": "all152 worker artifacts locally hash/length verified; native same-operator endpoint reconstruction passed, checkpoint unchanged",
+    "analysis": "time-control-comparison/analysis.json and time-control-segment01/analysis-command.json"
   }
 }

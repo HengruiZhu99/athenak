@@ -39,9 +39,10 @@ summary['qualification']='Admitted .6M controls, same native operator and fixed 
 fig,axes=plt.subplots(1,2,figsize=(11,4),layout='constrained')
 labels=dict(reference='radial12, dt=1.25e-4',time='radial12, dt=3.125e-5',radial='radial18, dt=3.125e-5')
 for key,c in cases.items():
-    for ax,f in zip(axes,('H','M')):ax.semilogy([x['t_over_M'] for x in c['rows']],[x['fixed'][1][f] for x in c['rows']],'.-',label=labels[key],ms=4)
+    common=[x for x in c['rows'] if any(abs(x['t_over_M']-m['time_M'])<1e-10 for m in matches)]
+    for ax,f in zip(axes,('H','M')):ax.semilogy([x['t_over_M'] for x in common],[x['fixed'][1][f] for x in common],'.-',label=labels[key],ms=4)
 for ax,f in zip(axes,('H','M')):ax.set(xlabel='t/M',ylabel=f+' RMS, fixed r > .3');ax.grid(alpha=.2);ax.legend(fontsize=8)
-fig.suptitle('Bounded time/radial attribution controls; no interpolation');fig.savefig(O/'histories.png',dpi=170);fig.savefig(O/'histories.pdf');plt.close(fig)
+fig.suptitle('Bounded time/radial attribution controls; matched recorded times only');fig.savefig(O/'histories.png',dpi=170);fig.savefig(O/'histories.pdf');plt.close(fig)
 fig,axes=plt.subplots(1,2,figsize=(11,4),layout='constrained')
 for key in ('time','radial'):
     b=np.array(json.loads((cases[key]['folder']/'spatial-native.json').read_text())['radial_bins']);mask=b[:,0]>=.3-1e-12
