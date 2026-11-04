@@ -1,0 +1,25 @@
+{
+  "command": [
+    "mpiexec",
+    "-n",
+    "2",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/build-refined-convergence/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined_amr",
+    "16",
+    "boost",
+    "2",
+    ".000125",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/reference-radial18-two-step/state",
+    "-",
+    "smr",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/inputs/hyperbolic_shift_3d/refined_convergence/central20_stationary_smr025_radial18_reference.cfg"
+  ],
+  "source": "b52f09723b9c5a51340401bf91a7bf4426d8f339",
+  "config_sha256": "ef36601d8d492909fd8bf80fa4afc1d496fa863b7b91b674c464309d58b14cff",
+  "binary_sha256": "6c22d88a196c0dabe657eacc6130137e85d5d34ad1436cf30629bb45e5652271",
+  "started": 1793787596.391449,
+  "qualification": "Local two-step CFL/readiness probe on new radial18 layout. Nonproduction native driver explicitly selects allowed initial dt under requested .000125 cap; selected dt will be recorded. No Aurora campaign change or long-time stability claim.",
+  "returncode": 0,
+  "elapsed": 235.138592004776,
+  "actual_dt": 3.3745118776273217e-05,
+  "checkpoint_sha256": "b3a395eac4309f74148bc23227fbcf44e5a329db636105de69d226a23baa8595"
+}

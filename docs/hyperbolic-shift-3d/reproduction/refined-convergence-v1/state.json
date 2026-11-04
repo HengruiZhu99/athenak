@@ -31,7 +31,21 @@
     "reference_initial_resolution": "N12/N14 initial-only plus preserved N16 t0: same configured family, exact admitted RF2. Fixed r>.3 H/M fitted residual orders3.8921/3.6584; no evolution or field-self-convergence claim. See reference-initial-resolution/.",
     "smr_coverage": "Admitted topology: finest cube[-.05,.05]^3, physical inner dx=.0463335M. Reference k*v drift retains four-cell buffer to12.9734M, not live gauge guarantee; current production uses fixed SMR and dynamic option remains a fixture. Actual boosted tracker/support must be checked. The translated stationary-horizon proxy plus buffer reaches the fine edge at7.9731M, so puncture-only coverage does not establish coverage of its neighborhood; actual boosted horizon and features need assessment.",
     "initial_native_rhs": "N12/14/16 initial native residuals in .90-.95 decrease with fitted orders3.64-3.88. KO contribution zero in this band. Initial constraints reproduced, checkpoints unchanged; no evolved convergence proof.",
-    "radial18_initial": "Fourfold radial-only refinement .90-.95 reduces initial band RHS206-246x, fixed r>.3 H/M3.315/5.287x; same core/angles/geometry/gauge. Zero RK steps, smaller dt probe explicitly recorded. No new Aurora submission."
+    "radial18_initial": "Fourfold radial-only refinement .90-.95 reduces initial band RHS206-246x, fixed r>.3 H/M3.315/5.287x; same core/angles/geometry/gauge. Zero RK steps, smaller dt probe explicitly recorded. No new Aurora submission.",
+    "radial18_cfl_probe": {
+      "status": "local_two_step_passed",
+      "dt": 3.3745118776273217e-05,
+      "cfl_max": 0.20000000000000004,
+      "null_max": 1.1102230246251479e-15,
+      "ghost_null_max": 1.1102230246251558e-15,
+      "floor_counts": [
+        0,
+        0,
+        0
+      ],
+      "checkpoint_sha256": "b3a395eac4309f74148bc23227fbcf44e5a329db636105de69d226a23baa8595",
+      "qualification": "Native nonproduction selection from requested .000125 cap; no active campaign settings changed. Proposed matched control dt .00003125 below measured limit."
+    }
   },
   "historical_stationary6": {
     "plan": "campaigns/stationary6-n16-v2-segment01/plan.json",
@@ -255,5 +269,8 @@
     "status": "pending_authentication",
     "last_remote_commit": "c272353097c2f6330a403579f4864eb805aae0f6",
     "reason": "Prior GitHub internal commit_refs_rules rejection; latest SSH attempt has no agent identities and HTTPS no saved credential. User renewal requested once asynchronously. Local commits/scientific Aurora snapshots preserved."
-  }
+  },
+  "next_analysis": "Radial18 local two-step CFL probe passed and preserved; proposed fresh radial12/radial18 equal-dt .6M controls separate radial and temporal sensitivity after current reference10M disposition. No new Aurora control submitted.",
+  "local_evidence_commit": "2612c1c1d",
+  "publication_status": "Local evidence committed; GitHub publication still pending restored authentication (already requested once). Aurora job unaffected."
 }

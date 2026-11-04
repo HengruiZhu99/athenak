@@ -435,3 +435,20 @@ per-RK quadrature, new kernels and new collectives; no speedup is claimed from
 this structural improvement. Fresh storage admission consumed about378s of
 startup and the worker correctly reduced its native time budget. No frozen
 launcher or running scientific binary was modified for performance work.
+
+The bounded evolved follow-up is specified in `RADIAL-CONTROL-PLAN.md` and
+has not been submitted. It holds dt equal between radial12 and radial18 and
+uses the existing radial12 evolution to assess temporal sensitivity separately.
+This prevents crediting a spatial refinement for an improvement caused only by
+its smaller step. The active four-node run continues unchanged.
+
+The new radial18 grid's local two-step Serial/MPI2 CFL probe has now passed:
+the unchanged native nonproduction timestep selector chooses
+3.3745118776273217e-5 from a requested .000125 cap, with measured maximum CFL
+.2, null/ghost residuals below1.12e-15, zero floor counts and an admitted
+finite/SPD/FNV checkpoint. This confirms .00003125 as a suitable initial cap
+for the proposed matched comparison; later CFL still requires monitoring.
+Evidence/commands are in `reference-radial18-two-step/` and
+`run_radial_cfl_probe.py`. This is neither a GPU check nor long evolution, and
+its checkpoint will not be used as a fresh experiment's restart input. Runtime
+235.14s is local end-to-end, not a GPU estimate or a scaling measurement.
