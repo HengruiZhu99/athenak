@@ -1,0 +1,46 @@
+{
+  "command": [
+    "mpiexec",
+    "-n",
+    "2",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/reference-endpoint-reader/reader",
+    "16",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/stationary-reference-v2-aurora/campaigns/stationary20-reference-n16-segment02/output/state.checkpoint",
+    ".000125",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/inputs/hyperbolic_shift_3d/refined_convergence/central20_stationary_smr025_radial12_reference.cfg",
+    "smr",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/reference-endpoint-reader/segment02",
+    ".3"
+  ],
+  "checkpoint_sha256": "d6b4ca2a1e998b5f7a0891e3af619d0d790f0b84244eb7ecfab38064d16c75f6",
+  "source_manifest_sha256": "19d2445841e7a6e63588a13ab72855fe0da8cd23698c207742f16b16cb3dc608",
+  "matching_production_source_files": 633,
+  "analysis_binary_sha256": "166264047f58e1048bbae5258ed7a0719d3092b0b6b278241a7e409cad386ea6",
+  "started": 1793792071.3591921,
+  "qualification": "Read-only admitted reference-v2 checkpoint; disposition/time taken from exact terminal record. Dedicated explicit frozen-backend identity calibration; original checkpoint and production code unchanged.",
+  "terminal_status": "completed",
+  "t_over_M": 10.0,
+  "returncode": 0,
+  "elapsed": 101.72521686553955,
+  "checkpoint_unchanged": true,
+  "native_report_norms_match": [
+    [
+      1.1891608723792022e-14,
+      4.9927227538579406e-14
+    ],
+    [
+      6.479424371422684e-15,
+      2.5701933902591663e-14
+    ]
+  ],
+  "full_norms": [
+    0.10167026134706561,
+    0.6966697522598697,
+    0.7246856781479951
+  ],
+  "fixed03_norms": [
+    0.10303945402100828,
+    0.7062455159560114,
+    0.7069835992854391
+  ]
+}

@@ -623,3 +623,50 @@ in this analysis tool, not yet as a production input policy. The frozen
 stationary/radial controls are unchanged. Before a boosted run, qualify the
 chosen static policy/initial fields and monitor actual fine-support margins;
 use the existing AMR infrastructure rather than a separate mesh engine.
+
+### Reference-v2 completed 10M; equal-dt controls in progress
+
+Segment02 job9038494 completed10M/26667 total steps with native/worker/PBS
+success and frozen terminal admission. All152 worker artifacts were locally
+hash/length verified, the matching allocation lock released, and the unchanged
+checkpoint reconstructed with the dedicated native analysis reader. Full and
+fixed-domain report norms agree within5.0e-14 scaled. Evidence is in
+`stationary-reference-v2-segment02/` and the joined histories in
+`stationary-reference-v2-completed/`; figures were inspected.
+
+All69 unique recorded horizon candidates were accepted online. Final mass
+error is−.000344613%, maximum absolute recorded error.00105377%, and final
+expansion RMS2.34891e-6. The native command sum is5405.71s (90.10minutes),
+with median-rank stepping.191669s per step. Queue and inter-segment delays are
+excluded; this is not a strong-scaling measurement.
+
+The exterior error remains large: common r>.3 H/M=.1030394540/.7062455160,
+with99.8754%/99.8558% of their squared integrals in .90–.95. The central
+evolution and accurate horizon therefore do not establish global convergence.
+RF2 cumulative floor/sign counters are unchanged after segment01; they must
+not be summed across the restart. Read-only localization identifies all60864
+stage and60864 final negative-chi candidates at the eight central cells,
+r=.00135316, first encountered at.031875M. There are no lapse, surface or
+boundary sign events. These are attempted pre-floor states, not negative
+admitted fields. Their location is distinct from the dominant exterior error;
+this alone does not exclude causal influence. See `reference-sign-localization/`.
+
+Fresh time-control job9038572 is running on four nodes with the frozen v7
+launcher, unchanged radial12 grid and dt=.00003125, targeting.6M. The fresh
+radial18 control will use the same dt/target after its terminal admission and
+preservation. Neither restarts from the completed10M state. No build, freeze,
+smoke or long reference run is repeated.
+
+Performance work is measurement-driven. The observed halo/work imbalance
+motivates testing existing fixed ownership descriptors. The general
+`Evolution::Repartition` entry point currently rebuilds `ContinuousCoreMesh`,
+so it cannot be applied directly to this custom SMR descriptor. A separate
+analysis-only static-SMR constructor probe reuses the existing strict measured
+partition reader; it must pass MPI field/counter parity before a new production
+policy is considered. Existing scientific snapshots remain unchanged.
+
+Additional topology qualification: although the1408-leaf cube fits the stated
+four-node block allocation geometrically, current RF2 restart/admission readers
+cap leaf counts at1024. Thus that topology is not an admitted production
+candidate without a separately versioned capacity change. The400-leaf
+symmetric tube is below this cap. No capacity guard has been weakened.

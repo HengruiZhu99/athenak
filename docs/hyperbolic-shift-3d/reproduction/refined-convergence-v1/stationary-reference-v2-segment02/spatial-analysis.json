@@ -1,0 +1,155 @@
+{
+  "t_over_M": 10,
+  "fixed03_norms": [
+    0.10303945402100828,
+    0.7062455159560114,
+    0.7069835992854391
+  ],
+  "regional": {
+    "0.3-0.6": {
+      "H": {
+        "squared_integral": 1.123211451528966e-05,
+        "fraction_of_r03": 0.000259418592517909
+      },
+      "M": {
+        "squared_integral": 3.113164158811163e-05,
+        "fraction_of_r03": 1.530513937201618e-05
+      },
+      "Mr": {
+        "squared_integral": 0.0003192815686333675,
+        "fraction_of_r03": 0.0001566397004957866
+      }
+    },
+    "0.6-0.78": {
+      "H": {
+        "squared_integral": 3.288132301017334e-06,
+        "fraction_of_r03": 7.594319416717526e-05
+      },
+      "M": {
+        "squared_integral": 1.4646858605523419e-05,
+        "fraction_of_r03": 7.200783539964564e-06
+      },
+      "Mr": {
+        "squared_integral": 6.742052110211698e-05,
+        "fraction_of_r03": 3.3076542056307676e-05
+      }
+    },
+    "0.9-0.95": {
+      "H": {
+        "squared_integral": 0.043243292779282225,
+        "fraction_of_r03": 0.9987535413185692
+      },
+      "M": {
+        "squared_integral": 2.031130429875865,
+        "fraction_of_r03": 0.9985575037541378
+      },
+      "Mr": {
+        "squared_integral": 2.0349167411555373,
+        "fraction_of_r03": 0.998331191596237
+      }
+    },
+    "0.95-1": {
+      "H": {
+        "squared_integral": 1.7348736196438173e-05,
+        "fraction_of_r03": 0.0004006889993792437
+      },
+      "M": {
+        "squared_integral": 0.0022787761395644457,
+        "fraction_of_r03": 0.0011203066923068218
+      },
+      "Mr": {
+        "squared_integral": 0.00228045151663906,
+        "fraction_of_r03": 0.0011187906777409054
+      }
+    },
+    "0.78-0.87": {
+      "H": {
+        "squared_integral": 2.1094166450284864e-06,
+        "fraction_of_r03": 4.8719401528735885e-05
+      },
+      "M": {
+        "squared_integral": 6.803726282021454e-05,
+        "fraction_of_r03": 3.34489200322649e-05
+      },
+      "Mr": {
+        "squared_integral": 0.0001247663702036035,
+        "fraction_of_r03": 6.121044488816273e-05
+      }
+    },
+    "0.87-0.9": {
+      "H": {
+        "squared_integral": 1.9989847230497524e-05,
+        "fraction_of_r03": 0.0004616884938383266
+      },
+      "M": {
+        "squared_integral": 0.0005415385896405916,
+        "fraction_of_r03": 0.0002662347106340653
+      },
+      "Mr": {
+        "squared_integral": 0.0006096427384412783,
+        "fraction_of_r03": 0.0002990910385701891
+      }
+    }
+  },
+  "peak_bins": {
+    "H": [
+      0.92,
+      0.93,
+      0.10086131996616483,
+      0.025224274121298625,
+      1.2012779161502367,
+      1.2028923933538822
+    ],
+    "M": [
+      0.92,
+      0.93,
+      0.10086131996616483,
+      0.025224274121298625,
+      1.2012779161502367,
+      1.2028923933538822
+    ]
+  },
+  "sampled_exterior_maxima": {
+    "dr_chi": {
+      "value": 10.18905564205507,
+      "r": 0.8929687500000001,
+      "ray": 1
+    },
+    "dr_alpha": {
+      "value": 29.241190905758753,
+      "r": 0.90859375,
+      "ray": 3
+    },
+    "dr_beta_dev_r": {
+      "value": -30.111666315583374,
+      "r": 0.90859375,
+      "ray": 1
+    },
+    "dr_D_r": {
+      "value": -325.14774695670803,
+      "r": 0.92734375,
+      "ray": 1
+    },
+    "H": {
+      "value": 0.677860258264233,
+      "r": 0.92109375,
+      "ray": 1
+    },
+    "Mnorm": {
+      "value": 4.483635194039648,
+      "r": 0.92734375,
+      "ray": 1
+    }
+  },
+  "profiles": {
+    "segment02.rank0.csv": {
+      "bytes": 77994,
+      "sha256": "78c66c4c88579e31d862dda017baed4408d30647f2ff49d2ee17dddcd292ea79"
+    },
+    "segment02.rank1.csv": {
+      "bytes": 287416,
+      "sha256": "3b7a4dc80c058df8bd1fc12cc2309860dcce75bb30ed1f42cb427f86d1168aaf"
+    }
+  },
+  "qualification": "Same native operator and exact admitted checkpoint, explicit known k/gamma backend roundoff calibration; full/fixed history norms independently checked in analysis-command.json. Fractions from native-volume .01 radial bins outside r>.3, beyond every complete horizon. Regions split at .87 rather than .875 to avoid fractional-bin fabrication. Profiles are unsmoothed native-center rays including separately evolved overlap copies; maxima are sampled-ray extrema, not full-domain extrema. One checkpoint cannot prove convergence or continuum slicing regularity."
+}

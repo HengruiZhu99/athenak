@@ -1,0 +1,137 @@
+{
+  "status": "admitted_completed_10M_not_convergence",
+  "inputs": {
+    "stationary-reference-v2-segment01/output/state.history.jsonl": "3679fdb6e93d4fe4ada4cc64a1db4f7b6d65fbdaa9efd68f8a80dbd91c4a3a2b",
+    "stationary-reference-v2-segment02/output/state.history.jsonl": "0cc88aa1afe343773fb4589ede0d2ac464e3424f047bb275c6f5be599a973aec"
+  },
+  "segments": [
+    {
+      "number": 1,
+      "end_step": 12753,
+      "end_M": 4.782374999999389,
+      "duplicate_boundary_rows": 0,
+      "native_command_seconds": 2592.934407554101,
+      "median_step_seconds": 2445.639964562375,
+      "counters": {
+        "cumulative_floor_statistics": [
+          0,
+          0,
+          203472,
+          67832,
+          0.0013531646933869306,
+          0,
+          0,
+          0
+        ],
+        "cumulative_bulk_sign_counts": [
+          60864,
+          60864,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "cumulative_surface_sign_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "cumulative_boundary_sign_counts": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "number": 2,
+      "end_step": 26667,
+      "end_M": 10,
+      "duplicate_boundary_rows": 1,
+      "native_command_seconds": 2812.777729928028,
+      "median_step_seconds": 2665.599106122274,
+      "counters": {
+        "cumulative_floor_statistics": [
+          0,
+          0,
+          203472,
+          67832,
+          0.0013531646933869306,
+          0,
+          0,
+          0
+        ],
+        "cumulative_bulk_sign_counts": [
+          60864,
+          60864,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "cumulative_surface_sign_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "cumulative_boundary_sign_counts": [
+          0,
+          0
+        ]
+      }
+    }
+  ],
+  "rows": 69,
+  "online_accepted": 69,
+  "final_fixed03": {
+    "cut": 0.3,
+    "H": 0.10303945402100113,
+    "M": 0.7062455159559675,
+    "Mr": 0.7069835992853829
+  },
+  "final_mass_error_percent": -0.0003446129526962771,
+  "max_abs_mass_error_percent": 0.0010537664848375705,
+  "final_horizon_rms": 2.3489086128819332e-06,
+  "native_command_seconds": 5405.712137482129,
+  "step_seconds_per_step": 0.19166906928730826,
+  "cumulative_counters": {
+    "cumulative_floor_statistics": [
+      0,
+      0,
+      203472,
+      67832,
+      0.0013531646933869306,
+      0,
+      0,
+      0
+    ],
+    "cumulative_bulk_sign_counts": [
+      60864,
+      60864,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "cumulative_surface_sign_counts": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "cumulative_boundary_sign_counts": [
+      0,
+      0
+    ]
+  },
+  "floor_counters_unchanged_after_segment01": true,
+  "max_complete_horizon_radius": 0.03886856465499859,
+  "qualification": "Native online acceptance retained. Final cumulative counters, not sum of restart reports. Fixed coordinate r>.3 outside complete horizon enclosures; not an invariant physical domain. Raw sampling times joined without interpolation; restart sampling phase retained. Native commands include setup/diagnostics and exclude queue time. No controlled strong-scaling or convergence claim."
+}

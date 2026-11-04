@@ -17,7 +17,7 @@ and three-resolution analysis pushed (e8eaa56d2; final state c41a5ef1a).
 Its monitor was deleted after follow-up. Do not resubmit or repeat completed
 BN1 diagnostics. The exterior residuals do not decrease under refinement.
 
-Current progress: compatible stationary outer reference gauge v2 is locally qualified and frozen in a separate immutable Aurora snapshot; stationary N16 segment01 job9038410 ended at a fully admitted healthy walltime checkpoint4.782375M and segment02 job9038494 is running on four nodes. All152 first-segment artifacts are locally verified. At this checkpoint99.868%/99.843% of exterior H²/M² lies in r.90–.95; matched evolved radial controls remain pending. Initial N12/N14/N16 exterior constraint residuals decrease with fitted orders3.89/3.66, but no evolved convergence is established. The earlier v1 reference precursor was caught before submission and is unused.  enlarged geometry/initial-map parameters and matched-plateau
+Current progress: compatible stationary outer reference gauge v2 is locally qualified and frozen in a separate immutable Aurora snapshot; stationary N16 segment01 job9038410 ended at a fully admitted healthy walltime checkpoint4.782375M and segment02 job9038494 completed10M and all152 final artifacts are locally verified. All152 first-segment artifacts are locally verified. At this checkpoint99.868%/99.843% of exterior H²/M² lies in r.90–.95; matched evolved radial controls remain pending. Initial N12/N14/N16 exterior constraint residuals decrease with fitted orders3.89/3.66, but no evolved convergence is established. The earlier v1 reference precursor was caught before submission and is unused.  enlarged geometry/initial-map parameters and matched-plateau
 controls implemented; local geometry/frame/oracle checks and MPI SMR restart
 qualification passed. Production scheduled diagnostics/walltime support and
 the frozen Aurora build are complete. Stationary6 N16 RF2 job9038055 completed10M natively with large exterior
@@ -41,7 +41,7 @@ features throughout evolution; scri null/pole/clock behavior; moving-horizon
 acceptance/mass gaps, trajectory, floor/sign counts and cost. Explicitly report
 remaining limitations and do not mark complete without evidence for all parts.
 
-New radial isolation: initial native RHS residuals in .90–.95 decrease with resolution (fitted orders3.64–3.88); selective fourfold radial refinement reduces them206–246x. The corrected outer gauge survives beyond the old failure, but large evolved exterior residuals remain. See RADIAL-CONTROL-PLAN.md for equal-dt spatial and temporal controls; not submitted. The full stationary/boosted convergence goal remains active.
+New radial isolation: initial native RHS residuals in .90–.95 decrease with resolution (fitted orders3.64–3.88); selective fourfold radial refinement reduces them206–246x. The corrected outer gauge survives beyond the old failure, but large evolved exterior residuals remain. See RADIAL-CONTROL-PLAN.md: fresh temporal control9038572 is running; radial control follows its verified disposition. The full stationary/boosted convergence goal remains active.
 
 Initial findings: RF1 narrow Omega join .18–.22 worsens short-time exterior
 constraints. Its parser prevents a wide join because gauge onset must remain
