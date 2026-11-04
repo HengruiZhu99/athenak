@@ -2,6 +2,7 @@
 """Compare RF1 histories without inventing missing horizon masses or convergence."""
 import argparse
 import csv
+import hashlib
 import json
 import math
 import statistics
@@ -10,6 +11,7 @@ from pathlib import Path
 parser=argparse.ArgumentParser()
 parser.add_argument('runs',type=Path)
 parser.add_argument('output',type=Path)
+parser.add_argument('--placement-label',default='Flat + radial placement')
 a=parser.parse_args()
 a.output.mkdir(parents=True,exist_ok=True)
 keys=['H_L2','H_exterior_L2','M_L2','M_exterior_L2','M_physical_L2','Theta_exterior_L2',
@@ -25,12 +27,16 @@ def finite(value):
 
 summary={}
 series={}
-for name in ['legacy-n16','flat-n16','redistributed-n16']:
+inputs={}
+for name in ['legacy-n16','flat-n16','compactification-n16','redistributed-n16']:
     path=a.runs/(name+'.history.csv')
     report_path=a.runs/(name+'.report.json')
     if not path.exists():
-        summary[name]=dict(status='not_run_or_no_history')
         continue
+    for source in [path,report_path]:
+        if source.exists():
+            inputs[source.name]=dict(bytes=source.stat().st_size,
+                sha256=hashlib.sha256(source.read_bytes()).hexdigest())
     report=json.loads(report_path.read_text()) if report_path.exists() else {}
     rows=list(csv.DictReader(path.open()))
     mass=[]
@@ -61,7 +67,7 @@ for name in ['legacy-n16','flat-n16','redistributed-n16']:
        runtime={k:v for k,v in report.items() if 'seconds' in k and not isinstance(v,list)},
        floors={k:v for k,v in report.items() if 'floor' in k and not isinstance(v,list)},
        identity=report.get('formulation_identity'),checkpoint_admitted=report.get('checkpoint_admitted'))
-result=dict(cases=summary,online_horizon_tolerance=1e-3,postprocessing_quality_threshold=1e-2,
+result=dict(cases=summary,inputs=inputs,online_horizon_tolerance=1e-3,postprocessing_quality_threshold=1e-2,
             missing_masses_preserved=True,convergence_demonstrated=False,
             norm_notes='H is physical; M_exterior_L2 uses the conformal metric and its normalization changes with Omega. M_physical_L2 is a physical norm over the full domain. All use normalized compact coordinate volume.',
             limit='Single-resolution bounded evolution comparison; no robustness or convergence claim follows from completion alone.')
@@ -74,7 +80,9 @@ try:
 except ImportError:
     raise SystemExit('JSON written; install matplotlib to render the figure')
 fig,axes=plt.subplots(2,2,figsize=(10,6.5),layout='constrained')
-labels={'legacy-n16':'Legacy','flat-n16':'Flat','redistributed-n16':'Flat + radial placement'}
+labels={'legacy-n16':'Legacy','flat-n16':'Flat',
+        'compactification-n16':'Flat + Omega-focused placement',
+        'redistributed-n16':a.placement_label}
 for name,data in series.items():
     rows=data['rows'];t=[finite(r['t_over_M']) for r in rows]
     for ax,key in [(axes[0,0],'H_exterior_L2'),(axes[0,1],'M_exterior_L2'),(axes[1,1],'puncture_x')]:

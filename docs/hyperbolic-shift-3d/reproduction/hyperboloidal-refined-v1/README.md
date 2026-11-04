@@ -5,6 +5,21 @@ merged performance/Cartesian-AMR head: `a2d648962`. The independent BN1 campaign
 its source/binary/launcher snapshots, submissions, checkpoints and monitor are
 not modified. Campaign records under `boosted-normalized-shift-v1` remain frozen.
 
+The integration and staged experiment are complete. The optimized halo path
+is the default; the flat conformal frame remains a separate selectable
+experiment. [Aurora comparisons](aurora-comparison/README.md) contain the final
+measurements, plots and reproduction commands, with verified raw evidence
+from jobs 9037790 and 9037836. Both jobs completed on one node with 12 GPU
+tiles/ranks, and their repeated baseline checkpoints are byte-identical.
+The final task footprint is 23.87 GB, below the 50 GB allowance.
+
+At N16 through t/M=0.15, the flat formulation worsens constraints. Refining
+both transition layers lowers final exterior H by 63% relative to flat alone,
+but it remains 3.26 times legacy, with worse momentum and some scri residuals.
+All recorded horizons pass the quality threshold; that early agreement does
+not establish convergence or long-time robustness. The final placement is
+available for controlled research, not promoted as an accuracy improvement.
+
 ## Merged baseline gate
 
 The normalized-shift driver retains BN1, the exact boosted initial data, native
@@ -51,7 +66,7 @@ invariance, derivative/map oracles, actual reference Z4c, device parity, MPI/AMR
 restart and collective configuration rejection. A separate mixed-level flat
 boosted AMR test also completes two steps. N16 two-step comparisons show a
 constraint regression for the selected flat profile; radial redistribution
-reduces that error but does not recover the legacy result. No robustness or
+in the first Omega-focused trial reduces that error but does not recover the legacy result. No robustness or
 convergence improvement is inferred from these short runs.
 
 ## Performance scope

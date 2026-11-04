@@ -1,0 +1,164 @@
+{
+  "source_commit": "ddc5b48004420635f13d06cf56e0fbfea65d0d73",
+  "nodes": 1,
+  "ranks": 12,
+  "deadline_seconds": 3200,
+  "output": "job1",
+  "commands": [
+    {
+      "name": "mapping",
+      "arguments": [
+        "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_amr_device_mapping"
+      ],
+      "timeout": 180,
+      "mapping": true
+    },
+    {
+      "name": "flat-profile",
+      "arguments": [
+        "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined_profile",
+        "source/inputs/hyperbolic_shift_3d/refined/flat.cfg",
+        "OUTPUT/flat-profiles.csv"
+      ],
+      "timeout": 180
+    },
+    {
+      "name": "flat-device",
+      "arguments": [
+        "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined_device",
+        "source/inputs/hyperbolic_shift_3d/refined/flat.cfg"
+      ],
+      "timeout": 180
+    },
+    {
+      "name": "legacy-n16",
+      "arguments": [
+        "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined",
+        "16",
+        "OUTPUT/legacy-n16",
+        "puncture",
+        ".05",
+        ".00025",
+        "-",
+        "-",
+        "650",
+        ".005",
+        ".001",
+        "12",
+        "24",
+        "2",
+        "source/inputs/hyperbolic_shift_3d/refined/legacy.cfg"
+      ],
+      "timeout": 850,
+      "report": "legacy-n16.report.json",
+      "fixed": true
+    },
+    {
+      "name": "flat-amr",
+      "arguments": [
+        "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined_amr",
+        "12",
+        "wave",
+        "6",
+        ".00025",
+        "OUTPUT/flat-amr",
+        "-",
+        "dynamic",
+        "source/inputs/hyperbolic_shift_3d/refined/flat.cfg"
+      ],
+      "timeout": 450,
+      "report": "flat-amr.report.json"
+    },
+    {
+      "name": "flat-n16",
+      "arguments": [
+        "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined",
+        "16",
+        "OUTPUT/flat-n16",
+        "puncture",
+        ".05",
+        ".00025",
+        "-",
+        "-",
+        "650",
+        ".005",
+        ".001",
+        "12",
+        "24",
+        "2",
+        "source/inputs/hyperbolic_shift_3d/refined/flat.cfg"
+      ],
+      "timeout": 850,
+      "report": "flat-n16.report.json",
+      "fixed": true
+    },
+    {
+      "name": "redistributed-profile",
+      "arguments": [
+        "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined_profile",
+        "source/inputs/hyperbolic_shift_3d/refined/redistributed.cfg",
+        "OUTPUT/redistributed-profiles.csv"
+      ],
+      "timeout": 180
+    },
+    {
+      "name": "redistributed-amr",
+      "arguments": [
+        "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined_amr",
+        "12",
+        "wave",
+        "6",
+        ".00025",
+        "OUTPUT/redistributed-amr",
+        "-",
+        "dynamic",
+        "source/inputs/hyperbolic_shift_3d/refined/redistributed.cfg"
+      ],
+      "timeout": 450,
+      "report": "redistributed-amr.report.json"
+    },
+    {
+      "name": "redistributed-n16",
+      "arguments": [
+        "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined",
+        "16",
+        "OUTPUT/redistributed-n16",
+        "puncture",
+        ".05",
+        ".00025",
+        "-",
+        "-",
+        "650",
+        ".005",
+        ".001",
+        "12",
+        "24",
+        "2",
+        "source/inputs/hyperbolic_shift_3d/refined/redistributed.cfg"
+      ],
+      "timeout": 850,
+      "report": "redistributed-n16.report.json",
+      "fixed": true
+    }
+  ],
+  "bindings": {
+    "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_amr_device_mapping": "3a2a044ae13d40eb0df1ee97295f82bcdec0d28c6e7c94b4a0f7b5b3157a1191",
+    "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined": "a6a9d75bd4915000255ed666e6b0541a12afb527aefda39ba95beaa095057d44",
+    "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined_amr": "d76246b86c81314188c68a2b401cd11822997e749ecdf722a68046d18e4ecedb",
+    "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined_device": "4afb3f952803f2028668f4d00933ee5d777bce249c4b907fbffd7daed556e3c5",
+    "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined_profile": "98e132d6b6ce3128448efdd5f5db8165d42aec7522e979109ad0c462697c3c07",
+    "launcher/job.pbs": "f4d5bba7047dde48606839f28d825e71ebed48bb34f0f5b439de77d30c8f4a43",
+    "launcher/storage.py": "a7a0a6c283d8fd91538bfa71918c9916a476c057ce64b513853a428d7fae5333",
+    "launcher/worker.py": "22d6ce568628333e5d8668f17097d406fcd0313e69d4d0df412dc43d700adbdc",
+    "local-qualification.json": "6f2f774b1d17fb72d40d9b7cb2fd7dadb1dfd89c0f498a74ccd25df22b5a7364",
+    "refined-kokkos.tar.gz": "82bfc22185bdf2ba29ce70288282e98ad46176f5770032dd19e19d41bfa2493e",
+    "refined-source.tar.gz": "f8442d05e6aecf14d3cec10c398e6c91b66d1e4c6fa9d07b60d4a2b66c1530fb",
+    "source-manifest.json": "10620bb68fc0b36c1d1a460aefba80e072ed461c6a99aacc8c97e05b2e59507c",
+    "source/inputs/hyperbolic_shift_3d/refined/flat.cfg": "32941f620900b85cf12af0c7c86f8f6d558be75cfd2bbabc7c1709e81f4b42e3",
+    "source/inputs/hyperbolic_shift_3d/refined/legacy.cfg": "663caec6639436ecf6139008afeb21af58a0bdd6d64f216c289a45c7d2b421ab",
+    "source/inputs/hyperbolic_shift_3d/refined/redistributed.cfg": "21886617c50f8ab0b14dc1bf6e25b203c2cbae6a13473e63dcee3657acaf0e8b"
+  },
+  "continuation": "None in this plan. A healthy same-formulation walltime checkpoint requires separate verification and a new immutable continuation plan; numerical failures are terminal.",
+  "comparison": "N16 compact64-cubed core, six shells, t=.05=0.15M; diagnostic interval .005, same online1e-3 and post-quality1e-2 thresholds; missing masses stay missing.",
+  "launcher_source_commit": "4077347db9aced474f1066241d8d0bfbf93fc767"
+}

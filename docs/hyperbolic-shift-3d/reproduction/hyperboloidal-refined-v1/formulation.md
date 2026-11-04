@@ -137,3 +137,11 @@ radial interval (fractional cells at the endpoints). At N16, the Omega interval
 shell containing parts of the native-map, donor-gauge and restoration layers.
 The final scri shell remains unchanged. This explicitly trades resolution;
 it does not claim improvement everywhere or change stencil orders.
+
+The RF1 targets evolve chi and the conformal lapse directly. Legacy
+`PositiveReference` and logarithmic materialization retain their original
+reference profile for their separately selectable controls; RF1 does not use
+those logarithmic paths or positive-variable dissipation. Its static lapse
+storage offset is unchanged, and physical lapse flooring evaluates the actual
+configured Omega. These distinctions avoid interpreting a numerical storage
+reference as the new conformal factor.

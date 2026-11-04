@@ -1,0 +1,111 @@
+{
+  "source_commit": "ddc5b48004420635f13d06cf56e0fbfea65d0d73",
+  "nodes": 1,
+  "ranks": 12,
+  "deadline_seconds": 3200,
+  "output": "job2",
+  "commands": [
+    {
+      "name": "mapping",
+      "arguments": [
+        "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_amr_device_mapping"
+      ],
+      "timeout": 180,
+      "mapping": true
+    },
+    {
+      "name": "redistributed-profile",
+      "arguments": [
+        "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined_profile",
+        "experiments/gauge-focused-v2.cfg",
+        "OUTPUT/redistributed-profiles.csv"
+      ],
+      "timeout": 180
+    },
+    {
+      "name": "redistributed-amr",
+      "arguments": [
+        "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined_amr",
+        "12",
+        "wave",
+        "6",
+        ".00025",
+        "OUTPUT/redistributed-amr",
+        "-",
+        "dynamic",
+        "experiments/gauge-focused-v2.cfg"
+      ],
+      "timeout": 450,
+      "report": "redistributed-amr.report.json"
+    },
+    {
+      "name": "legacy-n16",
+      "arguments": [
+        "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined",
+        "16",
+        "OUTPUT/legacy-n16",
+        "puncture",
+        ".05",
+        ".00025",
+        "-",
+        "-",
+        "650",
+        ".005",
+        ".001",
+        "12",
+        "24",
+        "2",
+        "source/inputs/hyperbolic_shift_3d/refined/legacy.cfg"
+      ],
+      "timeout": 850,
+      "report": "legacy-n16.report.json",
+      "fixed": true,
+      "checkpoint_sha256": "2b2349b9d87e75b293c916d679a86851be4df50dc46fd2196c3151891786d1d5"
+    },
+    {
+      "name": "redistributed-n16",
+      "arguments": [
+        "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined",
+        "16",
+        "OUTPUT/redistributed-n16",
+        "puncture",
+        ".05",
+        ".00025",
+        "-",
+        "-",
+        "650",
+        ".005",
+        ".001",
+        "12",
+        "24",
+        "2",
+        "experiments/gauge-focused-v2.cfg"
+      ],
+      "timeout": 850,
+      "report": "redistributed-n16.report.json",
+      "fixed": true
+    }
+  ],
+  "bindings": {
+    "experiments/gauge-focused-v2.cfg": "c4ea91702933aa9eae15d1cffe4511a09033a35fc7b4df4fe18c097f955fe524",
+    "local-qualification2.json": "b07e56e12336c02eaee0b8b60d31b70093bb6888132ec71b2fd39ccd682c68ed",
+    "launcher/worker_v2.py": "110307dcd3b5b2ee1ad55cf40f018bc8066ad9e4edcf42f68b6b92bedb5bddb5",
+    "launcher/submit_v2.py": "ac310395a9c414e73ba1250dcaa812ee5dc6f46c958612e056784460f64e32e2",
+    "launcher/job2.pbs": "c4f04f76784fa6633060b0b93eb14fab80110ab3e9a640311004e21515ac6ec9",
+    "launcher/collect_v2.py": "5f653fd88b2ac4468204cfaa28373a55e95150b5b948a669337404e5b9f2a4a2",
+    "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_amr_device_mapping": "3a2a044ae13d40eb0df1ee97295f82bcdec0d28c6e7c94b4a0f7b5b3157a1191",
+    "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined": "a6a9d75bd4915000255ed666e6b0541a12afb527aefda39ba95beaa095057d44",
+    "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined_amr": "d76246b86c81314188c68a2b401cd11822997e749ecdf722a68046d18e4ecedb",
+    "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined_device": "4afb3f952803f2028668f4d00933ee5d777bce249c4b907fbffd7daed556e3c5",
+    "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined_profile": "98e132d6b6ce3128448efdd5f5db8165d42aec7522e979109ad0c462697c3c07",
+    "launcher/storage.py": "a7a0a6c283d8fd91538bfa71918c9916a476c057ce64b513853a428d7fae5333",
+    "refined-kokkos.tar.gz": "82bfc22185bdf2ba29ce70288282e98ad46176f5770032dd19e19d41bfa2493e",
+    "refined-source.tar.gz": "f8442d05e6aecf14d3cec10c398e6c91b66d1e4c6fa9d07b60d4a2b66c1530fb",
+    "source-manifest.json": "10620bb68fc0b36c1d1a460aefba80e072ed461c6a99aacc8c97e05b2e59507c",
+    "source/inputs/hyperbolic_shift_3d/refined/legacy.cfg": "663caec6639436ecf6139008afeb21af58a0bdd6d64f216c289a45c7d2b421ab",
+    "job1/state.json": "92dea266e4e3a3a081cabf77d4d80369c12f113447c69fe2579fbfea2b61cab7"
+  },
+  "continuation": "None in this plan. A healthy same-formulation walltime checkpoint requires separate verification and a new immutable continuation plan; numerical failures are terminal.",
+  "comparison": "Repeat legacy baseline on the second allocation, then both-layer radial placement to t=.05; compare the repeated baseline checkpoint exactly. No continuation of any prior trajectory.",
+  "launcher_source_commit": "69714b5ccd61f9d4fe9608d633fb8ffe6595b4fe"
+}

@@ -1,0 +1,32 @@
+{
+  "status": "completed_bounded_qualification",
+  "branch": "hyperboloidal_refined",
+  "base": "fc9990546",
+  "merged_performance": "a2d648962",
+  "aurora_scientific_source": "ddc5b48004420635f13d06cf56e0fbfea65d0d73",
+  "archives": {
+    "aurora-v1": {
+      "archive_sha256": "c57fce59da79ef8b27afec11e155a2da6c89e86bb66c74414a61ab671cd14a2b",
+      "verified_files": 138,
+      "commands": 9,
+      "job_id": "9037790.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+      "status": "completed"
+    },
+    "aurora-v2": {
+      "archive_sha256": "6d0b93a05179f2ea1bbdc0cd3297850f1d8b0c542a124884036138339fad660f",
+      "verified_files": 100,
+      "commands": 5,
+      "job_id": "9037836.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+      "status": "completed"
+    }
+  },
+  "published_analysis_reproduced_exactly": true,
+  "current_redistributed_configuration_matches_frozen_run": true,
+  "storage_bytes": 23869398770,
+  "storage_limit_bytes": 50000000000,
+  "atomic_checkpoint_reserve_bytes": 2000000000,
+  "convergence_demonstrated": false,
+  "improved_robustness_demonstrated": false,
+  "scientific_outcome": "Flat N16 variants regress against legacy; both-layer placement improves final exterior H relative to flat alone but worsens momentum and some scri residuals.",
+  "source_scope": "Aurora executed the stated frozen source. Subsequent legacy compile-time kernel isolation and report-only checkpoint offset correction are qualified by final-source local gates, not a later Aurora binary."
+}
