@@ -120,6 +120,29 @@
         "ray_definition": "Native centers: ray0 face0 near center; ray1 face0 near corner; ray2 Cartesian x-line y=z=-dx/2; ray3 face1 near center. No interpolation.",
         "operator": "original mapped bulk derivatives and native donor-seven final3 radial rows; CPU constraint formula cross-checked against production device volume sums"
       }
+    },
+    {
+      "command": [
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/boosted-normalized-shift/localization/bn1_endpoint_slices",
+        "24",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/output/boosted-normalized-shift/aurora/campaigns/n24-boosted-normalized-shift-v1-s24-evolution-segment02/output/puncture.checkpoint",
+        "0.00016666666666666666",
+        "/Users/hz0693/.codex/worktrees/hyperbolic-core-shell/hyperboloidal/docs/hyperbolic-shift-3d/reproduction/boosted-normalized-shift-v1/convergence-localization/n24"
+      ],
+      "checkpoint_sha256": "9f1dc5875451544bcbfe2e47404ad8353948fd8506bd8cf587b908224aa29528",
+      "admission_sha256": "74a908e7bc95fa1fc93efdfb84ed08734c322b199b4bf5a33a1c0089438106eb",
+      "csv_sha256": "9604662481cf68f106ab9fb6367d12b4c79d193eac510ad7c3f313320ef57fe7",
+      "verification": {
+        "schema": "HYP3D_MPI_BN1",
+        "n": 24,
+        "t_over_M": 10,
+        "steps": 20000,
+        "rows": 543,
+        "native_volume_integral_relative_difference": 0,
+        "cutoff": 0.12,
+        "ray_definition": "Native centers: ray0 face0 near center; ray1 face0 near corner; ray2 Cartesian x-line y=z=-dx/2; ray3 face1 near center. No interpolation.",
+        "operator": "original mapped bulk derivatives and native donor-seven final3 radial rows; CPU constraint formula cross-checked against production device volume sums"
+      }
     }
   ],
   "binary_sha256": "98651a9211e5bbbdf1a0f9f7d0bb8c943a7d9e7076e5a3f91f4914fbaa64924a"

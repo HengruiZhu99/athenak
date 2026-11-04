@@ -1,4 +1,4 @@
-# Coordinate-normalized inner shift: fresh boosted N16, N20, N24
+# Coordinate-normalized inner shift: completed boosted N16, N20, N24
 
 User authorized sequential fresh N16, N20 and N24 evolutions to10M, all on four
 Aurora debug-scaling nodes (48 ranks/tiles). Branch `codex/boosted-normalized-shift`.
@@ -215,3 +215,51 @@ as lock-release metadata was added; every recorded worker artifact matches its
 original hash and byte length. No horizon seed sidecar was emitted; preserve
 restart finder initialization and diagnostic sampling discontinuities. This is
 not yet N24 completion or a three-resolution convergence result.
+
+
+## Final three-resolution disposition (2026-11-04)
+
+All BN1 runs completed10M; the campaign and its analysis are complete. N24
+segment02 job9037997 finished20,000steps with native0/workerpassed/PBS0.
+Its806091472-byte endpoint has SHA256
+`9f1dc5875451544bcbfe2e47404ad8353948fd8506bd8cf587b908224aa29528`.
+All four final worker artifacts are locally hash/length verified; both N24
+terminal locks are released. No further BN1 evolution or replay is needed.
+
+Same native diagnostic operators and common coordinate cutoff r>.3 give:
+
+| N | H RMS | M RMS | radial-M RMS |
+|---|---:|---:|---:|
+|16|.03593065627|.05473442898|.07097847590|
+|20|.03995065314|.05619947359|.07317458895|
+|24|.04343683621|.06087961823|.08004768946|
+
+Unweighted log residual versus log N fitted orders are -.4682,-.2571,-.2907.
+Thus this series does not show decreasing exterior residuals. This is residual
+scaling on a coordinate domain, not Richardson field self-convergence, an
+invariant physical-domain comparison, or proof of a continuum failure.
+The cutoff lies outside every recorded complete candidate enclosure, so this
+particular deterioration cannot be dismissed as the puncture singularity
+inside the horizon. At N24, .3–.4 contains98.13%/96.63% of the exterior H²/M²
+integrals. The original scri-region error decreases while this inner exterior
+region dominates. Primary fields and shift gradients nearly overlay; native
+constraint and D-gradient structure is less regular. Coincident overlap-copy
+constraint disagreements remain substantial and nonmonotonic across the three
+resolutions; they identify an interface suspect, not a proven causal defect.
+
+N24 has31/68 online accepted horizon rows, last4.5M;67/68 complete candidates
+pass post expansion RMS<=.01. Final RMS=.00631374, but mass remains missing.
+Do not convert a post-quality pass into native acceptance or invent a mass.
+Chi floor interventions sum145204stage/48456final, with no lapse or boundary
+floors; pre-floor sign counts remain separately preserved. Native command sums
+are36.60/53.03/70.43min for N16/20/24 on four nodes, not a strong-scaling study.
+Scri null maxima remain <=1.56e-15. Pole/clock curves are per-segment cumulative
+maxima and reset at restart; the lower restarted maxima are not discontinuous
+instantaneous physical residuals. Restart sampling gaps are left unfilled.
+
+Reproducers: compare_three_histories.py, compare_three_endpoints.py,
+extract_localization.py and plot_three_slices.py. Results, histories, radial
+integrals, unsmoothed slices and inspected figures are in n16-n20-n24/.
+Older N16/N20 evidence is retained. The separate persistent RF2 enlarged-core,
+flat-Omega, SMR and performance investigation remains active in
+codex/refined-convergence; do not mix its scientific identity with BN1.

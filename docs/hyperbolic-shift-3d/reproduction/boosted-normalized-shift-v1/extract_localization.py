@@ -26,7 +26,7 @@ if not binary.exists():
  with (OUT/'build.log').open('w') as f:subprocess.run(cmd,cwd=work,stdout=f,stderr=subprocess.STDOUT,check=True)
 prov['binary_sha256']=sha(binary)
 raw=ROOT/'output/boosted-normalized-shift/aurora'
-for n,seg,dt in [(16,1,'.00025'),(20,2,'.0002')]:
+for n,seg,dt in [(16,1,'.00025'),(20,2,'.0002'),(24,2,str(1/6000))]:
  camp=raw/f'campaigns/n{n}-boosted-normalized-shift-v1-s{n}-evolution-segment{seg:02}'
  a=read(camp/'checkpoint-verified.json');assert a['verified'] and a['cases'][0]['completed']
  cp=raw/a['cases'][0]['checkpoint'];assert sha(cp)==a['cases'][0]['sha256']

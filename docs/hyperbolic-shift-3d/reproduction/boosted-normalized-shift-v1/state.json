@@ -1,5 +1,5 @@
 {
-  "status": "n24_segment02_submitted",
+  "status": "campaign_and_analysis_complete",
   "branch": "codex/boosted-normalized-shift",
   "source_commit": "680ce2f812036d6e5bc6009b6d64eaabe126d0cb",
   "launcher_commit": "a308265f7",
@@ -17,7 +17,7 @@
   ],
   "target_t_over_M": 10,
   "updated": 1793768421.2501569,
-  "next": "Monitor existing N24 segment02 job9037997; no duplicate. N16/N20 complete. Full three-resolution followup remains.",
+  "next": "No BN1 runs remain. Frozen evidence preserved; persistent RF2 goal continues separately.",
   "local_checks": "checks/serial-verification.json",
   "monitor_frequency": "every 30 minutes",
   "monitor": "aurora-normalized-shift-n16-n20-n24",
@@ -115,5 +115,16 @@
     "remote_verified": true,
     "lock_released": true,
     "all_artifacts_locally_verified": true
-  }
+  },
+  "n24_completed": {
+    "job": "9037997",
+    "t_over_M": 10,
+    "steps": 20000,
+    "checkpoint_sha256": "9f1dc5875451544bcbfe2e47404ad8353948fd8506bd8cf587b908224aa29528",
+    "bytes": 806091472,
+    "all_artifacts_locally_verified": true,
+    "lock_released": true
+  },
+  "three_resolution_analysis": "n16-n20-n24/",
+  "monitor_delete_requested": true
 }
