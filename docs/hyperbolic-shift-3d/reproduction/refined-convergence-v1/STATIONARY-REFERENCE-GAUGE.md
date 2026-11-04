@@ -29,7 +29,7 @@ RHS is
     G_alpha_new(U) = G_alpha(U) - G_alpha(U_*)
                     + 2 xi (alpha-alpha_*) (alpha_*-A)/Omega
                     + [F(alpha)-F(alpha_*)] (K_*+3)/Omega,
-    A = (1+r²)/2.
+    A = (1+r²)/2, F(alpha) = alpha² + 4 Omega² alpha.
 
 The lapse-restoring correction turns the original lapse restoring factor into
 -2 xi alpha(alpha-alpha_*)/Omega. At alpha=alpha_*>0, its derivative is negative,
@@ -90,6 +90,20 @@ point (48 bytes/cell); no extra RK kernel, MPI call or quadrature is introduced.
 The CPU reference table is created lazily only when the CPU RHS is requested,
 avoiding a replicated global table during native distributed device evolution.
 These are structural cost controls, not a measured speedup claim.
+
+The preserved matched four-node constant/separated controls spent median
+238.384/238.480 seconds stepping (1238 attempts), 82.485/82.907 seconds in
+evolution setup, about5.295 seconds in diagnostics and2.29 seconds capturing
+the failure. Output is not the leading cost. The constant-control nested
+median RHS/exchange/closure times were97.872/35.807/63.754 seconds; these
+include overlapping synchronization and must not be added to the exclusive
+phases or interpreted as isolated device kernel timings. The forthcoming
+reference run can measure added source/setup cost, but changed science and a
+possibly different duration prevent calling it a controlled speedup benchmark.
+Evidence: stationary20-constant-failure/comparison.json and preserved per-rank
+performance/generation records for job9038285. Further performance changes
+should target measured stepping/setup costs while retaining the admitted
+scientific configuration and numerical-equivalence checks.
 
 The point oracle compares source balance using independently differenced
 reference lapse/shift, tests arbitrary nonzero gauge perturbations, exact

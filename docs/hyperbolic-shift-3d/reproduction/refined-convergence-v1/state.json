@@ -1,8 +1,8 @@
 {
-  "status": "stationary_reference_v2_building",
-  "current_job": null,
+  "status": "stationary_reference_v2_n16_submitted",
+  "current_job": "9038410.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
   "branch": "codex/refined-convergence",
-  "next": "Monitor existing build pid3464707 on aurora-uan-0012 in stationary-reference-v2. No duplicate build/freeze/smoke. After completion preserve/hashverify all source/compiler/build/launcher records, then fresh N16 reference plan via launcher-v6, four debug-scaling nodes48ranks dt.000125 target10/3 after all user queues/submissions check. Never launch unused v1 precursor or restart failed paired controls.",
+  "next": "Monitor existing reference v2 job9038410. No duplicate build/freeze/smoke/submission. Collect with frozen launcher-v6/control.py at terminal; preserve/localize failures without replay; healthy admitted same-formulation walltime continues sequentially using verified --previous plan. Stationary regularity and convergence remain unproven; no boosted production yet.",
   "goal_active": true,
   "historical_startup_failure": {
     "job": "9038031",
@@ -68,7 +68,11 @@
   "ledger_root": "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1",
   "source": {
     "source_commit": "b52f09723b9c5a51340401bf91a7bf4426d8f339",
-    "source_manifest_sha256": "19d2445841e7a6e63588a13ab72855fe0da8cd23698c207742f16b16cb3dc608"
+    "source_manifest_sha256": "19d2445841e7a6e63588a13ab72855fe0da8cd23698c207742f16b16cb3dc608",
+    "binary": "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined_amr",
+    "binary_sha256": "4220cf70111f829fc8aa3e244f0cd04ad57e2477ca74c294e08c0bb880c7104c",
+    "build_cache_sha256": "4aafa883af379564f320b6901a093bb374e538013d9c19b43bb3fed338295646",
+    "flags_sha256": "68520fd940116d8505341332dc0c36da4bd3f9a7c51887623085b75f76db8422"
   },
   "launcher": "launcher-v6",
   "submission_helper": "launcher-v6/submit_reviewed.py",
@@ -185,13 +189,13 @@
   },
   "active_control": {
     "root": "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/stationary-reference-v2",
-    "status": "building",
+    "status": "submitted",
     "build_pid": 3464707,
     "build_host": "aurora-uan-0012",
     "source_commit": "b52f09723b9c5a51340401bf91a7bf4426d8f339",
     "source_manifest_sha256": "19d2445841e7a6e63588a13ab72855fe0da8cd23698c207742f16b16cb3dc608",
     "launcher": "launcher-v6",
-    "current_job": null,
+    "current_job": "9038410.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
     "n": 16,
     "dt": 0.000125,
     "target_M": 10,
@@ -201,6 +205,21 @@
     "checkpoint_expected_bytes": 858262703,
     "local_checks": "stationary-reference-v2-checks/",
     "current_restart": null,
-    "execution": "Use explicit /usr/bin/python3.11 remotely. Build has started once with make-j64. Actual binary hashes only after build completion. Fresh plan --variant reference; no GPU smoke gate. Healthy exact same-formulation verified walltime continuation only, failed states terminal."
+    "execution": "Frozen launcher-v6/controller and plan helper only; fresh reference N16 job9038410 submitted once after all user queues checked. Healthy admitted walltime only: --variant reference --previous VERIFIEDPLAN --segment NEXT after matching lock release; no failed restart, no GPU smoke or rebuild.",
+    "build_completed": true,
+    "plan": "campaigns/stationary20-reference-n16-segment01/plan.json",
+    "plan_sha256": "e5f7872186b02d477a8eb513dcc29db709244975f14104c5a2195af9b19b6eaf",
+    "science": {
+      "source_commit": "b52f09723b9c5a51340401bf91a7bf4426d8f339",
+      "source_manifest_sha256": "19d2445841e7a6e63588a13ab72855fe0da8cd23698c207742f16b16cb3dc608",
+      "binary": "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined_amr",
+      "binary_sha256": "4220cf70111f829fc8aa3e244f0cd04ad57e2477ca74c294e08c0bb880c7104c",
+      "build_cache_sha256": "4aafa883af379564f320b6901a093bb374e538013d9c19b43bb3fed338295646",
+      "flags_sha256": "68520fd940116d8505341332dc0c36da4bd3f9a7c51887623085b75f76db8422"
+    },
+    "science_sha256": "726d9d0139698aa5d2ffde34fb6ffed30b7d31fc7efe9e79225d7cd42274df6d",
+    "all29_build_records_locally_verified": true,
+    "storage_footprint_bytes": 38583165313,
+    "storage_headroom_after_reserves_bytes": 8416834687
   }
 }

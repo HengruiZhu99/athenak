@@ -9,10 +9,16 @@ currently queued or running from that historical campaign. The separate frozen B
 and its final analysis are complete; its monitor was deleted. See state.json
 before any action; never duplicate a run.
 
-**Next experiment:** the coherent stationary outer gauge v2 is implemented
-and locally qualified; Aurora build3464707 is running in the separate
-stationary-reference-v2 namespace, sourceb52f09723. No evolution submitted yet.
-See STATIONARY-REFERENCE-GAUGE.md and state.json for the live build/next action.
+**Active experiment:** the coherent stationary outer gauge v2 is implemented,
+locally qualified and frozen on Aurora. Fresh N16 job9038410 is submitted in
+stationary-reference-v2, sourceb52f09723, four debug-scaling nodes48ranks,
+dt=.000125, target10M. Build3464707 completed with-j64 in645.84s. All29 source,
+build and launcher records are locally hash/length verified; actual binary
+4220cf70111f829fc8aa3e244f0cd04ad57e2477ca74c294e08c0bb880c7104c.
+Both user debug queues were empty before the single submission. Combined
+footprint38.583GB leaves8.417GB after2GB output and1GB atomic reserves under50GB.
+No purge was needed. See STATIONARY-REFERENCE-GAUGE.md and state.json for the
+active plan and terminal verification/healthy continuation policy.
 The v1 precursor build is preserved but must not launch: a local perturbation
 check found a positive lapse response, repaired in v2 by consistently targeting
 K-K_*. This is not a stability or convergence proof. Never repeat a successful
@@ -21,7 +27,7 @@ build/freeze or restart a failed state.
 **Current update:** both enlarged stationary controls failed at the same
 accepted step1237 (0.463875M): separated-driver9038253 and constant-driver9038285.
 All151 artifacts from each run are locally hash/length verified and both terminal
-locks are released. Neither may restart. There is no active evolution.
+locks are released. Neither may restart. The reference v2 job above is a fresh control.
 The outer failed nominal fields (r>.875) differ by at most9.032e-4 scaled;
 changing the inner driver did not prevent this early failure. See
 `stationary20-constant-failure/` and `compare_driver_failures.py`.
