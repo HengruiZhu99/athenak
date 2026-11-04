@@ -1,5 +1,5 @@
 {
-  "status": "n16_submitted",
+  "status": "n20_submitted",
   "branch": "codex/boosted-normalized-shift",
   "source_commit": "680ce2f812036d6e5bc6009b6d64eaabe126d0cb",
   "launcher_commit": "a308265f7",
@@ -16,18 +16,18 @@
     "S24"
   ],
   "target_t_over_M": 10,
-  "updated": 1793754666.785197,
-  "next": "Monitor existing S16 job9037573; no duplicate build, freeze, smoke or submission. Healthy admitted same-case walltime continuation automatic. After terminal disposition/preservation advance fresh S20 then S24, each four nodes; never numerical replay.",
+  "updated": 1793759470.844501,
+  "next": "Monitor existing running S20 job9037706; no duplicate. Healthy verified walltime continuation automatic; after terminal disposition/preservation advance fresh S24. N16 completed and comparison preserved; do not rerun.",
   "local_checks": "checks/serial-verification.json",
-  "monitor_frequency": "hourly",
+  "monitor_frequency": "every 30 minutes",
   "monitor": "aurora-normalized-shift-n16-n20-n24",
   "build_pid": 2594941,
   "build_host": "aurora-uan-0012",
   "build_log": "boosted-normalized-shift-build-attempt02.stdout.log",
   "build_attempt": 2,
   "transport_repair": "normalized-shift-transport-repair.json",
-  "plan": "campaigns/n16-boosted-normalized-shift-v1-s16-evolution-segment01/plan.json",
-  "plan_sha256": "1436287663dc79a9f40265aac0e1dd01f540ca2d4e55243aa3c0c750376174bd",
+  "plan": "campaigns/n20-boosted-normalized-shift-v1-s20-evolution-segment01/plan.json",
+  "plan_sha256": "7df9a0bbae2ddb641d5ef29776204600f6558c1d855f05f4de22ec5853913199",
   "science_sha256": "ab00e6c2bc6ec44fa25bececd2b9d19c20e094034a81f581e70d3015d2439e0e",
   "science": {
     "schema": 1,
@@ -53,10 +53,10 @@
     }
   },
   "submission": {
-    "job_id": "9037573.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
-    "submitted": 1793754589.8013628,
-    "plan": "campaigns/n16-boosted-normalized-shift-v1-s16-evolution-segment01/plan.json",
-    "plan_sha256": "1436287663dc79a9f40265aac0e1dd01f540ca2d4e55243aa3c0c750376174bd",
+    "job_id": "9037706.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "submitted": 1793759270.1404023,
+    "plan": "campaigns/n20-boosted-normalized-shift-v1-s20-evolution-segment01/plan.json",
+    "plan_sha256": "7df9a0bbae2ddb641d5ef29776204600f6558c1d855f05f4de22ec5853913199",
     "source_manifest_sha256": "15003c908c6c2640140045ed0473a93a8ffa9e19ab5dac868cd401358c5c42b5",
     "resources": {
       "queue": "debug-scaling",
@@ -72,5 +72,15 @@
   "retirement_receipt": "retired-before-normalized-shift.json",
   "post_horizon_expansion_rms_tolerance": 0.01,
   "online_horizon_tolerance_unchanged": 0.001,
-  "last_scheduler_state": "Q"
+  "last_scheduler_state": "R",
+  "n16_completed": {
+    "job": "9037573",
+    "t_over_M": 10,
+    "steps": 13334,
+    "checkpoint_sha256": "8e8bfe0fd44f181ac06f62d27e96f6c6349536103b68540d92d289f75e5aa5e8",
+    "remote_verified": true,
+    "all_artifacts_locally_verified": true,
+    "lock_released": true
+  },
+  "n16_common_cutoff_endpoint": "n16-comparison/endpoint-comparison.json"
 }

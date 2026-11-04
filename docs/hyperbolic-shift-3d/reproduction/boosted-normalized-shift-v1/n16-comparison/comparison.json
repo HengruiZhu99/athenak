@@ -1,0 +1,63 @@
+{
+  "provenance": {
+    "BC2 gamma=1": {
+      "job": "9036411.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+      "source_manifest_sha256": "6d1c29a69bcce98d761d1f896b9f230553d7e4852d8a4c86384f33237634847b",
+      "binaries": {
+        "build-sycl-mpi-boosted-refined-core-cfl-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_control_broad_smooth_six_shells_boosted_free_gauge_refined_core_matched_cfl": "fbb8f8d2e9522d1b72fe28ea8b1e857f2b840f4d58365c5042a16727831f59e6"
+      },
+      "input_hashes": {
+        "puncture.history.csv": "c4907df46b5dc6fd4a64c67a46dedf83524587b6cc3cc366519c5d614435af20",
+        "puncture.report.json": "139638460e151ab48ddad208fcd65d8a488e88d0367edfac9f832e8c2bb5600b"
+      }
+    },
+    "BN1 gamma=k\u00b2": {
+      "job": "9037573.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+      "source_manifest_sha256": "15003c908c6c2640140045ed0473a93a8ffa9e19ab5dac868cd401358c5c42b5",
+      "binaries": {
+        "build-sycl-mpi-boosted-normalized-shift-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_control_broad_smooth_six_shells_boosted_free_gauge_refined_core_matched_cfl_normalized_shift": "8eb9c7ccd60603718d3c4c686af68cde784d70a2b1e9fb51c7ecaed3f8d9af08"
+      },
+      "input_hashes": {
+        "puncture.history.csv": "cb4ab340ad4d7c243de70c315379d802cc8d423ab0861968e46b0e502fafad4e",
+        "puncture.report.json": "bcd902e55c33a8a86e241b7d81bd8a2bd1de82c293d795b36ff4fc8c9eb3fff1"
+      }
+    }
+  },
+  "qualification": "Own-candidate moving domains; no common-cutoff or convergence claim. Post 1e-2 expansion selection does not recover masses.",
+  "BC2 gamma=1": {
+    "rows": 68,
+    "online_accepted": 25,
+    "post_expansion_pass": 65,
+    "last_online_mass_time_M": 3.7500000000000036,
+    "final_candidate_rms": 0.0024271150866956273,
+    "final_H": 0.027354582777003176,
+    "final_M": 0.03941216091312918,
+    "final_cut": 0.19252851654376785,
+    "final_tracker_x": 0.04954742391494002,
+    "chi_floor_stages": 22188,
+    "chi_floor_final": 7484,
+    "lapse_floor_nodes": 3032,
+    "null_surface": 1.2254837954160151e-15,
+    "null_ghost": 1.5543122006008414e-15,
+    "cumulative_pole": 6.0336292525944355,
+    "cumulative_clock": 14.012987726083502
+  },
+  "BN1 gamma=k\u00b2": {
+    "rows": 68,
+    "online_accepted": 29,
+    "post_expansion_pass": 67,
+    "last_online_mass_time_M": 4.500000000000254,
+    "final_candidate_rms": 0.005328284747933365,
+    "final_H": 0.11739048247888982,
+    "final_M": 0.15104839291217698,
+    "final_cut": 0.152393341860091,
+    "final_tracker_x": -0.000677625138887775,
+    "chi_floor_stages": 5133,
+    "chi_floor_final": 1723,
+    "lapse_floor_nodes": 0,
+    "null_surface": 1.2265246105933524e-15,
+    "null_ghost": 1.5543122006008414e-15,
+    "cumulative_pole": 6.033628283077526,
+    "cumulative_clock": 14.01298654889057
+  }
+}

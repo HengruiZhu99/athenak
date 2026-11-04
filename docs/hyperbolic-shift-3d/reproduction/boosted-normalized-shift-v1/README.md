@@ -5,19 +5,53 @@ Aurora debug-scaling nodes (48 ranks/tiles). Branch `codex/boosted-normalized-sh
 Read state.json and remote boosted-normalized-shift-state.json before actions.
 No duplicate builds/submissions. Existing BC2 baselines are terminal and preserved.
 
-Current: **N16 S16 job9037573 submitted**, four nodes/48ranks, target10M. Plan
-`campaigns/n16-boosted-normalized-shift-v1-s16-evolution-segment01/plan.json`,
-SHA2561436287663dc79a9f40265aac0e1dd01f540ca2d4e55243aa3c0c750376174bd.
-N20/N24 not yet submitted; advance sequentially after prior disposition.
-Build attempt02 completed and froze; all launcher/science/build records are
-locally preserved and verified in `aurora-build/`. Do not rebuild/freeze/smoke.
-Source manifest SHA25615003c908c6c2640140045ed0473a93a8ffa9e19ab5dac868cd401358c5c42b5;
-actual evolution SHA2568eb9c7ccd60603718d3c4c686af68cde784d70a2b1e9fb51c7ecaed3f8d9af08.
-Binding footprint8.070GB, headroom1.236GB after output/atomic reserves. Both debug
-queues checked before submission; see immutable records in `n16-submitted/`.
-Hourly monitor `aurora-normalized-shift-n16-n20-n24` is active. Two obsolete BC2
-N24 remote files were locally+remotely hashverified and retired with receipt;
-local originals remain. No old failed checkpoint is a restart input.
+Current: **N16 S16 job9037573 completed and verified at10M/13334steps**.
+All five worker artifacts are locally hash/length verified; the admitted BN1
+checkpoint SHA256 is8e8bfe0fd44f181ac06f62d27e96f6c6349536103b68540d92d289f75e5aa5e8
+(259205840bytes). Native/worker/PBS all succeeded; matching terminal lock released.
+Native command runtime2195.923s (36.60min); PBS reported41min28s on four nodes.
+No N16 continuation, rebuild, freeze or smoke is needed.
+
+**Fresh N20 S20 job9037706 submitted**, four debug-scaling nodes/48ranks,
+dt.0002,target10M. Plan
+`campaigns/n20-boosted-normalized-shift-v1-s20-evolution-segment01/plan.json`,
+SHA2567df9a0bbae2ddb641d5ef29776204600f6558c1d855f05f4de22ec5853913199.
+Both user debug queues were empty before the single submission. Binding footprint
+8,411,304,084bytes; headroom315,534,312bytes after output/atomic reserves. No purge.
+N24 is not submitted; it follows N20 terminal disposition and preservation.
+The same immutable source/build/launcher/science remains in use.
+Read `state.json` and saved submission before any action.
+
+The monitor checks every30minutes. Evidence in `n16-completed/`,
+`n16-local-verification.json`, `n20-submitted/`, and `n16-comparison/`.
+`compare_n16.py` preserves separate BC2/BN1 scientific identities and moving
+candidate cuts. BN1 has29/68 online accepted rows (last4.5M) and67/68 post1e-2
+expansion passes, versus BC225/68 (last3.75M) and65/68. Final BN1 candidate
+RMS.00532828 passes post1e-2 but the final mass is missing. Chi floor stage/final
+counts fall from22188/7484 to5133/1723; lapse floor interventions fall3032to0.
+The cumulative pole/clock maxima remain essentially6.03363/14.01299, and null
+residuals stay at roundoff. These observations do not prove improved accuracy.
+
+At10M the own-candidate H/M norms are.1173905/.1510484 for BN1 versus
+.0273546/.0394122 for BC2, but the cutoffs differ (.15239 versus.19253).
+Use `compare_endpoint.py` for the admitted endpoint comparison at common r>.3,
+which exceeds all recorded complete candidate enclosing radii in both runs.
+This is a common coordinate-domain comparison, not an invariant physical-domain
+comparison or final-horizon acceptance. Missing masses remain gaps.
+
+Completed common-cutoff r>.3 reconstruction reproduces full-domain report
+norms and preserves the checkpoint hash. BN1 H/M/Mr=.03593065627/.05473442898/
+.07097847590 versus BC2 .01448145953/.02303339626/.01378313985: ratios
+2.4811/2.3763/5.1497. Thus the N16 weaker driver does not improve these exterior
+endpoint residuals despite reducing floor interventions and delaying loss of
+online horizon acceptance. Regional integrals and the inspected radial plot are
+in `n16-comparison/`; native diagnostic operators are unchanged. N20/N24 remain
+necessary to assess this family's resolution dependence; no convergence claim.
+
+
+Build attempt02 completed/froze previously; all build/provenance records remain
+in `aurora-build/`. No successful build is repeated. Previously retired BC2
+N24 checkpoint/capture files remain preserved locally; do not retire them again.
 
 ## Single scientific change and its limits
 
@@ -85,7 +119,7 @@ but never purge before local preservation. Check exact BN1/config/n/dt/coefficie
 penalty/tracker/source/binary/input/artifact identities, finitepayload,time/steps/
 progress and scheduler/worker/native disposition at every terminal segment.
 
-Hourly quiet monitor: notify meaningful changes/failure/completion/required
+Quiet 30-minute monitor: notify meaningful changes/failure/completion/required
 input only. Keep local/remote state and monitor prompt current. Delete after
 all requested dispositions, preservation, comparisons and report complete.
 
