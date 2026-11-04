@@ -20,9 +20,11 @@ BN1 diagnostics. The exterior residuals do not decrease under refinement.
 Current progress: enlarged geometry/initial-map parameters and matched-plateau
 controls implemented; local geometry/frame/oracle checks and MPI SMR restart
 qualification passed. Production scheduled diagnostics/walltime support and
-the frozen Aurora build are complete. Stationary6 N16 RF2 job9038055 is running
-on four nodes with native SMR; consult state.json and saved submission before
-acting. User explicitly authorizes SMR/AMR as needed and measured performance
+the frozen Aurora build are complete. Stationary6 N16 RF2 job9038055 completed10M natively with large exterior
+errors. Original worker/PBS failure was executable permission, independently
+verified with identical verifier bytes; all151 artifacts are preserved. No active
+job remains. New initial halo and principal-symbol controls isolate separate
+numerical and gauge defects; consult state.json before acting. User explicitly authorizes SMR/AMR as needed and measured performance
 work; reuse existing infrastructure. Scientific source b41c24e8879 remains
 frozen during this experiment. Analysis tools are separate.
 

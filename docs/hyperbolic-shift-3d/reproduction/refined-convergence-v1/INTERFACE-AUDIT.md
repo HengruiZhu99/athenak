@@ -73,3 +73,22 @@ compare resolved derivative features. Then distinguish spatial/interface error
 from evolved gauge behavior through matched stationary resolution controls
 before the v=.1 sequence. Keep the old original-scri accuracy limitation and
 cumulative-versus-instantaneous residual distinction explicit.
+
+
+## Completed stationary endpoint and t0 causal experiment
+
+The independently verified stationary6 N16 endpoint now supplies the previously
+pending read-only reconstruction. It reproduces native full norms to roundoff;
+99.936%/99.883% of exterior r>.3 H²/M² lies in .3–.6. Near-shell-corner angular
+profiles are far worse than near-face-center profiles, despite stationary
+spherical initial geometry. See stationary6-terminal/ and its qualification of
+the original verifier permission failure. No failed numerical capture is used.
+
+The enlarged initial-data experiment now directly isolates a ghost contribution:
+changing only Cartesian-to-shell t0 ghosts reduces the over-refined12-shell
+Hamiltonian norm .0421891 to .00044628, without active-field changes. Removing
+the known conformal-frame factors before interpolating donor values reproduces
+that reduction. See INITIAL-INTERPOLATION.md for the exact maps and bounded
+scope. This establishes an initial numerical mechanism; the late error still
+needs a production repair/control and resolution test. PRINCIPAL-AUDIT.md
+records an independent lapse/shift Jordan-block suspect. Do not conflate the two.

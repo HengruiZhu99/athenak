@@ -1,0 +1,107 @@
+{
+  "status": "native_completed_independently_verified_not_accuracy_success",
+  "original_worker_admitted": false,
+  "full_norms": [
+    2.317524664565685,
+    3.1941270792207765,
+    6.457327662688546
+  ],
+  "fixed_cut_03_norms": [
+    2.2858438111109005,
+    3.165588428913193,
+    6.372486203371042
+  ],
+  "radial_03_06_squared_fractions": {
+    "H": 0.999361570959129,
+    "M": 0.9988298645275908
+  },
+  "online_accepted": 56,
+  "post_expansion_quality": 58,
+  "total_rows": 68,
+  "last_online_accepted_t": 8.250749999999506,
+  "final_mass": null,
+  "final_expansion_rms": 0.015803491972581886,
+  "native_seconds": 2414.7572405794635,
+  "floor_counts": [
+    0,
+    20944,
+    7024
+  ],
+  "exclusive_phase_rank_seconds": {
+    "checkpoint_capture": {
+      "min": 0.7986745848320425,
+      "median": 0.7987564476206899,
+      "max": 0.7987593351863325
+    },
+    "checkpoint_write": {
+      "min": 1.0627141278237104,
+      "median": 1.0783396237529814,
+      "max": 1.1148127312771976
+    },
+    "diagnostics": {
+      "min": 96.83052662434056,
+      "median": 96.8323650744278,
+      "max": 96.92645567236468
+    },
+    "evolution_setup": {
+      "min": 35.91570873744786,
+      "median": 35.9767584213987,
+      "max": 36.04642894305289
+    },
+    "initial_state": {
+      "min": 7.206145755015314,
+      "median": 7.300206465413794,
+      "max": 7.302212531212717
+    },
+    "native_setup": {
+      "min": 0.07599940011277795,
+      "median": 0.1501024034805596,
+      "max": 0.2132662725634873
+    },
+    "startup": {
+      "min": 0.0012042634189128876,
+      "median": 0.010792286600917578,
+      "max": 0.020780055318027735
+    },
+    "step": {
+      "min": 2315.936893630307,
+      "median": 2315.943409002386,
+      "max": 2315.9528118302114
+    }
+  },
+  "nested_rank_seconds": {
+    "rhs": {
+      "min": 690.003360950009,
+      "median": 1042.3567734810003,
+      "max": 1056.489373985991
+    },
+    "exchange": {
+      "min": 320.36651246002936,
+      "median": 330.6392416773407,
+      "max": 344.1869104408889
+    },
+    "diagnostic_transfer": {
+      "min": 0.7102876133285463,
+      "median": 0.8425263890530914,
+      "max": 14.070297732483596
+    },
+    "closure": {
+      "min": 687.229847124999,
+      "median": 687.536824500002,
+      "max": 687.8944767979995
+    },
+    "halo": {
+      "min": 34.17692421299998,
+      "median": 56.69183946000015,
+      "max": 202.10222933300005
+    },
+    "error_sync_overlapping": {
+      "min": 47.340023486875,
+      "median": 213.3944250245113,
+      "max": 597.5888581625186
+    }
+  },
+  "input_checkpoint_sha256": "785aea72c6df1960344dda24de63335af5a1a5a315bd617d5008c5b3bff0deda",
+  "analysis_sha256": "111f0ec14ee52eaa570483321850f8ec6f1a6dc4dbaf173ceb751009f1939d18",
+  "qualification": "One stationary resolution; original worker/PBS permission failure retained. Independent identical-byte verifier passed. Common coordinate cut, not invariant physical domain. Cumulative pole/clock are not instantaneous values; post expansion quality does not recover missing mass. Native rank timers are not a controlled scaling experiment; nested timers overlap."
+}

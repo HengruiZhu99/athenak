@@ -6,7 +6,12 @@ int main(int argc,char**argv) {
  MPI_Comm_size(MPI_COMM_WORLD,&global_variable::nranks);
  Kokkos::initialize(argc,argv);int code=0;
  try {
-  if(argc!=8)throw std::invalid_argument("usage: diagnostic N checkpoint dt config smr|uniform fresh_prefix cutoff");
+  if(argc!=8&&argc!=9)throw std::invalid_argument("usage: diagnostic N checkpoint dt config smr|uniform fresh_prefix cutoff [analytic-initial-halos]");
+  const bool exact_halos=argc==9;
+  const bool legacy_frame=exact_halos&&std::string(argv[8])=="legacy-frame-cartesian-to-shell-halos";
+  const bool physical_frame=legacy_frame||(exact_halos&&std::string(argv[8])=="physical-frame-cartesian-to-shell-halos");
+  const bool cartesian_donors=physical_frame||(exact_halos&&std::string(argv[8])=="analytic-cartesian-to-shell-halos");
+  if(exact_halos&&!cartesian_donors&&std::string(argv[8])!="analytic-initial-halos")throw std::invalid_argument("unknown analysis override");
   const int n=std::stoi(argv[1]),rank=global_variable::my_rank;
   const Real dt=std::stod(argv[3]),cut=std::stod(argv[7]);
   const std::string prefix=argv[6],policy=argv[5];
@@ -16,6 +21,7 @@ int main(int argc,char**argv) {
   cfg.identity+=";amr_policy="+policy;cfg.CheckCollective();
   Snapshot s;
   CollectiveLocal([&]{s=Read(argv[2],n,2,dt);
+   if(exact_halos&&(s.steps!=0||s.time!=0))throw std::invalid_argument("analytic halo control requires exact initial time");
    if(!(s.dt>0&&s.dt<=dt))throw std::invalid_argument("checkpoint dt exceeds bound");
    if(std::filesystem::exists(prefix+".json")||std::filesystem::exists(prefix+".rank"+std::to_string(rank)+".csv"))
     throw std::runtime_error("refusing analysis overwrite");});
@@ -25,10 +31,62 @@ int main(int argc,char**argv) {
   Evolution e(n,2,2,"",&descriptor);Install(e,s);e.RefreshBoundary(s.dt);
   const auto halo=e.exchange()->Fill(e.state);
   e.SynchronizeError(halo.invalid,"analysis halo geometry rejected");
-  const auto native=ReduceDiagnostic(e.kernel()->Diagnostics(e.exchange()->padded,cut,e.surface),false);
+  auto native=ReduceDiagnostic(e.kernel()->Diagnostics(e.exchange()->padded,cut,e.surface),false);
   e.SynchronizeError(native.invalid_cells,"analysis native geometry rejected");
-  const auto padded=e.Download(e.exchange()->padded),surface=e.Download(e.surface);
+  auto padded=e.Download(e.exchange()->padded);
+  const auto surface=e.Download(e.surface);
   const auto& model=e.Model();const auto& g=model.grid;
+  const auto production_native=native;
+  uint64_t replaced=0;Real halo_maximum=0;
+  if(exact_halos){
+   std::vector<bool> owned(g.mesh.blocks.size(),false);
+   for(int p=e.first;p<e.last;++p)owned[g.cells[p].block]=true;
+   h::NativeBoostedWormhole pgen(cfg.boost_velocity,1./3.,h::boost_free_initial_gauge,cfg.initial_start_M,cfg.initial_end_M);
+   std::vector<Real> donor_omega,donor_reference;
+   if(physical_frame){donor_omega.resize(g.count);donor_reference.resize(g.count);
+    for(size_t p=0;p<g.active.size();++p){const auto*x=g.geometry[p].x;const Real r=model.Radius(x);const Real om=cfg.gauge.profile.At(x).omega;
+     donor_omega[g.active[p]]=legacy_frame?(r>=cfg.gauge.profile.outer_radius?1:om/((1-r*r)/2)):om;
+     donor_reference[g.active[p]]=(1+r*r)/2;}}
+   for(const auto&row:g.halos){
+    int index=row.target,w=g.padded;const int i=index%w-g.storage_halo;index/=w;
+    const int j=index%w-g.storage_halo;index/=w;
+    const int k=index%w-g.storage_halo,block=index/w;
+    if(!owned[block]||g.inverse_active[row.target]>=0)continue;
+    if(cartesian_donors){
+     if(g.mesh.blocks[block].face<0||row.entries.empty()||row.boundary_weight!=0)continue;
+     bool all_cartesian=true;for(const auto&donor:row.entries)
+      all_cartesian=all_cartesian&&g.mesh.blocks[donor.point/(w*w*w)].face<0;
+     if(!all_cartesian)continue;
+    }
+
+    const Real q[3]={(i+.5)/n,(j+.5)/n,(k+.5)/n};
+    const auto geometry=g.mesh.Geometry(block,q);const auto*x=geometry.x;
+    const Real r=model.Radius(x);if(r<.33||r>.60)continue;
+    std::array<double,31> fields{};
+    if(!physical_frame){fields=pgen.Fields(x);cfg.InitialFields(x,fields);}
+    else {
+     for(int f=0;f<31;++f)fields[f]=padded[f*g.count+row.target];
+     const Real om=cfg.gauge.profile.At(x).omega;
+     const Real target_omega=legacy_frame?(r>=cfg.gauge.profile.outer_radius?1:om/((1-r*r)/2)):om,target_reference=(1+r*r)/2;
+     for(int f:{0,7,8,9,10,11,12,18}){
+      auto convert=[&](int point){const Real om=donor_omega[point],q=padded[f*g.count+point];
+       return f==0?om*om*q:(f==18?(q+donor_reference[point])/om:om*q);};
+      const Real anchor=convert(row.entries.front().point);Real interpolated=anchor;
+      for(const auto&entry:row.entries)interpolated+=entry.weight*(convert(entry.point)-anchor);
+      fields[f]=f==0?interpolated/(target_omega*target_omega):(f==18?target_omega*interpolated-target_reference:interpolated/target_omega);
+     }
+    }
+    for(int f=0;f<31;++f){auto&value=padded[f*g.count+row.target];halo_maximum=std::max(halo_maximum,std::abs(value-fields[f]));value=fields[f];}
+    ++replaced;
+   }
+   // Analysis scratch only: native state, checkpoint and production halos remain unchanged.
+   Buffer scratch("analytic_initial_halos",padded.size());e.CopyFromHost(padded,scratch);
+   native=ReduceDiagnostic(e.kernel()->Diagnostics(scratch,cut,e.surface),false);
+   e.SynchronizeError(native.invalid_cells,"analytic halo control invalid geometry");
+  }
+  MPI_Allreduce(MPI_IN_PLACE,&replaced,1,MPI_UINT64_T,MPI_SUM,MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE,&halo_maximum,1,MPI_ATHENA_REAL,MPI_MAX,MPI_COMM_WORLD);
+
   std::ofstream out(prefix+".rank"+std::to_string(rank)+".csv");out<<std::setprecision(17);
   out<<"ray,cell,block,layer,level,i,j,k,x,y,z,r,volume,chi,alpha,metric_rr,K,Theta,beta_r,beta_dev_r,D_r,Lambda_r,dr_chi,dr_alpha,dr_beta_dev_r,dr_D_r,H,Mr,Mnorm,Zr\n";
   V v(31);std::vector<std::array<Real,3>>d(31);std::vector<std::array<std::array<Real,3>,3>>dd(31);
@@ -77,12 +135,15 @@ int main(int argc,char**argv) {
   if(maximum>1e-9)throw std::runtime_error("CPU/operator volume cross-check failed: "+std::to_string(maximum));
   if(!rank){std::ofstream meta(prefix+".json");meta<<std::setprecision(17);
    meta<<"{\"identity\":"<<JsonString(cfg.identity)<<",\"n\":"<<n<<",\"t_over_M\":"<<3*s.time<<",\"steps\":"<<s.steps
+       <<",\"analysis_override\":"<<JsonString(legacy_frame?"legacy-frame interpolation of t0 Cartesian-to-shell chi,A,lapse ghosts at .33<=r<=.60":(physical_frame?"physical-frame interpolation of t0 Cartesian-to-shell chi,A,lapse ghosts at .33<=r<=.60":(cartesian_donors?"analytic t0 Cartesian-to-shell ghosts only at .33<=r<=.60":(exact_halos?"analytic t0 ghosts only at .33<=r<=.60":"none"))))
+       <<",\"replaced_ghosts\":"<<replaced<<",\"maximum_ghost_change\":"<<halo_maximum
+       <<",\"production_full_integrals\":["<<production_native.total.volume<<','<<production_native.total.h2<<','<<production_native.total.m2<<','<<production_native.total.mr2<<']'
        <<",\"cutoff\":"<<cut<<",\"native_volume_integral_relative_difference\":"<<maximum
        <<",\"rows\":"<<rows<<",\"evolved_overlap_cells\":"<<overlap<<",\"native_radial_closure_cells\":"<<radial<<",\"integrals\":[";
    for(int k=0;k<2;++k){if(k)meta<<',';meta<<'[';for(int f=0;f<4;++f){if(f)meta<<',';meta<<sums[k][f];}meta<<']';}
    meta<<"],\"radial_bins\":[";for(int b=0;b<100;++b){if(b)meta<<',';meta<<'['<<b*.01<<','<<(b+1)*.01;
     for(int f=0;f<4;++f)meta<<','<<bins[b][f];meta<<']';}
-   meta<<"],\"qualification\":\"Read-only native RF2 Restore/Install, same OmegaAt and native derivative operators; CPU integrals reproduce native kernel. Exterior admission must be checked separately. Rays use native centers without interpolation; Cartesian y,z offset follows local spacing across SMR. Radial bins include full domain; puncture-interior norms are not exterior accuracy measures.\"}\n";
+   meta<<"],\"qualification\":\"Read-only native RF2 Restore/Install, same OmegaAt and derivative stencils; if analysis_override is enabled only t0 halo values in the specified annulus are replaced by the explicitly stated analytic or physical-frame control, never active fields or scri; CPU integrals reproduce native kernel. Exterior admission must be checked separately. Rays use native centers without interpolation; Cartesian y,z offset follows local spacing across SMR. Radial bins include full domain; puncture-interior norms are not exterior accuracy measures.\"}\n";
    meta.close();if(!meta)throw std::runtime_error("metadata write failed");}
  }catch(const std::exception&x){std::cerr<<x.what()<<'\n';code=1;}
  MPI_Allreduce(MPI_IN_PLACE,&code,1,MPI_INT,MPI_MAX,MPI_COMM_WORLD);

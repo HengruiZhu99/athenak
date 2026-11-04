@@ -2,7 +2,10 @@
 
 Branch `codex/refined-convergence`, based on `hyperboloidal_refined`21676d39e.
 The persistent goal in GOAL.md is not complete. Stationary RF2 N16 SMR job9038055
-is running on four Aurora debug-scaling nodes. The separate frozen BN1 campaign
+reached10M, with worsening exterior errors. The original worker/PBS verification
+failed on executable permissions; an independent identical-byte verifier passed
+all scientific/artifact checks. All151 artifacts are preserved locally. No run is
+currently queued or running for this branch. The separate frozen BN1 campaign
 and its final analysis are complete; its monitor was deleted. See state.json
 before any action; never duplicate a run.
 
@@ -98,7 +101,7 @@ exclusive timers or extrapolate this CPU fixture to GPU costs.
 The production extension below now supplies scheduled diagnostics, healthy
 walltime checkpoints and complete candidate/fixed-cutoff histories. Its local
 field equivalence and restart checks pass; the frozen SYCL build completed
-with make-j64. GPU timing and long-time physics remain to be measured.
+with make-j64. The first GPU timing and stationary10M results are now measured below.
 Next causal controls must test interface derivative/overlap behavior and
 monitor evolved slice/metric regularity. Stationary qualification precedes
 boosted runs, with resolved puncture spacing and controlled timestep, followed
@@ -214,7 +217,71 @@ jobs and both queues, and preserves the same one-shot intent/lock protocol.
 Use it for future healthy continuations; frozen v2 control.py collect remains
 the terminal verifier. No frozen launcher or science snapshot was edited.
 
-Current job9038055 has passed four-node placement and started native evolution,
-reaching200steps/.15M in the latest observation. It is not a verified endpoint.
+Historical observation: job9038055 passed four-node placement and started native evolution,
+reaching200steps/.15M at that observation. Its terminal disposition is now below.
 Its plan hash is f1c5847369aceee53c3c16f4d045fcf619fc95aaa5841851156303b724df0f51.
 Do not duplicate it. Follow state.json before any action.
+
+
+## Stationary10M disposition and causal controls
+
+Job9038055 completed13334 native steps in2414.76s (40.25min), dt=.00025.
+The worker then could not execute launcher-v2/verify-checkpoint (mode0644),
+so original worker terminal_failure/PBS2 remains immutable. Frozen collection
+verified all151 artifact hashes and released only the matching allocation lock.
+`review_terminal.py` executed an identical-byte copy from a separate review
+path and passed every frozen controller scientific check. Its receipt qualifies
+the endpoint for read-only analysis, not a restarted run or an accuracy claim.
+Local preservation, original failure, independent review and figures are in
+stationary6-terminal/. No frozen launcher/source/binary was edited.
+
+The same-operator reader reproduces the full report to roundoff. At10M,
+fixed r>.3 H/M/Mr =2.285843811/3.165588429/6.372486203; r>.6 H/M =
+.0643872723/.1207173464. Of the squared error outside .3, .3–.6 contains
+99.9362% H and99.8830% M. The peak is around .36–.40. Native-center profiles
+show much larger angular error near shell face corners: sampled max |H|/M
+in .3–.6 is118.68/139.84 there, versus .332/.461 near the face center.
+These are different angular samples of a stationary spherical problem, not
+an interpolated jump at identical coordinates. The metric/chi stay admissible,
+but resolved accuracy and good gauge behavior have not been established.
+
+Online horizons accept56/68 rows, last8.25075M; post expansion quality<=.01
+passes58/68. Final RMS=.01580349 and final mass is missing. No lapse floor;
+chi stage/final floors20944/7024. Tiny null residuals do not cure this failure.
+Pole/clock2.72225/2.27961 are cumulative maxima, not current boundary values.
+Full norms near the puncture are not used as an exterior accuracy criterion.
+
+Exclusive per-rank median times: stepping2315.94s, diagnostics96.83s,
+evolution setup35.98s, initialization7.30s, capture/write~1.88s. Nested RHS,
+exchange, closure, halo and error synchronization timers overlap; they must
+not be summed into a speedup estimate. Four-node data are not controlled strong
+scaling. Measured step/closure/exchange costs should guide further performance
+work; repeated launcher tests or output optimization are not priorities.
+
+The enlarged20–40M N16 initial controls keep geometry, gauge, Cartesian SMR
+and angular resolution fixed while varying radial shells. Core nominal fields
+are checked bit-identical. Six shells give full H/M=.0572033/.2387504; eleven
+shells refining .54–.875 barely change them. Nine shells targeting .875–1
+reduce them to .00320683/.00143734. The compressed late initial-slicing change
+lies around r=.90–.93, not the earlier gauge-stitching interval. Final shell
+spacing and hence boundary stencil sampling/penalty CFL also change explicitly.
+The nine-shell two-step Serial MPI2 check passes, CFL .188389 atdt=.000125;
+it is not a long/GPU result. See initial-radial-controls/.
+
+Further refining the Omega/interface region with twelve shells instead raises
+H to .0421891, leaving M=.00143734. A read-only t0 control replacing **only
+Cartesian-to-shell ghost values** in .33–.60 by exact values reduces H to
+.00044628, with active fields and M unchanged. This isolates a numerical halo
+interpolation contribution; it is not an evolution with analytic boundaries.
+Frame-aware interpolation using only donor values and known Omega achieves
+essentially the same reduction. Its bounded test, limitations and reproducer
+are documented in INITIAL-INTERPOLATION.md. No production repair is frozen yet.
+
+Separately, PRINCIPAL-AUDIT.md records radial frozen-symbol Jordan-block
+evidence at lapse/shift speed coincidences in both initial configurations.
+Pushing the gauge outward alone does not remove these defects. The inner
+crossing also belongs to the corresponding spatial gauge, so it is not a
+uniquely hyperboloidal effect. Neither audit alone attributes all late errors.
+Next: validate a conformal-frame-aware interface repair and independently check
+an explicitly well-separated gauge control before further stationary/boosted
+production. Preserve stationary-first sequencing and the full convergence goal.
