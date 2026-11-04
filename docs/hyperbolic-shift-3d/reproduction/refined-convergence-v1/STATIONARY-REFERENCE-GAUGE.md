@@ -117,3 +117,38 @@ Fresh stationary N16 is the next evolution control, on the matched12-shell,
 three-level SMR grid, dt.000125, four nodes48ranks, target10M. There is no restart
 from either failed control. Stationary regularity and resolution evidence must
 precede a boosted stability/convergence claim.
+
+## Initial resolution and refinement coverage controls
+
+The fresh N12/N14 initial-only controls and preserved N16 t0 history use exactly
+the same physical geometry, reference gauge, frame-aware halo policy, three SMR
+levels and twelve shells. No N12/N14 evolution steps were taken. Their RF2
+framing/FNV/finite/SPD checks pass. Native fixed r>.3 H is
+.000809785414/.000445405099/.000264273845 and M is
+.004175171750/.002387202242/.001457127855. Fitted residual orders are3.8921/3.6584;
+pairwise H orders3.8779/3.9092 and M3.6265/3.6969. Cuts.1 and.6 give similar
+trends and all initial horizons lie inside.1. This is initial-data consistency,
+not evolved field self-convergence or a claim that the gauge change reduces
+initial constraints: the physical initial geometry was unchanged. The original
+scri derivative operator is retained. See reference-initial-resolution/ and
+run_reference_initial_resolution.py/analyze_reference_initial_resolution.py.
+Both plots were visually inspected.
+
+A read-only topology audit of the admitted local N16 checkpoint finds232leaves:
+56/56/56/64 at refinement levels0/1/2/3. The finest union is the complete cube
+[-.05,.05]^3, with compact spacing.0015625, or.0463335M in the affine inner
+isotropic chart. The actual AthenaK location criterion selects intersecting
+boxes, so the input smr_radius=.025 is not the extent of the final fine union.
+For the reference Lorentz chart alone, x=k v t gives x(10M)=.0337229; the
+four-cell buffered fine edge .04375 is reached at 12.9734M. Translating the saved
+stationary initial horizon radius (.0168624) as a proxy reaches that buffered
+edge at 7.9731M; at 10M its envelope exceeds the buffer by .0068353. Thus
+puncture-only coverage is insufficient to assert coverage of the entire
+horizon neighborhood. This proxy is not the actual boosted horizon. This is not the live
+gauge trajectory, which follows xdot=-beta, nor proof that every gradient is
+resolved. The current dynamic driver option is a test fixture explicitly
+rejected for production. Before/during a boosted run, audit the actual tracker
+and stencil support against the finest leaves; enlarge fixed refinement or
+qualify a production moving criterion if needed. See audit_refinement_coverage.py
+and refinement-coverage/ (inspected topology/coverage plot). The stationary
+campaign remains immutable and has not been replaced by a moving-grid run.

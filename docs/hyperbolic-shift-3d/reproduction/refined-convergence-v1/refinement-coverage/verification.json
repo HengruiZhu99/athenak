@@ -1,0 +1,42 @@
+{
+  "checkpoint": "output/refined-convergence/reference-v2-stationary-n16-mpi2.checkpoint",
+  "checkpoint_sha256": "e32d2d3b458942c5fac222c1004a21f16a8db60d691c9d83c6860bc485c04d80",
+  "identity": "RF2;flat-inner-Cartesian-Z4c-v1;native-C6-areal=20,40;M=1/3;v=0;restoration4:.6-.9;KO8;scri-original;penalty=.6510416666660156;chi-floor=1e-8:.03;lapse-floor=1e-10;flat=1;omega=0.40000000000000002,0.54000000000000004,0.41999999999999998;gauge=0.62,0.78000000000000003,0.010235092792698275;eta=6;k=0.10116863541976967;cfl=0.20000000000000001;buffer=4;smr=3,0.025000000000000001;subdivisions=4;shell_inner=0.34999999999999998;box=-0.40000000000000002,0.40000000000000002;-0.40000000000000002,0.40000000000000002;-0.40000000000000002,0.40000000000000002;shells=0.40000000000000002,0.42999999999999999,0.46500000000000002,0.5,0.54000000000000004,0.65000000000000002,0.78000000000000003,0.875,0.90000000000000002,0.92500000000000004,0.94999999999999996,1,;halo_frame=legacy-cartesian-to-shell-v1;outer_gauge=stationary-reference-v2;initial-lapse-blend=flat-to-inner-begin;amr_policy=smr",
+  "n": 16,
+  "topology_leaves": 232,
+  "level_counts": {
+    "0": 56,
+    "1": 56,
+    "2": 56,
+    "3": 64
+  },
+  "finest_cube_lower": [
+    -0.04999999999999999,
+    -0.04999999999999999,
+    -0.04999999999999999
+  ],
+  "finest_cube_upper": [
+    0.050000000000000024,
+    0.050000000000000024,
+    0.050000000000000024
+  ],
+  "finest_spacing": 0.0015625,
+  "finest_spacing_in_inner_isotropic_M": 0.04633352995768491,
+  "four_cell_buffer": 0.00625,
+  "reference_boost": 0.1,
+  "reference_x_at_10M": 0.03372287847325656,
+  "buffered_finest_exit_reference_M": 12.97338838815178,
+  "finest_cube_exit_reference_M": 14.826729586459177,
+  "cartesian_cube_exit_reference_M": 118.61383669167336,
+  "reference_margin_at_10M": 0.010027121526743468,
+  "stationary_initial_horizon_proxy": 0.016862434161169684,
+  "initial_history_sha256": "bc3f027f723ab6235dccd27f1db7f206210410b52de044d960ab1d2427123182",
+  "reference_plus_stationary_horizon_and_buffer_exit_M": 7.973093358609093,
+  "reference_envelope_margin_at_10M": -0.006835312634426216,
+  "live_tracker_from_stationary_two_step": [
+    -2.184303470409848e-25,
+    1.2045607100691976e-24,
+    3.876011653196783e-24
+  ],
+  "qualification": "Topology read from admitted local stationary two-step checkpoint; no evolution or new trajectory measurement. Reference drift k*v is the Lorentz-chart estimate, not live-gauge xdot=-beta. Dynamic policy in current driver is a fixture explicitly rejected in production. A boosted production run must monitor actual tracker, finest-leaf distance and stencil support; enlarge static support or qualify a production moving criterion if needed. The saved stationary initial horizon radius is only a coverage proxy, not a boosted/evolved horizon prediction; its translated envelope plus the same buffer exits earlier than the puncture alone. This does not prove gradient resolution or stability."
+}

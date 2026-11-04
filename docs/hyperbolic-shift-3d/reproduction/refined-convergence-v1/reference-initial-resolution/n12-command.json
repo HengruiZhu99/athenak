@@ -1,0 +1,23 @@
+{
+  "command": [
+    "mpiexec",
+    "-n",
+    "1",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/build-refined-convergence/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined_amr",
+    "12",
+    "boost",
+    "0",
+    "0.00016666666666666666",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/reference-initial-resolution/n12",
+    "-",
+    "smr",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/inputs/hyperbolic_shift_3d/refined_convergence/central20_stationary_smr025_radial12_reference.cfg"
+  ],
+  "binary_sha256": "6c22d88a196c0dabe657eacc6130137e85d5d34ad1436cf30629bb45e5652271",
+  "config_sha256": "b7b8d23c6d60b69ea7a196dd9302e2ca355e107436e3a06963c3b30ae3c95c9a",
+  "source_commit": "b52f09723b9c5a51340401bf91a7bf4426d8f339",
+  "started": 1793785391.697106,
+  "purpose": "Initial-data-only N12/N14 resolution control. No evolution steps; N16 t0 row reused from existing admitted two-step control.",
+  "returncode": 0,
+  "finished": 1793785467.674693
+}

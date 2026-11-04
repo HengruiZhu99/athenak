@@ -1,5 +1,5 @@
 {
-  "status": "stationary_reference_v2_n16_submitted",
+  "status": "stationary_reference_v2_n16_running",
   "current_job": "9038410.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
   "branch": "codex/refined-convergence",
   "next": "Monitor existing reference v2 job9038410. No duplicate build/freeze/smoke/submission. Collect with frozen launcher-v6/control.py at terminal; preserve/localize failures without replay; healthy admitted same-formulation walltime continues sequentially using verified --previous plan. Stationary regularity and convergence remain unproven; no boosted production yet.",
@@ -27,7 +27,9 @@
     "failed_radial_geometry": "Large-center failed stage nearly spherical: last nominal row chi16.68, relativeangularrange.02036%, adjacent radial cellchange25.23%; conformaltangentialmetric.01395. Boundary surface unavailable. See profiles evidence; no endpoint admission.",
     "matched_inner_policy": "Both policies fail same1237steps/.463875M and same floorcounts; nominal r>.875 failed fields differ by maxscaled.00090318. Inner policy does not remove this early failure; not proof of universal irrelevance. All151 constant artifacts preserved, lock released.",
     "full_initial_stationarity": "Compatible stationary outer gauge cancels all18 geometric RHS components with derivative-probe orders4.007/4.004 before roundoff; free gauge rates persist~1753.43. Pointwise not evolved convergence. See initial-stationary-geometry/.",
-    "stationary_reference_v2": "Consistent reference lapse/shift and K target; no geometry reset. Pointwise stationary outer gauge balance1.02e-10; geometry/inner initialization identical; nontrivial source perturbation1.78e-15; sampled held-geometry lapse response negative. CPU/device Serial all-field RHS+partition exact. N16 MPI2 two-step admitted, no floors, initial constraints unchanged; no GPU/long evidence."
+    "stationary_reference_v2": "Consistent reference lapse/shift and K target; no geometry reset. Pointwise stationary outer gauge balance1.02e-10; geometry/inner initialization identical; nontrivial source perturbation1.78e-15; sampled held-geometry lapse response negative. CPU/device Serial all-field RHS+partition exact. N16 MPI2 two-step admitted, no floors, initial constraints unchanged; no GPU/long evidence.",
+    "reference_initial_resolution": "N12/N14 initial-only plus preserved N16 t0: same configured family, exact admitted RF2. Fixed r>.3 H/M fitted residual orders3.8921/3.6584; no evolution or field-self-convergence claim. See reference-initial-resolution/.",
+    "smr_coverage": "Admitted topology: finest cube[-.05,.05]^3, physical inner dx=.0463335M. Reference k*v drift retains four-cell buffer to12.9734M, not live gauge guarantee; current production uses fixed SMR and dynamic option remains a fixture. Actual boosted tracker/support must be checked. The translated stationary-horizon proxy plus buffer reaches the fine edge at7.9731M, so puncture-only coverage does not establish coverage of its neighborhood; actual boosted horizon and features need assessment."
   },
   "historical_stationary6": {
     "plan": "campaigns/stationary6-n16-v2-segment01/plan.json",
@@ -189,7 +191,7 @@
   },
   "active_control": {
     "root": "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/stationary-reference-v2",
-    "status": "submitted",
+    "status": "running",
     "build_pid": 3464707,
     "build_host": "aurora-uan-0012",
     "source_commit": "b52f09723b9c5a51340401bf91a7bf4426d8f339",
@@ -220,6 +222,8 @@
     "science_sha256": "726d9d0139698aa5d2ffde34fb6ffed30b7d31fc7efe9e79225d7cd42274df6d",
     "all29_build_records_locally_verified": true,
     "storage_footprint_bytes": 38583165313,
-    "storage_headroom_after_reserves_bytes": 8416834687
+    "storage_headroom_after_reserves_bytes": 8416834687,
+    "scheduler_start": "2026-11-04 09:45:55 UTC",
+    "latest_live": "Scheduler R and worker running confirmed; no terminal or native progress claim yet."
   }
 }
