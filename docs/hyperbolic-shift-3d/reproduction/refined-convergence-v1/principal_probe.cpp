@@ -28,7 +28,7 @@ int main(int argc,char**argv){
  MPI_Init(&argc,&argv);MPI_Comm_rank(MPI_COMM_WORLD,&global_variable::my_rank);
  MPI_Comm_size(MPI_COMM_WORLD,&global_variable::nranks);Kokkos::initialize(argc,argv);int code=0;
  try{
-  if(argc!=3&&argc!=4&&argc!=5)throw std::invalid_argument("usage: principal_probe config fresh_jsonl [crossings [amplitude]]");
+  if(argc!=3&&argc!=4&&argc!=5)throw std::invalid_argument("usage: principal_probe config fresh_jsonl [crossings|separated [amplitude]]");
   if(std::filesystem::exists(argv[2]))throw std::runtime_error("refusing overwrite");
   const Real amplitude=argc==5?std::stod(argv[4]):1;
   if(!(amplitude>0))throw std::invalid_argument("invalid perturbation amplitude");
@@ -36,10 +36,11 @@ int main(int argc,char**argv){
   cfg.Load(argv[1],hyperbolic_reproduction::ContinuousCoreMesh(16));
   h::NativeBoostedWormhole pgen(cfg.boost_velocity,1./3.,h::boost_free_initial_gauge,cfg.initial_start_M,cfg.initial_end_M);
   std::ofstream out(argv[2]);out<<std::setprecision(17);
+  const bool separated=argc>=4&&std::string(argv[3])=="separated";
   for(int gcase=0;gcase<2;++gcase){
    std::vector<Real> radii;
    auto gap=[&](Real r){const Real x[3]={r,0,0};auto f=pgen.Fields(x);cfg.InitialFields(x,f);V v(f.begin(),f.end());D d(31);DD dd(31);auto p=cfg.gauge;if(gcase)p.inner_gamma=1;const auto u=h::HyperbolicComposite::Jet(x,v,d,dd);const auto c=h::ShiftCoefficients(r,u.alpha.value,u.chi.value,p);return h::GaugeShiftSpeedSquared(c,Real(1))-h::GaugeLapseSpeedSquared(u.alpha.value,u.chi.value,c,Real(1),Real(1),p);};
-   if(argc==3)for(int ir=0;ir<=360;++ir)radii.push_back(.05+.0025*ir);
+   if(argc==3||separated)for(int ir=0;ir<=360;++ir)radii.push_back(.05+.0025*ir);
    else {
     if(std::string(argv[3])!="crossings")throw std::invalid_argument("unknown mode");
     for(int ir=0;ir<360;++ir){Real lo=.05+.0025*ir,hi=lo+.0025,gl=gap(lo),gh=gap(hi);if(gl*gh>=0)continue;
@@ -49,7 +50,7 @@ int main(int argc,char**argv){
    }
    for(Real r:radii){const Real x[3]={r,0,0};auto fields=pgen.Fields(x);cfg.InitialFields(x,fields);
    V v(fields.begin(),fields.end());D d(31);DD dd(31);auto parameters=cfg.gauge;
-   if(gcase)parameters.inner_gamma=1; // Explicit analysis-only coefficient control.
+   if(gcase){if(separated)parameters.separated_shift_speeds=true;else parameters.inner_gamma=1;} // Explicit analysis-only coefficient control.
    const auto u=h::HyperbolicComposite::Jet(x,v,d,dd);const auto geometry=h::Geometry(u.metric);
    const auto c=h::ShiftCoefficients(r,u.alpha.value,u.chi.value,parameters);
    Real a[3][28][28]{};
@@ -73,6 +74,7 @@ int main(int argc,char**argv){
    }
    if(forbidden>1e-9)throw std::runtime_error("unexpected differential-order coupling");
    out<<"{\"r\":"<<r<<",\"perturbation_amplitude\":"<<amplitude<<",\"inner_gamma\":"<<parameters.inner_gamma<<",\"override\":"<<gcase
+      <<",\"effective_inner_gamma\":"<<c.inner_gamma<<",\"separated_shift_speeds\":"<<parameters.separated_shift_speeds
       <<",\"beta_x\":"<<u.beta.value[0]<<",\"alpha\":"<<u.alpha.value<<",\"chi\":"<<u.chi.value<<",\"inner_weight\":"<<c.inner
       <<",\"gap\":"<<h::AllDirectionShiftLapseGap(u.metric.g,u.chi.value,c,parameters)
       <<",\"lapse_speed2\":"<<h::GaugeLapseSpeedSquared(u.alpha.value,u.chi.value,c,geometry.inverse[0][0],Real(1),parameters)

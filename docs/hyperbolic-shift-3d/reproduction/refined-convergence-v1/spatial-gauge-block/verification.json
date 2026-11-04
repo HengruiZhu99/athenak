@@ -1,0 +1,187 @@
+{
+  "passed": true,
+  "reference_commit": "b99e27ffd47c2a0c13e126e0c2c7560e3fc9944a",
+  "reference_input": "experiments/telegrapher_aurora_20260929/inputs_v4/g1_bhahaha_L5.athinput",
+  "reference_input_sha256": "360a9621613a0ae570cc0a95179cd0d7da85c4a88bef872f296f2ec2a5475a37",
+  "reference_tau": 0.1,
+  "reference_kappa": 0.2,
+  "reference_shift_Gamma": 1,
+  "reference_shift_eta": 2,
+  "checks": [
+    {
+      "config": "central6_stationary_matched_plateau",
+      "r": 0.14844505384361217,
+      "omega": 0.4712,
+      "alpha_physical": 0.6379714041083284,
+      "chi_physical": 0.020501631863119953,
+      "gamma": 0.050371630094020035,
+      "actual_rhs_block": [
+        [
+          0.0,
+          0.02050163186311995,
+          -1.2759428082166568,
+          0.0,
+          0.0
+        ],
+        [
+          2.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.020501631863119957,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.050371630094020035
+        ],
+        [
+          0.0,
+          0.0,
+          -0.8506285388111046,
+          1.3333333333333333,
+          0.0
+        ]
+      ],
+      "analytic_block": [
+        [
+          0.0,
+          0.020501631863119953,
+          -1.2759428082166568,
+          0.0,
+          0.0
+        ],
+        [
+          2.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.020501631863119953,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.050371630094020035
+        ],
+        [
+          0.0,
+          0.0,
+          -0.8506285388111046,
+          1.3333333333333333,
+          0.0
+        ]
+      ],
+      "max_difference": 3.469446951953614e-18,
+      "lapse_speed2": 0.06716217345869327,
+      "shift_speed2": 0.06716217345869338,
+      "nullity_T": 1,
+      "nullity_T_squared": 2
+    },
+    {
+      "config": "central20_stationary_smr025_radial9",
+      "r": 0.06691425099543691,
+      "omega": 0.42,
+      "alpha_physical": 0.6379714041083289,
+      "chi_physical": 0.004165759657352913,
+      "gamma": 0.010235092792698275,
+      "actual_rhs_block": [
+        [
+          0.0,
+          0.004165759657352913,
+          -1.2759428082166577,
+          0.0,
+          0.0
+        ],
+        [
+          2.0000000000000004,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.004165759657352913,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.010235092792698275
+        ],
+        [
+          0.0,
+          0.0,
+          -0.8506285388111051,
+          1.3333333333333333,
+          0.0
+        ]
+      ],
+      "analytic_block": [
+        [
+          0.0,
+          0.004165759657352913,
+          -1.2759428082166577,
+          0.0,
+          0.0
+        ],
+        [
+          2.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.004165759657352913,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.010235092792698275
+        ],
+        [
+          0.0,
+          0.0,
+          -0.8506285388111051,
+          1.3333333333333333,
+          0.0
+        ]
+      ],
+      "max_difference": 4.440892098500626e-16,
+      "lapse_speed2": 0.013646790390264365,
+      "shift_speed2": 0.013646790390264367,
+      "nullity_T": 1,
+      "nullity_T_squared": 2
+    }
+  ],
+  "qualification": "The successful spatial-reference input uses kappa/tau=2. Under central coordinate scaling its normalized Gamma coefficient has the same possible inner lapse/shift speed coincidence. This explains why the inner defect is not unique to hyperboloidal stitching; it does not prove that it caused either long-run error. The full production-symbol rank evidence is separate. The 5x5 restriction sets other perturbations to zero, and is not a complete characteristic analysis."
+}

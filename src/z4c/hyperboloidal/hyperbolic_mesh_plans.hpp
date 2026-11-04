@@ -122,6 +122,8 @@ class HyperbolicMeshPlans {
     Append(out, o.angular_epsilon);
     Append(out, int(o.parameters.profile.flat));
     Append(out, int(o.parameters.enforce_cfl));
+    Append(out, int(o.parameters.conformal_frame_halos));
+    Append(out, int(o.parameters.separated_shift_speeds));
     for (Real value : {o.parameters.profile.flat_radius, o.parameters.profile.outer_radius,
                        o.parameters.profile.plateau, o.parameters.inner_begin,
                        o.parameters.inner_end, o.parameters.inner_gamma, o.parameters.bulk_mu,

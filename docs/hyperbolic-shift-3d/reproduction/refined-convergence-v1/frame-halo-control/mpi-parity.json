@@ -1,0 +1,176 @@
+{
+  "passed": true,
+  "mpi1": {
+    "path": "output/refined-convergence/frame-halo-stationary-mpi1.checkpoint",
+    "sha256": "31dde8650bb340d6a1c503e1c0743b0e6714ed3e8b200805801a5798b650fbc7",
+    "bytes": 373986659,
+    "identity": "RF2;flat-inner-Cartesian-Z4c-v1;native-C6-areal=20,40;M=1/3;v=0;restoration4:.6-.9;KO8;scri-original;penalty=.6510416666660156;chi-floor=1e-8:.03;lapse-floor=1e-10;flat=1;omega=0.40000000000000002,0.54000000000000004,0.41999999999999998;gauge=0.62,0.78000000000000003,0.010235092792698275;eta=6;k=0.10116863541976967;cfl=0.20000000000000001;buffer=4;smr=3,0.025000000000000001;subdivisions=4;shell_inner=0.34999999999999998;box=-0.40000000000000002,0.40000000000000002;-0.40000000000000002,0.40000000000000002;-0.40000000000000002,0.40000000000000002;shells=0.40000000000000002,0.42999999999999999,0.46500000000000002,0.5,0.54000000000000004,0.65000000000000002,0.78000000000000003,0.875,0.90000000000000002,0.92500000000000004,0.94999999999999996,1,;halo_frame=legacy-cartesian-to-shell-v1;amr_policy=smr",
+    "config": [
+      12,
+      2,
+      4,
+      2,
+      0
+    ],
+    "time": 0.00025,
+    "dt": 0.000125,
+    "seed": 0.016862473127010214,
+    "tracker": [
+      -1.4501280050214953e-22,
+      -1.6504826666437588e-22,
+      -2.3428905705652253e-22
+    ],
+    "floors": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "diagnostics": [
+      1.1102230246251504e-15,
+      1.1102230246251558e-15,
+      5.288614139980625e-10,
+      1.2491445221408127e-10,
+      1.2924697071141057e-26,
+      0.14124102927171,
+      -0.02224369905894117,
+      0.23437499999976552
+    ],
+    "leaves": 232
+  },
+  "mpi2": {
+    "path": "output/refined-convergence/frame-halo-stationary-mpi2.checkpoint",
+    "sha256": "31dde8650bb340d6a1c503e1c0743b0e6714ed3e8b200805801a5798b650fbc7",
+    "bytes": 373986659,
+    "identity": "RF2;flat-inner-Cartesian-Z4c-v1;native-C6-areal=20,40;M=1/3;v=0;restoration4:.6-.9;KO8;scri-original;penalty=.6510416666660156;chi-floor=1e-8:.03;lapse-floor=1e-10;flat=1;omega=0.40000000000000002,0.54000000000000004,0.41999999999999998;gauge=0.62,0.78000000000000003,0.010235092792698275;eta=6;k=0.10116863541976967;cfl=0.20000000000000001;buffer=4;smr=3,0.025000000000000001;subdivisions=4;shell_inner=0.34999999999999998;box=-0.40000000000000002,0.40000000000000002;-0.40000000000000002,0.40000000000000002;-0.40000000000000002,0.40000000000000002;shells=0.40000000000000002,0.42999999999999999,0.46500000000000002,0.5,0.54000000000000004,0.65000000000000002,0.78000000000000003,0.875,0.90000000000000002,0.92500000000000004,0.94999999999999996,1,;halo_frame=legacy-cartesian-to-shell-v1;amr_policy=smr",
+    "config": [
+      12,
+      2,
+      4,
+      2,
+      0
+    ],
+    "time": 0.00025,
+    "dt": 0.000125,
+    "seed": 0.016862473127010214,
+    "tracker": [
+      -1.4501280050214953e-22,
+      -1.6504826666437588e-22,
+      -2.3428905705652253e-22
+    ],
+    "floors": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "diagnostics": [
+      1.1102230246251504e-15,
+      1.1102230246251558e-15,
+      5.288614139980625e-10,
+      1.2491445221408127e-10,
+      1.2924697071141057e-26,
+      0.14124102927171,
+      -0.02224369905894117,
+      0.23437499999976552
+    ],
+    "leaves": 232
+  },
+  "arrays": [
+    {
+      "array": 0,
+      "elements": 18320256,
+      "bit_identical": true
+    },
+    {
+      "array": 1,
+      "elements": 18320256,
+      "bit_identical": true
+    },
+    {
+      "array": 2,
+      "elements": 26784,
+      "bit_identical": true
+    },
+    {
+      "array": 3,
+      "elements": 26784,
+      "bit_identical": true
+    },
+    {
+      "array": 4,
+      "elements": 590976,
+      "bit_identical": true
+    },
+    {
+      "array": 5,
+      "elements": 9455616,
+      "bit_identical": true
+    },
+    {
+      "array": 6,
+      "elements": 6912,
+      "bit_identical": true
+    },
+    {
+      "array": 7,
+      "elements": 0,
+      "bit_identical": true
+    }
+  ],
+  "bindings": {
+    "build-refined-convergence/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined_amr": "d315a6a3cfa6d696369724b4a9ff4814d4d9dfe507bb93b6a19df4e57c81f62d",
+    "src/z4c/hyperboloidal/hyperbolic_sampled_normal_device.hpp": "ad58483bd21bb3d1d7a24cfbd61c1d2c1fcdafe9370fb4c5a2269ef55198f5e7",
+    "src/z4c/hyperboloidal/cartesian_amr.hpp": "ddb95b5a434549d1c1c08d4ca0c9362daa680a91cd4db1a156c9d11e574639df",
+    "src/z4c/hyperboloidal/conformal_profile.hpp": "1bd083493adceb30c1541d20d948ae2f17ee6fd4dc9a1c788067dcd684cbfb30",
+    "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+    "src/z4c/hyperboloidal/measured_partition.hpp": "151ec2f29d61ae0da9d97d1042339dc904dcca09fef30d24c55da3575b62c8d9",
+    "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+    "src/z4c/hyperboloidal/hyperbolic_scri_device.hpp": "7240ea43a773e785df703a94cdb9aef9e044f181271356aaa3bebb417974aa39",
+    "src/z4c/hyperboloidal/native_boosted_wormhole.hpp": "c796c24d601854a1515dccdc0e4c2a1a650f6c899292dc995121f929eedbc371",
+    "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+    "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+    "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+    "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+    "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+    "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+    "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+    "src/z4c/hyperboloidal/native_wormhole.hpp": "0ee05a433359ee36da513203696e6eae7cb18eaa9be426a0eb0fb26c44300008",
+    "src/z4c/hyperboloidal/conformal_halo.hpp": "00ea8bbefdeec104364fdd89325949812bc3e5411d419f9cb5041b7a1e366cbc",
+    "src/z4c/hyperboloidal/algebraic_projection.hpp": "b2643c247ef37ad9141df41cfe99976301823ec93da71a9c5bbc05a13fdceb15",
+    "src/z4c/hyperboloidal/hyperbolic_composite_device.hpp": "3678eebb12bf23f237ac4b51e560710103998482b17689d70f42ef4b1dca7c39",
+    "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+    "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+    "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+    "src/z4c/hyperboloidal/scri_radial_device.hpp": "8948f42b976928388811b5cfbdabaac948c5de993953aac479bf77f3f288afd7",
+    "src/z4c/hyperboloidal/tensor_scri.hpp": "e959c1a1b401f958f409a37517d40572e956996011dce114d81480dd53dbec17",
+    "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+    "src/z4c/hyperboloidal/horizon_geometry.hpp": "9ee145b38810076aabc27f8ace9f249f2872adc2aa920b1d5b70fbdc4396e7b5",
+    "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+    "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+    "src/z4c/hyperboloidal/amr_fields.hpp": "e771983d44ac23091dea1f531f2105b8fc98d00636191e997ebda47e1206aa83",
+    "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+    "src/z4c/hyperboloidal/hyperbolic_composite_exchange.hpp": "35e6ed233088b41e9c0040106ebc263370545afeca46f3759d29d996856a4ccd",
+    "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+    "src/z4c/hyperboloidal/sparse_stage_exchange.hpp": "1555019dfcebba0b111d40e3f8a726fd21f074cb4dca108309a5a163d9a7f7bf",
+    "src/z4c/hyperboloidal/hyperbolic_angular_dissipation_device.hpp": "1045ea037e78806bed276b401c9652f6e7487e651113d188e9d6a5bf14027564",
+    "src/z4c/hyperboloidal/hyperbolic_shift.hpp": "8a6357e3b75ecc871cf3b9353422a854f6bdde0017f2db8e385695f37cac9de1",
+    "src/z4c/hyperboloidal/composite_dissipation.hpp": "92e6cf5017a432ee6b78acee4a3491d78c209f1c31045a8f773725df2e8d6faf",
+    "src/z4c/hyperboloidal/positive_variables.hpp": "7b14ddcbe22797cbef9eb42f3e24d2b816a6b49614f783a16ee528edde3926e1",
+    "src/z4c/hyperboloidal/hyperbolic_composite.hpp": "172574ca765dc80c87fb76d1a776b72b5aef488b20d79d97de0cd535c5ec336e",
+    "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+    "src/z4c/hyperboloidal/hyperbolic_mesh_plans.hpp": "cd6dd6f833d24b71f2ec1022b5ed95ca07cd29515cb4b62115684234b0b54658",
+    "src/z4c/hyperboloidal/cartesian_inner_adjustment.hpp": "69979d75adf1b6671fa1e22678277707752b7f01e4979edabd646a0c07db9b60",
+    "tst/hyperbolic_shift_3d/refined_configuration.hpp": "c666239a4787ffb7ed1654107c153b0c1415058de141bddc1d4ec58641b98c67",
+    "tst/hyperbolic_shift_3d/amr_evolution.cpp": "d0bfc994a7065445641e44f777b947327aeb897fe6db11f00fab41ae2b398347"
+  },
+  "qualification": "Two-step stationary N12 SERIAL backend; actual MPI1/2 native arrays byte-identical. Not SYCL GPU or long-time accuracy evidence."
+}

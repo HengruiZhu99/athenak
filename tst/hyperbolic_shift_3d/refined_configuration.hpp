@@ -44,7 +44,7 @@ struct RefinedConfiguration {
     std::map<std::string, std::string> values;
     const std::set<std::string> allowed = {
         "omega_profile", "omega_flat_radius", "omega_outer_radius", "omega_plateau", "gauge_begin",
-        "gauge_end",     "buffer_cells",      "cfl_target",         "shell_radii", "core_half_width", "shell_inner_radius", "core_subdivisions", "initial_start_M", "initial_end_M", "boost_velocity", "smr_levels", "smr_radius"};
+        "gauge_end",     "buffer_cells",      "cfl_target",         "shell_radii", "core_half_width", "shell_inner_radius", "core_subdivisions", "initial_start_M", "initial_end_M", "boost_velocity", "smr_levels", "smr_radius", "halo_frame", "shift_speed_policy"};
     std::string line;
     while (std::getline(input, line)) {
       line = Trim(line.substr(0, line.find('#')));
@@ -113,6 +113,13 @@ struct RefinedConfiguration {
     gauge.profile.outer_radius = number("omega_outer_radius", gauge.profile.flat_radius + .04);
     gauge.profile.plateau = number("omega_plateau", .5);
     gauge.profile.Validate();
+    const auto halo_frame=values.count("halo_frame")?values.at("halo_frame"):"stored";
+    if(halo_frame!="stored"&&halo_frame!="legacy")throw std::invalid_argument("halo_frame must be stored or legacy");
+    gauge.conformal_frame_halos=halo_frame=="legacy";
+    const auto shift_policy=values.count("shift_speed_policy")?values.at("shift_speed_policy"):"constant";
+    if(shift_policy!="constant"&&shift_policy!="separated")throw std::invalid_argument("shift_speed_policy must be constant or separated");
+    gauge.separated_shift_speeds=shift_policy=="separated";
+    if(gauge.conformal_frame_halos&&!gauge.profile.flat)throw std::invalid_argument("legacy-frame halo control requires flat profile");
     gauge.inner_begin =
         number("gauge_begin", gauge.profile.flat ? gauge.profile.outer_radius + .06 : .2);
     gauge.inner_end = number("gauge_end", .56);
@@ -186,6 +193,8 @@ struct RefinedConfiguration {
     out << "shells=";
     for (auto r : shell_radii)
       out << r << ',';
+    if(gauge.conformal_frame_halos)out<<";halo_frame=legacy-cartesian-to-shell-v1";
+    if(gauge.separated_shift_speeds)out<<";shift_speed_policy=separated-inner-v1";
     identity = out.str();
   }
   void CheckCollective() const {

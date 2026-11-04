@@ -14,6 +14,7 @@
 #include "z4c/hyperboloidal/tensor_scri.hpp"
 #include "z4c/hyperboloidal/positive_variables.hpp"
 #include "z4c/hyperboloidal/composite_dissipation.hpp"
+#include "z4c/hyperboloidal/conformal_halo.hpp"
 
 namespace z4c::hyperboloidal {
 // CPU coupled evolution on actual Cartesian/core and mapped shell cells. No
@@ -35,6 +36,7 @@ class HyperbolicComposite {
   cubed_sphere::ScriSurface scri;
   std::unique_ptr<const cubed_sphere::ScriRadialDifference> radial_plan;
   HyperbolicShiftParameters<Real> parameters;
+  std::shared_ptr<const ConformalHaloPlan> frame_halos;
   V state,compensation,edge_compensation,failed_state,failed_boundary;
   int failed_stage=0;
   bool adaptive;
@@ -77,6 +79,7 @@ class HyperbolicComposite {
   void Configure(const HyperbolicShiftParameters<Real>& value) {
     value.Validate();
     parameters=value;
+    frame_halos=value.conformal_frame_halos?std::make_shared<const ConformalHaloPlan>(grid,value.profile):nullptr;
     if (!value.profile.flat) return;
     for (size_t p=0; p<grid.active.size(); ++p) {
       std::array<double,31> q{};
@@ -171,7 +174,9 @@ class HyperbolicComposite {
        interpolated_null_max=std::max(interpolated_null_max,NullResidual(row.boundary.data(),values.data()));
        cache.emplace(row.boundary,std::move(values));}
     const int count=std::max(1,std::min(workers,nf));std::vector<std::thread> pool;
-    auto fill=[&](int worker){grid.Fill(out,nf,[&](int f,const auto&x){return cache.at(x)[f];},nf*worker/count,nf*(worker+1)/count);};
+    auto fill=[&](int worker){const int first=nf*worker/count,last=nf*(worker+1)/count;
+      grid.Fill(out,nf,[&](int f,const auto&x){return cache.at(x)[f];},first,last);
+      if(frame_halos)frame_halos->Fill(out,grid,first,last);};
     for(int w=1;w<count;++w)pool.emplace_back(fill,w);fill(0);for(auto&t:pool)t.join();
   }
   V Padded(const V&values)const{auto out=ActivePadded(values);FillGhosts(out);return out;}

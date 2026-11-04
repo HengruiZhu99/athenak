@@ -132,6 +132,10 @@ inline constexpr bool configured_conformal_frame=HYPERBOLIC_CONFIGURED_FORMULATI
 template<class T> struct HyperbolicShiftParameters {
   ConformalProfile profile;
   bool enforce_cfl=false;
+  // Numerical interface policy, not a change to any gauge RHS.
+  bool conformal_frame_halos=false;
+  // Optional field-dependent inner driver; outer gauge remains unchanged.
+  bool separated_shift_speeds=false;
   T inner_begin=InnerTelegrapher::begin, inner_end=InnerTelegrapher::end;
   T inner_gamma=InnerTelegrapher::shift_gamma;
   T bulk_mu = 4, ratio = 2, damping = 1, restoring = 4;
@@ -139,6 +143,8 @@ template<class T> struct HyperbolicShiftParameters {
   T inner_z4 = 8, kappa1 = 4, kappa2 = T(-.99);
   void Validate() const {
     profile.Validate();
+    if (separated_shift_speeds && (!configured_conformal_frame || !direct_outer || !inner_telegrapher || ratio!=T(2)))
+      throw std::invalid_argument("separated shift speeds require configured direct outer gauge with ratio 2");
     if (profile.flat && !configured_conformal_frame)
       throw std::invalid_argument("flat Omega requires the separate configured formulation target");
     if (!std::isfinite(inner_begin) || !std::isfinite(inner_end) ||
@@ -150,6 +156,20 @@ template<class T> struct HyperbolicShiftParameters {
       throw std::invalid_argument("invalid hyperbolic gauge speed/relaxation parameter");
   }
 };
+
+// The optional coefficient separates the inner longitudinal-shift speed from
+// the telegrapher lapse speed, including the chi guard. It is a source
+// coefficient (not a conservative flux); no gradient of it is added to beta_t.
+// For direct_outer with ratio=2 the squared-speed gap divided by Q is
+// 4*s*g0/3 + (1-s)*chi*F + s*(1-s)*guard*kappa/tau > 0
+// for positive lapse/chi and Q. This is not a full hyperbolicity proof.
+template<class T> KOKKOS_INLINE_FUNCTION
+T InnerShiftGamma(T alpha,T chi,T omega,const HyperbolicShiftParameters<T>&p) {
+  if (!p.separated_shift_speeds) return p.inner_gamma;
+  const T guard=fmax(omega*omega*chi,T(InnerTelegrapher::chi_guard));
+  return p.inner_gamma+T(.75)*(2*omega*alpha*chi
+      +guard*T(InnerTelegrapher::kappa/InnerTelegrapher::tau));
+}
 
 template<class T> KOKKOS_INLINE_FUNCTION
 T SmoothCollar(T t) {
@@ -167,7 +187,7 @@ HyperbolicCoefficients<T> ShiftCoefficients(T r, T alpha, T chi,
     const HyperbolicShiftParameters<T> &p = {}) {
   HyperbolicCoefficients<T> c{};
   c.omega=p.profile.Radial(r).value; c.reference_alpha=(1+r*r)/2;
-  c.inner=InnerTelegrapherWeight(r,p.inner_begin,p.inner_end); c.inner_gamma=p.inner_gamma;
+  c.inner=InnerTelegrapherWeight(r,p.inner_begin,p.inner_end); c.inner_gamma=InnerShiftGamma(alpha,chi,c.omega,p);
   const T y=(T(.8)-r)/T(.24);
   if constexpr(smooth_gauge_blend) {
     c.w=Smoothstep9(y);
@@ -342,7 +362,7 @@ HyperbolicGaugeParts<T> HyperbolicGauge(const T x[3],const Z4cJet<T>&u,
     lapse+=u.beta.value[i]*((p.profile.flat ? u.alpha.d[i]-alpha*omega.gradient[i] : u.alpha.d[i]+alpha*x[i]));
     for(int j=0;j<3;++j)lapse+=o*chi*g.inverse[i][j]*B.d[i][j];
     T flux=(T(InnerTelegrapher::kappa)*((p.profile.flat ? u.alpha.d[i]-alpha*omega.gradient[i] : u.alpha.d[i]+alpha*x[i]))/o-B.value[i])/T(InnerTelegrapher::tau);
-    T shift=p.inner_gamma*u.lambda.value[i]-T(InnerTelegrapher::shift_eta)*u.beta.value[i];
+    T shift=InnerShiftGamma(u.alpha.value,u.chi.value,o,p)*u.lambda.value[i]-T(InnerTelegrapher::shift_eta)*u.beta.value[i];
     for(int j=0;j<3;++j) {flux+=u.beta.value[j]*B.d[j][i];shift+=u.beta.value[j]*u.beta.d[j][i];}
     out.flux_rate[i]=(1-s)*out.flux_rate[i]+s*flux;
     out.shift_regular[i]=(1-s)*out.shift_regular[i]+s*shift;

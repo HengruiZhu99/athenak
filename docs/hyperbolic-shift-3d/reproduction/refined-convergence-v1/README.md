@@ -285,3 +285,16 @@ uniquely hyperboloidal effect. Neither audit alone attributes all late errors.
 Next: validate a conformal-frame-aware interface repair and independently check
 an explicitly well-separated gauge control before further stationary/boosted
 production. Preserve stationary-first sequencing and the full convergence goal.
+
+
+## Production frame and gauge controls
+
+See [FRAME-AND-GAUGE-CONTROLS.md](FRAME-AND-GAUGE-CONTROLS.md) for the new
+opt-in halo interpolation and separated inner-driver policies, derivation,
+qualified tests and next paired stationary comparison. The N16 production
+initial Hamiltonian norm reproduces the read-only interface improvement.
+The two-step local N16 control is admitted with CFL .188389, fixed penalty
+.6510416666660156 and penalty CFL .3125. Twelve radial shells, deeper SMR,
+the larger center and dt .000125 differ from the completed stationary6 case;
+that historical case is not a one-parameter gauge comparison. No new long
+result or boosted convergence has been established.

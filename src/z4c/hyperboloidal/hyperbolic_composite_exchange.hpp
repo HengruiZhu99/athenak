@@ -18,7 +18,7 @@ class HyperbolicCompositeExchange {
   using HostBuffer=Kokkos::View<Real*,Kokkos::HostSpace>;
   static constexpr int nf=31;
   struct Boundary {Real x[3];int point[36];Real weight[36];};
-  struct Halo {int target,begin,end,boundary;Real boundary_weight;Real reference_lapse=0;};
+  struct Halo {int target,begin,end,boundary;Real boundary_weight;Real reference_lapse=0;bool frame=false;};
   struct Entry {int point;Real weight;};
   template<class T>using View=Kokkos::View<T*,Device::MemorySpace>;
   int count,total;
@@ -29,6 +29,7 @@ class HyperbolicCompositeExchange {
   IntBuffer active,scri_active,source_ids;
   Buffer positive_references;
   View<Halo> rows;View<Entry> terms;View<Boundary> boundary;
+  View<ConformalHaloPoint> frame_points;
   Buffer boundary_values,null_before,null_after,scri_samples;
   IntBuffer boundary_bad;
   HostBuffer host_surface,host_samples;
@@ -64,6 +65,7 @@ class HyperbolicCompositeExchange {
     for(const auto&row:e.grid.halos){const int block=row.target/blocksize;
       if(!selected(block))continue;
       Halo h{row.target,int(es.size()),0,-1,row.boundary_weight};
+      h.frame=e.frame_halos&&e.frame_halos->enabled[row.target];
       if(validate_amr_halos){const int offset=row.target%blocksize,w=e.grid.padded,o=e.grid.storage_halo;
         const Real q[3]={(offset%w-o+.5)/e.grid.n,((offset/w)%w-o+.5)/e.grid.n,(offset/(w*w)-o+.5)/e.grid.n};
         Real x[3];e.grid.mesh.Forward(block,q,x);h.reference_lapse=(1+x[0]*x[0]+x[1]*x[1]+x[2]*x[2])/2;}
@@ -99,6 +101,8 @@ class HyperbolicCompositeExchange {
       positive_references=Upload("positive reference factors",references);
     }
     rows=Upload("owned halo rows",hs);terms=Upload("owned halo entries",es);boundary=Upload("boundary plans",bs);
+    if(e.frame_halos&&std::any_of(hs.begin(),hs.end(),[](const Halo&h){return h.frame;}))
+      frame_points=Upload("conformal halo factors",e.frame_halos->points);
     boundary_values=Buffer("boundary interpolants",bs.size()*nf);
     null_before=Buffer("boundary null before",bs.size());null_after=Buffer("boundary null after",bs.size());
     boundary_bad=IntBuffer("boundary errors",bs.size());
@@ -169,9 +173,16 @@ class HyperbolicCompositeExchange {
       after(p)=fabs(normal*normal-v[0]*q)/(v[0]*q);
       for(int f=0;f<nf;++f)vals(p*nf+f)=v[f];
     });
-    const auto h=rows;const auto e=terms;
+    const auto h=rows;const auto e=terms;const auto frame=frame_points;
     Kokkos::parallel_for("owned halo lift",Kokkos::RangePolicy<>(0,h.extent(0)*nf),KOKKOS_LAMBDA(int index){
-      const auto row=h(index/nf);const int f=index%nf,base=f*size;const Real anchor=out(base+e(row.begin).point);Real value=anchor;
+      const auto row=h(index/nf);const int f=index%nf,base=f*size;
+      if(row.frame&&ConformalHaloPoint::Transformed(f)){
+        const int start=e(row.begin).point;const Real anchor=frame(start).ToLegacy(f,out(base+start));Real value=anchor;
+        for(int i=row.begin;i<row.end;++i){const int point=e(i).point;
+          value+=e(i).weight*(frame(point).ToLegacy(f,out(base+point))-anchor);}
+        out(base+row.target)=frame(row.target).FromLegacy(f,value);return;
+      }
+      const Real anchor=out(base+e(row.begin).point);Real value=anchor;
       for(int i=row.begin;i<row.end;++i)value+=e(i).weight*(out(base+e(i).point)-anchor);
       if(row.boundary>=0)value+=row.boundary_weight*(vals(row.boundary*nf+f)-anchor);out(base+row.target)=value;
     });
