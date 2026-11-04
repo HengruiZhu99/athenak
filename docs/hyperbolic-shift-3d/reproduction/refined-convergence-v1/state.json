@@ -275,18 +275,11 @@
     "storage_footprint_bytes": 39471237766,
     "storage_headroom_after_reserves_bytes": 7528762234,
     "latest_live": {
-      "observed_at": "2026-11-04T11:00:07.774203+00:00",
-      "t_over_M": 6.750374999999631,
-      "step": 18001,
-      "horizon_found": 1,
-      "mass": 0.3333322395543966,
-      "fixed03": {
-        "cut": 0.3,
-        "H": 0.10040637240340912,
-        "M": 0.6888877989007116,
-        "Mr": 0.6896079953717845
-      },
-      "qualification": "Live history only, not terminal checkpoint or admission."
+      "observed_epoch": 1793790568.4102762,
+      "state": "R",
+      "last_M": 7.800000000000914,
+      "job": "9038494.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+      "qualification": "Live scheduler/history only, not terminal admission."
     },
     "native_started": true,
     "scheduler_start": "2026-11-04 10:41:04 UTC"
@@ -297,7 +290,7 @@
     "reason": "Prior GitHub internal commit_refs_rules rejection; latest SSH attempt has no agent identities and HTTPS no saved credential. User renewal requested once asynchronously. Local commits/scientific Aurora snapshots preserved."
   },
   "next_analysis": "Completed first-segment same-operator spatial reconstruction; next matched-dt evolved radial controls, then stationary resolution/boosted tests contingent on measured regularity.",
-  "local_evidence_commit": "c153584ca",
+  "local_evidence_commit": "47ba8dd54",
   "publication_status": "Local evidence committed; GitHub publication still pending restored authentication (already requested once). Aurora job unaffected.",
   "prepared_radial_controls": {
     "status": "installed_not_submitted",
@@ -333,5 +326,12 @@
     "debug_scaling_max_run": "[u:PBS_GENERIC=1]",
     "observed_current_job": "9038494",
     "decision": "Keep controls sequential; user8-node permission does not override scheduler limit."
-  }
+  },
+  "local_terminal_watcher": {
+    "tool_session_id": 87655,
+    "script": "/tmp/watch-reference-9038494.py",
+    "log": "output/refined-convergence/reference-segment02-watch.jsonl",
+    "action": "Poll current9038494 every60s up to40 polls. On schedulerF call frozenv6 collect once then exit. Never submit or restart. Resume existing handle before any duplicate collect; observation errors do not prove terminal."
+  },
+  "radial_analysis_preparation": "Dedicated radial18 reader built; exact local wrong-identity rejection passed, original reference body unchanged. Positive Aurora norm reproduction remains pending an admitted radial control."
 }
