@@ -1,8 +1,8 @@
 {
-  "status": "stationary_radial18_n12_submitted",
+  "status": "awaiting_aurora_access_stationary_disposition_unknown",
   "current_job": "9038758.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
   "branch": "codex/refined-convergence",
-  "next": "Renew Aurora access and reconcile9038758 before any continuation or new submission. Full combined boosted SMR/radial24/angular2 now locally qualified, including MPI1/2 parity; stationary/boosted10M resolution work remains.",
+  "next": "Reconcile existing9038758 after SSH renewal; finish stationary radial18 family and then build the prepared immutable boosted-transition package once. No duplicate jobs or rebuilds. Full10M/resolution evidence remains required.",
   "goal_active": true,
   "historical_startup_failure": {
     "job": "9038031",
@@ -651,5 +651,25 @@
     ],
     "memory_optimization": "Fixed topology retires native state/coarse/compensation buffers after construction or restore; dynamic unchanged.5,499,552,768 allocated bytes retired for one-rank N12 SMR; matched uniform peakRSS2.63% lower. Separate migration buffers retained.",
     "qualification": "Local Serial-MPI short qualification only; no new Aurora run, GPU/10M/convergence evidence. Production frozen source/binary and existing9038758 unchanged."
+  },
+  "boosted_transition_package": {
+    "status": "prepared_locally_not_uploaded_built_or_submitted",
+    "package": "output/refined-convergence/boosted-transition-package-v2",
+    "superseded_package": "output/refined-convergence/boosted-transition-package-v1; do not upload",
+    "source_commit": "d98e8d9e7f6131a4af55afe96ef7589a73d07b9e",
+    "source_manifest_sha256": "50037c604c81ce37c5465da2e08c6082dc54d198eeb941654d366e12f75b554e",
+    "launcher": "launcher-boosted-transition-v1",
+    "planned_remote_root": "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/boosted-transition-v1",
+    "evidence": "boosted-transition-preparation/verification.json",
+    "identity_policy": "Production-flags host utility before freeze; accept only previously measured local/Aurora forms, exact runtime identity checks remain.",
+    "build_or_job": null
+  },
+  "continuation_blocker": {
+    "status": "awaiting_external_authentication",
+    "reason": "Repeated Aurora SSH authentication expiry across multiple turns; useful local mesh, MPI, memory and package preparation now completed. Long evolution and scheduler reconciliation require renewed access.",
+    "renewal_already_requested": true,
+    "do_not_infer_job_disposition": true,
+    "goal_achieved": false,
+    "git_push": "Also awaiting previously requested Git authentication; local commits preserved."
   }
 }

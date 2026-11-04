@@ -9,8 +9,23 @@ currently queued or running from that historical campaign. The separate frozen B
 and its final analysis are complete; its monitor was deleted. See state.json
 before any action; never duplicate a run.
 
-**Active experiment:** the coherent stationary outer gauge v2 is implemented,
-locally qualified and frozen on Aurora. Fresh N16 job9038410 is running in
+**Current handoff:** stationary radial18 N12 job9038758 was last observed running
+at0.6M. SSH authentication subsequently expired; its current disposition is
+unknown. Reconcile the saved submission and scheduler before any continuation
+or new job. The radial12 reference run described below has completed10M.
+
+The combined boosted400-leaf SMR/radial24/angular2 configuration has passed
+local two-step MPI1/2 checks. It is not yet a long-run result. A separate immutable
+Aurora package is prepared, not uploaded, built or submitted. See
+[BOOSTED-TRANSITION-PACKAGE.md](BOOSTED-TRANSITION-PACKAGE.md),
+[FULL-BOOSTED-SMR.md](FULL-BOOSTED-SMR.md) and state.json. The existing Aurora
+scientific source and executable remain unchanged. Fixed-topology state-buffer
+retirement preserves matched checkpoints and reduces measured local peak RSS
+by2.63%; no runtime speedup is claimed.
+
+**Historical reference-v2 launch (now completed):** the coherent stationary outer
+gauge v2 was implemented, locally qualified and frozen on Aurora. N16 job9038410
+started the run in
 stationary-reference-v2, sourceb52f09723, four debug-scaling nodes48ranks,
 dt=.000125, target10M. Build3464707 completed with-j64 in645.84s. All29 source,
 build and launcher records are locally hash/length verified; actual binary
@@ -28,10 +43,10 @@ check found a positive lapse response, repaired in v2 by consistently targeting
 K-K_*. This is not a stability or convergence proof. Never repeat a successful
 build/freeze or restart a failed state.
 
-**Current update:** both enlarged stationary controls failed at the same
+**Historical precursor failures:** both enlarged stationary controls failed at the same
 accepted step1237 (0.463875M): separated-driver9038253 and constant-driver9038285.
 All151 artifacts from each run are locally hash/length verified and both terminal
-locks are released. Neither may restart. The reference v2 job above is a fresh control.
+locks are released. Neither may restart. The subsequently completed reference v2 run was a fresh control.
 The outer failed nominal fields (r>.875) differ by at most9.032e-4 scaled;
 changing the inner driver did not prevent this early failure. See
 `stationary20-constant-failure/` and `compare_driver_failures.py`.
