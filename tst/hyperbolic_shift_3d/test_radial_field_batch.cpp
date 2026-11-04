@@ -30,8 +30,7 @@ try{
     Model::V stage_volume=padded,stage_edge=surface;
     for(auto&v:stage_volume)v*=factor;for(auto&v:stage_edge)v*=factor;
     const auto current_volume=upload(stage_volume),current_edge=upload(stage_edge);
-    for(bool masked:{false,true}){
-    const auto kernel=masked?device.PreparePointJet(current_volume,current_edge):device.Prepare(current_volume,current_edge);
+    const auto kernel=device.Prepare(current_volume,current_edge);
     const auto reference=device.Bind(current_volume,current_edge);
     Device::Buffer result("derivative control",points.size()*31*12),exact("direct comparison",points.size()*31*12);
     Kokkos::parallel_for("radial plan control",Kokkos::RangePolicy<>(0,points.size()*31),KOKKOS_LAMBDA(int index){
@@ -52,7 +51,6 @@ try{
           worst=std::max(worst,std::abs(v-dd[a][b])/(1+std::abs(dd[a][b])));}}
     }
     }
-    }
   };
   for(int rank=0;rank<12;++rank){std::vector<size_t>points;
     for(size_t p=g.active.size()*rank/12;p<g.active.size()*(rank+1)/12;++p)points.push_back(p);check(points);}
@@ -64,6 +62,6 @@ try{
   if(worst>2e-12||!shape_rejected||!index_rejected||tested==0)throw std::runtime_error("radial device parity/guard failed");
   std::cout<<std::setprecision(17)<<"{\"passed\":true,\"backend\":\""<<Device::ExecutionSpace::name()
     <<"\",\"max_scaled_error\":"<<worst<<",\"tested_field_rows\":"<<tested
-    <<",\"generic_and_masked_with_fallback\":true,\"stage_refreshes_per_plan\":3,\"exact_direct_equality\":true,\"simulated_partitions\":12,\"sparse_and_empty_ownership\":true,\"radial_ghost_poison\":true,\"invalid_inputs_rejected\":true}\n";
+    <<",\"stage_refreshes_per_plan\":3,\"exact_direct_equality\":true,\"simulated_partitions\":12,\"sparse_and_empty_ownership\":true,\"radial_ghost_poison\":true,\"invalid_inputs_rejected\":true}\n";
 }catch(const std::exception&e){std::cerr<<e.what()<<'\n';code=1;}
 Kokkos::finalize();return code;}

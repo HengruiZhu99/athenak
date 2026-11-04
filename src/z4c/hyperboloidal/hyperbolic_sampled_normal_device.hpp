@@ -85,11 +85,7 @@ class HyperbolicSampledNormalDevice {
     Device::PointKernel point{};point.padded=padded;point.active=active_;point.n=n_;
     point.width=width_;point.padded_count=padded_count_;
     point.outer_radius2=outer_radius2_;
-#if defined(HYPERBOLIC_RADIAL_POINT_JET) && HYPERBOLIC_RADIAL_POINT_JET
-    if(radial_plan_)point.radial=radial_plan_->PreparePointJet(padded,surface);
-#else
     if(radial_plan_)point.radial=radial_plan_->Prepare(padded,surface);
-#endif
     Kokkos::parallel_for("owned scri interior pole samples",Kokkos::RangePolicy<ExecutionSpace>(0,donors_*local_),
                         Kernel{point,geometry_,poles_,status_});
     Summary result;Kokkos::parallel_reduce("owned sampled-normal diagnostics",Kokkos::RangePolicy<ExecutionSpace>(0,local_),

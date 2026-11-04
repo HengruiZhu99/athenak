@@ -140,6 +140,8 @@ class SparseStageExchange {
   uint64_t Calls()const{return calls_;}
   size_t SendPoints()const{return send_ids_.extent(0);}
   size_t ReceivePoints()const{return recv_ids_.extent(0);}
+  size_t SendPeers()const{return std::count_if(send_counts_.begin(),send_counts_.end(),[](int n){return n>0;});}
+  size_t ReceivePeers()const{return std::count_if(recv_counts_.begin(),recv_counts_.end(),[](int n){return n>0;});}
   Timing Seconds()const{return seconds_;}
 };
 }

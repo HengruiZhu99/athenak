@@ -39,9 +39,9 @@ struct AMRPerformance {
       if(e.Model().radial_plan&&e.Model().radial_plan->Contains(p))++radial;
     }
     auto&out=generations;
-    out<<"{\"event\":\""<<event<<"\",\"step\":"<<e.steps<<",\"leaves\":"<<std::count_if(g.mesh.blocks.begin(),g.mesh.blocks.end(),[](const auto&b){return b.face<0;})
+    out<<"{\"schema_version\":2,\"event\":\""<<event<<"\",\"step\":"<<e.steps<<",\"leaves\":"<<std::count_if(g.mesh.blocks.begin(),g.mesh.blocks.end(),[](const auto&b){return b.face<0;})
        <<",\"active\":"<<e.local<<",\"overlap\":"<<overlap<<",\"radial_rows\":"<<radial
-       <<",\"surface_rows\":"<<e.surface_local<<",\"selected_blocks\":"<<blocks.size()
+       <<",\"surface_rows\":"<<e.surface_local<<",\"sampled_normal_rows\":"<<e.sampled_normal()->LocalCount()<<",\"sampled_normal_points\":"<<e.sampled_normal()->LocalPoleSamples().extent(0)/31<<",\"selected_blocks\":"<<blocks.size()
        <<",\"block_span\":"<<e.last_block-e.first_block<<",\"work\":{";
     bool comma=false;for(auto&v:work){if(comma)out<<',';comma=true;out<<'"'<<v.first<<"\":"<<v.second;}
     out<<"},\"setup_seconds\":[";for(int i=0;i<8;++i){if(i)out<<',';out<<e.setup_seconds[i];}
@@ -51,6 +51,7 @@ struct AMRPerformance {
     for(int i=0;i<6;++i){if(i)out<<',';out<<e.boundary_phase_seconds[i];}
     out<<"],\"diagnostic_transfer_calls\":"<<e.diagnostic_transfer_calls<<",\"sparse_calls\":"<<e.sparse()->Calls()<<",\"sparse_send_bytes_per_call\":"<<31*sizeof(Real)*e.sparse()->SendPoints()
        <<",\"sparse_receive_bytes_per_call\":"<<31*sizeof(Real)*e.sparse()->ReceivePoints()
+       <<",\"sparse_send_peers\":"<<e.sparse()->SendPeers()<<",\"sparse_receive_peers\":"<<e.sparse()->ReceivePeers()
        <<",\"halo_rows\":"<<e.exchange()->HaloRows()<<",\"normal_halo_rows\":"<<e.normal_exchange()->HaloRows()
        <<",\"memory_bytes\":{\"two_padded\":"<<(e.exchange()->padded.span()+e.normal_exchange()->padded.span())*sizeof(Real)
        <<",\"global_state_base\":"<<(e.state.span()+e.base.span())*sizeof(Real)

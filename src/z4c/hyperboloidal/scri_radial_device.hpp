@@ -36,23 +36,12 @@ class ScriRadialDevice {
   // data. Prepare refreshes them on every invocation using the immutable plan.
   struct Jet {Real d[3],dd[3][3];};
   using Jets=Kokkos::View<Jet*,MemorySpace>;
-  // BuildJet consumes first derivatives of fields 0..27 and second derivatives
-  // of chi, six metric components, lapse and three shift components.
-  KOKKOS_INLINE_FUNCTION static bool PointJetSecond(int f){
-    return f<=6||f==18||(f>=22&&f<=24);
-  }
   struct CachedKernel {
     IntBuffer lookup;Jets jets;int fields=31;
-    Kernel fallback;bool point_jet=false;
     KOKKOS_INLINE_FUNCTION bool HasRow(int local)const{
       return lookup.extent(0)>0&&lookup(local)>=0;
     }
     KOKKOS_INLINE_FUNCTION void Derivatives(int f,int local,Real d[3],Real dd[3][3],bool second)const{
-      // Keep the full derivative contract even for a caller requesting more
-      // than BuildJet needs; never expose stale/uncomputed scratch components.
-      if(point_jet&&(f>=28||(second&&!PointJetSecond(f)))){
-        fallback.Derivatives(f,local,d,dd,second);return;
-      }
       const auto value=jets(fields*lookup(local)+f);
       for(int a=0;a<3;++a){d[a]=value.d[a];for(int b=0;b<3;++b)dd[a][b]=second?value.dd[a][b]:0;}
     }
@@ -67,11 +56,10 @@ class ScriRadialDevice {
 #if defined(HYPERBOLIC_RADIAL_FIELD_BATCH) && HYPERBOLIC_RADIAL_FIELD_BATCH
   IntBuffer cached_points_,cached_lookup_;Jets cached_jets_;
   struct SampleFields {
-    Kernel source;IntBuffer points;Jets jets;int active_fields=31;bool point_jet=false;
+    Kernel source;IntBuffer points;Jets jets;
     KOKKOS_INLINE_FUNCTION void operator()(int index)const{
-      const int f=index%active_fields,row=index/active_fields;
-      Jet result{};source.Derivatives(f,points(row),result.d,result.dd,!point_jet||PointJetSecond(f));
-      jets(source.fields*row+f)=result;
+      Jet result{};source.Derivatives(index%source.fields,points(index/source.fields),result.d,result.dd,true);
+      jets(index)=result;
     }
   };
 #endif
@@ -117,25 +105,12 @@ class ScriRadialDevice {
     const auto source=Bind(padded,surface);
 #if defined(HYPERBOLIC_RADIAL_FIELD_BATCH) && HYPERBOLIC_RADIAL_FIELD_BATCH
     Kokkos::parallel_for("radial derivatives across owned rows and fields",
-      Kokkos::RangePolicy<ExecutionSpace>(0,cached_jets_.extent(0)),SampleFields{source,cached_points_,cached_jets_,fields_,false});
+      Kokkos::RangePolicy<ExecutionSpace>(0,cached_jets_.extent(0)),SampleFields{source,cached_points_,cached_jets_});
     return CachedKernel{cached_lookup_,cached_jets_,fields_};
 #else
     return source;
 #endif
   }
-  BoundKernel PreparePointJet(ConstBuffer padded,ConstBuffer surface)const{
-    const auto source=Bind(padded,surface);
-#if defined(HYPERBOLIC_RADIAL_FIELD_BATCH) && HYPERBOLIC_RADIAL_FIELD_BATCH
-    if(fields_!=31)throw std::invalid_argument("point jet requires the native31 layout");
-    Kokkos::parallel_for("radial derivatives consumed by point jet",
-      Kokkos::RangePolicy<ExecutionSpace>(0,28*cached_points_.extent(0)),
-      SampleFields{source,cached_points_,cached_jets_,28,true});
-    return CachedKernel{cached_lookup_,cached_jets_,fields_,source,true};
-#else
-    return source;
-#endif
-  }
-
 };
 } // namespace z4c::hyperboloidal
 #endif

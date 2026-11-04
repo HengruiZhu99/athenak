@@ -529,11 +529,7 @@ class HyperbolicCompositeDevice {
     PointKernel kernel{padded,active_,ko_offsets_,status_,geometry_,ko_terms_,
         volumes_,rhs_,gap_,cfl_,n_,width_,padded_count_,dt,ko,adaptive};
     kernel.amr_cfl=amr_cfl_;
-#if defined(HYPERBOLIC_RADIAL_POINT_JET) && HYPERBOLIC_RADIAL_POINT_JET
-    if(radial_plan_)kernel.radial=radial_plan_->PreparePointJet(padded,surface);
-#else
     if(radial_plan_)kernel.radial=radial_plan_->Prepare(padded,surface);
-#endif
     if(positive_ko.extent(0)&&positive_ko.extent(0)!=size_t(2)*padded_count_)throw std::invalid_argument("positive KO storage mismatch");
     kernel.positive_ko=positive_ko;
     kernel.direct_lapse_dissipation=direct_lapse_dissipation;
@@ -558,11 +554,7 @@ class HyperbolicCompositeDevice {
     kernel.outer_radius2=outer_radius2_;
     kernel.diagnostic_outer_first_order=outer_first_order;
     kernel.amr_cfl=amr_cfl_;
-#if defined(HYPERBOLIC_RADIAL_POINT_JET) && HYPERBOLIC_RADIAL_POINT_JET
-    if(radial_plan_)kernel.radial=radial_plan_->PreparePointJet(padded,surface);
-#else
     if(radial_plan_)kernel.radial=radial_plan_->Prepare(padded,surface);
-#endif
     DiagnosticSummary result;
     Kokkos::parallel_reduce("hyperboloidal owned constraints",
         Kokkos::RangePolicy<ExecutionSpace>(0,local_),Diagnose{kernel,first_,exterior_radius},result);
