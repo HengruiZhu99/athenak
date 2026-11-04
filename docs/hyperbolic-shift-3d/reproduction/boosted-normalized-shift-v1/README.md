@@ -5,6 +5,20 @@ Aurora debug-scaling nodes (48 ranks/tiles). Branch `codex/boosted-normalized-sh
 Read state.json and remote boosted-normalized-shift-state.json before actions.
 No duplicate builds/submissions. Existing BC2 baselines are terminal and preserved.
 
+Current: **N16 S16 job9037573 submitted**, four nodes/48ranks, target10M. Plan
+`campaigns/n16-boosted-normalized-shift-v1-s16-evolution-segment01/plan.json`,
+SHA2561436287663dc79a9f40265aac0e1dd01f540ca2d4e55243aa3c0c750376174bd.
+N20/N24 not yet submitted; advance sequentially after prior disposition.
+Build attempt02 completed and froze; all launcher/science/build records are
+locally preserved and verified in `aurora-build/`. Do not rebuild/freeze/smoke.
+Source manifest SHA25615003c908c6c2640140045ed0473a93a8ffa9e19ab5dac868cd401358c5c42b5;
+actual evolution SHA2568eb9c7ccd60603718d3c4c686af68cde784d70a2b1e9fb51c7ecaed3f8d9af08.
+Binding footprint8.070GB, headroom1.236GB after output/atomic reserves. Both debug
+queues checked before submission; see immutable records in `n16-submitted/`.
+Hourly monitor `aurora-normalized-shift-n16-n20-n24` is active. Two obsolete BC2
+N24 remote files were locally+remotely hashverified and retired with receipt;
+local originals remain. No old failed checkpoint is a restart input.
+
 ## Single scientific change and its limits
 
 On the inner plateau the initial map is x=kX,t=T, k=.306142283363079 for the

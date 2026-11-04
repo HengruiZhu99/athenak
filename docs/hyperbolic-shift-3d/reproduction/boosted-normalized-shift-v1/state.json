@@ -1,5 +1,5 @@
 {
-  "status": "build_started",
+  "status": "n16_submitted",
   "branch": "codex/boosted-normalized-shift",
   "source_commit": "680ce2f812036d6e5bc6009b6d64eaabe126d0cb",
   "launcher_commit": "a308265f7",
@@ -16,8 +16,8 @@
     "S24"
   ],
   "target_t_over_M": 10,
-  "updated": 1793754286.084818,
-  "next": "Monitor existing make-j64 build; after successful freeze preserve all records then fresh S16 on four nodes. No duplicate build or smoke.",
+  "updated": 1793754666.785197,
+  "next": "Monitor existing S16 job9037573; no duplicate build, freeze, smoke or submission. Healthy admitted same-case walltime continuation automatic. After terminal disposition/preservation advance fresh S20 then S24, each four nodes; never numerical replay.",
   "local_checks": "checks/serial-verification.json",
   "monitor_frequency": "hourly",
   "monitor": "aurora-normalized-shift-n16-n20-n24",
@@ -25,5 +25,52 @@
   "build_host": "aurora-uan-0012",
   "build_log": "boosted-normalized-shift-build-attempt02.stdout.log",
   "build_attempt": 2,
-  "transport_repair": "normalized-shift-transport-repair.json"
+  "transport_repair": "normalized-shift-transport-repair.json",
+  "plan": "campaigns/n16-boosted-normalized-shift-v1-s16-evolution-segment01/plan.json",
+  "plan_sha256": "1436287663dc79a9f40265aac0e1dd01f540ca2d4e55243aa3c0c750376174bd",
+  "science_sha256": "ab00e6c2bc6ec44fa25bececd2b9d19c20e094034a81f581e70d3015d2439e0e",
+  "science": {
+    "schema": 1,
+    "source_commit": "680ce2f812036d6e5bc6009b6d64eaabe126d0cb",
+    "source_manifest": "source-boosted-normalized-shift-v1-manifest.json",
+    "source_manifest_sha256": "15003c908c6c2640140045ed0473a93a8ffa9e19ab5dac868cd401358c5c42b5",
+    "binaries": {
+      "build-sycl-mpi-boosted-normalized-shift-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_mpi_native_control_broad_smooth_six_shells_boosted_free_gauge_refined_core_matched_cfl_normalized_shift": "8eb9c7ccd60603718d3c4c686af68cde784d70a2b1e9fb51c7ecaed3f8d9af08"
+    },
+    "diagnostic_binaries": {
+      "build-sycl-mpi-boosted-normalized-shift-v1/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_checkpoint_constraints_native_control_broad_smooth_six_shells_boosted_free_gauge_refined_core_matched_cfl_normalized_shift": "25734d7226ea0d0ac577a6dc2e5763f2bc751491c930c269efc89a7b2df011e3"
+    },
+    "build_cache_sha256": "f508b4ced5f014139eb978ce53dcf7ced2cf88f41c2b61a582868a6a62ba41b8",
+    "flags": {
+      "build-sycl-mpi-boosted-normalized-shift-v1/tst/hyperbolic_shift_3d/CMakeFiles/hyperbolic_shift_3d_mpi_native_control_broad_smooth_six_shells_boosted_free_gauge_refined_core_matched_cfl_normalized_shift.dir/flags.make": {
+        "bytes": 3014,
+        "sha256": "4ec7dfaa84a58a27c0e00978f32b502ba134743b541a17d1b7facd62b26b9edc"
+      },
+      "build-sycl-mpi-boosted-normalized-shift-v1/tst/hyperbolic_shift_3d/CMakeFiles/hyperbolic_shift_3d_checkpoint_constraints_native_control_broad_smooth_six_shells_boosted_free_gauge_refined_core_matched_cfl_normalized_shift.dir/flags.make": {
+        "bytes": 3014,
+        "sha256": "4ec7dfaa84a58a27c0e00978f32b502ba134743b541a17d1b7facd62b26b9edc"
+      }
+    }
+  },
+  "submission": {
+    "job_id": "9037573.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "submitted": 1793754589.8013628,
+    "plan": "campaigns/n16-boosted-normalized-shift-v1-s16-evolution-segment01/plan.json",
+    "plan_sha256": "1436287663dc79a9f40265aac0e1dd01f540ca2d4e55243aa3c0c750376174bd",
+    "source_manifest_sha256": "15003c908c6c2640140045ed0473a93a8ffa9e19ab5dac868cd401358c5c42b5",
+    "resources": {
+      "queue": "debug-scaling",
+      "account": "CompactBinaryMerger",
+      "nodes": 4,
+      "ranks": 48,
+      "ranks_per_node": 12,
+      "walltime": "01:00:00"
+    }
+  },
+  "build_complete": true,
+  "build_records_locally_verified": true,
+  "retirement_receipt": "retired-before-normalized-shift.json",
+  "post_horizon_expansion_rms_tolerance": 0.01,
+  "online_horizon_tolerance_unchanged": 0.001,
+  "last_scheduler_state": "Q"
 }
