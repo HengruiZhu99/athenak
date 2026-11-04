@@ -1,0 +1,22 @@
+{
+  "command": [
+    "mpiexec",
+    "-n",
+    "2",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/initial-native-rhs/reader",
+    "16",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/reference-v2-stationary-n16-mpi2.checkpoint",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/inputs/hyperbolic_shift_3d/refined_convergence/central20_stationary_smr025_radial12_reference.cfg",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/initial-native-rhs/n16",
+    "reconstruct-initial"
+  ],
+  "checkpoint_sha256": "e32d2d3b458942c5fac222c1004a21f16a8db60d691c9d83c6860bc485c04d80",
+  "analysis_binary_sha256": "ca000b644662ca9ef25feb95e794c5f15b5c2f57953883b5566cc148f20d8876",
+  "production_manifest_sha256": "19d2445841e7a6e63588a13ab72855fe0da8cd23698c207742f16b16cb3dc608",
+  "matching_local_production_files": 633,
+  "started": 1793786695.171925,
+  "returncode": 0,
+  "finished": 1793786802.112792,
+  "checkpoint_unchanged": true,
+  "initial_norms_match": true
+}

@@ -1,0 +1,121 @@
+{
+  "status": "running",
+  "job_id": "9038410.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "plan_sha256": "e5f7872186b02d477a8eb513dcc29db709244975f14104c5a2195af9b19b6eaf",
+  "nodes": [
+    "x4108c5s0b0n0.hsn.cm.aurora.alcf.anl.gov",
+    "x4108c5s1b0n0.hsn.cm.aurora.alcf.anl.gov",
+    "x4108c7s2b0n0.hsn.cm.aurora.alcf.anl.gov",
+    "x4108c7s3b0n0.hsn.cm.aurora.alcf.anl.gov"
+  ],
+  "started": 1793785585.2930605,
+  "artifacts": {},
+  "storage_at_submission": {
+    "bytes": 38583165313,
+    "limit_bytes": 50000000000,
+    "planned_bytes": 2000000000,
+    "reserve_bytes": 1000000000,
+    "headroom_bytes": 8416834687,
+    "roots": [
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1",
+      "/home/hzhu/hyperboloidal-performance-scaling-20261103",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/hyperboloidal-refined-20261103-v1",
+      "/home/hzhu/hyperbolic-core-shell-20261028",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/stationary-reference-v2"
+    ]
+  },
+  "storage_snapshot_age_seconds": 678.0117809772491,
+  "fresh_storage": {
+    "bytes": 38583320576,
+    "limit_bytes": 50000000000,
+    "planned_bytes": 2000000000,
+    "reserve_bytes": 1000000000,
+    "headroom_bytes": 8416679424,
+    "roots": [
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1",
+      "/home/hzhu/hyperboloidal-performance-scaling-20261103",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/hyperboloidal-refined-20261103-v1",
+      "/home/hzhu/hyperbolic-core-shell-20261028",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/stationary-reference-v2"
+    ]
+  },
+  "verified_placements": {
+    "x4108c7s3b0n0": [
+      "0.0",
+      "0.1",
+      "1.0",
+      "1.1",
+      "2.0",
+      "2.1",
+      "3.0",
+      "3.1",
+      "4.0",
+      "4.1",
+      "5.0",
+      "5.1"
+    ],
+    "x4108c7s2b0n0": [
+      "0.0",
+      "0.1",
+      "1.0",
+      "1.1",
+      "2.0",
+      "2.1",
+      "3.0",
+      "3.1",
+      "4.0",
+      "4.1",
+      "5.0",
+      "5.1"
+    ],
+    "x4108c5s0b0n0": [
+      "0.0",
+      "0.1",
+      "1.0",
+      "1.1",
+      "2.0",
+      "2.1",
+      "3.0",
+      "3.1",
+      "4.0",
+      "4.1",
+      "5.0",
+      "5.1"
+    ],
+    "x4108c5s1b0n0": [
+      "0.0",
+      "0.1",
+      "1.0",
+      "1.1",
+      "2.0",
+      "2.1",
+      "3.0",
+      "3.1",
+      "4.0",
+      "4.1",
+      "5.0",
+      "5.1"
+    ]
+  },
+  "command": [
+    "mpiexec",
+    "-n",
+    "48",
+    "-ppn",
+    "12",
+    "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+    "gpu_tile_compact.sh",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/stationary-reference-v2/build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined_amr",
+    "16",
+    "boost",
+    "0",
+    "0.000125",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/stationary-reference-v2/campaigns/stationary20-reference-n16-segment01/output/state",
+    "-",
+    "smr",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/stationary-reference-v2/source/inputs/hyperbolic_shift_3d/refined_convergence/central20_stationary_smr025_radial12_reference.cfg",
+    "2642.240926113911",
+    "0.05",
+    "3.3333333333333335"
+  ]
+}

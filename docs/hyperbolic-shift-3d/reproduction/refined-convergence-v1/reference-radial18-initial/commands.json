@@ -1,0 +1,39 @@
+{
+  "commands": [
+    [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/build-refined-convergence/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined_amr",
+      "16",
+      "boost",
+      "0",
+      ".00003125",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/reference-radial18-initial/state",
+      "-",
+      "smr",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/inputs/hyperbolic_shift_3d/refined_convergence/central20_stationary_smr025_radial18_reference.cfg"
+    ],
+    [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/initial-native-rhs-probe-dt/reader",
+      "16",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/reference-radial18-initial/state.checkpoint",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/inputs/hyperbolic_shift_3d/refined_convergence/central20_stationary_smr025_radial18_reference.cfg",
+      "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/reference-radial18-initial/rhs",
+      "reconstruct-initial"
+    ]
+  ],
+  "config_sha256": "ef36601d8d492909fd8bf80fa4afc1d496fa863b7b91b674c464309d58b14cff",
+  "production_binary_sha256": "6c22d88a196c0dabe657eacc6130137e85d5d34ad1436cf30629bb45e5652271",
+  "analysis_binary_sha256": "cf639b10d10f4ecacc95ccf5798b71d8ca144a594294015c3ef2290a7c16b434",
+  "started": 1793786971.993037,
+  "qualification": "Initial-only local radial-refinement control, not Aurora evolution; only .90-.95 radial spacing changes, angular/core/physics/scri final shell unchanged. Smaller dt is a zero-step characteristic probe.",
+  "checkpoint_sha256": "aa045e26668f5a4cc3dd6fd181e4d90d78b8a5a9cdbaaeabd2c16bff6eb368c4",
+  "initial_finished": 1793787119.150691,
+  "rhs_returncode": 0,
+  "finished": 1793787254.5822651,
+  "checkpoint_unchanged": true
+}

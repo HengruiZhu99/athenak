@@ -29,7 +29,9 @@
     "full_initial_stationarity": "Compatible stationary outer gauge cancels all18 geometric RHS components with derivative-probe orders4.007/4.004 before roundoff; free gauge rates persist~1753.43. Pointwise not evolved convergence. See initial-stationary-geometry/.",
     "stationary_reference_v2": "Consistent reference lapse/shift and K target; no geometry reset. Pointwise stationary outer gauge balance1.02e-10; geometry/inner initialization identical; nontrivial source perturbation1.78e-15; sampled held-geometry lapse response negative. CPU/device Serial all-field RHS+partition exact. N16 MPI2 two-step admitted, no floors, initial constraints unchanged; no GPU/long evidence.",
     "reference_initial_resolution": "N12/N14 initial-only plus preserved N16 t0: same configured family, exact admitted RF2. Fixed r>.3 H/M fitted residual orders3.8921/3.6584; no evolution or field-self-convergence claim. See reference-initial-resolution/.",
-    "smr_coverage": "Admitted topology: finest cube[-.05,.05]^3, physical inner dx=.0463335M. Reference k*v drift retains four-cell buffer to12.9734M, not live gauge guarantee; current production uses fixed SMR and dynamic option remains a fixture. Actual boosted tracker/support must be checked. The translated stationary-horizon proxy plus buffer reaches the fine edge at7.9731M, so puncture-only coverage does not establish coverage of its neighborhood; actual boosted horizon and features need assessment."
+    "smr_coverage": "Admitted topology: finest cube[-.05,.05]^3, physical inner dx=.0463335M. Reference k*v drift retains four-cell buffer to12.9734M, not live gauge guarantee; current production uses fixed SMR and dynamic option remains a fixture. Actual boosted tracker/support must be checked. The translated stationary-horizon proxy plus buffer reaches the fine edge at7.9731M, so puncture-only coverage does not establish coverage of its neighborhood; actual boosted horizon and features need assessment.",
+    "initial_native_rhs": "N12/14/16 initial native residuals in .90-.95 decrease with fitted orders3.64-3.88. KO contribution zero in this band. Initial constraints reproduced, checkpoints unchanged; no evolved convergence proof.",
+    "radial18_initial": "Fourfold radial-only refinement .90-.95 reduces initial band RHS206-246x, fixed r>.3 H/M3.315/5.287x; same core/angles/geometry/gauge. Zero RK steps, smaller dt probe explicitly recorded. No new Aurora submission."
   },
   "historical_stationary6": {
     "plan": "campaigns/stationary6-n16-v2-segment01/plan.json",
@@ -224,7 +226,28 @@
     "storage_footprint_bytes": 38583165313,
     "storage_headroom_after_reserves_bytes": 8416834687,
     "scheduler_start": "2026-11-04 09:45:55 UTC",
-    "latest_live": "Four-node affinity passed; native process started after fresh storage admission. Current native walltime budget2642.240926s reflects startup/exit reserve; no terminal or advanced-time result yet.",
+    "latest_live": {
+      "observed": "2026-11-04T10:18:42.858079+00:00",
+      "t_over_M": 2.7000000000002773,
+      "step": 7200,
+      "fixed03": {
+        "cut": 0.3,
+        "H": 0.09616475692318893,
+        "M": 0.6608498195368908,
+        "Mr": 0.6614836676223749
+      },
+      "fixed06": {
+        "cut": 0.6,
+        "H": 0.10725435638712187,
+        "M": 0.7371568037475289,
+        "Mr": 0.7377968008723571
+      },
+      "horizon_found": 1,
+      "mass": 0.33333139469262346,
+      "pole_max_cumulative": 0.00834450551080709,
+      "clock_max_cumulative": 0.013759821366823594,
+      "qualification": "Live snapshot, not terminal admission; exterior errors remain large despite survival past the original failure."
+    },
     "native_started": true,
     "native_walltime_budget_seconds": 2642.240926113911
   },

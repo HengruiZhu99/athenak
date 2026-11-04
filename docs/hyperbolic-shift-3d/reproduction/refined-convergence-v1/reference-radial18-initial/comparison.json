@@ -1,0 +1,97 @@
+{
+  "checkpoint_sha256": "aa045e26668f5a4cc3dd6fd181e4d90d78b8a5a9cdbaaeabd2c16bff6eb368c4",
+  "initial_norm_match": {
+    "full_H": 0.0,
+    "full_M": 0.0,
+    "cut03_H": 0.0,
+    "cut03_M": 0.0
+  },
+  "rates_band_09_095": {
+    "chi": {
+      "radial12": 0.004317715217468491,
+      "radial18": 1.7575455664359394e-05,
+      "reduction_factor": 245.6673272047349
+    },
+    "metric": {
+      "radial12": 0.009712588945350084,
+      "radial18": 4.0710066872877056e-05,
+      "reduction_factor": 238.57953797224204
+    },
+    "A": {
+      "radial12": 3.387042467956435,
+      "radial18": 0.015660901065930426,
+      "reduction_factor": 216.2737925293961
+    },
+    "K": {
+      "radial12": 0.3194261780174719,
+      "radial18": 0.0014395844052550368,
+      "reduction_factor": 221.88777320137916
+    },
+    "Lambda": {
+      "radial12": 1.8078057304139408,
+      "radial18": 0.008775293554984387,
+      "reduction_factor": 206.01085525932098
+    },
+    "alpha": {
+      "radial12": 0.0076821665646721,
+      "radial18": 3.186744866738974e-05,
+      "reduction_factor": 241.06625682065769
+    },
+    "D": {
+      "radial12": 1.8078057305039212,
+      "radial18": 0.008775293584982241,
+      "reduction_factor": 206.01085456533812
+    }
+  },
+  "initial_fixed03_constraints": {
+    "cut03_H": {
+      "radial12": 0.00026427384464052867,
+      "radial18": 7.970959452159009e-05,
+      "reduction_factor": 3.315458399038119
+    },
+    "cut03_M": {
+      "radial12": 0.0014571278548602903,
+      "radial18": 0.0002756020161049504,
+      "reduction_factor": 5.287072552856109
+    }
+  },
+  "inputs": {
+    "output/refined-convergence/reference-radial18-initial/commands.json": {
+      "bytes": 2054,
+      "sha256": "a67062470a83f02e8bc3cae94fb93dbb8b09083a1f06b9590bee6fbcd88216fa"
+    },
+    "output/refined-convergence/reference-radial18-initial/checkpoint-verification.json": {
+      "bytes": 1355,
+      "sha256": "bbc25a0f28a04a59f53e9529402c58fbaa52511f8f82b82064c1c5bf6b70b74d"
+    },
+    "output/refined-convergence/reference-radial18-initial/rhs.json": {
+      "bytes": 19633,
+      "sha256": "596961b3590e45746c787dc7ac3d9d5fe5fba2aa32e5b435b98a344f9ce5fa54"
+    },
+    "output/refined-convergence/reference-radial18-initial/rhs.log": {
+      "bytes": 417,
+      "sha256": "11f2af77baad43feace8ff326c62ea143e3ecf52be9d977fbeca38af4bda58e9"
+    },
+    "output/refined-convergence/reference-radial18-initial/initial.log": {
+      "bytes": 465,
+      "sha256": "3209fdb2c4a41fd7b448a31b868757b3c56bed5af3d7d3c48fd9fee134f3c9be"
+    },
+    "output/refined-convergence/reference-radial18-initial/state.history.jsonl": {
+      "bytes": 1335,
+      "sha256": "ece2ca41c129808c0e6c5aa9b24526b46ccb8dd1a96e558ffa08602bf47a2890"
+    },
+    "output/refined-convergence/reference-radial18-initial/state.report.json": {
+      "bytes": 1724,
+      "sha256": "6490a75393c6f078095aa7ef91e2cb8e664e9d703f6f63d015dc1ecd00828206"
+    },
+    "output/refined-convergence/reference-radial18-initial/rhs.rank0.csv": {
+      "bytes": 118,
+      "sha256": "58cb168f71ca605617a92151677c1748cc86608442590302e5d3fb4fb7042ef3"
+    },
+    "output/refined-convergence/reference-radial18-initial/rhs.rank1.csv": {
+      "bytes": 226550,
+      "sha256": "038af97a39cd90267f151cf31e85181c420d6b9708a0718d88b2835b603d9b49"
+    }
+  },
+  "qualification": "N16 core/angles/initial geometry and gauge unchanged; only radial .90-.95 spacing reduced fourfold. Final .95-1 scri shell unchanged. Zero RK steps. Native analysis probe dt .00003125 vs baseline .000125; the physical bulk RHS in this band does not depend on the boundary timestep penalty, but this is not an evolved matched-timestep comparison. Baseline body-v1 and new checkpoint-dt body separately preserved. Original checkpoint hash unchanged. Regional reductions do not establish convergence order or long-time regularity."
+}

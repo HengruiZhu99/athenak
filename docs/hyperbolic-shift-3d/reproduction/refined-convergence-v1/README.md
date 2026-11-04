@@ -381,3 +381,57 @@ combined cap. No purge was needed. Follow the saved job and immutable
 launcher-v3 for terminal verification and healthy same-case continuations.
 This historical submission was followed by the matched constant-driver job9038285;
 both are now terminal failures as recorded at the top. No boosted run submitted.
+
+### Initial native RHS and selective radial refinement (2026-11-04)
+
+The initial geometry and its continuum equations are regular in the outer
+transition, but the production discretization has substantial truncation error.
+`analyze_initial_rhs.py` and `initial-native-rhs/` reconstruct the analytic t0
+state on admitted N12/N14/N16 checkpoint topologies, evaluate the actual native
+RHS, and reproduce the saved initial full/fixed-cut constraints. They take no RK
+steps and leave checkpoint hashes unchanged. In .90<r<.95, the RMS rates of
+chi, metric, A, K, Lambda, lapse and D fall with fitted residual orders 3.64–3.88.
+Bulk KO removal in this analysis has exactly zero effect there: its original
+taper is already zero. Face-center and corner profiles nearly coincide in the
+peak band. These are initial semidiscrete residuals, not evolved convergence.
+
+An N16 radial-only initial control reduces spacing fourfold in .90–.95 by
+splitting two shells into eight; core, angular resolution, geometry, gauge,
+SMR leaves and the last .95–1 scri shell are unchanged. The band RMS rates fall
+by factors 206–246 (A:216.3, K:221.9, Lambda:206.0). Initial fixed r>.3 H and M
+fall from .000264273845/.001457127855 to .000079709595/.000275602016,
+factors 3.315/5.287. `compare_radial_initial_rhs.py` verifies exact reproduction
+of the new initial constraints and unchanged checkpoint hash. The diagnostic
+uses its admitted .00003125 probe timestep, versus .000125 in the baseline;
+there is no time integration, and this is not an evolved matched-timestep test.
+The smaller step would increase evolution cost, so the next evolved control
+must distinguish radial from temporal changes. The original Aurora run remains
+unchanged. This isolates a large radial discretization error, not the sole
+cause of all late error or a proof of nonlinear regularity.
+
+Reproduction: build the separate analysis reader with
+`build_endpoint_diagnostic.py --body initial-native-rhs/body-v1.inc --output
+output/refined-convergence/initial-native-rhs`, then `run_initial_native_rhs.py`.
+The radial control reader instead uses `--body initial_native_rhs.inc --output
+output/refined-convergence/initial-native-rhs-probe-dt`, then
+`run_radial_initial_rhs.py`. Run the two analysis scripts above for plots.
+Recorded compile/link commands, binaries/source hashes, commands and raw small
+results are preserved; existing output directories/records are never overwritten
+by evolution runners. Figures were visually inspected. These commands need the
+preserved input checkpoints and the matching local production build.
+
+`stationary-reference-v2-early/` is an immutable live snapshot through1.05M,
+compared with the old .463875M failure without interpolation. The new coherent
+gauge markedly reduces cumulative pole/clock maxima, while exterior constraint
+errors still grow. It is not terminal admission. Later live observations belong
+in state.json; do not reinterpret cumulative maxima as instantaneous values.
+
+Performance: the local radial control required147.2s for zero-step setup,
+checkpoint and initial diagnostics plus135.4s for the read-only RHS analysis.
+These are Serial/MPI2 end-to-end measurements, not a GPU speedup comparison.
+The running four-node original radial12 control takes about78s per400 steps,
+roughly .195s/step, close to the old control. The reference-source cache avoids
+per-RK quadrature, new kernels and new collectives; no speedup is claimed from
+this structural improvement. Fresh storage admission consumed about378s of
+startup and the worker correctly reduced its native time budget. No frozen
+launcher or running scientific binary was modified for performance work.
