@@ -868,7 +868,9 @@ class Evolution {
       const auto halo = TimeBoundary(1, [&] { return normal_exchange()->Fill(state); });
       null_ghost = std::max(null_ghost, halo.after);
       null_before = std::max(null_before, halo.before);
-      SynchronizeError(halo.invalid, "nonpositive interpolated scri geometry");
+      SynchronizeError(halo.invalid, halo.invalid ? "invalid sampled-normal interpolation: halo_rows=" +
+          std::to_string(halo.invalid_halos) + " surface_interpolants=" +
+          std::to_string(halo.invalid_surface) + " on rank " + std::to_string(rank) : "");
       const auto normal = TimeBoundary(
           2, [&] { return sampled_normal()->Evaluate(normal_exchange()->padded, surface); });
       SynchronizeError(normal.bad_rows,
@@ -946,7 +948,9 @@ class Evolution {
         std::chrono::duration<double>(std::chrono::steady_clock::now() - halo_start).count();
     null_ghost = std::max(null_ghost, halo.after);
     null_before = std::max(null_before, halo.before);
-    SynchronizeError(halo.invalid, "nonpositive interpolated scri geometry");
+    SynchronizeError(halo.invalid, halo.invalid ? "invalid bulk interpolation: halo_rows=" +
+        std::to_string(halo.invalid_halos) + " surface_interpolants=" +
+        std::to_string(halo.invalid_surface) + " on rank " + std::to_string(rank) : "");
     const auto start = std::chrono::steady_clock::now();
     const auto stats = kernel()->Evaluate(exchange()->padded, dt, false, .5, surface,
                                           exchange()->positive_ko, direct_lapse);

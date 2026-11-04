@@ -5,9 +5,43 @@ The persistent goal in GOAL.md is not complete. Stationary RF2 N16 SMR job903805
 reached10M, with worsening exterior errors. The original worker/PBS verification
 failed on executable permissions; an independent identical-byte verifier passed
 all scientific/artifact checks. All151 artifacts are preserved locally. No run is
-currently queued or running for this branch. The separate frozen BN1 campaign
+currently queued or running from that historical campaign. The separate frozen BN1 campaign
 and its final analysis are complete; its monitor was deleted. See state.json
 before any action; never duplicate a run.
+
+**Current update:** the large-center separated-driver N16 job9038253 failed
+after its last accepted step at0.463875M. All151 artifacts are locally verified;
+its state is terminal and must never restart. Matched constant-driver job9038285
+is submitted on four nodes. Source342715a90 and the successful build are frozen; launcher-v4 uses
+an exact expected identity calibrated to the actual Aurora-derived map scale
+(a1.4e-16 relative difference from the local compiler). The original v3 identity
+and failed run remain unchanged. See `stationary20-separated-failure/`,
+`stationary20-constant-submission/`, `launcher-v4/identity-calibration.json`.
+
+The failure message “nonpositive interpolated scri geometry” combines two
+different checks: ordinary AMR halo geometry and surface interpolation. It
+cannot alone locate the failure. The saved active capture is finite, has
+positive chi everywhere and minimum metric eigenvalue0.232664. Read-only
+reconstruction on the matching local topology found all3503736 non-boundary
+halo rows valid. The13824 surface-dependent rows cannot be reconstructed
+exactly: the old AMR driver omitted its already available failed surface.
+Thus boundary-dependent interpolation is the remaining suspect in this
+reconstruction, subject to CPU/SYCL arithmetic differences. No failed endpoint
+is admitted and no slicing root cause is established.
+
+At the last diagnostic0.45M, the horizon still passed (RMS3.18e-5), while fixed
+r>.6 H/M were.06678/.62990 and cumulative scri pole/clock maxima161.81/53.04.
+Null projection remained near roundoff. These maxima are not instantaneous
+pole values, and roundoff nullness does not establish regularity. The history
+plot preserves all four recorded times without inventing intermediate data.
+
+The matched fresh constant-driver case changes only the inner shift policy,
+retaining the large center, initial slice, three SMR levels, frame-aware halo
+interpolation, twelve shells and dt.000125. It is not a continuation of the
+failed state. A local diagnostic-only follow-up now separates halo and surface
+error counts and saves failed-surface data separately; it has **not** changed
+the frozen running binary. Existing reduction results are reused, with no
+new halo kernel or collective in healthy steps. No measured speedup is claimed.
 
 ## What is established
 

@@ -22,8 +22,10 @@ controls implemented; local geometry/frame/oracle checks and MPI SMR restart
 qualification passed. Production scheduled diagnostics/walltime support and
 the frozen Aurora build are complete. Stationary6 N16 RF2 job9038055 completed10M natively with large exterior
 errors. Original worker/PBS failure was executable permission, independently
-verified with identical verifier bytes; all151 artifacts are preserved. The next immutable frame/separated-speed build is active; consult state.json
-for its pid, root and current job before acting. Initial halo controls isolate
+verified with identical verifier bytes; all151 artifacts are preserved. The frame/separated-speed build completed. Its stationary20 job9038253 failed
+at0.463875M; all151artifacts are preserved and its state must not restart.
+Matched constant-driver job9038285 is submitted using unchanged frozen binary;
+consult state.json for current disposition before any action. Initial halo controls isolate
 a numerical frame-interpolation error. The principal audit motivates a
 separate gauge control but does not establish the sole cause of late growth. User explicitly authorizes SMR/AMR as needed and measured performance
 work; reuse existing infrastructure. Historical scientific source b41c24e8879 remains immutable. The new opt-in

@@ -799,11 +799,23 @@ int main(int argc, char** argv) {
         if (ev->rank == 0) {
           std::ofstream f(output + ".failed-stage.bin", std::ios::binary);
           f.write(reinterpret_cast<const char*>(capture.data()), capture.size() * sizeof(Real));
+          f.close();
+          // Keep the existing active-only format and save the actual failed
+          // surface separately. Capture() above contains the rolled-back base
+          // surface, which cannot reconstruct a rejected boundary interpolant.
+          std::ofstream edge(output + ".failed-surface.bin", std::ios::binary);
+          edge.write(reinterpret_cast<const char*>(ev->failed_edge.data()),
+                     ev->failed_edge.size() * sizeof(Real));
+          edge.close();
+          if (!f || !edge) throw std::runtime_error("failed-state evidence write failed");
           std::ofstream report(output + ".failure.json");
           report << std::setprecision(17) << "{\"status\":\"failed\",\"accepted_steps\":" << ev->steps
                  << ",\"time\":"<<ev->time<<",\"dt\":"<<dt<<",\"n\":"<<n
                  << ",\"identity\":"<<JsonString(hyperbolic_reproduction::refined_configuration.identity)
-                 << ",\"checkpoint_admitted\":false,\"error\":" << JsonString(failure.what());
+                 << ",\"checkpoint_admitted\":false,\"error\":" << JsonString(failure.what())
+                 << ",\"failed_active_values\":" << capture.size()
+                 << ",\"failed_surface_values\":" << ev->failed_edge.size()
+                 << ",\"failed_surface_saved\":" << (!ev->failed_edge.empty() ? "true" : "false");
           WriteCounters(report,failure_snapshot);report<<"}\n";
         }
       });

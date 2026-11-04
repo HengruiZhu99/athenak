@@ -3,14 +3,15 @@ from pathlib import Path
 import argparse,hashlib,json,shlex,subprocess
 HERE=Path(__file__).resolve().parent
 ROOT=next(p for p in HERE.parents if (p/'CMakeLists.txt').exists())
-parser=argparse.ArgumentParser();parser.add_argument('--output');args=parser.parse_args()
+parser=argparse.ArgumentParser();parser.add_argument('--output');parser.add_argument('--body',default=str(HERE/'endpoint_diagnostic.inc'));args=parser.parse_args()
+body=Path(args.body).resolve()
 OUT=Path(args.output).resolve() if args.output else ROOT/'output/refined-convergence/endpoint-diagnostic'
 OUT.mkdir(exist_ok=not bool(args.output))
 target=ROOT/'build-refined-convergence/tst/hyperbolic_shift_3d'
 src=ROOT/'tst/hyperbolic_shift_3d/amr_evolution.cpp'
 text=src.read_text();needle='int main(int argc, char** argv) {'
 assert text.count(needle)==1
-source=OUT/'reader.cpp';source.write_text(text.replace(needle,'int unused_production_driver(int argc, char** argv) {')+'\n'+(HERE/'endpoint_diagnostic.inc').read_text())
+source=OUT/'reader.cpp';source.write_text(text.replace(needle,'int unused_production_driver(int argc, char** argv) {')+'\n'+body.read_text())
 flags={}
 for line in (target/'CMakeFiles/hyperbolic_shift_3d_refined_amr.dir/flags.make').read_text().splitlines():
  if ' = ' in line:
@@ -23,5 +24,5 @@ link[link.index('CMakeFiles/hyperbolic_shift_3d_refined_amr.dir/amr_evolution.cp
 link[link.index('-o')+1]=str(binary)
 subprocess.run(link,cwd=target,check=True)
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
-(OUT/'build.json').write_text(json.dumps(dict(source_sha256=sha(src),body_sha256=sha(HERE/'endpoint_diagnostic.inc'),generated_sha256=sha(source),binary_sha256=sha(binary),compile=cmd,link=link,qualification='Separate local analysis binary; campaign source/checkpoints/binaries unchanged.'),indent=2)+'\n')
+(OUT/'build.json').write_text(json.dumps(dict(source_sha256=sha(src),body=str(body),body_sha256=sha(body),generated_sha256=sha(source),binary_sha256=sha(binary),compile=cmd,link=link,qualification='Separate local analysis binary; campaign source/checkpoints/binaries unchanged.'),indent=2)+'\n')
 print(binary)

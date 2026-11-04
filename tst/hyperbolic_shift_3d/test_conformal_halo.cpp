@@ -41,14 +41,20 @@ int main(int argc,char**argv){
   Require(analytic<2e-12,"polynomial canonical frame not reproduced");Require(unchanged==0,"untargeted halos changed");Require(baseline_error>1e-7,"oracle did not exercise nontrivial frame error");
   using Buffer=h::HyperbolicCompositeDevice::Buffer;Buffer state("manufactured state",cpu.state.size());
   auto host=Kokkos::create_mirror_view(state);for(size_t i=0;i<cpu.state.size();++i)host(i)=cpu.state[i];Kokkos::deep_copy(state,host);
-  const int blocks=g.mesh.blocks.size();size_t dependency_counts[2]{};
+  const int blocks=g.mesh.blocks.size();size_t dependency_counts[2]{};int rejected_surface_rows=0;
   for(int part=0;part<2;++part){const int lo=part*blocks/2,hi=(part+1)*blocks/2;
    h::HyperbolicCompositeExchange exchange(cpu,lo,hi,{},true,false);exchange.SetSurface(cpu.scri.values);
    const auto summary=exchange.Fill(state);Require(summary.invalid==0,"device halo rejected geometry");dependency_counts[part]=exchange.ActiveDependencies().size();
    auto got=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),exchange.padded);
    for(const auto&row:g.halos)if(row.target/bs>=lo&&row.target/bs<hi)for(int f=0;f<31;++f)
     device_error=std::max(device_error,std::abs(got(f*g.count+row.target)-corrected[f*g.count+row.target]));
+   auto invalid_surface=cpu.scri.values;
+   for(size_t p=0;p<invalid_surface.size();p+=31)invalid_surface[p]=-1;
+   exchange.SetSurface(invalid_surface);const auto rejected=exchange.Fill(state);
+   Require(rejected.invalid==rejected.invalid_halos+rejected.invalid_surface,"invalid summary decomposition");
+   rejected_surface_rows+=rejected.invalid_surface;
   }
+  Require(rejected_surface_rows>0,"invalid surface was not identified separately");
   Require(device_error<2e-12,"CPU/device halo disagreement");
   std::cout<<std::setprecision(17)<<"{\"passed\":true,\"backend\":\""<<Kokkos::DefaultExecutionSpace::name()<<"\",\"corrected_rows\":"<<plan->corrected_rows<<",\"affected_components\":"<<affected<<",\"exact_polynomial_max_error\":"<<analytic<<",\"baseline_max_error\":"<<baseline_error<<",\"untargeted_max_change\":"<<unchanged<<",\"cpu_device_max_error\":"<<device_error<<",\"partition_dependencies\":["<<dependency_counts[0]<<','<<dependency_counts[1]<<"]}\n";
  }catch(const std::exception&e){std::cerr<<e.what()<<'\n';code=1;}

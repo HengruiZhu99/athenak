@@ -137,7 +137,10 @@ class HyperbolicCompositeExchange {
   // Retained on the host for a persistent rank-to-rank communication plan.
   const std::vector<int>& ActiveDependencies()const{return active_dependencies;}
   size_t HaloRows()const{return rows.extent(0);}
-  struct Summary {Real before=0,after=0;int invalid=0;};
+  struct Summary {
+    Real before=0,after=0;
+    int invalid=0,invalid_halos=0,invalid_surface=0;
+  };
   Summary Fill(ConstBuffer state){
     if(state.extent(0)!=size_t(nf)*total)throw std::invalid_argument("active device state size mismatch");
     const auto a=active,ids=source_ids;const auto out=padded;const int size=count;
@@ -197,11 +200,13 @@ class HyperbolicCompositeExchange {
       },result.invalid);
     }
 
+    result.invalid_halos=result.invalid;
     if(b.extent(0)==0){Kokkos::fence();return result;}
     Kokkos::parallel_reduce("null before max",Kokkos::RangePolicy<>(0,b.extent(0)),KOKKOS_LAMBDA(int p,Real&v){v=fmax(v,before(p));},Kokkos::Max<Real>(result.before));
     Kokkos::parallel_reduce("null after max",Kokkos::RangePolicy<>(0,b.extent(0)),KOKKOS_LAMBDA(int p,Real&v){v=fmax(v,after(p));},Kokkos::Max<Real>(result.after));
     int invalid_boundary=0;
     Kokkos::parallel_reduce("null invalid",Kokkos::RangePolicy<>(0,b.extent(0)),KOKKOS_LAMBDA(int p,int&v){v+=bad(p);},invalid_boundary);
+    result.invalid_surface=invalid_boundary;
     result.invalid+=invalid_boundary;
     return result;
   }
