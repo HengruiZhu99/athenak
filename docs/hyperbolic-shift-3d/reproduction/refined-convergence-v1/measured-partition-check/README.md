@@ -19,6 +19,9 @@ finite/SPD/FNV verifier passed; the verification JSON binds the exact hash.
 Reduction-only norm differences are below2.1e-16 absolute. These are local
 SERIAL/MPI results, not GPU or long-time evidence. The deliberately uneven
 one-third/two-thirds split tests ownership invariance, not performance.
+The additional `unequal-offset/` case moves the cut17 cells into a block,
+matching the partial-block situation in the48-rank proposal. It also produces
+the identical complete checkpoint, using the same preserved baseline.
 
 `../propose_measured_partition.py` uses the two completed Aurora segments to
 produce a candidate48-rank descriptor. It fits piecewise-constant local

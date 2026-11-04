@@ -44,6 +44,6 @@ with p.open('rb') as f:
     n,kind,sub=struct.unpack('<3i',f.read(12));assert n==12 and kind==2 and sub==4
     f.seek(16+24+24+128,1);leaves=u64();f.seek(20*leaves,1);length=u64();assert length%31==0;total=length//31
 descriptor_source=sha(D/'reference-rank-cost/analysis.json')
-for name,cut in [('equal',total//2),('unequal',total//3)]:
+for name,cut in [('equal',total//2),('unequal',total//3),('unequal-offset',total//3+17)]:
     (O/(name+'.partition')).write_text(f'HYP3D_COST_PARTITION_V1 12 {total} 2 {descriptor_source}\n0 {cut} {total}\n')
 print(json.dumps(dict(output=str(O),n=12,total=total,leaves=leaves,binary_sha256=record['binary_sha256'])))

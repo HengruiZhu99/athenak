@@ -24,5 +24,11 @@
   },
   "production_ownership": "two equal contiguous active-cell ranges",
   "test_ownership": "one third/two thirds contiguous active-cell ranges",
-  "qualification": "Two-step local SERIAL/MPI static SMR physical checkpoint parity. Same geometry, equations, dt and initial data. Not GPU performance or long-time accuracy evidence. Unequal split intentionally exercises migration of ownership only; no runtime Repartition or regridding."
+  "qualification": "Two-step local SERIAL/MPI static SMR physical checkpoint parity. Same geometry, equations, dt and initial data. Not GPU performance or long-time accuracy evidence. Unequal split intentionally exercises migration of ownership only; no runtime Repartition or regridding.",
+  "partial_block_cut_test": {
+    "cut": 197009,
+    "checkpoint_byte_identical": true,
+    "checkpoint_sha256": "9b2a9c32f381baf3708765c2c2a11bed52e38c1237a996657f34ef2dd5386dc8",
+    "qualification": "Interior block cut plus17 cells, same preserved baseline, two-step SERIAL/MPI. No new GPU measurement."
+  }
 }

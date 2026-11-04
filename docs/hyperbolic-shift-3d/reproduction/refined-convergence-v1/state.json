@@ -75,6 +75,18 @@
       "max_sampled_metric_deviation": 0.005489940582186659,
       "max_sampled_K_deviation": 0.05504723415316892,
       "qualification": "Initial regular slice already steep; evolved profiles close with localized oscillatory errors. Supports spatial truncation hypothesis, not yet evolved convergence or nonlinear regularity proof."
+    },
+    "reference_final_10M": {
+      "fixed03_H": 0.10303945402100113,
+      "fixed03_M": 0.7062455159559675,
+      "fraction_H2_in_090_095": 0.9987535413185692,
+      "fraction_M2_in_090_095": 0.9985575037541378,
+      "horizon_accepted": 69,
+      "horizon_rows": 69,
+      "final_mass_error_percent": -0.0003446129526962771,
+      "negative_chi_cells": 8,
+      "negative_chi_cell_radius": 0.0013531646934132,
+      "qualification": "Admitted unchanged endpoint, central sign events distinct from dominant exterior error; causal radial test pending."
     }
   },
   "historical_stationary6": {
@@ -257,7 +269,7 @@
     "reason": "Prior GitHub internal commit_refs_rules rejection; latest SSH attempt has no agent identities and HTTPS no saved credential. User renewal requested once asynchronously. Local commits/scientific Aurora snapshots preserved."
   },
   "next_analysis": "Reference10M endpoint/history reconstruction complete. Time-control9038572 then equal-dt radial18; preserve same-case science. Performance work targets measured halo/work imbalance with parity before use.",
-  "local_evidence_commit": "47ba8dd54",
+  "local_evidence_commit": "7d26fcb72",
   "publication_status": "Local evidence committed; GitHub publication still pending restored authentication (already requested once). Aurora job unaffected.",
   "prepared_radial_controls": {
     "status": "time_control_running",
@@ -268,10 +280,13 @@
     "science_unchanged": true,
     "source_commit": "b52f09723b9c5a51340401bf91a7bf4426d8f339",
     "plan": "RADIAL-CONTROL-PLAN.md",
-    "note": "Fresh .6M time-control9038572 running. Radial18 not yet generated/submitted. Same frozen production source/binary.",
+    "note": "Time control9038572 active. Fresh paired radial18 bound; submit only after time disposition/preservation and matching lock release.",
     "time_plan": "campaigns/stationary20-reference-time-dt4-n16-segment01/plan.json",
     "time_plan_sha256": "ba16737cc5deedbfae7a431d130ba7d9dce248205c087fa2242b074d8fa56a2c",
-    "job": "9038572.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov"
+    "job": "9038572.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "radial_plan": "campaigns/stationary20-reference-radial-dt4-n16-segment01/plan.json",
+    "radial_plan_sha256": "6aa4eee16a6fb122a561803934db61ce117166c140a6e65b9a39f14b88c68c8d",
+    "radial_status": "bound_not_submitted"
   },
   "reference_v2_segments": [
     {
@@ -367,5 +382,19 @@
     "local_preservation": "all152 artifacts hash/length verified",
     "endpoint_analysis": "stationary-reference-v2-segment02/spatial-analysis.json",
     "history_analysis": "stationary-reference-v2-completed/analysis.json"
+  },
+  "performance_control_preparation": {
+    "status": "local_static_SMR_partition_parity_passed",
+    "source_changes": "analysis copy only; production files/binary unchanged",
+    "cases": [
+      "two-rank block-aligned unequal",
+      "two-rank partial-block unequal"
+    ],
+    "checkpoint_byte_identical": true,
+    "checkpoint_sha256": "9b2a9c32f381baf3708765c2c2a11bed52e38c1237a996657f34ef2dd5386dc8",
+    "candidate48": "measured-partition-candidate/candidate.partition",
+    "gpu_benchmark_submitted": false,
+    "measured_speedup": null,
+    "qualification": "Proxy cost model is not measured speedup; fixed-grid runtime Repartition cannot directly rebuild custom SMR."
   }
 }

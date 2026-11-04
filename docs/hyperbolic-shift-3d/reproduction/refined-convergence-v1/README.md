@@ -670,3 +670,20 @@ four-node block allocation geometrically, current RF2 restart/admission readers
 cap leaf counts at1024. Thus that topology is not an admitted production
 candidate without a separately versioned capacity change. The400-leaf
 symmetric tube is below this cap. No capacity guard has been weakened.
+
+The final10M profile comparison reuses the native analytic initial oracle at
+the exact sampled radii (`reference-profile-regularity-segment02/`). Sampled
+initial/final maximum lapse gradients are29.3953/29.2412 and shift-deviation
+gradients30.2585/30.1101. Maximum sampled lapse change is.004659 and K change
+.061804 in .85–.96. The steep profile remains close to its initial form, with
+localized oscillatory deviations; there is no observed order-of-magnitude
+collapse of the sampled outer lapse. This is not a uniform regularity proof.
+
+Static-SMR constructor ownership qualification now passes both block-aligned
+and partial-block cuts in two-rank SERIAL: the complete373986735-byte two-step
+checkpoints are byte-identical to the preserved production baseline. See
+`measured-partition-check/`. A48-rank candidate descriptor fitted to segment01
+costs predicts lower local-work imbalance on segment02's independent timings,
+but no new GPU partition has been run and no speedup is claimed. Explicitly
+separate this performance preparation from the unchanged radial/time physics
+controls.
