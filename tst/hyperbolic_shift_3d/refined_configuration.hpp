@@ -29,6 +29,8 @@ struct RefinedConfiguration {
   int core_subdivisions=4;
   bool core_bounds_overridden=false;
   int smr_levels=0;Real smr_radius=.05;
+  bool smr_box=false;
+  std::array<Real,3> smr_half_widths{};
   std::string identity;
   std::shared_ptr<z4c::hyperboloidal::StationaryGaugeReference> stationary_reference;
   cubed_sphere::CompositeMesh Mesh(int n) const {
@@ -47,7 +49,7 @@ struct RefinedConfiguration {
     std::map<std::string, std::string> values;
     const std::set<std::string> allowed = {
         "omega_profile", "omega_flat_radius", "omega_outer_radius", "omega_plateau", "gauge_begin",
-        "gauge_end",     "buffer_cells",      "cfl_target",         "shell_radii", "core_half_width", "shell_inner_radius", "core_subdivisions", "initial_start_M", "initial_end_M", "boost_velocity", "smr_levels", "smr_radius", "halo_frame", "shift_speed_policy", "outer_gauge"};
+        "gauge_end",     "buffer_cells",      "cfl_target",         "shell_radii", "core_half_width", "shell_inner_radius", "core_subdivisions", "initial_start_M", "initial_end_M", "boost_velocity", "smr_levels", "smr_radius", "smr_half_widths", "halo_frame", "shift_speed_policy", "outer_gauge"};
     std::string line;
     while (std::getline(input, line)) {
       line = Trim(line.substr(0, line.find('#')));
@@ -98,6 +100,23 @@ struct RefinedConfiguration {
     if(levels!=std::floor(levels) || levels<0 || levels>3 || !(smr_radius>0 && smr_radius<shell_inner_radius))
       throw std::invalid_argument("invalid static refinement levels/radius");
     smr_levels=int(levels);
+    smr_box=values.count("smr_half_widths");
+    smr_half_widths.fill(0);
+    if(smr_box){
+      if(values.count("smr_radius") || !smr_levels)
+        throw std::invalid_argument("SMR box requires nonzero levels and replaces smr_radius");
+      std::istringstream widths(values.at("smr_half_widths"));std::string word;
+      int axis=0;
+      while(std::getline(widths,word,',')){
+        if(axis==3)throw std::invalid_argument("SMR half widths require three values");
+        word=Trim(word);size_t used=0;const Real value=std::stod(word,&used);
+        if(used!=word.size() || !std::isfinite(value) || !(value>0 && value<shell_inner_radius))
+          throw std::invalid_argument("invalid SMR box half width");
+        smr_half_widths[axis++]=value;
+      }
+      if(axis!=3 || values.at("smr_half_widths").back()==',')
+        throw std::invalid_argument("SMR half widths require three values");
+    }
     if(std::abs(boost_velocity)>=.3)throw std::invalid_argument("boost outside audited mild range");
     inscribed_radius = std::numeric_limits<Real>::infinity();
     for (int a = 0; a < 3; ++a) {
@@ -203,6 +222,7 @@ struct RefinedConfiguration {
     if(gauge.conformal_frame_halos)out<<";halo_frame=legacy-cartesian-to-shell-v1";
     if(gauge.separated_shift_speeds)out<<";shift_speed_policy=separated-inner-v1";
     if(gauge.stationary_outer_reference)out<<";outer_gauge=stationary-reference-v2;initial-lapse-blend=flat-to-inner-begin";
+    if(smr_box)out<<";smr-box-origin-v1="<<smr_half_widths[0]<<','<<smr_half_widths[1]<<','<<smr_half_widths[2];
     identity = out.str();
     stationary_reference.reset();
     if(gauge.stationary_outer_reference)stationary_reference=std::make_shared<z4c::hyperboloidal::StationaryGaugeReference>(gauge);

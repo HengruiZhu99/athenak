@@ -2,7 +2,7 @@
   "status": "stationary_radial18_n12_submitted",
   "current_job": "9038758.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
   "branch": "codex/refined-convergence",
-  "next": "Monitor existing N12; fully verify healthy terminal walltime state before same-case continuation. Then stationary N14 and explicit N16 extension; no duplicate jobs. Symmetric boosted SMR remains pending.",
+  "next": "Renew Aurora access and reconcile9038758; no duplicate. Continue local boosted SMR qualification and initial spatial-error isolation meanwhile.",
   "goal_active": true,
   "historical_startup_failure": {
     "job": "9038031",
@@ -110,6 +110,42 @@
       "nominal_core_max_scaled_change": 4.235158505485189e-22,
       "floor_sign_counts_equal": true,
       "qualification": "Same dt, geometry/gauge/core/angles/scri shell; radial spacing and interfaces changed. Major early spatial contribution established, not full resolution convergence or long-time regularity."
+    },
+    "boosted_initial_point_constraints": {
+      "analysis": "boosted-initial-point-constraints/analysis.json",
+      "H_orders": [
+        3.9681780711,
+        3.9921565558,
+        3.9883476872,
+        4.1135948682
+      ],
+      "M_orders": [
+        3.9514576023,
+        3.9878371055,
+        3.9969588807,
+        3.9992351225
+      ],
+      "minimum_Q_over_Q0": 0.981122637708746,
+      "minimum_boost_J": 0.7363108244465814,
+      "scope": "Sampled exterior exact native boosted geometry, same configured conformal factor; derivative refinement and positive sampled spacelike/map margins. Not uniform or evolved proof."
+    },
+    "boosted_angular_truncation": {
+      "analysis": "boosted-shell-derivative-control/analysis.json",
+      "radial8x_H_ratio": 0.9989176768,
+      "radial8x_M_ratio": 1.0013847866,
+      "angular8x_H_ratio": 0.07341504058,
+      "angular8x_M_ratio": 0.07783337866,
+      "both_H_orders": [
+        3.82644,
+        3.95438,
+        3.92536
+      ],
+      "both_M_orders": [
+        3.94197,
+        3.9859,
+        3.9965
+      ],
+      "scope": "Independent same-map bulk stencils with analytic values, no halo/interpolation/KO/RK; angular under-resolution dominates sampled boosted outer initial residuals. Do not equate puncture SMR or radial-only refinement with resolving this."
     }
   },
   "historical_stationary6": {
@@ -334,7 +370,9 @@
     "script": "/tmp/watch-radial-n12-9038758.py",
     "log": "output/refined-convergence/radial18-n12-segment01-watch.jsonl",
     "action": "Observe existing job only; collect exactly once at terminal, no automatic submission inside watcher.",
-    "tool_session_id": 27865
+    "tool_session_id": 27865,
+    "completed": true,
+    "termination": "Connection lost, then bounded reconnect denied authentication. No terminal collect performed."
   },
   "radial_analysis_preparation": "Positive admitted radial18 Aurora norm reproduction verified; dedicated reader preserves checkpoint and reproduces native norms. No rerun needed.",
   "completed_reference_control": {
@@ -518,6 +556,34 @@
       "dt": 3.571428571428572e-05,
       "cfl": 0.18520469948488266,
       "checkpoint_sha256": "f3e660b01a538a11724d54a70c4f524df7e90183a6cf8b087fee7ac5a0d94912"
-    }
+    },
+    "latest_live": {
+      "job": "9038758",
+      "state": "R",
+      "last_recorded_M": 0.6,
+      "evidence": "radial18-family-initial-and-live/snapshot.json",
+      "qualification": "Last successful watcher observation, before SSH expiry. Current terminal state unknown."
+    },
+    "initial_and_early_analysis": "radial18-family-initial-and-live/analysis.json; initial fixed-cut H/M fitted4.021/4.045; live N12 vs admitted N16 through.3M decreases, no long-time proof."
+  },
+  "boosted_smr_preparation": {
+    "status": "local_qualification_passed_not_submitted",
+    "input": "central20_boosted_smr_tube_radial18_reference.cfg",
+    "new_optional_input": "smr_half_widths",
+    "native_topology_leaves": 400,
+    "topology_mpi1_mpi2_equal": true,
+    "old_spherical_policy_checkpoint_unchanged": true,
+    "local_session": null,
+    "scope": "Optional production static-box configuration with native AthenaK Regrid; candidate binary separate. No Aurora candidate build/job. Current stationary science unchanged.",
+    "mpi1_mpi2_checkpoint_byte_equal": true,
+    "restart_all8_arrays_byte_equal": true,
+    "policy_mismatch_rejected": true
+  },
+  "access": {
+    "status": "ssh_expired",
+    "observed": 1793818212.344169,
+    "error": "Permission denied (keyboard-interactive,hostbased).",
+    "renewal_requested_once": true,
+    "scope": "No new submission or cancellation. Existing9038758 disposition unknown after watcher lost connection; last observed .6M running. Read saved submission and scheduler before any continuation."
   }
 }

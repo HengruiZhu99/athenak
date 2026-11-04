@@ -1,6 +1,8 @@
 // Copyright(C) 2026 AthenaK contributors. BSD-3-Clause; see LICENSE.
 #ifndef Z4C_HYPERBOLOIDAL_CARTESIAN_AMR_HPP_
 #define Z4C_HYPERBOLOIDAL_CARTESIAN_AMR_HPP_
+#include <algorithm>
+#include <cmath>
 #include "globals.hpp"
 #include "mesh/mesh.hpp"
 #include "mesh/refinement_criteria.hpp"
@@ -103,6 +105,40 @@ class CartesianAMR {
     mesh->ncycle=accepted_cycle;mesh->pmr->CheckForRefinement(mesh->pmb_pack);
     std::vector<int> flags(mesh->nmb_total);for(int m=0;m<mesh->nmb_total;++m)flags[m]=mesh->pmr->refine_flag.h_view(m);
     return Regrid(flags);
+  }
+  // Initial static target only. AthenaK still performs octree balancing,
+  // redistribution and registered field transfer through Regrid. Strict box
+  // intersection avoids refining blocks that only touch the requested region.
+  bool RefineBox(const std::array<Real,3>&half){
+    for(Real x:half)if(!std::isfinite(x) || !(x>0 && x<inner_radius))
+      throw std::invalid_argument("invalid static Cartesian refinement box");
+    const auto d=Descriptor();std::vector<int> flags(mesh->nmb_total,0);
+    for(int m=0;m<mesh->nmb_total;++m){bool hit=true;
+      for(int a=0;a<3;++a)hit=hit && d.blocks[m].lo[a]<half[a] && d.blocks[m].hi[a]>-half[a];
+      flags[m]=hit?1:0;
+    }
+    return Regrid(flags);
+  }
+  struct FinestSupport {Real radius=0,spacing=0,core_margin=0;int level=0;};
+  // Radius of the largest coordinate ball about center entirely covered by
+  // nominal finest Cartesian cells. Appended overlap/halo rows do not count.
+  // Subtract stencil and horizon radii separately; this is not an error bound.
+  FinestSupport SupportAt(const std::array<Real,3>&center)const{
+    const auto d=Descriptor();FinestSupport out;out.core_margin=half_width;
+    for(Real x:center){if(!std::isfinite(x))throw std::invalid_argument("nonfinite support center");
+      out.core_margin=std::min(out.core_margin,half_width-std::abs(x));}
+    for(const auto&b:d.blocks)if(b.face<0)out.level=std::max(out.level,b.refinement);
+    out.radius=std::max(Real(0),out.core_margin);
+    for(const auto&b:d.blocks)if(b.face<0){
+      if(b.refinement==out.level){
+        for(int a=0;a<3;++a)out.spacing=std::max(out.spacing,(b.hi[a]-b.lo[a])/n);
+      }else{
+        Real distance2=0;
+        for(int a=0;a<3;++a){const Real dx=std::max({b.lo[a]-center[a],Real(0),center[a]-b.hi[a]});distance2+=dx*dx;}
+        out.radius=std::min(out.radius,std::sqrt(distance2));
+      }
+    }
+    return out;
   }
   std::vector<Real> Gather(bool rk=false)const{
     const auto h=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),rk?compensation:state);

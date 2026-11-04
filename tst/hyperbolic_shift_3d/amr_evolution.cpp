@@ -528,7 +528,8 @@ int main(int argc, char** argv) {
       for(int level=0;level<cfg.smr_levels;++level){
         for(int m=0;m<amr.mesh->nmb_total;++m)
           amr.mesh->pmr->ncyc_since_ref(m)=amr.mesh->pmr->refinement_interval;
-        if(!amr.RefineAround({0,0,0},cfg.smr_radius,0))
+        if(!(cfg.smr_box ? amr.RefineBox(cfg.smr_half_widths) :
+                          amr.RefineAround({0,0,0},cfg.smr_radius,0)))
           throw std::runtime_error("initial SMR level did not refine");
       }
     }
@@ -674,6 +675,11 @@ int main(int argc, char** argv) {
         MPI_Allreduce(MPI_IN_PLACE,v,1,MPI_ATHENA_REAL,MPI_MAX,MPI_COMM_WORLD);
       last_diagnostic=d;last_cut=cut;last_recorded=e.steps;
       if (e.rank == 0) {
+        const auto support=amr.SupportAt(e.puncture);
+        const Real support_buffer=hyperbolic_reproduction::configured_formulation
+          ?hyperbolic_reproduction::refined_configuration.buffer_cells*support.spacing:4*support.spacing;
+        const Real horizon_margin=complete && std::isfinite(trial_max_radius) && trial_max_radius>0
+          ?support.radius-support_buffer-trial_max_radius:nan;
         history << "{\"step\":" << e.steps << ",\"time\":" << e.time
                 << ",\"t_over_M\":" << 3*e.time << ",\"leaves\":" << amr.mesh->nmb_total
                 << ",\"H\":" << JsonNumber(Norm(d.total.h2,d.total.volume))
@@ -696,7 +702,14 @@ int main(int argc, char** argv) {
                 << ",\"horizon_trial_expansion_rms\":" << JsonNumber(trial_rms)
                 << ",\"horizon_iterations\":" << iterations << ",\"mass\":" << JsonNumber(mass)
                 << ",\"tracker\":[" << e.puncture[0] << ',' << e.puncture[1] << ',' << e.puncture[2]
-                << "],\"fixed\":[";
+                << "],\"finest_level\":" << support.level
+                << ",\"finest_spacing\":" << support.spacing
+                << ",\"finest_support_radius\":" << support.radius
+                << ",\"finest_stencil_buffer\":" << support_buffer
+                << ",\"puncture_finest_margin\":" << support.radius-support_buffer
+                << ",\"candidate_finest_margin\":" << JsonNumber(horizon_margin)
+                << ",\"core_margin\":" << support.core_margin
+                << ",\"fixed\":[";
         for(int k=0;k<3;++k){if(k)history<<',';history<<"{\"cut\":"<<fixed_cuts[k]
           <<",\"H\":"<<JsonNumber(Norm(d.fixed[k].h2,d.fixed[k].volume))
           <<",\"M\":"<<JsonNumber(Norm(d.fixed[k].m2,d.fixed[k].volume))

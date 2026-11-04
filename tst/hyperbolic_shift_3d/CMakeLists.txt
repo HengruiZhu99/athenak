@@ -797,6 +797,19 @@ if(ENABLE_MPI)
   add_test(NAME hyperbolic_shift_3d_shift_separation COMMAND hyperbolic_shift_3d_shift_separation
     ${CMAKE_SOURCE_DIR}/inputs/hyperbolic_shift_3d/refined_convergence/central20_stationary_smr025_radial12_separated.cfg)
   set_tests_properties(hyperbolic_shift_3d_shift_separation PROPERTIES RUN_SERIAL TRUE TIMEOUT 120)
+  add_hyperbolic_amr_executable(hyperbolic_shift_3d_smr_support test_smr_support.cpp)
+  target_compile_definitions(hyperbolic_shift_3d_smr_support PRIVATE ${refined_science} HYPERBOLIC_CONFIGURED_FORMULATION=1)
+  target_compile_options(hyperbolic_shift_3d_smr_support PRIVATE -ffp-contract=off)
+  foreach(ranks 1 2)
+    add_test(NAME hyperbolic_shift_3d_smr_support_mpi${ranks}
+      COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${ranks}
+      $<TARGET_FILE:hyperbolic_shift_3d_smr_support>
+      ${CMAKE_SOURCE_DIR}/inputs/hyperbolic_shift_3d/refined_convergence/central20_boosted_smr_tube_radial18_reference.cfg
+      ${CMAKE_CURRENT_BINARY_DIR}/smr-support-mpi${ranks}.json)
+    set_tests_properties(hyperbolic_shift_3d_smr_support_mpi${ranks}
+      PROPERTIES RUN_SERIAL TRUE TIMEOUT 180)
+  endforeach()
+
   foreach(driver refined refined_amr)
     if(driver STREQUAL "refined")
       set(driver_source coupled_mpi.cpp)
