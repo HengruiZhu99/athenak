@@ -1,8 +1,8 @@
 {
-  "status": "stationary6_n16_submitted",
-  "current_job": "9038031.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
-  "plan": "campaigns/stationary6-n16-segment01/plan.json",
-  "plan_sha256": "a464abd2b867f9225a1c58d97316afea1d2604141b45e9fb669ac9db914df550",
+  "status": "stationary6_n16_v2_running",
+  "current_job": "9038055.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "plan": "campaigns/stationary6-n16-v2-segment01/plan.json",
+  "plan_sha256": "f1c5847369aceee53c3c16f4d045fcf619fc95aaa5841851156303b724df0f51",
   "source": {
     "source_commit": "b41c24e88790562d93a643be9c713631bb93d573",
     "source_manifest_sha256": "314ff2db3a6d74f11bf0ae3a253b4d908963c38b514801d0bdb7d9ff9422b7ce",
@@ -12,10 +12,19 @@
     "flags_sha256": "e58cd3114dcc5b2352dab706ae5c4442f96dc79b01628706d187039bd3831594"
   },
   "branch": "codex/refined-convergence",
-  "next": "Monitor existing job. Collect terminal using frozen launcher-v1/control.py. Continue only healthy fully admitted walltime checkpoints. Do not repeat successful build, GPU smoke or submission.",
+  "next": "Monitor existing9038055, never duplicate. Frozen launcher-v2/control.py collects/verifies terminal; use reviewed text-format submission helper for healthy same-case continuations, preserving source/config/dt and hashes.",
   "goal_active": true,
+  "launcher": "launcher-v2",
+  "submission_helper": "submit-reviewed.py",
+  "historical_startup_failure": {
+    "job": "9038031",
+    "terminal": true,
+    "admitted": false,
+    "native_started": false,
+    "lock_released": true,
+    "reason": "Empty rank environment variables broke affinity parser after296s pre-native startup; no cancellation was issued. Scientific binary unchanged."
+  },
+  "last_live_observation": "Four-host12tile placement passed; native reached step200/time.05=.15M. Not terminal verification.",
   "remote_root": "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1",
-  "primary_candidate": "stationary6 matched plateau one-level SMR N16 dt=.00025, target10M, four nodes48ranks",
-  "large_candidate": "stationary20 matched plateau three-level SMR radius.025: local topology and two-step tests passed, not yet long/GPU qualified",
-  "storage_policy": "50GB combined refined/performance roots including BN1 home; BN1 separate10GB unchanged"
+  "future_work": "Monitor same-case admitted continuation. Extend stationary then boosted controls and interface/continuum constraint-propagation audit; no convergence claim from survival. Large stationary20 three-level .025 local test passed, no long submission."
 }

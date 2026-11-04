@@ -1,7 +1,7 @@
 # RF2 enlarged-center investigation (work in progress)
 
 Branch `codex/refined-convergence`, based on `hyperboloidal_refined`21676d39e.
-The persistent goal in GOAL.md is not complete. Stationary RF2 N16 SMR job9038031
+The persistent goal in GOAL.md is not complete. Stationary RF2 N16 SMR job9038055
 is submitted on four Aurora debug-scaling nodes. Keep the separate frozen BN1
 campaign unchanged. See state.json before any action; never duplicate a run.
 
@@ -141,7 +141,7 @@ Scientific commit b41c24e88790562d93a643be9c713631bb93d573 is frozen at
 The actual SYCL binary hash is
 `1a694bca3e9bca020bee2a112911fde7ee28032c772972b5d2c05e67480efaca`.
 All22 source/build/launcher records were locally hash/length verified.
-Stationary6 N16 job9038031 uses four nodes48ranks, dt=.00025, target10M,
+Stationary6 N16 job9038055 uses four nodes48ranks, dt=.00025, target10M,
 one SMR level, matched plateau.4712 and gauge interval.36–.65. The original
 scri/restoration remains. It may wait behind frozen BN1 N24 job9037997;
 no cancellation or duplicate submission is authorized. No GPU smoke gate.
@@ -170,3 +170,34 @@ so its input radius is not itself the exact refined coverage boundary; moving
 puncture coverage still needs explicit verification. The large configuration
 changes physical map scale and the physical extent of the fixed .03 chi patch.
 Do not infer stability or improved accuracy from this short control.
+
+
+### Startup disposition and measured launcher overhead
+
+Job9038031 terminated before native evolution, worker/PBS2. Both requested MPI
+rank environment variables were empty in Aurora's shell placement probe; the
+masks and hosts were present, but positional parsing failed. No cancellation
+was issued: the safety check detected that it was already terminal. All
+recorded artifacts and scheduler/lock-release receipts are preserved under
+startup-failure-v1/. It consumed296s in pre-native startup including a global
+storage scan. This is infrastructure evidence, not a numerical failure.
+
+Immutable launcher-v2 validates the observed four-host/12-distinct-mask layout;
+a duplicate-mask regression rejects. The global storage scan runs in a
+background guard, while the submission-time total-capacity check and a cheap
+per-allocation output/atomic budget remain enforced. An old submission storage
+snapshot (>300s) still triggers a fresh scan. Native walltime is bounded by
+remaining worker time with180s exit reserve. The scientific binary, source,
+configuration, operators and dt are unchanged.
+
+The v2 submit preflight also discovered that Aurora's qstat -u ignored its JSON
+format request. It failed before intent/qsub and created no job. The separate
+hash-recorded submit_reviewed.py uses the observed text format, checks all user
+jobs and both queues, and preserves the same one-shot intent/lock protocol.
+Use it for future healthy continuations; frozen v2 control.py collect remains
+the terminal verifier. No frozen launcher or science snapshot was edited.
+
+Current job9038055 has passed four-node placement and started native evolution,
+reaching200steps/.15M in the latest observation. It is not a verified endpoint.
+Its plan hash is f1c5847369aceee53c3c16f4d045fcf619fc95aaa5841851156303b724df0f51.
+Do not duplicate it. Follow state.json before any action.
