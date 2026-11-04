@@ -45,7 +45,18 @@
 #define HYPERBOLIC_ZERO_SHIFT_RESTORATION 0
 #endif
 
+#ifndef HYPERBOLIC_NORMALIZED_INNER_SHIFT
+#define HYPERBOLIC_NORMALIZED_INNER_SHIFT 0
+#endif
+
 namespace z4c::hyperboloidal {
+constexpr bool normalized_inner_shift=HYPERBOLIC_NORMALIZED_INNER_SHIFT;
+static_assert(!normalized_inner_shift || HYPERBOLIC_BROAD_SMOOTH_A);
+// Constant inner map x=k X, t=T for the native C6 4M--12M slice, M=1/3.
+// beta_x=k beta_X and Lambda_x=Lambda_X/k, hence Gamma-driver coefficient k^2.
+// This changes only the inner driver, through the existing complete-RHS blend.
+constexpr double normalized_inner_spatial_scale=.306142283363079;
+
 // Combined restored-A experiment: broader restoring collar and native C6 slice.
 constexpr bool broad_smooth_a=HYPERBOLIC_BROAD_SMOOTH_A;
 static_assert(!broad_smooth_a || (HYPERBOLIC_SHORT_INNER_GAUGE &&
@@ -79,7 +90,7 @@ static_assert(HYPERBOLIC_INNER_TELEGRAPHER == 0 || HYPERBOLIC_INNER_TELEGRAPHER 
 struct InnerTelegrapher {
   static constexpr double mass=1./3., begin=late_inner_gauge?.4:.2, end=direct_outer&&!short_inner_gauge?.9:.56;
   static constexpr double tau=.1*mass, kappa=.2*mass;
-  static constexpr double shift_gamma=1., shift_eta=2./mass, kappa1=.01/mass;
+  static constexpr double shift_gamma=normalized_inner_shift ? normalized_inner_spatial_scale*normalized_inner_spatial_scale : 1., shift_eta=2./mass, kappa1=.01/mass;
   static constexpr double chi_guard=1.e-5;
 };
 
@@ -283,7 +294,7 @@ HyperbolicGaugeParts<T> OuterHyperbolicGauge(const T x[3],const Z4cJet<T>&u,
   return out;
 }
 
-// Exact physical Cauchy gauge on r<=.2; outer plateau is .56 (IT1) or .9 (DO1). Blend complete
+// Cauchy-type gauge on r<=.2 (normalized_shift matches the spatially scaled driver); outer plateau is .56 (IT1) or .9 (DO1). Blend complete
 // local RHSs, not fluxes: no spurious derivative-of-weight source is added.
 // For stationary Omega, dt(alpha_bar)=beta.grad(alpha_bar)
 // -alpha_phys beta.grad(Omega)+Omega*(nonadvective physical lapse RHS).
