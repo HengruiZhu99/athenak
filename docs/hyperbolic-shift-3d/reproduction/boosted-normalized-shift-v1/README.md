@@ -12,26 +12,50 @@ checkpoint SHA256 is8e8bfe0fd44f181ac06f62d27e96f6c6349536103b68540d92d289f75e5a
 Native command runtime2195.923s (36.60min); PBS reported41min28s on four nodes.
 No N16 continuation, rebuild, freeze or smoke is needed.
 
-**N20 segment01 job9037706 reached9.3174M/15529steps and checkpointed at
-healthy walltime.** Frozen helper admission passed, all five worker artifacts
-are locally hash/length verified, native/worker checkpoint disposition agrees
-with expected PBS exit3, and its matching terminal lock was released.
-Checkpoint481985232bytes, SHA256
-f9e92791038645ca88cfcd8723209e1f71cfb809383199d5b714409a98d7ade5.
-Native command2913.925s; this is not a numerical failure or completed10M result.
-The frozen worker emitted no horizon-seed sidecar for this segment; continuation
-binds the unchanged science and exact checkpoint, without inventing a seed.
-Keep the changed finder initialization/sampling boundary explicit in analysis.
+**N20 completed10M/16667steps**, finishing in segment02 job9037854 after
+healthy walltime segment01 job9037706 at9.3174M. Both segments passed frozen
+verification; all5+4 worker artifacts locally hash/length verified and terminal
+locks released. Endpoint CP SHA256
+68d2e2e0069b1ac2dfa6c6159d80d187d163f7007b6f722ec8a8e5fbf1fcbe51,
+481985232bytes. Native total3181.526s (53.03min). No N20 rerun/continuation.
+No horizon-seed sidecar was emitted at restart; analysis keeps the finder
+initialization/sampling boundary explicit and does not fill missing masses.
 
-**Same-case segment02 job9037854 is submitted** under the unchanged
-four-node/48-rank policy, dt.0002, target10M. Read `state.json` and saved submission
-for its exact job. No duplicate plan or restart from another formulation.
-Storage initially blocked binding. Two obsolete BC2 N16/unboosted N24 segment01
-checkpoint copies were freshly hash/length verified locally, remotely rehashed,
-and retired with receipt `retired-before-n20-segment02.json`; local originals
-remain. Active BN1 N20 restart and scientific snapshots are retained. Successful
-binding footprint7,919,046,656bytes and headroom807,791,740bytes after reserves.
-N24 remains unsubmitted and follows N20 terminal disposition/preservation.
+**Fresh N24 S24 job9037899 submitted**, four nodes48ranks,dt1/6000,target10M.
+Plan `campaigns/n24-boosted-normalized-shift-v1-s24-evolution-segment01/plan.json`,
+SHA256e6c0b26d2ef345439e7f66483ec9f1ed79d50b5b848d2b13999bcc964772e1cb.
+Both user debug queues empty before submission. Binding footprint7,434,440,704B,
+headroom449,721,468B after output/atomic reserves. Read saved state/submission
+before any action. Build/source/science/binary/parameters remain frozen unchanged.
+
+Storage guard required retirement of locally preserved obsolete checkpoint
+copies: completed BN1 N16 and N20 segment01 after verified completed successor.
+Fresh local+remote hash/length checks and receipt `retired-before-normalized-n24.json`
+preceded deletion; local originals remain. Previously retired BC2 N16/unboosted
+N24 segment01 copies must not be retired again. No scientific snapshot removed.
+
+N20 history joins retain segment boundary at9.3174M without interpolation; the
+repeated start-time row is counted once. 31/69 rows accepted online, last4.5M;
+68/69 pass post1e-2. Final candidate RMS.00609771 and final mass missing.
+Segment-summed chi floor counts35200stage/11772final, no lapse/boundary floors.
+Native runtime and sign counts are summed; cumulative residuals use maxima.
+`compare_n16_n20.py` and `n16-n20/` preserve qualified histories and counters.
+Own-candidate final H/M=.13691797/.17864298, cutoff.15114478; compare N16
+.11739048/.15104839 at.15239334. These moving cuts alone do not establish
+resolution convergence. Commoncutr>.3 reconstruction uses
+`compare_n16_n20_endpoints.py`; final three-resolution/profile work awaits N24.
+
+Commoncut r>.3 N20 endpoint reconstruction is complete and reproduces the
+full-domain report norms with unchanged checkpoint hash. N16→N20 H/M/Mr:
+.03593065627→.03995065314 / .05473442898→.05619947359 /
+.07097847590→.07317458895. Changes +11.188%/+2.677%/+3.094%;
+two-point residual orders -.4753/-.1184/-.1366. These exterior residuals do not
+decrease under this refinement. This is not field self-convergence, an invariant
+physical-domain comparison, or a fourth-order estimate; space/time refine
+together. Native operators and r>.3 coordinate cut match, quadrature volumes
+differ slightly. Radial and history figures inspected in `n16-n20/`. Do not
+repeat either completed N16 or N20 endpoint reconstruction.
+
 
 The monitor checks every30minutes. Evidence in `n16-completed/`,
 `n16-local-verification.json`, `n20-submitted/`, and `n16-comparison/`.
