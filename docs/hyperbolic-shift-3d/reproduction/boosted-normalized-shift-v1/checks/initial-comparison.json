@@ -1,0 +1,46 @@
+{
+  "passed": true,
+  "qualification": "SERIAL BN1 vs preserved GPU BC2 at t0; roundoff comparison, not bitwise backend parity or long-time proof",
+  "histories": [
+    {
+      "path": "output/boosted-normalized-shift/serial/puncture.history.csv",
+      "sha256": "63d559cac54a66cce94358683a3fb4379f5053c55480a92daa5dcb0fd79b24e3"
+    },
+    {
+      "path": "docs/hyperbolic-shift-3d/reproduction/boosted-refined-core-v1/completed/puncture.history.csv",
+      "sha256": "c4907df46b5dc6fd4a64c67a46dedf83524587b6cc3cc366519c5d614435af20"
+    }
+  ],
+  "fields": {
+    "H_L2": {
+      "new": 0.018184159801597623,
+      "BC2": 0.01818415980160975,
+      "absolute_difference": 1.2125717097077882e-14
+    },
+    "M_L2": {
+      "new": 0.05297822550189835,
+      "BC2": 0.05297822550189826,
+      "absolute_difference": 9.020562075079397e-17
+    },
+    "horizon_mass": {
+      "new": 0.33333334537670706,
+      "BC2": 0.33333334537670645,
+      "absolute_difference": 6.106226635438361e-16
+    },
+    "puncture_x": {
+      "new": 0.0,
+      "BC2": 0.0,
+      "absolute_difference": 0.0
+    },
+    "puncture_y": {
+      "new": 0.0,
+      "BC2": 0.0,
+      "absolute_difference": 0.0
+    },
+    "puncture_z": {
+      "new": 0.0,
+      "BC2": 0.0,
+      "absolute_difference": 0.0
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "status": "build_started",
+  "branch": "codex/boosted-normalized-shift",
+  "source_commit": "680ce2f812036d6e5bc6009b6d64eaabe126d0cb",
+  "launcher_commit": "a308265f7",
+  "launcher": "launcher-boosted-normalized-shift-v1",
+  "source_manifest_sha256": "15003c908c6c2640140045ed0473a93a8ffa9e19ab5dac868cd401358c5c42b5",
+  "schema": "HYP3D_MPI_BN1",
+  "inner_shift_gamma": 0.09372309766275977,
+  "inner_shift_eta": 6,
+  "nodes": 4,
+  "ranks": 48,
+  "order": [
+    "S16",
+    "S20",
+    "S24"
+  ],
+  "target_t_over_M": 10,
+  "updated": 1793754152.0010552,
+  "next": "Monitor existing make-j64 build; after successful freeze preserve all records then fresh S16 on four nodes. No duplicate build or smoke.",
+  "local_checks": "checks/serial-verification.json",
+  "monitor_frequency": "hourly",
+  "monitor": "aurora-normalized-shift-n16-n20-n24",
+  "build_pid": 2536480,
+  "build_host": "aurora-uan-0012",
+  "build_log": "boosted-normalized-shift-build.stdout.log"
+}
