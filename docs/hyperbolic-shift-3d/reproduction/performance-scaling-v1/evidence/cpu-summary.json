@@ -1,0 +1,4844 @@
+{
+  "directory": "build-performance/cpu-bench",
+  "completed": true,
+  "runs": [
+    {
+      "name": "overhead-p4-r0-base",
+      "case": {
+        "name": "overhead-p4-r0-base",
+        "variant": "base",
+        "ranks": 4,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "wave-p4"
+      },
+      "passed": true,
+      "process_seconds": 43.397707042,
+      "rank0_after_setup_seconds": 26.193252000000005
+    },
+    {
+      "name": "overhead-p4-r0-m0",
+      "case": {
+        "name": "overhead-p4-r0-m0",
+        "variant": "m0",
+        "ranks": 4,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "wave-p4"
+      },
+      "passed": true,
+      "process_seconds": 48.048428375,
+      "rank0_after_setup_seconds": 27.176442,
+      "max_rank_driver_seconds": 44.082625,
+      "rank_peak_rss_bytes": [
+        3850387456,
+        3289317376,
+        3346612224,
+        3751133184
+      ],
+      "max_rank_rss_bytes": 3850387456,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 14237450240,
+      "sum_rank_peak_rss_bytes_upper_bound": 14237450240,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.01418099999999356,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.25066800000000455,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 5.258102000000001,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.747773000000002,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.052493999999999374,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.106205,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00020699999999995722,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 21.652965000000002,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014275000000004923,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.25066799999999745,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 5.257263000000002,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.738012,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.052353000000000094,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.11611700000000003,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00023600000000001398,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 21.653677999999996,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014275000000004923,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.25066799999999745,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 5.258791000000006,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.763502,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.050822000000000145,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.09067100000000006,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00022400000000000198,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 21.653639999999992,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014274999999997817,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2506920000000008,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 5.2574360000000055,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.77721,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.052275000000001626,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.07688300000000003,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00019999999999997797,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 21.653653999999996,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 21.653677999999996,
+      "critical_rank_steady_step_seconds": 2.5898863333333324,
+      "critical_rank_steady_step_with_diagnostics_seconds": 3.158559666666667,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 5.341429166999999,
+            "exchange": 0.2002691320000072,
+            "diagnostic_transfer": 0,
+            "closure": 0.9201387449999999,
+            "halo": 15.085563,
+            "error_sync_overlapping": 0.025087000000052484
+          },
+          "sparse_bytes_sent": 608082112
+        },
+        {
+          "nested_seconds": {
+            "rhs": 5.056917002000001,
+            "exchange": 0.21055208399999542,
+            "diagnostic_transfer": 0,
+            "closure": 0.920092415,
+            "halo": 6.504527457,
+            "error_sync_overlapping": 11.277751999999975
+          },
+          "sparse_bytes_sent": 433387936
+        },
+        {
+          "nested_seconds": {
+            "rhs": 5.076312627,
+            "exchange": 0.2012702080000131,
+            "diagnostic_transfer": 0,
+            "closure": 0.920133372,
+            "halo": 7.508002375000001,
+            "error_sync_overlapping": 9.970151999999949
+          },
+          "sparse_bytes_sent": 552363456
+        },
+        {
+          "nested_seconds": {
+            "rhs": 5.155462622,
+            "exchange": 0.21068012300000657,
+            "diagnostic_transfer": 0,
+            "closure": 0.920089003,
+            "halo": 13.368337375999996,
+            "error_sync_overlapping": 2.3929610000001134
+          },
+          "sparse_bytes_sent": 474848080
+        }
+      ]
+    },
+    {
+      "name": "overhead-p4-r1-m0",
+      "case": {
+        "name": "overhead-p4-r1-m0",
+        "variant": "m0",
+        "ranks": 4,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "wave-p4"
+      },
+      "passed": true,
+      "process_seconds": 41.477572957999996,
+      "rank0_after_setup_seconds": 24.873472000000003,
+      "max_rank_driver_seconds": 41.128335,
+      "rank_peak_rss_bytes": [
+        3850715136,
+        3289071616,
+        3349151744,
+        3753541632
+      ],
+      "max_rank_rss_bytes": 3850715136,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 14242480128,
+      "sum_rank_peak_rss_bytes_upper_bound": 14242480128,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.013991999999994675,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.24146400000000057,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.82968000000001,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.101760000000002,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.04574399999999912,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.10715100000000001,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00015699999999999915,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.787964999999993,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.01407800000000492,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.24188399999999888,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.828097,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.092311000000002,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.046310999999999325,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.11658299999999999,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00020699999999999885,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.788863999999997,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014077999999997814,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.24186200000000468,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.829126000000006,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.117265,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.04531199999999913,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.09163500000000001,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00018699999999999967,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.788844999999995,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.01407700000000034,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.24156899999999837,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.82836099999999,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.13081,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.04613300000000109,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.07809,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00017099999999999928,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.788808000000007,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 19.788863999999997,
+      "critical_rank_steady_step_seconds": 2.4725583333333323,
+      "critical_rank_steady_step_with_diagnostics_seconds": 3.0117321666666665,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 4.954488994999999,
+            "exchange": 0.19253721299999493,
+            "diagnostic_transfer": 0,
+            "closure": 0.8649460769999998,
+            "halo": 13.672675624000004,
+            "error_sync_overlapping": 0.018596000000009383
+          },
+          "sparse_bytes_sent": 608082112
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.713381085,
+            "exchange": 0.20322404300000643,
+            "diagnostic_transfer": 0,
+            "closure": 0.8649238329999999,
+            "halo": 5.939094374999999,
+            "error_sync_overlapping": 10.15422000000007
+          },
+          "sparse_bytes_sent": 433387936
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.678073124999998,
+            "exchange": 0.19575016400000608,
+            "diagnostic_transfer": 0,
+            "closure": 0.8649360030000001,
+            "halo": 6.794907877000001,
+            "error_sync_overlapping": 9.072115999999966
+          },
+          "sparse_bytes_sent": 552363456
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.809822499,
+            "exchange": 0.20211933100001478,
+            "diagnostic_transfer": 0,
+            "closure": 0.864921248,
+            "halo": 12.068879375,
+            "error_sync_overlapping": 2.1744730000000025
+          },
+          "sparse_bytes_sent": 474848080
+        }
+      ]
+    },
+    {
+      "name": "overhead-p4-r1-base",
+      "case": {
+        "name": "overhead-p4-r1-base",
+        "variant": "base",
+        "ranks": 4,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "wave-p4"
+      },
+      "passed": true,
+      "process_seconds": 42.192330166999994,
+      "rank0_after_setup_seconds": 25.458197
+    },
+    {
+      "name": "overhead-p4-r2-base",
+      "case": {
+        "name": "overhead-p4-r2-base",
+        "variant": "base",
+        "ranks": 4,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "wave-p4"
+      },
+      "passed": true,
+      "process_seconds": 42.603430375000016,
+      "rank0_after_setup_seconds": 26.009831000000002
+    },
+    {
+      "name": "overhead-p4-r2-m0",
+      "case": {
+        "name": "overhead-p4-r2-m0",
+        "variant": "m0",
+        "ranks": 4,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "wave-p4"
+      },
+      "passed": true,
+      "process_seconds": 44.66283387500002,
+      "rank0_after_setup_seconds": 27.933563,
+      "max_rank_driver_seconds": 44.372174,
+      "rank_peak_rss_bytes": [
+        3850420224,
+        3288989696,
+        3347218432,
+        3752230912
+      ],
+      "max_rank_rss_bytes": 3850420224,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 14238859264,
+      "sum_rank_peak_rss_bytes_upper_bound": 14238859264,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.01679099999999778,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.28405200000000264,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 5.494139000000008,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.288205,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.046955999999998,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.103637,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00014800000000000056,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 22.138097999999992,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.01685399999999504,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.28420000000000556,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 5.493260999999993,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.279167,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.04673999999999978,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.112735,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00016000000000000042,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 22.139057000000008,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.016854000000002145,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2841850000000008,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 5.494329999999998,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.303216,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.045667999999999154,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.08867799999999999,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00018000000000000134,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 22.13905,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.016852999999997564,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2841200000000015,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 5.4934200000000075,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.317352,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.04667099999999991,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.074435,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00021800000000000118,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 22.139024999999997,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 22.139057000000008,
+      "critical_rank_steady_step_seconds": 2.8433436666666676,
+      "critical_rank_steady_step_with_diagnostics_seconds": 3.4763276666666663,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 5.378344336,
+            "exchange": 0.20212600499999636,
+            "diagnostic_transfer": 0,
+            "closure": 0.9617510789999998,
+            "halo": 15.485335872,
+            "error_sync_overlapping": 0.02602499999996155
+          },
+          "sparse_bytes_sent": 608082112
+        },
+        {
+          "nested_seconds": {
+            "rhs": 5.105314997999999,
+            "exchange": 0.21300853400000785,
+            "diagnostic_transfer": 0,
+            "closure": 0.961703128,
+            "halo": 6.809204541000001,
+            "error_sync_overlapping": 11.478985999999988
+          },
+          "sparse_bytes_sent": 433387936
+        },
+        {
+          "nested_seconds": {
+            "rhs": 5.118068833,
+            "exchange": 0.2046094989999852,
+            "diagnostic_transfer": 0,
+            "closure": 0.9617358410000002,
+            "halo": 7.785411707999999,
+            "error_sync_overlapping": 10.208365999999998
+          },
+          "sparse_bytes_sent": 552363456
+        },
+        {
+          "nested_seconds": {
+            "rhs": 5.195442373999999,
+            "exchange": 0.21228841700000528,
+            "diagnostic_transfer": 0,
+            "closure": 0.9617000829999999,
+            "halo": 13.797433624000002,
+            "error_sync_overlapping": 2.418203999999985
+          },
+          "sparse_bytes_sent": 474848080
+        }
+      ]
+    },
+    {
+      "name": "mask-p1-r0-m0",
+      "case": {
+        "name": "mask-p1-r0-m0",
+        "variant": "m0",
+        "ranks": 1,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "wave-p1"
+      },
+      "passed": true,
+      "process_seconds": 69.85484216700002,
+      "rank0_after_setup_seconds": 53.052876,
+      "max_rank_driver_seconds": 69.504143,
+      "rank_peak_rss_bytes": [
+        5510676480
+      ],
+      "max_rank_rss_bytes": 5510676480,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 5510676480,
+      "sum_rank_peak_rss_bytes_upper_bound": 5510676480,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.010627999999996973,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2506450000000058,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 9.762369000000007,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.13003,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.03382999999999825,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.287804,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 8.899999999999967e-05,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 43.028747999999986,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 43.028747999999986,
+      "critical_rank_steady_step_seconds": 5.378901999999999,
+      "critical_rank_steady_step_with_diagnostics_seconds": 6.457050833333333,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 19.159219917,
+            "exchange": 0.028795792000000542,
+            "diagnostic_transfer": 0,
+            "closure": 2.528730003,
+            "halo": 20.921472663,
+            "error_sync_overlapping": 0.0002380000000563598
+          },
+          "sparse_bytes_sent": 0
+        }
+      ]
+    },
+    {
+      "name": "mask-p1-r0-m1b",
+      "case": {
+        "name": "mask-p1-r0-m1b",
+        "variant": "m1b",
+        "ranks": 1,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "wave-p1"
+      },
+      "passed": true,
+      "process_seconds": 71.38085779099998,
+      "rank0_after_setup_seconds": 53.477411000000004,
+      "max_rank_driver_seconds": 70.226079,
+      "rank_peak_rss_bytes": [
+        5510610944
+      ],
+      "max_rank_rss_bytes": 5510610944,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 5510610944,
+      "sum_rank_peak_rss_bytes_upper_bound": 5510610944,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.007024999999998727,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.24905100000000857,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 9.743355999999999,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.399944,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.033895999999998594,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.314987,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.0001510000000000001,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 43.477669,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 43.477669,
+      "critical_rank_steady_step_seconds": 5.447746833333333,
+      "critical_rank_steady_step_with_diagnostics_seconds": 6.526211666666666,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 19.344253208999994,
+            "exchange": 0.027433037999982462,
+            "diagnostic_transfer": 0,
+            "closure": 2.7695735029999993,
+            "halo": 20.952857377000004,
+            "error_sync_overlapping": 0.0002619999999353695
+          },
+          "sparse_bytes_sent": 0
+        }
+      ]
+    },
+    {
+      "name": "mask-p1-r1-m1b",
+      "case": {
+        "name": "mask-p1-r1-m1b",
+        "variant": "m1b",
+        "ranks": 1,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "wave-p1"
+      },
+      "passed": true,
+      "process_seconds": 70.61558033400001,
+      "rank0_after_setup_seconds": 53.493564000000006,
+      "max_rank_driver_seconds": 70.351274,
+      "rank_peak_rss_bytes": [
+        5510496256
+      ],
+      "max_rank_rss_bytes": 5510496256,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 5510496256,
+      "sum_rank_peak_rss_bytes_upper_bound": 5510496256,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.009016000000002578,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2520729999999958,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 9.777865000000013,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.527161,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.027409999999999712,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.303411,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 8.700000000000027e-05,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 43.45425099999999,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 43.45425099999999,
+      "critical_rank_steady_step_seconds": 5.427623999999999,
+      "critical_rank_steady_step_with_diagnostics_seconds": 6.502824333333334,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 19.44200775099999,
+            "exchange": 0.02726104400003145,
+            "diagnostic_transfer": 0,
+            "closure": 2.712723494999999,
+            "halo": 20.894029955,
+            "error_sync_overlapping": 0.0002919999999910772
+          },
+          "sparse_bytes_sent": 0
+        }
+      ]
+    },
+    {
+      "name": "mask-p1-r1-m0",
+      "case": {
+        "name": "mask-p1-r1-m0",
+        "variant": "m0",
+        "ranks": 1,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "wave-p1"
+      },
+      "passed": true,
+      "process_seconds": 70.14381958299998,
+      "rank0_after_setup_seconds": 52.76976500000001,
+      "max_rank_driver_seconds": 69.822128,
+      "rank_peak_rss_bytes": [
+        5510299648
+      ],
+      "max_rank_rss_bytes": 5510299648,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 5510299648,
+      "sum_rank_peak_rss_bytes_upper_bound": 5510299648,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.009678999999991333,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2518090000000086,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 9.641939000000008,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.711192999999998,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.030905000000000626,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.310475,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00013699999999999997,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 42.865990999999994,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 42.865990999999994,
+      "critical_rank_steady_step_seconds": 5.358812666666666,
+      "critical_rank_steady_step_with_diagnostics_seconds": 6.4206715,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 19.082190584,
+            "exchange": 0.027450249000045397,
+            "diagnostic_transfer": 0,
+            "closure": 2.5186992970000004,
+            "halo": 20.843433583,
+            "error_sync_overlapping": 0.00019999999996045403
+          },
+          "sparse_bytes_sent": 0
+        }
+      ]
+    },
+    {
+      "name": "mask-p1-r2-m0",
+      "case": {
+        "name": "mask-p1-r2-m0",
+        "variant": "m0",
+        "ranks": 1,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "wave-p1"
+      },
+      "passed": true,
+      "process_seconds": 69.34219866700005,
+      "rank0_after_setup_seconds": 52.603608,
+      "max_rank_driver_seconds": 69.011525,
+      "rank_peak_rss_bytes": [
+        5510283264
+      ],
+      "max_rank_rss_bytes": 5510283264,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 5510283264,
+      "sum_rank_peak_rss_bytes_upper_bound": 5510283264,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.010193999999998482,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.24718700000001093,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 9.620645999999994,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.072313,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.03058799999999806,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.30532800000000004,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 7.799999999999994e-05,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 42.725191,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 42.725191,
+      "critical_rank_steady_step_seconds": 5.341792333333334,
+      "critical_rank_steady_step_with_diagnostics_seconds": 6.403204833333333,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 18.991180869,
+            "exchange": 0.0272862899999915,
+            "diagnostic_transfer": 0,
+            "closure": 2.5081501299999998,
+            "halo": 20.806695878,
+            "error_sync_overlapping": 0.000144999999996287
+          },
+          "sparse_bytes_sent": 0
+        }
+      ]
+    },
+    {
+      "name": "mask-p1-r2-m1b",
+      "case": {
+        "name": "mask-p1-r2-m1b",
+        "variant": "m1b",
+        "ranks": 1,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "wave-p1"
+      },
+      "passed": true,
+      "process_seconds": 70.98982725000008,
+      "rank0_after_setup_seconds": 53.913775,
+      "max_rank_driver_seconds": 70.759327,
+      "rank_peak_rss_bytes": [
+        5510676480
+      ],
+      "max_rank_rss_bytes": 5510676480,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 5510676480,
+      "sum_rank_peak_rss_bytes_upper_bound": 5510676480,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.010052999999999201,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2515240000000034,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 9.726361000000011,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.496758,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.0292129999999986,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.31981,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 8.700000000000027e-05,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 43.92552099999999,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 43.92552099999999,
+      "critical_rank_steady_step_seconds": 5.514876499999999,
+      "critical_rank_steady_step_with_diagnostics_seconds": 6.586345666666666,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 19.519470748999996,
+            "exchange": 0.02746662100000705,
+            "diagnostic_transfer": 0,
+            "closure": 2.8519887499999994,
+            "halo": 21.136972291,
+            "error_sync_overlapping": 0.00028899999999865145
+          },
+          "sparse_bytes_sent": 0
+        }
+      ]
+    },
+    {
+      "name": "mask-p2-r0-m0",
+      "case": {
+        "name": "mask-p2-r0-m0",
+        "variant": "m0",
+        "ranks": 2,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "wave-p2"
+      },
+      "passed": true,
+      "process_seconds": 54.07490520800002,
+      "rank0_after_setup_seconds": 37.359651,
+      "max_rank_driver_seconds": 53.77519,
+      "rank_peak_rss_bytes": [
+        4465721344,
+        4497358848
+      ],
+      "max_rank_rss_bytes": 4497358848,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 8963080192,
+      "sum_rank_peak_rss_bytes_upper_bound": 8963080192,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.011133999999998423,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.24870899999999807,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 7.161983999999997,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.183842,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.035841000000001344,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.19607,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.0001559999999999999,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 29.937423000000006,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.011220999999999037,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.24873999999999796,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 7.161187000000012,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.230869,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.03549200000000141,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.14920699999999998,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00014099999999999877,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 29.93833299999999,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 29.93833299999999,
+      "critical_rank_steady_step_seconds": 3.738046666666665,
+      "critical_rank_steady_step_with_diagnostics_seconds": 4.527272333333333,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 9.657299588999999,
+            "exchange": 0.1516272449999899,
+            "diagnostic_transfer": 0,
+            "closure": 1.4085845399999994,
+            "halo": 18.533806000000002,
+            "error_sync_overlapping": 0.14947799999999845
+          },
+          "sparse_bytes_sent": 513643712
+        },
+        {
+          "nested_seconds": {
+            "rhs": 9.532771083000002,
+            "exchange": 0.16436137500001508,
+            "diagnostic_transfer": 0,
+            "closure": 1.4085926659999999,
+            "halo": 18.067743580999995,
+            "error_sync_overlapping": 0.7263349999999811
+          },
+          "sparse_bytes_sent": 521224080
+        }
+      ]
+    },
+    {
+      "name": "mask-p2-r0-m1b",
+      "case": {
+        "name": "mask-p2-r0-m1b",
+        "variant": "m1b",
+        "ranks": 2,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "wave-p2"
+      },
+      "passed": true,
+      "process_seconds": 54.52995629199995,
+      "rank0_after_setup_seconds": 37.591927999999996,
+      "max_rank_driver_seconds": 54.235816,
+      "rank_peak_rss_bytes": [
+        4465377280,
+        4497014784
+      ],
+      "max_rank_rss_bytes": 4497014784,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 8962392064,
+      "sum_rank_peak_rss_bytes_upper_bound": 8962392064,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.010578999999999894,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.24387700000000478,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 7.2211360000000155,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.418863,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.03803100000000015,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.187257,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00010499999999999919,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 30.11596499999998,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.010664999999995928,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2438810000000018,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 7.220030000000008,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.46584,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.037822999999999496,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.140435,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00010600000000000019,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 30.117035999999995,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 30.117035999999995,
+      "critical_rank_steady_step_seconds": 3.7642959999999994,
+      "critical_rank_steady_step_with_diagnostics_seconds": 4.560754333333334,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 9.697880208,
+            "exchange": 0.15007492500001665,
+            "diagnostic_transfer": 0,
+            "closure": 1.5044861249999997,
+            "halo": 18.490790168,
+            "error_sync_overlapping": 0.24363700000001387
+          },
+          "sparse_bytes_sent": 513643712
+        },
+        {
+          "nested_seconds": {
+            "rhs": 9.779380083000001,
+            "exchange": 0.1632869159999732,
+            "diagnostic_transfer": 0,
+            "closure": 1.5045139570000001,
+            "halo": 18.020461791000002,
+            "error_sync_overlapping": 0.6044599999999747
+          },
+          "sparse_bytes_sent": 521224080
+        }
+      ]
+    },
+    {
+      "name": "mask-p2-r1-m1b",
+      "case": {
+        "name": "mask-p2-r1-m1b",
+        "variant": "m1b",
+        "ranks": 2,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "wave-p2"
+      },
+      "passed": true,
+      "process_seconds": 54.56997875000002,
+      "rank0_after_setup_seconds": 37.515297,
+      "max_rank_driver_seconds": 54.306005,
+      "rank_peak_rss_bytes": [
+        4465491968,
+        4496949248
+      ],
+      "max_rank_rss_bytes": 4496949248,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 8962441216,
+      "sum_rank_peak_rss_bytes_upper_bound": 8962441216,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.010507000000004041,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.23902599999999552,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 7.194136999999994,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.559133,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.03774500000000103,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.19335600000000003,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 8.900000000000054e-05,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 30.071289000000004,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.010584000000001481,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2397500000000008,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 7.197407999999989,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.605954,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.03755199999999803,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.14662600000000003,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00010600000000000019,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 30.06802500000001,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 30.071289000000004,
+      "critical_rank_steady_step_seconds": 3.760417333333334,
+      "critical_rank_steady_step_with_diagnostics_seconds": 4.554523166666667,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 9.626388376,
+            "exchange": 0.15024837400001076,
+            "diagnostic_transfer": 0,
+            "closure": 1.50607946,
+            "halo": 18.51858558399999,
+            "error_sync_overlapping": 0.2456520000000033
+          },
+          "sparse_bytes_sent": 513643712
+        },
+        {
+          "nested_seconds": {
+            "rhs": 9.701910123000001,
+            "exchange": 0.1638861270000043,
+            "diagnostic_transfer": 0,
+            "closure": 1.5060740010000002,
+            "halo": 18.038192165000005,
+            "error_sync_overlapping": 0.6061950000000245
+          },
+          "sparse_bytes_sent": 521224080
+        }
+      ]
+    },
+    {
+      "name": "mask-p2-r1-m0",
+      "case": {
+        "name": "mask-p2-r1-m0",
+        "variant": "m0",
+        "ranks": 2,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "wave-p2"
+      },
+      "passed": true,
+      "process_seconds": 54.80440166599999,
+      "rank0_after_setup_seconds": 37.339583,
+      "max_rank_driver_seconds": 54.541222,
+      "rank_peak_rss_bytes": [
+        4465491968,
+        4497014784
+      ],
+      "max_rank_rss_bytes": 4497014784,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 8962506752,
+      "sum_rank_peak_rss_bytes_upper_bound": 8962506752,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.009965000000001112,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.24568299999999965,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 7.164566000000004,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.975437,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.037693000000000865,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.188717,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00012200000000000058,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 29.919038999999994,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.010058000000000789,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.24568299999999965,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 7.161619999999999,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 17.022481,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.03739299999999801,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.141929,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00010600000000000019,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 29.921951000000004,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 29.921951000000004,
+      "critical_rank_steady_step_seconds": 3.7424783333333345,
+      "critical_rank_steady_step_with_diagnostics_seconds": 4.533830333333333,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 9.684870876,
+            "exchange": 0.15153178700000158,
+            "diagnostic_transfer": 0,
+            "closure": 1.406973502,
+            "halo": 18.487289583000003,
+            "error_sync_overlapping": 0.14868800000007099
+          },
+          "sparse_bytes_sent": 513643712
+        },
+        {
+          "nested_seconds": {
+            "rhs": 9.554015626,
+            "exchange": 0.1637112890000027,
+            "diagnostic_transfer": 0,
+            "closure": 1.4069765830000005,
+            "halo": 17.995558583999998,
+            "error_sync_overlapping": 0.7708809999999531
+          },
+          "sparse_bytes_sent": 521224080
+        }
+      ]
+    },
+    {
+      "name": "mask-p2-r2-m0",
+      "case": {
+        "name": "mask-p2-r2-m0",
+        "variant": "m0",
+        "ranks": 2,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "wave-p2"
+      },
+      "passed": true,
+      "process_seconds": 54.87006558299993,
+      "rank0_after_setup_seconds": 37.845062999999996,
+      "max_rank_driver_seconds": 54.627249000000006,
+      "rank_peak_rss_bytes": [
+        4465590272,
+        4497096704
+      ],
+      "max_rank_rss_bytes": 4497096704,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 8962686976,
+      "sum_rank_peak_rss_bytes_upper_bound": 8962686976,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.010284000000005733,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2581259999999972,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 7.2515439999999955,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.557412,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.036898000000000764,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.188041,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00010199999999999966,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 30.324727000000003,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.010384000000001947,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2582400000000007,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 7.250752000000006,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.604375,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.03660099999999744,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.141207,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.0001299999999999999,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 30.325559999999996,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 30.325559999999996,
+      "critical_rank_steady_step_seconds": 3.792484999999999,
+      "critical_rank_steady_step_with_diagnostics_seconds": 4.593216333333333,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 9.689912495999996,
+            "exchange": 0.15285629600001216,
+            "diagnostic_transfer": 0,
+            "closure": 1.4342276259999998,
+            "halo": 18.861710669,
+            "error_sync_overlapping": 0.15140100000002477
+          },
+          "sparse_bytes_sent": 513643712
+        },
+        {
+          "nested_seconds": {
+            "rhs": 9.539435454000001,
+            "exchange": 0.16703745799999328,
+            "diagnostic_transfer": 0,
+            "closure": 1.4342212119999997,
+            "halo": 18.378230752,
+            "error_sync_overlapping": 0.7792969999999251
+          },
+          "sparse_bytes_sent": 521224080
+        }
+      ]
+    },
+    {
+      "name": "mask-p2-r2-m1b",
+      "case": {
+        "name": "mask-p2-r2-m1b",
+        "variant": "m1b",
+        "ranks": 2,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "wave-p2"
+      },
+      "passed": true,
+      "process_seconds": 54.843362833000015,
+      "rank0_after_setup_seconds": 37.98715,
+      "max_rank_driver_seconds": 54.545852000000004,
+      "rank_peak_rss_bytes": [
+        4465410048,
+        4496932864
+      ],
+      "max_rank_rss_bytes": 4496932864,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 8962342912,
+      "sum_rank_peak_rss_bytes_upper_bound": 8962342912,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.009281999999998902,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.24998000000000076,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 7.291349999999998,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.332033000000003,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.0363509999999998,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.190556,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00010999999999999899,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 30.436187000000004,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.009389000000005865,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.24998399999999776,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 7.290206999999992,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.379984,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.03591199999999972,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.1428,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00010000000000000026,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 30.437476000000004,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 30.437476000000004,
+      "critical_rank_steady_step_seconds": 3.803493333333334,
+      "critical_rank_steady_step_with_diagnostics_seconds": 4.604987499999999,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 9.666247624000002,
+            "exchange": 0.154270003999997,
+            "diagnostic_transfer": 0,
+            "closure": 1.5201352909999997,
+            "halo": 18.849876080999998,
+            "error_sync_overlapping": 0.22164199999996725
+          },
+          "sparse_bytes_sent": 513643712
+        },
+        {
+          "nested_seconds": {
+            "rhs": 9.722874831000002,
+            "exchange": 0.16495550400000075,
+            "diagnostic_transfer": 0,
+            "closure": 1.5201411619999996,
+            "halo": 18.349238204,
+            "error_sync_overlapping": 0.6520760000000365
+          },
+          "sparse_bytes_sent": 521224080
+        }
+      ]
+    },
+    {
+      "name": "mask-p4-r0-m0",
+      "case": {
+        "name": "mask-p4-r0-m0",
+        "variant": "m0",
+        "ranks": 4,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "wave-p4"
+      },
+      "passed": true,
+      "process_seconds": 43.345715375000054,
+      "rank0_after_setup_seconds": 26.224467999999998,
+      "max_rank_driver_seconds": 42.956522,
+      "rank_peak_rss_bytes": [
+        3850321920,
+        3288219648,
+        3347349504,
+        3753607168
+      ],
+      "max_rank_rss_bytes": 3850321920,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 14239498240,
+      "sum_rank_peak_rss_bytes_upper_bound": 14239498240,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.015342999999994333,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.27217100000000016,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 5.083580000000001,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.47711,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.1428060000000002,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.11244799999999999,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.000171000000000001,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 20.852780000000003,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.015540999999998917,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.27227599999999796,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 5.0807269999999995,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.468094,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.14371000000000222,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.12145799999999998,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00017800000000000107,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 20.854538,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.015540999999998917,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2722359999999995,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 5.080914000000021,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.492306,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.14354600000000062,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.09722199999999999,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00018500000000000114,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 20.85452299999998,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.015540999999998917,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2722100000000012,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 5.080891999999999,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.511401000000003,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.14357599999999948,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.078113,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00020799999999999985,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 20.854513999999998,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 20.854538,
+      "critical_rank_steady_step_seconds": 2.6443188333333336,
+      "critical_rank_steady_step_with_diagnostics_seconds": 3.2117101666666668,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 5.162525043999999,
+            "exchange": 0.20228587300000564,
+            "diagnostic_transfer": 0,
+            "closure": 0.9131565800000001,
+            "halo": 14.476436542,
+            "error_sync_overlapping": 0.025727000000014044
+          },
+          "sparse_bytes_sent": 608082112
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.890750623,
+            "exchange": 0.21794550099998972,
+            "diagnostic_transfer": 0,
+            "closure": 0.9131242499999999,
+            "halo": 6.355629916999999,
+            "error_sync_overlapping": 10.69187399999997
+          },
+          "sparse_bytes_sent": 433387936
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.908717124999999,
+            "exchange": 0.21178733500000171,
+            "diagnostic_transfer": 0,
+            "closure": 0.9131506700000002,
+            "halo": 7.302666835,
+            "error_sync_overlapping": 9.446304000000012
+          },
+          "sparse_bytes_sent": 552363456
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.9939867079999996,
+            "exchange": 0.21013207999996852,
+            "diagnostic_transfer": 0,
+            "closure": 0.9131215000000003,
+            "halo": 12.801942373000003,
+            "error_sync_overlapping": 2.33752599999999
+          },
+          "sparse_bytes_sent": 474848080
+        }
+      ]
+    },
+    {
+      "name": "mask-p4-r0-m1b",
+      "case": {
+        "name": "mask-p4-r0-m1b",
+        "variant": "m1b",
+        "ranks": 4,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "wave-p4"
+      },
+      "passed": true,
+      "process_seconds": 46.155455500000016,
+      "rank0_after_setup_seconds": 29.127222000000003,
+      "max_rank_driver_seconds": 45.791249,
+      "rank_peak_rss_bytes": [
+        3850878976,
+        3288252416,
+        3347267584,
+        3751657472
+      ],
+      "max_rank_rss_bytes": 3850878976,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 14238056448,
+      "sum_rank_peak_rss_bytes_upper_bound": 14238056448,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.016593000000000302,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.24858299999999645,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 6.21331,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.503417,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.04791900000000027,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.11297,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00021300000000000138,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 22.648197,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.016692999999996516,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2486159999999984,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 6.21089000000001,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.494176,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.048166999999999405,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.12231399999999999,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.0002239999999999985,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 22.650168999999995,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.016692999999996516,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2486290000000011,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 6.211534000000007,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.518691999999998,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.04675100000000043,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.09776800000000001,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00016000000000000042,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 22.651018999999994,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.016692999999996516,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2486120000000014,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 6.21015100000001,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.536619,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.048145999999999134,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.079821,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00017199999999999854,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 22.65102999999999,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 22.65102999999999,
+      "critical_rank_steady_step_seconds": 2.8639408333333325,
+      "critical_rank_steady_step_with_diagnostics_seconds": 3.5924709999999997,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 5.485501166000001,
+            "exchange": 0.2048919969999936,
+            "diagnostic_transfer": 0,
+            "closure": 1.033602132,
+            "halo": 15.801622290999997,
+            "error_sync_overlapping": 0.034434000000054255
+          },
+          "sparse_bytes_sent": 608082112
+        },
+        {
+          "nested_seconds": {
+            "rhs": 5.206123790999999,
+            "exchange": 0.21705170999999387,
+            "diagnostic_transfer": 0,
+            "closure": 1.033519625,
+            "halo": 6.845048412999998,
+            "error_sync_overlapping": 11.97569499999997
+          },
+          "sparse_bytes_sent": 433387936
+        },
+        {
+          "nested_seconds": {
+            "rhs": 5.409067629999999,
+            "exchange": 0.2081937929999955,
+            "diagnostic_transfer": 0,
+            "closure": 1.0335841259999998,
+            "halo": 7.919362497999998,
+            "error_sync_overlapping": 10.43422900000002
+          },
+          "sparse_bytes_sent": 552363456
+        },
+        {
+          "nested_seconds": {
+            "rhs": 5.304338624000001,
+            "exchange": 0.2167588330000057,
+            "diagnostic_transfer": 0,
+            "closure": 1.0335067539999998,
+            "halo": 14.085116248000002,
+            "error_sync_overlapping": 2.4157039999999945
+          },
+          "sparse_bytes_sent": 474848080
+        }
+      ]
+    },
+    {
+      "name": "mask-p4-r1-m1b",
+      "case": {
+        "name": "mask-p4-r1-m1b",
+        "variant": "m1b",
+        "ranks": 4,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "wave-p4"
+      },
+      "passed": true,
+      "process_seconds": 43.64467012499995,
+      "rank0_after_setup_seconds": 26.524143,
+      "max_rank_driver_seconds": 43.369465999999996,
+      "rank_peak_rss_bytes": [
+        3850403840,
+        3292741632,
+        3348856832,
+        3751297024
+      ],
+      "max_rank_rss_bytes": 3850403840,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 14243299328,
+      "sum_rank_peak_rss_bytes_upper_bound": 14243299328,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.018894999999993445,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.25237300000000573,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 5.247619999999994,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.68196,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.05544700000000091,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.107732,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00012200000000000058,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 21.004843000000008,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.0189980000000034,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2523690000000016,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 5.246294999999996,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.673076000000002,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.055543999999997595,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.11670799999999999,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00017,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 21.005823000000003,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.0189980000000034,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.25284899999999766,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 5.247445999999993,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.697401,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.05436900000000122,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.09240100000000001,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.0001299999999999999,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 21.005872000000004,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.0189980000000034,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.25250399999999473,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 5.246850000000002,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.711333,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.0550050000000013,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.078418,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00015000000000000083,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 21.005858999999997,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 21.005872000000004,
+      "critical_rank_steady_step_seconds": 2.5607736666666674,
+      "critical_rank_steady_step_with_diagnostics_seconds": 3.1226416666666665,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 5.199907542,
+            "exchange": 0.19574304299999848,
+            "diagnostic_transfer": 0,
+            "closure": 0.9687341189999997,
+            "halo": 14.527177001000002,
+            "error_sync_overlapping": 0.03995099999999141
+          },
+          "sparse_bytes_sent": 608082112
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.975901458999998,
+            "exchange": 0.20654433100001307,
+            "diagnostic_transfer": 0,
+            "closure": 0.9686996220000001,
+            "halo": 6.2796392469999995,
+            "error_sync_overlapping": 10.831801000000013
+          },
+          "sparse_bytes_sent": 433387936
+        },
+        {
+          "nested_seconds": {
+            "rhs": 5.170077081000002,
+            "exchange": 0.19661566699999156,
+            "diagnostic_transfer": 0,
+            "closure": 0.9687101249999999,
+            "halo": 7.251393627999999,
+            "error_sync_overlapping": 9.37658399999992
+          },
+          "sparse_bytes_sent": 552363456
+        },
+        {
+          "nested_seconds": {
+            "rhs": 5.066365497000001,
+            "exchange": 0.20708041799999966,
+            "diagnostic_transfer": 0,
+            "closure": 0.9686726649999998,
+            "halo": 12.870937292000004,
+            "error_sync_overlapping": 2.2938220000000094
+          },
+          "sparse_bytes_sent": 474848080
+        }
+      ]
+    },
+    {
+      "name": "mask-p4-r1-m0",
+      "case": {
+        "name": "mask-p4-r1-m0",
+        "variant": "m0",
+        "ranks": 4,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "wave-p4"
+      },
+      "passed": true,
+      "process_seconds": 44.31459295900004,
+      "rank0_after_setup_seconds": 27.622156999999998,
+      "max_rank_driver_seconds": 44.007400999999994,
+      "rank_peak_rss_bytes": [
+        3850862592,
+        3287859200,
+        3347775488,
+        3752198144
+      ],
+      "max_rank_rss_bytes": 3850862592,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 14238695424,
+      "sum_rank_peak_rss_bytes_upper_bound": 14238695424,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014391999999993743,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2665890000000033,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 5.377191000000014,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.225442,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.04919800000000052,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.11091799999999999,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00020299999999999832,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 21.96344099999999,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014490000000002112,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2666109999999975,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 5.373814999999997,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.21625,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.04926200000000236,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.12018999999999999,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.0002249999999999995,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 21.966558,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014490000000002112,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.26658700000000124,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 5.375220999999993,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.240589,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.04779800000000023,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.095896,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00021799999999999944,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 21.966572000000003,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014490000000002112,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.26661,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 5.374256000000013,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.255708000000002,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.04891099999999682,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.08068,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00021000000000000185,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 21.96653499999999,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 21.966572000000003,
+      "critical_rank_steady_step_seconds": 2.750196666666667,
+      "critical_rank_steady_step_with_diagnostics_seconds": 3.3395508333333335,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 5.3346901220000005,
+            "exchange": 0.20126587400001095,
+            "diagnostic_transfer": 0,
+            "closure": 0.9662498370000001,
+            "halo": 15.362853671000005,
+            "error_sync_overlapping": 0.02464799999998135
+          },
+          "sparse_bytes_sent": 608082112
+        },
+        {
+          "nested_seconds": {
+            "rhs": 5.0604545,
+            "exchange": 0.21307891500001344,
+            "diagnostic_transfer": 0,
+            "closure": 0.966267627,
+            "halo": 6.688544667999999,
+            "error_sync_overlapping": 11.411069999999985
+          },
+          "sparse_bytes_sent": 433387936
+        },
+        {
+          "nested_seconds": {
+            "rhs": 5.083170997000001,
+            "exchange": 0.2032395409999952,
+            "diagnostic_transfer": 0,
+            "closure": 0.966243831,
+            "halo": 7.7501156280000005,
+            "error_sync_overlapping": 10.016140999999951
+          },
+          "sparse_bytes_sent": 552363456
+        },
+        {
+          "nested_seconds": {
+            "rhs": 5.172471205000001,
+            "exchange": 0.21192512600001082,
+            "diagnostic_transfer": 0,
+            "closure": 0.9662546300000001,
+            "halo": 13.677706585,
+            "error_sync_overlapping": 2.3586610000000228
+          },
+          "sparse_bytes_sent": 474848080
+        }
+      ]
+    },
+    {
+      "name": "mask-p4-r2-m0",
+      "case": {
+        "name": "mask-p4-r2-m0",
+        "variant": "m0",
+        "ranks": 4,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "wave-p4"
+      },
+      "passed": true,
+      "process_seconds": 41.67366049999987,
+      "rank0_after_setup_seconds": 24.951183,
+      "max_rank_driver_seconds": 41.367977999999994,
+      "rank_peak_rss_bytes": [
+        3851239424,
+        3288104960,
+        3347185664,
+        3751690240
+      ],
+      "max_rank_rss_bytes": 3851239424,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 14238220288,
+      "sum_rank_peak_rss_bytes_upper_bound": 14238220288,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014757000000003018,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.24030799999999886,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.8200779999999845,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.264004,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.047758000000001744,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.104821,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00019300000000000046,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.87569200000001,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014859000000001288,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2405299999999997,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.819060999999994,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.255284999999997,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.04757200000000239,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.11373699999999999,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00015300000000000036,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.876641000000003,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014858999999994182,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.24044500000000113,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.820541000000013,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.279281,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.046162999999999954,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.089629,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.000171000000000001,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.87666199999999,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014859000000001288,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2406689999999969,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.819184,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.293887,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.047515999999998115,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.07499600000000001,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.0001839999999999984,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.876683,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 19.876683,
+      "critical_rank_steady_step_seconds": 2.4851183333333338,
+      "critical_rank_steady_step_with_diagnostics_seconds": 3.0235323333333337,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 4.999501042,
+            "exchange": 0.19079767000001832,
+            "diagnostic_transfer": 0,
+            "closure": 0.8671851640000001,
+            "halo": 13.719934084,
+            "error_sync_overlapping": 0.034352999999949674
+          },
+          "sparse_bytes_sent": 608082112
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.699884751000002,
+            "exchange": 0.20123720799999664,
+            "diagnostic_transfer": 0,
+            "closure": 0.8671709580000001,
+            "halo": 5.92111754,
+            "error_sync_overlapping": 10.263536000000066
+          },
+          "sparse_bytes_sent": 433387936
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.745488580999999,
+            "exchange": 0.1910007929999892,
+            "diagnostic_transfer": 0,
+            "closure": 0.8671815429999999,
+            "halo": 6.833801414000001,
+            "error_sync_overlapping": 9.064641999999978
+          },
+          "sparse_bytes_sent": 552363456
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.817248917,
+            "exchange": 0.19920465700001064,
+            "diagnostic_transfer": 0,
+            "closure": 0.867161461,
+            "halo": 12.142759333000003,
+            "error_sync_overlapping": 2.1786899999999605
+          },
+          "sparse_bytes_sent": 474848080
+        }
+      ]
+    },
+    {
+      "name": "mask-p4-r2-m1b",
+      "case": {
+        "name": "mask-p4-r2-m1b",
+        "variant": "m1b",
+        "ranks": 4,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "wave-p4"
+      },
+      "passed": true,
+      "process_seconds": 45.877946458999986,
+      "rank0_after_setup_seconds": 29.014559,
+      "max_rank_driver_seconds": 45.535641999999996,
+      "rank_peak_rss_bytes": [
+        3850452992,
+        3288530944,
+        3347251200,
+        3751870464
+      ],
+      "max_rank_rss_bytes": 3850452992,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 14238105600,
+      "sum_rank_peak_rss_bytes_upper_bound": 14238105600,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014845999999998583,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.24654600000000215,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 5.6533519999999875,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.369075000000002,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.0479239999999983,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.104675,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00017400000000000054,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 23.099032000000012,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014963000000001614,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.24656199999999728,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 5.652209999999997,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.360142000000003,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.047860000000000014,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.113594,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.0002370000000000011,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 23.100074,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014963000000001614,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2465479999999971,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 5.653572000000008,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.384305,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.04671700000000101,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.089543,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.0001920000000000012,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 23.09978299999999,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014963000000001614,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.24654499999999757,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 5.652660000000001,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.39809,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.04762900000000059,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.075639,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00019600000000000173,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 23.099902999999998,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 23.100074,
+      "critical_rank_steady_step_seconds": 2.892653166666666,
+      "critical_rank_steady_step_with_diagnostics_seconds": 3.509279666666666,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 5.492197669,
+            "exchange": 0.21170971199999425,
+            "diagnostic_transfer": 0,
+            "closure": 1.12909029,
+            "halo": 16.136297166,
+            "error_sync_overlapping": 0.07034300000006155
+          },
+          "sparse_bytes_sent": 608082112
+        },
+        {
+          "nested_seconds": {
+            "rhs": 5.207115120999999,
+            "exchange": 0.22293187800001146,
+            "diagnostic_transfer": 0,
+            "closure": 1.12899092,
+            "halo": 7.3413074190000005,
+            "error_sync_overlapping": 11.568310000000036
+          },
+          "sparse_bytes_sent": 433387936
+        },
+        {
+          "nested_seconds": {
+            "rhs": 5.4540496240000005,
+            "exchange": 0.21128617400000374,
+            "diagnostic_transfer": 0,
+            "closure": 1.129045206,
+            "halo": 8.317285497,
+            "error_sync_overlapping": 10.080815000000008
+          },
+          "sparse_bytes_sent": 552363456
+        },
+        {
+          "nested_seconds": {
+            "rhs": 5.330261665000002,
+            "exchange": 0.22225879500000095,
+            "diagnostic_transfer": 0,
+            "closure": 1.128970873,
+            "halo": 14.415088706000004,
+            "error_sync_overlapping": 2.4618340000000494
+          },
+          "sparse_bytes_sent": 474848080
+        }
+      ]
+    },
+    {
+      "name": "transfer-p4-r0-m0",
+      "case": {
+        "name": "transfer-p4-r0-m0",
+        "variant": "m0",
+        "ranks": 4,
+        "kind": "boost",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "boost-p4"
+      },
+      "passed": true,
+      "process_seconds": 52.84071954199999,
+      "rank0_after_setup_seconds": 34.835357,
+      "max_rank_driver_seconds": 52.52117,
+      "rank_peak_rss_bytes": [
+        4046503936,
+        3533668352,
+        3589390336,
+        3947806720
+      ],
+      "max_rank_rss_bytes": 4046503936,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 15117369344,
+      "sum_rank_peak_rss_bytes_upper_bound": 15117369344,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014549000000002366,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2513349999999974,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 13.326065000000007,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.079136,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 1.4933650000000007,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.113442,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.0002020000000000008,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 21.242889999999992,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.01464700000000363,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2515159999999952,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 13.325097000000003,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.070355,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 1.4931739999999998,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.12234700000000001,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.0001889999999999982,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 21.243844999999997,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014648000000001105,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.25146099999999905,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 13.325031999999993,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.094677,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 1.4930559999999993,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.098133,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00023799999999999863,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 21.243865000000007,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014646999999996524,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.25138700000000114,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 13.325471000000011,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.112457,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 1.4928820000000016,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.080156,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.0002239999999999985,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 21.243815999999992,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 21.243865000000007,
+      "critical_rank_steady_step_seconds": 2.6583560000000017,
+      "critical_rank_steady_step_with_diagnostics_seconds": 3.8971055,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 5.252680789,
+            "exchange": 0.19767453599999113,
+            "diagnostic_transfer": 0.1071740000000041,
+            "closure": 0.927457711,
+            "halo": 14.758626002,
+            "error_sync_overlapping": 0.02004399999996309
+          },
+          "sparse_bytes_sent": 608082112
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.975243665999998,
+            "exchange": 0.24108071000001724,
+            "diagnostic_transfer": 0.10400800000000388,
+            "closure": 0.927447753,
+            "halo": 6.409810371000001,
+            "error_sync_overlapping": 11.053676000000006
+          },
+          "sparse_bytes_sent": 433387936
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.982912002000001,
+            "exchange": 0.1977785470000111,
+            "diagnostic_transfer": 0.16886700000000587,
+            "closure": 0.9274589539999999,
+            "halo": 7.413345370999999,
+            "error_sync_overlapping": 9.737558999999983
+          },
+          "sparse_bytes_sent": 552363456
+        },
+        {
+          "nested_seconds": {
+            "rhs": 5.075509455999999,
+            "exchange": 0.27068629499999286,
+            "diagnostic_transfer": 0.10103299999999038,
+            "closure": 0.9274490320000003,
+            "halo": 13.057731664,
+            "error_sync_overlapping": 2.3551849999998495
+          },
+          "sparse_bytes_sent": 474848080
+        }
+      ]
+    },
+    {
+      "name": "transfer-p4-r0-m1a",
+      "case": {
+        "name": "transfer-p4-r0-m1a",
+        "variant": "m1a",
+        "ranks": 4,
+        "kind": "boost",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "boost-p4"
+      },
+      "passed": true,
+      "process_seconds": 56.520922416000076,
+      "rank0_after_setup_seconds": 37.063195,
+      "max_rank_driver_seconds": 55.056256,
+      "rank_peak_rss_bytes": [
+        4044242944,
+        3482599424,
+        3541008384,
+        3944808448
+      ],
+      "max_rank_rss_bytes": 4044242944,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 15012659200,
+      "sum_rank_peak_rss_bytes_upper_bound": 15012659200,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.01788400000000223,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2694149999999951,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 14.126204999999999,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.405839999999998,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 1.4804270000000024,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.10700399999999999,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00017099999999999928,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 22.649165,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.017990999999994983,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2695580000000035,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 14.124512000000003,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.396879,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 1.4810000000000016,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.115951,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00027300000000000067,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 22.650091999999997,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.01799100000000209,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2695319999999981,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 14.124995000000009,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.421128,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 1.480436000000001,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.09175,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.0001910000000000002,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 22.650203999999988,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.01799100000000209,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.26953499999999764,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 14.125295000000005,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.434928,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 1.4803369999999987,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.077842,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.0002889999999999993,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 22.650014999999993,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 22.650203999999988,
+      "critical_rank_steady_step_seconds": 2.939739333333332,
+      "critical_rank_steady_step_with_diagnostics_seconds": 4.388671333333334,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 5.491909082000001,
+            "exchange": 0.20967803800000057,
+            "diagnostic_transfer": 0.059661999999995885,
+            "closure": 0.991496378,
+            "halo": 15.838249998,
+            "error_sync_overlapping": 0.027625999999976614
+          },
+          "sparse_bytes_sent": 608082112
+        },
+        {
+          "nested_seconds": {
+            "rhs": 5.172716293,
+            "exchange": 0.22214324899999396,
+            "diagnostic_transfer": 0.060940000000002215,
+            "closure": 0.9913857869999998,
+            "halo": 7.030153167999999,
+            "error_sync_overlapping": 11.736415999999917
+          },
+          "sparse_bytes_sent": 433387936
+        },
+        {
+          "nested_seconds": {
+            "rhs": 5.213226663,
+            "exchange": 0.24556003900000473,
+            "diagnostic_transfer": 0.06626000000001042,
+            "closure": 0.9914793369999997,
+            "halo": 8.034902544,
+            "error_sync_overlapping": 10.414793000000014
+          },
+          "sparse_bytes_sent": 552363456
+        },
+        {
+          "nested_seconds": {
+            "rhs": 5.291909167,
+            "exchange": 0.22192296000000689,
+            "diagnostic_transfer": 0.05402499999999222,
+            "closure": 0.9913760850000001,
+            "halo": 14.096940999000001,
+            "error_sync_overlapping": 2.523725000000013
+          },
+          "sparse_bytes_sent": 474848080
+        }
+      ]
+    },
+    {
+      "name": "transfer-p4-r1-m1a",
+      "case": {
+        "name": "transfer-p4-r1-m1a",
+        "variant": "m1a",
+        "ranks": 4,
+        "kind": "boost",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "boost-p4"
+      },
+      "passed": true,
+      "process_seconds": 56.82286545900001,
+      "rank0_after_setup_seconds": 37.852689,
+      "max_rank_driver_seconds": 56.462427999999996,
+      "rank_peak_rss_bytes": [
+        4091969536,
+        3530768384,
+        3589849088,
+        3995123712
+      ],
+      "max_rank_rss_bytes": 4091969536,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 15207710720,
+      "sum_rank_peak_rss_bytes_upper_bound": 15207710720,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014288000000000523,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2233009999999993,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 14.107810000000008,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.983811999999997,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 1.5193380000000012,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.107629,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00015000000000000083,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 23.506079999999994,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014690999999999121,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.22332199999999602,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 14.105583999999993,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.974894,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 1.519984000000001,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.11670099999999997,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00016300000000000169,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 23.507089000000008,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014691999999996597,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.22329400000000277,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 14.107731000000026,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.999024,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 1.517788000000003,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.092473,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.0001899999999999992,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 23.507209999999976,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014693000000001177,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2232929999999982,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 14.106983000000003,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 17.012416,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 1.5186279999999996,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.07904,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00020599999999999959,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 23.507143,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 23.507209999999976,
+      "critical_rank_steady_step_seconds": 2.950299666666663,
+      "critical_rank_steady_step_with_diagnostics_seconds": 4.264796,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 5.744151542000002,
+            "exchange": 0.2211741279999727,
+            "diagnostic_transfer": 0.06524800000001107,
+            "closure": 1.0292084139999997,
+            "halo": 16.400622123,
+            "error_sync_overlapping": 0.027248000000014372
+          },
+          "sparse_bytes_sent": 608082112
+        },
+        {
+          "nested_seconds": {
+            "rhs": 5.447820374000002,
+            "exchange": 0.2239658709999942,
+            "diagnostic_transfer": 0.06718400000000102,
+            "closure": 1.0292584649999998,
+            "halo": 7.187600706,
+            "error_sync_overlapping": 12.089845999999934
+          },
+          "sparse_bytes_sent": 433387936
+        },
+        {
+          "nested_seconds": {
+            "rhs": 5.453262083000001,
+            "exchange": 0.23233108300000177,
+            "diagnostic_transfer": 0.0717119999999909,
+            "closure": 1.029261207,
+            "halo": 8.296165497999999,
+            "error_sync_overlapping": 10.666374999999956
+          },
+          "sparse_bytes_sent": 552363456
+        },
+        {
+          "nested_seconds": {
+            "rhs": 5.545408082000002,
+            "exchange": 0.2481033350000015,
+            "diagnostic_transfer": 0.060532999999999504,
+            "closure": 1.02926071,
+            "halo": 14.577439709,
+            "error_sync_overlapping": 2.563745999999952
+          },
+          "sparse_bytes_sent": 474848080
+        }
+      ]
+    },
+    {
+      "name": "transfer-p4-r1-m0",
+      "case": {
+        "name": "transfer-p4-r1-m0",
+        "variant": "m0",
+        "ranks": 4,
+        "kind": "boost",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "boost-p4"
+      },
+      "passed": true,
+      "process_seconds": 53.48201333299994,
+      "rank0_after_setup_seconds": 35.371018,
+      "max_rank_driver_seconds": 53.176954,
+      "rank_peak_rss_bytes": [
+        4094509056,
+        3535011840,
+        3589963776,
+        3995664384
+      ],
+      "max_rank_rss_bytes": 4094509056,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 15215149056,
+      "sum_rank_peak_rss_bytes_upper_bound": 15215149056,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014021999999997092,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2547740000000047,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 13.128584999999998,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.188917,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 1.5082179999999994,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.108936,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00017399999999999707,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 21.973178000000004,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014109000000004812,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2549109999999999,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 13.125607000000006,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.179989000000003,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 1.5077919999999985,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.11803299999999999,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.000171000000000001,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 21.976341999999992,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014109000000004812,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.25491699999999895,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 13.125439000000018,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.20415,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 1.5080220000000004,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.093776,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00018699999999999967,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 21.97634499999998,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014108999999997707,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2548189999999977,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 13.12556099999999,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.217693999999998,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 1.5079630000000002,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.080225,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00018400000000000014,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 21.97630600000001,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 21.97634499999998,
+      "critical_rank_steady_step_seconds": 2.620844999999997,
+      "critical_rank_steady_step_with_diagnostics_seconds": 3.8372468333333334,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 5.375396498,
+            "exchange": 0.22704645200000223,
+            "diagnostic_transfer": 0.07135199999998676,
+            "closure": 0.9350868400000001,
+            "halo": 15.350905291999998,
+            "error_sync_overlapping": 0.02269200000008098
+          },
+          "sparse_bytes_sent": 608082112
+        },
+        {
+          "nested_seconds": {
+            "rhs": 5.065291917,
+            "exchange": 0.2485760809999912,
+            "diagnostic_transfer": 0.0744779999999956,
+            "closure": 0.935051584,
+            "halo": 6.454544874,
+            "error_sync_overlapping": 11.56314499999997
+          },
+          "sparse_bytes_sent": 433387936
+        },
+        {
+          "nested_seconds": {
+            "rhs": 5.1077703340000005,
+            "exchange": 0.21507021000003643,
+            "diagnostic_transfer": 0.14855299999999616,
+            "closure": 0.9351080849999999,
+            "halo": 7.494512665,
+            "error_sync_overlapping": 10.184848999999907
+          },
+          "sparse_bytes_sent": 552363456
+        },
+        {
+          "nested_seconds": {
+            "rhs": 5.206952583000001,
+            "exchange": 0.21382900300000224,
+            "diagnostic_transfer": 0.0653819999999925,
+            "closure": 0.9350474930000001,
+            "halo": 13.644378250000003,
+            "error_sync_overlapping": 2.351817000000036
+          },
+          "sparse_bytes_sent": 474848080
+        }
+      ]
+    },
+    {
+      "name": "transfer-p4-r2-m0",
+      "case": {
+        "name": "transfer-p4-r2-m0",
+        "variant": "m0",
+        "ranks": 4,
+        "kind": "boost",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "boost-p4"
+      },
+      "passed": true,
+      "process_seconds": 50.46995766700002,
+      "rank0_after_setup_seconds": 32.622708,
+      "max_rank_driver_seconds": 50.179127,
+      "rank_peak_rss_bytes": [
+        4046209024,
+        3533570048,
+        3589341184,
+        3947167744
+      ],
+      "max_rank_rss_bytes": 4046209024,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 15116288000,
+      "sum_rank_peak_rss_bytes_upper_bound": 15116288000,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014243999999997925,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.25526400000000393,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 12.47647700000001,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 15.972069999999999,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 1.479030999999999,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.105667,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00016299999999999995,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.87615899999999,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.0143589999999989,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.25531600000000054,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 12.476068000000005,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 15.963114000000001,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 1.4782909999999987,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.114674,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00019899999999999952,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.877105999999998,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.0143589999999989,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.25529900000000083,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 12.476569000000005,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 15.987499999999999,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 1.4777570000000004,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.090282,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00018899999999999993,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.877156999999997,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.0143589999999989,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.25527100000000047,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 12.475543000000009,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.001800000000003,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 1.4788800000000002,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.075883,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00021799999999999944,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.877128999999993,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 19.877156999999997,
+      "critical_rank_steady_step_seconds": 2.482416,
+      "critical_rank_steady_step_with_diagnostics_seconds": 3.657078500000001,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 4.992219248999999,
+            "exchange": 0.19323070799998585,
+            "diagnostic_transfer": 0.07008099999999828,
+            "closure": 0.8709279960000004,
+            "halo": 13.716373667999997,
+            "error_sync_overlapping": 0.01864500000007041
+          },
+          "sparse_bytes_sent": 608082112
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.739677959,
+            "exchange": 0.2084635820000129,
+            "diagnostic_transfer": 0.06827299999999425,
+            "closure": 0.8709210419999999,
+            "halo": 5.972658206999999,
+            "error_sync_overlapping": 10.218009000000112
+          },
+          "sparse_bytes_sent": 433387936
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.728256418999998,
+            "exchange": 0.19670529500000122,
+            "diagnostic_transfer": 0.13491799999999898,
+            "closure": 0.8709300809999999,
+            "halo": 6.872782125999999,
+            "error_sync_overlapping": 9.070447000000016
+          },
+          "sparse_bytes_sent": 552363456
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.8400741269999985,
+            "exchange": 0.20505537299999457,
+            "diagnostic_transfer": 0.0642649999999989,
+            "closure": 0.8709274170000001,
+            "halo": 12.198311044000002,
+            "error_sync_overlapping": 2.1276269999998796
+          },
+          "sparse_bytes_sent": 474848080
+        }
+      ]
+    },
+    {
+      "name": "transfer-p4-r2-m1a",
+      "case": {
+        "name": "transfer-p4-r2-m1a",
+        "variant": "m1a",
+        "ranks": 4,
+        "kind": "boost",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "boost-p4"
+      },
+      "passed": true,
+      "process_seconds": 55.044185666999965,
+      "rank0_after_setup_seconds": 35.225719,
+      "max_rank_driver_seconds": 54.555255,
+      "rank_peak_rss_bytes": [
+        3937533952,
+        3368681472,
+        3428270080,
+        3829874688
+      ],
+      "max_rank_rss_bytes": 3937533952,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 14564360192,
+      "sum_rank_peak_rss_bytes_upper_bound": 14564360192,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.01425899999999558,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.24264600000000058,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 13.37584000000001,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 17.678817,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 1.5458570000000016,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.10519300000000001,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00011700000000000078,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 21.592525999999992,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014352000000002363,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.24264799999999553,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 13.37513599999999,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 17.669835,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 1.5452480000000008,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.11432200000000001,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00017,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 21.59354100000001,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014352000000002363,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.24264600000000058,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 13.375195999999992,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 17.693822,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 1.5452590000000015,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.09018100000000001,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00014800000000000056,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 21.593650000000004,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014351999999995257,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.242640999999999,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 13.374145000000002,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 17.707815,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 1.546371999999998,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.07613600000000001,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00019699999999999926,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 21.593585,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 21.593650000000004,
+      "critical_rank_steady_step_seconds": 2.658432,
+      "critical_rank_steady_step_with_diagnostics_seconds": 3.9056863333333336,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 5.257111209999999,
+            "exchange": 0.20770541400000075,
+            "diagnostic_transfer": 0.21651100000000056,
+            "closure": 0.9357109210000002,
+            "halo": 15.091785503999999,
+            "error_sync_overlapping": 0.02418999999999727
+          },
+          "sparse_bytes_sent": 608082112
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.961022336999998,
+            "exchange": 0.2196575820000082,
+            "diagnostic_transfer": 0.23274100000000075,
+            "closure": 0.935707503,
+            "halo": 6.620797206000001,
+            "error_sync_overlapping": 11.152280999999906
+          },
+          "sparse_bytes_sent": 433387936
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.9852622050000015,
+            "exchange": 0.2147162109999797,
+            "diagnostic_transfer": 0.23838200000000853,
+            "closure": 0.935697704,
+            "halo": 7.5630348739999995,
+            "error_sync_overlapping": 9.90154199999997
+          },
+          "sparse_bytes_sent": 552363456
+        },
+        {
+          "nested_seconds": {
+            "rhs": 5.077988166999999,
+            "exchange": 0.2221543730000126,
+            "diagnostic_transfer": 0.2223019999999991,
+            "closure": 0.935680501,
+            "halo": 13.394850498,
+            "error_sync_overlapping": 2.384127000000017
+          },
+          "sparse_bytes_sent": 474848080
+        }
+      ]
+    }
+  ],
+  "paired_comparisons": [
+    {
+      "experiment": "overhead",
+      "ranks": 4,
+      "control": "base",
+      "candidate": "m0",
+      "metrics": {
+        "process_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            0.9032076284222481,
+            1.017232377837627,
+            0.9538899948497725
+          ],
+          "median_speedup": 0.9538899948497725,
+          "range": [
+            0.9032076284222481,
+            1.017232377837627
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            0.8254670503241862,
+            1.1094412294332854
+          ]
+        },
+        "rank0_after_setup_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            0.9638219749296101,
+            1.02350797669099,
+            0.9311318788798981
+          ],
+          "median_speedup": 0.9638219749296101,
+          "range": [
+            0.9311318788798981,
+            1.02350797669099
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            0.8630926056840761,
+            1.0948184433349906
+          ]
+        }
+      }
+    },
+    {
+      "experiment": "mask",
+      "ranks": 1,
+      "control": "m0",
+      "candidate": "m1b",
+      "metrics": {
+        "process_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            0.9786215006204034,
+            0.9933193107134618,
+            0.9767906382248588
+          ],
+          "median_speedup": 0.9786215006204034,
+          "range": [
+            0.9767906382248588,
+            0.9933193107134618
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            0.9606863939230634,
+            1.0055919164503162
+          ]
+        },
+        "rank0_after_setup_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            0.9920614144914381,
+            0.9864694190127246,
+            0.9756988450539774
+          ],
+          "median_speedup": 0.9864694190127246,
+          "range": [
+            0.9756988450539774,
+            0.9920614144914381
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            0.9642495610084468,
+            1.0056245506143102
+          ]
+        },
+        "critical_rank_step_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            0.9896746764413701,
+            0.9864625442514243,
+            0.9726735170653983
+          ],
+          "median_speedup": 0.9864625442514243,
+          "range": [
+            0.9726735170653983,
+            0.9896746764413701
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            0.9606758204168344,
+            1.005657058486469
+          ]
+        },
+        "critical_rank_steady_step_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            0.9873626959108873,
+            0.9873220154282366,
+            0.9686150421198617
+          ],
+          "median_speedup": 0.9873220154282366,
+          "range": [
+            0.9686150421198617,
+            0.9873626959108873
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            0.9544821394070874,
+            1.0083779889593139
+          ]
+        },
+        "critical_rank_steady_step_with_diagnostics_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            0.9894026064636273,
+            0.9873665919418705,
+            0.9721938624842901
+          ],
+          "median_speedup": 0.9873665919418705,
+          "range": [
+            0.9721938624842901,
+            0.9894026064636273
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            0.9598149259276122,
+            1.006658279494261
+          ]
+        }
+      }
+    },
+    {
+      "experiment": "mask",
+      "ranks": 2,
+      "control": "m0",
+      "candidate": "m1b",
+      "metrics": {
+        "process_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            0.9916550256970095,
+            1.004295822013674,
+            1.0004868911864728
+          ],
+          "median_speedup": 1.0004868911864728,
+          "range": [
+            0.9916550256970095,
+            1.004295822013674
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            0.9828004946844342,
+            1.0150569696382918
+          ]
+        },
+        "rank0_after_setup_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            0.9938210937199072,
+            0.9953162039474192,
+            0.9962596035764725
+          ],
+          "median_speedup": 0.9953162039474192,
+          "range": [
+            0.9938210937199072,
+            0.9962596035764725
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            0.9920815363274538,
+            0.9981914297555462
+          ]
+        },
+        "critical_rank_step_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            0.9940663815655696,
+            0.9950338676868823,
+            0.9963230853964367
+          ],
+          "median_speedup": 0.9950338676868823,
+          "range": [
+            0.9940663815655696,
+            0.9963230853964367
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            0.9923324164957118,
+            0.9979568952795626
+          ]
+        },
+        "critical_rank_steady_step_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            0.9930267616220047,
+            0.9952295188512765,
+            0.99710573087197
+          ],
+          "median_speedup": 0.9952295188512765,
+          "range": [
+            0.9930267616220047,
+            0.99710573087197
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            0.990059993503749,
+            1.0002044078377987
+          ]
+        },
+        "critical_rank_steady_step_with_diagnostics_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            0.9926586705722583,
+            0.9954566411068498,
+            0.9974438222325976
+          ],
+          "median_speedup": 0.9954566411068498,
+          "range": [
+            0.9926586705722583,
+            0.9974438222325976
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            0.9892292695119441,
+            1.001175464156549
+          ]
+        }
+      }
+    },
+    {
+      "experiment": "mask",
+      "ranks": 4,
+      "control": "m0",
+      "candidate": "m1b",
+      "metrics": {
+        "process_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            0.9391244199724135,
+            1.0153494763984103,
+            0.9083593254820727
+          ],
+          "median_speedup": 0.9391244199724135,
+          "range": [
+            0.9083593254820727,
+            1.0153494763984103
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            0.8270666981505308,
+            1.0986441317365732
+          ]
+        },
+        "rank0_after_setup_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            0.900342229684657,
+            1.0413967757601066,
+            0.8599538941811937
+          ],
+          "median_speedup": 0.900342229684657,
+          "range": [
+            0.8599538941811937,
+            1.0413967757601066
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            0.7261122257632968,
+            1.1930599365759922
+          ]
+        },
+        "critical_rank_step_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            0.9206882865812287,
+            1.0457348307178107,
+            0.860459711081445
+          ],
+          "median_speedup": 0.9206882865812287,
+          "range": [
+            0.860459711081445,
+            1.0457348307178107
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            0.7343995065400709,
+            1.201095237059644
+          ]
+        },
+        "critical_rank_steady_step_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            0.9233147565606719,
+            1.0739710043357988,
+            0.8591138273922577
+          ],
+          "median_speedup": 0.9233147565606719,
+          "range": [
+            0.8591138273922577,
+            1.0739710043357988
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            0.714325791101874,
+            1.2580532684357284
+          ]
+        },
+        "critical_rank_steady_step_with_diagnostics_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            0.8940114385520904,
+            1.0694633550119157,
+            0.8615820397709352
+          ],
+          "median_speedup": 0.8940114385520904,
+          "range": [
+            0.8615820397709352,
+            1.0694633550119157
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            0.7034132437702274,
+            1.249280246476777
+          ]
+        }
+      }
+    },
+    {
+      "experiment": "transfer",
+      "ranks": 4,
+      "control": "m0",
+      "candidate": "m1a",
+      "metrics": {
+        "process_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            0.9348877775399099,
+            0.9412058491064547,
+            0.9168989795276
+          ],
+          "median_speedup": 0.9348877775399099,
+          "range": [
+            0.9168989795276,
+            0.9412058491064547
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            0.9000463197566466,
+            0.9628948533454085
+          ]
+        },
+        "rank0_after_setup_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            0.9398908270050653,
+            0.9344387131915516,
+            0.9261048156320104
+          ],
+          "median_speedup": 0.9344387131915516,
+          "range": [
+            0.9261048156320104,
+            0.9398908270050653
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            0.9163589699959171,
+            0.9508819760189663
+          ]
+        },
+        "critical_rank_step_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            0.9379105371412998,
+            0.9348767888660544,
+            0.9205093627061657
+          ],
+          "median_speedup": 0.9348767888660544,
+          "range": [
+            0.9205093627061657,
+            0.9379105371412998
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            0.908203529476493,
+            0.9545078028359192
+          ]
+        },
+        "critical_rank_steady_step_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            0.9042828967375576,
+            0.8883317954481235,
+            0.9337895421060235
+          ],
+          "median_speedup": 0.9042828967375576,
+          "range": [
+            0.8883317954481235,
+            0.9337895421060235
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            0.8532755940557961,
+            0.9675268568275212
+          ]
+        },
+        "critical_rank_steady_step_with_diagnostics_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            0.887992106039079,
+            0.8997492103569159,
+            0.9363472096538903
+          ],
+          "median_speedup": 0.8997492103569159,
+          "range": [
+            0.887992106039079,
+            0.9363472096538903
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            0.8476202525147287,
+            0.9722478877707467
+          ]
+        }
+      }
+    }
+  ],
+  "notes": [
+    "Profiled runs excluded from A/B groups.",
+    "Rank-zero report excludes initial setup but includes final capture/write.",
+    "Rank RSS sum is an upper bound, not simultaneous measured node RSS; node grouping follows explicit ppn and contiguous PALS rank placement.",
+    "Three-pair Student-t intervals assume independent log ratios; workstation scheduling limits inference."
+  ]
+}

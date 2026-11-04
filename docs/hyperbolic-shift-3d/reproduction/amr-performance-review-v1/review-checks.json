@@ -1,0 +1,33 @@
+{
+  "scope": "Read-only emulation of LoadBalance cost assignment and metadata loops, not a native MPI test. Null entries represent untouched outputs.",
+  "source": "src/mesh/load_balance.cpp:38-77",
+  "costs": [
+    10,
+    1,
+    1
+  ],
+  "ranks": 3,
+  "rank_eachmb": [
+    2,
+    2,
+    2
+  ],
+  "gids_eachrank": [
+    0,
+    null,
+    null
+  ],
+  "nmb_eachrank": [
+    3,
+    null,
+    null
+  ],
+  "packing_arithmetic_only": {
+    "N": 12,
+    "nghost": 4,
+    "fine_values_per_field_per_capacity_slot": 8000,
+    "coarse_child_message_values_per_field": 2744,
+    "eight_child_values_per_field": 21952,
+    "note": "Actual bound must count messages routed by admissible topology and ownership. Eight children are not always sent remotely; this does not reproduce an overrun."
+  }
+}

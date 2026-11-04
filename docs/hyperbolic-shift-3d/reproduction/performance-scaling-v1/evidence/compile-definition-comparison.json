@@ -1,0 +1,91 @@
+{
+  "control": {
+    "command": {
+      "directory": "/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-performance/control/tst/hyperbolic_shift_3d",
+      "command": "/usr/bin/c++ -DHYPERBOLIC_ALGEBRAIC_FINAL_PROJECTION=1 -DHYPERBOLIC_ASSUMED_HORIZON_DIAGNOSTICS=1 -DHYPERBOLIC_BOOSTED_PUNCTURE=1 -DHYPERBOLIC_BOOST_FREE_INITIAL_GAUGE=1 -DHYPERBOLIC_BOUNDARY_REUSE=1 -DHYPERBOLIC_BROAD_SMOOTH_A=1 -DHYPERBOLIC_CONTINUOUS_POSITIVE=1 -DHYPERBOLIC_CORE_SUBDIVISIONS=2 -DHYPERBOLIC_DIRECT_CHI=1 -DHYPERBOLIC_DIRECT_LAPSE=1 -DHYPERBOLIC_DIRECT_OUTER=1 -DHYPERBOLIC_EVOLVED_OVERLAP=3 -DHYPERBOLIC_EXPERIMENTAL_TIMESTEP=1 -DHYPERBOLIC_INNER_TELEGRAPHER=1 -DHYPERBOLIC_INNER_TRANSITION_LOGICAL=1 -DHYPERBOLIC_NATIVE_WORMHOLE=1 -DHYPERBOLIC_PUNCTURE_CHI_FLOOR=1e-8 -DHYPERBOLIC_RADIAL_FIELD_BATCH=1 -DHYPERBOLIC_REFINED_CORE=1 -DHYPERBOLIC_REFINED_CORE_MATCHED_CFL=1 -DHYPERBOLIC_RESTORE_INNER_DAMPING=1 -DHYPERBOLIC_SCRI_ANGULAR_DISSIPATION=1 -DHYPERBOLIC_SCRI_ANGULAR_EXCHANGE=1 -DHYPERBOLIC_SCRI_DONOR_SEVEN=1 -DHYPERBOLIC_SCRI_SAMPLED_NORMAL=1 -DHYPERBOLIC_SHORT_INNER_GAUGE=1 -DHYPERBOLIC_SIX_SHELLS=1 -DHYPERBOLIC_SMOOTH_GAUGE_BLEND=1 -DHYPERBOLIC_SPARSE_STAGE=1 -DHYPERBOLIC_SPHERICAL_OVERLAP=1 -DKOKKOS_DEPENDENCE -I/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-performance/control-source/src -I/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-performance/control -I/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-performance/control/kokkos -I/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-performance/control/kokkos/core/src -I/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-performance/control-source/kokkos/core/src -I/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-performance/control/kokkos/containers/src -I/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-performance/control-source/kokkos/containers/src -I/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-performance/control/kokkos/algorithms/src -I/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-performance/control-source/kokkos/algorithms/src -I/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-performance/control/kokkos/simd/src -I/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-performance/control-source/kokkos/simd/src -isystem /Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-performance/control-source/kokkos/tpls/desul/include -isystem /Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-performance/control-source/kokkos/tpls/mdspan/include -isystem /opt/homebrew/Cellar/open-mpi/5.0.10/include -O3 -DNDEBUG -std=c++17 -arch arm64 -ffp-contract=off -o CMakeFiles/hyperbolic_shift_3d_amr_evolution.dir/amr_evolution.cpp.o -c /Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-performance/control-source/tst/hyperbolic_shift_3d/amr_evolution.cpp",
+      "file": "/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-performance/control-source/tst/hyperbolic_shift_3d/amr_evolution.cpp",
+      "output": "tst/hyperbolic_shift_3d/CMakeFiles/hyperbolic_shift_3d_amr_evolution.dir/amr_evolution.cpp.o"
+    },
+    "definitions": [
+      "-DHYPERBOLIC_ALGEBRAIC_FINAL_PROJECTION=1",
+      "-DHYPERBOLIC_ASSUMED_HORIZON_DIAGNOSTICS=1",
+      "-DHYPERBOLIC_BOOSTED_PUNCTURE=1",
+      "-DHYPERBOLIC_BOOST_FREE_INITIAL_GAUGE=1",
+      "-DHYPERBOLIC_BOUNDARY_REUSE=1",
+      "-DHYPERBOLIC_BROAD_SMOOTH_A=1",
+      "-DHYPERBOLIC_CONTINUOUS_POSITIVE=1",
+      "-DHYPERBOLIC_CORE_SUBDIVISIONS=2",
+      "-DHYPERBOLIC_DIRECT_CHI=1",
+      "-DHYPERBOLIC_DIRECT_LAPSE=1",
+      "-DHYPERBOLIC_DIRECT_OUTER=1",
+      "-DHYPERBOLIC_EVOLVED_OVERLAP=3",
+      "-DHYPERBOLIC_EXPERIMENTAL_TIMESTEP=1",
+      "-DHYPERBOLIC_INNER_TELEGRAPHER=1",
+      "-DHYPERBOLIC_INNER_TRANSITION_LOGICAL=1",
+      "-DHYPERBOLIC_NATIVE_WORMHOLE=1",
+      "-DHYPERBOLIC_PUNCTURE_CHI_FLOOR=1e-8",
+      "-DHYPERBOLIC_RADIAL_FIELD_BATCH=1",
+      "-DHYPERBOLIC_REFINED_CORE=1",
+      "-DHYPERBOLIC_REFINED_CORE_MATCHED_CFL=1",
+      "-DHYPERBOLIC_RESTORE_INNER_DAMPING=1",
+      "-DHYPERBOLIC_SCRI_ANGULAR_DISSIPATION=1",
+      "-DHYPERBOLIC_SCRI_ANGULAR_EXCHANGE=1",
+      "-DHYPERBOLIC_SCRI_DONOR_SEVEN=1",
+      "-DHYPERBOLIC_SCRI_SAMPLED_NORMAL=1",
+      "-DHYPERBOLIC_SHORT_INNER_GAUGE=1",
+      "-DHYPERBOLIC_SIX_SHELLS=1",
+      "-DHYPERBOLIC_SMOOTH_GAUGE_BLEND=1",
+      "-DHYPERBOLIC_SPARSE_STAGE=1",
+      "-DHYPERBOLIC_SPHERICAL_OVERLAP=1",
+      "-DKOKKOS_DEPENDENCE",
+      "-DNDEBUG"
+    ]
+  },
+  "final": {
+    "command": {
+      "directory": "/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-performance/candidate/tst/hyperbolic_shift_3d",
+      "command": "/usr/bin/c++ -DHYPERBOLIC_ALGEBRAIC_FINAL_PROJECTION=1 -DHYPERBOLIC_ASSUMED_HORIZON_DIAGNOSTICS=1 -DHYPERBOLIC_BOOSTED_PUNCTURE=1 -DHYPERBOLIC_BOOST_FREE_INITIAL_GAUGE=1 -DHYPERBOLIC_BOUNDARY_REUSE=1 -DHYPERBOLIC_BROAD_SMOOTH_A=1 -DHYPERBOLIC_CONTINUOUS_POSITIVE=1 -DHYPERBOLIC_CORE_SUBDIVISIONS=2 -DHYPERBOLIC_DIRECT_CHI=1 -DHYPERBOLIC_DIRECT_HALO_SETUP=1 -DHYPERBOLIC_DIRECT_LAPSE=1 -DHYPERBOLIC_DIRECT_OUTER=1 -DHYPERBOLIC_EVOLVED_OVERLAP=3 -DHYPERBOLIC_EXPERIMENTAL_TIMESTEP=1 -DHYPERBOLIC_INNER_TELEGRAPHER=1 -DHYPERBOLIC_INNER_TRANSITION_LOGICAL=1 -DHYPERBOLIC_NATIVE_WORMHOLE=1 -DHYPERBOLIC_PUNCTURE_CHI_FLOOR=1e-8 -DHYPERBOLIC_RADIAL_FIELD_BATCH=1 -DHYPERBOLIC_REFINED_CORE=1 -DHYPERBOLIC_REFINED_CORE_MATCHED_CFL=1 -DHYPERBOLIC_RESTORE_INNER_DAMPING=1 -DHYPERBOLIC_SCRI_ANGULAR_DISSIPATION=1 -DHYPERBOLIC_SCRI_ANGULAR_EXCHANGE=1 -DHYPERBOLIC_SCRI_DONOR_SEVEN=1 -DHYPERBOLIC_SCRI_SAMPLED_NORMAL=1 -DHYPERBOLIC_SHORT_INNER_GAUGE=1 -DHYPERBOLIC_SIX_SHELLS=1 -DHYPERBOLIC_SMOOTH_GAUGE_BLEND=1 -DHYPERBOLIC_SPARSE_STAGE=1 -DHYPERBOLIC_SPHERICAL_OVERLAP=1 -DKOKKOS_DEPENDENCE -I/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/src -I/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-performance/candidate -I/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-performance/candidate/kokkos -I/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-performance/candidate/kokkos/core/src -I/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/kokkos/core/src -I/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-performance/candidate/kokkos/containers/src -I/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/kokkos/containers/src -I/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-performance/candidate/kokkos/algorithms/src -I/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/kokkos/algorithms/src -I/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-performance/candidate/kokkos/simd/src -I/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/kokkos/simd/src -isystem /Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/kokkos/tpls/desul/include -isystem /Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/kokkos/tpls/mdspan/include -isystem /opt/homebrew/Cellar/open-mpi/5.0.10/include -O3 -DNDEBUG -std=c++17 -arch arm64 -ffp-contract=off -o CMakeFiles/hyperbolic_shift_3d_amr_setup.dir/amr_evolution.cpp.o -c /Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/tst/hyperbolic_shift_3d/amr_evolution.cpp",
+      "file": "/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/tst/hyperbolic_shift_3d/amr_evolution.cpp",
+      "output": "tst/hyperbolic_shift_3d/CMakeFiles/hyperbolic_shift_3d_amr_setup.dir/amr_evolution.cpp.o"
+    },
+    "definitions": [
+      "-DHYPERBOLIC_ALGEBRAIC_FINAL_PROJECTION=1",
+      "-DHYPERBOLIC_ASSUMED_HORIZON_DIAGNOSTICS=1",
+      "-DHYPERBOLIC_BOOSTED_PUNCTURE=1",
+      "-DHYPERBOLIC_BOOST_FREE_INITIAL_GAUGE=1",
+      "-DHYPERBOLIC_BOUNDARY_REUSE=1",
+      "-DHYPERBOLIC_BROAD_SMOOTH_A=1",
+      "-DHYPERBOLIC_CONTINUOUS_POSITIVE=1",
+      "-DHYPERBOLIC_CORE_SUBDIVISIONS=2",
+      "-DHYPERBOLIC_DIRECT_CHI=1",
+      "-DHYPERBOLIC_DIRECT_HALO_SETUP=1",
+      "-DHYPERBOLIC_DIRECT_LAPSE=1",
+      "-DHYPERBOLIC_DIRECT_OUTER=1",
+      "-DHYPERBOLIC_EVOLVED_OVERLAP=3",
+      "-DHYPERBOLIC_EXPERIMENTAL_TIMESTEP=1",
+      "-DHYPERBOLIC_INNER_TELEGRAPHER=1",
+      "-DHYPERBOLIC_INNER_TRANSITION_LOGICAL=1",
+      "-DHYPERBOLIC_NATIVE_WORMHOLE=1",
+      "-DHYPERBOLIC_PUNCTURE_CHI_FLOOR=1e-8",
+      "-DHYPERBOLIC_RADIAL_FIELD_BATCH=1",
+      "-DHYPERBOLIC_REFINED_CORE=1",
+      "-DHYPERBOLIC_REFINED_CORE_MATCHED_CFL=1",
+      "-DHYPERBOLIC_RESTORE_INNER_DAMPING=1",
+      "-DHYPERBOLIC_SCRI_ANGULAR_DISSIPATION=1",
+      "-DHYPERBOLIC_SCRI_ANGULAR_EXCHANGE=1",
+      "-DHYPERBOLIC_SCRI_DONOR_SEVEN=1",
+      "-DHYPERBOLIC_SCRI_SAMPLED_NORMAL=1",
+      "-DHYPERBOLIC_SHORT_INNER_GAUGE=1",
+      "-DHYPERBOLIC_SIX_SHELLS=1",
+      "-DHYPERBOLIC_SMOOTH_GAUGE_BLEND=1",
+      "-DHYPERBOLIC_SPARSE_STAGE=1",
+      "-DHYPERBOLIC_SPHERICAL_OVERLAP=1",
+      "-DKOKKOS_DEPENDENCE",
+      "-DNDEBUG"
+    ]
+  },
+  "extra_final_definitions": [
+    "-DHYPERBOLIC_DIRECT_HALO_SETUP=1"
+  ],
+  "removed_definitions": []
+}

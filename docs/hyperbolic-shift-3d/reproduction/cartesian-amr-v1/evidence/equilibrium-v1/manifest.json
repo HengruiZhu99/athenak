@@ -1,0 +1,56 @@
+[
+  {
+    "binary_sha256": "d94323fe0783983faa8c345bd72a9d86d50a1fe34466318f206190760cdc4598",
+    "name": "minkowski",
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/equilibrium-v1/evolution.bin",
+      "12",
+      "minkowski",
+      "6",
+      ".00025",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/equilibrium-v1/minkowski",
+      "-",
+      "dynamic"
+    ],
+    "returncode": 0,
+    "seconds": 105.806038792,
+    "report.json": {
+      "bytes": 155,
+      "sha256": "8713ce2fbb58012e2239206ba2b104b27b847662fc914d26c685c963e7ef50a0"
+    },
+    "checkpoint": {
+      "bytes": 68740836,
+      "sha256": "79ac7c12e80ec3b53060d95921fd4f1a876b1cc1828d706bd6ca77bacb3f6674"
+    }
+  },
+  {
+    "binary_sha256": "d94323fe0783983faa8c345bd72a9d86d50a1fe34466318f206190760cdc4598",
+    "name": "minkowski-uniform",
+    "command": [
+      "mpiexec",
+      "-n",
+      "1",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/equilibrium-v1/evolution.bin",
+      "12",
+      "minkowski",
+      "6",
+      ".00025",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/equilibrium-v1/minkowski-uniform",
+      "-",
+      "uniform"
+    ],
+    "returncode": 0,
+    "seconds": 100.315699834,
+    "report.json": {
+      "bytes": 155,
+      "sha256": "8cba7a00946de411ab63f00984e9b5a8ad20acc93a9f4c45e5db0dd63f1c1fb1"
+    },
+    "checkpoint": {
+      "bytes": 151195204,
+      "sha256": "c097e04ce2e188f3e5fb7902ee35325586b4d2119516f9c854169d789c00611b"
+    }
+  }
+]

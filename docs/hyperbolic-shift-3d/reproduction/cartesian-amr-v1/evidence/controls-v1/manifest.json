@@ -1,0 +1,160 @@
+[
+  {
+    "binary_sha256": "d94323fe0783983faa8c345bd72a9d86d50a1fe34466318f206190760cdc4598",
+    "name": "wave-final-2",
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/controls-v1/evolution.bin",
+      "12",
+      "wave",
+      "6",
+      ".00025",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/controls-v1/wave-final-2",
+      "-",
+      "dynamic"
+    ],
+    "returncode": 0,
+    "seconds": 80.246031667,
+    "report.json": {
+      "bytes": 155,
+      "sha256": "effb6b74e2a6936cf1e2fde920daaa07f7fe5f63d88de5ef0ecbe9fb8223e1e1"
+    },
+    "checkpoint": {
+      "bytes": 68740836,
+      "sha256": "8e8d28add8411268d5ba8c83a8f83b4b5b857b2f03f0b024aa1bd67b9a8de69a"
+    }
+  },
+  {
+    "binary_sha256": "d94323fe0783983faa8c345bd72a9d86d50a1fe34466318f206190760cdc4598",
+    "name": "boost-rejected",
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/controls-v1/evolution.bin",
+      "12",
+      "boost",
+      "6",
+      ".00025",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/controls-v1/boost-rejected",
+      "-",
+      "dynamic"
+    ],
+    "returncode": 2,
+    "seconds": 50.26574624999999,
+    "failure.json": {
+      "bytes": 296,
+      "sha256": "4a6a71488c7b5498fc33dd767fd98830776b26614ff28c2a86e338beb6fc4948"
+    }
+  },
+  {
+    "binary_sha256": "d94323fe0783983faa8c345bd72a9d86d50a1fe34466318f206190760cdc4598",
+    "name": "boost-fixed",
+    "command": [
+      "mpiexec",
+      "-n",
+      "1",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/controls-v1/evolution.bin",
+      "12",
+      "boost",
+      "6",
+      ".00025",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/controls-v1/boost-fixed",
+      "-",
+      "fixed"
+    ],
+    "returncode": 0,
+    "seconds": 64.800320667,
+    "report.json": {
+      "bytes": 155,
+      "sha256": "4ac33bab03590d64548e1499fc4c6a8187d16d2fb9fa61827e498c2894e99c26"
+    },
+    "checkpoint": {
+      "bytes": 79047632,
+      "sha256": "cd5a7ecb548de898afd29bc700b169e9baf7dbc6e98b7bdd8ad2d19935b3af4d"
+    }
+  },
+  {
+    "binary_sha256": "d94323fe0783983faa8c345bd72a9d86d50a1fe34466318f206190760cdc4598",
+    "name": "boost-save",
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/controls-v1/evolution.bin",
+      "12",
+      "boost",
+      "3",
+      ".00025",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/controls-v1/boost-save",
+      "-",
+      "fixed"
+    ],
+    "returncode": 0,
+    "seconds": 37.70138533400001,
+    "report.json": {
+      "bytes": 155,
+      "sha256": "1a1fae5b67e53684a46ad2809a9fe7d8f5f52e35985617c870b5ea843577d025"
+    },
+    "checkpoint": {
+      "bytes": 79047632,
+      "sha256": "3004e48022eec8a6d1c7e8d47573f682cdd0da09152b6c99c21f3e4a421ee3ae"
+    }
+  },
+  {
+    "binary_sha256": "d94323fe0783983faa8c345bd72a9d86d50a1fe34466318f206190760cdc4598",
+    "name": "boost-restart",
+    "command": [
+      "mpiexec",
+      "-n",
+      "4",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/controls-v1/evolution.bin",
+      "12",
+      "boost",
+      "6",
+      ".00025",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/controls-v1/boost-restart",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/controls-v1/boost-save.checkpoint",
+      "fixed"
+    ],
+    "returncode": 0,
+    "seconds": 41.54100091699996,
+    "report.json": {
+      "bytes": 146,
+      "sha256": "017a0f4a004893a9d9ec57c09401a0c8a9c3707c60196dd18d31bfd8b0e5c300"
+    },
+    "checkpoint": {
+      "bytes": 79047632,
+      "sha256": "4c49be3caa329fb2d6aa93c569902d297cbfc9dc1150c40a67b6ef23b84d09eb"
+    }
+  },
+  {
+    "binary_sha256": "d94323fe0783983faa8c345bd72a9d86d50a1fe34466318f206190760cdc4598",
+    "name": "boost-uniform",
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/controls-v1/evolution.bin",
+      "12",
+      "boost",
+      "6",
+      ".00025",
+      "/Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/output/amr-local/controls-v1/boost-uniform",
+      "-",
+      "uniform"
+    ],
+    "returncode": 0,
+    "seconds": 104.16744550000004,
+    "report.json": {
+      "bytes": 155,
+      "sha256": "96aba7e54d82d2e88af2ef924b4ea630618dcbff820ec264bdbaf4fc1463c355"
+    },
+    "checkpoint": {
+      "bytes": 151195204,
+      "sha256": "b6de8b9ac477f64f7b7a57f1109ff5d62377abca4e4bb3f431f51590d21b3074"
+    }
+  }
+]

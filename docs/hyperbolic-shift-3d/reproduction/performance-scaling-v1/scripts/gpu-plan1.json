@@ -1,0 +1,316 @@
+{
+  "aurora": true,
+  "nodes": 1,
+  "deadline_seconds": 3100,
+  "variants": {
+    "base": "/home/hzhu/hyperboloidal-performance-scaling-20261103/control-build-v2/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_amr_evolution",
+    "m0": "/home/hzhu/hyperboloidal-performance-scaling-20261103/m1-build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_amr_evolution",
+    "m1a": "/home/hzhu/hyperboloidal-performance-scaling-20261103/m1-build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_amr_diagnostic_transfer",
+    "m1b": "/home/hzhu/hyperboloidal-performance-scaling-20261103/m1b-bin/hyperbolic_shift_3d_amr_evolution"
+  },
+  "runs": [
+    {
+      "name": "dynamic-wave-base",
+      "variant": "base",
+      "ranks": 2,
+      "kind": "wave",
+      "steps": 6,
+      "policy": "dynamic",
+      "equivalence": "dynamic-wave",
+      "env": {
+        "HYPERBOLIC_SPARSE_POISON": "1"
+      }
+    },
+    {
+      "name": "dynamic-wave-m0",
+      "variant": "m0",
+      "ranks": 2,
+      "kind": "wave",
+      "steps": 6,
+      "policy": "dynamic",
+      "equivalence": "dynamic-wave",
+      "env": {
+        "HYPERBOLIC_SPARSE_POISON": "1"
+      }
+    },
+    {
+      "name": "dynamic-wave-m1a",
+      "variant": "m1a",
+      "ranks": 2,
+      "kind": "wave",
+      "steps": 6,
+      "policy": "dynamic",
+      "equivalence": "dynamic-wave",
+      "env": {
+        "HYPERBOLIC_SPARSE_POISON": "1"
+      }
+    },
+    {
+      "name": "dynamic-wave-m1b",
+      "variant": "m1b",
+      "ranks": 2,
+      "kind": "wave",
+      "steps": 6,
+      "policy": "dynamic",
+      "equivalence": "dynamic-wave",
+      "env": {
+        "HYPERBOLIC_SPARSE_POISON": "1"
+      }
+    },
+    {
+      "name": "boost-rejection-base",
+      "variant": "base",
+      "ranks": 2,
+      "kind": "boost",
+      "steps": 6,
+      "policy": "dynamic",
+      "expected": 2,
+      "env": {
+        "HYPERBOLIC_SPARSE_POISON": "1"
+      }
+    },
+    {
+      "name": "boost-rejection-m1b",
+      "variant": "m1b",
+      "ranks": 2,
+      "kind": "boost",
+      "steps": 6,
+      "policy": "dynamic",
+      "expected": 2,
+      "env": {
+        "HYPERBOLIC_SPARSE_POISON": "1"
+      }
+    },
+    {
+      "name": "overhead-p4-r0-base",
+      "variant": "base",
+      "ranks": 4,
+      "kind": "wave",
+      "steps": 8,
+      "policy": "fixed",
+      "equivalence": "wave-p4-s8"
+    },
+    {
+      "name": "overhead-p4-r0-m0",
+      "variant": "m0",
+      "ranks": 4,
+      "kind": "wave",
+      "steps": 8,
+      "policy": "fixed",
+      "equivalence": "wave-p4-s8"
+    },
+    {
+      "name": "overhead-p4-r1-m0",
+      "variant": "m0",
+      "ranks": 4,
+      "kind": "wave",
+      "steps": 8,
+      "policy": "fixed",
+      "equivalence": "wave-p4-s8"
+    },
+    {
+      "name": "overhead-p4-r1-base",
+      "variant": "base",
+      "ranks": 4,
+      "kind": "wave",
+      "steps": 8,
+      "policy": "fixed",
+      "equivalence": "wave-p4-s8"
+    },
+    {
+      "name": "overhead-p4-r2-base",
+      "variant": "base",
+      "ranks": 4,
+      "kind": "wave",
+      "steps": 8,
+      "policy": "fixed",
+      "equivalence": "wave-p4-s8"
+    },
+    {
+      "name": "overhead-p4-r2-m0",
+      "variant": "m0",
+      "ranks": 4,
+      "kind": "wave",
+      "steps": 8,
+      "policy": "fixed",
+      "equivalence": "wave-p4-s8"
+    },
+    {
+      "name": "mask-p4-r0-m0",
+      "variant": "m0",
+      "ranks": 4,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "fixed",
+      "equivalence": "wave-p4-s32"
+    },
+    {
+      "name": "mask-p4-r0-m1b",
+      "variant": "m1b",
+      "ranks": 4,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "fixed",
+      "equivalence": "wave-p4-s32"
+    },
+    {
+      "name": "mask-p4-r1-m1b",
+      "variant": "m1b",
+      "ranks": 4,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "fixed",
+      "equivalence": "wave-p4-s32"
+    },
+    {
+      "name": "mask-p4-r1-m0",
+      "variant": "m0",
+      "ranks": 4,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "fixed",
+      "equivalence": "wave-p4-s32"
+    },
+    {
+      "name": "mask-p4-r2-m0",
+      "variant": "m0",
+      "ranks": 4,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "fixed",
+      "equivalence": "wave-p4-s32"
+    },
+    {
+      "name": "mask-p4-r2-m1b",
+      "variant": "m1b",
+      "ranks": 4,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "fixed",
+      "equivalence": "wave-p4-s32"
+    },
+    {
+      "name": "transfer-p4-r0-m0",
+      "variant": "m0",
+      "ranks": 4,
+      "kind": "boost",
+      "steps": 16,
+      "policy": "fixed",
+      "equivalence": "boost-p4-s16"
+    },
+    {
+      "name": "transfer-p4-r0-m1a",
+      "variant": "m1a",
+      "ranks": 4,
+      "kind": "boost",
+      "steps": 16,
+      "policy": "fixed",
+      "equivalence": "boost-p4-s16"
+    },
+    {
+      "name": "transfer-p4-r1-m1a",
+      "variant": "m1a",
+      "ranks": 4,
+      "kind": "boost",
+      "steps": 16,
+      "policy": "fixed",
+      "equivalence": "boost-p4-s16"
+    },
+    {
+      "name": "transfer-p4-r1-m0",
+      "variant": "m0",
+      "ranks": 4,
+      "kind": "boost",
+      "steps": 16,
+      "policy": "fixed",
+      "equivalence": "boost-p4-s16"
+    },
+    {
+      "name": "transfer-p4-r2-m0",
+      "variant": "m0",
+      "ranks": 4,
+      "kind": "boost",
+      "steps": 16,
+      "policy": "fixed",
+      "equivalence": "boost-p4-s16"
+    },
+    {
+      "name": "transfer-p4-r2-m1a",
+      "variant": "m1a",
+      "ranks": 4,
+      "kind": "boost",
+      "steps": 16,
+      "policy": "fixed",
+      "equivalence": "boost-p4-s16"
+    },
+    {
+      "name": "profile-m0",
+      "variant": "m0",
+      "ranks": 4,
+      "kind": "wave",
+      "steps": 8,
+      "policy": "fixed",
+      "equivalence": "wave-p4-s8",
+      "env": {
+        "KOKKOS_TOOLS_LIBS": "/home/hzhu/hyperboloidal-performance-scaling-20261103/fenced-profile.so",
+        "HYPERBOLIC_ALLOCATION_PREFIX": "/home/hzhu/hyperboloidal-performance-scaling-20261103/job1-components/profile-m0",
+        "HYPERBOLIC_PROFILE_KERNELS": "1"
+      }
+    },
+    {
+      "name": "profile-m1b",
+      "variant": "m1b",
+      "ranks": 4,
+      "kind": "wave",
+      "steps": 8,
+      "policy": "fixed",
+      "equivalence": "wave-p4-s8",
+      "env": {
+        "KOKKOS_TOOLS_LIBS": "/home/hzhu/hyperboloidal-performance-scaling-20261103/fenced-profile.so",
+        "HYPERBOLIC_ALLOCATION_PREFIX": "/home/hzhu/hyperboloidal-performance-scaling-20261103/job1-components/profile-m1b",
+        "HYPERBOLIC_PROFILE_KERNELS": "1"
+      }
+    },
+    {
+      "name": "profile-boost-m0",
+      "variant": "m0",
+      "ranks": 4,
+      "kind": "boost",
+      "steps": 16,
+      "policy": "fixed",
+      "equivalence": "boost-p4-s16",
+      "env": {
+        "KOKKOS_TOOLS_LIBS": "/home/hzhu/hyperboloidal-performance-scaling-20261103/fenced-profile.so",
+        "HYPERBOLIC_ALLOCATION_PREFIX": "/home/hzhu/hyperboloidal-performance-scaling-20261103/job1-components/profile-boost-m0",
+        "HYPERBOLIC_PROFILE_KERNELS": "1"
+      }
+    },
+    {
+      "name": "profile-boost-m1a",
+      "variant": "m1a",
+      "ranks": 4,
+      "kind": "boost",
+      "steps": 16,
+      "policy": "fixed",
+      "equivalence": "boost-p4-s16",
+      "env": {
+        "KOKKOS_TOOLS_LIBS": "/home/hzhu/hyperboloidal-performance-scaling-20261103/fenced-profile.so",
+        "HYPERBOLIC_ALLOCATION_PREFIX": "/home/hzhu/hyperboloidal-performance-scaling-20261103/job1-components/profile-boost-m1a",
+        "HYPERBOLIC_PROFILE_KERNELS": "1"
+      }
+    },
+    {
+      "name": "profile-dynamic",
+      "variant": "m0",
+      "ranks": 2,
+      "kind": "wave",
+      "steps": 6,
+      "policy": "dynamic",
+      "equivalence": "dynamic-wave",
+      "env": {
+        "KOKKOS_TOOLS_LIBS": "/home/hzhu/hyperboloidal-performance-scaling-20261103/fenced-profile.so",
+        "HYPERBOLIC_ALLOCATION_PREFIX": "/home/hzhu/hyperboloidal-performance-scaling-20261103/job1-components/profile-dynamic"
+      }
+    }
+  ]
+}

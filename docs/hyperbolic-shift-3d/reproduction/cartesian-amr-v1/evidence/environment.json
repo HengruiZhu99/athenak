@@ -1,0 +1,9 @@
+{
+  "platform": "macOS-26.7.1-arm64-arm-64bit",
+  "processor": "arm",
+  "backend": "Kokkos SERIAL",
+  "mpi": "mpiexec (Open MPI) 5.0.10\n\nReport bugs to https://www.open-mpi.org/community/help/\n\n",
+  "base": "d82047d383a27377b969d593a360f4e2786daa29",
+  "main_regression_binary_sha256": "5569d052695ddcfd4688ed58eb0f294174bbfff2dff712acf017397605d2623c",
+  "main_regression_command": "build-amr/python/bin/python tst/hyperbolic_shift_3d/validate_main_amr.py --binary build-amr/src/athena --output output/amr-new-main"
+}

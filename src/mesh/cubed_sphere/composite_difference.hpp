@@ -46,10 +46,10 @@ class CompositeDifference {
   std::vector<Row> extrapolated_halos;
   bool radial_interface_stencils = false;
 
-  CompositeDifference(CompositeMesh descriptor, int derivative_order = 4,bool radial_stencils=false)
+  CompositeDifference(CompositeMesh descriptor, int derivative_order = 4,bool radial_stencils=false,bool logical_inner=false)
       : mesh(std::move(descriptor)), n(mesh.cells), ng(mesh.ghosts),
         padded(n+2*(ng+mesh.evolved_overlap)), count(static_cast<int>(mesh.blocks.size())*padded*padded*padded),
-        order(derivative_order),storage_halo(ng+mesh.evolved_overlap),radial_interface_stencils(radial_stencils) {
+        order(derivative_order),storage_halo(ng+mesh.evolved_overlap),radial_interface_stencils(radial_stencils),inner_transition_logical(logical_inner) {
     if ((order != 2 && order != 4) || ng < order/2 || n < order)
       throw std::invalid_argument("composite derivative order/halo contract");
     if(mesh.evolved_overlap<0||mesh.evolved_overlap>n/3)
@@ -89,12 +89,12 @@ class CompositeDifference {
   int Overlap(int m)const{return mesh.blocks[m].layer<=0?mesh.evolved_overlap:0;}
   int Lower(int m,int axis)const{
     const auto&b=mesh.blocks[m];
-    if(mesh.continuous_cartesian_core&&b.face<0&&b.lo[axis]>-mesh.half_width+1e-14)return 0;
+    if((mesh.continuous_cartesian_core||mesh.amr_cartesian_core)&&b.face<0&&b.lo[axis]>-mesh.half_width+1e-14)return 0;
     return mesh.spherical_inner_boundary&&b.layer==0&&axis==0?0:-Overlap(m);
   }
   int Upper(int m,int axis)const{
     const auto&b=mesh.blocks[m];
-    if(mesh.continuous_cartesian_core&&b.face<0&&b.hi[axis]<mesh.half_width-1e-14)return n;
+    if((mesh.continuous_cartesian_core||mesh.amr_cartesian_core)&&b.face<0&&b.hi[axis]<mesh.half_width-1e-14)return n;
     return n+Overlap(m);
   }
   int CartesianPoint(int i,int j,int k)const{
@@ -129,6 +129,7 @@ class CompositeDifference {
     return amount*(a == 0 ? 1 : (a == 1 ? padded : padded*padded));
   }
   std::vector<Entry> Interpolate(const Real x[3], int width) const {
+    if(mesh.amr_cartesian_core){auto entries=InterpolateAMRCartesian(x,width);if(!entries.empty())return entries;}
     if(mesh.evolved_overlap&&std::sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2])<mesh.radii[0])
       return InterpolateOverlap(x,width);
     const int owner = mesh.Owner(x);
@@ -305,6 +306,10 @@ class CompositeDifference {
  private:
   bool inner_transition_logical=false;
   void BuildCartesianLookup(){
+    if(mesh.amr_cartesian_core){
+      if(mesh.continuous_cartesian_core||ng<4)throw std::invalid_argument("AMR core needs its own policy and four halos");
+      return;
+    }
     if(!mesh.continuous_cartesian_core)return;
     for(const auto&b:mesh.blocks)if(b.face<0){cartesian_h=(b.hi[0]-b.lo[0])/n;break;}
     if(!(cartesian_h>0))throw std::invalid_argument("continuous core has no Cartesian blocks");
@@ -322,6 +327,32 @@ class CompositeDifference {
       if(target>=0)throw std::invalid_argument("duplicate continuous Cartesian point");target=p;
     }
     for(int p:cartesian_points)if(p<0)throw std::invalid_argument("hole in continuous Cartesian grid");
+  }
+  std::vector<Entry> InterpolateAMRCartesian(const Real x[3],int width)const{
+    int owner=-1; Real best_h=std::numeric_limits<Real>::infinity();
+    for(int m=0;m<int(mesh.blocks.size());++m){const auto&b=mesh.blocks[m];if(b.face>=0)continue;
+      Real q[3];mesh.Inverse(m,x,q);bool inside=true;
+      for(int a=0;a<3;++a)inside=inside&&n*q[a]>=Lower(m,a)-1e-11&&n*q[a]<=Upper(m,a)+1e-11;
+      const Real h=(b.hi[0]-b.lo[0])/n;
+      if(inside&&h<best_h){owner=m;best_h=h;}
+    }
+    if(owner<0)return {};
+    Real q[3];mesh.Inverse(owner,x,q);int first[3],length[3];Real w[3][6]{};
+    if(width<1||width>6)throw std::invalid_argument("AMR interpolation width");
+    for(int a=0;a<3;++a){const Real t=n*q[a]-.5;
+      const bool exact=std::abs(t-std::round(t))<1e-10;
+      length[a]=exact?1:width;
+      first[a]=exact?int(std::round(t)):std::clamp(int(std::floor(t))-width/2+1,Lower(owner,a),Upper(owner,a)-width);
+      if(first[a]<Lower(owner,a)||first[a]+length[a]>Upper(owner,a))return {};
+      for(int i=0;i<length[a];++i){w[a][i]=1;
+        for(int j=0;j<length[a];++j)if(i!=j)w[a][i]*=(t-first[a]-j)/Real(i-j);}
+    }
+    std::vector<Entry> out;
+    for(int k=0;k<length[2];++k)for(int j=0;j<length[1];++j)for(int i=0;i<length[0];++i){
+      const int p=Index(owner,first[0]+i,first[1]+j,first[2]+k);
+      if(inverse_active[p]<0)throw std::runtime_error("AMR interpolation donor is not evolved");
+      const Real weight=w[0][i]*w[1][j]*w[2][k];if(std::abs(weight)>1e-18)out.push_back({p,weight});}
+    return out;
   }
   std::vector<Entry> InterpolateCartesian(const Real x[3],int width)const{
     if(!mesh.continuous_cartesian_core)return {};
@@ -345,7 +376,7 @@ class CompositeDifference {
     const int preferred=mesh.Owner(x);int selected=-1,best_first[3]{},best_width[3]{};
     Real best_q[3]{},best_margin=-1e300;
     for(int m=0;m<int(mesh.blocks.size());++m){
-      const auto&b=mesh.blocks[m];if(b.layer>0||(mesh.continuous_cartesian_core&&b.face<0))continue;
+      const auto&b=mesh.blocks[m];if(b.layer>0||((mesh.continuous_cartesian_core||mesh.amr_cartesian_core)&&b.face<0))continue;
       if(b.face>=0&&(b.face%2?-x[b.face/2]:x[b.face/2])<=0)continue;
       Real q[3];mesh.Inverse(m,x,q);int first[3],length[3];Real margin=1e300;bool valid=true;
       bool aligned=true;

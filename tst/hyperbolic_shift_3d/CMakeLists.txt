@@ -739,3 +739,61 @@ foreach(zero_audit zero_restoration scri_dissipation_closure scri_full_consisten
   target_compile_definitions(${zero_target} PRIVATE ${scri_audit_defs} HYPERBOLIC_ZERO_SHIFT_RESTORATION=1)
   target_compile_options(${zero_target} PRIVATE -Wall -Wextra -ffp-contract=off)
 endforeach()
+
+# Link the real AthenaK lifecycle into the standalone AMR qualification driver.
+# Keep the existing athena target and its optional dependency settings intact.
+if(ENABLE_MPI)
+  get_target_property(amr_athena_sources athena SOURCES)
+  list(REMOVE_ITEM amr_athena_sources main.cpp)
+  list(TRANSFORM amr_athena_sources PREPEND "${CMAKE_SOURCE_DIR}/src/")
+  add_library(hyperbolic_athenak_amr STATIC EXCLUDE_FROM_ALL ${amr_athena_sources})
+  target_include_directories(hyperbolic_athenak_amr PRIVATE
+    $<TARGET_PROPERTY:athena,INCLUDE_DIRECTORIES>)
+  target_link_libraries(hyperbolic_athenak_amr PUBLIC $<TARGET_PROPERTY:athena,LINK_LIBRARIES>)
+  function(add_hyperbolic_amr_executable target source)
+    add_executable(${target} ${source})
+    target_include_directories(${target} PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+    target_link_libraries(${target} PRIVATE hyperbolic_athenak_amr)
+  endfunction()
+
+  add_hyperbolic_amr_executable(hyperbolic_shift_3d_amr_transfer test_amr_transfer.cpp)
+  add_hyperbolic_amr_executable(hyperbolic_shift_3d_amr_operators test_amr_operators.cpp)
+  add_hyperbolic_amr_executable(hyperbolic_shift_3d_amr_evolution amr_evolution.cpp)
+  add_hyperbolic_amr_executable(hyperbolic_shift_3d_amr_setup_contract test_amr_setup.cpp)
+
+  # One AMR driver: the validated final halo plan is constructed directly.
+  get_target_property(amr_science
+    hyperbolic_shift_3d_mpi_native_control_broad_smooth_six_shells_boosted_free_gauge_refined_core_matched_cfl
+    COMPILE_DEFINITIONS)
+  target_compile_definitions(hyperbolic_shift_3d_amr_evolution PRIVATE ${amr_science})
+  target_compile_options(hyperbolic_shift_3d_amr_evolution PRIVATE -ffp-contract=off)
+  target_compile_options(hyperbolic_shift_3d_amr_setup_contract PRIVATE -ffp-contract=off)
+
+  foreach(ranks 1 2 4)
+    add_test(NAME hyperbolic_shift_3d_amr_transfer_mpi${ranks}
+      COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${ranks}
+      $<TARGET_FILE:hyperbolic_shift_3d_amr_transfer> 12)
+    set_tests_properties(hyperbolic_shift_3d_amr_transfer_mpi${ranks}
+      PROPERTIES RUN_SERIAL TRUE TIMEOUT 180)
+  endforeach()
+  add_test(NAME hyperbolic_shift_3d_amr_operators
+    COMMAND hyperbolic_shift_3d_amr_operators 12)
+  set_tests_properties(hyperbolic_shift_3d_amr_operators PROPERTIES RUN_SERIAL TRUE TIMEOUT 180)
+  add_test(NAME hyperbolic_shift_3d_amr_setup_contract
+    COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 1
+    $<TARGET_FILE:hyperbolic_shift_3d_amr_setup_contract>)
+  set_tests_properties(hyperbolic_shift_3d_amr_setup_contract
+    PROPERTIES RUN_SERIAL TRUE TIMEOUT 420)
+
+  add_executable(hyperbolic_shift_3d_amr_device_mapping test_amr_device_mapping.cpp)
+  target_link_libraries(hyperbolic_shift_3d_amr_device_mapping PRIVATE Kokkos::kokkos MPI::MPI_CXX)
+endif()
+
+# Optional allocation census. Never loaded by ordinary timing runs.
+add_library(hyperbolic_amr_allocation_tool MODULE amr_allocation_tool.cpp)
+target_compile_features(hyperbolic_amr_allocation_tool PRIVATE cxx_std_17)
+target_include_directories(hyperbolic_amr_allocation_tool PRIVATE ${CMAKE_SOURCE_DIR}/kokkos/core/src)
+add_executable(hyperbolic_amr_allocation_tool_test test_amr_allocation_tool.cpp)
+target_compile_features(hyperbolic_amr_allocation_tool_test PRIVATE cxx_std_17)
+target_include_directories(hyperbolic_amr_allocation_tool_test PRIVATE ${CMAKE_SOURCE_DIR}/kokkos/core/src)
+add_test(NAME hyperbolic_amr_allocation_tool_test COMMAND hyperbolic_amr_allocation_tool_test)

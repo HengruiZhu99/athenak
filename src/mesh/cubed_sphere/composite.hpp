@@ -35,6 +35,8 @@ class CompositeMesh {
   bool spherical_inner_boundary = false, equiangular = false;
   Real inner_radius = 0;
   bool continuous_cartesian_core = false;
+  // Explicit experimental mixed-level policy; uniform targets remain unchanged.
+  bool amr_cartesian_core = false;
   Real AngularRatio(Real q) const {return equiangular?std::tan(std::acos(-1.)*q/4):q;}
 
 
@@ -157,13 +159,18 @@ class CompositeMesh {
     const int face = bulk ? -1 : Map{}.Owner(x);
     const int layer = bulk ? -1 : static_cast<int>(std::lower_bound(radii.begin(), radii.end(),
         std::min(radius, radii.back()))-radii.begin());
+    int selected=-1;
     for (int m = 0; m < static_cast<int>(blocks.size()); ++m) {
       const auto &block = blocks[m];
       if (block.face != face || block.layer != layer) continue;
       Real q[3]; Inverse(m, x, q);
       if (q[0] >= -2e-13 && q[0] <= 1+2e-13 && q[1] >= -2e-13
-          && q[1] <= 1+2e-13 && q[2] >= -2e-13 && q[2] <= 1+2e-13) return m;
+          && q[1] <= 1+2e-13 && q[2] >= -2e-13 && q[2] <= 1+2e-13) {
+        if(!amr_cartesian_core)return m;
+        if(selected<0||block.refinement>blocks[selected].refinement)selected=m;
+      }
     }
+    if(selected>=0)return selected;
     throw std::runtime_error("no active composite donor");
   }
 

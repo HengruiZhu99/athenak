@@ -1,0 +1,23 @@
+#!/bin/bash -l
+#PBS -N hyp-perf-v1
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -l select=2
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home
+#PBS -j oe
+set -euo pipefail
+ulimit -c 0
+cd /home/hzhu/hyperboloidal-performance-scaling-20261103
+module load oneapi/release/2025.3.1
+export OMP_NUM_THREADS=1 ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE ZE_ENABLE_PCI_ID_DEVICE_ORDER=1
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu MPIR_CVAR_ENABLE_GPU=1
+export NEO_CACHE_DIR="$PWD/runtime-cache/neo" SYCL_CACHE_DIR="$PWD/runtime-cache/sycl"
+mkdir -p "$NEO_CACHE_DIR" "$SYCL_CACHE_DIR" job2-components
+unset ZE_AFFINITY_MASK
+module list > job2-components/modules.txt 2>&1
+cat "$PBS_NODEFILE" > job2-components/nodes.txt
+export HYPERBOLIC_MAPPING_PREFIX="$PWD/job2-components/mapping"
+timeout 180 mpiexec -n 24 -ppn 12 --cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100 gpu_tile_compact.sh m1-build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_amr_device_mapping > job2-components/mapping.log 2>&1
+timeout 300 mpiexec -n 1 -ppn 1 --cpu-bind=list:1-8 gpu_tile_compact.sh m4-bin/hyperbolic_shift_3d_amr_setup_contract > job2-components/setup-contract.log 2>&1
+exec /usr/bin/python3.11 run_plan.py gpu-plan2.json gpu-job2

@@ -49,8 +49,8 @@ class HyperbolicComposite {
   HyperbolicComposite(cubed_sphere::CompositeMesh mesh,bool source=false,bool cross_face_scri=false,
                       Real angular_strength=0,
                       NormalDerivative normal=NormalDerivative::analytic_jets,
-                      RadialClosure radial=RadialClosure::ghost_lift)
-      :normal_derivative(normal),radial_closure(radial),grid(std::move(mesh),4,true),
+                      RadialClosure radial=RadialClosure::ghost_lift,bool logical_inner=false)
+      :normal_derivative(normal),radial_closure(radial),grid(std::move(mesh),4,true,logical_inner),
        scri(grid,nf,radial==RadialClosure::donor_seven?7:6,cross_face_scri),
        state(nf*grid.active.size(),0),compensation(state.size(),0),
        edge_compensation(scri.values.size(),0),adaptive(source),angular_epsilon(angular_strength) {
@@ -313,8 +313,19 @@ class HyperbolicComposite {
   void Dissipate(const V&v,V&rhs)const{
     if(ko==0)return;
     using Stencil=CompositeDissipation;const int n=grid.n;
+    if(grid.mesh.amr_cartesian_core){
+      if(positive_dissipation)throw std::invalid_argument("AMR KO qualification uses physical variables");
+      const auto padded=Padded(v);
+      for(size_t p=0;p<grid.active.size();++p)if(grid.mesh.blocks[grid.cells[p].block].face<0)
+        for(const auto&t:Stencil::CartesianTerms(grid,p))for(int f=0;f<nf;++f){
+          const Real anchor=padded[f*grid.count+t.point[0]];Real difference=0;
+          for(int a=0;a<Stencil::points;++a)difference+=Stencil::Coefficient(a)*(padded[f*grid.count+t.point[a]]-anchor);
+          rhs[nf*p+f]-=ko*n*t.target_coefficient*t.weight*difference/(Stencil::normalization*grid.volumes[p]);
+        }
+    }
     for(size_t start=0;start<grid.active.size();++start)
-    for(int A=0;A<3;++A){if(grid.ShiftActive(start,A,Stencil::order)<0)continue;
+    for(int A=0;A<3;++A){if(grid.mesh.amr_cartesian_core&&grid.mesh.blocks[grid.cells[start].block].face<0)continue;
+      if(grid.ShiftActive(start,A,Stencil::order)<0)continue;
       int donors[Stencil::points];for(int a=0;a<Stencil::points;++a)donors[a]=grid.ShiftActive(start,A,a);
       Real weight=0;
       for(int a=0;a<Stencil::points;++a){const size_t p=donors[a];Real inverse_length=0;

@@ -1,0 +1,18 @@
+
+Root grid = 2 x 2 x 2 MeshBlocks
+Total number of MeshBlocks = 8
+Number of logical  levels of refinement = 3 (4 levels total)
+Number of physical levels of refinement = 2 (3 levels total)
+  Physical level = 0 (logical level = 1): 8 MeshBlocks, cost = 8
+Number of parallel ranks = 1
+event 0 leaves 15 added 7 removed 0
+### FATAL ERROR in /Users/hz0693/.codex/worktrees/cartesian-amr-mpi/hyperboloidal/src/mesh/mesh_refinement.cpp at line 538
+Number of MeshBlocks in this rank on new tree = 71 on rank = 0 exceeds <mesh_refinement>/max_nmb_per_rank = 64
+--------------------------------------------------------------------------
+
+prterun detected that one or more processes exited with non-zero status,
+thus causing the job to be terminated. The first process to do so was:
+
+   Process name: [prterun-PU-KL2XFPVQ0D-56566@1,0]
+   Exit code:    1
+--------------------------------------------------------------------------

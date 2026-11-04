@@ -1,0 +1,2536 @@
+{
+  "directory": "/Users/hz0693/.codex/worktrees/hyperboloidal-performance-scaling/hyperboloidal/build-performance/cpu-m4-clean",
+  "completed": true,
+  "runs": [
+    {
+      "name": "setup-dynamic-p2-r0-m0",
+      "case": {
+        "name": "setup-dynamic-p2-r0-m0",
+        "variant": "m0",
+        "ranks": 2,
+        "kind": "wave",
+        "steps": 6,
+        "policy": "dynamic",
+        "equivalence": "dynamic-6"
+      },
+      "passed": true,
+      "process_seconds": 79.584079459,
+      "rank0_after_setup_seconds": 62.352565,
+      "max_rank_driver_seconds": 78.892171,
+      "rank_peak_rss_bytes": [
+        6645825536,
+        6705594368
+      ],
+      "max_rank_rss_bytes": 6705594368,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 13351419904,
+      "sum_rank_peak_rss_bytes_upper_bound": 13351419904,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.005251000000001227,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2162880000000058,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 7.1930809999999745,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.300491,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.03975799999999907,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.19957899999999998,
+            "calls": 1
+          },
+          "regrid_capture": {
+            "seconds": 0.017950999999996498,
+            "calls": 2
+          },
+          "regrid_evolution_setup": {
+            "seconds": 31.92006,
+            "calls": 2
+          },
+          "regrid_extra": {
+            "seconds": 0.12418500000000421,
+            "calls": 2
+          },
+          "regrid_gather": {
+            "seconds": 0.006295000000001494,
+            "calls": 2
+          },
+          "regrid_install": {
+            "seconds": 0.027707999999996957,
+            "calls": 2
+          },
+          "regrid_load": {
+            "seconds": 0.36482000000000525,
+            "calls": 2
+          },
+          "regrid_native": {
+            "seconds": 0.28983099999999595,
+            "calls": 2
+          },
+          "regrid_retire": {
+            "seconds": 0.003340000000001453,
+            "calls": 2
+          },
+          "startup": {
+            "seconds": 0.00016000000000000042,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 22.18334400000002,
+            "calls": 6
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.00533300000000736,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.21631499999999448,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 7.187991000000007,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.347566,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.039477999999999014,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.15276,
+            "calls": 1
+          },
+          "regrid_capture": {
+            "seconds": 0.018119000000002217,
+            "calls": 2
+          },
+          "regrid_evolution_setup": {
+            "seconds": 31.907665,
+            "calls": 2
+          },
+          "regrid_extra": {
+            "seconds": 0.12349500000000546,
+            "calls": 2
+          },
+          "regrid_gather": {
+            "seconds": 0.0058919999999957895,
+            "calls": 2
+          },
+          "regrid_install": {
+            "seconds": 0.027170999999995615,
+            "calls": 2
+          },
+          "regrid_load": {
+            "seconds": 0.36481699999999506,
+            "calls": 2
+          },
+          "regrid_native": {
+            "seconds": 0.30248700000000284,
+            "calls": 2
+          },
+          "regrid_retire": {
+            "seconds": 0.0039059999999935258,
+            "calls": 2
+          },
+          "startup": {
+            "seconds": 0.0001460000000000003,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 22.18903,
+            "calls": 6
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 22.18903,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 7.2465694990000005,
+            "exchange": 0.1280993739999899,
+            "diagnostic_transfer": 0,
+            "closure": 1.159028292,
+            "halo": 13.601298209000001,
+            "error_sync_overlapping": 0.14876500000000092
+          },
+          "sparse_bytes_sent": 411635360
+        },
+        {
+          "nested_seconds": {
+            "rhs": 7.160222501000001,
+            "exchange": 0.13776599599995154,
+            "diagnostic_transfer": 0,
+            "closure": 1.159039249,
+            "halo": 13.221642205999999,
+            "error_sync_overlapping": 0.6136989999999365
+          },
+          "sparse_bytes_sent": 417817752
+        }
+      ]
+    },
+    {
+      "name": "setup-dynamic-p2-r0-m4",
+      "case": {
+        "name": "setup-dynamic-p2-r0-m4",
+        "variant": "m4",
+        "ranks": 2,
+        "kind": "wave",
+        "steps": 6,
+        "policy": "dynamic",
+        "equivalence": "dynamic-6"
+      },
+      "passed": true,
+      "process_seconds": 58.52406400000001,
+      "rank0_after_setup_seconds": 48.294785999999995,
+      "max_rank_driver_seconds": 57.576423000000005,
+      "rank_peak_rss_bytes": [
+        6553075712,
+        6622969856
+      ],
+      "max_rank_rss_bytes": 6622969856,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 13176045568,
+      "sum_rank_peak_rss_bytes_upper_bound": 13176045568,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.00800999999999874,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.21584700000000367,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 7.1538930000000125,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 9.047891,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.03853600000000057,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.195527,
+            "calls": 1
+          },
+          "regrid_capture": {
+            "seconds": 0.02047799999999711,
+            "calls": 2
+          },
+          "regrid_evolution_setup": {
+            "seconds": 17.719860000000004,
+            "calls": 2
+          },
+          "regrid_extra": {
+            "seconds": 0.12841399999999936,
+            "calls": 2
+          },
+          "regrid_gather": {
+            "seconds": 0.004851999999996082,
+            "calls": 2
+          },
+          "regrid_install": {
+            "seconds": 0.0321810000000049,
+            "calls": 2
+          },
+          "regrid_load": {
+            "seconds": 0.3638779999999997,
+            "calls": 2
+          },
+          "regrid_native": {
+            "seconds": 0.3905169999999991,
+            "calls": 2
+          },
+          "regrid_retire": {
+            "seconds": 0.003403999999992635,
+            "calls": 2
+          },
+          "startup": {
+            "seconds": 0.00011900000000000105,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 22.252987999999995,
+            "calls": 6
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.008075999999995531,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.21587400000000656,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 7.152267,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 9.095102,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.03824700000000014,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.148367,
+            "calls": 1
+          },
+          "regrid_capture": {
+            "seconds": 0.02066899999999805,
+            "calls": 2
+          },
+          "regrid_evolution_setup": {
+            "seconds": 17.708603000000004,
+            "calls": 2
+          },
+          "regrid_extra": {
+            "seconds": 0.12815099999999546,
+            "calls": 2
+          },
+          "regrid_gather": {
+            "seconds": 0.004636999999998892,
+            "calls": 2
+          },
+          "regrid_install": {
+            "seconds": 0.032313000000002035,
+            "calls": 2
+          },
+          "regrid_load": {
+            "seconds": 0.3638760000000012,
+            "calls": 2
+          },
+          "regrid_native": {
+            "seconds": 0.401999,
+            "calls": 2
+          },
+          "regrid_retire": {
+            "seconds": 0.0038390000000028124,
+            "calls": 2
+          },
+          "startup": {
+            "seconds": 0.00012400000000000085,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 22.254278999999997,
+            "calls": 6
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 22.254278999999997,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 7.2867414969999995,
+            "exchange": 0.12934233600000944,
+            "diagnostic_transfer": 0,
+            "closure": 1.160251124,
+            "halo": 13.625188962,
+            "error_sync_overlapping": 0.12758500000003004
+          },
+          "sparse_bytes_sent": 411635360
+        },
+        {
+          "nested_seconds": {
+            "rhs": 7.188581205999999,
+            "exchange": 0.13821416700000502,
+            "diagnostic_transfer": 0,
+            "closure": 1.160262751,
+            "halo": 13.224705541,
+            "error_sync_overlapping": 0.6436260000000491
+          },
+          "sparse_bytes_sent": 417817752
+        }
+      ]
+    },
+    {
+      "name": "setup-dynamic-p2-r1-m4",
+      "case": {
+        "name": "setup-dynamic-p2-r1-m4",
+        "variant": "m4",
+        "ranks": 2,
+        "kind": "wave",
+        "steps": 6,
+        "policy": "dynamic",
+        "equivalence": "dynamic-6"
+      },
+      "passed": true,
+      "process_seconds": 57.199257708000005,
+      "rank0_after_setup_seconds": 48.068296000000004,
+      "max_rank_driver_seconds": 56.963546,
+      "rank_peak_rss_bytes": [
+        6553255936,
+        6622216192
+      ],
+      "max_rank_rss_bytes": 6622216192,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 13175472128,
+      "sum_rank_peak_rss_bytes_upper_bound": 13175472128,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.007911999999997477,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.22046799999999678,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 7.231675999999997,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 8.66415,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.03855300000000028,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.192292,
+            "calls": 1
+          },
+          "regrid_capture": {
+            "seconds": 0.020963999999999317,
+            "calls": 2
+          },
+          "regrid_evolution_setup": {
+            "seconds": 17.101318999999997,
+            "calls": 2
+          },
+          "regrid_extra": {
+            "seconds": 0.1277970000000046,
+            "calls": 2
+          },
+          "regrid_gather": {
+            "seconds": 0.005447000000000202,
+            "calls": 2
+          },
+          "regrid_install": {
+            "seconds": 0.03140099999999535,
+            "calls": 2
+          },
+          "regrid_load": {
+            "seconds": 0.36073600000000283,
+            "calls": 2
+          },
+          "regrid_native": {
+            "seconds": 0.4154320000000027,
+            "calls": 2
+          },
+          "regrid_retire": {
+            "seconds": 0.003288999999998765,
+            "calls": 2
+          },
+          "startup": {
+            "seconds": 0.0001499999999999991,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 22.541508000000007,
+            "calls": 6
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.00807100000000105,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2209179999999975,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 7.229904000000001,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 8.711371,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.038282999999999845,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.145235,
+            "calls": 1
+          },
+          "regrid_capture": {
+            "seconds": 0.02113499999999746,
+            "calls": 2
+          },
+          "regrid_evolution_setup": {
+            "seconds": 17.08435,
+            "calls": 2
+          },
+          "regrid_extra": {
+            "seconds": 0.1285989999999977,
+            "calls": 2
+          },
+          "regrid_gather": {
+            "seconds": 0.005016999999998717,
+            "calls": 2
+          },
+          "regrid_install": {
+            "seconds": 0.030476999999997645,
+            "calls": 2
+          },
+          "regrid_load": {
+            "seconds": 0.3607320000000023,
+            "calls": 2
+          },
+          "regrid_native": {
+            "seconds": 0.4327890000000032,
+            "calls": 2
+          },
+          "regrid_retire": {
+            "seconds": 0.003817999999998989,
+            "calls": 2
+          },
+          "startup": {
+            "seconds": 0.0001299999999999999,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 22.542717000000003,
+            "calls": 6
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 22.542717000000003,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 7.336175082999999,
+            "exchange": 0.13111087399999477,
+            "diagnostic_transfer": 0,
+            "closure": 1.173157957,
+            "halo": 13.845482669,
+            "error_sync_overlapping": 0.1473130000000502
+          },
+          "sparse_bytes_sent": 411635360
+        },
+        {
+          "nested_seconds": {
+            "rhs": 7.233877626,
+            "exchange": 0.14298054099998914,
+            "diagnostic_transfer": 0,
+            "closure": 1.173149125,
+            "halo": 13.486845706999997,
+            "error_sync_overlapping": 0.6003859999999861
+          },
+          "sparse_bytes_sent": 417817752
+        }
+      ]
+    },
+    {
+      "name": "setup-dynamic-p2-r1-m0",
+      "case": {
+        "name": "setup-dynamic-p2-r1-m0",
+        "variant": "m0",
+        "ranks": 2,
+        "kind": "wave",
+        "steps": 6,
+        "policy": "dynamic",
+        "equivalence": "dynamic-6"
+      },
+      "passed": true,
+      "process_seconds": 79.33268274999998,
+      "rank0_after_setup_seconds": 62.497862000000005,
+      "max_rank_driver_seconds": 79.104576,
+      "rank_peak_rss_bytes": [
+        6622969856,
+        6629588992
+      ],
+      "max_rank_rss_bytes": 6629588992,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 13252558848,
+      "sum_rank_peak_rss_bytes_upper_bound": 13252558848,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.02355899999999167,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.21278200000000425,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 7.106791999999988,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.371563,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.03906000000000276,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.19634000000000001,
+            "calls": 1
+          },
+          "regrid_capture": {
+            "seconds": 0.017882000000000176,
+            "calls": 2
+          },
+          "regrid_evolution_setup": {
+            "seconds": 32.23715800000001,
+            "calls": 2
+          },
+          "regrid_extra": {
+            "seconds": 0.12836899999999218,
+            "calls": 2
+          },
+          "regrid_gather": {
+            "seconds": 0.004587000000000785,
+            "calls": 2
+          },
+          "regrid_install": {
+            "seconds": 0.027312000000002,
+            "calls": 2
+          },
+          "regrid_load": {
+            "seconds": 0.36788399999999655,
+            "calls": 2
+          },
+          "regrid_native": {
+            "seconds": 0.2998139999999978,
+            "calls": 2
+          },
+          "regrid_retire": {
+            "seconds": 0.0034200000000055297,
+            "calls": 2
+          },
+          "startup": {
+            "seconds": 0.00013699999999999997,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 22.067917000000016,
+            "calls": 6
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.023634000000001265,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.21274999999999977,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 7.104217999999996,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.418606,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.03883300000000034,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.149507,
+            "calls": 1
+          },
+          "regrid_capture": {
+            "seconds": 0.01809000000000438,
+            "calls": 2
+          },
+          "regrid_evolution_setup": {
+            "seconds": 32.226029999999994,
+            "calls": 2
+          },
+          "regrid_extra": {
+            "seconds": 0.12624499999999728,
+            "calls": 2
+          },
+          "regrid_gather": {
+            "seconds": 0.00453600000000165,
+            "calls": 2
+          },
+          "regrid_install": {
+            "seconds": 0.028454000000010637,
+            "calls": 2
+          },
+          "regrid_load": {
+            "seconds": 0.367880999999997,
+            "calls": 2
+          },
+          "regrid_native": {
+            "seconds": 0.31099600000000294,
+            "calls": 2
+          },
+          "regrid_retire": {
+            "seconds": 0.003837999999994679,
+            "calls": 2
+          },
+          "startup": {
+            "seconds": 0.00012299999999999985,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 22.070804000000003,
+            "calls": 6
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 22.070804000000003,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 7.211021667000001,
+            "exchange": 0.13109429099999942,
+            "diagnostic_transfer": 0,
+            "closure": 1.1459980070000002,
+            "halo": 13.554352622,
+            "error_sync_overlapping": 0.12358400000008984
+          },
+          "sparse_bytes_sent": 411635360
+        },
+        {
+          "nested_seconds": {
+            "rhs": 7.098042461,
+            "exchange": 0.13723400400003657,
+            "diagnostic_transfer": 0,
+            "closure": 1.146001122,
+            "halo": 13.195840955000001,
+            "error_sync_overlapping": 0.6142250000000153
+          },
+          "sparse_bytes_sent": 417817752
+        }
+      ]
+    },
+    {
+      "name": "setup-dynamic-p2-r2-m0",
+      "case": {
+        "name": "setup-dynamic-p2-r2-m0",
+        "variant": "m0",
+        "ranks": 2,
+        "kind": "wave",
+        "steps": 6,
+        "policy": "dynamic",
+        "equivalence": "dynamic-6"
+      },
+      "passed": true,
+      "process_seconds": 79.34218254199999,
+      "rank0_after_setup_seconds": 62.494938000000005,
+      "max_rank_driver_seconds": 79.15960700000001,
+      "rank_peak_rss_bytes": [
+        6550880256,
+        6626050048
+      ],
+      "max_rank_rss_bytes": 6626050048,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 13176930304,
+      "sum_rank_peak_rss_bytes_upper_bound": 13176930304,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.01927100000000337,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.21212500000000034,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 7.133132999999987,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.433405,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.03765300000000238,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.19380300000000006,
+            "calls": 1
+          },
+          "regrid_capture": {
+            "seconds": 0.02099500000000276,
+            "calls": 2
+          },
+          "regrid_evolution_setup": {
+            "seconds": 32.202499,
+            "calls": 2
+          },
+          "regrid_extra": {
+            "seconds": 0.1286799999999957,
+            "calls": 2
+          },
+          "regrid_gather": {
+            "seconds": 0.005282999999998594,
+            "calls": 2
+          },
+          "regrid_install": {
+            "seconds": 0.030183000000008064,
+            "calls": 2
+          },
+          "regrid_load": {
+            "seconds": 0.3621459999999992,
+            "calls": 2
+          },
+          "regrid_native": {
+            "seconds": 0.30011000000000365,
+            "calls": 2
+          },
+          "regrid_retire": {
+            "seconds": 0.003441000000002248,
+            "calls": 2
+          },
+          "startup": {
+            "seconds": 0.0001239999999999991,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 22.076741999999996,
+            "calls": 6
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.019357999999996878,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2121400000000051,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 7.128170999999998,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.480397999999997,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.037591000000002595,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.14684499999999995,
+            "calls": 1
+          },
+          "regrid_capture": {
+            "seconds": 0.02117300000000455,
+            "calls": 2
+          },
+          "regrid_evolution_setup": {
+            "seconds": 32.193098000000006,
+            "calls": 2
+          },
+          "regrid_extra": {
+            "seconds": 0.1293149999999912,
+            "calls": 2
+          },
+          "regrid_gather": {
+            "seconds": 0.004972999999999672,
+            "calls": 2
+          },
+          "regrid_install": {
+            "seconds": 0.02948800000000773,
+            "calls": 2
+          },
+          "regrid_load": {
+            "seconds": 0.3621470000000002,
+            "calls": 2
+          },
+          "regrid_native": {
+            "seconds": 0.3097639999999977,
+            "calls": 2
+          },
+          "regrid_retire": {
+            "seconds": 0.0037229999999937036,
+            "calls": 2
+          },
+          "startup": {
+            "seconds": 0.00011200000000000012,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 22.081311000000007,
+            "calls": 6
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 22.081311000000007,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 7.203085961999999,
+            "exchange": 0.14010212499999786,
+            "diagnostic_transfer": 0,
+            "closure": 1.151653919,
+            "halo": 13.548202296,
+            "error_sync_overlapping": 0.12378199999993811
+          },
+          "sparse_bytes_sent": 411635360
+        },
+        {
+          "nested_seconds": {
+            "rhs": 7.100587375000001,
+            "exchange": 0.13781599700002012,
+            "diagnostic_transfer": 0,
+            "closure": 1.15164821,
+            "halo": 13.198194666000001,
+            "error_sync_overlapping": 0.6031699999999951
+          },
+          "sparse_bytes_sent": 417817752
+        }
+      ]
+    },
+    {
+      "name": "setup-dynamic-p2-r2-m4",
+      "case": {
+        "name": "setup-dynamic-p2-r2-m4",
+        "variant": "m4",
+        "ranks": 2,
+        "kind": "wave",
+        "steps": 6,
+        "policy": "dynamic",
+        "equivalence": "dynamic-6"
+      },
+      "passed": true,
+      "process_seconds": 57.640629915999966,
+      "rank0_after_setup_seconds": 48.314586999999996,
+      "max_rank_driver_seconds": 57.420467,
+      "rank_peak_rss_bytes": [
+        6553272320,
+        6622347264
+      ],
+      "max_rank_rss_bytes": 6622347264,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 13175619584,
+      "sum_rank_peak_rss_bytes_upper_bound": 13175619584,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.006584000000003698,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.21289900000000017,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 7.1334910000000065,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 8.874147,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.03768299999999947,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.194305,
+            "calls": 1
+          },
+          "regrid_capture": {
+            "seconds": 0.01984899999999712,
+            "calls": 2
+          },
+          "regrid_evolution_setup": {
+            "seconds": 17.840832000000002,
+            "calls": 2
+          },
+          "regrid_extra": {
+            "seconds": 0.1292789999999968,
+            "calls": 2
+          },
+          "regrid_gather": {
+            "seconds": 0.004803000000002555,
+            "calls": 2
+          },
+          "regrid_install": {
+            "seconds": 0.02822699999999756,
+            "calls": 2
+          },
+          "regrid_load": {
+            "seconds": 0.37068299999999965,
+            "calls": 2
+          },
+          "regrid_native": {
+            "seconds": 0.39526799999999795,
+            "calls": 2
+          },
+          "regrid_retire": {
+            "seconds": 0.003392000000001616,
+            "calls": 2
+          },
+          "startup": {
+            "seconds": 7.899999999999921e-05,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 22.168917999999998,
+            "calls": 6
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.006681000000000381,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2129280000000051,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 7.131666999999993,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 8.921184,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.03743099999999977,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.147353,
+            "calls": 1
+          },
+          "regrid_capture": {
+            "seconds": 0.020018000000000313,
+            "calls": 2
+          },
+          "regrid_evolution_setup": {
+            "seconds": 17.833251999999998,
+            "calls": 2
+          },
+          "regrid_extra": {
+            "seconds": 0.12830199999999792,
+            "calls": 2
+          },
+          "regrid_gather": {
+            "seconds": 0.004498999999999143,
+            "calls": 2
+          },
+          "regrid_install": {
+            "seconds": 0.029077999999998383,
+            "calls": 2
+          },
+          "regrid_load": {
+            "seconds": 0.3706800000000001,
+            "calls": 2
+          },
+          "regrid_native": {
+            "seconds": 0.4031580000000048,
+            "calls": 2
+          },
+          "regrid_retire": {
+            "seconds": 0.0037100000000016564,
+            "calls": 2
+          },
+          "startup": {
+            "seconds": 9.10000000000008e-05,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 22.170435000000005,
+            "calls": 6
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 22.170435000000005,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 7.281629791999999,
+            "exchange": 0.12539100100000627,
+            "diagnostic_transfer": 0,
+            "closure": 1.1509582090000001,
+            "halo": 13.572265958,
+            "error_sync_overlapping": 0.12335999999996794
+          },
+          "sparse_bytes_sent": 411635360
+        },
+        {
+          "nested_seconds": {
+            "rhs": 7.162577832999999,
+            "exchange": 0.13525837400002347,
+            "diagnostic_transfer": 0,
+            "closure": 1.150960129,
+            "halo": 13.206438751,
+            "error_sync_overlapping": 0.6262350000000474
+          },
+          "sparse_bytes_sent": 417817752
+        }
+      ]
+    },
+    {
+      "name": "setup-fixed-p4-r0-m0",
+      "case": {
+        "name": "setup-fixed-p4-r0-m0",
+        "variant": "m0",
+        "ranks": 4,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "fixed-8"
+      },
+      "passed": true,
+      "process_seconds": 41.912872790999984,
+      "rank0_after_setup_seconds": 24.996699000000003,
+      "max_rank_driver_seconds": 41.601286,
+      "rank_peak_rss_bytes": [
+        3850256384,
+        3288678400,
+        3347152896,
+        3753361408
+      ],
+      "max_rank_rss_bytes": 3850256384,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 14239449088,
+      "sum_rank_peak_rss_bytes_upper_bound": 14239449088,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014284999999993886,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2365090000000052,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.890440000000009,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.440810000000003,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.054117999999999,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.11004599999999998,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00016399999999994197,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.854903999999994,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014373999999996556,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2365169999999992,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.889294000000007,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.431898,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.05412199999999956,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.11907500000000004,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00017400000000000748,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.855831999999996,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014373999999996556,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.23651400000000677,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.890791,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.45615,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.052630999999998096,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.094809,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.000194999999999999,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.855816,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014374000000003662,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.23650899999999808,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.889506999999998,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.474588,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.05401599999999718,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.076297,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.0001789999999999986,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.855808,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 19.855831999999996,
+      "critical_rank_steady_step_seconds": 2.482316333333333,
+      "critical_rank_steady_step_with_diagnostics_seconds": 3.0244271666666673,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 4.979432001999999,
+            "exchange": 0.192905493999979,
+            "diagnostic_transfer": 0,
+            "closure": 0.8669121639999998,
+            "halo": 13.715597711000001,
+            "error_sync_overlapping": 0.020903999999962508
+          },
+          "sparse_bytes_sent": 608082112
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.72481308,
+            "exchange": 0.20317233100000495,
+            "diagnostic_transfer": 0,
+            "closure": 0.8668837950000001,
+            "halo": 5.952305168999999,
+            "error_sync_overlapping": 10.240601999999985
+          },
+          "sparse_bytes_sent": 433387936
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.739176834999999,
+            "exchange": 0.19510467000000026,
+            "diagnostic_transfer": 0,
+            "closure": 0.866904541,
+            "halo": 6.849389536999998,
+            "error_sync_overlapping": 9.09400800000003
+          },
+          "sparse_bytes_sent": 552363456
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.823039916000001,
+            "exchange": 0.20472820800001196,
+            "diagnostic_transfer": 0,
+            "closure": 0.8668831680000001,
+            "halo": 12.085117999,
+            "error_sync_overlapping": 2.2667519999999897
+          },
+          "sparse_bytes_sent": 474848080
+        }
+      ]
+    },
+    {
+      "name": "setup-fixed-p4-r0-m4",
+      "case": {
+        "name": "setup-fixed-p4-r0-m4",
+        "variant": "m4",
+        "ranks": 4,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "fixed-8"
+      },
+      "passed": true,
+      "process_seconds": 34.478704042000004,
+      "rank0_after_setup_seconds": 25.178449,
+      "max_rank_driver_seconds": 34.156736,
+      "rank_peak_rss_bytes": [
+        3859464192,
+        3301982208,
+        3344613376,
+        3765256192
+      ],
+      "max_rank_rss_bytes": 3859464192,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 14271315968,
+      "sum_rank_peak_rss_bytes_upper_bound": 14271315968,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014373999999996556,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2734009999999998,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.951274999999997,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 8.822142,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.05341800000000063,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.10312500000000002,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.0001349999999999997,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.938853000000005,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014466000000005863,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2734079999999963,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.950053999999994,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 8.813381999999999,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.05352500000000049,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.11202800000000002,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.0001810000000000006,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.939692000000004,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014465999999998758,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2734039999999993,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.9515569999999975,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 8.837389,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.05208399999999891,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.08798200000000003,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00015800000000000015,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.939685000000004,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014465999999998758,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2734009999999998,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.950372000000003,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 8.851151,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.05339000000000027,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.07406499999999998,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00020500000000000032,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.939678,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 19.939692000000004,
+      "critical_rank_steady_step_seconds": 2.494487500000001,
+      "critical_rank_steady_step_with_diagnostics_seconds": 3.036531,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 5.039047293,
+            "exchange": 0.19385470500000132,
+            "diagnostic_transfer": 0,
+            "closure": 0.8700852110000001,
+            "halo": 13.738730085,
+            "error_sync_overlapping": 0.019734999999990066
+          },
+          "sparse_bytes_sent": 608082112
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.815983833000001,
+            "exchange": 0.20503862500000444,
+            "diagnostic_transfer": 0,
+            "closure": 0.8700515389999995,
+            "halo": 5.954913833000001,
+            "error_sync_overlapping": 10.23425300000002
+          },
+          "sparse_bytes_sent": 433387936
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.794703709,
+            "exchange": 0.19402608300000718,
+            "diagnostic_transfer": 0,
+            "closure": 0.8700845820000002,
+            "halo": 6.852408627000003,
+            "error_sync_overlapping": 9.09717899999999
+          },
+          "sparse_bytes_sent": 552363456
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.871603294000001,
+            "exchange": 0.20228108400000122,
+            "diagnostic_transfer": 0,
+            "closure": 0.8700475379999998,
+            "halo": 12.113372502,
+            "error_sync_overlapping": 2.2588090000000047
+          },
+          "sparse_bytes_sent": 474848080
+        }
+      ]
+    },
+    {
+      "name": "setup-fixed-p4-r1-m4",
+      "case": {
+        "name": "setup-fixed-p4-r1-m4",
+        "variant": "m4",
+        "ranks": 4,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "fixed-8"
+      },
+      "passed": true,
+      "process_seconds": 34.30033666700007,
+      "rank0_after_setup_seconds": 25.133246,
+      "max_rank_driver_seconds": 33.928705,
+      "rank_peak_rss_bytes": [
+        3860070400,
+        3301834752,
+        3344285696,
+        3767189504
+      ],
+      "max_rank_rss_bytes": 3860070400,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 14273380352,
+      "sum_rank_peak_rss_bytes_upper_bound": 14273380352,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.015380999999997869,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.25010699999999986,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.914549999999995,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 8.645942,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.04621999999999993,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.103769,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00011300000000000025,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.952623000000006,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.015472000000002595,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.25010699999999986,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.912888999999996,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 8.63697,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.04669299999999943,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.112819,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00016200000000000069,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.953587000000002,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.015472000000002595,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.25010799999999733,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.914114,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 8.661121999999999,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.045560000000000045,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.088581,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00017700000000000007,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.953567,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.015472000000002595,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2501090000000019,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.913115999999997,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 8.674584000000001,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.046602999999999284,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.075043,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.0001920000000000012,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.953581000000003,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 19.953587000000002,
+      "critical_rank_steady_step_seconds": 2.498410166666667,
+      "critical_rank_steady_step_with_diagnostics_seconds": 3.0389025000000003,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 5.049911502000001,
+            "exchange": 0.18729258700000334,
+            "diagnostic_transfer": 0,
+            "closure": 0.8670559960000002,
+            "halo": 13.745406247999997,
+            "error_sync_overlapping": 0.018505999999980816
+          },
+          "sparse_bytes_sent": 608082112
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.779508913,
+            "exchange": 0.19916340999999183,
+            "diagnostic_transfer": 0,
+            "closure": 0.8670700900000002,
+            "halo": 5.966449209000001,
+            "error_sync_overlapping": 10.259499999999978
+          },
+          "sparse_bytes_sent": 433387936
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.789129333999998,
+            "exchange": 0.18867071200000154,
+            "diagnostic_transfer": 0,
+            "closure": 0.867050915,
+            "halo": 6.870321709000001,
+            "error_sync_overlapping": 9.085462000000016
+          },
+          "sparse_bytes_sent": 552363456
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.89749754,
+            "exchange": 0.1968224599999969,
+            "diagnostic_transfer": 0,
+            "closure": 0.8670398309999998,
+            "halo": 12.161298292000003,
+            "error_sync_overlapping": 2.1835490000000632
+          },
+          "sparse_bytes_sent": 474848080
+        }
+      ]
+    },
+    {
+      "name": "setup-fixed-p4-r1-m0",
+      "case": {
+        "name": "setup-fixed-p4-r1-m0",
+        "variant": "m0",
+        "ranks": 4,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "fixed-8"
+      },
+      "passed": true,
+      "process_seconds": 42.28493549999996,
+      "rank0_after_setup_seconds": 25.136227,
+      "max_rank_driver_seconds": 41.985118,
+      "rank_peak_rss_bytes": [
+        3850371072,
+        3288825856,
+        3347169280,
+        3751591936
+      ],
+      "max_rank_rss_bytes": 3850371072,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 14237958144,
+      "sum_rank_peak_rss_bytes_upper_bound": 14237958144,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.019572000000003698,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.25115899999999414,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.941220999999995,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.699456,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.04703100000000049,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.10274,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00020500000000000032,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.923720000000003,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.019662000000003843,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2511730000000014,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.940428999999984,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.690474000000002,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.04673700000000025,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.11177100000000001,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00018899999999999993,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.924683000000012,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.019665000000003374,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2511609999999962,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.941208,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.714615,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.04598100000000116,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.08762400000000001,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00016499999999999848,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.924688999999997,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.019662000000003843,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2511639999999957,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.940206999999997,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.728413,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.04697699999999827,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.073826,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00016600000000000122,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.924695000000003,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 19.924695000000003,
+      "critical_rank_steady_step_seconds": 2.4919486666666675,
+      "critical_rank_steady_step_with_diagnostics_seconds": 3.035185333333333,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 5.0218103329999995,
+            "exchange": 0.18833695600001985,
+            "diagnostic_transfer": 0,
+            "closure": 0.8677744150000001,
+            "halo": 13.743804499000001,
+            "error_sync_overlapping": 0.01932600000001372
+          },
+          "sparse_bytes_sent": 608082112
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.742751500000001,
+            "exchange": 0.19919295400000422,
+            "diagnostic_transfer": 0,
+            "closure": 0.8677232079999999,
+            "halo": 5.9668047060000005,
+            "error_sync_overlapping": 10.286188000000063
+          },
+          "sparse_bytes_sent": 433387936
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.755830958,
+            "exchange": 0.1903690810000033,
+            "diagnostic_transfer": 0,
+            "closure": 0.8677617489999999,
+            "halo": 6.852158959,
+            "error_sync_overlapping": 9.136192999999949
+          },
+          "sparse_bytes_sent": 552363456
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.850631998000001,
+            "exchange": 0.19782762500002257,
+            "diagnostic_transfer": 0,
+            "closure": 0.8677307519999999,
+            "halo": 12.148645208,
+            "error_sync_overlapping": 2.238714999999953
+          },
+          "sparse_bytes_sent": 474848080
+        }
+      ]
+    },
+    {
+      "name": "setup-fixed-p4-r2-m0",
+      "case": {
+        "name": "setup-fixed-p4-r2-m0",
+        "variant": "m0",
+        "ranks": 4,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "fixed-8"
+      },
+      "passed": true,
+      "process_seconds": 42.019997834,
+      "rank0_after_setup_seconds": 24.998343000000002,
+      "max_rank_driver_seconds": 41.472529,
+      "rank_peak_rss_bytes": [
+        3850895360,
+        3288154112,
+        3346989056,
+        3751526400
+      ],
+      "max_rank_rss_bytes": 3850895360,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 14237564928,
+      "sum_rank_peak_rss_bytes_upper_bound": 14237564928,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.013809999999999434,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.23782099999999673,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.901057999999992,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.310468,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.04940000000000211,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.11434899999999999,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00021599999999999918,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.845209000000008,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.013905999999998642,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.23794199999999677,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.899514999999997,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.301598,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.04997600000000091,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.12331299999999999,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00018800000000000067,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.846019000000005,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.013905999999998642,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2380199999999988,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.900558000000011,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.325613999999998,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.048987000000000336,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.099267,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00018099999999999887,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.845995999999992,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.013906000000005747,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.23789499999999464,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.89967,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 16.347796,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.04987699999999862,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.077041,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00020199999999999906,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.846021999999998,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 19.846021999999998,
+      "critical_rank_steady_step_seconds": 2.475628166666666,
+      "critical_rank_steady_step_with_diagnostics_seconds": 3.0140945000000006,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 4.985736004999999,
+            "exchange": 0.18827087399999246,
+            "diagnostic_transfer": 0,
+            "closure": 0.860499746,
+            "halo": 13.710661664,
+            "error_sync_overlapping": 0.01942099999999769
+          },
+          "sparse_bytes_sent": 608082112
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.722336208,
+            "exchange": 0.20033945899999897,
+            "diagnostic_transfer": 0,
+            "closure": 0.860459044,
+            "halo": 5.874851917999999,
+            "error_sync_overlapping": 10.329561999999946
+          },
+          "sparse_bytes_sent": 433387936
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.731881706999999,
+            "exchange": 0.19166196199999572,
+            "diagnostic_transfer": 0,
+            "closure": 0.8604971239999998,
+            "halo": 6.814787626999999,
+            "error_sync_overlapping": 9.102178000000048
+          },
+          "sparse_bytes_sent": 552363456
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.822191916000001,
+            "exchange": 0.19914732899998178,
+            "diagnostic_transfer": 0,
+            "closure": 0.8604619210000003,
+            "halo": 12.108067165,
+            "error_sync_overlapping": 2.2291810000000467
+          },
+          "sparse_bytes_sent": 474848080
+        }
+      ]
+    },
+    {
+      "name": "setup-fixed-p4-r2-m4",
+      "case": {
+        "name": "setup-fixed-p4-r2-m4",
+        "variant": "m4",
+        "ranks": 4,
+        "kind": "wave",
+        "steps": 8,
+        "policy": "fixed",
+        "equivalence": "fixed-8"
+      },
+      "passed": true,
+      "process_seconds": 37.396347541000004,
+      "rank0_after_setup_seconds": 24.957231999999998,
+      "max_rank_driver_seconds": 33.790193,
+      "rank_peak_rss_bytes": [
+        3859447808,
+        3302375424,
+        3345055744,
+        3765190656
+      ],
+      "max_rank_rss_bytes": 3859447808,
+      "max_node_sum_rank_peak_rss_bytes_upper_bound": 14272069632,
+      "sum_rank_peak_rss_bytes_upper_bound": 14272069632,
+      "rank_phases": [
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014193999999996265,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.24084600000000478,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.899657999999999,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 8.666220000000001,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.06142299999999956,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.10495600000000001,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00020700000000000232,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.802223000000005,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014288000000000523,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2413050000000041,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.898855999999995,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 8.657305000000001,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.06129699999999971,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.11388799999999999,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00025299999999999975,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.803001000000002,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014288000000000523,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.24131100000000316,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.9000889999999995,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 8.681322000000002,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.060069999999999624,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.08986,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00022900000000000004,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.803022,
+            "calls": 8
+          }
+        },
+        {
+          "checkpoint_capture": {
+            "seconds": 0.014287999999993417,
+            "calls": 1
+          },
+          "checkpoint_write": {
+            "seconds": 0.2409190000000052,
+            "calls": 1
+          },
+          "diagnostics": {
+            "seconds": 4.898930000000005,
+            "calls": 9
+          },
+          "evolution_setup": {
+            "seconds": 8.6944,
+            "calls": 1
+          },
+          "initial_state": {
+            "seconds": 0.06125699999999945,
+            "calls": 1
+          },
+          "native_setup": {
+            "seconds": 0.076772,
+            "calls": 1
+          },
+          "startup": {
+            "seconds": 0.00021699999999999844,
+            "calls": 1
+          },
+          "step": {
+            "seconds": 19.803022999999996,
+            "calls": 8
+          }
+        }
+      ],
+      "critical_rank_step_seconds": 19.803022999999996,
+      "critical_rank_steady_step_seconds": 2.4784846666666662,
+      "critical_rank_steady_step_with_diagnostics_seconds": 3.0163785000000005,
+      "warmup_steps": 2,
+      "rank_generation_totals": [
+        {
+          "nested_seconds": {
+            "rhs": 4.9809828320000005,
+            "exchange": 0.1979321220000045,
+            "diagnostic_transfer": 0,
+            "closure": 0.859891376,
+            "halo": 13.671066955,
+            "error_sync_overlapping": 0.020591999999998833
+          },
+          "sparse_bytes_sent": 608082112
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.750758622000001,
+            "exchange": 0.2091937939999844,
+            "diagnostic_transfer": 0,
+            "closure": 0.8598541239999999,
+            "halo": 5.848344794999999,
+            "error_sync_overlapping": 10.293773999999999
+          },
+          "sparse_bytes_sent": 433387936
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.743394794000001,
+            "exchange": 0.19918428599999888,
+            "diagnostic_transfer": 0,
+            "closure": 0.8598707510000001,
+            "halo": 6.776900915,
+            "error_sync_overlapping": 9.107055000000017
+          },
+          "sparse_bytes_sent": 552363456
+        },
+        {
+          "nested_seconds": {
+            "rhs": 4.832384043999999,
+            "exchange": 0.206792415000001,
+            "diagnostic_transfer": 0,
+            "closure": 0.8598490450000003,
+            "halo": 12.078113583,
+            "error_sync_overlapping": 2.213891999999996
+          },
+          "sparse_bytes_sent": 474848080
+        }
+      ]
+    }
+  ],
+  "paired_comparisons": [
+    {
+      "experiment": "setup-dynamic",
+      "ranks": 2,
+      "control": "m0",
+      "candidate": "m4",
+      "metrics": {
+        "process_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            1.3598522388841618,
+            1.3869530117854019,
+            1.3764974924393751
+          ],
+          "median_speedup": 1.3764974924393751,
+          "range": [
+            1.3598522388841618,
+            1.3869530117854019
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            1.340815837407337,
+            1.4088025563785724
+          ]
+        },
+        "rank0_after_setup_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            1.2910827475247537,
+            1.3001888396459904,
+            1.2935004080651669
+          ],
+          "median_speedup": 1.2935004080651669,
+          "range": [
+            1.2910827475247537,
+            1.3001888396459904
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            1.2832621299714504,
+            1.3066802984615526
+          ]
+        },
+        "critical_rank_step_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            0.9970680245358657,
+            0.9790658331025492,
+            0.9959800518122446
+          ],
+          "median_speedup": 0.9959800518122446,
+          "range": [
+            0.9790658331025492,
+            0.9970680245358657
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            0.9658386299350961,
+            1.016140226822443
+          ]
+        }
+      }
+    },
+    {
+      "experiment": "setup-fixed",
+      "ranks": 4,
+      "control": "m0",
+      "candidate": "m4",
+      "metrics": {
+        "process_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            1.2156162464791047,
+            1.232784853120167,
+            1.1236390876924758
+          ],
+          "median_speedup": 1.2156162464791047,
+          "range": [
+            1.1236390876924758,
+            1.232784853120167
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            1.0508214253187254,
+            1.3469293925775305
+          ]
+        },
+        "rank0_after_setup_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            0.9927815251844941,
+            1.0001186078391944,
+            1.0016472579972011
+          ],
+          "median_speedup": 1.0001186078391944,
+          "range": [
+            0.9927815251844941,
+            1.0016472579972011
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            0.9864567149128768,
+            1.0100323885865947
+          ]
+        },
+        "critical_rank_step_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            0.9957943181870609,
+            0.9985520397911414,
+            1.0021713351542338
+          ],
+          "median_speedup": 0.9985520397911414,
+          "range": [
+            0.9957943181870609,
+            1.0021713351542338
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            0.9909242595173227,
+            1.0068105436517931
+          ]
+        },
+        "critical_rank_steady_step_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            0.9951207746414171,
+            0.9974137553208006,
+            0.9988474812701417
+          ],
+          "median_speedup": 0.9974137553208006,
+          "range": [
+            0.9951207746414171,
+            0.9988474812701417
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            0.9924664357300047,
+            1.0018077530370781
+          ]
+        },
+        "critical_rank_steady_step_with_diagnostics_seconds": {
+          "pairs": 3,
+          "speedup_ratios": [
+            0.9960139272962032,
+            0.9987768062099172,
+            0.9992428005968084
+          ],
+          "median_speedup": 0.9987768062099172,
+          "range": [
+            0.9960139272962032,
+            0.9992428005968084
+          ],
+          "paired_log_ratio_student_t_95_interval": [
+            0.9936820111285837,
+            1.002357160913117
+          ]
+        }
+      }
+    }
+  ],
+  "notes": [
+    "Profiled runs excluded from A/B groups.",
+    "Rank-zero report excludes initial setup but includes final capture/write.",
+    "Rank RSS sum is an upper bound, not simultaneous measured node RSS; node grouping follows explicit ppn and contiguous PALS rank placement.",
+    "Three-pair Student-t intervals assume independent log ratios; workstation scheduling limits inference."
+  ]
+}

@@ -1,0 +1,36 @@
+[
+  {
+    "command": [
+      "mpiexec",
+      "-n",
+      "4",
+      "/Users/hz0693/.codex/worktrees/normalized-flat-omega/hyperboloidal/build-refined/local/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_amr_evolution",
+      "12",
+      "wave",
+      "6",
+      ".00025",
+      "/Users/hz0693/.codex/worktrees/normalized-flat-omega/hyperboloidal/build-refined/merged/amr-wave-matched",
+      "-",
+      "dynamic"
+    ],
+    "returncode": 0,
+    "seconds": 48.313357583
+  },
+  {
+    "command": [
+      "mpiexec",
+      "-n",
+      "1",
+      "/Users/hz0693/.codex/worktrees/normalized-flat-omega/hyperboloidal/build-refined/local/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_amr_evolution",
+      "12",
+      "boost",
+      "6",
+      ".00025",
+      "/Users/hz0693/.codex/worktrees/normalized-flat-omega/hyperboloidal/build-refined/merged/amr-boost-matched",
+      "-",
+      "fixed"
+    ],
+    "returncode": 0,
+    "seconds": 57.22349116600001
+  }
+]

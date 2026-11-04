@@ -1,0 +1,1386 @@
+{
+  "profile-boost-m0": {
+    "ranks": [
+      {
+        "rank": 2,
+        "spaces": {
+          "Host": {
+            "live": 0,
+            "peak": 170772464,
+            "allocations": 1753
+          },
+          "SYCLDeviceUSM": {
+            "live": 55816,
+            "peak": 1361307920,
+            "allocations": 213
+          },
+          "SYCLHostUSM": {
+            "live": 2944,
+            "peak": 2944,
+            "allocations": 3
+          }
+        },
+        "excluded_invalid_live_labels": [
+          "SYCLDeviceUSM:[unlabeled]",
+          "SYCLHostUSM:[unlabeled]"
+        ],
+        "top_kernel_intervals": {
+          "hyperboloidal owned bulk RHS": {
+            "seconds": 0.9969163070000001,
+            "calls": 64
+          },
+          "owned scri interior pole samples": {
+            "seconds": 0.6940212470000002,
+            "calls": 65
+          },
+          "scri nonlinear interpolation": {
+            "seconds": 0.395498394,
+            "calls": 146
+          },
+          "scri owned native rates": {
+            "seconds": 0.22894419899999993,
+            "calls": 65
+          },
+          "FastFlow_sphradii_compute": {
+            "seconds": 0.21468783600000013,
+            "calls": 384
+          },
+          "hyperboloidal owned constraints": {
+            "seconds": 0.19864096900000003,
+            "calls": 17
+          },
+          "owned halo lift": {
+            "seconds": 0.18883592300000007,
+            "calls": 146
+          },
+          "scri owned null projection": {
+            "seconds": 0.11722978499999998,
+            "calls": 65
+          },
+          "scri owned field sampling": {
+            "seconds": 0.05373049299999999,
+            "calls": 65
+          },
+          "Kokkos::View::initialization [owned halo entries_mirror] via memset": {
+            "seconds": 0.039879271,
+            "calls": 2
+          },
+          "radial derivatives across owned rows and fields": {
+            "seconds": 0.032566039,
+            "calls": 146
+          },
+          "sampled horizon maximum radius": {
+            "seconds": 0.02761943500000001,
+            "calls": 384
+          }
+        },
+        "radial_prepare": {
+          "radial derivatives across owned rows and fields": {
+            "seconds": 0.032566039,
+            "calls": 146
+          }
+        }
+      },
+      {
+        "rank": 1,
+        "spaces": {
+          "Host": {
+            "live": 0,
+            "peak": 146185696,
+            "allocations": 1753
+          },
+          "SYCLDeviceUSM": {
+            "live": 55816,
+            "peak": 1303714168,
+            "allocations": 213
+          },
+          "SYCLHostUSM": {
+            "live": 10240,
+            "peak": 10240,
+            "allocations": 6
+          }
+        },
+        "excluded_invalid_live_labels": [
+          "SYCLDeviceUSM:[unlabeled]",
+          "SYCLHostUSM:[unlabeled]"
+        ],
+        "top_kernel_intervals": {
+          "hyperboloidal owned bulk RHS": {
+            "seconds": 0.9973275520000001,
+            "calls": 64
+          },
+          "owned scri interior pole samples": {
+            "seconds": 0.6916506940000001,
+            "calls": 65
+          },
+          "scri owned native rates": {
+            "seconds": 0.22905983199999994,
+            "calls": 65
+          },
+          "FastFlow_sphradii_compute": {
+            "seconds": 0.2130542679999999,
+            "calls": 384
+          },
+          "hyperboloidal owned constraints": {
+            "seconds": 0.197963269,
+            "calls": 17
+          },
+          "owned halo lift": {
+            "seconds": 0.17714605699999997,
+            "calls": 146
+          },
+          "scri nonlinear interpolation": {
+            "seconds": 0.17436912699999993,
+            "calls": 146
+          },
+          "scri owned null projection": {
+            "seconds": 0.115940778,
+            "calls": 65
+          },
+          "scri owned field sampling": {
+            "seconds": 0.05333095600000001,
+            "calls": 65
+          },
+          "Kokkos::View::initialization [owned halo entries_mirror] via memset": {
+            "seconds": 0.036226515,
+            "calls": 2
+          },
+          "sampled horizon maximum radius": {
+            "seconds": 0.028424025,
+            "calls": 384
+          },
+          "FastFlow_surfintegrals": {
+            "seconds": 0.01922144300000003,
+            "calls": 384
+          }
+        },
+        "radial_prepare": {
+          "radial derivatives across owned rows and fields": {
+            "seconds": 0.012021978999999997,
+            "calls": 146
+          }
+        }
+      },
+      {
+        "rank": 3,
+        "spaces": {
+          "Host": {
+            "live": 0,
+            "peak": 292849008,
+            "allocations": 1752
+          },
+          "SYCLDeviceUSM": {
+            "live": 55816,
+            "peak": 1449153640,
+            "allocations": 212
+          },
+          "SYCLHostUSM": {
+            "live": 10240,
+            "peak": 10240,
+            "allocations": 6
+          }
+        },
+        "excluded_invalid_live_labels": [
+          "SYCLDeviceUSM:[unlabeled]",
+          "SYCLHostUSM:[unlabeled]"
+        ],
+        "top_kernel_intervals": {
+          "hyperboloidal owned bulk RHS": {
+            "seconds": 0.988784696,
+            "calls": 64
+          },
+          "owned scri interior pole samples": {
+            "seconds": 0.6883835840000002,
+            "calls": 65
+          },
+          "owned halo lift": {
+            "seconds": 0.2945292700000002,
+            "calls": 146
+          },
+          "scri owned native rates": {
+            "seconds": 0.22762268099999997,
+            "calls": 65
+          },
+          "FastFlow_sphradii_compute": {
+            "seconds": 0.21228895199999992,
+            "calls": 384
+          },
+          "hyperboloidal owned constraints": {
+            "seconds": 0.196410002,
+            "calls": 17
+          },
+          "scri nonlinear interpolation": {
+            "seconds": 0.17299679199999998,
+            "calls": 146
+          },
+          "scri owned null projection": {
+            "seconds": 0.11599048100000003,
+            "calls": 65
+          },
+          "Kokkos::View::initialization [owned halo entries_mirror] via memset": {
+            "seconds": 0.07116301000000001,
+            "calls": 2
+          },
+          "scri owned field sampling": {
+            "seconds": 0.05347133000000002,
+            "calls": 65
+          },
+          "sampled horizon maximum radius": {
+            "seconds": 0.02860623500000001,
+            "calls": 384
+          },
+          "FastFlow_surfintegrals": {
+            "seconds": 0.019152197000000024,
+            "calls": 384
+          }
+        },
+        "radial_prepare": {
+          "radial derivatives across owned rows and fields": {
+            "seconds": 0.012053958000000007,
+            "calls": 146
+          }
+        }
+      },
+      {
+        "rank": 0,
+        "spaces": {
+          "Host": {
+            "live": 0,
+            "peak": 332700272,
+            "allocations": 1816
+          },
+          "SYCLDeviceUSM": {
+            "live": 55816,
+            "peak": 1496324488,
+            "allocations": 276
+          },
+          "SYCLHostUSM": {
+            "live": 10240,
+            "peak": 10240,
+            "allocations": 6
+          }
+        },
+        "excluded_invalid_live_labels": [
+          "SYCLDeviceUSM:[unlabeled]",
+          "SYCLHostUSM:[unlabeled]"
+        ],
+        "top_kernel_intervals": {
+          "FastFlow_surfintegrals": {
+            "seconds": 3.399410625000001,
+            "calls": 384
+          },
+          "hyperboloidal owned bulk RHS": {
+            "seconds": 0.9977746540000003,
+            "calls": 64
+          },
+          "owned scri interior pole samples": {
+            "seconds": 0.6910269649999999,
+            "calls": 65
+          },
+          "owned halo lift": {
+            "seconds": 0.32142004399999996,
+            "calls": 146
+          },
+          "scri owned native rates": {
+            "seconds": 0.22833219799999996,
+            "calls": 65
+          },
+          "FastFlow_sphradii_compute": {
+            "seconds": 0.21411555499999987,
+            "calls": 384
+          },
+          "hyperboloidal owned constraints": {
+            "seconds": 0.19653122300000003,
+            "calls": 17
+          },
+          "scri nonlinear interpolation": {
+            "seconds": 0.17510673599999999,
+            "calls": 146
+          },
+          "scri owned null projection": {
+            "seconds": 0.11667852299999999,
+            "calls": 65
+          },
+          "Kokkos::View::initialization [owned halo entries_mirror] via memset": {
+            "seconds": 0.080430157,
+            "calls": 2
+          },
+          "scri owned field sampling": {
+            "seconds": 0.05215910700000002,
+            "calls": 65
+          },
+          "sampled horizon maximum radius": {
+            "seconds": 0.014573583000000006,
+            "calls": 384
+          }
+        },
+        "radial_prepare": {
+          "radial derivatives across owned rows and fields": {
+            "seconds": 0.012045683000000003,
+            "calls": 146
+          }
+        }
+      }
+    ],
+    "process_seconds": 47.1638366249972,
+    "unprofiled_reference_seconds": [
+      47.46017845798633,
+      47.111092032981105,
+      47.112748966988875
+    ],
+    "intrusive_overhead_ratio_to_reference_median": 1.0010843701360777,
+    "caveat": "Single separate profiling run; setup dominates; not an independent kernel speedup estimate. Per-space peaks cover observed Kokkos allocations only. Invalid unsigned live-label counters excluded; raw evidence unchanged."
+  },
+  "profile-boost-m1a": {
+    "ranks": [
+      {
+        "rank": 0,
+        "spaces": {
+          "Host": {
+            "live": 0,
+            "peak": 332700272,
+            "allocations": 1801
+          },
+          "SYCLDeviceUSM": {
+            "live": 55816,
+            "peak": 1574783824,
+            "allocations": 278
+          },
+          "SYCLHostUSM": {
+            "live": 2944,
+            "peak": 2944,
+            "allocations": 3
+          }
+        },
+        "excluded_invalid_live_labels": [
+          "SYCLDeviceUSM:[unlabeled]",
+          "SYCLHostUSM:[unlabeled]"
+        ],
+        "top_kernel_intervals": {
+          "FastFlow_surfintegrals": {
+            "seconds": 3.395143981999999,
+            "calls": 384
+          },
+          "hyperboloidal owned bulk RHS": {
+            "seconds": 0.99767305,
+            "calls": 64
+          },
+          "owned scri interior pole samples": {
+            "seconds": 0.6916445090000001,
+            "calls": 65
+          },
+          "owned halo lift": {
+            "seconds": 0.3214776660000001,
+            "calls": 146
+          },
+          "scri owned native rates": {
+            "seconds": 0.228325157,
+            "calls": 65
+          },
+          "FastFlow_sphradii_compute": {
+            "seconds": 0.21397601299999996,
+            "calls": 384
+          },
+          "hyperboloidal owned constraints": {
+            "seconds": 0.19653837500000004,
+            "calls": 17
+          },
+          "scri nonlinear interpolation": {
+            "seconds": 0.17460337100000006,
+            "calls": 146
+          },
+          "scri owned null projection": {
+            "seconds": 0.116562691,
+            "calls": 65
+          },
+          "Kokkos::View::initialization [owned halo entries_mirror] via memset": {
+            "seconds": 0.08055096,
+            "calls": 2
+          },
+          "scri owned field sampling": {
+            "seconds": 0.05169577899999998,
+            "calls": 65
+          },
+          "Kokkos::View::initialization [diagnostic persistent host fields] via memset": {
+            "seconds": 0.019060798,
+            "calls": 1
+          }
+        },
+        "radial_prepare": {
+          "radial derivatives across owned rows and fields": {
+            "seconds": 0.012003212,
+            "calls": 146
+          }
+        }
+      },
+      {
+        "rank": 1,
+        "spaces": {
+          "Host": {
+            "live": 0,
+            "peak": 146185696,
+            "allocations": 1738
+          },
+          "SYCLDeviceUSM": {
+            "live": 55816,
+            "peak": 1386532360,
+            "allocations": 215
+          },
+          "SYCLHostUSM": {
+            "live": 2944,
+            "peak": 2944,
+            "allocations": 3
+          }
+        },
+        "excluded_invalid_live_labels": [
+          "SYCLDeviceUSM:[unlabeled]",
+          "SYCLHostUSM:[unlabeled]"
+        ],
+        "top_kernel_intervals": {
+          "hyperboloidal owned bulk RHS": {
+            "seconds": 0.9972853320000005,
+            "calls": 64
+          },
+          "owned scri interior pole samples": {
+            "seconds": 0.6919478510000001,
+            "calls": 65
+          },
+          "scri owned native rates": {
+            "seconds": 0.22835039099999999,
+            "calls": 65
+          },
+          "FastFlow_sphradii_compute": {
+            "seconds": 0.21328121700000008,
+            "calls": 384
+          },
+          "hyperboloidal owned constraints": {
+            "seconds": 0.19773685400000002,
+            "calls": 17
+          },
+          "owned halo lift": {
+            "seconds": 0.1772138459999999,
+            "calls": 146
+          },
+          "scri nonlinear interpolation": {
+            "seconds": 0.17307551100000004,
+            "calls": 146
+          },
+          "scri owned null projection": {
+            "seconds": 0.11646883700000002,
+            "calls": 65
+          },
+          "scri owned field sampling": {
+            "seconds": 0.05327839300000001,
+            "calls": 65
+          },
+          "Kokkos::View::initialization [owned halo entries_mirror] via memset": {
+            "seconds": 0.035625420000000005,
+            "calls": 2
+          },
+          "sampled horizon maximum radius": {
+            "seconds": 0.028030272999999998,
+            "calls": 384
+          },
+          "Kokkos::View::initialization [diagnostic persistent host fields] via memset": {
+            "seconds": 0.020334520000000002,
+            "calls": 1
+          }
+        },
+        "radial_prepare": {
+          "radial derivatives across owned rows and fields": {
+            "seconds": 0.011976308000000003,
+            "calls": 146
+          }
+        }
+      },
+      {
+        "rank": 2,
+        "spaces": {
+          "Host": {
+            "live": 0,
+            "peak": 170772464,
+            "allocations": 1738
+          },
+          "SYCLDeviceUSM": {
+            "live": 55816,
+            "peak": 1457202664,
+            "allocations": 215
+          },
+          "SYCLHostUSM": {
+            "live": 10240,
+            "peak": 10240,
+            "allocations": 6
+          }
+        },
+        "excluded_invalid_live_labels": [
+          "SYCLDeviceUSM:[unlabeled]",
+          "SYCLHostUSM:[unlabeled]"
+        ],
+        "top_kernel_intervals": {
+          "hyperboloidal owned bulk RHS": {
+            "seconds": 0.996428457,
+            "calls": 64
+          },
+          "owned scri interior pole samples": {
+            "seconds": 0.6932344260000005,
+            "calls": 65
+          },
+          "scri nonlinear interpolation": {
+            "seconds": 0.39619657,
+            "calls": 146
+          },
+          "scri owned native rates": {
+            "seconds": 0.22885200200000003,
+            "calls": 65
+          },
+          "FastFlow_sphradii_compute": {
+            "seconds": 0.21508398399999987,
+            "calls": 384
+          },
+          "hyperboloidal owned constraints": {
+            "seconds": 0.198459297,
+            "calls": 17
+          },
+          "owned halo lift": {
+            "seconds": 0.188877034,
+            "calls": 146
+          },
+          "scri owned null projection": {
+            "seconds": 0.11704514199999998,
+            "calls": 65
+          },
+          "scri owned field sampling": {
+            "seconds": 0.053661522999999996,
+            "calls": 65
+          },
+          "Kokkos::View::initialization [owned halo entries_mirror] via memset": {
+            "seconds": 0.037929336,
+            "calls": 2
+          },
+          "radial derivatives across owned rows and fields": {
+            "seconds": 0.03271469300000001,
+            "calls": 146
+          },
+          "sampled horizon maximum radius": {
+            "seconds": 0.027138018999999996,
+            "calls": 384
+          }
+        },
+        "radial_prepare": {
+          "radial derivatives across owned rows and fields": {
+            "seconds": 0.03271469300000001,
+            "calls": 146
+          }
+        }
+      },
+      {
+        "rank": 3,
+        "spaces": {
+          "Host": {
+            "live": 0,
+            "peak": 292849008,
+            "allocations": 1737
+          },
+          "SYCLDeviceUSM": {
+            "live": 55816,
+            "peak": 1514536424,
+            "allocations": 214
+          },
+          "SYCLHostUSM": {
+            "live": 2944,
+            "peak": 2944,
+            "allocations": 3
+          }
+        },
+        "excluded_invalid_live_labels": [
+          "SYCLDeviceUSM:[unlabeled]",
+          "SYCLHostUSM:[unlabeled]"
+        ],
+        "top_kernel_intervals": {
+          "hyperboloidal owned bulk RHS": {
+            "seconds": 0.9881725699999997,
+            "calls": 64
+          },
+          "owned scri interior pole samples": {
+            "seconds": 0.6884489530000002,
+            "calls": 65
+          },
+          "owned halo lift": {
+            "seconds": 0.2944607999999999,
+            "calls": 146
+          },
+          "scri owned native rates": {
+            "seconds": 0.22757190000000002,
+            "calls": 65
+          },
+          "FastFlow_sphradii_compute": {
+            "seconds": 0.212752579,
+            "calls": 384
+          },
+          "hyperboloidal owned constraints": {
+            "seconds": 0.196159309,
+            "calls": 17
+          },
+          "scri nonlinear interpolation": {
+            "seconds": 0.17366088200000002,
+            "calls": 146
+          },
+          "scri owned null projection": {
+            "seconds": 0.11590063900000004,
+            "calls": 65
+          },
+          "Kokkos::View::initialization [owned halo entries_mirror] via memset": {
+            "seconds": 0.071758785,
+            "calls": 2
+          },
+          "scri owned field sampling": {
+            "seconds": 0.053647196,
+            "calls": 65
+          },
+          "sampled horizon maximum radius": {
+            "seconds": 0.028626378,
+            "calls": 384
+          },
+          "FastFlow_surfintegrals": {
+            "seconds": 0.019285904999999996,
+            "calls": 384
+          }
+        },
+        "radial_prepare": {
+          "radial derivatives across owned rows and fields": {
+            "seconds": 0.012112608000000002,
+            "calls": 146
+          }
+        }
+      }
+    ],
+    "process_seconds": 47.208598716999404,
+    "unprofiled_reference_seconds": [
+      47.261438998015365,
+      47.110355694021564,
+      47.05715346802026
+    ],
+    "intrusive_overhead_ratio_to_reference_median": 1.0020853806245047,
+    "caveat": "Single separate profiling run; setup dominates; not an independent kernel speedup estimate. Per-space peaks cover observed Kokkos allocations only. Invalid unsigned live-label counters excluded; raw evidence unchanged."
+  },
+  "profile-dynamic": {
+    "ranks": [
+      {
+        "rank": 0,
+        "spaces": {
+          "Host": {
+            "live": 0,
+            "peak": 551433336,
+            "allocations": 299
+          },
+          "SYCLDeviceUSM": {
+            "live": 125576,
+            "peak": 3409992328,
+            "allocations": 380
+          },
+          "SYCLHostUSM": {
+            "live": 512,
+            "peak": 512,
+            "allocations": 2
+          }
+        },
+        "excluded_invalid_live_labels": [
+          "SYCLDeviceUSM:[unlabeled]",
+          "SYCLHostUSM:[unlabeled]"
+        ],
+        "top_kernel_intervals": {},
+        "radial_prepare": {}
+      },
+      {
+        "rank": 1,
+        "spaces": {
+          "Host": {
+            "live": 0,
+            "peak": 549171144,
+            "allocations": 300
+          },
+          "SYCLDeviceUSM": {
+            "live": 125576,
+            "peak": 3474736680,
+            "allocations": 381
+          },
+          "SYCLHostUSM": {
+            "live": 512,
+            "peak": 512,
+            "allocations": 2
+          }
+        },
+        "excluded_invalid_live_labels": [
+          "SYCLDeviceUSM:[unlabeled]",
+          "SYCLHostUSM:[unlabeled]"
+        ],
+        "top_kernel_intervals": {},
+        "radial_prepare": {}
+      }
+    ],
+    "process_seconds": 64.45597045501927,
+    "unprofiled_reference_seconds": [],
+    "intrusive_overhead_ratio_to_reference_median": null,
+    "caveat": "Single separate profiling run; setup dominates; not an independent kernel speedup estimate. Per-space peaks cover observed Kokkos allocations only. Invalid unsigned live-label counters excluded; raw evidence unchanged."
+  },
+  "profile-m0": {
+    "ranks": [
+      {
+        "rank": 3,
+        "spaces": {
+          "Host": {
+            "live": 0,
+            "peak": 292849008,
+            "allocations": 123
+          },
+          "SYCLDeviceUSM": {
+            "live": 55816,
+            "peak": 1429709536,
+            "allocations": 149
+          },
+          "SYCLHostUSM": {
+            "live": 512,
+            "peak": 512,
+            "allocations": 2
+          }
+        },
+        "excluded_invalid_live_labels": [
+          "SYCLDeviceUSM:[unlabeled]",
+          "SYCLHostUSM:[unlabeled]"
+        ],
+        "top_kernel_intervals": {
+          "hyperboloidal owned bulk RHS": {
+            "seconds": 0.4929039330000001,
+            "calls": 32
+          },
+          "owned scri interior pole samples": {
+            "seconds": 0.3495990970000001,
+            "calls": 33
+          },
+          "owned halo lift": {
+            "seconds": 0.149105849,
+            "calls": 74
+          },
+          "scri owned native rates": {
+            "seconds": 0.115405569,
+            "calls": 33
+          },
+          "hyperboloidal owned constraints": {
+            "seconds": 0.10368195100000001,
+            "calls": 9
+          },
+          "scri nonlinear interpolation": {
+            "seconds": 0.08778525300000002,
+            "calls": 74
+          },
+          "Kokkos::View::initialization [owned halo entries_mirror] via memset": {
+            "seconds": 0.071074457,
+            "calls": 2
+          },
+          "scri owned null projection": {
+            "seconds": 0.058851837,
+            "calls": 33
+          },
+          "scri owned field sampling": {
+            "seconds": 0.027439021000000004,
+            "calls": 33
+          },
+          "Kokkos::View::initialization [host upload] via memset": {
+            "seconds": 0.013357683,
+            "calls": 9
+          },
+          "Kokkos::View::initialization [owned halo rows]": {
+            "seconds": 0.007028508,
+            "calls": 2
+          },
+          "radial derivatives across owned rows and fields": {
+            "seconds": 0.006138663999999999,
+            "calls": 74
+          }
+        },
+        "radial_prepare": {
+          "radial derivatives across owned rows and fields": {
+            "seconds": 0.006138663999999999,
+            "calls": 74
+          }
+        }
+      },
+      {
+        "rank": 2,
+        "spaces": {
+          "Host": {
+            "live": 0,
+            "peak": 170772464,
+            "allocations": 124
+          },
+          "SYCLDeviceUSM": {
+            "live": 55816,
+            "peak": 1341863816,
+            "allocations": 150
+          },
+          "SYCLHostUSM": {
+            "live": 512,
+            "peak": 512,
+            "allocations": 2
+          }
+        },
+        "excluded_invalid_live_labels": [
+          "SYCLDeviceUSM:[unlabeled]",
+          "SYCLHostUSM:[unlabeled]"
+        ],
+        "top_kernel_intervals": {
+          "hyperboloidal owned bulk RHS": {
+            "seconds": 0.4982806230000001,
+            "calls": 32
+          },
+          "owned scri interior pole samples": {
+            "seconds": 0.3523217150000001,
+            "calls": 33
+          },
+          "scri nonlinear interpolation": {
+            "seconds": 0.20020659400000002,
+            "calls": 74
+          },
+          "scri owned native rates": {
+            "seconds": 0.116034381,
+            "calls": 33
+          },
+          "hyperboloidal owned constraints": {
+            "seconds": 0.10471148200000001,
+            "calls": 9
+          },
+          "owned halo lift": {
+            "seconds": 0.09554949100000001,
+            "calls": 74
+          },
+          "scri owned null projection": {
+            "seconds": 0.059429461999999995,
+            "calls": 33
+          },
+          "Kokkos::View::initialization [owned halo entries_mirror] via memset": {
+            "seconds": 0.039217364000000005,
+            "calls": 2
+          },
+          "scri owned field sampling": {
+            "seconds": 0.027249812,
+            "calls": 33
+          },
+          "radial derivatives across owned rows and fields": {
+            "seconds": 0.016498441,
+            "calls": 74
+          },
+          "Kokkos::View::initialization [host upload] via memset": {
+            "seconds": 0.01313068,
+            "calls": 9
+          },
+          "Kokkos::View::initialization [owned halo rows]": {
+            "seconds": 0.006708888,
+            "calls": 2
+          }
+        },
+        "radial_prepare": {
+          "radial derivatives across owned rows and fields": {
+            "seconds": 0.016498441,
+            "calls": 74
+          }
+        }
+      },
+      {
+        "rank": 0,
+        "spaces": {
+          "Host": {
+            "live": 0,
+            "peak": 332700272,
+            "allocations": 123
+          },
+          "SYCLDeviceUSM": {
+            "live": 55816,
+            "peak": 1476880384,
+            "allocations": 149
+          },
+          "SYCLHostUSM": {
+            "live": 512,
+            "peak": 512,
+            "allocations": 2
+          }
+        },
+        "excluded_invalid_live_labels": [
+          "SYCLDeviceUSM:[unlabeled]",
+          "SYCLHostUSM:[unlabeled]"
+        ],
+        "top_kernel_intervals": {
+          "hyperboloidal owned bulk RHS": {
+            "seconds": 0.499064463,
+            "calls": 32
+          },
+          "owned scri interior pole samples": {
+            "seconds": 0.35122477600000007,
+            "calls": 33
+          },
+          "owned halo lift": {
+            "seconds": 0.162372958,
+            "calls": 74
+          },
+          "scri owned native rates": {
+            "seconds": 0.11586413000000001,
+            "calls": 33
+          },
+          "hyperboloidal owned constraints": {
+            "seconds": 0.10394639900000001,
+            "calls": 9
+          },
+          "scri nonlinear interpolation": {
+            "seconds": 0.08822136500000004,
+            "calls": 74
+          },
+          "Kokkos::View::initialization [owned halo entries_mirror] via memset": {
+            "seconds": 0.080790045,
+            "calls": 2
+          },
+          "scri owned null projection": {
+            "seconds": 0.059307768000000025,
+            "calls": 33
+          },
+          "scri owned field sampling": {
+            "seconds": 0.026469951,
+            "calls": 33
+          },
+          "Kokkos::View::initialization [host upload] via memset": {
+            "seconds": 0.013669806999999999,
+            "calls": 9
+          },
+          "Kokkos::View::initialization [owned halo rows]": {
+            "seconds": 0.0071256,
+            "calls": 2
+          },
+          "radial derivatives across owned rows and fields": {
+            "seconds": 0.006126573999999998,
+            "calls": 74
+          }
+        },
+        "radial_prepare": {
+          "radial derivatives across owned rows and fields": {
+            "seconds": 0.006126573999999998,
+            "calls": 74
+          }
+        }
+      },
+      {
+        "rank": 1,
+        "spaces": {
+          "Host": {
+            "live": 0,
+            "peak": 146185696,
+            "allocations": 124
+          },
+          "SYCLDeviceUSM": {
+            "live": 55816,
+            "peak": 1284270064,
+            "allocations": 150
+          },
+          "SYCLHostUSM": {
+            "live": 512,
+            "peak": 512,
+            "allocations": 2
+          }
+        },
+        "excluded_invalid_live_labels": [
+          "SYCLDeviceUSM:[unlabeled]",
+          "SYCLHostUSM:[unlabeled]"
+        ],
+        "top_kernel_intervals": {
+          "hyperboloidal owned bulk RHS": {
+            "seconds": 0.498285394,
+            "calls": 32
+          },
+          "owned scri interior pole samples": {
+            "seconds": 0.35110757899999995,
+            "calls": 33
+          },
+          "scri owned native rates": {
+            "seconds": 0.116007158,
+            "calls": 33
+          },
+          "hyperboloidal owned constraints": {
+            "seconds": 0.104654248,
+            "calls": 9
+          },
+          "owned halo lift": {
+            "seconds": 0.08971347399999999,
+            "calls": 74
+          },
+          "scri nonlinear interpolation": {
+            "seconds": 0.088248843,
+            "calls": 74
+          },
+          "scri owned null projection": {
+            "seconds": 0.05891020499999999,
+            "calls": 33
+          },
+          "Kokkos::View::initialization [owned halo entries_mirror] via memset": {
+            "seconds": 0.036974236,
+            "calls": 2
+          },
+          "scri owned field sampling": {
+            "seconds": 0.027013762999999996,
+            "calls": 33
+          },
+          "Kokkos::View::initialization [host upload] via memset": {
+            "seconds": 0.013571386,
+            "calls": 9
+          },
+          "Kokkos::View::initialization [owned halo rows]": {
+            "seconds": 0.006979915,
+            "calls": 2
+          },
+          "radial derivatives across owned rows and fields": {
+            "seconds": 0.006100137000000001,
+            "calls": 74
+          }
+        },
+        "radial_prepare": {
+          "radial derivatives across owned rows and fields": {
+            "seconds": 0.006100137000000001,
+            "calls": 74
+          }
+        }
+      }
+    ],
+    "process_seconds": 23.33361985499505,
+    "unprofiled_reference_seconds": [
+      23.333639221003978,
+      23.38661731898901,
+      23.433583667996572
+    ],
+    "intrusive_overhead_ratio_to_reference_median": 0.9977338550816869,
+    "caveat": "Single separate profiling run; setup dominates; not an independent kernel speedup estimate. Per-space peaks cover observed Kokkos allocations only. Invalid unsigned live-label counters excluded; raw evidence unchanged."
+  },
+  "profile-m1b": {
+    "ranks": [
+      {
+        "rank": 3,
+        "spaces": {
+          "Host": {
+            "live": 0,
+            "peak": 292849008,
+            "allocations": 123
+          },
+          "SYCLDeviceUSM": {
+            "live": 55816,
+            "peak": 1429709536,
+            "allocations": 149
+          },
+          "SYCLHostUSM": {
+            "live": 512,
+            "peak": 512,
+            "allocations": 2
+          }
+        },
+        "excluded_invalid_live_labels": [
+          "SYCLDeviceUSM:[unlabeled]",
+          "SYCLHostUSM:[unlabeled]"
+        ],
+        "top_kernel_intervals": {
+          "hyperboloidal owned bulk RHS": {
+            "seconds": 0.4903323340000001,
+            "calls": 32
+          },
+          "owned scri interior pole samples": {
+            "seconds": 0.34960541000000006,
+            "calls": 33
+          },
+          "owned halo lift": {
+            "seconds": 0.14898951400000005,
+            "calls": 74
+          },
+          "scri owned native rates": {
+            "seconds": 0.11533596700000003,
+            "calls": 33
+          },
+          "hyperboloidal owned constraints": {
+            "seconds": 0.10362203,
+            "calls": 9
+          },
+          "scri nonlinear interpolation": {
+            "seconds": 0.08796198600000003,
+            "calls": 74
+          },
+          "Kokkos::View::initialization [owned halo entries_mirror] via memset": {
+            "seconds": 0.070729792,
+            "calls": 2
+          },
+          "scri owned null projection": {
+            "seconds": 0.058918003999999996,
+            "calls": 33
+          },
+          "scri owned field sampling": {
+            "seconds": 0.027066768,
+            "calls": 33
+          },
+          "Kokkos::View::initialization [host upload] via memset": {
+            "seconds": 0.012986159,
+            "calls": 9
+          },
+          "Kokkos::View::initialization [owned halo rows]": {
+            "seconds": 0.007144383,
+            "calls": 2
+          },
+          "radial derivatives consumed by point jet": {
+            "seconds": 0.006143226000000001,
+            "calls": 74
+          }
+        },
+        "radial_prepare": {
+          "radial derivatives consumed by point jet": {
+            "seconds": 0.006143226000000001,
+            "calls": 74
+          }
+        }
+      },
+      {
+        "rank": 2,
+        "spaces": {
+          "Host": {
+            "live": 0,
+            "peak": 170772464,
+            "allocations": 124
+          },
+          "SYCLDeviceUSM": {
+            "live": 55816,
+            "peak": 1341863816,
+            "allocations": 150
+          },
+          "SYCLHostUSM": {
+            "live": 512,
+            "peak": 512,
+            "allocations": 2
+          }
+        },
+        "excluded_invalid_live_labels": [
+          "SYCLDeviceUSM:[unlabeled]",
+          "SYCLHostUSM:[unlabeled]"
+        ],
+        "top_kernel_intervals": {
+          "hyperboloidal owned bulk RHS": {
+            "seconds": 0.4932689670000001,
+            "calls": 32
+          },
+          "owned scri interior pole samples": {
+            "seconds": 0.352554737,
+            "calls": 33
+          },
+          "scri nonlinear interpolation": {
+            "seconds": 0.20083868900000004,
+            "calls": 74
+          },
+          "scri owned native rates": {
+            "seconds": 0.115989416,
+            "calls": 33
+          },
+          "hyperboloidal owned constraints": {
+            "seconds": 0.10460965900000002,
+            "calls": 9
+          },
+          "owned halo lift": {
+            "seconds": 0.09556071399999995,
+            "calls": 74
+          },
+          "scri owned null projection": {
+            "seconds": 0.05946837900000001,
+            "calls": 33
+          },
+          "Kokkos::View::initialization [owned halo entries_mirror] via memset": {
+            "seconds": 0.039590114,
+            "calls": 2
+          },
+          "scri owned field sampling": {
+            "seconds": 0.027483318,
+            "calls": 33
+          },
+          "radial derivatives consumed by point jet": {
+            "seconds": 0.016931115000000004,
+            "calls": 74
+          },
+          "Kokkos::View::initialization [host upload] via memset": {
+            "seconds": 0.013100224,
+            "calls": 9
+          },
+          "Kokkos::View::initialization [owned halo rows]": {
+            "seconds": 0.007034014000000001,
+            "calls": 2
+          }
+        },
+        "radial_prepare": {
+          "radial derivatives consumed by point jet": {
+            "seconds": 0.016931115000000004,
+            "calls": 74
+          }
+        }
+      },
+      {
+        "rank": 1,
+        "spaces": {
+          "Host": {
+            "live": 0,
+            "peak": 146185696,
+            "allocations": 124
+          },
+          "SYCLDeviceUSM": {
+            "live": 55816,
+            "peak": 1284270064,
+            "allocations": 150
+          },
+          "SYCLHostUSM": {
+            "live": 512,
+            "peak": 512,
+            "allocations": 2
+          }
+        },
+        "excluded_invalid_live_labels": [
+          "SYCLDeviceUSM:[unlabeled]",
+          "SYCLHostUSM:[unlabeled]"
+        ],
+        "top_kernel_intervals": {
+          "hyperboloidal owned bulk RHS": {
+            "seconds": 0.49594164500000004,
+            "calls": 32
+          },
+          "owned scri interior pole samples": {
+            "seconds": 0.3512261929999999,
+            "calls": 33
+          },
+          "scri owned native rates": {
+            "seconds": 0.11596964900000001,
+            "calls": 33
+          },
+          "hyperboloidal owned constraints": {
+            "seconds": 0.104504546,
+            "calls": 9
+          },
+          "owned halo lift": {
+            "seconds": 0.08967387099999999,
+            "calls": 74
+          },
+          "scri nonlinear interpolation": {
+            "seconds": 0.08889260099999999,
+            "calls": 74
+          },
+          "scri owned null projection": {
+            "seconds": 0.058987571,
+            "calls": 33
+          },
+          "Kokkos::View::initialization [owned halo entries_mirror] via memset": {
+            "seconds": 0.036703786,
+            "calls": 2
+          },
+          "scri owned field sampling": {
+            "seconds": 0.027046105000000004,
+            "calls": 33
+          },
+          "Kokkos::View::initialization [host upload] via memset": {
+            "seconds": 0.013359497000000003,
+            "calls": 9
+          },
+          "Kokkos::View::initialization [owned halo rows]": {
+            "seconds": 0.007140901000000001,
+            "calls": 2
+          },
+          "radial derivatives consumed by point jet": {
+            "seconds": 0.006369230000000002,
+            "calls": 74
+          }
+        },
+        "radial_prepare": {
+          "radial derivatives consumed by point jet": {
+            "seconds": 0.006369230000000002,
+            "calls": 74
+          }
+        }
+      },
+      {
+        "rank": 0,
+        "spaces": {
+          "Host": {
+            "live": 0,
+            "peak": 332700272,
+            "allocations": 123
+          },
+          "SYCLDeviceUSM": {
+            "live": 55816,
+            "peak": 1476880384,
+            "allocations": 149
+          },
+          "SYCLHostUSM": {
+            "live": 512,
+            "peak": 512,
+            "allocations": 2
+          }
+        },
+        "excluded_invalid_live_labels": [
+          "SYCLDeviceUSM:[unlabeled]",
+          "SYCLHostUSM:[unlabeled]"
+        ],
+        "top_kernel_intervals": {
+          "hyperboloidal owned bulk RHS": {
+            "seconds": 0.494750819,
+            "calls": 32
+          },
+          "owned scri interior pole samples": {
+            "seconds": 0.351295666,
+            "calls": 33
+          },
+          "owned halo lift": {
+            "seconds": 0.16267460499999997,
+            "calls": 74
+          },
+          "scri owned native rates": {
+            "seconds": 0.11565187700000003,
+            "calls": 33
+          },
+          "hyperboloidal owned constraints": {
+            "seconds": 0.10378426900000001,
+            "calls": 9
+          },
+          "scri nonlinear interpolation": {
+            "seconds": 0.08905393500000001,
+            "calls": 74
+          },
+          "Kokkos::View::initialization [owned halo entries_mirror] via memset": {
+            "seconds": 0.077741927,
+            "calls": 2
+          },
+          "scri owned null projection": {
+            "seconds": 0.05927395,
+            "calls": 33
+          },
+          "scri owned field sampling": {
+            "seconds": 0.026266751,
+            "calls": 33
+          },
+          "Kokkos::View::initialization [host upload] via memset": {
+            "seconds": 0.013551898,
+            "calls": 9
+          },
+          "Kokkos::View::initialization [owned halo rows]": {
+            "seconds": 0.0071388910000000005,
+            "calls": 2
+          },
+          "radial derivatives consumed by point jet": {
+            "seconds": 0.006165300000000001,
+            "calls": 74
+          }
+        },
+        "radial_prepare": {
+          "radial derivatives consumed by point jet": {
+            "seconds": 0.006165300000000001,
+            "calls": 74
+          }
+        }
+      }
+    ],
+    "process_seconds": 23.385505767015275,
+    "unprofiled_reference_seconds": [],
+    "intrusive_overhead_ratio_to_reference_median": null,
+    "caveat": "Single separate profiling run; setup dominates; not an independent kernel speedup estimate. Per-space peaks cover observed Kokkos allocations only. Invalid unsigned live-label counters excluded; raw evidence unchanged."
+  }
+}

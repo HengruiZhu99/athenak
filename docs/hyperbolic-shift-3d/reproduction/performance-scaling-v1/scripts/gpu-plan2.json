@@ -1,0 +1,539 @@
+{
+  "aurora": true,
+  "nodes": 2,
+  "deadline_seconds": 3100,
+  "variants": {
+    "base": "/home/hzhu/hyperboloidal-performance-scaling-20261103/control-build-v2/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_amr_evolution",
+    "m0": "/home/hzhu/hyperboloidal-performance-scaling-20261103/m1-build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_amr_evolution",
+    "m4": "/home/hzhu/hyperboloidal-performance-scaling-20261103/m4-bin/hyperbolic_shift_3d_amr_setup"
+  },
+  "runs": [
+    {
+      "name": "qual-dynamic-minkowski-base",
+      "variant": "base",
+      "ranks": 2,
+      "kind": "minkowski",
+      "steps": 6,
+      "policy": "dynamic",
+      "timeout": 240,
+      "equivalence": "dynamicminkowski"
+    },
+    {
+      "name": "qual-dynamic-minkowski-m4",
+      "variant": "m4",
+      "ranks": 2,
+      "kind": "minkowski",
+      "steps": 6,
+      "policy": "dynamic",
+      "timeout": 240,
+      "equivalence": "dynamicminkowski"
+    },
+    {
+      "name": "qual-uniform-wave-base",
+      "variant": "base",
+      "ranks": 2,
+      "kind": "wave",
+      "steps": 6,
+      "policy": "uniform",
+      "timeout": 240,
+      "equivalence": "uniformwave"
+    },
+    {
+      "name": "qual-uniform-wave-m4",
+      "variant": "m4",
+      "ranks": 2,
+      "kind": "wave",
+      "steps": 6,
+      "policy": "uniform",
+      "timeout": 240,
+      "equivalence": "uniformwave"
+    },
+    {
+      "name": "qual-uniform-boost-base",
+      "variant": "base",
+      "ranks": 2,
+      "kind": "boost",
+      "steps": 6,
+      "policy": "uniform",
+      "timeout": 240,
+      "equivalence": "uniformboost"
+    },
+    {
+      "name": "qual-uniform-boost-m4",
+      "variant": "m4",
+      "ranks": 2,
+      "kind": "boost",
+      "steps": 6,
+      "policy": "uniform",
+      "timeout": 240,
+      "equivalence": "uniformboost"
+    },
+    {
+      "name": "qual-fixed-boost-base",
+      "variant": "base",
+      "ranks": 2,
+      "kind": "boost",
+      "steps": 6,
+      "policy": "fixed",
+      "timeout": 240,
+      "equivalence": "fixedboost"
+    },
+    {
+      "name": "qual-fixed-boost-m4",
+      "variant": "m4",
+      "ranks": 2,
+      "kind": "boost",
+      "steps": 6,
+      "policy": "fixed",
+      "timeout": 240,
+      "equivalence": "fixedboost"
+    },
+    {
+      "name": "qual-rejected-m4",
+      "variant": "m4",
+      "ranks": 2,
+      "kind": "boost",
+      "steps": 6,
+      "policy": "dynamic",
+      "timeout": 240,
+      "expected": 2
+    },
+    {
+      "name": "restart-save",
+      "variant": "m4",
+      "ranks": 2,
+      "kind": "wave",
+      "steps": 3,
+      "policy": "dynamic",
+      "timeout": 240
+    },
+    {
+      "name": "restart-finish",
+      "variant": "m4",
+      "ranks": 4,
+      "kind": "wave",
+      "steps": 6,
+      "policy": "dynamic",
+      "timeout": 240,
+      "restart": "/home/hzhu/hyperboloidal-performance-scaling-20261103/gpu-job2/restart-save.checkpoint",
+      "equivalence": "dynamicwave"
+    },
+    {
+      "name": "setup-dynamic-p2-r0-m0",
+      "variant": "m0",
+      "ranks": 2,
+      "kind": "wave",
+      "steps": 6,
+      "policy": "dynamic",
+      "timeout": 240,
+      "equivalence": "dynamicwave"
+    },
+    {
+      "name": "setup-dynamic-p2-r0-m4",
+      "variant": "m4",
+      "ranks": 2,
+      "kind": "wave",
+      "steps": 6,
+      "policy": "dynamic",
+      "timeout": 240,
+      "equivalence": "dynamicwave"
+    },
+    {
+      "name": "setup-dynamic-p2-r1-m4",
+      "variant": "m4",
+      "ranks": 2,
+      "kind": "wave",
+      "steps": 6,
+      "policy": "dynamic",
+      "timeout": 240,
+      "equivalence": "dynamicwave"
+    },
+    {
+      "name": "setup-dynamic-p2-r1-m0",
+      "variant": "m0",
+      "ranks": 2,
+      "kind": "wave",
+      "steps": 6,
+      "policy": "dynamic",
+      "timeout": 240,
+      "equivalence": "dynamicwave"
+    },
+    {
+      "name": "setup-dynamic-p2-r2-m0",
+      "variant": "m0",
+      "ranks": 2,
+      "kind": "wave",
+      "steps": 6,
+      "policy": "dynamic",
+      "timeout": 240,
+      "equivalence": "dynamicwave"
+    },
+    {
+      "name": "setup-dynamic-p2-r2-m4",
+      "variant": "m4",
+      "ranks": 2,
+      "kind": "wave",
+      "steps": 6,
+      "policy": "dynamic",
+      "timeout": 240,
+      "equivalence": "dynamicwave"
+    },
+    {
+      "name": "setup-fixed-p4-r0-m0",
+      "variant": "m0",
+      "ranks": 4,
+      "kind": "wave",
+      "steps": 8,
+      "policy": "fixed",
+      "timeout": 240,
+      "equivalence": "fixed8"
+    },
+    {
+      "name": "setup-fixed-p4-r0-m4",
+      "variant": "m4",
+      "ranks": 4,
+      "kind": "wave",
+      "steps": 8,
+      "policy": "fixed",
+      "timeout": 240,
+      "equivalence": "fixed8"
+    },
+    {
+      "name": "setup-fixed-p4-r1-m4",
+      "variant": "m4",
+      "ranks": 4,
+      "kind": "wave",
+      "steps": 8,
+      "policy": "fixed",
+      "timeout": 240,
+      "equivalence": "fixed8"
+    },
+    {
+      "name": "setup-fixed-p4-r1-m0",
+      "variant": "m0",
+      "ranks": 4,
+      "kind": "wave",
+      "steps": 8,
+      "policy": "fixed",
+      "timeout": 240,
+      "equivalence": "fixed8"
+    },
+    {
+      "name": "setup-fixed-p4-r2-m0",
+      "variant": "m0",
+      "ranks": 4,
+      "kind": "wave",
+      "steps": 8,
+      "policy": "fixed",
+      "timeout": 240,
+      "equivalence": "fixed8"
+    },
+    {
+      "name": "setup-fixed-p4-r2-m4",
+      "variant": "m4",
+      "ranks": 4,
+      "kind": "wave",
+      "steps": 8,
+      "policy": "fixed",
+      "timeout": 240,
+      "equivalence": "fixed8"
+    },
+    {
+      "name": "scaling-mixed-p1-ppn1-r0-m4",
+      "variant": "m4",
+      "ranks": 1,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "fixed",
+      "timeout": 240,
+      "ppn": 1,
+      "equivalence": "fixed32"
+    },
+    {
+      "name": "scaling-mixed-p2-ppn2-r0-m4",
+      "variant": "m4",
+      "ranks": 2,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "fixed",
+      "timeout": 240,
+      "ppn": 2,
+      "equivalence": "fixed32"
+    },
+    {
+      "name": "scaling-mixed-p4-ppn4-r0-m4",
+      "variant": "m4",
+      "ranks": 4,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "fixed",
+      "timeout": 240,
+      "ppn": 4,
+      "equivalence": "fixed32"
+    },
+    {
+      "name": "scaling-mixed-p8-ppn8-r0-m4",
+      "variant": "m4",
+      "ranks": 8,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "fixed",
+      "timeout": 240,
+      "ppn": 8,
+      "equivalence": "fixed32"
+    },
+    {
+      "name": "scaling-mixed-inter-p8-ppn4-r0-m4",
+      "variant": "m4",
+      "ranks": 8,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "fixed",
+      "timeout": 240,
+      "ppn": 4,
+      "equivalence": "fixed32"
+    },
+    {
+      "name": "scaling-uniform-p1-ppn1-r0-m4",
+      "variant": "m4",
+      "ranks": 1,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "uniform",
+      "timeout": 240,
+      "ppn": 1,
+      "equivalence": "uniform32"
+    },
+    {
+      "name": "scaling-uniform-p4-ppn4-r0-m4",
+      "variant": "m4",
+      "ranks": 4,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "uniform",
+      "timeout": 240,
+      "ppn": 4,
+      "equivalence": "uniform32"
+    },
+    {
+      "name": "scaling-uniform-p12-ppn12-r0-m4",
+      "variant": "m4",
+      "ranks": 12,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "uniform",
+      "timeout": 240,
+      "ppn": 12,
+      "equivalence": "uniform32"
+    },
+    {
+      "name": "scaling-uniform-p24-ppn12-r0-m4",
+      "variant": "m4",
+      "ranks": 24,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "uniform",
+      "timeout": 240,
+      "ppn": 12,
+      "equivalence": "uniform32"
+    },
+    {
+      "name": "scaling-uniform-p24-ppn12-r1-m4",
+      "variant": "m4",
+      "ranks": 24,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "uniform",
+      "timeout": 240,
+      "ppn": 12,
+      "equivalence": "uniform32"
+    },
+    {
+      "name": "scaling-uniform-p12-ppn12-r1-m4",
+      "variant": "m4",
+      "ranks": 12,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "uniform",
+      "timeout": 240,
+      "ppn": 12,
+      "equivalence": "uniform32"
+    },
+    {
+      "name": "scaling-uniform-p4-ppn4-r1-m4",
+      "variant": "m4",
+      "ranks": 4,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "uniform",
+      "timeout": 240,
+      "ppn": 4,
+      "equivalence": "uniform32"
+    },
+    {
+      "name": "scaling-uniform-p1-ppn1-r1-m4",
+      "variant": "m4",
+      "ranks": 1,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "uniform",
+      "timeout": 240,
+      "ppn": 1,
+      "equivalence": "uniform32"
+    },
+    {
+      "name": "scaling-mixed-inter-p8-ppn4-r1-m4",
+      "variant": "m4",
+      "ranks": 8,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "fixed",
+      "timeout": 240,
+      "ppn": 4,
+      "equivalence": "fixed32"
+    },
+    {
+      "name": "scaling-mixed-p8-ppn8-r1-m4",
+      "variant": "m4",
+      "ranks": 8,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "fixed",
+      "timeout": 240,
+      "ppn": 8,
+      "equivalence": "fixed32"
+    },
+    {
+      "name": "scaling-mixed-p4-ppn4-r1-m4",
+      "variant": "m4",
+      "ranks": 4,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "fixed",
+      "timeout": 240,
+      "ppn": 4,
+      "equivalence": "fixed32"
+    },
+    {
+      "name": "scaling-mixed-p2-ppn2-r1-m4",
+      "variant": "m4",
+      "ranks": 2,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "fixed",
+      "timeout": 240,
+      "ppn": 2,
+      "equivalence": "fixed32"
+    },
+    {
+      "name": "scaling-mixed-p1-ppn1-r1-m4",
+      "variant": "m4",
+      "ranks": 1,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "fixed",
+      "timeout": 240,
+      "ppn": 1,
+      "equivalence": "fixed32"
+    },
+    {
+      "name": "scaling-mixed-p1-ppn1-r2-m4",
+      "variant": "m4",
+      "ranks": 1,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "fixed",
+      "timeout": 240,
+      "ppn": 1,
+      "equivalence": "fixed32"
+    },
+    {
+      "name": "scaling-mixed-p2-ppn2-r2-m4",
+      "variant": "m4",
+      "ranks": 2,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "fixed",
+      "timeout": 240,
+      "ppn": 2,
+      "equivalence": "fixed32"
+    },
+    {
+      "name": "scaling-mixed-p4-ppn4-r2-m4",
+      "variant": "m4",
+      "ranks": 4,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "fixed",
+      "timeout": 240,
+      "ppn": 4,
+      "equivalence": "fixed32"
+    },
+    {
+      "name": "scaling-mixed-p8-ppn8-r2-m4",
+      "variant": "m4",
+      "ranks": 8,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "fixed",
+      "timeout": 240,
+      "ppn": 8,
+      "equivalence": "fixed32"
+    },
+    {
+      "name": "scaling-mixed-inter-p8-ppn4-r2-m4",
+      "variant": "m4",
+      "ranks": 8,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "fixed",
+      "timeout": 240,
+      "ppn": 4,
+      "equivalence": "fixed32"
+    },
+    {
+      "name": "scaling-uniform-p1-ppn1-r2-m4",
+      "variant": "m4",
+      "ranks": 1,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "uniform",
+      "timeout": 240,
+      "ppn": 1,
+      "equivalence": "uniform32"
+    },
+    {
+      "name": "scaling-uniform-p4-ppn4-r2-m4",
+      "variant": "m4",
+      "ranks": 4,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "uniform",
+      "timeout": 240,
+      "ppn": 4,
+      "equivalence": "uniform32"
+    },
+    {
+      "name": "scaling-uniform-p12-ppn12-r2-m4",
+      "variant": "m4",
+      "ranks": 12,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "uniform",
+      "timeout": 240,
+      "ppn": 12,
+      "equivalence": "uniform32"
+    },
+    {
+      "name": "scaling-uniform-p24-ppn12-r2-m4",
+      "variant": "m4",
+      "ranks": 24,
+      "kind": "wave",
+      "steps": 32,
+      "policy": "uniform",
+      "timeout": 240,
+      "ppn": 12,
+      "equivalence": "uniform32"
+    }
+  ]
+}

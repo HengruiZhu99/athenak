@@ -1,0 +1,2833 @@
+{
+  "scope": "Structural counts only. Hypothetical cuts at unsupported rank counts are not successful MPI runs. Whole-block active dependencies exclude additional halo/normal/scri donors; workspace bytes exclude geometry/plans and other buffers.",
+  "source_commit": "c16a7c212acb00e9f963cb9a9f42d5d886777a7e",
+  "layouts": [
+    {
+      "checkpoint": "output/amr-local/restart-v1/wave-full.checkpoint",
+      "sha256": "8e8d28add8411268d5ba8c83a8f83b4b5b857b2f03f0b024aa1bd67b9a8de69a",
+      "n": 12,
+      "root_subdivisions": 2,
+      "leaves": 8,
+      "active": 108000,
+      "blocks": 44,
+      "two_full_padded_workspaces_bytes_per_rank": 383578624,
+      "state_and_base_bytes_per_rank": 53568000,
+      "partitions": [
+        {
+          "ranks": 1,
+          "default_constructor_can_start": true,
+          "owners": [
+            {
+              "rank": 0,
+              "active": 108000,
+              "by_region": {
+                "cartesian": 27000,
+                "shell_0": 29160,
+                "shell_1": 10368,
+                "shell_2": 10368,
+                "shell_3": 10368,
+                "shell_4": 10368,
+                "shell_5": 10368
+              },
+              "selected_blocks": 44,
+              "block_index_span": 44,
+              "selected_whole_block_active": 108000,
+              "native_capacity": 104,
+              "native_state_compensation_bytes": 554218496
+            }
+          ]
+        },
+        {
+          "ranks": 2,
+          "default_constructor_can_start": true,
+          "owners": [
+            {
+              "rank": 0,
+              "active": 54000,
+              "by_region": {
+                "cartesian": 13824,
+                "shell_0": 10368,
+                "shell_1": 10368,
+                "shell_2": 10368,
+                "shell_3": 9072
+              },
+              "selected_blocks": 32,
+              "block_index_span": 32,
+              "selected_whole_block_active": 87264,
+              "native_capacity": 56,
+              "native_state_compensation_bytes": 298425344
+            },
+            {
+              "rank": 1,
+              "active": 54000,
+              "by_region": {
+                "shell_3": 1296,
+                "shell_4": 10368,
+                "shell_5": 10368,
+                "cartesian": 13176,
+                "shell_0": 18792
+              },
+              "selected_blocks": 27,
+              "block_index_span": 44,
+              "selected_whole_block_active": 78624,
+              "native_capacity": 56,
+              "native_state_compensation_bytes": 298425344
+            }
+          ]
+        },
+        {
+          "ranks": 4,
+          "default_constructor_can_start": true,
+          "owners": [
+            {
+              "rank": 0,
+              "active": 27000,
+              "by_region": {
+                "cartesian": 13824,
+                "shell_0": 10368,
+                "shell_1": 2808
+              },
+              "selected_blocks": 16,
+              "block_index_span": 16,
+              "selected_whole_block_active": 59616,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 1,
+              "active": 27000,
+              "by_region": {
+                "shell_1": 7560,
+                "shell_2": 10368,
+                "shell_3": 9072
+              },
+              "selected_blocks": 17,
+              "block_index_span": 17,
+              "selected_whole_block_active": 29376,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 2,
+              "active": 27000,
+              "by_region": {
+                "shell_3": 1296,
+                "shell_4": 10368,
+                "shell_5": 10368,
+                "cartesian": 4968
+              },
+              "selected_blocks": 17,
+              "block_index_span": 44,
+              "selected_whole_block_active": 35964,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 3,
+              "active": 27000,
+              "by_region": {
+                "cartesian": 8208,
+                "shell_0": 18792
+              },
+              "selected_blocks": 11,
+              "block_index_span": 11,
+              "selected_whole_block_active": 46035,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            }
+          ]
+        },
+        {
+          "ranks": 8,
+          "default_constructor_can_start": true,
+          "owners": [
+            {
+              "rank": 0,
+              "active": 13500,
+              "by_region": {
+                "cartesian": 13500
+              },
+              "selected_blocks": 8,
+              "block_index_span": 8,
+              "selected_whole_block_active": 27000,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 1,
+              "active": 13500,
+              "by_region": {
+                "cartesian": 324,
+                "shell_0": 10368,
+                "shell_1": 2808
+              },
+              "selected_blocks": 9,
+              "block_index_span": 9,
+              "selected_whole_block_active": 35991,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 2,
+              "active": 13500,
+              "by_region": {
+                "shell_1": 7560,
+                "shell_2": 5940
+              },
+              "selected_blocks": 9,
+              "block_index_span": 9,
+              "selected_whole_block_active": 15552,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 3,
+              "active": 13500,
+              "by_region": {
+                "shell_2": 4428,
+                "shell_3": 9072
+              },
+              "selected_blocks": 9,
+              "block_index_span": 9,
+              "selected_whole_block_active": 15552,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 4,
+              "active": 13500,
+              "by_region": {
+                "shell_3": 1296,
+                "shell_4": 10368,
+                "shell_5": 1836
+              },
+              "selected_blocks": 9,
+              "block_index_span": 9,
+              "selected_whole_block_active": 15552,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 5,
+              "active": 13500,
+              "by_region": {
+                "shell_5": 8532,
+                "cartesian": 4968
+              },
+              "selected_blocks": 9,
+              "block_index_span": 44,
+              "selected_whole_block_active": 22140,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 6,
+              "active": 13500,
+              "by_region": {
+                "cartesian": 8208,
+                "shell_0": 5292
+              },
+              "selected_blocks": 7,
+              "block_index_span": 7,
+              "selected_whole_block_active": 26595,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 7,
+              "active": 13500,
+              "by_region": {
+                "shell_0": 13500
+              },
+              "selected_blocks": 5,
+              "block_index_span": 5,
+              "selected_whole_block_active": 24300,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            }
+          ]
+        },
+        {
+          "ranks": 12,
+          "default_constructor_can_start": false,
+          "owners": [
+            {
+              "rank": 0,
+              "active": 9000,
+              "by_region": {
+                "cartesian": 9000
+              },
+              "selected_blocks": 6,
+              "block_index_span": 6,
+              "selected_whole_block_active": 20250,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 1,
+              "active": 9000,
+              "by_region": {
+                "cartesian": 4824,
+                "shell_0": 4176
+              },
+              "selected_blocks": 6,
+              "block_index_span": 6,
+              "selected_whole_block_active": 24705,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 2,
+              "active": 9000,
+              "by_region": {
+                "shell_0": 6192,
+                "shell_1": 2808
+              },
+              "selected_blocks": 6,
+              "block_index_span": 6,
+              "selected_whole_block_active": 22896,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 3,
+              "active": 9000,
+              "by_region": {
+                "shell_1": 7560,
+                "shell_2": 1440
+              },
+              "selected_blocks": 6,
+              "block_index_span": 6,
+              "selected_whole_block_active": 10368,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 4,
+              "active": 9000,
+              "by_region": {
+                "shell_2": 8928,
+                "shell_3": 72
+              },
+              "selected_blocks": 7,
+              "block_index_span": 7,
+              "selected_whole_block_active": 12096,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 5,
+              "active": 9000,
+              "by_region": {
+                "shell_3": 9000
+              },
+              "selected_blocks": 6,
+              "block_index_span": 6,
+              "selected_whole_block_active": 10368,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 6,
+              "active": 9000,
+              "by_region": {
+                "shell_3": 1296,
+                "shell_4": 7704
+              },
+              "selected_blocks": 6,
+              "block_index_span": 6,
+              "selected_whole_block_active": 10368,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 7,
+              "active": 9000,
+              "by_region": {
+                "shell_4": 2664,
+                "shell_5": 6336
+              },
+              "selected_blocks": 6,
+              "block_index_span": 6,
+              "selected_whole_block_active": 10368,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 8,
+              "active": 9000,
+              "by_region": {
+                "shell_5": 4032,
+                "cartesian": 4968
+              },
+              "selected_blocks": 7,
+              "block_index_span": 44,
+              "selected_whole_block_active": 18684,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 9,
+              "active": 9000,
+              "by_region": {
+                "cartesian": 8208,
+                "shell_0": 792
+              },
+              "selected_blocks": 6,
+              "block_index_span": 6,
+              "selected_whole_block_active": 21735,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 10,
+              "active": 9000,
+              "by_region": {
+                "shell_0": 9000
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 19440,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 11,
+              "active": 9000,
+              "by_region": {
+                "shell_0": 9000
+              },
+              "selected_blocks": 3,
+              "block_index_span": 3,
+              "selected_whole_block_active": 14580,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            }
+          ]
+        },
+        {
+          "ranks": 24,
+          "default_constructor_can_start": false,
+          "owners": [
+            {
+              "rank": 0,
+              "active": 4500,
+              "by_region": {
+                "cartesian": 4500
+              },
+              "selected_blocks": 3,
+              "block_index_span": 3,
+              "selected_whole_block_active": 10125,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 1,
+              "active": 4500,
+              "by_region": {
+                "cartesian": 4500
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 13500,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 2,
+              "active": 4500,
+              "by_region": {
+                "cartesian": 4500
+              },
+              "selected_blocks": 3,
+              "block_index_span": 3,
+              "selected_whole_block_active": 10125,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 3,
+              "active": 4500,
+              "by_region": {
+                "cartesian": 324,
+                "shell_0": 4176
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 17955,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 4,
+              "active": 4500,
+              "by_region": {
+                "shell_0": 4500
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 19440,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 5,
+              "active": 4500,
+              "by_region": {
+                "shell_0": 1692,
+                "shell_1": 2808
+              },
+              "selected_blocks": 3,
+              "block_index_span": 3,
+              "selected_whole_block_active": 8316,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 6,
+              "active": 4500,
+              "by_region": {
+                "shell_1": 4500
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 6912,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 7,
+              "active": 4500,
+              "by_region": {
+                "shell_1": 3060,
+                "shell_2": 1440
+              },
+              "selected_blocks": 3,
+              "block_index_span": 3,
+              "selected_whole_block_active": 5184,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 8,
+              "active": 4500,
+              "by_region": {
+                "shell_2": 4500
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 6912,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 9,
+              "active": 4500,
+              "by_region": {
+                "shell_2": 4428,
+                "shell_3": 72
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 6912,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 10,
+              "active": 4500,
+              "by_region": {
+                "shell_3": 4500
+              },
+              "selected_blocks": 3,
+              "block_index_span": 3,
+              "selected_whole_block_active": 5184,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 11,
+              "active": 4500,
+              "by_region": {
+                "shell_3": 4500
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 6912,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 12,
+              "active": 4500,
+              "by_region": {
+                "shell_3": 1296,
+                "shell_4": 3204
+              },
+              "selected_blocks": 3,
+              "block_index_span": 3,
+              "selected_whole_block_active": 5184,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 13,
+              "active": 4500,
+              "by_region": {
+                "shell_4": 4500
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 6912,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 14,
+              "active": 4500,
+              "by_region": {
+                "shell_4": 2664,
+                "shell_5": 1836
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 6912,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 15,
+              "active": 4500,
+              "by_region": {
+                "shell_5": 4500
+              },
+              "selected_blocks": 3,
+              "block_index_span": 3,
+              "selected_whole_block_active": 5184,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 16,
+              "active": 4500,
+              "by_region": {
+                "shell_5": 4032,
+                "cartesian": 468
+              },
+              "selected_blocks": 4,
+              "block_index_span": 44,
+              "selected_whole_block_active": 8559,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 17,
+              "active": 4500,
+              "by_region": {
+                "cartesian": 4500
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 13500,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 18,
+              "active": 4500,
+              "by_region": {
+                "cartesian": 4500
+              },
+              "selected_blocks": 3,
+              "block_index_span": 3,
+              "selected_whole_block_active": 10125,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 19,
+              "active": 4500,
+              "by_region": {
+                "cartesian": 3708,
+                "shell_0": 792
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 14985,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 20,
+              "active": 4500,
+              "by_region": {
+                "shell_0": 4500
+              },
+              "selected_blocks": 2,
+              "block_index_span": 2,
+              "selected_whole_block_active": 9720,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 21,
+              "active": 4500,
+              "by_region": {
+                "shell_0": 4500
+              },
+              "selected_blocks": 3,
+              "block_index_span": 3,
+              "selected_whole_block_active": 14580,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 22,
+              "active": 4500,
+              "by_region": {
+                "shell_0": 4500
+              },
+              "selected_blocks": 2,
+              "block_index_span": 2,
+              "selected_whole_block_active": 9720,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 23,
+              "active": 4500,
+              "by_region": {
+                "shell_0": 4500
+              },
+              "selected_blocks": 2,
+              "block_index_span": 2,
+              "selected_whole_block_active": 9720,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint": "output/amr-local/controls-v1/boost-fixed.checkpoint",
+      "sha256": "cd5a7ecb548de898afd29bc700b169e9baf7dbc6e98b7bdd8ad2d19935b3af4d",
+      "n": 12,
+      "root_subdivisions": 2,
+      "leaves": 15,
+      "active": 124308,
+      "blocks": 51,
+      "two_full_padded_workspaces_bytes_per_rank": 444602496,
+      "state_and_base_bytes_per_rank": 61656768,
+      "partitions": [
+        {
+          "ranks": 1,
+          "default_constructor_can_start": true,
+          "owners": [
+            {
+              "rank": 0,
+              "active": 124308,
+              "by_region": {
+                "cartesian": 43308,
+                "shell_0": 29160,
+                "shell_1": 10368,
+                "shell_2": 10368,
+                "shell_3": 10368,
+                "shell_4": 10368,
+                "shell_5": 10368
+              },
+              "selected_blocks": 51,
+              "block_index_span": 51,
+              "selected_whole_block_active": 124308,
+              "native_capacity": 104,
+              "native_state_compensation_bytes": 554218496
+            }
+          ]
+        },
+        {
+          "ranks": 2,
+          "default_constructor_can_start": true,
+          "owners": [
+            {
+              "rank": 0,
+              "active": 62154,
+              "by_region": {
+                "cartesian": 25920,
+                "shell_0": 10368,
+                "shell_1": 10368,
+                "shell_2": 10368,
+                "shell_3": 5130
+              },
+              "selected_blocks": 36,
+              "block_index_span": 36,
+              "selected_whole_block_active": 98388,
+              "native_capacity": 56,
+              "native_state_compensation_bytes": 298425344
+            },
+            {
+              "rank": 1,
+              "active": 62154,
+              "by_region": {
+                "shell_3": 5238,
+                "shell_4": 10368,
+                "shell_5": 10368,
+                "cartesian": 17388,
+                "shell_0": 18792
+              },
+              "selected_blocks": 36,
+              "block_index_span": 51,
+              "selected_whole_block_active": 98388,
+              "native_capacity": 56,
+              "native_state_compensation_bytes": 298425344
+            }
+          ]
+        },
+        {
+          "ranks": 4,
+          "default_constructor_can_start": true,
+          "owners": [
+            {
+              "rank": 0,
+              "active": 31077,
+              "by_region": {
+                "cartesian": 25920,
+                "shell_0": 5157
+              },
+              "selected_blocks": 18,
+              "block_index_span": 18,
+              "selected_whole_block_active": 57888,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 1,
+              "active": 31077,
+              "by_region": {
+                "shell_0": 5211,
+                "shell_1": 10368,
+                "shell_2": 10368,
+                "shell_3": 5130
+              },
+              "selected_blocks": 19,
+              "block_index_span": 19,
+              "selected_whole_block_active": 45360,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 2,
+              "active": 31077,
+              "by_region": {
+                "shell_3": 5238,
+                "shell_4": 10368,
+                "shell_5": 10368,
+                "cartesian": 5103
+              },
+              "selected_blocks": 22,
+              "block_index_span": 51,
+              "selected_whole_block_active": 43443,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 3,
+              "active": 31077,
+              "by_region": {
+                "cartesian": 12285,
+                "shell_0": 18792
+              },
+              "selected_blocks": 15,
+              "block_index_span": 16,
+              "selected_whole_block_active": 57105,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            }
+          ]
+        },
+        {
+          "ranks": 8,
+          "default_constructor_can_start": true,
+          "owners": [
+            {
+              "rank": 0,
+              "active": 15538,
+              "by_region": {
+                "cartesian": 15538
+              },
+              "selected_blocks": 9,
+              "block_index_span": 9,
+              "selected_whole_block_active": 23058,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 1,
+              "active": 15539,
+              "by_region": {
+                "cartesian": 10382,
+                "shell_0": 5157
+              },
+              "selected_blocks": 10,
+              "block_index_span": 10,
+              "selected_whole_block_active": 38205,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 2,
+              "active": 15538,
+              "by_region": {
+                "shell_0": 5211,
+                "shell_1": 10327
+              },
+              "selected_blocks": 10,
+              "block_index_span": 10,
+              "selected_whole_block_active": 29808,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 3,
+              "active": 15539,
+              "by_region": {
+                "shell_1": 41,
+                "shell_2": 10368,
+                "shell_3": 5130
+              },
+              "selected_blocks": 10,
+              "block_index_span": 10,
+              "selected_whole_block_active": 17280,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 4,
+              "active": 15538,
+              "by_region": {
+                "shell_3": 5238,
+                "shell_4": 10300
+              },
+              "selected_blocks": 10,
+              "block_index_span": 10,
+              "selected_whole_block_active": 17280,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 5,
+              "active": 15539,
+              "by_region": {
+                "shell_4": 68,
+                "shell_5": 10368,
+                "cartesian": 5103
+              },
+              "selected_blocks": 13,
+              "block_index_span": 51,
+              "selected_whole_block_active": 27891,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 6,
+              "active": 15538,
+              "by_region": {
+                "cartesian": 12285,
+                "shell_0": 3253
+              },
+              "selected_blocks": 11,
+              "block_index_span": 12,
+              "selected_whole_block_active": 37665,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 7,
+              "active": 15539,
+              "by_region": {
+                "shell_0": 15539
+              },
+              "selected_blocks": 5,
+              "block_index_span": 5,
+              "selected_whole_block_active": 24300,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            }
+          ]
+        },
+        {
+          "ranks": 12,
+          "default_constructor_can_start": false,
+          "owners": [
+            {
+              "rank": 0,
+              "active": 10359,
+              "by_region": {
+                "cartesian": 10359
+              },
+              "selected_blocks": 6,
+              "block_index_span": 6,
+              "selected_whole_block_active": 15795,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 1,
+              "active": 10359,
+              "by_region": {
+                "cartesian": 10359
+              },
+              "selected_blocks": 7,
+              "block_index_span": 7,
+              "selected_whole_block_active": 19548,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 2,
+              "active": 10359,
+              "by_region": {
+                "cartesian": 5202,
+                "shell_0": 5157
+              },
+              "selected_blocks": 7,
+              "block_index_span": 7,
+              "selected_whole_block_active": 28080,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 3,
+              "active": 10359,
+              "by_region": {
+                "shell_0": 5211,
+                "shell_1": 5148
+              },
+              "selected_blocks": 7,
+              "block_index_span": 7,
+              "selected_whole_block_active": 24624,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 4,
+              "active": 10359,
+              "by_region": {
+                "shell_1": 5220,
+                "shell_2": 5139
+              },
+              "selected_blocks": 7,
+              "block_index_span": 7,
+              "selected_whole_block_active": 12096,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 5,
+              "active": 10359,
+              "by_region": {
+                "shell_2": 5229,
+                "shell_3": 5130
+              },
+              "selected_blocks": 7,
+              "block_index_span": 7,
+              "selected_whole_block_active": 12096,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 6,
+              "active": 10359,
+              "by_region": {
+                "shell_3": 5238,
+                "shell_4": 5121
+              },
+              "selected_blocks": 7,
+              "block_index_span": 7,
+              "selected_whole_block_active": 12096,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 7,
+              "active": 10359,
+              "by_region": {
+                "shell_4": 5247,
+                "shell_5": 5112
+              },
+              "selected_blocks": 7,
+              "block_index_span": 7,
+              "selected_whole_block_active": 12096,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 8,
+              "active": 10359,
+              "by_region": {
+                "shell_5": 5256,
+                "cartesian": 5103
+              },
+              "selected_blocks": 10,
+              "block_index_span": 51,
+              "selected_whole_block_active": 22707,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 9,
+              "active": 10359,
+              "by_region": {
+                "cartesian": 10359
+              },
+              "selected_blocks": 8,
+              "block_index_span": 9,
+              "selected_whole_block_active": 24570,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 10,
+              "active": 10359,
+              "by_region": {
+                "cartesian": 1926,
+                "shell_0": 8433
+              },
+              "selected_blocks": 5,
+              "block_index_span": 5,
+              "selected_whole_block_active": 21330,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 11,
+              "active": 10359,
+              "by_region": {
+                "shell_0": 10359
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 19440,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            }
+          ]
+        },
+        {
+          "ranks": 24,
+          "default_constructor_can_start": false,
+          "owners": [
+            {
+              "rank": 0,
+              "active": 5179,
+              "by_region": {
+                "cartesian": 5179
+              },
+              "selected_blocks": 3,
+              "block_index_span": 3,
+              "selected_whole_block_active": 8775,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 1,
+              "active": 5180,
+              "by_region": {
+                "cartesian": 5180
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 9720,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 2,
+              "active": 5179,
+              "by_region": {
+                "cartesian": 5179
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 9423,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 3,
+              "active": 5180,
+              "by_region": {
+                "cartesian": 5180
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 13500,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 4,
+              "active": 5179,
+              "by_region": {
+                "cartesian": 5179
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 13500,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 5,
+              "active": 5180,
+              "by_region": {
+                "cartesian": 23,
+                "shell_0": 5157
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 17955,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 6,
+              "active": 5179,
+              "by_region": {
+                "shell_0": 5179
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 19440,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 7,
+              "active": 5180,
+              "by_region": {
+                "shell_0": 32,
+                "shell_1": 5148
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 10044,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 8,
+              "active": 5179,
+              "by_region": {
+                "shell_1": 5179
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 6912,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 9,
+              "active": 5180,
+              "by_region": {
+                "shell_1": 41,
+                "shell_2": 5139
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 6912,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 10,
+              "active": 5179,
+              "by_region": {
+                "shell_2": 5179
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 6912,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 11,
+              "active": 5180,
+              "by_region": {
+                "shell_2": 50,
+                "shell_3": 5130
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 6912,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 12,
+              "active": 5179,
+              "by_region": {
+                "shell_3": 5179
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 6912,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 13,
+              "active": 5180,
+              "by_region": {
+                "shell_3": 59,
+                "shell_4": 5121
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 6912,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 14,
+              "active": 5179,
+              "by_region": {
+                "shell_4": 5179
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 6912,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 15,
+              "active": 5180,
+              "by_region": {
+                "shell_4": 68,
+                "shell_5": 5112
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 6912,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 16,
+              "active": 5179,
+              "by_region": {
+                "shell_5": 5179
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 6912,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 17,
+              "active": 5180,
+              "by_region": {
+                "shell_5": 77,
+                "cartesian": 5103
+              },
+              "selected_blocks": 7,
+              "block_index_span": 51,
+              "selected_whole_block_active": 17523,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 18,
+              "active": 5179,
+              "by_region": {
+                "cartesian": 5179
+              },
+              "selected_blocks": 5,
+              "block_index_span": 6,
+              "selected_whole_block_active": 14445,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 19,
+              "active": 5180,
+              "by_region": {
+                "cartesian": 5180
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 13500,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 20,
+              "active": 5179,
+              "by_region": {
+                "cartesian": 1926,
+                "shell_0": 3253
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 16470,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 21,
+              "active": 5180,
+              "by_region": {
+                "shell_0": 5180
+              },
+              "selected_blocks": 2,
+              "block_index_span": 2,
+              "selected_whole_block_active": 9720,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 22,
+              "active": 5179,
+              "by_region": {
+                "shell_0": 5179
+              },
+              "selected_blocks": 3,
+              "block_index_span": 3,
+              "selected_whole_block_active": 14580,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 23,
+              "active": 5180,
+              "by_region": {
+                "shell_0": 5180
+              },
+              "selected_blocks": 2,
+              "block_index_span": 2,
+              "selected_whole_block_active": 9720,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint": "output/amr-local/restart-v1/wave-save.checkpoint",
+      "sha256": "a3a73bc6d76fc0d1dc8aa461a3bb8f67b9e59d2333e5842d311abde95376e43e",
+      "n": 12,
+      "root_subdivisions": 2,
+      "leaves": 22,
+      "active": 140616,
+      "blocks": 58,
+      "two_full_padded_workspaces_bytes_per_rank": 505626368,
+      "state_and_base_bytes_per_rank": 69745536,
+      "partitions": [
+        {
+          "ranks": 1,
+          "default_constructor_can_start": true,
+          "owners": [
+            {
+              "rank": 0,
+              "active": 140616,
+              "by_region": {
+                "cartesian": 59616,
+                "shell_0": 29160,
+                "shell_1": 10368,
+                "shell_2": 10368,
+                "shell_3": 10368,
+                "shell_4": 10368,
+                "shell_5": 10368
+              },
+              "selected_blocks": 58,
+              "block_index_span": 58,
+              "selected_whole_block_active": 140616,
+              "native_capacity": 104,
+              "native_state_compensation_bytes": 554218496
+            }
+          ]
+        },
+        {
+          "ranks": 2,
+          "default_constructor_can_start": true,
+          "owners": [
+            {
+              "rank": 0,
+              "active": 70308,
+              "by_region": {
+                "cartesian": 38016,
+                "shell_0": 10368,
+                "shell_1": 10368,
+                "shell_2": 10368,
+                "shell_3": 1188
+              },
+              "selected_blocks": 41,
+              "block_index_span": 41,
+              "selected_whole_block_active": 111240,
+              "native_capacity": 56,
+              "native_state_compensation_bytes": 298425344
+            },
+            {
+              "rank": 1,
+              "active": 70308,
+              "by_region": {
+                "shell_3": 9180,
+                "shell_4": 10368,
+                "shell_5": 10368,
+                "cartesian": 21600,
+                "shell_0": 18792
+              },
+              "selected_blocks": 44,
+              "block_index_span": 58,
+              "selected_whole_block_active": 116424,
+              "native_capacity": 56,
+              "native_state_compensation_bytes": 298425344
+            }
+          ]
+        },
+        {
+          "ranks": 4,
+          "default_constructor_can_start": true,
+          "owners": [
+            {
+              "rank": 0,
+              "active": 35154,
+              "by_region": {
+                "cartesian": 35154
+              },
+              "selected_blocks": 21,
+              "block_index_span": 21,
+              "selected_whole_block_active": 56241,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 1,
+              "active": 35154,
+              "by_region": {
+                "cartesian": 2862,
+                "shell_0": 10368,
+                "shell_1": 10368,
+                "shell_2": 10368,
+                "shell_3": 1188
+              },
+              "selected_blocks": 21,
+              "block_index_span": 21,
+              "selected_whole_block_active": 58374,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 2,
+              "active": 35154,
+              "by_region": {
+                "shell_3": 9180,
+                "shell_4": 10368,
+                "shell_5": 10368,
+                "cartesian": 5238
+              },
+              "selected_blocks": 24,
+              "block_index_span": 58,
+              "selected_whole_block_active": 46899,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 3,
+              "active": 35154,
+              "by_region": {
+                "cartesian": 16362,
+                "shell_0": 18792
+              },
+              "selected_blocks": 21,
+              "block_index_span": 23,
+              "selected_whole_block_active": 71685,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            }
+          ]
+        },
+        {
+          "ranks": 8,
+          "default_constructor_can_start": true,
+          "owners": [
+            {
+              "rank": 0,
+              "active": 17577,
+              "by_region": {
+                "cartesian": 17577
+              },
+              "selected_blocks": 11,
+              "block_index_span": 11,
+              "selected_whole_block_active": 27918,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 1,
+              "active": 17577,
+              "by_region": {
+                "cartesian": 17577
+              },
+              "selected_blocks": 11,
+              "block_index_span": 11,
+              "selected_whole_block_active": 30483,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 2,
+              "active": 17577,
+              "by_region": {
+                "cartesian": 2862,
+                "shell_0": 10368,
+                "shell_1": 4347
+              },
+              "selected_blocks": 11,
+              "block_index_span": 11,
+              "selected_whole_block_active": 41094,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 3,
+              "active": 17577,
+              "by_region": {
+                "shell_1": 6021,
+                "shell_2": 10368,
+                "shell_3": 1188
+              },
+              "selected_blocks": 11,
+              "block_index_span": 11,
+              "selected_whole_block_active": 19008,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 4,
+              "active": 17577,
+              "by_region": {
+                "shell_3": 9180,
+                "shell_4": 8397
+              },
+              "selected_blocks": 11,
+              "block_index_span": 11,
+              "selected_whole_block_active": 19008,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 5,
+              "active": 17577,
+              "by_region": {
+                "shell_4": 1971,
+                "shell_5": 10368,
+                "cartesian": 5238
+              },
+              "selected_blocks": 14,
+              "block_index_span": 58,
+              "selected_whole_block_active": 29619,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 6,
+              "active": 17577,
+              "by_region": {
+                "cartesian": 16362,
+                "shell_0": 1215
+              },
+              "selected_blocks": 16,
+              "block_index_span": 18,
+              "selected_whole_block_active": 47385,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 7,
+              "active": 17577,
+              "by_region": {
+                "shell_0": 17577
+              },
+              "selected_blocks": 6,
+              "block_index_span": 6,
+              "selected_whole_block_active": 29160,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            }
+          ]
+        },
+        {
+          "ranks": 12,
+          "default_constructor_can_start": false,
+          "owners": [
+            {
+              "rank": 0,
+              "active": 11718,
+              "by_region": {
+                "cartesian": 11718
+              },
+              "selected_blocks": 7,
+              "block_index_span": 7,
+              "selected_whole_block_active": 17955,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 1,
+              "active": 11718,
+              "by_region": {
+                "cartesian": 11718
+              },
+              "selected_blocks": 8,
+              "block_index_span": 8,
+              "selected_whole_block_active": 19683,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 2,
+              "active": 11718,
+              "by_region": {
+                "cartesian": 11718
+              },
+              "selected_blocks": 8,
+              "block_index_span": 8,
+              "selected_whole_block_active": 23463,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 3,
+              "active": 11718,
+              "by_region": {
+                "cartesian": 2862,
+                "shell_0": 8856
+              },
+              "selected_blocks": 8,
+              "block_index_span": 8,
+              "selected_whole_block_active": 35910,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 4,
+              "active": 11718,
+              "by_region": {
+                "shell_0": 1512,
+                "shell_1": 10206
+              },
+              "selected_blocks": 7,
+              "block_index_span": 7,
+              "selected_whole_block_active": 15228,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 5,
+              "active": 11718,
+              "by_region": {
+                "shell_1": 162,
+                "shell_2": 10368,
+                "shell_3": 1188
+              },
+              "selected_blocks": 8,
+              "block_index_span": 8,
+              "selected_whole_block_active": 13824,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 6,
+              "active": 11718,
+              "by_region": {
+                "shell_3": 9180,
+                "shell_4": 2538
+              },
+              "selected_blocks": 8,
+              "block_index_span": 8,
+              "selected_whole_block_active": 13824,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 7,
+              "active": 11718,
+              "by_region": {
+                "shell_4": 7830,
+                "shell_5": 3888
+              },
+              "selected_blocks": 8,
+              "block_index_span": 8,
+              "selected_whole_block_active": 13824,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 8,
+              "active": 11718,
+              "by_region": {
+                "shell_5": 6480,
+                "cartesian": 5238
+              },
+              "selected_blocks": 10,
+              "block_index_span": 58,
+              "selected_whole_block_active": 22707,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 9,
+              "active": 11718,
+              "by_region": {
+                "cartesian": 11718
+              },
+              "selected_blocks": 13,
+              "block_index_span": 15,
+              "selected_whole_block_active": 35775,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 10,
+              "active": 11718,
+              "by_region": {
+                "cartesian": 4644,
+                "shell_0": 7074
+              },
+              "selected_blocks": 6,
+              "block_index_span": 6,
+              "selected_whole_block_active": 24705,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 11,
+              "active": 11718,
+              "by_region": {
+                "shell_0": 11718
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 19440,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            }
+          ]
+        },
+        {
+          "ranks": 24,
+          "default_constructor_can_start": false,
+          "owners": [
+            {
+              "rank": 0,
+              "active": 5859,
+              "by_region": {
+                "cartesian": 5859
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 10935,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 1,
+              "active": 5859,
+              "by_region": {
+                "cartesian": 5859
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 9180,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 2,
+              "active": 5859,
+              "by_region": {
+                "cartesian": 5859
+              },
+              "selected_blocks": 5,
+              "block_index_span": 5,
+              "selected_whole_block_active": 12123,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 3,
+              "active": 5859,
+              "by_region": {
+                "cartesian": 5859
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 9720,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 4,
+              "active": 5859,
+              "by_region": {
+                "cartesian": 5859
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 9963,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 5,
+              "active": 5859,
+              "by_region": {
+                "cartesian": 5859
+              },
+              "selected_blocks": 5,
+              "block_index_span": 5,
+              "selected_whole_block_active": 16875,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 6,
+              "active": 5859,
+              "by_region": {
+                "cartesian": 2862,
+                "shell_0": 2997
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 16470,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 7,
+              "active": 5859,
+              "by_region": {
+                "shell_0": 5859
+              },
+              "selected_blocks": 5,
+              "block_index_span": 5,
+              "selected_whole_block_active": 24300,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 8,
+              "active": 5859,
+              "by_region": {
+                "shell_0": 1512,
+                "shell_1": 4347
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 10044,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 9,
+              "active": 5859,
+              "by_region": {
+                "shell_1": 5859
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 6912,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 10,
+              "active": 5859,
+              "by_region": {
+                "shell_1": 162,
+                "shell_2": 5697
+              },
+              "selected_blocks": 5,
+              "block_index_span": 5,
+              "selected_whole_block_active": 8640,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 11,
+              "active": 5859,
+              "by_region": {
+                "shell_2": 4671,
+                "shell_3": 1188
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 6912,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 12,
+              "active": 5859,
+              "by_region": {
+                "shell_3": 5859
+              },
+              "selected_blocks": 5,
+              "block_index_span": 5,
+              "selected_whole_block_active": 8640,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 13,
+              "active": 5859,
+              "by_region": {
+                "shell_3": 3321,
+                "shell_4": 2538
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 6912,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 14,
+              "active": 5859,
+              "by_region": {
+                "shell_4": 5859
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 6912,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 15,
+              "active": 5859,
+              "by_region": {
+                "shell_4": 1971,
+                "shell_5": 3888
+              },
+              "selected_blocks": 5,
+              "block_index_span": 5,
+              "selected_whole_block_active": 8640,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 16,
+              "active": 5859,
+              "by_region": {
+                "shell_5": 5859
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 6912,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 17,
+              "active": 5859,
+              "by_region": {
+                "shell_5": 621,
+                "cartesian": 5238
+              },
+              "selected_blocks": 7,
+              "block_index_span": 58,
+              "selected_whole_block_active": 17523,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 18,
+              "active": 5859,
+              "by_region": {
+                "cartesian": 5859
+              },
+              "selected_blocks": 8,
+              "block_index_span": 9,
+              "selected_whole_block_active": 20115,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 19,
+              "active": 5859,
+              "by_region": {
+                "cartesian": 5859
+              },
+              "selected_blocks": 6,
+              "block_index_span": 7,
+              "selected_whole_block_active": 18360,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 20,
+              "active": 5859,
+              "by_region": {
+                "cartesian": 4644,
+                "shell_0": 1215
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 14985,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 21,
+              "active": 5859,
+              "by_region": {
+                "shell_0": 5859
+              },
+              "selected_blocks": 3,
+              "block_index_span": 3,
+              "selected_whole_block_active": 14580,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 22,
+              "active": 5859,
+              "by_region": {
+                "shell_0": 5859
+              },
+              "selected_blocks": 3,
+              "block_index_span": 3,
+              "selected_whole_block_active": 14580,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 23,
+              "active": 5859,
+              "by_region": {
+                "shell_0": 5859
+              },
+              "selected_blocks": 2,
+              "block_index_span": 2,
+              "selected_whole_block_active": 9720,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "checkpoint": "output/amr-local/controls-v1/boost-uniform.checkpoint",
+      "sha256": "b6de8b9ac477f64f7b7a57f1109ff5d62377abca4e4bb3f431f51590d21b3074",
+      "n": 12,
+      "root_subdivisions": 4,
+      "leaves": 64,
+      "active": 238464,
+      "blocks": 100,
+      "two_full_padded_workspaces_bytes_per_rank": 871769600,
+      "state_and_base_bytes_per_rank": 118278144,
+      "partitions": [
+        {
+          "ranks": 1,
+          "default_constructor_can_start": true,
+          "owners": [
+            {
+              "rank": 0,
+              "active": 238464,
+              "by_region": {
+                "cartesian": 157464,
+                "shell_0": 29160,
+                "shell_1": 10368,
+                "shell_2": 10368,
+                "shell_3": 10368,
+                "shell_4": 10368,
+                "shell_5": 10368
+              },
+              "selected_blocks": 100,
+              "block_index_span": 100,
+              "selected_whole_block_active": 238464,
+              "native_capacity": 104,
+              "native_state_compensation_bytes": 554218496
+            }
+          ]
+        },
+        {
+          "ranks": 2,
+          "default_constructor_can_start": true,
+          "owners": [
+            {
+              "rank": 0,
+              "active": 119232,
+              "by_region": {
+                "cartesian": 110592,
+                "shell_0": 8640
+              },
+              "selected_blocks": 69,
+              "block_index_span": 69,
+              "selected_whole_block_active": 181764,
+              "native_capacity": 56,
+              "native_state_compensation_bytes": 298425344
+            },
+            {
+              "rank": 1,
+              "active": 119232,
+              "by_region": {
+                "shell_0": 20520,
+                "shell_1": 10368,
+                "shell_2": 10368,
+                "shell_3": 10368,
+                "shell_4": 10368,
+                "shell_5": 10368,
+                "cartesian": 46872
+              },
+              "selected_blocks": 92,
+              "block_index_span": 100,
+              "selected_whole_block_active": 224640,
+              "native_capacity": 56,
+              "native_state_compensation_bytes": 298425344
+            }
+          ]
+        },
+        {
+          "ranks": 4,
+          "default_constructor_can_start": true,
+          "owners": [
+            {
+              "rank": 0,
+              "active": 59616,
+              "by_region": {
+                "cartesian": 59616
+              },
+              "selected_blocks": 35,
+              "block_index_span": 35,
+              "selected_whole_block_active": 85752,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 1,
+              "active": 59616,
+              "by_region": {
+                "cartesian": 50976,
+                "shell_0": 8640
+              },
+              "selected_blocks": 35,
+              "block_index_span": 35,
+              "selected_whole_block_active": 98172,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 2,
+              "active": 59616,
+              "by_region": {
+                "shell_0": 1728,
+                "shell_1": 10368,
+                "shell_2": 10368,
+                "shell_3": 10368,
+                "shell_4": 10368,
+                "shell_5": 10368,
+                "cartesian": 6048
+              },
+              "selected_blocks": 39,
+              "block_index_span": 100,
+              "selected_whole_block_active": 77355,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 3,
+              "active": 59616,
+              "by_region": {
+                "cartesian": 40824,
+                "shell_0": 18792
+              },
+              "selected_blocks": 55,
+              "block_index_span": 62,
+              "selected_whole_block_active": 154845,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            }
+          ]
+        },
+        {
+          "ranks": 8,
+          "default_constructor_can_start": true,
+          "owners": [
+            {
+              "rank": 0,
+              "active": 29808,
+              "by_region": {
+                "cartesian": 29808
+              },
+              "selected_blocks": 18,
+              "block_index_span": 18,
+              "selected_whole_block_active": 44226,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 1,
+              "active": 29808,
+              "by_region": {
+                "cartesian": 29808
+              },
+              "selected_blocks": 18,
+              "block_index_span": 18,
+              "selected_whole_block_active": 43686,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 2,
+              "active": 29808,
+              "by_region": {
+                "cartesian": 29808
+              },
+              "selected_blocks": 18,
+              "block_index_span": 18,
+              "selected_whole_block_active": 43254,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 3,
+              "active": 29808,
+              "by_region": {
+                "cartesian": 21168,
+                "shell_0": 8640
+              },
+              "selected_blocks": 18,
+              "block_index_span": 18,
+              "selected_whole_block_active": 57078,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 4,
+              "active": 29808,
+              "by_region": {
+                "shell_0": 1728,
+                "shell_1": 10368,
+                "shell_2": 10368,
+                "shell_3": 7344
+              },
+              "selected_blocks": 18,
+              "block_index_span": 18,
+              "selected_whole_block_active": 34236,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 5,
+              "active": 29808,
+              "by_region": {
+                "shell_3": 3024,
+                "shell_4": 10368,
+                "shell_5": 10368,
+                "cartesian": 6048
+              },
+              "selected_blocks": 22,
+              "block_index_span": 100,
+              "selected_whole_block_active": 44847,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 6,
+              "active": 29808,
+              "by_region": {
+                "cartesian": 29808
+              },
+              "selected_blocks": 37,
+              "block_index_span": 43,
+              "selected_whole_block_active": 94635,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 7,
+              "active": 29808,
+              "by_region": {
+                "cartesian": 11016,
+                "shell_0": 18792
+              },
+              "selected_blocks": 19,
+              "block_index_span": 20,
+              "selected_whole_block_active": 62910,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            }
+          ]
+        },
+        {
+          "ranks": 12,
+          "default_constructor_can_start": true,
+          "owners": [
+            {
+              "rank": 0,
+              "active": 19872,
+              "by_region": {
+                "cartesian": 19872
+              },
+              "selected_blocks": 12,
+              "block_index_span": 12,
+              "selected_whole_block_active": 30618,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 1,
+              "active": 19872,
+              "by_region": {
+                "cartesian": 19872
+              },
+              "selected_blocks": 12,
+              "block_index_span": 12,
+              "selected_whole_block_active": 28971,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 2,
+              "active": 19872,
+              "by_region": {
+                "cartesian": 19872
+              },
+              "selected_blocks": 12,
+              "block_index_span": 12,
+              "selected_whole_block_active": 28863,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 3,
+              "active": 19872,
+              "by_region": {
+                "cartesian": 19872
+              },
+              "selected_blocks": 12,
+              "block_index_span": 12,
+              "selected_whole_block_active": 29646,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 4,
+              "active": 19872,
+              "by_region": {
+                "cartesian": 19872
+              },
+              "selected_blocks": 12,
+              "block_index_span": 12,
+              "selected_whole_block_active": 28431,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 5,
+              "active": 19872,
+              "by_region": {
+                "cartesian": 11232,
+                "shell_0": 8640
+              },
+              "selected_blocks": 12,
+              "block_index_span": 12,
+              "selected_whole_block_active": 42255,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 6,
+              "active": 19872,
+              "by_region": {
+                "shell_0": 1728,
+                "shell_1": 10368,
+                "shell_2": 7776
+              },
+              "selected_blocks": 12,
+              "block_index_span": 12,
+              "selected_whole_block_active": 23868,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 7,
+              "active": 19872,
+              "by_region": {
+                "shell_2": 2592,
+                "shell_3": 10368,
+                "shell_4": 6912
+              },
+              "selected_blocks": 12,
+              "block_index_span": 12,
+              "selected_whole_block_active": 20736,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 8,
+              "active": 19872,
+              "by_region": {
+                "shell_4": 3456,
+                "shell_5": 10368,
+                "cartesian": 6048
+              },
+              "selected_blocks": 16,
+              "block_index_span": 100,
+              "selected_whole_block_active": 34479,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 9,
+              "active": 19872,
+              "by_region": {
+                "cartesian": 19872
+              },
+              "selected_blocks": 25,
+              "block_index_span": 29,
+              "selected_whole_block_active": 64260,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 10,
+              "active": 19872,
+              "by_region": {
+                "cartesian": 19872
+              },
+              "selected_blocks": 25,
+              "block_index_span": 28,
+              "selected_whole_block_active": 64800,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 11,
+              "active": 19872,
+              "by_region": {
+                "cartesian": 1080,
+                "shell_0": 18792
+              },
+              "selected_blocks": 7,
+              "block_index_span": 7,
+              "selected_whole_block_active": 32535,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            }
+          ]
+        },
+        {
+          "ranks": 24,
+          "default_constructor_can_start": true,
+          "owners": [
+            {
+              "rank": 0,
+              "active": 9936,
+              "by_region": {
+                "cartesian": 9936
+              },
+              "selected_blocks": 6,
+              "block_index_span": 6,
+              "selected_whole_block_active": 15795,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 1,
+              "active": 9936,
+              "by_region": {
+                "cartesian": 9936
+              },
+              "selected_blocks": 7,
+              "block_index_span": 7,
+              "selected_whole_block_active": 16983,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 2,
+              "active": 9936,
+              "by_region": {
+                "cartesian": 9936
+              },
+              "selected_blocks": 7,
+              "block_index_span": 7,
+              "selected_whole_block_active": 16308,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 3,
+              "active": 9936,
+              "by_region": {
+                "cartesian": 9936
+              },
+              "selected_blocks": 6,
+              "block_index_span": 6,
+              "selected_whole_block_active": 14823,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 4,
+              "active": 9936,
+              "by_region": {
+                "cartesian": 9936
+              },
+              "selected_blocks": 6,
+              "block_index_span": 6,
+              "selected_whole_block_active": 14823,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 5,
+              "active": 9936,
+              "by_region": {
+                "cartesian": 9936
+              },
+              "selected_blocks": 7,
+              "block_index_span": 7,
+              "selected_whole_block_active": 15768,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 6,
+              "active": 9936,
+              "by_region": {
+                "cartesian": 9936
+              },
+              "selected_blocks": 7,
+              "block_index_span": 7,
+              "selected_whole_block_active": 16983,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 7,
+              "active": 9936,
+              "by_region": {
+                "cartesian": 9936
+              },
+              "selected_blocks": 6,
+              "block_index_span": 6,
+              "selected_whole_block_active": 14823,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 8,
+              "active": 9936,
+              "by_region": {
+                "cartesian": 9936
+              },
+              "selected_blocks": 6,
+              "block_index_span": 6,
+              "selected_whole_block_active": 13608,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 9,
+              "active": 9936,
+              "by_region": {
+                "cartesian": 9936
+              },
+              "selected_blocks": 7,
+              "block_index_span": 7,
+              "selected_whole_block_active": 16983,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 10,
+              "active": 9936,
+              "by_region": {
+                "cartesian": 9936
+              },
+              "selected_blocks": 7,
+              "block_index_span": 7,
+              "selected_whole_block_active": 17955,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 11,
+              "active": 9936,
+              "by_region": {
+                "cartesian": 1296,
+                "shell_0": 8640
+              },
+              "selected_blocks": 6,
+              "block_index_span": 6,
+              "selected_whole_block_active": 27675,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 12,
+              "active": 9936,
+              "by_region": {
+                "shell_0": 1728,
+                "shell_1": 8208
+              },
+              "selected_blocks": 6,
+              "block_index_span": 6,
+              "selected_whole_block_active": 13500,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 13,
+              "active": 9936,
+              "by_region": {
+                "shell_1": 2160,
+                "shell_2": 7776
+              },
+              "selected_blocks": 7,
+              "block_index_span": 7,
+              "selected_whole_block_active": 12096,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 14,
+              "active": 9936,
+              "by_region": {
+                "shell_2": 2592,
+                "shell_3": 7344
+              },
+              "selected_blocks": 7,
+              "block_index_span": 7,
+              "selected_whole_block_active": 12096,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 15,
+              "active": 9936,
+              "by_region": {
+                "shell_3": 3024,
+                "shell_4": 6912
+              },
+              "selected_blocks": 6,
+              "block_index_span": 6,
+              "selected_whole_block_active": 10368,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 16,
+              "active": 9936,
+              "by_region": {
+                "shell_4": 3456,
+                "shell_5": 6480
+              },
+              "selected_blocks": 6,
+              "block_index_span": 6,
+              "selected_whole_block_active": 10368,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 17,
+              "active": 9936,
+              "by_region": {
+                "shell_5": 3888,
+                "cartesian": 6048
+              },
+              "selected_blocks": 11,
+              "block_index_span": 100,
+              "selected_whole_block_active": 25839,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 18,
+              "active": 9936,
+              "by_region": {
+                "cartesian": 9936
+              },
+              "selected_blocks": 12,
+              "block_index_span": 13,
+              "selected_whole_block_active": 31050,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 19,
+              "active": 9936,
+              "by_region": {
+                "cartesian": 9936
+              },
+              "selected_blocks": 14,
+              "block_index_span": 17,
+              "selected_whole_block_active": 35370,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 20,
+              "active": 9936,
+              "by_region": {
+                "cartesian": 9936
+              },
+              "selected_blocks": 13,
+              "block_index_span": 15,
+              "selected_whole_block_active": 33750,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 21,
+              "active": 9936,
+              "by_region": {
+                "cartesian": 9936
+              },
+              "selected_blocks": 13,
+              "block_index_span": 14,
+              "selected_whole_block_active": 33750,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 22,
+              "active": 9936,
+              "by_region": {
+                "cartesian": 1080,
+                "shell_0": 8856
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 17955,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            },
+            {
+              "rank": 23,
+              "active": 9936,
+              "by_region": {
+                "shell_0": 9936
+              },
+              "selected_blocks": 4,
+              "block_index_span": 4,
+              "selected_whole_block_active": 19440,
+              "native_capacity": 32,
+              "native_state_compensation_bytes": 170528768
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

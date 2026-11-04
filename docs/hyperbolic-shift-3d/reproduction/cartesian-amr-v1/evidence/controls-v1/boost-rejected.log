@@ -1,0 +1,24 @@
+
+Root grid = 2 x 2 x 2 MeshBlocks
+Total number of MeshBlocks = 8
+Number of logical  levels of refinement = 3 (4 levels total)
+Number of physical levels of refinement = 2 (3 levels total)
+  Physical level = 0 (logical level = 1): 8 MeshBlocks, cost = 8
+Number of parallel ranks = 2
+  Rank = 0: 4 MeshBlocks, cost = 4
+  Rank = 1: 4 MeshBlocks, cost = 4
+Load Balancing:
+  Maximum normalized cost = 1, Average = 1
+accepted step 0 leaves 15 H 0.059363
+accepted step 1 leaves 15 H 0.0609958
+accepted step 2 leaves 15 H 0.0639079
+AMR qualification failed: AMR invalid interpolated geometry at cell 25908 xyz=0.0037500000000000007,-0.0037500000000000033,-0.0037500000000000033 chi=-0.0002924790344160026 lapse=0.0095424685998469205 metric_minors=1.0067212606106661,1.0033550022772169,0.99999999998415401
+AMR qualification failed: AMR invalid interpolated geometry at cell 25908 xyz=0.0037500000000000007,-0.0037500000000000033,-0.0037500000000000033 chi=-0.0002924790344160026 lapse=0.0095424685998469205 metric_minors=1.0067212606106661,1.0033550022772169,0.99999999998415401
+--------------------------------------------------------------------------
+
+prterun detected that one or more processes exited with non-zero status,
+thus causing the job to be terminated. The first process to do so was:
+
+   Process name: [prterun-PU-KL2XFPVQ0D-59778@1,1]
+   Exit code:    2
+--------------------------------------------------------------------------
