@@ -80,7 +80,30 @@ Native costs, rank participation, capacity and payload handling remain unchanged
 see native-contract-gates.md before any such change. A local-padded storage change
 needs a new dependency proof for FD/mixed/advection/KO/scri and moving horizon
 reads. Initial profiles point to host model construction as a large startup/regrid
-cost; its internal searches need focused attribution before indexing changes.
+cost. M4 removes its demonstrated duplicate halo construction; owner-search
+indexing remains deferred pending separate attribution and validity proofs.
 Neither these experiments nor short fixed boosted survival establish robust
 adaptive boosted evolution, convergence, a mixed-grid KO energy estimate, or
 production readiness.
+
+## Final measurement qualifications
+
+The rejected radial mask gave a consistent approximately 0.25% GPU improvement
+in the short steady window, but no whole-process improvement and CPU regressions.
+It was removed rather than promoted on that narrow result. Exact-block transfers
+reduced the largest-rank transfer interval while leaving overall GPU time flat
+and increasing persistent device staging memory.
+
+The first profiler keyed release attribution by label. SYCL scratch allocations
+can be freed with an `[unlabeled]` callback, causing unsigned wraparound only in
+those labels' live counters. Per-space totals do not have that label mismatch;
+all observed space peaks remain bounded. Raw results are preserved, invalid live
+label counts are excluded, and the final tool matches release pointers to their
+allocation label/size with explicit anomaly counts. Peaks from different labels
+are never summed. No physical device-memory total is inferred from this census.
+
+Setup subdivision array indices are: host model/ownership (0), bulk device (1),
+bulk halo (2), boundary (3), sampled normal plus its halo (4), angular (5), sparse
+plan (6), and persistent state allocation (7). Generation-local nested timers
+are accumulated only from `retired` and `final` records. The `coexisting` record
+is an allocation snapshot, not another generation's stage work.

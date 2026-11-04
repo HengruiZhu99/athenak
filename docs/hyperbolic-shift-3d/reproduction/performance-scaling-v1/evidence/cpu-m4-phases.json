@@ -1,0 +1,734 @@
+[
+  {
+    "name": "setup-dynamic-p2-r0-m0",
+    "critical_wall_rank": 1,
+    "exclusive_phases": {
+      "checkpoint_capture": {
+        "seconds": 0.00533300000000736,
+        "calls": 1
+      },
+      "checkpoint_write": {
+        "seconds": 0.21631499999999448,
+        "calls": 1
+      },
+      "diagnostics": {
+        "seconds": 7.187991000000007,
+        "calls": 9
+      },
+      "evolution_setup": {
+        "seconds": 16.347566,
+        "calls": 1
+      },
+      "initial_state": {
+        "seconds": 0.039477999999999014,
+        "calls": 1
+      },
+      "native_setup": {
+        "seconds": 0.15276,
+        "calls": 1
+      },
+      "regrid_capture": {
+        "seconds": 0.018119000000002217,
+        "calls": 2
+      },
+      "regrid_evolution_setup": {
+        "seconds": 31.907665,
+        "calls": 2
+      },
+      "regrid_extra": {
+        "seconds": 0.12349500000000546,
+        "calls": 2
+      },
+      "regrid_gather": {
+        "seconds": 0.0058919999999957895,
+        "calls": 2
+      },
+      "regrid_install": {
+        "seconds": 0.027170999999995615,
+        "calls": 2
+      },
+      "regrid_load": {
+        "seconds": 0.36481699999999506,
+        "calls": 2
+      },
+      "regrid_native": {
+        "seconds": 0.30248700000000284,
+        "calls": 2
+      },
+      "regrid_retire": {
+        "seconds": 0.0039059999999935258,
+        "calls": 2
+      },
+      "startup": {
+        "seconds": 0.0001460000000000003,
+        "calls": 1
+      },
+      "step": {
+        "seconds": 22.18903,
+        "calls": 6
+      }
+    },
+    "sum_exclusive_seconds": 78.89217099999999,
+    "startup_setup_seconds": 16.53995,
+    "all_regrid_seconds": 32.75355199999999,
+    "setup_and_regrid_fraction": 0.6248212132481434,
+    "steady_step_with_diagnostics_seconds": null,
+    "startup_equivalent_steady_steps": null,
+    "caveat": "Phase components all use this same rank. Steady-window critical rank may differ. Short synthetic event history does not imply long-run speedup."
+  },
+  {
+    "name": "setup-dynamic-p2-r0-m4",
+    "critical_wall_rank": 1,
+    "exclusive_phases": {
+      "checkpoint_capture": {
+        "seconds": 0.008075999999995531,
+        "calls": 1
+      },
+      "checkpoint_write": {
+        "seconds": 0.21587400000000656,
+        "calls": 1
+      },
+      "diagnostics": {
+        "seconds": 7.152267,
+        "calls": 9
+      },
+      "evolution_setup": {
+        "seconds": 9.095102,
+        "calls": 1
+      },
+      "initial_state": {
+        "seconds": 0.03824700000000014,
+        "calls": 1
+      },
+      "native_setup": {
+        "seconds": 0.148367,
+        "calls": 1
+      },
+      "regrid_capture": {
+        "seconds": 0.02066899999999805,
+        "calls": 2
+      },
+      "regrid_evolution_setup": {
+        "seconds": 17.708603000000004,
+        "calls": 2
+      },
+      "regrid_extra": {
+        "seconds": 0.12815099999999546,
+        "calls": 2
+      },
+      "regrid_gather": {
+        "seconds": 0.004636999999998892,
+        "calls": 2
+      },
+      "regrid_install": {
+        "seconds": 0.032313000000002035,
+        "calls": 2
+      },
+      "regrid_load": {
+        "seconds": 0.3638760000000012,
+        "calls": 2
+      },
+      "regrid_native": {
+        "seconds": 0.401999,
+        "calls": 2
+      },
+      "regrid_retire": {
+        "seconds": 0.0038390000000028124,
+        "calls": 2
+      },
+      "startup": {
+        "seconds": 0.00012400000000000085,
+        "calls": 1
+      },
+      "step": {
+        "seconds": 22.254278999999997,
+        "calls": 6
+      }
+    },
+    "sum_exclusive_seconds": 57.576423000000005,
+    "startup_setup_seconds": 9.28184,
+    "all_regrid_seconds": 18.664087000000002,
+    "setup_and_regrid_fraction": 0.48537101723043824,
+    "steady_step_with_diagnostics_seconds": null,
+    "startup_equivalent_steady_steps": null,
+    "caveat": "Phase components all use this same rank. Steady-window critical rank may differ. Short synthetic event history does not imply long-run speedup."
+  },
+  {
+    "name": "setup-dynamic-p2-r1-m4",
+    "critical_wall_rank": 1,
+    "exclusive_phases": {
+      "checkpoint_capture": {
+        "seconds": 0.00807100000000105,
+        "calls": 1
+      },
+      "checkpoint_write": {
+        "seconds": 0.2209179999999975,
+        "calls": 1
+      },
+      "diagnostics": {
+        "seconds": 7.229904000000001,
+        "calls": 9
+      },
+      "evolution_setup": {
+        "seconds": 8.711371,
+        "calls": 1
+      },
+      "initial_state": {
+        "seconds": 0.038282999999999845,
+        "calls": 1
+      },
+      "native_setup": {
+        "seconds": 0.145235,
+        "calls": 1
+      },
+      "regrid_capture": {
+        "seconds": 0.02113499999999746,
+        "calls": 2
+      },
+      "regrid_evolution_setup": {
+        "seconds": 17.08435,
+        "calls": 2
+      },
+      "regrid_extra": {
+        "seconds": 0.1285989999999977,
+        "calls": 2
+      },
+      "regrid_gather": {
+        "seconds": 0.005016999999998717,
+        "calls": 2
+      },
+      "regrid_install": {
+        "seconds": 0.030476999999997645,
+        "calls": 2
+      },
+      "regrid_load": {
+        "seconds": 0.3607320000000023,
+        "calls": 2
+      },
+      "regrid_native": {
+        "seconds": 0.4327890000000032,
+        "calls": 2
+      },
+      "regrid_retire": {
+        "seconds": 0.003817999999998989,
+        "calls": 2
+      },
+      "startup": {
+        "seconds": 0.0001299999999999999,
+        "calls": 1
+      },
+      "step": {
+        "seconds": 22.542717000000003,
+        "calls": 6
+      }
+    },
+    "sum_exclusive_seconds": 56.96354599999999,
+    "startup_setup_seconds": 8.895019,
+    "all_regrid_seconds": 18.066916999999997,
+    "setup_and_regrid_fraction": 0.4733191293954909,
+    "steady_step_with_diagnostics_seconds": null,
+    "startup_equivalent_steady_steps": null,
+    "caveat": "Phase components all use this same rank. Steady-window critical rank may differ. Short synthetic event history does not imply long-run speedup."
+  },
+  {
+    "name": "setup-dynamic-p2-r1-m0",
+    "critical_wall_rank": 0,
+    "exclusive_phases": {
+      "checkpoint_capture": {
+        "seconds": 0.02355899999999167,
+        "calls": 1
+      },
+      "checkpoint_write": {
+        "seconds": 0.21278200000000425,
+        "calls": 1
+      },
+      "diagnostics": {
+        "seconds": 7.106791999999988,
+        "calls": 9
+      },
+      "evolution_setup": {
+        "seconds": 16.371563,
+        "calls": 1
+      },
+      "initial_state": {
+        "seconds": 0.03906000000000276,
+        "calls": 1
+      },
+      "native_setup": {
+        "seconds": 0.19634000000000001,
+        "calls": 1
+      },
+      "regrid_capture": {
+        "seconds": 0.017882000000000176,
+        "calls": 2
+      },
+      "regrid_evolution_setup": {
+        "seconds": 32.23715800000001,
+        "calls": 2
+      },
+      "regrid_extra": {
+        "seconds": 0.12836899999999218,
+        "calls": 2
+      },
+      "regrid_gather": {
+        "seconds": 0.004587000000000785,
+        "calls": 2
+      },
+      "regrid_install": {
+        "seconds": 0.027312000000002,
+        "calls": 2
+      },
+      "regrid_load": {
+        "seconds": 0.36788399999999655,
+        "calls": 2
+      },
+      "regrid_native": {
+        "seconds": 0.2998139999999978,
+        "calls": 2
+      },
+      "regrid_retire": {
+        "seconds": 0.0034200000000055297,
+        "calls": 2
+      },
+      "startup": {
+        "seconds": 0.00013699999999999997,
+        "calls": 1
+      },
+      "step": {
+        "seconds": 22.067917000000016,
+        "calls": 6
+      }
+    },
+    "sum_exclusive_seconds": 79.10457600000001,
+    "startup_setup_seconds": 16.6071,
+    "all_regrid_seconds": 33.086426,
+    "setup_and_regrid_fraction": 0.62820039639679,
+    "steady_step_with_diagnostics_seconds": null,
+    "startup_equivalent_steady_steps": null,
+    "caveat": "Phase components all use this same rank. Steady-window critical rank may differ. Short synthetic event history does not imply long-run speedup."
+  },
+  {
+    "name": "setup-dynamic-p2-r2-m0",
+    "critical_wall_rank": 1,
+    "exclusive_phases": {
+      "checkpoint_capture": {
+        "seconds": 0.019357999999996878,
+        "calls": 1
+      },
+      "checkpoint_write": {
+        "seconds": 0.2121400000000051,
+        "calls": 1
+      },
+      "diagnostics": {
+        "seconds": 7.128170999999998,
+        "calls": 9
+      },
+      "evolution_setup": {
+        "seconds": 16.480397999999997,
+        "calls": 1
+      },
+      "initial_state": {
+        "seconds": 0.037591000000002595,
+        "calls": 1
+      },
+      "native_setup": {
+        "seconds": 0.14684499999999995,
+        "calls": 1
+      },
+      "regrid_capture": {
+        "seconds": 0.02117300000000455,
+        "calls": 2
+      },
+      "regrid_evolution_setup": {
+        "seconds": 32.193098000000006,
+        "calls": 2
+      },
+      "regrid_extra": {
+        "seconds": 0.1293149999999912,
+        "calls": 2
+      },
+      "regrid_gather": {
+        "seconds": 0.004972999999999672,
+        "calls": 2
+      },
+      "regrid_install": {
+        "seconds": 0.02948800000000773,
+        "calls": 2
+      },
+      "regrid_load": {
+        "seconds": 0.3621470000000002,
+        "calls": 2
+      },
+      "regrid_native": {
+        "seconds": 0.3097639999999977,
+        "calls": 2
+      },
+      "regrid_retire": {
+        "seconds": 0.0037229999999937036,
+        "calls": 2
+      },
+      "startup": {
+        "seconds": 0.00011200000000000012,
+        "calls": 1
+      },
+      "step": {
+        "seconds": 22.081311000000007,
+        "calls": 6
+      }
+    },
+    "sum_exclusive_seconds": 79.159607,
+    "startup_setup_seconds": 16.664946,
+    "all_regrid_seconds": 33.053681,
+    "setup_and_regrid_fraction": 0.6280807710427365,
+    "steady_step_with_diagnostics_seconds": null,
+    "startup_equivalent_steady_steps": null,
+    "caveat": "Phase components all use this same rank. Steady-window critical rank may differ. Short synthetic event history does not imply long-run speedup."
+  },
+  {
+    "name": "setup-dynamic-p2-r2-m4",
+    "critical_wall_rank": 1,
+    "exclusive_phases": {
+      "checkpoint_capture": {
+        "seconds": 0.006681000000000381,
+        "calls": 1
+      },
+      "checkpoint_write": {
+        "seconds": 0.2129280000000051,
+        "calls": 1
+      },
+      "diagnostics": {
+        "seconds": 7.131666999999993,
+        "calls": 9
+      },
+      "evolution_setup": {
+        "seconds": 8.921184,
+        "calls": 1
+      },
+      "initial_state": {
+        "seconds": 0.03743099999999977,
+        "calls": 1
+      },
+      "native_setup": {
+        "seconds": 0.147353,
+        "calls": 1
+      },
+      "regrid_capture": {
+        "seconds": 0.020018000000000313,
+        "calls": 2
+      },
+      "regrid_evolution_setup": {
+        "seconds": 17.833251999999998,
+        "calls": 2
+      },
+      "regrid_extra": {
+        "seconds": 0.12830199999999792,
+        "calls": 2
+      },
+      "regrid_gather": {
+        "seconds": 0.004498999999999143,
+        "calls": 2
+      },
+      "regrid_install": {
+        "seconds": 0.029077999999998383,
+        "calls": 2
+      },
+      "regrid_load": {
+        "seconds": 0.3706800000000001,
+        "calls": 2
+      },
+      "regrid_native": {
+        "seconds": 0.4031580000000048,
+        "calls": 2
+      },
+      "regrid_retire": {
+        "seconds": 0.0037100000000016564,
+        "calls": 2
+      },
+      "startup": {
+        "seconds": 9.10000000000008e-05,
+        "calls": 1
+      },
+      "step": {
+        "seconds": 22.170435000000005,
+        "calls": 6
+      }
+    },
+    "sum_exclusive_seconds": 57.42046700000001,
+    "startup_setup_seconds": 9.106059,
+    "all_regrid_seconds": 18.792697,
+    "setup_and_regrid_fraction": 0.48586780041339606,
+    "steady_step_with_diagnostics_seconds": null,
+    "startup_equivalent_steady_steps": null,
+    "caveat": "Phase components all use this same rank. Steady-window critical rank may differ. Short synthetic event history does not imply long-run speedup."
+  },
+  {
+    "name": "setup-fixed-p4-r0-m0",
+    "critical_wall_rank": 1,
+    "exclusive_phases": {
+      "checkpoint_capture": {
+        "seconds": 0.014373999999996556,
+        "calls": 1
+      },
+      "checkpoint_write": {
+        "seconds": 0.2365169999999992,
+        "calls": 1
+      },
+      "diagnostics": {
+        "seconds": 4.889294000000007,
+        "calls": 9
+      },
+      "evolution_setup": {
+        "seconds": 16.431898,
+        "calls": 1
+      },
+      "initial_state": {
+        "seconds": 0.05412199999999956,
+        "calls": 1
+      },
+      "native_setup": {
+        "seconds": 0.11907500000000004,
+        "calls": 1
+      },
+      "startup": {
+        "seconds": 0.00017400000000000748,
+        "calls": 1
+      },
+      "step": {
+        "seconds": 19.855831999999996,
+        "calls": 8
+      }
+    },
+    "sum_exclusive_seconds": 41.601286,
+    "startup_setup_seconds": 16.605269,
+    "all_regrid_seconds": 0,
+    "setup_and_regrid_fraction": 0.3991527809981643,
+    "steady_step_with_diagnostics_seconds": 3.0244271666666673,
+    "startup_equivalent_steady_steps": 5.490384818326202,
+    "caveat": "Phase components all use this same rank. Steady-window critical rank may differ. Short synthetic event history does not imply long-run speedup."
+  },
+  {
+    "name": "setup-fixed-p4-r0-m4",
+    "critical_wall_rank": 1,
+    "exclusive_phases": {
+      "checkpoint_capture": {
+        "seconds": 0.014466000000005863,
+        "calls": 1
+      },
+      "checkpoint_write": {
+        "seconds": 0.2734079999999963,
+        "calls": 1
+      },
+      "diagnostics": {
+        "seconds": 4.950053999999994,
+        "calls": 9
+      },
+      "evolution_setup": {
+        "seconds": 8.813381999999999,
+        "calls": 1
+      },
+      "initial_state": {
+        "seconds": 0.05352500000000049,
+        "calls": 1
+      },
+      "native_setup": {
+        "seconds": 0.11202800000000002,
+        "calls": 1
+      },
+      "startup": {
+        "seconds": 0.0001810000000000006,
+        "calls": 1
+      },
+      "step": {
+        "seconds": 19.939692000000004,
+        "calls": 8
+      }
+    },
+    "sum_exclusive_seconds": 34.156736,
+    "startup_setup_seconds": 8.979116,
+    "all_regrid_seconds": 0,
+    "setup_and_regrid_fraction": 0.2628798020981864,
+    "steady_step_with_diagnostics_seconds": 3.036531,
+    "startup_equivalent_steady_steps": 2.9570309013805556,
+    "caveat": "Phase components all use this same rank. Steady-window critical rank may differ. Short synthetic event history does not imply long-run speedup."
+  },
+  {
+    "name": "setup-fixed-p4-r1-m4",
+    "critical_wall_rank": 0,
+    "exclusive_phases": {
+      "checkpoint_capture": {
+        "seconds": 0.015380999999997869,
+        "calls": 1
+      },
+      "checkpoint_write": {
+        "seconds": 0.25010699999999986,
+        "calls": 1
+      },
+      "diagnostics": {
+        "seconds": 4.914549999999995,
+        "calls": 9
+      },
+      "evolution_setup": {
+        "seconds": 8.645942,
+        "calls": 1
+      },
+      "initial_state": {
+        "seconds": 0.04621999999999993,
+        "calls": 1
+      },
+      "native_setup": {
+        "seconds": 0.103769,
+        "calls": 1
+      },
+      "startup": {
+        "seconds": 0.00011300000000000025,
+        "calls": 1
+      },
+      "step": {
+        "seconds": 19.952623000000006,
+        "calls": 8
+      }
+    },
+    "sum_exclusive_seconds": 33.928705,
+    "startup_setup_seconds": 8.796044,
+    "all_regrid_seconds": 0,
+    "setup_and_regrid_fraction": 0.25925080252841953,
+    "steady_step_with_diagnostics_seconds": 3.0389025000000003,
+    "startup_equivalent_steady_steps": 2.894480490900909,
+    "caveat": "Phase components all use this same rank. Steady-window critical rank may differ. Short synthetic event history does not imply long-run speedup."
+  },
+  {
+    "name": "setup-fixed-p4-r1-m0",
+    "critical_wall_rank": 1,
+    "exclusive_phases": {
+      "checkpoint_capture": {
+        "seconds": 0.019662000000003843,
+        "calls": 1
+      },
+      "checkpoint_write": {
+        "seconds": 0.2511730000000014,
+        "calls": 1
+      },
+      "diagnostics": {
+        "seconds": 4.940428999999984,
+        "calls": 9
+      },
+      "evolution_setup": {
+        "seconds": 16.690474000000002,
+        "calls": 1
+      },
+      "initial_state": {
+        "seconds": 0.04673700000000025,
+        "calls": 1
+      },
+      "native_setup": {
+        "seconds": 0.11177100000000001,
+        "calls": 1
+      },
+      "startup": {
+        "seconds": 0.00018899999999999993,
+        "calls": 1
+      },
+      "step": {
+        "seconds": 19.924683000000012,
+        "calls": 8
+      }
+    },
+    "sum_exclusive_seconds": 41.985118,
+    "startup_setup_seconds": 16.849171000000002,
+    "all_regrid_seconds": 0,
+    "setup_and_regrid_fraction": 0.40131293664578965,
+    "steady_step_with_diagnostics_seconds": 3.035185333333333,
+    "startup_equivalent_steady_steps": 5.551282425806838,
+    "caveat": "Phase components all use this same rank. Steady-window critical rank may differ. Short synthetic event history does not imply long-run speedup."
+  },
+  {
+    "name": "setup-fixed-p4-r2-m0",
+    "critical_wall_rank": 2,
+    "exclusive_phases": {
+      "checkpoint_capture": {
+        "seconds": 0.013905999999998642,
+        "calls": 1
+      },
+      "checkpoint_write": {
+        "seconds": 0.2380199999999988,
+        "calls": 1
+      },
+      "diagnostics": {
+        "seconds": 4.900558000000011,
+        "calls": 9
+      },
+      "evolution_setup": {
+        "seconds": 16.325613999999998,
+        "calls": 1
+      },
+      "initial_state": {
+        "seconds": 0.048987000000000336,
+        "calls": 1
+      },
+      "native_setup": {
+        "seconds": 0.099267,
+        "calls": 1
+      },
+      "startup": {
+        "seconds": 0.00018099999999999887,
+        "calls": 1
+      },
+      "step": {
+        "seconds": 19.845995999999992,
+        "calls": 8
+      }
+    },
+    "sum_exclusive_seconds": 41.472529,
+    "startup_setup_seconds": 16.474049,
+    "all_regrid_seconds": 0,
+    "setup_and_regrid_fraction": 0.3972279819250955,
+    "steady_step_with_diagnostics_seconds": 3.0140945000000006,
+    "startup_equivalent_steady_steps": 5.465671033207485,
+    "caveat": "Phase components all use this same rank. Steady-window critical rank may differ. Short synthetic event history does not imply long-run speedup."
+  },
+  {
+    "name": "setup-fixed-p4-r2-m4",
+    "critical_wall_rank": 1,
+    "exclusive_phases": {
+      "checkpoint_capture": {
+        "seconds": 0.014288000000000523,
+        "calls": 1
+      },
+      "checkpoint_write": {
+        "seconds": 0.2413050000000041,
+        "calls": 1
+      },
+      "diagnostics": {
+        "seconds": 4.898855999999995,
+        "calls": 9
+      },
+      "evolution_setup": {
+        "seconds": 8.657305000000001,
+        "calls": 1
+      },
+      "initial_state": {
+        "seconds": 0.06129699999999971,
+        "calls": 1
+      },
+      "native_setup": {
+        "seconds": 0.11388799999999999,
+        "calls": 1
+      },
+      "startup": {
+        "seconds": 0.00025299999999999975,
+        "calls": 1
+      },
+      "step": {
+        "seconds": 19.803001000000002,
+        "calls": 8
+      }
+    },
+    "sum_exclusive_seconds": 33.790193,
+    "startup_setup_seconds": 8.832743,
+    "all_regrid_seconds": 0,
+    "setup_and_regrid_fraction": 0.2613996019495953,
+    "steady_step_with_diagnostics_seconds": 3.0163785000000005,
+    "startup_equivalent_steady_steps": 2.9282608266833883,
+    "caveat": "Phase components all use this same rank. Steady-window critical rank may differ. Short synthetic event history does not imply long-run speedup."
+  }
+]

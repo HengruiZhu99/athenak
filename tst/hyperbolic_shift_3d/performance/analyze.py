@@ -7,18 +7,24 @@ for receipt in receipts:
     case=receipt['case'];name=case['name'];row={'name':name,'case':case,'passed':receipt['passed'],'process_seconds':receipt['seconds']}
     if receipt['returncode']!=0:rows.append(row);continue
     report=json.loads((root/(name+'.report.json')).read_text());row['rank0_after_setup_seconds']=report['seconds']
-    profiles=[json.loads(f.read_text()) for f in sorted(root.glob(name+'.rank*.performance.json'))]
+    def rank_files(suffix):
+        return sorted(root.glob(name+'.rank*.'+suffix),key=lambda f:int(re.search(r'\.rank(\d+)\.',f.name).group(1)))
+    profiles=[json.loads(f.read_text()) for f in rank_files('performance.json')]
     if profiles:
-        assert len(profiles)==case['ranks']
+        assert [x['rank'] for x in profiles]==list(range(case['ranks']))
         row['max_rank_driver_seconds']=max(x['wall_seconds'] for x in profiles)
-        row['max_rank_rss_bytes']=max(x['peak_rss_bytes'] for x in profiles)
+        row['rank_peak_rss_bytes']=[x['peak_rss_bytes'] for x in profiles]
+        row['max_rank_rss_bytes']=max(row['rank_peak_rss_bytes'])
+        ppn=case.get('ppn',case['ranks'])
+        node_bounds=[sum(row['rank_peak_rss_bytes'][i:i+ppn]) for i in range(0,len(profiles),ppn)]
+        row['max_node_sum_rank_peak_rss_bytes_upper_bound']=max(node_bounds)
         row['sum_rank_peak_rss_bytes_upper_bound']=sum(x['peak_rss_bytes'] for x in profiles)
         row['rank_phases']=[x['exclusive_phases'] for x in profiles]
         row['critical_rank_step_seconds']=max(x['exclusive_phases'].get('step',{}).get('seconds',0) for x in profiles)
         windows=[];step_windows=[]
         # Fixed hierarchy only: diagnostics are initial, then one per step.
         if case.get('policy','fixed') in ['fixed','uniform']:
-            for f in sorted(root.glob(name+'.rank*.samples.jsonl')):
+            for f in rank_files('samples.jsonl'):
                 samples=[json.loads(line) for line in f.read_text().splitlines()]
                 steps=[x['seconds'] for x in samples if x['phase']=='step']
                 diag=[x['seconds'] for x in samples if x['phase']=='diagnostics']
@@ -31,7 +37,7 @@ for receipt in receipts:
                 row['critical_rank_steady_step_with_diagnostics_seconds']=max(windows)
                 row['warmup_steps']=warm
         generations=[]
-        for f in sorted(root.glob(name+'.rank*.generations.jsonl')):
+        for f in rank_files('generations.jsonl'):
             generations.append([json.loads(line) for line in f.read_text().splitlines() if json.loads(line)['event'] in ['retired','final']])
         row['rank_generation_totals']=[{'nested_seconds':{k:sum(g['nested_seconds'].get(k,0) for g in gs) for k in gs[-1]['nested_seconds']},'sparse_bytes_sent':sum(g['sparse_calls']*g['sparse_send_bytes_per_call'] for g in gs)} for gs in generations]
     rows.append(row)
@@ -54,4 +60,4 @@ for (label,ranks),pairs in groups.items():
             m['paired_log_ratio_student_t_95_interval']=[math.exp(statistics.mean(logs)-margin),math.exp(statistics.mean(logs)+margin)]
         result['metrics'][metric]=m
     comparisons.append(result)
-pathlib.Path(a.output).write_text(json.dumps({'directory':str(root),'completed':(root/'completed.json').exists(),'runs':rows,'paired_comparisons':comparisons,'notes':['Profiled runs excluded from A/B groups.','Rank-zero report excludes initial setup but includes final capture/write.','Rank RSS sum is an upper bound, not simultaneous measured node RSS.','Three-pair Student-t intervals assume independent log ratios; workstation scheduling limits inference.']},indent=2)+'\n')
+pathlib.Path(a.output).write_text(json.dumps({'directory':str(root),'completed':(root/'completed.json').exists(),'runs':rows,'paired_comparisons':comparisons,'notes':['Profiled runs excluded from A/B groups.','Rank-zero report excludes initial setup but includes final capture/write.','Rank RSS sum is an upper bound, not simultaneous measured node RSS; node grouping follows explicit ppn and contiguous PALS rank placement.','Three-pair Student-t intervals assume independent log ratios; workstation scheduling limits inference.']},indent=2)+'\n')
