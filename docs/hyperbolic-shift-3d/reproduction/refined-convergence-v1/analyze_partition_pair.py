@@ -72,6 +72,8 @@ for name in ('equal','weighted'):
     axes[0].plot(range(48),np.array(s['step_seconds_by_rank'])/256,'.-',label=name)
     axes[1].plot(range(48),s['halo_rows_by_rank'],'.-',label=name)
 axes[0].set(xlabel='MPI rank',ylabel='Host stepping seconds per step')
+axes[0].set_ylim(0,1.15*max(a['max'],b['max'])/256)
+axes[0].set_title(f"Weighted median cost change: {100*(b['median']/a['median']-1):+.2f}%")
 axes[1].set(xlabel='MPI rank',ylabel='Halo rows')
 for ax in axes:ax.grid(alpha=.2);ax.legend()
 fig.suptitle('Matched four-node ownership pair; same physical state, no scaling claim')

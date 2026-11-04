@@ -1,8 +1,8 @@
 {
-  "status": "radial_attribution_complete_ownership_benchmark_running",
-  "current_job": "9038692.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "status": "stationary_radial18_n12_submitted",
+  "current_job": "9038758.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
   "branch": "codex/refined-convergence",
-  "next": "Monitor existing GPU ownership pair9038692, preserve/compare physical parity and measured step cost. Radial/time attribution complete through.6M. Choose stationary long-time resolution family and qualify enlarged symmetric SMR support before boosted v=.1; goal remains active.",
+  "next": "Monitor existing N12; fully verify healthy terminal walltime state before same-case continuation. Then stationary N14 and explicit N16 extension; no duplicate jobs. Symmetric boosted SMR remains pending.",
   "goal_active": true,
   "historical_startup_failure": {
     "job": "9038031",
@@ -287,7 +287,7 @@
     "science_unchanged": true,
     "source_commit": "b52f09723b9c5a51340401bf91a7bf4426d8f339",
     "plan": "RADIAL-CONTROL-PLAN.md",
-    "note": "Time9038572 admitted and all152 artifacts locally verified; endpoint reconstructed. Radial9038626 running unchanged.",
+    "note": "Time and radial controls fully admitted, preserved and reconstructed; causal comparison complete through.6M.",
     "time_plan": "campaigns/stationary20-reference-time-dt4-n16-segment01/plan.json",
     "time_plan_sha256": "ba16737cc5deedbfae7a431d130ba7d9dce248205c087fa2242b074d8fa56a2c",
     "job": null,
@@ -327,14 +327,14 @@
   ],
   "execution_limits": {
     "debug_scaling_max_run": "[u:PBS_GENERIC=1]",
-    "observed_current_job": "9038692",
+    "observed_current_job": "9038758.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
     "decision": "Keep controls sequential; user8-node permission does not override scheduler limit."
   },
   "local_terminal_watcher": {
-    "tool_session_id": 97283,
-    "script": "/tmp/watch-partition-9038692.py",
-    "log": "output/refined-convergence/partition-pair-watch.jsonl",
-    "action": "Observe existing9038692 every60s, at terminal invoke dedicated collector once. No submission/replay/adoption."
+    "script": "/tmp/watch-radial-n12-9038758.py",
+    "log": "output/refined-convergence/radial18-n12-segment01-watch.jsonl",
+    "action": "Observe existing job only; collect exactly once at terminal, no automatic submission inside watcher.",
+    "tool_session_id": 27865
   },
   "radial_analysis_preparation": "Positive admitted radial18 Aurora norm reproduction verified; dedicated reader preserves checkpoint and reproduces native norms. No rerun needed.",
   "completed_reference_control": {
@@ -391,7 +391,7 @@
     "history_analysis": "stationary-reference-v2-completed/analysis.json"
   },
   "performance_control_preparation": {
-    "status": "GPU_pair_running",
+    "status": "completed_not_adopted",
     "source_changes": "analysis copy only; production files/binary unchanged",
     "cases": [
       "two-rank block-aligned unequal",
@@ -401,15 +401,16 @@
     "checkpoint_sha256": "9b2a9c32f381baf3708765c2c2a11bed52e38c1237a996657f34ef2dd5386dc8",
     "candidate48": "measured-partition-candidate/candidate.partition",
     "gpu_benchmark_submitted": true,
-    "measured_speedup": null,
-    "qualification": "Proxy cost model is not measured speedup; fixed-grid runtime Repartition cannot directly rebuild custom SMR.",
+    "measured_speedup": 0.9906849611,
+    "qualification": "Single ordered 256-step same-allocation pair: weighted ownership is0.94% slower, nominal communication increases3.6%; retain equal ownership. Not a strong-scaling result.",
     "gpu_build_status": "completed",
     "gpu_probe_binary_sha256": "c3a2970ddb1cd78908d233f54c45394375c67d1035f0c61653efdb80c0f2eca9",
     "gpu_probe_namespace": "gpu-partition-package-v1",
     "benchmark_policy": "Two equal/weighted ownership restarts from admitted radial .6M endpoint, 256 steps, same four-node allocation, matched science. Prepare only after terminal admission; no automatic adoption.",
-    "current_job": "9038692.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "current_job": null,
     "plan": "campaigns/stationary20-radial18-ownership-pair-v1/plan.json",
-    "plan_sha256": "8146783f417d65d447b1025306f634d7248f88017459490dfbdb1407e5c82be5"
+    "plan_sha256": "8146783f417d65d447b1025306f634d7248f88017459490dfbdb1407e5c82be5",
+    "all303_artifacts_locally_verified": true
   },
   "completed_time_control": {
     "root": "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/stationary-reference-v2",
@@ -459,16 +460,64 @@
     "analysis": "short-radial-controls-comparison/analysis.json and nominal-core-comparison.json; three figures inspected"
   },
   "active_control": {
-    "status": "running",
-    "purpose": "static_ownership_pair",
-    "current_job": "9038692.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
-    "plan": "campaigns/stationary20-radial18-ownership-pair-v1/plan.json",
-    "plan_sha256": "8146783f417d65d447b1025306f634d7248f88017459490dfbdb1407e5c82be5",
+    "status": "submitted",
+    "purpose": "stationary_radial18_resolution",
+    "n": 12,
+    "current_job": "9038758.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "plan": "campaigns/stationary20-radial18-resolution-n12-segment01/plan.json",
     "nodes": 4,
     "ranks": 48,
-    "steps_per_case": 256,
-    "source": "separate analysis probe; original production snapshot unchanged",
-    "restart": "campaigns/stationary20-reference-radial-dt4-n16-segment01/output/state.checkpoint",
-    "adopted_for_physics": false
+    "dt": 4.1666666666666665e-05,
+    "target_M": 10,
+    "launcher": "launcher-v7"
+  },
+  "radial_resolution": {
+    "status": "n12_submitted",
+    "sequence": [
+      12,
+      14,
+      16
+    ],
+    "target_M": 10,
+    "dt_policy": "1/(2000*N)",
+    "nodes": 4,
+    "ranks": 48,
+    "n16_reuse": "Explicit continuation of admitted completed .6M radial18 control",
+    "n12_local_check": {
+      "steps": 2,
+      "dt": 4.1666666666666665e-05,
+      "cfl": 0.18519499977512974,
+      "checkpoint_sha256": "db614729e5e2a01177b72d8b046aafecdff73f03f9f1da361feba1dc42bc6ffc"
+    },
+    "qualification": "Space/time refined together; same SMR and radial boundaries, angles scale with N. No convergence claim before measurements.",
+    "current_job": "9038758.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "plan": "campaigns/stationary20-radial18-resolution-n12-segment01/plan.json",
+    "plan_sha256": "79c7f0ffd7fcd0ef6161bcf2c448f53efbdc602efdc6793141fc34ebf1df8a83",
+    "storage": {
+      "bytes": 44282391174,
+      "limit_bytes": 50000000000,
+      "planned_bytes": 2000000000,
+      "reserve_bytes": 1000000000,
+      "headroom_bytes": 2717608826,
+      "roots": [
+        "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1",
+        "/home/hzhu/hyperboloidal-performance-scaling-20261103",
+        "/lus/flare/projects/CompactBinaryMerger/hzhu/hyperboloidal-refined-20261103-v1",
+        "/home/hzhu/hyperbolic-core-shell-20261028",
+        "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/stationary-reference-v2"
+      ],
+      "scan": {
+        "bytes": 44282391174,
+        "unique_inodes": 180146,
+        "directories_scanned": 20119,
+        "entries_scanned": 214320
+      }
+    },
+    "n14_local_check": {
+      "steps": 2,
+      "dt": 3.571428571428572e-05,
+      "cfl": 0.18520469948488266,
+      "checkpoint_sha256": "f3e660b01a538a11724d54a70c4f524df7e90183a6cf8b087fee7ac5a0d94912"
+    }
   }
 }

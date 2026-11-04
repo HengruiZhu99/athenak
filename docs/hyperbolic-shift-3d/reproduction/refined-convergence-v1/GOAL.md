@@ -41,7 +41,7 @@ features throughout evolution; scri null/pole/clock behavior; moving-horizon
 acceptance/mass gaps, trajectory, floor/sign counts and cost. Explicitly report
 remaining limitations and do not mark complete without evidence for all parts.
 
-New radial isolation: initial native RHS residuals in .90–.95 decrease with resolution (fitted orders3.64–3.88); selective fourfold radial refinement reduces them206–246x. The corrected outer gauge survives beyond the old failure, but large evolved exterior residuals remain. See RADIAL-CONTROL-PLAN.md: fresh temporal control9038572 completed.6M and its admitted same-grid comparison shows exterior changes below.002%; paired radial control9038626 is running. The full stationary/boosted convergence goal remains active.
+New radial isolation: initial native RHS residuals in .90–.95 decrease with resolution (fitted orders3.64–3.88); selective fourfold radial refinement reduces them206–246x. The corrected outer gauge survives beyond the old failure, but large evolved exterior residuals remain. See RADIAL-CONTROL-PLAN.md: fresh temporal control9038572 completed.6M and its admitted same-grid comparison shows exterior changes below.002%; paired radial control9038626 completed and is fully preserved. The full stationary/boosted convergence goal remains active.
 
 Initial findings: RF1 narrow Omega join .18–.22 worsens short-time exterior
 constraints. Its parser prevents a wide join because gauge onset must remain
@@ -54,4 +54,4 @@ Evidence on original branch ab045abef under convergence-localization/ remains
 immutable. New audits will distinguish initial spacelike margins, map
 Jacobians, evolved metric regularity and numerical derivative sensitivity.
 
-The admitted .6M radial control now reduces exterior H/M by36.394x/59.355x at the same timestep, while nominal Cartesian fields differ by at most4.24e-22 and floor/sign counters match. This establishes a major early spatial-discretization/interface contribution in .90–.95, not full10M convergence. GPU ownership benchmark9038692 is running on the same four nodes in an isolated namespace; no optimization adopted or speedup claimed before parity/timing.
+The admitted .6M radial control now reduces exterior H/M by36.394x/59.355x at the same timestep, while nominal Cartesian fields differ by at most4.24e-22 and floor/sign counters match. This establishes a major early spatial-discretization/interface contribution in .90–.95, not full10M convergence. GPU ownership benchmark9038692 completed: byte-identical endpoints, weighted partition0.94% slower. The candidate is rejected; retain equal production ownership. Next is stationary radial18 N12/N14/N16 to10M, with scaled timesteps and explicit reuse of the admitted N16 .6M state. Then qualify enlarged symmetric SMR support before boosted v=.1. No long-time convergence established yet.

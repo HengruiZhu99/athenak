@@ -1,0 +1,23 @@
+{
+  "source_commit": "b52f09723b9c5a51340401bf91a7bf4426d8f339",
+  "binary_sha256": "6c22d88a196c0dabe657eacc6130137e85d5d34ad1436cf30629bb45e5652271",
+  "config_sha256": "ef36601d8d492909fd8bf80fa4afc1d496fa863b7b91b674c464309d58b14cff",
+  "command": [
+    "mpiexec",
+    "-n",
+    "2",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/build-refined-convergence/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined_amr",
+    "14",
+    "boost",
+    "2",
+    "3.571428571428572e-05",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/radial18-resolution-check/n14/state",
+    "-",
+    "smr",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/inputs/hyperbolic_shift_3d/refined_convergence/central20_stationary_smr025_radial18_reference.cfg"
+  ],
+  "started": 1793797947.2211242,
+  "purpose": "New N14 radial18 local two-step CFL/admission check at scaled dt=1/28000; unchanged production source. No GPU smoke or long-time evidence.",
+  "returncode": 0,
+  "elapsed": 174.9084711074829
+}

@@ -789,3 +789,11 @@ reserves, within the50GB task cap. No purge or production adoption occurred.
 The local watcher invokes the dedicated terminal collector once; saved
 submission/state remain authoritative. Raw metadata is in
 `gpu-partition-submission/`; no speedup is claimed until measurement/parity.
+
+## Measured ownership result and next stationary family
+
+Four-node GPU pair9038692 completed and all303 artifacts are locally hash/length verified. Both 256-step endpoints are byte-identical (SHA25663e64dd36d188be00f5d16b147ba02ef82aacbad3071337012af60a5b64d1cf8). Median stepping time was50.28009s with equal ownership and50.75285s with weighted ownership: the candidate was0.94% slower. Nominal sparse-exchange payload increased3.6%; RHS and closure time were essentially unchanged. The inspected zero-based plot and records are in `gpu-partition-comparison/`. This single ordered pair is not a strong-scaling study. **Do not adopt weighted ownership.** Frozen production remains unchanged.
+
+The next stationary radial18 resolution family is N12/N14/N16 with dt=1/(2000N), four nodes/48ranks, to10M, using the existing frozen v7 worker. N12/N14 start fresh; N16 explicitly extends its admitted .6M radial control. No new geometry, gauge, floor, derivative or boundary equation is introduced. N12 two-step local MPI check passed requested dt1/24000 unchanged, CFL.185195, finite/admitted RF2 and matching scientific identity. Its record is `radial18-resolution-check/n12/`. The new plan writer binds each plan and uses the same terminal/continuation checks. Spatial/time resolution change together; survival is not convergence.
+
+N12 stationary radial18 job **9038758** is submitted, plan SHA25679c7f0ffd7fcd0ef6161bcf2c448f53efbdc602efdc6793141fc34ebf1df8a83. Both user debug queues were empty; four nodes48ranks, dt1/24000, fresh native t0 to10M, storage44.282GB plus3GB output/atomic reserves under50GB. Current-task watcher collects once at terminal; no duplicate submission. N14 local two-step check also passed dt1/28000 unchanged, CFL.185205 and finite/admitted RF2; no N14 Aurora job yet.
