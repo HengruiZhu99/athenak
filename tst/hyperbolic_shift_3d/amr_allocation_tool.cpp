@@ -20,7 +20,7 @@ std::map<std::string,KernelUse> kernels;
 std::map<uint64_t,std::pair<std::string,Clock::time_point>> running;
 uint64_t next_id=0;
 bool timings(){static const bool enabled=std::getenv("HYPERBOLIC_PROFILE_KERNELS")!=nullptr;return enabled;}
-void begin(const char*label,uint64_t*id){if(!timings())return;std::lock_guard<std::mutex> lock(guard);*id=++next_id;running[*id]={label,Clock::now()};}
+void begin(const char*label,uint64_t*id){*id=0;if(!timings())return;std::lock_guard<std::mutex> lock(guard);*id=++next_id;running[*id]={label,Clock::now()};}
 void end(uint64_t id){if(!timings())return;const auto now=Clock::now();std::lock_guard<std::mutex> lock(guard);auto it=running.find(id);if(it==running.end())return;auto&k=kernels[it->second.first];k.seconds+=std::chrono::duration<double>(now-it->second.second).count();++k.calls;running.erase(it);}
 
 void change(Use&v,uint64_t n,bool add){if(add){v.live+=n;v.peak=std::max(v.peak,v.live);++v.allocations;}else v.live-=n;}
@@ -39,6 +39,7 @@ extern "C" void kokkosp_deallocate_data(SpaceHandle s,const char*l,const void*,u
 extern "C" void kokkosp_finalize_library(){
   const char*prefix=std::getenv("HYPERBOLIC_ALLOCATION_PREFIX");if(!prefix)return;
   std::ofstream out(std::string(prefix)+".pid"+std::to_string(getpid())+".allocations.json");
-  out<<"{\"pid\":"<<getpid()<<",\"spaces\":";table(out,spaces);out<<",\"labels\":";table(out,labels);out<<",\"fenced_kernel_timings\":"<<(timings()?"true":"false")<<",\"kernels\":{";
+  const char*rank=std::getenv("PALS_RANKID");if(!rank)rank=std::getenv("PMI_RANK");if(!rank)rank=std::getenv("OMPI_COMM_WORLD_RANK");
+  out<<"{\"rank\":"<<(rank?rank:"-1")<<",\"pid\":"<<getpid()<<",\"spaces\":";table(out,spaces);out<<",\"labels\":";table(out,labels);out<<",\"fenced_kernel_timings\":"<<(timings()?"true":"false")<<",\"kernels\":{";
   bool comma=false;for(const auto&[name,k]:kernels){if(comma)out<<',';comma=true;out<<std::quoted(name)<<":{\"seconds\":"<<std::setprecision(17)<<k.seconds<<",\"calls\":"<<k.calls<<'}';}out<<"}}\n";
 }

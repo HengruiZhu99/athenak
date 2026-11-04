@@ -16,7 +16,7 @@ def save(p,data):
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('plan');parser.add_argument('output');a=parser.parse_args()
     plan=json.loads(pathlib.Path(a.plan).read_text());out=pathlib.Path(a.output).resolve();out.mkdir(parents=True,exist_ok=False)
-    save(out/'plan.json',plan);(out/'bin').mkdir();variants={};hashes={}
+    save(out/'plan.json',plan);shutil.copy2(__file__,out/'runner.py');(out/'bin').mkdir();variants={};hashes={}
     for name,path in plan['variants'].items():
         dest=out/'bin'/name;shutil.copy2(path,dest);variants[name]=str(dest);hashes[name]=digest(dest)
     save(out/'binaries.json',hashes)
@@ -24,6 +24,11 @@ def main():
         nodes=sorted(set(pathlib.Path(os.environ['PBS_NODEFILE']).read_text().split()))
         assert len(nodes)==plan['nodes'] and 1<=len(nodes)<=2
         assert os.environ['MPIR_CVAR_ENABLE_GPU']=='1'
+        quota=subprocess.run(['lfs','quota','-u',os.environ['USER'],'/home'],capture_output=True,text=True,check=True).stdout
+        (out/'quota-start.txt').write_text(quota)
+        row=next(line.split() for line in quota.splitlines() if line.split() and line.split()[0]=='/home')
+        used,soft,hard=map(lambda v:int(v.rstrip('*')),row[1:4]);limit=min(v for v in [soft,hard] if v>0)
+        if (limit-used)*1024<15*1024**3:raise RuntimeError('less than 15 GiB user-quota headroom for task artifacts/reserves')
         save(out/'allocation.json',{'job':os.environ['PBS_JOBID'],'nodes':nodes,'requested_nodes':plan['nodes'],'walltime_limit_seconds':plan['deadline_seconds'],'environment':{k:v for k,v in os.environ.items() if k.startswith(('PBS_','ZE_','ONEAPI_','MPIR_','OMP_','EnableImplicit'))}})
     results=[];comparisons={};began=time.monotonic()
     for i,case in enumerate(plan['runs']):
@@ -37,7 +42,7 @@ def main():
             bind='1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100'
             cmd+=['-ppn',str(ppn),'--cpu-bind=list:'+':'.join(bind.split(':')[:ppn]),'gpu_tile_compact.sh']
         cmd+=[variants[case['variant']],str(case.get('n',12)),case.get('kind','wave'),str(case.get('steps',8)),'.00025',str(prefix),case.get('restart','-'),case.get('policy','fixed')]
-        receipt={'case':case,'command':cmd,'binary_sha256':hashes[case['variant']],'status':'started','utc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime())}
+        receipt={'case':case,'command':cmd,'binary_sha256':hashes[case['variant']],'status':'started','load_average':list(os.getloadavg()),'utc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime())}
         save(str(prefix)+'.receipt.json',receipt);env=os.environ.copy();env.update(case.get('env',{}));start=time.monotonic()
         with open(str(prefix)+'.log','w') as log:
             proc=subprocess.Popen(cmd,stdout=log,stderr=subprocess.STDOUT,env=env,start_new_session=True)

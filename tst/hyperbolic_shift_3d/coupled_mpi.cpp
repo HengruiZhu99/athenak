@@ -1,3 +1,6 @@
+#ifndef HYPERBOLIC_DIRECT_HALO_SETUP
+#define HYPERBOLIC_DIRECT_HALO_SETUP 0
+#endif
 #include "z4c/hyperboloidal/owned_padded_snapshot.hpp"
 #ifndef HYPERBOLIC_COMPACT_DIAGNOSTIC_TRANSFER
 #define HYPERBOLIC_COMPACT_DIAGNOSTIC_TRANSFER 0
@@ -324,7 +327,8 @@ class Evolution {
     if constexpr(!coordinated_plans){
     legacy_model=std::make_unique<h::HyperbolicComposite>(custom_mesh?*custom_mesh:continuous_positive?hyperbolic_reproduction::ContinuousCoreMesh(n):spherical_overlap?hyperbolic_reproduction::SphericalOverlapMesh(n):hyperbolic_reproduction::FixedMesh(n,core_subdivisions,evolved_overlap),false,scri_angular_exchange,epsilon,
       scri_sampled_normal?h::HyperbolicComposite::NormalDerivative::sampled_numerator:h::HyperbolicComposite::NormalDerivative::analytic_jets,
-      scri_donor_seven?h::HyperbolicComposite::RadialClosure::donor_seven:h::HyperbolicComposite::RadialClosure::ghost_lift);
+      scri_donor_seven?h::HyperbolicComposite::RadialClosure::donor_seven:h::HyperbolicComposite::RadialClosure::ghost_lift,
+      HYPERBOLIC_DIRECT_HALO_SETUP&&inner_transition_logical);
     auto&model=*legacy_model;
     if constexpr(inner_transition_logical)model.grid.SetInnerTransitionLogical(true);
     model.positive_dissipation=continuous_positive&&!direct_chi;model.puncture_reference=kind==2;

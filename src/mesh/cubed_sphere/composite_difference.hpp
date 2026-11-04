@@ -46,10 +46,10 @@ class CompositeDifference {
   std::vector<Row> extrapolated_halos;
   bool radial_interface_stencils = false;
 
-  CompositeDifference(CompositeMesh descriptor, int derivative_order = 4,bool radial_stencils=false)
+  CompositeDifference(CompositeMesh descriptor, int derivative_order = 4,bool radial_stencils=false,bool logical_inner=false)
       : mesh(std::move(descriptor)), n(mesh.cells), ng(mesh.ghosts),
         padded(n+2*(ng+mesh.evolved_overlap)), count(static_cast<int>(mesh.blocks.size())*padded*padded*padded),
-        order(derivative_order),storage_halo(ng+mesh.evolved_overlap),radial_interface_stencils(radial_stencils) {
+        order(derivative_order),storage_halo(ng+mesh.evolved_overlap),radial_interface_stencils(radial_stencils),inner_transition_logical(logical_inner) {
     if ((order != 2 && order != 4) || ng < order/2 || n < order)
       throw std::invalid_argument("composite derivative order/halo contract");
     if(mesh.evolved_overlap<0||mesh.evolved_overlap>n/3)

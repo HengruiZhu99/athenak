@@ -49,8 +49,8 @@ class HyperbolicComposite {
   HyperbolicComposite(cubed_sphere::CompositeMesh mesh,bool source=false,bool cross_face_scri=false,
                       Real angular_strength=0,
                       NormalDerivative normal=NormalDerivative::analytic_jets,
-                      RadialClosure radial=RadialClosure::ghost_lift)
-      :normal_derivative(normal),radial_closure(radial),grid(std::move(mesh),4,true),
+                      RadialClosure radial=RadialClosure::ghost_lift,bool logical_inner=false)
+      :normal_derivative(normal),radial_closure(radial),grid(std::move(mesh),4,true,logical_inner),
        scri(grid,nf,radial==RadialClosure::donor_seven?7:6,cross_face_scri),
        state(nf*grid.active.size(),0),compensation(state.size(),0),
        edge_compensation(scri.values.size(),0),adaptive(source),angular_epsilon(angular_strength) {
