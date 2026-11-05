@@ -6,12 +6,12 @@ The parent campaign, frozen Aurora snapshots and remote jobs are untouched.
 **Work in progress: no candidate is admitted, no stability/cost improvement is
 established, and no spherical result establishes boosted or 3D stability.**
 
-The latest [compatible-lapse trial](COMPATIBLE-LAPSE.md) implements a spatial
-candidate motivated by the [discrete gauge-mode audit](DISCRETE-GAUGE-MODE.md).
-It removes the tested interior growing branch and reduces refined 20M pulse
-responses; an N128 40M pair stays small. Boundary convergence, robust timestep
-limits and controlled costs remain open. The earlier direct-D2 policy fails
-the refined pulse robustness gate.
+The latest [boundary regularity audit](BOUNDARY-REGULARITY.md) extends the
+[compatible-lapse trial](COMPATIBLE-LAPSE.md) to N1024. Exterior errors continue
+to decrease, but endpoint second derivatives grow while boundary residuals
+converge slowly. The near-scri regularity question remains open. The compatible
+lapse policy removes the previous interior mode and keeps tested pulses small;
+it is not yet an admitted smooth candidate.
 
 Boundary results are in [SHIFT-NORMAL-BOUNDARY.md](SHIFT-NORMAL-BOUNDARY.md):
 the outgoing auxiliary/shift-normal policy improves the boundary defect and

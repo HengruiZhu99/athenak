@@ -1,0 +1,51 @@
+{
+  "domain": "Reference R/M 25\u2013100, uniform log-R RMS, t=10M",
+  "runs": [
+    {
+      "case": "compatible-lapse-f1-n1024-10M-v24",
+      "binary_sha256": "44f30a3d0038665476c4c86b0d8734919479ad80720350d69eede2b99a7e3b05",
+      "n": 1024,
+      "seconds": 605.571507375,
+      "physical_rms": [
+        2.2797620459447272e-08,
+        1.1717115901296666e-08,
+        1.632156856043874e-09,
+        2.4926277082266962e-09
+      ],
+      "interpolation_rms": [
+        5.711862186234659e-10,
+        2.800989278900391e-10,
+        8.63900461512273e-11,
+        9.210774930788891e-11
+      ],
+      "auxiliary_probes": [
+        {
+          "epsilon": 5.601346188530389e-06,
+          "trace_rate": 0.047920537550461995,
+          "pde_rate": 0.04930006380596863,
+          "defect": -0.0013795262555066357
+        },
+        {
+          "epsilon": 1.6804038565591163e-06,
+          "trace_rate": 0.04792053755872061,
+          "pde_rate": 0.04930006380596863,
+          "defect": -0.0013795262472480196
+        },
+        {
+          "epsilon": 5.601346188530388e-07,
+          "trace_rate": 0.04792053698061842,
+          "pde_rate": 0.04930006380596863,
+          "defect": -0.0013795268253502108
+        }
+      ],
+      "clock": -0.0030628306224944057,
+      "pole": 0.002759326494184808,
+      "trace": 0.001338561003642158,
+      "D_mismatch": 0.0,
+      "reference_step": 0.000125,
+      "scri_tangency": 2.948318429859967e-06
+    }
+  ],
+  "timing_same_binary": true,
+  "qualification": "No robust or converged candidate admitted."
+}
