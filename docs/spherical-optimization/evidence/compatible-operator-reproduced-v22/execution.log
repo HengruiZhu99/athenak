@@ -1,0 +1,16 @@
+/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/spherical_optimization/audit_compatible_operator.py:41: RuntimeWarning: divide by zero encountered in matmul
+  mat=J+correction;v,V=eig(mat);order=np.argsort(v.real)[::-1];v=v[order];mode=V[:,order[0]];res=np.linalg.norm(mat@mode-v[0]*mode)/max(1,np.linalg.norm(mat)*np.linalg.norm(mode));physical=np.zeros_like(s['state'],dtype=complex);physical[active]=mode*scale[active];peak=np.unravel_index(abs(physical).argmax(),physical.shape)
+/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/spherical_optimization/audit_compatible_operator.py:41: RuntimeWarning: overflow encountered in matmul
+  mat=J+correction;v,V=eig(mat);order=np.argsort(v.real)[::-1];v=v[order];mode=V[:,order[0]];res=np.linalg.norm(mat@mode-v[0]*mode)/max(1,np.linalg.norm(mat)*np.linalg.norm(mode));physical=np.zeros_like(s['state'],dtype=complex);physical[active]=mode*scale[active];peak=np.unravel_index(abs(physical).argmax(),physical.shape)
+/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/spherical_optimization/audit_compatible_operator.py:41: RuntimeWarning: invalid value encountered in matmul
+  mat=J+correction;v,V=eig(mat);order=np.argsort(v.real)[::-1];v=v[order];mode=V[:,order[0]];res=np.linalg.norm(mat@mode-v[0]*mode)/max(1,np.linalg.norm(mat)*np.linalg.norm(mode));physical=np.zeros_like(s['state'],dtype=complex);physical[active]=mode*scale[active];peak=np.unravel_index(abs(physical).argmax(),physical.shape)
+{"n": 64, "model": "original", "leading": [0.39877011535906415, 22.49065902111603], "peak_r": 0.8267716535433071}
+{"n": 64, "model": "all", "leading": [0.3159322753473817, 0.0], "peak_r": 0.03937007874015748}
+{"n": 64, "model": "lapse", "leading": [0.3159365581464273, 0.0], "peak_r": 0.03937007874015748}
+{"n": 64, "model": "shift", "leading": [0.3159362526657686, 0.0], "peak_r": 0.03937007874015748}
+{"n": 64, "model": "geometry", "leading": [0.3159339957412332, 0.0], "peak_r": 0.03937007874015748}
+{"n": 128, "model": "original", "leading": [1.7574282065071902, 45.65023825262312], "peak_r": 0.8117647058823529}
+{"n": 128, "model": "all", "leading": [0.031095935849242626, -0.47782480054495885], "peak_r": 0.0196078431372549}
+{"n": 128, "model": "lapse", "leading": [0.031060667532661672, 0.47784599555527035], "peak_r": 0.0196078431372549}
+{"n": 128, "model": "shift", "leading": [2.0288282777753497, 46.53960592971317], "peak_r": 0.8196078431372549}
+{"n": 128, "model": "geometry", "leading": [0.031074411739317083, -0.4778170618164434], "peak_r": 0.0196078431372549}

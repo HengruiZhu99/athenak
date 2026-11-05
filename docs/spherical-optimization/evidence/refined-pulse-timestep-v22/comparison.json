@@ -1,0 +1,38 @@
+{
+  "rows": [
+    {
+      "region": "all",
+      "coarse_max": 17.047969624164867,
+      "fine_max": 17.050953938157438,
+      "relative_L2_difference": 0.00022441016088937447,
+      "max_response_difference": 0.0031362809246289203,
+      "fine_peak_r": 0.8043052837573386,
+      "fine_peak_field": "Ar"
+    },
+    {
+      "region": "exterior",
+      "coarse_max": 17.047969624164867,
+      "fine_max": 17.050953938157438,
+      "relative_L2_difference": 0.00022242547569621704,
+      "max_response_difference": 0.0031362809246289203,
+      "fine_peak_r": 0.8043052837573386,
+      "fine_peak_field": "Ar"
+    }
+  ],
+  "inputs": {
+    "docs/spherical-optimization/evidence/shift-normal-n256-none-20M-v22/manifest.json": "df6cb7fb54cd0e12f51e3781206e657f49a5d8710b197a25a22aa164b4833a12",
+    "docs/spherical-optimization/evidence/shift-normal-n256-gauge-20M-v22/manifest.json": "446a43962cd061a02cdd23c9eb429c58584b502a30909f4f908c72f04ef653b3",
+    "docs/spherical-optimization/evidence/shift-normal-n256-none-20M-v22/result.json": "ef626d78341c3670ba7898f372c89ab702ef5a1dbd0ec46e76a4f2815d85a7ed",
+    "docs/spherical-optimization/evidence/shift-normal-n256-gauge-20M-v22/result.json": "0b5f67e4c1e263d3501a1e75fbb9d1b7e3e3ed1ad7891f720178635fa6d67bcd",
+    "docs/spherical-optimization/evidence/shift-normal-n256-none-20M-v22/last-accepted.npz": "919de2de684070437e99ed380563edf4af46286b2c48ff70c1e1b3c8ec77a57a",
+    "docs/spherical-optimization/evidence/shift-normal-n256-gauge-20M-v22/last-accepted.npz": "d0b829b7e90787ebd64fcde927887e767bb36bfb941e000407e3478b2053caf8",
+    "docs/spherical-optimization/evidence/shift-normal-n256-none-20M-halfstep-v22/manifest.json": "e6d3a3c79c0ef0f8f703311d66b69c28b0763e29a759f0768d99702c950bbbbe",
+    "docs/spherical-optimization/evidence/shift-normal-n256-gauge-20M-halfstep-v22/manifest.json": "3e3dbc7a97929cb6c166daeb74899df67cf2a78ec72a834f92da01ef535ba496",
+    "docs/spherical-optimization/evidence/shift-normal-n256-none-20M-halfstep-v22/result.json": "a82356921632c940044ddbc4e1521d1cd03f3abe2c52ea83762d89b7f08841b2",
+    "docs/spherical-optimization/evidence/shift-normal-n256-gauge-20M-halfstep-v22/result.json": "44a355d957aab5ca53f600a2452d39f9f4a9fef382393a592f5fb0f461cf1c0f",
+    "docs/spherical-optimization/evidence/shift-normal-n256-none-20M-halfstep-v22/last-accepted.npz": "f324d905aa7a7bc64a76672adba2ad90a491dc8f7b80e4e2f61379f648dd8125",
+    "docs/spherical-optimization/evidence/shift-normal-n256-gauge-20M-halfstep-v22/last-accepted.npz": "2a925bae58497007c9d4237fab2e74f4280617d40a485635d1289cdaf5522865"
+  },
+  "source_sha256": "f36adf42c2950d76d65565b18531d7a3005abf8885c840feecf9f1ef7851b0f4",
+  "qualification": "Same-grid final paired differences; two steps exclude leading RK sensitivity but do not measure temporal order or prove spatial stability. Raw component norm, not an energy."
+}

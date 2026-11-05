@@ -65,16 +65,19 @@
     "shift-normal initial and evolved 1M/10M frozen operators; matched-CFL N64/128/256/512 10M runs and fourth-order temporal controls",
     "shift-normal N512 full 26-field evolved point symbols including transverse/oblique sectors",
     "shift-normal paired 20M gauge pulse leaves late response unchanged despite improved auxiliary boundary defect",
-    "leading frozen 10M mode localized in gauge transition; N64/N128 eigenvalues and saved-scale localization preserved"
+    "leading frozen 10M mode localized in gauge transition; N64/N128 eigenvalues and saved-scale localization preserved",
+    "frozen local Fourier rows and shared-C++ jet symbols identify near-Nyquist gauge-transition branch at N64/128",
+    "compact interior linear D1-squared interventions isolate coupled lapse/geometry derivative sensitivity; shift-only intervention worsens N128",
+    "20M N256 paired gauge and constraint pulses reveal strong resolution growth despite no-floor completion",
+    "N256 20M gauge-pulse timestep halving leaves response 17.048 versus 17.051; exterior relative difference 2.224e-4 and peak Ar at r=.8043"
   ],
   "next": [
-    "Audit the local discrete symbol and coupled variable-coefficient operator in the interior gauge blend near r=.82. The N64/N128 frozen 10M modes have eigenvalues .39877+22.49066i and 1.75743+45.65024i; late pulse growth is unchanged by the improved boundary. Compare compatible first/second derivatives, component advection and actual mapped coefficients against continuum symbols before changing gauge profiles.",
-    "Run spatially refined paired gauge/constraint pulses (at least N256) and a longer cheap control after the discrete-mode audit; determine whether growth disappears with resolution or reflects an underlying gauge-source instability. Preserve failures and actual speed limits.",
-    "Complete boundary clock/regularity/auxiliary convergence qualification: the shift-normal defect improves from 6.60 to -.00231 at N512 but the two finest residuals decrease slowly, and clock is -.00524. No strong regularity/constraint projection or hidden smoothing.",
-    "Only after those gates pass, determine robust RK4 timestep margins and remeasure a controlled admitted fixed-error cost frontier. Existing serial timings remain exterior-only; no 3D/boosted claim or Aurora work."
+    "Design a nonlinear compatible derivative candidate informed by the frozen operator audit. Preserve shared C++ equations, reference jets, endpoint treatment, and no-floor policy. D1 squared has a checkerboard nullspace; do not infer stability from the diagnostic intervention. Validate the actual new Jacobian, convergence and refined pulses before further cost claims.",
+    "Revisit boundary clock/regularity/auxiliary convergence and longer controls only for a candidate that passes the refined interior-mode gate.",
+    "Determine robust RK4 margins and admitted fixed-error costs only after those gates; existing cost frontier is conditional exterior-only. No boosted/3D stability claim or Aurora work."
   ],
   "latest": {
-    "disposition": "shift_normal_boundary_improved_but_bulk_gauge_growth_and_residuals_unqualified",
+    "disposition": "discrete_gauge_branch_identified_refined_pulses_reject_current_scheme",
     "wide_areal_10M_points": [
       64,
       128,
@@ -92,7 +95,7 @@
     "exact_scri_n128_1M_D_defect": 2.138805993727148e-06,
     "release_binary": "build-spherical-v18/libcurrent_spherical.dylib",
     "compiler_only_observed_speed_ratio": 5.269579338765357,
-    "next_design": "interior gauge-transition discrete-symbol/operator audit; spatially refined pulse response",
+    "next_design": "implement and validate a disclosed compatible derivative candidate; current scheme fails refined pulse robustness",
     "compact_report": "COMPACT-PROFILE.md",
     "compact_10M_points": [
       64,
@@ -225,7 +228,15 @@
     "shift_normal_N128_10M_eigenvalue": [
       1.7574282065070537,
       45.650238252623296
-    ]
+    ],
+    "discrete_operator_report": "DISCRETE-GAUGE-MODE.md",
+    "lapse_only_linear_N128_max_real": 0.031060667532661672,
+    "shift_only_linear_N128_max_real": 2.0288282777753497,
+    "N256_20M_gauge_response": 17.047969624164867,
+    "N256_20M_constraint_response": 0.33031749688589507,
+    "N256_20M_halfstep_gauge_response": 17.050953938157438,
+    "N256_20M_response_temporal_relative_difference": 0.00022242547569621704,
+    "N256_20M_response_peak_r": 0.8043052837573386
   },
   "live_processes": [],
   "admitted_candidate": null,

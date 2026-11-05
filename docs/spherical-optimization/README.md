@@ -6,7 +6,13 @@ The parent campaign, frozen Aurora snapshots and remote jobs are untouched.
 **Work in progress: no candidate is admitted, no stability/cost improvement is
 established, and no spherical result establishes boosted or 3D stability.**
 
-Current results are in [SHIFT-NORMAL-BOUNDARY.md](SHIFT-NORMAL-BOUNDARY.md):
+The latest [discrete gauge-mode audit](DISCRETE-GAUGE-MODE.md) identifies a
+near-Nyquist branch sensitive to the first/second derivative mismatch. A
+linear diagnostic intervention removes that branch but is not a tested scheme.
+N256 paired pulses grow sharply by 20M, essentially unchanged at half timestep;
+the current spatial policy fails this robustness gate.
+
+Boundary results are in [SHIFT-NORMAL-BOUNDARY.md](SHIFT-NORMAL-BOUNDARY.md):
 the outgoing auxiliary/shift-normal policy improves the boundary defect and
 preserves exterior convergence, but leaves the late gauge response unchanged.
 [CONSTRAINT-PROPAGATION.md](CONSTRAINT-PROPAGATION.md) checks the shared interior
