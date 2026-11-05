@@ -1,0 +1,1664 @@
+{
+  "domain": "Reference R/M25\u2013100, 301 uniform log-R samples, maximum dimensionless physical H/M/Theta/Z RMS at 10M",
+  "runs": [
+    {
+      "name": "areal-n128-repeat1",
+      "family": "areal",
+      "n": 128,
+      "repeat": 1,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 2566,
+        "setup_seconds": 0.05659,
+        "stepping_seconds": 12.265872333,
+        "rhs_calls": 12841,
+        "rhs_seconds": 11.900674639999988,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.414229778607554,
+        "worst_evaluated_speed_over_dr": 307.8142967724643,
+        "C_char_max_accepted": 0.40000268679369894,
+        "dt_min": 0.00013243141344343456,
+        "dt_max": 0.0012994935290136316,
+        "dt_over_M": 0.003898480587040895,
+        "min_dr_over_M": 0.0235294117647058,
+        "nominal_dt_over_min_dr": 0.16568542494923863,
+        "steps_per_M": 256.6,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.0006497467645068135,
+          "scri_policy": 0.0005019607843142256,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.029492615740914038,
+        0.0208453988789874,
+        0.0022629956794404495,
+        0.004062737039209805
+      ],
+      "linear_physical_rms": [
+        0.026599686329731104,
+        0.018395451381222772,
+        0.002049789221370511,
+        0.0038180472994707756
+      ],
+      "interpolation_disagreement_rms": [
+        0.0041077436010484285,
+        0.0033661861444012568,
+        0.000330071778332943,
+        0.0004300566004004087
+      ],
+      "indicator": 0.029492615740914038,
+      "screening_indicator": 0.029492615740914038,
+      "final_q_sha256": "a4368b86a1bc27339233ced56420bc6e7dc5d30dcf0ec6bf21c16f407497dcb7"
+    },
+    {
+      "name": "compact-n128-repeat1",
+      "family": "compact",
+      "n": 128,
+      "repeat": 1,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 2566,
+        "setup_seconds": 0.18454329200000003,
+        "stepping_seconds": 12.275594250000001,
+        "rhs_calls": 12841,
+        "rhs_seconds": 11.906960384000039,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.414305739054051,
+        "worst_evaluated_speed_over_dr": 307.8239817293926,
+        "C_char_max_accepted": 0.4000152720378608,
+        "dt_min": 0.00013243141344343456,
+        "dt_max": 0.0012994935290136316,
+        "dt_over_M": 0.003898480587040895,
+        "min_dr_over_M": 0.0235294117647058,
+        "nominal_dt_over_min_dr": 0.16568542494923863,
+        "steps_per_M": 256.6,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.0006497467645068135,
+          "scri_policy": 0.0005019607843142256,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.0005406494950853514,
+        0.0002915943966863264,
+        0.00010597463352575857,
+        0.00013303064466993323
+      ],
+      "linear_physical_rms": [
+        0.0004895629604078174,
+        0.0002650873432531445,
+        9.933003383242834e-05,
+        0.0001206419553618797
+      ],
+      "interpolation_disagreement_rms": [
+        6.699663378990999e-05,
+        3.512468291111323e-05,
+        1.1139360173319408e-05,
+        1.679401259168155e-05
+      ],
+      "indicator": 0.0005406494950853514,
+      "screening_indicator": 0.0005406494950853514,
+      "final_q_sha256": "035a1b94ee47c97254cfa2c75c9643fc6edb1547f7b5e49840408c9c7c88fb9a"
+    },
+    {
+      "name": "areal-n256-repeat1",
+      "family": "areal",
+      "n": 256,
+      "repeat": 1,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 5141,
+        "setup_seconds": 0.106460042,
+        "stepping_seconds": 41.955226542000005,
+        "rhs_calls": 25716,
+        "rhs_seconds": 40.97882232400033,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4142144525070526,
+        "worst_evaluated_speed_over_dr": 616.831792615552,
+        "C_char_max_accepted": 0.40000014748222307,
+        "dt_min": 0.00017057701570344364,
+        "dt_max": 0.0006484752444197183,
+        "dt_over_M": 0.001945425733259155,
+        "min_dr_over_M": 0.011741682974559686,
+        "nominal_dt_over_min_dr": 0.16568542494923805,
+        "steps_per_M": 514.1,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.00032423762220985916,
+          "scri_policy": 0.0002504892367908571,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.05673177837509563,
+        0.027918070851848904,
+        0.001281772854102051,
+        0.003288043187072132
+      ],
+      "linear_physical_rms": [
+        0.05166651116256479,
+        0.02555842578346519,
+        0.0012022255594550289,
+        0.0030146416597853854
+      ],
+      "interpolation_disagreement_rms": [
+        0.006548169090674196,
+        0.0030893644298031404,
+        0.00013861532433712194,
+        0.00035967905118808693
+      ],
+      "indicator": 0.05673177837509563,
+      "screening_indicator": 0.05673177837509563,
+      "final_q_sha256": "0537f035cd0e203d7f6250809db0c74ef5f9cda2ee06c8bfd303cb7b4b8dddea"
+    },
+    {
+      "name": "compact-n256-repeat1",
+      "family": "compact",
+      "n": 256,
+      "repeat": 1,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 5141,
+        "setup_seconds": 0.333647375,
+        "stepping_seconds": 41.826200625,
+        "rhs_calls": 25716,
+        "rhs_seconds": 40.87226327600015,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4142143801927247,
+        "worst_evaluated_speed_over_dr": 616.8317741392412,
+        "C_char_max_accepted": 0.40000013549594804,
+        "dt_min": 0.00017057701570344364,
+        "dt_max": 0.0006484752444197183,
+        "dt_over_M": 0.001945425733259155,
+        "min_dr_over_M": 0.011741682974559686,
+        "nominal_dt_over_min_dr": 0.16568542494923805,
+        "steps_per_M": 514.1,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.00032423762220985916,
+          "scri_policy": 0.0002504892367908571,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        5.3719920576015366e-05,
+        2.7863799229373164e-05,
+        4.689326331804505e-06,
+        7.128661839577038e-06
+      ],
+      "linear_physical_rms": [
+        5.092309190025217e-05,
+        2.6386737650132113e-05,
+        4.512762074625393e-06,
+        6.819457736740538e-06
+      ],
+      "interpolation_disagreement_rms": [
+        4.189892872833377e-06,
+        2.227612814032484e-06,
+        2.9136033448728845e-07,
+        5.110412670881339e-07
+      ],
+      "indicator": 5.3719920576015366e-05,
+      "screening_indicator": 5.3719920576015366e-05,
+      "final_q_sha256": "40bb4eb49c3ce8daa75b8c2b4b9a4d147303b355127ccc62e754e5b6f49ceac4"
+    },
+    {
+      "name": "areal-n512-repeat1",
+      "family": "areal",
+      "n": 512,
+      "repeat": 1,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 10291,
+        "setup_seconds": 0.20755975,
+        "stepping_seconds": 154.14765604200002,
+        "rhs_calls": 51466,
+        "rhs_seconds": 151.14373908000022,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.414214319071529,
+        "worst_evaluated_speed_over_dr": 1234.8706242050882,
+        "C_char_max_accepted": 0.4000001253680103,
+        "dt_min": 0.00018959388504891095,
+        "dt_max": 0.0003239206743875621,
+        "dt_over_M": 0.0009717620231626863,
+        "min_dr_over_M": 0.0058651026392961825,
+        "nominal_dt_over_min_dr": 0.16568542494923819,
+        "steps_per_M": 1029.1,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.00016196033719378093,
+          "scri_policy": 0.00012512218963844367,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.050317623775357916,
+        0.025318349768116883,
+        0.0005662941009999398,
+        0.001708429916828567
+      ],
+      "linear_physical_rms": [
+        0.047062770222014515,
+        0.0236776978927561,
+        0.0005338113909459309,
+        0.0015974643528074094
+      ],
+      "interpolation_disagreement_rms": [
+        0.004022182702324389,
+        0.0020305772923698067,
+        4.617768063245991e-05,
+        0.00015048591308335232
+      ],
+      "indicator": 0.050317623775357916,
+      "screening_indicator": 0.050317623775357916,
+      "final_q_sha256": "2d1390298fa26bdd70f204ae64e7687d704289bf94a67a8dffeba17de739b39e"
+    },
+    {
+      "name": "compact-n64-repeat1",
+      "family": "compact",
+      "n": 64,
+      "repeat": 1,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 1278,
+        "setup_seconds": 0.109559083,
+        "stepping_seconds": 3.8796070000000005,
+        "rhs_calls": 6401,
+        "rhs_seconds": 3.7321267930000146,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4150340146570546,
+        "worst_evaluated_speed_over_dr": 153.35465993072324,
+        "C_char_max_accepted": 0.40013593151814536,
+        "dt_min": 0.0013602993148373876,
+        "dt_max": 0.002609219290539182,
+        "dt_over_M": 0.007827657871617546,
+        "min_dr_over_M": 0.04724409448818889,
+        "nominal_dt_over_min_dr": 0.16568542494923835,
+        "steps_per_M": 127.8,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.0013046096452695884,
+          "scri_policy": 0.0010078740157490377,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.0028395459183449823,
+        0.001446424722277671,
+        0.0008106642018853404,
+        0.0010205567192786012
+      ],
+      "linear_physical_rms": [
+        0.002604973639669893,
+        0.0013290754354717993,
+        0.0007426906944545346,
+        0.0009090878984708448
+      ],
+      "interpolation_disagreement_rms": [
+        0.0003669478640245585,
+        0.0001729571892967695,
+        0.00011117143175239044,
+        0.00016168921109628996
+      ],
+      "indicator": 0.0028395459183449823,
+      "screening_indicator": 0.0028395459183449823,
+      "final_q_sha256": "032b3f687d3a54fbf4f6d59e6f0f4b14c88598c1397b1af74d77bd2e99676f1b"
+    },
+    {
+      "name": "compact-n128-repeat2",
+      "family": "compact",
+      "n": 128,
+      "repeat": 2,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 2566,
+        "setup_seconds": 0.18459225,
+        "stepping_seconds": 12.238658584,
+        "rhs_calls": 12841,
+        "rhs_seconds": 11.877689460000052,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.414305739054051,
+        "worst_evaluated_speed_over_dr": 307.8239817293926,
+        "C_char_max_accepted": 0.4000152720378608,
+        "dt_min": 0.00013243141344343456,
+        "dt_max": 0.0012994935290136316,
+        "dt_over_M": 0.003898480587040895,
+        "min_dr_over_M": 0.0235294117647058,
+        "nominal_dt_over_min_dr": 0.16568542494923863,
+        "steps_per_M": 256.6,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.0006497467645068135,
+          "scri_policy": 0.0005019607843142256,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.0005406494950853514,
+        0.0002915943966863264,
+        0.00010597463352575857,
+        0.00013303064466993323
+      ],
+      "linear_physical_rms": [
+        0.0004895629604078174,
+        0.0002650873432531445,
+        9.933003383242834e-05,
+        0.0001206419553618797
+      ],
+      "interpolation_disagreement_rms": [
+        6.699663378990999e-05,
+        3.512468291111323e-05,
+        1.1139360173319408e-05,
+        1.679401259168155e-05
+      ],
+      "indicator": 0.0005406494950853514,
+      "screening_indicator": 0.0005406494950853514,
+      "final_q_sha256": "035a1b94ee47c97254cfa2c75c9643fc6edb1547f7b5e49840408c9c7c88fb9a"
+    },
+    {
+      "name": "areal-n256-repeat2",
+      "family": "areal",
+      "n": 256,
+      "repeat": 2,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 5141,
+        "setup_seconds": 0.107086625,
+        "stepping_seconds": 41.890648207999995,
+        "rhs_calls": 25716,
+        "rhs_seconds": 40.91198314999964,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4142144525070526,
+        "worst_evaluated_speed_over_dr": 616.831792615552,
+        "C_char_max_accepted": 0.40000014748222307,
+        "dt_min": 0.00017057701570344364,
+        "dt_max": 0.0006484752444197183,
+        "dt_over_M": 0.001945425733259155,
+        "min_dr_over_M": 0.011741682974559686,
+        "nominal_dt_over_min_dr": 0.16568542494923805,
+        "steps_per_M": 514.1,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.00032423762220985916,
+          "scri_policy": 0.0002504892367908571,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.05673177837509563,
+        0.027918070851848904,
+        0.001281772854102051,
+        0.003288043187072132
+      ],
+      "linear_physical_rms": [
+        0.05166651116256479,
+        0.02555842578346519,
+        0.0012022255594550289,
+        0.0030146416597853854
+      ],
+      "interpolation_disagreement_rms": [
+        0.006548169090674196,
+        0.0030893644298031404,
+        0.00013861532433712194,
+        0.00035967905118808693
+      ],
+      "indicator": 0.05673177837509563,
+      "screening_indicator": 0.05673177837509563,
+      "final_q_sha256": "0537f035cd0e203d7f6250809db0c74ef5f9cda2ee06c8bfd303cb7b4b8dddea"
+    },
+    {
+      "name": "compact-n256-repeat2",
+      "family": "compact",
+      "n": 256,
+      "repeat": 2,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 5141,
+        "setup_seconds": 0.334649042,
+        "stepping_seconds": 41.975190666,
+        "rhs_calls": 25716,
+        "rhs_seconds": 41.018817831999975,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4142143801927247,
+        "worst_evaluated_speed_over_dr": 616.8317741392412,
+        "C_char_max_accepted": 0.40000013549594804,
+        "dt_min": 0.00017057701570344364,
+        "dt_max": 0.0006484752444197183,
+        "dt_over_M": 0.001945425733259155,
+        "min_dr_over_M": 0.011741682974559686,
+        "nominal_dt_over_min_dr": 0.16568542494923805,
+        "steps_per_M": 514.1,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.00032423762220985916,
+          "scri_policy": 0.0002504892367908571,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        5.3719920576015366e-05,
+        2.7863799229373164e-05,
+        4.689326331804505e-06,
+        7.128661839577038e-06
+      ],
+      "linear_physical_rms": [
+        5.092309190025217e-05,
+        2.6386737650132113e-05,
+        4.512762074625393e-06,
+        6.819457736740538e-06
+      ],
+      "interpolation_disagreement_rms": [
+        4.189892872833377e-06,
+        2.227612814032484e-06,
+        2.9136033448728845e-07,
+        5.110412670881339e-07
+      ],
+      "indicator": 5.3719920576015366e-05,
+      "screening_indicator": 5.3719920576015366e-05,
+      "final_q_sha256": "40bb4eb49c3ce8daa75b8c2b4b9a4d147303b355127ccc62e754e5b6f49ceac4"
+    },
+    {
+      "name": "areal-n512-repeat2",
+      "family": "areal",
+      "n": 512,
+      "repeat": 2,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 10291,
+        "setup_seconds": 0.207410125,
+        "stepping_seconds": 154.191549958,
+        "rhs_calls": 51466,
+        "rhs_seconds": 151.19530038700086,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.414214319071529,
+        "worst_evaluated_speed_over_dr": 1234.8706242050882,
+        "C_char_max_accepted": 0.4000001253680103,
+        "dt_min": 0.00018959388504891095,
+        "dt_max": 0.0003239206743875621,
+        "dt_over_M": 0.0009717620231626863,
+        "min_dr_over_M": 0.0058651026392961825,
+        "nominal_dt_over_min_dr": 0.16568542494923819,
+        "steps_per_M": 1029.1,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.00016196033719378093,
+          "scri_policy": 0.00012512218963844367,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.050317623775357916,
+        0.025318349768116883,
+        0.0005662941009999398,
+        0.001708429916828567
+      ],
+      "linear_physical_rms": [
+        0.047062770222014515,
+        0.0236776978927561,
+        0.0005338113909459309,
+        0.0015974643528074094
+      ],
+      "interpolation_disagreement_rms": [
+        0.004022182702324389,
+        0.0020305772923698067,
+        4.617768063245991e-05,
+        0.00015048591308335232
+      ],
+      "indicator": 0.050317623775357916,
+      "screening_indicator": 0.050317623775357916,
+      "final_q_sha256": "2d1390298fa26bdd70f204ae64e7687d704289bf94a67a8dffeba17de739b39e"
+    },
+    {
+      "name": "compact-n64-repeat2",
+      "family": "compact",
+      "n": 64,
+      "repeat": 2,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 1278,
+        "setup_seconds": 0.109698125,
+        "stepping_seconds": 3.90840675,
+        "rhs_calls": 6401,
+        "rhs_seconds": 3.7596360869999983,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4150340146570546,
+        "worst_evaluated_speed_over_dr": 153.35465993072324,
+        "C_char_max_accepted": 0.40013593151814536,
+        "dt_min": 0.0013602993148373876,
+        "dt_max": 0.002609219290539182,
+        "dt_over_M": 0.007827657871617546,
+        "min_dr_over_M": 0.04724409448818889,
+        "nominal_dt_over_min_dr": 0.16568542494923835,
+        "steps_per_M": 127.8,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.0013046096452695884,
+          "scri_policy": 0.0010078740157490377,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.0028395459183449823,
+        0.001446424722277671,
+        0.0008106642018853404,
+        0.0010205567192786012
+      ],
+      "linear_physical_rms": [
+        0.002604973639669893,
+        0.0013290754354717993,
+        0.0007426906944545346,
+        0.0009090878984708448
+      ],
+      "interpolation_disagreement_rms": [
+        0.0003669478640245585,
+        0.0001729571892967695,
+        0.00011117143175239044,
+        0.00016168921109628996
+      ],
+      "indicator": 0.0028395459183449823,
+      "screening_indicator": 0.0028395459183449823,
+      "final_q_sha256": "032b3f687d3a54fbf4f6d59e6f0f4b14c88598c1397b1af74d77bd2e99676f1b"
+    },
+    {
+      "name": "areal-n128-repeat2",
+      "family": "areal",
+      "n": 128,
+      "repeat": 2,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 2566,
+        "setup_seconds": 0.05476070799999999,
+        "stepping_seconds": 12.237632833000001,
+        "rhs_calls": 12841,
+        "rhs_seconds": 11.878143063000078,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.414229778607554,
+        "worst_evaluated_speed_over_dr": 307.8142967724643,
+        "C_char_max_accepted": 0.40000268679369894,
+        "dt_min": 0.00013243141344343456,
+        "dt_max": 0.0012994935290136316,
+        "dt_over_M": 0.003898480587040895,
+        "min_dr_over_M": 0.0235294117647058,
+        "nominal_dt_over_min_dr": 0.16568542494923863,
+        "steps_per_M": 256.6,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.0006497467645068135,
+          "scri_policy": 0.0005019607843142256,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.029492615740914038,
+        0.0208453988789874,
+        0.0022629956794404495,
+        0.004062737039209805
+      ],
+      "linear_physical_rms": [
+        0.026599686329731104,
+        0.018395451381222772,
+        0.002049789221370511,
+        0.0038180472994707756
+      ],
+      "interpolation_disagreement_rms": [
+        0.0041077436010484285,
+        0.0033661861444012568,
+        0.000330071778332943,
+        0.0004300566004004087
+      ],
+      "indicator": 0.029492615740914038,
+      "screening_indicator": 0.029492615740914038,
+      "final_q_sha256": "a4368b86a1bc27339233ced56420bc6e7dc5d30dcf0ec6bf21c16f407497dcb7"
+    },
+    {
+      "name": "areal-n256-repeat3",
+      "family": "areal",
+      "n": 256,
+      "repeat": 3,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 5141,
+        "setup_seconds": 0.105394583,
+        "stepping_seconds": 41.918580082999995,
+        "rhs_calls": 25716,
+        "rhs_seconds": 40.954983141999776,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4142144525070526,
+        "worst_evaluated_speed_over_dr": 616.831792615552,
+        "C_char_max_accepted": 0.40000014748222307,
+        "dt_min": 0.00017057701570344364,
+        "dt_max": 0.0006484752444197183,
+        "dt_over_M": 0.001945425733259155,
+        "min_dr_over_M": 0.011741682974559686,
+        "nominal_dt_over_min_dr": 0.16568542494923805,
+        "steps_per_M": 514.1,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.00032423762220985916,
+          "scri_policy": 0.0002504892367908571,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.05673177837509563,
+        0.027918070851848904,
+        0.001281772854102051,
+        0.003288043187072132
+      ],
+      "linear_physical_rms": [
+        0.05166651116256479,
+        0.02555842578346519,
+        0.0012022255594550289,
+        0.0030146416597853854
+      ],
+      "interpolation_disagreement_rms": [
+        0.006548169090674196,
+        0.0030893644298031404,
+        0.00013861532433712194,
+        0.00035967905118808693
+      ],
+      "indicator": 0.05673177837509563,
+      "screening_indicator": 0.05673177837509563,
+      "final_q_sha256": "0537f035cd0e203d7f6250809db0c74ef5f9cda2ee06c8bfd303cb7b4b8dddea"
+    },
+    {
+      "name": "compact-n256-repeat3",
+      "family": "compact",
+      "n": 256,
+      "repeat": 3,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 5141,
+        "setup_seconds": 0.33502425,
+        "stepping_seconds": 41.971584041999996,
+        "rhs_calls": 25716,
+        "rhs_seconds": 40.996093697999775,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4142143801927247,
+        "worst_evaluated_speed_over_dr": 616.8317741392412,
+        "C_char_max_accepted": 0.40000013549594804,
+        "dt_min": 0.00017057701570344364,
+        "dt_max": 0.0006484752444197183,
+        "dt_over_M": 0.001945425733259155,
+        "min_dr_over_M": 0.011741682974559686,
+        "nominal_dt_over_min_dr": 0.16568542494923805,
+        "steps_per_M": 514.1,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.00032423762220985916,
+          "scri_policy": 0.0002504892367908571,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        5.3719920576015366e-05,
+        2.7863799229373164e-05,
+        4.689326331804505e-06,
+        7.128661839577038e-06
+      ],
+      "linear_physical_rms": [
+        5.092309190025217e-05,
+        2.6386737650132113e-05,
+        4.512762074625393e-06,
+        6.819457736740538e-06
+      ],
+      "interpolation_disagreement_rms": [
+        4.189892872833377e-06,
+        2.227612814032484e-06,
+        2.9136033448728845e-07,
+        5.110412670881339e-07
+      ],
+      "indicator": 5.3719920576015366e-05,
+      "screening_indicator": 5.3719920576015366e-05,
+      "final_q_sha256": "40bb4eb49c3ce8daa75b8c2b4b9a4d147303b355127ccc62e754e5b6f49ceac4"
+    },
+    {
+      "name": "areal-n512-repeat3",
+      "family": "areal",
+      "n": 512,
+      "repeat": 3,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 10291,
+        "setup_seconds": 0.20717458300000002,
+        "stepping_seconds": 154.18625287499998,
+        "rhs_calls": 51466,
+        "rhs_seconds": 151.22645597300215,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.414214319071529,
+        "worst_evaluated_speed_over_dr": 1234.8706242050882,
+        "C_char_max_accepted": 0.4000001253680103,
+        "dt_min": 0.00018959388504891095,
+        "dt_max": 0.0003239206743875621,
+        "dt_over_M": 0.0009717620231626863,
+        "min_dr_over_M": 0.0058651026392961825,
+        "nominal_dt_over_min_dr": 0.16568542494923819,
+        "steps_per_M": 1029.1,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.00016196033719378093,
+          "scri_policy": 0.00012512218963844367,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.050317623775357916,
+        0.025318349768116883,
+        0.0005662941009999398,
+        0.001708429916828567
+      ],
+      "linear_physical_rms": [
+        0.047062770222014515,
+        0.0236776978927561,
+        0.0005338113909459309,
+        0.0015974643528074094
+      ],
+      "interpolation_disagreement_rms": [
+        0.004022182702324389,
+        0.0020305772923698067,
+        4.617768063245991e-05,
+        0.00015048591308335232
+      ],
+      "indicator": 0.050317623775357916,
+      "screening_indicator": 0.050317623775357916,
+      "final_q_sha256": "2d1390298fa26bdd70f204ae64e7687d704289bf94a67a8dffeba17de739b39e"
+    },
+    {
+      "name": "compact-n64-repeat3",
+      "family": "compact",
+      "n": 64,
+      "repeat": 3,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 1278,
+        "setup_seconds": 0.109683042,
+        "stepping_seconds": 3.966046625,
+        "rhs_calls": 6401,
+        "rhs_seconds": 3.8081338780000085,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4150340146570546,
+        "worst_evaluated_speed_over_dr": 153.35465993072324,
+        "C_char_max_accepted": 0.40013593151814536,
+        "dt_min": 0.0013602993148373876,
+        "dt_max": 0.002609219290539182,
+        "dt_over_M": 0.007827657871617546,
+        "min_dr_over_M": 0.04724409448818889,
+        "nominal_dt_over_min_dr": 0.16568542494923835,
+        "steps_per_M": 127.8,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.0013046096452695884,
+          "scri_policy": 0.0010078740157490377,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.0028395459183449823,
+        0.001446424722277671,
+        0.0008106642018853404,
+        0.0010205567192786012
+      ],
+      "linear_physical_rms": [
+        0.002604973639669893,
+        0.0013290754354717993,
+        0.0007426906944545346,
+        0.0009090878984708448
+      ],
+      "interpolation_disagreement_rms": [
+        0.0003669478640245585,
+        0.0001729571892967695,
+        0.00011117143175239044,
+        0.00016168921109628996
+      ],
+      "indicator": 0.0028395459183449823,
+      "screening_indicator": 0.0028395459183449823,
+      "final_q_sha256": "032b3f687d3a54fbf4f6d59e6f0f4b14c88598c1397b1af74d77bd2e99676f1b"
+    },
+    {
+      "name": "areal-n128-repeat3",
+      "family": "areal",
+      "n": 128,
+      "repeat": 3,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 2566,
+        "setup_seconds": 0.055307834,
+        "stepping_seconds": 12.23714,
+        "rhs_calls": 12841,
+        "rhs_seconds": 11.873909805999995,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.414229778607554,
+        "worst_evaluated_speed_over_dr": 307.8142967724643,
+        "C_char_max_accepted": 0.40000268679369894,
+        "dt_min": 0.00013243141344343456,
+        "dt_max": 0.0012994935290136316,
+        "dt_over_M": 0.003898480587040895,
+        "min_dr_over_M": 0.0235294117647058,
+        "nominal_dt_over_min_dr": 0.16568542494923863,
+        "steps_per_M": 256.6,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.0006497467645068135,
+          "scri_policy": 0.0005019607843142256,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.029492615740914038,
+        0.0208453988789874,
+        0.0022629956794404495,
+        0.004062737039209805
+      ],
+      "linear_physical_rms": [
+        0.026599686329731104,
+        0.018395451381222772,
+        0.002049789221370511,
+        0.0038180472994707756
+      ],
+      "interpolation_disagreement_rms": [
+        0.0041077436010484285,
+        0.0033661861444012568,
+        0.000330071778332943,
+        0.0004300566004004087
+      ],
+      "indicator": 0.029492615740914038,
+      "screening_indicator": 0.029492615740914038,
+      "final_q_sha256": "a4368b86a1bc27339233ced56420bc6e7dc5d30dcf0ec6bf21c16f407497dcb7"
+    },
+    {
+      "name": "compact-n128-repeat3",
+      "family": "compact",
+      "n": 128,
+      "repeat": 3,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 2566,
+        "setup_seconds": 0.18439795800000003,
+        "stepping_seconds": 12.233537541999999,
+        "rhs_calls": 12841,
+        "rhs_seconds": 11.873514939999959,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.414305739054051,
+        "worst_evaluated_speed_over_dr": 307.8239817293926,
+        "C_char_max_accepted": 0.4000152720378608,
+        "dt_min": 0.00013243141344343456,
+        "dt_max": 0.0012994935290136316,
+        "dt_over_M": 0.003898480587040895,
+        "min_dr_over_M": 0.0235294117647058,
+        "nominal_dt_over_min_dr": 0.16568542494923863,
+        "steps_per_M": 256.6,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.0006497467645068135,
+          "scri_policy": 0.0005019607843142256,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.0005406494950853514,
+        0.0002915943966863264,
+        0.00010597463352575857,
+        0.00013303064466993323
+      ],
+      "linear_physical_rms": [
+        0.0004895629604078174,
+        0.0002650873432531445,
+        9.933003383242834e-05,
+        0.0001206419553618797
+      ],
+      "interpolation_disagreement_rms": [
+        6.699663378990999e-05,
+        3.512468291111323e-05,
+        1.1139360173319408e-05,
+        1.679401259168155e-05
+      ],
+      "indicator": 0.0005406494950853514,
+      "screening_indicator": 0.0005406494950853514,
+      "final_q_sha256": "035a1b94ee47c97254cfa2c75c9643fc6edb1547f7b5e49840408c9c7c88fb9a"
+    }
+  ],
+  "summary": [
+    {
+      "family": "areal",
+      "n": 128,
+      "repeats": 3,
+      "completed": 3,
+      "stepping_seconds": {
+        "min": 12.23714,
+        "median": 12.237632833000001,
+        "max": 12.265872333
+      },
+      "setup_seconds": {
+        "min": 0.05476070799999999,
+        "median": 0.055307834,
+        "max": 0.05659
+      },
+      "rhs_seconds": {
+        "min": 11.873909805999995,
+        "median": 11.878143063000078,
+        "max": 11.900674639999988
+      },
+      "rhs_calls": {
+        "min": 12841,
+        "median": 12841.0,
+        "max": 12841
+      },
+      "steps": {
+        "min": 2566,
+        "median": 2566.0,
+        "max": 2566
+      },
+      "C_char_max_accepted": {
+        "min": 0.40000268679369894,
+        "median": 0.40000268679369894,
+        "max": 0.40000268679369894
+      },
+      "dt_over_M": {
+        "min": 0.003898480587040895,
+        "median": 0.003898480587040895,
+        "max": 0.003898480587040895
+      },
+      "min_dr_over_M": {
+        "min": 0.0235294117647058,
+        "median": 0.0235294117647058,
+        "max": 0.0235294117647058
+      },
+      "steps_per_M": {
+        "min": 256.6,
+        "median": 256.6,
+        "max": 256.6
+      },
+      "worst_evaluated_speed": {
+        "min": 2.414229778607554,
+        "median": 2.414229778607554,
+        "max": 2.414229778607554
+      },
+      "indicator": 0.029492615740914038,
+      "screening_indicator": 0.029492615740914038,
+      "physical_rms": [
+        0.029492615740914038,
+        0.0208453988789874,
+        0.0022629956794404495,
+        0.004062737039209805
+      ],
+      "interpolation_disagreement_rms": [
+        0.0041077436010484285,
+        0.0033661861444012568,
+        0.000330071778332943,
+        0.0004300566004004087
+      ]
+    },
+    {
+      "family": "compact",
+      "n": 128,
+      "repeats": 3,
+      "completed": 3,
+      "stepping_seconds": {
+        "min": 12.233537541999999,
+        "median": 12.238658584,
+        "max": 12.275594250000001
+      },
+      "setup_seconds": {
+        "min": 0.18439795800000003,
+        "median": 0.18454329200000003,
+        "max": 0.18459225
+      },
+      "rhs_seconds": {
+        "min": 11.873514939999959,
+        "median": 11.877689460000052,
+        "max": 11.906960384000039
+      },
+      "rhs_calls": {
+        "min": 12841,
+        "median": 12841.0,
+        "max": 12841
+      },
+      "steps": {
+        "min": 2566,
+        "median": 2566.0,
+        "max": 2566
+      },
+      "C_char_max_accepted": {
+        "min": 0.4000152720378608,
+        "median": 0.4000152720378608,
+        "max": 0.4000152720378608
+      },
+      "dt_over_M": {
+        "min": 0.003898480587040895,
+        "median": 0.003898480587040895,
+        "max": 0.003898480587040895
+      },
+      "min_dr_over_M": {
+        "min": 0.0235294117647058,
+        "median": 0.0235294117647058,
+        "max": 0.0235294117647058
+      },
+      "steps_per_M": {
+        "min": 256.6,
+        "median": 256.6,
+        "max": 256.6
+      },
+      "worst_evaluated_speed": {
+        "min": 2.414305739054051,
+        "median": 2.414305739054051,
+        "max": 2.414305739054051
+      },
+      "indicator": 0.0005406494950853514,
+      "screening_indicator": 0.0005406494950853514,
+      "physical_rms": [
+        0.0005406494950853514,
+        0.0002915943966863264,
+        0.00010597463352575857,
+        0.00013303064466993323
+      ],
+      "interpolation_disagreement_rms": [
+        6.699663378990999e-05,
+        3.512468291111323e-05,
+        1.1139360173319408e-05,
+        1.679401259168155e-05
+      ]
+    },
+    {
+      "family": "areal",
+      "n": 256,
+      "repeats": 3,
+      "completed": 3,
+      "stepping_seconds": {
+        "min": 41.890648207999995,
+        "median": 41.918580082999995,
+        "max": 41.955226542000005
+      },
+      "setup_seconds": {
+        "min": 0.105394583,
+        "median": 0.106460042,
+        "max": 0.107086625
+      },
+      "rhs_seconds": {
+        "min": 40.91198314999964,
+        "median": 40.954983141999776,
+        "max": 40.97882232400033
+      },
+      "rhs_calls": {
+        "min": 25716,
+        "median": 25716.0,
+        "max": 25716
+      },
+      "steps": {
+        "min": 5141,
+        "median": 5141.0,
+        "max": 5141
+      },
+      "C_char_max_accepted": {
+        "min": 0.40000014748222307,
+        "median": 0.40000014748222307,
+        "max": 0.40000014748222307
+      },
+      "dt_over_M": {
+        "min": 0.001945425733259155,
+        "median": 0.001945425733259155,
+        "max": 0.001945425733259155
+      },
+      "min_dr_over_M": {
+        "min": 0.011741682974559686,
+        "median": 0.011741682974559686,
+        "max": 0.011741682974559686
+      },
+      "steps_per_M": {
+        "min": 514.1,
+        "median": 514.1,
+        "max": 514.1
+      },
+      "worst_evaluated_speed": {
+        "min": 2.4142144525070526,
+        "median": 2.4142144525070526,
+        "max": 2.4142144525070526
+      },
+      "indicator": 0.05673177837509563,
+      "screening_indicator": 0.05673177837509563,
+      "physical_rms": [
+        0.05673177837509563,
+        0.027918070851848904,
+        0.001281772854102051,
+        0.003288043187072132
+      ],
+      "interpolation_disagreement_rms": [
+        0.006548169090674196,
+        0.0030893644298031404,
+        0.00013861532433712194,
+        0.00035967905118808693
+      ]
+    },
+    {
+      "family": "compact",
+      "n": 256,
+      "repeats": 3,
+      "completed": 3,
+      "stepping_seconds": {
+        "min": 41.826200625,
+        "median": 41.971584041999996,
+        "max": 41.975190666
+      },
+      "setup_seconds": {
+        "min": 0.333647375,
+        "median": 0.334649042,
+        "max": 0.33502425
+      },
+      "rhs_seconds": {
+        "min": 40.87226327600015,
+        "median": 40.996093697999775,
+        "max": 41.018817831999975
+      },
+      "rhs_calls": {
+        "min": 25716,
+        "median": 25716.0,
+        "max": 25716
+      },
+      "steps": {
+        "min": 5141,
+        "median": 5141.0,
+        "max": 5141
+      },
+      "C_char_max_accepted": {
+        "min": 0.40000013549594804,
+        "median": 0.40000013549594804,
+        "max": 0.40000013549594804
+      },
+      "dt_over_M": {
+        "min": 0.001945425733259155,
+        "median": 0.001945425733259155,
+        "max": 0.001945425733259155
+      },
+      "min_dr_over_M": {
+        "min": 0.011741682974559686,
+        "median": 0.011741682974559686,
+        "max": 0.011741682974559686
+      },
+      "steps_per_M": {
+        "min": 514.1,
+        "median": 514.1,
+        "max": 514.1
+      },
+      "worst_evaluated_speed": {
+        "min": 2.4142143801927247,
+        "median": 2.4142143801927247,
+        "max": 2.4142143801927247
+      },
+      "indicator": 5.3719920576015366e-05,
+      "screening_indicator": 5.3719920576015366e-05,
+      "physical_rms": [
+        5.3719920576015366e-05,
+        2.7863799229373164e-05,
+        4.689326331804505e-06,
+        7.128661839577038e-06
+      ],
+      "interpolation_disagreement_rms": [
+        4.189892872833377e-06,
+        2.227612814032484e-06,
+        2.9136033448728845e-07,
+        5.110412670881339e-07
+      ]
+    },
+    {
+      "family": "areal",
+      "n": 512,
+      "repeats": 3,
+      "completed": 3,
+      "stepping_seconds": {
+        "min": 154.14765604200002,
+        "median": 154.18625287499998,
+        "max": 154.191549958
+      },
+      "setup_seconds": {
+        "min": 0.20717458300000002,
+        "median": 0.207410125,
+        "max": 0.20755975
+      },
+      "rhs_seconds": {
+        "min": 151.14373908000022,
+        "median": 151.19530038700086,
+        "max": 151.22645597300215
+      },
+      "rhs_calls": {
+        "min": 51466,
+        "median": 51466.0,
+        "max": 51466
+      },
+      "steps": {
+        "min": 10291,
+        "median": 10291.0,
+        "max": 10291
+      },
+      "C_char_max_accepted": {
+        "min": 0.4000001253680103,
+        "median": 0.4000001253680103,
+        "max": 0.4000001253680103
+      },
+      "dt_over_M": {
+        "min": 0.0009717620231626863,
+        "median": 0.0009717620231626863,
+        "max": 0.0009717620231626863
+      },
+      "min_dr_over_M": {
+        "min": 0.0058651026392961825,
+        "median": 0.0058651026392961825,
+        "max": 0.0058651026392961825
+      },
+      "steps_per_M": {
+        "min": 1029.1,
+        "median": 1029.1,
+        "max": 1029.1
+      },
+      "worst_evaluated_speed": {
+        "min": 2.414214319071529,
+        "median": 2.414214319071529,
+        "max": 2.414214319071529
+      },
+      "indicator": 0.050317623775357916,
+      "screening_indicator": 0.050317623775357916,
+      "physical_rms": [
+        0.050317623775357916,
+        0.025318349768116883,
+        0.0005662941009999398,
+        0.001708429916828567
+      ],
+      "interpolation_disagreement_rms": [
+        0.004022182702324389,
+        0.0020305772923698067,
+        4.617768063245991e-05,
+        0.00015048591308335232
+      ]
+    },
+    {
+      "family": "compact",
+      "n": 64,
+      "repeats": 3,
+      "completed": 3,
+      "stepping_seconds": {
+        "min": 3.8796070000000005,
+        "median": 3.90840675,
+        "max": 3.966046625
+      },
+      "setup_seconds": {
+        "min": 0.109559083,
+        "median": 0.109683042,
+        "max": 0.109698125
+      },
+      "rhs_seconds": {
+        "min": 3.7321267930000146,
+        "median": 3.7596360869999983,
+        "max": 3.8081338780000085
+      },
+      "rhs_calls": {
+        "min": 6401,
+        "median": 6401.0,
+        "max": 6401
+      },
+      "steps": {
+        "min": 1278,
+        "median": 1278.0,
+        "max": 1278
+      },
+      "C_char_max_accepted": {
+        "min": 0.40013593151814536,
+        "median": 0.40013593151814536,
+        "max": 0.40013593151814536
+      },
+      "dt_over_M": {
+        "min": 0.007827657871617546,
+        "median": 0.007827657871617546,
+        "max": 0.007827657871617546
+      },
+      "min_dr_over_M": {
+        "min": 0.04724409448818889,
+        "median": 0.04724409448818889,
+        "max": 0.04724409448818889
+      },
+      "steps_per_M": {
+        "min": 127.8,
+        "median": 127.8,
+        "max": 127.8
+      },
+      "worst_evaluated_speed": {
+        "min": 2.4150340146570546,
+        "median": 2.4150340146570546,
+        "max": 2.4150340146570546
+      },
+      "indicator": 0.0028395459183449823,
+      "screening_indicator": 0.0028395459183449823,
+      "physical_rms": [
+        0.0028395459183449823,
+        0.001446424722277671,
+        0.0008106642018853404,
+        0.0010205567192786012
+      ],
+      "interpolation_disagreement_rms": [
+        0.0003669478640245585,
+        0.0001729571892967695,
+        0.00011117143175239044,
+        0.00016168921109628996
+      ]
+    }
+  ],
+  "conditional_frontier": [
+    {
+      "family": "compact",
+      "n": 128
+    },
+    {
+      "family": "compact",
+      "n": 256
+    },
+    {
+      "family": "compact",
+      "n": 64
+    }
+  ],
+  "fixed_indicator_targets": [
+    {
+      "tolerance": 0.003,
+      "selected": {
+        "areal": null,
+        "compact": {
+          "n": 64,
+          "median_seconds": 3.90840675,
+          "rhs_calls": 6401.0,
+          "indicator": 0.0028395459183449823
+        }
+      },
+      "areal_over_compact_cost_ratio": null
+    },
+    {
+      "tolerance": 0.001,
+      "selected": {
+        "areal": null,
+        "compact": {
+          "n": 128,
+          "median_seconds": 12.238658584,
+          "rhs_calls": 12841.0,
+          "indicator": 0.0005406494950853514
+        }
+      },
+      "areal_over_compact_cost_ratio": null
+    },
+    {
+      "tolerance": 0.0001,
+      "selected": {
+        "areal": null,
+        "compact": {
+          "n": 256,
+          "median_seconds": 41.971584041999996,
+          "rhs_calls": 25716.0,
+          "indicator": 5.3719920576015366e-05
+        }
+      },
+      "areal_over_compact_cost_ratio": null
+    }
+  ],
+  "admitted_frontier": [],
+  "execution_sources": {
+    "tst/spherical_optimization/run.py": "7f51e71e65a87b5254381ef2ab98b6540192d5467be6dd7317fee7ba6eb44957",
+    "tst/spherical_optimization/evolution.py": "2f805b2087e353133f9790ca8eacc085843dd1875f1b7f9ac958226601566bcd",
+    "tst/spherical_optimization/kernel.py": "d029a47da8dda45e863edff4e1990f72746d2c96791825817d103f04a261628b",
+    "tst/spherical_optimization/physical_constraints.py": "f92db9b85eef1a2a8f707ef87ac4e32c9a44e1f8ce47034ab1880dfe9aafc8d4",
+    "tst/elliptic_shift_1d/numerics.py": "c62ee8d579cf22758768a91348b3adc890b9955cb7e64f1a3e27e65d833fbb61"
+  },
+  "inputs": {
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n128-repeat1/result.json": "e737a2456eec180c608eea3c2cda1c7fd16bf49ea9705f39ad6dd6ebe85a401d",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n128-repeat1/manifest.json": "c270087dc887c212ffc47f13828100471fa1c353f9651e9e95da59837a3d4f04",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n128-repeat1/initial.npz": "cd84257fed0dd1eddb9220c4c2d92099f83f293f428cfdb06b6bc60550dfb045",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n128-repeat1/profile-10.npz": "71e0b8636bef0b648d127cc972939552e60a21dcc710ee49142970b7a4c2508d",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n128-repeat1/result.json": "e86f3af24c1cf9350716162013c405cfb22a9033cf877fbabe066fb9a07529e4",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n128-repeat1/manifest.json": "fcb4d0da16e71b1e36056fd8fabc85150754ba4dc6fc493da70ddcb35fd50d7a",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n128-repeat1/initial.npz": "4f93ee1fb7338bad9cbe809588d32835f53489d1cabf386a38d0653fa3ebe4ab",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n128-repeat1/profile-10.npz": "78fa899e23b416e03a880b4a9ef987012e4b49979370bc8c898d51eb66555192",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n256-repeat1/result.json": "58cc53afec9a09291406e80187bbf71a458516232f2ea38326d97783edb02d71",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n256-repeat1/manifest.json": "5b97e762ed01a0620ae2f1cea595f0da5ef85546b658d6d169061659588d9b66",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n256-repeat1/initial.npz": "09147dfaea90e24c72479e60f03030f06d1ec95f1c5c725fc4459cd20e82fd8a",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n256-repeat1/profile-10.npz": "c5d0fdfb174ba105eb2bf2ca7aaecfbc310d20646d9dfc0af004389ed8ec87a7",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n256-repeat1/result.json": "7d0d0c85e89e4f81631ee04d009730901f5d0c2b2153bdb89120721f6777c074",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n256-repeat1/manifest.json": "44fd6d746f1c4b688e75bd85f55ef05e95e5c5741261e0b0c353c015c9e249a2",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n256-repeat1/initial.npz": "8407f283575e5d89192dfda00111cd96cda4bbdb8a90b38aed5898ccad08d942",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n256-repeat1/profile-10.npz": "32123d09837cd25b9acf65f4dd0adea761737db1e69889b7b286845e2c7a19ba",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n512-repeat1/result.json": "47c66f909eb66f86039974b55b654dded37168ce12e1cf4dd6dce0e7de3e8381",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n512-repeat1/manifest.json": "4d631eaf713afbe1f8a5aa6cb4a619aafd65290d20c4636c820732cd629913fe",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n512-repeat1/initial.npz": "c64364de8b69dbe0da79e18a66c81e42d39624dcdfdb7d384fa0f0c607637770",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n512-repeat1/profile-10.npz": "a6ad5b56a1eaeb5aab332fa2bdc8f37ad1fb1c3ef785f64577e553415585ac26",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n64-repeat1/result.json": "38536e07af26a6debd0893d793cbdde49a5da66c2bab148b9f0d72e608ae0425",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n64-repeat1/manifest.json": "4bf523c9db3dae42b429d53f24f84546d5d09033cb9ac17a75519b0a6c0954b6",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n64-repeat1/initial.npz": "b88d170e41d3b17360a934566192f621fc36f88645459bb3dbd21bef5c2f1be7",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n64-repeat1/profile-10.npz": "cf52b62c5c9e4f182b06ef685e13201e63237133dd4fac727b2ccd1c6092c697",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n128-repeat2/result.json": "0540ae0053bb612b1f6c5847834b40eaef42248e0bcfcaa6dd835c87dbf7a989",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n128-repeat2/manifest.json": "c5529d82ce98b797288224829c9308d6ef0070bfbb478cd25776cac1159d936b",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n128-repeat2/initial.npz": "4f93ee1fb7338bad9cbe809588d32835f53489d1cabf386a38d0653fa3ebe4ab",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n128-repeat2/profile-10.npz": "78fa899e23b416e03a880b4a9ef987012e4b49979370bc8c898d51eb66555192",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n256-repeat2/result.json": "6f577367a54fddda62f7b270be490bf72e29e572450d241553c319ed4608b8b0",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n256-repeat2/manifest.json": "61f88609c405108ad99e697a22c0c69d9bd4fa0d739593dd64a0809415974eb0",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n256-repeat2/initial.npz": "09147dfaea90e24c72479e60f03030f06d1ec95f1c5c725fc4459cd20e82fd8a",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n256-repeat2/profile-10.npz": "c5d0fdfb174ba105eb2bf2ca7aaecfbc310d20646d9dfc0af004389ed8ec87a7",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n256-repeat2/result.json": "d85d0718c178968919064a2a7f0f9638c147cc5eff9ab0baf503a2f095cb470e",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n256-repeat2/manifest.json": "57f6309767cdee012628e8602ad6964b70be8465aa528c22c915a18ebef7d0f3",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n256-repeat2/initial.npz": "8407f283575e5d89192dfda00111cd96cda4bbdb8a90b38aed5898ccad08d942",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n256-repeat2/profile-10.npz": "32123d09837cd25b9acf65f4dd0adea761737db1e69889b7b286845e2c7a19ba",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n512-repeat2/result.json": "664549727f13cc4416bef6f5370eda40df00f0657b7ca4e8c9437899be8b880c",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n512-repeat2/manifest.json": "fba9194c63de13fa0e78e9b351437d6531caf8f284bc56ad14bb2b9bb8c33e85",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n512-repeat2/initial.npz": "c64364de8b69dbe0da79e18a66c81e42d39624dcdfdb7d384fa0f0c607637770",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n512-repeat2/profile-10.npz": "a6ad5b56a1eaeb5aab332fa2bdc8f37ad1fb1c3ef785f64577e553415585ac26",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n64-repeat2/result.json": "5967c0cfd12e59a966a3be81f3079071c349f57fea6fdcb9d05c553ccf16b079",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n64-repeat2/manifest.json": "00fd2baa4ed6441bc0f3b606f1da914e19ecf36d8bb33a631c82017292f1991d",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n64-repeat2/initial.npz": "b88d170e41d3b17360a934566192f621fc36f88645459bb3dbd21bef5c2f1be7",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n64-repeat2/profile-10.npz": "cf52b62c5c9e4f182b06ef685e13201e63237133dd4fac727b2ccd1c6092c697",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n128-repeat2/result.json": "fb35574242e2328e9287ed9ac2127c703046cfdf3e05b4d8e661fa4a1ae402ca",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n128-repeat2/manifest.json": "9bc0780433692f65528d831327857881998430f5a2a70d467790450c76d05729",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n128-repeat2/initial.npz": "cd84257fed0dd1eddb9220c4c2d92099f83f293f428cfdb06b6bc60550dfb045",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n128-repeat2/profile-10.npz": "71e0b8636bef0b648d127cc972939552e60a21dcc710ee49142970b7a4c2508d",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n256-repeat3/result.json": "227e4cca5d5d4e147c563ca6ffab92a06eec636a86fdcf8b1c17d7bd04be44a9",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n256-repeat3/manifest.json": "eeb7d0518ff6ef94f2b21b14824b07f373e86a817ca805bcdb75f14086ca4bbc",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n256-repeat3/initial.npz": "09147dfaea90e24c72479e60f03030f06d1ec95f1c5c725fc4459cd20e82fd8a",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n256-repeat3/profile-10.npz": "c5d0fdfb174ba105eb2bf2ca7aaecfbc310d20646d9dfc0af004389ed8ec87a7",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n256-repeat3/result.json": "fcffe625124298ab2908e241af5dcf8ab18c6556314b1c27c172394d9f2740d3",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n256-repeat3/manifest.json": "e72f646183cfb3d65966d7b94b47511630df5b804f14c6d9cba8572cf70c588a",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n256-repeat3/initial.npz": "8407f283575e5d89192dfda00111cd96cda4bbdb8a90b38aed5898ccad08d942",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n256-repeat3/profile-10.npz": "32123d09837cd25b9acf65f4dd0adea761737db1e69889b7b286845e2c7a19ba",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n512-repeat3/result.json": "315779d733cf90db69cbfed3c1ec4654f56e5f5cb89a3fb3e92ca3de682637f1",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n512-repeat3/manifest.json": "68c8efad0cb3e9a101080cda11955fae662b58ec94b6d1d754285cb9ee3f66a6",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n512-repeat3/initial.npz": "c64364de8b69dbe0da79e18a66c81e42d39624dcdfdb7d384fa0f0c607637770",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n512-repeat3/profile-10.npz": "a6ad5b56a1eaeb5aab332fa2bdc8f37ad1fb1c3ef785f64577e553415585ac26",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n64-repeat3/result.json": "8a4f83db4de434e91ccfece13bdd159703ea2f26d170783da70fe53b3787e15b",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n64-repeat3/manifest.json": "67f7cc9d0f9b9a911ed4aa39455311511eb7fe6099c6dd65e4c94cc3c5e5d14b",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n64-repeat3/initial.npz": "b88d170e41d3b17360a934566192f621fc36f88645459bb3dbd21bef5c2f1be7",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n64-repeat3/profile-10.npz": "cf52b62c5c9e4f182b06ef685e13201e63237133dd4fac727b2ccd1c6092c697",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n128-repeat3/result.json": "a797afe1c05580b4635819479ce09474a54c8bb6b85d95ab5d3ea77e200d65db",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n128-repeat3/manifest.json": "24f5f24d96864148db1e68a0d226fa4357a9b8d3dd3660cc7d1ddbc09e55ac14",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n128-repeat3/initial.npz": "cd84257fed0dd1eddb9220c4c2d92099f83f293f428cfdb06b6bc60550dfb045",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n128-repeat3/profile-10.npz": "71e0b8636bef0b648d127cc972939552e60a21dcc710ee49142970b7a4c2508d",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n128-repeat3/result.json": "d47967b8aa1fdf55af2619a47c3fb63bcc242aed5309708f4f3ddfccb6a5d998",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n128-repeat3/manifest.json": "c88f6c5bf8c22f23286edf48b0bfef8c3da2288c8fca871453041af817bc2d95",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n128-repeat3/initial.npz": "4f93ee1fb7338bad9cbe809588d32835f53489d1cabf386a38d0653fa3ebe4ab",
+    "docs/spherical-optimization/evidence/serial-cost-v19/compact-n128-repeat3/profile-10.npz": "78fa899e23b416e03a880b4a9ef987012e4b49979370bc8c898d51eb66555192"
+  },
+  "source_sha256": "e9200ce64278ab2c1148190629a5c9b42473ed9ca6d067a1f9f4ee7c53c6569c",
+  "qualification": "Same binary, gauge, central scale, r2 representation, target C_char=.4, diagnostics and 10M duration. Timings include stepping diagnostics/output but exclude setup and Python startup/imports. PCHIP/linear agreement is a sensitivity screen, not a certified error bound. Constraints alone are not solution error; boundary differential compatibility and late response fail, so no robust cost or timestep recommendation follows."
+}

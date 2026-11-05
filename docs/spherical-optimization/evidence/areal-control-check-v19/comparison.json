@@ -1,0 +1,120 @@
+{
+  "rows": [
+    {
+      "case": "areal-n128-repeat1",
+      "n": 128,
+      "physical_rms": [
+        0.029492615740914038,
+        0.0208453988789874,
+        0.0022629956794404495,
+        0.004062737039209805
+      ],
+      "initial_physical_rms": [
+        1.9478803957101037e-10,
+        1.997813545427944e-12,
+        0.0,
+        0.0
+      ],
+      "peak_H_reference_R_M": 40.94646045896093,
+      "peak_abs_H": 0.08594361981705773
+    },
+    {
+      "case": "areal-n256-repeat1",
+      "n": 256,
+      "physical_rms": [
+        0.05673177837509563,
+        0.027918070851848904,
+        0.001281772854102051,
+        0.003288043187072132
+      ],
+      "initial_physical_rms": [
+        1.3548901406822692e-10,
+        3.5905588727167333e-12,
+        0.0,
+        0.0
+      ],
+      "peak_H_reference_R_M": 34.95643532685332,
+      "peak_abs_H": 0.21141582105162693
+    },
+    {
+      "case": "areal-n512-repeat1",
+      "n": 512,
+      "physical_rms": [
+        0.050317623775357916,
+        0.025318349768116883,
+        0.0005662941009999398,
+        0.001708429916828567
+      ],
+      "initial_physical_rms": [
+        3.864537941404428e-10,
+        6.083010863181461e-12,
+        0.0,
+        0.0
+      ],
+      "peak_H_reference_R_M": 34.991360691608435,
+      "peak_abs_H": 0.1862697706977875
+    },
+    {
+      "case": "areal-r2-n256-halfstep-v19",
+      "n": 256,
+      "physical_rms": [
+        0.05673177837518194,
+        0.027918070851795637,
+        0.0012817728541004206,
+        0.003288043187088927
+      ],
+      "initial_physical_rms": [
+        1.3548901406822692e-10,
+        3.5905588727167333e-12,
+        0.0,
+        0.0
+      ],
+      "peak_H_reference_R_M": 34.95643532685332,
+      "peak_abs_H": 0.21141582105219514
+    }
+  ],
+  "halfstep_comparison": {
+    "max_field_difference": 9.634959496906959e-12,
+    "per_field_max_difference": [
+      1.2501111257279263e-13,
+      5.6066262743570405e-14,
+      2.842170943040401e-14,
+      5.749178910718911e-12,
+      2.4589219549397967e-12,
+      3.0686564400639327e-13,
+      1.7571854344852755e-13,
+      9.50350909079134e-12,
+      1.5765166949677223e-14,
+      2.5091040356528538e-14,
+      3.400058012914542e-14,
+      9.634959496906959e-12
+    ],
+    "constraint_difference_rms": [
+      5.020027672908887e-13,
+      2.3460739397057107e-13,
+      1.9888928274024986e-14,
+      3.384317145477591e-14
+    ],
+    "constraint_relative_L2_difference": 8.77198068539974e-12
+  },
+  "inputs": {
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n128-repeat1/manifest.json": "c270087dc887c212ffc47f13828100471fa1c353f9651e9e95da59837a3d4f04",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n128-repeat1/initial.npz": "cd84257fed0dd1eddb9220c4c2d92099f83f293f428cfdb06b6bc60550dfb045",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n128-repeat1/profile-10.npz": "71e0b8636bef0b648d127cc972939552e60a21dcc710ee49142970b7a4c2508d",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n128-repeat1/reference-jets.npz": "ef71e85da011a5f275e37689c27194f7d08a062b9011d97fea6c7d868e60fe76",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n256-repeat1/manifest.json": "5b97e762ed01a0620ae2f1cea595f0da5ef85546b658d6d169061659588d9b66",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n256-repeat1/initial.npz": "09147dfaea90e24c72479e60f03030f06d1ec95f1c5c725fc4459cd20e82fd8a",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n256-repeat1/profile-10.npz": "c5d0fdfb174ba105eb2bf2ca7aaecfbc310d20646d9dfc0af004389ed8ec87a7",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n256-repeat1/reference-jets.npz": "aef2b53462c779f7a9fb26351788ff6de74075f1999d315ce22a7ecb395803ed",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n512-repeat1/manifest.json": "4d631eaf713afbe1f8a5aa6cb4a619aafd65290d20c4636c820732cd629913fe",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n512-repeat1/initial.npz": "c64364de8b69dbe0da79e18a66c81e42d39624dcdfdb7d384fa0f0c607637770",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n512-repeat1/profile-10.npz": "a6ad5b56a1eaeb5aab332fa2bdc8f37ad1fb1c3ef785f64577e553415585ac26",
+    "docs/spherical-optimization/evidence/serial-cost-v19/areal-n512-repeat1/reference-jets.npz": "f1f2973795a0379fcbc3a616b4ce750dbd306f3e367a723cc7d00f634b556ce6",
+    "docs/spherical-optimization/evidence/areal-r2-n256-halfstep-v19/manifest.json": "38001002d6dd5da7621c8bf63269d5764fbd98974c9b8911daadd5ef9bfed077",
+    "docs/spherical-optimization/evidence/areal-r2-n256-halfstep-v19/initial.npz": "09147dfaea90e24c72479e60f03030f06d1ec95f1c5c725fc4459cd20e82fd8a",
+    "docs/spherical-optimization/evidence/areal-r2-n256-halfstep-v19/profile-10.npz": "0af0a532f343f60a19418e3822bc1b69e00a84a8ec5a9dfee6d78508c1550db1",
+    "docs/spherical-optimization/evidence/areal-r2-n256-halfstep-v19/reference-jets.npz": "aef2b53462c779f7a9fb26351788ff6de74075f1999d315ce22a7ecb395803ed"
+  },
+  "source_sha256": "bbdd6108e5916d2307f8704cd59c1a3e94697f4430640c278bf397d86a0d9a64",
+  "qualification": "Two timesteps bound the observed temporal change, not an order estimate. No spatial-convergence claim for areal slicing; unsmoothed physical constraints on common reference coordinates, no constraint reset."
+}

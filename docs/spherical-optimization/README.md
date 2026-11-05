@@ -9,6 +9,9 @@ established, and no spherical result establishes boosted or 3D stability.**
 Latest auxiliary-damping and rejected outgoing-boundary experiments are in
 [BOUNDARY-TRIALS.md](BOUNDARY-TRIALS.md). Stronger damping does not cure the
 late response; the outgoing trace closure has a grid-scaled unstable mode.
+The controlled serial measurements in [ACCURACY-COST.md](ACCURACY-COST.md)
+give an exterior-only frontier. No finite fixed-target speedup ratio is
+established because the areal control misses all tested accuracy targets.
 
 ## Equation and variable mapping
 

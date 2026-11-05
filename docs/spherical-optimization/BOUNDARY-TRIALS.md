@@ -66,6 +66,24 @@ instability. Only .001M construction pilots were run; no long evolution was
 launched after the failed operator gate. The code is retained explicitly as
 a rejected reproduction option. Its algebraic compatibility is insufficient.
 
+The v19 directional audit (`evidence/boundary-mode-v19`) normalizes the saved
+mode to endpoint Ar=1 and decomposes its actual shared Ar rate. At N64 the
+regular, pole-normal and penalty contributions are respectively +170.059,
++276.191 and −198.553, totaling +247.697. In a diagnostic jet evaluation
+that omits only the lapse Hermite correction, the total becomes −214.676;
+omitting only the shift correction leaves +247.697. N32 gives the same
+pattern (+121.452 versus −111.262). Three directional increments agree.
+These are evaluations along the original eigenvector, **not eigenvalues of
+a modified operator** or proposed evolutions; removing the correction loses
+the clock compatibility condition.
+
+The lifting polynomial P has P'(0)=1 and P''(0)=4.9 in endpoint-spacing
+coordinates. Thus a normal lapse correction delta alpha' induces
+`delta alpha'' = 4.9 delta alpha'/h` at the endpoint. The regular Ar Hessian
+term is the identified positive feedback. A subsequent numerical boundary
+design must control this derivative lifting while retaining the normal clock
+equation, and must repeat the full operator gate; damping D does not address it.
+
 ## Reproduction and remaining work
 
 The v18 binary and final source snapshot are in
