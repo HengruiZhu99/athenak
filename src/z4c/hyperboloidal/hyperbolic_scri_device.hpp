@@ -53,6 +53,7 @@ class HyperbolicScriDevice {
   static constexpr int sampled_fields=25;
   int first_,local_,total_,active_total_,normal_donors_;
   bool sampled_normal_;
+  Real outer_lapse_damping_;
   Rows rows_;
   Terms terms_;
   Jets samples_;
@@ -161,6 +162,7 @@ class HyperbolicScriDevice {
     Sampling sample;Buffer surface,rhs;Diagnostics diagnostics;int first;Real dt;
     ConstBuffer additive_rates;
     ConstBuffer sampled_poles,normal_weights;
+    Real outer_lapse_damping;
     KOKKOS_INLINE_FUNCTION void operator()(int local) const {
       RowDiagnostic info{};const auto row=sample.rows(local);const auto*x=row.x;
       bool finite=true;
@@ -188,7 +190,7 @@ class HyperbolicScriDevice {
       SetStationaryOmegaNormal(u.alpha.value,u.beta.value,u.alpha.d,u.beta.d,omega);
       auto parts=ConformalRHS(u,omega,Real(4),Real(-.99));
       if(!HyperbolicDamping(x,u,omega,parts)){info.status=invalid_source;diagnostics(local)=info;return;}
-      auto pole=TensorPoleNormalJet(u,omega,x,x,Real(4),Real(-.99),Real(1),Real(1),true,true);
+      auto pole=TensorPoleNormalJet(u,omega,x,x,Real(4),Real(-.99),Real(1),outer_lapse_damping,true,true);
       if(sampled_poles.extent(0)!=0){
         Z4cRHS<Real> normal{};constexpr int ni[6]={0,0,0,1,1,2},nj[6]={0,1,2,1,2,2};
         const int donors=normal_weights.extent(0);
@@ -256,7 +258,9 @@ class HyperbolicScriDevice {
       // Only gauge lapse/flux outputs enter BoundaryRates. Its shift_regular
       // contains D, but is discarded. Supplying zero D removes all cross-row
       // reads of the dependent trace and preserves these outputs exactly.
-      const Real unused_D[3]{};const auto gauge=HyperbolicGauge(x,u,B,unused_D);
+      HyperbolicShiftParameters<Real> gauge_parameters;
+      gauge_parameters.outer_lapse_damping=outer_lapse_damping;
+      const Real unused_D[3]{};const auto gauge=HyperbolicGauge(x,u,B,unused_D,gauge_parameters);
       if(!gauge.valid){info.status=invalid_gauge;diagnostics(local)=info;return;}
       info.clock=fabs(gauge.lapse_regular-pole.lapse.derivative);
       info.pole=fmax(info.pole,fabs(gauge.lapse_pole));
@@ -326,7 +330,8 @@ class HyperbolicScriDevice {
   HyperbolicScriDevice(const HyperbolicComposite&model,int first_surface,int local_count)
       :first_(first_surface),local_(local_count),total_(model.scri.rows.size()),
        active_total_(model.grid.active.size()),normal_donors_(model.scri.radial_nodes-1),
-       sampled_normal_(model.normal_derivative==HyperbolicComposite::NormalDerivative::sampled_numerator) {
+       sampled_normal_(model.normal_derivative==HyperbolicComposite::NormalDerivative::sampled_numerator),
+       outer_lapse_damping_(model.parameters.outer_lapse_damping) {
     if(first_<0||local_<0||size_t(first_)+size_t(local_)>model.scri.rows.size())
       throw std::invalid_argument("invalid device scri owned row range");
     rows_=Rows("scri owned rows",local_);diagnostics_=Diagnostics("scri owned diagnostics",local_);
@@ -407,13 +412,13 @@ class HyperbolicScriDevice {
     // field summation order with the original in-kernel sampling organization.
     Kokkos::parallel_for("scri owned native rates inline sampling",
         Kokkos::RangePolicy<ExecutionSpace>(0,local_),
-        EvaluateRows<Sample>{source,local_surface_,local_rhs_,diagnostics_,first_,dt,additive_rates,sampled_poles,normal_weights_});
+        EvaluateRows<Sample>{source,local_surface_,local_rhs_,diagnostics_,first_,dt,additive_rates,sampled_poles,normal_weights_,outer_lapse_damping_});
 #else
     Kokkos::parallel_for("scri owned field sampling",
         Kokkos::RangePolicy<ExecutionSpace>(0,sampled_fields*local_),CacheSamples{source,samples_});
     const CachedSample sample{projected_surface,rows_,samples_};
     Kokkos::parallel_for("scri owned native rates",Kokkos::RangePolicy<ExecutionSpace>(0,local_),
-        EvaluateRows<CachedSample>{sample,local_surface_,local_rhs_,diagnostics_,first_,dt,additive_rates,sampled_poles,normal_weights_});
+        EvaluateRows<CachedSample>{sample,local_surface_,local_rhs_,diagnostics_,first_,dt,additive_rates,sampled_poles,normal_weights_,outer_lapse_damping_});
 #endif
     return Reduce();
   }

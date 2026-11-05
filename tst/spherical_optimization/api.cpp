@@ -46,6 +46,10 @@ extern "C" int spherical_set_auxiliary_damping(void*v,double damping){
   // prescribed reference consistently (its stationary D_* is identically zero).
   auto ref=std::make_unique<h::StationaryGaugeReference>(p);l.p=p;l.reference=std::move(ref);return 0;
  }catch(const std::exception&e){error=e.what();return 1;}}
+extern "C" int spherical_set_outer_lapse_damping(void*v,double damping){
+ try{auto&l=*static_cast<Lab*>(v);auto p=l.p;p.outer_lapse_damping=damping;p.Validate();
+  auto ref=std::make_unique<h::StationaryGaugeReference>(p);l.p=p;l.reference=std::move(ref);return 0;
+ }catch(const std::exception&e){error=e.what();return 1;}}
 extern "C" int spherical_configuration(void*v,double*out){
  auto&l=*static_cast<Lab*>(v);const auto&p=l.p;
  const double a[]={p.reference_start_M,p.reference_end_M,l.native->InnerRadius(),l.native->IsotropicScale(),
@@ -221,7 +225,7 @@ extern "C" int spherical_reference_chi(int n,int power,int inverse,const double*
 extern "C" int spherical_analytic_normal(void*v,const double*q,const double*d,const double*dd,double*out){
  try{auto&l=*static_cast<Lab*>(v);const auto j=s::Lift(1.,q,d,dd);const double x[3]={1,0,0};
   auto o=l.p.profile.At(x);h::SetStationaryOmegaNormal(j.u.alpha.value,j.u.beta.value,j.u.alpha.d,j.u.beta.d,o);
-  const auto dual=h::TensorPoleNormalJet(j.u,o,x,x,l.p.kappa1,l.p.kappa2,1.,1.,true,true);
+  const auto dual=h::TensorPoleNormalJet(j.u,o,x,x,l.p.kappa1,l.p.kappa2,1.,l.p.outer_lapse_damping,true,true);
   const auto normal=s::Pack(h::TensorScriLimit(h::Z4cRHS<double>{},dual,1.));
   std::copy(normal.begin(),normal.end(),out);out[s::alpha]=dual.lapse.derivative;out[s::driver]=normal[s::lambda];return 0;
  }catch(const std::exception&e){error=e.what();return 1;}}

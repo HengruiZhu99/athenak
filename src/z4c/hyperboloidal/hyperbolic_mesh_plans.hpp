@@ -130,6 +130,10 @@ class HyperbolicMeshPlans {
                        o.parameters.ratio, o.parameters.damping, o.parameters.restoring,
                        o.parameters.kappa, o.parameters.tau, o.parameters.epsilon,
                        o.parameters.inner_z4, o.parameters.kappa1, o.parameters.kappa2}) Append(out,value);
+    // Preserve frozen default descriptors while distinguishing the new gauge.
+    if(o.parameters.outer_lapse_damping!=1) {
+      Append(out, int(0x4c415053)); Append(out,o.parameters.outer_lapse_damping);
+    }
     for (bool b :
          {o.inner_logical, o.positive, o.puncture_reference, o.boundary_reuse, o.selective_halos})
       Append(out, int(b));

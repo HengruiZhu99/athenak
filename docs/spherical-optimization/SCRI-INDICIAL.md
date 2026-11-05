@@ -147,3 +147,9 @@ compare boundary regularity, refined pulses and exterior accuracy. Robust
 RK4 limits, controlled fixed-error costs and the final transfer gate remain
 required. No candidate is yet admitted; the parent campaign and Aurora remain
 untouched.
+
+## Implementation follow-up
+
+The predicted parameter is now implemented and independently checked in
+[OUTER-LAPSE.md](OUTER-LAPSE.md). This report remains the frozen pre-change
+continuum analysis; its earlier pending-action statements describe that phase.

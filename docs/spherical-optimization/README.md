@@ -6,19 +6,22 @@ The parent campaign, frozen Aurora snapshots and remote jobs are untouched.
 **Work in progress: no candidate is admitted, no stability/cost improvement is
 established, and no spherical result establishes boosted or 3D stability.**
 
-The latest [continuum near-scri audit](SCRI-INDICIAL.md) identifies a leading
-fractional gauge mode consistent with the [boundary regularity concern](BOUNDARY-REGULARITY.md).
-It predicts a targeted outer lapse damping change; that change is not yet
-implemented or tested. The [compatible-lapse spatial policy](COMPATIBLE-LAPSE.md)
-removes the earlier discrete interior instability, but no candidate is yet
-admitted as a smooth, robust formulation.
+The latest [shared outer lapse damping experiment](OUTER-LAPSE.md) implements
+the change predicted by the [continuum near-scri audit](SCRI-INDICIAL.md).
+Default and core equations remain unchanged; the new coefficient passes
+shared spherical/Cartesian and local host/device parity checks. Through 1024 points
+it improves boundary residuals and second-derivative convergence while
+increasing exterior error at fixed points.
+The [compatible-lapse spatial policy](COMPATIBLE-LAPSE.md) removes the earlier
+discrete interior instability. The late 40M pulse upturn, robust timesteps and controlled fixed-error costs
+remain gates; no candidate is admitted.
 
 Boundary results are in [SHIFT-NORMAL-BOUNDARY.md](SHIFT-NORMAL-BOUNDARY.md):
 the outgoing auxiliary/shift-normal policy improves the boundary defect and
 preserves exterior convergence, but leaves the late gauge response unchanged.
 [CONSTRAINT-PROPAGATION.md](CONSTRAINT-PROPAGATION.md) checks the shared interior
-equations on smooth stationary and perturbed-gauge data. The next stability
-investigation targets a resolution-dependent mode in the interior gauge blend.
+equations on smooth stationary and perturbed-gauge data. Those results motivated the discrete gauge-blend investigation and the
+compatible-lapse policy described above.
 
 Latest auxiliary-damping and rejected outgoing-boundary experiments are in
 [BOUNDARY-TRIALS.md](BOUNDARY-TRIALS.md). Stronger damping does not cure the

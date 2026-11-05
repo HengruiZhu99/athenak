@@ -147,6 +147,8 @@ template<class T> struct HyperbolicShiftParameters {
   // Opt-in configured windows; negative sentinel preserves frozen arithmetic.
   T coefficient_begin=-1, coefficient_end=-1, restoration_begin=-1, restoration_end=-1;
   T bulk_mu = 4, ratio = 2, damping = 1, restoring = 4;
+  // Constant part of the outer lapse relaxation; central telegrapher is unchanged.
+  T outer_lapse_damping = 1;
   T kappa = T(.005), tau = T(.02), epsilon = T(1.e-4);
   T inner_z4 = 8, kappa1 = 4, kappa2 = T(-.99);
   void Validate() const {
@@ -172,7 +174,8 @@ template<class T> struct HyperbolicShiftParameters {
       throw std::invalid_argument("invalid inner gauge profile");
     for (T v:{bulk_mu,ratio,damping,restoring,kappa,tau,epsilon,inner_z4,kappa1,inner_chi_guard})
       if (!std::isfinite(v) || v<0) throw std::invalid_argument("invalid hyperbolic gauge parameter");
-    if (bulk_mu<=0 || ratio<=0 || tau<=0 || !std::isfinite(kappa2))
+    if (bulk_mu<=0 || ratio<=0 || tau<=0 || !std::isfinite(kappa2) ||
+        !std::isfinite(outer_lapse_damping) || outer_lapse_damping<=0)
       throw std::invalid_argument("invalid hyperbolic gauge speed/relaxation parameter");
   }
 };
@@ -234,7 +237,7 @@ HyperbolicCoefficients<T> ShiftCoefficients(T r, T alpha, T chi,
   // component is necessary. This is identical to the coefficient-four donor.
   c.mu=(1-c.collar)*p.bulk_mu+c.collar*T(.75)*p.ratio*chi*c.F;
   if constexpr(direct_outer) c.mu=T(.75)*p.ratio*chi*c.F;
-  c.xi=1+2*pow(1-r*r,4);
+  c.xi=p.outer_lapse_damping+2*pow(1-r*r,4);
   return c;
 }
 

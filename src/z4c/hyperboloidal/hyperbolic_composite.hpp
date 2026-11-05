@@ -271,7 +271,7 @@ class HyperbolicComposite {
       const auto sample=scri.Sample(p,padded,scri.values,nf);const auto u=Jet(x,sample.value,sample.d,sample.dd);
       const auto o=OmegaAt(x,u,true);const auto g=Geometry(u.metric);
       auto parts=ConformalRHS(u,o,4.,-.99);if(!HyperbolicDamping(x,u,o,parts,parameters))throw std::runtime_error("scri source invalid");
-      auto pole=TensorPoleNormalJet(u,o,x,x,4.,-.99,1.,1.,true,true);
+      auto pole=TensorPoleNormalJet(u,o,x,x,4.,-.99,1.,parameters.outer_lapse_damping,true,true);
       if(normal_derivative==NormalDerivative::sampled_numerator){
         const auto normal=SampledPoleNormalDerivative(p,padded,&parts.pole);
         pole.geometry.chi.derivative=normal.chi;pole.geometry.trace.derivative=normal.trace;

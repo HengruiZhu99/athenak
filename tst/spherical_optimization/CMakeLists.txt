@@ -33,3 +33,28 @@ target_compile_options(sample_compact PRIVATE -ffp-contract=off -Wall -Wextra)
 add_executable(reference_variables test_reference_variables.cpp)
 target_link_libraries(reference_variables PRIVATE current_spherical)
 add_test(NAME reference_variables COMMAND reference_variables)
+
+add_test(NAME spherical_lapse_equivalence COMMAND spherical_equivalence --outer-lapse-damping .25)
+add_test(NAME spherical_compact_lapse_equivalence COMMAND spherical_equivalence --compact --outer-lapse-damping .25)
+add_executable(scri_device ../hyperbolic_shift_3d/test_scri_device.cpp)
+target_link_libraries(scri_device PRIVATE current_spherical)
+add_test(NAME scri_device_default COMMAND scri_device)
+add_test(NAME scri_device_lapse COMMAND scri_device --outer-lapse-damping .25)
+
+# Existing configured host/device test includes the reproduction MPI parser;
+# it runs as an ordinary local Serial process, without an MPI launch.
+find_package(MPI QUIET COMPONENTS CXX)
+if(MPI_CXX_FOUND)
+  add_executable(composite_device ../hyperbolic_shift_3d/test_composite_device.cpp)
+  target_link_libraries(composite_device PRIVATE current_spherical MPI::MPI_CXX)
+  file(READ ${ROOT}/inputs/hyperbolic_shift_3d/refined_convergence/central20_stationary.cfg FLAT_CONFIGURATION)
+  file(WRITE ${CMAKE_BINARY_DIR}/outer-lapse.cfg "${FLAT_CONFIGURATION}\nouter_lapse_damping=.25\n")
+  add_test(NAME composite_device_lapse COMMAND composite_device ${CMAKE_BINARY_DIR}/outer-lapse.cfg)
+  file(WRITE ${CMAKE_BINARY_DIR}/outer-lapse-reference.cfg "${FLAT_CONFIGURATION}\nouter_lapse_damping=.25\nouter_gauge=stationary-reference\n")
+  add_test(NAME composite_device_reference_lapse COMMAND composite_device ${CMAKE_BINARY_DIR}/outer-lapse-reference.cfg)
+endif()
+
+add_executable(scri_device_inline ../hyperbolic_shift_3d/test_scri_device.cpp)
+target_link_libraries(scri_device_inline PRIVATE current_spherical)
+target_compile_definitions(scri_device_inline PRIVATE HYPERBOLIC_SCRI_INLINE_SAMPLING=1)
+add_test(NAME scri_device_inline_lapse COMMAND scri_device_inline --outer-lapse-damping .25)

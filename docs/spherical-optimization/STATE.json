@@ -82,15 +82,22 @@
     "shared-C++ weighted near-scri pencils identify finite power .7720019 independently of numerical stencil, penalty and KO",
     "rational limiting determinant, direct RHS O(x) residual and independent leading physical-constraint cancellations verified",
     "frozen evolved-metric leading-root control and retained finite-window evolved polarization fits",
-    "identified outer lapse damping dependence predicting weighted power3 at xi=.25; no parameter change yet"
+    "identified outer lapse damping dependence predicting weighted power3 at xi=.25; no parameter change yet",
+    "shared outer lapse damping parameter with default-bitwise/core parity, source-balanced identity and actual bulk-pole finite-difference scri-normal checks",
+    "ten local CTests including configured host/device bulk with stationary reference and staged/inline scri at damping .25",
+    "actual new C++ near-scri pencils approach weighted power3 at damping .25",
+    "damping .25 compatible-lapse four-resolution 10M no-floor controls, early fourth-order temporal refinement and small 10M timestep differences",
+    "damping .25 N128/25620M gauge and constraint pulse pairs, N512 full 26-field evolved symbols and initial/evolved frozen operator diagnostics",
+    "damping .25 N1024 10M control: exterior indicator1.30e-7, clock6.22e-8, D defect5.53e-6; endpoint second derivatives approach finite values with independent stencil checks",
+    "damping .25 N128/25640M gauge pairs: refinement reduces final response, but N256 has a preserved late upturn near r.94"
   ],
   "next": [
-    "Implement an explicit shared outer_lapse_damping parameter, default1, and test xi=.25. The checked limiting gauge factor is xi*(s\u00b2+(R_beta+3)*s+2)-2*R_beta; R_beta4 gives current s=.7720019 and proposed s3. Update stationary reference sources and analytic scri lapse-pole normals consistently; current adapters hard-code one. Preserve default bitwise behavior and verify off-constraint tensor/spherical, flat-core and changing-geometry normal equivalence before sweeps. Ensure 3D host/device propagation or explicit rejection of unsupported nondefault paths.",
-    "Test the new parameter with the compatible-lapse spatial policy: boundary regularity and second-derivative convergence, four-resolution exterior accuracy, temporal refinement, refined gauge/constraint pulses and longer controls. Do not infer smoothness from the predicted indicial exponent alone.",
-    "Measure robust RK4 timestep margins with actual speeds and semidiscrete/nonnormal checks, then controlled serial fixed-error costs and final transfer report. No boosted/3D stability claim or Aurora work."
+    "Qualify the late N25640M gauge-pulse upturn before claiming robust long-time behavior: final response4.164e-7 remains below N1282.375e-6 but rises from7.05e-8 at32M; peak Lambda at r.94129. Compare a matched damping-one N25640M pair and a halved-step .25 pair; inspect amplitude dependence/localization as warranted. Fine10M boundary derivatives now show convergence through N1024; do not turn that into an all-time or analytic-regularity proof.",
+    "Measure robust RK4 timestep limits using actual evolved speeds, initial/evolved semidiscrete spectra and nonnormal amplification, duration/refinement/pulse controls, preserving failures. Existing sweep_timestep.py is a historical fixed configuration; extend it or construct explicit manifests for the new parameter and compatible-lapse policy.",
+    "Run controlled serial rotated repeated fixed-error costs only after the candidate passes the accuracy/regularity gates. Current areal baseline misses all tested targets; do not report a finite ratio from a missing baseline target. Finish transfer report with spherical-only scope, no Aurora work or parent campaign changes."
   ],
   "latest": {
-    "disposition": "continuum_fractional_gauge_mode_identified_shared_damping_candidate_pending",
+    "disposition": "outer_lapse025_fine_boundary_convergence_improved_robustness_cost_gates_pending",
     "wide_areal_10M_points": [
       64,
       128,
@@ -108,7 +115,7 @@
     "exact_scri_n128_1M_D_defect": 2.138805993727148e-06,
     "release_binary": "build-spherical-v18/libcurrent_spherical.dylib",
     "compiler_only_observed_speed_ratio": 5.269579338765357,
-    "next_design": "shared outer lapse damping .25 with consistent reference sources and scri pole normal, followed by parity and regularity tests",
+    "next_design": "Qualify late N25640M pulse upturn and robust RK4 limits for damping .25, then controlled serial costs.",
     "compact_report": "COMPACT-PROFILE.md",
     "compact_10M_points": [
       64,
@@ -275,7 +282,59 @@
     "scri_metric_lapse_power": 1.7720018726587656,
     "proposed_outer_lapse_damping": 0.25,
     "proposed_weighted_power": 3.0,
-    "evolved_mode_relative_polarization_difference": 0.09830576536838882
+    "evolved_mode_relative_polarization_difference": 0.09830576536838882,
+    "outer_lapse_damping_report": "OUTER-LAPSE.md",
+    "outer_lapse_damping": 0.25,
+    "outer_lapse_damping_binary": "build-spherical-v26/libcurrent_spherical.dylib",
+    "outer_lapse_damping_binary_sha256": "ee9e4c6c1123c0be8aaa638420b13b7413b463426671ca86b0151bbecd9e05d8",
+    "outer_lapse025_points": [
+      64,
+      128,
+      256,
+      512,
+      1024
+    ],
+    "outer_lapse025_10M_errors": [
+      0.0048066481195561915,
+      0.0022955256467011493,
+      0.00028453912786218893,
+      8.532723378324821e-06,
+      1.2957535201660846e-07
+    ],
+    "outer_lapse025_10M_clocks": [
+      -4.369037887058971,
+      -0.17636959491331677,
+      -0.017370643816380177,
+      2.2520577480311665e-05,
+      6.220489640051952e-08
+    ],
+    "outer_lapse025_10M_D_defects": [
+      -0.7559995351425512,
+      0.4403927999970571,
+      0.01242661592589206,
+      9.288331432050906e-05,
+      5.534450734485941e-06
+    ],
+    "outer_lapse025_endpoint_lapse_DD": [
+      -39.926320199535766,
+      6.193902946817046,
+      1.163037031576966,
+      1.1559465236903406
+    ],
+    "outer_lapse025_20M_gauge_response": [
+      2.190770260313002e-06,
+      1.3432681456038154e-07
+    ],
+    "outer_lapse025_20M_constraint_response": [
+      2.4294919754197508e-05,
+      2.394834327290596e-05
+    ],
+    "outer_lapse025_40M_gauge_response": [
+      2.3745784787365665e-06,
+      4.16416990667301e-07
+    ],
+    "outer_lapse025_initial_n64_max_growth": 0.645167975544181,
+    "outer_lapse025_evolved_n128_10M_max_growth": 0.03839259549672713
   },
   "live_processes": [],
   "admitted_candidate": null,

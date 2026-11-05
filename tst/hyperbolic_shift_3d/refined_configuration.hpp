@@ -52,7 +52,7 @@ struct RefinedConfiguration {
     std::map<std::string, std::string> values;
     const std::set<std::string> allowed = {
         "inner_z4c_radius_M", "omega_profile", "omega_flat_radius", "omega_outer_radius", "omega_plateau", "gauge_begin",
-        "gauge_end",     "buffer_cells",      "cfl_target",         "shell_radii", "core_half_width", "shell_inner_radius", "core_subdivisions", "initial_start_M", "initial_end_M", "boost_velocity", "smr_levels", "smr_radius", "smr_half_widths", "halo_frame", "shift_speed_policy", "outer_gauge", "shell_angular_subdivisions"};
+        "gauge_end",     "buffer_cells",      "cfl_target",         "shell_radii", "core_half_width", "shell_inner_radius", "core_subdivisions", "initial_start_M", "initial_end_M", "boost_velocity", "smr_levels", "smr_radius", "smr_half_widths", "halo_frame", "shift_speed_policy", "outer_gauge", "outer_lapse_damping", "shell_angular_subdivisions"};
     std::string line;
     while (std::getline(input, line)) {
       line = Trim(line.substr(0, line.find('#')));
@@ -174,6 +174,8 @@ struct RefinedConfiguration {
       gauge=central.gauge;gauge.conformal_frame_halos=halos;gauge.separated_shift_speeds=separated;
       gauge.stationary_outer_reference=reference;gauge.enforce_cfl=true;
     }
+    gauge.outer_lapse_damping=number("outer_lapse_damping",1);
+    if(gauge.outer_lapse_damping<=0)throw std::invalid_argument("outer_lapse_damping must be positive");
     buffer_cells = number("buffer_cells", 4);
     cfl_target = number("cfl_target", .2);
     shell_radii = mesh.radii;
@@ -269,6 +271,7 @@ struct RefinedConfiguration {
     if(gauge.conformal_frame_halos)out<<";halo_frame=legacy-cartesian-to-shell-v1";
     if(gauge.separated_shift_speeds)out<<";shift_speed_policy=separated-inner-v1";
     if(gauge.stationary_outer_reference)out<<";outer_gauge=stationary-reference-v2;initial-lapse-blend=flat-to-inner-begin";
+    if(gauge.outer_lapse_damping!=1)out<<";outer_lapse_damping="<<gauge.outer_lapse_damping;
     if(unified_center)out<<";central-z4c-v1="<<initial_start_M<<";sphere-fits-box=true;coefficient-window="
       <<gauge.coefficient_begin<<','<<gauge.coefficient_end<<";restoration-window="
       <<gauge.restoration_begin<<','<<gauge.restoration_end;

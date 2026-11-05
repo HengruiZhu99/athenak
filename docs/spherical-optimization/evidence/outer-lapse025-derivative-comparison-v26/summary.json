@@ -1,0 +1,109 @@
+{
+  "fields": [
+    "chi",
+    "Khat",
+    "alpha"
+  ],
+  "groups": {
+    "Damping 1": {
+      "n": [
+        128,
+        256,
+        512,
+        1024
+      ],
+      "second_derivatives": [
+        [
+          -34.68764144242064,
+          18.183983913591312,
+          -11.304342179062816
+        ],
+        [
+          -40.50853871815972,
+          55.876935115170454,
+          -23.995610897640837
+        ],
+        [
+          -47.09317313087916,
+          65.70561160409578,
+          -28.49089076711139
+        ],
+        [
+          -54.93941991488359,
+          76.66428275534699,
+          -33.46113506017132
+        ]
+      ],
+      "adjacent_differences": [
+        [
+          -5.820897275739078,
+          37.69295120157914,
+          -12.691268718578021
+        ],
+        [
+          -6.5846344127194385,
+          9.828676488925325,
+          -4.495279869470554
+        ],
+        [
+          -7.846246784004428,
+          10.95867115125121,
+          -4.970244293059931
+        ]
+      ]
+    },
+    "Damping 0.25": {
+      "n": [
+        128,
+        256,
+        512,
+        1024
+      ],
+      "second_derivatives": [
+        [
+          36.828466014363656,
+          -180.7016280183989,
+          -39.926320199535766
+        ],
+        [
+          0.21446929491178324,
+          -11.912619463026873,
+          6.193902946817046
+        ],
+        [
+          -0.04456240531574451,
+          0.37035285200575796,
+          1.163037031576966
+        ],
+        [
+          -0.03891200895328062,
+          0.3099730495703906,
+          1.1559465236903406
+        ]
+      ],
+      "adjacent_differences": [
+        [
+          -36.613996719451876,
+          168.78900855537202,
+          46.120223146352814
+        ],
+        [
+          -0.25903170022752775,
+          12.28297231503263,
+          -5.03086591524008
+        ],
+        [
+          0.005650396362463894,
+          -0.060379802435367336,
+          -0.007090507886625463
+        ]
+      ]
+    }
+  },
+  "inputs": {
+    "docs/spherical-optimization/evidence/boundary-resolution-refined-v24/audit.json": "eb893b98e791141c03c83f57304ab523b1942c6542bc7de3cd23dbc68a883913",
+    "docs/spherical-optimization/evidence/outer-lapse025-boundary-refined-v26/audit.json": "423b043d06a449508b4f1424edf240095d4f6e8c776789b117755986707052a8"
+  },
+  "source_sha256": "e0ede62fab855eacd582548c591e2ad264e925f4941900d34cb57b1c5dff04ab",
+  "qualification": "Signed endpoint derivatives on evolved total fields, from the fixed numerical policy. Decreasing differences support convergence of derivatives required by the PDE; a few levels do not prove analyticity or exclude higher-order logarithmic terms."
+}

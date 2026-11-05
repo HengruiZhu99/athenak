@@ -99,12 +99,14 @@ int main(int argc,char**argv) {
 #else
     std::cout<<"sampling=staged\n";
 #endif
+    Real outer_lapse_damping=1;
     int benchmark_repeats=0,benchmark_n=16;bool layout_only=false,explicit_ranks=false;
     std::string rank_source,size_source;
     int rank=EnvironmentInt({"PMI_RANK","OMPI_COMM_WORLD_RANK","MPI_LOCALRANKID","PALS_LOCAL_RANKID"},0,rank_source);
     int ranks=EnvironmentInt({"PMI_SIZE","OMPI_COMM_WORLD_SIZE"},1,size_source);
     for(int i=1;i<argc;++i) {
       const std::string arg=argv[i];
+      if(arg=="--outer-lapse-damping"){Require(i+1<argc,"missing lapse damping");outer_lapse_damping=std::stod(argv[++i]);continue;}
       if(arg=="--benchmark-layout-only"){layout_only=true;continue;}
       if(arg=="--benchmark-repeats"||arg=="--benchmark-n"||arg=="--benchmark-rank"||arg=="--benchmark-ranks") {
         Require(i+1<argc,"missing scri benchmark option value");const int value=std::stoi(argv[++i]);
@@ -138,6 +140,7 @@ int main(int argc,char**argv) {
       }
     }else {
     h::HyperbolicComposite cpu(cubed_sphere::CompositeMesh(.125,{.45,.75,1},1,6,3));
+    auto parameters=cpu.parameters;parameters.outer_lapse_damping=outer_lapse_damping;cpu.Configure(parameters);
     const int total=cpu.scri.rows.size(),split=total/2+7;const Real dt=.0001;
     Device full(cpu,0,total),left(cpu,0,split),right(cpu,split,total-split),empty(cpu,total,0);
     for(bool perturb:{false,true}) {

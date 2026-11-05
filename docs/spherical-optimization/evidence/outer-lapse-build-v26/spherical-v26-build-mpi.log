@@ -1,0 +1,50 @@
+-- Setting default Kokkos CXX standard to 17
+-- Kokkos version: 4.7.2
+-- The project name is: Kokkos
+-- Using internal gtest for testing
+-- Using -std=gnu++17 for C++17 extensions as feature
+-- Built-in Execution Spaces:
+--     Device Parallel: NoTypeDefined
+--     Host Parallel: NoTypeDefined
+--       Host Serial: SERIAL
+-- 
+-- Architectures:
+-- Using internal desul_atomics copy
+-- Performing Test KOKKOS_LINK_OPTIONS_CHECK
+-- Performing Test KOKKOS_LINK_OPTIONS_CHECK - Success
+-- Experimental mdspan support is enabled
+-- Using internal mdspan directory /Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include
+-- Kokkos Backends: SERIAL
+-- Configuring done (1.6s)
+-- Generating done (0.1s)
+-- Build files have been written to: /Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/build-spherical-v26
+[  5%] Built target kokkossimd
+[ 10%] Built target sample_compact
+[ 10%] Built target AlwaysCheckGit
+[ 57%] Built target kokkoscore
+[ 63%] Built target impl_git_version
+[ 68%] Built target kokkosalgorithms
+[ 73%] Built target kokkoscontainers
+[ 78%] Built target current_spherical
+[ 81%] Building CXX object CMakeFiles/composite_device.dir/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/hyperbolic_shift_3d/test_composite_device.cpp.o
+[ 86%] Built target spherical_equivalence
+[ 92%] Built target scri_device
+[ 97%] Built target reference_variables
+In file included from /Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/hyperbolic_shift_3d/test_composite_device.cpp:5:
+In file included from /Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/src/z4c/hyperboloidal/hyperbolic_composite.hpp:17:
+/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/src/z4c/hyperboloidal/composite_dissipation.hpp:45:6: warning: misleading indentation; statement is not part of the previous 'for' [-Wmisleading-indentation]
+   45 |     }return out;
+      |      ^
+/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/src/z4c/hyperboloidal/composite_dissipation.hpp:33:5: note: previous statement is here
+   33 |     for(int axis=0;axis<3;++axis)for(int target=0;target<points;++target){
+      |     ^
+In file included from /Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/hyperbolic_shift_3d/test_composite_device.cpp:6:
+/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/src/z4c/hyperboloidal/hyperbolic_composite_device.hpp:556:71: warning: missing field 'radial' initializer [-Wmissing-field-initializers]
+  556 |         volumes_,rhs_,gap_,cfl_,n_,width_,padded_count_,dt,ko,adaptive};
+      |                                                                       ^
+/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/src/z4c/hyperboloidal/hyperbolic_composite_device.hpp:584:77: warning: missing field 'radial' initializer [-Wmissing-field-initializers]
+  584 |         diagnostic_volumes_,rhs_,gap_,cfl_,n_,width_,padded_count_,0,0,false};
+      |                                                                             ^
+3 warnings generated.
+[100%] Linking CXX executable composite_device
+[100%] Built target composite_device
