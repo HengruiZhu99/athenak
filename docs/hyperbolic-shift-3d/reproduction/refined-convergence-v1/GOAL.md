@@ -57,3 +57,23 @@ Jacobians, evolved metric regularity and numerical derivative sensitivity.
 The admitted .6M radial control now reduces exterior H/M by36.394x/59.355x at the same timestep, while nominal Cartesian fields differ by at most4.24e-22 and floor/sign counters match. This establishes a major early spatial-discretization/interface contribution in .90–.95, not full10M convergence. GPU ownership benchmark9038692 completed: byte-identical endpoints, weighted partition0.94% slower. The candidate is rejected; retain equal production ownership. Next is stationary radial18 N12/N14/N16 to10M, with scaled timesteps and explicit reuse of the admitted N16 .6M state. Then qualify enlarged symmetric SMR support before boosted v=.1. No long-time convergence established yet.
 
 Static symmetric-tube SMR is now a tested optional native policy (400 leaves): old policy unchanged, MPI parity and cross-rank restart arrays identical. It expands coverage, not finest resolution. The exact boosted initial data pass independent sampled fourth-order constraint differentiation and positive Q/Q0/map checks, but a directional stencil control identifies dominant outer **angular** truncation. Both angular and radial refinement recover near-fourth-order point residuals. A global boosted evolved convergence result remains pending. Stationary radial18 N12 job9038758 was observed through.6M; SSH expired before terminal reconciliation, renewal requested once. Do not resubmit or interpret unknown terminal status.
+
+## Current priority: timestep and GPU-hour gate
+
+The user explicitly confirmed `origin/project/telegrapher_lapse`
+(`b99e27ffd47c2a0c13e126e0c2c7560e3fc9944a`) as the Cartesian comparison.
+Investigate multidimensional CFL estimates, actual limiting locations, source/
+penalty restrictions and stable larger timesteps before the boosted long runs.
+The requested gate is approximately fourfold **measured GPU-hour reduction**
+with stability, not merely multiplying dt by four. Preserve comparable physical
+duration, mesh, diagnostics and accuracy evidence; disclose equation changes
+if adjusting damping or penalties. A norm-based speed is a candidate estimate,
+not an automatic stability guarantee for mapped multidimensional operators.
+If the controlled investigation cannot achieve the target stably, report the
+evidence and block the goal rather than launch the three-resolution campaign.
+No improvement is yet established. Current stationary9040850 finishes unchanged;
+collect and preserve it, but defer another stationary allocation. The immutable
+boosted-transition baseline build is running; do not duplicate it or submit a
+boosted long evolution before this gate.
+
+Latest user priority: qualify and benchmark24³ meshblocks/two SMR refinements with merged shells before larger-CFL tests. Native topology has254 blocks and3.75million evolved cells, same finest1/480 spacing; no measured speedup yet. See LARGE-BLOCK-CFL.md. The frozen boosted baseline build is complete and locally preserved; no boosted long run submitted.

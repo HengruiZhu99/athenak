@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "checkpoint_sha256": "0a397ec21f10c4ad212f7cff912802a1b4def346021e5e2bfd11a4c2ede368b9",
+  "checkpoint_unchanged": true,
+  "configuration_sha256": "57d0d28cdd7833aabaf2ef91445692c850cdc5ce0b3d1262f797c173d06fa753",
+  "native_oracle_command": [
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/common-field-sampling-check/oracle",
+    "12",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/inputs/hyperbolic_shift_3d/refined_convergence/central20_boosted_smr_tube_radial24_angular2_reference.cfg",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/common-field-sampling-check/leaves.txt",
+    "/Users/hz0693/.codex/worktrees/refined-convergence/hyperboloidal/output/refined-convergence/common-field-sampling-check/points.txt"
+  ],
+  "native_oracle_binary_sha256": "bb4c624394a2c94897d1fc74672a97e43c4fbfad1814a584673526e179d326f3",
+  "blocks": 832,
+  "common_points": 1358,
+  "all_native_owners_equal": true,
+  "maximum_block_bound_error": 0.0,
+  "maximum_inverse_map_error": 0.0,
+  "maximum_native_roundtrip_error": 2.220446049250313e-16,
+  "polynomial_reproduction_errors": {
+    "6": 8.881784197001252e-16,
+    "8": 3.552713678800501e-15
+  },
+  "stored_nodes_checked": 128,
+  "stored_node_scaled_errors": {
+    "6": 1.743923789859859e-13,
+    "8": 1.7439905940655613e-13
+  },
+  "sampler_source_sha256": "d0f47e0ba3bdf2be84a2a4fa71edab93de85650f6d45ab9a91e5aa8adba3ff38",
+  "qualification": "Analysis-only map and interpolation validation, not boosted evolution or a convergence result. Common-coordinate field sampling must compare both interpolation orders; native constraint norms remain separate. No input checkpoint or production source changed."
+}

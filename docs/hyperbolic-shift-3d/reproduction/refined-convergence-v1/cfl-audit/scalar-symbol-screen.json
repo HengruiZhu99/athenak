@@ -1,0 +1,54 @@
+{
+  "theta_samples": 32769,
+  "checkpoint_sha256": "0a397ec21f10c4ad212f7cff912802a1b4def346021e5e2bfd11a4c2ede368b9",
+  "radial_advection_cfl": 0.07356870850283999,
+  "radial_wave_cfl": 0.11831946258283467,
+  "dominant_axis": 0,
+  "RK4_scalar_limit_multiplier": 6.785399993549225,
+  "screens": [
+    {
+      "dt_multiplier": 1,
+      "max_RK4_amplification": 1.0000000000000002,
+      "radial_characteristic_cfl": 0.19188817108567466,
+      "full_L1_cfl": 0.19371543740882682
+    },
+    {
+      "dt_multiplier": 2,
+      "max_RK4_amplification": 1.0000000000000002,
+      "radial_characteristic_cfl": 0.3837763421713493,
+      "full_L1_cfl": 0.38743087481765365
+    },
+    {
+      "dt_multiplier": 4,
+      "max_RK4_amplification": 1.0000000000000002,
+      "radial_characteristic_cfl": 0.7675526843426986,
+      "full_L1_cfl": 0.7748617496353073
+    },
+    {
+      "dt_multiplier": 5,
+      "max_RK4_amplification": 1.0000000000000002,
+      "radial_characteristic_cfl": 0.9594408554283733,
+      "full_L1_cfl": 0.9685771870441341
+    },
+    {
+      "dt_multiplier": 6,
+      "max_RK4_amplification": 1.0000000000000002,
+      "radial_characteristic_cfl": 1.151329026514048,
+      "full_L1_cfl": 1.162292624452961
+    },
+    {
+      "dt_multiplier": 8,
+      "max_RK4_amplification": 1.9987412857845799,
+      "radial_characteristic_cfl": 1.5351053686853973,
+      "full_L1_cfl": 1.5497234992706146
+    },
+    {
+      "dt_multiplier": 10,
+      "max_RK4_amplification": 6.014194316313823,
+      "radial_characteristic_cfl": 1.9188817108567466,
+      "full_L1_cfl": 1.9371543740882682
+    }
+  ],
+  "L1_to_L2_timestep_ratio": 1.0094996735643045,
+  "qualification": "Scalar frozen radial advection plus second-order-in-space wave screen only. Excludes coupled Z4c eigenvectors, non-normal growth, variable coefficients, KO, sources, halos, SMR and scri. A passing screen motivates bounded evolution tests; it is not a certified timestep or a stability/accuracy/performance result."
+}

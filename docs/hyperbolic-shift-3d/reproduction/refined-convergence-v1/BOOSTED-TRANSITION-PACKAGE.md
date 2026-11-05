@@ -1,13 +1,16 @@
 # Prepared boosted transition campaign
 
-This is preparation, not an Aurora build or evolution result. The current
-stationary job9038758 must be reconciled after SSH access returns. Its last
-observation was0.6M and running; its terminal disposition is unknown.
+This records package preparation, not an evolution result. Aurora access is
+restored:9038758 was verified at a healthy2.017625M walltime checkpoint and
+continued as9040850. The user now prioritizes the boosted family after the
+currently allocated stationary segment finishes. See state.json for build and
+submission status; never repeat a successful build or ambiguous submission.
 
 The only upload candidate is
 `output/refined-convergence/boosted-transition-package-v2`. The earlier local
 `boosted-transition-package-v1` is superseded: it assumed the local configuration
-identity would be identical on Aurora. Neither package was uploaded or run.
+identity would be identical on Aurora. Package v2 has now been uploaded and its hashes checked; v1 was never uploaded.
+Actual build disposition is recorded separately in state.json.
 
 ## Scientific binding
 
@@ -102,8 +105,8 @@ receipt; never weaken the guard or delete an active restart. A build adds its
 own reserved space and must also fit.
 
 The short local control gives no10M stability or evolved convergence result.
-Finish the stationary radial18 family and then measure this boosted resolution
-family, preserving fixed-domain constraints, horizon acceptance/mass gaps,
+The user now prioritizes this boosted resolution family, preserving
+fixed-domain constraints, horizon acceptance/mass gaps,
 tracker and SMR support margins, scri residuals, floor/sign accounting, radial
 and angular profiles and cost. Compare actual elapsed times before claiming a
 performance gain. Fixed-topology memory retirement is qualified locally;

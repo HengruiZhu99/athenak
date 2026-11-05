@@ -1,8 +1,8 @@
 {
-  "status": "awaiting_aurora_access_stationary_disposition_unknown",
-  "current_job": "9038758.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "status": "stationary_radial18_n12_segment02_submitted",
+  "current_job": "9040850.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
   "branch": "codex/refined-convergence",
-  "next": "Reconcile existing9038758 after SSH renewal; finish stationary radial18 family and then build the prepared immutable boosted-transition package once. No duplicate jobs or rebuilds. Full10M/resolution evidence remains required.",
+  "next": "Qualify native24^3/two-level topology and merged-shell spacing/coverage; benchmark actual cost and physics against12^3/three-level baseline, then test larger CFL. Preserve current9040850 and immutable baseline build.",
   "goal_active": true,
   "historical_startup_failure": {
     "job": "9038031",
@@ -501,16 +501,17 @@
     "status": "submitted",
     "purpose": "stationary_radial18_resolution",
     "n": 12,
-    "current_job": "9038758.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
-    "plan": "campaigns/stationary20-radial18-resolution-n12-segment01/plan.json",
+    "current_job": "9040850.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "plan": "campaigns/stationary20-radial18-resolution-n12-segment02/plan.json",
     "nodes": 4,
     "ranks": 48,
     "dt": 4.1666666666666665e-05,
     "target_M": 10,
-    "launcher": "launcher-v7"
+    "launcher": "launcher-v7",
+    "segment": 2
   },
   "radial_resolution": {
-    "status": "n12_submitted",
+    "status": "n12_segment02_submitted",
     "sequence": [
       12,
       14,
@@ -528,9 +529,9 @@
       "checkpoint_sha256": "db614729e5e2a01177b72d8b046aafecdff73f03f9f1da361feba1dc42bc6ffc"
     },
     "qualification": "Space/time refined together; same SMR and radial boundaries, angles scale with N. No convergence claim before measurements.",
-    "current_job": "9038758.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
-    "plan": "campaigns/stationary20-radial18-resolution-n12-segment01/plan.json",
-    "plan_sha256": "79c7f0ffd7fcd0ef6161bcf2c448f53efbdc602efdc6793141fc34ebf1df8a83",
+    "current_job": "9040850.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "plan": "campaigns/stationary20-radial18-resolution-n12-segment02/plan.json",
+    "plan_sha256": "01dc50146561503b11befa4059350bc84d915b8625a0419d5dafe599ed5e8d34",
     "storage": {
       "bytes": 44282391174,
       "limit_bytes": 50000000000,
@@ -558,13 +559,31 @@
       "checkpoint_sha256": "f3e660b01a538a11724d54a70c4f524df7e90183a6cf8b087fee7ac5a0d94912"
     },
     "latest_live": {
-      "job": "9038758",
-      "state": "R",
-      "last_recorded_M": 0.6,
-      "evidence": "radial18-family-initial-and-live/snapshot.json",
-      "qualification": "Last successful watcher observation, before SSH expiry. Current terminal state unknown."
+      "job": "9040850",
+      "state": "E",
+      "last_native_steps": 32217,
+      "time_M": 4.027125,
+      "qualification": "Native exit3 observed; terminal scheduler/worker checkpoint verification pending. No continuation intended before performance controls."
     },
-    "initial_and_early_analysis": "radial18-family-initial-and-live/analysis.json; initial fixed-cut H/M fitted4.021/4.045; live N12 vs admitted N16 through.3M decreases, no long-time proof."
+    "initial_and_early_analysis": "radial18-family-initial-and-live/analysis.json; initial fixed-cut H/M fitted4.021/4.045; live N12 vs admitted N16 through.3M decreases, no long-time proof.",
+    "segment01_terminal": {
+      "job": "9038758",
+      "status": "checkpointed",
+      "admitted": true,
+      "time_M": 2.0176250000004923,
+      "steps": 16141,
+      "checkpoint_sha256": "53ecded76adb8b745fca98a57a0acfab1674c0d755cd145cea85a83959bf37b7",
+      "checkpoint_bytes": 413302286,
+      "lock_released": true,
+      "local_preservation": "all152 worker artifacts freshly hash/length verified; local-verification.json in radial18-n12-segment01"
+    },
+    "continuation_storage": {
+      "bytes": 44732936192,
+      "limit_bytes": 50000000000,
+      "planned_bytes": 2000000000,
+      "reserve_bytes": 1000000000,
+      "headroom_bytes": 2267063808
+    }
   },
   "boosted_smr_preparation": {
     "status": "local_qualification_passed_not_submitted",
@@ -580,11 +599,12 @@
     "policy_mismatch_rejected": true
   },
   "access": {
-    "status": "ssh_expired",
+    "status": "restored",
     "observed": 1793818212.344169,
     "error": "Permission denied (keyboard-interactive,hostbased).",
     "renewal_requested_once": true,
-    "scope": "No new submission or cancellation. Existing9038758 disposition unknown after watcher lost connection; last observed .6M running. Read saved submission and scheduler before any continuation."
+    "scope": "9038758 scheduler F/3 and frozen native/worker checkpointed verified; matching terminal lock released. Continuation preparation underway.",
+    "restored_epoch": 1793843348.453658
   },
   "boosted_angular_survey": {
     "status": "complete_analysis_only",
@@ -653,7 +673,7 @@
     "qualification": "Local Serial-MPI short qualification only; no new Aurora run, GPU/10M/convergence evidence. Production frozen source/binary and existing9038758 unchanged."
   },
   "boosted_transition_package": {
-    "status": "prepared_locally_not_uploaded_built_or_submitted",
+    "status": "completed_frozen_locally_preserved",
     "package": "output/refined-convergence/boosted-transition-package-v2",
     "superseded_package": "output/refined-convergence/boosted-transition-package-v1; do not upload",
     "source_commit": "d98e8d9e7f6131a4af55afe96ef7589a73d07b9e",
@@ -662,14 +682,47 @@
     "planned_remote_root": "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/boosted-transition-v1",
     "evidence": "boosted-transition-preparation/verification.json",
     "identity_policy": "Production-flags host utility before freeze; accept only previously measured local/Aurora forms, exact runtime identity checks remain.",
-    "build_or_job": null
+    "build_or_job": {
+      "build_complete": true,
+      "compute_job": null
+    },
+    "science": {
+      "source_commit": "d98e8d9e7f6131a4af55afe96ef7589a73d07b9e",
+      "source_manifest_sha256": "50037c604c81ce37c5465da2e08c6082dc54d198eeb941654d366e12f75b554e",
+      "binary": "build/tst/hyperbolic_shift_3d/hyperbolic_shift_3d_refined_amr",
+      "binary_sha256": "40455f51c092f291bd8acc126a7bcb5deeb7b195725a938843e30822a751bc4f",
+      "build_cache_sha256": "e3ce1ba2f883b09f913f616fc4f0e6bd684b0142c5f70c41116b01c0bd472e84",
+      "flags_sha256": "1bead900f4a9f7699b0e26f84923763e8363d43348bd9aaa0f95d8d2b2e31c0e"
+    }
   },
-  "continuation_blocker": {
-    "status": "awaiting_external_authentication",
-    "reason": "Repeated Aurora SSH authentication expiry across multiple turns; useful local mesh, MPI, memory and package preparation now completed. Long evolution and scheduler reconciliation require renewed access.",
-    "renewal_already_requested": true,
-    "do_not_infer_job_disposition": true,
-    "goal_achieved": false,
-    "git_push": "Also awaiting previously requested Git authentication; local commits preserved."
+  "priority_update": "User requests larger meshblocks first: start24^3 with two interior refinement levels, merge suitable shell layers to retain approximately old radial spacing and same finest puncture spacing. Combine with CFL/performance investigation, measured stable ~4x GPU-hour gate remains before boosted long family. No new long run submitted.",
+  "cfl_performance_gate": {
+    "status": "investigating",
+    "target_gpu_hour_speedup": 4,
+    "reference_branch": "origin/project/telegrapher_lapse",
+    "reference_commit": "b99e27ffd47c2a0c13e126e0c2c7560e3fc9944a",
+    "reference_user_confirmed": true,
+    "boosted_long_runs_gated": true,
+    "qualification": "No speedup or stability demonstrated yet; timestep multiplier is not measured GPU-hour speedup. Record any equation/penalty/damping changes separately. If controlled investigation cannot achieve target stably, report evidence and block rather than launch long family."
+  },
+  "large_block_candidate": {
+    "status": "bound_not_submitted_waiting_existing_allocation_terminal",
+    "block_cells": 24,
+    "smr_levels": 2,
+    "reference_block_cells": 12,
+    "reference_smr_levels": 3,
+    "finest_dx_target": 0.0020833333333333333,
+    "no_long_submission": true,
+    "qualification": "Coarse-core cells and some shell angular resolution change; explicitly count/measure rather than assume pure block repack or speedup.",
+    "blocks": 254,
+    "active_cells": 3750624,
+    "frozen_binary_reused": "40455f51c092f291bd8acc126a7bcb5deeb7b195725a938843e30822a751bc4f",
+    "plan": "campaigns/boosted-block12-block24-pair-v1/plan.json",
+    "plan_sha256": "10e7b338f6f32954b38af7d2a7b69700e6d0a996d1eaf031f6ca06bc268d7239",
+    "target_M": 0.075,
+    "dt": 4.1666666666666665e-05,
+    "steps": 600,
+    "retirement_receipt": "retired-before-large-block-pair.json",
+    "retired_verified_bytes": 2864555616
   }
 }

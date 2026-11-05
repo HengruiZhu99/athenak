@@ -1,0 +1,102 @@
+diff --git a/src/z4c/hyperboloidal/hyperbolic_composite.hpp b/src/z4c/hyperboloidal/hyperbolic_composite.hpp
+index c7e2af194..f80d10d5b 100644
+--- a/src/z4c/hyperboloidal/hyperbolic_composite.hpp
++++ b/src/z4c/hyperboloidal/hyperbolic_composite.hpp
+@@ -427,7 +427,7 @@ class HyperbolicComposite {
+         if (parameters.enforce_cfl) speed2=std::max(speed2,u.alpha.value*u.alpha.value*u.chi.value*Q);
+         speed+=std::abs(transport)+std::sqrt(speed2);}
+       local.cfl=std::max(local.cfl,dt*grid.n*speed);
+-      if(dt*grid.n*speed>.4||dt/.02>.25)throw std::runtime_error("hyperbolic composite CFL exceeded");
++      if(dt*grid.n*speed>parameters.cfl_limit||dt/.02>.25)throw std::runtime_error("hyperbolic composite CFL exceeded");
+     }
+       }catch(...){local.error=std::current_exception();}
+     };
+diff --git a/src/z4c/hyperboloidal/hyperbolic_composite_device.hpp b/src/z4c/hyperboloidal/hyperbolic_composite_device.hpp
+index cdea205a5..3b9cf0524 100644
+--- a/src/z4c/hyperboloidal/hyperbolic_composite_device.hpp
++++ b/src/z4c/hyperboloidal/hyperbolic_composite_device.hpp
+@@ -321,7 +321,7 @@ class HyperbolicCompositeDevice {
+         speed+=fabs(transport)+sqrt(speed2);
+       }
+       cfl(local)=dt*n*speed;
+-      if (((!HYPERBOLIC_EXPERIMENTAL_TIMESTEP || amr_cfl || p.enforce_cfl) && cfl(local)>.4) || dt/.02>.25) status(local)=cfl_exceeded;
++      if (((!HYPERBOLIC_EXPERIMENTAL_TIMESTEP || amr_cfl || p.enforce_cfl) && cfl(local)>p.cfl_limit) || dt/.02>.25) status(local)=cfl_exceeded;
+       for (int f=0;f<nf;++f) {
+         rhs(nf*local+f)=rate[f];
+         if (!Kokkos::isfinite(rate[f])) status(local)=nonfinite_rhs;
+diff --git a/src/z4c/hyperboloidal/hyperbolic_shift.hpp b/src/z4c/hyperboloidal/hyperbolic_shift.hpp
+index e7ddb8826..8ced7489d 100644
+--- a/src/z4c/hyperboloidal/hyperbolic_shift.hpp
++++ b/src/z4c/hyperboloidal/hyperbolic_shift.hpp
+@@ -132,6 +132,9 @@ inline constexpr bool configured_conformal_frame=HYPERBOLIC_CONFIGURED_FORMULATI
+ template<class T> struct HyperbolicShiftParameters {
+   ConformalProfile profile;
+   bool enforce_cfl=false;
++  // Opt-in timestep study only. Retain the directional L1 speed estimate and
++  // the historical .4 default; this limit does not alter any evolution RHS.
++  T cfl_limit=T(.4);
+   // Numerical interface policy, not a change to any gauge RHS.
+   bool conformal_frame_halos=false;
+   // Optional field-dependent inner driver; outer gauge remains unchanged.
+@@ -146,6 +149,9 @@ template<class T> struct HyperbolicShiftParameters {
+   T inner_z4 = 8, kappa1 = 4, kappa2 = T(-.99);
+   void Validate() const {
+     profile.Validate();
++    if (!std::isfinite(cfl_limit) || !(cfl_limit>0 && cfl_limit<=1) ||
++        (cfl_limit!=T(.4) && !configured_conformal_frame))
++      throw std::invalid_argument("invalid configured CFL study limit");
+     if (stationary_outer_reference && (!configured_conformal_frame || !direct_outer ||
+         !inner_telegrapher || !profile.flat || !std::isfinite(reference_start_M) ||
+         !std::isfinite(reference_end_M) || !(reference_start_M>2 && reference_end_M>reference_start_M)))
+diff --git a/tst/hyperbolic_shift_3d/coupled_mpi.cpp b/tst/hyperbolic_shift_3d/coupled_mpi.cpp
+index 612534728..f3203003d 100644
+--- a/tst/hyperbolic_shift_3d/coupled_mpi.cpp
++++ b/tst/hyperbolic_shift_3d/coupled_mpi.cpp
+@@ -1327,7 +1327,7 @@ class Evolution {
+     SynchronizeError(!(rate > 0) || !std::isfinite(rate), "invalid characteristic rate");
+     initial_characteristic_rate = rate;
+     const auto& cfg = hyperbolic_reproduction::refined_configuration;
+-    Real selected = std::min({cap, (continuing ? Real(.4) : cfg.cfl_target) / rate, Real(.005)});
++    Real selected = std::min({cap, (continuing ? cfg.gauge.cfl_limit : cfg.cfl_target) / rate, Real(.005)});
+     if (angular_epsilon > 0 && angular_upper_bound > 0)
+       selected = std::min(selected, Real(2) / (angular_epsilon * n * angular_upper_bound));
+     return selected;
+diff --git a/tst/hyperbolic_shift_3d/refined_configuration.hpp b/tst/hyperbolic_shift_3d/refined_configuration.hpp
+index 143bcbe54..3022f58ef 100644
+--- a/tst/hyperbolic_shift_3d/refined_configuration.hpp
++++ b/tst/hyperbolic_shift_3d/refined_configuration.hpp
+@@ -51,7 +51,7 @@ struct RefinedConfiguration {
+     std::map<std::string, std::string> values;
+     const std::set<std::string> allowed = {
+         "omega_profile", "omega_flat_radius", "omega_outer_radius", "omega_plateau", "gauge_begin",
+-        "gauge_end",     "buffer_cells",      "cfl_target",         "shell_radii", "core_half_width", "shell_inner_radius", "core_subdivisions", "initial_start_M", "initial_end_M", "boost_velocity", "smr_levels", "smr_radius", "smr_half_widths", "halo_frame", "shift_speed_policy", "outer_gauge", "shell_angular_subdivisions"};
++        "gauge_end",     "buffer_cells",      "cfl_target", "cfl_limit", "shell_radii", "core_half_width", "shell_inner_radius", "core_subdivisions", "initial_start_M", "initial_end_M", "boost_velocity", "smr_levels", "smr_radius", "smr_half_widths", "halo_frame", "shift_speed_policy", "outer_gauge", "shell_angular_subdivisions"};
+     std::string line;
+     while (std::getline(input, line)) {
+       line = Trim(line.substr(0, line.find('#')));
+@@ -153,6 +153,7 @@ struct RefinedConfiguration {
+     gauge.inner_end = number("gauge_end", .56);
+     buffer_cells = number("buffer_cells", 4);
+     cfl_target = number("cfl_target", .2);
++    gauge.cfl_limit = number("cfl_limit", .4);
+     shell_radii = mesh.radii;
+     if (values.count("shell_radii")) {
+       shell_radii.clear();
+@@ -216,7 +217,7 @@ struct RefinedConfiguration {
+     // Recompute the normalization anyway, rather than importing the BN1 literal.
+     gauge.inner_gamma = gauge.profile.flat ? inner_map_scale * inner_map_scale
+                                            : z4c::hyperboloidal::InnerTelegrapher::shift_gamma;
+-    if (!(cfl_target > 0 && cfl_target <= .4 && buffer_cells >= 4 &&
++    if (!(cfl_target > 0 && cfl_target <= gauge.cfl_limit && gauge.cfl_limit<=1 && buffer_cells >= 4 &&
+           gauge.inner_begin < gauge.inner_end && gauge.inner_end <= .8))
+       throw std::invalid_argument("invalid gauge/CFL/buffer parameters");
+     if (gauge.profile.flat && (!(gauge.inner_begin - gauge.profile.outer_radius >=
+@@ -243,6 +244,8 @@ struct RefinedConfiguration {
+     out << "shells=";
+     for (auto r : shell_radii)
+       out << r << ',';
++    // Preserve all old configuration identities exactly at the default limit.
++    if(gauge.cfl_limit!=Real(.4))out<<";cfl-limit-L1-v1="<<gauge.cfl_limit;
+     if(gauge.conformal_frame_halos)out<<";halo_frame=legacy-cartesian-to-shell-v1";
+     if(gauge.separated_shift_speeds)out<<";shift_speed_policy=separated-inner-v1";
+     if(gauge.stationary_outer_reference)out<<";outer_gauge=stationary-reference-v2;initial-lapse-blend=flat-to-inner-begin";

@@ -2,8 +2,7 @@
 
 This local candidate retains the full goal: stationary and exact v=.1 boosted
 punctures with resolved, regular evolution through10M. The test below reaches
-only0.00025M; it is not a long-time stability or convergence result. The active
-stationary Aurora job9038758 and frozen source/build are unchanged.
+only0.00025M; it is not a long-time stability or convergence result. The stationary frozen source/build are unchanged; current job status is in state.json.
 
 ## Memory change and safeguards
 
@@ -90,7 +89,9 @@ Cartesian topology is verified identical to the400-leaf native tube.
 - `check_combined_boosted_smr_mpi.py`: fresh full-grid MPI2 vs MPI1 checkpoint comparison.
 - `plot_combined_boosted_mesh.py`: nominal grid diagram.
 
-Aurora SSH and Git push authentication are still unavailable. First reconcile
-existing9038758 when access returns; do not infer its terminal state or duplicate
-it. Stationary long-time resolution tests and the boosted10M/resolution campaign
-remain required. The short local result does not authorize a convergence claim.
+Aurora access is restored. Job9038758 was admitted at a healthy2.017625M
+walltime checkpoint and continued as9040850. The user now prioritizes boosted
+evolution and convergence: prepare its separate build while that allocation
+finishes, then advance the boosted family. The incomplete stationary resolution
+family remains unfinished evidence. Git push authentication is still unresolved.
+The short local result does not authorize a convergence claim.

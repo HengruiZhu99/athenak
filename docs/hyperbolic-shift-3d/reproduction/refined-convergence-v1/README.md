@@ -9,14 +9,22 @@ currently queued or running from that historical campaign. The separate frozen B
 and its final analysis are complete; its monitor was deleted. See state.json
 before any action; never duplicate a run.
 
-**Current handoff:** stationary radial18 N12 job9038758 was last observed running
-at0.6M. SSH authentication subsequently expired; its current disposition is
-unknown. Reconcile the saved submission and scheduler before any continuation
-or new job. The radial12 reference run described below has completed10M.
+**Current handoff:** Aurora access is restored. Stationary radial18 N12
+job9038758 ended at a healthy admitted walltime checkpoint,2.017625M/16141steps.
+The frozen controller verified all identities, finite payload, artifacts and
+native/worker/PBS exit3 agreement, then released its matching lock. Continuation
+job9040850 is submitted on four debug-scaling nodes from that checkpoint, with
+unchanged dt and science. All152 segment01 artifacts are locally hash/length verified. Three
+obsolete probe/time-control checkpoint copies were then retired after fresh
+local and remote rehashes to reserve space for the boosted build; local originals
+remain. See state.json before any action. The radial12 reference run described
+below has completed10M.
 
 The combined boosted400-leaf SMR/radial24/angular2 configuration has passed
 local two-step MPI1/2 checks. It is not yet a long-run result. A separate immutable
-Aurora package is prepared, not uploaded, built or submitted. See
+Aurora package is uploaded; build and submission status are in state.json.
+The user now prioritizes boosted10M/resolution runs after the existing stationary
+allocation finishes. See
 [BOOSTED-TRANSITION-PACKAGE.md](BOOSTED-TRANSITION-PACKAGE.md),
 [FULL-BOOSTED-SMR.md](FULL-BOOSTED-SMR.md) and state.json. The existing Aurora
 scientific source and executable remain unchanged. Fixed-topology state-buffer
@@ -918,3 +926,23 @@ Aurora SSH renewal and Git push authentication remain outstanding. Current
 9038758 disposition is unknown; no duplicate, remote rebuild or submission
 was made. Frozen stationary science remains unchanged. Reconcile that job
 first on access renewal, then finish stationary/boosted10M convergence work.
+
+## Current priority: timestep and GPU-hour gate
+
+The user explicitly confirmed `origin/project/telegrapher_lapse`
+(`b99e27ffd47c2a0c13e126e0c2c7560e3fc9944a`) as the Cartesian comparison.
+Investigate multidimensional CFL estimates, actual limiting locations, source/
+penalty restrictions and stable larger timesteps before the boosted long runs.
+The requested gate is approximately fourfold **measured GPU-hour reduction**
+with stability, not merely multiplying dt by four. Preserve comparable physical
+duration, mesh, diagnostics and accuracy evidence; disclose equation changes
+if adjusting damping or penalties. A norm-based speed is a candidate estimate,
+not an automatic stability guarantee for mapped multidimensional operators.
+If the controlled investigation cannot achieve the target stably, report the
+evidence and block the goal rather than launch the three-resolution campaign.
+No improvement is yet established. Current stationary9040850 finishes unchanged;
+collect and preserve it, but defer another stationary allocation. The immutable
+boosted-transition baseline build is running; do not duplicate it or submit a
+boosted long evolution before this gate.
+
+Latest user priority: qualify and benchmark24³ meshblocks/two SMR refinements with merged shells before larger-CFL tests. Native topology has254 blocks and3.75million evolved cells, same finest1/480 spacing; no measured speedup yet. See LARGE-BLOCK-CFL.md. The frozen boosted baseline build is complete and locally preserved; no boosted long run submitted.
