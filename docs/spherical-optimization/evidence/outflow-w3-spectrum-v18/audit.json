@@ -1,0 +1,157 @@
+{
+  "run_configuration": {
+    "library": "build-spherical-v18/libcurrent_spherical.dylib",
+    "output": "docs/spherical-optimization/evidence/outflow-w3-n32-pilot-v18",
+    "mode": 1,
+    "n": 32,
+    "radius": 20.0,
+    "compact_end": 0.97,
+    "slicing_ratio": 2.0,
+    "separated": true,
+    "grid_map": "quadratic",
+    "grading": 0.0,
+    "penalty": 0.6510416666660156,
+    "ko": 0.5,
+    "chi_reference_power": 2,
+    "auxiliary_damping": 1.0,
+    "outflow_boundary": true,
+    "outflow_width": 3,
+    "perturbation": "none",
+    "perturb_amplitude": 1e-05,
+    "perturb_center": 0.9,
+    "perturb_width": 0.025,
+    "probes": false,
+    "derivative_boundary": false,
+    "reference_tail": "scri",
+    "reference_step": 0.000125,
+    "reference_jets": true,
+    "normal_policy": "analytic",
+    "algebraic_chart": true,
+    "floors": false,
+    "duration": 0.001,
+    "cfl": 0.2,
+    "fixed_dt": null,
+    "experimental_timestep": false
+  },
+  "n": 32,
+  "reference_step": 0.000125,
+  "penalty": 0.6510416666660156,
+  "derivative_boundary": false,
+  "state": "None",
+  "finite_difference_epsilons": [
+    1e-05,
+    3e-06
+  ],
+  "relative_jacobian_difference": 8.590580221443204e-11,
+  "max_abs_jacobian_difference": 1.2368990098821087e-05,
+  "max_real_eigenvalue": 121.47232686873204,
+  "min_real_eigenvalue": -343.47550135458323,
+  "max_imaginary_eigenvalue": 126.37892201859366,
+  "leading_eigenvalues": [
+    [
+      121.47232686873204,
+      0.0
+    ],
+    [
+      1.198936539622697,
+      0.0
+    ],
+    [
+      1.0785594840144426,
+      0.0
+    ],
+    [
+      0.6158250763834227,
+      0.0
+    ],
+    [
+      0.3908185070945983,
+      0.0
+    ],
+    [
+      0.016825427044655335,
+      -1.1697349033872133
+    ],
+    [
+      0.016825427044655335,
+      1.1697349033872133
+    ],
+    [
+      0.007474790945884955,
+      0.5683042038493701
+    ],
+    [
+      0.007474790945884955,
+      -0.5683042038493701
+    ],
+    [
+      -0.005238930797973924,
+      0.3602213230184504
+    ],
+    [
+      -0.005238930797973924,
+      -0.3602213230184504
+    ],
+    [
+      -0.011357618866808881,
+      0.9413241869018678
+    ]
+  ],
+  "leading_eigenpair_residual": 2.99541526216629e-18,
+  "speed_over_dr": 76.0477272147525,
+  "rk4": [
+    {
+      "C_char": 0.1,
+      "dt": 0.0013149636900733177,
+      "dt_M": 0.003944891070219953,
+      "rk_spectral_radius": 1.1731951691813651,
+      "exact_spectral_radius": 1.1731960592981412,
+      "rk_scaled_norm": 168.52379784875603,
+      "exact_scaled_norm": 168.57812008899614,
+      "rk_minus_exact_scaled_norm": 0.11050953604347827
+    },
+    {
+      "C_char": 0.2,
+      "dt": 0.0026299273801466353,
+      "dt_M": 0.007889782140439906,
+      "rk_spectral_radius": 1.3763597186524164,
+      "exact_spectral_radius": 1.3763889935526878,
+      "rk_scaled_norm": 281.3258994375146,
+      "exact_scaled_norm": 282.1625822667947,
+      "rk_minus_exact_scaled_norm": 3.289246143534111
+    },
+    {
+      "C_char": 0.3,
+      "dt": 0.003944891070219952,
+      "dt_M": 0.011834673210659856,
+      "rk_spectral_radius": 1.6145455402498672,
+      "exact_spectral_radius": 1.614774143297348,
+      "rk_scaled_norm": 387.8596676545768,
+      "exact_scaled_norm": 388.12539003581736,
+      "rk_minus_exact_scaled_norm": 23.321973956901445
+    },
+    {
+      "C_char": 0.4,
+      "dt": 0.005259854760293271,
+      "dt_M": 0.015779564280879812,
+      "rk_spectral_radius": 1.893455501014407,
+      "exact_spectral_radius": 1.894446661572981,
+      "rk_scaled_norm": 531.7795820215339,
+      "exact_scaled_norm": 512.9954068709953,
+      "rk_minus_exact_scaled_norm": 92.08865200736554
+    },
+    {
+      "C_char": 0.5,
+      "dt": 0.006574818450366587,
+      "dt_M": 0.019724455351099762,
+      "rk_spectral_radius": 2.2194434431906966,
+      "exact_spectral_radius": 2.2225573579079407,
+      "rk_scaled_norm": 772.8438195607404,
+      "exact_scaled_norm": 668.3244081346952,
+      "rk_minus_exact_scaled_norm": 264.18993034164083
+    }
+  ],
+  "seconds": 1.169595459,
+  "stage_map_limitation": "Dependent endpoint D is eliminated; each stage already materializes it before the auxiliary advection derivative.",
+  "qualification": "Frozen time-dependent semidiscrete operator, not continuum or nonlinear stability. Positive real eigenvalues prevent absolute contractivity; displayed norms use the saved local variable scaling."
+}

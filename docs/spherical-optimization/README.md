@@ -6,6 +6,10 @@ The parent campaign, frozen Aurora snapshots and remote jobs are untouched.
 **Work in progress: no candidate is admitted, no stability/cost improvement is
 established, and no spherical result establishes boosted or 3D stability.**
 
+Latest auxiliary-damping and rejected outgoing-boundary experiments are in
+[BOUNDARY-TRIALS.md](BOUNDARY-TRIALS.md). Stronger damping does not cure the
+late response; the outgoing trace closure has a grid-scaled unstable mode.
+
 ## Equation and variable mapping
 
 `src/z4c/hyperboloidal/current_spherical.hpp` lifts **total** radial fields to

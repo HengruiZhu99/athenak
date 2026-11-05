@@ -40,6 +40,12 @@ extern "C" int spherical_compact_configuration(void*v,double*out){
  const double a[]={n.CompactEnd(),n.CompactShape(),n.TransitionEndAreal()/n.Mass(),n.CompactJoinResidual(),n.Tolerance()};
  std::copy(a,a+5,out);return 0;}
 extern "C" void spherical_destroy(void*v){delete static_cast<Lab*>(v);}
+extern "C" int spherical_set_auxiliary_damping(void*v,double damping){
+ try{auto&l=*static_cast<Lab*>(v);auto p=l.p;p.damping=damping;p.Validate();
+  // Existing shared PDE parameter, not an extra radial source. Rebuild the
+  // prescribed reference consistently (its stationary D_* is identically zero).
+  auto ref=std::make_unique<h::StationaryGaugeReference>(p);l.p=p;l.reference=std::move(ref);return 0;
+ }catch(const std::exception&e){error=e.what();return 1;}}
 extern "C" int spherical_configuration(void*v,double*out){
  auto&l=*static_cast<Lab*>(v);const auto&p=l.p;
  const double a[]={p.reference_start_M,p.reference_end_M,l.native->InnerRadius(),l.native->IsotropicScale(),

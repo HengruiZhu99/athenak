@@ -1,0 +1,203 @@
+{
+  "runs": [
+    {
+      "run": "docs/spherical-optimization/evidence/chi-r2-n128-10M-v16",
+      "n": 128,
+      "time_M": 10.0,
+      "h": 0.007843137254901933,
+      "D": 0.3454189837684943,
+      "Lambda": 0.2542019054409545,
+      "algebraic_D_terms": {
+        "raw_geometry": -0.025958109650085263,
+        "geometric_penalty": 0.025954688567892552,
+        "shift_advection": -0.1151779667778479,
+        "restoration": 0.46060037162853484
+      },
+      "bulk_D_terms": {
+        "raw_Lambda": -21.255663719960374,
+        "Lambda_penalty": 21.298740267644746,
+        "D_minus_Lambda_advection": -5.0130924206156156,
+        "D_damping": -0.3454189837684943
+      },
+      "trace_time_derivative_probes": [
+        0.05818442860525713,
+        0.058184362598865315,
+        0.05818475624074934
+      ],
+      "trace_derivative_by_field": {
+        "chi": 4.719057192376086,
+        "gr": -4.712323697262748,
+        "Ar": 0.014406507301926533,
+        "Khat": -0.01327923139967287,
+        "Theta": 0.0007827017275049049,
+        "Lambda": 0.0,
+        "alpha": -0.00961796171409605,
+        "beta": 0.05915894266128596,
+        "B": 0.0,
+        "D": 0.0
+      },
+      "trace_derivative_sum_difference": 9.109142159319239e-08,
+      "differential_defect": 5.373619612940487,
+      "clock": -0.06386377590828007,
+      "pole_max": 0.0722439657450941,
+      "regularity_trace_max": 0.007076635662670361,
+      "chi_ratio_residual": 7.636312054870587e-05,
+      "tail_extrapolations": [
+        {
+          "width": 3,
+          "D_value_mismatch": 0.036069458410920796,
+          "D_value_mismatch_over_h": 4.598855947392418,
+          "Lambda_value_mismatch": 0.019192871674777512,
+          "alternative_auxiliary_rate": 0.4849194061637125
+        },
+        {
+          "width": 5,
+          "D_value_mismatch": -0.0014699447494422868,
+          "D_value_mismatch_over_h": -0.18741795555389223,
+          "Lambda_value_mismatch": -0.024968455157961256,
+          "alternative_auxiliary_rate": 2.160494543030797
+        },
+        {
+          "width": 7,
+          "D_value_mismatch": 0.07841103605740807,
+          "D_value_mismatch_over_h": 9.997407097319565,
+          "Lambda_value_mismatch": 0.03955222998630378,
+          "alternative_auxiliary_rate": 6.823548148527892
+        }
+      ]
+    },
+    {
+      "run": "docs/spherical-optimization/evidence/chi-r2-n256-10M-v16",
+      "n": 256,
+      "time_M": 10.0,
+      "h": 0.003913894324853229,
+      "D": 0.3271071319254771,
+      "Lambda": 0.24360935259390212,
+      "algebraic_D_terms": {
+        "raw_geometry": 0.0003821919272475451,
+        "geometric_penalty": -0.00038223555915516263,
+        "shift_advection": -0.1090360518842309,
+        "restoration": 0.43614322744161566
+      },
+      "bulk_D_terms": {
+        "raw_Lambda": 7.158151047992099,
+        "Lambda_penalty": -7.121674660232626,
+        "D_minus_Lambda_advection": -5.594229634579634,
+        "D_damping": -0.3271071319254771
+      },
+      "trace_time_derivative_probes": [
+        0.05027671268125684,
+        0.05027685201993702,
+        0.05027741946932011
+      ],
+      "trace_derivative_by_field": {
+        "chi": 9.741047940492464,
+        "gr": -9.73665644928475,
+        "Ar": 0.013902249314708588,
+        "Khat": -0.012541539908446826,
+        "Theta": 0.0002284991362788702,
+        "Lambda": 0.0,
+        "alpha": -0.00997569655584544,
+        "beta": 0.054271797343223106,
+        "B": 0.0,
+        "D": 0.0
+      },
+      "trace_derivative_sum_difference": -5.1482304183614325e-08,
+      "differential_defect": 5.935137798214958,
+      "clock": -0.006080862831664757,
+      "pole_max": 0.00824605023136946,
+      "regularity_trace_max": 0.0037514737427579714,
+      "chi_ratio_residual": 6.77504079282798e-07,
+      "tail_extrapolations": [
+        {
+          "width": 3,
+          "D_value_mismatch": -0.0012522988295037285,
+          "D_value_mismatch_over_h": -0.31996235093820263,
+          "Lambda_value_mismatch": -0.010594850507030268,
+          "alternative_auxiliary_rate": 0.5537121486600758
+        },
+        {
+          "width": 5,
+          "D_value_mismatch": 0.002425273105952308,
+          "D_value_mismatch_over_h": 0.6196572785708148,
+          "Lambda_value_mismatch": -0.010681139929347577,
+          "alternative_auxiliary_rate": 2.461680152691011
+        },
+        {
+          "width": 7,
+          "D_value_mismatch": 0.004982881538693085,
+          "D_value_mismatch_over_h": 1.2731262331360833,
+          "Lambda_value_mismatch": -0.016288373096847525,
+          "alternative_auxiliary_rate": 7.430417752310769
+        }
+      ]
+    },
+    {
+      "run": "docs/spherical-optimization/evidence/chi-r2-n512-10M-v16",
+      "n": 512,
+      "time_M": 10.0,
+      "h": 0.0019550342130987275,
+      "D": 0.3201927731483418,
+      "Lambda": 0.2402323940458399,
+      "algebraic_D_terms": {
+        "raw_geometry": 0.00028905639431631646,
+        "geometric_penalty": -0.0002890654358011783,
+        "shift_advection": -0.10673099992688498,
+        "restoration": 0.4269237821167116
+      },
+      "bulk_D_terms": {
+        "raw_Lambda": 8.482710089541797,
+        "Lambda_penalty": -8.446923444591409,
+        "D_minus_Lambda_advection": -6.2682109695860495,
+        "D_damping": -0.3201927731483418
+      },
+      "trace_time_derivative_probes": [
+        0.04896115520807439,
+        0.04896074963160998,
+        0.048959976467259955
+      ],
+      "trace_derivative_by_field": {
+        "chi": 19.53310896290102,
+        "gr": -19.528724381009017,
+        "Ar": 0.013398254098776855,
+        "Khat": -0.012230922358247298,
+        "Theta": 0.00012656842240943433,
+        "Lambda": 0.0,
+        "alpha": -0.009643115722601792,
+        "beta": 0.05292562958262673,
+        "B": 0.0,
+        "D": 0.0
+      },
+      "trace_derivative_sum_difference": 2.462833586999724e-07,
+      "differential_defect": 6.601577074251263,
+      "clock": -0.0033279508556224857,
+      "pole_max": 0.005058853876370385,
+      "regularity_trace_max": 0.002101770238449374,
+      "chi_ratio_residual": 1.5090420935059967e-07,
+      "tail_extrapolations": [
+        {
+          "width": 3,
+          "D_value_mismatch": -0.0010272583758063614,
+          "D_value_mismatch_over_h": -0.5254426592249543,
+          "Lambda_value_mismatch": -0.006216458741369335,
+          "alternative_auxiliary_rate": 0.607805969975139
+        },
+        {
+          "width": 5,
+          "D_value_mismatch": 0.0014363159120786007,
+          "D_value_mismatch_over_h": 0.7346755890282048,
+          "Lambda_value_mismatch": -0.005847111071683481,
+          "alternative_auxiliary_rate": 2.733142212523343
+        },
+        {
+          "width": 7,
+          "D_value_mismatch": 0.00244057938063047,
+          "D_value_mismatch_over_h": 1.2483563531924864,
+          "Lambda_value_mismatch": -0.009383051983208796,
+          "alternative_auxiliary_rate": 8.264463254575956
+        }
+      ]
+    }
+  ],
+  "qualification": "Diagnostics of the existing discrete boundary extension only. Excluding endpoint values is an alternative derivative probe, not a changed evolution or a cure. No regularity/constraint reset."
+}

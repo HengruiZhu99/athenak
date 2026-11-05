@@ -257,8 +257,37 @@ class DerivativeBoundaryEvolution(ChartEvolution):
         return d
 
 
+class OutflowAuxiliaryBoundaryEvolution(DerivativeBoundaryEvolution,ReferenceChiEvolution):
+    """Rejected experimental outgoing C=D-Lambda trace with gauge normals.
+
+    C_t=beta*C_r-kappa_D*(C+Lambda) has outward coordinate speed -beta at
+    scri. Extrapolate only that outgoing trace from interior nodal data; keep
+    Lambda independently evolved. Clock/null gauge values and their actual
+    equations determine normal alpha/beta derivatives through the existing
+    shared scri kernel. No bulk D value or geometric constraint is reset.
+    The v18 frozen operators have a scri-localized positive eigenvalue growing
+    from 121 at N32 to 248 at N64. Retained only for reproducing that rejection.
+    """
+    evolve_boundary_driver=False
+    def __init__(self,*args,outflow_width=5,**kwargs):
+        super().__init__(*args,**kwargs)
+        if outflow_width not in (3,5,7):raise ValueError('unsupported outgoing trace order')
+        self.outflow_width=outflow_width
+        self.outflow_weights=weights(self.r[-outflow_width-1:-1],1.)
+    def materialize(self,state):
+        q=super().materialize(state);w=self.outflow_width
+        outgoing=self.outflow_weights@(q[-w-1:-1,11]-q[-w-1:-1,7])
+        q[-1,11]=q[-1,7]+outgoing
+        return q
+
+
 def make_evolution(kernel,cfg):
     power=cfg.get('chi_reference_power',0)
+    outflow=cfg.get('outflow_boundary',False)
+    if outflow:
+        if not power or not cfg.get('algebraic_chart',True) or cfg.get('derivative_boundary',False):raise ValueError('outgoing auxiliary closure needs reference-chi algebraic chart and excludes the other experimental closure')
+        cls=OutflowAuxiliaryBoundaryEvolution;extra={'chi_reference_power':power,'outflow_width':cfg.get('outflow_width',5)}
+        return cls(kernel,cfg.get('n',64),cfg.get('grading',0.),cfg.get('penalty',.6510416666660156),cfg.get('ko',.5),cfg.get('floors',False),cfg.get('normal_policy','analytic'),cfg.get('reference_jets',True),cfg.get('reference_step',.000125),cfg.get('reference_tail','numerical'),cfg.get('grid_map','quadratic'),**extra)
     if power and (not cfg.get('algebraic_chart',True) or cfg.get('derivative_boundary',False)):
         raise ValueError('reference chi needs the algebraic chart and standard boundary')
     cls=ReferenceChiEvolution if power else DerivativeBoundaryEvolution if cfg.get('derivative_boundary',False) else ChartEvolution if cfg.get('algebraic_chart',True) else Evolution

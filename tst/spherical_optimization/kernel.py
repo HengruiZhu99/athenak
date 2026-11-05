@@ -5,7 +5,7 @@ import numpy as np
 FIELDS=('chi','gr','gt','Ar','At','Khat','Theta','Lambda','alpha','beta','B','D')
 PARITY=np.array([1,1,1,1,1,1,1,-1,1,-1,-1,-1])
 class Kernel:
-    def __init__(self,library,mode=1,radius=20.,slicing_ratio=2.,separated=False,compact_end=0.):
+    def __init__(self,library,mode=1,radius=20.,slicing_ratio=2.,separated=False,compact_end=0.,auxiliary_damping=1.):
         self.lib=C.CDLL(str(Path(library).resolve())); self.path=Path(library).resolve()
         a=np.ctypeslib.ndpointer(dtype=np.float64,flags='C_CONTIGUOUS');v=C.c_void_p;i=C.c_int;d=C.c_double
         signatures={'spherical_free_radial_symbol':([v,d,a,a],i),'spherical_expand_chart':([i]+[a]*6,i),'spherical_analytic_normal':([v]+[a]*4,i),'spherical_create':([i,d,d,i],v),'spherical_destroy':([v],None),
@@ -14,6 +14,7 @@ class Kernel:
                     'spherical_scri':([v]+[a]*4+[d,d,a,a],i),'spherical_symbol':([v,d,a,a,a],i),'spherical_gauge_speeds':([v,d,a,a],i)}
         if hasattr(self.lib,'spherical_outer_reference_jets'):signatures['spherical_outer_reference_jets']=([v,i,a,a,a],i)
         if hasattr(self.lib,'spherical_reference_chi'):signatures['spherical_reference_chi']=([i,i,i]+[a]*7,i)
+        if hasattr(self.lib,'spherical_set_auxiliary_damping'):signatures['spherical_set_auxiliary_damping']=([v,d],i)
         if hasattr(self.lib,'spherical_create_extended'):signatures.update(spherical_create_extended=([i,d,d,i,d],v),spherical_compact_configuration=([v,a],i))
         for name,(args,result) in signatures.items():
             f=getattr(self.lib,name);f.argtypes=args;f.restype=result
@@ -22,9 +23,13 @@ class Kernel:
         self.config=np.zeros(13);self.check(self.lib.spherical_configuration(self.handle,self.config))
         self.compact_config=np.zeros(5)
         if hasattr(self.lib,'spherical_compact_configuration'):self.check(self.lib.spherical_compact_configuration(self.handle,self.compact_config))
+        if auxiliary_damping!=1:
+            try:self.check(self.lib.spherical_set_auxiliary_damping(self.handle,auxiliary_damping))
+            except Exception:self.close();raise
+        self.auxiliary_damping=auxiliary_damping
     @classmethod
     def from_config(cls,library,cfg):
-        return cls(library,cfg.get('mode',1),cfg.get('radius',20.),cfg.get('slicing_ratio',2.),cfg.get('separated',True),cfg.get('compact_end',0.))
+        return cls(library,cfg.get('mode',1),cfg.get('radius',20.),cfg.get('slicing_ratio',2.),cfg.get('separated',True),cfg.get('compact_end',0.),cfg.get('auxiliary_damping',1.))
     def check(self,code):
         if code:raise FloatingPointError(self.lib.spherical_error().decode())
     def initial(self,r):

@@ -14,6 +14,8 @@ def main():
     ap.add_argument('--separated',action='store_true');ap.add_argument('--grid-map',choices=('quadratic','two-end'),default='quadratic');ap.add_argument('--grading',type=float,default=0.)
     ap.add_argument('--penalty',type=float,default=.6510416666660156);ap.add_argument('--ko',type=float,default=.5)
     ap.add_argument('--chi-reference-power',type=int,choices=(0,2,4),default=0)
+    ap.add_argument('--auxiliary-damping',type=float,default=1.)
+    ap.add_argument('--outflow-boundary',action='store_true');ap.add_argument('--outflow-width',type=int,choices=(3,5,7),default=5)
     ap.add_argument('--perturbation',choices=('none','gauge','constraint'),default='none')
     ap.add_argument('--perturb-amplitude',type=float,default=1e-5);ap.add_argument('--perturb-center',type=float,default=.9);ap.add_argument('--perturb-width',type=float,default=.025)
     ap.add_argument('--probes',action='store_true',help='Save actual total fields and radial jets at fixed probe nodes each accepted step')
@@ -22,6 +24,8 @@ def main():
     ap.add_argument('--experimental-timestep',action='store_true')
     args=ap.parse_args()
     if args.derivative_boundary and not args.algebraic_chart:raise ValueError('derivative boundary requires algebraic chart')
+    if args.outflow_boundary and (not args.algebraic_chart or not args.chi_reference_power or args.derivative_boundary or args.normal_policy!='analytic'):
+        raise ValueError('outflow boundary requires reference-chi algebraic chart, analytic normal, and excludes derivative-boundary mode')
     if args.perturbation!='none' and (not args.algebraic_chart or not 0<args.perturb_center-args.perturb_width<args.perturb_center+args.perturb_width<1 or not np.isfinite(args.perturb_amplitude)):
         raise ValueError('perturbation needs algebraic chart, finite amplitude and support strictly inside domain')
     if args.output.exists():raise FileExistsError('refuse to overwrite experiment')

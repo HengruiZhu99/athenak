@@ -37,6 +37,7 @@ def main():
  cfg=json.loads((a.baseline/'manifest.json').read_text())['config'];pcfg=json.loads((a.perturbed/'manifest.json').read_text())['config']
  assert cfg['perturbation']=='none' and pcfg['perturbation']!='none'
  assert all(cfg.get(key)==pcfg.get(key) for key in ('n','duration','compact_end','radius','slicing_ratio','chi_reference_power','fixed_dt','penalty'))
+ assert cfg.get('auxiliary_damping',1.)==pcfg.get('auxiliary_damping',1.)
  b=np.load(a.baseline/'probes.npz');p=np.load(a.perturbed/'probes.npz');assert np.array_equal(b['r'],p['r']) and np.array_equal(b['t_M'],p['t_M'])
  delta_q=p['q']-b['q'];delta_d=p['d']-b['d'];delta=pack(delta_q,delta_d);times=b['t_M'];r=b['r'];k=Kernel.from_config(a.library,cfg)
  samples=np.unique(np.r_[np.arange(0,len(times),a.stride),len(times)-1]);incoming=np.zeros((len(samples),len(r)));outgoing=incoming.copy();stationary=incoming.copy();speed_min=incoming.copy();speed_max=incoming.copy();condition=0;residual=0
