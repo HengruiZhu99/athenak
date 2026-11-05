@@ -9,6 +9,20 @@ namespace z4c::hyperboloidal::current_spherical {
 // No algebraic/geometric constraint is reset by this adapter.
 enum Field {chi,gr,gt,ar,at,khat,theta,lambda,alpha,beta,flux,driver,count};
 using State=std::array<double,count>;
+// Ten independent coordinates on the determinant-one/tracefree algebraic
+// manifold. Lambda and Theta remain independent; no differential constraint
+// or evolved connection is replaced. Derivatives follow exact chain rules.
+inline constexpr int chart_fields[10]={chi,gr,ar,khat,theta,lambda,alpha,beta,flux,driver};
+inline void ExpandChart(const double*q,const double*d,const double*dd,
+                        State&Q,State&D,State&DD) {
+  for(int f=0;f<10;++f){const int j=chart_fields[f];Q[j]=q[f];D[j]=d[f];DD[j]=dd[f];}
+  if(!(Q[gr]>0))throw std::invalid_argument("nonpositive chart metric");
+  const double g=Q[gr],t=1/sqrt(g),u=D[gr]/g,v=DD[gr]/g;
+  Q[gt]=t;D[gt]=-.5*t*u;DD[gt]=t*(.75*u*u-.5*v);
+  Q[at]=-.5*Q[ar]*t/g;
+  D[at]=-.5*t/g*(D[ar]-1.5*Q[ar]*u);
+  DD[at]=-.5*t/g*(DD[ar]-3*D[ar]*u+Q[ar]*(3.75*u*u-1.5*v));
+}
 struct Jets {Z4cJet<double> u;VectorJet<double> B,D;};
 inline Jets Lift(double r,const double*q,const double*d,const double*dd) {
   if(!(r>0 && r<=1))throw std::invalid_argument("spherical chart excludes puncture");

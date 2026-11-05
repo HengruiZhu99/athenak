@@ -4,7 +4,7 @@ import argparse,hashlib,json,subprocess,time,traceback,tarfile
 from pathlib import Path
 import numpy as np
 from kernel import Kernel
-from evolution import Evolution
+from evolution import Evolution,ChartEvolution
 ROOT=Path(__file__).resolve().parents[2]
 def main():
     ap=argparse.ArgumentParser()
@@ -13,7 +13,7 @@ def main():
     ap.add_argument('--radius',type=float,default=20.);ap.add_argument('--slicing-ratio',type=float,default=2.)
     ap.add_argument('--separated',action='store_true');ap.add_argument('--grading',type=float,default=0.)
     ap.add_argument('--penalty',type=float,default=.6510416666660156);ap.add_argument('--ko',type=float,default=.5)
-    ap.add_argument('--floors',action='store_true');ap.add_argument('--duration',type=float,default=.1)
+    ap.add_argument('--reference-jets',action='store_true');ap.add_argument('--normal-policy',choices=('sampled','analytic'),default='sampled');ap.add_argument('--algebraic-chart',action='store_true');ap.add_argument('--floors',action='store_true');ap.add_argument('--duration',type=float,default=.1)
     ap.add_argument('--cfl',type=float,default=.2);ap.add_argument('--fixed-dt',type=float)
     ap.add_argument('--experimental-timestep',action='store_true')
     args=ap.parse_args()
@@ -30,8 +30,10 @@ def main():
     with tarfile.open(args.output/'source.tar.gz','w:gz') as archive:
         for p in source_paths:archive.add(p,arcname=str(p.relative_to(ROOT)))
     setup_start=time.perf_counter();k=Kernel(args.library,args.mode,args.radius,args.slicing_ratio,args.separated)
-    e=Evolution(k,args.n,args.grading,args.penalty,args.ko,args.floors);q=e.initial.copy()
-    np.savez_compressed(args.output/'initial.npz',r=e.r,q=q,omega=e.omega,source=e.source,configuration=k.config)
+    e=(ChartEvolution if args.algebraic_chart else Evolution)(k,args.n,args.grading,args.penalty,args.ko,args.floors,args.normal_policy,args.reference_jets);q=e.initial.copy()
+    full=lambda state:k.expand_chart(state)[0] if args.algebraic_chart else state
+    if args.reference_jets:np.savez_compressed(args.output/'reference-jets.npz',d=e.reference_d,dd=e.reference_dd,refinement_difference=e.reference_jet_difference)
+    np.savez_compressed(args.output/'initial.npz',r=e.r,q=full(q),omega=e.omega,source=e.source,configuration=k.config)
     history=[];t=0.;steps=0;dt_min=float('inf');dt_max=0.;cmax=0.;status='failed';failure=None
     setup_seconds=time.perf_counter()-setup_start;start=time.perf_counter()
     target=args.duration/3;next_output=0;interval=target/10
@@ -48,13 +50,13 @@ def main():
             cmax=max(cmax,dt*e.step_speed_over_dr)
             if t>=next_output-1e-14 or t>=target-1e-14:
                 history.append(e.report(q,t));next_output+=interval
-                np.savez_compressed(args.output/f'profile-{len(history)-1:02d}.npz',r=e.r,q=q,d=e.last['d'],dd=e.last['dd'],diag=e.last['diag'],t_M=3*t)
+                np.savez_compressed(args.output/f'profile-{len(history)-1:02d}.npz',r=e.r,q=full(q),d=e.last['d'],dd=e.last['dd'],diag=e.last['diag'],t_M=3*t)
         status='completed_unqualified'
     except Exception as exc:
         failure=dict(type=type(exc).__name__,message=str(exc),traceback=traceback.format_exc())
         if hasattr(e,'attempted_state'):np.savez_compressed(args.output/'failed-stage.npz',r=e.r,q=e.attempted_state,t_last_accepted_M=3*t)
     elapsed=time.perf_counter()-start
-    np.savez_compressed(args.output/'last-accepted.npz',r=e.r,q=q,t_M=3*t)
+    np.savez_compressed(args.output/'last-accepted.npz',r=e.r,q=full(q),independent_state=q,t_M=3*t)
     (args.output/'history.json').write_text(json.dumps(history,indent=2,allow_nan=False)+'\n')
     result=dict(status=status,failure=failure,time_M=3*t,steps=steps,setup_seconds=setup_seconds,stepping_seconds=elapsed,
       rhs_calls=e.calls,rhs_seconds=e.cumulative_rhs_seconds,initial_speed=locals().get('initial_speed'),

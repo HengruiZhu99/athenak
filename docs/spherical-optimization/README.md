@@ -212,3 +212,85 @@ explicit algebraic variable chart with proven tangential equations. Such a
 chart must never replace evolved Lambda or reset H, M, Theta or Z. The
 production spatial/algebraic policies must be distinguished from continuum
 kernel equivalence before any optimization claim.
+
+## Algebraic chart and reference-derivative checkpoint
+
+The complete **free twelve-field radial symbol** now includes the two algebraic
+sectors omitted from the previous tangent-space audit. At six sampled radii
+(.02, .2, .7, .85, .95, .99), its advective eigenvalue has multiplicity four
+but nullity three. Thus the free extension is not a suitable evolution
+baseline for a well-conditioned formulation, even with separated gauge speeds.
+The old free-field runs remain preserved as rejected diagnostic extensions.
+
+The opt-in `--algebraic-chart` evolves ten independent coordinates, with
+`gt=gr^(-1/2)` and `At=-Ar*gt/(2gr)`. Tangential values and their first/second
+jets are obtained by exact C++ chain rules. Tangential fields are not separately
+advanced and subsequently repaired. Lambda, Theta, H, M and Z are never reset
+or inferred from constraints. Arbitrary nontrivial off-constraint jets give
+continuum tangential-RHS agreement to 5.68e-14. The ten-dimensional principal
+subspace is invariant to 8.33e-17 at the sampled points, and its separated-speed
+symbols have complete numerical eigenspaces there. This is an interior point
+check, not a uniform endpoint hyperbolicity proof. At 1M the algebraic
+residuals remain at roundoff, while differential constraints are nonzero.
+
+The `--normal-policy analytic` option uses the existing production
+`TensorPoleNormalJet` AD kernel instead of radial numerator differences. This
+improves the boundary tangency discrepancy but barely changes the 128-point
+exterior constraint error by itself. The discrepancy of the omitted tangential
+boundary rate is recorded explicitly; algebraic identities alone do not certify
+boundary compatibility.
+
+The additional `--reference-jets` option differences deviations from the initial
+native fields and adds high-order reference derivatives. It changes the spatial
+representation, not the continuum RHS: the full shared kernels still evaluate
+all sources. The actual initial core RHS reaches 33.83, so the nonstationary
+puncture/gauge transient has not been frozen. Reference derivatives are currently
+**numerical**, prepared with seven-point stencils at h=.001 and .0005; their
+saved difference is a setup-error diagnostic. The initial outer RHS maximum
+is 3.40e-4, not declared zero. Refining this preparation or replacing it with
+analytic shared initial jets remains necessary before tight-error admission.
+
+`physical_constraints.py` independently derives spherical H/M/Theta/Z from
+`dl²=A dr²+B² dOmega²`, including the full physical curvature trace. It agrees
+with the shared kernel on the initial chart to 1.47e-14 (H) and 1.88e-15
+(physical momentum). Reports also retain a separate plain-nodal differentiation
+estimate, so the reference representation's derivatives are not the only
+available diagnostic. For free-field data with nonzero trace-A, the old kernel
+constraint formulas assume algebraic identities that no longer hold; their
+nominal norms must not be treated as independent physical accuracy evidence.
+
+The common R_reference/M=25–100, t=1M comparison gives:
+
+| Representation | Points | CPU seconds | Max dimensionless physical H/M/Theta/Z RMS |
+|---|---:|---:|---:|
+| Chart, sampled normal |128|15.73|.07149|
+| Chart, analytic normal |128|15.84|.07149|
+| Chart, reference derivatives, analytic normal |64|4.20|.007007|
+| Same |128|15.81|.003959|
+| Same |256|61.79|.001990|
+
+These are preliminary one-duration CPU observations, not a fixed-error 10M
+frontier. Interpolation disagreements are saved alongside the norms in
+`evidence/chart-comparison-v6/comparison.json`; the corresponding plot is
+`chart-comparison.png`. The differential D trace defect at 1M is approximately
+-138.16, -4.168 and +2.347 at 64/128/256. Three directional time-probe sizes give
+consistent values, so this is not explained by the probe epsilon. No candidate
+is admitted. The next boundary investigation must retain the actual auxiliary
+PDE and solve compatible normal-derivative conditions, rather than equating
+nullness or algebraic D reconstruction with differential compatibility.
+
+An initial-data hypothesis was explicitly falsified during this checkpoint:
+`NativeWormhole::PhysicalLapse` already smoothly blends the precollapsed and
+outer lapse. The suspected finite jump at the central slicing onset does not
+exist. The gap shrinks from 6.391e-6 at h=1e-4 to 6.391e-9 at h=1e-7, and the
+one-sided derivative gap approaches roundoff. An unnecessary alternate blend
+was reverted completely. Runs labelled v5 preserve that unadopted blend in
+their source archives and are **excluded** from the matched v6 comparison.
+The restored initializer matches the original saved binary exactly at the join
+samples. The failed hypothesis assertion and its correction are preserved.
+
+Reproduce the new audits with `test_algebraic_chart.py`,
+`test_initial_representation.py` (also pass `--legacy-library` pointing to the
+preserved qualification-v1 library), and `analyze_chart.py`. Each takes
+`--library` and a fresh `--output`; the comparison additionally takes
+`--evidence docs/spherical-optimization/evidence`. All runs remain local.

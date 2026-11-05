@@ -8,7 +8,7 @@ class Kernel:
     def __init__(self,library,mode=1,radius=20.,slicing_ratio=2.,separated=False):
         self.lib=C.CDLL(str(Path(library).resolve())); self.path=Path(library).resolve()
         a=np.ctypeslib.ndpointer(dtype=np.float64,flags='C_CONTIGUOUS');v=C.c_void_p;i=C.c_int;d=C.c_double
-        signatures={'spherical_create':([i,d,d,i],v),'spherical_destroy':([v],None),
+        signatures={'spherical_free_radial_symbol':([v,d,a,a],i),'spherical_expand_chart':([i]+[a]*6,i),'spherical_analytic_normal':([v]+[a]*4,i),'spherical_create':([i,d,d,i],v),'spherical_destroy':([v],None),
                     'spherical_auxiliary':([v,i]+[a]*5,i),'spherical_error':([],C.c_char_p),'spherical_configuration':([v,a],i),
                     'spherical_initial':([v,i,a,a,a,a],i),'spherical_current_parts':([v,i]+[a]*9,i),
                     'spherical_scri':([v]+[a]*4+[d,d,a,a],i),'spherical_symbol':([v,d,a,a,a],i),'spherical_gauge_speeds':([v,d,a,a],i)}
@@ -32,6 +32,14 @@ class Kernel:
     def symbol(self,r,q,direction=(1.,0.,0.)):
         P=np.zeros((26,26));n=np.ascontiguousarray(direction);q=np.ascontiguousarray(q)
         self.check(self.lib.spherical_symbol(self.handle,float(r),q,n,P));return P
+    def analytic_normal(self,q,d,dd):
+        out=np.zeros(12);self.check(self.lib.spherical_analytic_normal(self.handle,q,d,dd,out));return out
+    def expand_chart(self,q,d=None,dd=None):
+        q=np.ascontiguousarray(q);d=np.zeros_like(q) if d is None else np.ascontiguousarray(d);dd=np.zeros_like(q) if dd is None else np.ascontiguousarray(dd)
+        Q=np.zeros((len(q),12));D=np.zeros_like(Q);DD=np.zeros_like(Q)
+        self.check(self.lib.spherical_expand_chart(len(q),q,d,dd,Q,D,DD));return Q,D,DD
+    def free_radial_symbol(self,r,q):
+        P=np.zeros((12,12));self.check(self.lib.spherical_free_radial_symbol(self.handle,r,np.ascontiguousarray(q),P));return P
     def gauge_speeds(self,r,q):
         out=np.zeros(4);self.check(self.lib.spherical_gauge_speeds(self.handle,r,np.ascontiguousarray(q),out));return out
     def close(self):

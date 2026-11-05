@@ -145,3 +145,46 @@ extern "C" int spherical_gauge_speeds(void*v,double r,const double*q,double*out)
   out[0]=h::GaugeLapseSpeedSquared(q[s::alpha],chi,c,1/q[s::gr],1.,p);
   out[1]=h::GaugeShiftSpeedSquared(c,1/q[s::gr]);out[2]=q[s::alpha]*q[s::alpha]*chi/q[s::gr];out[3]=c.inner;return 0;
  }catch(const std::exception&e){error=e.what();return 1;}}
+// Unconstrained radial principal symbol of the twelve-field evolution, including
+// determinant and trace-A sectors omitted from the 26-variable tangent symbol.
+extern "C" int spherical_free_radial_symbol(void*v,double r,const double*q,double*P){
+ try{auto&l=*static_cast<Lab*>(v);if(!(r>0&&r<1))throw std::invalid_argument("interior symbol only");
+  h::Z4cJet<double> base{};base.chi.value=q[s::chi];base.alpha.value=q[s::alpha];
+  base.metric.g[0][0]=q[s::gr];base.metric.g[1][1]=base.metric.g[2][2]=q[s::gt];
+  h::OmegaJet<double>o{};o.omega=l.p.profile.Radial(r).value;const double x[3]={r,0,0},eps=1e-4;
+  std::fill(P,P+144,0.);
+  auto geometry=[&](const h::Z4cJet<double>&u){auto parts=h::ConformalRHS(u,o,l.p.kappa1,l.p.kappa2);h::Z4cRHS<double>rate{};
+   if(!h::HyperbolicDamping(x,u,o,parts,l.p)||!h::AssembleInterior(parts,o.omega,rate))throw std::runtime_error("invalid free symbol");return s::Pack(rate);};
+  for(int col=0;col<12;++col)for(int sign:{-1,1}){const double e=sign*eps;auto u=base;h::VectorJet<double>B{};double D[3]{};
+   if(col==s::ar)u.a.k[0][0]=e;if(col==s::at)u.a.k[1][1]=u.a.k[2][2]=e;
+   if(col==s::khat)u.trace.value=e;if(col==s::theta)u.theta.value=e;
+   if(col==s::lambda)u.lambda.value[0]=e;if(col==s::beta)u.beta.d[0][0]=e;
+   if(col==s::flux)B.d[0][0]=e;if(col==s::driver)D[0]=e;if(col==s::alpha)u.alpha.d[0]=e;
+   auto upper=geometry(u);auto gauge=h::HyperbolicGauge(x,u,B,D,l.p);
+   s::State value{};for(int f:{s::chi,s::gr,s::gt})value[f]=upper[f];
+   if(col==s::khat||col==s::theta||col==s::flux)value[s::alpha]=gauge.lapse_regular+gauge.lapse_pole/o.omega;
+   if(col==s::lambda||col==s::driver)value[s::beta]=gauge.shift_regular[0]+gauge.shift_pole[0]/o.omega;
+   if(col==s::alpha)value[s::flux]=gauge.flux_rate[0];
+   u=base;
+   if(col==s::chi)u.chi.dd[0][0]=e;if(col==s::alpha)u.alpha.dd[0][0]=e;
+   if(col==s::gr)u.metric.ddg[0][0][0][0]=e;
+   if(col==s::gt)u.metric.ddg[0][0][1][1]=u.metric.ddg[0][0][2][2]=e;
+   if(col==s::khat)u.trace.d[0]=e;if(col==s::theta)u.theta.d[0]=e;
+   if(col==s::lambda)u.lambda.d[0][0]=e;if(col==s::beta)u.beta.dd[0][0][0]=e;
+   auto lower=geometry(u);for(int f:{s::ar,s::at,s::khat,s::theta,s::lambda})value[f]=lower[f];
+   value[s::driver]=lower[s::lambda];
+   for(int row=0;row<12;++row)P[12*row+col]+=sign*value[row]/(2*eps);
+  }
+  for(int i=0;i<12;++i)P[12*i+i]+=q[s::beta];return 0;
+ }catch(const std::exception&e){error=e.what();return 1;}}
+extern "C" int spherical_expand_chart(int n,const double*q,const double*d,const double*dd,double*Q,double*D,double*DD){
+ try{for(int i=0;i<n;++i){s::State a{},b{},c{};s::ExpandChart(q+10*i,d+10*i,dd+10*i,a,b,c);
+  std::copy(a.begin(),a.end(),Q+12*i);std::copy(b.begin(),b.end(),D+12*i);std::copy(c.begin(),c.end(),DD+12*i);}return 0;
+ }catch(const std::exception&e){error=e.what();return 1;}}
+extern "C" int spherical_analytic_normal(void*v,const double*q,const double*d,const double*dd,double*out){
+ try{auto&l=*static_cast<Lab*>(v);const auto j=s::Lift(1.,q,d,dd);const double x[3]={1,0,0};
+  auto o=l.p.profile.At(x);h::SetStationaryOmegaNormal(j.u.alpha.value,j.u.beta.value,j.u.alpha.d,j.u.beta.d,o);
+  const auto dual=h::TensorPoleNormalJet(j.u,o,x,x,l.p.kappa1,l.p.kappa2,1.,1.,true,true);
+  const auto normal=s::Pack(h::TensorScriLimit(h::Z4cRHS<double>{},dual,1.));
+  std::copy(normal.begin(),normal.end(),out);out[s::alpha]=dual.lapse.derivative;out[s::driver]=normal[s::lambda];return 0;
+ }catch(const std::exception&e){error=e.what();return 1;}}

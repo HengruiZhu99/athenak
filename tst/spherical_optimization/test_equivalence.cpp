@@ -38,6 +38,20 @@ int main(){try{
    check(std::abs(u.lambda.value[0]-h::Geometry(u.metric).contracted[0])>1e-5,"fixture accidentally on constraint");++cases;
   }
  }
+ // Tangency of every continuum radial/tangential equation on the algebraic
+ // manifold, with nonzero off-constraint Lambda/Theta and arbitrary jets.
+ double tangent_error=0;
+ for(int i=1;i<100;++i){const double r=i/100.,x[3]={r,0,0};
+  double q[10]={.8+.1*r,1+.04*r*r,.02+.01*r,-.2,.013,.09*r,.6+.03*r,-.1*r,.03*r,.07*r};
+  double d[10]={.1,.08*r,.01,.02,.003,.09,.03,-.1,.03,.07},dd[10]{};dd[1]=.08;
+  s::State Q{},D{},DD{};s::ExpandChart(q,d,dd,Q,D,DD);
+  const auto j=s::Lift(r,Q.data(),D.data(),DD.data());const auto v=s::Evaluate(x,j,p,reference.At(r));
+  s::State rate{};for(int f=0;f<12;++f)rate[f]=v.regular[f]+v.pole[f]/v.omega.omega;
+  const double expected_g=-.5*Q[s::gt]/Q[s::gr]*rate[s::gr];
+  const double expected_a=-.5*Q[s::gt]/Q[s::gr]*rate[s::ar]+.75*Q[s::ar]*Q[s::gt]/(Q[s::gr]*Q[s::gr])*rate[s::gr];
+  near(rate[s::gt],expected_g);near(rate[s::at],expected_a);
+  tangent_error=std::max({tangent_error,std::abs(rate[s::gt]-expected_g),std::abs(rate[s::at]-expected_a)});
+ }
  // Single-radius plateau, physical mapping, and explicit bad-input rejection.
  for(double R:{6.,10.,20.,30.}){c.inner_z4c_radius_M=R;const auto z=c.Resolve();
   h::NativeWormhole map(1./3.,2e-13,R,2*R,h::NativeWormhole::TransitionProfile::polynomial_c6);
@@ -55,5 +69,5 @@ int main(){try{
  const double mu=h::ShiftCoefficients(1.,1.,q[s::chi],p).mu;
  near(rate[s::beta],-1+q[s::beta]*d[s::beta]+p.restoring*(d[s::beta]+1)+mu*D);
  check(std::abs(rate[s::chi])+std::abs(rate[s::gr])>1e-3,"stationary boundary fixture");
- std::cout<<std::setprecision(17)<<"{\"passed\":true,\"off_constraint_cases\":"<<cases<<",\"max_scaled_error\":"<<worst<<",\"central20_compact\":"<<config.compact_radius<<",\"fits_legacy_box_half_04\":"<<(config.FitsCartesianBox(.4)?"true":"false")<<",\"differential_auxiliary_boundary_proven\":false}\n";
+ std::cout<<std::setprecision(17)<<"{\"passed\":true,\"off_constraint_cases\":"<<cases<<",\"max_scaled_error\":"<<worst<<",\"tangent_error\":"<<tangent_error<<",\"central20_compact\":"<<config.compact_radius<<",\"fits_legacy_box_half_04\":"<<(config.FitsCartesianBox(.4)?"true":"false")<<",\"differential_auxiliary_boundary_proven\":false}\n";
 }catch(const std::exception&e){std::cerr<<e.what()<<'\n';return 1;} }
