@@ -237,15 +237,22 @@ class DerivativeBoundaryEvolution(ChartEvolution):
             _,dep=self.kernel.scri(q[-1],derivative,dd[-1],normal,self.dr[-1],self.penalty)
             return np.array([dep[1],dep[0]-q[-1,11]])
         base=condition(d[-1]);columns=[]
-        for f in (8,9):
-            perturbed=d[-1].copy();perturbed[f]+=1
-            columns.append(condition(perturbed)-base)
-        matrix=np.array(columns).T
-        correction=np.linalg.solve(matrix,-base)
+        if getattr(self,'boundary_normal_system','coupled')=='shift':
+            perturbed=d[-1].copy();perturbed[9]+=1
+            coefficient=(condition(perturbed)-base)[1]
+            if abs(coefficient)<1e-12:raise FloatingPointError('singular shift normal condition')
+            correction=np.array([0.,-base[1]/coefficient]);matrix=np.array([[coefficient]])
+        else:
+            for f in (8,9):
+                perturbed=d[-1].copy();perturbed[f]+=1
+                columns.append(condition(perturbed)-base)
+            matrix=np.array(columns).T
+            correction=np.linalg.solve(matrix,-base)
         d[-3:,8:10]+=self.hermite_d[:,None]*correction
         dd[-3:,8:10]+=self.hermite_dd[:,None]*correction
         residual=condition(d[-1])
-        if np.max(abs(residual))>1e-8*(1+np.max(abs(base))):
+        checked=residual[1:] if getattr(self,'boundary_normal_system','coupled')=='shift' else residual
+        if np.max(abs(checked))>1e-8*(1+np.max(abs(base))):
             raise FloatingPointError('nonlinear boundary derivative compatibility')
         self.boundary_matrix_condition=float(np.linalg.cond(matrix))
         self.boundary_derivative_correction=correction
@@ -258,22 +265,46 @@ class DerivativeBoundaryEvolution(ChartEvolution):
 
 
 class OutflowAuxiliaryBoundaryEvolution(DerivativeBoundaryEvolution,ReferenceChiEvolution):
-    """Rejected experimental outgoing C=D-Lambda trace with gauge normals.
+    """Experimental outgoing C=D-Lambda trace with gauge normal policies.
 
     C_t=beta*C_r-kappa_D*(C+Lambda) has outward coordinate speed -beta at
     scri. Extrapolate only that outgoing trace from interior nodal data; keep
-    Lambda independently evolved. Clock/null gauge values and their actual
-    equations determine normal alpha/beta derivatives through the existing
-    shared scri kernel. No bulk D value or geometric constraint is reset.
-    The v18 frozen operators have a scri-localized positive eigenvalue growing
-    from 121 at N32 to 248 at N64. Retained only for reproducing that rejection.
+    Lambda independently evolved. The coupled policy uses clock/null equations
+    for alpha/beta normals; its v18 endpoint mode grows from 121 at N32 to 248
+    at N64. The second-neutral lapse lift is also rejected (500 to 1032).
+    The shift-only policy retains lapse jets and measures the clock residual;
+    only beta's normal is matched to the outgoing D trace. No bulk D value or
+    geometric constraint is reset. All policies remain unqualified.
     """
     evolve_boundary_driver=False
-    def __init__(self,*args,outflow_width=5,**kwargs):
+    def __init__(self,*args,outflow_width=5,lapse_normal_lift='hermite',boundary_normal_system='coupled',**kwargs):
         super().__init__(*args,**kwargs)
         if outflow_width not in (3,5,7):raise ValueError('unsupported outgoing trace order')
         self.outflow_width=outflow_width
         self.outflow_weights=weights(self.r[-outflow_width-1:-1],1.)
+        if lapse_normal_lift not in ('hermite','second-neutral'):raise ValueError('unknown lapse normal lift')
+        self.lapse_normal_lift=lapse_normal_lift
+        if boundary_normal_system not in ('coupled','shift'):raise ValueError('unknown boundary normal system')
+        if boundary_normal_system=='shift' and lapse_normal_lift!='hermite':raise ValueError('lapse lift has no role in shift-only normal system')
+        self.boundary_normal_system=boundary_normal_system
+        if lapse_normal_lift=='second-neutral':
+            # Same seven zero nodal values and unit normal derivative, with an
+            # additional zero endpoint second derivative. This degree-eight
+            # lift retains the base second derivative instead of adding 4.9/h
+            # times the normal correction. Spatial consistency is not stability.
+            z=(self.r[-7:]-1)/self.dr[-1]
+            poly=np.polynomial.Polynomial.fromroots(z);poly=poly/poly.deriv()(0)
+            lift=poly*np.polynomial.Polynomial([1.,-.5*poly.deriv(2)(0)])
+            self.lapse_lift_d=lift.deriv()(z[-3:])
+            self.lapse_lift_dd=lift.deriv(2)(z[-3:])/self.dr[-1]
+    def spatial_jets(self,q):
+        d,dd=super().spatial_jets(q)
+        if self.lapse_normal_lift=='second-neutral':
+            correction=self.boundary_derivative_correction[0]
+            d[-3:,8]+=(self.lapse_lift_d-self.hermite_d)*correction
+            dd[-3:,8]+=(self.lapse_lift_dd-self.hermite_dd)*correction
+            self.boundary_gauge_jets=d[-3:,8:10].copy()
+        return d,dd
     def materialize(self,state):
         q=super().materialize(state);w=self.outflow_width
         outgoing=self.outflow_weights@(q[-w-1:-1,11]-q[-w-1:-1,7])
@@ -286,8 +317,10 @@ def make_evolution(kernel,cfg):
     outflow=cfg.get('outflow_boundary',False)
     if outflow:
         if not power or not cfg.get('algebraic_chart',True) or cfg.get('derivative_boundary',False):raise ValueError('outgoing auxiliary closure needs reference-chi algebraic chart and excludes the other experimental closure')
-        cls=OutflowAuxiliaryBoundaryEvolution;extra={'chi_reference_power':power,'outflow_width':cfg.get('outflow_width',5)}
+        cls=OutflowAuxiliaryBoundaryEvolution;extra={'chi_reference_power':power,'outflow_width':cfg.get('outflow_width',5),'lapse_normal_lift':cfg.get('lapse_normal_lift','hermite'),'boundary_normal_system':cfg.get('boundary_normal_system','coupled')}
         return cls(kernel,cfg.get('n',64),cfg.get('grading',0.),cfg.get('penalty',.6510416666660156),cfg.get('ko',.5),cfg.get('floors',False),cfg.get('normal_policy','analytic'),cfg.get('reference_jets',True),cfg.get('reference_step',.000125),cfg.get('reference_tail','numerical'),cfg.get('grid_map','quadratic'),**extra)
+    if cfg.get('lapse_normal_lift','hermite')!='hermite':raise ValueError('experimental lapse lift requires outgoing boundary closure')
+    if cfg.get('boundary_normal_system','coupled')!='coupled':raise ValueError('experimental normal system requires outgoing boundary closure')
     if power and (not cfg.get('algebraic_chart',True) or cfg.get('derivative_boundary',False)):
         raise ValueError('reference chi needs the algebraic chart and standard boundary')
     cls=ReferenceChiEvolution if power else DerivativeBoundaryEvolution if cfg.get('derivative_boundary',False) else ChartEvolution if cfg.get('algebraic_chart',True) else Evolution

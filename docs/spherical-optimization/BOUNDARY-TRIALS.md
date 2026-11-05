@@ -84,6 +84,20 @@ term is the identified positive feedback. A subsequent numerical boundary
 design must control this derivative lifting while retaining the normal clock
 equation, and must repeat the full operator gate; damping D does not address it.
 
+The v20 test adds a second condition to the lifting polynomial: keep its
+endpoint second derivative zero while retaining the normal derivative and
+seven nodal zeros. This degree-eight correction passes the nonstationary
+algebraic fixture and preserves the default RHS bitwise. Nevertheless, its
+full initial operators have positive real eigenvalues 500.419 at N32 and
+1031.993 at N64. **It is rejected.** Removing the direct endpoint Hessian
+feedback along the old eigenmode did not stabilize the coupled stencil; the
+new full eigenvector exposes a different unstable response. No long runs use it.
+
+The next v21 experiment uses only the shift normal to match the extrapolated
+outgoing auxiliary trace. Lapse derivative stencils remain unchanged and the
+clock residual is measured, not forced to zero. Results and remaining gates
+are recorded separately in SHIFT-NORMAL-BOUNDARY.md.
+
 ## Reproduction and remaining work
 
 The v18 binary and final source snapshot are in

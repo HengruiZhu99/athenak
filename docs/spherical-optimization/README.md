@@ -6,6 +6,13 @@ The parent campaign, frozen Aurora snapshots and remote jobs are untouched.
 **Work in progress: no candidate is admitted, no stability/cost improvement is
 established, and no spherical result establishes boosted or 3D stability.**
 
+Current results are in [SHIFT-NORMAL-BOUNDARY.md](SHIFT-NORMAL-BOUNDARY.md):
+the outgoing auxiliary/shift-normal policy improves the boundary defect and
+preserves exterior convergence, but leaves the late gauge response unchanged.
+[CONSTRAINT-PROPAGATION.md](CONSTRAINT-PROPAGATION.md) checks the shared interior
+equations on smooth stationary and perturbed-gauge data. The next stability
+investigation targets a resolution-dependent mode in the interior gauge blend.
+
 Latest auxiliary-damping and rejected outgoing-boundary experiments are in
 [BOUNDARY-TRIALS.md](BOUNDARY-TRIALS.md). Stronger damping does not cure the
 late response; the outgoing trace closure has a grid-scaled unstable mode.
