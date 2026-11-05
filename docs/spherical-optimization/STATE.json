@@ -78,15 +78,19 @@
     "N1024 compatible-lapse 10M control: exterior indicator 2.28e-8 but slow boundary residual decrease and growing second derivatives",
     "same-state reference-jet, outgoing-width and endpoint-polynomial sensitivity audits with independent width-seven reproduction",
     "seven-point outgoing control spectra, N128/256/512 10M evolutions and paired N12820M pulse; modest D improvement without clock improvement",
-    "raw endpoint-subtracted boundary profiles and preserved polynomial/logarithmic/fractional finite-window tail fits"
+    "raw endpoint-subtracted boundary profiles and preserved polynomial/logarithmic/fractional finite-window tail fits",
+    "shared-C++ weighted near-scri pencils identify finite power .7720019 independently of numerical stencil, penalty and KO",
+    "rational limiting determinant, direct RHS O(x) residual and independent leading physical-constraint cancellations verified",
+    "frozen evolved-metric leading-root control and retained finite-window evolved polarization fits",
+    "identified outer lapse damping dependence predicting weighted power3 at xi=.25; no parameter change yet"
   ],
   "next": [
-    "Audit the leading near-scri powers of the shared continuum linearization and gauge/reference sources. N256/512/1024 lapse second derivatives grow -23.996/-28.491/-33.461 while clock/pole/D residual orders are about .75; narrow N1024 raw-tail fits suggest field power 1.71-1.73 but do not prove a continuum singularity. Distinguish a continuum regularity mode from numerical boundary layers before more stencil or gauge-profile changes.",
-    "Retain five-point outgoing trace as the working candidate until regularity is resolved. Seven-point controls reduce D defect modestly but leave clock/pole and paired pulses unchanged. Preserve all unsuccessful and ambiguous evidence.",
-    "Measure robust RK4 margins with actual speeds and perturbed nonlinear controls, then serial fixed-error costs and final transfer report after regularity assessment. No boosted/3D stability claim or Aurora work."
+    "Implement an explicit shared outer_lapse_damping parameter, default1, and test xi=.25. The checked limiting gauge factor is xi*(s\u00b2+(R_beta+3)*s+2)-2*R_beta; R_beta4 gives current s=.7720019 and proposed s3. Update stationary reference sources and analytic scri lapse-pole normals consistently; current adapters hard-code one. Preserve default bitwise behavior and verify off-constraint tensor/spherical, flat-core and changing-geometry normal equivalence before sweeps. Ensure 3D host/device propagation or explicit rejection of unsupported nondefault paths.",
+    "Test the new parameter with the compatible-lapse spatial policy: boundary regularity and second-derivative convergence, four-resolution exterior accuracy, temporal refinement, refined gauge/constraint pulses and longer controls. Do not infer smoothness from the predicted indicial exponent alone.",
+    "Measure robust RK4 timestep margins with actual speeds and semidiscrete/nonnormal checks, then controlled serial fixed-error costs and final transfer report. No boosted/3D stability claim or Aurora work."
   ],
   "latest": {
-    "disposition": "exterior_convergence_confirmed_boundary_second_derivative_regularity_unresolved",
+    "disposition": "continuum_fractional_gauge_mode_identified_shared_damping_candidate_pending",
     "wide_areal_10M_points": [
       64,
       128,
@@ -104,7 +108,7 @@
     "exact_scri_n128_1M_D_defect": 2.138805993727148e-06,
     "release_binary": "build-spherical-v18/libcurrent_spherical.dylib",
     "compiler_only_observed_speed_ratio": 5.269579338765357,
-    "next_design": "continuum near-scri power/regularity audit before further endpoint or gauge changes",
+    "next_design": "shared outer lapse damping .25 with consistent reference sources and scri pole normal, followed by parity and regularity tests",
     "compact_report": "COMPACT-PROFILE.md",
     "compact_10M_points": [
       64,
@@ -265,7 +269,13 @@
     "compatible_lapse_N1024_D_defect": -0.0013795268253502108,
     "compatible_lapse_N1024_pole": 0.002759326494184808,
     "compatible_lapse_N1024_lapse_second": -33.46113506017132,
-    "near_scri_lapse_fit_field_power": 1.7251630950457348
+    "near_scri_lapse_fit_field_power": 1.7251630950457348,
+    "scri_indicial_report": "SCRI-INDICIAL.md",
+    "scri_weighted_power": 0.7720018726587656,
+    "scri_metric_lapse_power": 1.7720018726587656,
+    "proposed_outer_lapse_damping": 0.25,
+    "proposed_weighted_power": 3.0,
+    "evolved_mode_relative_polarization_difference": 0.09830576536838882
   },
   "live_processes": [],
   "admitted_candidate": null,

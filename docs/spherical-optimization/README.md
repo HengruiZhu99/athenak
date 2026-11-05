@@ -6,12 +6,12 @@ The parent campaign, frozen Aurora snapshots and remote jobs are untouched.
 **Work in progress: no candidate is admitted, no stability/cost improvement is
 established, and no spherical result establishes boosted or 3D stability.**
 
-The latest [boundary regularity audit](BOUNDARY-REGULARITY.md) extends the
-[compatible-lapse trial](COMPATIBLE-LAPSE.md) to N1024. Exterior errors continue
-to decrease, but endpoint second derivatives grow while boundary residuals
-converge slowly. The near-scri regularity question remains open. The compatible
-lapse policy removes the previous interior mode and keeps tested pulses small;
-it is not yet an admitted smooth candidate.
+The latest [continuum near-scri audit](SCRI-INDICIAL.md) identifies a leading
+fractional gauge mode consistent with the [boundary regularity concern](BOUNDARY-REGULARITY.md).
+It predicts a targeted outer lapse damping change; that change is not yet
+implemented or tested. The [compatible-lapse spatial policy](COMPATIBLE-LAPSE.md)
+removes the earlier discrete interior instability, but no candidate is yet
+admitted as a smooth, robust formulation.
 
 Boundary results are in [SHIFT-NORMAL-BOUNDARY.md](SHIFT-NORMAL-BOUNDARY.md):
 the outgoing auxiliary/shift-normal policy improves the boundary defect and
