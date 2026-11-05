@@ -1,0 +1,196 @@
+{
+  "domain": "R_reference/M in [25,100], uniform log-R RMS; initial outer branch",
+  "duration_M": 1,
+  "qualification": "Provisional 1M evidence only. No robust-stability or fixed-accuracy 10M admission.",
+  "runs": [
+    {
+      "case": "central20-constant-n128-1M-v2",
+      "status": "completed_unqualified",
+      "n": 128,
+      "slicing_ratio": 2.0,
+      "separated": false,
+      "time_M": 1.0,
+      "cpu_seconds": 15.061719834,
+      "rhs_calls": 3336,
+      "dimensionless_H_M_Theta_Z_rms": [
+        0.0597446907667249,
+        0.031356523645602215,
+        0.005840836071488048,
+        0.008993551812044788
+      ],
+      "pchip_linear_disagreement_rms": [
+        0.006781732892258032,
+        0.003314734645097958,
+        0.0006720465936502967,
+        0.00120194007357143
+      ],
+      "error_indicator": 0.0597446907667249,
+      "interpolation_indicator": 0.006781732892258032,
+      "C_char": 0.15456158288696792,
+      "floor_calls": 0
+    },
+    {
+      "case": "central20-separated-n128-1M-v2",
+      "status": "completed_unqualified",
+      "n": 128,
+      "slicing_ratio": 2.0,
+      "separated": true,
+      "time_M": 1.0,
+      "cpu_seconds": 15.111306041999999,
+      "rhs_calls": 3336,
+      "dimensionless_H_M_Theta_Z_rms": [
+        0.059716906406482265,
+        0.03134982954289275,
+        0.005837611716153343,
+        0.00899241379437457
+      ],
+      "pchip_linear_disagreement_rms": [
+        0.006777096348631149,
+        0.003314205560744243,
+        0.0006720433172426143,
+        0.001202131782012158
+      ],
+      "error_indicator": 0.059716906406482265,
+      "interpolation_indicator": 0.006777096348631149,
+      "C_char": 0.15456180613949808,
+      "floor_calls": 0
+    },
+    {
+      "case": "central20-separated-n256-1M-v2",
+      "status": "completed_unqualified",
+      "n": 256,
+      "slicing_ratio": 2.0,
+      "separated": true,
+      "time_M": 1.0,
+      "cpu_seconds": 59.519515917,
+      "rhs_calls": 6666,
+      "dimensionless_H_M_Theta_Z_rms": [
+        0.0390033247253491,
+        0.019437810785018283,
+        0.0009695287223113847,
+        0.002785537479087944
+      ],
+      "pchip_linear_disagreement_rms": [
+        0.003827804913812379,
+        0.0018496661162682353,
+        8.98624310803524e-05,
+        0.0002480273430129679
+      ],
+      "error_indicator": 0.0390033247253491,
+      "interpolation_indicator": 0.003827804913812379,
+      "C_char": 0.1545115969530603,
+      "floor_calls": 0
+    },
+    {
+      "case": "central20-separated-n64-1M-v2",
+      "status": "completed_unqualified",
+      "n": 64,
+      "slicing_ratio": 2.0,
+      "separated": true,
+      "time_M": 1.0,
+      "cpu_seconds": 3.9335489160000003,
+      "rhs_calls": 1666,
+      "dimensionless_H_M_Theta_Z_rms": [
+        0.1095203692440849,
+        0.058217678368022586,
+        0.020442343610738697,
+        0.01958044656651348
+      ],
+      "pchip_linear_disagreement_rms": [
+        0.017289464381972968,
+        0.008004773297317953,
+        0.002712665863264567,
+        0.0032115939193475304
+      ],
+      "error_indicator": 0.1095203692440849,
+      "interpolation_indicator": 0.017289464381972968,
+      "C_char": 0.16219941155976747,
+      "floor_calls": 0
+    },
+    {
+      "case": "central20-slicing4-n128-1M-v2",
+      "status": "completed_unqualified",
+      "n": 128,
+      "slicing_ratio": 4.0,
+      "separated": true,
+      "time_M": 1.0,
+      "cpu_seconds": 14.970690125,
+      "rhs_calls": 3336,
+      "dimensionless_H_M_Theta_Z_rms": [
+        0.027843498555726716,
+        0.014692941143693497,
+        0.004267850501137483,
+        0.00541422806514552
+      ],
+      "pchip_linear_disagreement_rms": [
+        0.00327908480526852,
+        0.0017737270908125729,
+        0.00048331142983521646,
+        0.000774823046811726
+      ],
+      "error_indicator": 0.027843498555726716,
+      "interpolation_indicator": 0.00327908480526852,
+      "C_char": 0.15460468607514605,
+      "floor_calls": 0
+    }
+  ],
+  "field_comparison": {
+    "fields": [
+      "chi",
+      "gr",
+      "gt",
+      "Ar",
+      "At",
+      "Khat",
+      "Theta",
+      "Lambda",
+      "alpha",
+      "beta",
+      "B",
+      "D"
+    ],
+    "difference_64_128": [
+      0.05372281106771188,
+      0.07612834479186005,
+      0.04212815307772472,
+      2.073669389363996,
+      1.1157623830707395,
+      0.29749514628474827,
+      0.05767757678085386,
+      4.140733572947883,
+      0.037615813012122086,
+      0.05383833197348476,
+      0.0008463708266151291,
+      4.18016189084648
+    ],
+    "difference_128_256": [
+      0.009414729047681803,
+      0.01602534240346083,
+      0.00770902255326942,
+      0.9110426782937652,
+      0.44952672876805655,
+      0.12775621837044435,
+      0.016761092962083012,
+      2.0094870149318433,
+      0.009550526898604514,
+      0.016392606770851623,
+      0.00019628133199876415,
+      2.0102114579860837
+    ],
+    "pairwise_order": [
+      2.5125433160036224,
+      2.2480785286458578,
+      2.450164814866338,
+      1.186595355207358,
+      1.31155101239048,
+      1.2194726164387633,
+      1.7828943258569558,
+      1.043059123524101,
+      1.9776870391537582,
+      1.7155884211907588,
+      2.1083669334174835,
+      1.0562115473760583
+    ],
+    "qualification": "One triplet only, interpolation uncertainty not removed; not asymptotic convergence."
+  }
+}

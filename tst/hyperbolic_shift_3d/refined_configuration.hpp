@@ -13,6 +13,7 @@
 #include "z4c/hyperboloidal/hyperbolic_shift.hpp"
 #include "z4c/hyperboloidal/native_wormhole.hpp"
 #include "z4c/hyperboloidal/stationary_gauge_reference.hpp"
+#include "z4c/hyperboloidal/central_z4c_configuration.hpp"
 #ifndef HYPERBOLIC_CONFIGURED_FORMULATION
 #define HYPERBOLIC_CONFIGURED_FORMULATION 0
 #endif
@@ -50,7 +51,7 @@ struct RefinedConfiguration {
       throw std::invalid_argument("cannot open refined configuration");
     std::map<std::string, std::string> values;
     const std::set<std::string> allowed = {
-        "omega_profile", "omega_flat_radius", "omega_outer_radius", "omega_plateau", "gauge_begin",
+        "inner_z4c_radius_M", "omega_profile", "omega_flat_radius", "omega_outer_radius", "omega_plateau", "gauge_begin",
         "gauge_end",     "buffer_cells",      "cfl_target",         "shell_radii", "core_half_width", "shell_inner_radius", "core_subdivisions", "initial_start_M", "initial_end_M", "boost_velocity", "smr_levels", "smr_radius", "smr_half_widths", "halo_frame", "shift_speed_policy", "outer_gauge", "shell_angular_subdivisions"};
     std::string line;
     while (std::getline(input, line)) {
@@ -97,6 +98,21 @@ struct RefinedConfiguration {
     if(core_bounds_overridden){lower.fill(-core_half_width);upper.fill(core_half_width);}
     core_spacing=2*core_half_width/(core_subdivisions*mesh.cells);
     initial_start_M=number("initial_start_M",4);initial_end_M=number("initial_end_M",12);
+    const bool unified_center=values.count("inner_z4c_radius_M");
+    z4c::hyperboloidal::CentralZ4cConfiguration::Resolved central{};
+    if(unified_center){
+      for(const char* key:{"omega_profile","omega_flat_radius","omega_outer_radius","omega_plateau",
+                          "gauge_begin","gauge_end","initial_start_M","initial_end_M"})
+        if(values.count(key))throw std::invalid_argument(std::string("inner_z4c_radius_M conflicts with ")+key);
+      z4c::hyperboloidal::CentralZ4cConfiguration c;
+      c.inner_z4c_radius_M=number("inner_z4c_radius_M",20);central=c.Resolve();
+      initial_start_M=central.gauge.reference_start_M;initial_end_M=central.gauge.reference_end_M;
+      if(!central.FitsCartesianBox(core_half_width)){
+        std::ostringstream message;message<<"central Z4c sphere compact radius "<<central.compact_radius
+          <<" does not fit Cartesian box half width "<<core_half_width;
+        throw std::invalid_argument(message.str());
+      }
+    }
     boost_velocity=number("boost_velocity",.1);
     const Real levels=number("smr_levels",0);smr_radius=number("smr_radius",.05);
     if(levels!=std::floor(levels) || levels<0 || levels>3 || !(smr_radius>0 && smr_radius<shell_inner_radius))
@@ -151,6 +167,12 @@ struct RefinedConfiguration {
     gauge.inner_begin =
         number("gauge_begin", gauge.profile.flat ? gauge.profile.outer_radius + .06 : .2);
     gauge.inner_end = number("gauge_end", .56);
+    if(unified_center){
+      const bool halos=gauge.conformal_frame_halos,separated=gauge.separated_shift_speeds;
+      const bool reference=values.count("outer_gauge")?gauge.stationary_outer_reference:true;
+      gauge=central.gauge;gauge.conformal_frame_halos=halos;gauge.separated_shift_speeds=separated;
+      gauge.stationary_outer_reference=reference;gauge.enforce_cfl=true;
+    }
     buffer_cells = number("buffer_cells", 4);
     cfl_target = number("cfl_target", .2);
     shell_radii = mesh.radii;
@@ -217,11 +239,11 @@ struct RefinedConfiguration {
     gauge.inner_gamma = gauge.profile.flat ? inner_map_scale * inner_map_scale
                                            : z4c::hyperboloidal::InnerTelegrapher::shift_gamma;
     if (!(cfl_target > 0 && cfl_target <= .4 && buffer_cells >= 4 &&
-          gauge.inner_begin < gauge.inner_end && gauge.inner_end <= .8))
+          gauge.inner_begin < gauge.inner_end && gauge.inner_end <= (unified_center?.99:.8)))
       throw std::invalid_argument("invalid gauge/CFL/buffer parameters");
     if (gauge.profile.flat && (!(gauge.inner_begin - gauge.profile.outer_radius >=
                                  buffer_cells * largest_transition_spacing) ||
-                               !(gauge.inner_begin < affine_radius) ||
+                               (!unified_center && !(gauge.inner_begin < affine_radius)) ||
                                !(gauge.profile.outer_radius - gauge.profile.flat_radius >=
                                  3 * largest_transition_spacing)))
       throw std::invalid_argument(
@@ -246,6 +268,9 @@ struct RefinedConfiguration {
     if(gauge.conformal_frame_halos)out<<";halo_frame=legacy-cartesian-to-shell-v1";
     if(gauge.separated_shift_speeds)out<<";shift_speed_policy=separated-inner-v1";
     if(gauge.stationary_outer_reference)out<<";outer_gauge=stationary-reference-v2;initial-lapse-blend=flat-to-inner-begin";
+    if(unified_center)out<<";central-z4c-v1="<<initial_start_M<<";sphere-fits-box=true;coefficient-window="
+      <<gauge.coefficient_begin<<','<<gauge.coefficient_end<<";restoration-window="
+      <<gauge.restoration_begin<<','<<gauge.restoration_end;
     if(smr_box)out<<";smr-box-origin-v1="<<smr_half_widths[0]<<','<<smr_half_widths[1]<<','<<smr_half_widths[2];
     if(!shell_angular_subdivisions.empty()){
       out<<";shell-angular-subdivisions-v1=";

@@ -17,7 +17,7 @@ void Check(bool good, const char* message) {
 // implementation or an equilibrium-only cancellation. The data are off shell,
 // with nonzero Theta/Lambda, transport, lapse/chi Hessians and A/B gradients.
 double ReferenceInner(const h::HyperbolicShiftParameters<Real>& parameters, bool variable_metric,
-                      double radius) {
+                      double radius, bool below_guard=false) {
   // 64 roots support the production 12 ranks per node in GPU qualification.
   h::CartesianAMR mesh(8, 4, 64, 1);
   auto& input = mesh.input;
@@ -27,6 +27,8 @@ double ReferenceInner(const h::HyperbolicShiftParameters<Real>& parameters, bool
   input.SetRealExact("z4c", "shift_Gamma", parameters.inner_gamma);
   input.SetRealExact("z4c", "shift_eta", 6);
   input.SetRealExact("z4c", "diss", 0);
+  if(parameters.cartesian_chi_guard)
+    input.SetRealExact("z4c", "chi_div_floor", parameters.inner_chi_guard);
   input.SetBoolean("z4c", "telegraph_lapse", true);
   input.SetRealExact("z4c", "telegraph_tau", 1. / 30);
   input.SetRealExact("z4c", "telegraph_kappa", 1. / 15);
@@ -44,6 +46,7 @@ double ReferenceInner(const h::HyperbolicShiftParameters<Real>& parameters, bool
           for (int f = 0; f < Z::nz4c; ++f)
             host(m, f, k, j, i) = 0;
           host(m, Z::I_Z4C_CHI, k, j, i) = .8 + .05 * x + .03 * y * y + .02 * x * z;
+          if(below_guard)host(m, Z::I_Z4C_CHI, k, j, i)*=1e-9;
           host(m, Z::I_Z4C_ALPHA, k, j, i) = .7 + .04 * y + .08 * x * x + .03 * y * z;
           host(m, Z::I_Z4C_KHAT, k, j, i) = .12 + .04 * z;
           host(m, Z::I_Z4C_THETA, k, j, i) = .015 + .008 * x;
@@ -356,6 +359,8 @@ int main(int argc, char** argv) {
     const double reference_error =
         std::max({ReferenceInner(c.gauge, false, .05), ReferenceInner(c.gauge, true, .05),
                   ReferenceInner(c.gauge, true, profile.flat_radius+.25*(profile.outer_radius-profile.flat_radius)), ReferenceInner(c.gauge, true, profile.flat_radius+.75*(profile.outer_radius-profile.flat_radius))});
+    const auto central=h::CentralZ4cConfiguration{}.Resolve();
+    const double guarded_reference_error=ReferenceInner(central.gauge,true,.05,true);
     if (argc == 3 && global_variable::my_rank == 0) {
       std::ofstream out(argv[2]);
       out << std::setprecision(17);
@@ -379,7 +384,8 @@ int main(int argc, char** argv) {
                 << ",\"derivative_error\":" << derivative_error
                 << ",\"frame_constraint_error\":" << frame_error
                 << ",\"map_inverse_error\":" << map_error
-                << ",\"reference_z4c_error\":" << reference_error << "}\n";
+                << ",\"reference_z4c_error\":" << reference_error
+                << ",\"scaled_guard_z4c_error\":" << guarded_reference_error << "}\n";
   } catch (const std::exception& e) {
     std::cerr << e.what() << '\n';
     code = 1;

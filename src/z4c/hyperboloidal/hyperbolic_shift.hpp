@@ -141,11 +141,21 @@ template<class T> struct HyperbolicShiftParameters {
   T reference_start_M=4, reference_end_M=12;
   T inner_begin=InnerTelegrapher::begin, inner_end=InnerTelegrapher::end;
   T inner_gamma=InnerTelegrapher::shift_gamma;
+  T inner_chi_guard=InnerTelegrapher::chi_guard;
+  bool cartesian_chi_guard=false;
+  // Opt-in configured windows; negative sentinel preserves frozen arithmetic.
+  T coefficient_begin=-1, coefficient_end=-1, restoration_begin=-1, restoration_end=-1;
   T bulk_mu = 4, ratio = 2, damping = 1, restoring = 4;
   T kappa = T(.005), tau = T(.02), epsilon = T(1.e-4);
   T inner_z4 = 8, kappa1 = 4, kappa2 = T(-.99);
   void Validate() const {
     profile.Validate();
+    for (const auto window : {std::array<T,2>{coefficient_begin,coefficient_end},
+                              std::array<T,2>{restoration_begin,restoration_end}})
+      if (!(window[0]==-1 && window[1]==-1) &&
+          (!configured_conformal_frame || !std::isfinite(window[0]) ||
+           !std::isfinite(window[1]) || !(0<=window[0] && window[0]<window[1] && window[1]<1)))
+        throw std::invalid_argument("invalid configured gauge window");
     if (stationary_outer_reference && (!configured_conformal_frame || !direct_outer ||
         !inner_telegrapher || !profile.flat || !std::isfinite(reference_start_M) ||
         !std::isfinite(reference_end_M) || !(reference_start_M>2 && reference_end_M>reference_start_M)))
@@ -157,7 +167,7 @@ template<class T> struct HyperbolicShiftParameters {
     if (!std::isfinite(inner_begin) || !std::isfinite(inner_end) ||
         !std::isfinite(inner_gamma) || !(inner_begin<inner_end && inner_gamma>0))
       throw std::invalid_argument("invalid inner gauge profile");
-    for (T v:{bulk_mu,ratio,damping,restoring,kappa,tau,epsilon,inner_z4,kappa1})
+    for (T v:{bulk_mu,ratio,damping,restoring,kappa,tau,epsilon,inner_z4,kappa1,inner_chi_guard})
       if (!std::isfinite(v) || v<0) throw std::invalid_argument("invalid hyperbolic gauge parameter");
     if (bulk_mu<=0 || ratio<=0 || tau<=0 || !std::isfinite(kappa2))
       throw std::invalid_argument("invalid hyperbolic gauge speed/relaxation parameter");
@@ -173,7 +183,7 @@ template<class T> struct HyperbolicShiftParameters {
 template<class T> KOKKOS_INLINE_FUNCTION
 T InnerShiftGamma(T alpha,T chi,T omega,const HyperbolicShiftParameters<T>&p) {
   if (!p.separated_shift_speeds) return p.inner_gamma;
-  const T guard=fmax(omega*omega*chi,T(InnerTelegrapher::chi_guard));
+  const T guard=fmax(omega*omega*chi,p.inner_chi_guard);
   return p.inner_gamma+T(.75)*(2*omega*alpha*chi
       +guard*T(InnerTelegrapher::kappa/InnerTelegrapher::tau));
 }
@@ -195,22 +205,25 @@ HyperbolicCoefficients<T> ShiftCoefficients(T r, T alpha, T chi,
   HyperbolicCoefficients<T> c{};
   c.omega=p.profile.Radial(r).value; c.reference_alpha=(1+r*r)/2;
   c.inner=InnerTelegrapherWeight(r,p.inner_begin,p.inner_end); c.inner_gamma=InnerShiftGamma(alpha,chi,c.omega,p);
-  const T y=(T(.8)-r)/T(.24);
+  const T width=p.coefficient_begin>=0 ? p.coefficient_end-p.coefficient_begin : T(.24);
+  const T y=p.coefficient_begin>=0 ? (p.coefficient_end-r)/width : (T(.8)-r)/T(.24);
   if constexpr(smooth_gauge_blend) {
     c.w=Smoothstep9(y);
     if (y>0 && y<1) {
       const T q=y*(1-y),q2=q*q;
-      c.dw_dr=-630*q2*q2/T(.24);
+      c.dw_dr=-630*q2*q2/width;
     }
   } else {
     c.w=SmoothCollar(y);
     if (y>0 && y<1) {
       const T a=pow(y,8),b=pow(1-y,8);
-      c.dw_dr=-8*pow(y,7)*pow(1-y,7)/((a+b)*(a+b)*T(.24));
+      c.dw_dr=-8*pow(y,7)*pow(1-y,7)/((a+b)*(a+b)*width);
     }
   }
   // A-width control: preserve the original profile and outer plateau, widen inward.
   c.collar=broad_smooth_a ? SmoothCollar((r-T(.6))/T(.3)) : wide_restoring_collar ? SmoothCollar((r-T(.7))/T(.2)) : SmoothCollar((r-T(.8))/T(.1));
+  if(p.restoration_begin>=0)
+    c.collar=SmoothCollar((r-p.restoration_begin)/(p.restoration_end-p.restoration_begin));
   c.F=alpha*alpha+4*c.omega*c.omega*alpha;
   c.eta=(1+p.epsilon)*alpha/(alpha+p.epsilon*c.reference_alpha);
   // w*C == 0 exactly: the donor's radial-g term in mu_separated never
@@ -230,12 +243,12 @@ T GaugeLapseSpeedSquared(T alpha,T chi,const HyperbolicCoefficients<T>&c,T Q,T E
   if constexpr(direct_outer) {
     const T s=c.inner,o=c.omega;
     if(s==0) return chi*c.F*Q;
-    const T guard=fmax(o*o*chi,T(InnerTelegrapher::chi_guard));
+    const T guard=fmax(o*o*chi,p.inner_chi_guard);
     return (chi*((1-s)*c.F+s*2*o*alpha)
         +s*s*guard*T(InnerTelegrapher::kappa/InnerTelegrapher::tau))*Q;
   }
   if (c.inner==0) return chi*(c.F*Q+c.eta*(p.kappa/p.tau)*c.w*c.w*E);
-  const T s=c.inner,o=c.omega,guard=fmax(o*o*chi,T(InnerTelegrapher::chi_guard));
+  const T s=c.inner,o=c.omega,guard=fmax(o*o*chi,p.inner_chi_guard);
   const T lapse_k=(1-s)*c.F+s*2*o*alpha;
   const T lapse_b=(1-s)*c.eta*chi*c.w*E+s*o*guard*Q;
   const T b_lapse=(1-s)*p.kappa*c.w/p.tau+s*T(InnerTelegrapher::kappa/InnerTelegrapher::tau)/o;
@@ -378,7 +391,7 @@ HyperbolicGaugeParts<T> HyperbolicGauge(const T x[3],const Z4cJet<T>&u,
   const T o=p.profile.flat ? omega.omega : (1-r2)/2,alpha=u.alpha.value/o;
   const auto g=Geometry(u.metric);
   if (!g.valid || !(o>0)) {out.valid=false;return out;}
-  const T chi=fmax(o*o*u.chi.value,T(InnerTelegrapher::chi_guard));
+  const T chi=fmax(o*o*u.chi.value,p.inner_chi_guard);
   T lapse=-2*u.alpha.value*u.trace.value;
   for(int i=0;i<3;++i) {
     lapse+=u.beta.value[i]*((p.profile.flat ? u.alpha.d[i]-alpha*omega.gradient[i] : u.alpha.d[i]+alpha*x[i]));
@@ -399,9 +412,22 @@ HyperbolicGaugeParts<T> HyperbolicGauge(const T x[3],const Z4cJet<T>&u,
 // Finite products only. Apply to the SAME free ConformalRHS used in the donor.
 // Geometry(u.metric).contracted is used for damping Z, not to overwrite Lambda.
 template<class T> KOKKOS_INLINE_FUNCTION
-bool HyperbolicDamping(const T x[3], const Z4cJet<T> &u,
+bool HyperbolicDamping(const T x[3], const Z4cJet<T> &input,
     const OmegaJet<T> &omega, Z4cRHSParts<T> &parts,
     const HyperbolicShiftParameters<T> &p = {}) {
+  auto u=input;
+  if(p.cartesian_chi_guard && p.profile.flat && omega.omega>0) {
+    T radius2=0;for(int i=0;i<3;++i)radius2+=x[i]*x[i];
+    const T s=InnerTelegrapherWeight(sqrt(radius2),p.inner_begin,p.inner_end);
+    const T guarded=fmax(u.chi.value,p.inner_chi_guard/(omega.omega*omega.omega));
+    if(s>0 && guarded>u.chi.value) {
+      // Actual Cartesian chi_div_floor policy: substitute coefficients, retain
+      // derivatives of the evolved field. This is numerical regularization,
+      // not differentiation of max(chi, floor), and never a state reset.
+      u.chi.value+=s*(guarded-u.chi.value);
+      parts=ConformalRHS(u,omega,p.kappa1,p.kappa2);
+    }
+  }
   const auto g=Geometry(u.metric);
   if (!parts.valid || !g.valid) return false;
   T r2=0; for (int i=0;i<3;++i) r2+=x[i]*x[i];
