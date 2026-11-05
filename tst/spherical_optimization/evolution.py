@@ -190,9 +190,21 @@ class ReferenceChiEvolution(ChartEvolution):
     representation. Fixed linear scaling of the stored RK coordinate would be
     algebraically equivalent. There is no floor or positivity guarantee.
     """
-    def __init__(self,*args,chi_reference_power=2,**kwargs):
+    def __init__(self,*args,chi_reference_power=2,compatible_lapse=0.,**kwargs):
         super().__init__(*args,**kwargs);self.chi_reference_power=chi_reference_power
         if chi_reference_power not in (2,4):raise ValueError('unsupported chi reference power')
+        if not np.isfinite(compatible_lapse) or not 0<=compatible_lapse<=1:raise ValueError('compatible lapse fraction must lie in [0,1]')
+        self.compatible_lapse=compatible_lapse
+        if compatible_lapse and not self.reference_jets:raise ValueError('compatible lapse trial requires reference jets')
+        # Explicit experimental spatial policy, anchored to the shared central
+        # region's gauge join. It changes only the lapse residual's D2 stencil;
+        # the exact reference jets, D1, advection, KO and endpoint jets remain.
+        begin,end=self.kernel.config[7:9];width=end-begin
+        self.compatible_window=np.array([begin-.5*width,begin+.125*width,end-.125*width,end+.125*width])
+        lo,left,right,hi=self.compatible_window
+        if compatible_lapse and not 0<lo<left<right<hi<1:raise ValueError('compatible lapse window leaves domain')
+        z=np.clip(np.minimum((self.r-lo)/(left-lo),(hi-self.r)/(hi-right)),0.,1.)
+        self.compatible_weight=compatible_lapse*z**3*(10-15*z+6*z*z)
         self.scaled_initial,self.scaled_d,self.scaled_dd=self.kernel.reference_chi(self.r,self.initial,chi_reference_power,
             self.reference_d[:,self.independent] if self.reference_jets else None,
             self.reference_dd[:,self.independent] if self.reference_jets else None,inverse=True)
@@ -201,6 +213,9 @@ class ReferenceChiEvolution(ChartEvolution):
     def spatial_jets(self,q):
         scaled=self.scaled_values(q);values=scaled-self.scaled_initial if self.reference_jets else scaled
         d,dd=self.op.derivatives(values,PARITY[self.independent])
+        if self.compatible_lapse:
+            composed,_=self.op.derivatives(d[:,6],-PARITY[self.independent[6]])
+            dd[:,6]+=self.compatible_weight*(composed-dd[:,6])
         if self.reference_jets:d+=self.scaled_d;dd+=self.scaled_dd
         Q,D,DD=self.kernel.reference_chi(self.r,scaled,self.chi_reference_power,d,dd)
         return self.kernel.expand_chart(Q,D,DD)[1:]
@@ -314,15 +329,17 @@ class OutflowAuxiliaryBoundaryEvolution(DerivativeBoundaryEvolution,ReferenceChi
 
 def make_evolution(kernel,cfg):
     power=cfg.get('chi_reference_power',0)
+    compatible=cfg.get('compatible_lapse',0.)
+    if compatible and not power:raise ValueError('compatible lapse trial requires reference-chi chart')
     outflow=cfg.get('outflow_boundary',False)
     if outflow:
         if not power or not cfg.get('algebraic_chart',True) or cfg.get('derivative_boundary',False):raise ValueError('outgoing auxiliary closure needs reference-chi algebraic chart and excludes the other experimental closure')
-        cls=OutflowAuxiliaryBoundaryEvolution;extra={'chi_reference_power':power,'outflow_width':cfg.get('outflow_width',5),'lapse_normal_lift':cfg.get('lapse_normal_lift','hermite'),'boundary_normal_system':cfg.get('boundary_normal_system','coupled')}
+        cls=OutflowAuxiliaryBoundaryEvolution;extra={'chi_reference_power':power,'compatible_lapse':compatible,'outflow_width':cfg.get('outflow_width',5),'lapse_normal_lift':cfg.get('lapse_normal_lift','hermite'),'boundary_normal_system':cfg.get('boundary_normal_system','coupled')}
         return cls(kernel,cfg.get('n',64),cfg.get('grading',0.),cfg.get('penalty',.6510416666660156),cfg.get('ko',.5),cfg.get('floors',False),cfg.get('normal_policy','analytic'),cfg.get('reference_jets',True),cfg.get('reference_step',.000125),cfg.get('reference_tail','numerical'),cfg.get('grid_map','quadratic'),**extra)
     if cfg.get('lapse_normal_lift','hermite')!='hermite':raise ValueError('experimental lapse lift requires outgoing boundary closure')
     if cfg.get('boundary_normal_system','coupled')!='coupled':raise ValueError('experimental normal system requires outgoing boundary closure')
     if power and (not cfg.get('algebraic_chart',True) or cfg.get('derivative_boundary',False)):
         raise ValueError('reference chi needs the algebraic chart and standard boundary')
     cls=ReferenceChiEvolution if power else DerivativeBoundaryEvolution if cfg.get('derivative_boundary',False) else ChartEvolution if cfg.get('algebraic_chart',True) else Evolution
-    extra={'chi_reference_power':power} if power else {}
+    extra={'chi_reference_power':power,'compatible_lapse':compatible} if power else {}
     return cls(kernel,cfg.get('n',64),cfg.get('grading',0.),cfg.get('penalty',.6510416666660156),cfg.get('ko',.5),cfg.get('floors',False),cfg.get('normal_policy','analytic'),cfg.get('reference_jets',True),cfg.get('reference_step',.000125),cfg.get('reference_tail','numerical'),cfg.get('grid_map','quadratic'),**extra)

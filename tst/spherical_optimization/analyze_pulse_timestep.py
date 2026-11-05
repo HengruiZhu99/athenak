@@ -10,6 +10,7 @@ def main():
   inputs[str(p)]=hashlib.sha256(p.read_bytes()).hexdigest();return json.loads(p.read_text()) if p.suffix=='.json' else np.load(p)
  for folders in (a.coarse,a.fine):
   bc,pc=[read(p/'manifest.json')['config'] for p in folders]
+  assert bc.get('compatible_lapse',0.)==pc.get('compatible_lapse',0.)
   assert all(bc[k]==pc[k] for k in bc if k not in ('output','perturbation'));assert bc['perturbation']=='none' and pc['perturbation']!='none'
   assert all(read(p/'result.json')['status']=='completed_unqualified' for p in folders)
   b,p=[read(x/'last-accepted.npz') for x in folders];assert np.array_equal(b['r'],p['r']) and b['t_M']==p['t_M'];pairs.append((b['r'],p['q']-b['q'],float(b['t_M'])));configs.append(bc)

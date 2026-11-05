@@ -69,15 +69,20 @@
     "frozen local Fourier rows and shared-C++ jet symbols identify near-Nyquist gauge-transition branch at N64/128",
     "compact interior linear D1-squared interventions isolate coupled lapse/geometry derivative sensitivity; shift-only intervention worsens N128",
     "20M N256 paired gauge and constraint pulses reveal strong resolution growth despite no-floor completion",
-    "N256 20M gauge-pulse timestep halving leaves response 17.048 versus 17.051; exterior relative difference 2.224e-4 and peak Ar at r=.8043"
+    "N256 20M gauge-pulse timestep halving leaves response 17.048 versus 17.051; exterior relative difference 2.224e-4 and peak Ar at r=.8043",
+    "explicit compatible-lapse residual second derivative anchored to shared gauge join; default and initial RHS bitwise parity, independent sixth-order smooth derivative check",
+    "actual candidate Jacobians remove the grid-growing branch for full composition; half composition retains N128 1.4965 growth and is preserved",
+    "compatible-lapse N128/256 gauge and constraint pulses through20M; N128 gauge pair through40M; strong former refinement failure absent",
+    "compatible-lapse four-resolution 10M accuracy, early fourth-order temporal convergence and small unresolved-order 10M timestep differences",
+    "full 26-field evolved N512 point symbols and N256 characteristic pulse diagnostics for compatible lapse"
   ],
   "next": [
-    "Design a nonlinear compatible derivative candidate informed by the frozen operator audit. Preserve shared C++ equations, reference jets, endpoint treatment, and no-floor policy. D1 squared has a checkerboard nullspace; do not infer stability from the diagnostic intervention. Validate the actual new Jacobian, convergence and refined pulses before further cost claims.",
-    "Revisit boundary clock/regularity/auxiliary convergence and longer controls only for a candidate that passes the refined interior-mode gate.",
-    "Determine robust RK4 margins and admitted fixed-error costs only after those gates; existing cost frontier is conditional exterior-only. No boosted/3D stability claim or Aurora work."
+    "Qualify boundary clock/pole/differential-D convergence for the compatible-lapse candidate. Fine-grid residuals are unchanged; inspect dependence on reference jets and outgoing extrapolation and add a justified higher-resolution control rather than assuming an asymptotic order. Avoid the rejected lapse-normal boundary conditions.",
+    "Measure candidate robust RK4 timestep limits with actual speeds, semidiscrete/nonnormal bounds and nonlinear gauge/constraint pulses at multiple resolutions. Existing C .4 runs are evidence, not the maximum admitted timestep.",
+    "Once boundary and robustness gates pass, run serial fixed-error cost comparisons with a margin below the measured limit and finish the selected-candidate/3D-transfer report. No boosted/3D stability claim or Aurora work."
   ],
   "latest": {
-    "disposition": "discrete_gauge_branch_identified_refined_pulses_reject_current_scheme",
+    "disposition": "compatible_lapse_removes_tested_interior_mode_boundary_and_cost_gates_open",
     "wide_areal_10M_points": [
       64,
       128,
@@ -95,7 +100,7 @@
     "exact_scri_n128_1M_D_defect": 2.138805993727148e-06,
     "release_binary": "build-spherical-v18/libcurrent_spherical.dylib",
     "compiler_only_observed_speed_ratio": 5.269579338765357,
-    "next_design": "implement and validate a disclosed compatible derivative candidate; current scheme fails refined pulse robustness",
+    "next_design": "boundary convergence qualification, robust CFL and controlled serial costs for compatible-lapse candidate",
     "compact_report": "COMPACT-PROFILE.md",
     "compact_10M_points": [
       64,
@@ -236,7 +241,20 @@
     "N256_20M_constraint_response": 0.33031749688589507,
     "N256_20M_halfstep_gauge_response": 17.050953938157438,
     "N256_20M_response_temporal_relative_difference": 0.00022242547569621704,
-    "N256_20M_response_peak_r": 0.8043052837573386
+    "N256_20M_response_peak_r": 0.8043052837573386,
+    "compatible_lapse_report": "COMPATIBLE-LAPSE.md",
+    "compatible_lapse_fraction": 1.0,
+    "compatible_lapse_10M_errors": [
+      0.00207569727867843,
+      0.0005351126843705245,
+      5.395585957751308e-05,
+      1.3879323905569854e-06
+    ],
+    "compatible_lapse_N128_gauge_response_20M": 2.0096466997188145e-06,
+    "compatible_lapse_N256_gauge_response_20M": 1.3306155821624088e-07,
+    "compatible_lapse_N128_gauge_response_40M": 2.3015264076775566e-06,
+    "compatible_lapse_N256_constraint_response_20M": 2.387355266364466e-05,
+    "compatible_lapse_N128_evolved_10M_growth": 0.03103254923688346
   },
   "live_processes": [],
   "admitted_candidate": null,

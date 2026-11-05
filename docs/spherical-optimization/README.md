@@ -6,11 +6,12 @@ The parent campaign, frozen Aurora snapshots and remote jobs are untouched.
 **Work in progress: no candidate is admitted, no stability/cost improvement is
 established, and no spherical result establishes boosted or 3D stability.**
 
-The latest [discrete gauge-mode audit](DISCRETE-GAUGE-MODE.md) identifies a
-near-Nyquist branch sensitive to the first/second derivative mismatch. A
-linear diagnostic intervention removes that branch but is not a tested scheme.
-N256 paired pulses grow sharply by 20M, essentially unchanged at half timestep;
-the current spatial policy fails this robustness gate.
+The latest [compatible-lapse trial](COMPATIBLE-LAPSE.md) implements a spatial
+candidate motivated by the [discrete gauge-mode audit](DISCRETE-GAUGE-MODE.md).
+It removes the tested interior growing branch and reduces refined 20M pulse
+responses; an N128 40M pair stays small. Boundary convergence, robust timestep
+limits and controlled costs remain open. The earlier direct-D2 policy fails
+the refined pulse robustness gate.
 
 Boundary results are in [SHIFT-NORMAL-BOUNDARY.md](SHIFT-NORMAL-BOUNDARY.md):
 the outgoing auxiliary/shift-normal policy improves the boundary defect and

@@ -10,6 +10,7 @@ def main():
   inputs[str(path)]=hashlib.sha256(path.read_bytes()).hexdigest();return json.loads(path.read_text()) if path.suffix=='.json' else np.load(path)
  for label,baseline,perturbed in a.pair:
   b,p=Path(baseline),Path(perturbed);bc=read(b/'manifest.json')['config'];pc=read(p/'manifest.json')['config']
+  assert bc.get('compatible_lapse',0.)==pc.get('compatible_lapse',0.)
   for key in bc:
    if key not in ('output','perturbation'):assert bc[key]==pc[key],key
   assert bc['perturbation']=='none' and pc['perturbation']!='none'

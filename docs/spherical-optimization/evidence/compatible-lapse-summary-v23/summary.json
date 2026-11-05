@@ -1,0 +1,303 @@
+{
+  "inputs": {
+    "docs/spherical-optimization/evidence/shift-normal-four-10M-v21/comparison.json": "c9c9315d67c352faff399877a66e9a514648f06cf07925bcb4d5fe637a7aba84",
+    "docs/spherical-optimization/evidence/compatible-lapse-four-10M-v23/comparison.json": "1e8339250583b5d1d3b159fec7df3751033ba72574e76b64902e20854bb9abc3",
+    "docs/spherical-optimization/evidence/compatible-lapse-pulse-response-v23/comparison.json": "6635ff59b9c49e789e56970b21f5fbb9df03637819de791868595daa666ec51a",
+    "docs/spherical-optimization/evidence/compatible-lapse-temporal-v23/convergence.json": "2ce9e12335001f4240466c3116559650d180d23cb17a12382dbfd0729dcddbc1",
+    "docs/spherical-optimization/evidence/compatible-lapse-transient-temporal-v23/convergence.json": "bcc9716ed5352adeaa50350db348843d94076a81bae6da18f8f18ed651ff01f6",
+    "docs/spherical-optimization/evidence/compatible-lapse-spatial-v23/convergence.json": "f16f0683487f84fbfdad4a2f58e9287234b22c8c01910df68f2563adfeccd341"
+  },
+  "source_sha256": "dcb64b17bacb71868c071b07f81f048028a18510b7f79ecc67543de25460bd1e",
+  "accuracy": [
+    {
+      "case": "compatible-lapse-f1-n64-10M-v23",
+      "binary_sha256": "44f30a3d0038665476c4c86b0d8734919479ad80720350d69eede2b99a7e3b05",
+      "n": 64,
+      "seconds": 4.7181895,
+      "physical_rms": [
+        0.00207569727867843,
+        0.0010278983118449327,
+        0.0006055665561029055,
+        0.00085709107715484
+      ],
+      "interpolation_rms": [
+        0.00029944447525421305,
+        0.00013289571363486218,
+        8.281184995458927e-05,
+        0.00013683838232235576
+      ],
+      "auxiliary_probes": [
+        {
+          "epsilon": 5.71907211397988e-06,
+          "trace_rate": 0.11821076645162809,
+          "pde_rate": 0.4770185039785768,
+          "defect": -0.3588077375269487
+        },
+        {
+          "epsilon": 1.7157216341939638e-06,
+          "trace_rate": 0.11821076637721298,
+          "pde_rate": 0.4770185039785768,
+          "defect": -0.35880773760136386
+        },
+        {
+          "epsilon": 5.719072113979879e-07,
+          "trace_rate": 0.11821076770374354,
+          "pde_rate": 0.4770185039785768,
+          "defect": -0.35880773627483326
+        }
+      ],
+      "clock": -0.08812813528475028,
+      "pole": 0.8729668390906966,
+      "trace": 0.5213072263907021,
+      "D_mismatch": 0.0,
+      "reference_step": 0.000125,
+      "scri_tangency": 0.17452469941614368
+    },
+    {
+      "case": "compatible-lapse-f1-n128-10M-v23",
+      "binary_sha256": "44f30a3d0038665476c4c86b0d8734919479ad80720350d69eede2b99a7e3b05",
+      "n": 128,
+      "seconds": 16.272743417,
+      "physical_rms": [
+        0.0005351126843705245,
+        0.0002866724998057902,
+        0.00010111024614850106,
+        0.00013324325139988475
+      ],
+      "interpolation_rms": [
+        6.789524778679895e-05,
+        3.52180197764701e-05,
+        1.0762870907330376e-05,
+        1.692024867482246e-05
+      ],
+      "auxiliary_probes": [
+        {
+          "epsilon": 5.62809318711923e-06,
+          "trace_rate": 0.05152249867931959,
+          "pde_rate": -0.004955026408696828,
+          "defect": 0.056477525088016414
+        },
+        {
+          "epsilon": 1.6884279561357692e-06,
+          "trace_rate": 0.051522498940695056,
+          "pde_rate": -0.004955026408696828,
+          "defect": 0.056477525349391884
+        },
+        {
+          "epsilon": 5.62809318711923e-07,
+          "trace_rate": 0.05152249810232091,
+          "pde_rate": -0.004955026408696828,
+          "defect": 0.056477524511017736
+        }
+      ],
+      "clock": -0.07100494568875948,
+      "pole": 0.07419298801459262,
+      "trace": 0.009494969542078568,
+      "D_mismatch": 0.0,
+      "reference_step": 0.000125,
+      "scri_tangency": 7.065629239264449e-05
+    },
+    {
+      "case": "compatible-lapse-f1-n256-10M-v23",
+      "binary_sha256": "44f30a3d0038665476c4c86b0d8734919479ad80720350d69eede2b99a7e3b05",
+      "n": 256,
+      "seconds": 48.047814249999995,
+      "physical_rms": [
+        5.395585957751308e-05,
+        2.792795430160752e-05,
+        4.627243574089456e-06,
+        7.143662559707035e-06
+      ],
+      "interpolation_rms": [
+        4.213130528600697e-06,
+        2.2339936088642254e-06,
+        2.7716765254240215e-07,
+        5.066889002817053e-07
+      ],
+      "auxiliary_probes": [
+        {
+          "epsilon": 5.6072242758235595e-06,
+          "trace_rate": 0.04916916162855048,
+          "pde_rate": 0.05286921702504466,
+          "defect": -0.0037000553964941785
+        },
+        {
+          "epsilon": 1.6821672827470679e-06,
+          "trace_rate": 0.04916916165165032,
+          "pde_rate": 0.05286921702504466,
+          "defect": -0.003700055373394337
+        },
+        {
+          "epsilon": 5.607224275823559e-07,
+          "trace_rate": 0.04916916117315351,
+          "pde_rate": 0.05286921702504466,
+          "defect": -0.0037000558518911486
+        }
+      ],
+      "clock": -0.009544416515918419,
+      "pole": 0.007537215925517305,
+      "trace": 0.00419262049073299,
+      "D_mismatch": 0.0,
+      "reference_step": 0.000125,
+      "scri_tangency": 1.841587307575658e-06
+    },
+    {
+      "case": "compatible-lapse-f1-n512-10M-v23",
+      "binary_sha256": "44f30a3d0038665476c4c86b0d8734919479ad80720350d69eede2b99a7e3b05",
+      "n": 512,
+      "seconds": 164.87986537499998,
+      "physical_rms": [
+        1.3879323905569854e-06,
+        7.142325211400436e-07,
+        9.274069645334599e-08,
+        1.4910882439439224e-07
+      ],
+      "interpolation_rms": [
+        4.957870213755764e-08,
+        2.54531057275783e-08,
+        3.068444999376775e-09,
+        4.8502003785268824e-09
+      ],
+      "auxiliary_probes": [
+        {
+          "epsilon": 5.602467134735873e-06,
+          "trace_rate": 0.04838702314959559,
+          "pde_rate": 0.05069250744429915,
+          "defect": -0.0023054842947035636
+        },
+        {
+          "epsilon": 1.680740140420762e-06,
+          "trace_rate": 0.04838702313803586,
+          "pde_rate": 0.05069250744429915,
+          "defect": -0.002305484306263289
+        },
+        {
+          "epsilon": 5.602467134735872e-07,
+          "trace_rate": 0.04838702335271657,
+          "pde_rate": 0.05069250744429915,
+          "defect": -0.0023054840915825783
+        }
+      ],
+      "clock": -0.005244287453934959,
+      "pole": 0.004677338582353307,
+      "trace": 0.002289663229015748,
+      "D_mismatch": 0.0,
+      "reference_step": 0.000125,
+      "scri_tangency": 2.758886366743948e-06
+    }
+  ],
+  "pulse_finals": [
+    {
+      "label": "original-gauge-N128",
+      "t_M": 20.0,
+      "max_field_response": 0.028548956410606063,
+      "field_response_RMS": 0.004530088964959165,
+      "max_lapse_shift_response": 3.061622676914233e-05
+    },
+    {
+      "label": "original-gauge-N256",
+      "t_M": 20.0,
+      "max_field_response": 17.047969624164867,
+      "field_response_RMS": 1.2525791168156295,
+      "max_lapse_shift_response": 0.006231390608954057
+    },
+    {
+      "label": "compatible-gauge-N128",
+      "t_M": 20.0,
+      "max_field_response": 2.0096466997188145e-06,
+      "field_response_RMS": 4.718351061412354e-07,
+      "max_lapse_shift_response": 2.358289197257335e-08
+    },
+    {
+      "label": "compatible-gauge-N256",
+      "t_M": 20.0,
+      "max_field_response": 1.3306155821624088e-07,
+      "field_response_RMS": 2.0757797014951152e-08,
+      "max_lapse_shift_response": 1.3085228798941084e-10
+    },
+    {
+      "label": "compatible-constraint-N128",
+      "t_M": 20.0,
+      "max_field_response": 2.4255200450795655e-05,
+      "field_response_RMS": 5.786102496953582e-06,
+      "max_lapse_shift_response": 2.9266904355562673e-07
+    },
+    {
+      "label": "compatible-constraint-N256",
+      "t_M": 20.0,
+      "max_field_response": 2.387355266364466e-05,
+      "field_response_RMS": 5.689006774163121e-06,
+      "max_lapse_shift_response": 2.873201224717903e-07
+    },
+    {
+      "label": "compatible-gauge-N128-long",
+      "t_M": 40.0,
+      "max_field_response": 2.3015264076775566e-06,
+      "field_response_RMS": 3.782426648175719e-07,
+      "max_lapse_shift_response": 1.1376747433011758e-08
+    }
+  ],
+  "temporal_10M": [
+    [
+      1.7190018900430584,
+      0.7090062516314204,
+      0.8493926209707738,
+      3.046668058284565,
+      2.7989711131152792,
+      1.2144954355656654,
+      4.390851535837609,
+      2.8461073003581165,
+      0.09477853520636169,
+      0.8131820353926478,
+      2.3739904919836414,
+      1.7947224691253505
+    ]
+  ],
+  "temporal_1M": [
+    [
+      4.022793466071974,
+      4.0036319603638235,
+      4.003692308368935,
+      4.005576500574559,
+      4.0023958195849705,
+      4.005362048765325,
+      3.996585100627327,
+      4.028592096918643,
+      4.018786588658978,
+      4.0182210023006615,
+      5.341456299791819,
+      4.032576920760059
+    ]
+  ],
+  "spatial": [
+    [
+      4.9657593599862455,
+      4.941093772068418,
+      4.905911506507492,
+      4.321327640482879,
+      4.008942348440152,
+      4.633029538600958,
+      2.5357603579345285,
+      3.8748020652650026,
+      5.291612427866289,
+      4.599544324543028,
+      3.988590682169908,
+      3.82781204073273
+    ],
+    [
+      3.0408882910767137,
+      3.1132719367691566,
+      3.1299587757142406,
+      3.6385059793066232,
+      3.853585925856442,
+      3.39141255899245,
+      4.486564099612812,
+      3.7050377459200616,
+      2.8531848856007858,
+      3.404034127055825,
+      5.158623820468707,
+      3.765078710252714
+    ]
+  ],
+  "qualification": "Concurrent runs are not controlled timings; boundary convergence and robust timestep gates remain unresolved."
+}
