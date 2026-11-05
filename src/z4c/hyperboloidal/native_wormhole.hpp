@@ -59,6 +59,31 @@ class NativeWormhole {
       throw std::runtime_error("nonfinite native initial data");
     cache_.emplace(r,v);return v;
   }
+  // Derivatives in the exact S=1 outer plateau, in the native Omega=(1-r²)/2
+  // frame. Differentiate y=1/R through y'=-sqrt(1+y²-2 M y³)/r, not through
+  // the quadrature/inversion tolerance. Order: chi, Ar, K, conformal lapse,
+  // shift_ratio. At scri chi=1+O((1-r)^3), alpha=(1+r²)/2+O((1-r)^3).
+  struct OuterDerivatives {std::array<double,5> first{},second{};};
+  OuterDerivatives OuterRadialDerivatives(double r) {
+    if(!(r>=OuterTransitionRadius()&&r<=1))
+      throw std::invalid_argument("outer reference derivatives require S=1");
+    OuterDerivatives out{};
+    if(r==1){out.first[3]=1;out.second[3]=1;return out;}
+    const auto v=Point(r);
+    const long double x=r,y=1.L/v.areal,m=mass_,o=(1-x*x)/2;
+    const long double F=std::sqrt(1+y*y-2*m*y*y*y);
+    const long double Fy=(y-3*m*y*y)/F;
+    const long double Fyy=(1-6*m*y)/F-Fy*Fy/F;
+    const long double yp=-F/x,ypp=F*(1+Fy)/(x*x);
+    const long double log_o=-x/o,log_opp=-1/o-log_o*log_o;
+    const long double c1=2*(1/x+yp/y-log_o);
+    const long double c2=2*(-1/(x*x)+ypp/y-yp*yp/(y*y)-log_opp);
+    const long double a1=log_o+(Fy/F-1/y)*yp;
+    const long double a2=log_opp+(Fyy/F-Fy*Fy/(F*F)+1/(y*y))*yp*yp+(Fy/F-1/y)*ypp;
+    out.first[0]=v.chi*c1;out.second[0]=v.chi*(c1*c1+c2);
+    out.first[3]=v.lapse*a1;out.second[3]=v.lapse*(a1*a1+a2);
+    return out;
+  }
   std::array<double,31> Fields(const double x[3]){
     const double r=std::sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);
     const auto v=Point(r);std::array<double,31> q{};

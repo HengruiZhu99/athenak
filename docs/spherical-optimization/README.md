@@ -114,12 +114,12 @@ in the newer runner, the attempted stage.
 ## Reproduce locally
 
 ```
-cmake -S tst/spherical_optimization -B build-spherical \
+cmake -S tst/spherical_optimization -B build-spherical -DCMAKE_BUILD_TYPE=Release \
   -DKOKKOS_SOURCE=/path/to/local/kokkos
 cmake --build build-spherical -j 4
 ctest --test-dir build-spherical --output-on-failure
 python3 -m venv build-spherical/python
-build-spherical/python/bin/pip install numpy scipy matplotlib
+build-spherical/python/bin/pip install numpy scipy matplotlib mpmath==1.3.0
 build-spherical/python/bin/python tst/spherical_optimization/audit.py \
   --library build-spherical/libcurrent_spherical.dylib --output fresh-audit
 build-spherical/python/bin/python tst/spherical_optimization/run.py \
@@ -421,3 +421,87 @@ The reduced compact allocation to the physical central region is a relevant
 next resolution test. The boundary-rejection, temporal-refinement and wide-family resolution plots
 were rendered and inspected. No Aurora run, parent-campaign edit or 3D
 stability assertion was made.
+
+## Radial allocation, reference tails and Release build (v11–v13)
+
+The areal 20–80M family now has 10M controls at N=64/128/256. The common
+reference-exterior constraint indicators are .01673, .01045 and .004930.
+At N=256 the horizon mass improves to .333258, but the clock residual remains
+.1001 and the differential D defect is -40.12. Lambda/D field differences
+still converge only about first order over these resolutions. There is no
+admitted 10M candidate.
+
+The dominant exterior error is localized near r=.95, not broadly distributed
+through the central plateau. At N=256, peak H and M occur at reference
+R/M=62.5 and 68.2; the Lambda/D gradient half-maximum covers only **two grid
+points**. The lapse/shift gradient half-maximum covers six. Saved unsmoothed
+profiles, gradients and the inspected plot are in
+`width4-long-localization-v13`. The preceding v12 analysis directory records a
+JSON integer-serialization error, not a simulation failure.
+
+Both signs of the monotone quadratic radial grading are now available.
+`--grading -.3` concentrates points toward the puncture chart; `+.3`
+concentrates them toward scri. Separate controls either hold the coefficient
+kappa fixed or set kappa/dr_scri equal to the uniform-grid value. No state
+floors or extra KO were added. At N=128 and 10M:
+
+| Grid / penalty policy | Exterior indicator | Horizon mass | Clock residual magnitude |
+|---|---:|---:|---:|
+| Uniform |.01045|.28088|.568|
+| Central refinement, matched rate |.01228|.34312|.449|
+| Outer refinement, matched rate |.007853|.19961|1.110|
+| Both ends refined, fixed coefficient |.003941|.33373|.0444|
+
+The two-end option is `--grid-map two-end --grading -.5`, using
+r=x+g*x*(1-x)*(1-2*x). Its Jacobian is positive for the accepted |g|<1 range.
+Grid/stencil checks reproduce degree-six polynomial derivatives at the
+one-sided puncture and scri rows to below 3e-11. The two-end **matched-rate**
+control lowers kappa to .33314 and fails near .2065M; a four-times smaller
+step fails near .2067M. Its initial semidiscrete operator has a scri-localized
+growth eigenvalue 401.74. Retaining kappa=.65104 reduces the largest real
+eigenvalue to .6254 and completes 10M, but its differential D defect is still
+108.26. Thus equal penalty rates across grids are not sufficient for boundary
+stability, and the surviving control is not yet accurate enough to admit.
+The fixed/matched coefficient comparisons and failed stages are preserved.
+
+`NativeWormhole::OuterRadialDerivatives` supplies shared C++ derivatives on the
+exact S=1 outer plateau, using the inverse-map ODE rather than differencing
+quadrature noise. At scri, chi'=chi''=0, alpha'=alpha''=1 and beta'=-1, beta''=0
+in the laboratory's total-field representation. `--reference-tail scri`
+applies just the endpoint limits; `outer` also uses the analytic differentiated
+map in the outer plateau. Neither option changes evolved equations or resets
+constraints. Independent 70-digit integration/differentiation agrees with
+outer derivatives to 5.69e-8 at r=.999 and much better farther inside; the
+remaining error comes from the double-precision map value and cancellation.
+The 128-point 1M D defect decreases from 5.05e-5 to 2.14e-6 with exact scri
+jets, while the exterior indicator is unchanged. At 10M the large defect is
+unchanged to useful accuracy. Reference differentiation explains a small
+short-time floor, not the dominant long-time problem.
+
+Full 26-field point-symbol checks now include radial, transverse and oblique
+directions on sampled evolved states through 10M. The inspected wider N=128
+run has no numerically defective eigenvalue clusters at those samples, and
+imaginary parts remain below 7e-16. Eigenspace condition numbers reach about
+1.8e4. This is not uniform endpoint hyperbolicity, a nonspherical evolution
+test, or evidence of boosted/3D stability.
+
+The CMake default `Release` assignment did not replace an already-created
+empty cache entry. Both earlier build directories therefore omitted optimizer
+flags. The corrected default preserves explicit user build choices and selects
+Release when the cache is empty. A separate `build-spherical-v12` uses `-O3`,
+`-DNDEBUG`, and the same `-ffp-contract=off`. On 257 off-constraint jets its
+normalized RHS difference from the old library is exactly zero; initial data
+differ by at most 1.11e-16. The matched uniform N=128 10M run drops from 154.08
+to 29.24 seconds, with maximum final field difference 6.81e-10. This observed
+5.27x change is **compiler optimization**, not a formulation or GPU speedup.
+It is kept separate from physics comparisons; overlapping independent controls
+also make these exploratory timing observations. Both binaries, flags and
+caches are preserved. New run manifests capture build metadata, and plots
+mixing binary identities explicitly prohibit ranking runtimes.
+
+The next profile is the handoff's compact-coordinate slicing construction,
+which preserves the central compact scale while spreading the outer feature.
+The implementation and validation requirements are in
+[COMPACT-PROFILE-NEXT.md](COMPACT-PROFILE-NEXT.md). It has not been implemented
+in shared C++ yet. This is the next substantive step; increasing advertised
+CFL or accepting the surviving coarse-grid runs would not meet the goal.

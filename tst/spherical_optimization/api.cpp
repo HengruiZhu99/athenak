@@ -56,6 +56,18 @@ extern "C" int spherical_initial(void*v,int n,const double*r,double*q,double*sou
    std::copy(src,src+6,sources+6*i);
   }return 0;
  }catch(const std::exception&e){error=e.what();return 1;}}
+extern "C" int spherical_outer_reference_jets(void*v,int n,const double*r,double*d,double*dd){
+ try{auto&l=*static_cast<Lab*>(v);
+  for(int i=0;i<n;++i){
+   if(r[i]<l.p.profile.outer_radius)throw std::invalid_argument("outer reference jet needs native conformal frame");
+   const auto j=l.native->OuterRadialDerivatives(r[i]);
+   s::State first{},second{};
+   first[s::chi]=j.first[0];second[s::chi]=j.second[0];
+   first[s::alpha]=j.first[3];second[s::alpha]=j.second[3];
+   first[s::beta]=-1;
+   std::copy(first.begin(),first.end(),d+12*i);std::copy(second.begin(),second.end(),dd+12*i);
+  }return 0;
+ }catch(const std::exception&e){error=e.what();return 1;}}
 extern "C" int spherical_current_parts(void*v,int n,const double*r,const double*q,const double*d,const double*dd,
  const double*sources,double*regular,double*pole,double*traces,double*diagnostics){
  try{auto&l=*static_cast<Lab*>(v);

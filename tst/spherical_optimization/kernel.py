@@ -12,6 +12,7 @@ class Kernel:
                     'spherical_auxiliary':([v,i]+[a]*5,i),'spherical_error':([],C.c_char_p),'spherical_configuration':([v,a],i),
                     'spherical_initial':([v,i,a,a,a,a],i),'spherical_current_parts':([v,i]+[a]*9,i),
                     'spherical_scri':([v]+[a]*4+[d,d,a,a],i),'spherical_symbol':([v,d,a,a,a],i),'spherical_gauge_speeds':([v,d,a,a],i)}
+        if hasattr(self.lib,'spherical_outer_reference_jets'):signatures['spherical_outer_reference_jets']=([v,i,a,a,a],i)
         for name,(args,result) in signatures.items():
             f=getattr(self.lib,name);f.argtypes=args;f.restype=result
         self.handle=self.lib.spherical_create(mode,radius,slicing_ratio,int(separated))
@@ -42,5 +43,8 @@ class Kernel:
         P=np.zeros((12,12));self.check(self.lib.spherical_free_radial_symbol(self.handle,r,np.ascontiguousarray(q),P));return P
     def gauge_speeds(self,r,q):
         out=np.zeros(4);self.check(self.lib.spherical_gauge_speeds(self.handle,r,np.ascontiguousarray(q),out));return out
+    def outer_reference_jets(self,r):
+        r=np.ascontiguousarray(r);d=np.zeros((len(r),12));dd=np.zeros_like(d)
+        self.check(self.lib.spherical_outer_reference_jets(self.handle,len(r),r,d,dd));return d,dd
     def close(self):
         if self.handle:self.lib.spherical_destroy(self.handle);self.handle=None

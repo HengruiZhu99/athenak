@@ -13,16 +13,23 @@ from kernel import Kernel,PARITY
 from physical_constraints import evaluate as physical_constraints
 
 class Evolution:
-    def __init__(self,kernel,n,grading=0.,penalty=.6510416666660156,ko=.5,floors=False,normal_policy="sampled",reference_jets=False,reference_step=5e-4):
+    def __init__(self,kernel,n,grading=0.,penalty=.6510416666660156,ko=.5,floors=False,normal_policy="sampled",reference_jets=False,reference_step=5e-4,reference_tail="numerical",grid_map="quadratic"):
         self.kernel=kernel;self.n=n;self.penalty=penalty;self.ko=ko;self.floors=floors;self.normal_policy=normal_policy
         x=(np.arange(n)+.5)/(n-.5)
-        # Monotone smooth grading: finer toward scri. Actual dr enters all CFLs.
-        if not 0<=grading<1:raise ValueError('grading must lie in [0,1)')
-        self.r=x+grading*x*(1-x);self.r[-1]=1
+        # Monotone quadratic map: positive grading refines scri, negative grading
+        # refines the puncture chart. dr/dx >= 1-|grading| > 0.
+        if not -1<grading<1:raise ValueError('grading must lie in (-1,1)')
+        if grid_map not in ("quadratic","two-end"):raise ValueError("unknown radial map")
+        shape=x*(1-x) if grid_map=="quadratic" else x*(1-x)*(1-2*x)
+        # For two-end: dr/dx=1+g*(1-6*x+6*x²), positive for |g|<1.
+        # Negative g refines both ends without imposing puncture parity.
+        self.r=x+grading*shape;self.r[-1]=1
         self.dr=np.r_[np.diff(self.r),self.r[-1]-self.r[-2]]
         self.h=float(min(self.dr));self.op=RadialOperators(self.r,width=7,puncture=True,subtract_local=True)
         self.initial,self.source,self.omega=kernel.initial(self.r)
-        self.reference_jets=reference_jets;self.reference_jet_difference=None
+        self.reference_jets=reference_jets;self.reference_jet_difference=None;self.reference_tail_correction=None
+        if reference_tail not in ("numerical","scri","outer"):raise ValueError("unknown reference tail policy")
+        if reference_tail!="numerical" and not reference_jets:raise ValueError("analytic reference tail requires reference jets")
         if reference_jets:
             derivatives=[]
             if reference_step<=0:raise ValueError("reference step must be positive")
@@ -37,6 +44,13 @@ class Evolution:
                 derivatives.append((np.einsum('ij,ijf->if',np.array(first),samples),np.einsum('ij,ijf->if',np.array(second),samples)))
             self.reference_d,self.reference_dd=derivatives[-1]
             self.reference_jet_difference=np.stack([derivatives[1][j]-derivatives[0][j] for j in (0,1)])
+            if reference_tail!="numerical":
+                mask=self.r==1 if reference_tail=="scri" else self.r>=max(kernel.config[5],kernel.config[12])
+                d,dd=kernel.outer_reference_jets(self.r[mask])
+                self.reference_tail_correction=np.zeros((2,self.n,12))
+                self.reference_tail_correction[0,mask]=d-self.reference_d[mask]
+                self.reference_tail_correction[1,mask]=dd-self.reference_dd[mask]
+                self.reference_d[mask]=d;self.reference_dd[mask]=dd
         self.normal=weights(self.r[-7:],1.,1)
         self.calls=0;self.floor_calls=0;self.floor_max_r=0.;self.last={};self.max_speed=0.
         self.cumulative_rhs_seconds=0.;self.step_speed_over_dr=0.;self.worst_speed_over_dr=0.

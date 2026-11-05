@@ -27,22 +27,23 @@ def main():
   sample=PchipInterpolator(R,phys[mask])(common);linear=np.column_stack([np.interp(common,R,phys[mask,f]) for f in range(4)])
   rms=np.sqrt(np.mean(sample**2,axis=0));interp=np.sqrt(np.mean((sample-linear)**2,axis=0))
   k=Kernel(a.library,cfg['mode'],cfg['radius'],cfg['slicing_ratio'],cfg['separated'])
-  e=(DerivativeBoundaryEvolution if cfg.get('derivative_boundary',False) else ChartEvolution)(k,cfg['n'],cfg['grading'],cfg['penalty'],cfg['ko'],cfg['floors'],cfg.get('normal_policy','sampled'),cfg.get('reference_jets',False),cfg.get('reference_step',5e-4))
+  e=(DerivativeBoundaryEvolution if cfg.get('derivative_boundary',False) else ChartEvolution)(k,cfg['n'],cfg['grading'],cfg['penalty'],cfg['ko'],cfg['floors'],cfg.get('normal_policy','sampled'),cfg.get('reference_jets',False),cfg.get('reference_step',5e-4),cfg.get('reference_tail','numerical'),cfg.get('grid_map','quadratic'))
   state=q[:,e.independent];rate=e.rhs(state);base=e.last.copy();probe=[]
   for scale in (1e-5,3e-6,1e-6):
    eps=scale/max(1.,np.max(abs(rate)));e.rhs(state+eps*rate);plus=e.last['dependent_D'];e.rhs(state-eps*rate);minus=e.last['dependent_D']
    trace=(plus-minus)/(2*eps);probe.append(dict(epsilon=float(eps),trace_rate=float(trace),pde_rate=float(base['auxiliary_trace_pde']),defect=float(trace-base['auxiliary_trace_pde'])))
-  row=dict(case=name,n=cfg['n'],seconds=result['stepping_seconds'],physical_rms=rms.tolist(),interpolation_rms=interp.tolist(),auxiliary_probes=probe,
+  row=dict(case=name,binary_sha256=json.loads((folder/'manifest.json').read_text())['binary_sha256'],n=cfg['n'],seconds=result['stepping_seconds'],physical_rms=rms.tolist(),interpolation_rms=interp.tolist(),auxiliary_probes=probe,
            clock=float(base['clock']),pole=float(max(abs(base['pole']))),trace=float(max(abs(base['trace']))),D_mismatch=float(base['dependent_D']-base['q'][-1,11]),reference_step=cfg.get('reference_step',5e-4),scri_tangency=float(max(abs(base['tangency'][-1]))))
   rows.append(row);k.close()
- (a.output/'comparison.json').write_text(json.dumps(dict(domain=f'Reference R/M 25–100, uniform log-R RMS, t={duration:g}M',runs=rows,qualification='No robust or converged candidate admitted.'),indent=2)+'\n')
+ timing_same_binary=len({x['binary_sha256'] for x in rows if 'binary_sha256' in x})<=1
+ (a.output/'comparison.json').write_text(json.dumps(dict(domain=f'Reference R/M 25–100, uniform log-R RMS, t={duration:g}M',runs=rows,timing_same_binary=timing_same_binary,qualification='No robust or converged candidate admitted.'),indent=2)+'\n')
  fig,ax=plt.subplots(1,2,figsize=(11,4.5),layout='constrained')
  for row in rows:
   if 'physical_rms' not in row:continue
   label=row['case'].replace('chart-','').replace('-1M-v6','').replace('-1M-v4','').replace('-1M-v8','')
   ax[0].loglog(row['seconds'],max(row['physical_rms']),'o',label=label)
   ax[1].loglog(row['n'],abs(row['auxiliary_probes'][-1]['defect']),'o',label=label)
- ax[0].set(xlabel=f'Measured {duration:g}M CPU seconds',ylabel='Max physical constraint RMS (dimensionless)',title='Common reference exterior')
+ ax[0].set(xlabel=f'Measured {duration:g}M CPU seconds',ylabel='Max physical constraint RMS (dimensionless)',title='Common reference exterior' if timing_same_binary else 'Mixed binaries: do not rank runtimes')
  ax[1].set(xlabel='Radial points',ylabel='Differential D trace defect',title='Boundary compatibility remains a gate')
  ax[0].legend(fontsize=7)
  for axes in ax:axes.grid(True,which='both',alpha=.25)
