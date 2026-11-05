@@ -13,8 +13,10 @@ shared spherical/Cartesian and local host/device parity checks. Through 1024 poi
 it improves boundary residuals and second-derivative convergence while
 increasing exterior error at fixed points.
 The [compatible-lapse spatial policy](COMPATIBLE-LAPSE.md) removes the earlier
-discrete interior instability. The late 40M pulse upturn, robust timesteps and controlled fixed-error costs
-remain gates; no candidate is admitted.
+discrete interior instability. The [RK4 and pulse controls](RK4-LIMITS.md) now support characteristic CFL .55
+for the tested finite durations, with about 12% margin below sampled frozen
+limits. The late response is resolved in timestep and amplitude. A lower-penalty
+tradeoff and controlled fixed-error costs remain; no overall candidate is admitted.
 
 Boundary results are in [SHIFT-NORMAL-BOUNDARY.md](SHIFT-NORMAL-BOUNDARY.md):
 the outgoing auxiliary/shift-normal policy improves the boundary defect and

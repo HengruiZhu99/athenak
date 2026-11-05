@@ -1,0 +1,52 @@
+{
+  "reference": [
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-none-40M-v26",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-constraint-40M-c0.4-amp1e-05-v27"
+  ],
+  "rows": [
+    {
+      "label": "CFL 0.55",
+      "parameter_changes": {
+        "fixed_dt": [
+          0.0006484752444197183,
+          0.0008916534610771128
+        ]
+      },
+      "amplitude_ratio": 1.0,
+      "regions": [
+        {
+          "region": "all",
+          "max_response": 2.538097422188912e-05,
+          "max_response_difference": 2.080282127114863e-12,
+          "relative_L2_difference": 5.978263757498891e-08,
+          "peak_r": 0.8747553816046967,
+          "peak_field": "Ar"
+        },
+        {
+          "region": "exterior",
+          "max_response": 2.538097422188912e-05,
+          "max_response_difference": 1.836003571398237e-12,
+          "relative_L2_difference": 4.863375885314903e-08,
+          "peak_r": 0.8747553816046967,
+          "peak_field": "Ar"
+        }
+      ]
+    }
+  ],
+  "inputs": {
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-none-40M-v26/manifest.json": "b7ab960f44948e2f236840f460c67bfc067c233385fb885100f0bf8e9aa990e6",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-constraint-40M-c0.4-amp1e-05-v27/manifest.json": "8f62dfacc214d812f369575740d1e2f9d23f1a5fa98e00cde946d8f7f6ea0094",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-none-40M-v26/result.json": "6852877a4a25aadfe95b9de447c825bde5e258fe3f228f7666b5c48571f8d05f",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-constraint-40M-c0.4-amp1e-05-v27/result.json": "e165e22fec888bfc3baf436fcad9e03b31e8d85ed10c9614f8e41afd0d284aab",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-none-40M-v26/last-accepted.npz": "2350ae0182efb04f6f10ab067d7d64aeb7939d505dfbae485677d7a36c9c9c05",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-constraint-40M-c0.4-amp1e-05-v27/last-accepted.npz": "77280532205217ef71a6415b6f9ef2fdd4edb1e5a1b348408c8b4262e6d0a409",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-none-40M-c0.55-amp1e-05-v27/manifest.json": "b9a435355c20e3e1bf1a7209fa8a5f95406b887993066aba619cf6a48cb6ba61",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-constraint-40M-c0.55-amp1e-05-v27/manifest.json": "bea72e600184638600902510ff7893ef6f94924f759932ac4e02895df3b7dae8",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-none-40M-c0.55-amp1e-05-v27/result.json": "70e9c81dc044ea4c89dfaa2cddb42a8c910a964e0a444bd7a28bcf1e1c86aec4",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-constraint-40M-c0.55-amp1e-05-v27/result.json": "5f0f5fdfa983d4290f96c8b5c236d188f7b40b7fe3175b87afea4725fe142f60",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-none-40M-c0.55-amp1e-05-v27/last-accepted.npz": "9f3a2f4589f232102d8eba7736675dc06a1d3b64c3e2d205f9d5c1c6f435611b",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-constraint-40M-c0.55-amp1e-05-v27/last-accepted.npz": "a9a248f1bb58025514b3dc891a48917028ac925aeca810e777131447366ed424"
+  },
+  "source_sha256": "b5aa0a4e7e1cb13942c8bc04b03e50ff9b21798f6e22bcce15451582046edafc",
+  "qualification": "Same-grid paired differences, normalized to reference pulse amplitude. All cross-case parameter changes are listed. Raw component norms are not energy norms; finite-duration agreement or amplitude linearity is not all-time stability."
+}

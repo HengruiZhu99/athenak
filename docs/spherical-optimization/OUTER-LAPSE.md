@@ -189,3 +189,10 @@ phase are not controlled cost measurements. The fine boundary evidence is now fa
 robust RK4 margins and controlled serial fixed-error costs still require
 qualification before an overall accuracy–cost admission. No Aurora or parent campaign work
 was performed.
+
+## Timestep follow-up
+
+[RK4-LIMITS.md](RK4-LIMITS.md) records the subsequent timestep, amplitude and
+long-pulse controls. It qualifies CFL .55 over the tested local durations and
+preserves the refined .625/.65 failures. The late response is resolved in time
+and amplitude; that does not establish its continuum origin or asymptotic decay.

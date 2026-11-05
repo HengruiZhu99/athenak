@@ -1,0 +1,37 @@
+{
+  "status": "failed",
+  "failure": {
+    "type": "FloatingPointError",
+    "message": "nonpositive chart metric",
+    "traceback": "Traceback (most recent call last):\n  File \"/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/spherical_optimization/run.py\", line 84, in main\n    q=e.step(q,dt);t+=dt;steps+=1;dt_min=min(dt_min,dt);dt_max=max(dt_max,dt)\n  File \"/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/spherical_optimization/evolution.py\", line 183, in step\n    return super().step(q,dt)[:,self.independent]\n  File \"/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/spherical_optimization/evolution.py\", line 116, in step\n    a=self.rhs(q);b=self.rhs(q+dt*a/2);c=self.rhs(q+dt*b/2);d=self.rhs(q+dt*c)\n  File \"/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/spherical_optimization/evolution.py\", line 181, in rhs\n    return super().rhs(state,record)[:,self.independent]\n  File \"/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/spherical_optimization/evolution.py\", line 76, in rhs\n    started=time.perf_counter();self.attempted_state=state.copy();q=self.materialize(state)\n  File \"/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/spherical_optimization/evolution.py\", line 324, in materialize\n    q=super().materialize(state);w=self.outflow_width\n  File \"/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/spherical_optimization/evolution.py\", line 164, in materialize\n    full,_,_=self.kernel.expand_chart(state)\n  File \"/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/spherical_optimization/kernel.py\", line 58, in expand_chart\n    self.check(self.lib.spherical_expand_chart(len(q),q,d,dd,Q,D,DD));return Q,D,DD\n  File \"/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/spherical_optimization/kernel.py\", line 39, in check\n    if code:raise FloatingPointError(self.lib.spherical_error().decode())\nFloatingPointError: nonpositive chart metric\n"
+  },
+  "time_M": 1.1447949637240644,
+  "steps": 90,
+  "setup_seconds": 0.141887542,
+  "stepping_seconds": 0.39164983300000006,
+  "rhs_calls": 453,
+  "rhs_seconds": 0.3753722889999998,
+  "initial_speed": 2.414213562373095,
+  "worst_evaluated_speed": 4.390938599534977,
+  "worst_evaluated_speed_over_dr": 278.8246010704715,
+  "C_char_max_accepted": 1.1822111076586925,
+  "dt_min": 0.004239981347126162,
+  "dt_max": 0.004239981347126162,
+  "dt_over_M": 0.012719944041378488,
+  "min_dr_over_M": 0.04724409448818889,
+  "nominal_dt_over_min_dr": 0.2692388155425118,
+  "steps_per_M": 78.61669805676499,
+  "active_limiter": "explicit_fixed_dt",
+  "limits": {
+    "characteristic": 0.0013046096452695884,
+    "scri_policy": 0.0010078740157490377,
+    "telegrapher_policy": 0.016666666666666666
+  },
+  "floor_calls": 0,
+  "floor_max_r": 0.0,
+  "qualifications": [
+    "spherical CPU only",
+    "completion is not stability or convergence",
+    "differential D boundary compatibility not yet qualified"
+  ]
+}

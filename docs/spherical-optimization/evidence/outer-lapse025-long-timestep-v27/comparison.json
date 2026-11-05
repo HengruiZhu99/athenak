@@ -1,0 +1,38 @@
+{
+  "rows": [
+    {
+      "region": "all",
+      "coarse_max": 4.16416990667301e-07,
+      "fine_max": 4.1641748893539443e-07,
+      "relative_L2_difference": 4.552916738452812e-06,
+      "max_response_difference": 2.0701444031212546e-12,
+      "fine_peak_r": 0.9412915851272016,
+      "fine_peak_field": "Lambda"
+    },
+    {
+      "region": "exterior",
+      "coarse_max": 4.16416990667301e-07,
+      "fine_max": 4.1641748893539443e-07,
+      "relative_L2_difference": 2.883462194846382e-06,
+      "max_response_difference": 1.3367085216486885e-12,
+      "fine_peak_r": 0.9412915851272016,
+      "fine_peak_field": "Lambda"
+    }
+  ],
+  "inputs": {
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-none-40M-v26/manifest.json": "b7ab960f44948e2f236840f460c67bfc067c233385fb885100f0bf8e9aa990e6",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-gauge-40M-v26/manifest.json": "29e7fa573a77b1d827c8e2702cabd087f94426244d87a8327e24040461f10d79",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-none-40M-v26/result.json": "6852877a4a25aadfe95b9de447c825bde5e258fe3f228f7666b5c48571f8d05f",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-gauge-40M-v26/result.json": "cce23069f66dd9ceb7451066363eb4e7f6199e0f2194cc7f33093b5c402c098a",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-none-40M-v26/last-accepted.npz": "2350ae0182efb04f6f10ab067d7d64aeb7939d505dfbae485677d7a36c9c9c05",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-gauge-40M-v26/last-accepted.npz": "152d28d13e2f358d83a898a65740c08961630a09ed607d9db7fb8d33e598d51c",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-none-40M-dt2-v27/manifest.json": "7512e77d518b61c4adbd65dc3dcb44b4cb98694dbd8f297cf60b366b97d85665",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-gauge-40M-dt2-v27/manifest.json": "e8c076015aa2bdfcce5ab334e15fb47e871514760e7e95d1726eaae218b7ebbc",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-none-40M-dt2-v27/result.json": "75daff4b74b4de007064d40bbc7c342e295d3514c4c88d75a5962772b9254eeb",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-gauge-40M-dt2-v27/result.json": "71f17127c34b9e3f079c25578f56fa264be356e01c201f4095be8136e6007175",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-none-40M-dt2-v27/last-accepted.npz": "bde4a369d1cc14a7d2cba644a8dbdd753c8fb3012e129b8454dd0260fb7a543b",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-gauge-40M-dt2-v27/last-accepted.npz": "9126bcd9881271830cf65579cdf9c42b7cce1aed9bdf42dd3e7b3aba602ef8f4"
+  },
+  "source_sha256": "588dd43688997534eef72a2287773f7bb1bc186580c1ab43f675003b1a6b0a1f",
+  "qualification": "Same-grid final paired differences; two steps exclude leading RK sensitivity but do not measure temporal order or prove spatial stability. Raw component norm, not an energy."
+}

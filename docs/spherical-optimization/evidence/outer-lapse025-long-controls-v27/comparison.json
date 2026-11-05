@@ -1,0 +1,120 @@
+{
+  "reference": [
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-none-40M-v26",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-gauge-40M-v26"
+  ],
+  "rows": [
+    {
+      "label": "CFL 0.55",
+      "parameter_changes": {
+        "fixed_dt": [
+          0.0006484752444197183,
+          0.0008916534610771128
+        ]
+      },
+      "amplitude_ratio": 1.0,
+      "regions": [
+        {
+          "region": "all",
+          "max_response": 4.16417172743877e-07,
+          "max_response_difference": 1.8546778696171273e-12,
+          "relative_L2_difference": 3.5833076400404884e-06,
+          "peak_r": 0.9412915851272016,
+          "peak_field": "Lambda"
+        },
+        {
+          "region": "exterior",
+          "max_response": 4.16417172743877e-07,
+          "max_response_difference": 1.2685547057245117e-12,
+          "relative_L2_difference": 2.1484114317579307e-06,
+          "peak_r": 0.9412915851272016,
+          "peak_field": "Lambda"
+        }
+      ]
+    },
+    {
+      "label": "CFL 0.2",
+      "parameter_changes": {
+        "fixed_dt": [
+          0.0006484752444197183,
+          0.00032423762220985916
+        ]
+      },
+      "amplitude_ratio": 1.0,
+      "regions": [
+        {
+          "region": "all",
+          "max_response": 4.1641748893539443e-07,
+          "max_response_difference": 2.0701444031212546e-12,
+          "relative_L2_difference": 4.552920520481036e-06,
+          "peak_r": 0.9412915851272016,
+          "peak_field": "Lambda"
+        },
+        {
+          "region": "exterior",
+          "max_response": 4.1641748893539443e-07,
+          "max_response_difference": 1.3367085216486885e-12,
+          "relative_L2_difference": 2.8834652819972785e-06,
+          "peak_r": 0.9412915851272016,
+          "peak_field": "Lambda"
+        }
+      ]
+    },
+    {
+      "label": "Damping 1",
+      "parameter_changes": {
+        "outer_lapse_damping": [
+          0.25,
+          1.0
+        ]
+      },
+      "amplitude_ratio": 1.0,
+      "regions": [
+        {
+          "region": "all",
+          "max_response": 1.3453223957071714e-07,
+          "max_response_difference": 3.1267412725632937e-07,
+          "relative_L2_difference": 0.6689162325098742,
+          "peak_r": 0.8747553816046967,
+          "peak_field": "Ar"
+        },
+        {
+          "region": "exterior",
+          "max_response": 1.3453223957071714e-07,
+          "max_response_difference": 3.1267412725632937e-07,
+          "relative_L2_difference": 0.6966676284323758,
+          "peak_r": 0.8747553816046967,
+          "peak_field": "Ar"
+        }
+      ]
+    }
+  ],
+  "inputs": {
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-none-40M-v26/manifest.json": "b7ab960f44948e2f236840f460c67bfc067c233385fb885100f0bf8e9aa990e6",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-gauge-40M-v26/manifest.json": "29e7fa573a77b1d827c8e2702cabd087f94426244d87a8327e24040461f10d79",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-none-40M-v26/result.json": "6852877a4a25aadfe95b9de447c825bde5e258fe3f228f7666b5c48571f8d05f",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-gauge-40M-v26/result.json": "cce23069f66dd9ceb7451066363eb4e7f6199e0f2194cc7f33093b5c402c098a",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-none-40M-v26/last-accepted.npz": "2350ae0182efb04f6f10ab067d7d64aeb7939d505dfbae485677d7a36c9c9c05",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-gauge-40M-v26/last-accepted.npz": "152d28d13e2f358d83a898a65740c08961630a09ed607d9db7fb8d33e598d51c",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-none-40M-c0.55-amp1e-05-v27/manifest.json": "b9a435355c20e3e1bf1a7209fa8a5f95406b887993066aba619cf6a48cb6ba61",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-gauge-40M-c0.55-amp1e-05-v27/manifest.json": "7dba20164e6fb0ef1d588bfa622269526980f3530aaf63bfcf5072b672bc4bb0",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-none-40M-c0.55-amp1e-05-v27/result.json": "70e9c81dc044ea4c89dfaa2cddb42a8c910a964e0a444bd7a28bcf1e1c86aec4",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-gauge-40M-c0.55-amp1e-05-v27/result.json": "819ba18de937cca3703d1c99643f353148aaa64cd134fe226added4ee4dc6833",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-none-40M-c0.55-amp1e-05-v27/last-accepted.npz": "9f3a2f4589f232102d8eba7736675dc06a1d3b64c3e2d205f9d5c1c6f435611b",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-gauge-40M-c0.55-amp1e-05-v27/last-accepted.npz": "e175a35393deda9868e1c5ed44b478775e36257686d6c828d96f67185773e9f5",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-none-40M-dt2-v27/manifest.json": "7512e77d518b61c4adbd65dc3dcb44b4cb98694dbd8f297cf60b366b97d85665",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-gauge-40M-dt2-v27/manifest.json": "e8c076015aa2bdfcce5ab334e15fb47e871514760e7e95d1726eaae218b7ebbc",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-none-40M-dt2-v27/result.json": "75daff4b74b4de007064d40bbc7c342e295d3514c4c88d75a5962772b9254eeb",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-gauge-40M-dt2-v27/result.json": "71f17127c34b9e3f079c25578f56fa264be356e01c201f4095be8136e6007175",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-none-40M-dt2-v27/last-accepted.npz": "bde4a369d1cc14a7d2cba644a8dbdd753c8fb3012e129b8454dd0260fb7a543b",
+    "docs/spherical-optimization/evidence/outer-lapse025-n256-gauge-40M-dt2-v27/last-accepted.npz": "9126bcd9881271830cf65579cdf9c42b7cce1aed9bdf42dd3e7b3aba602ef8f4",
+    "docs/spherical-optimization/evidence/outer-lapse10-n256-none-40M-dt1-v27/manifest.json": "8b7f87fa6e3abb7166dc53df22975f563a90859adc1501028dfd96e351a1ed0b",
+    "docs/spherical-optimization/evidence/outer-lapse10-n256-gauge-40M-dt1-v27/manifest.json": "9146f082692b1a0e3f777e4001ac0e130829a291b9371e8bc9e9fbb90a8c6be0",
+    "docs/spherical-optimization/evidence/outer-lapse10-n256-none-40M-dt1-v27/result.json": "650a34716fff68dd01f9b3b327068a769ad1d181eaa8ec86dc0e8f439e6226e0",
+    "docs/spherical-optimization/evidence/outer-lapse10-n256-gauge-40M-dt1-v27/result.json": "68b2b8609cc7a9c296988fa121d7ebe0e78dccb3a39b60b43d87f57c2c37200b",
+    "docs/spherical-optimization/evidence/outer-lapse10-n256-none-40M-dt1-v27/last-accepted.npz": "2d9a549bc9406cbc5baac53ed619ac53b5b0c4ad96a5ee5a3e8ae109568c5ac7",
+    "docs/spherical-optimization/evidence/outer-lapse10-n256-gauge-40M-dt1-v27/last-accepted.npz": "d202e28f9bf53a11a46ff4067671e5064bb30eabab4a4756dc1f80f6c530e2ab"
+  },
+  "source_sha256": "b5aa0a4e7e1cb13942c8bc04b03e50ff9b21798f6e22bcce15451582046edafc",
+  "qualification": "Same-grid paired differences, normalized to reference pulse amplitude. All cross-case parameter changes are listed. Raw component norms are not energy norms; finite-duration agreement or amplitude linearity is not all-time stability."
+}

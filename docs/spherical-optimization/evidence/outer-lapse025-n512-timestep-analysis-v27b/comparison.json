@@ -1,0 +1,63 @@
+{
+  "duration_M": 10.0,
+  "n": 512,
+  "linearization": "docs/spherical-optimization/evidence/outer-lapse025-n128-10M-spectrum-v26",
+  "linearization_n": 128,
+  "same_resolution": false,
+  "runs": [
+    {
+      "target": 0.40000000000000036,
+      "status": "completed_unqualified",
+      "time_M": 10.0,
+      "seconds": 163.69496949999998,
+      "actual_C_char": 0.40000011393759555,
+      "failure": null,
+      "case": "outer-lapse025-n512-10M-v26",
+      "final_recorded_pole": 5.322489369954132e-05,
+      "final_recorded_clock": 2.2520577480311665e-05,
+      "field_difference_rms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "max_field_difference_rms": 0.0
+    },
+    {
+      "target": 0.55,
+      "status": "completed_unqualified",
+      "time_M": 10.0,
+      "seconds": 117.891774125,
+      "actual_C_char": 0.5500001566649526,
+      "failure": null,
+      "case": "C0.550",
+      "final_recorded_pole": 5.322481941773702e-05,
+      "final_recorded_clock": 2.252060961246971e-05,
+      "field_difference_rms": [
+        1.5278794207574167e-14,
+        1.3895980829141972e-14,
+        5.982402783364667e-15,
+        2.88806091634123e-13,
+        1.17276061372308e-13,
+        2.3260542970167183e-14,
+        1.5030533666263087e-14,
+        4.178661238503646e-13,
+        4.685716673626399e-15,
+        4.390256652232512e-15,
+        8.196412566732276e-16,
+        4.119743116442344e-13
+      ],
+      "max_field_difference_rms": 4.178661238503646e-13
+    }
+  ],
+  "decaying_eigenvalue_RK4_C_char_bound": 0.6225688698375138,
+  "qualification": "Frozen decaying-eigenspace absolute-stability bound and unperturbed nonlinear runs only; positive growth modes, nonnormal transients, boundary incompatibility and perturbation accuracy prevent robust timestep admission."
+}
