@@ -1,0 +1,45 @@
+{
+  "phase_runs": 52,
+  "completed": 49,
+  "preserved_failures": 3,
+  "all_phase_runs_no_floors": true,
+  "benchmark_runs": 27,
+  "benchmark_configs": 9,
+  "all_repeat_states_bitwise": true,
+  "execution_sources_match_frozen_plan": true,
+  "phase_sources_match_archive_manifest": true,
+  "binary_sha256": "ee9e4c6c1123c0be8aaa638420b13b7413b463426671ca86b0151bbecd9e05d8",
+  "compiled_tests": {
+    "path": "docs/spherical-optimization/evidence/outer-lapse-build-v26/spherical-v26-ctest-verified.log",
+    "sha256": "5c7f9d79974da2af9c017a41bd9cd96a1baf513b1ace3648d35f147fdcebb1c0",
+    "passed": 10,
+    "qualification": "Existing v26 verification; no compiled source change in v27/v28"
+  },
+  "python_compile_passed": [
+    "run_cost_plan.py",
+    "analyze_cost_plan.py",
+    "report_cost_plan.py",
+    "analyze_final_diagnostics.py",
+    "analyze_convergence.py",
+    "analyze_response_controls.py",
+    "test_shift_normal.py"
+  ],
+  "checked_report_links": [
+    "README.md",
+    "PENALTY-TRADEOFF.md",
+    "HANDOFF-AUDIT.md",
+    "FINAL-COST.md",
+    "COST-PROTOCOL.md"
+  ],
+  "visually_checked": [
+    "serial-cost-final-v28/accuracy-cost.png",
+    "final-diagnostics-revised-v28/final-diagnostics.png",
+    "penalty05-gauge-controls-v28/response-controls.png",
+    "penalty05-temporal-v28/convergence.png",
+    "penalty05-spatial-v28/convergence.png",
+    "penalty05-n128-timestep-analysis-v28/timestep.png",
+    "penalty05-refinement-v28/boundary-refinement.png",
+    "penalty05-rk-margin-v28/rk-margin.png"
+  ],
+  "verification_note": "Initial packaging assertion expected the alternate CTest summary wording with zero-failure clause; the preserved log says 100% tests passed out of 10. Parser corrected without rerunning or changing the test record."
+}
