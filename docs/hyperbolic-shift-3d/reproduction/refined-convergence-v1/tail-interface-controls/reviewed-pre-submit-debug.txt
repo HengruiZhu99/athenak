@@ -1,0 +1,34 @@
+Queue: debug
+    queue_type = Execution
+    Priority = 10
+    total_jobs = 13
+    state_count = Transit:0 Queued:2 Held:0 Waiting:0 Running:11 Exiting:0 Begu
+	n:0 
+    resources_max.nodect = 2
+    resources_max.walltime = 01:00:00
+    resources_min.nodect = 1
+    resources_min.walltime = 00:05:00
+    resources_default.base_score = 51
+    resources_default.bkc_definition = compute_aurora_prod_20261002T162246_af5b
+	0375_b4fd227
+    resources_default.enable_2nd_fp64 = True
+    resources_default.enable_fifo = 1
+    resources_default.hbm_mode = flat
+    resources_default.snc_mode = quad
+    acl_group_enable = False
+    acl_groups = aurora_admins,aurora_aig,aurora_compute,aurora_intel_daos,
+	post_hpl_early_access
+    default_chunk.at_queue = lustre_scaling
+    default_chunk.broken = False
+    default_chunk.system = aurora
+    default_chunk.validation = False
+    resources_assigned.mem = 0gb
+    resources_assigned.mpiprocs = 0
+    resources_assigned.ncpus = 2912
+    resources_assigned.nodect = 14
+    max_run = [u:PBS_GENERIC=1]
+    max_run_res.nodect = [o:PBS_ALL=64]
+    enabled = True
+    started = True
+    queued_jobs_threshold = [u:PBS_GENERIC=1]
+

@@ -1,0 +1,276 @@
+{
+  "job_id": "9040972.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "cases": {
+    "block12": {
+      "configuration_identity": "RF2;flat-inner-Cartesian-Z4c-v1;native-C6-areal=20,40;M=1/3;v=0.10000000000000001;restoration4:.6-.9;KO8;scri-original;penalty=.6510416666660156;chi-floor=1e-8:.03;lapse-floor=1e-10;flat=1;omega=0.40000000000000002,0.54000000000000004,0.41999999999999998;gauge=0.62,0.78000000000000003,0.010235092792698271;eta=6;k=0.10116863541976966;cfl=0.20000000000000001;buffer=4;smr=3,0.050000000000000003;subdivisions=4;shell_inner=0.34999999999999998;box=-0.40000000000000002,0.40000000000000002;-0.40000000000000002,0.40000000000000002;-0.40000000000000002,0.40000000000000002;shells=0.40000000000000002,0.42999999999999999,0.46500000000000002,0.5,0.54000000000000004,0.65000000000000002,0.78000000000000003,0.80374999999999996,0.82750000000000001,0.85124999999999995,0.875,0.88124999999999998,0.88749999999999996,0.89375000000000004,0.90000000000000002,0.90625,0.91249999999999998,0.91874999999999996,0.92500000000000004,0.93125000000000002,0.9375,0.94374999999999998,0.94999999999999996,1,;halo_frame=legacy-cartesian-to-shell-v1;outer_gauge=stationary-reference-v2;initial-lapse-blend=flat-to-inner-begin;smr-box-origin-v1=0.074999999999999997,0.025000000000000001,0.025000000000000001;shell-angular-subdivisions-v1=1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,;amr_policy=smr",
+      "native_command_seconds": 252.49965828302084,
+      "physical_GPU_hours": 1.6833310552201388,
+      "GPU_tile_hours": 3.3666621104402776,
+      "active_cells": 1513728,
+      "exclusive_rank_seconds": {
+        "checkpoint_capture": {
+          "min": 1.6146890930831432,
+          "mean": 1.6147511738624114,
+          "max": 1.6148385179112665
+        },
+        "checkpoint_write": {
+          "min": 2.0342826237902045,
+          "mean": 2.0465832244529643,
+          "max": 2.1321060070768
+        },
+        "diagnostics": {
+          "min": 4.89764065342024,
+          "mean": 4.9309484555318095,
+          "max": 4.999823647318408
+        },
+        "evolution_setup": {
+          "min": 89.44200538471341,
+          "mean": 89.57548596037668,
+          "max": 89.63627195218578
+        },
+        "initial_state": {
+          "min": 22.382569992681965,
+          "mean": 22.451778142520197,
+          "max": 22.48495945101604
+        },
+        "native_setup": {
+          "min": 0.39223307371139526,
+          "mean": 0.457501710405874,
+          "max": 0.5931650018319488
+        },
+        "startup": {
+          "min": 0.001429231371730566,
+          "mean": 0.010132346338650677,
+          "max": 0.017218634951859713
+        },
+        "step": {
+          "min": 124.19082069094293,
+          "mean": 124.1912129248655,
+          "max": 124.19175173761323
+        }
+      },
+      "nested_overlapping_rank_seconds": {
+        "closure": {
+          "mean": 29.306559207041673,
+          "max": 29.32216606200002
+        },
+        "diagnostic_transfer": {
+          "mean": 0.9975163941053324,
+          "max": 2.06543026631698
+        },
+        "error_sync_overlapping": {
+          "mean": 30.244019867410923,
+          "max": 44.905378768686205
+        },
+        "exchange": {
+          "mean": 20.579287636134975,
+          "max": 21.79472305443772
+        },
+        "halo": {
+          "mean": 5.493575916479166,
+          "max": 24.902688480999977
+        },
+        "rhs": {
+          "mean": 40.97588643495833,
+          "max": 49.002478358000054
+        }
+      },
+      "cell_steps_per_second": 7313181.328812255,
+      "report_seconds": 132.85775822337018,
+      "endpoint_fixed03": {
+        "cut": 0.3,
+        "H": 0.7011432907010758,
+        "M": 5.38604825951831,
+        "Mr": 4.318882889709862
+      },
+      "endpoint_candidate_cut": 0.017021149688561006,
+      "endpoint_candidate_H": 0.6916170320120171,
+      "endpoint_candidate_M": 5.312869367497695,
+      "endpoint_tracker": [
+        -1.5448709422253964e-07,
+        4.2624123473888502e-19,
+        3.1496098984656744e-20
+      ],
+      "horizon_accepted": 3,
+      "horizon_rows": 3,
+      "endpoint_mass": 0.33333349401554535,
+      "endpoint_horizon_expansion": 1.8019227664219818e-05,
+      "max_null": 1.221254503747843e-15,
+      "max_ghost_null": 1.554312200923528e-15,
+      "pole_max": 0.21206923042310616,
+      "clock_max": 0.529035274286833,
+      "cfl_max": 0.20029402807450866,
+      "floor_statistics": [
+        0,
+        0,
+        6224,
+        2080,
+        0.0018042195912167601,
+        0,
+        0,
+        0
+      ],
+      "bulk_sign_counts": [
+        2072,
+        2072,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "surface_sign_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "boundary_sign_counts": [
+        0,
+        0
+      ]
+    },
+    "block24": {
+      "configuration_identity": "RF2;flat-inner-Cartesian-Z4c-v1;native-C6-areal=20,40;M=1/3;v=0.10000000000000001;restoration4:.6-.9;KO8;scri-original;penalty=.6510416666660156;chi-floor=1e-8:.03;lapse-floor=1e-10;flat=1;omega=0.40000000000000002,0.54000000000000004,0.41999999999999998;gauge=0.62,0.78000000000000003,0.010235092792698271;eta=6;k=0.10116863541976966;cfl=0.20000000000000001;buffer=4;smr=2,0.050000000000000003;subdivisions=4;shell_inner=0.34999999999999998;box=-0.40000000000000002,0.40000000000000002;-0.40000000000000002,0.40000000000000002;-0.40000000000000002,0.40000000000000002;shells=0.40000000000000002,0.46500000000000002,0.54000000000000004,0.78000000000000003,0.82750000000000001,0.875,0.88749999999999996,0.90000000000000002,0.91249999999999998,0.92500000000000004,0.9375,0.94999999999999996,1,;halo_frame=legacy-cartesian-to-shell-v1;outer_gauge=stationary-reference-v2;initial-lapse-blend=flat-to-inner-begin;smr-box-origin-v1=0.074999999999999997,0.025000000000000001,0.025000000000000001;shell-angular-subdivisions-v1=1,1,1,1,1,1,1,1,1,1,1,1,1,;amr_policy=smr",
+      "native_command_seconds": 462.97589187597623,
+      "physical_GPU_hours": 3.0865059458398414,
+      "GPU_tile_hours": 6.173011891679683,
+      "active_cells": 3750624,
+      "exclusive_rank_seconds": {
+        "checkpoint_capture": {
+          "min": 3.975777776213363,
+          "mean": 3.976010170145552,
+          "max": 3.976110043004155
+        },
+        "checkpoint_write": {
+          "min": 5.163693544629496,
+          "mean": 5.18377316601133,
+          "max": 5.2130453085992485
+        },
+        "diagnostics": {
+          "min": 4.419236585847102,
+          "mean": 4.425793714767981,
+          "max": 4.430730638559908
+        },
+        "evolution_setup": {
+          "min": 191.67416127212346,
+          "mean": 191.78006729356275,
+          "max": 191.8413117006421
+        },
+        "initial_state": {
+          "min": 30.120852484367788,
+          "mean": 30.143396431022364,
+          "max": 30.150309430493508
+        },
+        "native_setup": {
+          "min": 0.20540718454867601,
+          "mean": 0.2708044709870592,
+          "max": 0.3818447063677013
+        },
+        "startup": {
+          "min": 0.0016284945304505527,
+          "mean": 0.008777654650960661,
+          "max": 0.015490039717406034
+        },
+        "step": {
+          "min": 221.99257211061195,
+          "mean": 221.99365684050645,
+          "max": 221.99438195303082
+        }
+      },
+      "nested_overlapping_rank_seconds": {
+        "closure": {
+          "mean": 34.99285504572916,
+          "max": 35.021848651000134
+        },
+        "diagnostic_transfer": {
+          "mean": 0.9670096969202859,
+          "max": 1.9648467120714486
+        },
+        "error_sync_overlapping": {
+          "mean": 39.15484723046029,
+          "max": 77.96779777575284
+        },
+        "exchange": {
+          "mean": 44.07716195753987,
+          "max": 46.60700258921214
+        },
+        "halo": {
+          "mean": 8.33646098,
+          "max": 33.72209927299991
+        },
+        "rhs": {
+          "mean": 98.36157958441665,
+          "max": 107.60267933200002
+        }
+      },
+      "cell_steps_per_second": 10137078.155771213,
+      "report_seconds": 235.6451614284888,
+      "endpoint_fixed03": {
+        "cut": 0.3,
+        "H": 0.13192964246067967,
+        "M": 1.2266421488659196,
+        "Mr": 1.086520692432222
+      },
+      "endpoint_candidate_cut": 0.017021149688470606,
+      "endpoint_candidate_H": 0.13013764011156442,
+      "endpoint_candidate_M": 1.2099806492930856,
+      "endpoint_tracker": [
+        -1.5448709422236306e-07,
+        1.1892489736938858e-19,
+        1.4994762905482344e-19
+      ],
+      "horizon_accepted": 3,
+      "horizon_rows": 3,
+      "endpoint_mass": 0.3333334940155735,
+      "endpoint_horizon_expansion": 1.8019228931949374e-05,
+      "max_null": 1.5543122297478929e-15,
+      "max_ghost_null": 1.5543122344751133e-15,
+      "pole_max": 0.038779116862590744,
+      "clock_max": 0.03635437274940984,
+      "cfl_max": 0.20029402807449526,
+      "floor_statistics": [
+        0,
+        0,
+        6224,
+        2080,
+        0.0018042195912167601,
+        0,
+        0,
+        0
+      ],
+      "bulk_sign_counts": [
+        2072,
+        2072,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "surface_sign_counts": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "boundary_sign_counts": [
+        0,
+        0
+      ]
+    }
+  },
+  "block24_over_block12": {
+    "command_seconds": 1.8335703700518977,
+    "step_seconds": 1.7875130904188437,
+    "cells": 2.4777397260273974,
+    "cell_throughput": 1.386137947357254,
+    "fixed03_H": 0.18816359538827324,
+    "fixed03_M": 0.2277443665117887
+  },
+  "source_sha256": "7603140f8b75ac9f8060c457d201c1501acdbd7b54c474e01daba0bb3ad96139",
+  "plan_sha256": "10e7b338f6f32954b38af7d2a7b69700e6d0a996d1eaf031f6ca06bc268d7239",
+  "qualification": "Same four-node allocation/executable/dt/physical duration, distinct mesh/config identities. Largest-rank step timer and separate command elapsed. Nested timers overlap and are not additive. GPU-hours count 24 physical GPUs; 48 tile-hours also reported. Fresh 600 steps to .075M, not 10M stability/convergence or a strong-scaling experiment. Same finest spacing but 24^3 layout refines more volume and changes interfaces/scri spacing. No automatic adoption or restart."
+}

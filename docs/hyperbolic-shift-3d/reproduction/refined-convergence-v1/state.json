@@ -1,8 +1,8 @@
 {
-  "status": "large_block_pair_submitted",
-  "current_job": "9040972.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "status": "tail_interface_pair_running",
+  "current_job": "9041071.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
   "branch": "codex/refined-convergence",
-  "next": "Monitor existing9040972 large-block pair, preserve terminal9040850 locally. Compare cost/physics before adoption; investigate smoothing initial slicing/map transition to reduce dense radial requirement. No boosted long family until stable measured~4x GPU-hour improvement.",
+  "next": "Collect existing9041071 when terminal; verify/preserve both fresh600-step cases and compare with9040972. Distinguish radial spacing and angular seam effects before adopting layout or increasing dt. Fourfold stable GPU-hour gate remains unmet.",
   "goal_active": true,
   "historical_startup_failure": {
     "job": "9038031",
@@ -714,7 +714,7 @@
     "qualification": "No speedup or stability demonstrated yet; timestep multiplier is not measured GPU-hour speedup. Record any equation/penalty/damping changes separately. If controlled investigation cannot achieve target stably, report evidence and block rather than launch long family."
   },
   "large_block_candidate": {
-    "status": "gpu_pair_submitted",
+    "status": "terminal_preserved_analyzed_not_adopted",
     "block_cells": 24,
     "smr_levels": 2,
     "reference_block_cells": 12,
@@ -732,7 +732,7 @@
     "steps": 600,
     "retirement_receipt": "retired-before-large-block-pair.json",
     "retired_verified_bytes": 2864555616,
-    "current_job": "9040972.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "current_job": null,
     "submission_storage": {
       "bytes": 40501058186,
       "limit_bytes": 50000000000,
@@ -753,10 +753,189 @@
         "entries_scanned": 220365
       }
     },
-    "latest_scheduler_state": "Q"
+    "latest_scheduler_state": "F/0"
   },
   "requested_radial_redesign": {
     "status": "investigation_requested",
     "scope": "Joint slicing/radial-map and compatible gauge controls; retain central Z4c region and scri. Avoid claiming a pure coordinate stretch improves CFL or flatteningOmega fixes the distinct outer slicing transition."
-  }
+  },
+  "compact_slicing_study": {
+    "status": "analysis_only_complete",
+    "evidence": "compact-slicing-study/results.json",
+    "derivation": "COMPACT-SLICING-STUDY.md",
+    "initial_central_R_M": 20,
+    "initial_central_k": 0.10116863541977153,
+    "candidate_end_compact_r": [
+      0.95,
+      0.97
+    ],
+    "native_alpha_gradient_max": 29.48117899676081,
+    "candidate_alpha_gradient_max": [
+      18.302903391589748,
+      13.531760665788022
+    ],
+    "candidate_alpha_halfmax_width": [
+      0.04348003459896976,
+      0.05919940259597911
+    ],
+    "qualification": "Independent stationary exact-data radial study; native oracle matched, fixed central scale, same scri limit. No production/boosted evolution or timestep/performance claim. Requires opt-in native initializer and compatible reference-gauge qualification."
+  },
+  "large_block_pair_terminal": {
+    "job": "9040972.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "remote_verified": true,
+    "worker": "completed",
+    "PBS_exit": 0,
+    "steps_each": 600,
+    "target_M": 0.075,
+    "lock_released": true,
+    "local_records_preserved": true,
+    "local_full_artifact_verification": true,
+    "case12_CP_sha256": "02fe98e3ec5eb0a7988c79ef8446ac08d9d29a0a9ea3b4f5f8f002c87b74d69b",
+    "case24_CP_sha256": "9bef9110a5ad5656cca38f790419e88576f15b6878546027bbdb669b5d1a5eca",
+    "native_command_seconds": [
+      252.49965828302084,
+      462.97589187597623
+    ],
+    "max_rank_step_seconds": [
+      124.19175173761323,
+      221.99438195303082
+    ],
+    "fixed03_H": [
+      0.7011432907010758,
+      0.13192964246067967
+    ],
+    "fixed03_M": [
+      5.38604825951831,
+      1.2266421488659196
+    ],
+    "qualification": "All303 artifacts locally verified; finite short endpoints admitted, not accurate/stable10M evidence. Both native full norms reproduced and checkpoint hashes unchanged. No restart/adoption.",
+    "local_artifact_count": 303
+  },
+  "large_block_native_analysis": {
+    "block12": {
+      "native_full_norms": [
+        1.6597397909035998,
+        5.312856203074487
+      ],
+      "report_norms": [
+        1.659739790905286,
+        5.31285620307458
+      ],
+      "checkpoint_unchanged_sha256": "02fe98e3ec5eb0a7988c79ef8446ac08d9d29a0a9ea3b4f5f8f002c87b74d69b",
+      "regions": {
+        "0.3-0.6": {
+          "fraction_H2": 6.912168303735778e-05,
+          "fraction_M2": 2.1442702411103723e-07
+        },
+        "0.6-0.78": {
+          "fraction_H2": 1.3989970898690043e-08,
+          "fraction_M2": 5.064272262113605e-10
+        },
+        "0.78-0.9": {
+          "fraction_H2": 8.383871468767791e-08,
+          "fraction_M2": 9.22989136313447e-08
+        },
+        "0.9-0.94": {
+          "fraction_H2": 0.0002092602729918563,
+          "fraction_M2": 0.0002580226559414617
+        },
+        "0.94-0.95": {
+          "fraction_H2": 0.3422172749255014,
+          "fraction_M2": 0.7737242869627856
+        },
+        "0.95-0.97": {
+          "fraction_H2": 0.657496753203818,
+          "fraction_M2": 0.22501064837133872
+        },
+        "0.97-1": {
+          "fraction_H2": 7.492085965808887e-06,
+          "fraction_M2": 0.0010067347775692523
+        }
+      },
+      "fixed03_norms": [
+        0.7011432907010039,
+        5.3860482595177706
+      ]
+    },
+    "block24": {
+      "native_full_norms": [
+        1.5147072696565664,
+        1.209978192634148
+      ],
+      "report_norms": [
+        1.5147072696588424,
+        1.2099781926337205
+      ],
+      "checkpoint_unchanged_sha256": "9bef9110a5ad5656cca38f790419e88576f15b6878546027bbdb669b5d1a5eca",
+      "regions": {
+        "0.3-0.6": {
+          "fraction_H2": 4.782931925936543e-06,
+          "fraction_M2": 1.5675355380169924e-08
+        },
+        "0.6-0.78": {
+          "fraction_H2": 2.212773420068846e-09,
+          "fraction_M2": 5.194326651140814e-09
+        },
+        "0.78-0.9": {
+          "fraction_H2": 2.0520683703324025e-06,
+          "fraction_M2": 1.6884419060939328e-06
+        },
+        "0.9-0.94": {
+          "fraction_H2": 0.005912925508456422,
+          "fraction_M2": 0.0049767799730984245
+        },
+        "0.94-0.95": {
+          "fraction_H2": 0.49926612715174995,
+          "fraction_M2": 0.6022192235368603
+        },
+        "0.95-0.97": {
+          "fraction_H2": 0.49480896952423964,
+          "fraction_M2": 0.3927028141579522
+        },
+        "0.97-1": {
+          "fraction_H2": 5.14060248440322e-06,
+          "fraction_M2": 9.947302050088539e-05
+        }
+      },
+      "fixed03_norms": [
+        0.13192964246066832,
+        1.2266421488658248
+      ]
+    },
+    "qualification": "Same production constraint operator on each distinct admitted mesh; fixed coordinate cut r>.3. Radial squared-integral distribution, no ray interpolation. 600 steps/.075M only; no long stability, convergence, or pure packing attribution."
+  },
+  "tail_interface_pair": {
+    "job": "9041071.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "plan": "campaigns/boosted-tail-interface-pair-v1/plan.json",
+    "plan_sha256": "7933efa7102497bfe0adb838a6ca1595fcb06a3db1e601ca4f789692e0041245",
+    "scheduler": "R",
+    "cases": [
+      "radial-graded",
+      "angular-moved"
+    ],
+    "target_M": 0.075,
+    "steps_each": 600,
+    "storage": {
+      "bytes": 43834507264,
+      "limit_bytes": 50000000000,
+      "planned_bytes": 2200000000,
+      "reserve_bytes": 1050000000,
+      "headroom_bytes": 2915492736,
+      "roots": [
+        "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1",
+        "/home/hzhu/hyperboloidal-performance-scaling-20261103",
+        "/lus/flare/projects/CompactBinaryMerger/hzhu/hyperboloidal-refined-20261103-v1",
+        "/home/hzhu/hyperbolic-core-shell-20261028",
+        "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/boosted-transition-v1"
+      ],
+      "scan": {
+        "bytes": 43834507264,
+        "unique_inodes": 186531,
+        "directories_scanned": 20697,
+        "entries_scanned": 220705
+      }
+    },
+    "qualification": "Same frozen source/binary/dt/gauge, distinct fresh meshes. Radial control also changes outermost spacing and mesh-dependent scri rate. No long run, speedup or convergence claim."
+  },
+  "last_goal_turn_classification": "progress: completed native spatial localization and preservation; verified9041071 running; continuing controlled interface attribution"
 }

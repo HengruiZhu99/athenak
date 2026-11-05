@@ -1,0 +1,19 @@
+#!/bin/bash -l
+#PBS -N rf2-tail-pair
+#PBS -A CompactBinaryMerger
+#PBS -q debug-scaling
+#PBS -l select=4
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -j oe
+set -euo pipefail
+ulimit -c 0
+cd /lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/boosted-transition-v1
+module load oneapi/release/2025.3.1
+export OMP_NUM_THREADS=1 ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE ZE_ENABLE_PCI_ID_DEVICE_ORDER=1
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu MPIR_CVAR_ENABLE_GPU=1
+export NEO_CACHE_DIR="$PWD/runtime-cache/neo" SYCL_CACHE_DIR="$PWD/runtime-cache/sycl"
+unset ZE_AFFINITY_MASK
+mkdir -p "$NEO_CACHE_DIR" "$SYCL_CACHE_DIR"
+module list > campaigns/boosted-tail-interface-pair-v1/modules.txt 2>&1
+exec /usr/bin/python3.11 tail-interface-pair-v1/worker.py "$PWD" "campaigns/boosted-tail-interface-pair-v1/plan.json"

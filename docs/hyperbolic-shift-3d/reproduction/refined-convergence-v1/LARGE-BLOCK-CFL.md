@@ -88,3 +88,23 @@ A stationary-reference subtraction in the discrete RHS is a separate possible
 control; it must retain perturbation dynamics and full-field diagnostics.
 The submitted block comparison stays unchanged and does not establish that
 coarsening the dense band is safe.
+
+The first analysis-only joint slicing/map control is complete; see
+COMPACT-SLICING-STUDY.md. At fixed central20M boundary and isotropic scale,
+compact-coordinate C6 switches ending at.95/.97 reduce the peak lapse gradient
+29.48→18.30/13.53. Independent radial constraint-differencing errors decrease
+substantially, with native baseline fields cross-checked to7.51e-13 scaled.
+This is not a production/boosted evolution, timestep or performance result.
+The broader physical slicing ends at58.46M/98.48M respectively; retain that
+change explicitly. The frozen block benchmark remains unchanged.
+
+## Completed benchmark and next attribution
+
+Job9040972 is terminal and fully preserved: all303 artifacts verified.
+The24³ layout improves per-cell throughput1.386× but evolves2.478× more cells;
+native command time is1.834× larger. Both short evolutions show sharp exterior
+constraint growth concentrated near r=.95. See TAIL-INTERFACE-ATTRIBUTION.md
+for native volume localization and the existing fresh four-node control
+job9041071. Do not resubmit9040972 or treat either benchmark as10M stability.
+LAPSE-REGULARITY-OPTIONS.md separates normalization from physical lapse collapse
+and records consistent equation/discretization candidates.
