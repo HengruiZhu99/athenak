@@ -1,0 +1,37 @@
+{
+  "status": "failed",
+  "failure": {
+    "type": "FloatingPointError",
+    "message": "nonpositive field 0 at r=1.0",
+    "traceback": "Traceback (most recent call last):\n  File \"/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/spherical_optimization/run.py\", line 54, in main\n    q=e.step(q,dt);t+=dt;steps+=1;dt_min=min(dt_min,dt);dt_max=max(dt_max,dt)\n  File \"/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/spherical_optimization/evolution.py\", line 183, in step\n    return super().step(q,dt)[:,self.independent]\n  File \"/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/spherical_optimization/evolution.py\", line 116, in step\n    a=self.rhs(q);b=self.rhs(q+dt*a/2);c=self.rhs(q+dt*b/2);d=self.rhs(q+dt*c)\n  File \"/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/spherical_optimization/evolution.py\", line 181, in rhs\n    return super().rhs(state,record)[:,self.independent]\n  File \"/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/spherical_optimization/evolution.py\", line 76, in rhs\n    started=time.perf_counter();self.attempted_state=state.copy();q=self.materialize(state)\n  File \"/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/spherical_optimization/evolution.py\", line 165, in materialize\n    return super().materialize(full)\n  File \"/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/spherical_optimization/evolution.py\", line 66, in materialize\n    i,f=np.argwhere(q[:,[0,1,2,8]]<=0)[0];raise FloatingPointError(f'nonpositive field {f} at r={self.r[i]}')\nFloatingPointError: nonpositive field 0 at r=1.0\n"
+  },
+  "time_M": 0.4109520382599211,
+  "steps": 30,
+  "setup_seconds": 0.110491167,
+  "stepping_seconds": 0.08682795800000001,
+  "rhs_calls": 153,
+  "rhs_seconds": 0.08155521100000013,
+  "initial_speed": 2.414213562373095,
+  "worst_evaluated_speed": 3.670717736114373,
+  "worst_evaluated_speed_over_dr": 233.0905762432631,
+  "C_char_max_accepted": 1.0643227489594278,
+  "dt_min": 0.0045661337584435675,
+  "dt_max": 0.0045661337584435675,
+  "dt_over_M": 0.013698401275330702,
+  "min_dr_over_M": 0.04724409448818889,
+  "nominal_dt_over_min_dr": 0.28994949366116707,
+  "steps_per_M": 73.00121962413883,
+  "active_limiter": "explicit_fixed_dt",
+  "limits": {
+    "characteristic": 0.0013046096452695884,
+    "scri_policy": 0.0010078740157490377,
+    "telegrapher_policy": 0.016666666666666666
+  },
+  "floor_calls": 0,
+  "floor_max_r": 0.0,
+  "qualifications": [
+    "spherical CPU only",
+    "completion is not stability or convergence",
+    "differential D boundary compatibility not yet qualified"
+  ]
+}

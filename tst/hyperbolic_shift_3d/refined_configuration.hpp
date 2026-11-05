@@ -62,6 +62,7 @@ struct RefinedConfiguration {
       if (equal == std::string::npos)
         throw std::invalid_argument("configuration requires key=value");
       const auto key = Trim(line.substr(0, equal)), value = Trim(line.substr(equal + 1));
+      if(key=="compact_slicing_end")throw std::invalid_argument("compact slicing is not supported by the refined boosted initializer; use the local spherical laboratory");
       if (!allowed.count(key) || value.empty() || !values.emplace(key, value).second)
         throw std::invalid_argument("unknown, duplicate or empty configuration key: " + key);
     }

@@ -40,17 +40,22 @@
     "exact reference endpoint reduces short-time D floor but does not fix 10M error",
     "full 26-field radial/transverse/oblique point symbols on evolved states through 10M",
     "Release build default fixed with compiled-kernel parity and matched-trajectory timing evidence",
-    "unsmoothed long-time error and gradient localization identifies a two-point outer Lambda/D feature"
+    "unsmoothed long-time error and gradient localization identifies a two-point outer Lambda/D feature",
+    "shared compact-coordinate C6 beta slicing with fixed central compact scale and matched stationary gauge sources",
+    "independent compact map/geometry/free-lapse/source and tolerance-refinement verification; default compiled path unchanged",
+    "compact matched-anchor and 64/128/256 1M and 10M resolution controls",
+    "compact 10M temporal refinement and full evolved transverse/oblique symbols",
+    "compact initial/evolved semidiscrete nonnormal RK4 audits and 64/128-point 10M timestep sweeps with preserved failures",
+    "localized N512 puncture positivity failure and decomposed its discrete chi rate"
   ],
   "next": [
-    "Implement the handoff compact-coordinate slicing candidate in shared C++ using COMPACT-PROFILE-NEXT.md: keep the native 20\u201340M central compact radius/scale, solve I_z(p,7) shape for b=.97, and share the same map with initial geometry and stationary gauge sources. This profile is not yet implemented.",
-    "Verify new initial geometry/map/profile derivatives against the independent compact-slicing study, retain the real nonstationary central RHS, and explicitly reject unsupported boosted paths. No spherical-to-3D stability claim.",
-    "Run matched Release-build convergence and 10M controls for the new profile. Current wide areal N256 still has exterior indicator .00493 and D defect -40.12; two-end N128 improves indicator to .00394 but D defect is 108.26.",
-    "Complete source/variable, perturbation and boundary-reflection controls; qualify evolved characteristics and robust nonlinear RK4 limits for finalists.",
-    "Construct a controlled-timing fixed-error 10M frontier only after accuracy and boundary gates; retain separate local spherical and 3D/boosted transfer requirements."
+    "The N512 half-step control fails at the same3.142678M as C_char=.4. Investigate consistent puncture reference variables and exact derivative chain rules: chi crosses zero at the innermost node with a negative one-sided derivative, while KO opposes the crossing. Do not add floors or infer a robust CFL from coarser runs.",
+    "Compare factored/normalized or positive variables as a numerical representation in shared C++ with off-constraint parity; keep full nonstationary core RHS and preserve direct-variable failures. Then repeat finer 10M spatial convergence and boundary-D checks.",
+    "Complete regular gauge/constraint perturbations, reflection and source/variable controls; test nonlinear timestep margin and delayed growth for the finalist.",
+    "Construct controlled serial timing at fixed exterior error, keeping the unresolved differential-D gate explicit; no spherical-to-3D or boosted stability claim."
   ],
   "latest": {
-    "disposition": "no_admitted_10M_candidate",
+    "disposition": "promising_compact_exterior_candidate_not_admitted",
     "wide_areal_10M_points": [
       64,
       128,
@@ -66,9 +71,31 @@
     "twoend_n128_D_defect": 108.26238927037272,
     "weak_twoend_initial_growth_rate": 401.7369458759884,
     "exact_scri_n128_1M_D_defect": 2.138805993727148e-06,
-    "release_binary": "build-spherical-v12/libcurrent_spherical.dylib",
+    "release_binary": "build-spherical-v14/libcurrent_spherical.dylib",
     "compiler_only_observed_speed_ratio": 5.269579338765357,
-    "next_design": "COMPACT-PROFILE-NEXT.md"
+    "next_design": "puncture reference-variable and derivative-chain comparison",
+    "compact_report": "COMPACT-PROFILE.md",
+    "compact_10M_points": [
+      64,
+      128,
+      256
+    ],
+    "compact_10M_errors": [
+      0.0029645622561722106,
+      0.0005775218009130567,
+      5.479296496844964e-05
+    ],
+    "compact_10M_D_defects": [
+      150.69702412304594,
+      5.246343307794092,
+      5.933262103176671
+    ],
+    "compact_matched_anchor_n128_10M_error_ratio": 51.52748118476155,
+    "compact_n64_decaying_RK4_bound": 0.6069055925470159,
+    "compact_n64_C065_failure_M": 0.8013564746068456,
+    "compact_n128_C065_failure_M": 0.5131375072692572,
+    "compact_n512_C04_failure_M": 3.1426783829081923,
+    "compact_n512_C02_failure_M": 3.1426783829078007
   },
   "live_processes": [],
   "admitted_candidate": null,

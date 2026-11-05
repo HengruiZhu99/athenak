@@ -1,5 +1,11 @@
 # Next shared initial-profile implementation
 
+**Implemented and checked in v14.** See [COMPACT-PROFILE.md](COMPACT-PROFILE.md)
+for the shared C++ implementation, independent geometry checks, matched 10M
+results and unresolved differential boundary gate. The list below records the
+design that motivated the implementation; it is no longer an unimplemented
+proposal.
+
 The v11/v12 evidence localizes the remaining 10M error, rather than establishing
 an admitted candidate. At N=256, the areal 20–80M map has peak exterior H/M near
 compact r=.953/.957 (reference R/M=62.5/68.2). The Lambda/D gradient half-maximum
@@ -52,4 +58,5 @@ Required implementation and checks:
 Current endpoint derivative work is already available as an independent control:
 `NativeWormhole::OuterRadialDerivatives`, `--reference-tail scri|outer`, with
 70-digit verification. It lowers the small 1M D-defect floor but does not fix
-the large 10M error. The new initial compact profile is not implemented yet.
+the large 10M error. The compact-profile implementation and its new evolution
+evidence are now recorded separately in COMPACT-PROFILE.md.

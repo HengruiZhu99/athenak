@@ -1,0 +1,1 @@
+Frozen analysis sources for the compact v14/v15 evidence. Run from tst/spherical_optimization with the surrounding kernel/evolution helpers from each evolution source.tar.gz. independent_study.py is the unchanged handoff oracle. See COMPACT-PROFILE.md for case names and commands. No scientific outputs overwritten.

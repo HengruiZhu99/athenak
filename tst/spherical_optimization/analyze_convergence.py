@@ -24,7 +24,7 @@ def interpolate(r,q,target,width):
 
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('--reference-interpolation',action='store_true');ap.add_argument('--library',required=True);ap.add_argument('--evidence',type=Path,required=True);ap.add_argument('--cases',nargs='+',required=True);ap.add_argument('--kind',choices=('temporal','spatial'),required=True);ap.add_argument('--output',type=Path,required=True);a=ap.parse_args();a.output.mkdir(parents=True,exist_ok=False)
- R=np.geomspace(25,100,301);cfg0=json.loads((a.evidence/a.cases[0]/'manifest.json').read_text())['config'];k=Kernel(a.library,cfg0['mode'],cfg0['radius'],cfg0['slicing_ratio'],cfg0['separated'])
+ R=np.geomspace(25,100,301);cfg0=json.loads((a.evidence/a.cases[0]/'manifest.json').read_text())['config'];k=Kernel.from_config(a.library,cfg0)
  def radius(r):
   q,_,om=k.initial(np.array([r]));return 3*r/(om[0,0]*np.sqrt(q[0,0]))
  target=np.array([brentq(lambda r:radius(r)-value,k.config[2],.99999,xtol=2e-14) for value in R]);k.close()
@@ -32,7 +32,7 @@ def main():
  for name in a.cases:
   folder=a.evidence/name;result=json.loads((folder/'result.json').read_text());cfg=json.loads((folder/'manifest.json').read_text())['config']
   assert result['status']=='completed_unqualified' and abs(result['time_M']-cfg0['duration'])<1e-12
-  assert all(cfg[key]==cfg0[key] for key in ('radius','slicing_ratio','mode','separated'))
+  assert all(cfg.get(key)==cfg0.get(key) for key in ('radius','slicing_ratio','mode','separated','compact_end'))
   state=np.load(folder/'last-accepted.npz');r=state['r'];q=state['q'];total_disagreement=np.sqrt(np.mean((interpolate(r,q,target,7)-interpolate(r,q,target,5))**2,axis=0))
   if a.reference_interpolation:q=q-np.load(folder/'initial.npz')['q']
   high=interpolate(r,q,target,7);low=interpolate(r,q,target,5)

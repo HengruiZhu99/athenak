@@ -499,9 +499,10 @@ also make these exploratory timing observations. Both binaries, flags and
 caches are preserved. New run manifests capture build metadata, and plots
 mixing binary identities explicitly prohibit ranking runtimes.
 
-The next profile is the handoff's compact-coordinate slicing construction,
-which preserves the central compact scale while spreading the outer feature.
-The implementation and validation requirements are in
-[COMPACT-PROFILE-NEXT.md](COMPACT-PROFILE-NEXT.md). It has not been implemented
-in shared C++ yet. This is the next substantive step; increasing advertised
-CFL or accepting the surviving coarse-grid runs would not meet the goal.
+The handoff's compact-coordinate slicing construction is now implemented in
+shared C++, preserving the central compact scale while spreading the outer
+feature. The implementation, independent verification and new 10M evidence are
+in [COMPACT-PROFILE.md](COMPACT-PROFILE.md). At N128 it improves the matched
+20–40M anchor's common-exterior indicator by 51.5x at 10M. Differential D
+compatibility remains unresolved, so this is a promising spherical candidate,
+not an admitted stable formulation or a 3D/boosted result.

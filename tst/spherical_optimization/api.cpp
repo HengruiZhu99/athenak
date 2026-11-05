@@ -12,17 +12,18 @@ struct Lab {
  h::HyperbolicShiftParameters<double> p;
  std::unique_ptr<h::NativeWormhole> native;
  std::unique_ptr<h::StationaryGaugeReference> reference;
- Lab(int mode,double radius,double slicing_ratio,int separated) {
+ Lab(int mode,double radius,double slicing_ratio,int separated,double compact_end=0) {
+  if(mode==0 && compact_end!=0)throw std::invalid_argument("compact slicing requires the central configuration mode");
   if(mode==0){ // Historical current production formulation, explicit baseline.
    p.profile={true,.4,.54,.42};p.inner_begin=.62;p.inner_end=.78;
    p.reference_start_M=20;p.reference_end_M=40;p.stationary_outer_reference=true;
   }else if(mode==1){
-   h::CentralZ4cConfiguration c;c.inner_z4c_radius_M=radius;c.slicing_end_ratio=slicing_ratio;
+   h::CentralZ4cConfiguration c;c.inner_z4c_radius_M=radius;c.slicing_end_ratio=slicing_ratio;c.compact_slicing_end=compact_end;
    p=c.Resolve().gauge;
   }else throw std::invalid_argument("unknown formulation mode");
   p.separated_shift_speeds=separated;
   native=std::make_unique<h::NativeWormhole>(1./3.,2e-13,p.reference_start_M,p.reference_end_M,
-                       h::NativeWormhole::TransitionProfile::polynomial_c6);
+                       h::NativeWormhole::TransitionProfile::polynomial_c6,p.reference_compact_end);
   p.inner_gamma=std::pow(native->IsotropicScale(),2);p.Validate();
   reference=std::make_unique<h::StationaryGaugeReference>(p);
  }
@@ -31,6 +32,12 @@ struct Lab {
 extern "C" const char* spherical_error(){return error.c_str();}
 extern "C" void* spherical_create(int mode,double radius,double ratio,int separated){
  try{return new Lab(mode,radius,ratio,separated);}catch(const std::exception&e){error=e.what();return nullptr;}}
+extern "C" void* spherical_create_extended(int mode,double radius,double ratio,int separated,double compact_end){
+ try{return new Lab(mode,radius,ratio,separated,compact_end);}catch(const std::exception&e){error=e.what();return nullptr;}}
+extern "C" int spherical_compact_configuration(void*v,double*out){
+ auto&n=*static_cast<Lab*>(v)->native;
+ const double a[]={n.CompactEnd(),n.CompactShape(),n.TransitionEndAreal()/n.Mass(),n.CompactJoinResidual(),n.Tolerance()};
+ std::copy(a,a+5,out);return 0;}
 extern "C" void spherical_destroy(void*v){delete static_cast<Lab*>(v);}
 extern "C" int spherical_configuration(void*v,double*out){
  auto&l=*static_cast<Lab*>(v);const auto&p=l.p;

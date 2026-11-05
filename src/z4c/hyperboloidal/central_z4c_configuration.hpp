@@ -9,6 +9,7 @@ namespace z4c::hyperboloidal {
 struct CentralZ4cConfiguration {
   double inner_z4c_radius_M=20;
   double slicing_end_ratio=2;
+  double compact_slicing_end=0; // optional compact beta-profile; same inner scale
   double omega_fraction=.25, gauge_begin_fraction=.35, gauge_end_fraction=.65;
   double restoration_end_fraction=.85;
   double plateau=.42;
@@ -22,14 +23,14 @@ struct CentralZ4cConfiguration {
   };
   Resolved Resolve() const {
     for(double v:{inner_z4c_radius_M,slicing_end_ratio,omega_fraction,
-        gauge_begin_fraction,gauge_end_fraction,restoration_end_fraction,plateau})
+        gauge_begin_fraction,gauge_end_fraction,restoration_end_fraction,plateau,compact_slicing_end})
       if(!std::isfinite(v))throw std::invalid_argument("nonfinite central configuration");
     if(!(inner_z4c_radius_M>2 && slicing_end_ratio>1 && 0<omega_fraction &&
         omega_fraction<gauge_begin_fraction && gauge_begin_fraction<gauge_end_fraction &&
         gauge_end_fraction<restoration_end_fraction && restoration_end_fraction<1))
       throw std::invalid_argument("invalid central configuration ordering");
     NativeWormhole map(1./3.,2e-13,inner_z4c_radius_M,
-        slicing_end_ratio*inner_z4c_radius_M,NativeWormhole::TransitionProfile::polynomial_c6);
+        slicing_end_ratio*inner_z4c_radius_M,NativeWormhole::TransitionProfile::polynomial_c6,compact_slicing_end);
     Resolved out{};
     out.compact_radius=map.InnerRadius();out.isotropic_scale=map.IsotropicScale();
     out.slicing_end=map.OuterTransitionRadius();
@@ -43,6 +44,7 @@ struct CentralZ4cConfiguration {
     p.cartesian_chi_guard=true;
     p.reference_start_M=inner_z4c_radius_M;
     p.reference_end_M=slicing_end_ratio*inner_z4c_radius_M;
+    p.reference_compact_end=compact_slicing_end;
     p.stationary_outer_reference=true;p.Validate();
     if(!(r>0 && r<out.slicing_end && out.slicing_end<1))
       throw std::invalid_argument("nonmonotone central initial map");

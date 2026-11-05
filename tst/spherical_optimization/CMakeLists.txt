@@ -25,3 +25,8 @@ add_executable(spherical_equivalence test_equivalence.cpp)
 target_link_libraries(spherical_equivalence PRIVATE current_spherical)
 enable_testing()
 add_test(NAME spherical_equivalence COMMAND spherical_equivalence)
+
+add_test(NAME spherical_compact_equivalence COMMAND spherical_equivalence --compact)
+add_executable(sample_compact sample_compact.cpp)
+target_include_directories(sample_compact PRIVATE ${ROOT}/src)
+target_compile_options(sample_compact PRIVATE -ffp-contract=off -Wall -Wextra)

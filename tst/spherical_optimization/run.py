@@ -10,7 +10,7 @@ def main():
     ap=argparse.ArgumentParser()
     ap.add_argument('--library',required=True);ap.add_argument('--output',type=Path,required=True)
     ap.add_argument('--mode',type=int,choices=(0,1),default=1);ap.add_argument('--n',type=int,default=64)
-    ap.add_argument('--radius',type=float,default=20.);ap.add_argument('--slicing-ratio',type=float,default=2.)
+    ap.add_argument('--radius',type=float,default=20.);ap.add_argument('--compact-end',type=float,default=0.);ap.add_argument('--slicing-ratio',type=float,default=2.)
     ap.add_argument('--separated',action='store_true');ap.add_argument('--grid-map',choices=('quadratic','two-end'),default='quadratic');ap.add_argument('--grading',type=float,default=0.)
     ap.add_argument('--penalty',type=float,default=.6510416666660156);ap.add_argument('--ko',type=float,default=.5)
     ap.add_argument('--derivative-boundary',action='store_true');ap.add_argument('--reference-tail',choices=('numerical','scri','outer'),default='numerical');ap.add_argument('--reference-step',type=float,default=5e-4);ap.add_argument('--reference-jets',action='store_true');ap.add_argument('--normal-policy',choices=('sampled','analytic'),default='sampled');ap.add_argument('--algebraic-chart',action='store_true');ap.add_argument('--floors',action='store_true');ap.add_argument('--duration',type=float,default=.1)
@@ -33,12 +33,12 @@ def main():
     (args.output/'manifest.json').write_text(json.dumps(identity,indent=2)+'\n')
     with tarfile.open(args.output/'source.tar.gz','w:gz') as archive:
         for p in source_paths:archive.add(p,arcname=str(p.relative_to(ROOT)))
-    setup_start=time.perf_counter();k=Kernel(args.library,args.mode,args.radius,args.slicing_ratio,args.separated)
+    setup_start=time.perf_counter();k=Kernel.from_config(args.library,vars(args))
     e=(DerivativeBoundaryEvolution if args.derivative_boundary else ChartEvolution if args.algebraic_chart else Evolution)(k,args.n,args.grading,args.penalty,args.ko,args.floors,args.normal_policy,args.reference_jets,args.reference_step,args.reference_tail,args.grid_map);q=e.initial.copy()
     full=lambda state:k.expand_chart(state)[0] if args.algebraic_chart else state
     if args.reference_jets:np.savez_compressed(args.output/'reference-jets.npz',d=e.reference_d,dd=e.reference_dd,refinement_difference=e.reference_jet_difference)
     if e.reference_tail_correction is not None:np.savez_compressed(args.output/'reference-tail-correction.npz',difference=e.reference_tail_correction)
-    np.savez_compressed(args.output/'initial.npz',r=e.r,q=full(q),omega=e.omega,source=e.source,configuration=k.config)
+    np.savez_compressed(args.output/'initial.npz',r=e.r,q=full(q),omega=e.omega,source=e.source,configuration=k.config,compact_configuration=k.compact_config)
     history=[];t=0.;steps=0;dt_min=float('inf');dt_max=0.;cmax=0.;status='failed';failure=None
     setup_seconds=time.perf_counter()-setup_start;start=time.perf_counter()
     target=args.duration/3;next_output=0;interval=target/10

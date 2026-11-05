@@ -14,7 +14,7 @@ class StationaryGaugeReference {
  public:
   explicit StationaryGaugeReference(const HyperbolicShiftParameters<Real>&p)
       :parameters_(p),native_(1./3.,2e-13,p.reference_start_M,p.reference_end_M,
-                             NativeWormhole::TransitionProfile::polynomial_c6) {
+                             NativeWormhole::TransitionProfile::polynomial_c6,p.reference_compact_end) {
     p.Validate();
     if (!(p.profile.flat_radius>native_.IsotropicScale()/6))
       throw std::invalid_argument("stationary lapse blend must lie outside the horizon");

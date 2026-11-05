@@ -2,6 +2,7 @@
 #include "z4c/hyperboloidal/current_spherical.hpp"
 #include "z4c/hyperboloidal/central_z4c_configuration.hpp"
 #include "z4c/hyperboloidal/stationary_gauge_reference.hpp"
+#include "z4c/hyperboloidal/native_boosted_wormhole.hpp"
 #include <iostream>
 #include <iomanip>
 namespace h=z4c::hyperboloidal;namespace s=h::current_spherical;
@@ -14,8 +15,8 @@ h::ScalarJet<double> scalar(double r,double a,double b){h::ScalarJet<double>v{};
 h::VectorJet<double> vector(double r,double a,double b){h::VectorJet<double>v{};double x[3]={r,0,0};for(int i=0;i<3;++i){v.value[i]=(a+b*r*r)*x[i];for(int d=0;d<3;++d){v.d[d][i]=2*b*x[d]*x[i]+(i==d?a+b*r*r:0);for(int e=0;e<3;++e)v.dd[d][e][i]=2*b*((d==e?x[i]:0)+(d==i?x[e]:0)+(e==i?x[d]:0));}}return v;}
 h::MetricJet<double> tensor(double r,double a,double b,double c){h::MetricJet<double>v{};double x[3]={r,0,0};for(int i=0;i<3;++i)for(int j=0;j<3;++j){v.g[i][j]=(i==j?a+b*r*r:0)+c*x[i]*x[j];for(int d=0;d<3;++d){v.dg[d][i][j]=(i==j?2*b*x[d]:0)+c*((i==d?x[j]:0)+(j==d?x[i]:0));for(int e=0;e<3;++e)v.ddg[d][e][i][j]=(i==j&&d==e?2*b:0)+c*((i==d&&j==e)+(j==d&&i==e));}}return v;}
 void compare(const h::Z4cRHS<double>&a,const h::Z4cRHS<double>&b){near(a.chi,b.chi);near(a.trace,b.trace);near(a.theta,b.theta);for(int i=0;i<3;++i){near(a.lambda[i],b.lambda[i]);for(int j=0;j<3;++j){near(a.metric[i][j],b.metric[i][j]);near(a.a[i][j],b.a[i][j]);}}}
-int main(){try{
- h::CentralZ4cConfiguration c;const auto config=c.Resolve();auto p=config.gauge;h::StationaryGaugeReference reference(p);
+int main(int argc,char**){try{
+ h::CentralZ4cConfiguration c;if(argc>1)c.compact_slicing_end=.97;const auto config=c.Resolve();auto p=config.gauge;h::StationaryGaugeReference reference(p);
  int cases=0;
  for(int i=1;i<100;++i){double r=i/100.,x[3]={r,0,0};s::Jets exact{};auto&u=exact.u;
   u.chi=scalar(r,.81,.07);u.alpha=scalar(r,.63,.16);u.trace=scalar(r,-.7,.02);u.theta=scalar(r,.023,.011);
@@ -52,8 +53,13 @@ int main(){try{
   near(rate[s::gt],expected_g);near(rate[s::at],expected_a);
   tangent_error=std::max({tangent_error,std::abs(rate[s::gt]-expected_g),std::abs(rate[s::at]-expected_a)});
  }
+ if(argc>1){bool rejected=false;try{h::NativeBoostedWormhole unsupported(.1,1./3.,false,20,40,.97);}catch(const std::invalid_argument&){rejected=true;}check(rejected,"unsupported compact boost accepted");}
  // Single-radius plateau, physical mapping, and explicit bad-input rejection.
- for(double R:{6.,10.,20.,30.}){c.inner_z4c_radius_M=R;const auto z=c.Resolve();
+ for(double R:{6.,10.,20.,30.}){c.inner_z4c_radius_M=R;
+  // At 6M the fixed b=.97 control cannot match the anchor with p>=7.
+  // Retain the C6 restriction and verify rejection instead of lowering p.
+  if(argc>1 && R==6){bool rejected=false;try{c.Resolve();}catch(const std::invalid_argument&){rejected=true;}check(rejected,"unmatchable compact shape accepted");continue;}
+  const auto z=c.Resolve();
   h::NativeWormhole map(1./3.,2e-13,R,2*R,h::NativeWormhole::TransitionProfile::polynomial_c6);
   near(map.Point(z.compact_radius).areal*3,R);
   for(double f:{.01,.5,1.}){const auto om=z.gauge.profile.Radial(f*z.compact_radius);check(om.first==0&&om.second==0,"nonflat core");check(h::InnerTelegrapherWeight(f*z.compact_radius,z.gauge.inner_begin,z.gauge.inner_end)==1,"non-Cartesian inner gauge");}

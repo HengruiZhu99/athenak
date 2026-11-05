@@ -22,7 +22,7 @@ class NativeWormhole {
   // Defaults preserve the frozen 4M--8M initializer; no evolution gauge changes.
   explicit NativeWormhole(double mass=1./3.,double tolerance=2e-13,
                           double transition_start_M=4,double transition_end_M=8,
-                          TransitionProfile profile=TransitionProfile::bump)
+                          TransitionProfile profile=TransitionProfile::bump,double compact_end=0)
       : mass_(mass),tol_(tolerance),r0_phys_(transition_start_M*mass),r1_phys_(transition_end_M*mass),
         profile_(profile),g8_(Rule(8)),g16_(Rule(16)) {
     if(!(mass>0)||!std::isfinite(mass)||!(tolerance>0)||tolerance>1e-5
@@ -33,9 +33,28 @@ class NativeWormhole {
     j0_=Integral(1/r0_phys_);r0_=std::exp(-j0_);
     const double rho0=(r0_phys_-mass+std::sqrt(r0_phys_*(r0_phys_-2*mass)))/2;
     scale_=r0_/rho0;inner_shift_=ShiftIntegral(r0_phys_);
+    if(compact_end!=0){
+      if(!std::isfinite(compact_end)||profile!=TransitionProfile::polynomial_c6 ||
+          !(compact_end>OuterTransitionRadius()&&compact_end<1))
+        throw std::invalid_argument("compact slicing needs C6 anchor and an extended outer endpoint");
+      // Above the anchor's outer join the map is the same exact CMC solution.
+      compact_y_end_=Inverse(compact_end);compact_end_=compact_end;
+      double lo=7,hi=150;const double target=1/r0_phys_;
+      if(!(CompactIntegrate(r0_,lo)[0]>=target && CompactIntegrate(r0_,hi)[0]<=target))
+        throw std::invalid_argument("compact slicing shape cannot preserve the central scale");
+      for(int i=0;i<52;++i){const double mid=(lo+hi)/2;
+        if(CompactIntegrate(r0_,mid)[0]>target)lo=mid;else hi=mid;}
+      compact_shape_=(lo+hi)/2;const auto join=CompactIntegrate(r0_,compact_shape_);
+      compact_join_residual_=join[0]/target-1;inner_shift_=join[1];
+      if(std::abs(compact_join_residual_)>50*tol_)throw std::runtime_error("compact central matching failed");
+    }
   }
   double InnerRadius()const{return r0_;}
-  double OuterTransitionRadius()const{return std::exp(-Integral(1/r1_phys_));}
+  double OuterTransitionRadius()const{return compact_end_>0?compact_end_:std::exp(-Integral(1/r1_phys_));}
+  double CompactShape()const{return compact_shape_;}
+  double CompactEnd()const{return compact_end_;}
+  double CompactJoinResidual()const{return compact_join_residual_;}
+  double TransitionEndAreal()const{return compact_end_>0?1/compact_y_end_:r1_phys_;}
   double IsotropicScale()const{return scale_;}
   double Mass()const{return mass_;}
   double Tolerance()const{return tol_;}
@@ -50,6 +69,13 @@ class NativeWormhole {
       const double rho=r/scale_,psi=1+mass_/(2*rho);
       v.chi=scale_*scale_/(o*o*std::pow(psi,4));v.ar=0;v.trace=0;
       v.lapse=o/(psi*psi);v.shift_ratio=inner_shift_;v.areal=rho*psi*psi;
+    }else if(compact_end_>0 && r<compact_end_){
+      const auto mapped=CompactIntegrate(r,compact_shape_);const double y=mapped[0],R=1/y;
+      const auto sw=CompactSwitch(r,compact_shape_);
+      const double a=std::sqrt(y*y-2*mass_*y*y*y+sw[0]*sw[0])/y;
+      v.chi=std::pow(r*y/o,2);v.ar=-2*r*sw[1]/(3*o*a);
+      v.trace=-3*sw[0]-r*sw[1]/a;v.lapse=o*PhysicalLapse(R,sw[0]);
+      v.shift_ratio=mapped[1];v.areal=R;
     }else{
       const double y=Inverse(r),R=1/y;const auto s=Switch(R);
       v.chi=std::pow(r*y/o,2);v.ar=-2*R*s[1]/(3*o);v.trace=-3*s[0]-R*s[1];
@@ -100,6 +126,48 @@ class NativeWormhole {
   struct Gauss {std::vector<double>x,w;};
   double mass_,tol_,r0_phys_,r1_phys_,j0_,r0_,scale_,inner_shift_;
   TransitionProfile profile_;
+  double compact_end_=0,compact_shape_=0,compact_y_end_=0,compact_join_residual_=0;
+  // Host-only coordinate construction. No interpolated field table or evolution
+  // constraint solve: every requested radius is independently integrated.
+  std::array<double,2> CompactSwitch(double r,double p)const{
+    if(r<=r0_)return {0,0};if(r>=compact_end_)return {1,0};
+    const double z=(r-r0_)/(compact_end_-r0_),t=1-z;
+    double term=1,sum=1,norm=p;
+    for(int j=1;j<=6;++j){term*=((p+j-1)/j)*t;sum+=term;norm*=(p+j)/j;}
+    const double value=std::pow(z,p)*sum;
+    const double derivative=norm*std::pow(z,p-1)*std::pow(t,6)/(compact_end_-r0_);
+    return {value,derivative};
+  }
+  std::array<double,2> CompactIntegrate(double target,double shape)const{
+    if(!(target>=r0_&&target<=compact_end_))throw std::invalid_argument("invalid compact map radius");
+    using V=std::array<double,2>;
+    const auto rhs=[&](double r,const V&u){const auto s=CompactSwitch(r,shape);const double y=u[0];
+      const double F=std::sqrt(y*y-2*mass_*y*y*y+s[0]*s[0]);
+      if(!(F>0 && y>0))throw std::runtime_error("nonmonotone compact map");
+      return V{-F/r,-PhysicalLapse(1/y,s[0])*s[1]*y/F};};
+    const auto rk=[&](double r,const V&u,double h){const auto a=rhs(r,u);
+      V v{};for(int j=0;j<2;++j)v[j]=u[j]+h*a[j]/2;const auto b=rhs(r+h/2,v);
+      for(int j=0;j<2;++j)v[j]=u[j]+h*b[j]/2;const auto c=rhs(r+h/2,v);
+      for(int j=0;j<2;++j)v[j]=u[j]+h*c[j];const auto d=rhs(r+h,v);
+      for(int j=0;j<2;++j)v[j]=u[j]+h*(a[j]+2*b[j]+2*c[j]+d[j])/6;return v;};
+    double r=compact_end_,h=-(compact_end_-r0_)/32;V u{compact_y_end_,0};
+    int attempts=0;
+    while(r>target){
+      if(r-target<8*std::numeric_limits<double>::epsilon()){u=rk(r,u,target-r);break;}
+      if(++attempts>200000)throw std::runtime_error("compact map integration did not converge");
+      h=-std::min(-h,r-target);const auto whole=rk(r,u,h),half=rk(r,u,h/2),fine=rk(r+h/2,half,h/2);
+      double error=0;for(int j=0;j<2;++j)error=std::max(error,std::abs(fine[j]-whole[j])/15);
+      // Local relative/absolute step tolerance; Richardson extrapolation removes
+      // the estimated leading RK4 error. Do not shrink the budget with h again:
+      // that can ask for a difference below roundoff and cause step collapse.
+      const double budget=(tol_+2*std::numeric_limits<double>::epsilon())*
+          std::max({.01,std::abs(fine[0]),std::abs(fine[1])});
+      if(error<=budget){for(int j=0;j<2;++j)u[j]=fine[j]+(fine[j]-whole[j])/15;r+=h;}
+      const double factor=error>0?std::clamp(.8*std::pow(budget/error,.2),.2,2.):2.;h*=factor;
+      if(-h<4*std::numeric_limits<double>::epsilon() && r>target+1e-14)
+        throw std::runtime_error("compact map tolerance exhausted floating precision");
+    }return u;
+  }
   Gauss g8_,g16_;
   std::map<double,Radial>cache_;
   static Gauss Rule(int n){

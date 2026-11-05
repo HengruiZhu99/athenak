@@ -66,7 +66,8 @@ class NativeBoostedWormhole {
     return q;
   }
  public:
-  explicit NativeBoostedWormhole(double v=.1,double mass=1./3.,bool free_gauge=boost_free_initial_gauge,double transition_start_M=4,double transition_end_M=12):base_(mass,2e-13,transition_start_M,transition_end_M,NativeWormhole::TransitionProfile::polynomial_c6),m_(mass),v_(v),lorentz_(1/std::sqrt(1-v*v)),free_gauge_(free_gauge){
+  explicit NativeBoostedWormhole(double v=.1,double mass=1./3.,bool free_gauge=boost_free_initial_gauge,double transition_start_M=4,double transition_end_M=12,double compact_end=0):base_(mass,2e-13,transition_start_M,transition_end_M,NativeWormhole::TransitionProfile::polynomial_c6),m_(mass),v_(v),lorentz_(1/std::sqrt(1-v*v)),free_gauge_(free_gauge){
+    if(compact_end!=0)throw std::invalid_argument("compact slicing is not implemented in boosted Tail/Fields/Radial");
     if(!std::isfinite(v)||std::abs(v)>=.3)throw std::invalid_argument("boost outside audited mild range");
     rho0_=base_.InnerRadius()/base_.IsotropicScale();constant_=-Rstar(base_.r0_phys_)-Tail(base_.r0_phys_);
   }

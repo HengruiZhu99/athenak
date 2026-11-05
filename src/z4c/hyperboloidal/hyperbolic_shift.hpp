@@ -139,6 +139,7 @@ template<class T> struct HyperbolicShiftParameters {
   // Prescribed stationary outer gauge only; geometric equations are untouched.
   bool stationary_outer_reference=false;
   T reference_start_M=4, reference_end_M=12;
+  T reference_compact_end=0; // host initial/reference map; zero preserves areal profile
   T inner_begin=InnerTelegrapher::begin, inner_end=InnerTelegrapher::end;
   T inner_gamma=InnerTelegrapher::shift_gamma;
   T inner_chi_guard=InnerTelegrapher::chi_guard;
@@ -150,6 +151,8 @@ template<class T> struct HyperbolicShiftParameters {
   T inner_z4 = 8, kappa1 = 4, kappa2 = T(-.99);
   void Validate() const {
     profile.Validate();
+    if(!std::isfinite(reference_compact_end)||reference_compact_end<0||reference_compact_end>=1)
+      throw std::invalid_argument("invalid compact reference endpoint");
     for (const auto window : {std::array<T,2>{coefficient_begin,coefficient_end},
                               std::array<T,2>{restoration_begin,restoration_end}})
       if (!(window[0]==-1 && window[1]==-1) &&

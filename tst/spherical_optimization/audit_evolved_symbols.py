@@ -8,7 +8,7 @@ from audit import symbol_audit
 
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('--library',required=True);ap.add_argument('--run',type=Path,required=True);ap.add_argument('--output',type=Path,required=True);ap.add_argument('--stride',type=int,default=4);a=ap.parse_args();a.output.mkdir(parents=True,exist_ok=False)
- cfg=json.loads((a.run/'manifest.json').read_text())['config'];k=Kernel(a.library,cfg['mode'],cfg['radius'],cfg['slicing_ratio'],cfg['separated']);rows=[]
+ cfg=json.loads((a.run/'manifest.json').read_text())['config'];k=Kernel.from_config(a.library,cfg);rows=[]
  files=[a.run/'initial.npz',*sorted(a.run.glob('profile-*.npz'))]
  for p in files:
   state=np.load(p);r=state['r'];q=state['q'];index=np.unique(np.r_[np.arange(0,len(r)-1,a.stride),len(r)-2]);values=symbol_audit(k,r[index],q[index]);np.savetxt(a.output/(p.stem+'-symbols.csv'),values,delimiter=',',header='r,direction,max_abs_speed,max_imag,raw_eigenvector_condition,eigenspace_condition,defective_clusters,residual',comments='')
