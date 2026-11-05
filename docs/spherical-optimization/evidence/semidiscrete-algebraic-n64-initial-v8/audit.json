@@ -1,0 +1,122 @@
+{
+  "n": 64,
+  "penalty": 0.6510416666660156,
+  "derivative_boundary": false,
+  "state": "None",
+  "finite_difference_epsilons": [
+    1e-05,
+    3e-06
+  ],
+  "relative_jacobian_difference": 2.4929958689298742e-11,
+  "max_abs_jacobian_difference": 8.689330570632592e-06,
+  "max_real_eigenvalue": 2.343461840182832,
+  "min_real_eigenvalue": -703.5525438766124,
+  "max_imaginary_eigenvalue": 231.43389873052138,
+  "leading_eigenvalues": [
+    [
+      2.343461840182832,
+      0.0
+    ],
+    [
+      0.6404878304635673,
+      0.0
+    ],
+    [
+      0.36248548784907453,
+      0.5615032777752735
+    ],
+    [
+      0.36248548784907453,
+      -0.5615032777752735
+    ],
+    [
+      0.024043666597366887,
+      0.4624048533128641
+    ],
+    [
+      0.024043666597366887,
+      -0.4624048533128641
+    ],
+    [
+      0.0015410437429566192,
+      1.2816336421722718
+    ],
+    [
+      0.0015410437429566192,
+      -1.2816336421722718
+    ],
+    [
+      0.0,
+      0.0
+    ],
+    [
+      -0.005681575312571015,
+      0.9492940503077311
+    ],
+    [
+      -0.005681575312571015,
+      -0.9492940503077311
+    ],
+    [
+      -0.018487713445114993,
+      0.35682923501318453
+    ]
+  ],
+  "leading_eigenpair_residual": 1.112867907966816e-17,
+  "speed_over_dr": 153.3025612106918,
+  "rk4": [
+    {
+      "C_char": 0.1,
+      "dt": 0.0006523048226347942,
+      "dt_M": 0.0019569144679043825,
+      "rk_spectral_radius": 1.001529820443235,
+      "exact_spectral_radius": 1.001529820443235,
+      "rk_scaled_norm": 211.63341783794857,
+      "exact_scaled_norm": 211.69391268657674,
+      "rk_minus_exact_scaled_norm": 0.12650966209669526
+    },
+    {
+      "C_char": 0.2,
+      "dt": 0.0013046096452695884,
+      "dt_M": 0.003913828935808765,
+      "rk_spectral_radius": 1.0030619812370565,
+      "exact_spectral_radius": 1.0030619812370587,
+      "rk_scaled_norm": 340.8276991464968,
+      "exact_scaled_norm": 342.3147092408157,
+      "rk_minus_exact_scaled_norm": 3.7633167047247045
+    },
+    {
+      "C_char": 0.3,
+      "dt": 0.0019569144679043825,
+      "dt_M": 0.005870743403713147,
+      "rk_spectral_radius": 1.00459648596177,
+      "exact_spectral_radius": 1.0045964859617869,
+      "rk_scaled_norm": 412.1355038732545,
+      "exact_scaled_norm": 420.1383603801502,
+      "rk_minus_exact_scaled_norm": 26.663718062289348
+    },
+    {
+      "C_char": 0.4,
+      "dt": 0.0026092192905391768,
+      "dt_M": 0.00782765787161753,
+      "rk_spectral_radius": 1.006133338203142,
+      "exact_spectral_radius": 1.0061333382032134,
+      "rk_scaled_norm": 446.5227045041173,
+      "exact_scaled_norm": 462.9289513941484,
+      "rk_minus_exact_scaled_norm": 105.19451269188698
+    },
+    {
+      "C_char": 0.5,
+      "dt": 0.003261524113173971,
+      "dt_M": 0.009784572339521912,
+      "rk_spectral_radius": 1.0076725415523993,
+      "exact_spectral_radius": 1.007672541552617,
+      "rk_scaled_norm": 516.2631237407203,
+      "exact_scaled_norm": 482.6703719060457,
+      "rk_minus_exact_scaled_norm": 301.5105622713004
+    }
+  ],
+  "seconds": 9.019025041,
+  "stage_map_limitation": "Algebraic policy also rematerializes D after each accepted step: its stage Jacobian is NOT the Jacobian of that complete projected integrator.",
+  "qualification": "Frozen time-dependent semidiscrete operator, not continuum or nonlinear stability. Positive real eigenvalues prevent absolute contractivity; displayed norms use the saved local variable scaling."
+}

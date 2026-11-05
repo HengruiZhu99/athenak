@@ -4,7 +4,7 @@ import argparse,hashlib,json,subprocess,time,traceback,tarfile
 from pathlib import Path
 import numpy as np
 from kernel import Kernel
-from evolution import Evolution,ChartEvolution
+from evolution import Evolution,ChartEvolution,DerivativeBoundaryEvolution
 ROOT=Path(__file__).resolve().parents[2]
 def main():
     ap=argparse.ArgumentParser()
@@ -13,15 +13,16 @@ def main():
     ap.add_argument('--radius',type=float,default=20.);ap.add_argument('--slicing-ratio',type=float,default=2.)
     ap.add_argument('--separated',action='store_true');ap.add_argument('--grading',type=float,default=0.)
     ap.add_argument('--penalty',type=float,default=.6510416666660156);ap.add_argument('--ko',type=float,default=.5)
-    ap.add_argument('--reference-jets',action='store_true');ap.add_argument('--normal-policy',choices=('sampled','analytic'),default='sampled');ap.add_argument('--algebraic-chart',action='store_true');ap.add_argument('--floors',action='store_true');ap.add_argument('--duration',type=float,default=.1)
+    ap.add_argument('--derivative-boundary',action='store_true');ap.add_argument('--reference-step',type=float,default=5e-4);ap.add_argument('--reference-jets',action='store_true');ap.add_argument('--normal-policy',choices=('sampled','analytic'),default='sampled');ap.add_argument('--algebraic-chart',action='store_true');ap.add_argument('--floors',action='store_true');ap.add_argument('--duration',type=float,default=.1)
     ap.add_argument('--cfl',type=float,default=.2);ap.add_argument('--fixed-dt',type=float)
     ap.add_argument('--experimental-timestep',action='store_true')
     args=ap.parse_args()
+    if args.derivative_boundary and not args.algebraic_chart:raise ValueError('derivative boundary requires algebraic chart')
     if args.output.exists():raise FileExistsError('refuse to overwrite experiment')
     if args.cfl<=0 or args.duration<=0 or args.n<16 or (args.fixed_dt is not None and args.fixed_dt<=0):raise ValueError('invalid experiment')
     if (args.cfl>.4 or args.fixed_dt) and not args.experimental_timestep:raise ValueError('explicit experimental timestep opt-in required')
     args.output.mkdir(parents=True)
-    source_paths=sorted([*ROOT.glob('src/z4c/hyperboloidal/*.hpp'),*Path(__file__).parent.glob('*.py'),*Path(__file__).parent.glob('*.cpp'),Path(__file__).parent/'CMakeLists.txt'])
+    source_paths=sorted([*ROOT.glob('src/z4c/hyperboloidal/*.hpp'),*Path(__file__).parent.glob('*.py'),*Path(__file__).parent.glob('*.cpp'),Path(__file__).parent/'CMakeLists.txt',ROOT/'tst/elliptic_shift_1d/numerics.py'])
     hashes={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in source_paths}
     identity=dict(config={k:str(v) if isinstance(v,Path) else v for k,v in vars(args).items()},
       commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
@@ -30,7 +31,7 @@ def main():
     with tarfile.open(args.output/'source.tar.gz','w:gz') as archive:
         for p in source_paths:archive.add(p,arcname=str(p.relative_to(ROOT)))
     setup_start=time.perf_counter();k=Kernel(args.library,args.mode,args.radius,args.slicing_ratio,args.separated)
-    e=(ChartEvolution if args.algebraic_chart else Evolution)(k,args.n,args.grading,args.penalty,args.ko,args.floors,args.normal_policy,args.reference_jets);q=e.initial.copy()
+    e=(DerivativeBoundaryEvolution if args.derivative_boundary else ChartEvolution if args.algebraic_chart else Evolution)(k,args.n,args.grading,args.penalty,args.ko,args.floors,args.normal_policy,args.reference_jets,args.reference_step);q=e.initial.copy()
     full=lambda state:k.expand_chart(state)[0] if args.algebraic_chart else state
     if args.reference_jets:np.savez_compressed(args.output/'reference-jets.npz',d=e.reference_d,dd=e.reference_dd,refinement_difference=e.reference_jet_difference)
     np.savez_compressed(args.output/'initial.npz',r=e.r,q=full(q),omega=e.omega,source=e.source,configuration=k.config)

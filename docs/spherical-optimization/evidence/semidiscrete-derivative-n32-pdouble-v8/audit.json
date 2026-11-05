@@ -1,0 +1,122 @@
+{
+  "n": 32,
+  "penalty": 1.302083333332,
+  "derivative_boundary": true,
+  "state": "None",
+  "finite_difference_epsilons": [
+    1e-05,
+    3e-06
+  ],
+  "relative_jacobian_difference": 7.796863307386452e-11,
+  "max_abs_jacobian_difference": 1.3337208656594157e-05,
+  "max_real_eigenvalue": 86.2234760964421,
+  "min_real_eigenvalue": -912.711855278826,
+  "max_imaginary_eigenvalue": 189.12634275452868,
+  "leading_eigenvalues": [
+    [
+      86.2234760964421,
+      0.0
+    ],
+    [
+      6.955013761486176,
+      0.0
+    ],
+    [
+      0.9067168753357612,
+      0.0
+    ],
+    [
+      0.537969239136725,
+      0.0
+    ],
+    [
+      0.3543031919146059,
+      -0.591624670409644
+    ],
+    [
+      0.3543031919146059,
+      0.591624670409644
+    ],
+    [
+      0.023888743712412418,
+      1.1736741767186734
+    ],
+    [
+      0.023888743712412418,
+      -1.1736741767186734
+    ],
+    [
+      0.019017773836906747,
+      0.41707347139422585
+    ],
+    [
+      0.019017773836906747,
+      -0.41707347139422585
+    ],
+    [
+      0.015269795672692616,
+      0.7221123383721669
+    ],
+    [
+      0.015269795672692616,
+      -0.7221123383721669
+    ]
+  ],
+  "leading_eigenpair_residual": 6.004864811117988e-18,
+  "speed_over_dr": 76.0477272147525,
+  "rk4": [
+    {
+      "C_char": 0.1,
+      "dt": 0.0013149636900733177,
+      "dt_M": 0.003944891070219953,
+      "rk_spectral_radius": 1.1200581439688049,
+      "exact_spectral_radius": 1.1200583031082003,
+      "rk_scaled_norm": 179.0654393955187,
+      "exact_scaled_norm": 178.45580967813586,
+      "rk_minus_exact_scaled_norm": 4.212329309598383
+    },
+    {
+      "C_char": 0.2,
+      "dt": 0.0026299273801466353,
+      "dt_M": 0.007889782140439906,
+      "rk_spectral_radius": 1.254525410739481,
+      "exact_spectral_radius": 1.2545306023616212,
+      "rk_scaled_norm": 334.9831972674028,
+      "exact_scaled_norm": 276.28321563934264,
+      "rk_minus_exact_scaled_norm": 115.60236732115754
+    },
+    {
+      "C_char": 0.3,
+      "dt": 0.003944891070219952,
+      "dt_M": 0.011834673210659856,
+      "rk_spectral_radius": 3.1045388946106223,
+      "exact_spectral_radius": 1.4051474176784655,
+      "rk_scaled_norm": 999.4425732990046,
+      "exact_scaled_norm": 412.87393381588976,
+      "rk_minus_exact_scaled_norm": 764.6619014267892
+    },
+    {
+      "C_char": 0.4,
+      "dt": 0.005259854760293271,
+      "dt_M": 0.015779564280879812,
+      "rk_spectral_radius": 11.414241074321154,
+      "exact_spectral_radius": 1.5738470322618119,
+      "rk_scaled_norm": 3134.25184517748,
+      "exact_scaled_norm": 568.053401094831,
+      "rk_minus_exact_scaled_norm": 2844.5387574587094
+    },
+    {
+      "C_char": 0.5,
+      "dt": 0.006574818450366587,
+      "dt_M": 0.019724455351099762,
+      "rk_spectral_radius": 31.02104459655644,
+      "exact_spectral_radius": 1.7628004363070418,
+      "rk_scaled_norm": 8123.692701083766,
+      "exact_scaled_norm": 744.6486706326468,
+      "rk_minus_exact_scaled_norm": 7751.71158645274
+    }
+  ],
+  "seconds": 2.550495917,
+  "stage_map_limitation": "D is evolved; endpoint alpha/beta redundant coordinates eliminated.",
+  "qualification": "Frozen time-dependent semidiscrete operator, not continuum or nonlinear stability. Positive real eigenvalues prevent absolute contractivity; displayed norms use the saved local variable scaling."
+}

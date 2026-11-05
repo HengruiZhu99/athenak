@@ -7,13 +7,13 @@ No stationary-background subtraction and no elliptic solve.
 import sys,time
 from pathlib import Path
 import numpy as np
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'elliptic_shift_1d'))
+sys.path.append(str(Path(__file__).resolve().parents[1]/'elliptic_shift_1d'))
 from numerics import RadialOperators,weights,puncture_dissipation
 from kernel import Kernel,PARITY
 from physical_constraints import evaluate as physical_constraints
 
 class Evolution:
-    def __init__(self,kernel,n,grading=0.,penalty=.6510416666660156,ko=.5,floors=False,normal_policy="sampled",reference_jets=False):
+    def __init__(self,kernel,n,grading=0.,penalty=.6510416666660156,ko=.5,floors=False,normal_policy="sampled",reference_jets=False,reference_step=5e-4):
         self.kernel=kernel;self.n=n;self.penalty=penalty;self.ko=ko;self.floors=floors;self.normal_policy=normal_policy
         x=(np.arange(n)+.5)/(n-.5)
         # Monotone smooth grading: finer toward scri. Actual dr enters all CFLs.
@@ -25,7 +25,8 @@ class Evolution:
         self.reference_jets=reference_jets;self.reference_jet_difference=None
         if reference_jets:
             derivatives=[]
-            for step in (1e-3,5e-4):
+            if reference_step<=0:raise ValueError("reference step must be positive")
+            for step in (2*reference_step,reference_step):
                 nodes=[];first=[];second=[]
                 for r in self.r:
                     offsets=np.arange(-3,4) if r<1 else np.arange(-6,1)
@@ -65,7 +66,14 @@ class Evolution:
         normal=self.normal@(S[-7:]-S[-1])
         if self.normal_policy=='analytic':normal=self.kernel.analytic_normal(q[-1],d[-1],dd[-1])
         rate[-1],dependent=self.kernel.scri(q[-1],d[-1],dd[-1],normal,self.dr[-1],self.penalty)
-        q[-1,11]=dependent[0]
+        if not getattr(self,"evolve_boundary_driver",False):
+            q[-1,11]=dependent[0]
+            # Auxiliary advection below already uses the materialized trace.
+            # Refresh diagnostic centered D jets to describe that same state.
+            values=q[:,11]-self.initial[:,-1] if self.reference_jets else q[:,11]
+            d[:,11],dd[:,11]=self.op.derivatives(values,PARITY[11])
+            if self.reference_jets:
+                d[:,11]+=self.reference_d[:,11];dd[:,11]+=self.reference_dd[:,11]
         adv=self.advection_jets(q)
         # Common change from centered to biased component-advection derivative.
         rate[:-1,:11]+=q[:-1,9,None]*(adv[:-1,:11]-d[:-1,:11])
@@ -77,6 +85,7 @@ class Evolution:
         self.kernel.check(self.kernel.lib.spherical_auxiliary(self.kernel.handle,self.n,self.r,q,
             np.ascontiguousarray(adv),np.ascontiguousarray(rate[:,7]),auxiliary))
         rate[:-1,11]=auxiliary[:-1]+diss[:-1,11]
+        if getattr(self,"evolve_boundary_driver",False):rate[-1,11]=auxiliary[-1]
         self.calls+=1;self.max_speed=max(self.max_speed,float(max(diag[:,7])))
         self.cumulative_rhs_seconds+=time.perf_counter()-started
         if not np.isfinite(rate).all():raise FloatingPointError('nonfinite RHS')
@@ -98,7 +107,7 @@ class Evolution:
         out=dict(t_M=3*t,calls=self.calls,speed=x['speed'],speed_over_dr=x['speed_over_dr'],
           determinant_max=float(max(abs(diag[:,4]))),tracefree_max=float(max(abs(diag[:,5]))),clock=float(abs(x['clock'])),pole=float(max(abs(x['pole']))),trace=float(max(abs(x['trace']))),
           null=float(abs(x['q'][-1,0]/x['q'][-1,1]-x['q'][-1,9]**2)),
-          dependent_D=float(x['dependent_D']),auxiliary_trace_pde=float(x['auxiliary_trace_pde']),
+          dependent_D=float(x['dependent_D']),dependent_D_mismatch=float(x['dependent_D']-x['q'][-1,11]),auxiliary_trace_pde=float(x['auxiliary_trace_pde']),
           floors=self.floor_calls,floor_max_r=self.floor_max_r,
           alpha_min=float(min(x['q'][:,8])),chi_min=float(min(x['q'][:,0])),rhs_seconds=self.cumulative_rhs_seconds)
         for lo,hi,label in [(.65,.995,'exterior'),(.8,.9,'join'),(.9,.97,'tail'),(.97,.995,'scri_collar')]:
@@ -158,3 +167,48 @@ class ChartEvolution(Evolution):
         return super().rhs(state,record)[:,self.independent]
     def step(self,q,dt):
         return super().step(q,dt)[:,self.independent]
+
+
+class DerivativeBoundaryEvolution(ChartEvolution):
+    """Experimental normal-derivative closure with the shared D PDE at scri.
+
+    The last three gauge derivative rows use a degree-seven Hermite polynomial
+    through the last seven values plus the normal derivative. No nodal data are
+    smoothed. Its correction vanishes at every interpolation node. Reference
+    jets are retained: the correction acts on their residual compatibility.
+    This is a spatial boundary policy, not a boundary well-posedness proof.
+    """
+    evolve_boundary_driver=True
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        if self.normal_policy!='analytic':raise ValueError('derivative boundary requires analytic pole normal')
+        z=(self.r[-7:]-1)/self.dr[-1]
+        poly=np.polynomial.Polynomial.fromroots(z)
+        poly=poly/poly.deriv()(0)
+        self.hermite_d=poly.deriv()(z[-3:])
+        self.hermite_dd=poly.deriv(2)(z[-3:])/self.dr[-1]
+    def spatial_jets(self,q):
+        d,dd=super().spatial_jets(q)
+        def condition(derivative):
+            normal=self.kernel.analytic_normal(q[-1],derivative,dd[-1])
+            _,dep=self.kernel.scri(q[-1],derivative,dd[-1],normal,self.dr[-1],self.penalty)
+            return np.array([dep[1],dep[0]-q[-1,11]])
+        base=condition(d[-1]);columns=[]
+        for f in (8,9):
+            perturbed=d[-1].copy();perturbed[f]+=1
+            columns.append(condition(perturbed)-base)
+        matrix=np.array(columns).T
+        correction=np.linalg.solve(matrix,-base)
+        d[-3:,8:10]+=self.hermite_d[:,None]*correction
+        dd[-3:,8:10]+=self.hermite_dd[:,None]*correction
+        residual=condition(d[-1])
+        if np.max(abs(residual))>1e-8*(1+np.max(abs(base))):
+            raise FloatingPointError('nonlinear boundary derivative compatibility')
+        self.boundary_matrix_condition=float(np.linalg.cond(matrix))
+        self.boundary_derivative_correction=correction
+        self.boundary_gauge_jets=d[-3:,8:10].copy()
+        return d,dd
+    def advection_jets(self,q):
+        d=super().advection_jets(q)
+        d[-3:,8:10]=self.boundary_gauge_jets
+        return d

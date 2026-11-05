@@ -22,35 +22,48 @@
     "independent physical spherical constraints and plain-nodal diagnostics",
     "matched reference-derivative 64/128/256 1M controls",
     "three-epsilon evolved differential-D probes",
-    "falsified and reverted unnecessary initial-lapse change"
+    "falsified and reverted unnecessary initial-lapse change",
+    "experimental derivative closure rejected by boundary spectrum and nonlinear regularity failure",
+    "semidiscrete RK4 and scaled-norm nonnormal audits at initial and 1M states",
+    "reference-derivative preparation refinement at fixed resolution",
+    "128-point 1M temporal refinement with resolved fourth-order differences",
+    "512-point 1M spatial control and exact-map independent field comparison",
+    "explicit 64-point characteristic timestep sweep and preserved delayed 10M-target failures",
+    "128-point 10M control completed but rejected for boundary accuracy",
+    "shared width-four 128-point 1M slicing comparison",
+    "width-four 64/128/256 1M resolution checks",
+    "width-four 128-point 10M control completed but not admitted for accuracy"
   ],
   "next": [
-    "Investigate a consistent shared scri closure using normal-derivative conditions for fixed clock and auxiliary compatibility; keep the actual D PDE, do not prescribe an independent D trace. Current alpha_r/beta_r local compatibility matrix is nonsingular at initial and 1M states, but this is not a well-posedness proof.",
-    "Refine or analytically derive shared native reference jets: current h=.001/.0005 preparation has measurable derivative error; no zero continuum RHS is assumed.",
-    "Run temporal refinement and independent field convergence for qualified reference-variable controls; no asymptotic result yet.",
-    "Complete smoother slicing, constant/separated gauge, radial grading and penalty comparisons on common physical/reference coordinates.",
-    "Implement semidiscrete RK4 and nonnormal audits, then nonlinear timestep sweeps; qualify finalists to 10M and construct a fixed-error cost frontier.",
-    "Full transverse/evolved-symbol and 3D transfer gates remain; no Aurora authorization."
+    "Investigate wide-family long-time error with higher resolution and central-grid allocation: compact central radius shrinks from .64029 to .44017 when the shared map changes from 20\u201340M to 20\u201380M. N128 reaches 10M but is not accurate enough.",
+    "Separate the wide-family 1M D compatibility floor (~5e-5 at N128/256) from the large 10M defect (~162 at N128): reference derivative accuracy, regularity, characteristic boundary data and propagating core errors remain to audit.",
+    "Compare radial grading with separate matched penalty-rate controls and consistent source/variable policies.",
+    "Repeat temporal, principal-symbol and nonlinear timestep qualification for finalists, including perturbations and evolved full-3D transverse symbols.",
+    "Construct controlled-timing 10M fixed-error cost frontier after the boundary/accuracy gates, and document all 3D transfer gates."
   ],
   "latest": {
-    "comparison": "chart-comparison-v6/comparison.json",
-    "time_M": 1,
-    "reference_points": [
+    "disposition": "no_admitted_10M_candidate",
+    "width_four_n128_1M_error": 3.662983209824077e-06,
+    "width_four_D_defect": 5.053644589057483e-05,
+    "original_n512_1M_error": 0.0008682656094547421,
+    "original_n512_D_defect": 3.019115084702016,
+    "temporal_difference_rms": [
+      2.593803669912304e-11,
+      1.5808895899206519e-12
+    ],
+    "width_four_1M_points": [
       64,
       128,
       256
     ],
-    "physical_error_indicators": [
-      0.007007421895583152,
-      0.003958505447822793,
-      0.001989667108217781
+    "width_four_1M_errors": [
+      4.837551483785449e-05,
+      3.662983209824077e-06,
+      1.0434189510893084e-07
     ],
-    "differential_D_defects": [
-      -138.1623521544767,
-      -4.168042807794092,
-      2.3467727076692064
-    ],
-    "disposition": "unqualified_boundary_compatibility_and_convergence"
+    "width_four_n128_10M_error": 0.010448145564418577,
+    "width_four_n128_10M_D_defect": 162.43062941938675,
+    "width_four_n128_10M_horizon_mass": 0.2808816741762915
   },
   "live_processes": [],
   "admitted_candidate": null,

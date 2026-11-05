@@ -294,3 +294,130 @@ Reproduce the new audits with `test_algebraic_chart.py`,
 preserved qualification-v1 library), and `analyze_chart.py`. Each takes
 `--library` and a fresh `--output`; the comparison additionally takes
 `--evidence docs/spherical-optimization/evidence`. All runs remain local.
+
+## Boundary, convergence and timestep investigation (v7–v10)
+
+The experimental `--derivative-boundary` policy evolves the endpoint D with
+`HyperbolicAuxiliaryRate`, and solves for normal lapse/shift derivatives so the
+shared scri kernel gives a fixed clock and the same D trace. Degree-seven
+Hermite corrections use seven nodal values and that derivative in the final
+three rows. This policy is **rejected**. Its algebraic/clock identities pass
+and its Hermite polynomial errors are below 8e-15, but the 128-point 1M run
+reaches a pole residual of 469. The leading initial boundary growth rate rises
+from 124.02 at N=32 to 248.29 at N=64 (coordinate-time units). Quartering or
+doubling the penalty leaves positive growth rates of 240.41 or 86.22 at N=32.
+The mode is localized at scri. Smaller RK steps cannot remove this spatial
+instability. The plot and saved matrices in `boundary-rejection-v8` and
+`semidiscrete-derivative-*-v8` preserve this failure rather than counting its
+roundoff clock/D identities as success.
+
+A separate stage-materialization hypothesis was tested and falsified: the
+original policy already reconstructs the dependent D before computing auxiliary
+advection in **every RK stage**. Moving reconstruction earlier changes the
+entire 1M trajectory by exactly zero. The extra implementation was removed;
+its run/source and disposition remain in `chart-stage-n128-1M-v9`. A regression
+check varies the redundant endpoint D input from +33 to -27 and obtains exactly
+the same RHS and RK step. Centered diagnostic D derivatives now also describe
+the reconstructed trace. The auxiliary evolution was already using it. This
+small diagnostic correction does not change the evolved solution.
+
+`audit_semidiscrete.py` now saves finite-difference Jacobians, their refinement
+differences, eigenvalues/eigenmodes, and RK4 versus exact frozen linear-flow
+amplification for characteristic targets .1–.5. The state chart removes the
+redundant clock/null coordinates and, for the original closure, the dependent D
+coordinate. The original-policy N=64 initial and 1M largest real eigenvalues
+are 2.343 and 2.155; the most negative eigenvalues are -703.55 and -703.86.
+The initial **decaying-eigenspace** RK4 absolute-stability threshold is
+C_char=0.60691. Positive growth eigenvalues preclude a contractivity claim for
+the full operator. Large singular amplification is reported in a disclosed
+local-variable Euclidean norm, not presented as a physical energy estimate.
+Jacobian refinement differences are about 3e-11 relative. The matrix exponential
+is independently checked against SciPy to 3.9e-15 relative. Early v7 audits,
+without source archives, and the v8 original-policy stage-map caveat are
+superseded by the archived v9/v10 audits; the caveat was disproved by the
+stage-materialization test above.
+
+Reference preparation is now configurable with `--reference-step`. At N=128,
+h=.0005, .00025, .000125 gives exterior indicators .00395850545,
+.00395852484, .00395852521 at 1M. Thus reference-stencil error is measurable but
+is not the dominant exterior error in this control. This is a numerical
+refinement check, not a claim of analytic reference jets. The actual continuum
+background RHS remains in every evaluation.
+
+At h_reference=.000125, halving and quartering the 128-point timestep gives
+maximum exterior field-difference RMS values 2.594e-11 and 1.581e-12. Resolved
+component ratios correspond to orders 3.85–4.09; values below the diagnostic
+floor are left unassigned in `temporal-convergence-n128-v10`. Temporal error at
+this timestep is negligible compared with the spatial error. These are 1M
+controls, not temporal qualification of a 10M finalist.
+
+The original 20–40M slicing control was extended to N=512 at 1M. Its common
+reference-exterior physical constraint indicator is .00086827, versus .0070074,
+.0039585 and .0019897 at 64/128/256. The D compatibility defect, however, is
++3.019 at N=512, versus +2.347 at N=256: decreasing exterior constraints alone
+does not qualify the boundary. Spatial field comparisons use exact shared-map
+inversion at R_reference/M=25–100. Interpolating total fields is contaminated
+by the sharp initial curvature profile; the additional reference-interpolation
+comparison differences evolved deviations from the same exact initial fields.
+It retains both interpolation estimates. The latter maximum adjacent-pair
+field differences are .09688, .05354 and .02378; Lambda/D ratios remain near
+first order. No clean high-order spatial claim is made for this family.
+
+The explicit N=64 1M timestep sweep completes at initial C_char=.1 through .6
+and fails at .7 (last accepted time .397M, nonpositive chi at scri). Differences
+from the .1 trajectory stay below 7.42e-8 in the common exterior through .6.
+That short-run result **does not establish a robust timestep**. Ten-M targets
+at .1, .3 and .5 fail after 4.628M, 4.520M and 4.442M respectively, with large
+scri/constraint errors and nonpositive conformal metric. All failed stages,
+last accepted states, source archives and subprocess logs are retained. At
+N=128, C_char=.3 completes 10M in 80.49 seconds without floors, but has clock
+residual .748 and pole residual .969; it remains unqualified. The shorter
+64-point failures cannot be attributed solely to an excessive timestep.
+
+A controlled wider slicing run retains the 20M central physical scale and
+changes only the configured slicing end ratio from 2 to 4 (20–80M). With the
+same chart, reference-step, analytic normal, separated gauge, ungraded grid,
+KO and penalty policies, N=128 at 1M improves the common exterior indicator
+from .0039585 to 3.663e-6 at similar runtime (15.51 seconds). Its clock residual
+is -1.55e-7 and differential D defect about 5.05e-5. This is a promising
+initial-slicing/map change expressed through the shared C++ implementation,
+not a frozen background or a claim about boosted/3D stability. Resolution and
+10M checks are recorded below as they finish.
+
+New reproductions are provided by `analyze_boundary.py`,
+`analyze_convergence.py`, `audit_semidiscrete.py`, `sweep_timestep.py`, and
+`analyze_timestep.py`; each refuses to overwrite its output directory. The
+convergence and comparison scripts accept explicit case lists. Run manifests
+contain complete command configurations; the latest archives also include
+the shared Python radial-operator dependency. Some independent local controls
+ran concurrently, so these wall times are exploratory observations; a final
+fixed-error frontier must use controlled timing conditions and matched duration.
+
+The wider-family 1M checks completed at N=64/128/256 with exterior indicators
+4.838e-5, 3.663e-6 and 1.043e-7. The corresponding D defects are -7.65e-3,
+5.05e-5 and 5.21e-5: the last pair has reached a compatibility floor rather
+than demonstrating further decay. Reference-interpolated field differences
+fall from .005073 to .0001826; component ratios range from about 3.65 to 5.83.
+Interpolation disagreement remains substantial for the finest curvature
+comparison (.0001529 maximum), so the ratios alone do not prove asymptotic
+field convergence.
+
+The 128-point wide case also completed 10M at the default penalty timestep,
+without floors, in 154.08 seconds. Its exterior indicator grew to .01045,
+clock residual to .568, pole residual to 1.578, and differential D defect to
+162.43. The horizon mass diagnostic is .28088 rather than 1/3. Consequently
+**it is not admitted as a 10M finalist**. The short-time improvement is real,
+but it does not survive as a qualified long-time accuracy result. Further
+resolution, central-grid allocation and boundary/source analysis are needed.
+The comparison in `width-10M-comparison-v10` uses different timestep policies
+for the narrow and wide cases and is not a controlled speedup claim.
+
+The single physical central radius remains 20M in both cases; changing the
+slicing map consistently changes its compact radius from .64029 to .44017,
+and the Cartesian scaling from .10117 to .06955. The conformal/gauge joins
+follow those derived radii. Thus this is a controlled **configured slicing/map
+family**, not a claim that every compact-coordinate window was held fixed.
+The reduced compact allocation to the physical central region is a relevant
+next resolution test. The boundary-rejection, temporal-refinement and wide-family resolution plots
+were rendered and inspected. No Aurora run, parent-campaign edit or 3D
+stability assertion was made.

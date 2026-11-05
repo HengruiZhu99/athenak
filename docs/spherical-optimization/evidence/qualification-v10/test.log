@@ -1,0 +1,12 @@
+ctest --test-dir build-spherical --output-on-failure
+Test project /Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/build-spherical
+    Start 1: spherical_equivalence
+1/1 Test #1: spherical_equivalence ............   Passed    0.02 sec
+
+100% tests passed out of 1
+
+Total Test time (real) =   0.02 sec
+build-spherical/python/bin/python tst/spherical_optimization/test_derivative_boundary.py --library build-spherical/libcurrent_spherical.dylib --output /Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/docs/spherical-optimization/evidence/qualification-v10/derivative
+{"hermite_polynomial_errors": [7.105427357601002e-15, 6.966649479522903e-16, 1.582067810090848e-15, 1.3766765505351975e-15, 1.7763568394002505e-15, 2.364775042451586e-15, 2.4091839634365955e-15, 6.046324465408537e-16], "clock": 2.609403578629488e-16, "D_algebraic_mismatch": 5.98388119653695e-16, "D_pde_rate": -0.10803262525084116, "null_rate_residual": 0.0, "differentiated_identity_errors": [8.826736563882775e-11, 9.548043050644495e-10, 1.0191692767502758e-09], "exponential_vs_scipy_relative_error": 3.878342659326157e-15, "scipy_warnings": ["divide by zero encountered in matmul", "overflow encountered in matmul", "invalid value encountered in matmul", "divide by zero encountered in matmul", "overflow encountered in matmul", "invalid value encountered in matmul", "divide by zero encountered in matmul", "overflow encountered in matmul", "invalid value encountered in matmul", "divide by zero encountered in matmul", "overflow encountered in matmul", "invalid value encountered in matmul"], "qualification": "Consistency identities only. Policy rejected by resolution-growing boundary spectrum and 1M regularity errors."}
+build-spherical/python/bin/python tst/spherical_optimization/test_boundary_materialization.py --library build-spherical/libcurrent_spherical.dylib --output /Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/docs/spherical-optimization/evidence/qualification-v10/materialization
+{"rhs_D_input_difference": 0.0, "step_D_input_difference": 0.0, "centered_D_jet_error": 0.0, "qualification": "D is already materialized before its auxiliary advection at each stage. This does not assert continuum differential trace compatibility."}
