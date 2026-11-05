@@ -1,8 +1,8 @@
 {
-  "status": "stationary_radial18_n12_segment02_submitted",
-  "current_job": "9040850.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "status": "large_block_pair_submitted",
+  "current_job": "9040972.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
   "branch": "codex/refined-convergence",
-  "next": "Qualify native24^3/two-level topology and merged-shell spacing/coverage; benchmark actual cost and physics against12^3/three-level baseline, then test larger CFL. Preserve current9040850 and immutable baseline build.",
+  "next": "Monitor existing9040972 large-block pair, preserve terminal9040850 locally. Compare cost/physics before adoption; investigate smoothing initial slicing/map transition to reduce dense radial requirement. No boosted long family until stable measured~4x GPU-hour improvement.",
   "goal_active": true,
   "historical_startup_failure": {
     "job": "9038031",
@@ -498,20 +498,16 @@
     "analysis": "short-radial-controls-comparison/analysis.json and nominal-core-comparison.json; three figures inspected"
   },
   "active_control": {
+    "purpose": "large_block_pair",
     "status": "submitted",
-    "purpose": "stationary_radial18_resolution",
-    "n": 12,
-    "current_job": "9040850.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
-    "plan": "campaigns/stationary20-radial18-resolution-n12-segment02/plan.json",
+    "current_job": "9040972.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "root": "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/boosted-transition-v1",
+    "plan": "campaigns/boosted-block12-block24-pair-v1/plan.json",
     "nodes": 4,
-    "ranks": 48,
-    "dt": 4.1666666666666665e-05,
-    "target_M": 10,
-    "launcher": "launcher-v7",
-    "segment": 2
+    "ranks": 48
   },
   "radial_resolution": {
-    "status": "n12_segment02_submitted",
+    "status": "n12_healthy_walltime_deferred_for_performance",
     "sequence": [
       12,
       14,
@@ -529,7 +525,7 @@
       "checkpoint_sha256": "db614729e5e2a01177b72d8b046aafecdff73f03f9f1da361feba1dc42bc6ffc"
     },
     "qualification": "Space/time refined together; same SMR and radial boundaries, angles scale with N. No convergence claim before measurements.",
-    "current_job": "9040850.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "current_job": null,
     "plan": "campaigns/stationary20-radial18-resolution-n12-segment02/plan.json",
     "plan_sha256": "01dc50146561503b11befa4059350bc84d915b8625a0419d5dafe599ed5e8d34",
     "storage": {
@@ -583,6 +579,17 @@
       "planned_bytes": 2000000000,
       "reserve_bytes": 1000000000,
       "headroom_bytes": 2267063808
+    },
+    "segment02_terminal": {
+      "job": "9040850",
+      "admitted": true,
+      "status": "checkpointed",
+      "time_M": 4.027125000002948,
+      "steps": 32217,
+      "checkpoint_sha256": "e240a748dfd043ad905c8681c3282d1fb8bbe334345af7ac18f0c1d2d54313d3",
+      "checkpoint_bytes": 413302286,
+      "lock_released": true,
+      "local_preservation": "All152 worker artifacts locally freshly SHA256/length verified; terminal native/worker/PBS3 agree and matching allocation lock released."
     }
   },
   "boosted_smr_preparation": {
@@ -604,7 +611,8 @@
     "error": "Permission denied (keyboard-interactive,hostbased).",
     "renewal_requested_once": true,
     "scope": "9038758 scheduler F/3 and frozen native/worker checkpointed verified; matching terminal lock released. Continuation preparation underway.",
-    "restored_epoch": 1793843348.453658
+    "restored_epoch": 1793843348.453658,
+    "git_push": "Succeeded to origin/codex/refined-convergence through c68ceaf51; additional disposition commit follows."
   },
   "boosted_angular_survey": {
     "status": "complete_analysis_only",
@@ -706,7 +714,7 @@
     "qualification": "No speedup or stability demonstrated yet; timestep multiplier is not measured GPU-hour speedup. Record any equation/penalty/damping changes separately. If controlled investigation cannot achieve target stably, report evidence and block rather than launch long family."
   },
   "large_block_candidate": {
-    "status": "bound_not_submitted_waiting_existing_allocation_terminal",
+    "status": "gpu_pair_submitted",
     "block_cells": 24,
     "smr_levels": 2,
     "reference_block_cells": 12,
@@ -723,6 +731,32 @@
     "dt": 4.1666666666666665e-05,
     "steps": 600,
     "retirement_receipt": "retired-before-large-block-pair.json",
-    "retired_verified_bytes": 2864555616
+    "retired_verified_bytes": 2864555616,
+    "current_job": "9040972.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "submission_storage": {
+      "bytes": 40501058186,
+      "limit_bytes": 50000000000,
+      "planned_bytes": 3500000000,
+      "reserve_bytes": 2450000000,
+      "headroom_bytes": 3548941814,
+      "roots": [
+        "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1",
+        "/home/hzhu/hyperboloidal-performance-scaling-20261103",
+        "/lus/flare/projects/CompactBinaryMerger/hzhu/hyperboloidal-refined-20261103-v1",
+        "/home/hzhu/hyperbolic-core-shell-20261028",
+        "/lus/flare/projects/CompactBinaryMerger/hzhu/refined-convergence-20261104-v1/boosted-transition-v1"
+      ],
+      "scan": {
+        "bytes": 40501058186,
+        "unique_inodes": 186191,
+        "directories_scanned": 20689,
+        "entries_scanned": 220365
+      }
+    },
+    "latest_scheduler_state": "Q"
+  },
+  "requested_radial_redesign": {
+    "status": "investigation_requested",
+    "scope": "Joint slicing/radial-map and compatible gauge controls; retain central Z4c region and scri. Avoid claiming a pure coordinate stretch improves CFL or flatteningOmega fixes the distinct outer slicing transition."
   }
 }

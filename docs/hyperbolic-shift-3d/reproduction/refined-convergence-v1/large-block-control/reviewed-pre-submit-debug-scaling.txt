@@ -1,0 +1,29 @@
+Queue: debug-scaling
+    queue_type = Execution
+    Priority = 10
+    total_jobs = 25
+    state_count = Transit:0 Queued:5 Held:2 Waiting:0 Running:18 Exiting:0 Begu
+	n:0 
+    resources_max.nodect = 256
+    resources_max.walltime = 01:00:00
+    resources_min.nodect = 1
+    resources_min.walltime = 00:05:00
+    resources_default.base_score = 51
+    resources_default.bkc_definition = compute_aurora_prod_20261002T162246_af5b
+	0375_b4fd227
+    resources_default.enable_2nd_fp64 = True
+    resources_default.enable_fifo = 1
+    resources_default.hbm_mode = flat
+    resources_default.snc_mode = quad
+    default_chunk.at_queue = lustre_scaling
+    default_chunk.broken = False
+    default_chunk.system = aurora
+    resources_assigned.mem = 0gb
+    resources_assigned.mpiprocs = 48
+    resources_assigned.ncpus = 151216
+    resources_assigned.nodect = 727
+    max_run = [u:PBS_GENERIC=1]
+    enabled = True
+    started = True
+    queued_jobs_threshold = [u:PBS_GENERIC=1]
+

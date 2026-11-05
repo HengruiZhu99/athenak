@@ -62,3 +62,29 @@ Five obsolete remote output copies were freshly hash/length verified locally
 and rehashed remotely before retirement (2,864,555,616 logical bytes); receipt
 retired-before-large-block-pair.json preserves all identities. Local originals,
 scientific snapshots and current restart inputs remain intact.
+
+## Submission and retained stationary state
+
+Four-node48-rank job9040972 is submitted (last schedulerQ), plan SHA256
+10e7b338f6f32954b38af7d2a7b69700e6d0a996d1eaf031f6ca06bc268d7239.
+Both debug queues were empty before its single submission. Binding footprint
+40,501,058,186bytes; headroom3,548,941,814bytes after planned/atomic reserves.
+Monitor this existing job; never duplicate it or restart a failed benchmark.
+
+Stationary9040850 ended healthy at4.027125M/32217steps. Exact frozen verification
+and all152 local artifact hashes/lengths pass; matching terminal lock released.
+The retained413,302,286byte checkpoint has SHA256
+e240a748dfd043ad905c8681c3282d1fb8bbe334345af7ac18f0c1d2d54313d3.
+Do not automatically continue it ahead of the requested performance controls.
+
+The user additionally asks to reduce the need for dense outer radial sampling.
+Next initial-data controls should jointly redesign the slicing transition and
+radial map, regenerate the exact geometric data and compatible reference gauge,
+and test derivatives, spacelike/map margins, constraints and unchanged scri
+limits before evolutions. The measured lapse-gradient half-width is.0213 in
+compact radius, distinct from the Omega flattening join. A coordinate stretch
+alone also transforms characteristic speeds and is not a guaranteed CFL gain.
+A stationary-reference subtraction in the discrete RHS is a separate possible
+control; it must retain perturbation dynamics and full-field diagnostics.
+The submitted block comparison stays unchanged and does not establish that
+coarsening the dense band is safe.
