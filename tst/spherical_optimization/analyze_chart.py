@@ -8,7 +8,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from kernel import Kernel
-from evolution import ChartEvolution,DerivativeBoundaryEvolution
+from evolution import make_evolution
 from physical_constraints import evaluate
 
 def main():
@@ -27,7 +27,7 @@ def main():
   sample=PchipInterpolator(R,phys[mask])(common);linear=np.column_stack([np.interp(common,R,phys[mask,f]) for f in range(4)])
   rms=np.sqrt(np.mean(sample**2,axis=0));interp=np.sqrt(np.mean((sample-linear)**2,axis=0))
   k=Kernel.from_config(a.library,cfg)
-  e=(DerivativeBoundaryEvolution if cfg.get('derivative_boundary',False) else ChartEvolution)(k,cfg['n'],cfg['grading'],cfg['penalty'],cfg['ko'],cfg['floors'],cfg.get('normal_policy','sampled'),cfg.get('reference_jets',False),cfg.get('reference_step',5e-4),cfg.get('reference_tail','numerical'),cfg.get('grid_map','quadratic'))
+  e=make_evolution(k,cfg)
   state=q[:,e.independent];rate=e.rhs(state);base=e.last.copy();probe=[]
   for scale in (1e-5,3e-6,1e-6):
    eps=scale/max(1.,np.max(abs(rate)));e.rhs(state+eps*rate);plus=e.last['dependent_D'];e.rhs(state-eps*rate);minus=e.last['dependent_D']

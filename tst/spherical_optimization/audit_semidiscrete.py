@@ -27,7 +27,7 @@ def exponential(a):
  if not np.isfinite(out).all():raise FloatingPointError("nonfinite exponential")
  return out
 from kernel import Kernel
-from evolution import ChartEvolution,DerivativeBoundaryEvolution
+from evolution import make_evolution
 
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('--library',required=True);ap.add_argument('--output',type=Path,required=True);ap.add_argument('--n',type=int,default=32);ap.add_argument('--reference-step',type=float,default=5e-4);ap.add_argument('--penalty',type=float,default=.6510416666660156);ap.add_argument('--derivative-boundary',action='store_true');ap.add_argument('--run',type=Path,help='Use the complete configuration of an immutable run');ap.add_argument('--state',type=Path);a=ap.parse_args()
@@ -40,7 +40,7 @@ def main():
  (a.output/'manifest.json').write_text(json.dumps(identity,indent=2)+'\n')
  with tarfile.open(a.output/'source.tar.gz','w:gz') as archive:
   for p in paths:archive.add(p,arcname=str(p.relative_to(root)))
- k=Kernel.from_config(a.library,cfg);e=(DerivativeBoundaryEvolution if a.derivative_boundary else ChartEvolution)(k,a.n,grading=cfg.get('grading',0.),penalty=a.penalty,ko=cfg.get('ko',.5),floors=cfg.get('floors',False),normal_policy=cfg.get('normal_policy','analytic'),reference_jets=cfg.get('reference_jets',True),reference_step=a.reference_step,reference_tail=cfg.get('reference_tail','numerical'),grid_map=cfg.get('grid_map','quadratic'))
+ k=Kernel.from_config(a.library,cfg);e=make_evolution(k,dict(cfg,n=a.n,penalty=a.penalty,reference_step=a.reference_step,derivative_boundary=a.derivative_boundary))
  q=e.initial.copy() if not a.state else np.load(a.state)['independent_state'].copy()
  if a.state and not np.array_equal(np.load(a.state)['r'],e.r):raise ValueError('saved state grid differs from the selected configuration')
  active=np.ones_like(q,dtype=bool);active[-1,6:8]=False

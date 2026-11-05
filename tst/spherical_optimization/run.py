@@ -4,7 +4,7 @@ import argparse,hashlib,json,subprocess,time,traceback,tarfile,platform
 from pathlib import Path
 import numpy as np
 from kernel import Kernel
-from evolution import Evolution,ChartEvolution,DerivativeBoundaryEvolution
+from evolution import make_evolution
 ROOT=Path(__file__).resolve().parents[2]
 def main():
     ap=argparse.ArgumentParser()
@@ -13,11 +13,17 @@ def main():
     ap.add_argument('--radius',type=float,default=20.);ap.add_argument('--compact-end',type=float,default=0.);ap.add_argument('--slicing-ratio',type=float,default=2.)
     ap.add_argument('--separated',action='store_true');ap.add_argument('--grid-map',choices=('quadratic','two-end'),default='quadratic');ap.add_argument('--grading',type=float,default=0.)
     ap.add_argument('--penalty',type=float,default=.6510416666660156);ap.add_argument('--ko',type=float,default=.5)
+    ap.add_argument('--chi-reference-power',type=int,choices=(0,2,4),default=0)
+    ap.add_argument('--perturbation',choices=('none','gauge','constraint'),default='none')
+    ap.add_argument('--perturb-amplitude',type=float,default=1e-5);ap.add_argument('--perturb-center',type=float,default=.9);ap.add_argument('--perturb-width',type=float,default=.025)
+    ap.add_argument('--probes',action='store_true',help='Save actual total fields and radial jets at fixed probe nodes each accepted step')
     ap.add_argument('--derivative-boundary',action='store_true');ap.add_argument('--reference-tail',choices=('numerical','scri','outer'),default='numerical');ap.add_argument('--reference-step',type=float,default=5e-4);ap.add_argument('--reference-jets',action='store_true');ap.add_argument('--normal-policy',choices=('sampled','analytic'),default='sampled');ap.add_argument('--algebraic-chart',action='store_true');ap.add_argument('--floors',action='store_true');ap.add_argument('--duration',type=float,default=.1)
     ap.add_argument('--cfl',type=float,default=.2);ap.add_argument('--fixed-dt',type=float)
     ap.add_argument('--experimental-timestep',action='store_true')
     args=ap.parse_args()
     if args.derivative_boundary and not args.algebraic_chart:raise ValueError('derivative boundary requires algebraic chart')
+    if args.perturbation!='none' and (not args.algebraic_chart or not 0<args.perturb_center-args.perturb_width<args.perturb_center+args.perturb_width<1 or not np.isfinite(args.perturb_amplitude)):
+        raise ValueError('perturbation needs algebraic chart, finite amplitude and support strictly inside domain')
     if args.output.exists():raise FileExistsError('refuse to overwrite experiment')
     if args.cfl<=0 or args.duration<=0 or args.n<16 or (args.fixed_dt is not None and args.fixed_dt<=0):raise ValueError('invalid experiment')
     if (args.cfl>.4 or args.fixed_dt) and not args.experimental_timestep:raise ValueError('explicit experimental timestep opt-in required')
@@ -34,16 +40,28 @@ def main():
     with tarfile.open(args.output/'source.tar.gz','w:gz') as archive:
         for p in source_paths:archive.add(p,arcname=str(p.relative_to(ROOT)))
     setup_start=time.perf_counter();k=Kernel.from_config(args.library,vars(args))
-    e=(DerivativeBoundaryEvolution if args.derivative_boundary else ChartEvolution if args.algebraic_chart else Evolution)(k,args.n,args.grading,args.penalty,args.ko,args.floors,args.normal_policy,args.reference_jets,args.reference_step,args.reference_tail,args.grid_map);q=e.initial.copy()
+    e=make_evolution(k,vars(args));q=e.initial.copy()
+    if args.perturbation!='none':
+        z=(e.r-args.perturb_center)/args.perturb_width;bump=np.zeros_like(z);inside=abs(z)<1
+        bump[inside]=np.exp(1-1/(1-z[inside]**2));pulse=args.perturb_amplitude*bump
+        # Smooth compact support, no boundary projection or constraint solve.
+        # The reference derivatives/sources remain those of the unperturbed data.
+        slots=(6,7) if args.perturbation=='gauge' else (4,5)
+        q[:,slots[0]]+=pulse;q[:,slots[1]]+=pulse
     full=lambda state:k.expand_chart(state)[0] if args.algebraic_chart else state
     if args.reference_jets:np.savez_compressed(args.output/'reference-jets.npz',d=e.reference_d,dd=e.reference_dd,refinement_difference=e.reference_jet_difference)
     if e.reference_tail_correction is not None:np.savez_compressed(args.output/'reference-tail-correction.npz',difference=e.reference_tail_correction)
     np.savez_compressed(args.output/'initial.npz',r=e.r,q=full(q),omega=e.omega,source=e.source,configuration=k.config,compact_configuration=k.compact_config)
     history=[];t=0.;steps=0;dt_min=float('inf');dt_max=0.;cmax=0.;status='failed';failure=None
+    probe_index=np.unique([int(np.argmin(abs(e.r-r))) for r in (.84,.88,.92,.96,.985,1.)]);probe_times=[];probe_q=[];probe_d=[]
+    def record_probes():
+        if args.probes:
+            probe_times.append(3*t);probe_q.append(e.last['q'][probe_index].copy());probe_d.append(e.last['d'][probe_index].copy())
     setup_seconds=time.perf_counter()-setup_start;start=time.perf_counter()
     target=args.duration/3;next_output=0;interval=target/10
     try:
         history.append(e.report(q,t));speed0=e.last['speed_over_dr'];initial_speed=e.last['speed']
+        record_probes()
         fixed_limit=min(args.cfl/speed0,.5*e.dr[-1]/(12*args.penalty),.5/30)
         limiters={'characteristic':args.cfl/speed0,'scri_policy':.5*e.dr[-1]/(12*args.penalty),'telegrapher_policy':.5/30}
         active=min(limiters,key=limiters.get)
@@ -52,6 +70,7 @@ def main():
         while t<target-1e-14:
             dt=min(fixed_limit,target-t)
             q=e.step(q,dt);t+=dt;steps+=1;dt_min=min(dt_min,dt);dt_max=max(dt_max,dt)
+            record_probes()
             cmax=max(cmax,dt*e.step_speed_over_dr)
             if t>=next_output-1e-14 or t>=target-1e-14:
                 history.append(e.report(q,t));next_output+=interval
@@ -61,6 +80,7 @@ def main():
         failure=dict(type=type(exc).__name__,message=str(exc),traceback=traceback.format_exc())
         if hasattr(e,'attempted_state'):np.savez_compressed(args.output/'failed-stage.npz',r=e.r,q=e.attempted_state,t_last_accepted_M=3*t)
     elapsed=time.perf_counter()-start
+    if args.probes:np.savez_compressed(args.output/'probes.npz',r=e.r[probe_index],indices=probe_index,t_M=np.array(probe_times),q=np.array(probe_q),d=np.array(probe_d))
     np.savez_compressed(args.output/'last-accepted.npz',r=e.r,q=full(q),independent_state=q,t_M=3*t)
     (args.output/'history.json').write_text(json.dumps(history,indent=2,allow_nan=False)+'\n')
     result=dict(status=status,failure=failure,time_M=3*t,steps=steps,setup_seconds=setup_seconds,stepping_seconds=elapsed,

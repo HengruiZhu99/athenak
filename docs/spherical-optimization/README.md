@@ -506,3 +506,11 @@ in [COMPACT-PROFILE.md](COMPACT-PROFILE.md). At N128 it improves the matched
 20–40M anchor's common-exterior indicator by 51.5x at 10M. Differential D
 compatibility remains unresolved, so this is a promising spherical candidate,
 not an admitted stable formulation or a 3D/boosted result.
+
+The next reference-variable controls are in
+[REFERENCE-VARIABLES.md](REFERENCE-VARIABLES.md). Shared Cartesian derivative
+rules for chi/r² let the N512 run complete 10M without floors, with exterior
+indicator 1.38e-6. The chi/r⁴ control fails and is preserved. Smooth gauge and
+constraint pulse tests now include characteristic-direction probes and a 20M
+check; late gauge-response growth and the nonconverging D boundary defect
+remain explicit admission failures.

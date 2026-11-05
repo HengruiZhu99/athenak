@@ -1,5 +1,10 @@
 # Shared compact slicing: implementation and local evidence
 
+Later reference-variable controls are recorded in
+[REFERENCE-VARIABLES.md](REFERENCE-VARIABLES.md). They retain this geometry and
+remove the reported direct-chi N512 puncture failure, while exposing a separate
+late gauge-response problem. The v14 results below remain preserved controls.
+
 The compact-coordinate candidate is implemented in shared C++, with the default
 areal initializer unchanged. It substantially improves the matched 20–40M
 anchor's exterior accuracy at fixed point count, but does not yet pass the

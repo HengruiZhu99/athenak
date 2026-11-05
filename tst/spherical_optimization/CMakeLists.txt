@@ -30,3 +30,6 @@ add_test(NAME spherical_compact_equivalence COMMAND spherical_equivalence --comp
 add_executable(sample_compact sample_compact.cpp)
 target_include_directories(sample_compact PRIVATE ${ROOT}/src)
 target_compile_options(sample_compact PRIVATE -ffp-contract=off -Wall -Wextra)
+add_executable(reference_variables test_reference_variables.cpp)
+target_link_libraries(reference_variables PRIVATE current_spherical)
+add_test(NAME reference_variables COMMAND reference_variables)

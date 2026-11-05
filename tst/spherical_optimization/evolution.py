@@ -183,6 +183,35 @@ class ChartEvolution(Evolution):
         return super().step(q,dt)[:,self.independent]
 
 
+class ReferenceChiEvolution(ChartEvolution):
+    """Differentiate chi/r^p and recover physical jets in shared Cartesian C++.
+
+    The stored RK values and KO remain physical chi, isolating this spatial
+    representation. Fixed linear scaling of the stored RK coordinate would be
+    algebraically equivalent. There is no floor or positivity guarantee.
+    """
+    def __init__(self,*args,chi_reference_power=2,**kwargs):
+        super().__init__(*args,**kwargs);self.chi_reference_power=chi_reference_power
+        if chi_reference_power not in (2,4):raise ValueError('unsupported chi reference power')
+        self.scaled_initial,self.scaled_d,self.scaled_dd=self.kernel.reference_chi(self.r,self.initial,chi_reference_power,
+            self.reference_d[:,self.independent] if self.reference_jets else None,
+            self.reference_dd[:,self.independent] if self.reference_jets else None,inverse=True)
+    def scaled_values(self,q):
+        return self.kernel.reference_chi(self.r,q[:,self.independent],self.chi_reference_power,inverse=True)[0]
+    def spatial_jets(self,q):
+        scaled=self.scaled_values(q);values=scaled-self.scaled_initial if self.reference_jets else scaled
+        d,dd=self.op.derivatives(values,PARITY[self.independent])
+        if self.reference_jets:d+=self.scaled_d;dd+=self.scaled_dd
+        Q,D,DD=self.kernel.reference_chi(self.r,scaled,self.chi_reference_power,d,dd)
+        return self.kernel.expand_chart(Q,D,DD)[1:]
+    def advection_jets(self,q):
+        scaled=self.scaled_values(q);values=scaled-self.scaled_initial if self.reference_jets else scaled
+        d=self.op.advection_derivative(values,PARITY[self.independent],q[:,9])
+        if self.reference_jets:d+=self.scaled_d
+        Q,D,_=self.kernel.reference_chi(self.r,scaled,self.chi_reference_power,d)
+        return self.kernel.expand_chart(Q,D)[1]
+
+
 class DerivativeBoundaryEvolution(ChartEvolution):
     """Experimental normal-derivative closure with the shared D PDE at scri.
 
@@ -226,3 +255,12 @@ class DerivativeBoundaryEvolution(ChartEvolution):
         d=super().advection_jets(q)
         d[-3:,8:10]=self.boundary_gauge_jets
         return d
+
+
+def make_evolution(kernel,cfg):
+    power=cfg.get('chi_reference_power',0)
+    if power and (not cfg.get('algebraic_chart',True) or cfg.get('derivative_boundary',False)):
+        raise ValueError('reference chi needs the algebraic chart and standard boundary')
+    cls=ReferenceChiEvolution if power else DerivativeBoundaryEvolution if cfg.get('derivative_boundary',False) else ChartEvolution if cfg.get('algebraic_chart',True) else Evolution
+    extra={'chi_reference_power':power} if power else {}
+    return cls(kernel,cfg.get('n',64),cfg.get('grading',0.),cfg.get('penalty',.6510416666660156),cfg.get('ko',.5),cfg.get('floors',False),cfg.get('normal_policy','analytic'),cfg.get('reference_jets',True),cfg.get('reference_step',.000125),cfg.get('reference_tail','numerical'),cfg.get('grid_map','quadratic'),**extra)

@@ -13,6 +13,7 @@ class Kernel:
                     'spherical_initial':([v,i,a,a,a,a],i),'spherical_current_parts':([v,i]+[a]*9,i),
                     'spherical_scri':([v]+[a]*4+[d,d,a,a],i),'spherical_symbol':([v,d,a,a,a],i),'spherical_gauge_speeds':([v,d,a,a],i)}
         if hasattr(self.lib,'spherical_outer_reference_jets'):signatures['spherical_outer_reference_jets']=([v,i,a,a,a],i)
+        if hasattr(self.lib,'spherical_reference_chi'):signatures['spherical_reference_chi']=([i,i,i]+[a]*7,i)
         if hasattr(self.lib,'spherical_create_extended'):signatures.update(spherical_create_extended=([i,d,d,i,d],v),spherical_compact_configuration=([v,a],i))
         for name,(args,result) in signatures.items():
             f=getattr(self.lib,name);f.argtypes=args;f.restype=result
@@ -47,6 +48,10 @@ class Kernel:
         self.check(self.lib.spherical_expand_chart(len(q),q,d,dd,Q,D,DD));return Q,D,DD
     def free_radial_symbol(self,r,q):
         P=np.zeros((12,12));self.check(self.lib.spherical_free_radial_symbol(self.handle,r,np.ascontiguousarray(q),P));return P
+    def reference_chi(self,r,q,power,d=None,dd=None,inverse=False):
+        q=np.ascontiguousarray(q);d=np.zeros_like(q) if d is None else np.ascontiguousarray(d);dd=np.zeros_like(q) if dd is None else np.ascontiguousarray(dd)
+        Q=np.zeros_like(q);D=np.zeros_like(q);DD=np.zeros_like(q)
+        self.check(self.lib.spherical_reference_chi(len(q),power,int(inverse),np.ascontiguousarray(r),q,d,dd,Q,D,DD));return Q,D,DD
     def gauge_speeds(self,r,q):
         out=np.zeros(4);self.check(self.lib.spherical_gauge_speeds(self.handle,r,np.ascontiguousarray(q),out));return out
     def outer_reference_jets(self,r):

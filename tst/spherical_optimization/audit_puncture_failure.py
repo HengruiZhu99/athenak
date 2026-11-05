@@ -4,12 +4,12 @@ import argparse,json
 from pathlib import Path
 import numpy as np
 from kernel import Kernel
-from evolution import ChartEvolution,puncture_dissipation
+from evolution import make_evolution,puncture_dissipation
 
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('--library',required=True);ap.add_argument('--run',type=Path,required=True);ap.add_argument('--output',type=Path,required=True);a=ap.parse_args();a.output.mkdir(parents=True,exist_ok=False)
  cfg=json.loads((a.run/'manifest.json').read_text())['config'];saved=np.load(a.run/'last-accepted.npz');k=Kernel.from_config(a.library,cfg)
- e=ChartEvolution(k,cfg['n'],cfg['grading'],cfg['penalty'],cfg['ko'],cfg['floors'],cfg['normal_policy'],cfg['reference_jets'],cfg['reference_step'],cfg['reference_tail'],cfg['grid_map'])
+ e=make_evolution(k,cfg)
  state=saved['independent_state'];rate=e.rhs(state);base=e.last;q=base['q'];d,dd=e.spatial_jets(q);R,S,_,_=k.parts(e.r,q,d,dd,e.source)
  continuum=R[0,0]+S[0,0]/e.omega[0,0];adv=e.advection_jets(q);advective=q[0,9]*(adv[0,0]-d[0,0]);ko=puncture_dissipation(q,e.r,e.h,e.ko,.8,order=8,include_first=True)[0,0]
  assert abs(rate[0,0]-continuum-advective-ko)<1e-12

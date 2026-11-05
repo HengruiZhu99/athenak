@@ -2,6 +2,7 @@
 #include "z4c/hyperboloidal/central_z4c_configuration.hpp"
 #include "z4c/hyperboloidal/current_spherical.hpp"
 #include "z4c/hyperboloidal/stationary_gauge_reference.hpp"
+#include "z4c/hyperboloidal/reference_variables.hpp"
 #include <memory>
 #include <string>
 namespace h=z4c::hyperboloidal;
@@ -199,6 +200,17 @@ extern "C" int spherical_free_radial_symbol(void*v,double r,const double*q,doubl
 extern "C" int spherical_expand_chart(int n,const double*q,const double*d,const double*dd,double*Q,double*D,double*DD){
  try{for(int i=0;i<n;++i){s::State a{},b{},c{};s::ExpandChart(q+10*i,d+10*i,dd+10*i,a,b,c);
   std::copy(a.begin(),a.end(),Q+12*i);std::copy(b.begin(),b.end(),D+12*i);std::copy(c.begin(),c.end(),DD+12*i);}return 0;
+ }catch(const std::exception&e){error=e.what();return 1;}}
+extern "C" int spherical_reference_chi(int n,int power,int inverse,const double*r,
+ const double*q,const double*d,const double*dd,double*Q,double*D,double*DD){
+ try{if(power!=2&&power!=4)throw std::invalid_argument("unsupported chi reference power");
+  std::copy(q,q+10*n,Q);std::copy(d,d+10*n,D);std::copy(dd,dd+10*n,DD);
+  for(int i=0;i<n;++i){if(!(r[i]>0&&r[i]<=1))throw std::invalid_argument("reference chart excludes puncture");
+   const double x[3]={r[i],0,0};const auto f=h::PunctureReference(x,power);
+   const auto v=h::RadialScalar(q[10*i],d[10*i],dd[10*i],r[i]);
+   const auto u=inverse?h::ReferenceQuotient(v,f):h::ReferenceProduct(v,f);
+   Q[10*i]=u.value;D[10*i]=u.d[0];DD[10*i]=u.dd[0][0];
+  }return 0;
  }catch(const std::exception&e){error=e.what();return 1;}}
 extern "C" int spherical_analytic_normal(void*v,const double*q,const double*d,const double*dd,double*out){
  try{auto&l=*static_cast<Lab*>(v);const auto j=s::Lift(1.,q,d,dd);const double x[3]={1,0,0};

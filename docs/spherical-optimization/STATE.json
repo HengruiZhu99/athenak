@@ -46,16 +46,22 @@
     "compact matched-anchor and 64/128/256 1M and 10M resolution controls",
     "compact 10M temporal refinement and full evolved transverse/oblique symbols",
     "compact initial/evolved semidiscrete nonnormal RK4 audits and 64/128-point 10M timestep sweeps with preserved failures",
-    "localized N512 puncture positivity failure and decomposed its discrete chi rate"
+    "localized N512 puncture positivity failure and decomposed its discrete chi rate",
+    "shared Cartesian scalar reference-jet product/quotient rules with 198 nonspherical polynomial and 257 off-constraint RHS checks",
+    "r2 puncture derivative representation completes 64/128/256/512-point 10M runs without floors; r4 failure preserved with timestep refinement",
+    "resolved fourth-order temporal convergence for r2 representation at N64 and small temporal contamination check at N128",
+    "smooth gauge/constraint pulses, actual characteristic-direction probes and amplitude-linearity checks",
+    "20M paired gauge-pulse response reveals delayed growth unchanged by halved timestep",
+    "stronger scri penalties and returning-signal comparisons fail to remove differential D defect"
   ],
   "next": [
-    "The N512 half-step control fails at the same3.142678M as C_char=.4. Investigate consistent puncture reference variables and exact derivative chain rules: chi crosses zero at the innermost node with a negative one-sided derivative, while KO opposes the crossing. Do not add floors or infer a robust CFL from coarser runs.",
-    "Compare factored/normalized or positive variables as a numerical representation in shared C++ with off-constraint parity; keep full nonstationary core RHS and preserve direct-variable failures. Then repeat finer 10M spatial convergence and boundary-D checks.",
-    "Complete regular gauge/constraint perturbations, reflection and source/variable controls; test nonlinear timestep margin and delayed growth for the finalist.",
-    "Construct controlled serial timing at fixed exterior error, keeping the unresolved differential-D gate explicit; no spherical-to-3D or boosted stability claim."
+    "Audit the outer clock/null/auxiliary boundary system using the saved r2 N512 and 20M pulse data. Exterior constraints converge, but D defects stay near6 and the late gauge response grows independently of timestep. Algebraic D materialization is not differential compatibility.",
+    "Compare the existing shared auxiliary damping parameter as a controlled gauge-source change, retaining exact stationary-reference sources and the actual nonstationary core. Investigate which source/boundary sector supports the oscillatory growth before altering profiles.",
+    "Derive and test a consistent regular/characteristic boundary treatment if source tuning is insufficient; shared changing-geometry parity, initial/evolved semidiscrete stability and paired pulse controls must precede admission. Preserve the rejected derivative closure and all failures.",
+    "Once a candidate meets accuracy and boundary/perturbation gates, measure robust RK4 limits with margins and perform controlled serial fixed-error timings. No 3D/boosted claim or Aurora jobs."
   ],
   "latest": {
-    "disposition": "promising_compact_exterior_candidate_not_admitted",
+    "disposition": "r2_exterior_convergence_but_boundary_and_late_gauge_growth_not_admitted",
     "wide_areal_10M_points": [
       64,
       128,
@@ -71,9 +77,9 @@
     "twoend_n128_D_defect": 108.26238927037272,
     "weak_twoend_initial_growth_rate": 401.7369458759884,
     "exact_scri_n128_1M_D_defect": 2.138805993727148e-06,
-    "release_binary": "build-spherical-v14/libcurrent_spherical.dylib",
+    "release_binary": "build-spherical-v16/libcurrent_spherical.dylib",
     "compiler_only_observed_speed_ratio": 5.269579338765357,
-    "next_design": "puncture reference-variable and derivative-chain comparison",
+    "next_design": "outer gauge damping and coupled clock/null/auxiliary boundary consistency",
     "compact_report": "COMPACT-PROFILE.md",
     "compact_10M_points": [
       64,
@@ -95,7 +101,36 @@
     "compact_n64_C065_failure_M": 0.8013564746068456,
     "compact_n128_C065_failure_M": 0.5131375072692572,
     "compact_n512_C04_failure_M": 3.1426783829081923,
-    "compact_n512_C02_failure_M": 3.1426783829078007
+    "compact_n512_C02_failure_M": 3.1426783829078007,
+    "reference_report": "REFERENCE-VARIABLES.md",
+    "reference_chi_power": 2,
+    "r2_10M_points": [
+      64,
+      128,
+      256,
+      512
+    ],
+    "r2_10M_errors": [
+      0.0028395459183449823,
+      0.0005406494950853514,
+      5.3719920576015366e-05,
+      1.3838398899031611e-06
+    ],
+    "r2_10M_D_defects": [
+      147.88638244752667,
+      5.373619612940487,
+      5.935137798214958,
+      6.601577074251263
+    ],
+    "r2_n64_temporal_order_range": [
+      4.007372810028691,
+      4.18865268443414
+    ],
+    "r2_20M_gauge_response_max": 0.028547853610395357,
+    "r2_20M_halfstep_response_max": 0.028549596107700803,
+    "r2_20M_response_temporal_relative_difference": 5.6764472320914e-05,
+    "r4_failure_M": 6.701488129123165,
+    "r4_halfstep_failure_M": 6.70343736941666
   },
   "live_processes": [],
   "admitted_candidate": null,

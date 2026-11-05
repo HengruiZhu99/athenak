@@ -33,6 +33,7 @@ def main():
   folder=a.evidence/name;result=json.loads((folder/'result.json').read_text());cfg=json.loads((folder/'manifest.json').read_text())['config']
   assert result['status']=='completed_unqualified' and abs(result['time_M']-cfg0['duration'])<1e-12
   assert all(cfg.get(key)==cfg0.get(key) for key in ('radius','slicing_ratio','mode','separated','compact_end'))
+  assert cfg.get('chi_reference_power',0)==cfg0.get('chi_reference_power',0)
   state=np.load(folder/'last-accepted.npz');r=state['r'];q=state['q'];total_disagreement=np.sqrt(np.mean((interpolate(r,q,target,7)-interpolate(r,q,target,5))**2,axis=0))
   if a.reference_interpolation:q=q-np.load(folder/'initial.npz')['q']
   high=interpolate(r,q,target,7);low=interpolate(r,q,target,5)
