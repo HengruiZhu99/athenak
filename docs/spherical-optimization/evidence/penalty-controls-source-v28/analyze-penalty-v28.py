@@ -1,0 +1,10 @@
+from pathlib import Path
+import subprocess,concurrent.futures
+root=Path.cwd();e=root/'docs/spherical-optimization/evidence';py=str(root/'build-spherical/python/bin/python');lib='build-spherical-v26/libcurrent_spherical.dylib'
+def p(n,c,k,amp='1e-05'):return str(e/f'penalty05-n{n}-{k}-40M-c{c}-amp{amp}-v28')
+jobs=[['analyze_response_controls.py','--reference',p(256,'0.4','none'),p(256,'0.4','gauge'),'--comparison','C0.68',p(256,'0.68','none'),p(256,'0.68','gauge'),'--comparison','double-amplitude',p(256,'0.68','none'),p(256,'0.68','gauge','2e-05'),'--comparison','penalty0.651',str(e/'outer-lapse025-n256-none-40M-v26'),str(e/'outer-lapse025-n256-gauge-40M-v26'),'--output',str(e/'penalty05-gauge-controls-v28')],['analyze_response_controls.py','--reference',p(256,'0.4','none'),p(256,'0.4','constraint'),'--comparison','C0.68',p(256,'0.68','none'),p(256,'0.68','constraint'),'--output',str(e/'penalty05-constraint-controls-v28')],['analyze_paired_profiles.py','--pair','N128',p(128,'0.68','none'),p(128,'0.68','gauge'),'--pair','N256',p(256,'0.68','none'),p(256,'0.68','gauge'),'--output',str(e/'penalty05-gauge-refinement-v28')],['analyze_timestep.py','--library',lib,'--evidence',str(e),'--cases','outer-lapse025-penalty05-n512-10M-v28','penalty05-n512-none-10M-c0.68-amp1e-05-v28','--linearization',str(e/'outer-lapse025-penalty05-n128-10M-spectrum-v28'),'--output',str(e/'penalty05-n512-step-control-v28')],['audit_evolved_symbols.py','--library',lib,'--run',str(e/'penalty05-n512-none-10M-c0.68-amp1e-05-v28'),'--output',str(e/'penalty05-evolved-symbols-v28')]]
+for n in [64,128]:jobs.append(['analyze_timestep.py','--library',lib,'--sweep',str(e/f'penalty05-n{n}-timestep10M-v28'),'--linearization',str(e/'outer-lapse025-penalty05-n128-10M-spectrum-v28'),'--output',str(e/f'penalty05-n{n}-timestep-analysis-v28')])
+def run(j):
+ with open('/tmp/'+Path(j[-1]).name+'.log','w') as f:r=subprocess.run([py,'tst/spherical_optimization/'+j[0],*j[1:]],stdout=f,stderr=subprocess.STDOUT)
+ print(j[0],j[-1],r.returncode,flush=True)
+with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:list(pool.map(run,jobs))

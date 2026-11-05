@@ -1,0 +1,130 @@
+{
+  "duration_M": 10.0,
+  "n": 64,
+  "linearization": "/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/docs/spherical-optimization/evidence/outer-lapse025-penalty05-n128-10M-spectrum-v28",
+  "linearization_n": 128,
+  "same_resolution": false,
+  "runs": [
+    {
+      "target": 0.4,
+      "status": "completed_unqualified",
+      "time_M": 10.0,
+      "seconds": 4.88691275,
+      "actual_C_char": 0.40095840032145297,
+      "failure": null,
+      "case": "C0.400",
+      "final_recorded_pole": 4.172963023185535,
+      "final_recorded_clock": 11.491518255422287,
+      "field_difference_rms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "max_field_difference_rms": 0.0
+    },
+    {
+      "target": 0.68,
+      "status": "completed_unqualified",
+      "time_M": 10.0,
+      "seconds": 2.901421,
+      "actual_C_char": 0.6816292837829862,
+      "failure": null,
+      "case": "C0.680",
+      "final_recorded_pole": 4.172963222392444,
+      "final_recorded_clock": 11.49151850168705,
+      "field_difference_rms": [
+        1.431178132861015e-09,
+        1.1089787060279028e-09,
+        4.757330669335165e-10,
+        2.2472349900191378e-08,
+        7.1642288596090766e-09,
+        1.7018047889067022e-09,
+        3.5091022102551565e-10,
+        3.644253503077648e-08,
+        5.121967374432586e-10,
+        4.0406088585520664e-10,
+        1.8731115051868454e-11,
+        3.160744193512958e-08
+      ],
+      "max_field_difference_rms": 3.644253503077648e-08
+    },
+    {
+      "target": 0.75,
+      "status": "completed_unqualified",
+      "time_M": 10.0,
+      "seconds": 2.6261655,
+      "actual_C_char": 0.751797005227007,
+      "failure": null,
+      "case": "C0.750",
+      "final_recorded_pole": 4.1729634081569245,
+      "final_recorded_clock": 11.491518607185292,
+      "field_difference_rms": [
+        1.874998813069697e-09,
+        1.4386815816447385e-09,
+        6.151960607670974e-10,
+        2.8234146457352333e-08,
+        8.920140954591227e-09,
+        2.100875167670738e-09,
+        4.876558449538263e-10,
+        4.589172617953208e-08,
+        6.199673105021398e-10,
+        5.470403364821762e-10,
+        1.1712352151738507e-11,
+        4.0515887408591684e-08
+      ],
+      "max_field_difference_rms": 4.589172617953208e-08
+    },
+    {
+      "target": 0.78,
+      "status": "completed_unqualified",
+      "time_M": 10.0,
+      "seconds": 2.5585248750000003,
+      "actual_C_char": 0.781869728158491,
+      "failure": null,
+      "case": "C0.780",
+      "final_recorded_pole": 4.1727696471671205,
+      "final_recorded_clock": 11.491764545019857,
+      "field_difference_rms": [
+        4.815522864571935e-09,
+        2.0038120703072437e-09,
+        8.331974963724468e-10,
+        3.0581524330793864e-07,
+        1.2545187414086046e-07,
+        4.1711170736830106e-08,
+        3.1607237256008845e-08,
+        4.605802602903974e-07,
+        5.068771398206091e-09,
+        2.2638501223372248e-09,
+        2.5859821338977893e-11,
+        4.5981369705509907e-07
+      ],
+      "max_field_difference_rms": 4.605802602903974e-07
+    },
+    {
+      "target": 0.8,
+      "status": "failed",
+      "time_M": 1.9256038364179144,
+      "seconds": 0.486577375,
+      "actual_C_char": 1.0766688854088269,
+      "failure": {
+        "type": "FloatingPointError",
+        "message": "nonpositive chart metric",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/spherical_optimization/run.py\", line 84, in main\n    q=e.step(q,dt);t+=dt;steps+=1;dt_min=min(dt_min,dt);dt_max=max(dt_max,dt)\n  File \"/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/spherical_optimization/evolution.py\", line 183, in step\n    return super().step(q,dt)[:,self.independent]\n  File \"/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/spherical_optimization/evolution.py\", line 116, in step\n    a=self.rhs(q);b=self.rhs(q+dt*a/2);c=self.rhs(q+dt*b/2);d=self.rhs(q+dt*c)\n  File \"/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/spherical_optimization/evolution.py\", line 181, in rhs\n    return super().rhs(state,record)[:,self.independent]\n  File \"/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/spherical_optimization/evolution.py\", line 76, in rhs\n    started=time.perf_counter();self.attempted_state=state.copy();q=self.materialize(state)\n  File \"/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/spherical_optimization/evolution.py\", line 324, in materialize\n    q=super().materialize(state);w=self.outflow_width\n  File \"/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/spherical_optimization/evolution.py\", line 164, in materialize\n    full,_,_=self.kernel.expand_chart(state)\n  File \"/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/spherical_optimization/kernel.py\", line 58, in expand_chart\n    self.check(self.lib.spherical_expand_chart(len(q),q,d,dd,Q,D,DD));return Q,D,DD\n  File \"/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/tst/spherical_optimization/kernel.py\", line 39, in check\n    if code:raise FloatingPointError(self.lib.spherical_error().decode())\nFloatingPointError: nonpositive chart metric\n"
+      },
+      "case": "C0.800",
+      "final_recorded_pole": 0.06898870693143941,
+      "final_recorded_clock": 0.517748140718842
+    }
+  ],
+  "decaying_eigenvalue_RK4_C_char_bound": 0.7767020627285198,
+  "qualification": "Frozen decaying-eigenspace absolute-stability bound and unperturbed nonlinear runs only; positive growth modes, nonnormal transients, boundary incompatibility and perturbation accuracy prevent robust timestep admission."
+}

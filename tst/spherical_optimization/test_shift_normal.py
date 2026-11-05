@@ -7,8 +7,8 @@ from kernel import Kernel
 from evolution import make_evolution,ReferenceChiEvolution
 
 def main():
- ap=argparse.ArgumentParser();ap.add_argument('--library',required=True);ap.add_argument('--output',type=Path,required=True);ap.add_argument('--outer-lapse-damping',type=float,default=1.);a=ap.parse_args();a.output.mkdir(parents=True,exist_ok=False)
- cfg=dict(outer_lapse_damping=a.outer_lapse_damping,n=64,algebraic_chart=True,chi_reference_power=2,compact_end=.97,separated=True,normal_policy='analytic',reference_jets=True,reference_step=.000125,reference_tail='scri',outflow_boundary=True,boundary_normal_system='shift')
+ ap=argparse.ArgumentParser();ap.add_argument('--library',required=True);ap.add_argument('--output',type=Path,required=True);ap.add_argument('--outer-lapse-damping',type=float,default=1.);ap.add_argument('--penalty',type=float,default=.6510416666660156);a=ap.parse_args();a.output.mkdir(parents=True,exist_ok=False)
+ cfg=dict(penalty=a.penalty,outer_lapse_damping=a.outer_lapse_damping,n=64,algebraic_chart=True,chi_reference_power=2,compact_end=.97,separated=True,normal_policy='analytic',reference_jets=True,reference_step=.000125,reference_tail='scri',outflow_boundary=True,boundary_normal_system='shift')
  k=Kernel.from_config(a.library,cfg);e=make_evolution(k,cfg);r=e.r;state=e.initial.copy()
  state[:,0]=.8+.1*r;state[:,1]=1+.01*r*r;state[:,2]=.03*r;state[:,3]=-3+.02*r*r;state[:,4]=.01*r
  state[:,5]=.05*r+.02*r*r;state[:,6]=.7+.1*r;state[:,7]=-.1*r;state[:,9]=state[:,5]+.3*r+.02*r*r-.1*r**3
@@ -27,6 +27,6 @@ def main():
  assert np.array_equal(q[:,6],state[:,4]) and np.array_equal(q[:,7],state[:,5])
  null_rate=rate[0]/q[-1,1]-q[-1,0]*rate[1]/q[-1,1]**2-2*q[-1,9]*rate[9]
  assert abs(null_rate)<1e-10
- out=dict(outer_lapse_damping=a.outer_lapse_damping,lapse_jets_unchanged=True,clock_residual=float(dep[1]),dependent_D_residual=float(dep[0]-q[-1,11]),raw_minus_projected_shift_rate=float(raw_shift-rate[9]),null_time_derivative=float(null_rate),outgoing_trace=float(q[-1,11]-q[-1,7]),normal_corrections=e.boundary_derivative_correction.tolist(),source_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),qualification='The clock residual is deliberately measured, not constrained by a second normal condition. Its convergence and differential auxiliary compatibility must be tested in evolved regular data. This arbitrary off-constraint fixture is not a regularity or stability proof.')
+ out=dict(penalty=a.penalty,outer_lapse_damping=a.outer_lapse_damping,lapse_jets_unchanged=True,clock_residual=float(dep[1]),dependent_D_residual=float(dep[0]-q[-1,11]),raw_minus_projected_shift_rate=float(raw_shift-rate[9]),null_time_derivative=float(null_rate),outgoing_trace=float(q[-1,11]-q[-1,7]),normal_corrections=e.boundary_derivative_correction.tolist(),source_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),qualification='The clock residual is deliberately measured, not constrained by a second normal condition. Its convergence and differential auxiliary compatibility must be tested in evolved regular data. This arbitrary off-constraint fixture is not a regularity or stability proof.')
  (a.output/'audit.json').write_text(json.dumps(out,indent=2)+'\n');print(json.dumps(out));k.close()
 if __name__=='__main__':main()

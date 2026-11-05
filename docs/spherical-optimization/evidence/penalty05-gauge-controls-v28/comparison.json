@@ -1,0 +1,121 @@
+{
+  "reference": [
+    "/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/docs/spherical-optimization/evidence/penalty05-n256-none-40M-c0.4-amp1e-05-v28",
+    "/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/docs/spherical-optimization/evidence/penalty05-n256-gauge-40M-c0.4-amp1e-05-v28"
+  ],
+  "rows": [
+    {
+      "label": "C0.68",
+      "parameter_changes": {
+        "fixed_dt": [
+          0.0006484752444197183,
+          0.0011024079155135212
+        ]
+      },
+      "amplitude_ratio": 1.0,
+      "regions": [
+        {
+          "region": "all",
+          "max_response": 4.1641732195785153e-07,
+          "max_response_difference": 1.6301335281632134e-12,
+          "relative_L2_difference": 3.3336147248818394e-06,
+          "peak_r": 0.9412915851272016,
+          "peak_field": "Lambda"
+        },
+        {
+          "region": "exterior",
+          "max_response": 4.1641732195785153e-07,
+          "max_response_difference": 8.786305016883489e-13,
+          "relative_L2_difference": 2.0073414412812887e-06,
+          "peak_r": 0.9412915851272016,
+          "peak_field": "Lambda"
+        }
+      ]
+    },
+    {
+      "label": "double-amplitude",
+      "parameter_changes": {
+        "perturb_amplitude": [
+          1e-05,
+          2e-05
+        ],
+        "fixed_dt": [
+          0.0006484752444197183,
+          0.0011024079155135212
+        ]
+      },
+      "amplitude_ratio": 2.0,
+      "regions": [
+        {
+          "region": "all",
+          "max_response": 4.163566638126781e-07,
+          "max_response_difference": 9.552003632506967e-11,
+          "relative_L2_difference": 0.00025935176840696626,
+          "peak_r": 0.9412915851272016,
+          "peak_field": "Lambda"
+        },
+        {
+          "region": "exterior",
+          "max_response": 4.163566638126781e-07,
+          "max_response_difference": 9.552003632506967e-11,
+          "relative_L2_difference": 0.00022462914613936293,
+          "peak_r": 0.9412915851272016,
+          "peak_field": "Lambda"
+        }
+      ]
+    },
+    {
+      "label": "penalty0.651",
+      "parameter_changes": {
+        "penalty": [
+          0.5,
+          0.6510416666660156
+        ]
+      },
+      "amplitude_ratio": 1.0,
+      "regions": [
+        {
+          "region": "all",
+          "max_response": 4.16416990667301e-07,
+          "max_response_difference": 1.772994251414417e-10,
+          "relative_L2_difference": 8.534328913378411e-05,
+          "peak_r": 0.9412915851272016,
+          "peak_field": "Lambda"
+        },
+        {
+          "region": "exterior",
+          "max_response": 4.16416990667301e-07,
+          "max_response_difference": 1.772994251414417e-10,
+          "relative_L2_difference": 8.996437705284433e-05,
+          "peak_r": 0.9412915851272016,
+          "peak_field": "Lambda"
+        }
+      ]
+    }
+  ],
+  "inputs": {
+    "/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/docs/spherical-optimization/evidence/penalty05-n256-none-40M-c0.4-amp1e-05-v28/manifest.json": "667d8b83fc4685433cbf5fc88d0fede90fff24a3d1a991df3c2aef9a81cc7081",
+    "/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/docs/spherical-optimization/evidence/penalty05-n256-gauge-40M-c0.4-amp1e-05-v28/manifest.json": "4bfa3a308ec88220dee65cccb2151f85a5ad8435536dbad565d94240de52f020",
+    "/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/docs/spherical-optimization/evidence/penalty05-n256-none-40M-c0.4-amp1e-05-v28/result.json": "6d6194b93b7440bad8870957d0d389fd42c6af774272aabac418654910bb4a1b",
+    "/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/docs/spherical-optimization/evidence/penalty05-n256-gauge-40M-c0.4-amp1e-05-v28/result.json": "404df2c0911b174b1cc5d00b8cec60321fd1af23a7a2c2652fd62dffccc1b28f",
+    "/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/docs/spherical-optimization/evidence/penalty05-n256-none-40M-c0.4-amp1e-05-v28/last-accepted.npz": "37162902238f9f64c3b1398b3b7c19d0e0a2871fc45a409f5e75cdb14b2d781d",
+    "/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/docs/spherical-optimization/evidence/penalty05-n256-gauge-40M-c0.4-amp1e-05-v28/last-accepted.npz": "2419399143bda091834dd1c5d72bf85921c752c4a2dd706d4c4943c2dabc4393",
+    "/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/docs/spherical-optimization/evidence/penalty05-n256-none-40M-c0.68-amp1e-05-v28/manifest.json": "58869746df8a011adbe135fc1ad1e1c583f7454213566a71ad1f9144ac2d26e7",
+    "/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/docs/spherical-optimization/evidence/penalty05-n256-gauge-40M-c0.68-amp1e-05-v28/manifest.json": "e6f50c3871639919356f5db1b6260ef8a0cdedff1bd8b846c8ff3c30c2337079",
+    "/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/docs/spherical-optimization/evidence/penalty05-n256-none-40M-c0.68-amp1e-05-v28/result.json": "d5f6276c1ac0201939a8bf12903aa09505b9eb4e7075bd866221c90de6994b5d",
+    "/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/docs/spherical-optimization/evidence/penalty05-n256-gauge-40M-c0.68-amp1e-05-v28/result.json": "18a27e3e8af361c8204f6034d6e60d193fc20f1012f0ba3da2f65b15f2a2d1de",
+    "/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/docs/spherical-optimization/evidence/penalty05-n256-none-40M-c0.68-amp1e-05-v28/last-accepted.npz": "215a65860ce0efb60f571cb0682965cb2fd3c68952bf015a9f92b6c2d2c81956",
+    "/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/docs/spherical-optimization/evidence/penalty05-n256-gauge-40M-c0.68-amp1e-05-v28/last-accepted.npz": "9f6b0b08b02b59e9e8e2d720bcc95ed09bdd8b00d79df33b4b51f7e0bc975970",
+    "/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/docs/spherical-optimization/evidence/penalty05-n256-gauge-40M-c0.68-amp2e-05-v28/manifest.json": "194644800b38cfc9db3a259f87a3f997e495d97f16ad85889a7141144ee33dcb",
+    "/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/docs/spherical-optimization/evidence/penalty05-n256-gauge-40M-c0.68-amp2e-05-v28/result.json": "e573f43b459fe919b49848c5e660a88dba307a8b5e745fd2aa76c8537fffc4eb",
+    "/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/docs/spherical-optimization/evidence/penalty05-n256-gauge-40M-c0.68-amp2e-05-v28/last-accepted.npz": "1c36fcc639a9abeaabc73d0e38ecf6d2680f295f16a0bbf7001f8fa85503d6a8",
+    "/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/docs/spherical-optimization/evidence/outer-lapse025-n256-none-40M-v26/manifest.json": "b7ab960f44948e2f236840f460c67bfc067c233385fb885100f0bf8e9aa990e6",
+    "/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/docs/spherical-optimization/evidence/outer-lapse025-n256-gauge-40M-v26/manifest.json": "29e7fa573a77b1d827c8e2702cabd087f94426244d87a8327e24040461f10d79",
+    "/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/docs/spherical-optimization/evidence/outer-lapse025-n256-none-40M-v26/result.json": "6852877a4a25aadfe95b9de447c825bde5e258fe3f228f7666b5c48571f8d05f",
+    "/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/docs/spherical-optimization/evidence/outer-lapse025-n256-gauge-40M-v26/result.json": "cce23069f66dd9ceb7451066363eb4e7f6199e0f2194cc7f33093b5c402c098a",
+    "/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/docs/spherical-optimization/evidence/outer-lapse025-n256-none-40M-v26/last-accepted.npz": "2350ae0182efb04f6f10ab067d7d64aeb7939d505dfbae485677d7a36c9c9c05",
+    "/Users/hz0693/.codex/worktrees/spherical-gauge-optimization/hyperboloidal/docs/spherical-optimization/evidence/outer-lapse025-n256-gauge-40M-v26/last-accepted.npz": "152d28d13e2f358d83a898a65740c08961630a09ed607d9db7fb8d33e598d51c"
+  },
+  "source_sha256": "1377b3a1204d4b5b142069a47bdb9803dd114864b0d8487af65ca28e88cea120",
+  "qualification": "Same-grid paired differences, normalized to reference pulse amplitude. All cross-case parameter changes are listed. Raw component norms are not energy norms; finite-duration agreement or amplitude linearity is not all-time stability."
+}

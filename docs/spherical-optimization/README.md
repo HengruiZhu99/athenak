@@ -3,34 +3,38 @@
 Branch: `codex/spherical-gauge-optimization`, based on `718ad1fdd` of
 `codex/refined-convergence`. This directory is a separate local experiment.
 The parent campaign, frozen Aurora snapshots and remote jobs are untouched.
-**Work in progress: no candidate is admitted, no stability/cost improvement is
-established, and no spherical result establishes boosted or 3D stability.**
+The completed local study selects a working candidate using central 20M, compact C6 slicing ending at
+r=.97, the exact algebraic chart, r2 reference variables, compatible-lapse
+spatial derivatives, outer lapse damping .25, shift-only outgoing closure,
+penalty .5 and initial characteristic CFL .68. It is qualified only for the
+reported finite spherical durations. **No spherical result establishes boosted
+or 3D stability.**
 
-The latest [shared outer lapse damping experiment](OUTER-LAPSE.md) implements
-the change predicted by the [continuum near-scri audit](SCRI-INDICIAL.md).
-Default and core equations remain unchanged; the new coefficient passes
-shared spherical/Cartesian and local host/device parity checks. Through 1024 points
-it improves boundary residuals and second-derivative convergence while
-increasing exterior error at fixed points.
-The [compatible-lapse spatial policy](COMPATIBLE-LAPSE.md) removes the earlier
-discrete interior instability. The [RK4 and pulse controls](RK4-LIMITS.md) now support characteristic CFL .55
-for the tested finite durations, with about 12% margin below sampled frozen
-limits. The late response is resolved in timestep and amplitude. A lower-penalty
-tradeoff and controlled fixed-error costs remain; no overall candidate is admitted.
+Start with the [handoff audit and transfer gate](HANDOFF-AUDIT.md),
+[penalty/timestep selection](PENALTY-TRADEOFF.md) and
+[final measured accuracy–cost result](FINAL-COST.md). The selected policy costs
+95.16 seconds at N512 versus 419.76 seconds under the conservative guard,
+a **4.411× local CPU reduction** while meeting the declared tight exterior/clock/D
+screen. All 27 serial benchmark runs complete; all three final states match
+bitwise in each case. [STATE.json](STATE.json) records the completed local scope.
 
-Boundary results are in [SHIFT-NORMAL-BOUNDARY.md](SHIFT-NORMAL-BOUNDARY.md):
-the outgoing auxiliary/shift-normal policy improves the boundary defect and
-preserves exterior convergence, but leaves the late gauge response unchanged.
-[CONSTRAINT-PROPAGATION.md](CONSTRAINT-PROPAGATION.md) checks the shared interior
-equations on smooth stationary and perturbed-gauge data. Those results motivated the discrete gauge-blend investigation and the
-compatible-lapse policy described above.
+The [shared lapse-damping experiment](OUTER-LAPSE.md), motivated by the
+[near-scri audit](SCRI-INDICIAL.md), improves boundary residual and derivative
+convergence through 1024 points while increasing exterior error at fixed points.
+The [compatible-lapse policy](COMPATIBLE-LAPSE.md) removes the measured discrete
+gauge-blend instability. [RK4-LIMITS.md](RK4-LIMITS.md) records the higher-penalty
+control; the newer penalty report qualifies CFL .68 with about 12% sampled
+frozen margin and matched 40M pulse controls. The late gauge-response upturn
+remains documented and is not a claim of all-time decay.
 
-Latest auxiliary-damping and rejected outgoing-boundary experiments are in
-[BOUNDARY-TRIALS.md](BOUNDARY-TRIALS.md). Stronger damping does not cure the
-late response; the outgoing trace closure has a grid-scaled unstable mode.
-The controlled serial measurements in [ACCURACY-COST.md](ACCURACY-COST.md)
-give an exterior-only frontier. No finite fixed-target speedup ratio is
-established because the areal control misses all tested accuracy targets.
+Earlier [boundary trials](BOUNDARY-TRIALS.md),
+[shift-normal work](SHIFT-NORMAL-BOUNDARY.md),
+[constraint propagation](CONSTRAINT-PROPAGATION.md) and
+[historical accuracy–cost measurements](ACCURACY-COST.md) preserve rejected
+policies and attribution. The areal baseline misses the tested fixed-error
+targets, so no finite speedup ratio against that baseline is inferred.
+The checkpoint sections below retain their historical findings; current
+selection and limitations are stated in the linked reports above.
 
 ## Equation and variable mapping
 
@@ -176,20 +180,14 @@ be arbitrarily ill-conditioned; the second audit uses SVD bases for each
 repeated eigenspace and explicitly checks algebraic/geometric multiplicity.
 Speed coincidences are root-located rather than inferred from a sparse grid.
 
-## Remaining admission gates
+## Current scope and transfer gate
 
-See STATE.json for the current next steps. Required work includes a qualified
-nonstationary scri/differential-auxiliary check; perturbation and wormhole
-transient evolution; attributable slicing/reference-variable/speed/grading/
-penalty controls; temporal and three-resolution field/constraint convergence;
-full-symbol conditioning during evolution; RK4 semidiscrete and nonnormal
-analysis followed by nonlinear timestep sweeps; 10M finalists; reproducible
-plots and a fixed-accuracy cost frontier including all failures.
-
-Before 3D adoption: shared-kernel parity, a small spherical 3D/1D comparison,
-angular perturbations, interfaces/MPI, then the actual v=.1 boosted test.
-Spherical CPU timings do not satisfy the separate fourfold measured GPU-hour
-or boosted 10M three-resolution campaign gates.
+The local requirement audit is in [HANDOFF-AUDIT.md](HANDOFF-AUDIT.md).
+[FINAL-COST.md](FINAL-COST.md) records the controlled repeated measurements. Before 3D
+adoption require shared numerical-policy implementation/parity, a small
+spherical 3D/1D comparison, angular perturbations, interfaces/MPI, then the
+actual v=.1 boosted test. Spherical CPU timings do not satisfy the separate
+fourfold measured GPU-hour or boosted 10M three-resolution campaign gates.
 
 ## First local checkpoint
 

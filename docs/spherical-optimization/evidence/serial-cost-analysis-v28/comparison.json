@@ -1,0 +1,3299 @@
+{
+  "domain": "Reference R/M25\u2013100;301 log samples;10M;M=1/3",
+  "platform": "macOS-26.7.1-arm64-arm-64bit",
+  "thread_environment": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1"
+  },
+  "hardware": {
+    "machdep.cpu.brand_string": "Apple M5 Pro",
+    "hw.model": "Mac17,8",
+    "hw.ncpu": "18",
+    "hw.memsize": "51539607552",
+    "platform": "macOS-26.7.1-arm64-arm-64bit",
+    "qualification": "Local host inventory recorded during the serial batch. Thread limits are in serial-cost-v28/plan.json. No CPU core pinning or exclusion of unrelated OS activity."
+  },
+  "runs": [
+    {
+      "name": "conservative-n128-repeat1",
+      "case": "conservative-n128",
+      "family": "conservative",
+      "n": 128,
+      "repeat": 1,
+      "process_seconds": 36.1902995,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 6641,
+        "setup_seconds": 0.19913291600000002,
+        "stepping_seconds": 35.836198833000005,
+        "rhs_calls": 33216,
+        "rhs_seconds": 34.90473557900004,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4144067027311973,
+        "worst_evaluated_speed_over_dr": 307.83685459822874,
+        "C_char_max_accepted": 0.15452202897495113,
+        "dt_min": 0.0003137254870515527,
+        "dt_max": 0.0005019607843142256,
+        "dt_over_M": 0.0015058823529426769,
+        "min_dr_over_M": 0.0235294117647058,
+        "nominal_dt_over_min_dr": 0.06400000000006399,
+        "steps_per_M": 664.1,
+        "active_limiter": "scri_policy",
+        "limits": {
+          "characteristic": 0.0006497467645068135,
+          "scri_policy": 0.0005019607843142256,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.0022955256467827516,
+        0.0011298259218614185,
+        0.0001484716229025687,
+        0.0002680193164359676
+      ],
+      "linear_physical_rms": [
+        0.0021042161160238194,
+        0.0010395335702562205,
+        0.00013716255922553293,
+        0.0002464187729529063
+      ],
+      "interpolation_disagreement_rms": [
+        0.0002691987859081097,
+        0.00012779849686297357,
+        1.6104820209780032e-05,
+        2.933551967560843e-05
+      ],
+      "indicator": 0.0022955256467827516,
+      "screening_indicator": 0.0022955256467827516,
+      "final_q_sha256": "b0cf7ef3650c11bf46ff4ed4a8cec0967dd04e86423fdc77723b4b17ebec7f9c"
+    },
+    {
+      "name": "step055-n128-repeat1",
+      "case": "step055-n128",
+      "family": "step055",
+      "n": 128,
+      "repeat": 1,
+      "process_seconds": 10.468103708000001,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 1866,
+        "setup_seconds": 0.19776125000000003,
+        "stepping_seconds": 10.120208791,
+        "rhs_calls": 9341,
+        "rhs_seconds": 9.84309539800001,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4144067027541176,
+        "worst_evaluated_speed_over_dr": 307.8368546011511,
+        "C_char_max_accepted": 0.5500440007508959,
+        "dt_min": 0.0009446148690996914,
+        "dt_max": 0.0017868036023937436,
+        "dt_over_M": 0.005360410807181231,
+        "min_dr_over_M": 0.0235294117647058,
+        "nominal_dt_over_min_dr": 0.2278174593052031,
+        "steps_per_M": 186.6,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.0006497467645068135,
+          "scri_policy": 0.0005019607843142256,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.00229552564671456,
+        0.0011298259218315908,
+        0.00014847162302182465,
+        0.00026801931627951157
+      ],
+      "linear_physical_rms": [
+        0.0021042161159416164,
+        0.001039533570244483,
+        0.00013716255934643446,
+        0.0002464187728111803
+      ],
+      "interpolation_disagreement_rms": [
+        0.00026919878592075047,
+        0.0001277984968442638,
+        1.6104820218697314e-05,
+        2.9335519667952563e-05
+      ],
+      "indicator": 0.00229552564671456,
+      "screening_indicator": 0.00229552564671456,
+      "final_q_sha256": "66d1fbd8eb27f15dd65db0146a0b0ab74a657d172681508c52c9a864de779ede"
+    },
+    {
+      "name": "penalty05-step068-n128-repeat1",
+      "case": "penalty05-step068-n128",
+      "family": "penalty05-step068",
+      "n": 128,
+      "repeat": 1,
+      "process_seconds": 8.520312250000003,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 1509,
+        "setup_seconds": 0.19752379200000003,
+        "stepping_seconds": 8.173846875,
+        "rhs_calls": 7556,
+        "rhs_seconds": 7.946790548999981,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4148289494854733,
+        "worst_evaluated_speed_over_dr": 307.89069105939893,
+        "C_char_max_accepted": 0.680173324949994,
+        "dt_min": 0.0019517223539629036,
+        "dt_max": 0.0022091389993231735,
+        "dt_over_M": 0.00662741699796952,
+        "min_dr_over_M": 0.0235294117647058,
+        "nominal_dt_over_min_dr": 0.2816652224137056,
+        "steps_per_M": 150.9,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.0006497467645068135,
+          "scri_policy": 0.0006535947712418277,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.002294272455988429,
+        0.0011291810462693201,
+        0.00014871398297449038,
+        0.00026737072590842637
+      ],
+      "linear_physical_rms": [
+        0.0021029187074350776,
+        0.0010388220104674596,
+        0.00013736885789095236,
+        0.00024580101171068697
+      ],
+      "interpolation_disagreement_rms": [
+        0.00026935835443261507,
+        0.00012782482544890504,
+        1.6150825864522927e-05,
+        2.930795393474519e-05
+      ],
+      "indicator": 0.002294272455988429,
+      "screening_indicator": 0.002294272455988429,
+      "final_q_sha256": "f4ff5ab5b38b74ea8590ef159e50b32cf2e83cb222136dfa51023c79c843c0d5"
+    },
+    {
+      "name": "conservative-n256-repeat1",
+      "case": "conservative-n256",
+      "family": "conservative",
+      "n": 256,
+      "repeat": 1,
+      "process_seconds": 118.19349904200001,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 13308,
+        "setup_seconds": 0.3487035,
+        "stepping_seconds": 117.69493433299999,
+        "rhs_calls": 66551,
+        "rhs_seconds": 115.17666679100013,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4142249288773416,
+        "worst_evaluated_speed_over_dr": 616.8344693281608,
+        "C_char_max_accepted": 0.15451039544830436,
+        "dt_min": 7.305935670265384e-05,
+        "dt_max": 0.0002504892367908571,
+        "dt_over_M": 0.0007514677103725713,
+        "min_dr_over_M": 0.011741682974559686,
+        "nominal_dt_over_min_dr": 0.06400000000006399,
+        "steps_per_M": 1330.8,
+        "active_limiter": "scri_policy",
+        "limits": {
+          "characteristic": 0.00032423762220985916,
+          "scri_policy": 0.0002504892367908571,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.0002845391278494468,
+        0.00014537624290772606,
+        1.0299734980211126e-05,
+        2.343737700956978e-05
+      ],
+      "linear_physical_rms": [
+        0.0002682117461803293,
+        0.00013701217208401806,
+        9.805191771166252e-06,
+        2.2146332698068535e-05
+      ],
+      "interpolation_disagreement_rms": [
+        2.0616526559899328e-05,
+        1.05413732131765e-05,
+        6.884348128694412e-07,
+        1.6839220773462063e-06
+      ],
+      "indicator": 0.0002845391278494468,
+      "screening_indicator": 0.0002845391278494468,
+      "final_q_sha256": "60920fc31eefa67bc2cad9bd2cf71a3433b406d5da59479d1f25c86d3aef26c1"
+    },
+    {
+      "name": "step055-n256-repeat1",
+      "case": "step055-n256",
+      "family": "step055",
+      "n": 256,
+      "repeat": 1,
+      "process_seconds": 33.55037991699999,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 3739,
+        "setup_seconds": 0.348618708,
+        "stepping_seconds": 33.043063458,
+        "rhs_calls": 18706,
+        "rhs_seconds": 32.31028043999982,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.414224929007289,
+        "worst_evaluated_speed_over_dr": 616.8344693613623,
+        "C_char_max_accepted": 0.550002589517723,
+        "dt_min": 0.0003326958273750513,
+        "dt_max": 0.0008916534610771128,
+        "dt_over_M": 0.0026749603832313383,
+        "min_dr_over_M": 0.011741682974559686,
+        "nominal_dt_over_min_dr": 0.2278174593052023,
+        "steps_per_M": 373.9,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.00032423762220985916,
+          "scri_policy": 0.0002504892367908571,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.00028453912785482893,
+        0.00014537624291178098,
+        1.0299734980736793e-05,
+        2.3437377009545486e-05
+      ],
+      "linear_physical_rms": [
+        0.0002682117461844923,
+        0.00013701217208803823,
+        9.805191771716512e-06,
+        2.2146332698001152e-05
+      ],
+      "interpolation_disagreement_rms": [
+        2.061652656106767e-05,
+        1.054137321350485e-05,
+        6.884348129796439e-07,
+        1.6839220774560483e-06
+      ],
+      "indicator": 0.00028453912785482893,
+      "screening_indicator": 0.00028453912785482893,
+      "final_q_sha256": "733ee969f489352a3a8cb0f43b6a970e5748e9eaff97ee96890e52f6ef86ea73"
+    },
+    {
+      "name": "penalty05-step068-n256-repeat1",
+      "case": "penalty05-step068-n256",
+      "family": "penalty05-step068",
+      "n": 256,
+      "repeat": 1,
+      "process_seconds": 27.173397125000008,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 3024,
+        "setup_seconds": 0.34818908299999995,
+        "stepping_seconds": 26.675313083,
+        "rhs_calls": 15131,
+        "rhs_seconds": 26.07988993100027,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.414232657080709,
+        "worst_evaluated_speed_over_dr": 616.8364438841212,
+        "C_char_max_accepted": 0.6800053783150671,
+        "dt_min": 0.0007542047362139037,
+        "dt_max": 0.0011024079155135212,
+        "dt_over_M": 0.0033072237465405635,
+        "min_dr_over_M": 0.011741682974559686,
+        "nominal_dt_over_min_dr": 0.2816652224137047,
+        "steps_per_M": 302.4,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.00032423762220985916,
+          "scri_policy": 0.00032615786040443573,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.0002845401927620186,
+        0.0001453767742626715,
+        1.02997692759182e-05,
+        2.343740666421674e-05
+      ],
+      "linear_physical_rms": [
+        0.0002682126659781259,
+        0.00013701262769762185,
+        9.805219219733255e-06,
+        2.2146351861790505e-05
+      ],
+      "interpolation_disagreement_rms": [
+        2.0616739867153888e-05,
+        1.0541475432185899e-05,
+        6.884433885676964e-07,
+        1.6839326415267033e-06
+      ],
+      "indicator": 0.0002845401927620186,
+      "screening_indicator": 0.0002845401927620186,
+      "final_q_sha256": "39157cae2c24543b8e21dab2421a5477f38d011ae79231d8d343a3e5d63a0e6c"
+    },
+    {
+      "name": "conservative-n512-repeat1",
+      "case": "conservative-n512",
+      "family": "conservative",
+      "n": 512,
+      "repeat": 1,
+      "process_seconds": 420.557994208,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 26641,
+        "setup_seconds": 0.6498585,
+        "stepping_seconds": 419.75509875,
+        "rhs_calls": 133216,
+        "rhs_seconds": 412.0166981090007,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4142142500435115,
+        "worst_evaluated_speed_over_dr": 1234.8705888972572,
+        "C_char_max_accepted": 0.15450971200293923,
+        "dt_min": 7.820136475666928e-05,
+        "dt_max": 0.00012512218963844367,
+        "dt_over_M": 0.000375366568915331,
+        "min_dr_over_M": 0.0058651026392961825,
+        "nominal_dt_over_min_dr": 0.06400000000006399,
+        "steps_per_M": 2664.1,
+        "active_limiter": "scri_policy",
+        "limits": {
+          "characteristic": 0.00016196033719378093,
+          "scri_policy": 0.00012512218963844367,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        8.532723382325448e-06,
+        4.38816041486511e-06,
+        2.6686460835915164e-07,
+        5.657987857269525e-07
+      ],
+      "linear_physical_rms": [
+        8.3239488826569e-06,
+        4.280444651811906e-06,
+        2.611550442171339e-07,
+        5.528777446842441e-07
+      ],
+      "interpolation_disagreement_rms": [
+        2.8876803005154795e-07,
+        1.4884994219163495e-07,
+        7.721671207915512e-09,
+        1.707951970131816e-08
+      ],
+      "indicator": 8.532723382325448e-06,
+      "screening_indicator": 8.532723382325448e-06,
+      "final_q_sha256": "395b28bcd8a7d813dfecb2e0d92b5e6b24c2642ad12489d0ac58b017218e74e8"
+    },
+    {
+      "name": "step055-n512-repeat1",
+      "case": "step055-n512",
+      "family": "step055",
+      "n": 512,
+      "repeat": 1,
+      "process_seconds": 118.44378054200001,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 7485,
+        "setup_seconds": 0.6457593749999999,
+        "stepping_seconds": 117.64433325,
+        "rhs_calls": 37436,
+        "rhs_seconds": 115.44381597399989,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4142142500506463,
+        "worst_evaluated_speed_over_dr": 1234.8705889009066,
+        "C_char_max_accepted": 0.550000156664953,
+        "dt_min": 2.7633547976968487e-05,
+        "dt_max": 0.00044539092728289797,
+        "dt_over_M": 0.001336172781848694,
+        "min_dr_over_M": 0.0058651026392961825,
+        "nominal_dt_over_min_dr": 0.2278174593052025,
+        "steps_per_M": 748.5,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.00016196033719378093,
+          "scri_policy": 0.00012512218963844367,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        8.532723375748849e-06,
+        4.388160410653674e-06,
+        2.6686460885655956e-07,
+        5.657987858794335e-07
+      ],
+      "linear_physical_rms": [
+        8.323948876763297e-06,
+        4.280444647640481e-06,
+        2.6115504468700085e-07,
+        5.52877744899039e-07
+      ],
+      "interpolation_disagreement_rms": [
+        2.887680310889424e-07,
+        1.4884994056161686e-07,
+        7.721671219962388e-09,
+        1.7079519700601478e-08
+      ],
+      "indicator": 8.532723375748849e-06,
+      "screening_indicator": 8.532723375748849e-06,
+      "final_q_sha256": "369d0056c858898c8125708d12a53485c4b3a2890a9e465edf627809f6cd8fca"
+    },
+    {
+      "name": "penalty05-step068-n512-repeat1",
+      "case": "penalty05-step068-n512",
+      "family": "penalty05-step068",
+      "n": 512,
+      "repeat": 1,
+      "process_seconds": 95.96035262500004,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 6054,
+        "setup_seconds": 0.6540365419999999,
+        "stepping_seconds": 95.15553775,
+        "rhs_calls": 30281,
+        "rhs_seconds": 93.34795366299936,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4142148123936495,
+        "worst_evaluated_speed_over_dr": 1234.8708765393528,
+        "C_char_max_accepted": 0.680000352087318,
+        "dt_min": 0.00015720181790879195,
+        "dt_max": 0.0005506651464588556,
+        "dt_over_M": 0.0016519954393765667,
+        "min_dr_over_M": 0.0058651026392961825,
+        "nominal_dt_over_min_dr": 0.28166522241370484,
+        "steps_per_M": 605.4,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.00016196033719378093,
+          "scri_policy": 0.0001629195177582273,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        8.532723353103296e-06,
+        4.38816040039492e-06,
+        2.668646074765403e-07,
+        5.657987838118622e-07
+      ],
+      "linear_physical_rms": [
+        8.323948855016183e-06,
+        4.280444638066985e-06,
+        2.6115504356692345e-07,
+        5.5287774290756e-07
+      ],
+      "interpolation_disagreement_rms": [
+        2.8876803039155544e-07,
+        1.4884994142933835e-07,
+        7.721670990065163e-09,
+        1.7079519671494763e-08
+      ],
+      "indicator": 8.532723353103296e-06,
+      "screening_indicator": 8.532723353103296e-06,
+      "final_q_sha256": "c66e2b8660952ae75b6d802d5508fcb9d6bfa081915b1d2a927ca8528701dc9e"
+    },
+    {
+      "name": "step055-n128-repeat2",
+      "case": "step055-n128",
+      "family": "step055",
+      "n": 128,
+      "repeat": 2,
+      "process_seconds": 10.469151541999963,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 1866,
+        "setup_seconds": 0.19843329099999998,
+        "stepping_seconds": 10.117216208,
+        "rhs_calls": 9341,
+        "rhs_seconds": 9.834783965999987,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4144067027541176,
+        "worst_evaluated_speed_over_dr": 307.8368546011511,
+        "C_char_max_accepted": 0.5500440007508959,
+        "dt_min": 0.0009446148690996914,
+        "dt_max": 0.0017868036023937436,
+        "dt_over_M": 0.005360410807181231,
+        "min_dr_over_M": 0.0235294117647058,
+        "nominal_dt_over_min_dr": 0.2278174593052031,
+        "steps_per_M": 186.6,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.0006497467645068135,
+          "scri_policy": 0.0005019607843142256,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.00229552564671456,
+        0.0011298259218315908,
+        0.00014847162302182465,
+        0.00026801931627951157
+      ],
+      "linear_physical_rms": [
+        0.0021042161159416164,
+        0.001039533570244483,
+        0.00013716255934643446,
+        0.0002464187728111803
+      ],
+      "interpolation_disagreement_rms": [
+        0.00026919878592075047,
+        0.0001277984968442638,
+        1.6104820218697314e-05,
+        2.9335519667952563e-05
+      ],
+      "indicator": 0.00229552564671456,
+      "screening_indicator": 0.00229552564671456,
+      "final_q_sha256": "66d1fbd8eb27f15dd65db0146a0b0ab74a657d172681508c52c9a864de779ede"
+    },
+    {
+      "name": "penalty05-step068-n128-repeat2",
+      "case": "penalty05-step068-n128",
+      "family": "penalty05-step068",
+      "n": 128,
+      "repeat": 2,
+      "process_seconds": 8.50477854199994,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 1509,
+        "setup_seconds": 0.197945792,
+        "stepping_seconds": 8.157716707999999,
+        "rhs_calls": 7556,
+        "rhs_seconds": 7.932631991000012,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4148289494854733,
+        "worst_evaluated_speed_over_dr": 307.89069105939893,
+        "C_char_max_accepted": 0.680173324949994,
+        "dt_min": 0.0019517223539629036,
+        "dt_max": 0.0022091389993231735,
+        "dt_over_M": 0.00662741699796952,
+        "min_dr_over_M": 0.0235294117647058,
+        "nominal_dt_over_min_dr": 0.2816652224137056,
+        "steps_per_M": 150.9,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.0006497467645068135,
+          "scri_policy": 0.0006535947712418277,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.002294272455988429,
+        0.0011291810462693201,
+        0.00014871398297449038,
+        0.00026737072590842637
+      ],
+      "linear_physical_rms": [
+        0.0021029187074350776,
+        0.0010388220104674596,
+        0.00013736885789095236,
+        0.00024580101171068697
+      ],
+      "interpolation_disagreement_rms": [
+        0.00026935835443261507,
+        0.00012782482544890504,
+        1.6150825864522927e-05,
+        2.930795393474519e-05
+      ],
+      "indicator": 0.002294272455988429,
+      "screening_indicator": 0.002294272455988429,
+      "final_q_sha256": "f4ff5ab5b38b74ea8590ef159e50b32cf2e83cb222136dfa51023c79c843c0d5"
+    },
+    {
+      "name": "conservative-n256-repeat2",
+      "case": "conservative-n256",
+      "family": "conservative",
+      "n": 256,
+      "repeat": 2,
+      "process_seconds": 118.01264637499992,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 13308,
+        "setup_seconds": 0.34735175,
+        "stepping_seconds": 117.512369792,
+        "rhs_calls": 66551,
+        "rhs_seconds": 115.02182147700073,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4142249288773416,
+        "worst_evaluated_speed_over_dr": 616.8344693281608,
+        "C_char_max_accepted": 0.15451039544830436,
+        "dt_min": 7.305935670265384e-05,
+        "dt_max": 0.0002504892367908571,
+        "dt_over_M": 0.0007514677103725713,
+        "min_dr_over_M": 0.011741682974559686,
+        "nominal_dt_over_min_dr": 0.06400000000006399,
+        "steps_per_M": 1330.8,
+        "active_limiter": "scri_policy",
+        "limits": {
+          "characteristic": 0.00032423762220985916,
+          "scri_policy": 0.0002504892367908571,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.0002845391278494468,
+        0.00014537624290772606,
+        1.0299734980211126e-05,
+        2.343737700956978e-05
+      ],
+      "linear_physical_rms": [
+        0.0002682117461803293,
+        0.00013701217208401806,
+        9.805191771166252e-06,
+        2.2146332698068535e-05
+      ],
+      "interpolation_disagreement_rms": [
+        2.0616526559899328e-05,
+        1.05413732131765e-05,
+        6.884348128694412e-07,
+        1.6839220773462063e-06
+      ],
+      "indicator": 0.0002845391278494468,
+      "screening_indicator": 0.0002845391278494468,
+      "final_q_sha256": "60920fc31eefa67bc2cad9bd2cf71a3433b406d5da59479d1f25c86d3aef26c1"
+    },
+    {
+      "name": "step055-n256-repeat2",
+      "case": "step055-n256",
+      "family": "step055",
+      "n": 256,
+      "repeat": 2,
+      "process_seconds": 33.42101725000009,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 3739,
+        "setup_seconds": 0.348311834,
+        "stepping_seconds": 32.920015708,
+        "rhs_calls": 18706,
+        "rhs_seconds": 32.19424964199986,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.414224929007289,
+        "worst_evaluated_speed_over_dr": 616.8344693613623,
+        "C_char_max_accepted": 0.550002589517723,
+        "dt_min": 0.0003326958273750513,
+        "dt_max": 0.0008916534610771128,
+        "dt_over_M": 0.0026749603832313383,
+        "min_dr_over_M": 0.011741682974559686,
+        "nominal_dt_over_min_dr": 0.2278174593052023,
+        "steps_per_M": 373.9,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.00032423762220985916,
+          "scri_policy": 0.0002504892367908571,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.00028453912785482893,
+        0.00014537624291178098,
+        1.0299734980736793e-05,
+        2.3437377009545486e-05
+      ],
+      "linear_physical_rms": [
+        0.0002682117461844923,
+        0.00013701217208803823,
+        9.805191771716512e-06,
+        2.2146332698001152e-05
+      ],
+      "interpolation_disagreement_rms": [
+        2.061652656106767e-05,
+        1.054137321350485e-05,
+        6.884348129796439e-07,
+        1.6839220774560483e-06
+      ],
+      "indicator": 0.00028453912785482893,
+      "screening_indicator": 0.00028453912785482893,
+      "final_q_sha256": "733ee969f489352a3a8cb0f43b6a970e5748e9eaff97ee96890e52f6ef86ea73"
+    },
+    {
+      "name": "penalty05-step068-n256-repeat2",
+      "case": "penalty05-step068-n256",
+      "family": "penalty05-step068",
+      "n": 256,
+      "repeat": 2,
+      "process_seconds": 27.178729499999918,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 3024,
+        "setup_seconds": 0.349901416,
+        "stepping_seconds": 26.675546958,
+        "rhs_calls": 15131,
+        "rhs_seconds": 26.08325937899971,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.414232657080709,
+        "worst_evaluated_speed_over_dr": 616.8364438841212,
+        "C_char_max_accepted": 0.6800053783150671,
+        "dt_min": 0.0007542047362139037,
+        "dt_max": 0.0011024079155135212,
+        "dt_over_M": 0.0033072237465405635,
+        "min_dr_over_M": 0.011741682974559686,
+        "nominal_dt_over_min_dr": 0.2816652224137047,
+        "steps_per_M": 302.4,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.00032423762220985916,
+          "scri_policy": 0.00032615786040443573,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.0002845401927620186,
+        0.0001453767742626715,
+        1.02997692759182e-05,
+        2.343740666421674e-05
+      ],
+      "linear_physical_rms": [
+        0.0002682126659781259,
+        0.00013701262769762185,
+        9.805219219733255e-06,
+        2.2146351861790505e-05
+      ],
+      "interpolation_disagreement_rms": [
+        2.0616739867153888e-05,
+        1.0541475432185899e-05,
+        6.884433885676964e-07,
+        1.6839326415267033e-06
+      ],
+      "indicator": 0.0002845401927620186,
+      "screening_indicator": 0.0002845401927620186,
+      "final_q_sha256": "39157cae2c24543b8e21dab2421a5477f38d011ae79231d8d343a3e5d63a0e6c"
+    },
+    {
+      "name": "conservative-n512-repeat2",
+      "case": "conservative-n512",
+      "family": "conservative",
+      "n": 512,
+      "repeat": 2,
+      "process_seconds": 421.0548725410001,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 26641,
+        "setup_seconds": 0.649217625,
+        "stepping_seconds": 420.25200079200005,
+        "rhs_calls": 133216,
+        "rhs_seconds": 412.47639542799936,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4142142500435115,
+        "worst_evaluated_speed_over_dr": 1234.8705888972572,
+        "C_char_max_accepted": 0.15450971200293923,
+        "dt_min": 7.820136475666928e-05,
+        "dt_max": 0.00012512218963844367,
+        "dt_over_M": 0.000375366568915331,
+        "min_dr_over_M": 0.0058651026392961825,
+        "nominal_dt_over_min_dr": 0.06400000000006399,
+        "steps_per_M": 2664.1,
+        "active_limiter": "scri_policy",
+        "limits": {
+          "characteristic": 0.00016196033719378093,
+          "scri_policy": 0.00012512218963844367,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        8.532723382325448e-06,
+        4.38816041486511e-06,
+        2.6686460835915164e-07,
+        5.657987857269525e-07
+      ],
+      "linear_physical_rms": [
+        8.3239488826569e-06,
+        4.280444651811906e-06,
+        2.611550442171339e-07,
+        5.528777446842441e-07
+      ],
+      "interpolation_disagreement_rms": [
+        2.8876803005154795e-07,
+        1.4884994219163495e-07,
+        7.721671207915512e-09,
+        1.707951970131816e-08
+      ],
+      "indicator": 8.532723382325448e-06,
+      "screening_indicator": 8.532723382325448e-06,
+      "final_q_sha256": "395b28bcd8a7d813dfecb2e0d92b5e6b24c2642ad12489d0ac58b017218e74e8"
+    },
+    {
+      "name": "step055-n512-repeat2",
+      "case": "step055-n512",
+      "family": "step055",
+      "n": 512,
+      "repeat": 2,
+      "process_seconds": 118.34817808399998,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 7485,
+        "setup_seconds": 0.6469793749999999,
+        "stepping_seconds": 117.54918775,
+        "rhs_calls": 37436,
+        "rhs_seconds": 115.34187373899864,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4142142500506463,
+        "worst_evaluated_speed_over_dr": 1234.8705889009066,
+        "C_char_max_accepted": 0.550000156664953,
+        "dt_min": 2.7633547976968487e-05,
+        "dt_max": 0.00044539092728289797,
+        "dt_over_M": 0.001336172781848694,
+        "min_dr_over_M": 0.0058651026392961825,
+        "nominal_dt_over_min_dr": 0.2278174593052025,
+        "steps_per_M": 748.5,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.00016196033719378093,
+          "scri_policy": 0.00012512218963844367,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        8.532723375748849e-06,
+        4.388160410653674e-06,
+        2.6686460885655956e-07,
+        5.657987858794335e-07
+      ],
+      "linear_physical_rms": [
+        8.323948876763297e-06,
+        4.280444647640481e-06,
+        2.6115504468700085e-07,
+        5.52877744899039e-07
+      ],
+      "interpolation_disagreement_rms": [
+        2.887680310889424e-07,
+        1.4884994056161686e-07,
+        7.721671219962388e-09,
+        1.7079519700601478e-08
+      ],
+      "indicator": 8.532723375748849e-06,
+      "screening_indicator": 8.532723375748849e-06,
+      "final_q_sha256": "369d0056c858898c8125708d12a53485c4b3a2890a9e465edf627809f6cd8fca"
+    },
+    {
+      "name": "penalty05-step068-n512-repeat2",
+      "case": "penalty05-step068-n512",
+      "family": "penalty05-step068",
+      "n": 512,
+      "repeat": 2,
+      "process_seconds": 95.76358379200019,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 6054,
+        "setup_seconds": 0.647592708,
+        "stepping_seconds": 94.961027166,
+        "rhs_calls": 30281,
+        "rhs_seconds": 93.16709714300012,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4142148123936495,
+        "worst_evaluated_speed_over_dr": 1234.8708765393528,
+        "C_char_max_accepted": 0.680000352087318,
+        "dt_min": 0.00015720181790879195,
+        "dt_max": 0.0005506651464588556,
+        "dt_over_M": 0.0016519954393765667,
+        "min_dr_over_M": 0.0058651026392961825,
+        "nominal_dt_over_min_dr": 0.28166522241370484,
+        "steps_per_M": 605.4,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.00016196033719378093,
+          "scri_policy": 0.0001629195177582273,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        8.532723353103296e-06,
+        4.38816040039492e-06,
+        2.668646074765403e-07,
+        5.657987838118622e-07
+      ],
+      "linear_physical_rms": [
+        8.323948855016183e-06,
+        4.280444638066985e-06,
+        2.6115504356692345e-07,
+        5.5287774290756e-07
+      ],
+      "interpolation_disagreement_rms": [
+        2.8876803039155544e-07,
+        1.4884994142933835e-07,
+        7.721670990065163e-09,
+        1.7079519671494763e-08
+      ],
+      "indicator": 8.532723353103296e-06,
+      "screening_indicator": 8.532723353103296e-06,
+      "final_q_sha256": "c66e2b8660952ae75b6d802d5508fcb9d6bfa081915b1d2a927ca8528701dc9e"
+    },
+    {
+      "name": "conservative-n128-repeat2",
+      "case": "conservative-n128",
+      "family": "conservative",
+      "n": 128,
+      "repeat": 2,
+      "process_seconds": 36.405313249999836,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 6641,
+        "setup_seconds": 0.199276667,
+        "stepping_seconds": 36.05155475,
+        "rhs_calls": 33216,
+        "rhs_seconds": 35.11057656099984,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4144067027311973,
+        "worst_evaluated_speed_over_dr": 307.83685459822874,
+        "C_char_max_accepted": 0.15452202897495113,
+        "dt_min": 0.0003137254870515527,
+        "dt_max": 0.0005019607843142256,
+        "dt_over_M": 0.0015058823529426769,
+        "min_dr_over_M": 0.0235294117647058,
+        "nominal_dt_over_min_dr": 0.06400000000006399,
+        "steps_per_M": 664.1,
+        "active_limiter": "scri_policy",
+        "limits": {
+          "characteristic": 0.0006497467645068135,
+          "scri_policy": 0.0005019607843142256,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.0022955256467827516,
+        0.0011298259218614185,
+        0.0001484716229025687,
+        0.0002680193164359676
+      ],
+      "linear_physical_rms": [
+        0.0021042161160238194,
+        0.0010395335702562205,
+        0.00013716255922553293,
+        0.0002464187729529063
+      ],
+      "interpolation_disagreement_rms": [
+        0.0002691987859081097,
+        0.00012779849686297357,
+        1.6104820209780032e-05,
+        2.933551967560843e-05
+      ],
+      "indicator": 0.0022955256467827516,
+      "screening_indicator": 0.0022955256467827516,
+      "final_q_sha256": "b0cf7ef3650c11bf46ff4ed4a8cec0967dd04e86423fdc77723b4b17ebec7f9c"
+    },
+    {
+      "name": "penalty05-step068-n128-repeat3",
+      "case": "penalty05-step068-n128",
+      "family": "penalty05-step068",
+      "n": 128,
+      "repeat": 3,
+      "process_seconds": 8.493323207999993,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 1509,
+        "setup_seconds": 0.198060291,
+        "stepping_seconds": 8.1429525,
+        "rhs_calls": 7556,
+        "rhs_seconds": 7.917749399000037,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4148289494854733,
+        "worst_evaluated_speed_over_dr": 307.89069105939893,
+        "C_char_max_accepted": 0.680173324949994,
+        "dt_min": 0.0019517223539629036,
+        "dt_max": 0.0022091389993231735,
+        "dt_over_M": 0.00662741699796952,
+        "min_dr_over_M": 0.0235294117647058,
+        "nominal_dt_over_min_dr": 0.2816652224137056,
+        "steps_per_M": 150.9,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.0006497467645068135,
+          "scri_policy": 0.0006535947712418277,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.002294272455988429,
+        0.0011291810462693201,
+        0.00014871398297449038,
+        0.00026737072590842637
+      ],
+      "linear_physical_rms": [
+        0.0021029187074350776,
+        0.0010388220104674596,
+        0.00013736885789095236,
+        0.00024580101171068697
+      ],
+      "interpolation_disagreement_rms": [
+        0.00026935835443261507,
+        0.00012782482544890504,
+        1.6150825864522927e-05,
+        2.930795393474519e-05
+      ],
+      "indicator": 0.002294272455988429,
+      "screening_indicator": 0.002294272455988429,
+      "final_q_sha256": "f4ff5ab5b38b74ea8590ef159e50b32cf2e83cb222136dfa51023c79c843c0d5"
+    },
+    {
+      "name": "conservative-n256-repeat3",
+      "case": "conservative-n256",
+      "family": "conservative",
+      "n": 256,
+      "repeat": 3,
+      "process_seconds": 117.78786629199999,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 13308,
+        "setup_seconds": 0.352344209,
+        "stepping_seconds": 117.282929292,
+        "rhs_calls": 66551,
+        "rhs_seconds": 114.7947565430007,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4142249288773416,
+        "worst_evaluated_speed_over_dr": 616.8344693281608,
+        "C_char_max_accepted": 0.15451039544830436,
+        "dt_min": 7.305935670265384e-05,
+        "dt_max": 0.0002504892367908571,
+        "dt_over_M": 0.0007514677103725713,
+        "min_dr_over_M": 0.011741682974559686,
+        "nominal_dt_over_min_dr": 0.06400000000006399,
+        "steps_per_M": 1330.8,
+        "active_limiter": "scri_policy",
+        "limits": {
+          "characteristic": 0.00032423762220985916,
+          "scri_policy": 0.0002504892367908571,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.0002845391278494468,
+        0.00014537624290772606,
+        1.0299734980211126e-05,
+        2.343737700956978e-05
+      ],
+      "linear_physical_rms": [
+        0.0002682117461803293,
+        0.00013701217208401806,
+        9.805191771166252e-06,
+        2.2146332698068535e-05
+      ],
+      "interpolation_disagreement_rms": [
+        2.0616526559899328e-05,
+        1.05413732131765e-05,
+        6.884348128694412e-07,
+        1.6839220773462063e-06
+      ],
+      "indicator": 0.0002845391278494468,
+      "screening_indicator": 0.0002845391278494468,
+      "final_q_sha256": "60920fc31eefa67bc2cad9bd2cf71a3433b406d5da59479d1f25c86d3aef26c1"
+    },
+    {
+      "name": "step055-n256-repeat3",
+      "case": "step055-n256",
+      "family": "step055",
+      "n": 256,
+      "repeat": 3,
+      "process_seconds": 33.473480582999855,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 3739,
+        "setup_seconds": 0.35132850000000004,
+        "stepping_seconds": 32.970241334,
+        "rhs_calls": 18706,
+        "rhs_seconds": 32.238457665000176,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.414224929007289,
+        "worst_evaluated_speed_over_dr": 616.8344693613623,
+        "C_char_max_accepted": 0.550002589517723,
+        "dt_min": 0.0003326958273750513,
+        "dt_max": 0.0008916534610771128,
+        "dt_over_M": 0.0026749603832313383,
+        "min_dr_over_M": 0.011741682974559686,
+        "nominal_dt_over_min_dr": 0.2278174593052023,
+        "steps_per_M": 373.9,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.00032423762220985916,
+          "scri_policy": 0.0002504892367908571,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.00028453912785482893,
+        0.00014537624291178098,
+        1.0299734980736793e-05,
+        2.3437377009545486e-05
+      ],
+      "linear_physical_rms": [
+        0.0002682117461844923,
+        0.00013701217208803823,
+        9.805191771716512e-06,
+        2.2146332698001152e-05
+      ],
+      "interpolation_disagreement_rms": [
+        2.061652656106767e-05,
+        1.054137321350485e-05,
+        6.884348129796439e-07,
+        1.6839220774560483e-06
+      ],
+      "indicator": 0.00028453912785482893,
+      "screening_indicator": 0.00028453912785482893,
+      "final_q_sha256": "733ee969f489352a3a8cb0f43b6a970e5748e9eaff97ee96890e52f6ef86ea73"
+    },
+    {
+      "name": "penalty05-step068-n256-repeat3",
+      "case": "penalty05-step068-n256",
+      "family": "penalty05-step068",
+      "n": 256,
+      "repeat": 3,
+      "process_seconds": 27.207276125000135,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 3024,
+        "setup_seconds": 0.351062125,
+        "stepping_seconds": 26.703821542,
+        "rhs_calls": 15131,
+        "rhs_seconds": 26.10830914600003,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.414232657080709,
+        "worst_evaluated_speed_over_dr": 616.8364438841212,
+        "C_char_max_accepted": 0.6800053783150671,
+        "dt_min": 0.0007542047362139037,
+        "dt_max": 0.0011024079155135212,
+        "dt_over_M": 0.0033072237465405635,
+        "min_dr_over_M": 0.011741682974559686,
+        "nominal_dt_over_min_dr": 0.2816652224137047,
+        "steps_per_M": 302.4,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.00032423762220985916,
+          "scri_policy": 0.00032615786040443573,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.0002845401927620186,
+        0.0001453767742626715,
+        1.02997692759182e-05,
+        2.343740666421674e-05
+      ],
+      "linear_physical_rms": [
+        0.0002682126659781259,
+        0.00013701262769762185,
+        9.805219219733255e-06,
+        2.2146351861790505e-05
+      ],
+      "interpolation_disagreement_rms": [
+        2.0616739867153888e-05,
+        1.0541475432185899e-05,
+        6.884433885676964e-07,
+        1.6839326415267033e-06
+      ],
+      "indicator": 0.0002845401927620186,
+      "screening_indicator": 0.0002845401927620186,
+      "final_q_sha256": "39157cae2c24543b8e21dab2421a5477f38d011ae79231d8d343a3e5d63a0e6c"
+    },
+    {
+      "name": "conservative-n512-repeat3",
+      "case": "conservative-n512",
+      "family": "conservative",
+      "n": 512,
+      "repeat": 3,
+      "process_seconds": 420.540276875,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 26641,
+        "setup_seconds": 0.6498405,
+        "stepping_seconds": 419.7317205,
+        "rhs_calls": 133216,
+        "rhs_seconds": 411.9747957580006,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4142142500435115,
+        "worst_evaluated_speed_over_dr": 1234.8705888972572,
+        "C_char_max_accepted": 0.15450971200293923,
+        "dt_min": 7.820136475666928e-05,
+        "dt_max": 0.00012512218963844367,
+        "dt_over_M": 0.000375366568915331,
+        "min_dr_over_M": 0.0058651026392961825,
+        "nominal_dt_over_min_dr": 0.06400000000006399,
+        "steps_per_M": 2664.1,
+        "active_limiter": "scri_policy",
+        "limits": {
+          "characteristic": 0.00016196033719378093,
+          "scri_policy": 0.00012512218963844367,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        8.532723382325448e-06,
+        4.38816041486511e-06,
+        2.6686460835915164e-07,
+        5.657987857269525e-07
+      ],
+      "linear_physical_rms": [
+        8.3239488826569e-06,
+        4.280444651811906e-06,
+        2.611550442171339e-07,
+        5.528777446842441e-07
+      ],
+      "interpolation_disagreement_rms": [
+        2.8876803005154795e-07,
+        1.4884994219163495e-07,
+        7.721671207915512e-09,
+        1.707951970131816e-08
+      ],
+      "indicator": 8.532723382325448e-06,
+      "screening_indicator": 8.532723382325448e-06,
+      "final_q_sha256": "395b28bcd8a7d813dfecb2e0d92b5e6b24c2642ad12489d0ac58b017218e74e8"
+    },
+    {
+      "name": "step055-n512-repeat3",
+      "case": "step055-n512",
+      "family": "step055",
+      "n": 512,
+      "repeat": 3,
+      "process_seconds": 119.37131995800019,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 7485,
+        "setup_seconds": 0.6492092919999999,
+        "stepping_seconds": 118.56793979199999,
+        "rhs_calls": 37436,
+        "rhs_seconds": 116.30147412999911,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4142142500506463,
+        "worst_evaluated_speed_over_dr": 1234.8705889009066,
+        "C_char_max_accepted": 0.550000156664953,
+        "dt_min": 2.7633547976968487e-05,
+        "dt_max": 0.00044539092728289797,
+        "dt_over_M": 0.001336172781848694,
+        "min_dr_over_M": 0.0058651026392961825,
+        "nominal_dt_over_min_dr": 0.2278174593052025,
+        "steps_per_M": 748.5,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.00016196033719378093,
+          "scri_policy": 0.00012512218963844367,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        8.532723375748849e-06,
+        4.388160410653674e-06,
+        2.6686460885655956e-07,
+        5.657987858794335e-07
+      ],
+      "linear_physical_rms": [
+        8.323948876763297e-06,
+        4.280444647640481e-06,
+        2.6115504468700085e-07,
+        5.52877744899039e-07
+      ],
+      "interpolation_disagreement_rms": [
+        2.887680310889424e-07,
+        1.4884994056161686e-07,
+        7.721671219962388e-09,
+        1.7079519700601478e-08
+      ],
+      "indicator": 8.532723375748849e-06,
+      "screening_indicator": 8.532723375748849e-06,
+      "final_q_sha256": "369d0056c858898c8125708d12a53485c4b3a2890a9e465edf627809f6cd8fca"
+    },
+    {
+      "name": "penalty05-step068-n512-repeat3",
+      "case": "penalty05-step068-n512",
+      "family": "penalty05-step068",
+      "n": 512,
+      "repeat": 3,
+      "process_seconds": 96.01106362499968,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 6054,
+        "setup_seconds": 0.646236375,
+        "stepping_seconds": 95.207496542,
+        "rhs_calls": 30281,
+        "rhs_seconds": 93.3741771790005,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4142148123936495,
+        "worst_evaluated_speed_over_dr": 1234.8708765393528,
+        "C_char_max_accepted": 0.680000352087318,
+        "dt_min": 0.00015720181790879195,
+        "dt_max": 0.0005506651464588556,
+        "dt_over_M": 0.0016519954393765667,
+        "min_dr_over_M": 0.0058651026392961825,
+        "nominal_dt_over_min_dr": 0.28166522241370484,
+        "steps_per_M": 605.4,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.00016196033719378093,
+          "scri_policy": 0.0001629195177582273,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        8.532723353103296e-06,
+        4.38816040039492e-06,
+        2.668646074765403e-07,
+        5.657987838118622e-07
+      ],
+      "linear_physical_rms": [
+        8.323948855016183e-06,
+        4.280444638066985e-06,
+        2.6115504356692345e-07,
+        5.5287774290756e-07
+      ],
+      "interpolation_disagreement_rms": [
+        2.8876803039155544e-07,
+        1.4884994142933835e-07,
+        7.721670990065163e-09,
+        1.7079519671494763e-08
+      ],
+      "indicator": 8.532723353103296e-06,
+      "screening_indicator": 8.532723353103296e-06,
+      "final_q_sha256": "c66e2b8660952ae75b6d802d5508fcb9d6bfa081915b1d2a927ca8528701dc9e"
+    },
+    {
+      "name": "conservative-n128-repeat3",
+      "case": "conservative-n128",
+      "family": "conservative",
+      "n": 128,
+      "repeat": 3,
+      "process_seconds": 36.361304333000135,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 6641,
+        "setup_seconds": 0.19984229199999998,
+        "stepping_seconds": 36.011701875,
+        "rhs_calls": 33216,
+        "rhs_seconds": 35.070674229000176,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4144067027311973,
+        "worst_evaluated_speed_over_dr": 307.83685459822874,
+        "C_char_max_accepted": 0.15452202897495113,
+        "dt_min": 0.0003137254870515527,
+        "dt_max": 0.0005019607843142256,
+        "dt_over_M": 0.0015058823529426769,
+        "min_dr_over_M": 0.0235294117647058,
+        "nominal_dt_over_min_dr": 0.06400000000006399,
+        "steps_per_M": 664.1,
+        "active_limiter": "scri_policy",
+        "limits": {
+          "characteristic": 0.0006497467645068135,
+          "scri_policy": 0.0005019607843142256,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.0022955256467827516,
+        0.0011298259218614185,
+        0.0001484716229025687,
+        0.0002680193164359676
+      ],
+      "linear_physical_rms": [
+        0.0021042161160238194,
+        0.0010395335702562205,
+        0.00013716255922553293,
+        0.0002464187729529063
+      ],
+      "interpolation_disagreement_rms": [
+        0.0002691987859081097,
+        0.00012779849686297357,
+        1.6104820209780032e-05,
+        2.933551967560843e-05
+      ],
+      "indicator": 0.0022955256467827516,
+      "screening_indicator": 0.0022955256467827516,
+      "final_q_sha256": "b0cf7ef3650c11bf46ff4ed4a8cec0967dd04e86423fdc77723b4b17ebec7f9c"
+    },
+    {
+      "name": "step055-n128-repeat3",
+      "case": "step055-n128",
+      "family": "step055",
+      "n": 128,
+      "repeat": 3,
+      "process_seconds": 10.432233792000261,
+      "status": "completed_unqualified",
+      "result": {
+        "status": "completed_unqualified",
+        "failure": null,
+        "time_M": 10.0,
+        "steps": 1866,
+        "setup_seconds": 0.20129429100000001,
+        "stepping_seconds": 10.080633916,
+        "rhs_calls": 9341,
+        "rhs_seconds": 9.806951715999949,
+        "initial_speed": 2.414213562373095,
+        "worst_evaluated_speed": 2.4144067027541176,
+        "worst_evaluated_speed_over_dr": 307.8368546011511,
+        "C_char_max_accepted": 0.5500440007508959,
+        "dt_min": 0.0009446148690996914,
+        "dt_max": 0.0017868036023937436,
+        "dt_over_M": 0.005360410807181231,
+        "min_dr_over_M": 0.0235294117647058,
+        "nominal_dt_over_min_dr": 0.2278174593052031,
+        "steps_per_M": 186.6,
+        "active_limiter": "explicit_fixed_dt",
+        "limits": {
+          "characteristic": 0.0006497467645068135,
+          "scri_policy": 0.0005019607843142256,
+          "telegrapher_policy": 0.016666666666666666
+        },
+        "floor_calls": 0,
+        "floor_max_r": 0.0,
+        "qualifications": [
+          "spherical CPU only",
+          "completion is not stability or convergence",
+          "differential D boundary compatibility not yet qualified"
+        ]
+      },
+      "physical_rms": [
+        0.00229552564671456,
+        0.0011298259218315908,
+        0.00014847162302182465,
+        0.00026801931627951157
+      ],
+      "linear_physical_rms": [
+        0.0021042161159416164,
+        0.001039533570244483,
+        0.00013716255934643446,
+        0.0002464187728111803
+      ],
+      "interpolation_disagreement_rms": [
+        0.00026919878592075047,
+        0.0001277984968442638,
+        1.6104820218697314e-05,
+        2.9335519667952563e-05
+      ],
+      "indicator": 0.00229552564671456,
+      "screening_indicator": 0.00229552564671456,
+      "final_q_sha256": "66d1fbd8eb27f15dd65db0146a0b0ab74a657d172681508c52c9a864de779ede"
+    }
+  ],
+  "summary": [
+    {
+      "case": "conservative-n128",
+      "family": "conservative",
+      "n": 128,
+      "repeats": 3,
+      "completed": 3,
+      "repeated_states_bitwise_equal": true,
+      "stepping_seconds": {
+        "min": 35.836198833000005,
+        "median": 36.011701875,
+        "max": 36.05155475
+      },
+      "setup_seconds": {
+        "min": 0.19913291600000002,
+        "median": 0.199276667,
+        "max": 0.19984229199999998
+      },
+      "rhs_seconds": {
+        "min": 34.90473557900004,
+        "median": 35.070674229000176,
+        "max": 35.11057656099984
+      },
+      "rhs_calls": {
+        "min": 33216,
+        "median": 33216.0,
+        "max": 33216
+      },
+      "steps": {
+        "min": 6641,
+        "median": 6641.0,
+        "max": 6641
+      },
+      "C_char_max_accepted": {
+        "min": 0.15452202897495113,
+        "median": 0.15452202897495113,
+        "max": 0.15452202897495113
+      },
+      "dt_over_M": {
+        "min": 0.0015058823529426769,
+        "median": 0.0015058823529426769,
+        "max": 0.0015058823529426769
+      },
+      "min_dr_over_M": {
+        "min": 0.0235294117647058,
+        "median": 0.0235294117647058,
+        "max": 0.0235294117647058
+      },
+      "steps_per_M": {
+        "min": 664.1,
+        "median": 664.1,
+        "max": 664.1
+      },
+      "initial_speed": {
+        "min": 2.414213562373095,
+        "median": 2.414213562373095,
+        "max": 2.414213562373095
+      },
+      "worst_evaluated_speed": {
+        "min": 2.4144067027311973,
+        "median": 2.4144067027311973,
+        "max": 2.4144067027311973
+      },
+      "process_seconds": {
+        "min": 36.1902995,
+        "median": 36.361304333000135,
+        "max": 36.405313249999836
+      },
+      "indicator": 0.0022955256467827516,
+      "screening_indicator": 0.0022955256467827516,
+      "physical_rms": [
+        0.0022955256467827516,
+        0.0011298259218614185,
+        0.0001484716229025687,
+        0.0002680193164359676
+      ],
+      "linear_physical_rms": [
+        0.0021042161160238194,
+        0.0010395335702562205,
+        0.00013716255922553293,
+        0.0002464187729529063
+      ],
+      "interpolation_disagreement_rms": [
+        0.0002691987859081097,
+        0.00012779849686297357,
+        1.6104820209780032e-05,
+        2.933551967560843e-05
+      ],
+      "clock": -0.17636959492829718,
+      "D_defect_max": 0.4403928002411361,
+      "D_probes": [
+        {
+          "epsilon": 4.685788207283488e-06,
+          "defect": 0.4403928002411361
+        },
+        {
+          "epsilon": 1.4057364621850463e-06,
+          "defect": 0.44039279992621116
+        },
+        {
+          "epsilon": 4.6857882072834874e-07,
+          "defect": 0.4403927994622152
+        }
+      ],
+      "pole": 0.6567256828887974,
+      "trace": 0.19269265386809983
+    },
+    {
+      "case": "step055-n128",
+      "family": "step055",
+      "n": 128,
+      "repeats": 3,
+      "completed": 3,
+      "repeated_states_bitwise_equal": true,
+      "stepping_seconds": {
+        "min": 10.080633916,
+        "median": 10.117216208,
+        "max": 10.120208791
+      },
+      "setup_seconds": {
+        "min": 0.19776125000000003,
+        "median": 0.19843329099999998,
+        "max": 0.20129429100000001
+      },
+      "rhs_seconds": {
+        "min": 9.806951715999949,
+        "median": 9.834783965999987,
+        "max": 9.84309539800001
+      },
+      "rhs_calls": {
+        "min": 9341,
+        "median": 9341.0,
+        "max": 9341
+      },
+      "steps": {
+        "min": 1866,
+        "median": 1866.0,
+        "max": 1866
+      },
+      "C_char_max_accepted": {
+        "min": 0.5500440007508959,
+        "median": 0.5500440007508959,
+        "max": 0.5500440007508959
+      },
+      "dt_over_M": {
+        "min": 0.005360410807181231,
+        "median": 0.005360410807181231,
+        "max": 0.005360410807181231
+      },
+      "min_dr_over_M": {
+        "min": 0.0235294117647058,
+        "median": 0.0235294117647058,
+        "max": 0.0235294117647058
+      },
+      "steps_per_M": {
+        "min": 186.6,
+        "median": 186.6,
+        "max": 186.6
+      },
+      "initial_speed": {
+        "min": 2.414213562373095,
+        "median": 2.414213562373095,
+        "max": 2.414213562373095
+      },
+      "worst_evaluated_speed": {
+        "min": 2.4144067027541176,
+        "median": 2.4144067027541176,
+        "max": 2.4144067027541176
+      },
+      "process_seconds": {
+        "min": 10.432233792000261,
+        "median": 10.468103708000001,
+        "max": 10.469151541999963
+      },
+      "indicator": 0.00229552564671456,
+      "screening_indicator": 0.00229552564671456,
+      "physical_rms": [
+        0.00229552564671456,
+        0.0011298259218315908,
+        0.00014847162302182465,
+        0.00026801931627951157
+      ],
+      "linear_physical_rms": [
+        0.0021042161159416164,
+        0.001039533570244483,
+        0.00013716255934643446,
+        0.0002464187728111803
+      ],
+      "interpolation_disagreement_rms": [
+        0.00026919878592075047,
+        0.0001277984968442638,
+        1.6104820218697314e-05,
+        2.9335519667952563e-05
+      ],
+      "clock": -0.17636959510761302,
+      "D_defect_max": 0.4403927999968792,
+      "D_probes": [
+        {
+          "epsilon": 4.6857882051035485e-06,
+          "defect": 0.4403927999968792
+        },
+        {
+          "epsilon": 1.4057364615310646e-06,
+          "defect": 0.4403927998300381
+        },
+        {
+          "epsilon": 4.685788205103548e-07,
+          "defect": 0.44039279995837743
+        }
+      ],
+      "pole": 0.6567256831296544,
+      "trace": 0.19269265389181756
+    },
+    {
+      "case": "penalty05-step068-n128",
+      "family": "penalty05-step068",
+      "n": 128,
+      "repeats": 3,
+      "completed": 3,
+      "repeated_states_bitwise_equal": true,
+      "stepping_seconds": {
+        "min": 8.1429525,
+        "median": 8.157716707999999,
+        "max": 8.173846875
+      },
+      "setup_seconds": {
+        "min": 0.19752379200000003,
+        "median": 0.197945792,
+        "max": 0.198060291
+      },
+      "rhs_seconds": {
+        "min": 7.917749399000037,
+        "median": 7.932631991000012,
+        "max": 7.946790548999981
+      },
+      "rhs_calls": {
+        "min": 7556,
+        "median": 7556.0,
+        "max": 7556
+      },
+      "steps": {
+        "min": 1509,
+        "median": 1509.0,
+        "max": 1509
+      },
+      "C_char_max_accepted": {
+        "min": 0.680173324949994,
+        "median": 0.680173324949994,
+        "max": 0.680173324949994
+      },
+      "dt_over_M": {
+        "min": 0.00662741699796952,
+        "median": 0.00662741699796952,
+        "max": 0.00662741699796952
+      },
+      "min_dr_over_M": {
+        "min": 0.0235294117647058,
+        "median": 0.0235294117647058,
+        "max": 0.0235294117647058
+      },
+      "steps_per_M": {
+        "min": 150.9,
+        "median": 150.9,
+        "max": 150.9
+      },
+      "initial_speed": {
+        "min": 2.414213562373095,
+        "median": 2.414213562373095,
+        "max": 2.414213562373095
+      },
+      "worst_evaluated_speed": {
+        "min": 2.4148289494854733,
+        "median": 2.4148289494854733,
+        "max": 2.4148289494854733
+      },
+      "process_seconds": {
+        "min": 8.493323207999993,
+        "median": 8.50477854199994,
+        "max": 8.520312250000003
+      },
+      "indicator": 0.002294272455988429,
+      "screening_indicator": 0.002294272455988429,
+      "physical_rms": [
+        0.002294272455988429,
+        0.0011291810462693201,
+        0.00014871398297449038,
+        0.00026737072590842637
+      ],
+      "linear_physical_rms": [
+        0.0021029187074350776,
+        0.0010388220104674596,
+        0.00013736885789095236,
+        0.00024580101171068697
+      ],
+      "interpolation_disagreement_rms": [
+        0.00026935835443261507,
+        0.00012782482544890504,
+        1.6150825864522927e-05,
+        2.930795393474519e-05
+      ],
+      "clock": 0.6961518326390863,
+      "D_defect_max": 0.5432116721237028,
+      "D_probes": [
+        {
+          "epsilon": 4.685788201375963e-06,
+          "defect": 0.5432116721237028
+        },
+        {
+          "epsilon": 1.4057364604127889e-06,
+          "defect": 0.5432116719963508
+        },
+        {
+          "epsilon": 4.685788201375962e-07,
+          "defect": 0.5432116713151652
+        }
+      ],
+      "pole": 0.5180532729154583,
+      "trace": 0.3418434111506275
+    },
+    {
+      "case": "conservative-n256",
+      "family": "conservative",
+      "n": 256,
+      "repeats": 3,
+      "completed": 3,
+      "repeated_states_bitwise_equal": true,
+      "stepping_seconds": {
+        "min": 117.282929292,
+        "median": 117.512369792,
+        "max": 117.69493433299999
+      },
+      "setup_seconds": {
+        "min": 0.34735175,
+        "median": 0.3487035,
+        "max": 0.352344209
+      },
+      "rhs_seconds": {
+        "min": 114.7947565430007,
+        "median": 115.02182147700073,
+        "max": 115.17666679100013
+      },
+      "rhs_calls": {
+        "min": 66551,
+        "median": 66551.0,
+        "max": 66551
+      },
+      "steps": {
+        "min": 13308,
+        "median": 13308.0,
+        "max": 13308
+      },
+      "C_char_max_accepted": {
+        "min": 0.15451039544830436,
+        "median": 0.15451039544830436,
+        "max": 0.15451039544830436
+      },
+      "dt_over_M": {
+        "min": 0.0007514677103725713,
+        "median": 0.0007514677103725713,
+        "max": 0.0007514677103725713
+      },
+      "min_dr_over_M": {
+        "min": 0.011741682974559686,
+        "median": 0.011741682974559686,
+        "max": 0.011741682974559686
+      },
+      "steps_per_M": {
+        "min": 1330.8,
+        "median": 1330.8,
+        "max": 1330.8
+      },
+      "initial_speed": {
+        "min": 2.414213562373095,
+        "median": 2.414213562373095,
+        "max": 2.414213562373095
+      },
+      "worst_evaluated_speed": {
+        "min": 2.4142249288773416,
+        "median": 2.4142249288773416,
+        "max": 2.4142249288773416
+      },
+      "process_seconds": {
+        "min": 117.78786629199999,
+        "median": 118.01264637499992,
+        "max": 118.19349904200001
+      },
+      "indicator": 0.0002845391278494468,
+      "screening_indicator": 0.0002845391278494468,
+      "physical_rms": [
+        0.0002845391278494468,
+        0.00014537624290772606,
+        1.0299734980211126e-05,
+        2.343737700956978e-05
+      ],
+      "linear_physical_rms": [
+        0.0002682117461803293,
+        0.00013701217208401806,
+        9.805191771166252e-06,
+        2.2146332698068535e-05
+      ],
+      "interpolation_disagreement_rms": [
+        2.0616526559899328e-05,
+        1.05413732131765e-05,
+        6.884348128694412e-07,
+        1.6839220773462063e-06
+      ],
+      "clock": -0.01737064380962844,
+      "D_defect_max": 0.012426616800682265,
+      "D_probes": [
+        {
+          "epsilon": 4.6865948772327554e-06,
+          "defect": 0.012426616240034737
+        },
+        {
+          "epsilon": 1.4059784631698266e-06,
+          "defect": 0.012426616800682265
+        },
+        {
+          "epsilon": 4.686594877232755e-07,
+          "defect": 0.012426616346636735
+        }
+      ],
+      "pole": 0.012456573099610284,
+      "trace": 0.0015319135680725293
+    },
+    {
+      "case": "step055-n256",
+      "family": "step055",
+      "n": 256,
+      "repeats": 3,
+      "completed": 3,
+      "repeated_states_bitwise_equal": true,
+      "stepping_seconds": {
+        "min": 32.920015708,
+        "median": 32.970241334,
+        "max": 33.043063458
+      },
+      "setup_seconds": {
+        "min": 0.348311834,
+        "median": 0.348618708,
+        "max": 0.35132850000000004
+      },
+      "rhs_seconds": {
+        "min": 32.19424964199986,
+        "median": 32.238457665000176,
+        "max": 32.31028043999982
+      },
+      "rhs_calls": {
+        "min": 18706,
+        "median": 18706.0,
+        "max": 18706
+      },
+      "steps": {
+        "min": 3739,
+        "median": 3739.0,
+        "max": 3739
+      },
+      "C_char_max_accepted": {
+        "min": 0.550002589517723,
+        "median": 0.550002589517723,
+        "max": 0.550002589517723
+      },
+      "dt_over_M": {
+        "min": 0.0026749603832313383,
+        "median": 0.0026749603832313383,
+        "max": 0.0026749603832313383
+      },
+      "min_dr_over_M": {
+        "min": 0.011741682974559686,
+        "median": 0.011741682974559686,
+        "max": 0.011741682974559686
+      },
+      "steps_per_M": {
+        "min": 373.9,
+        "median": 373.9,
+        "max": 373.9
+      },
+      "initial_speed": {
+        "min": 2.414213562373095,
+        "median": 2.414213562373095,
+        "max": 2.414213562373095
+      },
+      "worst_evaluated_speed": {
+        "min": 2.414224929007289,
+        "median": 2.414224929007289,
+        "max": 2.414224929007289
+      },
+      "process_seconds": {
+        "min": 33.42101725000009,
+        "median": 33.473480582999855,
+        "max": 33.55037991699999
+      },
+      "indicator": 0.00028453912785482893,
+      "screening_indicator": 0.00028453912785482893,
+      "physical_rms": [
+        0.00028453912785482893,
+        0.00014537624291178098,
+        1.0299734980736793e-05,
+        2.3437377009545486e-05
+      ],
+      "linear_physical_rms": [
+        0.0002682117461844923,
+        0.00013701217208803823,
+        9.805191771716512e-06,
+        2.2146332698001152e-05
+      ],
+      "interpolation_disagreement_rms": [
+        2.061652656106767e-05,
+        1.054137321350485e-05,
+        6.884348129796439e-07,
+        1.6839220774560483e-06
+      ],
+      "clock": -0.017370643780431044,
+      "D_defect_max": 0.012426616446092165,
+      "D_probes": [
+        {
+          "epsilon": 4.686594877074953e-06,
+          "defect": 0.012426616294085611
+        },
+        {
+          "epsilon": 1.4059784631224857e-06,
+          "defect": 0.012426616446092165
+        },
+        {
+          "epsilon": 4.6865948770749524e-07,
+          "defect": 0.012426616051269962
+        }
+      ],
+      "pole": 0.012456573246806558,
+      "trace": 0.0015319135279107665
+    },
+    {
+      "case": "penalty05-step068-n256",
+      "family": "penalty05-step068",
+      "n": 256,
+      "repeats": 3,
+      "completed": 3,
+      "repeated_states_bitwise_equal": true,
+      "stepping_seconds": {
+        "min": 26.675313083,
+        "median": 26.675546958,
+        "max": 26.703821542
+      },
+      "setup_seconds": {
+        "min": 0.34818908299999995,
+        "median": 0.349901416,
+        "max": 0.351062125
+      },
+      "rhs_seconds": {
+        "min": 26.07988993100027,
+        "median": 26.08325937899971,
+        "max": 26.10830914600003
+      },
+      "rhs_calls": {
+        "min": 15131,
+        "median": 15131.0,
+        "max": 15131
+      },
+      "steps": {
+        "min": 3024,
+        "median": 3024.0,
+        "max": 3024
+      },
+      "C_char_max_accepted": {
+        "min": 0.6800053783150671,
+        "median": 0.6800053783150671,
+        "max": 0.6800053783150671
+      },
+      "dt_over_M": {
+        "min": 0.0033072237465405635,
+        "median": 0.0033072237465405635,
+        "max": 0.0033072237465405635
+      },
+      "min_dr_over_M": {
+        "min": 0.011741682974559686,
+        "median": 0.011741682974559686,
+        "max": 0.011741682974559686
+      },
+      "steps_per_M": {
+        "min": 302.4,
+        "median": 302.4,
+        "max": 302.4
+      },
+      "initial_speed": {
+        "min": 2.414213562373095,
+        "median": 2.414213562373095,
+        "max": 2.414213562373095
+      },
+      "worst_evaluated_speed": {
+        "min": 2.414232657080709,
+        "median": 2.414232657080709,
+        "max": 2.414232657080709
+      },
+      "process_seconds": {
+        "min": 27.173397125000008,
+        "median": 27.178729499999918,
+        "max": 27.207276125000135
+      },
+      "indicator": 0.0002845401927620186,
+      "screening_indicator": 0.0002845401927620186,
+      "physical_rms": [
+        0.0002845401927620186,
+        0.0001453767742626715,
+        1.02997692759182e-05,
+        2.343740666421674e-05
+      ],
+      "linear_physical_rms": [
+        0.0002682126659781259,
+        0.00013701262769762185,
+        9.805219219733255e-06,
+        2.2146351861790505e-05
+      ],
+      "interpolation_disagreement_rms": [
+        2.0616739867153888e-05,
+        1.0541475432185899e-05,
+        6.884433885676964e-07,
+        1.6839326415267033e-06
+      ],
+      "clock": -0.02066362322815199,
+      "D_defect_max": 0.013843611978886276,
+      "D_probes": [
+        {
+          "epsilon": 4.686594876878711e-06,
+          "defect": 0.013843611457720964
+        },
+        {
+          "epsilon": 1.4059784630636133e-06,
+          "defect": 0.01384361172225184
+        },
+        {
+          "epsilon": 4.6865948768787107e-07,
+          "defect": 0.013843611978886276
+        }
+      ],
+      "pole": 0.01712552172135241,
+      "trace": 0.0007455292101490318
+    },
+    {
+      "case": "conservative-n512",
+      "family": "conservative",
+      "n": 512,
+      "repeats": 3,
+      "completed": 3,
+      "repeated_states_bitwise_equal": true,
+      "stepping_seconds": {
+        "min": 419.7317205,
+        "median": 419.75509875,
+        "max": 420.25200079200005
+      },
+      "setup_seconds": {
+        "min": 0.649217625,
+        "median": 0.6498405,
+        "max": 0.6498585
+      },
+      "rhs_seconds": {
+        "min": 411.9747957580006,
+        "median": 412.0166981090007,
+        "max": 412.47639542799936
+      },
+      "rhs_calls": {
+        "min": 133216,
+        "median": 133216.0,
+        "max": 133216
+      },
+      "steps": {
+        "min": 26641,
+        "median": 26641.0,
+        "max": 26641
+      },
+      "C_char_max_accepted": {
+        "min": 0.15450971200293923,
+        "median": 0.15450971200293923,
+        "max": 0.15450971200293923
+      },
+      "dt_over_M": {
+        "min": 0.000375366568915331,
+        "median": 0.000375366568915331,
+        "max": 0.000375366568915331
+      },
+      "min_dr_over_M": {
+        "min": 0.0058651026392961825,
+        "median": 0.0058651026392961825,
+        "max": 0.0058651026392961825
+      },
+      "steps_per_M": {
+        "min": 2664.1,
+        "median": 2664.1,
+        "max": 2664.1
+      },
+      "initial_speed": {
+        "min": 2.414213562373095,
+        "median": 2.414213562373095,
+        "max": 2.414213562373095
+      },
+      "worst_evaluated_speed": {
+        "min": 2.4142142500435115,
+        "median": 2.4142142500435115,
+        "max": 2.4142142500435115
+      },
+      "process_seconds": {
+        "min": 420.540276875,
+        "median": 420.557994208,
+        "max": 421.0548725410001
+      },
+      "indicator": 8.532723382325448e-06,
+      "screening_indicator": 8.532723382325448e-06,
+      "physical_rms": [
+        8.532723382325448e-06,
+        4.38816041486511e-06,
+        2.6686460835915164e-07,
+        5.657987857269525e-07
+      ],
+      "linear_physical_rms": [
+        8.3239488826569e-06,
+        4.280444651811906e-06,
+        2.611550442171339e-07,
+        5.528777446842441e-07
+      ],
+      "interpolation_disagreement_rms": [
+        2.8876803005154795e-07,
+        1.4884994219163495e-07,
+        7.721671207915512e-09,
+        1.707951970131816e-08
+      ],
+      "clock": 2.252058097571008e-05,
+      "D_defect_max": 9.288298545697543e-05,
+      "D_probes": [
+        {
+          "epsilon": 4.678689862780448e-06,
+          "defect": 9.288298545697543e-05
+        },
+        {
+          "epsilon": 1.4036069588341344e-06,
+          "defect": 9.288281341914006e-05
+        },
+        {
+          "epsilon": 4.6786898627804475e-07,
+          "defect": 9.288245747878648e-05
+        }
+      ],
+      "pole": 5.3224903402779685e-05,
+      "trace": 1.052920665772783e-05
+    },
+    {
+      "case": "step055-n512",
+      "family": "step055",
+      "n": 512,
+      "repeats": 3,
+      "completed": 3,
+      "repeated_states_bitwise_equal": true,
+      "stepping_seconds": {
+        "min": 117.54918775,
+        "median": 117.64433325,
+        "max": 118.56793979199999
+      },
+      "setup_seconds": {
+        "min": 0.6457593749999999,
+        "median": 0.6469793749999999,
+        "max": 0.6492092919999999
+      },
+      "rhs_seconds": {
+        "min": 115.34187373899864,
+        "median": 115.44381597399989,
+        "max": 116.30147412999911
+      },
+      "rhs_calls": {
+        "min": 37436,
+        "median": 37436.0,
+        "max": 37436
+      },
+      "steps": {
+        "min": 7485,
+        "median": 7485.0,
+        "max": 7485
+      },
+      "C_char_max_accepted": {
+        "min": 0.550000156664953,
+        "median": 0.550000156664953,
+        "max": 0.550000156664953
+      },
+      "dt_over_M": {
+        "min": 0.001336172781848694,
+        "median": 0.001336172781848694,
+        "max": 0.001336172781848694
+      },
+      "min_dr_over_M": {
+        "min": 0.0058651026392961825,
+        "median": 0.0058651026392961825,
+        "max": 0.0058651026392961825
+      },
+      "steps_per_M": {
+        "min": 748.5,
+        "median": 748.5,
+        "max": 748.5
+      },
+      "initial_speed": {
+        "min": 2.414213562373095,
+        "median": 2.414213562373095,
+        "max": 2.414213562373095
+      },
+      "worst_evaluated_speed": {
+        "min": 2.4142142500506463,
+        "median": 2.4142142500506463,
+        "max": 2.4142142500506463
+      },
+      "process_seconds": {
+        "min": 118.34817808399998,
+        "median": 118.44378054200001,
+        "max": 119.37131995800019
+      },
+      "indicator": 8.532723375748849e-06,
+      "screening_indicator": 8.532723375748849e-06,
+      "physical_rms": [
+        8.532723375748849e-06,
+        4.388160410653674e-06,
+        2.6686460885655956e-07,
+        5.657987858794335e-07
+      ],
+      "linear_physical_rms": [
+        8.323948876763297e-06,
+        4.280444647640481e-06,
+        2.6115504468700085e-07,
+        5.52877744899039e-07
+      ],
+      "interpolation_disagreement_rms": [
+        2.887680310889424e-07,
+        1.4884994056161686e-07,
+        7.721671219962388e-09,
+        1.7079519700601478e-08
+      ],
+      "clock": 2.2520613328275152e-05,
+      "D_defect_max": 9.288287981891463e-05,
+      "D_probes": [
+        {
+          "epsilon": 4.678689862803176e-06,
+          "defect": 9.288287981891463e-05
+        },
+        {
+          "epsilon": 1.4036069588409526e-06,
+          "defect": 9.288266229981468e-05
+        },
+        {
+          "epsilon": 4.678689862803175e-07,
+          "defect": 9.288139673410689e-05
+        }
+      ],
+      "pole": 5.322481889940161e-05,
+      "trace": 1.0529184417046311e-05
+    },
+    {
+      "case": "penalty05-step068-n512",
+      "family": "penalty05-step068",
+      "n": 512,
+      "repeats": 3,
+      "completed": 3,
+      "repeated_states_bitwise_equal": true,
+      "stepping_seconds": {
+        "min": 94.961027166,
+        "median": 95.15553775,
+        "max": 95.207496542
+      },
+      "setup_seconds": {
+        "min": 0.646236375,
+        "median": 0.647592708,
+        "max": 0.6540365419999999
+      },
+      "rhs_seconds": {
+        "min": 93.16709714300012,
+        "median": 93.34795366299936,
+        "max": 93.3741771790005
+      },
+      "rhs_calls": {
+        "min": 30281,
+        "median": 30281.0,
+        "max": 30281
+      },
+      "steps": {
+        "min": 6054,
+        "median": 6054.0,
+        "max": 6054
+      },
+      "C_char_max_accepted": {
+        "min": 0.680000352087318,
+        "median": 0.680000352087318,
+        "max": 0.680000352087318
+      },
+      "dt_over_M": {
+        "min": 0.0016519954393765667,
+        "median": 0.0016519954393765667,
+        "max": 0.0016519954393765667
+      },
+      "min_dr_over_M": {
+        "min": 0.0058651026392961825,
+        "median": 0.0058651026392961825,
+        "max": 0.0058651026392961825
+      },
+      "steps_per_M": {
+        "min": 605.4,
+        "median": 605.4,
+        "max": 605.4
+      },
+      "initial_speed": {
+        "min": 2.414213562373095,
+        "median": 2.414213562373095,
+        "max": 2.414213562373095
+      },
+      "worst_evaluated_speed": {
+        "min": 2.4142148123936495,
+        "median": 2.4142148123936495,
+        "max": 2.4142148123936495
+      },
+      "process_seconds": {
+        "min": 95.76358379200019,
+        "median": 95.96035262500004,
+        "max": 96.01106362499968
+      },
+      "indicator": 8.532723353103296e-06,
+      "screening_indicator": 8.532723353103296e-06,
+      "physical_rms": [
+        8.532723353103296e-06,
+        4.38816040039492e-06,
+        2.668646074765403e-07,
+        5.657987838118622e-07
+      ],
+      "linear_physical_rms": [
+        8.323948855016183e-06,
+        4.280444638066985e-06,
+        2.6115504356692345e-07,
+        5.5287774290756e-07
+      ],
+      "interpolation_disagreement_rms": [
+        2.8876803039155544e-07,
+        1.4884994142933835e-07,
+        7.721670990065163e-09,
+        1.7079519671494763e-08
+      ],
+      "clock": -2.9909496065655405e-05,
+      "D_defect_max": 8.584560029421817e-05,
+      "D_probes": [
+        {
+          "epsilon": 4.67868986275912e-06,
+          "defect": 8.58455469031627e-05
+        },
+        {
+          "epsilon": 1.4036069588277359e-06,
+          "defect": 8.584560029421817e-05
+        },
+        {
+          "epsilon": 4.67868986275912e-07,
+          "defect": 8.584554097082475e-05
+        }
+      ],
+      "pole": 2.8462654351635308e-05,
+      "trace": 2.021035248220282e-05
+    }
+  ],
+  "exterior_only_frontier": [
+    "penalty05-step068-n128",
+    "step055-n256",
+    "penalty05-step068-n256",
+    "penalty05-step068-n512"
+  ],
+  "exterior_targets": [
+    {
+      "E": 0.003,
+      "clock": null,
+      "D": null,
+      "selected": {
+        "conservative": {
+          "case": "conservative-n128",
+          "n": 128,
+          "indicator": 0.0022955256467827516,
+          "screening_indicator": 0.0022955256467827516,
+          "clock": -0.17636959492829718,
+          "D_defect_max": 0.4403928002411361,
+          "stepping_seconds": {
+            "min": 35.836198833000005,
+            "median": 36.011701875,
+            "max": 36.05155475
+          },
+          "process_seconds": {
+            "min": 36.1902995,
+            "median": 36.361304333000135,
+            "max": 36.405313249999836
+          },
+          "rhs_calls": {
+            "min": 33216,
+            "median": 33216.0,
+            "max": 33216
+          }
+        },
+        "step055": {
+          "case": "step055-n128",
+          "n": 128,
+          "indicator": 0.00229552564671456,
+          "screening_indicator": 0.00229552564671456,
+          "clock": -0.17636959510761302,
+          "D_defect_max": 0.4403927999968792,
+          "stepping_seconds": {
+            "min": 10.080633916,
+            "median": 10.117216208,
+            "max": 10.120208791
+          },
+          "process_seconds": {
+            "min": 10.432233792000261,
+            "median": 10.468103708000001,
+            "max": 10.469151541999963
+          },
+          "rhs_calls": {
+            "min": 9341,
+            "median": 9341.0,
+            "max": 9341
+          }
+        },
+        "penalty05-step068": {
+          "case": "penalty05-step068-n128",
+          "n": 128,
+          "indicator": 0.002294272455988429,
+          "screening_indicator": 0.002294272455988429,
+          "clock": 0.6961518326390863,
+          "D_defect_max": 0.5432116721237028,
+          "stepping_seconds": {
+            "min": 8.1429525,
+            "median": 8.157716707999999,
+            "max": 8.173846875
+          },
+          "process_seconds": {
+            "min": 8.493323207999993,
+            "median": 8.50477854199994,
+            "max": 8.520312250000003
+          },
+          "rhs_calls": {
+            "min": 7556,
+            "median": 7556.0,
+            "max": 7556
+          }
+        }
+      },
+      "baseline_over_family_cost_ratio": {
+        "conservative": 1.0,
+        "step055": 3.5594476914039275,
+        "penalty05-step068": 4.414433984902238
+      }
+    },
+    {
+      "E": 0.001,
+      "clock": null,
+      "D": null,
+      "selected": {
+        "conservative": {
+          "case": "conservative-n256",
+          "n": 256,
+          "indicator": 0.0002845391278494468,
+          "screening_indicator": 0.0002845391278494468,
+          "clock": -0.01737064380962844,
+          "D_defect_max": 0.012426616800682265,
+          "stepping_seconds": {
+            "min": 117.282929292,
+            "median": 117.512369792,
+            "max": 117.69493433299999
+          },
+          "process_seconds": {
+            "min": 117.78786629199999,
+            "median": 118.01264637499992,
+            "max": 118.19349904200001
+          },
+          "rhs_calls": {
+            "min": 66551,
+            "median": 66551.0,
+            "max": 66551
+          }
+        },
+        "step055": {
+          "case": "step055-n256",
+          "n": 256,
+          "indicator": 0.00028453912785482893,
+          "screening_indicator": 0.00028453912785482893,
+          "clock": -0.017370643780431044,
+          "D_defect_max": 0.012426616446092165,
+          "stepping_seconds": {
+            "min": 32.920015708,
+            "median": 32.970241334,
+            "max": 33.043063458
+          },
+          "process_seconds": {
+            "min": 33.42101725000009,
+            "median": 33.473480582999855,
+            "max": 33.55037991699999
+          },
+          "rhs_calls": {
+            "min": 18706,
+            "median": 18706.0,
+            "max": 18706
+          }
+        },
+        "penalty05-step068": {
+          "case": "penalty05-step068-n256",
+          "n": 256,
+          "indicator": 0.0002845401927620186,
+          "screening_indicator": 0.0002845401927620186,
+          "clock": -0.02066362322815199,
+          "D_defect_max": 0.013843611978886276,
+          "stepping_seconds": {
+            "min": 26.675313083,
+            "median": 26.675546958,
+            "max": 26.703821542
+          },
+          "process_seconds": {
+            "min": 27.173397125000008,
+            "median": 27.178729499999918,
+            "max": 27.207276125000135
+          },
+          "rhs_calls": {
+            "min": 15131,
+            "median": 15131.0,
+            "max": 15131
+          }
+        }
+      },
+      "baseline_over_family_cost_ratio": {
+        "conservative": 1.0,
+        "step055": 3.5641950145756853,
+        "penalty05-step068": 4.405246871864347
+      }
+    },
+    {
+      "E": 0.0001,
+      "clock": null,
+      "D": null,
+      "selected": {
+        "conservative": {
+          "case": "conservative-n512",
+          "n": 512,
+          "indicator": 8.532723382325448e-06,
+          "screening_indicator": 8.532723382325448e-06,
+          "clock": 2.252058097571008e-05,
+          "D_defect_max": 9.288298545697543e-05,
+          "stepping_seconds": {
+            "min": 419.7317205,
+            "median": 419.75509875,
+            "max": 420.25200079200005
+          },
+          "process_seconds": {
+            "min": 420.540276875,
+            "median": 420.557994208,
+            "max": 421.0548725410001
+          },
+          "rhs_calls": {
+            "min": 133216,
+            "median": 133216.0,
+            "max": 133216
+          }
+        },
+        "step055": {
+          "case": "step055-n512",
+          "n": 512,
+          "indicator": 8.532723375748849e-06,
+          "screening_indicator": 8.532723375748849e-06,
+          "clock": 2.2520613328275152e-05,
+          "D_defect_max": 9.288287981891463e-05,
+          "stepping_seconds": {
+            "min": 117.54918775,
+            "median": 117.64433325,
+            "max": 118.56793979199999
+          },
+          "process_seconds": {
+            "min": 118.34817808399998,
+            "median": 118.44378054200001,
+            "max": 119.37131995800019
+          },
+          "rhs_calls": {
+            "min": 37436,
+            "median": 37436.0,
+            "max": 37436
+          }
+        },
+        "penalty05-step068": {
+          "case": "penalty05-step068-n512",
+          "n": 512,
+          "indicator": 8.532723353103296e-06,
+          "screening_indicator": 8.532723353103296e-06,
+          "clock": -2.9909496065655405e-05,
+          "D_defect_max": 8.584560029421817e-05,
+          "stepping_seconds": {
+            "min": 94.961027166,
+            "median": 95.15553775,
+            "max": 95.207496542
+          },
+          "process_seconds": {
+            "min": 95.76358379200019,
+            "median": 95.96035262500004,
+            "max": 96.01106362499968
+          },
+          "rhs_calls": {
+            "min": 30281,
+            "median": 30281.0,
+            "max": 30281
+          }
+        }
+      },
+      "baseline_over_family_cost_ratio": {
+        "conservative": 1.0,
+        "step055": 3.568001000592181,
+        "penalty05-step068": 4.411252447049515
+      }
+    }
+  ],
+  "boundary_aware_targets": [
+    {
+      "name": "loose",
+      "E": 0.003,
+      "clock": 0.1,
+      "D": 0.1,
+      "selected": {
+        "conservative": {
+          "case": "conservative-n256",
+          "n": 256,
+          "indicator": 0.0002845391278494468,
+          "screening_indicator": 0.0002845391278494468,
+          "clock": -0.01737064380962844,
+          "D_defect_max": 0.012426616800682265,
+          "stepping_seconds": {
+            "min": 117.282929292,
+            "median": 117.512369792,
+            "max": 117.69493433299999
+          },
+          "process_seconds": {
+            "min": 117.78786629199999,
+            "median": 118.01264637499992,
+            "max": 118.19349904200001
+          },
+          "rhs_calls": {
+            "min": 66551,
+            "median": 66551.0,
+            "max": 66551
+          }
+        },
+        "step055": {
+          "case": "step055-n256",
+          "n": 256,
+          "indicator": 0.00028453912785482893,
+          "screening_indicator": 0.00028453912785482893,
+          "clock": -0.017370643780431044,
+          "D_defect_max": 0.012426616446092165,
+          "stepping_seconds": {
+            "min": 32.920015708,
+            "median": 32.970241334,
+            "max": 33.043063458
+          },
+          "process_seconds": {
+            "min": 33.42101725000009,
+            "median": 33.473480582999855,
+            "max": 33.55037991699999
+          },
+          "rhs_calls": {
+            "min": 18706,
+            "median": 18706.0,
+            "max": 18706
+          }
+        },
+        "penalty05-step068": {
+          "case": "penalty05-step068-n256",
+          "n": 256,
+          "indicator": 0.0002845401927620186,
+          "screening_indicator": 0.0002845401927620186,
+          "clock": -0.02066362322815199,
+          "D_defect_max": 0.013843611978886276,
+          "stepping_seconds": {
+            "min": 26.675313083,
+            "median": 26.675546958,
+            "max": 26.703821542
+          },
+          "process_seconds": {
+            "min": 27.173397125000008,
+            "median": 27.178729499999918,
+            "max": 27.207276125000135
+          },
+          "rhs_calls": {
+            "min": 15131,
+            "median": 15131.0,
+            "max": 15131
+          }
+        }
+      },
+      "baseline_over_family_cost_ratio": {
+        "conservative": 1.0,
+        "step055": 3.5641950145756853,
+        "penalty05-step068": 4.405246871864347
+      }
+    },
+    {
+      "name": "medium",
+      "E": 0.001,
+      "clock": 0.01,
+      "D": 0.01,
+      "selected": {
+        "conservative": {
+          "case": "conservative-n512",
+          "n": 512,
+          "indicator": 8.532723382325448e-06,
+          "screening_indicator": 8.532723382325448e-06,
+          "clock": 2.252058097571008e-05,
+          "D_defect_max": 9.288298545697543e-05,
+          "stepping_seconds": {
+            "min": 419.7317205,
+            "median": 419.75509875,
+            "max": 420.25200079200005
+          },
+          "process_seconds": {
+            "min": 420.540276875,
+            "median": 420.557994208,
+            "max": 421.0548725410001
+          },
+          "rhs_calls": {
+            "min": 133216,
+            "median": 133216.0,
+            "max": 133216
+          }
+        },
+        "step055": {
+          "case": "step055-n512",
+          "n": 512,
+          "indicator": 8.532723375748849e-06,
+          "screening_indicator": 8.532723375748849e-06,
+          "clock": 2.2520613328275152e-05,
+          "D_defect_max": 9.288287981891463e-05,
+          "stepping_seconds": {
+            "min": 117.54918775,
+            "median": 117.64433325,
+            "max": 118.56793979199999
+          },
+          "process_seconds": {
+            "min": 118.34817808399998,
+            "median": 118.44378054200001,
+            "max": 119.37131995800019
+          },
+          "rhs_calls": {
+            "min": 37436,
+            "median": 37436.0,
+            "max": 37436
+          }
+        },
+        "penalty05-step068": {
+          "case": "penalty05-step068-n512",
+          "n": 512,
+          "indicator": 8.532723353103296e-06,
+          "screening_indicator": 8.532723353103296e-06,
+          "clock": -2.9909496065655405e-05,
+          "D_defect_max": 8.584560029421817e-05,
+          "stepping_seconds": {
+            "min": 94.961027166,
+            "median": 95.15553775,
+            "max": 95.207496542
+          },
+          "process_seconds": {
+            "min": 95.76358379200019,
+            "median": 95.96035262500004,
+            "max": 96.01106362499968
+          },
+          "rhs_calls": {
+            "min": 30281,
+            "median": 30281.0,
+            "max": 30281
+          }
+        }
+      },
+      "baseline_over_family_cost_ratio": {
+        "conservative": 1.0,
+        "step055": 3.568001000592181,
+        "penalty05-step068": 4.411252447049515
+      }
+    },
+    {
+      "name": "tight",
+      "E": 0.0001,
+      "clock": 0.001,
+      "D": 0.001,
+      "selected": {
+        "conservative": {
+          "case": "conservative-n512",
+          "n": 512,
+          "indicator": 8.532723382325448e-06,
+          "screening_indicator": 8.532723382325448e-06,
+          "clock": 2.252058097571008e-05,
+          "D_defect_max": 9.288298545697543e-05,
+          "stepping_seconds": {
+            "min": 419.7317205,
+            "median": 419.75509875,
+            "max": 420.25200079200005
+          },
+          "process_seconds": {
+            "min": 420.540276875,
+            "median": 420.557994208,
+            "max": 421.0548725410001
+          },
+          "rhs_calls": {
+            "min": 133216,
+            "median": 133216.0,
+            "max": 133216
+          }
+        },
+        "step055": {
+          "case": "step055-n512",
+          "n": 512,
+          "indicator": 8.532723375748849e-06,
+          "screening_indicator": 8.532723375748849e-06,
+          "clock": 2.2520613328275152e-05,
+          "D_defect_max": 9.288287981891463e-05,
+          "stepping_seconds": {
+            "min": 117.54918775,
+            "median": 117.64433325,
+            "max": 118.56793979199999
+          },
+          "process_seconds": {
+            "min": 118.34817808399998,
+            "median": 118.44378054200001,
+            "max": 119.37131995800019
+          },
+          "rhs_calls": {
+            "min": 37436,
+            "median": 37436.0,
+            "max": 37436
+          }
+        },
+        "penalty05-step068": {
+          "case": "penalty05-step068-n512",
+          "n": 512,
+          "indicator": 8.532723353103296e-06,
+          "screening_indicator": 8.532723353103296e-06,
+          "clock": -2.9909496065655405e-05,
+          "D_defect_max": 8.584560029421817e-05,
+          "stepping_seconds": {
+            "min": 94.961027166,
+            "median": 95.15553775,
+            "max": 95.207496542
+          },
+          "process_seconds": {
+            "min": 95.76358379200019,
+            "median": 95.96035262500004,
+            "max": 96.01106362499968
+          },
+          "rhs_calls": {
+            "min": 30281,
+            "median": 30281.0,
+            "max": 30281
+          }
+        }
+      },
+      "baseline_over_family_cost_ratio": {
+        "conservative": 1.0,
+        "step055": 3.568001000592181,
+        "penalty05-step068": 4.411252447049515
+      }
+    }
+  ],
+  "execution_sources": {
+    "tst/spherical_optimization/run.py": "eebcb811f67e099efd95a08a08d539f36219f559908b3babccbdac574ea62d17",
+    "tst/spherical_optimization/evolution.py": "366dd45d3619d2cd3b2fc2beb888605c777a4391da04df20b3787759362ac3a3",
+    "tst/spherical_optimization/kernel.py": "d63d8e2b3028cc2d7f05acad6cdde23ed7a9331eb4a2dffca151663b95b7855a",
+    "tst/spherical_optimization/physical_constraints.py": "f92db9b85eef1a2a8f707ef87ac4e32c9a44e1f8ce47034ab1880dfe9aafc8d4",
+    "tst/elliptic_shift_1d/numerics.py": "c62ee8d579cf22758768a91348b3adc890b9955cb7e64f1a3e27e65d833fbb61"
+  },
+  "binary_sha256": "ee9e4c6c1123c0be8aaa638420b13b7413b463426671ca86b0151bbecd9e05d8",
+  "inputs": {
+    "docs/spherical-optimization/evidence/serial-cost-v28/plan.json": "56da0bf148011a24ed9086e8c3775751979e34211ab3ae29c2e1a1de296c09b9",
+    "docs/spherical-optimization/evidence/serial-cost-v28/completion.json": "64679ca75f82bc880611326372b354b1770f6467c011f7f2b5d1552c37a5ce82",
+    "docs/spherical-optimization/evidence/serial-cost-hardware-v28.json": "2a25db91231f9653c0a30e51ab201e15a3cffe8d52eec6f3059a6edac2095c1e",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n128-repeat1/result.json": "19bf7d86c91a8a1efe461307a6226a7379756414b0fcb25d13a97d346736d6ad",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n128-repeat1/manifest.json": "9a71eb302e12f5c925dff9f390cc9c22cc74cf2bf4c78f05e7df6df5a4ecbcb9",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n128-repeat1/initial.npz": "caf8a98b934d2ccfc5df50c5a615996253bcc207b0d581e8d3580aaff0e76c71",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n128-repeat1/profile-10.npz": "13a144aeb87de1bb46f62579e4d66646f894f642857ef0f61ed4121ac8b25e31",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n128-repeat1/result.json": "825d5b51917042e883a7cfe3dba39c62ee7b852686e635359e42253626659399",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n128-repeat1/manifest.json": "ef85cbb95245f299a052edd8331314634172ca36f73f1fc0f0acee822d71ed81",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n128-repeat1/initial.npz": "caf8a98b934d2ccfc5df50c5a615996253bcc207b0d581e8d3580aaff0e76c71",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n128-repeat1/profile-10.npz": "1ce8cad4d118ba685bebff9b3033923654219c2e7686921d9f118910aa8b0d9e",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n128-repeat1/result.json": "72151c88f509483db7f0e878e7718db5d0e7f3027000e5ae6b6ece61bbf09c3d",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n128-repeat1/manifest.json": "d31e9e4516f134aa20a249198c5f2517566c48446565b667dad2524c3f01d0a6",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n128-repeat1/initial.npz": "caf8a98b934d2ccfc5df50c5a615996253bcc207b0d581e8d3580aaff0e76c71",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n128-repeat1/profile-10.npz": "5f2be6d583b324325a180f3e0b960096ffd5ac63cf8a24ce3d01301f01144f14",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n256-repeat1/result.json": "d4ad55ef56ed1d647fd6bfd18d15bc84c73517e539e6792529a3fa02b5bc3d75",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n256-repeat1/manifest.json": "abb5a9f612aac509eaaf159d64b795398d5058a724a39a81ff2fe1ad0b16e0e2",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n256-repeat1/initial.npz": "ba833aac054e2765cb52a45980ff984a17414158c41053971babf2e18fbf7443",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n256-repeat1/profile-10.npz": "d6372e51eef174f45f92649038f3094d791833753df49471e762b0ad5ae25cdf",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n256-repeat1/result.json": "4346634d5b8e77f79c33a55a88697f26b4748dd2d4a1cf34da9c147c8e1a9a43",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n256-repeat1/manifest.json": "fde3f4551bed5dbe20c78138d72229a640bfa28c0ee344bbc12af556832bb9e3",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n256-repeat1/initial.npz": "ba833aac054e2765cb52a45980ff984a17414158c41053971babf2e18fbf7443",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n256-repeat1/profile-10.npz": "492536491ba0f4fe8b6d37d021a7653c74e34a59a69966a63af8c25b9a0ce1e9",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n256-repeat1/result.json": "c14f97a6961d3a166803313c805054395c3f09b04fe71f211ae3a1fb771bef7b",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n256-repeat1/manifest.json": "fafc9fa4663735086c0f4399612be4d12659cf0a17e9eab55823cee0a6f9f8ae",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n256-repeat1/initial.npz": "ba833aac054e2765cb52a45980ff984a17414158c41053971babf2e18fbf7443",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n256-repeat1/profile-10.npz": "525077d87a0c728a139c002bd086bc1ca0d1ed71a8b2212ea0f37255e4f7d139",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n512-repeat1/result.json": "2c673dfa2bb13d0e0034fddadddd12c6af6410324f93e17a5a155cde63d0ee96",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n512-repeat1/manifest.json": "4d9a95de4bb9944cb621eb3b8c820a07829753052f54466ceae9f76a683866da",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n512-repeat1/initial.npz": "c4de73b97012223f3d77a020aa75813fb68b03addacea6a9371e9ec82bf7a1b1",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n512-repeat1/profile-10.npz": "ec34450448253f3ebb5307e71717b6a6c8d3c96e28e78afcac91953b1cef1097",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n512-repeat1/result.json": "ee7a8c25c25f7d9c1de23fe1586bcd5c78126d9564a8768ecbcc256f097d2d07",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n512-repeat1/manifest.json": "0f9d53283bb90b1c0e33e6b413e013fda59683503b9ade60080566859abebc42",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n512-repeat1/initial.npz": "c4de73b97012223f3d77a020aa75813fb68b03addacea6a9371e9ec82bf7a1b1",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n512-repeat1/profile-10.npz": "4ea313c8d0882830f5afc9afb0bd798934befe3087a3b644c3e82aa8f60cdd39",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n512-repeat1/result.json": "46f9e5fcfaa666802d1a752234c2b7d24651c543d1ec33160ce7c4d8a925eefe",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n512-repeat1/manifest.json": "500a25ad2dc40c8b0be0ab39f8e1bbb1342bdf68619c31064f6f8d662faede39",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n512-repeat1/initial.npz": "c4de73b97012223f3d77a020aa75813fb68b03addacea6a9371e9ec82bf7a1b1",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n512-repeat1/profile-10.npz": "3f61917bddfad0e93c6ca88d677ee0ecad4860f917d83be3b7a5accfab102ed0",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n128-repeat2/result.json": "69b42fb90f40ac3ff74d68de32dc9ee8423e92739fbbc60c5f3b446f07adaaa8",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n128-repeat2/manifest.json": "6435cd3eb676a87846093522e700e1982f8c597d853267a44c2b1d432c8e19fa",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n128-repeat2/initial.npz": "caf8a98b934d2ccfc5df50c5a615996253bcc207b0d581e8d3580aaff0e76c71",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n128-repeat2/profile-10.npz": "1ce8cad4d118ba685bebff9b3033923654219c2e7686921d9f118910aa8b0d9e",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n128-repeat2/result.json": "d5968edea2e4ea14c663cd6e469e13fcfaaefa10411ff88c3bc92b5fbbdfc55b",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n128-repeat2/manifest.json": "480c2b4efe739e55d612c02eb989b0bb1be0617f6022b0baeb8b8fb56ca05395",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n128-repeat2/initial.npz": "caf8a98b934d2ccfc5df50c5a615996253bcc207b0d581e8d3580aaff0e76c71",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n128-repeat2/profile-10.npz": "5f2be6d583b324325a180f3e0b960096ffd5ac63cf8a24ce3d01301f01144f14",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n256-repeat2/result.json": "c35861b44c6b2bc7783334a01bf8d97d4e7943d1bc2c864cbe07bcc1c5e33cba",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n256-repeat2/manifest.json": "3d0083423d18b4cb6181e35a8d4529e51e62e32d3a42699615aba2e46b07610b",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n256-repeat2/initial.npz": "ba833aac054e2765cb52a45980ff984a17414158c41053971babf2e18fbf7443",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n256-repeat2/profile-10.npz": "d6372e51eef174f45f92649038f3094d791833753df49471e762b0ad5ae25cdf",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n256-repeat2/result.json": "83db61b402ff39c2cb0a3e1e554f996fd59412212fbf587e85deda4d4f948517",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n256-repeat2/manifest.json": "433ee0c7a636c9db91bd528cb9f69d95323ce497f1e751dbe7b730be737ab741",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n256-repeat2/initial.npz": "ba833aac054e2765cb52a45980ff984a17414158c41053971babf2e18fbf7443",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n256-repeat2/profile-10.npz": "492536491ba0f4fe8b6d37d021a7653c74e34a59a69966a63af8c25b9a0ce1e9",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n256-repeat2/result.json": "2efbd2a358b008d82631c5f1536521814c16ac2533351efc04506fa71bce22d8",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n256-repeat2/manifest.json": "a1b7caf63355176fc12fc1f7038581b02ff3269350ba3d30ee9299b7b8f642f4",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n256-repeat2/initial.npz": "ba833aac054e2765cb52a45980ff984a17414158c41053971babf2e18fbf7443",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n256-repeat2/profile-10.npz": "525077d87a0c728a139c002bd086bc1ca0d1ed71a8b2212ea0f37255e4f7d139",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n512-repeat2/result.json": "564f7fd8cf9ac0ccf799530333e4118cc38deca8861726f4c989b9cbbbc45ac9",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n512-repeat2/manifest.json": "65b4ad1aaad242a02b661917d37632317e7157fb2c1ffa0cfd4a5e0009b6b0bc",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n512-repeat2/initial.npz": "c4de73b97012223f3d77a020aa75813fb68b03addacea6a9371e9ec82bf7a1b1",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n512-repeat2/profile-10.npz": "ec34450448253f3ebb5307e71717b6a6c8d3c96e28e78afcac91953b1cef1097",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n512-repeat2/result.json": "7c8c4a763ecb8f7d1605c0ac650b655d8b9e1398648b20074f1357612f2af11e",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n512-repeat2/manifest.json": "baefb3250b08e516098ae7f153382d7188b7628ae4894469afab4a5fd82c3cba",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n512-repeat2/initial.npz": "c4de73b97012223f3d77a020aa75813fb68b03addacea6a9371e9ec82bf7a1b1",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n512-repeat2/profile-10.npz": "4ea313c8d0882830f5afc9afb0bd798934befe3087a3b644c3e82aa8f60cdd39",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n512-repeat2/result.json": "2d6cf65c3b3678d83f581a278e98a8704c985c928d431a4a856757d4371e2027",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n512-repeat2/manifest.json": "400fe04021217fb36271b3bb9b5fd72728dbd26dc7eaf01d5b1cba9dfba471e3",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n512-repeat2/initial.npz": "c4de73b97012223f3d77a020aa75813fb68b03addacea6a9371e9ec82bf7a1b1",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n512-repeat2/profile-10.npz": "3f61917bddfad0e93c6ca88d677ee0ecad4860f917d83be3b7a5accfab102ed0",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n128-repeat2/result.json": "32a593d1ae1154827ebfd22e81295bf5d20cbeb56e2801f5f69d9e8c3c9245fe",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n128-repeat2/manifest.json": "cc03248b4031ea9abb1ceda8f4e5eb912aff0168d40c99bc94378ebaeb1d5d9e",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n128-repeat2/initial.npz": "caf8a98b934d2ccfc5df50c5a615996253bcc207b0d581e8d3580aaff0e76c71",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n128-repeat2/profile-10.npz": "13a144aeb87de1bb46f62579e4d66646f894f642857ef0f61ed4121ac8b25e31",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n128-repeat3/result.json": "3412f6dca18f661e4994a654410832e5e119a036f75cf24762672bed19594256",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n128-repeat3/manifest.json": "bc6f7b544ef72dc11e311a7d4a839f2066c2c39a380bd119e9f1920a89733167",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n128-repeat3/initial.npz": "caf8a98b934d2ccfc5df50c5a615996253bcc207b0d581e8d3580aaff0e76c71",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n128-repeat3/profile-10.npz": "5f2be6d583b324325a180f3e0b960096ffd5ac63cf8a24ce3d01301f01144f14",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n256-repeat3/result.json": "a5f56b5a5eddf04c282025c0a8bab67846f8ccaab16c0dbd2eb13a06d17e2da7",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n256-repeat3/manifest.json": "035baa5525650d6312ecbf2b176cd50c33fb6679db67268c656affa534c52283",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n256-repeat3/initial.npz": "ba833aac054e2765cb52a45980ff984a17414158c41053971babf2e18fbf7443",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n256-repeat3/profile-10.npz": "d6372e51eef174f45f92649038f3094d791833753df49471e762b0ad5ae25cdf",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n256-repeat3/result.json": "2526daa67d4786ac15bd64fe6a33adf845e9285d1907e036209efe4fcd960552",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n256-repeat3/manifest.json": "94a8ce30d720475eefee8c29f4329cb1281e1643432186143745c91acd30de6b",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n256-repeat3/initial.npz": "ba833aac054e2765cb52a45980ff984a17414158c41053971babf2e18fbf7443",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n256-repeat3/profile-10.npz": "492536491ba0f4fe8b6d37d021a7653c74e34a59a69966a63af8c25b9a0ce1e9",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n256-repeat3/result.json": "190fc9e6a5bd494af59eb4379fb9222d317309c8440223097cabca925c9a7c5d",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n256-repeat3/manifest.json": "6b949e560280c1ca70ccffb51bc29115d3d4a12af83e68e87bc8b121f4d36d05",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n256-repeat3/initial.npz": "ba833aac054e2765cb52a45980ff984a17414158c41053971babf2e18fbf7443",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n256-repeat3/profile-10.npz": "525077d87a0c728a139c002bd086bc1ca0d1ed71a8b2212ea0f37255e4f7d139",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n512-repeat3/result.json": "ed0c628de0433c97916e0894d984beca922fcd16ba95a0718ed6109cd29fe834",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n512-repeat3/manifest.json": "1d3e15a87768f1339d0673f393cf826edd5444bdde12123faa0d467dee748d00",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n512-repeat3/initial.npz": "c4de73b97012223f3d77a020aa75813fb68b03addacea6a9371e9ec82bf7a1b1",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n512-repeat3/profile-10.npz": "ec34450448253f3ebb5307e71717b6a6c8d3c96e28e78afcac91953b1cef1097",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n512-repeat3/result.json": "4e1afb3fedff671d1aef0429cd42033c6b9b9022ac92d388f9717271b4651bcb",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n512-repeat3/manifest.json": "6139fe0b7b15d5ef186eb985def20f7472913c469b2ad275e799e1dfa414e151",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n512-repeat3/initial.npz": "c4de73b97012223f3d77a020aa75813fb68b03addacea6a9371e9ec82bf7a1b1",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n512-repeat3/profile-10.npz": "4ea313c8d0882830f5afc9afb0bd798934befe3087a3b644c3e82aa8f60cdd39",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n512-repeat3/result.json": "4ef425cd11839e306d171c4484a5eb4b24850b8937bcb47293bb978efc643b06",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n512-repeat3/manifest.json": "cf9c365b6719c4215756d9ce1f3b009bcd6358fdd7f223ca0205ac25d6f4a2f0",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n512-repeat3/initial.npz": "c4de73b97012223f3d77a020aa75813fb68b03addacea6a9371e9ec82bf7a1b1",
+    "docs/spherical-optimization/evidence/serial-cost-v28/penalty05-step068-n512-repeat3/profile-10.npz": "3f61917bddfad0e93c6ca88d677ee0ecad4860f917d83be3b7a5accfab102ed0",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n128-repeat3/result.json": "d097a196ad0c9ccfd461fdda36dc45b0b76b9e05de16918c2645b67c5e8c3d6c",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n128-repeat3/manifest.json": "a91545b02a27e232abdaf38fe34d67b3536911d20f690395c6bde1b699da56fb",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n128-repeat3/initial.npz": "caf8a98b934d2ccfc5df50c5a615996253bcc207b0d581e8d3580aaff0e76c71",
+    "docs/spherical-optimization/evidence/serial-cost-v28/conservative-n128-repeat3/profile-10.npz": "13a144aeb87de1bb46f62579e4d66646f894f642857ef0f61ed4121ac8b25e31",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n128-repeat3/result.json": "81b0fc52c4a5f0fd4a37272b1b13b5ba505df707c20c578e4f10a81f663f9966",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n128-repeat3/manifest.json": "2867b6741cdef7e9da8702ef66c83dccba2313d56b8f0be47386a730c3f638cb",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n128-repeat3/initial.npz": "caf8a98b934d2ccfc5df50c5a615996253bcc207b0d581e8d3580aaff0e76c71",
+    "docs/spherical-optimization/evidence/serial-cost-v28/step055-n128-repeat3/profile-10.npz": "1ce8cad4d118ba685bebff9b3033923654219c2e7686921d9f118910aa8b0d9e"
+  },
+  "source_sha256": "a62edc911fd57551ea5ae3675467728a713e817427cfbc3e7ccb76c60625be9f",
+  "qualification": "Local CPU medians/min-max with identical diagnostics. Both interpolation indicators must pass. Constraints are not a solution-error bound. Boundary targets have fixed laboratory units and are separate screens. Finite-duration pulse and convergence qualification is documented separately. No all-time, boosted, 3D or GPU performance claim."
+}

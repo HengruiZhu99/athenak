@@ -36,7 +36,7 @@ def main():
   assert cfg.get('chi_reference_power',0)==cfg0.get('chi_reference_power',0)
   assert cfg.get('auxiliary_damping',1.)==cfg0.get('auxiliary_damping',1.)
   assert cfg.get('outer_lapse_damping',1.)==cfg0.get('outer_lapse_damping',1.)
-  for key,default in [('outflow_boundary',False),('outflow_width',5),('lapse_normal_lift','hermite'),('boundary_normal_system','coupled'),('compatible_lapse',0.)]:assert cfg.get(key,default)==cfg0.get(key,default)
+  for key,default in [('outflow_boundary',False),('outflow_width',5),('lapse_normal_lift','hermite'),('boundary_normal_system','coupled'),('compatible_lapse',0.),('penalty',.6510416666660156),('ko',.5),('grading',0.),('grid_map','quadratic'),('floors',False),('normal_policy','sampled'),('reference_step',.0005),('reference_tail','numerical')]:assert cfg.get(key,default)==cfg0.get(key,default),key
   state=np.load(folder/'last-accepted.npz');r=state['r'];q=state['q'];total_disagreement=np.sqrt(np.mean((interpolate(r,q,target,7)-interpolate(r,q,target,5))**2,axis=0))
   if a.reference_interpolation:q=q-np.load(folder/'initial.npz')['q']
   high=interpolate(r,q,target,7);low=interpolate(r,q,target,5)

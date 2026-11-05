@@ -1,5 +1,5 @@
 {
-  "status": "active",
+  "status": "complete",
   "base": "718ad1fdd",
   "branch": "codex/spherical-gauge-optimization",
   "parent_campaign_touched": false,
@@ -95,15 +95,12 @@
     "actual-RHS critical complex-mode localization at scri and converged penalty/KO eigenvalue sensitivities identify boundary stiffness",
     "N25640M damping-one and halved-step controls: damping .25 late response is time-resolved; double-amplitude response agrees to0.023percent",
     "N25640M gauge and constraint pairs atC.55 matchC.4; N51210M C.55 exterior difference4.18e-13; working finite-duration timestep with about12percent frozen margin",
-    "attributable penalty.5 pilot: initialN64 bound.77978 but worse N12810M clock/D defects, so fine tradeoff remains pending"
+    "attributable penalty.5 pilot: initialN64 bound.77978 but worse N12810M clock/D defects, so fine tradeoff remains pending",
+    "Penalty .5 refinement, evolving full symbols, early RK4 convergence, nonlinear failure bracket and matched40M gauge/constraint/amplitude controls qualify C.68 for tested finite durations"
   ],
-  "next": [
-    "Resolve the attributable penalty .5 tradeoff. InitialN64 frozen bound rises .62413 to .77978, but matched-C.4 N12810M clock is .69615 versus -.17637 and D defect .54321 versus .44039; exterior errors nearly equal. Run N256/51210M at matched step, assess boundary derivatives/convergence and evolvedN128 operator before selecting or rejecting. If retained, measure its own nonlinear limit and perturbation margin; do not transfer C.55 qualification blindly.",
-    "Run controlled serial rotated repeated same-binary costs at specified exterior AND boundary accuracy once the working penalty is selected. Compare the optimized step to the conservative policy with identical diagnostics, and retain the areal baseline whose tested fixed-error targets remain unmet. Use measured wall time/RHS counts, not just nominal step ratios.",
-    "Produce a final requirement-by-requirement handoff audit and concise transfer report, including complete equation/config mapping, resolved temporal/spatial convergence, actual speed/RK and nonnormal evidence, finite-duration perturbation scope, failures and limitations. Preserve no boosted/3D stability claim; before 3D adoption require shared numerical-policy implementation, spherical3D comparison and nonspherical perturbations. No Aurora or parent campaign work."
-  ],
+  "next": [],
   "latest": {
-    "disposition": "working_C055_qualified_for_tested_durations_lower_penalty_tradeoff_and_controlled_costs_pending",
+    "disposition": "local_study_complete_with_finite_duration_spherical_selection",
     "wide_areal_10M_points": [
       64,
       128,
@@ -119,9 +116,9 @@
     "twoend_n128_D_defect": 108.26238927037272,
     "weak_twoend_initial_growth_rate": 401.7369458759884,
     "exact_scri_n128_1M_D_defect": 2.138805993727148e-06,
-    "release_binary": "build-spherical-v18/libcurrent_spherical.dylib",
+    "release_binary": "build-spherical-v26/libcurrent_spherical.dylib",
     "compiler_only_observed_speed_ratio": 5.269579338765357,
-    "next_design": "Resolve penalty .5 versus .651 at fine resolutions and evolved spectrum; select a finite-duration working policy, then controlled serial fixed-error costs and final transfer audit.",
+    "next_design": "Local requested work complete. Separate 3D transfer gates require future authorization.",
     "compact_report": "COMPACT-PROFILE.md",
     "compact_10M_points": [
       64,
@@ -342,8 +339,8 @@
     "outer_lapse025_initial_n64_max_growth": 0.645167975544181,
     "outer_lapse025_evolved_n128_10M_max_growth": 0.03839259549672713,
     "rk4_report": "RK4-LIMITS.md",
-    "working_C_char": 0.55,
-    "working_penalty": 0.6510416666660156,
+    "working_C_char": 0.68,
+    "working_penalty": 0.5,
     "frozen_decaying_RK4_bounds": [
       0.624128637942282,
       0.6225688698375138
@@ -358,10 +355,1247 @@
     "n512_C055_C04_exterior_difference": 4.178661238503646e-13,
     "penalty05_initial_n64_RK4_bound": 0.7797768277719038,
     "penalty05_n128_clock": 0.6961518336397727,
-    "penalty05_n128_D_defect": 0.5432116719187049
+    "penalty05_n128_D_defect": 0.5432116719187049,
+    "penalty_report": "PENALTY-TRADEOFF.md",
+    "penalty05_evolved_n128_RK4_bound": 0.7767020627285198,
+    "penalty05_n512_C068_C04_exterior_difference": 5.385278215395405e-13,
+    "penalty05_gauge_step_relative_difference": 2.0073414412812887e-06,
+    "penalty05_constraint_step_relative_difference": 4.3354247325025866e-08,
+    "cost_report": "FINAL-COST.md",
+    "handoff_audit": "HANDOFF-AUDIT.md",
+    "serial_cost_runs": 27,
+    "serial_cost_all_repeated_states_bitwise": true,
+    "serial_cost_summary": [
+      {
+        "case": "conservative-n128",
+        "family": "conservative",
+        "n": 128,
+        "repeats": 3,
+        "completed": 3,
+        "repeated_states_bitwise_equal": true,
+        "stepping_seconds": {
+          "min": 35.836198833000005,
+          "median": 36.011701875,
+          "max": 36.05155475
+        },
+        "setup_seconds": {
+          "min": 0.19913291600000002,
+          "median": 0.199276667,
+          "max": 0.19984229199999998
+        },
+        "rhs_seconds": {
+          "min": 34.90473557900004,
+          "median": 35.070674229000176,
+          "max": 35.11057656099984
+        },
+        "rhs_calls": {
+          "min": 33216,
+          "median": 33216.0,
+          "max": 33216
+        },
+        "steps": {
+          "min": 6641,
+          "median": 6641.0,
+          "max": 6641
+        },
+        "C_char_max_accepted": {
+          "min": 0.15452202897495113,
+          "median": 0.15452202897495113,
+          "max": 0.15452202897495113
+        },
+        "dt_over_M": {
+          "min": 0.0015058823529426769,
+          "median": 0.0015058823529426769,
+          "max": 0.0015058823529426769
+        },
+        "min_dr_over_M": {
+          "min": 0.0235294117647058,
+          "median": 0.0235294117647058,
+          "max": 0.0235294117647058
+        },
+        "steps_per_M": {
+          "min": 664.1,
+          "median": 664.1,
+          "max": 664.1
+        },
+        "initial_speed": {
+          "min": 2.414213562373095,
+          "median": 2.414213562373095,
+          "max": 2.414213562373095
+        },
+        "worst_evaluated_speed": {
+          "min": 2.4144067027311973,
+          "median": 2.4144067027311973,
+          "max": 2.4144067027311973
+        },
+        "process_seconds": {
+          "min": 36.1902995,
+          "median": 36.361304333000135,
+          "max": 36.405313249999836
+        },
+        "indicator": 0.0022955256467827516,
+        "screening_indicator": 0.0022955256467827516,
+        "physical_rms": [
+          0.0022955256467827516,
+          0.0011298259218614185,
+          0.0001484716229025687,
+          0.0002680193164359676
+        ],
+        "linear_physical_rms": [
+          0.0021042161160238194,
+          0.0010395335702562205,
+          0.00013716255922553293,
+          0.0002464187729529063
+        ],
+        "interpolation_disagreement_rms": [
+          0.0002691987859081097,
+          0.00012779849686297357,
+          1.6104820209780032e-05,
+          2.933551967560843e-05
+        ],
+        "clock": -0.17636959492829718,
+        "D_defect_max": 0.4403928002411361,
+        "D_probes": [
+          {
+            "epsilon": 4.685788207283488e-06,
+            "defect": 0.4403928002411361
+          },
+          {
+            "epsilon": 1.4057364621850463e-06,
+            "defect": 0.44039279992621116
+          },
+          {
+            "epsilon": 4.6857882072834874e-07,
+            "defect": 0.4403927994622152
+          }
+        ],
+        "pole": 0.6567256828887974,
+        "trace": 0.19269265386809983
+      },
+      {
+        "case": "step055-n128",
+        "family": "step055",
+        "n": 128,
+        "repeats": 3,
+        "completed": 3,
+        "repeated_states_bitwise_equal": true,
+        "stepping_seconds": {
+          "min": 10.080633916,
+          "median": 10.117216208,
+          "max": 10.120208791
+        },
+        "setup_seconds": {
+          "min": 0.19776125000000003,
+          "median": 0.19843329099999998,
+          "max": 0.20129429100000001
+        },
+        "rhs_seconds": {
+          "min": 9.806951715999949,
+          "median": 9.834783965999987,
+          "max": 9.84309539800001
+        },
+        "rhs_calls": {
+          "min": 9341,
+          "median": 9341.0,
+          "max": 9341
+        },
+        "steps": {
+          "min": 1866,
+          "median": 1866.0,
+          "max": 1866
+        },
+        "C_char_max_accepted": {
+          "min": 0.5500440007508959,
+          "median": 0.5500440007508959,
+          "max": 0.5500440007508959
+        },
+        "dt_over_M": {
+          "min": 0.005360410807181231,
+          "median": 0.005360410807181231,
+          "max": 0.005360410807181231
+        },
+        "min_dr_over_M": {
+          "min": 0.0235294117647058,
+          "median": 0.0235294117647058,
+          "max": 0.0235294117647058
+        },
+        "steps_per_M": {
+          "min": 186.6,
+          "median": 186.6,
+          "max": 186.6
+        },
+        "initial_speed": {
+          "min": 2.414213562373095,
+          "median": 2.414213562373095,
+          "max": 2.414213562373095
+        },
+        "worst_evaluated_speed": {
+          "min": 2.4144067027541176,
+          "median": 2.4144067027541176,
+          "max": 2.4144067027541176
+        },
+        "process_seconds": {
+          "min": 10.432233792000261,
+          "median": 10.468103708000001,
+          "max": 10.469151541999963
+        },
+        "indicator": 0.00229552564671456,
+        "screening_indicator": 0.00229552564671456,
+        "physical_rms": [
+          0.00229552564671456,
+          0.0011298259218315908,
+          0.00014847162302182465,
+          0.00026801931627951157
+        ],
+        "linear_physical_rms": [
+          0.0021042161159416164,
+          0.001039533570244483,
+          0.00013716255934643446,
+          0.0002464187728111803
+        ],
+        "interpolation_disagreement_rms": [
+          0.00026919878592075047,
+          0.0001277984968442638,
+          1.6104820218697314e-05,
+          2.9335519667952563e-05
+        ],
+        "clock": -0.17636959510761302,
+        "D_defect_max": 0.4403927999968792,
+        "D_probes": [
+          {
+            "epsilon": 4.6857882051035485e-06,
+            "defect": 0.4403927999968792
+          },
+          {
+            "epsilon": 1.4057364615310646e-06,
+            "defect": 0.4403927998300381
+          },
+          {
+            "epsilon": 4.685788205103548e-07,
+            "defect": 0.44039279995837743
+          }
+        ],
+        "pole": 0.6567256831296544,
+        "trace": 0.19269265389181756
+      },
+      {
+        "case": "penalty05-step068-n128",
+        "family": "penalty05-step068",
+        "n": 128,
+        "repeats": 3,
+        "completed": 3,
+        "repeated_states_bitwise_equal": true,
+        "stepping_seconds": {
+          "min": 8.1429525,
+          "median": 8.157716707999999,
+          "max": 8.173846875
+        },
+        "setup_seconds": {
+          "min": 0.19752379200000003,
+          "median": 0.197945792,
+          "max": 0.198060291
+        },
+        "rhs_seconds": {
+          "min": 7.917749399000037,
+          "median": 7.932631991000012,
+          "max": 7.946790548999981
+        },
+        "rhs_calls": {
+          "min": 7556,
+          "median": 7556.0,
+          "max": 7556
+        },
+        "steps": {
+          "min": 1509,
+          "median": 1509.0,
+          "max": 1509
+        },
+        "C_char_max_accepted": {
+          "min": 0.680173324949994,
+          "median": 0.680173324949994,
+          "max": 0.680173324949994
+        },
+        "dt_over_M": {
+          "min": 0.00662741699796952,
+          "median": 0.00662741699796952,
+          "max": 0.00662741699796952
+        },
+        "min_dr_over_M": {
+          "min": 0.0235294117647058,
+          "median": 0.0235294117647058,
+          "max": 0.0235294117647058
+        },
+        "steps_per_M": {
+          "min": 150.9,
+          "median": 150.9,
+          "max": 150.9
+        },
+        "initial_speed": {
+          "min": 2.414213562373095,
+          "median": 2.414213562373095,
+          "max": 2.414213562373095
+        },
+        "worst_evaluated_speed": {
+          "min": 2.4148289494854733,
+          "median": 2.4148289494854733,
+          "max": 2.4148289494854733
+        },
+        "process_seconds": {
+          "min": 8.493323207999993,
+          "median": 8.50477854199994,
+          "max": 8.520312250000003
+        },
+        "indicator": 0.002294272455988429,
+        "screening_indicator": 0.002294272455988429,
+        "physical_rms": [
+          0.002294272455988429,
+          0.0011291810462693201,
+          0.00014871398297449038,
+          0.00026737072590842637
+        ],
+        "linear_physical_rms": [
+          0.0021029187074350776,
+          0.0010388220104674596,
+          0.00013736885789095236,
+          0.00024580101171068697
+        ],
+        "interpolation_disagreement_rms": [
+          0.00026935835443261507,
+          0.00012782482544890504,
+          1.6150825864522927e-05,
+          2.930795393474519e-05
+        ],
+        "clock": 0.6961518326390863,
+        "D_defect_max": 0.5432116721237028,
+        "D_probes": [
+          {
+            "epsilon": 4.685788201375963e-06,
+            "defect": 0.5432116721237028
+          },
+          {
+            "epsilon": 1.4057364604127889e-06,
+            "defect": 0.5432116719963508
+          },
+          {
+            "epsilon": 4.685788201375962e-07,
+            "defect": 0.5432116713151652
+          }
+        ],
+        "pole": 0.5180532729154583,
+        "trace": 0.3418434111506275
+      },
+      {
+        "case": "conservative-n256",
+        "family": "conservative",
+        "n": 256,
+        "repeats": 3,
+        "completed": 3,
+        "repeated_states_bitwise_equal": true,
+        "stepping_seconds": {
+          "min": 117.282929292,
+          "median": 117.512369792,
+          "max": 117.69493433299999
+        },
+        "setup_seconds": {
+          "min": 0.34735175,
+          "median": 0.3487035,
+          "max": 0.352344209
+        },
+        "rhs_seconds": {
+          "min": 114.7947565430007,
+          "median": 115.02182147700073,
+          "max": 115.17666679100013
+        },
+        "rhs_calls": {
+          "min": 66551,
+          "median": 66551.0,
+          "max": 66551
+        },
+        "steps": {
+          "min": 13308,
+          "median": 13308.0,
+          "max": 13308
+        },
+        "C_char_max_accepted": {
+          "min": 0.15451039544830436,
+          "median": 0.15451039544830436,
+          "max": 0.15451039544830436
+        },
+        "dt_over_M": {
+          "min": 0.0007514677103725713,
+          "median": 0.0007514677103725713,
+          "max": 0.0007514677103725713
+        },
+        "min_dr_over_M": {
+          "min": 0.011741682974559686,
+          "median": 0.011741682974559686,
+          "max": 0.011741682974559686
+        },
+        "steps_per_M": {
+          "min": 1330.8,
+          "median": 1330.8,
+          "max": 1330.8
+        },
+        "initial_speed": {
+          "min": 2.414213562373095,
+          "median": 2.414213562373095,
+          "max": 2.414213562373095
+        },
+        "worst_evaluated_speed": {
+          "min": 2.4142249288773416,
+          "median": 2.4142249288773416,
+          "max": 2.4142249288773416
+        },
+        "process_seconds": {
+          "min": 117.78786629199999,
+          "median": 118.01264637499992,
+          "max": 118.19349904200001
+        },
+        "indicator": 0.0002845391278494468,
+        "screening_indicator": 0.0002845391278494468,
+        "physical_rms": [
+          0.0002845391278494468,
+          0.00014537624290772606,
+          1.0299734980211126e-05,
+          2.343737700956978e-05
+        ],
+        "linear_physical_rms": [
+          0.0002682117461803293,
+          0.00013701217208401806,
+          9.805191771166252e-06,
+          2.2146332698068535e-05
+        ],
+        "interpolation_disagreement_rms": [
+          2.0616526559899328e-05,
+          1.05413732131765e-05,
+          6.884348128694412e-07,
+          1.6839220773462063e-06
+        ],
+        "clock": -0.01737064380962844,
+        "D_defect_max": 0.012426616800682265,
+        "D_probes": [
+          {
+            "epsilon": 4.6865948772327554e-06,
+            "defect": 0.012426616240034737
+          },
+          {
+            "epsilon": 1.4059784631698266e-06,
+            "defect": 0.012426616800682265
+          },
+          {
+            "epsilon": 4.686594877232755e-07,
+            "defect": 0.012426616346636735
+          }
+        ],
+        "pole": 0.012456573099610284,
+        "trace": 0.0015319135680725293
+      },
+      {
+        "case": "step055-n256",
+        "family": "step055",
+        "n": 256,
+        "repeats": 3,
+        "completed": 3,
+        "repeated_states_bitwise_equal": true,
+        "stepping_seconds": {
+          "min": 32.920015708,
+          "median": 32.970241334,
+          "max": 33.043063458
+        },
+        "setup_seconds": {
+          "min": 0.348311834,
+          "median": 0.348618708,
+          "max": 0.35132850000000004
+        },
+        "rhs_seconds": {
+          "min": 32.19424964199986,
+          "median": 32.238457665000176,
+          "max": 32.31028043999982
+        },
+        "rhs_calls": {
+          "min": 18706,
+          "median": 18706.0,
+          "max": 18706
+        },
+        "steps": {
+          "min": 3739,
+          "median": 3739.0,
+          "max": 3739
+        },
+        "C_char_max_accepted": {
+          "min": 0.550002589517723,
+          "median": 0.550002589517723,
+          "max": 0.550002589517723
+        },
+        "dt_over_M": {
+          "min": 0.0026749603832313383,
+          "median": 0.0026749603832313383,
+          "max": 0.0026749603832313383
+        },
+        "min_dr_over_M": {
+          "min": 0.011741682974559686,
+          "median": 0.011741682974559686,
+          "max": 0.011741682974559686
+        },
+        "steps_per_M": {
+          "min": 373.9,
+          "median": 373.9,
+          "max": 373.9
+        },
+        "initial_speed": {
+          "min": 2.414213562373095,
+          "median": 2.414213562373095,
+          "max": 2.414213562373095
+        },
+        "worst_evaluated_speed": {
+          "min": 2.414224929007289,
+          "median": 2.414224929007289,
+          "max": 2.414224929007289
+        },
+        "process_seconds": {
+          "min": 33.42101725000009,
+          "median": 33.473480582999855,
+          "max": 33.55037991699999
+        },
+        "indicator": 0.00028453912785482893,
+        "screening_indicator": 0.00028453912785482893,
+        "physical_rms": [
+          0.00028453912785482893,
+          0.00014537624291178098,
+          1.0299734980736793e-05,
+          2.3437377009545486e-05
+        ],
+        "linear_physical_rms": [
+          0.0002682117461844923,
+          0.00013701217208803823,
+          9.805191771716512e-06,
+          2.2146332698001152e-05
+        ],
+        "interpolation_disagreement_rms": [
+          2.061652656106767e-05,
+          1.054137321350485e-05,
+          6.884348129796439e-07,
+          1.6839220774560483e-06
+        ],
+        "clock": -0.017370643780431044,
+        "D_defect_max": 0.012426616446092165,
+        "D_probes": [
+          {
+            "epsilon": 4.686594877074953e-06,
+            "defect": 0.012426616294085611
+          },
+          {
+            "epsilon": 1.4059784631224857e-06,
+            "defect": 0.012426616446092165
+          },
+          {
+            "epsilon": 4.6865948770749524e-07,
+            "defect": 0.012426616051269962
+          }
+        ],
+        "pole": 0.012456573246806558,
+        "trace": 0.0015319135279107665
+      },
+      {
+        "case": "penalty05-step068-n256",
+        "family": "penalty05-step068",
+        "n": 256,
+        "repeats": 3,
+        "completed": 3,
+        "repeated_states_bitwise_equal": true,
+        "stepping_seconds": {
+          "min": 26.675313083,
+          "median": 26.675546958,
+          "max": 26.703821542
+        },
+        "setup_seconds": {
+          "min": 0.34818908299999995,
+          "median": 0.349901416,
+          "max": 0.351062125
+        },
+        "rhs_seconds": {
+          "min": 26.07988993100027,
+          "median": 26.08325937899971,
+          "max": 26.10830914600003
+        },
+        "rhs_calls": {
+          "min": 15131,
+          "median": 15131.0,
+          "max": 15131
+        },
+        "steps": {
+          "min": 3024,
+          "median": 3024.0,
+          "max": 3024
+        },
+        "C_char_max_accepted": {
+          "min": 0.6800053783150671,
+          "median": 0.6800053783150671,
+          "max": 0.6800053783150671
+        },
+        "dt_over_M": {
+          "min": 0.0033072237465405635,
+          "median": 0.0033072237465405635,
+          "max": 0.0033072237465405635
+        },
+        "min_dr_over_M": {
+          "min": 0.011741682974559686,
+          "median": 0.011741682974559686,
+          "max": 0.011741682974559686
+        },
+        "steps_per_M": {
+          "min": 302.4,
+          "median": 302.4,
+          "max": 302.4
+        },
+        "initial_speed": {
+          "min": 2.414213562373095,
+          "median": 2.414213562373095,
+          "max": 2.414213562373095
+        },
+        "worst_evaluated_speed": {
+          "min": 2.414232657080709,
+          "median": 2.414232657080709,
+          "max": 2.414232657080709
+        },
+        "process_seconds": {
+          "min": 27.173397125000008,
+          "median": 27.178729499999918,
+          "max": 27.207276125000135
+        },
+        "indicator": 0.0002845401927620186,
+        "screening_indicator": 0.0002845401927620186,
+        "physical_rms": [
+          0.0002845401927620186,
+          0.0001453767742626715,
+          1.02997692759182e-05,
+          2.343740666421674e-05
+        ],
+        "linear_physical_rms": [
+          0.0002682126659781259,
+          0.00013701262769762185,
+          9.805219219733255e-06,
+          2.2146351861790505e-05
+        ],
+        "interpolation_disagreement_rms": [
+          2.0616739867153888e-05,
+          1.0541475432185899e-05,
+          6.884433885676964e-07,
+          1.6839326415267033e-06
+        ],
+        "clock": -0.02066362322815199,
+        "D_defect_max": 0.013843611978886276,
+        "D_probes": [
+          {
+            "epsilon": 4.686594876878711e-06,
+            "defect": 0.013843611457720964
+          },
+          {
+            "epsilon": 1.4059784630636133e-06,
+            "defect": 0.01384361172225184
+          },
+          {
+            "epsilon": 4.6865948768787107e-07,
+            "defect": 0.013843611978886276
+          }
+        ],
+        "pole": 0.01712552172135241,
+        "trace": 0.0007455292101490318
+      },
+      {
+        "case": "conservative-n512",
+        "family": "conservative",
+        "n": 512,
+        "repeats": 3,
+        "completed": 3,
+        "repeated_states_bitwise_equal": true,
+        "stepping_seconds": {
+          "min": 419.7317205,
+          "median": 419.75509875,
+          "max": 420.25200079200005
+        },
+        "setup_seconds": {
+          "min": 0.649217625,
+          "median": 0.6498405,
+          "max": 0.6498585
+        },
+        "rhs_seconds": {
+          "min": 411.9747957580006,
+          "median": 412.0166981090007,
+          "max": 412.47639542799936
+        },
+        "rhs_calls": {
+          "min": 133216,
+          "median": 133216.0,
+          "max": 133216
+        },
+        "steps": {
+          "min": 26641,
+          "median": 26641.0,
+          "max": 26641
+        },
+        "C_char_max_accepted": {
+          "min": 0.15450971200293923,
+          "median": 0.15450971200293923,
+          "max": 0.15450971200293923
+        },
+        "dt_over_M": {
+          "min": 0.000375366568915331,
+          "median": 0.000375366568915331,
+          "max": 0.000375366568915331
+        },
+        "min_dr_over_M": {
+          "min": 0.0058651026392961825,
+          "median": 0.0058651026392961825,
+          "max": 0.0058651026392961825
+        },
+        "steps_per_M": {
+          "min": 2664.1,
+          "median": 2664.1,
+          "max": 2664.1
+        },
+        "initial_speed": {
+          "min": 2.414213562373095,
+          "median": 2.414213562373095,
+          "max": 2.414213562373095
+        },
+        "worst_evaluated_speed": {
+          "min": 2.4142142500435115,
+          "median": 2.4142142500435115,
+          "max": 2.4142142500435115
+        },
+        "process_seconds": {
+          "min": 420.540276875,
+          "median": 420.557994208,
+          "max": 421.0548725410001
+        },
+        "indicator": 8.532723382325448e-06,
+        "screening_indicator": 8.532723382325448e-06,
+        "physical_rms": [
+          8.532723382325448e-06,
+          4.38816041486511e-06,
+          2.6686460835915164e-07,
+          5.657987857269525e-07
+        ],
+        "linear_physical_rms": [
+          8.3239488826569e-06,
+          4.280444651811906e-06,
+          2.611550442171339e-07,
+          5.528777446842441e-07
+        ],
+        "interpolation_disagreement_rms": [
+          2.8876803005154795e-07,
+          1.4884994219163495e-07,
+          7.721671207915512e-09,
+          1.707951970131816e-08
+        ],
+        "clock": 2.252058097571008e-05,
+        "D_defect_max": 9.288298545697543e-05,
+        "D_probes": [
+          {
+            "epsilon": 4.678689862780448e-06,
+            "defect": 9.288298545697543e-05
+          },
+          {
+            "epsilon": 1.4036069588341344e-06,
+            "defect": 9.288281341914006e-05
+          },
+          {
+            "epsilon": 4.6786898627804475e-07,
+            "defect": 9.288245747878648e-05
+          }
+        ],
+        "pole": 5.3224903402779685e-05,
+        "trace": 1.052920665772783e-05
+      },
+      {
+        "case": "step055-n512",
+        "family": "step055",
+        "n": 512,
+        "repeats": 3,
+        "completed": 3,
+        "repeated_states_bitwise_equal": true,
+        "stepping_seconds": {
+          "min": 117.54918775,
+          "median": 117.64433325,
+          "max": 118.56793979199999
+        },
+        "setup_seconds": {
+          "min": 0.6457593749999999,
+          "median": 0.6469793749999999,
+          "max": 0.6492092919999999
+        },
+        "rhs_seconds": {
+          "min": 115.34187373899864,
+          "median": 115.44381597399989,
+          "max": 116.30147412999911
+        },
+        "rhs_calls": {
+          "min": 37436,
+          "median": 37436.0,
+          "max": 37436
+        },
+        "steps": {
+          "min": 7485,
+          "median": 7485.0,
+          "max": 7485
+        },
+        "C_char_max_accepted": {
+          "min": 0.550000156664953,
+          "median": 0.550000156664953,
+          "max": 0.550000156664953
+        },
+        "dt_over_M": {
+          "min": 0.001336172781848694,
+          "median": 0.001336172781848694,
+          "max": 0.001336172781848694
+        },
+        "min_dr_over_M": {
+          "min": 0.0058651026392961825,
+          "median": 0.0058651026392961825,
+          "max": 0.0058651026392961825
+        },
+        "steps_per_M": {
+          "min": 748.5,
+          "median": 748.5,
+          "max": 748.5
+        },
+        "initial_speed": {
+          "min": 2.414213562373095,
+          "median": 2.414213562373095,
+          "max": 2.414213562373095
+        },
+        "worst_evaluated_speed": {
+          "min": 2.4142142500506463,
+          "median": 2.4142142500506463,
+          "max": 2.4142142500506463
+        },
+        "process_seconds": {
+          "min": 118.34817808399998,
+          "median": 118.44378054200001,
+          "max": 119.37131995800019
+        },
+        "indicator": 8.532723375748849e-06,
+        "screening_indicator": 8.532723375748849e-06,
+        "physical_rms": [
+          8.532723375748849e-06,
+          4.388160410653674e-06,
+          2.6686460885655956e-07,
+          5.657987858794335e-07
+        ],
+        "linear_physical_rms": [
+          8.323948876763297e-06,
+          4.280444647640481e-06,
+          2.6115504468700085e-07,
+          5.52877744899039e-07
+        ],
+        "interpolation_disagreement_rms": [
+          2.887680310889424e-07,
+          1.4884994056161686e-07,
+          7.721671219962388e-09,
+          1.7079519700601478e-08
+        ],
+        "clock": 2.2520613328275152e-05,
+        "D_defect_max": 9.288287981891463e-05,
+        "D_probes": [
+          {
+            "epsilon": 4.678689862803176e-06,
+            "defect": 9.288287981891463e-05
+          },
+          {
+            "epsilon": 1.4036069588409526e-06,
+            "defect": 9.288266229981468e-05
+          },
+          {
+            "epsilon": 4.678689862803175e-07,
+            "defect": 9.288139673410689e-05
+          }
+        ],
+        "pole": 5.322481889940161e-05,
+        "trace": 1.0529184417046311e-05
+      },
+      {
+        "case": "penalty05-step068-n512",
+        "family": "penalty05-step068",
+        "n": 512,
+        "repeats": 3,
+        "completed": 3,
+        "repeated_states_bitwise_equal": true,
+        "stepping_seconds": {
+          "min": 94.961027166,
+          "median": 95.15553775,
+          "max": 95.207496542
+        },
+        "setup_seconds": {
+          "min": 0.646236375,
+          "median": 0.647592708,
+          "max": 0.6540365419999999
+        },
+        "rhs_seconds": {
+          "min": 93.16709714300012,
+          "median": 93.34795366299936,
+          "max": 93.3741771790005
+        },
+        "rhs_calls": {
+          "min": 30281,
+          "median": 30281.0,
+          "max": 30281
+        },
+        "steps": {
+          "min": 6054,
+          "median": 6054.0,
+          "max": 6054
+        },
+        "C_char_max_accepted": {
+          "min": 0.680000352087318,
+          "median": 0.680000352087318,
+          "max": 0.680000352087318
+        },
+        "dt_over_M": {
+          "min": 0.0016519954393765667,
+          "median": 0.0016519954393765667,
+          "max": 0.0016519954393765667
+        },
+        "min_dr_over_M": {
+          "min": 0.0058651026392961825,
+          "median": 0.0058651026392961825,
+          "max": 0.0058651026392961825
+        },
+        "steps_per_M": {
+          "min": 605.4,
+          "median": 605.4,
+          "max": 605.4
+        },
+        "initial_speed": {
+          "min": 2.414213562373095,
+          "median": 2.414213562373095,
+          "max": 2.414213562373095
+        },
+        "worst_evaluated_speed": {
+          "min": 2.4142148123936495,
+          "median": 2.4142148123936495,
+          "max": 2.4142148123936495
+        },
+        "process_seconds": {
+          "min": 95.76358379200019,
+          "median": 95.96035262500004,
+          "max": 96.01106362499968
+        },
+        "indicator": 8.532723353103296e-06,
+        "screening_indicator": 8.532723353103296e-06,
+        "physical_rms": [
+          8.532723353103296e-06,
+          4.38816040039492e-06,
+          2.668646074765403e-07,
+          5.657987838118622e-07
+        ],
+        "linear_physical_rms": [
+          8.323948855016183e-06,
+          4.280444638066985e-06,
+          2.6115504356692345e-07,
+          5.5287774290756e-07
+        ],
+        "interpolation_disagreement_rms": [
+          2.8876803039155544e-07,
+          1.4884994142933835e-07,
+          7.721670990065163e-09,
+          1.7079519671494763e-08
+        ],
+        "clock": -2.9909496065655405e-05,
+        "D_defect_max": 8.584560029421817e-05,
+        "D_probes": [
+          {
+            "epsilon": 4.67868986275912e-06,
+            "defect": 8.58455469031627e-05
+          },
+          {
+            "epsilon": 1.4036069588277359e-06,
+            "defect": 8.584560029421817e-05
+          },
+          {
+            "epsilon": 4.67868986275912e-07,
+            "defect": 8.584554097082475e-05
+          }
+        ],
+        "pole": 2.8462654351635308e-05,
+        "trace": 2.021035248220282e-05
+      }
+    ],
+    "serial_cost_boundary_targets": [
+      {
+        "name": "loose",
+        "E": 0.003,
+        "clock": 0.1,
+        "D": 0.1,
+        "selected": {
+          "conservative": {
+            "case": "conservative-n256",
+            "n": 256,
+            "indicator": 0.0002845391278494468,
+            "screening_indicator": 0.0002845391278494468,
+            "clock": -0.01737064380962844,
+            "D_defect_max": 0.012426616800682265,
+            "stepping_seconds": {
+              "min": 117.282929292,
+              "median": 117.512369792,
+              "max": 117.69493433299999
+            },
+            "process_seconds": {
+              "min": 117.78786629199999,
+              "median": 118.01264637499992,
+              "max": 118.19349904200001
+            },
+            "rhs_calls": {
+              "min": 66551,
+              "median": 66551.0,
+              "max": 66551
+            }
+          },
+          "step055": {
+            "case": "step055-n256",
+            "n": 256,
+            "indicator": 0.00028453912785482893,
+            "screening_indicator": 0.00028453912785482893,
+            "clock": -0.017370643780431044,
+            "D_defect_max": 0.012426616446092165,
+            "stepping_seconds": {
+              "min": 32.920015708,
+              "median": 32.970241334,
+              "max": 33.043063458
+            },
+            "process_seconds": {
+              "min": 33.42101725000009,
+              "median": 33.473480582999855,
+              "max": 33.55037991699999
+            },
+            "rhs_calls": {
+              "min": 18706,
+              "median": 18706.0,
+              "max": 18706
+            }
+          },
+          "penalty05-step068": {
+            "case": "penalty05-step068-n256",
+            "n": 256,
+            "indicator": 0.0002845401927620186,
+            "screening_indicator": 0.0002845401927620186,
+            "clock": -0.02066362322815199,
+            "D_defect_max": 0.013843611978886276,
+            "stepping_seconds": {
+              "min": 26.675313083,
+              "median": 26.675546958,
+              "max": 26.703821542
+            },
+            "process_seconds": {
+              "min": 27.173397125000008,
+              "median": 27.178729499999918,
+              "max": 27.207276125000135
+            },
+            "rhs_calls": {
+              "min": 15131,
+              "median": 15131.0,
+              "max": 15131
+            }
+          }
+        },
+        "baseline_over_family_cost_ratio": {
+          "conservative": 1.0,
+          "step055": 3.5641950145756853,
+          "penalty05-step068": 4.405246871864347
+        }
+      },
+      {
+        "name": "medium",
+        "E": 0.001,
+        "clock": 0.01,
+        "D": 0.01,
+        "selected": {
+          "conservative": {
+            "case": "conservative-n512",
+            "n": 512,
+            "indicator": 8.532723382325448e-06,
+            "screening_indicator": 8.532723382325448e-06,
+            "clock": 2.252058097571008e-05,
+            "D_defect_max": 9.288298545697543e-05,
+            "stepping_seconds": {
+              "min": 419.7317205,
+              "median": 419.75509875,
+              "max": 420.25200079200005
+            },
+            "process_seconds": {
+              "min": 420.540276875,
+              "median": 420.557994208,
+              "max": 421.0548725410001
+            },
+            "rhs_calls": {
+              "min": 133216,
+              "median": 133216.0,
+              "max": 133216
+            }
+          },
+          "step055": {
+            "case": "step055-n512",
+            "n": 512,
+            "indicator": 8.532723375748849e-06,
+            "screening_indicator": 8.532723375748849e-06,
+            "clock": 2.2520613328275152e-05,
+            "D_defect_max": 9.288287981891463e-05,
+            "stepping_seconds": {
+              "min": 117.54918775,
+              "median": 117.64433325,
+              "max": 118.56793979199999
+            },
+            "process_seconds": {
+              "min": 118.34817808399998,
+              "median": 118.44378054200001,
+              "max": 119.37131995800019
+            },
+            "rhs_calls": {
+              "min": 37436,
+              "median": 37436.0,
+              "max": 37436
+            }
+          },
+          "penalty05-step068": {
+            "case": "penalty05-step068-n512",
+            "n": 512,
+            "indicator": 8.532723353103296e-06,
+            "screening_indicator": 8.532723353103296e-06,
+            "clock": -2.9909496065655405e-05,
+            "D_defect_max": 8.584560029421817e-05,
+            "stepping_seconds": {
+              "min": 94.961027166,
+              "median": 95.15553775,
+              "max": 95.207496542
+            },
+            "process_seconds": {
+              "min": 95.76358379200019,
+              "median": 95.96035262500004,
+              "max": 96.01106362499968
+            },
+            "rhs_calls": {
+              "min": 30281,
+              "median": 30281.0,
+              "max": 30281
+            }
+          }
+        },
+        "baseline_over_family_cost_ratio": {
+          "conservative": 1.0,
+          "step055": 3.568001000592181,
+          "penalty05-step068": 4.411252447049515
+        }
+      },
+      {
+        "name": "tight",
+        "E": 0.0001,
+        "clock": 0.001,
+        "D": 0.001,
+        "selected": {
+          "conservative": {
+            "case": "conservative-n512",
+            "n": 512,
+            "indicator": 8.532723382325448e-06,
+            "screening_indicator": 8.532723382325448e-06,
+            "clock": 2.252058097571008e-05,
+            "D_defect_max": 9.288298545697543e-05,
+            "stepping_seconds": {
+              "min": 419.7317205,
+              "median": 419.75509875,
+              "max": 420.25200079200005
+            },
+            "process_seconds": {
+              "min": 420.540276875,
+              "median": 420.557994208,
+              "max": 421.0548725410001
+            },
+            "rhs_calls": {
+              "min": 133216,
+              "median": 133216.0,
+              "max": 133216
+            }
+          },
+          "step055": {
+            "case": "step055-n512",
+            "n": 512,
+            "indicator": 8.532723375748849e-06,
+            "screening_indicator": 8.532723375748849e-06,
+            "clock": 2.2520613328275152e-05,
+            "D_defect_max": 9.288287981891463e-05,
+            "stepping_seconds": {
+              "min": 117.54918775,
+              "median": 117.64433325,
+              "max": 118.56793979199999
+            },
+            "process_seconds": {
+              "min": 118.34817808399998,
+              "median": 118.44378054200001,
+              "max": 119.37131995800019
+            },
+            "rhs_calls": {
+              "min": 37436,
+              "median": 37436.0,
+              "max": 37436
+            }
+          },
+          "penalty05-step068": {
+            "case": "penalty05-step068-n512",
+            "n": 512,
+            "indicator": 8.532723353103296e-06,
+            "screening_indicator": 8.532723353103296e-06,
+            "clock": -2.9909496065655405e-05,
+            "D_defect_max": 8.584560029421817e-05,
+            "stepping_seconds": {
+              "min": 94.961027166,
+              "median": 95.15553775,
+              "max": 95.207496542
+            },
+            "process_seconds": {
+              "min": 95.76358379200019,
+              "median": 95.96035262500004,
+              "max": 96.01106362499968
+            },
+            "rhs_calls": {
+              "min": 30281,
+              "median": 30281.0,
+              "max": 30281
+            }
+          }
+        },
+        "baseline_over_family_cost_ratio": {
+          "conservative": 1.0,
+          "step055": 3.568001000592181,
+          "penalty05-step068": 4.411252447049515
+        }
+      }
+    ]
   },
   "live_processes": [],
-  "admitted_candidate": null,
-  "completion_claim": false,
-  "previous_turn_classification": "progress"
+  "admitted_candidate": {
+    "scope": "Finite-duration local spherical working policy; not all-time or 3D stability",
+    "central_radius_M": 20,
+    "compact_end": 0.97,
+    "outer_lapse_damping": 0.25,
+    "compatible_lapse": 1,
+    "chi_reference_power": 2,
+    "penalty": 0.5,
+    "initial_C_char": 0.68,
+    "grid": "uniform",
+    "floors": false,
+    "reference": "PENALTY-TRADEOFF.md",
+    "boundary_target_points": {
+      "loose": 256,
+      "medium": 512,
+      "tight": 512
+    },
+    "duration_scope": "Unperturbed convergence/cost through10M atN128/256/512; matched gauge controls through40M atN128/256 and constraint/amplitude controls atN256."
+  },
+  "completion_claim": true,
+  "previous_turn_classification": "completed_local_goal",
+  "future_transfer_gates": [
+    "Implement and verify the selected numerical policies in shared3D, including device paths.",
+    "Fit the central sphere into a resolved Cartesian/shell layout and compare spherical3D with1D.",
+    "Exercise nonspherical/angular perturbations, interfaces and MPI.",
+    "Separately authorize actual v=.1 boosted tests and the boosted10M three-resolution/GPU-hour campaign gates."
+  ]
 }

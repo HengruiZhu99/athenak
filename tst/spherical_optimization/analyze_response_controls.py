@@ -22,7 +22,7 @@ def main():
  for index,(label,b,p) in enumerate(a.comparison):
   cfg,rr,response,tt=pair([Path(b),Path(p)]);assert np.array_equal(r,rr) and tt==t
   changes={k:[ref.get(k),cfg.get(k)] for k in set(ref)|set(cfg) if k!='output' and ref.get(k)!=cfg.get(k)}
-  assert set(changes)<=set(('fixed_dt','outer_lapse_damping','perturb_amplitude')),changes
+  assert set(changes)<=set(('fixed_dt','outer_lapse_damping','perturb_amplitude','penalty')),changes
   ratio=cfg['perturb_amplitude']/ref['perturb_amplitude'];assert ratio>0;scaled=response/ratio;difference=scaled-delta;arrays[f'comparison{index}']=scaled
   regions=[]
   for region,mask in [('all',r>0),('exterior',r>.8)]:

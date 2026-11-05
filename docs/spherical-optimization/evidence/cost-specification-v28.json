@@ -1,0 +1,90 @@
+{
+  "protocol": "docs/spherical-optimization/COST-PROTOCOL.md",
+  "qualification": "Penalty .5/C.68 controls completed before timing; see PENALTY-TRADEOFF.md and penalty05-*-v28 evidence.",
+  "cases": [
+    {
+      "name": "conservative-n128",
+      "family": "conservative",
+      "reference_run": "docs/spherical-optimization/evidence/outer-lapse025-n128-10M-v26",
+      "overrides": {
+        "fixed_dt": null,
+        "experimental_timestep": false,
+        "cfl": 0.2
+      }
+    },
+    {
+      "name": "step055-n128",
+      "family": "step055",
+      "reference_run": "docs/spherical-optimization/evidence/outer-lapse025-n128-10M-v26",
+      "overrides": {
+        "fixed_dt": 0.0017868036023937436,
+        "experimental_timestep": true
+      }
+    },
+    {
+      "name": "penalty05-step068-n128",
+      "family": "penalty05-step068",
+      "reference_run": "docs/spherical-optimization/evidence/outer-lapse025-penalty05-n128-10M-v27",
+      "overrides": {
+        "fixed_dt": 0.0022091389993231735,
+        "experimental_timestep": true
+      }
+    },
+    {
+      "name": "conservative-n256",
+      "family": "conservative",
+      "reference_run": "docs/spherical-optimization/evidence/outer-lapse025-n256-10M-v26",
+      "overrides": {
+        "fixed_dt": null,
+        "experimental_timestep": false,
+        "cfl": 0.2
+      }
+    },
+    {
+      "name": "step055-n256",
+      "family": "step055",
+      "reference_run": "docs/spherical-optimization/evidence/outer-lapse025-n256-10M-v26",
+      "overrides": {
+        "fixed_dt": 0.0008916534610771128,
+        "experimental_timestep": true
+      }
+    },
+    {
+      "name": "penalty05-step068-n256",
+      "family": "penalty05-step068",
+      "reference_run": "docs/spherical-optimization/evidence/outer-lapse025-penalty05-n256-10M-v28",
+      "overrides": {
+        "fixed_dt": 0.0011024079155135212,
+        "experimental_timestep": true
+      }
+    },
+    {
+      "name": "conservative-n512",
+      "family": "conservative",
+      "reference_run": "docs/spherical-optimization/evidence/outer-lapse025-n512-10M-v26",
+      "overrides": {
+        "fixed_dt": null,
+        "experimental_timestep": false,
+        "cfl": 0.2
+      }
+    },
+    {
+      "name": "step055-n512",
+      "family": "step055",
+      "reference_run": "docs/spherical-optimization/evidence/outer-lapse025-n512-10M-v26",
+      "overrides": {
+        "fixed_dt": 0.00044539092728289797,
+        "experimental_timestep": true
+      }
+    },
+    {
+      "name": "penalty05-step068-n512",
+      "family": "penalty05-step068",
+      "reference_run": "docs/spherical-optimization/evidence/outer-lapse025-penalty05-n512-10M-v28",
+      "overrides": {
+        "fixed_dt": 0.0005506651464588556,
+        "experimental_timestep": true
+      }
+    }
+  ]
+}
