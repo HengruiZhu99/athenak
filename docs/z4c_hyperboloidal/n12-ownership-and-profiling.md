@@ -43,6 +43,22 @@ operation to change. Summed kernel or phase maxima must not be reported as the
 critical path. Keep detailed profiling separate from the validated whole-cycle
 timing windows.
 
+Two launch requirements remain for timing after the complete step-3551
+trajectory is admitted. A restart retains the completed segment's terminal
+`tlim`, so increasing only `nlim` will fail the timing preflight. The ordinary
+restart command must set both the bounded cumulative `nlim` and a later `tlim`
+covering the entire warmup and repeated windows, with at most 150 further steps.
+Keep the timestep, physics, grid, equal weights and existing output cadence
+unchanged; the harness must still reject any scheduled output inside that run.
+
+The existing timing validator qualifies only the CPU two-rank, fresh eight-step
+case. It does not admit actual 24/96-rank GPU timing. Future Aurora qualification
+must bind the frozen numerical baseline, the same timing executable and restart
+checkpoint hashes at both decompositions, the compiler/tile configuration,
+actual state equivalence and complete window coverage. Neither the ownership
+counts above nor the CPU validation timings establish GPU throughput or scaling.
+The hash-qualified timing builder, header, contract and validator remain unchanged.
+
 Reproducer: `tst/z4c_hyperboloidal/n12_ownership_audit.py`, using the actual
 `native-clean` directories in the qualified two/eight-node stage-trace bundles
 and `build-native/n12-checkpoint-map-aurora-v1`. The full result is
