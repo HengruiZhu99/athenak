@@ -16,7 +16,7 @@
     {
       "id": "native_driver_and_tasks",
       "status": "partial",
-      "evidence_or_next_gate": "Original Driver initialization,RK4,AMR,shared restart and history cadence pass local2/8-rank checks. Native24/96 firstRHS/step1/8, actualrecords, stage/poison andfullcross-ranktrace gates pass. Observed original main has exact all24704784 padded31+8 state scalars andordinaryoutput bytes versus normalf3 at24/96;24->96restart state/stages exact; oldclock/CFL exact. All31 actual report bindings passed remote admission before fresh0->356 submission9051541."
+      "evidence_or_next_gate": "Original Driver initialization,RK4,AMR,shared restart and history cadence pass local2/8-rank checks. Native24/96 firstRHS/step1/8, actualrecords, stage/poison andfullcross-ranktrace gates pass. Observed original main has exact all24704784 padded31+8 state scalars andordinaryoutput bytes versus normalf3 at24/96;24->96restart state/stages exact; oldclock/CFL exact. All31 actual report bindings passed remote admission before fresh0->356 submission9051541. The actual 24-rank restart from 356 through 711 now passes independent checkpoint/handoff, all 31+8 endpoint, cumulative 2844-stage and common 0/356/711 history review."
     },
     {
       "id": "extend_native_octree",
@@ -26,7 +26,7 @@
     {
       "id": "new_native_physics_module",
       "status": "partial",
-      "evidence_or_next_gate": "Native fixed/adaptive evolution, restart, read-only constraints and sparse existing-FastFlow integration are implemented. Required24/96 GPU short/stage/poison/observer checks pass; native24 fresh evolution through356 now passes complete reference science and independent review. Full3551 remains unproven. The fixed-step AMR admission patch has coherent CPU build/endpoint/lifecycle evidence and a completed separate Aurora SYCL build; it remains isolated and has no actual GPU numerical qualification."
+      "evidence_or_next_gate": "Native fixed/adaptive evolution, restart, read-only constraints and sparse existing-FastFlow integration are implemented. Required24/96 GPU short/stage/poison/observer checks pass; native 24-rank fresh trajectory with its ordinary restart handoff through 711 now passes complete reference science and independent review. Full 3551 remains unproven. The fixed-step AMR admission patch has coherent CPU build/endpoint/lifecycle evidence and a completed separate Aurora SYCL build; it remains isolated and has no actual GPU numerical qualification."
     },
     {
       "id": "block_locality",
@@ -51,22 +51,22 @@
     {
       "id": "numerical_fidelity",
       "status": "partial",
-      "evidence_or_next_gate": "All prior CPU and24/96-rank GPU short/stage/poison gates retained. Actual fresh native24 trajectory through356 now passes unchanged long gates: all7137936 endpoint fields, bulk max1.8963303149988064e-13 and scri max5.979418349344456e-13; all1842048 native chi records decoded and finite. Historical aggregate floor counts3888/eight cells and first-floor time agree, with no historical per-cell record claim. All1424 stage clocks exact; clock/CFL maximum differences2.8552514085705694e-12/1.1102230246251565e-16 pass predeclared gates. Full3551 remains pending. Historical initial null aggregate reporting bug fixed without changing numerical gates; failed reporter v1 retained."
+      "evidence_or_next_gate": "All prior CPU and24/96-rank GPU short/stage/poison gates are retained. Actual native 24-rank trajectory from fresh initialization through 711, including the ordinary 356-step restart handoff, passes unchanged long gates: all 7137936 endpoint fields, bulk maximum 6.651346140529313e-13 and scri maximum 5.305478278927467e-13. All 1842048 actual native chi-record values are decoded and finite, and their aggregates are independently recomputed. Historical floor counts 15248/eight distinct cells, first-floor time and total correction sum agree exactly; no historical per-cell record claim is made. All 2844 cumulative stage clocks are exact; maximum clock/CFL differences 4.236701267590348e-12/1.6653345369377348e-16 pass predeclared gates, with compatibility maximum 1.2817467898683377e-13. Full 3551 remains pending. The first 356 historical-initial-null reporting failure and its report-only fix remain preserved without a numerical gate change."
     },
     {
       "id": "native_restart",
       "status": "verified_local",
-      "evidence_or_next_gate": "Native shared/per-rank fixed/SMR andordinaryadaptive113leaf CPUtests pass. Observed originalmain actualGPU24->96 prefix2/resume8 matchescontinuousall24704784payloadscalars and32stage rows bitwise; adoptedrestartdiagnosticgates pass. SeparatecleanAMRadmissionoverlay ordinary2->8 restart atdt.0002 passes all26336232paddedscalars; overlayunmerged."
+      "evidence_or_next_gate": "Native shared/per-rank fixed/SMR andordinaryadaptive113leaf CPUtests pass. Observed originalmain actualGPU24->96 prefix2/resume8 matchescontinuousall24704784payloadscalars and32stage rows bitwise; adoptedrestartdiagnosticgates pass. SeparatecleanAMRadmissionoverlay ordinary2->8 restart atdt.0002 passes all26336232paddedscalars; overlayunmerged. The actual fixed N12 24-rank 356-to-711 restart handoff is independently verified against the exact admitted predecessor checkpoint and time/dt; endpoint fields, records, stage clocks and diagnostic history pass the historical comparison."
     },
     {
       "id": "n12_aurora_through_5m",
       "status": "incomplete",
-      "evidence_or_next_gate": "Target remains3551 complete steps, t/M=5.0009660239551499, dt=0.00046944203735617445. Fresh original-Driver job9051541 completed356 steps (0.50136409589639774M) at24ranks. Complete fields, available chi aggregates, eight RMS histories, horizon, all1424 stage clocks/CFL and structural/provenance gates passed independent review. All3888 floor events/eight distinct cells match historical aggregate counts. Segment356-to711 job9051587 is running after exact predecessor/science/review and fresh runtime/resource preflight. Nine later common-time endpoints and full5M remain unverified."
+      "evidence_or_next_gate": "Target remains 3551 complete steps, t/M=5.0009660239551499, dt=0.00046944203735617445. Original-Driver jobs 9051541 and 9051587 completed fresh 0-to-356 and restarted 356-to-711 on 24 ranks, reaching t/M=1.0013198656807232. Complete endpoint fields, available chi aggregates, eight RMS histories, horizon quantities, all 2844 cumulative stage clocks/CFL and actual restart/provenance gates passed independent review. At 711 the 15248 floor events/eight distinct cells match historical aggregate counts. Eight later common-time endpoints 1066 through 3551 and the full 5M result remain unverified."
     },
     {
       "id": "diagnostics_and_constraints",
       "status": "partial",
-      "evidence_or_next_gate": "Previously qualified local operators, native24/96 saved3551 replay and short trajectories remain recorded with cross-platform/compact-radius failures retained. Fresh native24 common times0 and356 now pass all eight RMS and areal-radius/irreducible-mass reference gates; both endpoint horizon quantities match reference exactly. All169 shape coefficients are finite and complete at each output. Remaining nine common-time histories/horizons through3551 are pending; no full-trajectory claim."
+      "evidence_or_next_gate": "Previously qualified local operators, native24/96 saved3551 replay and short trajectories remain recorded with cross-platform/compact-radius failures retained. The native 24-rank fresh/restarted trajectory at common times 0, 356 and 711 now passes all eight RMS and areal-radius/irreducible-mass reference gates; horizon quantities match reference exactly at all three times. All 169 shape coefficients are finite and complete at each output. Eight later common-time histories/horizons through 3551 remain pending; no full-trajectory claim."
     },
     {
       "id": "performance_and_scaling",

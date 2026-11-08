@@ -592,3 +592,28 @@ The timestep, output cadence and numerical executable remain unchanged. A
 fresh queue check showed only the three existing held campaigns. Segment 3
 remains held until the complete cycle-711 comparison and review pass. See
 [second-segment submission evidence](evidence/native-n12-second-common-segment.json).
+
+
+Segment 2 completed normally at cycle 711 as PBS **9051587** (terminal F/0).
+All 90 archived files, including the complete 1,420 new stage observations,
+checkpoint, diagnostic outputs and exact predecessor admission, verified by
+size and SHA256 after download. The checkpoint SHA is
+`2bc744ea139041c33bf2275e756515050ebbc5d33581a7990bc8fcc9bf6d5b89`.
+The complete cycle-711 scientific comparison and independent review both
+pass. All endpoint fields, cumulative 2,844 stage records, and histories at
+0/356/711 satisfy the unchanged gates. Segment 3 remains held while the
+separate AMR qualification runs. The recorded allocation wall time is
+correctness-run planning information, not a performance measurement.
+
+
+The isolated coherent AMR candidate and both test helpers built successfully
+with the verified Aurora compiler and frozen numerical flags. Their complete
+source/object checks pass, and the frozen N12 build is unchanged. After the
+cycle-711 comparison and independent review passed, the reviewed two-node
+AMR qualification was submitted once as **9051631** (24 ranks). It runs the
+field-transfer lifecycle, four-cycle adaptive evolution, and ordinary
+two-cycle restart prefix at the separately justified AMR timestep `.0002`.
+This is a distinct adaptive admission test, not a change to the N12 trajectory.
+The eight-node allocation is held until the two-node allocation terminates
+successfully and the actual prefix checkpoint is verified. Complete GPU
+AMR science remains pending; no performance claim is made.

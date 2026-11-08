@@ -1,0 +1,98 @@
+{
+  "schema": "native-n12-common-independent-review-v1",
+  "passed": true,
+  "science_admission": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-common-segment-02-science-v1/continuation-admission.json",
+  "science_admission_sha256": "7fb54523740ce11cec735b24b92cc7877b65dc119e0fe14413ff59767f7ac7da",
+  "checkpoint_sha256": "2bc744ea139041c33bf2275e756515050ebbc5d33581a7990bc8fcc9bf6d5b89",
+  "end_cycle": 711,
+  "through_5m_complete": false,
+  "transfer_verification_sha256": "501b1b60e4cf7250b816c15d3f8b75c5eace08b526f14db025d1f34f79fe0f8a",
+  "predecessor_science_sha256": "454755931a81a883936fdd8a82e9f60da47b1c7ecd522cae29392376a9a0e3bf",
+  "predecessor_independent_review_sha256": "c88d16bb8b382fdf80143424080a275af4fb2fa06fc78fd4b6a85432b45cf26c",
+  "predecessor_checkpoint_sha256": "c2735117dc8026f47c307005bcbd592d9bf54670d30af2a89c0fffe027ed4ff8",
+  "actual_restart_handoff_verified": true,
+  "state_checks": {
+    "711": {
+      "bulk": {
+        "field_values": 7111152,
+        "record_values": 1835136,
+        "exports_match_actual_checkpoint_bitwise": true,
+        "failed_values": 0,
+        "max_absolute": 6.651346140529313e-13,
+        "max_tolerance_ratio": 0.0023703136794427622
+      },
+      "surface": {
+        "field_values": 26784,
+        "record_values": 6912,
+        "exports_match_actual_checkpoint_bitwise": true,
+        "failed_values": 0,
+        "max_absolute": 5.305478278927467e-13,
+        "max_tolerance_ratio": 0.00209935380411122
+      }
+    }
+  },
+  "actual_native_chi_summary_recomputed": true,
+  "chi_summary": {
+    "minimum_chi": 1e-10,
+    "minimum_raw_candidate": -4.5390970865975194e-08,
+    "minimum_raw_acceptance_candidate": -4.5390970865975194e-08,
+    "floor_events": 15248,
+    "nonpositive_candidates": 15248,
+    "nonfinite_candidates": 0,
+    "distinct_floored_cells": 8,
+    "sum_corrections_over_attempts": 0.0005026121171196662,
+    "surface_floor_events": 0,
+    "max_correction": 4.5490970865975195e-08,
+    "max_floor_radius": 0.002405626121623456,
+    "first_floor_M": 0.33095663633610284
+  },
+  "historical_chi_aggregate_differences": {
+    "minimum_chi": 0.0,
+    "minimum_raw_candidate": -6.617444900424221e-23,
+    "minimum_raw_acceptance_candidate": -6.617444900424221e-23,
+    "floor_events": 0,
+    "nonpositive_candidates": 0,
+    "nonfinite_candidates": 0,
+    "distinct_floored_cells": 0,
+    "sum_corrections_over_attempts": 0.0,
+    "surface_floor_events": 0,
+    "max_correction": 6.617444900424221e-23,
+    "max_floor_radius": 0.0,
+    "first_floor_M": 0.0
+  },
+  "stage_rows": 2844,
+  "new_segment_stage_rows": 1420,
+  "exact_stage_clocks": true,
+  "maximum_compatibility": 1.2817467898683377e-13,
+  "clock_CFL_max_absolute_difference": {
+    "clock": 4.236701267590348e-12,
+    "CFL": 1.6653345369377348e-16
+  },
+  "clock_CFL_max_tolerance_ratio": {
+    "clock": 0.02577619954159558,
+    "CFL": 6.717771699849685e-08
+  },
+  "history_completed_prefix_passed": true,
+  "history_times": [
+    0,
+    356,
+    711
+  ],
+  "harmonic_coefficients_each_time": 169,
+  "missing_future_common_steps": [
+    1066,
+    1421,
+    1776,
+    2131,
+    2486,
+    2841,
+    3196,
+    3551
+  ],
+  "chi_history_scope": "native records decoded and checked finite; all available historical aggregate differences reported under the declared threshold-sensitive floor policy; no historical per-cell record equivalence claim",
+  "retained_initial_null_reporting_scope": "The admitted first356 review retains the original report-only failure and exact reverse-patch proof; no new reporting or numerical change here.",
+  "scope": "Independent actual711 checkpoint/export/field/record review, restart-handoff binding, all2844 cumulative stages and all three ordinary diagnostic times. No full3551, AMR or performance admission.",
+  "source_sha256": {
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-common-02-independent-review-v1/review.py": "481030f0ed790f0417cc260a853bc807494cb6925431459b87829752510ea673"
+  }
+}

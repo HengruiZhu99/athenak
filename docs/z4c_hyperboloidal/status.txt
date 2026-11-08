@@ -198,9 +198,20 @@ Diagnostics working-tree milestone (local CPU MPI, full goal still incomplete):
   distinct cells match historical aggregate counts, all8RMS/horizon gates pass,
   and all1424stage rows pass exact clocks and declared clock/CFL gates. The
   initial null-aggregate reporting failure is retained; its report-only fix
-  changed no numerical gate. Segment356->711 job9051587 is running after actual
-  checkpoint/science/review and fresh runtime/resource preflight. No scaling
-  result is established.
+  changed no numerical gate. Segment 356->711 job9051587 now also completed
+  normally and passes independent science review. The actual restart handoff
+  preserves the admitted predecessor checkpoint and exact time/dt. At cycle 711
+  (1.0013198656807232M), all 7137936 endpoint fields pass: maximum differences
+  are 6.651346140529313e-13 bulk and 5.305478278927467e-13 scri. All 1842048 native
+  chi-record values are decoded and finite; independently recomputed aggregates
+  give 15248 floor events/eight cells, matching the historical counts exactly.
+  All 2844 cumulative stage rows pass exact clocks and declared scalar gates;
+  maximum clock/CFL differences are 4.236701267590348e-12/1.6653345369377348e-16
+  and maximum compatibility is 1.2817467898683377e-13. All three common diagnostic
+  times 0/356/711 pass; horizon areal radius and irreducible mass match the
+  reference exactly. Eight later endpoints through 3551 remain unverified.
+  No scaling result is established. See
+  evidence/native-n12-common-02-independent-review.json.
   See evidence/aurora-stage-trace-two.json, evidence/aurora-n12-mapping.json,
   evidence/native-step-observer-local-validation.json,
   evidence/aurora-native-saved-replay-two.json,
@@ -216,7 +227,7 @@ Diagnostics working-tree milestone (local CPU MPI, full goal still incomplete):
 
 Current limitations / remaining full-goal requirements:
 - Fixed-topology dynamic evolution is validated through eight complete RK4
-  steps locally and on24/96Aurora ranks, and through356steps on24Aurora ranks.
+  steps locally and on24/96Aurora ranks, and through 711 steps on24Aurora ranks.
   This does not establish the full3551-step trajectory or
   arbitrary refined coupled evolution. Fixed-mesh dynamic restart continuity
   is validated locally andthroughactual24->96rank GPUrestart withthe observed

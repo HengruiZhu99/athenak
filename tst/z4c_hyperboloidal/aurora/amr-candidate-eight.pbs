@@ -1,0 +1,12 @@
+#!/bin/bash -l
+#PBS -A CompactBinaryMerger
+#PBS -N native-amr-eight
+#PBS -q debug-scaling
+#PBS -l select=8
+#PBS -l walltime=00:50:00
+#PBS -l filesystems=home:flare
+#PBS -j oe
+set -euo pipefail
+cd /lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/amr-admission-candidate-v1
+sha256sum -c launchers.sha256
+exec timeout --kill-after=15 2940 bash run-amr-candidate-validation.sh 8

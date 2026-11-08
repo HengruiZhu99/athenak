@@ -1,0 +1,125 @@
+{
+  "schema": "native-amr-gpu-launcher-peer-review-v1",
+  "review_passed": true,
+  "review_scope": "independent read-only wrapper/operational audit/collector/execution-v2 review plus offline CPU fixture parser controls",
+  "runtime_changed": false,
+  "solver_launched": false,
+  "gpu_submitted": false,
+  "gpu_executed": false,
+  "closed_finding": "Eight-node prefix terminalF/0 checkpoint validation moved before every MPI/binding launch; prior qstat/checkpoint SHA retained in prefix-admission.txt.",
+  "checks": {
+    "exact_frozen_baseline_vs_coherent_candidate_identities": true,
+    "reviewed_helpers_and_generated_input_hashes": true,
+    "fixed_dt_0002_no_restart_dt_override": true,
+    "24_and96_ranks_12_tiles_per_node_binding": true,
+    "seven_cases_and_unique_output_paths": true,
+    "prefix24_to_resume96_vs_continuous96": true,
+    "prefix_final_checkpoint_parsed_and_duplicate_verified": true,
+    "lifecycle106_127_106_and_diagnostic_reports": true,
+    "four_cycle_evolution16_stages_exact_clocks": true,
+    "collector_preserves_all_raw_snapshots_and_restart_duplicates": true,
+    "execution_v2_candidate_build_compile_database_link_file_bindings": true,
+    "exact_launch_command_indices_binding_wrapper_exe_options": true,
+    "shell_and_python_syntax": true
+  },
+  "serialization_scope": "Wrapper gates prior24-jobF/0 before any96 MPI. External Donor qsub preflight retains global<=8-node allocation serialization, including N12 jobs.",
+  "scientific_scope": "Operational completion is not scientific qualification. Full31+8 cross-rank lifecycle/evolution and repartitioned restart comparisons remain pending actual GPU artifacts.",
+  "parser_validation": {
+    "path": "build-native/amr-wrapper-parser-controls-v1/results.json",
+    "sha256": "46d33ee61106dfb36bf36ac03bb4c22ccff351e7ee7dd421defaf5bcd38d30d8",
+    "positive_cases": {
+      "lifecycle": {
+        "ranks": 2,
+        "case": "lifecycle",
+        "snapshot_files": 12,
+        "checkpoint_cycles": [],
+        "stage_rows": null
+      },
+      "evolution2": {
+        "ranks": 2,
+        "case": "evolution",
+        "snapshot_files": 20,
+        "checkpoint_cycles": [],
+        "stage_rows": 16
+      },
+      "evolution8": {
+        "ranks": 8,
+        "case": "evolution",
+        "snapshot_files": 80,
+        "checkpoint_cycles": [],
+        "stage_rows": 16
+      },
+      "prefix": {
+        "ranks": 2,
+        "case": "prefix",
+        "snapshot_files": null,
+        "checkpoint_cycles": [
+          0,
+          1,
+          2,
+          2
+        ],
+        "stage_rows": null
+      },
+      "continuous": {
+        "ranks": 2,
+        "case": "continuous",
+        "snapshot_files": null,
+        "checkpoint_cycles": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          4
+        ],
+        "stage_rows": null
+      },
+      "resumed": {
+        "ranks": 8,
+        "case": "resumed",
+        "snapshot_files": null,
+        "checkpoint_cycles": [
+          3,
+          4,
+          4
+        ],
+        "stage_rows": null
+      }
+    },
+    "rejection_controls": {
+      "GPU_capacity16_rejects_CPU72": {
+        "rejected": true,
+        "message": ""
+      },
+      "wrong_writer_ranks": {
+        "rejected": true,
+        "message": ""
+      },
+      "wrong_fixed_dt": {
+        "rejected": true,
+        "message": ""
+      },
+      "wrong_stage_time": {
+        "rejected": true,
+        "message": ""
+      }
+    },
+    "test_only_adaptations": [
+      "checkpoint capacity keyword72 instead of production default16",
+      "temporary checkpoint basename symlinks amr_admission->amr_restart, bytes unchanged",
+      "temporary opreport scaffolding references prior success; no PBS/job identity"
+    ],
+    "original_files_unchanged": true
+  },
+  "source_sha256": {
+    "tst/z4c_hyperboloidal/aurora/run-amr-candidate-validation.sh": "f5f3b28224fbcf4ae991dc2a919f579090eb7aa0363c29b0434c0e651ee73e9c",
+    "tst/z4c_hyperboloidal/aurora/amr_run_audit.py": "4d57c76d9fe6939713d3075fdd51104162c029ac62acb04b3bdc952912674b3e",
+    "tst/z4c_hyperboloidal/aurora/amr-candidate-two.pbs": "831dd1c90ad895706d6c0abbdc37b23518cc9fcbbe4e5bd3f3b1bad0e588d8f3",
+    "tst/z4c_hyperboloidal/aurora/amr-candidate-eight.pbs": "95329b705ec2175a1e80bf80f13060cf170242e9c5ec883eb39607e6f89d7681",
+    "tst/z4c_hyperboloidal/aurora/collect_amr_candidate.py": "c18a449655bcb87cea570242c940435fff92e2de3cec73ea8a02eaec30837edf",
+    "tst/z4c_hyperboloidal/aurora/amr_execution_evidence.py": "a749fccbb42bf774b9a28e20f3984201ac40f0fbc9b3b01e75359fb75de02e19"
+  },
+  "scientific_reader_sha256": "bf89e5cced3e4b78f3a06463caf12cc679a3d67e4c4270b775596573363af0b0",
+  "build_evidence_sha256": "23b50d65cbd3813d5543e4171e4cb59126519d317683a8ae0e7a6ec1ff22bccd"
+}
