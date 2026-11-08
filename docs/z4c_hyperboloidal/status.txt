@@ -363,6 +363,13 @@ Current limitations / remaining full-goal requirements:
   exercised. No timing allocation was staged or submitted. The qualified
   builder/header/contract/CPU validator and numerical sources remain unchanged.
   See evidence/native-cycle-timing-gpu-preparation.json.
+- Installed profiler help/version/dependency checks identify unitrace2.3 and
+  pinned VTune2025.8/APS for a later bounded collection. Loading the PTI module
+  changes two C++ runtime library files, so any trial must preserve and verify
+  the baseline environment. No native collection, GPU capability qualification
+  or performance result is established; the selected-rank/four-cycle idea is
+  conditional on actual unprofiled results and a storage plan. See
+  evidence/native-profiler-readiness.json.
 - Actual qualified GPU trace ownership matches native unit-cost load balancing
   at24/96ranks. Maximum owned bulk points fall from12663 to6588 while the average
   falls from9558 to2389.5; six surface owners retain144points each at both sizes.

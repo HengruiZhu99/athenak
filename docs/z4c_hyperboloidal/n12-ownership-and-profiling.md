@@ -117,6 +117,38 @@ withholds all timing values. These checks do not exercise a successful complete
 four-run GPU collection; that remains the next qualification after 3551.
 See [preparation evidence](evidence/native-cycle-timing-gpu-preparation.json).
 
+An installed-tool audit found unitrace 2.3.0 with MPI, Level Zero and SYCL trace
+options, plus VTune 2025.8.0 and APS under the pinned compiler module. This is
+availability evidence only; no native GPU collection has run. Loading the
+`pti-gpu/0.17.0` module changes the solver's resolved `libstdc++` and `libgcc_s`
+to byte-different libraries. Prefer an absolute profiler path under the existing
+baseline environment, then verify actual loaded libraries during a separately
+qualified collection. A successful `--version` command does not prove that
+the combined GPU/MPI collector works.
+
+After the unprofiled results, a conditional first trial is four complete cycles
+from 3551 on two selected ranks per decomposition: bulk-heavy rank 8 and scri
+owner 23 at 24 ranks, or ranks 90 and 95 at 96 ranks. These are static workload
+candidates, not established critical ranks. Use the frozen normal executable,
+preserve the timestep/output cadence, and compare complete final state and
+ordinary diagnostics against matching unprofiled four-cycle controls. The
+130-cycle timing controls end at a different state and cannot substitute.
+No such profile or control is staged or submitted; the actual timing results
+will determine whether this trial is appropriate.
+
+The initial collection should avoid hardware metrics and all-rank Chrome MPI
+logging. `MPI_Testall` polling can generate large traces and perturb progress;
+the event-buffer size does not cap total output. Kernel names may identify
+compiler functors rather than Kokkos runtime labels, and all four bulk RHS
+subsets share a callsite. Selected-rank traces can expose local GPU/host waits,
+but neither overlapping nonblocking calls nor merged timestamps establish a
+whole-job critical path. The installed merge helper does not align clocks and
+can modify malformed inputs, so preserve raw files. Plan remote retention and
+bounded transfer before collection: four additional checkpoints alone total
+about 791 MB, beyond the space already needed for the remaining trajectory and
+timing data. See [tool/readiness evidence](evidence/native-profiler-readiness.json)
+for exact installed paths, hashes, commands and interpretation limits.
+
 Reproducer: `tst/z4c_hyperboloidal/n12_ownership_audit.py`, using the actual
 `native-clean` directories in the qualified two/eight-node stage-trace bundles
 and `build-native/n12-checkpoint-map-aurora-v1`. The full result is
