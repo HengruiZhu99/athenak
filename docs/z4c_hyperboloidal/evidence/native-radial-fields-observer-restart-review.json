@@ -1,0 +1,47 @@
+{
+  "schema": "native-radial-fields-observer-restart-review-v1",
+  "passed": true,
+  "job_id": "9052427",
+  "terminal": "F/0",
+  "nodes": 2,
+  "ranks": 24,
+  "raw_review": "build-native/native-radial-fields-qualification-review-v1/observer-restart.json",
+  "raw_review_sha256": "e9eb24f4de7b7f56a379a97266dc7240ce3124c05380b12f26afdb8c214d8db0",
+  "collection": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-radial-fields-qualification-v1",
+  "verified_collection_files": 1476,
+  "collection_package_sha256": "7eb60189e758e0f24ad860617cf4a9fe7159694ecbe56d28606498b2193d2d73",
+  "collection_file_manifest_sha256": "e940a9e8d83ff38313200ca0f683a98804966165992f93a6129278e7aebfc13d",
+  "archive_sha256": "019a721e6c9733fd08c54d48a605f4c07f24dd530980648a286f430f04897ff9",
+  "command_manifest_sha256": "74b984ad31de5609ab380a783928c2908e647b0c4a7942f8369cf758b7874070",
+  "qualification_build_provenance_sha256": "215a1c38b4e34b35e43e287a89cef0ed257602b2aff30ddcebfd99e57c5bbb94",
+  "candidate_source_manifest_sha256": "e6363347621c659a1486e539cb1ff64b8e1e1343915ac9033a8397c5ff1c6909",
+  "four_changed_sources_and_six_TU_f3_coherent_closures_bound": true,
+  "all_five_executables_bound": true,
+  "before_after_frozen_guards_equal": true,
+  "admitted_WG128_reference_review_sha256": "a82f56f0eecbc228044406c30cf30331d31d4c2ea7b2e996e2797ddea4f6f8ca",
+  "observer70": {
+    "stage_rows": 280,
+    "complete_padded31_plus8_scalar_values": 24704784,
+    "full_state_parameters_initialized_metadata_and_three_diagnostics_bitwise_WG128": true,
+    "exact_RK_clocks_and_all_stage_rows": true,
+    "max_compatibility": 9.111146658370792e-14,
+    "horizon_coefficients": 169
+  },
+  "restart": {
+    "prefix_cycles": [
+      0,
+      2
+    ],
+    "resume_cycle": 8,
+    "joined_stage_rows": 32,
+    "complete_state_parameters_initialized_metadata_and_three_diagnostics_bitwise_same_phase_WG128": true,
+    "complete_payload_and_joined_stages_bitwise_continuous8": true,
+    "unchanged_twelve_diagnostic_gates_passed": true,
+    "max_diagnostic_absolute_difference": 6.13389339321202e-11,
+    "max_fraction_of_adopted_gate": 0.00030669465019872585,
+    "extra_prefix_final_FastFlow_seed_and_output_counter_differences_exactly_match_admitted_reference": true,
+    "max_compatibility": 9.778256860928204e-16
+  },
+  "cache128_wrapper_rank_probes": 72,
+  "scope": "Observer70 and same24-rank ordinary2+6 restart only; poison8/coherentAMR4/actual-cacheSMR reviewed separately. No throughput claim. Nine unused coarse-header integers120:156 excluded and reported in full review. Wrapper cache probes do not claim in-solver CVAR readback."
+}

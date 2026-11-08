@@ -1,0 +1,274 @@
+{
+  "schema": "native-radial-fields-profile-independent-review-v1",
+  "passed": true,
+  "job_id": "9052427",
+  "nodes": 2,
+  "ranks": 24,
+  "cycles": [
+    2486,
+    2490
+  ],
+  "selected_ranks": [
+    8,
+    23
+  ],
+  "performance_measurement": false,
+  "scientific_qualification": {
+    "normal_profiled_complete31_plus8_bitwise": true,
+    "normal_retained_reference_complete31_plus8_bitwise": true,
+    "padded_scalars": 24704784,
+    "parameters_exact": true,
+    "all_three_diagnostics_exact": true,
+    "normal_reference": "runs/native-n12-profile-cache128-v1/normal",
+    "normal_checkpoint_sha256": "f27efd7e45983fd90f23011b58ebedf92a4b193a7b0a45744a4aefa2e8ab97f8"
+  },
+  "candidate_binding": {
+    "executable": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/build/athena-candidate-normal",
+    "executable_sha256": "f3d12437e47b3aca52322d0495bb3aef5140a35e8e20bc5b1b4dbccf53f48cf1",
+    "build_provenance": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/build/provenance.json",
+    "build_provenance_sha256": "67416752d876b2b5a9b1e52614e069945b01c9082d7b5c547b2b8d2da4224872",
+    "candidate_rhs_source_sha256": "9df6cfdb7b75ad9426c5c88b73213b9564983043c3cbf897220748a7f59916b9",
+    "candidate_manifest_sha256": "e6363347621c659a1486e539cb1ff64b8e1e1343915ac9033a8397c5ff1c6909",
+    "candidate_sources": {
+      "src/z4c_hyperboloidal/surface_exchange.hpp": {
+        "control_sha256": "de0a04b9d81a6c60ff6e49a21ae3ba700b621d5ff89636ff5bcd7ce0bb05c325",
+        "candidate_sha256": "53ddab2874b4d84d33e7a02a34b9d6253cf1c5c03be77f94eb440901fb11fdbd"
+      },
+      "src/z4c_hyperboloidal/surface_exchange.cpp": {
+        "control_sha256": "2b78bb42e819fc0178a9e13d2b21df29736a17abe762f85c6fb6485003517c34",
+        "candidate_sha256": "bc57f71c14827486ba8ff81ce0b43e4fe73c04e231fb55e24b783983ffa4d474"
+      },
+      "src/z4c_hyperboloidal/endpoint_state.hpp": {
+        "control_sha256": "c6a95d943a835ebd646bfa3cd9db24dbc870e3d277dfb075c8964fb4c2cf1df6",
+        "candidate_sha256": "6c9d098dcdc0fcfe4f3c18a8fddc7ae81d754dbadb631c9353b22ff46b21cd10"
+      },
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp": {
+        "control_sha256": "70dd4866b718d126bdfd7e41a8cb461d01dda747849f7bd1a143aa99b6d8c1a8",
+        "candidate_sha256": "9df6cfdb7b75ad9426c5c88b73213b9564983043c3cbf897220748a7f59916b9"
+      }
+    },
+    "compiled_translation_units": [
+      "src/z4c_hyperboloidal/surface_exchange.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal.cpp",
+      "src/z4c_hyperboloidal/diagnostics.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_lifecycle.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_tasks.cpp"
+    ],
+    "baseline_source_objects_unchanged": true,
+    "before_after_verify_logs": {
+      "before": "93a290cb6461a38218269c24f63c829f9ab37b7ded85e53deda7abe3e2875c6e",
+      "after": "93a290cb6461a38218269c24f63c829f9ab37b7ded85e53deda7abe3e2875c6e"
+    }
+  },
+  "source_and_runtime": {
+    "compact_files_rehashed": 96,
+    "launch_environment_records": 48,
+    "actual_selected_process_records": 4,
+    "core_library_images_unchanged": true,
+    "cache128_launcher_and_selected_process_environment_verified": true,
+    "before_after_guards_passed": true
+  },
+  "units_and_classification": {
+    "text": "nanoseconds",
+    "chrome": "microseconds",
+    "unit_crosschecks": [
+      {
+        "rank": 8,
+        "groups": 10,
+        "text_ns_equals_chrome_us": true
+      },
+      {
+        "rank": 23,
+        "groups": 14,
+        "text_ns_equals_chrome_us": true
+      }
+    ],
+    "main": "CalcRHS ParallelForCustom lambda(int), local128; ordinal ignored",
+    "ko": "CalcRHS ParallelForCustom lambda(long), IndexType<long>, local1024",
+    "radial_prepare": "SurfaceExchange::PrepareRadialJets ParallelForCustom lambda(long), local1024",
+    "validity": "CalcRHS ParallelReduce, excluded from pure main totals",
+    "surface": "Solve/Evaluate within first-main to last-main envelope; local-size1 reduction finalizers excluded"
+  },
+  "rank_local_measurements": {
+    "8": {
+      "rhs_span_seconds": 1.339693,
+      "all_rhs_envelope_seconds": 1.5268435,
+      "gpu_union_seconds": 0.42344325,
+      "surface_in_main_span": {
+        "solve": {
+          "calls": 0,
+          "total_seconds": 0.0
+        },
+        "evaluate": {
+          "calls": 0,
+          "total_seconds": 0.0
+        }
+      },
+      "main": {
+        "calls": 48,
+        "total_seconds": 0.37193936000000005
+      },
+      "ko": {
+        "calls": 48,
+        "total_seconds": 0.00510352
+      },
+      "validity": {
+        "calls": 64,
+        "total_seconds": 0.00057264
+      },
+      "radial_prepare": {
+        "calls": 0,
+        "total_seconds": 0.0
+      },
+      "launch_groups": {
+        "main": [
+          {
+            "shape": "[SIMD32 {11; 1; 1} {128; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.11241072000000002
+          },
+          {
+            "shape": "[SIMD32 {8; 1; 1} {128; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.11202256
+          },
+          {
+            "shape": "[SIMD32 {82; 1; 1} {128; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.14750607999999998
+          }
+        ],
+        "ko": [
+          {
+            "shape": "[SIMD32 {30; 1; 1} {1024; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.0007172799999999999
+          },
+          {
+            "shape": "[SIMD32 {315; 1; 1} {1024; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.0032996800000000006
+          },
+          {
+            "shape": "[SIMD32 {40; 1; 1} {1024; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.0010865599999999999
+          }
+        ],
+        "radial_prepare": []
+      }
+    },
+    "23": {
+      "rhs_span_seconds": 1.40342,
+      "all_rhs_envelope_seconds": 1.4035765,
+      "gpu_union_seconds": 1.15514925,
+      "surface_in_main_span": {
+        "solve": {
+          "calls": 16,
+          "total_seconds": 0.30246160000000005
+        },
+        "evaluate": {
+          "calls": 16,
+          "total_seconds": 0.20021376000000002
+        }
+      },
+      "main": {
+        "calls": 64,
+        "total_seconds": 0.5756091199999999
+      },
+      "ko": {
+        "calls": 64,
+        "total_seconds": 0.003937600000000002
+      },
+      "validity": {
+        "calls": 64,
+        "total_seconds": 0.0006215999999999999
+      },
+      "radial_prepare": {
+        "calls": 16,
+        "total_seconds": 0.004237920000000001
+      },
+      "launch_groups": {
+        "main": [
+          {
+            "shape": "[SIMD32 {3; 1; 1} {128; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.1114272
+          },
+          {
+            "shape": "[SIMD32 {4; 1; 1} {128; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.11084400000000003
+          },
+          {
+            "shape": "[SIMD32 {57; 1; 1} {128; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.13533264
+          },
+          {
+            "shape": "[SIMD32 {5; 1; 1} {128; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.21800527999999997
+          }
+        ],
+        "ko": [
+          {
+            "shape": "[SIMD32 {10; 1; 1} {1024; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.0007723200000000001
+          },
+          {
+            "shape": "[SIMD32 {16; 1; 1} {1024; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.00068736
+          },
+          {
+            "shape": "[SIMD32 {219; 1; 1} {1024; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.0018721600000000003
+          },
+          {
+            "shape": "[SIMD32 {18; 1; 1} {1024; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.0006057600000000001
+          }
+        ],
+        "radial_prepare": [
+          {
+            "shape": "[SIMD32 {11; 1; 1} {1024; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.004237919999999999
+          }
+        ]
+      }
+    }
+  },
+  "prior_profile_comparison": {
+    "reference": "build-native/native-bulk-group128-profile-review-v1/review.json",
+    "reference_sha256": "799dc1142ce5a0f1a97550d28f2b89d8eac6e0aea78079988f0189d97bdc3f5d",
+    "rank23_surface_dependent_main_seconds_before": 0.54285552,
+    "rank23_surface_dependent_main_seconds_after": 0.21800528,
+    "rank23_new_radial_prepare_seconds": 0.00423792,
+    "scope": "Separate selected-rank profiled samples; diagnostic attribution, not paired throughput."
+  },
+  "historical_next_candidate_recommendation": "Four independent normal cases followed by separate elimination: measured rank23 Solve .30246160s/16 stages is directly identified. Preserve geometry/arithmetic and defer workgroup tuning. This was an unimplemented recommendation; current user selected boundary weight2/3 experiments instead.",
+  "limits": [
+    "Only ranks8/23 observed; no whole-job critical-path or achieved-occupancy claim.",
+    "GPU duration sums and interval unions are distinct; timestamps are compared within one trace only.",
+    "Timing includes profiler effects and is excluded from throughput admission.",
+    "The volume/cache validation and ABBA throughput have separate evidence.",
+    "Existing raw Chrome traces and full checkpoints remain remote; compact manifest/hash binding and existing read-only extractor used."
+  ],
+  "inputs": {
+    "build-native/aurora-native-radial-fields-profile-v1/package.json": "c4e710fff357096485246325d90ae0fc4e06509421d16c7cc4a8c4be7fd20377",
+    "build-native/aurora-native-radial-fields-profile-v1/transfer.json": "9b3aea5076f281e7e4ce72dc4df39c6f3de99db16740379acf644ea231aec231",
+    "build-native/aurora-native-radial-fields-profile-v1/run-artifacts/files.json": "d4758bd63528eb8f1155648f4f7750335731cbc89ff62accbceeb304d341440d",
+    "build-native/aurora-native-radial-fields-profile-v1/run-artifacts/runs/native-radial-fields-profile-v1/qualification.json": "96fbd59b444050c2294dac1f6b29676a811b6f1d7e79102432fbd12d8ffef78e",
+    "build-native/native-radial-fields-profile-review-v1/timeline.json": "001169662c1616401b2593be050e5c6f66d4b11a3512dba2a676c09065d8b219",
+    "build-native/native-radial-fields-profile-review-v1/normal-equivalence.json": "fe1853d158d93c4aea855077aec00828d2d0d96a7ef3a04bfe41404b73012b2e",
+    "build-native/native-radial-fields-profile-review-v1/extract.py": "c7d061bec94a2d9426efc8fe43c5f0cfd8dd0738ecdac0829782f1c7ad3848fd",
+    "build-native/native-radial-fields-profile-review-v1/compare_normal.py": "8d6a9def5d39de1615ac43a5104cbbf9b2c04bdcf776335e3e00ef17b5072d87",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-radial-fields-profile-review-v1/finalize_review.py": "e3602ce6de07d97b5f7855f633111dd0a041cb4695d82e55b1134cb83fad22ff"
+  }
+}

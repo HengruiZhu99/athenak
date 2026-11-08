@@ -3,6 +3,7 @@
 // Global reference arrays exist only in this regression, never in native tasks.
 #include <algorithm>
 #include <cmath>
+#include <cstring>
 #include <iomanip>
 #include <iostream>
 #include <limits>
@@ -16,6 +17,7 @@
 #include "pgen/pgen.hpp"
 #include "z4c_hyperboloidal/mapped_halo.hpp"
 #include "z4c_hyperboloidal/surface_exchange.hpp"
+#include "z4c_hyperboloidal/endpoint_state.hpp"
 #include "z4c/hyperboloidal/central_z4c_configuration.hpp"
 #include "z4c/hyperboloidal/spherical_transfer_3d.hpp"
 
@@ -37,6 +39,66 @@ void WriteJet(std::vector<Real> &values,size_t index,const J &jet) {
     for (int b=0;b<3;++b)values[jet_width*index+4+3*a+b]=jet.h[a][b];
   }
 }
+// Exercise the explicit evolution cache without changing the default direct
+// endpoint path used by Diagnostics' separate SurfaceExchange instance.
+std::uint64_t CheckEndpointCache(native::SurfaceExchange &surface,
+                                native::Z4cHyperboloidal &p,std::uint64_t &cache_rows,
+                                std::uint64_t &cache_bytes) {
+  auto cached=surface.PrepareRadialJets();
+  cache_rows=cached.radial_jets.extent(0);
+  cache_bytes=cached.radial_jets.span()*sizeof(native::mapped::Jet);
+  native::mapped::Jet poison(std::numeric_limits<Real>::quiet_NaN());
+  for (int a=0;a<3;++a) {
+    poison.d[a]=poison.f;
+    for (int b=0;b<3;++b)poison.h[a][b]=poison.f;
+  }
+  Kokkos::deep_copy(cached.radial_jets,poison);
+  const auto direct=surface.BindKernel();
+  const auto cells=p.points.d_view;const auto geometry=p.geometry;
+  const auto reference=p.reference;const auto residual=p.residual;
+  const auto parameters=p.parameters;const int n=p.n[0];
+  DvceArray1D<native::PointState> expected("direct endpoint with poisoned cache",
+                                         direct.radial_rows.extent(0));
+  Kokkos::parallel_for("oracle direct endpoint ignores cache",
+    Kokkos::RangePolicy<>(0,p.npoints),KOKKOS_LAMBDA(int point) {
+      if (!direct.HasRadialRow(point))return;
+      const auto c=cells(point);const Real inv_h[3]={Real(n),Real(n),Real(n)};
+      expected(direct.radial_index(point))=native::EndpointState(point,
+          native::BlockPointReader{residual,c.m,c.k,c.j,c.i},geometry(point),
+          inv_h,reference(point),parameters,direct);
+    });
+  cached=surface.PrepareRadialJets();
+  DvceArray1D<native::PointState> actual("cached endpoint",direct.radial_rows.extent(0));
+  Kokkos::parallel_for("oracle cached endpoint after poison",
+    Kokkos::RangePolicy<>(0,p.npoints),KOKKOS_LAMBDA(int point) {
+      if (!cached.HasRadialRow(point))return;
+      const auto c=cells(point);const Real inv_h[3]={Real(n),Real(n),Real(n)};
+      actual(cached.radial_index(point))=native::EndpointState(point,
+          native::BlockPointReader{residual,c.m,c.k,c.j,c.i},geometry(point),
+          inv_h,reference(point),parameters,cached);
+    });
+  const auto a=Kokkos::create_mirror_view_and_copy(HostMemSpace(),actual);
+  const auto b=Kokkos::create_mirror_view_and_copy(HostMemSpace(),expected);
+  std::uint64_t compared=0;
+  const auto equal=[&](Real x,Real y) {
+    Require(std::isfinite(x)&&std::isfinite(y)&&std::memcmp(&x,&y,sizeof(Real))==0,
+            "cached/direct endpoint state differs after cache poison");++compared;
+  };
+  for (size_t row=0;row<a.extent(0);++row) {
+    Require(a(row).status==native::PointStatus::success && a(row).status==b(row).status,
+            "endpoint state failed after cache poison");
+    for (int f=0;f<nf;++f) {
+      equal(a(row).jets[f].f,b(row).jets[f].f);
+      equal(a(row).transport[f],b(row).transport[f]);
+      for (int i=0;i<3;++i) {
+        equal(a(row).jets[f].d[i],b(row).jets[f].d[i]);
+        for (int j=0;j<3;++j)equal(a(row).jets[f].h[i][j],b(row).jets[f].h[i][j]);
+      }
+    }
+  }
+  return compared;
+}
+
 struct Error {
   double scaled=0,absolute=0;
   std::uint64_t count=0,failures=0;
@@ -92,7 +154,8 @@ int main(int argc,char **argv) {
                 "legacy oracle is not the pinned N12 mesh");
       }
       Error projection_error,sample_error,radial_error,correction_error,rate_error;
-      double maximum_defect=0;std::uint64_t zero_faces=p.nfaces==0;
+      double maximum_defect=0;std::uint64_t zero_faces=p.nfaces==0,cache_compared=0,
+          cache_rows=0,cache_bytes=0;
       MPI_Allreduce(MPI_IN_PLACE,&zero_faces,1,MPI_UINT64_T,MPI_SUM,MPI_COMM_WORLD);
       for (int scenario=0;scenario<2;++scenario) {
         auto state=Kokkos::create_mirror_view_and_copy(HostMemSpace(),p.u0);
@@ -124,6 +187,7 @@ int main(int argc,char **argv) {
         maximum_defect=std::max(maximum_defect,surface.MaxCompatibility());
         while (halo.Receive()!=TaskStatus::complete) {}
         halo.FillRemote(p.residual,p.u0);
+        cache_compared+=CheckEndpointCache(surface,p,cache_rows,cache_bytes);
 
         std::vector<Real> projected(nedge*nf),samples(nedge*nf*jet_width),
             radial(3*nedge*nf*jet_width),correction(3*nedge),rate(nedge*nf);
@@ -211,8 +275,18 @@ int main(int argc,char **argv) {
       for (auto *e:{&projection_error,&sample_error,&radial_error,&correction_error,&rate_error})
         e->Global();
       MPI_Allreduce(MPI_IN_PLACE,&maximum_defect,1,MPI_DOUBLE,MPI_MAX,MPI_COMM_WORLD);
+      MPI_Allreduce(MPI_IN_PLACE,&cache_compared,1,MPI_UINT64_T,MPI_SUM,MPI_COMM_WORLD);
+      MPI_Allreduce(MPI_IN_PLACE,&cache_rows,1,MPI_UINT64_T,MPI_SUM,MPI_COMM_WORLD);
+      MPI_Allreduce(MPI_IN_PLACE,&cache_bytes,1,MPI_UINT64_T,MPI_SUM,MPI_COMM_WORLD);
+      Require(cache_rows==3*nedge && cache_bytes==cache_rows*26*sizeof(native::mapped::Jet),
+              "endpoint cache allocation coverage changed");
+      Require(cache_compared==2*3*nedge*nf*14,"endpoint cache comparison coverage changed");
       if (!global_variable::my_rank) {
         std::cout<<std::setprecision(17);
+        std::cout<<"cache_layout rows="<<cache_rows<<" fields=26 jet_bytes="
+            <<sizeof(native::mapped::Jet)<<" bytes="<<cache_bytes<<"\n";
+        std::cout<<"endpoint_cache comparisons="<<cache_compared
+            <<" poison_refresh=passed default_direct=passed bitwise=passed\n";
         const char *names[] = {"projection","surface_jets","radial_jets","normal_correction","surface_rhs"};
         Error *errors[]={&projection_error,&sample_error,&radial_error,&correction_error,&rate_error};
         for (int i=0;i<5;++i)std::cout<<names[i]<<" comparisons="<<errors[i]->count

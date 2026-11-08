@@ -2,6 +2,7 @@
 // Manufactured operators on a genuinely refined outer-shell native topology.
 #include <algorithm>
 #include <cmath>
+#include <cstring>
 #include <iomanip>
 #include <iostream>
 #include <limits>
@@ -37,6 +38,54 @@ std::array<double,13> Components(const h::mapped::Jet &q) {
     for (int b=0;b<3;++b)out[4+3*a+b]=q.h[a][b];
   }
   return out;
+}
+
+// Exact cache-storage checks supplement, without replacing, the independent
+// polynomial gates below. The second scenario deliberately leaves finite jets
+// from the first scenario until the refresh is invoked.
+void CheckRadialCache(h::SurfaceExchange &surface,h::Z4cHyperboloidal &p,
+    h::SurfaceExchange::CachedKernel &cached,bool stale,
+    std::uint64_t &compared,std::uint64_t &stale_changed) {
+  const auto direct=surface.BindKernel();const auto data=p.residual;
+  DvceArray2D<h::mapped::Jet> expected("direct radial cache reference",
+      direct.radial_rows.extent(0),h::Fields::independent_count);
+  Kokkos::parallel_for("SMR direct radial cache reference",Kokkos::RangePolicy<>(0,p.npoints),
+    KOKKOS_LAMBDA(int point) {
+      if (!direct.HasRadialRow(point))return;
+      for (int f=0;f<h::Fields::count;++f)if (h::Fields::Independent(f))
+        expected(direct.radial_index(point),direct.fields.index[f])=
+            direct.ResidualJet(point,f,data,f<=6||f==18||(f>=22&&f<25));
+    });
+  const auto truth=Kokkos::create_mirror_view_and_copy(HostMemSpace(),expected);
+  if (stale) {
+    const auto old=Kokkos::create_mirror_view_and_copy(HostMemSpace(),cached.radial_jets);
+    Require(old.extent(0)==truth.extent(0)&&old.extent(1)==truth.extent(1),
+            "stale radial cache shape changed without rebuild");
+    for (size_t row=0;row<old.extent(0);++row)for (int f=0;f<h::Fields::independent_count;++f) {
+      Require(std::isfinite(old(row,f).f)&&old(row,f).f!=truth(row,f).f,
+              "manufactured state did not expose stale radial cache");++stale_changed;
+    }
+  }
+  cached=surface.PrepareRadialJets();
+  Require(cached.radial_jets.extent(0)==truth.extent(0)&&
+          cached.radial_jets.extent(1)==h::Fields::independent_count,
+          "radial cache does not cover the current refined rows and fields");
+  h::mapped::Jet poison(std::numeric_limits<Real>::quiet_NaN());
+  for (int a=0;a<3;++a) {
+    poison.d[a]=poison.f;
+    for (int b=0;b<3;++b)poison.h[a][b]=poison.f;
+  }
+  Kokkos::deep_copy(cached.radial_jets,poison);
+  cached=surface.PrepareRadialJets();
+  const auto actual=Kokkos::create_mirror_view_and_copy(HostMemSpace(),cached.radial_jets);
+  for (size_t row=0;row<truth.extent(0);++row)for (int f=0;f<h::Fields::independent_count;++f) {
+    const auto a=Components(actual(row,f)),b=Components(truth(row,f));
+    for (int c=0;c<13;++c) {
+      Require(std::isfinite(a[c])&&std::isfinite(b[c])&&
+              std::memcmp(&a[c],&b[c],sizeof(a[c]))==0,
+              "refined radial cache did not refresh bitwise after poison");++compared;
+    }
+  }
 }
 
 int main(int argc,char **argv) {
@@ -107,7 +156,9 @@ int main(int argc,char **argv) {
       if (!global_variable::my_rank)std::cout<<"nodal_volume comparisons="<<volume_checks
           <<" internal_radial_starts="<<interior_starts<<" analytic_jacobian=passed\n";
 
-      std::uint64_t compared=0,failed=0;double worst_ratio=0,max_absolute=0;
+      std::uint64_t compared=0,failed=0,cache_compared=0,stale_changed=0;
+      h::SurfaceExchange::CachedKernel cached;
+      double worst_ratio=0,max_absolute=0;
       const auto check=[&](double actual,double expected,double row_norm) {
         Require(std::isfinite(actual),"manufactured surface value is nonfinite");
         // A priori rounding allowance from the absolute coefficient row sum.
@@ -153,6 +204,7 @@ int main(int argc,char **argv) {
         surface.StartReceives();surface.PackAndSend();
         while (surface.Receive()!=TaskStatus::complete) {}
         surface.Sample();
+        CheckRadialCache(surface,p,cached,scenario!=0,cache_compared,stale_changed);
         const auto samples=Kokkos::create_mirror_view_and_copy(HostMemSpace(),surface.SampledJets());
         const auto rows=Kokkos::create_mirror_view_and_copy(HostMemSpace(),surface.Rows());
         const auto terms=Kokkos::create_mirror_view_and_copy(HostMemSpace(),surface.Terms());
@@ -251,9 +303,31 @@ int main(int argc,char **argv) {
       try {surface.Rebuild();}catch (const std::runtime_error &) {++rejected;}
       try {surface.StartReceives();}catch (const std::logic_error &) {++rejected;}
       try {surface.Project();}catch (const std::logic_error &) {++rejected;}
-      Require(rejected==3,"failed surface rebuild remained usable or was not collective");
+      try {surface.PrepareRadialJets();}catch (const std::logic_error &) {++rejected;}
+      Require(rejected==4,"failed surface rebuild remained usable or was not collective");
       if (global_variable::my_rank==owner)p.face_blocks.h_view(0)=saved;
       surface.Rebuild();
+      surface.StartReceives();surface.PackAndSend();
+      while (surface.Receive()!=TaskStatus::complete) {}
+      CheckRadialCache(surface,p,cached,false,cache_compared,stale_changed);
+      while (surface.ClearSend()!=TaskStatus::complete) {}
+      while (surface.ClearRecv()!=TaskStatus::complete) {}
+      std::uint64_t cache_rows=cached.radial_jets.extent(0),
+          cache_bytes=cached.radial_jets.span()*sizeof(h::mapped::Jet);
+      MPI_Allreduce(MPI_IN_PLACE,&cache_rows,1,MPI_UINT64_T,MPI_SUM,MPI_COMM_WORLD);
+      MPI_Allreduce(MPI_IN_PLACE,&cache_bytes,1,MPI_UINT64_T,MPI_SUM,MPI_COMM_WORLD);
+      Require(cache_rows==3*counts[1]*n*n && cache_bytes==cache_rows*26*sizeof(h::mapped::Jet),
+              "refined radial cache allocation coverage changed");
+      if (!global_variable::my_rank)std::cout<<"cache_layout rows="<<cache_rows
+          <<" fields=26 jet_bytes="<<sizeof(h::mapped::Jet)<<" bytes="<<cache_bytes<<"\n";
+      MPI_Allreduce(MPI_IN_PLACE,&cache_compared,1,MPI_UINT64_T,MPI_SUM,MPI_COMM_WORLD);
+      MPI_Allreduce(MPI_IN_PLACE,&stale_changed,1,MPI_UINT64_T,MPI_SUM,MPI_COMM_WORLD);
+      Require(cache_compared==3*3*counts[1]*n*n*h::Fields::independent_count*13 &&
+              stale_changed==3*counts[1]*n*n*h::Fields::independent_count,
+              "refined radial cache comparison coverage changed");
+      if (!global_variable::my_rank)std::cout<<"radial_cache comparisons="<<cache_compared
+          <<" stale_changed="<<stale_changed
+          <<" poison_refresh=passed rebuild_refresh=passed bitwise=passed\n";
       MPI_Allreduce(MPI_IN_PLACE,&compared,1,MPI_UINT64_T,MPI_SUM,MPI_COMM_WORLD);
       MPI_Allreduce(MPI_IN_PLACE,&failed,1,MPI_UINT64_T,MPI_SUM,MPI_COMM_WORLD);
       MPI_Allreduce(MPI_IN_PLACE,&worst_ratio,1,MPI_DOUBLE,MPI_MAX,MPI_COMM_WORLD);

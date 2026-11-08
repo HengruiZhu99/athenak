@@ -1,0 +1,133 @@
+{
+  "schema": "native-radial-fields-poison-amr-independent-review-v1",
+  "passed": true,
+  "job_id": "9052427",
+  "poison": {
+    "passed": true,
+    "ranks": 24,
+    "complete_labels": 26,
+    "dump_files": 624,
+    "points_per_state": 230256,
+    "independent_state_phases": 11,
+    "all31_fields_all8_records_bitwise": true,
+    "state_scalar_values": 98779824,
+    "first_rhs_values": 7137936,
+    "geometry_values": 690768,
+    "stage_records": 32,
+    "stage_records_exact": true,
+    "reference_canonical_hashes_match_qualified_clean": true,
+    "report": "build-native/native-radial-fields-poison-amr-review-v1/poison8/trace-audit.json",
+    "report_sha256": "52518581d51208d1bf8a338b6d92395701bad35f878839b65bbdc95c0765511b"
+  },
+  "amr": {
+    "passed": true,
+    "ranks": 24,
+    "complete_snapshots": 5,
+    "complete31_plus8_scalar_values": 48665448,
+    "all31_fields_all8_records_bitwise": true,
+    "blocks": [
+      106,
+      127,
+      127,
+      106,
+      106
+    ],
+    "scri_points": [
+      864,
+      1296,
+      1296,
+      864,
+      864
+    ],
+    "stage_records": 16,
+    "stage_records_exact": true,
+    "topology_and_ownership_exact": true,
+    "regrid_events": 2,
+    "maximum_compatibility": 1.0910657402209053e-15,
+    "report": "build-native/native-radial-fields-poison-amr-review-v1/amr-review.json",
+    "report_sha256": "658ffc6c2607531bbce1aeee25de2896b507ed48ff7f8049b6d45b2c6877c778"
+  },
+  "cache_smr": {
+    "operator_comparisons": 4228848,
+    "operator_failures": 0,
+    "max_error_over_bound": 0.41312500000000035,
+    "max_absolute_error": 2.035842855407921e-09,
+    "nodal_volume_comparisons": 22464,
+    "internal_radial_starts": 576,
+    "collective_rebuild_rejection": true,
+    "cache_comparisons": 3942432,
+    "stale_changed": 101088,
+    "poison_refresh": true,
+    "rebuild_refresh": true,
+    "bitwise": true,
+    "global_cache_layout": {
+      "rows": 3888,
+      "fields": 26,
+      "jet_bytes": 104,
+      "bytes": 10513152
+    },
+    "passed": true,
+    "ranks": 24,
+    "executable_sha256": "7b7d7077f0ddb63e51d49594c2b7eb341620343557bbc4d60552bd4f70a495f4",
+    "fixture_sha256": "b9065f68ea280dcef2d329460db07c35aa1a412dfd2fa3e68b09c7f22c8cea33",
+    "input_sha256": "0a1ac2023d0abb6ad17931090a61c97a3505b97e7fd4f472f6d5a9342ebc2719",
+    "scope": "Actual SYCL24 refined operator and private radial-cache poison/stale refresh/rebuild; stored host-generated nodal weights, not a GPU volume-arithmetic oracle."
+  },
+  "candidate_binding": {
+    "candidate_sources": {
+      "src/z4c_hyperboloidal/surface_exchange.hpp": {
+        "control_sha256": "de0a04b9d81a6c60ff6e49a21ae3ba700b621d5ff89636ff5bcd7ce0bb05c325",
+        "candidate_sha256": "53ddab2874b4d84d33e7a02a34b9d6253cf1c5c03be77f94eb440901fb11fdbd"
+      },
+      "src/z4c_hyperboloidal/surface_exchange.cpp": {
+        "control_sha256": "2b78bb42e819fc0178a9e13d2b21df29736a17abe762f85c6fb6485003517c34",
+        "candidate_sha256": "bc57f71c14827486ba8ff81ce0b43e4fe73c04e231fb55e24b783983ffa4d474"
+      },
+      "src/z4c_hyperboloidal/endpoint_state.hpp": {
+        "control_sha256": "c6a95d943a835ebd646bfa3cd9db24dbc870e3d277dfb075c8964fb4c2cf1df6",
+        "candidate_sha256": "6c9d098dcdc0fcfe4f3c18a8fddc7ae81d754dbadb631c9353b22ff46b21cd10"
+      },
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp": {
+        "control_sha256": "70dd4866b718d126bdfd7e41a8cb461d01dda747849f7bd1a143aa99b6d8c1a8",
+        "candidate_sha256": "9df6cfdb7b75ad9426c5c88b73213b9564983043c3cbf897220748a7f59916b9"
+      }
+    },
+    "candidate_manifest_sha256": "e6363347621c659a1486e539cb1ff64b8e1e1343915ac9033a8397c5ff1c6909",
+    "patch_sha256": "1b2a858675685bc522d59e64a8326a21bc8b85fe72ac820c74c4e76fd77727dd",
+    "build_provenance_sha256": "215a1c38b4e34b35e43e287a89cef0ed257602b2aff30ddcebfd99e57c5bbb94",
+    "dependency_closure_exact": true,
+    "coherent_class_header_and_lifecycle_preserved": true,
+    "executables": {
+      "poison8": "19fd0ae520d878f8c33342fd553e72edd828158669a085cfafe5256f1d8f58f3",
+      "amr4": "07530b9c2ac3f7ddf82ba15fc115c08de52d06f7727d3a8a0e09bc4ebb966098",
+      "cache-smr": "7b7d7077f0ddb63e51d49594c2b7eb341620343557bbc4d60552bd4f70a495f4"
+    }
+  },
+  "limits": [
+    "Existing bounded N12 poison and coherent AMR correctness fixtures, not a new long-time or convergence claim.",
+    "Timing, observer70, restart and legacy speed parity have separate assigned reviews.",
+    "No MPI cache eviction cause is established.",
+    "Poison covers the fixture listed public residual/RHS/status and unowned u0 workspaces, not private surface scratch. Stage-input snapshots precede PrepareStage projection.",
+    "This review independently parses retained output; it executes no new solver and changes no numerical tolerance.",
+    "Separate refined cache-SMR now explicitly poisons private radial scratch, demonstrates stale finite values, and verifies refresh after rejected and successful Rebuild. It does not claim full-module private-scratch poisoning in the stage fixture."
+  ],
+  "review": {
+    "path": "build-native/native-radial-fields-poison-amr-review-v1/review.json",
+    "sha256": "fb916f5b5d00de5b11dbe8152fec0f6185c4afb37b6bf89ee92535ff0b34df56"
+  },
+  "source_proof": {
+    "input_payload_hashes_rebound_to_verified_collection": 865,
+    "qualified_reference_amr_hashes_matched": true,
+    "qualification_before_after_guards_exact": true,
+    "commands_match_frozen_readiness": true,
+    "full_collection_files_rehashed": 1476
+  },
+  "retained_review_only_failure": "finalize-first-path-filter-failure.log: reviewer initially matched frozen original and new fixture source paths together; corrected to exact qualification-package source. No scientific gate or input changed.",
+  "solver_runs_added": 0,
+  "performance_admission": false,
+  "collection": {
+    "build-native/aurora-native-radial-fields-qualification-v1/transfer.json": "e2e0590cbdf07fb79683d0cf36bb61c5fb6d0865e8f96ebf3bb6503d5a79f1d1",
+    "build-native/aurora-native-radial-fields-qualification-v1/run-artifacts/files.json": "e940a9e8d83ff38313200ca0f683a98804966165992f93a6129278e7aebfc13d",
+    "build-native/aurora-native-radial-fields-qualification-v1/run-artifacts/terminal-qstat.txt": "5e6302e26487502537f4b3ef7c1ed9908b1ba223841eb7ea6b4887a4e708e55d"
+  }
+}

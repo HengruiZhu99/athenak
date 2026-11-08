@@ -1,0 +1,105 @@
+{
+  "schema": "native-radial-fields-aurora-build-evidence-v1",
+  "status": "built_verified_gpu_not_run",
+  "candidate_manifest_sha256": "e6363347621c659a1486e539cb1ff64b8e1e1343915ac9033a8397c5ff1c6909",
+  "candidate_patch_sha256": "1b2a858675685bc522d59e64a8326a21bc8b85fe72ac820c74c4e76fd77727dd",
+  "parent_proof_sha256": "d75a9862644a61d732c4d288f299f63e67923170c68c75c45747a71d3ce6997b",
+  "build_provenance_sha256": "67416752d876b2b5a9b1e52614e069945b01c9082d7b5c547b2b8d2da4224872",
+  "compiled_translation_units": [
+    "src/z4c_hyperboloidal/surface_exchange.cpp",
+    "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp",
+    "src/z4c_hyperboloidal/z4c_hyperboloidal.cpp",
+    "src/z4c_hyperboloidal/diagnostics.cpp",
+    "src/z4c_hyperboloidal/z4c_hyperboloidal_lifecycle.cpp",
+    "src/z4c_hyperboloidal/z4c_hyperboloidal_tasks.cpp"
+  ],
+  "changed_numerical_sources": [
+    "src/z4c_hyperboloidal/endpoint_state.hpp",
+    "src/z4c_hyperboloidal/surface_exchange.cpp",
+    "src/z4c_hyperboloidal/surface_exchange.hpp",
+    "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp"
+  ],
+  "dependency_closure_exact": true,
+  "changed_headers_private_only": true,
+  "same_timing_driver_control_candidate": true,
+  "control_executable_sha256": "6a6e51179ce68b2213f97a3cdf6aae5965a2be7eae05c6b5cb5eaddca0611b4e",
+  "normal_control_executable_sha256": "6c1a9532889306d3cc1511b5d53984f1706c2e2c511ba27935666ccb078a4f9a",
+  "outputs": {
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/build/surface_exchange.cpp.o": "ccb12b62ef2610b37a822d1b1d108dee886176b304b942f5f9cad3adb1688db2",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/build/z4c_hyperboloidal_rhs.cpp.o": "b859f97b106c401f2e0c8af0cacc1af83819d3a947511b55a9c4d92c45772eaa",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/build/z4c_hyperboloidal.cpp.o": "611539923085c0b969bdcdea01931a1f832d54f79dccf39790dd95e795d94a7b",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/build/diagnostics.cpp.o": "ebc562a02c34b36ce28e63377d61365952ee4bcde1bb6cfea1a92baa974b51e5",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/build/z4c_hyperboloidal_lifecycle.cpp.o": "77d9157fed3ffb914283ca619eb71ef1483390300d6f45450ce97f3b1eb03346",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/build/z4c_hyperboloidal_tasks.cpp.o": "6dafccd48e58a63ac0124e0890bb87c83bdc2ce923fdef76f3e59faf7bc48bec",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/build/athena-candidate-normal": "f3d12437e47b3aca52322d0495bb3aef5140a35e8e20bc5b1b4dbccf53f48cf1",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/build/athena-candidate-timed": "e1d9fdad0428bceee647f9bf2c03869464a9150af7532095c6cc557ed0c4a010"
+  },
+  "build_seconds": 306.4728995889891,
+  "build_exit_code": 0,
+  "input_count": 1825,
+  "private_source_file_count": 400,
+  "dependency_count": 225,
+  "runtime_inputs_unchanged": true,
+  "gpu_executed": false,
+  "scientific_qualification_pending": true,
+  "collection": {
+    "schema": "native-radial-fields-build-collection-v1",
+    "files": 21,
+    "archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/build-artifacts/run-artifacts.tar.gz",
+    "archive_bytes": 163074,
+    "sha256": "10db136ee03ac2b507fc4ec7249f4a05b36515712e6c15a58459eaa269bd36d0",
+    "provenance_sha256": "67416752d876b2b5a9b1e52614e069945b01c9082d7b5c547b2b8d2da4224872",
+    "executables": {
+      "candidate-normal": {
+        "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/build/athena-candidate-normal",
+        "sha256": "f3d12437e47b3aca52322d0495bb3aef5140a35e8e20bc5b1b4dbccf53f48cf1"
+      },
+      "candidate-timed": {
+        "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/build/athena-candidate-timed",
+        "sha256": "e1d9fdad0428bceee647f9bf2c03869464a9150af7532095c6cc557ed0c4a010"
+      }
+    },
+    "gpu_executed": false
+  },
+  "transfer": {
+    "schema": "verified-streamed-run-collection-v1",
+    "passed": true,
+    "files": 21,
+    "archive_sha256": "10db136ee03ac2b507fc4ec7249f4a05b36515712e6c15a58459eaa269bd36d0",
+    "archive_bytes": 163074,
+    "remote_archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/build-artifacts/run-artifacts.tar.gz",
+    "local_archive_created": false,
+    "all_file_sizes_and_hashes_verified": true,
+    "seconds": 0.5064129829406738
+  },
+  "files": {
+    "build-native/aurora-native-radial-fields-build-v1/package.json": {
+      "bytes": 1045,
+      "sha256": "e4914d4ae9181005c0842be200de5873255c0df1a67fd40612bb1fc9315e8f14"
+    },
+    "build-native/aurora-native-radial-fields-build-v1/transfer.json": {
+      "bytes": 491,
+      "sha256": "bdd104f59b54de45b8049a6cf04994ff00de9df03014cb73969bd6476e328380"
+    },
+    "build-native/aurora-native-radial-fields-build-v1/run-artifacts/files.json": {
+      "bytes": 3084,
+      "sha256": "95b6742cc4a0ad9732db38b3fea774179f8f5790a82bdd46cd6db847b339c2c8"
+    },
+    "build-native/aurora-native-radial-fields-build-v1/run-artifacts/build/provenance.json": {
+      "bytes": 579620,
+      "sha256": "67416752d876b2b5a9b1e52614e069945b01c9082d7b5c547b2b8d2da4224872"
+    },
+    "build-native/native-radial-batch-candidate-v1/package-files.json": {
+      "bytes": 1490,
+      "sha256": "570c877556b1c0be73e392790186468b1b75993f054e48275f918ba4f1efb0e5"
+    },
+    "build-native/native-radial-batch-candidate-v1/builder-adaptation.patch": {
+      "bytes": 23955,
+      "sha256": "69b5f782fda3cfb8a62e1efad997e04fe8cd1f6466e4e4b33db5c611d7109807"
+    },
+    "build-native/native-radial-batch-candidate-v1/build-session.log": {
+      "bytes": 2250,
+      "sha256": "bee2cb020690f3f03e98f2a576930fc06848e74e84cfd27b9807d0b73961ddc9"
+    }
+  }
+}

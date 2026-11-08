@@ -65,6 +65,11 @@ class SurfaceExchange {
       }
       return out;
     }
+    KOKKOS_INLINE_FUNCTION mapped::Jet EndpointResidualJet(int point,int field,
+        const DvceArray5D<Real> &residual) const {
+      return ResidualJet(point,field,residual,
+          field<=6||field==18||(field>=22&&field<25));
+    }
     KOKKOS_INLINE_FUNCTION mapped::Jet NormalCorrection(int point,
         const mapped::Point &map,int axis) const {
       const auto c=points(point); const int face=block_faces(c.m);
@@ -91,6 +96,17 @@ class SurfaceExchange {
     }
   };
 
+  // Explicit evolution-only view. BindKernel retains direct sampling for
+  // diagnostics and other consumers that have not refreshed this stage cache.
+  struct CachedKernel : Kernel {
+    DvceArray2D<mapped::Jet> radial_jets;
+    KOKKOS_INLINE_FUNCTION mapped::Jet EndpointResidualJet(int point,int field,
+        const DvceArray5D<Real> &) const {
+      if (!Fields::Independent(field))return mapped::Jet{};
+      return radial_jets(radial_index(point),fields.index[field]);
+    }
+  };
+
   SurfaceExchange(MeshBlockPack *pack,Z4cHyperboloidal *module);
   void Rebuild();
   TaskStatus Project();
@@ -103,6 +119,9 @@ class SurfaceExchange {
   TaskStatus ClearSend();
   TaskStatus ClearRecv();
   Kernel BindKernel() const;
+  // Requires current interpolated bulk ghosts and received scri residuals.
+  // Refresh on every Surface RHS use; the returned view is stage-local data.
+  CachedKernel PrepareRadialJets();
 
   const DvceArray1D<CartesianChartJets> &SampledJets() const {return sampled_;}
   const DvceArray4D<Real> &Correction() const {return correction_;}
@@ -122,6 +141,8 @@ class SurfaceExchange {
   DvceArray1D<Term> terms_;
   DvceArray1D<RadialTerm> radial_terms_;
   DvceArray1D<int> radial_index_;
+  DvceArray1D<int> radial_points_, radial_fields_;
+  DvceArray2D<mapped::Jet> radial_jets_;
   DvceArray1D<Real> face_spacing_, face_gap_;
   DvceArray1D<CartesianChartJets> sampled_;
   DvceArray4D<Real> correction_;

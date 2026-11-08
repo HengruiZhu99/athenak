@@ -1,6 +1,6 @@
 # Native N12 two-node performance parity
 
-The active objective is performance parity with the fastest validated applicable
+The original objective was performance parity with the fastest validated applicable
 previous implementation on two Aurora nodes / 24 GPU-tile ranks. The request in
 `/Users/hz0693/.codex/attachments/290805e0-7e5d-427b-9ea2-932e424784a8/pasted-text-1.txt`
 supersedes the earlier full-fresh-3551-before-timing restriction. No further long
@@ -8,6 +8,11 @@ N12 evolution or eight-node campaign is part of this goal. The earlier evidence
 and scientific gates remain intact; `requirements.json` describes that previous
 architecture/long-trajectory effort, while `two-node-performance-requirements.json`
 tracks this objective.
+
+The user cleared that goal after the radial experiment and subsequently requested
+a bounded comparison of boundary MeshBlock weights2 and3 against equal weights.
+That request explicitly relaxes the former equal-weight constraint for these
+isolated tests; it does not resume the broader parity campaign.
 
 ## Current retained implementation
 
@@ -38,15 +43,25 @@ poison, refinement, restart and diagnostic checks. Only this launch policy
 changes; arithmetic and task dependencies remain intact. See
 `evidence/native-bulk-group128-admission.json`.
 
+Field-parallel endpoint radial derivatives are now also qualified and retained:
+**0.379937 → 0.300340 s/step**, a **20.95% reduction**, with all six candidate
+windows faster than all six controls. The already-collected job9052427 passed
+independent observer/restart, poison, AMR and private-cache SMR reviews. The
+cache fixture explicitly checks NaN overwrite, stale finite values and refresh
+after plan rebuilding. See `evidence/native-radial-fields-admission.json`.
+
 Parity remains unfinished. Leading legacy v3/v6 references measured about
-0.1364 s/step in their earlier matched allocation; a new final same-allocation
-comparison is still required. The new profile identifies a slow surface-dependent
-bulk batch. The next single experiment ports legacy's field-batched endpoint
-radial derivatives, with per-stage refresh and unchanged term accumulation.
-Geometry, normal correction, surface Solve/Evaluate and workgroup tuning remain
-separate. Host/communication gaps need a specific dependency diagnosis before
-scheduling changes; a global causal critical rank and achieved occupancy have
-not been demonstrated.
+0.1364 s/step in their earlier matched allocation; a final same-allocation
+comparison would still be required. The post-radial profile records rank23 bulk
+RHS0.575609s, normal compatibility0.302462s and surface RHS0.200214s across four
+steps; radial preparation is only0.004238s. The surface-dependent bulk batch fell
+from0.542856s to0.218005s. These are representative-rank GPU durations, not an
+additive global elapsed-time budget or demonstrated critical path.
+
+The current user-requested experiment changes only boundary block cost metadata
+in private restart copies, using the identical admitted radial executable and
+native load balancer. Geometry, normal correction, surface Solve/Evaluate and
+workgroup policies remain fixed. No production checkpoint or source is modified.
 
 ## Starting evidence
 
@@ -461,12 +476,20 @@ bulk subsets together take0.358159 s. Source dependencies predict576 points in
 that subset, including432 radial reconstruction points and288 normal-lift
 points; group shapes corroborate but do not count active work-items themselves.
 
-This selects one next experiment: field-batch the existing endpoint radial
+This selected the field-batching experiment: batch the existing endpoint radial
 derivative loops as in validated legacy `ScriRadialDevice::Prepare`. The slow
 kernel also includes restoration, normal correction and the complete point RHS,
 so the radial contribution remains a hypothesis to test with complete-step
-timing. Preserve each field's term order, current policies and dependencies;
-refresh stage-local storage on every use and qualify poison/refinement paths.
+timing. Its subsequent repeated comparison measured0.379937 versus0.300340s/step.
+The exact source preserves each field's term order and refreshes stage-local
+storage before the existing surface-dependent batch. All four complete timing
+endpoints match the admitted31+8 state and diagnostics exactly. Independent
+qualification covers280 observer stages,98,779,824 poison state/history scalars,
+48,665,448 AMR scalars acrossfive snapshots/two regrids,32 joined restart stages,
+and3,942,432 exact private-cache components in the refined fixture. The latter
+exposes101,088 stale values and checks NaN overwrite and Rebuild refresh. Existing
+operator bounds and restart diagnostic gates remain unchanged. Full evidence is
+linked by `evidence/native-radial-fields-admission.json`.
 
 Inspect bulk kernel organization, geometry reuse, surface arithmetic,
 synchronization, communication/data layout and imbalance one at a time. Reorder
@@ -508,6 +531,8 @@ bounded two-node correctness checks when a proposed change requires them.
 | Field-parallel bulk KO | Four complete endpoints exact; CPU KO.1/0 oracles, GPU observer, poison, AMR and restart pass | Control 0.600897 s; candidate 0.549904 s; all six candidate windows faster | Accepted, 8.49% lower time; native infrastructure preserved |
 | Main bulk SYCL workgroup128 | Four complete endpoints exact; observer, poison, AMR, restart and profile-reference equivalence pass | Control 0.551614 s; candidate 0.380092 s; all six candidate windows faster | Accepted, 31.09% lower time; arithmetic and dependencies unchanged |
 | Post-KO/bulk128 selected-rank profile | Normal/profiled/reference complete31+8 and diagnostics exact | Rank23 surface-dependent bulk0.542856 s across16 launches; KO only0.003889 s | Select field-batched radial derivatives next; no occupancy or global critical-rank claim |
+| Field-parallel endpoint radial derivatives | Full timing endpoints exact; observer, poison, AMR, restart, refined private-cache stale/poison/Rebuild and profile equivalence pass | Control0.379937 s; candidate0.300340 s; all six candidate windows faster | Accepted,20.95% lower complete-step time; surface and geometry arithmetic unchanged |
+| Post-radial selected-rank profile | Normal/profiled/reference full31+8 and diagnostics exact | Rank23 main0.575609 s, normalSolve0.302462 s, surfaceRHS0.200214 s acrossfour steps | Surface organization remains costly; current user instead requests isolated weight2/3 comparison |
 
 Completion requires the committed native implementation to match or beat the
 fastest accepted previous N12 reference median on the same two nodes, with repeat

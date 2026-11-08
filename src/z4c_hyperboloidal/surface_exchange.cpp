@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdint>
 #include <limits>
 #include <map>
 #include <stdexcept>
@@ -132,6 +133,7 @@ void SurfaceExchange::Rebuild() {
   std::vector<Term> terms;
   std::vector<RadialTerm> radial_terms;
   std::vector<int> radial_index(p.npoints,-1);
+  std::vector<int> radial_points;
   std::vector<Real> spacing(p.nfaces),gap(p.nfaces);
   int failed=0;std::string reason;
   try {
@@ -180,6 +182,7 @@ void SurfaceExchange::Rebuild() {
     }
     row.end=radial_terms.size();radial_index[point]=radial_rows.size();
     radial_rows.push_back(row);
+    radial_points.push_back(point);
   }
   } catch (const std::exception &error) {
     failed=1;reason=error.what();
@@ -200,6 +203,8 @@ void SurfaceExchange::Rebuild() {
     term.ordinal=surface_exchange_.RequestOrdinals()[term.ordinal];
   Upload(rows_,rows);Upload(terms_,terms);Upload(radial_rows_,radial_rows);
   Upload(radial_terms_,radial_terms);Upload(radial_index_,radial_index);
+  Upload(radial_points_,radial_points);Upload(radial_fields_,fields);
+  Kokkos::realloc(radial_jets_,radial_rows.size(),fields.size());
   Upload(face_spacing_,spacing);Upload(face_gap_,gap);
   Kokkos::realloc(sampled_,p.nsurface_points);
   Kokkos::realloc(correction_,p.nfaces,3,n,n);
@@ -409,5 +414,23 @@ SurfaceExchange::Kernel SurfaceExchange::BindKernel() const {
   return {radial_index_,radial_rows_,radial_terms_,p.points.d_view,p.block_faces.d_view,
           correction_,face_spacing_,face_gap_,surface_exchange_.Values(),fields_,
           p.n[0],p.origin};
+}
+
+SurfaceExchange::CachedKernel SurfaceExchange::PrepareRadialJets() {
+  const auto kernel=BindKernel();
+  const auto points=radial_points_,fields=radial_fields_;
+  const auto residual=module_->residual;
+  const auto output=radial_jets_;
+  const int count=fields.extent_int(0);
+  using Index=std::int64_t;
+  // Field-fast writes match LayoutRight(rows,field slots). Every field keeps
+  // the direct row's anchor, term order and endpoint second-derivative mask.
+  Kokkos::parallel_for("hyperboloidal endpoint radial fields",
+    Kokkos::RangePolicy<Kokkos::IndexType<Index>>(0,Index(points.extent_int(0))*count),
+    KOKKOS_LAMBDA(Index task) {
+      const int row=static_cast<int>(task/count),slot=static_cast<int>(task%count);
+      output(row,slot)=kernel.EndpointResidualJet(points(row),fields(slot),residual);
+    });
+  return {kernel,radial_jets_};
 }
 }  // namespace z4c_hyperboloidal

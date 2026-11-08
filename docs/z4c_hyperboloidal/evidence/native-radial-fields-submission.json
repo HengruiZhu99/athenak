@@ -1,0 +1,323 @@
+{
+  "schema": "native-radial-fields-submission-evidence-v1",
+  "status": "completed_collected_independent_review_pending",
+  "job_id": "9052395",
+  "submission": {
+    "schema": "native-radial-fields-submission-v1",
+    "job_id": "9052395.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "nodes": 2,
+    "ranks": 24,
+    "state": "Q",
+    "utc": "2026-11-08T22:06:31.679995+00:00",
+    "fresh_queue_clear": true,
+    "held_jobs_untouched": true,
+    "preflight_sha256": "cb1e7ae6b7763dcbe50414ef3bda44dc3c124970c70c0b8b079e47f4e674157c",
+    "package_manifest_sha256": "86afeb2491b30873a6d06921544202699427646673358535a8904320a25b70f3",
+    "build_binding_sha256": "a1e1bac5c5774e9b0255ddf29c80d4975acba2d271437da623c4f71f12c86a42",
+    "candidate_build_provenance_sha256": "67416752d876b2b5a9b1e52614e069945b01c9082d7b5c547b2b8d2da4224872",
+    "candidate_source_manifest_sha256": "e6363347621c659a1486e539cb1ff64b8e1e1343915ac9033a8397c5ff1c6909",
+    "case_order": [
+      "timed-C0",
+      "timed-K0",
+      "timed-K1",
+      "timed-C1"
+    ],
+    "control": "accepted WG128",
+    "candidate": "field-batched endpoint radial derivatives",
+    "cache_capacity": 128,
+    "pbs_minutes": 30,
+    "outer_bound_seconds": 1680,
+    "per_solver_cap_seconds": 180,
+    "cycles": [
+      2486,
+      2556
+    ],
+    "warmup": 10,
+    "windows": 3,
+    "steps_per_window": 20,
+    "candidate_accepted": false,
+    "independent_science_and_timing_review_pending": true
+  },
+  "preflight": {
+    "schema": "native-radial-fields-preflight-v1",
+    "passed": true,
+    "package_manifest_sha256": "86afeb2491b30873a6d06921544202699427646673358535a8904320a25b70f3",
+    "candidate_build_provenance_sha256": "67416752d876b2b5a9b1e52614e069945b01c9082d7b5c547b2b8d2da4224872",
+    "candidate_source_manifest_sha256": "e6363347621c659a1486e539cb1ff64b8e1e1343915ac9033a8397c5ff1c6909",
+    "build_binding_sha256": "a1e1bac5c5774e9b0255ddf29c80d4975acba2d271437da623c4f71f12c86a42",
+    "source_and_object_guards_passed": true,
+    "candidate_guard_passed": true,
+    "actual_case_absent": true,
+    "gpu_executed": false,
+    "seconds": 231.88623369298875,
+    "utc": "2026-11-08T22:05:10.508581+00:00"
+  },
+  "readiness": {
+    "schema": "native-radial-fields-abba-readiness-v1",
+    "passed": true,
+    "files": 17,
+    "manifest_sha256": "86afeb2491b30873a6d06921544202699427646673358535a8904320a25b70f3",
+    "build_provenance_sha256": "67416752d876b2b5a9b1e52614e069945b01c9082d7b5c547b2b8d2da4224872",
+    "build_binding_sha256": "a1e1bac5c5774e9b0255ddf29c80d4975acba2d271437da623c4f71f12c86a42",
+    "candidate_manifest_sha256": "e6363347621c659a1486e539cb1ff64b8e1e1343915ac9033a8397c5ff1c6909",
+    "compiled_translation_units": [
+      "src/z4c_hyperboloidal/surface_exchange.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal.cpp",
+      "src/z4c_hyperboloidal/diagnostics.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_lifecycle.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_tasks.cpp"
+    ],
+    "same_timing_driver": "d68a0cf2dc8a61297eb83d34d8c6f9bb93c0ce0c05f2a4f566f3fd8ee428e696",
+    "completed_and_screen_ast_unchanged_after_names_only": true,
+    "control_executable_sha256": "6a6e51179ce68b2213f97a3cdf6aae5965a2be7eae05c6b5cb5eaddca0611b4e",
+    "candidate_executable_sha256": "e1d9fdad0428bceee647f9bf2c03869464a9150af7532095c6cc557ed0c4a010",
+    "nodes": 2,
+    "ranks": 24,
+    "cycles": [
+      2486,
+      2556
+    ],
+    "warmup": 10,
+    "windows": 3,
+    "steps_per_window": 20,
+    "per_case_cap_seconds": 180,
+    "outer_cap_seconds": 1680,
+    "pbs_minutes": 30,
+    "cache_capacity": 128,
+    "gpu_executed": false
+  },
+  "candidate_accepted": false,
+  "independent_science_and_timing_review_pending": true,
+  "build_evidence": "docs/z4c_hyperboloidal/evidence/native-radial-fields-build.json",
+  "scope": "One radial field-batching factor versus accepted WG128, common cache128 and unchanged70-cycle ABBA full-state/timing protocol. No profile or qualification extra runs.",
+  "files": {
+    "build-native/native-radial-fields-launch-preparation-v1/remote-records/remote-manifest.json": {
+      "bytes": 2388,
+      "sha256": "9dabe28c26019dc8669cb8fda1be9ca1de697da9e52bfc98f049920e8b36ef7e"
+    },
+    "build-native/native-radial-fields-launch-preparation-v1/remote-records/transfer.json": {
+      "bytes": 77,
+      "sha256": "9e319b54efbceff9208a24433ae94451f198ab9ce80b853243a832c4d420040e"
+    },
+    "build-native/native-radial-fields-launch-preparation-v1/remote-records/launch-staging.json": {
+      "bytes": 283,
+      "sha256": "ed8283693dbecccaeb38cee6f4fd0a28c50ddb2988f9260c9da3302cb935f3c7"
+    },
+    "build-native/native-radial-fields-launch-preparation-v1/remote-records/submission/qsub.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "build-native/native-radial-fields-launch-preparation-v1/remote-records/submission/queue-before.txt": {
+      "bytes": 565,
+      "sha256": "3d25bdbc0e3e858f2851b3751eb637a7291bb50575ccb5051acb9f14148969be"
+    },
+    "build-native/native-radial-fields-launch-preparation-v1/remote-records/submission/previous-terminal.txt": {
+      "bytes": 3545,
+      "sha256": "9dbc302426bb3d372e19ea28f53df03e0de38d838321148e9243f8f2b64fd847"
+    },
+    "build-native/native-radial-fields-launch-preparation-v1/remote-records/submission/qsub.stdout": {
+      "bytes": 56,
+      "sha256": "a64c448a9174bc667caf530ef1b5e5c4e7e38255dc09b83c08ff2cabcfddfd0e"
+    },
+    "build-native/native-radial-fields-launch-preparation-v1/remote-records/submission/attempt.json": {
+      "bytes": 206,
+      "sha256": "7f13a22e9ced51b740e675a73c5d4c74377f5943acbe6af02643d87c3bf8e340"
+    },
+    "build-native/native-radial-fields-launch-preparation-v1/remote-records/submission/submission.json": {
+      "bytes": 1239,
+      "sha256": "a3cd96bf9ae9c7c054d9643b07b0fbf60d5b461b8e73edd946da5e1ec77c5ca9"
+    },
+    "build-native/native-radial-fields-launch-preparation-v1/remote-records/submission/submitted-qstat.txt": {
+      "bytes": 2784,
+      "sha256": "c65b36d7a57ffb9c0add282612806d4bb51cee061e65d53f493c05c41be10bb7"
+    },
+    "build-native/native-radial-fields-launch-preparation-v1/remote-records/preflight/timing-verify-before.txt": {
+      "bytes": 96,
+      "sha256": "2fce95b383e78b648cb43f29235dc871675d41e3347d300eb716d6f298d3fbc0"
+    },
+    "build-native/native-radial-fields-launch-preparation-v1/remote-records/preflight/queue.txt": {
+      "bytes": 565,
+      "sha256": "3d25bdbc0e3e858f2851b3751eb637a7291bb50575ccb5051acb9f14148969be"
+    },
+    "build-native/native-radial-fields-launch-preparation-v1/remote-records/preflight/candidate-guard-before.json": {
+      "bytes": 297,
+      "sha256": "fcfdad9b62664dd32fde3ea72a72297c26e112d2aed6669afd146a5f17934192"
+    },
+    "build-native/native-radial-fields-launch-preparation-v1/remote-records/preflight/results.json": {
+      "bytes": 684,
+      "sha256": "cb1e7ae6b7763dcbe50414ef3bda44dc3c124970c70c0b8b079e47f4e674157c"
+    },
+    "build-native/native-radial-fields-launch-preparation-v1/remote-records/preflight/previous-terminal.txt": {
+      "bytes": 3545,
+      "sha256": "9dbc302426bb3d372e19ea28f53df03e0de38d838321148e9243f8f2b64fd847"
+    },
+    "build-native/native-radial-fields-launch-preparation-v1/remote-records/preflight/timed-observer-verify-before.txt": {
+      "bytes": 245,
+      "sha256": "250ba1628ad896cfa9359394e6fb8678ce8aa98171f9f1a7ae55f67cab48a3f3"
+    },
+    "build-native/native-radial-fields-launch-preparation-v1/remote-records/preflight/guard-before.json": {
+      "bytes": 1665,
+      "sha256": "28339ad976a1f52d41b4dae491ee092938d8b1344b8b1c591241e4a1028270b9"
+    },
+    "build-native/native-radial-fields-launch-preparation-v1/remote-records/preflight/launchers-before.txt": {
+      "bytes": 496,
+      "sha256": "2bd03418a3dddcac2424517b5ce119cb9bfd6c92b1f72ce6f3b53eeccf01ef29"
+    },
+    "build-native/native-radial-fields-launch-preparation-v1/remote-records/preflight/candidate-verify-before.txt": {
+      "bytes": 162,
+      "sha256": "93a290cb6461a38218269c24f63c829f9ab37b7ded85e53deda7abe3e2875c6e"
+    },
+    "build-native/native-radial-fields-launch-preparation-v1/files.json": {
+      "bytes": 2363,
+      "sha256": "86afeb2491b30873a6d06921544202699427646673358535a8904320a25b70f3"
+    },
+    "build-native/native-radial-fields-launch-preparation-v1/readiness.json": {
+      "bytes": 1437,
+      "sha256": "c440512dea819feb1d12242b491e785bc9e45a974ac717eb27b1a654a2e908cb"
+    },
+    "build-native/native-radial-fields-launch-preparation-v1/package/build-binding.json": {
+      "bytes": 3250,
+      "sha256": "a1e1bac5c5774e9b0255ddf29c80d4975acba2d271437da623c4f71f12c86a42"
+    },
+    "build-native/native-radial-fields-candidate-v1/gpu-build-launch-review.json": {
+      "bytes": 1459,
+      "sha256": "374a070ca9c2f35555fe83adf8c80cca273b3f037b8206e80a71a63e78fbe35d"
+    },
+    "build-native/native-radial-fields-launch-preparation-v1/last-status.json": {
+      "bytes": 946,
+      "sha256": "9f37662efecb4d9dbdeae8b50cb651e94f56c9a90520190531516b4e8f9a00ff"
+    },
+    "build-native/aurora-native-radial-fields-abba-v1/package.json": {
+      "bytes": 697,
+      "sha256": "592120d00ec6932c5fe121ffeba03f230d3b0d8f995f4ab25f9d905c078e5277"
+    },
+    "build-native/aurora-native-radial-fields-abba-v1/transfer.json": {
+      "bytes": 483,
+      "sha256": "a6c544d2b07d2257e750c76326bb8e6c2125f65ce9cb2f0a4b63973ccaace869"
+    },
+    "build-native/aurora-native-radial-fields-abba-v1/run-artifacts/files.json": {
+      "bytes": 66848,
+      "sha256": "3d2e233ef69b74a7205071b5b1ddf311ef4fc710fb1480e727903ff0ad6db5a5"
+    },
+    "build-native/aurora-native-radial-fields-abba-v1/run-artifacts/terminal-qstat.txt": {
+      "bytes": 3494,
+      "sha256": "a424d92cafaa3d61f9c53c6f7d0def51afc8c023b418689a786e39390403638f"
+    }
+  },
+  "terminal_observation": {
+    "utc": "2026-11-08T22:15:44.839657+00:00",
+    "job_id": "9052395",
+    "state": "F",
+    "exit_status": "0",
+    "walltime": "00:04:08",
+    "cases": {
+      "timed-C0": {
+        "exists": true,
+        "exit": "0",
+        "passed": true,
+        "windows": [
+          0.3801107889,
+          0.38004175619999997,
+          0.37995908754999996
+        ]
+      },
+      "timed-K0": {
+        "exists": true,
+        "exit": "0",
+        "passed": true,
+        "windows": [
+          0.30033874495,
+          0.3003296267,
+          0.3003876934
+        ]
+      },
+      "timed-K1": {
+        "exists": true,
+        "exit": "0",
+        "passed": true,
+        "windows": [
+          0.30034169645,
+          0.3003058607,
+          0.30035432715
+        ]
+      },
+      "timed-C1": {
+        "exists": true,
+        "exit": "0",
+        "passed": true,
+        "windows": [
+          0.37991525275,
+          0.3797843744,
+          0.3797091184
+        ]
+      }
+    },
+    "pipeline_complete": true,
+    "early_rejected": false
+  },
+  "collection": {
+    "schema": "native-radial-fields-collection-v1",
+    "job_id": "9052395",
+    "nodes": 2,
+    "ranks": 24,
+    "job_state": "F",
+    "exit_status": 0,
+    "cases": [
+      "timed-C0",
+      "timed-K0",
+      "timed-K1",
+      "timed-C1"
+    ],
+    "files": 346,
+    "archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-radial-fields-artifacts-9052395/run-artifacts.tar.gz",
+    "archive_bytes": 208893040,
+    "sha256": "343e9feb6952293f7e6dc25e28799ddce2690711aaeb1ef1d56ca24214a868e6",
+    "total_uncompressed_bytes": 798347734,
+    "created_utc": "2026-11-08T22:16:52.197113+00:00",
+    "state_and_diagnostic_checks_passed": true,
+    "independent_timing_decision_pending": true
+  },
+  "transfer": {
+    "schema": "verified-streamed-run-collection-v1",
+    "passed": true,
+    "files": 346,
+    "archive_sha256": "343e9feb6952293f7e6dc25e28799ddce2690711aaeb1ef1d56ca24214a868e6",
+    "archive_bytes": 208893040,
+    "remote_archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-radial-fields-artifacts-9052395/run-artifacts.tar.gz",
+    "local_archive_created": false,
+    "all_file_sizes_and_hashes_verified": true,
+    "seconds": 18.01680016517639
+  },
+  "screen": {
+    "raw_seconds_per_step": {
+      "timed-C0": [
+        0.3801107889,
+        0.38004175619999997,
+        0.37995908754999996
+      ],
+      "timed-K0": [
+        0.30033874495,
+        0.3003296267,
+        0.3003876934
+      ],
+      "timed-K1": [
+        0.30034169645,
+        0.3003058607,
+        0.30035432715
+      ],
+      "timed-C1": [
+        0.37991525275,
+        0.3797843744,
+        0.3797091184
+      ]
+    },
+    "pooled_control_median": 0.37993717014999995,
+    "pooled_candidate_median": 0.3003402207,
+    "time_reduction_percent": 20.950029558459605,
+    "speedup": 1.2650226109060057,
+    "full_range_separation": true,
+    "candidate_retained": false,
+    "qualification_pending": true
+  }
+}

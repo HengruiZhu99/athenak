@@ -1,0 +1,88 @@
+{
+  "schema": "native-radial-fields-admission-v1",
+  "candidate_accepted": true,
+  "correctness_passed": true,
+  "repeated_complete_step_improvement": true,
+  "parity_achieved": false,
+  "changed_numerical_sources": [
+    "src/z4c_hyperboloidal/surface_exchange.hpp",
+    "src/z4c_hyperboloidal/surface_exchange.cpp",
+    "src/z4c_hyperboloidal/endpoint_state.hpp",
+    "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp"
+  ],
+  "candidate_sources": {
+    "src/z4c_hyperboloidal/surface_exchange.hpp": {
+      "control_sha256": "de0a04b9d81a6c60ff6e49a21ae3ba700b621d5ff89636ff5bcd7ce0bb05c325",
+      "candidate_sha256": "53ddab2874b4d84d33e7a02a34b9d6253cf1c5c03be77f94eb440901fb11fdbd"
+    },
+    "src/z4c_hyperboloidal/surface_exchange.cpp": {
+      "control_sha256": "2b78bb42e819fc0178a9e13d2b21df29736a17abe762f85c6fb6485003517c34",
+      "candidate_sha256": "bc57f71c14827486ba8ff81ce0b43e4fe73c04e231fb55e24b783983ffa4d474"
+    },
+    "src/z4c_hyperboloidal/endpoint_state.hpp": {
+      "control_sha256": "c6a95d943a835ebd646bfa3cd9db24dbc870e3d277dfb075c8964fb4c2cf1df6",
+      "candidate_sha256": "6c9d098dcdc0fcfe4f3c18a8fddc7ae81d754dbadb631c9353b22ff46b21cd10"
+    },
+    "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp": {
+      "control_sha256": "70dd4866b718d126bdfd7e41a8cb461d01dda747849f7bd1a143aa99b6d8c1a8",
+      "candidate_sha256": "9df6cfdb7b75ad9426c5c88b73213b9564983043c3cbf897220748a7f59916b9"
+    }
+  },
+  "candidate_manifest_sha256": "e6363347621c659a1486e539cb1ff64b8e1e1343915ac9033a8397c5ff1c6909",
+  "candidate_patch_sha256": "1b2a858675685bc522d59e64a8326a21bc8b85fe72ac820c74c4e76fd77727dd",
+  "timing_job": "9052395",
+  "qualification_and_profile_job": "9052427",
+  "nodes": 2,
+  "ranks": 24,
+  "control_median_seconds": 0.37993717014999995,
+  "candidate_median_seconds": 0.3003402207,
+  "time_reduction_percent": 20.950029558459605,
+  "speedup": 1.2650226109060057,
+  "acceptance": "All six candidate windows beat all six controls; complete-state/chi, observer, poison, AMR, private radial-cache SMR poison/stale/rebuild, restart and profile-equivalence reviews pass with unchanged gates.",
+  "numerical_scope": "Field-parallel stage-local endpoint radial derivative preparation using the existing anchor, term order and second-derivative mask. Direct diagnostic sampling remains direct. Geometry, normal correction, Solve/Evaluate, bulk128 and KO policies, and task dependencies are unchanged.",
+  "architecture": "Driver, TaskLists, native tree, MeshBlock ownership, equal block weights, block-local surfaces, restart/output and refinement machinery preserved.",
+  "production_untouched": true,
+  "evidence": {
+    "timing": {
+      "path": "docs/z4c_hyperboloidal/evidence/native-radial-fields-abba-review.json",
+      "sha256": "12e7a535d7e5df5acf4d3ebb02e59b9bcdd0edf269b8531b890d5f6a26c17ca9"
+    },
+    "observer_restart": {
+      "path": "docs/z4c_hyperboloidal/evidence/native-radial-fields-observer-restart-review.json",
+      "sha256": "f1092d15b50a765e54dca7b4f86325fac2690451941eb33a53d73a865ce0c412"
+    },
+    "poison_amr_cache_smr": {
+      "path": "docs/z4c_hyperboloidal/evidence/native-radial-fields-poison-amr-cache-review.json",
+      "sha256": "3da175752748dd4b03c4bf2a721f39166461ac5125dcd58f0d2ca79e97687177"
+    },
+    "profile": {
+      "path": "docs/z4c_hyperboloidal/evidence/native-radial-fields-profile-review.json",
+      "sha256": "86af7fc566771e9f7b350aff4b16c3703f499bc0903fcd7b15c289670cfb2b2b"
+    },
+    "build": {
+      "path": "docs/z4c_hyperboloidal/evidence/native-radial-fields-build.json",
+      "sha256": "6edd034658d4e5b0a9c8f5142da549e26c18d8b2015cd47ffda0ad84cf527316"
+    },
+    "qualification_build": {
+      "path": "docs/z4c_hyperboloidal/evidence/native-radial-fields-qualification-build.json",
+      "sha256": "e61a51c41f70ccbb5e4cafde0ff1278a2936fa41bfb2a9e1cccc5d8b5887b0b7"
+    },
+    "timing_submission": {
+      "path": "docs/z4c_hyperboloidal/evidence/native-radial-fields-submission.json",
+      "sha256": "b8d9c0a5fefdc41bb763bfbe977603c6618a56629f3f204b372c20ef56c9cc32"
+    },
+    "qualification_submission": {
+      "path": "docs/z4c_hyperboloidal/evidence/native-radial-fields-qualification-submission.json",
+      "sha256": "2f67bc3c30786e2c7c9e8c2b2229df0a4fde1973e49fada630f12f50af98e11e"
+    }
+  },
+  "historical_evidence_note": "Earlier build/screen/submission records retain their original pending-review status. This later admission accepts their exact source after completion of the collected independent reviews; no additional solver runs were needed.",
+  "limits": [
+    "Only N12/two nodes/24 tiles; no wider scaling or long-time claim.",
+    "Restart uses the same rank layout; weight/repartition changes are separate experiments.",
+    "Qualification/profile durations are excluded from throughput acceptance.",
+    "Representative-rank profile does not prove the global causal critical rank or achieved occupancy.",
+    "Final same-allocation parity comparison with leading legacy v3/v6 remains unperformed."
+  ],
+  "next_user_authorized_experiment": "Compare outer-boundary MeshBlock cost weights1/2/3 using the identical radial binary and private checkpoint cost metadata. User explicitly relaxes the former equal-weight constraint for this bounded test; the original parity goal remains cleared."
+}

@@ -6,14 +6,15 @@
 #include "z4c_hyperboloidal/surface_exchange.hpp"
 
 namespace z4c_hyperboloidal {
+template<class SurfaceKernel>
 KOKKOS_INLINE_FUNCTION PointState EndpointState(int p,const BlockPointReader &reader,
     const mapped::Point &map,const Real inv_h[3],const CartesianChartJets &reference,
-    const HyperbolicShiftParameters<Real> &parameters,const SurfaceExchange::Kernel &surface) {
+    const HyperbolicShiftParameters<Real> &parameters,const SurfaceKernel &surface) {
   PointState out;
   Real beta[3]{};
   for (int a=0;a<3;++a) beta[a]=reader(22+a)+reference[22+a].f-map.x[a];
   for (int f=0;f<Fields::count;++f) if (Fields::Independent(f)) {
-    out.jets[f]=surface.ResidualJet(p,f,reader.state,f<=6||f==18||(f>=22&&f<25));
+    out.jets[f]=surface.EndpointResidualJet(p,f,reader.state);
     // Radial transport already belongs to the endpoint reconstruction. Only
     // the ordinary angular centered-to-biased corrections are added here.
     for (int a=1;a<3;++a) {

@@ -1,0 +1,120 @@
+{
+  "schema": "native-radial-fields-qualification-build-evidence-v1",
+  "status": "built_verified_gpu_not_run",
+  "plan_sha256": "40db9f42c1252a5d9a571f5c85e52ec8f92cc5ec8a711e89be38318fe16a161a",
+  "build_provenance_sha256": "215a1c38b4e34b35e43e287a89cef0ed257602b2aff30ddcebfd99e57c5bbb94",
+  "changed_numerical_sources": [
+    "src/z4c_hyperboloidal/endpoint_state.hpp",
+    "src/z4c_hyperboloidal/surface_exchange.cpp",
+    "src/z4c_hyperboloidal/surface_exchange.hpp",
+    "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp"
+  ],
+  "compiled_translation_units": [
+    "src/z4c_hyperboloidal/surface_exchange.cpp",
+    "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp",
+    "src/z4c_hyperboloidal/z4c_hyperboloidal.cpp",
+    "src/z4c_hyperboloidal/diagnostics.cpp",
+    "src/z4c_hyperboloidal/z4c_hyperboloidal_lifecycle.cpp",
+    "src/z4c_hyperboloidal/z4c_hyperboloidal_tasks.cpp"
+  ],
+  "dependency_closure_exact": true,
+  "coherent_class_header_and_lifecycle_preserved": true,
+  "executables": {
+    "observer70": {
+      "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/qualification-build/athena-radial-observer70",
+      "sha256": "f3ed073a603f923d8860f40d353e176fad1564bf6dc8e0258ee031a32fd90315"
+    },
+    "poison8": {
+      "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/qualification-build/athena-radial-poison8",
+      "sha256": "19fd0ae520d878f8c33342fd553e72edd828158669a085cfafe5256f1d8f58f3"
+    },
+    "restart": {
+      "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/qualification-build/athena-radial-restart",
+      "sha256": "c27ed3fb80ddb2e6d4443a024e9252e8d94170a18ac0c5296536c3a396bfbb3b"
+    },
+    "amr4": {
+      "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/qualification-build/athena-radial-amr4",
+      "sha256": "07530b9c2ac3f7ddf82ba15fc115c08de52d06f7727d3a8a0e09bc4ebb966098"
+    },
+    "cache-smr": {
+      "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/qualification-build/athena-radial-cache-smr",
+      "sha256": "7b7d7077f0ddb63e51d49594c2b7eb341620343557bbc4d60552bd4f70a495f4"
+    }
+  },
+  "build_exit_code": 0,
+  "build_seconds": 157.40956454793923,
+  "input_count": 5853,
+  "private_source_count": 401,
+  "dependency_count": 228,
+  "runtime_inputs_unchanged": true,
+  "gpu_executed": false,
+  "qualification_pending": true,
+  "collection": {
+    "schema": "native-radial-fields-qualification-build-collection-v1",
+    "files": 16,
+    "archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/qualification-build-artifacts/run-artifacts.tar.gz",
+    "archive_bytes": 368856,
+    "sha256": "4cbddc991fd8499e32d20b7c9cc7e9e67f32f5f8047806586b941b5d87f1e4ce",
+    "provenance_sha256": "215a1c38b4e34b35e43e287a89cef0ed257602b2aff30ddcebfd99e57c5bbb94",
+    "executables": {
+      "observer70": {
+        "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/qualification-build/athena-radial-observer70",
+        "sha256": "f3ed073a603f923d8860f40d353e176fad1564bf6dc8e0258ee031a32fd90315"
+      },
+      "poison8": {
+        "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/qualification-build/athena-radial-poison8",
+        "sha256": "19fd0ae520d878f8c33342fd553e72edd828158669a085cfafe5256f1d8f58f3"
+      },
+      "restart": {
+        "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/qualification-build/athena-radial-restart",
+        "sha256": "c27ed3fb80ddb2e6d4443a024e9252e8d94170a18ac0c5296536c3a396bfbb3b"
+      },
+      "amr4": {
+        "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/qualification-build/athena-radial-amr4",
+        "sha256": "07530b9c2ac3f7ddf82ba15fc115c08de52d06f7727d3a8a0e09bc4ebb966098"
+      },
+      "cache-smr": {
+        "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/qualification-build/athena-radial-cache-smr",
+        "sha256": "7b7d7077f0ddb63e51d49594c2b7eb341620343557bbc4d60552bd4f70a495f4"
+      }
+    },
+    "gpu_executed": false
+  },
+  "transfer": {
+    "schema": "verified-streamed-run-collection-v1",
+    "passed": true,
+    "files": 16,
+    "archive_sha256": "4cbddc991fd8499e32d20b7c9cc7e9e67f32f5f8047806586b941b5d87f1e4ce",
+    "archive_bytes": 368856,
+    "remote_archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/qualification-build-artifacts/run-artifacts.tar.gz",
+    "local_archive_created": false,
+    "all_file_sizes_and_hashes_verified": true,
+    "seconds": 0.5622892379760742
+  },
+  "files": {
+    "build-native/aurora-native-radial-fields-qualification-build-v1/run-artifacts/qualification-build/provenance.json": {
+      "bytes": 1644215,
+      "sha256": "215a1c38b4e34b35e43e287a89cef0ed257602b2aff30ddcebfd99e57c5bbb94"
+    },
+    "build-native/aurora-native-radial-fields-qualification-build-v1/package.json": {
+      "bytes": 1931,
+      "sha256": "e80c4dcfec476c69d1dd24506605d45c2807062eb5f5c6bdf40a7184139dbc88"
+    },
+    "build-native/aurora-native-radial-fields-qualification-build-v1/transfer.json": {
+      "bytes": 505,
+      "sha256": "3269d81194a4dc7bddda071fd3a58fbe408f4888d45c068478ba42916ebc9997"
+    },
+    "build-native/aurora-native-radial-fields-qualification-build-v1/run-artifacts/files.json": {
+      "bytes": 2505,
+      "sha256": "4ce129f81207bd17ec23524cc13b1eb26c64c504cc940f4a147f662c2a5e6058"
+    },
+    "build-native/native-radial-fields-qualification-build-v1/files.json": {
+      "bytes": 545,
+      "sha256": "504bfd91eb07203f11506aeb01dee02237c4dc0bc9390fa518af094ecd5e7b95"
+    },
+    "build-native/native-radial-fields-qualification-build-v1/build-session.log": {
+      "bytes": 3147,
+      "sha256": "a2f7dc646f481d3adcd207881da9fddb28e44bc3640f9e8af79b158d99096b78"
+    }
+  }
+}

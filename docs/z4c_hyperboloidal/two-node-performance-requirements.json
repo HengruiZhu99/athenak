@@ -2,13 +2,13 @@
   "objective": "/goal Bring the native hyperboloidal N12 implementation to at least the performance of the previous implementation on two Aurora nodes, while preserving AthenaK\u2019s native infrastructure and following the efficient execution patterns of Cartesian Z4c.\n\nWork in the isolated hyperboloidal_cleaned_up branch. Keep production untouched. Inspect the current worktree, existing results, and pending changes before proceeding; preserve uncommitted work and existing scientific evidence.\n\nScope and success criterion\n- Target two nodes / 24 GPU-tile ranks.\n- Establish a matched N12 baseline for the previous implementation on those same resources. The historical 48-rank N12 timing and previous N24 timings are context, not acceptance targets.\n- Use the fastest previously validated applicable implementation as the reference, preserving the same N12 physics and numerical workload.\n- Success requires the native implementation\u2019s median complete-RK4-step time to be no worse than the reference, with repeated measurements sufficient to distinguish improvement from noise.\n- Do not expand this goal into eight-node optimization, a new resolution campaign, or further long evolution.\n- Use existing validated saved states and short checkpoint continuations. Completion of the remaining fresh trajectory through 5 M is not a prerequisite for these bounded performance experiments.\n\nPreserve the architecture\n- Retain the original AthenaK Driver, TaskList machinery, MeshBlock/MeshBlockPack ownership, native tree, load balancing, restart/output infrastructure, and SMR/AMR support.\n- Keep equal block weights.\n- Keep surface state and treatment local to the ranks owning the outer MeshBlocks.\n- Study the actual Cartesian Z4c implementation and reuse its useful kernel decomposition, data-access, boundary-exchange, and scheduling patterns.\n- Do not introduce a replacement driver, parallel mesh hierarchy, custom scheduler, or globally replicated evolution state.\n- Reuse existing infrastructure where its indexing and mathematical contracts fit; justify necessary mapped-grid extensions.\n\nEstablish trustworthy measurements first\n1. Verify that the previous and native runs start from equivalent physical states, with restart conversion/mapping checked where formats differ.\n2. Match compiler and floating-point policy, precision, GPU binding, grid, timestep, equations, KO=0.1, chi floor=1e-10, constant shift-speed policy, and boundary conditions.\n3. Separate the stage observer\u2019s overhead from the native solver\u2019s cost using matched bounded controls.\n4. Measure complete RK4 steps with detailed profiling disabled, warmup, repeated timing windows, and maximum-rank elapsed time. Report startup and diagnostic/I/O costs separately.\n5. Profile representative bulk-heavy and surface-owning ranks to identify the actual critical path, GPU utilization, memory/register pressure, synchronization, and MPI progress. Do not infer the critical path by summing unrelated phase maxima.\n\nExplore the following issues one at a time, reordering only when measurements justify it:\n\n1. Bulk GPU kernel organization\n   - Investigate the monolithic per-point reconstruction/RHS/KO kernel.\n   - Compare with Cartesian Z4c\u2019s separation of geometry, connection, gauge, and KO work.\n   - Test field-parallel KO, endpoint radial reconstruction batching, and workgroup sizing as separate changes.\n   - Check whether reduced per-thread live state actually improves complete-step time.\n   - Avoid indiscriminate kernel splitting, large intermediate caches, or forced inlining without evidence.\n\n2. Repeated geometry and overly general arithmetic\n   - Reuse identical evolved-metric geometry within a point/stage evaluation.\n   - Introduce value-only operations where projection or closure does not require full derivative jets.\n   - Distinguish static coordinate geometry from evolved geometry; do not cache evolving quantities across stages.\n   - Preserve the chi-guard and Penrose-geometry dependencies.\n\n3. Surface execution\n   - Evaluate batching the four independent normal-compatibility cases, followed by a separate small elimination kernel.\n   - Precompute geometry-dependent angular interpolation weights and reuse them across components.\n   - Consider a minimal compatibility-defect evaluator or analytic matrix only after establishing a measured baseline.\n   - Retain the earlier analytic-matrix slowdown as evidence; do not assume fewer operations will be faster.\n   - Preserve every surface, angular, radial-reconstruction, and normal-correction dependency.\n\n4. Synchronization and task overlap\n   - Measure host-returning reductions, observer collectives, packing fences, and MPI progress.\n   - Consolidate checks at safe dependency boundaries and remove closure/projection passes only when their redundancy is proved.\n   - Preserve required validity checks and prevent invalid intermediate states from being consumed.\n   - Demonstrate actual communication/computation overlap rather than assuming nonblocking MPI provides it.\n\n5. Communication and data layout\n   - Investigate duplicate physical/residual donor exchange and reconstruction of residuals before interpolation.\n   - Examine packing order, memory coalescing, reference/jet layout, and unnecessary data movement.\n   - Reuse native Bvals for compatible routes only when correctness and measured cost support it.\n   - Do not assume full boundary slabs, fused donor loops, or fewer kernels are automatically faster.\n\n6. Remaining imbalance\n   - Measure which ranks determine elapsed time.\n   - Preserve equal block weights and block-local surfaces.\n   - Consider block subdivision or workload-layout changes only if earlier fixes are insufficient, preserving the same physical grid and numerical workload.\n\nExperiment and correctness discipline\n- Change one substantive factor at a time.\n- Compare each candidate against both the unchanged native control and the previous-implementation baseline.\n- Prefer bitwise agreement when arithmetic order is preserved. Otherwise use existing justified tolerances established before examining candidate results; never loosen gates to obtain a pass.\n- Validate complete bulk and surface states, chi records, boundary compatibility, constraints, horizon diagnostics, and restart continuity as applicable.\n- Use poisoned-workspace checks when changing dependencies or intermediate storage.\n- Exercise relevant SMR/AMR cases when a change affects refined operators, communication, storage, or plan rebuilding.\n- Do not omit necessary RHS work, disable physical terms, enlarge dt, reduce precision, change resolution, or count RK stages as complete updates.\n- Use make -j64. Serialize Aurora allocations, use only the two nodes required by this goal, check the queue before submission, and leave unrelated campaigns untouched.\n\nCommit policy\n- Commit an optimization only after correctness passes and repeated complete-step measurements confirm a real improvement.\n- Make each successful optimization a separate, reviewable commit.\n- Record the concrete change, measured before/after performance, numerical validation, and relevant limitations.\n- Reject or revert slower and inconclusive candidates while retaining concise experimental evidence.\n- Keep necessary measurement infrastructure separate from optimization commits and label it accurately.\n- Do not turn source cleanup or speculative redesign into claimed performance progress.\n\nDeliverables\n- A reproducible matched two-node N12 baseline and final comparison.\n- An evidence-based account of the dominant bottlenecks.\n- Separate validated commits for retained improvements.\n- A concise table of accepted and rejected experiments.\n- Confirmation that the final committed implementation preserves AthenaK\u2019s architecture and required numerical behavior.\n- An honest statement of whether two-node performance parity was achieved.\n\nProceed autonomously within this scope. Do not request approval for routine isolated experiments or validated commits. If performance parity is not achieved, keep pursuing the measured bottleneck; do not redefine success around infrastructure work or partial speedups.",
   "objective_source": "/Users/hz0693/.codex/attachments/290805e0-7e5d-427b-9ea2-932e424784a8/pasted-text-1.txt",
   "objective_source_sha256": "ff38c8e99fcab66dcc246efb8592e706fbfb70b9a9cec3c12b1e35d773d5a252",
-  "goal_status": "active",
+  "goal_status": "cleared",
   "completion_proven": false,
   "requirements": [
     {
       "id": "isolation_resources",
       "status": "pending",
-      "required_evidence": "Use existing isolated branch; production untouched; serialized2nodes24ranks, make-j64 and fresh queue checks."
+      "required_evidence": "Use existing isolated branch; production untouched; serialized2nodes24ranks, make-j64 and fresh queue checks. Current user explicitly authorizes weights2/3 trials in private saved-state copies."
     },
     {
       "id": "native_infrastructure",
@@ -50,9 +50,10 @@
         "evidence/native-mapped-poll-abba-review.json",
         "evidence/native-ipc-cache-abba-review.json",
         "evidence/legacy-native-two-node-matched-review.json",
-        "evidence/native-bulk-group128-admission.json"
+        "evidence/native-bulk-group128-admission.json",
+        "evidence/native-radial-fields-admission.json"
       ],
-      "remaining": "Current retained native workgroup128 median0.380092s in repeated nativeABBA. Final optimized same-allocation repeated comparison with leading legacy v3/v6 remains required."
+      "remaining": "Current admitted radial median0.300340s; final same-allocation leading-legacy comparison remains required for any future parity acceptance."
     },
     {
       "id": "critical_path",
@@ -64,9 +65,10 @@
         "evidence/native-ipc-cache-abba-failure-review.json",
         "evidence/native-ipc-cache-abba-review.json",
         "evidence/native-n12-profile-cache128-findings.json",
-        "evidence/native-bulk-group128-profile-review.json"
+        "evidence/native-bulk-group128-profile-review.json",
+        "evidence/native-radial-fields-profile-review.json"
       ],
-      "remaining": "New profile separates KO/main/validity. Surface-dependent bulk accounts0.542856s over16 launches on rank23, exceeding its normalSolve0.302570s or surfaceRHS0.199277s. Test field-batched radial derivatives next; radial contribution, global causal critical rank and achieved occupancy remain unproved."
+      "remaining": "Post-radial rank23 main0.575609s, normalSolve0.302462s, surfaceRHS0.200214s overfour profiledsteps; radial prepass0.004238s. Global causal critical rank and occupancy remain unproved."
     },
     {
       "id": "bulk_organization",
@@ -76,9 +78,10 @@
         "evidence/native-n12-profile-cache128-findings.json",
         "evidence/native-field-ko-abba-review.json",
         "evidence/native-field-ko-admission.json",
-        "evidence/native-bulk-group128-admission.json"
+        "evidence/native-bulk-group128-admission.json",
+        "evidence/native-radial-fields-admission.json"
       ],
-      "remaining": "Field-parallel KO and main bulk workgroup128 are separately qualified and retained (8.49% and31.09% complete-step reductions in respective controlled comparisons). Next single experiment: field-batched endpoint radial derivatives with existing arithmetic/dependencies; geometry and surface changes remain separate."
+      "remaining": "KO, main bulk128 and field-parallel radial derivatives independently accepted (8.49%,31.09%,20.95% controlled reductions). Geometry and normal-case batching remain untested in native."
     },
     {
       "id": "geometry_reuse",
@@ -123,9 +126,10 @@
         "evidence/native-ipc-cache-poison-amr-review.json",
         "evidence/legacy-native-two-node-matched-review.json",
         "evidence/native-field-ko-admission.json",
-        "evidence/native-bulk-group128-admission.json"
+        "evidence/native-bulk-group128-admission.json",
+        "evidence/native-radial-fields-admission.json"
       ],
-      "remaining": "Retained cache128, KO and bulk128 pass applicable complete-state/chi, observer compatibility, constraints/horizon, poison, coherent AMR and same-layout restart gates. Future cache/storage changes require explicit stale/poison coverage and refresh/rebuild checks without loosened tolerances."
+      "remaining": "All admitted radial source gates pass, including actual private-cache stale/poison/rebuild tests. New cost/repartition trials require separate complete-state and existing redistribution diagnostic checks."
     },
     {
       "id": "experiment_commits",
@@ -136,9 +140,10 @@
         "evidence/native-ipc-cache-abba-review.json",
         "evidence/native-field-ko-abba-review.json",
         "evidence/native-field-ko-admission.json",
-        "evidence/native-bulk-group128-admission.json"
+        "evidence/native-bulk-group128-admission.json",
+        "evidence/native-radial-fields-admission.json"
       ],
-      "remaining": "Cache128, field-parallel KO and main bulk workgroup128 are separate qualified optimizations. Exact WG128 procedures are archived and hash-bound; no new measurement framework. Retain and push only confirmed future improvements."
+      "remaining": "Retain and push only confirmed improvements; radial batching is independently accepted. Weight trials change only private restart cost metadata initially."
     },
     {
       "id": "parity_and_deliverables",
@@ -146,12 +151,14 @@
       "required_evidence": "Final committed native median no worse than fastest accepted old reference with sufficient repeatability; reproducible evidence, profiles, experiment table and architecture confirmation.",
       "evidence": [
         "evidence/legacy-native-two-node-matched-review.json",
-        "evidence/native-bulk-group128-admission.json"
+        "evidence/native-bulk-group128-admission.json",
+        "evidence/native-radial-fields-admission.json"
       ],
-      "remaining": "Parity not achieved: current bulk128 median0.380092s in nativeABBA versus leading legacy~0.1364s in an earlier matched allocation. Continue one measured legacy port at a time; final same-allocation comparison remains required."
+      "remaining": "Parity not reached: admitted native0.300340s vs leading legacy~0.1364s in an earlier allocation. Original goal cleared by user; current task is only requested weight2/3 experiment."
     }
   ],
-  "next_milestone": "Port only validated legacy field-batched radial derivative accumulation for the measured slow surface-dependent bulk subset. Refresh stage-local data at the existing dependency boundary; preserve term arithmetic, normal correction, geometry, group sizes and AthenaK infrastructure. Screen repeated unprofiled MAX-rank complete RK4 ABBA against accepted bulk128; qualify all affected storage/restart/refinement paths before committing.",
+  "next_milestone": "Run serialized two-node/24-rank weight1/2/3 comparisons with repeated unprofiled maximum-rank complete RK4 windows, complete31+8 payload and existing redistribution diagnostic gates. Preserve production and old evidence.",
   "pause_reason": "User requested pause, summary, commit and push on 2026-11-08 after substantial improvement. Finished only already-running job9052165; no further experiment or qualification allocation.",
-  "resume_reason": "User explicitly resumed on 2026-11-08: full KO qualification first, then validated legacy optimizations one at a time; commit and push only confirmed correctness and complete-step improvements."
+  "resume_reason": "User explicitly resumed on 2026-11-08: full KO qualification first, then validated legacy optimizations one at a time; commit and push only confirmed correctness and complete-step improvements.",
+  "current_request": "Bounded user-requested comparison of outer-boundary block weights2 and3 against1, keeping the admitted radial kernels fixed. This does not resume the cleared parity goal."
 }

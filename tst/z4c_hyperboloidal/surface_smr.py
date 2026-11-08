@@ -50,6 +50,18 @@ volume = re.search(r'nodal_volume comparisons=(\d+) internal_radial_starts=(\d+)
 if volume:
     status.update(nodal_volume_comparisons=int(volume[1]),
                   internal_radial_starts=int(volume[2]), analytic_jacobian=volume[3])
+cache = re.search(r'radial_cache comparisons=(\d+) stale_changed=(\d+) '
+                  r'poison_refresh=passed rebuild_refresh=passed bitwise=passed', text)
+if cache:
+    status['radial_cache'] = {'comparisons': int(cache[1]), 'stale_changed': int(cache[2]),
+                             'poison_refresh': True, 'rebuild_refresh': True, 'bitwise': True}
+layout=re.search(r'cache_layout rows=(\d+) fields=(\d+) jet_bytes=(\d+) bytes=(\d+)',text)
+if layout:
+    status['cache_layout']=dict(zip(('rows','fields','jet_bytes','bytes'),map(int,layout.groups())))
+cache_valid=bool(cache and (int(cache[1]),int(cache[2]))==(3942432,101088) and layout and tuple(map(int,layout.groups()))==(3888,26,104,3888*26*104))
+status['passed']=status['passed'] and cache_valid
 (output/'results.json').write_text(json.dumps(status, indent=2)+'\n')
 print(text)
 result.check_returncode()
+
+assert cache_valid, 'missing/incomplete radial-cache poison/allocation coverage'

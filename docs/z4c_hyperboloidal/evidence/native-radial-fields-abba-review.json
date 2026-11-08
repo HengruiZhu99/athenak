@@ -1,0 +1,232 @@
+{
+  "passed": true,
+  "candidate_status": "screened_pending_gpu_qualification",
+  "candidate_retained": false,
+  "complete_gpu_qualification": false,
+  "job_id": "9052395",
+  "terminal": "F/0",
+  "candidate_provenance_sha256": "67416752d876b2b5a9b1e52614e069945b01c9082d7b5c547b2b8d2da4224872",
+  "candidate_manifest_sha256": "e6363347621c659a1486e539cb1ff64b8e1e1343915ac9033a8397c5ff1c6909",
+  "candidate_sources": {
+    "src/z4c_hyperboloidal/surface_exchange.hpp": {
+      "control_sha256": "de0a04b9d81a6c60ff6e49a21ae3ba700b621d5ff89636ff5bcd7ce0bb05c325",
+      "candidate_sha256": "53ddab2874b4d84d33e7a02a34b9d6253cf1c5c03be77f94eb440901fb11fdbd"
+    },
+    "src/z4c_hyperboloidal/surface_exchange.cpp": {
+      "control_sha256": "2b78bb42e819fc0178a9e13d2b21df29736a17abe762f85c6fb6485003517c34",
+      "candidate_sha256": "bc57f71c14827486ba8ff81ce0b43e4fe73c04e231fb55e24b783983ffa4d474"
+    },
+    "src/z4c_hyperboloidal/endpoint_state.hpp": {
+      "control_sha256": "c6a95d943a835ebd646bfa3cd9db24dbc870e3d277dfb075c8964fb4c2cf1df6",
+      "candidate_sha256": "6c9d098dcdc0fcfe4f3c18a8fddc7ae81d754dbadb631c9353b22ff46b21cd10"
+    },
+    "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp": {
+      "control_sha256": "70dd4866b718d126bdfd7e41a8cb461d01dda747849f7bd1a143aa99b6d8c1a8",
+      "candidate_sha256": "9df6cfdb7b75ad9426c5c88b73213b9564983043c3cbf897220748a7f59916b9"
+    }
+  },
+  "candidate_patch_sha256": "1b2a858675685bc522d59e64a8326a21bc8b85fe72ac820c74c4e76fd77727dd",
+  "accepted_WG128_parent_proof_sha256": "d75a9862644a61d732c4d288f299f63e67923170c68c75c45747a71d3ce6997b",
+  "control_executable_sha256": "6a6e51179ce68b2213f97a3cdf6aae5965a2be7eae05c6b5cb5eaddca0611b4e",
+  "candidate_executable_sha256": "e1d9fdad0428bceee647f9bf2c03869464a9150af7532095c6cc557ed0c4a010",
+  "same_timing_driver_sha256": "d68a0cf2dc8a61297eb83d34d8c6f9bb93c0ce0c05f2a4f566f3fd8ee428e696",
+  "fixed_cache_environment": {
+    "MPIR_CVAR_CH4_IPC_GPU_HANDLE_CACHE": "specialized",
+    "MPIR_CVAR_CH4_IPC_GPU_CACHE_SIZE": "limited",
+    "MPIR_CVAR_CH4_IPC_GPU_MAX_CACHE_ENTRIES": "128",
+    "MPICH_CH4_IPC_GPU_HANDLE_CACHE": null,
+    "MPIR_PARAM_CH4_IPC_GPU_HANDLE_CACHE": null,
+    "MPICH_CH4_IPC_GPU_CACHE_SIZE": null,
+    "MPIR_PARAM_CH4_IPC_GPU_CACHE_SIZE": null,
+    "MPICH_CH4_IPC_GPU_MAX_CACHE_ENTRIES": null,
+    "MPIR_PARAM_CH4_IPC_GPU_MAX_CACHE_ENTRIES": null
+  },
+  "performance_screen": {
+    "pooled_control_median_seconds": 0.37993717014999995,
+    "pooled_candidate_median_seconds": 0.3003402207,
+    "speedup": 1.2650226109060057,
+    "time_reduction_percent": 20.950029558459605,
+    "control_range": [
+      0.3797091184,
+      0.3801107889
+    ],
+    "candidate_range": [
+      0.3003058607,
+      0.3003876934
+    ],
+    "full_range_separation": true,
+    "both_candidate_repeat_medians_faster_than_both_control_repeat_medians": true,
+    "screening_improvement": true,
+    "qualified_for_retention": false
+  },
+  "limits": [
+    "Endpoints include all24,704,784 padded31+8 finite scalars; initialized metadata/parameters and all three ordinary diagnostics exact. Nine unused coarse-header integers excluded by existing comparison.",
+    "No observer/stage/poison/refinement/additional restart qualification claim from unprofiled screening; those gates remain pending.",
+    "Rank arrays identify ranks attaining windowMPI_MAX, not causal critical ranks.",
+    "Cache128 propagation is checked at24 wrapper-rank probes per case; no in-solver MPI CVAR readback.",
+    "Startup/warmup/execute/finalize are retained separately; only repeated complete-step windows supply screening throughput."
+  ],
+  "schema": "native-radial-fields-abba-review-v1",
+  "nodes": 2,
+  "ranks": 24,
+  "collection": {
+    "collection_path": "build-native/aurora-native-radial-fields-abba-v1",
+    "package_sha256": "592120d00ec6932c5fe121ffeba03f230d3b0d8f995f4ab25f9d905c078e5277",
+    "transfer_sha256": "a6c544d2b07d2257e750c76326bb8e6c2125f65ce9cb2f0a4b63973ccaace869",
+    "files_sha256": "3d2e233ef69b74a7205071b5b1ddf311ef4fc710fb1480e727903ff0ad6db5a5",
+    "archive_sha256": "343e9feb6952293f7e6dc25e28799ddce2690711aaeb1ef1d56ca24214a868e6",
+    "verified_collection_files": 346
+  },
+  "raw_review": {
+    "path": "build-native/radial-fields-abba-independent-review-v1/results.json",
+    "sha256": "d75811e1cc309aee8765b9e72462108d2ecaa0f79e0fded433e11ac000252f0f"
+  },
+  "local_CPU_validation": {
+    "path": "build-native/native-radial-cache-local-validation-v1/results.json",
+    "sha256": "b2d2a62ce31154459d7ab3ec12eabb0f69b09b10d3096654b6658cffa1c5b054"
+  },
+  "cases": {
+    "timed-C0": {
+      "passed": true,
+      "checkpoint_sha256": "c4410a676ad09e606caf508c8d84105e8e70487439fad283a91cc8097a39a710",
+      "parameters_and_initialized_mesh_metadata_equal": true,
+      "ordinary_three_diagnostics_bitwise_equal": true,
+      "all169_horizon_coefficients_present_finite": true,
+      "seconds_per_step": [
+        0.3801107889,
+        0.38004175619999997,
+        0.37995908754999996
+      ],
+      "median_seconds_per_step": 0.38004175619999997,
+      "min_seconds_per_step": 0.37995908754999996,
+      "max_seconds_per_step": 0.3801107889,
+      "max_rank_ids": [
+        [
+          8
+        ],
+        [
+          16
+        ],
+        [
+          21
+        ]
+      ],
+      "max_rank_spread_seconds": 8.923999999410626e-06,
+      "separated_seconds": {
+        "startup_max_seconds": 4.316813725,
+        "warmup_max_seconds": 4.11430877,
+        "execute_max_seconds": 26.916657681,
+        "finalize_max_seconds": 5.838020346
+      }
+    },
+    "timed-K0": {
+      "passed": true,
+      "checkpoint_sha256": "c4410a676ad09e606caf508c8d84105e8e70487439fad283a91cc8097a39a710",
+      "parameters_and_initialized_mesh_metadata_equal": true,
+      "ordinary_three_diagnostics_bitwise_equal": true,
+      "all169_horizon_coefficients_present_finite": true,
+      "seconds_per_step": [
+        0.30033874495,
+        0.3003296267,
+        0.3003876934
+      ],
+      "median_seconds_per_step": 0.30033874495,
+      "min_seconds_per_step": 0.3003296267,
+      "max_seconds_per_step": 0.3003876934,
+      "max_rank_ids": [
+        [
+          12
+        ],
+        [
+          17
+        ],
+        [
+          16
+        ]
+      ],
+      "max_rank_spread_seconds": 7.188000000546424e-06,
+      "separated_seconds": {
+        "startup_max_seconds": 4.153657456,
+        "warmup_max_seconds": 3.222855613,
+        "execute_max_seconds": 21.244094507,
+        "finalize_max_seconds": 5.709656991
+      }
+    },
+    "timed-K1": {
+      "passed": true,
+      "checkpoint_sha256": "c4410a676ad09e606caf508c8d84105e8e70487439fad283a91cc8097a39a710",
+      "parameters_and_initialized_mesh_metadata_equal": true,
+      "ordinary_three_diagnostics_bitwise_equal": true,
+      "all169_horizon_coefficients_present_finite": true,
+      "seconds_per_step": [
+        0.30034169645,
+        0.3003058607,
+        0.30035432715
+      ],
+      "median_seconds_per_step": 0.30034169645,
+      "min_seconds_per_step": 0.3003058607,
+      "max_seconds_per_step": 0.30035432715,
+      "max_rank_ids": [
+        [
+          5
+        ],
+        [
+          15
+        ],
+        [
+          14
+        ]
+      ],
+      "max_rank_spread_seconds": 4.1560000001439334e-06,
+      "separated_seconds": {
+        "startup_max_seconds": 3.745898661,
+        "warmup_max_seconds": 3.208571863,
+        "execute_max_seconds": 21.228726534,
+        "finalize_max_seconds": 5.467520372
+      }
+    },
+    "timed-C1": {
+      "passed": true,
+      "checkpoint_sha256": "c4410a676ad09e606caf508c8d84105e8e70487439fad283a91cc8097a39a710",
+      "parameters_and_initialized_mesh_metadata_equal": true,
+      "ordinary_three_diagnostics_bitwise_equal": true,
+      "all169_horizon_coefficients_present_finite": true,
+      "seconds_per_step": [
+        0.37991525275,
+        0.3797843744,
+        0.3797091184
+      ],
+      "median_seconds_per_step": 0.3797843744,
+      "min_seconds_per_step": 0.3797091184,
+      "max_seconds_per_step": 0.37991525275,
+      "max_rank_ids": [
+        [
+          17
+        ],
+        [
+          14
+        ],
+        [
+          5
+        ]
+      ],
+      "max_rank_spread_seconds": 7.520999999677258e-06,
+      "separated_seconds": {
+        "startup_max_seconds": 3.508800988,
+        "warmup_max_seconds": 3.983378971,
+        "execute_max_seconds": 26.771670497,
+        "finalize_max_seconds": 5.421838874
+      }
+    }
+  },
+  "complete_state": {
+    "padded31_plus8_finite_scalars_per_case": 24704784,
+    "bitwise_admitted_normal2556": true,
+    "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+    "parameters_initialized_metadata_and_three_diagnostics_exact": true,
+    "all169_horizon_coefficients_finite": true
+  },
+  "before_after_frozen_guards_equal": true,
+  "rank_array_values_checked": 288,
+  "cache128_wrapper_probes": 96
+}

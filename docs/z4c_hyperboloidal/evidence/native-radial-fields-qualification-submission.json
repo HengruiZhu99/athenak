@@ -1,0 +1,380 @@
+{
+  "schema": "native-radial-fields-combined-submission-evidence-v1",
+  "status": "completed_collected_independent_science_pending",
+  "job_id": "9052427",
+  "submission": {
+    "schema": "native-radial-fields-combined-submission-v1",
+    "passed": true,
+    "job_id": "9052427.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "job_state": "Q",
+    "nodes": 2,
+    "ranks": 24,
+    "utc": "2026-11-08T22:31:19.897177+00:00",
+    "preflight_sha256": "b89ae9e0a52d0261eedda0f94570234b022721a3626839f46dc75803da52da20",
+    "staging_sha256": "07b474d4bf82e7520400b73a72864a86278cd93df8ca7264aabe321e8c929918",
+    "pbs_sha256": "979e3712073d8a9695fedfc7dadedb8e81f61b33cc9a9eb6e3d7b11b869f3d41",
+    "attempt_sha256": "a3d0ecc501c5a4dfb65781a1303d7c6ed4b93dee31c267d361a390ad85142bff",
+    "queue_before_sha256": "3d25bdbc0e3e858f2851b3751eb637a7291bb50575ccb5051acb9f14148969be",
+    "previous_terminal_sha256": "a424d92cafaa3d61f9c53c6f7d0def51afc8c023b418689a786e39390403638f",
+    "qsub_stdout_sha256": "8329af46bb4bf074a242ed626a1f26a4c2cce89b55885b91c7fb3d3302afbcbe",
+    "protocol": "six correctness cases then normal4/profiled4; independent scientific review pending",
+    "scientific_admission": false
+  },
+  "preflight": {
+    "schema": "native-radial-fields-combined-preflight-v1",
+    "passed": true,
+    "qualification_files": 20,
+    "profile_files": 13,
+    "qualification_manifest_sha256": "0b30729e3b3f11eaed5480048ebd42bfd0d6785998dd77e9780bcac7b6728f81",
+    "profile_manifest_sha256": "d05aac796e64645db2a60f084e7133a1ed5c30836b61d3f715e5369042b5fcba",
+    "combined_binding_sha256": "1e12b489aed9bed3fcb3930ef33401954676644a48f758f1ec90111ef2411dcf",
+    "qualification_commands_sha256": "74b984ad31de5609ab380a783928c2908e647b0c4a7942f8369cf758b7874070",
+    "qualification_build_provenance_sha256": "215a1c38b4e34b35e43e287a89cef0ed257602b2aff30ddcebfd99e57c5bbb94",
+    "profile_tool_sha256": "af42167b3842eaaffacd99a7be56aaf6cbcb5f8b6df259f9e3a7bb4eb1f9e17c",
+    "frozen_and_candidate_guards_passed": true,
+    "actual_cases_absent": true,
+    "seconds": 49.83605025312863,
+    "utc": "2026-11-08T22:30:57.380465+00:00",
+    "gpu_executed": false
+  },
+  "package_readiness": {
+    "schema": "native-radial-fields-qualification-readiness-v1",
+    "passed": true,
+    "package": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-radial-fields-qualification-preparation-v1/package",
+    "package_files": 20,
+    "package_manifest_sha256": "0b30729e3b3f11eaed5480048ebd42bfd0d6785998dd77e9780bcac7b6728f81",
+    "command_manifest_sha256": "74b984ad31de5609ab380a783928c2908e647b0c4a7942f8369cf758b7874070",
+    "qualification_provenance_sha256": "215a1c38b4e34b35e43e287a89cef0ed257602b2aff30ddcebfd99e57c5bbb94",
+    "verifier_sha256": "c3b2ecb763fa8359e8b5801dcf024c864ef722a50a6a7316bc276c57fea97e97",
+    "checks_sha256": "9d73832fe83c07822fc888bdc77f038a4b3f40015b3aa139fdf776aa798c796e",
+    "cases": [
+      "observer70",
+      "poison8",
+      "amr4",
+      "prefix2",
+      "resume8",
+      "cache-smr"
+    ],
+    "per_case_caps_seconds": {
+      "observer70": 600,
+      "poison8": 180,
+      "amr4": 300,
+      "prefix2": 120,
+      "resume8": 180,
+      "cache-smr": 600
+    },
+    "outer_cap_seconds": 1680,
+    "PBS_minutes": 30,
+    "job_name": "native-radial-qual",
+    "profile_tail": true,
+    "source_manifest_sha256": "e6363347621c659a1486e539cb1ff64b8e1e1343915ac9033a8397c5ff1c6909",
+    "fixture_sha256": "b9065f68ea280dcef2d329460db07c35aa1a412dfd2fa3e68b09c7f22c8cea33",
+    "scope": "Prepared six correctness launches followed by existing matched four-step normal/profiled runs; no throughput admission from qualification or profile. Individual solver caps total3300s; the1680s outer timeout may preempt. Actual GPU scientific qualification pending.",
+    "combined_binding_sha256": "1e12b489aed9bed3fcb3930ef33401954676644a48f758f1ec90111ef2411dcf",
+    "profile_package_manifest_sha256": "d05aac796e64645db2a60f084e7133a1ed5c30836b61d3f715e5369042b5fcba",
+    "solver_cases": [
+      "observer70",
+      "poison8",
+      "amr4",
+      "prefix2",
+      "resume8",
+      "cache-smr",
+      "normal4",
+      "profiled4"
+    ],
+    "sum_individual_solver_caps_seconds": 3300,
+    "outer_timeout_may_preempt_before_individual_caps": true
+  },
+  "independent_package_review_sha256": "f202fce2f00eedb8f16d0c57e18eac2facf42ada8191daa664ab7081373f21d6",
+  "frozen_source_objects_unchanged": true,
+  "held_jobs_untouched": true,
+  "new_numerical_factor": false,
+  "candidate_retained": false,
+  "scientific_admission": false,
+  "private_coherent_source_count": 401,
+  "local_proof_files": {
+    "build-native/native-radial-fields-qualification-preparation-v1/remote-records/remote-manifest.json": {
+      "bytes": 3822,
+      "sha256": "5c219a92a707d48f9f7cb2a5377bfdea1bbe344edea8bd6c2fccb90aeee4cb99"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/remote-records/transfer.json": {
+      "bytes": 302,
+      "sha256": "cc456db0a4b905f3d4e545ca96585efb64de9fba17361595acd6a79d54d88aa5"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/remote-records/combined-staging.json": {
+      "bytes": 1127,
+      "sha256": "07b474d4bf82e7520400b73a72864a86278cd93df8ca7264aabe321e8c929918"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/remote-records/qualification-launch-files.json": {
+      "bytes": 2792,
+      "sha256": "0b30729e3b3f11eaed5480048ebd42bfd0d6785998dd77e9780bcac7b6728f81"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/remote-records/profile-launch-files.json": {
+      "bytes": 1794,
+      "sha256": "d05aac796e64645db2a60f084e7133a1ed5c30836b61d3f715e5369042b5fcba"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/remote-records/combined-staging-inputs.json": {
+      "bytes": 879,
+      "sha256": "56e120f3032470fdc7fad59acdbdbf01e5b40d98746b510ded6b93fa28250b9b"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/remote-records/combined-submission/qsub.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/remote-records/combined-submission/job-id.txt": {
+      "bytes": 56,
+      "sha256": "8329af46bb4bf074a242ed626a1f26a4c2cce89b55885b91c7fb3d3302afbcbe"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/remote-records/combined-submission/queue-before.txt": {
+      "bytes": 565,
+      "sha256": "3d25bdbc0e3e858f2851b3751eb637a7291bb50575ccb5051acb9f14148969be"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/remote-records/combined-submission/previous-terminal.txt": {
+      "bytes": 3494,
+      "sha256": "a424d92cafaa3d61f9c53c6f7d0def51afc8c023b418689a786e39390403638f"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/remote-records/combined-submission/qsub.stdout": {
+      "bytes": 56,
+      "sha256": "8329af46bb4bf074a242ed626a1f26a4c2cce89b55885b91c7fb3d3302afbcbe"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/remote-records/combined-submission/attempt.json": {
+      "bytes": 643,
+      "sha256": "a3d0ecc501c5a4dfb65781a1303d7c6ed4b93dee31c267d361a390ad85142bff"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/remote-records/combined-submission/submission.json": {
+      "bytes": 1012,
+      "sha256": "67bc73b9d120d5911609a289906082c9a4fa855286a1d16ce4c95d18a0a878ba"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/remote-records/combined-submission/submitted-qstat.txt": {
+      "bytes": 2834,
+      "sha256": "1fce003c898f08711bf87c171f79936fe647941ef9f0833f2541f92f5c23ab94"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/remote-records/combined-preflight/queue.txt": {
+      "bytes": 565,
+      "sha256": "3d25bdbc0e3e858f2851b3751eb637a7291bb50575ccb5051acb9f14148969be"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/remote-records/combined-preflight/results.json": {
+      "bytes": 914,
+      "sha256": "b89ae9e0a52d0261eedda0f94570234b022721a3626839f46dc75803da52da20"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/remote-records/combined-preflight/previous-terminal.txt": {
+      "bytes": 3494,
+      "sha256": "a424d92cafaa3d61f9c53c6f7d0def51afc8c023b418689a786e39390403638f"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/remote-records/combined-preflight/profile/timing-verify-before.txt": {
+      "bytes": 96,
+      "sha256": "2fce95b383e78b648cb43f29235dc871675d41e3347d300eb716d6f298d3fbc0"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/remote-records/combined-preflight/profile/timed-observer-verify-before.txt": {
+      "bytes": 245,
+      "sha256": "250ba1628ad896cfa9359394e6fb8678ce8aa98171f9f1a7ae55f67cab48a3f3"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/remote-records/combined-preflight/profile/guard-before.json": {
+      "bytes": 1665,
+      "sha256": "28339ad976a1f52d41b4dae491ee092938d8b1344b8b1c591241e4a1028270b9"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/remote-records/combined-preflight/profile/candidate-verify-before.txt": {
+      "bytes": 162,
+      "sha256": "93a290cb6461a38218269c24f63c829f9ab37b7ded85e53deda7abe3e2875c6e"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/remote-records/combined-preflight/qualification/timing-verify-before.txt": {
+      "bytes": 96,
+      "sha256": "2fce95b383e78b648cb43f29235dc871675d41e3347d300eb716d6f298d3fbc0"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/remote-records/combined-preflight/qualification/qualification-guard-before.json": {
+      "bytes": 4199,
+      "sha256": "cb0b45592bdc606b30433a415d49d082e78588593b21360911fd37b5011fb82b"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/remote-records/combined-preflight/qualification/timed-observer-verify-before.txt": {
+      "bytes": 245,
+      "sha256": "250ba1628ad896cfa9359394e6fb8678ce8aa98171f9f1a7ae55f67cab48a3f3"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/remote-records/combined-preflight/qualification/guard-before.json": {
+      "bytes": 1665,
+      "sha256": "28339ad976a1f52d41b4dae491ee092938d8b1344b8b1c591241e4a1028270b9"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/remote-records/combined-preflight/qualification/candidate-verify-before.txt": {
+      "bytes": 65,
+      "sha256": "ed3e632fe2b25b10534460644c6894b3fe3460cdfb0b442cdf61fa9b8599c9d5"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/remote-records/combined-preflight/qualification/coherent-verify-before.txt": {
+      "bytes": 48,
+      "sha256": "55645eee104b1e7768ca083452e2bf923c98b127173f3c05adc476efd1a81229"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/readiness.json": {
+      "bytes": 2033,
+      "sha256": "aded1595bc2cf57eb4b862a32b4c3e59724b2dd645634718c4edb191543f490d"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/independent-review.json": {
+      "bytes": 1056,
+      "sha256": "f202fce2f00eedb8f16d0c57e18eac2facf42ada8191daa664ab7081373f21d6"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/package/files.json": {
+      "bytes": 2792,
+      "sha256": "0b30729e3b3f11eaed5480048ebd42bfd0d6785998dd77e9780bcac7b6728f81"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/package/combined-binding.json": {
+      "bytes": 1521,
+      "sha256": "1e12b489aed9bed3fcb3930ef33401954676644a48f758f1ec90111ef2411dcf"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/executed-staging.py": {
+      "bytes": 1504,
+      "sha256": "eb7fc16216466821fe10bd161a0c9d04f1281a3e7cd41085a3e4926c1533f247"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/executed-preflight.sh": {
+      "bytes": 3736,
+      "sha256": "9a7cbdae6db62755efc1bed16f2c8e79abc4eefe477d2f28d0e8eef8a54e82f0"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/executed-submission.py": {
+      "bytes": 3403,
+      "sha256": "d5ba1a3a74c8d0557696491020601b67978c707d111a77de862f21e889af2447"
+    },
+    "build-native/native-radial-fields-profile-preparation-v1/files.json": {
+      "bytes": 1794,
+      "sha256": "d05aac796e64645db2a60f084e7133a1ed5c30836b61d3f715e5369042b5fcba"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/last-status.json": {
+      "bytes": 2542,
+      "sha256": "c04ce1d11c08784294fae14b4b808e25bef36bfc702fa933cb790d6ded915b16"
+    },
+    "build-native/native-radial-fields-qualification-preparation-v1/queue-after-terminal.txt": {
+      "bytes": 565,
+      "sha256": "3d25bdbc0e3e858f2851b3751eb637a7291bb50575ccb5051acb9f14148969be"
+    },
+    "build-native/aurora-native-radial-fields-qualification-v1/run-artifacts/terminal-qstat.txt": {
+      "bytes": 3542,
+      "sha256": "5e6302e26487502537f4b3ef7c1ed9908b1ba223841eb7ea6b4887a4e708e55d"
+    },
+    "build-native/aurora-native-radial-fields-qualification-v1/package.json": {
+      "bytes": 879,
+      "sha256": "7eb60189e758e0f24ad860617cf4a9fe7159694ecbe56d28606498b2193d2d73"
+    },
+    "build-native/aurora-native-radial-fields-qualification-v1/transfer.json": {
+      "bytes": 497,
+      "sha256": "e2e0590cbdf07fb79683d0cf36bb61c5fb6d0865e8f96ebf3bb6503d5a79f1d1"
+    },
+    "build-native/aurora-native-radial-fields-profile-v1/package.json": {
+      "bytes": 1060,
+      "sha256": "c4e710fff357096485246325d90ae0fc4e06509421d16c7cc4a8c4be7fd20377"
+    },
+    "build-native/aurora-native-radial-fields-profile-v1/transfer.json": {
+      "bytes": 486,
+      "sha256": "9b3aea5076f281e7e4ce72dc4df39c6f3de99db16740379acf644ea231aec231"
+    },
+    "build-native/aurora-native-radial-fields-qualification-v1/run-artifacts/runs/native-radial-fields-qualification-v1/qualification-operational.json": {
+      "bytes": 52722,
+      "sha256": "50d4a27d8122e3b4d58b9674644c668ebf91913a680cd2ad1f3f706fbbafb128"
+    },
+    "build-native/aurora-native-radial-fields-qualification-v1/run-artifacts/runs/native-radial-fields-qualification-v1/combined-complete.txt": {
+      "bytes": 92,
+      "sha256": "ba52285da79058676a5fb5bf078ffd11c4bb3c8471eceee6df64e952d0a2453f"
+    },
+    "build-native/aurora-native-radial-fields-profile-v1/run-artifacts/runs/native-radial-fields-profile-v1/qualification.json": {
+      "bytes": 696382,
+      "sha256": "96fbd59b444050c2294dac1f6b29676a811b6f1d7e79102432fbd12d8ffef78e"
+    }
+  },
+  "remote_recovery_root": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1",
+  "scope": "One serialized two-node allocation; six correctness cases followed by matched four-step normal/profiled controls. Independent full scientific review is required after verified terminal collection; this record does not admit the candidate.",
+  "terminal": {
+    "job_state": "F",
+    "exit_status": 0,
+    "walltime": "00:06:36",
+    "observed_utc": "2026-11-08T22:42:16.043621+00:00",
+    "all_eight_solver_exit_codes_zero": true,
+    "all_six_case_operational_checks_passed": true,
+    "profile_audit_passed": true,
+    "all_postguards_and_combined_marker_passed": true
+  },
+  "qualification_collection": {
+    "local": "build-native/aurora-native-radial-fields-qualification-v1",
+    "package": {
+      "schema": "native-radial-fields-qualification-collection-v1",
+      "job_id": "9052427",
+      "nodes": 2,
+      "ranks": 24,
+      "job_state": "F",
+      "exit_status": 0,
+      "cases": [
+        "observer70",
+        "poison8",
+        "amr4",
+        "prefix2",
+        "resume8",
+        "cache-smr"
+      ],
+      "files": 1476,
+      "command_manifest_sha256": "74b984ad31de5609ab380a783928c2908e647b0c4a7942f8369cf758b7874070",
+      "archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-radial-fields-qualification-artifacts-9052427/run-artifacts.tar.gz",
+      "archive_bytes": 749609941,
+      "sha256": "019a721e6c9733fd08c54d48a605f4c07f24dd530980648a286f430f04897ff9",
+      "total_uncompressed_bytes": 2162758264,
+      "created_utc": "2026-11-08T22:44:00.477995+00:00",
+      "operational_checks_passed": true,
+      "independent_scientific_review_pending": true,
+      "performance_admission": false
+    },
+    "transfer": {
+      "schema": "verified-streamed-run-collection-v1",
+      "passed": true,
+      "files": 1476,
+      "archive_sha256": "019a721e6c9733fd08c54d48a605f4c07f24dd530980648a286f430f04897ff9",
+      "archive_bytes": 749609941,
+      "remote_archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-radial-fields-qualification-artifacts-9052427/run-artifacts.tar.gz",
+      "local_archive_created": false,
+      "all_file_sizes_and_hashes_verified": true,
+      "seconds": 18.3590726852417
+    }
+  },
+  "profile_collection": {
+    "local": "build-native/aurora-native-radial-fields-profile-v1",
+    "package": {
+      "schema": "native-n12-profile-compact-collection-v1",
+      "job_id": 9052427,
+      "nodes": 2,
+      "ranks": 24,
+      "job_state": "F",
+      "exit_status": 0,
+      "raw_root": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/native-radial-fields-profile-v1",
+      "raw_files": 82,
+      "files": 96,
+      "compact_files": 96,
+      "archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-radial-fields-profile-compact-9052427/run-artifacts.tar.gz",
+      "sha256": "c0836255575691bf435ff8b3995c3de90569aa511ec37edf993f69f1c43dc947",
+      "archive_sha256": "c0836255575691bf435ff8b3995c3de90569aa511ec37edf993f69f1c43dc947",
+      "archive_bytes": 650678,
+      "qualification_report": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/native-radial-fields-profile-v1/qualification.json",
+      "qualification_sha256": "96fbd59b444050c2294dac1f6b29676a811b6f1d7e79102432fbd12d8ffef78e",
+      "offline_reanalysis": null,
+      "raw_traces_and_checkpoints_retained_remote": true,
+      "performance_measurement": false
+    },
+    "transfer": {
+      "schema": "verified-streamed-run-collection-v1",
+      "passed": true,
+      "files": 96,
+      "archive_sha256": "c0836255575691bf435ff8b3995c3de90569aa511ec37edf993f69f1c43dc947",
+      "archive_bytes": 650678,
+      "remote_archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-radial-fields-profile-compact-9052427/run-artifacts.tar.gz",
+      "local_archive_created": false,
+      "all_file_sizes_and_hashes_verified": true,
+      "seconds": 0.5471820831298828
+    }
+  },
+  "remaining": "Full independent observer/restart, poison/AMR/new-cache fixture and profile interpretation; no qualification throughput claim.",
+  "no_active_goal_allocation": true,
+  "profile_raw_traces": [
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/native-radial-fields-profile-v1/profiled/ranks/rank23/athena-candidat.2094268.23.json",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/native-radial-fields-profile-v1/profiled/ranks/rank8/athena-candidat.1413170.8.json"
+  ],
+  "profile_external_text_files": {
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/profile-launch/unitrace.1413170.8.txt": {
+      "bytes": 2079984,
+      "sha256": "c28ff085014c74f4d8529314a055cb22806dbf6a98d247d67d8055cba2845f71"
+    },
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/profile-launch/unitrace.2094268.23.txt": {
+      "bytes": 2599072,
+      "sha256": "8e829124c2cf142f62f65a84f56d5ad94061f0ba08762ef186ce173ebd71117c"
+    }
+  }
+}

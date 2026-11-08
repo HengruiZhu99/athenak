@@ -54,6 +54,16 @@ status={'passed':result.returncode==0,'local_mpi_ranks':args.ranks,'scenarios':2
  'native_build':str(build),'legacy_readonly_source':str(legacy)}
 m=re.search(r'normal_compatibility=([^ ]+) zero_face_ranks=(\d+)',text)
 if m:status.update(normal_compatibility=float(m.group(1)),zero_face_ranks=int(m.group(2)))
+cache=re.search(r'endpoint_cache comparisons=(\d+) poison_refresh=passed default_direct=passed bitwise=passed',text)
+if cache:status['endpoint_cache']={'comparisons':int(cache[1]),'poison_refresh':True,
+ 'default_direct':True,'bitwise':True}
+layout=re.search(r'cache_layout rows=(\d+) fields=(\d+) jet_bytes=(\d+) bytes=(\d+)',text)
+if layout:
+    status['cache_layout']=dict(zip(('rows','fields','jet_bytes','bytes'),map(int,layout.groups())))
+cache_valid=bool(cache and int(cache[1])==2249856 and layout and tuple(map(int,layout.groups()))==(2592,26,104,2592*26*104))
+status['passed']=status['passed'] and cache_valid
 (output/'results.json').write_text(json.dumps(status,indent=2)+'\n')
 print(text)
 result.check_returncode()
+
+assert cache_valid, 'missing/incomplete radial-cache poison/allocation coverage'
