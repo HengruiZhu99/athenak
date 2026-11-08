@@ -2,8 +2,8 @@
 set -euo pipefail
 ulimit -c 0
 side=/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side
-work=$side/validation/perf-two-node-v1/profile
-case=$side/runs/native-n12-profile-two-v1
+work=$side/validation/perf-two-node-v1/profile-cache128-v1
+case=$side/runs/native-n12-profile-cache128-v1
 [[ -n ${PBS_JOBID:-} && -r ${PBS_NODEFILE:-} ]]
 [[ $(sort -u "$PBS_NODEFILE" | awk 'END {print NR}') == 2 ]]
 [[ ! -e "$case" ]]
@@ -17,6 +17,13 @@ module list > "$case/modules.txt" 2>&1
 export PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
 export ZE_ENABLE_PCI_ID_DEVICE_ORDER=1 ONEAPI_DEVICE_SELECTOR=level_zero:gpu MPIR_CVAR_ENABLE_GPU=1
 unset ZE_AFFINITY_MASK
+# Exact accepted native-gpu-ipc-cache.env policy, same in both controls.
+unset MPICH_CH4_IPC_GPU_HANDLE_CACHE MPIR_PARAM_CH4_IPC_GPU_HANDLE_CACHE
+unset MPICH_CH4_IPC_GPU_CACHE_SIZE MPIR_PARAM_CH4_IPC_GPU_CACHE_SIZE
+unset MPICH_CH4_IPC_GPU_MAX_CACHE_ENTRIES MPIR_PARAM_CH4_IPC_GPU_MAX_CACHE_ENTRIES
+export MPIR_CVAR_CH4_IPC_GPU_HANDLE_CACHE=specialized
+export MPIR_CVAR_CH4_IPC_GPU_CACHE_SIZE=limited
+export MPIR_CVAR_CH4_IPC_GPU_MAX_CACHE_ENTRIES=128
 # Existing full frozen-source/object and exact2486 admission guard; no PTI module.
 /usr/bin/python3.11 "$work/native_two_node_timing_audit.py" guard --admission "$work/admission.json" --directory "$case" --suffix before
 wrapper=$(command -v gpu_tile_compact.sh)

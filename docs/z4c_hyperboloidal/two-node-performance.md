@@ -315,16 +315,39 @@ reviews, the successful collection and preserved failures. Startup, accepted
 output and final diagnostics are separately recorded there; no setup speed claim
 is inferred across the different drivers.
 
-The next experiment, job 9052139, repeats the existing four-step selected-rank
-kernel profile with cache128. It measures bulk/surface durations, launch shapes
-and transfer-adjacent host gaps after the accepted fix. The same ranks 8/23 and
-profiler options are retained; these are representative observations, not a
-proved global critical path. The original sources and four-step mathematical
-workload remain unchanged. Select one code optimization from those measurements;
-if bulk dominates, test field-parallel KO using existing RHS storage and unchanged
-arithmetic/validity checks. Workgroup tuning remains separate.
+The cache128 profile, job 9052139, completed F/0. Its normal/profiled four-step
+continuations pass complete state, diagnostics, actual runtime/library identity
+and cache-environment checks. The new normal endpoint also matches the earlier
+normal2490 exactly. The existing profiler and extractor are reused, including
+ranks 8/23 and unchanged trace options. Actual text nanosecond summaries agree
+with Chrome microsecond durations and launch counts.
 
-Surface batching and field-parallel KO remain untested candidates.
+| Sampled rank | RHS span | GPU interval union | Pure bulk RHS kernels | Surface solve + RHS |
+|---|---:|---:|---:|---:|
+| 8, bulk-heavy | 2.702677 s | 1.279110 s (47.3%) | 1.232348 s, 48 launches | Empty reductions, microseconds |
+| 23, surface owner | 2.570627 s | 2.036681 s (79.2%) | 1.463776 s, 64 launches | 0.302860 + 0.200479 s |
+
+Each span is local to one rank, from its first to last bulk RHS kernel; it is
+neither a complete-step timing window nor a globally aligned critical path.
+GPU interval coverage is not achieved occupancy. Bulk validity reductions are
+excluded from the main-kernel totals. On rank23, 16 normal solves and 16 surface
+RHS evaluations each launch one 256-work-item group, taking up to 19.06/12.62 ms.
+Bulk shapes remain 1×1024 (up to 43.69 ms), 8×1024 (25.41 ms), and 1×512
+(12.85 ms). On rank8, bulk shapes are 11×1024, 1×1024 and 2×1024,
+with maxima about26 ms. Counts and shapes describe executed launches, not
+occupancy or useful-thread utilization. See
+`evidence/native-n12-profile-cache128-findings.json`.
+
+The large transfer-adjacent gaps have substantially contracted from the earlier
+~17-second sampled spans. Bulk RHS now dominates recorded GPU work on both
+representative ranks. This selects the next **single experiment: field-parallel
+KO using existing RHS storage**. The per-field operator, its line summation,
+transport/KO/Lambda-to-D addition order, subset dependencies and validity checks
+remain unchanged. No workgroup tuning is combined with this experiment. The
+candidate has passed existing two-rank full-RHS CPU oracles at KO=.1 and KO=0,
+but GPU correctness, complete-step improvement and retention remain unproven.
+
+Surface batching remains untested; the field-parallel KO candidate awaits its GPU screen.
 
 Inspect bulk kernel organization, geometry reuse, surface arithmetic,
 synchronization, communication/data layout and imbalance one at a time. Reorder

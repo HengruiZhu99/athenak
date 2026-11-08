@@ -1,0 +1,193 @@
+{
+  "schema": "native-n12-cache128-profile-independent-review-v1",
+  "passed": true,
+  "job_id": 9052139,
+  "nodes": 2,
+  "mpi_ranks": 24,
+  "cycles": [
+    2486,
+    2490
+  ],
+  "selected_ranks": [
+    8,
+    23
+  ],
+  "performance_measurement": false,
+  "verification": {
+    "compact_files_rehashed": 93,
+    "actual_launch_cache_environments_checked": 48,
+    "actual_selected_solver_processes_checked": 4,
+    "cache_environment": {
+      "MPIR_CVAR_CH4_IPC_GPU_HANDLE_CACHE": "specialized",
+      "MPIR_CVAR_CH4_IPC_GPU_CACHE_SIZE": "limited",
+      "MPIR_CVAR_CH4_IPC_GPU_MAX_CACHE_ENTRIES": "128",
+      "MPICH_CH4_IPC_GPU_HANDLE_CACHE": null,
+      "MPIR_PARAM_CH4_IPC_GPU_HANDLE_CACHE": null,
+      "MPICH_CH4_IPC_GPU_CACHE_SIZE": null,
+      "MPIR_PARAM_CH4_IPC_GPU_CACHE_SIZE": null,
+      "MPICH_CH4_IPC_GPU_MAX_CACHE_ENTRIES": null,
+      "MPIR_PARAM_CH4_IPC_GPU_MAX_CACHE_ENTRIES": null
+    },
+    "cache_scope": "All24 launch environments and actual selected-rank8/23 process environments in both cases; no MPI CVAR readback.",
+    "core_library_sha256": {
+      "libmpi.so": "aae85d14c5687653512009291dc5683da1c023495d803e2f798c5d1e0d78a220",
+      "libsycl.so": "0336997fdfed9b2e6385e9f1cea2395eb5e130d3e5e9c943df5b0c10c1b5e57f",
+      "libstdc++.so": "afb5f1afa1a3e004cca1a23b89271f12c643ae763bd258a9aab4013f7518451f",
+      "libgcc_s.so": "992a135c8b0328549dbf25ebc3d16859ca11a587f59254e53ca42aa932c362c7"
+    },
+    "immutable_baseline_executable_sha256": "f3a85db7528986ddec347b31675a8c5d588120a2380133aed73d5967f7aab05c",
+    "source_files": 1972,
+    "runtime_objects": 228,
+    "guards_identical": true,
+    "padded31_plus8_values": 24704784,
+    "profiled_vs_normal_payload_bitwise": true,
+    "ordinary_diagnostics_bitwise": true,
+    "normal_cache128_vs_previous_normal_bitwise": true
+  },
+  "units": {
+    "text": "nanoseconds explicitly labeled by Unitrace",
+    "chrome": "microseconds; same kernel calls and aggregate durations agree after conversion",
+    "report": "seconds",
+    "main_filter": "CalcRHS lambda(int)#1 / ParallelForCustom only; validity reductions excluded"
+  },
+  "ranks": {
+    "8": {
+      "trace_path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/native-n12-profile-cache128-v1/profiled/ranks/rank8/athena.3943623.8.json",
+      "trace_sha256": "9eb7b0a6c8c4d3c7933f7dba2a427f1abb148c96648a95a3a49ca352a35cc472",
+      "rhs_span_seconds": 2.7026765,
+      "gpu_interval_union_seconds": 1.27911,
+      "main_rhs_calls": 48,
+      "main_rhs_seconds": 1.23234768,
+      "main_rhs_launches": [
+        {
+          "shape": "[SIMD32 {11; 1; 1} {1024; 1; 1}]",
+          "calls": 16,
+          "total_seconds": 0.42398976,
+          "minimum_seconds": 0.02633184,
+          "maximum_seconds": 0.02660944
+        },
+        {
+          "shape": "[SIMD32 {1; 1; 1} {1024; 1; 1}]",
+          "calls": 16,
+          "total_seconds": 0.41033344,
+          "minimum_seconds": 0.02540656,
+          "maximum_seconds": 0.02599264
+        },
+        {
+          "shape": "[SIMD32 {2; 1; 1} {1024; 1; 1}]",
+          "calls": 16,
+          "total_seconds": 0.39802448,
+          "minimum_seconds": 2.4e-06,
+          "maximum_seconds": 0.0266232
+        }
+      ],
+      "surface": {
+        "Solve": {
+          "calls_in_span": 16,
+          "seconds_in_span": 0.00012704,
+          "whole_trace_calls": 18,
+          "whole_trace_seconds": 0.000144,
+          "shapes": [
+            "[SIMD32 {1; 1; 1} {1; 1; 1}]"
+          ]
+        },
+        "Evaluate": {
+          "calls_in_span": 16,
+          "seconds_in_span": 9.375999999999998e-05,
+          "whole_trace_calls": 16,
+          "whole_trace_seconds": 9.376e-05,
+          "shapes": [
+            "[SIMD32 {1; 1; 1} {1; 1; 1}]"
+          ]
+        }
+      },
+      "bulk_fraction_of_local_span": 0.4559730622588386,
+      "gpu_interval_coverage_fraction": 0.4732752884039211,
+      "surface_note": "Rank8 has no scri face; tiny surface reductions are empty-worklist bookkeeping."
+    },
+    "23": {
+      "trace_path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/native-n12-profile-cache128-v1/profiled/ranks/rank23/athena.3113456.23.json",
+      "trace_sha256": "27304cf6341c1928db2d17e53a8e0b2c866dd91921f983365c584061b9bd6237",
+      "rhs_span_seconds": 2.5706265,
+      "gpu_interval_union_seconds": 2.03668075,
+      "main_rhs_calls": 64,
+      "main_rhs_seconds": 1.46377552,
+      "main_rhs_launches": [
+        {
+          "shape": "[SIMD32 {1; 1; 1} {1024; 1; 1}]",
+          "calls": 16,
+          "total_seconds": 0.69171616,
+          "minimum_seconds": 0.04285328,
+          "maximum_seconds": 0.0436864
+        },
+        {
+          "shape": "[SIMD32 {8; 1; 1} {1024; 1; 1}]",
+          "calls": 16,
+          "total_seconds": 0.4024008,
+          "minimum_seconds": 0.02492368,
+          "maximum_seconds": 0.02541232
+        },
+        {
+          "shape": "[SIMD32 {1; 1; 1} {512; 1; 1}]",
+          "calls": 32,
+          "total_seconds": 0.36965856,
+          "minimum_seconds": 0.01015616,
+          "maximum_seconds": 0.01284688
+        }
+      ],
+      "surface": {
+        "Solve": {
+          "calls_in_span": 16,
+          "seconds_in_span": 0.30286016000000004,
+          "whole_trace_calls": 18,
+          "whole_trace_seconds": 0.34077552,
+          "shapes": [
+            "[SIMD32 {1; 1; 1} {256; 1; 1}]"
+          ]
+        },
+        "Evaluate": {
+          "calls_in_span": 16,
+          "seconds_in_span": 0.20047888,
+          "whole_trace_calls": 16,
+          "whole_trace_seconds": 0.20047888,
+          "shapes": [
+            "[SIMD32 {1; 1; 1} {256; 1; 1}]"
+          ]
+        }
+      },
+      "bulk_fraction_of_local_span": 0.5694236482818488,
+      "gpu_interval_coverage_fraction": 0.7922896422331288,
+      "surface_note": "Whole-trace Solve includes two calls outside RHS span; only16 in-span solves attributed to16 evolution stages."
+    }
+  },
+  "conclusion": "Bulk RHS is the largest measured kernel category on both selected ranks, supporting a single field-parallel KO prepass experiment. The profile does not isolate KO cost inside that monolithic kernel or establish a speedup.",
+  "limits": [
+    "First-main-RHS to last-main-RHS span is rank-local, not complete-cycle wall time; initialization/finalization and trailing validity/task tail are excluded.",
+    "GPU interval union is trace-covered kernel/copy activity, not achieved occupancy, throughput, hardware utilization counters, or a global critical path.",
+    "Ranks8/23 represent bulk/scri ownership; neither is proven the slowest or causal rank.",
+    "Launch dimensions/SIMD labels are literal; no subset identity or occupancy inferred.",
+    "The KO candidate remains unadmitted pending correctness and unprofiled ABBA."
+  ],
+  "report_generation_note": "Initial inline writer had a duplicate keyword syntax typo before execution; no report, scientific check, source change or solver invocation occurred.",
+  "input_sha256": {
+    "build-native/aurora-native-profile-cache128-v1/package.json": "6c5dc8744c771d4da5edb03b25be834ca1c46c5c8a6e2db1b3e970ef16d03a2f",
+    "build-native/aurora-native-profile-cache128-v1/transfer.json": "fe433cbff8b599fdcc6c0956cba4d23d2dfb0e5731b9c078eaf7b623144aa75d",
+    "build-native/aurora-native-profile-cache128-v1/run-artifacts/files.json": "95e5b44858f62d937af129303fd1ba141b583f8db3bff5144269072e534161b0",
+    "build-native/aurora-native-profile-cache128-v1/run-artifacts/terminal-qstat.txt": "7cbf6ed464334be9d6718a083e919029e646018f3d579a946f7c2fe5ddaca01f",
+    "build-native/aurora-native-profile-cache128-v1/run-artifacts/runs/native-n12-profile-cache128-v1/qualification.json": "8bf4fa7a2dbad1b79afbe6fbc2f52633573a6f507c068a39dcb81962128b6c83",
+    "build-native/native-profile-cache128-normal-equivalence-v1/results.json": "bd4585dff121198e68016c8e328c5b2fbd5571b95d714037db0e0a84c6dfb50e",
+    "build-native/native-n12-profile-cache128-host-gap-v1/results.json": "bb782596a4735cebdfca65b512693d6adb95d96229895b54a37071ca313ada08",
+    "build-native/native-n12-profile-cache128-host-gap-v1/provenance.json": "fcad0568538bc6094ee0fbf6bd36ae3171e321c967df08bf803f4fe3f7289789",
+    "build-native/native-n12-profile-cache128-host-gap-v1/extract.py": "817dd11d3dcc7adcaf7177a5a71edcfc71a89ba20019aaca6ee7498c5e4e5be2",
+    "build-native/aurora-native-profile-cache128-v1/run-artifacts/validation/perf-two-node-v1/profile-cache128-v1/unitrace.3943623.8.txt": "ce0182d507aab7aea9051714066ad8241bdbc2dd4d520dd04995e75cb57b37d0",
+    "build-native/aurora-native-profile-cache128-v1/run-artifacts/validation/perf-two-node-v1/profile-cache128-v1/unitrace.3113456.23.txt": "7f12fd51cba0302dd7e723b428e19ae56422cf312230b13c0692365e70c271f1"
+  },
+  "baseline_source_sha256": {
+    "build-native/aurora-stage-20261108T063914Z/source/src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp": "8c9e47745dd6ba4bbd3870e41645af1e879c63a86e2a800df499badca9936e29",
+    "build-native/aurora-stage-20261108T063914Z/source/src/z4c_hyperboloidal/surface_exchange.cpp": "2b78bb42e819fc0178a9e13d2b21df29736a17abe762f85c6fb6485003517c34",
+    "build-native/aurora-stage-20261108T063914Z/source/src/z4c_hyperboloidal/point_rhs.hpp": "4a1720aa1f37c9e96148817fc018f609ef4bb4ac90fb1c7fbbd4da810d114187",
+    "build-native/aurora-stage-20261108T063914Z/source/src/z4c_hyperboloidal/dissipation_plan.hpp": "761b0da313c2831a8a95a0f3e9711a5531e93ccc6eacaf72197c22bd437fee08"
+  },
+  "raw_review_path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-n12-profile-cache128-independent-review-v1/review.json",
+  "raw_review_sha256": "565aeefd8b97f591025ff5bd127217a779ecde7e818fdf41de480469b91a89e4"
+}

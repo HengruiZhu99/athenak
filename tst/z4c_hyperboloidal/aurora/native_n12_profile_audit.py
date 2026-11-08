@@ -11,9 +11,10 @@ import struct
 
 from native_two_node_timing_audit import (ROOT,SOURCE,DT,NORMAL,BINDING,WRAPPER,VERIFY,
     checkpoint_metadata,expected_time,read_json,require,sha,write_json)
-from native_n12_profile_rank import SELECTED,TOOL,TOOL_SHA,OPTIONS
+from native_n12_profile_rank import SELECTED,TOOL,TOOL_SHA,OPTIONS,CACHE_ENV
 
-CASE=ROOT/'runs/native-n12-profile-two-v1'
+WORK=ROOT/'validation/perf-two-node-v1/profile-cache128-v1'
+CASE=ROOT/'runs/native-n12-profile-cache128-v1'
 CORE={
  'libmpi.so':'aae85d14c5687653512009291dc5683da1c023495d803e2f798c5d1e0d78a220',
  'libsycl.so':'0336997fdfed9b2e6385e9f1cea2395eb5e130d3e5e9c943df5b0c10c1b5e57f',
@@ -88,6 +89,8 @@ def runtime(directory,mode,rank):
     require(process['executable']==str(ROOT/'build-sycl/src/athena'),'observed another executable')
     require(process['environment']['ZE_AFFINITY_MASK']==launch['environment']['ZE_AFFINITY_MASK'] and
             process['environment']['EnableImplicitScaling']=='0','observed solver binding differs')
+    require({k:process['environment'].get(k) for k in CACHE_ENV}==CACHE_ENV,
+            'observed solver cache128 environment differs')
     files=process['mapped_files'];selected={}
     for prefix,digest in CORE.items():
         matches=[(name,data) for name,data in files.items() if Path(name).name.startswith(prefix)]
@@ -106,7 +109,7 @@ def runtime(directory,mode,rank):
                 loaded_images={name:d['sha256'] for name,d in files.items() if name not in cache},
                 non_executable_loader_cache_mappings=cache,
                 cache_classification_scope='Only canonical /etc/ld.so.cache excluded by loader-data role; captured inode/size/hash retained, ELF magic not captured. Every other observed image is still compared.',
-                samples=r['samples'])
+                samples=r['samples'],observed_cache_environment=CACHE_ENV)
 
 
 def trace_summary(folder,shared_log=None,text_report=None):
@@ -173,7 +176,7 @@ def audit(args,result):
         folder=d/mode
         import shlex
         expected_outer=['mpiexec','-n','24','-ppn','12',BINDING,WRAPPER,'/usr/bin/python3.11',
-            str(ROOT/'validation/perf-two-node-v1/profile/native_n12_profile_rank.py'),
+            str(WORK/'native_n12_profile_rank.py'),
             '--mode',mode,'--directory',str(CASE/mode)]
         require(shlex.split((folder/'command.txt').read_text())==expected_outer,'MPI launch command differs')
         require((folder/'exit-code.txt').read_text().strip()=='0' and
@@ -200,6 +203,7 @@ def audit(args,result):
                     launch['profiled']==(mode=='profiled' and rank in SELECTED),'rank selection differs')
             require(0<=local<12 and env['ZE_AFFINITY_MASK']==f'{local//2}.{local%2}' and
                     env['EnableImplicitScaling']=='0' and (host,local) not in owners,'actual tile binding differs')
+            require({k:env.get(k) for k in CACHE_ENV}==CACHE_ENV,'rank cache128 environment differs')
             owners.add((host,local))
             expected=[str(ROOT/'build-sycl/src/athena'),'-r',str(args.source),'-d',str(CASE/mode),
                       'time/nlim=2490','time/tlim=2','time/ndiag=1000000000']
@@ -216,7 +220,7 @@ def audit(args,result):
             require(runtimes['profiled'][rank]['loaded_images'].get(name)==digest,
                     'profile replaces/removes observed normal image: '+name)
     result['scientific_qualification_passed']=True
-    work=ROOT/'validation/perf-two-node-v1/profile'
+    work=WORK
     texts={str(r):work/f'unitrace.{runtimes["profiled"][str(r)]["pid"]}.{r}.txt' for r in SELECTED}
     result['selected_rank_trace_inventory']={str(r):trace_summary(d/'profiled'/'ranks'/f'rank{r}',
         d/'profiled'/'run.log',texts[str(r)]) for r in SELECTED}
@@ -234,7 +238,8 @@ def main():
     args=p.parse_args();require(not args.output.exists(),'qualification output already exists; preserve prior evidence')
     result=dict(schema='native-n12-selected-profile-qualification-v1',passed=False,
         scientific_qualification_passed=False,performance_measurement=False,trace_interpretation_pending=True,selected_ranks=list(SELECTED),
-        cycles=[2486,2490],scope='Four complete cycles, selected-rank tracing; no throughput or whole-job critical-path claim')
+        cycles=[2486,2490],cache_environment=CACHE_ENV,
+        cache_observation_scope='All24 launch environments and actual selected-rank8/23 process environments in both cases; no MPI CVAR readback.',scope='Four complete cycles, selected-rank tracing; no throughput or whole-job critical-path claim')
     try:
         if args.previous_failure is not None or args.terminal is not None:
             require(args.previous_failure is not None and args.terminal is not None,

@@ -61,14 +61,19 @@
         "evidence/native-n12-selected-profile-findings.json",
         "evidence/native-n12-aps-findings.json",
         "evidence/native-ipc-cache-abba-failure-review.json",
-        "evidence/native-ipc-cache-abba-review.json"
+        "evidence/native-ipc-cache-abba-review.json",
+        "evidence/native-n12-profile-cache128-findings.json"
       ],
-      "remaining": "Capacity16\u2192128 produces qualified7.89x complete-step improvement, consistent with observed communication/IPC waits. Exact eviction counts and a causal critical rank remain unmeasured; no sum of unrelated maxima is used."
+      "remaining": "Cache fix contracts host gaps; bulk dominates recorded GPU work on sampledranks8/23. Global causal critical rank and achieved occupancy remain unproved. Select one KO experiment, no sum of unrelated rank maxima."
     },
     {
       "id": "bulk_organization",
-      "status": "pending",
-      "required_evidence": "Evaluate monolithic kernel, Cartesian Z4c decomposition, KO/radial batching and workgroups with measured evidence."
+      "status": "in_progress",
+      "required_evidence": "Evaluate monolithic kernel, Cartesian Z4c decomposition, KO/radial batching and workgroups with measured evidence.",
+      "evidence": [
+        "evidence/native-n12-profile-cache128-findings.json"
+      ],
+      "remaining": "Field-parallel KO one-file candidate passes existing CPU full-RHS oracles atKO.1/0; GPU screen and full applicable qualification pending. Workgroup tuning separate."
     },
     {
       "id": "geometry_reuse",
@@ -135,5 +140,5 @@
       "remaining": "Parity explicitly not achieved: native0.599393s versus leading references~0.1364s. Continue measured solver improvement."
     }
   ],
-  "next_milestone": "Use cache128 kernel profile9052139 to select one measured optimization; fastest qualified legacy contendersv3/v6 are about0.1364s/step versus native0.5994s. Preserve original parity target."
+  "next_milestone": "Screen one field-parallel KO candidate against unchanged nativecache128 in repeated complete-stepABBA; profile9052139 identifies bulk as dominant recorded GPU work. No candidate speedup admitted yet."
 }

@@ -5,7 +5,7 @@ from pathlib import Path
 import subprocess
 import tarfile
 
-from native_n12_profile_audit import CASE
+from native_n12_profile_audit import CASE,WORK
 from native_two_node_timing_audit import ROOT,read_json,require,sha,write_json
 
 
@@ -53,7 +53,7 @@ def main():
         (p.name in ('qualification.json','qualification-v2.json','job-id.txt','modules.txt','nodes.txt','launchers-after.txt',
                     'guard-before.json','guard-after.json','command.txt','exit-code.txt','launch.json','runtime.json')
          or '-verify-' in p.name or p.name=='run.log' or p.suffix=='.hst' or '.horizon' in p.name)}
-    work=ROOT/'validation/perf-two-node-v1/profile'
+    work=WORK
     for path in work.iterdir():
         if path.is_file():selected[str(path.relative_to(ROOT))]=path
     for name,v in report.get('external_profile_artifacts',{}).items():
