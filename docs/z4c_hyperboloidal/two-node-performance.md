@@ -59,6 +59,28 @@ relabeled as a matched baseline.
 
 ## Investigation and acceptance
 
+Static PVC binary metadata is preserved in
+`evidence/two-node-kernel-selected-resources.json`, with verified raw-artifact
+locations/hashes in `evidence/two-node-kernel-transfer-verification.json`.
+It compares the unchanged native binary with archived v8; it is not a runtime
+profile and does not select v8 as the N12 reference.
+
+| Compiled kernel | Private allocation per work-item (bytes) | Reported spill bytes | Spill/fill allocation (bytes) |
+|---|---:|---:|---:|
+| Native bulk CalcRHS | 22,928 | absent | absent |
+| v8 bulk PointKernel | 24,480 | absent | absent |
+| Native normal solve, nd_item variant | 34,024 | 8,960 | 16,384 |
+| v8 normal case evaluation | 25,216 | absent | absent |
+| Native surface RHS, nd_item variant | 26,440 | 2,944 | 4,096 |
+| v8 surface RHS | 26,440 | absent | absent |
+
+The native normal solve's single_task variant also reports spill storage.
+Actual reduction variants dispatched, achieved occupancy, scratch traffic and
+elapsed time remain unmeasured. An absent spill field does not establish zero
+spilling. Native bulk private storage is slightly smaller than v8's, so the
+larger source kernel alone does not establish register pressure as the cause
+of its slowdown. Surface batching is a profiling lead, not an accepted fix.
+
 Inspect bulk kernel organization, geometry reuse, surface arithmetic,
 synchronization, communication/data layout and imbalance one at a time. Reorder
 only using measured evidence. Preserve the native Driver, task lists, block
