@@ -1,0 +1,78 @@
+{
+  "schema": "native-cycle-timing-aurora-build-evidence-v1",
+  "passed": true,
+  "scope": "Actual Aurora SYCL compilation and build-input preservation only. No GPU execution, numerical qualification, timing, throughput or scaling claim. GPU use remains held until required step3551 reproduction and specific run authorization.",
+  "build_exit_code": 0,
+  "verify_exit_code": 0,
+  "build_command": [
+    "python3.11",
+    "validation/cycle-timing/package/native_cycle_timing.py",
+    "build",
+    "--build",
+    "build-sycl",
+    "--output",
+    "validation/cycle-timing/build"
+  ],
+  "make_jobs": 64,
+  "remote_directory": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/cycle-timing",
+  "timing_executable": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/cycle-timing/build/athena-cycle-timing",
+  "timing_executable_sha256": "e47888006e1221d5e14bce734a97d77a45126b271f7ef39c2ceb9e9b31c0f6cf",
+  "baseline_executable_sha256": "f3a85db7528986ddec347b31675a8c5d588120a2380133aed73d5967f7aab05c",
+  "harness_object_sha256": "d42a7d8359c229b5058d058b03bc539462a0d6f35401177a86d548e9e4d6bfc1",
+  "build_provenance": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/build/provenance.json",
+  "build_provenance_sha256": "89265de52cfec416139ddf4188618b10b91b4e130c3fa844ffeed473d0d492ea",
+  "build_result": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/build-result.json",
+  "build_result_sha256": "64e46cf8d4e4308245e940abeaafcbb93d46361d2cce59992c2898d98764523e",
+  "transfer_verification": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/transfer-verification.json",
+  "transfer_verification_sha256": "de0a040e8a71c6a572b82a712fdc899d3126459c2ee1eb1f844f8ad1852aa708",
+  "compact_artifacts": {
+    "files": 31,
+    "archive_bytes": 214420,
+    "archive_sha256": "4cb4b78a097d2e830a4a99d8cc2bf0a4dbb88353901636d43d9e24a3e4e59ee7",
+    "manifest_sha256": "fb9f49ead63ae8e37b01c3cc2dc77eab8f9c92c33572a4f21962059c2b263f9d",
+    "binaries_or_objects_downloaded": false
+  },
+  "frozen_baseline": {
+    "verified_before_and_after": true,
+    "sources": 1972,
+    "objects": 228,
+    "source_manifest_sha256": "4706aae696919253201da4cac9dd14bff52743ee8826dc93660a382f255ec9a5",
+    "object_manifest_sha256": "462da52c2e152e9c94818a534314aec72f2a827f30decdb2d23a3559e6954547",
+    "original_main_sha256": "df3504092f586440526194cfc825949a5637b3ec0506ec3fa47629fc3e5915ae",
+    "before_after_records_bitwise_equal": true
+  },
+  "overlay": {
+    "insertions": 11,
+    "driver_only": true,
+    "inverse_byte_exact": true,
+    "original_driver_fp_flags_preserved": true,
+    "original_main_and_numerical_objects_unchanged": true,
+    "link_only_driver_and_output_replaced": true,
+    "retained_link_inputs": 202,
+    "source_inputs": 401,
+    "dependencies": 227
+  },
+  "toolchain": {
+    "compiler.txt": {
+      "actual_sha256": "6f41d08dd542e36e2f41b7b105da56d84c00bd6eb99a7c324ef8ef06635cbe26",
+      "baseline_sha256": "6f41d08dd542e36e2f41b7b105da56d84c00bd6eb99a7c324ef8ef06635cbe26",
+      "exact": true
+    },
+    "mpi-wrapper.txt": {
+      "actual_sha256": "35ee2ba9df330d781abc430dd144e1728a49ceb7215380336a8682af0ed5a88d",
+      "baseline_sha256": "35ee2ba9df330d781abc430dd144e1728a49ceb7215380336a8682af0ed5a88d",
+      "exact": true
+    }
+  },
+  "cpu_qualification_evidence": "docs/z4c_hyperboloidal/evidence/native-cycle-timing-cpu-validation.json",
+  "cpu_qualification_evidence_sha256": "213fe9cc0c07646a5e0f7ed745ccd8fcfa25e18f9568aef93722a8fd6ff94294",
+  "source_sha256": {
+    "native_cycle_timing.py": "944b05be76c1bfe208a0c409a7952d7119112398e306e842c458a6ffff19cfdb",
+    "native_cycle_timing.hpp": "310ebb617883e2b02f05677b98718c4163d886da9b48e812c961fda6e4077c0a",
+    "native_cycle_timing_contract.md": "d610e7141bead813ff5382c2509eaabad3f42566ac9170c1cfb794629e14ca06"
+  },
+  "gpu_executed": false,
+  "gpu_submitted": false,
+  "performance_admission": false,
+  "baseline_mutated": false
+}

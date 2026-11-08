@@ -319,7 +319,12 @@ Current limitations / remaining full-goal requirements:
   then repeated same-work 2-/8-node timing, profiling and measured improvements.
 - The isolated whole-cycle timing harness passes CPU complete-state/output
   equivalence, window-boundary checks and rejection of timed output/profiling.
-  It has no GPU timing qualification or performance result yet.
+  Its separate Aurora SYCL build now also passes compilation and integrity
+  checks, with only the copied Driver instrumented and all frozen source,
+  objects and the baseline executable unchanged. This compilation was brought
+  forward during the N12 run; actual GPU numerical qualification and timing
+  remain deferred until the full3551 trajectory passes. No performance result
+  exists. See evidence/native-cycle-timing-aurora-build.json.
 - Actual qualified GPU trace ownership matches native unit-cost load balancing
   at24/96ranks. Maximum owned bulk points fall from12663 to6588 while the average
   falls from9558 to2389.5; six surface owners retain144points each at both sizes.

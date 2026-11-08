@@ -59,6 +59,13 @@ actual state equivalence and complete window coverage. Neither the ownership
 counts above nor the CPU validation timings establish GPU throughput or scaling.
 The hash-qualified timing builder, header, contract and validator remain unchanged.
 
+The same builder now compiled and verified a separate Aurora SYCL timing
+executable while the frozen N12 trajectory continued. Its 11 reversible Driver
+insertions preserve the original main and numerical objects; all 1,972 baseline
+source files and 228 objects passed before/after checks. This removes a build
+prerequisite only: no GPU timing run or numerical qualification was performed.
+See [the actual build evidence](evidence/native-cycle-timing-aurora-build.json).
+
 Reproducer: `tst/z4c_hyperboloidal/n12_ownership_audit.py`, using the actual
 `native-clean` directories in the qualified two/eight-node stage-trace bundles
 and `build-native/n12-checkpoint-map-aurora-v1`. The full result is

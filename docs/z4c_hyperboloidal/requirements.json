@@ -71,7 +71,7 @@
     {
       "id": "performance_and_scaling",
       "status": "incomplete",
-      "evidence_or_next_gate": "No accepted GPU benchmark or scaling result. Whole-cycle timing overlay is CPU-qualified with complete state/output equivalence, exact window coverage, and output/profiling rejection controls. After full N12 admission, require repeated same-work/compiler/dt 2-/8-node windows with warmup, maximum-rank timing, and startup/I/O separation. Actual qualified GPU trace ownership has bulk mean/max 9558/12663 at24ranks and2389.5/6588 at96ranks; six surface owners retain144points each. These are workload counts, not measured speed or an overall scaling bound. Equal block weights remain unchanged."
+      "evidence_or_next_gate": "No accepted GPU benchmark or scaling result. Whole-cycle timing overlay is CPU-qualified with complete state/output equivalence, exact window coverage, and output/profiling rejection controls. After full N12 admission, require repeated same-work/compiler/dt 2-/8-node windows with warmup, maximum-rank timing, and startup/I/O separation. Actual qualified GPU trace ownership has bulk mean/max 9558/12663 at24ranks and2389.5/6588 at96ranks; six surface owners retain144points each. These are workload counts, not measured speed or an overall scaling bound. Equal block weights remain unchanged. The unchanged CPU-qualified timing builder now also produced an isolated verified Aurora SYCL executable, with11 reversible Driver insertions and frozen1972-source/228-object/executable guards passing. This compilation-only milestone establishes no GPU numerical or timing qualification; actualGPUuse remains deferred until3551. See evidence/native-cycle-timing-aurora-build.json."
     },
     {
       "id": "performance_improvements",
