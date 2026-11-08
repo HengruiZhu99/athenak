@@ -89,6 +89,8 @@ add_executable(
         ion-neutral/ion-neutral_tasks.cpp
 
         mesh/build_tree.cpp
+        mesh/chart_atlas.cpp
+        mesh/chart_mesh.cpp
         mesh/load_balance.cpp
         mesh/mesh.cpp
         mesh/meshblock.cpp

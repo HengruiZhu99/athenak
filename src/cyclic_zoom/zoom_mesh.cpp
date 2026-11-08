@@ -233,9 +233,9 @@ void ZoomMesh::SyncMBLists() {
 
 void ZoomMesh::SyncLogicalLocations() {
 #if MPI_PARALLEL_ENABLED
-  // Allreduce LogicalLocation as 4 int32s by global ZMB index
+  // Allreduce the complete LogicalLocation by global ZMB index.
   MPI_Allreduce(MPI_IN_PLACE, reinterpret_cast<std::int32_t*>(lloc_eachzmb.data()),
-                4*nzmb_total, MPI_INT32_T, MPI_MAX, MPI_COMM_WORLD);
+                LogicalLocation::nint*nzmb_total, MPI_INT32_T, MPI_MAX, MPI_COMM_WORLD);
 #endif
   return;
 }

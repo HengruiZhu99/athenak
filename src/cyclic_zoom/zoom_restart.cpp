@@ -7,6 +7,7 @@
 //! \brief Functions to write and read cyclic zoom restart data
 
 #include <iostream>
+#include <vector>
 
 #include "athena.hpp"
 #include "globals.hpp"
@@ -28,7 +29,7 @@ IOWrapperSizeT CyclicZoom::RestartFileSize() {
   // Size of zoom mesh metadata
   res_size += sizeof(int);                              // nzmb_total
   res_size += pzmesh->nlevels * sizeof(int);            // nzmb_eachlevel
-  res_size += pzmesh->nzmb_total * sizeof(LogicalLocation);  // lloc_eachzmb
+  res_size += pzmesh->nzmb_total * logical_location::RecordSize(1);  // lloc_eachzmb
 
   // Size of ZMB data
   res_size += pzmesh->nzmb_total * pzdata->zmb_data_cnt * sizeof(Real);
@@ -75,16 +76,20 @@ void CyclicZoom::WriteRestartFile(IOWrapper &resfile, IOWrapperSizeT offset_zoom
     resfile.Write_any_type_at(pzmesh->nzmb_eachlevel, pzmesh->nlevels*sizeof(int),
                               current_offset, "byte");
     current_offset += pzmesh->nlevels * sizeof(int);
-    resfile.Write_any_type_at(pzmesh->lloc_eachzmb.data(),
-                              pzmesh->nzmb_total*sizeof(LogicalLocation),
-                              current_offset, "byte");
-    current_offset += pzmesh->nzmb_total * sizeof(LogicalLocation);
+    // Cyclic zoom is Cartesian; keep its historical four-integer disk records.
+    std::vector<char> locations(pzmesh->nzmb_total*logical_location::RecordSize(1));
+    for (int m=0; m<pzmesh->nzmb_total; ++m) {
+      logical_location::Encode(locations.data()+m*logical_location::RecordSize(1),
+                               pzmesh->lloc_eachzmb[m], 1);
+    }
+    resfile.Write_any_type_at(locations.data(), locations.size(), current_offset, "byte");
+    current_offset += pzmesh->nzmb_total * logical_location::RecordSize(1);
   }
 
   // STEP 3: Calculate base offset for ZMB data (after metadata)
   IOWrapperSizeT base_offset = offset_zoom + sizeof(ZoomState) + sizeof(int)
                              + pzmesh->nlevels * sizeof(int)
-                             + pzmesh->nzmb_total * sizeof(LogicalLocation);
+                             + pzmesh->nzmb_total * logical_location::RecordSize(1);
 
   // STEP 4: Each rank writes its owned ZMBs to their global logical positions
   for (int gzm = 0; gzm < pzmesh->nzmb_total; ++gzm) {
@@ -170,20 +175,25 @@ void CyclicZoom::ReadRestartFile(IOWrapper &resfile, IOWrapperSizeT offset_zoom,
   pzmesh->RebuildMeshStructure();
 
   if (my_rank == 0 && nzmb_total_read > 0) {
-    resfile.Read_bytes_at(pzmesh->lloc_eachzmb.data(), nzmb_total_read,
-                          sizeof(LogicalLocation), current_offset);
-    current_offset += nzmb_total_read * sizeof(LogicalLocation);
+    std::vector<char> locations(nzmb_total_read*logical_location::RecordSize(1));
+    resfile.Read_bytes_at(locations.data(), nzmb_total_read,
+                          logical_location::RecordSize(1), current_offset);
+    for (int m=0; m<nzmb_total_read; ++m) {
+      pzmesh->lloc_eachzmb[m] = logical_location::Decode(
+          locations.data()+m*logical_location::RecordSize(1), 1);
+    }
+    current_offset += nzmb_total_read * logical_location::RecordSize(1);
   }
 #if MPI_PARALLEL_ENABLED
-  // Broadcast LogicalLocation array (4 int32_t per element)
-  MPI_Bcast(pzmesh->lloc_eachzmb.data(), nzmb_total_read * 4, MPI_INT32_T, 0,
+  // Broadcast complete in-memory locations, including chart identity.
+  MPI_Bcast(pzmesh->lloc_eachzmb.data(), nzmb_total_read * LogicalLocation::nint, MPI_INT32_T, 0,
             MPI_COMM_WORLD);
 #endif
 
   // STEP 3: Calculate base offset for ZMB data (after metadata)
   IOWrapperSizeT base_offset = offset_zoom + sizeof(ZoomState) + sizeof(int)
                              + pzmesh->nlevels * sizeof(int)
-                             + nzmb_total_read * sizeof(LogicalLocation);
+                             + nzmb_total_read * logical_location::RecordSize(1);
 
   // STEP 4: Each rank reads its owned ZMBs from their global logical positions
   int &zmb_size = pzdata->zmb_data_cnt;

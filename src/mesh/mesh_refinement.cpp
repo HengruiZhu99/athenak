@@ -340,7 +340,7 @@ void MeshRefinement::UpdateMeshBlockTree(int &nnew, int &ndel) {
 #if MPI_PARALLEL_ENABLED
   // Now pass Logical Locations of MBs updated between all ranks.
   MPI_Datatype lloc_type;
-  MPI_Type_contiguous(4, MPI_INT32_T, &lloc_type);
+  MPI_Type_contiguous(LogicalLocation::nint, MPI_INT32_T, &lloc_type);
   MPI_Type_commit(&lloc_type);
   if (tnref > 0) {
     MPI_Allgatherv(MPI_IN_PLACE, nref_eachrank[global_variable::my_rank], lloc_type,
@@ -372,7 +372,8 @@ void MeshRefinement::UpdateMeshBlockTree(int &nnew, int &ndel) {
                 if ((llderef[n].lx1+i) == llderef[r].lx1 &&
                     (llderef[n].lx2+j) == llderef[r].lx2 &&
                     (llderef[n].lx3+k) == llderef[r].lx3 &&
-                     llderef[n].level  == llderef[r].level) {
+                     llderef[n].level  == llderef[r].level &&
+                     llderef[n].chart_id == llderef[r].chart_id) {
                   rr++;
                 }
                 r++;
@@ -385,6 +386,7 @@ void MeshRefinement::UpdateMeshBlockTree(int &nnew, int &ndel) {
           cllderef[ctnd].lx2   = llderef[n].lx2 >> 1;
           cllderef[ctnd].lx3   = llderef[n].lx3 >> 1;
           cllderef[ctnd].level = llderef[n].level - 1;
+          cllderef[ctnd].chart_id = llderef[n].chart_id;
           ctnd++;
         }
       }

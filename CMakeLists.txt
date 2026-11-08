@@ -259,5 +259,11 @@ target_include_directories(athena PUBLIC
 
 configure_file(config.hpp.in config.hpp)
 
+option(Athena_ENABLE_HYPERBOLOIDAL_TESTS "Build native chart and hyperboloidal tests" OFF)
+if (Athena_ENABLE_HYPERBOLOIDAL_TESTS)
+  enable_testing()
+  add_subdirectory(tst/z4c_hyperboloidal)
+endif()
+
 install( TARGETS athena DESTINATION bin )
 

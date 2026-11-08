@@ -247,6 +247,7 @@ int main(int argc, char *argv[]) {
   IOWrapper infile, restartfile;
   // read parameters from restart file
   bool single_file_per_rank = false; // DBF: flag for single_file_per_rank for rst files
+  int restart_location_version = 1;
   if (res_flag) {
     // Check if the path contains "rank_" directory
     size_t rank_pos = restart_file.find("/rank_");
@@ -275,6 +276,9 @@ int main(int argc, char *argv[]) {
     // read parameters from restart file
     restartfile.Open(restart_file.c_str(),IOWrapper::FileMode::read,single_file_per_rank);
     pinput->LoadFromFile(restartfile, single_file_per_rank);
+    // Disk layout is fixed by the saved header, not by later input/CLI overrides.
+    restart_location_version = pinput->GetOrAddInteger(
+        "mesh", "logical_location_version", 1);
   }
 
   // read parameters from input file.  If both -r and -i are specified, this will
@@ -326,7 +330,8 @@ int main(int argc, char *argv[]) {
   if (!res_flag) {
     pmesh->BuildTreeFromScratch(pinput);
   } else {
-    pmesh->BuildTreeFromRestart(pinput, restartfile, single_file_per_rank);
+    pmesh->BuildTreeFromRestart(pinput, restartfile, single_file_per_rank,
+                                restart_location_version);
   }
 
   //  If code was run with -m option, write mesh structure to file and quit.

@@ -1,0 +1,21 @@
+add_executable(hyperboloidal_topology_tests topology_tests.cpp
+    ${CMAKE_SOURCE_DIR}/src/mesh/meshblock_tree.cpp
+    ${CMAKE_SOURCE_DIR}/src/mesh/chart_atlas.cpp)
+target_include_directories(hyperboloidal_topology_tests PRIVATE
+    ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+target_link_libraries(hyperboloidal_topology_tests PRIVATE Kokkos::kokkos)
+if (Athena_ENABLE_MPI)
+  target_link_libraries(hyperboloidal_topology_tests PRIVATE MPI::MPI_CXX)
+endif()
+add_test(NAME hyperboloidal_topology COMMAND hyperboloidal_topology_tests)
+
+add_executable(hyperboloidal_location_tests location_tests.cpp)
+target_include_directories(hyperboloidal_location_tests PRIVATE
+    ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+if (Athena_ENABLE_MPI)
+  target_link_libraries(hyperboloidal_location_tests PRIVATE MPI::MPI_CXX)
+  add_test(NAME hyperboloidal_locations_mpi COMMAND
+      ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 2 ${MPIEXEC_PREFLAGS}
+      $<TARGET_FILE:hyperboloidal_location_tests> ${MPIEXEC_POSTFLAGS})
+endif()
+add_test(NAME hyperboloidal_locations COMMAND hyperboloidal_location_tests)

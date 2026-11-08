@@ -14,9 +14,11 @@
 #include <cstdint>  // int32_t
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "athena.hpp"
 #include "diffusion/sts_types.hpp"
+#include "mesh/logical_location.hpp"
 
 // Define following structure before other "include" files to resolve declarations
 //----------------------------------------------------------------------------------------
@@ -60,10 +62,6 @@ struct NeighborBlock {
 //! of AMR, even if the root grid consists of a single MeshBlock, since the corresponding
 //! max index = 1*2^31 > INT_MAX = 2^31 -1 for most 32-bit signed integer types
 
-struct LogicalLocation {
-  std::int32_t lx1, lx2, lx3, level;
-};
-
 //----------------------------------------------------------------------------------------
 //! \struct EventCounters
 //! \brief stores various counters used as diagnostics throughout the code
@@ -79,6 +77,7 @@ class MeshBlock;
 class MeshBlockPack;
 class MeshBlockTree;
 class Mesh;
+namespace chart_atlas {class Atlas;}
 
 #include "parameter_input.hpp"
 #include "meshblock.hpp"
@@ -147,13 +146,14 @@ class Mesh {
   int nmb_packs_thisrank;                  // number of MBPacks on this rank
   MeshBlockPack* pmb_pack;                 // container for MeshBlocks on this rank
   std::unique_ptr<ProblemGenerator> pgen;  // class containing functions to set ICs
+  std::unique_ptr<chart_atlas::Atlas> atlas;  // geometry of optional mapped chart roots
   MeshRefinement *pmr=nullptr;             // mesh refinement data/functions (if needed)
   CyclicZoom *pzoom=nullptr;               // cyclic zoom data/functions (if needed)
 
   // functions
   void BuildTreeFromScratch(ParameterInput *pin);
   void BuildTreeFromRestart(ParameterInput *pin, IOWrapper &resfile,
-                            bool single_file_per_rank=false);
+                            bool single_file_per_rank=false, int location_version=1);
   void PrintMeshDiagnostics();
   void WriteMeshStructure();
   void NewTimeStep(const Real tlim);
@@ -186,6 +186,9 @@ class Mesh {
 
  private:
   std::unique_ptr<MeshBlockTree> ptree;  // pointer to root node in binary/quad/oct-tree
+  std::vector<std::unique_ptr<MeshBlockTree>> chart_trees;  // shell chart roots
+  void ConfigureChartAtlas(ParameterInput *pin, bool restarting);
+  void CreateMeshBlockTrees();
   void LoadBalance(float *clist, int *rlist, int *slist, int *nlist, int nb);
   int amr_lb_seq_ = 0;
 };

@@ -1,0 +1,87 @@
+{
+  "objective": "please proceed to use the original athenak driver, perhaps start a new branch, called hyperboloidal_cleaned_up, from this branch: project/z4c_overhaul, only move over necessary features, and ensure that we are reusing the athenak's original structure as in this branch as much as possible. You would need to extend the octree to add in the spherical shells, and add a new z4c_hyperboloidal module along with the rest of the modules, which should be closely modeled from the existing z4c module. I think a great thing about the current implementation in athenak is locality and task-based parallelism. right now give all blocks in the interior cartesian mesh and the spherical shells equal weights for load balancing. make sure that you carry over support for SMR and AMR, and reproduce the previous N12 run on aurora up-to 5 M. then measure performance and scaling, and make improvement on top of that. again, try reusing any of the infrastructure within athenak itself, only add new features as needed, and try making sure that they are added in a consistent style",
+  "goal_status": "active",
+  "completion_proven": false,
+  "requirements": [
+    {
+      "id": "base_branch",
+      "status": "verified",
+      "evidence_or_next_gate": "Branch hyperboloidal_cleaned_up, base origin/project/z4c_overhaul at 9db7169c9ea0ec943caf286b2199676e138ae9ee."
+    },
+    {
+      "id": "isolated_work",
+      "status": "verified",
+      "evidence_or_next_gate": "This worktree only; production source and campaign read-only. No new remote jobs."
+    },
+    {
+      "id": "native_driver_and_tasks",
+      "status": "incomplete",
+      "evidence_or_next_gate": "Original Driver retained. Hyperboloidal tasks and classical RK4 mode not integrated yet."
+    },
+    {
+      "id": "extend_native_octree",
+      "status": "partial",
+      "evidence_or_next_gate": "Seven native chart roots, chart/Morton leaf order, native whole-block ownership, geometry, level31, refine/derefine and restart identity implemented. Seam adjacency/closure and mapped donor lookup pending."
+    },
+    {
+      "id": "new_native_physics_module",
+      "status": "partial",
+      "evidence_or_next_gate": "Stateless z4c_hyperboloidal equations/fields/reference/stencil math validated. Pack-owned arrays, class registration, construction and runtime lifecycle pending."
+    },
+    {
+      "id": "block_locality",
+      "status": "partial",
+      "evidence_or_next_gate": "Native N12 mesh construction owns whole leaves and per-local-leaf geometry. Bulk/overlap/scri field allocation and block-owned boundary tasks pending."
+    },
+    {
+      "id": "equal_block_weights",
+      "status": "verified_for_constructed_mesh",
+      "evidence_or_next_gate": "All106 N12 leaves weight1; two ranks own53 each. Native AMR still resets every block weight to1. Coupled AMR execution not yet validated."
+    },
+    {
+      "id": "smr_support",
+      "status": "partial",
+      "evidence_or_next_gate": "Native core static refinement reproduces34 core+72 shell leaves. General shell region selection and cross-chart closure/transfer pending."
+    },
+    {
+      "id": "amr_support",
+      "status": "partial",
+      "evidence_or_next_gate": "Native Cartesian AMR/restart remains bitwise against base; chart identity survives tree/MPI records and within-chart refinement tests. Coupled chart refinement, overlap donor eligibility, migration and state transfers pending."
+    },
+    {
+      "id": "numerical_fidelity",
+      "status": "partial",
+      "evidence_or_next_gate": "31slots/26independent, reference subtraction, physical KO8, gauge/endpoint math extracted and oracle tested. Need whole-grid initialization, stage closure, overlap and endpoint sampling, exact dt/floor/KO policies and full coupled comparisons."
+    },
+    {
+      "id": "native_restart",
+      "status": "partial",
+      "evidence_or_next_gate": "Explicit v2 location records and immutable binary atlas identity, legacy Cartesian v1 support, format key captured before overrides. Full hyperboloidal bulk/overlap/scri state serialization not integrated."
+    },
+    {
+      "id": "n12_aurora_through_5m",
+      "status": "incomplete",
+      "evidence_or_next_gate": "Pinned exact reference target3551 complete steps,t/M5.0009660239551499,dt0.00046944203735617445. Native coupled run not submitted."
+    },
+    {
+      "id": "diagnostics_and_constraints",
+      "status": "incomplete",
+      "evidence_or_next_gate": "Reference RMS/horizon/state hashes recovered. Native physical conversion, constraints, FastFlow and any required tracker interface integration pending."
+    },
+    {
+      "id": "performance_and_scaling",
+      "status": "incomplete",
+      "evidence_or_next_gate": "No native coupled timings yet. Same workload/compiler/dt/rank timing,warmup,repeated2-/8-node windows and startup/I/O separation required after correctness."
+    },
+    {
+      "id": "performance_improvements",
+      "status": "incomplete",
+      "evidence_or_next_gate": "Profile native coupled implementation then improve measured bottlenecks one at a time with correctness gates."
+    },
+    {
+      "id": "reuse_and_consistent_style",
+      "status": "partial",
+      "evidence_or_next_gate": "Native tree, ownership, main Driver, generic boundary graph and native AMR framework retained. No legacy Evolution/CompositeGrid/global field ownership copied. Final integration/review remains."
+    }
+  ]
+}

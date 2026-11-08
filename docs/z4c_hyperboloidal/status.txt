@@ -1,0 +1,60 @@
+Native AthenaK migration — active, incomplete
+
+Authoritative checkout: /Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal
+Branch: hyperboloidal_cleaned_up
+Base: 9db7169c9ea0ec943caf286b2199676e138ae9ee (project/z4c_overhaul)
+
+Implemented foundation:
+- Mesh-owned seven-root native tree, explicit chart identity and per-local-block maps.
+- N12 mesh-only fixture gives 106 leaves (34 Cartesian, 72 shell), six scri-bearing
+  leaves, native equal block costs and rank ownership. No flattened cell ownership.
+- Same-chart conforming neighbors remain native; different radial intervals are
+  intentionally excluded from generic copy neighbors and require mapped exchange.
+- Explicit restart location records preserve old Cartesian files. Geometry identity
+  is binary-bound; restart input overrides cannot silently change maps or format.
+- Stateless z4c_hyperboloidal point math, native packed readers, endpoint and KO
+  math. Native atlas is the only geometry implementation.
+
+Validated:
+- Full native MPI/Serial Release build with make -j64.
+- CTest: tree/atlas geometry, level 31, identity changes, native refine/derefine,
+  location disk formats and two-rank MPI record transport.
+- Two-rank hydro and Z4c AMR (8→64 blocks): complete binary state and metadata
+  agree bitwise with an immutable build of the exact base, including old/new restart.
+- Point oracle: 432 bulk, 256 scri, 37 invalid cases, 492247 scalar comparisons,
+  maximum scaled difference 7.0359255910187767e-14. This is math/stencil evidence,
+  not a full evolution or GPU validation.
+
+Build provenance:
+- Current candidate: build-native; configure/build logs under evidence/.
+- Immutable base: thread artifact native-base/source (git archive of exact base),
+  native-base/build. Kokkos submodule 6739bc623081648af9e752b616d9671527922cbf.
+- The initial build-native-baseline attempt raced a concurrent tree-header edit
+  and failed; it is NOT baseline evidence. Its generated config/Kokkos libraries
+  were used for the independent point oracle only. The real base build was made
+  from the immutable archive after this was detected.
+
+Next required work, preserving the complete objective:
+1. Native Z4cHyperboloidal class/registration, per-block evolved overlap storage,
+   block-owned scri arrays, initial/reference data and algebraic reconstruction.
+2. Native stage task graph and classical RK4 inside Driver. Native rk4 is a
+   different low-storage method and cannot silently replace classical RK4.
+3. Mapped donor plans keyed by native GID/index, native peer/nonblocking exchange
+   lifecycle, surface compatibility/reconstruction, independent bulk overlap.
+4. Cross-chart seam/refinement closure, donor eligibility, SMR shell selection,
+   native migration/refine/derefine/restart for all evolved bulk/overlap/scri data.
+5. Mapped timestep, diagnostics, ADM conversion and N12 full-state comparison.
+6. Aurora N12 through 3551 full steps (just past 5 M), then bounded performance and
+   scaling measurements and measured improvements. No native Aurora job yet.
+
+Important limits:
+- The N12 fixture is mesh-only (-m), not an executable hyperboloidal evolution.
+- Cross-chart coupled SMR/AMR support and end-to-end correctness are NOT complete.
+- Production remains untouched; this migration has no claimed speedup yet.
+- Keep all leaves at equal weight. Current maps include 3 evolved overlap cells
+  and 4 difference ghosts, and outer radial endpoint offset 0 with separate scri.
+- Reference N12 tracker is disabled. Pin KO=.1, stored chi floor 1e-10, constant
+  shift-speed policy, stationary-reference outer gauge and exact dt.
+- Check live qstat before any future Aurora submission; use at most 8 nodes.
+
+Full original requirements/status are retained in requirements.json.

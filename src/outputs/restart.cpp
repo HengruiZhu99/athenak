@@ -16,12 +16,14 @@
 #include <sstream>
 #include <string>
 #include <utility> // make_pair
+#include <vector>
 
 #include "athena.hpp"
 #include "coordinates/cell_locations.hpp"
 #include "geodesic-grid/geodesic_grid.hpp"
 #include "globals.hpp"
 #include "mesh/mesh.hpp"
+#include "mesh/chart_atlas.hpp"
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
 #include "coordinates/adm.hpp"
@@ -211,6 +213,13 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
     }
   }
 
+  // Version the logical-location records before dumping the parameter header.
+  const int location_version = logical_location::current_version;
+  const auto location_size = logical_location::RecordSize(location_version);
+  const std::string atlas_identity = pm->atlas ? pm->atlas->Identity() : std::string();
+  const std::uint64_t atlas_size = atlas_identity.size();
+  pin->SetInteger("mesh", "logical_location_version", location_version);
+
   // create string holding input parameters (copy of input file)
   std::stringstream ost;
   pin->ParameterDump(ost);
@@ -244,13 +253,22 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
                             single_file_per_rank);
     resfile.Write_any_type(&(pm->ncycle), (sizeof(int)), "byte",
                             single_file_per_rank);
+    resfile.Write_any_type(&atlas_size, sizeof(atlas_size), "byte", single_file_per_rank);
+    if (atlas_size > 0) {
+      resfile.Write_any_type(atlas_identity.data(), atlas_size, "byte", single_file_per_rank);
+    }
   }
   //--- STEP 2.  Root process writes list of logical locations and cost of MeshBlocks
   // This data read in Mesh::BuildTreeFromRestart()
 
   if (global_variable::my_rank == 0 || single_file_per_rank) {
-    resfile.Write_any_type(&(pm->lloc_eachmb[0]),(pm->nmb_total)*sizeof(LogicalLocation),
-                           "byte", single_file_per_rank);
+    std::vector<char> locations(pm->nmb_total*location_size);
+    for (int m=0; m<pm->nmb_total; ++m) {
+      logical_location::Encode(locations.data()+m*location_size,
+                               pm->lloc_eachmb[m], location_version);
+    }
+    resfile.Write_any_type(locations.data(), locations.size(), "byte",
+                           single_file_per_rank);
     resfile.Write_any_type(&(pm->cost_eachmb[0]), (pm->nmb_total)*sizeof(float),
                            "byte", single_file_per_rank);
   }
@@ -309,8 +327,9 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
 
   // calculate size of data written in Steps 1-2 above
   IOWrapperSizeT step1size = sbuf.size()*sizeof(char) + 3*sizeof(int) + 2*sizeof(Real) +
-                             sizeof(RegionSize) + 2*sizeof(RegionIndcs);
-  IOWrapperSizeT step2size = (pm->nmb_total)*(sizeof(LogicalLocation) + sizeof(float));
+                             sizeof(RegionSize) + 2*sizeof(RegionIndcs)
+                             + sizeof(atlas_size) + atlas_size;
+  IOWrapperSizeT step2size = (pm->nmb_total)*(location_size + sizeof(float));
 
   IOWrapperSizeT step3size = 3*nco*sizeof(Real);
   if (pz4c != nullptr) step3size += sizeof(Real);

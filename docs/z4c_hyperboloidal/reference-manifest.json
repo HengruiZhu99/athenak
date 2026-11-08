@@ -1,0 +1,251 @@
+{
+  "status": "inputs_grid_diagnostics_snapshot_hashes_and_header_verified_evolution_build_manifest_audited",
+  "production_source_root": "/Users/hz0693/.codex/worktrees/scri-ko01/hyperboloidal",
+  "remote_campaign": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-ko01-20261106/campaign-constant20m",
+  "input_records": [
+    {
+      "remote_path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-ko01-20261106/campaign-constant20m/central_smr20.in",
+      "local_source": "/Users/hz0693/.codex/worktrees/scri-ko01/hyperboloidal/inputs/hyperbolic_shift_3d/spherical_smoke/central_smr_constant20.in",
+      "evidence_path": "evidence/central_smr20.in",
+      "sha256": "d660b72deb0f3679cf63a0a28e1298e817b927e7906533eecef020d11f1a202f",
+      "remote_local_match": true
+    },
+    {
+      "remote_path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-ko01-20261106/campaign-constant20m/central_smr_constant.cfg",
+      "local_source": "/Users/hz0693/.codex/worktrees/scri-ko01/hyperboloidal/inputs/hyperbolic_shift_3d/spherical_smoke/central_smr_constant.cfg",
+      "evidence_path": "evidence/central_smr_constant.cfg",
+      "sha256": "9c786cc8c3312ddf93389a4b3f1f6e32921811a61f4d131ee53990fb80a1d363",
+      "remote_local_match": true
+    }
+  ],
+  "remote_inventory": {
+    "source": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/docs/z4c_hyperboloidal/evidence/n12-remote-inventory.json",
+    "evidence_path": "evidence/n12-remote-inventory.json",
+    "sha256": "dadc544136b70d41679f554ad5fd48866f5e86cb787ef36de91c05dfe2737b8b"
+  },
+  "diagnostic_csv": {
+    "source": "/Users/hz0693/.codex/visualizations/2026/11/07/01a1b480-8ee5-74c1-8892-b4989efa7d20/n24-n12-through10M/n12-fastflow.csv",
+    "evidence_path": "evidence/n12-fastflow.csv",
+    "sha256": "1a9cad154bf199e0e28f25384ad5185c17e85066d2afd337cc366b45f4a84435",
+    "rows": 42,
+    "semantics": "RMS, sqrt(sum(v*C^2)/sum(v)); physical metric contractions for momentum and Z",
+    "target_row": {
+      "t_M": "5.0009660239551499",
+      "step": "3551",
+      "horizon_found": "1",
+      "horizon_r": "0.030549496850187822",
+      "horizon_xplus": "0.030548633681119878",
+      "horizon_radius_M": "1.9999860425879357",
+      "horizon_mass_M": "0.99999302129396783",
+      "horizon_expansion_rms": "1.4887607237254066e-05",
+      "horizon_iterations": "132",
+      "full_volume": "4.1616985768894033",
+      "exterior_volume": "4.1615782065190334",
+      "full_H": "0.0073257648025702423",
+      "full_M": "0.0039666959397409406",
+      "full_Theta": "0.00063679744011741466",
+      "full_Z": "0.00074930798279592369",
+      "exterior_H": "0.0066650464364187327",
+      "exterior_M": "0.003785788884853934",
+      "exterior_Theta": "0.00062887813299441033",
+      "exterior_Z": "0.0007488764374473728",
+      "reference_max_abs_difference": "0"
+    },
+    "remote_hash_matches_local": true
+  },
+  "target": {
+    "step": 3551,
+    "time_M": "5.0009660239551499",
+    "nominal_dt": "0.00046944203735617445",
+    "fixed_dt": true
+  },
+  "derived_grid": {
+    "N": 12,
+    "cartesian_leaves": 34,
+    "shell_leaves": 72,
+    "total_leaves": 106,
+    "bulk_points": 229392,
+    "scri_points": 864
+  },
+  "local_source_audit": [
+    {
+      "path": "tst/hyperbolic_shift_3d/endpoint_policy/run.cpp",
+      "sha256": "b2c93b005f23c9eed7a561dad5adfcc9ea706cb714d211f01764b9671e8f5d42"
+    },
+    {
+      "path": "tst/hyperbolic_shift_3d/endpoint_policy/run_controls.hpp",
+      "sha256": "730f0a103ecbbd8c7fd02bdbb73496d96fba31bf39b099e615dd3315058b94eb"
+    },
+    {
+      "path": "tst/hyperbolic_shift_3d/endpoint_policy/static_mesh.hpp",
+      "sha256": "53e6f32189d82fa03499f9e5edb16f758a4228f3c2bd36ef39495eb16531d1c0"
+    },
+    {
+      "path": "tst/hyperbolic_shift_3d/endpoint_policy/chi_policy.hpp",
+      "sha256": "1d9ce70380679bc812597de8db151336db0393bb71e8dd56c22237503d3b6758"
+    },
+    {
+      "path": "tst/hyperbolic_shift_3d/endpoint_policy/fastflow_history.hpp",
+      "sha256": "5fef2bef95f254117162e10cf3a8d8fec9b5f24b46af9f4ac4f3c7ea5aecf8ef"
+    },
+    {
+      "path": "tst/hyperbolic_shift_3d/endpoint_policy/fastflow_diagnostics.cpp",
+      "sha256": "6d3989aa19bc13cdbc8e0597ba239d3fd651962851710e851a18faaeeb11df32"
+    },
+    {
+      "path": "tst/hyperbolic_shift_3d/endpoint_policy/resolution_20m/analyze_n12.pbs",
+      "sha256": "30f25c8023d44c7c38f2d6e2791f6db396a0cb92eb945903145544306b2291ca"
+    },
+    {
+      "path": "tst/hyperbolic_shift_3d/endpoint_policy/central_smr/build_ko01.py",
+      "sha256": "76d6e56df7c4f46b1e11ba3712a198037848e93edcc2c8fdd46f6e47e4eff843"
+    },
+    {
+      "path": "tst/hyperbolic_shift_3d/endpoint_policy/constant_20m/evolve.pbs",
+      "sha256": "daa82b45e90cfd0d1fd520d5bf17ea2cea08b107c8884abc3b07160a86685b26"
+    },
+    {
+      "path": "tst/hyperbolic_shift_3d/endpoint_policy/constant_20m/controller.py",
+      "sha256": "57a1ca23f446601aa30c2dd8b25fb8be5684de83f59bd9ef953b172edf56e244"
+    },
+    {
+      "path": "tst/hyperbolic_shift_3d/refined_configuration.hpp",
+      "sha256": "2f19f582ac63b03c18a57c2923eaecb8d76c9080a4b838ef1d2a033de3832184"
+    },
+    {
+      "path": "tst/hyperbolic_shift_3d/coupled_mpi.cpp",
+      "sha256": "f7708dd17b13e64bd7690669a217277d6a3fea9a6169bcb07c2b8430ee335055"
+    },
+    {
+      "path": "src/mesh/cubed_sphere/composite.hpp",
+      "sha256": "64e78e3ab69816cb8be3d13614bedb0074bb0ba3ea6fafea15f81323051d9972"
+    },
+    {
+      "path": "src/mesh/cubed_sphere/composite_difference.hpp",
+      "sha256": "2a424afa66c695ccb5063d0fccd7736cff2a460dab5dd82365918d6e4911c7bf"
+    },
+    {
+      "path": "src/z4c/hyperboloidal/central_z4c_configuration.hpp",
+      "sha256": "47411b63291116de91c5e070acd8bacdc67170f659eb3e4d84be7923e595f0a0"
+    },
+    {
+      "path": "src/z4c/hyperboloidal/native_wormhole.hpp",
+      "sha256": "6588c562661bb7ba8d701dd8e9e42e22708e864b5d55e4ab3966dca357ab7e72"
+    },
+    {
+      "path": "src/z4c/hyperboloidal/spherical_reference_3d.hpp",
+      "sha256": "47afba870faa303a00f32273d3432c1b7e7673309e987045104a07b04ebc0ae6"
+    },
+    {
+      "path": "src/z4c/hyperboloidal/spherical_transfer_3d.hpp",
+      "sha256": "319674e2a55e1e2f1e07232be99f306f7644be606ab50d74696af437d27df127"
+    },
+    {
+      "path": "src/z4c/hyperboloidal/spherical_policy.hpp",
+      "sha256": "74618175719f922e62b5f15e6f619b508486cef563494d7ccd14f2017fa1c00c"
+    },
+    {
+      "path": "src/z4c/hyperboloidal/hyperbolic_shift.hpp",
+      "sha256": "e64e5e37a25650bf8d3b95de75d6a89cdca83f04864a8eb5c896ffdb4788059f"
+    },
+    {
+      "path": "src/z4c/hyperboloidal/cartesian_algebraic_chart.hpp",
+      "sha256": "70ef745c0708ac2f7b7d6dd84be2e4d69d5552375a2a86fa600e1e8de2b9eaf6"
+    },
+    {
+      "path": "src/z4c/hyperboloidal/composite_dissipation.hpp",
+      "sha256": "92e6cf5017a432ee6b78acee4a3491d78c209f1c31045a8f773725df2e8d6faf"
+    }
+  ],
+  "local_source_provenance_caveat": "Current local production source contains later changes; remote N12 build manifest must establish which source hashes match.",
+  "native_target_base_commit": "9db7169c9ea0ec943caf286b2199676e138ae9ee",
+  "snapshot": {
+    "remote_directory": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-ko01-20261106/campaign-constant20m/segment-01/step-3551",
+    "files": {
+      "fields.bin": {
+        "bytes": 56889216,
+        "sha256": "7d37c940eea84a04dc471bb90178c3e2facf153f14382cd2a47cf1fba6a320be"
+      },
+      "boundary.bin": {
+        "bytes": 214272,
+        "sha256": "343d4b04c6dc6456eb8bdf84bf1ddaa97fc1aee9531bdb1299c4d8573394e6ef"
+      },
+      "restart.bin": {
+        "bytes": 114214390,
+        "sha256": "e43367df1a1a71a43d0e145157ca5a6810b6fb521b8cee7dbb2c1d594dc18cab"
+      }
+    },
+    "header_evidence": "evidence/step-3551-checkpoint-layout.json",
+    "time": {
+      "t": 1.6669886746517166,
+      "t_M": 5.00096602395515,
+      "steps": 3551,
+      "clock_stage_max": 0.37126366000113326,
+      "CFL": 0.2384279379080275,
+      "determinant": 8.881784197001252e-16,
+      "tracefree": 1.2434497875801753e-14,
+      "constraint_RMS": [
+        0.007325764802570242,
+        0.0039666959397409406,
+        0.0006367974401174147,
+        0.0007493079827959237
+      ],
+      "outer_constraint_RMS": [
+        0.009746186025080513,
+        0.004896165433714319,
+        0.0001470802568244885,
+        0.00038191355277477436
+      ]
+    },
+    "chi_policy": {
+      "ko": 0.1,
+      "chi_floor": 1e-10,
+      "time_M": 5.00096602395515,
+      "minimum_chi": 4.325320342180422e-05,
+      "minimum_raw_candidate": -4.539097086597513e-08,
+      "minimum_raw_acceptance_candidate": -4.539097086597513e-08,
+      "floor_events": 56664,
+      "nonpositive_candidates": 56608,
+      "nonfinite_candidates": 0,
+      "distinct_floored_cells": 8,
+      "sum_corrections_over_attempts": 0.0012998644382008217,
+      "surface_floor_events": 0,
+      "max_correction": 4.549097086597513e-08,
+      "max_floor_radius": 0.002405626121623456,
+      "first_floor_M": 0.33095663633610284
+    }
+  },
+  "actual_plan": {
+    "backend": "SYCL",
+    "ranks": 48,
+    "bulk_points": 229392,
+    "surface_points": 864,
+    "dt_dr": 0.09388840747123489,
+    "dt_M": 0.0014083261120685234,
+    "target_M": 20,
+    "tlim": 6.666666666666667,
+    "nlim": -1,
+    "wall_time_limit": 3200,
+    "host_evolution": false,
+    "interpolation_kernels_per_RHS_per_rank": 1
+  },
+  "grid_remote_confirmed": true,
+  "source_audit": {
+    "evidence_path": "evidence/n12-source-audit.json",
+    "matching_count": 763,
+    "different_count": 9,
+    "missing_count": 0
+  },
+  "remaining_gaps": [
+    "The file under n12-fastflow/build-manifest.json describes evolve-history, not fastflow_diagnostics."
+  ],
+  "campaign_binary_manifest": {
+    "path": "evidence/binaries-20m.sha256",
+    "sha256": "e0cec036def413a6e0bc080f81a6bda19149042af329591e620f93f925d4be06",
+    "evolve_static_matches_build_manifest": true
+  },
+  "snapshot_list": {
+    "path": "evidence/snapshots.txt",
+    "sha256": "fc55628d06c697d800a4824249f403434cd43710560ee69d7e69c8689b2de9d6"
+  }
+}

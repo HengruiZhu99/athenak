@@ -1,0 +1,43 @@
+# Mesh construction fixture for the pinned N12 reference; use athena -m.
+# Evolution registration and mapped interface transport are separate migration gates.
+<job>
+basename = native_n12
+<mesh>
+nghost = 4
+nx1 = 36
+nx2 = 36
+nx3 = 36
+x1min = -.1
+x1max = .1
+x2min = -.1
+x2max = .1
+x3min = -.1
+x3max = .1
+ix1_bc = mapped
+ox1_bc = mapped
+ix2_bc = mapped
+ox2_bc = mapped
+ix3_bc = mapped
+ox3_bc = mapped
+<meshblock>
+nx1 = 12
+nx2 = 12
+nx3 = 12
+<mesh_atlas>
+type = cubed_sphere
+spherical_inner_radius = .08
+shell_radii = .16,.24,.32,.40,.48,.56,.64,.72,.80,.88,.94,1
+evolved_overlap = 3
+outer_endpoint_grid = true
+<mesh_refinement>
+refinement = static
+<refined_region0>
+x1min = -.03
+x1max = .03
+x2min = -.03
+x2max = .03
+x3min = -.03
+x3max = .03
+level = 1
+<time>
+cfl_number = .2

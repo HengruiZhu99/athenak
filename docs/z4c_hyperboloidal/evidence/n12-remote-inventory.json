@@ -1,0 +1,75 @@
+{
+  "queue": "\naurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov: \n                                                                 Req'd  Req'd   Elap\nJob ID               Username Queue    Jobname    SessID NDS TSK Memory Time  S Time\n-------------------- -------- -------- ---------- ------ --- --- ------ ----- - -----\n8883678.aurora-pbs-* hzhu     capacity telegraph*    --   16 33*    --  01:00 H   -- \n8888791.aurora-pbs-* hzhu     capacity telegraph*    --    8 16*    --  01:00 H   -- \n8888792.aurora-pbs-* hzhu     capacity telegraph*    --   16 33*    --  01:00 H   -- \n",
+  "listing:/lus/flare/projects/CompactBinaryMerger/hzhu/scri-ko01-20261106": [
+    "source/",
+    "campaign-constant20m/",
+    "build-static-checkpoint-manifest.json",
+    "scri-ko01-20M-01.o9047276",
+    "evolve-static.o",
+    "evidence.tar.gz",
+    "runtime-cache/",
+    "baseline-check/",
+    "continuation20-submission.tar.gz",
+    "ko01/",
+    "final-qstat.txt",
+    "ko01.log",
+    "campaign-20m/",
+    "scri-constant20M-02.o9047631",
+    "ko01.exit-code",
+    "evolve-static",
+    "apply-floor",
+    "baseline-check.log",
+    "ko01-floor.log",
+    "scri-constant20M-01.o9047352",
+    "ko01-floor.exit-code",
+    "scri-ko01-chi.o9046513",
+    "collection-sha256.json",
+    "collect.py",
+    "completed.json",
+    "ko01-floor/",
+    "build.log",
+    "nodes.txt",
+    "floor-decision.json",
+    "source-update.tar.gz",
+    "baseline-validation.json",
+    "Makefile-static-checkpoint",
+    "constant20-submission.tar.gz"
+  ],
+  "listing:/lus/flare/projects/CompactBinaryMerger/hzhu/scri-ko01-20261106/campaign-constant20m": [
+    "ray-analysis/",
+    "evolve.pbs",
+    "segment-01.log",
+    "horizon-analysis/",
+    "central_smr20.in",
+    "nodes-02.txt",
+    "central_smr_constant.cfg",
+    "segment-01/",
+    "controller.lock",
+    "collect_ray.py",
+    "build-evidence/",
+    "segment-02.log",
+    "nodes-01.txt",
+    "state.json",
+    "controller.py",
+    "segment-02/"
+  ],
+  "listing:/lus/flare/projects/CompactBinaryMerger/hzhu/scri-ko01-20261106/horizon-analysis": [],
+  "listing:/lus/flare/projects/CompactBinaryMerger/hzhu/scri-resolution-20261107/n12-fastflow": [
+    "pbs.log",
+    "diagnostics.log",
+    "build-manifest.json",
+    "output/"
+  ],
+  "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-ko01-20261106/campaign-constant20m/central_smr20.in": {
+    "sha256": "d660b72deb0f3679cf63a0a28e1298e817b927e7906533eecef020d11f1a202f",
+    "text": "# Fresh constant-shift SMR run to 20M; KO=.1, stored chi floor=1e-10.\n<problem>\nconfiguration=central_smr_constant.cfg\n<time>\ntlim=6.666666666666667\nnlim=-1\ndt=0.00046944203735617445\nwall_time_limit=3200\n<numerics>\nko=0.1\nchi_floor=1e-10\n"
+  },
+  "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-ko01-20261106/campaign-constant20m/central_smr_constant.cfg": {
+    "sha256": "9c786cc8c3312ddf93389a4b3f1f6e32921811a61f4d131ee53990fb80a1d363",
+    "text": "# N12: 3^3 Cartesian parents; replace central parent by eight level-1 children.\n# Fine dx=1/360; fine cube [-1/30,1/30]^3. Shells unchanged.\n# The Cartesian tensor equations also operate on the mapped central shells.\ninner_z4c_radius_M=20\ncentral_region_layout=cartesian-shell\ncompact_slicing_end=.97\nboost_velocity=0\ncore_half_width=.10\nshell_inner_radius=.08\ncore_subdivisions=3\nsmr_levels=1\nsmr_half_widths=.03,.03,.03\nshell_radii=.16,.24,.32,.40,.48,.56,.64,.72,.80,.88,.94,1\nshift_speed_policy=constant\nouter_gauge=stationary-reference\nouter_lapse_damping=.25\nbuffer_cells=4\ncfl_target=.2\n"
+  },
+  "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-ko01-20261106/campaign-constant20m/state.json": {
+    "sha256": "47f87eb2c88f3a604918084ab09b9380706cca4accde4737ebf85fb542c2421a",
+    "text": "{\n  \"target_M\": 20,\n  \"status\": \"complete\",\n  \"time_M\": 20,\n  \"checkpoint\": \"campaign-constant20m/segment-02/final/restart.bin\",\n  \"max_segments\": 3,\n  \"segments\": [\n    {\n      \"index\": 1,\n      \"output\": \"campaign-constant20m/segment-01\",\n      \"checkpoint\": \"\",\n      \"start_M\": 0,\n      \"submitted_UTC\": \"2026-11-06T19:58:22.694623+00:00\",\n      \"submit_command\": [\n        \"qsub\",\n        \"-N\",\n        \"scri-constant20M-01\",\n        \"-v\",\n        \"SCRI_SEGMENT=1\",\n        \"campaign-constant20m/evolve.pbs\"\n      ],\n      \"submission_receipt\": {\n        \"returncode\": 0,\n        \"stdout\": \"9047352.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov\\n\",\n        \"stderr\": \"\"\n      },\n      \"job_id\": \"9047352.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov\",\n      \"started_UTC\": \"2026-11-06T20:19:07.168391+00:00\",\n      \"ended_UTC\": \"2026-11-06T21:13:01.348377+00:00\",\n      \"exit_code\": 0,\n      \"result\": {\n        \"status\": \"wall_limit\",\n        \"failure\": \"\",\n        \"start_M\": 0,\n        \"time_M\": 13.752304484349663,\n        \"steps\": 9765,\n        \"evolution_seconds\": 3200.606594867073,\n        \"setup_seconds\": 30.557583957444876,\n        \"max_CFL\": 0.2387182432090092,\n        \"max_clock\": 0.3768414917303344,\n        \"interpolation_calls_per_rank\": 39089\n      }\n    },\n    {\n      \"index\": 2,\n      \"output\": \"campaign-constant20m/segment-02\",\n      \"checkpoint\": \"campaign-constant20m/segment-01/final/restart.bin\",\n      \"start_M\": 13.752304484349663,\n      \"submitted_UTC\": \"2026-11-06T21:13:01.375308+00:00\",\n      \"submit_command\": [\n        \"qsub\",\n        \"-N\",\n        \"scri-constant20M-02\",\n        \"-v\",\n        \"SCRI_SEGMENT=2\",\n        \"-W\",\n        \"depend=afterany:9047352.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov\",\n        \"campaign-constant20m/evolve.pbs\"\n      ],\n      \"submission_receipt\": {\n        \"returncode\": 0,\n        \"stdout\": \"9047631.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov\\n\",\n        \"stderr\": \"\"\n      },\n      \"job_id\": \"9047631.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov\",\n      \"started_UTC\": \"2026-11-06T21:15:33.479757+00:00\",\n      \"ended_UTC\": \"2026-11-06T21:40:19.790685+00:00\",\n      \"exit_code\": 0,\n      \"result\": {\n        \"status\": \"target\",\n        \"failure\": \"\",\n        \"start_M\": 13.752304484349663,\n        \"time_M\": 20,\n        \"steps\": 14202,\n        \"evolution_seconds\": 1453.2033238350414,\n        \"setup_seconds\": 31.03651355020702,\n        \"max_CFL\": 0.23917238596027623,\n        \"max_clock\": 0.31413370184980893,\n        \"interpolation_calls_per_rank\": 17763\n      },\n      \"restart_roundtrip_sha256\": {\n        \"fields.bin\": \"c4609830a48710b8b3de08a9d9cfa3916e41d0a44dab0861b96c3a8e89f9471c\",\n        \"boundary.bin\": \"4f095a3d6097f56c0986a4cf0dd295b7e2dd51b869eb7c1d1522b137745ed336\",\n        \"restart.bin\": \"ffb71f9b0d469264c4649a7a44d60c8032fbb77ba3a25f6c7edc5f6a1197a4a8\"\n      }\n    }\n  ],\n  \"created_UTC\": \"2026-11-06T19:58:22.599160+00:00\",\n  \"completed_UTC\": \"2026-11-06T21:40:20.270928+00:00\"\n}\n"
+  }
+}

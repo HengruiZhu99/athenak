@@ -15,6 +15,7 @@
 #include "globals.hpp"
 #include "parameter_input.hpp"
 #include "mesh.hpp"
+#include "chart_atlas.hpp"
 #include "coordinates/cell_locations.hpp"
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
@@ -42,11 +43,11 @@ void Mesh::BuildTreeFromScratch(ParameterInput *pin) {
   // Find smallest N such that 2^N > max number of MeshBlocks in any dimension (nmbmax)
   // Then N is logical level of root grid.  2^N implemented as left-shift (1<<root_level)
   for (root_level=0; ((1<<root_level) < nmbmax); root_level++) {}
+  ConfigureChartAtlas(pin, false);
   int current_level = root_level;
 
   // Construct tree and create root grid
-  ptree = std::make_unique<MeshBlockTree>(this);
-  ptree->CreateRootGrid();
+  CreateMeshBlockTrees();
 
   // Error check properties of input paraemters for SMR/AMR meshes.
   if (adaptive) {
@@ -313,7 +314,8 @@ void Mesh::BuildTreeFromScratch(ParameterInput *pin) {
 //! restart file.
 
 void Mesh::BuildTreeFromRestart(ParameterInput *pin, IOWrapper &resfile,
-                                                     bool single_file_per_rank) {
+                                  bool single_file_per_rank, int location_version) {
+  const auto location_size = logical_location::RecordSize(location_version);
   // At this point, the restartfile is already open and the ParameterInput (input file)
   // data has already been read in main(). Thus the file pointer is set to after <par_end>
   // following must be identical to calculation of headeroffset (excluding size of
@@ -369,10 +371,42 @@ void Mesh::BuildTreeFromRestart(ParameterInput *pin, IOWrapper &resfile,
   std::memcpy(&ncycle, &(headerdata[hdos]), sizeof(int));
   delete [] headerdata;
 
+  // The geometry identity is saved in the binary section, where input overrides
+  // cannot change it. Version-one files predate mapped charts.
+  std::string saved_atlas;
+  if (location_version >= 2) {
+    std::uint64_t size = 0;
+    if (global_variable::my_rank == 0 || single_file_per_rank) {
+      if (resfile.Read_bytes(&size, sizeof(size), 1, single_file_per_rank) != 1) {
+        throw std::runtime_error("Missing chart atlas restart record");
+      }
+    }
+#if MPI_PARALLEL_ENABLED
+    if (!single_file_per_rank) MPI_Bcast(&size, 1, MPI_UINT64_T, 0, MPI_COMM_WORLD);
+#endif
+    if (size > 65536) throw std::runtime_error("Invalid chart atlas restart record size");
+    saved_atlas.resize(size);
+    if (size > 0) {
+      if (global_variable::my_rank == 0 || single_file_per_rank) {
+        if (resfile.Read_bytes(saved_atlas.data(), 1, size, single_file_per_rank) != size) {
+          throw std::runtime_error("Incomplete chart atlas restart record");
+        }
+      }
+#if MPI_PARALLEL_ENABLED
+      if (!single_file_per_rank) MPI_Bcast(saved_atlas.data(), size, MPI_CHAR,
+                                          0, MPI_COMM_WORLD);
+#endif
+    }
+  }
+
   // calculate the number of MeshBlocks at root level in each dir
   nmb_rootx1 = mesh_indcs.nx1/mb_indcs.nx1;
   nmb_rootx2 = mesh_indcs.nx2/mb_indcs.nx2;
   nmb_rootx3 = mesh_indcs.nx3/mb_indcs.nx3;
+  ConfigureChartAtlas(pin, true);
+  if (saved_atlas != (atlas ? atlas->Identity() : std::string())) {
+    throw std::runtime_error("Restart chart atlas differs from requested geometry");
+  }
   int current_level = root_level;
 
   // Error check properties of input paraemters for SMR/AMR meshes.
@@ -396,7 +430,7 @@ void Mesh::BuildTreeFromRestart(ParameterInput *pin, IOWrapper &resfile,
   nmb_eachrank = new int[global_variable::nranks];
 
   // allocate idlist buffer and read list of logical locations and cost
-  IOWrapperSizeT listsize = sizeof(LogicalLocation) + sizeof(float);
+  IOWrapperSizeT listsize = location_size + sizeof(float);
   char *idlist = new char[listsize*nmb_total];
   // only the master process reads the ID list
   if (global_variable::my_rank == 0 || single_file_per_rank) {
@@ -418,8 +452,8 @@ void Mesh::BuildTreeFromRestart(ParameterInput *pin, IOWrapper &resfile,
   // everyone sets the logical location and cost lists based on bradcasted data
   int os = 0;
   for (int i=0; i<nmb_total; i++) {
-    std::memcpy(&(lloc_eachmb[i]), &(idlist[os]), sizeof(LogicalLocation));
-    os += sizeof(LogicalLocation);
+    lloc_eachmb[i] = logical_location::Decode(&(idlist[os]), location_version);
+    os += location_size;
   }
   for (int i=0; i<nmb_total; i++) {
     std::memcpy(&(cost_eachmb[i]), &(idlist[os]), sizeof(float));
@@ -430,8 +464,7 @@ void Mesh::BuildTreeFromRestart(ParameterInput *pin, IOWrapper &resfile,
   if (!adaptive) max_level = current_level;
 
   // rebuild the MeshBlockTree
-  ptree = std::make_unique<MeshBlockTree>(this);
-  ptree->CreateRootGrid();
+  CreateMeshBlockTrees();
   for (int i=0; i<nmb_total; i++) {ptree->AddNodeWithoutRefinement(lloc_eachmb[i]);}
 
   // check the tree structure by making sure total # of MBs counted in tree same as the

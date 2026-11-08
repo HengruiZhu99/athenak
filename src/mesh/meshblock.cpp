@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <memory>
+#include <limits>
 
 #include "athena.hpp"
 #include "parameter_input.hpp"
@@ -25,6 +26,8 @@
 MeshBlock::MeshBlock(MeshBlockPack* ppack, int igids, int nmb) :
   mb_gid("mb_gid",nmb),
   mb_lev("mb_lev",nmb),
+  mb_chart("mb_chart",nmb),
+  mb_map("mb_map",ppack->pmesh->atlas ? nmb : 0),
   mb_size("mbsize",nmb),
   mb_bcs("mbbcs",nmb,6),
   pmy_pack(ppack) {
@@ -35,6 +38,33 @@ MeshBlock::MeshBlock(MeshBlockPack* ppack, int igids, int nmb) :
     // initialize host array elements of gids, levels
     mb_gid.h_view(m) = igids + m;
     mb_lev.h_view(m) = pm->lloc_eachmb[igids+m].level;
+    const auto &loc = pm->lloc_eachmb[igids+m];
+    mb_chart.h_view(m) = loc.chart_id;
+    if (pm->atlas) mb_map.h_view(m) = pm->atlas->GetBlockMap(loc);
+    if (loc.chart_id != 0) {
+      const auto bounds = pm->atlas->PhysicalBounds(loc);
+      auto &size = mb_size.h_view(m);
+      size.x1min = bounds.lo[0]; size.x1max = bounds.hi[0];
+      size.x2min = bounds.lo[1]; size.x2max = bounds.hi[1];
+      size.x3min = bounds.lo[2]; size.x3max = bounds.hi[2];
+      size.dx1 = size.dx2 = size.dx3 = std::numeric_limits<Real>::quiet_NaN();
+      const auto roots = pm->atlas->RootBlocks(loc.chart_id);
+      const std::int64_t level_scale = 1LL << (loc.level-pm->root_level);
+      const int index[3] = {loc.lx1, loc.lx2, loc.lx3};
+      for (int a=0; a<3; ++a) {
+        mb_bcs.h_view(m,2*a) = index[a] == 0 ? BoundaryFlag::mapped : BoundaryFlag::block;
+        mb_bcs.h_view(m,2*a+1) = index[a] == roots[a]*level_scale-1
+            ? BoundaryFlag::mapped : BoundaryFlag::block;
+      }
+      // Radial knots separate nonuniform intervals, and the outer interval has
+      // endpoint-offset nodes. These interfaces need mapped interpolation even
+      // when both native leaves have the same refinement level.
+      if (loc.lx1 % level_scale == 0) mb_bcs.h_view(m,0) = BoundaryFlag::mapped;
+      if (loc.lx1 % level_scale == level_scale-1) {
+        mb_bcs.h_view(m,1) = BoundaryFlag::mapped;
+      }
+      continue;
+    }
 
     // calculate physical size and set BCs of each MeshBlock in x1
     std::int32_t &lx1 = pm->lloc_eachmb[igids+m].lx1;
@@ -121,11 +151,15 @@ MeshBlock::MeshBlock(MeshBlockPack* ppack, int igids, int nmb) :
   // For each DualArray: mark host views as modified, and then sync to device array
   mb_gid.template modify<HostMemSpace>();
   mb_lev.template modify<HostMemSpace>();
+  mb_chart.template modify<HostMemSpace>();
+  mb_map.template modify<HostMemSpace>();
   mb_size.template modify<HostMemSpace>();
   mb_bcs.template modify<HostMemSpace>();
 
   mb_gid.template sync<DevExeSpace>();
   mb_lev.template sync<DevExeSpace>();
+  mb_chart.template sync<DevExeSpace>();
+  mb_map.template sync<DevExeSpace>();
   mb_size.template sync<DevExeSpace>();
   mb_bcs.template sync<DevExeSpace>();
 }
@@ -421,6 +455,24 @@ void MeshBlock::SetNeighbors(std::unique_ptr<MeshBlockTree> &ptree, int *ranklis
       }
     }  // end loop over three_d
   }    // end loop over all MeshBlocks
+
+  if (pmy_pack->pmesh->atlas) {
+    auto *pm = pmy_pack->pmesh;
+    for (int m=0; m<nmb; ++m) {
+      const auto &loc = pm->lloc_eachmb[mb_gid.h_view(m)];
+      if (loc.chart_id == 0) continue;
+      const int layer = loc.lx1 >> (loc.level-pm->root_level);
+      for (int n=0; n<nnghbr; ++n) {
+        auto &nb = nghbr.h_view(m,n);
+        if (nb.gid < 0) continue;
+        const auto &other = pm->lloc_eachmb[nb.gid];
+        if (other.chart_id != loc.chart_id ||
+            (other.lx1 >> (other.level-pm->root_level)) != layer) {
+          nb = {-1, -1, -1, -1};
+        }
+      }
+    }
+  }
 
   // For each DualArray: mark host views as modified, and then sync to device array
   nghbr.template modify<HostMemSpace>();

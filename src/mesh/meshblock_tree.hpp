@@ -15,6 +15,16 @@
 //
 // Original version of this foundational class written c2015-2016 by K. Tomida.
 
+#include <array>
+#include <cstdint>
+#include <memory>
+#include <vector>
+
+#include "mesh/logical_location.hpp"
+
+class Mesh;
+enum class BoundaryFlag;
+
 //--------------------------------------------------------------------------------------
 //! \class MeshBlockTree
 //  \brief Objects are nodes in a binary tree structure.  Thus, the class name does not
@@ -28,15 +38,39 @@ class MeshBlockTree {
   friend class MeshBlockPack;
 
  public:
+  // Each chart has its own Cartesian logical lattice. All charts in a forest use
+  // one root_level, so refinement levels have the same meaning across charts.
+  struct RootGrid {
+    int chart_id = 0;
+    int root_level = 0;
+    int ndim = 3;
+    std::array<int, 3> nmb_root{1, 1, 1};
+    std::array<BoundaryFlag, 6> bcs;
+    RootGrid();
+  };
+
   explicit MeshBlockTree(Mesh *pmesh);
+  explicit MeshBlockTree(const RootGrid &root_grid);
+  MeshBlockTree(Mesh *pmesh, const RootGrid &root_grid);
   MeshBlockTree(MeshBlockTree *parent, int ox1, int ox2, int ox3);
   ~MeshBlockTree();
+  MeshBlockTree(const MeshBlockTree &) = delete;
+  MeshBlockTree &operator=(const MeshBlockTree &) = delete;
 
   // accessors
   MeshBlockTree* GetLeaf(int ox1, int ox2, int ox3)
     { return pleaf_[(ox1 + (ox2<<1) + (ox3<<2))]; }
   int GetGID() {return gid_;}
   std::int32_t GetLevel() {return lloc_.level;}
+  const LogicalLocation &GetLocation() const {return lloc_;}
+  const RootGrid &GetRootGrid() const {return *root_grid_;}
+  bool IsLeaf() const {return pleaf_ == nullptr;}
+
+  // Mesh retains ownership of every root. This registry only dispatches native
+  // tree operations and concatenates chart/Morton leaf lists; it owns no nodes.
+  // Call on chart zero, passing roots in chart-id order, before AMR/lookup.
+  void SetChartRoots(const std::vector<MeshBlockTree *> &roots);
+  MeshBlockTree *GetChartRoot(int chart_id) const;
 
   // functions
   void CreateRootGrid();
@@ -56,9 +90,15 @@ class MeshBlockTree {
   int gid_;                // grid ID
   LogicalLocation lloc_;   // stores logical x1/x2/x3 location, level for node in tree
 
-  static Mesh *pmesh_;           // pointer to Mesh containing Tree
-  static MeshBlockTree *proot_;  // pointer to leaf at root level
-  static int nleaf_;             // number of leafs (2/4/8 for 1D/2D/3D)
+  std::shared_ptr<const RootGrid> root_grid_;  // immutable, chart-specific context
+  MeshBlockTree *proot_;                      // root of this chart
+  int nleaf_;                                // 2/4/8 for 1D/2D/3D
+  MeshBlockTree *forest_root_;                // used only on chart roots
+  std::vector<MeshBlockTree *> chart_roots_;  // nonowning; only on forest root
+
+  void CountLeaves(int &count);
+  void AppendZOrderedLLList(LogicalLocation *list, int *pglist, int &count);
+  bool ContainsLocation(const LogicalLocation &loc) const;
 };
 
 #endif // MESH_MESHBLOCK_TREE_HPP_

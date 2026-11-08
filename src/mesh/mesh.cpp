@@ -13,11 +13,13 @@
 #include <limits>
 #include <cstdio> // fclose
 #include <string> // string
+#include <stdexcept>
 
 #include "athena.hpp"
 #include "globals.hpp"
 #include "parameter_input.hpp"
 #include "mesh.hpp"
+#include "chart_atlas.hpp"
 #include "coordinates/cell_locations.hpp"
 #include "refinement_criteria.hpp"
 #include "hydro/hydro.hpp"
@@ -474,6 +476,23 @@ void Mesh::WriteMeshStructure() {
         std::fprintf(
             fp,"#  Logical level %d, location = (%" PRId32 " %" PRId32 " %" PRId32")\n",
             lloc_eachmb[j].level, lx1, lx2, lx3);
+        if (atlas) {
+          const auto map = block.mb_map.h_view(0);
+          std::fprintf(fp,"#  Chart = %d, radial layer = %d, scri = %d\n",
+                       map.chart_id, map.layer, static_cast<int>(map.outer_surface));
+          // Map the ordinary cube-edge traversal to the actual chart boundary.
+          const int vertex[17][3] = {{0,0,0},{1,0,0},{1,1,0},{0,1,0},{0,0,0},
+              {0,0,1},{1,0,1},{1,0,0},{1,0,1},{1,1,1},{1,1,0},{1,1,1},
+              {0,1,1},{0,1,0},{0,1,1},{0,0,1},{0,0,0}};
+          for (const auto &v : vertex) {
+            const Real local[3] = {Real(v[0]), Real(v[1]), Real(v[2])};
+            Real x[3];
+            map.Forward(local,x);
+            std::fprintf(fp,"%g %g %g\n", x[0],x[1],x[2]);
+          }
+          std::fprintf(fp,"\n\n");
+          continue;
+        }
         if (two_d) { // 2D
           Real &x1min = block.mb_size.h_view(0).x1min;
           Real &x1max = block.mb_size.h_view(0).x1max;
@@ -546,6 +565,8 @@ BoundaryFlag Mesh::GetBoundaryFlag(const std::string& input_string) {
     return BoundaryFlag::shear_periodic;
   } else if (input_string == "undef") {
     return BoundaryFlag::undef;
+  } else if (input_string == "mapped") {
+    return BoundaryFlag::mapped;
   } else {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__ << std::endl
               << "Input string = '" << input_string << "' is an invalid boundary type"
@@ -580,6 +601,8 @@ std::string Mesh::GetBoundaryString(BoundaryFlag input_flag) {
       return "shear_periodic";
     case BoundaryFlag::undef:
       return "undef";
+    case BoundaryFlag::mapped:
+      return "mapped";
     default:
       std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
          << std::endl << "Input enum class BoundaryFlag=" << static_cast<int>(input_flag)
@@ -697,6 +720,20 @@ void Mesh::RefreshSTSParabolicTimeStep() {
 // \fn Mesh::AddCoordinatesAndPhysics
 
 void Mesh::AddCoordinatesAndPhysics(ParameterInput *pinput) {
+  if (atlas) {
+    // Cartesian finite-volume/NR modules assume uniform physical spacing. A
+    // chart mesh needs a module that explicitly uses its maps and interfaces.
+    if (!pinput->DoesBlockExist("z4c_hyperboloidal")) {
+      throw std::invalid_argument("A mapped atlas requires z4c_hyperboloidal physics");
+    }
+    for (const char *name : {"hydro", "mhd", "z4c", "radiation", "ion-neutral",
+                             "gravity", "particles", "cyclic_zoom"}) {
+      if (pinput->DoesBlockExist(name)) {
+        throw std::invalid_argument(std::string("Physics module does not support mapped ")
+                                    + "charts: " + name);
+      }
+    }
+  }
   // cycle over MeshBlockPacks on this rank and add Coordinates and Physics
   for (int n=0; n<nmb_packs_thisrank; ++n) {
     pmb_pack->AddCoordinates(pinput);

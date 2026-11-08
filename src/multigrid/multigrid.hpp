@@ -46,7 +46,7 @@ enum class MGNormType {max, l1, l2};
 
 inline bool operator==(const LogicalLocation &l1, const LogicalLocation &l2) {
   return (l1.level == l2.level) && (l1.lx1 == l2.lx1)
-      && (l1.lx2 == l2.lx2) && (l1.lx3 == l2.lx3);
+      && (l1.lx2 == l2.lx2) && (l1.lx3 == l2.lx3) && (l1.chart_id == l2.chart_id);
 }
 
 inline std::int64_t rotl64(std::int64_t i, int s) {
@@ -55,7 +55,8 @@ inline std::int64_t rotl64(std::int64_t i, int s) {
 
 struct LogicalLocationHash {
   std::size_t operator()(const LogicalLocation &l) const {
-    return static_cast<std::size_t>(l.lx1 ^ rotl64(l.lx2, 21) ^ rotl64(l.lx3, 42));
+    return static_cast<std::size_t>(l.lx1 ^ rotl64(l.lx2, 21) ^ rotl64(l.lx3, 42)
+                                   ^ rotl64(l.chart_id, 11));
   }
 };
 
