@@ -1,0 +1,233 @@
+{
+  "schema": "native-window-rank-export-cpu-v1",
+  "passed": true,
+  "solver_optimization": false,
+  "gpu_qualified": false,
+  "scope": "Report-only gather after all existing measured intervals. Two-rank eight-step CPU equivalence only, no performance claim. Native candidate GPU controls still required.",
+  "sources": {
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-rank-export-check-v1/results.json": "1c077325386451973ff02b1b901a693aaa944253af94ca9a65f95a64eb60f885",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-rank-export-run-v1/rank-export-check.json": "dfa39799cff907d8d861d1030cc191a1c860468667ccb21fed1747192a6cfc99",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-rank-export-build-v1/provenance.json": "230c161e040c77dd79e898b6638df881753ec1050646e9269543d568f1d7898e"
+  },
+  "validation": {
+    "schema": "native-cycle-timing-cpu-validation-v1",
+    "passed": true,
+    "scope": "CPU plumbing/state validation only; no GPU performance or scaling claim",
+    "timing_build_provenance_sha256": "230c161e040c77dd79e898b6638df881753ec1050646e9269543d568f1d7898e",
+    "negative_controls": {
+      "console-output": {
+        "passed": true,
+        "command": [
+          "mpiexec",
+          "-n",
+          "2",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-rank-export-build-v1/athena-cycle-timing",
+          "time/ndiag=1",
+          "-r",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-rank-export-run-v1/rst/native_n12_5M.00000.rst",
+          "time/nlim=8",
+          "-d",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-rank-export-check-v1/console-output"
+        ],
+        "exit_code": 134,
+        "expected_message": "timing preflight found",
+        "log_sha256": "73f8b8571f20ae671a0451b63e1a987e79ae0403c73135243eba45689103a046"
+      },
+      "scheduled-output": {
+        "passed": true,
+        "command": [
+          "mpiexec",
+          "-n",
+          "2",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-rank-export-build-v1/athena-cycle-timing",
+          "time/ndiag=1000000000",
+          "output1/dt=0.001",
+          "-r",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-rank-export-run-v1/rst/native_n12_5M.00000.rst",
+          "time/nlim=8",
+          "-d",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-rank-export-check-v1/scheduled-output"
+        ],
+        "exit_code": 134,
+        "expected_message": "timing preflight found",
+        "log_sha256": "3f2b312d6443ee117581b4a05a6ce74e4a56430ebee1d2bf6431f316b3619a1e"
+      },
+      "cli-profiling-tool": {
+        "passed": true,
+        "command": [
+          "mpiexec",
+          "-n",
+          "2",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-rank-export-build-v1/athena-cycle-timing",
+          "--kokkos-tools-libs=/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-rank-export-check-v1/profiling-tool.dylib",
+          "time/ndiag=1000000000",
+          "-r",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-rank-export-run-v1/rst/native_n12_5M.00000.rst",
+          "time/nlim=8",
+          "-d",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-rank-export-check-v1/cli-profiling-tool"
+        ],
+        "exit_code": 134,
+        "expected_message": "primary timing refuses loaded profiling",
+        "log_sha256": "0e3b100bffb1441946150325f6b627632ceff797b32b92111ae211e1e6d46ace"
+      }
+    },
+    "timing": {
+      "schema": "native-cycle-timing-v1",
+      "passed": true,
+      "scope": "unadmitted bounded timing; external scientific and campaign gates required",
+      "backend": "Serial",
+      "ranks": 2,
+      "restart": false,
+      "blocks": 106,
+      "bulk_points": 229392,
+      "scri_points": 864,
+      "initial_cycle": 0,
+      "final_cycle": 8,
+      "initial_time": 0,
+      "final_time": 0.003755536298849396,
+      "dt": 0.00046944203735617445,
+      "complete_steps": 8,
+      "warmup_steps": 2,
+      "steps_per_window": 3,
+      "window_count": 2,
+      "console_ndiag": 1000000000,
+      "timed_output_count": 0,
+      "timed_console_count": 0,
+      "profiling_library_loaded": false,
+      "profiling_environment": [],
+      "startup_max_seconds": 15.754115792,
+      "startup_scope": "original main wall timer after Kokkos/MPI/argument setup through driver initialization",
+      "warmup_max_seconds": 18.419230292,
+      "execute_max_seconds": 73.719853208,
+      "finalize_max_seconds": 4.733366875,
+      "finalize_scope": "original Driver::Finalize including final outputs and final completion fence",
+      "windows": [
+        {
+          "index": 0,
+          "first_cycle": 2,
+          "last_cycle": 5,
+          "first_time": 0.0009388840747123489,
+          "last_time": 0.002347210186780872,
+          "complete_steps": 3,
+          "max_rank_seconds": 27.646666667,
+          "seconds_per_complete_step": 9.215555555666667,
+          "bulk_cell_updates": 688176,
+          "bulk_cell_updates_per_second": 24891.82541566323,
+          "rank_order_seconds": [
+            27.646666667,
+            27.646663667
+          ],
+          "max_rank_ids": [
+            0
+          ]
+        },
+        {
+          "index": 1,
+          "first_cycle": 5,
+          "last_cycle": 8,
+          "first_time": 0.002347210186780872,
+          "last_time": 0.003755536298849396,
+          "complete_steps": 3,
+          "max_rank_seconds": 27.653947125,
+          "seconds_per_complete_step": 9.217982375,
+          "bulk_cell_updates": 688176,
+          "bulk_cell_updates_per_second": 24885.272141779293,
+          "rank_order_seconds": [
+            27.653947125,
+            27.653944792
+          ],
+          "max_rank_ids": [
+            0
+          ]
+        }
+      ]
+    },
+    "complete_states": {
+      "0": {
+        "bitwise_equal": true,
+        "scalar_values": 24704784,
+        "payload_sha256": "a99fffd8c3a6dff7da69687b9898de195d7810d112b0efbee5ea1f0041ad48fb"
+      },
+      "8": {
+        "bitwise_equal": true,
+        "scalar_values": 24704784,
+        "payload_sha256": "d3628a85957d353a10c67c1511c617da29cbfe8ac540c605f4e6e08d0c4da963"
+      }
+    },
+    "ordinary_outputs": {
+      "bitwise_equal": true,
+      "files": [
+        "native_n12_5M.horizon_shape_0.txt",
+        "native_n12_5M.horizon_summary_0.txt",
+        "native_n12_5M.z4c_hyperboloidal.hst"
+      ]
+    },
+    "profiling_tool": {
+      "command": [
+        "/usr/bin/c++",
+        "-dynamiclib",
+        "-std=c++17",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-rank-export-check-v1/profiling-tool.cpp",
+        "-o",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-rank-export-check-v1/profiling-tool.dylib"
+      ],
+      "source_sha256": "68da2a593f94165ab68876dc2b2f420dfdf7b073accddc4850c528d36ee6b62b",
+      "library_sha256": "6efd5dfbfa7c96d549e5edfc3020ec88209d8608f5e86bda3e1f7fc454db0cef"
+    },
+    "source_sha256": {
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_cycle_timing_validate.py": "8c85a9c7045509145f1cba4c62d65f3886c24bd37728181887d39f5e130256f3",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_cycle_timing.py": "944b05be76c1bfe208a0c409a7952d7119112398e306e842c458a6ffff19cfdb",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_cycle_timing.hpp": "9b0c3a9b0bc2feb6f0c8d2cedffc3ce273f5263b592a14add9f15332cf16d63d",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_cycle_timing_contract.md": "d610e7141bead813ff5382c2509eaabad3f42566ac9170c1cfb794629e14ca06"
+    },
+    "input_sha256": {
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-rank-export-run-v1/native_n12_5M.horizon_summary_0.txt": "e123cdd19347799e7ecc617634da0f67d0adfa5deaacb0862a84170c1ac0831d",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-rank-export-run-v1/run.log": "d7dce0c5b12ac2bbd8910fd4597e3236f7b38f400a761e8d2bb8ebfeed65211f",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-rank-export-run-v1/rank-export-check.json": "dfa39799cff907d8d861d1030cc191a1c860468667ccb21fed1747192a6cfc99",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-rank-export-run-v1/native_n12_5M.z4c_hyperboloidal.hst": "ad8fa4428df32e4915c457a57894a6fdc95ac1ee70845d08aec5949927e8459b",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-rank-export-run-v1/native-cycle-timing.json": "05a525678cc688072ade483b335d2e5401c9d569bfa6527adc3bc0c9a46882de",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-rank-export-run-v1/execution.json": "7f5f447cfeff0cbfc4afab420517ed0fcbdd01bfeffb43b3a0d51d22a81729d4",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-rank-export-run-v1/native_n12_5M.horizon_shape_0.txt": "0df05b9ed7d1352fd824efebf98024b248943b0b670e65e3941be399b7d677bd",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-rank-export-run-v1/rst/native_n12_5M.00001.rst": "a52a520c21fc7d519df29a5ed416afdd0f9730c61293917f931b34ebdf15b094",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-rank-export-run-v1/rst/native_n12_5M.00000.rst": "910e7866238ae714bdcb471035e6d51f9d24223a2bd918f79e5e937568912000",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-step-observer-local-validation-v1/normal8-two/native_n12_5M.horizon_summary_0.txt": "e123cdd19347799e7ecc617634da0f67d0adfa5deaacb0862a84170c1ac0831d",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-step-observer-local-validation-v1/normal8-two/run.log": "bbd85b39a120d0692bee2dff6670792c2dbdeaa0aef19f659ce0c63cccac7e4f",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-step-observer-local-validation-v1/normal8-two/native_n12_5M.z4c_hyperboloidal.hst": "ad8fa4428df32e4915c457a57894a6fdc95ac1ee70845d08aec5949927e8459b",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-step-observer-local-validation-v1/normal8-two/native_n12_5M.horizon_shape_0.txt": "0df05b9ed7d1352fd824efebf98024b248943b0b670e65e3941be399b7d677bd",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-step-observer-local-validation-v1/normal8-two/rst/native_n12_5M.00001.rst": "43f4021111b64e34b22c3814cf6006d15999b89ca18a5c3ee83dbbb6c7fe72f3",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-step-observer-local-validation-v1/normal8-two/rst/native_n12_5M.00000.rst": "6d25f848d4f3e10d68a5338877d72d2095a3a4eb87b3a83548556e9e54a64c38"
+    }
+  },
+  "rank_export": {
+    "passed": true,
+    "timing_report_sha256": "05a525678cc688072ade483b335d2e5401c9d569bfa6527adc3bc0c9a46882de",
+    "windows": [
+      {
+        "index": 0,
+        "rank_order_seconds": [
+          27.646666667,
+          27.646663667
+        ],
+        "max_rank_ids": [
+          0
+        ],
+        "max_rank_seconds": 27.646666667,
+        "all_exact": true
+      },
+      {
+        "index": 1,
+        "rank_order_seconds": [
+          27.653947125,
+          27.653944792
+        ],
+        "max_rank_ids": [
+          0
+        ],
+        "max_rank_seconds": 27.653947125,
+        "all_exact": true
+      }
+    ],
+    "scope": "Actual CPU2 rank arrays and tie-inclusive IDs exactly reproduce the unchanged MPI_MAX value; rank attaining duration maximum is not a causal critical-path claim."
+  }
+}

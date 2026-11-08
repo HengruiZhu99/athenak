@@ -166,6 +166,21 @@ class Timer {
     Kokkos::fence("timing final output completion");
     const double elapsed=Seconds(finalize_start_,Clock::now());
     MPI_Allreduce(&elapsed,&finalize_max_,1,MPI_DOUBLE,MPI_MAX,MPI_COMM_WORLD);
+    // Export existing samples once, after every measured interval and elapsed stamp.
+    const int rank=global_variable::my_rank,nranks=global_variable::nranks;
+    std::vector<double> local(windows_),rank_seconds(rank==0?nranks*windows_:0);
+    for(int i=0;i<windows_;++i)local[i]=windows_data_[i].local;
+    MPI_Gather(local.data(),windows_,MPI_DOUBLE,rank_seconds.data(),windows_,MPI_DOUBLE,0,MPI_COMM_WORLD);
+    bool samples_valid=true;
+    if(rank==0)for(int i=0;i<windows_;++i) {
+      double maximum=0;
+      for(int r=0;r<nranks;++r) {
+        const double value=rank_seconds[r*windows_+i];
+        samples_valid&=std::isfinite(value)&&value>0;maximum=std::max(maximum,value);
+      }
+      samples_valid&=maximum==windows_data_[i].maximum;
+    }
+    RequireAll(samples_valid,"gathered window samples differ from original maximum");
     bool written=true;
     if(global_variable::my_rank==0) {
       std::ofstream out("native-cycle-timing.json");out<<std::setprecision(17);
@@ -194,7 +209,14 @@ class Timer {
           <<",\"complete_steps\":"<<steps_<<",\"max_rank_seconds\":"<<w.maximum
           <<",\"seconds_per_complete_step\":"<<w.maximum/steps_
           <<",\"bulk_cell_updates\":"<<counts_[0]*std::uint64_t(steps_)
-          <<",\"bulk_cell_updates_per_second\":"<<counts_[0]*std::uint64_t(steps_)/w.maximum<<'}';
+          <<",\"bulk_cell_updates_per_second\":"<<counts_[0]*std::uint64_t(steps_)/w.maximum
+          <<",\"rank_order_seconds\":[";
+        for(int r=0;r<nranks;++r){if(r)out<<',';out<<rank_seconds[r*windows_+i];}
+        out<<"],\"max_rank_ids\":[";bool first=true;
+        for(int r=0;r<nranks;++r)if(rank_seconds[r*windows_+i]==w.maximum) {
+          if(!first)out<<',';out<<r;first=false;
+        }
+        out<<"]}";
       }
       out<<"]}\n";out.close();written=out.good();
     }

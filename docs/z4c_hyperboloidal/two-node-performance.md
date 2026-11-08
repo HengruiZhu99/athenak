@@ -75,6 +75,15 @@ native instrumentation controls; no matched legacy comparison or solver
 optimization has yet passed. Max-rank windows do not identify which rank was
 slowest because this timer does not serialize local rank times.
 
+A report-only extension now gathers those already-recorded local samples after
+all measured intervals and finalization timing have ended. It writes every rank's
+duration and the IDs attaining each existing MPI_MAX result. The existing two-rank,
+eight-step CPU control passes complete-state/output equivalence and the original
+negative controls; see `evidence/native-window-rank-export-cpu.json`. It has not
+been built or qualified on the GPU yet and does not change the timings above.
+The rank attaining the measured maximum is not by itself a causal critical-path
+diagnosis.
+
 The user's subsequent priority clarification makes a measured bottleneck and a
 correctness-qualified complete-step speedup the next milestone. Finish and
 validate the active native timing controls, then run the already prepared native
