@@ -1,6 +1,6 @@
-# Proposed N12 comparison protocol, declared before native evaluation
+# Adopted N12 comparison protocol, declared before coupled native evaluation
 
-This protocol is a proposed engineering acceptance gate for a migration that preserves the reference discretization. It is not a measured native result or a truncation-error estimate. The parent should explicitly adopt or revise it before examining native comparison results, and record any revision and its independent reason.
+Adopted on 2026-11-07 before evaluating any complete coupled native RHS or PDE trajectory. This is an engineering acceptance gate for a migration that preserves the reference discretization, not a measured result or a truncation-error estimate. The earlier isolated initializer and point-operator oracles retain their separately declared tolerances. Any revision requires an independent reason recorded before observing the affected comparison.
 
 ## Exact identities
 

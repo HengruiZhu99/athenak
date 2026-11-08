@@ -48,8 +48,8 @@ namespace {
 //
 // First, define each time-integrator by setting weights for each step of the algorithm
 // and the CFL number stability limit when coupled to the single-stage spatial operator.
-// Currently, the explicit, multistage time-integrators must be expressed as 2S-type
-// algorithms as in Ketcheson (2010) Algorithm 3, which incudes 2N (Williamson) and 2R
+// The existing explicit, multistage time-integrators are expressed as 2S-type
+// algorithms as in Ketcheson (2010) Algorithm 3, which includes 2N (Williamson) and 2R
 // (van der Houwen) popular 2-register low-storage RK methods. The 2S-type integrators
 // depend on a bidiagonally sparse Shu-Osher representation; at each stage l:
 //
@@ -63,7 +63,8 @@ namespace {
 //
 // The 2x RHS evaluations of Div(F) and source terms per stage is avoided by adding
 // another weighted average / caching of these terms each stage. The API and framework
-// is extensible to three register 3S* methods, although none are currently implemented.
+// also supports rk4_classical through a separate immutable base/accumulator
+// interface, only for modules that explicitly implement that method.
 
 // Notation: exclusively using "stage", equivalent in lit. to "substage" or "substep"
 // (infrequently "step"), to refer to the intermediate values of U^{l} between each
@@ -79,6 +80,7 @@ Driver::Driver(ParameterInput *pin, Mesh *pmesh, Real wtlim, Kokkos::Timer* ptim
   nmb_updated_(0),
   npart_updated_(0),
   lb_efficiency_(0) {
+  stage_time=stage_state_time=pmesh->time;
   // set time-evolution option (no default)
   {
     std::string evolution_t = pin->GetString("time","evolution");
@@ -172,6 +174,16 @@ Driver::Driver(ParameterInput *pin, Mesh *pmesh, Real wtlim, Kokkos::Timer* ptim
       delta[1] = 0.217683334308543;
       delta[2] = 1.065841341361089;
       delta[3] = 0.0;
+    } else if (integrator == "rk4_classical") {
+      // Classical RK4 uses module-owned immutable base and weighted-sum arrays;
+      // the existing 2S coefficients do not represent this update.
+      nimp_stages = 0;
+      nexp_stages = time_integration::ClassicalRK4::stages;
+      cfl_limit = 1.3925;
+      for (int stage=0; stage<nexp_stages; ++stage) {
+        gam0[stage]=0.0; gam1[stage]=0.0;
+        beta[stage]=0.0; delta[stage]=0.0;
+      }
     } else if (integrator == "imex2") {
       // IMEX-SSP2(3,2,2): Pareschi & Russo (2005) Table III.
       // two-stage explicit, three-stage implicit, second-order ImEx
@@ -287,11 +299,29 @@ Driver::Driver(ParameterInput *pin, Mesh *pmesh, Real wtlim, Kokkos::Timer* ptim
     } else {
       std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
          << std::endl << "integrator=" << integrator << " not implemented. "
-         << "Valid choices are [rk1,rk2,rk3,rk4,imex2,imex3]." << std::endl;
+         << "Valid choices are [rk1,rk2,rk3,rk4,rk4_classical,imex2,imex2+,imex3]."
+         << std::endl;
       exit(EXIT_FAILURE);
     }
 
+    if (UsesClassicalRK4()) ValidateClassicalRK4Configuration(pmesh);
     ValidateSTSConfiguration(pmesh);
+  }
+}
+
+// Classical RK4 requires an explicit module implementation. Never let the
+// generic 2S update silently consume its deliberately unused coefficients.
+void Driver::ValidateClassicalRK4Configuration(Mesh *pm) {
+  const auto *pack=pm->pmb_pack;
+  if (pack->pz4c_hyperboloidal==nullptr || pack->phydro!=nullptr ||
+      pack->pmhd!=nullptr || pack->pz4c!=nullptr || pack->pdyngr!=nullptr ||
+      pack->pionn!=nullptr || pack->prad!=nullptr || pack->ppart!=nullptr ||
+      pack->pturb!=nullptr || pack->pgrav!=nullptr || !pack->pz4c_cce.empty() ||
+      pm->sts_integrator!=parabolic::STSIntegrator::none) {
+    DriverFatalError(__FILE__, __LINE__,
+        "<time>/integrator = rk4_classical requires the native z4c_hyperboloidal "
+        "module alone; other evolution modules and STS do not implement its "
+        "immutable-base/accumulator update");
   }
 }
 
@@ -558,9 +588,16 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool wdfla
 
       // Execute TaskLists
       // Work before time integrator indicated by "0" in stage
+      stage_time=pmesh->time;
+      stage_state_time=pmesh->time;
       ExecuteTaskList(pmesh, "before_timeintegrator", 0);
       // time-integrator tasks for each stage of integrator
       for (int stage=1; stage<=(nexp_stages); ++stage) {
+        if (UsesClassicalRK4()) {
+          stage_time=time_integration::ClassicalRK4::RHSTime(pmesh->time,pmesh->dt,stage);
+          stage_state_time=time_integration::ClassicalRK4::StateTime(
+              pmesh->time,pmesh->dt,stage);
+        }
         ExecuteTaskList(pmesh, "before_stagen", stage);
         // solve gravity at each RK stage so the potential is consistent
         // with the current density (required for 2nd-order accuracy)
@@ -571,6 +608,7 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool wdfla
       }
 
       // Work after time integrator indicated by "1" in stage
+      if (UsesClassicalRK4()) stage_time=stage_state_time=pmesh->time+pmesh->dt;
       ExecuteTaskList(pmesh, "after_timeintegrator", 1);
 
       // Diffusion coefficients may depend on the post-RK state. Refresh the global

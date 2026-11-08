@@ -81,5 +81,5 @@ void Mesh::CreateMeshBlockTrees() {
     chart_trees.back()->CreateRootGrid();
     roots.push_back(chart_trees.back().get());
   }
-  ptree->SetChartRoots(roots);
+  ptree->SetChartRoots(roots, true);
 }

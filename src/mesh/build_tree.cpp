@@ -10,6 +10,7 @@
 #include <cinttypes>
 #include <limits> // numeric_limits<>
 #include <memory> // make_unique<>
+#include <stdexcept>
 
 #include "athena.hpp"
 #include "globals.hpp"
@@ -123,6 +124,36 @@ void Mesh::BuildTreeFromScratch(ParameterInput *pin) {
               << std::endl;
           std::exit(EXIT_FAILURE);
         }
+        const int chart_id = pin->DoesParameterExist(it->block_name, "chart_id")
+            ? pin->GetInteger(it->block_name, "chart_id") : 0;
+        if (chart_id != 0) {
+          if (!atlas || pin->GetString(it->block_name, "coordinate_system") != "radius_angles") {
+            throw std::invalid_argument("shell refined_region requires mesh_atlas, chart_id 1..6, "
+                                        "and coordinate_system=radius_angles");
+          }
+          const chart_atlas::Bounds region{{ref_size.x1min, ref_size.x2min, ref_size.x3min},
+                                           {ref_size.x1max, ref_size.x2max, ref_size.x3max}};
+          const auto parents = atlas->ShellRefinementParents(chart_id, log_ref_lev, region);
+          // radius_angles: x1 is physical spherical radius; x2/x3 are normalized
+          // chart angles [-1,1]. Add one child per selected parent using the
+          // native tree, which also closes same-chart and oriented seam levels.
+          for (std::int64_t k=parents.first[2]; k<parents.last[2]; ++k) {
+            for (std::int64_t j=parents.first[1]; j<parents.last[1]; ++j) {
+              for (std::int64_t i=parents.first[0]; i<parents.last[0]; ++i) {
+                LogicalLocation loc{static_cast<std::int32_t>(2*i),
+                    static_cast<std::int32_t>(2*j), static_cast<std::int32_t>(2*k),
+                    log_ref_lev, chart_id};
+                int nnew = 0;
+                ptree->AddNode(loc, nnew);
+              }
+            }
+          }
+          continue;
+        }
+        if (pin->DoesParameterExist(it->block_name, "coordinate_system")
+            && pin->GetString(it->block_name, "coordinate_system") != "cartesian") {
+          throw std::invalid_argument("chart-zero refined_region uses Cartesian coordinates");
+        }
         if (   ref_size.x1min < mesh_size.x1min || ref_size.x1max > mesh_size.x1max
             || ref_size.x2min < mesh_size.x2min || ref_size.x2max > mesh_size.x2max
             || ref_size.x3min < mesh_size.x3min || ref_size.x3max > mesh_size.x3max) {
@@ -232,6 +263,7 @@ void Mesh::BuildTreeFromScratch(ParameterInput *pin) {
   if (!adaptive) max_level = current_level;
 
   // initial mesh hierarchy construction is completed here
+  ptree->ValidateSeamBalance();
   ptree->CountMeshBlocks(nmb_total);
 
   cost_eachmb = new float[nmb_total];
@@ -466,6 +498,7 @@ void Mesh::BuildTreeFromRestart(ParameterInput *pin, IOWrapper &resfile,
   // rebuild the MeshBlockTree
   CreateMeshBlockTrees();
   for (int i=0; i<nmb_total; i++) {ptree->AddNodeWithoutRefinement(lloc_eachmb[i]);}
+  ptree->ValidateSeamBalance();
 
   // check the tree structure by making sure total # of MBs counted in tree same as the
   // number read from the restart file.

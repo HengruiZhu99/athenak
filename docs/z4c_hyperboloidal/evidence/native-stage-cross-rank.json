@@ -1,0 +1,39 @@
+{
+  "scope": "one full native Driver RK4 step; local CPU MPI ranks 2 versus 8",
+  "legacy_comparison": false,
+  "production_dynamic_enabled": false,
+  "full_bulk_surface_and_chi_records": true,
+  "identical_executable": true,
+  "provenance": {
+    "executable_sha256": "1dc41c25a3d60c7216858390757ac4e6627af83433b96a5229131ce929bcf524",
+    "harness_object_sha256": "13fe96fef95ab6e92b6202ba581068bb5b7ae3a16d8cb8ea5aa767a176b200b9",
+    "source_manifest_sha256": "08a0f81577a6978733d08ce2e20b998c2e438bc0f65eb7011c1aa72d47f035e6",
+    "object_manifest_sha256": "794a7d1faa20909ca12d9ea72fce07083685b8e6ba0dbf7decbad92deaff76a8",
+    "native_object_count": 191,
+    "source_count": 388,
+    "sources_unchanged_during_test": true,
+    "objects_unchanged_during_test": true
+  },
+  "comparisons": {
+    "bulk": {
+      "count": 229392,
+      "key": "native_gid,k,j,i",
+      "state_fields": 31,
+      "chi_record_fields": 8,
+      "encoding": "little-endian int32 key, float64 state and records",
+      "sha256": "9db07bdca70d06312f88ccc464021d025c023782b6c41bd2167486155c49b4ee",
+      "byte_for_byte_equal": true,
+      "bytes": 75240576
+    },
+    "scri": {
+      "count": 864,
+      "key": "native_gid,k,j",
+      "state_fields": 31,
+      "chi_record_fields": 8,
+      "encoding": "little-endian int32 key, float64 state and records",
+      "sha256": "0f49dab18f2fe4a7d6375e300e3ecf5c22f0b015c0b5e457dbd60180c7bdfc19",
+      "byte_for_byte_equal": true,
+      "bytes": 279936
+    }
+  }
+}

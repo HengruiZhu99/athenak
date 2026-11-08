@@ -1,0 +1,133 @@
+{
+  "passed": true,
+  "scope": "Native static donor plans and persistent peer interpolation on atlas v2; no AMR state migration, PDE trajectory or Aurora GPU claim",
+  "geometry": "root Cartesian bounds followed by midpoint refinement, atlas identity v2",
+  "full_n12_two_ranks": {
+    "ranks": 2,
+    "shell_smr": false,
+    "full_rows": true,
+    "source_sha256": {
+      "src/z4c_hyperboloidal/mapped_halo.cpp": "c2233381f8a68559fa3d03f7d9a54de1f711292dd6edfcdaf94025203ae2c552",
+      "src/z4c_hyperboloidal/mapped_halo.hpp": "8273971a0bad594dce67e89ca8b8f7c541e7be7c47a1f3f0cc8755be73831f24",
+      "src/z4c_hyperboloidal/fields.hpp": "40662c4df2de65baa076c6f46097ef75622497b33069794c7a0717c0a2c2836a",
+      "src/bvals/mapped_exchange.cpp": "0ca3e55128a19c27ed7d4a515ef900a59da75d92b893e8d8ef9ca6749fbd28e9",
+      "src/bvals/mapped_exchange.hpp": "3656a27d7934b9738edb516bedcc57cb4e403c55d0a80ed24fa3106f221de49c",
+      "src/mesh/chart_atlas.cpp": "e299c661a78f215791558652b036de848272a924b6ec2141920115cbaf0f0495",
+      "src/mesh/chart_atlas.hpp": "7f665e4e910c536094971cfea8b49a93f3b38b1d9314d179ceffc00498152731",
+      "tst/z4c_hyperboloidal/mapped_halo_oracle.cpp": "ca43d876f11792e4b4ecb931a658c420c5c12d8e388e8129272037e8d045d1ab"
+    },
+    "executable_sha256": "9313fb4ae45b502e39a148ed2e8fa0b64528305f60f061fd8ca60ac3de244d92",
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/mapped-halo-oracle-atlas-v2-full/mapped_halo_oracle",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/n12_initialize.athinput",
+      "full"
+    ],
+    "pass_line": "PASS mapped halos: rows=481248 exterior=4608 oracle_rows=481248 weights=28349184 fill_values=59674752 max_weight_error=0 max_payload_error=0 max_fill_error=0 ready=14704,103002,108230,3456 collective_failure=passed",
+    "metrics": {
+      "rows": 481248,
+      "exterior": 4608,
+      "oracle_rows": 481248,
+      "weights": 28349184,
+      "fill_values": 59674752,
+      "max_weight_error": 0,
+      "max_payload_error": 0,
+      "max_fill_error": 0,
+      "ready": [
+        14704,
+        103002,
+        108230,
+        3456
+      ],
+      "collective_failure": "passed"
+    },
+    "evidence_directory": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/mapped-halo-oracle-atlas-v2-full"
+  },
+  "n12_eight_ranks": {
+    "ranks": 8,
+    "shell_smr": false,
+    "full_rows": false,
+    "source_sha256": {
+      "src/z4c_hyperboloidal/mapped_halo.cpp": "c2233381f8a68559fa3d03f7d9a54de1f711292dd6edfcdaf94025203ae2c552",
+      "src/z4c_hyperboloidal/mapped_halo.hpp": "8273971a0bad594dce67e89ca8b8f7c541e7be7c47a1f3f0cc8755be73831f24",
+      "src/z4c_hyperboloidal/fields.hpp": "40662c4df2de65baa076c6f46097ef75622497b33069794c7a0717c0a2c2836a",
+      "src/bvals/mapped_exchange.cpp": "0ca3e55128a19c27ed7d4a515ef900a59da75d92b893e8d8ef9ca6749fbd28e9",
+      "src/bvals/mapped_exchange.hpp": "3656a27d7934b9738edb516bedcc57cb4e403c55d0a80ed24fa3106f221de49c",
+      "src/mesh/chart_atlas.cpp": "e299c661a78f215791558652b036de848272a924b6ec2141920115cbaf0f0495",
+      "src/mesh/chart_atlas.hpp": "7f665e4e910c536094971cfea8b49a93f3b38b1d9314d179ceffc00498152731",
+      "tst/z4c_hyperboloidal/mapped_halo_oracle.cpp": "ca43d876f11792e4b4ecb931a658c420c5c12d8e388e8129272037e8d045d1ab"
+    },
+    "executable_sha256": "9313fb4ae45b502e39a148ed2e8fa0b64528305f60f061fd8ca60ac3de244d92",
+    "command": [
+      "mpiexec",
+      "-n",
+      "8",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/mapped-halo-oracle-atlas-v2-eight/mapped_halo_oracle",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/n12_initialize.athinput"
+    ],
+    "pass_line": "PASS mapped halos: rows=481248 exterior=4608 oracle_rows=4974 weights=289128 fill_values=59674752 max_weight_error=0 max_payload_error=0 max_fill_error=0 ready=14704,32690,178542,3456 collective_failure=passed",
+    "metrics": {
+      "rows": 481248,
+      "exterior": 4608,
+      "oracle_rows": 4974,
+      "weights": 289128,
+      "fill_values": 59674752,
+      "max_weight_error": 0,
+      "max_payload_error": 0,
+      "max_fill_error": 0,
+      "ready": [
+        14704,
+        32690,
+        178542,
+        3456
+      ],
+      "collective_failure": "passed"
+    },
+    "evidence_directory": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/mapped-halo-oracle-atlas-v2-eight"
+  },
+  "shell_smr_two_ranks": {
+    "ranks": 2,
+    "shell_smr": true,
+    "full_rows": false,
+    "source_sha256": {
+      "src/z4c_hyperboloidal/mapped_halo.cpp": "c2233381f8a68559fa3d03f7d9a54de1f711292dd6edfcdaf94025203ae2c552",
+      "src/z4c_hyperboloidal/mapped_halo.hpp": "8273971a0bad594dce67e89ca8b8f7c541e7be7c47a1f3f0cc8755be73831f24",
+      "src/z4c_hyperboloidal/fields.hpp": "40662c4df2de65baa076c6f46097ef75622497b33069794c7a0717c0a2c2836a",
+      "src/bvals/mapped_exchange.cpp": "0ca3e55128a19c27ed7d4a515ef900a59da75d92b893e8d8ef9ca6749fbd28e9",
+      "src/bvals/mapped_exchange.hpp": "3656a27d7934b9738edb516bedcc57cb4e403c55d0a80ed24fa3106f221de49c",
+      "src/mesh/chart_atlas.cpp": "e299c661a78f215791558652b036de848272a924b6ec2141920115cbaf0f0495",
+      "src/mesh/chart_atlas.hpp": "7f665e4e910c536094971cfea8b49a93f3b38b1d9314d179ceffc00498152731",
+      "tst/z4c_hyperboloidal/mapped_halo_oracle.cpp": "ca43d876f11792e4b4ecb931a658c420c5c12d8e388e8129272037e8d045d1ab"
+    },
+    "executable_sha256": "9313fb4ae45b502e39a148ed2e8fa0b64528305f60f061fd8ca60ac3de244d92",
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/mapped-halo-shell-smr-atlas-v2/mapped_halo_oracle",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/shell_smr.athinput",
+      "shell"
+    ],
+    "pass_line": "PASS shell-SMR mapped halos: rows=838944 exterior=13824 oracle_rows=6150 weights=2170608 fill_values=104029056 max_weight_error=1.8207657603852567e-14 max_payload_error=0 max_fill_error=0 ready=20528,222536,133208,10368 collective_failure=passed",
+    "metrics": {
+      "rows": 838944,
+      "exterior": 13824,
+      "oracle_rows": 6150,
+      "weights": 2170608,
+      "fill_values": 104029056,
+      "max_weight_error": 1.8207657603852567e-14,
+      "max_payload_error": 0,
+      "max_fill_error": 0,
+      "ready": [
+        20528,
+        222536,
+        133208,
+        10368
+      ],
+      "collective_failure": "passed"
+    },
+    "evidence_directory": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/mapped-halo-shell-smr-atlas-v2"
+  }
+}

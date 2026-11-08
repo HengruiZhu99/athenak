@@ -88,13 +88,35 @@ enum TaskName {
   Z4c_FastFlow,
   Z4c_CCE,
   Z4c_DumpHorizon,
-  Z4c_NTASKS
+  Z4c_NTASKS,
+
+  Hyp_Recv,
+  Hyp_CopyU,
+  Hyp_Prepare,
+  Hyp_SendBulk,
+  Hyp_SendSurface,
+  Hyp_FillLocal,
+  Hyp_InteriorRHS,
+  Hyp_LocalRHS,
+  Hyp_RecvBulk,
+  Hyp_FillRemote,
+  Hyp_RemoteRHS,
+  Hyp_RecvSurface,
+  Hyp_Normal,
+  Hyp_SurfaceRHS,
+  Hyp_OuterRHS,
+  Hyp_ExplRK,
+  Hyp_Project,
+  Hyp_ClearS,
+  Hyp_ClearR,
+  Hyp_NTASKS
 };
 
 enum PhysicsDependency {
   Phys_None,
   Phys_MHD,
-  Phys_Z4c
+  Phys_Z4c,
+  Phys_Z4cHyperboloidal
 };
 
 enum TaskLocation {

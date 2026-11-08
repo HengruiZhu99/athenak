@@ -15,23 +15,23 @@
     },
     {
       "id": "native_driver_and_tasks",
-      "status": "incomplete",
-      "evidence_or_next_gate": "Original Driver retained. Hyperboloidal tasks and classical RK4 mode not integrated yet."
+      "status": "partial",
+      "evidence_or_next_gate": "Real NumericalRelativity stage queues and block-local adapters execute one full classical RK4 cycle through original Driver. Four disjoint bulk batches, sparse donor polling and local scri compatibility are wired. Native initialization/timestep lifecycle and multicycle comparison remain; dynamic constructor gate retained."
     },
     {
       "id": "extend_native_octree",
       "status": "partial",
-      "evidence_or_next_gate": "Seven native chart roots, chart/Morton leaf order, native whole-block ownership, geometry, level31, refine/derefine and restart identity implemented. Seam adjacency/closure and mapped donor lookup pending."
+      "evidence_or_next_gate": "Seven native chart roots, whole-leaf ownership, 24 directed seam mappings and 2:1 refinement/derefinement closure validated. Atlas v2 preserves exact parent-midpoint core coordinates. Coupled AMR field lifecycle remains."
     },
     {
       "id": "new_native_physics_module",
       "status": "partial",
-      "evidence_or_next_gate": "Stateless z4c_hyperboloidal equations/fields/reference/stencil math validated. Pack-owned arrays, class registration, construction and runtime lifecycle pending."
+      "evidence_or_next_gate": "Registered pack-owned module/pgen with local bulk/overlap/scri storage, reference/source initialization, full mapped RHS, original normal solve, physical KO and actual RK updates. Accepted-state guards tested. Remaining lifecycle/diagnostics/restarts prevent production enablement."
     },
     {
       "id": "block_locality",
-      "status": "partial",
-      "evidence_or_next_gate": "Native N12 mesh construction owns whole leaves and per-local-leaf geometry. Bulk/overlap/scri field allocation and block-owned boundary tasks pending."
+      "status": "verified_for_fixed_mesh_stages",
+      "evidence_or_next_gate": "Native local block and owned-face arrays plus four sparse peer plans; no global evolved field replication and no normal-correction gather. Complete fixed N12 stage and one-cycle two/eight local-rank tests. AMR resize/migration remains under amr_support."
     },
     {
       "id": "equal_block_weights",
@@ -41,22 +41,22 @@
     {
       "id": "smr_support",
       "status": "partial",
-      "evidence_or_next_gate": "Native core static refinement reproduces34 core+72 shell leaves. General shell region selection and cross-chart closure/transfer pending."
+      "evidence_or_next_gate": "N12 core SMR complete stage RHS passes independent oracle. Shell 197-leaf donor fixture and 113-leaf/nine-surface-patch manufactured operators pass. Arbitrary refined coupled evolution, state transfers and first-shell radial refinement accuracy remain."
     },
     {
       "id": "amr_support",
       "status": "partial",
-      "evidence_or_next_gate": "Native Cartesian AMR/restart remains bitwise against base; chart identity survives tree/MPI records and within-chart refinement tests. Coupled chart refinement, overlap donor eligibility, migration and state transfers pending."
+      "evidence_or_next_gate": "Cartesian baseline AMR/restart remains bitwise; native chart-aware seams, safe derefinement and mixed shell donor/operator plans tested. Hyperboloidal array resize, migration, restriction/prolongation, overlap/scri/record transfer and rebuild lifecycle remain."
     },
     {
       "id": "numerical_fidelity",
       "status": "partial",
-      "evidence_or_next_gate": "31slots/26independent, reference subtraction, physical KO8, gauge/endpoint math extracted and oracle tested. Need whole-grid initialization, stage closure, overlap and endpoint sampling, exact dt/floor/KO policies and full coupled comparisons."
+      "evidence_or_next_gate": "All N12 coordinates and initial values bitwise equal. Two complete stage RHS scenarios:14222304 bulk rates maxabs2.842176364051263e-14;53568 scri rates maxabs4.440892098500626e-16; zero failures of adopted/tighter-chi gates. KO rates bitwise. Full old-versus-new RK4/eight-step and3551-step comparisons remain."
     },
     {
       "id": "native_restart",
       "status": "partial",
-      "evidence_or_next_gate": "Explicit v2 location records and immutable binary atlas identity, legacy Cartesian v1 support, format key captured before overrides. Full hyperboloidal bulk/overlap/scri state serialization not integrated."
+      "evidence_or_next_gate": "Explicit v2 location records, atlas convention v2 binary identity and legacy Cartesian v1 loading tested. Hyperboloidal bulk/overlap/scri/chi-record serialization and restore lifecycle remain unimplemented."
     },
     {
       "id": "n12_aurora_through_5m",
@@ -81,7 +81,7 @@
     {
       "id": "reuse_and_consistent_style",
       "status": "partial",
-      "evidence_or_next_gate": "Native tree, ownership, main Driver, generic boundary graph and native AMR framework retained. No legacy Evolution/CompositeGrid/global field ownership copied. Final integration/review remains."
+      "evidence_or_next_gate": "Original native tree, load balancing, mesh/packs, NR TaskList and Driver retained; classicalRK4 separate from existingRK4. New mapped donor/endpoint operators use local views and persistent peer MPI. No legacy Evolution/CompositeGrid driver imported. Same-chart native Bvals reuse and AMR/restart integration remain."
     }
   ]
 }

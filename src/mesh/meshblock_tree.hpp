@@ -24,6 +24,7 @@
 
 class Mesh;
 enum class BoundaryFlag;
+namespace chart_atlas {struct Seam;}
 
 //--------------------------------------------------------------------------------------
 //! \class MeshBlockTree
@@ -69,8 +70,17 @@ class MeshBlockTree {
   // Mesh retains ownership of every root. This registry only dispatches native
   // tree operations and concatenates chart/Morton leaf lists; it owns no nodes.
   // Call on chart zero, passing roots in chart-id order, before AMR/lookup.
-  void SetChartRoots(const std::vector<MeshBlockTree *> &roots);
+  void SetChartRoots(const std::vector<MeshBlockTree *> &roots,
+                     bool cubed_sphere_seams = false);
   MeshBlockTree *GetChartRoot(int chart_id) const;
+  // Native leaves touching an oriented cubed-sphere seam footprint, including
+  // edge/corner contacts. This is refinement topology, not a conforming Bvals
+  // neighbor: mapped field interpolation remains a separate operation.
+  std::vector<MeshBlockTree *> FindSeamNeighbors(const LogicalLocation &loc,
+                                                int axis, int side) const;
+  // Restart insertion cannot create extra blocks without corresponding saved
+  // state. Validate its reconstructed seam levels instead of refining it.
+  void ValidateSeamBalance() const;
 
   // functions
   void CreateRootGrid();
@@ -95,10 +105,17 @@ class MeshBlockTree {
   int nleaf_;                                // 2/4/8 for 1D/2D/3D
   MeshBlockTree *forest_root_;                // used only on chart roots
   std::vector<MeshBlockTree *> chart_roots_;  // nonowning; only on forest root
+  bool cubed_sphere_seams_ = false;           // used only on forest root
 
   void CountLeaves(int &count);
   void AppendZOrderedLLList(LogicalLocation *list, int *pglist, int &count);
   bool ContainsLocation(const LogicalLocation &loc) const;
+  void CollectSeamLeaves(const LogicalLocation &source, const RootGrid &source_grid,
+                         const chart_atlas::Seam &seam,
+                         std::vector<MeshBlockTree *> &neighbors);
+  void BalanceSeams(int &nnew);
+  bool CanDerefineAcrossSeams() const;
+  void ValidateLeafSeams() const;
 };
 
 #endif // MESH_MESHBLOCK_TREE_HPP_

@@ -1,0 +1,42 @@
+{
+  "passed": true,
+  "local_mpi_ranks": 8,
+  "scenarios": 2,
+  "gate": "abs(delta)<=1e-12+5e-10*abs(reference)",
+  "metrics": {
+    "projection": {
+      "comparisons": 53568,
+      "max_scaled_error": 0.0,
+      "max_absolute_error": 0.0,
+      "failed_values": 0
+    },
+    "surface_jets": {
+      "comparisons": 696384,
+      "max_scaled_error": 2.1364721477912505e-16,
+      "max_absolute_error": 2.498001805406602e-16,
+      "failed_values": 0
+    },
+    "radial_jets": {
+      "comparisons": 2089152,
+      "max_scaled_error": 1.0113905870768931e-17,
+      "max_absolute_error": 1.0408340855860843e-17,
+      "failed_values": 0
+    },
+    "normal_correction": {
+      "comparisons": 5184,
+      "max_scaled_error": 0.0,
+      "max_absolute_error": 0.0,
+      "failed_values": 0
+    },
+    "surface_rhs": {
+      "comparisons": 53568,
+      "max_scaled_error": 4.435692515140695e-16,
+      "max_absolute_error": 4.440892098500626e-16,
+      "failed_values": 0
+    }
+  },
+  "native_build": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native",
+  "legacy_readonly_source": "/Users/hz0693/.codex/worktrees/scri-ko01/hyperboloidal",
+  "normal_compatibility": 9.636456671686944e-16,
+  "zero_face_ranks": 3
+}

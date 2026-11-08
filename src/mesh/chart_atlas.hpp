@@ -9,6 +9,7 @@
 //! \brief Stateless geometry for a Cartesian core and six cubed-sphere charts.
 
 #include <array>
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -29,6 +30,19 @@ struct Point {
 
 struct Bounds {
   Real lo[3]{}, hi[3]{};
+};
+
+// Coordinates on a shared angular edge. axis/neighbor_axis are chart axes 1
+// (u) or 2 (v), and sides are -1/+1. The remaining angular coordinate increases
+// in the same direction on both faces in this atlas's Cartesian component basis.
+struct Seam {
+  int neighbor_chart;
+  int axis, side, neighbor_axis, neighbor_side;
+  int tangent_axis, neighbor_tangent_axis;
+};
+
+struct IndexBounds {
+  std::int64_t first[3]{}, last[3]{};  // half-open range of parent block indices
 };
 
 namespace detail {
@@ -207,6 +221,13 @@ class Atlas {
   std::array<int, 3> RootBlocks(int chart_id) const;
   const std::vector<Real> &RadialKnots() const {return radial_knots_;}
   Real HalfWidth() const {return half_width_;}
+  static Seam AngularSeam(int chart_id, int axis, int side);
+  // Select parents whose interiors intersect an SMR region, then refine each
+  // selected parent to logical_level. Region coordinates are physical spherical
+  // radius and normalized chart angles [-1,1]. A zero-width interval selects
+  // the block on its upper side (clamped at the outer chart edge).
+  IndexBounds ShellRefinementParents(int chart_id, int logical_level,
+                                    const Bounds &radius_angles) const;
   std::string Identity() const;
   BlockMap GetBlockMap(const LogicalLocation &loc) const;
   Bounds PhysicalBounds(const LogicalLocation &loc) const;

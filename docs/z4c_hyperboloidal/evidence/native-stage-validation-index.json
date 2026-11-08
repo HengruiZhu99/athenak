@@ -1,0 +1,48 @@
+{
+  "goal_status": "active",
+  "full_objective_complete": false,
+  "branch": "hyperboloidal_cleaned_up",
+  "parent_commit": "9a3021d695c1cb59be0b24518ee20032bffaee1c",
+  "native_executable_sha256": "7e8948484eca478fb74482dba11b527eca61e2d5518144a829c58e5cb88b9024",
+  "compiler_scope": "Local Apple Clang, Kokkos Serial, OpenMPI; new math sources -ffp-contract=off",
+  "gpu_validation": false,
+  "artifacts": {
+    "native-stage-cartesian-regression.json": "7abf98fffbc83b1488c4f49f0f3605f9d819d9f498f54f50c0cfc86b75a366d4",
+    "native-stage-coupled-rhs.json": "512c2bc543319b13c59127c54c564d134b6baf7021642fd3b90ebdb08adf7471",
+    "native-stage-coupled-rhs.log": "763c7d781ba047eb096eb87a81cfcca04640501240c25bf527a1f7017ab64680",
+    "native-stage-cross-rank.json": "f3841abaa9e49fc6b0dccc2020e0c17a41e451e5e10152a92bb2d90a827e1e94",
+    "native-stage-ctest.log": "ad648ae432ad2d402121d164f2dba5bc549f817d5b38611e3be1f17201d9f223",
+    "native-stage-eight-local-ranks.json": "8674a1e7e8d0e8cabf6744dc6486f37a3c53454d0324ff3e95550728cb90fe19",
+    "native-stage-eight-local-ranks.log": "5f078db30ee8174cd4e1a6e252bbc77e83efac119266e1db9750b261066fcf6e",
+    "native-stage-full-donor-oracle.json": "cebfc8b0fcca3a6970f733693dffa2bb48abb921ec76c548c0050231c9d06d2d",
+    "native-stage-ko-oracle.json": "494632273b4b8f740beb9f06b0ee4e47c4cba1f3cd95a0528d7d9d0b1c3409b6",
+    "native-stage-ko-oracle.log": "3e8ba3f09a88c0a17338fc5b811fba06976694d53ee00d9a3d74e0d6cf12fb38",
+    "native-stage-mapped-halo-suite.json": "24ad35d650ae7856bbac213766cece7766d78805bcf1abdb3b4a176f74837223",
+    "native-stage-module-oracle.log": "10741c4888c0ffddf6d4f4188a06f630ebfc42ceaaf42a4336047e8c73681989",
+    "native-stage-object-manifest.json": "794a7d1faa20909ca12d9ea72fce07083685b8e6ba0dbf7decbad92deaff76a8",
+    "native-stage-outer-smr-eight-local-ranks.json": "d79fcb3dc1397c3923992bc1af8fdf97e132931102cae3afc2743c71634e9952",
+    "native-stage-outer-smr-two-ranks.json": "2cf4b191bd883279557ae30dfbdf4e92c5412e22a08fa5d329937539a7bb424c",
+    "native-stage-point-oracle.log": "797ecde3fca6a6418c5a54fe333b39d6ac32092a92ad17f7448484a9431c2644",
+    "native-stage-scri-final-eight-ranks.json": "9748c6b2c3cc0f09d327ed524e115bda1ab21d540bac8b4747cca686652b868b",
+    "native-stage-shell-smr-donors.json": "6d6cfd0146dcd0417d64ff7779def93f7c2eb67be23b75b76d97727c2dea486a",
+    "native-stage-source-manifest.json": "08a0f81577a6978733d08ce2e20b998c2e438bc0f65eb7011c1aa72d47f035e6",
+    "native-stage-task-delays.log": "6a284db841e124422319854bd1124618b088cf422b7d700c85252014b0b9859d",
+    "native-stage-two-ranks.json": "761e749ef4e5189a480ce231da4c477056764fed0bb523b2d778ed5c0ae18fa4",
+    "native-stage-two-ranks.log": "2984ff115109e80279b98e3f677a360fdb5a55bd83e222969aa2b6e60d75901d"
+  },
+  "completed_scope": [
+    "Local native block/scri stage operator",
+    "Complete N12 RHS versus independent legacy solver, two input states",
+    "One complete RK4 step through original Driver at two/eight local MPI ranks, byte-identical states/chi records",
+    "Mixed shell static donor/surface manufactured tests",
+    "Original Cartesian evolution/restart regression"
+  ],
+  "remaining": [
+    "Native initialization/plan/timestep lifecycle for multicycle runs",
+    "Old/new one-step/eight-step trajectory comparison",
+    "Hyperboloidal AMR field transfers, resize, migration and restart",
+    "ADM, constraint RMS, FastFlow and output integration",
+    "Aurora N12 fresh3551steps through5M",
+    "Same-work GPU scaling and measured optimization"
+  ]
+}

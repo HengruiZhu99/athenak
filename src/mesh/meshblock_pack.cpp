@@ -22,6 +22,7 @@
 #include "z4c/tmunu.hpp"
 #include "tasklist/numerical_relativity.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c_hyperboloidal/z4c_hyperboloidal.hpp"
 #include "dyn_grmhd/dyn_grmhd.hpp"
 #include "z4c/cce/cce.hpp"
 #include "diffusion/viscosity.hpp"
@@ -58,6 +59,7 @@ MeshBlockPack::MeshBlockPack(Mesh *pm, int igids, int igide) :
 MeshBlockPack::~MeshBlockPack() {
   if (ppart  != nullptr) {delete ppart;}
   if (pnr    != nullptr) {delete pnr;}
+  delete pz4c_hyperboloidal;
   if (pdyngr != nullptr) {delete pdyngr;}
   if (ptmunu != nullptr) {delete ptmunu;}
   if (padm   != nullptr) {delete padm;}
@@ -215,6 +217,12 @@ void MeshBlockPack::AddPhysics(ParameterInput *pin) {
     }
   }
 
+  // Hyperboloidal vacuum Z4c owns native block and outer-face fields.
+  if (pin->DoesBlockExist("z4c_hyperboloidal")) {
+    pz4c_hyperboloidal = new z4c_hyperboloidal::Z4cHyperboloidal(this,pin);
+    nphysics++;
+  }
+
   // (8) Dynamical Spacetime and Matter (MHD TODO)
   if ((pin->DoesBlockExist("z4c") || pin->DoesBlockExist("adm")) &&
       (pin->DoesBlockExist("hydro")) ) {
@@ -228,7 +236,7 @@ void MeshBlockPack::AddPhysics(ParameterInput *pin) {
     ptmunu = new Tmunu(this, pin);
   }
 
-  if (pz4c != nullptr || padm != nullptr) {
+  if (pz4c != nullptr || padm != nullptr || pz4c_hyperboloidal != nullptr) {
     pnr = new numrel::NumericalRelativity(this, pin);
     pnr->AssembleNumericalRelativityTasks(tl_map);
   }

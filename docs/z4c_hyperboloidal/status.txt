@@ -1,60 +1,105 @@
 Native AthenaK migration — active, incomplete
 
-Authoritative checkout: /Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal
+Checkout: /Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal
 Branch: hyperboloidal_cleaned_up
 Base: 9db7169c9ea0ec943caf286b2199676e138ae9ee (project/z4c_overhaul)
+Earlier foundation: 9a3021d69. Production source/campaign remain untouched.
 
-Implemented foundation:
-- Mesh-owned seven-root native tree, explicit chart identity and per-local-block maps.
-- N12 mesh-only fixture gives 106 leaves (34 Cartesian, 72 shell), six scri-bearing
-  leaves, native equal block costs and rank ownership. No flattened cell ownership.
-- Same-chart conforming neighbors remain native; different radial intervals are
-  intentionally excluded from generic copy neighbors and require mapped exchange.
-- Explicit restart location records preserve old Cartesian files. Geometry identity
-  is binary-bound; restart input overrides cannot silently change maps or format.
-- Stateless z4c_hyperboloidal point math, native packed readers, endpoint and KO
-  math. Native atlas is the only geometry implementation.
+Implemented:
+- Native Mesh-owned seven-chart forest, chart/Morton leaf ordering, whole-block
+  ownership and equal costs. N12 has 106 leaves: 34 core, 72 shell, six scri faces.
+- All 24 directed angular seams, native 2:1 refinement closure, unsafe
+  derefinement rejection, scratch/restart balance validation, shell SMR selectors.
+- Atlas convention v2 preserves Cartesian parent-midpoint subdivision exactly.
+  Direct refined-grid fractions differed by ulps and failed the full RHS gate;
+  all N12 native/legacy sample coordinates now agree bit for bit.
+- Registered Z4cHyperboloidal module and problem generator. Local packed bulk,
+  evolved-overlap, residual, RK, reference/source and chi-record arrays; only
+  locally owned outer blocks allocate separately evolved scri arrays.
+- Original Driver classical RK4 mode, immutable base/numerator accumulation and
+  stage clocks; existing integrator branches retained. Independent fields update,
+  algebraic components reconstruct, original chi-floor policy/records preserved.
+  Stage four rejects nonfinite fields, nonpositive chi/lapse or invalid metrics.
+- Persistent peer MappedExchange transport with posted Irecv/Isend and incomplete
+  polling. Plan metadata collectives occur at rebuild, never in an RK stage.
+- Native mapped donor lookup and six-point interpolation. Raw 31-field physical
+  interpolation for Cartesian KO is separate from 26-field residual interpolation.
+  Chi residual normalization preserves the reference sqrt(r2), then r*r arithmetic.
+- Surface projection, angular donor exchange, seven-node radial reconstruction,
+  original normal-compatibility solve and boundary RHS. Corrections remain on
+  their owning outer block; no correction all-gather is required.
+- Complete rank-batched bulk RHS and physical KO8. Radial reconstruction replaces
+  final three rows; normal lift affects final two rows, preserving the old closure.
+- Real NumericalRelativity task queues in the original Driver. Four disjoint bulk
+  batches (interior, local halos, remote halos, scri dependent) overlap with peer
+  exchange. Scri direct-donor sampling proceeds independently of bulk ghost fill.
+- Pinned N12 floating-point contraction policy retained for migrated sources.
+  Default contraction caused small surface errors amplified by radial derivatives;
+  disabling contraction restores reference agreement without relaxing tolerances.
 
-Validated:
-- Full native MPI/Serial Release build with make -j64.
-- CTest: tree/atlas geometry, level 31, identity changes, native refine/derefine,
-  location disk formats and two-rank MPI record transport.
-- Two-rank hydro and Z4c AMR (8→64 blocks): complete binary state and metadata
-  agree bitwise with an immutable build of the exact base, including old/new restart.
-- Point oracle: 432 bulk, 256 scri, 37 invalid cases, 492247 scalar comparisons,
-  maximum scaled difference 7.0359255910187767e-14. This is math/stencil evidence,
-  not a full evolution or GPU validation.
+Validation (local CPU MPI unless explicitly stated otherwise):
+- make -j64 builds; eight CTests cover topology, chart records, RK4, transport and
+  original TaskList delayed-dependency behavior (48 cases, 192 stages).
+- Cartesian hydro/Z4c AMR and old/new-format restarts remain byte-identical to
+  immutable base. Earlier driver regression retained all 30 RK1–4/Z4c RK4 files.
+- Native N12 initialization: all 229392 bulk and 864 scri points; 7137936 values
+  agree exactly with the legacy initializer at native coordinates. Actual RK
+  storage, chi policy and injected invalid accepted lapse/chi tests pass.
+- Complete N12 RHS oracle, spherical and nonspherical inputs: all coordinates and
+  all input values agree bitwise. 14222304 bulk rates have maximum absolute
+  difference 2.842176364051263e-14; 53568 scri rates differ by at most
+  4.440892098500626e-16. Weighted RMS differences are 2.94e-17 and 1.08e-17;
+  per-field maxima, RMS and worst coordinates are recorded. Adopted pointwise
+  and tighter chi gates have zero failures.
+- Full donor-row checks compare all 481248 required N12 halo rows to legacy;
+  separate tests exercise all raw/residual fills at two and eight MPI ranks.
+- KO oracle checks 2661120 lines and 7111152 rates; coefficients, donor order,
+  volumes and every rate agree bit for bit with extracted legacy code.
+- Scri/radial oracle checks 2897856 values across two scenarios at two/eight ranks,
+  including three zero-face ranks. No padding outside required stencils is reset
+  to hide missing dependencies.
+- One full RK4 step through actual Driver::Execute is tested at two/eight ranks;
+  complete accepted bulk/scri state and all eight chi-record fields agree byte
+  for byte. Both decompositions use the same executable and native object hashes.
+  This is distinct from a legacy multistep trajectory comparison.
+- Shell-SMR donor tests cover 197 native leaves with mixed angular/radial levels;
+  manufactured degree-five rows and two changing transport stages pass. Separate
+  outer-shell SMR tests cover 113 leaves and nine surface patches, including four
+  refined outer patches, at two/eight ranks. Tests also reject one-rank geometry
+  errors collectively before exchange and reject use of a failed plan.
+- Pinned Aurora source was read back and its build hash verified. The point-kernel
+  and KO-builder sections used by oracles are identical to that N12 source;
+  later local file differences only add a constraint diagnostic exterior mask.
 
-Build provenance:
-- Current candidate: build-native; configure/build logs under evidence/.
-- Immutable base: thread artifact native-base/source (git archive of exact base),
-  native-base/build. Kokkos submodule 6739bc623081648af9e752b616d9671527922cbf.
-- The initial build-native-baseline attempt raced a concurrent tree-header edit
-  and failed; it is NOT baseline evidence. Its generated config/Kokkos libraries
-  were used for the independent point oracle only. The real base build was made
-  from the immutable archive after this was detected.
+Current limitations / remaining full-goal requirements:
+- Production dynamic input still rejects. The one-cycle harness constructs in
+  static mode and sets exact dt after Driver initialization. Mesh::NewTimeStep
+  does not yet include this module, so a subsequent cycle would change dt. Need
+  native initialization/plan/timestep lifecycle and exact pinned fixed-dt policy.
+- Full old-versus-new RK4-step and eight-step trajectory comparisons remain.
+  A full RHS comparison plus cross-rank step equality does not replace them.
+- Hyperboloidal AMR storage resize, migration, restriction/prolongation, evolved
+  overlap and scri transfer, chi-record transfer, and complete restart state are
+  not integrated. Existing chart-aware topology does not establish field AMR.
+- Same-chart copy-compatible routes should reuse native Bvals where appropriate;
+  module storage origin is ng+overlap=7 while native ng remains 4. Current mapped
+  transport preserves reference interpolation, including internal core donors.
+- First-shell radial refinement needs its own accuracy/convergence gate. Outer
+  nodal-grid descendants inherit offset zero; future volume diagnostics must
+  distinguish root-layer endpoints from internal refined radial boundaries.
+- ADM conversion, constraint RMS, fixed-origin FastFlow, mapped adaptive timestep
+  and accepted-step output/restart lifecycle remain. N12 tracking stays disabled.
+- No native Aurora run, N12-through-5M result, GPU performance or scaling result
+  exists. Final objective still requires fresh 3551 steps to t/M=5.0009660239551499,
+  then repeated same-work 2-/8-node timing, profiling and measured improvements.
 
-Next required work, preserving the complete objective:
-1. Native Z4cHyperboloidal class/registration, per-block evolved overlap storage,
-   block-owned scri arrays, initial/reference data and algebraic reconstruction.
-2. Native stage task graph and classical RK4 inside Driver. Native rk4 is a
-   different low-storage method and cannot silently replace classical RK4.
-3. Mapped donor plans keyed by native GID/index, native peer/nonblocking exchange
-   lifecycle, surface compatibility/reconstruction, independent bulk overlap.
-4. Cross-chart seam/refinement closure, donor eligibility, SMR shell selection,
-   native migration/refine/derefine/restart for all evolved bulk/overlap/scri data.
-5. Mapped timestep, diagnostics, ADM conversion and N12 full-state comparison.
-6. Aurora N12 through 3551 full steps (just past 5 M), then bounded performance and
-   scaling measurements and measured improvements. No native Aurora job yet.
+Pinned N12: float64, KO=.1, chi floor=1e-10, constant shift-speed, stationary
+outer reference, dt=0.00046944203735617445. Three evolved overlap cells and four
+stencil ghosts; outer radial offset zero plus separately evolved endpoint.
+Do not restart production N24/N36. Maximum eight Aurora nodes; inspect qstat
+before submissions. Full original objective remains in requirements.json.
 
-Important limits:
-- The N12 fixture is mesh-only (-m), not an executable hyperboloidal evolution.
-- Cross-chart coupled SMR/AMR support and end-to-end correctness are NOT complete.
-- Production remains untouched; this migration has no claimed speedup yet.
-- Keep all leaves at equal weight. Current maps include 3 evolved overlap cells
-  and 4 difference ghosts, and outer radial endpoint offset 0 with separate scri.
-- Reference N12 tracker is disabled. Pin KO=.1, stored chi floor 1e-10, constant
-  shift-speed policy, stationary-reference outer gauge and exact dt.
-- Check live qstat before any future Aurora submission; use at most 8 nodes.
-
-Full original requirements/status are retained in requirements.json.
+Evidence scope/provenance is recorded per test under docs/z4c_hyperboloidal/evidence
+and build-native. Earlier snapshots retain their original source hashes; use the
+latest coupled-stage manifest for this milestone. Contracts and executable test
+runners are in tst/z4c_hyperboloidal. No local MPI result is a GPU scaling result.

@@ -27,7 +27,7 @@ struct Fields {
 
 enum class PointStatus : int {
   success=0, invalid_input=1, invalid_geometry=2, invalid_assembly=3,
-  invalid_gauge=4, invalid_auxiliary=5, nonfinite_rhs=7
+  invalid_gauge=4, invalid_auxiliary=5, cfl_exceeded=6, nonfinite_rhs=7
 };
 }  // namespace z4c_hyperboloidal
 #endif

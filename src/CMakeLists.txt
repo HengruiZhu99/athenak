@@ -12,6 +12,7 @@ add_executable(
         parameter_input.cpp
 
         bvals/bvals.cpp
+        bvals/mapped_exchange.cpp
         bvals/buffs_cc.cpp
         bvals/buffs_fc.cpp
         bvals/bvals_cc.cpp
@@ -50,6 +51,14 @@ add_executable(
         diffusion/viscosity.cpp
 
         driver/driver.cpp
+
+        z4c_hyperboloidal/z4c_hyperboloidal.cpp
+        z4c_hyperboloidal/dissipation_plan.cpp
+        z4c_hyperboloidal/mapped_halo.cpp
+        z4c_hyperboloidal/surface_exchange.cpp
+        z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp
+        z4c_hyperboloidal/z4c_hyperboloidal_tasks.cpp
+        z4c_hyperboloidal/z4c_hyperboloidal_update.cpp
 
         dyn_grmhd/dyn_grmhd.cpp
         dyn_grmhd/dyn_grmhd_fluxes.cpp
@@ -154,6 +163,7 @@ add_executable(
         pgen/tests/z4c_boosted_puncture.cpp
         pgen/tests/z4c_interpolation.cpp
         pgen/z4c/superposed_boosted_puncture.cpp
+        pgen/z4c/hyperboloidal_puncture.cpp
         pgen/tests/z4c_linear_wave.cpp
         pgen/tests/jeans_wave.cpp
         pgen/tests/binary_gravity.cpp
@@ -230,3 +240,19 @@ endif()
 
 # enable include of header files with /src/ as root of path
 target_include_directories(athena PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+# The pinned N12 campaign disables fused multiply-add contraction. Preserve
+# that arithmetic for the migrated equations, initialization and mapped plans;
+# leave existing AthenaK physics compilation unchanged.
+if(CMAKE_CXX_COMPILER_ID MATCHES "^(GNU|Clang|AppleClang|IntelLLVM)$")
+  set_source_files_properties(
+      mesh/chart_atlas.cpp
+      z4c_hyperboloidal/z4c_hyperboloidal.cpp
+      z4c_hyperboloidal/z4c_hyperboloidal_update.cpp
+      z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp
+      z4c_hyperboloidal/z4c_hyperboloidal_tasks.cpp
+      z4c_hyperboloidal/dissipation_plan.cpp
+      z4c_hyperboloidal/mapped_halo.cpp
+      z4c_hyperboloidal/surface_exchange.cpp
+      PROPERTIES COMPILE_OPTIONS "-ffp-contract=off")
+endif()

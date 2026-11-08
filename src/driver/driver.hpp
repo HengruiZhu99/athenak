@@ -19,6 +19,7 @@
 
 #include "diffusion/sts_rkl2.hpp"
 #include "diffusion/sts_types.hpp"
+#include "driver/classical_rk4.hpp"
 #include "parameter_input.hpp"
 #include "outputs/outputs.hpp"
 #include "pgen/pgen.hpp"
@@ -63,6 +64,10 @@ class Driver {
   Real a_twid[4][4], a_impl;       // matrix elements for implicit stages in ImEx
   Real cfl_limit;                  // maximum CFL number for integrator
   Real gamma;                      // gamma value for the IMEX_new integrator
+  // Classical RK4 task clocks. Mesh::time stays at the accepted cycle start
+  // throughout all stages; existing integrators retain their previous clocks.
+  Real stage_time=0.0;              // time of the current RHS evaluation
+  Real stage_state_time=0.0;        // time of the state produced by this stage
   Kokkos::Timer* pwall_clock_;     // timer for tracking the wall clock
   Real wall_time;
 
@@ -72,6 +77,7 @@ class Driver {
   void Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool wdflag);
   void Finalize(Mesh *pmesh, ParameterInput *pin, Outputs *pout);
   void InitBoundaryValuesAndPrimitives(Mesh *pm);
+  bool UsesClassicalRK4() const {return integrator=="rk4_classical";}
 
  private:
   Kokkos::Timer run_time_;      // generalized timer for cpu/gpu/etc
@@ -80,6 +86,7 @@ class Driver {
   float lb_efficiency_;         // measure of how efficient was load balancing
   void ResetSTSController();
   void ValidateSTSConfiguration(Mesh *pm);
+  void ValidateClassicalRK4Configuration(Mesh *pm);
   void RefreshSTSCycleState(Mesh *pm);
   void BeginSTSSweep(Mesh *pm, STSSweep sweep);
   void SetSTSStage(int stage);

@@ -25,7 +25,8 @@ struct BlockResidualReader {
                         -reference(block,f,k+dk,j+dj,i+di);
     if (f!=Fields::chi) return residual;
     const auto &x=geometry(block,k+dk,j+dj,i+di).x;
-    return residual/(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);
+    const Real r=SphericalPolicy::Radius(x);
+    return residual/(r*r);
   }
 };
 
@@ -101,24 +102,14 @@ struct PointState {
   PointStatus status=PointStatus::success;
 };
 
-// Reader returns (u-reference), with chi additionally divided by r^2. Reference
-// jets are analytic Cartesian jets; lift is the already interpolated Cartesian
-// shift-normal correction, with value and first/second derivatives.
-// This helper is for ordinary interior stencils (radius four is required by
-// the compatible lapse Hessian). Endpoint-adjacent radial rows are supplied by
-// the caller and restored with SphericalPolicy::Restore instead.
+// Finish either centered or endpoint-reconstructed residual jets with the same
+// compatible lapse Hessian, reference restoration and algebraic constraints.
 template<class Reader>
-KOKKOS_INLINE_FUNCTION PointState BuildPointState(const Reader &q,
+KOKKOS_INLINE_FUNCTION void RestorePointState(PointState &out,const Reader &q,
     const mapped::Point &map,const Real inv_h[3],const CartesianChartJets &reference,
     const HyperbolicShiftParameters<Real> &parameters,const mapped::Jet *lift=nullptr) {
-  PointState out;
   const Real r=SphericalPolicy::Radius(map.x);
-  if (!(r>0) || !Kokkos::isfinite(r)) {out.status=PointStatus::invalid_input;return out;}
-  Real beta[3]{};
-  for (int a=0;a<3;++a)beta[a]=q(22+a)+reference[22+a].f-map.x[a];
-  for (int f=0;f<Fields::count;++f) if (Fields::Independent(f))
-    out.jets[f]=SampleResidualJet(q,f,map,inv_h,beta,
-        f<=6||f==18||(f>=22&&f<25),out.transport[f]);
+  if (!(r>0) || !Kokkos::isfinite(r)) {out.status=PointStatus::invalid_input;return;}
   const Real w=SphericalPolicy::CompatibleWeight(r,parameters);
   if (w>0) {
     Real composed=0;
@@ -132,12 +123,29 @@ KOKKOS_INLINE_FUNCTION PointState BuildPointState(const Reader &q,
       out.jets[18].h[a][b]+=delta*map.x[a]*map.x[b]/(r*r);
   }
   if (!SphericalPolicy::Restore(map.x,out.jets,reference)) {
-    out.status=PointStatus::invalid_geometry;return out;
+    out.status=PointStatus::invalid_geometry;return;
   }
   if (lift)for (int a=0;a<3;++a)out.jets[22+a]=out.jets[22+a]+lift[a];
   out.transport[0]*=r*r;
   const auto u=SphericalPolicy::Physical(map.x,out.jets);
   if (!(u.chi.value>0 && u.alpha.value>0)) out.status=PointStatus::invalid_input;
+}
+
+// Reader returns (u-reference), with chi additionally divided by r^2. Reference
+// jets are analytic Cartesian jets; lift is the already interpolated Cartesian
+// shift-normal correction, with value and first/second derivatives. Ordinary
+// interior stencils need radius four for the compatible lapse Hessian.
+template<class Reader>
+KOKKOS_INLINE_FUNCTION PointState BuildPointState(const Reader &q,
+    const mapped::Point &map,const Real inv_h[3],const CartesianChartJets &reference,
+    const HyperbolicShiftParameters<Real> &parameters,const mapped::Jet *lift=nullptr) {
+  PointState out;
+  Real beta[3]{};
+  for (int a=0;a<3;++a)beta[a]=q(22+a)+reference[22+a].f-map.x[a];
+  for (int f=0;f<Fields::count;++f) if (Fields::Independent(f))
+    out.jets[f]=SampleResidualJet(q,f,map,inv_h,beta,
+        f<=6||f==18||(f>=22&&f<25),out.transport[f]);
+  RestorePointState(out,q,map,inv_h,reference,parameters,lift);
   return out;
 }
 }  // namespace z4c_hyperboloidal

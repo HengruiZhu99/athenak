@@ -15,6 +15,7 @@
 #include "parameter_input.hpp"
 #include "mesh.hpp"
 #include "meshblock_tree.hpp"
+#include "chart_atlas.hpp"
 
 MeshBlockTree::RootGrid::RootGrid() {
   bcs.fill(BoundaryFlag::outflow);
@@ -53,7 +54,8 @@ MeshBlockTree::MeshBlockTree(const RootGrid &root_grid)
   lloc_ = {0, 0, 0, 0, root_grid.chart_id};
 }
 
-void MeshBlockTree::SetChartRoots(const std::vector<MeshBlockTree *> &roots) {
+void MeshBlockTree::SetChartRoots(const std::vector<MeshBlockTree *> &roots,
+                                 bool cubed_sphere_seams) {
   if (this != proot_ || lloc_.chart_id != 0 || roots.empty() || roots[0] != this) {
     throw std::invalid_argument("forest registry must start with its chart-zero root");
   }
@@ -64,7 +66,24 @@ void MeshBlockTree::SetChartRoots(const std::vector<MeshBlockTree *> &roots) {
       throw std::invalid_argument("forest requires ordered charts and a common root level");
     }
   }
+  if (cubed_sphere_seams) {
+    if (roots.size() != 7) {
+      throw std::invalid_argument("cubed-sphere seams require one core and six shell charts");
+    }
+    for (int chart=1; chart<7; ++chart) {
+      const auto &grid = roots[chart]->GetRootGrid();
+      if (grid.ndim != 3 || grid.nmb_root[0] != roots[1]->GetRootGrid().nmb_root[0]) {
+        throw std::invalid_argument("shell seam roots require common radial topology");
+      }
+      for (int f=2; f<6; ++f) {
+        if (grid.bcs[f] == BoundaryFlag::periodic || grid.bcs[f] == BoundaryFlag::shear_periodic) {
+          throw std::invalid_argument("cubed-sphere angular seams cannot also be periodic");
+        }
+      }
+    }
+  }
   chart_roots_ = roots;
+  cubed_sphere_seams_ = cubed_sphere_seams;
   for (auto *root : roots) root->forest_root_ = this;
 }
 
@@ -86,6 +105,120 @@ bool MeshBlockTree::ContainsLocation(const LogicalLocation &loc) const {
     if (index[a] < 0 || index[a] >= n) return false;
   }
   return true;
+}
+
+std::vector<MeshBlockTree *> MeshBlockTree::FindSeamNeighbors(
+    const LogicalLocation &loc, int axis, int side) const {
+  std::vector<MeshBlockTree *> neighbors;
+  if (!proot_->forest_root_->cubed_sphere_seams_ || loc.chart_id == 0) return neighbors;
+  auto *source = GetChartRoot(loc.chart_id);
+  if (source == nullptr || !source->ContainsLocation(loc)
+      || loc.level < source->root_grid_->root_level) return neighbors;
+  const auto seam = chart_atlas::Atlas::AngularSeam(loc.chart_id, axis, side);
+  const std::int32_t index[3] = {loc.lx1, loc.lx2, loc.lx3};
+  const auto &grid = source->GetRootGrid();
+  const std::int64_t extent = std::int64_t(grid.nmb_root[axis])
+      << (loc.level-grid.root_level);
+  if ((side < 0 && index[axis] != 0)
+      || (side > 0 && std::int64_t(index[axis])+1 != extent)) return neighbors;
+  auto *target = GetChartRoot(seam.neighbor_chart);
+  target->CollectSeamLeaves(loc, grid, seam, neighbors);
+  return neighbors;
+}
+
+void MeshBlockTree::CollectSeamLeaves(const LogicalLocation &source,
+                                     const RootGrid &source_grid,
+                                     const chart_atlas::Seam &seam,
+                                     std::vector<MeshBlockTree *> &neighbors) {
+  const std::int32_t src[3] = {source.lx1, source.lx2, source.lx3};
+  const std::int32_t dst[3] = {lloc_.lx1, lloc_.lx2, lloc_.lx3};
+  const int source_shift = 31-source.level, target_shift = 31-lloc_.level;
+  const auto lower = [=](int a) {return std::int64_t(dst[a]) << target_shift;};
+  const auto upper = [=](int a) {return (std::int64_t(dst[a])+1) << target_shift;};
+  const std::int64_t edge = std::int64_t(root_grid_->nmb_root[seam.neighbor_axis])
+      << (31-root_grid_->root_level);
+  if (seam.neighbor_side < 0 ? lower(seam.neighbor_axis) != 0
+      : upper(seam.neighbor_axis) < edge || lower(seam.neighbor_axis) >= edge) return;
+
+  // Radial root indices agree across shell faces. Angular indices can have
+  // different root counts after swapping u/v: compare exact rational intervals
+  // using cross products. At most 2^31 times (2^31-1), which fits int64.
+  const std::int64_t radial_lo = std::int64_t(src[0]) << source_shift;
+  const std::int64_t radial_hi = (std::int64_t(src[0])+1) << source_shift;
+  if (upper(0) < radial_lo || lower(0) > radial_hi) return;
+  const std::int64_t source_lo = (std::int64_t(src[seam.tangent_axis]) << source_shift)
+      *root_grid_->nmb_root[seam.neighbor_tangent_axis];
+  const std::int64_t source_hi = ((std::int64_t(src[seam.tangent_axis])+1) << source_shift)
+      *root_grid_->nmb_root[seam.neighbor_tangent_axis];
+  const std::int64_t target_lo = lower(seam.neighbor_tangent_axis)
+      *source_grid.nmb_root[seam.tangent_axis];
+  const std::int64_t target_hi = upper(seam.neighbor_tangent_axis)
+      *source_grid.nmb_root[seam.tangent_axis];
+  if (target_hi < source_lo || target_lo > source_hi) return;
+  if (IsLeaf()) {
+    neighbors.push_back(this);
+  } else {
+    for (int n=0; n<nleaf_; ++n) {
+      if (pleaf_[n] != nullptr) pleaf_[n]->CollectSeamLeaves(source, source_grid, seam, neighbors);
+    }
+  }
+}
+
+void MeshBlockTree::BalanceSeams(int &nnew) {
+  if (!proot_->forest_root_->cubed_sphere_seams_ || lloc_.chart_id == 0) return;
+  bool changed;
+  do {
+    changed = false;
+    for (int axis=1; axis<3; ++axis) {
+      for (int side : {-1, 1}) {
+        for (auto *neighbor : FindSeamNeighbors(lloc_, axis, side)) {
+          // This node has just produced children at level+1. Its seam neighbors
+          // must therefore reach at least this node's level.
+          if (neighbor->lloc_.level < lloc_.level && neighbor->IsLeaf()) {
+            neighbor->Refine(nnew);
+            changed = true;
+          }
+        }
+      }
+    }
+  } while (changed);
+}
+
+bool MeshBlockTree::CanDerefineAcrossSeams() const {
+  for (int axis=1; axis<3; ++axis) {
+    for (int side : {-1, 1}) {
+      for (const auto *neighbor : FindSeamNeighbors(lloc_, axis, side)) {
+        if (neighbor->lloc_.level > lloc_.level+1) return false;
+      }
+    }
+  }
+  return true;
+}
+
+void MeshBlockTree::ValidateSeamBalance() const {
+  const auto *forest = proot_->forest_root_;
+  if (!forest->cubed_sphere_seams_) return;
+  for (std::size_t chart=1; chart<forest->chart_roots_.size(); ++chart) {
+    forest->chart_roots_[chart]->ValidateLeafSeams();
+  }
+}
+
+void MeshBlockTree::ValidateLeafSeams() const {
+  if (!IsLeaf()) {
+    for (int n=0; n<nleaf_; ++n) {
+      if (pleaf_[n] != nullptr) pleaf_[n]->ValidateLeafSeams();
+    }
+    return;
+  }
+  for (int axis=1; axis<3; ++axis) {
+    for (int side : {-1, 1}) {
+      for (const auto *neighbor : FindSeamNeighbors(lloc_, axis, side)) {
+        if (lloc_.level > neighbor->lloc_.level+1 || neighbor->lloc_.level > lloc_.level+1) {
+          throw std::runtime_error("native chart forest violates 2:1 shell seam balance");
+        }
+      }
+    }
+  }
 }
 
 //----------------------------------------------------------------------------------------
@@ -313,6 +446,7 @@ void MeshBlockTree::Refine(int &nnew) {
       }
     }
   }
+  BalanceSeams(nnew);
   // this block is not a leaf anymore
   gid_ = -1;
 
@@ -329,6 +463,7 @@ void MeshBlockTree::Derefine(int &ndel) {
   for (int n=0; n<nleaf_; ++n) {
     if (pleaf_[n] == nullptr || !pleaf_[n]->IsLeaf()) return;
   }
+  if (!CanDerefineAcrossSeams()) return;
   int s2=0, e2=0, s3=0, e3=0;
   if ((root_grid_->ndim > 1)) s2=-1, e2=1;
   if ((root_grid_->ndim > 2)) s3=-1, e3=1;

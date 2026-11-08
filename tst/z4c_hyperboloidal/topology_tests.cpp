@@ -35,7 +35,7 @@ bool SameLocation(const LogicalLocation &a, const LogicalLocation &b) {
 
 using Roots = std::vector<std::unique_ptr<MeshBlockTree>>;
 
-Roots MakeForest(const chart_atlas::Atlas &atlas) {
+Roots MakeForest(const chart_atlas::Atlas &atlas, bool balance_seams = true) {
   Roots roots;
   std::vector<MeshBlockTree *> registry;
   for (int chart=0; chart<atlas.NumCharts(); ++chart) {
@@ -47,7 +47,7 @@ Roots MakeForest(const chart_atlas::Atlas &atlas) {
     roots.back()->CreateRootGrid();
     registry.push_back(roots.back().get());
   }
-  roots.front()->SetChartRoots(registry);
+  roots.front()->SetChartRoots(registry, balance_seams);
   return roots;
 }
 
@@ -328,6 +328,16 @@ void TestGeometry() {
   }
   const auto center = sphere.GetBlockMap({1, 1, 1, level, 0});
   for (int f=0; f<6; ++f) Require(center.overlap_sides[f] == 0, "no core internal overlap");
+  for (int octant=0;octant<8;++octant) {
+    const auto child=sphere.GetBlockMap({2+(octant&1),2+((octant>>1)&1),
+                                         2+((octant>>2)&1),level+1,0});
+    for (int a=0;a<3;++a) {
+      const Real middle=(center.lo[a]+center.hi[a])/2;
+      Require(child.lo[a]==((octant&(1<<a)) ? middle : center.lo[a]) &&
+              child.hi[a]==((octant&(1<<a)) ? center.hi[a] : middle),
+              "refined core coordinates preserve parent midpoint bits");
+    }
+  }
   const auto corner = sphere.GetBlockMap({0, 0, 0, level, 0});
   for (int a=0; a<3; ++a) {
     Require(corner.overlap_sides[2*a] == 3 && corner.overlap_sides[2*a+1] == 0,
@@ -359,6 +369,143 @@ void TestGeometry() {
           "level-31 shell bounds preserve the outer radial endpoint");
 }
 
+void CheckSeamBalance(MeshBlockTree &forest) {
+  forest.ValidateSeamBalance();
+  const auto locations = Leaves(forest);
+  CheckOrderAndBalance(locations);
+  for (const auto &loc : locations) {
+    if (loc.chart_id == 0) continue;
+    for (int axis=1; axis<3; ++axis) for (int side : {-1, 1}) {
+      const auto seam = chart_atlas::Atlas::AngularSeam(loc.chart_id, axis, side);
+      for (const auto *neighbor : forest.FindSeamNeighbors(loc, axis, side)) {
+        Require(neighbor->IsLeaf(), "seam topology returns native leaves");
+        const auto &other = neighbor->GetLocation();
+        Require(std::abs(other.level-loc.level) <= 1, "cross-chart 2:1 closure");
+        const auto reverse = forest.FindSeamNeighbors(other, seam.neighbor_axis, seam.neighbor_side);
+        Require(std::find(reverse.begin(), reverse.end(), forest.FindMeshBlock(loc)) != reverse.end(),
+                "reciprocal seam leaf intersection");
+      }
+    }
+  }
+}
+
+void TestSeams() {
+  const chart_atlas::Atlas atlas(.1, {.2, .4, 1}, {1, 1, 1}, {1, 1}, .08, true);
+  const int level = atlas.RootLevel();
+  for (int chart=1; chart<=6; ++chart) {
+    for (int axis=1; axis<3; ++axis) for (int side : {-1, 1}) {
+      const auto seam = chart_atlas::Atlas::AngularSeam(chart, axis, side);
+      const auto reverse = chart_atlas::Atlas::AngularSeam(
+          seam.neighbor_chart, seam.neighbor_axis, seam.neighbor_side);
+      Require(reverse.neighbor_chart == chart && reverse.neighbor_axis == axis
+              && reverse.neighbor_side == side, "all 24 oriented seams are reciprocal");
+      const auto source_map = atlas.GetBlockMap({1, 0, 0, level, chart});
+      const auto target_map = atlas.GetBlockMap({1, 0, 0, level, seam.neighbor_chart});
+      Real qs[3]{.37, 0, 0}, qt[3]{.37, 0, 0}, xs[3], xt[3];
+      qs[axis] = side < 0 ? 0 : 1;
+      qs[seam.tangent_axis] = .21;
+      qt[seam.neighbor_axis] = seam.neighbor_side < 0 ? 0 : 1;
+      qt[seam.neighbor_tangent_axis] = .21;
+      source_map.Forward(qs, xs);
+      target_map.Forward(qt, xt);
+      for (int a=0; a<3; ++a) Near(xs[a], xt[a], 2e-14, "seam orientation agrees with physical maps");
+
+      auto roots = MakeForest(atlas);
+      auto &forest = *roots[0];
+      const LogicalLocation source{1, 0, 0, level, chart};
+      auto *source_node = forest.FindMeshBlock(source);
+      int added = 0;
+      source_node->Refine(added);
+      Require(added == 7, "first shell refinement needs no same-level seam closure");
+      LogicalLocation child{2, 0, 0, level+1, chart};
+      if (axis == 1) child.lx2 = side > 0 ? 1 : 0;
+      else child.lx3 = side > 0 ? 1 : 0;
+      auto *fine_parent = forest.FindMeshBlock(child);
+      fine_parent->Refine(added);
+      auto *target_root = forest.FindMeshBlock({1, 0, 0, level, seam.neighbor_chart});
+      Require(!target_root->IsLeaf(), "refinement propagates across each oriented shell seam");
+      CheckSeamBalance(forest);
+      Require(forest.FindNeighbor(child, 0, axis == 1 ? side : 0, axis == 2 ? side : 0) == nullptr,
+              "seams remain outside the conforming Cartesian Bvals graph");
+      int removed = 0;
+      target_root->Derefine(removed);
+      Require(removed == 0, "derefine cannot create a two-level cross-seam jump");
+      fine_parent->Derefine(removed);
+      Require(removed == 7, "fine seam parent can safely coarsen first");
+      removed = 0;
+      target_root->Derefine(removed);
+      Require(removed == 7, "neighbor can coarsen once the seam level difference allows it");
+      CheckSeamBalance(forest);
+    }
+  }
+
+  // A u/v swap need not map one root edge cell to one edge cell when root
+  // angular counts differ. Exact overlaps must include both intersecting roots
+  // and their radial edge contacts, rather than rounding a face-center lookup.
+  const chart_atlas::Atlas rectangular(.1, {.2, .4, 1}, {1, 1, 1}, {2, 3}, .08, true);
+  auto roots = MakeForest(rectangular);
+  auto &forest = *roots[0];
+  const LogicalLocation source{1, 1, 1, rectangular.RootLevel(), 1};
+  const auto neighbors = forest.FindSeamNeighbors(source, 1, 1);
+  Require(neighbors.size() == 6, "unequal angular roots include every intersecting seam leaf");
+  for (int radial=0; radial<3; ++radial) for (int tangent=0; tangent<2; ++tangent) {
+    const LogicalLocation expected{radial, tangent, 2, rectangular.RootLevel(), 3};
+    Require(std::find(neighbors.begin(), neighbors.end(), forest.FindMeshBlock(expected))
+            != neighbors.end(), "exact angular/radial seam footprint");
+  }
+  int added = 0;
+  forest.FindMeshBlock(source)->Refine(added);
+  forest.FindMeshBlock({2, 3, 2, rectangular.RootLevel()+1, 1})->Refine(added);
+  CheckSeamBalance(forest);
+
+  // Old/incomplete chart restart records can describe a forest that is balanced
+  // within each chart but not across faces. Reconstruct without mutation and
+  // reject the incompatible seam levels before any state is assigned to leaves.
+  auto unbalanced = MakeForest(atlas, false);
+  added = 0;
+  unbalanced[0]->AddNode({4, 0, 0, level+2, 1}, added);
+  auto restored = MakeForest(atlas);
+  for (const auto &loc : Leaves(*unbalanced[0])) restored[0]->AddNodeWithoutRefinement(loc);
+  bool caught = false;
+  try {restored[0]->ValidateSeamBalance();} catch (const std::runtime_error &) {caught = true;}
+  Require(caught, "restart rejects an unbalanced chart seam without inventing saved state");
+}
+
+void TestShellSMR() {
+  const chart_atlas::Atlas atlas(.1, {.16, .24, .32, .40, .48, .56, .64, .72, .80, .88, .94, 1},
+                                {3, 3, 3}, {1, 1}, .08, true);
+  const chart_atlas::Bounds region{{.24, -.5, -1}, {.32, .25, 0}};
+  const auto range = atlas.ShellRefinementParents(1, atlas.RootLevel()+2, region);
+  Require(range.first[0] == 4 && range.last[0] == 6, "SMR physical radial knots select exact parents");
+  Require(range.first[1] == 0 && range.last[1] == 2
+          && range.first[2] == 0 && range.last[2] == 1, "SMR normalized angular ranges");
+  auto roots = MakeForest(atlas);
+  auto &forest = *roots[0];
+  int added = 0;
+  for (auto k=range.first[2]; k<range.last[2]; ++k) {
+    for (auto j=range.first[1]; j<range.last[1]; ++j) {
+      for (auto i=range.first[0]; i<range.last[0]; ++i) {
+        forest.AddNode({int(2*i), int(2*j), int(2*k), atlas.RootLevel()+2, 1}, added);
+      }
+    }
+  }
+  CheckSeamBalance(forest);
+  Require(forest.FindMeshBlock({8, 0, 0, atlas.RootLevel()+2, 1})->IsLeaf(),
+          "shell SMR inserts selected child locations through native tree");
+  const chart_atlas::Bounds endpoint{{1, 1, 1}, {1, 1, 1}};
+  const auto point = atlas.ShellRefinementParents(6, atlas.RootLevel()+2, endpoint);
+  Require(point.first[0] == 23 && point.last[0] == 24 && point.first[1] == 1
+          && point.last[1] == 2, "SMR point on outer boundary is clamped to last parent");
+  const chart_atlas::Atlas cube(.1, {.2, .4, 1});
+  bool caught = false;
+  try {
+    cube.ShellRefinementParents(1, cube.RootLevel()+1, {{.15, -1, -1}, {.3, 1, 1}});
+  } catch (const std::invalid_argument &) {caught = true;}
+  Require(caught, "physical-radius SMR rejects the non-spherical transition layer");
+  const auto outer = cube.ShellRefinementParents(1, cube.RootLevel()+1, {{.2, -1, -1}, {.4, 1, 1}});
+  Require(outer.first[0] == 1 && outer.last[0] == 2, "cube atlas spherical layers remain selectable");
+}
+
 }  // namespace
 
 int main(int argc, char **argv) {
@@ -367,6 +514,8 @@ int main(int argc, char **argv) {
   try {
     TestForest();
     TestGeometry();
+    TestSeams();
+    TestShellSMR();
     std::cout << "native forest and chart geometry tests passed\n";
   } catch (const std::exception &error) {
     std::cerr << "topology test failure: " << error.what() << '\n';
