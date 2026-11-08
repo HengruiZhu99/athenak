@@ -1,0 +1,362 @@
+{
+  "schema": "native-field-ko-qualification-submission-evidence-v1",
+  "status": "completed_collected_independent_science_pending",
+  "job_id": "9052266",
+  "submission": {
+    "schema": "native-field-ko-qualification-submission-v1",
+    "job_id": "9052266.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "nodes": 2,
+    "ranks": 24,
+    "state": "Q",
+    "utc": "2026-11-08T20:33:53.189251+00:00",
+    "fresh_queue_clear": true,
+    "held_jobs_untouched": true,
+    "preflight_sha256": "4c11449ec8802c846effac8391dd44a2c8de3b9dfc0cb5e9c3562f318e173c48",
+    "package_manifest_sha256": "83da51e4f82bb76af5948973689f5c1be5ce744444e0da8f525262e84f51b3a9",
+    "commands_sha256": "9c8d5e90c988b712b3d0ad7814c8775edd55ccf124231852361195d2cdf02ee7",
+    "candidate_build_provenance_sha256": "9c0362658062ed2280f1cfbd57888898f41115683e7d2b74bf15ddf108ec52f8",
+    "cache_capacity": 128,
+    "cases": [
+      "observer70",
+      "poison8",
+      "amr4",
+      "prefix2",
+      "resume8"
+    ],
+    "pbs_minutes": 30,
+    "outer_bound_seconds": 1680,
+    "performance_measurement": false,
+    "scientific_qualification_pending": true
+  },
+  "preflight": {
+    "schema": "native-field-ko-qualification-preflight-v1",
+    "passed": true,
+    "package_manifest_sha256": "83da51e4f82bb76af5948973689f5c1be5ce744444e0da8f525262e84f51b3a9",
+    "commands_sha256": "9c8d5e90c988b712b3d0ad7814c8775edd55ccf124231852361195d2cdf02ee7",
+    "files_verified": 17,
+    "candidate_build_provenance_sha256": "9c0362658062ed2280f1cfbd57888898f41115683e7d2b74bf15ddf108ec52f8",
+    "source_and_object_guards_passed": true,
+    "candidate_guard_passed": true,
+    "coherent_guard_passed": true,
+    "actual_case_absent": true,
+    "gpu_executed": false,
+    "seconds": 33.35192322009243,
+    "utc": "2026-11-08T20:33:24.664249+00:00"
+  },
+  "package_readiness": {
+    "schema": "native-field-ko-qualification-launch-readiness-v1",
+    "passed": true,
+    "scope": "Local syntax, exact existing five-case command/science-gate reuse and verified actual-build bindings; no GPU qualification run or submission",
+    "package_files": 17,
+    "package_manifest_sha256": "83da51e4f82bb76af5948973689f5c1be5ce744444e0da8f525262e84f51b3a9",
+    "command_manifest_sha256": "9c8d5e90c988b712b3d0ad7814c8775edd55ccf124231852361195d2cdf02ee7",
+    "candidate_build_provenance_sha256": "9c0362658062ed2280f1cfbd57888898f41115683e7d2b74bf15ddf108ec52f8",
+    "candidate_build_verifier_sha256": "30621c20b5a387eb8b9c48dfc4022b41a4a41a1bedc58c8a4c66d1592df090bc",
+    "changed_command_fields": [
+      "executable",
+      "executable_sha256",
+      "provenance",
+      "provenance_sha256"
+    ],
+    "all_five_completed_science_branches_ast_identical_except_schema": true,
+    "source_plan_sha256": "d7e4861a0ad97d5ba44e04bc2cef33c2864d533020c379f23fcb989baf8bcd42",
+    "original_command_manifest_sha256": "08de71e12bbe7d7ea0dd5013b89e82e530067061e8105cdc1a3327af5463c344",
+    "remote_launch": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/field-ko-v1/qualification-launch",
+    "remote_case": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/native-field-ko-qualification-v1",
+    "nodes": 2,
+    "ranks": 24,
+    "pbs_minutes": 30,
+    "outer_cap_seconds": 1680,
+    "per_case_caps_seconds": {
+      "observer70": 600,
+      "poison8": 180,
+      "amr4": 300,
+      "prefix2": 120,
+      "resume8": 180
+    },
+    "resume_payload_and_diagnostic_phase_admission": "Existing local full-state/restart_diagnostics readers required after collection",
+    "performance_admission": false,
+    "private_import_help_and_five_manifest_commands_passed": true
+  },
+  "candidate_accepted": false,
+  "qualification_passed": false,
+  "independent_scientific_review_pending": true,
+  "performance_measurement": false,
+  "build_evidence": "docs/z4c_hyperboloidal/evidence/native-field-ko-qualification-build.json",
+  "scope": "Five reviewed qualification cases only, on two nodes/24 ranks with cache128. Exact screened KO source and new fixture links; no timing screen or future optimization. Operational success requires later independent observer/poison/AMR/restart science review.",
+  "files": {
+    "build-native/native-field-ko-qualification-preparation-v1/files.json": {
+      "bytes": 2357,
+      "sha256": "83da51e4f82bb76af5948973689f5c1be5ce744444e0da8f525262e84f51b3a9"
+    },
+    "build-native/native-field-ko-qualification-preparation-v1/readiness.json": {
+      "bytes": 1791,
+      "sha256": "6f62f761cb576284f9fcd83cddec41762ddb9c999197337d20679fa8d30d97fb"
+    },
+    "build-native/native-field-ko-qualification-preparation-v1/package/qualification-commands.json": {
+      "bytes": 12973,
+      "sha256": "9c8d5e90c988b712b3d0ad7814c8775edd55ccf124231852361195d2cdf02ee7"
+    },
+    "build-native/native-field-ko-qualification-preparation-v1/remote-records/remote-manifest.json": {
+      "bytes": 2104,
+      "sha256": "c5bbf6a5f11837253c393dcd0095a96d18170e1f3c0f0b27beb9d5bbaa1a87ea"
+    },
+    "build-native/native-field-ko-qualification-preparation-v1/remote-records/transfer.json": {
+      "bytes": 82,
+      "sha256": "d12aaf79569871fb3b287a69b99022270c3aa2fd3d062c2746f707a9568f42c5"
+    },
+    "build-native/native-field-ko-qualification-preparation-v1/remote-records/qualification-preflight/candidate-verify-before.txt": {
+      "bytes": 65,
+      "sha256": "e77d170d2a3bc7ab16451c11d7e96db0666297e0e0a991f2239a2c028f3d4cf5"
+    },
+    "build-native/native-field-ko-qualification-preparation-v1/remote-records/qualification-preflight/coherent-verify-before.txt": {
+      "bytes": 48,
+      "sha256": "55645eee104b1e7768ca083452e2bf923c98b127173f3c05adc476efd1a81229"
+    },
+    "build-native/native-field-ko-qualification-preparation-v1/remote-records/qualification-preflight/guard-before.json": {
+      "bytes": 1665,
+      "sha256": "28339ad976a1f52d41b4dae491ee092938d8b1344b8b1c591241e4a1028270b9"
+    },
+    "build-native/native-field-ko-qualification-preparation-v1/remote-records/qualification-preflight/qualification-guard-before.json": {
+      "bytes": 3450,
+      "sha256": "e671d94742d7898cfbdb65b136c934f1165fec0d98299d79bac992ffdc1a3801"
+    },
+    "build-native/native-field-ko-qualification-preparation-v1/remote-records/qualification-preflight/queue.txt": {
+      "bytes": 565,
+      "sha256": "3d25bdbc0e3e858f2851b3751eb637a7291bb50575ccb5051acb9f14148969be"
+    },
+    "build-native/native-field-ko-qualification-preparation-v1/remote-records/qualification-preflight/results.json": {
+      "bytes": 638,
+      "sha256": "4c11449ec8802c846effac8391dd44a2c8de3b9dfc0cb5e9c3562f318e173c48"
+    },
+    "build-native/native-field-ko-qualification-preparation-v1/remote-records/qualification-preflight/timed-observer-verify-before.txt": {
+      "bytes": 245,
+      "sha256": "250ba1628ad896cfa9359394e6fb8678ce8aa98171f9f1a7ae55f67cab48a3f3"
+    },
+    "build-native/native-field-ko-qualification-preparation-v1/remote-records/qualification-preflight/timing-verify-before.txt": {
+      "bytes": 96,
+      "sha256": "2fce95b383e78b648cb43f29235dc871675d41e3347d300eb716d6f298d3fbc0"
+    },
+    "build-native/native-field-ko-qualification-preparation-v1/remote-records/qualification-submission/attempt.json": {
+      "bytes": 224,
+      "sha256": "a3e6c8c12829d3750f1ae99bb96de2bf932d879512972ded089a4c2d227315a0"
+    },
+    "build-native/native-field-ko-qualification-preparation-v1/remote-records/qualification-submission/previous-terminal.txt": {
+      "bytes": 3453,
+      "sha256": "f7c97f07d209e86b3c3eb4a1f430e6dc6f6579bb4e6749f3d2f036a58cbb1adb"
+    },
+    "build-native/native-field-ko-qualification-preparation-v1/remote-records/qualification-submission/qsub.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "build-native/native-field-ko-qualification-preparation-v1/remote-records/qualification-submission/qsub.stdout": {
+      "bytes": 56,
+      "sha256": "d62c42ef7f8cb2d4bb7737235ec9de678bf9faa8aa4d44208b472c6d918f63f0"
+    },
+    "build-native/native-field-ko-qualification-preparation-v1/remote-records/qualification-submission/queue-before.txt": {
+      "bytes": 565,
+      "sha256": "3d25bdbc0e3e858f2851b3751eb637a7291bb50575ccb5051acb9f14148969be"
+    },
+    "build-native/native-field-ko-qualification-preparation-v1/remote-records/qualification-submission/submission.json": {
+      "bytes": 915,
+      "sha256": "7d4ba0805c87d5f106eaed1d687f7ad3cd3794e9925920df41c4af2821bc9d45"
+    },
+    "build-native/native-field-ko-qualification-preparation-v1/remote-records/qualification-submission/submitted-qstat.txt": {
+      "bytes": 2802,
+      "sha256": "52b0214d37b367ce46093dbde7edb85d0b87887d8565826deb1783cc0c88fdda"
+    },
+    "build-native/aurora-native-field-ko-qualification-v1/package.json": {
+      "bytes": 851,
+      "sha256": "898ac44c75e8c2059f9a246bf71a488417fa1f41c56102e86b3c30b2580b2b55"
+    },
+    "build-native/aurora-native-field-ko-qualification-v1/transfer.json": {
+      "bytes": 493,
+      "sha256": "dcf7a04f74b788fe84b1dc6100a328634addaf82fca70498c4a7eab7e0e55f55"
+    },
+    "build-native/aurora-native-field-ko-qualification-v1/run-artifacts/files.json": {
+      "bytes": 178014,
+      "sha256": "731a79e10d0bbef7122353d2bc350eebfd39e1fe7d9087fd503ece29e277ce2d"
+    },
+    "build-native/aurora-native-field-ko-qualification-v1/run-artifacts/terminal-qstat.txt": {
+      "bytes": 3508,
+      "sha256": "564b1f1a0d903183d2e785b536efec05a216b15e9f7835acd7fded2a2957702e"
+    },
+    "build-native/aurora-native-field-ko-qualification-v1/run-artifacts/runs/native-field-ko-qualification-v1/qualification-operational.json": {
+      "bytes": 51821,
+      "sha256": "cd1c62e924c71c831e7e4cf7ec9aad546c98aa4bc66caa40a1a420949d509bd6"
+    },
+    "build-native/aurora-native-field-ko-qualification-v1/run-artifacts/runs/native-field-ko-qualification-v1/guard-before.json": {
+      "bytes": 1665,
+      "sha256": "28339ad976a1f52d41b4dae491ee092938d8b1344b8b1c591241e4a1028270b9"
+    },
+    "build-native/aurora-native-field-ko-qualification-v1/run-artifacts/runs/native-field-ko-qualification-v1/guard-after.json": {
+      "bytes": 1665,
+      "sha256": "28339ad976a1f52d41b4dae491ee092938d8b1344b8b1c591241e4a1028270b9"
+    },
+    "build-native/aurora-native-field-ko-qualification-v1/run-artifacts/runs/native-field-ko-qualification-v1/qualification-guard-before.json": {
+      "bytes": 3450,
+      "sha256": "e671d94742d7898cfbdb65b136c934f1165fec0d98299d79bac992ffdc1a3801"
+    },
+    "build-native/aurora-native-field-ko-qualification-v1/run-artifacts/runs/native-field-ko-qualification-v1/qualification-guard-after.json": {
+      "bytes": 3450,
+      "sha256": "e671d94742d7898cfbdb65b136c934f1165fec0d98299d79bac992ffdc1a3801"
+    },
+    "build-native/aurora-native-field-ko-qualification-v1/run-artifacts/runs/native-field-ko-qualification-v1/pipeline-complete.txt": {
+      "bytes": 77,
+      "sha256": "139f4a4de3158ca7ad436f0af82d203a375d190a4d5404ecb31009452a5b10cd"
+    }
+  },
+  "terminal": {
+    "job_state": "F",
+    "exit_status": 0,
+    "walltime": "00:05:50",
+    "pipeline_complete": true,
+    "before_after_guards_equal": true,
+    "case_exit_statuses": {
+      "observer70": 0,
+      "poison8": 0,
+      "amr4": 0,
+      "prefix2": 0,
+      "resume8": 0
+    }
+  },
+  "collection": {
+    "schema": "native-field-ko-qualification-collection-v1",
+    "job_id": "9052266",
+    "nodes": 2,
+    "ranks": 24,
+    "job_state": "F",
+    "exit_status": 0,
+    "cases": [
+      "observer70",
+      "poison8",
+      "amr4",
+      "prefix2",
+      "resume8"
+    ],
+    "files": 980,
+    "command_manifest_sha256": "9c8d5e90c988b712b3d0ad7814c8775edd55ccf124231852361195d2cdf02ee7",
+    "archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-field-ko-qualification-artifacts-9052266/run-artifacts.tar.gz",
+    "archive_bytes": 747645107,
+    "sha256": "3d7ba8f72f1cce54c2cb35099b6779ae07b3c01ad611c9318ff04d396154a733",
+    "total_uncompressed_bytes": 2154251542,
+    "created_utc": "2026-11-08T20:46:00.305192+00:00",
+    "operational_checks_passed": true,
+    "independent_scientific_review_pending": true,
+    "performance_admission": false,
+    "local_directory": "build-native/aurora-native-field-ko-qualification-v1",
+    "transfer": {
+      "schema": "verified-streamed-run-collection-v1",
+      "passed": true,
+      "files": 980,
+      "archive_sha256": "3d7ba8f72f1cce54c2cb35099b6779ae07b3c01ad611c9318ff04d396154a733",
+      "archive_bytes": 747645107,
+      "remote_archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-field-ko-qualification-artifacts-9052266/run-artifacts.tar.gz",
+      "local_archive_created": false,
+      "all_file_sizes_and_hashes_verified": true,
+      "seconds": 18.273242235183716
+    }
+  },
+  "remote_operational_summary": {
+    "passed": true,
+    "cases": {
+      "observer70": {
+        "schema": "native-field-ko-case-qualification-v1",
+        "passed": true,
+        "case": "observer70",
+        "performance_admission": false,
+        "independent_scientific_review_pending": true,
+        "full_state": {
+          "bitwise_equal": true,
+          "padded31_plus8_scalar_values": 24704784,
+          "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+          "excluded_unused_coarse_indices": [
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ],
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ]
+          ]
+        },
+        "stage_rows": 280
+      },
+      "poison8": {
+        "schema": "native-field-ko-case-qualification-v1",
+        "passed": true,
+        "case": "poison8",
+        "performance_admission": false,
+        "independent_scientific_review_pending": true,
+        "trace_audit_sha256": "31c004f7f449a1b77aef63febed5ad54ccb8a458e5b557c09a6a9e8fd0d742a9"
+      },
+      "amr4": {
+        "schema": "native-field-ko-case-qualification-v1",
+        "passed": true,
+        "case": "amr4",
+        "performance_admission": false,
+        "independent_scientific_review_pending": true,
+        "exact_reference_snapshot_files": 240
+      },
+      "prefix2": {
+        "schema": "native-field-ko-case-qualification-v1",
+        "passed": true,
+        "case": "prefix2",
+        "performance_admission": false,
+        "independent_scientific_review_pending": true,
+        "full_state": {
+          "bitwise_equal": true,
+          "padded31_plus8_scalar_values": 24704784,
+          "payload_sha256": "b70caebc12756a27cb5715438f7642c0340c2e389334deada311f9631fd1a2a4",
+          "excluded_unused_coarse_indices": [
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ],
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ]
+          ]
+        }
+      },
+      "resume8": {
+        "schema": "native-field-ko-case-qualification-v1",
+        "passed": true,
+        "case": "resume8",
+        "performance_admission": false,
+        "independent_scientific_review_pending": true,
+        "restart_payload_and_diagnostics": "pending existing local full-state and restart diagnostic readers"
+      }
+    }
+  }
+}

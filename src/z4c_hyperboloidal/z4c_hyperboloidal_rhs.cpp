@@ -2,6 +2,7 @@
 //! \file z4c_hyperboloidal_rhs.cpp
 //! \brief Rank-batched mapped RHS on disjoint native block work lists.
 
+#include <cstdint>
 #include <stdexcept>
 
 #include "driver/driver.hpp"
@@ -28,6 +29,19 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver,int stage,RHSSubset subset) 
   const auto surface=surface_exchange_->BindKernel();
   const Real epsilon=ko,dt=pmy_pack->pmesh->dt;
   const int count=n[0];
+  const int selected_count=selected.extent_int(0);
+  // Keep each subset's halo dependencies. RHS storage holds KO only until the
+  // point kernel loads all fields, including Lambda's contribution to D.
+  using KOIndex=std::int64_t;
+  Kokkos::parallel_for("hyperboloidal field KO",
+    Kokkos::RangePolicy<Kokkos::IndexType<KOIndex>>(0,KOIndex(selected_count)*nvar),
+    KOKKOS_LAMBDA(KOIndex task) {
+      const int index=static_cast<int>(task%selected_count);
+      const int f=static_cast<int>(task/selected_count);
+      const int p=selected(index);const auto c=cells(p);
+      output(c.m,f,c.k,c.j,c.i)=
+          dissipation.Evaluate(p,f,{physical,c.m,c.k,c.j,c.i},epsilon);
+    });
   Kokkos::parallel_for("hyperboloidal block RHS",Kokkos::RangePolicy<>(0,selected.extent_int(0)),
     KOKKOS_LAMBDA(int index) {
       const int p=selected(index);const auto c=cells(p);const auto map=maps(p);
@@ -41,7 +55,7 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver,int stage,RHSSubset subset) 
       PointForcing forcing;
       for (int f=0;f<nvar;++f) {
         forcing.transport[f]=state.transport[f];
-        forcing.dissipation[f]=dissipation.Evaluate(p,f,{physical,c.m,c.k,c.j,c.i},epsilon);
+        forcing.dissipation[f]=output(c.m,f,c.k,c.j,c.i);
       }
       const auto result=EvaluateBulkPoint(map,state.jets,params,sources(p),forcing);
       statuses(p)=static_cast<int>(result.status);

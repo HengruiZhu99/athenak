@@ -1,0 +1,106 @@
+{
+  "schema": "native-field-ko-poison-amr-independent-review-v1",
+  "passed": true,
+  "job_id": "9052266",
+  "terminal_scope": "Verified actual PBS F/0, two nodes/24 ranks; all files bound to the collected manifest.",
+  "runtime_source_changes": [
+    "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp: field-parallel KO prepass only"
+  ],
+  "fixture_source_changes": false,
+  "new_solver_runs": false,
+  "cache128_environment_propagation": "24-rank launcher/wrapper probes verified for both cases; effective MPI_T values and eviction events were not observed.",
+  "poison": {
+    "passed": true,
+    "ranks": 24,
+    "complete_labels": 26,
+    "dump_files": 624,
+    "points_per_state": 230256,
+    "independent_state_phases": 11,
+    "all31_fields_all8_records_bitwise": true,
+    "state_scalar_values": 98779824,
+    "first_rhs_values": 7137936,
+    "geometry_values": 690768,
+    "stage_records": 32,
+    "stage_records_exact": true,
+    "reference_canonical_hashes_match_qualified_clean": true,
+    "report": "build-native/native-field-ko-poison-amr-review-v1/poison8/trace-audit.json",
+    "report_sha256": "4475455463c74918be11c7e156ee2a6b368d5884ec5e1f08af079873ad423c18"
+  },
+  "amr": {
+    "passed": true,
+    "ranks": 24,
+    "complete_snapshots": 5,
+    "complete31_plus8_scalar_values": 48665448,
+    "all31_fields_all8_records_bitwise": true,
+    "blocks": [
+      106,
+      127,
+      127,
+      106,
+      106
+    ],
+    "scri_points": [
+      864,
+      1296,
+      1296,
+      864,
+      864
+    ],
+    "stage_records": 16,
+    "stage_records_exact": true,
+    "topology_and_ownership_exact": true,
+    "regrid_events": 2,
+    "maximum_compatibility": 1.0910657402209053e-15,
+    "report": "build-native/native-field-ko-poison-amr-review-v1/amr-review.json",
+    "report_sha256": "2882f90e9db2e8df280ab86711d0ce55f8eb510c44f4b2fd4f4bfe51ffb018d9"
+  },
+  "source_proof": {
+    "input_payload_hashes_rebound_to_verified_collection": 865,
+    "qualified_reference_amr_hashes_matched": true,
+    "qualification_before_after_guards_exact": true,
+    "commands_match_frozen_readiness": true
+  },
+  "retained_environment": {
+    "path": "tst/z4c_hyperboloidal/aurora/native-gpu-ipc-cache.env",
+    "sha256": "6435fda1f3213dace157860f620b98e79096b0b7354bf9f088524db80d9a2eda",
+    "settings_match_measured": true
+  },
+  "inputs": {
+    "build-native/aurora-native-field-ko-qualification-v1/transfer.json": "dcf7a04f74b788fe84b1dc6100a328634addaf82fca70498c4a7eab7e0e55f55",
+    "build-native/aurora-native-field-ko-qualification-v1/run-artifacts/files.json": "731a79e10d0bbef7122353d2bc350eebfd39e1fe7d9087fd503ece29e277ce2d",
+    "build-native/aurora-native-field-ko-qualification-v1/run-artifacts/validation/perf-two-node-v1/field-ko-v1/qualification-launch/qualification-commands.json": "9c8d5e90c988b712b3d0ad7814c8775edd55ccf124231852361195d2cdf02ee7",
+    "build-native/aurora-stage-trace-two-v2/run-artifacts/runs/stage-validation-v2-nodes2/native-clean/trace-audit.json": "6d6d9e524df104a4d0eeecf3102f4f1282944030032d326ad6cfb36ce286594a",
+    "build-native/aurora-amr-primary-comparison-v1/evolution/results.json": "6e52a821323f13bde5e737581909a9e1410895b362a9caabf04d030e6c1b00c4",
+    "build-native/aurora-native-field-ko-qualification-v1/run-artifacts/runs/native-field-ko-qualification-v1/qualification-guard-before.json": "e671d94742d7898cfbdb65b136c934f1165fec0d98299d79bac992ffdc1a3801",
+    "build-native/aurora-native-field-ko-qualification-v1/run-artifacts/runs/native-field-ko-qualification-v1/qualification-guard-after.json": "e671d94742d7898cfbdb65b136c934f1165fec0d98299d79bac992ffdc1a3801",
+    "build-native/aurora-native-field-ko-qualification-v1/package.json": "898ac44c75e8c2059f9a246bf71a488417fa1f41c56102e86b3c30b2580b2b55",
+    "build-native/aurora-native-field-ko-qualification-v1/run-artifacts/terminal-qstat.txt": "564b1f1a0d903183d2e785b536efec05a216b15e9f7835acd7fded2a2957702e",
+    "build-native/aurora-native-field-ko-qualification-v1/run-artifacts/validation/perf-two-node-v1/field-ko-v1/qualification-build/provenance.json": "9c0362658062ed2280f1cfbd57888898f41115683e7d2b74bf15ddf108ec52f8",
+    "build-native/aurora-native-field-ko-qualification-v1/run-artifacts/runs/native-field-ko-qualification-v1/job-id.txt": "d62c42ef7f8cb2d4bb7737235ec9de678bf9faa8aa4d44208b472c6d918f63f0"
+  },
+  "readers": {
+    "tst/z4c_hyperboloidal/native_stage_trace_compare.py": "6d0c9750b5bb212481121be706577743242198d6b6fb76fac8708085dfa968b1",
+    "tst/z4c_hyperboloidal/native_amr_gpu_compare.py": "bf89e5cced3e4b78f3a06463caf12cc679a3d67e4c4270b775596573363af0b0",
+    "tst/z4c_hyperboloidal/amr_evolution.cpp": "14ddd38eb781c73eea14659e958e36e3cfd29e7c28bb03c02c32c17f719c1ea0",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-field-ko-poison-amr-review-v1/finalize_review.py": "5637bd4b2ac4eae486b2fe2c879184eba416b184511ea239bc046ea927d8a3a2"
+  },
+  "limits": [
+    "Existing bounded N12 poison and coherent AMR correctness fixtures, not a new long-time or convergence claim.",
+    "Timing, observer70, restart and legacy speed parity have separate assigned reviews.",
+    "No MPI cache eviction cause is established.",
+    "Poison covers the fixture listed public residual/RHS/status and unowned u0 workspaces, not private surface scratch. Stage-input snapshots precede PrepareStage projection.",
+    "This review independently parses retained output; it executes no new solver and changes no numerical tolerance."
+  ],
+  "candidate_binding": {
+    "source_sha256": "ebd097d260d822dd3c7d07755de827de1d6902b4b0be4e9ffcc00538e4afa786",
+    "patch_sha256": "1f54c71aab10de5a287f8679cc1326c3ab84d6ebb0fd52a0fe8daad545691d37",
+    "build_provenance_sha256": "9c0362658062ed2280f1cfbd57888898f41115683e7d2b74bf15ddf108ec52f8",
+    "same_candidate_source_both_builds": true,
+    "coherent_class_header_preserved": true,
+    "executables": {
+      "poison8": "944c7e01899e8721180f81eebeb61d7cd39790a825e8f531dfa94ba10ea92759",
+      "amr4": "6211783267a33c9eeb56c7c598c12ae18a20aed9508f00410ea440d95c110450"
+    }
+  },
+  "performance_admission": false
+}

@@ -1,0 +1,124 @@
+{
+  "schema": "native-field-ko-qualification-build-evidence-v1",
+  "status": "build_only_pass",
+  "candidate_accepted": false,
+  "qualification_passed": false,
+  "gpu_executed": false,
+  "build_exit_code": 0,
+  "build_seconds": 60.057804425945505,
+  "input_files": 5036,
+  "coherent_dependencies": 204,
+  "plan_sha256": "d7e4861a0ad97d5ba44e04bc2cef33c2864d533020c379f23fcb989baf8bcd42",
+  "proof_sha256": "9c0362658062ed2280f1cfbd57888898f41115683e7d2b74bf15ddf108ec52f8",
+  "executables": {
+    "observer70": {
+      "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/field-ko-v1/qualification-build/athena-ko-observer70",
+      "sha256": "118894507e77a9362f4348ecd7d21099ab333f69965cd8915cdd8722ca026e87"
+    },
+    "poison8": {
+      "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/field-ko-v1/qualification-build/athena-ko-poison8",
+      "sha256": "944c7e01899e8721180f81eebeb61d7cd39790a825e8f531dfa94ba10ea92759"
+    },
+    "restart": {
+      "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/field-ko-v1/qualification-build/athena-ko-restart",
+      "sha256": "9054f9382e3729ffc08d0cc8e42f5c1bfaf760ad75dddda559c601aae8cb1949"
+    },
+    "amr4": {
+      "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/field-ko-v1/qualification-build/athena-ko-amr4",
+      "sha256": "6211783267a33c9eeb56c7c598c12ae18a20aed9508f00410ea440d95c110450"
+    }
+  },
+  "f3_rhs_object": {
+    "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/field-ko-v1/build/z4c_hyperboloidal_rhs.cpp.o",
+    "sha256": "28f4abbacc7ce1bac5fee8f636e66f02154187b22a4bdb4e68cee77816233350"
+  },
+  "coherent_rhs_object": {
+    "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/field-ko-v1/qualification-build/coherent-z4c_hyperboloidal_rhs.cpp.o",
+    "sha256": "2cabfbce205c5f5a12a563035397e7a8c4105e1ece6fc42f45c22d51e9c9bfb3"
+  },
+  "scope": "Three fixtures reuse the screened f3 KO object; coherent AMR compiles the same source with its own exact recipe/header. Each link changes only RHS object and output. Frozen inputs unchanged before/after. No solver or GPU execution.",
+  "collection": {
+    "schema": "native-field-ko-qualification-build-collection-v1",
+    "files": 6,
+    "archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-field-ko-qualification-build-artifacts-v1/run-artifacts.tar.gz",
+    "archive_bytes": 278544,
+    "sha256": "f2e7c09d527f9f0f5cf0f5f1005eea542f1b5cc61b266014198c1903c18e304d",
+    "proof_sha256": "9c0362658062ed2280f1cfbd57888898f41115683e7d2b74bf15ddf108ec52f8",
+    "executables": {
+      "observer70": {
+        "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/field-ko-v1/qualification-build/athena-ko-observer70",
+        "sha256": "118894507e77a9362f4348ecd7d21099ab333f69965cd8915cdd8722ca026e87"
+      },
+      "poison8": {
+        "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/field-ko-v1/qualification-build/athena-ko-poison8",
+        "sha256": "944c7e01899e8721180f81eebeb61d7cd39790a825e8f531dfa94ba10ea92759"
+      },
+      "restart": {
+        "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/field-ko-v1/qualification-build/athena-ko-restart",
+        "sha256": "9054f9382e3729ffc08d0cc8e42f5c1bfaf760ad75dddda559c601aae8cb1949"
+      },
+      "amr4": {
+        "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/field-ko-v1/qualification-build/athena-ko-amr4",
+        "sha256": "6211783267a33c9eeb56c7c598c12ae18a20aed9508f00410ea440d95c110450"
+      }
+    },
+    "inputs": 5036,
+    "dependencies": 204,
+    "build_exit_code": 0,
+    "build_seconds": 60.057804425945505,
+    "gpu_executed": false
+  },
+  "transfer": {
+    "schema": "verified-streamed-run-collection-v1",
+    "passed": true,
+    "files": 6,
+    "archive_sha256": "f2e7c09d527f9f0f5cf0f5f1005eea542f1b5cc61b266014198c1903c18e304d",
+    "archive_bytes": 278544,
+    "remote_archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-field-ko-qualification-build-artifacts-v1/run-artifacts.tar.gz",
+    "local_archive_created": false,
+    "all_file_sizes_and_hashes_verified": true,
+    "seconds": 0.5312578678131104
+  },
+  "files": {
+    "build-native/aurora-native-field-ko-qualification-build-v1/package.json": {
+      "bytes": 1687,
+      "sha256": "2f835c0764936b1512e02a83375777f2dfa5f7b95540fe47dd622a188415c62d"
+    },
+    "build-native/aurora-native-field-ko-qualification-build-v1/transfer.json": {
+      "bytes": 489,
+      "sha256": "2faf3155d157745964b554414e9875933d276cefb10d4bd70dbfc715241d4daf"
+    },
+    "build-native/aurora-native-field-ko-qualification-build-v1/run-artifacts/files.json": {
+      "bytes": 907,
+      "sha256": "9f7e34f8469876c510c7b489deb8490c55a4e1b6bd7fb484a820ced8808161e3"
+    },
+    "build-native/aurora-native-field-ko-qualification-build-v1/run-artifacts/qualification-build/provenance.json": {
+      "bytes": 1252571,
+      "sha256": "9c0362658062ed2280f1cfbd57888898f41115683e7d2b74bf15ddf108ec52f8"
+    },
+    "build-native/aurora-native-field-ko-qualification-build-v1/run-artifacts/qualification-build/build.log": {
+      "bytes": 47987,
+      "sha256": "66daac27519166dec9c57d77d5201f6b4415fe11d25521c3bdec85d5fa36207a"
+    },
+    "build-native/aurora-native-field-ko-qualification-build-v1/run-artifacts/qualification-build/qualification.mk": {
+      "bytes": 47295,
+      "sha256": "376fb64873899a14a7b8cc6236f25c314b24d60ae816dad131fbedf0269b7b68"
+    },
+    "build-native/aurora-native-field-ko-qualification-build-v1/run-artifacts/qualification-build/coherent-rhs.d": {
+      "bytes": 35157,
+      "sha256": "578a7cc1b83394999818e632211f1e70a7735ad1f8332f78c8a98c6f6d35967a"
+    },
+    "build-native/aurora-native-field-ko-qualification-build-v1/run-artifacts/qualification-package/native_field_ko_qualification_build.py": {
+      "bytes": 8537,
+      "sha256": "30621c20b5a387eb8b9c48dfc4022b41a4a41a1bedc58c8a4c66d1592df090bc"
+    },
+    "build-native/aurora-native-field-ko-qualification-build-v1/run-artifacts/qualification-package/plan.json": {
+      "bytes": 21304,
+      "sha256": "d7e4861a0ad97d5ba44e04bc2cef33c2864d533020c379f23fcb989baf8bcd42"
+    },
+    "build-native/native-field-ko-qualification-build-v1/staging.json": {
+      "bytes": 1384,
+      "sha256": "5aa2e13d3c55b5e0af217ce8614b1343ec7cdb464cf23edb8d47dae0d17ab43c"
+    }
+  }
+}

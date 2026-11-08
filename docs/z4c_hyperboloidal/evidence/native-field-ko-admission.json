@@ -1,0 +1,54 @@
+{
+  "schema": "native-field-ko-admission-v1",
+  "candidate_accepted": true,
+  "correctness_passed": true,
+  "repeated_complete_step_improvement": true,
+  "parity_achieved": false,
+  "changed_numerical_sources": [
+    "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp"
+  ],
+  "candidate_source_sha256": "ebd097d260d822dd3c7d07755de827de1d6902b4b0be4e9ffcc00538e4afa786",
+  "timing_job": "9052165",
+  "qualification_job": "9052266",
+  "nodes": 2,
+  "ranks": 24,
+  "control_median_seconds": 0.600897096325,
+  "candidate_median_seconds": 0.5499040867,
+  "time_reduction_percent": 8.486146785675263,
+  "speedup": 1.0927307340649375,
+  "acceptance": "All six candidate windows beat all six control windows; all applicable independent GPU science reviews pass without changed tolerances.",
+  "numerical_scope": "Same per-field KO operator and transport/own-KO/Lambda-to-D addition order, per-subset halo dependencies and existing validity checks. Existing RHS storage holds temporary KO; no new persistent cache.",
+  "architecture": "Driver, TaskLists, MeshBlocks, native tree, equal block weights, block-local surfaces, restart/output and refinement machinery unchanged.",
+  "production_untouched": true,
+  "evidence": {
+    "timing": {
+      "path": "docs/z4c_hyperboloidal/evidence/native-field-ko-abba-review.json",
+      "sha256": "df498835168ec5011c89ae8cc42952b9d68d5fffb07a5fccad4141e32f83063a"
+    },
+    "observer_restart": {
+      "path": "docs/z4c_hyperboloidal/evidence/native-field-ko-observer-restart-review.json",
+      "sha256": "6e1faa4edd446e95e67267425b28a420b8d7bb4de723593c955a82cb65a557df"
+    },
+    "poison_amr": {
+      "path": "docs/z4c_hyperboloidal/evidence/native-field-ko-poison-amr-review.json",
+      "sha256": "8a292d0437b869429386da6ff2612425762fecb50e59ecb43be3ba23ccfab2f0"
+    },
+    "qualification_build": {
+      "path": "docs/z4c_hyperboloidal/evidence/native-field-ko-qualification-build.json",
+      "sha256": "85728be9f292abbfaf5e8037c2a17e27f6015b69a0e5189b18cb426661c4f724"
+    },
+    "qualification_submission": {
+      "path": "docs/z4c_hyperboloidal/evidence/native-field-ko-qualification-submission.json",
+      "sha256": "fa84b4b75bf2ca3fbc52345ce4a0fc1b486074edf47d87e9df6404282d1d21d5"
+    }
+  },
+  "historical_evidence_note": "The earlier ABBA and build reports correctly record pending qualification at their creation. This record admits the unchanged source after later job9052266 and independent reviews.",
+  "limits": [
+    "N12, two nodes/24 tile ranks; no wider scaling claim.",
+    "Restart qualification uses the same24-rank layout and established diagnostic phase gates.",
+    "AMR uses its existing coherent qualified fixture with the identical KO source.",
+    "Observed qualification timings are excluded from performance acceptance.",
+    "Fastest qualified legacy references remain about0.1364s/step in their earlier matched allocation. A new final same-allocation comparison remains required."
+  ],
+  "next_single_experiment": "Set only main bulk RHS SYCL workgroup size to128 using the validated legacy policy; leave KO and surface workgroup choices, arithmetic and task dependencies unchanged."
+}

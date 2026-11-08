@@ -1,0 +1,85 @@
+{
+  "schema": "native-field-ko-observer-restart-review-v1",
+  "passed": true,
+  "job_id": "9052266",
+  "terminal": "F/0",
+  "nodes": 2,
+  "ranks": 24,
+  "collection": {
+    "path": "build-native/aurora-native-field-ko-qualification-v1",
+    "package_sha256": "898ac44c75e8c2059f9a246bf71a488417fa1f41c56102e86b3c30b2580b2b55",
+    "transfer_sha256": "dcf7a04f74b788fe84b1dc6100a328634addaf82fca70498c4a7eab7e0e55f55",
+    "files_sha256": "731a79e10d0bbef7122353d2bc350eebfd39e1fe7d9087fd503ece29e277ce2d",
+    "verified_files": 980,
+    "archive_sha256": "3d7ba8f72f1cce54c2cb35099b6779ae07b3c01ad611c9318ff04d396154a733"
+  },
+  "raw_review": {
+    "path": "build-native/native-field-ko-qualification-review-v1/observer-restart.json",
+    "sha256": "b3725b114e96b5204bfa2bf27e7828d1a4c72e1841b043279a9f6438e2ed2c1f"
+  },
+  "candidate_source_sha256": "ebd097d260d822dd3c7d07755de827de1d6902b4b0be4e9ffcc00538e4afa786",
+  "candidate_patch_sha256": "1f54c71aab10de5a287f8679cc1326c3ab84d6ebb0fd52a0fe8daad545691d37",
+  "qualification_build_provenance_sha256": "9c0362658062ed2280f1cfbd57888898f41115683e7d2b74bf15ddf108ec52f8",
+  "command_manifest_sha256": "9c8d5e90c988b712b3d0ad7814c8775edd55ccf124231852361195d2cdf02ee7",
+  "observer70": {
+    "passed": true,
+    "cycles": [
+      2486,
+      2556
+    ],
+    "exact_stage_rows": 280,
+    "max_compatibility": 9.111146658370792e-14,
+    "finite_padded31_plus8_scalars": 24704784,
+    "state_parameters_initialized_metadata_and_three_diagnostics_bitwise_equal": true,
+    "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+    "all169_horizon_coefficients_present_finite": true
+  },
+  "restart": {
+    "passed": true,
+    "prefix_cycles": [
+      0,
+      2
+    ],
+    "resume_cycles": [
+      2,
+      8
+    ],
+    "prefix_checkpoints_complete31_plus8_exact": true,
+    "resume_complete31_plus8_exact_continuous8": true,
+    "finite_padded31_plus8_scalars_per_checkpoint": 24704784,
+    "resume_payload_sha256": "e303efff82e13776c01c0fd37c603b0cfa6d864586a8d919a38443bd1e65c9a1",
+    "joined_stage_rows_bitwise_continuous8": 32,
+    "max_compatibility": 9.778256860928204e-16,
+    "parameter_differences": {
+      "fastflow/last_a0_0": {
+        "continuous": "0.05985643518454601",
+        "restart": "0.059856432571675132"
+      },
+      "output1/last_time": {
+        "continuous": "0.16666666666666666",
+        "restart": "0.33333333333333331"
+      },
+      "output2/last_time": {
+        "continuous": "0.16666666666666666",
+        "restart": "0.33333333333333331"
+      },
+      "output2/file_number": {
+        "continuous": "2",
+        "restart": "3"
+      }
+    },
+    "diagnostic_comparisons": 12,
+    "max_diagnostic_absolute_difference": 6.13389339321202e-11,
+    "max_diagnostic_gate_fraction": 0.00030669465019872585,
+    "phase": "restart has an additional prefix-final horizon search; retain every final row and apply adopted diagnostic gates",
+    "rank_changing_restart": false
+  },
+  "before_after_frozen_guards_equal": true,
+  "three_cases_cache128_rank_probes": 72,
+  "limits": [
+    "This review covers observer70 and prefix2/resume8. Poison8 and coherentAMR4 are separate independent reviews.",
+    "No performance inference from observed qualification timings.",
+    "Nine unused coarse-header integers are excluded by existing state comparison; all initialized metadata and all31+8 payload values were checked.",
+    "Cache128 recorded in wrapper-rank probes; no in-solver MPI CVAR readback."
+  ]
+}
