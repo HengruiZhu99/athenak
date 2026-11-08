@@ -1,0 +1,187 @@
+{
+  "schema": "native-n12-aps-submission-evidence-v1",
+  "status": "queued",
+  "job_id": "9051976",
+  "submission": {
+    "schema": "native-n12-aps-submission-v1",
+    "job_id": "9051976.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "utc": "2026-11-08T16:13:24.974845+00:00",
+    "nodes": 2,
+    "ranks": 24,
+    "previous_job": "9051936",
+    "previous_terminal": "F/2; solver0/0; offlineauditPASS",
+    "fresh_queue_clear": true,
+    "held_jobs_untouched": true,
+    "submitted_state": "Q"
+  },
+  "nodes": 2,
+  "ranks": 24,
+  "cycles": [
+    2486,
+    2490
+  ],
+  "cases": [
+    "normal",
+    "profiled"
+  ],
+  "profiled_ranks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23
+  ],
+  "runtime_monitored_ranks": [
+    0,
+    8,
+    23
+  ],
+  "scope": "Four-cycle MPI-only APS aggregate attribution; not throughput or performance acceptance",
+  "baseline_executable_sha256": "f3a85db7528986ddec347b31675a8c5d588120a2380133aed73d5967f7aab05c",
+  "frozen_runtime_unchanged": true,
+  "launcher_manifest_sha256": "3419d3c0ad849b3c059c7163ca5f8255bc1a1f323543ba45e68d80c25bf37887",
+  "aps_collection_mode": "mpi",
+  "aps_stat_level": 3,
+  "aps_mpi_imbalance": 0,
+  "additional_imbalance_barriers": false,
+  "initial_loader_incompatibility_preserved": true,
+  "compatibility_resolution": "Only APS child preloads the exact original native system libssl/libcrypto; LD_LIBRARY_PATH unchanged. All70 ordinary loader images preserved in login loader-only preflight. Actual compute maps still required.",
+  "prepared_package": {
+    "admission.json": {
+      "bytes": 602,
+      "sha256": "4e411e15247ee02c66a68abb6228a4988400777bcabf7ed1c030de39064c4caf"
+    },
+    "aps-toolchain.sha256": {
+      "bytes": 690,
+      "sha256": "659430803a9d52061c9c2cb0bacb2cb0c4b52b7ed984319f4fd924e267d50b2b"
+    },
+    "capability.json": {
+      "bytes": 1028,
+      "sha256": "b85bd4fca6b3084bce4f6d33300251df626922dc51430fa40ff43fb25d24ab89"
+    },
+    "collect_native_n12_mpi.py": {
+      "bytes": 2980,
+      "sha256": "2e82546a2117bd2a71c615b37bb63e8aebf6a949c6380c8676d864123df0c2b4"
+    },
+    "help-aps-report.txt": {
+      "bytes": 8137,
+      "sha256": "fc397de7cba7e0f98a1c9796cb91916d27460a8b758503bdd7b4af2f8382a1f0"
+    },
+    "help-aps.txt": {
+      "bytes": 1951,
+      "sha256": "134d7e58f6727dde26c45d218d3b63d5fe0156f4cfc4397c6780fb033cb9e74b"
+    },
+    "independent-review.json": {
+      "bytes": 4118,
+      "sha256": "6322dcb077c8ac51bc105791d024cd93686994cbc89ffaf90b5819a9f3b99d51"
+    },
+    "loader-proof.json": {
+      "bytes": 45241,
+      "sha256": "40178849b8f32d3333afdf9d50a943ec41901aa12c5bc566cab6dfcbc656d268"
+    },
+    "native-n12-mpi-two.pbs": {
+      "bytes": 408,
+      "sha256": "afdc14984420e1f87f385fb979737ea966bdf1dc09328708425eb0bfce87d106"
+    },
+    "native_n12_mpi_audit.py": {
+      "bytes": 12834,
+      "sha256": "c536f21dd0d36f3a7d30d4cdce581a63a38b20433af79f8661c932a0792ade10"
+    },
+    "native_n12_mpi_contract.md": {
+      "bytes": 2621,
+      "sha256": "6a4902a95ffb435ff1bf96b5f693fb337fbfcc04d106fd2c78e8693c871ec992"
+    },
+    "native_n12_mpi_rank.py": {
+      "bytes": 7900,
+      "sha256": "2eb222bb18b1812b201178002f931c99fcad1e8dd91445f1e910bd4b6212c19d"
+    },
+    "native_n12_profile_audit.py": {
+      "bytes": 19072,
+      "sha256": "a37ffc7aed1941663a8996580722afce55ded2f8d5b9ebb0a770daac2914be2b"
+    },
+    "native_n12_profile_rank.py": {
+      "bytes": 7057,
+      "sha256": "7464f878aeed4e8361bfc17defe4e0e8685aef328a8c8600a42ce1e92d918f78"
+    },
+    "native_two_node_timing_audit.py": {
+      "bytes": 15923,
+      "sha256": "44e4576505f5328150e24230ec37abdaea52481df03bb101a800ebbfcca0ef7e"
+    },
+    "run-native-n12-mpi.sh": {
+      "bytes": 3111,
+      "sha256": "3fa47913f7990c6a6a8a82a73241a94056a84afd31a8b52d935e4ecc4628f22b"
+    },
+    "science-admission.json": {
+      "bytes": 2517015,
+      "sha256": "babb035acdcb505d2f8407815981731168ae2c75c3217dcc43ba2ce56c363bd9"
+    }
+  },
+  "files": {
+    "build-native/native-n12-mpi-preparation-v1/preparation.json": {
+      "size": 2874,
+      "sha256": "db3b39604744b90afc20337ae4e08241981a31b9b9722a010bf3729b94d1053b"
+    },
+    "build-native/native-n12-mpi-preparation-v1/loader-proof.json": {
+      "size": 45241,
+      "sha256": "40178849b8f32d3333afdf9d50a943ec41901aa12c5bc566cab6dfcbc656d268"
+    },
+    "build-native/native-n12-mpi-preparation-v1/staging-preflight.log": {
+      "size": 1003,
+      "sha256": "6803b591313b21081d133fe71adce5b8c306a97c141fb23674c752d07198f129"
+    },
+    "build-native/native-n12-mpi-preparation-v1/preflight/guard-before.json": {
+      "size": 1665,
+      "sha256": "28339ad976a1f52d41b4dae491ee092938d8b1344b8b1c591241e4a1028270b9"
+    },
+    "build-native/native-n12-mpi-preparation-v1/preflight/previous-terminal.txt": {
+      "size": 3330,
+      "sha256": "381497619be17e9d98531a8e919f0d3a98d921c6115724db4458e630665937a2"
+    },
+    "build-native/native-n12-mpi-preparation-v1/preflight/queue-before.txt": {
+      "size": 565,
+      "sha256": "3d25bdbc0e3e858f2851b3751eb637a7291bb50575ccb5051acb9f14148969be"
+    },
+    "build-native/native-n12-mpi-preparation-v1/preflight/submission.json": {
+      "size": 366,
+      "sha256": "d1bd9c60551b2f07d9b19447a41a3cb955debaae911a38b0ef3920cfa3b90132"
+    },
+    "build-native/native-n12-mpi-preparation-v1/preflight/submitted-job.txt": {
+      "size": 56,
+      "sha256": "1e086be7d00b3236b3cae62e9ea306b385a34e3ab7aae9a09ba5632dec12cced"
+    },
+    "build-native/native-n12-mpi-preparation-v1/preflight/submitted-qstat.txt": {
+      "size": 2617,
+      "sha256": "3e7908d0d3cb214abe29699ec10258fb26a271d57db363e829491ba61cffe307"
+    },
+    "build-native/native-n12-mpi-preparation-v1/preflight/timed-observer-verify-before.txt": {
+      "size": 245,
+      "sha256": "250ba1628ad896cfa9359394e6fb8678ce8aa98171f9f1a7ae55f67cab48a3f3"
+    },
+    "build-native/native-n12-mpi-preparation-v1/preflight/timing-verify-before.txt": {
+      "size": 96,
+      "sha256": "2fce95b383e78b648cb43f29235dc871675d41e3347d300eb716d6f298d3fbc0"
+    }
+  },
+  "scientific_qualification_passed": false,
+  "mpi_interception_verified": false,
+  "performance_admission": false
+}
