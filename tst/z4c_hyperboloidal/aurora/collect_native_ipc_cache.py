@@ -16,10 +16,11 @@ def collect(job):
     match=re.search(r'^Job Id:\s*(\S+)',status,re.M)
     fields=dict(re.findall(r'^\s+([A-Za-z_.]+)\s*=\s*(\S+)\s*$',status,re.M))
     require(match and match[1].split('.')[0]==str(job) and all(fields.get(k)==v for k,v in
-        [('job_state','F'),('Exit_status','0'),('Job_Name','native-ipc-cache'),
+        [('job_state','F'),('Exit_status','0'),('Job_Name','native-cache-qual'),
          ('Resource_List.nodect','2')]),'not the expected successful terminal job')
     require((CASE/'job-id.txt').read_text().strip().split('.')[0]==str(job)
             and (CASE/'pipeline-complete.txt').is_file(),'wrong/incomplete case')
+    require((CASE/'combined-complete.txt').is_file(),'combined allocation did not complete')
     binding()
     for stem in ('guard','cache-guard'):
         require(read_json(CASE/f'{stem}-before.json')==read_json(CASE/f'{stem}-after.json'),
@@ -30,6 +31,17 @@ def collect(job):
     for name in names:
         require(read_json(CASE/name/'operational.json')==completed(name),'case proof changed')
     for name in set(ORDER)-set(names):require(not (CASE/name).exists(),'unexpected case after rejection')
+    gate=read_json(CASE/'qualification-gate.json')
+    if gate['run_qualification']:
+        q=CASE/'qualification'
+        require((q/'pipeline-complete.txt').is_file() and
+                read_json(q/'qualification-operational.json')['passed'] is True,
+                'conditional qualification did not complete')
+        require(read_json(q/'qualification-guard-before.json')==
+                read_json(q/'qualification-guard-after.json'),'qualification input guards changed')
+    else:
+        require((CASE/'qualification-skipped.txt').is_file() and not (CASE/'qualification').exists(),
+                'unexpected qualification after failed spending gate')
     out=ROOT/f'validation/native-ipc-cache-artifacts-{job}';out.mkdir(exist_ok=False)
     (out/'terminal-qstat.txt').write_text(status)
     files={str(p.relative_to(ROOT)):p for p in CASE.rglob('*') if p.is_file()
@@ -47,6 +59,7 @@ def collect(job):
         tar.add(out/'files.json',arcname='files.json',recursive=False)
     report=dict(schema='native-ipc-cache-collection-v1',job_id=str(job),nodes=2,ranks=24,
         job_state='F',exit_status=0,cases=list(names),files=len(files),
+        qualification_executed=gate['run_qualification'],
         archive=str(archive),archive_bytes=archive.stat().st_size,sha256=sha(archive),
         total_uncompressed_bytes=sum(v['size'] for v in manifest.values()),
         created_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),

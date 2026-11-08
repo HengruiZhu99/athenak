@@ -3,9 +3,9 @@
 set -euo pipefail
 ulimit -c 0
 task_root=/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side
-work=$task_root/validation/perf-two-node-v1/ipc-cache-v1
+work=$task_root/validation/perf-two-node-v1/ipc-cache-v2
 validation=$work/launch
-case_dir=$task_root/runs/native-n12-ipc-cache-abba-v1
+case_dir=$task_root/runs/native-n12-ipc-cache-abba-v2
 audit=$validation/native_ipc_cache_audit.py
 [[ -n ${PBS_JOBID:-} && -r ${PBS_NODEFILE:-} ]]
 [[ $(sort -u "$PBS_NODEFILE" | awk 'END {print NR}') == 2 ]]
@@ -37,6 +37,8 @@ timeout --signal=TERM --kill-after=15s 120s mpiexec -n 24 -ppn 12 --cpu-bind=lis
 /usr/bin/python3.11 "$audit" binding "$case_dir/binding.txt"
 run_case() {
  local name=$1 capacity=$2 out=$case_dir/$1
+ local cap_seconds=180
+ [[ "$capacity" != 16 ]] || cap_seconds=450
  local executable=$task_root/validation/perf-two-node-v1/mapped-test-poll-v1/timing-build/athena-cycle-timing
  export MPIR_CVAR_CH4_IPC_GPU_MAX_CACHE_ENTRIES="$capacity"
  mkdir -p "$out/cache/neo" "$out/cache/sycl"
@@ -51,7 +53,7 @@ run_case() {
   -r "$checkpoint" -d "$out" time/nlim=2556 time/tlim=2 time/ndiag=1000000000)
  printf '%q ' "${command[@]}" > "$out/command.txt"; printf '\n' >> "$out/command.txt"
  set +e
- timeout --signal=TERM --kill-after=30s 900s "${command[@]}" > "$out/run.log" 2>&1
+ timeout --signal=TERM --kill-after=30s "${cap_seconds}s" "${command[@]}" > "$out/run.log" 2>&1
  local status=$?
  set -e
  printf '%s\n' "$status" > "$out/exit-code.txt"

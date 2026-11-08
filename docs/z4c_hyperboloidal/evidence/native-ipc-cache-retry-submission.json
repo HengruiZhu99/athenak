@@ -1,0 +1,303 @@
+{
+  "schema": "native-ipc-cache-retry-submission-evidence-v1",
+  "status": "completed_collected_independent_review_pending",
+  "job_id": "9052075",
+  "submission": {
+    "schema": "native-ipc-cache-retry-qualification-submission-v1",
+    "job_id": "9052075.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "utc": "2026-11-08T18:03:10.661037+00:00",
+    "nodes": 2,
+    "ranks": 24,
+    "previous_job": 9052050,
+    "previous_exit_status": 143,
+    "order": [
+      "C0:16",
+      "K0:128",
+      "K1:128",
+      "C1:16"
+    ],
+    "conditional_qualification": [
+      "observer70",
+      "poison8",
+      "amr4",
+      "prefix2",
+      "resume8"
+    ],
+    "qualification_gate": "all four clean and max(all6K)<min(all6C)",
+    "cycles": [
+      2486,
+      2556
+    ],
+    "fresh_queue_clear": true,
+    "held_jobs_untouched": true,
+    "launcher_manifest_sha256": "3f9dfad62fe3e5b5c3dfa48913ac57dd043c021bdf073783012b88ab70882aa6",
+    "submitted_state": "Q",
+    "timed_executable_sha256": "0ef1d6921b2184baa13446e267067ce183adc6341545580678822f7670daebb8"
+  },
+  "nodes": 2,
+  "ranks": 24,
+  "compiled": false,
+  "numerical_source_unchanged": true,
+  "previous_failure_job": 9052050,
+  "previous_failure_exit_status": 143,
+  "previous_failure_preserved": true,
+  "solver_caps_total_seconds": 2640,
+  "external_bound_seconds": 3420,
+  "independent_scientific_review_required": true,
+  "performance_retention_pending": true,
+  "files": {
+    "build-native/native-ipc-cache-preparation-v2/preparation.json": {
+      "bytes": 4072,
+      "sha256": "386e8cbabeb906217549c3a16554001aa70192754703e3c2a68e25b71d027490"
+    },
+    "build-native/native-ipc-cache-preparation-v2/staging-preflight-submission.log": {
+      "bytes": 1077,
+      "sha256": "c2d9e592a27c39ebb85e4987835d49402bfe29fb92afda9dbd0cc8dd95ad4467"
+    },
+    "build-native/native-ipc-cache-preparation-v2/preflight/cache-guard-before.json": {
+      "bytes": 297,
+      "sha256": "b4972e750ac3de3f38e657ec1856ed7f52ae6f557b40250a0f7d38a0a38cd314"
+    },
+    "build-native/native-ipc-cache-preparation-v2/preflight/guard-before.json": {
+      "bytes": 1665,
+      "sha256": "28339ad976a1f52d41b4dae491ee092938d8b1344b8b1c591241e4a1028270b9"
+    },
+    "build-native/native-ipc-cache-preparation-v2/preflight/launchers-check.txt": {
+      "bytes": 591,
+      "sha256": "b4885c5ea6a303fd90e98b5e61ec3ca38577438702d39038b777efd2ab6d2213"
+    },
+    "build-native/native-ipc-cache-preparation-v2/preflight/previous-terminal.txt": {
+      "bytes": 3462,
+      "sha256": "3996e6aff1864dc5ff85ec39b236f69bcc918cb3318df0912cbe6d048433b92b"
+    },
+    "build-native/native-ipc-cache-preparation-v2/preflight/qualification-input-guard/coherent-verify-before.txt": {
+      "bytes": 48,
+      "sha256": "55645eee104b1e7768ca083452e2bf923c98b127173f3c05adc476efd1a81229"
+    },
+    "build-native/native-ipc-cache-preparation-v2/preflight/qualification-input-guard/guard-before.json": {
+      "bytes": 1665,
+      "sha256": "28339ad976a1f52d41b4dae491ee092938d8b1344b8b1c591241e4a1028270b9"
+    },
+    "build-native/native-ipc-cache-preparation-v2/preflight/qualification-input-guard/qualification-guard-before.json": {
+      "bytes": 3536,
+      "sha256": "f3fd09d717c7e61557ba51da93cb62549b3e97c55b2a30010a433fc3a80627a6"
+    },
+    "build-native/native-ipc-cache-preparation-v2/preflight/qualification-input-guard/timed-observer-verify-before.txt": {
+      "bytes": 245,
+      "sha256": "250ba1628ad896cfa9359394e6fb8678ce8aa98171f9f1a7ae55f67cab48a3f3"
+    },
+    "build-native/native-ipc-cache-preparation-v2/preflight/qualification-input-guard/timing-verify-before.txt": {
+      "bytes": 96,
+      "sha256": "2fce95b383e78b648cb43f29235dc871675d41e3347d300eb716d6f298d3fbc0"
+    },
+    "build-native/native-ipc-cache-preparation-v2/preflight/qualification-input-preflight.json": {
+      "bytes": 181,
+      "sha256": "7838609f7e776de582114e6204ca43f68227599b92e96dca1cdeb1b9d5b53547"
+    },
+    "build-native/native-ipc-cache-preparation-v2/preflight/queue-before.txt": {
+      "bytes": 565,
+      "sha256": "3d25bdbc0e3e858f2851b3751eb637a7291bb50575ccb5051acb9f14148969be"
+    },
+    "build-native/native-ipc-cache-preparation-v2/preflight/rank-timing-verify-before.txt": {
+      "bytes": 96,
+      "sha256": "2fce95b383e78b648cb43f29235dc871675d41e3347d300eb716d6f298d3fbc0"
+    },
+    "build-native/native-ipc-cache-preparation-v2/preflight/submission.json": {
+      "bytes": 842,
+      "sha256": "11ce2904b552d47e16d1f554906069809839d7238de875256444560d0e838241"
+    },
+    "build-native/native-ipc-cache-preparation-v2/preflight/submitted-job.txt": {
+      "bytes": 56,
+      "sha256": "12c0acb76800919960836ac3086d9ffe415e459a903640753e080e6c6ea7f54b"
+    },
+    "build-native/native-ipc-cache-preparation-v2/preflight/submitted-qstat.txt": {
+      "bytes": 2755,
+      "sha256": "8ea8fceb24d0e8b1d1727bf39977b13b6494aa56534d502fcb9dca6e1aec8ffb"
+    },
+    "build-native/native-ipc-cache-preparation-v2/preflight/timed-observer-verify-before.txt": {
+      "bytes": 245,
+      "sha256": "250ba1628ad896cfa9359394e6fb8678ce8aa98171f9f1a7ae55f67cab48a3f3"
+    },
+    "build-native/native-ipc-cache-preparation-v2/preflight/timing-verify-before.txt": {
+      "bytes": 96,
+      "sha256": "2fce95b383e78b648cb43f29235dc871675d41e3347d300eb716d6f298d3fbc0"
+    },
+    "build-native/aurora-native-ipc-cache-retry-v2/package.json": {
+      "bytes": 725,
+      "sha256": "5c7adcfa8459cc9bc7b62bb8c98d2c093912cdaa5fa7ef472e5998e4dfc3dcfa"
+    },
+    "build-native/aurora-native-ipc-cache-retry-v2/transfer.json": {
+      "bytes": 480,
+      "sha256": "87ee0bbd609e2632571373ff09536eaf8508debe27ff47e0c21758430aafefc7"
+    },
+    "build-native/aurora-native-ipc-cache-retry-v2/run-artifacts/files.json": {
+      "bytes": 196639,
+      "sha256": "a94581463f232e0e1584272de11861067a69330ab1b530e5acf66e4574e966a2"
+    },
+    "build-native/aurora-native-ipc-cache-retry-v2/run-artifacts/terminal-qstat.txt": {
+      "bytes": 3465,
+      "sha256": "efdc25dfd5170b941a1cfd82d567d662feae4f60a36bbcc65feb50b04c34b935"
+    },
+    "build-native/aurora-native-ipc-cache-retry-v2/run-artifacts/runs/native-n12-ipc-cache-abba-v2/guard-before.json": {
+      "bytes": 1665,
+      "sha256": "28339ad976a1f52d41b4dae491ee092938d8b1344b8b1c591241e4a1028270b9"
+    },
+    "build-native/aurora-native-ipc-cache-retry-v2/run-artifacts/runs/native-n12-ipc-cache-abba-v2/guard-after.json": {
+      "bytes": 1665,
+      "sha256": "28339ad976a1f52d41b4dae491ee092938d8b1344b8b1c591241e4a1028270b9"
+    },
+    "build-native/aurora-native-ipc-cache-retry-v2/run-artifacts/runs/native-n12-ipc-cache-abba-v2/cache-guard-before.json": {
+      "bytes": 297,
+      "sha256": "b4972e750ac3de3f38e657ec1856ed7f52ae6f557b40250a0f7d38a0a38cd314"
+    },
+    "build-native/aurora-native-ipc-cache-retry-v2/run-artifacts/runs/native-n12-ipc-cache-abba-v2/cache-guard-after.json": {
+      "bytes": 297,
+      "sha256": "b4972e750ac3de3f38e657ec1856ed7f52ae6f557b40250a0f7d38a0a38cd314"
+    },
+    "build-native/aurora-native-ipc-cache-retry-v2/run-artifacts/runs/native-n12-ipc-cache-abba-v2/qualification-gate.json": {
+      "bytes": 506,
+      "sha256": "f6cd537d993345664e47f6dffcdfa93fb10e577b7acbc4b45a1e07799a4c1e20"
+    },
+    "build-native/aurora-native-ipc-cache-retry-v2/run-artifacts/runs/native-n12-ipc-cache-abba-v2/pipeline-complete.txt": {
+      "bytes": 98,
+      "sha256": "b38cb298f2d132ad2a56362bff7b085eee0634770a370122e260c3ec22cb8bdc"
+    },
+    "build-native/aurora-native-ipc-cache-retry-v2/run-artifacts/runs/native-n12-ipc-cache-abba-v2/combined-complete.txt": {
+      "bytes": 57,
+      "sha256": "f7a4a1323213b14dc102b3ac65921aadff6ca8562435e1d0a4c35b606a2b2a9f"
+    },
+    "build-native/aurora-native-ipc-cache-retry-v2/run-artifacts/runs/native-n12-ipc-cache-abba-v2/qualification/qualification-guard-before.json": {
+      "bytes": 3536,
+      "sha256": "f3fd09d717c7e61557ba51da93cb62549b3e97c55b2a30010a433fc3a80627a6"
+    },
+    "build-native/aurora-native-ipc-cache-retry-v2/run-artifacts/runs/native-n12-ipc-cache-abba-v2/qualification/qualification-guard-after.json": {
+      "bytes": 3536,
+      "sha256": "f3fd09d717c7e61557ba51da93cb62549b3e97c55b2a30010a433fc3a80627a6"
+    },
+    "build-native/aurora-native-ipc-cache-retry-v2/run-artifacts/runs/native-n12-ipc-cache-abba-v2/qualification/qualification-operational.json": {
+      "bytes": 51796,
+      "sha256": "2749fac798a54356b6ff7d47e6ee97bf70d23787969d44f2e77f43c3c6b77a83"
+    },
+    "build-native/aurora-native-ipc-cache-retry-v2/run-artifacts/runs/native-n12-ipc-cache-abba-v2/qualification/pipeline-complete.txt": {
+      "bytes": 77,
+      "sha256": "139f4a4de3158ca7ad436f0af82d203a375d190a4d5404ecb31009452a5b10cd"
+    },
+    "build-native/aurora-native-ipc-cache-retry-v2/run-artifacts/runs/native-n12-ipc-cache-abba-v2/qualification/observer70/qualification-case.json": {
+      "bytes": 818,
+      "sha256": "aea885564466a1501c60e3eab64ca2da6a53568442c251e3ca2b5ef644c31320"
+    },
+    "build-native/aurora-native-ipc-cache-retry-v2/run-artifacts/runs/native-n12-ipc-cache-abba-v2/qualification/poison8/qualification-case.json": {
+      "bytes": 265,
+      "sha256": "6f7378f2975abbbfe56904334f839755e3a65a14bc6bd9659cca99b512fa9ae4"
+    },
+    "build-native/aurora-native-ipc-cache-retry-v2/run-artifacts/runs/native-n12-ipc-cache-abba-v2/qualification/amr4/qualification-case.json": {
+      "bytes": 48108,
+      "sha256": "b8bf7f87522f4db63d78b14ec5898cc5afb570441f0fc3a5937d1819eff836e1"
+    },
+    "build-native/aurora-native-ipc-cache-retry-v2/run-artifacts/runs/native-n12-ipc-cache-abba-v2/qualification/prefix2/qualification-case.json": {
+      "bytes": 794,
+      "sha256": "f03bcc9cd895b17203c0b85076df57637299ed4703af706fc0e8719e2509fe61"
+    },
+    "build-native/aurora-native-ipc-cache-retry-v2/run-artifacts/runs/native-n12-ipc-cache-abba-v2/qualification/resume8/qualification-case.json": {
+      "bytes": 278,
+      "sha256": "18403bc3e939288259ef09a904498c08b58aaa88cda309116d1c5ee7868766ba"
+    }
+  },
+  "scope": "Clean four-case ABBA retry and five immutable qualification runs completed F/0 with frozen guards. Complete raw archive and every file hash verified; independent science, retention and matched-predecessor parity remain separate pending decisions. The prior F/143 batch is preserved.",
+  "terminal": {
+    "job_state": "F",
+    "exit_status": 0,
+    "walltime": "00:19:25",
+    "obittime_utc": "2026-11-08T18:24:30Z"
+  },
+  "collection": {
+    "schema": "native-ipc-cache-collection-v1",
+    "job_id": "9052075",
+    "nodes": 2,
+    "ranks": 24,
+    "job_state": "F",
+    "exit_status": 0,
+    "cases": [
+      "timed-C0",
+      "timed-K0",
+      "timed-K1",
+      "timed-C1"
+    ],
+    "files": 1035,
+    "qualification_executed": true,
+    "archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-ipc-cache-artifacts-9052075/run-artifacts.tar.gz",
+    "archive_bytes": 954604077,
+    "sha256": "f86c2c3ff8cfd41456fee7c12b17dc85dbebce78b6d63eea41ac6f6099fd9c17",
+    "total_uncompressed_bytes": 2943603334,
+    "created_utc": "2026-11-08T18:26:49.290548+00:00",
+    "state_and_diagnostic_checks_passed": true,
+    "independent_timing_decision_pending": true
+  },
+  "transfer": {
+    "schema": "verified-streamed-run-collection-v1",
+    "passed": true,
+    "files": 1035,
+    "archive_sha256": "f86c2c3ff8cfd41456fee7c12b17dc85dbebce78b6d63eea41ac6f6099fd9c17",
+    "archive_bytes": 954604077,
+    "remote_archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-ipc-cache-artifacts-9052075/run-artifacts.tar.gz",
+    "local_archive_created": false,
+    "all_file_sizes_and_hashes_verified": true,
+    "seconds": 22.94093108177185
+  },
+  "qualification_operational_passed": true,
+  "all_solver_exit_codes": {
+    "timed-C0": 0,
+    "timed-K0": 0,
+    "timed-K1": 0,
+    "timed-C1": 0,
+    "observer70": 0,
+    "poison8": 0,
+    "amr4": 0,
+    "prefix2": 0,
+    "resume8": 0
+  },
+  "timing_windows_seconds_per_complete_step": {
+    "timed-C0": [
+      4.6397233681,
+      4.52983979225,
+      4.960999133850001
+    ],
+    "timed-K0": [
+      0.5947477652,
+      0.5942811370500001,
+      0.59432156795
+    ],
+    "timed-K1": [
+      0.5941436366499999,
+      0.5944200356,
+      0.5944926661500001
+    ],
+    "timed-C1": [
+      4.74004904715,
+      4.8438398568,
+      4.612780448800001
+    ]
+  },
+  "qualification_spending_gate": {
+    "run_qualification": true,
+    "all_four_clean": true,
+    "control_windows": [
+      4.6397233681,
+      4.52983979225,
+      4.960999133850001,
+      4.74004904715,
+      4.8438398568,
+      4.612780448800001
+    ],
+    "candidate_windows": [
+      0.5947477652,
+      0.5942811370500001,
+      0.59432156795,
+      0.5941436366499999,
+      0.5944200356,
+      0.5944926661500001
+    ],
+    "criterion": "max(all six K windows) < min(all six C windows)",
+    "scope": "operational spending gate only; no retention or parity admission"
+  }
+}

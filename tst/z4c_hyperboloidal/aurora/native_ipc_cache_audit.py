@@ -15,12 +15,12 @@ import native_cycle_timing as timing
 from native_n12_profile_audit import checkpoint, compare_checkpoints
 
 ROOT=base.ROOT
-WORK=ROOT/'validation/perf-two-node-v1/ipc-cache-v1'
+WORK=ROOT/'validation/perf-two-node-v1/ipc-cache-v2'
 TIMING_WORK=ROOT/'validation/perf-two-node-v1/mapped-test-poll-v1'
 TIMED='0ef1d6921b2184baa13446e267067ce183adc6341545580678822f7670daebb8'
 TIMING_PROOF='4112e39f65c14d6c9ed15444f1666dee364acdc808c70a6ff89bda51a0886654'
 LAUNCH=WORK/'launch'
-CASE=ROOT/'runs/native-n12-ipc-cache-abba-v1'
+CASE=ROOT/'runs/native-n12-ipc-cache-abba-v2'
 ORDER=('timed-C0','timed-K0','timed-K1','timed-C1')
 NORMAL=ROOT/'runs/native-n12-timing-two-v1/normal'
 DIAGNOSTICS=('native_n12_5M.z4c_hyperboloidal.hst','native_n12_5M.horizon_summary_0.txt',

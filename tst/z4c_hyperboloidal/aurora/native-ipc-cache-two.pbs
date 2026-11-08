@@ -1,12 +1,12 @@
 #!/bin/bash -l
 #PBS -A CompactBinaryMerger
-#PBS -N native-ipc-cache
+#PBS -N native-cache-qual
 #PBS -q debug
 #PBS -l select=2
 #PBS -l walltime=01:00:00
 #PBS -l filesystems=home:flare
 #PBS -j oe
 set -euo pipefail
-cd /lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/ipc-cache-v1/launch
+cd /lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/ipc-cache-v2/launch
 sha256sum -c launchers.sha256
-exec timeout --signal=TERM --kill-after=30s 3420s bash run-native-ipc-cache.sh
+exec timeout --signal=TERM --kill-after=30s 3420s bash run-native-cache-combined.sh
