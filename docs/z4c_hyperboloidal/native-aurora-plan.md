@@ -691,3 +691,22 @@ clocks, and unchanged runtime. It uses the original restart entry and timestep.
 No segment beyond 1776 is admitted; six later common endpoints and the full
 3551-step result remain unverified. See
 [fifth-segment submission evidence](evidence/native-n12-fifth-common-segment.json).
+
+Segment 5 completed as **9051736** (F/0), and all 91 collected files verified
+against their remote hashes and sizes. Complete cycle-1776 science and the
+independent review pass: all 7,137,936 endpoint fields, 1,842,048 native chi-record
+values, 7,104 cumulative stage observations, and all six common diagnostic
+times are checked. The 49,328 floor events in eight cells match the historical
+counts; the correction-sum difference `8.673617379884035e-19` is retained. The
+admitted checkpoint SHA is
+`13e8fe4baae38d0ee0f4dda2201cb87ebbfa9de5ed195893b83953fa12ecec5a`.
+See [cycle-1776 science](evidence/native-n12-common-05-science.json) and
+[independent review](evidence/native-n12-common-05-independent-review.json).
+
+After fresh queue and runtime checks, **1776→2131** was submitted once as
+**9051782** on two nodes/24 ranks. Its preflight binds the exact admitted
+checkpoint, complete science report and independent review, output/horizon
+clocks, and unchanged runtime. It uses the original restart entry and timestep.
+No segment beyond 2131 is admitted; five later common endpoints and the full
+3551-step result remain unverified. See
+[sixth-segment submission evidence](evidence/native-n12-sixth-common-segment.json).
