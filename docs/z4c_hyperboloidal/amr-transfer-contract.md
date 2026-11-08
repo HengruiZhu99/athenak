@@ -1,7 +1,77 @@
 # Hyperboloidal field AMR integration contract
 
-Status: required, not implemented. Chart-tree refinement tests do not establish
-field AMR. Dynamic adaptive runs remain rejected until the lifecycle below passes.
+Status: implemented and admitted after local CPU MPI validation. Actual native
+refine/coarsen lifecycle and coupled evolution pass at two and eight ranks;
+ordinary adaptive input and a repartitioned restart also pass. See
+`evidence/native-amr-validation-index.json` for scope and provenance. These
+tests do not establish GPU behavior or long-time AMR accuracy.
+
+## Implemented transfer and history semantics
+
+`RemeshState` captures transfer results before the native mesh mutates. It owns
+only local fields and global leaf metadata. For nominal Cartesian core points,
+temporary arrays with the ordinary `ng` origin are registered with native
+cell-centered restriction, migration and prolongation. Their full tensor halos
+are populated from old raw evolved data using `MappedExchange`; the evolution
+halo's axis and mixed-derivative stencil alone is insufficient for these tensor
+operators. These arrays are scratch space: their shell results are discarded.
+
+Every unchanged leaf copies all 31 fields and all eight ledger members directly,
+including evolved overlap. A changed overlap or shell point first selects an
+old member of its native replacement family (the old parent on refinement, or
+old siblings on coarsening). A nominal containing leaf takes precedence over
+overlap; otherwise the largest logical margin wins, followed by old GID. Its
+six-point tensor stencil is centered where possible and clamped one-sided to
+the old evolved bounds. The covered logical cell extent permits within-cell
+endpoint extrapolation, as required when fine centers extend beyond coarse
+centers. Only coarse overlap outside the entire old fine-family extent uses
+the existing physical-space mapped selector. Thus independently evolved first
+shell values retain their own lineage wherever that old family supplies data.
+Changed scri points similarly use their old outer angular family. These are
+raw-field transfers; no analytic initial state replaces evolved data.
+
+Changed points retain the 26 independent fields, reconstruct slots 6 and 12,
+and set dormant slots 28–30 to zero. Unchanged values bypass that reconstruction
+inside the transfer. Normal native boundary initialization runs after the mesh
+sequence advances and rebuilds all stage plans. The transfer does not add a
+floor event or silently repair an interpolated state. Nonfinite state or
+nonpositive bulk chi/physical lapse is rejected collectively.
+
+The read-only predecessor's `tst/hyperbolic_shift_3d/amr_evolution.cpp`,
+`Validate()` at lines 126–149 and `Install()` beginning at line 152, also rejects
+nonpositive interpolated chi/lapse and invalid metric geometry before upload.
+Its `TransferExtra()` at lines 360–438 performs raw interpolation without a
+remesh floor; `coupled_mpi.cpp::Upload()` at line 816 copies/materializes and
+exchanges that state. Thus this positivity rejection preserves the old AMR
+admission policy. Positive values below the configured floor are not clamped
+by remeshing; the ordinary subsequent RK candidate applies the evolution
+floor policy. Raw interpolation near the puncture can still be rejected, which
+requires evolved-data validation and is not silently converted into a floor
+event. The older external historical-event ledger is distinct from the native
+packet redistribution defined here.
+
+Each old ChiRecord is an indivisible inherited-history packet. It is routed
+exactly once to a replacement-family point. The candidate index is nearest in
+the common chart coordinates, clamped to the new evolved bounds; exact
+half-index ties choose the lower index. Across candidate leaves, squared
+distances normalized by the old leaf's chart spans choose the target, with
+new-GID/k/j/i ties. Scri uses the same rule in the two angular coordinates and
+only outer radial children. Old overlap which no longer exists is clamped to
+the nearest surviving family sample rather than discarded.
+
+Packets are folded in old-GID/k/j/i order independently of MPI ownership.
+Counts and accumulated correction are summed; minima, accepted minima and
+first-event time take minima; maximum correction takes the maximum. Counts
+are never polynomially interpolated, fractionally split, or duplicated.
+Floating correction sums retain ordinary floating-point summation error;
+integer event counts remain exact within the representable integer range.
+Points receiving no packet get explicit default ChiRecords. The resulting
+ledger describes inherited history, not an interpolation of the new physical
+field or an assertion that every new point experienced every old event.
+
+The coordinated build and lifecycle/interpolation tests, rather than this
+implementation description, determine admission. No AMR correctness or coupled
+stability result is claimed merely by adding these paths.
 
 ## Native lifecycle and storage
 
@@ -17,12 +87,12 @@ Derivative-based refinement criteria need accepted-state halos before
 `CheckForRefinement`: the last RK update changes owned fields after the final
 stage's halo fill. Refresh these boundaries at the accepted-step boundary when
 the selected criterion needs them. After reallocation, rebind the criteria's
-shallow `rdata` views; rebinding is not currently part of the generic native
-regrid path. Criteria must also account for the module origin `ng+overlap`,
+shallow `rdata` views; the hyperboloidal post-regrid hook performs this rebinding.
+Criteria must also account for the module origin `ng+overlap`,
 where existing cell-centered criteria assume origin `ng`.
 
-The standard cell-centered AMR calls currently omit this module. Adding it to
-`ncc_tosend` alone is incorrect: their fixed nominal bounds and storage origin
+Adding this module to standard cell-centered `ncc_tosend` alone is incorrect:
+the native operators' fixed nominal bounds and storage origin
 do not cover the independently evolved overlap or the separate scri surface.
 Native migration transport and cell-centered operators should be extended where
 their indexing and interpolation contracts match. Mapped donor transport is
@@ -40,7 +110,7 @@ compensation register belongs to its more general formulation path; the pinned
 N12 spherical RK branch clears compensation and needs no persistent RK history
 across an accepted-step regrid.
 
-All state/work arrays currently have the actual local block count, not the AMR
+All persistent module state/work arrays have the actual local block count, not the AMR
 capacity. A topology change must resize bulk, coarse, surface, RK, reference,
 source and record arrays; rebuild evolved-point and block/face mappings; and
 invalidate all four RHS partitions and all donor/KO/surface plans. Plan rebuilding

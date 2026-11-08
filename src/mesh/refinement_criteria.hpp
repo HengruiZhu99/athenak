@@ -47,6 +47,8 @@ struct RefCritData {
   Real rloc_x1, rloc_x2, rloc_x3;  // x1-,x2-,x3-locations of point to refine around
   Real rloc_rad;                   // radius of region around point to be refined
   DvceArray5DnSlice rdata;         // slice of variable "n" in 5D array(m,n,k,j,i)
+  int index_offset=0;             // nominal-cell origin relative to mesh indices
+  int hyper_field=-1;             // separate scri neighbor for mapped bulk fields
 };
 
 //----------------------------------------------------------------------------------------
@@ -65,6 +67,7 @@ class RefinementCriteria {
 
   // functions
   void SetRefinementData(MeshBlockPack* pmbp, bool count, bool load);
+  bool NeedsAcceptedHalos() const;
   void CheckMinMax(MeshBlockPack* pmbp, RefCritData crit);
   void CheckSlope(MeshBlockPack* pmbp, RefCritData crit);
   void CheckSecondDeriv(MeshBlockPack* pmbp, RefCritData crit);

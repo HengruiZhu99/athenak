@@ -44,6 +44,16 @@ Implemented:
   eight chi-history members in GID-indexed block records. Shared files support
   changed rank counts; per-rank files require unchanged ownership and exact
   collective agreement on checkpoint time, topology and parameter metadata.
+- Native AMR now transfers module state through the original tree/load-balance
+  lifecycle. Nominal core fields reuse registered native cell-centered arrays;
+  mapped raw-field transfer handles shell/overlap/scri points. Unchanged leaves
+  copy all31+8 values; changed leaves reconstruct algebraic/dormant components.
+  Chi history moves as indivisible packets with deterministic merges. Storage,
+  reference caches, criteria views and all stage plans rebuild after regridding.
+- Hyperboloidal field criteria use the correct nominal origin and current
+  accepted halos, including the separate scri radial neighbor. First-shell
+  refinement now has a one-sided donor fallback when no centered stencil fits;
+  the established centered N12 donor path remains unchanged.
 
 Validation (local CPU MPI unless explicitly stated otherwise):
 - make -j64 builds; eight CTests cover topology, chart records, RK4, transport and
@@ -111,17 +121,27 @@ Current limitations / remaining full-goal requirements:
 - Fixed-topology dynamic evolution is admitted and locally validated through
   eight complete RK4 steps. This is not a GPU, long-run or arbitrary refined
   coupled-evolution claim. Fixed-mesh dynamic restart continuity is validated.
-- Hyperboloidal AMR storage resize, migration, restriction/prolongation, evolved
-  overlap and scri transfer, and chi-record transfer are not integrated. Existing
-  chart-aware topology does not establish field AMR. The AMR transfer contract
-  includes accepted-state halo freshness, criteria-view rebinding and native
-  origin indexing; adaptive evolution remains explicitly rejected.
+- Native AMR transfer passes actual106->127->106 regrids at two/eight local ranks,
+  including nonzero histories, poisoned workspace and bitwise unchanged-leaf
+  migration. Complete states match across ranks. Four coupled Driver cycles
+  through two regrids also match bitwise across ranks, with current halos,
+  criteria views, equal block weights and complete task partition coverage.
+  Ordinary adaptive input is now admitted. A real location criterion refines
+  the outer +X block to113 leaves; four uninterrupted steps on two ranks match
+  two steps plus a restart and two steps on eight ranks bitwise (all31+8 values,
+  including padding/metadata). No GPU AMR or long-time AMR accuracy claim is
+  established. Evidence index: evidence/native-amr-validation-index.json.
 - Same-chart copy-compatible routes should reuse native Bvals where appropriate;
   module storage origin is ng+overlap=7 while native ng remains 4. Current mapped
   transport preserves reference interpolation, including internal core donors.
-- First-shell radial refinement needs its own accuracy/convergence gate. Outer
-  nodal-grid descendants inherit offset zero; future volume diagnostics must
-  distinguish root-layer endpoints from internal refined radial boundaries.
+- First-shell radial/overlap refinement and one-sided donor rows pass independent
+  polynomial/convergence checks. Beyond-family coarse-overlap donors also pass
+  an exact r^6 remainder identity. Surface interpolation's original coarse-grid
+  order>=5.5 test failed, consistently with independent high-precision analysis;
+  analytic finite-N bounds and actual N48->96->192 sixth-order behavior pass.
+  This revised rationale is explicit in amr-interpolation-review.md. The
+  measured coupled post-coarsening clock RHS transient reaches4.10e-4; bounded
+  consistency tests do not establish coupled convergence or long-time accuracy.
 - ADM conversion, constraint RMS, fixed-origin FastFlow, mapped adaptive timestep
   and accepted-step diagnostic output remain. N12 tracking stays disabled.
 - No native Aurora run, N12-through-5M result, GPU performance or scaling result

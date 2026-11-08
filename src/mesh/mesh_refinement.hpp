@@ -8,6 +8,9 @@
 //! \file mesh_refinement.hpp
 //! \brief defines MeshRefinement class containing data and functions controlling SMR/AMR
 
+#include <string>
+#include <vector>
+
 //----------------------------------------------------------------------------------------
 //! \fn int CreateAMR_MPI_Tag(int lid, int ox1, int ox2, int ox3)
 //! \brief calculate an MPI tag for AMR communications.  Note maximum size of
@@ -89,6 +92,20 @@ class MeshRefinement {
   };
   InterpWeight weights;
 
+  // Additional standard-origin cell-centered arrays use the existing AMR
+  // operators and migration protocol. Register collectively in identical order;
+  // views must include max_nmb_per_rank capacity and outlive their registration.
+  // The owner supplies accepted-state fine halos before refinement starts.
+  struct RegisteredCC {
+    std::string name;
+    DvceArray5D<Real> *fine, *coarse;
+    bool high_order;
+  };
+  void RegisterCC(const std::string &name, DvceArray5D<Real> &fine,
+                  DvceArray5D<Real> &coarse, bool high_order=true);
+  void UnregisterCC(const std::string &name);
+  int RegisteredComponents() const;
+
 #if MPI_PARALLEL_ENABLED
   int nmb_send, nmb_recv;
   MPI_Comm amr_comm;                           // unique communicator for AMR
@@ -137,5 +154,9 @@ class MeshRefinement {
  private:
   // data
   Mesh *pmy_mesh;
+  std::vector<RegisteredCC> registered_cc_;
+#if MPI_PARALLEL_ENABLED
+  std::size_t registered_base_capacity_=0;
+#endif
 };
 #endif // MESH_MESH_REFINEMENT_HPP_

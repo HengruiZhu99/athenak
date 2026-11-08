@@ -90,10 +90,10 @@ run('reject-integrator', ['time/nlim=1', 'time/integrator=rk4'],
     error='Hyperboloidal evolution requires rk4_classical')
 run('reject-kinematic', ['time/nlim=1', 'time/evolution=kinematic'],
     error='Hyperboloidal evolution requires static or dynamic mode')
-run('reject-adaptive', ['time/nlim=1', 'mesh_refinement/refinement=adaptive',
+run('reject-missing-amr-criterion', ['time/nlim=1', 'mesh_refinement/refinement=adaptive',
                         'mesh_refinement/num_levels=2',
                         'mesh_refinement/max_nmb_per_rank=106'],
-    error='Hyperboloidal AMR state transfer is not yet integrated')
+    error='No <amr_criterion> blocks were found in input file')
 run('reject-relaxation', ['time/nlim=1', 'time/dt=.01'],
     error='Hyperboloidal fixed timestep exceeds the relaxation limit')
 assert digest(exe) == report['executable_sha256'], 'executable changed during tests'

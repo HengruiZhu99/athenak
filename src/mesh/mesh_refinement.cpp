@@ -17,6 +17,8 @@
 #include <cmath>     // abs
 #include <algorithm> // sort
 #include <utility>   // pair
+#include <climits>
+#include <stdexcept>
 
 #include "athena.hpp"
 #include "globals.hpp"
@@ -32,6 +34,7 @@
 #include "coordinates/adm.hpp"
 #include "z4c/z4c.hpp"
 #include "z4c/z4c_amr.hpp"
+#include "z4c_hyperboloidal/z4c_hyperboloidal.hpp"
 #include "prolongation.hpp"
 #include "restriction.hpp"
 
@@ -123,6 +126,7 @@ MeshRefinement::MeshRefinement(Mesh *pm, ParameterInput *pin) :
   int ndata = nmb*(ncc_tosend + nfc_tosend)*ncells;
   Kokkos::realloc(recv_data, ndata);
   Kokkos::realloc(send_data, ndata);
+  registered_base_capacity_=ndata;
 #endif
 }
 
@@ -138,11 +142,80 @@ MeshRefinement::~MeshRefinement() {
   }
 }
 
+int MeshRefinement::RegisteredComponents() const {
+  int count=0;
+  for (const auto &field:registered_cc_) count+=field.fine->extent_int(1);
+  return count;
+}
+
+void MeshRefinement::RegisterCC(const std::string &name, DvceArray5D<Real> &fine,
+                                DvceArray5D<Real> &coarse, bool high_order) {
+  const auto &indcs=pmy_mesh->mb_indcs;
+  int bad=name.empty() || !pmy_mesh->three_d || fine.extent_int(1)<1 ||
+      fine.extent(1)!=coarse.extent(1) ||
+      fine.extent_int(0)<pmy_mesh->nmb_maxperrank ||
+      coarse.extent(0)!=fine.extent(0) ||
+      (high_order && indcs.ng!=2 && indcs.ng!=4);
+  for (int d=2;d<5;++d) {
+    const int n=d==2 ? indcs.nx3 : d==3 ? indcs.nx2 : indcs.nx1;
+    bad|=fine.extent_int(d)!=n+2*indcs.ng || coarse.extent_int(d)!=n/2+2*indcs.ng;
+  }
+  for (const auto &field:registered_cc_) {
+    bad|=field.name==name || field.fine->data()==fine.data() ||
+        field.coarse->data()==coarse.data();
+  }
+#if MPI_PARALLEL_ENABLED
+  // Reject mismatched component ordering before peer buffer offsets can differ.
+  const std::string schema=name+":"+std::to_string(fine.extent(1))+":"+
+      std::to_string(high_order)+":"+std::to_string(registered_cc_.size());
+  int length=schema.size();
+  MPI_Bcast(&length,1,MPI_INT,0,amr_comm);
+  std::string expected(length,'\0');
+  if (global_variable::my_rank==0) expected=schema;
+  MPI_Bcast(expected.data(),length,MPI_CHAR,0,amr_comm);
+  bad|=schema!=expected;
+  std::size_t capacity=registered_base_capacity_+fine.size();
+  for (const auto &field:registered_cc_) capacity+=field.fine->size();
+  bad|=capacity>INT_MAX;
+  MPI_Allreduce(MPI_IN_PLACE,&bad,1,MPI_INT,MPI_MAX,amr_comm);
+#endif
+  if (bad) throw std::invalid_argument("Invalid or inconsistent AMR CC registration");
+  Kokkos::fence();
+#if MPI_PARALLEL_ENABLED
+  // Retain capacity after unregistering so successive regrids do not repeatedly
+  // allocate buffers. This extends the original native capacity policy.
+  if (send_data.extent(0)<capacity) Kokkos::realloc(send_data,capacity);
+  if (recv_data.extent(0)<capacity) Kokkos::realloc(recv_data,capacity);
+#endif
+  registered_cc_.push_back({name,&fine,&coarse,high_order});
+}
+
+void MeshRefinement::UnregisterCC(const std::string &name) {
+  auto found=std::find_if(registered_cc_.begin(),registered_cc_.end(),
+                         [&](const RegisteredCC &field) {return field.name==name;});
+  int index=found==registered_cc_.end() ? -1 : found-registered_cc_.begin();
+#if MPI_PARALLEL_ENABLED
+  int minimum=index,maximum=index;
+  MPI_Allreduce(MPI_IN_PLACE,&minimum,1,MPI_INT,MPI_MIN,amr_comm);
+  MPI_Allreduce(MPI_IN_PLACE,&maximum,1,MPI_INT,MPI_MAX,amr_comm);
+  if (minimum<0 || minimum!=maximum)
+    throw std::invalid_argument("Invalid or inconsistent AMR CC unregistration");
+#else
+  if (index<0) throw std::invalid_argument("Unknown AMR CC registration");
+#endif
+  Kokkos::fence();
+  registered_cc_.erase(found);
+}
+
 //----------------------------------------------------------------------------------------
 //! \fn void MeshRefinement::AdaptiveMeshRefinement()
 //! \brief Simple driver function for adaptive mesh refinement
 
 void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin) {
+  auto *phyper=pmy_mesh->pmb_pack->pz4c_hyperboloidal;
+  const bool refresh=phyper!=nullptr &&
+      pmy_mesh->ncycle%ncyc_check_amr==0 && pmrc->NeedsAcceptedHalos();
+  if (refresh) pdriver->InitBoundaryValuesAndPrimitives(pmy_mesh);
   // first check refinement criteria
   CheckForRefinement(pmy_mesh->pmb_pack);
 
@@ -153,12 +226,17 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
 
   // Refine/derefine mesh and evolved data, set boundary conditions/timestep on new mesh
   if (nnew != 0 || ndel != 0) { // at least one (de)refinement flagged
+    // The accepted RK update changes owned values after the last stage's halo
+    // fill. Transfers also require current donors when their criterion did not.
+    if (phyper!=nullptr && !refresh)
+      pdriver->InitBoundaryValuesAndPrimitives(pmy_mesh);
     if (pmy_mesh->pzoom != nullptr) pmy_mesh->pzoom->StoreZoomRegion();
     RedistAndRefineMeshBlocks(pin, nnew, ndel);
 
     // Mark one mesh-topology update event (AMR and any resulting load balancing).
     pmy_mesh->MarkMeshUpdated();
 
+    if (phyper!=nullptr) pmrc->SetRefinementData(pmy_mesh->pmb_pack,false,false);
     pdriver->InitBoundaryValuesAndPrimitives(pmy_mesh);
     if (pmy_mesh->pzoom != nullptr) pmy_mesh->pzoom->ApplyZoomRegion(pdriver);
 
@@ -181,6 +259,9 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
     }
     if (pmbp->pz4c != nullptr) {
       (void) pmbp->pz4c->NewTimeStep(pdriver, pdriver->nexp_stages);
+    }
+    if (phyper!=nullptr) {
+      (void) phyper->NewTimeStep(pdriver,pdriver->nexp_stages);
     }
 
     nmb_created += nnew;
@@ -520,6 +601,17 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
   radiation::Radiation* prad = pm->pmb_pack->prad;
   z4c::Z4c* pz4c = pm->pmb_pack->pz4c;
   adm::ADM* padm = pm->pmb_pack->padm;
+  auto *phyper=pm->pmb_pack->pz4c_hyperboloidal;
+  if (phyper!=nullptr) {
+    // Preserve old owned fields/maps before the native migration starts. Only
+    // standard-origin nominal-core staging enters the ordinary CC operators;
+    // evolved overlap and shell/scri points are installed by the remesh owner.
+    phyper->PrepareRemesh(*this);
+    RegisterCC("hyperboloidal_nominal",phyper->RemeshNominal(),
+                phyper->RemeshCoarse(),true);
+  }
+  for (const auto &field:registered_cc_)
+    RestrictCC(*field.fine,*field.coarse,field.high_order);
   if ((ndel > 0) && (pmhd != nullptr)) {
     RestrictFC(pmhd->b0, pmhd->coarse_b0);
   }
@@ -552,6 +644,8 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
     if (pz4c != nullptr) {
       DerefineCCSameRank(pz4c->u0, pz4c->coarse_u0);
     }
+    for (const auto &field:registered_cc_)
+      DerefineCCSameRank(*field.fine,*field.coarse);
   }
 
   // Step 6.
@@ -572,6 +666,7 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
   } else if (padm != nullptr) {
     CopyCC(padm->u_adm);
   }
+  for (const auto &field:registered_cc_) CopyCC(*field.fine);
   // Step 7.
   // Copy evolved physics variables for MBs flagged for refinement from source fine array
   // to target coarse array, when both are on same rank.
@@ -589,6 +684,8 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
     if (pz4c != nullptr) {
       CopyForRefinementCC(pz4c->u0, pz4c->coarse_u0);
     }
+    for (const auto &field:registered_cc_)
+      CopyForRefinementCC(*field.fine,*field.coarse);
   }
 
   // Step 8.
@@ -624,6 +721,8 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
     if (pz4c != nullptr) {
       RefineCC(new_to_old, pz4c->u0, pz4c->coarse_u0, true);
     }
+    for (const auto &field:registered_cc_)
+      RefineCC(new_to_old,*field.fine,*field.coarse,field.high_order);
   }
 
   // Step 10.
@@ -665,6 +764,11 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
   pm->pmb_pack->AddMeshBlocks(pin);
   pm->pmb_pack->AddCoordinates(pin);
   pm->pmb_pack->pmb->SetNeighbors(pm->ptree, pm->rank_eachmb);
+
+  if (phyper!=nullptr) {
+    UnregisterCC("hyperboloidal_nominal");
+    phyper->FinishRemesh(*this);
+  }
 
   Kokkos::realloc(fc_amr_repair, new_nmb_total);
   for (int m=0; m<new_nmb_total; ++m) {

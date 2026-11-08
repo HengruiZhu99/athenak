@@ -11,6 +11,7 @@
 #include <limits> // numeric_limits<>
 #include <algorithm> // max
 #include <utility> // make_pair
+#include <stdexcept>
 
 #include "athena.hpp"
 #include "globals.hpp"
@@ -22,6 +23,15 @@
 
 #if MPI_PARALLEL_ENABLED
 #include <mpi.h>
+
+namespace {
+int NextAMROffset(const AMRBufferData &previous, bool registered) {
+  if (registered && static_cast<std::size_t>(previous.offset)+previous.cnt >
+      static_cast<std::size_t>(std::numeric_limits<int>::max()))
+    throw std::overflow_error("Registered AMR buffer exceeds native integer offsets");
+  return previous.offset+previous.cnt;
+}
+}  // namespace
 #endif
 
 //----------------------------------------------------------------------------------------
@@ -151,6 +161,7 @@ void MeshRefinement::InitRecvAMR(int nleaf) {
   if (pmy_mesh->pmb_pack->pz4c != nullptr) {
     ncc_tosend += (pmy_mesh->pmb_pack->pz4c->nz4c);
   }
+  ncc_tosend+=RegisteredComponents();
 
   // Step 2. (InitRecvAMR)
   // loop over new MBs on this rank, initialize recv buffer metadata
@@ -202,8 +213,8 @@ void MeshRefinement::InitRecvAMR(int nleaf) {
           recvbuf.h_view(rb_idx).lid   = newm - nmbs;
           recvbuf.h_view(rb_idx).use_coarse = false;
           if (rb_idx > 0) {
-            recvbuf.h_view(rb_idx).offset = recvbuf.h_view((rb_idx-1)).offset +
-                                             recvbuf.h_view((rb_idx-1)).cnt;
+            recvbuf.h_view(rb_idx).offset =
+              NextAMROffset(recvbuf.h_view(rb_idx-1),!registered_cc_.empty());
           } else {
             recvbuf.h_view(rb_idx).offset = 0;
           }
@@ -225,8 +236,8 @@ void MeshRefinement::InitRecvAMR(int nleaf) {
         recvbuf.h_view(rb_idx).lid = newm - nmbs;
         recvbuf.h_view(rb_idx).use_coarse = false;
         if (rb_idx > 0) {
-          recvbuf.h_view(rb_idx).offset = recvbuf.h_view((rb_idx-1)).offset +
-                                          recvbuf.h_view((rb_idx-1)).cnt;
+          recvbuf.h_view(rb_idx).offset =
+              NextAMROffset(recvbuf.h_view(rb_idx-1),!registered_cc_.empty());
         } else {
           recvbuf.h_view(rb_idx).offset = 0;
         }
@@ -250,8 +261,8 @@ void MeshRefinement::InitRecvAMR(int nleaf) {
         recvbuf.h_view(rb_idx).lid = newm - nmbs;
         recvbuf.h_view(rb_idx).use_coarse = true;
         if (rb_idx > 0) {
-          recvbuf.h_view(rb_idx).offset = recvbuf.h_view((rb_idx-1)).offset +
-                                          recvbuf.h_view((rb_idx-1)).cnt;
+          recvbuf.h_view(rb_idx).offset =
+              NextAMROffset(recvbuf.h_view(rb_idx-1),!registered_cc_.empty());
         } else {
           recvbuf.h_view(rb_idx).offset = 0;
         }
@@ -262,6 +273,13 @@ void MeshRefinement::InitRecvAMR(int nleaf) {
   // Sync dual array
   recvbuf.template modify<HostMemSpace>();
   recvbuf.template sync<DevExeSpace>();
+  if (!registered_cc_.empty()) {
+    const auto &last=recvbuf.h_view(nmb_recv-1);
+    const std::size_t required=static_cast<std::size_t>(last.offset)+last.cnt;
+    if (required>static_cast<std::size_t>(std::numeric_limits<int>::max()))
+      throw std::overflow_error("Registered AMR buffer exceeds native integer offsets");
+    if (recv_data.extent(0)<required) Kokkos::realloc(recv_data,required);
+  }
   // Note: No need to reallocate recv_data buffer as it is fixed length
 
   // Step 3. (InitRecvAMR)
@@ -403,6 +421,7 @@ void MeshRefinement::PackAndSendAMR(int nleaf) {
   if (pmy_mesh->pmb_pack->pz4c != nullptr) {
     ncc_tosend += (pmy_mesh->pmb_pack->pz4c->nz4c);
   }
+  ncc_tosend+=RegisteredComponents();
 
   // Step 2. (PackAndSendAMR)
   // loop over old MBs on this rank, initialize send buffer metadata
@@ -454,8 +473,8 @@ void MeshRefinement::PackAndSendAMR(int nleaf) {
           sendbuf.h_view(sb_idx).lid   = oldm - ombs;
           sendbuf.h_view(sb_idx).use_coarse = false;
           if (sb_idx > 0) {
-            sendbuf.h_view(sb_idx).offset = sendbuf.h_view((sb_idx-1)).offset +
-                                            sendbuf.h_view((sb_idx-1)).cnt;
+            sendbuf.h_view(sb_idx).offset =
+              NextAMROffset(sendbuf.h_view(sb_idx-1),!registered_cc_.empty());
           } else {
             sendbuf.h_view(sb_idx).offset = 0;
           }
@@ -478,8 +497,8 @@ void MeshRefinement::PackAndSendAMR(int nleaf) {
           sendbuf.h_view(sb_idx).lid = oldm - ombs;
           sendbuf.h_view(sb_idx).use_coarse = false;
           if (sb_idx > 0) {
-            sendbuf.h_view(sb_idx).offset = sendbuf.h_view((sb_idx-1)).offset +
-                                            sendbuf.h_view((sb_idx-1)).cnt;
+            sendbuf.h_view(sb_idx).offset =
+              NextAMROffset(sendbuf.h_view(sb_idx-1),!registered_cc_.empty());
           } else {
             sendbuf.h_view(sb_idx).offset = 0;
           }
@@ -503,8 +522,8 @@ void MeshRefinement::PackAndSendAMR(int nleaf) {
                                        nfc_tosend*(sendbuf.h_view(sb_idx).cntfc);
           sendbuf.h_view(sb_idx).lid = oldm - ombs;
           if (sb_idx > 0) {
-            sendbuf.h_view(sb_idx).offset = sendbuf.h_view((sb_idx-1)).offset +
-                                            sendbuf.h_view((sb_idx-1)).cnt;
+            sendbuf.h_view(sb_idx).offset =
+              NextAMROffset(sendbuf.h_view(sb_idx-1),!registered_cc_.empty());
           } else {
             sendbuf.h_view(sb_idx).offset = 0;
           }
@@ -516,6 +535,13 @@ void MeshRefinement::PackAndSendAMR(int nleaf) {
   // Sync dual array
   sendbuf.template modify<HostMemSpace>();
   sendbuf.template sync<DevExeSpace>();
+  if (!registered_cc_.empty()) {
+    const auto &last=sendbuf.h_view(nmb_send-1);
+    const std::size_t required=static_cast<std::size_t>(last.offset)+last.cnt;
+    if (required>static_cast<std::size_t>(std::numeric_limits<int>::max()))
+      throw std::overflow_error("Registered AMR buffer exceeds native integer offsets");
+    if (send_data.extent(0)<required) Kokkos::realloc(send_data,required);
+  }
   // Note: No need to reallocate send_date as it is fixed length
 
   // Step 3. (PackAndSendAMR)
@@ -543,6 +569,10 @@ void MeshRefinement::PackAndSendAMR(int nleaf) {
   if (pz4c != nullptr) {
     PackAMRBuffersCC(pz4c->u0, pz4c->coarse_u0, ncc_sent, nfc_sent);
     ncc_sent += pz4c->nz4c;
+  }
+  for (const auto &field:registered_cc_) {
+    PackAMRBuffersCC(*field.fine,*field.coarse,ncc_sent,nfc_sent);
+    ncc_sent+=field.fine->extent_int(1);
   }
 
   // Step 4. (PackAndSendAMR)
@@ -833,6 +863,10 @@ void MeshRefinement::ClearRecvAndUnpackAMR() {
   if (pz4c != nullptr) {
     UnpackAMRBuffersCC(pz4c->u0, pz4c->coarse_u0, ncc_recv, nfc_recv);
     ncc_recv += pz4c->nz4c;
+  }
+  for (const auto &field:registered_cc_) {
+    UnpackAMRBuffersCC(*field.fine,*field.coarse,ncc_recv,nfc_recv);
+    ncc_recv+=field.fine->extent_int(1);
   }
 #endif
   return;

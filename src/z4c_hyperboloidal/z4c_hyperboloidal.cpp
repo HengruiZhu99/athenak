@@ -18,6 +18,7 @@
 #include "z4c_hyperboloidal/mapped_halo.hpp"
 #include "z4c_hyperboloidal/surface_exchange.hpp"
 #include "z4c_hyperboloidal/dissipation_plan.hpp"
+#include "z4c_hyperboloidal/remesh.hpp"
 
 namespace z4c_hyperboloidal {
 
@@ -33,9 +34,6 @@ Z4cHyperboloidal::Z4cHyperboloidal(MeshBlockPack *ppack, ParameterInput *pin)
   if (evolution!="static") {
     if (evolution!="dynamic") {
       throw std::invalid_argument("Hyperboloidal evolution requires static or dynamic mode");
-    }
-    if (pm->adaptive) {
-      throw std::runtime_error("Hyperboloidal AMR state transfer is not yet integrated");
     }
     if (pin->GetOrAddString("time","integrator","rk4_classical")!="rk4_classical") {
       throw std::invalid_argument("Hyperboloidal evolution requires rk4_classical");
@@ -69,12 +67,16 @@ Z4cHyperboloidal::Z4cHyperboloidal(MeshBlockPack *ppack, ParameterInput *pin)
                                                   "outer_lapse_damping",.25);
   parameters.Validate();
   BuildLocalWorkLists();
+  AllocateStorage();
+}
+
+void Z4cHyperboloidal::AllocateStorage() {
   Kokkos::realloc(u0,nblocks,nvar,storage[2],storage[1],storage[0]);
   Kokkos::realloc(u1,nblocks,nvar,storage[2],storage[1],storage[0]);
   Kokkos::realloc(u_rhs,nblocks,nvar,storage[2],storage[1],storage[0]);
   Kokkos::realloc(u_accum,nblocks,nvar,storage[2],storage[1],storage[0]);
   Kokkos::realloc(residual,nblocks,nvar,storage[2],storage[1],storage[0]);
-  if (pm->multilevel) {
+  if (pmy_pack->pmesh->multilevel) {
     Kokkos::realloc(coarse_u0,nblocks,nvar,n[2]/2+2*origin,
                     n[1]/2+2*origin,n[0]/2+2*origin);
   }
@@ -94,6 +96,44 @@ Z4cHyperboloidal::Z4cHyperboloidal(MeshBlockPack *ppack, ParameterInput *pin)
   const Real poison=std::numeric_limits<Real>::quiet_NaN();
   Kokkos::deep_copy(u0,poison);
   Kokkos::deep_copy(residual,poison);
+}
+
+void Z4cHyperboloidal::ResetMeshStorage() {
+  // Regridding is an accepted-step operation: no old stage or peer buffer may
+  // still be in use. Preserve any shallow snapshots held by RemeshState by
+  // dropping our views before allocation, even if the new extents are equal.
+  Kokkos::fence();
+  initialized_=false;
+  plans_ready_=false;
+  mapped_halo_.reset();
+  surface_exchange_.reset();
+  dissipation_plan_.reset();
+  for (auto &batch:rhs_points_) batch=DvceArray1D<int>();
+  rhs_status=DvceArray1D<int>();
+  rhs_gap=DvceArray1D<Real>(); rhs_cfl=DvceArray1D<Real>();
+  for (auto *array:{&u0,&u1,&u_rhs,&u_accum,&coarse_u0,&residual})
+    *array=DvceArray5D<Real>();
+  for (auto *array:{&s0,&s1,&s_rhs,&s_accum}) *array=DvceArray4D<Real>();
+  evolved_bounds=DualArray1D<EvolvedBounds>();
+  points=DualArray1D<BlockPoint>();
+  surface_points=DualArray1D<SurfacePoint>();
+  face_blocks=DualArray1D<int>(); block_faces=DualArray1D<int>();
+  geometry=DvceArray1D<mapped::Point>(); surface_geometry=DvceArray1D<mapped::Point>();
+  reference=DvceArray1D<CartesianChartJets>();
+  surface_reference=DvceArray1D<CartesianChartJets>();
+  stationary_source=DvceArray1D<StationaryGaugeSource<Real>>();
+  chi_records=DvceArray1D<ChiRecord>(); surface_chi_records=DvceArray1D<ChiRecord>();
+  nblocks=pmy_pack->nmb_thispack;
+  BuildLocalWorkLists();
+  AllocateStorage();
+  BuildReferenceCache();
+  const Real poison=std::numeric_limits<Real>::quiet_NaN();
+  Kokkos::deep_copy(s0,poison);
+  const ChiRecord empty{poison,poison,poison,poison,poison,poison,poison,poison};
+  Kokkos::deep_copy(chi_records,empty);
+  Kokkos::deep_copy(surface_chi_records,empty);
+  // Install must explicitly populate every evolved field and every record,
+  // including defaults for new points with no inherited history packet.
 }
 
 void Z4cHyperboloidal::BuildStagePlans() {
@@ -172,7 +212,7 @@ void Z4cHyperboloidal::BuildLocalWorkLists() {
   surface_points.template modify<HostMemSpace>(); surface_points.template sync<DevExeSpace>();
 }
 
-void Z4cHyperboloidal::InitializeReference() {
+void Z4cHyperboloidal::BuildReferenceCache() {
   SphericalReference3D initial(parameters);
   auto g=Kokkos::create_mirror_view(geometry);
   auto ref=Kokkos::create_mirror_view(reference);
@@ -203,6 +243,10 @@ void Z4cHyperboloidal::InitializeReference() {
   Kokkos::deep_copy(geometry,g); Kokkos::deep_copy(reference,ref);
   Kokkos::deep_copy(stationary_source,sources);
   Kokkos::deep_copy(surface_geometry,sg); Kokkos::deep_copy(surface_reference,sr);
+}
+
+void Z4cHyperboloidal::InitializeReference() {
+  BuildReferenceCache();
   auto list=points.d_view; auto surf=surface_points.d_view;
   auto refs=reference; auto srefs=surface_reference;
   auto state=u0; auto edge=s0;

@@ -197,7 +197,39 @@ std::vector<WeightedDonor> NativeDonorSelector::Overlap(const Real x[3],int widt
       for (int a=0;a<3;++a) {best_first[a]=first[a];best_length[a]=length[a];best_q[a]=q[a];}
     }
   }
-  if (selected<0) throw std::runtime_error("no centered native evolved-overlap donor");
+  if (selected<0) {
+    // A refined first-shell child can contain the target without containing a
+    // centered six-point stencil across its internal radial/angular boundary.
+    // Keep the established centered search above unchanged. Only if it finds
+    // no donor, use a one-sided stencil entirely in a covering evolved leaf.
+    for (int gid:order_) {
+      const auto &map=maps_[gid];if (map.face<0||map.layer>0) continue;
+      if ((map.face%2?-x[map.face/2]:x[map.face/2])<=0) continue;
+      Real q[3];map.Inverse(x,q);int first[3],length[3];Real margin=1e300;
+      bool valid=true,aligned=true;
+      for (int a=0;a<3;++a) {
+        const Real t=n_*q[a]-map.node_offset[a];
+        if (!std::isfinite(t)||n_*q[a]<Lower(gid,a)-1e-11
+            ||n_*q[a]>Upper(gid,a)+1e-11) {valid=false;break;}
+        const bool exact=spherical_&&std::abs(t-std::round(t))<=64*
+            std::numeric_limits<Real>::epsilon()*std::max(Real(1),std::abs(t));
+        length[a]=exact?1:width;aligned=aligned&&exact;
+        first[a]=exact?int(std::round(t)):std::clamp(int(std::floor(t))-width/2+1,
+            Lower(gid,a),Upper(gid,a)-width);
+        if (first[a]<Lower(gid,a)||first[a]+length[a]>Upper(gid,a)) {valid=false;break;}
+        margin=std::min(margin,std::min(t-Lower(gid,a),Upper(gid,a)-1-t));
+      }
+      if (!valid)continue;
+      if (gid==preferred)margin+=1e6;
+      if (aligned&&spherical_)margin+=1e9;
+      if (margin>best_margin) {
+        selected=gid;best_margin=margin;
+        for (int a=0;a<3;++a) {best_first[a]=first[a];best_length[a]=length[a];best_q[a]=q[a];}
+      }
+    }
+  }
+  if (selected<0) throw std::runtime_error("no covered native evolved-overlap donor at ("
+      +std::to_string(x[0])+","+std::to_string(x[1])+","+std::to_string(x[2])+")");
   return Tensor(selected,best_q,best_first,best_length);
 }
 

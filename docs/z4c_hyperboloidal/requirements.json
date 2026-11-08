@@ -16,37 +16,37 @@
     {
       "id": "native_driver_and_tasks",
       "status": "partial",
-      "evidence_or_next_gate": "Original Driver initialization and eight-cycle dynamic classical RK4 execute with exact fixed dt. Independent legacy/native states and 32 stage diagnostics are exact on two/eight local ranks. Native AMR/diagnostic lifecycle remains."
+      "evidence_or_next_gate": "Original Driver initialization, RK4, accepted-step native AMR and shared restart now pass local two/eight-rank checks. Diagnostics and Aurora validation remain."
     },
     {
       "id": "extend_native_octree",
-      "status": "partial",
-      "evidence_or_next_gate": "Seven native chart roots, whole-leaf ownership, 24 directed seam mappings and 2:1 refinement/derefinement closure validated. Atlas v2 preserves exact parent-midpoint core coordinates. Coupled AMR field lifecycle remains."
+      "status": "verified_local",
+      "evidence_or_next_gate": "Seven native chart roots,24seams,2:1 closure and whole-block/equal-weight ownership exercised through actual106->127->106 refine/coarsen and113-leaf adaptive restart; GPU validation remains."
     },
     {
       "id": "new_native_physics_module",
       "status": "partial",
-      "evidence_or_next_gate": "Pack-owned module now supports normal fixed-topology dynamic input and native restart records. Full local eight-step trajectory is exact against legacy on two/eight ranks. AMR transfers and physical diagnostics/FastFlow remain."
+      "evidence_or_next_gate": "Native module supports ordinary dynamic fixed/adaptive inputs and restart. Full fixed eight-step reference trajectories and coupled AMR/restart checks pass locally. Physical diagnostics/FastFlow and Aurora remain."
     },
     {
       "id": "block_locality",
-      "status": "verified_for_fixed_mesh_stages",
-      "evidence_or_next_gate": "Native local block/owned-face arrays, sparse peer transport and four independent bulk batches validated through eight full steps on two/eight ranks. No global evolved-field replication. AMR resize/migration remains."
+      "status": "verified_local",
+      "evidence_or_next_gate": "Owned block/scri arrays and sparse peer transport survive actual two/eight-rank AMR resize/migration; unchanged all31+8 values remain exact. No global evolved-state replication."
     },
     {
       "id": "equal_block_weights",
-      "status": "verified_for_constructed_mesh",
-      "evidence_or_next_gate": "All106 N12 leaves weight1; two ranks own53 each. Native AMR still resets every block weight to1. Coupled AMR execution not yet validated."
+      "status": "verified_local",
+      "evidence_or_next_gate": "All blocks retain cost1 through actual native refinement/coarsening and the ordinary adaptive113-leaf restart case at two/eight ranks."
     },
     {
       "id": "smr_support",
       "status": "partial",
-      "evidence_or_next_gate": "Core-SMR N12 actual eight-step evolution passes complete legacy comparison. Refined shell donor/surface operators and native restart pass two/eight ranks. Analytic refined nodal volume check passes. Arbitrary refined coupled evolution and first-shell radial accuracy remain."
+      "evidence_or_next_gate": "Core-SMR N12 eight-step legacy trajectory remains exact; outer and first-shell mixed radial/angular donor accuracy and bounded coupled refined evolution pass locally. GPU/long-time refined accuracy remains."
     },
     {
       "id": "amr_support",
-      "status": "partial",
-      "evidence_or_next_gate": "Chart-aware tree/seams/balance and shell SMR operators validated. Transfer contract now covers native lifecycle, raw-field legacy transfer reference, evolved overlap/scri/history, accepted halo refresh, dormant slots and criterion view/index rebinding. Field AMR remains unimplemented and dynamic adaptive input rejected."
+      "status": "verified_local_bounded",
+      "evidence_or_next_gate": "Native CC core transfer, mapped shell/overlap/scri transfer, atomic chi histories, accepted halos,criteria and storage/plan rebinding pass actual regrids and four coupled cycles on two/eight ranks. Ordinary adaptive input and2->8restart continuation are exact. Surface coarse asymptotic-rate failure and revised analytic/higher-resolution rationale are retained. GPU and long-time AMR accuracy remain unverified."
     },
     {
       "id": "numerical_fidelity",
@@ -55,8 +55,8 @@
     },
     {
       "id": "native_restart",
-      "status": "partial",
-      "evidence_or_next_gate": "Native shared-file N12 and outer-SMR records pass 2->8->2 bytewise with all8 record members nonzero. Per-rank roundtrip and collective rejection of mixed-time/changedownership/single-rank truncation pass. Final-build nine-step state/records are byte-identical for continuous2ranks versus1step2ranks+restart+8steps8ranks. AMR regrid/restart remains under amr_support."
+      "status": "verified_local",
+      "evidence_or_next_gate": "Native shared/per-rank fixed/SMR tests retained; ordinary adaptive113-leaf continuous4steps2ranks equals2steps2ranks+restart2steps8ranks across every field/history/padding/metadata. Final binary684acd97778d8a5f1d8d5b2786bc58077fb45d15a4d353e92c550be8ce8b8fa6."
     },
     {
       "id": "n12_aurora_through_5m",
@@ -81,7 +81,7 @@
     {
       "id": "reuse_and_consistent_style",
       "status": "partial",
-      "evidence_or_next_gate": "Original Driver initialization, NumericalRelativity TaskList, mesh/tree/load balancing and native GID-indexed MPI-IO reused. Custom code implements mapped stencils and owned scri, with no research Evolution driver. Same-chart native Bvals and field AMR integration remain."
+      "evidence_or_next_gate": "Original Driver/NR TaskList/tree/load balance/MPI-IO reused; AMR uses generic temporary CC registration in native transport/restriction/prolongation. Mapped transfers only for data outside that indexing/geometry contract. Physical diagnostics and suitable same-chart Bvals reuse remain."
     }
   ]
 }

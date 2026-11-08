@@ -65,7 +65,9 @@ legacy_provenance = {
     'source': str(legacy/'src'/relative),
     'source_sha256': hashlib.sha256(original.encode()).hexdigest(),
     'overlay_sha256': hashlib.sha256(modified.encode()).hexdigest(),
-    'replacements': replacements,
+    # JSON stores sequences as lists; normalize the in-memory pairs as well so
+    # a verified existing executable can pass the identical-provenance check.
+    'replacements': [list(pair) for pair in replacements],
     'floor_helper': str(legacy/'tst/hyperbolic_shift_3d/endpoint_policy/chi_policy.hpp'),
     'floor_helper_sha256': hashlib.sha256((legacy/'tst/hyperbolic_shift_3d/endpoint_policy/chi_policy.hpp').read_bytes()).hexdigest(),
     'gpu_step_source_sha256': hashlib.sha256((legacy/'tst/hyperbolic_shift_3d/coupled_mpi.cpp').read_bytes()).hexdigest(),

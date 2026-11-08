@@ -57,6 +57,8 @@ add_executable(
         z4c_hyperboloidal/mapped_halo.cpp
         z4c_hyperboloidal/surface_exchange.cpp
         z4c_hyperboloidal/restart.cpp
+        z4c_hyperboloidal/remesh.cpp
+        z4c_hyperboloidal/surface_remesh.cpp
         z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp
         z4c_hyperboloidal/z4c_hyperboloidal_tasks.cpp
         z4c_hyperboloidal/z4c_hyperboloidal_lifecycle.cpp
@@ -257,5 +259,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "^(GNU|Clang|AppleClang|IntelLLVM)$")
       z4c_hyperboloidal/dissipation_plan.cpp
       z4c_hyperboloidal/mapped_halo.cpp
       z4c_hyperboloidal/surface_exchange.cpp
+      z4c_hyperboloidal/remesh.cpp
+      z4c_hyperboloidal/surface_remesh.cpp
       PROPERTIES COMPILE_OPTIONS "-ffp-contract=off")
 endif()

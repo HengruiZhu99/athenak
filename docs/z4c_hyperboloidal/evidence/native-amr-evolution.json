@@ -1,0 +1,542 @@
+{
+  "passed": true,
+  "scope": "four native Driver cycles/two AMR events, local CPU MPI",
+  "test_only_adaptive_admission_override": true,
+  "legacy_comparison": false,
+  "cross_rank_complete_state_exact": true,
+  "runs": {
+    "2": {
+      "command": [
+        "mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/amr_evolution",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/n12_initialize.athinput"
+      ],
+      "cycles": [
+        {
+          "cycle": 0,
+          "time": 0.0,
+          "dt": 0.00046944203735617445,
+          "blocks": 106,
+          "sequence": 0,
+          "bulk_points": 229392,
+          "scri_points": 864,
+          "zero_scri_ranks": 0,
+          "canonical": {
+            "points": 230256,
+            "values": 8979984,
+            "sha256": "cb95755804254330775a68c3f1b6265b655b52a2bda1c11e41323a5a40761d00"
+          }
+        },
+        {
+          "cycle": 1,
+          "time": 0.00046944203735617445,
+          "dt": 0.00046944203735617445,
+          "blocks": 127,
+          "sequence": 1,
+          "bulk_points": 277236,
+          "scri_points": 1296,
+          "zero_scri_ranks": 0,
+          "canonical": {
+            "points": 278532,
+            "values": 10862748,
+            "sha256": "df166dc1a1d8540372ab3c0bc8d75fdfc3b97a8e433dd47318cb46402e032c99"
+          }
+        },
+        {
+          "cycle": 2,
+          "time": 0.0009388840747123489,
+          "dt": 0.00046944203735617445,
+          "blocks": 127,
+          "sequence": 1,
+          "bulk_points": 277236,
+          "scri_points": 1296,
+          "zero_scri_ranks": 0,
+          "canonical": {
+            "points": 278532,
+            "values": 10862748,
+            "sha256": "fd90acd12cb424a58242adf33f0c4ebf6482e6ea86ac0ab4f95c60174fec6c8b"
+          }
+        },
+        {
+          "cycle": 3,
+          "time": 0.0014083261120685234,
+          "dt": 0.00046944203735617445,
+          "blocks": 106,
+          "sequence": 2,
+          "bulk_points": 229392,
+          "scri_points": 864,
+          "zero_scri_ranks": 0,
+          "canonical": {
+            "points": 230256,
+            "values": 8979984,
+            "sha256": "df8fd55e6f3441551d7585846430bcc320eaef709bc92740309f54c31698b4c4"
+          }
+        },
+        {
+          "cycle": 4,
+          "time": 0.0018777681494246978,
+          "dt": 0.00046944203735617445,
+          "blocks": 106,
+          "sequence": 2,
+          "bulk_points": 229392,
+          "scri_points": 864,
+          "zero_scri_ranks": 0,
+          "canonical": {
+            "points": 230256,
+            "values": 8979984,
+            "sha256": "92759ba8f11fe4be48f14cb72e1dc7177607207a942f023bc41c279683f3c6ea"
+          }
+        }
+      ],
+      "stages": [
+        {
+          "cycle": 1,
+          "stage": 1,
+          "rhs_time": 0.0,
+          "state_time": 0.00023472101867808723,
+          "bulk_values": 7111152,
+          "scri_values": 26784,
+          "compatibility": 6.041830624351692e-16,
+          "clock": 9.127841543631657e-14,
+          "cfl": 0.23769230225943389
+        },
+        {
+          "cycle": 1,
+          "stage": 2,
+          "rhs_time": 0.00023472101867808723,
+          "state_time": 0.00023472101867808723,
+          "bulk_values": 7111152,
+          "scri_values": 26784,
+          "compatibility": 9.794612198600041e-16,
+          "clock": 4.995613281275584e-09,
+          "cfl": 0.23769230225943366
+        },
+        {
+          "cycle": 1,
+          "stage": 3,
+          "rhs_time": 0.00023472101867808723,
+          "state_time": 0.00046944203735617445,
+          "bulk_values": 7111152,
+          "scri_values": 26784,
+          "compatibility": 7.780627783265004e-16,
+          "clock": 4.8803803284995395e-09,
+          "cfl": 0.2376923022594371
+        },
+        {
+          "cycle": 1,
+          "stage": 4,
+          "rhs_time": 0.00046944203735617445,
+          "state_time": 0.00046944203735617445,
+          "bulk_values": 7111152,
+          "scri_values": 26784,
+          "compatibility": 7.755384307193223e-16,
+          "clock": 9.307388759707291e-09,
+          "cfl": 0.2376923022594358
+        },
+        {
+          "cycle": 2,
+          "stage": 1,
+          "rhs_time": 0.00046944203735617445,
+          "state_time": 0.0007041630560342617,
+          "bulk_values": 8594316,
+          "scri_values": 40176,
+          "compatibility": 8.7469742712343e-16,
+          "clock": 1.0324958278435212e-07,
+          "cfl": 0.4767786203250591
+        },
+        {
+          "cycle": 2,
+          "stage": 2,
+          "rhs_time": 0.0007041630560342617,
+          "state_time": 0.0007041630560342617,
+          "bulk_values": 8594316,
+          "scri_values": 40176,
+          "compatibility": 8.754975672017587e-16,
+          "clock": 1.0608854370816393e-07,
+          "cfl": 0.4767786203255413
+        },
+        {
+          "cycle": 2,
+          "stage": 3,
+          "rhs_time": 0.0007041630560342617,
+          "state_time": 0.0009388840747123489,
+          "bulk_values": 8594316,
+          "scri_values": 40176,
+          "compatibility": 8.858040275302938e-16,
+          "clock": 7.192717563801462e-07,
+          "cfl": 0.47677862032512724
+        },
+        {
+          "cycle": 2,
+          "stage": 4,
+          "rhs_time": 0.0009388840747123489,
+          "state_time": 0.0009388840747123489,
+          "bulk_values": 8594316,
+          "scri_values": 40176,
+          "compatibility": 9.593115583962717e-16,
+          "clock": 1.913685346247946e-06,
+          "cfl": 0.4767786203266099
+        },
+        {
+          "cycle": 3,
+          "stage": 1,
+          "rhs_time": 0.0009388840747123489,
+          "state_time": 0.001173605093390436,
+          "bulk_values": 8594316,
+          "scri_values": 40176,
+          "compatibility": 8.456158081939847e-16,
+          "clock": 6.661446689326488e-07,
+          "cfl": 0.47677862032380336
+        },
+        {
+          "cycle": 3,
+          "stage": 2,
+          "rhs_time": 0.001173605093390436,
+          "state_time": 0.001173605093390436,
+          "bulk_values": 8594316,
+          "scri_values": 40176,
+          "compatibility": 8.818024652164522e-16,
+          "clock": 6.252642560839846e-07,
+          "cfl": 0.4767786203256903
+        },
+        {
+          "cycle": 3,
+          "stage": 3,
+          "rhs_time": 0.001173605093390436,
+          "state_time": 0.0014083261120685234,
+          "bulk_values": 8594316,
+          "scri_values": 40176,
+          "compatibility": 8.098601652102165e-16,
+          "clock": 1.1746816165525157e-06,
+          "cfl": 0.47677862032514695
+        },
+        {
+          "cycle": 3,
+          "stage": 4,
+          "rhs_time": 0.0014083261120685234,
+          "state_time": 0.0014083261120685234,
+          "bulk_values": 8594316,
+          "scri_values": 40176,
+          "compatibility": 9.626399321762963e-16,
+          "clock": 1.4528475146018661e-06,
+          "cfl": 0.47677862032733676
+        },
+        {
+          "cycle": 4,
+          "stage": 1,
+          "rhs_time": 0.0014083261120685234,
+          "state_time": 0.0016430471307466107,
+          "bulk_values": 7111152,
+          "scri_values": 26784,
+          "compatibility": 6.868827338510353e-16,
+          "clock": 0.00027806240662011457,
+          "cfl": 0.23769230225953764
+        },
+        {
+          "cycle": 4,
+          "stage": 2,
+          "rhs_time": 0.0016430471307466107,
+          "state_time": 0.0016430471307466107,
+          "bulk_values": 7111152,
+          "scri_values": 26784,
+          "compatibility": 7.879371525902623e-16,
+          "clock": 0.00039712439517876455,
+          "cfl": 0.23769230230277458
+        },
+        {
+          "cycle": 4,
+          "stage": 3,
+          "rhs_time": 0.0016430471307466107,
+          "state_time": 0.0018777681494246978,
+          "bulk_values": 7111152,
+          "scri_values": 26784,
+          "compatibility": 7.174165775336583e-16,
+          "clock": 0.0003344686492598959,
+          "cfl": 0.23769230225957313
+        },
+        {
+          "cycle": 4,
+          "stage": 4,
+          "rhs_time": 0.0018777681494246978,
+          "state_time": 0.0018777681494246978,
+          "bulk_values": 7111152,
+          "scri_values": 26784,
+          "compatibility": 9.6238528214318e-16,
+          "clock": 0.00040953784497806437,
+          "cfl": 0.23769230225961144
+        }
+      ]
+    },
+    "8": {
+      "command": [
+        "mpiexec",
+        "-n",
+        "8",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/amr_evolution",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/n12_initialize.athinput"
+      ],
+      "cycles": [
+        {
+          "cycle": 0,
+          "time": 0.0,
+          "dt": 0.00046944203735617445,
+          "blocks": 106,
+          "sequence": 0,
+          "bulk_points": 229392,
+          "scri_points": 864,
+          "zero_scri_ranks": 3,
+          "canonical": {
+            "points": 230256,
+            "values": 8979984,
+            "sha256": "cb95755804254330775a68c3f1b6265b655b52a2bda1c11e41323a5a40761d00"
+          }
+        },
+        {
+          "cycle": 1,
+          "time": 0.00046944203735617445,
+          "dt": 0.00046944203735617445,
+          "blocks": 127,
+          "sequence": 1,
+          "bulk_points": 277236,
+          "scri_points": 1296,
+          "zero_scri_ranks": 3,
+          "canonical": {
+            "points": 278532,
+            "values": 10862748,
+            "sha256": "df166dc1a1d8540372ab3c0bc8d75fdfc3b97a8e433dd47318cb46402e032c99"
+          }
+        },
+        {
+          "cycle": 2,
+          "time": 0.0009388840747123489,
+          "dt": 0.00046944203735617445,
+          "blocks": 127,
+          "sequence": 1,
+          "bulk_points": 277236,
+          "scri_points": 1296,
+          "zero_scri_ranks": 3,
+          "canonical": {
+            "points": 278532,
+            "values": 10862748,
+            "sha256": "fd90acd12cb424a58242adf33f0c4ebf6482e6ea86ac0ab4f95c60174fec6c8b"
+          }
+        },
+        {
+          "cycle": 3,
+          "time": 0.0014083261120685234,
+          "dt": 0.00046944203735617445,
+          "blocks": 106,
+          "sequence": 2,
+          "bulk_points": 229392,
+          "scri_points": 864,
+          "zero_scri_ranks": 3,
+          "canonical": {
+            "points": 230256,
+            "values": 8979984,
+            "sha256": "df8fd55e6f3441551d7585846430bcc320eaef709bc92740309f54c31698b4c4"
+          }
+        },
+        {
+          "cycle": 4,
+          "time": 0.0018777681494246978,
+          "dt": 0.00046944203735617445,
+          "blocks": 106,
+          "sequence": 2,
+          "bulk_points": 229392,
+          "scri_points": 864,
+          "zero_scri_ranks": 3,
+          "canonical": {
+            "points": 230256,
+            "values": 8979984,
+            "sha256": "92759ba8f11fe4be48f14cb72e1dc7177607207a942f023bc41c279683f3c6ea"
+          }
+        }
+      ],
+      "stages": [
+        {
+          "cycle": 1,
+          "stage": 1,
+          "rhs_time": 0.0,
+          "state_time": 0.00023472101867808723,
+          "bulk_values": 7111152,
+          "scri_values": 26784,
+          "compatibility": 6.041830624351692e-16,
+          "clock": 9.127841543631657e-14,
+          "cfl": 0.23769230225943389
+        },
+        {
+          "cycle": 1,
+          "stage": 2,
+          "rhs_time": 0.00023472101867808723,
+          "state_time": 0.00023472101867808723,
+          "bulk_values": 7111152,
+          "scri_values": 26784,
+          "compatibility": 9.794612198600041e-16,
+          "clock": 4.995613281275584e-09,
+          "cfl": 0.23769230225943366
+        },
+        {
+          "cycle": 1,
+          "stage": 3,
+          "rhs_time": 0.00023472101867808723,
+          "state_time": 0.00046944203735617445,
+          "bulk_values": 7111152,
+          "scri_values": 26784,
+          "compatibility": 7.780627783265004e-16,
+          "clock": 4.8803803284995395e-09,
+          "cfl": 0.2376923022594371
+        },
+        {
+          "cycle": 1,
+          "stage": 4,
+          "rhs_time": 0.00046944203735617445,
+          "state_time": 0.00046944203735617445,
+          "bulk_values": 7111152,
+          "scri_values": 26784,
+          "compatibility": 7.755384307193223e-16,
+          "clock": 9.307388759707291e-09,
+          "cfl": 0.2376923022594358
+        },
+        {
+          "cycle": 2,
+          "stage": 1,
+          "rhs_time": 0.00046944203735617445,
+          "state_time": 0.0007041630560342617,
+          "bulk_values": 8594316,
+          "scri_values": 40176,
+          "compatibility": 8.7469742712343e-16,
+          "clock": 1.0324958278435212e-07,
+          "cfl": 0.4767786203250591
+        },
+        {
+          "cycle": 2,
+          "stage": 2,
+          "rhs_time": 0.0007041630560342617,
+          "state_time": 0.0007041630560342617,
+          "bulk_values": 8594316,
+          "scri_values": 40176,
+          "compatibility": 8.754975672017587e-16,
+          "clock": 1.0608854370816393e-07,
+          "cfl": 0.4767786203255413
+        },
+        {
+          "cycle": 2,
+          "stage": 3,
+          "rhs_time": 0.0007041630560342617,
+          "state_time": 0.0009388840747123489,
+          "bulk_values": 8594316,
+          "scri_values": 40176,
+          "compatibility": 8.858040275302938e-16,
+          "clock": 7.192717563801462e-07,
+          "cfl": 0.47677862032512724
+        },
+        {
+          "cycle": 2,
+          "stage": 4,
+          "rhs_time": 0.0009388840747123489,
+          "state_time": 0.0009388840747123489,
+          "bulk_values": 8594316,
+          "scri_values": 40176,
+          "compatibility": 9.593115583962717e-16,
+          "clock": 1.913685346247946e-06,
+          "cfl": 0.4767786203266099
+        },
+        {
+          "cycle": 3,
+          "stage": 1,
+          "rhs_time": 0.0009388840747123489,
+          "state_time": 0.001173605093390436,
+          "bulk_values": 8594316,
+          "scri_values": 40176,
+          "compatibility": 8.456158081939847e-16,
+          "clock": 6.661446689326488e-07,
+          "cfl": 0.47677862032380336
+        },
+        {
+          "cycle": 3,
+          "stage": 2,
+          "rhs_time": 0.001173605093390436,
+          "state_time": 0.001173605093390436,
+          "bulk_values": 8594316,
+          "scri_values": 40176,
+          "compatibility": 8.818024652164522e-16,
+          "clock": 6.252642560839846e-07,
+          "cfl": 0.4767786203256903
+        },
+        {
+          "cycle": 3,
+          "stage": 3,
+          "rhs_time": 0.001173605093390436,
+          "state_time": 0.0014083261120685234,
+          "bulk_values": 8594316,
+          "scri_values": 40176,
+          "compatibility": 8.098601652102165e-16,
+          "clock": 1.1746816165525157e-06,
+          "cfl": 0.47677862032514695
+        },
+        {
+          "cycle": 3,
+          "stage": 4,
+          "rhs_time": 0.0014083261120685234,
+          "state_time": 0.0014083261120685234,
+          "bulk_values": 8594316,
+          "scri_values": 40176,
+          "compatibility": 9.626399321762963e-16,
+          "clock": 1.4528475146018661e-06,
+          "cfl": 0.47677862032733676
+        },
+        {
+          "cycle": 4,
+          "stage": 1,
+          "rhs_time": 0.0014083261120685234,
+          "state_time": 0.0016430471307466107,
+          "bulk_values": 7111152,
+          "scri_values": 26784,
+          "compatibility": 6.868827338510353e-16,
+          "clock": 0.00027806240662011457,
+          "cfl": 0.23769230225953764
+        },
+        {
+          "cycle": 4,
+          "stage": 2,
+          "rhs_time": 0.0016430471307466107,
+          "state_time": 0.0016430471307466107,
+          "bulk_values": 7111152,
+          "scri_values": 26784,
+          "compatibility": 7.879371525902623e-16,
+          "clock": 0.00039712439517876455,
+          "cfl": 0.23769230230277458
+        },
+        {
+          "cycle": 4,
+          "stage": 3,
+          "rhs_time": 0.0016430471307466107,
+          "state_time": 0.0018777681494246978,
+          "bulk_values": 7111152,
+          "scri_values": 26784,
+          "compatibility": 7.174165775336583e-16,
+          "clock": 0.0003344686492598959,
+          "cfl": 0.23769230225957313
+        },
+        {
+          "cycle": 4,
+          "stage": 4,
+          "rhs_time": 0.0018777681494246978,
+          "state_time": 0.0018777681494246978,
+          "bulk_values": 7111152,
+          "scri_values": 26784,
+          "compatibility": 9.6238528214318e-16,
+          "clock": 0.00040953784497806437,
+          "cfl": 0.23769230225961144
+        }
+      ]
+    }
+  },
+  "executable_sha256": "7d8e5fcb2652edd3f556257be926d135194d50d25af3ebbacac94bfb8c6f7197",
+  "provenance": {
+    "sources_unchanged": true,
+    "objects_unchanged": true
+  }
+}

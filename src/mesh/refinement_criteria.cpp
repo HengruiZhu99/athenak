@@ -19,6 +19,7 @@
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
 #include "radiation/radiation.hpp"
+#include "z4c_hyperboloidal/z4c_hyperboloidal.hpp"
 #include "refinement_criteria.hpp"
 #include "utils/utils.hpp"
 
@@ -94,6 +95,10 @@ RefinementCriteria::RefinementCriteria(Mesh *pm, ParameterInput *pin) :
       std::cout<<"### FATAL ERROR in "<<__FILE__<<" at line "<<__LINE__<<std::endl;
       Kokkos::abort("radiation refinement variable used but <radiation> not defined");
     }
+    if ((it->rvariable.compare(0, 14, "hyperboloidal_") == 0) &&
+        (pm->pmb_pack->pz4c_hyperboloidal == nullptr)) {
+      Kokkos::abort("Hyperboloidal refinement variable used without its module");
+    }
   }
 
   // count number of derived variables used for refinement
@@ -118,6 +123,16 @@ RefinementCriteria::RefinementCriteria(Mesh *pm, ParameterInput *pin) :
 // destructor
 
 RefinementCriteria::~RefinementCriteria() {
+}
+
+bool RefinementCriteria::NeedsAcceptedHalos() const {
+  for (const auto &criterion:rcrit) {
+    if (criterion.rmethod==RefCritMethod::user ||
+        (criterion.hyper_field>=0 && (criterion.rmethod==RefCritMethod::slope ||
+                                     criterion.rmethod==RefCritMethod::second_deriv)))
+      return true;
+  }
+  return false;
 }
 
 //----------------------------------------------------------------------------------------
@@ -168,6 +183,19 @@ void RefinementCriteria::SetRefinementData(MeshBlockPack* pmbp, bool count_deriv
           it->rdata = Kokkos::subview(dvars, ALL, iderived, ALL, ALL, ALL);
           iderived += 1;
         }
+      } else if (it->rvariable.compare(0,14,"hyperboloidal_")==0) {
+        // Field names preserve their stored offsets (for example P+3), rather
+        // than silently changing the quantity on which thresholds operate.
+        const auto name=it->rvariable.substr(14);
+        int field=-1;
+        for (int f=0;f<z4c_hyperboloidal::Fields::count;++f)
+          if (name==z4c_hyperboloidal::Fields::names[f]) field=f;
+        if (field<0) Kokkos::abort("Unknown hyperboloidal refinement variable");
+        auto *module=pmbp->pz4c_hyperboloidal;
+        it->hyper_field=field;
+        it->index_offset=module->overlap;
+        if (!count_derived && !load_derived)
+          it->rdata=Kokkos::subview(module->u0,ALL,field,ALL,ALL,ALL);
       } else {
         std::cout<<"### FATAL ERROR in "<<__FILE__<<" at line "<<__LINE__<<std::endl;
         Kokkos::abort("Unknown refinement variable requested in a <amr_criterion>");
@@ -188,9 +216,9 @@ void RefinementCriteria::CheckMinMax(MeshBlockPack* pmbp, RefCritData crit) {
 
   // capture variables for kernels
   auto &indcs = pmbp->pmesh->mb_indcs;
-  int &is = indcs.is, nx1 = indcs.nx1;
-  int &js = indcs.js, nx2 = indcs.nx2;
-  int &ks = indcs.ks, nx3 = indcs.nx3;
+  int is = indcs.is+crit.index_offset, nx1 = indcs.nx1;
+  int js = indcs.js+crit.index_offset, nx2 = indcs.nx2;
+  int ks = indcs.ks+crit.index_offset, nx3 = indcs.nx3;
   const int nkji = nx3*nx2*nx1;
   const int nji  = nx2*nx1;
   int nmb = pmbp->nmb_thispack;
@@ -255,14 +283,21 @@ void RefinementCriteria::CheckSlope(MeshBlockPack* pmbp, RefCritData crit) {
 
   // capture variables for kernels
   auto &indcs = pmbp->pmesh->mb_indcs;
-  int &is = indcs.is, nx1 = indcs.nx1;
-  int &js = indcs.js, nx2 = indcs.nx2;
-  int &ks = indcs.ks, nx3 = indcs.nx3;
+  int is = indcs.is+crit.index_offset, nx1 = indcs.nx1;
+  int js = indcs.js+crit.index_offset, nx2 = indcs.nx2;
+  int ks = indcs.ks+crit.index_offset, nx3 = indcs.nx3;
   const int nkji = nx3*nx2*nx1;
   const int nji  = nx2*nx1;
   int nmb = pmbp->nmb_thispack;
   auto &multi_d = pmbp->pmesh->multi_d;
   auto &three_d = pmbp->pmesh->three_d;
+  const int field=crit.hyper_field;
+  DvceArray1D<int> outer_faces;
+  DvceArray4D<Real> surface;
+  if (field>=0) {
+    outer_faces=pmbp->pz4c_hyperboloidal->block_faces.d_view;
+    surface=pmbp->pz4c_hyperboloidal->s0;
+  }
 
   auto &valmax = crit.rvalue_max;
   auto &q0 = crit.rdata;
@@ -277,10 +312,17 @@ void RefinementCriteria::CheckSlope(MeshBlockPack* pmbp, RefCritData crit) {
         int i = (idx - k*nji - j*nx1) + is;
         j += js;
         k += ks;
-        Real d2 = SQR(q0(m,k,j,i+1) - q0(m,k,j,i-1));
+        // The outer radial endpoint lives in s0, not in a bulk ghost slot.
+        const Real qp=(field>=0 && i==is+nx1-1 && outer_faces(m)>=0) ?
+            surface(outer_faces(m),field,k-ks,j-js) : q0(m,k,j,i+1);
+        Real d2 = SQR(qp - q0(m,k,j,i-1));
         if (multi_d) {d2 += SQR(q0(m,k,j+1,i) - q0(m,k,j-1,i));}
         if (three_d) {d2 += SQR(q0(m,k+1,j,i) - q0(m,k-1,j,i));}
-        dqmax = fmax((0.5*sqrt(d2)/q0(m,k,j,i)), dqmax);
+        const Real numerator=0.5*sqrt(d2);
+        const Real value=q0(m,k,j,i);
+        const Real ratio=field<0 ? numerator/value :
+            (value!=0 ? numerator/fabs(value) : (numerator==0 ? 0 : FLT_MAX));
+        dqmax = fmax(ratio, dqmax);
       },Kokkos::Max<Real>(team_dqmax));
       // only derefine when flag has not been set by other criteria
       int &flag = refine_flag.d_view(m+mbs);
@@ -306,14 +348,21 @@ void RefinementCriteria::CheckSecondDeriv(MeshBlockPack* pmbp, RefCritData crit)
 
   // capture variables for kernels
   auto &indcs = pmbp->pmesh->mb_indcs;
-  int &is = indcs.is, nx1 = indcs.nx1;
-  int &js = indcs.js, nx2 = indcs.nx2;
-  int &ks = indcs.ks, nx3 = indcs.nx3;
+  int is = indcs.is+crit.index_offset, nx1 = indcs.nx1;
+  int js = indcs.js+crit.index_offset, nx2 = indcs.nx2;
+  int ks = indcs.ks+crit.index_offset, nx3 = indcs.nx3;
   const int nkji = nx3*nx2*nx1;
   const int nji  = nx2*nx1;
   int nmb = pmbp->nmb_thispack;
   auto &multi_d = pmbp->pmesh->multi_d;
   auto &three_d = pmbp->pmesh->three_d;
+  const int field=crit.hyper_field;
+  DvceArray1D<int> outer_faces;
+  DvceArray4D<Real> surface;
+  if (field>=0) {
+    outer_faces=pmbp->pz4c_hyperboloidal->block_faces.d_view;
+    surface=pmbp->pz4c_hyperboloidal->s0;
+  }
 
   auto &valmax = crit.rvalue_max;
   auto &q0 = crit.rdata;
@@ -328,10 +377,16 @@ void RefinementCriteria::CheckSecondDeriv(MeshBlockPack* pmbp, RefCritData crit)
         int i = (idx - k*nji - j*nx1) + is;
         j += js;
         k += ks;
-        Real d2q = q0(m,k,j,i+1) - 2.0*q0(m,k,j,i) + q0(m,k,j,i-1);
+        const Real qp=(field>=0 && i==is+nx1-1 && outer_faces(m)>=0) ?
+            surface(outer_faces(m),field,k-ks,j-js) : q0(m,k,j,i+1);
+        Real d2q = qp - 2.0*q0(m,k,j,i) + q0(m,k,j,i-1);
         if (multi_d) {d2q += (q0(m,k,j+1,i) - 2.0*q0(m,k,j,i) + q0(m,k,j-1,i));}
         if (three_d) {d2q += (q0(m,k+1,j,i) - 2.0*q0(m,k,j,i) + q0(m,k-1,j,i));}
-        d2qmax = fmax((fabs(d2q)/q0(m,k,j,i)), d2qmax);
+        const Real numerator=fabs(d2q);
+        const Real value=q0(m,k,j,i);
+        const Real ratio=field<0 ? numerator/value :
+            (value!=0 ? numerator/fabs(value) : (numerator==0 ? 0 : FLT_MAX));
+        d2qmax = fmax(ratio, d2qmax);
       },Kokkos::Max<Real>(team_d2qmax));
       // only derefine when flag has not been set by other criteria
       int &flag = refine_flag.d_view(m+mbs);

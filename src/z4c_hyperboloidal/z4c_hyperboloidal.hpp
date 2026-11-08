@@ -18,11 +18,13 @@
 
 class Driver;
 class MeshBlockPack;
+class MeshRefinement;
 
 namespace z4c_hyperboloidal {
 class MappedHalo;
 class SurfaceExchange;
 class DissipationPlan;
+class RemeshState;
 
 // Local execution indices only. MeshBlockPack remains the ownership authority;
 // these lists batch irregular evolved overlap regions into device kernels.
@@ -84,6 +86,10 @@ class Z4cHyperboloidal {
   TaskStatus NewTimeStep(Driver *driver, int stage);
   Real StageMaxCompatibility() const;
   Real StageMaxClock() const;
+  void PrepareRemesh(MeshRefinement &refinement);
+  void FinishRemesh(MeshRefinement &refinement);
+  DvceArray5D<Real> &RemeshNominal();
+  DvceArray5D<Real> &RemeshCoarse();
   void FormResidual();
   void EnforceAlgebraicConstraints();
   TaskStatus CopyU(Driver *driver, int stage);
@@ -117,8 +123,12 @@ class Z4cHyperboloidal {
   std::unique_ptr<MappedHalo> mapped_halo_;
   std::unique_ptr<SurfaceExchange> surface_exchange_;
   std::unique_ptr<DissipationPlan> dissipation_plan_;
+  std::unique_ptr<RemeshState> remesh_;
   std::array<DvceArray1D<int>,4> rhs_points_;
   void BuildLocalWorkLists();
+  void AllocateStorage();
+  void BuildReferenceCache();
+  void ResetMeshStorage();
 };
 }  // namespace z4c_hyperboloidal
 #endif  // Z4C_HYPERBOLOIDAL_Z4C_HYPERBOLOIDAL_HPP_

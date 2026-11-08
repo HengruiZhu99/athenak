@@ -1,0 +1,43 @@
+{
+  "scope": "Native hyperboloidal field AMR milestone; local CPU MPI validation only",
+  "full_goal_complete": false,
+  "ordinary_adaptive_input_enabled": true,
+  "final_executable_sha256": "684acd97778d8a5f1d8d5b2786bc58077fb45d15a4d353e92c550be8ce8b8fa6",
+  "final_source_manifest": "native-amr-final-source-manifest.json",
+  "pre_admission_module_sha256": "d3e9a750a8ca0755965eb5c05c6684f3e7f2b200fe6b0b839de1815d6a50c4ac",
+  "final_module_sha256": "e5b2790cc94fa0788b1df747e0c6763729c87b6f6c7573e1d9cb51e510f9e8ce",
+  "only_runtime_change_after_operator_coupled_fixed_trajectory_tests": "native-amr-admission.patch removes the three-line constructor rejection; no arithmetic changes. Final ordinary executable validates adaptive restart and the lifecycle smoke suite.",
+  "passed_evidence": [
+    "native-amr-transfer.json",
+    "native-amr-evolution.json",
+    "native-amr-restart.json",
+    "native-amr-restart-provenance.json",
+    "native-amr-bulk-rows.json",
+    "native-amr-criteria-two.json",
+    "native-amr-criteria-eight.json",
+    "native-amr-cartesian-regression.json",
+    "native-amr-lifecycle-smoke.json",
+    "native-amr-ctest.log",
+    "native-amr-admission-build.log",
+    "native-amr-fixed-trajectory-two.json",
+    "native-amr-fixed-trajectory-eight.json",
+    "native-amr-fixed-trajectory-cross-rank.json"
+  ],
+  "surface_evidence": "native-surface-remesh-validation.json",
+  "surface_original_coarse_rate_gate_passed": false,
+  "surface_revised_admission": "amr-interpolation-review.md; unchanged numerical method, finite-N analytic bounds and actual asymptotic rates plus transport/history checks",
+  "known_limits": [
+    "Four-cycle AMR consistency is not coupled convergence or long-time accuracy; max post-coarsening clock RHS diagnostic 4.095e-4.",
+    "Raw transfer rejects nonpositive chi/lapse or invalid metric; no silent interpolation floor.",
+    "No native Aurora/GPU AMR or N12-through-5M result yet.",
+    "Diagnostics/FastFlow, full N12 Aurora reproduction and performance/scaling remain."
+  ],
+  "verified_pre_to_final_source_changes": [
+    "src/z4c_hyperboloidal/z4c_hyperboloidal.cpp"
+  ],
+  "verified_pre_to_final_object_changes": [
+    "src/CMakeFiles/athena.dir/z4c_hyperboloidal/z4c_hyperboloidal.cpp.o"
+  ],
+  "unchanged_native_objects": 194,
+  "fixed_trajectory_runner_note": "The reuse guard was corrected between the two runs to normalize tuple pairs into JSON lists. No C++ test/runtime code, input, legacy headers or executable changed. Both full-run reports preserve their actual runner hashes; cross-rank snapshot comparison is bytewise."
+}

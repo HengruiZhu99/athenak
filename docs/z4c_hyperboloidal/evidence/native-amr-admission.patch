@@ -1,0 +1,12 @@
+--- a/src/z4c_hyperboloidal/z4c_hyperboloidal.cpp
++++ b/src/z4c_hyperboloidal/z4c_hyperboloidal.cpp
+@@ -34,9 +34,6 @@
+   if (evolution!="static") {
+     if (evolution!="dynamic") {
+       throw std::invalid_argument("Hyperboloidal evolution requires static or dynamic mode");
+-    }
+-    if (pm->adaptive) {
+-      throw std::runtime_error("Hyperboloidal AMR state transfer is not yet integrated");
+     }
+     if (pin->GetOrAddString("time","integrator","rk4_classical")!="rk4_classical") {
+       throw std::invalid_argument("Hyperboloidal evolution requires rk4_classical");

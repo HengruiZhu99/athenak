@@ -1,0 +1,306 @@
+{
+  "scope": "local CPU MPI surface transfer only; coupled native AMR tested separately",
+  "original_gate_passed": false,
+  "revised_admission_passed": true,
+  "scientific_review": "docs/z4c_hyperboloidal/amr-interpolation-review.md",
+  "original_failure": "build-native/surface-remesh-two/results.json",
+  "diagnostic_coverage_failure": "build-native/surface-remesh-diagnostic-two/results.json",
+  "independent_prediction": {
+    "precision_decimal_digits": 60,
+    "waveform": "sin(5.1u)*cos(4.7v)",
+    "method": "independent Decimal sine/cosine Taylor series, rational Lagrange weights",
+    "bound": "Bu + Lu*Bv; Ba=omega_a^6/6!*product_i abs(x-x_i)",
+    "results": [
+      {
+        "n": 12,
+        "error": "0.012808303263232431315126215317996715145003192606334970546859",
+        "remainder_bound": "0.144111581092124180140073407334064750514403292181069958847734",
+        "error_over_bound": "0.0888776819056939479195216329939810603887528031273295565939039"
+      },
+      {
+        "n": 24,
+        "error": "0.000288663785435706961103709428883682073334171454293059912559",
+        "remainder_bound": "0.00225174345456444031468864698959476172678755144032921810699675",
+        "error_over_bound": "0.128195680929177534368584015376026937087493350033944086161152",
+        "order_from_previous": 5.471545437578025
+      },
+      {
+        "n": 48,
+        "error": "0.000006176695831884624296069813162074932172189752913413989851",
+        "remainder_bound": "0.0000351834914775693799170101092124181519810554912551440329218079",
+        "error_over_bound": "0.175556648089416275596373450138314289261425894377849185128961",
+        "order_from_previous": 5.546411026462575
+      },
+      {
+        "n": 96,
+        "error": "9.8101617953904086917405451737509630677872876609342505E-8",
+        "remainder_bound": "5.49742054337021561203282956444033624703992050861625514404140E-7",
+        "error_over_bound": "0.178450269867406757223533902973346323146616393792206103481316",
+        "order_from_previous": 5.976414546982533
+      },
+      {
+        "n": 192,
+        "error": "1.496692142089953564027339749726576332081771706296633E-9",
+        "remainder_bound": "8.58971959901596189380129619443802538599987579471289866254876E-9",
+        "error_over_bound": "0.174242258415678037501769990989289483824909039658624954581259",
+        "order_from_previous": 6.034427524582071
+      }
+    ]
+  },
+  "two_ranks": {
+    "exit_code": 0,
+    "local_mpi_ranks": 2,
+    "native_build": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native",
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/surface-remesh-reviewed-two/surface_remesh",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/n12_initialize.athinput",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/surface_smr.athinput",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/surface_remesh_migration.athinput",
+      "--reviewed-admission"
+    ],
+    "diagnostic_mode": false,
+    "reviewed_admission_mode": true,
+    "finite_remainder_gate": "pointwise Bu+Lu*Bv plus fixed roundoff allowance at N12/24/48/96/192",
+    "polynomial_gate": "2048*epsilon*max(1,row_L1)",
+    "smooth_gate": "order >= 5.5 at both N12->24 and N24->48",
+    "history_gate": "all8 members bitwise; unique old packets; exact global ledger",
+    "executable_sha256": "4d44228db242678e54ea5e853c68d12928462b7ef340eb8785edcf0e22e666da",
+    "harness_object_sha256": "99f6f58d3d0e55abcd58b94a65dc472f15ad5322ba11f49f219842a25d627f7e",
+    "source_manifest_sha256": "72e0adcd2fcf7ee8bb616160b9f4e81c45b4c99fe46242a92d2d2001eb8c1693",
+    "object_manifest_sha256": "bf7773e2dae00764456b5d8ace851d2a382cacbdad07bfa4e6c676d4f74896b1",
+    "sources_unchanged": true,
+    "objects_unchanged": true,
+    "cases": {
+      "refine": {
+        "unchanged_values": 22320,
+        "changed_values": 17856,
+        "migrated_unchanged_points": 0,
+        "failures": 0,
+        "remote_donors": 0,
+        "max_scaled_error": 0.00044010427262167483,
+        "zero_old_face_ranks": 0,
+        "zero_new_face_ranks": 0,
+        "polynomial_checks": 20736,
+        "max_roundoff_ratio": 0.000768256021319104,
+        "smooth_errors": [
+          0.012808303263232956,
+          0.00028866378543801474,
+          6.176695832915691e-06,
+          9.810161860634992e-08,
+          1.4966922146086858e-09
+        ],
+        "convergence_orders": [
+          5.471545437566551,
+          5.546411026233282,
+          5.976414537628408,
+          6.034427464274597
+        ],
+        "remainder_bounds": [
+          0.14411158109212477,
+          0.0022517434545644443,
+          3.51834914775699e-05,
+          5.497420543370251e-07,
+          8.589719599016465e-09
+        ],
+        "max_pointwise_remainder_ratios": [
+          0.7960347920205468,
+          0.8712420053032317,
+          0.8925626671632454,
+          0.8989974744769053,
+          0.8955354554079625
+        ]
+      },
+      "coarsen": {
+        "unchanged_values": 22320,
+        "changed_values": 4464,
+        "migrated_unchanged_points": 0,
+        "failures": 0,
+        "remote_donors": 0,
+        "max_scaled_error": 0.0005049867440979675,
+        "zero_old_face_ranks": 0,
+        "zero_new_face_ranks": 0,
+        "polynomial_checks": 5184,
+        "max_roundoff_ratio": 0.0003787400580734756,
+        "smooth_errors": [
+          0.00011312920717687636,
+          2.7788120136040817e-06,
+          4.58813689263593e-08,
+          7.109383082237741e-10,
+          1.0963119301266033e-11
+        ],
+        "convergence_orders": [
+          5.347359395899727,
+          5.9204159928633135,
+          6.012040251127366,
+          6.01899412797747
+        ],
+        "remainder_bounds": [
+          0.000342369126859218,
+          5.349517607175256e-06,
+          8.358621261211457e-08,
+          1.306034572064267e-09,
+          2.0406790188505336e-11
+        ],
+        "max_pointwise_remainder_ratios": [
+          0.7521955981650835,
+          0.8468910868804104,
+          0.8655594197369826,
+          0.8658508249678157,
+          0.6818445426177262
+        ]
+      },
+      "migration": {
+        "unchanged_values": 26784,
+        "changed_values": 0,
+        "migrated_unchanged_points": 144,
+        "failures": 0,
+        "remote_donors": 144,
+        "max_scaled_error": 0.0,
+        "zero_old_face_ranks": 0,
+        "zero_new_face_ranks": 1
+      }
+    },
+    "required_cases_present": true,
+    "required_convergence_present": true,
+    "transport_gates_passed": true,
+    "polynomial_and_remainder_gates_passed": true,
+    "original_convergence_gate_passed": false,
+    "diagnostic_completed": false,
+    "original_gate_passed": false,
+    "asymptotic_rate_gate_passed": true,
+    "revised_admission_passed": true
+  },
+  "eight_ranks": {
+    "exit_code": 0,
+    "local_mpi_ranks": 8,
+    "native_build": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native",
+    "command": [
+      "mpiexec",
+      "-n",
+      "8",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/surface-remesh-reviewed-two/surface_remesh",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/n12_initialize.athinput",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/surface_smr.athinput",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/surface_remesh_migration.athinput",
+      "--reviewed-admission"
+    ],
+    "diagnostic_mode": false,
+    "reviewed_admission_mode": true,
+    "finite_remainder_gate": "pointwise Bu+Lu*Bv plus fixed roundoff allowance at N12/24/48/96/192",
+    "polynomial_gate": "2048*epsilon*max(1,row_L1)",
+    "smooth_gate": "order >= 5.5 at both N12->24 and N24->48",
+    "history_gate": "all8 members bitwise; unique old packets; exact global ledger",
+    "executable_sha256": "4d44228db242678e54ea5e853c68d12928462b7ef340eb8785edcf0e22e666da",
+    "harness_object_sha256": "99f6f58d3d0e55abcd58b94a65dc472f15ad5322ba11f49f219842a25d627f7e",
+    "source_manifest_sha256": "72e0adcd2fcf7ee8bb616160b9f4e81c45b4c99fe46242a92d2d2001eb8c1693",
+    "object_manifest_sha256": "bf7773e2dae00764456b5d8ace851d2a382cacbdad07bfa4e6c676d4f74896b1",
+    "sources_unchanged": true,
+    "objects_unchanged": true,
+    "cases": {
+      "refine": {
+        "unchanged_values": 22320,
+        "changed_values": 17856,
+        "migrated_unchanged_points": 0,
+        "failures": 0,
+        "remote_donors": 0,
+        "max_scaled_error": 0.00044010427262167483,
+        "zero_old_face_ranks": 3,
+        "zero_new_face_ranks": 3,
+        "polynomial_checks": 20736,
+        "max_roundoff_ratio": 0.000768256021319104,
+        "smooth_errors": [
+          0.012808303263232956,
+          0.00028866378543801474,
+          6.176695832915691e-06,
+          9.810161860634992e-08,
+          1.4966922146086858e-09
+        ],
+        "convergence_orders": [
+          5.471545437566551,
+          5.546411026233282,
+          5.976414537628408,
+          6.034427464274597
+        ],
+        "remainder_bounds": [
+          0.14411158109212477,
+          0.0022517434545644443,
+          3.51834914775699e-05,
+          5.497420543370251e-07,
+          8.589719599016465e-09
+        ],
+        "max_pointwise_remainder_ratios": [
+          0.7960347920205468,
+          0.8712420053032317,
+          0.8925626671632454,
+          0.8989974744769053,
+          0.8955354554079625
+        ]
+      },
+      "coarsen": {
+        "unchanged_values": 22320,
+        "changed_values": 4464,
+        "migrated_unchanged_points": 0,
+        "failures": 0,
+        "remote_donors": 0,
+        "max_scaled_error": 0.0005049867440979675,
+        "zero_old_face_ranks": 3,
+        "zero_new_face_ranks": 3,
+        "polynomial_checks": 5184,
+        "max_roundoff_ratio": 0.0003787400580734756,
+        "smooth_errors": [
+          0.00011312920717687636,
+          2.7788120136040817e-06,
+          4.58813689263593e-08,
+          7.109383082237741e-10,
+          1.0963119301266033e-11
+        ],
+        "convergence_orders": [
+          5.347359395899727,
+          5.9204159928633135,
+          6.012040251127366,
+          6.01899412797747
+        ],
+        "remainder_bounds": [
+          0.000342369126859218,
+          5.349517607175256e-06,
+          8.358621261211457e-08,
+          1.306034572064267e-09,
+          2.0406790188505336e-11
+        ],
+        "max_pointwise_remainder_ratios": [
+          0.7521955981650835,
+          0.8468910868804104,
+          0.8655594197369826,
+          0.8658508249678157,
+          0.6818445426177262
+        ]
+      },
+      "migration": {
+        "unchanged_values": 26784,
+        "changed_values": 0,
+        "migrated_unchanged_points": 576,
+        "failures": 0,
+        "remote_donors": 576,
+        "max_scaled_error": 0.0,
+        "zero_old_face_ranks": 3,
+        "zero_new_face_ranks": 6
+      }
+    },
+    "required_cases_present": true,
+    "required_convergence_present": true,
+    "transport_gates_passed": true,
+    "polynomial_and_remainder_gates_passed": true,
+    "original_convergence_gate_passed": false,
+    "diagnostic_completed": false,
+    "original_gate_passed": false,
+    "asymptotic_rate_gate_passed": true,
+    "revised_admission_passed": true
+  },
+  "provenance_directories": [
+    "build-native/surface-remesh-reviewed-two",
+    "build-native/surface-remesh-reviewed-eight"
+  ]
+}

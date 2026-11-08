@@ -1,0 +1,137 @@
+{
+  "passed": true,
+  "scope": "native field AMR transfer, local CPU MPI",
+  "coupled_evolution_validated": false,
+  "runs": {
+    "2": {
+      "command": [
+        "mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-lifecycle-v3/amr_lifecycle",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/n12_initialize.athinput"
+      ],
+      "phases": [
+        {
+          "phase": 0,
+          "blocks": 106,
+          "bulk_points": 229392,
+          "scri_points": 864,
+          "polynomial_checks": 0,
+          "zero_scri_ranks": 0,
+          "max_polynomial_error": 0,
+          "compatibility": 0,
+          "canonical": {
+            "points": 230256,
+            "values": 8979984,
+            "sha256": "f960d8ea82a963d5d9a4e2286481eea9eae94477b252196b641c4ef9f1eb77bb"
+          }
+        },
+        {
+          "phase": 1,
+          "blocks": 127,
+          "bulk_points": 277236,
+          "scri_points": 1296,
+          "polynomial_checks": 40428,
+          "zero_scri_ranks": 0,
+          "max_polynomial_error": 1.3010426069826053e-17,
+          "compatibility": 0,
+          "canonical": {
+            "points": 278532,
+            "values": 10862748,
+            "sha256": "814f10d9f16deecaa13c707839cdd4685d8681f04266982468fe177b2464268a"
+          },
+          "unchanged_leaves": 103,
+          "unchanged_migrated_leaves": 7,
+          "unchanged_values": 8585811
+        },
+        {
+          "phase": 2,
+          "blocks": 106,
+          "bulk_points": 229392,
+          "scri_points": 864,
+          "polynomial_checks": 3816,
+          "zero_scri_ranks": 0,
+          "max_polynomial_error": 9.107298248878237e-18,
+          "compatibility": 0,
+          "canonical": {
+            "points": 230256,
+            "values": 8979984,
+            "sha256": "f708925d4739c02fb446910fb8f1cb72a8a52d49eed628f597fd4791c6f7059b"
+          },
+          "unchanged_leaves": 103,
+          "unchanged_migrated_leaves": 7,
+          "unchanged_values": 8585811
+        }
+      ]
+    },
+    "8": {
+      "command": [
+        "mpiexec",
+        "-n",
+        "8",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-lifecycle-v3/amr_lifecycle",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/n12_initialize.athinput"
+      ],
+      "phases": [
+        {
+          "phase": 0,
+          "blocks": 106,
+          "bulk_points": 229392,
+          "scri_points": 864,
+          "polynomial_checks": 0,
+          "zero_scri_ranks": 3,
+          "max_polynomial_error": 0,
+          "compatibility": 0,
+          "canonical": {
+            "points": 230256,
+            "values": 8979984,
+            "sha256": "f960d8ea82a963d5d9a4e2286481eea9eae94477b252196b641c4ef9f1eb77bb"
+          }
+        },
+        {
+          "phase": 1,
+          "blocks": 127,
+          "bulk_points": 277236,
+          "scri_points": 1296,
+          "polynomial_checks": 40428,
+          "zero_scri_ranks": 3,
+          "max_polynomial_error": 1.3010426069826053e-17,
+          "compatibility": 0,
+          "canonical": {
+            "points": 278532,
+            "values": 10862748,
+            "sha256": "814f10d9f16deecaa13c707839cdd4685d8681f04266982468fe177b2464268a"
+          },
+          "unchanged_leaves": 103,
+          "unchanged_migrated_leaves": 30,
+          "unchanged_values": 8585811
+        },
+        {
+          "phase": 2,
+          "blocks": 106,
+          "bulk_points": 229392,
+          "scri_points": 864,
+          "polynomial_checks": 3816,
+          "zero_scri_ranks": 3,
+          "max_polynomial_error": 9.107298248878237e-18,
+          "compatibility": 0,
+          "canonical": {
+            "points": 230256,
+            "values": 8979984,
+            "sha256": "f708925d4739c02fb446910fb8f1cb72a8a52d49eed628f597fd4791c6f7059b"
+          },
+          "unchanged_leaves": 103,
+          "unchanged_migrated_leaves": 30,
+          "unchanged_values": 8585811
+        }
+      ]
+    }
+  },
+  "cross_rank_complete_state_exact": true,
+  "executable_sha256": "df755dbf4d8ab3a628a6e7048bd0a67ff159ecae002dd8690d9ebd62124d3bc1",
+  "provenance": {
+    "sources_unchanged": true,
+    "objects_unchanged": true
+  }
+}
