@@ -26,7 +26,7 @@
     {
       "id": "new_native_physics_module",
       "status": "partial",
-      "evidence_or_next_gate": "Native fixed/adaptive evolution, restart, read-only constraints and sparse existing-FastFlow integration are implemented. Required24/96 GPU short/stage/poison/observer checks pass; native24 fresh evolution through356 now passes complete reference science and independent review. Full3551 remains unproven. The fixed-step AMR admission patch has coherent CPU build/endpoint/lifecycle evidence in a separate source tree; it is not merged or GPU-qualified."
+      "evidence_or_next_gate": "Native fixed/adaptive evolution, restart, read-only constraints and sparse existing-FastFlow integration are implemented. Required24/96 GPU short/stage/poison/observer checks pass; native24 fresh evolution through356 now passes complete reference science and independent review. Full3551 remains unproven. The fixed-step AMR admission patch has coherent CPU build/endpoint/lifecycle evidence and a completed separate Aurora SYCL build; it remains isolated and has no actual GPU numerical qualification."
     },
     {
       "id": "block_locality",
@@ -46,7 +46,7 @@
     {
       "id": "amr_support",
       "status": "partial",
-      "evidence_or_next_gate": "Native CC core transfer, mapped shell/overlap/scri transfer, atomic chi histories, current accepted halos/criteria and plan rebinding pass local regrid/evolution/restart consistency tests. The missing fixed-step characteristic admission is addressed by an isolated reviewed patch. Prior speed/rejection and2-to8 restart tests remain mixed-object prototype evidence. A coherent separate CMake candidate now matches all198 native compile recipes/link policy and preserves original main source, with no baseline objects linked. Actual dt=.0002 four-cycle106-to113 evolution matches all26336232 padded31+8 endpoint scalars; manufactured106-to127-to106 lifecycle/diagnostics and12 metadata controls pass. Runtime integration, coherent GPU build and seven actual24/96-rank transfer/evolution/restart launches remain. Old .47678-CFL consistency results remain explicitly separate."
+      "evidence_or_next_gate": "Native CC core transfer, mapped shell/overlap/scri transfer, atomic chi histories, current accepted halos/criteria and plan rebinding pass local regrid/evolution/restart consistency tests. The missing fixed-step characteristic admission is addressed by an isolated reviewed patch. Prior speed/rejection and2-to8 restart tests remain mixed-object prototype evidence. A coherent separate CMake candidate now matches all198 native compile recipes/link policy and preserves original main source, with no baseline objects linked. Actual dt=.0002 four-cycle106-to113 evolution matches all26336232 padded31+8 endpoint scalars; manufactured106-to127-to106 lifecycle/diagnostics and12 metadata controls pass. The coherent Aurora SYCL candidate and both helpers now build successfully with all 198 native compile recipes and normalized link policy matched; 1972 frozen baseline source files and 228 objects remain unchanged. The reviewed patch remains isolated. Runtime integration and seven actual 24/96-rank transfer/evolution/restart launches remain; compilation does not establish GPU correctness. Old .47678-CFL consistency results remain explicitly separate."
     },
     {
       "id": "numerical_fidelity",
@@ -61,7 +61,7 @@
     {
       "id": "n12_aurora_through_5m",
       "status": "incomplete",
-      "evidence_or_next_gate": "Target remains3551 complete steps, t/M=5.0009660239551499, dt=0.00046944203735617445. Fresh original-Driver job9051541 completed356 steps (0.50136409589639774M) at24ranks. Complete fields, available chi aggregates, eight RMS histories, horizon, all1424 stage clocks/CFL and structural/provenance gates passed independent review. All3888 floor events/eight distinct cells match historical aggregate counts. Segment356-to711 job9051587 is queued after exact predecessor/science/review and fresh runtime/resource preflight. Nine later common-time endpoints and full5M remain unverified."
+      "evidence_or_next_gate": "Target remains3551 complete steps, t/M=5.0009660239551499, dt=0.00046944203735617445. Fresh original-Driver job9051541 completed356 steps (0.50136409589639774M) at24ranks. Complete fields, available chi aggregates, eight RMS histories, horizon, all1424 stage clocks/CFL and structural/provenance gates passed independent review. All3888 floor events/eight distinct cells match historical aggregate counts. Segment356-to711 job9051587 is running after exact predecessor/science/review and fresh runtime/resource preflight. Nine later common-time endpoints and full5M remain unverified."
     },
     {
       "id": "diagnostics_and_constraints",
@@ -81,7 +81,7 @@
     {
       "id": "reuse_and_consistent_style",
       "status": "partial",
-      "evidence_or_next_gate": "Original Driver/NR TaskList/tree/load balance/MPI-IO/history outputs/FastFlow retained. Native AMR reuses registered cell-centered transport; mapped transport/sampling handles data outside existing geometry/indexing contracts. Suitable same-chart Bvals reuse and GPU validation remain."
+      "evidence_or_next_gate": "Original Driver/NR TaskList/tree/load balance/MPI-IO/history outputs/FastFlow retained. Native AMR reuses registered cell-centered transport; mapped transport/sampling handles data outside existing geometry/indexing contracts. Suitable same-chart Bvals reuse and GPU validation remain. A metadata-only CPU two-rank audit identifies 76032/481248 exact single-donor unit-weight same-chart/layer/level native-neighbor rows (15.799%), all Cartesian, with public exchange counts verified. Offline projection onto observed 24/96 owners gives 6.713%/8.720% removable sparse payload after shared-donor accounting; full 62-field native slabs would raise combined bytes by 5.055%/3.352%. This is CPU host-plan routing evidence only, excludes surface exchange, and implements no transport or performance improvement. See native-bvals-reuse-audit.md and evidence/native-bvals-route-cpu-audit.json."
     }
   ]
 }

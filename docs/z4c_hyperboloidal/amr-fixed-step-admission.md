@@ -1,7 +1,9 @@
 # Fixed-step AMR admission candidate
 
 This is an isolated, reviewed source overlay. It has not been merged into the
-native runtime, and it has no GPU validation. The frozen N12 source, objects,
+native runtime, and it has no GPU execution validation. Its coherent ordinary
+executable and both AMR helpers have compiled successfully with the actual
+Aurora SYCL toolchain in separate source/build directories. The frozen N12 source, objects,
 executable and prior unsafe-dt consistency evidence remain unchanged.
 
 The available predecessor AMR driver checks a fixed requested step at fresh
@@ -79,6 +81,12 @@ a separate two-rank manufactured-state lifecycle preflight passed refinement,
 coarsening and diagnostic freshness at the safe dt. The earlier
 two-to-eight-rank restart evidence remains prototype evidence. Actual GPU
 coherent transfer/evolution/restart qualification is still required.
+
+The actual Aurora build is recorded in
+`evidence/native-amr-coherent-aurora-build.json`: all198 native translation-unit
+recipes and the full link policy matched the baseline, and its source/objects
+were verified unchanged after every build. This is compilation/provenance
+evidence only; the seven dt=.0002 GPU validation launches remain unexecuted.
 
 Review patch: [native-amr-fixed-step-candidate.patch](evidence/native-amr-fixed-step-candidate.patch),
 a byte-identical retained copy of `build-native/amr-admission-clean-v1/production.patch`

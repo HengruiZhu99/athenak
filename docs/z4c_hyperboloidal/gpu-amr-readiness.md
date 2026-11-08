@@ -61,8 +61,9 @@ old-timestep input must fail candidate admission. Portable tools never submit.
 Local preparation evidence is in `build-native/amr-admission-coherent-local-v1`
 and the separate candidate parser/control directories. This is CPU evidence
 only. The earlier offline2/8 controls and larger-dt consistency results remain
-untouched. Actual coherent GPU build, both decompositions' transfer/coupled
-runs, and repartitioned ordinary restart remain outstanding. Neither these
+untouched. The isolated coherent SYCL build and both helper builds have now
+passed on Aurora. Both decompositions' transfer/coupled runs and repartitioned
+ordinary restart remain outstanding. Neither these
 bounded tests nor their CPU equivalents establish adaptive convergence,
 long-time stability, independent-solution agreement or performance.
 
@@ -73,3 +74,14 @@ The peer-reviewed local build audit binds compile/link recipe files and their
 exact normalized policy. The targeted coherent ordinary endpoint and
 manufactured lifecycle checks passed;12 provenance controls passed. Durable
 scope and hashes: `evidence/native-amr-coherent-candidate-preparation.json`.
+
+Actual Aurora build evidence is separate:
+`evidence/native-amr-coherent-aurora-build.json`. The ordinary executable is
+`442594b847ff0eb56407513da48e96930ec41dbe537a69c202fd802da4ea6a31`;
+it is not the frozen N12 executable. All198 native compile recipes and link
+flags/library order match the baseline after path relocation. Compiler-version
+and MPI-wrapper records match bytewise. All1972 baseline source files and228
+objects passed checks before and after the three builds. The exact reviewed
+patch remains isolated. All68 compact downloaded evidence files passed hash and
+size verification; native objects/executables remain on Aurora. No candidate GPU
+allocation, field transport, evolution, or restart run has been performed.

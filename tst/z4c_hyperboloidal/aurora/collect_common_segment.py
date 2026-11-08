@@ -38,6 +38,24 @@ def main(args):
     out.mkdir(exist_ok=False);(out/'job-final.txt').write_text(status)
     files=[p for p in case.rglob('*') if p.is_file() and 'cache' not in p.relative_to(case).parts]
     files += [p for p in (ROOT/'validation/full-n12').rglob('*') if p.is_file() and '__pycache__' not in p.parts]
+    predecessor_proof = None
+    if args.segment > 1:
+        proof_directory = ROOT/f'validation/common-next-{args.segment:02d}'
+        acceptance = json.loads((proof_directory/'acceptance.json').read_text())
+        assert acceptance['segment'] == args.segment
+        predecessor = ROOT/f'runs/native-n12-common-{args.segment-1:02d}'
+        science = predecessor/'continuation-admission.json'
+        review = Path(acceptance['independent_review']['path'])
+        assert sha(science) == acceptance['science_admission_sha256']
+        assert sha(review) == acceptance['independent_review']['sha256']
+        checkpoint = predecessor/'rst'/f'native_n12_5M.{args.segment-1:05d}.rst'
+        assert sha(checkpoint) == acceptance['checkpoint_sha256']
+        files += [p for p in proof_directory.rglob('*')
+                  if p.is_file() and '__pycache__' not in p.parts]
+        files += [science, review]
+        predecessor_proof = dict(science_sha256=sha(science),review_sha256=sha(review),
+            checkpoint_sha256=acceptance['checkpoint_sha256'],
+            proof_directory=str(proof_directory))
     files += [ROOT/p for p in ['build-sycl/runtime-object-sha256.json','build-sycl/source-sha256.json',
         'source/source-revision.json','validation/step-observer/build/provenance.json',
         'validation/step-observer/native_step_observer.py','validation/step-observer/native_step_observer.hpp',
@@ -54,6 +72,7 @@ def main(args):
         archive=str(archive),archive_bytes=archive.stat().st_size,sha256=sha(archive),files=len(files),
         total_uncompressed_bytes=sum(x['size'] for x in manifest.values()),
         created_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        predecessor_proof=predecessor_proof,
         endpoint_scientific_comparison_pending=True,continuation_admitted=False)
     (out/'package.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report,indent=2))
 

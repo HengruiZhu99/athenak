@@ -1,0 +1,166 @@
+{
+  "schema": "native-amr-coherent-aurora-build-milestone-v1",
+  "passed": true,
+  "actual_SYCL_build": true,
+  "gpu_executed": false,
+  "gpu_submitted": false,
+  "fixed_dt": 0.0002,
+  "scope": "isolated coherent compilation and provenance only; no adaptive GPU field/evolution/restart admission",
+  "remote_directory": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/amr-admission-candidate-v1",
+  "source_overlay": {
+    "production_patch_sha256": "9f411610ee3246f39a25be3e9f19598186da8c28bdeb90c8f53bc57489ebc2d7",
+    "changed_sources": [
+      "src/driver/driver.cpp",
+      "src/mesh/mesh_refinement.cpp",
+      "src/z4c_hyperboloidal/fixed_step_admission.hpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal.hpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_lifecycle.cpp"
+    ],
+    "baseline_source_written": false,
+    "physical_source_copy": true
+  },
+  "baseline": {
+    "executable_sha256": "f3a85db7528986ddec347b31675a8c5d588120a2380133aed73d5967f7aab05c",
+    "source_files": 1972,
+    "objects": 228,
+    "unchanged_before_and_after_each_build": true
+  },
+  "candidate": {
+    "executable_sha256": "442594b847ff0eb56407513da48e96930ec41dbe537a69c202fd802da4ea6a31",
+    "native_translation_units": 198,
+    "compile_recipes_match": true,
+    "normalized_link_policy_matches": true,
+    "original_main_source_unchanged": true,
+    "baseline_objects_linked": false
+  },
+  "helper_executable_sha256": {
+    "lifecycle": "6e9f5ae7cba71f160e0c83012875da69d67a874a1548863f407b9bf44fa63b3b",
+    "evolution": "752357a16cefa1cfc03f89b1337de6dd896542b62f54e81400d11a2bf5a726b7"
+  },
+  "executables_retained_on_aurora": {
+    "candidate": {
+      "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/amr-admission-candidate-v1/coherent/build/src/athena",
+      "sha256": "442594b847ff0eb56407513da48e96930ec41dbe537a69c202fd802da4ea6a31",
+      "size": 160018128
+    },
+    "lifecycle": {
+      "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/amr-admission-candidate-v1/lifecycle-build/amr_lifecycle",
+      "sha256": "6e9f5ae7cba71f160e0c83012875da69d67a874a1548863f407b9bf44fa63b3b",
+      "size": 160768248
+    },
+    "evolution": {
+      "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/amr-admission-candidate-v1/evolution-build/amr_evolution",
+      "sha256": "752357a16cefa1cfc03f89b1337de6dd896542b62f54e81400d11a2bf5a726b7",
+      "size": 160789032
+    }
+  },
+  "toolchain": {
+    "compiler.txt": {
+      "baseline_exists": true,
+      "candidate_sha256": "6f41d08dd542e36e2f41b7b105da56d84c00bd6eb99a7c324ef8ef06635cbe26",
+      "baseline_sha256": "6f41d08dd542e36e2f41b7b105da56d84c00bd6eb99a7c324ef8ef06635cbe26",
+      "byte_exact": true
+    },
+    "mpi-wrapper.txt": {
+      "baseline_exists": true,
+      "candidate_sha256": "35ee2ba9df330d781abc430dd144e1728a49ceb7215380336a8682af0ed5a88d",
+      "baseline_sha256": "35ee2ba9df330d781abc430dd144e1728a49ceb7215380336a8682af0ed5a88d",
+      "byte_exact": true
+    }
+  },
+  "build_exit_codes": {
+    "coherent": 0,
+    "lifecycle": 0,
+    "evolution": 0
+  },
+  "actual_SYCL_offline_binding_passed": true,
+  "transfer": {
+    "archive_sha256": "9318364a25e7736723860764731e51e821189beb1ef574f0b2a4f128c04a4c0c",
+    "archive_bytes": 533364,
+    "files_verified": 68,
+    "all_hashes_sizes_exact": true
+  },
+  "evidence": {
+    "build-native/aurora-amr-candidate-build-v1/transfer-verification.json": "f0029b514dfc405dc0ff8fc6f61d639879a5a5877fde0ad3444c6a32cdf6fc96",
+    "build-native/aurora-amr-candidate-build-v1/artifacts/artifact-manifest.json": "aa0a9fa78d64959c640c7044c3a621b50391c4d58e3595c8d26bb7394b9257ed",
+    "build-native/aurora-amr-candidate-build-v1/artifacts/coherent/provenance.json": "f4941ccd95ebee95aac62842aa6e06266872b65621a80f43e8ad5ae4532eb340",
+    "build-native/aurora-amr-candidate-build-v1/artifacts/lifecycle-build/provenance.json": "eef0147368a391a8dd6ffbf5ca4f0675c2220b380ed0dc3b9b01b841afcc0b48",
+    "build-native/aurora-amr-candidate-build-v1/artifacts/evolution-build/provenance.json": "60f47f95808bf2fe6e6a1f1b3894c35507558df8efb18c7fd47e8fcc044d2aba",
+    "build-native/aurora-amr-candidate-build-v1/artifacts/coherent/build/compile_commands.json": "cd8ba1ebf8650b4a7c1977bb6d4bbfa80ef0085a57b9781b9608bc2a3d091d99",
+    "build-native/aurora-amr-candidate-build-v1/artifacts/coherent/build/src/CMakeFiles/athena.dir/link.txt": "9b4480577f4b4d0e7aed5d31320d9716d920aae58e518acb1c37871903805071",
+    "build-native/aurora-amr-candidate-build-v1/artifacts/stage-verification.json": "636e2b9beb63f9dca16442f6a2bd3a38950906daf26f7d4a8b767f324e2c69eb",
+    "build-native/aurora-amr-candidate-build-v1/artifacts/build-result.json": "6e64b438534b4777478f0d43c04e43547b4c1fde0d9d0464995702cadd06d21a"
+  },
+  "remaining_seven_launches": [
+    {
+      "label": "lifecycle24",
+      "ranks": 24,
+      "command": [
+        "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/amr-admission-candidate-v1/lifecycle-build/amr_lifecycle",
+        "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/amr-admission-candidate-v1/package/inputs/amr_helper.athinput",
+        "--diagnostics"
+      ]
+    },
+    {
+      "label": "evolution24",
+      "ranks": 24,
+      "command": [
+        "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/amr-admission-candidate-v1/evolution-build/amr_evolution",
+        "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/amr-admission-candidate-v1/package/inputs/amr_helper.athinput"
+      ]
+    },
+    {
+      "label": "lifecycle96",
+      "ranks": 96,
+      "command": [
+        "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/amr-admission-candidate-v1/lifecycle-build/amr_lifecycle",
+        "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/amr-admission-candidate-v1/package/inputs/amr_helper.athinput",
+        "--diagnostics"
+      ]
+    },
+    {
+      "label": "evolution96",
+      "ranks": 96,
+      "command": [
+        "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/amr-admission-candidate-v1/evolution-build/amr_evolution",
+        "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/amr-admission-candidate-v1/package/inputs/amr_helper.athinput"
+      ]
+    },
+    {
+      "label": "prefix",
+      "ranks": 24,
+      "command": [
+        "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/amr-admission-candidate-v1/coherent/build/src/athena",
+        "-i",
+        "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/amr-admission-candidate-v1/package/inputs/amr_restart.athinput",
+        "time/nlim=2"
+      ]
+    },
+    {
+      "label": "continuous",
+      "ranks": 96,
+      "command": [
+        "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/amr-admission-candidate-v1/coherent/build/src/athena",
+        "-i",
+        "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/amr-admission-candidate-v1/package/inputs/amr_restart.athinput"
+      ]
+    },
+    {
+      "label": "resumed",
+      "ranks": 96,
+      "command": [
+        "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/amr-admission-candidate-v1/coherent/build/src/athena",
+        "-r",
+        "<verified-prefix-cycle2-shared-checkpoint>",
+        "time/nlim=4"
+      ]
+    }
+  ],
+  "launch_scope": "future serialized24/96 validation, not submitted by this milestone",
+  "limitations": [
+    "compilation is not GPU numerical qualification",
+    "no candidate GPU execution/performance claim",
+    "frozen N12 baseline and prior evidence unchanged",
+    "patch not integrated into production"
+  ]
+}

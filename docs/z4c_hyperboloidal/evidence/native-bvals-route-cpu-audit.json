@@ -1,0 +1,239 @@
+{
+  "schema": "native-bvals-route-cpu-evidence-v1",
+  "passed": true,
+  "scope": "CPU host-generated plan metadata;24/96 traffic is an offline projection onto previously verified Aurora GID ownership. No field transport, evolution, transport replacement, numerical equivalence or performance claim.",
+  "report": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-bvals-route-projection-v1/results.json",
+  "report_sha256": "00dd59db7556b957478f80f7584b84a7aaeb66ed046cd0d45efbc820654c7178",
+  "build_proof": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-bvals-route-build-v1/provenance.json",
+  "build_proof_sha256": "53d2dc9af6a0e2cd298e31e8aafe928813839f0c13ce5e36d8ac065929f1d2c6",
+  "helper_executable_sha256": "f839171757727f11c9f80cc56eeddac2bc8306144bbc6aa4ce8d25948c4fc78d",
+  "native_executable_sha256": "4ff23f28d83a8ea92b0cdaad55936e269537a936fa3356aeeadb012f43697687",
+  "runtime_sources_objects_executable_unchanged": true,
+  "capture_ranks": 2,
+  "backend": "Serial",
+  "capture_exit_code": 0,
+  "counts": {
+    "total_blocks": 106,
+    "total_rows": 481248,
+    "total_donor_entries": 28349184,
+    "distinct_target_block_donor_pairs": 941090,
+    "exterior_surface_dependencies": 4608,
+    "first_failure_reasons": {
+      "eligible": 76032,
+      "not_single": 362180,
+      "nonunit_weight": 0,
+      "different_chart": 0,
+      "different_layer": 19420,
+      "different_level": 0,
+      "different_node_offset": 0,
+      "not_adjacent": 0,
+      "missing_native_neighbor": 0,
+      "native_neighbor_metadata": 0,
+      "outside_native_receive_box": 23616,
+      "outside_native_send_box": 0,
+      "index_translation": 0
+    },
+    "diagnostic_single_nonunit_near_one": 0
+  },
+  "per_chart": {
+    "0": {
+      "blocks": 34,
+      "rows": 173376,
+      "eligible": 76032
+    },
+    "1": {
+      "blocks": 12,
+      "rows": 51312,
+      "eligible": 0
+    },
+    "2": {
+      "blocks": 12,
+      "rows": 51312,
+      "eligible": 0
+    },
+    "3": {
+      "blocks": 12,
+      "rows": 51312,
+      "eligible": 0
+    },
+    "4": {
+      "blocks": 12,
+      "rows": 51312,
+      "eligible": 0
+    },
+    "5": {
+      "blocks": 12,
+      "rows": 51312,
+      "eligible": 0
+    },
+    "6": {
+      "blocks": 12,
+      "rows": 51312,
+      "eligible": 0
+    }
+  },
+  "actual_two_rank_totals": {
+    "rows": 481248,
+    "unique_donors": 369358,
+    "eligible_remote_rows": 0,
+    "eligible_local_rows": 76032,
+    "remote_native_routes": 0,
+    "remote_slab_points": 0,
+    "remote_slab_noneligible_plan_points": 0,
+    "remote_slab_evolved_points": 0,
+    "remote_slab_unused_points": 0,
+    "mapped_receive_messages_per_stage": 4,
+    "mapped_receive_bytes_per_stage": 75545976,
+    "remaining_sparse_receive_bytes_per_stage": 75545976,
+    "removable_sparse_receive_bytes_per_stage": 0,
+    "native_slab_62_field_bytes_per_stage": 0,
+    "native_slab_hypothetical_57_field_bytes_per_stage": 0,
+    "remote_donors": {
+      "unique": 165671,
+      "eligible_exclusive": 0,
+      "shared": 0,
+      "remaining_only": 165671
+    },
+    "reasons": {
+      "eligible": 76032,
+      "not_single": 362180,
+      "nonunit_weight": 0,
+      "different_chart": 0,
+      "different_layer": 19420,
+      "different_level": 0,
+      "different_node_offset": 0,
+      "not_adjacent": 0,
+      "missing_native_neighbor": 0,
+      "native_neighbor_metadata": 0,
+      "outside_native_receive_box": 23616,
+      "outside_native_send_box": 0,
+      "index_translation": 0
+    },
+    "hypothetical_remaining_sparse_plus_full_native_62_bytes_per_stage": 75545976,
+    "hypothetical_remaining_sparse_plus_full_native_57_bytes_per_stage": 75545976,
+    "maximum_rank_receive_bytes_per_stage": 45676608,
+    "maximum_rank_send_bytes_per_stage": 45676608
+  },
+  "projected_totals": {
+    "24": {
+      "rows": 481248,
+      "unique_donors": 759688,
+      "eligible_remote_rows": 51744,
+      "eligible_local_rows": 24288,
+      "remote_native_routes": 198,
+      "remote_slab_points": 68736,
+      "remote_slab_noneligible_plan_points": 0,
+      "remote_slab_evolved_points": 0,
+      "remote_slab_unused_points": 16992,
+      "mapped_receive_messages_per_stage": 596,
+      "mapped_receive_bytes_per_stage": 289708200,
+      "remaining_sparse_receive_bytes_per_stage": 270259800,
+      "removable_sparse_receive_bytes_per_stage": 19448400,
+      "native_slab_62_field_bytes_per_stage": 34093056,
+      "native_slab_hypothetical_57_field_bytes_per_stage": 31343616,
+      "remote_donors": {
+        "unique": 635325,
+        "eligible_exclusive": 42650,
+        "shared": 3790,
+        "remaining_only": 588885
+      },
+      "reasons": {
+        "eligible": 76032,
+        "not_single": 362180,
+        "nonunit_weight": 0,
+        "different_chart": 0,
+        "different_layer": 19420,
+        "different_level": 0,
+        "different_node_offset": 0,
+        "not_adjacent": 0,
+        "missing_native_neighbor": 0,
+        "native_neighbor_metadata": 0,
+        "outside_native_receive_box": 23616,
+        "outside_native_send_box": 0,
+        "index_translation": 0
+      },
+      "hypothetical_remaining_sparse_plus_full_native_62_bytes_per_stage": 304352856,
+      "hypothetical_remaining_sparse_plus_full_native_57_bytes_per_stage": 301603416,
+      "maximum_rank_receive_bytes_per_stage": 23435208,
+      "maximum_rank_send_bytes_per_stage": 19081320
+    },
+    "96": {
+      "rows": 481248,
+      "unique_donors": 915508,
+      "eligible_remote_rows": 76032,
+      "eligible_local_rows": 0,
+      "remote_native_routes": 264,
+      "remote_slab_points": 96768,
+      "remote_slab_noneligible_plan_points": 0,
+      "remote_slab_evolved_points": 0,
+      "remote_slab_unused_points": 20736,
+      "mapped_receive_messages_per_stage": 2728,
+      "mapped_receive_bytes_per_stage": 397590048,
+      "remaining_sparse_receive_bytes_per_stage": 362919456,
+      "removable_sparse_receive_bytes_per_stage": 34670592,
+      "native_slab_62_field_bytes_per_stage": 47996928,
+      "native_slab_hypothetical_57_field_bytes_per_stage": 44126208,
+      "remote_donors": {
+        "unique": 871908,
+        "eligible_exclusive": 76032,
+        "shared": 0,
+        "remaining_only": 795876
+      },
+      "reasons": {
+        "eligible": 76032,
+        "not_single": 362180,
+        "nonunit_weight": 0,
+        "different_chart": 0,
+        "different_layer": 19420,
+        "different_level": 0,
+        "different_node_offset": 0,
+        "not_adjacent": 0,
+        "missing_native_neighbor": 0,
+        "native_neighbor_metadata": 0,
+        "outside_native_receive_box": 23616,
+        "outside_native_send_box": 0,
+        "index_translation": 0
+      },
+      "hypothetical_remaining_sparse_plus_full_native_62_bytes_per_stage": 410916384,
+      "hypothetical_remaining_sparse_plus_full_native_57_bytes_per_stage": 407045664,
+      "maximum_rank_receive_bytes_per_stage": 17987832,
+      "maximum_rank_send_bytes_per_stage": 9885168
+    }
+  },
+  "public_exchange_unique_send_receive_peer_statistics_match": true,
+  "independent_source_review": {
+    "reviewer": "native_tasks",
+    "cpp_contract": "No blocking defect; exact origin/index boxes and slab intersections checked.",
+    "offline_set_accounting": "No blocking defect; receiving-rank donor union, usage-bit exclusion,57/62 field accounting checked.",
+    "scope": "Read-only source review; no second numerical run."
+  },
+  "notes": [
+    "First-failure buckets are mutually exclusive; near-unit diagnostic does not change eligibility.",
+    "Counts include bulk mapped halos only; surface exchanges remain outside this audit.",
+    "Bytes count payload once via receive totals, per stage; no headers, startup metadata or timing included.",
+    "Full native slabs may include noneligible/unused/evolved cells and are not an implemented replacement.",
+    "Generic CC uses62 fields for the two existing31-slot arrays;57 fields assumes a future compact residual pack.",
+    "Unit-weight coalescing is compiler/host dependent; this CPU capture is not an actual Aurora donor-plan measurement."
+  ],
+  "input_sha256": {
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-bvals-route-build-v1/provenance.json": "53d2dc9af6a0e2cd298e31e8aafe928813839f0c13ce5e36d8ac065929f1d2c6",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-bvals-route-cpu-two-v1/execution.json": "fc18a44b0ff05968caff2d6091c7cb5080b12fc1ad73afc7302e4496a834d02b",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-bvals-route-cpu-two-v1/run.log": "56583f7b97b5dde868977588940d6e84413d998f6a8cc3405a126051eabecd8d",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/n12_initialize.athinput": "3fa18e3f83a466d9ea702c3aec1da9ec369e91a3a6715c14b91ad253f111f62d",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-bvals-route-cpu-two-v1/stats-rank0.json": "06b04723efd915ca8244fae5645b235cdbfd70cb8781012b01b9009e66cb026b",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-bvals-route-cpu-two-v1/blocks-rank0.tsv": "bd5f614e2c6bff08cbab36c80914e798ecdf5aae7cfe9dc1ea3dabf21b0e1c85",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-bvals-route-cpu-two-v1/routes-rank0.tsv": "8bf2a0f072cd9948181a1e96b4c5af5824367e686d462e558799e494096b4e75",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-bvals-route-cpu-two-v1/uses-rank0.bin": "a4e974dce1e300964fcc22783c2502bfa3ac84cbeb040eff21992a5639261a80",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-bvals-route-cpu-two-v1/stats-rank1.json": "3ee1262ac52ff072d236848520c4c2a21f1d33fb048a94e4a3d4c8aeb0f398d1",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-bvals-route-cpu-two-v1/blocks-rank1.tsv": "94dfd7476ae62b8abcd740c7ff0f6f1eb72641240d4d77668304cbfd043de90e",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-bvals-route-cpu-two-v1/routes-rank1.tsv": "bb2d224a55690c1b7396ad4fb92cd6fedba6a6ebfef1fafd40f6b1a9cfcfe628",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-bvals-route-cpu-two-v1/uses-rank1.bin": "eeaa425103264667573e2bcac0ba498273a9b18b1b919c060c48868a31596bd4",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-ownership-audit-v1/results.json": "1cfe5c57ae7a782dc473a24bf6471e6b8ea03245c5cfdd3efcac936b1170589c"
+  },
+  "source_sha256": {
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_bvals_route_audit.cpp": "9d141d181300949cc4826170e80309d4bb536fd3f4121c3487d20b25715b86e7",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_bvals_route_audit.py": "9e9d9feede15bced6fcadbabbe5789331b9ed3916bd65d2ff06f91cac34c5669",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_bvals_route_audit_contract.md": "a71d799838a98497e65efdd18257706ec66aa21bfc447d9d15dad9da41af1df8",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_bvals_route_compare.py": "f0e8546059375538dd1090abf6e2fa4613a5e73c9af232615648d20736ccebbe"
+  }
+}

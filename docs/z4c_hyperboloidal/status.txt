@@ -198,7 +198,7 @@ Diagnostics working-tree milestone (local CPU MPI, full goal still incomplete):
   distinct cells match historical aggregate counts, all8RMS/horizon gates pass,
   and all1424stage rows pass exact clocks and declared clock/CFL gates. The
   initial null-aggregate reporting failure is retained; its report-only fix
-  changed no numerical gate. Segment356->711 job9051587 is queued after actual
+  changed no numerical gate. Segment356->711 job9051587 is running after actual
   checkpoint/science/review and fresh runtime/resource preflight. No scaling
   result is established.
   See evidence/aurora-stage-trace-two.json, evidence/aurora-n12-mapping.json,
@@ -248,12 +248,30 @@ Current limitations / remaining full-goal requirements:
   CMake candidate now passes all198 native compile/link recipe checks and an
   actual four-cycle2-rank endpoint comparison across26336232padded scalars.
   Its manufactured106->127->106 lifecycle/diagnostics preflight also passes,
-  along with12 provenance controls. Runtime integration and actual24/96-rank
-  GPU validation remain separate. See
-  amr-fixed-step-admission.md andevidence/native-amr-clean-admission-cpu-proof.json.
+  along with12 provenance controls. The separate coherent Aurora SYCL candidate
+  and both test helpers now build successfully: all 198 native compile recipes
+  and normalized link flags/library order match, while all 1972 frozen baseline
+  source files and 228 objects remain unchanged. The exact reviewed patch stays
+  isolated. Seven actual 24/96-rank transfer, coupled-evolution and ordinary
+  restart launches remain pending; compilation is not GPU numerical admission.
+  See amr-fixed-step-admission.md,
+  evidence/native-amr-clean-admission-cpu-proof.json and
+  evidence/native-amr-coherent-aurora-build.json.
 - Same-chart copy-compatible routes should reuse native Bvals where appropriate;
   module storage origin is ng+overlap=7 while native ng remains 4. Current mapped
   transport preserves reference interpolation, including internal core donors.
+  A metadata-only CPU two-rank audit now identifies 76032 of 481248 halo rows
+  (15.799%) as exact single-donor/unit-weight, same-chart/layer/level routes
+  inside native neighbor send/receive boxes; all are in the Cartesian chart.
+  Actual unique-donor/send/receive/peer counts match both public exchanges.
+  Projecting this CPU plan onto verified 24/96-rank owners makes 6.713%/8.720%
+  of sparse payload removable, accounting for donors shared with other rows.
+  Complete native slabs using both existing 31-slot arrays would instead raise
+  combined payload by 5.055%/3.352%, due to extra slab cells and 62 versus 57
+  fields. These are CPU-plan metadata projections, not Aurora route measurements,
+  transport implementation, numerical equivalence or performance results.
+  Surface exchange remains outside this audit. See native-bvals-reuse-audit.md
+  and evidence/native-bvals-route-cpu-audit.json.
 - First-shell radial/overlap refinement and one-sided donor rows pass independent
   polynomial/convergence checks. Beyond-family coarse-overlap donors also pass
   an exact r^6 remainder identity. Surface interpolation's original coarse-grid

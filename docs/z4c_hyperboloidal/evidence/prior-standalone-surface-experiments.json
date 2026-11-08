@@ -1,0 +1,97 @@
+{
+  "schema": "prior-standalone-surface-experiments-v1",
+  "scope": "Retained N24 experiment evidence; no native N12 performance or qualification claim. Original validation policies remain distinct.",
+  "input_sha256": {
+    "/Users/hz0693/.codex/visualizations/2026/11/07/01a1b737-65d3-73a3-82d2-773a71aaf9f3/scaling/normal-matrix/report.txt": "ac34d5bea0f527ba3e1e69e5dd31c4dc7d852657f45025065b5171401948ee11",
+    "/Users/hz0693/.codex/visualizations/2026/11/07/01a1b737-65d3-73a3-82d2-773a71aaf9f3/scaling/normal-matrix/verification.json": "3c27f338d0811f60518240d819ba42a622a6972ca4cdd207ee25a54b076dd7ef",
+    "/Users/hz0693/.codex/visualizations/2026/11/07/01a1b737-65d3-73a3-82d2-773a71aaf9f3/scaling/normal-matrix/progress.json": "3351d0e6d2ac8b7eea2a272f75959a806134190270fac77cd0af5b598378b425",
+    "/Users/hz0693/.codex/visualizations/2026/11/07/01a1b737-65d3-73a3-82d2-773a71aaf9f3/scaling/normal-matrix/reproduction.txt": "0ec19d8bd0938e075de0def1c03fab85c62a0daa7c21e5558ee46dde82d1162d",
+    "/Users/hz0693/.codex/visualizations/2026/11/07/01a1b737-65d3-73a3-82d2-773a71aaf9f3/scaling/normal-matrix/validation_policy.json": "934cdc9be6a9d1d7916e1274581a05da18f6cf4d387f813b1f5f66f61ca9de21",
+    "/Users/hz0693/.codex/visualizations/2026/11/07/01a1b737-65d3-73a3-82d2-773a71aaf9f3/scaling/normal-ablation/report.txt": "08bbc46c5beef97a96ccf7d1c7a4fa919184aa897de8c2c9d8b74ccbf1cde8e4",
+    "/Users/hz0693/.codex/visualizations/2026/11/07/01a1b737-65d3-73a3-82d2-773a71aaf9f3/scaling/normal-ablation/verification.json": "2a54f69ee31faddedfe9ea91ba5f0d7b17c058a87e26615d233c48d42bbf6e7d",
+    "/Users/hz0693/.codex/visualizations/2026/11/07/01a1b737-65d3-73a3-82d2-773a71aaf9f3/scaling/normal-ablation/progress.json": "6923cf1294c5e5cf1d9becba51820ea7bb3723a4fa0ff4d8393abe1b439120ab",
+    "/Users/hz0693/.codex/visualizations/2026/11/07/01a1b737-65d3-73a3-82d2-773a71aaf9f3/scaling/normal-ablation/reproduction.txt": "2d794d4dc805fa2beb20488a2d1af4eb35cae3c23072bbc5439f5e7dc000e70d",
+    "/Users/hz0693/.codex/visualizations/2026/11/07/01a1b737-65d3-73a3-82d2-773a71aaf9f3/scaling/normal-ablation/validation_policy.json": "8b9c155fceac0223478389d14f6ceeeb8027832fb094c723dda266688d8d606a",
+    "/Users/hz0693/.codex/visualizations/2026/11/07/01a1b737-65d3-73a3-82d2-773a71aaf9f3/scaling/normal-matrix/derivation.txt": "64b03453bd0574f10b3915428aa436421096de22aa777db02573512ca8d2eb49",
+    "/Users/hz0693/.codex/visualizations/2026/11/07/01a1b737-65d3-73a3-82d2-773a71aaf9f3/scaling/normal-matrix/analytic-normal-vs-v8.patch": "6a6a88edd0e354473b17e836d8a5089af88e90b9808da8b2c67c20bd5fc45c09",
+    "/Users/hz0693/.codex/visualizations/2026/11/07/01a1b737-65d3-73a3-82d2-773a71aaf9f3/scaling/normal-ablation/reuse.patch": "71fd9bc63eabfc5b2991187623b811d9725a2c424f57acdb54da20926bdb1a2f",
+    "/Users/hz0693/.codex/visualizations/2026/11/07/01a1b737-65d3-73a3-82d2-773a71aaf9f3/scaling/normal-ablation/split.patch": "981136cbb97181ec7dfe640524fefe341759389ff6513803701efe83f3812631"
+  },
+  "analytic_matrix": {
+    "2": {
+      "control_seconds": 0.33707803741563114,
+      "candidate_seconds": 0.33912717435974626,
+      "time_reduction": -0.00607911734572153
+    },
+    "8": {
+      "control_seconds": 0.17069230824243276,
+      "candidate_seconds": 0.17406449768692256,
+      "time_reduction": -0.019755954320450853
+    }
+  },
+  "q_reuse_and_elimination": {
+    "2": {
+      "baseline": {
+        "seconds": 0.3424847193202004,
+        "repeats": [
+          0.3425827740482055,
+          0.3423866645921953
+        ]
+      },
+      "reuse": {
+        "seconds": 0.3400339308427647,
+        "repeats": [
+          0.3401318764407188,
+          0.33993598524481056
+        ]
+      },
+      "reuse_split_control": {
+        "seconds": 0.33985947859822774,
+        "repeats": [
+          0.33993598524481056,
+          0.33978297195164486
+        ]
+      },
+      "split": {
+        "seconds": 0.3398903656343464,
+        "repeats": [
+          0.33996247057337314,
+          0.3398182606953196
+        ]
+      }
+    },
+    "8": {
+      "baseline": {
+        "seconds": 0.17265793627128004,
+        "repeats": [
+          0.17243515904992818,
+          0.1728807134926319
+        ]
+      },
+      "reuse": {
+        "seconds": 0.17069871960207822,
+        "repeats": [
+          0.17034647569060327,
+          0.17105096351355314
+        ]
+      },
+      "reuse_split_control": {
+        "seconds": 0.17089104854501785,
+        "repeats": [
+          0.17105096351355314,
+          0.17073113357648254
+        ]
+      },
+      "split": {
+        "seconds": 0.17037781500956045,
+        "repeats": [
+          0.1701546661555767,
+          0.17060096386354417
+        ]
+      }
+    }
+  },
+  "native_runtime_changed": false,
+  "native_performance_admitted": false,
+  "cheap_base_defect_implemented": false
+}
