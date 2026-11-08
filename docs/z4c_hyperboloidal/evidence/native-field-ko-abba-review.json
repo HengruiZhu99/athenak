@@ -1,0 +1,197 @@
+{
+  "schema": "native-field-ko-abba-review-v1",
+  "screen_review_passed": true,
+  "candidate_status": "archived_not_retained",
+  "candidate_retained": false,
+  "complete_gpu_qualification": false,
+  "reason": "User pause before required GPU per-stage/poison/AMR/restart qualification; not a performance rejection",
+  "job_id": "9052165",
+  "terminal": "F/0",
+  "nodes": 2,
+  "ranks": 24,
+  "cycles": [
+    2486,
+    2556
+  ],
+  "warmup_steps": 10,
+  "window_steps": 20,
+  "windows_per_case": 3,
+  "verified_collection_files": 99,
+  "raw_review": {
+    "path": "build-native/field-ko-abba-independent-review-v1/results.json",
+    "sha256": "b0bd1319f8ebd714d1670486f8ed37f6277b6414bc0311b1422c4cf901ab4e8b"
+  },
+  "collection": {
+    "path": "build-native/aurora-native-field-ko-abba-v1",
+    "package_sha256": "4c2fd6f03d7a6bf9f0666d72a9cfabdaf516cd01cfa94ddc32e34c39f35f3792",
+    "transfer_sha256": "59a3b9d537e57265233d5b643a7431ba494d6b4556bc7721e84cf4df04ab413e",
+    "files_sha256": "1da4e058a037a834f659c0574f3dc51b6f37e35ad3d9e74543ba27ffe8f48051",
+    "archive_sha256": "00383ad8afbcb7eebd9eabd9bb23117aa2779a81764e549ab6f91d284136d6f6"
+  },
+  "candidate_source_sha256": "ebd097d260d822dd3c7d07755de827de1d6902b4b0be4e9ffcc00538e4afa786",
+  "archived_patch": {
+    "path": "docs/z4c_hyperboloidal/evidence/native-field-ko-experiment.patch",
+    "sha256": "1f54c71aab10de5a287f8679cc1326c3ab84d6ebb0fd52a0fe8daad545691d37"
+  },
+  "control_executable_sha256": "0ef1d6921b2184baa13446e267067ce183adc6341545580678822f7670daebb8",
+  "candidate_executable_sha256": "53d51d14617fc5f05a7fdb098fb7833522bd85b2ec21044d14c9fcee3449b819",
+  "same_timing_driver_sha256": "d68a0cf2dc8a61297eb83d34d8c6f9bb93c0ce0c05f2a4f566f3fd8ee428e696",
+  "fixed_cache_environment": {
+    "MPIR_CVAR_CH4_IPC_GPU_HANDLE_CACHE": "specialized",
+    "MPIR_CVAR_CH4_IPC_GPU_CACHE_SIZE": "limited",
+    "MPIR_CVAR_CH4_IPC_GPU_MAX_CACHE_ENTRIES": "128",
+    "MPICH_CH4_IPC_GPU_HANDLE_CACHE": null,
+    "MPIR_PARAM_CH4_IPC_GPU_HANDLE_CACHE": null,
+    "MPICH_CH4_IPC_GPU_CACHE_SIZE": null,
+    "MPIR_PARAM_CH4_IPC_GPU_CACHE_SIZE": null,
+    "MPICH_CH4_IPC_GPU_MAX_CACHE_ENTRIES": null,
+    "MPIR_PARAM_CH4_IPC_GPU_MAX_CACHE_ENTRIES": null
+  },
+  "cases": {
+    "timed-C0": {
+      "seconds_per_complete_step": [
+        0.6008016600999999,
+        0.6008352312999999,
+        0.60099466855
+      ],
+      "median": 0.6008352312999999,
+      "max_rank_ids": [
+        [
+          6
+        ],
+        [
+          7
+        ],
+        [
+          6
+        ]
+      ],
+      "separated_seconds": {
+        "startup_max_seconds": 3.769690884,
+        "warmup_max_seconds": 6.259302493,
+        "execute_max_seconds": 42.312048642,
+        "finalize_max_seconds": 5.712012168
+      }
+    },
+    "timed-K0": {
+      "seconds_per_complete_step": [
+        0.5501495693,
+        0.54993262055,
+        0.5498305139
+      ],
+      "median": 0.54993262055,
+      "max_rank_ids": [
+        [
+          17
+        ],
+        [
+          16
+        ],
+        [
+          3
+        ]
+      ],
+      "separated_seconds": {
+        "startup_max_seconds": 4.193811937,
+        "warmup_max_seconds": 5.81219498,
+        "execute_max_seconds": 38.810567377,
+        "finalize_max_seconds": 5.645836584
+      }
+    },
+    "timed-K1": {
+      "seconds_per_complete_step": [
+        0.549574898,
+        0.54987555285,
+        0.55019077825
+      ],
+      "median": 0.54987555285,
+      "max_rank_ids": [
+        [
+          7
+        ],
+        [
+          10
+        ],
+        [
+          7
+        ]
+      ],
+      "separated_seconds": {
+        "startup_max_seconds": 3.533337091,
+        "warmup_max_seconds": 5.662189273,
+        "execute_max_seconds": 38.655134158,
+        "finalize_max_seconds": 5.604641176
+      }
+    },
+    "timed-C1": {
+      "seconds_per_complete_step": [
+        0.60095896135,
+        0.60045656775,
+        0.6009989199
+      ],
+      "median": 0.60095896135,
+      "max_rank_ids": [
+        [
+          6
+        ],
+        [
+          1
+        ],
+        [
+          6
+        ]
+      ],
+      "separated_seconds": {
+        "startup_max_seconds": 3.46309087,
+        "warmup_max_seconds": 6.212545017,
+        "execute_max_seconds": 42.260952046,
+        "finalize_max_seconds": 5.44927772
+      }
+    }
+  },
+  "performance_screen": {
+    "control_median_seconds": 0.600897096325,
+    "candidate_median_seconds": 0.5499040867,
+    "time_reduction_percent": 8.486146785675263,
+    "speedup": 1.0927307340649375,
+    "control_range": [
+      0.60045656775,
+      0.6009989199
+    ],
+    "candidate_range": [
+      0.549574898,
+      0.55019077825
+    ],
+    "all_candidate_windows_faster_than_all_control_windows": true,
+    "both_candidate_run_medians_faster_than_both_controls": true,
+    "scope": "Unprofiled maximum-rank complete-cycle screening; ranks realizing window maximum are not causal critical-rank identification"
+  },
+  "gpu_endpoint_science": {
+    "four_cases_passed": true,
+    "finite_padded31_plus8_scalars_per_case": 24704784,
+    "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+    "bitwise_equal_to_admitted_normal2556": true,
+    "parameters_and_initialized_mesh_metadata_equal": true,
+    "excluded_unused_coarse_header_ints": 9,
+    "three_ordinary_diagnostic_files_bitwise_equal": true,
+    "all169_horizon_coefficients_present_finite": true,
+    "rank_timing_values_checked": 288,
+    "rank_cache_probes_checked": 96,
+    "before_after_frozen_guards_equal": true
+  },
+  "cpu_local_validation": {
+    "path": "build-native/native-field-ko-candidate-v1/local-validation.json",
+    "sha256": "806fad33309c586bcd182f675ceb099e60f733c3142e9a3e47309a3d37f5df48",
+    "reports": {
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-field-ko-candidate-v1/coupled-rhs/results.json": "df20e38bfa6613a44dec0f03c0dcb64bc03dfb7b941774d0f6013073ff638ef8",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-field-ko-candidate-v1/coupled-rhs-ko0/results.json": "7b9806e40beacc363f0b889305fa23f5483f92c46d5315e2b1db116276430f5a"
+    },
+    "passed": true
+  },
+  "limits": [
+    "Endpoint-only GPU science for four70-cycle continuations; no candidate observer/stage trace, poison, refined-mesh or separate restart roundtrip qualification.",
+    "All24704784 finite padded31+8 scalars and meaningful metadata/parameters checked; nine unused coarse-header ints excluded and recorded.",
+    "Cache policy observed in24 launcher/wrapper probes per case, not in-solver MPI CVAR readback.",
+    "Selected N12,2nodes24ranks,one ABBA allocation; no wider scaling or long-trajectory claim."
+  ]
+}

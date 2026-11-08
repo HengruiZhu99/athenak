@@ -9,6 +9,34 @@ and scientific gates remain intact; `requirements.json` describes that previous
 architecture/long-trajectory effort, while `two-node-performance-requirements.json`
 tracks this objective.
 
+## Paused at the user's request
+
+The user requested a pause and commit/push on 2026-11-08. The already-running
+two-node KO screen was allowed to finish; no further experiment or qualification
+allocation was started. The objective is paused, not completed: the accepted
+cache configuration improves native complete-step time by 7.89x, but the matched
+native median remains 0.599393 s versus approximately 0.1364 s for legacy v3/v6,
+a remaining factor of about 4.39.
+
+The pending KO candidate is preserved as
+`evidence/native-field-ko-experiment.patch`, with its frozen build and run
+evidence. The active RHS source was restored to the committed implementation.
+The candidate is not retained because its additional GPU observer, poison,
+restart and coherent-AMR qualification has not been run. Existing local full-RHS
+oracles at KO=.1 and KO=0 pass exactly. The ignored local `build-native/src/athena`
+binary still contains that experimental candidate; rebuild before using it as a
+control. Production source and launches remain untouched.
+
+On resumption, finish the existing candidate's correctness qualification first.
+The conditional commands and frozen object bindings are preserved locally in
+`build-native/native-field-ko-qualification-plan-v1/plan.json`; they reuse the
+existing qualification tools. Only after qualification may this candidate be
+retained in a separate optimization commit. Then measure one further bulk
+change, with workgroup tuning separate from decomposition. Surface case batching
+is the next substantial recorded GPU cost. Remaining host/communication gaps
+need a specific dependency diagnosis before scheduling changes; a global causal
+critical rank and achieved occupancy have not been demonstrated.
+
 ## Starting evidence
 
 The native trajectory is admitted through cycle 2486, t/M=3.501098714602395.
@@ -344,10 +372,25 @@ representative ranks. This selects the next **single experiment: field-parallel
 KO using existing RHS storage**. The per-field operator, its line summation,
 transport/KO/Lambda-to-D addition order, subset dependencies and validity checks
 remain unchanged. No workgroup tuning is combined with this experiment. The
-candidate has passed existing two-rank full-RHS CPU oracles at KO=.1 and KO=0,
-but GPU correctness, complete-step improvement and retention remain unproven.
+candidate has passed existing two-rank full-RHS CPU oracles at KO=.1 and KO=0.
+Its two-node ABBA screen, job9052165, completed F/0. Both control and candidate
+use cache128, identical saved-state continuations and the same complete-cycle
+timing driver, with no profiler or stage observer inside the measured runs.
 
-Surface batching remains untested; the field-parallel KO candidate awaits its GPU screen.
+| Run | Three windows (s/complete RK4 step) | Median |
+|---|---|---:|
+| Control C0 | 0.600802, 0.600835, 0.600995 | 0.600835 |
+| Field-parallel KO K0 | 0.550150, 0.549933, 0.549831 | 0.549933 |
+| Field-parallel KO K1 | 0.549575, 0.549876, 0.550191 | 0.549876 |
+| Control C1 | 0.600959, 0.600457, 0.600999 | 0.600959 |
+
+The six-window medians are 0.600897 and 0.549904 s/step, an 8.49% time reduction.
+Every candidate window beats every control window. Complete padded31+8 states,
+parameters and ordinary diagnostics match exactly in all four cases. This is a
+successful timing screen, **not full qualification or an accepted optimization**.
+The user requested a pause before the additional GPU qualification; the exact
+patch/build/results are preserved and the runtime source restored. See
+`evidence/native-field-ko-abba-review.json`. Surface batching remains untested.
 
 Inspect bulk kernel organization, geometry reuse, surface arithmetic,
 synchronization, communication/data layout and imbalance one at a time. Reorder
@@ -386,6 +429,7 @@ bounded two-node correctness checks when a proposed change requires them.
 | MPI GPU IPC cache capacity, first screen | Three successful endpoints exact; last control failed after output | Successful medians 4.885799 vs 0.599515/0.599614 s | Failed full ABBA preserved; not admitted |
 | MPI GPU IPC cache capacity, clean retry | Four exact full endpoints; observer, poison, AMR and restart pass | 4.689886 → 0.594371 s; all six candidate windows faster | Accepted native improvement, 7.89x; parity pending |
 | Matched previous-implementation reference | All four references pass full31+8/constraints/horizon gates; actual native brackets exact | Native 0.599393 s; v3/v6 0.136397/0.136795 s | Parity not reached; leading references about4.39x faster |
+| Field-parallel bulk KO | Four complete endpoints/ordinary diagnostics exact; CPU full-RHS and zero-KO oracles exact | Control 0.600897 s; candidate 0.549904 s; all six candidate windows faster | Promising screen, 8.49% lower time; archived pending GPU qualification at user pause; runtime restored |
 
 Completion requires the committed native implementation to match or beat the
 fastest accepted previous N12 reference median on the same two nodes, with repeat

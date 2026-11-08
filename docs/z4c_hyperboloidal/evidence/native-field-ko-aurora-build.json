@@ -1,0 +1,97 @@
+{
+  "schema": "native-field-ko-aurora-build-evidence-v1",
+  "status": "built_not_gpu_executed",
+  "gpu_executed": false,
+  "retention_pending": true,
+  "scope": "Reviewed single-TU field-parallel KO candidate compiled and linked with original frozen SYCL compile/link recipes. Same qualified complete-cycle timing driver for control and candidate; no header/layout/driver/DAG changes. Full GPU science and repeated timing admission remain pending.",
+  "changed_numerical_sources": [
+    "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp"
+  ],
+  "baseline_executable_sha256": "f3a85db7528986ddec347b31675a8c5d588120a2380133aed73d5967f7aab05c",
+  "control_executable_sha256": "0ef1d6921b2184baa13446e267067ce183adc6341545580678822f7670daebb8",
+  "timing_driver_sha256": "d68a0cf2dc8a61297eb83d34d8c6f9bb93c0ce0c05f2a4f566f3fd8ee428e696",
+  "candidate_source_sha256": "ebd097d260d822dd3c7d07755de827de1d6902b4b0be4e9ffcc00538e4afa786",
+  "candidate_patch_sha256": "1f54c71aab10de5a287f8679cc1326c3ab84d6ebb0fd52a0fe8daad545691d37",
+  "outputs": {
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/field-ko-v1/build/z4c_hyperboloidal_rhs.cpp.o": "28f4abbacc7ce1bac5fee8f636e66f02154187b22a4bdb4e68cee77816233350",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/field-ko-v1/build/athena-candidate-normal": "f76a03d810e954509d91bf7012a3ed385c4d7830ec3ce9fe66613eb644bc1f86",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/field-ko-v1/build/athena-candidate-timed": "53d51d14617fc5f05a7fdb098fb7833522bd85b2ec21044d14c9fcee3449b819"
+  },
+  "build_exit_code": 0,
+  "build_seconds": 43.63347704196349,
+  "runtime_inputs_unchanged": true,
+  "same_timing_driver_control_candidate": true,
+  "input_count": 212,
+  "dependency_count": 204,
+  "compile_recipe": "build-native/aurora-native-field-ko-build-v1/run-artifacts/build/provenance.json",
+  "collection": {
+    "schema": "native-field-ko-build-collection-v1",
+    "passed": true,
+    "gpu_executed": false,
+    "files": 16,
+    "archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-field-ko-build-artifacts-v1/run-artifacts.tar.gz",
+    "archive_bytes": 98172,
+    "sha256": "62a3d236a9e62c1041c41a38ea40f41311e6a871d99b273e5e959ef36b399283",
+    "total_uncompressed_bytes": 424619,
+    "outputs": {
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/field-ko-v1/build/z4c_hyperboloidal_rhs.cpp.o": "28f4abbacc7ce1bac5fee8f636e66f02154187b22a4bdb4e68cee77816233350",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/field-ko-v1/build/athena-candidate-normal": "f76a03d810e954509d91bf7012a3ed385c4d7830ec3ce9fe66613eb644bc1f86",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/field-ko-v1/build/athena-candidate-timed": "53d51d14617fc5f05a7fdb098fb7833522bd85b2ec21044d14c9fcee3449b819"
+    },
+    "provenance_sha256": "be7af7b23d80c6099ee53e3f014cee4f234094e2eb16fe1239b269a4045ad413",
+    "created_utc": "2026-11-08T19:04:05.794800+00:00"
+  },
+  "transfer": {
+    "schema": "verified-streamed-run-collection-v1",
+    "passed": true,
+    "files": 16,
+    "archive_sha256": "62a3d236a9e62c1041c41a38ea40f41311e6a871d99b273e5e959ef36b399283",
+    "archive_bytes": 98172,
+    "remote_archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-field-ko-build-artifacts-v1/run-artifacts.tar.gz",
+    "local_archive_created": false,
+    "all_file_sizes_and_hashes_verified": true,
+    "seconds": 0.4698448181152344
+  },
+  "files": {
+    "build-native/aurora-native-field-ko-build-v1/package.json": {
+      "bytes": 1224,
+      "sha256": "0b4b9263fde57715f33678bb38b24ff821fdcb59e3ee04961e1e64cb3f8dc0ae"
+    },
+    "build-native/aurora-native-field-ko-build-v1/transfer.json": {
+      "bytes": 475,
+      "sha256": "5679533059ab3dab32128f384b415d24431ee7afe8665663f59dbc9849035ecb"
+    },
+    "build-native/aurora-native-field-ko-build-v1/run-artifacts/files.json": {
+      "bytes": 2142,
+      "sha256": "c93f3627dc9ce00d88e8e4d30e4e3c190cde4d9cf3853839ff12595895875b43"
+    },
+    "build-native/aurora-native-field-ko-build-v1/run-artifacts/build/provenance.json": {
+      "bytes": 133463,
+      "sha256": "be7af7b23d80c6099ee53e3f014cee4f234094e2eb16fe1239b269a4045ad413"
+    },
+    "build-native/aurora-native-field-ko-build-v1/run-artifacts/build/verify.log": {
+      "bytes": 156,
+      "sha256": "9758d90cb11a5d9d63d4a3375642f07f3b6bbf04d1e3b400e61ee4b671bd54d8"
+    },
+    "build-native/aurora-native-field-ko-build-v1/run-artifacts/build/build.log": {
+      "bytes": 25134,
+      "sha256": "00e88f29560269ed1ca5f4ff708e2f510a9f25e61facffc04e1cb608255c263a"
+    },
+    "build-native/aurora-native-field-ko-build-v1/run-artifacts/build/candidate.mk": {
+      "bytes": 24440,
+      "sha256": "cfd8b9fd8721cf8425d8134c377d3e1d9420b3d6cc989aeb516404ab59928f26"
+    },
+    "build-native/aurora-native-field-ko-build-v1/run-artifacts/compiler-version.txt": {
+      "bytes": 275,
+      "sha256": "6f41d08dd542e36e2f41b7b105da56d84c00bd6eb99a7c324ef8ef06635cbe26"
+    },
+    "build-native/aurora-native-field-ko-build-v1/run-artifacts/modules.txt": {
+      "bytes": 189,
+      "sha256": "cf3fde5892e6950a2ec013c75688552bf45cd2c81a1c7e4bdce32cb81f224156"
+    },
+    "build-native/native-field-ko-candidate-v1/package-files.json": {
+      "bytes": 542,
+      "sha256": "92a73c190e8aa07bde3cde18c93c26704661f8453cd1332816d36f92497516e9"
+    }
+  }
+}
