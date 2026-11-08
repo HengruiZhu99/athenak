@@ -1,6 +1,6 @@
 {
   "schema": "native-n12-profile-submission-v1",
-  "status": "submitted",
+  "status": "terminal; original batch audit failed; offline reanalysis qualified existing solver/profile outputs",
   "job_id": "9051936",
   "submitted_state": "Q",
   "submission_utc": "2026-11-08T15:46:01Z",
@@ -51,6 +51,44 @@
     "build-native/native-n12-profile-submission-v1/timing-verify-before.txt": {
       "size": 96,
       "sha256": "2fce95b383e78b648cb43f29235dc871675d41e3347d300eb716d6f298d3fbc0"
+    },
+    "build-native/aurora-native-n12-profile-v2/package.json": {
+      "size": 1988,
+      "sha256": "615c4c3548aba64364ff68c53b0463effe340bfdece025944bc1711ddcd18162"
+    },
+    "build-native/aurora-native-n12-profile-v2/transfer.json": {
+      "size": 487,
+      "sha256": "189ba2bf97854dc0c188a93657c66ed779a6c1c370e258094e566cd8344773a5"
+    },
+    "build-native/aurora-native-n12-profile-v2/run-artifacts/terminal-qstat.txt": {
+      "size": 3330,
+      "sha256": "381497619be17e9d98531a8e919f0d3a98d921c6115724db4458e630665937a2"
+    },
+    "build-native/aurora-native-n12-profile-v2/run-artifacts/runs/native-n12-profile-two-v1/qualification-v2.json": {
+      "size": 679662,
+      "sha256": "10692439ce974d43f2fd14896720bf636782187f5438ed16b9978ba0bcc6edc2"
+    },
+    "build-native/aurora-native-n12-profile-v2/run-artifacts/runs/native-n12-profile-two-v1/qualification.json": {
+      "size": 49967,
+      "sha256": "52827e97ac8ab6107dc5ac3ad3f81059c2ccb074796e8f7f65088c326d12dee1"
     }
-  }
+  },
+  "terminal_state": "F",
+  "terminal_exit_status": 2,
+  "terminal_walltime": "00:02:02",
+  "solver_exit_statuses": {
+    "normal": 0,
+    "profiled": 0
+  },
+  "offline_reanalysis_passed": true,
+  "solver_or_profiler_rerun": false,
+  "original_failure_preserved": true,
+  "original_failure": "ValueError: profile replaces/removes observed normal image: /etc/ld.so.cache",
+  "scientific_qualification_scope": "Complete padded31+8 checkpoint and ordinary diagnostics bitwise equal; actual runtime images qualified with exact loader-cache data exception. Selected-rank tracing only, no complete-step throughput or global critical-path claim.",
+  "qualified_report": "build-native/aurora-native-n12-profile-v2/run-artifacts/runs/native-n12-profile-two-v1/qualification-v2.json",
+  "qualified_report_sha256": "10692439ce974d43f2fd14896720bf636782187f5438ed16b9978ba0bcc6edc2",
+  "collection_root": "build-native/aurora-native-n12-profile-v2",
+  "collection_all_file_sizes_and_hashes_verified": true,
+  "raw_data_retained_remote": true,
+  "raw_remote_root": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/native-n12-profile-two-v1"
 }

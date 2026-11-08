@@ -45,8 +45,12 @@
     },
     {
       "id": "critical_path",
-      "status": "pending",
-      "required_evidence": "Profile representative bulk/surface owners and actual GPU/register/memory/synchronization/MPI progress; do not sum unrelated maxima."
+      "status": "in_progress",
+      "required_evidence": "Profile representative bulk/surface owners and actual GPU/register/memory/synchronization/MPI progress; do not sum unrelated maxima.",
+      "evidence": [
+        "evidence/native-n12-selected-profile-findings.json"
+      ],
+      "remaining": "Sampled GPU/L0 durations and launch shapes measured; global critical ranks and transfer-adjacent host gaps require MPI attribution."
     },
     {
       "id": "bulk_organization",
@@ -94,5 +98,5 @@
       "required_evidence": "Final committed native median no worse than fastest accepted old reference with sufficient repeatability; reproducible evidence, profiles, experiment table and architecture confirmation."
     }
   ],
-  "next_milestone": "Measured runtime bottleneck, followed by one correctness-qualified complete-step speedup; prepared native profile next, reference work independent."
+  "next_milestone": "Attribute measured transfer-adjacent host gaps, then confirm one correctness-qualified complete-step speedup; legacy reference proceeds independently."
 }

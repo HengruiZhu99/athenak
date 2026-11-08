@@ -1,0 +1,507 @@
+{
+  "schema": "native-n12-selected-profile-findings-v1",
+  "solver_optimization": false,
+  "qualified_profile": true,
+  "job_id": 9051936,
+  "batch_status": "F/2; offline audit corrected; both solver invocations exit0",
+  "reanalysis": {
+    "previous_report": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/native-n12-profile-two-v1/qualification.json",
+    "previous_report_sha256": "52827e97ac8ab6107dc5ac3ad3f81059c2ccb074796e8f7f65088c326d12dee1",
+    "previous_failure": "ValueError: profile replaces/removes observed normal image: /etc/ld.so.cache",
+    "terminal_record": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-n12-profile-failure-9051936/terminal-qstat.txt",
+    "terminal_sha256": "381497619be17e9d98531a8e919f0d3a98d921c6115724db4458e630665937a2",
+    "job_id": "9051936",
+    "job_state": "F",
+    "batch_exit_status": 2,
+    "solver_exit_statuses": {
+      "normal": 0,
+      "profiled": 0
+    },
+    "scope": "Offline parser correction only; original F/2 audit failure and all raw observations retained. Both solver exits independently checked below. No solver/profiler rerun."
+  },
+  "state_equivalence": {
+    "bitwise_equal": true,
+    "padded31_plus8_scalar_values": 24704784,
+    "payload_sha256": "7831898300738ebbfa49899aece6b453c0b5b8e275516c948a461ddbf3a1c2da",
+    "excluded_unused_coarse_indices": [
+      [
+        1768714349,
+        1646290021,
+        1752440953,
+        1763734377,
+        1953853550,
+        1782319662,
+        171860591,
+        1702060386,
+        1701667182
+      ],
+      [
+        1768714349,
+        1646290021,
+        1752440953,
+        1763734377,
+        1953853550,
+        1782319662,
+        171860591,
+        1702060386,
+        1701667182
+      ]
+    ]
+  },
+  "ordinary_diagnostics_bitwise": true,
+  "inputs": [
+    {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-n12-profile-v2/run-artifacts/runs/native-n12-profile-two-v1/qualification-v2.json",
+      "sha256": "10692439ce974d43f2fd14896720bf636782187f5438ed16b9978ba0bcc6edc2",
+      "bytes": 679662
+    },
+    {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-n12-profile-v2/transfer.json",
+      "sha256": "189ba2bf97854dc0c188a93657c66ed779a6c1c370e258094e566cd8344773a5",
+      "bytes": 487
+    },
+    {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-n12-profile-host-gap-v1/results.json",
+      "sha256": "0de51ac3d26bb7098e9efcec6b16a1a899e731871f1cdced48ecd3f4a2059ef9",
+      "bytes": 435661
+    },
+    {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-n12-profile-host-gap-v1/extract.py",
+      "sha256": "228383c8ca2c9c1dee3352d6d6de2e075ed7fd885d343f717cdfd9446efbc521",
+      "bytes": 3350
+    },
+    {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-profile-preview-v1/preview.json",
+      "sha256": "ce83fe59d51b3ea0b0ff56740250a495009b971de0c2d5fcf507a308110be01b",
+      "bytes": 469515
+    }
+  ],
+  "ranks": {
+    "8": {
+      "trace": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/native-n12-profile-two-v1/profiled/ranks/rank8/athena.744044.8.json",
+      "trace_sha256": "2a6cee2e66499a336e8cd1e84360e7a459f8f8b4da862b01dc92f6bbb75d3057",
+      "rhs_span_seconds": 17.28708425,
+      "bulk_rhs_calls": 48,
+      "gpu_interval_union_seconds": 1.271704,
+      "gpu_activity_fraction": 0.07356382265563378,
+      "cpu_api_interval_union_seconds": 1.28554175,
+      "gpu_gaps_gt50ms": 72,
+      "gpu_gaps_gt50ms_total_seconds": 15.16000575,
+      "kernel_groups": [
+        {
+          "kernel": "bulk CalcRHS",
+          "shape": "[SIMD32 {11; 1; 1} {1024; 1; 1}]",
+          "calls_whole_process": 16,
+          "seconds_whole_process": 0.42223424,
+          "max_call_seconds": 0.02649296
+        },
+        {
+          "kernel": "bulk CalcRHS",
+          "shape": "[SIMD32 {1; 1; 1} {1024; 1; 1}]",
+          "calls_whole_process": 16,
+          "seconds_whole_process": 0.40733840000000004,
+          "max_call_seconds": 0.02588352
+        },
+        {
+          "kernel": "bulk CalcRHS",
+          "shape": "[SIMD32 {2; 1; 1} {1024; 1; 1}]",
+          "calls_whole_process": 16,
+          "seconds_whole_process": 0.39507776,
+          "max_call_seconds": 0.02647472
+        }
+      ],
+      "three_largest_gaps": [
+        {
+          "start_seconds": 8.69523775,
+          "stop_seconds": 9.62245775,
+          "duration_seconds": 0.92722,
+          "previous_gpu": "SurfaceExchange::Project()::{lambda(int, int&)#1}, Kokkos::Impl::FunctorAnalysis<Kokkos::Impl::FunctorPatternInterface::REDUCE, Kokkos::RangePolicy<>, z4c_hyperboloidal::SurfaceExc ... ::_V1::handler&)#1}::operator()(sycl::_V1::handler&) const::{lambda()#1}[SIMD32 {1; 1; 1} {1; 1; 1}]",
+          "next_gpu": "zeCommandListAppendMemoryCopy(D2M)[1048576]",
+          "cpu_events": 33,
+          "cpu_union_seconds": 5.275e-05,
+          "cpu_largest_overlap_seconds": [
+            [
+              "zeEventQueryStatus",
+              2.575e-05
+            ],
+            [
+              "zeCommandListAppendMemoryCopy",
+              2.325e-05
+            ],
+            [
+              "queue.wait[0x39558c90]",
+              3e-06
+            ],
+            [
+              "urQueueFinish",
+              2e-06
+            ],
+            [
+              "urEventRelease",
+              2.5e-07
+            ]
+          ],
+          "first_cpu": [
+            {
+              "name": "queue.wait[0x39558c90]",
+              "start_seconds": 8.69522925,
+              "duration_seconds": 1.0677e-05
+            },
+            {
+              "name": "urQueueFinish",
+              "start_seconds": 8.69522975,
+              "duration_seconds": 9.868000000000001e-06
+            }
+          ],
+          "last_cpu": [
+            {
+              "name": "zeEventQueryStatus",
+              "start_seconds": 9.62245575,
+              "duration_seconds": 1.1539999999999999e-06
+            },
+            {
+              "name": "zeEventQueryStatus",
+              "start_seconds": 9.62245725,
+              "duration_seconds": 1.333e-06
+            }
+          ]
+        },
+        {
+          "start_seconds": 0.0551315,
+          "stop_seconds": 0.96633775,
+          "duration_seconds": 0.91120625,
+          "previous_gpu": "SurfaceExchange::Project()::{lambda(int, int&)#1}, Kokkos::Impl::FunctorAnalysis<Kokkos::Impl::FunctorPatternInterface::REDUCE, Kokkos::RangePolicy<>, z4c_hyperboloidal::SurfaceExc ... ::_V1::handler&)#1}::operator()(sycl::_V1::handler&) const::{lambda()#1}[SIMD32 {1; 1; 1} {1; 1; 1}]",
+          "next_gpu": "zeCommandListAppendMemoryCopy(D2M)[1048576]",
+          "cpu_events": 34,
+          "cpu_union_seconds": 4.85e-05,
+          "cpu_largest_overlap_seconds": [
+            [
+              "zeEventQueryStatus",
+              2.625e-05
+            ],
+            [
+              "zeCommandListAppendMemoryCopy",
+              1.85e-05
+            ],
+            [
+              "queue.wait[0x39558c90]",
+              2.75e-06
+            ],
+            [
+              "urQueueFinish",
+              1.75e-06
+            ],
+            [
+              "zeMemGetAllocProperties",
+              5e-07
+            ]
+          ],
+          "first_cpu": [
+            {
+              "name": "queue.wait[0x39558c90]",
+              "start_seconds": 0.055123,
+              "duration_seconds": 1.022e-05
+            },
+            {
+              "name": "urQueueFinish",
+              "start_seconds": 0.0551235,
+              "duration_seconds": 9.547e-06
+            }
+          ],
+          "last_cpu": [
+            {
+              "name": "zeEventQueryStatus",
+              "start_seconds": 0.966335,
+              "duration_seconds": 1.222e-06
+            },
+            {
+              "name": "zeMemGetAllocProperties",
+              "start_seconds": 0.96633675,
+              "duration_seconds": 1.01e-07
+            }
+          ]
+        },
+        {
+          "start_seconds": 13.0980345,
+          "stop_seconds": 13.946645,
+          "duration_seconds": 0.8486105,
+          "previous_gpu": "SurfaceExchange::Project()::{lambda(int, int&)#1}, Kokkos::Impl::FunctorAnalysis<Kokkos::Impl::FunctorPatternInterface::REDUCE, Kokkos::RangePolicy<>, z4c_hyperboloidal::SurfaceExc ... ::_V1::handler&)#1}::operator()(sycl::_V1::handler&) const::{lambda()#1}[SIMD32 {1; 1; 1} {1; 1; 1}]",
+          "next_gpu": "zeCommandListAppendMemoryCopy(D2M)[1048576]",
+          "cpu_events": 38,
+          "cpu_union_seconds": 4.35e-05,
+          "cpu_largest_overlap_seconds": [
+            [
+              "zeEventQueryStatus",
+              2.7e-05
+            ],
+            [
+              "zeCommandListAppendMemoryCopy",
+              1.325e-05
+            ],
+            [
+              "queue.wait[0x39558c90]",
+              2.5e-06
+            ],
+            [
+              "urQueueFinish",
+              1.5e-06
+            ],
+            [
+              "urEventRelease",
+              2.5e-07
+            ]
+          ],
+          "first_cpu": [
+            {
+              "name": "queue.wait[0x39558c90]",
+              "start_seconds": 13.098025,
+              "duration_seconds": 1.1241e-05
+            },
+            {
+              "name": "urQueueFinish",
+              "start_seconds": 13.09802525,
+              "duration_seconds": 1.0597e-05
+            }
+          ],
+          "last_cpu": [
+            {
+              "name": "zeEventQueryStatus",
+              "start_seconds": 13.9466425,
+              "duration_seconds": 1.04e-06
+            },
+            {
+              "name": "zeEventQueryStatus",
+              "start_seconds": 13.946644,
+              "duration_seconds": 1.3640000000000002e-06
+            }
+          ]
+        }
+      ]
+    },
+    "23": {
+      "trace": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/native-n12-profile-two-v1/profiled/ranks/rank23/athena.2002413.23.json",
+      "trace_sha256": "17294d1a495a126d9bd2c9c012d65f444baccfd1bae040f895d2079466045eaf",
+      "rhs_span_seconds": 17.182853,
+      "bulk_rhs_calls": 64,
+      "gpu_interval_union_seconds": 2.04723725,
+      "gpu_activity_fraction": 0.11914419857982837,
+      "cpu_api_interval_union_seconds": 2.077078,
+      "gpu_gaps_gt50ms": 106,
+      "gpu_gaps_gt50ms_total_seconds": 10.388927999999998,
+      "kernel_groups": [
+        {
+          "kernel": "bulk CalcRHS",
+          "shape": "[SIMD32 {1; 1; 1} {1024; 1; 1}]",
+          "calls_whole_process": 16,
+          "seconds_whole_process": 0.6947976,
+          "max_call_seconds": 0.04376928
+        },
+        {
+          "kernel": "bulk CalcRHS",
+          "shape": "[SIMD32 {8; 1; 1} {1024; 1; 1}]",
+          "calls_whole_process": 16,
+          "seconds_whole_process": 0.40715728,
+          "max_call_seconds": 0.02567472
+        },
+        {
+          "kernel": "bulk CalcRHS",
+          "shape": "[SIMD32 {1; 1; 1} {512; 1; 1}]",
+          "calls_whole_process": 32,
+          "seconds_whole_process": 0.3693908800000001,
+          "max_call_seconds": 0.01290144
+        },
+        {
+          "kernel": "normal compatibility",
+          "shape": "[SIMD32 {1; 1; 1} {256; 1; 1}]",
+          "calls_whole_process": 18,
+          "seconds_whole_process": 0.3412209600000001,
+          "max_call_seconds": 0.0191184
+        },
+        {
+          "kernel": "surface RHS",
+          "shape": "[SIMD32 {1; 1; 1} {256; 1; 1}]",
+          "calls_whole_process": 16,
+          "seconds_whole_process": 0.20123871999999998,
+          "max_call_seconds": 0.01265552
+        }
+      ],
+      "three_largest_gaps": [
+        {
+          "start_seconds": 4.17176,
+          "stop_seconds": 4.57104525,
+          "duration_seconds": 0.39928525,
+          "previous_gpu": "SurfaceExchange::Project()::{lambda(int, int&)#1}, Kokkos::Impl::FunctorAnalysis<Kokkos::Impl::FunctorPatternInterface::REDUCE, Kokkos::RangePolicy<>, z4c_hyperboloidal::SurfaceExc ... 1::access::decorated)2>, int) const::{lambda(sycl::_V1::nd_item<1>)#1}[SIMD32 {1; 1; 1} {256; 1; 1}]",
+          "next_gpu": "Z4cHyperboloidal::CopyU(Driver*, int)::{lambda(int)#1}, Kokkos::Impl::SYCLInternal::USMObjectMem<(sycl::_V1::usm::alloc)0>, false>, Kokkos::RangePolicy<> >[SIMD32 {9; 1; 1} {1024;  ... MObjectMem<(sycl::_V1::usm::alloc)0>, false>, Kokkos::RangePolicy<> >[SIMD32 {9; 1; 1} {1024; 1; 1}]",
+          "cpu_events": 86,
+          "cpu_union_seconds": 7.2e-05,
+          "cpu_largest_overlap_seconds": [
+            [
+              "submit",
+              5.625e-05
+            ],
+            [
+              "urEnqueueKernelLaunch",
+              3.675e-05
+            ],
+            [
+              "zeCommandListAppendLaunchKernel",
+              1.375e-05
+            ],
+            [
+              "queue.wait[0xd8e25a0]",
+              1.125e-05
+            ],
+            [
+              "urKernelSetArgValue",
+              8.5e-06
+            ]
+          ],
+          "first_cpu": [
+            {
+              "name": "queue.wait[0xd8e25a0]",
+              "start_seconds": 4.17080825,
+              "duration_seconds": 0.000958491
+            },
+            {
+              "name": "urQueueFinish",
+              "start_seconds": 4.1708085,
+              "duration_seconds": 0.000957899
+            }
+          ],
+          "last_cpu": [
+            {
+              "name": "zeKernelSetArgumentValue",
+              "start_seconds": 4.57104475,
+              "duration_seconds": 4.2999999999999995e-08
+            },
+            {
+              "name": "urKernelSetArgValue",
+              "start_seconds": 4.57104475,
+              "duration_seconds": 4.1299999999999995e-07
+            }
+          ]
+        },
+        {
+          "start_seconds": 0.94131625,
+          "stop_seconds": 1.325478,
+          "duration_seconds": 0.38416175,
+          "previous_gpu": "SurfaceExchange::Project()::{lambda(int, int&)#1}, Kokkos::Impl::FunctorAnalysis<Kokkos::Impl::FunctorPatternInterface::REDUCE, Kokkos::RangePolicy<>, z4c_hyperboloidal::SurfaceExc ... 1::access::decorated)2>, int) const::{lambda(sycl::_V1::nd_item<1>)#1}[SIMD32 {1; 1; 1} {256; 1; 1}]",
+          "next_gpu": "zeCommandListAppendMemoryCopy(D2D)[646464]",
+          "cpu_events": 21,
+          "cpu_union_seconds": 0.00010625,
+          "cpu_largest_overlap_seconds": [
+            [
+              "zeCommandListAppendMemoryCopy",
+              3.575e-05
+            ],
+            [
+              "zexMemOpenIpcHandles",
+              3e-05
+            ],
+            [
+              "zeMemCloseIpcHandle",
+              2.9e-05
+            ],
+            [
+              "queue.wait[0xd8e25a0]",
+              7.25e-06
+            ],
+            [
+              "urQueueFinish",
+              6e-06
+            ]
+          ],
+          "first_cpu": [
+            {
+              "name": "queue.wait[0xd8e25a0]",
+              "start_seconds": 0.94037675,
+              "duration_seconds": 0.000944981
+            },
+            {
+              "name": "urQueueFinish",
+              "start_seconds": 0.94037725,
+              "duration_seconds": 0.0009443959999999999
+            }
+          ],
+          "last_cpu": [
+            {
+              "name": "zeMemGetAllocProperties",
+              "start_seconds": 1.32544075,
+              "duration_seconds": 8.500000000000001e-08
+            },
+            {
+              "name": "zeMemGetAllocProperties",
+              "start_seconds": 1.32544175,
+              "duration_seconds": 6.1e-08
+            }
+          ]
+        },
+        {
+          "start_seconds": 9.32989425,
+          "stop_seconds": 9.709832,
+          "duration_seconds": 0.37993775,
+          "previous_gpu": "SurfaceExchange::Project()::{lambda(int, int&)#1}, Kokkos::Impl::FunctorAnalysis<Kokkos::Impl::FunctorPatternInterface::REDUCE, Kokkos::RangePolicy<>, z4c_hyperboloidal::SurfaceExc ... 1::access::decorated)2>, int) const::{lambda(sycl::_V1::nd_item<1>)#1}[SIMD32 {1; 1; 1} {256; 1; 1}]",
+          "next_gpu": "zeCommandListAppendMemoryCopy(D2D)[646464]",
+          "cpu_events": 20,
+          "cpu_union_seconds": 0.00010875,
+          "cpu_largest_overlap_seconds": [
+            [
+              "zeCommandListAppendMemoryCopy",
+              3.525e-05
+            ],
+            [
+              "zeMemCloseIpcHandle",
+              3.425e-05
+            ],
+            [
+              "zexMemOpenIpcHandles",
+              2.95e-05
+            ],
+            [
+              "queue.wait[0xd8e25a0]",
+              6.25e-06
+            ],
+            [
+              "urQueueFinish",
+              4.75e-06
+            ]
+          ],
+          "first_cpu": [
+            {
+              "name": "queue.wait[0xd8e25a0]",
+              "start_seconds": 9.328958,
+              "duration_seconds": 0.0009406530000000001
+            },
+            {
+              "name": "urQueueFinish",
+              "start_seconds": 9.3289585,
+              "duration_seconds": 0.000940056
+            }
+          ],
+          "last_cpu": [
+            {
+              "name": "zeMemGetAllocProperties",
+              "start_seconds": 9.70979625,
+              "duration_seconds": 1.3e-07
+            },
+            {
+              "name": "zeMemGetAllocProperties",
+              "start_seconds": 9.709797,
+              "duration_seconds": 5.9e-08
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "conclusion": "Most elapsed time in the sampled RHS span is outside recorded GPU work and SYCL/Level Zero API calls on ranks8/23. Frequent transfer-adjacent gaps require MPI/host attribution before selecting an optimization.",
+  "limitations": [
+    "These representative ranks are not a demonstrated global critical path.",
+    "First-to-last bulk RHS span excludes some leading/trailing stage work and is not a complete-step timing window.",
+    "GPU interval union measures observed activity coverage, not achieved occupancy.",
+    "CPU API totals overlap/nest; only interval unions are used for coverage.",
+    "No MPI tracing in this experiment and no cross-rank timestamp alignment.",
+    "No solver speedup or legacy performance parity claimed."
+  ],
+  "next_single_experiment": "Bounded all-rank APS MPI-only profile with imbalance instrumentation disabled, unchanged f3 solver and matched full-state control."
+}

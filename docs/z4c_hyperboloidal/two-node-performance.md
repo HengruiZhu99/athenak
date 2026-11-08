@@ -106,11 +106,37 @@ profile and does not select v8 as the N12 reference.
 | v8 surface RHS | 26,440 | absent | absent |
 
 The native normal solve's single_task variant also reports spill storage.
-Actual reduction variants dispatched, achieved occupancy, scratch traffic and
-elapsed time remain unmeasured. An absent spill field does not establish zero
+The profile below confirms the reduction launch shape; achieved occupancy and
+scratch traffic remain unmeasured. An absent spill field does not establish zero
 spilling. Native bulk private storage is slightly smaller than v8's, so the
 larger source kernel alone does not establish register pressure as the cause
 of its slowdown. Surface batching is a profiling lead, not an accepted fix.
+
+The bounded profile in job 9051936 completed both solver cases with exit 0.
+The batch ended F/2 because its audit misclassified `/etc/ld.so.cache` as a loaded
+library. A second output-location assumption required correction too. Offline
+reanalysis preserves that original failure and verifies exact complete 31+8
+payload and ordinary diagnostic equality. No solver rerun was needed.
+See `evidence/native-n12-selected-profile-findings.json`; raw traces remain remote.
+
+| Representative rank | First-to-last bulk RHS span | GPU interval union | Activity coverage |
+|---|---:|---:|---:|
+| 8 (many bulk points) | 17.287 s | 1.272 s | 7.36% |
+| 23 (outer surface owner) | 17.183 s | 2.047 s | 11.91% |
+
+These spans are not complete-step timing windows or globally aligned clocks.
+Activity coverage is not achieved occupancy. On rank 23, normal compatibility
+launches one group of 256 work-items and takes approximately 19 ms/call; surface
+RHS also launches one group of 256 and takes approximately 13 ms/call. Bulk launches
+use 512 or 1024 work-items/group. Most elapsed time on both sampled ranks lies
+outside recorded GPU work and SYCL/Level Zero calls, often between transfers.
+MPI calls were not traced, so this does not yet identify the responsible MPI
+operation or prove that either sampled rank determines global elapsed time.
+
+The next single experiment is a bounded all-rank MPI-only profile using the
+installed APS tool, with imbalance instrumentation disabled and the unchanged
+native solver. Attribute those host gaps before changing scheduling. Surface
+batching and field-parallel KO remain untested candidates, not selected fixes.
 
 Inspect bulk kernel organization, geometry reuse, surface arithmetic,
 synchronization, communication/data layout and imbalance one at a time. Reorder
@@ -143,7 +169,7 @@ bounded two-node correctness checks when a proposed change requires them.
 | Experiment | Numerical result | Complete-step timing | Decision |
 |---|---|---|---|
 | Native timing and observer controls | Complete payload/diagnostics bitwise; independent review passes | 4.572643 s normal; 5.422913 s observed | Qualified measurement; no solver speedup |
-| Selected-rank native profile | Pending (job 9051936 submitted next) | Not a throughput test | Await actual bottleneck evidence |
+| Selected-rank native profile | Complete payload/diagnostics bitwise; offline audit correction preserves original F/2 | GPU activity covers 7.36%/11.91% of sampled RHS spans | Diagnose transfer-adjacent host gaps next; no solver change |
 | Matched previous-implementation reference | Builds ready; GPU qualification pending | Pending | Does not block native screening |
 
 Completion requires the committed native implementation to match or beat the

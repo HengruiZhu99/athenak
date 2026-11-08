@@ -97,11 +97,19 @@ def runtime(directory,mode,rank):
     tool=[x for name,x in files.items() if Path(name).name.startswith('libunitrace_tool.so')]
     require((len(tool)==1 and tool[0]['sha256']==TOOL_LIBRARY) if mode=='profiled' else not tool,
             'profiling tool injection/identity differs')
+    # The monitor used a filename substring, which also captured the transient
+    # dynamic-loader lookup cache. It is data, not a loaded executable image.
+    # Retain the compute-node observation: its bytes/magic were not captured,
+    # so a later login-node cache cannot establish its byte identity or format.
+    cache={name:data for name,data in files.items() if name=='/etc/ld.so.cache'}
     return dict(pid=int(next(iter(r['solver_processes']))),core_libraries=selected,
-                loaded_images={name:d['sha256'] for name,d in files.items()},samples=r['samples'])
+                loaded_images={name:d['sha256'] for name,d in files.items() if name not in cache},
+                non_executable_loader_cache_mappings=cache,
+                cache_classification_scope='Only canonical /etc/ld.so.cache excluded by loader-data role; captured inode/size/hash retained, ELF magic not captured. Every other observed image is still compared.',
+                samples=r['samples'])
 
 
-def trace_summary(folder):
+def trace_summary(folder,shared_log=None,text_report=None):
     """Conservative schema inventory. Raw timestamps from different ranks are never merged."""
     paths=[p for p in folder.glob('*.json') if p.name not in ('launch.json','runtime.json')]
     reports=[]
@@ -131,9 +139,21 @@ def trace_summary(folder):
             interval_scope='Raw Chrome timestamp/duration units; same-file intervals only. Categories and kernel identities require actual-source review. Overlapping totals are not wall time.'))
     text=[dict(path=str(p),bytes=p.stat().st_size,sha256=sha(p)) for p in folder.iterdir()
           if p.is_file() and p.suffix!='.json' and p.name not in ('launch.json','runtime.json')]
+    locator=None
+    if text_report is not None:
+        require(shared_log is not None and
+                f'[INFO] Log is stored in {text_report.name}' in shared_log.read_text(),
+                'shared log does not identify selected-rank text report')
+        body=text_report.read_text()
+        require('=== API Timing Summary ===' in body and 'Total Execution Time (ns)' in body,
+                'missing actual unitrace API timing summary')
+        text.append(dict(path=str(text_report),bytes=text_report.stat().st_size,sha256=sha(text_report),
+                         attribution='Actual solver PID and rank in filename; unitrace launch-working-directory report'))
+        locator=dict(path=str(shared_log),bytes=shared_log.stat().st_size,sha256=sha(shared_log),
+                     attribution='Shared stdout/stderr locates reports; not itself a rank-specific timing table')
     require(reports and any(r['complete_event_groups'] for r in reports),'no actual complete Chrome trace intervals')
     require(text,'no profiler host/device summary output')
-    return dict(traces=reports,other_profile_artifacts=text,
+    return dict(traces=reports,other_profile_artifacts=text,shared_output_locator=locator,
         coverage_scope='Raw event/schema inventory only; does not itself prove MPI progress, cross-rank clocks, critical rank, per-stage boundaries or Kokkos runtime-label mapping')
 
 
@@ -196,7 +216,11 @@ def audit(args,result):
             require(runtimes['profiled'][rank]['loaded_images'].get(name)==digest,
                     'profile replaces/removes observed normal image: '+name)
     result['scientific_qualification_passed']=True
-    result['selected_rank_trace_inventory']={str(r):trace_summary(d/'profiled'/'ranks'/f'rank{r}') for r in SELECTED}
+    work=ROOT/'validation/perf-two-node-v1/profile'
+    texts={str(r):work/f'unitrace.{runtimes["profiled"][str(r)]["pid"]}.{r}.txt' for r in SELECTED}
+    result['selected_rank_trace_inventory']={str(r):trace_summary(d/'profiled'/'ranks'/f'rank{r}',
+        d/'profiled'/'run.log',texts[str(r)]) for r in SELECTED}
+    result['external_profile_artifacts']={str(p):dict(bytes=p.stat().st_size,sha256=sha(p)) for p in texts.values()}
     result['passed']=True
     result['artifact_manifest']={str(p.relative_to(d)):dict(bytes=p.stat().st_size,sha256=sha(p))
         for p in d.rglob('*') if p.is_file() and 'cache' not in p.relative_to(d).parts and p!=args.output}
@@ -205,10 +229,34 @@ def audit(args,result):
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     for name in ('directory','source','output'):p.add_argument('--'+name,type=Path,required=True)
-    args=p.parse_args();result=dict(schema='native-n12-selected-profile-qualification-v1',passed=False,
+    p.add_argument('--previous-failure',type=Path)
+    p.add_argument('--terminal',type=Path)
+    args=p.parse_args();require(not args.output.exists(),'qualification output already exists; preserve prior evidence')
+    result=dict(schema='native-n12-selected-profile-qualification-v1',passed=False,
         scientific_qualification_passed=False,performance_measurement=False,trace_interpretation_pending=True,selected_ranks=list(SELECTED),
         cycles=[2486,2490],scope='Four complete cycles, selected-rank tracing; no throughput or whole-job critical-path claim')
-    try:audit(args,result)
+    try:
+        if args.previous_failure is not None or args.terminal is not None:
+            require(args.previous_failure is not None and args.terminal is not None,
+                    'reanalysis requires original failure and actual terminal record')
+            require(not args.output.exists() and args.output.name=='qualification-v2.json' and
+                    args.previous_failure.resolve()==(args.directory/'qualification.json').resolve(),
+                    'reanalysis must preserve original qualification and use new v2 output')
+            old=read_json(args.previous_failure)
+            require(old['passed'] is False and old.get('failure')==
+                    'ValueError: profile replaces/removes observed normal image: /etc/ld.so.cache',
+                    'unexpected original audit failure')
+            terminal=args.terminal.read_text();job=re.search(r'^Job Id:\s*(\S+)',terminal,re.M)
+            require(job and job[1].split('.')[0]==(args.directory/'job-id.txt').read_text().strip().split('.')[0],
+                    'reanalysis terminal job differs')
+            for key,value in [('job_state','F'),('Exit_status','2'),('Job_Name','native-n12-profile-two'),('Resource_List.nodect','2')]:
+                found=re.search(r'^\s*'+re.escape(key)+r'\s*=\s*(\S+)\s*$',terminal,re.M)
+                require(found and found[1]==value,'reanalysis terminal field differs: '+key)
+            result['reanalysis']=dict(previous_report=str(args.previous_failure),previous_report_sha256=sha(args.previous_failure),
+                previous_failure=old['failure'],terminal_record=str(args.terminal),terminal_sha256=sha(args.terminal),
+                job_id=job[1].split('.')[0],job_state='F',batch_exit_status=2,solver_exit_statuses={'normal':0,'profiled':0},
+                scope='Offline parser correction only; original F/2 audit failure and all raw observations retained. Both solver exits independently checked below. No solver/profiler rerun.')
+        audit(args,result)
     except Exception as e:result.update(passed=False,failure=type(e).__name__+': '+str(e))
     result['source_sha256']={name:sha(Path(__file__).with_name(name)) for name in
         ('native_n12_profile_audit.py','native_n12_profile_rank.py','native_two_node_timing_audit.py')}
