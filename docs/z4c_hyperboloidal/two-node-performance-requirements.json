@@ -48,9 +48,10 @@
       "status": "in_progress",
       "required_evidence": "Profile representative bulk/surface owners and actual GPU/register/memory/synchronization/MPI progress; do not sum unrelated maxima.",
       "evidence": [
-        "evidence/native-n12-selected-profile-findings.json"
+        "evidence/native-n12-selected-profile-findings.json",
+        "evidence/native-n12-aps-findings.json"
       ],
-      "remaining": "Sampled GPU/L0 durations and launch shapes measured; global critical ranks and transfer-adjacent host gaps require MPI attribution."
+      "remaining": "All-rank MPI residency/API counts measured; causal critical rank remains unproved. Completion-policy candidate under native-v-native screening."
     },
     {
       "id": "bulk_organization",
@@ -69,8 +70,12 @@
     },
     {
       "id": "synchronization",
-      "status": "pending",
-      "required_evidence": "Evaluate reductions, observer collectives, packing fences, closure redundancy and real overlap while preserving necessary checks."
+      "status": "in_progress",
+      "required_evidence": "Evaluate reductions, observer collectives, packing fences, closure redundancy and real overlap while preserving necessary checks.",
+      "evidence": [
+        "evidence/native-n12-aps-findings.json"
+      ],
+      "remaining": "MPI_Test candidate must pass complete-state/GPU checks and repeated unprofiled timing before retention."
     },
     {
       "id": "communication_layout",
@@ -98,5 +103,5 @@
       "required_evidence": "Final committed native median no worse than fastest accepted old reference with sufficient repeatability; reproducible evidence, profiles, experiment table and architecture confirmation."
     }
   ],
-  "next_milestone": "Attribute measured transfer-adjacent host gaps, then confirm one correctness-qualified complete-step speedup; legacy reference proceeds independently."
+  "next_milestone": "One correctness-qualified complete-step speedup: screen the single MPI completion-policy candidate with repeated same-allocation ABBA windows, while retaining final legacy-parity requirements."
 }

@@ -2,8 +2,8 @@
 set -euo pipefail
 ulimit -c 0
 side=/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side
-work=$side/validation/perf-two-node-v1/mpi-profile
-case=$side/runs/native-n12-mpi-two-v1
+work=$side/validation/perf-two-node-v1/mpi-profile-v2
+case=$side/runs/native-n12-mpi-two-v2
 [[ -n ${PBS_JOBID:-} && -r ${PBS_NODEFILE:-} ]]
 [[ $(sort -u "$PBS_NODEFILE" | awk 'END {print NR}') == 2 ]]
 [[ ! -e "$case" ]]

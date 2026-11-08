@@ -1,0 +1,222 @@
+{
+  "schema": "native-n12-aps-retry-submission-evidence-v1",
+  "status": "solver_controls_passed_offline_reanalysis_passed",
+  "job_id": "9051996",
+  "submission": {
+    "schema": "native-n12-aps-submission-v1",
+    "job_id": "9051996.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "utc": "2026-11-08T16:33:39.155283+00:00",
+    "nodes": 2,
+    "ranks": 24,
+    "previous_job": "9051976",
+    "previous_terminal": "F/143; initialmonitorfailure; APSnotstarted",
+    "fresh_queue_clear": true,
+    "held_jobs_untouched": true,
+    "submitted_state": "Q"
+  },
+  "nodes": 2,
+  "ranks": 24,
+  "cycles": [
+    2486,
+    2490
+  ],
+  "cases": [
+    "normal",
+    "profiled"
+  ],
+  "profiled_ranks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23
+  ],
+  "runtime_monitored_ranks": [
+    0,
+    8,
+    23
+  ],
+  "baseline_executable_sha256": "f3a85db7528986ddec347b31675a8c5d588120a2380133aed73d5967f7aab05c",
+  "frozen_runtime_unchanged": true,
+  "launcher_manifest_sha256": "38d902a6a6c3e41172531f969110eccd7fbafedbd5a853485ed26dc564d248d3",
+  "aps_collection_mode": "mpi",
+  "aps_stat_level": 3,
+  "aps_mpi_imbalance": 0,
+  "previous_failure_job": "9051976",
+  "previous_failure_evidence": "docs/z4c_hyperboloidal/evidence/native-n12-aps-submission.json",
+  "previous_failure_evidence_sha256": "b514abc3d6756adadda645cfe3d41306cbfd4c0cb03cb0a09fd9c12b5b24775f",
+  "change": "Strict same-live-executable bracketing of nonempty proc samples; retain genuine live-environment mismatch as fatal with exactkeys andobservations. Fresh separate case/package paths. No solver changes.",
+  "cause_of_previous_inconsistent_snapshot_unproven": true,
+  "prepared_package": {
+    "admission.json": {
+      "bytes": 602,
+      "sha256": "4e411e15247ee02c66a68abb6228a4988400777bcabf7ed1c030de39064c4caf"
+    },
+    "aps-toolchain.sha256": {
+      "bytes": 690,
+      "sha256": "659430803a9d52061c9c2cb0bacb2cb0c4b52b7ed984319f4fd924e267d50b2b"
+    },
+    "capability.json": {
+      "bytes": 1028,
+      "sha256": "b85bd4fca6b3084bce4f6d33300251df626922dc51430fa40ff43fb25d24ab89"
+    },
+    "collect_native_n12_mpi.py": {
+      "bytes": 2983,
+      "sha256": "001e6cd5cdce26a68ac759c9969651d4d2abbb4b5300501c8bd5bd2b521565a3"
+    },
+    "help-aps-report.txt": {
+      "bytes": 8137,
+      "sha256": "fc397de7cba7e0f98a1c9796cb91916d27460a8b758503bdd7b4af2f8382a1f0"
+    },
+    "help-aps.txt": {
+      "bytes": 1951,
+      "sha256": "134d7e58f6727dde26c45d218d3b63d5fe0156f4cfc4397c6780fb033cb9e74b"
+    },
+    "independent-review.json": {
+      "bytes": 4118,
+      "sha256": "6322dcb077c8ac51bc105791d024cd93686994cbc89ffaf90b5819a9f3b99d51"
+    },
+    "loader-proof.json": {
+      "bytes": 45241,
+      "sha256": "40178849b8f32d3333afdf9d50a943ec41901aa12c5bc566cab6dfcbc656d268"
+    },
+    "native-n12-mpi-two.pbs": {
+      "bytes": 411,
+      "sha256": "19dd92686a5f6aabdb8f9d7ffc4d46f01d25c3bf6871e1e38fc107bada07f423"
+    },
+    "native_n12_mpi_audit.py": {
+      "bytes": 12837,
+      "sha256": "666c90f0e0977097dd134692ad6cdc940ea9207bc1bf4bb629dcd0f00c1a682d"
+    },
+    "native_n12_mpi_contract.md": {
+      "bytes": 2621,
+      "sha256": "6a4902a95ffb435ff1bf96b5f693fb337fbfcc04d106fd2c78e8693c871ec992"
+    },
+    "native_n12_mpi_rank.py": {
+      "bytes": 8929,
+      "sha256": "a27dd83da63b9e0c9affcd1eaa0e0c67c5446a28fc2877565acd883e0ceac400"
+    },
+    "native_n12_profile_audit.py": {
+      "bytes": 19072,
+      "sha256": "a37ffc7aed1941663a8996580722afce55ded2f8d5b9ebb0a770daac2914be2b"
+    },
+    "native_n12_profile_rank.py": {
+      "bytes": 7057,
+      "sha256": "7464f878aeed4e8361bfc17defe4e0e8685aef328a8c8600a42ce1e92d918f78"
+    },
+    "native_two_node_timing_audit.py": {
+      "bytes": 15923,
+      "sha256": "44e4576505f5328150e24230ec37abdaea52481df03bb101a800ebbfcca0ef7e"
+    },
+    "run-native-n12-mpi.sh": {
+      "bytes": 3114,
+      "sha256": "29d05de8b83e16db74898d89c1fd251451b7c9dead314d20ed4b7b2d841048f8"
+    },
+    "science-admission.json": {
+      "bytes": 2517015,
+      "sha256": "babb035acdcb505d2f8407815981731168ae2c75c3217dcc43ba2ce56c363bd9"
+    },
+    "snapshot-controls.json": {
+      "bytes": 653,
+      "sha256": "6ba75177b9ae6ba8a2478fa1c50913579b35d93281a7efaa1e170d41645928c4"
+    }
+  },
+  "files": {
+    "build-native/native-n12-mpi-preparation-v2/preparation.json": {
+      "size": 3185,
+      "sha256": "080f340642a577bd64e7c7b1771f6a12a62c06a0ad40f21e6ad435e687771b3c"
+    },
+    "build-native/native-n12-mpi-preparation-v2/snapshot-controls.json": {
+      "size": 653,
+      "sha256": "6ba75177b9ae6ba8a2478fa1c50913579b35d93281a7efaa1e170d41645928c4"
+    },
+    "build-native/native-n12-mpi-preparation-v2/staging-preflight.log": {
+      "size": 1030,
+      "sha256": "3fe333a820e8e9815e4ad04f25dafb4442a45f0b05f5e3759b9cace2e09ba950"
+    },
+    "build-native/native-n12-mpi-preparation-v2/preflight/guard-before.json": {
+      "size": 1665,
+      "sha256": "28339ad976a1f52d41b4dae491ee092938d8b1344b8b1c591241e4a1028270b9"
+    },
+    "build-native/native-n12-mpi-preparation-v2/preflight/previous-terminal.txt": {
+      "size": 3316,
+      "sha256": "af8c8beb4f7655c54428432aa56062a51af4a333e06b395ea2ae5b4e9e7d395d"
+    },
+    "build-native/native-n12-mpi-preparation-v2/preflight/queue-before.txt": {
+      "size": 565,
+      "sha256": "3d25bdbc0e3e858f2851b3751eb637a7291bb50575ccb5051acb9f14148969be"
+    },
+    "build-native/native-n12-mpi-preparation-v2/preflight/submission.json": {
+      "size": 377,
+      "sha256": "9b95bcf3b192871a45b1760e3f78f1d2720c87ddea380c4af27aa033af27dfc5"
+    },
+    "build-native/native-n12-mpi-preparation-v2/preflight/submitted-job.txt": {
+      "size": 56,
+      "sha256": "5a4cf6271ba9510f52a7e8ecda71d19d09e89e2e56a27d642ecacd41edd349b5"
+    },
+    "build-native/native-n12-mpi-preparation-v2/preflight/submitted-qstat.txt": {
+      "size": 2623,
+      "sha256": "a094c11999523a028708e3fd1a9ade5957a83f3f8c44117924acbb00285e6701"
+    },
+    "build-native/native-n12-mpi-preparation-v2/preflight/timed-observer-verify-before.txt": {
+      "size": 245,
+      "sha256": "250ba1628ad896cfa9359394e6fb8678ce8aa98171f9f1a7ae55f67cab48a3f3"
+    },
+    "build-native/native-n12-mpi-preparation-v2/preflight/timing-verify-before.txt": {
+      "size": 96,
+      "sha256": "2fce95b383e78b648cb43f29235dc871675d41e3347d300eb716d6f298d3fbc0"
+    }
+  },
+  "scientific_qualification_passed": false,
+  "mpi_interception_verified": false,
+  "performance_admission": false,
+  "job_state": "F",
+  "batch_exit_status": 2,
+  "solver_exit_statuses": {
+    "normal": 0,
+    "profiled": 0
+  },
+  "original_postprocess_failure_preserved": true,
+  "qualification": {
+    "path": "build-native/aurora-native-n12-mpi-v2/run-artifacts/runs/native-n12-mpi-two-v2/qualification-v2.json",
+    "sha256": "7c9783db8da95c32aff8ab08b6ecac1280f4bf457865dcf4d0a1d73d46b80014",
+    "passed": true,
+    "scientific_qualification_passed": true,
+    "mpi_interception_verified": true
+  },
+  "collection": {
+    "path": "build-native/aurora-native-n12-mpi-v2",
+    "transfer": {
+      "schema": "verified-streamed-run-collection-v1",
+      "passed": true,
+      "files": 151,
+      "archive_sha256": "c4752aa41259c32cba71f7b52dae623dbe781e9fab6fe5a3e6b35444540b9326",
+      "archive_bytes": 879407,
+      "remote_archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-n12-mpi-compact-9051996-reaudit-v2/run-artifacts.tar.gz",
+      "local_archive_created": false,
+      "all_file_sizes_and_hashes_verified": true,
+      "seconds": 0.5586159229278564
+    },
+    "package_sha256": "d8d8726e98c8e445644164d70a93fdb6f0de1336d8603cdda076e627879e692a"
+  },
+  "scope": "Actual batch F/2 is retained. Both paired solvers exited0; only the preserved output-format parser failure was corrected offline. No GPU rerun or numerical/runtime policy change."
+}

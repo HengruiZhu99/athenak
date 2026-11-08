@@ -13,8 +13,8 @@ from native_n12_mpi_rank import TOOL,TOOL_SHA,OPTIONS,SELECTED,BASELINE_PRELOAD
 from native_two_node_timing_audit import (ROOT,SOURCE,SOURCE_PATH,NORMAL,BINDING,WRAPPER,
     VERIFY,read_json,require,sha,write_json)
 
-CASE=ROOT/'runs/native-n12-mpi-two-v1'
-WORK=ROOT/'validation/perf-two-node-v1/mpi-profile'
+CASE=ROOT/'runs/native-n12-mpi-two-v2'
+WORK=ROOT/'validation/perf-two-node-v1/mpi-profile-v2'
 REPORT=Path('/opt/aurora/26.26.0/oneapi/vtune/latest/bin64/aps-report')
 REPORT_SHA='f1ed1b1ea6e45150a2b91b24fe662f05e10c90caace356e19b5f2a127e217b3a'
 MPS_SHA='b955adb9e0c665834b80ca676f8d96ec9d4c17b95fc424fb2708cb9484c235ba'
@@ -72,22 +72,37 @@ def mpi_reports(directory):
         require((reports/(name+'.exit-code.txt')).read_text().strip()=='0','APS report failed: '+name)
         log=reports/(name+'.log');require(log.stat().st_size>0,'empty APS report: '+name)
         outputs[name]=dict(path=str(log),sha256=sha(log))
-    # Installed aps-report help documents stat-<rank>.bin. An unexpected actual
-    # format fails closed with the raw data intact for a bounded offline review.
+    # Actual APS compact layout: 0-23/<host>/stat-<rank>-<PID>._bin.
     raw={}
-    for path in data.rglob('*.bin'):
-        match=re.fullmatch(r'stat-(\d+)\.bin',path.name)
+    for path in data.rglob('*._bin'):
+        match=re.fullmatch(r'stat-(\d+)-(\d+)\._bin',path.name)
         if match:
             rank=int(match[1]);require(rank not in raw and path.stat().st_size>0,'duplicate/empty APS rank record')
-            raw[rank]=dict(path=str(path),bytes=path.stat().st_size,sha256=sha(path))
+            launch=read_json(directory/'profiled'/'ranks'/f'rank{rank}'/'launch.json')
+            require(path.parent.name==launch['host'],'APS rank host differs from actual launch')
+            if rank in SELECTED:
+                observed=read_json(directory/'profiled'/'ranks'/f'rank{rank}'/'runtime.json')
+                require(set(observed['solver_processes'])=={match[2]},'APS PID differs from observed solver')
+            raw[rank]=dict(path=str(path),pid=int(match[2]),host=path.parent.name,
+                           bytes=path.stat().st_size,sha256=sha(path))
     require(set(raw)==set(range(24)),'APS raw statistics do not cover exactly24 ranks')
+    rank_rows={}
+    for line in (reports/'per-rank.log').read_text().splitlines():
+        cells=[x.strip() for x in line.split(';')]
+        if len(cells)!=6 or not cells[0].isdigit():continue
+        rank=int(cells[0]);values=[float(x) for x in cells[1:]]
+        require(rank not in rank_rows and all(math.isfinite(x) and x>=0 for x in values),
+                'duplicate/nonfinite APS rank summary')
+        rank_rows[rank]=dict(zip(('elapsed_seconds','mpi_seconds','mpi_percent','disabled_imbalance_seconds',
+                                 'disabled_imbalance_percent'),values))
+    require(set(rank_rows)==set(range(24)),'APS report does not cover exactly24 actual ranks')
     tables=[p for p in reports.rglob('*') if p.is_file() and p.suffix in ('.csv','.log')]
     calls={name:[] for name in ('MPI_Testall','MPI_Isend','MPI_Irecv')}
     for path in tables:
         call_column=None;column_name=None
         for line in path.read_text().splitlines():
             if not line.strip():continue
-            cells=next(csv.reader(io.StringIO(line)))
+            cells=next(csv.reader(io.StringIO(line),delimiter=';'))
             columns=[i for i,x in enumerate(cells) if x.strip().lower() in
                      ('calls','number of calls','call count')]
             if len(columns)==1:
@@ -100,7 +115,7 @@ def mpi_reports(directory):
                 if math.isfinite(value) and value>0:
                     calls[name].append(dict(path=str(path),line=line,call_column=column_name,positive_calls=value))
     require(all(calls.values()),'APS reports lack actual positive Testall/Isend/Irecv data rows')
-    return dict(rank_records=raw,required_function_data=calls,report_logs=outputs,
+    return dict(rank_records=raw,rank_summary=rank_rows,required_function_data=calls,report_logs=outputs,
         scope='Whole-process aggregate MPI statistics, including initialization/final outputs. Positive rows establish interception; column meanings and critical-rank attribution require actual report review. Imbalance0 inserts no requested imbalance barriers. No chronological MPI/GPU overlay or throughput claim.')
 
 
@@ -161,11 +176,33 @@ def audit(args,result):
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     for name in ('directory','source','output'):p.add_argument('--'+name,type=Path,required=True)
+    p.add_argument('--previous-failure',type=Path)
+    p.add_argument('--terminal',type=Path)
     args=p.parse_args();require(not args.output.exists(),'preserve previous qualification')
     result=dict(schema='native-n12-mpi-profile-qualification-v1',passed=False,scientific_qualification_passed=False,
         mpi_interception_verified=False,performance_measurement=False,cycles=[2486,2490],ranks=24,
         scope='Four-cycle APS aggregate MPI probe; numerical identity and actual interception required. No throughput/causal critical-path claim.')
-    try:audit(args,result)
+    try:
+        if args.previous_failure is not None or args.terminal is not None:
+            require(args.previous_failure is not None and args.terminal is not None and
+                args.output.name=='qualification-v2.json' and
+                args.previous_failure.resolve()==(args.directory/'qualification.json').resolve(),
+                'reanalysis must retain original qualification and use new v2 output')
+            old=read_json(args.previous_failure);terminal=args.terminal.read_text()
+            require(old['passed'] is False and old['scientific_qualification_passed'] is True and
+                old.get('failure')=='ValueError: APS raw statistics do not cover exactly24 ranks',
+                'unexpected original audit failure')
+            job=re.search(r'^Job Id:\s*(\S+)',terminal,re.M)
+            require(job and job[1].split('.')[0]==(args.directory/'job-id.txt').read_text().strip().split('.')[0],
+                    'reanalysis terminal job differs')
+            for key,value in [('job_state','F'),('Exit_status','2'),('Job_Name','native-n12-mpi-two'),('Resource_List.nodect','2')]:
+                found=re.search(r'^\s*'+re.escape(key)+r'\s*=\s*(\S+)\s*$',terminal,re.M)
+                require(found and found[1]==value,'reanalysis terminal field differs: '+key)
+            result['reanalysis']=dict(previous_report=str(args.previous_failure),previous_report_sha256=sha(args.previous_failure),
+                previous_failure=old['failure'],terminal_record=str(args.terminal),terminal_sha256=sha(args.terminal),
+                job_id=job[1].split('.')[0],job_state='F',batch_exit_status=2,solver_exit_statuses={'normal':0,'profiled':0},
+                scope='Offline actual APS layout/CSV parsing correction. Original F/2 audit report and all raw evidence retained; both solver exits checked below. No GPU rerun.')
+        audit(args,result)
     except Exception as e:result.update(passed=False,failure=type(e).__name__+': '+str(e))
     result['artifact_manifest']={str(p.relative_to(args.directory)):dict(bytes=p.stat().st_size,sha256=sha(p))
         for p in args.directory.rglob('*') if p.is_file() and 'cache' not in p.relative_to(args.directory).parts and p!=args.output}

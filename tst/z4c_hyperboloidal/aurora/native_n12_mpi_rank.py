@@ -39,17 +39,25 @@ def snapshot(pid, executable):
     for child in descendants(pid):
         try:
             proc=Path(f'/proc/{child}')
-            if (proc/'exe').resolve()!=executable.resolve():continue
+            expected=executable.resolve(strict=True)
+            if (proc/'exe').resolve(strict=True)!=expected:continue
+            maps=(proc/'maps').read_text()
+            environment=(proc/'environ').read_bytes()
+            # proc files are separate observations, not an atomic snapshot.
+            # Exec/exit can clear maps/environ between these reads. Accept only
+            # a nonempty sample bracketed by the same live native executable.
+            if not maps.strip() or not environment:continue
+            if (proc/'exe').resolve(strict=True)!=expected:continue
             loaded={}
-            for line in (proc/'maps').read_text().splitlines():
+            for line in maps.splitlines():
                 parts=line.split(maxsplit=5)
                 if len(parts)!=6 or not parts[5].startswith('/'):continue
                 path=parts[5]
                 if '.so' not in Path(path).name and path!=str(executable):continue
                 require(not path.endswith(' (deleted)'),'deleted mapped runtime image')
                 loaded[path]=dict(inode=int(parts[4]),device=parts[3])
-            environ=dict(x.split('=',1) for x in (proc/'environ').read_bytes().decode().split('\0') if '=' in x)
-            rows.append(dict(pid=child,executable=str((proc/'exe').resolve()),
+            environ=dict(x.split('=',1) for x in environment.decode().split('\0') if '=' in x)
+            rows.append(dict(pid=child,executable=str(expected),
                 mapped_files=loaded,environment={k:environ.get(k) for k in ENV_KEYS}))
         except (FileNotFoundError,ProcessLookupError):pass
     return rows
@@ -103,7 +111,13 @@ def main():
             for row in snapshot(child.pid,executable):
                 key=row['pid'];entry=observations.setdefault(key,dict(first_seconds=time.monotonic()-begin,
                     last_seconds=0.,executable=row['executable'],mapped_files={},environment=row['environment']))
-                require(entry['environment']==row['environment'],'solver environment changed during observation')
+                if entry['environment']!=row['environment']:
+                    changed={k:dict(previous=entry['environment'].get(k),current=row['environment'].get(k))
+                        for k in ENV_KEYS if entry['environment'].get(k)!=row['environment'].get(k)}
+                    write_json(rankdir/'runtime-environment-mismatch.json',dict(rank=rank,mode=args.mode,
+                        pid=key,elapsed_seconds=time.monotonic()-begin,changed=changed,
+                        previous=entry['environment'],current=row['environment']))
+                    require(False,'solver environment changed during observation')
                 entry['last_seconds']=time.monotonic()-begin;entry['mapped_files'].update(row['mapped_files'])
             samples+=1;time.sleep(.25)
         require(child.returncode==0,'selected solver/profiler failed')
@@ -131,7 +145,8 @@ def main():
             except ProcessLookupError:pass
         child.wait()
         write_json(rankdir/'runtime-failure.json',dict(passed=False,rank=rank,mode=args.mode,
-            failure=type(error).__name__+': '+str(error),terminated_pids=sorted(victims)))
+            failure=type(error).__name__+': '+str(error),terminated_pids=sorted(victims),
+            observations=observations,samples=samples))
         raise
 
 if __name__=='__main__':main()

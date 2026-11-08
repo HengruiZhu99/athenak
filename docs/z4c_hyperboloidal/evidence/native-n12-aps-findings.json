@@ -1,0 +1,673 @@
+{
+  "schema": "native-n12-aps-findings-v1",
+  "qualified_profile": true,
+  "solver_optimization": false,
+  "job_id": 9051996,
+  "batch_status": "F/2; both solvers0; offline actual-format correction passes",
+  "inputs": [
+    {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-n12-mpi-v2/run-artifacts/runs/native-n12-mpi-two-v2/qualification-v2.json",
+      "sha256": "7c9783db8da95c32aff8ab08b6ecac1280f4bf457865dcf4d0a1d73d46b80014",
+      "bytes": 109592
+    },
+    {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-n12-mpi-v2/transfer.json",
+      "sha256": "f515df6a8d195126c11c234bf1743b78db232e1f4d78accdfd5191801de29d58",
+      "bytes": 484
+    },
+    {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-n12-aps-preview-v1/rank-reports/results.json",
+      "sha256": "112b6a5f0beb11b5e93e16ba62c23afc6ccb7b5fdfaf44441e2fcea25e5d3064",
+      "bytes": 11824
+    },
+    {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-n12-profile-host-gap-v1/communicator-source-map.json",
+      "sha256": "198dca6529f0c9b5fc5049b39b06468c6d35147434201606ff8e75ee4116adb2",
+      "bytes": 7330
+    }
+  ],
+  "reanalysis": {
+    "previous_report": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/native-n12-mpi-two-v2/qualification.json",
+    "previous_report_sha256": "b044e56f7e2c1233f70a995b0c6301649927882f0d48d877fb0499fde1115a87",
+    "previous_failure": "ValueError: APS raw statistics do not cover exactly24 ranks",
+    "terminal_record": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-n12-mpi-failure-9051996/terminal-qstat.txt",
+    "terminal_sha256": "ce77097bf336cb2f7da276ffc0237b3d40d8f600a2060609e1e8f460116227c6",
+    "job_id": "9051996",
+    "job_state": "F",
+    "batch_exit_status": 2,
+    "solver_exit_statuses": {
+      "normal": 0,
+      "profiled": 0
+    },
+    "scope": "Offline actual APS layout/CSV parsing correction. Original F/2 audit report and all raw evidence retained; both solver exits checked below. No GPU rerun."
+  },
+  "state_equivalence": {
+    "bitwise_equal": true,
+    "padded31_plus8_scalar_values": 24704784,
+    "payload_sha256": "7831898300738ebbfa49899aece6b453c0b5b8e275516c948a461ddbf3a1c2da",
+    "excluded_unused_coarse_indices": [
+      [
+        1768714349,
+        1646290021,
+        1752440953,
+        1763734377,
+        1953853550,
+        1782319662,
+        171860591,
+        1702060386,
+        1701667182
+      ],
+      [
+        1768714349,
+        1646290021,
+        1752440953,
+        1763734377,
+        1953853550,
+        1782319662,
+        171860591,
+        1702060386,
+        1701667182
+      ]
+    ]
+  },
+  "diagnostics_exact": {
+    "native_n12_5M.z4c_hyperboloidal.hst": "1649fae98446faa7390b79bb0d3b5f8320f31044273cc575f368b994e5cec89f",
+    "native_n12_5M.horizon_summary_0.txt": "26b67bc6160fb45949842ad50bb6e8190a70e3425b828e51a70d8366c4bf0f01",
+    "native_n12_5M.horizon_shape_0.txt": "9274d6ee546b5924a0aa15fdb69799a1b4e7385488c34e3e56c59eab8faf5696"
+  },
+  "whole_process_report": {
+    "ranks": 24,
+    "cycles": [
+      2486,
+      2490
+    ],
+    "elapsed_seconds_min": 28.66,
+    "elapsed_seconds_max": 28.8,
+    "mean_elapsed_from_rounded_rank_rows": 28.699583333333333,
+    "mean_mpi_seconds_from_rounded_rank_rows": 22.245416666666667,
+    "mpi_testall_calls_total": 1431038674,
+    "mpi_testall_rank_seconds_total": 316.38,
+    "mpi_testall_seconds_per_rank_mean": 13.1825,
+    "mpi_irecv_rank_seconds_total": 38.06,
+    "mpi_isend_rank_seconds_total": 2.14,
+    "mpi_allreduce_rank_seconds_total": 136.72,
+    "mpi_allreduce_calls_per_rank": 1133,
+    "allreduce_16byte_bin": {
+      "calls_total": 120,
+      "rank_seconds_total": 35.58,
+      "inference": "Five calls per rank is consistent with initial timestep plus four post-cycle NewTimeStep reductions; this is a size-bin/source inference, not a call-site trace."
+    }
+  },
+  "rank_functions": [
+    {
+      "rank": 0,
+      "elapsed_seconds": 28.73,
+      "mpi_seconds": 21.34,
+      "functions": {
+        "MPI_Testall": {
+          "seconds": 14.56,
+          "calls": 91849857
+        },
+        "MPI_Allreduce": {
+          "seconds": 5.1,
+          "calls": 1133
+        },
+        "MPI_Isend": {
+          "seconds": 0.06,
+          "calls": 396
+        },
+        "MPI_Irecv": {
+          "seconds": 0.0,
+          "calls": 324
+        }
+      }
+    },
+    {
+      "rank": 1,
+      "elapsed_seconds": 28.74,
+      "mpi_seconds": 20.48,
+      "functions": {
+        "MPI_Testall": {
+          "seconds": 14.45,
+          "calls": 79723856
+        },
+        "MPI_Allreduce": {
+          "seconds": 4.29,
+          "calls": 1133
+        },
+        "MPI_Isend": {
+          "seconds": 0.11,
+          "calls": 506
+        },
+        "MPI_Irecv": {
+          "seconds": 0.0,
+          "calls": 362
+        }
+      }
+    },
+    {
+      "rank": 2,
+      "elapsed_seconds": 28.8,
+      "mpi_seconds": 19.29,
+      "functions": {
+        "MPI_Testall": {
+          "seconds": 10.98,
+          "calls": 84849285
+        },
+        "MPI_Allreduce": {
+          "seconds": 6.57,
+          "calls": 1133
+        },
+        "MPI_Isend": {
+          "seconds": 0.1,
+          "calls": 254
+        },
+        "MPI_Irecv": {
+          "seconds": 0.0,
+          "calls": 254
+        }
+      }
+    },
+    {
+      "rank": 3,
+      "elapsed_seconds": 28.77,
+      "mpi_seconds": 20.14,
+      "functions": {
+        "MPI_Testall": {
+          "seconds": 12.18,
+          "calls": 76639630
+        },
+        "MPI_Allreduce": {
+          "seconds": 6.23,
+          "calls": 1133
+        },
+        "MPI_Isend": {
+          "seconds": 0.12,
+          "calls": 398
+        },
+        "MPI_Irecv": {
+          "seconds": 0.0,
+          "calls": 398
+        }
+      }
+    },
+    {
+      "rank": 4,
+      "elapsed_seconds": 28.73,
+      "mpi_seconds": 23.31,
+      "functions": {
+        "MPI_Testall": {
+          "seconds": 13.7,
+          "calls": 60227766
+        },
+        "MPI_Allreduce": {
+          "seconds": 5.02,
+          "calls": 1133
+        },
+        "MPI_Irecv": {
+          "seconds": 2.95,
+          "calls": 468
+        },
+        "MPI_Isend": {
+          "seconds": 0.03,
+          "calls": 504
+        }
+      }
+    },
+    {
+      "rank": 5,
+      "elapsed_seconds": 28.73,
+      "mpi_seconds": 22.94,
+      "functions": {
+        "MPI_Testall": {
+          "seconds": 13.87,
+          "calls": 63977697
+        },
+        "MPI_Allreduce": {
+          "seconds": 5.03,
+          "calls": 1133
+        },
+        "MPI_Irecv": {
+          "seconds": 2.38,
+          "calls": 396
+        },
+        "MPI_Isend": {
+          "seconds": 0.05,
+          "calls": 432
+        }
+      }
+    },
+    {
+      "rank": 6,
+      "elapsed_seconds": 28.73,
+      "mpi_seconds": 21.8,
+      "functions": {
+        "MPI_Testall": {
+          "seconds": 14.23,
+          "calls": 80502440
+        },
+        "MPI_Allreduce": {
+          "seconds": 5.91,
+          "calls": 1133
+        },
+        "MPI_Isend": {
+          "seconds": 0.05,
+          "calls": 468
+        },
+        "MPI_Irecv": {
+          "seconds": 0.0,
+          "calls": 432
+        }
+      }
+    },
+    {
+      "rank": 7,
+      "elapsed_seconds": 28.72,
+      "mpi_seconds": 21.61,
+      "functions": {
+        "MPI_Testall": {
+          "seconds": 14.48,
+          "calls": 82514665
+        },
+        "MPI_Allreduce": {
+          "seconds": 5.5,
+          "calls": 1133
+        },
+        "MPI_Isend": {
+          "seconds": 0.06,
+          "calls": 432
+        },
+        "MPI_Irecv": {
+          "seconds": 0.0,
+          "calls": 432
+        }
+      }
+    },
+    {
+      "rank": 8,
+      "elapsed_seconds": 28.73,
+      "mpi_seconds": 21.61,
+      "functions": {
+        "MPI_Testall": {
+          "seconds": 14.62,
+          "calls": 79537455
+        },
+        "MPI_Allreduce": {
+          "seconds": 5.37,
+          "calls": 1133
+        },
+        "MPI_Isend": {
+          "seconds": 0.06,
+          "calls": 468
+        },
+        "MPI_Irecv": {
+          "seconds": 0.01,
+          "calls": 504
+        }
+      }
+    },
+    {
+      "rank": 9,
+      "elapsed_seconds": 28.73,
+      "mpi_seconds": 21.74,
+      "functions": {
+        "MPI_Testall": {
+          "seconds": 12.05,
+          "calls": 83616354
+        },
+        "MPI_Allreduce": {
+          "seconds": 7.86,
+          "calls": 1133
+        },
+        "MPI_Isend": {
+          "seconds": 0.07,
+          "calls": 360
+        },
+        "MPI_Irecv": {
+          "seconds": 0.01,
+          "calls": 360
+        }
+      }
+    },
+    {
+      "rank": 10,
+      "elapsed_seconds": 28.72,
+      "mpi_seconds": 21.41,
+      "functions": {
+        "MPI_Testall": {
+          "seconds": 11.76,
+          "calls": 79112388
+        },
+        "MPI_Allreduce": {
+          "seconds": 7.8,
+          "calls": 1133
+        },
+        "MPI_Isend": {
+          "seconds": 0.09,
+          "calls": 360
+        },
+        "MPI_Irecv": {
+          "seconds": 0.01,
+          "calls": 360
+        }
+      }
+    },
+    {
+      "rank": 11,
+      "elapsed_seconds": 28.73,
+      "mpi_seconds": 21.22,
+      "functions": {
+        "MPI_Testall": {
+          "seconds": 12.56,
+          "calls": 78558764
+        },
+        "MPI_Allreduce": {
+          "seconds": 6.93,
+          "calls": 1133
+        },
+        "MPI_Isend": {
+          "seconds": 0.09,
+          "calls": 720
+        },
+        "MPI_Irecv": {
+          "seconds": 0.01,
+          "calls": 756
+        }
+      }
+    },
+    {
+      "rank": 12,
+      "elapsed_seconds": 28.66,
+      "mpi_seconds": 23.71,
+      "functions": {
+        "MPI_Testall": {
+          "seconds": 14.04,
+          "calls": 49360424
+        },
+        "MPI_Allreduce": {
+          "seconds": 7.01,
+          "calls": 1133
+        },
+        "MPI_Irecv": {
+          "seconds": 0.91,
+          "calls": 360
+        },
+        "MPI_Isend": {
+          "seconds": 0.09,
+          "calls": 360
+        }
+      }
+    },
+    {
+      "rank": 13,
+      "elapsed_seconds": 28.66,
+      "mpi_seconds": 24.75,
+      "functions": {
+        "MPI_Testall": {
+          "seconds": 13.22,
+          "calls": 21387787
+        },
+        "MPI_Allreduce": {
+          "seconds": 6.41,
+          "calls": 1133
+        },
+        "MPI_Irecv": {
+          "seconds": 3.41,
+          "calls": 360
+        },
+        "MPI_Isend": {
+          "seconds": 0.06,
+          "calls": 360
+        }
+      }
+    },
+    {
+      "rank": 14,
+      "elapsed_seconds": 28.66,
+      "mpi_seconds": 24.2,
+      "functions": {
+        "MPI_Testall": {
+          "seconds": 12.31,
+          "calls": 4759975
+        },
+        "MPI_Irecv": {
+          "seconds": 6.03,
+          "calls": 792
+        },
+        "MPI_Allreduce": {
+          "seconds": 4.06,
+          "calls": 1133
+        },
+        "MPI_Isend": {
+          "seconds": 0.11,
+          "calls": 720
+        }
+      }
+    },
+    {
+      "rank": 15,
+      "elapsed_seconds": 28.66,
+      "mpi_seconds": 21.52,
+      "functions": {
+        "MPI_Testall": {
+          "seconds": 12.78,
+          "calls": 80186283
+        },
+        "MPI_Allreduce": {
+          "seconds": 6.82,
+          "calls": 1133
+        },
+        "MPI_Isend": {
+          "seconds": 0.08,
+          "calls": 360
+        },
+        "MPI_Irecv": {
+          "seconds": 0.0,
+          "calls": 360
+        }
+      }
+    },
+    {
+      "rank": 16,
+      "elapsed_seconds": 28.67,
+      "mpi_seconds": 23.38,
+      "functions": {
+        "MPI_Testall": {
+          "seconds": 12.75,
+          "calls": 16748094
+        },
+        "MPI_Irecv": {
+          "seconds": 4.53,
+          "calls": 756
+        },
+        "MPI_Allreduce": {
+          "seconds": 4.14,
+          "calls": 1133
+        },
+        "MPI_Isend": {
+          "seconds": 0.22,
+          "calls": 756
+        }
+      }
+    },
+    {
+      "rank": 17,
+      "elapsed_seconds": 28.66,
+      "mpi_seconds": 22.44,
+      "functions": {
+        "MPI_Testall": {
+          "seconds": 14.45,
+          "calls": 68986425
+        },
+        "MPI_Allreduce": {
+          "seconds": 6.09,
+          "calls": 1133
+        },
+        "MPI_Isend": {
+          "seconds": 0.1,
+          "calls": 648
+        },
+        "MPI_Irecv": {
+          "seconds": 0.01,
+          "calls": 648
+        }
+      }
+    },
+    {
+      "rank": 18,
+      "elapsed_seconds": 28.66,
+      "mpi_seconds": 22.68,
+      "functions": {
+        "MPI_Testall": {
+          "seconds": 14.78,
+          "calls": 51953046
+        },
+        "MPI_Allreduce": {
+          "seconds": 5.31,
+          "calls": 1133
+        },
+        "MPI_Irecv": {
+          "seconds": 0.71,
+          "calls": 432
+        },
+        "MPI_Isend": {
+          "seconds": 0.09,
+          "calls": 432
+        }
+      }
+    },
+    {
+      "rank": 19,
+      "elapsed_seconds": 28.66,
+      "mpi_seconds": 24.28,
+      "functions": {
+        "MPI_Testall": {
+          "seconds": 10.81,
+          "calls": 4537492
+        },
+        "MPI_Irecv": {
+          "seconds": 7.22,
+          "calls": 756
+        },
+        "MPI_Allreduce": {
+          "seconds": 4.45,
+          "calls": 1133
+        },
+        "MPI_Isend": {
+          "seconds": 0.08,
+          "calls": 648
+        }
+      }
+    },
+    {
+      "rank": 20,
+      "elapsed_seconds": 28.66,
+      "mpi_seconds": 21.16,
+      "functions": {
+        "MPI_Testall": {
+          "seconds": 13.07,
+          "calls": 84337526
+        },
+        "MPI_Allreduce": {
+          "seconds": 6.16,
+          "calls": 1133
+        },
+        "MPI_Isend": {
+          "seconds": 0.09,
+          "calls": 360
+        },
+        "MPI_Irecv": {
+          "seconds": 0.0,
+          "calls": 360
+        }
+      }
+    },
+    {
+      "rank": 21,
+      "elapsed_seconds": 28.66,
+      "mpi_seconds": 24.2,
+      "functions": {
+        "MPI_Testall": {
+          "seconds": 12.38,
+          "calls": 2049826
+        },
+        "MPI_Irecv": {
+          "seconds": 6.48,
+          "calls": 828
+        },
+        "MPI_Allreduce": {
+          "seconds": 3.48,
+          "calls": 1133
+        },
+        "MPI_Isend": {
+          "seconds": 0.15,
+          "calls": 756
+        }
+      }
+    },
+    {
+      "rank": 22,
+      "elapsed_seconds": 28.66,
+      "mpi_seconds": 21.8,
+      "functions": {
+        "MPI_Testall": {
+          "seconds": 12.82,
+          "calls": 75729595
+        },
+        "MPI_Allreduce": {
+          "seconds": 7.12,
+          "calls": 1133
+        },
+        "MPI_Isend": {
+          "seconds": 0.06,
+          "calls": 432
+        },
+        "MPI_Irecv": {
+          "seconds": 0.0,
+          "calls": 432
+        }
+      }
+    },
+    {
+      "rank": 23,
+      "elapsed_seconds": 28.66,
+      "mpi_seconds": 22.88,
+      "functions": {
+        "MPI_Testall": {
+          "seconds": 13.53,
+          "calls": 29892044
+        },
+        "MPI_Allreduce": {
+          "seconds": 4.07,
+          "calls": 1133
+        },
+        "MPI_Irecv": {
+          "seconds": 3.38,
+          "calls": 468
+        },
+        "MPI_Isend": {
+          "seconds": 0.13,
+          "calls": 468
+        }
+      }
+    }
+  ],
+  "interpretation": "Measured donor completion/progress and receive posting are the next target. The dominant Testall call sites are MappedExchange::Receive and ClearSend; individual request retirement is a small, native-Bvals-style hypothesis to test. No arithmetic or task-dependency change is proposed.",
+  "limits": [
+    "Whole-process MPI statistics include initialization and final constraints/FastFlow/I/O. They are not complete-step timing windows.",
+    "MPI residence is not automatically removable time. Polling can expose delays elsewhere.",
+    "No demonstrated causal critical rank; min/max process-lifetime ranks are not the RK4 critical path.",
+    "APS imbalance measurement was disabled; displayed zero does not establish balance.",
+    "Equal-membership communicators are collapsed in the report, so duplicate donor plans cannot be identified by APS communicator ID alone.",
+    "Recorded GPU activity coverage is not achieved occupancy.",
+    "No solver speedup or legacy parity yet."
+  ],
+  "selected_single_experiment": {
+    "change": "Replace two MappedExchange MPI_Testall completion scans with per-request MPI_Test, polling all requests and preserving all-ready unpack/buffer-reuse gates.",
+    "runtime_files": [
+      "src/bvals/mapped_exchange.cpp"
+    ],
+    "status": "Implemented in isolated worktree; local MPI/poison/mixed-peer tests pass; GPU build and ABBA timing qualification pending.",
+    "retention_gate": "Full state/records, diagnostics/compatibility/restart and applicable poison/refinement controls plus repeated unprofiled complete-step improvement before separate optimization commit."
+  }
+}

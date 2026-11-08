@@ -1,6 +1,6 @@
 {
   "schema": "native-n12-aps-submission-evidence-v1",
-  "status": "queued",
+  "status": "terminal failure before APS execution",
   "job_id": "9051976",
   "submission": {
     "schema": "native-n12-aps-submission-v1",
@@ -179,9 +179,39 @@
     "build-native/native-n12-mpi-preparation-v1/preflight/timing-verify-before.txt": {
       "size": 96,
       "sha256": "2fce95b383e78b648cb43f29235dc871675d41e3347d300eb716d6f298d3fbc0"
+    },
+    "build-native/aurora-native-n12-mpi-failure-v1/package.json": {
+      "size": 827,
+      "sha256": "8fa0a51b31b8bbb36272282dcd888f3aa1a2d5c6d41feec7b8c0b7f2fa772c97"
+    },
+    "build-native/aurora-native-n12-mpi-failure-v1/transfer.json": {
+      "size": 472,
+      "sha256": "b274ec3a999d38c3c09e7093c3036d946f73cb29e849a0955fc8bc50b9685169"
+    },
+    "build-native/aurora-native-n12-mpi-failure-v1/run-artifacts/terminal-qstat.txt": {
+      "size": 3316,
+      "sha256": "af8c8beb4f7655c54428432aa56062a51af4a333e06b395ea2ae5b4e9e7d395d"
+    },
+    "build-native/aurora-native-n12-mpi-failure-v1/run-artifacts/runs/native-n12-mpi-two-v1/normal/run.log": {
+      "size": 992,
+      "sha256": "c654427423c6dd193d2138904c84b36340b201658031f542cdc1307c0565ab8f"
+    },
+    "build-native/aurora-native-n12-mpi-failure-v1/run-artifacts/runs/native-n12-mpi-two-v1/normal/ranks/rank23/runtime-failure.json": {
+      "size": 170,
+      "sha256": "34f3094c3d75850e0fa536c81dd06e46f4243ec869e441acd36b549021d7051c"
     }
   },
   "scientific_qualification_passed": false,
   "mpi_interception_verified": false,
-  "performance_admission": false
+  "performance_admission": false,
+  "terminal_state": "F",
+  "terminal_exit_status": 143,
+  "recorded_walltime": "00:00:14",
+  "normal_exit_status": 143,
+  "profiled_started": false,
+  "solver_cycle_output_or_final_checkpoint": false,
+  "failure": "External monitor rejected environment change during startup; original code did not save differing keys. Inconsistent proc snapshot is a hypothesis, not an established cause.",
+  "failure_collection": "build-native/aurora-native-n12-mpi-failure-v1",
+  "failure_all_file_sizes_and_hashes_verified": true,
+  "original_raw_and_package_preserved": true
 }

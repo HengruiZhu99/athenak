@@ -142,10 +142,32 @@ outside recorded GPU work and SYCL/Level Zero calls, often between transfers.
 MPI calls were not traced, so this does not yet identify the responsible MPI
 operation or prove that either sampled rank determines global elapsed time.
 
-The next single experiment is a bounded all-rank MPI-only profile using the
-installed APS tool, with imbalance instrumentation disabled and the unchanged
-native solver. Attribute those host gaps before changing scheduling. Surface
-batching and field-parallel KO remain untested candidates, not selected fixes.
+The all-rank APS follow-up now passes scientific and actual-interception checks.
+Job 9051976 stopped in the external process monitor at startup; that failure is
+preserved. Retry 9051996 completed both solver cases with exact full state and
+diagnostic agreement. Its F/2 batch status records an output-format audit failure;
+offline reanalysis passes and preserves the original report. See
+`evidence/native-n12-aps-findings.json`.
+
+Across the 24 ranks, mean whole-process MPI residence is 22.25 s out of about 28.70 s.
+`MPI_Testall` accounts for 316.38 summed rank-seconds (13.18 s/rank) and
+1,431,038,674 calls. `MPI_Irecv` averages 1.59 s/rank, reaching 7.22 s on rank 19;
+`MPI_Isend` averages 0.089 s/rank. `MPI_Allreduce` averages 5.70 s/rank, but its
+1,133 calls/rank include setup and final diagnostics/FastFlow. Its 16-byte bin
+contains five calls/rank, consistent with initial plus four post-cycle timestep
+reductions. These are whole-process observations, not a sum of phase maxima or
+a demonstrated causal critical path. Disabled imbalance reporting means zero is
+unmeasured, not proof of balance.
+
+The selected single candidate replaces `MappedExchange`'s two `MPI_Testall`
+completion scans with individual `MPI_Test` calls, following native Bvals.
+Every request is polled; unpacking and buffer reuse still require all requests
+to complete. Earlier retirement of completed requests is the hypothesis, not
+an established explanation or speedup. Only one runtime `.cpp` file changes;
+task order, arithmetic, storage layout and ownership remain unchanged. Existing
+local MPI/poison tests and a delayed-second-peer check pass. Next is unprofiled
+control/candidate/candidate/control screening with complete-state comparisons.
+Surface batching and field-parallel KO remain untested candidates.
 
 Inspect bulk kernel organization, geometry reuse, surface arithmetic,
 synchronization, communication/data layout and imbalance one at a time. Reorder
@@ -179,6 +201,8 @@ bounded two-node correctness checks when a proposed change requires them.
 |---|---|---|---|
 | Native timing and observer controls | Complete payload/diagnostics bitwise; independent review passes | 4.572643 s normal; 5.422913 s observed | Qualified measurement; no solver speedup |
 | Selected-rank native profile | Complete payload/diagnostics bitwise; offline audit correction preserves original F/2 | GPU activity covers 7.36%/11.91% of sampled RHS spans | Diagnose transfer-adjacent host gaps next; no solver change |
+| All-rank APS MPI profile | Complete payload/diagnostics/runtime identity pass; original F/2 retained | Whole-process mean 13.18 s/rank in Testall | Select one completion-policy experiment; no throughput claim |
+| Individual MPI completion checks | Local MPI/poison/mixed-peer tests pass; GPU pending | Pending | Uncommitted candidate; retain only after complete-step improvement |
 | Matched previous-implementation reference | Builds ready; GPU qualification pending | Pending | Does not block native screening |
 
 Completion requires the committed native implementation to match or beat the
