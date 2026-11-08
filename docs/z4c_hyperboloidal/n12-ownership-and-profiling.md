@@ -51,13 +51,15 @@ covering the entire warmup and repeated windows, with at most 150 further steps.
 Keep the timestep, physics, grid, equal weights and existing output cadence
 unchanged; the harness must still reject any scheduled output inside that run.
 
-The existing timing validator qualifies only the CPU two-rank, fresh eight-step
-case. It does not admit actual 24/96-rank GPU timing. Future Aurora qualification
-must bind the frozen numerical baseline, the same timing executable and restart
-checkpoint hashes at both decompositions, the compiler/tile configuration,
-actual state equivalence and complete window coverage. Neither the ownership
-counts above nor the CPU validation timings establish GPU throughput or scaling.
-The hash-qualified timing builder, header, contract and validator remain unchanged.
+The original timing validator qualifies only the CPU two-rank, fresh eight-step
+case. The separate `native_cycle_timing_gpu_validate.py` reader now requires
+the complete 3551-step admission and independent review, the frozen numerical
+baseline and timing build, and matching restart checkpoint hashes at both
+decompositions. It checks the compiler/tile provenance, complete state and
+diagnostic equivalence, and complete window coverage before exposing accepted
+timings. Neither the ownership counts above nor the CPU validation timings
+establish GPU throughput or scaling. The hash-qualified timing builder,
+header, contract and original CPU validator remain unchanged.
 
 The same builder now compiled and verified a separate Aurora SYCL timing
 executable while the frozen N12 trajectory continued. Its 11 reversible Driver
@@ -65,6 +67,55 @@ insertions preserve the original main and numerical objects; all 1,972 baseline
 source files and 228 objects passed before/after checks. This removes a build
 prerequisite only: no GPU timing run or numerical qualification was performed.
 See [the actual build evidence](evidence/native-cycle-timing-aurora-build.json).
+
+The first planned GPU timing qualification uses the same admitted cycle-3551
+checkpoint for a normal and a timed run at each decomposition. The normal
+executable remains `f3a85db7…`; the separate timing executable is `e4788800…`.
+Each run advances 130 complete cycles with the original timestep: ten warmup
+cycles followed by three 40-cycle windows. The only restart overrides are
+`time/nlim=3681`, `time/tlim=2`, and `time/ndiag=1000000000`.
+
+| Interval | Initial cycle | Final cycle | Complete cycles |
+| --- | ---: | ---: | ---: |
+| Warmup | 3551 | 3561 | 10 |
+| Window 1 | 3561 | 3601 | 40 |
+| Window 2 | 3601 | 3641 | 40 |
+| Window 3 | 3641 | 3681 | 40 |
+
+The current restart/output implementation and admitted cycle-1066 metadata
+project the next diagnostic write after 3551 to cycle 3906. This prediction
+must be checked against the actual admitted cycle-3551 checkpoint: both output
+clocks should be `1.6666666666666667`, with restart file counter 11. The normal
+restart entry skips initial outputs; finalization writes the ordinary history,
+horizon and restart after the timing windows. Neither the output cadence nor
+the saved horizon seed is overridden. The final time is
+`1.7280161395080103`, below the proposed `tlim=2`.
+
+Acceptance requires complete normal-versus-timed checkpoint equality at both
+24 and 96 ranks, including all 31 fields, eight chi-record values, padding and
+meaningful metadata; same-rank history/horizon/shape files must also match
+byte for byte. Compare the timed final states across decompositions as well.
+Bind the actual terminal jobs, commands, tile assignments, environments,
+before/after runtime guards, and common source-checkpoint hash. Accept no
+throughput or efficiency if any scientific or execution-provenance check fails.
+The two allocations are serialized and retain the eight-node resource limit.
+This is a concrete future run specification, not evidence of GPU execution.
+
+The prepared `aurora/run-cycle-timing-validation.sh` and two PBS files execute
+the normal/timed pair only after the runtime guard verifies the full admission.
+The eight-node entry also checks that the two-node job is terminal F/0 and used
+the same guarded inputs. Submission remains separate and requires a fresh queue
+check. The guard's module docstring specifies the hash-bound `admission.json`
+descriptor; no final-3551 descriptor has been fabricated or staged.
+`aurora/collect_cycle_timing.py` collects complete final outputs and compact
+provenance without duplicating the source checkpoint or numerical build.
+
+Offline controls exercise actual existing CPU payloads and outputs, the actual
+SYCL build proof, and explicitly synthetic admission/window/environment/metadata
+cases. The public reader rejects the real incomplete cycle-1066 admission and
+withholds all timing values. These checks do not exercise a successful complete
+four-run GPU collection; that remains the next qualification after 3551.
+See [preparation evidence](evidence/native-cycle-timing-gpu-preparation.json).
 
 Reproducer: `tst/z4c_hyperboloidal/n12_ownership_audit.py`, using the actual
 `native-clean` directories in the qualified two/eight-node stage-trace bundles

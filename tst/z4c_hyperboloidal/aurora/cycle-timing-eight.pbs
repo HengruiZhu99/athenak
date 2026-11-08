@@ -1,0 +1,13 @@
+#!/bin/bash -l
+# Prepared only. Serialized submission is controlled by Root/donor, never here.
+#PBS -A CompactBinaryMerger
+#PBS -N native-timing-eight
+#PBS -q debug-scaling
+#PBS -l select=8
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -j oe
+set -euo pipefail
+cd /lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/cycle-timing-run
+sha256sum -c launchers.sha256
+exec bash run-cycle-timing-validation.sh 8

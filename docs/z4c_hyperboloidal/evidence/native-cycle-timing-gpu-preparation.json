@@ -1,0 +1,233 @@
+{
+  "schema": "native-cycle-timing-gpu-preparation-v1",
+  "passed": true,
+  "scope": "Local offline reader/launch preparation and source review only. No GPU run, successful complete four-run GPU collection, numerical GPU qualification, throughput or scaling result.",
+  "gpu_executed": false,
+  "gpu_submitted": false,
+  "remote_staging_performed": false,
+  "performance_admission": false,
+  "reader_controls": {
+    "path": "build-native/native-cycle-timing-gpu-reader-controls-v3/results.json",
+    "sha256": "5f71b8ec3439c06f63e9ff5ad87b197777e7d3279a09da6d3ef07655d2542848",
+    "passed": true,
+    "checks": 41,
+    "check_names": [
+      "actual_cpu_windows",
+      "actual_cpu_diagnostics_normal",
+      "actual_cpu_diagnostics_timed",
+      "actual_cpu_output_bytes",
+      "actual_aurora_build_only",
+      "synthetic_restart_windows",
+      "window_gap",
+      "rk_stages_as_updates",
+      "wrong_dt",
+      "wrong_backend",
+      "wrong_rank_count",
+      "partial_final_cycle",
+      "profile_loaded",
+      "scheduled_output",
+      "nonfinite_window",
+      "actual1066_not_full3551",
+      "actual1066_not_timing_source",
+      "synthetic_3551_schedule",
+      "insufficient_output_schedule",
+      "added_cycle_output",
+      "synthetic_final_metadata",
+      "changed_final_physics",
+      "extra_final_output_counter",
+      "changed_initialized_header",
+      "synthetic_exact_command",
+      "wrong_executable",
+      "extra_dt_override",
+      "synthetic_environment",
+      "profiling_environment",
+      "wrong_device_environment",
+      "synthetic_terminal_record",
+      "different_actual_job",
+      "nonzero_job_exit",
+      "wrong_node_count",
+      "synthetic_guard_binding",
+      "guard_binds_wrong_review",
+      "guard_missing_verify_transcript",
+      "late_chi_record_payload",
+      "both_missing_horizon_rejected",
+      "incomplete_horizon_coefficients",
+      "actual1066_public_reader_withholds_all_timings"
+    ],
+    "actual_cpu_complete_state": {
+      "0": {
+        "bitwise_equal": true,
+        "scalar_values": 24704784,
+        "payload_sha256": "a99fffd8c3a6dff7da69687b9898de195d7810d112b0efbee5ea1f0041ad48fb"
+      },
+      "8": {
+        "bitwise_equal": true,
+        "scalar_values": 24704784,
+        "payload_sha256": "d3628a85957d353a10c67c1511c617da29cbfe8ac540c605f4e6e08d0c4da963"
+      }
+    },
+    "scope": "Offline parser controls only: existing CPU runs/build evidence and synthetic in-memory metadata; no GPU numerical/timing qualification"
+  },
+  "producer_controls": {
+    "path": "build-native/cycle-timing-producer-controls-v3/results.json",
+    "sha256": "e7d6b9ffba63ffae16ecf64b1c49b98ed94960acabef9af8faf538d1981c4136",
+    "passed": true,
+    "checks": 35,
+    "check_names": [
+      "three_shell_syntax_checks",
+      "three_python_syntax_checks",
+      "actual1066_not3551",
+      "shared_reader_synthetic_source_positive",
+      "synthetic_header_only_positive",
+      "wrong_counter",
+      "changed_output_cadence",
+      "changed_last_time",
+      "nonfinite_seed",
+      "adaptive_mesh",
+      "truncated_payload",
+      "actual_partial_admission",
+      "synthetic_admission_shape_only_positive",
+      "failed_science",
+      "missing_history",
+      "missing_stage",
+      "failed_compatibility",
+      "partial_field_count",
+      "wrong_review_binding",
+      "synthetic_environment_positive",
+      "profiling_requested",
+      "empty_profile_env",
+      "preset_affinity",
+      "wrong_cache",
+      "synthetic_binding_positive",
+      "missing_tile_rank",
+      "duplicate_tile_rank",
+      "synthetic_terminal_positive",
+      "synthetic_previous_pair_positive",
+      "previous_pair_checkpoint_mismatch",
+      "previous_pair_not_terminal",
+      "running_job",
+      "failed_job",
+      "wrong_job",
+      "wrong_nodes"
+    ],
+    "scope": "Only synthetic admission/metadata, environment, binding and scheduler parser controls; no solver invocation or GPU proof."
+  },
+  "actual_partial_inputs": {
+    "source_checkpoint": {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-n12-common-03/run-artifacts/runs/native-n12-common-03/rst/native_n12_5M.00003.rst",
+      "sha256": "745a158d2eeb4c05111d1a26a5e971c955439ca3360ce12e9078aaf0fe336143"
+    },
+    "partial_science": {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-common-segment-03-science-v1/continuation-admission.json",
+      "sha256": "c54691b90392e301d53cb6bcc8bb72eca49c3b438ff90f77cf17da47fcab0405"
+    },
+    "partial_review": {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-common-03-independent-review-v1/review.json",
+      "sha256": "a4b74ee8ac69b3fc251d7fd99c00ec5bf4e6a767fca5ae7e023b2a42c14bbe85"
+    }
+  },
+  "retained_failures": [
+    {
+      "path": "build-native/native-cycle-timing-gpu-reader-controls-v1/results.json",
+      "sha256": "66540be80c2b2ac2779288ffa9ca2577ce2b3c846d90dcd2527d78f9fd5c79dc",
+      "reason": "Negative-control expected-message formatting assumed plain tuple integers; NumPy printed np.int64 wrappers. Test expectation corrected; numerical/parser gate unchanged."
+    },
+    {
+      "path": "build-native/cycle-timing-producer-controls-v2/results.json",
+      "sha256": "ce38e9a2ef9587c0437e73a49ea7e00228a04eeadee66497ba2e8fef17781f32",
+      "notes": {
+        "path": "build-native/cycle-timing-producer-controls-v2/failure-notes.txt",
+        "sha256": "8b645b42f1243ed52aa36ac0f712ef7a29969826b1b8d143e245c2dc86909cbc"
+      },
+      "reason": "Synthetic control used a relative cache path; real guard correctly required an absolute path. Control output path resolution corrected; guard unchanged."
+    }
+  ],
+  "source_review": {
+    "passed": true,
+    "reviewers": [
+      "root",
+      "native_tasks",
+      "native_surface_plan"
+    ],
+    "scope": "Actual sources inspected for producer/reader schema compatibility, original restart/output semantics, complete state/parameter/diagnostic coverage, and exclusion of timings on failure.",
+    "findings_resolved": [
+      "Optional dcycle is absent in actual time-based checkpoints.",
+      "Compare complete same-rank final parameter maps including retained horizon state.",
+      "Bind actual PBS job ID/name/node count to terminal records and collected outputs.",
+      "Bind both before/after guards to the science report, independent review and source checkpoint.",
+      "Require two-node F/0 and identical guarded inputs before eight-node MPI.",
+      "Collect an explicit compact file list; never duplicate source checkpoint/build artifacts."
+    ],
+    "future_full_gpu_collection_path_unexercised": true
+  },
+  "source_sha256": {
+    "tst/z4c_hyperboloidal/native_cycle_timing_gpu_controls.py": "9ac7e5ae11e72fffd78bdefecc3e2826892bebc5ae7f9052ca3bdd4b9e3012e0",
+    "tst/z4c_hyperboloidal/native_cycle_timing_gpu_validate.py": "510297d7e04958b95ed871b81f8b68502704a851aea7a9e149dc2a39502f1b8e",
+    "tst/z4c_hyperboloidal/aurora/cycle_timing_run_audit.py": "b52b9d9fb3c661b620fb3b8876b94253fe923b553420e6bd00d1db7a3e7f6677",
+    "tst/z4c_hyperboloidal/aurora/collect_cycle_timing.py": "bcab289f0c59821d3f652f203001edc3b6203888fe6f0bdc68c4eb2fe5f5e0f1",
+    "tst/z4c_hyperboloidal/aurora/run-cycle-timing-validation.sh": "0ba60fbb51dc276bf41e8fdaf19ac66e0ed1d1d30ec1a2817147c2fdc12102b5",
+    "tst/z4c_hyperboloidal/aurora/cycle-timing-two.pbs": "fff18f28a820c9481463574528abc4c878c73d15f4dff11085bd01eb6c1319a8",
+    "tst/z4c_hyperboloidal/aurora/cycle-timing-eight.pbs": "d6905b28c8b8dd68ff0e849a7a4d76d310aec45a5d0ebdb2c0f28680049d9240",
+    "tst/z4c_hyperboloidal/aurora/cycle_timing_run_controls.py": "754aac76a6a7f57d5b7805c826ba01b6cea1032cd851bc82807d6fa036633df1"
+  },
+  "qualified_sources_unchanged": {
+    "tst/z4c_hyperboloidal/native_cycle_timing.py": "944b05be76c1bfe208a0c409a7952d7119112398e306e842c458a6ffff19cfdb",
+    "tst/z4c_hyperboloidal/native_cycle_timing.hpp": "310ebb617883e2b02f05677b98718c4163d886da9b48e812c961fda6e4077c0a",
+    "tst/z4c_hyperboloidal/native_cycle_timing_contract.md": "d610e7141bead813ff5382c2509eaabad3f42566ac9170c1cfb794629e14ca06",
+    "tst/z4c_hyperboloidal/native_cycle_timing_validate.py": "8c85a9c7045509145f1cba4c62d65f3886c24bd37728181887d39f5e130256f3"
+  },
+  "numerical_src_diff_empty": true,
+  "planned_run": {
+    "initial_cycle": 3551,
+    "final_cycle": 3681,
+    "warmup_cycles": 10,
+    "windows": 3,
+    "cycles_per_window": 40,
+    "complete_cycles_per_run": 130,
+    "node_counts": [
+      2,
+      8
+    ],
+    "ranks": [
+      24,
+      96
+    ],
+    "executables": [
+      "normal frozen f3a85db7",
+      "timing e4788800"
+    ],
+    "restart_overrides": [
+      "time/nlim=3681",
+      "time/tlim=2",
+      "time/ndiag=1000000000"
+    ],
+    "dt": 0.00046944203735617445,
+    "next_scheduled_output_cycle_projected": 3906,
+    "actual3551_checkpoint_metadata_still_required": true,
+    "allocations_serialized": true
+  },
+  "reproduce_reader_controls": [
+    "python3",
+    "tst/z4c_hyperboloidal/native_cycle_timing_gpu_controls.py",
+    "--output",
+    "<new-output-directory>"
+  ],
+  "reproduce_producer_controls": [
+    "python3",
+    "tst/z4c_hyperboloidal/aurora/cycle_timing_run_controls.py",
+    "--output",
+    "<new-output-directory>",
+    "--source-checkpoint",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-n12-common-03/run-artifacts/runs/native-n12-common-03/rst/native_n12_5M.00003.rst",
+    "--partial-science",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-common-segment-03-science-v1/continuation-admission.json",
+    "--partial-review",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-common-03-independent-review-v1/review.json"
+  ],
+  "remaining_gates": [
+    "Complete unchanged N12 trajectory through3551 with primary and independent science admission.",
+    "Confirm actual3551 output metadata, hash-bound descriptor and fresh resource/runtime preflight before any timing submission.",
+    "Run/collect normal and timed executables at24/96 and pass complete offline GPU reader before accepting timings.",
+    "Profile separately and improve measured native bottlenecks; full goal remains incomplete."
+  ]
+}

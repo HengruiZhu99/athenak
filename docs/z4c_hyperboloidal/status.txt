@@ -339,6 +339,16 @@ Current limitations / remaining full-goal requirements:
   forward during the N12 run; actual GPU numerical qualification and timing
   remain deferred until the full3551 trajectory passes. No performance result
   exists. See evidence/native-cycle-timing-aurora-build.json.
+- The separate GPU timing reader and bounded launch/collection tools are now
+  prepared. They require the complete3551 science admission and independent
+  review, unchanged runtime and common checkpoint, then complete normal/timed
+  state and diagnostic equivalence at24/96ranks before accepting timings.
+  The fixed plan is10 warmup plus three40-cycle windows, ending3681 with the
+  original output cadence. Offline parser checks use existing CPU data and
+  explicitly synthetic metadata; no successful full GPU collection has been
+  exercised. No timing allocation was staged or submitted. The qualified
+  builder/header/contract/CPU validator and numerical sources remain unchanged.
+  See evidence/native-cycle-timing-gpu-preparation.json.
 - Actual qualified GPU trace ownership matches native unit-cost load balancing
   at24/96ranks. Maximum owned bulk points fall from12663 to6588 while the average
   falls from9558 to2389.5; six surface owners retain144points each at both sizes.
