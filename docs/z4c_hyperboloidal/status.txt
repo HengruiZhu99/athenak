@@ -3,7 +3,8 @@ Native AthenaK migration — active, incomplete
 Checkout: /Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal
 Branch: hyperboloidal_cleaned_up
 Base: 9db7169c9ea0ec943caf286b2199676e138ae9ee (project/z4c_overhaul)
-Earlier foundation: 9a3021d69. Production source/campaign remain untouched.
+Earlier foundation: 9a3021d69. AMR/restart milestone: fce02a15f3.
+Diagnostics milestone: 526cc1fc2. Production source/campaign remain untouched.
 
 Implemented:
 - Native Mesh-owned seven-chart forest, chart/Morton leaf ordering, whole-block
@@ -117,10 +118,109 @@ Validation (local CPU MPI unless explicitly stated otherwise):
   surviving binary hash are recovered, with post-build header/source gaps
   explicitly retained in the provenance evidence.
 
+Diagnostics working-tree milestone (local CPU MPI, full goal still incomplete):
+- Native accepted-state coordinator shares unchanged point/endpoint jets and
+  evaluates constraints without bulk RHS/KO/RK. Independent scri workspace keeps
+  true stage observations intact. Caches refresh collectively on any rank's
+  state invalidation and on cycle/time/topology changes.
+- HistoryOutput reduces ten raw integrals before forming eight RMS values;
+  fixed-origin existing FastFlow samples only sparse block-owned donor values.
+  No full evolved-state gather enters the runtime diagnostic path.
+- Two/eight ranks:13,075,344 constraint values per decomposition across initial,
+  nonspherical and saved3551 data equal independent legacyCPU exactly. All688176
+  diagnostic weights agree exactly. Sparse ADM sampler's88290values also agree
+  numerically exactly; complete native samples are byte-identical across ranks.
+- Actual history cadence and restart checks preserve all24,704,784 stored state
+  scalars. Diagnostic calls preserve owned31+8, RK/RHS workspace and stage
+  observations. One-rank remote-donor invalidation and pure clock changes pass.
+- Diagnostics across real106->127->106 AMR match freshly constructed diagnostics
+  exactly, with correct extents/cache behavior and unchanged owned state. The
+  existing Cartesian FastFlow summary/shape regression remains byte-identical.
+- Direct historicalAurora tight replay is NOT admitted onCPU: fullH differs
+  by5.81e-11 versus5.04e-11 tolerance; fixedr>.94 norms also differ. Native and
+  independent legacyCPU agree. Complete CPU/Aurora dumps establish that all118
+  fixed-cut membership changes occur at differently rounded coordinates;
+  host/device radius bytes agree within each platform. Swapping only the mask
+  reproduces nearly all outer-norm differences. FullH arithmetic and the
+  eight-step evolution discrepancy remain separately unassigned. Tolerances
+  remain unchanged.
+- An additional compact mean/min horizon-radius restart test fails. The adopted
+  areal-radius/mass/history checks pass, and the unchanged predecessorFastFlow
+  reproduces the compact shift exactly from its warm-monopole stopping behavior.
+  Both failed gate and equivalence evidence are preserved.
+- The preserved original GPU diagnostic binary replayed step3551 successfully
+  on2Aurora nodes/24ranks, with full/fixed-outer norm difference<=8.68e-19 and
+  immutable reference checks before/after. The frozen native SYCL build and
+  native saved3551 replay also pass on2nodes/24ranks: all strict full/fixed-outer
+  norms pass (maximum difference2.19e-16), history/horizon/read-only checks pass.
+  Native eight-step GPU fields FAIL the unchanged short gate against CPU
+  (bulk4.89e-9,scri1.32e-9 maximum), and that cross-platform failure is retained.
+  The unchanged original GPU control9051418 completed and the SAME-HARDWARE
+  comparison PASSES: all7,137,936 fields at initial/eight; initial bitwise,
+  step8 maximum bulk5.55e-17/scri4.34e-17; all available chi aggregates exact.
+  All688176 actual bulk coordinate components and10common serialized resolved
+  parameters match bitwise. The original SP1 checkpoints do not serialize
+  per-cell ChiRecords; a separately qualified accessor now exposes those records
+  from actual original GPU evolution, as described below.
+  Eight-node bundle9051435 completed successfully: strict saved replay and
+  native96-versus-originalGPU96 gates pass; native24/96 initial/eight states
+  are bitwise identical in all31fields and all8chi-record members. Local CPU
+  clean/poison traces pass all26region/label comparisons and32stage records;
+  GPU24 trace9051466 stopped before evolution because the metadata-only helper
+  left a coordinate pointer uninitialized during cleanup. The test-only fix
+  reproduces all CPU mapping/initial-field artifacts bitwise. Retry9051476
+  completed successfully on24ranks: complete firstRHS, all actual31fields and
+  all8ChiRecords at0/1/8, actual bulk/scri geometry and all8step clocks pass
+  against the qualified original accessor and immutable one/eight-step controls.
+  FirstRHS, actual records, geometry and clocks are bitwise exact; native step8
+  field maxima remain5.55e-17bulk/4.34e-17scri. All26clean/poison trace labels
+  and32stage records match bitwise. The96-rank trace9051485 is terminalExit0;
+  matched scientific comparison also passes both clean and poison, with the
+  same complete coverage and differences as24ranks. Complete cross-rank trace
+  parity also passes: all26labels and32stage records are bitwise identical.
+  Exact Aurora mapping now passes688176bulk+2592scri coordinate comparisons,
+  binding the complete native checkpoint decoder to actual platform geometry
+  and resolved identity. Strict initial/eight exports pass on24/96ranks.
+  A raw host-constructor comparison precedes native initial projection; its
+  signed-zero/roundoff differences are retained separately and pass the adopted
+  short gates. Actual projected GPU initialization remains byte-exact.
+  A test-only observer around the original main records every stage clock/CFL
+  without changing numerical objects. Local normal/observed eight-step payloads
+  (all31+8 and padding), history and horizon files are byte-identical. Ordinary
+  restart2->8ranks reproduces all fields/records and32stage rows exactly.
+  ActualGPU observer qualification also passes on24/96ranks: all24704784
+  padded field/record scalars andordinaryoutputs are exactnormal-main matches;
+  rank-changing restart and32stage rows are exact. All8clock/CFL maxima are
+  bitwise equal to the immutable original. All31reports passed remote admission.
+  Fresh0->356 job9051541 completed normally on2nodes/24ranks. Complete endpoint
+  science and independent review pass: bulk maximum difference1.8963e-13 and
+  scri5.9794e-13, all1842048native chi records checked,3888floor events/eight
+  distinct cells match historical aggregate counts, all8RMS/horizon gates pass,
+  and all1424stage rows pass exact clocks and declared clock/CFL gates. The
+  initial null-aggregate reporting failure is retained; its report-only fix
+  changed no numerical gate. Segment356->711 job9051587 is queued after actual
+  checkpoint/science/review and fresh runtime/resource preflight. No scaling
+  result is established.
+  See evidence/aurora-stage-trace-two.json, evidence/aurora-n12-mapping.json,
+  evidence/native-step-observer-local-validation.json,
+  evidence/aurora-native-saved-replay-two.json,
+  evidence/aurora-native-vs-original-gpu-eight.json,
+  evidence/aurora-native-vs-original-gpu96.json,
+  evidence/native-stage-trace-local-validation.json,
+  evidence/aurora-native-state-cross-platform.json,
+  evidence/native-saved-state-cross-architecture-attribution.json,
+  evidence/aurora-reference-replay-two.json and
+  evidence/native-constraint-diagnostics-
+  validation.json, native-history-validation.json, native-history-restart-
+  validation.json, native-amr-diagnostics-validation.json and FastFlow evidence.
+
 Current limitations / remaining full-goal requirements:
-- Fixed-topology dynamic evolution is admitted and locally validated through
-  eight complete RK4 steps. This is not a GPU, long-run or arbitrary refined
-  coupled-evolution claim. Fixed-mesh dynamic restart continuity is validated.
+- Fixed-topology dynamic evolution is validated through eight complete RK4
+  steps locally and on24/96Aurora ranks, and through356steps on24Aurora ranks.
+  This does not establish the full3551-step trajectory or
+  arbitrary refined coupled evolution. Fixed-mesh dynamic restart continuity
+  is validated locally andthroughactual24->96rank GPUrestart withthe observed
+  originalmain; completepayloadandstage rows areexact.
 - Native AMR transfer passes actual106->127->106 regrids at two/eight local ranks,
   including nonzero histories, poisoned workspace and bitwise unchanged-leaf
   migration. Complete states match across ranks. Four coupled Driver cycles
@@ -131,6 +231,26 @@ Current limitations / remaining full-goal requirements:
   two steps plus a restart and two steps on eight ranks bitwise (all31+8 values,
   including padding/metadata). No GPU AMR or long-time AMR accuracy claim is
   established. Evidence index: evidence/native-amr-validation-index.json.
+- A source audit found a specific AMR admission gap: the available predecessor
+  checks its characteristic fixed-step cap after regridding, while native code
+  currently checks only relaxation. Existing refined consistency tests reach
+  CFL0.47678 and therefore do not prove that admission parity. Preserve those
+  results; add the missing adaptive-mesh check and validate both rejection and
+  an admissible fixed-step evolution separately. This is not a request for a new
+  adaptive-dt controller, and it does not affect the pinned fixed-SMR N12 policy.
+  See bvals-reuse-and-timestep-audit.md and its source-hashed evidence.
+  The clean candidate overlay passes prototype CPU speed/rejection and
+  genuine ordinary-main restart tests at dt.0002. Continuous4cycles on2ranks
+  equals2cycles+checkpoint+2cycles on8ranks across26336232padded31+8scalars,
+  the113-leaf tree andunit costs. The patch is reviewed, including serial guards.
+  The prototype replaced only three objects despite adding a shared class
+  declaration, so those results remain prototype evidence. A coherent separate
+  CMake candidate now passes all198 native compile/link recipe checks and an
+  actual four-cycle2-rank endpoint comparison across26336232padded scalars.
+  Its manufactured106->127->106 lifecycle/diagnostics preflight also passes,
+  along with12 provenance controls. Runtime integration and actual24/96-rank
+  GPU validation remain separate. See
+  amr-fixed-step-admission.md andevidence/native-amr-clean-admission-cpu-proof.json.
 - Same-chart copy-compatible routes should reuse native Bvals where appropriate;
   module storage origin is ng+overlap=7 while native ng remains 4. Current mapped
   transport preserves reference interpolation, including internal core donors.
@@ -142,11 +262,25 @@ Current limitations / remaining full-goal requirements:
   This revised rationale is explicit in amr-interpolation-review.md. The
   measured coupled post-coarsening clock RHS transient reaches4.10e-4; bounded
   consistency tests do not establish coupled convergence or long-time accuracy.
-- ADM conversion, constraint RMS, fixed-origin FastFlow, mapped adaptive timestep
-  and accepted-step diagnostic output remain. N12 tracking stays disabled.
-- No native Aurora run, N12-through-5M result, GPU performance or scaling result
-  exists. Final objective still requires fresh 3551 steps to t/M=5.0009660239551499,
+- Native ADM sampling, constraint RMS, fixed-origin FastFlow and accepted-step
+  output are implemented and locally tested as described above. Strict saved
+  Aurora replay and initial/eight-step trajectory pass on24/96ranks, with
+  cross-rank field/record and full stage/poison bitwise equality. GPU observer
+  qualification is complete. Fixed-step AMR admission integration and bounded
+  GPU AMR validation remain. N12 tracking stays disabled.
+- Native24/96-rank initial/eight-step GPU trajectories are admitted against the
+  unchanged original GPU control. No N12-through-5M result, accepted GPU
+  performance or scaling result exists. Final objective still requires fresh3551steps to t/M=5.0009660239551499,
   then repeated same-work 2-/8-node timing, profiling and measured improvements.
+- The isolated whole-cycle timing harness passes CPU complete-state/output
+  equivalence, window-boundary checks and rejection of timed output/profiling.
+  It has no GPU timing qualification or performance result yet.
+- Actual qualified GPU trace ownership matches native unit-cost load balancing
+  at24/96ranks. Maximum owned bulk points fall from12663 to6588 while the average
+  falls from9558 to2389.5; six surface owners retain144points each at both sizes.
+  This identifies a workload imbalance to profile, not measured GPU utilization
+  or an overall scaling bound. Equal block weights remain unchanged. See
+  n12-ownership-and-profiling.md and evidence/native-n12-ownership-audit.json.
 
 Pinned N12: float64, KO=.1, chi floor=1e-10, constant shift-speed, stationary
 outer reference, dt=0.00046944203735617445. Three evolved overlap cells and four

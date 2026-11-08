@@ -1,0 +1,628 @@
+{
+  "scope": "Actual Aurora24-rank native/unchanged predecessor first-RHS and accepted0/1/8 comparison; clean and poisoned native stages",
+  "passed": true,
+  "ranks": 24,
+  "bulk_points": 229392,
+  "scri_points": 864,
+  "full_report": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-stage-trace-comparison-two-v1/results.json",
+  "full_report_sha256": "be65c5d9bfdec2ea7e3a1ac551c67d0a27515536ddd09736a53f93bc17747869",
+  "comparator_source_sha256": {
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/legacy_stage_trace_compare.py": "bca07273126a4d90d125edd6813011f783c9890cb285759c350f150cc0d95fb2",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/legacy_stage_trace_gpu.cpp": "9fa9cd1a22f5e3fb09fc4ff327ebaf18dd9bd3e8b8ffcadf4098dff7beadbc85",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/legacy_stage_trace_gpu_contract.md": "b2aa9329f08f1fbb620bfb68138fc4d198ef0e490c7c487a47b048581c32cf14",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_stage_trace_compare.py": "6d0c9750b5bb212481121be706577743242198d6b6fb76fac8708085dfa968b1",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/n12_checkpoint.py": "ca26c57ee362feacb613209a881727b56b35334402abb12dab6f5d8a5097dbcf",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/n12_checkpoint_cross_platform.py": "c9f1d1f9bc3898979802639b3d70090fe21114132e7aba1af0a5b46800a884e6",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/n12_checkpoint_gpu_control.py": "e0b9f61262759484670f00adae8698879a1d6fba4b6615e9e9a43df56f879409"
+  },
+  "accessor_build": {
+    "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-stage-trace-two-v2/run-artifacts/validation/legacy-stage-trace/build/provenance.json",
+    "sha256": "2ffdc428276a168ae5d721d45aac057626843cae012d4ee08629d64c31ed4557",
+    "executable_sha256": "70132898f83c693f625542737f13c3635c27dd9c1388ecde71d084e67e853ace",
+    "original_executable_sha256": "494ec8e38fb34806eb3981fb19bdb5e3bc75f46615b05a21d8314a0db6583753",
+    "compile_command": [
+      "/opt/aurora/26.26.0/oneapi/compiler/latest/bin/icpx",
+      "-DHYPERBOLIC_BOUNDARY_REUSE=1",
+      "-DHYPERBOLIC_BROAD_SMOOTH_A=1",
+      "-DHYPERBOLIC_CONFIGURED_FORMULATION=1",
+      "-DHYPERBOLIC_DIRECT_OUTER=1",
+      "-DHYPERBOLIC_INNER_TELEGRAPHER=1",
+      "-DHYPERBOLIC_NATIVE_WORMHOLE=1",
+      "-DHYPERBOLIC_NORMALIZED_INNER_SHIFT=1",
+      "-DHYPERBOLIC_RESTORE_INNER_DAMPING=1",
+      "-DHYPERBOLIC_SHORT_INNER_GAUGE=1",
+      "-DHYPERBOLIC_SMOOTH_GAUGE_BLEND=1",
+      "-DHYPERBOLIC_SPARSE_STAGE=1",
+      "-DHYPERBOLIC_SPHERICAL_POLICY=1",
+      "-DKOKKOS_DEPENDENCE",
+      "-DMPI_ATHENA_REAL=MPI_DOUBLE",
+      "-I/lus/flare/projects/CompactBinaryMerger/hzhu/scri-ko01-20261106/source/src",
+      "-I/home/hzhu/scri-resident-20M-20261105/build-100m",
+      "-I/home/hzhu/scri-resident-20M-20261105/build-100m/kokkos",
+      "-I/home/hzhu/scri-resident-20M-20261105/build-100m/kokkos/core/src",
+      "-I/home/hzhu/hyperboloidal-performance-scaling-20261103/control-source-v2/kokkos/core/src",
+      "-I/home/hzhu/scri-resident-20M-20261105/build-100m/kokkos/containers/src",
+      "-I/home/hzhu/hyperboloidal-performance-scaling-20261103/control-source-v2/kokkos/containers/src",
+      "-I/home/hzhu/scri-resident-20M-20261105/build-100m/kokkos/algorithms/src",
+      "-I/home/hzhu/hyperboloidal-performance-scaling-20261103/control-source-v2/kokkos/algorithms/src",
+      "-I/home/hzhu/scri-resident-20M-20261105/build-100m/kokkos/simd/src",
+      "-I/home/hzhu/hyperboloidal-performance-scaling-20261103/control-source-v2/kokkos/simd/src",
+      "-isystem",
+      "/home/hzhu/hyperboloidal-performance-scaling-20261103/control-source-v2/kokkos/tpls/desul/include",
+      "-isystem",
+      "/home/hzhu/hyperboloidal-performance-scaling-20261103/control-source-v2/kokkos/tpls/mdspan/include",
+      "-isystem",
+      "/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.87e2045-po72xy6/include",
+      "-fp-model=precise",
+      "-fno-sycl-id-queries-fit-in-int",
+      "-O2",
+      "-std=gnu++17",
+      "-fPIE",
+      "-ffp-contract=off",
+      "-Wall",
+      "-Wextra",
+      "-fsycl",
+      "-fno-sycl-id-queries-fit-in-int",
+      "-fsycl-dead-args-optimization",
+      "-fsycl-unnamed-lambda",
+      "-fno-sycl-rdc",
+      "-DDESUL_SYCL_DEVICE_GLOBAL_SUPPORTED",
+      "-fsycl-targets=spir64_gen",
+      "-Xsycl-target-backend",
+      "-device 12.60.7",
+      "-o",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/legacy-stage-trace/build/legacy_stage_trace_gpu.o",
+      "-c",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/legacy-stage-trace/legacy_stage_trace_gpu.cpp",
+      "-I/lus/flare/projects/CompactBinaryMerger/hzhu/scri-ko01-20261106/source",
+      "-MMD",
+      "-MF",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/legacy-stage-trace/build/legacy_stage_trace_gpu.d",
+      "-MT",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/legacy-stage-trace/build/legacy_stage_trace_gpu.o"
+    ],
+    "pinned_manifest_sha256": "c3794dada9b12fd9eb445ddc012ab13166c5012f8939268cf4482563b47f3094",
+    "pinned_sources_checked": 772,
+    "scope": "archived successful build and source hash; remote runtime guards are retained by the launcher"
+  },
+  "accessor_initial_final_fields": {
+    "accepted0-bulk": {
+      "bitwise_equal": true,
+      "different_values": 0,
+      "different_points": 0,
+      "max_absolute": 0.0,
+      "worst": {
+        "legacy_ordinal": 0,
+        "component": 0,
+        "actual": 0.03961098328293063,
+        "reference": 0.03961098328293063
+      }
+    },
+    "final-snapshot-bulk": {
+      "bitwise_equal": true,
+      "different_values": 0,
+      "different_points": 0,
+      "max_absolute": 0.0,
+      "worst": {
+        "legacy_ordinal": 0,
+        "component": 0,
+        "actual": 0.039610982828144355,
+        "reference": 0.039610982828144355
+      }
+    },
+    "accepted0-scri": {
+      "bitwise_equal": true,
+      "different_values": 0,
+      "different_points": 0,
+      "max_absolute": 0.0,
+      "worst": {
+        "legacy_ordinal": 0,
+        "component": 0,
+        "actual": 1.0,
+        "reference": 1.0
+      }
+    },
+    "final-snapshot-scri": {
+      "bitwise_equal": true,
+      "different_values": 0,
+      "different_points": 0,
+      "max_absolute": 0.0,
+      "worst": {
+        "legacy_ordinal": 0,
+        "component": 0,
+        "actual": 0.9999999999873144,
+        "reference": 0.9999999999873144
+      }
+    }
+  },
+  "gates": {
+    "accessor_final_snapshot": "unchanged short field/chi gates against immutable original at same step/ranks; bitwise status reported separately",
+    "geometry": "bitwise actual GPU-build geometry; CPU XYZ excluded",
+    "native_fields_and_rhs": "1e-12+5e-10*abs(reference); chi 1e-14+5e-10*abs(reference)",
+    "histories": "same chi gate for two minima; exact zero-event/correction/first-floor records"
+  },
+  "phases": {
+    "legacy_initial": "after original initial diagnostic RHS",
+    "native_initial": "after Driver initialization and boundary fill",
+    "accepted": "after the complete step; no added diagnostic RHS",
+    "final_snapshot": "after original final diagnostic RHS",
+    "first_rhs": "legacy persistent first RK rate; native after-stage just-consumed RHS"
+  },
+  "native": [
+    {
+      "mode": "clean",
+      "ranks": 24,
+      "passed": true,
+      "geometry": {
+        "bulk": {
+          "bitwise_equal": true,
+          "different_values": 0,
+          "different_points": 0,
+          "max_absolute": 0.0,
+          "worst": {
+            "legacy_ordinal": 0,
+            "component": 0,
+            "actual": -0.09722222222222222,
+            "reference": -0.09722222222222222
+          }
+        },
+        "scri": {
+          "bitwise_equal": true,
+          "different_values": 0,
+          "different_points": 0,
+          "max_absolute": 0.0,
+          "worst": {
+            "legacy_ordinal": 0,
+            "component": 0,
+            "actual": 0.6276812878400296,
+            "reference": 0.6276812878400296
+          }
+        }
+      },
+      "step_clocks": [
+        {
+          "step": 1,
+          "actual": 8.97201198955169e-09,
+          "reference": 8.97201198955169e-09,
+          "absolute_difference": 0.0,
+          "tolerance": 1.0000044860059948e-12,
+          "bitwise_equal": true,
+          "passed": true
+        },
+        {
+          "step": 2,
+          "actual": 1.741277925230305e-08,
+          "reference": 1.741277925230305e-08,
+          "absolute_difference": 0.0,
+          "tolerance": 1.000008706389626e-12,
+          "bitwise_equal": true,
+          "passed": true
+        },
+        {
+          "step": 3,
+          "actual": 2.4551852636375704e-08,
+          "reference": 2.4551852636375704e-08,
+          "absolute_difference": 0.0,
+          "tolerance": 1.000012275926318e-12,
+          "bitwise_equal": true,
+          "passed": true
+        },
+        {
+          "step": 4,
+          "actual": 3.029971400329219e-08,
+          "reference": 3.029971400329219e-08,
+          "absolute_difference": 0.0,
+          "tolerance": 1.0000151498570016e-12,
+          "bitwise_equal": true,
+          "passed": true
+        },
+        {
+          "step": 5,
+          "actual": 3.478460468652304e-08,
+          "reference": 3.478460468652304e-08,
+          "absolute_difference": 0.0,
+          "tolerance": 1.0000173923023432e-12,
+          "bitwise_equal": true,
+          "passed": true
+        },
+        {
+          "step": 6,
+          "actual": 3.844845429349949e-08,
+          "reference": 3.844845429349949e-08,
+          "absolute_difference": 0.0,
+          "tolerance": 1.0000192242271467e-12,
+          "bitwise_equal": true,
+          "passed": true
+        },
+        {
+          "step": 7,
+          "actual": 4.155028694925833e-08,
+          "reference": 4.155028694925833e-08,
+          "absolute_difference": 0.0,
+          "tolerance": 1.0000207751434747e-12,
+          "bitwise_equal": true,
+          "passed": true
+        },
+        {
+          "step": 8,
+          "actual": 4.4135053071112676e-08,
+          "reference": 4.4135053071112676e-08,
+          "absolute_difference": 0.0,
+          "tolerance": 1.0000220675265354e-12,
+          "bitwise_equal": true,
+          "passed": true
+        }
+      ],
+      "transitions": {
+        "bulk:accepted0=stage1-input": true,
+        "bulk:stage4-output=accepted1": true,
+        "bulk:stage1-output=stage2-input": true,
+        "bulk:stage2-output=stage3-input": true,
+        "bulk:stage3-output=stage4-input": true,
+        "scri:accepted0=stage1-input": true,
+        "scri:stage4-output=accepted1": true,
+        "scri:stage1-output=stage2-input": true,
+        "scri:stage2-output=stage3-input": true,
+        "scri:stage3-output=stage4-input": true
+      },
+      "labels": {
+        "accepted0-bulk": {
+          "comparisons": 7111152,
+          "failed_values": 0,
+          "bitwise_equal": true,
+          "max_absolute": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "records": {
+            "comparisons": 1835136,
+            "failed_values": 0,
+            "all_eight_members_bitwise_equal": true
+          }
+        },
+        "accepted1-bulk": {
+          "comparisons": 7111152,
+          "failed_values": 0,
+          "bitwise_equal": false,
+          "max_absolute": 2.168404344971009e-19,
+          "max_tolerance_ratio": 1.743861685376946e-07,
+          "weighted_rms": 2.870569437899689e-23,
+          "records": {
+            "comparisons": 1835136,
+            "failed_values": 0,
+            "all_eight_members_bitwise_equal": true
+          },
+          "direct_immutable_one_step": {
+            "comparisons": 7111152,
+            "failed_values": 0,
+            "bitwise_equal": false,
+            "max_absolute": 2.168404344971009e-19
+          }
+        },
+        "accepted8-bulk": {
+          "comparisons": 7111152,
+          "failed_values": 0,
+          "bitwise_equal": false,
+          "max_absolute": 5.551115123125783e-17,
+          "max_tolerance_ratio": 2.8481610857790758e-06,
+          "weighted_rms": 4.100482999371309e-20,
+          "records": {
+            "comparisons": 1835136,
+            "failed_values": 0,
+            "all_eight_members_bitwise_equal": true
+          }
+        },
+        "first-rhs-bulk": {
+          "comparisons": 7111152,
+          "failed_values": 0,
+          "bitwise_equal": true,
+          "max_absolute": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0
+        },
+        "accepted0-scri": {
+          "comparisons": 26784,
+          "failed_values": 0,
+          "bitwise_equal": true,
+          "max_absolute": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "records": {
+            "comparisons": 6912,
+            "failed_values": 0,
+            "all_eight_members_bitwise_equal": true
+          }
+        },
+        "accepted1-scri": {
+          "comparisons": 26784,
+          "failed_values": 0,
+          "bitwise_equal": true,
+          "max_absolute": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "records": {
+            "comparisons": 6912,
+            "failed_values": 0,
+            "all_eight_members_bitwise_equal": true
+          },
+          "direct_immutable_one_step": {
+            "comparisons": 26784,
+            "failed_values": 0,
+            "bitwise_equal": true,
+            "max_absolute": 0.0
+          }
+        },
+        "accepted8-scri": {
+          "comparisons": 26784,
+          "failed_values": 0,
+          "bitwise_equal": false,
+          "max_absolute": 4.342378097006337e-17,
+          "max_tolerance_ratio": 4.34237255247275e-05,
+          "weighted_rms": 3.437237089814442e-19,
+          "records": {
+            "comparisons": 6912,
+            "failed_values": 0,
+            "all_eight_members_bitwise_equal": true
+          }
+        },
+        "first-rhs-scri": {
+          "comparisons": 26784,
+          "failed_values": 0,
+          "bitwise_equal": true,
+          "max_absolute": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0
+        }
+      }
+    },
+    {
+      "mode": "poison",
+      "ranks": 24,
+      "passed": true,
+      "geometry": {
+        "bulk": {
+          "bitwise_equal": true,
+          "different_values": 0,
+          "different_points": 0,
+          "max_absolute": 0.0,
+          "worst": {
+            "legacy_ordinal": 0,
+            "component": 0,
+            "actual": -0.09722222222222222,
+            "reference": -0.09722222222222222
+          }
+        },
+        "scri": {
+          "bitwise_equal": true,
+          "different_values": 0,
+          "different_points": 0,
+          "max_absolute": 0.0,
+          "worst": {
+            "legacy_ordinal": 0,
+            "component": 0,
+            "actual": 0.6276812878400296,
+            "reference": 0.6276812878400296
+          }
+        }
+      },
+      "step_clocks": [
+        {
+          "step": 1,
+          "actual": 8.97201198955169e-09,
+          "reference": 8.97201198955169e-09,
+          "absolute_difference": 0.0,
+          "tolerance": 1.0000044860059948e-12,
+          "bitwise_equal": true,
+          "passed": true
+        },
+        {
+          "step": 2,
+          "actual": 1.741277925230305e-08,
+          "reference": 1.741277925230305e-08,
+          "absolute_difference": 0.0,
+          "tolerance": 1.000008706389626e-12,
+          "bitwise_equal": true,
+          "passed": true
+        },
+        {
+          "step": 3,
+          "actual": 2.4551852636375704e-08,
+          "reference": 2.4551852636375704e-08,
+          "absolute_difference": 0.0,
+          "tolerance": 1.000012275926318e-12,
+          "bitwise_equal": true,
+          "passed": true
+        },
+        {
+          "step": 4,
+          "actual": 3.029971400329219e-08,
+          "reference": 3.029971400329219e-08,
+          "absolute_difference": 0.0,
+          "tolerance": 1.0000151498570016e-12,
+          "bitwise_equal": true,
+          "passed": true
+        },
+        {
+          "step": 5,
+          "actual": 3.478460468652304e-08,
+          "reference": 3.478460468652304e-08,
+          "absolute_difference": 0.0,
+          "tolerance": 1.0000173923023432e-12,
+          "bitwise_equal": true,
+          "passed": true
+        },
+        {
+          "step": 6,
+          "actual": 3.844845429349949e-08,
+          "reference": 3.844845429349949e-08,
+          "absolute_difference": 0.0,
+          "tolerance": 1.0000192242271467e-12,
+          "bitwise_equal": true,
+          "passed": true
+        },
+        {
+          "step": 7,
+          "actual": 4.155028694925833e-08,
+          "reference": 4.155028694925833e-08,
+          "absolute_difference": 0.0,
+          "tolerance": 1.0000207751434747e-12,
+          "bitwise_equal": true,
+          "passed": true
+        },
+        {
+          "step": 8,
+          "actual": 4.4135053071112676e-08,
+          "reference": 4.4135053071112676e-08,
+          "absolute_difference": 0.0,
+          "tolerance": 1.0000220675265354e-12,
+          "bitwise_equal": true,
+          "passed": true
+        }
+      ],
+      "transitions": {
+        "bulk:accepted0=stage1-input": true,
+        "bulk:stage4-output=accepted1": true,
+        "bulk:stage1-output=stage2-input": true,
+        "bulk:stage2-output=stage3-input": true,
+        "bulk:stage3-output=stage4-input": true,
+        "scri:accepted0=stage1-input": true,
+        "scri:stage4-output=accepted1": true,
+        "scri:stage1-output=stage2-input": true,
+        "scri:stage2-output=stage3-input": true,
+        "scri:stage3-output=stage4-input": true
+      },
+      "labels": {
+        "accepted0-bulk": {
+          "comparisons": 7111152,
+          "failed_values": 0,
+          "bitwise_equal": true,
+          "max_absolute": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "records": {
+            "comparisons": 1835136,
+            "failed_values": 0,
+            "all_eight_members_bitwise_equal": true
+          }
+        },
+        "accepted1-bulk": {
+          "comparisons": 7111152,
+          "failed_values": 0,
+          "bitwise_equal": false,
+          "max_absolute": 2.168404344971009e-19,
+          "max_tolerance_ratio": 1.743861685376946e-07,
+          "weighted_rms": 2.870569437899689e-23,
+          "records": {
+            "comparisons": 1835136,
+            "failed_values": 0,
+            "all_eight_members_bitwise_equal": true
+          },
+          "direct_immutable_one_step": {
+            "comparisons": 7111152,
+            "failed_values": 0,
+            "bitwise_equal": false,
+            "max_absolute": 2.168404344971009e-19
+          }
+        },
+        "accepted8-bulk": {
+          "comparisons": 7111152,
+          "failed_values": 0,
+          "bitwise_equal": false,
+          "max_absolute": 5.551115123125783e-17,
+          "max_tolerance_ratio": 2.8481610857790758e-06,
+          "weighted_rms": 4.100482999371309e-20,
+          "records": {
+            "comparisons": 1835136,
+            "failed_values": 0,
+            "all_eight_members_bitwise_equal": true
+          }
+        },
+        "first-rhs-bulk": {
+          "comparisons": 7111152,
+          "failed_values": 0,
+          "bitwise_equal": true,
+          "max_absolute": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0
+        },
+        "accepted0-scri": {
+          "comparisons": 26784,
+          "failed_values": 0,
+          "bitwise_equal": true,
+          "max_absolute": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "records": {
+            "comparisons": 6912,
+            "failed_values": 0,
+            "all_eight_members_bitwise_equal": true
+          }
+        },
+        "accepted1-scri": {
+          "comparisons": 26784,
+          "failed_values": 0,
+          "bitwise_equal": true,
+          "max_absolute": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "records": {
+            "comparisons": 6912,
+            "failed_values": 0,
+            "all_eight_members_bitwise_equal": true
+          },
+          "direct_immutable_one_step": {
+            "comparisons": 26784,
+            "failed_values": 0,
+            "bitwise_equal": true,
+            "max_absolute": 0.0
+          }
+        },
+        "accepted8-scri": {
+          "comparisons": 26784,
+          "failed_values": 0,
+          "bitwise_equal": false,
+          "max_absolute": 4.342378097006337e-17,
+          "max_tolerance_ratio": 4.34237255247275e-05,
+          "weighted_rms": 3.437237089814442e-19,
+          "records": {
+            "comparisons": 6912,
+            "failed_values": 0,
+            "all_eight_members_bitwise_equal": true
+          }
+        },
+        "first-rhs-scri": {
+          "comparisons": 26784,
+          "failed_values": 0,
+          "bitwise_equal": true,
+          "max_absolute": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0
+        }
+      }
+    }
+  ],
+  "cfl_scope": "Not recorded by this frozen stage tracer; separate observed-main test is pending.",
+  "initial_failed_job": {
+    "job": "9051466",
+    "reason": "Metadata mapper completed its files but failed during teardown due to an uninitialized pcoord in the test fixture. No evolution ran. Failure and unadmitted artifacts preserved; retry used a test-only nullptr initialization."
+  },
+  "successful_retry_job": "9051476",
+  "runtime_or_observer_source_changes_for_retry": false,
+  "clean_poison_exact_audit": {
+    "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-stage-trace-two-v2/run-artifacts/runs/stage-validation-v2-nodes2/native-poison/trace-audit.json",
+    "sha256": "27e6f2737c65322de600b6a763138cffb8d54252cf0df179e9443e7b116a9fca",
+    "all_26_labels_exact": true,
+    "all_32_stage_records_exact": true
+  },
+  "matched_scientific_comparison": {
+    "passed": true,
+    "path": "build-native/aurora-stage-trace-comparison-two-v1/results.json",
+    "sha256": "be65c5d9bfdec2ea7e3a1ac551c67d0a27515536ddd09736a53f93bc17747869",
+    "first_rhs_all31_bulk_and_scri": "bitwise_equal",
+    "native_accepted_states": "unchanged short+chi gates passed",
+    "chi_records_0_1_8": "all8 exact",
+    "actual_bulk_and_scri_geometry": "bitwise_equal",
+    "stage_clock_maxima": "all8 exact",
+    "legacy_accessor_immutable_initial_final8": "bitwise_equal",
+    "immutable_one_step": "passed unchanged short gates"
+  }
+}

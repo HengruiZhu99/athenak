@@ -1,0 +1,63 @@
+{
+  "schema": "native-step-observer-aurora-validation-v1",
+  "status": "full-GPU-scientific-qualification-pass",
+  "normal_executable_sha256": "f3a85db7528986ddec347b31675a8c5d588120a2380133aed73d5967f7aab05c",
+  "observed_executable_sha256": "f2c2e6cd910279f0c558164466da8027f0e5b18c5bbd26bb4e36a853dd669f9d",
+  "build_provenance_path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-step-observer/build-artifacts/provenance.json",
+  "build_provenance_sha256": "642507b2529419d290f00eea609d8ebc0ba6ce5dc52ed41d6cfe2fe995eb1a8a",
+  "original_main_fp_flags_preserved": true,
+  "overlay_inverse_byte_exact": true,
+  "runtime_inputs_unchanged": true,
+  "jobs": {
+    "two": {
+      "job_id": "9051515",
+      "nodes": 2,
+      "ranks": 24,
+      "scope": "fresh8 and fresh prefix2",
+      "last_authoritative_state": "F",
+      "exit_status": 0,
+      "stage_rows": {
+        "fresh8": 32,
+        "prefix2": 8
+      },
+      "transfer_verification": "build-native/aurora-step-observer-two/transfer-verification.json"
+    },
+    "eight": {
+      "job_id": "9051527",
+      "nodes": 8,
+      "ranks": 96,
+      "scope": "fresh8 and restart2to8",
+      "last_authoritative_state": "F",
+      "same_executable": true,
+      "exit_status": 0,
+      "stage_rows": {
+        "fresh8": 32,
+        "resume2to8": 24
+      },
+      "transfer_verification": "build-native/aurora-step-observer-eight/transfer-verification.json"
+    }
+  },
+  "eight_node_scope": "fresh8 and restart from qualified24 prefix2 to8; held until two-node terminal",
+  "scientific_comparison": {
+    "path": "build-native/aurora-step-observer-qualification-v1/results.json",
+    "sha256": "98da440cbcf02da392abd678ff8052169725c60d69a6fdb8b4c5c34beb525ef5",
+    "passed": true,
+    "actual_SYCL_ranks": [
+      24,
+      96
+    ],
+    "all31_fields_and8_records_bitwise_normal": true,
+    "ordinary_diagnostic_files_bitwise_normal": true,
+    "cross_rank_and_restart_stage_records_bitwise": true,
+    "all_eight_original_clock_CFL_comparisons_bitwise": true,
+    "restart_diagnostic_gates_passed": true
+  },
+  "performance_claim": false,
+  "two_node_preflight": {
+    "path": "build-native/aurora-step-observer-two-preflight-v1/results.json",
+    "sha256": "ad1ce927c10719b26f0505d10366eb87fa0f90d9e68b9ad2230f30d5f430ffa9",
+    "passed": true,
+    "full_qualification_complete": false
+  },
+  "long_trajectory_scope": "Not yet claimed; first common segment separately admitted and later continuation requires endpoint gates"
+}

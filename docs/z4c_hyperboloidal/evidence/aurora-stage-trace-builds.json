@@ -1,0 +1,65 @@
+{
+  "status": "all_three_isolated_builds_passed",
+  "native_runtime_executable_sha256": "f3a85db7528986ddec347b31675a8c5d588120a2380133aed73d5967f7aab05c",
+  "builds": {
+    "native": {
+      "executable": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/stage-trace/build/native_stage_trace_gpu",
+      "executable_sha256": "3c26a493a5c2507dca58b083d35167ceae027db9385d1b61aabbcb4008bc795f",
+      "provenance": "build-native/aurora-stage-trace/build-artifacts/provenance.json",
+      "provenance_sha256": "13b37c61282548d2c5affeb993676f5562aa93b85fa843295b88e68d47c2def6",
+      "source_files": 401,
+      "reused_objects_libraries": 202,
+      "transitive_dependencies": 198,
+      "compile_policy": "actual archived/native compiler command, precise FP, contraction off, original SYCL PVC flags",
+      "runtime_inputs_unchanged": true
+    },
+    "legacy": {
+      "executable": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/legacy-stage-trace/build/legacy_stage_trace_gpu",
+      "executable_sha256": "70132898f83c693f625542737f13c3635c27dd9c1388ecde71d084e67e853ace",
+      "provenance": "build-native/aurora-legacy-stage-trace/build-artifacts/provenance.json",
+      "provenance_sha256": "2ffdc428276a168ae5d721d45aac057626843cae012d4ee08629d64c31ed4557",
+      "source_files": 775,
+      "reused_objects_libraries": 9,
+      "transitive_dependencies": 227,
+      "compile_policy": "actual archived/native compiler command, precise FP, contraction off, original SYCL PVC flags",
+      "runtime_inputs_unchanged": true
+    },
+    "geometry_map": {
+      "executable": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/geometry-map/build/n12_checkpoint_map",
+      "executable_sha256": "3092bfd6d2cef1ce476d2ccf76114ebc4fdcbbfe6a233875481b965ea7e4cb0e",
+      "provenance": "build-native/aurora-geometry-map/build-artifacts/provenance.json",
+      "provenance_sha256": "b4d6116789adb210edf5155a84398bff3210d35e5fd0b56890494cfb6d781d62",
+      "source_files": 401,
+      "reused_objects_libraries": 202,
+      "transitive_dependencies": 206,
+      "compile_policy": "actual archived/native compiler command, precise FP, contraction off, original SYCL PVC flags",
+      "runtime_inputs_unchanged": true
+    }
+  },
+  "submitted_24rank_job": "9051466",
+  "gpu_trace_acceptance": "pending actual retry andfullcomparisons",
+  "job24_submission": {
+    "path": "build-native/aurora-stage-trace/submission-two.json",
+    "sha256": "cc17a4d0f3f2f303b516ec43be17f80ea494b03f5e59eb51b9a2db995223745e"
+  },
+  "wrapper_review": "Independent read-only review found no material control-flow/gate defect; scientific comparisons remain pending.",
+  "corrected_geometry_mapper": {
+    "status": "built",
+    "executable_sha256": "a14333e4829718a7903efcabaf7ab523713cdf40ea0f0f5d7a772ea95004a8a7",
+    "provenance": "build-native/aurora-geometry-map-v2/build-artifacts/provenance.json",
+    "provenance_sha256": "de00e54acf98e6e783138f2691f8d42c84822b39cfe97063f8a7eab8d83993f9",
+    "runtime_inputs_unchanged": true,
+    "test_only_change": "Initialize omitted MeshBlockPack::pcoord nullptr; PASS flushed after Mesh teardown; mapping arithmetic unchanged"
+  },
+  "first_attempt_failure": {
+    "job": "9051466",
+    "exit_status": 139,
+    "phase": "metadata-only mapper cleanup",
+    "evolution_not_run": true,
+    "complete_mapping_outputs_unadmitted": true,
+    "archive_sha256": "256c5c3b923579baac99e562b1c36a4bcf0120abbf56be71c2abe2f2076a1404",
+    "local_artifacts": "build-native/aurora-stage-trace/failure-9051466/artifacts",
+    "verification": "build-native/aurora-stage-trace/failure-9051466/transfer-verification.json"
+  },
+  "retry_job": "9051476"
+}

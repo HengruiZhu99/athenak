@@ -1,0 +1,88 @@
+{
+  "passed": false,
+  "failure": "independent Aurora host legacy initial state bitwise comparison",
+  "scope": "all geometry keys/coordinates already passed; no strict sidecar emitted",
+  "candidate_sha256": "cfa18d09e96a52f1cf22fb724c907a097a0ca42925c623cdbbba22af2ebeae77",
+  "regions": {
+    "bulk": {
+      "values": 7111152,
+      "bitwise_differences": 182656,
+      "max_abs": 0.0,
+      "short_gate_failures": 0,
+      "fields": {
+        "Azz": {
+          "bitwise_different": 182656,
+          "max_abs": 0.0,
+          "short_gate_failures": 0,
+          "worst_legacy_row": 0,
+          "host": 0.0,
+          "native_gpu": -0.0
+        }
+      }
+    },
+    "surface": {
+      "values": 26784,
+      "bitwise_differences": 2904,
+      "max_abs": 2.220446049250313e-16,
+      "short_gate_failures": 0,
+      "fields": {
+        "alpha-(1+r2)/2": {
+          "bitwise_different": 102,
+          "max_abs": 2.220446049250313e-16,
+          "short_gate_failures": 0,
+          "worst_legacy_row": 52,
+          "host": -2.220446049250313e-16,
+          "native_gpu": 0.0
+        },
+        "beta_x+x": {
+          "bitwise_different": 505,
+          "max_abs": 2.1374840744931666e-16,
+          "short_gate_failures": 0,
+          "worst_legacy_row": 52,
+          "host": 0.0,
+          "native_gpu": -2.1374840744931666e-16
+        },
+        "beta_y+y": {
+          "bitwise_different": 501,
+          "max_abs": 2.1374840744931666e-16,
+          "short_gate_failures": 0,
+          "worst_legacy_row": 340,
+          "host": 0.0,
+          "native_gpu": -2.1374840744931666e-16
+        },
+        "beta_z+z": {
+          "bitwise_different": 500,
+          "max_abs": 2.1374840744931666e-16,
+          "short_gate_failures": 0,
+          "worst_legacy_row": 628,
+          "host": 0.0,
+          "native_gpu": -2.1374840744931666e-16
+        },
+        "D_x": {
+          "bitwise_different": 432,
+          "max_abs": 0.0,
+          "short_gate_failures": 0,
+          "worst_legacy_row": 0,
+          "host": 0.0,
+          "native_gpu": 0.0
+        },
+        "D_y": {
+          "bitwise_different": 432,
+          "max_abs": 0.0,
+          "short_gate_failures": 0,
+          "worst_legacy_row": 0,
+          "host": -0.0,
+          "native_gpu": 0.0
+        },
+        "D_z": {
+          "bitwise_different": 432,
+          "max_abs": 0.0,
+          "short_gate_failures": 0,
+          "worst_legacy_row": 0,
+          "host": -0.0,
+          "native_gpu": 0.0
+        }
+      }
+    }
+  }
+}

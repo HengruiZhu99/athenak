@@ -1,0 +1,36 @@
+{
+  "schema": "native-amr-fixed-step-source-review-v1",
+  "source_review_passed": true,
+  "runtime_validation_claimed": false,
+  "candidate_root": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-admission-clean-v1",
+  "reviewed_sha256": {
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-admission-clean-v1/production.patch": "9f411610ee3246f39a25be3e9f19598186da8c28bdeb90c8f53bc57489ebc2d7",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-admission-clean-v1/overlay/src/z4c_hyperboloidal/fixed_step_admission.hpp": "9c9c032d64faeb4abfbeb24dfc6d37905e350f7ff56c24e8ec357f5b86d8e086",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-admission-clean-v1/overlay/src/z4c_hyperboloidal/z4c_hyperboloidal.hpp": "bbf29470197ef320ce9bc25235eb2ae32d7d88e3421651d62ef826ac3e28e635",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-admission-clean-v1/overlay/src/driver/driver.cpp": "b11f907665daa8bc7f6739380380e5c85c1e8df91d4f0a4bab9ed0039ca3000c",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-admission-clean-v1/overlay/src/mesh/mesh_refinement.cpp": "a2608068e535486633c364e6b001fa3d324e24fd2e3057b77c3791f6a84ad91b",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-admission-clean-v1/overlay/src/z4c_hyperboloidal/z4c_hyperboloidal_lifecycle.cpp": "62619c2e4d30f33babf46c5a70378f2b379526488ddb45b418e5e58d86398056"
+  },
+  "available_predecessor_sha256": {
+    "/Users/hz0693/.codex/worktrees/scri-ko01/hyperboloidal/tst/hyperbolic_shift_3d/amr_evolution.cpp": "69002ae8b2eaa67129affb137d7868877b1752fd76643858759a882fe1bc0842",
+    "/Users/hz0693/.codex/worktrees/scri-ko01/hyperboloidal/tst/hyperbolic_shift_3d/coupled_mpi.cpp": "f7708dd17b13e64bd7690669a217277d6a3fea9a6169bcb07c2b8430ee335055"
+  },
+  "checks": {
+    "cap_and_slack": "min(requested_dt,target/rate,.005), target fresh mesh.cfl_no versus continuing .4, reject dt>allowed*(1+1e-12)",
+    "cadence": "Driver initialization and actual mesh-topology change only; fixed mesh returns before any added policy/state read, reduction or kernel",
+    "restart": "Driver actual res_flag; a cycle-zero restart is continuing; no ncycle heuristic",
+    "freshness": "Both wired call sites follow completion of InitializeBoundaryValues, which forms residual and solves normal correction after projection",
+    "endpoint_value": "ResidualJet keeps central f; CompatibleLapse changes Hessian only; existing NormalCorrection.f added to shift on last two radial rows",
+    "collectives": "Policy/readiness reduction precedes BindKernel; per-point finite/positive and speed-component checks feed invalid SUM then global CFL MAX before throw; guarded for non-MPI builds",
+    "finite_components": "Validate chi/lapse, beta, metric, Jacobian, determinant, Q/E, individual speed squares before fmax; invalid count prevents max reduction hiding a failed point",
+    "side_effects": "Kernel writes only local reduction Summary; no oracle, exported views, global derivatives, RHS, state, ChiRecords or logging",
+    "valid_arithmetic": "Restoration, dependent metric expansion, normal lift, cofactor inverse, gauge speed helpers and probe multiplication/division remain in predecessor order"
+  },
+  "limits": [
+    "Review of available predecessor source, not recovered historical dynamic-AMR binary provenance.",
+    "Initialization/readiness flags alone are not a general accepted-state freshness certificate; future call sites must obey the documented refresh precondition.",
+    "Optional independent angular dissipation operator is absent; its predecessor timestep cap must accompany any future introduction.",
+    "Speed-only admission does not replace all validity checks from the old full-RHS probe; ordinary native state/RHS validation retains that role.",
+    "Clean-overlay ordinary-main build, actual process restart and any GPU validation are separate pending evidence; source review does not claim them."
+  ]
+}

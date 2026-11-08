@@ -1,0 +1,125 @@
+{
+  "purpose": "CPU end-to-end harness/output/audit plumbing; does not substitute for original GPU reference admission",
+  "backend": "Serial",
+  "ranks": 2,
+  "executable_sha256": "96eff21a1d68f0101c16d382d8efc70e7542469fcc2a530d510dffdbdf34cd04",
+  "runtime_sources_and_objects_unchanged": true,
+  "harness_source_sha256": "6d8b24faebb66d969abe248d99d335ae391e8727f62b3b05fefcdc54398a6c81",
+  "adapter_source_sha256": "b25ee2326512dac7edc8c570749499cae0c6d25cd2212514a38d42d23532e0ca",
+  "run_exit_code": 2,
+  "strict_historical_gate_passed": false,
+  "history_gate_passed": true,
+  "horizon_gate_passed": true,
+  "readonly_passed": true,
+  "canonical_points": 229392,
+  "invalid_points": 0,
+  "legacy_weight_differences": 0,
+  "mask_counts": {
+    "all": 229392,
+    "positive_weight": 160976,
+    "device_outer": 9874,
+    "host_outer": 9874,
+    "near_any": 864,
+    "near_positive": 864,
+    "device1_host0": 0,
+    "device0_host1": 0,
+    "weighted_1_0": 0,
+    "weighted_0_1": 0,
+    "invalid_any": 0,
+    "invalid_zero_weight": 0,
+    "exact_device_cut": 430,
+    "exact_host_cut": 430
+  },
+  "strict_checks": [
+    {
+      "region": 0,
+      "field": 0,
+      "actual": 0.007325764860670533,
+      "reference": 0.007325764802570242,
+      "difference": 5.810029107128356e-11,
+      "gate": 5.036628824012851e-11,
+      "passed": false
+    },
+    {
+      "region": 0,
+      "field": 1,
+      "actual": 0.003966695939759599,
+      "reference": 0.0039666959397409406,
+      "difference": 1.8658685707606537e-14,
+      "gate": 5.0198334796987046e-11,
+      "passed": true
+    },
+    {
+      "region": 0,
+      "field": 2,
+      "actual": 0.0006367974401174326,
+      "reference": 0.0006367974401174147,
+      "difference": 1.7889335846010823e-17,
+      "gate": 5.003183987200587e-11,
+      "passed": true
+    },
+    {
+      "region": 0,
+      "field": 3,
+      "actual": 0.0007493079827959443,
+      "reference": 0.0007493079827959237,
+      "difference": 2.0599841277224584e-17,
+      "gate": 5.003746539913979e-11,
+      "passed": true
+    },
+    {
+      "region": 1,
+      "field": 0,
+      "actual": 0.009744675579568231,
+      "reference": 0.009746186025080513,
+      "difference": 1.510445512281286e-06,
+      "gate": 5.0487309301254024e-11,
+      "passed": false
+    },
+    {
+      "region": 1,
+      "field": 1,
+      "actual": 0.00489544947588852,
+      "reference": 0.004896165433714319,
+      "difference": 7.159578257988006e-07,
+      "gate": 5.0244808271685717e-11,
+      "passed": false
+    },
+    {
+      "region": 1,
+      "field": 2,
+      "actual": 0.00014705266973823162,
+      "reference": 0.0001470802568244885,
+      "difference": 2.7587086256879167e-08,
+      "gate": 5.0007354012841224e-11,
+      "passed": false
+    },
+    {
+      "region": 1,
+      "field": 3,
+      "actual": 0.0003820850714560773,
+      "reference": 0.00038191355277477436,
+      "difference": 1.7151868130291367e-07,
+      "gate": 5.001909567763874e-11,
+      "passed": false
+    }
+  ],
+  "horizon": {
+    "found": true,
+    "complete": true,
+    "areal_radius_M": 1.9999860430348486,
+    "irreducible_mass_M": 0.9999930215174243,
+    "mean_coordinate_radius": 0.030549496869085313,
+    "expansion_rms": 1.4887606638515881e-05,
+    "iterations": 149,
+    "passed": true
+  },
+  "canonical_dump_sha256": "33ce90493976ee05ebba20096a99a3abc2a03edcbcf046850f3bbb40c0eec865",
+  "artifacts": {
+    "build-native/saved-state-local-plumbing/results.json": "6b2c4e72ac97de29ba3a3a0d5fd4615321e1c6e7e4294f4a79a7ef4b4a3a26c9",
+    "build-native/saved-state-local-plumbing/audit.json": "adf5c2553ea7ff482e1f3089d1f46d80032441b9edbc28c45b9f2e947dfd3e46",
+    "build-native/saved-state-local-plumbing/run.log": "e436125086c4ca71c2c6c102b79c782ce79c0dede734532b065f4f233040893b",
+    "build-native/saved-state-local-syntax/local-provenance.json": "d6a1a391053639a3ac6a235bc45cf745127bf6a86adf9e772ae7f368008997b5"
+  },
+  "interpretation": "Reproduces the previously recorded CPU full-H and four strict-fixed-outer failures without changing any gate; output decoding, complete unique mapping, state preservation and adopted history/horizon gates pass."
+}

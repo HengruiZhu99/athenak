@@ -1,0 +1,83 @@
+# Fresh fixed N12 through 3551 complete native Driver RK4 steps.
+# Prepared locally; no Aurora build or run is implied by this input.
+<job>
+basename = native_n12_5M
+<mesh>
+nghost = 4
+nx1 = 36
+nx2 = 36
+nx3 = 36
+x1min = -.1
+x1max = .1
+x2min = -.1
+x2max = .1
+x3min = -.1
+x3max = .1
+ix1_bc = mapped
+ox1_bc = mapped
+ix2_bc = mapped
+ox2_bc = mapped
+ix3_bc = mapped
+ox3_bc = mapped
+<meshblock>
+nx1 = 12
+nx2 = 12
+nx3 = 12
+<mesh_atlas>
+type = cubed_sphere
+spherical_inner_radius = .08
+shell_radii = .16,.24,.32,.40,.48,.56,.64,.72,.80,.88,.94,1
+evolved_overlap = 3
+outer_endpoint_grid = true
+<mesh_refinement>
+refinement = static
+<refined_region0>
+x1min = -.03
+x1max = .03
+x2min = -.03
+x2max = .03
+x3min = -.03
+x3max = .03
+level = 1
+<time>
+cfl_number = .2
+evolution = dynamic
+integrator = rk4_classical
+tlim = 2
+nlim = 3551
+ndiag = 1
+dt = 0.00046944203735617445
+<problem>
+pgen_name = z4c_hyperboloidal_puncture
+<z4c_hyperboloidal>
+inner_z4c_radius_M = 20
+compact_slicing_end = .97
+outer_lapse_damping = .25
+ko = .1
+chi_floor = 1e-10
+scri_penalty = .5
+
+<fastflow>
+num_horizons = 1
+lmax = 12
+ntheta = 24
+flow_iterations_0 = 300
+flow_alpha_beta_const_0 = .1
+initial_radius_0 = .02
+mass_tol_0 = 1e-10
+expansion_rms_tol_0 = 1e-3
+center_x_0 = 0
+center_y_0 = 0
+center_z_0 = 0
+use_puncture_0 = -1
+npunct = 0
+start_time_0 = 0
+stop_time_0 = 2
+<output1>
+file_type = hst
+dt = 0.16666666666666666
+data_format = %.17e
+<output2>
+file_type = rst
+dt = 0.16666666666666666
+single_file_per_rank = false

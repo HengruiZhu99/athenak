@@ -11,12 +11,12 @@
     {
       "id": "isolated_work",
       "status": "verified",
-      "evidence_or_next_gate": "This worktree only; production source and campaign read-only. No new remote jobs."
+      "evidence_or_next_gate": "All work remains isolated in native worktree/private scri-native-20261108-side. Production read-only. GPU24 trace retry9051476 and GPU96 trace9051485 completed Exit0 with frozen runtime; the failed metadata-helper teardown9051466 remains preserved. Diagnostics526cc1fc2 changes no frozen runtime bytes. No production evolution resumed."
     },
     {
       "id": "native_driver_and_tasks",
       "status": "partial",
-      "evidence_or_next_gate": "Original Driver initialization, RK4, accepted-step native AMR and shared restart now pass local two/eight-rank checks. Diagnostics and Aurora validation remain."
+      "evidence_or_next_gate": "Original Driver initialization,RK4,AMR,shared restart and history cadence pass local2/8-rank checks. Native24/96 firstRHS/step1/8, actualrecords, stage/poison andfullcross-ranktrace gates pass. Observed original main has exact all24704784 padded31+8 state scalars andordinaryoutput bytes versus normalf3 at24/96;24->96restart state/stages exact; oldclock/CFL exact. All31 actual report bindings passed remote admission before fresh0->356 submission9051541."
     },
     {
       "id": "extend_native_octree",
@@ -26,7 +26,7 @@
     {
       "id": "new_native_physics_module",
       "status": "partial",
-      "evidence_or_next_gate": "Native module supports ordinary dynamic fixed/adaptive inputs and restart. Full fixed eight-step reference trajectories and coupled AMR/restart checks pass locally. Physical diagnostics/FastFlow and Aurora remain."
+      "evidence_or_next_gate": "Native fixed/adaptive evolution, restart, read-only constraints and sparse existing-FastFlow integration are implemented. Required24/96 GPU short/stage/poison/observer checks pass; native24 fresh evolution through356 now passes complete reference science and independent review. Full3551 remains unproven. The fixed-step AMR admission patch has coherent CPU build/endpoint/lifecycle evidence in a separate source tree; it is not merged or GPU-qualified."
     },
     {
       "id": "block_locality",
@@ -45,33 +45,33 @@
     },
     {
       "id": "amr_support",
-      "status": "verified_local_bounded",
-      "evidence_or_next_gate": "Native CC core transfer, mapped shell/overlap/scri transfer, atomic chi histories, accepted halos,criteria and storage/plan rebinding pass actual regrids and four coupled cycles on two/eight ranks. Ordinary adaptive input and2->8restart continuation are exact. Surface coarse asymptotic-rate failure and revised analytic/higher-resolution rationale are retained. GPU and long-time AMR accuracy remain unverified."
+      "status": "partial",
+      "evidence_or_next_gate": "Native CC core transfer, mapped shell/overlap/scri transfer, atomic chi histories, current accepted halos/criteria and plan rebinding pass local regrid/evolution/restart consistency tests. The missing fixed-step characteristic admission is addressed by an isolated reviewed patch. Prior speed/rejection and2-to8 restart tests remain mixed-object prototype evidence. A coherent separate CMake candidate now matches all198 native compile recipes/link policy and preserves original main source, with no baseline objects linked. Actual dt=.0002 four-cycle106-to113 evolution matches all26336232 padded31+8 endpoint scalars; manufactured106-to127-to106 lifecycle/diagnostics and12 metadata controls pass. Runtime integration, coherent GPU build and seven actual24/96-rank transfer/evolution/restart launches remain. Old .47678-CFL consistency results remain explicitly separate."
     },
     {
       "id": "numerical_fidelity",
       "status": "partial",
-      "evidence_or_next_gate": "Fresh/one/eight-step bulk/scri and every ChiRecord member match independent legacy bit for bit on two/eight local ranks with one executable; all32 stage diagnostics match. Full source/object provenance and complete snapshot byte comparisons recorded. Active-floor long evolution and Aurora3551-step comparisons remain."
+      "evidence_or_next_gate": "All prior CPU and24/96-rank GPU short/stage/poison gates retained. Actual fresh native24 trajectory through356 now passes unchanged long gates: all7137936 endpoint fields, bulk max1.8963303149988064e-13 and scri max5.979418349344456e-13; all1842048 native chi records decoded and finite. Historical aggregate floor counts3888/eight cells and first-floor time agree, with no historical per-cell record claim. All1424 stage clocks exact; clock/CFL maximum differences2.8552514085705694e-12/1.1102230246251565e-16 pass predeclared gates. Full3551 remains pending. Historical initial null aggregate reporting bug fixed without changing numerical gates; failed reporter v1 retained."
     },
     {
       "id": "native_restart",
       "status": "verified_local",
-      "evidence_or_next_gate": "Native shared/per-rank fixed/SMR tests retained; ordinary adaptive113-leaf continuous4steps2ranks equals2steps2ranks+restart2steps8ranks across every field/history/padding/metadata. Final binary684acd97778d8a5f1d8d5b2786bc58077fb45d15a4d353e92c550be8ce8b8fa6."
+      "evidence_or_next_gate": "Native shared/per-rank fixed/SMR andordinaryadaptive113leaf CPUtests pass. Observed originalmain actualGPU24->96 prefix2/resume8 matchescontinuousall24704784payloadscalars and32stage rows bitwise; adoptedrestartdiagnosticgates pass. SeparatecleanAMRadmissionoverlay ordinary2->8 restart atdt.0002 passes all26336232paddedscalars; overlayunmerged."
     },
     {
       "id": "n12_aurora_through_5m",
       "status": "incomplete",
-      "evidence_or_next_gate": "Pinned exact reference target3551 complete steps,t/M5.0009660239551499,dt0.00046944203735617445. Native coupled run not submitted."
+      "evidence_or_next_gate": "Target remains3551 complete steps, t/M=5.0009660239551499, dt=0.00046944203735617445. Fresh original-Driver job9051541 completed356 steps (0.50136409589639774M) at24ranks. Complete fields, available chi aggregates, eight RMS histories, horizon, all1424 stage clocks/CFL and structural/provenance gates passed independent review. All3888 floor events/eight distinct cells match historical aggregate counts. Segment356-to711 job9051587 is queued after exact predecessor/science/review and fresh runtime/resource preflight. Nine later common-time endpoints and full5M remain unverified."
     },
     {
       "id": "diagnostics_and_constraints",
-      "status": "incomplete",
-      "evidence_or_next_gate": "Reference RMS/horizon/state hashes recovered. Native physical conversion, constraints, FastFlow and any required tracker interface integration pending."
+      "status": "partial",
+      "evidence_or_next_gate": "Previously qualified local operators, native24/96 saved3551 replay and short trajectories remain recorded with cross-platform/compact-radius failures retained. Fresh native24 common times0 and356 now pass all eight RMS and areal-radius/irreducible-mass reference gates; both endpoint horizon quantities match reference exactly. All169 shape coefficients are finite and complete at each output. Remaining nine common-time histories/horizons through3551 are pending; no full-trajectory claim."
     },
     {
       "id": "performance_and_scaling",
       "status": "incomplete",
-      "evidence_or_next_gate": "No native coupled timings yet. Same workload/compiler/dt/rank timing,warmup,repeated2-/8-node windows and startup/I/O separation required after correctness."
+      "evidence_or_next_gate": "No accepted GPU benchmark or scaling result. Whole-cycle timing overlay is CPU-qualified with complete state/output equivalence, exact window coverage, and output/profiling rejection controls. After full N12 admission, require repeated same-work/compiler/dt 2-/8-node windows with warmup, maximum-rank timing, and startup/I/O separation. Actual qualified GPU trace ownership has bulk mean/max 9558/12663 at24ranks and2389.5/6588 at96ranks; six surface owners retain144points each. These are workload counts, not measured speed or an overall scaling bound. Equal block weights remain unchanged."
     },
     {
       "id": "performance_improvements",
@@ -81,7 +81,7 @@
     {
       "id": "reuse_and_consistent_style",
       "status": "partial",
-      "evidence_or_next_gate": "Original Driver/NR TaskList/tree/load balance/MPI-IO reused; AMR uses generic temporary CC registration in native transport/restriction/prolongation. Mapped transfers only for data outside that indexing/geometry contract. Physical diagnostics and suitable same-chart Bvals reuse remain."
+      "evidence_or_next_gate": "Original Driver/NR TaskList/tree/load balance/MPI-IO/history outputs/FastFlow retained. Native AMR reuses registered cell-centered transport; mapped transport/sampling handles data outside existing geometry/indexing contracts. Suitable same-chart Bvals reuse and GPU validation remain."
     }
   ]
 }

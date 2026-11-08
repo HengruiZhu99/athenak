@@ -1,0 +1,250 @@
+{
+  "passed": true,
+  "scope": "local CPU MPI validation of observed original main; no GPU admission",
+  "runs": {
+    "normal8-two": {
+      "command": [
+        "mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/src/athena",
+        "-i",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/aurora/n12.athinput",
+        "time/nlim=8",
+        "-d",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-step-observer-local-validation-v1/normal8-two"
+      ],
+      "exit_code": 0,
+      "executable_sha256": "4ff23f28d83a8ea92b0cdaad55936e269537a936fa3356aeeadb012f43697687"
+    },
+    "observed8-two": {
+      "command": [
+        "mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-step-observer-local-build-v2/athena-step-observer",
+        "-i",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/aurora/n12.athinput",
+        "time/nlim=8",
+        "-d",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-step-observer-local-validation-v1/observed8-two"
+      ],
+      "exit_code": 0,
+      "executable_sha256": "537a57726e33448009f4000546940896907ccfe51638b6da5fce6f9828e0e61e"
+    },
+    "prefix2-two": {
+      "command": [
+        "mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-step-observer-local-build-v2/athena-step-observer",
+        "-i",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/aurora/n12.athinput",
+        "time/nlim=2",
+        "-d",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-step-observer-local-validation-v1/prefix2-two"
+      ],
+      "exit_code": 0,
+      "executable_sha256": "537a57726e33448009f4000546940896907ccfe51638b6da5fce6f9828e0e61e"
+    },
+    "resumed8-eight": {
+      "command": [
+        "mpiexec",
+        "-n",
+        "8",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-step-observer-local-build-v2/athena-step-observer",
+        "-r",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-step-observer-local-validation-v1/prefix2-two/rst/native_n12_5M.00001.rst",
+        "time/nlim=8",
+        "-d",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-step-observer-local-validation-v1/resumed8-eight"
+      ],
+      "exit_code": 0,
+      "executable_sha256": "537a57726e33448009f4000546940896907ccfe51638b6da5fce6f9828e0e61e"
+    }
+  },
+  "normal_vs_observed": {
+    "0": {
+      "bitwise_equal": true,
+      "scalar_values": 24704784,
+      "payload_sha256": "a99fffd8c3a6dff7da69687b9898de195d7810d112b0efbee5ea1f0041ad48fb"
+    },
+    "8": {
+      "bitwise_equal": true,
+      "scalar_values": 24704784,
+      "payload_sha256": "d3628a85957d353a10c67c1511c617da29cbfe8ac540c605f4e6e08d0c4da963"
+    }
+  },
+  "normal_vs_observed_diagnostics": {
+    "bitwise_equal": true,
+    "files": [
+      "native_n12_5M.horizon_shape_0.txt",
+      "native_n12_5M.horizon_summary_0.txt",
+      "native_n12_5M.z4c_hyperboloidal.hst"
+    ]
+  },
+  "restart_complete_state": {
+    "bitwise_equal": true,
+    "scalar_values": 24704784,
+    "payload_sha256": "d3628a85957d353a10c67c1511c617da29cbfe8ac540c605f4e6e08d0c4da963"
+  },
+  "restart_stage_rows_bitwise_equal": true,
+  "observer_completion": [
+    {
+      "schema": "native-step-observer-v1",
+      "passed": true,
+      "backend": "Serial",
+      "ranks": 2,
+      "initial_cycle": 0,
+      "final_cycle": 8,
+      "initial_time": 0,
+      "final_time": 0.003755536298849396,
+      "dt": 0.00046944203735617445,
+      "stage_rows": 32,
+      "scope": "read-only stage observations; reference comparison separate"
+    },
+    {
+      "schema": "native-step-observer-v1",
+      "passed": true,
+      "backend": "Serial",
+      "ranks": 2,
+      "initial_cycle": 0,
+      "final_cycle": 2,
+      "initial_time": 0,
+      "final_time": 0.0009388840747123489,
+      "dt": 0.00046944203735617445,
+      "stage_rows": 8,
+      "scope": "read-only stage observations; reference comparison separate"
+    },
+    {
+      "schema": "native-step-observer-v1",
+      "passed": true,
+      "backend": "Serial",
+      "ranks": 8,
+      "initial_cycle": 2,
+      "final_cycle": 8,
+      "initial_time": 0.0009388840747123489,
+      "final_time": 0.003755536298849396,
+      "dt": 0.00046944203735617445,
+      "stage_rows": 24,
+      "scope": "read-only stage observations; reference comparison separate"
+    }
+  ],
+  "restart_diagnostics": {
+    "Volume": {
+      "candidate": 4.161698576889471,
+      "reference": 4.161698576889209,
+      "absolute": 2.6201263381153694e-13,
+      "gate": 4.162198576889209e-06
+    },
+    "H": {
+      "candidate": 0.00012133993260708222,
+      "reference": 0.0001213399326070863,
+      "absolute": 4.0793106739767104e-18,
+      "gate": 6.213399326070863e-10
+    },
+    "M": {
+      "candidate": 1.4190407550877344e-06,
+      "reference": 1.4190407550877876e-06,
+      "absolute": 5.3151317440207346e-20,
+      "gate": 5.014190407550879e-10
+    },
+    "Theta": {
+      "candidate": 1.0968554670703763e-08,
+      "reference": 1.096855467070402e-08,
+      "absolute": 2.564259898914386e-22,
+      "gate": 5.000109685546707e-10
+    },
+    "Z": {
+      "candidate": 7.065049121707119e-07,
+      "reference": 7.06504912170735e-07,
+      "absolute": 2.3081647812679684e-20,
+      "gate": 5.007065049121708e-10
+    },
+    "eVolume": {
+      "candidate": 4.161677829290019,
+      "reference": 4.161677829289758,
+      "absolute": 2.611244553918368e-13,
+      "gate": 4.162177829289758e-06
+    },
+    "eH": {
+      "candidate": 6.9250886165877665e-06,
+      "reference": 6.925088616588027e-06,
+      "absolute": 2.608861477543245e-19,
+      "gate": 5.069250886165881e-10
+    },
+    "eM": {
+      "candidate": 1.4176986394238193e-06,
+      "reference": 1.417698639423872e-06,
+      "absolute": 5.2727800966580196e-20,
+      "gate": 5.014176986394239e-10
+    },
+    "eTheta": {
+      "candidate": 9.54920589826636e-09,
+      "reference": 9.5492058982666e-09,
+      "absolute": 2.3988237764037803e-22,
+      "gate": 5.000095492058983e-10
+    },
+    "eZ": {
+      "candidate": 7.065066727804527e-07,
+      "reference": 7.065066727804756e-07,
+      "absolute": 2.2975768694272897e-20,
+      "gate": 5.007065066727805e-10
+    },
+    "areal_radius_M": {
+      "candidate": 2.000000126852352,
+      "reference": 2.0000001269136893,
+      "absolute": 6.13371575752808e-11,
+      "gate": 2.0000001269136892e-07
+    },
+    "irreducible_mass_M": {
+      "candidate": 1.000000063426176,
+      "reference": 1.0000000634568447,
+      "absolute": 3.06685787876404e-11,
+      "gate": 1.0000000634568446e-07
+    }
+  },
+  "restart_output_scope": "prefix final horizon search changes warm start; compare adopted RMS/areal/mass gates separately from exact evolved state and stage values",
+  "source_inputs_unchanged": true,
+  "source_sha256": {
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_step_observer_validate.py": "bb18cb9f75582fcc2471728949994e5e01cc521f543ae633b29358be4c600e94",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/aurora/n12.athinput": "125dad50603e2970d7b158f942050c0de6d0a0babf5d04729330bfaa66fea737",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_step_observer.py": "632604c3f5ae3b09663a65ac9326a3e56aecac99bcf8a6a5241b56d641e0d41f",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_step_observer.hpp": "fdc13a891de9a456b9cf7d0aca646038446d0879a760a3541f84cbf5dd369de5",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/n12_checkpoint.py": "ca26c57ee362feacb613209a881727b56b35334402abb12dab6f5d8a5097dbcf",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/n12_long_history.py": "304e0ae0dffedfad946396204bc8326533b0850af3e88ccb144bd1885f6cd104",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/restart_roundtrip.py": "8afc41988e20e36d336230e111450ec3ba573940c773a6ed15ed03ed16eb8a3b"
+  },
+  "observer_build_provenance_sha256": "dbf9cfdaa399a849dd9729058ea8fc6fd5ab1ab85d8dca469f485b523b16b8fe",
+  "artifact_sha256": {
+    "observed8-two/native_n12_5M.horizon_summary_0.txt": "e123cdd19347799e7ecc617634da0f67d0adfa5deaacb0862a84170c1ac0831d",
+    "observed8-two/run.log": "bfcfe11e6b0ddadec78576b9ee3eea3d029addb5bed4d964ee478a6c83748a38",
+    "observed8-two/native_n12_5M.z4c_hyperboloidal.hst": "ad8fa4428df32e4915c457a57894a6fdc95ac1ee70845d08aec5949927e8459b",
+    "observed8-two/native-stages.csv": "fb6265bdad1956578e21d5f0df9fa81d1c517c2b93ea3cf63d3bb0f44a477b2b",
+    "observed8-two/native-step-observer.json": "540827a994db94e0b24273c23f31e3e4971f8cdd1d78acd6afddfbf0f009765e",
+    "observed8-two/native_n12_5M.horizon_shape_0.txt": "0df05b9ed7d1352fd824efebf98024b248943b0b670e65e3941be399b7d677bd",
+    "observed8-two/rst/native_n12_5M.00001.rst": "43f4021111b64e34b22c3814cf6006d15999b89ca18a5c3ee83dbbb6c7fe72f3",
+    "observed8-two/rst/native_n12_5M.00000.rst": "6d25f848d4f3e10d68a5338877d72d2095a3a4eb87b3a83548556e9e54a64c38",
+    "resumed8-eight/native_n12_5M.horizon_summary_0.txt": "b8c65228ab5c0130bf6768af671257fe7af4ffd84c044e4310d920bd9f4cd320",
+    "resumed8-eight/run.log": "de265030a26622f52a3492d9ae8102a6a71a49479118182937c5d9132a0e2700",
+    "resumed8-eight/native_n12_5M.z4c_hyperboloidal.hst": "f554799ca0b3a0f4dfa505a94a216df9b8eceb7e90d22a38d59b245069090ebb",
+    "resumed8-eight/native-stages.csv": "e8d824bbeed8ed3b25743ddaa41611bfbfa3262a9ff2fc0727d3adc959f7b284",
+    "resumed8-eight/native-step-observer.json": "209c13aeb752cf1fa4bb1693ddadbb83bf7eac1e7c625901f766d7aff64492d4",
+    "resumed8-eight/native_n12_5M.horizon_shape_0.txt": "9252d19a4c8e6a96c5a1d690c1460132ef2bfd3878c261ae3b9de686d100df53",
+    "resumed8-eight/rst/native_n12_5M.00002.rst": "20a2d92d0684b7ec98a59742b886599bbc178c25cfe0a2799d6defaaa14310f5",
+    "normal8-two/native_n12_5M.horizon_summary_0.txt": "e123cdd19347799e7ecc617634da0f67d0adfa5deaacb0862a84170c1ac0831d",
+    "normal8-two/run.log": "bbd85b39a120d0692bee2dff6670792c2dbdeaa0aef19f659ce0c63cccac7e4f",
+    "normal8-two/native_n12_5M.z4c_hyperboloidal.hst": "ad8fa4428df32e4915c457a57894a6fdc95ac1ee70845d08aec5949927e8459b",
+    "normal8-two/native_n12_5M.horizon_shape_0.txt": "0df05b9ed7d1352fd824efebf98024b248943b0b670e65e3941be399b7d677bd",
+    "normal8-two/rst/native_n12_5M.00001.rst": "43f4021111b64e34b22c3814cf6006d15999b89ca18a5c3ee83dbbb6c7fe72f3",
+    "normal8-two/rst/native_n12_5M.00000.rst": "6d25f848d4f3e10d68a5338877d72d2095a3a4eb87b3a83548556e9e54a64c38",
+    "prefix2-two/native_n12_5M.horizon_summary_0.txt": "7d0cf4793c6aba6600848f193f07cf059dea10795cc6eabef2779cf06e140044",
+    "prefix2-two/run.log": "fcf9ebb6f8ad1063de88ae1129243c14a5c2131763f76f4c604fd12d0e8abe35",
+    "prefix2-two/native_n12_5M.z4c_hyperboloidal.hst": "3c283e77ee021d470ae1b5f7af8755a0ed454eb1fc4d2d3ed4f177518770e37d",
+    "prefix2-two/native-stages.csv": "b0e36c1a88f4443e535aa8c3577189dc3c9da6d162331295ed46468707203343",
+    "prefix2-two/native-step-observer.json": "20b96d26e5bd0f3c5b3ecff12ea2efe3d7b7de97fc8cd9ec58ae4d48e140496c",
+    "prefix2-two/native_n12_5M.horizon_shape_0.txt": "86389a52cf501b869a87e978ebd0d7ad968cae65eea0e1b18fe9cc3317404535",
+    "prefix2-two/rst/native_n12_5M.00001.rst": "966696655f8e72c32e912bc5df7d4c0d187f0d7f58af57c24887668769d6f47c",
+    "prefix2-two/rst/native_n12_5M.00000.rst": "78bd84682b589743e87500f7bbae6c721705aae207e37fd50539b73b20416fa0"
+  }
+}

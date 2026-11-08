@@ -1,0 +1,48 @@
+{
+  "schema": "native-n12-common-segment-submission-v1",
+  "status": "scientific-and-independent-review-pass",
+  "job": {
+    "job_id": "9051541.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "nodes": 2,
+    "ranks": 24,
+    "start_cycle": 0,
+    "end_cycle": 356,
+    "fresh_start": true,
+    "admission_sha256": "deb26a9eca22bed36370725662531ef54ac3868d6cca4344bbda7d2fdc7db66c",
+    "preflight_sha256": "cac7f9efe2074fdee54d7d0c1a00ef19135568dba95ff83539a4a6310d214fb3",
+    "no_automatic_continuation": true
+  },
+  "admission_validation": {
+    "passed": true,
+    "native_executable_sha256": "f3a85db7528986ddec347b31675a8c5d588120a2380133aed73d5967f7aab05c",
+    "observed_executable_sha256": "f2c2e6cd910279f0c558164466da8027f0e5b18c5bbd26bb4e36a853dd669f9d",
+    "observed_executable": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/step-observer/build/athena-step-observer",
+    "initial_checkpoint_sha256": "cfa18d09e96a52f1cf22fb724c907a097a0ca42925c623cdbbba22af2ebeae77",
+    "source_reports": 31,
+    "scope": "complete actual Aurora24/96 short gates"
+  },
+  "local_admission": "build-native/aurora-longrun-admission-v1/admission.json",
+  "local_preflight": "build-native/aurora-longrun-admission-v1/remote-records/preflight-first.json",
+  "endpoint_scientific_comparison": {
+    "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-common-segment-01-science-v2/continuation-admission.json",
+    "sha256": "454755931a81a883936fdd8a82e9f60da47b1c7ecd522cae29392376a9a0e3bf",
+    "passed": true
+  },
+  "continuation_admitted": true,
+  "full3551_complete": false,
+  "endpoint_checkpoint_sha256": "c2735117dc8026f47c307005bcbd592d9bf54670d30af2a89c0fffe027ed4ff8",
+  "science_admission_sha256": "454755931a81a883936fdd8a82e9f60da47b1c7ecd522cae29392376a9a0e3bf",
+  "independent_review_sha256": "c88d16bb8b382fdf80143424080a275af4fb2fa06fc78fd4b6a85432b45cf26c",
+  "independent_review": {
+    "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-common-01-independent-review-v1/review.json",
+    "sha256": "c88d16bb8b382fdf80143424080a275af4fb2fa06fc78fd4b6a85432b45cf26c",
+    "passed": true
+  },
+  "admitted_next_segment_only": {
+    "start_cycle": 356,
+    "end_cycle": 711,
+    "job_id": "9051587"
+  },
+  "prior_reporting_failure_retained": "build-native/n12-common-segment-01-science-v1/continuation-admission.json",
+  "chi_scope": "native records decoded and checked finite; all available historical aggregate differences reported under the declared threshold-sensitive floor policy; no historical per-cell record equivalence claim"
+}

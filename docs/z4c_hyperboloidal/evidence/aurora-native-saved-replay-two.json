@@ -1,0 +1,380 @@
+{
+  "job_id": "9051398.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+  "job_state": "F",
+  "exit_status": 0,
+  "nodes": 2,
+  "ranks": 24,
+  "native_executable_sha256": "f3a85db7528986ddec347b31675a8c5d588120a2380133aed73d5967f7aab05c",
+  "adapter_sha256": "650cf2a803c4a71ff0893a8e215aa86572c3966070ca0328c198bba8a5fbf806",
+  "saved_replay": {
+    "backend": "SYCL",
+    "ranks": 24,
+    "step": 3551,
+    "time": 1.6669886746517166,
+    "readonly": true,
+    "raw_device": [
+      4.161698576889404,
+      0.00022334516979818816,
+      6.548298154013428e-05,
+      1.68761446729737e-06,
+      2.3366374919669283e-06,
+      0.6630374288114037,
+      6.298069346277074e-05,
+      1.5894622297484407e-05,
+      1.4343224773809086e-08,
+      9.670928795893606e-08
+    ],
+    "raw_device_host_mask_control": [
+      4.161698576889404,
+      0.00022334516979818816,
+      6.548298154013428e-05,
+      1.68761446729737e-06,
+      2.3366374919669283e-06,
+      0.6630374288114037,
+      6.298069346277074e-05,
+      1.5894622297484407e-05,
+      1.4343224773809086e-08,
+      9.670928795893606e-08
+    ],
+    "mask_counts": [
+      229392,
+      160976,
+      9864,
+      9864,
+      864,
+      864,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      432,
+      432
+    ],
+    "mask_weight_difference": 0,
+    "legacy_weight_differences": 0,
+    "legacy_weight_max_absolute": 0,
+    "strict_checks": [
+      {
+        "region": 0,
+        "field": 0,
+        "actual": 0.007325764802570238,
+        "reference": 0.007325764802570242,
+        "difference": 4.336808689942018e-18,
+        "gate": 5.036628824012851e-11,
+        "passed": true
+      },
+      {
+        "region": 0,
+        "field": 1,
+        "actual": 0.00396669593974094,
+        "reference": 0.0039666959397409406,
+        "difference": 8.673617379884035e-19,
+        "gate": 5.0198334796987046e-11,
+        "passed": true
+      },
+      {
+        "region": 0,
+        "field": 2,
+        "actual": 0.0006367974401174147,
+        "reference": 0.0006367974401174147,
+        "difference": 0,
+        "gate": 5.003183987200587e-11,
+        "passed": true
+      },
+      {
+        "region": 0,
+        "field": 3,
+        "actual": 0.0007493079827959235,
+        "reference": 0.0007493079827959237,
+        "difference": 2.168404344971009e-19,
+        "gate": 5.003746539913979e-11,
+        "passed": true
+      },
+      {
+        "region": 1,
+        "field": 0,
+        "actual": 0.009746186025080294,
+        "reference": 0.009746186025080513,
+        "difference": 2.185751579730777e-16,
+        "gate": 5.0487309301254024e-11,
+        "passed": true
+      },
+      {
+        "region": 1,
+        "field": 1,
+        "actual": 0.004896165433714319,
+        "reference": 0.004896165433714319,
+        "difference": 0,
+        "gate": 5.0244808271685717e-11,
+        "passed": true
+      },
+      {
+        "region": 1,
+        "field": 2,
+        "actual": 0.0001470802568244885,
+        "reference": 0.0001470802568244885,
+        "difference": 0,
+        "gate": 5.0007354012841224e-11,
+        "passed": true
+      },
+      {
+        "region": 1,
+        "field": 3,
+        "actual": 0.00038191355277477436,
+        "reference": 0.00038191355277477436,
+        "difference": 0,
+        "gate": 5.001909567763874e-11,
+        "passed": true
+      }
+    ],
+    "history_checks": [
+      {
+        "region": 0,
+        "field": 0,
+        "actual": 0.007325764802570238,
+        "reference": 0.007325764802570242,
+        "difference": 4.336808689942018e-18,
+        "gate": 7.825764802570242e-09,
+        "passed": true
+      },
+      {
+        "region": 0,
+        "field": 1,
+        "actual": 0.00396669593974094,
+        "reference": 0.0039666959397409406,
+        "difference": 8.673617379884035e-19,
+        "gate": 4.466695939740941e-09,
+        "passed": true
+      },
+      {
+        "region": 0,
+        "field": 2,
+        "actual": 0.0006367974401174147,
+        "reference": 0.0006367974401174147,
+        "difference": 0,
+        "gate": 1.1367974401174148e-09,
+        "passed": true
+      },
+      {
+        "region": 0,
+        "field": 3,
+        "actual": 0.0007493079827959235,
+        "reference": 0.0007493079827959237,
+        "difference": 2.168404344971009e-19,
+        "gate": 1.2493079827959236e-09,
+        "passed": true
+      },
+      {
+        "region": 1,
+        "field": 0,
+        "actual": 0.006665046436418729,
+        "reference": 0.006665046436418733,
+        "difference": 3.469446951953614e-18,
+        "gate": 7.165046436418733e-09,
+        "passed": true
+      },
+      {
+        "region": 1,
+        "field": 1,
+        "actual": 0.0037857888848539336,
+        "reference": 0.003785788884853934,
+        "difference": 4.336808689942018e-19,
+        "gate": 4.285788884853934e-09,
+        "passed": true
+      },
+      {
+        "region": 1,
+        "field": 2,
+        "actual": 0.0006288781329944103,
+        "reference": 0.0006288781329944103,
+        "difference": 0,
+        "gate": 1.1288781329944104e-09,
+        "passed": true
+      },
+      {
+        "region": 1,
+        "field": 3,
+        "actual": 0.0007488764374473728,
+        "reference": 0.0007488764374473728,
+        "difference": 0,
+        "gate": 1.248876437447373e-09,
+        "passed": true
+      }
+    ],
+    "horizon": {
+      "found": true,
+      "complete": true,
+      "areal_radius_M": 1.9999860430348488,
+      "irreducible_mass_M": 0.9999930215174244,
+      "mean_coordinate_radius": 0.030549496869085334,
+      "expansion_rms": 1.4887606637316005e-05,
+      "iterations": 149,
+      "passed": true
+    },
+    "strict_replay_passed": true,
+    "history_passed": true,
+    "passed": true,
+    "mask_count_names": {
+      "all": 229392,
+      "positive_weight": 160976,
+      "device_outer": 9864,
+      "host_outer": 9864,
+      "near_any": 864,
+      "near_positive": 864,
+      "device1_host0": 0,
+      "device0_host1": 0,
+      "weighted_1_0": 0,
+      "weighted_0_1": 0,
+      "invalid_any": 0,
+      "invalid_zero_weight": 0,
+      "exact_device_cut": 432,
+      "exact_host_cut": 432
+    },
+    "device_minus_host_cut_raw": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "canonical_dump_sha256": "bb8087a8f2d55ef241129a8a9ce8abb63b2fe500d25a9b77a6bff65ea595d2db",
+    "dump_files_sha256": {
+      "points-rank0.bin": "cc17779c7eb70952284a9a194e00d67bbe7e7a60577dd5ac36243de253f75f72",
+      "points-rank1.bin": "2eafc8ea6839881e238f6086944ee3f8219dbce87c1d198b6e6d1a6267b0b332",
+      "points-rank10.bin": "496602556b774b8ef661e51f78e948099ad72d29d51e3dcb8b69124104565e74",
+      "points-rank11.bin": "27e019e683bb2b6551b490a2ae0d077c262467d76574b39a8c103a8a3d8691d7",
+      "points-rank12.bin": "1ffcb4f8752763ca7c0c5fc10005f31ed1a947ff8be72077276f82a61131bfb3",
+      "points-rank13.bin": "4466bad580a5770f1370f8b33204b64c0940e2e750112b077d312949bb2303d3",
+      "points-rank14.bin": "190e2647b288da18a353e0a99cac49e58a4edf66333cde2646bbcda2e77b3c41",
+      "points-rank15.bin": "8f9bb1b0644735235d19da0c3793f3538da933d2a916d77eb77a38266742ddc2",
+      "points-rank16.bin": "fd9abd152b964b0fa53307dd7ff6e6b026281bc5160226570dca2579a5b83841",
+      "points-rank17.bin": "b34736c6e52060d08594fad4520d21d21f95398ab30591114fc8908a47442f52",
+      "points-rank18.bin": "019666e69f6a8bc67863d7daa9bcd5b3a588c5ecbb96dba1f7197444edbdb356",
+      "points-rank19.bin": "bbe1ae5c18aa433faafd0474256d7ea04fb0b49d7fa8313dfbd61d38f7caa847",
+      "points-rank2.bin": "8ba75e18fcb2ab9c49fb1b1e716daccbaa47807047d47262b42235437950ba37",
+      "points-rank20.bin": "13b4cef62d6bbc975a12ba48f59ef1c6b117527eaf6e3b0706cedbdd1f28b5eb",
+      "points-rank21.bin": "bcbb838d04587d51dc550822ee7294a94cc3ae5c9afc765ae79635547eec9e95",
+      "points-rank22.bin": "a7f888938100d080ce00d1e207283ae6ec82fb3a4462f42e7e234209e7d7d5ba",
+      "points-rank23.bin": "a5723891a7050cd16d51cb69bd035b7854f898828d44d1182947e6ed21ee938b",
+      "points-rank3.bin": "9ba70d2e0dcf295600fe2fc0d801732cf26ad4fb67f9e3ff64dab5d1ab8fd487",
+      "points-rank4.bin": "7d5b337f2743de0b5032ca1deacd79ee147794b7fc561c98fb6e356d3e39acd5",
+      "points-rank5.bin": "af78e551b5648848c6040c4eed3c9f3868576231a96b5543fcd5eb00d6c03353",
+      "points-rank6.bin": "16d9bb61de8772912a61e7f94de0cf9463bc50e334722473325450e019499959",
+      "points-rank7.bin": "867124124f47a6aeaccd8e71c6b695367da3d488a163f19c1b030525d7fad2f4",
+      "points-rank8.bin": "f288504dbecec21b9c75ae969e9bd597f5c36f6f7330c337d8a8e1a816b20e16",
+      "points-rank9.bin": "b22e351fa30fb562840ba40bb8676fdd18624991b47262c5d6a94ad561f3075a"
+    }
+  },
+  "pipeline": {
+    "saved_state_replay_passed": true,
+    "native_eight_step_smoke_completed": true,
+    "restarts": [
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/n12-native-gpu-eight-two/rst/native_n12_5M.00000.rst",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/n12-native-gpu-eight-two/rst/native_n12_5M.00001.rst"
+    ],
+    "complete_state_comparison_pending": true,
+    "native_runtime_source_unchanged": true
+  },
+  "source_runtime_unchanged": true,
+  "production_modified": false,
+  "full3551_native_evolution_performed": false,
+  "eight_step_log_observation": {
+    "scope": "non-benchmark correctness smoke, final cycle includes outputs; not accepted performance or scaling evidence",
+    "cycles": [
+      {
+        "cycle": 0,
+        "elapsed": 9.570878038,
+        "time": 0.0,
+        "dt": 0.00046944203735617445
+      },
+      {
+        "cycle": 1,
+        "elapsed": 14.81666169,
+        "time": 0.00046944203735617445,
+        "dt": 0.00046944203735617445
+      },
+      {
+        "cycle": 2,
+        "elapsed": 19.899586716,
+        "time": 0.0009388840747123489,
+        "dt": 0.00046944203735617445
+      },
+      {
+        "cycle": 3,
+        "elapsed": 24.603817017,
+        "time": 0.0014083261120685234,
+        "dt": 0.00046944203735617445
+      },
+      {
+        "cycle": 4,
+        "elapsed": 29.772920451,
+        "time": 0.0018777681494246978,
+        "dt": 0.00046944203735617445
+      },
+      {
+        "cycle": 5,
+        "elapsed": 35.540134881,
+        "time": 0.002347210186780872,
+        "dt": 0.00046944203735617445
+      },
+      {
+        "cycle": 6,
+        "elapsed": 41.260071227,
+        "time": 0.002816652224137047,
+        "dt": 0.00046944203735617445
+      },
+      {
+        "cycle": 7,
+        "elapsed": 46.590975199,
+        "time": 0.0032860942614932214,
+        "dt": 0.00046944203735617445
+      },
+      {
+        "cycle": 8,
+        "elapsed": 56.104281812,
+        "time": 0.003755536298849396,
+        "dt": 0.00046944203735617445
+      }
+    ],
+    "intervals": [
+      {
+        "to_cycle": 1,
+        "seconds": 5.245783652
+      },
+      {
+        "to_cycle": 2,
+        "seconds": 5.082925026000002
+      },
+      {
+        "to_cycle": 3,
+        "seconds": 4.704230300999999
+      },
+      {
+        "to_cycle": 4,
+        "seconds": 5.169103434
+      },
+      {
+        "to_cycle": 5,
+        "seconds": 5.767214429999999
+      },
+      {
+        "to_cycle": 6,
+        "seconds": 5.719936345999997
+      },
+      {
+        "to_cycle": 7,
+        "seconds": 5.3309039720000015
+      },
+      {
+        "to_cycle": 8,
+        "seconds": 9.513306613000005
+      }
+    ]
+  },
+  "artifact_archive_sha256": "056371c109003d7b34760ecd35901d2241b582b4a2d06650e875b8292d281b00",
+  "verified_artifact_files": 85,
+  "evidence_directory": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-saved-replay/run-artifacts",
+  "complete_initial_eight_state_comparison": "delegated to native_tasks; pending separate evidence"
+}

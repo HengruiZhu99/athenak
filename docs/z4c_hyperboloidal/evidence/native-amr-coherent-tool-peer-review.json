@@ -1,0 +1,64 @@
+{
+  "schema": "native-amr-coherent-tool-peer-review-v1",
+  "passed": true,
+  "scope": "Bounded read-only source/provenance review and existing evidence verification. No new numerical build, evolution rerun, GPU build or GPU execution.",
+  "candidate_audited_provenance": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-admission-coherent-local-v1/audited-provenance.json",
+  "candidate_audited_provenance_sha256": "7f24d07a8eb908ab38b046f73ff72ec4b65b0f84bdea70d8740f7e61635c18c4",
+  "prior_provenance_sha256": "b1a633773f092235c3b864848b928e47adfc1ecc5ff75ecd32cf062f77c41ced",
+  "build_coverage": {
+    "native_translation_units": 198,
+    "all_native_compile_recipes_match": true,
+    "normalized_link_flags_libraries_order_match": true,
+    "all_existing_objects_and_executable_unchanged_by_audit": true,
+    "actual_recipe_and_finalizer_files_rehashed": true,
+    "exact_reviewed_source_patch_only": true,
+    "original_main_source_unchanged": true,
+    "baseline_objects_linked": false
+  },
+  "candidate_executable_sha256": "c51d03e1f1c6b64885414aeb820ab9ec048684a55f6ea733ac6cb1b881866376",
+  "baseline_native_executable_sha256": "4ff23f28d83a8ea92b0cdaad55936e269537a936fa3356aeeadb012f43697687",
+  "production_patch_sha256": "9f411610ee3246f39a25be3e9f19598186da8c28bdeb90c8f53bc57489ebc2d7",
+  "controls": {
+    "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-admission-gpu-controls-final-v1/results.json",
+    "sha256": "ab3c6699db2c2a6fe26f552182761668216d78d596ce87edb01002d0b80adbcc",
+    "count": 12,
+    "all_rejected_as_expected": true,
+    "checks": [
+      "CPU_build_cannot_claim_GPU",
+      "mixed_objects_cannot_qualify",
+      "frozen_executable_as_candidate",
+      "old_timestep",
+      "wrong_patch",
+      "linked_baseline_objects",
+      "wrong_class_definition",
+      "changed_overlay_bytes",
+      "changed_compile_database",
+      "changed_link_file",
+      "changed_finalizer",
+      "old_dt_against_safe_checkpoint"
+    ]
+  },
+  "prepared_bundle": {
+    "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-admission-gpu-ready-v2",
+    "setup_sha256": "0493767c235d621c2b48fd0c69dafa20b61550f0185fc21bd43250b2c9323aa5",
+    "all_listed_files_verified": true,
+    "file_count": 26,
+    "gpu_built": false,
+    "gpu_submitted": false
+  },
+  "corrections_closed": [
+    "Enforce normalized candidate link flags/libraries/order equal the actual baseline link policy.",
+    "Bind and rehash actual candidate compile_commands.json and link.txt; rehash audit finalizer.",
+    "GPU execution v2 must include and hash-bind both actual recipe artifacts."
+  ],
+  "remaining_scope": [
+    "SYCL candidate compilation and actual24/96 AMR lifecycle/evolution/restart correctness are still pending.",
+    "Mixed-object prototypes remain preserved but are rejected for GPU admission.",
+    "Safe adaptive fixed step remains .0002; frozen fixed-N12 baseline remains unchanged."
+  ],
+  "source_sha256": {
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_amr_candidate_cmake.py": "6b2615e9f7c74e04b7869c56b1ebcb40ac1b23bac5c80af346db42da4bdeddee",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_amr_gpu_compare.py": "bf89e5cced3e4b78f3a06463caf12cc679a3d67e4c4270b775596573363af0b0",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_amr_admission_candidate.py": "cd2b90461f45aa230b9cfd5b08702f64971dc0306fc41c0e3fa49735f8cf7a85"
+  }
+}

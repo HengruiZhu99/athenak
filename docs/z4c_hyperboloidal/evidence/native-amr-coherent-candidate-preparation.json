@@ -1,0 +1,313 @@
+{
+  "schema": "native-amr-coherent-candidate-preparation-v1",
+  "passed": true,
+  "gpu_evidence": false,
+  "gpu_built": false,
+  "gpu_submitted": false,
+  "scope": "reviewed isolated patch; coherent CPU build/targeted endpoint/lifecycle and local tool controls; actual GPU qualification remains pending",
+  "fixed_dt": 0.0002,
+  "production_patch_sha256": "9f411610ee3246f39a25be3e9f19598186da8c28bdeb90c8f53bc57489ebc2d7",
+  "baseline_cpu_executable_sha256": "4ff23f28d83a8ea92b0cdaad55936e269537a936fa3356aeeadb012f43697687",
+  "coherent_cpu_executable_sha256": "c51d03e1f1c6b64885414aeb820ab9ec048684a55f6ea733ac6cb1b881866376",
+  "expected_frozen_aurora_executable_sha256": "f3a85db7528986ddec347b31675a8c5d588120a2380133aed73d5967f7aab05c",
+  "coherent_build": {
+    "native_translation_units": 198,
+    "all_native_compile_recipes_match": true,
+    "normalized_link_policy_matches": true,
+    "original_main_source_unchanged": true,
+    "baseline_objects_linked": false,
+    "baseline_source_objects_executable_unchanged": true
+  },
+  "endpoint": {
+    "ranks": 2,
+    "cycles": 4,
+    "topology": [
+      106,
+      113
+    ],
+    "complete_final": {
+      "bitwise_equal": true,
+      "scalar_values": 26336232,
+      "payload_sha256": "9f6a42b943835b3e58134e032a14a12bdaaa07c6648b09983f4acf62f6accefd"
+    },
+    "all_meaningful_metadata_exact": true,
+    "restart_test": false
+  },
+  "lifecycle": {
+    "ranks": 2,
+    "topology": [
+      106,
+      127,
+      106
+    ],
+    "reports": [
+      {
+        "phase": 0,
+        "blocks": 106,
+        "bulk_points": 229392,
+        "scri_points": 864,
+        "polynomial_checks": 0,
+        "zero_scri_ranks": 0,
+        "max_polynomial_error": 0,
+        "compatibility": 0
+      },
+      {
+        "phase": 1,
+        "blocks": 127,
+        "bulk_points": 277236,
+        "scri_points": 1296,
+        "polynomial_checks": 40428,
+        "zero_scri_ranks": 0,
+        "max_polynomial_error": 1.3010426069826053e-17,
+        "compatibility": 0
+      },
+      {
+        "phase": 2,
+        "blocks": 106,
+        "bulk_points": 229392,
+        "scri_points": 864,
+        "polynomial_checks": 3816,
+        "zero_scri_ranks": 0,
+        "max_polynomial_error": 9.107298248878237e-18,
+        "compatibility": 0
+      }
+    ],
+    "diagnostics": [
+      {
+        "phase": 0,
+        "refreshes": 1,
+        "constraint_weight_scalars": 5276016,
+        "owned_scalars": 8979984,
+        "rk_status_values": 174032736,
+        "fresh_exact": true,
+        "repeat_cached": true,
+        "readonly": true
+      },
+      {
+        "phase": 1,
+        "refreshes": 2,
+        "constraint_weight_scalars": 6376428,
+        "owned_scalars": 10862748,
+        "rk_status_values": 208542372,
+        "fresh_exact": true,
+        "repeat_cached": true,
+        "readonly": true
+      },
+      {
+        "phase": 2,
+        "refreshes": 3,
+        "constraint_weight_scalars": 5276016,
+        "owned_scalars": 8979984,
+        "rk_status_values": 174032736,
+        "fresh_exact": true,
+        "repeat_cached": true,
+        "readonly": true
+      }
+    ],
+    "seeded_history_totals_preserved": true,
+    "decomposition_claim": false
+  },
+  "controls": {
+    "CPU_build_cannot_claim_GPU": {
+      "rejected": true,
+      "reason": "candidate objects lack actual SYCL recipes"
+    },
+    "mixed_objects_cannot_qualify": {
+      "rejected": true,
+      "reason": "GPU candidate requires coherent reviewed source/build and frozen baseline"
+    },
+    "frozen_executable_as_candidate": {
+      "rejected": true,
+      "reason": "GPU candidate requires coherent reviewed source/build and frozen baseline"
+    },
+    "old_timestep": {
+      "rejected": true,
+      "reason": "GPU candidate requires coherent reviewed source/build and frozen baseline"
+    },
+    "wrong_patch": {
+      "rejected": true,
+      "reason": "GPU candidate requires coherent reviewed source/build and frozen baseline"
+    },
+    "linked_baseline_objects": {
+      "rejected": true,
+      "reason": "GPU candidate requires coherent reviewed source/build and frozen baseline"
+    },
+    "wrong_class_definition": {
+      "rejected": true,
+      "reason": "unbound coherent candidate source src/z4c_hyperboloidal/z4c_hyperboloidal.hpp"
+    },
+    "changed_overlay_bytes": {
+      "rejected": true,
+      "reason": "candidate package file changed overlay/src/z4c_hyperboloidal/fixed_step_admission.hpp"
+    },
+    "changed_compile_database": {
+      "rejected": true,
+      "reason": "changed candidate compile_database"
+    },
+    "changed_link_file": {
+      "rejected": true,
+      "reason": "changed candidate link_file"
+    },
+    "changed_finalizer": {
+      "rejected": true,
+      "reason": "changed finalizer"
+    },
+    "old_dt_against_safe_checkpoint": {
+      "rejected": true,
+      "reason": "ordinary AMR exact time changed"
+    }
+  },
+  "preserved_prototype_scope": "mixed-object value-only/full-RHS, safe evolution and real2-to8 restart are prototype numerical evidence only; not final coherent/GPU admission",
+  "preserved_audit_failures": [
+    "pre-finalization-failure.json: duplicate unit-test recipes selected instead of athena.dir; objects already built; corrected without rebuild",
+    "prior build/metadata records preserved; link/recipe-file binding added by read-only audit"
+  ],
+  "remaining_gpu": [
+    "complete separate coherent SYCL build from reviewed package",
+    "lifecycle/diagnostics24and96 all31+8 transfer",
+    "four-cycle poisoned coupled evolution24and96 all31+8",
+    "ordinary prefix24/continuous96/resumed96 checkpoint proof"
+  ],
+  "seven_launches": [
+    {
+      "label": "lifecycle24",
+      "ranks": 24,
+      "command": [
+        "<new-lifecycle-build>/amr_lifecycle",
+        "<verified-bundle>/inputs/amr_helper.athinput",
+        "--diagnostics"
+      ]
+    },
+    {
+      "label": "evolution24",
+      "ranks": 24,
+      "command": [
+        "<new-evolution-build>/amr_evolution",
+        "<verified-bundle>/inputs/amr_helper.athinput"
+      ]
+    },
+    {
+      "label": "lifecycle96",
+      "ranks": 96,
+      "command": [
+        "<new-lifecycle-build>/amr_lifecycle",
+        "<verified-bundle>/inputs/amr_helper.athinput",
+        "--diagnostics"
+      ]
+    },
+    {
+      "label": "evolution96",
+      "ranks": 96,
+      "command": [
+        "<new-evolution-build>/amr_evolution",
+        "<verified-bundle>/inputs/amr_helper.athinput"
+      ]
+    },
+    {
+      "label": "prefix",
+      "ranks": 24,
+      "command": [
+        "<new-candidate-build>/build/src/athena",
+        "-i",
+        "<verified-bundle>/inputs/amr_restart.athinput",
+        "time/nlim=2"
+      ]
+    },
+    {
+      "label": "continuous",
+      "ranks": 96,
+      "command": [
+        "<new-candidate-build>/build/src/athena",
+        "-i",
+        "<verified-bundle>/inputs/amr_restart.athinput"
+      ]
+    },
+    {
+      "label": "resumed",
+      "ranks": 96,
+      "command": [
+        "<new-candidate-build>/build/src/athena",
+        "-r",
+        "<verified-prefix-cycle2-shared-checkpoint>",
+        "time/nlim=4"
+      ]
+    }
+  ],
+  "evidence": {
+    "coherent_build": {
+      "path": "build-native/amr-admission-coherent-local-v1/audited-provenance.json",
+      "sha256": "7f24d07a8eb908ab38b046f73ff72ec4b65b0f84bdea70d8740f7e61635c18c4"
+    },
+    "pre_link_audit_build": {
+      "path": "build-native/amr-admission-coherent-local-v1/provenance.json",
+      "sha256": "b1a633773f092235c3b864848b928e47adfc1ecc5ff75ecd32cf062f77c41ced"
+    },
+    "endpoint": {
+      "path": "build-native/amr-admission-coherent-local-v1/endpoint-proof.json",
+      "sha256": "2eda8e606bff06070609993acca00d41669cb162046ce68d282ff5a7908a7c82"
+    },
+    "lifecycle": {
+      "path": "build-native/amr-admission-coherent-lifecycle-preflight-v1/results.json",
+      "sha256": "edc8ce5bc56cbc05c3379bd0945964e83e2d3add3bbe1738a83a1034b5aaa6c9"
+    },
+    "controls": {
+      "path": "build-native/amr-admission-gpu-controls-final-v1/results.json",
+      "sha256": "ab3c6699db2c2a6fe26f552182761668216d78d596ce87edb01002d0b80adbcc"
+    },
+    "prototype_restart_reader": {
+      "path": "build-native/amr-admission-gpu-parser-local-v1/results.json",
+      "sha256": "7a02679f08c4e322cf2c65b62987187782ee7ecc6e57f8c483c754d769a15f4d"
+    },
+    "setup": {
+      "path": "build-native/amr-admission-gpu-ready-v2/setup.json",
+      "sha256": "0493767c235d621c2b48fd0c69dafa20b61550f0185fc21bd43250b2c9323aa5"
+    }
+  },
+  "tooling_sha256": {
+    "native_amr_admission_candidate.py": "cd2b90461f45aa230b9cfd5b08702f64971dc0306fc41c0e3fa49735f8cf7a85",
+    "native_amr_candidate_cmake.py": "6b2615e9f7c74e04b7869c56b1ebcb40ac1b23bac5c80af346db42da4bdeddee",
+    "native_amr_candidate_controls.py": "a5cefe68862403ea274464c1c7916bed060c08f7b0806309c41bb15631cbe6fd",
+    "native_amr_gpu.py": "5d23fb3274f6ec04a11aa4483263bb247bd6ebf265221a6b8f92f274c02efaf7",
+    "native_amr_gpu_input.py": "d587eb989351a0927d33fe7eb33e606b424c2fe3de22af46a4b9971cd4eb21fb",
+    "native_amr_gpu_compare.py": "bf89e5cced3e4b78f3a06463caf12cc679a3d67e4c4270b775596573363af0b0",
+    "native_amr_gpu_contract.md": "d297cec76f927c76a5890919827dfd063ff7f619eab16818965832acd9478395"
+  },
+  "ready_bundle": {
+    "path": "build-native/amr-admission-gpu-ready-v2",
+    "setup_sha256": "0493767c235d621c2b48fd0c69dafa20b61550f0185fc21bd43250b2c9323aa5",
+    "files": {
+      "candidate/cpu-build-proof.json": "f27c9a1caecc8c0162c09734eb4379808a6a00698ed5c789f258bfeb044d1722",
+      "candidate/cpu-restart-proof.json": "db464afb6f44528cf2a9ea5d3821b677dc85f0db6e4a7d2ed439db941d0e3846",
+      "candidate/manifest.json": "ea40250e20e75c914bfbc355acb5b16e813673bf45c69f08b96d8ed360204896",
+      "candidate/generation.json": "849922f91b8734e685c54b9d748b504f430687fad05deea00ca9af1ef3243675",
+      "candidate/production.patch": "9f411610ee3246f39a25be3e9f19598186da8c28bdeb90c8f53bc57489ebc2d7",
+      "candidate/overlay/src/mesh/mesh_refinement.cpp": "a2608068e535486633c364e6b001fa3d324e24fd2e3057b77c3791f6a84ad91b",
+      "candidate/overlay/src/driver/driver.cpp": "b11f907665daa8bc7f6739380380e5c85c1e8df91d4f0a4bab9ed0039ca3000c",
+      "candidate/overlay/src/z4c_hyperboloidal/fixed_step_admission.hpp": "9c9c032d64faeb4abfbeb24dfc6d37905e350f7ff56c24e8ec357f5b86d8e086",
+      "candidate/overlay/src/z4c_hyperboloidal/z4c_hyperboloidal_lifecycle.cpp": "62619c2e4d30f33babf46c5a70378f2b379526488ddb45b418e5e58d86398056",
+      "candidate/overlay/src/z4c_hyperboloidal/z4c_hyperboloidal.hpp": "bbf29470197ef320ce9bc25235eb2ae32d7d88e3421651d62ef826ac3e28e635",
+      "tools/amr_evolution_contract.md": "d885e3668085890b3b4b632946799ac5496906b1a9f1a077b1f4313807e0b219",
+      "tools/native_amr_candidate_cmake.py": "6b2615e9f7c74e04b7869c56b1ebcb40ac1b23bac5c80af346db42da4bdeddee",
+      "tools/amr_evolution.cpp": "14ddd38eb781c73eea14659e958e36e3cfd29e7c28bb03c02c32c17f719c1ea0",
+      "tools/amr_restart.py": "2336f54f7ba139ff599067e0cd62efc6ddd453c140650e1670aaeddea36d191c",
+      "tools/native_amr_gpu_input.py": "d587eb989351a0927d33fe7eb33e606b424c2fe3de22af46a4b9971cd4eb21fb",
+      "tools/native_amr_admission_candidate.py": "cd2b90461f45aa230b9cfd5b08702f64971dc0306fc41c0e3fa49735f8cf7a85",
+      "tools/native_amr_gpu_compare.py": "bf89e5cced3e4b78f3a06463caf12cc679a3d67e4c4270b775596573363af0b0",
+      "tools/amr_lifecycle.cpp": "025c42fb3b8e9c0576c374bdb82708f0bc43fab6ca244b8052994fb6c3a5830d",
+      "tools/n12_initialize.athinput": "3fa18e3f83a466d9ea702c3aec1da9ec369e91a3a6715c14b91ad253f111f62d",
+      "tools/native_amr_gpu_contract.md": "d297cec76f927c76a5890919827dfd063ff7f619eab16818965832acd9478395",
+      "tools/restart_roundtrip.py": "8afc41988e20e36d336230e111450ec3ba573940c773a6ed15ed03ed16eb8a3b",
+      "tools/amr_lifecycle_contract.md": "d42de4fc4d2b280010e93c64be78014c5400778f28c4e6a0797f625092b25d97",
+      "tools/native_amr_gpu.py": "5d23fb3274f6ec04a11aa4483263bb247bd6ebf265221a6b8f92f274c02efaf7",
+      "inputs/amr_helper.athinput": "feb01f57769a884c2ddc87e9f1655a4f8b3e6d99d4a7bf11a82a54da6c8cc05a",
+      "inputs/amr_restart.athinput": "a4b3de1310649346ed4206be3a5cb93fe582330c3f7f1e2217cede61505dd621",
+      "inputs/manifest.json": "e2417bc3bfe529e9f466dae50c8db96bf294d6ae1c5bb87dbda41ff7ca2b534e"
+    }
+  },
+  "limitations": [
+    "no GPU admission claim",
+    "no coherent cross-rank restart claim from prototype data",
+    "no adaptive convergence/long-time-stability/performance claim",
+    "no runtime integration or tolerance changes"
+  ]
+}

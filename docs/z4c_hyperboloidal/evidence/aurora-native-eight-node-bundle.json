@@ -1,0 +1,58 @@
+{
+  "recorded_utc": "2026-11-08T07:42:09.199716+00:00",
+  "job_id": "9051435",
+  "nodes": 8,
+  "ranks": 96,
+  "queue": "debug-scaling",
+  "job_state": "F",
+  "exit_status": 0,
+  "walltime": "00:03:03",
+  "archive_sha256": "4738f8b11d362c6a08d5bbff9fc6322e3dd357789175d7a8a552f945a3e50038",
+  "verified_files": 368,
+  "native_executable_sha256": "f3a85db7528986ddec347b31675a8c5d588120a2380133aed73d5967f7aab05c",
+  "original_executable_sha256": "494ec8e38fb34806eb3981fb19bdb5e3bc75f46615b05a21d8314a0db6583753",
+  "saved3551_strict_replay_passed": true,
+  "saved3551_audit_passed": true,
+  "native_smoke": {
+    "saved_state_replay_passed": true,
+    "native_eight_step_smoke_completed": true,
+    "restarts": [
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/n12-native-gpu-eight-eight/rst/native_n12_5M.00000.rst",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/n12-native-gpu-eight-eight/rst/native_n12_5M.00001.rst"
+    ],
+    "complete_state_comparison_pending": true,
+    "native_runtime_source_unchanged": true,
+    "original_gpu_eight_step_control_completed": true,
+    "matched_and_cross_rank_state_comparison_pending": true
+  },
+  "original_control": {
+    "status": "step_limit",
+    "failure": "",
+    "start_M": 0,
+    "time_M": 0.011266608896548187,
+    "steps": 8,
+    "evolution_seconds": 2.8552830200642347,
+    "setup_seconds": 30.53551872447133,
+    "max_CFL": 0.2376923022594367,
+    "max_clock": 4.4135053071112676e-08,
+    "interpolation_calls_per_rank": 34
+  },
+  "complete_state_comparison": "PASS native96/original96 unchanged short+chi gates; native24/native96 all31fields+8ChiRecords bitwise initial/eight; fullfirstRHS/accepted1+stagepoison pending",
+  "artifact_root": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-eight-node/run-artifacts",
+  "runtime_unchanged": true,
+  "not_performance_measurement": true,
+  "complete_state_comparisons": {
+    "build-native/aurora-native-vs-original-gpu96-v1/results.json": {
+      "passed": true,
+      "sha256": "96166c0a0ae7b3bc741d869f013f578c2a3170921f5d0d4e18838955d47c25dc"
+    },
+    "build-native/aurora-native24-vs96-initial-v1/results.json": {
+      "passed": true,
+      "sha256": "8a621b232901bc621dc8209a711fea508e80332ae463e78bb6135189234e75c9"
+    },
+    "build-native/aurora-native24-vs96-eight-v1/results.json": {
+      "passed": true,
+      "sha256": "e23830a1a6dce78a436e3133006fb08430d2e4529c10da94d957ce123c267cda"
+    }
+  }
+}

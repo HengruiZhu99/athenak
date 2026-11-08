@@ -1,0 +1,74 @@
+{
+  "scope": "Actual native Driver observer, CPU2 clean/poison plumbing validation. Does not claim Aurora or96-rank execution.",
+  "passed": true,
+  "backend": "Serial",
+  "ranks": 2,
+  "steps_per_run": 8,
+  "stages_per_run": 32,
+  "executable_sha256": "dbc0a14e6ee59dc2f5882f9ecc867d466137d18099dc555354e9b508625d4e5f",
+  "exact_clean_poison_region_label_comparisons": 26,
+  "exact_stage_records": true,
+  "all31_fields_all8_chi_records": true,
+  "poison_scope": "All public RHS/residual/status and u0 outside native inclusive evolved bounds; preserves evolved overlap. Private surface/transport scratch is not deliberately poisoned.",
+  "runtime_source_objects_executable_unchanged": true,
+  "source_sha256": {
+    "tst/z4c_hyperboloidal/native_stage_trace_gpu.cpp": "f4791cd75fc4414e5599d288e10127a383a56192e77523ba9a644ad9a50275a6",
+    "tst/z4c_hyperboloidal/native_stage_trace_gpu.py": "ee0f43897c23a0a2755f5a985015203b2fdcfdc775a4fd99298d8f2fbe48ff67",
+    "tst/z4c_hyperboloidal/native_stage_trace_gpu_contract.md": "3e768bbea1071c9624be293f1d81f57f376d38fdb30ebe2dc6594450f2328088",
+    "tst/z4c_hyperboloidal/native_stage_trace_compare.py": "6d0c9750b5bb212481121be706577743242198d6b6fb76fac8708085dfa968b1"
+  },
+  "ordering": {
+    "bulk_independent_geometry_keys_exact": true,
+    "bulk_step1_vs_prior_native_fields_exact": true,
+    "bulk_step1_vs_prior_native_records_exact": true,
+    "scri_independent_geometry_keys_exact": true,
+    "scri_step1_vs_prior_native_fields_exact": true,
+    "scri_step1_vs_prior_native_records_exact": true,
+    "bulk_initial_independent_fields_exact": true,
+    "bulk_step8_vs_prior_native_fields_exact": true,
+    "bulk_step8_vs_prior_native_records_exact": true,
+    "scri_initial_independent_fields_exact": false,
+    "scri_step8_vs_prior_native_fields_exact": true,
+    "scri_step8_vs_prior_native_records_exact": true,
+    "initial_scri_raw_reference_comparison": {
+      "bitwise_exact": false,
+      "short_gate_passed": true,
+      "max_absolute": 2.220446049250313e-16,
+      "changed_fields": [
+        18,
+        22,
+        23,
+        24
+      ],
+      "changed_values": 334
+    },
+    "initial_scri_scope": "Observer accepted0 is after native Driver initialization scri projection; mapping reference is raw legacy initializer output, before that projection."
+  },
+  "negative_gates": {
+    "missing_stage": {
+      "rejected": true,
+      "reason": "changed dt or missing stage records"
+    },
+    "duplicate_point": {
+      "rejected": true,
+      "reason": "duplicate canonical point"
+    },
+    "truncated_payload": {
+      "rejected": true,
+      "reason": "truncated or extra trace bytes"
+    },
+    "nonfinite_rhs": {
+      "rejected": true,
+      "reason": "nonfinite owned dump value"
+    }
+  },
+  "artifacts": {
+    "build-native/native-stage-trace-validation/clean/results.json": "4c506237556b022d5d1ca796f70dc7b22bb3d4422d4205de883ddd89fd85385b",
+    "build-native/native-stage-trace-validation/clean/trace-audit.json": "51f8c4b70839382022cc3a97df4c7488fc094dda613951ec3d44aba1a2d8b2af",
+    "build-native/native-stage-trace-validation/poison/results.json": "2f3a9a380c58e8626fc748278efe54d9ea8229255d6f2aed3b3c41cbc5b0ba42",
+    "build-native/native-stage-trace-validation/poison/trace-audit.json": "e528d0d6a0e5cb2b9425ef32b4f293f6ff2334939e3d89d38279e2754c24785a",
+    "build-native/native-stage-trace-validation/order-proof.json": "f1f1004b2c4810ad634d19096a342b794436a5cfd40cce4d6e2143cb634a40f1",
+    "build-native/native-stage-trace-validation/comparator-negative-gates.json": "1df0903c62ee64ccc21aa844b7e6ece63f44c59841492ead3472dce9395e963c",
+    "build-native/native-stage-trace-portable-build-v2/provenance.json": "cb9aaa0db35ec1d70f9df9e502a1fbce0ba556e17ff663916ced445d87277194"
+  }
+}

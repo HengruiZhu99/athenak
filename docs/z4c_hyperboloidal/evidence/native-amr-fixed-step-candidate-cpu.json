@@ -1,0 +1,250 @@
+{
+  "schema": "native-amr-admission-candidate-cpu-v1",
+  "passed": true,
+  "scope": "isolated CPU MPI candidate only; no runtime source/object/executable edits; no GPU evidence or admission",
+  "candidate_executable_sha256": "8452acc03bec6a692c0a9a46cc1bab8ca17ee57ee5db76051ef69d92dff7379d",
+  "safe_cross_rank_complete_state_exact": true,
+  "unchanged_runtime_smaller_dt_control": {
+    "passed": true,
+    "complete_owned_state_bitwise_equal_2_and_8": true,
+    "stage_diagnostics_exact": true,
+    "points": 230256,
+    "values": 8979984,
+    "sha256": "612f36e5052ffbe8b68c8b332642c4e502db6aeee21435ae21df9ddeafc9a894",
+    "log_sha256": "1912cef78460badd01f1a768f03c113b27cc806e5ac08006164ab8361098a962",
+    "build_provenance_sha256": "94f844c6c85a2f3d59ec4fdafe8ca8a1ac9ba2c56e3975aaada9fba77c9d3407",
+    "dt": 0.0002,
+    "cycles": 4
+  },
+  "fresh_original_dt_rejected": {
+    "ADMISSION": [
+      {
+        "cycle": 0,
+        "blocks": 106,
+        "continuing": false,
+        "rate": 506.3293939291856,
+        "target": 0.2,
+        "dt": 0.00046944203735617445,
+        "allowed": 0.0003949997815611149,
+        "rejected": true
+      }
+    ],
+    "SPEED_ORACLE": [
+      {
+        "cycle": 0,
+        "blocks": 106,
+        "points": 229392,
+        "mismatches": 0,
+        "max_error": 0
+      }
+    ],
+    "log_sha256": "8d95a74f1c2dfe14d7108929d4f904626b2c589aaea7100774a631b391ac9cf0"
+  },
+  "frozen_runtime_unchanged": true,
+  "restart_scope": "Driver restart flag on reference fixture; no checkpoint deserialization in this test",
+  "case_summaries": [
+    {
+      "mode": "fixed",
+      "ranks": 2,
+      "exit_code": 0,
+      "ADMISSION": [],
+      "SPEED_ORACLE": []
+    },
+    {
+      "mode": "restart_bad",
+      "ranks": 2,
+      "exit_code": 0,
+      "ADMISSION": [
+        {
+          "cycle": 0,
+          "blocks": 106,
+          "continuing": true,
+          "rate": 506.3293939291856,
+          "target": 0.4,
+          "dt": 0.0009,
+          "allowed": 0.0007899995631222298,
+          "rejected": true
+        }
+      ],
+      "SPEED_ORACLE": [
+        {
+          "cycle": 0,
+          "blocks": 106,
+          "points": 229392,
+          "mismatches": 0,
+          "max_error": 0
+        }
+      ]
+    },
+    {
+      "mode": "refine_bad",
+      "ranks": 2,
+      "exit_code": 0,
+      "ADMISSION": [
+        {
+          "cycle": 0,
+          "blocks": 106,
+          "continuing": true,
+          "rate": 506.3293939291856,
+          "target": 0.4,
+          "dt": 0.00046944203735617445,
+          "allowed": 0.00046944203735617445,
+          "rejected": false
+        },
+        {
+          "cycle": 1,
+          "blocks": 127,
+          "continuing": true,
+          "rate": 1015.628304210256,
+          "target": 0.4,
+          "dt": 0.00046944203735617445,
+          "allowed": 0.0003938448725205986,
+          "rejected": true
+        }
+      ],
+      "SPEED_ORACLE": [
+        {
+          "cycle": 0,
+          "blocks": 106,
+          "points": 229392,
+          "mismatches": 0,
+          "max_error": 0
+        },
+        {
+          "cycle": 1,
+          "blocks": 127,
+          "points": 277236,
+          "mismatches": 0,
+          "max_error": 0.0
+        }
+      ]
+    },
+    {
+      "mode": "safe",
+      "ranks": 2,
+      "exit_code": 0,
+      "ADMISSION": [
+        {
+          "cycle": 0,
+          "blocks": 106,
+          "continuing": false,
+          "rate": 506.3293939291856,
+          "target": 0.2,
+          "dt": 0.0002,
+          "allowed": 0.0002,
+          "rejected": false
+        },
+        {
+          "cycle": 1,
+          "blocks": 127,
+          "continuing": true,
+          "rate": 1015.6283042101916,
+          "target": 0.4,
+          "dt": 0.0002,
+          "allowed": 0.0002,
+          "rejected": false
+        },
+        {
+          "cycle": 3,
+          "blocks": 106,
+          "continuing": true,
+          "rate": 506.32939392922566,
+          "target": 0.4,
+          "dt": 0.0002,
+          "allowed": 0.0002,
+          "rejected": false
+        }
+      ],
+      "SPEED_ORACLE": [
+        {
+          "cycle": 0,
+          "blocks": 106,
+          "points": 229392,
+          "mismatches": 0,
+          "max_error": 0
+        },
+        {
+          "cycle": 1,
+          "blocks": 127,
+          "points": 277236,
+          "mismatches": 0,
+          "max_error": 0.0
+        },
+        {
+          "cycle": 3,
+          "blocks": 106,
+          "points": 229392,
+          "mismatches": 0,
+          "max_error": 0.0
+        }
+      ]
+    },
+    {
+      "mode": "safe",
+      "ranks": 8,
+      "exit_code": 0,
+      "ADMISSION": [
+        {
+          "cycle": 0,
+          "blocks": 106,
+          "continuing": false,
+          "rate": 506.3293939291856,
+          "target": 0.2,
+          "dt": 0.0002,
+          "allowed": 0.0002,
+          "rejected": false
+        },
+        {
+          "cycle": 1,
+          "blocks": 127,
+          "continuing": true,
+          "rate": 1015.6283042101916,
+          "target": 0.4,
+          "dt": 0.0002,
+          "allowed": 0.0002,
+          "rejected": false
+        },
+        {
+          "cycle": 3,
+          "blocks": 106,
+          "continuing": true,
+          "rate": 506.32939392922566,
+          "target": 0.4,
+          "dt": 0.0002,
+          "allowed": 0.0002,
+          "rejected": false
+        }
+      ],
+      "SPEED_ORACLE": [
+        {
+          "cycle": 0,
+          "blocks": 106,
+          "points": 229392,
+          "mismatches": 0,
+          "max_error": 0
+        },
+        {
+          "cycle": 1,
+          "blocks": 127,
+          "points": 277236,
+          "mismatches": 0,
+          "max_error": 0.0
+        },
+        {
+          "cycle": 3,
+          "blocks": 106,
+          "points": 229392,
+          "mismatches": 0,
+          "max_error": 0.0
+        }
+      ]
+    }
+  ],
+  "evidence": {
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-admission-candidate-v1/results-complete.json": "9ebb7e19313c2b42be8ffefbb533692690fa8fa2a4f8eac0ebb91b803deda6f7",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-admission-candidate-v1/provenance.json": "c899471b62d11d216443775210fb303e9643fad5e3856d5a369ec85e0f323481",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-admission-candidate-v1/candidate.patch": "2e4eea5e3cef537eccf2cc34614107ca380b283ce7e578b86acef3c4941744a3",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-admission-candidate-v1/derivation.md": "fc25a23eaff6010de2f2ac3c744188d209274e1263368855cd05cb540abf1a34",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-admission-candidate-v1/frozen-manifest.json": "37c8cbc39ca9e2ca8f5e36688b2cf1044d8c36bb2702cfea7b254aeb7770d675"
+  }
+}

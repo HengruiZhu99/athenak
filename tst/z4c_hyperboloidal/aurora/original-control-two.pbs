@@ -1,0 +1,10 @@
+#!/bin/bash -l
+#PBS -A CompactBinaryMerger
+#PBS -N original-n12-eight
+#PBS -q debug
+#PBS -l select=2
+#PBS -l walltime=00:15:00
+#PBS -l filesystems=home:flare
+#PBS -j oe
+set -euo pipefail
+exec bash /lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/original-eight/run-original-control.sh

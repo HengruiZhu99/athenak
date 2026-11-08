@@ -1,0 +1,94 @@
+{
+  "schema": "native-n12-common-independent-review-v1",
+  "passed": true,
+  "science_admission": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-common-segment-01-science-v2/continuation-admission.json",
+  "science_admission_sha256": "454755931a81a883936fdd8a82e9f60da47b1c7ecd522cae29392376a9a0e3bf",
+  "checkpoint_sha256": "c2735117dc8026f47c307005bcbd592d9bf54670d30af2a89c0fffe027ed4ff8",
+  "end_cycle": 356,
+  "through_5m_complete": false,
+  "state_checks": {
+    "0": {
+      "bulk": {
+        "field_values": 7111152,
+        "record_values": 1835136,
+        "exports_match_actual_checkpoint_bitwise": true,
+        "failed_values": 0,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0
+      },
+      "surface": {
+        "field_values": 26784,
+        "record_values": 6912,
+        "exports_match_actual_checkpoint_bitwise": true,
+        "failed_values": 0,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0
+      }
+    },
+    "356": {
+      "bulk": {
+        "field_values": 7111152,
+        "record_values": 1835136,
+        "exports_match_actual_checkpoint_bitwise": true,
+        "failed_values": 0,
+        "max_absolute": 1.8963303149988064e-13,
+        "max_tolerance_ratio": 0.0009210071957213942
+      },
+      "surface": {
+        "field_values": 26784,
+        "record_values": 6912,
+        "exports_match_actual_checkpoint_bitwise": true,
+        "failed_values": 0,
+        "max_absolute": 5.979418349344456e-13,
+        "max_tolerance_ratio": 0.0031786102113454742
+      }
+    }
+  },
+  "stage_rows": 1424,
+  "exact_stage_clocks": true,
+  "maximum_compatibility": 1.140165425434777e-13,
+  "clock_CFL_max_absolute_difference": {
+    "clock": 2.8552514085705694e-12,
+    "CFL": 1.1102230246251565e-16
+  },
+  "clock_CFL_max_tolerance_ratio": {
+    "clock": 0.02498026836793133,
+    "CFL": 4.482314218788685e-08
+  },
+  "history_completed_prefix_passed": true,
+  "history_times": [
+    0,
+    356
+  ],
+  "harmonic_coefficients_each_time": 169,
+  "missing_future_common_steps": [
+    711,
+    1066,
+    1421,
+    1776,
+    2131,
+    2486,
+    2841,
+    3196,
+    3551
+  ],
+  "null_reporting_fix": {
+    "prior_failure_path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-common-segment-01-science-v1/continuation-admission.json",
+    "prior_failure_sha256": "544375f31ea506a5877871e97c10afd079a56031b434e8e23ce86c5c3a85c129",
+    "scope": "Historical initial unavailable candidate minima stay null; native finite sentinels retained; no numerical gate change. Exact reverse-patch hash equals prior comparator source.",
+    "unavailable": [
+      "minimum_raw_candidate",
+      "minimum_raw_acceptance_candidate",
+      "first_floor_M"
+    ],
+    "prior_source_sha256": "ca26c57ee362feacb613209a881727b56b35334402abb12dab6f5d8a5097dbcf",
+    "current_source_sha256": "e1c920a84d9e0a218ae34dfc90962120f532af8a111ac77a13624cc8de541542"
+  },
+  "chi_history_scope": "native records decoded and checked finite; all available historical aggregate differences reported under the declared threshold-sensitive floor policy; no historical per-cell record equivalence claim",
+  "source_sha256": {
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-common-01-independent-review-v1/review.py": "bc6cdaa18b641ad784389930a581fdad3d3e9c49fbdcdb41a06d33c88d5171be"
+  },
+  "scope": "Independent complete356 review of actual checkpoint exports, every field/record, all1424stage rows and both ordinary diagnostic times under existing gates. No full3551, AMR or performance admission.",
+  "full_review_path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-common-01-independent-review-v1/review.json",
+  "full_review_sha256": "c88d16bb8b382fdf80143424080a275af4fb2fa06fc78fd4b6a85432b45cf26c"
+}

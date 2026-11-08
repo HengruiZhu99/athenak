@@ -1,0 +1,18 @@
+#!/bin/bash -l
+# Prepared continuation; requires exact first-endpoint science and peer review.
+#PBS -A CompactBinaryMerger
+#PBS -N native-n12-common2
+#PBS -q debug
+#PBS -l select=2
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -j oe
+set -euo pipefail
+side=/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side
+cd "$side/validation/common-next-02"
+sha256sum -c launchers.sha256
+/usr/bin/python3.11 continuation_preflight.py --root "$side" \
+ --acceptance acceptance.json --output preflight-in-job.json
+cd "$side/validation/full-n12"
+sha256sum -c launchers.sha256
+exec bash run-common-segment.sh 2

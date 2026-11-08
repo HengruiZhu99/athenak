@@ -34,6 +34,14 @@ At every common stored time through 5M, require the full and full-horizon-exteri
 
 The existing replay's `5e-11*(1+abs(expected))` comparison applies only to recomputing saved full/fixed-outer RMS values from exactly the same checkpoint. Keep that tighter gate for reference decoding/replay. Its zero recorded difference establishes decoding/diagnostic reproduction and does not establish a tolerance for a different numerical scheme.
 
+## Recorded stage clock and CFL admission
+
+Adopted on 2026-11-08 before reading any long native trajectory metrics or running the first long native segment: apply the existing scalar arithmetic gates to the recorded per-step clock and CFL maxima. Use `1e-12 + 5e-10*abs(reference)` for the bounded eight-step comparison and `1e-10 + 1e-8*abs(reference)` through step 3551. This is an engineering application of the existing arithmetic thresholds to diagnostics computed from the same stage states; it is not a derived error-propagation or stability bound. A failed comparison remains a failure and must be investigated without fitting these thresholds to results.
+
+For each of all 3551 steps, require four complete, unique, ordered stage observations, exact nominal dt and RK stage/accepted times, finite nonnegative diagnostic values, and normal compatibility at most `1e-7`. Compare the maximum of those four native clock values and bulk characteristic CFL values to the unchanged original solver's corresponding per-step CSV values. The CFL has no additional `cfl_number` factor or surface-penalty contribution. Report every comparison, maximum absolute/scaled differences and tolerance ratios, and the steps where they occur. Do not substitute averages, common-time snapshots or a later saved-state replay for these actual stage maxima.
+
+A passing completed prefix lists every future missing step explicitly and is not a completed 3551-step result. Qualification of the read-only observer against the unchanged native main remains separate: require exact full fields and all eight chi-record members, exact ordinary output at the same decomposition, and the declared restart checks. Its extra reductions and output make observer timing unsuitable for performance claims.
+
 ## Changes to the discretization
 
 If native SMR/AMR introduces different prolongation/restriction, coarse/fine derivative closures, physical sample locations, evolution overlap, or a different scri closure, the strict migration gates above no longer establish numerical equivalence. Do not relax them merely because a candidate failed. Document the changed discretization first and establish a separate error budget from independent resolution/consistency controls before evaluating the new result. A horizon mass close to one and a stable 5M evolution alone are insufficient to call it the reproduced N12 run.

@@ -1,0 +1,83 @@
+{
+  "observed_utc": "2026-11-08T06:28:26.886451+00:00",
+  "remote_mutations": false,
+  "hostname": {
+    "command": [
+      "hostname"
+    ],
+    "returncode": 0,
+    "stdout": "aurora-uan-0012\n",
+    "stderr": ""
+  },
+  "queue_jobs": {
+    "command": [
+      "qstat",
+      "-u",
+      "hzhu"
+    ],
+    "returncode": 0,
+    "stdout": "\naurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov: \n                                                                 Req'd  Req'd   Elap\nJob ID               Username Queue    Jobname    SessID NDS TSK Memory Time  S Time\n-------------------- -------- -------- ---------- ------ --- --- ------ ----- - -----\n8883678.aurora-pbs-* hzhu     capacity telegraph*    --   16 33*    --  01:00 H   -- \n8888791.aurora-pbs-* hzhu     capacity telegraph*    --    8 16*    --  01:00 H   -- \n8888792.aurora-pbs-* hzhu     capacity telegraph*    --   16 33*    --  01:00 H   -- \n",
+    "stderr": ""
+  },
+  "debug_queue": {
+    "command": [
+      "qstat",
+      "-Qf",
+      "debug"
+    ],
+    "returncode": 0,
+    "stdout": "Queue: debug\n    queue_type = Execution\n    Priority = 10\n    total_jobs = 15\n    state_count = Transit:0 Queued:3 Held:2 Waiting:1 Running:9 Exiting:0 Begun\n\t:0 \n    resources_max.nodect = 2\n    resources_max.walltime = 01:00:00\n    resources_min.nodect = 1\n    resources_min.walltime = 00:05:00\n    resources_default.base_score = 51\n    resources_default.bkc_definition = compute_aurora_prod_20261002T162246_af5b\n\t0375_b4fd227\n    resources_default.enable_2nd_fp64 = True\n    resources_default.enable_fifo = 1\n    resources_default.hbm_mode = flat\n    resources_default.snc_mode = quad\n    acl_group_enable = False\n    acl_groups = aurora_admins,aurora_aig,aurora_compute,aurora_intel_daos,\n\tpost_hpl_early_access\n    default_chunk.at_queue = lustre_scaling\n    default_chunk.broken = False\n    default_chunk.system = aurora\n    default_chunk.validation = False\n    resources_assigned.mem = 0gb\n    resources_assigned.mpiprocs = 0\n    resources_assigned.ncpus = 2496\n    resources_assigned.nodect = 12\n    max_run = [u:PBS_GENERIC=1]\n    max_run_res.nodect = [o:PBS_ALL=64]\n    enabled = True\n    started = True\n    queued_jobs_threshold = [u:PBS_GENERIC=1]\n\n",
+    "stderr": ""
+  },
+  "scaling_queue": {
+    "command": [
+      "qstat",
+      "-Qf",
+      "debug-scaling"
+    ],
+    "returncode": 0,
+    "stdout": "Queue: debug-scaling\n    queue_type = Execution\n    Priority = 10\n    total_jobs = 23\n    state_count = Transit:0 Queued:10 Held:2 Waiting:0 Running:11 Exiting:0 Beg\n\tun:0 \n    resources_max.nodect = 256\n    resources_max.walltime = 01:00:00\n    resources_min.nodect = 1\n    resources_min.walltime = 00:05:00\n    resources_default.base_score = 51\n    resources_default.bkc_definition = compute_aurora_prod_20261002T162246_af5b\n\t0375_b4fd227\n    resources_default.enable_2nd_fp64 = True\n    resources_default.enable_fifo = 1\n    resources_default.hbm_mode = flat\n    resources_default.snc_mode = quad\n    default_chunk.at_queue = lustre_scaling\n    default_chunk.broken = False\n    default_chunk.system = aurora\n    resources_assigned.mem = 0gb\n    resources_assigned.mpiprocs = 0\n    resources_assigned.ncpus = 27456\n    resources_assigned.nodect = 132\n    max_run = [u:PBS_GENERIC=1]\n    enabled = True\n    started = True\n    queued_jobs_threshold = [u:PBS_GENERIC=1]\n\n",
+    "stderr": ""
+  },
+  "toolchain": {
+    "command": [
+      "bash",
+      "-lc",
+      "set -e\nmodule load oneapi/release/2025.3.1\nmodule list 2>&1\ncommand -v icpx\nicpx --version\nmpicxx -show\ncommand -v gpu_tile_compact.sh\ncmake --version"
+    ],
+    "returncode": 0,
+    "stdout": "\nCurrently Loaded Modules:\n  1) libfabric/2.3.1      4) gcc/14.3.0\n  2) cray-pals/1.8.0      5) oneapi/release/2025.3.1\n  3) cray-libpals/1.8.0   6) mpich/prd/5.0.0.aurora_test.87e2045\n\n \n\n/opt/aurora/26.26.0/oneapi/compiler/latest/bin/icpx\nIntel(R) oneAPI DPC++/C++ Compiler 2025.3.2 (2025.3.2.20260112)\nTarget: x86_64-unknown-linux-gnu\nThread model: posix\nInstalledDir: /opt/aurora/26.26.0/oneapi/compiler/2025.3/bin/compiler\nConfiguration file: /opt/aurora/26.26.0/oneapi/compiler/2025.3/bin/compiler/../icpx.cfg\nicpx -I/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.87e2045-po72xy6/include -L/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.87e2045-po72xy6/lib -Wl,-rpath -Wl,/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.87e2045-po72xy6/lib -lmpi\n/opt/aurora/26.26.0/support/tools/mpi_wrapper_utils/gpu_tile_compact.sh\ncmake version 3.28.3\n\nCMake suite maintained and supported by Kitware (kitware.com/cmake).\n",
+    "stderr": "\nDue to MODULEPATH changes, the following have been reloaded:\n  1) gcc/14.3.0     2) mpich/prd/5.0.0.aurora_test.87e2045\n\nThe following have been reloaded with a version change:\n  1) oneapi/release/2026.1.0 => oneapi/release/2025.3.1\n\n"
+  },
+  "proposed_destination": {
+    "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side",
+    "exists": false
+  },
+  "related_directories": [
+    "scri-ko01-20261106",
+    "scri-perf-20261107-side",
+    "scri-resolution-20261107"
+  ],
+  "resident_cache": {
+    "path": "/home/hzhu/scri-resident-20M-20261105/build-100m/CMakeCache.txt",
+    "selected_lines": [
+      "CMAKE_CXX_COMPILER:UNINITIALIZED=icpx",
+      "CMAKE_CXX_FLAGS:STRING=-fp-model=precise -fno-sycl-id-queries-fit-in-int",
+      "CMAKE_CXX_FLAGS_RELEASE:STRING=-O2",
+      "Kokkos_ARCH_INTEL_PVC:BOOL=ON",
+      "Kokkos_ENABLE_SERIAL:BOOL=ON",
+      "Kokkos_ENABLE_SYCL:BOOL=ON",
+      "MPI_CXX_COMPILER:FILEPATH=/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.87e2045-po72xy6/bin/mpicxx"
+    ]
+  },
+  "runtime_files": {
+    "/opt/aurora/26.26.0/support/tools/mpi_wrapper_utils/gpu_tile_compact.sh": {
+      "sha256": "4469d67ffee9450a7e09b96e291f422360c3ac04c151cd7dde22e8e129979dbd",
+      "text": "#!/usr/bin/env bash\n\ndisplay_help() {\n  echo \" Will map gpu tile to rank in compact and then round-robin fashion\"\n  echo \" Usage:\"\n  echo \"   mpiexec -np N gpu_tile_compact.sh [--oneapi] ./a.out\"\n  echo\n  echo \" Example 3 GPU of 2 Tiles with 7 Ranks:\"\n  echo \"   0 Rank 0.0\"\n  echo \"   1 Rank 0.1\"\n  echo \"   2 Rank 1.0\"\n  echo \"   3 Rank 1.1\"\n  echo \"   4 Rank 2.0\"\n  echo \"   5 Rank 2.1\"\n  echo \"   6 Rank 0.0\"\n  echo\n  echo \" By default, the script will use \\`ZE_AFFINITY_MASK\\` to set the visiblity,\"\n  echo \"  \\`--oneapi\\` can be used so \\`ONEAPI_DEVICE_SELECTOR\\` is used instead\"\n  echo \" Hacked together by apl@anl.gov, please contact if bug found\"\n  exit 1\n}\n\n# This give the exact GPU count i915 knows about and I use udev to only enumerate the devices with physical presence.\nnum_gpu=$(/usr/bin/udevadm info /sys/module/i915/drivers/pci:i915/* |& grep -v Unknown | grep -c \"P: /devices\")\nnum_tile=2\n\nif [ \"$#\" -eq 0 ] || [ \"$1\" == \"--help\" ] || [ \"$1\" == \"-h\" ] || [ \"$num_gpu\" = 0 ] ; then\n  display_help\nfi\n\n# Get the RankID from different launcher\nif [[ -v MPI_LOCALRANKID ]]; then\n  _MPI_RANKID=$MPI_LOCALRANKID\nelif [[ -v PALS_LOCAL_RANKID ]]; then\n  _MPI_RANKID=$PALS_LOCAL_RANKID\nelse\n  display_help\nfi\n\nuse_zam=true\nif [[ \"$1\" == \"--oneapi\" ]]; then\n  shift;\n  use_zam=false\nfi\n\nexport ZE_ENABLE_PCI_ID_DEVICE_ORDER=1\nulimit -c 0 # Until Aurora filesystem problems are fixed\n\n# https://oneapi-src.github.io/level-zero-spec/level-zero/latest/core/PROG.html#environment-variables\nif [[ $ZE_FLAT_DEVICE_HIERARCHY == COMPOSITE ]] ; then\n  gpu_id=$(((_MPI_RANKID / num_tile) % num_gpu))\n  tile_id=$((_MPI_RANKID % num_tile))\n  mask=$gpu_id.$tile_id\nelse\n  gpu_id=$((_MPI_RANKID % ( num_gpu * num_tile )))\n  mask=$gpu_id\nfi\n\nif $use_zam; then\n  export ZE_AFFINITY_MASK=$mask\nelse\n  # https://intel.github.io/llvm/EnvironmentVariables.html#oneapi-device-selector\n  export ONEAPI_DEVICE_SELECTOR=level_zero:$mask\nfi\n\n#Ensure implicit scaling is disabled to ensure RDMA ops work [SM 05/21/26]\nexport EnableImplicitScaling=0\n\n# https://stackoverflow.com/a/28099707/7674852\nexec \"$@\"\n"
+    },
+    "/home/hzhu/scri-resident-20M-20261105/build-100m/kokkos/KokkosCore_config.h": {
+      "sha256": "8a7211398bd1c60b1f11f071006ae68c460a9df303ea817c055bf793c5fe4c38",
+      "text": "\n#if !defined(KOKKOS_MACROS_HPP) || defined(KOKKOS_CORE_CONFIG_H)\n#error \\\n    \"Do not include KokkosCore_config.h directly; include Kokkos_Macros.hpp instead.\"\n#else\n#define KOKKOS_CORE_CONFIG_H\n#endif\n\n// KOKKOS_VERSION % 100 is the patch level\n// KOKKOS_VERSION / 100 % 100 is the minor version\n// KOKKOS_VERSION / 10000 is the major version\n#define KOKKOS_VERSION 40702\n/* #undef below */\n// yields /* undef KOKKOS_VERSION_FOO */\n#define KOKKOS_VERSION_MAJOR 4\n#define KOKKOS_VERSION_MINOR 7\n#define KOKKOS_VERSION_PATCH 2\n\n/* Execution Spaces */\n#define KOKKOS_ENABLE_SERIAL\n/* #undef KOKKOS_ENABLE_OPENMP */\n/* #undef KOKKOS_ENABLE_OPENACC */\n/* #undef KOKKOS_ENABLE_OPENMPTARGET */\n/* #undef KOKKOS_ENABLE_THREADS */\n/* #undef KOKKOS_ENABLE_CUDA */\n/* #undef KOKKOS_ENABLE_HIP */\n/* #undef KOKKOS_ENABLE_HPX */\n#define KOKKOS_ENABLE_SYCL\n\n/* General Settings */\n#define KOKKOS_ENABLE_CXX17\n/* #undef KOKKOS_ENABLE_CXX20 */\n/* #undef KOKKOS_ENABLE_CXX23 */\n/* #undef KOKKOS_ENABLE_CXX26 */\n\n/* #undef KOKKOS_ENABLE_CUDA_RELOCATABLE_DEVICE_CODE */\n/* #undef KOKKOS_ENABLE_CUDA_UVM */\n/* #undef KOKKOS_ENABLE_CUDA_LAMBDA */\n/* #undef KOKKOS_ENABLE_CUDA_CONSTEXPR */\n/* #undef KOKKOS_ENABLE_IMPL_CUDA_MALLOC_ASYNC */\n/* #undef KOKKOS_ENABLE_IMPL_CUDA_UNIFIED_MEMORY */\n/* #undef KOKKOS_ENABLE_HIP_RELOCATABLE_DEVICE_CODE */\n/* #undef KOKKOS_ENABLE_HIP_MULTIPLE_KERNEL_INSTANTIATIONS */\n/* #undef KOKKOS_ENABLE_IMPL_HIP_MALLOC_ASYNC */\n/* #undef KOKKOS_ENABLE_SYCL_RELOCATABLE_DEVICE_CODE */\n/* #undef KOKKOS_ENABLE_IMPL_SYCL_OUT_OF_ORDER_QUEUES */\n#define KOKKOS_IMPL_SYCL_DEVICE_GLOBAL_SUPPORTED\n/* #undef KOKKOS_ENABLE_OPENACC_FORCE_HOST_AS_DEVICE */\n/* #undef KOKKOS_ENABLE_IMPL_HPX_ASYNC_DISPATCH */\n/* #undef KOKKOS_ENABLE_DEBUG */\n#define KOKKOS_ENABLE_DEBUG_DUALVIEW_MODIFY_CHECK\n/* #undef KOKKOS_ENABLE_DEBUG_BOUNDS_CHECK */\n/* #undef KOKKOS_ENABLE_TUNING */\n#define KOKKOS_ENABLE_DEPRECATED_CODE_4\n#define KOKKOS_ENABLE_DEPRECATION_WARNINGS\n/* #undef KOKKOS_ENABLE_LARGE_MEM_TESTS */\n#define KOKKOS_ENABLE_COMPLEX_ALIGN\n/* #undef KOKKOS_OPT_RANGE_AGGRESSIVE_VECTORIZATION */\n/* #undef KOKKOS_ENABLE_AGGRESSIVE_VECTORIZATION */\n/* #undef KOKKOS_ENABLE_EXPERIMENTAL_CXX20_MODULES */\n#define KOKKOS_ENABLE_IMPL_MDSPAN\n#define KOKKOS_ENABLE_IMPL_VIEW_LEGACY\n#define KOKKOS_ENABLE_IMPL_REF_COUNT_BRANCH_UNLIKELY\n/* #undef KOKKOS_ENABLE_IMPL_VIEW_OF_VIEWS_DESTRUCTOR_PRECONDITION_VIOLATION_WORKAROUND */\n/* #undef KOKKOS_ENABLE_ATOMICS_BYPASS */\n/* #undef KOKKOS_ENABLE_IMPL_CHECK_POSSIBLY_BREAKING_LAYOUTS */\n\n/* TPL Settings */\n/* #undef KOKKOS_ENABLE_HWLOC */\n#define KOKKOS_ENABLE_LIBDL\n/* #undef KOKKOS_ENABLE_LIBQUADMATH */\n#define KOKKOS_ENABLE_ONEDPL\n/* #undef KOKKOS_ENABLE_ROCTHRUST */\n\n/* #undef KOKKOS_ARCH_ARMV80 */\n/* #undef KOKKOS_ARCH_ARMV8_THUNDERX */\n/* #undef KOKKOS_ARCH_ARMV81 */\n/* #undef KOKKOS_ARCH_ARMV8_THUNDERX2 */\n/* #undef KOKKOS_ARCH_ARMV9_GRACE */\n/* #undef KOKKOS_ARCH_ARMV84 */\n/* #undef KOKKOS_ARCH_ARMV84_SVE */\n/* #undef KOKKOS_ARCH_ARM_NEON */\n/* #undef KOKKOS_ARCH_ARM_SVE */\n/* #undef KOKKOS_ARCH_A64FX */\n/* #undef KOKKOS_ARCH_AVX */\n/* #undef KOKKOS_ARCH_AVX2 */\n/* #undef KOKKOS_ARCH_AVX512XEON */\n/* #undef KOKKOS_ARCH_KNC */\n/* #undef KOKKOS_ARCH_AVX512MIC */\n/* #undef KOKKOS_ARCH_POWER7 */\n/* #undef KOKKOS_ARCH_POWER8 */\n/* #undef KOKKOS_ARCH_POWER9 */\n/* #undef KOKKOS_ARCH_RISCV_SG2042 */\n/* #undef KOKKOS_ARCH_RISCV_RVA22V */\n/* #undef KOKKOS_ARCH_RISCV_U74MC */\n/* #undef KOKKOS_ARCH_INTEL_GEN */\n/* #undef KOKKOS_ARCH_INTEL_DG1 */\n/* #undef KOKKOS_ARCH_INTEL_DG2 */\n/* #undef KOKKOS_ARCH_INTEL_GEN9 */\n/* #undef KOKKOS_ARCH_INTEL_GEN11 */\n/* #undef KOKKOS_ARCH_INTEL_GEN12LP */\n/* #undef KOKKOS_ARCH_INTEL_XEHP */\n#define KOKKOS_ARCH_INTEL_PVC\n#define KOKKOS_ARCH_INTEL_GPU\n/* #undef KOKKOS_ARCH_KEPLER */\n/* #undef KOKKOS_ARCH_KEPLER30 */\n/* #undef KOKKOS_ARCH_KEPLER32 */\n/* #undef KOKKOS_ARCH_KEPLER35 */\n/* #undef KOKKOS_ARCH_KEPLER37 */\n/* #undef KOKKOS_ARCH_MAXWELL */\n/* #undef KOKKOS_ARCH_MAXWELL50 */\n/* #undef KOKKOS_ARCH_MAXWELL52 */\n/* #undef KOKKOS_ARCH_MAXWELL53 */\n/* #undef KOKKOS_ARCH_PASCAL */\n/* #undef KOKKOS_ARCH_PASCAL60 */\n/* #undef KOKKOS_ARCH_PASCAL61 */\n/* #undef KOKKOS_ARCH_VOLTA */\n/* #undef KOKKOS_ARCH_VOLTA70 */\n/* #undef KOKKOS_ARCH_VOLTA72 */\n/* #undef KOKKOS_ARCH_TURING75 */\n/* #undef KOKKOS_ARCH_AMPERE */\n/* #undef KOKKOS_ARCH_AMPERE80 */\n/* #undef KOKKOS_ARCH_AMPERE86 */\n/* #undef KOKKOS_ARCH_AMPERE87 */\n/* #undef KOKKOS_ARCH_ADA89 */\n/* #undef KOKKOS_ARCH_HOPPER */\n/* #undef KOKKOS_ARCH_HOPPER90 */\n/* #undef KOKKOS_ARCH_BLACKWELL */\n/* #undef KOKKOS_ARCH_BLACKWELL100 */\n/* #undef KOKKOS_ARCH_BLACKWELL120 */\n/* #undef KOKKOS_ARCH_AMD_ZEN */\n/* #undef KOKKOS_ARCH_AMD_ZEN2 */\n/* #undef KOKKOS_ARCH_AMD_ZEN3 */\n/* #undef KOKKOS_ARCH_AMD_ZEN4 */\n/* #undef KOKKOS_ARCH_AMD_ZEN5 */\n/* #undef KOKKOS_ARCH_AMD_GFX906 */\n/* #undef KOKKOS_ARCH_AMD_GFX908 */\n/* #undef KOKKOS_ARCH_AMD_GFX90A */\n/* #undef KOKKOS_ARCH_AMD_GFX940 */\n/* #undef KOKKOS_ARCH_AMD_GFX942 */\n/* #undef KOKKOS_ARCH_AMD_GFX942_APU */\n/* #undef KOKKOS_ARCH_AMD_GFX1030 */\n/* #undef KOKKOS_ARCH_AMD_GFX1100 */\n/* #undef KOKKOS_ARCH_AMD_GFX1103 */\n/* #undef KOKKOS_ARCH_AMD_GPU */\n/* #undef KOKKOS_ARCH_VEGA */\n/* #undef KOKKOS_ARCH_VEGA906 */\n/* #undef KOKKOS_ARCH_VEGA908 */\n/* #undef KOKKOS_ARCH_VEGA90A */\n/* #undef KOKKOS_ARCH_NAVI */\n/* #undef KOKKOS_ARCH_NAVI1030 */\n/* #undef KOKKOS_ARCH_NAVI1100 */\n\n/* #undef KOKKOS_IMPL_32BIT */\n"
+    }
+  }
+}

@@ -1,0 +1,149 @@
+{
+  "schema": "native-bvals-fixed-step-amr-audit-v1",
+  "scope": "read-only source audit; no implementation or numerical admission change",
+  "runtime_changed": false,
+  "copy_route_requires_exact_selected_unit_row": true,
+  "raw_copy_bitwise_equivalence_not_assumed": true,
+  "same_level_same_chart_alone_sufficient": false,
+  "copy_subset_count_measured": false,
+  "performance_benefit_measured": false,
+  "new_adaptive_dt_controller_explicitly_required": false,
+  "available_predecessor_fixed_step_post_regrid_characteristic_admission_missing_in_native": true,
+  "pinned_fixed_N12_policy_changed": false,
+  "historical_dynamic_amr_binary_provenance_claimed": false,
+  "source_references": [
+    {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/src/z4c_hyperboloidal/mapped_halo.cpp",
+      "line": 151,
+      "sha256": "80174d14da93cd6c45d8467edd5113a0ebc48aa3c3dd56e6cb272789a7088af1",
+      "supports": "Cartesian finest covering owner and aligned stencil snapping"
+    },
+    {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/src/z4c_hyperboloidal/mapped_halo.cpp",
+      "line": 340,
+      "sha256": "80174d14da93cd6c45d8467edd5113a0ebc48aa3c3dd56e6cb272789a7088af1",
+      "supports": "selector precedence and shell interpolation fallback"
+    },
+    {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/src/z4c_hyperboloidal/mapped_halo.cpp",
+      "line": 394,
+      "sha256": "80174d14da93cd6c45d8467edd5113a0ebc48aa3c3dd56e6cb272789a7088af1",
+      "supports": "stable coalesced donor rows"
+    },
+    {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/src/z4c_hyperboloidal/mapped_halo.cpp",
+      "line": 480,
+      "sha256": "80174d14da93cd6c45d8467edd5113a0ebc48aa3c3dd56e6cb272789a7088af1",
+      "supports": "anchored arithmetic,31 physical / 26 independent residual semantics"
+    },
+    {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/src/bvals/buffs_cc.cpp",
+      "line": 28,
+      "sha256": "d89c4ef06458d4a76d0962a722837215560f307b3cbcc8365e4ee902d49a87b1",
+      "supports": "shared nominal CC buffer indices"
+    },
+    {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/src/bvals/bvals.cpp",
+      "line": 152,
+      "sha256": "473fc2cc0d6f0b57b26da00bdf49ad3dbabcef23cd0a5853269e4cee1c2f844d",
+      "supports": "rank-packed entries built from native neighbor table"
+    },
+    {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/src/bvals/bvals_tasks.cpp",
+      "line": 32,
+      "sha256": "9267c1d42e88be05eb2fc73d975c2ef1a2d22238bbd66ec6fd6bacb06c525231",
+      "supports": "persistent-layout nonblocking receives"
+    },
+    {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/src/bvals/bvals_cc.cpp",
+      "line": 273,
+      "sha256": "ecb8f656c1027ba6bf036c74f9188c41e4f9b33fcc2a787ea61d3756b95988b1",
+      "supports": "incomplete receive polling"
+    },
+    {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/src/mesh/meshblock.cpp",
+      "line": 459,
+      "sha256": "4f75a7e5571c8aac91dd0bbbfe277313e9358d7b7101815d50b347bc9fce0d2f",
+      "supports": "shell cross-chart/layer neighbor removal"
+    },
+    {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/src/z4c_hyperboloidal/z4c_hyperboloidal.cpp",
+      "line": 51,
+      "sha256": "77bfd232396f53707ac408765079260c7e1402264d28fdd29412d3ef3491a775",
+      "supports": "module storage origin and overlap"
+    },
+    {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/src/z4c_hyperboloidal/z4c_hyperboloidal_lifecycle.cpp",
+      "line": 75,
+      "sha256": "b9ba0fff9814898c3056e5693c23036124fa5372b1765657d1d989bd980bfd54",
+      "supports": "native fixed requested-dt relaxation admission"
+    },
+    {
+      "path": "/Users/hz0693/.codex/worktrees/scri-ko01/hyperboloidal/tst/hyperbolic_shift_3d/coupled_mpi.cpp",
+      "line": 1440,
+      "sha256": "f7708dd17b13e64bd7690669a217277d6a3fea9a6169bcb07c2b8430ee335055",
+      "supports": "available predecessor characteristic timestep cap"
+    },
+    {
+      "path": "/Users/hz0693/.codex/worktrees/scri-ko01/hyperboloidal/tst/hyperbolic_shift_3d/amr_evolution.cpp",
+      "line": 591,
+      "sha256": "69002ae8b2eaa67129affb137d7868877b1752fd76643858759a882fe1bc0842",
+      "supports": "available predecessor initial fixed-step selection/admission"
+    },
+    {
+      "path": "/Users/hz0693/.codex/worktrees/scri-ko01/hyperboloidal/tst/hyperbolic_shift_3d/amr_evolution.cpp",
+      "line": 777,
+      "sha256": "69002ae8b2eaa67129affb137d7868877b1752fd76643858759a882fe1bc0842",
+      "supports": "available predecessor fixed-step post-regrid rejection"
+    },
+    {
+      "path": "/Users/hz0693/.codex/attachments/9c6e49e3-2e85-442b-8b06-6adb9db3cba6/goal-objective.md",
+      "line": 64,
+      "sha256": "f56ee556a6ea048104cb972e3dca18416a2a37c9da51833a7a2ff31071eeddc0",
+      "supports": "explicit preserve-existing-timestep requirement"
+    }
+  ],
+  "existing_cpu_cfl_evidence": {
+    "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/results.json",
+    "sha256": "38636367f753d4e2254479bc1bfa4b87c39492f02880ccf2ef1aa197f104a3cb",
+    "runs": {
+      "2": [
+        {
+          "cycle": 1,
+          "max_cfl": 0.2376923022594371
+        },
+        {
+          "cycle": 2,
+          "max_cfl": 0.4767786203266099
+        },
+        {
+          "cycle": 3,
+          "max_cfl": 0.47677862032733676
+        },
+        {
+          "cycle": 4,
+          "max_cfl": 0.23769230230277458
+        }
+      ],
+      "8": [
+        {
+          "cycle": 1,
+          "max_cfl": 0.2376923022594371
+        },
+        {
+          "cycle": 2,
+          "max_cfl": 0.4767786203266099
+        },
+        {
+          "cycle": 3,
+          "max_cfl": 0.47677862032733676
+        },
+        {
+          "cycle": 4,
+          "max_cfl": 0.23769230230277458
+        }
+      ]
+    }
+  },
+  "recommendation_document": "docs/z4c_hyperboloidal/bvals-reuse-and-timestep-audit.md"
+}

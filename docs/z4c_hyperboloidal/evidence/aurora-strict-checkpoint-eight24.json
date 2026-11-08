@@ -1,0 +1,4397 @@
+{
+  "passed": true,
+  "step": 8,
+  "time": 0.003755536298849396,
+  "dt": 0.00046944203735617445,
+  "writer_mpi_ranks": 24,
+  "candidate": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-saved-replay/run-artifacts/runs/n12-native-gpu-eight-two/rst/native_n12_5M.00001.rst",
+  "candidate_sha256": "f96631bcbd5aa11e968b087fb92fb4692a859b549c9f23a5717f4412a1bc8d14",
+  "mapping_sha256": "484bd5e77d83c537ce564e2f02b68bd3544680ced65d81abdf8a69216434b15d",
+  "all31_fields_decoded": true,
+  "bulk_points": 229392,
+  "scri_points": 864,
+  "chi_record_scalars": 1842048,
+  "coordinate_scope": "bitwise host native-atlas/independent-legacy proof bound by exact checkpoint metadata",
+  "unused_global_coarse_indices": [
+    1768714349,
+    1646290021,
+    1752440953,
+    1763734377,
+    1953853550,
+    1782319662,
+    171860591,
+    1702060386,
+    1701667182
+  ],
+  "mesh_header_scope": "all initialized fields exact; nine unused native global coarse indices reported only",
+  "stage_diagnostics_scope": "not stored in native restart; require separate stage/histories evidence",
+  "chi_history_reference_scope": "aggregate only; no per-cell reference histories",
+  "chi_summary": {
+    "minimum_chi": 1.342207406105154e-05,
+    "minimum_raw_candidate": 1.3422073804799769e-05,
+    "minimum_raw_acceptance_candidate": 1.342207406105154e-05,
+    "floor_events": 0,
+    "nonpositive_candidates": 0,
+    "nonfinite_candidates": 0,
+    "distinct_floored_cells": 0,
+    "sum_corrections_over_attempts": 0.0,
+    "surface_floor_events": 0,
+    "max_correction": 0.0,
+    "max_floor_radius": 0.0,
+    "first_floor_M": null
+  },
+  "actual_coordinate_audit": {
+    "bulk_points": 229392,
+    "bitwise_equal": true,
+    "surface_scope": "host atlas proof only",
+    "geometry_generation": "native host cache mirrored after device upload; not GPU map generation"
+  },
+  "gate": "short",
+  "reference": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-original-eight-bound-references-v1/ranks24",
+  "fields": {
+    "bulk": {
+      "comparisons": 7111152,
+      "failed_values": 0,
+      "bitwise_equal": false,
+      "max_absolute": 5.551115123125783e-17,
+      "max_scaled": 3.875590780143519e-17,
+      "max_tolerance_ratio": 2.8481610857790758e-06,
+      "fields": [
+        {
+          "field": 0,
+          "name": "chi",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 0.0,
+          "max_scaled": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "worst_absolute": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 0,
+            "field_name": "chi",
+            "actual": 0.039610982828144355,
+            "expected": 0.039610982828144355
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 0,
+            "field_name": "chi",
+            "actual": 0.039610982828144355,
+            "expected": 0.039610982828144355
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 0,
+            "field_name": "chi",
+            "actual": 0.039610982828144355,
+            "expected": 0.039610982828144355
+          }
+        },
+        {
+          "field": 1,
+          "name": "gxx-1",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 3.389067900592257e-20,
+          "max_scaled": 3.389067900591837e-20,
+          "max_tolerance_ratio": 3.389067900382148e-08,
+          "weighted_rms": 1.3786750966949333e-22,
+          "worst_absolute": {
+            "legacy_ordinal": 162130,
+            "native_gid": 57,
+            "native_restart_slot": 4135,
+            "ijk": [
+              10,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7616161811373845,
+              0.5088956625296756,
+              0.37558753611933027
+            ],
+            "field": 1,
+            "field_name": "gxx-1",
+            "actual": 1.2399206487192815e-13,
+            "expected": 1.2399209876260716e-13
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 162130,
+            "native_gid": 57,
+            "native_restart_slot": 4135,
+            "ijk": [
+              10,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7616161811373845,
+              0.5088956625296756,
+              0.37558753611933027
+            ],
+            "field": 1,
+            "field_name": "gxx-1",
+            "actual": 1.2399206487192815e-13,
+            "expected": 1.2399209876260716e-13
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 162130,
+            "native_gid": 57,
+            "native_restart_slot": 4135,
+            "ijk": [
+              10,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7616161811373845,
+              0.5088956625296756,
+              0.37558753611933027
+            ],
+            "field": 1,
+            "field_name": "gxx-1",
+            "actual": 1.2399206487192815e-13,
+            "expected": 1.2399209876260716e-13
+          }
+        },
+        {
+          "field": 2,
+          "name": "gxy",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 2.7248599632880755e-21,
+          "max_scaled": 2.7248599632854356e-21,
+          "max_tolerance_ratio": 2.7248599619682133e-09,
+          "weighted_rms": 1.6219927375003123e-23,
+          "worst_absolute": {
+            "legacy_ordinal": 162124,
+            "native_gid": 57,
+            "native_restart_slot": 4129,
+            "ijk": [
+              4,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7385369029211001,
+              0.49347458184695814,
+              0.3642060956308657
+            ],
+            "field": 2,
+            "field_name": "gxy",
+            "actual": -9.687561918078363e-13,
+            "expected": -9.687561945326963e-13
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 162124,
+            "native_gid": 57,
+            "native_restart_slot": 4129,
+            "ijk": [
+              4,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7385369029211001,
+              0.49347458184695814,
+              0.3642060956308657
+            ],
+            "field": 2,
+            "field_name": "gxy",
+            "actual": -9.687561918078363e-13,
+            "expected": -9.687561945326963e-13
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 162124,
+            "native_gid": 57,
+            "native_restart_slot": 4129,
+            "ijk": [
+              4,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7385369029211001,
+              0.49347458184695814,
+              0.3642060956308657
+            ],
+            "field": 2,
+            "field_name": "gxy",
+            "actual": -9.687561918078363e-13,
+            "expected": -9.687561945326963e-13
+          }
+        },
+        {
+          "field": 3,
+          "name": "gxz",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 2.124051986813424e-21,
+          "max_scaled": 2.1240519868118926e-21,
+          "max_tolerance_ratio": 2.124051986047633e-09,
+          "weighted_rms": 1.0549312757460975e-23,
+          "worst_absolute": {
+            "legacy_ordinal": 162124,
+            "native_gid": 57,
+            "native_restart_slot": 4129,
+            "ijk": [
+              4,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7385369029211001,
+              0.49347458184695814,
+              0.3642060956308657
+            ],
+            "field": 3,
+            "field_name": "gxz",
+            "actual": -7.210658555974385e-13,
+            "expected": -7.210658577214905e-13
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 162124,
+            "native_gid": 57,
+            "native_restart_slot": 4129,
+            "ijk": [
+              4,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7385369029211001,
+              0.49347458184695814,
+              0.3642060956308657
+            ],
+            "field": 3,
+            "field_name": "gxz",
+            "actual": -7.210658555974385e-13,
+            "expected": -7.210658577214905e-13
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 162124,
+            "native_gid": 57,
+            "native_restart_slot": 4129,
+            "ijk": [
+              4,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7385369029211001,
+              0.49347458184695814,
+              0.3642060956308657
+            ],
+            "field": 3,
+            "field_name": "gxz",
+            "actual": -7.210658555974385e-13,
+            "expected": -7.210658577214905e-13
+          }
+        },
+        {
+          "field": 4,
+          "name": "gyy-1",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 2.117582368135751e-22,
+          "max_scaled": 2.1175813791136704e-22,
+          "max_tolerance_ratio": 2.117087972318875e-10,
+          "weighted_rms": 3.2712863315124254e-25,
+          "worst_absolute": {
+            "legacy_ordinal": 18942,
+            "native_gid": 5,
+            "native_restart_slot": 4707,
+            "ijk": [
+              6,
+              6,
+              11
+            ],
+            "xyz": [
+              0.002777777777777768,
+              -0.0638888888888889,
+              0.030555555555555544
+            ],
+            "field": 4,
+            "field_name": "gyy-1",
+            "actual": 7.380028740070521e-07,
+            "expected": 7.380028740070519e-07
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 214794,
+            "native_gid": 46,
+            "native_restart_slot": 1623,
+            "ijk": [
+              0,
+              -3,
+              2
+            ],
+            "xyz": [
+              -0.03601077050150772,
+              -0.07302261888812858,
+              -0.017758546760681542
+            ],
+            "field": 4,
+            "field_name": "gyy-1",
+            "actual": 4.6705269062062946e-07,
+            "expected": 4.670526906206297e-07
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 214794,
+            "native_gid": 46,
+            "native_restart_slot": 1623,
+            "ijk": [
+              0,
+              -3,
+              2
+            ],
+            "xyz": [
+              -0.03601077050150772,
+              -0.07302261888812858,
+              -0.017758546760681542
+            ],
+            "field": 4,
+            "field_name": "gyy-1",
+            "actual": 4.6705269062062946e-07,
+            "expected": 4.670526906206297e-07
+          }
+        },
+        {
+          "field": 5,
+          "name": "gyz",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 1.7464834171193554e-21,
+          "max_scaled": 1.7464834171181122e-21,
+          "max_tolerance_ratio": 1.746483416497635e-09,
+          "weighted_rms": 9.202664644648063e-24,
+          "worst_absolute": {
+            "legacy_ordinal": 163900,
+            "native_gid": 69,
+            "native_restart_slot": 4309,
+            "ijk": [
+              4,
+              2,
+              10
+            ],
+            "xyz": [
+              0.49347458184695814,
+              0.7385369029211001,
+              -0.3642060956308657
+            ],
+            "field": 5,
+            "field_name": "gyz",
+            "actual": -7.119683960453105e-13,
+            "expected": -7.119683977917939e-13
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 163900,
+            "native_gid": 69,
+            "native_restart_slot": 4309,
+            "ijk": [
+              4,
+              2,
+              10
+            ],
+            "xyz": [
+              0.49347458184695814,
+              0.7385369029211001,
+              -0.3642060956308657
+            ],
+            "field": 5,
+            "field_name": "gyz",
+            "actual": -7.119683960453105e-13,
+            "expected": -7.119683977917939e-13
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 163900,
+            "native_gid": 69,
+            "native_restart_slot": 4309,
+            "ijk": [
+              4,
+              2,
+              10
+            ],
+            "xyz": [
+              0.49347458184695814,
+              0.7385369029211001,
+              -0.3642060956308657
+            ],
+            "field": 5,
+            "field_name": "gyz",
+            "actual": -7.119683960453105e-13,
+            "expected": -7.119683977917939e-13
+          }
+        },
+        {
+          "field": 6,
+          "name": "gzz-1",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 0.0,
+          "max_scaled": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "worst_absolute": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 6,
+            "field_name": "gzz-1",
+            "actual": 2.6645352591003757e-15,
+            "expected": 2.6645352591003757e-15
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 6,
+            "field_name": "gzz-1",
+            "actual": 2.6645352591003757e-15,
+            "expected": 2.6645352591003757e-15
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 6,
+            "field_name": "gzz-1",
+            "actual": 2.6645352591003757e-15,
+            "expected": 2.6645352591003757e-15
+          }
+        },
+        {
+          "field": 7,
+          "name": "Axx",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 5.551115123125783e-17,
+          "max_scaled": 3.875590780143519e-17,
+          "max_tolerance_ratio": 7.947227036134796e-07,
+          "weighted_rms": 2.2026350532085766e-19,
+          "worst_absolute": {
+            "legacy_ordinal": 143237,
+            "native_gid": 67,
+            "native_restart_slot": 4418,
+            "ijk": [
+              5,
+              8,
+              10
+            ],
+            "xyz": [
+              0.44734993305555304,
+              0.6695064877389615,
+              0.22726682859965103
+            ],
+            "field": 7,
+            "field_name": "Axx",
+            "actual": 0.43232746645150605,
+            "expected": 0.4323274664515061
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 143237,
+            "native_gid": 67,
+            "native_restart_slot": 4418,
+            "ijk": [
+              5,
+              8,
+              10
+            ],
+            "xyz": [
+              0.44734993305555304,
+              0.6695064877389615,
+              0.22726682859965103
+            ],
+            "field": 7,
+            "field_name": "Axx",
+            "actual": 0.43232746645150605,
+            "expected": 0.4323274664515061
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 162131,
+            "native_gid": 57,
+            "native_restart_slot": 4136,
+            "ijk": [
+              11,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7654627275067653,
+              0.5114658426434618,
+              0.37748444286740773
+            ],
+            "field": 7,
+            "field_name": "Axx",
+            "actual": -4.2501259748240267e-10,
+            "expected": -4.250125966876798e-10
+          }
+        },
+        {
+          "field": 8,
+          "name": "Axy",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 1.0814256373618936e-18,
+          "max_scaled": 1.0814256366568629e-18,
+          "max_tolerance_ratio": 1.0814252848466176e-06,
+          "weighted_rms": 5.942460581390924e-21,
+          "worst_absolute": {
+            "legacy_ordinal": 162131,
+            "native_gid": 57,
+            "native_restart_slot": 4136,
+            "ijk": [
+              11,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7654627275067653,
+              0.5114658426434618,
+              0.37748444286740773
+            ],
+            "field": 8,
+            "field_name": "Axy",
+            "actual": 6.519456874760082e-10,
+            "expected": 6.519456885574339e-10
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 162131,
+            "native_gid": 57,
+            "native_restart_slot": 4136,
+            "ijk": [
+              11,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7654627275067653,
+              0.5114658426434618,
+              0.37748444286740773
+            ],
+            "field": 8,
+            "field_name": "Axy",
+            "actual": 6.519456874760082e-10,
+            "expected": 6.519456885574339e-10
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 162131,
+            "native_gid": 57,
+            "native_restart_slot": 4136,
+            "ijk": [
+              11,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7654627275067653,
+              0.5114658426434618,
+              0.37748444286740773
+            ],
+            "field": 8,
+            "field_name": "Axy",
+            "actual": 6.519456874760082e-10,
+            "expected": 6.519456885574339e-10
+          }
+        },
+        {
+          "field": 9,
+          "name": "Axz",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 1.3877787807814457e-17,
+          "max_scaled": 1.2353619872554558e-17,
+          "max_tolerance_ratio": 3.716959880752299e-07,
+          "weighted_rms": 5.4032953942234264e-20,
+          "worst_absolute": {
+            "legacy_ordinal": 162122,
+            "native_gid": 57,
+            "native_restart_slot": 4127,
+            "ijk": [
+              2,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7308438101823386,
+              0.4883342216193856,
+              0.3604122821347108
+            ],
+            "field": 9,
+            "field_name": "Axz",
+            "actual": 0.12337824467515546,
+            "expected": 0.12337824467515547
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 162122,
+            "native_gid": 57,
+            "native_restart_slot": 4127,
+            "ijk": [
+              2,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7308438101823386,
+              0.4883342216193856,
+              0.3604122821347108
+            ],
+            "field": 9,
+            "field_name": "Axz",
+            "actual": 0.12337824467515546,
+            "expected": 0.12337824467515547
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 181168,
+            "native_gid": 13,
+            "native_restart_slot": 4291,
+            "ijk": [
+              4,
+              1,
+              10
+            ],
+            "xyz": [
+              -0.02083333333333334,
+              0.00416666666666666,
+              0.02916666666666666
+            ],
+            "field": 9,
+            "field_name": "Axz",
+            "actual": 0.0026670492327878046,
+            "expected": 0.0026670492327878054
+          }
+        },
+        {
+          "field": 10,
+          "name": "Ayy",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 8.673617379884035e-19,
+          "max_scaled": 8.643883999322102e-19,
+          "max_tolerance_ratio": 3.1889370966611436e-07,
+          "weighted_rms": 3.81303524152149e-21,
+          "worst_absolute": {
+            "legacy_ordinal": 163900,
+            "native_gid": 69,
+            "native_restart_slot": 4309,
+            "ijk": [
+              4,
+              2,
+              10
+            ],
+            "xyz": [
+              0.49347458184695814,
+              0.7385369029211001,
+              -0.3642060956308657
+            ],
+            "field": 10,
+            "field_name": "Ayy",
+            "actual": -0.003439817166017741,
+            "expected": -0.003439817166017742
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 163900,
+            "native_gid": 69,
+            "native_restart_slot": 4309,
+            "ijk": [
+              4,
+              2,
+              10
+            ],
+            "xyz": [
+              0.49347458184695814,
+              0.7385369029211001,
+              -0.3642060956308657
+            ],
+            "field": 10,
+            "field_name": "Ayy",
+            "actual": -0.003439817166017741,
+            "expected": -0.003439817166017742
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 163900,
+            "native_gid": 69,
+            "native_restart_slot": 4309,
+            "ijk": [
+              4,
+              2,
+              10
+            ],
+            "xyz": [
+              0.49347458184695814,
+              0.7385369029211001,
+              -0.3642060956308657
+            ],
+            "field": 10,
+            "field_name": "Ayy",
+            "actual": -0.003439817166017741,
+            "expected": -0.003439817166017742
+          }
+        },
+        {
+          "field": 11,
+          "name": "Ayz",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 8.673617379884035e-19,
+          "max_scaled": 8.63996303762549e-19,
+          "max_tolerance_ratio": 5.560157774137908e-07,
+          "weighted_rms": 3.560661918510985e-21,
+          "worst_absolute": {
+            "legacy_ordinal": 178490,
+            "native_gid": 12,
+            "native_restart_slot": 2111,
+            "ijk": [
+              2,
+              6,
+              3
+            ],
+            "xyz": [
+              0.006944444444444438,
+              -0.015277777777777786,
+              0.009722222222222215
+            ],
+            "field": 11,
+            "field_name": "Ayz",
+            "actual": 0.00389519516599623,
+            "expected": 0.003895195165996229
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 178490,
+            "native_gid": 12,
+            "native_restart_slot": 2111,
+            "ijk": [
+              2,
+              6,
+              3
+            ],
+            "xyz": [
+              0.006944444444444438,
+              -0.015277777777777786,
+              0.009722222222222215
+            ],
+            "field": 11,
+            "field_name": "Ayz",
+            "actual": 0.00389519516599623,
+            "expected": 0.003895195165996229
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 162131,
+            "native_gid": 57,
+            "native_restart_slot": 4136,
+            "ijk": [
+              11,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7654627275067653,
+              0.5114658426434618,
+              0.37748444286740773
+            ],
+            "field": 11,
+            "field_name": "Ayz",
+            "actual": -3.215539698590789e-10,
+            "expected": -3.2155396930306305e-10
+          }
+        },
+        {
+          "field": 12,
+          "name": "Azz",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 8.673617379884035e-19,
+          "max_scaled": 8.651812019338695e-19,
+          "max_tolerance_ratio": 7.811416857426918e-07,
+          "weighted_rms": 6.076096688323812e-21,
+          "worst_absolute": {
+            "legacy_ordinal": 163900,
+            "native_gid": 69,
+            "native_restart_slot": 4309,
+            "ijk": [
+              4,
+              2,
+              10
+            ],
+            "xyz": [
+              0.49347458184695814,
+              0.7385369029211001,
+              -0.3642060956308657
+            ],
+            "field": 12,
+            "field_name": "Azz",
+            "actual": 0.0025203229677900297,
+            "expected": 0.0025203229677900306
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 163900,
+            "native_gid": 69,
+            "native_restart_slot": 4309,
+            "ijk": [
+              4,
+              2,
+              10
+            ],
+            "xyz": [
+              0.49347458184695814,
+              0.7385369029211001,
+              -0.3642060956308657
+            ],
+            "field": 12,
+            "field_name": "Azz",
+            "actual": 0.0025203229677900297,
+            "expected": 0.0025203229677900306
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 162131,
+            "native_gid": 57,
+            "native_restart_slot": 4136,
+            "ijk": [
+              11,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7654627275067653,
+              0.5114658426434618,
+              0.37748444286740773
+            ],
+            "field": 12,
+            "field_name": "Azz",
+            "actual": 3.120232046823494e-10,
+            "expected": 3.120232039012076e-10
+          }
+        },
+        {
+          "field": 13,
+          "name": "P+3",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 2.204425152590852e-19,
+          "max_scaled": 2.2044251525447055e-19,
+          "max_tolerance_ratio": 2.204425129517522e-07,
+          "weighted_rms": 1.2183262741432961e-21,
+          "worst_absolute": {
+            "legacy_ordinal": 162126,
+            "native_gid": 57,
+            "native_restart_slot": 4131,
+            "ijk": [
+              6,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7462299956598616,
+              0.4986149420745306,
+              0.3679999091270206
+            ],
+            "field": 13,
+            "field_name": "P+3",
+            "actual": -2.093364825109033e-11,
+            "expected": -2.0933648471532846e-11
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 162126,
+            "native_gid": 57,
+            "native_restart_slot": 4131,
+            "ijk": [
+              6,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7462299956598616,
+              0.4986149420745306,
+              0.3679999091270206
+            ],
+            "field": 13,
+            "field_name": "P+3",
+            "actual": -2.093364825109033e-11,
+            "expected": -2.0933648471532846e-11
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 162126,
+            "native_gid": 57,
+            "native_restart_slot": 4131,
+            "ijk": [
+              6,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7462299956598616,
+              0.4986149420745306,
+              0.3679999091270206
+            ],
+            "field": 13,
+            "field_name": "P+3",
+            "actual": -2.093364825109033e-11,
+            "expected": -2.0933648471532846e-11
+          }
+        },
+        {
+          "field": 14,
+          "name": "Theta",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 3.107419776341206e-19,
+          "max_scaled": 3.1074195091432037e-19,
+          "max_tolerance_ratio": 3.107286183072174e-07,
+          "weighted_rms": 1.3271776506920519e-21,
+          "worst_absolute": {
+            "legacy_ordinal": 174881,
+            "native_gid": 10,
+            "native_restart_slot": 1772,
+            "ijk": [
+              5,
+              5,
+              2
+            ],
+            "xyz": [
+              0.01527777777777777,
+              0.01527777777777777,
+              -0.026388888888888896
+            ],
+            "field": 14,
+            "field_name": "Theta",
+            "actual": 8.598710331824176e-08,
+            "expected": 8.59871033185525e-08
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 174881,
+            "native_gid": 10,
+            "native_restart_slot": 1772,
+            "ijk": [
+              5,
+              5,
+              2
+            ],
+            "xyz": [
+              0.01527777777777777,
+              0.01527777777777777,
+              -0.026388888888888896
+            ],
+            "field": 14,
+            "field_name": "Theta",
+            "actual": 8.598710331824176e-08,
+            "expected": 8.59871033185525e-08
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 174881,
+            "native_gid": 10,
+            "native_restart_slot": 1772,
+            "ijk": [
+              5,
+              5,
+              2
+            ],
+            "xyz": [
+              0.01527777777777777,
+              0.01527777777777777,
+              -0.026388888888888896
+            ],
+            "field": 14,
+            "field_name": "Theta",
+            "actual": 8.598710331824176e-08,
+            "expected": 8.59871033185525e-08
+          }
+        },
+        {
+          "field": 15,
+          "name": "Lambda_x",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 2.8481618302251154e-18,
+          "max_scaled": 2.848161828736223e-18,
+          "max_tolerance_ratio": 2.8481610857790758e-06,
+          "weighted_rms": 1.563696214187247e-20,
+          "worst_absolute": {
+            "legacy_ordinal": 162131,
+            "native_gid": 57,
+            "native_restart_slot": 4136,
+            "ijk": [
+              11,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7654627275067653,
+              0.5114658426434618,
+              0.37748444286740773
+            ],
+            "field": 15,
+            "field_name": "Lambda_x",
+            "actual": -5.227555752189715e-10,
+            "expected": -5.227555723708096e-10
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 162131,
+            "native_gid": 57,
+            "native_restart_slot": 4136,
+            "ijk": [
+              11,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7654627275067653,
+              0.5114658426434618,
+              0.37748444286740773
+            ],
+            "field": 15,
+            "field_name": "Lambda_x",
+            "actual": -5.227555752189715e-10,
+            "expected": -5.227555723708096e-10
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 162131,
+            "native_gid": 57,
+            "native_restart_slot": 4136,
+            "ijk": [
+              11,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7654627275067653,
+              0.5114658426434618,
+              0.37748444286740773
+            ],
+            "field": 15,
+            "field_name": "Lambda_x",
+            "actual": -5.227555752189715e-10,
+            "expected": -5.227555723708096e-10
+          }
+        },
+        {
+          "field": 16,
+          "name": "Lambda_y",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 7.854963965470664e-19,
+          "max_scaled": 7.854963961640942e-19,
+          "max_tolerance_ratio": 7.854962050610133e-07,
+          "weighted_rms": 5.092571075659571e-21,
+          "worst_absolute": {
+            "legacy_ordinal": 162126,
+            "native_gid": 57,
+            "native_restart_slot": 4131,
+            "ijk": [
+              6,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7462299956598616,
+              0.4986149420745306,
+              0.3679999091270206
+            ],
+            "field": 16,
+            "field_name": "Lambda_y",
+            "actual": -4.875543676919153e-10,
+            "expected": -4.875543684774117e-10
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 162126,
+            "native_gid": 57,
+            "native_restart_slot": 4131,
+            "ijk": [
+              6,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7462299956598616,
+              0.4986149420745306,
+              0.3679999091270206
+            ],
+            "field": 16,
+            "field_name": "Lambda_y",
+            "actual": -4.875543676919153e-10,
+            "expected": -4.875543684774117e-10
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 162126,
+            "native_gid": 57,
+            "native_restart_slot": 4131,
+            "ijk": [
+              6,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7462299956598616,
+              0.4986149420745306,
+              0.3679999091270206
+            ],
+            "field": 16,
+            "field_name": "Lambda_y",
+            "actual": -4.875543676919153e-10,
+            "expected": -4.875543684774117e-10
+          }
+        },
+        {
+          "field": 17,
+          "name": "Lambda_z",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 8.507444549640375e-19,
+          "max_scaled": 8.507444547447303e-19,
+          "max_tolerance_ratio": 8.507443453104657e-07,
+          "weighted_rms": 4.65625951465683e-21,
+          "worst_absolute": {
+            "legacy_ordinal": 162131,
+            "native_gid": 57,
+            "native_restart_slot": 4136,
+            "ijk": [
+              11,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7654627275067653,
+              0.5114658426434618,
+              0.37748444286740773
+            ],
+            "field": 17,
+            "field_name": "Lambda_z",
+            "actual": 2.5778266281048326e-10,
+            "expected": 2.577826636612277e-10
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 162131,
+            "native_gid": 57,
+            "native_restart_slot": 4136,
+            "ijk": [
+              11,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7654627275067653,
+              0.5114658426434618,
+              0.37748444286740773
+            ],
+            "field": 17,
+            "field_name": "Lambda_z",
+            "actual": 2.5778266281048326e-10,
+            "expected": 2.577826636612277e-10
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 162131,
+            "native_gid": 57,
+            "native_restart_slot": 4136,
+            "ijk": [
+              11,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7654627275067653,
+              0.5114658426434618,
+              0.37748444286740773
+            ],
+            "field": 17,
+            "field_name": "Lambda_z",
+            "actual": 2.5778266281048326e-10,
+            "expected": 2.577826636612277e-10
+          }
+        },
+        {
+          "field": 18,
+          "name": "alpha-(1+r2)/2",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 0.0,
+          "max_scaled": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "worst_absolute": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 18,
+            "field_name": "alpha-(1+r2)/2",
+            "actual": -0.16715337604453026,
+            "expected": -0.16715337604453026
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 18,
+            "field_name": "alpha-(1+r2)/2",
+            "actual": -0.16715337604453026,
+            "expected": -0.16715337604453026
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 18,
+            "field_name": "alpha-(1+r2)/2",
+            "actual": -0.16715337604453026,
+            "expected": -0.16715337604453026
+          }
+        },
+        {
+          "field": 19,
+          "name": "B_x",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 0.0,
+          "max_scaled": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "worst_absolute": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 19,
+            "field_name": "B_x",
+            "actual": -0.0036630627939358167,
+            "expected": -0.0036630627939358167
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 19,
+            "field_name": "B_x",
+            "actual": -0.0036630627939358167,
+            "expected": -0.0036630627939358167
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 19,
+            "field_name": "B_x",
+            "actual": -0.0036630627939358167,
+            "expected": -0.0036630627939358167
+          }
+        },
+        {
+          "field": 20,
+          "name": "B_y",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 0.0,
+          "max_scaled": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "worst_absolute": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 20,
+            "field_name": "B_y",
+            "actual": -0.0036630627939358167,
+            "expected": -0.0036630627939358167
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 20,
+            "field_name": "B_y",
+            "actual": -0.0036630627939358167,
+            "expected": -0.0036630627939358167
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 20,
+            "field_name": "B_y",
+            "actual": -0.0036630627939358167,
+            "expected": -0.0036630627939358167
+          }
+        },
+        {
+          "field": 21,
+          "name": "B_z",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 0.0,
+          "max_scaled": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "worst_absolute": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 21,
+            "field_name": "B_z",
+            "actual": -0.0036630627939358167,
+            "expected": -0.0036630627939358167
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 21,
+            "field_name": "B_z",
+            "actual": -0.0036630627939358167,
+            "expected": -0.0036630627939358167
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 21,
+            "field_name": "B_z",
+            "actual": -0.0036630627939358167,
+            "expected": -0.0036630627939358167
+          }
+        },
+        {
+          "field": 22,
+          "name": "beta_x+x",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 1.5855397981416434e-20,
+          "max_scaled": 1.5855395408841392e-20,
+          "max_tolerance_ratio": 1.5854111798030364e-08,
+          "weighted_rms": 8.876098168053033e-23,
+          "worst_absolute": {
+            "legacy_ordinal": 162125,
+            "native_gid": 57,
+            "native_restart_slot": 4130,
+            "ijk": [
+              5,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7423834492904808,
+              0.4960447619607444,
+              0.36610300237894317
+            ],
+            "field": 22,
+            "field_name": "beta_x+x",
+            "actual": -1.6225234216263235e-07,
+            "expected": -1.622523421626165e-07
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 162125,
+            "native_gid": 57,
+            "native_restart_slot": 4130,
+            "ijk": [
+              5,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7423834492904808,
+              0.4960447619607444,
+              0.36610300237894317
+            ],
+            "field": 22,
+            "field_name": "beta_x+x",
+            "actual": -1.6225234216263235e-07,
+            "expected": -1.622523421626165e-07
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 162125,
+            "native_gid": 57,
+            "native_restart_slot": 4130,
+            "ijk": [
+              5,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7423834492904808,
+              0.4960447619607444,
+              0.36610300237894317
+            ],
+            "field": 22,
+            "field_name": "beta_x+x",
+            "actual": -1.6225234216263235e-07,
+            "expected": -1.622523421626165e-07
+          }
+        },
+        {
+          "field": 23,
+          "name": "beta_y+y",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 1.0744376405886462e-22,
+          "max_scaled": 1.0744376405884375e-22,
+          "max_tolerance_ratio": 1.0744376404843075e-10,
+          "weighted_rms": 4.742142304298805e-25,
+          "worst_absolute": {
+            "legacy_ordinal": 162131,
+            "native_gid": 57,
+            "native_restart_slot": 4136,
+            "ijk": [
+              11,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7654627275067653,
+              0.5114658426434618,
+              0.37748444286740773
+            ],
+            "field": 23,
+            "field_name": "beta_y+y",
+            "actual": 1.9422012762225604e-13,
+            "expected": 1.9422012751481228e-13
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 162131,
+            "native_gid": 57,
+            "native_restart_slot": 4136,
+            "ijk": [
+              11,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7654627275067653,
+              0.5114658426434618,
+              0.37748444286740773
+            ],
+            "field": 23,
+            "field_name": "beta_y+y",
+            "actual": 1.9422012762225604e-13,
+            "expected": 1.9422012751481228e-13
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 162131,
+            "native_gid": 57,
+            "native_restart_slot": 4136,
+            "ijk": [
+              11,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7654627275067653,
+              0.5114658426434618,
+              0.37748444286740773
+            ],
+            "field": 23,
+            "field_name": "beta_y+y",
+            "actual": 1.9422012762225604e-13,
+            "expected": 1.9422012751481228e-13
+          }
+        },
+        {
+          "field": 24,
+          "name": "beta_z+z",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 0.0,
+          "max_scaled": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "worst_absolute": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 24,
+            "field_name": "beta_z+z",
+            "actual": -0.09722222222174878,
+            "expected": -0.09722222222174878
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 24,
+            "field_name": "beta_z+z",
+            "actual": -0.09722222222174878,
+            "expected": -0.09722222222174878
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 24,
+            "field_name": "beta_z+z",
+            "actual": -0.09722222222174878,
+            "expected": -0.09722222222174878
+          }
+        },
+        {
+          "field": 25,
+          "name": "D_x",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 2.8476636607012054e-18,
+          "max_scaled": 2.8476636592137404e-18,
+          "max_tolerance_ratio": 2.84766291696884e-06,
+          "weighted_rms": 1.5630048228042518e-20,
+          "worst_absolute": {
+            "legacy_ordinal": 162131,
+            "native_gid": 57,
+            "native_restart_slot": 4136,
+            "ijk": [
+              11,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7654627275067653,
+              0.5114658426434618,
+              0.37748444286740773
+            ],
+            "field": 25,
+            "field_name": "D_x",
+            "actual": -5.223457910652778e-10,
+            "expected": -5.223457882176141e-10
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 162131,
+            "native_gid": 57,
+            "native_restart_slot": 4136,
+            "ijk": [
+              11,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7654627275067653,
+              0.5114658426434618,
+              0.37748444286740773
+            ],
+            "field": 25,
+            "field_name": "D_x",
+            "actual": -5.223457910652778e-10,
+            "expected": -5.223457882176141e-10
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 162131,
+            "native_gid": 57,
+            "native_restart_slot": 4136,
+            "ijk": [
+              11,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7654627275067653,
+              0.5114658426434618,
+              0.37748444286740773
+            ],
+            "field": 25,
+            "field_name": "D_x",
+            "actual": -5.223457910652778e-10,
+            "expected": -5.223457882176141e-10
+          }
+        },
+        {
+          "field": 26,
+          "name": "D_y",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 7.849716538459781e-19,
+          "max_scaled": 7.849716534637718e-19,
+          "max_tolerance_ratio": 7.849714627428675e-07,
+          "weighted_rms": 5.186292038432848e-21,
+          "worst_absolute": {
+            "legacy_ordinal": 162126,
+            "native_gid": 57,
+            "native_restart_slot": 4131,
+            "ijk": [
+              6,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7462299956598616,
+              0.4986149420745306,
+              0.3679999091270206
+            ],
+            "field": 26,
+            "field_name": "D_y",
+            "actual": -4.86904605583146e-10,
+            "expected": -4.869046063681176e-10
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 162126,
+            "native_gid": 57,
+            "native_restart_slot": 4131,
+            "ijk": [
+              6,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7462299956598616,
+              0.4986149420745306,
+              0.3679999091270206
+            ],
+            "field": 26,
+            "field_name": "D_y",
+            "actual": -4.86904605583146e-10,
+            "expected": -4.869046063681176e-10
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 162126,
+            "native_gid": 57,
+            "native_restart_slot": 4131,
+            "ijk": [
+              6,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7462299956598616,
+              0.4986149420745306,
+              0.3679999091270206
+            ],
+            "field": 26,
+            "field_name": "D_y",
+            "actual": -4.86904605583146e-10,
+            "expected": -4.869046063681176e-10
+          }
+        },
+        {
+          "field": 27,
+          "name": "D_z",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 8.503950228540221e-19,
+          "max_scaled": 8.503950226349769e-19,
+          "max_tolerance_ratio": 8.503949133313577e-07,
+          "weighted_rms": 4.6538826931778574e-21,
+          "worst_absolute": {
+            "legacy_ordinal": 162131,
+            "native_gid": 57,
+            "native_restart_slot": 4136,
+            "ijk": [
+              11,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7654627275067653,
+              0.5114658426434618,
+              0.37748444286740773
+            ],
+            "field": 27,
+            "field_name": "D_z",
+            "actual": 2.5758071292176644e-10,
+            "expected": 2.5758071377216146e-10
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 162131,
+            "native_gid": 57,
+            "native_restart_slot": 4136,
+            "ijk": [
+              11,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7654627275067653,
+              0.5114658426434618,
+              0.37748444286740773
+            ],
+            "field": 27,
+            "field_name": "D_z",
+            "actual": 2.5758071292176644e-10,
+            "expected": 2.5758071377216146e-10
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 162131,
+            "native_gid": 57,
+            "native_restart_slot": 4136,
+            "ijk": [
+              11,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.7654627275067653,
+              0.5114658426434618,
+              0.37748444286740773
+            ],
+            "field": 27,
+            "field_name": "D_z",
+            "actual": 2.5758071292176644e-10,
+            "expected": 2.5758071377216146e-10
+          }
+        },
+        {
+          "field": 28,
+          "name": "J_x",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 0.0,
+          "max_scaled": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "worst_absolute": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 28,
+            "field_name": "J_x",
+            "actual": 0.0,
+            "expected": 0.0
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 28,
+            "field_name": "J_x",
+            "actual": 0.0,
+            "expected": 0.0
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 28,
+            "field_name": "J_x",
+            "actual": 0.0,
+            "expected": 0.0
+          }
+        },
+        {
+          "field": 29,
+          "name": "J_y",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 0.0,
+          "max_scaled": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "worst_absolute": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 29,
+            "field_name": "J_y",
+            "actual": 0.0,
+            "expected": 0.0
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 29,
+            "field_name": "J_y",
+            "actual": 0.0,
+            "expected": 0.0
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 29,
+            "field_name": "J_y",
+            "actual": 0.0,
+            "expected": 0.0
+          }
+        },
+        {
+          "field": 30,
+          "name": "J_z",
+          "comparisons": 229392,
+          "failed_values": 0,
+          "max_absolute": 0.0,
+          "max_scaled": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "worst_absolute": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 30,
+            "field_name": "J_z",
+            "actual": 0.0,
+            "expected": 0.0
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 30,
+            "field_name": "J_z",
+            "actual": 0.0,
+            "expected": 0.0
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 0,
+            "native_gid": 0,
+            "native_restart_slot": 1029,
+            "ijk": [
+              0,
+              0,
+              0
+            ],
+            "xyz": [
+              -0.09722222222222222,
+              -0.09722222222222222,
+              -0.09722222222222222
+            ],
+            "field": 30,
+            "field_name": "J_z",
+            "actual": 0.0,
+            "expected": 0.0
+          }
+        }
+      ],
+      "worst_absolute": {
+        "legacy_ordinal": 143237,
+        "native_gid": 67,
+        "native_restart_slot": 4418,
+        "ijk": [
+          5,
+          8,
+          10
+        ],
+        "xyz": [
+          0.44734993305555304,
+          0.6695064877389615,
+          0.22726682859965103
+        ],
+        "field": 7,
+        "field_name": "Axx",
+        "actual": 0.43232746645150605,
+        "expected": 0.4323274664515061
+      },
+      "worst_scaled": {
+        "legacy_ordinal": 143237,
+        "native_gid": 67,
+        "native_restart_slot": 4418,
+        "ijk": [
+          5,
+          8,
+          10
+        ],
+        "xyz": [
+          0.44734993305555304,
+          0.6695064877389615,
+          0.22726682859965103
+        ],
+        "field": 7,
+        "field_name": "Axx",
+        "actual": 0.43232746645150605,
+        "expected": 0.4323274664515061
+      },
+      "worst_tolerance_ratio": {
+        "legacy_ordinal": 162131,
+        "native_gid": 57,
+        "native_restart_slot": 4136,
+        "ijk": [
+          11,
+          10,
+          9
+        ],
+        "xyz": [
+          -0.7654627275067653,
+          0.5114658426434618,
+          0.37748444286740773
+        ],
+        "field": 15,
+        "field_name": "Lambda_x",
+        "actual": -5.227555752189715e-10,
+        "expected": -5.227555723708096e-10
+      },
+      "weighted_rms": 4.100482999371309e-20,
+      "weight_sum_per_field": 4.200810505851262
+    },
+    "surface": {
+      "comparisons": 26784,
+      "failed_values": 0,
+      "bitwise_equal": false,
+      "max_absolute": 4.342378097006337e-17,
+      "max_scaled": 4.342378085917256e-17,
+      "max_tolerance_ratio": 4.34237255247275e-05,
+      "fields": [
+        {
+          "field": 0,
+          "name": "chi",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 0.0,
+          "max_scaled": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "worst_absolute": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 0,
+            "field_name": "chi",
+            "actual": 0.9999999999873144,
+            "expected": 0.9999999999873144
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 0,
+            "field_name": "chi",
+            "actual": 0.9999999999873144,
+            "expected": 0.9999999999873144
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 0,
+            "field_name": "chi",
+            "actual": 0.9999999999873144,
+            "expected": 0.9999999999873144
+          }
+        },
+        {
+          "field": 1,
+          "name": "gxx-1",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 6.1345360106325185e-21,
+          "max_scaled": 6.134536010629717e-21,
+          "max_tolerance_ratio": 6.134536009231736e-09,
+          "weighted_rms": 2.0487785423974582e-22,
+          "worst_absolute": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 1,
+            "field_name": "gxx-1",
+            "actual": -4.566872554724699e-13,
+            "expected": -4.566872616070059e-13
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 1,
+            "field_name": "gxx-1",
+            "actual": -4.566872554724699e-13,
+            "expected": -4.566872616070059e-13
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 1,
+            "field_name": "gxx-1",
+            "actual": -4.566872554724699e-13,
+            "expected": -4.566872616070059e-13
+          }
+        },
+        {
+          "field": 2,
+          "name": "gxy",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 1.5009628423300838e-21,
+          "max_scaled": 1.500962842329039e-21,
+          "max_tolerance_ratio": 1.5009628418077348e-09,
+          "weighted_rms": 5.019234500062585e-23,
+          "worst_absolute": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 2,
+            "field_name": "gxy",
+            "actual": 6.960187027000171e-13,
+            "expected": 6.960187011990543e-13
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 2,
+            "field_name": "gxy",
+            "actual": 6.960187027000171e-13,
+            "expected": 6.960187011990543e-13
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 2,
+            "field_name": "gxy",
+            "actual": 6.960187027000171e-13,
+            "expected": 6.960187011990543e-13
+          }
+        },
+        {
+          "field": 3,
+          "name": "gxz",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 2.004615870920968e-21,
+          "max_scaled": 2.004615870919935e-21,
+          "max_tolerance_ratio": 2.0046158704043363e-09,
+          "weighted_rms": 6.697263889849394e-23,
+          "worst_absolute": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 3,
+            "field_name": "gxz",
+            "actual": 5.154420819315383e-13,
+            "expected": 5.154420799269225e-13
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 3,
+            "field_name": "gxz",
+            "actual": 5.154420819315383e-13,
+            "expected": 5.154420799269225e-13
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 3,
+            "field_name": "gxz",
+            "actual": 5.154420819315383e-13,
+            "expected": 5.154420799269225e-13
+          }
+        },
+        {
+          "field": 4,
+          "name": "gyy-1",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 0.0,
+          "max_scaled": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "worst_absolute": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 4,
+            "field_name": "gyy-1",
+            "actual": 3.779998805176147e-14,
+            "expected": 3.779998805176147e-14
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 4,
+            "field_name": "gyy-1",
+            "actual": 3.779998805176147e-14,
+            "expected": 3.779998805176147e-14
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 4,
+            "field_name": "gyy-1",
+            "actual": 3.779998805176147e-14,
+            "expected": 3.779998805176147e-14
+          }
+        },
+        {
+          "field": 5,
+          "name": "gyz",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 3.2526600620530983e-22,
+          "max_scaled": 3.2526600620519816e-22,
+          "max_tolerance_ratio": 3.252660061494839e-10,
+          "weighted_rms": 1.0899011629829278e-23,
+          "worst_absolute": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 5,
+            "field_name": "gyz",
+            "actual": -3.4326348163727384e-13,
+            "expected": -3.4326348196253985e-13
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 5,
+            "field_name": "gyz",
+            "actual": -3.4326348163727384e-13,
+            "expected": -3.4326348196253985e-13
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 5,
+            "field_name": "gyz",
+            "actual": -3.4326348163727384e-13,
+            "expected": -3.4326348196253985e-13
+          }
+        },
+        {
+          "field": 6,
+          "name": "gzz-1",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 0.0,
+          "max_scaled": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "worst_absolute": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 6,
+            "field_name": "gzz-1",
+            "actual": 3.6193270602780103e-14,
+            "expected": 3.6193270602780103e-14
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 6,
+            "field_name": "gzz-1",
+            "actual": 3.6193270602780103e-14,
+            "expected": 3.6193270602780103e-14
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 6,
+            "field_name": "gzz-1",
+            "actual": 3.6193270602780103e-14,
+            "expected": 3.6193270602780103e-14
+          }
+        },
+        {
+          "field": 7,
+          "name": "Axx",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 4.342378097006337e-17,
+          "max_scaled": 4.342378085917256e-17,
+          "max_tolerance_ratio": 4.34237255247275e-05,
+          "weighted_rms": 1.4501590043822361e-18,
+          "worst_absolute": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 7,
+            "field_name": "Axx",
+            "actual": 2.5536886179789717e-09,
+            "expected": 2.5536885745551907e-09
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 7,
+            "field_name": "Axx",
+            "actual": 2.5536886179789717e-09,
+            "expected": 2.5536885745551907e-09
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 7,
+            "field_name": "Axx",
+            "actual": 2.5536886179789717e-09,
+            "expected": 2.5536885745551907e-09
+          }
+        },
+        {
+          "field": 8,
+          "name": "Axy",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 3.429727393300043e-18,
+          "max_scaled": 3.4297273799360897e-18,
+          "max_tolerance_ratio": 3.42972071133622e-06,
+          "weighted_rms": 1.1457074514317774e-19,
+          "worst_absolute": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 8,
+            "field_name": "Axy",
+            "actual": -3.896506095612227e-09,
+            "expected": -3.8965060921824995e-09
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 8,
+            "field_name": "Axy",
+            "actual": -3.896506095612227e-09,
+            "expected": -3.8965060921824995e-09
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 8,
+            "field_name": "Axy",
+            "actual": -3.896506095612227e-09,
+            "expected": -3.8965060921824995e-09
+          }
+        },
+        {
+          "field": 9,
+          "name": "Axz",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 1.5948042210022374e-19,
+          "max_scaled": 1.594804216410711e-19,
+          "max_tolerance_ratio": 1.5948019252423515e-07,
+          "weighted_rms": 5.36476800853577e-21,
+          "worst_absolute": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 9,
+            "field_name": "Axz",
+            "actual": -2.8790533165807764e-09,
+            "expected": -2.879053316421296e-09
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 9,
+            "field_name": "Axz",
+            "actual": -2.8790533165807764e-09,
+            "expected": -2.879053316421296e-09
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 9,
+            "field_name": "Axz",
+            "actual": -2.8790533165807764e-09,
+            "expected": -2.879053316421296e-09
+          }
+        },
+        {
+          "field": 10,
+          "name": "Ayy",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 7.563472548642184e-18,
+          "max_scaled": 7.563472543446832e-18,
+          "max_tolerance_ratio": 7.563469950967307e-06,
+          "weighted_rms": 2.526322188660493e-19,
+          "worst_absolute": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 10,
+            "field_name": "Ayy",
+            "actual": -6.869003045345448e-10,
+            "expected": -6.869002969710723e-10
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 10,
+            "field_name": "Ayy",
+            "actual": -6.869003045345448e-10,
+            "expected": -6.869002969710723e-10
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 10,
+            "field_name": "Ayy",
+            "actual": -6.869003045345448e-10,
+            "expected": -6.869002969710723e-10
+          }
+        },
+        {
+          "field": 11,
+          "name": "Ayz",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 1.0398479208597985e-18,
+          "max_scaled": 1.0398479188624125e-18,
+          "max_tolerance_ratio": 1.0398469221677641e-06,
+          "weighted_rms": 3.481943033821882e-20,
+          "worst_absolute": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 11,
+            "field_name": "Ayz",
+            "actual": 1.92084433301327e-09,
+            "expected": 1.920844334053118e-09
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 11,
+            "field_name": "Ayz",
+            "actual": 1.92084433301327e-09,
+            "expected": 1.920844334053118e-09
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 11,
+            "field_name": "Ayz",
+            "actual": 1.92084433301327e-09,
+            "expected": 1.920844334053118e-09
+          }
+        },
+        {
+          "field": 12,
+          "name": "Azz",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 3.586030862821634e-17,
+          "max_scaled": 3.5860308561272737e-17,
+          "max_tolerance_ratio": 3.58602751564457e-05,
+          "weighted_rms": 1.1975879152703938e-18,
+          "worst_absolute": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 12,
+            "field_name": "Azz",
+            "actual": -1.866788313456008e-09,
+            "expected": -1.8667882775956996e-09
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 12,
+            "field_name": "Azz",
+            "actual": -1.866788313456008e-09,
+            "expected": -1.8667882775956996e-09
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 12,
+            "field_name": "Azz",
+            "actual": -1.866788313456008e-09,
+            "expected": -1.8667882775956996e-09
+          }
+        },
+        {
+          "field": 13,
+          "name": "P+3",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 0.0,
+          "max_scaled": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "worst_absolute": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 13,
+            "field_name": "P+3",
+            "actual": 5.1169678330178536e-11,
+            "expected": 5.1169678330178536e-11
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 13,
+            "field_name": "P+3",
+            "actual": 5.1169678330178536e-11,
+            "expected": 5.1169678330178536e-11
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 13,
+            "field_name": "P+3",
+            "actual": 5.1169678330178536e-11,
+            "expected": 5.1169678330178536e-11
+          }
+        },
+        {
+          "field": 14,
+          "name": "Theta",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 0.0,
+          "max_scaled": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "worst_absolute": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 14,
+            "field_name": "Theta",
+            "actual": 6.991363106483407e-12,
+            "expected": 6.991363106483407e-12
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 14,
+            "field_name": "Theta",
+            "actual": 6.991363106483407e-12,
+            "expected": 6.991363106483407e-12
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 14,
+            "field_name": "Theta",
+            "actual": 6.991363106483407e-12,
+            "expected": 6.991363106483407e-12
+          }
+        },
+        {
+          "field": 15,
+          "name": "Lambda_x",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 1.718380868614597e-19,
+          "max_scaled": 1.718380862350253e-19,
+          "max_tolerance_ratio": 1.718377736448429e-07,
+          "weighted_rms": 9.937480601035177e-21,
+          "worst_absolute": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 15,
+            "field_name": "Lambda_x",
+            "actual": 3.645492026004907e-09,
+            "expected": 3.645492026176745e-09
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 15,
+            "field_name": "Lambda_x",
+            "actual": 3.645492026004907e-09,
+            "expected": 3.645492026176745e-09
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 15,
+            "field_name": "Lambda_x",
+            "actual": 3.645492026004907e-09,
+            "expected": 3.645492026176745e-09
+          }
+        },
+        {
+          "field": 16,
+          "name": "Lambda_y",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 4.422682031643904e-18,
+          "max_scaled": 4.422682020833892e-18,
+          "max_tolerance_ratio": 4.4226766266441446e-06,
+          "weighted_rms": 1.4770303367856521e-19,
+          "worst_absolute": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 16,
+            "field_name": "Lambda_y",
+            "actual": -2.4442210929719534e-09,
+            "expected": -2.4442210973946354e-09
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 16,
+            "field_name": "Lambda_y",
+            "actual": -2.4442210929719534e-09,
+            "expected": -2.4442210973946354e-09
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 16,
+            "field_name": "Lambda_y",
+            "actual": -2.4442210929719534e-09,
+            "expected": -2.4442210973946354e-09
+          }
+        },
+        {
+          "field": 17,
+          "name": "Lambda_z",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 1.1839946891499737e-18,
+          "max_scaled": 1.1839946870243178e-18,
+          "max_tolerance_ratio": 1.18399362632299e-06,
+          "weighted_rms": 4.07443659202655e-20,
+          "worst_absolute": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 17,
+            "field_name": "Lambda_z",
+            "actual": -1.7953255163822662e-09,
+            "expected": -1.7953255151982715e-09
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 17,
+            "field_name": "Lambda_z",
+            "actual": -1.7953255163822662e-09,
+            "expected": -1.7953255151982715e-09
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 17,
+            "field_name": "Lambda_z",
+            "actual": -1.7953255163822662e-09,
+            "expected": -1.7953255151982715e-09
+          }
+        },
+        {
+          "field": 18,
+          "name": "alpha-(1+r2)/2",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 0.0,
+          "max_scaled": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "worst_absolute": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 18,
+            "field_name": "alpha-(1+r2)/2",
+            "actual": 0.0,
+            "expected": 0.0
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 18,
+            "field_name": "alpha-(1+r2)/2",
+            "actual": 0.0,
+            "expected": 0.0
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 18,
+            "field_name": "alpha-(1+r2)/2",
+            "actual": 0.0,
+            "expected": 0.0
+          }
+        },
+        {
+          "field": 19,
+          "name": "B_x",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 0.0,
+          "max_scaled": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "worst_absolute": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 19,
+            "field_name": "B_x",
+            "actual": 1.7211307156142324e-19,
+            "expected": 1.7211307156142324e-19
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 19,
+            "field_name": "B_x",
+            "actual": 1.7211307156142324e-19,
+            "expected": 1.7211307156142324e-19
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 19,
+            "field_name": "B_x",
+            "actual": 1.7211307156142324e-19,
+            "expected": 1.7211307156142324e-19
+          }
+        },
+        {
+          "field": 20,
+          "name": "B_y",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 0.0,
+          "max_scaled": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "worst_absolute": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 20,
+            "field_name": "B_y",
+            "actual": -1.5093911273275731e-19,
+            "expected": -1.5093911273275731e-19
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 20,
+            "field_name": "B_y",
+            "actual": -1.5093911273275731e-19,
+            "expected": -1.5093911273275731e-19
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 20,
+            "field_name": "B_y",
+            "actual": -1.5093911273275731e-19,
+            "expected": -1.5093911273275731e-19
+          }
+        },
+        {
+          "field": 21,
+          "name": "B_z",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 0.0,
+          "max_scaled": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "worst_absolute": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 21,
+            "field_name": "B_z",
+            "actual": -1.5093911273275727e-19,
+            "expected": -1.5093911273275727e-19
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 21,
+            "field_name": "B_z",
+            "actual": -1.5093911273275727e-19,
+            "expected": -1.5093911273275727e-19
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 21,
+            "field_name": "B_z",
+            "actual": -1.5093911273275727e-19,
+            "expected": -1.5093911273275727e-19
+          }
+        },
+        {
+          "field": 22,
+          "name": "beta_x+x",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 0.0,
+          "max_scaled": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "worst_absolute": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 22,
+            "field_name": "beta_x+x",
+            "actual": 3.767467833759089e-12,
+            "expected": 3.767467833759089e-12
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 22,
+            "field_name": "beta_x+x",
+            "actual": 3.767467833759089e-12,
+            "expected": 3.767467833759089e-12
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 22,
+            "field_name": "beta_x+x",
+            "actual": 3.767467833759089e-12,
+            "expected": 3.767467833759089e-12
+          }
+        },
+        {
+          "field": 23,
+          "name": "beta_y+y",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 0.0,
+          "max_scaled": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "worst_absolute": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 23,
+            "field_name": "beta_y+y",
+            "actual": -3.303980615289029e-12,
+            "expected": -3.303980615289029e-12
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 23,
+            "field_name": "beta_y+y",
+            "actual": -3.303980615289029e-12,
+            "expected": -3.303980615289029e-12
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 23,
+            "field_name": "beta_y+y",
+            "actual": -3.303980615289029e-12,
+            "expected": -3.303980615289029e-12
+          }
+        },
+        {
+          "field": 24,
+          "name": "beta_z+z",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 0.0,
+          "max_scaled": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "worst_absolute": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 24,
+            "field_name": "beta_z+z",
+            "actual": -3.303980615289029e-12,
+            "expected": -3.303980615289029e-12
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 24,
+            "field_name": "beta_z+z",
+            "actual": -3.303980615289029e-12,
+            "expected": -3.303980615289029e-12
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 24,
+            "field_name": "beta_z+z",
+            "actual": -3.303980615289029e-12,
+            "expected": -3.303980615289029e-12
+          }
+        },
+        {
+          "field": 25,
+          "name": "D_x",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 1.6624386437876357e-19,
+          "max_scaled": 1.6624386377182432e-19,
+          "max_tolerance_ratio": 1.662435609096978e-07,
+          "weighted_rms": 9.829654772833163e-21,
+          "worst_absolute": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 25,
+            "field_name": "D_x",
+            "actual": 3.6508970826116186e-09,
+            "expected": 3.6508970827778624e-09
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 25,
+            "field_name": "D_x",
+            "actual": 3.6508970826116186e-09,
+            "expected": 3.6508970827778624e-09
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 25,
+            "field_name": "D_x",
+            "actual": 3.6508970826116186e-09,
+            "expected": 3.6508970827778624e-09
+          }
+        },
+        {
+          "field": 26,
+          "name": "D_y",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 4.424081621240344e-18,
+          "max_scaled": 4.4240816104108435e-18,
+          "max_tolerance_ratio": 4.424076206496426e-06,
+          "weighted_rms": 1.477497827978766e-19,
+          "worst_absolute": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 26,
+            "field_name": "D_y",
+            "actual": -2.4478529099098132e-09,
+            "expected": -2.447852914333895e-09
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 26,
+            "field_name": "D_y",
+            "actual": -2.4478529099098132e-09,
+            "expected": -2.447852914333895e-09
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 26,
+            "field_name": "D_y",
+            "actual": -2.4478529099098132e-09,
+            "expected": -2.447852914333895e-09
+          }
+        },
+        {
+          "field": 27,
+          "name": "D_z",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 1.1821908150291486e-18,
+          "max_scaled": 1.1821908129035604e-18,
+          "max_tolerance_ratio": 1.1821897522359757e-06,
+          "weighted_rms": 4.068536745080334e-20,
+          "worst_absolute": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 27,
+            "field_name": "D_z",
+            "actual": -1.7980077590673462e-09,
+            "expected": -1.7980077578851554e-09
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 27,
+            "field_name": "D_z",
+            "actual": -1.7980077590673462e-09,
+            "expected": -1.7980077578851554e-09
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 262,
+            "native_gid": 57,
+            "native_restart_slot": 5950,
+            "ijk": [
+              12,
+              10,
+              9
+            ],
+            "xyz": [
+              -0.769309273876146,
+              0.5140360227572481,
+              0.37938134961548514
+            ],
+            "field": 27,
+            "field_name": "D_z",
+            "actual": -1.7980077590673462e-09,
+            "expected": -1.7980077578851554e-09
+          }
+        },
+        {
+          "field": 28,
+          "name": "J_x",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 0.0,
+          "max_scaled": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "worst_absolute": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 28,
+            "field_name": "J_x",
+            "actual": 0.0,
+            "expected": 0.0
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 28,
+            "field_name": "J_x",
+            "actual": 0.0,
+            "expected": 0.0
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 28,
+            "field_name": "J_x",
+            "actual": 0.0,
+            "expected": 0.0
+          }
+        },
+        {
+          "field": 29,
+          "name": "J_y",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 0.0,
+          "max_scaled": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "worst_absolute": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 29,
+            "field_name": "J_y",
+            "actual": 0.0,
+            "expected": 0.0
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 29,
+            "field_name": "J_y",
+            "actual": 0.0,
+            "expected": 0.0
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 29,
+            "field_name": "J_y",
+            "actual": 0.0,
+            "expected": 0.0
+          }
+        },
+        {
+          "field": 30,
+          "name": "J_z",
+          "comparisons": 864,
+          "failed_values": 0,
+          "max_absolute": 0.0,
+          "max_scaled": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "weighted_rms": 0.0,
+          "worst_absolute": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 30,
+            "field_name": "J_z",
+            "actual": 0.0,
+            "expected": 0.0
+          },
+          "worst_scaled": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 30,
+            "field_name": "J_z",
+            "actual": 0.0,
+            "expected": 0.0
+          },
+          "worst_ratio": {
+            "legacy_ordinal": 0,
+            "native_gid": 45,
+            "native_restart_slot": 5832,
+            "ijk": [
+              12,
+              0,
+              0
+            ],
+            "xyz": [
+              0.6276812878400296,
+              -0.5504617156966877,
+              -0.5504617156966877
+            ],
+            "field": 30,
+            "field_name": "J_z",
+            "actual": 0.0,
+            "expected": 0.0
+          }
+        }
+      ],
+      "worst_absolute": {
+        "legacy_ordinal": 262,
+        "native_gid": 57,
+        "native_restart_slot": 5950,
+        "ijk": [
+          12,
+          10,
+          9
+        ],
+        "xyz": [
+          -0.769309273876146,
+          0.5140360227572481,
+          0.37938134961548514
+        ],
+        "field": 7,
+        "field_name": "Axx",
+        "actual": 2.5536886179789717e-09,
+        "expected": 2.5536885745551907e-09
+      },
+      "worst_scaled": {
+        "legacy_ordinal": 262,
+        "native_gid": 57,
+        "native_restart_slot": 5950,
+        "ijk": [
+          12,
+          10,
+          9
+        ],
+        "xyz": [
+          -0.769309273876146,
+          0.5140360227572481,
+          0.37938134961548514
+        ],
+        "field": 7,
+        "field_name": "Axx",
+        "actual": 2.5536886179789717e-09,
+        "expected": 2.5536885745551907e-09
+      },
+      "worst_tolerance_ratio": {
+        "legacy_ordinal": 262,
+        "native_gid": 57,
+        "native_restart_slot": 5950,
+        "ijk": [
+          12,
+          10,
+          9
+        ],
+        "xyz": [
+          -0.769309273876146,
+          0.5140360227572481,
+          0.37938134961548514
+        ],
+        "field": 7,
+        "field_name": "Axx",
+        "actual": 2.5536886179789717e-09,
+        "expected": 2.5536885745551907e-09
+      },
+      "weighted_rms": 3.437237089814442e-19,
+      "weight_sum_per_field": 12.57956851882184
+    }
+  },
+  "chi_reference_aggregate": {
+    "ko": 0.1,
+    "chi_floor": 1e-10,
+    "time_M": 0.011266608896548187,
+    "minimum_chi": 1.342207406105154e-05,
+    "minimum_raw_candidate": 1.3422073804799769e-05,
+    "minimum_raw_acceptance_candidate": 1.342207406105154e-05,
+    "floor_events": 0,
+    "nonpositive_candidates": 0,
+    "nonfinite_candidates": 0,
+    "distinct_floored_cells": 0,
+    "sum_corrections_over_attempts": 0,
+    "surface_floor_events": 0,
+    "max_correction": 0,
+    "max_floor_radius": 0,
+    "first_floor_M": null
+  },
+  "chi_aggregate_differences": {
+    "minimum_chi": 0.0,
+    "minimum_raw_candidate": 0.0,
+    "minimum_raw_acceptance_candidate": 0.0,
+    "floor_events": 0,
+    "nonpositive_candidates": 0,
+    "nonfinite_candidates": 0,
+    "distinct_floored_cells": 0,
+    "sum_corrections_over_attempts": 0.0,
+    "surface_floor_events": 0,
+    "max_correction": 0.0,
+    "max_floor_radius": 0.0,
+    "first_floor_M": null
+  },
+  "chi_aggregate_exact_equal": {
+    "minimum_chi": true,
+    "minimum_raw_candidate": true,
+    "minimum_raw_acceptance_candidate": true,
+    "floor_events": true,
+    "nonpositive_candidates": true,
+    "nonfinite_candidates": true,
+    "distinct_floored_cells": true,
+    "sum_corrections_over_attempts": true,
+    "surface_floor_events": true,
+    "max_correction": true,
+    "max_floor_radius": true,
+    "first_floor_M": true
+  },
+  "per_cell_chi_history_compared": false,
+  "export_sha256": {
+    "fields.bin": "36e4957c94ba250562ff4ef7c09758ef34a503964b971ad8538904862c61a404",
+    "boundary.bin": "5a7df50e27549481c18adcddeace417977af17626681574529f0909f7537a482",
+    "chi-records.bin": "b1315b9880cc533f8285cf07b3816ba07a9e1f49bd9947c24a58719c062bff11",
+    "surface-chi-records.bin": "54cdcc0c3b6d31f36b0748ad720d2ee5186ff2b3af8840a7b5942bed6cd525ed"
+  }
+}

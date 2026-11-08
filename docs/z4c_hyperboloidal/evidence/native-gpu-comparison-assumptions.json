@@ -1,0 +1,263 @@
+{
+  "scope": "Read-only source/config/build policy audit; not a substitute for matched GPU field comparisons.",
+  "old_source_checks": {
+    "src/z4c/hyperboloidal/spherical_policy.hpp": {
+      "sha256": "74618175719f922e62b5f15e6f619b508486cef563494d7ccd14f2017fa1c00c",
+      "matches_pinned": true
+    },
+    "src/z4c/hyperboloidal/hyperbolic_scri_device.hpp": {
+      "sha256": "26814001eead2e16ae717ac4dc5fb47bc9142553e1dc0b33a4319636d5d20154",
+      "matches_pinned": true
+    },
+    "src/mesh/cubed_sphere/scri_surface.hpp": {
+      "sha256": "fac59278a9462653e3a04cb6060c94c2920932596228a50377a574e3c2fe4a24",
+      "matches_pinned": true
+    },
+    "src/mesh/cubed_sphere/scri_radial_difference.hpp": {
+      "sha256": "c68e96e590b7c6d601e850b91d5ec0d6e5a6e58ee2a3866d98188825f3ff6b3b",
+      "matches_pinned": true
+    },
+    "src/z4c/hyperboloidal/spherical_transfer_3d.hpp": {
+      "sha256": "319674e2a55e1e2f1e07232be99f306f7644be606ab50d74696af437d27df127",
+      "matches_pinned": true
+    },
+    "pinned coupled_mpi.cpp": {
+      "path": "build-native/aurora-original-eight-control/control-provenance/pinned-source/tst/hyperbolic_shift_3d/coupled_mpi.cpp",
+      "sha256": "87a8d90396bb3ab6e72efadab0e9491322517bf63413f8f4460a42f24f51c115",
+      "matches_pinned": true
+    },
+    "pinned hyperbolic_composite_device.hpp": {
+      "path": "build-native/n12-pinned-hyperbolic-composite-device.hpp",
+      "sha256": "1c8987d2b23bc32a37393e92b9ebb70336d51f4e27e9b9473d20b607bd7d2962",
+      "matches_pinned": true
+    }
+  },
+  "native_source_checks": {
+    "src/driver/classical_rk4.hpp": {
+      "frozen_sha256": "f8a60018ddeb0397186e16cd6142b830081af37fa5464a19ffd37264dfc51bfc",
+      "current_matches_frozen": true
+    },
+    "src/z4c_hyperboloidal/point_state.hpp": {
+      "frozen_sha256": "75769bc90eb7024b13ed7e50a527e47c06ade5ae4cbb7b8274c2c4f9c5472f51",
+      "current_matches_frozen": true
+    },
+    "src/z4c_hyperboloidal/endpoint_state.hpp": {
+      "frozen_sha256": "c6a95d943a835ebd646bfa3cd9db24dbc870e3d277dfb075c8964fb4c2cf1df6",
+      "current_matches_frozen": true
+    },
+    "src/z4c_hyperboloidal/endpoint.hpp": {
+      "frozen_sha256": "a083a517629b2e7b3d9156b9b2d41db72e8cbc0e6fa26419a12364e6f005e813",
+      "current_matches_frozen": true
+    },
+    "src/z4c_hyperboloidal/spherical_policy.hpp": {
+      "frozen_sha256": "838f5f9812b44afe21b799b8abb2beef59eef7e744b1df10c0b0668693a8e264",
+      "current_matches_frozen": true
+    },
+    "src/z4c_hyperboloidal/surface_exchange.hpp": {
+      "frozen_sha256": "de0a04b9d81a6c60ff6e49a21ae3ba700b621d5ff89636ff5bcd7ce0bb05c325",
+      "current_matches_frozen": true
+    },
+    "src/z4c_hyperboloidal/surface_exchange.cpp": {
+      "frozen_sha256": "2b78bb42e819fc0178a9e13d2b21df29736a17abe762f85c6fb6485003517c34",
+      "current_matches_frozen": true
+    },
+    "src/z4c_hyperboloidal/z4c_hyperboloidal.cpp": {
+      "frozen_sha256": "77bfd232396f53707ac408765079260c7e1402264d28fdd29412d3ef3491a775",
+      "current_matches_frozen": true
+    },
+    "src/z4c_hyperboloidal/z4c_hyperboloidal_update.cpp": {
+      "frozen_sha256": "aeded9c998280e82ac551bb9d6c088aafb6f33fa84c9823fa91f13e35d6dbebe",
+      "current_matches_frozen": true
+    },
+    "src/z4c_hyperboloidal/z4c_hyperboloidal_tasks.cpp": {
+      "frozen_sha256": "ba561148afb2f563213d16b1eb5335024dd0a0fa136ed026a40e7d2284f4da49",
+      "current_matches_frozen": true
+    },
+    "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp": {
+      "frozen_sha256": "8c9e47745dd6ba4bbd3870e41645af1e879c63a86e2a800df499badca9936e29",
+      "current_matches_frozen": true
+    }
+  },
+  "normalized_function_body_checks": {
+    "spherical_policy.hpp::Physical(": true,
+    "spherical_policy.hpp::Restore(": true,
+    "spherical_policy.hpp::Boundary(": true,
+    "spherical_policy.hpp::CompatibleWeight(": true,
+    "central_z4c_configuration.hpp::Resolve() const": true,
+    "native_wormhole.hpp::Gaussian(": true,
+    "native_wormhole.hpp::Integral(": true,
+    "native_wormhole.hpp::CompactIntegrate(": true
+  },
+  "original_compile": [
+    "/opt/aurora/26.26.0/oneapi/compiler/latest/bin/icpx",
+    "-DHYPERBOLIC_BOUNDARY_REUSE=1",
+    "-DHYPERBOLIC_BROAD_SMOOTH_A=1",
+    "-DHYPERBOLIC_CONFIGURED_FORMULATION=1",
+    "-DHYPERBOLIC_DIRECT_OUTER=1",
+    "-DHYPERBOLIC_INNER_TELEGRAPHER=1",
+    "-DHYPERBOLIC_NATIVE_WORMHOLE=1",
+    "-DHYPERBOLIC_NORMALIZED_INNER_SHIFT=1",
+    "-DHYPERBOLIC_RESTORE_INNER_DAMPING=1",
+    "-DHYPERBOLIC_SHORT_INNER_GAUGE=1",
+    "-DHYPERBOLIC_SMOOTH_GAUGE_BLEND=1",
+    "-DHYPERBOLIC_SPARSE_STAGE=1",
+    "-DHYPERBOLIC_SPHERICAL_POLICY=1",
+    "-DKOKKOS_DEPENDENCE",
+    "-DMPI_ATHENA_REAL=MPI_DOUBLE",
+    "-I/lus/flare/projects/CompactBinaryMerger/hzhu/scri-ko01-20261106/source/src",
+    "-I/home/hzhu/scri-resident-20M-20261105/build-100m",
+    "-I/home/hzhu/scri-resident-20M-20261105/build-100m/kokkos",
+    "-I/home/hzhu/scri-resident-20M-20261105/build-100m/kokkos/core/src",
+    "-I/home/hzhu/hyperboloidal-performance-scaling-20261103/control-source-v2/kokkos/core/src",
+    "-I/home/hzhu/scri-resident-20M-20261105/build-100m/kokkos/containers/src",
+    "-I/home/hzhu/hyperboloidal-performance-scaling-20261103/control-source-v2/kokkos/containers/src",
+    "-I/home/hzhu/scri-resident-20M-20261105/build-100m/kokkos/algorithms/src",
+    "-I/home/hzhu/hyperboloidal-performance-scaling-20261103/control-source-v2/kokkos/algorithms/src",
+    "-I/home/hzhu/scri-resident-20M-20261105/build-100m/kokkos/simd/src",
+    "-I/home/hzhu/hyperboloidal-performance-scaling-20261103/control-source-v2/kokkos/simd/src",
+    "-isystem",
+    "/home/hzhu/hyperboloidal-performance-scaling-20261103/control-source-v2/kokkos/tpls/desul/include",
+    "-isystem",
+    "/home/hzhu/hyperboloidal-performance-scaling-20261103/control-source-v2/kokkos/tpls/mdspan/include",
+    "-isystem",
+    "/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.87e2045-po72xy6/include",
+    "-fp-model=precise",
+    "-fno-sycl-id-queries-fit-in-int",
+    "-O2",
+    "-std=gnu++17",
+    "-fPIE",
+    "-ffp-contract=off",
+    "-Wall",
+    "-Wextra",
+    "-fsycl",
+    "-fno-sycl-id-queries-fit-in-int",
+    "-fsycl-dead-args-optimization",
+    "-fsycl-unnamed-lambda",
+    "-fno-sycl-rdc",
+    "-DDESUL_SYCL_DEVICE_GLOBAL_SUPPORTED",
+    "-fsycl-targets=spir64_gen",
+    "-Xsycl-target-backend",
+    "-device 12.60.7",
+    "-o",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-ko01-20261106/evolve-static.o",
+    "-c",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-ko01-20261106/source/tst/hyperbolic_shift_3d/endpoint_policy/run.cpp"
+  ],
+  "native_fp_flags": {
+    "z4c_hyperboloidal_rhs.cpp": {
+      "compiler": "/opt/aurora/26.26.0/oneapi/compiler/latest/bin/icpx",
+      "flags": [
+        "-fp-model=precise",
+        "-ffp-contract=off",
+        "-fno-sycl-id-queries-fit-in-int",
+        "-O2",
+        "-std=c++17",
+        "-fsycl",
+        "-fno-sycl-id-queries-fit-in-int",
+        "-fsycl-dead-args-optimization",
+        "-fsycl-unnamed-lambda",
+        "-fno-sycl-rdc",
+        "-fsycl-targets=spir64_gen",
+        "-ffp-contract=off"
+      ]
+    },
+    "surface_exchange.cpp": {
+      "compiler": "/opt/aurora/26.26.0/oneapi/compiler/latest/bin/icpx",
+      "flags": [
+        "-fp-model=precise",
+        "-ffp-contract=off",
+        "-fno-sycl-id-queries-fit-in-int",
+        "-O2",
+        "-std=c++17",
+        "-fsycl",
+        "-fno-sycl-id-queries-fit-in-int",
+        "-fsycl-dead-args-optimization",
+        "-fsycl-unnamed-lambda",
+        "-fno-sycl-rdc",
+        "-fsycl-targets=spir64_gen",
+        "-ffp-contract=off"
+      ]
+    },
+    "z4c_hyperboloidal_update.cpp": {
+      "compiler": "/opt/aurora/26.26.0/oneapi/compiler/latest/bin/icpx",
+      "flags": [
+        "-fp-model=precise",
+        "-ffp-contract=off",
+        "-fno-sycl-id-queries-fit-in-int",
+        "-O2",
+        "-std=c++17",
+        "-fsycl",
+        "-fno-sycl-id-queries-fit-in-int",
+        "-fsycl-dead-args-optimization",
+        "-fsycl-unnamed-lambda",
+        "-fno-sycl-rdc",
+        "-fsycl-targets=spir64_gen",
+        "-ffp-contract=off"
+      ]
+    },
+    "z4c_hyperboloidal.cpp": {
+      "compiler": "/opt/aurora/26.26.0/oneapi/compiler/latest/bin/icpx",
+      "flags": [
+        "-fp-model=precise",
+        "-ffp-contract=off",
+        "-fno-sycl-id-queries-fit-in-int",
+        "-O2",
+        "-std=c++17",
+        "-fsycl",
+        "-fno-sycl-id-queries-fit-in-int",
+        "-fsycl-dead-args-optimization",
+        "-fsycl-unnamed-lambda",
+        "-fno-sycl-rdc",
+        "-fsycl-targets=spir64_gen",
+        "-ffp-contract=off"
+      ]
+    },
+    "chart_atlas.cpp": {
+      "compiler": "/opt/aurora/26.26.0/oneapi/compiler/latest/bin/icpx",
+      "flags": [
+        "-fp-model=precise",
+        "-ffp-contract=off",
+        "-fno-sycl-id-queries-fit-in-int",
+        "-O2",
+        "-std=c++17",
+        "-fsycl",
+        "-fno-sycl-id-queries-fit-in-int",
+        "-fsycl-dead-args-optimization",
+        "-fsycl-unnamed-lambda",
+        "-fno-sycl-rdc",
+        "-fsycl-targets=spir64_gen",
+        "-ffp-contract=off"
+      ]
+    }
+  },
+  "compensation": {
+    "enabled_in_pinned_spherical_policy": false,
+    "bulk_branch_lines": [
+      1286,
+      1288
+    ],
+    "surface_branch_lines": [
+      1357,
+      1359
+    ],
+    "manifest_defines_spherical_policy": true,
+    "native_numerator_and_base_order_matches": true,
+    "inert_storage_in_original_restart": true
+  },
+  "review_findings": {
+    "surface_projection": "Same algebraic expansion, null-speed projection, alphaoffset=0, J=0, and five inner radial donor extrapolation of D-Lambda in identical order.",
+    "normal_compatibility": "Same base plus three shift-gradient unit probes, same defect differences, partial pivoting/Gauss-Jordan elimination, same1e-12 threshold for finite matrices. Native additionally rejects NaN pivots.",
+    "endpoint_derivatives": "Same six radial bulk nodes plus actual scri endpoint, centered5x5 angular rows, six-point crossface donor interpolation, insertion/summation order; endpoint reconstruction coverslast3bulkrows.",
+    "normal_lift": "Same six-node polynomial radial lift and local6x6angular interpolation; applies toscriandlast2bulkrows only.",
+    "jet_assembly": "Same independentfields, need_second selection, compatible-lapse Hessian, Restore\u2192normal-lift order, angular-only endpoint transport correction, chi transport factor r*r.",
+    "boundary_source": "Both obtain reference.source.At(1), bulk sourceAt(r), same20M/.97configuration/.25outerlapse/.5penalty/.1KO/1e-10chifloor/fixeddt.",
+    "snapshot": "Pinned run.cpp invokes RHS before snapshot; CompleteState itself only gathers. RHS refresh repeats dependent surface projection but does not advance independent fields or chi records; accepted state already performs same projection.",
+    "mapping": "Full31 stored components retain common Cartesian convention; independent coordinate proof and mapping coverall229392bulk/864scri. No percell historical ChiRecord oracle exists; aggregateonly must remain explicit."
+  },
+  "runtime_modified": false,
+  "exact_declaration_scoped_wormhole_body_checks": {
+    "static double Gaussian(": true,
+    "double Integral(double y)const": true,
+    "std::array<double,2> CompactIntegrate(double target,double shape)const": true
+  }
+}

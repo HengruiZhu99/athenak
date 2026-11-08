@@ -1,0 +1,153 @@
+{
+  "observed_utc": "2026-11-08T06:33:35.351417+00:00",
+  "remote_mutations": false,
+  "binary_executed": false,
+  "files": {
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-resolution-20261107/fastflow_diagnostics": {
+      "exists": true,
+      "bytes": 13809000,
+      "sha256": "ffc8cd31909776872f0490466b26fbaeda378e072478e68e24ec9c7aaa2f0701"
+    },
+    "/home/hzhu/scri-resident-20M-20261105/build-100m/libcurrent_spherical.so": {
+      "exists": true,
+      "bytes": 345272,
+      "sha256": "ad4c6321b18a44ee89e42cdd4307e760fe59506ec0293a655e97416811acff2d"
+    },
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-resolution-20261107/source/src/z4c/hyperboloidal/hyperbolic_composite_device.hpp": {
+      "exists": true,
+      "bytes": 37984,
+      "sha256": "3c5c5d22ade99123946511a706a01a9a4ca13541ef61626776c86025ec5f33b2",
+      "diagnostic_mask_lines": [
+        {
+          "line": 229,
+          "text": "      if(logarithmic){const auto&x=geometry(local).x;const Real r=sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);"
+        },
+        {
+          "line": 309,
+          "text": "      const Real r=sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);"
+        },
+        {
+          "line": 410,
+          "text": "    Real exterior_radius;"
+        },
+        {
+          "line": 450,
+          "text": "      const Real r=sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);"
+        },
+        {
+          "line": 452,
+          "text": "      const bool outside=exterior_mask.extent(0)?exterior_mask(local)>0:r>exterior_radius;"
+        },
+        {
+          "line": 458,
+          "text": "        if(r>fixed_cuts[k])result.fixed[k].volume+=weight;"
+        },
+        {
+          "line": 503,
+          "text": "        if(r>fixed_cuts[k])Add(result.fixed[k],sums);"
+        },
+        {
+          "line": 648,
+          "text": "  DiagnosticSummary Diagnostics(ConstBuffer padded,Real exterior_radius=0,ConstBuffer surface={},"
+        },
+        {
+          "line": 655,
+          "text": "    if (padded.extent(0)!=size_t(nf)*padded_count_ || !(exterior_radius>=0)"
+        },
+        {
+          "line": 656,
+          "text": "        || !std::isfinite(exterior_radius))"
+        },
+        {
+          "line": 671,
+          "text": "        Kokkos::RangePolicy<ExecutionSpace>(0,local_),Diagnose{kernel,first_,exterior_radius,extended||zero_shift_restoration,"
+        }
+      ]
+    },
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-ko01-20261106/source/src/z4c/hyperboloidal/hyperbolic_composite_device.hpp": {
+      "exists": true,
+      "bytes": 37616,
+      "sha256": "1c8987d2b23bc32a37393e92b9ebb70336d51f4e27e9b9473d20b607bd7d2962",
+      "diagnostic_mask_lines": [
+        {
+          "line": 229,
+          "text": "      if(logarithmic){const auto&x=geometry(local).x;const Real r=sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);"
+        },
+        {
+          "line": 309,
+          "text": "      const Real r=sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);"
+        },
+        {
+          "line": 410,
+          "text": "    Real exterior_radius;"
+        },
+        {
+          "line": 449,
+          "text": "      const Real r=sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);"
+        },
+        {
+          "line": 454,
+          "text": "      if (r>exterior_radius) result.exterior.volume+=weight;"
+        },
+        {
+          "line": 456,
+          "text": "        if(r>fixed_cuts[k])result.fixed[k].volume+=weight;"
+        },
+        {
+          "line": 499,
+          "text": "      Add(result.total,sums);if (r>exterior_radius) Add(result.exterior,sums);"
+        },
+        {
+          "line": 501,
+          "text": "        if(r>fixed_cuts[k])Add(result.fixed[k],sums);"
+        },
+        {
+          "line": 646,
+          "text": "  DiagnosticSummary Diagnostics(ConstBuffer padded,Real exterior_radius=0,ConstBuffer surface={},"
+        },
+        {
+          "line": 651,
+          "text": "    if (padded.extent(0)!=size_t(nf)*padded_count_ || !(exterior_radius>=0)"
+        },
+        {
+          "line": 652,
+          "text": "        || !std::isfinite(exterior_radius))"
+        },
+        {
+          "line": 667,
+          "text": "        Kokkos::RangePolicy<ExecutionSpace>(0,local_),Diagnose{kernel,first_,exterior_radius,extended||zero_shift_restoration,"
+        }
+      ]
+    },
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-ko01-20261106/campaign-constant20m/horizon-analysis/snapshots.txt": {
+      "exists": true,
+      "bytes": 14007,
+      "sha256": "fc55628d06c697d800a4824249f403434cd43710560ee69d7e69c8689b2de9d6",
+      "target_rows": [
+        "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-ko01-20261106/campaign-constant20m/segment-01/step-3551/restart.bin 0.030460281838094686 5.0009660239551499 0.0073257648025702423 0.0039666959397409406 0.00063679744011741466 0.00074930798279592369 0.0097461860250805128 0.0048961654337143189 0.0001470802568244885 0.00038191355277477436"
+      ],
+      "target_exists": true,
+      "target_path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-ko01-20261106/campaign-constant20m/segment-01/step-3551/restart.bin"
+    },
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-ko01-20261106/campaign-constant20m/central_smr20.in": {
+      "exists": true,
+      "bytes": 238,
+      "sha256": "d660b72deb0f3679cf63a0a28e1298e817b927e7906533eecef020d11f1a202f"
+    },
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-resolution-20261107/analyze_n12.pbs": {
+      "exists": true,
+      "bytes": 1100,
+      "sha256": "30f25c8023d44c7c38f2d6e2791f6db396a0cb92eb945903145544306b2291ca"
+    }
+  },
+  "dynamic_libraries": {
+    "command": [
+      "bash",
+      "-lc",
+      "module load oneapi/release/2025.3.1 >/dev/null 2>&1; ldd /lus/flare/projects/CompactBinaryMerger/hzhu/scri-resolution-20261107/fastflow_diagnostics"
+    ],
+    "returncode": 0,
+    "stdout": "\tlinux-vdso.so.1 (0x00007ffe37494000)\n\tlibcurrent_spherical.so => /home/hzhu/scri-resident-20M-20261105/build-100m/libcurrent_spherical.so (0x00007f27f990f000)\n\tlibmpi.so.12 => /opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/mpich-5.0.0.aurora_test.87e2045-po72xy6/lib/libmpi.so.12 (0x00007f27f1f6d000)\n\tlibstdc++.so.6 => /opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-14.3.0-siitp7a/lib64/libstdc++.so.6 (0x00007f27f1d01000)\n\tlibm.so.6 => /lib64/libm.so.6 (0x00007f27f1c0a000)\n\tlibgcc_s.so.1 => /opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-14.3.0-siitp7a/lib64/libgcc_s.so.1 (0x00007f27f1bdd000)\n\tlibsycl.so.8 => /opt/aurora/26.26.0/oneapi/compiler/latest/lib/libsycl.so.8 (0x00007f27f17e5000)\n\tlibc.so.6 => /lib64/libc.so.6 (0x00007f27f15d2000)\n\t/lib64/ld-linux-x86-64.so.2 (0x00007f27f9962000)\n\tlibsvml.so => /opt/aurora/26.26.0/oneapi/compiler/latest/lib/libsvml.so (0x00007f27f00b2000)\n\tlibirng.so => /opt/aurora/26.26.0/oneapi/compiler/latest/lib/libirng.so (0x00007f27effb9000)\n\tlibimf.so => /opt/aurora/26.26.0/oneapi/compiler/latest/lib/libimf.so (0x00007f27efb94000)\n\tlibintlc.so.5 => /opt/aurora/26.26.0/oneapi/compiler/latest/lib/libintlc.so.5 (0x00007f27efb31000)\n\tlibpmix.so.2 => /usr/lib64/libpmix.so.2 (0x00007f27ef8e8000)\n\tlibmunge.so.2 => /usr/lib64/libmunge.so.2 (0x00007f27ef8dd000)\n\tlibevent_core-2.1.so.7 => /usr/lib64/libevent_core-2.1.so.7 (0x00007f27ef8a7000)\n\tlibevent_pthreads-2.1.so.7 => /usr/lib64/libevent_pthreads-2.1.so.7 (0x00007f27ef8a1000)\n\tlibhwloc.so.15 => /opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/hwloc-2.12.2-nidjp7i/lib/libhwloc.so.15 (0x00007f27ef83c000)\n\tlibfabric.so.1 => /opt/cray/libfabric/2.3.1/lib64/libfabric.so.1 (0x00007f27ef6e6000)\n\tlibcxi.so.1 => /usr/lib64/libcxi.so.1 (0x00007f27ef6c5000)\n\tlibcurl.so.4 => /usr/lib64/libcurl.so.4 (0x00007f27ef5e7000)\n\tlibjson-c.so.5 => /usr/lib64/libjson-c.so.5 (0x00007f27ef5d1000)\n\tlibatomic.so.1 => /opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-runtime-14.3.0-7g6ktug/lib/libatomic.so.1 (0x00007f27ef5c5000)\n\tlibxpmem.so.0 => /usr/lib64/libxpmem.so.0 (0x00007f27ef5c2000)\n\tlibze_loader.so.1 => /usr/lib64/libze_loader.so.1 (0x00007f27ef46a000)\n\tlibduns.so => /usr/lib64/libduns.so (0x00007f27ef45d000)\n\tlibdfs.so => /usr/lib64/libdfs.so (0x00007f27ef3f8000)\n\tlibdaos.so.2 => /usr/lib64/libdaos.so.2 (0x00007f27ef1fb000)\n\tlibuuid.so.1 => /usr/lib64/libuuid.so.1 (0x00007f27ef1f0000)\n\tlibgurt.so.4 => /usr/lib64/libgurt.so.4 (0x00007f27ef1a3000)\n\tlibdl.so.2 => /lib64/libdl.so.2 (0x00007f27ef1a0000)\n\tlibur_loader.so.0 => /opt/aurora/26.26.0/oneapi/compiler/latest/lib/libur_loader.so.0 (0x00007f27ee450000)\n\tlibpthread.so.0 => /lib64/libpthread.so.0 (0x00007f27ee44d000)\n\tlibpciaccess.so.0 => /usr/lib64/libpciaccess.so.0 (0x00007f27ee200000)\n\tlibxml2.so.2 => /opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/libxml2-2.13.9-bkp3lbv/lib64/libxml2.so.2 (0x00007f27ee084000)\n\tlibnl-3.so.200 => /usr/lib64/libnl-3.so.200 (0x00007f27ee428000)\n\tlibnghttp2.so.14 => /usr/lib64/libnghttp2.so.14 (0x00007f27ee054000)\n\tlibidn2.so.0 => /usr/lib64/libidn2.so.0 (0x00007f27ede00000)\n\tlibssh.so.4 => /usr/lib64/libssh.so.4 (0x00007f27edd91000)\n\tlibpsl.so.5 => /usr/lib64/libpsl.so.5 (0x00007f27eda00000)\n\tlibssl.so.3 => /usr/lib64/libssl.so.3 (0x00007f27edc71000)\n\tlibcrypto.so.3 => /usr/lib64/libcrypto.so.3 (0x00007f27ed391000)\n\tlibgssapi_krb5.so.2 => /usr/lib64/libgssapi_krb5.so.2 (0x00007f27edc1f000)\n\tlibldap_r-2.4.so.2 => /usr/lib64/libldap_r-2.4.so.2 (0x00007f27ed33c000)\n\tliblber-2.4.so.2 => /usr/lib64/liblber-2.4.so.2 (0x00007f27ee414000)\n\tlibzstd.so.1 => /usr/lib64/libzstd.so.1 (0x00007f27ed275000)\n\tlibbrotlidec.so.1 => /usr/lib64/libbrotlidec.so.1 (0x00007f27ee047000)\n\tlibz.so.1 => /usr/lib64/libz.so.1 (0x00007f27ee02e000)\n\tlibdaos_common.so => /usr/lib64/libdaos_common.so (0x00007f27ed1d1000)\n\tlibyaml-0.so.2 => /usr/lib64/libyaml-0.so.2 (0x00007f27ed1b2000)\n\tlibrt.so.1 => /lib64/librt.so.1 (0x00007f27ee40f000)\n\tliblzma.so.5 => /usr/lib64/liblzma.so.5 (0x00007f27ed16b000)\n\tlibunistring.so.2 => /usr/lib64/libunistring.so.2 (0x00007f27ecc00000)\n\tlibjitterentropy.so.3 => /usr/lib64/libjitterentropy.so.3 (0x00007f27ee026000)\n\tlibkrb5.so.3 => /usr/lib64/libkrb5.so.3 (0x00007f27ed091000)\n\tlibk5crypto.so.3 => /usr/lib64/libk5crypto.so.3 (0x00007f27ed07a000)\n\tlibcom_err.so.2 => /usr/lib64/libcom_err.so.2 (0x00007f27ee021000)\n\tlibkrb5support.so.0 => /usr/lib64/libkrb5support.so.0 (0x00007f27ed06b000)\n\tlibsasl2.so.3 => /usr/lib64/libsasl2.so.3 (0x00007f27ed04d000)\n\tlibbrotlicommon.so.1 => /usr/lib64/libbrotlicommon.so.1 (0x00007f27ed02b000)\n\tlibisal.so.2 => /usr/lib64/libisal.so.2 (0x00007f27ecfd5000)\n\tlibisal_crypto.so.2 => /usr/lib64/libisal_crypto.so.2 (0x00007f27ec9f9000)\n\tlibcart.so.4 => /usr/lib64/libcart.so.4 (0x00007f27ec8f1000)\n\tliblz4.so.1 => /usr/lib64/liblz4.so.1 (0x00007f27ecfb1000)\n\tlibprotobuf-c.so.1 => /usr/lib64/libprotobuf-c.so.1 (0x00007f27edc15000)\n\tlibkeyutils.so.1 => /usr/lib64/libkeyutils.so.1 (0x00007f27ec600000)\n\tlibresolv.so.2 => /lib64/libresolv.so.2 (0x00007f27ecf9f000)\n\tlibselinux.so.1 => /usr/lib64/libselinux.so.1 (0x00007f27ec8c4000)\n\tlibmercury.so.2 => /usr/lib64/libmercury.so.2 (0x00007f27ec88a000)\n\tlibpcre2-8.so.0 => /usr/lib64/libpcre2-8.so.0 (0x00007f27ec544000)\n\tlibna.so.6 => /usr/lib64/libna.so.6 (0x00007f27ec869000)\n\tlibmercury_util.so.4 => /usr/lib64/libmercury_util.so.4 (0x00007f27ecf92000)\n",
+    "stderr": ""
+  }
+}

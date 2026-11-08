@@ -1,0 +1,74 @@
+{
+  "schema": "native-n12-ownership-evidence-v1",
+  "passed": true,
+  "scope": "Observed ownership counts only; no measured performance or GPU utilization.",
+  "full_report": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-ownership-audit-v1/results.json",
+  "full_report_sha256": "1cfe5c57ae7a782dc473a24bf6471e6b8ea03245c5cfdd3efcac936b1170589c",
+  "layouts": {
+    "24": {
+      "ranks": 24,
+      "total_bulk_points": 229392,
+      "total_scri_points": 864,
+      "blocks_per_rank_min": 4,
+      "blocks_per_rank_max": 5,
+      "bulk_per_rank_min": 6912,
+      "bulk_per_rank_mean": 9558.0,
+      "bulk_per_rank_max": 12663,
+      "largest_bulk_ranks": [
+        8
+      ],
+      "mean_to_max_bulk_count": 0.7547974413646056,
+      "surface_owners": [
+        11,
+        14,
+        16,
+        19,
+        21,
+        23
+      ],
+      "native_unit_cost_assignment_exact": true
+    },
+    "96": {
+      "ranks": 96,
+      "total_bulk_points": 229392,
+      "total_scri_points": 864,
+      "blocks_per_rank_min": 1,
+      "blocks_per_rank_max": 2,
+      "bulk_per_rank_min": 1728,
+      "bulk_per_rank_mean": 2389.5,
+      "bulk_per_rank_max": 6588,
+      "largest_bulk_ranks": [
+        90
+      ],
+      "mean_to_max_bulk_count": 0.36270491803278687,
+      "surface_owners": [
+        45,
+        57,
+        69,
+        81,
+        89,
+        95
+      ],
+      "native_unit_cost_assignment_exact": true
+    }
+  },
+  "uniform_bulk_point_cost_model": {
+    "speedup": 1.9221311475409837,
+    "efficiency": 0.4805327868852459,
+    "assumptions": "Equal time per bulk point, concurrent ranks, no communication, surface, launch or diagnostic costs. This is not an overall scaling bound."
+  },
+  "input_sha256": {
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-checkpoint-map-aurora-v1/mapping.npz": "484bd5e77d83c537ce564e2f02b68bd3544680ced65d81abdf8a69216434b15d",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/src/mesh/load_balance.cpp": "86ed933a707fb4b20935077400cf3342f6007fdbd68f60ba913a4792ea864d82"
+  },
+  "source_sha256": {
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/n12_ownership_audit.py": "7286931e59401c0f9c84829cec6671f42886f90e69f977ff180b6b1381b3903f"
+  },
+  "equal_block_weights_unchanged": true,
+  "performance_admission": false,
+  "independent_review": {
+    "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-ownership-audit-v1/independent-review.json",
+    "sha256": "97ad61acdab7727adefaf7e625fd14c9ef317471e934bf754f3e4ac8b72cbc2c",
+    "passed": true
+  }
+}

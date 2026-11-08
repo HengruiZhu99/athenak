@@ -1,0 +1,66 @@
+{
+  "scope": "read-only arithmetic and accumulation audit; actual GPU CFL observation remains a separate comparison",
+  "sources": {
+    "pinned_device": {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-pinned-hyperbolic-composite-device.hpp",
+      "sha256": "1c8987d2b23bc32a37393e92b9ebb70336d51f4e27e9b9473d20b607bd7d2962"
+    },
+    "pinned_evolution": {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-original-eight-control/control-provenance/pinned-source/tst/hyperbolic_shift_3d/coupled_mpi.cpp",
+      "sha256": "87a8d90396bb3ab6e72efadab0e9491322517bf63413f8f4460a42f24f51c115"
+    },
+    "pinned_driver": {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/gpu-comparison-assumptions/run.cpp",
+      "sha256": "865ec01c0acb9e4db851733e2e0fbcd5577f154cc0ca99d3f73212079fee426c"
+    },
+    "native_point_rhs": {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/src/z4c_hyperboloidal/point_rhs.hpp",
+      "sha256": "4a1720aa1f37c9e96148817fc018f609ef4bb4ac90fb1c7fbbd4da810d114187"
+    },
+    "native_rhs": {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp",
+      "sha256": "8c9e47745dd6ba4bbd3870e41645af1e879c63a86e2a800df499badca9936e29"
+    },
+    "native_lifecycle": {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/src/z4c_hyperboloidal/z4c_hyperboloidal_lifecycle.cpp",
+      "sha256": "b9ba0fff9814898c3056e5693c23036124fa5372b1765657d1d989bd980bfd54"
+    }
+  },
+  "native_sources_match_frozen_aurora_snapshot": true,
+  "per_point": {
+    "references": [
+      "pinned device:354-370",
+      "native point_rhs.hpp:58-71",
+      "native z4c_hyperboloidal_rhs.cpp:48"
+    ],
+    "formula": "dt * N * sum_A(abs(sum_i J[A][i] beta[i]) + sqrt(max(gauge_shift_speed_squared, gauge_lapse_speed_squared, optional_physical_speed_squared)))",
+    "N": 12,
+    "same_characteristic_chi_guard": true,
+    "same_transport_Q_E_loops": true,
+    "same_optional_enforce_cfl_term": true,
+    "same_axis_order": [
+      0,
+      1,
+      2
+    ],
+    "sum_order": "Old starts at +0 and accumulates axes0/1/2; native uses (speed0+speed1)+speed2. Valid terms are nonnegative; initial zero addition does not alter the valid finite term.",
+    "cfl_number_multiplier": false
+  },
+  "reduction": {
+    "old": "device maximum over owned evolved bulk points; e.cfl accumulates four stage maxima, reset at step start; original run.cpp then MPI_MAX across ranks",
+    "native_observer_required": "maximum of owned rhs_cfl at each stage, MPI_MAX, then maximum across four stages",
+    "scri_penalty_cfl_included": false,
+    "reason": "Old e.cfl is updated only from bulk kernel stats.max_cfl. Boundary penalty statistics are separate."
+  },
+  "runtime_policy": {
+    "spherical_policy_rejects_cfl_above_0_4": false,
+    "relaxation_guard_preserved": "dt/min(tau,InnerTelegrapher::tau) <= .25",
+    "dt_is_nominal_fixed": true
+  },
+  "observer_caveats": [
+    "Read after the original complete stage task list; preserve RHS arrays and state.",
+    "A reduction/fence alters timing, so this observed executable is not performance evidence.",
+    "Check finite CFL values explicitly; a Max reduction alone can hide NaNs.",
+    "Bind original-main overlay and unchanged runtime objects; validate observed eight-step fields/records/history against immutable native main before long observation."
+  ]
+}

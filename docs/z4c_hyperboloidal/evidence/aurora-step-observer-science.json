@@ -1,0 +1,336 @@
+{
+  "schema": "aurora-step-observer-science-summary-v1",
+  "passed": true,
+  "full_report": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-step-observer-qualification-v1/results.json",
+  "full_report_sha256": "98da440cbcf02da392abd678ff8052169725c60d69a6fdb8b4c5c34beb525ef5",
+  "observer_build_provenance": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-step-observer-eight/run-artifacts/validation/step-observer/build/provenance.json",
+  "observer_build_provenance_sha256": "642507b2529419d290f00eea609d8ebc0ba6ce5dc52ed41d6cfe2fe995eb1a8a",
+  "native_executable_sha256": "f3a85db7528986ddec347b31675a8c5d588120a2380133aed73d5967f7aab05c",
+  "observed_executable_sha256": "f2c2e6cd910279f0c558164466da8027f0e5b18c5bbd26bb4e36a853dd669f9d",
+  "ordinary_native_equivalence": {
+    "24": {
+      "states": {
+        "0": {
+          "bitwise_equal": true,
+          "scalar_values": 24704784,
+          "payload_sha256": "64f12f4d00d7615e982fb50cfc082df8140854a8194970e3062db7bf0c79f651"
+        },
+        "8": {
+          "bitwise_equal": true,
+          "scalar_values": 24704784,
+          "payload_sha256": "e303efff82e13776c01c0fd37c603b0cfa6d864586a8d919a38443bd1e65c9a1"
+        }
+      },
+      "diagnostics": {
+        "passed": true,
+        "files": [
+          {
+            "name": "native_n12_5M.horizon_shape_0.txt",
+            "bitwise_equal": true
+          },
+          {
+            "name": "native_n12_5M.horizon_summary_0.txt",
+            "bitwise_equal": true
+          },
+          {
+            "name": "native_n12_5M.z4c_hyperboloidal.hst",
+            "bitwise_equal": true
+          }
+        ]
+      },
+      "original_control_wall_limit": [
+        "-t 00:50:00"
+      ],
+      "original_control_termination": "cycle limit; optional original watchdog did not trigger"
+    },
+    "96": {
+      "states": {
+        "0": {
+          "bitwise_equal": true,
+          "scalar_values": 24704784,
+          "payload_sha256": "64f12f4d00d7615e982fb50cfc082df8140854a8194970e3062db7bf0c79f651"
+        },
+        "8": {
+          "bitwise_equal": true,
+          "scalar_values": 24704784,
+          "payload_sha256": "e303efff82e13776c01c0fd37c603b0cfa6d864586a8d919a38443bd1e65c9a1"
+        }
+      },
+      "diagnostics": {
+        "passed": true,
+        "files": [
+          {
+            "name": "native_n12_5M.horizon_shape_0.txt",
+            "bitwise_equal": true
+          },
+          {
+            "name": "native_n12_5M.horizon_summary_0.txt",
+            "bitwise_equal": true
+          },
+          {
+            "name": "native_n12_5M.z4c_hyperboloidal.hst",
+            "bitwise_equal": true
+          }
+        ]
+      },
+      "original_control_wall_limit": [
+        "-t 00:50:00"
+      ],
+      "original_control_termination": "cycle limit; optional original watchdog did not trigger"
+    }
+  },
+  "cross_rank_state": {
+    "0": {
+      "bitwise_equal": true,
+      "scalar_values": 24704784,
+      "payload_sha256": "64f12f4d00d7615e982fb50cfc082df8140854a8194970e3062db7bf0c79f651"
+    },
+    "8": {
+      "bitwise_equal": true,
+      "scalar_values": 24704784,
+      "payload_sha256": "e303efff82e13776c01c0fd37c603b0cfa6d864586a8d919a38443bd1e65c9a1"
+    }
+  },
+  "prefix_initial_state": {
+    "bitwise_equal": true,
+    "scalar_values": 24704784,
+    "payload_sha256": "64f12f4d00d7615e982fb50cfc082df8140854a8194970e3062db7bf0c79f651"
+  },
+  "cross_rank_stage_rows_exact": true,
+  "restart_state": {
+    "bitwise_equal": true,
+    "scalar_values": 24704784,
+    "payload_sha256": "e303efff82e13776c01c0fd37c603b0cfa6d864586a8d919a38443bd1e65c9a1"
+  },
+  "restart_stage_rows_exact": true,
+  "restart_source": {
+    "recorded_path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/step-observer-nodes2/prefix2/rst/native_n12_5M.00001.rst",
+    "downloaded_path": "build-native/aurora-step-observer-two/run-artifacts/runs/step-observer-nodes2/prefix2/rst/native_n12_5M.00001.rst",
+    "sha256": "e950e61a3ec62e6fe6ed532ace46432e6b6d165b7cd54e7c88a0b29a25c9f3d0"
+  },
+  "restart_diagnostics": {
+    "passed": true,
+    "comparisons": [
+      {
+        "field": "Volume",
+        "actual": 4.161698576889405,
+        "reference": 4.161698576889405,
+        "absolute_difference": 0.0,
+        "tolerance": 4.162198576889405e-06,
+        "passed": true,
+        "actual_line": 3,
+        "reference_line": 4
+      },
+      {
+        "field": "H",
+        "actual": 0.00012133993374359183,
+        "reference": 0.00012133993374359183,
+        "absolute_difference": 0.0,
+        "tolerance": 6.213399337435918e-10,
+        "passed": true,
+        "actual_line": 3,
+        "reference_line": 4
+      },
+      {
+        "field": "M",
+        "actual": 1.4190397307145017e-06,
+        "reference": 1.4190397307145017e-06,
+        "absolute_difference": 0.0,
+        "tolerance": 5.014190397307145e-10,
+        "passed": true,
+        "actual_line": 3,
+        "reference_line": 4
+      },
+      {
+        "field": "Theta",
+        "actual": 1.0968664658345928e-08,
+        "reference": 1.0968664658345928e-08,
+        "absolute_difference": 0.0,
+        "tolerance": 5.000109686646583e-10,
+        "passed": true,
+        "actual_line": 3,
+        "reference_line": 4
+      },
+      {
+        "field": "Z",
+        "actual": 7.065043121903163e-07,
+        "reference": 7.065043121903163e-07,
+        "absolute_difference": 0.0,
+        "tolerance": 5.007065043121904e-10,
+        "passed": true,
+        "actual_line": 3,
+        "reference_line": 4
+      },
+      {
+        "field": "eVolume",
+        "actual": 4.161677829289953,
+        "reference": 4.161677829289953,
+        "absolute_difference": 0.0,
+        "tolerance": 4.1621778292899534e-06,
+        "passed": true,
+        "actual_line": 3,
+        "reference_line": 4
+      },
+      {
+        "field": "eH",
+        "actual": 6.925108506735859e-06,
+        "reference": 6.925108506735859e-06,
+        "absolute_difference": 0.0,
+        "tolerance": 5.069251085067359e-10,
+        "passed": true,
+        "actual_line": 3,
+        "reference_line": 4
+      },
+      {
+        "field": "eM",
+        "actual": 1.4176976140756854e-06,
+        "reference": 1.4176976140756854e-06,
+        "absolute_difference": 0.0,
+        "tolerance": 5.014176976140757e-10,
+        "passed": true,
+        "actual_line": 3,
+        "reference_line": 4
+      },
+      {
+        "field": "eTheta",
+        "actual": 9.54933223415243e-09,
+        "reference": 9.54933223415243e-09,
+        "absolute_difference": 0.0,
+        "tolerance": 5.000095493322342e-10,
+        "passed": true,
+        "actual_line": 3,
+        "reference_line": 4
+      },
+      {
+        "field": "eZ",
+        "actual": 7.065060727985611e-07,
+        "reference": 7.065060727985611e-07,
+        "absolute_difference": 0.0,
+        "tolerance": 5.007065060727986e-10,
+        "passed": true,
+        "actual_line": 3,
+        "reference_line": 4
+      },
+      {
+        "field": "areal_radius_M",
+        "actual": 2.0000001268523526,
+        "reference": 2.0000001269136916,
+        "absolute_difference": 6.13389339321202e-11,
+        "tolerance": 2.0000001269136916e-07,
+        "passed": true,
+        "actual_line": 2,
+        "reference_line": 3
+      },
+      {
+        "field": "irreducible_mass_M",
+        "actual": 1.0000000634261763,
+        "reference": 1.0000000634568458,
+        "absolute_difference": 3.06694669660601e-11,
+        "tolerance": 1.0000000634568458e-07,
+        "passed": true,
+        "actual_line": 2,
+        "reference_line": 3
+      }
+    ],
+    "phase": "restart has an additional prefix-final horizon search; retain every final row and apply adopted diagnostic gates"
+  },
+  "stage_metadata": {
+    "observed_24": {
+      "schema": "native-step-observer-v1",
+      "passed": true,
+      "backend": "SYCL",
+      "ranks": 24,
+      "initial_cycle": 0,
+      "final_cycle": 8,
+      "initial_time": 0,
+      "final_time": 0.003755536298849396,
+      "dt": 0.00046944203735617445,
+      "stage_rows": 32,
+      "scope": "read-only stage observations; reference comparison separate"
+    },
+    "observed_96": {
+      "schema": "native-step-observer-v1",
+      "passed": true,
+      "backend": "SYCL",
+      "ranks": 96,
+      "initial_cycle": 0,
+      "final_cycle": 8,
+      "initial_time": 0,
+      "final_time": 0.003755536298849396,
+      "dt": 0.00046944203735617445,
+      "stage_rows": 32,
+      "scope": "read-only stage observations; reference comparison separate"
+    },
+    "prefix_24": {
+      "schema": "native-step-observer-v1",
+      "passed": true,
+      "backend": "SYCL",
+      "ranks": 24,
+      "initial_cycle": 0,
+      "final_cycle": 2,
+      "initial_time": 0,
+      "final_time": 0.0009388840747123489,
+      "dt": 0.00046944203735617445,
+      "stage_rows": 8,
+      "scope": "read-only stage observations; reference comparison separate"
+    },
+    "resumed_96": {
+      "schema": "native-step-observer-v1",
+      "passed": true,
+      "backend": "SYCL",
+      "ranks": 96,
+      "initial_cycle": 2,
+      "final_cycle": 8,
+      "initial_time": 0.0009388840747123489,
+      "final_time": 0.003755536298849396,
+      "dt": 0.00046944203735617445,
+      "stage_rows": 24,
+      "scope": "read-only stage observations; reference comparison separate"
+    }
+  },
+  "historical_metrics": {
+    "24": {
+      "passed": true,
+      "through_step": 8,
+      "stage_rows": 32,
+      "gate": "short",
+      "gate_formula": "1e-12+5e-10*abs(reference)",
+      "exact_step_stage_time_dt": true,
+      "maximum_compatibility": 9.778256860928204e-16,
+      "clock_all_eight_bitwise": true,
+      "CFL_all_eight_bitwise": true,
+      "max_clock_absolute_difference": 0.0,
+      "max_CFL_absolute_difference": 0.0,
+      "failed_values": 0
+    },
+    "96": {
+      "passed": true,
+      "through_step": 8,
+      "stage_rows": 32,
+      "gate": "short",
+      "gate_formula": "1e-12+5e-10*abs(reference)",
+      "exact_step_stage_time_dt": true,
+      "maximum_compatibility": 9.778256860928204e-16,
+      "clock_all_eight_bitwise": true,
+      "CFL_all_eight_bitwise": true,
+      "max_clock_absolute_difference": 0.0,
+      "max_CFL_absolute_difference": 0.0,
+      "failed_values": 0
+    }
+  },
+  "source_sha256": {
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_step_observer_gpu_compare.py": "96a2a394671ca8affa075876dda7a3c1e0ae5e82cde098771c1613095087d87a",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_step_metrics.py": "e5ad44170fc971fa97c91877b793a04e5b7b5ea0fb4276b647d6dada9d81cd90",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_step_observer_validate.py": "bb18cb9f75582fcc2471728949994e5e01cc521f543ae633b29358be4c600e94",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/restart_roundtrip.py": "8afc41988e20e36d336230e111450ec3ba573940c773a6ed15ed03ed16eb8a3b",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/n12_checkpoint.py": "ca26c57ee362feacb613209a881727b56b35334402abb12dab6f5d8a5097dbcf",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/n12_checkpoint_gpu_control.py": "e0b9f61262759484670f00adae8698879a1d6fba4b6615e9e9a43df56f879409",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/n12_long_history.py": "304e0ae0dffedfad946396204bc8326533b0850af3e88ccb144bd1885f6cd104"
+  },
+  "admission_check": {
+    "passed": true,
+    "call": "longrun_admission.observed_main(report, build, build_sha)",
+    "validator_sha256": "2887b479590c51d473564f9e62d5c6c042ac0b92b520126d6acb421195dddf7f"
+  },
+  "scope": "Actual SYCL 24/96 ranks, original-main observer equivalence through eight steps and 24-to-96 restart. Observer adds synchronization and is not performance evidence. No long-trajectory admission is inferred."
+}

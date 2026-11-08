@@ -1,0 +1,173 @@
+--- a/src/z4c_hyperboloidal/z4c_hyperboloidal.hpp
++++ b/src/z4c_hyperboloidal/z4c_hyperboloidal.hpp
+@@ -92,6 +92,8 @@
+   void InitializeReference();
+   void InitializeBoundaryValues(Driver *driver);
+   TaskStatus NewTimeStep(Driver *driver, int stage);
++  // Call only after initialization/remesh boundary preparation, not after RK stages.
++  void CheckFixedStepAdmission(bool continuing);
+   Real StageMaxCompatibility() const;
+   Real StageMaxClock() const;
+   void PrepareRemesh(MeshRefinement &refinement);
+--- a/src/driver/driver.cpp
++++ b/src/driver/driver.cpp
+@@ -514,6 +514,7 @@
+     }
+     if (pmesh->pmb_pack->pz4c_hyperboloidal != nullptr) {
+       (void) pmesh->pmb_pack->pz4c_hyperboloidal->NewTimeStep(this,nexp_stages);
++      pmesh->pmb_pack->pz4c_hyperboloidal->CheckFixedStepAdmission(res_flag);
+     }
+ 
+     pmesh->NewTimeStep(tlim);
+--- a/src/mesh/mesh_refinement.cpp
++++ b/src/mesh/mesh_refinement.cpp
+@@ -262,6 +262,7 @@
+     }
+     if (phyper!=nullptr) {
+       (void) phyper->NewTimeStep(pdriver,pdriver->nexp_stages);
++      phyper->CheckFixedStepAdmission(true);
+     }
+ 
+     nmb_created += nnew;
+--- a/src/z4c_hyperboloidal/z4c_hyperboloidal_lifecycle.cpp
++++ b/src/z4c_hyperboloidal/z4c_hyperboloidal_lifecycle.cpp
+@@ -9,6 +9,7 @@
+ #include <algorithm>
+ #include <cmath>
+ #include <stdexcept>
++#include "z4c_hyperboloidal/fixed_step_admission.hpp"
+ 
+ #include "driver/driver.hpp"
+ #include "mesh/mesh.hpp"
+@@ -85,6 +86,36 @@
+   return TaskStatus::complete;
+ }
+ 
++void Z4cHyperboloidal::CheckFixedStepAdmission(bool continuing) {
++  auto &mesh=*pmy_pack->pmesh;
++  if (!mesh.adaptive) return;  // Pinned fixed-SMR policy is unchanged.
++  const Real target=continuing ? Real(.4) : mesh.cfl_no;
++  int invalid=(!initialized_ || !plans_ready_ || !std::isfinite(target) || target<=0
++               || !std::isfinite(requested_dt) || requested_dt<=0) ? 1 : 0;
++#if MPI_PARALLEL_ENABLED
++  MPI_Allreduce(MPI_IN_PLACE,&invalid,1,MPI_INT,MPI_MAX,MPI_COMM_WORLD);
++#endif
++  if (invalid)
++    throw std::runtime_error("Adaptive fixed-step admission needs valid policy and prepared state");
++  fixed_step_admission::Summary summary;
++  fixed_step_admission::Evaluate evaluate{points.d_view,geometry,reference,residual,
++      surface_exchange_->BindKernel(),parameters,n[0]};
++  Kokkos::parallel_reduce("adaptive fixed-step characteristic admission",
++      Kokkos::RangePolicy<>(0,npoints),evaluate,summary);
++#if MPI_PARALLEL_ENABLED
++  MPI_Allreduce(MPI_IN_PLACE,&summary.invalid,1,MPI_INT,MPI_SUM,MPI_COMM_WORLD);
++  MPI_Allreduce(MPI_IN_PLACE,&summary.probe_cfl,1,MPI_ATHENA_REAL,MPI_MAX,MPI_COMM_WORLD);
++#endif
++  if (summary.invalid || !(summary.probe_cfl>0 && std::isfinite(summary.probe_cfl)))
++    throw std::runtime_error("Invalid adaptive characteristic admission state");
++  const Real rate=summary.probe_cfl/Real(1e-8);
++  const Real allowed=std::min({requested_dt,target/rate,Real(.005)});
++  // Optional angular dissipation is absent from this native formulation. Its
++  // predecessor cap must be added if that independent operator is introduced.
++  if (requested_dt>allowed*(1+1e-12))
++    throw std::runtime_error("Adaptive fixed timestep exceeds current characteristic bound");
++}
++
+ Real Z4cHyperboloidal::StageMaxCompatibility() const {
+   if (!plans_ready_) throw std::logic_error("Hyperboloidal stage diagnostics are not ready");
+   return surface_exchange_->MaxCompatibility();
+--- /dev/null
++++ b/src/z4c_hyperboloidal/fixed_step_admission.hpp
+@@ -0,0 +1,92 @@
++// Copyright(C) 2026 AthenaK contributors. BSD-3-Clause; see LICENSE.
++#ifndef Z4C_HYPERBOLOIDAL_FIXED_STEP_ADMISSION_HPP_
++#define Z4C_HYPERBOLOIDAL_FIXED_STEP_ADMISSION_HPP_
++#include "z4c_hyperboloidal/surface_exchange.hpp"
++
++namespace z4c_hyperboloidal {
++namespace fixed_step_admission {
++struct Summary {Real probe_cfl=0;int invalid=0;};
++struct Evaluate {
++  using value_type=Summary;
++  DvceArray1D<BlockPoint> points;
++  DvceArray1D<mapped::Point> geometry;
++  DvceArray1D<CartesianChartJets> reference;
++  DvceArray5D<Real> residual;
++  SurfaceExchange::Kernel surface;
++  HyperbolicShiftParameters<Real> parameters;
++  int n;
++  KOKKOS_INLINE_FUNCTION void init(value_type &out) const {out={};}
++  KOKKOS_INLINE_FUNCTION void join(value_type &a,const value_type &b) const {
++    a.probe_cfl=fmax(a.probe_cfl,b.probe_cfl);a.invalid+=b.invalid;
++  }
++  KOKKOS_INLINE_FUNCTION void operator()(int p,value_type &out) const {
++    const auto c=points(p);const auto map=geometry(p);CartesianChartJets jets{};
++    const Real r=SphericalPolicy::Radius(map.x);
++    if (!(r>0 && Kokkos::isfinite(r))) {++out.invalid;return;}
++    for (int f=0;f<Fields::count;++f) if (Fields::Independent(f))
++      jets[f].f=residual(c.m,f,c.k,c.j,c.i);
++    // Endpoint derivative reconstruction keeps the central field value. Only
++    // the already solved shift-normal lift can alter its characteristic value.
++    if (!SphericalPolicy::Restore(map.x,jets,reference(p))) {++out.invalid;return;}
++    if (surface.HasRadialRow(p)) for (int a=0;a<3;++a)
++      jets[22+a].f+=surface.NormalCorrection(p,map,a).f;
++    const auto u=SphericalPolicy::Physical(map.x,jets);
++    if (!(u.chi.value>0 && u.alpha.value>0 && Kokkos::isfinite(u.chi.value)
++          && Kokkos::isfinite(u.alpha.value))) {++out.invalid;return;}
++    for (int a=0;a<3;++a) {
++      if (!Kokkos::isfinite(u.beta.value[a])) {++out.invalid;return;}
++      for (int b=0;b<3;++b) if (!Kokkos::isfinite(u.metric.g[a][b])
++          || !Kokkos::isfinite(map.J[a][b])) {++out.invalid;return;}
++    }
++    // Identical determinant/cofactor arithmetic to Geometry, without any
++    // connection, curvature, derivative, gauge RHS or dissipation calculation.
++    const auto &g=u.metric.g;
++    const Real det=g[0][0]*(g[1][1]*g[2][2]-g[1][2]*g[2][1])
++        -g[0][1]*(g[1][0]*g[2][2]-g[1][2]*g[2][0])
++        +g[0][2]*(g[1][0]*g[2][1]-g[1][1]*g[2][0]);
++    if (!(Kokkos::isfinite(det)&&det>0&&g[0][0]>0&&
++          g[0][0]*g[1][1]-g[0][1]*g[1][0]>0)) {++out.invalid;return;}
++    Real inverse[3][3];
++    for (int i=0;i<3;++i) {const int p=(i+1)%3,q=(i+2)%3;
++      for (int j=0;j<3;++j) {const int r=(j+1)%3,s=(j+2)%3;
++        inverse[j][i]=(g[p][r]*g[q][s]-g[p][s]*g[q][r])/det;
++      }
++    }
++    const auto coefficient=ShiftCoefficients(r,u.alpha.value,u.chi.value,parameters);
++    const auto omega=parameters.profile.At(map.x);
++    Real characteristic_chi=u.chi.value;
++    if (parameters.cartesian_chi_guard)
++      characteristic_chi+=coefficient.inner*(fmax(characteristic_chi,
++          parameters.inner_chi_guard/(omega.omega*omega.omega))-characteristic_chi);
++    Real speed=0;
++    for (int A=0;A<3;++A) {
++      Real transport=0,Q=0,E=0;
++      for (int a=0;a<3;++a) {
++        transport+=map.J[A][a]*u.beta.value[a];E+=map.J[A][a]*map.J[A][a];
++        for (int b=0;b<3;++b)Q+=inverse[a][b]*map.J[A][a]*map.J[A][b];
++      }
++      if (!(Q>0 && E>0 && Kokkos::isfinite(Q) && Kokkos::isfinite(E)
++            && Kokkos::isfinite(transport))) {++out.invalid;return;}
++      const Real shift2=GaugeShiftSpeedSquared(coefficient,Q);
++      const Real lapse2=GaugeLapseSpeedSquared(u.alpha.value,characteristic_chi,
++                                              coefficient,Q,E,parameters);
++      // fmax can hide a NaN in one branch, so validate each component first.
++      if (!(shift2>=0 && lapse2>=0 && Kokkos::isfinite(shift2)
++            && Kokkos::isfinite(lapse2))) {++out.invalid;return;}
++      Real speed2=fmax(shift2,lapse2);
++      if (parameters.enforce_cfl) {
++        const Real physical2=u.alpha.value*u.alpha.value*characteristic_chi*Q;
++        if (!(physical2>=0 && Kokkos::isfinite(physical2))) {++out.invalid;return;}
++        speed2=fmax(speed2,physical2);
++      }
++      speed+=fabs(transport)+sqrt(speed2);
++    }
++    if (!(speed>0&&Kokkos::isfinite(speed))) {++out.invalid;return;}
++    // Preserve the available predecessor probe's multiplication and division
++    // order rather than changing a threshold by silently cancelling probe.
++    out.probe_cfl=fmax(out.probe_cfl,Real(1e-8)*n*speed);
++  }
++};
++}  // namespace fixed_step_admission
++}  // namespace z4c_hyperboloidal
++#endif

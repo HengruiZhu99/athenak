@@ -1,0 +1,2060 @@
+{
+  "passed": true,
+  "scope": "offline GPU-AMR tooling validation using existing CPU fixtures only",
+  "gpu_evolution_validated": false,
+  "runtime_changed": false,
+  "reports": {
+    "build-native/gpu-amr-offline-lifecycle-cpu-v3/results.json": {
+      "sha256": "9a9ad86b64ba3a163acc45ede878f622f2ff1e16c1a45f6ccbf4b6f9014ca928",
+      "result": {
+        "passed": true,
+        "case": "lifecycle",
+        "cross_rank_complete_state_bitwise": true,
+        "runs": {
+          "2": {
+            "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks2",
+            "snapshots": [
+              {
+                "phase": 0,
+                "blocks": 106,
+                "bulk_points": 229392,
+                "scri_points": 864,
+                "polynomial_checks": 0,
+                "zero_scri_ranks": 0,
+                "max_polynomial_error": 0,
+                "compatibility": 0,
+                "canonical": {
+                  "summary": {
+                    "points": 230256,
+                    "scalar_values": 8979984,
+                    "sha256": "f960d8ea82a963d5d9a4e2286481eea9eae94477b252196b641c4ef9f1eb77bb",
+                    "chi_totals": [
+                      0.125,
+                      0.25,
+                      575651.0,
+                      689864.0,
+                      805895.0,
+                      0.998046875,
+                      3875651.875,
+                      0.125
+                    ]
+                  },
+                  "regions": {
+                    "bulk": {
+                      "points": 229392,
+                      "scalar_values": 8946288,
+                      "sha256": "ef5583fb7ca8b4323a911e4bfdd12b6fbc0500f798bc627f42ac3049028ff6bf",
+                      "chi_totals": [
+                        0.125,
+                        0.25,
+                        573491.0,
+                        687277.0,
+                        802871.0,
+                        0.998046875,
+                        3860439.875,
+                        0.125
+                      ]
+                    },
+                    "surface": {
+                      "points": 864,
+                      "scalar_values": 33696,
+                      "sha256": "96ed8bb2662f0462a41607554f04058757174b0d5b6ef046c2178059a3c45a05",
+                      "chi_totals": [
+                        0.125,
+                        0.25,
+                        2160.0,
+                        2587.0,
+                        3024.0,
+                        0.998046875,
+                        15212.0,
+                        0.125
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "phase": 1,
+                "blocks": 127,
+                "bulk_points": 277236,
+                "scri_points": 1296,
+                "polynomial_checks": 40428,
+                "zero_scri_ranks": 0,
+                "max_polynomial_error": 1.3010426069826053e-17,
+                "compatibility": 0,
+                "canonical": {
+                  "summary": {
+                    "points": 278532,
+                    "scalar_values": 10862748,
+                    "sha256": "814f10d9f16deecaa13c707839cdd4685d8681f04266982468fe177b2464268a",
+                    "chi_totals": [
+                      0.125,
+                      0.25,
+                      575651.0,
+                      689864.0,
+                      805895.0,
+                      0.998046875,
+                      3875651.875,
+                      0.125
+                    ]
+                  },
+                  "regions": {
+                    "bulk": {
+                      "points": 277236,
+                      "scalar_values": 10812204,
+                      "sha256": "a20d97354028b277ccbdf8a2aa87ed4175b447ac0b2b5d21357b90cb2ef4b95b",
+                      "chi_totals": [
+                        0.125,
+                        0.25,
+                        573491.0,
+                        687277.0,
+                        802871.0,
+                        0.998046875,
+                        3860439.875,
+                        0.125
+                      ]
+                    },
+                    "surface": {
+                      "points": 1296,
+                      "scalar_values": 50544,
+                      "sha256": "52b6162cf722393af891284a9a7b1dc63a0c3a38b7864992f8d80b3678ce035e",
+                      "chi_totals": [
+                        0.125,
+                        0.25,
+                        2160.0,
+                        2587.0,
+                        3024.0,
+                        0.998046875,
+                        15212.0,
+                        0.125
+                      ]
+                    }
+                  }
+                },
+                "unchanged_leaves": 103,
+                "unchanged_migrated_leaves": 7
+              },
+              {
+                "phase": 2,
+                "blocks": 106,
+                "bulk_points": 229392,
+                "scri_points": 864,
+                "polynomial_checks": 3816,
+                "zero_scri_ranks": 0,
+                "max_polynomial_error": 9.107298248878237e-18,
+                "compatibility": 0,
+                "canonical": {
+                  "summary": {
+                    "points": 230256,
+                    "scalar_values": 8979984,
+                    "sha256": "f708925d4739c02fb446910fb8f1cb72a8a52d49eed628f597fd4791c6f7059b",
+                    "chi_totals": [
+                      0.125,
+                      0.25,
+                      575651.0,
+                      689864.0,
+                      805895.0,
+                      0.998046875,
+                      3875651.875,
+                      0.125
+                    ]
+                  },
+                  "regions": {
+                    "bulk": {
+                      "points": 229392,
+                      "scalar_values": 8946288,
+                      "sha256": "5686b3aca58668bd9c02420da3f61b514fab7ea1cb3254074dc2627cf86aae19",
+                      "chi_totals": [
+                        0.125,
+                        0.25,
+                        573491.0,
+                        687277.0,
+                        802871.0,
+                        0.998046875,
+                        3860439.875,
+                        0.125
+                      ]
+                    },
+                    "surface": {
+                      "points": 864,
+                      "scalar_values": 33696,
+                      "sha256": "2acea6524dd8dadee6c22d75c8ffc0fccc004a51db4ab2b6652195a1d90a16d0",
+                      "chi_totals": [
+                        0.125,
+                        0.25,
+                        2160.0,
+                        2587.0,
+                        3024.0,
+                        0.998046875,
+                        15212.0,
+                        0.125
+                      ]
+                    }
+                  }
+                },
+                "unchanged_leaves": 103,
+                "unchanged_migrated_leaves": 7
+              }
+            ],
+            "stages": [],
+            "diagnostics": [
+              {
+                "phase": 0,
+                "refreshes": 1,
+                "constraint_weight_scalars": 5276016,
+                "owned_scalars": 8979984,
+                "rk_status_values": 174032736,
+                "fresh_exact": true,
+                "repeat_cached": true,
+                "readonly": true
+              },
+              {
+                "phase": 1,
+                "refreshes": 2,
+                "constraint_weight_scalars": 6376428,
+                "owned_scalars": 10862748,
+                "rk_status_values": 208542372,
+                "fresh_exact": true,
+                "repeat_cached": true,
+                "readonly": true
+              },
+              {
+                "phase": 2,
+                "refreshes": 3,
+                "constraint_weight_scalars": 5276016,
+                "owned_scalars": 8979984,
+                "rk_status_values": 174032736,
+                "fresh_exact": true,
+                "repeat_cached": true,
+                "readonly": true
+              }
+            ]
+          },
+          "8": {
+            "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8",
+            "snapshots": [
+              {
+                "phase": 0,
+                "blocks": 106,
+                "bulk_points": 229392,
+                "scri_points": 864,
+                "polynomial_checks": 0,
+                "zero_scri_ranks": 3,
+                "max_polynomial_error": 0,
+                "compatibility": 0,
+                "canonical": {
+                  "summary": {
+                    "points": 230256,
+                    "scalar_values": 8979984,
+                    "sha256": "f960d8ea82a963d5d9a4e2286481eea9eae94477b252196b641c4ef9f1eb77bb",
+                    "chi_totals": [
+                      0.125,
+                      0.25,
+                      575651.0,
+                      689864.0,
+                      805895.0,
+                      0.998046875,
+                      3875651.875,
+                      0.125
+                    ]
+                  },
+                  "regions": {
+                    "bulk": {
+                      "points": 229392,
+                      "scalar_values": 8946288,
+                      "sha256": "ef5583fb7ca8b4323a911e4bfdd12b6fbc0500f798bc627f42ac3049028ff6bf",
+                      "chi_totals": [
+                        0.125,
+                        0.25,
+                        573491.0,
+                        687277.0,
+                        802871.0,
+                        0.998046875,
+                        3860439.875,
+                        0.125
+                      ]
+                    },
+                    "surface": {
+                      "points": 864,
+                      "scalar_values": 33696,
+                      "sha256": "96ed8bb2662f0462a41607554f04058757174b0d5b6ef046c2178059a3c45a05",
+                      "chi_totals": [
+                        0.125,
+                        0.25,
+                        2160.0,
+                        2587.0,
+                        3024.0,
+                        0.998046875,
+                        15212.0,
+                        0.125
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "phase": 1,
+                "blocks": 127,
+                "bulk_points": 277236,
+                "scri_points": 1296,
+                "polynomial_checks": 40428,
+                "zero_scri_ranks": 3,
+                "max_polynomial_error": 1.3010426069826053e-17,
+                "compatibility": 0,
+                "canonical": {
+                  "summary": {
+                    "points": 278532,
+                    "scalar_values": 10862748,
+                    "sha256": "814f10d9f16deecaa13c707839cdd4685d8681f04266982468fe177b2464268a",
+                    "chi_totals": [
+                      0.125,
+                      0.25,
+                      575651.0,
+                      689864.0,
+                      805895.0,
+                      0.998046875,
+                      3875651.875,
+                      0.125
+                    ]
+                  },
+                  "regions": {
+                    "bulk": {
+                      "points": 277236,
+                      "scalar_values": 10812204,
+                      "sha256": "a20d97354028b277ccbdf8a2aa87ed4175b447ac0b2b5d21357b90cb2ef4b95b",
+                      "chi_totals": [
+                        0.125,
+                        0.25,
+                        573491.0,
+                        687277.0,
+                        802871.0,
+                        0.998046875,
+                        3860439.875,
+                        0.125
+                      ]
+                    },
+                    "surface": {
+                      "points": 1296,
+                      "scalar_values": 50544,
+                      "sha256": "52b6162cf722393af891284a9a7b1dc63a0c3a38b7864992f8d80b3678ce035e",
+                      "chi_totals": [
+                        0.125,
+                        0.25,
+                        2160.0,
+                        2587.0,
+                        3024.0,
+                        0.998046875,
+                        15212.0,
+                        0.125
+                      ]
+                    }
+                  }
+                },
+                "unchanged_leaves": 103,
+                "unchanged_migrated_leaves": 30
+              },
+              {
+                "phase": 2,
+                "blocks": 106,
+                "bulk_points": 229392,
+                "scri_points": 864,
+                "polynomial_checks": 3816,
+                "zero_scri_ranks": 3,
+                "max_polynomial_error": 9.107298248878237e-18,
+                "compatibility": 0,
+                "canonical": {
+                  "summary": {
+                    "points": 230256,
+                    "scalar_values": 8979984,
+                    "sha256": "f708925d4739c02fb446910fb8f1cb72a8a52d49eed628f597fd4791c6f7059b",
+                    "chi_totals": [
+                      0.125,
+                      0.25,
+                      575651.0,
+                      689864.0,
+                      805895.0,
+                      0.998046875,
+                      3875651.875,
+                      0.125
+                    ]
+                  },
+                  "regions": {
+                    "bulk": {
+                      "points": 229392,
+                      "scalar_values": 8946288,
+                      "sha256": "5686b3aca58668bd9c02420da3f61b514fab7ea1cb3254074dc2627cf86aae19",
+                      "chi_totals": [
+                        0.125,
+                        0.25,
+                        573491.0,
+                        687277.0,
+                        802871.0,
+                        0.998046875,
+                        3860439.875,
+                        0.125
+                      ]
+                    },
+                    "surface": {
+                      "points": 864,
+                      "scalar_values": 33696,
+                      "sha256": "2acea6524dd8dadee6c22d75c8ffc0fccc004a51db4ab2b6652195a1d90a16d0",
+                      "chi_totals": [
+                        0.125,
+                        0.25,
+                        2160.0,
+                        2587.0,
+                        3024.0,
+                        0.998046875,
+                        15212.0,
+                        0.125
+                      ]
+                    }
+                  }
+                },
+                "unchanged_leaves": 103,
+                "unchanged_migrated_leaves": 30
+              }
+            ],
+            "stages": [],
+            "diagnostics": [
+              {
+                "phase": 0,
+                "refreshes": 1,
+                "constraint_weight_scalars": 5276016,
+                "owned_scalars": 8979984,
+                "rk_status_values": 174032736,
+                "fresh_exact": true,
+                "repeat_cached": true,
+                "readonly": true
+              },
+              {
+                "phase": 1,
+                "refreshes": 2,
+                "constraint_weight_scalars": 6376428,
+                "owned_scalars": 10862748,
+                "rk_status_values": 208542372,
+                "fresh_exact": true,
+                "repeat_cached": true,
+                "readonly": true
+              },
+              {
+                "phase": 2,
+                "refreshes": 3,
+                "constraint_weight_scalars": 5276016,
+                "owned_scalars": 8979984,
+                "rk_status_values": 174032736,
+                "fresh_exact": true,
+                "repeat_cached": true,
+                "readonly": true
+              }
+            ]
+          }
+        },
+        "real_driver_cycles": 0,
+        "legacy_solution_comparison": false,
+        "admission_scope": "test harness constructs static then uses actual dynamic Driver; ordinary restart case gates input admission",
+        "provenance": {
+          "backend": "existing CPU fixture parsing validation only",
+          "gpu_evidence": false,
+          "evidence": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/results.json",
+          "evidence_sha256": "fdc293ae3bf80af6f58dc47456c555a808a98d71525888c45f61c0f86dc63bef"
+        },
+        "input_sha256": {
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/results.json": "fdc293ae3bf80af6f58dc47456c555a808a98d71525888c45f61c0f86dc63bef",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks2/run.log": "4d2d80ada026f58e5f7217657ce24a883b61e7917a36aeee7a2bc77516629e2e",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks2/phase0-rank0.txt": "84cc2133f040f7cf3ae6263d6ca51b69c04e6f641bfc5d1647628c35c58ada58",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks2/phase0-rank0.bin": "7d5a96882c328eddf4ba85ad8782223821b74424936afaa9c54ec8a1a12c2920",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks2/phase0-rank1.txt": "91d62d38c1914f82ff602a4fd825ec0728fffad8e0f406bab5a7a19132da7ed7",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks2/phase0-rank1.bin": "a2e0f9fdccd07f4a13bd501a78293c83d39bc9131b57010503735894ba5d89a7",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks2/phase1-rank0.txt": "a5461e7a5298b52b1a30f7e204794f2dea1bfc989859d2327921579ad26d50be",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks2/phase1-rank0.bin": "81fc364c1375c42203befa14d87539d2c3ce42ac9d8de301926a634f24f67e29",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks2/phase1-rank1.txt": "37ea5c09e611564515f2fce546a62bf06ef374284ff39d5523ad452485ba16b3",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks2/phase1-rank1.bin": "51f15b3ecbcafe0f1ab0316e1c76aadd45937b706d74e579577a4ef325115e0b",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks2/phase2-rank0.txt": "84cc2133f040f7cf3ae6263d6ca51b69c04e6f641bfc5d1647628c35c58ada58",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks2/phase2-rank0.bin": "cf0b79deb7b730597093f92ce6017bf2b9465509764f331f55adafa01ac2eb4f",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks2/phase2-rank1.txt": "91d62d38c1914f82ff602a4fd825ec0728fffad8e0f406bab5a7a19132da7ed7",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks2/phase2-rank1.bin": "a2e0f9fdccd07f4a13bd501a78293c83d39bc9131b57010503735894ba5d89a7",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/run.log": "481f854248dae5236ce3a8809781c4436d2beed39e71cfc2ee0cc91ecd2cb884",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase0-rank0.txt": "1531698ce7adc96c74ede2b2956bf193ead691080a0e6e5248d8c24493fac254",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase0-rank0.bin": "a0c643114e7512cf862c30ab03e4176d1de0b53e5a97dd5651c1dff7bea217b2",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase0-rank1.txt": "f5f5119e3cf0993635980915a1a2001625c441cdbfdf1ceee2e4d19c8fb7d069",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase0-rank1.bin": "59bf1dfd4fe2a3de64398b67952b5ea84d7bbb108fc4b793d48fa9b5fa2e4fd9",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase0-rank2.txt": "a63cdcbc5f0eab19d9d453057de3f8cceda2776117a75a2b3ba8bdad892b9a79",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase0-rank2.bin": "d5835d0023c86c119941367ce6258c1da901addd0c7a424e79a32ef9c14dca04",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase0-rank3.txt": "909c5e8120225d25eb68a5debf97634786343f7b05807a0a9da6c28259da8328",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase0-rank3.bin": "0732272c506c005c635edd411c1f73bde6578f72cb89080d1c61924e2c7d5d51",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase0-rank4.txt": "4f485a8980e4d81e92f9e84459011da0ce5d230bcd7deeb865f5874722fba947",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase0-rank4.bin": "ec8c8e6c74c8fbb7e70e7538e020907ee02edec95f7236437f28ecfbc4ed90da",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase0-rank5.txt": "8eae8a0e64acdc27e520bf9ffb603f5b3e2d6d9c365be2bbf0cfd02837ae2a9f",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase0-rank5.bin": "8264dcf8f7c594d2b2461e00d75c65d3702aafa67a457968b4630fcd9bec3a9f",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase0-rank6.txt": "e67204f130e58112305f17c6e7d458ae29a464e795c18380ff11765860d4010b",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase0-rank6.bin": "09cc10c00b715eb303b2339a3f57b3c4b4f4cc94fe99d8bdc7fd583cbbc9b5ac",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase0-rank7.txt": "20ce24036472a6fade12d776ca7efed880ffebdd14e63a4a93a536930e654990",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase0-rank7.bin": "840da5a4f0f456208d5c221847732b282f84ff973ee6948776a9a8669af8b403",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase1-rank0.txt": "d8464a1fc4b801408ccdfaab03998ce304c93595bd7fc5427941dba0b41411ac",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase1-rank0.bin": "8b414803d2a30d48fae97f25d7eab2033eafc32a39930dc0aab6267f13c18d14",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase1-rank1.txt": "d492751ce5ed87b133e711270c13ab6787c383a2cc313084086b734a2b218b81",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase1-rank1.bin": "bc5186111c561dc7aff7f68cf3120b15875d4d2ca8741c79bb1b845c03b0a358",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase1-rank2.txt": "d82741cdb7d32c0e165d48cca1e4ba1326509a4427fd084fcdfcd83b107e9a41",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase1-rank2.bin": "a42b0bb57474b5e2e2d0eec25b924646d31158d9fe2d8a2d353f899396c5a771",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase1-rank3.txt": "5ce6471bb79d3959da17f63bf4786777e1f3b309d7ff222c0cb71b9574d1d1ab",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase1-rank3.bin": "c424815e455c1db7022b6619b32fda87fb9a6a8d5f5ce160275e0ac43972a64c",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase1-rank4.txt": "6ccc309e2bbd98daa4deca0bb58f9e4029e9931c53375d50a5a8e35d86cef11a",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase1-rank4.bin": "f7ad36e64fa3fb77849c6500beba3c5e312ce381841ae494c110565df7d5da0a",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase1-rank5.txt": "a8cf0cff2883beafd1ca0c7c4c28960e87dc77cfc1dc8f139e1afd2898e626c8",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase1-rank5.bin": "d36c238f41a13f4e1605e59556c21a33b7fc2f80e4b968c4af7b0b8ba2fd267f",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase1-rank6.txt": "812f8374aaf774a5e0b382c031083af16876dc47bec782615628a49f9548f320",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase1-rank6.bin": "1286a843fece62dca748aa802d281e3f6bdadb78a21cc7cfe2464715700cb98b",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase1-rank7.txt": "e3d460742ca9193104202dbba12229af84f4c56243f1b35290f38632e5209b79",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase1-rank7.bin": "594c0bffe9454ac26494e902758ddef48c7b27c8174f01ab07407988a661c129",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase2-rank0.txt": "1531698ce7adc96c74ede2b2956bf193ead691080a0e6e5248d8c24493fac254",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase2-rank0.bin": "160c1109f05e532dedd369db6868d1d547065f57a0243f8c2eda6208491c768f",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase2-rank1.txt": "f5f5119e3cf0993635980915a1a2001625c441cdbfdf1ceee2e4d19c8fb7d069",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase2-rank1.bin": "59bf1dfd4fe2a3de64398b67952b5ea84d7bbb108fc4b793d48fa9b5fa2e4fd9",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase2-rank2.txt": "a63cdcbc5f0eab19d9d453057de3f8cceda2776117a75a2b3ba8bdad892b9a79",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase2-rank2.bin": "70033f01a307abc20d1421fcd341dea1969b26a2ee27ff1d9dd3ef764730a2a1",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase2-rank3.txt": "909c5e8120225d25eb68a5debf97634786343f7b05807a0a9da6c28259da8328",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase2-rank3.bin": "73241a6dbb75aef6792ff9b92e8d910455a73e1b80c190ea808dcab8cb125e22",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase2-rank4.txt": "4f485a8980e4d81e92f9e84459011da0ce5d230bcd7deeb865f5874722fba947",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase2-rank4.bin": "ec8c8e6c74c8fbb7e70e7538e020907ee02edec95f7236437f28ecfbc4ed90da",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase2-rank5.txt": "8eae8a0e64acdc27e520bf9ffb603f5b3e2d6d9c365be2bbf0cfd02837ae2a9f",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase2-rank5.bin": "8264dcf8f7c594d2b2461e00d75c65d3702aafa67a457968b4630fcd9bec3a9f",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase2-rank6.txt": "e67204f130e58112305f17c6e7d458ae29a464e795c18380ff11765860d4010b",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase2-rank6.bin": "09cc10c00b715eb303b2339a3f57b3c4b4f4cc94fe99d8bdc7fd583cbbc9b5ac",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase2-rank7.txt": "20ce24036472a6fade12d776ca7efed880ffebdd14e63a4a93a536930e654990",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-diagnostics/ranks8/phase2-rank7.bin": "840da5a4f0f456208d5c221847732b282f84ff973ee6948776a9a8669af8b403"
+        },
+        "source_sha256": {
+          "native_amr_gpu_compare.py": "0f338a7d174343ebae6905552a4066f0058d1dd243af3b82f1da6723726638b5",
+          "amr_restart.py": "2336f54f7ba139ff599067e0cd62efc6ddd453c140650e1670aaeddea36d191c",
+          "restart_roundtrip.py": "8afc41988e20e36d336230e111450ec3ba573940c773a6ed15ed03ed16eb8a3b"
+        }
+      }
+    },
+    "build-native/gpu-amr-offline-evolution-cpu-v3/results.json": {
+      "sha256": "59deea3f8ffda45cf03e74f1bdfd376fc93e9c79c543df58cd3f85a865b1c11b",
+      "result": {
+        "passed": true,
+        "case": "evolution",
+        "cross_rank_complete_state_bitwise": true,
+        "runs": {
+          "2": {
+            "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks2",
+            "snapshots": [
+              {
+                "cycle": 0,
+                "time": 0.0,
+                "dt": 0.00046944203735617445,
+                "blocks": 106,
+                "sequence": 0,
+                "bulk_points": 229392,
+                "scri_points": 864,
+                "zero_scri_ranks": 0,
+                "canonical": {
+                  "summary": {
+                    "points": 230256,
+                    "scalar_values": 8979984,
+                    "sha256": "cb95755804254330775a68c3f1b6265b655b52a2bda1c11e41323a5a40761d00",
+                    "chi_totals": [
+                      1e+300,
+                      1e+300,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      1e+300
+                    ]
+                  },
+                  "regions": {
+                    "bulk": {
+                      "points": 229392,
+                      "scalar_values": 8946288,
+                      "sha256": "df81529cfe980bf4becb9d3f99d6a5ff3e421d88e4304d6763add2653fa3e623",
+                      "chi_totals": [
+                        1e+300,
+                        1e+300,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1e+300
+                      ]
+                    },
+                    "surface": {
+                      "points": 864,
+                      "scalar_values": 33696,
+                      "sha256": "a86452b80368d0730ace8aa3f9a2f32ca5091579037e577c70e9ce60982d46df",
+                      "chi_totals": [
+                        1e+300,
+                        1e+300,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1e+300
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "cycle": 1,
+                "time": 0.00046944203735617445,
+                "dt": 0.00046944203735617445,
+                "blocks": 127,
+                "sequence": 1,
+                "bulk_points": 277236,
+                "scri_points": 1296,
+                "zero_scri_ranks": 0,
+                "canonical": {
+                  "summary": {
+                    "points": 278532,
+                    "scalar_values": 10862748,
+                    "sha256": "df166dc1a1d8540372ab3c0bc8d75fdfc3b97a8e433dd47318cb46402e032c99",
+                    "chi_totals": [
+                      1.4014670510464629e-05,
+                      1.4014670788558706e-05,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      1e+300
+                    ]
+                  },
+                  "regions": {
+                    "bulk": {
+                      "points": 277236,
+                      "scalar_values": 10812204,
+                      "sha256": "527bc96eee4cbe6a4c2dc455b0a8143cf0300a9df48fa0fefee78faf312d4a08",
+                      "chi_totals": [
+                        1.4014670510464629e-05,
+                        1.4014670788558706e-05,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1e+300
+                      ]
+                    },
+                    "surface": {
+                      "points": 1296,
+                      "scalar_values": 50544,
+                      "sha256": "96bd2881956e2445a11fc4732a0bc24cfed1af2f3f7a3aec55f17b886469f63b",
+                      "chi_totals": [
+                        0.9999999999984835,
+                        0.9999999999984835,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1e+300
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "cycle": 2,
+                "time": 0.0009388840747123489,
+                "dt": 0.00046944203735617445,
+                "blocks": 127,
+                "sequence": 1,
+                "bulk_points": 277236,
+                "scri_points": 1296,
+                "zero_scri_ranks": 0,
+                "canonical": {
+                  "summary": {
+                    "points": 278532,
+                    "scalar_values": 10862748,
+                    "sha256": "fd90acd12cb424a58242adf33f0c4ebf6482e6ea86ac0ab4f95c60174fec6c8b",
+                    "chi_totals": [
+                      1.3928923359873145e-05,
+                      1.3928923634714902e-05,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      1e+300
+                    ]
+                  },
+                  "regions": {
+                    "bulk": {
+                      "points": 277236,
+                      "scalar_values": 10812204,
+                      "sha256": "ab3dd858c58892955b6c0d3716077f352a1a0fbec94ccaee43c7d7907ba9f4a9",
+                      "chi_totals": [
+                        1.3928923359873145e-05,
+                        1.3928923634714902e-05,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1e+300
+                      ]
+                    },
+                    "surface": {
+                      "points": 1296,
+                      "scalar_values": 50544,
+                      "sha256": "997c553e6bf6ad4739b982d5ef436814470033dd717349ee81be0d565d8e0461",
+                      "chi_totals": [
+                        0.9999999998236133,
+                        0.9999999999669292,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1e+300
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "cycle": 3,
+                "time": 0.0014083261120685234,
+                "dt": 0.00046944203735617445,
+                "blocks": 106,
+                "sequence": 2,
+                "bulk_points": 229392,
+                "scri_points": 864,
+                "zero_scri_ranks": 0,
+                "canonical": {
+                  "summary": {
+                    "points": 230256,
+                    "scalar_values": 8979984,
+                    "sha256": "df8fd55e6f3441551d7585846430bcc320eaef709bc92740309f54c31698b4c4",
+                    "chi_totals": [
+                      1.3843545009835915e-05,
+                      1.3843545281470546e-05,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      1e+300
+                    ]
+                  },
+                  "regions": {
+                    "bulk": {
+                      "points": 229392,
+                      "scalar_values": 8946288,
+                      "sha256": "dec620b3a04bea73aadf37056de087ea1ca5feb99bbb90458b7e33e9c394df89",
+                      "chi_totals": [
+                        1.3843545009835915e-05,
+                        1.3843545281470546e-05,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1e+300
+                      ]
+                    },
+                    "surface": {
+                      "points": 864,
+                      "scalar_values": 33696,
+                      "sha256": "8fa5d4d4f7282b21a42a86aaf76d6358f7741057a35f01dd528f2c2873484030",
+                      "chi_totals": [
+                        0.9999999998236133,
+                        0.9999999999669292,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1e+300
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "cycle": 4,
+                "time": 0.0018777681494246978,
+                "dt": 0.00046944203735617445,
+                "blocks": 106,
+                "sequence": 2,
+                "bulk_points": 229392,
+                "scri_points": 864,
+                "zero_scri_ranks": 0,
+                "canonical": {
+                  "summary": {
+                    "points": 230256,
+                    "scalar_values": 8979984,
+                    "sha256": "92759ba8f11fe4be48f14cb72e1dc7177607207a942f023bc41c279683f3c6ea",
+                    "chi_totals": [
+                      1.375853223856762e-05,
+                      1.3758532507039594e-05,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      1e+300
+                    ]
+                  },
+                  "regions": {
+                    "bulk": {
+                      "points": 229392,
+                      "scalar_values": 8946288,
+                      "sha256": "6b9521fd71a311aa78672c346c97b0519fead054c95436cdf2fdf557d2a01ff0",
+                      "chi_totals": [
+                        1.375853223856762e-05,
+                        1.3758532507039594e-05,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1e+300
+                      ]
+                    },
+                    "surface": {
+                      "points": 864,
+                      "scalar_values": 33696,
+                      "sha256": "c34a042cb2a6aadc8a0dfd589c0521f56e32d44f937df2244695d5733df7d16f",
+                      "chi_totals": [
+                        0.9999999216264004,
+                        0.9999999216413106,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1e+300
+                      ]
+                    }
+                  }
+                }
+              }
+            ],
+            "stages": [
+              {
+                "cycle": 1,
+                "stage": 1,
+                "rhs_time": 0.0,
+                "state_time": 0.00023472101867808723,
+                "bulk_values": 7111152,
+                "scri_values": 26784,
+                "compatibility": 6.041830624351692e-16,
+                "clock": 9.127841543631657e-14,
+                "cfl": 0.23769230225943389
+              },
+              {
+                "cycle": 1,
+                "stage": 2,
+                "rhs_time": 0.00023472101867808723,
+                "state_time": 0.00023472101867808723,
+                "bulk_values": 7111152,
+                "scri_values": 26784,
+                "compatibility": 9.794612198600041e-16,
+                "clock": 4.995613281275584e-09,
+                "cfl": 0.23769230225943366
+              },
+              {
+                "cycle": 1,
+                "stage": 3,
+                "rhs_time": 0.00023472101867808723,
+                "state_time": 0.00046944203735617445,
+                "bulk_values": 7111152,
+                "scri_values": 26784,
+                "compatibility": 7.780627783265004e-16,
+                "clock": 4.8803803284995395e-09,
+                "cfl": 0.2376923022594371
+              },
+              {
+                "cycle": 1,
+                "stage": 4,
+                "rhs_time": 0.00046944203735617445,
+                "state_time": 0.00046944203735617445,
+                "bulk_values": 7111152,
+                "scri_values": 26784,
+                "compatibility": 7.755384307193223e-16,
+                "clock": 9.307388759707291e-09,
+                "cfl": 0.2376923022594358
+              },
+              {
+                "cycle": 2,
+                "stage": 1,
+                "rhs_time": 0.00046944203735617445,
+                "state_time": 0.0007041630560342617,
+                "bulk_values": 8594316,
+                "scri_values": 40176,
+                "compatibility": 8.7469742712343e-16,
+                "clock": 1.0324958278435212e-07,
+                "cfl": 0.4767786203250591
+              },
+              {
+                "cycle": 2,
+                "stage": 2,
+                "rhs_time": 0.0007041630560342617,
+                "state_time": 0.0007041630560342617,
+                "bulk_values": 8594316,
+                "scri_values": 40176,
+                "compatibility": 8.754975672017587e-16,
+                "clock": 1.0608854370816393e-07,
+                "cfl": 0.4767786203255413
+              },
+              {
+                "cycle": 2,
+                "stage": 3,
+                "rhs_time": 0.0007041630560342617,
+                "state_time": 0.0009388840747123489,
+                "bulk_values": 8594316,
+                "scri_values": 40176,
+                "compatibility": 8.858040275302938e-16,
+                "clock": 7.192717563801462e-07,
+                "cfl": 0.47677862032512724
+              },
+              {
+                "cycle": 2,
+                "stage": 4,
+                "rhs_time": 0.0009388840747123489,
+                "state_time": 0.0009388840747123489,
+                "bulk_values": 8594316,
+                "scri_values": 40176,
+                "compatibility": 9.593115583962717e-16,
+                "clock": 1.913685346247946e-06,
+                "cfl": 0.4767786203266099
+              },
+              {
+                "cycle": 3,
+                "stage": 1,
+                "rhs_time": 0.0009388840747123489,
+                "state_time": 0.001173605093390436,
+                "bulk_values": 8594316,
+                "scri_values": 40176,
+                "compatibility": 8.456158081939847e-16,
+                "clock": 6.661446689326488e-07,
+                "cfl": 0.47677862032380336
+              },
+              {
+                "cycle": 3,
+                "stage": 2,
+                "rhs_time": 0.001173605093390436,
+                "state_time": 0.001173605093390436,
+                "bulk_values": 8594316,
+                "scri_values": 40176,
+                "compatibility": 8.818024652164522e-16,
+                "clock": 6.252642560839846e-07,
+                "cfl": 0.4767786203256903
+              },
+              {
+                "cycle": 3,
+                "stage": 3,
+                "rhs_time": 0.001173605093390436,
+                "state_time": 0.0014083261120685234,
+                "bulk_values": 8594316,
+                "scri_values": 40176,
+                "compatibility": 8.098601652102165e-16,
+                "clock": 1.1746816165525157e-06,
+                "cfl": 0.47677862032514695
+              },
+              {
+                "cycle": 3,
+                "stage": 4,
+                "rhs_time": 0.0014083261120685234,
+                "state_time": 0.0014083261120685234,
+                "bulk_values": 8594316,
+                "scri_values": 40176,
+                "compatibility": 9.626399321762963e-16,
+                "clock": 1.4528475146018661e-06,
+                "cfl": 0.47677862032733676
+              },
+              {
+                "cycle": 4,
+                "stage": 1,
+                "rhs_time": 0.0014083261120685234,
+                "state_time": 0.0016430471307466107,
+                "bulk_values": 7111152,
+                "scri_values": 26784,
+                "compatibility": 6.868827338510353e-16,
+                "clock": 0.00027806240662011457,
+                "cfl": 0.23769230225953764
+              },
+              {
+                "cycle": 4,
+                "stage": 2,
+                "rhs_time": 0.0016430471307466107,
+                "state_time": 0.0016430471307466107,
+                "bulk_values": 7111152,
+                "scri_values": 26784,
+                "compatibility": 7.879371525902623e-16,
+                "clock": 0.00039712439517876455,
+                "cfl": 0.23769230230277458
+              },
+              {
+                "cycle": 4,
+                "stage": 3,
+                "rhs_time": 0.0016430471307466107,
+                "state_time": 0.0018777681494246978,
+                "bulk_values": 7111152,
+                "scri_values": 26784,
+                "compatibility": 7.174165775336583e-16,
+                "clock": 0.0003344686492598959,
+                "cfl": 0.23769230225957313
+              },
+              {
+                "cycle": 4,
+                "stage": 4,
+                "rhs_time": 0.0018777681494246978,
+                "state_time": 0.0018777681494246978,
+                "bulk_values": 7111152,
+                "scri_values": 26784,
+                "compatibility": 9.6238528214318e-16,
+                "clock": 0.00040953784497806437,
+                "cfl": 0.23769230225961144
+              }
+            ],
+            "diagnostics": []
+          },
+          "8": {
+            "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8",
+            "snapshots": [
+              {
+                "cycle": 0,
+                "time": 0.0,
+                "dt": 0.00046944203735617445,
+                "blocks": 106,
+                "sequence": 0,
+                "bulk_points": 229392,
+                "scri_points": 864,
+                "zero_scri_ranks": 3,
+                "canonical": {
+                  "summary": {
+                    "points": 230256,
+                    "scalar_values": 8979984,
+                    "sha256": "cb95755804254330775a68c3f1b6265b655b52a2bda1c11e41323a5a40761d00",
+                    "chi_totals": [
+                      1e+300,
+                      1e+300,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      1e+300
+                    ]
+                  },
+                  "regions": {
+                    "bulk": {
+                      "points": 229392,
+                      "scalar_values": 8946288,
+                      "sha256": "df81529cfe980bf4becb9d3f99d6a5ff3e421d88e4304d6763add2653fa3e623",
+                      "chi_totals": [
+                        1e+300,
+                        1e+300,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1e+300
+                      ]
+                    },
+                    "surface": {
+                      "points": 864,
+                      "scalar_values": 33696,
+                      "sha256": "a86452b80368d0730ace8aa3f9a2f32ca5091579037e577c70e9ce60982d46df",
+                      "chi_totals": [
+                        1e+300,
+                        1e+300,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1e+300
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "cycle": 1,
+                "time": 0.00046944203735617445,
+                "dt": 0.00046944203735617445,
+                "blocks": 127,
+                "sequence": 1,
+                "bulk_points": 277236,
+                "scri_points": 1296,
+                "zero_scri_ranks": 3,
+                "canonical": {
+                  "summary": {
+                    "points": 278532,
+                    "scalar_values": 10862748,
+                    "sha256": "df166dc1a1d8540372ab3c0bc8d75fdfc3b97a8e433dd47318cb46402e032c99",
+                    "chi_totals": [
+                      1.4014670510464629e-05,
+                      1.4014670788558706e-05,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      1e+300
+                    ]
+                  },
+                  "regions": {
+                    "bulk": {
+                      "points": 277236,
+                      "scalar_values": 10812204,
+                      "sha256": "527bc96eee4cbe6a4c2dc455b0a8143cf0300a9df48fa0fefee78faf312d4a08",
+                      "chi_totals": [
+                        1.4014670510464629e-05,
+                        1.4014670788558706e-05,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1e+300
+                      ]
+                    },
+                    "surface": {
+                      "points": 1296,
+                      "scalar_values": 50544,
+                      "sha256": "96bd2881956e2445a11fc4732a0bc24cfed1af2f3f7a3aec55f17b886469f63b",
+                      "chi_totals": [
+                        0.9999999999984835,
+                        0.9999999999984835,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1e+300
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "cycle": 2,
+                "time": 0.0009388840747123489,
+                "dt": 0.00046944203735617445,
+                "blocks": 127,
+                "sequence": 1,
+                "bulk_points": 277236,
+                "scri_points": 1296,
+                "zero_scri_ranks": 3,
+                "canonical": {
+                  "summary": {
+                    "points": 278532,
+                    "scalar_values": 10862748,
+                    "sha256": "fd90acd12cb424a58242adf33f0c4ebf6482e6ea86ac0ab4f95c60174fec6c8b",
+                    "chi_totals": [
+                      1.3928923359873145e-05,
+                      1.3928923634714902e-05,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      1e+300
+                    ]
+                  },
+                  "regions": {
+                    "bulk": {
+                      "points": 277236,
+                      "scalar_values": 10812204,
+                      "sha256": "ab3dd858c58892955b6c0d3716077f352a1a0fbec94ccaee43c7d7907ba9f4a9",
+                      "chi_totals": [
+                        1.3928923359873145e-05,
+                        1.3928923634714902e-05,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1e+300
+                      ]
+                    },
+                    "surface": {
+                      "points": 1296,
+                      "scalar_values": 50544,
+                      "sha256": "997c553e6bf6ad4739b982d5ef436814470033dd717349ee81be0d565d8e0461",
+                      "chi_totals": [
+                        0.9999999998236133,
+                        0.9999999999669292,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1e+300
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "cycle": 3,
+                "time": 0.0014083261120685234,
+                "dt": 0.00046944203735617445,
+                "blocks": 106,
+                "sequence": 2,
+                "bulk_points": 229392,
+                "scri_points": 864,
+                "zero_scri_ranks": 3,
+                "canonical": {
+                  "summary": {
+                    "points": 230256,
+                    "scalar_values": 8979984,
+                    "sha256": "df8fd55e6f3441551d7585846430bcc320eaef709bc92740309f54c31698b4c4",
+                    "chi_totals": [
+                      1.3843545009835915e-05,
+                      1.3843545281470546e-05,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      1e+300
+                    ]
+                  },
+                  "regions": {
+                    "bulk": {
+                      "points": 229392,
+                      "scalar_values": 8946288,
+                      "sha256": "dec620b3a04bea73aadf37056de087ea1ca5feb99bbb90458b7e33e9c394df89",
+                      "chi_totals": [
+                        1.3843545009835915e-05,
+                        1.3843545281470546e-05,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1e+300
+                      ]
+                    },
+                    "surface": {
+                      "points": 864,
+                      "scalar_values": 33696,
+                      "sha256": "8fa5d4d4f7282b21a42a86aaf76d6358f7741057a35f01dd528f2c2873484030",
+                      "chi_totals": [
+                        0.9999999998236133,
+                        0.9999999999669292,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1e+300
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "cycle": 4,
+                "time": 0.0018777681494246978,
+                "dt": 0.00046944203735617445,
+                "blocks": 106,
+                "sequence": 2,
+                "bulk_points": 229392,
+                "scri_points": 864,
+                "zero_scri_ranks": 3,
+                "canonical": {
+                  "summary": {
+                    "points": 230256,
+                    "scalar_values": 8979984,
+                    "sha256": "92759ba8f11fe4be48f14cb72e1dc7177607207a942f023bc41c279683f3c6ea",
+                    "chi_totals": [
+                      1.375853223856762e-05,
+                      1.3758532507039594e-05,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      1e+300
+                    ]
+                  },
+                  "regions": {
+                    "bulk": {
+                      "points": 229392,
+                      "scalar_values": 8946288,
+                      "sha256": "6b9521fd71a311aa78672c346c97b0519fead054c95436cdf2fdf557d2a01ff0",
+                      "chi_totals": [
+                        1.375853223856762e-05,
+                        1.3758532507039594e-05,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1e+300
+                      ]
+                    },
+                    "surface": {
+                      "points": 864,
+                      "scalar_values": 33696,
+                      "sha256": "c34a042cb2a6aadc8a0dfd589c0521f56e32d44f937df2244695d5733df7d16f",
+                      "chi_totals": [
+                        0.9999999216264004,
+                        0.9999999216413106,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        1e+300
+                      ]
+                    }
+                  }
+                }
+              }
+            ],
+            "stages": [
+              {
+                "cycle": 1,
+                "stage": 1,
+                "rhs_time": 0.0,
+                "state_time": 0.00023472101867808723,
+                "bulk_values": 7111152,
+                "scri_values": 26784,
+                "compatibility": 6.041830624351692e-16,
+                "clock": 9.127841543631657e-14,
+                "cfl": 0.23769230225943389
+              },
+              {
+                "cycle": 1,
+                "stage": 2,
+                "rhs_time": 0.00023472101867808723,
+                "state_time": 0.00023472101867808723,
+                "bulk_values": 7111152,
+                "scri_values": 26784,
+                "compatibility": 9.794612198600041e-16,
+                "clock": 4.995613281275584e-09,
+                "cfl": 0.23769230225943366
+              },
+              {
+                "cycle": 1,
+                "stage": 3,
+                "rhs_time": 0.00023472101867808723,
+                "state_time": 0.00046944203735617445,
+                "bulk_values": 7111152,
+                "scri_values": 26784,
+                "compatibility": 7.780627783265004e-16,
+                "clock": 4.8803803284995395e-09,
+                "cfl": 0.2376923022594371
+              },
+              {
+                "cycle": 1,
+                "stage": 4,
+                "rhs_time": 0.00046944203735617445,
+                "state_time": 0.00046944203735617445,
+                "bulk_values": 7111152,
+                "scri_values": 26784,
+                "compatibility": 7.755384307193223e-16,
+                "clock": 9.307388759707291e-09,
+                "cfl": 0.2376923022594358
+              },
+              {
+                "cycle": 2,
+                "stage": 1,
+                "rhs_time": 0.00046944203735617445,
+                "state_time": 0.0007041630560342617,
+                "bulk_values": 8594316,
+                "scri_values": 40176,
+                "compatibility": 8.7469742712343e-16,
+                "clock": 1.0324958278435212e-07,
+                "cfl": 0.4767786203250591
+              },
+              {
+                "cycle": 2,
+                "stage": 2,
+                "rhs_time": 0.0007041630560342617,
+                "state_time": 0.0007041630560342617,
+                "bulk_values": 8594316,
+                "scri_values": 40176,
+                "compatibility": 8.754975672017587e-16,
+                "clock": 1.0608854370816393e-07,
+                "cfl": 0.4767786203255413
+              },
+              {
+                "cycle": 2,
+                "stage": 3,
+                "rhs_time": 0.0007041630560342617,
+                "state_time": 0.0009388840747123489,
+                "bulk_values": 8594316,
+                "scri_values": 40176,
+                "compatibility": 8.858040275302938e-16,
+                "clock": 7.192717563801462e-07,
+                "cfl": 0.47677862032512724
+              },
+              {
+                "cycle": 2,
+                "stage": 4,
+                "rhs_time": 0.0009388840747123489,
+                "state_time": 0.0009388840747123489,
+                "bulk_values": 8594316,
+                "scri_values": 40176,
+                "compatibility": 9.593115583962717e-16,
+                "clock": 1.913685346247946e-06,
+                "cfl": 0.4767786203266099
+              },
+              {
+                "cycle": 3,
+                "stage": 1,
+                "rhs_time": 0.0009388840747123489,
+                "state_time": 0.001173605093390436,
+                "bulk_values": 8594316,
+                "scri_values": 40176,
+                "compatibility": 8.456158081939847e-16,
+                "clock": 6.661446689326488e-07,
+                "cfl": 0.47677862032380336
+              },
+              {
+                "cycle": 3,
+                "stage": 2,
+                "rhs_time": 0.001173605093390436,
+                "state_time": 0.001173605093390436,
+                "bulk_values": 8594316,
+                "scri_values": 40176,
+                "compatibility": 8.818024652164522e-16,
+                "clock": 6.252642560839846e-07,
+                "cfl": 0.4767786203256903
+              },
+              {
+                "cycle": 3,
+                "stage": 3,
+                "rhs_time": 0.001173605093390436,
+                "state_time": 0.0014083261120685234,
+                "bulk_values": 8594316,
+                "scri_values": 40176,
+                "compatibility": 8.098601652102165e-16,
+                "clock": 1.1746816165525157e-06,
+                "cfl": 0.47677862032514695
+              },
+              {
+                "cycle": 3,
+                "stage": 4,
+                "rhs_time": 0.0014083261120685234,
+                "state_time": 0.0014083261120685234,
+                "bulk_values": 8594316,
+                "scri_values": 40176,
+                "compatibility": 9.626399321762963e-16,
+                "clock": 1.4528475146018661e-06,
+                "cfl": 0.47677862032733676
+              },
+              {
+                "cycle": 4,
+                "stage": 1,
+                "rhs_time": 0.0014083261120685234,
+                "state_time": 0.0016430471307466107,
+                "bulk_values": 7111152,
+                "scri_values": 26784,
+                "compatibility": 6.868827338510353e-16,
+                "clock": 0.00027806240662011457,
+                "cfl": 0.23769230225953764
+              },
+              {
+                "cycle": 4,
+                "stage": 2,
+                "rhs_time": 0.0016430471307466107,
+                "state_time": 0.0016430471307466107,
+                "bulk_values": 7111152,
+                "scri_values": 26784,
+                "compatibility": 7.879371525902623e-16,
+                "clock": 0.00039712439517876455,
+                "cfl": 0.23769230230277458
+              },
+              {
+                "cycle": 4,
+                "stage": 3,
+                "rhs_time": 0.0016430471307466107,
+                "state_time": 0.0018777681494246978,
+                "bulk_values": 7111152,
+                "scri_values": 26784,
+                "compatibility": 7.174165775336583e-16,
+                "clock": 0.0003344686492598959,
+                "cfl": 0.23769230225957313
+              },
+              {
+                "cycle": 4,
+                "stage": 4,
+                "rhs_time": 0.0018777681494246978,
+                "state_time": 0.0018777681494246978,
+                "bulk_values": 7111152,
+                "scri_values": 26784,
+                "compatibility": 9.6238528214318e-16,
+                "clock": 0.00040953784497806437,
+                "cfl": 0.23769230225961144
+              }
+            ],
+            "diagnostics": []
+          }
+        },
+        "real_driver_cycles": 4,
+        "legacy_solution_comparison": false,
+        "admission_scope": "test harness constructs static then uses actual dynamic Driver; ordinary restart case gates input admission",
+        "provenance": {
+          "backend": "existing CPU fixture parsing validation only",
+          "gpu_evidence": false,
+          "evidence": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/results.json",
+          "evidence_sha256": "38636367f753d4e2254479bc1bfa4b87c39492f02880ccf2ef1aa197f104a3cb"
+        },
+        "input_sha256": {
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/results.json": "38636367f753d4e2254479bc1bfa4b87c39492f02880ccf2ef1aa197f104a3cb",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks2/run.log": "a0b0b016de107514e173d4f45b37b0ccb1ae572f566d7d956c7006fa9bb3dbb1",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks2/cycle0-rank0.txt": "0a20a87d0d6e316fe7bdaa02005a53e2ec39541618a3f34c555d81884a8f54ed",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks2/cycle0-rank0.bin": "df1194bcde649d36da9d174de4e02c441f16250e76f711483eabe8ac9da17589",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks2/cycle0-rank1.txt": "1af073ac6caf592b5d446fab1ade5f8cf3997bd4d4084ee11fc8e1d728645b2f",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks2/cycle0-rank1.bin": "dc9f8ee720a3853281d83fa683c40d1c9d76f682a68bd0528cefbb066d347d90",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks2/cycle1-rank0.txt": "63f70d781b83d3450f72fb62c0d697a6bc63ca2aa65473e39ce834c9f5a8111c",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks2/cycle1-rank0.bin": "62042800673a05f9f04271df432c9df915c660c8bfc5a9501c74e59775fc614e",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks2/cycle1-rank1.txt": "865484fd42ff4cc374c1977aee469439ff16be579efa617cf1d932478cf17011",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks2/cycle1-rank1.bin": "5decab250ff349265e71dc2c905290e2da55bcb77f216b99608364648e9f35a3",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks2/cycle2-rank0.txt": "63f70d781b83d3450f72fb62c0d697a6bc63ca2aa65473e39ce834c9f5a8111c",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks2/cycle2-rank0.bin": "5a1d52a95b4c0e45ff5595c3963b10b29b8350b851b94d274cc2aede05edf95a",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks2/cycle2-rank1.txt": "865484fd42ff4cc374c1977aee469439ff16be579efa617cf1d932478cf17011",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks2/cycle2-rank1.bin": "b49a63d9454d67daa1e1733d66a4b23046c612a368932ef50c4a29926d0320d1",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks2/cycle3-rank0.txt": "0a20a87d0d6e316fe7bdaa02005a53e2ec39541618a3f34c555d81884a8f54ed",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks2/cycle3-rank0.bin": "66d3e94875be0b5d334dfff24f756269cd45e5efbb42ac23cc5ddeadd9a1c993",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks2/cycle3-rank1.txt": "1af073ac6caf592b5d446fab1ade5f8cf3997bd4d4084ee11fc8e1d728645b2f",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks2/cycle3-rank1.bin": "f3e4d8ae63a0e05d46991a2cb437adeede4613d085ceb3f1f7af0f1627398a5f",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks2/cycle4-rank0.txt": "0a20a87d0d6e316fe7bdaa02005a53e2ec39541618a3f34c555d81884a8f54ed",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks2/cycle4-rank0.bin": "bcdcc0701171c6024eafc6484e18a0781c568a9adeaad9405431e8a4ffc4bb9b",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks2/cycle4-rank1.txt": "1af073ac6caf592b5d446fab1ade5f8cf3997bd4d4084ee11fc8e1d728645b2f",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks2/cycle4-rank1.bin": "54551cc3d912755b969fd9114e82b2b8196bc47732b737935954a8b922f3c45b",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/run.log": "bd4ae3c5f98fa34234e7a9ac7085bec8e2824f57b0727abe0414c9d7a1c6bd3f",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle0-rank0.txt": "d87a87f8ec773e303a7343160508729602c4991135054ea984412b961f8ceb9a",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle0-rank0.bin": "2f8e7dd87fba65a3a380159601e4464db0711e24eef7f7d02bdc3dd70d5049b5",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle0-rank1.txt": "8c4d796e3da530362c75216fe687de86e390bec807f2f66f68780aa4fd86c054",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle0-rank1.bin": "6e7d35c669cd894d4169010740a3f2f3f48019daa19ff5c56bccdc8498de9760",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle0-rank2.txt": "e6bde098a3cbca7e4c12425f7930cdfe50b33db3153ba2766dbb5e5b0c01c390",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle0-rank2.bin": "e8e15f7eaa9fd1625268a77553827db78884b2780eeb49f2228d5e6cbed20ba2",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle0-rank3.txt": "a1c11f88c5868c6f9792754611fce5c832c6b349788007d3c234d64a34f12726",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle0-rank3.bin": "5ddcad0bce910624eefce28d4104a1276602d5da6b26ad9ae1e72a4a1f5172ef",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle0-rank4.txt": "f0f5113962ee2a21d178f66e48e748775795d23a457ff59707e1de690b8ff677",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle0-rank4.bin": "8567cdd22b83732e29cdd62f8da5be18f8ba63902c6bc4a1abe9f41a80dc7762",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle0-rank5.txt": "97049b8173efe48bfd675567b3a320cb4d5f75a822fb0908def2bfbafcc8898d",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle0-rank5.bin": "86d3108ba937036fde0e2b7863df2f02e83ee571487e423a0838992fbf3d2ad1",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle0-rank6.txt": "f0af0debc25ce90fca82b4cc9353d292d79a715694d9643116d992ca16e72008",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle0-rank6.bin": "fdfbbcffd1f29b0adedeae30ab66cf3a220cd9217034da011e0346e978d896cf",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle0-rank7.txt": "ff93ba15ecad68b8bfab07ad62d54b29857020d404b687152524c52aabf1c518",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle0-rank7.bin": "046d06d8c4d5dd6a2be375d13f38d4a542e423d730d6812f43d0d00fd0320c11",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle1-rank0.txt": "6a9e1cbcad88c8e3c8fedee0c6c287c6f88d8cff458b1f6aaabb1ed3889b8a13",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle1-rank0.bin": "4e32bfe760c0391fe51cc58f3946b9b39c6cce951b025e92a6b0068bf8fe3b14",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle1-rank1.txt": "3ffece2f9a549e0ab02040a033a5cd399d9d21b436eb15c9ba731abe225478cb",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle1-rank1.bin": "b7535a698fa186f072e57b0b7247c2bb5c04c64702eeed0712085dace21e3847",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle1-rank2.txt": "262a6f91c3942c49192496078400915b37c3b849391814084a5c0212aca9bec9",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle1-rank2.bin": "a50a2aa4b15f4b98040f2f8c2edc18f39abc90ddb2c42bcda6ee874ca02d92c2",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle1-rank3.txt": "6fb7b7e706217359835a3a6eeb10ca0167e2886d85e818f418603214cc903f98",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle1-rank3.bin": "c9f795ad0e66c27f9251201d35570423f0c1788036c3a4d871a71ffcf5f5085c",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle1-rank4.txt": "3ea5a615e4d90b62dfffc0ef60d71907df2e07123f230d1f3443869269913dff",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle1-rank4.bin": "c713d70c14f08ce39e6658dcb98c01d425394f64f5768bad51319500e8336d21",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle1-rank5.txt": "73a2e67a1c197e25f412c666fb70c5cd0d872c219ff7b6d49c5e70d31ee2ed48",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle1-rank5.bin": "b7aa4242427aa750b342b22a1f1a9ec8ce2bf13e758879912feab72c2d357167",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle1-rank6.txt": "0fe3e0504c10913042b373c2548e768402dc359a1c37a32bb17affc0d837814c",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle1-rank6.bin": "659e8c8e4e4495f192748ff13d34f699afcd4e94d57e3251d72f749b300f0e90",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle1-rank7.txt": "f74f0ce5c563f3a130618cadd5ca12e90b8b76c9b32a7a75d039f5ddd7f599bd",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle1-rank7.bin": "f453cb719d54acffe4bc5cdb7f5b6f703464e32fcd46da795269e23f2a88dc0b",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle2-rank0.txt": "6a9e1cbcad88c8e3c8fedee0c6c287c6f88d8cff458b1f6aaabb1ed3889b8a13",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle2-rank0.bin": "b2286a9e4696992680882e2858befe47fab6fbad1f2b92337d9b01bd0c708183",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle2-rank1.txt": "3ffece2f9a549e0ab02040a033a5cd399d9d21b436eb15c9ba731abe225478cb",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle2-rank1.bin": "d8ec2f8f213e531ef8204e7ab2bc614a0180104615eb69a4cf6c31db473b4052",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle2-rank2.txt": "262a6f91c3942c49192496078400915b37c3b849391814084a5c0212aca9bec9",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle2-rank2.bin": "94756ed4b66261493822ac7784cca09afed50aa63359c61db40ca9d5ced32d17",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle2-rank3.txt": "6fb7b7e706217359835a3a6eeb10ca0167e2886d85e818f418603214cc903f98",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle2-rank3.bin": "b5506435a2ea9b0c128143bd3346e0bbb5e0c8d7ba25b736a7159efc510bd3c3",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle2-rank4.txt": "3ea5a615e4d90b62dfffc0ef60d71907df2e07123f230d1f3443869269913dff",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle2-rank4.bin": "346ab6be6c1e7528b3a486d02a9fae21c232f93888c6a3a86aedb80c08c921b0",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle2-rank5.txt": "73a2e67a1c197e25f412c666fb70c5cd0d872c219ff7b6d49c5e70d31ee2ed48",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle2-rank5.bin": "61c6030547d478429d5771572440f2f49410a146655c28f8b7c6a9068aaae312",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle2-rank6.txt": "0fe3e0504c10913042b373c2548e768402dc359a1c37a32bb17affc0d837814c",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle2-rank6.bin": "17f425c53340980eaa39a8dbc2135bb781afef54724d83b47465b20af072f62b",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle2-rank7.txt": "f74f0ce5c563f3a130618cadd5ca12e90b8b76c9b32a7a75d039f5ddd7f599bd",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle2-rank7.bin": "033e157e20acc2e05cb0ed9c974af1809ffc6c2f8d065889e4cb1884699a1774",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle3-rank0.txt": "d87a87f8ec773e303a7343160508729602c4991135054ea984412b961f8ceb9a",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle3-rank0.bin": "863106d89c73014cb4bfbc4f0d90713cc5e9a250318b1b9f49197b54ffdce78f",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle3-rank1.txt": "8c4d796e3da530362c75216fe687de86e390bec807f2f66f68780aa4fd86c054",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle3-rank1.bin": "d548c839d8d262634f9f45b8492a9aa74a376b533cc8bfab0d6916ff5ba5f1ad",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle3-rank2.txt": "e6bde098a3cbca7e4c12425f7930cdfe50b33db3153ba2766dbb5e5b0c01c390",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle3-rank2.bin": "d94563285657eba9442a8566750a893824e6b2d66c2ee0f69e13be6e3af4d0fa",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle3-rank3.txt": "a1c11f88c5868c6f9792754611fce5c832c6b349788007d3c234d64a34f12726",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle3-rank3.bin": "86d73049cc45ec45ab79056a5c8788d83c2329640270e6f4c4764cd217abd051",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle3-rank4.txt": "f0f5113962ee2a21d178f66e48e748775795d23a457ff59707e1de690b8ff677",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle3-rank4.bin": "af0687df093d37cc1ab9802002e1f1536bedecd8838b7c2a2d6e4b5fee557145",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle3-rank5.txt": "97049b8173efe48bfd675567b3a320cb4d5f75a822fb0908def2bfbafcc8898d",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle3-rank5.bin": "59787f26bd0a67c1e6a14bb66608feffd69a5227f325b2c5246659cd5c84b255",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle3-rank6.txt": "f0af0debc25ce90fca82b4cc9353d292d79a715694d9643116d992ca16e72008",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle3-rank6.bin": "b267eed743cb88e9c08b8084ee3067664ada389186be6e9cbbe49ea6795a1636",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle3-rank7.txt": "ff93ba15ecad68b8bfab07ad62d54b29857020d404b687152524c52aabf1c518",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle3-rank7.bin": "a0de2bb90c0266b7c0408078d6245efda629b72f7ee58d18f5e09e865e59231b",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle4-rank0.txt": "d87a87f8ec773e303a7343160508729602c4991135054ea984412b961f8ceb9a",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle4-rank0.bin": "f7b28d9e73c613153c9125b8659a824fdf0c4c7954e792264418361fc63e6c07",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle4-rank1.txt": "8c4d796e3da530362c75216fe687de86e390bec807f2f66f68780aa4fd86c054",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle4-rank1.bin": "deef9d9d95b3f67c28c21c867563a6d23f02dbdea26ed6ac2e1cc2cbde8db0b2",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle4-rank2.txt": "e6bde098a3cbca7e4c12425f7930cdfe50b33db3153ba2766dbb5e5b0c01c390",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle4-rank2.bin": "366c1d365c24b03435b973586bc62c34793e465cad6627fc8610b54427a3c522",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle4-rank3.txt": "a1c11f88c5868c6f9792754611fce5c832c6b349788007d3c234d64a34f12726",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle4-rank3.bin": "ede5d111e0fb4e65b88bd8d1b71dacb96699e0ccc9d159c504023c01177e8973",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle4-rank4.txt": "f0f5113962ee2a21d178f66e48e748775795d23a457ff59707e1de690b8ff677",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle4-rank4.bin": "982b5be22a69e6dc28070037266f3fc9ce36083ca2b6f15cfddfdb35adfcca1e",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle4-rank5.txt": "97049b8173efe48bfd675567b3a320cb4d5f75a822fb0908def2bfbafcc8898d",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle4-rank5.bin": "62e3e1055c28ce32873de9735a81c91db84a3a2ea8090e31346af87d8786bcad",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle4-rank6.txt": "f0af0debc25ce90fca82b4cc9353d292d79a715694d9643116d992ca16e72008",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle4-rank6.bin": "af0ea8a8c898eb5f2a146bc933911f8a358caa0a687c588a4d6bd18ed93dab8b",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle4-rank7.txt": "ff93ba15ecad68b8bfab07ad62d54b29857020d404b687152524c52aabf1c518",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks8/cycle4-rank7.bin": "a6121a58409376aec2ee4a2e3bcf39e3f9a68f25446047d1c754a8b86e8e04eb"
+        },
+        "source_sha256": {
+          "native_amr_gpu_compare.py": "0f338a7d174343ebae6905552a4066f0058d1dd243af3b82f1da6723726638b5",
+          "amr_restart.py": "2336f54f7ba139ff599067e0cd62efc6ddd453c140650e1670aaeddea36d191c",
+          "restart_roundtrip.py": "8afc41988e20e36d336230e111450ec3ba573940c773a6ed15ed03ed16eb8a3b"
+        }
+      }
+    },
+    "build-native/gpu-amr-offline-restart-cpu-v3/results.json": {
+      "sha256": "2b1cf8b4aafcbc04e6d09ca50fb46479581a5ba01212e17f5dd854ab5b0a0886",
+      "result": {
+        "passed": true,
+        "case": "restart",
+        "ordinary_native_executable": true,
+        "test_admission_override": false,
+        "comparisons": {
+          "prefix2": {
+            "bitwise_equal": true,
+            "scalar_values": 26336232,
+            "payload_sha256": "84a56207904800c1c09676a74690f4f740478085f950cce97aa32036de162d1f"
+          },
+          "resumed3": {
+            "bitwise_equal": true,
+            "scalar_values": 26336232,
+            "payload_sha256": "4fd2062088d662ceca34f326c23e51b7037fbd353642c6b06a2f9d9a6c3ed1f6"
+          },
+          "resumed4": {
+            "bitwise_equal": true,
+            "scalar_values": 26336232,
+            "payload_sha256": "80c0c339a5aee5c49811284c6f59ebf9265df47209308a91b1ce0e5b027e4711"
+          }
+        },
+        "checkpoints": {
+          "prefix": [
+            {
+              "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-restart-v1/first2/rst/amr_restart.00000.rst",
+              "cycle": 0,
+              "time": 0.0,
+              "dt": 0.00046944203735617445,
+              "blocks": 106,
+              "faces": 6,
+              "all_costs_one": true,
+              "initialized_header_sha256": "8252f342936b6d87890ebd39e7355539a21da2fecc313b6886bba7dc148ccdc5",
+              "unused_global_coarse_indices": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "scalar_values": 24704784,
+              "owned_scalar_values": 8979984,
+              "checkpoint_sha256": "3a18c1740c6b2b2b2ce274b0555ff271c2010b10f90d3e85a51e773d0e23536a",
+              "payload_sha256": "a99fffd8c3a6dff7da69687b9898de195d7810d112b0efbee5ea1f0041ad48fb"
+            },
+            {
+              "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-restart-v1/first2/rst/amr_restart.00001.rst",
+              "cycle": 1,
+              "time": 0.00046944203735617445,
+              "dt": 0.00046944203735617445,
+              "blocks": 106,
+              "faces": 6,
+              "all_costs_one": true,
+              "initialized_header_sha256": "8252f342936b6d87890ebd39e7355539a21da2fecc313b6886bba7dc148ccdc5",
+              "unused_global_coarse_indices": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "scalar_values": 24704784,
+              "owned_scalar_values": 8979984,
+              "checkpoint_sha256": "4318ed5af3d5c91454ea03b44eb12d4844ad01895c36b43745faded6262ac6a1",
+              "payload_sha256": "cf7e16422cf792f82a387328c0d701e70cf378ebd75912719f136c86b4278e28"
+            },
+            {
+              "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-restart-v1/first2/rst/amr_restart.00002.rst",
+              "cycle": 2,
+              "time": 0.0009388840747123489,
+              "dt": 0.00046944203735617445,
+              "blocks": 113,
+              "faces": 9,
+              "all_costs_one": true,
+              "initialized_header_sha256": "8252f342936b6d87890ebd39e7355539a21da2fecc313b6886bba7dc148ccdc5",
+              "unused_global_coarse_indices": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "scalar_values": 26336232,
+              "owned_scalar_values": 9468576,
+              "checkpoint_sha256": "4fbbcae3863f8c0a1b2db3ca2dbdaff2d31aa69c5af422d83d65c7a7f6a32aac",
+              "payload_sha256": "84a56207904800c1c09676a74690f4f740478085f950cce97aa32036de162d1f"
+            },
+            {
+              "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-restart-v1/first2/rst/amr_restart.00003.rst",
+              "cycle": 2,
+              "time": 0.0009388840747123489,
+              "dt": 0.00046944203735617445,
+              "blocks": 113,
+              "faces": 9,
+              "all_costs_one": true,
+              "initialized_header_sha256": "8252f342936b6d87890ebd39e7355539a21da2fecc313b6886bba7dc148ccdc5",
+              "unused_global_coarse_indices": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "scalar_values": 26336232,
+              "owned_scalar_values": 9468576,
+              "checkpoint_sha256": "81754d228ac51ed8d0053efd17b810d7f9e4f82fe70d3d6f736dcd19e3ec6556",
+              "payload_sha256": "84a56207904800c1c09676a74690f4f740478085f950cce97aa32036de162d1f"
+            }
+          ],
+          "continuous": [
+            {
+              "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-restart-v1/continuous4/rst/amr_restart.00000.rst",
+              "cycle": 0,
+              "time": 0.0,
+              "dt": 0.00046944203735617445,
+              "blocks": 106,
+              "faces": 6,
+              "all_costs_one": true,
+              "initialized_header_sha256": "8252f342936b6d87890ebd39e7355539a21da2fecc313b6886bba7dc148ccdc5",
+              "unused_global_coarse_indices": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "scalar_values": 24704784,
+              "owned_scalar_values": 8979984,
+              "checkpoint_sha256": "d212726265420f168b8e88d3f961edc6fa821befcecd97b58f7978136540297a",
+              "payload_sha256": "a99fffd8c3a6dff7da69687b9898de195d7810d112b0efbee5ea1f0041ad48fb"
+            },
+            {
+              "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-restart-v1/continuous4/rst/amr_restart.00001.rst",
+              "cycle": 1,
+              "time": 0.00046944203735617445,
+              "dt": 0.00046944203735617445,
+              "blocks": 106,
+              "faces": 6,
+              "all_costs_one": true,
+              "initialized_header_sha256": "8252f342936b6d87890ebd39e7355539a21da2fecc313b6886bba7dc148ccdc5",
+              "unused_global_coarse_indices": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "scalar_values": 24704784,
+              "owned_scalar_values": 8979984,
+              "checkpoint_sha256": "3d877f3bd607739f0bca6d87c45d93202dd66b7772f7ce85d4affd9479b93aa4",
+              "payload_sha256": "cf7e16422cf792f82a387328c0d701e70cf378ebd75912719f136c86b4278e28"
+            },
+            {
+              "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-restart-v1/continuous4/rst/amr_restart.00002.rst",
+              "cycle": 2,
+              "time": 0.0009388840747123489,
+              "dt": 0.00046944203735617445,
+              "blocks": 113,
+              "faces": 9,
+              "all_costs_one": true,
+              "initialized_header_sha256": "8252f342936b6d87890ebd39e7355539a21da2fecc313b6886bba7dc148ccdc5",
+              "unused_global_coarse_indices": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "scalar_values": 26336232,
+              "owned_scalar_values": 9468576,
+              "checkpoint_sha256": "a63ad8c7266af45d48608826c6a31db15b453e7824cc3ef564d56dedca708061",
+              "payload_sha256": "84a56207904800c1c09676a74690f4f740478085f950cce97aa32036de162d1f"
+            },
+            {
+              "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-restart-v1/continuous4/rst/amr_restart.00003.rst",
+              "cycle": 3,
+              "time": 0.0014083261120685234,
+              "dt": 0.00046944203735617445,
+              "blocks": 113,
+              "faces": 9,
+              "all_costs_one": true,
+              "initialized_header_sha256": "8252f342936b6d87890ebd39e7355539a21da2fecc313b6886bba7dc148ccdc5",
+              "unused_global_coarse_indices": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "scalar_values": 26336232,
+              "owned_scalar_values": 9468576,
+              "checkpoint_sha256": "16a3769749329b06a44f492129c1c382132c5c80eb3878dc7fd0670b2e655c9b",
+              "payload_sha256": "4fd2062088d662ceca34f326c23e51b7037fbd353642c6b06a2f9d9a6c3ed1f6"
+            },
+            {
+              "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-restart-v1/continuous4/rst/amr_restart.00004.rst",
+              "cycle": 4,
+              "time": 0.0018777681494246978,
+              "dt": 0.00046944203735617445,
+              "blocks": 113,
+              "faces": 9,
+              "all_costs_one": true,
+              "initialized_header_sha256": "8252f342936b6d87890ebd39e7355539a21da2fecc313b6886bba7dc148ccdc5",
+              "unused_global_coarse_indices": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "scalar_values": 26336232,
+              "owned_scalar_values": 9468576,
+              "checkpoint_sha256": "366402806fca2f5ef9a3a0a99e51c911a1306839649544768ff1f9643e7445b7",
+              "payload_sha256": "80c0c339a5aee5c49811284c6f59ebf9265df47209308a91b1ce0e5b027e4711"
+            },
+            {
+              "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-restart-v1/continuous4/rst/amr_restart.00005.rst",
+              "cycle": 4,
+              "time": 0.0018777681494246978,
+              "dt": 0.00046944203735617445,
+              "blocks": 113,
+              "faces": 9,
+              "all_costs_one": true,
+              "initialized_header_sha256": "8252f342936b6d87890ebd39e7355539a21da2fecc313b6886bba7dc148ccdc5",
+              "unused_global_coarse_indices": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "scalar_values": 26336232,
+              "owned_scalar_values": 9468576,
+              "checkpoint_sha256": "63b20fb9e57921c6ff1cc49f0816244d3ca9561e0886ddac412a58d065a25e06",
+              "payload_sha256": "80c0c339a5aee5c49811284c6f59ebf9265df47209308a91b1ce0e5b027e4711"
+            }
+          ],
+          "resumed": [
+            {
+              "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-restart-v1/restart_plus2/rst/amr_restart.00004.rst",
+              "cycle": 3,
+              "time": 0.0014083261120685234,
+              "dt": 0.00046944203735617445,
+              "blocks": 113,
+              "faces": 9,
+              "all_costs_one": true,
+              "initialized_header_sha256": "8252f342936b6d87890ebd39e7355539a21da2fecc313b6886bba7dc148ccdc5",
+              "unused_global_coarse_indices": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "scalar_values": 26336232,
+              "owned_scalar_values": 9468576,
+              "checkpoint_sha256": "13fe787d8e1fbe55767122add1a05366064708af8501305a0002cf85307990a3",
+              "payload_sha256": "4fd2062088d662ceca34f326c23e51b7037fbd353642c6b06a2f9d9a6c3ed1f6"
+            },
+            {
+              "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-restart-v1/restart_plus2/rst/amr_restart.00005.rst",
+              "cycle": 4,
+              "time": 0.0018777681494246978,
+              "dt": 0.00046944203735617445,
+              "blocks": 113,
+              "faces": 9,
+              "all_costs_one": true,
+              "initialized_header_sha256": "8252f342936b6d87890ebd39e7355539a21da2fecc313b6886bba7dc148ccdc5",
+              "unused_global_coarse_indices": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "scalar_values": 26336232,
+              "owned_scalar_values": 9468576,
+              "checkpoint_sha256": "31adafba272c8bf06290b9f89008bdde37fa77ef9f9170e558e45bd2ade8f525",
+              "payload_sha256": "80c0c339a5aee5c49811284c6f59ebf9265df47209308a91b1ce0e5b027e4711"
+            },
+            {
+              "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-restart-v1/restart_plus2/rst/amr_restart.00006.rst",
+              "cycle": 4,
+              "time": 0.0018777681494246978,
+              "dt": 0.00046944203735617445,
+              "blocks": 113,
+              "faces": 9,
+              "all_costs_one": true,
+              "initialized_header_sha256": "8252f342936b6d87890ebd39e7355539a21da2fecc313b6886bba7dc148ccdc5",
+              "unused_global_coarse_indices": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "scalar_values": 26336232,
+              "owned_scalar_values": 9468576,
+              "checkpoint_sha256": "cb0a5391176b8d354d28148752bbe8ef2f3143263e91b79ef6b826325270f404",
+              "payload_sha256": "80c0c339a5aee5c49811284c6f59ebf9265df47209308a91b1ce0e5b027e4711"
+            }
+          ]
+        },
+        "all31_fields_all8_records_bitwise": true,
+        "writer_ranks": [
+          2,
+          8
+        ],
+        "provenance": {
+          "backend": "existing CPU fixture parsing validation only",
+          "gpu_evidence": false,
+          "evidence": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-restart-v1/results.json",
+          "evidence_sha256": "f647d8eff409ca1c4402559c7858dde175a2334c0005dcbe8faf54bb86ba4b88"
+        },
+        "input_sha256": {
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-restart-v1/results.json": "f647d8eff409ca1c4402559c7858dde175a2334c0005dcbe8faf54bb86ba4b88",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-restart-v1/first2/rst/amr_restart.00000.rst": "3a18c1740c6b2b2b2ce274b0555ff271c2010b10f90d3e85a51e773d0e23536a",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-restart-v1/first2/rst/amr_restart.00001.rst": "4318ed5af3d5c91454ea03b44eb12d4844ad01895c36b43745faded6262ac6a1",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-restart-v1/first2/rst/amr_restart.00002.rst": "4fbbcae3863f8c0a1b2db3ca2dbdaff2d31aa69c5af422d83d65c7a7f6a32aac",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-restart-v1/first2/rst/amr_restart.00003.rst": "81754d228ac51ed8d0053efd17b810d7f9e4f82fe70d3d6f736dcd19e3ec6556",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-restart-v1/continuous4/rst/amr_restart.00000.rst": "d212726265420f168b8e88d3f961edc6fa821befcecd97b58f7978136540297a",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-restart-v1/continuous4/rst/amr_restart.00001.rst": "3d877f3bd607739f0bca6d87c45d93202dd66b7772f7ce85d4affd9479b93aa4",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-restart-v1/continuous4/rst/amr_restart.00002.rst": "a63ad8c7266af45d48608826c6a31db15b453e7824cc3ef564d56dedca708061",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-restart-v1/continuous4/rst/amr_restart.00003.rst": "16a3769749329b06a44f492129c1c382132c5c80eb3878dc7fd0670b2e655c9b",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-restart-v1/continuous4/rst/amr_restart.00004.rst": "366402806fca2f5ef9a3a0a99e51c911a1306839649544768ff1f9643e7445b7",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-restart-v1/continuous4/rst/amr_restart.00005.rst": "63b20fb9e57921c6ff1cc49f0816244d3ca9561e0886ddac412a58d065a25e06",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-restart-v1/restart_plus2/rst/amr_restart.00004.rst": "13fe787d8e1fbe55767122add1a05366064708af8501305a0002cf85307990a3",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-restart-v1/restart_plus2/rst/amr_restart.00005.rst": "31adafba272c8bf06290b9f89008bdde37fa77ef9f9170e558e45bd2ade8f525",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-restart-v1/restart_plus2/rst/amr_restart.00006.rst": "cb0a5391176b8d354d28148752bbe8ef2f3143263e91b79ef6b826325270f404"
+        },
+        "source_sha256": {
+          "native_amr_gpu_compare.py": "0f338a7d174343ebae6905552a4066f0058d1dd243af3b82f1da6723726638b5",
+          "amr_restart.py": "2336f54f7ba139ff599067e0cd62efc6ddd453c140650e1670aaeddea36d191c",
+          "restart_roundtrip.py": "8afc41988e20e36d336230e111450ec3ba573940c773a6ed15ed03ed16eb8a3b"
+        }
+      }
+    },
+    "build-native/gpu-amr-offline-controls-v1/results.json": {
+      "sha256": "c2aa129cc039ecb2ae18e4cc9dec3c56b44282ac1debf5daf7d33f29ab8c2e47",
+      "result": {
+        "passed": true,
+        "scope": "offline AMR reader corruption controls; no GPU execution",
+        "controls": {
+          "late_scri_Jz": {
+            "rejected": true,
+            "reason": "cross-rank complete31+8 AMR state differs"
+          },
+          "duplicate_late_point": {
+            "rejected": true,
+            "reason": "missing/duplicate/extra AMR owned point"
+          },
+          "wrong_owned_bounds": {
+            "rejected": true,
+            "reason": "evolved bounds differ from fixture"
+          },
+          "nonfinite_last_history_member": {
+            "rejected": true,
+            "reason": "wrong/nonfinite complete restart payload"
+          },
+          "unused_coarse_header_neutral": {
+            "accepted": true,
+            "initialized_identity_unchanged": true
+          },
+          "wrong_dt": {
+            "rejected": true,
+            "reason": "ordinary AMR exact time changed"
+          }
+        },
+        "original_inputs_unchanged": true,
+        "input_sha256": {
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks2/cycle4-rank1.txt": "1af073ac6caf592b5d446fab1ade5f8cf3997bd4d4084ee11fc8e1d728645b2f",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks2/cycle4-rank1.bin": "54551cc3d912755b969fd9114e82b2b8196bc47732b737935954a8b922f3c45b",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks2/cycle4-rank0.bin": "bcdcc0701171c6024eafc6484e18a0781c568a9adeaad9405431e8a4ffc4bb9b",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-evolution-v2/ranks2/cycle4-rank0.txt": "0a20a87d0d6e316fe7bdaa02005a53e2ec39541618a3f34c555d81884a8f54ed",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/amr-restart-v1/first2/rst/amr_restart.00002.rst": "4fbbcae3863f8c0a1b2db3ca2dbdaff2d31aa69c5af422d83d65c7a7f6a32aac"
+        },
+        "source_sha256": {
+          "native_amr_gpu_controls.py": "464f78def15c28d1db1baa0a460e895bdd024d2689ee8692876358735194cfe0",
+          "native_amr_gpu_compare.py": "0f338a7d174343ebae6905552a4066f0058d1dd243af3b82f1da6723726638b5",
+          "amr_restart.py": "2336f54f7ba139ff599067e0cd62efc6ddd453c140650e1670aaeddea36d191c",
+          "restart_roundtrip.py": "8afc41988e20e36d336230e111450ec3ba573940c773a6ed15ed03ed16eb8a3b"
+        }
+      }
+    }
+  }
+}

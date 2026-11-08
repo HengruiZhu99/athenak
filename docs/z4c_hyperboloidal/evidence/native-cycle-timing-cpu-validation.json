@@ -1,0 +1,155 @@
+{
+  "schema": "native-cycle-timing-cpu-evidence-v1",
+  "passed": true,
+  "scope": "CPU state/output and timer-boundary validation only; no GPU timing, throughput or scaling admission",
+  "full_report": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-local-check-v2/results.json",
+  "full_report_sha256": "f631fe8d1bd924abda7bffd833b578196d4f233c165ae1e9e7697a680f19bb71",
+  "build_provenance": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-local-build-v1/provenance.json",
+  "build_provenance_sha256": "3f013c60e71aaa370d2b6470946721cdd6e05b0532af33bdd2dd11ff3b71ee00",
+  "execution_provenance": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-local-validation-v1/execution.json",
+  "execution_provenance_sha256": "f0cc5c06f8977e4798b1b92dd5ca11d6b98fdab73ca3b4022b0d5d04a9f00894",
+  "native_executable_sha256": "4ff23f28d83a8ea92b0cdaad55936e269537a936fa3356aeeadb012f43697687",
+  "timing_executable_sha256": "e236f0f2b7fb119eaf799317737da486611ec4ebee2b8f8aad1997295692b4aa",
+  "original_driver_fp_flags_preserved": true,
+  "overlay_inverse_byte_exact": true,
+  "overlay_insertions": 11,
+  "runtime_inputs_unchanged": true,
+  "complete_states": {
+    "0": {
+      "bitwise_equal": true,
+      "scalar_values": 24704784,
+      "payload_sha256": "a99fffd8c3a6dff7da69687b9898de195d7810d112b0efbee5ea1f0041ad48fb"
+    },
+    "8": {
+      "bitwise_equal": true,
+      "scalar_values": 24704784,
+      "payload_sha256": "d3628a85957d353a10c67c1511c617da29cbfe8ac540c605f4e6e08d0c4da963"
+    }
+  },
+  "ordinary_outputs": {
+    "bitwise_equal": true,
+    "files": [
+      "native_n12_5M.horizon_shape_0.txt",
+      "native_n12_5M.horizon_summary_0.txt",
+      "native_n12_5M.z4c_hyperboloidal.hst"
+    ]
+  },
+  "coverage": {
+    "backend": "Serial",
+    "ranks": 2,
+    "initial_cycle": 0,
+    "final_cycle": 8,
+    "initial_time": 0,
+    "final_time": 0.003755536298849396,
+    "dt": 0.00046944203735617445,
+    "complete_steps": 8,
+    "warmup_steps": 2,
+    "steps_per_window": 3,
+    "window_count": 2,
+    "bulk_points": 229392,
+    "scri_points": 864,
+    "blocks": 106,
+    "timed_output_count": 0,
+    "timed_console_count": 0
+  },
+  "window_bounds": [
+    {
+      "first_cycle": 2,
+      "last_cycle": 5,
+      "first_time": 0.0009388840747123489,
+      "last_time": 0.002347210186780872,
+      "complete_steps": 3,
+      "bulk_cell_updates": 688176
+    },
+    {
+      "first_cycle": 5,
+      "last_cycle": 8,
+      "first_time": 0.002347210186780872,
+      "last_time": 0.003755536298849396,
+      "complete_steps": 3,
+      "bulk_cell_updates": 688176
+    }
+  ],
+  "negative_controls": {
+    "console-output": {
+      "passed": true,
+      "command": [
+        "mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-local-build-v1/athena-cycle-timing",
+        "time/ndiag=1",
+        "-r",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-local-validation-v1/rst/native_n12_5M.00000.rst",
+        "time/nlim=8",
+        "-d",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-local-check-v2/console-output"
+      ],
+      "exit_code": 134,
+      "expected_message": "timing preflight found",
+      "log_sha256": "3f47ccb07605b2e512b59ee02955423b96bb6e1e5e9a97635e3a09f681164298"
+    },
+    "scheduled-output": {
+      "passed": true,
+      "command": [
+        "mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-local-build-v1/athena-cycle-timing",
+        "time/ndiag=1000000000",
+        "output1/dt=0.001",
+        "-r",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-local-validation-v1/rst/native_n12_5M.00000.rst",
+        "time/nlim=8",
+        "-d",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-local-check-v2/scheduled-output"
+      ],
+      "exit_code": 134,
+      "expected_message": "timing preflight found",
+      "log_sha256": "3ef213a6ad46fea81db528241b516d9ec473d57e489e7c39bc71132298ee2cac"
+    },
+    "cli-profiling-tool": {
+      "passed": true,
+      "command": [
+        "mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-local-build-v1/athena-cycle-timing",
+        "--kokkos-tools-libs=/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-local-check-v2/profiling-tool.dylib",
+        "time/ndiag=1000000000",
+        "-r",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-local-validation-v1/rst/native_n12_5M.00000.rst",
+        "time/nlim=8",
+        "-d",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-local-check-v2/cli-profiling-tool"
+      ],
+      "exit_code": 134,
+      "expected_message": "primary timing refuses loaded profiling",
+      "log_sha256": "9f73bdf0ce7610f899b114eb93c6781c10d6b2c3feef384ee1d09095c68b2ce6"
+    }
+  },
+  "profiling_tool": {
+    "command": [
+      "/usr/bin/c++",
+      "-dynamiclib",
+      "-std=c++17",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-local-check-v2/profiling-tool.cpp",
+      "-o",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-local-check-v2/profiling-tool.dylib"
+    ],
+    "source_sha256": "68da2a593f94165ab68876dc2b2f420dfdf7b073accddc4850c528d36ee6b62b",
+    "library_sha256": "c8135631d51c430c008af447b00bc28e9cb8615edd632e9b471ae127ad787f91"
+  },
+  "preserved_failed_fixture": {
+    "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cycle-timing-local-check-v1/results.json",
+    "sha256": "72f3ebf9a43da3663d660c64d4ea6a3df846efba390d004ae8d9c269dc6410a3",
+    "reason": "scheduled-output fixture requested nonexistent output1/dcycle; input parser rejected before timing. v2 uses existing output1/dt=.001. No harness or gate change."
+  },
+  "source_sha256": {
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_cycle_timing_validate.py": "8c85a9c7045509145f1cba4c62d65f3886c24bd37728181887d39f5e130256f3",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_cycle_timing.py": "944b05be76c1bfe208a0c409a7952d7119112398e306e842c458a6ffff19cfdb",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_cycle_timing.hpp": "310ebb617883e2b02f05677b98718c4163d886da9b48e812c961fda6e4077c0a",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_cycle_timing_contract.md": "d610e7141bead813ff5382c2509eaabad3f42566ac9170c1cfb794629e14ca06"
+  },
+  "performance_admission": false
+}

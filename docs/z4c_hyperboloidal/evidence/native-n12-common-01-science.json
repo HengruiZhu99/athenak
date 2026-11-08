@@ -1,0 +1,260 @@
+{
+  "schema": "native-n12-common-science-evidence-v1",
+  "passed": true,
+  "segment": 1,
+  "start_cycle": 0,
+  "end_cycle": 356,
+  "end_time_M": 0.5013640958963977,
+  "full3551_complete": false,
+  "job_id": "9051541",
+  "job_exit_status": 0,
+  "full_report": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-common-segment-01-science-v2/continuation-admission.json",
+  "full_report_sha256": "454755931a81a883936fdd8a82e9f60da47b1c7ecd522cae29392376a9a0e3bf",
+  "checkpoint_sha256": "c2735117dc8026f47c307005bcbd592d9bf54670d30af2a89c0fffe027ed4ff8",
+  "initial_fields_bitwise_equal": true,
+  "endpoint_fields": {
+    "bulk": {
+      "comparisons": 7111152,
+      "failed_values": 0,
+      "max_absolute": 1.8963303149988064e-13,
+      "max_tolerance_ratio": 0.0009210071957213942,
+      "weighted_rms": 4.292404962973261e-15
+    },
+    "surface": {
+      "comparisons": 26784,
+      "failed_values": 0,
+      "max_absolute": 5.979418349344456e-13,
+      "max_tolerance_ratio": 0.0031786102113454742,
+      "weighted_rms": 5.5526599054496895e-14
+    }
+  },
+  "chi_record_scalars_checked": 1842048,
+  "chi_scope": "native records decoded and checked finite; all available historical aggregate differences reported under the declared threshold-sensitive floor policy; no historical per-cell record equivalence claim",
+  "chi_summary": {
+    "minimum_chi": 1e-10,
+    "minimum_raw_candidate": -4.5390970865975194e-08,
+    "minimum_raw_acceptance_candidate": -4.5390970865975194e-08,
+    "floor_events": 3888,
+    "nonpositive_candidates": 3888,
+    "nonfinite_candidates": 0,
+    "distinct_floored_cells": 8,
+    "sum_corrections_over_attempts": 0.00013116024228305485,
+    "surface_floor_events": 0,
+    "max_correction": 4.5490970865975195e-08,
+    "max_floor_radius": 0.002405626121623456,
+    "first_floor_M": 0.33095663633610284
+  },
+  "chi_aggregate_differences": {
+    "minimum_chi": 0.0,
+    "minimum_raw_candidate": -6.617444900424221e-23,
+    "minimum_raw_acceptance_candidate": -6.617444900424221e-23,
+    "floor_events": 0,
+    "nonpositive_candidates": 0,
+    "nonfinite_candidates": 0,
+    "distinct_floored_cells": 0,
+    "sum_corrections_over_attempts": 0.0,
+    "surface_floor_events": 0,
+    "max_correction": 6.617444900424221e-23,
+    "max_floor_radius": 0.0,
+    "first_floor_M": 0.0
+  },
+  "history_completed_prefix_passed": true,
+  "endpoint_history_comparisons": [
+    {
+      "field": "full_H",
+      "actual": 195.05051738324295,
+      "expected": 195.0505173826164,
+      "absolute_difference": 6.265565843932563e-10,
+      "gate": 0.00019505101738261638,
+      "passed": true
+    },
+    {
+      "field": "full_M",
+      "actual": 0.002768076837137487,
+      "expected": 0.0027680768371338544,
+      "absolute_difference": 3.632510958695434e-15,
+      "gate": 3.268076837133854e-09,
+      "passed": true
+    },
+    {
+      "field": "full_Theta",
+      "actual": 0.00018995166253813018,
+      "expected": 0.00018995166253812836,
+      "absolute_difference": 1.81603863891322e-18,
+      "gate": 6.899516625381284e-10,
+      "passed": true
+    },
+    {
+      "field": "full_Z",
+      "actual": 0.00031873671980842745,
+      "expected": 0.0003187367198084279,
+      "absolute_difference": 4.336808689942018e-19,
+      "gate": 8.187367198084279e-10,
+      "passed": true
+    },
+    {
+      "field": "exterior_H",
+      "actual": 0.0012064570560534585,
+      "expected": 0.0012064570560535658,
+      "absolute_difference": 1.0733601507606494e-16,
+      "gate": 1.706457056053566e-09,
+      "passed": true
+    },
+    {
+      "field": "exterior_M",
+      "actual": 0.0011864383578520292,
+      "expected": 0.0011864383578520177,
+      "absolute_difference": 1.1492543028346347e-17,
+      "gate": 1.6864383578520179e-09,
+      "passed": true
+    },
+    {
+      "field": "exterior_Theta",
+      "actual": 0.0001888707488316848,
+      "expected": 0.00018887074883168297,
+      "absolute_difference": 1.8431436932253575e-18,
+      "gate": 6.88870748831683e-10,
+      "passed": true
+    },
+    {
+      "field": "exterior_Z",
+      "actual": 0.000318737571575217,
+      "expected": 0.00031873757157521737,
+      "absolute_difference": 3.7947076036992655e-19,
+      "gate": 8.187375715752173e-10,
+      "passed": true
+    }
+  ],
+  "endpoint_horizon_comparisons": [
+    {
+      "field": "areal_radius_M",
+      "actual": 1.9999939788004986,
+      "expected": 1.9999939788004986,
+      "absolute_difference": 0.0,
+      "gate": 1.9999939788004984e-07,
+      "passed": true
+    },
+    {
+      "field": "irreducible_mass_M",
+      "actual": 0.9999969894002493,
+      "expected": 0.9999969894002493,
+      "absolute_difference": 0.0,
+      "gate": 9.999969894002492e-08,
+      "passed": true
+    }
+  ],
+  "stage_metrics": {
+    "passed": true,
+    "through_step": 356,
+    "stage_rows": 1424,
+    "ranks": 24,
+    "gate": "long",
+    "exact_step_stage_time_dt": true,
+    "maximum_compatibility": 1.140165425434777e-13,
+    "failed_values": 0,
+    "maxima": {
+      "clock": {
+        "absolute_difference": {
+          "step": 292,
+          "actual": 0.001430026960596132,
+          "reference": 0.0014300269577408806,
+          "absolute_difference": 2.8552514085705694e-12,
+          "scaled_difference": 2.8511741526710355e-12,
+          "tolerance": 1.1430026957740881e-10,
+          "tolerance_ratio": 0.02498026836793133,
+          "bitwise_equal": false,
+          "passed": true
+        },
+        "scaled_difference": {
+          "step": 292,
+          "actual": 0.001430026960596132,
+          "reference": 0.0014300269577408806,
+          "absolute_difference": 2.8552514085705694e-12,
+          "scaled_difference": 2.8511741526710355e-12,
+          "tolerance": 1.1430026957740881e-10,
+          "tolerance_ratio": 0.02498026836793133,
+          "bitwise_equal": false,
+          "passed": true
+        },
+        "tolerance_ratio": {
+          "step": 292,
+          "actual": 0.001430026960596132,
+          "reference": 0.0014300269577408806,
+          "absolute_difference": 2.8552514085705694e-12,
+          "scaled_difference": 2.8511741526710355e-12,
+          "tolerance": 1.1430026957740881e-10,
+          "tolerance_ratio": 0.02498026836793133,
+          "bitwise_equal": false,
+          "passed": true
+        }
+      },
+      "CFL": {
+        "absolute_difference": {
+          "step": 326,
+          "actual": 0.23768969118037134,
+          "reference": 0.23768969118037123,
+          "absolute_difference": 1.1102230246251565e-16,
+          "scaled_difference": 8.970124196205826e-17,
+          "tolerance": 2.4768969118037125e-09,
+          "tolerance_ratio": 4.482314218788685e-08,
+          "bitwise_equal": false,
+          "passed": true
+        },
+        "scaled_difference": {
+          "step": 326,
+          "actual": 0.23768969118037134,
+          "reference": 0.23768969118037123,
+          "absolute_difference": 1.1102230246251565e-16,
+          "scaled_difference": 8.970124196205826e-17,
+          "tolerance": 2.4768969118037125e-09,
+          "tolerance_ratio": 4.482314218788685e-08,
+          "bitwise_equal": false,
+          "passed": true
+        },
+        "tolerance_ratio": {
+          "step": 326,
+          "actual": 0.23768969118037134,
+          "reference": 0.23768969118037123,
+          "absolute_difference": 1.1102230246251565e-16,
+          "scaled_difference": 8.970124196205826e-17,
+          "tolerance": 2.4768969118037125e-09,
+          "tolerance_ratio": 4.482314218788685e-08,
+          "bitwise_equal": false,
+          "passed": true
+        }
+      }
+    }
+  },
+  "retained_reporting_failure": {
+    "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-common-segment-01-science-v1/continuation-admission.json",
+    "sha256": "544375f31ea506a5877871e97c10afd079a56031b434e8e23ce86c5c3a85c129",
+    "error": "TypeError: unsupported operand type(s) for -: 'float' and 'NoneType'",
+    "correction": "Historical initial raw-candidate minima are null before an attempted step. Undefined numeric differences now remain null with an explicit unavailable list; native sentinels and historical nulls are preserved. No numerical gate, runtime or input changed."
+  },
+  "missing_future_common_steps": [
+    711,
+    1066,
+    1421,
+    1776,
+    2131,
+    2486,
+    2841,
+    3196,
+    3551
+  ],
+  "source_sha256": {
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/n12_common_segment_compare.py": "066ccf3a0e2e15c64160a10c7881ae44b83e39d92540394bf1f241df78fb609c",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/n12_checkpoint.py": "e1c920a84d9e0a218ae34dfc90962120f532af8a111ac77a13624cc8de541542",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/n12_long_history.py": "304e0ae0dffedfad946396204bc8326533b0850af3e88ccb144bd1885f6cd104",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_step_metrics.py": "e5ad44170fc971fa97c91877b793a04e5b7b5ea0fb4276b647d6dada9d81cd90",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/aurora/common_segment_audit.py": "e89427a8a98dc93b504924b57a55bf444d589de41538fe674fe0da7b6f43e94f",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/aurora/longrun_admission.py": "2887b479590c51d473564f9e62d5c6c042ac0b92b520126d6acb421195dddf7f"
+  },
+  "independent_review": {
+    "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-common-01-independent-review-v1/review.json",
+    "sha256": "c88d16bb8b382fdf80143424080a275af4fb2fa06fc78fd4b6a85432b45cf26c",
+    "passed": true
+  },
+  "continuation_admitted": true,
+  "performance_admission": false
+}
