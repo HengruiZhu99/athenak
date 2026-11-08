@@ -200,6 +200,25 @@ and do not prove eviction. Prior environment captures omitted these cache knobs,
 so inherited overrides are unknown. The controlled experiment will explicitly set
 the common cache mode, clear aliases, and vary only the limit from 16 to 128;
 no cache speedup or causal-path conclusion is established yet.
+The first capacity screen (job 9052050) produced a successful 16-entry control
+median of 4.885799 seconds/step and two successful 128-entry medians of 0.599515
+and 0.599614 seconds/step, approximately 8.15 times faster. Each successful case
+passes complete endpoint and ordinary diagnostic equality. The final 16-entry
+control reached cycle 2556 and wrote matching fields and timing data, but rank 13
+then reported SIGSEGV and the batch ended F/143. There is no stack trace; its
+precise failing function and cause are unknown. That failed control is not an
+admitted performance sample, and no cache optimization is retained yet.
+
+All 81 raw files and the original missing post-run guards are preserved. Separate
+offline frozen-source checks pass without converting the failed batch to success;
+see `evidence/native-ipc-cache-abba-failure-review.json`. The next allocation
+repeats the unchanged capacity ABBA in fresh directories, then conditionally runs
+the existing observer, poison, regrid and restart qualification fixtures. All four
+cases must exit successfully, pass their full-state checks and show fully separated
+candidate/control timing ranges before spending time on that qualification.
+The existing binaries suffice; no solver rebuild or arithmetic change is needed.
+Final acceptance still requires all applicable checks and the matched legacy run.
+
 Surface batching and field-parallel KO remain untested candidates.
 
 Inspect bulk kernel organization, geometry reuse, surface arithmetic,
@@ -236,7 +255,7 @@ bounded two-node correctness checks when a proposed change requires them.
 | Selected-rank native profile | Complete payload/diagnostics bitwise; offline audit correction preserves original F/2 | GPU activity covers 7.36%/11.91% of sampled RHS spans | Diagnose transfer-adjacent host gaps next; no solver change |
 | All-rank APS MPI profile | Complete payload/diagnostics/runtime identity pass; original F/2 retained | Whole-process mean 13.18 s/rank in Testall | Select one completion-policy experiment; no throughput claim |
 | Individual MPI completion checks | All four full endpoints/diagnostics exact; local mixed-peer tests pass | Control 4.565817 s; candidate 4.789034 s (six-window medians) | Rejected; no repeated improvement; original runtime restored |
-| MPI GPU IPC cache capacity | Pending controlled 16-versus-128 screen | Pending | Next single experiment; no solver source change |
+| MPI GPU IPC cache capacity | Three successful endpoints exact; final control wrote exact state but exited143 | Valid medians: 4.885799 s (16), 0.599515/0.599614 s (128) | Promising ~8.15x; failed fullABBA, not retained; clean retry and qualification next |
 | Matched previous-implementation reference | Builds ready; GPU qualification pending | Pending | Does not block native screening |
 
 Completion requires the committed native implementation to match or beat the

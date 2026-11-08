@@ -50,9 +50,10 @@
       "required_evidence": "Profile representative bulk/surface owners and actual GPU/register/memory/synchronization/MPI progress; do not sum unrelated maxima.",
       "evidence": [
         "evidence/native-n12-selected-profile-findings.json",
-        "evidence/native-n12-aps-findings.json"
+        "evidence/native-n12-aps-findings.json",
+        "evidence/native-ipc-cache-abba-failure-review.json"
       ],
-      "remaining": "GPU and all-rank MPI residence measured; near-tied window endpoints do not identify a causal critical rank. Polling rejected; next test varies only IPC cache capacity."
+      "remaining": "Two valid cache128 runs show ~8.15x sensitivity to capacity, consistent with measured IPC waits; final cache16 control failed after endpoint output. Causal critical rank and precise failure function remain unproved."
     },
     {
       "id": "bulk_organization",
@@ -76,9 +77,10 @@
       "evidence": [
         "evidence/native-n12-aps-findings.json",
         "evidence/native-mapped-poll-abba-review.json",
-        "evidence/native-mpi-ipc-cache-hypothesis.json"
+        "evidence/native-mpi-ipc-cache-hypothesis.json",
+        "evidence/native-ipc-cache-abba-failure-review.json"
       ],
-      "remaining": "Individual MPI polling was bitwise correct at all four endpoints but did not improve repeated complete steps; restored original runtime. Controlled cache-capacity experiment pending."
+      "remaining": "Polling rejected and reverted. Cache128 produced two exact fast endpoints, but the full ABBA batch failed in final cache16 control; clean repeat plus existing observer/poison/AMR/restart checks required before retention."
     },
     {
       "id": "communication_layout",
@@ -110,5 +112,5 @@
       "required_evidence": "Final committed native median no worse than fastest accepted old reference with sufficient repeatability; reproducible evidence, profiles, experiment table and architecture confirmation."
     }
   ],
-  "next_milestone": "One correctness-qualified complete-step speedup: test only MPI GPU IPC cache capacity (explicit16 versus128) on the unchanged native executable, preserving final matched legacy-parity requirements."
+  "next_milestone": "Complete a clean unchanged cache-capacity ABBA retry, then existing scientific qualification if all candidate timing windows beat all controls; retain original matched legacy-parity target."
 }

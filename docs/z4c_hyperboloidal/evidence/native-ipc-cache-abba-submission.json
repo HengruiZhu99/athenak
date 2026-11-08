@@ -1,0 +1,132 @@
+{
+  "schema": "native-ipc-cache-abba-submission-evidence-v1",
+  "status": "failed_final_control_process_after_endpoint_output",
+  "job_id": "9052050",
+  "submission": {
+    "schema": "native-ipc-cache-submission-v1",
+    "job_id": "9052050.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "utc": "2026-11-08T17:32:32.611940+00:00",
+    "nodes": 2,
+    "ranks": 24,
+    "order": [
+      "C0:16",
+      "K0:128",
+      "K1:128",
+      "C1:16"
+    ],
+    "cycles": [
+      2486,
+      2556
+    ],
+    "fresh_queue_clear": true,
+    "held_jobs_untouched": true,
+    "launcher_manifest_sha256": "86e554153dacecec58cd3a8d3d662de45c7ee1d9b078cb11d8d49f42daccda70",
+    "submitted_state": "Q",
+    "timed_executable_sha256": "0ef1d6921b2184baa13446e267067ce183adc6341545580678822f7670daebb8"
+  },
+  "nodes": 2,
+  "ranks": 24,
+  "compiled": false,
+  "numerical_source_unchanged": true,
+  "only_case_factor": "MPIR_CVAR_CH4_IPC_GPU_MAX_CACHE_ENTRIES",
+  "capacities": [
+    16,
+    128,
+    128,
+    16
+  ],
+  "common_cache_settings": {
+    "MPIR_CVAR_CH4_IPC_GPU_HANDLE_CACHE": "specialized",
+    "MPIR_CVAR_CH4_IPC_GPU_CACHE_SIZE": "limited"
+  },
+  "controls": "Same0ef1 timed executable and2486 source in all four70-cycle ABBA cases,10warmup+3x20 windows; full31+8/parameters/ordinarydiagnostics exact vs admitted native2556 endpoint.",
+  "cache_observation_scope": "Launcher shell and24rank wrapper probes immediately before each solver; not an in-solver MPI CVAR readback. Historical run capture omitted cache keys; historical effective overrides unknown. Evictions are a hypothesis, not observed.",
+  "source_cache_hypothesis_evidence_sha256": "3c86b9aa9650ffa55692d9a5a81d9f0d0b47ded875235346ab7fe058e46b3288",
+  "full_state_and_timing_results_pending": true,
+  "files": {
+    "build-native/native-ipc-cache-preparation-v1/preparation.json": {
+      "bytes": 2700,
+      "sha256": "74558b6208327fe8a7732fda4367a8833b796389a7dddc698b1e5886213427c2"
+    },
+    "build-native/native-ipc-cache-preparation-v1/launch/build-binding.json": {
+      "bytes": 3042,
+      "sha256": "8b22a5d7a0026a6e2f0900b9d644860491700ade8e4da50cf29d2c3a1f126b51"
+    },
+    "build-native/native-ipc-cache-preparation-v1/staging-preflight-submission.log": {
+      "bytes": 819,
+      "sha256": "de016123ec96c8b60ddf1e2cdaedf3abbc787ca115ce213de9a9d5bad6e84d0f"
+    },
+    "build-native/native-ipc-cache-preparation-v1/preflight/cache-guard-before.json": {
+      "bytes": 297,
+      "sha256": "b4972e750ac3de3f38e657ec1856ed7f52ae6f557b40250a0f7d38a0a38cd314"
+    },
+    "build-native/native-ipc-cache-preparation-v1/preflight/guard-before.json": {
+      "bytes": 1665,
+      "sha256": "28339ad976a1f52d41b4dae491ee092938d8b1344b8b1c591241e4a1028270b9"
+    },
+    "build-native/native-ipc-cache-preparation-v1/preflight/launchers-check.txt": {
+      "bytes": 373,
+      "sha256": "ccf4151763dcdf10d9de97fce4902dc022f51b162f1366910d779d7b29a70b97"
+    },
+    "build-native/native-ipc-cache-preparation-v1/preflight/previous-terminal.txt": {
+      "bytes": 3495,
+      "sha256": "1b5516b9c15025d42b110148871c52d04709b5933dd0f4327c803f3e0cf37ef2"
+    },
+    "build-native/native-ipc-cache-preparation-v1/preflight/queue-before.txt": {
+      "bytes": 565,
+      "sha256": "3d25bdbc0e3e858f2851b3751eb637a7291bb50575ccb5051acb9f14148969be"
+    },
+    "build-native/native-ipc-cache-preparation-v1/preflight/rank-timing-verify-before.txt": {
+      "bytes": 96,
+      "sha256": "2fce95b383e78b648cb43f29235dc871675d41e3347d300eb716d6f298d3fbc0"
+    },
+    "build-native/native-ipc-cache-preparation-v1/preflight/submission.json": {
+      "bytes": 584,
+      "sha256": "b338b9002d66ef8df107d202ebae01ebbfacde402029c0d8737a0f431289a701"
+    },
+    "build-native/native-ipc-cache-preparation-v1/preflight/submitted-job.txt": {
+      "bytes": 56,
+      "sha256": "c4c11193ce048defd5a42b0a429fc3c5ebe195a29c04e17d124322431454be76"
+    },
+    "build-native/native-ipc-cache-preparation-v1/preflight/submitted-qstat.txt": {
+      "bytes": 2752,
+      "sha256": "9d8841e8dd86d625843efea4ece48570b457877a5c7a7349a9e12f2f03f2f3b1"
+    },
+    "build-native/native-ipc-cache-preparation-v1/preflight/timed-observer-verify-before.txt": {
+      "bytes": 245,
+      "sha256": "250ba1628ad896cfa9359394e6fb8678ce8aa98171f9f1a7ae55f67cab48a3f3"
+    },
+    "build-native/native-ipc-cache-preparation-v1/preflight/timing-verify-before.txt": {
+      "bytes": 96,
+      "sha256": "2fce95b383e78b648cb43f29235dc871675d41e3347d300eb716d6f298d3fbc0"
+    }
+  },
+  "job_state": "F",
+  "exit_status": 143,
+  "batch_admitted": false,
+  "cause_unproven": true,
+  "solver_exit_codes": {
+    "timed-C0": 0,
+    "timed-K0": 0,
+    "timed-K1": 0,
+    "timed-C1": 143
+  },
+  "observed_failure": "Rank0 logged normal2556 final counters; rank13 died signal11 and rank3 signal15. No stack trace. Precise failing location/cause unproven.",
+  "post_run_pipeline_guards_not_reached": true,
+  "offline_frozen_guards_passed": true,
+  "collection": {
+    "path": "build-native/aurora-native-ipc-cache-failure-v1",
+    "package_sha256": "827fe8cfa2d4dc834daff0b9129a9fb39790ddf6d42fc66d4711a42f1a987cbc",
+    "transfer": {
+      "schema": "verified-streamed-run-collection-v1",
+      "passed": true,
+      "files": 81,
+      "archive_sha256": "7cfddba234fe7557af0154e2f951cf208d611dd351c2ebacb1085eff453e251e",
+      "archive_bytes": 207783009,
+      "remote_archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-ipc-cache-failure-9052050/run-artifacts.tar.gz",
+      "local_archive_created": false,
+      "all_file_sizes_and_hashes_verified": true,
+      "seconds": 6.3971028327941895
+    }
+  }
+}
