@@ -1,0 +1,12 @@
+#!/bin/bash -l
+#PBS -A CompactBinaryMerger
+#PBS -N native-ko-qual
+#PBS -q debug
+#PBS -l select=2
+#PBS -l walltime=00:30:00
+#PBS -l filesystems=home:flare
+#PBS -j oe
+set -euo pipefail
+cd /lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/field-ko-v1/qualification-launch
+sha256sum -c launchers.sha256
+exec timeout --signal=TERM --kill-after=30s 1680s bash run-native-field-ko-qualification.sh
