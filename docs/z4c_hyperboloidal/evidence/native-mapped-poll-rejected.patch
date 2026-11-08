@@ -1,0 +1,41 @@
+diff --git a/src/bvals/mapped_exchange.cpp b/src/bvals/mapped_exchange.cpp
+index cf13b14a5..6d45300da 100644
+--- a/src/bvals/mapped_exchange.cpp
++++ b/src/bvals/mapped_exchange.cpp
+@@ -319,9 +319,16 @@ TaskStatus MappedExchange::Receive() {
+   if (!posted_ || !packed_) return TaskStatus::incomplete;
+   if (received_) return TaskStatus::complete;
+ #if MPI_PARALLEL_ENABLED
+-  int complete=1;
+-  CheckMPI(MPI_Testall(recv_requests_.size(),recv_requests_.data(),&complete,
+-                       MPI_STATUSES_IGNORE),"Mapped donor receive polling failed");
++  bool complete=true;
++  // Retire completed requests individually, while still requiring every peer
++  // before unpacking. Poll every request so an earlier pending peer cannot
++  // prevent progress on later peers.
++  for (auto &request : recv_requests_) {
++    int ready=0;
++    CheckMPI(MPI_Test(&request,&ready,MPI_STATUS_IGNORE),
++             "Mapped donor receive polling failed");
++    if (!ready) complete=false;
++  }
+   if (!complete) return TaskStatus::incomplete;
+ #endif
+   auto received = recv_buffer_;
+@@ -344,9 +351,13 @@ TaskStatus MappedExchange::ClearSend() {
+   if (!posted_) return TaskStatus::complete;
+   if (!packed_) return TaskStatus::incomplete;
+ #if MPI_PARALLEL_ENABLED
+-  int complete=1;
+-  CheckMPI(MPI_Testall(send_requests_.size(),send_requests_.data(),&complete,
+-                       MPI_STATUSES_IGNORE),"Mapped donor send completion polling failed");
++  bool complete=true;
++  for (auto &request : send_requests_) {
++    int ready=0;
++    CheckMPI(MPI_Test(&request,&ready,MPI_STATUS_IGNORE),
++             "Mapped donor send completion polling failed");
++    if (!ready) complete=false;
++  }
+   if (!complete) return TaskStatus::incomplete;
+ #endif
+   sends_cleared_ = true;

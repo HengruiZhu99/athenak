@@ -1,0 +1,76 @@
+{
+  "schema": "native-mapped-poll-candidate-build-evidence-v1",
+  "status": "isolated_gpu_build_and_launch_preflight_passed",
+  "gpu_executed": false,
+  "performance_claim": false,
+  "baseline_executable_sha256": "f3a85db7528986ddec347b31675a8c5d588120a2380133aed73d5967f7aab05c",
+  "candidate_source_sha256": "a67ec7abf8235daac113fd6d05caf7bf36d307d645c9453ed37ec25cbc083e29",
+  "candidate_patch_sha256": "b5eae25021f2192f3cd8adec612876f28246df681b4d1378f7dccf5facabfee5",
+  "changed_numerical_sources": [
+    "src/bvals/mapped_exchange.cpp"
+  ],
+  "same_timing_driver_control_candidate": true,
+  "timing_driver_sha256": "d68a0cf2dc8a61297eb83d34d8c6f9bb93c0ce0c05f2a4f566f3fd8ee428e696",
+  "control_executable_sha256": "0ef1d6921b2184baa13446e267067ce183adc6341545580678822f7670daebb8",
+  "candidate_executables": {
+    "candidate-normal": {
+      "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/mapped-test-poll-v1/candidate-build/athena-candidate-normal",
+      "sha256": "174a0be0ffa2ef4b0ac13e44f13085972d7affd37bfc7110f9f22d4fc2fa3dc9"
+    },
+    "candidate-timed": {
+      "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/mapped-test-poll-v1/candidate-build/athena-candidate-timed",
+      "sha256": "6752c22e2f4b55e401a38a0e76d3d2bb7d0d16e31c110f288b7a95549a515131"
+    }
+  },
+  "baseline_inputs_unchanged": true,
+  "candidate_build_seconds": 21.933769931085408,
+  "timing_build_seconds": 19.23816044605337,
+  "launcher_manifest_sha256": "3e58389480ee318593adfe9918c200bdd5d3319b676e67a866513c375ff39f89",
+  "experiment": {
+    "nodes": 2,
+    "ranks": 24,
+    "order": [
+      "C0",
+      "K0",
+      "K1",
+      "C1"
+    ],
+    "initial_cycle": 2486,
+    "final_cycle": 2556,
+    "warmup_steps": 10,
+    "windows": 3,
+    "complete_steps_per_window": 20,
+    "early_rejection": "Only after C0/K0 complete state and diagnostics pass: min(K0 windows) >= 1.05*max(C0 windows). No positive claim from one pair."
+  },
+  "files": {
+    "build-native/mapped-poll-gpu-build-v1/timing-provenance.json": {
+      "bytes": 185804,
+      "sha256": "4112e39f65c14d6c9ed15444f1666dee364acdc808c70a6ff89bda51a0886654"
+    },
+    "build-native/mapped-poll-gpu-build-v1/candidate-provenance.json": {
+      "bytes": 128813,
+      "sha256": "dca0afd83b69cc48e0e4bdc2a0b3408833cce9c5b69163b5de26bb4c7d226349"
+    },
+    "build-native/mapped-poll-gpu-build-v1/preparation.json": {
+      "bytes": 2413,
+      "sha256": "fb96cb42d3e61fc4ff810031227699431f7042040def423a147da59afdcff216"
+    },
+    "build-native/mapped-poll-gpu-build-v1/launch/build-binding.json": {
+      "bytes": 2626,
+      "sha256": "39d4732f2d66d7470c80c68bc05eadce6d1506d895fa12cb865bc0db5acb9ebd"
+    },
+    "build-native/mapped-poll-gpu-build-v1/staging-preflight.log": {
+      "bytes": 704,
+      "sha256": "eb34b12957fac3dffde16632e770b855ea54a8fce6ce145574f2eb00cd4c92a8"
+    },
+    "build-native/mapped-test-poll-candidate-v1/results.json": {
+      "bytes": 5195,
+      "sha256": "2884dae01f949e52b0486f4de659be2fd1c4f24b5c124afee95ba26425a8e8db"
+    },
+    "build-native/mapped-test-poll-candidate-v1/candidate.patch": {
+      "bytes": 1774,
+      "sha256": "b5eae25021f2192f3cd8adec612876f28246df681b4d1378f7dccf5facabfee5"
+    }
+  },
+  "scope": "Measurement/build evidence only. Only the mapped-exchange numerical object differs; no header, layout, arithmetic, task DAG, or frozen source/build mutation. Actual GPU state/timing qualification remains pending."
+}

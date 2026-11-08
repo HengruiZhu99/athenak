@@ -39,7 +39,8 @@
       "status": "in_progress",
       "required_evidence": "Repeated warmed max-rank whole-RK4 windows, profiling off, same compiler/FP/grid/dt/physics; separate startup and diagnostics/I/O.",
       "evidence": [
-        "evidence/native-two-node-timing-validation.json"
+        "evidence/native-two-node-timing-validation.json",
+        "evidence/native-mapped-poll-abba-review.json"
       ],
       "remaining": "Matched legacy reference and candidate/repeat comparisons pending."
     },
@@ -51,7 +52,7 @@
         "evidence/native-n12-selected-profile-findings.json",
         "evidence/native-n12-aps-findings.json"
       ],
-      "remaining": "All-rank MPI residency/API counts measured; causal critical rank remains unproved. Completion-policy candidate under native-v-native screening."
+      "remaining": "GPU and all-rank MPI residence measured; near-tied window endpoints do not identify a causal critical rank. Polling rejected; next test varies only IPC cache capacity."
     },
     {
       "id": "bulk_organization",
@@ -73,9 +74,11 @@
       "status": "in_progress",
       "required_evidence": "Evaluate reductions, observer collectives, packing fences, closure redundancy and real overlap while preserving necessary checks.",
       "evidence": [
-        "evidence/native-n12-aps-findings.json"
+        "evidence/native-n12-aps-findings.json",
+        "evidence/native-mapped-poll-abba-review.json",
+        "evidence/native-mpi-ipc-cache-hypothesis.json"
       ],
-      "remaining": "MPI_Test candidate must pass complete-state/GPU checks and repeated unprofiled timing before retention."
+      "remaining": "Individual MPI polling was bitwise correct at all four endpoints but did not improve repeated complete steps; restored original runtime. Controlled cache-capacity experiment pending."
     },
     {
       "id": "communication_layout",
@@ -94,8 +97,12 @@
     },
     {
       "id": "experiment_commits",
-      "status": "pending",
-      "required_evidence": "One factor at a time; separate optimization commits only for repeated accepted improvements; retain failures and revert slower/inconclusive changes."
+      "status": "in_progress",
+      "required_evidence": "One factor at a time; separate optimization commits only for repeated accepted improvements; retain failures and revert slower/inconclusive changes.",
+      "evidence": [
+        "evidence/native-mapped-poll-abba-review.json"
+      ],
+      "remaining": "First runtime candidate rejected and reverted with patches preserved; no optimization retained. Successful optimization commit still requires repeated timing and full applicable qualification."
     },
     {
       "id": "parity_and_deliverables",
@@ -103,5 +110,5 @@
       "required_evidence": "Final committed native median no worse than fastest accepted old reference with sufficient repeatability; reproducible evidence, profiles, experiment table and architecture confirmation."
     }
   ],
-  "next_milestone": "One correctness-qualified complete-step speedup: screen the single MPI completion-policy candidate with repeated same-allocation ABBA windows, while retaining final legacy-parity requirements."
+  "next_milestone": "One correctness-qualified complete-step speedup: test only MPI GPU IPC cache capacity (explicit16 versus128) on the unchanged native executable, preserving final matched legacy-parity requirements."
 }

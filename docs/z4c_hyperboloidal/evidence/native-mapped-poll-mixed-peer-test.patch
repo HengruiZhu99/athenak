@@ -1,0 +1,65 @@
+diff --git a/tst/z4c_hyperboloidal/exchange_tests.cpp b/tst/z4c_hyperboloidal/exchange_tests.cpp
+index 1b7bc1be7..f6dc8d3c5 100644
+--- a/tst/z4c_hyperboloidal/exchange_tests.cpp
++++ b/tst/z4c_hyperboloidal/exchange_tests.cpp
+@@ -144,6 +144,60 @@ int main(int argc,char **argv) {
+         ++comparisons;
+       }
+     }
++    if (nranks > 2) {
++      // Two remote peers: seed the output once, then complete rank one's send
++      // while rank two withholds its payload. Partial completion must never
++      // expose a partially unpacked Values array or allow receive-buffer reuse.
++      std::vector<bvals::DonorPoint> mixed;
++      if (rank == 0) mixed = {{1,1,1,1},{2,1,1,1}};
++      const std::vector<int> fields = {30,0};
++      exchange.Rebuild(rank,1,owners,101,mixed,fields);
++      if (rank == 0) Require(exchange.ReceivePeers() == 2,"mixed plan needs two peers");
++      for (int stage=1; stage<=3; ++stage) {
++        auto host=Kokkos::create_mirror_view(state);
++        Kokkos::deep_copy(host,std::numeric_limits<Real>::quiet_NaN());
++        for (int f : fields) host(0,f,1,1,1)=Expected(3,stage,rank,f,1,1,1);
++        Kokkos::deep_copy(state,host);
++        exchange.StartReceives();
++        int token=1;
++        if (stage > 1 && rank == 2) {
++          MPI_Recv(&token,1,MPI_INT,0,81,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
++        }
++        exchange.PackAndSend(state);
++        if (stage > 1 && rank == 1) {
++          Complete(exchange);
++          MPI_Send(&token,1,MPI_INT,0,80,MPI_COMM_WORLD);
++        }
++        if (stage > 1 && rank == 0) {
++          MPI_Recv(&token,1,MPI_INT,1,80,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
++          for (int poll=0; poll<16; ++poll) {
++            Require(exchange.Receive() == TaskStatus::incomplete,
++                    "mixed receive completed before the second peer sent");
++            Require(exchange.ClearRecv() == TaskStatus::incomplete,
++                    "mixed receive buffer cleared before all peers completed");
++          }
++          auto values=Kokkos::create_mirror_view_and_copy(HostMemSpace(),exchange.Values());
++          for (std::size_t n=0; n<mixed.size(); ++n) for (std::size_t f=0; f<fields.size(); ++f) {
++            Require(values(exchange.RequestOrdinals()[n],f) ==
++                    Expected(3,stage-1,mixed[n].gid,fields[f],1,1,1),
++                    "mixed receive unpacked before all peers completed");
++            ++comparisons;
++          }
++          MPI_Send(&token,1,MPI_INT,2,81,MPI_COMM_WORLD);
++        }
++        if (!(stage > 1 && rank == 1)) Complete(exchange);
++        if (rank == 0) {
++          auto values=Kokkos::create_mirror_view_and_copy(HostMemSpace(),exchange.Values());
++          for (std::size_t n=0; n<mixed.size(); ++n) for (std::size_t f=0; f<fields.size(); ++f) {
++            Require(values(exchange.RequestOrdinals()[n],f) ==
++                    Expected(3,stage,mixed[n].gid,fields[f],1,1,1),
++                    "mixed receive final value changed or poisoned");
++            ++comparisons;
++          }
++        }
++        MPI_Barrier(MPI_COMM_WORLD);
++      }
++    }
+     unsigned long long local=comparisons,total=0;
+     MPI_Reduce(&local,&total,1,MPI_UNSIGNED_LONG_LONG,MPI_SUM,0,MPI_COMM_WORLD);
+ #else

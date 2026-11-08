@@ -1,0 +1,147 @@
+{
+  "schema": "mpich-ipc-cache-readonly-audit-v1",
+  "scope": "Existing source, installed ELF, captured launch metadata and existing CPU-plan ownership projection only; no solver execution, trace, environment change or new simulation.",
+  "source_commit": "87e20459f9e18a9f7c75a2c5fae1f92116515c00",
+  "defaults": {
+    "MPIR_CVAR_CH4_IPC_GPU_HANDLE_CACHE": "specialized",
+    "MPIR_CVAR_CH4_IPC_GPU_CACHE_SIZE": "limited",
+    "MPIR_CVAR_CH4_IPC_GPU_MAX_CACHE_ENTRIES": 16
+  },
+  "documented_choices": {
+    "HANDLE_CACHE": [
+      "generic",
+      "specialized",
+      "disabled"
+    ],
+    "CACHE_SIZE": [
+      "unlimited",
+      "limited",
+      "disabled"
+    ],
+    "MAX_CACHE_ENTRIES": "Positive per-local-device limit, relevant only for limited specialized cache."
+  },
+  "installed_elf_crosscheck": {
+    "function": "MPIR_T_cvar_init",
+    "handle_cache_default_store": "0x25d861a: enum1(specialized)",
+    "max_entries_default_store": "0x25d8bde: 0x10(16)",
+    "cache_size_default_store": "0x25d8cca: enum1(limited)",
+    "environment_aliases": [
+      "MPIR_CVAR_CH4_IPC_GPU_HANDLE_CACHE",
+      "MPICH_CH4_IPC_GPU_HANDLE_CACHE",
+      "MPIR_PARAM_CH4_IPC_GPU_HANDLE_CACHE",
+      "MPIR_CVAR_CH4_IPC_GPU_CACHE_SIZE",
+      "MPICH_CH4_IPC_GPU_CACHE_SIZE",
+      "MPIR_PARAM_CH4_IPC_GPU_CACHE_SIZE",
+      "MPIR_CVAR_CH4_IPC_GPU_MAX_CACHE_ENTRIES",
+      "MPICH_CH4_IPC_GPU_MAX_CACHE_ENTRIES",
+      "MPIR_PARAM_CH4_IPC_GPU_MAX_CACHE_ENTRIES"
+    ],
+    "scope": "Initialization defaults, not observed post-environment runtime CVAR values."
+  },
+  "source": {
+    "gpu_post.c": {
+      "url": "https://raw.githubusercontent.com/pmodels/mpich/87e20459f9e18a9f7c75a2c5fae1f92116515c00/src/mpid/ch4/shm/ipc/gpu/gpu_post.c",
+      "sha256": "796744e7d8c82b639f757002796f890187c55b2e623d26ba3adc7e0548bc84e2"
+    },
+    "init_gpu.c": {
+      "url": "https://raw.githubusercontent.com/pmodels/mpich/87e20459f9e18a9f7c75a2c5fae1f92116515c00/src/mpi/init/init_gpu.c",
+      "sha256": "d4bcb35ef791eb90ce7fbd31fca57e73c84d6e37ca7583410bb8c7e5deed0465"
+    },
+    "mpl_gpu_ze.c": {
+      "url": "https://raw.githubusercontent.com/pmodels/mpich/87e20459f9e18a9f7c75a2c5fae1f92116515c00/src/mpl/src/gpu/mpl_gpu_ze.c",
+      "sha256": "5b0b3aed8326c4190c0c194a2f6db1c6b6e43f6f84258ee7a16a53e90671fe05"
+    }
+  },
+  "line_references": {
+    "gpu_post.c": {
+      "handle_default_and_choices": "9-23",
+      "max_entries_default_and_eviction_doc": "25-35",
+      "size_default_and_choices": "37-48",
+      "p2p_threshold_default": "50-59",
+      "map_device_selection": "433-471",
+      "allocation_or_repeat_gate": "333-339",
+      "host_mmap_copy_choice": "645-657"
+    },
+    "init_gpu.c": {
+      "enable_and_size_mapping": "28-48"
+    },
+    "mpl_gpu_ze.c": {
+      "per_device_initialization": "673-688",
+      "LRU_hit_and_insertion": "1615-1677",
+      "overflow_closes_oldest": "1679-1700",
+      "lookup_key_and_hit": "1896-1908",
+      "LRU_update": "1971-1973",
+      "finalization_cleanup": "1383-1396",
+      "host_mmap_shared_cache": "3254-3290",
+      "host_mmap_no_LRU_update": "3294-3329"
+    }
+  },
+  "interpretation": "306 whole-process opens/closes and68 RHS-span gap-edge opens could include capacity churn, initial mapping and final teardown. Eight ranks have more than16 projected bulk remote send allocations; rank23 has14 bulk and uncaptured surface allocations. All projected bulk remote send allocation sizes exceed1MiB. Counts do not identify repeated runtime keys or prove eviction. A16-versus128 capacity experiment is a direct hypothesis test only after binding actual knob values; no cause or speedup is established.",
+  "threshold_semantics": {
+    "documented_default_bytes": 1048576,
+    "actual_gate": "gpu_post.c333\u2013339: skip only if bounds_len<threshold AND MPIDI_IPCI_is_repeat_addr(bounds_base)<1. Bounds are entire remote allocation, not message/peer segment.",
+    "host_mmap_choice": "gpu_post.c645\u2013657: do_mmap is src_data_sz<=MPIR_CVAR_GPU_FAST_COPY_MAX_SIZE for ZE, independent from allocation/repeat IPC admission.",
+    "shared_cache": "MPL_ze_ipc_handle_mmap_host3254\u20133290 and MPL_gpu_ipc_handle_map1896\u20131965 share ipc_cache_mapped[dev_id] keyed remote_mem_id/dev_id/pid, reusing FDs.",
+    "counting": "Host-only mmap insertion does not call update_lru_mapped_order. Device mapping calls it at1971\u20131973 and counts device ipc_buf entries per local device; converting a host-only cached entry to device mapping adds/updates that entry in LRU.",
+    "cleanup": "LRU overflow closes/unmaps the device entry and associated host mapping if present; finalization also closes retained mappings.",
+    "default_protocol": "gpu_post.c89\u2013100 read;433\u2013443 maps onto receiver local device."
+  },
+  "raw_report": {
+    "path": "build-native/mpich-ipc-preopen-audit-v1/cache-results.json",
+    "sha256": "3c86b9aa9650ffa55692d9a5a81d9f0d0b47ded875235346ab7fe058e46b3288"
+  },
+  "captured_environment": {
+    "launch_files_examined": 96,
+    "cache_knob_keys_found": [],
+    "actual_override_status": "Unknown: these knobs/aliases were not included in selected ENV_KEYS. Reviewed launch scripts do not explicitly set or unset them; inherited module/PBS values cannot be excluded."
+  },
+  "existing_bulk_plan": {
+    "projection_path": "build-native/native-bvals-route-projection-v1/results.json",
+    "projection_sha256": "00dd59db7556b957478f80f7584b84a7aaeb66ed046cd0d45efbc820654c7178",
+    "ranks_above16": [
+      4,
+      5,
+      12,
+      13,
+      14,
+      18,
+      19,
+      21
+    ],
+    "allocation_basis": "MappedExchange creates one persistent send_buffer per plan on each sender; all receiver peer offsets share that sender allocation. Residual and physical plans are separate allocations. Same-node grouping uses verified contiguous12-rank host placement.",
+    "limits": [
+      "CPU-generated plan projection, not GPU allocation/IPC interception.",
+      "Bulk only; surface, diagnostics, horizon and MPI-internal allocations excluded.",
+      "Cache lookup uses remote allocation identity and local map device; default read protocol maps to receiver local device. Actual CVAR values were not captured.",
+      "Peer payload sizes are descriptive only: actual source gates IPC using entire allocation bounds_len OR repeated base address, not per-peer message bytes. Kokkos view sizes provide requested allocation lower bounds."
+    ],
+    "projected_bulk_remote_allocations_by_rank": {
+      "0": 12,
+      "1": 16,
+      "2": 14,
+      "3": 16,
+      "4": 18,
+      "5": 18,
+      "6": 16,
+      "7": 16,
+      "8": 16,
+      "9": 4,
+      "10": 4,
+      "11": 16,
+      "12": 18,
+      "13": 20,
+      "14": 18,
+      "15": 16,
+      "16": 16,
+      "17": 16,
+      "18": 18,
+      "19": 18,
+      "20": 16,
+      "21": 18,
+      "22": 16,
+      "23": 14
+    },
+    "all_projected_bulk_remote_allocations_exceed_1MiB": true,
+    "minimum_remote_allocation_bytes": 3038256
+  }
+}

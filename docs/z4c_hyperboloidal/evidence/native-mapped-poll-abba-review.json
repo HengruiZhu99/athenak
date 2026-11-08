@@ -1,0 +1,182 @@
+{
+  "schema": "native-mapped-poll-abba-independent-review-v1",
+  "passed": true,
+  "scientific_endpoint_qualified": true,
+  "candidate_retained": false,
+  "decision": "reject: no repeatable speedup; both candidate run medians exceed both control run medians",
+  "cases": {
+    "timed-C0": {
+      "raw_seconds_per_step": [
+        4.5515561857,
+        4.5777292505,
+        4.55390484735
+      ],
+      "median": 4.55390484735,
+      "minimum": 4.5515561857,
+      "maximum": 4.5777292505,
+      "range_over_median_percent": 0.5747389477237456,
+      "max_rank_ids": [
+        [
+          1
+        ],
+        [
+          3
+        ],
+        [
+          18
+        ]
+      ],
+      "rank_window_spans_seconds": [
+        2.476800000295043e-05,
+        3.3080000036989077e-06,
+        4.30800000117415e-06
+      ],
+      "checkpoint_sha256": "c4410a676ad09e606caf508c8d84105e8e70487439fad283a91cc8097a39a710",
+      "timer_sha256": "e2f15018cdec242f4fa4a5e28d1751329e57e54350467484a7af5854d73633a4",
+      "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+      "complete_padded_31plus8_values": 24704784,
+      "parameters_and_initialized_metadata_exact": true,
+      "ordinary_diagnostics_bitwise_exact": true
+    },
+    "timed-K0": {
+      "raw_seconds_per_step": [
+        4.60280095375,
+        5.0407987553,
+        4.9159007262
+      ],
+      "median": 4.9159007262,
+      "minimum": 4.60280095375,
+      "maximum": 5.0407987553,
+      "range_over_median_percent": 8.909817873571523,
+      "max_rank_ids": [
+        [
+          19
+        ],
+        [
+          20
+        ],
+        [
+          6
+        ]
+      ],
+      "rank_window_spans_seconds": [
+        2.7822999996374165e-05,
+        0.00012859699999978602,
+        0.00013620500000399716
+      ],
+      "checkpoint_sha256": "c4410a676ad09e606caf508c8d84105e8e70487439fad283a91cc8097a39a710",
+      "timer_sha256": "cb135d2cff30871698792f8382c0df27dd02a3626bddada544c064f7503a9ee6",
+      "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+      "complete_padded_31plus8_values": 24704784,
+      "parameters_and_initialized_metadata_exact": true,
+      "ordinary_diagnostics_bitwise_exact": true
+    },
+    "timed-K1": {
+      "raw_seconds_per_step": [
+        4.8868183211,
+        4.69124983575,
+        4.66374447415
+      ],
+      "median": 4.69124983575,
+      "minimum": 4.66374447415,
+      "maximum": 4.8868183211,
+      "range_over_median_percent": 4.755104817698053,
+      "max_rank_ids": [
+        [
+          16
+        ],
+        [
+          6
+        ],
+        [
+          14
+        ]
+      ],
+      "rank_window_spans_seconds": [
+        1.738200001000223e-05,
+        7.363299999951778e-05,
+        3.9305000001377266e-05
+      ],
+      "checkpoint_sha256": "c4410a676ad09e606caf508c8d84105e8e70487439fad283a91cc8097a39a710",
+      "timer_sha256": "af6d2315716d83982bb3b38cc32fbf9b6c7066f129abaaf235bd429857351c62",
+      "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+      "complete_padded_31plus8_values": 24704784,
+      "parameters_and_initialized_metadata_exact": true,
+      "ordinary_diagnostics_bitwise_exact": true
+    },
+    "timed-C1": {
+      "raw_seconds_per_step": [
+        4.6733055873,
+        4.57856615245,
+        4.540197754799999
+      ],
+      "median": 4.57856615245,
+      "minimum": 4.540197754799999,
+      "maximum": 4.6733055873,
+      "range_over_median_percent": 2.907194699562746,
+      "max_rank_ids": [
+        [
+          9
+        ],
+        [
+          17
+        ],
+        [
+          4
+        ]
+      ],
+      "rank_window_spans_seconds": [
+        9.908199999131284e-05,
+        0.0001289089999971793,
+        8.829299999035811e-05
+      ],
+      "checkpoint_sha256": "c4410a676ad09e606caf508c8d84105e8e70487439fad283a91cc8097a39a710",
+      "timer_sha256": "0cde5abc4ce0b9107c04bef6265094a58d680906677318ddefcae532c895d5ff",
+      "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+      "complete_padded_31plus8_values": 24704784,
+      "parameters_and_initialized_metadata_exact": true,
+      "ordinary_diagnostics_bitwise_exact": true
+    }
+  },
+  "pooled_control_median": 4.565817048925,
+  "pooled_candidate_median": 4.789034078425,
+  "pooled_candidate_increase_percent": 4.888873713250397,
+  "pooled_statistic_is_not_sole_decision": true,
+  "early_reject_predicate": false,
+  "collection": {
+    "job_id": "9052023",
+    "state": "F",
+    "exit_status": 0,
+    "files": 91,
+    "bytes": 793869138,
+    "all_sizes_and_hashes_rechecked": true,
+    "package_sha256": "fea811458ed94281c376b0965851b952383bcd35664060074a447c8b96b2e340",
+    "manifest_sha256": "6f030a57db0bb3a0fcbe53a5f4a72b450cf0382501ca7b77b6c11b59e1159144",
+    "terminal_sha256": "1b5516b9c15025d42b110148871c52d04709b5933dd0f4327c803f3e0cf37ef2"
+  },
+  "build": {
+    "control_sha256": "0ef1d6921b2184baa13446e267067ce183adc6341545580678822f7670daebb8",
+    "candidate_sha256": "6752c22e2f4b55e401a38a0e76d3d2bb7d0d16e31c110f288b7a95549a515131",
+    "shared_timing_driver_sha256": "d68a0cf2dc8a61297eb83d34d8c6f9bb93c0ce0c05f2a4f566f3fd8ee428e696",
+    "numerical_source_changes": [
+      "src/bvals/mapped_exchange.cpp"
+    ],
+    "candidate_proof_sha256": "dca0afd83b69cc48e0e4bdc2a0b3408833cce9c5b69163b5de26bb4c7d226349",
+    "timing_proof_sha256": "4112e39f65c14d6c9ed15444f1666dee364acdc808c70a6ff89bda51a0886654"
+  },
+  "reference": {
+    "prior_qualification_sha256": "3510af246ac22b343b428e297d73a34b8edaf9881bf7a5330830e72091a92207",
+    "checkpoint_sha256": "c4410a676ad09e606caf508c8d84105e8e70487439fad283a91cc8097a39a710"
+  },
+  "scope": "Actual unprofiled two-node, 24-rank ABBA, each using ordinary restart from cycle 2486 through 2556, with 10 warmup and three 20-cycle complete RK4 windows. Full endpoint 31+8 values including padding, initialized metadata/parameters, and three ordinary diagnostics are exact. Nine unused coarse-header integers are excluded as in the established reader. No candidate observer/stage, poisoned GPU, refined-mesh, additional split-run/repartitioned-restart equivalence, or legacy-parity admission.",
+  "rank_scope": "Maximum IDs reproduce the measured MPI_MAX only. All-rank window spans of 3.308\u2013136.205 microseconds, after the per-cycle timestep reduction, cannot identify causal critical ranks.",
+  "source_sha256": {
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/aurora/native_mapped_poll_audit.py": "f7a1913a7dcac8cac7c8f9e1630d0e6cba3b287985a20920c7834a7f6cea0f7b",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/aurora/native_two_node_timing_audit.py": "44e4576505f5328150e24230ec37abdaea52481df03bb101a800ebbfcca0ef7e",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/aurora/native_n12_profile_audit.py": "a37ffc7aed1941663a8996580722afce55ded2f8d5b9ebb0a770daac2914be2b",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_n12_two_node_timing_validate.py": "ac9dbefb92a1659c4ff4f53f308c0a8793305891c6d320da94bd7ad90d4073b9",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_cycle_timing_gpu_validate.py": "510297d7e04958b95ed871b81f8b68502704a851aea7a9e149dc2a39502f1b8e",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/n12_checkpoint.py": "e1c920a84d9e0a218ae34dfc90962120f532af8a111ac77a13624cc8de541542",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/n12_long_history.py": "304e0ae0dffedfad946396204bc8326533b0850af3e88ccb144bd1885f6cd104"
+  }
+}

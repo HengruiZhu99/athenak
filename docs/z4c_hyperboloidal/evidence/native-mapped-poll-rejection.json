@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "reason": "No repeated complete-step improvement in completed ABBA job9052023; exact candidate and test patches preserved in docs evidence",
+  "files": [
+    {
+      "path": "src/bvals/mapped_exchange.cpp",
+      "candidate_sha256": "a67ec7abf8235daac113fd6d05caf7bf36d307d645c9453ed37ec25cbc083e29",
+      "restored_sha256": "0ca3e55128a19c27ed7d4a515ef900a59da75d92b893e8d8ef9ca6749fbd28e9"
+    },
+    {
+      "path": "tst/z4c_hyperboloidal/exchange_tests.cpp",
+      "candidate_sha256": "c30764a3942997e0d2e2fbe655892b794677d8cdab740e2928039882c4e5a1d0",
+      "restored_sha256": "e61052ffde97a00c95df3cd79fbe6046048830ebea53ba18ea30add3d7335051"
+    }
+  ],
+  "runtime_patch": {
+    "path": "docs/z4c_hyperboloidal/evidence/native-mapped-poll-rejected.patch",
+    "sha256": "b5eae25021f2192f3cd8adec612876f28246df681b4d1378f7dccf5facabfee5"
+  },
+  "test_patch": {
+    "path": "docs/z4c_hyperboloidal/evidence/native-mapped-poll-mixed-peer-test.patch",
+    "sha256": "d3ce1edfd67808dbb863f40a9c0b206ade6a88e0e9d4aedff8b75478f6e0161b"
+  },
+  "review": {
+    "path": "docs/z4c_hyperboloidal/evidence/native-mapped-poll-abba-review.json",
+    "sha256": "b9afc03cdadd9eb8f71eafb8f10dcb1eb6274c8bea4758a02bd1be69fc7c9d9a"
+  }
+}

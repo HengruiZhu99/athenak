@@ -79,10 +79,12 @@ A report-only extension now gathers those already-recorded local samples after
 all measured intervals and finalization timing have ended. It writes every rank's
 duration and the IDs attaining each existing MPI_MAX result. The existing two-rank,
 eight-step CPU control passes complete-state/output equivalence and the original
-negative controls; see `evidence/native-window-rank-export-cpu.json`. It has not
-been built or qualified on the GPU yet and does not change the timings above.
-The rank attaining the measured maximum is not by itself a causal critical-path
-diagnosis.
+negative controls; see `evidence/native-window-rank-export-cpu.json`. The subsequent
+two-node ABBA experiment also passes the exact GPU state/output and rank-array
+checks. Across its 12 windows, maximum-minus-minimum rank durations differ by only
+3.308--136.205 microseconds over roughly 91--101 seconds. Native per-cycle timestep
+reductions synchronize completion. These endpoint rank IDs do not identify the
+causal critical rank.
 
 The user's subsequent priority clarification makes a measured bottleneck and a
 correctness-qualified complete-step speedup the next milestone. Finish and
@@ -159,14 +161,45 @@ reductions. These are whole-process observations, not a sum of phase maxima or
 a demonstrated causal critical path. Disabled imbalance reporting means zero is
 unmeasured, not proof of balance.
 
-The selected single candidate replaces `MappedExchange`'s two `MPI_Testall`
+The rejected single candidate replaced `MappedExchange`'s two `MPI_Testall`
 completion scans with individual `MPI_Test` calls, following native Bvals.
 Every request is polled; unpacking and buffer reuse still require all requests
 to complete. Earlier retirement of completed requests is the hypothesis, not
 an established explanation or speedup. Only one runtime `.cpp` file changes;
 task order, arithmetic, storage layout and ownership remain unchanged. Existing
-local MPI/poison tests and a delayed-second-peer check pass. Next is unprofiled
-control/candidate/candidate/control screening with complete-state comparisons.
+local MPI/poison tests and a delayed-second-peer check pass. The two-node
+unprofiled ABBA screen in job 9052023 (F/0) rejects this candidate: both candidate
+run medians exceed both control run medians. Every endpoint passes exact full
+31+8, parameter and ordinary history/horizon comparisons. Since performance did
+not improve, further observer/AMR qualification is unnecessary and no optimization
+is retained. The experiment patches and raw evidence are preserved; see
+`evidence/native-mapped-poll-abba-review.json`.
+
+| Run, in execution order | Three 20-step windows (s/complete RK4 step) | Median |
+|---|---|---:|
+| Control C0 | 4.551556, 4.577729, 4.553905 | 4.553905 |
+| Individual polling K0 | 4.602801, 5.040799, 4.915901 | 4.915901 |
+| Individual polling K1 | 4.886818, 4.691250, 4.663744 | 4.691250 |
+| Control C1 | 4.673306, 4.578566, 4.540198 | 4.578566 |
+
+The six-window medians are 4.565817 seconds for control and 4.789034 for the
+candidate (4.89% slower). The rejection rests on the absent repeated improvement,
+not the pooled statistic alone. Per-stage observer and AMR tests were not run for
+this rejected candidate.
+
+The next single experiment tests MPI GPU IPC cache capacity, using the unchanged
+native executable and identical physics/task order; see
+`evidence/native-mpi-ipc-cache-hypothesis.json`. Exact installed-MPI source
+and initialization code default to specialized, limited caching with 16 entries
+per device. Existing CPU donor-plan metadata projected onto the verified 24-rank
+ownership gives 18--20 same-node bulk send allocations on eight ranks, before
+surface plans. Every projected bulk send allocation exceeds the allocation-size
+IPC threshold. LRU overflow closes the oldest mapping. The sampled trace contains
+repeated opens/closes, but their fast API calls do not explain the preceding gaps
+and do not prove eviction. Prior environment captures omitted these cache knobs,
+so inherited overrides are unknown. The controlled experiment will explicitly set
+the common cache mode, clear aliases, and vary only the limit from 16 to 128;
+no cache speedup or causal-path conclusion is established yet.
 Surface batching and field-parallel KO remain untested candidates.
 
 Inspect bulk kernel organization, geometry reuse, surface arithmetic,
@@ -202,7 +235,8 @@ bounded two-node correctness checks when a proposed change requires them.
 | Native timing and observer controls | Complete payload/diagnostics bitwise; independent review passes | 4.572643 s normal; 5.422913 s observed | Qualified measurement; no solver speedup |
 | Selected-rank native profile | Complete payload/diagnostics bitwise; offline audit correction preserves original F/2 | GPU activity covers 7.36%/11.91% of sampled RHS spans | Diagnose transfer-adjacent host gaps next; no solver change |
 | All-rank APS MPI profile | Complete payload/diagnostics/runtime identity pass; original F/2 retained | Whole-process mean 13.18 s/rank in Testall | Select one completion-policy experiment; no throughput claim |
-| Individual MPI completion checks | Local MPI/poison/mixed-peer tests pass; GPU pending | Pending | Uncommitted candidate; retain only after complete-step improvement |
+| Individual MPI completion checks | All four full endpoints/diagnostics exact; local mixed-peer tests pass | Control 4.565817 s; candidate 4.789034 s (six-window medians) | Rejected; no repeated improvement; original runtime restored |
+| MPI GPU IPC cache capacity | Pending controlled 16-versus-128 screen | Pending | Next single experiment; no solver source change |
 | Matched previous-implementation reference | Builds ready; GPU qualification pending | Pending | Does not block native screening |
 
 Completion requires the committed native implementation to match or beat the

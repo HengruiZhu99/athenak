@@ -1,0 +1,97 @@
+{
+  "schema": "native-mapped-poll-abba-submission-evidence-v1",
+  "status": "completed_all_four_cases_state_exact",
+  "job_id": "9052023",
+  "submission": {
+    "schema": "native-mapped-poll-submission-v1",
+    "job_id": "9052023.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "utc": "2026-11-08T16:58:32.513498+00:00",
+    "nodes": 2,
+    "ranks": 24,
+    "order": [
+      "C0",
+      "K0",
+      "K1",
+      "C1"
+    ],
+    "cycles": [
+      2486,
+      2556
+    ],
+    "fresh_queue_clear": true,
+    "held_jobs_untouched": true,
+    "launcher_manifest_sha256": "3e58389480ee318593adfe9918c200bdd5d3319b676e67a866513c375ff39f89",
+    "submitted_state": "Q"
+  },
+  "build_evidence": "docs/z4c_hyperboloidal/evidence/native-mapped-poll-candidate-build.json",
+  "build_evidence_sha256": "4f199a326557b6f29c310d380b3c4779ec15d89bfe103f9d3a7516280abd4ff4",
+  "source_checkpoint_sha256": "dd4b86ab42c10827f14bd339930cb4d2ffaf9fb5e2b43953d1e5d7924a9fc1ec",
+  "candidate_source_sha256": "a67ec7abf8235daac113fd6d05caf7bf36d307d645c9453ed37ec25cbc083e29",
+  "full_state_and_timing_results_pending": false,
+  "files": {
+    "build-native/mapped-poll-gpu-build-v1/submission-preflight/candidate-guard-before.json": {
+      "bytes": 297,
+      "sha256": "3bb0083f51d7c2718b9b50737369a604f8e8ab9d1dba9c0b53c7df29418a32eb"
+    },
+    "build-native/mapped-poll-gpu-build-v1/submission-preflight/candidate-verify-before.txt": {
+      "bytes": 162,
+      "sha256": "5739a4e333bf4eb57b5fc4a58aea58af92b30fde2213f1fa4c631036d51b425b"
+    },
+    "build-native/mapped-poll-gpu-build-v1/submission-preflight/guard-before.json": {
+      "bytes": 1665,
+      "sha256": "28339ad976a1f52d41b4dae491ee092938d8b1344b8b1c591241e4a1028270b9"
+    },
+    "build-native/mapped-poll-gpu-build-v1/submission-preflight/launchers-check.txt": {
+      "bytes": 386,
+      "sha256": "e74f0e6719cc7e8f27c769cbf1a6c9bd792359888695963dc88dcc9ebd63a3e0"
+    },
+    "build-native/mapped-poll-gpu-build-v1/submission-preflight/previous-terminal.txt": {
+      "bytes": 3330,
+      "sha256": "ce77097bf336cb2f7da276ffc0237b3d40d8f600a2060609e1e8f460116227c6"
+    },
+    "build-native/mapped-poll-gpu-build-v1/submission-preflight/queue-before.txt": {
+      "bytes": 565,
+      "sha256": "3d25bdbc0e3e858f2851b3751eb637a7291bb50575ccb5051acb9f14148969be"
+    },
+    "build-native/mapped-poll-gpu-build-v1/submission-preflight/submission.json": {
+      "bytes": 475,
+      "sha256": "2e78e7f03a7e5de40a5fe7ff5d28aa232a9c46b93e79c7b2f2270a789303a252"
+    },
+    "build-native/mapped-poll-gpu-build-v1/submission-preflight/submitted-job.txt": {
+      "bytes": 56,
+      "sha256": "a381ba29c1cd22dd48ed835e7321b07f096fbc8b1569fd84c25064768472be61"
+    },
+    "build-native/mapped-poll-gpu-build-v1/submission-preflight/submitted-qstat.txt": {
+      "bytes": 2785,
+      "sha256": "4178c2a4d9d1389b8a9c60f74e87e03e8e77b0c2441bb3836329da5d0d00153b"
+    },
+    "build-native/mapped-poll-gpu-build-v1/submission-preflight/timed-observer-verify-before.txt": {
+      "bytes": 245,
+      "sha256": "250ba1628ad896cfa9359394e6fb8678ce8aa98171f9f1a7ae55f67cab48a3f3"
+    },
+    "build-native/mapped-poll-gpu-build-v1/submission-preflight/timing-verify-before.txt": {
+      "bytes": 96,
+      "sha256": "2fce95b383e78b648cb43f29235dc871675d41e3347d300eb716d6f298d3fbc0"
+    }
+  },
+  "scope": "One serialized two-node/24-rank ABBA screen completed. All four operational proofs compare full31+8/parameters/ordinary diagnostics exactly against the admitted native endpoint. Independent raw-data timing review controls the optimization decision.",
+  "job_state": "F",
+  "exit_status": 0,
+  "walltime": "00:24:11",
+  "independent_performance_review_pending": true,
+  "collection": {
+    "path": "build-native/aurora-native-mapped-poll-abba-v1",
+    "package_sha256": "fea811458ed94281c376b0965851b952383bcd35664060074a447c8b96b2e340",
+    "transfer": {
+      "schema": "verified-streamed-run-collection-v1",
+      "passed": true,
+      "files": 91,
+      "archive_sha256": "844b50b909d4822c1d95a83bc51a62327116ca5e42fa93c6a0d361b0156f4e69",
+      "archive_bytes": 207861732,
+      "remote_archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-mapped-poll-artifacts-9052023/run-artifacts.tar.gz",
+      "local_archive_created": false,
+      "all_file_sizes_and_hashes_verified": true,
+      "seconds": 6.210760831832886
+    }
+  }
+}
