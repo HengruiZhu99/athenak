@@ -1,0 +1,1103 @@
+{
+  "scope": "Local CPU MPI diagnostics; full objective remains active and Aurora replay remains unverified.",
+  "native_vs_independent_legacy_cpu_passed": true,
+  "historical_aurora_tight_saved_checkpoint_replay_passed_on_cpu": false,
+  "historical_replay_audit": {
+    "passed": false,
+    "gate": "abs(delta)<=5e-11*(1+abs(expected))",
+    "reference": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-reference-step3551/time.json",
+    "reference_sha256": "1608393d11c0020a9e3ffc25af19bf9ea92c0a70a5e57b62cb8b10829cf0e469",
+    "reference_step": 3551,
+    "reference_time": 1.6669886746517166,
+    "runs": [
+      {
+        "directory": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/constraint-oracle-two",
+        "passed": false,
+        "checks": [
+          {
+            "region": "full",
+            "field": "H",
+            "actual": 0.007325764860670533,
+            "reference": 0.007325764802570242,
+            "absolute_difference": 5.810029107128356e-11,
+            "tolerance": 5.036628824012851e-11,
+            "tolerance_ratio": 1.153555147726632,
+            "passed": false
+          },
+          {
+            "region": "full",
+            "field": "M",
+            "actual": 0.003966695939759599,
+            "reference": 0.0039666959397409406,
+            "absolute_difference": 1.8658685707606537e-14,
+            "tolerance": 5.0198334796987046e-11,
+            "tolerance_ratio": 0.00037169929606363055,
+            "passed": true
+          },
+          {
+            "region": "full",
+            "field": "Theta",
+            "actual": 0.0006367974401174326,
+            "reference": 0.0006367974401174147,
+            "absolute_difference": 1.7889335846010823e-17,
+            "tolerance": 5.003183987200587e-11,
+            "tolerance_ratio": 3.575590242488839e-07,
+            "passed": true
+          },
+          {
+            "region": "full",
+            "field": "Z",
+            "actual": 0.0007493079827959443,
+            "reference": 0.0007493079827959237,
+            "absolute_difference": 2.0599841277224584e-17,
+            "tolerance": 5.003746539913979e-11,
+            "tolerance_ratio": 4.116883441817723e-07,
+            "passed": true
+          },
+          {
+            "region": "fixed_outer",
+            "field": "H",
+            "actual": 0.009744675579568231,
+            "reference": 0.009746186025080513,
+            "absolute_difference": 1.510445512281286e-06,
+            "tolerance": 5.0487309301254024e-11,
+            "tolerance_ratio": 29917.330378384195,
+            "passed": false
+          },
+          {
+            "region": "fixed_outer",
+            "field": "M",
+            "actual": 0.00489544947588852,
+            "reference": 0.004896165433714319,
+            "absolute_difference": 7.159578257988006e-07,
+            "tolerance": 5.0244808271685717e-11,
+            "tolerance_ratio": 14249.389149371316,
+            "passed": false
+          },
+          {
+            "region": "fixed_outer",
+            "field": "Theta",
+            "actual": 0.00014705266973823162,
+            "reference": 0.0001470802568244885,
+            "absolute_difference": 2.7587086256879167e-08,
+            "tolerance": 5.0007354012841224e-11,
+            "tolerance_ratio": 551.6605867568032,
+            "passed": false
+          },
+          {
+            "region": "fixed_outer",
+            "field": "Z",
+            "actual": 0.0003820850714560773,
+            "reference": 0.00038191355277477436,
+            "absolute_difference": 1.7151868130291367e-07,
+            "tolerance": 5.001909567763874e-11,
+            "tolerance_ratio": 3429.0640200356893,
+            "passed": false
+          }
+        ],
+        "log_sha256": "dd56f5dff679ecf968b357d2629b7782cd2aeaa6ab61a57ee98d07c0297db4a9"
+      },
+      {
+        "directory": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/constraint-oracle-eight",
+        "passed": false,
+        "checks": [
+          {
+            "region": "full",
+            "field": "H",
+            "actual": 0.007325764860670317,
+            "reference": 0.007325764802570242,
+            "absolute_difference": 5.81000750982108e-11,
+            "tolerance": 5.036628824012851e-11,
+            "tolerance_ratio": 1.1535508596784094,
+            "passed": false
+          },
+          {
+            "region": "full",
+            "field": "M",
+            "actual": 0.003966695939759472,
+            "reference": 0.0039666959397409406,
+            "absolute_difference": 1.8531183532122242e-14,
+            "tolerance": 5.0198334796987046e-11,
+            "tolerance_ratio": 0.00036915932783560185,
+            "passed": true
+          },
+          {
+            "region": "full",
+            "field": "Theta",
+            "actual": 0.0006367974401174112,
+            "reference": 0.0006367974401174147,
+            "absolute_difference": 3.469446951953614e-18,
+            "tolerance": 5.003183987200587e-11,
+            "tolerance_ratio": 6.93447804603896e-08,
+            "passed": true
+          },
+          {
+            "region": "full",
+            "field": "Z",
+            "actual": 0.0007493079827959175,
+            "reference": 0.0007493079827959237,
+            "absolute_difference": 6.179952383167375e-18,
+            "tolerance": 5.003746539913979e-11,
+            "tolerance_ratio": 1.235065032545317e-07,
+            "passed": true
+          },
+          {
+            "region": "fixed_outer",
+            "field": "H",
+            "actual": 0.009744675579568244,
+            "reference": 0.009746186025080513,
+            "absolute_difference": 1.510445512269143e-06,
+            "tolerance": 5.0487309301254024e-11,
+            "tolerance_ratio": 29917.330378143677,
+            "passed": false
+          },
+          {
+            "region": "fixed_outer",
+            "field": "M",
+            "actual": 0.004895449475888525,
+            "reference": 0.004896165433714319,
+            "absolute_difference": 7.159578257935964e-07,
+            "tolerance": 5.0244808271685717e-11,
+            "tolerance_ratio": 14249.38914926774,
+            "passed": false
+          },
+          {
+            "region": "fixed_outer",
+            "field": "Theta",
+            "actual": 0.00014705266973823178,
+            "reference": 0.0001470802568244885,
+            "absolute_difference": 2.7587086256716537e-08,
+            "tolerance": 5.0007354012841224e-11,
+            "tolerance_ratio": 551.6605867535511,
+            "passed": false
+          },
+          {
+            "region": "fixed_outer",
+            "field": "Z",
+            "actual": 0.0003820850714560774,
+            "reference": 0.00038191355277477436,
+            "absolute_difference": 1.715186813030221e-07,
+            "tolerance": 5.001909567763874e-11,
+            "tolerance_ratio": 3429.064020037857,
+            "passed": false
+          }
+        ],
+        "log_sha256": "a3844edcc5f0fdfe8b4bdc342e4df9d2acd6df5b120a0bf74d8e6167cb3fa36a"
+      }
+    ]
+  },
+  "runs": {
+    "two": {
+      "ranks": 2,
+      "executable_sha256": "50c8ea224418aaef364de3c12d2514a0e7e26c0a5fb696802d1d9ec197d3fe82",
+      "passed_native_vs_legacy_cpu": true,
+      "sources_objects_unchanged": true,
+      "metrics": {
+        "constraints0": {
+          "count": 4358448,
+          "max_scaled": 0.0,
+          "max_absolute": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "failures": 0,
+          "weighted_rms": 0.0,
+          "weight_sum": 79.07227296090038,
+          "components": [
+            {
+              "field": 0,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 1,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 2,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 3,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 4,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 5,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 6,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 7,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 8,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 9,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 10,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 11,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 12,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 13,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 14,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 15,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 16,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 17,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 18,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            }
+          ]
+        },
+        "constraints1": {
+          "count": 4358448,
+          "max_scaled": 0.0,
+          "max_absolute": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "failures": 0,
+          "weighted_rms": 0.0,
+          "weight_sum": 79.07227296090038,
+          "components": [
+            {
+              "field": 0,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 1,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 2,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 3,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 4,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 5,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 6,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 7,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 8,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 9,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 10,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 11,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 12,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 13,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 14,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 15,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 16,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 17,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 18,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            }
+          ]
+        },
+        "constraints2": {
+          "count": 4358448,
+          "max_scaled": 0.0,
+          "max_absolute": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "failures": 0,
+          "weighted_rms": 0.0,
+          "weight_sum": 79.07227296090038,
+          "components": [
+            {
+              "field": 0,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 1,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 2,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 3,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 4,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 5,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 6,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 7,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 8,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 9,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 10,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 11,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 12,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 13,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 14,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 15,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 16,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 17,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 18,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            }
+          ]
+        }
+      },
+      "results_path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/constraint-oracle-two/results.json",
+      "results_sha256": "1634261add0bbb2bd5fcd62ceff7eec401d91615dc44ba06813b9595d112313a",
+      "run_log_sha256": "dd56f5dff679ecf968b357d2629b7782cd2aeaa6ab61a57ee98d07c0297db4a9"
+    },
+    "eight": {
+      "ranks": 8,
+      "executable_sha256": "50c8ea224418aaef364de3c12d2514a0e7e26c0a5fb696802d1d9ec197d3fe82",
+      "passed_native_vs_legacy_cpu": true,
+      "sources_objects_unchanged": true,
+      "metrics": {
+        "constraints0": {
+          "count": 4358448,
+          "max_scaled": 0.0,
+          "max_absolute": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "failures": 0,
+          "weighted_rms": 0.0,
+          "weight_sum": 79.07227296091128,
+          "components": [
+            {
+              "field": 0,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 1,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 2,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 3,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 4,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 5,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 6,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 7,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 8,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 9,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 10,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 11,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 12,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 13,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 14,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 15,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 16,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 17,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 18,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            }
+          ]
+        },
+        "constraints1": {
+          "count": 4358448,
+          "max_scaled": 0.0,
+          "max_absolute": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "failures": 0,
+          "weighted_rms": 0.0,
+          "weight_sum": 79.07227296091128,
+          "components": [
+            {
+              "field": 0,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 1,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 2,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 3,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 4,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 5,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 6,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 7,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 8,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 9,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 10,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 11,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 12,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 13,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 14,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 15,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 16,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 17,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 18,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            }
+          ]
+        },
+        "constraints2": {
+          "count": 4358448,
+          "max_scaled": 0.0,
+          "max_absolute": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "failures": 0,
+          "weighted_rms": 0.0,
+          "weight_sum": 79.07227296091128,
+          "components": [
+            {
+              "field": 0,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 1,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 2,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 3,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 4,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 5,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 6,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 7,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 8,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 9,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 10,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 11,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 12,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 13,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 14,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 15,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 16,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 17,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            },
+            {
+              "field": 18,
+              "max_absolute": 0.0,
+              "max_scaled": 0.0,
+              "weighted_rms": 0.0,
+              "failures": 0
+            }
+          ]
+        }
+      },
+      "results_path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/constraint-oracle-eight/results.json",
+      "results_sha256": "4b8b9af07013aec2ef0e5f9a6aa1b78779bcb1c8cc87b9dd1f0507133280b74f",
+      "run_log_sha256": "a3844edcc5f0fdfe8b4bdc342e4df9d2acd6df5b120a0bf74d8e6167cb3fa36a"
+    }
+  },
+  "complete_harmonic_surface_comparison": {
+    "0": {
+      "byte_equal": false,
+      "scalar_count": 355,
+      "max_absolute_difference": 2.5673907444456745e-16,
+      "two_sha256": "235b95d5aa58008864a03a8fe82c82001464457ac737d5f27df7d0ccb6cf4e18",
+      "eight_sha256": "f983603f3b4810dc902c2de82c8321759c0925fbdf08ed205d50f350137e7f43"
+    },
+    "2": {
+      "byte_equal": false,
+      "scalar_count": 355,
+      "max_absolute_difference": 2.2617886935915885e-17,
+      "two_sha256": "5c264782d844dbbde2914d2da5d8346c9336a63093979bedf54f6f9f645e074b",
+      "eight_sha256": "9605c76969b7299cfc37df7159870cd7ac37373db3ec732b2ec19a2faeb0ef35"
+    }
+  },
+  "endpoint_state_move": {
+    "body_unchanged": true,
+    "body_sha256": "216e266bef755af740e94a46c292955473ca171b487b45b25c81b62aa905df08"
+  },
+  "native_athena_sha256": "4ff23f28d83a8ea92b0cdaad55936e269537a936fa3356aeeadb012f43697687",
+  "remaining": [
+    "Same-hardware original and native Aurora replay, including device fixed-radius mask.",
+    "Complete fresh native N12 through3551steps/5M with field/chi-history and common diagnostic comparisons.",
+    "GPU AMR checks, performance/scaling and measured improvements."
+  ]
+}

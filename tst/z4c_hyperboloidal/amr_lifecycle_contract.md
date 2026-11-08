@@ -44,3 +44,28 @@ state must therefore be written explicitly. Each regrid must increment the
 native topology sequence, rebuild usable plans, retain the requested timestep,
 and satisfy surface compatibility <= 1e-7. The eight-rank fixture must include
 ranks with zero owned scri patches.
+
+## Optional accepted-state diagnostics gate
+
+`--diagnostics` primes the module's diagnostic cache before the actual native
+refine/coarsen operations above. At phases 0/1/2 it must refresh exactly once
+(total refresh counts 1/2/3), allocate constraints, weights and exterior-mask
+storage for the current point list, and reuse the cache on a repeated call.
+Every named constraint scalar, physical chi/lapse/Theta, validity flag and volume
+weight must compare bitwise with a new independent `Diagnostics` instance on the
+same accepted mesh. Struct padding is excluded from that comparison. The test
+checks 23 scalar/status/weight values per evolved bulk point.
+
+Both reused and fresh diagnostic refreshes must preserve every owned field and
+all eight bulk/scri ChiRecord members byte for byte, leave the state version and
+last actual-stage compatibility/clock observations unchanged, and preserve
+sentinels throughout all RK/RHS arrays and stored RHS status/gap/CFL arrays.
+The existing transfer snapshots still establish bitwise 2/8-rank state equality
+and unchanged migrated-leaf fidelity. This mode tests cache and plan rebuilding
+after real AMR, not independent correctness of the constraint equations or a
+FastFlow search on the remeshed geometry; those use separate diagnostic oracles.
+
+```sh
+python3 tst/z4c_hyperboloidal/amr_lifecycle.py --build build-native \
+  --output build-native/amr-diagnostics --ranks 2 8 --diagnostics
+```

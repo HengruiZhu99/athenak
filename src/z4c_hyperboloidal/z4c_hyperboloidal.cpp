@@ -19,13 +19,14 @@
 #include "z4c_hyperboloidal/surface_exchange.hpp"
 #include "z4c_hyperboloidal/dissipation_plan.hpp"
 #include "z4c_hyperboloidal/remesh.hpp"
+#include "z4c_hyperboloidal/diagnostics.hpp"
 
 namespace z4c_hyperboloidal {
 
 Z4cHyperboloidal::~Z4cHyperboloidal() = default;
 
 Z4cHyperboloidal::Z4cHyperboloidal(MeshBlockPack *ppack, ParameterInput *pin)
-    : pmy_pack(ppack) {
+    : pmy_pack(ppack), pinput_(pin) {
   auto *pm=ppack->pmesh;
   if (!pm->atlas || !pm->three_d || sizeof(Real)!=sizeof(double)) {
     throw std::invalid_argument("Hyperboloidal Z4c requires a 3D atlas and double precision");
@@ -99,6 +100,7 @@ void Z4cHyperboloidal::AllocateStorage() {
 }
 
 void Z4cHyperboloidal::ResetMeshStorage() {
+  InvalidateDiagnostics();
   // Regridding is an accepted-step operation: no old stage or peer buffer may
   // still be in use. Preserve any shallow snapshots held by RemeshState by
   // dropping our views before allocation, even if the new extents are equal.
@@ -246,6 +248,7 @@ void Z4cHyperboloidal::BuildReferenceCache() {
 }
 
 void Z4cHyperboloidal::InitializeReference() {
+  InvalidateDiagnostics();
   BuildReferenceCache();
   auto list=points.d_view; auto surf=surface_points.d_view;
   auto refs=reference; auto srefs=surface_reference;
@@ -279,6 +282,7 @@ void Z4cHyperboloidal::FormResidual() {
 }
 
 void Z4cHyperboloidal::EnforceAlgebraicConstraints() {
+  InvalidateDiagnostics();
   auto list=points.d_view; auto state=u0;
   auto surf=surface_points.d_view; auto edge=s0;
   int bad_bulk=0,bad_surface=0;

@@ -1,0 +1,89 @@
+{
+  "passed": true,
+  "scope": "native HistoryOutput integration and ordinary Driver cadence; local CPU MPI, no GPU performance claim",
+  "ranks": [
+    2,
+    8
+  ],
+  "synthetic": {
+    "result_path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/history-output-synthetic-v1/results.json",
+    "result_sha256": "316a6e7fbfbc61a71a0291e2bde795cff731507c2968f6d0efcbf47eb64d3ac5",
+    "executable_sha256": "7e167f50612a8c932b3962a3c26f23550c155890892ea3604ae46bf65083d7ec",
+    "history_sha256": "8109a2318e8902bf96812f97ea0a6606790b8e19f2cc5a2c328dbeacc01667f8",
+    "cross_rank_byte_equal": true,
+    "unequal_local_volume": true,
+    "empty_local_exterior": true,
+    "collective_negative_cases": 3,
+    "ordinary_raw_sum_regression": [
+      "hydro",
+      "mhd",
+      "z4c.user",
+      "user"
+    ],
+    "user_hist_only_suppresses_hyperboloidal": true,
+    "provenance": {
+      "sources_unchanged": true,
+      "objects_unchanged": true
+    }
+  },
+  "real": {
+    "result_path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/history-output-real-v1/results.json",
+    "result_sha256": "075c743fc6a6a5f6fcbdf9900af3155d9c16b336f1f82e2cdd6bdd75db8cf264",
+    "executable_sha256": "623ef4ae32995971ac7ba8604a4b724c8eb02223d6e9202c442a2099390b9c38",
+    "full_owned_fields_and_chi_records_unchanged": true,
+    "all_six_rk_rhs_arrays_unchanged": true,
+    "stage_observations_unchanged": true,
+    "repeated_calls_reuse_cache": true,
+    "one_rank_theta_change_and_restore_refresh_all_ranks": true,
+    "cycle_time_only_change_refreshes": true,
+    "fastflow_summary_cycles": [
+      0,
+      0,
+      0,
+      1
+    ],
+    "cross_rank_max_absolute": 2.6201263381153694e-13,
+    "provenance": {
+      "sources_unchanged": true,
+      "objects_unchanged": true
+    }
+  },
+  "lifecycle": {
+    "result_path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/history-lifecycle-v1/results.json",
+    "result_sha256": "52d9a05d8af144fc15e2e5122d7249a577f80e13c10447284c120037835d08b6",
+    "executable_sha256": "4ff23f28d83a8ea92b0cdaad55936e269537a936fa3356aeeadb012f43697687",
+    "ordinary_executable_no_override": true,
+    "hst_cycles": [
+      0,
+      1,
+      1
+    ],
+    "fastflow_summary_cycles": [
+      0,
+      1
+    ],
+    "all_stored_scalars_per_checkpoint": 24704784,
+    "history_enabled_vs_disabled_bitwise_equal_cycles": [
+      0,
+      1
+    ],
+    "final_cross_rank_payload_sha256": "cf7e16422cf792f82a387328c0d701e70cf378ebd75912719f136c86b4278e28",
+    "cross_rank_max_absolute": 2.6201263381153694e-13,
+    "provenance": {
+      "binary_unchanged": true,
+      "sources_unchanged": true,
+      "objects_unchanged": true
+    }
+  },
+  "limits": [
+    "Synthetic test is not a constraint formula oracle.",
+    "Real and lifecycle tests cover initial data and one accepted step; saved N12 history comparison is separate.",
+    "GPU performance and longer-time AMR diagnostics are separate gates."
+  ],
+  "history_runtime_sources": {
+    "src/athena.hpp": "fb80eab8674278f9ede807b0aaa10801ccee6285a0344072e99cc5e1a65baa4d",
+    "src/outputs/history.cpp": "18cca7391cd9e239ee74fc562ca6a846f70859c7533c1843d679d94eaf113f1c",
+    "src/outputs/outputs.hpp": "dcf138a07dec6cdc254c15eee307f06b50481a1a1e28dfeb50abad1e95cc9cb9"
+  },
+  "synthetic_output_sources_match_integrated_real_run": true
+}

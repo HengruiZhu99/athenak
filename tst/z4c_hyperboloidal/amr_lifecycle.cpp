@@ -4,6 +4,7 @@
 #include <array>
 #include <cmath>
 #include <cstdint>
+#include <cstring>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -11,6 +12,7 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 #include "globals.hpp"
 #include "mesh/mesh.hpp"
@@ -18,6 +20,7 @@
 #include "outputs/outputs.hpp"
 #include "pgen/pgen.hpp"
 #include "z4c_hyperboloidal/remesh.hpp"
+#include "z4c_hyperboloidal/diagnostics.hpp"
 
 namespace h=z4c_hyperboloidal;
 namespace {
@@ -187,6 +190,96 @@ void DumpAndCheck(Mesh &mesh,int phase) {
       <<",\"polynomial_checks\":"<<checks[2]<<",\"zero_scri_ranks\":"<<checks[3]
       <<",\"max_polynomial_error\":"<<maximum<<",\"compatibility\":"<<compatibility<<"}\n";
 }
+// Optional accepted-state diagnostic cache gate. It uses actual AMR below, not
+// synthetic maps or direct storage reset, and keeps the mathematical oracle
+// separate: a new Diagnostics instance checks only cache/plan reconstruction.
+std::vector<Real> OwnedState(const h::Z4cHyperboloidal &p) {
+  const auto u=Kokkos::create_mirror_view_and_copy(HostMemSpace(),p.u0);
+  const auto s=Kokkos::create_mirror_view_and_copy(HostMemSpace(),p.s0);
+  const auto chi=Kokkos::create_mirror_view_and_copy(HostMemSpace(),p.chi_records);
+  const auto schi=Kokkos::create_mirror_view_and_copy(HostMemSpace(),p.surface_chi_records);
+  std::vector<Real> values(39*(p.npoints+p.nsurface_points));
+  for (int q=0;q<p.npoints;++q) {
+    const auto c=p.points.h_view(q);auto *v=values.data()+39*q;
+    for (int f=0;f<31;++f)v[f]=u(c.m,f,c.k,c.j,c.i);
+    h::PackChiRecord(chi(q),v+31);
+  }
+  for (int q=0;q<p.nsurface_points;++q) {
+    const auto c=p.surface_points.h_view(q);auto *v=values.data()+39*(p.npoints+q);
+    for (int f=0;f<31;++f)v[f]=s(c.face,f,c.k,c.j);
+    h::PackChiRecord(schi(q),v+31);
+  }
+  return values;
+}
+std::vector<Real> DiagnosticValues(const h::Diagnostics &diagnostic) {
+  const auto points=Kokkos::create_mirror_view_and_copy(HostMemSpace(),diagnostic.Points());
+  const auto weights=Kokkos::create_mirror_view_and_copy(HostMemSpace(),diagnostic.Weights());
+  std::vector<Real> values;values.reserve(23*points.extent(0));
+  for (std::size_t q=0;q<points.extent(0);++q) {
+    const auto &p=points(q);const auto &c=p.constraints;const auto &z=c.z4;
+    // Compare named scalars, excluding implementation-dependent struct padding.
+    values.insert(values.end(),{Real(p.status),Real(c.valid),Real(z.valid),
+        p.chi,p.lapse,p.theta,c.hamiltonian,c.momentum[0],c.momentum[1],c.momentum[2],
+        c.momentum_conformal_norm2,c.momentum_physical_norm2,c.physical_trace,
+        c.null_residual,z.determinant_residual,z.tracefree_residual,z.theta_physical,
+        z.z_covector[0],z.z_covector[1],z.z_covector[2],z.z_conformal_norm2,
+        z.z_physical_norm2,weights(q)});
+  }
+  return values;
+}
+void Same(const std::vector<Real> &a,const std::vector<Real> &b,const char *message) {
+  Require(a.size()==b.size() && std::memcmp(a.data(),b.data(),a.size()*sizeof(Real))==0,
+          message);
+}
+template<class View>void Sentinel(const View &view,Real expected) {
+  const auto host=Kokkos::create_mirror_view_and_copy(HostMemSpace(),view);
+  for (std::size_t q=0;q<host.size();++q)
+    Require(host.data()[q]==expected,"AMR diagnostics changed RK/RHS workspace");
+}
+void CheckDiagnostics(ParameterInput &pin,Mesh &mesh,int phase) {
+  auto &p=*mesh.pmb_pack->pz4c_hyperboloidal;
+  auto &cached=p.GetDiagnostics();
+  Require(cached.GetStatistics().refreshes==std::uint64_t(phase),
+          "diagnostic refresh count before AMR phase changed");
+  Kokkos::deep_copy(p.u_rhs,13);Kokkos::deep_copy(p.s_rhs,14);
+  Kokkos::deep_copy(p.u1,15);Kokkos::deep_copy(p.u_accum,16);
+  Kokkos::deep_copy(p.s1,17);Kokkos::deep_copy(p.s_accum,18);
+  Kokkos::deep_copy(p.rhs_status,73);Kokkos::deep_copy(p.rhs_gap,19);
+  Kokkos::deep_copy(p.rhs_cfl,20);
+  const auto before=OwnedState(p);const auto version=p.StateVersion();
+  const Real compatibility=p.StageMaxCompatibility(),clock=p.StageMaxClock();
+  cached.Refresh();
+  Require(cached.GetStatistics().refreshes==std::uint64_t(phase+1),
+          "accepted AMR state did not invalidate diagnostic cache");
+  Require(cached.Points().extent_int(0)==p.npoints && cached.Weights().extent_int(0)==p.npoints
+          && cached.ExteriorMask().extent_int(0)==p.npoints,
+          "diagnostic extents still describe the old mesh");
+  const auto values=DiagnosticValues(cached);
+  cached.Refresh();
+  Require(cached.GetStatistics().refreshes==std::uint64_t(phase+1),
+          "unchanged AMR state missed diagnostic cache");
+  Same(values,DiagnosticValues(cached),"cached diagnostics changed on repeat");
+  {
+    h::Diagnostics cold(mesh.pmb_pack,&p,&pin);cold.Refresh();
+    Require(cold.GetStatistics().refreshes==1,"fresh diagnostics did not refresh once");
+    Same(values,DiagnosticValues(cold),"cached/fresh AMR constraints or weights differ");
+  }
+  Same(before,OwnedState(p),"AMR diagnostics changed owned fields or chi history");
+  Require(p.StateVersion()==version && p.StageMaxCompatibility()==compatibility
+          && p.StageMaxClock()==clock,"AMR diagnostics changed accepted-stage bookkeeping");
+  Sentinel(p.u_rhs,13);Sentinel(p.s_rhs,14);Sentinel(p.u1,15);Sentinel(p.u_accum,16);
+  Sentinel(p.s1,17);Sentinel(p.s_accum,18);Sentinel(p.rhs_status,73);
+  Sentinel(p.rhs_gap,19);Sentinel(p.rhs_cfl,20);
+  std::uint64_t counts[3]={std::uint64_t(values.size()),std::uint64_t(before.size()),
+      std::uint64_t(p.u_rhs.size()+p.s_rhs.size()+p.u1.size()+p.u_accum.size()
+          +p.s1.size()+p.s_accum.size()+p.rhs_status.size()+p.rhs_gap.size()+p.rhs_cfl.size())};
+  MPI_Allreduce(MPI_IN_PLACE,counts,3,MPI_UINT64_T,MPI_SUM,MPI_COMM_WORLD);
+  if (!global_variable::my_rank)std::cout<<"DIAGNOSTICS_REPORT {\"phase\":"<<phase
+      <<",\"refreshes\":"<<cached.GetStatistics().refreshes
+      <<",\"constraint_weight_scalars\":"<<counts[0]<<",\"owned_scalars\":"<<counts[1]
+      <<",\"rk_status_values\":"<<counts[2]
+      <<",\"fresh_exact\":true,\"repeat_cached\":true,\"readonly\":true}\n";
+}
 }  // namespace
 int main(int argc,char **argv) {
   MPI_Init(&argc,&argv);
@@ -194,7 +287,9 @@ int main(int argc,char **argv) {
   MPI_Comm_size(MPI_COMM_WORLD,&global_variable::nranks);
   Kokkos::initialize(argc,argv);
   try {{
-    Require(argc==2,"usage: amr_lifecycle N12-initial-input");
+    Require(argc==2 || (argc==3 && std::string(argv[2])=="--diagnostics"),
+            "usage: amr_lifecycle N12-initial-input [--diagnostics]");
+    const bool diagnostics=argc==3;
     ParameterInput pin;IOWrapper file;file.Open(argv[1],IOWrapper::FileMode::read);
     pin.LoadFromFile(file);file.Close();
     pin.SetString("mesh_refinement","refinement","adaptive");
@@ -215,6 +310,7 @@ int main(int argc,char **argv) {
     driver.Initialize(&mesh,&pin,&output,false);
     const auto bulk_history=Totals(p,false),surface_history=Totals(p,true);
     Require(mesh.nmb_total==106,"initial N12 AMR fixture topology changed");
+    if (diagnostics)CheckDiagnostics(pin,mesh,0);
     DumpAndCheck(mesh,0);
     for (operation=1;operation<=2;++operation) {
       Poison(p);
@@ -226,6 +322,7 @@ int main(int argc,char **argv) {
       Require(p.dtnew==p.requested_dt,"AMR failed to refresh fixed timestep");
       Require(Totals(p,false)==bulk_history,"AMR changed bulk historical totals/extrema");
       Require(Totals(p,true)==surface_history,"AMR changed scri historical totals/extrema");
+      if (diagnostics)CheckDiagnostics(pin,mesh,operation);
       DumpAndCheck(mesh,operation);
     }
     if (!global_variable::my_rank)std::cout<<"PASS native field AMR lifecycle\n";

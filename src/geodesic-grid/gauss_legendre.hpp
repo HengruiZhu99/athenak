@@ -20,6 +20,8 @@ class MeshBlockPack;
 class GaussLegendreGrid {
  public:
   GaussLegendreGrid(MeshBlockPack *pmy_pack, int ntheta, Real rad);
+  // Angular quadrature only, for samplers that do not use a MeshBlockPack.
+  GaussLegendreGrid(int ntheta, Real rad) : GaussLegendreGrid(nullptr, ntheta, rad) {}
   ~GaussLegendreGrid();
     int nangles;  // total number of gridpoints
     int ntheta;  // number of gridpoints along theta direction, nphi = 2ntheta

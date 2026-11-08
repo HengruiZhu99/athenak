@@ -89,6 +89,7 @@ TaskStatus Z4cHyperboloidal::CalcSurfaceRHS(Driver *, int) {
 }
 
 TaskStatus Z4cHyperboloidal::ProjectSurface(Driver *, int) {
+  InvalidateDiagnostics();
   return RequirePlan(surface_exchange_.get()).Project();
 }
 

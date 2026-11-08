@@ -231,6 +231,7 @@ void Pack(const Z4cHyperboloidal &p, HostArray2D<Real> &host) {
 }
 
 void Unpack(Z4cHyperboloidal &p, const HostArray2D<Real> &host) {
+  p.InvalidateDiagnostics();
   const auto count=RecordScalars(p);
   bool good=host.extent(0)==static_cast<std::size_t>(p.nblocks) && host.extent(1)==count;
   if (good) for (std::size_t i=0;i<host.size();++i) {

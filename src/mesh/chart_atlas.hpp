@@ -221,6 +221,7 @@ class Atlas {
   std::array<int, 3> RootBlocks(int chart_id) const;
   const std::vector<Real> &RadialKnots() const {return radial_knots_;}
   Real HalfWidth() const {return half_width_;}
+  Real SphericalInnerRadius() const {return spherical_inner_radius_;}
   static Seam AngularSeam(int chart_id, int axis, int side);
   // Select parents whose interiors intersect an SMR region, then refine each
   // selected parent to logical_level. Region coordinates are physical spherical

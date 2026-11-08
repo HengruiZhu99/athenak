@@ -1,0 +1,83 @@
+{
+  "scope": "same-time ordinary native process restart2-to8 and same-object Unpack2/8; local CPU MPI",
+  "adopted_same_time_restart_checks_pass": true,
+  "additional_compact_radius_checks_pass": false,
+  "original_additional_gate_failure_preserved": true,
+  "original_process_result": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/history-restart-v1/results.json",
+  "failure_audit": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/history-restart-v1/failure-audit.json",
+  "controls_result": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/history-restart-controls-v2/results.json",
+  "artifact_sha256": {
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/history-restart-v1/results.json": "5684d02c02b444a487f88b4d3045a889ff4710e4a98af371f010fe4447cb9823",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/history-restart-v1/failure-audit.json": "bdc0f6b21675111e12fff67145177cb8a6ed2c68a5284bb6d9a2e545393d59a0",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/history-restart-controls-v2/results.json": "513f1b74f088e3d2fa49f6cdf1cc8b6f8a55f6f714a30a483ee699ff89c9544f"
+  },
+  "complete_checkpoint": {
+    "bitwise_equal": true,
+    "scalar_values": 24704784,
+    "payload_sha256": "cf7e16422cf792f82a387328c0d701e70cf378ebd75912719f136c86b4278e28"
+  },
+  "ten_history_columns_pass": true,
+  "ten_history_columns_max_absolute": 2.6201263381153694e-13,
+  "complete_shape_coefficients": 169,
+  "mass_M": {
+    "reference": 1.000000005569659,
+    "candidate": 1.0000000058420953,
+    "absolute_difference": 2.724362957451376e-10,
+    "relative_difference": 2.724362942277604e-10,
+    "gate": 1.0010000055696588e-07,
+    "passed": true
+  },
+  "adopted_areal_radius_M": {
+    "reference": 2.000000011139318,
+    "candidate": 2.0000000116841905,
+    "absolute_difference": 5.448725914902752e-10,
+    "gate": 2.0010000111393178e-07,
+    "passed": true
+  },
+  "additional_compact_radius_gates": {
+    "mean": {
+      "absolute_difference": 1.9020776903522219e-07,
+      "gate": 5.159156344091623e-09,
+      "passed": false
+    },
+    "minimum": {
+      "absolute_difference": 1.9070746334892696e-07,
+      "gate": 5.159156278163593e-09,
+      "passed": false
+    }
+  },
+  "expansion_rms": {
+    "source": 4.9494508055859635e-05,
+    "fresh_search": 4.3855884612460574e-05,
+    "limit": 0.001,
+    "summary_hrms_is_mean_square": true
+  },
+  "fresh_search_iterations": 2,
+  "saved_monopole": {
+    "before": "0.059780807629455139",
+    "after": "0.059781032385783604"
+  },
+  "fresh_two_vs_fresh_eight_max_absolute": 1.7763568394002505e-15,
+  "fresh_two_vs_fresh_eight_mass_and_compact_radii_exact": true,
+  "same_object_unpack_cache_ranks": [
+    2,
+    8
+  ],
+  "same_object_unpack_cache_pass": true,
+  "same_object_cache_executable_sha256": "7dfaad706ca134644f2f0c700e338362f971519e077d67064e18ae7f183bb4f9",
+  "controls_all_provenance_unchanged": true,
+  "limits": [
+    "Additional compact-coordinate mean/minimum radius gates remain failed; adopted protocol radius means areal radius.",
+    "No runtime code or numerical tolerance changed.",
+    "Available predecessor source reproduces both searches exactly; historical N12 binary source provenance remains separately limited."
+  ],
+  "predecessor_warm_start_equivalence": {
+    "evidence": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/docs/z4c_hyperboloidal/evidence/native-fastflow-warmstart-equivalence.json",
+    "evidence_sha256": "aba0c86c4f9ebdfe55291faa420cff6edfbe59c6c10b6940d4f9a2ed49cbafbf",
+    "available_predecessor_matches_native_exactly": true,
+    "prior_monopole_iterations": 11,
+    "saved_monopole_iterations": 2,
+    "complete_summary_shape_verbose_bytes_equal": true,
+    "historical_N12_binary_provenance_resolved": false
+  }
+}

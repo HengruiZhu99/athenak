@@ -1,10 +1,12 @@
 # Planned native hyperboloidal diagnostics integration
 
-Status: **planned only**, from the read-only source review on 2026-11-08.
-This document specifies the next diagnostics milestone after the field-AMR
-milestone. It does not claim that the interfaces below are implemented, that
-native constraint/horizon comparisons have passed, or that performance has
-been measured. It does not change the adopted
+Status: **implemented, validation in progress** on 2026-11-08. This document
+preserves the preimplementation contract and its acceptance gates. The native
+coordinator, history integration, sparse sampler, and FastFlow extension now
+exist. Current evidence is recorded separately in `history-output.md`,
+`fastflow-external.md`, and the corresponding evidence files; listing a gate
+below does not claim that it has passed. No Aurora diagnostic or performance
+result is established. This work does not change the adopted
 [N12 comparison protocol](comparison-protocol.md).
 
 The implementation must use the original native `Driver`, output cadence,

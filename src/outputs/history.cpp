@@ -9,10 +9,12 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <cmath>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <stdexcept>
 
 #include "athena.hpp"
 #include "globals.hpp"
@@ -21,6 +23,7 @@
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c_hyperboloidal/z4c_hyperboloidal.hpp"
 #include "coordinates/adm.hpp"
 #include "outputs.hpp"
 
@@ -49,6 +52,9 @@ HistoryOutput::HistoryOutput(ParameterInput *pin, Mesh *pm, OutputParameters op)
   if (pm->pmb_pack->pz4c != nullptr) {
     hist_data.emplace_back(PhysicsModule::SpaceTimeDynamics);
   }
+  if (pm->pmb_pack->pz4c_hyperboloidal != nullptr && !op.user_hist_only) {
+    hist_data.emplace_back(PhysicsModule::HyperboloidalSpaceTimeDynamics);
+  }
 }
 
 //----------------------------------------------------------------------------------------
@@ -64,9 +70,25 @@ void HistoryOutput::LoadOutputData(Mesh *pm) {
       LoadMHDHistoryData(&data, pm);
     } else if (data.physics == PhysicsModule::SpaceTimeDynamics) {
       LoadZ4cHistoryData(&data, pm);
+    } else if (data.physics == PhysicsModule::HyperboloidalSpaceTimeDynamics) {
+      LoadHyperboloidalHistoryData(&data, pm);
     } else if (data.physics == PhysicsModule::UserDefined) {
       (pm->pgen->user_hist_func)(&data, pm);
     }
+  }
+}
+
+// The module supplies local Jacobian-volume integrals in the pinned diagnostic
+// convention. No ADM proper-volume factor or ordinary Z4c chi excision applies.
+// The complete harmonic horizon mask is prepared by the module's coordinator.
+void HistoryOutput::LoadHyperboloidalHistoryData(HistoryData *pdata, Mesh *pm) {
+  constexpr const char *labels[10]={"Volume","H-rms","M-rms","Theta-rms","Z-rms",
+      "eVolume","eH-rms","eM-rms","eTheta-rms","eZ-rms"};
+  const auto sums=pm->pmb_pack->pz4c_hyperboloidal->DiagnosticHistorySums();
+  pdata->nhist=sums.size();
+  for (int n=0;n<pdata->nhist;++n) {
+    pdata->label[n]=labels[n];
+    pdata->hdata[n]=sums[n];
   }
 }
 
@@ -392,6 +414,27 @@ void HistoryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
     }
 #endif
 
+    if (data.physics==PhysicsModule::HyperboloidalSpaceTimeDynamics) {
+      // MPI sums raw volume and squared-constraint integrals. Averaging local
+      // RMS values would give the wrong weighting, including on empty ranks.
+      int invalid=0;
+      if (global_variable::my_rank==0) {
+        invalid=data.nhist!=10;
+        for (int n=0;n<10;++n)
+          invalid|=!std::isfinite(data.hdata[n]) || data.hdata[n]<0;
+        invalid|=!(data.hdata[0]>0) || !(data.hdata[5]>0);
+      }
+#if MPI_PARALLEL_ENABLED
+      MPI_Bcast(&invalid,1,MPI_INT,0,MPI_COMM_WORLD);
+#endif
+      if (invalid) throw std::runtime_error("Invalid global hyperboloidal history integrals");
+      if (global_variable::my_rank==0)
+        for (int region=0;region<2;++region)
+          for (int field=1;field<5;++field)
+            data.hdata[5*region+field]=
+                std::sqrt(data.hdata[5*region+field]/data.hdata[5*region]);
+    }
+
     // only the master rank writes the file
     if (global_variable::my_rank == 0) {
       // create filename: "file_basename" + ".physics" + ".hst"
@@ -409,6 +452,9 @@ void HistoryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
           fname.append(".z4c");
         case PhysicsModule::UserDefined:
           fname.append(".user");
+          break;
+        case PhysicsModule::HyperboloidalSpaceTimeDynamics:
+          fname.append(".z4c_hyperboloidal");
           break;
         default:
           break;

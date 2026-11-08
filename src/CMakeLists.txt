@@ -53,6 +53,8 @@ add_executable(
         driver/driver.cpp
 
         z4c_hyperboloidal/z4c_hyperboloidal.cpp
+        z4c_hyperboloidal/diagnostics.cpp
+        z4c_hyperboloidal/horizon_sampling.cpp
         z4c_hyperboloidal/dissipation_plan.cpp
         z4c_hyperboloidal/mapped_halo.cpp
         z4c_hyperboloidal/surface_exchange.cpp
@@ -256,6 +258,8 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "^(GNU|Clang|AppleClang|IntelLLVM)$")
       z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp
       z4c_hyperboloidal/z4c_hyperboloidal_tasks.cpp
       z4c_hyperboloidal/z4c_hyperboloidal_lifecycle.cpp
+      z4c_hyperboloidal/diagnostics.cpp
+      z4c_hyperboloidal/horizon_sampling.cpp
       z4c_hyperboloidal/dissipation_plan.cpp
       z4c_hyperboloidal/mapped_halo.cpp
       z4c_hyperboloidal/surface_exchange.cpp

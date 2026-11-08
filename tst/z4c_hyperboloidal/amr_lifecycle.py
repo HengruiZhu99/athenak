@@ -13,7 +13,13 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--build', type=pathlib.Path, required=True)
 parser.add_argument('--output', type=pathlib.Path, required=True)
 parser.add_argument('--ranks', type=int, nargs='+', default=[2, 8])
+parser.add_argument('--build-only', action='store_true')
+parser.add_argument('--executable', type=pathlib.Path, help='reuse a manifest-verified test executable')
+parser.add_argument('--diagnostics', action='store_true',
+                    help='also gate accepted-state diagnostic cache across actual regrids')
 args = parser.parse_args()
+if args.build_only and args.executable:
+    parser.error('--build-only and --executable are mutually exclusive')
 root = pathlib.Path(__file__).resolve().parents[2]
 build, output = args.build.resolve(), args.output.resolve()
 output.mkdir(parents=True, exist_ok=True)
@@ -34,7 +40,8 @@ source_manifest = {str(p.relative_to(root)): sha256(p) for p in sorted(sources)}
 (output/'source-manifest.json').write_text(json.dumps(source_manifest, indent=2)+'\n')
 flags = (build/'src/CMakeFiles/athena.dir/flags.make').read_text()
 includes = shlex.split(re.search(r'^CXX_INCLUDES = (.*)$', flags, re.M).group(1))
-obj, exe = output/'amr_lifecycle.o', output/'amr_lifecycle'
+obj = output/'amr_lifecycle.o'
+exe = args.executable.resolve() if args.executable else output/'amr_lifecycle'
 compile_command = ['/usr/bin/c++', '-std=c++17', '-O2', '-ffp-contract=off', *includes,
                    '-c', str(root/'tst/z4c_hyperboloidal/amr_lifecycle.cpp'), '-o', str(obj)]
 link = shlex.split((build/'src/CMakeFiles/athena.dir/link.txt').read_text())
@@ -44,11 +51,27 @@ link[link.index('-o')+1] = str(exe)
 objects = [build/'src'/p for p in link if p.endswith('.o') and p != str(obj)]
 object_manifest = {str(p.relative_to(build)): sha256(p) for p in sorted(objects)}
 (output/'object-manifest.json').write_text(json.dumps(object_manifest, indent=2)+'\n')
-makefile = output/'amr_lifecycle.mk'
-makefile.write_text('all:\n\t'+shlex.join(compile_command)+'\n\t'+shlex.join(link)+'\n')
-with (output/'build.log').open('w') as log:
-    subprocess.run(['make', '-j64', '-f', str(makefile)], cwd=build/'src', stdout=log,
-                   stderr=subprocess.STDOUT, check=True)
+build_provenance = {
+    'source_manifest_sha256': sha256(output/'source-manifest.json'),
+    'object_manifest_sha256': sha256(output/'object-manifest.json')}
+if args.executable:
+    saved = json.loads((exe.parent/'build-provenance.json').read_text())
+    assert all(saved[key] == value for key, value in build_provenance.items())
+    assert saved['executable_sha256'] == sha256(exe)
+    build_provenance = saved
+else:
+    makefile = output/'amr_lifecycle.mk'
+    makefile.write_text('all:\n\t'+shlex.join(compile_command)+'\n\t'+shlex.join(link)+'\n')
+    with (output/'build.log').open('w') as log:
+        subprocess.run(['make', '-j64', '-f', str(makefile)], cwd=build/'src', stdout=log,
+                       stderr=subprocess.STDOUT, check=True)
+    build_provenance.update(executable_sha256=sha256(exe), harness_object_sha256=sha256(obj))
+    (output/'build-provenance.json').write_text(json.dumps(build_provenance, indent=2)+'\n')
+if args.build_only:
+    assert all(sha256(root/path) == sha for path, sha in source_manifest.items())
+    assert all(sha256(build/path) == sha for path, sha in object_manifest.items())
+    print(json.dumps(build_provenance, indent=2))
+    raise SystemExit(0)
 
 
 def snapshot(folder, phase, ranks, expected):
@@ -92,6 +115,8 @@ try:
         folder.mkdir(exist_ok=True)
         command = ['mpiexec', '-n', str(ranks), str(exe),
                    str(root/'tst/z4c_hyperboloidal/n12_initialize.athinput')]
+        if args.diagnostics:
+            command.append('--diagnostics')
         with (folder/'run.log').open('w') as log:
             run = subprocess.run(command, cwd=folder, stdout=log, stderr=subprocess.STDOUT)
         text = (folder/'run.log').read_text()
@@ -116,16 +141,31 @@ try:
                 phase['unchanged_migrated_leaves'] = len(migrated)
                 phase['unchanged_values'] = sum(len(blocks[leaf])//348*39 for leaf in unchanged)
             previous, previous_owners = blocks, owners
-        reports[str(ranks)] = {'command': command, 'phases': phases}
+        diagnostics = [json.loads(line.removeprefix('DIAGNOSTICS_REPORT '))
+                       for line in text.splitlines() if line.startswith('DIAGNOSTICS_REPORT ')]
+        if args.diagnostics:
+            assert [p['phase'] for p in diagnostics] == [0, 1, 2], diagnostics
+            assert [p['refreshes'] for p in diagnostics] == [1, 2, 3], diagnostics
+            for phase, diagnostic in zip(phases, diagnostics):
+                assert diagnostic['constraint_weight_scalars'] == 23*phase['bulk_points']
+                assert diagnostic['owned_scalars'] == 39*(phase['bulk_points']+phase['scri_points'])
+                assert diagnostic['rk_status_values'] > 0
+                assert all(diagnostic[key] is True for key in
+                           ('fresh_exact', 'repeat_cached', 'readonly'))
+        else:
+            assert not diagnostics
+        reports[str(ranks)] = {'command': command, 'phases': phases,
+                              'diagnostics': diagnostics}
     cross_rank = len(reports) > 1
     if cross_rank:
         first = next(iter(reports.values()))['phases']
         for report in reports.values():
             assert [p['canonical'] for p in report['phases']] == [p['canonical'] for p in first]
     result = {'passed': True, 'scope': 'native field AMR transfer, local CPU MPI',
-              'coupled_evolution_validated': False, 'runs': reports,
+              'coupled_evolution_validated': False,
+              'actual_remesh_diagnostics_validated': args.diagnostics, 'runs': reports,
               'cross_rank_complete_state_exact': cross_rank,
-              'executable_sha256': sha256(exe)}
+              'executable_sha256': sha256(exe), 'build_provenance': build_provenance}
 finally:
     provenance = {'sources_unchanged': all(sha256(root/p) == digest
                     for p, digest in source_manifest.items()),

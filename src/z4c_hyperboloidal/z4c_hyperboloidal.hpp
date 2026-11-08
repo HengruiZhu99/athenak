@@ -7,6 +7,7 @@
 //========================================================================================
 
 #include <array>
+#include <cstdint>
 #include <memory>
 
 #include "athena.hpp"
@@ -25,6 +26,7 @@ class MappedHalo;
 class SurfaceExchange;
 class DissipationPlan;
 class RemeshState;
+class Diagnostics;
 
 // Local execution indices only. MeshBlockPack remains the ownership authority;
 // these lists batch irregular evolved overlap regions into device kernels.
@@ -81,6 +83,12 @@ class Z4cHyperboloidal {
   DvceArray1D<int> rhs_status;
   DvceArray1D<Real> rhs_gap, rhs_cfl;
 
+  // State-changing entry points invalidate accepted-state diagnostics. Call this
+  // explicitly after external seeding of the public state views.
+  void InvalidateDiagnostics() {++state_version_;}
+  std::uint64_t StateVersion() const {return state_version_;}
+  Diagnostics &GetDiagnostics();
+  std::array<Real,10> DiagnosticHistorySums();
   void InitializeReference();
   void InitializeBoundaryValues(Driver *driver);
   TaskStatus NewTimeStep(Driver *driver, int stage);
@@ -117,7 +125,11 @@ class Z4cHyperboloidal {
   }
 
  private:
+  friend class Diagnostics;
   MeshBlockPack *pmy_pack;
+  ParameterInput *pinput_;
+  std::uint64_t state_version_=0;
+  std::unique_ptr<Diagnostics> diagnostics_;
   bool initialized_=false;
   bool plans_ready_=false;
   std::unique_ptr<MappedHalo> mapped_halo_;

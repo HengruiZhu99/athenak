@@ -1,0 +1,248 @@
+{
+  "scope": "Existing FastFlow external first-jet extension; analytic/ownership/full-harmonic gates and unchanged Cartesian finder. No performance claim.",
+  "passed": true,
+  "baseline": {
+    "gauss_legendre.cpp.o": "d6aab7191d06ad73e037b9fed6349e4118079c37cc80bb5165d818832f38dbf6",
+    "gauss_legendre.hpp": "fe896b88f489258a0a69e8e59c2738a3e958f067f840b4e3a790d963286ad074",
+    "fastflow.cpp.o": "354c9d8e771451465c81161353201a083e621b78e3aaf7aefadb2f53a385f181",
+    "fastflow.hpp": "89c07aa71e19b65bed5675e44530319c823b2085eb7ffac57e76a66d449baaa9",
+    "gauss_legendre.cpp": "d224fc546f7a78c67fcf93c51b687d50551c12ea2ad98f5ce4743c79ac87f897",
+    "fastflow.cpp": "c7da27a316cf724027aa9d1a51d1f3de8e8ac6052d1f5ccd13d05baaf90a8b08",
+    "athena": "684acd97778d8a5f1d8d5b2786bc58077fb45d15a4d353e92c550be8ce8b8fa6"
+  },
+  "source_manifest": {
+    "src/z4c/fastflow.hpp": "08558a57721a4dc4909015ca492e472244761175c482ac691e5fa0c76b29c0fc",
+    "src/z4c/fastflow.cpp": "1e3e517062310e00797eafba8420f7ab0ac4974caee105c3957c31733a19ddfe",
+    "src/z4c/horizon_geometry.hpp": "4c174e8a5739232f335810d8127bda753a0f947653a9c49edb6a3073fc214789",
+    "src/z4c/fastflow_surface.hpp": "8ac79fcc4f50435c2bf187b056cd329fd7e9d80bc966c8fe40f55153f2a539a7",
+    "src/geodesic-grid/gauss_legendre.hpp": "bc8a1d3507cf5370d6ab9bf3bd5011a067b16bd4fda3904f6c1196f13d967e73",
+    "src/geodesic-grid/gauss_legendre.cpp": "18c212a527172a37ea24ab2397a57955a1410fe2ee63bb21d4d35b4f41957e92",
+    "tst/z4c_hyperboloidal/fastflow_external.cpp": "5b73a866a17dac1350ec1fa62dd7a39b2489a7740a18d43b09dc40324635511d",
+    "tst/z4c_hyperboloidal/fastflow_external.py": "5e9064b07e9d370e5242b33685fb79d01213501833a37e654037bf425a688423",
+    "tst/inputs/z4c_boosted.athinput": "8e7da544c3e5f6cecb4312a4a21819bf6c77bdb3ed6372f81ac2ce72d1ec05a8"
+  },
+  "runtime_objects": {
+    "src/CMakeFiles/athena.dir/z4c/fastflow.cpp.o": "1b0283d42726edc1e867834dccb3f0989f22e2aa4d00cc911a3a91e4a20df245",
+    "src/CMakeFiles/athena.dir/geodesic-grid/gauss_legendre.cpp.o": "66a0578dcdad674434ae126fdd08ebc2a9b13536834e209d6e2c08d6a2836688"
+  },
+  "runs": {
+    "two": {
+      "ranks": 2,
+      "executable_sha256": "15979a55d97fc3e52e9e917d477a3c130fcf43c90df7efa69a2b483e6897d468",
+      "source_manifest_sha256": "9c18e3e6ce70d049eb293618b1dc4f6d010b8198ec7a9aa82ddce8898e9a87b5",
+      "object_manifest_sha256": "11c36c4c0996e6052d8a5d37fe5daa6557b8391acbba085c3be0864bc58b5e6a",
+      "external": {
+        "command": [
+          "mpiexec",
+          "-n",
+          "2",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/fastflow-external-two/fastflow_external"
+        ],
+        "log_sha256": "24ed29a2edca9fa196bfcf3eb96c4028c336f5db4321caa919652550da12de2c",
+        "required_gates": [
+          "bad_flag",
+          "batch_exception",
+          "collective_output_failure",
+          "duplicate",
+          "failed_after_success",
+          "fastflow_external_all",
+          "full_harmonic_mask",
+          "invalid_geometry",
+          "invalid_radius",
+          "missing",
+          "nonconverged",
+          "scalar_exception",
+          "schwarzschild_nontrivial_flow",
+          "schwarzschild_scalar_batch",
+          "skipped_search"
+        ],
+        "zero_owner_ranks": 0
+      },
+      "cartesian_baseline_sha256": "684acd97778d8a5f1d8d5b2786bc58077fb45d15a4d353e92c550be8ce8b8fa6",
+      "cartesian_current_sha256": "058462fbb557524019769540374c59296c6764a594a600e0a605fbe5b6110baf",
+      "cartesian": {
+        "runs": {
+          "before": {
+            "command": [
+              "mpiexec",
+              "-n",
+              "2",
+              "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/fastflow-baseline/athena",
+              "-i",
+              "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/inputs/z4c_boosted.athinput",
+              "time/nlim=2",
+              "mesh_refinement/refinement=none",
+              "problem/punc_velocity_x1=0",
+              "job/basename=fastflow",
+              "fastflow/use_puncture_0=-1",
+              "mesh/nx1=32",
+              "meshblock/nx1=16",
+              "mesh/x1min=-2",
+              "mesh/x1max=2",
+              "mesh/nx2=32",
+              "meshblock/nx2=16",
+              "mesh/x2min=-2",
+              "mesh/x2max=2",
+              "mesh/nx3=32",
+              "meshblock/nx3=16",
+              "mesh/x3min=-2",
+              "mesh/x3max=2"
+            ],
+            "log_sha256": "5bd2c42a33bdc5d2eed5566615b57591f0085b398de2d3f8ea66ec4f12a7f96b"
+          },
+          "after": {
+            "command": [
+              "mpiexec",
+              "-n",
+              "2",
+              "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/src/athena",
+              "-i",
+              "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/inputs/z4c_boosted.athinput",
+              "time/nlim=2",
+              "mesh_refinement/refinement=none",
+              "problem/punc_velocity_x1=0",
+              "job/basename=fastflow",
+              "fastflow/use_puncture_0=-1",
+              "mesh/nx1=32",
+              "meshblock/nx1=16",
+              "mesh/x1min=-2",
+              "mesh/x1max=2",
+              "mesh/nx2=32",
+              "meshblock/nx2=16",
+              "mesh/x2min=-2",
+              "mesh/x2max=2",
+              "mesh/nx3=32",
+              "meshblock/nx3=16",
+              "mesh/x3min=-2",
+              "mesh/x3max=2"
+            ],
+            "log_sha256": "087c8f999da595d45bb2cfaaed8f72695ece2c5c626e9d153c20a51ceab08eb9"
+          }
+        },
+        "exact_file_sha256": {
+          "fastflow.horizon_summary_0.txt": "d410f72fd1401c481d45628880930c33a7635ea8d4d36dad954eaf290a2912cc",
+          "fastflow.horizon_shape_0.txt": "ca438a98dc82933648c650f1ceecc8de02e11a378470260cb33548a8fedeeeae"
+        }
+      },
+      "sources_unchanged": true,
+      "objects_unchanged": true,
+      "passed": true
+    },
+    "eight": {
+      "ranks": 8,
+      "executable_sha256": "15979a55d97fc3e52e9e917d477a3c130fcf43c90df7efa69a2b483e6897d468",
+      "source_manifest_sha256": "9c18e3e6ce70d049eb293618b1dc4f6d010b8198ec7a9aa82ddce8898e9a87b5",
+      "object_manifest_sha256": "11c36c4c0996e6052d8a5d37fe5daa6557b8391acbba085c3be0864bc58b5e6a",
+      "external": {
+        "command": [
+          "mpiexec",
+          "-n",
+          "8",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/fastflow-external-two/fastflow_external"
+        ],
+        "log_sha256": "c8767c0da27066790d9608a976df5894159768565dce9a37aeca132b6b1b71dd",
+        "required_gates": [
+          "bad_flag",
+          "batch_exception",
+          "collective_output_failure",
+          "duplicate",
+          "failed_after_success",
+          "fastflow_external_all",
+          "full_harmonic_mask",
+          "invalid_geometry",
+          "invalid_radius",
+          "missing",
+          "nonconverged",
+          "scalar_exception",
+          "schwarzschild_nontrivial_flow",
+          "schwarzschild_scalar_batch",
+          "skipped_search"
+        ],
+        "zero_owner_ranks": 6
+      },
+      "cartesian_baseline_sha256": "684acd97778d8a5f1d8d5b2786bc58077fb45d15a4d353e92c550be8ce8b8fa6",
+      "cartesian_current_sha256": "058462fbb557524019769540374c59296c6764a594a600e0a605fbe5b6110baf",
+      "cartesian": {
+        "runs": {
+          "before": {
+            "command": [
+              "mpiexec",
+              "-n",
+              "8",
+              "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/fastflow-baseline/athena",
+              "-i",
+              "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/inputs/z4c_boosted.athinput",
+              "time/nlim=2",
+              "mesh_refinement/refinement=none",
+              "problem/punc_velocity_x1=0",
+              "job/basename=fastflow",
+              "fastflow/use_puncture_0=-1",
+              "mesh/nx1=32",
+              "meshblock/nx1=16",
+              "mesh/x1min=-2",
+              "mesh/x1max=2",
+              "mesh/nx2=32",
+              "meshblock/nx2=16",
+              "mesh/x2min=-2",
+              "mesh/x2max=2",
+              "mesh/nx3=32",
+              "meshblock/nx3=16",
+              "mesh/x3min=-2",
+              "mesh/x3max=2"
+            ],
+            "log_sha256": "2caff7011b0bdb2522a766b5cae075dc467edd888496031b76a499cd5db8a695"
+          },
+          "after": {
+            "command": [
+              "mpiexec",
+              "-n",
+              "8",
+              "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/src/athena",
+              "-i",
+              "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/inputs/z4c_boosted.athinput",
+              "time/nlim=2",
+              "mesh_refinement/refinement=none",
+              "problem/punc_velocity_x1=0",
+              "job/basename=fastflow",
+              "fastflow/use_puncture_0=-1",
+              "mesh/nx1=32",
+              "meshblock/nx1=16",
+              "mesh/x1min=-2",
+              "mesh/x1max=2",
+              "mesh/nx2=32",
+              "meshblock/nx2=16",
+              "mesh/x2min=-2",
+              "mesh/x2max=2",
+              "mesh/nx3=32",
+              "meshblock/nx3=16",
+              "mesh/x3min=-2",
+              "mesh/x3max=2"
+            ],
+            "log_sha256": "1257da67f9f48ff0b0753632108408c1d51639a458a6f22bd0cd66a8c702de16"
+          }
+        },
+        "exact_file_sha256": {
+          "fastflow.horizon_summary_0.txt": "1089bf27ed10cbbc041ce8bf2055f8387a84a54fc5a1c6731775314eb77f0d0b",
+          "fastflow.horizon_shape_0.txt": "ca438a98dc82933648c650f1ceecc8de02e11a378470260cb33548a8fedeeeae"
+        }
+      },
+      "sources_unchanged": true,
+      "objects_unchanged": true,
+      "passed": true
+    }
+  },
+  "numerical_results": {
+    "schwarzschild_area": 50.26548245743677,
+    "schwarzschild_mass": 1.0000000000000007,
+    "schwarzschild_expansion_rms": 2.8427561731765954e-16,
+    "nontrivial_flow_iterations": 137,
+    "nontrivial_flow_radius": 0.5000000009965109,
+    "nontrivial_flow_expansion_rms": 9.965106363940956e-10,
+    "harmonic_mask_checks_per_rank": 3840
+  },
+  "limitations": [
+    "The legacy Cartesian exclusive angular reduction bounds remain unchanged.",
+    "Cartesian output is compared before/after at each rank count, not claimed bitwise invariant under changed MPI reduction count.",
+    "Native mapped sampler and evolved-state history integration have separate oracles."
+  ]
+}
