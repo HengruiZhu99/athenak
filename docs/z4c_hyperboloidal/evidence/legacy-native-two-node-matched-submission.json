@@ -1,0 +1,307 @@
+{
+  "schema": "legacy-native-two-node-matched-submission-evidence-v1",
+  "status": "completed_collected_matched_science_pending",
+  "job_id": "9052116",
+  "submission": {
+    "schema": "legacy-n12-matched-v2-submission-v1",
+    "job_id": "9052116.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "utc": "2026-11-08T18:32:29.101900+00:00",
+    "nodes": 2,
+    "ranks": 24,
+    "fresh_queue_clear": true,
+    "held_jobs_untouched": true,
+    "previous_job": "9052075",
+    "previous_exit_status": 0,
+    "reviewed_package_sha256": "3d2067aa4d3ac3351db011f8ef65dabb961f839a18fd9cfbc04d1738ffd696d9",
+    "cache_capacity": 128,
+    "order": [
+      "timed-native-before",
+      "immutable",
+      "control",
+      "endpoint-zero-step",
+      "v3",
+      "v6",
+      "v8",
+      "timed-native-after"
+    ],
+    "cycles": [
+      2486,
+      2556
+    ],
+    "solver_caps_total_seconds": 2790,
+    "external_bound_seconds": 3420,
+    "numerical_source_changed": false,
+    "actual_state": "Q"
+  },
+  "files": {
+    "build-native/legacy-two-node-launch-v2/files.json": {
+      "bytes": 2045,
+      "sha256": "3d2067aa4d3ac3351db011f8ef65dabb961f839a18fd9cfbc04d1738ffd696d9"
+    },
+    "build-native/legacy-two-node-launch-v2/package-origin.json": {
+      "bytes": 2937,
+      "sha256": "f91ce8c282d39e4c7a6b171b11a966a447ddf1f1c87c5eedaf0b871bfa09a502"
+    },
+    "build-native/legacy-two-node-launch-v2/staging.json": {
+      "bytes": 2421,
+      "sha256": "661dd6d8f0e013b428202787da95c7b6bde6c0c9595c96bf19c859c92f8ad730"
+    },
+    "build-native/legacy-two-node-launch-v2/preflight-files.json": {
+      "bytes": 1495,
+      "sha256": "9ead73a25708047a5f5c2e2cda95ecd95a043368b3c9b0f2758cd56d84feeca8"
+    },
+    "build-native/legacy-two-node-launch-v2/preflight-transfer.json": {
+      "bytes": 263,
+      "sha256": "35da61e6f71bf0062bef83289d4b9e795db17d3c7712fd12cc5b8b6f7d6f168f"
+    },
+    "build-native/legacy-two-node-launch-v2/preflight/control-verify-before.txt": {
+      "bytes": 61,
+      "sha256": "2866d9e651b01d7376008c30194225897bf6671b016899bdbcfcf33dbd3e742b"
+    },
+    "build-native/legacy-two-node-launch-v2/preflight/endpoint-verify-before.txt": {
+      "bytes": 53,
+      "sha256": "55bc1a36ea8defd2b8208388df04bf7a663f8e0fc1b4e1bf0d841c7ee9207d7c"
+    },
+    "build-native/legacy-two-node-launch-v2/preflight/guard-before.json": {
+      "bytes": 4741,
+      "sha256": "f4d8d3b25a6680bcd359cff8eb8e0cb12f3f2203375d4657c9ce39f3e7624ed0"
+    },
+    "build-native/legacy-two-node-launch-v2/preflight/native-guards/cache-guard-before.json": {
+      "bytes": 297,
+      "sha256": "dba10c134daeccc01415f6d9e15bc41b22ad1be0e62338aed7dbb455d8b52e4d"
+    },
+    "build-native/legacy-two-node-launch-v2/preflight/native-guards/guard-before.json": {
+      "bytes": 1665,
+      "sha256": "28339ad976a1f52d41b4dae491ee092938d8b1344b8b1c591241e4a1028270b9"
+    },
+    "build-native/legacy-two-node-launch-v2/preflight/native-guards/rank-timing-verify-before.txt": {
+      "bytes": 96,
+      "sha256": "2fce95b383e78b648cb43f29235dc871675d41e3347d300eb716d6f298d3fbc0"
+    },
+    "build-native/legacy-two-node-launch-v2/preflight/native-guards/timed-observer-verify-before.txt": {
+      "bytes": 245,
+      "sha256": "250ba1628ad896cfa9359394e6fb8678ce8aa98171f9f1a7ae55f67cab48a3f3"
+    },
+    "build-native/legacy-two-node-launch-v2/preflight/native-guards/timing-verify-before.txt": {
+      "bytes": 96,
+      "sha256": "2fce95b383e78b648cb43f29235dc871675d41e3347d300eb716d6f298d3fbc0"
+    },
+    "build-native/legacy-two-node-launch-v2/preflight/results.json": {
+      "bytes": 151,
+      "sha256": "fc17e512677474db9b51a638d3fd0278e2c29cb36fb73af88ad6107e2d3006e3"
+    },
+    "build-native/legacy-two-node-launch-v2/preflight/v3-verify-before.txt": {
+      "bytes": 61,
+      "sha256": "2866d9e651b01d7376008c30194225897bf6671b016899bdbcfcf33dbd3e742b"
+    },
+    "build-native/legacy-two-node-launch-v2/preflight/v6-verify-before.txt": {
+      "bytes": 61,
+      "sha256": "2866d9e651b01d7376008c30194225897bf6671b016899bdbcfcf33dbd3e742b"
+    },
+    "build-native/legacy-two-node-launch-v2/preflight/v8-verify-before.txt": {
+      "bytes": 61,
+      "sha256": "2866d9e651b01d7376008c30194225897bf6671b016899bdbcfcf33dbd3e742b"
+    },
+    "build-native/legacy-two-node-launch-v2/submission/previous-terminal.txt": {
+      "bytes": 3465,
+      "sha256": "efdc25dfd5170b941a1cfd82d567d662feae4f60a36bbcc65feb50b04c34b935"
+    },
+    "build-native/legacy-two-node-launch-v2/submission/qsub.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "build-native/legacy-two-node-launch-v2/submission/qsub.stdout": {
+      "bytes": 56,
+      "sha256": "1cdde17c6a15e15bad9a80ec5aa16f6dc1778ee5433b9990b636b6ab675aff26"
+    },
+    "build-native/legacy-two-node-launch-v2/submission/queue-before.txt": {
+      "bytes": 565,
+      "sha256": "3d25bdbc0e3e858f2851b3751eb637a7291bb50575ccb5051acb9f14148969be"
+    },
+    "build-native/legacy-two-node-launch-v2/submission/submission.json": {
+      "bytes": 766,
+      "sha256": "d989d7ed4881e3b8dd0e2b392a3ffd9de5ac2e055b614184986c12812dcdf25f"
+    },
+    "build-native/legacy-two-node-launch-v2/submission/submitted-qstat.txt": {
+      "bytes": 2751,
+      "sha256": "0613f1f82f3850c16b870f815039208c1d75279d40f477cf72bffd817c4a0528"
+    },
+    "build-native/aurora-legacy-native-two-node-matched-v2/package.json": {
+      "bytes": 1255,
+      "sha256": "eeed338782e2c3da59fd84b88ebf1a9f2cb115b236b9f81ac6262c981983ecd5"
+    },
+    "build-native/aurora-legacy-native-two-node-matched-v2/transfer.json": {
+      "bytes": 486,
+      "sha256": "4b67b92aafb9234ebb47da970c325efbfcbcbf8d258d9b82f71c35be52bb475a"
+    },
+    "build-native/aurora-legacy-native-two-node-matched-v2/run-artifacts/files.json": {
+      "bytes": 80985,
+      "sha256": "5e5589f3f97a61333ad0c8f6cd4ff06c8b66cf677c8e1ecd63c965a482544911"
+    },
+    "build-native/aurora-legacy-native-two-node-matched-v2/run-artifacts/terminal-qstat.txt": {
+      "bytes": 3461,
+      "sha256": "e2bad04496ab39b451da166f5de1321a275b4218354de6e09ca06073b925b68f"
+    },
+    "build-native/aurora-legacy-native-two-node-matched-v2/run-artifacts/runs/legacy-n12-timing-two-v2/guard-before.json": {
+      "bytes": 4741,
+      "sha256": "f4d8d3b25a6680bcd359cff8eb8e0cb12f3f2203375d4657c9ce39f3e7624ed0"
+    },
+    "build-native/aurora-legacy-native-two-node-matched-v2/run-artifacts/runs/legacy-n12-timing-two-v2/guard-after.json": {
+      "bytes": 4741,
+      "sha256": "f4d8d3b25a6680bcd359cff8eb8e0cb12f3f2203375d4657c9ce39f3e7624ed0"
+    },
+    "build-native/aurora-legacy-native-two-node-matched-v2/run-artifacts/runs/legacy-n12-timing-two-v2/pipeline-complete.txt": {
+      "bytes": 105,
+      "sha256": "b7651565e485f32f9d1a1f123cc493f684915c5a633c1ace371140e6da97bef1"
+    },
+    "build-native/aurora-legacy-native-two-node-matched-v2/run-artifacts/runs/legacy-n12-timing-two-v2/control/endpoint-operational.json": {
+      "bytes": 120,
+      "sha256": "41c05f7299a5c669e0a20f98f85bf72245adc592fc96fed55d22f1f1b636d163"
+    },
+    "build-native/aurora-legacy-native-two-node-matched-v2/run-artifacts/runs/legacy-n12-timing-two-v2/immutable/immutable-control-provenance.json": {
+      "bytes": 603,
+      "sha256": "c2fa08b2e2b6254211c1ba6ed33a9b8cae70517758ed53396129b28768e6ae29"
+    },
+    "build-native/aurora-legacy-native-two-node-matched-v2/run-artifacts/runs/legacy-n12-timing-two-v2/timed-native-before/operational.json": {
+      "bytes": 1324,
+      "sha256": "571905e9edaf6b77ba51847f8d547481c010c64f4f86a0c2269e2bbd7342e1c1"
+    },
+    "build-native/aurora-legacy-native-two-node-matched-v2/run-artifacts/runs/legacy-n12-timing-two-v2/immutable/operational.json": {
+      "bytes": 174,
+      "sha256": "8ed1f1edd44513566878f2e7f99ce40537c3ce4ec3261e9137323b8c00120c47"
+    },
+    "build-native/aurora-legacy-native-two-node-matched-v2/run-artifacts/runs/legacy-n12-timing-two-v2/control/operational.json": {
+      "bytes": 172,
+      "sha256": "04b7cbadf41ab00918cbb88157ad882579a8772c0187139517a78eeda951eee3"
+    },
+    "build-native/aurora-legacy-native-two-node-matched-v2/run-artifacts/runs/legacy-n12-timing-two-v2/v3/operational.json": {
+      "bytes": 167,
+      "sha256": "4566b0bc77907430060608afbba872a6b5c8bbbd28e37518e84cfde31b139400"
+    },
+    "build-native/aurora-legacy-native-two-node-matched-v2/run-artifacts/runs/legacy-n12-timing-two-v2/v6/operational.json": {
+      "bytes": 167,
+      "sha256": "90bb856782a72ae8665fae187c29a2e036709f1409d491057d839420a8fd579a"
+    },
+    "build-native/aurora-legacy-native-two-node-matched-v2/run-artifacts/runs/legacy-n12-timing-two-v2/v8/operational.json": {
+      "bytes": 167,
+      "sha256": "9406d792b1aa8188dd6f8a428007ef2f04bb77aeaf73a4248e854a0aea2511df"
+    },
+    "build-native/aurora-legacy-native-two-node-matched-v2/run-artifacts/runs/legacy-n12-timing-two-v2/timed-native-after/operational.json": {
+      "bytes": 1322,
+      "sha256": "b5678a7b423cd503865f5037036ddb1877e2f6f1dbbe065e8c90b7201bd14baf"
+    },
+    "build-native/aurora-legacy-native-two-node-matched-v2/run-artifacts/runs/legacy-n12-timing-two-v2/native-guards/guard-before.json": {
+      "bytes": 1665,
+      "sha256": "28339ad976a1f52d41b4dae491ee092938d8b1344b8b1c591241e4a1028270b9"
+    },
+    "build-native/aurora-legacy-native-two-node-matched-v2/run-artifacts/runs/legacy-n12-timing-two-v2/native-guards/guard-after.json": {
+      "bytes": 1665,
+      "sha256": "28339ad976a1f52d41b4dae491ee092938d8b1344b8b1c591241e4a1028270b9"
+    },
+    "build-native/aurora-legacy-native-two-node-matched-v2/run-artifacts/runs/legacy-n12-timing-two-v2/native-guards/cache-guard-before.json": {
+      "bytes": 297,
+      "sha256": "dba10c134daeccc01415f6d9e15bc41b22ad1be0e62338aed7dbb455d8b52e4d"
+    },
+    "build-native/aurora-legacy-native-two-node-matched-v2/run-artifacts/runs/legacy-n12-timing-two-v2/native-guards/cache-guard-after.json": {
+      "bytes": 297,
+      "sha256": "dba10c134daeccc01415f6d9e15bc41b22ad1be0e62338aed7dbb455d8b52e4d"
+    }
+  },
+  "scope": "Both native brackets, immutable original control, four predecessor timing variants and diagnostic-only endpoint postprocessor completed F/0 with unchanged frozen inputs. Complete raw archive and every file verified. Matched scientific qualification and performance parity assessment remain pending independent readers; raw timings do not establish parity.",
+  "scientific_comparison_pending": true,
+  "performance_parity_pending": true,
+  "previous_failed_cache_batch_preserved": true,
+  "numerical_sources_changed": false,
+  "prior_preparation": "docs/z4c_hyperboloidal/evidence/legacy-n12-matched-preparation.json",
+  "terminal": {
+    "job_state": "F",
+    "exit_status": 0,
+    "walltime": "00:08:46",
+    "obittime_utc": "2026-11-08T18:44:22Z"
+  },
+  "collection": {
+    "schema": "legacy-n12-two-node-timing-collection-v2",
+    "job_id": "9052116",
+    "job_state": "F",
+    "exit_status": 0,
+    "nodes": 2,
+    "ranks": 24,
+    "files": 450,
+    "seed_sha256": "27245d19010dee629d12c6e59872564bd70c19af8c06aa41c46cbe6b58143f18",
+    "archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/legacy-two-node-timing-artifacts-9052116/run-artifacts.tar.gz",
+    "sha256": "51186de277eb186023d2fcbe63c46922bedf72567603f6ca49a5b900c64e32d8",
+    "native_brackets": [
+      "timed-native-before",
+      "timed-native-after"
+    ],
+    "common_cache_environment": {
+      "MPIR_CVAR_CH4_IPC_GPU_HANDLE_CACHE": "specialized",
+      "MPIR_CVAR_CH4_IPC_GPU_CACHE_SIZE": "limited",
+      "MPIR_CVAR_CH4_IPC_GPU_MAX_CACHE_ENTRIES": "128",
+      "MPICH_CH4_IPC_GPU_HANDLE_CACHE": null,
+      "MPIR_PARAM_CH4_IPC_GPU_HANDLE_CACHE": null,
+      "MPICH_CH4_IPC_GPU_CACHE_SIZE": null,
+      "MPIR_PARAM_CH4_IPC_GPU_CACHE_SIZE": null,
+      "MPICH_CH4_IPC_GPU_MAX_CACHE_ENTRIES": null,
+      "MPIR_PARAM_CH4_IPC_GPU_MAX_CACHE_ENTRIES": null
+    },
+    "archive_bytes": 598963951,
+    "total_uncompressed_bytes": 1263544621,
+    "created_utc": "2026-11-08T18:46:01.889989+00:00",
+    "scientific_comparison_pending": true,
+    "performance_admission": false
+  },
+  "transfer": {
+    "schema": "verified-streamed-run-collection-v1",
+    "passed": true,
+    "files": 450,
+    "archive_sha256": "51186de277eb186023d2fcbe63c46922bedf72567603f6ca49a5b900c64e32d8",
+    "archive_bytes": 598963951,
+    "remote_archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/legacy-two-node-timing-artifacts-9052116/run-artifacts.tar.gz",
+    "local_archive_created": false,
+    "all_file_sizes_and_hashes_verified": true,
+    "seconds": 17.721136808395386
+  },
+  "solver_exit_codes": {
+    "timed-native-before": 0,
+    "immutable": 0,
+    "control": 0,
+    "v3": 0,
+    "v6": 0,
+    "v8": 0,
+    "timed-native-after": 0
+  },
+  "endpoint_postprocessor_exit_code": 0,
+  "raw_timing_windows_seconds_per_step": {
+    "timed-native-before": [
+      0.5991356909500001,
+      0.5989226024,
+      0.5994101803
+    ],
+    "timed-native-after": [
+      0.5993763037,
+      0.59943166875,
+      0.59945634615
+    ],
+    "control": [
+      0.326683540828526,
+      0.3253428177442402,
+      0.3252449008869007
+    ],
+    "v3": [
+      0.1363965206197463,
+      0.13623963996069505,
+      0.13665761545998975
+    ],
+    "v6": [
+      0.13786568627692758,
+      0.13652562220813708,
+      0.13679452003561893
+    ],
+    "v8": [
+      0.14302625795826315,
+      0.14383156276308,
+      0.14369312326889486
+    ]
+  }
+}

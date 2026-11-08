@@ -1,0 +1,111 @@
+{
+  "schema": "legacy-n12-matched-preparation-v1",
+  "status": "built-and-staged-no-gpu",
+  "gpu_executed": false,
+  "submitted": false,
+  "numerical_sources_unchanged": true,
+  "nodes": 2,
+  "ranks": 24,
+  "start_cycle": 2486,
+  "end_cycle": 2556,
+  "warmup": 10,
+  "steps_per_window": 20,
+  "windows": 3,
+  "build_collection": "build-native/aurora-legacy-n12-build-final-v1/artifacts",
+  "build_transfer_sha256": "977f49e31d66a6dc78a8332db8ff36539ee29b5dea96607226271a9c5edbac03",
+  "build_manifest_sha256": "c7ec4982106da9effb2cdfd3d561a376da18492adf5aa4ab34a5b9de8e1d6402",
+  "build_bindings": {
+    "schema": "legacy-n12-two-node-build-bindings-v1",
+    "variants": {
+      "control": {
+        "build_directory": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/legacy/control-v3",
+        "builder": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/legacy/control-v3-package/legacy_n12_benchmark.py",
+        "provenance_sha256": "448084fbbb131fe2cd82ad485b14e516bd56c8f753d30e80c83946447f70e533",
+        "executable_sha256": "80af435305a66da88046480383605b33892453aaa3b0beb70f65855535abfcf6",
+        "generation_sha256": "0654827cad627f017b4a0f152b2c798bce3652cc3ad1d0ec83f58fb5a8062244"
+      },
+      "v3": {
+        "build_directory": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/legacy/v3",
+        "builder": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/legacy/package/legacy_n12_benchmark.py",
+        "provenance_sha256": "0431cf78f39e210228d294a05051402364407d830902c8b07854a416d9a2a486",
+        "executable_sha256": "30ec591f00d3bf1627a0cc03d61c5c939a32a9a8a81ad0f1436b7f8eeeef1c33"
+      },
+      "v6": {
+        "build_directory": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/legacy/v6",
+        "builder": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/legacy/package/legacy_n12_benchmark.py",
+        "provenance_sha256": "768e0b63e8b83ec171b449f4b311e4df1df9315c6d45d20f91a93cdfa6d32730",
+        "executable_sha256": "5c06db102975320136da0f07359f9873c544f445dff8ed35ac8ecd59108e2f52"
+      },
+      "v8": {
+        "build_directory": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/legacy/v8",
+        "builder": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/legacy/package/legacy_n12_benchmark.py",
+        "provenance_sha256": "b5f89616a32ec8e2ea23d30e2cdc9cbdb2c169743869dd0aabf8eadf9cc679b5",
+        "executable_sha256": "0567ba61667aa4fc990dd3ca91f7a772a60b19d26bac99c54d7eab64cc13342e"
+      }
+    },
+    "endpoint_diagnostics": {
+      "build_directory": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/legacy/endpoint-diagnostics-v1/build",
+      "builder": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/legacy/endpoint-diagnostics-v1/package/legacy_n12_endpoint_diagnostics.py",
+      "provenance_sha256": "8767013c62aa1daa7b6b592a8cf6c3344664c744e562a2131b593e40ca6ecb32",
+      "executable_sha256": "904af410ae519594c8020783bc9b488de1a5b15fb886518b33995864c532b629"
+    },
+    "seed_manifest_sha256": "27245d19010dee629d12c6e59872564bd70c19af8c06aa41c46cbe6b58143f18",
+    "gpu_executed": false
+  },
+  "seed_staging_sha256": "cc3c7ee58d6c97b3075d069afafb1dce793725e953b679ac4f394038e66be8fc",
+  "launch_staging": {
+    "schema": "legacy-n12-two-node-launch-staging-v1",
+    "staged": true,
+    "submitted": false,
+    "gpu_executed": false,
+    "nodes": 2,
+    "ranks": 24,
+    "source_cycle": 2486,
+    "end_cycle": 2556,
+    "remote_directory": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/legacy-run",
+    "files": {
+      "build-bindings.json": {
+        "size": 2897,
+        "sha256": "3cd242ead46e72ba204a3d54b5d4f098ee3a8e55f271d70bc6198f2391239d31"
+      },
+      "launchers.sha256": {
+        "size": 471,
+        "sha256": "0fc4af91e2cb436edf52443558e1ca32483130a5d4374a18db5bd447ab6ffc79"
+      },
+      "legacy-two-node-timing.pbs": {
+        "size": 418,
+        "sha256": "7875cd7dfde33f385cbea27b4861deac505c2d3562e0663a5e437ac411a886b2"
+      },
+      "legacy_two_node_timing_audit.py": {
+        "size": 16807,
+        "sha256": "10fdaa6dae39563f0cc1842e02c6fea9b166aa2fbdbaa087d099f977279486d9"
+      },
+      "native_two_node_timing_audit.py": {
+        "size": 15923,
+        "sha256": "44e4576505f5328150e24230ec37abdaea52481df03bb101a800ebbfcca0ef7e"
+      },
+      "run-legacy-two-node-timing.sh": {
+        "size": 4795,
+        "sha256": "297a0f94d0dfd62378ebdadad635ecaa237df6b7ba6922225200ea762ade9330"
+      }
+    },
+    "build_bindings_sha256": "3cd242ead46e72ba204a3d54b5d4f098ee3a8e55f271d70bc6198f2391239d31",
+    "seed_manifest_sha256": "27245d19010dee629d12c6e59872564bd70c19af8c06aa41c46cbe6b58143f18",
+    "created_utc": "2026-11-08T15:49:34.888240+00:00",
+    "scope": "Five70cyclecontrols plus zero-step diagnostic postprocess; firstscreening only, no timing/science admission"
+  },
+  "launch_staging_sha256": "2147720d898fec2cba5431ec6c775fc64c62391782a5bd9dfc495d386fe4f911",
+  "preserved_failures": [
+    {
+      "path": "legacy/control",
+      "reason": "Pinned original snapshot lacks later fastflow_history.hpp"
+    },
+    {
+      "path": "legacy/control-v2",
+      "reason": "Pinned original RunControls lacks optional cells_per_axis/track_puncture fields"
+    }
+  ],
+  "control_resolution": "Original unchanged evolution with direct ParameterInput guard; original full/fixed diagnostics, then independent zero-step v8 endpoint diagnostics outside timing windows",
+  "performance_admission": false,
+  "scientific_comparison_pending": true
+}

@@ -268,12 +268,61 @@ changes, altered arithmetic or reduced validity checks are required. Production
 launches remain untouched. Capacity128 is qualified here on two nodes; this is
 not a universal capacity recommendation or an eight-node scaling result.
 
-The next experiment, job 9052116, compares this native configuration against the immutable
-legacy control and all applicable optimized versions on the same two nodes.
-Unprofiled native runs bracket the legacy suite. Both implementations receive
-identical cache settings, compiler policy, binding, physical state and workload.
-Final parity requires the fastest scientifically accepted legacy variant;
-retaining this native improvement does not establish parity.
+The matched native/legacy comparison, job 9052116, completed F/0 and passes
+scientific qualification for the rebuilt original control and v3/v6/v8. All use
+the same two allocated nodes, 24 tile ranks, explicit cache128, equivalent
+cycle-2486 states, compiler/FP policy, timestep and physics. Native runs bracket
+the legacy suite; all timing windows are unprofiled complete RK4 steps.
+
+| Implementation | Three windows (s/step) | Median |
+|---|---|---:|
+| Native before | 0.599136, 0.598923, 0.599410 | 0.599136 |
+| Legacy original control | 0.326684, 0.325343, 0.325245 | 0.325343 |
+| Legacy v3 | 0.136397, 0.136240, 0.136658 | 0.136397 |
+| Legacy v6 | 0.137866, 0.136526, 0.136795 | 0.136795 |
+| Legacy v8 | 0.143026, 0.143832, 0.143693 | 0.143693 |
+| Native after | 0.599376, 0.599432, 0.599456 | 0.599432 |
+
+The six-window native median is **0.599393 s**, 4.3945 times v3's observed median.
+Native bracket medians differ by only 0.0494%. **Parity is not achieved.**
+The v3/v6 median difference is only 0.292%, within their observed window variation;
+retain both as final-reference contenders instead of claiming a unique fastest
+version. The current gap is much larger than this uncertainty.
+
+Each legacy endpoint checks all 7,137,936 field values and 1,842,048 chi records.
+Optimized variants are bitwise equal to the rebuilt original control. Against
+native, maximum bulk/surface field differences are 1.795e-13/4.258e-13, at most
+0.03594 of the existing field gate. Two bulk chi minima differ by 2.776e-17;
+event counts, first-floor times and corrections are exact. Compatibility,
+constraints and horizon gates pass; areal radius and mass are exact. All 169
+harmonic coefficients are covered and finite. Their maximum 3.818e-9 difference
+is reported as diagnostic-only under the predeclared protocol, not a new relaxed
+coefficient tolerance. Both actual native brackets match all padded 31+8 state
+and ordinary outputs exactly. The immutable original campaign executable also
+passes its initial/final fields and 70-step clock/CFL checks; its SP1 format does
+not supply seeded chi-history equivalence.
+
+Two reader failures are preserved. The first required the exact archived timer
+header for an older scientific report; current native timings use their own
+independently reviewed provenance. The second exposed a schema mismatch: the
+original producer with `extended=false` fills its required r>.94 exterior sums,
+while an optional duplicate fixed-cut array remains zero. The corrected reader
+checks the populated exterior sums and requires that inactive array to be zero.
+All numerical gates are unchanged; 28 existing/focused offline controls pass.
+No solver rerun or numerical change was needed. See
+`evidence/legacy-native-two-node-matched-review.json`, which binds both full
+reviews, the successful collection and preserved failures. Startup, accepted
+output and final diagnostics are separately recorded there; no setup speed claim
+is inferred across the different drivers.
+
+The next experiment, job 9052139, repeats the existing four-step selected-rank
+kernel profile with cache128. It measures bulk/surface durations, launch shapes
+and transfer-adjacent host gaps after the accepted fix. The same ranks 8/23 and
+profiler options are retained; these are representative observations, not a
+proved global critical path. The original sources and four-step mathematical
+workload remain unchanged. Select one code optimization from those measurements;
+if bulk dominates, test field-parallel KO using existing RHS storage and unchanged
+arithmetic/validity checks. Workgroup tuning remains separate.
 
 Surface batching and field-parallel KO remain untested candidates.
 
@@ -313,7 +362,7 @@ bounded two-node correctness checks when a proposed change requires them.
 | Individual MPI completion checks | All four full endpoints/diagnostics exact; local mixed-peer tests pass | Control 4.565817 s; candidate 4.789034 s (six-window medians) | Rejected; no repeated improvement; original runtime restored |
 | MPI GPU IPC cache capacity, first screen | Three successful endpoints exact; last control failed after output | Successful medians 4.885799 vs 0.599515/0.599614 s | Failed full ABBA preserved; not admitted |
 | MPI GPU IPC cache capacity, clean retry | Four exact full endpoints; observer, poison, AMR and restart pass | 4.689886 → 0.594371 s; all six candidate windows faster | Accepted native improvement, 7.89x; parity pending |
-| Matched previous-implementation reference | Staged/preflight verified; same-allocation comparison next | Pending | Fastest applicable control/v3/v6/v8 must pass science |
+| Matched previous-implementation reference | All four references pass full31+8/constraints/horizon gates; actual native brackets exact | Native 0.599393 s; v3/v6 0.136397/0.136795 s | Parity not reached; leading references about4.39x faster |
 
 Completion requires the committed native implementation to match or beat the
 fastest accepted previous N12 reference median on the same two nodes, with repeat

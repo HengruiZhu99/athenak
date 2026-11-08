@@ -1,0 +1,600 @@
+{
+  "schema": "native-legacy-matched-qualified-screen-v1",
+  "passed": true,
+  "job_id": "9052116",
+  "nodes": 2,
+  "ranks": 24,
+  "parity_achieved": false,
+  "unique_fastest_reference_demonstrated": false,
+  "native": {
+    "timed-native-before": {
+      "window_seconds_per_step": [
+        0.5991356909500001,
+        0.5989226024,
+        0.5994101803
+      ],
+      "median": 0.5991356909500001,
+      "range_percent": 0.08138021275731032,
+      "max_rank_ids": [
+        [
+          17
+        ],
+        [
+          15
+        ],
+        [
+          15
+        ]
+      ],
+      "rank_window_spans_seconds": [
+        3.861999999799082e-06,
+        6.663999998934855e-06,
+        6.293000000212601e-06
+      ],
+      "state_equivalence": {
+        "bitwise_equal": true,
+        "padded31_plus8_scalar_values": 24704784,
+        "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+        "excluded_unused_coarse_indices": [
+          [
+            1768714349,
+            1646290021,
+            1752440953,
+            1763734377,
+            1953853550,
+            1782319662,
+            171860591,
+            1702060386,
+            1701667182
+          ],
+          [
+            1768714349,
+            1646290021,
+            1752440953,
+            1763734377,
+            1953853550,
+            1782319662,
+            171860591,
+            1702060386,
+            1701667182
+          ]
+        ]
+      },
+      "ordinary_diagnostics_bitwise": true,
+      "actual24rank_cache128_probes_passed": true,
+      "checkpoint_sha256": "c4410a676ad09e606caf508c8d84105e8e70487439fad283a91cc8097a39a710",
+      "timing_sha256": "9d0a0d4cdbc7cfbe697c56b4e87550abb741448318789e77e49ca4de63b8b394",
+      "separated_costs": {
+        "startup_max_seconds": 4.055098086,
+        "warmup_max_seconds": 6.245577478,
+        "finalize_max_seconds": 5.596211144
+      }
+    },
+    "timed-native-after": {
+      "window_seconds_per_step": [
+        0.5993763037,
+        0.59943166875,
+        0.59945634615
+      ],
+      "median": 0.59943166875,
+      "range_percent": 0.013353056598920245,
+      "max_rank_ids": [
+        [
+          1
+        ],
+        [
+          9
+        ],
+        [
+          8
+        ]
+      ],
+      "rank_window_spans_seconds": [
+        2.08500000020706e-06,
+        1.1189999984395627e-06,
+        3.665000001262797e-06
+      ],
+      "state_equivalence": {
+        "bitwise_equal": true,
+        "padded31_plus8_scalar_values": 24704784,
+        "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+        "excluded_unused_coarse_indices": [
+          [
+            1768714349,
+            1646290021,
+            1752440953,
+            1763734377,
+            1953853550,
+            1782319662,
+            171860591,
+            1702060386,
+            1701667182
+          ],
+          [
+            1768714349,
+            1646290021,
+            1752440953,
+            1763734377,
+            1953853550,
+            1782319662,
+            171860591,
+            1702060386,
+            1701667182
+          ]
+        ]
+      },
+      "ordinary_diagnostics_bitwise": true,
+      "actual24rank_cache128_probes_passed": true,
+      "checkpoint_sha256": "c4410a676ad09e606caf508c8d84105e8e70487439fad283a91cc8097a39a710",
+      "timing_sha256": "c5c2ecdbef50d01f045132c2bd5aa56737ac0e2fb2c1cc8c85fc6eb5de9021fb",
+      "separated_costs": {
+        "startup_max_seconds": 3.681225183,
+        "warmup_max_seconds": 6.258417772,
+        "finalize_max_seconds": 5.687915025
+      }
+    }
+  },
+  "summary": {
+    "native_six_window_median": 0.599393242,
+    "native_minimum": 0.5989226024,
+    "native_maximum": 0.59945634615,
+    "bracket_median_drift_percent": 0.04940079592496982,
+    "raw_native_over_legacy_median_ratio": {
+      "control": 1.8423435505842254,
+      "v3": 4.394490704576119,
+      "v6": 4.3817050700856175,
+      "v8": 4.171342569249799
+    },
+    "timed_windows": 18,
+    "rank_values_checked": 432,
+    "fastest_raw_screen": "v3",
+    "v3_v6_median_difference_percent": 0.2917958713787083,
+    "reference_selection_pending_full_science": true
+  },
+  "legacy": {
+    "control": {
+      "passed": true,
+      "regions": {
+        "bulk": {
+          "fields": {
+            "comparisons": 7111152,
+            "failed_values": 0,
+            "bitwise_equal": false,
+            "max_absolute": 1.7946755193065655e-13,
+            "max_tolerance_ratio": 0.016544174194753732
+          },
+          "records": {
+            "comparisons": 1835136,
+            "failed_values": 0,
+            "maximum_absolute": 2.7755575615628914e-17,
+            "bitwise_equal": false,
+            "event_counts_and_first_floor_exact": true
+          },
+          "against_rebuilt_control_fields_bitwise": true,
+          "against_rebuilt_control_records_bitwise": true
+        },
+        "surface": {
+          "fields": {
+            "comparisons": 26784,
+            "failed_values": 0,
+            "bitwise_equal": false,
+            "max_absolute": 4.2577052994374753e-13,
+            "max_tolerance_ratio": 0.03593571239837121
+          },
+          "records": {
+            "comparisons": 6912,
+            "failed_values": 0,
+            "maximum_absolute": 0.0,
+            "bitwise_equal": true,
+            "event_counts_and_first_floor_exact": true
+          },
+          "against_rebuilt_control_fields_bitwise": true,
+          "against_rebuilt_control_records_bitwise": true
+        }
+      },
+      "all_diagnostic_gates_passed": true,
+      "maximum_diagnostic_gate_fraction": 3.7469321896123016e-08,
+      "harmonics": {
+        "compared": 169,
+        "bitwise_equal": false,
+        "equal_at_native_print_precision": false,
+        "maximum_absolute_difference": 3.818443408687422e-09,
+        "numeric_admission_gate": null,
+        "scope": "Every coefficient is compared and reported. Completeness/finite values are required; individual coefficient differences are diagnostic only under the existing protocol. Native text has seven significant digits."
+      },
+      "compatibility_max": 1.268114239274577e-13,
+      "timing": {
+        "window_seconds_per_step": [
+          0.326683540828526,
+          0.3253428177442402,
+          0.3252449008869007
+        ],
+        "median": 0.3253428177442402,
+        "range_percent": 0.44219200890927507,
+        "max_rank_ids": [
+          [
+            18
+          ],
+          [
+            18
+          ],
+          [
+            18
+          ]
+        ],
+        "rank_window_spans_seconds": [
+          4.7171139158308506e-05,
+          4.829932004213333e-05,
+          4.8794085159897804e-05
+        ],
+        "executable_sha256": "80af435305a66da88046480383605b33892453aaa3b0beb70f65855535abfcf6",
+        "results_sha256": "e76890129123d832419a3856bcbbe6e472000f4dc7b19e63a8ea8a24e5baebec"
+      },
+      "separated_costs": {
+        "setup_including_seed_verification_seconds": 29.84954565623775,
+        "warmup_seconds": 3.277175844879821,
+        "accepted_output_seconds": 0.3252545610303059,
+        "diagnostic_output_seconds": 0.11434294283390045
+      }
+    },
+    "v3": {
+      "passed": true,
+      "regions": {
+        "bulk": {
+          "fields": {
+            "comparisons": 7111152,
+            "failed_values": 0,
+            "bitwise_equal": false,
+            "max_absolute": 1.7946755193065655e-13,
+            "max_tolerance_ratio": 0.016544174194753732
+          },
+          "records": {
+            "comparisons": 1835136,
+            "failed_values": 0,
+            "maximum_absolute": 2.7755575615628914e-17,
+            "bitwise_equal": false,
+            "event_counts_and_first_floor_exact": true
+          },
+          "against_rebuilt_control_fields_bitwise": true,
+          "against_rebuilt_control_records_bitwise": true
+        },
+        "surface": {
+          "fields": {
+            "comparisons": 26784,
+            "failed_values": 0,
+            "bitwise_equal": false,
+            "max_absolute": 4.2577052994374753e-13,
+            "max_tolerance_ratio": 0.03593571239837121
+          },
+          "records": {
+            "comparisons": 6912,
+            "failed_values": 0,
+            "maximum_absolute": 0.0,
+            "bitwise_equal": true,
+            "event_counts_and_first_floor_exact": true
+          },
+          "against_rebuilt_control_fields_bitwise": true,
+          "against_rebuilt_control_records_bitwise": true
+        }
+      },
+      "all_diagnostic_gates_passed": true,
+      "maximum_diagnostic_gate_fraction": 3.7469321896123016e-08,
+      "harmonics": {
+        "compared": 169,
+        "bitwise_equal": false,
+        "equal_at_native_print_precision": false,
+        "maximum_absolute_difference": 3.818443408687422e-09,
+        "numeric_admission_gate": null,
+        "scope": "Every coefficient is compared and reported. Completeness/finite values are required; individual coefficient differences are diagnostic only under the existing protocol. Native text has seven significant digits."
+      },
+      "compatibility_max": 1.268114239274577e-13,
+      "timing": {
+        "window_seconds_per_step": [
+          0.1363965206197463,
+          0.13623963996069505,
+          0.13665761545998975
+        ],
+        "median": 0.1363965206197463,
+        "range_percent": 0.306441467418336,
+        "max_rank_ids": [
+          [
+            2
+          ],
+          [
+            2
+          ],
+          [
+            2
+          ]
+        ],
+        "rank_window_spans_seconds": [
+          1.8420862033963203e-05,
+          1.825310755521059e-05,
+          1.7042970284819603e-05
+        ],
+        "executable_sha256": "30ec591f00d3bf1627a0cc03d61c5c939a32a9a8a81ad0f1436b7f8eeeef1c33",
+        "results_sha256": "d88e07832f6e8cf04970e7db6d5d8c14b8a99cf95effa3206e8e3d64ff66e086"
+      },
+      "separated_costs": {
+        "setup_including_seed_verification_seconds": 29.32092130742967,
+        "warmup_seconds": 1.3743651434779167,
+        "accepted_output_seconds": 0.03997714212164283,
+        "diagnostic_and_horizon_output_seconds": 3.583675513858907
+      }
+    },
+    "v6": {
+      "passed": true,
+      "regions": {
+        "bulk": {
+          "fields": {
+            "comparisons": 7111152,
+            "failed_values": 0,
+            "bitwise_equal": false,
+            "max_absolute": 1.7946755193065655e-13,
+            "max_tolerance_ratio": 0.016544174194753732
+          },
+          "records": {
+            "comparisons": 1835136,
+            "failed_values": 0,
+            "maximum_absolute": 2.7755575615628914e-17,
+            "bitwise_equal": false,
+            "event_counts_and_first_floor_exact": true
+          },
+          "against_rebuilt_control_fields_bitwise": true,
+          "against_rebuilt_control_records_bitwise": true
+        },
+        "surface": {
+          "fields": {
+            "comparisons": 26784,
+            "failed_values": 0,
+            "bitwise_equal": false,
+            "max_absolute": 4.2577052994374753e-13,
+            "max_tolerance_ratio": 0.03593571239837121
+          },
+          "records": {
+            "comparisons": 6912,
+            "failed_values": 0,
+            "maximum_absolute": 0.0,
+            "bitwise_equal": true,
+            "event_counts_and_first_floor_exact": true
+          },
+          "against_rebuilt_control_fields_bitwise": true,
+          "against_rebuilt_control_records_bitwise": true
+        }
+      },
+      "all_diagnostic_gates_passed": true,
+      "maximum_diagnostic_gate_fraction": 3.7469321896123016e-08,
+      "harmonics": {
+        "compared": 169,
+        "bitwise_equal": false,
+        "equal_at_native_print_precision": false,
+        "maximum_absolute_difference": 3.818443408687422e-09,
+        "numeric_admission_gate": null,
+        "scope": "Every coefficient is compared and reported. Completeness/finite values are required; individual coefficient differences are diagnostic only under the existing protocol. Native text has seven significant digits."
+      },
+      "compatibility_max": 1.268114239274577e-13,
+      "timing": {
+        "window_seconds_per_step": [
+          0.13786568627692758,
+          0.13652562220813708,
+          0.13679452003561893
+        ],
+        "median": 0.13679452003561893,
+        "range_percent": 0.979618239416004,
+        "max_rank_ids": [
+          [
+            1
+          ],
+          [
+            5
+          ],
+          [
+            5
+          ]
+        ],
+        "rank_window_spans_seconds": [
+          0.00011261540930718184,
+          2.0225299522280693e-05,
+          2.029037568718195e-05
+        ],
+        "executable_sha256": "5c06db102975320136da0f07359f9873c544f445dff8ed35ac8ecd59108e2f52",
+        "results_sha256": "c90ccb243c91e4aa186072ac1ebf2406ede574e648e8018da2257f601c60efc1"
+      },
+      "separated_costs": {
+        "setup_including_seed_verification_seconds": 29.225834774319082,
+        "warmup_seconds": 1.3577324559446424,
+        "accepted_output_seconds": 0.043666996993124485,
+        "diagnostic_and_horizon_output_seconds": 3.601627860101871
+      }
+    },
+    "v8": {
+      "passed": true,
+      "regions": {
+        "bulk": {
+          "fields": {
+            "comparisons": 7111152,
+            "failed_values": 0,
+            "bitwise_equal": false,
+            "max_absolute": 1.7946755193065655e-13,
+            "max_tolerance_ratio": 0.016544174194753732
+          },
+          "records": {
+            "comparisons": 1835136,
+            "failed_values": 0,
+            "maximum_absolute": 2.7755575615628914e-17,
+            "bitwise_equal": false,
+            "event_counts_and_first_floor_exact": true
+          },
+          "against_rebuilt_control_fields_bitwise": true,
+          "against_rebuilt_control_records_bitwise": true
+        },
+        "surface": {
+          "fields": {
+            "comparisons": 26784,
+            "failed_values": 0,
+            "bitwise_equal": false,
+            "max_absolute": 4.2577052994374753e-13,
+            "max_tolerance_ratio": 0.03593571239837121
+          },
+          "records": {
+            "comparisons": 6912,
+            "failed_values": 0,
+            "maximum_absolute": 0.0,
+            "bitwise_equal": true,
+            "event_counts_and_first_floor_exact": true
+          },
+          "against_rebuilt_control_fields_bitwise": true,
+          "against_rebuilt_control_records_bitwise": true
+        }
+      },
+      "all_diagnostic_gates_passed": true,
+      "maximum_diagnostic_gate_fraction": 3.7469321896123016e-08,
+      "harmonics": {
+        "compared": 169,
+        "bitwise_equal": false,
+        "equal_at_native_print_precision": false,
+        "maximum_absolute_difference": 3.818443408687422e-09,
+        "numeric_admission_gate": null,
+        "scope": "Every coefficient is compared and reported. Completeness/finite values are required; individual coefficient differences are diagnostic only under the existing protocol. Native text has seven significant digits."
+      },
+      "compatibility_max": 1.268114239274577e-13,
+      "timing": {
+        "window_seconds_per_step": [
+          0.14302625795826315,
+          0.14383156276308,
+          0.14369312326889486
+        ],
+        "median": 0.14369312326889486,
+        "range_percent": 0.5604337817265487,
+        "max_rank_ids": [
+          [
+            12
+          ],
+          [
+            14
+          ],
+          [
+            14
+          ]
+        ],
+        "rank_window_spans_seconds": [
+          0.00011326826643198729,
+          2.2404827177524567e-05,
+          2.4485052563250065e-05
+        ],
+        "executable_sha256": "0567ba61667aa4fc990dd3ca91f7a772a60b19d26bac99c54d7eab64cc13342e",
+        "results_sha256": "4a1ea8f12eae09bfdb7051f9f2b2ef6a44ccd8b25e6ffae8801166561161672a"
+      },
+      "separated_costs": {
+        "setup_including_seed_verification_seconds": 29.225528304465115,
+        "warmup_seconds": 1.427281437907368,
+        "accepted_output_seconds": 0.04071336844936013,
+        "diagnostic_and_horizon_output_seconds": 3.602256681304425
+      }
+    }
+  },
+  "immutable_control": {
+    "passed": true,
+    "steps": 70,
+    "native_stage_rows": 280,
+    "maximum_clock_difference": 1.458055898240218e-12,
+    "maximum_CFL_difference": 1.1102230246251565e-16,
+    "phase": "Immutable initial/final snapshots follow diagnostic RHS and CompleteState. It performs no FastFlow search. Wrapper accepted-final snapshot precedes its extra final diagnostic RHS; short field gates retain this phase difference.",
+    "record_scope": "SP1 and original campaign do not restore/store eight per-cell ChiRecords; no seeded record equivalence claimed for this control."
+  },
+  "schema_resolution": {
+    "pinned_producer": "build-native/legacy-control-diagnostic-api-v1/hyperbolic_composite_device.hpp",
+    "pinned_producer_sha256": "1c8987d2b23bc32a37393e92b9ebb70336d51f4e27e9b9473d20b607bd7d2962",
+    "source_key": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-ko01-20261106/source/src/z4c/hyperboloidal/hyperbolic_composite_device.hpp",
+    "build_provenance": "build-native/aurora-legacy-n12-build-final-v1/artifacts/control-v3/provenance.json",
+    "build_provenance_sha256": "448084fbbb131fe2cd82ad485b14e516bd56c8f753d30e80c83946447f70e533",
+    "bound_to_actual_control_build": true,
+    "producer_lines": {
+      "exterior_volume": 454,
+      "optional_fixed_volume": [
+        455,
+        456
+      ],
+      "exterior_norms": 499,
+      "optional_fixed_norms": [
+        500,
+        501
+      ],
+      "public_Diagnostics": [
+        646,
+        648
+      ],
+      "effective_extended_flag": 667
+    },
+    "generator": "tst/z4c_hyperboloidal/legacy_n12_control_package.py",
+    "generator_sha256": "ec4e0101d82708326d5ed8a3184ba0592371e3841d430a0bf86a8821208379bb",
+    "correction": "Use the populated exterior_radius=.94 sums[5:10]; require optional extended=false fixed accumulator to remain exactly five zeros. Existing norm tolerance unchanged.",
+    "controls": "build-native/n12-matched-benchmark-controls-v4/results.json",
+    "controls_sha256": "f05a890f459fe8f9252f82fbcb74a92367140107d591d42a42302834b5c865ad",
+    "offline_checks": 28
+  },
+  "source_snapshot": {
+    "path": "build-native/n12-matched-benchmark-reader-snapshot-v2/snapshot.json",
+    "sha256": "798ca492bd029a6a961f5dd46ce9eb3f0d199992fee8f116f2f5ed8818f210c6",
+    "archived_header_sha256": "310ebb617883e2b02f05677b98718c4163d886da9b48e812c961fda6e4077c0a",
+    "scope": "Exact archived header required by prior native scientific qualification; only unexecuted provenance input, not a replacement numerical build."
+  },
+  "retained_reader_failures": {
+    "build-native/n12-matched-benchmark-science-v2/results.json": {
+      "sha256": "a86c50b2391d6cf5961f1696124706cc7a3e59b9acb352abf5c03769358404ce",
+      "failure": null,
+      "scientific_failure_established": false
+    },
+    "build-native/n12-matched-benchmark-science-v3/results.json": {
+      "sha256": "f4c87df2660c95f72e194b8d81834f3fd53e6d99449273640f1a449213f6d260",
+      "failure": null,
+      "scientific_failure_established": false
+    }
+  },
+  "verification": {
+    "manifest_files": 450,
+    "manifest_bytes": 1263544621,
+    "actual_job": "9052116",
+    "terminal": "F/0",
+    "native_case_exits": [
+      0,
+      0
+    ],
+    "legacy_case_exits": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "common_cache_environment": {
+      "MPIR_CVAR_CH4_IPC_GPU_HANDLE_CACHE": "specialized",
+      "MPIR_CVAR_CH4_IPC_GPU_CACHE_SIZE": "limited",
+      "MPIR_CVAR_CH4_IPC_GPU_MAX_CACHE_ENTRIES": "128",
+      "MPICH_CH4_IPC_GPU_HANDLE_CACHE": null,
+      "MPIR_PARAM_CH4_IPC_GPU_HANDLE_CACHE": null,
+      "MPICH_CH4_IPC_GPU_CACHE_SIZE": null,
+      "MPIR_PARAM_CH4_IPC_GPU_CACHE_SIZE": null,
+      "MPICH_CH4_IPC_GPU_MAX_CACHE_ENTRIES": null,
+      "MPIR_PARAM_CH4_IPC_GPU_MAX_CACHE_ENTRIES": null
+    },
+    "native_executable_sha256": "0ef1d6921b2184baa13446e267067ce183adc6341545580678822f7670daebb8",
+    "before_after_guards_equal": true,
+    "source_package_files_checked": 15
+  },
+  "reviews": {
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-matched-benchmark-science-review-v1/review.json": "c3b199bdf01e638c90a09ddc9430ee196efe7ff2e5b51a80f5b6dfcc8fd2ebc0",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/legacy-native-matched-timing-review-v2/results.json": "4f58848d3e6710dcfe483f2e744f1cdc9c2a0e24fbb320dd86b7e6027345afdc"
+  },
+  "science_raw_report": {
+    "path": "build-native/n12-matched-benchmark-science-v4/results.json",
+    "sha256": "5386037a346921a32091b81db0b9b060c2111534279eaea72e9ee817c449a1d6"
+  },
+  "limitations": [
+    "Native whole-window argmax ranks are not demonstrated causal critical ranks.",
+    "v3/v6 medians differ by only0.292%, within observed window variation; both remain final-reference candidates.",
+    "One screened run per legacy variant suffices to show current native is slower, not to establish unique fastest ordering or final parity.",
+    "Complete harmonic coverage and finite values pass; individual coefficient differences are diagnostic-only under the predeclared protocol.",
+    "Earlier reader/provenance failures are retained; no solver work or numerical tolerance was changed."
+  ]
+}

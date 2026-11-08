@@ -17,14 +17,20 @@
     },
     {
       "id": "matched_initial_state",
-      "status": "pending",
-      "required_evidence": "Verify complete equivalent native/legacy restart state and meaningful metadata, physical parameters and all chi histories."
+      "status": "complete",
+      "required_evidence": "Verify complete equivalent native/legacy restart state and meaningful metadata, physical parameters and all chi histories.",
+      "evidence": [
+        "evidence/legacy-native-two-node-matched-review.json"
+      ]
     },
     {
       "id": "reference_selection",
       "status": "in_progress",
       "required_evidence": "Qualify and measure fastest applicable previously validated implementation on N12/24ranks; no48rank or N24 substitution.",
-      "remaining": "Matched suite9052116 submitted with native-before/after brackets and control/v3/v6/v8, commoncache128; no legacy window admitted yet."
+      "remaining": "Control/v3/v6/v8 scientifically qualified on same nodes. v3 has lowest observed median; v3/v6 ordering within variation. Retain both for final repeated comparison.",
+      "evidence": [
+        "evidence/legacy-native-two-node-matched-review.json"
+      ]
     },
     {
       "id": "observer_attribution",
@@ -42,9 +48,10 @@
       "evidence": [
         "evidence/native-two-node-timing-validation.json",
         "evidence/native-mapped-poll-abba-review.json",
-        "evidence/native-ipc-cache-abba-review.json"
+        "evidence/native-ipc-cache-abba-review.json",
+        "evidence/legacy-native-two-node-matched-review.json"
       ],
-      "remaining": "Native complete-step improvement confirmed in clean ABBA; matched legacy/native comparison9052116 pending."
+      "remaining": "Native and all applicable legacy references now qualified; current native is4.39x slower. Final optimized same-allocation repeated comparison remains required."
     },
     {
       "id": "critical_path",
@@ -103,9 +110,10 @@
       "evidence": [
         "evidence/native-ipc-cache-abba-review.json",
         "evidence/native-ipc-cache-observer-review.json",
-        "evidence/native-ipc-cache-poison-amr-review.json"
+        "evidence/native-ipc-cache-poison-amr-review.json",
+        "evidence/legacy-native-two-node-matched-review.json"
       ],
-      "remaining": "Native cache128 endpoint, stage, poison, coherent AMR, constraints, horizon and restart gates pass. Applicable legacy endpoints and final matched comparison pending."
+      "remaining": "Retained cache128 and all four legacy references pass required gates. Any future code candidate needs full applicable correctness qualification."
     },
     {
       "id": "experiment_commits",
@@ -119,9 +127,13 @@
     },
     {
       "id": "parity_and_deliverables",
-      "status": "pending",
-      "required_evidence": "Final committed native median no worse than fastest accepted old reference with sufficient repeatability; reproducible evidence, profiles, experiment table and architecture confirmation."
+      "status": "in_progress",
+      "required_evidence": "Final committed native median no worse than fastest accepted old reference with sufficient repeatability; reproducible evidence, profiles, experiment table and architecture confirmation.",
+      "evidence": [
+        "evidence/legacy-native-two-node-matched-review.json"
+      ],
+      "remaining": "Parity explicitly not achieved: native0.599393s versus leading references~0.1364s. Continue measured solver improvement."
     }
   ],
-  "next_milestone": "Matched native/legacy comparison9052116: select fastest scientifically accepted applicable predecessor on same two nodes. Cache128 improvement admitted independently; parity not yet established."
+  "next_milestone": "Use cache128 kernel profile9052139 to select one measured optimization; fastest qualified legacy contendersv3/v6 are about0.1364s/step versus native0.5994s. Preserve original parity target."
 }
