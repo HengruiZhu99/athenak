@@ -1,0 +1,71 @@
+{
+  "schema": "native-ipc-cache-observer-review-v2",
+  "passed": true,
+  "job_id": "9052075",
+  "stage_rows": 280,
+  "stages_bitwise_exact": true,
+  "metadata_exact": true,
+  "maximum_compatibility": 9.111146658370792e-14,
+  "maximum_clock": 0.3724614068283002,
+  "maximum_CFL": 0.23848492703717356,
+  "state": {
+    "bitwise_equal": true,
+    "scalar_values": 24704784,
+    "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b"
+  },
+  "final_parameters_exact": true,
+  "diagnostics": {
+    "passed": true,
+    "files": [
+      {
+        "name": "native_n12_5M.horizon_shape_0.txt",
+        "bitwise_equal": true
+      },
+      {
+        "name": "native_n12_5M.horizon_summary_0.txt",
+        "bitwise_equal": true
+      },
+      {
+        "name": "native_n12_5M.z4c_hyperboloidal.hst",
+        "bitwise_equal": true
+      }
+    ]
+  },
+  "diagnostic_coverage": {
+    "cycles": [
+      2556
+    ],
+    "files": [
+      "native_n12_5M.horizon_shape_0.txt",
+      "native_n12_5M.horizon_summary_0.txt",
+      "native_n12_5M.z4c_hyperboloidal.hst"
+    ],
+    "harmonic_coefficients_per_row": 169,
+    "full_harmonic_mask_scope": "unchanged guarded native diagnostic objects"
+  },
+  "checkpoint": [
+    {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-ipc-cache-retry-v2/run-artifacts/runs/native-n12-ipc-cache-abba-v2/qualification/observer70/rst/native_n12_5M.00008.rst",
+      "cycle": 2556,
+      "time": 1.1998938474823924,
+      "ranks": 24,
+      "scalar_values": 24704784,
+      "sha256": "c4410a676ad09e606caf508c8d84105e8e70487439fad283a91cc8097a39a710"
+    }
+  ],
+  "observer_seconds_per_step": [
+    0.61414194805,
+    0.6138737757,
+    0.613835072
+  ],
+  "observer_median": 0.6138737757,
+  "normal_pooled_median": 0.594370801775,
+  "observer_median_extra_seconds": 0.019502973925,
+  "observer_median_ratio": 1.0328128061922914,
+  "startup_seconds": 4.073492323,
+  "finalize_seconds": 5.983210516,
+  "scope": "Existing full-state/stage/diagnostic readers; unchanged observer binary. Cache128 observer cost is descriptive one-run versus two unobserved runs, not a second ABBA overhead experiment. Observer timings excluded from throughput acceptance.",
+  "review_source_sha256": "15cbf4a1c051fdf710f18b7adfdc5586f9ad7f95132325477907c9a3db830f94",
+  "raw_review_path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-ipc-cache-observer-review-v2/results.json",
+  "raw_review_sha256": "08fd60acb93549f27118a89f44a94fec6a8207c7f22104e71743e9c1ed3ef788"
+}

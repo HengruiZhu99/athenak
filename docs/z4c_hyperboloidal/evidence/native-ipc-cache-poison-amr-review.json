@@ -1,0 +1,91 @@
+{
+  "schema": "native-ipc-cache-poison-amr-independent-review-v1",
+  "passed": true,
+  "job_id": "9052075",
+  "terminal_scope": "Verified F/0 collection; original F143 cache screen remains excluded and preserved.",
+  "runtime_source_changes": false,
+  "new_solver_runs": false,
+  "cache128_environment_propagation": "24-rank launcher/wrapper probes verified for both cases; effective MPI_T values and eviction events were not observed.",
+  "poison": {
+    "passed": true,
+    "ranks": 24,
+    "complete_labels": 26,
+    "dump_files": 624,
+    "points_per_state": 230256,
+    "independent_state_phases": 11,
+    "all31_fields_all8_records_bitwise": true,
+    "state_scalar_values": 98779824,
+    "first_rhs_values": 7137936,
+    "geometry_values": 690768,
+    "stage_records": 32,
+    "stage_records_exact": true,
+    "reference_canonical_hashes_match_qualified_clean": true,
+    "report": "build-native/native-ipc-cache-poison-amr-review-v1/poison8/trace-audit.json",
+    "report_sha256": "4afdd3d171b7f06ce1a65e54eebd32d9f7ccdf87622ad783f60919b89cfeeab4"
+  },
+  "amr": {
+    "passed": true,
+    "ranks": 24,
+    "complete_snapshots": 5,
+    "complete31_plus8_scalar_values": 48665448,
+    "all31_fields_all8_records_bitwise": true,
+    "blocks": [
+      106,
+      127,
+      127,
+      106,
+      106
+    ],
+    "scri_points": [
+      864,
+      1296,
+      1296,
+      864,
+      864
+    ],
+    "stage_records": 16,
+    "stage_records_exact": true,
+    "topology_and_ownership_exact": true,
+    "regrid_events": 2,
+    "maximum_compatibility": 1.0910657402209053e-15,
+    "report": "build-native/native-ipc-cache-poison-amr-review-v1/amr-review.json",
+    "report_sha256": "664ba27cffb91e3ae5ec26a80cba50ab9dca9e88aa3c3ce692c4ad7f8a4d1755"
+  },
+  "source_proof": {
+    "input_payload_hashes_rebound_to_verified_collection": 865,
+    "qualified_reference_amr_hashes_matched": true,
+    "qualification_before_after_guards_exact": true,
+    "commands_match_frozen_readiness": true
+  },
+  "retained_environment": {
+    "path": "tst/z4c_hyperboloidal/aurora/native-gpu-ipc-cache.env",
+    "sha256": "6435fda1f3213dace157860f620b98e79096b0b7354bf9f088524db80d9a2eda",
+    "settings_match_measured": true
+  },
+  "inputs": {
+    "build-native/aurora-native-ipc-cache-retry-v2/transfer.json": "87ee0bbd609e2632571373ff09536eaf8508debe27ff47e0c21758430aafefc7",
+    "build-native/aurora-native-ipc-cache-retry-v2/run-artifacts/files.json": "a94581463f232e0e1584272de11861067a69330ab1b530e5acf66e4574e966a2",
+    "build-native/native-ipc-cache-qualification-readiness-v1/commands.json": "08de71e12bbe7d7ea0dd5013b89e82e530067061e8105cdc1a3327af5463c344",
+    "build-native/aurora-stage-trace-two-v2/run-artifacts/runs/stage-validation-v2-nodes2/native-clean/trace-audit.json": "6d6d9e524df104a4d0eeecf3102f4f1282944030032d326ad6cfb36ce286594a",
+    "build-native/aurora-amr-primary-comparison-v1/evolution/results.json": "6e52a821323f13bde5e737581909a9e1410895b362a9caabf04d030e6c1b00c4",
+    "build-native/aurora-native-ipc-cache-retry-v2/run-artifacts/runs/native-n12-ipc-cache-abba-v2/qualification/qualification-guard-before.json": "f3fd09d717c7e61557ba51da93cb62549b3e97c55b2a30010a433fc3a80627a6",
+    "build-native/aurora-native-ipc-cache-retry-v2/run-artifacts/runs/native-n12-ipc-cache-abba-v2/qualification/qualification-guard-after.json": "f3fd09d717c7e61557ba51da93cb62549b3e97c55b2a30010a433fc3a80627a6"
+  },
+  "readers": {
+    "tst/z4c_hyperboloidal/native_stage_trace_compare.py": "6d0c9750b5bb212481121be706577743242198d6b6fb76fac8708085dfa968b1",
+    "tst/z4c_hyperboloidal/native_amr_gpu_compare.py": "bf89e5cced3e4b78f3a06463caf12cc679a3d67e4c4270b775596573363af0b0",
+    "tst/z4c_hyperboloidal/amr_evolution.cpp": "14ddd38eb781c73eea14659e958e36e3cfd29e7c28bb03c02c32c17f719c1ea0",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-ipc-cache-poison-amr-review-v1/finalize_review.py": "5d4767b8042096d3a6dcc32e06873fde3eb11c9ab589a43023f9fb3ed5504c91"
+  },
+  "limits": [
+    "Existing bounded N12 poison and coherent AMR correctness fixtures, not a new long-time or convergence claim.",
+    "Timing, observer70, restart and legacy speed parity have separate assigned reviews.",
+    "No MPI cache eviction cause is established."
+  ],
+  "retained_setup_failures": [
+    "First inline review invocation had a Python SyntaxError (else106); it did not execute any data comparison. Corrected only the ignored review invocation; fixture, readers, raw data and gates unchanged.",
+    "First final-report binding invocation treated basename-only poison hash keys as full paths and failed before writing review.json. Corrected only report path joining; all completed scientific reader results and gates unchanged."
+  ],
+  "raw_review_path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-ipc-cache-poison-amr-review-v1/review.json",
+  "raw_review_sha256": "d95aec936b1b3845c0c35cf23427af570c4fd8614f2d50a8b6906f040630ad98"
+}

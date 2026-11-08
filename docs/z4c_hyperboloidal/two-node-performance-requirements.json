@@ -22,8 +22,9 @@
     },
     {
       "id": "reference_selection",
-      "status": "pending",
-      "required_evidence": "Qualify and measure fastest applicable previously validated implementation on N12/24ranks; no48rank or N24 substitution."
+      "status": "in_progress",
+      "required_evidence": "Qualify and measure fastest applicable previously validated implementation on N12/24ranks; no48rank or N24 substitution.",
+      "remaining": "Matched suite9052116 submitted with native-before/after brackets and control/v3/v6/v8, commoncache128; no legacy window admitted yet."
     },
     {
       "id": "observer_attribution",
@@ -40,9 +41,10 @@
       "required_evidence": "Repeated warmed max-rank whole-RK4 windows, profiling off, same compiler/FP/grid/dt/physics; separate startup and diagnostics/I/O.",
       "evidence": [
         "evidence/native-two-node-timing-validation.json",
-        "evidence/native-mapped-poll-abba-review.json"
+        "evidence/native-mapped-poll-abba-review.json",
+        "evidence/native-ipc-cache-abba-review.json"
       ],
-      "remaining": "Matched legacy reference and candidate/repeat comparisons pending."
+      "remaining": "Native complete-step improvement confirmed in clean ABBA; matched legacy/native comparison9052116 pending."
     },
     {
       "id": "critical_path",
@@ -51,9 +53,10 @@
       "evidence": [
         "evidence/native-n12-selected-profile-findings.json",
         "evidence/native-n12-aps-findings.json",
-        "evidence/native-ipc-cache-abba-failure-review.json"
+        "evidence/native-ipc-cache-abba-failure-review.json",
+        "evidence/native-ipc-cache-abba-review.json"
       ],
-      "remaining": "Two valid cache128 runs show ~8.15x sensitivity to capacity, consistent with measured IPC waits; final cache16 control failed after endpoint output. Causal critical rank and precise failure function remain unproved."
+      "remaining": "Capacity16\u2192128 produces qualified7.89x complete-step improvement, consistent with observed communication/IPC waits. Exact eviction counts and a causal critical rank remain unmeasured; no sum of unrelated maxima is used."
     },
     {
       "id": "bulk_organization",
@@ -78,9 +81,10 @@
         "evidence/native-n12-aps-findings.json",
         "evidence/native-mapped-poll-abba-review.json",
         "evidence/native-mpi-ipc-cache-hypothesis.json",
-        "evidence/native-ipc-cache-abba-failure-review.json"
+        "evidence/native-ipc-cache-abba-failure-review.json",
+        "evidence/native-ipc-cache-abba-review.json"
       ],
-      "remaining": "Polling rejected and reverted. Cache128 produced two exact fast endpoints, but the full ABBA batch failed in final cache16 control; clean repeat plus existing observer/poison/AMR/restart checks required before retention."
+      "remaining": "Polling rejected/reverted. Cache128 is scientifically qualified and retained as a launch profile; no task scheduling changes. Reprofile remaining cost if matched parity requires further optimization."
     },
     {
       "id": "communication_layout",
@@ -94,17 +98,24 @@
     },
     {
       "id": "scientific_acceptance",
-      "status": "pending",
-      "required_evidence": "Complete bulk/surface/chi, compatibility, constraints, horizon and restart gates; poison and SMR/AMR tests where affected, no relaxed gates."
+      "status": "in_progress",
+      "required_evidence": "Complete bulk/surface/chi, compatibility, constraints, horizon and restart gates; poison and SMR/AMR tests where affected, no relaxed gates.",
+      "evidence": [
+        "evidence/native-ipc-cache-abba-review.json",
+        "evidence/native-ipc-cache-observer-review.json",
+        "evidence/native-ipc-cache-poison-amr-review.json"
+      ],
+      "remaining": "Native cache128 endpoint, stage, poison, coherent AMR, constraints, horizon and restart gates pass. Applicable legacy endpoints and final matched comparison pending."
     },
     {
       "id": "experiment_commits",
       "status": "in_progress",
       "required_evidence": "One factor at a time; separate optimization commits only for repeated accepted improvements; retain failures and revert slower/inconclusive changes.",
       "evidence": [
-        "evidence/native-mapped-poll-abba-review.json"
+        "evidence/native-mapped-poll-abba-review.json",
+        "evidence/native-ipc-cache-abba-review.json"
       ],
-      "remaining": "First runtime candidate rejected and reverted with patches preserved; no optimization retained. Successful optimization commit still requires repeated timing and full applicable qualification."
+      "remaining": "Separate accepted cache-setting optimization follows clean ABBA and full applicable qualification. Parity comparison remains pending."
     },
     {
       "id": "parity_and_deliverables",
@@ -112,5 +123,5 @@
       "required_evidence": "Final committed native median no worse than fastest accepted old reference with sufficient repeatability; reproducible evidence, profiles, experiment table and architecture confirmation."
     }
   ],
-  "next_milestone": "Complete a clean unchanged cache-capacity ABBA retry, then existing scientific qualification if all candidate timing windows beat all controls; retain original matched legacy-parity target."
+  "next_milestone": "Matched native/legacy comparison9052116: select fastest scientifically accepted applicable predecessor on same two nodes. Cache128 improvement admitted independently; parity not yet established."
 }

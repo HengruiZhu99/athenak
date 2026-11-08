@@ -187,7 +187,7 @@ candidate (4.89% slower). The rejection rests on the absent repeated improvement
 not the pooled statistic alone. Per-stage observer and AMR tests were not run for
 this rejected candidate.
 
-The next single experiment tests MPI GPU IPC cache capacity, using the unchanged
+The accepted optimization increases MPI GPU IPC cache capacity, using the unchanged
 native executable and identical physics/task order; see
 `evidence/native-mpi-ipc-cache-hypothesis.json`. Exact installed-MPI source
 and initialization code default to specialized, limited caching with 16 entries
@@ -197,9 +197,10 @@ surface plans. Every projected bulk send allocation exceeds the allocation-size
 IPC threshold. LRU overflow closes the oldest mapping. The sampled trace contains
 repeated opens/closes, but their fast API calls do not explain the preceding gaps
 and do not prove eviction. Prior environment captures omitted these cache knobs,
-so inherited overrides are unknown. The controlled experiment will explicitly set
-the common cache mode, clear aliases, and vary only the limit from 16 to 128;
-no cache speedup or causal-path conclusion is established yet.
+so inherited overrides are unknown. The controlled experiment explicitly sets
+the common cache mode, clears aliases, and varies only the limit from 16 to 128.
+The successful retry below demonstrates capacity sensitivity; individual cache
+evictions and a causal critical rank remain unmeasured.
 The first capacity screen (job 9052050) produced a successful 16-entry control
 median of 4.885799 seconds/step and two successful 128-entry medians of 0.599515
 and 0.599614 seconds/step, approximately 8.15 times faster. Each successful case
@@ -211,13 +212,68 @@ admitted performance sample, and no cache optimization is retained yet.
 
 All 81 raw files and the original missing post-run guards are preserved. Separate
 offline frozen-source checks pass without converting the failed batch to success;
-see `evidence/native-ipc-cache-abba-failure-review.json`. The next allocation
-repeats the unchanged capacity ABBA in fresh directories, then conditionally runs
-the existing observer, poison, regrid and restart qualification fixtures. All four
-cases must exit successfully, pass their full-state checks and show fully separated
-candidate/control timing ranges before spending time on that qualification.
-The existing binaries suffice; no solver rebuild or arithmetic change is needed.
-Final acceptance still requires all applicable checks and the matched legacy run.
+see `evidence/native-ipc-cache-abba-failure-review.json`. The successful clean
+retry does not explain the earlier rank-13 failure.
+
+The unchanged retry, job 9052075, completed F/0. All four ABBA runs and five
+qualification runs exited 0; before/after source, executable, object and launcher
+guards pass. All 1,035 collected files were size/hash verified. The same native
+executable is used in all timing cases, from the admitted cycle-2486 checkpoint,
+with 10 warmup steps and three unprofiled 20-step maximum-rank windows per run.
+
+| Run, in execution order | Cache entries | Three windows (s/complete RK4 step) | Median |
+|---|---:|---|---:|
+| Control C0 | 16 | 4.639723, 4.529840, 4.960999 | 4.639723 |
+| Candidate K0 | 128 | 0.594748, 0.594281, 0.594322 | 0.594322 |
+| Candidate K1 | 128 | 0.594144, 0.594420, 0.594493 | 0.594420 |
+| Control C1 | 16 | 4.740049, 4.843840, 4.612780 | 4.740049 |
+
+Six-window medians are **4.689886 versus 0.594371 seconds/step: 7.8905x faster**.
+Every candidate window beats every control window. Candidate startup costs are
+3.790/3.542 s and finalization, including diagnostics/output, costs 5.505/5.451 s;
+these are outside the complete-step windows. Control startup spans 3.458--4.752 s
+and finalization 6.071--6.264 s. Maximum-rank IDs vary; tiny endpoint rank spreads
+reflect synchronization and do not identify a causal critical rank.
+
+Independent existing readers verify complete 24,704,784-scalar padded 31+8 state,
+initialized metadata, parameters and ordinary history/horizon diagnostics exactly
+for all four runs. Further qualification passes:
+
+- 280 observer stage records are exact, with maximum compatibility defect
+  9.11115e-14; complete endpoint and diagnostics are exact.
+- Poisoned-workspace checks cover 624 dumps, geometry, first RHS, all 11 state
+  phases and 32 stage records, exactly matching the clean reference.
+- AMR evolution covers refinement and coarsening, 106→127→127→106→106 leaves,
+  48,665,448 state/history scalars and 16 stages, all exact to its coherent
+  qualified reference.
+- Fresh prefix and resumed evolution preserve full state and joined 32 stage
+  records exactly. Existing restart diagnostic tolerances pass, retaining the
+  extra prefix-final horizon search and its expected output/seed differences.
+
+See `evidence/native-ipc-cache-abba-review.json`,
+`evidence/native-ipc-cache-observer-review.json` and
+`evidence/native-ipc-cache-poison-amr-review.json` for admission details.
+At cache128, the observer run's three-window median is 0.613874 s/step,
+0.019503 s (3.28%) above the unobserved pooled median. This is descriptive,
+not another randomized overhead experiment; observer timings are excluded from
+throughput acceptance. The earlier matched observer controls remain valid for
+their original slow configuration.
+
+The retained configuration is
+`tst/z4c_hyperboloidal/aurora/native-gpu-ipc-cache.env`. Source it before `mpiexec`
+for this validated Aurora N12 layout. It explicitly selects specialized, limited
+caching with 128 entries and clears six aliases. Its exported variables match the
+measured candidate exactly. No solver C++ changes, task reordering, ownership
+changes, altered arithmetic or reduced validity checks are required. Production
+launches remain untouched. Capacity128 is qualified here on two nodes; this is
+not a universal capacity recommendation or an eight-node scaling result.
+
+The next experiment, job 9052116, compares this native configuration against the immutable
+legacy control and all applicable optimized versions on the same two nodes.
+Unprofiled native runs bracket the legacy suite. Both implementations receive
+identical cache settings, compiler policy, binding, physical state and workload.
+Final parity requires the fastest scientifically accepted legacy variant;
+retaining this native improvement does not establish parity.
 
 Surface batching and field-parallel KO remain untested candidates.
 
@@ -255,8 +311,9 @@ bounded two-node correctness checks when a proposed change requires them.
 | Selected-rank native profile | Complete payload/diagnostics bitwise; offline audit correction preserves original F/2 | GPU activity covers 7.36%/11.91% of sampled RHS spans | Diagnose transfer-adjacent host gaps next; no solver change |
 | All-rank APS MPI profile | Complete payload/diagnostics/runtime identity pass; original F/2 retained | Whole-process mean 13.18 s/rank in Testall | Select one completion-policy experiment; no throughput claim |
 | Individual MPI completion checks | All four full endpoints/diagnostics exact; local mixed-peer tests pass | Control 4.565817 s; candidate 4.789034 s (six-window medians) | Rejected; no repeated improvement; original runtime restored |
-| MPI GPU IPC cache capacity | Three successful endpoints exact; final control wrote exact state but exited143 | Valid medians: 4.885799 s (16), 0.599515/0.599614 s (128) | Promising ~8.15x; failed fullABBA, not retained; clean retry and qualification next |
-| Matched previous-implementation reference | Builds ready; GPU qualification pending | Pending | Does not block native screening |
+| MPI GPU IPC cache capacity, first screen | Three successful endpoints exact; last control failed after output | Successful medians 4.885799 vs 0.599515/0.599614 s | Failed full ABBA preserved; not admitted |
+| MPI GPU IPC cache capacity, clean retry | Four exact full endpoints; observer, poison, AMR and restart pass | 4.689886 → 0.594371 s; all six candidate windows faster | Accepted native improvement, 7.89x; parity pending |
+| Matched previous-implementation reference | Staged/preflight verified; same-allocation comparison next | Pending | Fastest applicable control/v3/v6/v8 must pass science |
 
 Completion requires the committed native implementation to match or beat the
 fastest accepted previous N12 reference median on the same two nodes, with repeat
