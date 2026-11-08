@@ -1,0 +1,106 @@
+{
+  "schema": "native-bulk-group128-poison-amr-independent-review-v1",
+  "passed": true,
+  "job_id": "9052329",
+  "terminal_scope": "Verified actual PBS F/0, two nodes/24 ranks; all files bound to the collected manifest.",
+  "runtime_source_changes": [
+    "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp: main bulk workgroup128 only over accepted field-KO"
+  ],
+  "fixture_source_changes": false,
+  "new_solver_runs": false,
+  "cache128_environment_propagation": "24-rank launcher/wrapper probes verified for both cases; effective MPI_T values and eviction events were not observed.",
+  "poison": {
+    "passed": true,
+    "ranks": 24,
+    "complete_labels": 26,
+    "dump_files": 624,
+    "points_per_state": 230256,
+    "independent_state_phases": 11,
+    "all31_fields_all8_records_bitwise": true,
+    "state_scalar_values": 98779824,
+    "first_rhs_values": 7137936,
+    "geometry_values": 690768,
+    "stage_records": 32,
+    "stage_records_exact": true,
+    "reference_canonical_hashes_match_qualified_clean": true,
+    "report": "build-native/native-bulk-group128-poison-amr-review-v1/poison8/trace-audit.json",
+    "report_sha256": "edd0f6fd1ec2e69662f38a595c211d23b4f805639bdc9fcb3cdf5c454844d159"
+  },
+  "amr": {
+    "passed": true,
+    "ranks": 24,
+    "complete_snapshots": 5,
+    "complete31_plus8_scalar_values": 48665448,
+    "all31_fields_all8_records_bitwise": true,
+    "blocks": [
+      106,
+      127,
+      127,
+      106,
+      106
+    ],
+    "scri_points": [
+      864,
+      1296,
+      1296,
+      864,
+      864
+    ],
+    "stage_records": 16,
+    "stage_records_exact": true,
+    "topology_and_ownership_exact": true,
+    "regrid_events": 2,
+    "maximum_compatibility": 1.0910657402209053e-15,
+    "report": "build-native/native-bulk-group128-poison-amr-review-v1/amr-review.json",
+    "report_sha256": "32ea5d4dd1bbead683c0f65419ee7e7a2fd7c27dd30a1504efecea632fb34ef2"
+  },
+  "source_proof": {
+    "input_payload_hashes_rebound_to_verified_collection": 865,
+    "qualified_reference_amr_hashes_matched": true,
+    "qualification_before_after_guards_exact": true,
+    "commands_match_frozen_readiness": true
+  },
+  "retained_environment": {
+    "path": "tst/z4c_hyperboloidal/aurora/native-gpu-ipc-cache.env",
+    "sha256": "6435fda1f3213dace157860f620b98e79096b0b7354bf9f088524db80d9a2eda",
+    "settings_match_measured": true
+  },
+  "inputs": {
+    "build-native/aurora-native-bulk-group128-qualification-v1/transfer.json": "108e7bb2f86dde68382cbe998a4e984ec98659a5e65054d02854bd3c4cee8a25",
+    "build-native/aurora-native-bulk-group128-qualification-v1/run-artifacts/files.json": "fd3de7a44a5d690d6542305a06204c5af9fd81c2029b35f9a9d62646081af6fb",
+    "build-native/aurora-native-bulk-group128-qualification-v1/run-artifacts/validation/perf-two-node-v1/bulk-group128-v1/qualification-launch/qualification-commands.json": "439d87f729771994e5b4b31c3a8312ccdcdb36a66ce274d459273dbc5cb843e8",
+    "build-native/aurora-stage-trace-two-v2/run-artifacts/runs/stage-validation-v2-nodes2/native-clean/trace-audit.json": "6d6d9e524df104a4d0eeecf3102f4f1282944030032d326ad6cfb36ce286594a",
+    "build-native/aurora-amr-primary-comparison-v1/evolution/results.json": "6e52a821323f13bde5e737581909a9e1410895b362a9caabf04d030e6c1b00c4",
+    "build-native/aurora-native-bulk-group128-qualification-v1/run-artifacts/runs/native-bulk-group128-qualification-v1/qualification-guard-before.json": "7d54965fe7d13796f455be910211f338d076acb45176c1f1a27afab7865cbbde",
+    "build-native/aurora-native-bulk-group128-qualification-v1/run-artifacts/runs/native-bulk-group128-qualification-v1/qualification-guard-after.json": "7d54965fe7d13796f455be910211f338d076acb45176c1f1a27afab7865cbbde",
+    "build-native/aurora-native-bulk-group128-qualification-v1/package.json": "8527a50981d526f00ed6b076573484b57d07df2547e6e3a9c0b38e966ed20ccd",
+    "build-native/aurora-native-bulk-group128-qualification-v1/run-artifacts/terminal-qstat.txt": "9dbc302426bb3d372e19ea28f53df03e0de38d838321148e9243f8f2b64fd847",
+    "build-native/aurora-native-bulk-group128-qualification-v1/run-artifacts/validation/perf-two-node-v1/bulk-group128-v1/qualification-build/provenance.json": "97b441e61983885d8ccd918f252e4ee1aac7131232c74890c8bb86cc4e8289a3",
+    "build-native/aurora-native-bulk-group128-qualification-v1/run-artifacts/runs/native-bulk-group128-qualification-v1/job-id.txt": "e4c336c2954fe5223a54c4ba46477f2950171d7db8b4467c34db667a248f412c"
+  },
+  "readers": {
+    "tst/z4c_hyperboloidal/native_stage_trace_compare.py": "6d0c9750b5bb212481121be706577743242198d6b6fb76fac8708085dfa968b1",
+    "tst/z4c_hyperboloidal/native_amr_gpu_compare.py": "bf89e5cced3e4b78f3a06463caf12cc679a3d67e4c4270b775596573363af0b0",
+    "tst/z4c_hyperboloidal/amr_evolution.cpp": "14ddd38eb781c73eea14659e958e36e3cfd29e7c28bb03c02c32c17f719c1ea0",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-bulk-group128-poison-amr-review-v1/finalize_review.py": "b20d3e040c5d150e08b10ccc0990461421fd4e32012806dbae064a3dd97bb10b"
+  },
+  "limits": [
+    "Existing bounded N12 poison and coherent AMR correctness fixtures, not a new long-time or convergence claim.",
+    "Timing, observer70, restart and legacy speed parity have separate assigned reviews.",
+    "No MPI cache eviction cause is established.",
+    "Poison covers the fixture listed public residual/RHS/status and unowned u0 workspaces, not private surface scratch. Stage-input snapshots precede PrepareStage projection.",
+    "This review independently parses retained output; it executes no new solver and changes no numerical tolerance."
+  ],
+  "candidate_binding": {
+    "source_sha256": "70dd4866b718d126bdfd7e41a8cb461d01dda747849f7bd1a143aa99b6d8c1a8",
+    "patch_sha256": "7700f52e42fe22b65ef2c6a426bc4126e0cc4c22073fa30129b9569e81bcd8e9",
+    "build_provenance_sha256": "97b441e61983885d8ccd918f252e4ee1aac7131232c74890c8bb86cc4e8289a3",
+    "same_candidate_source_both_builds": true,
+    "coherent_class_header_preserved": true,
+    "executables": {
+      "poison8": "0046ed6b65b6ae6a087c9ce6a3cb57a295b2558dd40ec0a95fe9d365798a6c50",
+      "amr4": "1f786b6bcd27d8b17509a95a71897ed63d8ff3d0ab59e8f24dff8c2aeec6c42e"
+    }
+  },
+  "performance_admission": false
+}

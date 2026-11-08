@@ -49,9 +49,10 @@
         "evidence/native-two-node-timing-validation.json",
         "evidence/native-mapped-poll-abba-review.json",
         "evidence/native-ipc-cache-abba-review.json",
-        "evidence/legacy-native-two-node-matched-review.json"
+        "evidence/legacy-native-two-node-matched-review.json",
+        "evidence/native-bulk-group128-admission.json"
       ],
-      "remaining": "Native and all applicable legacy references now qualified; current native is4.39x slower. Final optimized same-allocation repeated comparison remains required."
+      "remaining": "Current retained native workgroup128 median0.380092s in repeated nativeABBA. Final optimized same-allocation repeated comparison with leading legacy v3/v6 remains required."
     },
     {
       "id": "critical_path",
@@ -62,9 +63,10 @@
         "evidence/native-n12-aps-findings.json",
         "evidence/native-ipc-cache-abba-failure-review.json",
         "evidence/native-ipc-cache-abba-review.json",
-        "evidence/native-n12-profile-cache128-findings.json"
+        "evidence/native-n12-profile-cache128-findings.json",
+        "evidence/native-bulk-group128-profile-review.json"
       ],
-      "remaining": "Bulk dominates recorded GPU work on sampled ranks8/23; KO now lowers complete-step time8.49% with full qualification. Test legacy main-bulk workgroup128 next; global causal critical rank and achieved occupancy remain unproved."
+      "remaining": "New profile separates KO/main/validity. Surface-dependent bulk accounts0.542856s over16 launches on rank23, exceeding its normalSolve0.302570s or surfaceRHS0.199277s. Test field-batched radial derivatives next; radial contribution, global causal critical rank and achieved occupancy remain unproved."
     },
     {
       "id": "bulk_organization",
@@ -73,9 +75,10 @@
       "evidence": [
         "evidence/native-n12-profile-cache128-findings.json",
         "evidence/native-field-ko-abba-review.json",
-        "evidence/native-field-ko-admission.json"
+        "evidence/native-field-ko-admission.json",
+        "evidence/native-bulk-group128-admission.json"
       ],
-      "remaining": "Field-parallel KO retained after full applicable GPU qualification and repeated8.49% complete-step reduction. Next single experiment: main bulk RHS SYCL workgroup128 only; geometry reuse and surface work remain separate."
+      "remaining": "Field-parallel KO and main bulk workgroup128 are separately qualified and retained (8.49% and31.09% complete-step reductions in respective controlled comparisons). Next single experiment: field-batched endpoint radial derivatives with existing arithmetic/dependencies; geometry and surface changes remain separate."
     },
     {
       "id": "geometry_reuse",
@@ -119,9 +122,10 @@
         "evidence/native-ipc-cache-observer-review.json",
         "evidence/native-ipc-cache-poison-amr-review.json",
         "evidence/legacy-native-two-node-matched-review.json",
-        "evidence/native-field-ko-admission.json"
+        "evidence/native-field-ko-admission.json",
+        "evidence/native-bulk-group128-admission.json"
       ],
-      "remaining": "Retained cache128 and KO pass complete-state/chi, observer compatibility, constraints/horizon, poison, coherentAMR and same-layout restart gates. Future candidates require their applicable checks without loosened tolerances."
+      "remaining": "Retained cache128, KO and bulk128 pass applicable complete-state/chi, observer compatibility, constraints/horizon, poison, coherent AMR and same-layout restart gates. Future cache/storage changes require explicit stale/poison coverage and refresh/rebuild checks without loosened tolerances."
     },
     {
       "id": "experiment_commits",
@@ -131,21 +135,23 @@
         "evidence/native-mapped-poll-abba-review.json",
         "evidence/native-ipc-cache-abba-review.json",
         "evidence/native-field-ko-abba-review.json",
-        "evidence/native-field-ko-admission.json"
+        "evidence/native-field-ko-admission.json",
+        "evidence/native-bulk-group128-admission.json"
       ],
-      "remaining": "Cache128 and now field-parallel KO are separate qualified optimizations. Qualification procedures are separately labeled. Retain only confirmed future improvements and push accepted changes as requested."
+      "remaining": "Cache128, field-parallel KO and main bulk workgroup128 are separate qualified optimizations. Exact WG128 procedures are archived and hash-bound; no new measurement framework. Retain and push only confirmed future improvements."
     },
     {
       "id": "parity_and_deliverables",
       "status": "in_progress",
       "required_evidence": "Final committed native median no worse than fastest accepted old reference with sufficient repeatability; reproducible evidence, profiles, experiment table and architecture confirmation.",
       "evidence": [
-        "evidence/legacy-native-two-node-matched-review.json"
+        "evidence/legacy-native-two-node-matched-review.json",
+        "evidence/native-bulk-group128-admission.json"
       ],
-      "remaining": "Explicitly resumed. Parity not achieved: current KO median0.549904s in nativeABBA versus leading legacy references~0.1364s in earlier matched allocation. Continue one measured legacy port at a time; final same-allocation comparison remains required."
+      "remaining": "Parity not achieved: current bulk128 median0.380092s in nativeABBA versus leading legacy~0.1364s in an earlier matched allocation. Continue one measured legacy port at a time; final same-allocation comparison remains required."
     }
   ],
-  "next_milestone": "Screen only main bulk RHS SYCL workgroup128 against accepted KO native control, same cache128 and repeated unprofiled complete-RK4 ABBA. Preserve arithmetic/storage/dependencies. Qualify any improvement before a separate commit/push; retain the final matched legacy parity target.",
+  "next_milestone": "Port only validated legacy field-batched radial derivative accumulation for the measured slow surface-dependent bulk subset. Refresh stage-local data at the existing dependency boundary; preserve term arithmetic, normal correction, geometry, group sizes and AthenaK infrastructure. Screen repeated unprofiled MAX-rank complete RK4 ABBA against accepted bulk128; qualify all affected storage/restart/refinement paths before committing.",
   "pause_reason": "User requested pause, summary, commit and push on 2026-11-08 after substantial improvement. Finished only already-running job9052165; no further experiment or qualification allocation.",
   "resume_reason": "User explicitly resumed on 2026-11-08: full KO qualification first, then validated legacy optimizations one at a time; commit and push only confirmed correctness and complete-step improvements."
 }

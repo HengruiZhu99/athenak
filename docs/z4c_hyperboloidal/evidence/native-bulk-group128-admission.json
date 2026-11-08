@@ -1,0 +1,81 @@
+{
+  "schema": "native-bulk-group128-admission-v1",
+  "candidate_accepted": true,
+  "correctness_passed": true,
+  "repeated_complete_step_improvement": true,
+  "parity_achieved": false,
+  "changed_numerical_sources": [
+    "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp"
+  ],
+  "candidate_source_sha256": "70dd4866b718d126bdfd7e41a8cb461d01dda747849f7bd1a143aa99b6d8c1a8",
+  "candidate_patch_sha256": "7700f52e42fe22b65ef2c6a426bc4126e0cc4c22073fa30129b9569e81bcd8e9",
+  "timing_job": "9052307",
+  "qualification_and_profile_job": "9052329",
+  "nodes": 2,
+  "ranks": 24,
+  "control_median_seconds": 0.5516144439749999,
+  "candidate_median_seconds": 0.3800918243,
+  "time_reduction_percent": 31.094657064994045,
+  "speedup": 1.451266269646516,
+  "acceptance": "All six candidate windows beat all six controls; independent observer, poison, AMR, restart and profile-equivalence reviews pass without changed tolerances.",
+  "numerical_scope": "Only main bulk RHS SYCL RangePolicy chunk size128 over accepted field-parallel KO. Per-point arithmetic, KO/surface policies, storage, validity checks and task dependencies are unchanged; non-SYCL path is unchanged.",
+  "architecture": "Driver, TaskLists, MeshBlocks, native tree, equal block weights, block-local surfaces, restart/output and refinement machinery unchanged.",
+  "production_untouched": true,
+  "evidence": {
+    "timing": {
+      "path": "docs/z4c_hyperboloidal/evidence/native-bulk-group128-abba-review.json",
+      "sha256": "4d74852dd834789b0d40a9f28ebac88c7030b5783f8ad9941f5251bb4fd79cef"
+    },
+    "observer_restart": {
+      "path": "docs/z4c_hyperboloidal/evidence/native-bulk-group128-observer-restart-review.json",
+      "sha256": "24397c1cd5dd897554d313662ad7022c329f904435c0e767732062b71cee6912"
+    },
+    "poison_amr": {
+      "path": "docs/z4c_hyperboloidal/evidence/native-bulk-group128-poison-amr-review.json",
+      "sha256": "4cda68306fa3079f2014796c9eb5e138705fba2ffb5a2f5a25ed110a51e1fd74"
+    },
+    "profile": {
+      "path": "docs/z4c_hyperboloidal/evidence/native-bulk-group128-profile-review.json",
+      "sha256": "799dc1142ce5a0f1a97550d28f2b89d8eac6e0aea78079988f0189d97bdc3f5d"
+    },
+    "build": {
+      "path": "docs/z4c_hyperboloidal/evidence/native-bulk-group128-build.json",
+      "sha256": "bd8320cca21a868d8c3fcbb4bbb494fcb8bcc2b60bc3f3cd605b6b7377dc7dd0"
+    },
+    "qualification_build": {
+      "path": "docs/z4c_hyperboloidal/evidence/native-bulk-group128-qualification-build.json",
+      "sha256": "973c14f1e0a50e17ac9c1e2349692291b85985b0c101f85024538ff0e25d3c00"
+    },
+    "timing_submission": {
+      "path": "docs/z4c_hyperboloidal/evidence/native-bulk-group128-submission.json",
+      "sha256": "5630ba8a7dcd7cbdc1e3011ca25dd007bafbff668c98f77c64cfc1635ca0f3a6"
+    },
+    "qualification_submission": {
+      "path": "docs/z4c_hyperboloidal/evidence/native-bulk-group128-qualification-submission.json",
+      "sha256": "1c0fd979e8ee416c550ce665fc0e7f41e390a00f63506e18db942e4419b969b4"
+    }
+  },
+  "historical_evidence_note": "Build and screen records retain their original pending-qualification status; this later admission accepts their exact source after job9052329.",
+  "limits": [
+    "N12, two nodes/24 tile ranks; no wider scaling claim.",
+    "Restart uses the same24-rank layout and established diagnostic phase gates.",
+    "AMR uses its coherent fixture with the identical screened RHS source.",
+    "Qualification/profile durations do not enter throughput acceptance.",
+    "Selected-rank profile identifies kernel costs, not a global causal critical rank or achieved occupancy.",
+    "Leading qualified legacy v3/v6 references remain about0.1364s/step in an earlier matched allocation; final same-allocation comparison is still required."
+  ],
+  "next_single_experiment": {
+    "recommendation": "Field-batch existing endpoint radial ResidualJet derivative accumulation into stage-local storage, following validated legacy ScriRadialDevice::Prepare.",
+    "reason": "Surface-dependent bulk kernel consumes0.542856s of rank23 main0.901014s; otherthree bulk subsets together0.358159s. Native endpoint reconstruction serially evaluates independent fields, while validated legacy batches owned radial rows and fields.",
+    "hypothesis_limit": "No separate radial-reconstruction timing exists; the slow bulk kernel also performs point-state restore, normal correction and full point RHS. The experiment must determine actual complete-step benefit.",
+    "preserve": [
+      "term accumulation order and arithmetic",
+      "per-stage refresh and exact dependencies",
+      "current bulk128 and other kernel group sizes",
+      "geometry and field equations",
+      "surface Solve/Evaluate",
+      "normal-correction interpolation",
+      "native ownership and task graph"
+    ]
+  }
+}

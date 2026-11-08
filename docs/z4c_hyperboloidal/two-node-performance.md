@@ -30,14 +30,23 @@ checks. Driver, TaskLists, MeshBlocks, tree, equal weights, local surfaces,
 restart/output and refinement machinery remain unchanged. No new persistent
 scratch allocation or workgroup tuning is part of this change.
 
+The main bulk RHS SYCL workgroup size of128 is now also qualified and retained.
+Its repeated unprofiled comparison gives **0.551614 → 0.380092 s/step**, a
+**31.09% reduction** over accepted KO; all six candidate windows beat all six
+controls. Full qualification in job9052329 passes complete-state/chi, observer,
+poison, refinement, restart and diagnostic checks. Only this launch policy
+changes; arithmetic and task dependencies remain intact. See
+`evidence/native-bulk-group128-admission.json`.
+
 Parity remains unfinished. Leading legacy v3/v6 references measured about
 0.1364 s/step in their earlier matched allocation; a new final same-allocation
-comparison is still required. The next single experiment sets only the main
-bulk RHS SYCL workgroup size to128, following the validated legacy policy.
-KO and surface workgroups, geometry calculations and task dependencies remain
-separate experiments. Remaining host/communication gaps need a specific
-dependency diagnosis before scheduling changes; a global causal critical rank
-and achieved occupancy have not been demonstrated.
+comparison is still required. The new profile identifies a slow surface-dependent
+bulk batch. The next single experiment ports legacy's field-batched endpoint
+radial derivatives, with per-stage refresh and unchanged term accumulation.
+Geometry, normal correction, surface Solve/Evaluate and workgroup tuning remain
+separate. Host/communication gaps need a specific dependency diagnosis before
+scheduling changes; a global causal critical rank and achieved occupancy have
+not been demonstrated.
 
 ## Starting evidence
 
@@ -412,6 +421,53 @@ All980 collected files were verified. The independent scientific reviews are
 performance acceptance. The field-parallel KO source is now retained. No wider
 scaling or rank-changing restart claim is made. Surface batching remains untested.
 
+The subsequent main bulk workgroup128 experiment, job9052307 (F/0), compares
+against the accepted KO implementation with identical cache128 settings:
+
+| Run | Three windows (s/complete RK4 step) | Median |
+|---|---|---:|
+| Control C0 | 0.552354, 0.551167, 0.551552 | 0.551552 |
+| Bulk128 K0 | 0.379914, 0.379943, 0.380023 | 0.379943 |
+| Bulk128 K1 | 0.380238, 0.380206, 0.380160 | 0.380206 |
+| Control C1 | 0.551316, 0.551853, 0.551677 | 0.551677 |
+
+The six-window medians are0.551614 and0.380092 s/step. All four complete
+24,704,784-scalar padded31+8 endpoints, parameters and ordinary diagnostics are
+bitwise equal. The same source passed all five qualification cases in job9052329
+(F/0): observer280 stages; poison98,779,824 state/history scalars and complete
+first RHS; AMR48,665,448 scalars acrossfive snapshots and two regrids; and
+prefix2/resume8 continuity. The independent reviews retain the existing restart
+diagnostic phase gates and confirm bitwise agreement with accepted KO. All989
+qualification artifacts were verified. No numerical tolerance changed.
+
+That allocation also ran the existing normal/profiled four-step protocol. Both
+complete endpoints and diagnostics match, and the normal endpoint matches the
+retained cycle2490 reference exactly. Main and KO kernels are distinguished by
+their actual argument signatures, not lambda numbering. The trace confirms
+main workgroup128 and unchanged KO workgroup1024. See
+`evidence/native-bulk-group128-profile-review.json`.
+
+| Sampled rank | Main RHS GPU time | KO GPU time | Normal solve + surface RHS |
+|---|---:|---:|---:|
+| 8 | 0.371550 s, 48 launches | 0.005049 s, 48 launches | No nonempty surface kernels |
+| 23 | 0.901014 s, 64 launches | 0.003889 s, 64 launches | 0.302570 + 0.199277 s, 16 each |
+
+These are recorded kernel durations over four steps, excluding initialization
+and final diagnostic surface calls, not complete-step timings or a global
+critical path. On rank23, the5×128 main launch contributes0.542856 s across16
+calls, with a maximum35.38 ms/call. Its place after normal solve/surface RHS in
+all16 stages identifies the surface-dependent bulk subset. The other three
+bulk subsets together take0.358159 s. Source dependencies predict576 points in
+that subset, including432 radial reconstruction points and288 normal-lift
+points; group shapes corroborate but do not count active work-items themselves.
+
+This selects one next experiment: field-batch the existing endpoint radial
+derivative loops as in validated legacy `ScriRadialDevice::Prepare`. The slow
+kernel also includes restoration, normal correction and the complete point RHS,
+so the radial contribution remains a hypothesis to test with complete-step
+timing. Preserve each field's term order, current policies and dependencies;
+refresh stage-local storage on every use and qualify poison/refinement paths.
+
 Inspect bulk kernel organization, geometry reuse, surface arithmetic,
 synchronization, communication/data layout and imbalance one at a time. Reorder
 only using measured evidence. Preserve the native Driver, task lists, block
@@ -450,6 +506,8 @@ bounded two-node correctness checks when a proposed change requires them.
 | MPI GPU IPC cache capacity, clean retry | Four exact full endpoints; observer, poison, AMR and restart pass | 4.689886 → 0.594371 s; all six candidate windows faster | Accepted native improvement, 7.89x; parity pending |
 | Matched previous-implementation reference | All four references pass full31+8/constraints/horizon gates; actual native brackets exact | Native 0.599393 s; v3/v6 0.136397/0.136795 s | Parity not reached; leading references about4.39x faster |
 | Field-parallel bulk KO | Four complete endpoints exact; CPU KO.1/0 oracles, GPU observer, poison, AMR and restart pass | Control 0.600897 s; candidate 0.549904 s; all six candidate windows faster | Accepted, 8.49% lower time; native infrastructure preserved |
+| Main bulk SYCL workgroup128 | Four complete endpoints exact; observer, poison, AMR, restart and profile-reference equivalence pass | Control 0.551614 s; candidate 0.380092 s; all six candidate windows faster | Accepted, 31.09% lower time; arithmetic and dependencies unchanged |
+| Post-KO/bulk128 selected-rank profile | Normal/profiled/reference complete31+8 and diagnostics exact | Rank23 surface-dependent bulk0.542856 s across16 launches; KO only0.003889 s | Select field-batched radial derivatives next; no occupancy or global critical-rank claim |
 
 Completion requires the committed native implementation to match or beat the
 fastest accepted previous N12 reference median on the same two nodes, with repeat

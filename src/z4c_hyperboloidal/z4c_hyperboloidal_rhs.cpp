@@ -42,7 +42,12 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver,int stage,RHSSubset subset) 
       output(c.m,f,c.k,c.j,c.i)=
           dissipation.Evaluate(p,f,{physical,c.m,c.k,c.j,c.i},epsilon);
     });
-  Kokkos::parallel_for("hyperboloidal block RHS",Kokkos::RangePolicy<>(0,selected.extent_int(0)),
+  auto bulk_policy=Kokkos::RangePolicy<>(0,selected_count);
+#ifdef KOKKOS_ENABLE_SYCL
+  // Reuse the validated legacy bulk workgroup size on SYCL.
+  bulk_policy.set_chunk_size(128);
+#endif
+  Kokkos::parallel_for("hyperboloidal block RHS",bulk_policy,
     KOKKOS_LAMBDA(int index) {
       const int p=selected(index);const auto c=cells(p);const auto map=maps(p);
       const Real inv_h[3]={Real(count),Real(count),Real(count)};

@@ -1,0 +1,99 @@
+{
+  "schema": "native-bulk-group128-build-evidence-v1",
+  "status": "build_only_pass",
+  "candidate_accepted": false,
+  "gpu_executed": false,
+  "build_exit_code": 0,
+  "build_seconds": 40.975464201997966,
+  "inputs": 217,
+  "dependencies": 204,
+  "parent_proof_sha256": "be7af7b23d80c6099ee53e3f014cee4f234094e2eb16fe1239b269a4045ad413",
+  "accepted_ko_control_source_sha256": "ebd097d260d822dd3c7d07755de827de1d6902b4b0be4e9ffcc00538e4afa786",
+  "candidate_source_sha256": "70dd4866b718d126bdfd7e41a8cb461d01dda747849f7bd1a143aa99b6d8c1a8",
+  "candidate_patch_sha256": "7700f52e42fe22b65ef2c6a426bc4126e0cc4c22073fa30129b9569e81bcd8e9",
+  "control_executable_sha256": "53d51d14617fc5f05a7fdb098fb7833522bd85b2ec21044d14c9fcee3449b819",
+  "normal_control_executable_sha256": "f76a03d810e954509d91bf7012a3ed385c4d7830ec3ce9fe66613eb644bc1f86",
+  "common_timing_driver_sha256": "d68a0cf2dc8a61297eb83d34d8c6f9bb93c0ce0c05f2a4f566f3fd8ee428e696",
+  "outputs": {
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/bulk-group128-v1/build/z4c_hyperboloidal_rhs.cpp.o": "098edc32fedc8c1b3c8ded72c32fb38bc5ae5572aecbde2807cbf0e76b120f43",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/bulk-group128-v1/build/athena-candidate-normal": "6c1a9532889306d3cc1511b5d53984f1706c2e2c511ba27935666ccb078a4f9a",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/bulk-group128-v1/build/athena-candidate-timed": "6a6e51179ce68b2213f97a3cdf6aae5965a2be7eae05c6b5cb5eaddca0611b4e"
+  },
+  "proof_sha256": "d75a9862644a61d732c4d288f299f63e67923170c68c75c45747a71d3ce6997b",
+  "collection": {
+    "schema": "native-bulk-group128-build-collection-v1",
+    "files": 11,
+    "archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-bulk-group128-build-artifacts-v1/run-artifacts.tar.gz",
+    "archive_bytes": 44108,
+    "sha256": "e2de0c1794326163609a8c97d3756d22adc89cc89265837eb42f6a6958694cfa",
+    "proof_sha256": "d75a9862644a61d732c4d288f299f63e67923170c68c75c45747a71d3ce6997b",
+    "outputs": {
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/bulk-group128-v1/build/z4c_hyperboloidal_rhs.cpp.o": "098edc32fedc8c1b3c8ded72c32fb38bc5ae5572aecbde2807cbf0e76b120f43",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/bulk-group128-v1/build/athena-candidate-normal": "6c1a9532889306d3cc1511b5d53984f1706c2e2c511ba27935666ccb078a4f9a",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/bulk-group128-v1/build/athena-candidate-timed": "6a6e51179ce68b2213f97a3cdf6aae5965a2be7eae05c6b5cb5eaddca0611b4e"
+    },
+    "inputs": 217,
+    "dependencies": 204,
+    "build_exit_code": 0,
+    "build_seconds": 40.975464201997966,
+    "gpu_executed": false
+  },
+  "transfer": {
+    "schema": "verified-streamed-run-collection-v1",
+    "passed": true,
+    "files": 11,
+    "archive_sha256": "e2de0c1794326163609a8c97d3756d22adc89cc89265837eb42f6a6958694cfa",
+    "archive_bytes": 44108,
+    "remote_archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-bulk-group128-build-artifacts-v1/run-artifacts.tar.gz",
+    "local_archive_created": false,
+    "all_file_sizes_and_hashes_verified": true,
+    "seconds": 0.4405388832092285
+  },
+  "scope": "Main bulk RHS SYCL workgroup128 only, derived exactly from accepted field-parallel KO. Original f3 header/compiler recipe and unchanged other link objects; same d68 timer for accepted KO control and candidate. No solver or GPU execution.",
+  "files": {
+    "build-native/aurora-native-bulk-group128-build-v1/package.json": {
+      "bytes": 1238,
+      "sha256": "49dd5ffc0c348953818d8f20df90bf9588685f9cf0ff6ff57300d18979c511eb"
+    },
+    "build-native/aurora-native-bulk-group128-build-v1/transfer.json": {
+      "bytes": 480,
+      "sha256": "e065aa9d1f316883db6c64b9b5d9fb534d39fa5c0974cad4afa6ec819376b773"
+    },
+    "build-native/aurora-native-bulk-group128-build-v1/run-artifacts/files.json": {
+      "bytes": 1568,
+      "sha256": "7a88832a83489e722eb1ec91849082ecc3077cce64f17bd5a07fd999e899ffb8"
+    },
+    "build-native/aurora-native-bulk-group128-build-v1/run-artifacts/build/provenance.json": {
+      "bytes": 135445,
+      "sha256": "d75a9862644a61d732c4d288f299f63e67923170c68c75c45747a71d3ce6997b"
+    },
+    "build-native/aurora-native-bulk-group128-build-v1/run-artifacts/build/build.log": {
+      "bytes": 25174,
+      "sha256": "1b0d7d8b35b7aa4a8a4594c6c11932e2c17d21bbb5b5809973f98788c8e6c50b"
+    },
+    "build-native/aurora-native-bulk-group128-build-v1/run-artifacts/build/verify.log": {
+      "bytes": 160,
+      "sha256": "dbf7dbaa0b6a59999a13db5f550fd6e492c4635dfbfc4509bdf6be0e6418d553"
+    },
+    "build-native/aurora-native-bulk-group128-build-v1/run-artifacts/build/candidate.mk": {
+      "bytes": 24480,
+      "sha256": "b2c3980fe6e6fe4b5655c70c979965785509596d28141adeefba736400520d36"
+    },
+    "build-native/aurora-native-bulk-group128-build-v1/run-artifacts/build/z4c_hyperboloidal_rhs.d": {
+      "bytes": 25628,
+      "sha256": "95450fbd4b816e9762d0c4cbd1161d41479f6f30b7c4c9c61d8cd2909dc9ca43"
+    },
+    "build-native/native-bulk-group128-candidate-v1/package-files.json": {
+      "bytes": 688,
+      "sha256": "d94ef72447387ac9923475bcc15a63432d86f5b99ec98dda46a4b5c34acd0e36"
+    },
+    "build-native/native-bulk-group128-candidate-v1/builder-adaptation.patch": {
+      "bytes": 7937,
+      "sha256": "22d9f178acaa73dca8240ead7e8fd00eeae2d4818c2612c9ad90cb5fd34ad0da"
+    },
+    "build-native/native-bulk-group128-launch-preparation-v1/build-binding.json": {
+      "bytes": 3230,
+      "sha256": "20833f93ae12f5425da0002a70a8863e0d85630c5dd111430fb9631cddf6de29"
+    }
+  }
+}

@@ -1,0 +1,184 @@
+{
+  "schema": "native-bulk-group128-abba-review-v1",
+  "screen_review_passed": true,
+  "candidate_status": "screened_pending_gpu_qualification",
+  "candidate_retained": false,
+  "complete_gpu_qualification": false,
+  "job_id": "9052307",
+  "terminal": "F/0",
+  "nodes": 2,
+  "ranks": 24,
+  "cycles": [
+    2486,
+    2556
+  ],
+  "warmup_steps": 10,
+  "window_steps": 20,
+  "windows_per_case": 3,
+  "collection": {
+    "path": "build-native/aurora-native-bulk-group128-abba-v1",
+    "package_sha256": "bd3dfa4ed968d5c6ffbb890f9b2a78731c1f7a5116b79cb73ef7b58acafa8aab",
+    "transfer_sha256": "b7b40a7e22e8c4bccd7676a4e0b0f17f5c2aeffbb9a1e50aebac5217315c1bce",
+    "files_sha256": "41961630c4ef3f7fb34e064aa1f7f9ae900cc86aa75bf24accdd5002cde1b329",
+    "verified_files": 107,
+    "archive_sha256": "b30eaaecabf8766bdcac74306cb6efcde27000b7593531f0f099f16925aae633"
+  },
+  "raw_review": {
+    "path": "build-native/bulk-group128-abba-independent-review-v1/results.json",
+    "sha256": "17e4c73f88aba1ec699b9dad0aee1e89bc873c4459ded20550a3695705a5825b"
+  },
+  "candidate_source_sha256": "70dd4866b718d126bdfd7e41a8cb461d01dda747849f7bd1a143aa99b6d8c1a8",
+  "candidate_patch_sha256": "7700f52e42fe22b65ef2c6a426bc4126e0cc4c22073fa30129b9569e81bcd8e9",
+  "accepted_KO_control_source_sha256": "ebd097d260d822dd3c7d07755de827de1d6902b4b0be4e9ffcc00538e4afa786",
+  "accepted_KO_parent_proof_sha256": "be7af7b23d80c6099ee53e3f014cee4f234094e2eb16fe1239b269a4045ad413",
+  "control_executable_sha256": "53d51d14617fc5f05a7fdb098fb7833522bd85b2ec21044d14c9fcee3449b819",
+  "candidate_executable_sha256": "6a6e51179ce68b2213f97a3cdf6aae5965a2be7eae05c6b5cb5eaddca0611b4e",
+  "same_timing_driver_sha256": "d68a0cf2dc8a61297eb83d34d8c6f9bb93c0ce0c05f2a4f566f3fd8ee428e696",
+  "fixed_cache_environment": {
+    "MPIR_CVAR_CH4_IPC_GPU_HANDLE_CACHE": "specialized",
+    "MPIR_CVAR_CH4_IPC_GPU_CACHE_SIZE": "limited",
+    "MPIR_CVAR_CH4_IPC_GPU_MAX_CACHE_ENTRIES": "128",
+    "MPICH_CH4_IPC_GPU_HANDLE_CACHE": null,
+    "MPIR_PARAM_CH4_IPC_GPU_HANDLE_CACHE": null,
+    "MPICH_CH4_IPC_GPU_CACHE_SIZE": null,
+    "MPIR_PARAM_CH4_IPC_GPU_CACHE_SIZE": null,
+    "MPICH_CH4_IPC_GPU_MAX_CACHE_ENTRIES": null,
+    "MPIR_PARAM_CH4_IPC_GPU_MAX_CACHE_ENTRIES": null
+  },
+  "cases": {
+    "timed-C0": {
+      "seconds_per_complete_step": [
+        0.5523542385,
+        0.55116725405,
+        0.55155195925
+      ],
+      "median": 0.55155195925,
+      "max_rank_ids": [
+        [
+          3
+        ],
+        [
+          23
+        ],
+        [
+          15
+        ]
+      ],
+      "separated_seconds": {
+        "startup_max_seconds": 3.891494357,
+        "warmup_max_seconds": 5.834360208,
+        "execute_max_seconds": 38.935931394,
+        "finalize_max_seconds": 5.761555982
+      }
+    },
+    "timed-K0": {
+      "seconds_per_complete_step": [
+        0.3799137647,
+        0.3799427401,
+        0.3800233193
+      ],
+      "median": 0.3799427401,
+      "max_rank_ids": [
+        [
+          8
+        ],
+        [
+          6
+        ],
+        [
+          3
+        ]
+      ],
+      "separated_seconds": {
+        "startup_max_seconds": 3.667204296,
+        "warmup_max_seconds": 4.056790925,
+        "execute_max_seconds": 26.854507622,
+        "finalize_max_seconds": 5.880974082
+      }
+    },
+    "timed-K1": {
+      "seconds_per_complete_step": [
+        0.3802380691,
+        0.38020629275,
+        0.3801603293
+      ],
+      "median": 0.38020629275,
+      "max_rank_ids": [
+        [
+          9
+        ],
+        [
+          4
+        ],
+        [
+          6
+        ]
+      ],
+      "separated_seconds": {
+        "startup_max_seconds": 3.443270256,
+        "warmup_max_seconds": 4.008485448,
+        "execute_max_seconds": 26.820699551,
+        "finalize_max_seconds": 5.449321456
+      }
+    },
+    "timed-C1": {
+      "seconds_per_complete_step": [
+        0.5513155205,
+        0.5518526548,
+        0.5516769287
+      ],
+      "median": 0.5516769287,
+      "max_rank_ids": [
+        [
+          5
+        ],
+        [
+          6
+        ],
+        [
+          7
+        ]
+      ],
+      "separated_seconds": {
+        "startup_max_seconds": 3.141518335,
+        "warmup_max_seconds": 5.710809041,
+        "execute_max_seconds": 38.807830556,
+        "finalize_max_seconds": 5.469063642
+      }
+    }
+  },
+  "performance_screen": {
+    "control_median_seconds": 0.5516144439749999,
+    "candidate_median_seconds": 0.3800918243,
+    "time_reduction_percent": 31.094657064994045,
+    "speedup": 1.451266269646516,
+    "control_range": [
+      0.55116725405,
+      0.5523542385
+    ],
+    "candidate_range": [
+      0.3799137647,
+      0.3802380691
+    ],
+    "all_six_candidate_windows_faster_than_all_six_control_windows": true,
+    "both_candidate_repeat_medians_faster_than_both_controls": true,
+    "scope": "Unprofiled maximum-rank complete-cycle screen against accepted KO; rank IDs are not causal critical-rank identification"
+  },
+  "endpoint_science": {
+    "four_cases_passed": true,
+    "finite_padded31_plus8_scalars_per_case": 24704784,
+    "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+    "state_parameters_initialized_metadata_bitwise_equal_to_admitted_normal2556": true,
+    "three_ordinary_diagnostic_files_bitwise_equal": true,
+    "all169_horizon_coefficients_present_finite": true,
+    "rank_timing_values_checked": 288,
+    "rank_cache_probes_checked": 96,
+    "before_after_frozen_guards_equal": true
+  },
+  "limits": [
+    "GPU endpoint qualification only for four70-cycle continuations; candidate per-stage/poison/AMR/separate restart qualification remains pending.",
+    "All24704784 finite padded31+8 scalars checked; nine unused coarse-header integers excluded and recorded, all initialized metadata and parameters checked.",
+    "Cache128 is observed in24 wrapper-rank probes per case; no in-solver MPI CVAR readback.",
+    "One2-node24-rank N12 ABBA allocation; no wider scaling or long-time claim."
+  ]
+}

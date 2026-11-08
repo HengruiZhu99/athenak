@@ -1,0 +1,87 @@
+{
+  "schema": "native-bulk-group128-observer-restart-review-v1",
+  "passed": true,
+  "job_id": "9052329",
+  "terminal": "F/0",
+  "nodes": 2,
+  "ranks": 24,
+  "collection": {
+    "path": "build-native/aurora-native-bulk-group128-qualification-v1",
+    "package_sha256": "8527a50981d526f00ed6b076573484b57d07df2547e6e3a9c0b38e966ed20ccd",
+    "transfer_sha256": "108e7bb2f86dde68382cbe998a4e984ec98659a5e65054d02854bd3c4cee8a25",
+    "files_sha256": "fd3de7a44a5d690d6542305a06204c5af9fd81c2029b35f9a9d62646081af6fb",
+    "verified_files": 989,
+    "archive_sha256": "5a78965243da33aa924c8bdd15b99d25dbf280a53660d9686289e294bd431fb0"
+  },
+  "raw_review": {
+    "path": "build-native/native-bulk-group128-qualification-review-v1/observer-restart.json",
+    "sha256": "a82f56f0eecbc228044406c30cf30331d31d4c2ea7b2e996e2797ddea4f6f8ca"
+  },
+  "candidate_source_sha256": "70dd4866b718d126bdfd7e41a8cb461d01dda747849f7bd1a143aa99b6d8c1a8",
+  "candidate_patch_sha256": "7700f52e42fe22b65ef2c6a426bc4126e0cc4c22073fa30129b9569e81bcd8e9",
+  "qualification_build_provenance_sha256": "97b441e61983885d8ccd918f252e4ee1aac7131232c74890c8bb86cc4e8289a3",
+  "command_manifest_sha256": "439d87f729771994e5b4b31c3a8312ccdcdb36a66ce274d459273dbc5cb843e8",
+  "accepted_KO_reference_review_sha256": "6e1faa4edd446e95e67267425b28a420b8d7bb4de723593c955a82cb65a557df",
+  "observer70": {
+    "passed": true,
+    "cycles": [
+      2486,
+      2556
+    ],
+    "exact_stage_rows": 280,
+    "max_compatibility": 9.111146658370792e-14,
+    "finite_padded31_plus8_scalars": 24704784,
+    "state_parameters_initialized_metadata_and_three_diagnostics_bitwise_KO": true,
+    "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+    "all169_horizon_coefficients_present_finite": true
+  },
+  "restart": {
+    "passed": true,
+    "prefix_cycles": [
+      0,
+      2
+    ],
+    "resume_cycles": [
+      2,
+      8
+    ],
+    "prefix_and_resume_complete31_plus8_parameters_metadata_stage_rows_and_three_diagnostics_bitwise_KO": true,
+    "resume_complete31_plus8_exact_continuous8": true,
+    "finite_padded31_plus8_scalars_per_checkpoint": 24704784,
+    "resume_payload_sha256": "e303efff82e13776c01c0fd37c603b0cfa6d864586a8d919a38443bd1e65c9a1",
+    "joined_stage_rows_bitwise_continuous8": 32,
+    "max_compatibility": 9.778256860928204e-16,
+    "parameter_differences": {
+      "fastflow/last_a0_0": {
+        "continuous": "0.05985643518454601",
+        "restart": "0.059856432571675132"
+      },
+      "output1/last_time": {
+        "continuous": "0.16666666666666666",
+        "restart": "0.33333333333333331"
+      },
+      "output2/file_number": {
+        "continuous": "2",
+        "restart": "3"
+      },
+      "output2/last_time": {
+        "continuous": "0.16666666666666666",
+        "restart": "0.33333333333333331"
+      }
+    },
+    "diagnostic_comparisons": 12,
+    "max_diagnostic_absolute_difference": 6.13389339321202e-11,
+    "max_diagnostic_gate_fraction": 0.00030669465019872585,
+    "phase": "restart has an additional prefix-final horizon search; retain every final row and apply adopted diagnostic gates",
+    "rank_changing_restart": false
+  },
+  "before_after_frozen_guards_equal": true,
+  "combined_pipeline_completed": true,
+  "three_cases_cache128_rank_probes": 72,
+  "limits": [
+    "This review covers observer70 and prefix2/resume8. Poison8, coherentAMR4 and profile interpretation are separate reviews.",
+    "No performance inference from observed qualification timings.",
+    "Nine unused coarse-header integers are excluded by existing state comparison; all initialized metadata and all31+8 payload values were checked.",
+    "Cache128 recorded in wrapper-rank probes; no in-solver MPI CVAR readback."
+  ]
+}

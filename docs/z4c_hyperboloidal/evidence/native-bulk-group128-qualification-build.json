@@ -1,0 +1,123 @@
+{
+  "schema": "native-bulk-group128-qualification-build-evidence-v1",
+  "status": "build_only_pass",
+  "candidate_accepted": false,
+  "qualification_passed": false,
+  "gpu_executed": false,
+  "build_exit_code": 0,
+  "build_seconds": 55.57278993190266,
+  "input_files": 5040,
+  "coherent_dependencies": 204,
+  "plan_sha256": "8b367fdaafaaf3660e7e5892e435196380770c0c89354f4ae31569e3b0f02534",
+  "proof_sha256": "97b441e61983885d8ccd918f252e4ee1aac7131232c74890c8bb86cc4e8289a3",
+  "executables": {
+    "observer70": {
+      "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/bulk-group128-v1/qualification-build/athena-bulk128-observer70",
+      "sha256": "70bfc31d0ef598083c2e43ad8dd51972235ed4a97c8f5ccc1194bf1cee6d7fe3"
+    },
+    "poison8": {
+      "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/bulk-group128-v1/qualification-build/athena-bulk128-poison8",
+      "sha256": "0046ed6b65b6ae6a087c9ce6a3cb57a295b2558dd40ec0a95fe9d365798a6c50"
+    },
+    "restart": {
+      "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/bulk-group128-v1/qualification-build/athena-bulk128-restart",
+      "sha256": "428ca5f69ceb27704d51ce9af1563a8f81b98d325fd4de0801fb43dc2d513889"
+    },
+    "amr4": {
+      "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/bulk-group128-v1/qualification-build/athena-bulk128-amr4",
+      "sha256": "1f786b6bcd27d8b17509a95a71897ed63d8ff3d0ab59e8f24dff8c2aeec6c42e"
+    }
+  },
+  "f3_rhs_object": {
+    "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/bulk-group128-v1/build/z4c_hyperboloidal_rhs.cpp.o",
+    "sha256": "098edc32fedc8c1b3c8ded72c32fb38bc5ae5572aecbde2807cbf0e76b120f43"
+  },
+  "coherent_rhs_object": {
+    "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/bulk-group128-v1/qualification-build/coherent-z4c_hyperboloidal_rhs.cpp.o",
+    "sha256": "11bca11a46b72e48775fb088a2d273cbd25ff3dd9346b401e241e44d15ddd03a"
+  },
+  "scope": "Three fixtures reuse the screened WG128 f3 RHS object; AMR compiles identical WG128 source with the coherent header/recipe. Each link changes RHS/output only. All frozen inputs unchanged; no GPU execution.",
+  "collection": {
+    "schema": "native-bulk-group128-qualification-build-collection-v1",
+    "files": 7,
+    "archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-bulk-group128-qualification-build-artifacts-v1/run-artifacts.tar.gz",
+    "archive_bytes": 278884,
+    "sha256": "d140f5386f28839b25aeb441e4a5905966e191cd7b64193d8792dec1f588c6dc",
+    "proof_sha256": "97b441e61983885d8ccd918f252e4ee1aac7131232c74890c8bb86cc4e8289a3",
+    "outputs": {
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/bulk-group128-v1/qualification-build/coherent-z4c_hyperboloidal_rhs.cpp.o": "11bca11a46b72e48775fb088a2d273cbd25ff3dd9346b401e241e44d15ddd03a",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/bulk-group128-v1/qualification-build/athena-bulk128-observer70": "70bfc31d0ef598083c2e43ad8dd51972235ed4a97c8f5ccc1194bf1cee6d7fe3",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/bulk-group128-v1/qualification-build/athena-bulk128-poison8": "0046ed6b65b6ae6a087c9ce6a3cb57a295b2558dd40ec0a95fe9d365798a6c50",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/bulk-group128-v1/qualification-build/athena-bulk128-restart": "428ca5f69ceb27704d51ce9af1563a8f81b98d325fd4de0801fb43dc2d513889",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/bulk-group128-v1/qualification-build/athena-bulk128-amr4": "1f786b6bcd27d8b17509a95a71897ed63d8ff3d0ab59e8f24dff8c2aeec6c42e"
+    },
+    "executables": {
+      "observer70": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/bulk-group128-v1/qualification-build/athena-bulk128-observer70",
+      "poison8": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/bulk-group128-v1/qualification-build/athena-bulk128-poison8",
+      "restart": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/bulk-group128-v1/qualification-build/athena-bulk128-restart",
+      "amr4": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/bulk-group128-v1/qualification-build/athena-bulk128-amr4"
+    },
+    "inputs": 5040,
+    "dependencies": 204,
+    "build_exit_code": 0,
+    "build_seconds": 55.57278993190266,
+    "gpu_executed": false
+  },
+  "transfer": {
+    "schema": "verified-streamed-run-collection-v1",
+    "passed": true,
+    "files": 7,
+    "archive_sha256": "d140f5386f28839b25aeb441e4a5905966e191cd7b64193d8792dec1f588c6dc",
+    "archive_bytes": 278884,
+    "remote_archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-bulk-group128-qualification-build-artifacts-v1/run-artifacts.tar.gz",
+    "local_archive_created": false,
+    "all_file_sizes_and_hashes_verified": true,
+    "seconds": 0.5150909423828125
+  },
+  "files": {
+    "build-native/aurora-native-bulk-group128-qualification-build-v1/package.json": {
+      "bytes": 2515,
+      "sha256": "aad2c8b25408aa4d0a012076e89fa50874a830c24d59c2d69d167d83c04d14c5"
+    },
+    "build-native/aurora-native-bulk-group128-qualification-build-v1/transfer.json": {
+      "bytes": 494,
+      "sha256": "90930669e7006998426502dadaa35bf53e7f419ba745355b85111b4126ac255e"
+    },
+    "build-native/aurora-native-bulk-group128-qualification-build-v1/run-artifacts/files.json": {
+      "bytes": 1052,
+      "sha256": "3bf7805bd38582c30d5f2cdfebec7d388e73afe61370a2f325539f52003e6983"
+    },
+    "build-native/aurora-native-bulk-group128-qualification-build-v1/run-artifacts/qualification-build/provenance.json": {
+      "bytes": 1253680,
+      "sha256": "97b441e61983885d8ccd918f252e4ee1aac7131232c74890c8bb86cc4e8289a3"
+    },
+    "build-native/aurora-native-bulk-group128-qualification-build-v1/run-artifacts/qualification-build/build.log": {
+      "bytes": 48067,
+      "sha256": "a0b8bac802e7024f436f54c2f37792906115b500055cd5e83626fcef3f95355f"
+    },
+    "build-native/aurora-native-bulk-group128-qualification-build-v1/run-artifacts/qualification-build/verify.log": {
+      "bytes": 70,
+      "sha256": "086b35e4ee26007004330e742dd6ffd1fe2abeb87fd5c1a53df010a2d8d3ea77"
+    },
+    "build-native/aurora-native-bulk-group128-qualification-build-v1/run-artifacts/qualification-build/qualification.mk": {
+      "bytes": 47375,
+      "sha256": "c6fdd3e6f4cc16783fba11875d495f0d0ea0985c01f4bc462902530fde9ad5b0"
+    },
+    "build-native/aurora-native-bulk-group128-qualification-build-v1/run-artifacts/qualification-build/coherent-rhs.d": {
+      "bytes": 35167,
+      "sha256": "c3bb860ad9ecbb5666d29d8df5133fbedb7e0691f0a8f71c880531d5a40c47a7"
+    },
+    "build-native/aurora-native-bulk-group128-qualification-build-v1/run-artifacts/qualification-package/native_bulk_group128_qualification_build.py": {
+      "bytes": 8567,
+      "sha256": "3524dd37c0ec23c4143fae13265781ce52c8a12ee0bb5ceaa8994a9bc63f54bf"
+    },
+    "build-native/aurora-native-bulk-group128-qualification-build-v1/run-artifacts/qualification-package/plan.json": {
+      "bytes": 21422,
+      "sha256": "8b367fdaafaaf3660e7e5892e435196380770c0c89354f4ae31569e3b0f02534"
+    },
+    "build-native/native-bulk-group128-qualification-build-v1/builder-adaptation.patch": {
+      "bytes": 2956,
+      "sha256": "e36afba4bd12b572d33ce0f00939d0bab4ab5a17dd819e95ea2a6841f6364aa3"
+    }
+  }
+}

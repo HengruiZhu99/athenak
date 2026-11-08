@@ -1,0 +1,367 @@
+{
+  "schema": "native-bulk-group128-combined-submission-evidence-v1",
+  "status": "completed_collected_independent_science_pending",
+  "job_id": "9052329",
+  "submission": {
+    "schema": "native-bulk-group128-combined-submission-v1",
+    "job_id": "9052329.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "nodes": 2,
+    "ranks": 24,
+    "state": "Q",
+    "utc": "2026-11-08T21:20:45.057600+00:00",
+    "fresh_queue_clear": true,
+    "held_jobs_untouched": true,
+    "preflight_sha256": "ac408050ef9e93942d77f1d0e02a1373d7f84742e8b360cde7535dc2a82e000a",
+    "qualification_manifest_sha256": "d8ba803b5c80a3e624685eb811cbcc28a906026d57c7f515fbf657251cd7b73f",
+    "profile_manifest_sha256": "a81c9a81207958a8d53fbf35d1dc058b7f9f2e1f5dcd29b3185aac8dab1d4c1b",
+    "combined_binding_sha256": "e400b724d938f37db52d2b5d16c5d8a4347e27b9bbc1249f16bee05b3b34b42d",
+    "qualification_build_provenance_sha256": "97b441e61983885d8ccd918f252e4ee1aac7131232c74890c8bb86cc4e8289a3",
+    "cache_capacity": 128,
+    "cases": [
+      "observer70",
+      "poison8",
+      "amr4",
+      "prefix2",
+      "resume8",
+      "normal4",
+      "profiled4"
+    ],
+    "pbs_minutes": 30,
+    "outer_bound_seconds": 1680,
+    "sum_individual_caps_seconds": 2700,
+    "outer_can_preempt": true,
+    "new_numerical_factor": false,
+    "candidate_accepted": false,
+    "independent_scientific_review_pending": true
+  },
+  "preflight": {
+    "schema": "native-bulk-group128-combined-preflight-v1",
+    "passed": true,
+    "qualification_files": 21,
+    "profile_files": 12,
+    "qualification_manifest_sha256": "d8ba803b5c80a3e624685eb811cbcc28a906026d57c7f515fbf657251cd7b73f",
+    "profile_manifest_sha256": "a81c9a81207958a8d53fbf35d1dc058b7f9f2e1f5dcd29b3185aac8dab1d4c1b",
+    "combined_binding_sha256": "e400b724d938f37db52d2b5d16c5d8a4347e27b9bbc1249f16bee05b3b34b42d",
+    "qualification_commands_sha256": "439d87f729771994e5b4b31c3a8312ccdcdb36a66ce274d459273dbc5cb843e8",
+    "qualification_build_provenance_sha256": "97b441e61983885d8ccd918f252e4ee1aac7131232c74890c8bb86cc4e8289a3",
+    "profile_tool_sha256": "af42167b3842eaaffacd99a7be56aaf6cbcb5f8b6df259f9e3a7bb4eb1f9e17c",
+    "frozen_and_candidate_guards_passed": true,
+    "actual_cases_absent": true,
+    "seconds": 36.54798986809328,
+    "utc": "2026-11-08T21:20:02.756707+00:00",
+    "gpu_executed": false
+  },
+  "package_readiness": {
+    "schema": "native-bulk-group128-qualification-launch-readiness-v1",
+    "passed": true,
+    "scope": "Private exact five-case numerical reader reuse plus reviewed separate profile tail; no GPU execution/submission",
+    "package_files": 21,
+    "package_manifest_sha256": "d8ba803b5c80a3e624685eb811cbcc28a906026d57c7f515fbf657251cd7b73f",
+    "command_manifest_sha256": "439d87f729771994e5b4b31c3a8312ccdcdb36a66ce274d459273dbc5cb843e8",
+    "candidate_build_provenance_sha256": "97b441e61983885d8ccd918f252e4ee1aac7131232c74890c8bb86cc4e8289a3",
+    "candidate_build_verifier_sha256": "3524dd37c0ec23c4143fae13265781ce52c8a12ee0bb5ceaa8994a9bc63f54bf",
+    "profile_package_manifest_sha256": "a81c9a81207958a8d53fbf35d1dc058b7f9f2e1f5dcd29b3185aac8dab1d4c1b",
+    "combined_binding_sha256": "e400b724d938f37db52d2b5d16c5d8a4347e27b9bbc1249f16bee05b3b34b42d",
+    "all_five_completed_science_branches_ast_identical_except_schema": true,
+    "syntax_import_help_and_five_command_resolution_passed": true,
+    "actual_build_files_rehashed": 7,
+    "outer_cap_seconds": 1680,
+    "sum_individual_solver_caps_seconds": 2700,
+    "outer_can_preempt": true,
+    "performance_admission": false
+  },
+  "files": {
+    "build-native/native-bulk-group128-qualification-preparation-v1/remote-records/remote-manifest.json": {
+      "bytes": 2857,
+      "sha256": "ffd4428ff288eec1a6bea7e94799589f9f34efdf936f7e0bbe81038555d6db3f"
+    },
+    "build-native/native-bulk-group128-qualification-preparation-v1/remote-records/transfer.json": {
+      "bytes": 77,
+      "sha256": "09172e7de15c742822954ed1aa76b858fbd8291da34b065f42358069dd5612db"
+    },
+    "build-native/native-bulk-group128-qualification-preparation-v1/remote-records/combined-submission/qsub.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "build-native/native-bulk-group128-qualification-preparation-v1/remote-records/combined-submission/queue-before.txt": {
+      "bytes": 565,
+      "sha256": "3d25bdbc0e3e858f2851b3751eb637a7291bb50575ccb5051acb9f14148969be"
+    },
+    "build-native/native-bulk-group128-qualification-preparation-v1/remote-records/combined-submission/previous-terminal.txt": {
+      "bytes": 3494,
+      "sha256": "e97286f8a47d254cb58caea1a4fc02794e5458a04f49daaca7dfb8dba7882ce7"
+    },
+    "build-native/native-bulk-group128-qualification-preparation-v1/remote-records/combined-submission/qsub.stdout": {
+      "bytes": 56,
+      "sha256": "e4c336c2954fe5223a54c4ba46477f2950171d7db8b4467c34db667a248f412c"
+    },
+    "build-native/native-bulk-group128-qualification-preparation-v1/remote-records/combined-submission/attempt.json": {
+      "bytes": 234,
+      "sha256": "0fa88eb59a8f26d6847f427d691809d20e83d0b0b312f3f4a9b207b22607fdf6"
+    },
+    "build-native/native-bulk-group128-qualification-preparation-v1/remote-records/combined-submission/submission.json": {
+      "bytes": 1163,
+      "sha256": "1767eb5d526e4bbcd0b9904b36c2f9dc8f436fa921a210af5f82e7ac10a0a526"
+    },
+    "build-native/native-bulk-group128-qualification-preparation-v1/remote-records/combined-submission/submitted-qstat.txt": {
+      "bytes": 2837,
+      "sha256": "41c3ebd2b6e7cd401ce89f24463965c61a4d392af84b0bd68f8041e3a5690265"
+    },
+    "build-native/native-bulk-group128-qualification-preparation-v1/remote-records/combined-preflight/results.json": {
+      "bytes": 914,
+      "sha256": "ac408050ef9e93942d77f1d0e02a1373d7f84742e8b360cde7535dc2a82e000a"
+    },
+    "build-native/native-bulk-group128-qualification-preparation-v1/remote-records/combined-preflight/profile/timing-verify-before.txt": {
+      "bytes": 96,
+      "sha256": "2fce95b383e78b648cb43f29235dc871675d41e3347d300eb716d6f298d3fbc0"
+    },
+    "build-native/native-bulk-group128-qualification-preparation-v1/remote-records/combined-preflight/profile/timed-observer-verify-before.txt": {
+      "bytes": 245,
+      "sha256": "250ba1628ad896cfa9359394e6fb8678ce8aa98171f9f1a7ae55f67cab48a3f3"
+    },
+    "build-native/native-bulk-group128-qualification-preparation-v1/remote-records/combined-preflight/profile/guard-before.json": {
+      "bytes": 1665,
+      "sha256": "28339ad976a1f52d41b4dae491ee092938d8b1344b8b1c591241e4a1028270b9"
+    },
+    "build-native/native-bulk-group128-qualification-preparation-v1/remote-records/combined-preflight/profile/candidate-verify-before.txt": {
+      "bytes": 160,
+      "sha256": "dbf7dbaa0b6a59999a13db5f550fd6e492c4635dfbfc4509bdf6be0e6418d553"
+    },
+    "build-native/native-bulk-group128-qualification-preparation-v1/remote-records/combined-preflight/qualification/timing-verify-before.txt": {
+      "bytes": 96,
+      "sha256": "2fce95b383e78b648cb43f29235dc871675d41e3347d300eb716d6f298d3fbc0"
+    },
+    "build-native/native-bulk-group128-qualification-preparation-v1/remote-records/combined-preflight/qualification/qualification-guard-before.json": {
+      "bytes": 3505,
+      "sha256": "7d54965fe7d13796f455be910211f338d076acb45176c1f1a27afab7865cbbde"
+    },
+    "build-native/native-bulk-group128-qualification-preparation-v1/remote-records/combined-preflight/qualification/timed-observer-verify-before.txt": {
+      "bytes": 245,
+      "sha256": "250ba1628ad896cfa9359394e6fb8678ce8aa98171f9f1a7ae55f67cab48a3f3"
+    },
+    "build-native/native-bulk-group128-qualification-preparation-v1/remote-records/combined-preflight/qualification/guard-before.json": {
+      "bytes": 1665,
+      "sha256": "28339ad976a1f52d41b4dae491ee092938d8b1344b8b1c591241e4a1028270b9"
+    },
+    "build-native/native-bulk-group128-qualification-preparation-v1/remote-records/combined-preflight/qualification/candidate-verify-before.txt": {
+      "bytes": 70,
+      "sha256": "086b35e4ee26007004330e742dd6ffd1fe2abeb87fd5c1a53df010a2d8d3ea77"
+    },
+    "build-native/native-bulk-group128-qualification-preparation-v1/remote-records/combined-preflight/qualification/coherent-verify-before.txt": {
+      "bytes": 48,
+      "sha256": "55645eee104b1e7768ca083452e2bf923c98b127173f3c05adc476efd1a81229"
+    },
+    "build-native/native-bulk-group128-qualification-preparation-v1/files.json": {
+      "bytes": 2922,
+      "sha256": "d8ba803b5c80a3e624685eb811cbcc28a906026d57c7f515fbf657251cd7b73f"
+    },
+    "build-native/native-bulk-group128-qualification-preparation-v1/readiness.json": {
+      "bytes": 1162,
+      "sha256": "7ca0d8ecd8ec9cdc9e8caaf9fe8e10153dc76869d1b2262f428b090975044174"
+    },
+    "build-native/native-bulk-group128-qualification-preparation-v1/package/qualification-commands.json": {
+      "bytes": 13080,
+      "sha256": "439d87f729771994e5b4b31c3a8312ccdcdb36a66ce274d459273dbc5cb843e8"
+    },
+    "build-native/native-bulk-group128-qualification-preparation-v1/package/combined-binding.json": {
+      "bytes": 1483,
+      "sha256": "e400b724d938f37db52d2b5d16c5d8a4347e27b9bbc1249f16bee05b3b34b42d"
+    },
+    "build-native/native-bulk-group128-profile-preparation-v1/files.json": {
+      "bytes": 1649,
+      "sha256": "a81c9a81207958a8d53fbf35d1dc058b7f9f2e1f5dcd29b3185aac8dab1d4c1b"
+    },
+    "build-native/native-bulk-group128-qualification-preparation-v1/last-status.json": {
+      "bytes": 2184,
+      "sha256": "7f0125be49d5932ba42ba82b93e9db197ca8d5439dc1b8de82d6d0fea78d6112"
+    },
+    "build-native/aurora-native-bulk-group128-profile-v1/package.json": {
+      "bytes": 1060,
+      "sha256": "2bb1c021578f2e0842dbf54b4c1aa1b602d52758ec32fe9d1194f9702f33b9e6"
+    },
+    "build-native/aurora-native-bulk-group128-profile-v1/transfer.json": {
+      "bytes": 486,
+      "sha256": "5c93a9bffacef27ae15ce4364d5420d5da62926f6f2fe0c1c0903bb3861b9020"
+    },
+    "build-native/aurora-native-bulk-group128-profile-v1/run-artifacts/files.json": {
+      "bytes": 17151,
+      "sha256": "7df703146368d7338693797c64ec3ecd119912dbb7a80875894845b436dd52ec"
+    },
+    "build-native/aurora-native-bulk-group128-profile-v1/run-artifacts/terminal-qstat.txt": {
+      "bytes": 3545,
+      "sha256": "9dbc302426bb3d372e19ea28f53df03e0de38d838321148e9243f8f2b64fd847"
+    },
+    "build-native/native-bulk-group128-qualification-preparation-v1/queue-after-terminal.txt": {
+      "bytes": 565,
+      "sha256": "3d25bdbc0e3e858f2851b3751eb637a7291bb50575ccb5051acb9f14148969be"
+    },
+    "build-native/aurora-native-bulk-group128-qualification-v1/package.json": {
+      "bytes": 861,
+      "sha256": "8527a50981d526f00ed6b076573484b57d07df2547e6e3a9c0b38e966ed20ccd"
+    },
+    "build-native/aurora-native-bulk-group128-qualification-v1/transfer.json": {
+      "bytes": 497,
+      "sha256": "108e7bb2f86dde68382cbe998a4e984ec98659a5e65054d02854bd3c4cee8a25"
+    },
+    "build-native/aurora-native-bulk-group128-qualification-v1/run-artifacts/files.json": {
+      "bytes": 184648,
+      "sha256": "fd3de7a44a5d690d6542305a06204c5af9fd81c2029b35f9a9d62646081af6fb"
+    },
+    "build-native/aurora-native-bulk-group128-qualification-v1/run-artifacts/terminal-qstat.txt": {
+      "bytes": 3545,
+      "sha256": "9dbc302426bb3d372e19ea28f53df03e0de38d838321148e9243f8f2b64fd847"
+    }
+  },
+  "candidate_accepted": false,
+  "qualification_passed": false,
+  "independent_scientific_review_pending": true,
+  "performance_measurement": false,
+  "build_evidence": "docs/z4c_hyperboloidal/evidence/native-bulk-group128-qualification-build.json",
+  "scope": "Five existing qualification cases followed by candidate normal/profiled four-step comparison, two nodes/24 ranks, cache128. Operational results require independent full-state/observer/poison/AMR/restart review. Primary performance screen is separately retained; profiler durations are diagnostic only.",
+  "budget_note": "Per-case caps sum2700s; reviewed hard outer bound1680s can preempt. No worst-case completion claim.",
+  "terminal_observation": {
+    "utc": "2026-11-08T21:30:38.029064+00:00",
+    "job_id": "9052329",
+    "state": "F",
+    "exit_status": "0",
+    "walltime": "00:06:01",
+    "cases": {
+      "observer70": {
+        "exists": true,
+        "exit": "0",
+        "proof_passed": true,
+        "tail": [
+          "zone-cycles/cpu_second = 391805",
+          "particle-updates/cpu_second = 0"
+        ]
+      },
+      "poison8": {
+        "exists": true,
+        "exit": "0",
+        "proof_passed": true,
+        "tail": [
+          "elapsed=7.1977889709999996e+00 cycle=7 time=3.2860942614932214e-03 dt=4.6944203735617445e-04",
+          "PASS native stage trace poison eight steps32 stages"
+        ]
+      },
+      "amr4": {
+        "exists": true,
+        "exit": "0",
+        "proof_passed": true,
+        "tail": [
+          "AMR_CYCLE {\"cycle\":4,\"time\":8.00000000000000038e-04,\"dt\":2.00000000000000010e-04,\"blocks\":106,\"sequence\":2,\"bulk_points\":229392,\"scri_points\":864,\"zero_scri_ranks\":18}",
+          "PASS four native Driver cycles with two AMR events refreshed_neighbors=4831488"
+        ]
+      },
+      "prefix2": {
+        "exists": true,
+        "exit": "0",
+        "proof_passed": true,
+        "tail": [
+          "zone-cycles/cpu_second = 1.1397915625000000e+05",
+          "particle-updates/cpu_second = 0.0000000000000000e+00"
+        ]
+      },
+      "resume8": {
+        "exists": true,
+        "exit": "0",
+        "proof_passed": true,
+        "tail": [
+          "zone-cycles/cpu_second = 1.8619634375000000e+05",
+          "particle-updates/cpu_second = 0.0000000000000000e+00"
+        ]
+      },
+      "normal": {
+        "exists": true,
+        "exit": "0",
+        "proof_passed": null,
+        "tail": [
+          "zone-cycles/cpu_second = 108824",
+          "particle-updates/cpu_second = 0"
+        ]
+      },
+      "profiled": {
+        "exists": true,
+        "exit": "0",
+        "proof_passed": null,
+        "tail": [
+          "[INFO] Log is stored in unitrace.2109383.23.txt",
+          "[INFO] Timeline is stored in /lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/native-bulk-group128-profile-v1/profiled/ranks/rank23/athena-candidat.2109383.23.json"
+        ]
+      }
+    },
+    "qualification_pipeline": true,
+    "combined_complete": true,
+    "profile_passed": true
+  },
+  "profile_collection": {
+    "schema": "native-n12-profile-compact-collection-v1",
+    "job_id": 9052329,
+    "nodes": 2,
+    "ranks": 24,
+    "job_state": "F",
+    "exit_status": 0,
+    "raw_root": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/native-bulk-group128-profile-v1",
+    "raw_files": 82,
+    "files": 95,
+    "compact_files": 95,
+    "archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-bulk-group128-profile-compact-9052329/run-artifacts.tar.gz",
+    "sha256": "66b37d4ed0e0f1f2efad6064da00e7ad15834dd00b34045acf8fdbfd65f3414d",
+    "archive_sha256": "66b37d4ed0e0f1f2efad6064da00e7ad15834dd00b34045acf8fdbfd65f3414d",
+    "archive_bytes": 543014,
+    "qualification_report": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/native-bulk-group128-profile-v1/qualification.json",
+    "qualification_sha256": "254f0cd071d33dc7d7f11d93f8a215b7da2f0a8e06c0ffecafa294d181a5f707",
+    "offline_reanalysis": null,
+    "raw_traces_and_checkpoints_retained_remote": true,
+    "performance_measurement": false
+  },
+  "profile_transfer": {
+    "schema": "verified-streamed-run-collection-v1",
+    "passed": true,
+    "files": 95,
+    "archive_sha256": "66b37d4ed0e0f1f2efad6064da00e7ad15834dd00b34045acf8fdbfd65f3414d",
+    "archive_bytes": 543014,
+    "remote_archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-bulk-group128-profile-compact-9052329/run-artifacts.tar.gz",
+    "local_archive_created": false,
+    "all_file_sizes_and_hashes_verified": true,
+    "seconds": 0.6579999923706055
+  },
+  "qualification_collection": {
+    "schema": "native-bulk-group128-qualification-collection-v1",
+    "job_id": "9052329",
+    "nodes": 2,
+    "ranks": 24,
+    "job_state": "F",
+    "exit_status": 0,
+    "cases": [
+      "observer70",
+      "poison8",
+      "amr4",
+      "prefix2",
+      "resume8"
+    ],
+    "files": 989,
+    "command_manifest_sha256": "439d87f729771994e5b4b31c3a8312ccdcdb36a66ce274d459273dbc5cb843e8",
+    "archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-bulk-group128-qualification-artifacts-9052329/run-artifacts.tar.gz",
+    "archive_bytes": 747647969,
+    "sha256": "5a78965243da33aa924c8bdd15b99d25dbf280a53660d9686289e294bd431fb0",
+    "total_uncompressed_bytes": 2154265255,
+    "created_utc": "2026-11-08T21:33:08.588674+00:00",
+    "operational_checks_passed": true,
+    "independent_scientific_review_pending": true,
+    "performance_admission": false
+  },
+  "qualification_transfer": {
+    "schema": "verified-streamed-run-collection-v1",
+    "passed": true,
+    "files": 989,
+    "archive_sha256": "5a78965243da33aa924c8bdd15b99d25dbf280a53660d9686289e294bd431fb0",
+    "archive_bytes": 747647969,
+    "remote_archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-bulk-group128-qualification-artifacts-9052329/run-artifacts.tar.gz",
+    "local_archive_created": false,
+    "all_file_sizes_and_hashes_verified": true,
+    "seconds": 33.10461711883545
+  },
+  "sessions_terminal": true,
+  "remaining_allocation": "none; original held jobs unchanged"
+}

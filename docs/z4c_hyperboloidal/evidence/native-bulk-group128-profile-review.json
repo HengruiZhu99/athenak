@@ -1,0 +1,193 @@
+{
+  "schema": "native-bulk-group128-profile-independent-review-v1",
+  "passed": true,
+  "job_id": "9052329",
+  "nodes": 2,
+  "ranks": 24,
+  "cycles": [
+    2486,
+    2490
+  ],
+  "selected_ranks": [
+    8,
+    23
+  ],
+  "performance_measurement": false,
+  "scientific_qualification": {
+    "candidate_normal_profiled_complete31_plus8_exact": true,
+    "candidate_normal_retained_reference_complete31_plus8_exact": true,
+    "padded_scalars": 24704784,
+    "parameters_exact": true,
+    "all_three_ordinary_diagnostics_exact": true,
+    "reference_cycle": 2490,
+    "reference": "runs/native-n12-profile-cache128-v1/normal",
+    "normal_checkpoint_sha256": "f27efd7e45983fd90f23011b58ebedf92a4b193a7b0a45744a4aefa2e8ab97f8",
+    "normal_reference_report": "build-native/native-bulk-group128-profile-review-v1/normal-equivalence.json",
+    "normal_reference_report_sha256": "fc5ac9e962709f3d71fc2f0f1d6808b040198f86f5119fd0feb9da39b32ff964"
+  },
+  "source_and_runtime": {
+    "candidate_normal_sha256": "6c1a9532889306d3cc1511b5d53984f1706c2e2c511ba27935666ccb078a4f9a",
+    "candidate_build_proof_sha256": "d75a9862644a61d732c4d288f299f63e67923170c68c75c45747a71d3ce6997b",
+    "candidate_source_sha256": "70dd4866b718d126bdfd7e41a8cb461d01dda747849f7bd1a143aa99b6d8c1a8",
+    "compact_files_rehashed": 95,
+    "launch_environment_records": 48,
+    "actual_selected_process_records": 4,
+    "core_library_images_unchanged": true,
+    "frozen_source_objects_and_candidate_before_after_guards_passed": true,
+    "cache128_launcher_and_selected_process_environment_verified": true
+  },
+  "units_and_classification": {
+    "text_unit": "nanoseconds",
+    "chrome_unit": "microseconds",
+    "all_rhs_groups_units_crosschecked": true,
+    "main": "CalcRHS parallel-for lambda(int), RangePolicy<>; ordinal ignored",
+    "ko": "CalcRHS parallel-for lambda(long), RangePolicy<IndexType<long>>; ordinal ignored",
+    "validity": "CalcRHS ParallelReduce lambda(int,int&), including tiny finalization kernels",
+    "surface": "Only actual Solve/Evaluate device kernels in main-span; local-size1 reduction-finalization kernels excluded"
+  },
+  "rank_local_measurements": {
+    "8": {
+      "rhs_span_seconds": 1.74384975,
+      "all_rhs_envelope_seconds": 1.9510485,
+      "gpu_union_seconds": 0.42278875,
+      "cpu_union_seconds": 0.41988125,
+      "surface_in_main_span": {
+        "solve": {
+          "calls": 0,
+          "total_seconds": 0.0
+        },
+        "evaluate": {
+          "calls": 0,
+          "total_seconds": 0.0
+        }
+      },
+      "main": {
+        "calls": 48,
+        "total_seconds": 0.37154976000000006
+      },
+      "ko": {
+        "calls": 48,
+        "total_seconds": 0.0050492
+      },
+      "validity": {
+        "calls": 64,
+        "total_seconds": 0.0005865599999999999
+      },
+      "main_workgroup": 128,
+      "ko_workgroup": 1024,
+      "large_gap_seconds": [
+        0.32791875,
+        0.078572,
+        0.05973175,
+        0.05561575,
+        0.08280625,
+        0.0610805,
+        0.06171375,
+        0.0795155,
+        0.057871,
+        0.06146275
+      ]
+    },
+    "23": {
+      "rhs_span_seconds": 1.824008,
+      "all_rhs_envelope_seconds": 1.82413775,
+      "gpu_union_seconds": 1.474615,
+      "cpu_union_seconds": 1.49373575,
+      "surface_in_main_span": {
+        "solve": {
+          "calls": 16,
+          "total_seconds": 0.3025700800000001
+        },
+        "evaluate": {
+          "calls": 16,
+          "total_seconds": 0.19927744000000003
+        }
+      },
+      "main": {
+        "calls": 64,
+        "total_seconds": 0.9010140799999998
+      },
+      "ko": {
+        "calls": 64,
+        "total_seconds": 0.003889280000000001
+      },
+      "validity": {
+        "calls": 64,
+        "total_seconds": 0.0006056000000000001
+      },
+      "main_workgroup": 128,
+      "ko_workgroup": 1024,
+      "large_gap_seconds": [
+        0.06033075,
+        0.15311975,
+        0.0777505
+      ]
+    }
+  },
+  "slow_subset": {
+    "rank": 23,
+    "main_group_shape": [
+      5,
+      128
+    ],
+    "calls": 16,
+    "total_gpu_seconds": 0.5428555199999999,
+    "maximum_launch_seconds": 0.03538384,
+    "all_16_stage_orders_verified": true,
+    "main_shapes_per_stage": [
+      3,
+      4,
+      57,
+      5
+    ],
+    "normal_solve_and_surface_rhs_complete_before_each_slow_launch": true,
+    "identified_subset": "RHSSubset::Surface: surface-dependent BULK RHS",
+    "source_expected_points": 576,
+    "source_radial_reconstruction_points": 432,
+    "source_normal_lift_points": 288,
+    "point_count_scope": "N12 source dependency derivation: radius4 KO marks four12x12 layers; radial rows are last3 layers, normal lift last2. Actual launch shapes corroborate but do not independently count active threads.",
+    "order_report_sha256": "f4750ffd9f13237a0e4e6e9c0f74cde338bb5f0fbc2aa5722548a7be467fe32c"
+  },
+  "next_single_experiment": {
+    "recommendation": "Field-batch existing endpoint radial ResidualJet derivative accumulation into stage-local storage, following validated legacy ScriRadialDevice::Prepare.",
+    "reason": "Surface-dependent bulk kernel consumes0.542856s of rank23 main0.901014s; otherthree bulk subsets together0.358159s. Native endpoint reconstruction serially evaluates independent fields, while validated legacy batches owned radial rows and fields.",
+    "hypothesis_limit": "No separate radial-reconstruction timing exists; the slow bulk kernel also performs point-state restore, normal correction and full point RHS. The experiment must determine actual complete-step benefit.",
+    "preserve": [
+      "term accumulation order and arithmetic",
+      "per-stage refresh and exact dependencies",
+      "current bulk128 and other kernel group sizes",
+      "geometry and field equations",
+      "surface Solve/Evaluate",
+      "normal-correction interpolation",
+      "native ownership and task graph"
+    ]
+  },
+  "inputs": {
+    "build-native/aurora-native-bulk-group128-profile-v1/package.json": "2bb1c021578f2e0842dbf54b4c1aa1b602d52758ec32fe9d1194f9702f33b9e6",
+    "build-native/aurora-native-bulk-group128-profile-v1/transfer.json": "5c93a9bffacef27ae15ce4364d5420d5da62926f6f2fe0c1c0903bb3861b9020",
+    "build-native/aurora-native-bulk-group128-profile-v1/run-artifacts/files.json": "7df703146368d7338693797c64ec3ecd119912dbb7a80875894845b436dd52ec",
+    "build-native/aurora-native-bulk-group128-profile-v1/run-artifacts/runs/native-bulk-group128-profile-v1/qualification.json": "254f0cd071d33dc7d7f11d93f8a215b7da2f0a8e06c0ffecafa294d181a5f707",
+    "build-native/native-bulk-group128-profile-review-v1/timeline.json": "031af4eda570c7ad29b6091b4e1206f2dcc19af1b9ff50afae8b08f57a97f19e",
+    "build-native/native-bulk-group128-profile-review-v1/metadata-checks.json": "1ed171ad8e88bce521ba0adf05b285a8b51c973a16dfc96faca2423e8a64d407",
+    "build-native/native-bulk-group128-profile-review-v1/subset-order.json": "f4750ffd9f13237a0e4e6e9c0f74cde338bb5f0fbc2aa5722548a7be467fe32c",
+    "build-native/native-bulk-group128-profile-review-v1/normal-equivalence.json": "fc5ac9e962709f3d71fc2f0f1d6808b040198f86f5119fd0feb9da39b32ff964",
+    "build-native/native-bulk-group128-profile-review-v1/compare_normal.py": "0aa4e3110228bddf7afdca85c77633fa2a1620a6e5aa35f1fda24ee5230bc2ad",
+    "build-native/native-bulk-group128-profile-review-v1/extract.py": "aa7f2f33671886977aafa044f5dc59832d484bbe9b2fd0905dfac03fe0d6ca5d"
+  },
+  "source_references": {
+    "src/z4c_hyperboloidal/tasks.hpp": "5e8c2f159d591539fe0a9e7b00c65f653286e986cfa5f6fb4ea9f743fb07de01",
+    "src/z4c_hyperboloidal/mapped_halo.cpp": "80174d14da93cd6c45d8467edd5113a0ebc48aa3c3dd56e6cb272789a7088af1",
+    "src/z4c_hyperboloidal/surface_exchange.cpp": "2b78bb42e819fc0178a9e13d2b21df29736a17abe762f85c6fb6485003517c34",
+    "src/z4c_hyperboloidal/surface_exchange.hpp": "de0a04b9d81a6c60ff6e49a21ae3ba700b621d5ff89636ff5bcd7ce0bb05c325",
+    "src/z4c_hyperboloidal/endpoint_state.hpp": "c6a95d943a835ebd646bfa3cd9db24dbc870e3d277dfb075c8964fb4c2cf1df6",
+    "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp": "70dd4866b718d126bdfd7e41a8cb461d01dda747849f7bd1a143aa99b6d8c1a8"
+  },
+  "limitations": [
+    "Selected-rank GPU duration and interval coverage are not achieved occupancy, memory/register utilization or whole-job critical-path proof.",
+    "No cross-rank timestamp alignment or sum of unrelated rank maxima is used.",
+    "The same-file main span starts at first main RHS kernel and ends at last main RHS kernel; all-RHS envelope separately includes KO/validity. Neither is a measured complete-step interval.",
+    "Whole-process initialization/final diagnostic kernels are excluded from the main-span surface totals.",
+    "Candidate profiling timings are excluded from unprofiled ABBA throughput; no extra solver runs were made for this review.",
+    "Transfer-adjacent gaps remain visible but their causes are not established by this trace."
+  ]
+}
