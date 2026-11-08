@@ -1,0 +1,94 @@
+{
+  "schema": "native-two-node-measurement-preparation-v1",
+  "passed": true,
+  "created_utc": "2026-11-08T15:15:33.874691+00:00",
+  "scope": "Measurement infrastructure and offline/source review only; no numerical optimization, GPU performance acceptance, or parity result.",
+  "build": {
+    "schema": "native-timed-observer-aurora-build-v1",
+    "passed": true,
+    "build_exit_code": 0,
+    "verify_exit_code": 0,
+    "make_jobs": 64,
+    "compilation_performed": false,
+    "gpu_executed": false,
+    "gpu_submitted": false,
+    "baseline_executable_sha256": "f3a85db7528986ddec347b31675a8c5d588120a2380133aed73d5967f7aab05c",
+    "executable": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/native-timed-observer/build/athena-timed-observer",
+    "executable_sha256": "222893425aae3419e55d72b7db78d2fdc0253ecd7676182fd5a52db8d9a7db45",
+    "link_seconds": 7.241207554005086,
+    "main_object_sha256": "6c4cabbd36a5d1e2f0f25ac07b69ad8dd4f1c356392fd4284acd5c4ca1684a8c",
+    "driver_object_sha256": "d42a7d8359c229b5058d058b03bc539462a0d6f35401177a86d548e9e4d6bfc1",
+    "retained_link_inputs": 203,
+    "runtime_inputs_unchanged": true,
+    "only_main_driver_output_replaced": true,
+    "provenance_sha256": "b3076d063321f8f939f654cfe0ffae736832f9eba1743fde4934b7a1047bbcfd",
+    "package_sha256": "7e675534200d77d693d772d021a36b984fc248f61fcb022b2e293bc540581d22"
+  },
+  "reader_controls": {
+    "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-two-node-timing-reader-controls-v3/results.json",
+    "sha256": "88c706dfc45cd56bce84e69df6c1fbc0b45e17f6d5306df28901e0a7b00bbf53",
+    "checks": 51
+  },
+  "producer_controls": {
+    "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-two-node-producer-controls-v1/results.json",
+    "sha256": "584c08ecbe12f70ee3fb01f540757a616445f99027a0b8508d6eefb18cca8b68",
+    "result": {
+      "passed": true,
+      "scope": "Local parser and producer/reader contract controls; no GPU execution or performance result",
+      "checks": [
+        "actual2486 stdlib metadata and independent reader agree",
+        "wrong cycle rejected 2485",
+        "wrong cycle rejected 2556",
+        "init-only command/environment reader interoperability",
+        "normal command/environment reader interoperability",
+        "timed-normal command/environment reader interoperability",
+        "timed-observer command/environment reader interoperability",
+        "duplicate binding rejected"
+      ],
+      "source_checkpoint_sha256": "dd4b86ab42c10827f14bd339930cb4d2ffaf9fb5e2b43953d1e5d7924a9fc1ec",
+      "producer_sha256": {
+        "native_two_node_timing_audit.py": "732c52a6f3e366879c7eda214d5c964bde02199cbbc00592f2b3ac1697e283ce",
+        "run-native-two-node-timing.sh": "d6542a5921e7318e346f91389a3bf6532f6caf41cf04560ae884b4fb50a0b403",
+        "native-two-node-timing.pbs": "e697976771dce256f90c1defdf719e17039bd1b841f7e209d30be49ceda3a609",
+        "collect_native_two_node_timing.py": "c4ceb7741d1bb75f58c3308fe9512035f5afe0deebdd077b9ac1269ffe9bf7e4"
+      },
+      "reader_sha256": "bbf5020b7620aafdcc03cb5768cf82d824891a939651312f3831ac3b09ab5fbd"
+    }
+  },
+  "sources_sha256": {
+    "native_timed_observer.py": "02dfe63c9d152fce4b5bfa5a962e35083f3cea5a467a28110209c9d1fd3b2d92",
+    "native_n12_two_node_timing_contract.md": "9ed82d9659b20bf58f35559a691d1d3af67fc58ab356273e612cfdcfca9e0407",
+    "native_n12_two_node_initial_capture.md": "4bd80885db426d35b522b7cf0b33cc70efee62d07b81606707cfec83419a97da",
+    "native_n12_two_node_timing_validate.py": "bbf5020b7620aafdcc03cb5768cf82d824891a939651312f3831ac3b09ab5fbd",
+    "native_n12_two_node_timing_controls.py": "e0656996b728fd1f8c8ca4e0b9bf7e1a5984630bb12193dfd86ad38dbb555df0",
+    "aurora/native_two_node_timing_audit.py": "732c52a6f3e366879c7eda214d5c964bde02199cbbc00592f2b3ac1697e283ce",
+    "aurora/run-native-two-node-timing.sh": "d6542a5921e7318e346f91389a3bf6532f6caf41cf04560ae884b4fb50a0b403",
+    "aurora/native-two-node-timing.pbs": "e697976771dce256f90c1defdf719e17039bd1b841f7e209d30be49ceda3a609",
+    "aurora/collect_native_two_node_timing.py": "c4ceb7741d1bb75f58c3308fe9512035f5afe0deebdd077b9ac1269ffe9bf7e4"
+  },
+  "protocol": {
+    "source_cycle": 2486,
+    "source_checkpoint_sha256": "dd4b86ab42c10827f14bd339930cb4d2ffaf9fb5e2b43953d1e5d7924a9fc1ec",
+    "nodes": 2,
+    "ranks": 24,
+    "zero_step_initial_capture": true,
+    "evolved_controls": [
+      "normal",
+      "timed-normal",
+      "timed-observer"
+    ],
+    "complete_cycles_each": 70,
+    "warmup": 10,
+    "windows": 3,
+    "steps_per_window": 20,
+    "final_cycle": 2556,
+    "profiled": false
+  },
+  "review": {
+    "root_source_review_passed": true,
+    "independent_producer_reader_interop_review_passed": true,
+    "complete_composite_build_collection_rehashed": true
+  },
+  "gpu_results_pending": true,
+  "performance_admitted": false
+}

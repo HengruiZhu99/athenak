@@ -1,0 +1,309 @@
+{
+  "schema": "native-n12-two-node-timing-reader-controls-v1",
+  "passed": true,
+  "checks": [
+    {
+      "name": "actual reviewed2486 source header",
+      "passed": true,
+      "expected": "accept"
+    },
+    {
+      "name": "actual bounded2486 science and independent review",
+      "passed": true,
+      "expected": "accept"
+    },
+    {
+      "name": "wrong source bytes",
+      "passed": true,
+      "expected": "reject",
+      "message": "not the reviewed2486 checkpoint/admission/review"
+    },
+    {
+      "name": "source cycle",
+      "passed": true,
+      "expected": "reject",
+      "message": "source checkpoint clock differs"
+    },
+    {
+      "name": "source time",
+      "passed": true,
+      "expected": "reject",
+      "message": "source checkpoint clock differs"
+    },
+    {
+      "name": "source dt",
+      "passed": true,
+      "expected": "reject",
+      "message": "source checkpoint clock differs"
+    },
+    {
+      "name": "source metadata",
+      "passed": true,
+      "expected": "reject",
+      "message": "source ownership differs"
+    },
+    {
+      "name": "source output1/last_time",
+      "passed": true,
+      "expected": "reject",
+      "message": "source output schedule differs"
+    },
+    {
+      "name": "source output2/file_number",
+      "passed": true,
+      "expected": "reject",
+      "message": "source output mode/counter differs"
+    },
+    {
+      "name": "source output1/dcycle",
+      "passed": true,
+      "expected": "reject",
+      "message": "source output schedule differs"
+    },
+    {
+      "name": "source z4c_hyperboloidal/ko",
+      "passed": true,
+      "expected": "reject",
+      "message": "source numerical policy differs"
+    },
+    {
+      "name": "source z4c_hyperboloidal/chi_floor",
+      "passed": true,
+      "expected": "reject",
+      "message": "source numerical policy differs"
+    },
+    {
+      "name": "actual qualified timing build",
+      "passed": true,
+      "expected": "accept"
+    },
+    {
+      "name": "actual two-object Aurora link proof",
+      "passed": true,
+      "expected": "accept"
+    },
+    {
+      "name": "synthetic final header only",
+      "passed": true,
+      "expected": "accept"
+    },
+    {
+      "name": "final time/nlim",
+      "passed": true,
+      "expected": "reject",
+      "message": "final stopping controls differ"
+    },
+    {
+      "name": "final output2/file_number",
+      "passed": true,
+      "expected": "reject",
+      "message": "final output counter/clock differs"
+    },
+    {
+      "name": "final fastflow/ah_found_a0_0",
+      "passed": true,
+      "expected": "reject",
+      "message": "final horizon state invalid"
+    },
+    {
+      "name": "final fastflow/last_a0_0",
+      "passed": true,
+      "expected": "reject",
+      "message": "final horizon state invalid"
+    },
+    {
+      "name": "final z4c_hyperboloidal/ko",
+      "passed": true,
+      "expected": "reject",
+      "message": "final numerical/output parameter changed"
+    },
+    {
+      "name": "initialized mesh header mutation",
+      "passed": true,
+      "expected": "reject",
+      "message": "initialized fixed header differs"
+    },
+    {
+      "name": "documented unused coarse-header byte excluded",
+      "passed": true,
+      "expected": "accept"
+    },
+    {
+      "name": "actual CPU timing fixture with its own scope",
+      "passed": true,
+      "expected": "accept"
+    },
+    {
+      "name": "synthetic future window parser only",
+      "passed": true,
+      "expected": "accept"
+    },
+    {
+      "name": "window ranks",
+      "passed": true,
+      "expected": "reject",
+      "message": "timing coverage differs"
+    },
+    {
+      "name": "window complete_steps",
+      "passed": true,
+      "expected": "reject",
+      "message": "timing coverage differs"
+    },
+    {
+      "name": "window timed_output_count",
+      "passed": true,
+      "expected": "reject",
+      "message": "timing contains profiling/output"
+    },
+    {
+      "name": "window timed_console_count",
+      "passed": true,
+      "expected": "reject",
+      "message": "timing contains profiling/output"
+    },
+    {
+      "name": "window profiling_library_loaded",
+      "passed": true,
+      "expected": "reject",
+      "message": "timing contains profiling/output"
+    },
+    {
+      "name": "window warmup_steps",
+      "passed": true,
+      "expected": "reject",
+      "message": "timing windows missing/changed"
+    },
+    {
+      "name": "window row max_rank_seconds",
+      "passed": true,
+      "expected": "reject",
+      "message": "invalid window rates/counts; stages are not complete cell updates"
+    },
+    {
+      "name": "window row complete_steps",
+      "passed": true,
+      "expected": "reject",
+      "message": "partial/missing/repeated complete-cycle window"
+    },
+    {
+      "name": "window row last_cycle",
+      "passed": true,
+      "expected": "reject",
+      "message": "partial/missing/repeated complete-cycle window"
+    },
+    {
+      "name": "window row bulk_cell_updates",
+      "passed": true,
+      "expected": "reject",
+      "message": "invalid window rates/counts; stages are not complete cell updates"
+    },
+    {
+      "name": "synthetic expected environment",
+      "passed": true,
+      "expected": "accept"
+    },
+    {
+      "name": "environment NATIVE_TIMING_STEPS",
+      "passed": true,
+      "expected": "reject",
+      "message": "environment/profiling/cache differs"
+    },
+    {
+      "name": "environment KOKKOS_TOOLS_LIBS",
+      "passed": true,
+      "expected": "reject",
+      "message": "environment/profiling/cache differs"
+    },
+    {
+      "name": "environment ZE_AFFINITY_MASK",
+      "passed": true,
+      "expected": "reject",
+      "message": "environment/profiling/cache differs"
+    },
+    {
+      "name": "synthetic exact command",
+      "passed": true,
+      "expected": "accept"
+    },
+    {
+      "name": "command token 2",
+      "passed": true,
+      "expected": "reject",
+      "message": "actual native command differs"
+    },
+    {
+      "name": "command token 7",
+      "passed": true,
+      "expected": "reject",
+      "message": "actual native command differs"
+    },
+    {
+      "name": "command token 9",
+      "passed": true,
+      "expected": "reject",
+      "message": "actual native command differs"
+    },
+    {
+      "name": "command token -3",
+      "passed": true,
+      "expected": "reject",
+      "message": "actual native command differs"
+    },
+    {
+      "name": "synthetic zero-step output header",
+      "passed": true,
+      "expected": "accept"
+    },
+    {
+      "name": "synthetic zero-step exact command",
+      "passed": true,
+      "expected": "accept"
+    },
+    {
+      "name": "synthetic full39-slot initial identity",
+      "passed": true,
+      "expected": "accept"
+    },
+    {
+      "name": "late initial payload field 30",
+      "passed": true,
+      "expected": "reject",
+      "message": "post-init fields exceed existing short gates"
+    },
+    {
+      "name": "late initial payload field 38",
+      "passed": true,
+      "expected": "reject",
+      "message": "initial capture changed chi records"
+    },
+    {
+      "name": "late initial payload field 0",
+      "passed": true,
+      "expected": "reject",
+      "message": "initial payload is nonfinite"
+    },
+    {
+      "name": "initial truncated records",
+      "passed": true,
+      "expected": "reject",
+      "message": "initial payload shape differs"
+    },
+    {
+      "name": "end-to-end missing collection withholds all timing values",
+      "passed": true,
+      "expected": "reject"
+    }
+  ],
+  "scope": "Offline actual2486 and qualified build proofs; existing CPU timing fixture; explicitly synthetic metadata/window/env/command negative controls. No GPU run or timing admission.",
+  "real_fixture_sha256": {
+    "build-native/aurora-n12-common-07/run-artifacts/runs/native-n12-common-07/rst/native_n12_5M.00007.rst": "dd4b86ab42c10827f14bd339930cb4d2ffaf9fb5e2b43953d1e5d7924a9fc1ec",
+    "build-native/n12-common-segment-07-science-v1/continuation-admission.json": "babb035acdcb505d2f8407815981731168ae2c75c3217dcc43ba2ce56c363bd9",
+    "docs/z4c_hyperboloidal/evidence/native-n12-common-07-independent-review.json": "6322dcb077c8ac51bc105791d024cd93686994cbc89ffaf90b5819a9f3b99d51",
+    "build-native/native-cycle-timing-local-validation-v1/native-cycle-timing.json": "5385e3ba63d153f9eb12282a6cda4f66998e04845418e418a7c6c7e98011807c"
+  },
+  "source_sha256": {
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_n12_two_node_timing_controls.py": "e0656996b728fd1f8c8ca4e0b9bf7e1a5984630bb12193dfd86ad38dbb555df0",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_n12_two_node_timing_validate.py": "bbf5020b7620aafdcc03cb5768cf82d824891a939651312f3831ac3b09ab5fbd"
+  }
+}
