@@ -50,6 +50,8 @@ VERIFY = {
               'Verified invertible original-driver timing and unchanged native source/object/executable inputs\n'),
     'timed-observer':(ROOT/'validation/perf-two-node-v1/native-timed-observer',
               'native_timed_observer.py', COMBINED_PROOF,
+              'Verified invertible original-driver timing and unchanged native source/object/executable inputs\n'
+              'Verified invertible original-main observer and unchanged native source/object/executable inputs\n'
               'Verified unchanged native timed observer composition\n')}
 
 

@@ -132,7 +132,9 @@ def check_guard(folder, suffix):
         timing_verify_exit_code=0,timed_observer_verify_exit_code=0)
     require(all(g.get(k) == v for k,v in expected.items()), 'runtime guard differs: '+suffix)
     for name,text in [('timing',qualified.VERIFY_TEXT),
-                      ('timed-observer','Verified unchanged native timed observer composition\n')]:
+                      ('timed-observer',qualified.VERIFY_TEXT+
+                       'Verified invertible original-main observer and unchanged native source/object/executable inputs\n'+
+                       'Verified unchanged native timed observer composition\n')]:
         log = folder/f'{name}-verify-{suffix}.txt'
         require(log.read_text() == text and sha256(log) == g[name.replace('-','_')+'_verify_log_sha256'],
                 'actual instrumentation verification missing: '+name)

@@ -43,6 +43,12 @@ def main():
         Path('build-native/aurora-native-cycle-timing-build-v1/artifacts'),hashes))
     ok('actual two-object Aurora link proof',lambda:reader.check_combined_build(
         Path('build-native/native-two-node-timing-build-v1/artifacts'),hashes))
+    actual_log=Path('build-native/native-two-node-timing-build-v1/artifacts/verify.log').read_text()
+    expected_log=(reader.qualified.VERIFY_TEXT+
+        'Verified invertible original-main observer and unchanged native source/object/executable inputs\n'+
+        'Verified unchanged native timed observer composition\n')
+    assert actual_log==expected_log
+    checks.append(dict(name='actual nested verifier complete three-line stdout',passed=True,expected='accept'))
     # Header-only final fixture. No fabricated payload or solver result.
     final=copy.deepcopy(source);final.update(cycle=reader.LAST,time=expected_time(reader.LAST))
     final['parameters'].update({'time/nlim':str(reader.LAST),'time/tlim':'2','time/ndiag':'1000000000',

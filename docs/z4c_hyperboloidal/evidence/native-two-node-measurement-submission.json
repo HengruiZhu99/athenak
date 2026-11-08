@@ -1,0 +1,110 @@
+{
+  "schema": "native-n12-two-node-measurement-submission-v1",
+  "status": "submitted",
+  "job_id": "9051913",
+  "nodes": 2,
+  "ranks": 24,
+  "submitted_state": "Q",
+  "submission_utc": "2026-11-08T15:16:48Z",
+  "protocol": {
+    "initial_cycle": 2486,
+    "final_cycle": 2556,
+    "warmup_steps": 10,
+    "steps_per_window": 20,
+    "window_count": 3,
+    "cases": [
+      "init-only",
+      "normal",
+      "timed-normal",
+      "timed-observer"
+    ],
+    "init_only_final_cycle": 2486
+  },
+  "preflight_passed": true,
+  "reader_guard_interoperability_passed": true,
+  "source_checkpoint_sha256": "dd4b86ab42c10827f14bd339930cb4d2ffaf9fb5e2b43953d1e5d7924a9fc1ec",
+  "numerical_runtime_changed": false,
+  "performance_result": false,
+  "remote_validation": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/native-run",
+  "package_sha256": "0eb3aa1ddbe63078b6a097b4d251e90ca5c9f6f9820d689ba92af41c4766b51f",
+  "files": {
+    "build-native/native-two-node-launch-v2/files.json": {
+      "size": 1094,
+      "sha256": "d0c99ac89767f0503a279b5b6139b7ef66686a5f8b20ee0a9ca1cf357fb22546"
+    },
+    "build-native/native-two-node-launch-v2/package/admission.json": {
+      "size": 602,
+      "sha256": "4e411e15247ee02c66a68abb6228a4988400777bcabf7ed1c030de39064c4caf"
+    },
+    "build-native/native-two-node-launch-v2/package/collect_native_two_node_timing.py": {
+      "size": 3507,
+      "sha256": "c4ceb7741d1bb75f58c3308fe9512035f5afe0deebdd077b9ac1269ffe9bf7e4"
+    },
+    "build-native/native-two-node-launch-v2/package/independent-review.json": {
+      "size": 4118,
+      "sha256": "6322dcb077c8ac51bc105791d024cd93686994cbc89ffaf90b5819a9f3b99d51"
+    },
+    "build-native/native-two-node-launch-v2/package/launchers.sha256": {
+      "size": 647,
+      "sha256": "e225943ddcd11a7dc4563e4cf458ffc9a6f04f6ad082283956c3e1c87d0ce44f"
+    },
+    "build-native/native-two-node-launch-v2/package/native-two-node-timing.pbs": {
+      "size": 418,
+      "sha256": "e697976771dce256f90c1defdf719e17039bd1b841f7e209d30be49ceda3a609"
+    },
+    "build-native/native-two-node-launch-v2/package/native_two_node_timing_audit.py": {
+      "size": 15923,
+      "sha256": "44e4576505f5328150e24230ec37abdaea52481df03bb101a800ebbfcca0ef7e"
+    },
+    "build-native/native-two-node-launch-v2/package/run-native-two-node-timing.sh": {
+      "size": 3167,
+      "sha256": "d6542a5921e7318e346f91389a3bf6532f6caf41cf04560ae884b4fb50a0b403"
+    },
+    "build-native/native-two-node-launch-v2/package/science-admission.json": {
+      "size": 2517015,
+      "sha256": "babb035acdcb505d2f8407815981731168ae2c75c3217dcc43ba2ce56c363bd9"
+    },
+    "build-native/native-two-node-launch-v2/package.tar.gz": {
+      "size": 331506,
+      "sha256": "0eb3aa1ddbe63078b6a097b4d251e90ca5c9f6f9820d689ba92af41c4766b51f"
+    },
+    "build-native/native-two-node-launch-v2/preflight/guard-before.json": {
+      "size": 1665,
+      "sha256": "28339ad976a1f52d41b4dae491ee092938d8b1344b8b1c591241e4a1028270b9"
+    },
+    "build-native/native-two-node-launch-v2/preflight/queue-before.txt": {
+      "size": 565,
+      "sha256": "3d25bdbc0e3e858f2851b3751eb637a7291bb50575ccb5051acb9f14148969be"
+    },
+    "build-native/native-two-node-launch-v2/preflight/submitted-job.txt": {
+      "size": 56,
+      "sha256": "943489cab662da405bc166f07c760e45ef08ef7aefbc6fcabdd21dfad599a583"
+    },
+    "build-native/native-two-node-launch-v2/preflight/submitted-qstat.txt": {
+      "size": 2628,
+      "sha256": "36af9f85c6224e69294c9c682d0c2a024c667342db4858c95d618f97c39a6290"
+    },
+    "build-native/native-two-node-launch-v2/preflight/timed-observer-verify-before.txt": {
+      "size": 245,
+      "sha256": "250ba1628ad896cfa9359394e6fb8678ce8aa98171f9f1a7ae55f67cab48a3f3"
+    },
+    "build-native/native-two-node-launch-v2/preflight/timing-verify-before.txt": {
+      "size": 96,
+      "sha256": "2fce95b383e78b648cb43f29235dc871675d41e3347d300eb716d6f298d3fbc0"
+    }
+  },
+  "prior_failure": {
+    "scope": "preflight only; no qsub or GPU execution",
+    "cause": "Successful composed verifier emits three nested-verifier lines; original producer/reader expected only final line",
+    "preserved_remote": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/native-run-preflight-v1",
+    "local": "build-native/native-two-node-launch-v1",
+    "actual_stdout_sha256": "250ba1628ad896cfa9359394e6fb8678ce8aa98171f9f1a7ae55f67cab48a3f3",
+    "fix": "Only exact expected stdout changed in producer/reader; executable/numerical source/gates unchanged"
+  },
+  "source_sha256": {
+    "native_two_node_timing_audit.py": "44e4576505f5328150e24230ec37abdaea52481df03bb101a800ebbfcca0ef7e",
+    "run-native-two-node-timing.sh": "d6542a5921e7318e346f91389a3bf6532f6caf41cf04560ae884b4fb50a0b403",
+    "native-two-node-timing.pbs": "e697976771dce256f90c1defdf719e17039bd1b841f7e209d30be49ceda3a609",
+    "collect_native_two_node_timing.py": "c4ceb7741d1bb75f58c3308fe9512035f5afe0deebdd077b9ac1269ffe9bf7e4"
+  }
+}
