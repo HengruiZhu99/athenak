@@ -1,6 +1,6 @@
 {
   "schema": "native-n12-two-node-measurement-submission-v1",
-  "status": "submitted",
+  "status": "terminal-collected-verified",
   "job_id": "9051913",
   "nodes": 2,
   "ranks": 24,
@@ -106,5 +106,24 @@
     "run-native-two-node-timing.sh": "d6542a5921e7318e346f91389a3bf6532f6caf41cf04560ae884b4fb50a0b403",
     "native-two-node-timing.pbs": "e697976771dce256f90c1defdf719e17039bd1b841f7e209d30be49ceda3a609",
     "collect_native_two_node_timing.py": "c4ceb7741d1bb75f58c3308fe9512035f5afe0deebdd077b9ac1269ffe9bf7e4"
-  }
+  },
+  "terminal_state": "F",
+  "exit_status": 0,
+  "walltime": "00:19:13",
+  "case_exit_codes": {
+    "init-only": 0,
+    "normal": 0,
+    "timed-normal": 0,
+    "timed-observer": 0
+  },
+  "collection": {
+    "path": "build-native/aurora-native-two-node-timing-v1",
+    "package_sha256": "9fc8b35624565800797ac9fd5dfb6de039b615af94ad779b7633f76178c67f7a",
+    "transfer_sha256": "eaba444ddfacffa9fa78319adae6da313107fdc00a7b247ce6f5d6a872e24fa5",
+    "files": 64,
+    "total_uncompressed_bytes": 793492213,
+    "all_file_sizes_and_hashes_verified": true,
+    "local_archive_created": false
+  },
+  "scientific_comparison_pending": true
 }

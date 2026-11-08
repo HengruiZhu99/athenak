@@ -54,8 +54,39 @@ and application of those optimizations to N12.
   observer-overhead diagnostic can proceed independently if the legacy wrapper
   is not ready; it cannot establish legacy/native parity by itself.
 
-No GPU benchmark has yet passed this protocol. Existing measurements must not be
-relabeled as a matched baseline.
+The native controls passed in two-node job 9051913 (terminal F/0). All three
+final 24,704,784-scalar padded 31+8 payloads, complete parameter maps and ordinary
+history/horizon outputs agree bitwise. The zero-step capture also agrees
+bitwise with the source. All 280 observed stages have the exact prescribed
+clocks and pass compatibility checks. Independent review confirms these results.
+See `evidence/native-two-node-timing-validation.json` and
+`evidence/native-two-node-timing-independent-review.json`.
+
+| Native case | Three 20-step windows (s/complete RK4 step) | Median |
+|---|---|---:|
+| Timed normal | 4.572643, 4.847819, 4.572417 | 4.572643 |
+| Timed observer | 5.480417, 5.422913, 5.391933 | 5.422913 |
+
+Observed median overhead is 0.850270 seconds/step (18.59%). Normal windows have
+a 6.02% spread, so smaller candidate improvements will need more repeated
+measurements. Startup/final diagnostics and I/O are separately 4.207/6.200
+seconds for timed-normal and 3.603/6.315 seconds for timed-observer. These are
+native instrumentation controls; no matched legacy comparison or solver
+optimization has yet passed. Max-rank windows do not identify which rank was
+slowest because this timer does not serialize local rank times.
+
+The user's subsequent priority clarification makes a measured bottleneck and a
+correctness-qualified complete-step speedup the next milestone. Finish and
+validate the active native timing controls, then run the already prepared native
+profile at the next serialized two-node allocation. Legacy diagnostic/reference
+completion proceeds independently and does not block that profile or native
+candidate screening. The approximately 4.57-second observation has now passed
+the native controls above. Use measured kernel durations,
+launch sizes and waits to select one change: surface case batching with separate
+elimination, field-parallel KO using existing RHS storage, or a specifically
+identified synchronization fix. Workgroup tuning stays separate. Do not add
+another measurement framework without a concrete question existing tools cannot
+answer. Final parity still requires the matched fastest validated predecessor.
 
 ## Investigation and acceptance
 
@@ -111,7 +142,9 @@ bounded two-node correctness checks when a proposed change requires them.
 
 | Experiment | Numerical result | Complete-step timing | Decision |
 |---|---|---|---|
-| Matched native/observer/previous baseline | Pending | Pending | No performance claim |
+| Native timing and observer controls | Complete payload/diagnostics bitwise; independent review passes | 4.572643 s normal; 5.422913 s observed | Qualified measurement; no solver speedup |
+| Selected-rank native profile | Pending (job 9051936 submitted next) | Not a throughput test | Await actual bottleneck evidence |
+| Matched previous-implementation reference | Builds ready; GPU qualification pending | Pending | Does not block native screening |
 
 Completion requires the committed native implementation to match or beat the
 fastest accepted previous N12 reference median on the same two nodes, with repeat

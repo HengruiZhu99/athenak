@@ -1,0 +1,880 @@
+{
+  "schema": "native-n12-two-node-timing-validation-v1",
+  "passed": true,
+  "timings_accepted": true,
+  "accepted_timings": {
+    "timed-normal": {
+      "schema": "native-cycle-timing-v1",
+      "passed": true,
+      "scope": "unadmitted bounded timing; external scientific and campaign gates required",
+      "backend": "SYCL",
+      "ranks": 24,
+      "restart": true,
+      "blocks": 106,
+      "bulk_points": 229392,
+      "scri_points": 864,
+      "initial_cycle": 2486,
+      "final_cycle": 2556,
+      "initial_time": 1.167032904867465,
+      "final_time": 1.1998938474823924,
+      "dt": 0.00046944203735617445,
+      "complete_steps": 70,
+      "warmup_steps": 10,
+      "steps_per_window": 20,
+      "window_count": 3,
+      "console_ndiag": 1000000000,
+      "timed_output_count": 0,
+      "timed_console_count": 0,
+      "profiling_library_loaded": false,
+      "profiling_environment": [],
+      "startup_max_seconds": 4.20658467,
+      "startup_scope": "original main wall timer after Kokkos/MPI/argument setup through driver initialization",
+      "warmup_max_seconds": 46.616371917,
+      "execute_max_seconds": 326.474077318,
+      "finalize_max_seconds": 6.200493762,
+      "finalize_scope": "original Driver::Finalize including final outputs and final completion fence",
+      "windows": [
+        {
+          "index": 0,
+          "first_cycle": 2496,
+          "last_cycle": 2516,
+          "first_time": 1.171727325241026,
+          "last_time": 1.1811161659881482,
+          "complete_steps": 20,
+          "max_rank_seconds": 91.452862287,
+          "seconds_per_complete_step": 4.57264311435,
+          "bulk_cell_updates": 4587840,
+          "bulk_cell_updates_per_second": 50166.17178806617
+        },
+        {
+          "index": 1,
+          "first_cycle": 2516,
+          "last_cycle": 2536,
+          "first_time": 1.1811161659881482,
+          "last_time": 1.1905050067352703,
+          "complete_steps": 20,
+          "max_rank_seconds": 96.956384814,
+          "seconds_per_complete_step": 4.8478192407,
+          "bulk_cell_updates": 4587840,
+          "bulk_cell_updates_per_second": 47318.59597283107
+        },
+        {
+          "index": 2,
+          "first_cycle": 2536,
+          "last_cycle": 2556,
+          "first_time": 1.1905050067352703,
+          "last_time": 1.1998938474823924,
+          "complete_steps": 20,
+          "max_rank_seconds": 91.448331275,
+          "seconds_per_complete_step": 4.57241656375,
+          "bulk_cell_updates": 4587840,
+          "bulk_cell_updates_per_second": 50168.65738319072
+        }
+      ]
+    },
+    "timed-observer": {
+      "schema": "native-cycle-timing-v1",
+      "passed": true,
+      "scope": "unadmitted bounded timing; external scientific and campaign gates required",
+      "backend": "SYCL",
+      "ranks": 24,
+      "restart": true,
+      "blocks": 106,
+      "bulk_points": 229392,
+      "scri_points": 864,
+      "initial_cycle": 2486,
+      "final_cycle": 2556,
+      "initial_time": 1.167032904867465,
+      "final_time": 1.1998938474823924,
+      "dt": 0.00046944203735617445,
+      "complete_steps": 70,
+      "warmup_steps": 10,
+      "steps_per_window": 20,
+      "window_count": 3,
+      "console_ndiag": 1000000000,
+      "timed_output_count": 0,
+      "timed_console_count": 0,
+      "profiling_library_loaded": false,
+      "profiling_environment": [],
+      "startup_max_seconds": 3.602639888,
+      "startup_scope": "original main wall timer after Kokkos/MPI/argument setup through driver initialization",
+      "warmup_max_seconds": 58.421382952,
+      "execute_max_seconds": 384.326752267,
+      "finalize_max_seconds": 6.314732005,
+      "finalize_scope": "original Driver::Finalize including final outputs and final completion fence",
+      "windows": [
+        {
+          "index": 0,
+          "first_cycle": 2496,
+          "last_cycle": 2516,
+          "first_time": 1.171727325241026,
+          "last_time": 1.1811161659881482,
+          "complete_steps": 20,
+          "max_rank_seconds": 109.60833497,
+          "seconds_per_complete_step": 5.4804167485,
+          "bulk_cell_updates": 4587840,
+          "bulk_cell_updates_per_second": 41856.670856789315
+        },
+        {
+          "index": 1,
+          "first_cycle": 2516,
+          "last_cycle": 2536,
+          "first_time": 1.1811161659881482,
+          "last_time": 1.1905050067352703,
+          "complete_steps": 20,
+          "max_rank_seconds": 108.458261068,
+          "seconds_per_complete_step": 5.4229130534,
+          "bulk_cell_updates": 4587840,
+          "bulk_cell_updates_per_second": 42300.51224151165
+        },
+        {
+          "index": 2,
+          "first_cycle": 2536,
+          "last_cycle": 2556,
+          "first_time": 1.1905050067352703,
+          "last_time": 1.1998938474823924,
+          "complete_steps": 20,
+          "max_rank_seconds": 107.838666095,
+          "seconds_per_complete_step": 5.391933304749999,
+          "bulk_cell_updates": 4587840,
+          "bulk_cell_updates_per_second": 42543.55294007775
+        }
+      ]
+    }
+  },
+  "timing_summary": {
+    "cases": {
+      "timed-normal": {
+        "windows_seconds_per_step": [
+          4.57264311435,
+          4.8478192407,
+          4.57241656375
+        ],
+        "median": 4.57264311435,
+        "minimum": 4.57241656375,
+        "maximum": 4.8478192407
+      },
+      "timed-observer": {
+        "windows_seconds_per_step": [
+          5.4804167485,
+          5.4229130534,
+          5.391933304749999
+        ],
+        "median": 5.4229130534,
+        "minimum": 5.391933304749999,
+        "maximum": 5.4804167485
+      }
+    },
+    "observer_median_overhead_seconds": 0.8502699390500004,
+    "observer_median_ratio": 1.1859471464942581,
+    "reference_parity_evaluated": false,
+    "scope": "Three repeated max-rank complete-cycle windows; additional repetitions needed if spread prevents a clear comparison"
+  },
+  "input_sha256": {
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-n12-common-07/run-artifacts/runs/native-n12-common-07/rst/native_n12_5M.00007.rst": "dd4b86ab42c10827f14bd339930cb4d2ffaf9fb5e2b43953d1e5d7924a9fc1ec",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-common-segment-07-science-v1/continuation-admission.json": "babb035acdcb505d2f8407815981731168ae2c75c3217dcc43ba2ce56c363bd9",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/docs/z4c_hyperboloidal/evidence/native-n12-common-07-independent-review.json": "6322dcb077c8ac51bc105791d024cd93686994cbc89ffaf90b5819a9f3b99d51",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/baseline-after.json": "87d9d9b49541b2dc31875d1ee337a9fb7b6795a633ffe794ae90ef940fd9f3d4",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/baseline-before.json": "87d9d9b49541b2dc31875d1ee337a9fb7b6795a633ffe794ae90ef940fd9f3d4",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/baseline/CMakeCache.txt": "afd080bf39102abcb62c9ac162a4028e64915041c8e1c3657fe7a8d6631c4640",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/baseline/compile_commands.json": "22ccc40dab3715ecf12a3a1a853ead8bed066ab1a9438559620a774c4cf34cb0",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/baseline/config.hpp": "aa8a435cbb2f93eb67b7fe46f2d17ed0023f5dc36153968c78f8a279c44acbfe",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/baseline/driver-link.txt": "9b4480577f4b4d0e7aed5d31320d9716d920aae58e518acb1c37871903805071",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/baseline/runtime-object-sha256.json": "462da52c2e152e9c94818a534314aec72f2a827f30decdb2d23a3559e6954547",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/baseline/source-sha256.json": "4706aae696919253201da4cac9dd14bff52743ee8826dc93660a382f255ec9a5",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/build-cycle-timing.sh": "c15a85f26098267822eeb8bcf0f8708d4eeaf6eb6bafdd86ed828a04b639d234",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/build-driver.log": "7de6ab693064b0a37e4209273df0c023fb02fd779a52dae7eb80a05a899f6879",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/build-exit-code.txt": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/build-result.json": "64e46cf8d4e4308245e940abeaafcbb93d46361d2cce59992c2898d98764523e",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/build/build.log": "a9345ff868a5d53040d5cd0c5bf07951ff32b04d4ad3f182aa99adb90902a206",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/build/driver-original.cpp": "cb2518b6bb3d555cd374bb94fd287034a7d1e89b3736cb32a7334113455bb3bf",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/build/driver-timed.cpp": "dc3c36f951a21c325d0ad4bd0e22b0d89f1a3276b9932312380c5d4524ea2110",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/build/driver-timed.d": "1dbd3b950a847fe91448f9f8cd5e79bb7a9c331259f0d95909ac25062d610a63",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/build/provenance.json": "89265de52cfec416139ddf4188618b10b91b4e130c3fa844ffeed473d0d492ea",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/build/timing.mk": "a7f4d8d46493e176170169fa676f2d4d9d2ae6e6d10b3ea3fac4df5a50569f46",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/collect-build.py": "5d8b602f306c20fcc5e784e214f2c0171750181730e811fc469779b9ac87bdf1",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/compiler.txt": "6f41d08dd542e36e2f41b7b105da56d84c00bd6eb99a7c324ef8ef06635cbe26",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/launch.log": "c188c2656fd72ca0717ef32b3bd8cef7c8c97079fa3c63698cb6d4a9166e2d50",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/modules.txt": "cf3fde5892e6950a2ec013c75688552bf45cd2c81a1c7e4bdce32cb81f224156",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/mpi-wrapper.txt": "35ee2ba9df330d781abc430dd144e1728a49ceb7215380336a8682af0ed5a88d",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/package/cpu-validation.json": "213fe9cc0c07646a5e0f7ed745ccd8fcfa25e18f9568aef93722a8fd6ff94294",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/package/native_cycle_timing.hpp": "310ebb617883e2b02f05677b98718c4163d886da9b48e812c961fda6e4077c0a",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/package/native_cycle_timing.py": "944b05be76c1bfe208a0c409a7952d7119112398e306e842c458a6ffff19cfdb",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/package/native_cycle_timing_contract.md": "d610e7141bead813ff5382c2509eaabad3f42566ac9170c1cfb794629e14ca06",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/package/package.json": "54f7cc57f3934ba96424969e826a87732cc1f5f8d7c53a6f5eae07b43198a340",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/toolchain-comparison.json": "e7d8689a171908670e40f7c60c1df0f4d599085c45ea2cc7ee178d9fbb5d29ef",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/verify.log": "2fce95b383e78b648cb43f29235dc871675d41e3347d300eb716d6f298d3fbc0",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-cycle-timing-build-v1/artifacts/artifact-manifest.json": "fb9f49ead63ae8e37b01c3cc2dc77eab8f9c92c33572a4f21962059c2b263f9d",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-two-node-timing-build-v1/artifacts/build-result.json": "5a06bb65d5ea5d543c4d602acd625f200b0a6a802d19786cb3a7291937b21e05",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-two-node-timing-build-v1/artifacts/build-exit-code.txt": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-two-node-timing-build-v1/artifacts/baseline-before.json": "87d9d9b49541b2dc31875d1ee337a9fb7b6795a633ffe794ae90ef940fd9f3d4",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-two-node-timing-build-v1/artifacts/baseline-after.json": "87d9d9b49541b2dc31875d1ee337a9fb7b6795a633ffe794ae90ef940fd9f3d4",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-two-node-timing-build-v1/artifacts/modules.txt": "cf3fde5892e6950a2ec013c75688552bf45cd2c81a1c7e4bdce32cb81f224156",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-two-node-timing-build-v1/artifacts/compiler.txt": "6f41d08dd542e36e2f41b7b105da56d84c00bd6eb99a7c324ef8ef06635cbe26",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-two-node-timing-build-v1/artifacts/mpi-wrapper.txt": "35ee2ba9df330d781abc430dd144e1728a49ceb7215380336a8682af0ed5a88d",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-two-node-timing-build-v1/artifacts/toolchain-comparison.json": "e7d8689a171908670e40f7c60c1df0f4d599085c45ea2cc7ee178d9fbb5d29ef",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-two-node-timing-build-v1/artifacts/verify.log": "250ba1628ad896cfa9359394e6fb8678ce8aa98171f9f1a7ae55f67cab48a3f3",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-two-node-timing-build-v1/artifacts/build-composition.log": "017b4a0a7fa4b73cfd5d05d5c97a51b4d1fca2c4f6bfaddadb400945346ed41c",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-two-node-timing-build-v1/artifacts/build-timed-observer.sh": "1feb7dcdb40385a858f5b16374654c43c1a5c22801a7be72837fe5a2a632d43b",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-two-node-timing-build-v1/artifacts/build/provenance.json": "b3076d063321f8f939f654cfe0ffae736832f9eba1743fde4934b7a1047bbcfd",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-two-node-timing-build-v1/artifacts/build/timed-observer.mk": "701f0d272077c70ca84ce72819759950141d0e668b58ee53da6857658f63bd56",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-two-node-timing-build-v1/artifacts/build/build.log": "49d741c817f0b0015d69ec0dc1e9de4ce5babf446d8a74a00ce2435f46df8115",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-two-node-timing-build-v1/artifacts/package/package.json": "7e675534200d77d693d772d021a36b984fc248f61fcb022b2e293bc540581d22",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-two-node-timing-build-v1/artifacts/package/native_cycle_timing.py": "944b05be76c1bfe208a0c409a7952d7119112398e306e842c458a6ffff19cfdb",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-two-node-timing-build-v1/artifacts/package/native_step_observer.py": "632604c3f5ae3b09663a65ac9326a3e56aecac99bcf8a6a5241b56d641e0d41f",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-two-node-timing-build-v1/artifacts/package/native_timed_observer.py": "02dfe63c9d152fce4b5bfa5a962e35083f3cea5a467a28110209c9d1fd3b2d92",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-two-node-timing-build-v1/artifacts/package/native_n12_two_node_timing_contract.md": "9ed82d9659b20bf58f35559a691d1d3af67fc58ab356273e612cfdcfca9e0407",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-two-node-timing-build-v1/artifacts/artifact-manifest.json": "5415087f1ff6b178070ef1c9722ecd80cc3adaf584e815e3c2495aae42744677",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/binding.txt": "bf2797955f3a5a76ac7c374717f4ab6167e9d7344b975c768a605f55c89072af",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/guard-after.json": "28339ad976a1f52d41b4dae491ee092938d8b1344b8b1c591241e4a1028270b9",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/guard-before.json": "28339ad976a1f52d41b4dae491ee092938d8b1344b8b1c591241e4a1028270b9",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/init-only/command.txt": "5049fb02dfad64dc1e1fe415ef77c6cc305818dc89e273f1be3efa2c16150221",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/init-only/environment.json": "b64c658630bfa65b518dcd3e5f4826adcb2dc62f4b42bb0747e3711e41f97817",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/init-only/exit-code.txt": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/init-only/native_n12_5M.horizon_shape_0.txt": "ce248166b585a9e2b0aaada80e1ad7ee7ecdc40adafae110da6380565b3ab954",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/init-only/native_n12_5M.horizon_summary_0.txt": "0ae2fbcc68275e983f8a27f650a5455e1405c739098fa532c522d8b59f2ed584",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/init-only/native_n12_5M.z4c_hyperboloidal.hst": "187dff6b2b33d81c341fc511fcde3bf42ae2116d70cb42b692b9893306c76b03",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/init-only/operational.json": "de13103c7956ea19ba9dde8aa217687cb15961555ce3b0231e8f7f5f98a86284",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/init-only/rst/native_n12_5M.00008.rst": "0c4855d3e3de0bb4aceb521519a33cb7dfaa8911cc7ee893490082c0b8ce9748",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/init-only/run.log": "59cb425049fa7b9275f2a1ba80a4c80311ff0ca32971b58f2a1a4c3b1c6c2549",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/job-id.txt": "943489cab662da405bc166f07c760e45ef08ef7aefbc6fcabdd21dfad599a583",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/launchers-after.txt": "abcfd422e7e1ed684801df5078d4be537222a4d065b4183244732dcf511a949e",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/modules.txt": "cf3fde5892e6950a2ec013c75688552bf45cd2c81a1c7e4bdce32cb81f224156",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/nodes.txt": "b4d52919049ff5d8bc504769bb600666f57147a1ad808fb0209a986d3c660fc8",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/normal/command.txt": "03fa0d238276b15628932a60f4eaf6aace5301a1b878082065af4f7e4f29c055",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/normal/environment.json": "463a446c9fe181eac4f4c1f73d4d44c1dff5be51ded4b782660876d129ac75a5",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/normal/exit-code.txt": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/normal/native_n12_5M.horizon_shape_0.txt": "b354b68ce19ea8ee850c5e814d3bf301fb0d68cff647f98531d3c25248920ab3",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/normal/native_n12_5M.horizon_summary_0.txt": "cb410e1360230cc16d38bcff03f549f2fd3921f662679989b597ee3d84876f2b",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/normal/native_n12_5M.z4c_hyperboloidal.hst": "c686c211d48a9b6ed9e74c648348d55a855746c4d0269d33489c0d1aab579909",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/normal/operational.json": "1655800669749d1f738da149704b225f62bf08dca73ec851786da543df196987",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/normal/rst/native_n12_5M.00008.rst": "c4410a676ad09e606caf508c8d84105e8e70487439fad283a91cc8097a39a710",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/normal/run.log": "5a9d6f3bf79da7dd9db3450d930c7fd9d4b3cb18f7ef76ae3d436176ae7e96b7",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/pipeline-complete.txt": "d8d2919eae33e5cad52245ee10830058a7da1ace560c3246ca6199782440a188",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/queue-at-start.txt": "63e455d071579218a5fa78ee1ecc5b16856d1ddf120332d1bbc9e1e4d655ab8a",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/timed-normal/command.txt": "347c0f642b17de02401eae882e955615645b9a46e603cfcba36a777075c8dd00",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/timed-normal/environment.json": "c3e85da66a0d339a8164d6caab54eff5aa44d65361d4426cbe2ad0e0f6140d0c",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/timed-normal/exit-code.txt": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/timed-normal/native-cycle-timing.json": "5acdcab501eb148cc40774f43fb0ca9bb2bac00faeb319ab203d934217489be7",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/timed-normal/native_n12_5M.horizon_shape_0.txt": "b354b68ce19ea8ee850c5e814d3bf301fb0d68cff647f98531d3c25248920ab3",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/timed-normal/native_n12_5M.horizon_summary_0.txt": "cb410e1360230cc16d38bcff03f549f2fd3921f662679989b597ee3d84876f2b",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/timed-normal/native_n12_5M.z4c_hyperboloidal.hst": "c686c211d48a9b6ed9e74c648348d55a855746c4d0269d33489c0d1aab579909",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/timed-normal/operational.json": "eca33f128c672b05cd929417c8d4db6b8ce55bc4f878595f6f8c3e5911ab645d",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/timed-normal/rst/native_n12_5M.00008.rst": "c4410a676ad09e606caf508c8d84105e8e70487439fad283a91cc8097a39a710",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/timed-normal/run.log": "18ff02cf3e9560d34b8db79a8e2f02d4d36220138e874e25fbcf1ca6f9f44dd4",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/timed-observer-verify-after.txt": "250ba1628ad896cfa9359394e6fb8678ce8aa98171f9f1a7ae55f67cab48a3f3",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/timed-observer-verify-before.txt": "250ba1628ad896cfa9359394e6fb8678ce8aa98171f9f1a7ae55f67cab48a3f3",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/timed-observer/command.txt": "a8188afae8c6cc1906532cf23fe6a37b6576083709ebdc630aa25c534f6273ac",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/timed-observer/environment.json": "6b0652503f86a0812c10ed3b4cb80d579bef6b24c197f0f865695085bf1cd058",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/timed-observer/exit-code.txt": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/timed-observer/native-cycle-timing.json": "f7b81d277893ea3b70f266028fe4625916fbf8987b271236f9e7a41ff202a979",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/timed-observer/native-stages.csv": "628291bb02e6052b5caf7980a2f3daf1e2674acc8fa3bf82bf0f34cd9b7efe5f",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/timed-observer/native-step-observer.json": "b1fa968f6dfdd01429ff4f63c86a68027bdccf6db8f26d6cd761d30e8ccc026a",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/timed-observer/native_n12_5M.horizon_shape_0.txt": "b354b68ce19ea8ee850c5e814d3bf301fb0d68cff647f98531d3c25248920ab3",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/timed-observer/native_n12_5M.horizon_summary_0.txt": "cb410e1360230cc16d38bcff03f549f2fd3921f662679989b597ee3d84876f2b",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/timed-observer/native_n12_5M.z4c_hyperboloidal.hst": "c686c211d48a9b6ed9e74c648348d55a855746c4d0269d33489c0d1aab579909",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/timed-observer/operational.json": "7a7932cad659c78c546005a2969188edbce3678be63f09b9d271bc9ddf0e2692",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/timed-observer/rst/native_n12_5M.00008.rst": "c4410a676ad09e606caf508c8d84105e8e70487439fad283a91cc8097a39a710",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/timed-observer/run.log": "fe57a015ce677a094bbe496e224d208aea56e137f0dce20acdeba690dba6b11f",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/timing-verify-after.txt": "2fce95b383e78b648cb43f29235dc871675d41e3347d300eb716d6f298d3fbc0",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/timing-verify-before.txt": "2fce95b383e78b648cb43f29235dc871675d41e3347d300eb716d6f298d3fbc0",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/terminal-qstat.txt": "be49f4e3cb639094b5c18f4a34d93623f1b787e6c770399b0e8b0518a8833adf",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/validation/cycle-timing/build/provenance.json": "89265de52cfec416139ddf4188618b10b91b4e130c3fa844ffeed473d0d492ea",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/validation/perf-two-node-v1/native-run/admission.json": "4e411e15247ee02c66a68abb6228a4988400777bcabf7ed1c030de39064c4caf",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/validation/perf-two-node-v1/native-run/collect_native_two_node_timing.py": "c4ceb7741d1bb75f58c3308fe9512035f5afe0deebdd077b9ac1269ffe9bf7e4",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/validation/perf-two-node-v1/native-run/independent-review.json": "6322dcb077c8ac51bc105791d024cd93686994cbc89ffaf90b5819a9f3b99d51",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/validation/perf-two-node-v1/native-run/launchers.sha256": "e225943ddcd11a7dc4563e4cf458ffc9a6f04f6ad082283956c3e1c87d0ce44f",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/validation/perf-two-node-v1/native-run/native-two-node-timing.pbs": "e697976771dce256f90c1defdf719e17039bd1b841f7e209d30be49ceda3a609",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/validation/perf-two-node-v1/native-run/native_two_node_timing_audit.py": "44e4576505f5328150e24230ec37abdaea52481df03bb101a800ebbfcca0ef7e",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/validation/perf-two-node-v1/native-run/run-native-two-node-timing.sh": "d6542a5921e7318e346f91389a3bf6532f6caf41cf04560ae884b4fb50a0b403",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/validation/perf-two-node-v1/native-run/science-admission.json": "babb035acdcb505d2f8407815981731168ae2c75c3217dcc43ba2ce56c363bd9",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/validation/perf-two-node-v1/native-timed-observer/build/provenance.json": "b3076d063321f8f939f654cfe0ffae736832f9eba1743fde4934b7a1047bbcfd",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/package.json": "9fc8b35624565800797ac9fd5dfb6de039b615af94ad779b7633f76178c67f7a",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/files.json": "50c002e1466de5c53b572186d33dd3d429389bc6f229a8bfea93d913eb249a8c"
+  },
+  "checkpoints": {
+    "normal": [
+      {
+        "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/normal/rst/native_n12_5M.00008.rst",
+        "cycle": 2556,
+        "time": 1.1998938474823924,
+        "ranks": 24,
+        "scalar_values": 24704784,
+        "sha256": "c4410a676ad09e606caf508c8d84105e8e70487439fad283a91cc8097a39a710"
+      }
+    ],
+    "timed-normal": [
+      {
+        "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/timed-normal/rst/native_n12_5M.00008.rst",
+        "cycle": 2556,
+        "time": 1.1998938474823924,
+        "ranks": 24,
+        "scalar_values": 24704784,
+        "sha256": "c4410a676ad09e606caf508c8d84105e8e70487439fad283a91cc8097a39a710"
+      }
+    ],
+    "timed-observer": [
+      {
+        "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/timed-observer/rst/native_n12_5M.00008.rst",
+        "cycle": 2556,
+        "time": 1.1998938474823924,
+        "ranks": 24,
+        "scalar_values": 24704784,
+        "sha256": "c4410a676ad09e606caf508c8d84105e8e70487439fad283a91cc8097a39a710"
+      }
+    ]
+  },
+  "equivalence": {
+    "timed-normal": {
+      "state": {
+        "bitwise_equal": true,
+        "scalar_values": 24704784,
+        "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b"
+      },
+      "final_parameters_exact": true,
+      "diagnostics": {
+        "passed": true,
+        "files": [
+          {
+            "name": "native_n12_5M.horizon_shape_0.txt",
+            "bitwise_equal": true
+          },
+          {
+            "name": "native_n12_5M.horizon_summary_0.txt",
+            "bitwise_equal": true
+          },
+          {
+            "name": "native_n12_5M.z4c_hyperboloidal.hst",
+            "bitwise_equal": true
+          }
+        ]
+      }
+    },
+    "timed-observer": {
+      "state": {
+        "bitwise_equal": true,
+        "scalar_values": 24704784,
+        "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b"
+      },
+      "final_parameters_exact": true,
+      "diagnostics": {
+        "passed": true,
+        "files": [
+          {
+            "name": "native_n12_5M.horizon_shape_0.txt",
+            "bitwise_equal": true
+          },
+          {
+            "name": "native_n12_5M.horizon_summary_0.txt",
+            "bitwise_equal": true
+          },
+          {
+            "name": "native_n12_5M.z4c_hyperboloidal.hst",
+            "bitwise_equal": true
+          }
+        ]
+      }
+    }
+  },
+  "diagnostic_coverage": {
+    "normal": {
+      "cycles": [
+        2556
+      ],
+      "files": [
+        "native_n12_5M.horizon_shape_0.txt",
+        "native_n12_5M.horizon_summary_0.txt",
+        "native_n12_5M.z4c_hyperboloidal.hst"
+      ],
+      "harmonic_coefficients_per_row": 169,
+      "full_harmonic_mask_scope": "unchanged guarded native diagnostic objects"
+    },
+    "timed-normal": {
+      "cycles": [
+        2556
+      ],
+      "files": [
+        "native_n12_5M.horizon_shape_0.txt",
+        "native_n12_5M.horizon_summary_0.txt",
+        "native_n12_5M.z4c_hyperboloidal.hst"
+      ],
+      "harmonic_coefficients_per_row": 169,
+      "full_harmonic_mask_scope": "unchanged guarded native diagnostic objects"
+    },
+    "timed-observer": {
+      "cycles": [
+        2556
+      ],
+      "files": [
+        "native_n12_5M.horizon_shape_0.txt",
+        "native_n12_5M.horizon_summary_0.txt",
+        "native_n12_5M.z4c_hyperboloidal.hst"
+      ],
+      "harmonic_coefficients_per_row": 169,
+      "full_harmonic_mask_scope": "unchanged guarded native diagnostic objects"
+    }
+  },
+  "unused_global_coarse_indices": {
+    "source": [
+      1768714349,
+      1646290021,
+      1752440953,
+      1763734377,
+      1953853550,
+      1782319662,
+      171860591,
+      1702060386,
+      1701667182
+    ],
+    "normal": [
+      1768714349,
+      1646290021,
+      1752440953,
+      1763734377,
+      1953853550,
+      1782319662,
+      171860591,
+      1702060386,
+      1701667182
+    ],
+    "timed-normal": [
+      1768714349,
+      1646290021,
+      1752440953,
+      1763734377,
+      1953853550,
+      1782319662,
+      171860591,
+      1702060386,
+      1701667182
+    ],
+    "timed-observer": [
+      1768714349,
+      1646290021,
+      1752440953,
+      1763734377,
+      1953853550,
+      1782319662,
+      171860591,
+      1702060386,
+      1701667182
+    ]
+  },
+  "mesh_header_scope": "All initialized fields exact; nine unused global coarse-index integers excluded and reported",
+  "initial_state_scope": "Same exact source in three continuations; separate ordinary zero-step capture checks actual post-init fields at pre-existing short gates and chi records exactly",
+  "scope": "Native solver/observer overhead controls only; no legacy parity claim, new resolution or eight-node run",
+  "timing_build": {
+    "provenance_sha256": "89265de52cfec416139ddf4188618b10b91b4e130c3fa844ffeed473d0d492ea",
+    "normal_sha256": "f3a85db7528986ddec347b31675a8c5d588120a2380133aed73d5967f7aab05c",
+    "timed_sha256": "e47888006e1221d5e14bce734a97d77a45126b271f7ef39c2ceb9e9b31c0f6cf"
+  },
+  "combined_build": {
+    "provenance_sha256": "b3076d063321f8f939f654cfe0ffae736832f9eba1743fde4934b7a1047bbcfd",
+    "executable_sha256": "222893425aae3419e55d72b7db78d2fdc0253ecd7676182fd5a52db8d9a7db45",
+    "composition": "qualified observer main + qualified timed driver + unchanged numerical objects"
+  },
+  "initial_capture": {
+    "checkpoints": [
+      {
+        "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-two-node-timing-v1/run-artifacts/runs/native-n12-timing-two-v1/init-only/rst/native_n12_5M.00008.rst",
+        "cycle": 2486,
+        "time": 1.167032904867465,
+        "ranks": 24,
+        "scalar_values": 24704784,
+        "sha256": "0c4855d3e3de0bb4aceb521519a33cb7dfaa8911cc7ee893490082c0b8ce9748"
+      }
+    ],
+    "diagnostics": {
+      "cycles": [
+        2486
+      ],
+      "files": [
+        "native_n12_5M.horizon_shape_0.txt",
+        "native_n12_5M.horizon_summary_0.txt",
+        "native_n12_5M.z4c_hyperboloidal.hst"
+      ],
+      "harmonic_coefficients_per_row": 169,
+      "full_harmonic_mask_scope": "unchanged guarded native diagnostic objects"
+    },
+    "fields": [
+      {
+        "field": 0,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 1,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 2,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 3,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 4,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 5,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 6,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 7,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 8,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 9,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 10,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 11,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 12,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 13,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 14,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 15,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 16,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 17,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 18,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 19,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 20,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 21,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 22,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 23,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 24,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 25,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 26,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 27,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 28,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 29,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      },
+      {
+        "field": 30,
+        "comparisons": 633456,
+        "failed_values": 0,
+        "bitwise_equal": true,
+        "max_absolute": 0.0,
+        "max_tolerance_ratio": 0.0,
+        "rms": 0.0,
+        "worst_gid": 0,
+        "worst_slot": 0
+      }
+    ],
+    "chi_records_bitwise_exact": true,
+    "complete_padded_scalars": 24704784,
+    "scope": "Actual ordinary zero-step post-initialization state; diagnostic preparation changes only halo/workspace, then Finalize writes. FastFlow seed/output metadata may change. This capture is never used as the timed source."
+  },
+  "observer": {
+    "completion": {
+      "schema": "native-step-observer-v1",
+      "passed": true,
+      "backend": "SYCL",
+      "ranks": 24,
+      "initial_cycle": 2486,
+      "final_cycle": 2556,
+      "initial_time": 1.167032904867465,
+      "final_time": 1.1998938474823924,
+      "dt": 0.00046944203735617445,
+      "stage_rows": 280,
+      "scope": "read-only stage observations; reference comparison separate"
+    },
+    "stage_rows": 280,
+    "maximum_compatibility": 9.111146658370792e-14,
+    "maximum_clock": 0.3724614068283002,
+    "maximum_CFL": 0.23848492703717356
+  },
+  "source_sha256": {
+    "native_n12_two_node_timing_validate.py": "ac9dbefb92a1659c4ff4f53f308c0a8793305891c6d320da94bd7ad90d4073b9",
+    "native_timed_observer.py": "02dfe63c9d152fce4b5bfa5a962e35083f3cea5a467a28110209c9d1fd3b2d92",
+    "native_n12_two_node_timing_contract.md": "9ed82d9659b20bf58f35559a691d1d3af67fc58ab356273e612cfdcfca9e0407",
+    "native_n12_two_node_initial_capture.md": "4bd80885db426d35b522b7cf0b33cc70efee62d07b81606707cfec83419a97da",
+    "native_cycle_timing_gpu_validate.py": "510297d7e04958b95ed871b81f8b68502704a851aea7a9e149dc2a39502f1b8e",
+    "native_cycle_timing.py": "944b05be76c1bfe208a0c409a7952d7119112398e306e842c458a6ffff19cfdb",
+    "native_cycle_timing.hpp": "310ebb617883e2b02f05677b98718c4163d886da9b48e812c961fda6e4077c0a",
+    "native_step_observer_gpu_compare.py": "96a2a394671ca8affa075876dda7a3c1e0ae5e82cde098771c1613095087d87a",
+    "native_step_observer_validate.py": "bb18cb9f75582fcc2471728949994e5e01cc521f543ae633b29358be4c600e94",
+    "native_step_observer.py": "632604c3f5ae3b09663a65ac9326a3e56aecac99bcf8a6a5241b56d641e0d41f",
+    "n12_checkpoint.py": "e1c920a84d9e0a218ae34dfc90962120f532af8a111ac77a13624cc8de541542",
+    "n12_long_history.py": "304e0ae0dffedfad946396204bc8326533b0850af3e88ccb144bd1885f6cd104",
+    "restart_roundtrip.py": "8afc41988e20e36d336230e111450ec3ba573940c773a6ed15ed03ed16eb8a3b"
+  }
+}

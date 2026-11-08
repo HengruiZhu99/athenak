@@ -27,13 +27,21 @@
     },
     {
       "id": "observer_attribution",
-      "status": "pending",
-      "required_evidence": "Matched normal/timed-normal/timed-observer complete-state and diagnostic controls identify observer overhead."
+      "status": "complete",
+      "required_evidence": "Matched normal/timed-normal/timed-observer complete-state and diagnostic controls identify observer overhead.",
+      "evidence": [
+        "evidence/native-two-node-timing-validation.json",
+        "evidence/native-two-node-timing-independent-review.json"
+      ]
     },
     {
       "id": "measurement",
-      "status": "pending",
-      "required_evidence": "Repeated warmed max-rank whole-RK4 windows, profiling off, same compiler/FP/grid/dt/physics; separate startup and diagnostics/I/O."
+      "status": "in_progress",
+      "required_evidence": "Repeated warmed max-rank whole-RK4 windows, profiling off, same compiler/FP/grid/dt/physics; separate startup and diagnostics/I/O.",
+      "evidence": [
+        "evidence/native-two-node-timing-validation.json"
+      ],
+      "remaining": "Matched legacy reference and candidate/repeat comparisons pending."
     },
     {
       "id": "critical_path",
@@ -85,5 +93,6 @@
       "status": "pending",
       "required_evidence": "Final committed native median no worse than fastest accepted old reference with sufficient repeatability; reproducible evidence, profiles, experiment table and architecture confirmation."
     }
-  ]
+  ],
+  "next_milestone": "Measured runtime bottleneck, followed by one correctness-qualified complete-step speedup; prepared native profile next, reference work independent."
 }
