@@ -1,0 +1,98 @@
+{
+  "schema": "native-n12-common-independent-review-v1",
+  "passed": true,
+  "science_admission": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-common-segment-06-science-v1/continuation-admission.json",
+  "science_admission_sha256": "2cbe9e7d7520062dec5fd945be716df2d0ab69e4005d82cb4183e7ef00e56c46",
+  "checkpoint_sha256": "4e8e390d8549923393b3d0d8e9071d740530220d4425ed80deac2ef89a9abdca",
+  "end_cycle": 2131,
+  "through_5m_complete": false,
+  "transfer_verification_sha256": "a4c8408f4861ea24278aa1f47c5cef41d27468ed39619d88ab1390a4868e8905",
+  "predecessor_science_sha256": "a0b8d1e54cb8251e8dadf9b7ea1186691a09a799dca9a5c454698924b618466a",
+  "predecessor_independent_review_sha256": "e49fb359d391abfcef180537c8c6636ed244d6ac1a2fd35ab26cacbc92d09ac8",
+  "predecessor_checkpoint_sha256": "13e8fe4baae38d0ee0f4dda2201cb87ebbfa9de5ed195893b83953fa12ecec5a",
+  "actual_restart_handoff_verified": true,
+  "state_checks": {
+    "2131": {
+      "bulk": {
+        "field_values": 7111152,
+        "record_values": 1835136,
+        "exports_match_actual_checkpoint_bitwise": true,
+        "failed_values": 0,
+        "max_absolute": 2.024491685403973e-12,
+        "max_tolerance_ratio": 0.011459153314667679
+      },
+      "surface": {
+        "field_values": 26784,
+        "record_values": 6912,
+        "exports_match_actual_checkpoint_bitwise": true,
+        "failed_values": 0,
+        "max_absolute": 5.505595979116151e-13,
+        "max_tolerance_ratio": 0.0014725024962797494
+      }
+    }
+  },
+  "actual_native_chi_summary_recomputed": true,
+  "chi_summary": {
+    "minimum_chi": 6.013689585689683e-07,
+    "minimum_raw_candidate": -4.5390970865975194e-08,
+    "minimum_raw_acceptance_candidate": -4.5390970865975194e-08,
+    "floor_events": 56664,
+    "nonpositive_candidates": 56608,
+    "nonfinite_candidates": 0,
+    "distinct_floored_cells": 8,
+    "sum_corrections_over_attempts": 0.0012998644382008224,
+    "surface_floor_events": 0,
+    "max_correction": 4.5490970865975195e-08,
+    "max_floor_radius": 0.002405626121623456,
+    "first_floor_M": 0.33095663633610284
+  },
+  "historical_chi_aggregate_differences": {
+    "minimum_chi": 3.928115292891818e-20,
+    "minimum_raw_candidate": -6.617444900424221e-23,
+    "minimum_raw_acceptance_candidate": -6.617444900424221e-23,
+    "floor_events": 0,
+    "nonpositive_candidates": 0,
+    "nonfinite_candidates": 0,
+    "distinct_floored_cells": 0,
+    "sum_corrections_over_attempts": 6.505213034913027e-19,
+    "surface_floor_events": 0,
+    "max_correction": 6.617444900424221e-23,
+    "max_floor_radius": 0.0,
+    "first_floor_M": 0.0
+  },
+  "stage_rows": 8524,
+  "new_segment_stage_rows": 1420,
+  "exact_stage_clocks": true,
+  "maximum_compatibility": 1.4089055443144982e-13,
+  "clock_CFL_max_absolute_difference": {
+    "clock": 5.3313742309768486e-12,
+    "CFL": 1.6653345369377348e-16
+  },
+  "clock_CFL_max_tolerance_ratio": {
+    "clock": 0.02577619954159558,
+    "CFL": 6.717771699849685e-08
+  },
+  "history_completed_prefix_passed": true,
+  "history_times": [
+    0,
+    356,
+    711,
+    1066,
+    1421,
+    1776,
+    2131
+  ],
+  "harmonic_coefficients_each_time": 169,
+  "missing_future_common_steps": [
+    2486,
+    2841,
+    3196,
+    3551
+  ],
+  "chi_history_scope": "native records decoded and checked finite; all available historical aggregate differences reported under the declared threshold-sensitive floor policy; no historical per-cell record equivalence claim",
+  "retained_initial_null_reporting_scope": "The admitted first356 review retains the original report-only failure and exact reverse-patch proof; no new reporting or numerical change here.",
+  "scope": "Independent actual2131 checkpoint/export/field/record review, restart-handoff binding, all8524 cumulative stages and all seven ordinary diagnostic times. No full3551, AMR or performance admission.",
+  "source_sha256": {
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-common-06-independent-review-v1/review.py": "fb1e4c2cd508a0a508260e2ebe634693267a2f6bdf324b225d6520fcf9611bc8"
+  }
+}

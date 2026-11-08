@@ -149,6 +149,26 @@ about 791 MB, beyond the space already needed for the remaining trajectory and
 timing data. See [tool/readiness evidence](evidence/native-profiler-readiness.json)
 for exact installed paths, hashes, commands and interpretation limits.
 
+A storage check after admitting cycle 1776 found 2.585 GiB locally available.
+The segment-5 collection contains 210,179,879 bytes, with a 53,042,013-byte
+compressed archive; its comparison/export directory adds 73,818,495 bytes.
+Observed growth projects about 1.34 GiB for the five remaining collections and
+comparisons. Four timing checkpoints add 0.736 GiB, leaving approximately
+0.51 GiB before temporary archives and logs. These are capacity estimates,
+not a guaranteed bound on compression or future output size. Recheck free
+space and the actual package sizes before each download/extraction, retain
+the remote raw collections, and remove only redundant compressed downloads
+after complete transfer verification and a recorded recovery location.
+
+Keep bounded local timing transfers as the default. Running the unchanged
+offline reader on Aurora is a possible fallback: it does not dereference the
+local paths embedded in the science/review reports, but it needs both complete
+collection trees, the compact build-proof tree and its helper package.
+That remote environment and package have not been qualified. The four optional
+profile/control checkpoints alone add another 0.736 GiB, exceeding the current
+local budget before any traces; do not collect them for full local download
+without a qualified storage/remote-comparison arrangement.
+
 Reproducer: `tst/z4c_hyperboloidal/n12_ownership_audit.py`, using the actual
 `native-clean` directories in the qualified two/eight-node stage-trace bundles
 and `build-native/n12-checkpoint-map-aurora-v1`. The full result is

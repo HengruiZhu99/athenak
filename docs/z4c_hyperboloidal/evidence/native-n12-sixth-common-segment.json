@@ -1,6 +1,6 @@
 {
   "schema": "native-n12-continuation-submission-evidence-v1",
-  "status": "queued",
+  "status": "completed_science_admitted",
   "job": {
     "schema": "native-n12-common-segment-submission-v1",
     "job_id": "9051782.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
@@ -84,7 +84,70 @@
   },
   "record_transfer_verified": true,
   "runtime_changes": false,
-  "segment7_admitted": false,
+  "segment7_admitted": true,
   "full3551_complete": false,
-  "scope": "Only1776-to2131; next endpoint science and independent review required before continuation"
+  "scope": "Completed1776-to2131 with full fields/records, cumulative stages and common-time histories under unchanged gates and independent review. The2131 checkpoint is admitted for bounded continuation after fresh resource/runtime preflight. Full3551 remains incomplete.",
+  "terminal": {
+    "job_state": "F",
+    "exit_status": 0,
+    "walltime": "00:33:01",
+    "end_cycle": 2131,
+    "end_time": 1.0003809816060478,
+    "stage_rows": 1420,
+    "cumulative_stage_rows": 8524,
+    "normal_cycle_limit": true,
+    "endpoint_checkpoint_sha256": "4e8e390d8549923393b3d0d8e9071d740530220d4425ed80deac2ef89a9abdca",
+    "structural_cadence_passed": true,
+    "frozen_provenance_before_after_passed": true,
+    "job_final_sha256": "d38b90b2076b5930908f4863925166e411bd3476014675993202097991fcbe3b",
+    "structural_cadence_sha256": "9cf87dddd2a7a791de4e5873a2326bdd64509705c847ff28eaa34a666d7a0468",
+    "observer_sha256": "63650e863839b30c58c95a234c671e87ef05770cfed76a5189890f63f150159c"
+  },
+  "collection": {
+    "package": {
+      "schema": "native-n12-common-segment-collection-v1",
+      "job_id": "9051782",
+      "segment": 6,
+      "nodes": 2,
+      "ranks": 24,
+      "job_state": "F",
+      "exit_status": 0,
+      "start_cycle": 1776,
+      "end_cycle": 2131,
+      "archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/common-artifacts-9051782/run-artifacts.tar.gz",
+      "archive_bytes": 53395883,
+      "sha256": "dc5264910749626b9141ce33be346dd43514b535c25b4a408ac834c3bf66b8f1",
+      "files": 91,
+      "total_uncompressed_bytes": 210840965,
+      "created_utc": "2026-11-08T13:43:50.657907+00:00",
+      "predecessor_proof": {
+        "science_sha256": "a0b8d1e54cb8251e8dadf9b7ea1186691a09a799dca9a5c454698924b618466a",
+        "review_sha256": "e49fb359d391abfcef180537c8c6636ed244d6ac1a2fd35ab26cacbc92d09ac8",
+        "checkpoint_sha256": "13e8fe4baae38d0ee0f4dda2201cb87ebbfa9de5ed195893b83953fa12ecec5a",
+        "proof_directory": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/common-next-06"
+      },
+      "endpoint_scientific_comparison_pending": true,
+      "continuation_admitted": false
+    },
+    "local_root": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-n12-common-06/run-artifacts",
+    "package_sha256": "c1f4dcaadddac60e9062858134838efa4d19b1d4370833ea5cf33deab7574e66",
+    "transfer_verification": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-n12-common-06/transfer-verification.json",
+    "transfer_verification_sha256": "a4c8408f4861ea24278aa1f47c5cef41d27468ed39619d88ab1390a4868e8905",
+    "all_file_sizes_and_sha256_verified": true,
+    "archive_retention_sha256": "cefcf702987b6155df5313189f6052d38408972130abf76ddce2ec8d65a124c1",
+    "local_compressed_archive_removed": true,
+    "remote_archive_retained": true,
+    "raw_artifacts_retained": true
+  },
+  "endpoint_science_admission": "passed primary comparison and independent review",
+  "science_admission": {
+    "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-common-segment-06-science-v1/continuation-admission.json",
+    "sha256": "2cbe9e7d7520062dec5fd945be716df2d0ab69e4005d82cb4183e7ef00e56c46",
+    "passed": true
+  },
+  "independent_review": {
+    "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-common-06-independent-review-v1/review.json",
+    "sha256": "f93234815cbc8f8f83ad9c5457c39595f6356899abec3bbaceb29f49dfc92f5e",
+    "passed": true
+  }
 }

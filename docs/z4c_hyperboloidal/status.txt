@@ -242,16 +242,29 @@ Diagnostics working-tree milestone (local CPU MPI, full goal still incomplete):
   retained. All7104 cumulative stages pass, including exact clocks; compatibility
   and clock/CFL maxima remain unchanged from1421. Six common diagnostic times
   through1776 pass, including exact horizon areal-radius/irreducible-mass matches.
-  Five later endpoints2131 through3551 remain unverified. No scaling result is
-  established. After fresh runtime/resource preflight, the next1776->2131
-  interval was submitted as9051782 on two nodes/24 ranks with the original
+  Common06 job9051782 has now completed normally through1776->2131, and both
+  scientific reviews pass. At2131 (t/M=3.0011429448181435), all7137936 fields
+  pass: maximum differences are2.024491685403973e-12 bulk and
+  5.505595979116151e-13 scri, with zero failures. All1842048 native chi-record
+  values are checked; historical counts match at56664 floor events,
+  56608 nonpositive candidates and eight cells. The correction-sum difference
+  is6.505213034913027e-19, and current minimum chi is6.013689585689683e-7.
+  All8524 cumulative stages and seven common diagnostic times pass. Compatibility
+  and clock/CFL maxima remain unchanged from1776. Endpoint horizon areal-radius
+  and irreducible-mass differences are4.440892098500626e-16 and
+  2.220446049250313e-16, within the unchanged gates rather than exact equality.
+  Four later endpoints2486 through3551 remain unverified. No scaling result is
+  established. After fresh runtime/resource preflight, the next2131->2486
+  interval was submitted as9051818 on two nodes/24 ranks with the original
   restart entry and timestep. No later segment is admitted.
   See evidence/native-n12-common-02-independent-review.json and
   evidence/native-n12-common-03-independent-review.json, plus
   evidence/native-n12-common-04-science.json and
   evidence/native-n12-common-04-independent-review.json, plus
   evidence/native-n12-common-05-science.json and
-  evidence/native-n12-common-05-independent-review.json.
+  evidence/native-n12-common-05-independent-review.json, plus
+  evidence/native-n12-common-06-science.json and
+  evidence/native-n12-common-06-independent-review.json.
   See evidence/aurora-stage-trace-two.json, evidence/aurora-n12-mapping.json,
   evidence/native-step-observer-local-validation.json,
   evidence/aurora-native-saved-replay-two.json,
@@ -267,7 +280,7 @@ Diagnostics working-tree milestone (local CPU MPI, full goal still incomplete):
 
 Current limitations / remaining full-goal requirements:
 - Fixed-topology dynamic evolution is validated through eight complete RK4
-  steps locally and on24/96Aurora ranks, and through1776 steps on24Aurora ranks.
+  steps locally and on24/96Aurora ranks, and through2131 steps on24Aurora ranks.
   This does not establish the full3551-step trajectory or
   arbitrary refined coupled evolution. Fixed-mesh dynamic restart continuity
   is validated locally andthroughactual24->96rank GPUrestart withthe observed
