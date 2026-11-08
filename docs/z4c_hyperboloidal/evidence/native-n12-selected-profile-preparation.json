@@ -1,0 +1,71 @@
+{
+  "schema": "native-n12-profile-preparation-v1",
+  "prepared": true,
+  "staged": false,
+  "submitted": false,
+  "gpu_executed": false,
+  "nodes": 2,
+  "ranks": 24,
+  "selected_ranks": [
+    8,
+    23
+  ],
+  "start_cycle": 2486,
+  "end_cycle": 2490,
+  "cases": [
+    "normal",
+    "profiled"
+  ],
+  "baseline_executable_sha256": "f3a85db7528986ddec347b31675a8c5d588120a2380133aed73d5967f7aab05c",
+  "source_checkpoint_sha256": "dd4b86ab42c10827f14bd339930cb4d2ffaf9fb5e2b43953d1e5d7924a9fc1ec",
+  "files": {
+    "native_n12_profile_rank.py": {
+      "sha256": "7464f878aeed4e8361bfc17defe4e0e8685aef328a8c8600a42ce1e92d918f78",
+      "bytes": 7057,
+      "source": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/aurora/native_n12_profile_rank.py"
+    },
+    "native_n12_profile_audit.py": {
+      "sha256": "b720cfe44b3a83917476d7635c55094ef7a3ba9f8770cded35b780c0463fd7b2",
+      "bytes": 14930,
+      "source": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/aurora/native_n12_profile_audit.py"
+    },
+    "native_two_node_timing_audit.py": {
+      "sha256": "44e4576505f5328150e24230ec37abdaea52481df03bb101a800ebbfcca0ef7e",
+      "bytes": 15923,
+      "source": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/aurora/native_two_node_timing_audit.py"
+    },
+    "run-native-n12-profile.sh": {
+      "sha256": "57ca21887a315ea0db0bb9a6c64457080adb80aad512628dd7cb2dcebd7a0c28",
+      "bytes": 2193,
+      "source": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/aurora/run-native-n12-profile.sh"
+    },
+    "native-n12-profile-two.pbs": {
+      "sha256": "8431569975df61458f83155cd7ce3da56fec6b9e6dac7dc275bd2b3305d92c8c",
+      "bytes": 412,
+      "source": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/aurora/native-n12-profile-two.pbs"
+    },
+    "collect_native_n12_profile.py": {
+      "sha256": "fb6cdd60b31cfbc8233044179d4126ab3ee326634b1ad8261394cafa39a3ca28",
+      "bytes": 3183,
+      "source": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/aurora/collect_native_n12_profile.py"
+    },
+    "native_n12_profile_contract.md": {
+      "sha256": "cfcd1bf87c935fd7c094917f88dec4c0da7ea63f23df3eadc4d2e2ad3ae8bf11",
+      "bytes": 4270,
+      "source": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_n12_profile_contract.md"
+    }
+  },
+  "launchers_sha256": "c1323087259fd8f21321465608e0cfe3f604dc20bce486f0f03cb17bdfdfe1b8",
+  "offline_controls": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-n12-profile-controls-v1/results.json",
+  "offline_controls_sha256": "ababda63658d47c7ab7e03157163a577e8b9bd054ab1160b8a43334823e796af",
+  "offline_controls_count": 17,
+  "independent_source_review": "native_surface_plan: no blocking defect in bounded requested scope; actual Linux process maps/PMI and profiler schema remain untested",
+  "raw_retention": "All raw traces, checkpoints and outputs remain on Aurora; compact collection cap20MiB",
+  "limitations": [
+    "No throughput measurement",
+    "No claimed actual critical rank or cross-rank clock alignment",
+    "No actual GPU/tool-schema/process-map qualification yet",
+    "Chrome MPI polling and hardwaremetrics disabled",
+    "No numerical source/build modifications"
+  ]
+}

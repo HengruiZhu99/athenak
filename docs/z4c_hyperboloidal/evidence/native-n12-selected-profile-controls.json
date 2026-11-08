@@ -1,0 +1,120 @@
+{
+  "schema": "native-n12-profile-offline-controls-v1",
+  "passed": true,
+  "checks": [
+    {
+      "name": "actual2486 full24704784 finite payload identity",
+      "passed": true,
+      "expected": "accept"
+    },
+    {
+      "name": "wrong expected actual cycle",
+      "passed": true,
+      "expected": "reject",
+      "message": "wrong N12 checkpoint clock/shape"
+    },
+    {
+      "name": "complete checkpoint parameters",
+      "passed": true,
+      "expected": "reject",
+      "message": "profile checkpoint differs: parameters"
+    },
+    {
+      "name": "complete checkpoint identity",
+      "passed": true,
+      "expected": "reject",
+      "message": "profile checkpoint differs: identity"
+    },
+    {
+      "name": "complete checkpoint topology",
+      "passed": true,
+      "expected": "reject",
+      "message": "profile checkpoint differs: topology"
+    },
+    {
+      "name": "complete checkpoint metadata",
+      "passed": true,
+      "expected": "reject",
+      "message": "profile checkpoint differs: metadata"
+    },
+    {
+      "name": "documented unused coarse header excluded",
+      "passed": true,
+      "expected": "accept"
+    },
+    {
+      "name": "initialized header changed",
+      "passed": true,
+      "expected": "reject",
+      "message": "profile initialized mesh header differs"
+    },
+    {
+      "name": "synthetic late field/record payload corruption",
+      "passed": true,
+      "expected": "reject",
+      "message": "full31+8 profile payload differs at byte chunk 0"
+    },
+    {
+      "name": "synthetic short payload",
+      "passed": true,
+      "expected": "reject",
+      "message": "payload coverage differs"
+    },
+    {
+      "name": "synthetic nonfinite payload",
+      "passed": true,
+      "expected": "reject",
+      "message": "nonfinite/truncated checkpoint payload"
+    },
+    {
+      "name": "synthetic Chrome complete interval and shape inventory",
+      "passed": true,
+      "expected": "accept"
+    },
+    {
+      "name": "synthetic invalid Chrome durnan",
+      "passed": true,
+      "expected": "reject",
+      "message": "invalid trace interval"
+    },
+    {
+      "name": "synthetic invalid Chrome tsinf",
+      "passed": true,
+      "expected": "reject",
+      "message": "invalid trace interval"
+    },
+    {
+      "name": "synthetic invalid Chrome dur-1",
+      "passed": true,
+      "expected": "reject",
+      "message": "invalid trace interval"
+    },
+    {
+      "name": "metadata-only trace is not collection",
+      "passed": true,
+      "expected": "reject",
+      "message": "no actual complete Chrome trace intervals"
+    },
+    {
+      "name": "malformed trace retained, not repaired",
+      "passed": true,
+      "expected": "reject",
+      "message": "Expecting property name enclosed in double quotes: line 1 column 2 (char 1)"
+    }
+  ],
+  "actual_fixture": {
+    "path": "build-native/aurora-n12-common-07/run-artifacts/runs/native-n12-common-07/rst/native_n12_5M.00007.rst",
+    "sha256": "dd4b86ab42c10827f14bd339930cb4d2ffaf9fb5e2b43953d1e5d7924a9fc1ec"
+  },
+  "source_sha256": {
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_n12_profile_controls.py": "f34422bcba285ce2176a58b572c66208aef495fac5d568cfc5e2ce9bab25f7ff",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/aurora/native_n12_profile_audit.py": "b720cfe44b3a83917476d7635c55094ef7a3ba9f8770cded35b780c0463fd7b2",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/native_n12_profile_contract.md": "cfcd1bf87c935fd7c094917f88dec4c0da7ea63f23df3eadc4d2e2ad3ae8bf11",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/aurora/native_n12_profile_rank.py": "7464f878aeed4e8361bfc17defe4e0e8685aef328a8c8600a42ce1e92d918f78",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/aurora/native_two_node_timing_audit.py": "44e4576505f5328150e24230ec37abdaea52481df03bb101a800ebbfcca0ef7e",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/aurora/collect_native_n12_profile.py": "fb6cdd60b31cfbc8233044179d4126ab3ee326634b1ad8261394cafa39a3ca28",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/aurora/run-native-n12-profile.sh": "57ca21887a315ea0db0bb9a6c64457080adb80aad512628dd7cb2dcebd7a0c28",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/aurora/native-n12-profile-two.pbs": "8431569975df61458f83155cd7ce3da56fec6b9e6dac7dc275bd2b3305d92c8c"
+  },
+  "scope": "Actual2486 full-state identity plus synthetic corruption/trace parser controls and syntax. No Linux process-map sampling, MPI child launch, actual unitrace schema, remote verifier or GPU collection exercised."
+}
