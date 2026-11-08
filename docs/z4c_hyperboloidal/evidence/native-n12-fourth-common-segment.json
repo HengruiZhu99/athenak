@@ -1,0 +1,90 @@
+{
+  "schema": "native-n12-continuation-submission-evidence-v1",
+  "status": "queued",
+  "job": {
+    "schema": "native-n12-common-segment-submission-v1",
+    "job_id": "9051691.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "nodes": 2,
+    "ranks": 24,
+    "segment": 4,
+    "start_cycle": 1066,
+    "end_cycle": 1421,
+    "fresh_start": false,
+    "entry": "ordinary -r; no -i and no -t",
+    "predecessor_job": "9051654",
+    "predecessor_checkpoint_sha256": "745a158d2eeb4c05111d1a26a5e971c955439ca3360ce12e9078aaf0fe336143",
+    "science_admission_sha256": "c54691b90392e301d53cb6bcc8bb72eca49c3b438ff90f77cf17da47fcab0405",
+    "independent_review_sha256": "a4b74ee8ac69b3fc251d7fd99c00ec5bf4e6a767fca5ae7e023b2a42c14bbe85",
+    "preflight_sha256": "3c9f5350aae079b9f2b02257d2da7d165cf4262d774966a415625f85571d3415",
+    "launchers": {
+      "acceptance.json": "f41b7547b66240d1de8551c7a366d960df8b8af37a8f6d64cf6dd9de26eca2c6",
+      "common_continuation.py": "d63e66d9669bb177bf503a0edd86afa50239f48fd5ebd4ab2b1c85d8ca0be6c6",
+      "previous-review.json": "a4b74ee8ac69b3fc251d7fd99c00ec5bf4e6a767fca5ae7e023b2a42c14bbe85",
+      "previous-science.json": "c54691b90392e301d53cb6bcc8bb72eca49c3b438ff90f77cf17da47fcab0405",
+      "previous-submission.json": "2c15b1a498140445bbe067841ac821c700fd17eff10e88ed25204da7ca8843fc",
+      "run.pbs": "533fc7df6e80daadda5e2d7438e5eb6eed3b38ecd610271cdab307df7761b343",
+      "staging-origin.json": "d712d7f513503c6f883424700aecbcc807d1fb4077e1494a1f057809a37b9c15"
+    },
+    "submitted_utc": "2026-11-08T11:36:16.293730+00:00",
+    "previous_allocation": {
+      "job_id": "9051654",
+      "state": "F",
+      "exit_status": 0,
+      "record_sha256": "f3684cbb2ecf0120c355f081a20e2a49101ccbcb87f2e5e6b964fa6b8f74a328"
+    },
+    "queue_before_sha256": "3d25bdbc0e3e858f2851b3751eb637a7291bb50575ccb5051acb9f14148969be",
+    "no_automatic_continuation": true
+  },
+  "preflight": {
+    "schema": "native-n12-continuation-preflight-v2",
+    "passed": true,
+    "segment": 4,
+    "start_cycle": 1066,
+    "end_cycle": 1421,
+    "predecessor_job": "9051654",
+    "execution_job_id": null,
+    "checkpoint": {
+      "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/native-n12-common-03/rst/native_n12_5M.00003.rst",
+      "sha256": "745a158d2eeb4c05111d1a26a5e971c955439ca3360ce12e9078aaf0fe336143",
+      "size": 197648814,
+      "time": 0.500425211821678,
+      "dt": 0.00046944203735617445,
+      "cycle": 1066,
+      "output_clock": 0.5,
+      "next_restart_number": 4,
+      "last_a0": 0.07233414560840187,
+      "ah_found": true,
+      "atlas_sha256": "55595d6dea9aa1615d6bbfa76c1a98991bb1c3512da6cbe0c15ab4ea2cbc95b1",
+      "identity_sha256": "e12bc4d477c227764b98e7b1dc4d48fb2825c2c0c7f87fd9cd582935cf581395"
+    },
+    "checked_utc": "2026-11-08T11:35:50.499286+00:00",
+    "science_admission_sha256": "c54691b90392e301d53cb6bcc8bb72eca49c3b438ff90f77cf17da47fcab0405",
+    "independent_review_sha256": "a4b74ee8ac69b3fc251d7fd99c00ec5bf4e6a767fca5ae7e023b2a42c14bbe85",
+    "previous_submission_sha256": "2c15b1a498140445bbe067841ac821c700fd17eff10e88ed25204da7ca8843fc",
+    "acceptance_sha256": "f41b7547b66240d1de8551c7a366d960df8b8af37a8f6d64cf6dd9de26eca2c6",
+    "short_admission_sha256": "deb26a9eca22bed36370725662531ef54ac3868d6cca4344bbda7d2fdc7db66c",
+    "frozen_helpers": {
+      "run-common-segment.sh": "7c13e2467cc11a7dde98b95026628cdf53a986b9a690684834b0a6abfaa1011f",
+      "common_segment_audit.py": "e89427a8a98dc93b504924b57a55bf444d589de41538fe674fe0da7b6f43e94f",
+      "longrun_admission.py": "2887b479590c51d473564f9e62d5c6c042ac0b92b520126d6acb421195dddf7f"
+    },
+    "observer_verify_stdout": "Verified invertible original-main observer and unchanged native source/object/executable inputs\n",
+    "observer_verify_stderr": "",
+    "restart_entry": "unchanged shared runner; ordinary -r, no -i, no -t",
+    "scope": "Only this interval; no automatic submission or later continuation"
+  },
+  "local_records": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-n12-common-04-prepared-v1/remote-records",
+  "records_sha256": {
+    "preflight-before-submit.json": "3c9f5350aae079b9f2b02257d2da7d165cf4262d774966a415625f85571d3415",
+    "preflight-before-submit.log": "4add7e70731c641c0dbb0680f3555f3140ca8966d002710a5953bb356c1b2711",
+    "previous-allocation-terminal.txt": "f3684cbb2ecf0120c355f081a20e2a49101ccbcb87f2e5e6b964fa6b8f74a328",
+    "qstat-after-submit.txt": "6054a0567a1a111a09ae00dff5063b90c687c2854ed8b18e6b913e417c486f4c",
+    "queue-before-submit.txt": "3d25bdbc0e3e858f2851b3751eb637a7291bb50575ccb5051acb9f14148969be",
+    "submission.json": "047af3fc70c45828d9c0877b365abb5760ad8480f970c6393e99050bd92f5ad5"
+  },
+  "record_transfer_verified": true,
+  "runtime_changes": false,
+  "segment5_admitted": false,
+  "full3551_complete": false,
+  "scope": "Only1066-to1421; next endpoint science and independent review required before continuation"
+}

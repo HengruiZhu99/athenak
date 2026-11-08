@@ -656,3 +656,19 @@ The unchanged fixed-mesh N12 segment **9051654** is running; the observed
 progress at cycle 720 has 36 new stage records and the exact
 original timestep. Cycle 1066 and any later continuation remain unadmitted
 until complete endpoint science and independent review.
+
+
+Segment 3 completed as **9051654** (F/0), and all 91 collected files verified
+against their remote hashes and sizes. Complete cycle-1066 science and the
+independent review pass, including all endpoint fields, cumulative 4,264
+stage observations, and the completed diagnostic prefix. The admitted
+checkpoint SHA is
+`745a158d2eeb4c05111d1a26a5e971c955439ca3360ce12e9078aaf0fe336143`.
+
+The reviewed reusable preflight passed on Aurora for the fourth segment,
+binding that checkpoint, the complete science report, independent review,
+ordinary output/horizon clocks, and unchanged runtime. After confirming the
+previous job was terminal and only the three existing held campaigns remained,
+**1066→1421** was submitted once as **9051691** on two nodes/24 ranks. This uses
+the original restart entry and timestep; no segment beyond 1421 is admitted.
+See [fourth-segment submission evidence](evidence/native-n12-fourth-common-segment.json).
