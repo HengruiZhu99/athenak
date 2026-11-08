@@ -1,0 +1,98 @@
+{
+  "schema": "native-n12-common-independent-review-v1",
+  "passed": true,
+  "science_admission": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-common-segment-04-science-v1/continuation-admission.json",
+  "science_admission_sha256": "c2b1b63eaf9a8c4bd5df0bbe8d98f27a87ee34c8da58c7cb58458af83070671b",
+  "checkpoint_sha256": "3ceb2d9f1f730cca2d1e4b85cf46a083ce619d6c5436b47f5ebedb1e27560115",
+  "end_cycle": 1421,
+  "through_5m_complete": false,
+  "transfer_verification_sha256": "86a6fbde2bac3ce53653626a90cd57b757d7837af43d240c04d29b35ecdc6e41",
+  "predecessor_science_sha256": "c54691b90392e301d53cb6bcc8bb72eca49c3b438ff90f77cf17da47fcab0405",
+  "predecessor_independent_review_sha256": "a4b74ee8ac69b3fc251d7fd99c00ec5bf4e6a767fca5ae7e023b2a42c14bbe85",
+  "predecessor_checkpoint_sha256": "745a158d2eeb4c05111d1a26a5e971c955439ca3360ce12e9078aaf0fe336143",
+  "actual_restart_handoff_verified": true,
+  "state_checks": {
+    "1421": {
+      "bulk": {
+        "field_values": 7111152,
+        "record_values": 1835136,
+        "exports_match_actual_checkpoint_bitwise": true,
+        "failed_values": 0,
+        "max_absolute": 1.460831455801781e-12,
+        "max_tolerance_ratio": 0.0081061488132568
+      },
+      "surface": {
+        "field_values": 26784,
+        "record_values": 6912,
+        "exports_match_actual_checkpoint_bitwise": true,
+        "failed_values": 0,
+        "max_absolute": 5.275502257262588e-13,
+        "max_tolerance_ratio": 0.00466391797270616
+      }
+    }
+  },
+  "actual_native_chi_summary_recomputed": true,
+  "chi_summary": {
+    "minimum_chi": 1e-10,
+    "minimum_raw_candidate": -4.5390970865975194e-08,
+    "minimum_raw_acceptance_candidate": -4.5390970865975194e-08,
+    "floor_events": 37968,
+    "nonpositive_candidates": 37968,
+    "nonfinite_candidates": 0,
+    "distinct_floored_cells": 8,
+    "sum_corrections_over_attempts": 0.0010852933163453034,
+    "surface_floor_events": 0,
+    "max_correction": 4.5490970865975195e-08,
+    "max_floor_radius": 0.002405626121623456,
+    "first_floor_M": 0.33095663633610284
+  },
+  "historical_chi_aggregate_differences": {
+    "minimum_chi": 0.0,
+    "minimum_raw_candidate": -6.617444900424221e-23,
+    "minimum_raw_acceptance_candidate": -6.617444900424221e-23,
+    "floor_events": 0,
+    "nonpositive_candidates": 0,
+    "nonfinite_candidates": 0,
+    "distinct_floored_cells": 0,
+    "sum_corrections_over_attempts": 2.168404344971009e-19,
+    "surface_floor_events": 0,
+    "max_correction": 6.617444900424221e-23,
+    "max_floor_radius": 0.0,
+    "first_floor_M": 0.0
+  },
+  "stage_rows": 5684,
+  "new_segment_stage_rows": 1420,
+  "exact_stage_clocks": true,
+  "maximum_compatibility": 1.4089055443144982e-13,
+  "clock_CFL_max_absolute_difference": {
+    "clock": 5.3313742309768486e-12,
+    "CFL": 1.6653345369377348e-16
+  },
+  "clock_CFL_max_tolerance_ratio": {
+    "clock": 0.02577619954159558,
+    "CFL": 6.717771699849685e-08
+  },
+  "history_completed_prefix_passed": true,
+  "history_times": [
+    0,
+    356,
+    711,
+    1066,
+    1421
+  ],
+  "harmonic_coefficients_each_time": 169,
+  "missing_future_common_steps": [
+    1776,
+    2131,
+    2486,
+    2841,
+    3196,
+    3551
+  ],
+  "chi_history_scope": "native records decoded and checked finite; all available historical aggregate differences reported under the declared threshold-sensitive floor policy; no historical per-cell record equivalence claim",
+  "retained_initial_null_reporting_scope": "The admitted first356 review retains the original report-only failure and exact reverse-patch proof; no new reporting or numerical change here.",
+  "scope": "Independent actual1421 checkpoint/export/field/record review, restart-handoff binding, all5684 cumulative stages and all five ordinary diagnostic times. No full3551, AMR or performance admission.",
+  "source_sha256": {
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-common-04-independent-review-v1/review.py": "fd1aeb72b7a321b5e8100f74eea252157fe97f2aeeb2fc81461e05788da2db0c"
+  }
+}

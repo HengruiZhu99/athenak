@@ -672,3 +672,22 @@ previous job was terminal and only the three existing held campaigns remained,
 **1066→1421** was submitted once as **9051691** on two nodes/24 ranks. This uses
 the original restart entry and timestep; no segment beyond 1421 is admitted.
 See [fourth-segment submission evidence](evidence/native-n12-fourth-common-segment.json).
+
+Segment 4 completed as **9051691** (F/0), and all 91 collected files verified
+against their remote hashes and sizes. Complete cycle-1421 science and the
+independent review pass: all 7,137,936 endpoint fields, 1,842,048 native chi-record
+values, 5,684 cumulative stage observations, and all five common diagnostic
+times are checked. The 37,968 floor events in eight cells match the historical
+counts; the correction-sum difference `2.168404344971009e-19` is retained. The
+admitted checkpoint SHA is
+`3ceb2d9f1f730cca2d1e4b85cf46a083ce619d6c5436b47f5ebedb1e27560115`.
+See [cycle-1421 science](evidence/native-n12-common-04-science.json) and
+[independent review](evidence/native-n12-common-04-independent-review.json).
+
+After fresh queue and runtime checks, **1421→1776** was submitted once as
+**9051736** on two nodes/24 ranks. Its preflight binds the exact admitted
+checkpoint, complete science report and independent review, output/horizon
+clocks, and unchanged runtime. It uses the original restart entry and timestep.
+No segment beyond 1776 is admitted; six later common endpoints and the full
+3551-step result remain unverified. See
+[fifth-segment submission evidence](evidence/native-n12-fifth-common-segment.json).
