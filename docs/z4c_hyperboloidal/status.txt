@@ -358,6 +358,17 @@ Current limitations / remaining full-goal requirements:
   This revised rationale is explicit in amr-interpolation-review.md. The
   measured coupled post-coarsening clock RHS transient reaches4.10e-4; bounded
   consistency tests do not establish coupled convergence or long-time accuracy.
+- The existing independent refined-surface analytic fixture now has an isolated
+  verified SYCL build using the coherent AMR candidate's headers/objects and
+  actual compiler/link recipes. Its C++ source, input and gates are unchanged;
+  all1972 frozen N12 source files,228 objects and baseline executable remain
+  unchanged. Reviewed24/96 launch/collection tools and23 offline controls pass,
+  but no GPU numerical execution or admission has occurred. This is a focused
+  oracle for device sampling, radial jets and normal lifting. Volume weights
+  are generated on the host and checked after storage, not computed by a GPU
+  volume kernel. Manufactured angular ghosts and supplied corrections exclude
+  a full refined-RHS/normal-solve or arbitrary long-time convergence claim.
+  See evidence/native-surface-smr-gpu-preparation.json.
 - Native ADM sampling, constraint RMS, fixed-origin FastFlow and accepted-step
   output are implemented and locally tested as described above. Strict saved
   Aurora replay and initial/eight-step trajectory pass on24/96ranks, with

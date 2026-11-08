@@ -41,7 +41,7 @@
     {
       "id": "smr_support",
       "status": "partial",
-      "evidence_or_next_gate": "Core-SMR N12 eight-step legacy trajectory remains exact; outer and first-shell mixed radial/angular donor accuracy and bounded coupled refined evolution pass locally. GPU/long-time refined accuracy remains."
+      "evidence_or_next_gate": "Core-SMR N12 eight-step legacy trajectory remains exact; outer and first-shell mixed radial/angular donor accuracy and bounded coupled refined evolution pass locally. GPU/long-time refined accuracy remains. The existing independent surface_smr analytic fixture now has an isolated verified SYCL build using coherent candidate objects and unchanged input/gates. Reviewed24/96 launch/collection tools and23 offline controls pass; no GPU numerical execution yet. This targets refined sampling/radial/lift operator accuracy; host-generated volume weights are checked after storage. See evidence/native-surface-smr-gpu-preparation.json."
     },
     {
       "id": "amr_support",

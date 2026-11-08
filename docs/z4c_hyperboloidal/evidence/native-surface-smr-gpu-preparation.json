@@ -1,0 +1,184 @@
+{
+  "schema": "native-surface-smr-gpu-preparation-evidence-v1",
+  "passed": true,
+  "actual_SYCL_build_passed": true,
+  "gpu_numerical_admission": false,
+  "gpu_executed": false,
+  "scope": "Actual isolated compilation, unchanged-input preservation and reviewed launch/collection preparation only. GPU numerical qualification remains pending.",
+  "build": {
+    "schema": "native-surface-smr-aurora-build-v1",
+    "passed": true,
+    "build_exit_code": 0,
+    "verify_exit_code": 0,
+    "gpu_executed": false,
+    "gpu_submitted": false,
+    "baseline_executable_sha256": "f3a85db7528986ddec347b31675a8c5d588120a2380133aed73d5967f7aab05c",
+    "candidate_executable_sha256": "442594b847ff0eb56407513da48e96930ec41dbe537a69c202fd802da4ea6a31",
+    "candidate_build_sha256": "f4941ccd95ebee95aac62842aa6e06266872b65621a80f43e8ad5ae4532eb340",
+    "helper_executable": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/surface-smr-gpu-v1/build/surface_smr",
+    "helper_executable_sha256": "3b50e96c0d642e30a7519385108921cca9e32a65cc64f4822e6a69386fb04336",
+    "harness_object_sha256": "d49c75b3adf84b2b50344cf22d9167ea68e60f0f79e75552df782bb6193eea40",
+    "fixture_sha256": "2f4641583d28e2d875c4234b1e2c3386710c3f20fe84e664b8e66ad43345fad3",
+    "input_sha256": "0a1ac2023d0abb6ad17931090a61c97a3505b97e7fd4f472f6d5a9342ebc2719",
+    "runtime_inputs_unchanged": true,
+    "retained_link_inputs": 202,
+    "source_inputs": 406,
+    "dependencies": 203,
+    "build_seconds": 25.996395593043417,
+    "provenance_sha256": "a91999245554bea95d34828ed5807acab82337769c30fe283a283b436f001e63",
+    "package_sha256": "36c232032af1b2550ebcb833a1d500990d94a8a218882e74613a4dca5e5e983f"
+  },
+  "baseline_before_and_after": {
+    "baseline_unchanged": true,
+    "executable_sha256": "f3a85db7528986ddec347b31675a8c5d588120a2380133aed73d5967f7aab05c",
+    "source_files": 1972,
+    "objects": 228,
+    "source_manifest_sha256": "4706aae696919253201da4cac9dd14bff52743ee8826dc93660a382f255ec9a5",
+    "object_manifest_sha256": "462da52c2e152e9c94818a534314aec72f2a827f30decdb2d23a3559e6954547",
+    "original_main_sha256": "df3504092f586440526194cfc825949a5637b3ec0506ec3fa47629fc3e5915ae"
+  },
+  "toolchain": {
+    "compiler.txt": {
+      "actual_sha256": "6f41d08dd542e36e2f41b7b105da56d84c00bd6eb99a7c324ef8ef06635cbe26",
+      "baseline_sha256": "6f41d08dd542e36e2f41b7b105da56d84c00bd6eb99a7c324ef8ef06635cbe26",
+      "exact": true
+    },
+    "mpi-wrapper.txt": {
+      "actual_sha256": "35ee2ba9df330d781abc430dd144e1728a49ceb7215380336a8682af0ed5a88d",
+      "baseline_sha256": "35ee2ba9df330d781abc430dd144e1728a49ceb7215380336a8682af0ed5a88d",
+      "exact": true
+    }
+  },
+  "build_artifacts": {
+    "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-surface-smr-gpu-build-v1/artifacts",
+    "manifest_sha256": "3e2889bcd70db69da1273401a0b8a39701602c586dc627aed6ab1291a1b9410a",
+    "build_result_sha256": "27ce163c8048a27965fc096e0dabd74651d7e540b8f2a4c9ca7f0e9eb568ad90",
+    "transfer_verification": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-surface-smr-gpu-build-v1/transfer-verification.json",
+    "transfer_verification_sha256": "8ebec214f7036fedea4eb0fa16f5f076c1365ac78f3bf40c32823da3166b064c",
+    "files_verified": 36,
+    "exe_object_downloaded": false
+  },
+  "launch_preparation": {
+    "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-surface-smr-gpu-build-v1/launch-preparation.json",
+    "sha256": "671be5be44beb57e62bb121bab59f2fa4381c58dd34bc08fe01abf56f8b5321f",
+    "scope": "Reviewed preparation snapshot before staging; no submission or GPU execution.",
+    "files": {
+      "surface_smr_run_audit.py": {
+        "sha256": "7f17bdf3d103e93eae201f83609f5ad3e32f769854624d839a73ee342920ddd5",
+        "size": 11461
+      },
+      "run-surface-smr-validation.sh": {
+        "sha256": "36e4f86300bcba518ff177bf5dfc295acf24c4a1e90e3b314eac8c539e8c5ecf",
+        "size": 2770
+      },
+      "surface-smr-two.pbs": {
+        "sha256": "a6bdf3722a013584752af9e2afd23eced2075a170765818429ce20d1fac993f2",
+        "size": 388
+      },
+      "surface-smr-eight.pbs": {
+        "sha256": "a791e4423b872e8af342b2f203a30a04e37e2e58a923a09609325c917e0ff80b",
+        "size": 398
+      },
+      "launchers.sha256": {
+        "sha256": "262b3874d98085baa17525872720d95caacfda35233894bcece2cd62d4416153",
+        "size": 361
+      }
+    },
+    "runs": {
+      "2": {
+        "ranks": 24,
+        "pbs": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/surface-smr-gpu-v1/surface-smr-two.pbs",
+        "working_case": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/surface-smr-gpu-nodes2",
+        "helper_command": [
+          "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/surface-smr-gpu-v1/build/surface_smr",
+          "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/surface-smr-gpu-v1/package/surface_smr.athinput"
+        ],
+        "launch_timeout_seconds": 600,
+        "allocation_minutes": 20,
+        "collect_command": [
+          "/usr/bin/python3.11",
+          "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/surface-smr-gpu-v1/surface_smr_run_audit.py",
+          "collect",
+          "--nodes",
+          "2",
+          "--job",
+          "<actual-terminal-job-id>"
+        ]
+      },
+      "8": {
+        "ranks": 96,
+        "pbs": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/surface-smr-gpu-v1/surface-smr-eight.pbs",
+        "working_case": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/surface-smr-gpu-nodes8",
+        "helper_command": [
+          "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/surface-smr-gpu-v1/build/surface_smr",
+          "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/surface-smr-gpu-v1/package/surface_smr.athinput"
+        ],
+        "launch_timeout_seconds": 600,
+        "allocation_minutes": 20,
+        "collect_command": [
+          "/usr/bin/python3.11",
+          "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/surface-smr-gpu-v1/surface_smr_run_audit.py",
+          "collect",
+          "--nodes",
+          "8",
+          "--job",
+          "<actual-terminal-job-id>"
+        ]
+      }
+    },
+    "preconditions": [
+      "Root review and authorization after current N12 interval terminal science review",
+      "Donor performs live queue/resource preflight; all qsub owned by Donor",
+      "Run2nodes first, then8nodes only after prior F/0 plus numerical gates; allocations never overlap and never exceed8nodes",
+      "Stage exact reviewed launch files only inside the existing isolated surface-smr-gpu-v1 directory"
+    ]
+  },
+  "offline_controls": {
+    "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-surface-smr-gpu-build-v1/launch-controls.json",
+    "sha256": "a56832fdcf895e95fa341ca02fd566d08f6db01e0a7bd1d497eb0624e081a591",
+    "passed": true,
+    "checks": 23,
+    "scope": "Preserved CPU numerical log, prior real GPU binding-only files, synthetic terminal records and rejected log mutations; no future GPU run or solver execution.",
+    "source_sha256": {
+      "tst/z4c_hyperboloidal/aurora/surface_smr_run_audit.py": "7f17bdf3d103e93eae201f83609f5ad3e32f769854624d839a73ee342920ddd5",
+      "tst/z4c_hyperboloidal/aurora/run-surface-smr-validation.sh": "36e4f86300bcba518ff177bf5dfc295acf24c4a1e90e3b314eac8c539e8c5ecf",
+      "tst/z4c_hyperboloidal/aurora/surface-smr-two.pbs": "a6bdf3722a013584752af9e2afd23eced2075a170765818429ce20d1fac993f2",
+      "tst/z4c_hyperboloidal/aurora/surface-smr-eight.pbs": "a791e4423b872e8af342b2f203a30a04e37e2e58a923a09609325c917e0ff80b",
+      "build-native/aurora-surface-smr-gpu-build-v1/check-launch-tools.py": "3ceac68f1bab0c8575e705f57fe6194919b4f03eea948fc067bfb07da972705c"
+    }
+  },
+  "independent_review": {
+    "agent": "/root/native_surface_plan",
+    "build_review_passed": true,
+    "launch_audit_review_passed": true,
+    "source_files_match_preparation_and_offline_controls": true,
+    "blocking_findings": [],
+    "scope": "Bounded read-only source/proof review; no duplicate build, tests or GPU execution. Compiled contract bytes preserved; volume-computation scope clarified here."
+  },
+  "operator_scope": "SurfaceExchange::Sample, ResidualJet and Correction run device kernels. DissipationPlan::Rebuild generates volume weights on the host and stores/copies them; the volume oracle checks those generated/stored weights, not GPU volume arithmetic.",
+  "acceptance": {
+    "ranks": [
+      24,
+      96
+    ],
+    "blocks": 113,
+    "surface_patches": 9,
+    "operator_comparisons": 4228848,
+    "nodal_volume_comparisons": 22464,
+    "internal_radial_starts": 576,
+    "failed_values": 0,
+    "operator_gate": "256*epsilon*max(1,row_L1)*4",
+    "volume_gate": "128*epsilon*expected",
+    "finite_max_error_over_bound_at_most": 1,
+    "collective_rebuild_rejection": "passed",
+    "both_decompositions_required": true,
+    "allocation_overlap_allowed": false,
+    "maximum_active_nodes": 8
+  },
+  "limits": [
+    "No original fixture, input or numerical tolerance change.",
+    "No runtime module, frozen N12 source/object/executable or coherent candidate changes.",
+    "Manufactured angular ghosts and supplied correction constants isolate operators; this is not a full refined RHS or normal-solve oracle.",
+    "No independent adaptive convergence, arbitrary long-time stability or performance claim."
+  ]
+}
