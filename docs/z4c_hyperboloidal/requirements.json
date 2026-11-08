@@ -16,7 +16,7 @@
     {
       "id": "native_driver_and_tasks",
       "status": "partial",
-      "evidence_or_next_gate": "Real NumericalRelativity stage queues and block-local adapters execute one full classical RK4 cycle through original Driver. Four disjoint bulk batches, sparse donor polling and local scri compatibility are wired. Native initialization/timestep lifecycle and multicycle comparison remain; dynamic constructor gate retained."
+      "evidence_or_next_gate": "Original Driver initialization and eight-cycle dynamic classical RK4 execute with exact fixed dt. Independent legacy/native states and 32 stage diagnostics are exact on two/eight local ranks. Native AMR/diagnostic lifecycle remains."
     },
     {
       "id": "extend_native_octree",
@@ -26,12 +26,12 @@
     {
       "id": "new_native_physics_module",
       "status": "partial",
-      "evidence_or_next_gate": "Registered pack-owned module/pgen with local bulk/overlap/scri storage, reference/source initialization, full mapped RHS, original normal solve, physical KO and actual RK updates. Accepted-state guards tested. Remaining lifecycle/diagnostics/restarts prevent production enablement."
+      "evidence_or_next_gate": "Pack-owned module now supports normal fixed-topology dynamic input and native restart records. Full local eight-step trajectory is exact against legacy on two/eight ranks. AMR transfers and physical diagnostics/FastFlow remain."
     },
     {
       "id": "block_locality",
       "status": "verified_for_fixed_mesh_stages",
-      "evidence_or_next_gate": "Native local block and owned-face arrays plus four sparse peer plans; no global evolved field replication and no normal-correction gather. Complete fixed N12 stage and one-cycle two/eight local-rank tests. AMR resize/migration remains under amr_support."
+      "evidence_or_next_gate": "Native local block/owned-face arrays, sparse peer transport and four independent bulk batches validated through eight full steps on two/eight ranks. No global evolved-field replication. AMR resize/migration remains."
     },
     {
       "id": "equal_block_weights",
@@ -41,22 +41,22 @@
     {
       "id": "smr_support",
       "status": "partial",
-      "evidence_or_next_gate": "N12 core SMR complete stage RHS passes independent oracle. Shell 197-leaf donor fixture and 113-leaf/nine-surface-patch manufactured operators pass. Arbitrary refined coupled evolution, state transfers and first-shell radial refinement accuracy remain."
+      "evidence_or_next_gate": "Core-SMR N12 actual eight-step evolution passes complete legacy comparison. Refined shell donor/surface operators and native restart pass two/eight ranks. Analytic refined nodal volume check passes. Arbitrary refined coupled evolution and first-shell radial accuracy remain."
     },
     {
       "id": "amr_support",
       "status": "partial",
-      "evidence_or_next_gate": "Cartesian baseline AMR/restart remains bitwise; native chart-aware seams, safe derefinement and mixed shell donor/operator plans tested. Hyperboloidal array resize, migration, restriction/prolongation, overlap/scri/record transfer and rebuild lifecycle remain."
+      "evidence_or_next_gate": "Chart-aware tree/seams/balance and shell SMR operators validated. Transfer contract now covers native lifecycle, raw-field legacy transfer reference, evolved overlap/scri/history, accepted halo refresh, dormant slots and criterion view/index rebinding. Field AMR remains unimplemented and dynamic adaptive input rejected."
     },
     {
       "id": "numerical_fidelity",
       "status": "partial",
-      "evidence_or_next_gate": "All N12 coordinates and initial values bitwise equal. Two complete stage RHS scenarios:14222304 bulk rates maxabs2.842176364051263e-14;53568 scri rates maxabs4.440892098500626e-16; zero failures of adopted/tighter-chi gates. KO rates bitwise. Full old-versus-new RK4/eight-step and3551-step comparisons remain."
+      "evidence_or_next_gate": "Fresh/one/eight-step bulk/scri and every ChiRecord member match independent legacy bit for bit on two/eight local ranks with one executable; all32 stage diagnostics match. Full source/object provenance and complete snapshot byte comparisons recorded. Active-floor long evolution and Aurora3551-step comparisons remain."
     },
     {
       "id": "native_restart",
       "status": "partial",
-      "evidence_or_next_gate": "Explicit v2 location records, atlas convention v2 binary identity and legacy Cartesian v1 loading tested. Hyperboloidal bulk/overlap/scri/chi-record serialization and restore lifecycle remain unimplemented."
+      "evidence_or_next_gate": "Native shared-file N12 and outer-SMR records pass 2->8->2 bytewise with all8 record members nonzero. Per-rank roundtrip and collective rejection of mixed-time/changedownership/single-rank truncation pass. Final-build nine-step state/records are byte-identical for continuous2ranks versus1step2ranks+restart+8steps8ranks. AMR regrid/restart remains under amr_support."
     },
     {
       "id": "n12_aurora_through_5m",
@@ -81,7 +81,7 @@
     {
       "id": "reuse_and_consistent_style",
       "status": "partial",
-      "evidence_or_next_gate": "Original native tree, load balancing, mesh/packs, NR TaskList and Driver retained; classicalRK4 separate from existingRK4. New mapped donor/endpoint operators use local views and persistent peer MPI. No legacy Evolution/CompositeGrid driver imported. Same-chart native Bvals reuse and AMR/restart integration remain."
+      "evidence_or_next_gate": "Original Driver initialization, NumericalRelativity TaskList, mesh/tree/load balancing and native GID-indexed MPI-IO reused. Custom code implements mapped stencils and owned scri, with no research Evolution driver. Same-chart native Bvals and field AMR integration remain."
     }
   ]
 }

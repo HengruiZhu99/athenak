@@ -22,6 +22,7 @@
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c_hyperboloidal/z4c_hyperboloidal.hpp"
 #include "dyn_grmhd/dyn_grmhd.hpp"
 #include "ion-neutral/ion-neutral.hpp"
 #include "radiation/radiation.hpp"
@@ -511,6 +512,9 @@ void Driver::Initialize(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool re
     if (pz4c != nullptr) {
       (void) pmesh->pmb_pack->pz4c->NewTimeStep(this, nexp_stages);
     }
+    if (pmesh->pmb_pack->pz4c_hyperboloidal != nullptr) {
+      (void) pmesh->pmb_pack->pz4c_hyperboloidal->NewTimeStep(this,nexp_stages);
+    }
 
     pmesh->NewTimeStep(tlim);
     RefreshSTSCycleState(pmesh);
@@ -748,7 +752,8 @@ void Driver::Finalize(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
 
 void Driver::OutputCycleDiagnostics(Mesh *pm) {
 //  const int dtprcsn = std::numeric_limits<Real>::max_digits10 - 1;
-  const int dtprcsn = 6;
+  const int dtprcsn = pm->pmb_pack->pz4c_hyperboloidal!=nullptr
+      ? std::numeric_limits<Real>::max_digits10-1 : 6;
   if (pm->ncycle % ndiag == 0) {
     Real elapsed = pwall_clock_->seconds();
     std::cout << "elapsed=" << std::scientific << std::setprecision(dtprcsn) << elapsed
@@ -784,6 +789,12 @@ Real Driver::UpdateWallClock() {
 
 void Driver::InitBoundaryValuesAndPrimitives(Mesh *pm) {
   // Note: with MPI, sends on ALL MBs must be complete before receives execute
+
+  // Hyperboloidal fields are populated by the native problem generator/restart
+  // reader before this hook. Mapped plans belong to the local MeshBlockPack.
+  if (pm->pmb_pack->pz4c_hyperboloidal != nullptr) {
+    pm->pmb_pack->pz4c_hyperboloidal->InitializeBoundaryValues(this);
+  }
 
   // Initialize Z4c
   z4c::Z4c *pz4c = pm->pmb_pack->pz4c;

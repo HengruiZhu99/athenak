@@ -1,0 +1,50 @@
+{
+  "status": "fixed-mesh lifecycle and restart milestone verified; full goal active/incomplete",
+  "validation_environment": "local CPU MPI, double precision; no Aurora GPU/performance claim",
+  "final_athena_sha256": "3c0984f8c130fa22694010ac27a2eaa25c0a42c35bdf32f8d2bb6bf0c854e8bf",
+  "build": "make -j64, including all test targets; build-native/native-lifecycle-final-build.log",
+  "ctest": {
+    "passed": 8,
+    "total": 8,
+    "evidence": "native-lifecycle-ctest.txt"
+  },
+  "cartesian_regression": {
+    "bytewise_comparisons": 6,
+    "evidence": "native-lifecycle-cartesian-regression.json"
+  },
+  "executable_lifecycle": "native-lifecycle-smoke.json",
+  "legacy_and_cross_rank_trajectory": "native-trajectory-cross-rank.json",
+  "trajectory_detail": [
+    "native-trajectory-two.json",
+    "native-trajectory-eight.json"
+  ],
+  "restart": [
+    "native-restart-validation.json",
+    "native-lifecycle-restart-shared.json",
+    "native-lifecycle-restart-per-rank.json",
+    "native-lifecycle-restart-trajectory-results.json"
+  ],
+  "refined_nodal_volumes_and_surface_operators": [
+    "native-lifecycle-surface-smr-two.json",
+    "native-lifecycle-surface-smr-eight.json"
+  ],
+  "source_provenance": {
+    "trajectory_sources": "native-lifecycle-trajectory-source-manifest.json",
+    "trajectory_objects": "native-lifecycle-trajectory-object-manifest.json",
+    "final_build": "native-lifecycle-final-build-manifest.json",
+    "after_trajectory_runtime_change": "Only restart.cpp and its object changed, adding per-rank-only metadata consistency validation. All other387source records and193native objects unchanged. Final per-rank and dynamic shared-file restart tests use the final executable.",
+    "later_test_hardening": "Additional surface/leaf preflight assertions and legacy-build reuse guards were added after archived full runs. Syntax and provenance-rejection checks passed, not a new full trajectory. The exact tested harness is reconstructible from native-trajectory-post-run-guards.patch and its tested-harness manifest."
+  },
+  "reference_recovery": [
+    "n12-downloaded-step3551.json",
+    "n12-fastflow-summary.json"
+  ],
+  "remaining": [
+    "Hyperboloidal field AMR transfer/resize/rebuild and refinement criteria integration",
+    "First-shell radial refinement accuracy and broader coupled SMR validation",
+    "Physical ADM conversion, constraints and distributed fixed-origin FastFlow",
+    "Mapped adaptive timestep admission",
+    "Native Aurora SYCL correctness and3551steps through5M, including active floors",
+    "Same-work2-/8-node timings, scaling profiles and measured improvements"
+  ]
+}

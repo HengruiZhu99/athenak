@@ -13,6 +13,7 @@
 #include "mesh/mesh.hpp"
 #include "pgen/pgen.hpp"
 #include "z4c_hyperboloidal/surface_exchange.hpp"
+#include "z4c_hyperboloidal/dissipation_plan.hpp"
 
 namespace h=z4c_hyperboloidal;
 void Require(bool yes,const char *what) {if (!yes)throw std::runtime_error(what);}
@@ -73,6 +74,38 @@ int main(int argc,char **argv) {
       MPI_Allreduce(MPI_IN_PLACE,counts,4,MPI_UINT64_T,MPI_SUM,MPI_COMM_WORLD);
       Require(counts[0]==113 && counts[1]==9 && counts[2]==4 && counts[3]==4,
               "outer SMR fixture topology changed");
+
+      // Independently evaluate the spherical volume Jacobian. The shared
+      // r=.97 refined interface owns a full nodal cell; only r=.94, the inner
+      // endpoint of the original nodal layer, owns a half cell. A test of KO
+      // rates alone cannot expose this error because its taper vanishes here.
+      h::DissipationPlan dissipation;dissipation.Rebuild(*mesh.pmb_pack,p);
+      const auto volumes=Kokkos::create_mirror_view_and_copy(HostMemSpace(),
+                                                          dissipation.Bind().volumes);
+      std::uint64_t volume_checks=0,interior_starts=0;
+      for (int point=0;point<p.npoints;++point) {
+        const auto c=p.points.h_view(point);const auto map=maps(c.m);
+        if (map.face<0 || map.layer!=11)continue;
+        const double q1=map.lo[1]+(c.j-origin+.5)*(map.hi[1]-map.lo[1])/n;
+        const double q2=map.lo[2]+(c.k-origin+.5)*(map.hi[2]-map.lo[2])/n;
+        const double a=std::acos(-1.)/4,u=std::tan(a*q1),v=std::tan(a*q2);
+        const double angular=a*a*(1+u*u)*(1+v*v)/std::pow(1+u*u+v*v,1.5);
+        const double r=h::SphericalPolicy::Radius(geometry(point).x);
+        const double dr=(map.outer_radius-map.inner_radius)*(map.hi[0]-map.lo[0])/n;
+        double expected=r*r*dr*angular*(map.hi[1]-map.lo[1])/n
+            *(map.hi[2]-map.lo[2])/n;
+        if (std::abs(r-.94)<1e-14)expected*=.5;
+        Require(std::abs(volumes(point)-expected)<=128*std::numeric_limits<Real>::epsilon()
+            *expected,"refined nodal volume disagrees with analytic spherical Jacobian");
+        ++volume_checks;
+        if (map.chart_id==1 && c.i==origin && std::abs(r-.97)<1e-14)++interior_starts;
+      }
+      MPI_Allreduce(MPI_IN_PLACE,&volume_checks,1,MPI_UINT64_T,MPI_SUM,MPI_COMM_WORLD);
+      MPI_Allreduce(MPI_IN_PLACE,&interior_starts,1,MPI_UINT64_T,MPI_SUM,MPI_COMM_WORLD);
+      Require(volume_checks==13*1728 && interior_starts==4*144,
+              "refined nodal-volume coverage changed");
+      if (!global_variable::my_rank)std::cout<<"nodal_volume comparisons="<<volume_checks
+          <<" internal_radial_starts="<<interior_starts<<" analytic_jacobian=passed\n";
 
       std::uint64_t compared=0,failed=0;double worst_ratio=0,max_absolute=0;
       const auto check=[&](double actual,double expected,double row_norm) {

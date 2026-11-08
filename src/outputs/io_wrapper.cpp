@@ -638,3 +638,23 @@ IOWrapperSizeT IOWrapper::GetPosition(bool single_file_per_rank) {
   return pos;
 #endif
 }
+
+// Query the byte extent without moving the sequential header cursor. A failed
+// query returns zero so restart callers reject the file before collective reads.
+IOWrapperSizeT IOWrapper::GetSize(bool single_file_per_rank) {
+#if MPI_PARALLEL_ENABLED
+  if (!single_file_per_rank) {
+    MPI_Offset size=0;
+    if (MPI_File_get_size(fh_,&size)!=MPI_SUCCESS || size<0) return 0;
+    return static_cast<IOWrapperSizeT>(size);
+  }
+  FILE *file=reinterpret_cast<FILE*>(fh_);
+#else
+  FILE *file=fh_;
+#endif
+  const auto position=std::ftell(file);
+  if (position<0 || std::fseek(file,0,SEEK_END)!=0) return 0;
+  const auto size=std::ftell(file);
+  if (std::fseek(file,position,SEEK_SET)!=0 || size<0) return 0;
+  return static_cast<IOWrapperSizeT>(size);
+}

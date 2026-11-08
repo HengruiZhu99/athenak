@@ -44,7 +44,10 @@ void DissipationPlan::Rebuild(const MeshBlockPack &pack,
     const auto cell=module.points.h_view(p);
     point_indices[index_of(cell.m,cell.i,cell.j,cell.k)]=p;
     volumes(p)=Volume(geometry(p),n)
-        *(maps(cell.m).node_offset[0]==0 && cell.i==origin ? .5 : 1.);
+        *(maps(cell.m).node_offset[0]==0 && maps(cell.m).lo[0]==0
+            && cell.i==origin ? .5 : 1.);
+    // The nodal outer layer has a half cell at its physical inner endpoint.
+    // Refinement introduces interior radial starts, which retain full weight.
   }
   for (int p=0;p<module.npoints;++p) {
     offsets(p)=lines.size();

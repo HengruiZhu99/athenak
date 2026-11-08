@@ -102,7 +102,24 @@ The campaign binary-hash list and snapshot list are now attached under `evidence
 
 Remaining recovery gaps:
 
-- Exact `fastflow_diagnostics` build provenance is not established by the misleadingly located `n12-fastflow/build-manifest.json`; that file's compile/link commands build `evolve-history`.
-- Large state arrays were hashed remotely but not downloaded or decoded in this recovery. A full-state native comparison must read the actual arrays and verify these hashes first.
+- The actual diagnostic compile/link commands have now been recovered from
+  `scri-resolution-20261107/build-fastflow.log`. The surviving binary has SHA-256
+  `ffc8cd31909776872f0490466b26fbaeda378e072478e68e24ec9c7aaa2f0701`.
+  `evidence/n12-fastflow-summary.json` and its companion command/dependency/source
+  records preserve this audit. A source gap remains: `coupled_mpi.cpp`,
+  `run_controls.hpp`, and `fastflow_history.hpp` were modified after the
+  diagnostic was built, and the Makefile did not track those header dependencies.
+  The later source manifest therefore cannot establish their exact compiled
+  bytes. No launch-time diagnostic binary checksum was found; the hash above
+  identifies the surviving binary. The misleading `n12-fastflow/build-manifest.json`
+  describes `evolve-history`, not this diagnostic.
+- The complete step-3551 bulk and scri arrays have now been downloaded read-only
+  to `build-native/n12-reference-step3551`. Both match the pinned SHA-256 hashes;
+  all 7,137,936 float64 values are finite and have the expected point-major shape.
+  `evidence/n12-downloaded-step3551.json` records provenance, dimensions and
+  per-field ranges, along with the saved time/chi-policy diagnostics. These are
+  reference arrays, not a comparison to a native evolved state. Coordinate/field
+  matching and comparison with a native step-3551 state remain; common-time
+  diagnostic comparison can use the preserved reference CSV.
 
 The native implementation should first match initial physical fields and mesh sampling, then the full N12 history and scri/constraint diagnostics through step 3551. Numerical tolerances must be established explicitly for the actual native arithmetic and interpolation changes; this recovery record does not authorize dropping a field, changing KO/floor/dt, or accepting only horizon-mass agreement.

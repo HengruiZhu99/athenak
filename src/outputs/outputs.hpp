@@ -408,6 +408,8 @@ class RestartOutput : public BaseTypeOutput {
   RestartOutput(ParameterInput *pin, Mesh *pm, OutputParameters oparams);
   void LoadOutputData(Mesh *pm) override;
   void WriteOutputFile(Mesh *pm, ParameterInput *pin) override;
+ private:
+  HostArray2D<Real> hyperboloidal_records;
 };
 
 // Forward declaration

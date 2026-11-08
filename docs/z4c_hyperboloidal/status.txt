@@ -36,6 +36,14 @@ Implemented:
 - Pinned N12 floating-point contraction policy retained for migrated sources.
   Default contraction caused small surface errors amplified by radial derivatives;
   disabling contraction restores reference agreement without relaxing tolerances.
+- Original Driver initialization now builds plans, projects dependent fields and
+  fills initial ghosts through native task polling. Ordinary fixed-mesh dynamic
+  inputs use classical RK4 and preserve exact time/dt across cycles, independent
+  of cfl_number, including the last full step across tlim.
+- Native restart MPI-IO includes every evolved bulk/overlap/scri field and all
+  eight chi-history members in GID-indexed block records. Shared files support
+  changed rank counts; per-rank files require unchanged ownership and exact
+  collective agreement on checkpoint time, topology and parameter metadata.
 
 Validation (local CPU MPI unless explicitly stated otherwise):
 - make -j64 builds; eight CTests cover topology, chart records, RK4, transport and
@@ -70,17 +78,44 @@ Validation (local CPU MPI unless explicitly stated otherwise):
 - Pinned Aurora source was read back and its build hash verified. The point-kernel
   and KO-builder sections used by oracles are identical to that N12 source;
   later local file differences only add a constraint diagnostic exterior mask.
+- Actual normal executable passes eight lifecycle cases on two local ranks:
+  one/eight cycles, alternate CFL multiplier, full-step tlim crossing and four
+  rejected unsupported/numerically inadmissible inputs. No in-memory driver or
+  timestep overrides are used. All eight CTests and six Cartesian bytewise
+  evolution/AMR/restart comparisons also pass with the lifecycle build.
+- Independent full legacy-versus-native trajectories on two and eight local
+  ranks are bitwise equal at initial, one-step and eight-step snapshots: all
+  7111152 bulk values, 26784 scri values and 1842048 chi-record values per snapshot.
+  All 32 stage compatibility, clock and chi-min diagnostics are exactly equal.
+  The same oracle executable/input was used at both rank counts; complete binary
+  snapshots were also compared bytewise across decompositions. No floors activate
+  in these first eight steps, so active-floor evolution remains a long-run gate.
+- Shared restart roundtrips 2->8->2 are bitwise on N12 and refined outer-shell
+  SMR, with nonzero values injected into every owned chi-record member. Parameter
+  mismatch, truncated metadata/identity/stride/payload, invalid stride and NaN
+  payload tests reject. Per-rank coherent roundtrips pass; changed ownership,
+  mixed-time rank files and a payload truncated on one rank reject collectively.
+- Dynamic restart continuity also passes: nine steps on two ranks are bitwise
+  identical to one step on two ranks plus a checkpoint and eight steps on eight
+  ranks, including every field and chi record. This uses the final restart build.
+- Refined nodal volumes now give full weight to internal radial child starts.
+  At two/eight ranks, 22464 outer-layer values match an independent analytic
+  spherical Jacobian, including 576 internal starts. All 4228848 existing refined
+  scri/radial operator comparisons still pass. Fixed N12 weights are unchanged.
+- Full old step-3551 bulk/scri arrays are downloaded and pinned hashes verified;
+  all 7137936 values are finite. Actual FastFlow diagnostic build commands and
+  surviving binary hash are recovered, with post-build header/source gaps
+  explicitly retained in the provenance evidence.
 
 Current limitations / remaining full-goal requirements:
-- Production dynamic input still rejects. The one-cycle harness constructs in
-  static mode and sets exact dt after Driver initialization. Mesh::NewTimeStep
-  does not yet include this module, so a subsequent cycle would change dt. Need
-  native initialization/plan/timestep lifecycle and exact pinned fixed-dt policy.
-- Full old-versus-new RK4-step and eight-step trajectory comparisons remain.
-  A full RHS comparison plus cross-rank step equality does not replace them.
+- Fixed-topology dynamic evolution is admitted and locally validated through
+  eight complete RK4 steps. This is not a GPU, long-run or arbitrary refined
+  coupled-evolution claim. Fixed-mesh dynamic restart continuity is validated.
 - Hyperboloidal AMR storage resize, migration, restriction/prolongation, evolved
-  overlap and scri transfer, chi-record transfer, and complete restart state are
-  not integrated. Existing chart-aware topology does not establish field AMR.
+  overlap and scri transfer, and chi-record transfer are not integrated. Existing
+  chart-aware topology does not establish field AMR. The AMR transfer contract
+  includes accepted-state halo freshness, criteria-view rebinding and native
+  origin indexing; adaptive evolution remains explicitly rejected.
 - Same-chart copy-compatible routes should reuse native Bvals where appropriate;
   module storage origin is ng+overlap=7 while native ng remains 4. Current mapped
   transport preserves reference interpolation, including internal core donors.
@@ -88,7 +123,7 @@ Current limitations / remaining full-goal requirements:
   nodal-grid descendants inherit offset zero; future volume diagnostics must
   distinguish root-layer endpoints from internal refined radial boundaries.
 - ADM conversion, constraint RMS, fixed-origin FastFlow, mapped adaptive timestep
-  and accepted-step output/restart lifecycle remain. N12 tracking stays disabled.
+  and accepted-step diagnostic output remain. N12 tracking stays disabled.
 - No native Aurora run, N12-through-5M result, GPU performance or scaling result
   exists. Final objective still requires fresh 3551 steps to t/M=5.0009660239551499,
   then repeated same-work 2-/8-node timing, profiling and measured improvements.

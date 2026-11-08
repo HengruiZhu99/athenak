@@ -7,8 +7,13 @@ tasks. `Driver::ExecuteTaskList` still executes `before_stagen`, `stagen`, and
 The module adapters in `z4c_hyperboloidal_tasks.cpp` call the actual block-local
 `MappedHalo` and `SurfaceExchange` plans. Construction binds callbacks before
 the problem generator initializes fields. `BuildStagePlans` must complete after
-initialization and before execution. The temporary dynamic-evolution constructor
-gate remains until the full coupled numerical validation passes.
+initialization and before execution. `Driver::Initialize` invokes the module's
+boundary initializer after problem generation or restart restore. That hook
+builds plans, projects dependent fields, exchanges current donors, fills ghosts
+and solves normal compatibility through the original `TaskList` polling. It
+does not advance evolved fields or reset chi-floor records. Fixed-topology
+dynamic evolution requires `rk4_classical`; adaptive evolution remains rejected
+until field transfer and plan rebuilding are integrated.
 
 Per-stage dependencies:
 
@@ -78,12 +83,15 @@ and scri values, RK updates, algebraic projection, stage clocks and untouched RH
 ghosts. The test writes every accepted bulk/scri field and every chi-floor record
 in canonical native-GID order, enabling complete byte comparisons across ranks.
 Two and eight ranks here are local CPU MPI processes, not Aurora nodes or GPUs.
-The test explicitly passes the temporary dynamic constructor gate only after
-static construction, initialization and plan assembly. It sets the exact N12
-`dt` after `Driver::Initialize`; it does not validate the pending production
-timestep, AMR, restart or diagnostic lifecycle. In particular, native
-`Mesh::NewTimeStep` does not yet include the new module and can increase the next
-cycle's timestep. A one-cycle smoke test does not establish multicycle fidelity.
+The original one-cycle evidence used static construction followed by explicit
+test setup of dynamic mode and `dt`; those results alone do not establish the
+production initialization or multicycle lifecycle. `lifecycle_smoke.py` exercises
+the actual executable using ordinary dynamic input for one and eight cycles,
+without test callbacks or in-memory mode/timestep overrides. It checks exact
+`dt` and accumulated times, independence from `cfl_number`, completion of a full
+last step across a nonaligned `tlim`, and rejection of unsupported integrators,
+kinematic mode, adaptive evolution and excessive relaxation timesteps. Numerical
+trajectory agreement and restart continuity require their separate oracles.
 
 The pinned reference is the spherical-policy **device** implementation. Its
 bulk kernel reports the characteristic CFL but deliberately excludes this policy
@@ -92,6 +100,8 @@ from the generic `CFL > 0.4` rejection; it still rejects
 has no timestep-dependent penalty admission check. The older host `RHS3D` path
 has additional characteristic/penalty checks, so copying those checks would
 change the pinned device policy. The native implementation currently follows
-the device admission behavior. Production timestep integration must preserve the
-exact N12 `time/dt` in seconds, without another `cfl_number` factor; any adaptive
+the device admission behavior. `Driver::Initialize` obtains the prescribed
+`time/dt` in seconds from the module, and `Mesh::NewTimeStep` preserves it across
+cycles without another `cfl_number` factor, a growth limiter or a shortened last
+step. Ordinary Cartesian module timestep behavior is unchanged. Any adaptive
 mapped-step policy requires its own validation, especially after refinement.

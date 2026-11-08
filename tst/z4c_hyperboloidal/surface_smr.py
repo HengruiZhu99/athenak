@@ -45,6 +45,11 @@ if match:
                   comparisons=int(match[3]), failed_values=int(match[4]),
                   max_error_over_bound=float(match[5]), max_absolute_error=float(match[6]),
                   collective_rebuild_rejection=match[7])
+volume = re.search(r'nodal_volume comparisons=(\d+) internal_radial_starts=(\d+) '
+                   r'analytic_jacobian=(\w+)', text)
+if volume:
+    status.update(nodal_volume_comparisons=int(volume[1]),
+                  internal_radial_starts=int(volume[2]), analytic_jacobian=volume[3])
 (output/'results.json').write_text(json.dumps(status, indent=2)+'\n')
 print(text)
 result.check_returncode()

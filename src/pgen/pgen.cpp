@@ -25,6 +25,7 @@
 #include "coordinates/adm.hpp"
 #include "z4c/compact_object_tracker.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c_hyperboloidal/restart.hpp"
 #include "radiation/radiation.hpp"
 #include "srcterms/turb_driver.hpp"
 #include "pgen.hpp"
@@ -204,6 +205,15 @@ ProblemGenerator::ProblemGenerator(ParameterInput *pin, Mesh *pm, IOWrapper resf
     std::memcpy(&(pturb->rstate), &(rng_data[0]), sizeof(RNG_State));
   }
 
+  auto *phyper=pm->pmb_pack->pz4c_hyperboloidal;
+  if (phyper != nullptr) {
+    z4c_hyperboloidal::restart::ReadMetadata(resfile,*pm,single_file_per_rank);
+  }
+
+  IOWrapperSizeT data_size;
+  if (phyper != nullptr) {
+    data_size=z4c_hyperboloidal::restart::ReadStride(resfile,single_file_per_rank);
+  } else {
   // root process reads size of CC and FC data arrays from restart file
   IOWrapperSizeT variablesize = sizeof(IOWrapperSizeT);
   char *variabledata = new char[variablesize];
@@ -222,8 +232,9 @@ ProblemGenerator::ProblemGenerator(ParameterInput *pin, Mesh *pm, IOWrapper resf
     MPI_Bcast(variabledata, variablesize, MPI_CHAR, 0, MPI_COMM_WORLD);
   }
 #endif
-  IOWrapperSizeT data_size;
   std::memcpy(&data_size, &(variabledata[0]), sizeof(IOWrapperSizeT));
+
+  }
 
   // calculate total number of CC variables
   IOWrapperSizeT headeroffset=0;
@@ -258,6 +269,13 @@ ProblemGenerator::ProblemGenerator(ParameterInput *pin, Mesh *pm, IOWrapper resf
     data_size_ += nout1*nout2*nout3*nz4c*sizeof(Real);   // z4c u0
   } else if (padm != nullptr) {
     data_size_ += nout1*nout2*nout3*nadm*sizeof(Real);   // adm u_adm
+  }
+
+  if (phyper != nullptr) {
+    data_size_=z4c_hyperboloidal::restart::Add(data_size_,
+        z4c_hyperboloidal::restart::RecordBytes(*phyper));
+    z4c_hyperboloidal::restart::CheckFileExtent(resfile,headeroffset,data_size,data_size_,
+        single_file_per_rank ? pm->nmb_thisrank : pm->nmb_total,single_file_per_rank);
   }
 
   if (data_size_ != data_size) {
@@ -625,6 +643,11 @@ ProblemGenerator::ProblemGenerator(ParameterInput *pin, Mesh *pm, IOWrapper resf
                       Kokkos::ALL, Kokkos::ALL, Kokkos::ALL), ccin);
     offset_myrank += nout1*nout2*nout3*nadm*sizeof(Real);   // adm u_adm
     myoffset = offset_myrank;
+  }
+
+  if (phyper != nullptr) {
+    z4c_hyperboloidal::restart::ReadRecords(resfile,*pm,offset_myrank,
+                                         data_size,single_file_per_rank);
   }
 
   // call problem generator again to re-initialize data, fn ptrs, as needed

@@ -16,7 +16,10 @@ void ProblemGenerator::Z4cHyperboloidalPuncture(ParameterInput *, const bool res
     throw std::invalid_argument("Hyperboloidal puncture requires z4c_hyperboloidal");
   }
   if (restart) {
-    throw std::runtime_error("Hyperboloidal checkpoint state loading is not yet integrated");
+    if (!physics->IsInitialized()) {
+      throw std::runtime_error("Hyperboloidal restart state was not restored");
+    }
+    return;
   }
   physics->InitializeReference();
 }

@@ -1,0 +1,72 @@
+{
+  "status": "actual diagnostic build recovered; exact historical wrapper bytes remain unresolved",
+  "remote_writes": false,
+  "jobs_submitted": false,
+  "binary": {
+    "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-resolution-20261107/fastflow_diagnostics",
+    "bytes": 13809000,
+    "sha256": "ffc8cd31909776872f0490466b26fbaeda378e072478e68e24ec9c7aaa2f0701",
+    "mtime_utc": "2026-11-07T04:47:52+00:00"
+  },
+  "actual_build_log": {
+    "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-resolution-20261107/build-fastflow.log",
+    "sha256": "c7e4ba4e6d2600c5e5777c7c082f582d1ba8415bb1799e2be90bd7a8a4b9331f"
+  },
+  "compile_link_commands_recovered": 4,
+  "launcher": {
+    "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-resolution-20261107/analyze_n12.pbs",
+    "sha256": "30f25c8023d44c7c38f2d6e2791f6db396a0cb92eb945903145544306b2291ca",
+    "mpi_ranks": 48,
+    "nodes": 4,
+    "root_only_fastflow": true,
+    "module": "oneapi/release/2025.3.1"
+  },
+  "elf_compiler": "Intel oneAPI DPC++/C++ Compiler 2025.3.2 (2025.3.2.20260112)",
+  "generated_configuration": {
+    "MPI_PARALLEL_ENABLED": 0,
+    "SINGLE_PRECISION_ENABLED": 0,
+    "path": "/home/hzhu/scri-resident-20M-20261105/build-100m/config.hpp"
+  },
+  "conservative_quoted_include_closure": {
+    "source_count": 87,
+    "all_surviving_hashes_match_later_manifest": true,
+    "postbuild_sources": {
+      "tst/hyperbolic_shift_3d/endpoint_policy/fastflow_history.hpp": {
+        "bytes": 6754,
+        "sha256": "5fef2bef95f254117162e10cf3a8d8fec9b5f24b46af9f4ac4f3c7ea5aecf8ef",
+        "manifest_sha256": "5fef2bef95f254117162e10cf3a8d8fec9b5f24b46af9f4ac4f3c7ea5aecf8ef",
+        "mtime_utc": "2026-11-07T04:51:24+00:00",
+        "newer_than_diagnostic_object": true
+      },
+      "tst/hyperbolic_shift_3d/endpoint_policy/run_controls.hpp": {
+        "bytes": 2992,
+        "sha256": "730f0a103ecbbd8c7fd02bdbb73496d96fba31bf39b099e615dd3315058b94eb",
+        "manifest_sha256": "730f0a103ecbbd8c7fd02bdbb73496d96fba31bf39b099e615dd3315058b94eb",
+        "mtime_utc": "2026-11-07T04:51:23+00:00",
+        "newer_than_diagnostic_object": true
+      },
+      "tst/hyperbolic_shift_3d/coupled_mpi.cpp": {
+        "bytes": 149771,
+        "sha256": "f7708dd17b13e64bd7690669a217277d6a3fea9a6169bcb07c2b8430ee335055",
+        "manifest_sha256": "f7708dd17b13e64bd7690669a217277d6a3fea9a6169bcb07c2b8430ee335055",
+        "mtime_utc": "2026-11-07T04:51:22+00:00",
+        "newer_than_diagnostic_object": true
+      }
+    }
+  },
+  "gaps": [
+    "No contemporaneous fastflow_diagnostics binary hash found; current checksum and matching chronology do not prove launch-time byte identity.",
+    "The current fastflow_history.hpp, run_controls.hpp and directly included coupled_mpi.cpp postdate fastflow_diagnostics.o. Later source manifest cannot identify their exact compiled bytes.",
+    "Header dependency tracking is absent in preserved Makefile; build-tracker.log rebuilt evolve-history only. No exact pre-tracker archive recovered in targeted inventory.",
+    "External object/static-library source hashes are not fully recorded by the diagnostic manifest; current libcurrent_spherical.so matches contemporaneous recorded hash."
+  ],
+  "native_requirements": [
+    "Optional physical Cartesian geometry sampler API with complete/unique ownership and invalid-geometry rejection.",
+    "HorizonGeometry physical metric, curvature and first derivative structure; convert native conformal jets using preserved physical-geometry formulas.",
+    "Result and FastFlowSurface APIs, correct RMS reporting, explicit expansion convergence criterion, failed-search state reset.",
+    "Quadrature-only GaussLegendreGrid construction for samplers without an ordinary ADM MeshBlockPack.",
+    "Include the final angular sample in minimum-radius and surface-integral reductions; these two fixes also affect the ordinary Cartesian path and need explicit regression.",
+    "Native rank-local sampler with six-point tensor interpolation, mapped first derivatives, chi-normalized residual interpolation and mixed-level donor stencils; do not copy the legacy whole-state root gather.",
+    "In native MPI-enabled builds every rank must participate in FastFlow collectives; legacy root-only wrapper assumes generated MPI_PARALLEL_ENABLED=0."
+  ]
+}

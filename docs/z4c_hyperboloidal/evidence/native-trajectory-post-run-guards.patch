@@ -1,0 +1,77 @@
+--- a/tst/z4c_hyperboloidal/trajectory_oracle.cpp
++++ b/tst/z4c_hyperboloidal/trajectory_oracle.cpp
+@@ -229,0 +230,17 @@
++    Require(p.nsurface_points==edge_counts[global_variable::my_rank]
++        &&edge_offsets.back()+edge_counts.back()==nedge,
++        "native N12 surface workload changed");
++    std::vector<int> surface_coverage(nedge);
++    for(int point=0;point<p.nsurface_points;++point) {
++      const auto c=p.surface_points.h_view(point);
++      Require(c.face>=0&&c.face<int(p.face_blocks.h_view.extent(0))
++          &&c.j>=0&&c.j<n&&c.k>=0&&c.k<n,"invalid native surface point");
++      const int gid=mesh.pmb_pack->gids+p.face_blocks.h_view(c.face);
++      Require(gid>=mesh.pmb_pack->gids&&gid<mesh.pmb_pack->gids+p.nblocks,
++          "surface point belongs to another rank");
++      const auto &map=selector.Map(gid);
++      Require(map.outer_surface&&map.face>=0&&map.face<6,"surface point has no outer leaf");
++      ++surface_coverage[(map.face*n+c.k)*n+c.j];
++    }
++    MPI_Allreduce(MPI_IN_PLACE,surface_coverage.data(),nedge,MPI_INT,MPI_SUM,MPI_COMM_WORLD);
++    for(int count:surface_coverage)Require(count==1,"duplicate or missing canonical surface point");
+@@ -288,0 +306,4 @@
++      auto unique_ids=native_id;std::sort(unique_ids.begin(),unique_ids.end());
++      Require(unique_ids.size()==size_t(mesh.nmb_total),"native/legacy leaf counts differ");
++      for(int gid=0;gid<mesh.nmb_total;++gid)
++        Require(unique_ids[gid]==gid,"native/legacy leaf matching is not one to one");
+@@ -430 +450,0 @@
+-
+--- a/tst/z4c_hyperboloidal/trajectory_oracle.py
++++ b/tst/z4c_hyperboloidal/trajectory_oracle.py
+@@ -64,3 +64 @@
+-overlay.parent.mkdir(parents=True, exist_ok=True)
+-overlay.write_text(modified)
+-(output/'overlay-provenance.json').write_text(json.dumps({
++legacy_provenance = {
+@@ -73,0 +72,4 @@
++    # Include all legacy source headers, covering transitive quoted includes as
++    # well as the two direct reference headers. These files are read only.
++    'legacy_header_sha256': {str(p.relative_to(legacy)): hashlib.sha256(p.read_bytes()).hexdigest()
++        for p in sorted(list((legacy/'src').rglob('*.hpp'))+list((legacy/'src').rglob('*.h')))},
+@@ -75 +77,8 @@
+-}, indent=2)+'\n')
++}
++if args.run_existing:
++    stored = json.loads((output/'build-provenance.json').read_text())
++    assert stored.get('legacy_provenance') == legacy_provenance, \
++        'legacy reference provenance changed or absent; rebuild before running'
++overlay.parent.mkdir(parents=True, exist_ok=True)
++overlay.write_text(modified)
++(output/'overlay-provenance.json').write_text(json.dumps(legacy_provenance, indent=2)+'\n')
+@@ -103,0 +113 @@
++    'legacy_provenance': legacy_provenance,
+--- a/tst/z4c_hyperboloidal/trajectory_contract.md
++++ b/tst/z4c_hyperboloidal/trajectory_contract.md
+@@ -58,2 +58,5 @@
+-executable, and oracle executable hashes. The runner checks source stability
+-through the run. These are bounded local fixed-topology tests, not Aurora GPU,
++executable, oracle executable, and legacy reference/header hashes. Reference
++provenance is checked before rewriting the private overlay. `--run-output`
++places logs and snapshots in a different directory while using the exact same
++oracle executable and input, enabling a controlled decomposition comparison.
++The runner checks source stability through the run. These are bounded local fixed-topology tests, not Aurora GPU,
+@@ -60,0 +64,15 @@
++
++The archived local results in `build-native/trajectory-results.json` used one
++executable on both 2 and 8 ranks. The complete accepted bulk and surface files
++at steps 1 and 8 agree byte for byte with the independent reference and between
++decompositions. All per-field errors and weighted RMS values are zero; every
++ChiRecord member and all 32 stage compatibility/clock/chi values agree exactly.
++Postchecks verified 26784 surface values and 864 distinct complete field rows
++per saved surface snapshot, plus all 864 eight-member surface ChiRecords.
++
++After those runs, review prompted explicit global surface-target uniqueness
++and legacy/native leaf-bijection preflights, and the legacy provenance reuse
++guard described above. These additional checks were not executed in the
++archived trajectory runs. Their original tested C++ source is preserved in
++`build-native/trajectory-oracle-two/archived-test-source`; the next freshly
++built oracle will execute the strengthened preflights.

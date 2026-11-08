@@ -1,0 +1,140 @@
+{
+  "n12/2_to_8": {
+    "bitwise_equal": true,
+    "scalar_values": 24704784,
+    "payload_sha256": "0b1e13d7ae1d154758442cf66faa230cf5048e6d6db303196cefce42284a7198",
+    "blocks": 106,
+    "active_points": 230256,
+    "nonzero_chi_values": 1842048,
+    "source": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/restart-native-final/n12_nonzero_records.rst",
+    "restored": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/restart-native-final/n12_read8/rst/native_n12.00002.rst"
+  },
+  "n12/back_to_2": {
+    "bitwise_equal": true,
+    "scalar_values": 24704784,
+    "payload_sha256": "0b1e13d7ae1d154758442cf66faa230cf5048e6d6db303196cefce42284a7198"
+  },
+  "reject/ko": {
+    "rejected": true,
+    "expected_message": "mathematical parameters",
+    "ranks": 2,
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/src/athena",
+      "-r",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/restart-native-final/n12_nonzero_records.rst",
+      "output1/last_time=-1",
+      "z4c_hyperboloidal/ko=.2"
+    ]
+  },
+  "reject/dt": {
+    "rejected": true,
+    "expected_message": "mathematical parameters",
+    "ranks": 2,
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/src/athena",
+      "-r",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/restart-native-final/n12_nonzero_records.rst",
+      "output1/last_time=-1",
+      "time/dt=.0004"
+    ]
+  },
+  "reject/metadata": {
+    "rejected": true,
+    "expected_message": "truncated metadata",
+    "ranks": 2,
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/src/athena",
+      "-r",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/restart-native-final/truncated_metadata.rst"
+    ]
+  },
+  "reject/identity": {
+    "rejected": true,
+    "expected_message": "truncated metadata",
+    "ranks": 2,
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/src/athena",
+      "-r",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/restart-native-final/truncated_identity.rst"
+    ]
+  },
+  "reject/stride": {
+    "rejected": true,
+    "expected_message": "truncated metadata",
+    "ranks": 2,
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/src/athena",
+      "-r",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/restart-native-final/truncated_stride.rst"
+    ]
+  },
+  "reject/payload": {
+    "rejected": true,
+    "expected_message": "truncated block payload",
+    "ranks": 2,
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/src/athena",
+      "-r",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/restart-native-final/truncated_payload.rst"
+    ]
+  },
+  "reject/overflow_stride": {
+    "rejected": true,
+    "expected_message": "block record byte count mismatch",
+    "ranks": 2,
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/src/athena",
+      "-r",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/restart-native-final/overflow_stride.rst"
+    ]
+  },
+  "reject/nonfinite": {
+    "rejected": true,
+    "expected_message": "nonfinite checkpoint state",
+    "ranks": 2,
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/src/athena",
+      "-r",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/restart-native-final/nonfinite.rst"
+    ]
+  },
+  "outer_smr/2_to_8": {
+    "bitwise_equal": true,
+    "scalar_values": 26336232,
+    "payload_sha256": "ef14efbc08c4e1f1c3791fd053cbfbc371e129555bed0690204dc1ced0cb814d",
+    "blocks": 113,
+    "active_points": 242784,
+    "nonzero_chi_values": 1942272,
+    "source": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/restart-native-final/outer_smr_nonzero_records.rst",
+    "restored": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/restart-native-final/outer_smr_read8/rst/native_n12.00002.rst"
+  },
+  "outer_smr/back_to_2": {
+    "bitwise_equal": true,
+    "scalar_values": 26336232,
+    "payload_sha256": "ef14efbc08c4e1f1c3791fd053cbfbc371e129555bed0690204dc1ced0cb814d"
+  }
+}

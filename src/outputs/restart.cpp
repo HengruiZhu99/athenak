@@ -29,6 +29,7 @@
 #include "coordinates/adm.hpp"
 #include "z4c/compact_object_tracker.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c_hyperboloidal/restart.hpp"
 #include "z4c/horizon_dump.hpp"
 #include "radiation/radiation.hpp"
 #include "srcterms/turb_driver.hpp"
@@ -124,6 +125,11 @@ void RestartOutput::LoadOutputData(Mesh *pm) {
     Kokkos::realloc(outarray_adm, nmb, nadm, nout3, nout2, nout1);
     Kokkos::deep_copy(outarray_adm, Kokkos::subview(padm->u_adm, std::make_pair(0,nmb),
                       Kokkos::ALL, Kokkos::ALL, Kokkos::ALL, Kokkos::ALL));
+  }
+
+  if (pm->pmb_pack->pz4c_hyperboloidal != nullptr) {
+    z4c_hyperboloidal::restart::Pack(*pm->pmb_pack->pz4c_hyperboloidal,
+                                    hyperboloidal_records);
   }
 
   // calculate max/min number of MeshBlocks across all ranks
@@ -294,6 +300,13 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
     }
   }
 
+  IOWrapperSizeT hyperboloidal_header_size=0;
+  auto *phyper=pm->pmb_pack->pz4c_hyperboloidal;
+  if (phyper != nullptr) {
+    hyperboloidal_header_size=z4c_hyperboloidal::restart::WriteMetadata(
+        resfile,*pm,single_file_per_rank);
+  }
+
   //--- STEP 4.  All ranks write data over all MeshBlocks (5D arrays) in parallel
   // This data read in ProblemGenerator constructor for restarts
 
@@ -320,6 +333,10 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
   } else if (padm != nullptr) {
     data_size += nout1*nout2*nout3*nadm*sizeof(Real);   // adm u_adm
   }
+  if (phyper != nullptr) {
+    data_size=z4c_hyperboloidal::restart::Add(data_size,
+        z4c_hyperboloidal::restart::RecordBytes(*phyper));
+  }
   if (global_variable::my_rank == 0 || single_file_per_rank) {
     resfile.Write_any_type(&(data_size), sizeof(IOWrapperSizeT), "byte",
                             single_file_per_rank);
@@ -334,6 +351,7 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
   IOWrapperSizeT step3size = 3*nco*sizeof(Real);
   if (pz4c != nullptr) step3size += sizeof(Real);
   if (pturb != nullptr) step3size += sizeof(RNG_State);
+  step3size += hyperboloidal_header_size;
 
   // write cell-centered variables in parallel
   IOWrapperSizeT offset_myrank = (step1size + step2size + step3size
@@ -343,6 +361,11 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
     offset_myrank += data_size*(pm->gids_eachrank[global_variable::my_rank]);
   }
 
+  if (phyper != nullptr) {
+    z4c_hyperboloidal::restart::Add(
+        step1size+step2size+step3size+sizeof(IOWrapperSizeT),
+        z4c_hyperboloidal::restart::Multiply(data_size,pm->nmb_total));
+  }
   IOWrapperSizeT myoffset = offset_myrank;
 
   // write cell-centered variables, one MeshBlock at a time (but parallelized over all
@@ -652,6 +675,11 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
     }
     offset_myrank += nout1*nout2*nout3*nadm*sizeof(Real); // adm u_adm
     myoffset = offset_myrank;
+  }
+
+  if (phyper != nullptr) {
+    z4c_hyperboloidal::restart::WriteRecords(resfile,*pm,hyperboloidal_records,
+        offset_myrank,data_size,single_file_per_rank);
   }
 
   //--- STEP 5.  Write cyclic zoom restart data if enabled

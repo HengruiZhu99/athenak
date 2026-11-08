@@ -29,10 +29,17 @@ Z4cHyperboloidal::Z4cHyperboloidal(MeshBlockPack *ppack, ParameterInput *pin)
   if (!pm->atlas || !pm->three_d || sizeof(Real)!=sizeof(double)) {
     throw std::invalid_argument("Hyperboloidal Z4c requires a 3D atlas and double precision");
   }
-  // A dynamic run must not silently execute an incomplete boundary/task graph.
-  // Remove this gate only when the coupled native RHS and exchange tasks are wired.
-  if (pin->GetString("time","evolution")!="static") {
-    throw std::runtime_error("Native hyperboloidal evolution tasks are not yet integrated");
+  const auto evolution=pin->GetString("time","evolution");
+  if (evolution!="static") {
+    if (evolution!="dynamic") {
+      throw std::invalid_argument("Hyperboloidal evolution requires static or dynamic mode");
+    }
+    if (pm->adaptive) {
+      throw std::runtime_error("Hyperboloidal AMR state transfer is not yet integrated");
+    }
+    if (pin->GetOrAddString("time","integrator","rk4_classical")!="rk4_classical") {
+      throw std::invalid_argument("Hyperboloidal evolution requires rk4_classical");
+    }
   }
   n[0]=pm->mb_indcs.nx1; n[1]=pm->mb_indcs.nx2; n[2]=pm->mb_indcs.nx3;
   nghost=pm->mb_indcs.ng;

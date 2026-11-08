@@ -56,8 +56,10 @@ add_executable(
         z4c_hyperboloidal/dissipation_plan.cpp
         z4c_hyperboloidal/mapped_halo.cpp
         z4c_hyperboloidal/surface_exchange.cpp
+        z4c_hyperboloidal/restart.cpp
         z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp
         z4c_hyperboloidal/z4c_hyperboloidal_tasks.cpp
+        z4c_hyperboloidal/z4c_hyperboloidal_lifecycle.cpp
         z4c_hyperboloidal/z4c_hyperboloidal_update.cpp
 
         dyn_grmhd/dyn_grmhd.cpp
@@ -251,6 +253,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "^(GNU|Clang|AppleClang|IntelLLVM)$")
       z4c_hyperboloidal/z4c_hyperboloidal_update.cpp
       z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp
       z4c_hyperboloidal/z4c_hyperboloidal_tasks.cpp
+      z4c_hyperboloidal/z4c_hyperboloidal_lifecycle.cpp
       z4c_hyperboloidal/dissipation_plan.cpp
       z4c_hyperboloidal/mapped_halo.cpp
       z4c_hyperboloidal/surface_exchange.cpp

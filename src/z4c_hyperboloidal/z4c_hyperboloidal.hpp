@@ -80,6 +80,10 @@ class Z4cHyperboloidal {
   DvceArray1D<Real> rhs_gap, rhs_cfl;
 
   void InitializeReference();
+  void InitializeBoundaryValues(Driver *driver);
+  TaskStatus NewTimeStep(Driver *driver, int stage);
+  Real StageMaxCompatibility() const;
+  Real StageMaxClock() const;
   void FormResidual();
   void EnforceAlgebraicConstraints();
   TaskStatus CopyU(Driver *driver, int stage);

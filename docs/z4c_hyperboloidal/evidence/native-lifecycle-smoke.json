@@ -1,0 +1,114 @@
+{
+  "scope": "actual executable lifecycle; local CPU MPI ranks",
+  "ranks": 2,
+  "executable_sha256": "c9d889cc1a0c55c2a75929a3ff83f44eb4b095899f258836a027fcfc35e9de68",
+  "fixture_sha256": "3fa18e3f83a466d9ea702c3aec1da9ec369e91a3a6715c14b91ad253f111f62d",
+  "expected_dt": 0.00046944203735617445,
+  "cases": {
+    "one-step": {
+      "command": [
+        "mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/src/athena",
+        "-i",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/lifecycle-smoke/one-step/case.athinput"
+      ],
+      "returncode": 0,
+      "cycles": 1,
+      "final_time": 0.00046944203735617445,
+      "all_dt_and_times_exact": true
+    },
+    "eight-steps": {
+      "command": [
+        "mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/src/athena",
+        "-i",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/lifecycle-smoke/eight-steps/case.athinput"
+      ],
+      "returncode": 0,
+      "cycles": 8,
+      "final_time": 0.003755536298849396,
+      "all_dt_and_times_exact": true
+    },
+    "different-cfl": {
+      "command": [
+        "mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/src/athena",
+        "-i",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/lifecycle-smoke/different-cfl/case.athinput"
+      ],
+      "returncode": 0,
+      "cycles": 1,
+      "final_time": 0.00046944203735617445,
+      "all_dt_and_times_exact": true
+    },
+    "cross-tlim": {
+      "command": [
+        "mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/src/athena",
+        "-i",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/lifecycle-smoke/cross-tlim/case.athinput"
+      ],
+      "returncode": 0,
+      "cycles": 2,
+      "final_time": 0.0009388840747123489,
+      "all_dt_and_times_exact": true
+    },
+    "reject-integrator": {
+      "command": [
+        "mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/src/athena",
+        "-i",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/lifecycle-smoke/reject-integrator/case.athinput"
+      ],
+      "returncode": 134,
+      "expected_rejection": "Hyperboloidal evolution requires rk4_classical"
+    },
+    "reject-kinematic": {
+      "command": [
+        "mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/src/athena",
+        "-i",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/lifecycle-smoke/reject-kinematic/case.athinput"
+      ],
+      "returncode": 134,
+      "expected_rejection": "Hyperboloidal evolution requires static or dynamic mode"
+    },
+    "reject-adaptive": {
+      "command": [
+        "mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/src/athena",
+        "-i",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/lifecycle-smoke/reject-adaptive/case.athinput"
+      ],
+      "returncode": 134,
+      "expected_rejection": "Hyperboloidal AMR state transfer is not yet integrated"
+    },
+    "reject-relaxation": {
+      "command": [
+        "mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/src/athena",
+        "-i",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/lifecycle-smoke/reject-relaxation/case.athinput"
+      ],
+      "returncode": 134,
+      "expected_rejection": "Hyperboloidal fixed timestep exceeds the relaxation limit"
+    }
+  },
+  "status": "PASS"
+}

@@ -25,6 +25,7 @@
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c_hyperboloidal/z4c_hyperboloidal.hpp"
 #include "diffusion/viscosity.hpp"
 #include "diffusion/resistivity.hpp"
 #include "diffusion/conduction.hpp"
@@ -662,6 +663,12 @@ void Mesh::NewTimeStep(const Real tlim) {
   if (pmb_pack->pz4c != nullptr) {
     dt_cycle = std::min(dt_cycle, (cfl_no)*(pmb_pack->pz4c->dtnew) );
   }
+  if (pmb_pack->pz4c_hyperboloidal != nullptr) {
+    // The native hyperboloidal fixed policy supplies time/dt in seconds. Its
+    // driver admits this evolution module alone, so neither the generic 2x
+    // growth limiter nor another cfl_number factor changes the prescribed step.
+    dt_cycle=pmb_pack->pz4c_hyperboloidal->dtnew;
+  }
   // Radiation timestep
   if (pmb_pack->prad != nullptr) {
     dt_cycle = std::min(dt_cycle, (cfl_no)*(pmb_pack->prad->dtnew) );
@@ -685,8 +692,10 @@ void Mesh::NewTimeStep(const Real tlim) {
   }
   dt = dt_cycle;
 
-  // limit last time step to stop at tlim *exactly*
-  if ( (time < tlim) && ((time + dt) > tlim) ) {dt = tlim - time;}
+  // Ordinary modules stop at tlim exactly. The fixed hyperboloidal campaign
+  // completes its last full step across tlim, preserving the N12 reference.
+  if (pmb_pack->pz4c_hyperboloidal==nullptr &&
+      (time < tlim) && ((time + dt) > tlim)) {dt = tlim - time;}
 
   return;
 }
