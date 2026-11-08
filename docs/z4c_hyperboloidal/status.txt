@@ -210,6 +210,7 @@ Diagnostics working-tree milestone (local CPU MPI, full goal still incomplete):
   and maximum compatibility is 1.2817467898683377e-13. All three common diagnostic
   times 0/356/711 pass; horizon areal radius and irreducible mass match the
   reference exactly. Eight later endpoints through 3551 remain unverified.
+  Common03 job9051654 is running through711->1066; it has no admitted endpoint yet.
   No scaling result is established. See
   evidence/native-n12-common-02-independent-review.json.
   See evidence/aurora-stage-trace-two.json, evidence/aurora-n12-mapping.json,
@@ -240,8 +241,10 @@ Current limitations / remaining full-goal requirements:
   Ordinary adaptive input is now admitted. A real location criterion refines
   the outer +X block to113 leaves; four uninterrupted steps on two ranks match
   two steps plus a restart and two steps on eight ranks bitwise (all31+8 values,
-  including padding/metadata). No GPU AMR or long-time AMR accuracy claim is
-  established. Evidence index: evidence/native-amr-validation-index.json.
+  including padding/metadata). These local results remain distinct from the
+  coherent candidate's bounded GPU qualification below. No long-time AMR
+  accuracy claim is established. Evidence index:
+  evidence/native-amr-validation-index.json.
 - A source audit found a specific AMR admission gap: the available predecessor
   checks its characteristic fixed-step cap after regridding, while native code
   currently checks only relaxation. Existing refined consistency tests reach
@@ -263,11 +266,23 @@ Current limitations / remaining full-goal requirements:
   and both test helpers now build successfully: all 198 native compile recipes
   and normalized link flags/library order match, while all 1972 frozen baseline
   source files and 228 objects remain unchanged. The exact reviewed patch stays
-  isolated. Seven actual 24/96-rank transfer, coupled-evolution and ordinary
-  restart launches remain pending; compilation is not GPU numerical admission.
+  isolated. All seven actual 24/96-rank transfer, coupled-evolution and ordinary
+  restart launches now pass in jobs9051631/9051645. Lifecycle106->127->106 states
+  match bitwise for all31+8, preserve nonzero histories/unchanged migrated leaves,
+  and pass fresh/read-only diagnostics. Four Driver cycles through two regrids
+  match all five states and16 poisoned-workspace stages across decompositions;
+  maximum compatibility is1.0910657402209053e-15, with finite clock/CFL maxima
+  1.822919687174616e-4/.20312566084213138. Ordinary adaptive prefix24 cycle2 and
+  resumed96 cycles3/4 match continuous96 across26336232padded field/history
+  scalars, meaningful metadata, topology, unit costs and duplicate checkpoints.
+  All453 two-node and1615 eight-node artifact files are verified. Runtime
+  integration remains pending while the frozen N12 baseline continues through
+  3551. These bounded GPU checks establish neither independent adaptive-solution
+  agreement nor adaptive convergence, long-time stability or performance.
   See amr-fixed-step-admission.md,
-  evidence/native-amr-clean-admission-cpu-proof.json and
-  evidence/native-amr-coherent-aurora-build.json.
+  evidence/native-amr-clean-admission-cpu-proof.json,
+  evidence/native-amr-coherent-aurora-build.json and
+  evidence/native-amr-coherent-gpu-validation.json.
 - Same-chart copy-compatible routes should reuse native Bvals where appropriate;
   module storage origin is ng+overlap=7 while native ng remains 4. Current mapped
   transport preserves reference interpolation, including internal core donors.
@@ -295,8 +310,9 @@ Current limitations / remaining full-goal requirements:
   output are implemented and locally tested as described above. Strict saved
   Aurora replay and initial/eight-step trajectory pass on24/96ranks, with
   cross-rank field/record and full stage/poison bitwise equality. GPU observer
-  qualification is complete. Fixed-step AMR admission integration and bounded
-  GPU AMR validation remain. N12 tracking stays disabled.
+  qualification is complete. The isolated coherent AMR candidate now passes its
+  bounded GPU validation; fixed-step AMR admission integration remains pending
+  completion of the frozen N12 baseline. N12 tracking stays disabled.
 - Native24/96-rank initial/eight-step GPU trajectories are admitted against the
   unchanged original GPU control. No N12-through-5M result, accepted GPU
   performance or scaling result exists. Final objective still requires fresh3551steps to t/M=5.0009660239551499,

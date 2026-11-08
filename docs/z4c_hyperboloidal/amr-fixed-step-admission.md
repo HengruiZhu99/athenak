@@ -1,7 +1,8 @@
 # Fixed-step AMR admission candidate
 
 This is an isolated, reviewed source overlay. It has not been merged into the
-native runtime, and it has no GPU execution validation. Its coherent ordinary
+native runtime. Its bounded GPU transfer, evolution and restart qualification
+now passes on24/96 Aurora ranks at fixed dt `.0002`. Its coherent ordinary
 executable and both AMR helpers have compiled successfully with the actual
 Aurora SYCL toolchain in separate source/build directories. The frozen N12 source, objects,
 executable and prior unsafe-dt consistency evidence remain unchanged.
@@ -79,18 +80,40 @@ A targeted actual four-cycle ordinary-main endpoint comparison passed in
 `endpoint-proof.json`, with all26,336,232 padded field/history scalars exact;
 a separate two-rank manufactured-state lifecycle preflight passed refinement,
 coarsening and diagnostic freshness at the safe dt. The earlier
-two-to-eight-rank restart evidence remains prototype evidence. Actual GPU
-coherent transfer/evolution/restart qualification is still required.
+two-to-eight-rank restart evidence remains prototype evidence. Separate actual
+GPU coherent transfer/evolution/restart qualification is recorded below.
 
 The actual Aurora build is recorded in
 `evidence/native-amr-coherent-aurora-build.json`: all198 native translation-unit
 recipes and the full link policy matched the baseline, and its source/objects
 were verified unchanged after every build. This is compilation/provenance
-evidence only; the seven dt=.0002 GPU validation launches remain unexecuted.
+evidence only. The later seven dt=.0002 GPU validation launches completed
+normally in jobs9051631 and9051645, and all three primary scientific comparisons
+pass. See `evidence/native-amr-coherent-gpu-validation.json`.
+
+The actual lifecycle checks106→127→106 on24/96 ranks, nonzero history
+redistribution, all31+8 complete states, exact unchanged-leaf migration and
+fresh/read-only diagnostics. Four actual Driver cycles through two regrids
+produce five bitwise-equal complete states and16 valid poisoned-workspace stages
+per decomposition. Maximum compatibility is1.0910657402209053e-15; clock and CFL
+are finite, with maxima1.822919687174616e-4 and.20312566084213138. These stage CFL
+values are observations, not a new per-stage admission threshold.
+
+The coherent ordinary-main113-leaf case now proves actual24→96-rank checkpoint
+deserialization: prefix cycle2 and resumed cycles3/4 agree bitwise with the
+continuous96-rank run across all26336232 padded field/history scalars. Exact
+initialized metadata, time/dt, topology and unit costs pass, including duplicate
+outputs. Resume uses no input or dt override. The inherited nine unused global
+coarse-index integers remain reported separately under the unchanged contract.
+This validates bounded consistency and restart behavior of the isolated
+candidate; it does not establish adaptive convergence, long-time stability,
+independent adaptive-solution agreement or performance. Runtime integration
+remains pending while the frozen N12 trajectory through3551 is completed.
 
 Review patch: [native-amr-fixed-step-candidate.patch](evidence/native-amr-fixed-step-candidate.patch),
 a byte-identical retained copy of `build-native/amr-admission-clean-v1/production.patch`
 (SHA-256 `9f411610ee3246f39a25be3e9f19598186da8c28bdeb90c8f53bc57489ebc2d7`).
 Full ordinary-restart evidence: `build-native/amr-admission-clean-v1/restart-proof/results.json`.
 Preserved prototype summary: `evidence/native-amr-clean-admission-cpu-proof.json`.
-The parent task controls any later integration and GPU admission.
+The parent task controls later runtime integration; the frozen N12 source,
+objects and executable remain unchanged.

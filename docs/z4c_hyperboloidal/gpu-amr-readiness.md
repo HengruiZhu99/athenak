@@ -1,4 +1,4 @@
-# Bounded GPU AMR candidate readiness
+# Bounded GPU AMR candidate qualification
 
 The AMR admission patch is reviewed and remains isolated. The frozen fixed-SMR
 N12 source/build/executable and all older successful/failed evidence remain
@@ -29,7 +29,7 @@ required. `native_amr_candidate_cmake.py` implements and verifies this route;
 `native_amr_gpu.py` builds the existing lifecycle/evolution mains against its
 coherent objects. The original main is used for the ordinary restart case.
 
-The smallest complete GPU set still requires seven MPI launches:
+The complete bounded GPU set has passed all seven MPI launches:
 
 | Case | 24 ranks | 96 ranks | Required evidence |
 | --- | --- | --- | --- |
@@ -62,14 +62,15 @@ Local preparation evidence is in `build-native/amr-admission-coherent-local-v1`
 and the separate candidate parser/control directories. This is CPU evidence
 only. The earlier offline2/8 controls and larger-dt consistency results remain
 untouched. The isolated coherent SYCL build and both helper builds have now
-passed on Aurora. Both decompositions' transfer/coupled runs and repartitioned
-ordinary restart remain outstanding. Neither these
+passed on Aurora. The seven actual GPU runs and their three scientific
+comparisons now pass at dt `.0002`. Neither these
 bounded tests nor their CPU equivalents establish adaptive convergence,
 long-time stability, independent-solution agreement or performance.
 
 Final review package: `build-native/amr-admission-gpu-ready-v2/setup.json`.
 It includes exact build/helper/launch/comparison command arrays and26 hashed
-package/tool/input files, with GPU-built/submitted/evidence flags all false.
+package/tool/input files. Its original GPU-built/submitted/evidence flags remain
+false as a preserved preparation snapshot; actual execution is recorded below.
 The peer-reviewed local build audit binds compile/link recipe files and their
 exact normalized policy. The targeted coherent ordinary endpoint and
 manufactured lifecycle checks passed;12 provenance controls passed. Durable
@@ -83,5 +84,28 @@ flags/library order match the baseline after path relocation. Compiler-version
 and MPI-wrapper records match bytewise. All1972 baseline source files and228
 objects passed checks before and after the three builds. The exact reviewed
 patch remains isolated. All68 compact downloaded evidence files passed hash and
-size verification; native objects/executables remain on Aurora. No candidate GPU
-allocation, field transport, evolution, or restart run has been performed.
+size verification; native objects/executables remain on Aurora.
+
+Actual execution and comparison evidence is now recorded separately in
+`evidence/native-amr-coherent-gpu-validation.json`. Jobs9051631 and9051645
+completed normally; all453 two-node and1615 eight-node archived files passed
+size/hash verification. Lifecycle states through106→127→106 match bitwise
+across24/96 ranks for all31 fields and8 records. Nonzero history totals are
+preserved,103 unchanged leaves remain exact through each regrid, and diagnostics
+match fresh workspaces while preserving state at all three phases. The refined
+snapshot has277236 bulk and1296 surface points. Polynomial errors remain below
+the unchanged gate (maximum1.3010426069826053e-17).
+
+Four actual Driver cycles through106→127→127→106→106 produce five bitwise-equal
+complete states and16 valid poisoned-workspace stages per decomposition.
+Maximum compatibility is1.0910657402209053e-15; finite clock/CFL maxima are
+1.822919687174616e-4 and.20312566084213138. The ordinary adaptive113-leaf case
+uses the coherent original-main executable. Prefix24 cycle2 and resumed96
+cycles3/4 match their continuous96 counterparts across all26336232 padded
+field/history scalars, exact initialized metadata, time/dt, topology and unit
+costs. All duplicate outputs are checked; resume supplies no input/dt override.
+
+This qualifies the isolated candidate for those bounded GPU cases. Runtime
+integration remains pending while the frozen fixed-SMR N12 trajectory is
+preserved through3551. No independent adaptive-solution comparison, adaptive
+convergence, long-time stability or performance is established.

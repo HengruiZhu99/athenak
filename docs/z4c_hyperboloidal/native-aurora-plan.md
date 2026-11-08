@@ -617,3 +617,42 @@ This is a distinct adaptive admission test, not a change to the N12 trajectory.
 The eight-node allocation is held until the two-node allocation terminates
 successfully and the actual prefix checkpoint is verified. Complete GPU
 AMR science remains pending; no performance claim is made.
+
+
+The two-node AMR bundle **9051631** completed F/0. All three launches passed
+operational coverage and the post-run source/object guards; its ordinary
+cycle-2 checkpoint was parsed and its duplicate final payload verified. All
+453 collected files match their remote hashes and sizes. After a fresh queue
+and provenance check, the serialized eight-node bundle was submitted once
+as **9051645** (96 ranks). It repeats both helpers, runs a continuous four-cycle
+ordinary evolution, then restarts the admitted 24-rank cycle-2 checkpoint to
+cycle 4. Complete cross-rank AMR field/history and restart science remains
+pending until those outputs are collected; no later N12 segment is submitted.
+
+
+Both AMR allocations completed F/0 with all seven launch-level checks and
+frozen-input guards passing. The complete 24/96 AMR comparison is performed
+offline; it does not gate the already admitted fixed-mesh N12 checkpoint.
+After the eight-node allocation ended and a fresh queue/provenance check
+passed, the third N12 segment **711→1066** was submitted once as **9051654**
+on two nodes/24 ranks. Its preflight binds the complete cycle-711 science and
+independent review, the exact checkpoint and output/horizon clocks, and the
+unchanged normal/observed N12 binaries. It uses the original restart entry
+with no timestep override. No segment beyond 1066 is admitted yet.
+
+
+The complete isolated GPU AMR qualification now passes for all three cases:
+field transfer, four-cycle adaptive evolution, and ordinary rank-changing
+restart. All 31 fields and eight history-record values in the canonical
+snapshots are bitwise equal between 24 and 96 ranks. The 24-rank prefix
+restarted on 96 ranks reproduces the continuous 96-rank payload exactly,
+including all 26,336,232 padded scalars per checkpoint comparison. The
+independent review passes. This qualifies the separate coherent candidate at
+`.0002` for the bounded transfer/evolution/restart scope; it does not establish
+long adaptive stability or performance. See
+[complete GPU AMR evidence](evidence/native-amr-coherent-gpu-validation.json).
+
+The unchanged fixed-mesh N12 segment **9051654** is running; the observed
+progress at cycle 720 has 36 new stage records and the exact
+original timestep. Cycle 1066 and any later continuation remain unadmitted
+until complete endpoint science and independent review.

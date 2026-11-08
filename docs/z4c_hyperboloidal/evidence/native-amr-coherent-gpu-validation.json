@@ -1,0 +1,182 @@
+{
+  "schema": "native-amr-coherent-gpu-validation-v1",
+  "passed": true,
+  "actual_gpu_execution": true,
+  "fixed_dt": 0.0002,
+  "ranks": [
+    24,
+    96
+  ],
+  "jobs": {
+    "two": "9051631",
+    "eight": "9051645"
+  },
+  "baseline_executable_sha256": "f3a85db7528986ddec347b31675a8c5d588120a2380133aed73d5967f7aab05c",
+  "candidate_executable_sha256": "442594b847ff0eb56407513da48e96930ec41dbe537a69c202fd802da4ea6a31",
+  "production_patch_sha256": "9f411610ee3246f39a25be3e9f19598186da8c28bdeb90c8f53bc57489ebc2d7",
+  "patch_integrated": false,
+  "frozen_N12_runtime_unchanged": true,
+  "production_untouched": true,
+  "lifecycle": {
+    "passed": true,
+    "cross_rank_complete31_fields_8_records_bitwise": true,
+    "blocks": [
+      106,
+      127,
+      106
+    ],
+    "bulk_points": [
+      229392,
+      277236,
+      229392
+    ],
+    "surface_points": [
+      864,
+      1296,
+      864
+    ],
+    "scalars_per_snapshot": [
+      8979984,
+      10862748,
+      8979984
+    ],
+    "seeded_history_totals_and_extrema_preserved": true,
+    "unchanged_leaves_each_event": 103,
+    "migrated_unchanged_leaves_each_event": {
+      "24": 71,
+      "96": 82
+    },
+    "polynomial_checks": [
+      0,
+      40428,
+      3816
+    ],
+    "polynomial_max_errors": [
+      0,
+      1.3010426069826053e-17,
+      9.107298248878237e-18
+    ],
+    "fresh_cached_readonly_diagnostic_checks": 6
+  },
+  "evolution": {
+    "passed": true,
+    "driver_cycles": 4,
+    "snapshots_per_decomposition": 5,
+    "blocks": [
+      106,
+      127,
+      127,
+      106,
+      106
+    ],
+    "scalars_per_snapshot": [
+      8979984,
+      10862748,
+      10862748,
+      8979984,
+      8979984
+    ],
+    "cross_rank_complete31_fields_8_records_bitwise": true,
+    "stage_rows_per_decomposition": 16,
+    "poisoned_complete_rhs_and_exact_stage_clocks": true,
+    "cross_rank_stage_records_bitwise": true,
+    "stage_maxima": {
+      "compatibility": 1.0910657402209053e-15,
+      "clock": 0.0001822919687174616,
+      "cfl": 0.20312566084213138
+    },
+    "unit_block_costs_checked": true,
+    "clock_scope": "Finite and exactly reproducible across rank counts; no independent legacy-AMR accuracy gate."
+  },
+  "restart": {
+    "passed": true,
+    "ordinary_native_executable": true,
+    "rank_change": "24->96",
+    "prefix_cycle": 2,
+    "final_cycle": 4,
+    "refined_blocks": 113,
+    "outer_faces": 9,
+    "all_block_costs_one": true,
+    "all31_fields_all8_records_and_padding_bitwise": true,
+    "comparisons": {
+      "prefix2": {
+        "bitwise_equal": true,
+        "scalar_values": 26336232,
+        "payload_sha256": "ed7f179f921fc3a94fbcb42318754296439945bfc3431267533fdaaf46d57b5d"
+      },
+      "resumed3": {
+        "bitwise_equal": true,
+        "scalar_values": 26336232,
+        "payload_sha256": "37c574c5d65eda63d4355896a82480fa6c86473839f1160f8ecabccc07603aec"
+      },
+      "resumed4": {
+        "bitwise_equal": true,
+        "scalar_values": 26336232,
+        "payload_sha256": "a1b3a84cddea158d6f41507ea4942c886082e2e03a622149b34095084349021e"
+      }
+    },
+    "all_duplicate_outputs_checked": true,
+    "checkpoint_file_counts": {
+      "prefix": 4,
+      "continuous": 6,
+      "resumed": 3
+    },
+    "no_input_or_dt_override_on_resume": true,
+    "metadata_scope": "All initialized invariants checked; nine inherited unused global coarse-index integers at120:156 remain separately reported and excluded, unchanged from predeclared gate."
+  },
+  "proofs": {
+    "primary": {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-amr-primary-comparison-v1/results.json",
+      "sha256": "3603ff7e2f2512f99016a6fcd6b1ee7e4b557e2cffa5d7c798ffca5b26cdd493"
+    },
+    "build": {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/docs/z4c_hyperboloidal/evidence/native-amr-coherent-aurora-build.json",
+      "sha256": "23b50d65cbd3813d5543e4171e4cb59126519d317683a8ae0e7a6ec1ff22bccd"
+    },
+    "launch_review": {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/docs/z4c_hyperboloidal/evidence/native-amr-gpu-launcher-peer-review.json",
+      "sha256": "dacf189f309d9e87b89cf684c5dcf734148fdaf83e0520f7b4618a6e3a55bcf0"
+    },
+    "lifecycle": {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-amr-primary-comparison-v1/lifecycle/results.json",
+      "sha256": "5493cde9762d876c68b222157b822938359ec80e48351e5025307399af730f45"
+    },
+    "evolution": {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-amr-primary-comparison-v1/evolution/results.json",
+      "sha256": "6e52a821323f13bde5e737581909a9e1410895b362a9caabf04d030e6c1b00c4"
+    },
+    "restart": {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-amr-primary-comparison-v1/restart/results.json",
+      "sha256": "baa67d6245b742956803be16f0e9766b8e0a532710baf116cd629bcf25c6ec2a"
+    },
+    "transfer_two": {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-amr-candidate-two/transfer-verification.json",
+      "sha256": "b34a5a2ba60e0e7ba3d90ef118f23812ce2b69f4b76fe214f196a8dd5e2eb0bd"
+    },
+    "transfer_eight": {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-amr-candidate-eight/transfer-verification.json",
+      "sha256": "95599c99b56a0fe42cc973c0beaefe8121b2a3aa39df37fa6d0482eac2f09178"
+    },
+    "independent_report_review": {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/docs/z4c_hyperboloidal/evidence/native-amr-coherent-gpu-independent-review.json",
+      "sha256": "ffe971c35541a7d99356223c19009165015c2072ed1baff033d94f9477bcbe42",
+      "scope": "Independent report/contract/provenance review; no duplicate raw-payload comparison run."
+    }
+  },
+  "source_sha256": {
+    "native_amr_gpu_compare.py": "bf89e5cced3e4b78f3a06463caf12cc679a3d67e4c4270b775596573363af0b0",
+    "native_amr_admission_candidate.py": "cd2b90461f45aa230b9cfd5b08702f64971dc0306fc41c0e3fa49735f8cf7a85",
+    "native_amr_candidate_cmake.py": "6b2615e9f7c74e04b7869c56b1ebcb40ac1b23bac5c80af346db42da4bdeddee",
+    "native_amr_gpu_input.py": "d587eb989351a0927d33fe7eb33e606b424c2fe3de22af46a4b9971cd4eb21fb",
+    "amr_restart.py": "2336f54f7ba139ff599067e0cd62efc6ddd453c140650e1670aaeddea36d191c",
+    "restart_roundtrip.py": "8afc41988e20e36d336230e111450ec3ba573940c773a6ed15ed03ed16eb8a3b"
+  },
+  "scope": "Bounded coherent candidate GPU transfer, native Driver evolution, diagnostics and ordinary rank-changing restart qualification. Runtime integration and the full frozen N12 trajectory remain separate.",
+  "limitations": [
+    "No independent adaptive-solution comparison or convergence result",
+    "No long-time adaptive stability claim",
+    "No performance or scaling result",
+    "Admission patch remains isolated until frozen N12 qualification finishes",
+    "Unsafe-admission rejection tests remain CPU evidence; these GPU runs exercise the admitted fixed-step cases."
+  ]
+}

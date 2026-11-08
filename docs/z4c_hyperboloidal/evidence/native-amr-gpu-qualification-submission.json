@@ -1,8 +1,8 @@
 {
   "schema": "native-amr-gpu-submission-milestone-v1",
-  "status": "two-node queued",
-  "gpu_qualification_complete": false,
-  "scientific_comparison_passed": false,
+  "status": "both allocations completed; complete scoped GPU AMR qualification passed",
+  "gpu_qualification_complete": true,
+  "scientific_comparison_passed": true,
   "submission_two": {
     "schema": "native-amr-candidate-submission-v1",
     "job_id": "9051631.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
@@ -50,9 +50,13 @@
   },
   "local_records": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-amr-validation-staging-v1/remote-records",
   "records_sha256": {
+    "prefix-before-submit-eight.txt": "e7d2f5b5ef14d036470b738bdddd57c312462ba514ba5acd5c7e1098030a088e",
     "preflight-before-qualification.json": "99ecf58cec49bfcb070d4e4ee12f966d8b902170af8c014997160a914f9a1084",
+    "qstat-after-submit-eight.txt": "33d7a222cd781e4a2a64ea2ac3523e3d7322b1638c3bd9839346b4b6c9b58957",
     "qstat-after-submit-two.txt": "7b9c664ba9a1ebe268882b8afa0bb9691c1ecac0be4b7af39c6e2bd7b50376a5",
+    "queue-before-submit-eight.txt": "3d25bdbc0e3e858f2851b3751eb637a7291bb50575ccb5051acb9f14148969be",
     "queue-before-submit-two.txt": "3d25bdbc0e3e858f2851b3751eb637a7291bb50575ccb5051acb9f14148969be",
+    "submission-eight.json": "4ad4e8da973be2e92449c567c4195db0202e571f67ca25a874dd17bdf8f81cf7",
     "submission-two.json": "a29d28fdc97cea81359e020aa6bc117fc032ddd48c5f8be60c703e18fef3dc97"
   },
   "launcher_sources": {
@@ -63,8 +67,87 @@
     "collect_amr_candidate.py": "c18a449655bcb87cea570242c940435fff92e2de3cec73ea8a02eaec30837edf",
     "amr_execution_evidence.py": "a749fccbb42bf774b9a28e20f3984201ac40f0fbc9b3b01e75359fb75de02e19"
   },
-  "eight_node_submitted": false,
+  "eight_node_submitted": true,
   "allocation_scope": "serialized two-node then eight-node, no overlap; eight-node requires terminal two-node and verified prefix",
   "frozen_N12_runtime_unchanged": true,
-  "production_untouched": true
+  "production_untouched": true,
+  "submission_eight": {
+    "schema": "native-amr-candidate-submission-v1",
+    "job_id": "9051645.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "nodes": 8,
+    "ranks": 96,
+    "command": [
+      "qsub",
+      "amr-candidate-eight.pbs"
+    ],
+    "working_directory": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/amr-admission-candidate-v1",
+    "submitted_utc": "2026-11-08T10:43:37.588463+00:00",
+    "candidate_executable_sha256": "442594b847ff0eb56407513da48e96930ec41dbe537a69c202fd802da4ea6a31",
+    "launcher_manifest_sha256": "1e6ee3fb1685b7892ef68f65ecba362d638e5d902c23401d1daa4203f53e4348",
+    "predecessor_job": "9051631",
+    "predecessor_state": "F",
+    "predecessor_exit_status": 0,
+    "prefix_checkpoint_sha256": "f7b713c2c0f46da1f224d0fecfeda242e6fb56fb15be1de9915899abd6f4d67f",
+    "prefix_admission_sha256": "e7d2f5b5ef14d036470b738bdddd57c312462ba514ba5acd5c7e1098030a088e",
+    "queue_before_sha256": "3d25bdbc0e3e858f2851b3751eb637a7291bb50575ccb5051acb9f14148969be",
+    "serialized_allocation": true,
+    "production_untouched": true
+  },
+  "two_node_collection": {
+    "passed": true,
+    "job_id": "9051631",
+    "nodes": 2,
+    "ranks": 24,
+    "files": 453,
+    "archive_sha256": "aa42a18b559daef2373816535a266407c1f261d89005d63cd45eaef452f048f4",
+    "local_root": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-amr-candidate-two/run-artifacts",
+    "case": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-amr-candidate-two/run-artifacts/runs/amr-candidate-nodes2",
+    "remote_archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/amr-candidate-artifacts-9051631/run-artifacts.tar.gz",
+    "prefix_checkpoint_sha256": "f7b713c2c0f46da1f224d0fecfeda242e6fb56fb15be1de9915899abd6f4d67f",
+    "scientific_comparison_pending": true
+  },
+  "eight_node_collection": {
+    "passed": true,
+    "job_id": "9051645",
+    "nodes": 8,
+    "ranks": 96,
+    "files": 1615,
+    "archive_sha256": "75c94ce9d25b36e5baf1dd562938de100ef54e6c02ec0028936d84e522254017",
+    "local_root": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-amr-candidate-eight/run-artifacts",
+    "case": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-amr-candidate-eight/run-artifacts/runs/amr-candidate-nodes8",
+    "remote_archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/amr-candidate-artifacts-9051645/run-artifacts.tar.gz",
+    "scientific_comparison_pending": true
+  },
+  "terminal": {
+    "9051631": {
+      "state": "F",
+      "exit_status": 0,
+      "walltime": "00:04:03"
+    },
+    "9051645": {
+      "state": "F",
+      "exit_status": 0,
+      "walltime": "00:03:53"
+    }
+  },
+  "all_seven_launches_operational_passed": true,
+  "raw_collection_sizes_bytes": {
+    "two": 1511828591,
+    "eight": 2565345943
+  },
+  "scientific_validation": {
+    "path": "docs/z4c_hyperboloidal/evidence/native-amr-coherent-gpu-validation.json",
+    "sha256": "4ef75612d77e4f231ea5f8694e4c957728e9c61e9d72bf6fcae53a063e2d3602",
+    "primary_results": "build-native/aurora-amr-primary-comparison-v1/results.json",
+    "cases": [
+      "lifecycle",
+      "evolution",
+      "restart"
+    ],
+    "all_31_fields_and_8_records_cross_rank_bitwise": true,
+    "ordinary_24_to_96_restart_matches_continuous96": true,
+    "independent_review_passed": true,
+    "scope": "coherent isolated candidate at dt=.0002; bounded transfer/four-cycle/restart qualification, not long adaptive stability or performance",
+    "independent_report_review_sha256": "ffe971c35541a7d99356223c19009165015c2072ed1baff033d94f9477bcbe42"
+  }
 }

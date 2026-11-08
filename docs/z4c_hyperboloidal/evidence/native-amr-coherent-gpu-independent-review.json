@@ -1,0 +1,143 @@
+{
+  "schema": "native-amr-primary-comparison-independent-review-v1",
+  "passed": true,
+  "scope": "Bounded read-only review of completed primary reports against the unchanged contract; no numerical comparison rerun, raw-payload revalidation, solver launch, build or runtime change. Root independently reviews raw/provenance.",
+  "primary_report": "build-native/aurora-amr-primary-comparison-v1/results.json",
+  "primary_report_sha256": "3603ff7e2f2512f99016a6fcd6b1ee7e4b557e2cffa5d7c798ffca5b26cdd493",
+  "contract": "tst/z4c_hyperboloidal/native_amr_gpu_contract.md",
+  "contract_sha256": "d297cec76f927c76a5890919827dfd063ff7f619eab16818965832acd9478395",
+  "report_bindings": {
+    "lifecycle": {
+      "path": "build-native/aurora-amr-primary-comparison-v1/lifecycle/results.json",
+      "sha256": "5493cde9762d876c68b222157b822938359ec80e48351e5025307399af730f45",
+      "execution_evidence": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-amr-primary-comparison-v1/execution-evidence/lifecycle-execution.json",
+      "execution_evidence_sha256": "92e326fe5128f6962938378db2c9c2bfacb5afe4aee222140416fd55d7560e16",
+      "source_sha256": {
+        "native_amr_gpu_compare.py": "bf89e5cced3e4b78f3a06463caf12cc679a3d67e4c4270b775596573363af0b0",
+        "native_amr_admission_candidate.py": "cd2b90461f45aa230b9cfd5b08702f64971dc0306fc41c0e3fa49735f8cf7a85",
+        "native_amr_candidate_cmake.py": "6b2615e9f7c74e04b7869c56b1ebcb40ac1b23bac5c80af346db42da4bdeddee",
+        "native_amr_gpu_input.py": "d587eb989351a0927d33fe7eb33e606b424c2fe3de22af46a4b9971cd4eb21fb",
+        "amr_restart.py": "2336f54f7ba139ff599067e0cd62efc6ddd453c140650e1670aaeddea36d191c",
+        "restart_roundtrip.py": "8afc41988e20e36d336230e111450ec3ba573940c773a6ed15ed03ed16eb8a3b"
+      }
+    },
+    "evolution": {
+      "path": "build-native/aurora-amr-primary-comparison-v1/evolution/results.json",
+      "sha256": "6e52a821323f13bde5e737581909a9e1410895b362a9caabf04d030e6c1b00c4",
+      "execution_evidence": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-amr-primary-comparison-v1/execution-evidence/evolution-execution.json",
+      "execution_evidence_sha256": "7e271fd82be356725f5e3f831cb9811d1f5ab595eef32aabfb34c659d3b1b08e",
+      "source_sha256": {
+        "native_amr_gpu_compare.py": "bf89e5cced3e4b78f3a06463caf12cc679a3d67e4c4270b775596573363af0b0",
+        "native_amr_admission_candidate.py": "cd2b90461f45aa230b9cfd5b08702f64971dc0306fc41c0e3fa49735f8cf7a85",
+        "native_amr_candidate_cmake.py": "6b2615e9f7c74e04b7869c56b1ebcb40ac1b23bac5c80af346db42da4bdeddee",
+        "native_amr_gpu_input.py": "d587eb989351a0927d33fe7eb33e606b424c2fe3de22af46a4b9971cd4eb21fb",
+        "amr_restart.py": "2336f54f7ba139ff599067e0cd62efc6ddd453c140650e1670aaeddea36d191c",
+        "restart_roundtrip.py": "8afc41988e20e36d336230e111450ec3ba573940c773a6ed15ed03ed16eb8a3b"
+      }
+    },
+    "restart": {
+      "path": "build-native/aurora-amr-primary-comparison-v1/restart/results.json",
+      "sha256": "baa67d6245b742956803be16f0e9766b8e0a532710baf116cd629bcf25c6ec2a",
+      "execution_evidence": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-amr-primary-comparison-v1/execution-evidence/restart-execution.json",
+      "execution_evidence_sha256": "2076901a02828fc6d2e2c62848f252189c21152ae9b1108c17b2d89519f87111",
+      "source_sha256": {
+        "native_amr_gpu_compare.py": "bf89e5cced3e4b78f3a06463caf12cc679a3d67e4c4270b775596573363af0b0",
+        "native_amr_admission_candidate.py": "cd2b90461f45aa230b9cfd5b08702f64971dc0306fc41c0e3fa49735f8cf7a85",
+        "native_amr_candidate_cmake.py": "6b2615e9f7c74e04b7869c56b1ebcb40ac1b23bac5c80af346db42da4bdeddee",
+        "native_amr_gpu_input.py": "d587eb989351a0927d33fe7eb33e606b424c2fe3de22af46a4b9971cd4eb21fb",
+        "amr_restart.py": "2336f54f7ba139ff599067e0cd62efc6ddd453c140650e1670aaeddea36d191c",
+        "restart_roundtrip.py": "8afc41988e20e36d336230e111450ec3ba573940c773a6ed15ed03ed16eb8a3b"
+      }
+    }
+  },
+  "checks": {
+    "all_three_primary_reports_passed": true,
+    "all_four_primary_commands_exit_zero": true,
+    "all_report_and_execution_hashes_match": true,
+    "all_six_reported_comparator_source_hashes_match": true,
+    "exact_seven_execution_labels_and_ranks": true,
+    "coherent_candidate_and_patch_identity_consistent": true,
+    "fixed_dt": 0.0002,
+    "resume_input_override": false,
+    "resume_dt_override": false
+  },
+  "lifecycle": {
+    "phases_per_decomposition": 3,
+    "ranks": [
+      24,
+      96
+    ],
+    "blocks": [
+      106,
+      127,
+      106
+    ],
+    "bulk_points": [
+      229392,
+      277236,
+      229392
+    ],
+    "scri_points": [
+      864,
+      1296,
+      864
+    ],
+    "complete31_plus8_bitwise": true,
+    "nonzero_history_totals_conserved": true,
+    "unchanged_leaves_per_regrid": 103,
+    "migrated_unchanged_leaves_per_regrid": {
+      "24": 71,
+      "96": 82
+    },
+    "polynomial_checks": [
+      0,
+      40428,
+      3816
+    ],
+    "maximum_polynomial_error": 1.3010426069826053e-17,
+    "fresh_cached_readonly_diagnostic_cases": 6
+  },
+  "evolution": {
+    "real_driver_cycles": 4,
+    "accepted_states_per_decomposition": 5,
+    "blocks": [
+      106,
+      127,
+      127,
+      106,
+      106
+    ],
+    "stages_per_decomposition": 16,
+    "complete31_plus8_bitwise": true,
+    "maximum_compatibility": 1.0910657402209053e-15,
+    "maximum_clock": 0.0001822919687174616,
+    "maximum_cfl": 0.20312566084213138,
+    "exact_stage_times_and_complete_rate_coverage": true
+  },
+  "restart": {
+    "ordinary_main": true,
+    "writer_ranks": [
+      24,
+      96
+    ],
+    "blocks_after_refinement": 113,
+    "comparisons": [
+      "prefix2_vs_continuous2",
+      "resumed3_vs_continuous3",
+      "resumed4_vs_continuous4"
+    ],
+    "padded_scalar_values_each": 26336232,
+    "all31_plus8_bitwise": true,
+    "initialized_metadata_time_dt_topology_unit_costs_exact": true,
+    "duplicate_outputs_checked": true,
+    "nine_inherited_unused_global_coarse_ints_reported_separately": true
+  },
+  "limitations": [
+    "Candidate patch remains isolated; runtime integration pending frozen N12 through3551.",
+    "No independent adaptive-solution comparison, adaptive convergence, long-time stability or performance claim.",
+    "No historical gate or tolerance changed."
+  ],
+  "baseline_native_executable_sha256": "f3a85db7528986ddec347b31675a8c5d588120a2380133aed73d5967f7aab05c",
+  "candidate_executable_sha256": "442594b847ff0eb56407513da48e96930ec41dbe537a69c202fd802da4ea6a31",
+  "production_patch_sha256": "9f411610ee3246f39a25be3e9f19598186da8c28bdeb90c8f53bc57489ebc2d7"
+}
