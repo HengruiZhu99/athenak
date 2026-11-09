@@ -1,0 +1,712 @@
+{
+  "schema": "native-legacy-two-node-parity-admission-v1",
+  "passed": true,
+  "performance_parity_confirmed": true,
+  "native_commit": "9baf7f566b5d16e5e4e40836e5ecf542c9ddd689",
+  "native_median_seconds_per_complete_RK4_step": 0.10611714095,
+  "legacy_medians_seconds_per_complete_RK4_step": {
+    "control": 0.32595167857361956,
+    "v3": 0.13620551400817932,
+    "v6": 0.13747899387963117,
+    "v8": 0.14340399598004297
+  },
+  "fastest_validated_legacy_variant": "v3",
+  "legacy_median": 0.13620551400817932,
+  "native_time_reduction_percent": 22.09042216629532,
+  "native_speedup": 1.28353923587478,
+  "native_window_count": 12,
+  "windows_per_legacy_variant": 6,
+  "warmup_steps_per_invocation": 10,
+  "complete_steps_per_window": 20,
+  "all_native_windows_faster_than_every_legacy_window": true,
+  "order_reversed": true,
+  "order_reversed_repeat_satisfied": true,
+  "allocation_reviews": [
+    {
+      "schema": "native-legacy-current-matched-review-v1",
+      "passed": true,
+      "job": "9052988",
+      "nodes": 2,
+      "ranks": 24,
+      "native_commit": "9baf7f566b5d16e5e4e40836e5ecf542c9ddd689",
+      "files_rehashed": 460,
+      "native": {
+        "timed-native-before": {
+          "seconds_per_step": [
+            0.10620550155,
+            0.1061279332,
+            0.10610559854999999
+          ],
+          "median": 0.1061279332,
+          "full_state": {
+            "bitwise_equal": true,
+            "padded31_plus8_scalar_values": 24704784,
+            "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+            "excluded_unused_coarse_indices": [
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ],
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ]
+            ]
+          },
+          "diagnostics_bitwise": true
+        },
+        "timed-native-after": {
+          "seconds_per_step": [
+            0.1061851837,
+            0.1063190333,
+            0.10608401155
+          ],
+          "median": 0.1061851837,
+          "full_state": {
+            "bitwise_equal": true,
+            "padded31_plus8_scalar_values": 24704784,
+            "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+            "excluded_unused_coarse_indices": [
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ],
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ]
+            ]
+          },
+          "diagnostics_bitwise": true
+        }
+      },
+      "native_median": 0.10615655845,
+      "legacy": {
+        "control": {
+          "window_step_seconds": [
+            0.3258014309220016,
+            0.326820212462917,
+            0.32548516446258874
+          ],
+          "median": 0.3258014309220016,
+          "minimum": 0.32548516446258874,
+          "maximum": 0.326820212462917,
+          "critical_rank_each_window": [
+            8,
+            8,
+            8
+          ],
+          "complete_cell_updates_per_step": 229392,
+          "scope": "one three-window screening; independent order-reversed repeats still required"
+        },
+        "v3": {
+          "window_step_seconds": [
+            0.1365708626108244,
+            0.13615195790771395,
+            0.13617914344649762
+          ],
+          "median": 0.13617914344649762,
+          "minimum": 0.13615195790771395,
+          "maximum": 0.1365708626108244,
+          "critical_rank_each_window": [
+            4,
+            10,
+            4
+          ],
+          "complete_cell_updates_per_step": 229392,
+          "scope": "one three-window screening; independent order-reversed repeats still required"
+        },
+        "v6": {
+          "window_step_seconds": [
+            0.13753104470670224,
+            0.1369262948166579,
+            0.1374269430525601
+          ],
+          "median": 0.1374269430525601,
+          "minimum": 0.1369262948166579,
+          "maximum": 0.13753104470670224,
+          "critical_rank_each_window": [
+            21,
+            17,
+            17
+          ],
+          "complete_cell_updates_per_step": 229392,
+          "scope": "one three-window screening; independent order-reversed repeats still required"
+        },
+        "v8": {
+          "window_step_seconds": [
+            0.1431640787050128,
+            0.14349989779293537,
+            0.1438609505072236
+          ],
+          "median": 0.14349989779293537,
+          "minimum": 0.1431640787050128,
+          "maximum": 0.1438609505072236,
+          "critical_rank_each_window": [
+            13,
+            3,
+            3
+          ],
+          "complete_cell_updates_per_step": 229392,
+          "scope": "one three-window screening; independent order-reversed repeats still required"
+        }
+      },
+      "fastest_validated_legacy": "v3",
+      "legacy_median": 0.13617914344649762,
+      "native_time_reduction_percent": 22.046389951257815,
+      "native_speedup": 1.2828142267878657,
+      "all_native_windows_faster_than_all_legacy_windows": true,
+      "single_allocation_parity": true,
+      "full_state_and_scientific_gates_passed": true,
+      "scientific_comparison_scope": "Fresh native brackets are bitwise equal in complete31+8, parameters, initialized metadata and diagnostics to the exact admitted native endpoint used by the unchanged full scientific comparator for every fresh legacy variant. Legacy gates and tolerances are unchanged.",
+      "order_reversed_repeat_required": true,
+      "limitations": [
+        "Maximum-rank complete-step timing; rank of maximum window elapsed is not a causal critical-path attribution.",
+        "Short N12 saved-state continuation on two nodes; no longer-trajectory or eight-node scaling claim."
+      ],
+      "evidence": {
+        "archive_sha256": "1a9ab260a77f02e38c789eb787352fb662652f45253810f340fdb304583797f5",
+        "science_review": "build-native/n12-matched-benchmark-science-v5/results.json",
+        "science_review_sha256": "51665d3d4a5b20bfa8c2cdd235aa3bfc170aa611a08b5a051445778a96614aca",
+        "native_admission_sha256": "78962f409836c091fcf8323526e89db46e7c0b54130b5125007abb8d539dc957"
+      }
+    },
+    {
+      "schema": "native-legacy-current-matched-review-v1",
+      "passed": true,
+      "job": "9053001",
+      "nodes": 2,
+      "ranks": 24,
+      "native_commit": "9baf7f566b5d16e5e4e40836e5ecf542c9ddd689",
+      "files_rehashed": 460,
+      "native": {
+        "timed-native-before": {
+          "seconds_per_step": [
+            0.10617018154999999,
+            0.10610634869999999,
+            0.10600491944999998
+          ],
+          "median": 0.10610634869999999,
+          "full_state": {
+            "bitwise_equal": true,
+            "padded31_plus8_scalar_values": 24704784,
+            "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+            "excluded_unused_coarse_indices": [
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ],
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ]
+            ]
+          },
+          "diagnostics_bitwise": true
+        },
+        "timed-native-after": {
+          "seconds_per_step": [
+            0.10598925365,
+            0.1060899117,
+            0.10622064760000001
+          ],
+          "median": 0.1060899117,
+          "full_state": {
+            "bitwise_equal": true,
+            "padded31_plus8_scalar_values": 24704784,
+            "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+            "excluded_unused_coarse_indices": [
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ],
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ]
+            ]
+          },
+          "diagnostics_bitwise": true
+        }
+      },
+      "native_median": 0.1060981302,
+      "legacy": {
+        "control": {
+          "window_step_seconds": [
+            0.32610192622523754,
+            0.32619699398055674,
+            0.32542352566961197
+          ],
+          "median": 0.32610192622523754,
+          "minimum": 0.32542352566961197,
+          "maximum": 0.32619699398055674,
+          "critical_rank_each_window": [
+            1,
+            1,
+            1
+          ],
+          "complete_cell_updates_per_step": 229392,
+          "scope": "one three-window screening; independent order-reversed repeats still required"
+        },
+        "v3": {
+          "window_step_seconds": [
+            0.13654949101619424,
+            0.13613569678273052,
+            0.136231884569861
+          ],
+          "median": 0.136231884569861,
+          "minimum": 0.13613569678273052,
+          "maximum": 0.13654949101619424,
+          "critical_rank_each_window": [
+            14,
+            14,
+            14
+          ],
+          "complete_cell_updates_per_step": 229392,
+          "scope": "one three-window screening; independent order-reversed repeats still required"
+        },
+        "v6": {
+          "window_step_seconds": [
+            0.13758843678515403,
+            0.13691506751347332,
+            0.13793863072060047
+          ],
+          "median": 0.13758843678515403,
+          "minimum": 0.13691506751347332,
+          "maximum": 0.13793863072060047,
+          "critical_rank_each_window": [
+            5,
+            22,
+            22
+          ],
+          "complete_cell_updates_per_step": 229392,
+          "scope": "one three-window screening; independent order-reversed repeats still required"
+        },
+        "v8": {
+          "window_step_seconds": [
+            0.14330809416715057,
+            0.14417909700423479,
+            0.1429819117533043
+          ],
+          "median": 0.14330809416715057,
+          "minimum": 0.1429819117533043,
+          "maximum": 0.14417909700423479,
+          "critical_rank_each_window": [
+            19,
+            9,
+            21
+          ],
+          "complete_cell_updates_per_step": 229392,
+          "scope": "one three-window screening; independent order-reversed repeats still required"
+        }
+      },
+      "fastest_validated_legacy": "v3",
+      "legacy_median": 0.136231884569861,
+      "native_time_reduction_percent": 22.119457911784313,
+      "native_speedup": 1.28401777027604,
+      "all_native_windows_faster_than_all_legacy_windows": true,
+      "single_allocation_parity": true,
+      "full_state_and_scientific_gates_passed": true,
+      "scientific_comparison_scope": "Fresh native brackets are bitwise equal in complete31+8, parameters, initialized metadata and diagnostics to the exact admitted native endpoint used by the unchanged full scientific comparator for every fresh legacy variant. Legacy gates and tolerances are unchanged.",
+      "order_reversed_repeat_required": true,
+      "limitations": [
+        "Maximum-rank complete-step timing; rank of maximum window elapsed is not a causal critical-path attribution.",
+        "Short N12 saved-state continuation on two nodes; no longer-trajectory or eight-node scaling claim."
+      ],
+      "evidence": {
+        "archive_sha256": "79cc6dcb055ec0734edea91ff403b7f1e81f17e1dea33916bdc12a94f6ca5433",
+        "science_review": "build-native/n12-matched-benchmark-science-v6/results.json",
+        "science_review_sha256": "26742b5423bfd3f369369df1ca381a63401b992274f2430c3bfa908cb56e9439",
+        "native_admission_sha256": "78962f409836c091fcf8323526e89db46e7c0b54130b5125007abb8d539dc957"
+      }
+    }
+  ],
+  "scientific_reviews": [
+    {
+      "passed": true,
+      "full_report": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-matched-benchmark-science-v5/results.json",
+      "full_report_sha256": "51665d3d4a5b20bfa8c2cdd235aa3bfc170aa611a08b5a051445778a96614aca",
+      "input_hash_count": 303,
+      "reader_sources": {
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-matched-benchmark-reader-snapshot-v2/n12_matched_benchmark_compare.py": "fc27cba5b02c9160136545ee1b807814963de3413d79940cdca8d0d55b111ad3",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-matched-benchmark-reader-snapshot-v2/n12_checkpoint.py": "e1c920a84d9e0a218ae34dfc90962120f532af8a111ac77a13624cc8de541542",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-matched-benchmark-reader-snapshot-v2/n12_long_history.py": "304e0ae0dffedfad946396204bc8326533b0850af3e88ccb144bd1885f6cd104",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-matched-benchmark-reader-snapshot-v2/legacy_stage_trace_compare.py": "bca07273126a4d90d125edd6813011f783c9890cb285759c350f150cc0d95fb2",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-matched-benchmark-reader-snapshot-v2/legacy_n12_benchmark.py": "6c7b1fdf9607672f8ae1f98261402cce4a8b6785656d6f8a0938184f0c617615",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-matched-benchmark-reader-snapshot-v2/native_step_observer_validate.py": "bb18cb9f75582fcc2471728949994e5e01cc521f543ae633b29358be4c600e94",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-matched-benchmark-reader-snapshot-v2/n12_checkpoint_gpu_control.py": "e0b9f61262759484670f00adae8698879a1d6fba4b6615e9e9a43df56f879409"
+      },
+      "variants": {
+        "control": {
+          "complete_state": {
+            "bulk": {
+              "fields": {
+                "comparisons": 7111152,
+                "failed_values": 0,
+                "bitwise_equal": false,
+                "max_absolute": 1.7946755193065655e-13,
+                "max_tolerance_ratio": 0.016544174194753732
+              },
+              "chi_record_comparisons": 1835136,
+              "chi_record_failures": 0
+            },
+            "surface": {
+              "fields": {
+                "comparisons": 26784,
+                "failed_values": 0,
+                "bitwise_equal": false,
+                "max_absolute": 4.2577052994374753e-13,
+                "max_tolerance_ratio": 0.03593571239837121
+              },
+              "chi_record_comparisons": 6912,
+              "chi_record_failures": 0
+            }
+          },
+          "diagnostics_passed": true,
+          "against_legacy_control_passed": true,
+          "full_harmonic_surface_present": true,
+          "native_complete_coefficients": 169
+        },
+        "v3": {
+          "complete_state": {
+            "bulk": {
+              "fields": {
+                "comparisons": 7111152,
+                "failed_values": 0,
+                "bitwise_equal": false,
+                "max_absolute": 1.7946755193065655e-13,
+                "max_tolerance_ratio": 0.016544174194753732
+              },
+              "chi_record_comparisons": 1835136,
+              "chi_record_failures": 0
+            },
+            "surface": {
+              "fields": {
+                "comparisons": 26784,
+                "failed_values": 0,
+                "bitwise_equal": false,
+                "max_absolute": 4.2577052994374753e-13,
+                "max_tolerance_ratio": 0.03593571239837121
+              },
+              "chi_record_comparisons": 6912,
+              "chi_record_failures": 0
+            }
+          },
+          "diagnostics_passed": true,
+          "against_legacy_control_passed": true,
+          "full_harmonic_surface_present": true,
+          "native_complete_coefficients": 169
+        },
+        "v6": {
+          "complete_state": {
+            "bulk": {
+              "fields": {
+                "comparisons": 7111152,
+                "failed_values": 0,
+                "bitwise_equal": false,
+                "max_absolute": 1.7946755193065655e-13,
+                "max_tolerance_ratio": 0.016544174194753732
+              },
+              "chi_record_comparisons": 1835136,
+              "chi_record_failures": 0
+            },
+            "surface": {
+              "fields": {
+                "comparisons": 26784,
+                "failed_values": 0,
+                "bitwise_equal": false,
+                "max_absolute": 4.2577052994374753e-13,
+                "max_tolerance_ratio": 0.03593571239837121
+              },
+              "chi_record_comparisons": 6912,
+              "chi_record_failures": 0
+            }
+          },
+          "diagnostics_passed": true,
+          "against_legacy_control_passed": true,
+          "full_harmonic_surface_present": true,
+          "native_complete_coefficients": 169
+        },
+        "v8": {
+          "complete_state": {
+            "bulk": {
+              "fields": {
+                "comparisons": 7111152,
+                "failed_values": 0,
+                "bitwise_equal": false,
+                "max_absolute": 1.7946755193065655e-13,
+                "max_tolerance_ratio": 0.016544174194753732
+              },
+              "chi_record_comparisons": 1835136,
+              "chi_record_failures": 0
+            },
+            "surface": {
+              "fields": {
+                "comparisons": 26784,
+                "failed_values": 0,
+                "bitwise_equal": false,
+                "max_absolute": 4.2577052994374753e-13,
+                "max_tolerance_ratio": 0.03593571239837121
+              },
+              "chi_record_comparisons": 6912,
+              "chi_record_failures": 0
+            }
+          },
+          "diagnostics_passed": true,
+          "against_legacy_control_passed": true,
+          "full_harmonic_surface_present": true,
+          "native_complete_coefficients": 169
+        }
+      },
+      "immutable_original_control_passed": true,
+      "initial_state_passed": true,
+      "unchanged_gates": {
+        "fields": "existing short1e-12+5e-10|ref|; chi1e-14+5e-10|ref|",
+        "records": "exact counts/first-floor; minima/max/sum correction1e-14+5e-10|ref|, predeclared for nonzero seed",
+        "history": "5e-10+1e-6|ref|",
+        "horizon": "max(1e-10,1e-7|ref|) in M units"
+      }
+    },
+    {
+      "passed": true,
+      "full_report": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-matched-benchmark-science-v6/results.json",
+      "full_report_sha256": "26742b5423bfd3f369369df1ca381a63401b992274f2430c3bfa908cb56e9439",
+      "input_hash_count": 303,
+      "reader_sources": {
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-matched-benchmark-reader-snapshot-v2/n12_matched_benchmark_compare.py": "fc27cba5b02c9160136545ee1b807814963de3413d79940cdca8d0d55b111ad3",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-matched-benchmark-reader-snapshot-v2/n12_checkpoint.py": "e1c920a84d9e0a218ae34dfc90962120f532af8a111ac77a13624cc8de541542",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-matched-benchmark-reader-snapshot-v2/n12_long_history.py": "304e0ae0dffedfad946396204bc8326533b0850af3e88ccb144bd1885f6cd104",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-matched-benchmark-reader-snapshot-v2/legacy_stage_trace_compare.py": "bca07273126a4d90d125edd6813011f783c9890cb285759c350f150cc0d95fb2",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-matched-benchmark-reader-snapshot-v2/legacy_n12_benchmark.py": "6c7b1fdf9607672f8ae1f98261402cce4a8b6785656d6f8a0938184f0c617615",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-matched-benchmark-reader-snapshot-v2/native_step_observer_validate.py": "bb18cb9f75582fcc2471728949994e5e01cc521f543ae633b29358be4c600e94",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/n12-matched-benchmark-reader-snapshot-v2/n12_checkpoint_gpu_control.py": "e0b9f61262759484670f00adae8698879a1d6fba4b6615e9e9a43df56f879409"
+      },
+      "variants": {
+        "control": {
+          "complete_state": {
+            "bulk": {
+              "fields": {
+                "comparisons": 7111152,
+                "failed_values": 0,
+                "bitwise_equal": false,
+                "max_absolute": 1.7946755193065655e-13,
+                "max_tolerance_ratio": 0.016544174194753732
+              },
+              "chi_record_comparisons": 1835136,
+              "chi_record_failures": 0
+            },
+            "surface": {
+              "fields": {
+                "comparisons": 26784,
+                "failed_values": 0,
+                "bitwise_equal": false,
+                "max_absolute": 4.2577052994374753e-13,
+                "max_tolerance_ratio": 0.03593571239837121
+              },
+              "chi_record_comparisons": 6912,
+              "chi_record_failures": 0
+            }
+          },
+          "diagnostics_passed": true,
+          "against_legacy_control_passed": true,
+          "full_harmonic_surface_present": true,
+          "native_complete_coefficients": 169
+        },
+        "v3": {
+          "complete_state": {
+            "bulk": {
+              "fields": {
+                "comparisons": 7111152,
+                "failed_values": 0,
+                "bitwise_equal": false,
+                "max_absolute": 1.7946755193065655e-13,
+                "max_tolerance_ratio": 0.016544174194753732
+              },
+              "chi_record_comparisons": 1835136,
+              "chi_record_failures": 0
+            },
+            "surface": {
+              "fields": {
+                "comparisons": 26784,
+                "failed_values": 0,
+                "bitwise_equal": false,
+                "max_absolute": 4.2577052994374753e-13,
+                "max_tolerance_ratio": 0.03593571239837121
+              },
+              "chi_record_comparisons": 6912,
+              "chi_record_failures": 0
+            }
+          },
+          "diagnostics_passed": true,
+          "against_legacy_control_passed": true,
+          "full_harmonic_surface_present": true,
+          "native_complete_coefficients": 169
+        },
+        "v6": {
+          "complete_state": {
+            "bulk": {
+              "fields": {
+                "comparisons": 7111152,
+                "failed_values": 0,
+                "bitwise_equal": false,
+                "max_absolute": 1.7946755193065655e-13,
+                "max_tolerance_ratio": 0.016544174194753732
+              },
+              "chi_record_comparisons": 1835136,
+              "chi_record_failures": 0
+            },
+            "surface": {
+              "fields": {
+                "comparisons": 26784,
+                "failed_values": 0,
+                "bitwise_equal": false,
+                "max_absolute": 4.2577052994374753e-13,
+                "max_tolerance_ratio": 0.03593571239837121
+              },
+              "chi_record_comparisons": 6912,
+              "chi_record_failures": 0
+            }
+          },
+          "diagnostics_passed": true,
+          "against_legacy_control_passed": true,
+          "full_harmonic_surface_present": true,
+          "native_complete_coefficients": 169
+        },
+        "v8": {
+          "complete_state": {
+            "bulk": {
+              "fields": {
+                "comparisons": 7111152,
+                "failed_values": 0,
+                "bitwise_equal": false,
+                "max_absolute": 1.7946755193065655e-13,
+                "max_tolerance_ratio": 0.016544174194753732
+              },
+              "chi_record_comparisons": 1835136,
+              "chi_record_failures": 0
+            },
+            "surface": {
+              "fields": {
+                "comparisons": 26784,
+                "failed_values": 0,
+                "bitwise_equal": false,
+                "max_absolute": 4.2577052994374753e-13,
+                "max_tolerance_ratio": 0.03593571239837121
+              },
+              "chi_record_comparisons": 6912,
+              "chi_record_failures": 0
+            }
+          },
+          "diagnostics_passed": true,
+          "against_legacy_control_passed": true,
+          "full_harmonic_surface_present": true,
+          "native_complete_coefficients": 169
+        }
+      },
+      "immutable_original_control_passed": true,
+      "initial_state_passed": true,
+      "unchanged_gates": {
+        "fields": "existing short1e-12+5e-10|ref|; chi1e-14+5e-10|ref|",
+        "records": "exact counts/first-floor; minima/max/sum correction1e-14+5e-10|ref|, predeclared for nonzero seed",
+        "history": "5e-10+1e-6|ref|",
+        "horizon": "max(1e-10,1e-7|ref|) in M units"
+      }
+    }
+  ],
+  "accepted_series_commits": [
+    "2980cb8c6279ff2772faf84b2257372d30a8378d",
+    "c7ffc79bc6bb6de37380f3df7ace642f2bb0a633",
+    "44b98c5ab04fa7bc7b5144ad2cc1ef6280e27d74",
+    "d53e5d0ee79d1b780cade50ea43aa70cdde21cee",
+    "958d00bd4c97c3264c9364d24cc8aa8cc5406165",
+    "4e655d817f7bf44e16eafa521e952dd89bfd23a7",
+    "71cff31bbf6a17652061bd76c47642ad2da7b65e",
+    "9baf7f566b5d16e5e4e40836e5ecf542c9ddd689"
+  ],
+  "architecture": {
+    "core_Driver_TaskList_Mesh_tree_load_balancing_source_unchanged": true,
+    "changed_solver_files": [
+      "src/z4c_hyperboloidal/conformal_rhs.hpp",
+      "src/z4c_hyperboloidal/hyperbolic_shift.hpp",
+      "src/z4c_hyperboloidal/point_rhs.hpp",
+      "src/z4c_hyperboloidal/rhs_subset.hpp",
+      "src/z4c_hyperboloidal/spherical_policy.hpp",
+      "src/z4c_hyperboloidal/surface_exchange.cpp",
+      "src/z4c_hyperboloidal/surface_exchange.hpp",
+      "src/z4c_hyperboloidal/tasks.hpp",
+      "src/z4c_hyperboloidal/tensor_scri.hpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal.hpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp"
+    ],
+    "native_block_ownership_and_equal_weights_retained": true,
+    "block_local_scri_surfaces_retained": true,
+    "restart_output_SMR_AMR_retained": true,
+    "production_untouched": true,
+    "no_physics_dt_precision_KO_chi_or_tolerance_changes": true
+  },
+  "qualification": "Each of the eight solver commits has separate accepted unprofiled ABBA timing and complete scientific qualification. Latest qualification includes observer, poisoned stage data, AMR, SMR/cache rebuild, restart, compatibility, constraints and horizons; all native complete states/diagnostics exact.",
+  "limitations": [
+    "Two-node24-GPU-tile-rank N12 saved-state continuations. No eight-node scaling or new full-length trajectory claim.",
+    "Profiles cover ranks8/23; global causal critical rank and achieved occupancy remain unproved.",
+    "Different phases/ranks are not summed into an elapsed-time budget."
+  ],
+  "next_single_experiment": "Optional: combine the remaining small Interior RHS launch with Dependent RHS after its dependencies. Measure whether reduced GPU launches outweigh lost communication overlap, using unchanged scientific gates.",
+  "profile_evidence": "native-dependent-batch-profile-review.json"
+}

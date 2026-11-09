@@ -715,26 +715,48 @@ bounded two-node correctness checks when a proposed change requires them.
 | Final surface-RHS chunk32 | Four complete endpoints/diagnostics exact | 0.169008 -> 0.168891 s; overlapping windows | Rejected:0.069% inconclusive; SYCL reduction ignores chunk size |
 | Post-cache/normal32 selected-rank profile | Normal/profiled/reference full31+8 and diagnostics exact | Rank23 bulk103.51ms/step; normal-correction fill14.45ms/step in one512 group | Select correction-fill grouping; representative rank, not global critical path |
 | Normal-correction cache-fill SYCL group32 | All timing endpoints exact; full observer/poison/AMR/restart/refined-cache checks and profile equivalence pass | 0.169193 -> 0.163139 s/step | Accepted,3.58% lower time; rank23 actual14x32 fill takes8.49ms/step; bulk remains103.22ms/step |
-
-
 | Explicit prepared-cache bulk reader | Four complete endpoints/diagnostics and local coupled/surface oracles exact | 0.162982 -> 0.164835 s/step; every candidate window slower | Rejected,1.14% regression; original reader restored; no qualification allocation |
 | Fixed angular interpolation-weight cache | Complete endpoints exact; weight poison/Rebuild oracle, full observer/poison/AMR/restart/refined-cache qualification and profile equivalence pass | 0.163086 -> 0.155696 s/step | Accepted,4.53% lower time;526.5KiB per boundary-owning plan; rank23 correction fill8.49ms ->0.21ms at unchanged14x32 |
-
 | Persistent reconstructed PointState workspace | First control/candidate full states and diagnostics exact; local poisoned workspace oracle exact | 0.154809 -> 0.162815 s/step | Rejected,5.17% regression under the prespecified early-stop rule; no qualification allocation |
 | Dependent bulk workgroup32 | Four complete endpoints and diagnostics exact | 0.156067 -> 0.157360 s/step; every candidate window slower | Rejected,0.83% regression; group128 restored |
 | Joined dependent bulk RHS batch | All timing endpoints exact; delayed TaskList, local Driver poison, full GPU observer/poison/AMR/restart/refined-cache and profile checks pass | 0.155157 -> 0.106252 s/step; every candidate window faster | Accepted,31.52% lower time; early interior remains independent, all late points wait for current halo and normal data |
 
 The latest selected-rank profile shows main RHS GPU time per complete step falling
-from103.27 to52.53ms on rank23, and77.79 to60.38ms on rank8. Acrossfour steps,
-main launch counts fall64->32 and48->32 respectively, at unchanged local size128.
-Rank23 final surface RHS takes9.35ms, shared geometry7.09ms, normal cases5.05ms,
-and correction-cache fill0.21ms. These are representative-rank kernel measurements,
+from 103.27 to 52.53ms on rank 23, and 77.79 to 60.38ms on rank 8. Across four steps,
+main launch counts fall 64->32 and 48->32 respectively, at unchanged local size 128.
+Rank 23 final surface RHS takes 9.35ms, shared geometry 7.09ms, normal cases 5.05ms,
+and correction-cache fill 0.21ms. These are representative-rank kernel measurements,
 not an additive global elapsed budget, a demonstrated global critical path, or
-achieved occupancy. The next step is a fresh same-allocation comparison against
-all frozen validated legacy variants; the earlier~0.1364s legacy result alone
-does not establish final parity.
+achieved occupancy. The final matched comparison below establishes parity against
+all frozen validated legacy variants, independently of the historical result.
 
 Completion requires the committed native implementation to match or beat the
 fastest accepted previous N12 reference median on the same two nodes, with repeat
 variation small enough to support that conclusion, and all applicable architecture
 and scientific requirements verified. A partial speedup is progress, not completion.
+
+## Confirmed two-node parity
+
+Forward/reverse matched allocations 9052988 and 9053001 compare the committed native
+implementation 9baf7f566 against unchanged immutable/control/v3/v6/v8 predecessors.
+Native median is 0.106117141s per complete RK4 step; fastest validated legacy
+v3 median is 0.136205514s. Native takes 22.090% less time
+(1.284x throughput). All 12 native windows beat every legacy
+window; each legacy variant has six windows. Each invocation uses 10 warmup steps
+followed by three 20-step windows. Each allocation uses the same two nodes for
+native and legacy.
+
+Complete 31-field states, all eight chi records, compatibility, constraints and
+horizons pass their existing gates without changed tolerances. The accepted native endpoint and diagnostics
+are bitwise equal to the admitted reference; every fresh legacy endpoint passes
+the existing full comparator against that identical state. Separate native
+observer/poison/AMR/SMR/restart checks remain qualified. The original bounded
+performance target is met; the formal goal object remains cleared.
+
+This is not a scaling result or a new full-length evolution. Optional further
+work is to test combining the remaining small Interior RHS launch with the late
+batch, measuring the loss of communication overlap against fewer GPU launches.
+The latest profile places that interior kernel near 24ms per complete step on both
+sampled ranks, but this is not a guaranteed complete-step saving. See
+`evidence/native-legacy-two-node-parity-review.json` for both matched allocations,
+all reference variants, raw evidence hashes and unchanged scientific gates.

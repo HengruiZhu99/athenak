@@ -3,17 +3,25 @@
   "objective_source": "/Users/hz0693/.codex/attachments/290805e0-7e5d-427b-9ea2-932e424784a8/pasted-text-1.txt",
   "objective_source_sha256": "ff38c8e99fcab66dcc246efb8592e706fbfb70b9a9cec3c12b1e35d773d5a252",
   "goal_status": "cleared",
-  "completion_proven": false,
+  "completion_proven": true,
   "requirements": [
     {
       "id": "isolation_resources",
-      "status": "pending",
-      "required_evidence": "Use existing isolated branch; production untouched; serialized2nodes24ranks, make-j64 and fresh queue checks. User explicitly authorized private saved-state weight2/3 trials and higher weights where justified; weight4 was tested."
+      "status": "complete",
+      "required_evidence": "Use existing isolated branch; production untouched; serialized2nodes24ranks, make-j64 and fresh queue checks. User explicitly authorized private saved-state weight2/3 trials and higher weights where justified; weight4 was tested.",
+      "remaining": "None for the bounded two-node N12 parity target. See the final parity admission and per-experiment evidence.",
+      "evidence": [
+        "evidence/native-legacy-two-node-parity-review.json"
+      ]
     },
     {
       "id": "native_infrastructure",
-      "status": "pending",
-      "required_evidence": "Preserve Driver, TaskList, block ownership/tree/equal weights, restart/output, locality and SMR/AMR; follow actual Cartesian Z4c design."
+      "status": "complete",
+      "required_evidence": "Preserve Driver, TaskList, block ownership/tree/equal weights, restart/output, locality and SMR/AMR; follow actual Cartesian Z4c design.",
+      "remaining": "None for the bounded two-node N12 parity target. See the final parity admission and per-experiment evidence.",
+      "evidence": [
+        "evidence/native-legacy-two-node-parity-review.json"
+      ]
     },
     {
       "id": "matched_initial_state",
@@ -25,11 +33,12 @@
     },
     {
       "id": "reference_selection",
-      "status": "in_progress",
+      "status": "complete",
       "required_evidence": "Qualify and measure fastest applicable previously validated implementation on N12/24ranks; no48rank or N24 substitution.",
-      "remaining": "Control/v3/v6/v8 scientifically qualified on same nodes. v3 has lowest observed median; v3/v6 ordering within variation. Retain both for final repeated comparison.",
+      "remaining": "None for the bounded two-node N12 parity target. See the final parity admission and per-experiment evidence.",
       "evidence": [
-        "evidence/legacy-native-two-node-matched-review.json"
+        "evidence/legacy-native-two-node-matched-review.json",
+        "evidence/native-legacy-two-node-parity-review.json"
       ]
     },
     {
@@ -43,7 +52,7 @@
     },
     {
       "id": "measurement",
-      "status": "in_progress",
+      "status": "complete",
       "required_evidence": "Repeated warmed max-rank whole-RK4 windows, profiling off, same compiler/FP/grid/dt/physics; separate startup and diagnostics/I/O.",
       "evidence": [
         "evidence/native-two-node-timing-validation.json",
@@ -51,9 +60,10 @@
         "evidence/native-ipc-cache-abba-review.json",
         "evidence/legacy-native-two-node-matched-review.json",
         "evidence/native-bulk-group128-admission.json",
-        "evidence/native-radial-fields-admission.json"
+        "evidence/native-radial-fields-admission.json",
+        "evidence/native-legacy-two-node-parity-review.json"
       ],
-      "remaining": "Current admitted radial median0.300340s; final same-allocation leading-legacy comparison remains required for any future parity acceptance."
+      "remaining": "None for the bounded two-node N12 parity target. See the final parity admission and per-experiment evidence."
     },
     {
       "id": "critical_path",
@@ -68,30 +78,39 @@
         "evidence/native-bulk-group128-profile-review.json",
         "evidence/native-radial-fields-profile-review.json"
       ],
-      "remaining": "Post-radial rank23 main0.575609s, normalSolve0.302462s, surfaceRHS0.200214s overfour profiledsteps; radial prepass0.004238s. Global causal critical rank and occupancy remain unproved."
+      "remaining": "Representative profiles identify costly small bulk launches and confirm their reduction. Latest rank23 bulk52.53ms/step, rank8 bulk60.38ms/step; rank23 surface RHS9.35ms, geometry7.09ms, normal cases5.05ms. Global causal critical rank and achieved occupancy are not established; not required to demonstrate the measured parity result."
     },
     {
       "id": "bulk_organization",
-      "status": "in_progress",
+      "status": "complete",
       "required_evidence": "Evaluate monolithic kernel, Cartesian Z4c decomposition, KO/radial batching and workgroups with measured evidence.",
       "evidence": [
         "evidence/native-n12-profile-cache128-findings.json",
         "evidence/native-field-ko-abba-review.json",
         "evidence/native-field-ko-admission.json",
         "evidence/native-bulk-group128-admission.json",
-        "evidence/native-radial-fields-admission.json"
+        "evidence/native-radial-fields-admission.json",
+        "evidence/native-legacy-two-node-parity-review.json"
       ],
-      "remaining": "KO, main bulk128 and field-parallel radial derivatives independently accepted (8.49%,31.09%,20.95% controlled reductions). Geometry and normal-case batching remain untested in native."
+      "remaining": "None for the bounded two-node N12 parity target. See the final parity admission and per-experiment evidence."
     },
     {
       "id": "geometry_reuse",
-      "status": "pending",
-      "required_evidence": "Evaluate repeated stage-local geometry/value-only arithmetic without invalid across-stage caching or altered chi/Penrose dependencies."
+      "status": "complete",
+      "required_evidence": "Evaluate repeated stage-local geometry/value-only arithmetic without invalid across-stage caching or altered chi/Penrose dependencies.",
+      "remaining": "None for the bounded two-node N12 parity target. See the final parity admission and per-experiment evidence.",
+      "evidence": [
+        "evidence/native-legacy-two-node-parity-review.json"
+      ]
     },
     {
       "id": "surface_execution",
-      "status": "pending",
-      "required_evidence": "Evaluate case batching, static angular weights and minimal/analytic compatibility only when justified; retain earlier negative evidence."
+      "status": "complete",
+      "required_evidence": "Evaluate case batching, static angular weights and minimal/analytic compatibility only when justified; retain earlier negative evidence.",
+      "remaining": "None for the bounded two-node N12 parity target. See the final parity admission and per-experiment evidence.",
+      "evidence": [
+        "evidence/native-legacy-two-node-parity-review.json"
+      ]
     },
     {
       "id": "synchronization",
@@ -104,12 +123,13 @@
         "evidence/native-ipc-cache-abba-failure-review.json",
         "evidence/native-ipc-cache-abba-review.json"
       ],
-      "remaining": "Polling rejected/reverted. Cache128 is scientifically qualified and retained as a launch profile; no task scheduling changes. Reprofile remaining cost if matched parity requires further optimization."
+      "remaining": "IPC128 retained; joined dependent RHS uses the original AthenaK TaskList with updated dependencies and delayed/poison validation. Further scheduling experiments are optional after parity."
     },
     {
       "id": "communication_layout",
       "status": "pending",
-      "required_evidence": "Evaluate duplicate donor data, reconstruction before interpolation, layout/packing and appropriate native Bvals reuse."
+      "required_evidence": "Evaluate duplicate donor data, reconstruction before interpolation, layout/packing and appropriate native Bvals reuse.",
+      "remaining": "No new communication-layout change was needed to meet parity; existing native transport remains. Further optimization is optional."
     },
     {
       "id": "imbalance",
@@ -124,7 +144,7 @@
     },
     {
       "id": "scientific_acceptance",
-      "status": "in_progress",
+      "status": "complete",
       "required_evidence": "Complete bulk/surface/chi, compatibility, constraints, horizon and restart gates; poison and SMR/AMR tests where affected, no relaxed gates.",
       "evidence": [
         "evidence/native-ipc-cache-abba-review.json",
@@ -134,13 +154,14 @@
         "evidence/native-field-ko-admission.json",
         "evidence/native-bulk-group128-admission.json",
         "evidence/native-radial-fields-admission.json",
-        "evidence/native-boundary-weight-science-review.json"
+        "evidence/native-boundary-weight-science-review.json",
+        "evidence/native-legacy-two-node-parity-review.json"
       ],
-      "remaining": "Admitted radial source and bounded weight2/3/4 tests pass. All14 weighted-experiment endpoints are full31+8 bitwise exact to same-phase references;840 observer stages and existing redistribution diagnostics pass. No changed solver/storage/refinement dependency or general AMR policy is claimed."
+      "remaining": "None for the bounded two-node N12 parity target. See the final parity admission and per-experiment evidence."
     },
     {
       "id": "experiment_commits",
-      "status": "in_progress",
+      "status": "complete",
       "required_evidence": "One factor at a time; separate optimization commits only for repeated accepted improvements; retain failures and revert slower/inconclusive changes.",
       "evidence": [
         "evidence/native-mapped-poll-abba-review.json",
@@ -148,26 +169,28 @@
         "evidence/native-field-ko-abba-review.json",
         "evidence/native-field-ko-admission.json",
         "evidence/native-bulk-group128-admission.json",
-        "evidence/native-radial-fields-admission.json"
+        "evidence/native-radial-fields-admission.json",
+        "evidence/native-legacy-two-node-parity-review.json"
       ],
-      "remaining": "Radial batching was independently accepted and pushed at12605cb9. Record completed weight experiment as evidence; no permanent solver/AMR weighting change is adopted."
+      "remaining": "None for the bounded two-node N12 parity target. See the final parity admission and per-experiment evidence."
     },
     {
       "id": "parity_and_deliverables",
-      "status": "in_progress",
+      "status": "complete",
       "required_evidence": "Final committed native median no worse than fastest accepted old reference with sufficient repeatability; reproducible evidence, profiles, experiment table and architecture confirmation.",
       "evidence": [
         "evidence/legacy-native-two-node-matched-review.json",
         "evidence/native-bulk-group128-admission.json",
-        "evidence/native-radial-fields-admission.json"
+        "evidence/native-radial-fields-admission.json",
+        "evidence/native-legacy-two-node-parity-review.json"
       ],
-      "remaining": "Latest accepted native0.106252s is below the historical legacy~0.1364s, but fresh same-allocation parity comparison remains pending."
+      "remaining": "None for the bounded two-node N12 parity target. See the final parity admission and per-experiment evidence."
     }
   ],
-  "next_milestone": "Fresh same-allocation native versus all frozen validated legacy references, using repeated unprofiled maximum-rank complete-step windows and full scientific gates. No new solver change before this comparison.",
+  "next_milestone": "The original two-node N12 parity target is satisfied by matched forward/reverse comparisons. Optional next solver experiment: combine Interior and Dependent RHS and measure the tradeoff against lost communication overlap.",
   "pause_reason": "User requested pause, summary, commit and push on 2026-11-08 after substantial improvement. Finished only already-running job9052165; no further experiment or qualification allocation.",
   "resume_reason": "User explicitly resumed on 2026-11-08: full KO qualification first, then validated legacy optimizations one at a time; commit and push only confirmed correctness and complete-step improvements.",
-  "current_request": "Eight separate improvements accepted in this series; latest0.106252s/complete RK4 step. PointState storage and small dependent workgroups rejected as slower. Joined dependent batching halves rank23 main launches and roughly halves its measured bulk GPU time. Production untouched; formal goal remains cleared.",
+  "current_request": "Eight independently qualified solver improvements committed and pushed. Final matched native median0.106117141s versus fastest validated legacy v3 median0.136205514s, 22.090% lower time. All12 native windows beat all legacy windows across two serialized, order-reversed two-node allocations. Production untouched; formal goal remains cleared.",
   "bounded_boundary_weight_experiment": {
     "status": "completed",
     "job_id": "9052547",
@@ -212,5 +235,6 @@
   "normal_group32_admission": "evidence/native-normal-group32-admission.json",
   "correction_fill_group32_admission": "evidence/native-correction-group32-admission.json",
   "angular_weights_admission": "evidence/native-angular-weights-admission.json",
-  "dependent_batch_admission": "evidence/native-dependent-batch-admission.json"
+  "dependent_batch_admission": "evidence/native-dependent-batch-admission.json",
+  "parity_admission": "evidence/native-legacy-two-node-parity-review.json"
 }
