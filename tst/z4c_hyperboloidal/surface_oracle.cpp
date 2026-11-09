@@ -143,6 +143,29 @@ int main(int argc,char **argv) {
       mesh.pgen=std::make_unique<ProblemGenerator>(&pin,&mesh);
       auto &p=*mesh.pmb_pack->pz4c_hyperboloidal;
       native::SurfaceExchange surface(mesh.pmb_pack,&p);
+      // Fixed weights must be rebuilt with the plan, including same-size
+      // rebuilds and ranks with no outer face. The endpoint oracle below still
+      // compares against the original on-demand angular polynomial.
+      native::mapped::Jet weight_poison(std::numeric_limits<Real>::quiet_NaN());
+      for (int a=0;a<3;++a) {
+        weight_poison.d[a]=weight_poison.f;
+        for (int b=0;b<3;++b)weight_poison.h[a][b]=weight_poison.f;
+      }
+      Kokkos::deep_copy(surface.CorrectionWeights(),weight_poison);
+      surface.Rebuild();
+      const auto weights=Kokkos::create_mirror_view_and_copy(
+          HostMemSpace(),surface.CorrectionWeights());
+      Require(weights.size()==(p.nfaces>0 ? std::size_t(n*n*36) : 0),
+              "fixed angular weight allocation differs");
+      for (std::size_t i=0;i<weights.size();++i) {
+        const auto &w=weights.data()[i];
+        Require(std::isfinite(w.f),"fixed weight value not refreshed");
+        for (int a=0;a<3;++a) {
+          Require(std::isfinite(w.d[a]),"fixed weight gradient not refreshed");
+          for (int b=0;b<3;++b)
+            Require(std::isfinite(w.h[a][b]),"fixed weight Hessian not refreshed");
+        }
+      }
       native::MappedHalo halo;halo.Rebuild(mesh.pmb_pack,p.origin);
       std::unique_ptr<old::SphericalTransfer3D> reference;
       if (!global_variable::my_rank) {

@@ -1,0 +1,238 @@
+{
+  "passed": true,
+  "job": "9052898",
+  "control_commit": "4e655d817f7bf44e16eafa521e952dd89bfd23a7",
+  "files_rehashed": 98,
+  "normal_profiled_retained_reference_full_state_and_diagnostics_bitwise": true,
+  "runtime_and_source_binding": {
+    "executable": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/angular-weights-v1/build/athena-candidate-normal",
+    "executable_sha256": "8c866f2c39a08cfb7cbb238a71e5e9ffe58b2d7f1d91ebe250488ace8ba5540e",
+    "build_provenance": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/angular-weights-v1/build/provenance.json",
+    "build_provenance_sha256": "ca99a3419d5700f20ea7f6191d8bda3529db7bcdc392c0450431cad39e920216",
+    "candidate_source_sha256": "7d146b87907a895ea8e29932d1d0409bd7e1d16cde932afd650aa8b431a9fc59",
+    "private_source_files": 400,
+    "dependency_closure": [
+      "src/z4c_hyperboloidal/z4c_hyperboloidal.cpp",
+      "src/z4c_hyperboloidal/diagnostics.cpp",
+      "src/z4c_hyperboloidal/surface_exchange.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_tasks.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_lifecycle.cpp"
+    ],
+    "baseline_source_objects_unchanged": true,
+    "before_after_verify_logs": {
+      "before": "d9f4ff50edba3275d47940e12dab0cd337f3bdf63e81a69397468ae407cfac60",
+      "after": "d9f4ff50edba3275d47940e12dab0cd337f3bdf63e81a69397468ae407cfac60"
+    }
+  },
+  "unit_crosschecks": [
+    {
+      "rank": 8,
+      "groups": 10,
+      "text_ns_equals_chrome_us": true
+    },
+    {
+      "rank": 23,
+      "groups": 16,
+      "text_ns_equals_chrome_us": true
+    }
+  ],
+  "measurements": {
+    "8": {
+      "rhs_span_seconds": 0.71217525,
+      "gpu_union_seconds": 0.36246275,
+      "bulk_groups": {
+        "main": [
+          {
+            "shape": "[SIMD32 {11; 1; 1} {128; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.09579439999999999,
+            "maximum_seconds": 0.006055520000000001,
+            "seconds_per_step": 0.023948599999999997
+          },
+          {
+            "shape": "[SIMD32 {8; 1; 1} {128; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.09545232,
+            "maximum_seconds": 0.0059910399999999996,
+            "seconds_per_step": 0.02386308
+          },
+          {
+            "shape": "[SIMD32 {82; 1; 1} {128; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.11992399999999999,
+            "maximum_seconds": 0.00755472,
+            "seconds_per_step": 0.029980999999999997
+          }
+        ],
+        "ko": [
+          {
+            "shape": "[SIMD32 {30; 1; 1} {1024; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.0007608,
+            "maximum_seconds": 7.6e-05,
+            "seconds_per_step": 0.0001902
+          },
+          {
+            "shape": "[SIMD32 {315; 1; 1} {1024; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.0030998400000000004,
+            "maximum_seconds": 0.00021712,
+            "seconds_per_step": 0.0007749600000000001
+          },
+          {
+            "shape": "[SIMD32 {40; 1; 1} {1024; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.00108904,
+            "maximum_seconds": 7.392e-05,
+            "seconds_per_step": 0.00027226
+          }
+        ],
+        "radial_prepare": []
+      },
+      "surface_groups": {
+        "SurfaceExchange::Solve()::{lambda(int, int&)#1}, Kokkos::Impl::FunctorAnalysis<Kokkos::Impl::FunctorPatternInterface::REDUCE, Kokkos::RangePolicy<>, z4c_hyperboloidal::SurfaceExcha ... ::_V1::handler&)#1}::operator()(sycl::_V1::handler&) const::{lambda()#1}[SIMD32 {1; 1; 1} {1; 1; 1}]": {
+          "calls": 16,
+          "total_seconds": 7.104e-05
+        },
+        "SurfaceExchange::Evaluate()::{lambda(int, int&, double&, double&)#1}, Kokkos::HostSpace, Kokkos::Sum<int, Kokkos::HostSpace>, Kokkos::Max<double, Kokkos::HostSpace>, Kokkos::Max<do ... ::_V1::handler&)#1}::operator()(sycl::_V1::handler&) const::{lambda()#1}[SIMD32 {1; 1; 1} {1; 1; 1}]": {
+          "calls": 16,
+          "total_seconds": 0.00012095999999999998
+        }
+      },
+      "seconds_per_step": {
+        "main": 0.07779267999999998,
+        "ko": 0.0012374200000000001,
+        "validity": 0.00013991999999999997,
+        "radial_prepare": 0.0
+      }
+    },
+    "23": {
+      "rhs_span_seconds": 0.7400165,
+      "gpu_union_seconds": 0.577347,
+      "bulk_groups": {
+        "main": [
+          {
+            "shape": "[SIMD32 {3; 1; 1} {128; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.09422016000000001,
+            "maximum_seconds": 0.0060152,
+            "seconds_per_step": 0.023555040000000003
+          },
+          {
+            "shape": "[SIMD32 {4; 1; 1} {128; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.09479455999999997,
+            "maximum_seconds": 0.005996,
+            "seconds_per_step": 0.023698639999999993
+          },
+          {
+            "shape": "[SIMD32 {57; 1; 1} {128; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.11290432,
+            "maximum_seconds": 0.00708816,
+            "seconds_per_step": 0.02822608
+          },
+          {
+            "shape": "[SIMD32 {5; 1; 1} {128; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.11116224,
+            "maximum_seconds": 0.00702032,
+            "seconds_per_step": 0.02779056
+          }
+        ],
+        "ko": [
+          {
+            "shape": "[SIMD32 {10; 1; 1} {1024; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.0007353599999999999,
+            "maximum_seconds": 5.7119999999999995e-05,
+            "seconds_per_step": 0.00018383999999999997
+          },
+          {
+            "shape": "[SIMD32 {16; 1; 1} {1024; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.0007104,
+            "maximum_seconds": 6.175999999999999e-05,
+            "seconds_per_step": 0.0001776
+          },
+          {
+            "shape": "[SIMD32 {219; 1; 1} {1024; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.0018815999999999998,
+            "maximum_seconds": 0.00013487999999999998,
+            "seconds_per_step": 0.00047039999999999994
+          },
+          {
+            "shape": "[SIMD32 {18; 1; 1} {1024; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.00061312,
+            "maximum_seconds": 4.0159999999999995e-05,
+            "seconds_per_step": 0.00015328
+          }
+        ],
+        "radial_prepare": [
+          {
+            "shape": "[SIMD32 {11; 1; 1} {1024; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.00417584,
+            "maximum_seconds": 0.00026512,
+            "seconds_per_step": 0.00104396
+          }
+        ]
+      },
+      "surface_groups": {
+        "SurfaceExchange::Solve()::{lambda(int)#1}, Kokkos::Impl::SYCLInternal::USMObjectMem<(sycl::_V1::usm::alloc)0>, false>, Kokkos::RangePolicy<> >[SIMD32 {1; 1; 1} {256; 1; 1}] ... SMObjectMem<(sycl::_V1::usm::alloc)0>, false>, Kokkos::RangePolicy<> >[SIMD32 {1; 1; 1} {256; 1; 1}]": {
+          "calls": 16,
+          "total_seconds": 0.02862912
+        },
+        "SurfaceExchange::Solve()::{lambda(int)#2}, Kokkos::Impl::SYCLInternal::USMObjectMem<(sycl::_V1::usm::alloc)0>, false>, Kokkos::RangePolicy<> >[SIMD32 {18; 1; 1} {32; 1; 1}] ... SMObjectMem<(sycl::_V1::usm::alloc)0>, false>, Kokkos::RangePolicy<> >[SIMD32 {18; 1; 1} {32; 1; 1}]": {
+          "calls": 16,
+          "total_seconds": 0.02021344
+        },
+        "SurfaceExchange::Solve()::{lambda(int, int&)#1}, Kokkos::Impl::FunctorAnalysis<Kokkos::Impl::FunctorPatternInterface::REDUCE, Kokkos::RangePolicy<>, z4c_hyperboloidal::SurfaceExcha ... 1::access::decorated)2>, int) const::{lambda(sycl::_V1::nd_item<1>)#1}[SIMD32 {1; 1; 1} {256; 1; 1}]": {
+          "calls": 16,
+          "total_seconds": 0.0003508799999999999
+        },
+        "SurfaceExchange::Solve()::{lambda(int)#3}, Kokkos::Impl::SYCLInternal::USMObjectMem<(sycl::_V1::usm::alloc)0>, false>, Kokkos::RangePolicy<> >[SIMD32 {14; 1; 1} {32; 1; 1}] ... SMObjectMem<(sycl::_V1::usm::alloc)0>, false>, Kokkos::RangePolicy<> >[SIMD32 {14; 1; 1} {32; 1; 1}]": {
+          "calls": 16,
+          "total_seconds": 0.0008383999999999999
+        },
+        "SurfaceExchange::Evaluate()::{lambda(int, int&, double&, double&)#1}, Kokkos::HostSpace, Kokkos::Sum<int, Kokkos::HostSpace>, Kokkos::Max<double, Kokkos::HostSpace>, Kokkos::Max<do ... 1::access::decorated)2>, int) const::{lambda(sycl::_V1::nd_item<1>)#1}[SIMD32 {1; 1; 1} {256; 1; 1}]": {
+          "calls": 16,
+          "total_seconds": 0.0373488
+        }
+      },
+      "seconds_per_step": {
+        "main": 0.10327032000000001,
+        "ko": 0.0009851200000000001,
+        "validity": 0.00015408000000000002,
+        "radial_prepare": 0.00104396
+      }
+    }
+  },
+  "next_single_experiment": "Test a persistent point-state intermediate between reconstruction and bulk RHS, preserving subset dependencies and arithmetic; measure complete-step benefit before acceptance. This is a kernel working-set hypothesis, not proof of register spilling or achieved occupancy.",
+  "limitations": [
+    "Selected ranks8/23; not a demonstrated whole-job critical path or achieved occupancy.",
+    "Dividing GPU totals byfour gives average kernel time per complete step, not additive global elapsed-time attribution.",
+    "Profiled elapsed time is excluded from throughput acceptance."
+  ],
+  "inputs": {
+    "build-native/native-cached-profile-v4/package.json": "e985aeeb45b3c8ecc58d337ebc107f82ef5c6dd5f574f9aadfe6a5ae9017e94b",
+    "build-native/native-cached-profile-v4/run-artifacts/files.json": "3b173374f74a5d49277cbabe81da17348df74057c6300724ccb563cd7dda52bf",
+    "build-native/native-cached-profile-v4/run-artifacts/runs/native-cached-profile-v4/qualification.json": "6f046e3153b5db7526da46b34500ddfb650e22435e5d7bac635d1337a27615a1",
+    "build-native/native-cached-profile-v4/analysis/timeline.json": "10096271d4038f8f2d898659e63acf6e9443172bffb49fd594afa02d124a0134",
+    "build-native/native-cached-profile-v4/analysis/normal-equivalence.json": "7cb0f66e7bd8eba429332e51d4be81830755b10d01e59c8f9a103b60ecec6488",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cached-profile-v4/analysis/review.py": "e3c5ac74c1a863a16eedaba16ff09fdd3f228733b4d3b8e201816433ace045a1"
+  },
+  "correction_fill_comparison": {
+    "before_profile": "build-native/native-cached-profile-v3/analysis/review.json",
+    "before_profile_sha256": "8875b5d2874ae1948fe531a4993742f7fef27343e0fa5ed01af73ed66b0edec4",
+    "before_seconds_per_step": 0.008487240000000002,
+    "after_seconds_per_step": 0.00020959999999999997,
+    "same_actual_groups": 14,
+    "same_actual_local_size": 32,
+    "complete_step_time_reduction_seconds": 0.007390565625000012,
+    "scope": "Separate four-step selected-rank profiles with exact complete scientific states. Unprofiled ABBA independently establishes the complete-step benefit; kernel-time savings are not an additive global elapsed budget."
+  }
+}

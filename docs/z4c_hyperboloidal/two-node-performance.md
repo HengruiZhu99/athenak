@@ -716,6 +716,16 @@ bounded two-node correctness checks when a proposed change requires them.
 | Post-cache/normal32 selected-rank profile | Normal/profiled/reference full31+8 and diagnostics exact | Rank23 bulk103.51ms/step; normal-correction fill14.45ms/step in one512 group | Select correction-fill grouping; representative rank, not global critical path |
 | Normal-correction cache-fill SYCL group32 | All timing endpoints exact; full observer/poison/AMR/restart/refined-cache checks and profile equivalence pass | 0.169193 -> 0.163139 s/step | Accepted,3.58% lower time; rank23 actual14x32 fill takes8.49ms/step; bulk remains103.22ms/step |
 
+
+| Explicit prepared-cache bulk reader | Four complete endpoints/diagnostics and local coupled/surface oracles exact | 0.162982 -> 0.164835 s/step; every candidate window slower | Rejected,1.14% regression; original reader restored; no qualification allocation |
+| Fixed angular interpolation-weight cache | Complete endpoints exact; weight poison/Rebuild oracle, full observer/poison/AMR/restart/refined-cache qualification and profile equivalence pass | 0.163086 -> 0.155696 s/step | Accepted,4.53% lower time;526.5KiB per boundary-owning plan; rank23 correction fill8.49ms ->0.21ms at unchanged14x32 |
+
+The latest profile leaves rank23 bulk RHS at103.27ms/step, with final surface RHS9.34ms,
+shared surface geometry7.16ms and independent normal cases5.05ms. These are selected-rank
+profiled kernel durations, not an additive global elapsed budget or an achieved-occupancy
+measurement. The next single hypothesis is persistent point-state storage separating
+reconstruction from bulk evaluation while retaining all native subset dependencies.
+
 Completion requires the committed native implementation to match or beat the
 fastest accepted previous N12 reference median on the same two nodes, with repeat
 variation small enough to support that conclusion, and all applicable architecture

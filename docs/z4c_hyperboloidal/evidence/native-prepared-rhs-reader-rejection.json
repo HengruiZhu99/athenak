@@ -1,0 +1,51 @@
+{
+  "schema": "native-prepared-rhs-reader-rejection-v1",
+  "accepted": false,
+  "control_commit": "4e655d817f7bf44e16eafa521e952dd89bfd23a7",
+  "scope": "Explicit evolution-only normal-correction cache reader; no direct-interpolation fallback in bulk kernel. Original optional-cache branch was already taking its cached path, so this tested code generation rather than elimination of executed interpolation.",
+  "decision": "Rejected: all six candidate windows slower than all six control windows; candidate code restored.",
+  "timing": {
+    "job": "9052864",
+    "files_rehashed": 65,
+    "control_median": 0.16298207607499998,
+    "candidate_median": 0.16483485342499998,
+    "time_reduction_percent": -1.136798226295399
+  },
+  "windows": {
+    "timed-C0": [
+      0.1628543032,
+      0.16297659955,
+      0.16296103175
+    ],
+    "timed-K0": [
+      0.16492880475,
+      0.16498072275,
+      0.16486334875
+    ],
+    "timed-K1": [
+      0.1648063581,
+      0.16479428540000002,
+      0.16475967895000002
+    ],
+    "timed-C1": [
+      0.1629875526,
+      0.16299913845,
+      0.16302067474999998
+    ]
+  },
+  "full_four_endpoints_bitwise": true,
+  "padded31_plus8_scalars_per_endpoint": 24704784,
+  "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+  "ordinary_diagnostics_bitwise": true,
+  "local_surface_and_coupled_oracles_passed": true,
+  "qualification_allocation_submitted": false,
+  "qualification_scope": "Qualification executables built successfully; no allocation spent qualifying a rejected speed candidate.",
+  "evidence": {
+    "local": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-prepared-rhs-reader-v1",
+    "remote": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/native-prepared-rhs-reader-abba-v1",
+    "raw_manifest_sha256": "2a2a71064654df7de687f1062af7894ff44f74ddc7f034d65bd64d578675df11",
+    "gpu_build_sha256": "453d3a6309fcf2cb301ac30493d0e5424be8c5e6a1f8e26a6d98e9e5012f1410",
+    "qualification_build_sha256": "518b12e3e9003b97f16e827d76e6c8984c11ac7a4b31c9e5418bd67d4dd01357",
+    "patch_sha256": "f58ae0d1c5fdf7311c4b80453bd9852a15ff703e091baae2cf14cfc027ebb3e6"
+  }
+}

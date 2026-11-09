@@ -213,6 +213,24 @@ void SurfaceExchange::Rebuild() {
   Kokkos::realloc(penrose_geometry_,p.nsurface_points);
   Kokkos::realloc(correction_,p.nfaces,3,n,n);
   Kokkos::realloc(correction_jets_,p.nfaces,3,n,n);
+  Kokkos::realloc(correction_weights_,p.nfaces>0 ? n : 0,n,36);
+  const auto weights=correction_weights_;
+  Kokkos::parallel_for("hyperboloidal normal correction weights",
+    Kokkos::RangePolicy<>(0,p.nfaces>0 ? n*n : 0),KOKKOS_LAMBDA(int point) {
+      const int j=point%n,k=point/n;
+      const int first[2]={j-2<0 ? 0 : (j-2>n-6 ? n-6 : j-2),
+                          k-2<0 ? 0 : (k-2>n-6 ? n-6 : k-2)};
+      const Real q[2]={(j+.5)/n,(k+.5)/n};
+      mapped::Jet basis[2][6];
+      for (int A=0;A<2;++A)for (int i=0;i<6;++i) {
+        basis[A][i]=mapped::Jet(1);
+        for (int l=0;l<6;++l)if (l!=i)
+          basis[A][i]=basis[A][i]*(mapped::Jet::Variable(q[A],A+1)
+              -mapped::Jet((first[A]+l+.5)/n))/mapped::Jet(Real(i-l)/n);
+      }
+      for (int v=0;v<6;++v)for (int u=0;u<6;++u)
+        weights(k,j,6*v+u)=basis[0][u]*basis[1][v];
+    });
   Kokkos::realloc(surface_staging_,p.nblocks,Fields::count,n,n,1);
   Kokkos::deep_copy(surface_staging_,std::numeric_limits<Real>::quiet_NaN());
   Kokkos::deep_copy(correction_,std::numeric_limits<Real>::quiet_NaN());
@@ -402,7 +420,8 @@ TaskStatus SurfaceExchange::Solve() {
   if (invalid)throw std::runtime_error("Invalid block-owned normal compatibility solve");
   // The angular polynomial is shared by scri and the last two radial layers.
   // Its lift still uses each consumer's own map, spacing and endpoint gap.
-  const auto kernel=BindKernel();const auto output=correction_jets_;
+  const auto weights=correction_weights_;const auto output=correction_jets_;
+  const int n=p.n[0];
   auto correction_policy=Kokkos::RangePolicy<>(0,3*p.nsurface_points);
 #ifdef KOKKOS_ENABLE_SYCL
   // Batch the independent angular jets across smaller SYCL workgroups.
@@ -411,7 +430,13 @@ TaskStatus SurfaceExchange::Solve() {
   Kokkos::parallel_for("hyperboloidal shared normal correction jets",
     correction_policy,KOKKOS_LAMBDA(int task) {
       const int point=task/3,axis=task%3;const auto c=points(point);
-      output(c.face,axis,c.k,c.j)=kernel.LogicalCorrection(c.face,c.j,c.k,axis);
+      const int first_j=c.j-2<0 ? 0 : (c.j-2>n-6 ? n-6 : c.j-2);
+      const int first_k=c.k-2<0 ? 0 : (c.k-2>n-6 ? n-6 : c.k-2);
+      mapped::Jet logical;
+      for (int v=0;v<6;++v)for (int u=0;u<6;++u)
+        logical=logical+weights(c.k,c.j,6*v+u)
+            *mapped::Jet(correction(c.face,axis,first_k+v,first_j+u));
+      output(c.face,axis,c.k,c.j)=logical;
     });
   correction_jets_ready_=true;
   return TaskStatus::complete;

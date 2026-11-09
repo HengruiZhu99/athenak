@@ -135,6 +135,7 @@ class SurfaceExchange {
   const DvceArray1D<SpatialGeometry<Real>> &MetricGeometry() const {return metric_geometry_;}
   const DvceArray1D<SpatialGeometry<Real>> &PenroseGeometry() const {return penrose_geometry_;}
   const DvceArray4D<mapped::Jet> &CorrectionJets() const {return correction_jets_;}
+  const DvceArray3D<mapped::Jet> &CorrectionWeights() const {return correction_weights_;}
   const DvceArray4D<Real> &Correction() const {return correction_;}
   const DvceArray1D<Row> &Rows() const {return rows_;}
   const DvceArray1D<Term> &Terms() const {return terms_;}
@@ -161,6 +162,8 @@ class SurfaceExchange {
   DvceArray1D<SpatialGeometry<Real>> metric_geometry_,penrose_geometry_;
   DvceArray4D<Real> correction_;
   DvceArray4D<mapped::Jet> correction_jets_;
+  // Fixed logical angular weights, shared by all faces and vector components.
+  DvceArray3D<mapped::Jet> correction_weights_;
   // MappedExchange addresses native GID-local-block indices. This thin surface
   // staging view has one radial slot per local block, never a global state copy.
   DvceArray5D<Real> surface_staging_;
