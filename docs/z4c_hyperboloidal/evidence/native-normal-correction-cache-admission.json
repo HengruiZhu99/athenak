@@ -1,0 +1,466 @@
+{
+  "schema": "native-normal-correction-cache-admission-v1",
+  "accepted": true,
+  "parity_achieved": false,
+  "control_commit": "44b98c5ab04fa7bc7b5144ad2cc1ef6280e27d74",
+  "scope": "Compute the three angular normal-correction jets once per owned surface point after elimination; final surface RHS and last two radial layers reuse them while retaining each consumer NormalLift map/spacing/gap. No normal-case or surface-RHS workgroup tuning.",
+  "storage": "Plan-local Jet[face][3][n][n],43.875KiB per144-point face. Reallocated/inactivated atRebuild, invalidated atSample and Solve start, refreshed after successful normal elimination. BindKernel remains direct; only Evaluate and prepared endpoint views bind refreshed data. Diagnostic plans remain separate.",
+  "timing": {
+    "passed": true,
+    "job": "9052709",
+    "files_rehashed": 65,
+    "cases": {
+      "timed-C0": {
+        "seconds_per_step": [
+          0.20827125610000002,
+          0.2083323456,
+          0.20828145034999998
+        ],
+        "state": {
+          "bitwise_equal": true,
+          "padded31_plus8_scalar_values": 24704784,
+          "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+          "excluded_unused_coarse_indices": [
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ],
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ]
+          ]
+        },
+        "diagnostics_bitwise": true
+      },
+      "timed-K0": {
+        "seconds_per_step": [
+          0.17055619135,
+          0.17047385715000002,
+          0.1704748995
+        ],
+        "state": {
+          "bitwise_equal": true,
+          "padded31_plus8_scalar_values": 24704784,
+          "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+          "excluded_unused_coarse_indices": [
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ],
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ]
+          ]
+        },
+        "diagnostics_bitwise": true
+      },
+      "timed-K1": {
+        "seconds_per_step": [
+          0.17059028739999998,
+          0.1705271591,
+          0.17053135655
+        ],
+        "state": {
+          "bitwise_equal": true,
+          "padded31_plus8_scalar_values": 24704784,
+          "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+          "excluded_unused_coarse_indices": [
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ],
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ]
+          ]
+        },
+        "diagnostics_bitwise": true
+      },
+      "timed-C1": {
+        "seconds_per_step": [
+          0.2082486754,
+          0.20821400055,
+          0.20823473835
+        ],
+        "state": {
+          "bitwise_equal": true,
+          "padded31_plus8_scalar_values": 24704784,
+          "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+          "excluded_unused_coarse_indices": [
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ],
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ]
+          ]
+        },
+        "diagnostics_bitwise": true
+      }
+    },
+    "control_median": 0.20825996575,
+    "candidate_median": 0.170529257825,
+    "time_reduction_percent": 18.117120008697583,
+    "all_candidate_windows_faster": true,
+    "full_qualification_pending": false
+  },
+  "qualification": {
+    "passed": true,
+    "job": "9052726",
+    "terminal": "F/0",
+    "files_rehashed": 958,
+    "cases": {
+      "observer70": {
+        "passed": true,
+        "bitwise_scientific_files": 4,
+        "checkpoints": {
+          "rst/native_n12_5M.00008.rst": {
+            "bitwise_equal": true,
+            "padded31_plus8_scalar_values": 24704784,
+            "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+            "excluded_unused_coarse_indices": [
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ],
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ]
+            ]
+          }
+        },
+        "operational_sha256": "090394a78c3590e0d33fafde95e0f106568648e3c4dbd73fdf178c78412e47d2"
+      },
+      "poison8": {
+        "passed": true,
+        "bitwise_scientific_files": 624,
+        "checkpoints": {},
+        "operational_sha256": "7369f46b7c2139c0e51662a4788687f19fbd4dc8702e27393fe0bf48500c0a2a"
+      },
+      "amr4": {
+        "passed": true,
+        "bitwise_scientific_files": 240,
+        "checkpoints": {},
+        "operational_sha256": "206120e4b69359d0c209393650022ec8919b8b542a0e66fbec07f0270e0411e6"
+      },
+      "prefix2": {
+        "passed": true,
+        "bitwise_scientific_files": 4,
+        "checkpoints": {
+          "rst/native_n12_5M.00000.rst": {
+            "bitwise_equal": true,
+            "padded31_plus8_scalar_values": 24704784,
+            "payload_sha256": "64f12f4d00d7615e982fb50cfc082df8140854a8194970e3062db7bf0c79f651",
+            "excluded_unused_coarse_indices": [
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ],
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ]
+            ]
+          },
+          "rst/native_n12_5M.00001.rst": {
+            "bitwise_equal": true,
+            "padded31_plus8_scalar_values": 24704784,
+            "payload_sha256": "b70caebc12756a27cb5715438f7642c0340c2e389334deada311f9631fd1a2a4",
+            "excluded_unused_coarse_indices": [
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ],
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ]
+            ]
+          }
+        },
+        "operational_sha256": "d332dc44440234f186f3b49351b5014d01eff3da27f30735d4296c08a701c7dc"
+      },
+      "resume8": {
+        "passed": true,
+        "bitwise_scientific_files": 4,
+        "checkpoints": {
+          "rst/native_n12_5M.00002.rst": {
+            "bitwise_equal": true,
+            "padded31_plus8_scalar_values": 24704784,
+            "payload_sha256": "e303efff82e13776c01c0fd37c603b0cfa6d864586a8d919a38443bd1e65c9a1",
+            "excluded_unused_coarse_indices": [
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ],
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ]
+            ]
+          }
+        },
+        "operational_sha256": "a174a8acc0cef6d28b0589c5c03bd561d4b072ec5104459ce02d6ed5cf0c140c"
+      },
+      "cache-smr": {
+        "passed": true,
+        "bitwise_scientific_files": 0,
+        "checkpoints": {},
+        "operational_sha256": "fcdbf22fd125b66761333209aeca59b522bd2880a39a860e687f2efbc68d2c93"
+      }
+    },
+    "restart_reference_review_sha256": "f1092d15b50a765e54dca7b4f86325fac2690451941eb33a53d73a865ce0c412",
+    "restart_scope": "New prefix/resume states, parameters, initialized metadata, diagnostics and joined stages are bitwise equal to the admitted same-phase radial reference. Its complete-state/continuous8 equality and unchanged diagnostic phase gates therefore carry over exactly.",
+    "restart_reference_gates": {
+      "prefix_cycles": [
+        0,
+        2
+      ],
+      "resume_cycle": 8,
+      "joined_stage_rows": 32,
+      "complete_state_parameters_initialized_metadata_and_three_diagnostics_bitwise_same_phase_WG128": true,
+      "complete_payload_and_joined_stages_bitwise_continuous8": true,
+      "unchanged_twelve_diagnostic_gates_passed": true,
+      "max_diagnostic_absolute_difference": 6.13389339321202e-11,
+      "max_fraction_of_adopted_gate": 0.00030669465019872585,
+      "extra_prefix_final_FastFlow_seed_and_output_counter_differences_exactly_match_admitted_reference": true,
+      "max_compatibility": 9.778256860928204e-16
+    },
+    "no_tolerances_changed": true
+  },
+  "production_untouched": true,
+  "nodes": 2,
+  "ranks": 24,
+  "source_files": {
+    "src/z4c_hyperboloidal/surface_exchange.cpp": "d8282083ceda14855e46038e309ae53080df49417c6a9152d081ed7c04a47a2b",
+    "src/z4c_hyperboloidal/surface_exchange.hpp": "b07bf6e76069a2bb5bd7caf062008971812b3c0d09d16e4784b2bb44ef0c8a9a",
+    "tst/z4c_hyperboloidal/surface_oracle.cpp": "8d03831532499689401b079c9d1811be462ed92d69d462e84155fb0bd8aca78d"
+  },
+  "source_binding": {
+    "passed": true,
+    "solver_sources": {
+      "src/z4c_hyperboloidal/surface_exchange.cpp": "d8282083ceda14855e46038e309ae53080df49417c6a9152d081ed7c04a47a2b",
+      "src/z4c_hyperboloidal/surface_exchange.hpp": "b07bf6e76069a2bb5bd7caf062008971812b3c0d09d16e4784b2bb44ef0c8a9a"
+    },
+    "normal_dependency_closure": [
+      "src/z4c_hyperboloidal/z4c_hyperboloidal.cpp",
+      "src/z4c_hyperboloidal/diagnostics.cpp",
+      "src/z4c_hyperboloidal/surface_exchange.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_tasks.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_lifecycle.cpp"
+    ],
+    "coherent_dependency_closure": [
+      "src/z4c_hyperboloidal/z4c_hyperboloidal.cpp",
+      "src/z4c_hyperboloidal/diagnostics.cpp",
+      "src/z4c_hyperboloidal/surface_exchange.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_tasks.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_lifecycle.cpp"
+    ],
+    "local_oracle_source_sha256": "8d03831532499689401b079c9d1811be462ed92d69d462e84155fb0bd8aca78d"
+  },
+  "local_surface_oracle": {
+    "passed": true,
+    "local_mpi_ranks": 8,
+    "scenarios": 2,
+    "gate": "abs(delta)<=1e-12+5e-10*abs(reference)",
+    "metrics": {
+      "projection": {
+        "comparisons": 53568,
+        "max_scaled_error": 0.0,
+        "max_absolute_error": 0.0,
+        "failed_values": 0
+      },
+      "surface_jets": {
+        "comparisons": 696384,
+        "max_scaled_error": 0.0,
+        "max_absolute_error": 0.0,
+        "failed_values": 0
+      },
+      "radial_jets": {
+        "comparisons": 2089152,
+        "max_scaled_error": 0.0,
+        "max_absolute_error": 0.0,
+        "failed_values": 0
+      },
+      "normal_correction": {
+        "comparisons": 5184,
+        "max_scaled_error": 0.0,
+        "max_absolute_error": 0.0,
+        "failed_values": 0
+      },
+      "surface_rhs": {
+        "comparisons": 53568,
+        "max_scaled_error": 0.0,
+        "max_absolute_error": 0.0,
+        "failed_values": 0
+      }
+    },
+    "native_build": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native",
+    "legacy_readonly_source": "/Users/hz0693/.codex/worktrees/scri-ko01/hyperboloidal",
+    "normal_compatibility": 9.636456671686944e-16,
+    "zero_face_ranks": 3,
+    "endpoint_cache": {
+      "comparisons": 2249856,
+      "poison_refresh": true,
+      "default_direct": true,
+      "bitwise": true
+    },
+    "cache_layout": {
+      "rows": 2592,
+      "fields": 26,
+      "jet_bytes": 104,
+      "bytes": 7008768
+    }
+  },
+  "local_poison": "Both radial and logical-correction views poisoned. Direct endpoint consumer evaluated independently; Solve refreshes correction jets, PrepareRadialJets refreshes radial jets and binds the explicit cache.2,249,856 endpoint components bitwise exact, plus independent legacy surface/correction checks. Each scenario also poisons real surface-geometry caches before Solve.8ranks including3 zero-face ranks.",
+  "local_history_readonly": true,
+  "evidence": {
+    "build-native/native-normal-correction-cache-v1/gpu-build-provenance.json": "24df81bf88b6affa2bb8843b6c8dc5b99f2dfffd84b39060289c3c5f00e761fc",
+    "build-native/native-normal-correction-cache-v1/qualification-build-provenance.json": "52638d5a84b077ad8f82b4334f9cc8c5f548a68460aa1ba5b7eef3701eba2ad4",
+    "build-native/native-normal-correction-cache-v1/qualification-commands-executed.json": "166251f3bf8cd38641d5ce89d07d958eb256033f189648d64f36bd739c0f55b4",
+    "build-native/native-normal-correction-cache-v1/build-binding.json": "60f8e9c4fc5b9148f1d8f19a477008fc205b53f813ad9ecf2329872bf96016c4",
+    "build-native/native-normal-correction-cache-v1/source-binding-review.json": "dc9a5a75e27d7633e655c9c69f41a329edb0836f29649a8e7af8431f4756f11f",
+    "build-native/native-normal-correction-cache-v1/review-abba.py": "898658940f3fd73457b4377a2d4511a71f28f1aedc51b9e08c74c0939b040698",
+    "build-native/native-normal-correction-cache-v1/review-qualification.py": "996c5ba15825d902d64537f18ee027c60feb32f105fa7f1ae0a4751ec558a9b1",
+    "build-native/native-normal-correction-cache-v1/build.py": "b0034d656952e88e80bea8b66930471d3c40b75928976d5363c75a2e4d2ce75b",
+    "build-native/native-normal-correction-cache-v1/qualify-build.py": "9ded7ea23ffe2868ff48a5e8f2c6d0a8e081ecf3e3acbc23cf9e89e4cc442380",
+    "build-native/native-normal-correction-cache-v1/candidate.patch": "f74f5bf2e1e6e4b7774b109abea6c9e247b4a27bbe8f3f8505569caab950df04",
+    "build-native/native-normal-correction-cache-v1/surface-oracle-final/results.json": "1202dc886a36122c3c2f9be0f6afd098325ef3bab0c817fb80f00f47869068c8",
+    "build-native/native-normal-correction-cache-v1/history/results.json": "594770f5a6a0c68df4ce327d6652a19b239dd809282cbcbf1bfc1c3bebe4980b",
+    "build-native/native-normal-correction-cache-v1/walltime-adjustment.json": "33fd3e788e7fbbc0f68b81476f5d7fcc7cfc4fc33d2b20d1046b9b7106d63954"
+  },
+  "raw_remote_cases": [
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/native-normal-correction-cache-abba-v1",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/native-normal-correction-cache-qualification-v1"
+  ],
+  "raw_manifests": {
+    "abba": "6adcfa5ff30a89dbb1c874015f0e1f67541eafc4ed81f7882874d727b0b7c32c",
+    "qualification": "d053945ed21eef495fdaaa18eea9bae8af36a4fd15fac255108e68823219b6d5"
+  },
+  "scheduler_note": "Queued ABBA shortened30->12min with same explicit project account; actual235s F/0. Qualification requested15min, actual353s F/0. Workloads/ranks/timing windows/scientific gates unchanged.",
+  "limitations": [
+    "No updated profile or achieved occupancy claim from this timing alone.",
+    "Earlier leading legacy ~0.1364s remains unmatched in this allocation; no final parity acceptance.",
+    "No eight-node/scaling claim."
+  ]
+}

@@ -164,10 +164,10 @@
       "remaining": "Parity not reached. Original goal cleared; bounded weight task completed at0.298797s best observed configuration versus~0.1364s leading legacy in an earlier allocation. No final same-allocation parity claim."
     }
   ],
-  "next_milestone": "Test stage-local normal-correction angular-jet cache against accepted bulk metric reuse; retain per-point NormalLift and default direct consumers. Require repeated complete-step gains and full qualification.",
+  "next_milestone": "Test only normal-case SYCL workgroup256->32 against accepted normal-correction cache; final surface RHS tuning separate. Retain repeated complete-step and full correctness gates.",
   "pause_reason": "User requested pause, summary, commit and push on 2026-11-08 after substantial improvement. Finished only already-running job9052165; no further experiment or qualification allocation.",
   "resume_reason": "User explicitly resumed on 2026-11-08: full KO qualification first, then validated legacy optimizations one at a time; commit and push only confirmed correctness and complete-step improvements.",
-  "current_request": "Systematic experiments continue: normal cases19.52%, surface geometry6.49%, bulk metric reuse7.90% separately accepted and pushed. Formal parity goal remains cleared; production untouched.",
+  "current_request": "Systematic experiments continue: normal cases19.52%, surface geometry6.49%, bulk metric reuse7.90%, normal-correction cache18.12% separately accepted. Latest measured0.170529s/step. Formal parity goal remains cleared; production untouched.",
   "bounded_boundary_weight_experiment": {
     "status": "completed",
     "job_id": "9052547",
@@ -207,5 +207,6 @@
     "evidence": "evidence/native-normal-cases-admission.json"
   },
   "surface_geometry_cache_admission": "evidence/native-surface-geometry-cache-admission.json",
-  "bulk_geometry_reuse_admission": "evidence/native-bulk-geometry-reuse-admission.json"
+  "bulk_geometry_reuse_admission": "evidence/native-bulk-geometry-reuse-admission.json",
+  "normal_correction_cache_admission": "evidence/native-normal-correction-cache-admission.json"
 }

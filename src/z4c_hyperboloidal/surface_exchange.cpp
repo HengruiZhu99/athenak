@@ -126,6 +126,7 @@ SurfaceExchange::SurfaceExchange(MeshBlockPack *pack,Z4cHyperboloidal *module)
 void SurfaceExchange::Rebuild() {
   auto &p=*module_;
   ready_=false;
+  correction_jets_ready_=false;
   const int n=p.n[0];
   std::vector<int> fields;
   std::vector<bvals::DonorPoint> bulk_requests,edge_requests;
@@ -211,6 +212,7 @@ void SurfaceExchange::Rebuild() {
   Kokkos::realloc(metric_geometry_,p.nsurface_points);
   Kokkos::realloc(penrose_geometry_,p.nsurface_points);
   Kokkos::realloc(correction_,p.nfaces,3,n,n);
+  Kokkos::realloc(correction_jets_,p.nfaces,3,n,n);
   Kokkos::realloc(surface_staging_,p.nblocks,Fields::count,n,n,1);
   Kokkos::deep_copy(surface_staging_,std::numeric_limits<Real>::quiet_NaN());
   Kokkos::deep_copy(correction_,std::numeric_limits<Real>::quiet_NaN());
@@ -291,6 +293,7 @@ TaskStatus SurfaceExchange::Receive() {
 }
 TaskStatus SurfaceExchange::Sample() {
   CheckReady();
+  correction_jets_ready_=false;
   const auto rows=rows_;const auto terms=terms_;const auto output=sampled_;
   const auto bulk=bulk_exchange_.Values(),edge=surface_exchange_.Values();
   const auto slots=fields_;
@@ -321,6 +324,7 @@ TaskStatus SurfaceExchange::Sample() {
 
 TaskStatus SurfaceExchange::Solve() {
   CheckReady();
+  correction_jets_ready_=false;
   auto &p=*module_;const auto samples=sampled_;const auto maps=p.surface_geometry;
   const auto reference=p.surface_reference;const auto rows=rows_;
   const auto points=p.surface_points.d_view;const auto correction=correction_;
@@ -396,6 +400,15 @@ TaskStatus SurfaceExchange::Solve() {
       }
     },invalid);
   if (invalid)throw std::runtime_error("Invalid block-owned normal compatibility solve");
+  // The angular polynomial is shared by scri and the last two radial layers.
+  // Its lift still uses each consumer's own map, spacing and endpoint gap.
+  const auto kernel=BindKernel();const auto output=correction_jets_;
+  Kokkos::parallel_for("hyperboloidal shared normal correction jets",
+    Kokkos::RangePolicy<>(0,3*p.nsurface_points),KOKKOS_LAMBDA(int task) {
+      const int point=task/3,axis=task%3;const auto c=points(point);
+      output(c.face,axis,c.k,c.j)=kernel.LogicalCorrection(c.face,c.j,c.k,axis);
+    });
+  correction_jets_ready_=true;
   return TaskStatus::complete;
 }
 
@@ -406,7 +419,8 @@ TaskStatus SurfaceExchange::Evaluate() {
   const auto points=p.surface_points.d_view;const auto rhs=p.s_rhs;
   const auto parameters=p.parameters;const auto source=p.boundary_source;
   const auto metric_geometry=metric_geometry_,penrose_geometry=penrose_geometry_;
-  const Real penalty=p.penalty;const auto kernel=BindKernel();
+  const Real penalty=p.penalty;auto kernel=BindKernel();
+  if (correction_jets_ready_)kernel.correction_jets=correction_jets_;
   Real compatibility=0,clock=0;int invalid=0;
   Kokkos::parallel_reduce("hyperboloidal block-owned scri RHS",
     Kokkos::RangePolicy<>(0,p.nsurface_points),
@@ -449,11 +463,11 @@ SurfaceExchange::Kernel SurfaceExchange::BindKernel() const {
   auto &p=*module_;
   return {radial_index_,radial_rows_,radial_terms_,p.points.d_view,p.block_faces.d_view,
           correction_,face_spacing_,face_gap_,surface_exchange_.Values(),fields_,
-          p.n[0],p.origin};
+          p.n[0],p.origin,{}};
 }
 
 SurfaceExchange::CachedKernel SurfaceExchange::PrepareRadialJets() {
-  const auto kernel=BindKernel();
+  auto kernel=BindKernel();
   const auto points=radial_points_,fields=radial_fields_;
   const auto residual=module_->residual;
   const auto output=radial_jets_;
@@ -467,6 +481,7 @@ SurfaceExchange::CachedKernel SurfaceExchange::PrepareRadialJets() {
       const int row=static_cast<int>(task/count),slot=static_cast<int>(task%count);
       output(row,slot)=kernel.EndpointResidualJet(points(row),fields(slot),residual);
     });
+  if (correction_jets_ready_)kernel.correction_jets=correction_jets_;
   return {kernel,radial_jets_};
 }
 }  // namespace z4c_hyperboloidal

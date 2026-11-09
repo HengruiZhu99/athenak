@@ -40,6 +40,7 @@ class SurfaceExchange {
     bvals::MappedExchange::ConstValues surface_values;
     FieldSlots fields;
     int n, origin;
+    DvceArray4D<mapped::Jet> correction_jets;
 
     KOKKOS_INLINE_FUNCTION bool HasRadialRow(int point) const {
       return radial_index(point)>=0;
@@ -78,6 +79,12 @@ class SurfaceExchange {
     }
     KOKKOS_INLINE_FUNCTION mapped::Jet Correction(int face,int j,int k,
         const mapped::Point &map,int axis) const {
+      const auto logical=correction_jets.extent(0)>0 ? correction_jets(face,axis,k,j)
+          : LogicalCorrection(face,j,k,axis);
+      return NormalLift(map,logical,face_spacing(face),face_gap(face));
+    }
+    KOKKOS_INLINE_FUNCTION mapped::Jet LogicalCorrection(int face,int j,int k,
+        int axis) const {
       const int first[2]={j-2<0 ? 0 : (j-2>n-6 ? n-6 : j-2),
                           k-2<0 ? 0 : (k-2>n-6 ? n-6 : k-2)};
       const Real q[2]={(j+.5)/n,(k+.5)/n};
@@ -92,7 +99,7 @@ class SurfaceExchange {
       for (int v=0;v<6;++v)for (int u=0;u<6;++u)
         logical=logical+basis[0][u]*basis[1][v]
             *mapped::Jet(correction(face,axis,first[1]+v,first[0]+u));
-      return NormalLift(map,logical,face_spacing(face),face_gap(face));
+      return logical;
     }
   };
 
@@ -127,6 +134,7 @@ class SurfaceExchange {
   // Refreshed by Solve from current samples, consumed through Evaluate.
   const DvceArray1D<SpatialGeometry<Real>> &MetricGeometry() const {return metric_geometry_;}
   const DvceArray1D<SpatialGeometry<Real>> &PenroseGeometry() const {return penrose_geometry_;}
+  const DvceArray4D<mapped::Jet> &CorrectionJets() const {return correction_jets_;}
   const DvceArray4D<Real> &Correction() const {return correction_;}
   const DvceArray1D<Row> &Rows() const {return rows_;}
   const DvceArray1D<Term> &Terms() const {return terms_;}
@@ -152,11 +160,13 @@ class SurfaceExchange {
   DvceArray2D<NormalCase> normal_cases_;
   DvceArray1D<SpatialGeometry<Real>> metric_geometry_,penrose_geometry_;
   DvceArray4D<Real> correction_;
+  DvceArray4D<mapped::Jet> correction_jets_;
   // MappedExchange addresses native GID-local-block indices. This thin surface
   // staging view has one radial slot per local block, never a global state copy.
   DvceArray5D<Real> surface_staging_;
   Real max_compatibility_=0,max_clock_=0;
   bool ready_=false;
+  bool correction_jets_ready_=false;
   void CheckReady() const;
 };
 

@@ -45,6 +45,8 @@ std::uint64_t CheckEndpointCache(native::SurfaceExchange &surface,
                                 native::Z4cHyperboloidal &p,std::uint64_t &cache_rows,
                                 std::uint64_t &cache_bytes) {
   auto cached=surface.PrepareRadialJets();
+  Require(cached.correction_jets.size()==3*std::size_t(p.nsurface_points),
+          "endpoint view did not bind refreshed normal correction jets");
   cache_rows=cached.radial_jets.extent(0);
   cache_bytes=cached.radial_jets.span()*sizeof(native::mapped::Jet);
   native::mapped::Jet poison(std::numeric_limits<Real>::quiet_NaN());
@@ -53,6 +55,7 @@ std::uint64_t CheckEndpointCache(native::SurfaceExchange &surface,
     for (int b=0;b<3;++b)poison.h[a][b]=poison.f;
   }
   Kokkos::deep_copy(cached.radial_jets,poison);
+  Kokkos::deep_copy(cached.correction_jets,poison);
   const auto direct=surface.BindKernel();
   const auto cells=p.points.d_view;const auto geometry=p.geometry;
   const auto reference=p.reference;const auto residual=p.residual;
@@ -67,6 +70,7 @@ std::uint64_t CheckEndpointCache(native::SurfaceExchange &surface,
           native::BlockPointReader{residual,c.m,c.k,c.j,c.i},geometry(point),
           inv_h,reference(point),parameters,direct);
     });
+  surface.Solve();
   cached=surface.PrepareRadialJets();
   DvceArray1D<native::PointState> actual("cached endpoint",direct.radial_rows.extent(0));
   Kokkos::parallel_for("oracle cached endpoint after poison",
@@ -202,6 +206,12 @@ int main(int argc,char **argv) {
                 "surface geometry cache allocation differs");
         Kokkos::deep_copy(surface.MetricGeometry(),poison);
         Kokkos::deep_copy(surface.PenroseGeometry(),poison);
+        native::mapped::Jet correction_poison(poison.scalar);
+        for (int a=0;a<3;++a) {
+          correction_poison.d[a]=poison.scalar;
+          for (int b=0;b<3;++b)correction_poison.h[a][b]=poison.scalar;
+        }
+        Kokkos::deep_copy(surface.CorrectionJets(),correction_poison);
         surface.Solve();
         const auto untouched=Kokkos::create_mirror_view_and_copy(HostMemSpace(),p.s_rhs);
         for (std::size_t i=0;i<untouched.size();++i)

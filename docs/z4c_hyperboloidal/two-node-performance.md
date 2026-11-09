@@ -89,7 +89,8 @@ isolation also pass. See `evidence/native-normal-cases-admission.json`.
 
 Stage-local surface geometry reuse has now also passed the separate experiment below.
 Bulk metric-geometry reuse has also passed the separate experiment below.
-Next: test shared normal-correction interpolation, then remaining measured cache candidates. The user-authorized task continues; the former
+Shared normal-correction interpolation is separately qualified below.
+Next: separately test the validated legacy32-thread normal-case workgroup. The user-authorized task continues; the former
 formal parity goal remains cleared. This result does not establish parity with
 the earlier~0.1364s legacy reference or scaling beyond two nodes.
 
@@ -135,9 +136,33 @@ local eight-rank coupled-RHS oracle matches14,222,304 bulk and53,568 surface RHS
 values exactly across two scenarios. See
 `evidence/native-bulk-geometry-reuse-admission.json`.
 
-Next: separately cache the angular normal-correction jets shared by surface and
-nearby radial consumers, preserving each consumer's NormalLift mapping. Parity
+The shared normal-correction cache is separately qualified below. Parity
 with the earlier~0.1364s legacy reference remains unestablished.
+
+## Shared normal-correction interpolation
+
+A separate kernel now computes the three angular correction jets once per owned
+surface point after normal elimination. The final surface RHS and last two radial
+layers reuse them, while NormalLift retains each consumer's map, spacing and gap.
+Storage is43.875KiB per144-point face perplan. Sample/Rebuild invalidate it and
+each Solve refreshes it. BindKernel remains direct; only the explicit prepared
+endpoint view and final surface evaluation use the refreshed cache.
+
+Job9052709 gives **0.208260 -> 0.170529 s/complete RK4 step**, an **18.12% reduction**.
+Every candidate window is faster than every control window; all full31+8 timing
+endpoints and diagnostics are exact. Qualification9052726 completed F/0 across
+observer, poison, AMR, restart and refined-cache cases. Independent review
+rehashed958 files, matched876 scientific files bitwise and passed complete
+checkpoint/restart gates. The local eight-rank oracle explicitly poisons both
+radial and correction caches, checks that direct consumers ignore them, refreshes
+them and compares2,249,856 endpoint components bitwise. Surface/correction and
+history read-only checks also pass. See
+`evidence/native-normal-correction-cache-admission.json`.
+
+No workgroup tuning is combined with this cache. Next test only the normal-case
+SYCL workgroup256->32, as used by the selected validated legacy surface code.
+Final surface-RHS launch tuning remains separate. The earlier~0.1364s legacy
+reference has not yet been rerun on the same allocation as this implementation.
 
 ## Boundary weight experiment
 
@@ -685,6 +710,7 @@ bounded two-node correctness checks when a proposed change requires them.
 | Independent normal-compatibility cases | Complete endpoints/diagnostics exact; observer, poison, AMR, restart and refined-cache qualification pass | 0.299643 -> 0.241150 s/step | Accepted,19.52% lower complete-step time; private scratch, fixed256 group |
 | Shared stage-local surface metric/Penrose geometry | Full endpoints exact; geometry-cache poison oracle and complete GPU qualification pass | 0.242989 -> 0.227213 s/step | Accepted,6.49% lower time; ~135KiB per144-point plan |
 | Bulk point-local metric geometry reuse | Local coupled RHS exact; complete endpoints, observer, poison, AMR, restart and refined-cache qualification pass | 0.226831 -> 0.208909 s/step | Accepted,7.90% lower time; no new persistent storage or launch tuning |
+| Shared normal-correction angular jets | Full endpoints exact; cache poison/direct-default checks and complete GPU qualification pass | 0.208260 -> 0.170529 s/step | Accepted,18.12% lower time;43.875KiB per144-point face perplan |
 
 Completion requires the committed native implementation to match or beat the
 fastest accepted previous N12 reference median on the same two nodes, with repeat
