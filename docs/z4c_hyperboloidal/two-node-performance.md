@@ -712,6 +712,9 @@ bounded two-node correctness checks when a proposed change requires them.
 | Bulk point-local metric geometry reuse | Local coupled RHS exact; complete endpoints, observer, poison, AMR, restart and refined-cache qualification pass | 0.226831 -> 0.208909 s/step | Accepted,7.90% lower time; no new persistent storage or launch tuning |
 | Shared normal-correction angular jets | Full endpoints exact; cache poison/direct-default checks and complete GPU qualification pass | 0.208260 -> 0.170529 s/step | Accepted,18.12% lower time;43.875KiB per144-point face perplan |
 | Normal-case SYCL workgroup32 | Complete timing endpoints exact; observer, poison, AMR, restart and refined-cache qualification pass | 0.170577 -> 0.169249 s/step | Accepted,0.78% lower time; caches, elimination and final surface-RHS policy fixed |
+| Final surface-RHS chunk32 | Four complete endpoints/diagnostics exact | 0.169008 -> 0.168891 s; overlapping windows | Rejected:0.069% inconclusive; SYCL reduction ignores chunk size |
+| Post-cache/normal32 selected-rank profile | Normal/profiled/reference full31+8 and diagnostics exact | Rank23 bulk103.51ms/step; normal-correction fill14.45ms/step in one512 group | Select correction-fill grouping; representative rank, not global critical path |
+| Normal-correction cache-fill SYCL group32 | All timing endpoints exact; full observer/poison/AMR/restart/refined-cache checks and profile equivalence pass | 0.169193 -> 0.163139 s/step | Accepted,3.58% lower time; rank23 actual14x32 fill takes8.49ms/step; bulk remains103.22ms/step |
 
 Completion requires the committed native implementation to match or beat the
 fastest accepted previous N12 reference median on the same two nodes, with repeat

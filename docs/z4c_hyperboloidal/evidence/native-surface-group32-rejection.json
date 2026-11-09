@@ -1,0 +1,182 @@
+{
+  "accepted": false,
+  "code_restored": true,
+  "job": "9052786",
+  "timing": {
+    "passed": true,
+    "job": "9052786",
+    "files_rehashed": 65,
+    "cases": {
+      "timed-C0": {
+        "seconds_per_step": [
+          0.16899550605,
+          0.16895007835,
+          0.16899973545
+        ],
+        "state": {
+          "bitwise_equal": true,
+          "padded31_plus8_scalar_values": 24704784,
+          "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+          "excluded_unused_coarse_indices": [
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ],
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ]
+          ]
+        },
+        "diagnostics_bitwise": true
+      },
+      "timed-K0": {
+        "seconds_per_step": [
+          0.16885700825,
+          0.16888710145000002,
+          0.16889451875
+        ],
+        "state": {
+          "bitwise_equal": true,
+          "padded31_plus8_scalar_values": 24704784,
+          "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+          "excluded_unused_coarse_indices": [
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ],
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ]
+          ]
+        },
+        "diagnostics_bitwise": true
+      },
+      "timed-K1": {
+        "seconds_per_step": [
+          0.16886565125,
+          0.1689533664,
+          0.16898939770000002
+        ],
+        "state": {
+          "bitwise_equal": true,
+          "padded31_plus8_scalar_values": 24704784,
+          "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+          "excluded_unused_coarse_indices": [
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ],
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ]
+          ]
+        },
+        "diagnostics_bitwise": true
+      },
+      "timed-C1": {
+        "seconds_per_step": [
+          0.16901576425,
+          0.16902775105,
+          0.16904685795000002
+        ],
+        "state": {
+          "bitwise_equal": true,
+          "padded31_plus8_scalar_values": 24704784,
+          "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+          "excluded_unused_coarse_indices": [
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ],
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ]
+          ]
+        },
+        "diagnostics_bitwise": true
+      }
+    },
+    "control_median": 0.16900774985,
+    "candidate_median": 0.1688908101,
+    "time_reduction_percent": 0.06919194540119245,
+    "all_candidate_windows_faster": false,
+    "full_qualification_pending": false,
+    "decision": "Rejected: gain below observed spread with overlapping windows; no confirmed performance improvement",
+    "accepted": false
+  },
+  "reason": {
+    "interpretation": "set_chunk_size32 was ineffective for this SYCL parallel_reduce; null result does not show actual group32 would be ineffective. Rejected and restored.",
+    "local_and_remote_sources_sha256": {
+      "kokkos/core/src/SYCL/Kokkos_SYCL_ParallelReduce_Range.hpp": "a3c7d632a7bd903ccd3d6cec270c11b1dcaf20eb90b5d3f84ea4aa58017f55c8",
+      "kokkos/core/src/SYCL/Kokkos_SYCL_ParallelFor_Range.hpp": "d2f52424bc313de9489c7115d5ed3ff657116372bf7c3968ee0328e7f6ac5c08"
+    },
+    "reduction_source_lines": [
+      279,
+      317
+    ],
+    "next_conditional": "If updated trace confirms costly final surface RHS, split expensive per-point computation into parallel_for plus small summary reduction, keeping initial actual group fixed; tune its group separately. Preserve all rate/validity/max compatibility/clock checks."
+  },
+  "qualification_submitted": false,
+  "scope": "Four complete timing endpoints and diagnostics exact;0.0692% median difference with overlapping windows. SYCL parallel_reduce does not consume RangePolicy.chunk_size; this was not a valid forced32-group comparison. Candidate code not retained.",
+  "raw_manifest": "b55c46e6d72c8dcaa5af2a574c931c5c88a2da0119acd38ed36ccdcfe747ee6f"
+}

@@ -403,8 +403,13 @@ TaskStatus SurfaceExchange::Solve() {
   // The angular polynomial is shared by scri and the last two radial layers.
   // Its lift still uses each consumer's own map, spacing and endpoint gap.
   const auto kernel=BindKernel();const auto output=correction_jets_;
+  auto correction_policy=Kokkos::RangePolicy<>(0,3*p.nsurface_points);
+#ifdef KOKKOS_ENABLE_SYCL
+  // Batch the independent angular jets across smaller SYCL workgroups.
+  correction_policy.set_chunk_size(32);
+#endif
   Kokkos::parallel_for("hyperboloidal shared normal correction jets",
-    Kokkos::RangePolicy<>(0,3*p.nsurface_points),KOKKOS_LAMBDA(int task) {
+    correction_policy,KOKKOS_LAMBDA(int task) {
       const int point=task/3,axis=task%3;const auto c=points(point);
       output(c.face,axis,c.k,c.j)=kernel.LogicalCorrection(c.face,c.j,c.k,axis);
     });
