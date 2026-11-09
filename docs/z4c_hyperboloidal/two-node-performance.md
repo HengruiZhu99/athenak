@@ -64,6 +64,34 @@ in private restart copies, using the admitted radial numerical objects and the
 native load balancer. Geometry, normal correction, surface Solve/Evaluate and
 workgroup policies remain fixed. No production checkpoint or source is modified.
 
+## Independent normal compatibility cases
+
+The user subsequently authorized systematic solver/cache experiments, one factor
+at a time, committing only correctness-qualified complete-step improvements.
+The first is now accepted: four independent normal-compatibility evaluations run
+in a separate batched kernel, followed by the unchanged3x3 elimination. The
+case kernel retains the measured256-work-item group size. A private per-plan
+buffer stores defects and validity flags, about18KiB per144-point surface face.
+Diagnostic plans remain isolated from module RHS storage; native rebuilding
+resizes the buffer. No geometry reuse or workgroup tuning is combined here.
+
+Job9052593 (F/0) gives six-window medians **0.299643 -> 0.241150 s/complete RK4
+step**, a **19.52% time reduction**. All six candidate windows beat all six
+control windows; all four complete31+8 endpoints and diagnostics are bitwise
+exact. The same frozen candidate passed six qualification cases in9052603
+(F/0): observer280 stages, poisoned state/history and first RHS, coherent AMR
+snapshots/refine/coarsen, prefix2/resume8, and the refined cache fixture. The
+958-file collected record verifies876 scientific files bitwise against the
+admitted radial reference, plus complete checkpoint/parameter comparisons.
+Existing restart diagnostic gates and unused-header exclusions remain unchanged.
+Local eight-rank surface/zero-face/NaN-output checks and real history-output
+isolation also pass. See `evidence/native-normal-cases-admission.json`.
+
+Next: separately test stage-local surface geometry reuse, then the remaining
+measured cache/reuse candidates. The user-authorized task continues; the former
+formal parity goal remains cleared. This result does not establish parity with
+the earlier~0.1364s legacy reference or scaling beyond two nodes.
+
 ## Boundary weight experiment
 
 The clean two-node/24-rank allocation9052547 completed F/0 in10:02. Eight

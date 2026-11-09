@@ -183,7 +183,15 @@ int main(int argc,char **argv) {
         surface.PackAndSend();halo.PackAndSend(p.residual,p.u0);
         halo.FillLocal(p.residual,p.u0);
         while (surface.Receive()!=TaskStatus::complete) {}
-        surface.Sample();surface.Solve();surface.Evaluate();
+        surface.Sample();
+        // Diagnostic-only normal solves must preserve the module RHS. Final
+        // evaluation must subsequently overwrite every poisoned output field.
+        Kokkos::deep_copy(p.s_rhs,std::numeric_limits<Real>::quiet_NaN());
+        surface.Solve();
+        const auto untouched=Kokkos::create_mirror_view_and_copy(HostMemSpace(),p.s_rhs);
+        for (std::size_t i=0;i<untouched.size();++i)
+          Require(std::isnan(untouched.data()[i]),"normal solve overwrote module RHS");
+        surface.Evaluate();
         maximum_defect=std::max(maximum_defect,surface.MaxCompatibility());
         while (halo.Receive()!=TaskStatus::complete) {}
         halo.FillRemote(p.residual,p.u0);

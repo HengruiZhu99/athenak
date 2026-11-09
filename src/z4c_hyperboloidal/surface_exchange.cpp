@@ -207,6 +207,7 @@ void SurfaceExchange::Rebuild() {
   Kokkos::realloc(radial_jets_,radial_rows.size(),fields.size());
   Upload(face_spacing_,spacing);Upload(face_gap_,gap);
   Kokkos::realloc(sampled_,p.nsurface_points);
+  Kokkos::realloc(normal_cases_,p.nsurface_points,4);
   Kokkos::realloc(correction_,p.nfaces,3,n,n);
   Kokkos::realloc(surface_staging_,p.nblocks,Fields::count,n,n,1);
   Kokkos::deep_copy(surface_staging_,std::numeric_limits<Real>::quiet_NaN());
@@ -322,23 +323,39 @@ TaskStatus SurfaceExchange::Solve() {
   const auto reference=p.surface_reference;const auto rows=rows_;
   const auto points=p.surface_points.d_view;const auto correction=correction_;
   const auto parameters=p.parameters;const auto source=p.boundary_source;
+  // Separate scratch belongs to this plan, including diagnostic-only plans.
+  // Every case overwrites its record before the elimination reads it.
+  const auto cases=normal_cases_;
   const Real penalty=p.penalty;int invalid=0;
+  auto case_policy=Kokkos::RangePolicy<>(0,4*p.nsurface_points);
+#ifdef KOKKOS_ENABLE_SYCL
+  // Keep the measured normal-solve group size; tune groups separately.
+  case_policy.set_chunk_size(256);
+#endif
+  Kokkos::parallel_for("hyperboloidal independent normal cases",
+    case_policy,KOKKOS_LAMBDA(int task) {
+      const int point=task/4,which=task%4;
+      cases(point,which)=NormalCase{};
+      auto jets=samples(point);const auto map=maps(point);
+      if (!SphericalPolicy::Restore(map.x,jets,reference(point)))return;
+      if (which>0)
+        for (int a=0;a<3;++a)jets[21+which].d[a]+=map.x[a];
+      const auto result=EvaluateScriPoint(map,rows(point).spacing,jets,
+                                        parameters,source,penalty);
+      if (!result.valid)return;
+      for (int a=0;a<3;++a)cases(point,which).defect[a]=result.defect[a];
+      cases(point,which).valid=true;
+    });
   Kokkos::parallel_reduce("hyperboloidal local normal compatibility",
     Kokkos::RangePolicy<>(0,p.nsurface_points),KOKKOS_LAMBDA(int point,int &bad) {
-      auto jets=samples(point);const auto map=maps(point);
-      if (!SphericalPolicy::Restore(map.x,jets,reference(point))) {++bad;return;}
-      const auto base=EvaluateScriPoint(map,rows(point).spacing,jets,parameters,source,penalty);
-      if (!base.valid) {++bad;return;}
+      const auto c=points(point);
+      for (int which=0;which<4;++which)
+        if (!cases(point,which).valid) {++bad;return;}
       Real matrix[3][4]{};
-      for (int a=0;a<3;++a)matrix[a][3]=-base.defect[a];
-      for (int b=0;b<3;++b) {
-        auto trial=jets;
-        for (int a=0;a<3;++a)trial[22+b].d[a]+=map.x[a];
-        const auto perturbed=EvaluateScriPoint(map,rows(point).spacing,trial,
-                                               parameters,source,penalty);
-        if (!perturbed.valid) {++bad;return;}
-        for (int a=0;a<3;++a)matrix[a][b]=perturbed.defect[a]-base.defect[a];
-      }
+      for (int a=0;a<3;++a)matrix[a][3]=-cases(point,0).defect[a];
+      for (int b=0;b<3;++b)
+        for (int a=0;a<3;++a)
+          matrix[a][b]=cases(point,b+1).defect[a]-cases(point,0).defect[a];
       for (int col=0;col<3;++col) {
         int pivot=col;
         for (int row=col+1;row<3;++row)
@@ -355,7 +372,6 @@ TaskStatus SurfaceExchange::Solve() {
           for (int k=col;k<4;++k)matrix[row][k]-=multiple*matrix[col][k];
         }
       }
-      const auto c=points(point);
       for (int a=0;a<3;++a) {
         correction(c.face,a,c.k,c.j)=matrix[a][3];
         if (!Kokkos::isfinite(matrix[a][3]))++bad;

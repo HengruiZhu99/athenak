@@ -145,6 +145,8 @@ class SurfaceExchange {
   DvceArray2D<mapped::Jet> radial_jets_;
   DvceArray1D<Real> face_spacing_, face_gap_;
   DvceArray1D<CartesianChartJets> sampled_;
+  struct NormalCase {Real defect[3]; bool valid;};
+  DvceArray2D<NormalCase> normal_cases_;
   DvceArray4D<Real> correction_;
   // MappedExchange addresses native GID-local-block indices. This thin surface
   // staging view has one radial slot per local block, never a global state copy.
