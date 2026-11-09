@@ -711,6 +711,7 @@ bounded two-node correctness checks when a proposed change requires them.
 | Shared stage-local surface metric/Penrose geometry | Full endpoints exact; geometry-cache poison oracle and complete GPU qualification pass | 0.242989 -> 0.227213 s/step | Accepted,6.49% lower time; ~135KiB per144-point plan |
 | Bulk point-local metric geometry reuse | Local coupled RHS exact; complete endpoints, observer, poison, AMR, restart and refined-cache qualification pass | 0.226831 -> 0.208909 s/step | Accepted,7.90% lower time; no new persistent storage or launch tuning |
 | Shared normal-correction angular jets | Full endpoints exact; cache poison/direct-default checks and complete GPU qualification pass | 0.208260 -> 0.170529 s/step | Accepted,18.12% lower time;43.875KiB per144-point face perplan |
+| Normal-case SYCL workgroup32 | Complete timing endpoints exact; observer, poison, AMR, restart and refined-cache qualification pass | 0.170577 -> 0.169249 s/step | Accepted,0.78% lower time; caches, elimination and final surface-RHS policy fixed |
 
 Completion requires the committed native implementation to match or beat the
 fastest accepted previous N12 reference median on the same two nodes, with repeat

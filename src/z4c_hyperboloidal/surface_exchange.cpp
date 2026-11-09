@@ -350,8 +350,8 @@ TaskStatus SurfaceExchange::Solve() {
   const Real penalty=p.penalty;int invalid=0;
   auto case_policy=Kokkos::RangePolicy<>(0,4*p.nsurface_points);
 #ifdef KOKKOS_ENABLE_SYCL
-  // Keep the measured normal-solve group size; tune groups separately.
-  case_policy.set_chunk_size(256);
+  // Use the validated legacy normal-case group size; elimination is separate.
+  case_policy.set_chunk_size(32);
 #endif
   Kokkos::parallel_for("hyperboloidal independent normal cases",
     case_policy,KOKKOS_LAMBDA(int task) {
