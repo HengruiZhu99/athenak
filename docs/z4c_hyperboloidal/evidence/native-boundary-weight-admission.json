@@ -1,0 +1,56 @@
+{
+  "schema": "native-boundary-weight-admission-v1",
+  "configuration_experiment_accepted": true,
+  "permanent_weight_policy_applied": false,
+  "solver_change": false,
+  "production_untouched": true,
+  "goal_status": "cleared",
+  "parity_achieved": false,
+  "job_id": "9052547",
+  "terminal": "F/0",
+  "nodes": 2,
+  "ranks": 24,
+  "numerical_source_commit": "12605cb9041df43689501e505688600bec413ba8",
+  "scientific_scope": "All14 endpoints full31+8 bitwise to same-phase references; three zero-step restart restores;840 observer stages; unchanged constraint/horizon and metadata gates.",
+  "performance_scope": "Eight unprofiled70-step saved-state continuations,10 warmup and3x20 measured completeRK4 steps each. Order1,2,3,4,4,3,2,1; six maximum-rank windows perweight.",
+  "median_seconds_per_complete_step": {
+    "1": 0.30117637025,
+    "2": 0.29904271409999994,
+    "3": 0.29982260159999996,
+    "4": 0.298797207475
+  },
+  "time_reduction_percent": {
+    "1": 0.0,
+    "2": 0.7084407545747906,
+    "3": 0.4494936468210642,
+    "4": 0.7899566533141722
+  },
+  "interpretation": "Repeated but modest configuration gains. Weight4 best observed at0.79%; weight2 at0.71%. Their0.082% difference is comparable to0.083% control drift; no robust general optimum.",
+  "workload": "Weight4 moves boundary-owner bulk total65772->41580, but allsix owners retain144surfacepoints each; largest ordinary-rank bulk count12663->17010. Rank elapsed includes waits and cannot identify the causal critical rank.",
+  "higher_weights": "4 selected by exact native greedy map scan;5,6,8,10 scanned offline only and not selected for GPU tests.",
+  "no_further_allocation": true,
+  "next_experiment_if_requested": "Batch the four normal-compatibility cases with separate small elimination; hold workgroup tuning fixed. Not started.",
+  "evidence": {
+    "native-boundary-weight-science-review.json": {
+      "path": "docs/z4c_hyperboloidal/evidence/native-boundary-weight-science-review.json",
+      "sha256": "8e254db41b4d626f17d4a6b667ac6f127cae7010d98fdb4664068f0134b8370a"
+    },
+    "native-boundary-weight-timing-review.json": {
+      "path": "docs/z4c_hyperboloidal/evidence/native-boundary-weight-timing-review.json",
+      "sha256": "05f74e8ead4b1d0db354a4a217f9b447001bffd43073af5f1475bcfadf657691"
+    },
+    "native-boundary-weight-workload-by-rank.csv": {
+      "path": "docs/z4c_hyperboloidal/evidence/native-boundary-weight-workload-by-rank.csv",
+      "sha256": "5b2d03e3df4b3990b2995173388a1d20925ca4827928f91fd6359d48b9adb6a1"
+    },
+    "native-boundary-weight-retry-submission.json": {
+      "path": "docs/z4c_hyperboloidal/evidence/native-boundary-weight-retry-submission.json",
+      "sha256": "d35b3533283c8e9539131b33f5d3e138453198d1cd818bd52db0603727fc9a97"
+    },
+    "native-boundary-weight-submission.json": {
+      "path": "docs/z4c_hyperboloidal/evidence/native-boundary-weight-submission.json",
+      "sha256": "5267bb6a421a3437f59b19bbdc8514095bda800b044ff1949c18cc1597f087f0"
+    }
+  },
+  "historical_record_note": "Retry submission records operational completion before independent reviews. This final record binds those subsequent reviews; the original failed attempt and submission facts remain preserved."
+}

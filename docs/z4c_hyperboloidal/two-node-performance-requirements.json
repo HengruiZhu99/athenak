@@ -8,7 +8,7 @@
     {
       "id": "isolation_resources",
       "status": "pending",
-      "required_evidence": "Use existing isolated branch; production untouched; serialized2nodes24ranks, make-j64 and fresh queue checks. Current user explicitly authorizes weights2/3 trials in private saved-state copies."
+      "required_evidence": "Use existing isolated branch; production untouched; serialized2nodes24ranks, make-j64 and fresh queue checks. User explicitly authorized private saved-state weight2/3 trials and higher weights where justified; weight4 was tested."
     },
     {
       "id": "native_infrastructure",
@@ -113,8 +113,14 @@
     },
     {
       "id": "imbalance",
-      "status": "pending",
-      "required_evidence": "Measure critical ranks while retaining equal weights and block-local surfaces; change workload layout only if justified and same physical work."
+      "status": "in_progress",
+      "required_evidence": "Measure critical ranks while retaining equal weights and block-local surfaces; change workload layout only if justified and same physical work.",
+      "remaining": "User-authorized fixed-topology weights2/3/4 are independently qualified, giving only0.71/0.45/0.79% gains. Native block-local surfaces and load balancer remain unchanged. Causal critical rank and a general initialization/AMR weighting policy are not established.",
+      "evidence": [
+        "evidence/native-boundary-weight-timing-review.json",
+        "evidence/native-boundary-weight-science-review.json",
+        "evidence/native-boundary-weight-workload-by-rank.csv"
+      ]
     },
     {
       "id": "scientific_acceptance",
@@ -127,9 +133,10 @@
         "evidence/legacy-native-two-node-matched-review.json",
         "evidence/native-field-ko-admission.json",
         "evidence/native-bulk-group128-admission.json",
-        "evidence/native-radial-fields-admission.json"
+        "evidence/native-radial-fields-admission.json",
+        "evidence/native-boundary-weight-science-review.json"
       ],
-      "remaining": "All admitted radial source gates pass, including actual private-cache stale/poison/rebuild tests. New cost/repartition trials require separate complete-state and existing redistribution diagnostic checks."
+      "remaining": "Admitted radial source and bounded weight2/3/4 tests pass. All14 weighted-experiment endpoints are full31+8 bitwise exact to same-phase references;840 observer stages and existing redistribution diagnostics pass. No changed solver/storage/refinement dependency or general AMR policy is claimed."
     },
     {
       "id": "experiment_commits",
@@ -143,7 +150,7 @@
         "evidence/native-bulk-group128-admission.json",
         "evidence/native-radial-fields-admission.json"
       ],
-      "remaining": "Retain and push only confirmed improvements; radial batching is independently accepted. Weight trials change only private restart cost metadata initially."
+      "remaining": "Radial batching was independently accepted and pushed at12605cb9. Record completed weight experiment as evidence; no permanent solver/AMR weighting change is adopted."
     },
     {
       "id": "parity_and_deliverables",
@@ -154,11 +161,42 @@
         "evidence/native-bulk-group128-admission.json",
         "evidence/native-radial-fields-admission.json"
       ],
-      "remaining": "Parity not reached: admitted native0.300340s vs leading legacy~0.1364s in an earlier allocation. Original goal cleared by user; current task is only requested weight2/3 experiment."
+      "remaining": "Parity not reached. Original goal cleared; bounded weight task completed at0.298797s best observed configuration versus~0.1364s leading legacy in an earlier allocation. No final same-allocation parity claim."
     }
   ],
-  "next_milestone": "Run serialized two-node/24-rank weight1/2/3 comparisons with repeated unprofiled maximum-rank complete RK4 windows, complete31+8 payload and existing redistribution diagnostic gates. Preserve production and old evidence.",
+  "next_milestone": "None authorized by this bounded task. If optimization is resumed, the retained profile and less-than1% redistribution gain favor one surface normal-case batching experiment with separate elimination; keep workgroup tuning separate.",
   "pause_reason": "User requested pause, summary, commit and push on 2026-11-08 after substantial improvement. Finished only already-running job9052165; no further experiment or qualification allocation.",
   "resume_reason": "User explicitly resumed on 2026-11-08: full KO qualification first, then validated legacy optimizations one at a time; commit and push only confirmed correctness and complete-step improvements.",
-  "current_request": "Bounded user-requested comparison of outer-boundary block weights2 and3 against1, keeping the admitted radial kernels fixed. This does not resume the cleared parity goal."
+  "current_request": "Completed bounded comparison of outer-boundary block weights2,3 and justified4 against1, keeping admitted radial numerical objects fixed. No permanent weighting policy applied; the cleared parity goal is not resumed.",
+  "bounded_boundary_weight_experiment": {
+    "status": "completed",
+    "job_id": "9052547",
+    "terminal": "F/0",
+    "nodes": 2,
+    "ranks": 24,
+    "weights_tested": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "median_seconds_per_complete_RK4_step": {
+      "1": 0.30117637025,
+      "2": 0.2990427141,
+      "3": 0.2998226016,
+      "4": 0.298797207475
+    },
+    "all14_case_scientific_gates_passed": true,
+    "production_untouched": true,
+    "permanent_weight_policy_applied": false,
+    "limitation": "Only a fixed-topology restart configuration comparison. Weight4 is0.082% faster than2, comparable to0.083% control drift; no universal optimum or causal critical-rank claim.",
+    "evidence": [
+      "evidence/native-boundary-weight-admission.json",
+      "evidence/native-boundary-weight-timing-review.json",
+      "evidence/native-boundary-weight-science-review.json",
+      "evidence/native-boundary-weight-workload-by-rank.csv",
+      "evidence/native-boundary-weight-retry-submission.json",
+      "evidence/native-boundary-weight-submission.json"
+    ]
+  }
 }

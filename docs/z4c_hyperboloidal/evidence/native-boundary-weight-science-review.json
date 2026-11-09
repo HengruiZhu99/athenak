@@ -1,0 +1,309 @@
+{
+  "schema": "native-boundary-weight-science-review-v1",
+  "passed": true,
+  "scope": "Bounded W1/W2/W3/W4 restart ownership experiments on the admitted radial baseline; no permanent cost policy is adopted.",
+  "job": {
+    "id": "9052547",
+    "terminal": "F/0",
+    "nodes": 2,
+    "ranks": 24,
+    "successful_solver_cases": 14
+  },
+  "collection": {
+    "path": "build-native/aurora-native-boundary-weights-v2",
+    "files_independently_rehashed": 222,
+    "archive_sha256": "91bc5d2bd895b79c15fdb3fdbad8989fb6222a27dfae3306da974ee951b1ea3a",
+    "bindings": {
+      "package.json": "31979d80c4dc12fecbf35610cf4e11166c69b47615dac53994973f233dc0f9ed",
+      "transfer.json": "f2a7776c84973d7b649b6974cb94de5e69c5a50002a43c986e4066e3e3954f13",
+      "run-artifacts/files.json": "e73cf8b907c1b646efd90233d4a51c651cb4ac2e821cc363d497ef2aecc182d5",
+      "run-artifacts/terminal-qstat.txt": "4c2f6f261041182d6106c774787076628090d9e8f73b849f8234ed485a7b1151"
+    }
+  },
+  "reports": {
+    "science_review": {
+      "path": "build-native/native-boundary-weight-science-review-v2/review.json",
+      "sha256": "48d1d5e6a59931959f0f99ff623806131ccdef4328bf32bd8ce42aa193c9b33d"
+    },
+    "eight_timed_endpoints_and_timing_review": {
+      "path": "build-native/native-boundary-weight-independent-review-v2/results.json",
+      "sha256": "93d992aa4c312b6b291ae699ae80ebb18b818b1d3960f77a69a2b88d0cf6d9b8"
+    },
+    "durable_timing_review": {
+      "path": "docs/z4c_hyperboloidal/evidence/native-boundary-weight-timing-review.json",
+      "sha256": "05f74e8ead4b1d0db354a4a217f9b447001bffd43073af5f1475bcfadf657691"
+    },
+    "science_review_adapter": {
+      "path": "build-native/native-boundary-weight-science-review-v2/review.py",
+      "sha256": "466b2d9ea6da039effca61008ab7472d387c334728c5a93517eef99c5ac9eaa5"
+    }
+  },
+  "execution_binding": {
+    "launch_binding_sha256": "09a52be8a35a2512a4441a2be918fad7edf4f9b63c6561f228449ff655905498",
+    "timer_build_provenance_sha256": "0a5eecc30de573b88963605c668c650a30aa97796e01815b4bb24a368c4bc243",
+    "numerical_baseline_commit": "12605cb9041df43689501e505688600bec413ba8",
+    "instrumentation_scope": "Two private Driver objects admit and report the exact expected boundary-cost vector. All numerical objects and timing boundaries remain unchanged."
+  },
+  "complete_state": {
+    "zero_step_restores": 3,
+    "timed_endpoints": 8,
+    "observer_endpoints": 3,
+    "padded31_plus8_scalars_per_checkpoint": 24704784,
+    "all_payloads_bitwise_equal_to_same_phase_reference": true,
+    "zero_step_payload_sha256": "7e2299b473a81a7ad877e95a60b3a688130c26dcf6d61f33b09e98879511fa26",
+    "cycle2556_payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+    "coverage": "All GID-strided owned bulk overlap and surface fields/records plus deterministic unused checkpoint padding."
+  },
+  "ownership_and_metadata": {
+    "boundary_gids": [
+      45,
+      57,
+      69,
+      81,
+      93,
+      105
+    ],
+    "costs": "Exactly the six outer-surface costs equal the requested W; all other costs equal1. Actual24-rank startup counts and costs reproduce the expected contiguous GID intervals.",
+    "input_seed_change": "Only six serialized float costs change. W2/W3 each change12bytes; W4 changes6bytes. Original checkpoint payload and input writer count4 remain exact.",
+    "writer_metadata": "W1/W2/W3 writer count4 is exact. W4 output count5 is explicitly required before only that word is normalized to4.",
+    "other_metadata": "All other meaningful metadata/parameters exact apart from separately gated FastFlow last_a0. The existing nine unused global-coarse integers remain reported/excluded by the established reader."
+  },
+  "diagnostic_gates": {
+    "history": "1e-12+5e-10*abs(reference), all10 normalized columns",
+    "mass_areal_radius_spin": "1e-10+1e-7*abs(reference), existing M-normalized quantities",
+    "area": "1e-10+2e-7*abs(reference), existing M-squared quantity",
+    "additional_compact_radius_gates": "Retained unchanged, including last_a0",
+    "maximum_history_absolute_difference": 1.7763568394002505e-15,
+    "maximum_gate_fraction": 8.532746614874448e-07,
+    "harmonic_coefficients": 169,
+    "harmonic_scope": "Complete and finite, differences reported; no numerical coefficient threshold was added.",
+    "largest_coefficient_absolute_difference": 2.56299999999988e-17
+  },
+  "observer_coverage": {
+    "cases": 3,
+    "rows_each": 280,
+    "rows_total": 840,
+    "step_stage_time_dt_coverage_exact": true,
+    "clock_and_CFL_bitwise_to_retained_reference": true,
+    "maximum_compatibility": 9.111146658370792e-14,
+    "compatibility_limit": 1e-07,
+    "clock_CFL_gate": "1e-12+5e-10*abs(reference)"
+  },
+  "zero_and_observer_cases": {
+    "zero-W2": {
+      "passed": true,
+      "weight": 2,
+      "cycle": 2486,
+      "checkpoint_sha256": "40af17040af09e499bcad0084383369ab0c6b9584021b2e28603fda6f698d292",
+      "all31_plus8_payload_bitwise": true,
+      "payload_sha256": "7e2299b473a81a7ad877e95a60b3a688130c26dcf6d61f33b09e98879511fa26",
+      "writer_rank0_block_count": 4,
+      "diagnostics": {
+        "passed": true,
+        "normalized_history_columns": 10,
+        "horizon_gates": [
+          "mass_M",
+          "spin_x_M2",
+          "spin_y_M2",
+          "spin_z_M2",
+          "spin_M2",
+          "area_M2",
+          "mean_radius_M",
+          "minimum_radius_M",
+          "areal_radius_M"
+        ],
+        "maximum_gate_fraction": 4.2662954740766134e-07,
+        "maximum_history_absolute_difference": 8.881784197001252e-16,
+        "shape_coefficients_finite": 169,
+        "shape_max_absolute_difference": 0.0,
+        "shape_numeric_gate": false,
+        "all_three_files_bitwise": false
+      }
+    },
+    "zero-W3": {
+      "passed": true,
+      "weight": 3,
+      "cycle": 2486,
+      "checkpoint_sha256": "40dbbb13d27dd4183425e8594bdf076995cf926fa3213a01ba6307ac57c7ceaf",
+      "all31_plus8_payload_bitwise": true,
+      "payload_sha256": "7e2299b473a81a7ad877e95a60b3a688130c26dcf6d61f33b09e98879511fa26",
+      "writer_rank0_block_count": 4,
+      "diagnostics": {
+        "passed": true,
+        "normalized_history_columns": 10,
+        "horizon_gates": [
+          "mass_M",
+          "spin_x_M2",
+          "spin_y_M2",
+          "spin_z_M2",
+          "spin_M2",
+          "area_M2",
+          "mean_radius_M",
+          "minimum_radius_M",
+          "areal_radius_M"
+        ],
+        "maximum_gate_fraction": 4.2663711990469195e-07,
+        "maximum_history_absolute_difference": 8.881784197001252e-16,
+        "shape_coefficients_finite": 169,
+        "shape_max_absolute_difference": 0.0,
+        "shape_numeric_gate": false,
+        "all_three_files_bitwise": false
+      }
+    },
+    "zero-W4": {
+      "passed": true,
+      "weight": 4,
+      "cycle": 2486,
+      "checkpoint_sha256": "e677cc122ab1b78d8f0634773a34a9ee8f757dae1c57127a5260c26489104d3b",
+      "all31_plus8_payload_bitwise": true,
+      "payload_sha256": "7e2299b473a81a7ad877e95a60b3a688130c26dcf6d61f33b09e98879511fa26",
+      "writer_rank0_block_count": 5,
+      "diagnostics": {
+        "passed": true,
+        "normalized_history_columns": 10,
+        "horizon_gates": [
+          "mass_M",
+          "spin_x_M2",
+          "spin_y_M2",
+          "spin_z_M2",
+          "spin_M2",
+          "area_M2",
+          "mean_radius_M",
+          "minimum_radius_M",
+          "areal_radius_M"
+        ],
+        "maximum_gate_fraction": 8.532590948153227e-07,
+        "maximum_history_absolute_difference": 1.7763568394002505e-15,
+        "shape_coefficients_finite": 169,
+        "shape_max_absolute_difference": 1.5000000000454825e-20,
+        "shape_numeric_gate": false,
+        "all_three_files_bitwise": false
+      }
+    },
+    "observer-W2": {
+      "passed": true,
+      "weight": 2,
+      "cycle": 2556,
+      "checkpoint_sha256": "7503400356c28c096d17c51148e7daad311976bbbd2dd21303fd02a5876a15fe",
+      "all31_plus8_payload_bitwise": true,
+      "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+      "writer_rank0_block_count": 4,
+      "diagnostics": {
+        "passed": true,
+        "normalized_history_columns": 10,
+        "horizon_gates": [
+          "mass_M",
+          "spin_x_M2",
+          "spin_y_M2",
+          "spin_z_M2",
+          "spin_M2",
+          "area_M2",
+          "mean_radius_M",
+          "minimum_radius_M",
+          "areal_radius_M"
+        ],
+        "maximum_gate_fraction": 4.266373307437224e-07,
+        "maximum_history_absolute_difference": 8.881784197001252e-16,
+        "shape_coefficients_finite": 169,
+        "shape_max_absolute_difference": 0.0,
+        "shape_numeric_gate": false,
+        "all_three_files_bitwise": false
+      },
+      "observer": {
+        "passed": true,
+        "rows": 280,
+        "maximum_compatibility": 9.111146658370792e-14,
+        "maximum_clock_gate_fraction": 0.0,
+        "maximum_CFL_gate_fraction": 0.0,
+        "all_clock_CFL_bitwise": true
+      }
+    },
+    "observer-W3": {
+      "passed": true,
+      "weight": 3,
+      "cycle": 2556,
+      "checkpoint_sha256": "e7c5d151f17ea3f60aafbe00320185221a4d1811afa1017b31c81efd1da3b23f",
+      "all31_plus8_payload_bitwise": true,
+      "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+      "writer_rank0_block_count": 4,
+      "diagnostics": {
+        "passed": true,
+        "normalized_history_columns": 10,
+        "horizon_gates": [
+          "mass_M",
+          "spin_x_M2",
+          "spin_y_M2",
+          "spin_z_M2",
+          "spin_M2",
+          "area_M2",
+          "mean_radius_M",
+          "minimum_radius_M",
+          "areal_radius_M"
+        ],
+        "maximum_gate_fraction": 4.2662954740766134e-07,
+        "maximum_history_absolute_difference": 8.881784197001252e-16,
+        "shape_coefficients_finite": 169,
+        "shape_max_absolute_difference": 0.0,
+        "shape_numeric_gate": false,
+        "all_three_files_bitwise": false
+      },
+      "observer": {
+        "passed": true,
+        "rows": 280,
+        "maximum_compatibility": 9.111146658370792e-14,
+        "maximum_clock_gate_fraction": 0.0,
+        "maximum_CFL_gate_fraction": 0.0,
+        "all_clock_CFL_bitwise": true
+      }
+    },
+    "observer-W4": {
+      "passed": true,
+      "weight": 4,
+      "cycle": 2556,
+      "checkpoint_sha256": "ba0feb35c7c99ad92628d0e71f3ca984a5f0e3b9038a531c82b7c8cb5d012c14",
+      "all31_plus8_payload_bitwise": true,
+      "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+      "writer_rank0_block_count": 5,
+      "diagnostics": {
+        "passed": true,
+        "normalized_history_columns": 10,
+        "horizon_gates": [
+          "mass_M",
+          "spin_x_M2",
+          "spin_y_M2",
+          "spin_z_M2",
+          "spin_M2",
+          "area_M2",
+          "mean_radius_M",
+          "minimum_radius_M",
+          "areal_radius_M"
+        ],
+        "maximum_gate_fraction": 8.532746614874448e-07,
+        "maximum_history_absolute_difference": 1.7763568394002505e-15,
+        "shape_coefficients_finite": 169,
+        "shape_max_absolute_difference": 2.56299999999988e-17,
+        "shape_numeric_gate": false,
+        "all_three_files_bitwise": false
+      },
+      "observer": {
+        "passed": true,
+        "rows": 280,
+        "maximum_compatibility": 9.111146658370792e-14,
+        "maximum_clock_gate_fraction": 0.0,
+        "maximum_CFL_gate_fraction": 0.0,
+        "all_clock_CFL_bitwise": true
+      }
+    }
+  },
+  "prior_failure": {
+    "job_id": "9052526",
+    "terminal": "F/143",
+    "path": "build-native/aurora-native-boundary-weights-failure-v1",
+    "cause": "The original timing preflight rejected nonunit weights before W2 evolution. That failure remains preserved; no partial weighted timing is admitted."
+  },
+  "limits": [
+    "No new solver runs or numerical tolerance changes were used for this review.",
+    "This admits the bounded70-cycle state and diagnostic equivalence only; no long-time accuracy or global critical-path claim.",
+    "Performance conclusions belong to the separately bound unobserved timing report; no permanent weighting default is chosen here."
+  ]
+}

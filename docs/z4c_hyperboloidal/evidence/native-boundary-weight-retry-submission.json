@@ -1,0 +1,315 @@
+{
+  "schema": "native-boundary-weight-retry-submission-evidence-v1",
+  "status": "terminal_success_fully_collected_independent_reviews_pending",
+  "job_id": "9052547",
+  "nodes": 2,
+  "ranks": 24,
+  "submission": {
+    "schema": "native-boundary-weight-submission-v2",
+    "passed": true,
+    "job_id": "9052547.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "job_state": "Q",
+    "nodes": 2,
+    "ranks": 24,
+    "utc": "2026-11-09T00:22:11.323834+00:00",
+    "preflight_sha256": "7d33027370e151153c2ab0fd7b792300078eb1e32d3211616289859bd764e6ac",
+    "staging_sha256": "904b96631fc246843528cf1b67cb49ba83e237fbab142fecae1f0e64a1015faa",
+    "pbs_sha256": "86109fa77f1b43ad26883921c497ec27003cf668780956e9c1fe15b297e81272",
+    "attempt_sha256": "20b07dd966c6f60860829684887d1adc844f8dde7251f362f4f121b9fc38a928",
+    "queue_before_sha256": "3d25bdbc0e3e858f2851b3751eb637a7291bb50575ccb5051acb9f14148969be",
+    "previous_terminal_sha256": "a39e1091135847e6263ba2b215ff93e585a0a0f8b92555028ad6924089f2f5dc",
+    "qsub_stdout_sha256": "21e9a788984326e03f8aa7611881f2fb537aeb990d2b0c244f853c7c13123cc5",
+    "case_count": 14,
+    "scientific_and_performance_admission": false
+  },
+  "preflight": {
+    "schema": "native-boundary-weight-preflight-v2",
+    "passed": true,
+    "package_manifest_sha256": "95f0a0a756c255a1adea8591eb639f88430a180b6c1930953f9548c63bab6ded",
+    "binding_sha256": "09a52be8a35a2512a4441a2be918fad7edf4f9b63c6561f228449ff655905498",
+    "staging_sha256": "904b96631fc246843528cf1b67cb49ba83e237fbab142fecae1f0e64a1015faa",
+    "frozen_and_candidate_guards_passed": true,
+    "seeds_verified": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "all_input_writer_rank0_blocks": 4,
+    "expected_output_rank0_blocks": {
+      "1": 4,
+      "2": 4,
+      "3": 4,
+      "4": 5
+    },
+    "existing_reference_readers_checked": true,
+    "actual_case_absent": true,
+    "seconds": 108.34634698205628,
+    "utc": "2026-11-09T00:21:38.994498+00:00",
+    "gpu_executed": false
+  },
+  "readiness": {
+    "schema": "native-boundary-weight-launch-readiness-v2",
+    "passed": true,
+    "preparation_only": true,
+    "package_files": 22,
+    "package_manifest_sha256": "95f0a0a756c255a1adea8591eb639f88430a180b6c1930953f9548c63bab6ded",
+    "binding_sha256": "09a52be8a35a2512a4441a2be918fad7edf4f9b63c6561f228449ff655905498",
+    "timer_build_provenance_sha256": "0a5eecc30de573b88963605c668c650a30aa97796e01815b4bb24a368c4bc243",
+    "timer_verifier_sha256": "38604afbea33e4b81991861d476d7c948b778e2bcc863fcc49361e2ef3b3c0ff",
+    "archive_sha256": "2812fedfe97ad0b3b8816a7f1359d72798f543ec34fc1b2261f6bd9481ac35b4",
+    "archive_bytes": 378681,
+    "order": [
+      "zero-W2",
+      "zero-W3",
+      "zero-W4",
+      "W1A",
+      "W2A",
+      "W3A",
+      "W4A",
+      "W4B",
+      "W3B",
+      "W2B",
+      "W1B",
+      "observer-W2",
+      "observer-W3",
+      "observer-W4"
+    ],
+    "case_caps": [
+      120,
+      120,
+      120,
+      180,
+      180,
+      180,
+      180,
+      180,
+      180,
+      180,
+      180,
+      600,
+      600,
+      600
+    ],
+    "sum_individual_caps_seconds": 3600,
+    "outer_seconds": 1680,
+    "pbs_minutes": 30,
+    "outer_may_preempt": true,
+    "nodes": 2,
+    "ranks": 24,
+    "scientific_and_performance_admission": false,
+    "original_failed_package_preserved": true,
+    "normal_zero_executable_unchanged": true,
+    "all_radial_numerical_objects_unchanged": true,
+    "explicit_weight_environment_and24rank_probe": true,
+    "timer_report_accepted_weight_required": true
+  },
+  "preserved_failed_job": {
+    "job_id": "9052526",
+    "state": "F",
+    "exit_status": 143,
+    "collection": "build-native/aurora-native-boundary-weights-failure-v1",
+    "archive_sha256": "b18be3ed5efcfb67206fd104705d5400b8d71d411fe6f97671494eff5b53f8b3"
+  },
+  "timer_only_fix": {
+    "proof_sha256": "0a5eecc30de573b88963605c668c650a30aa97796e01815b4bb24a368c4bc243",
+    "changed_translation_units": 2,
+    "normal_zero_executable_unchanged": true,
+    "numerical_objects_unchanged": true,
+    "explicit_weight_environment": "NATIVE_TIMING_BOUNDARY_WEIGHT",
+    "accepted_weight_report": "boundary_meshblock_weight",
+    "timing_boundaries_unchanged": true
+  },
+  "local_files": {
+    "build-native/native-boundary-weight-launch-v2/files.json": {
+      "bytes": 3016,
+      "sha256": "95f0a0a756c255a1adea8591eb639f88430a180b6c1930953f9548c63bab6ded"
+    },
+    "build-native/native-boundary-weight-launch-v2/package/binding.json": {
+      "bytes": 14396,
+      "sha256": "09a52be8a35a2512a4441a2be918fad7edf4f9b63c6561f228449ff655905498"
+    },
+    "build-native/native-boundary-weight-launch-v2/readiness.json": {
+      "bytes": 1417,
+      "sha256": "54128bc04c6c56fcf402836f62ebfa2c09e5681cc0261deef75d376f04ff37de"
+    },
+    "build-native/native-boundary-weight-launch-v2/remote-records/staging.json": {
+      "bytes": 1601,
+      "sha256": "904b96631fc246843528cf1b67cb49ba83e237fbab142fecae1f0e64a1015faa"
+    },
+    "build-native/native-boundary-weight-launch-v2/remote-records/preflight/results.json": {
+      "bytes": 750,
+      "sha256": "7d33027370e151153c2ab0fd7b792300078eb1e32d3211616289859bd764e6ac"
+    },
+    "build-native/native-boundary-weight-launch-v2/remote-records/submission/submission.json": {
+      "bytes": 940,
+      "sha256": "551bee6d8090143743d8573a4791f15426345bcb8ff8f08980c643f052c8cead"
+    },
+    "build-native/native-boundary-weight-launch-v2/remote-records/transfer.json": {
+      "bytes": 145,
+      "sha256": "8c15af59b427989083e35350bd746bb2b97da9cda8f29dd1667cbab2ae0af9f0"
+    },
+    "build-native/native-boundary-weight-launch-v2/remote-records/remote-manifest.json": {
+      "bytes": 2899,
+      "sha256": "6c795931e60dd98a22715580771f9c22cb871a2428b71a5d2cb835cbcb93aa12"
+    },
+    "build-native/native-boundary-weight-launch-v2/executed-staging.py": {
+      "bytes": 1782,
+      "sha256": "3c3a1022cd300e679b9dda19648b58790d35c5099e3f2fb8865bb81f79128e21"
+    },
+    "build-native/native-boundary-weight-launch-v2/executed-preflight.sh": {
+      "bytes": 2800,
+      "sha256": "2ba86451c9d9f301ac83bee85b6ccdb5ad234c7dd76caae066868ab5aefe6e60"
+    },
+    "build-native/native-boundary-weight-launch-v2/executed-submission.py": {
+      "bytes": 3162,
+      "sha256": "f2df54347625b9d30e798bbef43f19fa786122f4ad871580af864ef898593cd7"
+    },
+    "build-native/native-boundary-weight-timer-v1/run-artifacts/timer-build/provenance.json": {
+      "bytes": 551744,
+      "sha256": "0a5eecc30de573b88963605c668c650a30aa97796e01815b4bb24a368c4bc243"
+    },
+    "build-native/native-boundary-weight-timer-v1/transfer.json": {
+      "bytes": 445,
+      "sha256": "c56ebd163d6297ce402f9fb989a439fefa06126ac7bd9e72e643949f73495286"
+    }
+  },
+  "held_jobs_untouched": true,
+  "scientific_and_performance_admission": false,
+  "weight_policy_retained": false,
+  "terminal": {
+    "job_id": "9052547",
+    "state": "F",
+    "exit_status": 0,
+    "walltime": "00:10:02",
+    "all14_solver_exit_codes_zero": true,
+    "all14_operational_science_gates_passed": true,
+    "original_before_after_guards_equal": true,
+    "terminal_qstat_sha256": "4c2f6f261041182d6106c774787076628090d9e8f73b849f8234ed485a7b1151",
+    "pipeline_sha256": "5b0e36016e1addbe137e2137c86817a96d7495018046665224686413713ec3be",
+    "operational_sha256": "0b9843bf002779b8e9fe2446d865a34d4600d86bb958177455fb48fca08436a3",
+    "workload_summary_sha256": "6c3ab62c1026ccdfe71efabf415a910e700c9774086c084220b6861c08a16af0"
+  },
+  "collection": {
+    "path": "build-native/aurora-native-boundary-weights-v2",
+    "package": {
+      "schema": "native-boundary-weights-collection-v1",
+      "job_id": "9052547",
+      "nodes": 2,
+      "ranks": 24,
+      "job_state": "F",
+      "exit_status": 0,
+      "cases": [
+        "zero-W2",
+        "zero-W3",
+        "zero-W4",
+        "W1A",
+        "W2A",
+        "W3A",
+        "W4A",
+        "W4B",
+        "W3B",
+        "W2B",
+        "W1B",
+        "observer-W2",
+        "observer-W3",
+        "observer-W4"
+      ],
+      "files": 222,
+      "archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-boundary-weights-artifacts-9052547/run-artifacts.tar.gz",
+      "archive_bytes": 726782060,
+      "sha256": "91bc5d2bd895b79c15fdb3fdbad8989fb6222a27dfae3306da974ee951b1ea3a",
+      "total_uncompressed_bytes": 2775632932,
+      "created_utc": "2026-11-09T00:39:32.587294+00:00",
+      "state_and_diagnostic_checks_passed": true,
+      "independent_timing_decision_pending": true
+    },
+    "transfer": {
+      "schema": "verified-streamed-run-collection-v1",
+      "passed": true,
+      "files": 222,
+      "archive_sha256": "91bc5d2bd895b79c15fdb3fdbad8989fb6222a27dfae3306da974ee951b1ea3a",
+      "archive_bytes": 726782060,
+      "remote_archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-boundary-weights-artifacts-9052547/run-artifacts.tar.gz",
+      "local_archive_created": false,
+      "all_file_sizes_and_hashes_verified": true,
+      "seconds": 18.115931749343872
+    },
+    "package_sha256": "31979d80c4dc12fecbf35610cf4e11166c69b47615dac53994973f233dc0f9ed",
+    "transfer_sha256": "f2a7776c84973d7b649b6974cb94de5e69c5a50002a43c986e4066e3e3954f13"
+  },
+  "separate_phase_times_seconds": {
+    "W1A": {
+      "startup_max_seconds": 4.499646976,
+      "warmup_max_seconds": 3.206915014,
+      "execute_max_seconds": 21.271033704,
+      "finalize_max_seconds": 5.647804633
+    },
+    "W2A": {
+      "startup_max_seconds": 3.460028925,
+      "warmup_max_seconds": 3.174667685,
+      "execute_max_seconds": 21.119333725,
+      "finalize_max_seconds": 5.617463103
+    },
+    "W3A": {
+      "startup_max_seconds": 3.408232989,
+      "warmup_max_seconds": 3.160644166,
+      "execute_max_seconds": 21.147302126,
+      "finalize_max_seconds": 5.474314672
+    },
+    "W4A": {
+      "startup_max_seconds": 3.943377567,
+      "warmup_max_seconds": 3.197976386,
+      "execute_max_seconds": 21.124835511,
+      "finalize_max_seconds": 5.998519004
+    },
+    "W4B": {
+      "startup_max_seconds": 3.835857194,
+      "warmup_max_seconds": 3.173342416,
+      "execute_max_seconds": 21.10138653,
+      "finalize_max_seconds": 5.954085209
+    },
+    "W3B": {
+      "startup_max_seconds": 3.449414478,
+      "warmup_max_seconds": 3.161280001,
+      "execute_max_seconds": 21.157151378,
+      "finalize_max_seconds": 5.407406316
+    },
+    "W2B": {
+      "startup_max_seconds": 3.274245831,
+      "warmup_max_seconds": 3.169754156,
+      "execute_max_seconds": 21.112087668,
+      "finalize_max_seconds": 5.476630465
+    },
+    "W1B": {
+      "startup_max_seconds": 3.186787102,
+      "warmup_max_seconds": 3.208323783,
+      "execute_max_seconds": 21.28678754,
+      "finalize_max_seconds": 5.29149534
+    }
+  },
+  "phase_timing_scope": "Unprofiled instrument-reported per-case maxima; startup/finalize/warmup and PBS10:02 walltime are separate from the3x20 complete-cycle performance windows. Allocation walltime also includes guards/probes/zero/observer cases.",
+  "exact_procedures": {
+    "launch_package_local": "build-native/native-boundary-weight-launch-v2/package",
+    "launch_manifest_local": "build-native/native-boundary-weight-launch-v2/files.json",
+    "launch_manifest_sha256": "95f0a0a756c255a1adea8591eb639f88430a180b6c1930953f9548c63bab6ded",
+    "launch_remote": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/boundary-weights-v2/launch",
+    "timer_package_local": "build-native/native-boundary-weight-timer-v1/package",
+    "timer_package_manifest": "build-native/native-boundary-weight-timer-v1/package.json",
+    "timer_package_manifest_sha256": "1ad9ffad65bfe86a8569cf906495abb3a630c1f3ca5258ec51fcde13f44322ed",
+    "timer_build_remote": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/boundary-weights-v1/timer-build",
+    "timer_proof_sha256": "0a5eecc30de573b88963605c668c650a30aa97796e01815b4bb24a368c4bc243"
+  },
+  "queue_after": {
+    "path": "build-native/native-boundary-weight-launch-v2/queue-after.txt",
+    "sha256": "3d25bdbc0e3e858f2851b3751eb637a7291bb50575ccb5051acb9f14148969be",
+    "only_unchanged_held_jobs": [
+      8883678,
+      8888791,
+      8888792
+    ]
+  },
+  "no_active_owned_allocation": true,
+  "all_monitor_collection_transfer_sessions_terminal": true,
+  "scope": "Validated-configuration experiment operationally complete; independent timing and full scientific review pending. No permanent AMR or MeshBlock weighting policy applied; prior admitted radial solver unchanged."
+}

@@ -10,7 +10,8 @@ architecture/long-trajectory effort, while `two-node-performance-requirements.js
 tracks this objective.
 
 The user cleared that goal after the radial experiment and subsequently requested
-a bounded comparison of boundary MeshBlock weights2 and3 against equal weights.
+a bounded comparison of boundary MeshBlock weights2 and3 against equal weights,
+subsequently permitting a higher weight where justified. Weight4 was also tested.
 That request explicitly relaxes the former equal-weight constraint for these
 isolated tests; it does not resume the broader parity campaign.
 
@@ -58,10 +59,82 @@ steps; radial preparation is only0.004238s. The surface-dependent bulk batch fel
 from0.542856s to0.218005s. These are representative-rank GPU durations, not an
 additive global elapsed-time budget or demonstrated critical path.
 
-The current user-requested experiment changes only boundary block cost metadata
-in private restart copies, using the identical admitted radial executable and
+The user-requested weight experiment changes only boundary block cost metadata
+in private restart copies, using the admitted radial numerical objects and the
 native load balancer. Geometry, normal correction, surface Solve/Evaluate and
 workgroup policies remain fixed. No production checkpoint or source is modified.
+
+## Boundary weight experiment
+
+The clean two-node/24-rank allocation9052547 completed F/0 in10:02. Eight
+unprofiled continuations used the order1A,2A,3A,4A,4B,3B,2B,1B. Each starts
+from the same cycle2486 physical state, warms up10 complete RK4 steps, then
+measures three20-step windows using maximum-rank elapsed time. Startup,
+final diagnostics/output and the three stage-observer runs are excluded.
+
+| Outer-block weight | Six-window median, s/step | Time reduction vs1 | Repeat A/B medians |
+|---:|---:|---:|---:|
+| 1 | 0.301176 | baseline | 0.301048 / 0.301298 |
+| 2 | 0.299043 | 0.71% | 0.299116 / 0.299035 |
+| 3 | 0.299823 | 0.45% | 0.299781 / 0.299939 |
+| 4 | 0.298797 | 0.79% | 0.298791 / 0.298803 |
+
+Every weighted window is faster than every equal-weight control window. The
+improvements repeat in both halves of the sequence, but remain small. Weight4
+is only0.082% faster than weight2, comparable to the control's0.083% A-to-B drift;
+this does not establish a general optimum. No permanent initialization/AMR
+weighting policy is introduced by this fixed-topology restart experiment.
+
+The actual startup ownership matches the native contiguous, reverse-GID greedy
+load balancer's predicted maps. Six ranks still own one outer block each, with
+144 surface points per owner; the global work remains106 blocks,229392 bulk
+points and864 surface points. Changing weights moves bulk work between ranks,
+without dividing or accelerating an individual surface block.
+
+| Weight | Outer-block owner ranks | Their block counts, in owner order | Their total bulk points | Largest bulk count on an ordinary rank |
+|---:|---|---|---:|---:|
+| 1 | 11,14,16,19,21,23 | 4,5,5,5,5,5 | 65772 | 12663 |
+| 2 | 11,13,16,18,21,23 | 5,4,5,4,4,4 | 60588 | 12663 |
+| 3 | 10,13,15,18,21,23 | 3,5,3,3,5,3 | 50544 | 15525 |
+| 4 | 9,12,15,18,21,23 | 2,2,2,2,4,3 | 41580 | 17010 |
+
+Weight4 removes36.78% of aggregate bulk points from surface-owning ranks, while
+increasing the largest ordinary-rank bulk count by34.33%. Native greedy
+partitioning and indivisible blocks make this response nonmonotonic. The offline
+scan of weights5,6,8,10 gave less favorable boundary-owner layouts than4, so
+these were not allocated GPU tests. Bulk point counts quantify ownership, not
+measured kernel cost. The per-rank complete-window clocks include synchronization
+and waits; their0.885--8.448 microsecond spread cannot identify the causal critical
+rank. See the complete96-row comparison in
+[`evidence/native-boundary-weight-workload-by-rank.csv`](evidence/native-boundary-weight-workload-by-rank.csv)
+and the independent
+[`timing review`](evidence/native-boundary-weight-timing-review.json).
+
+Redistribution alone gives less than1% here. Combined with the retained
+representative-rank profile, this favors testing surface-kernel organization
+next if optimization is resumed: batch the four normal-compatibility cases,
+then perform their small elimination in a separate kernel, holding workgroup
+tuning fixed. No such experiment is part of this bounded request.
+
+The original attempt9052526 stopped at a test-only timer guard requiring unit
+costs, before weight2 evolution. Its failure and all partial artifacts are
+preserved. The retry changes only two timing/observer Driver objects to verify
+the explicit boundary weight; all numerical objects and timing boundaries are
+unchanged. All14 retry solver cases and original before/after guards passed.
+Full collection contains222 hash-verified files. Independent reviews confirm
+bitwise equality of all24,704,784 padded31+8 state scalars in every timed,
+zero-step and observer endpoint, against the appropriate same-phase reference.
+Each of the three observers retains280 complete stage records, with maximum
+compatibility defect9.11115e-14. Constraint and horizon diagnostics pass the
+existing redistribution gates, with no tolerance changes. Cost vectors are
+checked explicitly; only weight4 changes the output writer's rank0 block count
+from4 to5. The separately bounded FastFlow seed and previously established
+unused-header exclusion remain explicitly recorded. The scientific review is
+[`evidence/native-boundary-weight-science-review.json`](evidence/native-boundary-weight-science-review.json).
+These qualify the fixed-topology configuration experiment. No refinement,
+storage or solver dependency changed; no general AMR weighting claim is made.
+The final decision and evidence hashes are in
+[`evidence/native-boundary-weight-admission.json`](evidence/native-boundary-weight-admission.json).
 
 ## Starting evidence
 
@@ -533,6 +606,7 @@ bounded two-node correctness checks when a proposed change requires them.
 | Post-KO/bulk128 selected-rank profile | Normal/profiled/reference complete31+8 and diagnostics exact | Rank23 surface-dependent bulk0.542856 s across16 launches; KO only0.003889 s | Select field-batched radial derivatives next; no occupancy or global critical-rank claim |
 | Field-parallel endpoint radial derivatives | Full timing endpoints exact; observer, poison, AMR, restart, refined private-cache stale/poison/Rebuild and profile equivalence pass | Control0.379937 s; candidate0.300340 s; all six candidate windows faster | Accepted,20.95% lower complete-step time; surface and geometry arithmetic unchanged |
 | Post-radial selected-rank profile | Normal/profiled/reference full31+8 and diagnostics exact | Rank23 main0.575609 s, normalSolve0.302462 s, surfaceRHS0.200214 s acrossfour steps | Surface organization remains costly; current user instead requests isolated weight2/3 comparison |
+| Boundary weights2/3/4 through native restart/load balance | All14 cases pass; full31+8 states bitwise,840 observer stages and existing constraint/horizon gates pass | Weight1/2/3/4 medians0.301176/0.299043/0.299823/0.298797 s | Qualified isolated configuration gains0.71/0.45/0.79%; no permanent weighting policy; original goal remains cleared |
 
 Completion requires the committed native implementation to match or beat the
 fastest accepted previous N12 reference median on the same two nodes, with repeat

@@ -1,0 +1,282 @@
+{
+  "schema": "native-boundary-weight-timing-review-evidence-v1",
+  "passed": true,
+  "job_id": "9052547",
+  "terminal": "F/0",
+  "scope": "Eight unobserved70-cycle endpoints/timing cases. Six zero/observer cases are independently reviewed separately; no permanent weighting policy adopted.",
+  "full_review": {
+    "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-boundary-weight-independent-review-v2/results.json",
+    "sha256": "93d992aa4c312b6b291ae699ae80ebb18b818b1d3960f77a69a2b88d0cf6d9b8"
+  },
+  "collection": {
+    "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-boundary-weights-v2",
+    "archive_sha256": "91bc5d2bd895b79c15fdb3fdbad8989fb6222a27dfae3306da974ee951b1ea3a",
+    "all_files_independently_rehashed": 222,
+    "bindings": {
+      "package.json": "31979d80c4dc12fecbf35610cf4e11166c69b47615dac53994973f233dc0f9ed",
+      "transfer.json": "f2a7776c84973d7b649b6974cb94de5e69c5a50002a43c986e4066e3e3954f13",
+      "run-artifacts/files.json": "e73cf8b907c1b646efd90233d4a51c651cb4ac2e821cc363d497ef2aecc182d5",
+      "run-artifacts/terminal-qstat.txt": "4c2f6f261041182d6106c774787076628090d9e8f73b849f8234ed485a7b1151"
+    }
+  },
+  "review_script": {
+    "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-boundary-weights-v2/run-artifacts/validation/perf-two-node-v1/boundary-weights-v2/launch/native_boundary_weight_audit.py",
+    "sha256": "f6ed49e397d0d3813177a9fe8bd161fe59e6c8a42fb68eb617294fbe4e22a397",
+    "execution": "Independent direct imported API calls; no new standalone review framework.",
+    "apis": [
+      "timing(folder,True,weight)",
+      "rank_cache(path,weight)",
+      "ownership(run_log,weight)",
+      "state(folder,reference,2556,weight)",
+      "diagnostics(folder,reference,2556)"
+    ],
+    "local_reproduction": "Set module.LAUNCH to the archived collection launch directory. For each of8 TIMED cases call these APIs; compare the recorded argv/environment to the bound original remote CASE paths. Reference is aurora-native-radial-fields-abba-v1/run-artifacts/runs/native-radial-fields-abba-v1/timed-K0."
+  },
+  "supporting_script_hashes": {
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-boundary-weights-v2/run-artifacts/validation/perf-two-node-v1/boundary-weights-v2/launch/native_ipc_cache_audit.py": "01eb29c2ea668d60b2b45c3b4dbbbe6c8fddcbe64801c6662aa3ace54d5ff92c",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-boundary-weights-v2/run-artifacts/validation/perf-two-node-v1/boundary-weights-v2/launch/native_n12_profile_audit.py": "7186dc2f600f69ca819673f5144b3c0c3e1843f4aabfd17e772e3eabbea00b94",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/aurora-native-boundary-weights-v2/run-artifacts/validation/perf-two-node-v1/boundary-weights-v2/launch/native_two_node_timing_audit.py": "44e4576505f5328150e24230ec37abdaea52481df03bb101a800ebbfcca0ef7e"
+  },
+  "common_timed_executable_sha256": "be872c39b61353122bb7baad383b5d54395714a27b0220725b868d27593f45fb",
+  "timer_build_proof_sha256": "0a5eecc30de573b88963605c668c650a30aa97796e01815b4bb24a368c4bc243",
+  "scientific_checks": {
+    "timed_cases": 8,
+    "padded31_plus8_scalar_values_per_case": 24704784,
+    "all_payloads_bitwise_equal": true,
+    "common_payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+    "initialized_mesh_metadata_and_parameters_checked": true,
+    "explicit_cost_vectors_checked": true,
+    "W4_output_writer_rank0_count": 5,
+    "history_columns": 10,
+    "history_gate": "1e-12 + 5e-10*abs(reference)",
+    "horizon_gates": "Existing restart redistribution areal/mass/spin/area gates plus separately reported compact-radius/seed gates.",
+    "finite_shape_coefficients_per_case": 169,
+    "all_gates_passed": true,
+    "maximum_diagnostic_gate_fraction": 8.532746614874448e-07,
+    "unused_header_scope": "Only9 unused coarse ints excluded, values recorded in fullreview.",
+    "observer_science_scope": "Six zero/observer cases are handled by the separate final scientific review."
+  },
+  "timing_checks": {
+    "warmup_steps": 10,
+    "windows_per_case": 3,
+    "complete_RK4_steps_per_window": 20,
+    "ranks": 24,
+    "all_rank_arrays_reproduce_reported_MAX": true,
+    "console_and_outputs_excluded_from_windows": true,
+    "profiling_disabled": true,
+    "all_cache_settings_common128": true,
+    "startup_and_finalization_separately_reported": true
+  },
+  "weights": {
+    "1": {
+      "median": 0.30117637025,
+      "range": [
+        0.30101558110000004,
+        0.3014026019
+      ],
+      "repeat_medians": [
+        0.30104758315,
+        0.3012983111
+      ],
+      "percent_lower_time_vs_W1": 0.0,
+      "paired_A_percent_lower": 0.0,
+      "paired_B_percent_lower": 0.0,
+      "full_window_separation_from_W1": null,
+      "boundary_owners": [
+        11,
+        14,
+        16,
+        19,
+        21,
+        23
+      ],
+      "boundary_owner_blocks": [
+        4,
+        5,
+        5,
+        5,
+        5,
+        5
+      ],
+      "boundary_owner_block_range": [
+        4,
+        5
+      ],
+      "boundary_bulk_max": 11772,
+      "boundary_bulk_sum": 65772,
+      "ordinary_bulk_max": 12663,
+      "ordinary_bulk_sum": 163620,
+      "surface_points_per_boundary_owner": [
+        144,
+        144,
+        144,
+        144,
+        144,
+        144
+      ]
+    },
+    "2": {
+      "median": 0.29904271409999994,
+      "range": [
+        0.29897834785,
+        0.29913285775
+      ],
+      "repeat_medians": [
+        0.29911556275,
+        0.2990349448
+      ],
+      "percent_lower_time_vs_W1": 0.7084407545747906,
+      "paired_A_percent_lower": 0.6417657899074891,
+      "paired_B_percent_lower": 0.7512044431104759,
+      "full_window_separation_from_W1": true,
+      "boundary_owners": [
+        11,
+        13,
+        16,
+        18,
+        21,
+        23
+      ],
+      "boundary_owner_blocks": [
+        5,
+        4,
+        5,
+        4,
+        4,
+        4
+      ],
+      "boundary_owner_block_range": [
+        4,
+        5
+      ],
+      "boundary_bulk_max": 11772,
+      "boundary_bulk_sum": 60588,
+      "ordinary_bulk_max": 12663,
+      "ordinary_bulk_sum": 168804,
+      "surface_points_per_boundary_owner": [
+        144,
+        144,
+        144,
+        144,
+        144,
+        144
+      ]
+    },
+    "3": {
+      "median": 0.29982260159999996,
+      "range": [
+        0.29976180185,
+        0.29998741525
+      ],
+      "repeat_medians": [
+        0.29978087885,
+        0.29993928805
+      ],
+      "percent_lower_time_vs_W1": 0.4494936468210642,
+      "paired_A_percent_lower": 0.4207654772531044,
+      "paired_B_percent_lower": 0.45105564815096644,
+      "full_window_separation_from_W1": true,
+      "boundary_owners": [
+        10,
+        13,
+        15,
+        18,
+        21,
+        23
+      ],
+      "boundary_owner_blocks": [
+        3,
+        5,
+        3,
+        3,
+        5,
+        3
+      ],
+      "boundary_owner_block_range": [
+        3,
+        5
+      ],
+      "boundary_bulk_max": 11772,
+      "boundary_bulk_sum": 50544,
+      "ordinary_bulk_max": 15525,
+      "ordinary_bulk_sum": 178848,
+      "surface_points_per_boundary_owner": [
+        144,
+        144,
+        144,
+        144,
+        144,
+        144
+      ]
+    },
+    "4": {
+      "median": 0.298797207475,
+      "range": [
+        0.29871693444999997,
+        0.29884078525
+      ],
+      "repeat_medians": [
+        0.29879139535,
+        0.2988030196
+      ],
+      "percent_lower_time_vs_W1": 0.7899566533141722,
+      "paired_A_percent_lower": 0.7494455781350218,
+      "paired_B_percent_lower": 0.8281797169356953,
+      "full_window_separation_from_W1": true,
+      "boundary_owners": [
+        9,
+        12,
+        15,
+        18,
+        21,
+        23
+      ],
+      "boundary_owner_blocks": [
+        2,
+        2,
+        2,
+        2,
+        4,
+        3
+      ],
+      "boundary_owner_block_range": [
+        2,
+        4
+      ],
+      "boundary_bulk_max": 10044,
+      "boundary_bulk_sum": 41580,
+      "ordinary_bulk_max": 17010,
+      "ordinary_bulk_sum": 187812,
+      "surface_points_per_boundary_owner": [
+        144,
+        144,
+        144,
+        144,
+        144,
+        144
+      ]
+    }
+  },
+  "control_B_vs_A_median_drift_percent": 0.08328515624556054,
+  "weight4_vs_weight2_median_reduction_percent": 0.08209751096556195,
+  "rank_elapsed_spread_microseconds": [
+    0.8850000003945979,
+    8.447999999994238
+  ],
+  "workload_csv": {
+    "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/docs/z4c_hyperboloidal/evidence/native-boundary-weight-workload-by-rank.csv",
+    "sha256": "5b2d03e3df4b3990b2995173388a1d20925ca4827928f91fd6359d48b9adb6a1",
+    "rows": 96,
+    "ranks_per_weight": 24,
+    "columns_scope": "Actual rankGID intervals/costs and map-derived bulk/surface points, plus six measured20-step rank elapsed times perweight.",
+    "format_note": "Committed copy normalizes CRLF to LF; all parsed cells identical to the preserved raw review CSV.",
+    "raw_review_csv_sha256": "c54fdfad3240774711df915d6599f37978c8e43ff8aa9917b6f895de74c82a94"
+  },
+  "interpretation": "All weighted windows beat all control windows in this allocation. Gains are modest: W2~0.71%, W3~0.45%, W4~0.79%. W4 minus W2 is comparable to control repeat drift; no universal optimum or causal critical rank is established.",
+  "limitations": [
+    "Bulk/surface point counts are workload proxies derived from the proven GID map and actual native rank assignments; they do not measure arithmetic cost.",
+    "Each rank wall time includes GPU/communication waits and the native end-of-cycle reduction; microsecond rank spread cannot identify the causal bottleneck.",
+    "Only explicit106-cost vector, W4 writer-count4->5, and separately bounded FastFlow seed may differ; nine unused coarse-header ints are excluded and reported. All24,704,784 padded31+8 scalars remain bitwise exact.",
+    "Three20-step windows follow10 warmup steps; startup/finalization are excluded and reported separately. Observer timings are not used for throughput."
+  ]
+}

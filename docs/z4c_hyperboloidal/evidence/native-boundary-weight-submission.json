@@ -1,0 +1,370 @@
+{
+  "schema": "native-boundary-weight-submission-evidence-v1",
+  "status": "failed_instrument_preflight_preserved",
+  "job_id": "9052526",
+  "submission": {
+    "schema": "native-boundary-weight-submission-v1",
+    "passed": true,
+    "job_id": "9052526.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+    "job_state": "Q",
+    "nodes": 2,
+    "ranks": 24,
+    "utc": "2026-11-08T23:59:35.120545+00:00",
+    "preflight_sha256": "afd54dd3cbb52c7d493ec8898d7e54739a5d9c9b052668861d18945d555fee22",
+    "staging_sha256": "a5b6bceee5e9ef9fa5347739fea66cb332d3f92faee6711a312841d93712dc88",
+    "pbs_sha256": "eb722f0bcd12cc334e60538d8627fb3a2871327fc93e5735f2072aec539abf46",
+    "attempt_sha256": "97c7c39fd17f7a5da783acbe84f0bad37c70bd2a51cf0530793256288c21d193",
+    "queue_before_sha256": "3d25bdbc0e3e858f2851b3751eb637a7291bb50575ccb5051acb9f14148969be",
+    "previous_terminal_sha256": "5e6302e26487502537f4b3ef7c1ed9908b1ba223841eb7ea6b4887a4e708e55d",
+    "qsub_stdout_sha256": "e4a60b36c5b6fdd715cc187e0b877955570e382af808b70159bc4849f82e7882",
+    "case_count": 14,
+    "scientific_and_performance_admission": false
+  },
+  "staging": {
+    "schema": "native-boundary-weight-staging-v1",
+    "passed": true,
+    "utc": "2026-11-08T23:55:46.946707+00:00",
+    "files": 22,
+    "manifest_sha256": "1d1ea871de6a615b39f060a9dcfe9ec09de7298dd0aa9e0b08e8cb1e109ca893",
+    "archive_sha256": "f152f764a7a876caa1d365696a24e0efd3824bf4e4189d7253d2c5d1173ef982",
+    "binding_sha256": "79bea93030ca8813dacf544e92ed97f11165a4dd40b904bad30025cfb896bcc9",
+    "seeds": {
+      "2": {
+        "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/boundary-weights-v1/seeds/weight-2.rst",
+        "sha256": "945ba07cd7419dd770613bd76827cf8cfa2004659345a770ec4171e883e4a0fb",
+        "bytes": 197648814,
+        "changed_float_gids": [
+          45,
+          57,
+          69,
+          81,
+          93,
+          105
+        ],
+        "input_writer_rank0_blocks_unchanged": 4
+      },
+      "3": {
+        "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/boundary-weights-v1/seeds/weight-3.rst",
+        "sha256": "063d9da0f61134d6f9db0e79fb1fbf1bcf0ed6c3f81fd9c564283a0ee915c824",
+        "bytes": 197648814,
+        "changed_float_gids": [
+          45,
+          57,
+          69,
+          81,
+          93,
+          105
+        ],
+        "input_writer_rank0_blocks_unchanged": 4
+      },
+      "4": {
+        "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/boundary-weights-v1/seeds/weight-4.rst",
+        "sha256": "5e7dc8c41f01ef17796cc0c88374b296bce50fe1bf14639c112404d27915c026",
+        "bytes": 197648814,
+        "changed_float_gids": [
+          45,
+          57,
+          69,
+          81,
+          93,
+          105
+        ],
+        "input_writer_rank0_blocks_unchanged": 4
+      }
+    },
+    "original_source_unchanged": true,
+    "source_sha256": "dd4b86ab42c10827f14bd339930cb4d2ffaf9fb5e2b43953d1e5d7924a9fc1ec",
+    "gpu_executed": false
+  },
+  "preflight": {
+    "schema": "native-boundary-weight-preflight-v1",
+    "passed": true,
+    "package_manifest_sha256": "1d1ea871de6a615b39f060a9dcfe9ec09de7298dd0aa9e0b08e8cb1e109ca893",
+    "binding_sha256": "79bea93030ca8813dacf544e92ed97f11165a4dd40b904bad30025cfb896bcc9",
+    "staging_sha256": "a5b6bceee5e9ef9fa5347739fea66cb332d3f92faee6711a312841d93712dc88",
+    "frozen_and_candidate_guards_passed": true,
+    "seeds_verified": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "all_input_writer_rank0_blocks": 4,
+    "expected_output_rank0_blocks": {
+      "1": 4,
+      "2": 4,
+      "3": 4,
+      "4": 5
+    },
+    "existing_reference_readers_checked": true,
+    "actual_case_absent": true,
+    "seconds": 155.16755446908064,
+    "utc": "2026-11-08T23:59:12.058112+00:00",
+    "gpu_executed": false
+  },
+  "package_readiness": {
+    "schema": "native-boundary-weight-launch-readiness-v1",
+    "passed": true,
+    "preparation_only": true,
+    "package_files": 22,
+    "package_manifest_sha256": "1d1ea871de6a615b39f060a9dcfe9ec09de7298dd0aa9e0b08e8cb1e109ca893",
+    "binding_sha256": "79bea93030ca8813dacf544e92ed97f11165a4dd40b904bad30025cfb896bcc9",
+    "seed_proof_sha256": "1003f64edadc1ac75b57c7fd62aedd8504ed6f1bff39d623ce92530d5f4c1799",
+    "seed_weight4_proof_sha256": "45fdbbd9190d0c2f7876eae67d2602184d239eea0f378ac723f0d5ae63cda5a2",
+    "workload_proof_sha256": "d5482a5540ce25e2a74b468416386e696b618b01041f2a602c086b351eae246a",
+    "order": [
+      "zero-W2",
+      "zero-W3",
+      "zero-W4",
+      "W1A",
+      "W2A",
+      "W3A",
+      "W4A",
+      "W4B",
+      "W3B",
+      "W2B",
+      "W1B",
+      "observer-W2",
+      "observer-W3",
+      "observer-W4"
+    ],
+    "executables": {
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/build/athena-candidate-normal": "f3d12437e47b3aca52322d0495bb3aef5140a35e8e20bc5b1b4dbccf53f48cf1",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/build/athena-candidate-timed": "e1d9fdad0428bceee647f9bf2c03869464a9150af7532095c6cc557ed0c4a010",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/radial-fields-v1/qualification-build/athena-radial-observer70": "f3ed073a603f923d8860f40d353e176fad1564bf6dc8e0258ee031a32fd90315"
+    },
+    "nodes": 2,
+    "ranks": 24,
+    "case_caps": [
+      120,
+      120,
+      120,
+      180,
+      180,
+      180,
+      180,
+      180,
+      180,
+      180,
+      180,
+      600,
+      600,
+      600
+    ],
+    "sum_individual_caps_seconds": 3600,
+    "outer_seconds": 1680,
+    "pbs_minutes": 30,
+    "outer_may_preempt": true,
+    "syntax_passed": true,
+    "preserved_ten_case_manifest_sha256": "e3a9a7e3af087bd4abe46a0b78cd656061ca2ffa16f4293b09219ce76a19f7d4",
+    "science_and_performance_admission": false,
+    "scope": "Only six boundary-leaf costs differ in three private original2486 copies. All31+8 GID payload exact; all metadata exact except validated W4 output rank0count5, normalized to4 solely for comparison. Physics parameters exact except gated last_a0; existing redistribution diagnostics and280 observer stages. Actual24rank block/cost rows plus map-derived bulk/surface point counts and complete-window rank timings. No rebuild or new measurement harness."
+  },
+  "no_runtime_or_binary_changes": true,
+  "held_jobs_untouched": true,
+  "weight_policy_retained": false,
+  "scientific_and_performance_admission": false,
+  "local_files": {
+    "build-native/native-boundary-weight-launch-v1/remote-records/staging.json": {
+      "bytes": 1884,
+      "sha256": "a5b6bceee5e9ef9fa5347739fea66cb332d3f92faee6711a312841d93712dc88"
+    },
+    "build-native/native-boundary-weight-launch-v1/remote-records/remote-manifest.json": {
+      "bytes": 2752,
+      "sha256": "af0b12c553789d4ea22456be1f3699eb0b0766572ba050a25908cad6fcf7cb65"
+    },
+    "build-native/native-boundary-weight-launch-v1/remote-records/transfer.json": {
+      "bytes": 305,
+      "sha256": "42e10aaeceff30b507ba7b2d13fa0ea40772f5d42628874e97598b796e8adfee"
+    },
+    "build-native/native-boundary-weight-launch-v1/remote-records/staging-input.json": {
+      "bytes": 222,
+      "sha256": "3b31f12d5ac00387f93d3cdb023d491773ccbc6c7581abdc4e1b2ad99f4cdc66"
+    },
+    "build-native/native-boundary-weight-launch-v1/remote-records/launch-files.json": {
+      "bytes": 3016,
+      "sha256": "1d1ea871de6a615b39f060a9dcfe9ec09de7298dd0aa9e0b08e8cb1e109ca893"
+    },
+    "build-native/native-boundary-weight-launch-v1/remote-records/submission/qsub.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "build-native/native-boundary-weight-launch-v1/remote-records/submission/job-id.txt": {
+      "bytes": 56,
+      "sha256": "e4a60b36c5b6fdd715cc187e0b877955570e382af808b70159bc4849f82e7882"
+    },
+    "build-native/native-boundary-weight-launch-v1/remote-records/submission/queue-before.txt": {
+      "bytes": 565,
+      "sha256": "3d25bdbc0e3e858f2851b3751eb637a7291bb50575ccb5051acb9f14148969be"
+    },
+    "build-native/native-boundary-weight-launch-v1/remote-records/submission/previous-terminal.txt": {
+      "bytes": 3542,
+      "sha256": "5e6302e26487502537f4b3ef7c1ed9908b1ba223841eb7ea6b4887a4e708e55d"
+    },
+    "build-native/native-boundary-weight-launch-v1/remote-records/submission/qsub.stdout": {
+      "bytes": 56,
+      "sha256": "e4a60b36c5b6fdd715cc187e0b877955570e382af808b70159bc4849f82e7882"
+    },
+    "build-native/native-boundary-weight-launch-v1/remote-records/submission/attempt.json": {
+      "bytes": 615,
+      "sha256": "97c7c39fd17f7a5da783acbe84f0bad37c70bd2a51cf0530793256288c21d193"
+    },
+    "build-native/native-boundary-weight-launch-v1/remote-records/submission/submission.json": {
+      "bytes": 940,
+      "sha256": "d4b18cb334086476ea4101f092c5fa68b90202be81f187981e6d3bceb66e542d"
+    },
+    "build-native/native-boundary-weight-launch-v1/remote-records/submission/submitted-qstat.txt": {
+      "bytes": 2805,
+      "sha256": "8f2e31c288f2ed50c184db00c3c962105448eff108a5a331fe7ffcf8c65a9061"
+    },
+    "build-native/native-boundary-weight-launch-v1/remote-records/preflight/timing-verify-before.txt": {
+      "bytes": 96,
+      "sha256": "2fce95b383e78b648cb43f29235dc871675d41e3347d300eb716d6f298d3fbc0"
+    },
+    "build-native/native-boundary-weight-launch-v1/remote-records/preflight/weight-guard-before.json": {
+      "bytes": 669,
+      "sha256": "29ec84746d9c697947fe218bcd33b079a82ceb3e77dc7aa1c033177c26c11b65"
+    },
+    "build-native/native-boundary-weight-launch-v1/remote-records/preflight/queue.txt": {
+      "bytes": 565,
+      "sha256": "3d25bdbc0e3e858f2851b3751eb637a7291bb50575ccb5051acb9f14148969be"
+    },
+    "build-native/native-boundary-weight-launch-v1/remote-records/preflight/results.json": {
+      "bytes": 750,
+      "sha256": "afd54dd3cbb52c7d493ec8898d7e54739a5d9c9b052668861d18945d555fee22"
+    },
+    "build-native/native-boundary-weight-launch-v1/remote-records/preflight/previous-terminal.txt": {
+      "bytes": 3542,
+      "sha256": "5e6302e26487502537f4b3ef7c1ed9908b1ba223841eb7ea6b4887a4e708e55d"
+    },
+    "build-native/native-boundary-weight-launch-v1/remote-records/preflight/timed-observer-verify-before.txt": {
+      "bytes": 245,
+      "sha256": "250ba1628ad896cfa9359394e6fb8678ce8aa98171f9f1a7ae55f67cab48a3f3"
+    },
+    "build-native/native-boundary-weight-launch-v1/remote-records/preflight/guard-before.json": {
+      "bytes": 1665,
+      "sha256": "28339ad976a1f52d41b4dae491ee092938d8b1344b8b1c591241e4a1028270b9"
+    },
+    "build-native/native-boundary-weight-launch-v1/remote-records/preflight/observer-verify-before.txt": {
+      "bytes": 65,
+      "sha256": "ed3e632fe2b25b10534460644c6894b3fe3460cdfb0b442cdf61fa9b8599c9d5"
+    },
+    "build-native/native-boundary-weight-launch-v1/remote-records/preflight/radial-verify-before.txt": {
+      "bytes": 162,
+      "sha256": "93a290cb6461a38218269c24f63c829f9ab37b7ded85e53deda7abe3e2875c6e"
+    },
+    "build-native/native-boundary-weight-launch-v1/files.json": {
+      "bytes": 3016,
+      "sha256": "1d1ea871de6a615b39f060a9dcfe9ec09de7298dd0aa9e0b08e8cb1e109ca893"
+    },
+    "build-native/native-boundary-weight-launch-v1/readiness.json": {
+      "bytes": 2440,
+      "sha256": "de7846b1c300e3cb83ca42ff91523261649abd1a5792658a6eb5788defc50b1b"
+    },
+    "build-native/native-boundary-weight-launch-v1/package/binding.json": {
+      "bytes": 12374,
+      "sha256": "79bea93030ca8813dacf544e92ed97f11165a4dd40b904bad30025cfb896bcc9"
+    },
+    "build-native/native-boundary-weight-launch-v1/executed-staging.py": {
+      "bytes": 2553,
+      "sha256": "3b4e720200e438bc551033916af0b0259f042d9438202f95a179cd0ed487c0b0"
+    },
+    "build-native/native-boundary-weight-launch-v1/executed-preflight.sh": {
+      "bytes": 2777,
+      "sha256": "c34570ad3c7b84155765d48a92556a1b1a7604ee9909a69493cedf525751b661"
+    },
+    "build-native/native-boundary-weight-launch-v1/executed-submission.py": {
+      "bytes": 3160,
+      "sha256": "82b4bf39c973cc757e6fb3e759c39652d028e47974cb6caad94d6964cbb445d6"
+    },
+    "build-native/native-boundary-weight-v1/results.json": {
+      "bytes": 35557,
+      "sha256": "1003f64edadc1ac75b57c7fd62aedd8504ed6f1bff39d623ce92530d5f4c1799"
+    },
+    "build-native/native-boundary-weight-v1/weight-4-proof.json": {
+      "bytes": 12737,
+      "sha256": "45fdbbd9190d0c2f7876eae67d2602184d239eea0f378ac723f0d5ae63cda5a2"
+    },
+    "build-native/native-boundary-weight-v1/scan.json": {
+      "bytes": 14526,
+      "sha256": "d5482a5540ce25e2a74b468416386e696b618b01041f2a602c086b351eae246a"
+    }
+  },
+  "scope": "Single two-node24rank experiment comparing boundary weights1/2/3/4; complete-state, redistribution diagnostics, ownership and observed compatibility gates required. Independent final review remains pending.",
+  "terminal": {
+    "job_state": "F",
+    "exit_status": 143,
+    "walltime": "00:03:39",
+    "job_id": "9052526",
+    "failing_case": "W2A",
+    "last_completed_case": "W1A",
+    "last_completed_evolution_cycle": 2556,
+    "failure": "Timing instrument unit-cost preflight rejected private W2 seed before Driver::Execute; runtime_error followed by rank7 SIGABRT6 and rank22 SIGTERM15. No W2A timer or checkpoint.",
+    "missing_postguards": true,
+    "batch_admitted": false
+  },
+  "failure_collection": {
+    "path": "build-native/aurora-native-boundary-weights-failure-v1",
+    "package": {
+      "schema": "native-boundary-weights-failure-collection-v1",
+      "job_id": "9052526",
+      "nodes": 2,
+      "ranks": 24,
+      "job_state": "F",
+      "exit_status": 143,
+      "scientific_batch_admitted": false,
+      "cases": [
+        "zero-W2",
+        "zero-W3",
+        "zero-W4",
+        "W1A",
+        "W2A",
+        "W3A",
+        "W4A",
+        "W4B",
+        "W3B",
+        "W2B",
+        "W1B",
+        "observer-W2",
+        "observer-W3",
+        "observer-W4"
+      ],
+      "files": 111,
+      "archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-boundary-weights-failure-artifacts-9052526-v2/run-artifacts.tar.gz",
+      "archive_bytes": 208203508,
+      "sha256": "b18be3ed5efcfb67206fd104705d5400b8d71d411fe6f97671494eff5b53f8b3",
+      "total_uncompressed_bytes": 796059147,
+      "created_utc": "2026-11-09T00:14:20.960590+00:00",
+      "full_available_checkpoints_retained": true,
+      "private_seeds_retained_remote_and_hash_bound": true,
+      "missing_completion_records": [
+        "guard-after.json",
+        "weight-guard-after.json",
+        "pipeline-complete.txt",
+        "workload-summary.json",
+        "launchers-after.txt"
+      ]
+    },
+    "transfer": {
+      "schema": "verified-streamed-run-collection-v1",
+      "passed": true,
+      "files": 111,
+      "archive_sha256": "b18be3ed5efcfb67206fd104705d5400b8d71d411fe6f97671494eff5b53f8b3",
+      "archive_bytes": 208203508,
+      "remote_archive": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/native-boundary-weights-failure-artifacts-9052526-v2/run-artifacts.tar.gz",
+      "local_archive_created": false,
+      "all_file_sizes_and_hashes_verified": true,
+      "seconds": 5.622637033462524
+    },
+    "package_sha256": "3823dc90788ad1316a7efc1247988978938ab3f91adc0b03682bf997bd10d10b",
+    "transfer_sha256": "69fadb8754cfe9feaf2eae10130d12e4715ddc30dd698980d90bde4430d53b42",
+    "failure_sha256": "c513ea8e1db41f4af810e08093f321479a9d86822a87a2cafb3e0a23307d9f20",
+    "terminal_sha256": "a39e1091135847e6263ba2b215ff93e585a0a0f8b92555028ad6924089f2f5dc"
+  },
+  "completed_cases_before_failure": [
+    "zero-W2",
+    "zero-W3",
+    "zero-W4",
+    "W1A"
+  ]
+}
