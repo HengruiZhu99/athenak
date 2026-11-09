@@ -214,7 +214,7 @@ int main(int argc,char **argv) {
       Require(p.StagePlansReady(),"native stage plan construction failed");
       Require(mesh.pmb_pack->pnr!=nullptr,"module did not register native NR tasks");
       Require(mesh.pmb_pack->tl_map.at("before_stagen")->Size()==1 &&
-              mesh.pmb_pack->tl_map.at("stagen")->Size()==16 &&
+            mesh.pmb_pack->tl_map.at("stagen")->Size()==14 &&
               mesh.pmb_pack->tl_map.at("after_stagen")->Size()==2,
               "native NR did not assemble the complete hyperboloidal stage graph");
 

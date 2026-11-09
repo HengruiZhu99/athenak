@@ -720,11 +720,19 @@ bounded two-node correctness checks when a proposed change requires them.
 | Explicit prepared-cache bulk reader | Four complete endpoints/diagnostics and local coupled/surface oracles exact | 0.162982 -> 0.164835 s/step; every candidate window slower | Rejected,1.14% regression; original reader restored; no qualification allocation |
 | Fixed angular interpolation-weight cache | Complete endpoints exact; weight poison/Rebuild oracle, full observer/poison/AMR/restart/refined-cache qualification and profile equivalence pass | 0.163086 -> 0.155696 s/step | Accepted,4.53% lower time;526.5KiB per boundary-owning plan; rank23 correction fill8.49ms ->0.21ms at unchanged14x32 |
 
-The latest profile leaves rank23 bulk RHS at103.27ms/step, with final surface RHS9.34ms,
-shared surface geometry7.16ms and independent normal cases5.05ms. These are selected-rank
-profiled kernel durations, not an additive global elapsed budget or an achieved-occupancy
-measurement. The next single hypothesis is persistent point-state storage separating
-reconstruction from bulk evaluation while retaining all native subset dependencies.
+| Persistent reconstructed PointState workspace | First control/candidate full states and diagnostics exact; local poisoned workspace oracle exact | 0.154809 -> 0.162815 s/step | Rejected,5.17% regression under the prespecified early-stop rule; no qualification allocation |
+| Dependent bulk workgroup32 | Four complete endpoints and diagnostics exact | 0.156067 -> 0.157360 s/step; every candidate window slower | Rejected,0.83% regression; group128 restored |
+| Joined dependent bulk RHS batch | All timing endpoints exact; delayed TaskList, local Driver poison, full GPU observer/poison/AMR/restart/refined-cache and profile checks pass | 0.155157 -> 0.106252 s/step; every candidate window faster | Accepted,31.52% lower time; early interior remains independent, all late points wait for current halo and normal data |
+
+The latest selected-rank profile shows main RHS GPU time per complete step falling
+from103.27 to52.53ms on rank23, and77.79 to60.38ms on rank8. Acrossfour steps,
+main launch counts fall64->32 and48->32 respectively, at unchanged local size128.
+Rank23 final surface RHS takes9.35ms, shared geometry7.09ms, normal cases5.05ms,
+and correction-cache fill0.21ms. These are representative-rank kernel measurements,
+not an additive global elapsed budget, a demonstrated global critical path, or
+achieved occupancy. The next step is a fresh same-allocation comparison against
+all frozen validated legacy variants; the earlier~0.1364s legacy result alone
+does not establish final parity.
 
 Completion requires the committed native implementation to match or beat the
 fastest accepted previous N12 reference median on the same two nodes, with repeat

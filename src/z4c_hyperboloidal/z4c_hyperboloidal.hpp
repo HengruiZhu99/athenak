@@ -136,7 +136,7 @@ class Z4cHyperboloidal {
   std::unique_ptr<SurfaceExchange> surface_exchange_;
   std::unique_ptr<DissipationPlan> dissipation_plan_;
   std::unique_ptr<RemeshState> remesh_;
-  std::array<DvceArray1D<int>,4> rhs_points_;
+  std::array<DvceArray1D<int>,5> rhs_points_;
   void BuildLocalWorkLists();
   void AllocateStorage();
   void BuildReferenceCache();

@@ -1,0 +1,1673 @@
+{
+  "schema": "native-dependent-batch-admission-v1",
+  "accepted": true,
+  "parity_achieved": false,
+  "control_commit": "71cff31bbf6a17652061bd76c47642ad2da7b65e",
+  "scope": "Keep early Interior RHS. Concatenate the disjoint LocalHalo/RemoteHalo/Surface point IDs and execute one Dependent RHS after FillRemote and Normal, using AthenaK TaskLists. Keep original classifications, point arithmetic, workgroup128, KO, validity reductions, all communication, surface evolution and RK/project/retirement operations.",
+  "tradeoff": "Delay local/remote RHS until both halo and normal dependencies are ready; fewer larger kernel launches outperform the previous intermediate overlap in this bounded N12 case. No general scaling or occupancy claim.",
+  "storage": "One extra device integer index per non-interior owned point; rebuilt with native stage plans. No PointState workspace.",
+  "timing": {
+    "passed": true,
+    "job": "9052965",
+    "files_rehashed": 65,
+    "cases": {
+      "timed-C0": {
+        "seconds_per_step": [
+          0.15527363705,
+          0.15524307575000001,
+          0.15514577295
+        ],
+        "state": {
+          "bitwise_equal": true,
+          "padded31_plus8_scalar_values": 24704784,
+          "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+          "excluded_unused_coarse_indices": [
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ],
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ]
+          ]
+        },
+        "diagnostics_bitwise": true
+      },
+      "timed-K0": {
+        "seconds_per_step": [
+          0.10615443165,
+          0.10611221465000001,
+          0.10623248919999999
+        ],
+        "state": {
+          "bitwise_equal": true,
+          "padded31_plus8_scalar_values": 24704784,
+          "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+          "excluded_unused_coarse_indices": [
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ],
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ]
+          ]
+        },
+        "diagnostics_bitwise": true
+      },
+      "timed-K1": {
+        "seconds_per_step": [
+          0.1064164894,
+          0.10632185624999999,
+          0.10627223059999999
+        ],
+        "state": {
+          "bitwise_equal": true,
+          "padded31_plus8_scalar_values": 24704784,
+          "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+          "excluded_unused_coarse_indices": [
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ],
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ]
+          ]
+        },
+        "diagnostics_bitwise": true
+      },
+      "timed-C1": {
+        "seconds_per_step": [
+          0.15516810475,
+          0.1551334587,
+          0.15506770935
+        ],
+        "state": {
+          "bitwise_equal": true,
+          "padded31_plus8_scalar_values": 24704784,
+          "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+          "excluded_unused_coarse_indices": [
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ],
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ]
+          ]
+        },
+        "diagnostics_bitwise": true
+      }
+    },
+    "control_median": 0.15515693885,
+    "candidate_median": 0.10625235989999998,
+    "time_reduction_percent": 31.51942756313282,
+    "all_candidate_windows_faster": true,
+    "full_qualification_pending": false
+  },
+  "qualification": {
+    "passed": true,
+    "job": "9052970",
+    "terminal": "F/0",
+    "files_rehashed": 958,
+    "cases": {
+      "observer70": {
+        "passed": true,
+        "bitwise_scientific_files": 4,
+        "checkpoints": {
+          "rst/native_n12_5M.00008.rst": {
+            "bitwise_equal": true,
+            "padded31_plus8_scalar_values": 24704784,
+            "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+            "excluded_unused_coarse_indices": [
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ],
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ]
+            ]
+          }
+        },
+        "operational_sha256": "090394a78c3590e0d33fafde95e0f106568648e3c4dbd73fdf178c78412e47d2"
+      },
+      "poison8": {
+        "passed": true,
+        "bitwise_scientific_files": 624,
+        "checkpoints": {},
+        "operational_sha256": "a0a638998029b6f31af20573725b00ff1c57f8c03dae6bbf4223faa10a24c0ca"
+      },
+      "amr4": {
+        "passed": true,
+        "bitwise_scientific_files": 240,
+        "checkpoints": {},
+        "operational_sha256": "206120e4b69359d0c209393650022ec8919b8b542a0e66fbec07f0270e0411e6"
+      },
+      "prefix2": {
+        "passed": true,
+        "bitwise_scientific_files": 4,
+        "checkpoints": {
+          "rst/native_n12_5M.00000.rst": {
+            "bitwise_equal": true,
+            "padded31_plus8_scalar_values": 24704784,
+            "payload_sha256": "64f12f4d00d7615e982fb50cfc082df8140854a8194970e3062db7bf0c79f651",
+            "excluded_unused_coarse_indices": [
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ],
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ]
+            ]
+          },
+          "rst/native_n12_5M.00001.rst": {
+            "bitwise_equal": true,
+            "padded31_plus8_scalar_values": 24704784,
+            "payload_sha256": "b70caebc12756a27cb5715438f7642c0340c2e389334deada311f9631fd1a2a4",
+            "excluded_unused_coarse_indices": [
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ],
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ]
+            ]
+          }
+        },
+        "operational_sha256": "d332dc44440234f186f3b49351b5014d01eff3da27f30735d4296c08a701c7dc"
+      },
+      "resume8": {
+        "passed": true,
+        "bitwise_scientific_files": 4,
+        "checkpoints": {
+          "rst/native_n12_5M.00002.rst": {
+            "bitwise_equal": true,
+            "padded31_plus8_scalar_values": 24704784,
+            "payload_sha256": "e303efff82e13776c01c0fd37c603b0cfa6d864586a8d919a38443bd1e65c9a1",
+            "excluded_unused_coarse_indices": [
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ],
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ]
+            ]
+          }
+        },
+        "operational_sha256": "a174a8acc0cef6d28b0589c5c03bd561d4b072ec5104459ce02d6ed5cf0c140c"
+      },
+      "cache-smr": {
+        "passed": true,
+        "bitwise_scientific_files": 0,
+        "checkpoints": {},
+        "operational_sha256": "fcdbf22fd125b66761333209aeca59b522bd2880a39a860e687f2efbc68d2c93"
+      }
+    },
+    "restart_reference_review_sha256": "f1092d15b50a765e54dca7b4f86325fac2690451941eb33a53d73a865ce0c412",
+    "restart_scope": "New prefix/resume states, parameters, initialized metadata, diagnostics and joined stages are bitwise equal to the admitted same-phase radial reference. Its complete-state/continuous8 equality and unchanged diagnostic phase gates therefore carry over exactly.",
+    "restart_reference_gates": {
+      "prefix_cycles": [
+        0,
+        2
+      ],
+      "resume_cycle": 8,
+      "joined_stage_rows": 32,
+      "complete_state_parameters_initialized_metadata_and_three_diagnostics_bitwise_same_phase_WG128": true,
+      "complete_payload_and_joined_stages_bitwise_continuous8": true,
+      "unchanged_twelve_diagnostic_gates_passed": true,
+      "max_diagnostic_absolute_difference": 6.13389339321202e-11,
+      "max_fraction_of_adopted_gate": 0.00030669465019872585,
+      "extra_prefix_final_FastFlow_seed_and_output_counter_differences_exactly_match_admitted_reference": true,
+      "max_compatibility": 9.778256860928204e-16
+    },
+    "no_tolerances_changed": true
+  },
+  "local_checks": {
+    "task_graph": "48 delayed/empty-batch cases,192 RK stages, exact accepted states and buffer retirement",
+    "coupled_rhs": {
+      "passed": true,
+      "local_mpi_ranks": 8,
+      "scenarios": 2,
+      "gate": "abs(delta)<=1e-12+5e-10*abs(reference); chi<=1e-14+5e-10*abs(reference)",
+      "metrics": {
+        "initial_bulk": {
+          "comparisons": 14222304,
+          "max_scaled_error": 0.0,
+          "max_absolute_error": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "failed_values": 0,
+          "weighted_rms": 0.0,
+          "weight_sum": 260.45025136275945,
+          "per_field": [
+            {
+              "field": 0,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 1,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 2,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 3,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 4,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 5,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 6,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 7,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 8,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 9,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 10,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 11,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 12,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 13,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 14,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 15,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 16,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 17,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 18,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 19,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 20,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 21,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 22,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 23,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 24,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 25,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 26,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 27,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 28,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 29,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 30,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            }
+          ],
+          "worst_location": {
+            "absolute": {
+              "field": 0,
+              "native_gid": 0,
+              "cell_indices": [
+                -3,
+                -3,
+                -3
+              ],
+              "coordinates": [
+                -0.1138888888888889,
+                -0.1138888888888889,
+                -0.1138888888888889
+              ],
+              "scenario": 0,
+              "rank": 0,
+              "actual": 0.04179358576336534,
+              "expected": 0.04179358576336534
+            },
+            "scaled": {
+              "field": 0,
+              "native_gid": 0,
+              "cell_indices": [
+                -3,
+                -3,
+                -3
+              ],
+              "coordinates": [
+                -0.1138888888888889,
+                -0.1138888888888889,
+                -0.1138888888888889
+              ],
+              "scenario": 0,
+              "rank": 0,
+              "actual": 0.04179358576336534,
+              "expected": 0.04179358576336534
+            }
+          }
+        },
+        "initial_surface": {
+          "comparisons": 53568,
+          "max_scaled_error": 0.0,
+          "max_absolute_error": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "failed_values": 0,
+          "weighted_rms": 0.0,
+          "weight_sum": 779.9332481669436,
+          "per_field": [
+            {
+              "field": 0,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 1,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 2,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 3,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 4,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 5,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 6,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 7,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 8,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 9,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 10,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 11,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 12,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 13,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 14,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 15,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 16,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 17,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 18,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 19,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 20,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 21,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 22,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 23,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 24,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 25,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 26,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 27,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 28,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 29,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 30,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            }
+          ],
+          "worst_location": {
+            "absolute": {
+              "field": 0,
+              "native_gid": 45,
+              "cell_indices": [
+                12,
+                0,
+                0
+              ],
+              "coordinates": [
+                0.6276812878400296,
+                -0.5504617156966876,
+                -0.5504617156966876
+              ],
+              "scenario": 0,
+              "rank": 3,
+              "actual": 1.0,
+              "expected": 1.0
+            },
+            "scaled": {
+              "field": 0,
+              "native_gid": 45,
+              "cell_indices": [
+                12,
+                0,
+                0
+              ],
+              "coordinates": [
+                0.6276812878400296,
+                -0.5504617156966876,
+                -0.5504617156966876
+              ],
+              "scenario": 0,
+              "rank": 3,
+              "actual": 1.0,
+              "expected": 1.0
+            }
+          }
+        },
+        "bulk_rhs": {
+          "comparisons": 14222304,
+          "max_scaled_error": 0.0,
+          "max_absolute_error": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "failed_values": 0,
+          "weighted_rms": 0.0,
+          "weight_sum": 260.45025136275945,
+          "per_field": [
+            {
+              "field": 0,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 1,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 2,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 3,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 4,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 5,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 6,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 7,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 8,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 9,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 10,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 11,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 12,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 13,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 14,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 15,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 16,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 17,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 18,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 19,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 20,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 21,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 22,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 23,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 24,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 25,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 26,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 27,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 28,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 29,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 30,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            }
+          ],
+          "worst_location": {
+            "absolute": {
+              "field": 0,
+              "native_gid": 0,
+              "cell_indices": [
+                -3,
+                -3,
+                -3
+              ],
+              "coordinates": [
+                -0.1138888888888889,
+                -0.1138888888888889,
+                -0.1138888888888889
+              ],
+              "scenario": 0,
+              "rank": 0,
+              "actual": -8.695651714664224e-09,
+              "expected": -8.695651714664224e-09
+            },
+            "scaled": {
+              "field": 0,
+              "native_gid": 0,
+              "cell_indices": [
+                -3,
+                -3,
+                -3
+              ],
+              "coordinates": [
+                -0.1138888888888889,
+                -0.1138888888888889,
+                -0.1138888888888889
+              ],
+              "scenario": 0,
+              "rank": 0,
+              "actual": -8.695651714664224e-09,
+              "expected": -8.695651714664224e-09
+            }
+          }
+        },
+        "surface_rhs": {
+          "comparisons": 53568,
+          "max_scaled_error": 0.0,
+          "max_absolute_error": 0.0,
+          "max_tolerance_ratio": 0.0,
+          "failed_values": 0,
+          "weighted_rms": 0.0,
+          "weight_sum": 779.9332481669436,
+          "per_field": [
+            {
+              "field": 0,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 1,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 2,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 3,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 4,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 5,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 6,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 7,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 8,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 9,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 10,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 11,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 12,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 13,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 14,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 15,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 16,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 17,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 18,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 19,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 20,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 21,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 22,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 23,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 24,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 25,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 26,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 27,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 28,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 29,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            },
+            {
+              "field": 30,
+              "max_absolute_error": 0.0,
+              "max_scaled_error": 0.0,
+              "weighted_rms": 0.0,
+              "failed_values": 0
+            }
+          ],
+          "worst_location": {
+            "absolute": {
+              "field": 0,
+              "native_gid": 45,
+              "cell_indices": [
+                12,
+                0,
+                0
+              ],
+              "coordinates": [
+                0.6276812878400296,
+                -0.5504617156966876,
+                -0.5504617156966876
+              ],
+              "scenario": 0,
+              "rank": 3,
+              "actual": 0.0,
+              "expected": 0.0
+            },
+            "scaled": {
+              "field": 0,
+              "native_gid": 45,
+              "cell_indices": [
+                12,
+                0,
+                0
+              ],
+              "coordinates": [
+                0.6276812878400296,
+                -0.5504617156966876,
+                -0.5504617156966876
+              ],
+              "scenario": 0,
+              "rank": 3,
+              "actual": 0.0,
+              "expected": 0.0
+            }
+          }
+        }
+      },
+      "native_build": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native",
+      "legacy_readonly_source": "/Users/hz0693/.codex/worktrees/scri-ko01/hyperboloidal",
+      "source_sha256": {
+        "src/z4c_hyperboloidal/cartesian_algebraic_chart.hpp": "df3bcd93803ad5f6f7444c4115eb0eb2e25b9f7e8c090a1a0e82de7f3327d47d",
+        "src/z4c_hyperboloidal/cartesian_inner_adjustment.hpp": "5366314f3c78b76d39dd0c352ddd25558eebf68da1ae7847067c306f19e84c79",
+        "src/z4c_hyperboloidal/central_z4c_configuration.hpp": "fbf78e289cd21e96838cff441a7dfc9ef09b2fdaee46d8db3333744727b39349",
+        "src/z4c_hyperboloidal/cmc_reference.hpp": "f07bb5517c69552a6ae7f4790f3ef019b809140fe93aef4fa07857fa71798714",
+        "src/z4c_hyperboloidal/conformal_constraints.hpp": "e901e97527bcbf13f7c3ebb273a026e2ff3155eab123e04a2a4656381ee0d3e4",
+        "src/z4c_hyperboloidal/conformal_profile.hpp": "a2764b1a30dae9ed745442dbd0062a709756685c84dedf1c354a0a3e05969762",
+        "src/z4c_hyperboloidal/conformal_rhs.hpp": "ccb5e7be6bbd062757be9028d0fcb8ebfbf9a77e7070c2c363c163b71527cffa",
+        "src/z4c_hyperboloidal/diagnostics.cpp": "355eb6feceab04f6f1a8dee0b50e168e5f4c2ca3a900b230c677c6037c252afc",
+        "src/z4c_hyperboloidal/diagnostics.hpp": "78125c34a4ee082d0d54f1df1d5b8bcf77141d9ee7c42360d8f5099d334230bf",
+        "src/z4c_hyperboloidal/dissipation.hpp": "49c3762d5ddd4e81dbbd5d0052997bbde234604c2473746bb454e305a8fbee41",
+        "src/z4c_hyperboloidal/dissipation_plan.cpp": "b8083b1859853b0bc69c86dcd199e84dce947b2a5b637c47cb51f47b5557f3fd",
+        "src/z4c_hyperboloidal/dissipation_plan.hpp": "761b0da313c2831a8a95a0f3e9711a5531e93ccc6eacaf72197c22bd437fee08",
+        "src/z4c_hyperboloidal/endpoint.hpp": "a083a517629b2e7b3d9156b9b2d41db72e8cbc0e6fa26419a12364e6f005e813",
+        "src/z4c_hyperboloidal/endpoint_state.hpp": "6c9d098dcdc0fcfe4f3c18a8fddc7ae81d754dbadb631c9353b22ff46b21cd10",
+        "src/z4c_hyperboloidal/fields.hpp": "40662c4df2de65baa076c6f46097ef75622497b33069794c7a0717c0a2c2836a",
+        "src/z4c_hyperboloidal/horizon_geometry.hpp": "26ba431e68122b028024d9fb65758170cbdab45e0aadbd0de96bdd681dd402b0",
+        "src/z4c_hyperboloidal/horizon_sampling.cpp": "f296eff115318bd511cbc108a117d395d348f990728bce99d824a12f0112fedb",
+        "src/z4c_hyperboloidal/horizon_sampling.hpp": "c84c33fe75a7c365de94e1904cdc426e275f77d96b4afbbbd3c9e3b5227bc48f",
+        "src/z4c_hyperboloidal/hyperbolic_shift.hpp": "0b7d21d00f3b8c565f3eac3c4169e46e90f5863a68ee9c55d90bbcb91a4d68cf",
+        "src/z4c_hyperboloidal/mapped_geometry.hpp": "ac2aeb9e7f8c943ab961a1754af32e891dcec19fead712a1ee1806e32f1a33bf",
+        "src/z4c_hyperboloidal/mapped_halo.cpp": "80174d14da93cd6c45d8467edd5113a0ebc48aa3c3dd56e6cb272789a7088af1",
+        "src/z4c_hyperboloidal/mapped_halo.hpp": "8273971a0bad594dce67e89ca8b8f7c541e7be7c47a1f3f0cc8755be73831f24",
+        "src/z4c_hyperboloidal/native_wormhole.hpp": "97bc101f5cd145ef659d3cf130fecaa49ed9b277a627b1a0dee9d1c7a804bafc",
+        "src/z4c_hyperboloidal/point_rhs.hpp": "e7b86404998fd664ce204bc2a57a6936d0ad7f0929e08da1e9d0981f9231baed",
+        "src/z4c_hyperboloidal/point_state.hpp": "75769bc90eb7024b13ed7e50a527e47c06ade5ae4cbb7b8274c2c4f9c5472f51",
+        "src/z4c_hyperboloidal/reference_gauge.hpp": "09ca45cab2b119cd55e8f36d64392a7dec3852bf3be6613774d1a359cfea2746",
+        "src/z4c_hyperboloidal/remesh.cpp": "a5563bfc641b8d97388cb084bea00fd4aa0c15cb1aa993b8a55e7c4aa1075364",
+        "src/z4c_hyperboloidal/remesh.hpp": "40a39544fc3a208507d80cfa4d05590adc8175dfd7845ce8096288365543d4b0",
+        "src/z4c_hyperboloidal/restart.cpp": "a061ce50c08aa903c3b66f918802b312cb4de7cb9316f52cf7927f391ff8ee54",
+        "src/z4c_hyperboloidal/restart.hpp": "10464ea546c5c846c95e2b02fe7a38d548d8876f6c8e6c22b4efda5332db6d94",
+        "src/z4c_hyperboloidal/rhs_subset.hpp": "a4b980e518026ba6037fcf5be42704a1bc6dc2ffafd96d6afc336989e637a84c",
+        "src/z4c_hyperboloidal/spherical_policy.hpp": "75dedbdc3a27e792222d3793c1ace9e85f379b64cea6c38f8072ad51ad27694a",
+        "src/z4c_hyperboloidal/spherical_reference_3d.hpp": "7484dc0060b18f44dcc2869a0d3ab943ad4b8df9ca0df406d039b676a6a2f8d8",
+        "src/z4c_hyperboloidal/stationary_gauge_reference.hpp": "a5512a33057177d5caa43a814cacd788936eb4d3726f555487b9178b50e286bb",
+        "src/z4c_hyperboloidal/surface_exchange.cpp": "7d146b87907a895ea8e29932d1d0409bd7e1d16cde932afd650aa8b431a9fc59",
+        "src/z4c_hyperboloidal/surface_exchange.hpp": "e4f4db4d1990d270ca34edf8b4c16da9a5485e7aa69bb9c0b8bf3fd6abc0e2c8",
+        "src/z4c_hyperboloidal/surface_remesh.cpp": "4399d64b107d3ae820d2cb7486d357f8fa2868e83661018b1ebe5a734400b9b1",
+        "src/z4c_hyperboloidal/surface_remesh.hpp": "9057358629ad362353275ea195bd5ef89a630a28a1e652ac7bc0839fec764c8a",
+        "src/z4c_hyperboloidal/tasks.hpp": "157a87568025ea76f32b939ada4949d95aece48f247bbc7e981e5567c5dd662f",
+        "src/z4c_hyperboloidal/tensor_scri.hpp": "c46d5540495447759be3cd31f309cd13bf49a8c0a20fca6ad8126a5ad1b45521",
+        "src/z4c_hyperboloidal/z4c_hyperboloidal.cpp": "6b89186ea5b0ceb1cca0db40867309a9adf8af71bae4a50fe1c53819065c03e7",
+        "src/z4c_hyperboloidal/z4c_hyperboloidal.hpp": "e637e9c75d617951b201bb30a633e087f52a5e890418693dbd48fffb7f97cefa",
+        "src/z4c_hyperboloidal/z4c_hyperboloidal_lifecycle.cpp": "b9ba0fff9814898c3056e5693c23036124fa5372b1765657d1d989bd980bfd54",
+        "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp": "f1a8f4bf6f38702baa298f20cfb893b6b40d31aff185a548f9398460a89d186d",
+        "src/z4c_hyperboloidal/z4c_hyperboloidal_tasks.cpp": "ba561148afb2f563213d16b1eb5335024dd0a0fa136ed026a40e7d2284f4da49",
+        "src/z4c_hyperboloidal/z4c_hyperboloidal_update.cpp": "aeded9c998280e82ac551bb9d6c088aafb6f33fa84c9823fa91f13e35d6dbebe",
+        "src/mesh/chart_atlas.cpp": "e299c661a78f215791558652b036de848272a924b6ec2141920115cbaf0f0495",
+        "src/mesh/chart_atlas.hpp": "9481c6e585f4cb6384a9932bb626961a5bbc5032f2beac26d60845378661ebf3",
+        "src/bvals/mapped_exchange.cpp": "0ca3e55128a19c27ed7d4a515ef900a59da75d92b893e8d8ef9ca6749fbd28e9",
+        "src/bvals/mapped_exchange.hpp": "3656a27d7934b9738edb516bedcc57cb4e403c55d0a80ed24fa3106f221de49c",
+        "tst/z4c_hyperboloidal/coupled_rhs_oracle.cpp": "021beebd9a1def88a0f553299644c4200cd83789a901ed11086e97f44b16dd0c"
+      },
+      "executable_sha256": "31b8bcb01f605af8d25a0e9ec0a29bf65df57628c12a09b7381c652ddc463cba",
+      "native_compile_flags": "# CMAKE generated file: DO NOT EDIT!\n# Generated by \"Unix Makefiles\" Generator, CMake Version 4.4\n\n# compile CXX with /usr/bin/c++\nCXX_DEFINES = -DKOKKOS_DEPENDENCE\n\nCXX_INCLUDES = -I/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/src -I/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal -I/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native -I/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/kokkos -I/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/kokkos/core/src -I/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/kokkos/core/src -I/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/kokkos/containers/src -I/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/kokkos/containers/src -I/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/kokkos/algorithms/src -I/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/kokkos/algorithms/src -I/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/kokkos/simd/src -I/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/kokkos/simd/src -isystem /Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/kokkos/tpls/desul/include -isystem /Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/kokkos/tpls/mdspan/include -isystem /opt/homebrew/Cellar/open-mpi/5.0.10/include\n\nCXX_FLAGSarm64 = -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk\n\nCXX_FLAGS = -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk\n\n# Custom options: src/CMakeFiles/athena.dir/z4c_hyperboloidal/z4c_hyperboloidal.cpp.o_OPTIONS = -ffp-contract=off\n\n# Custom options: src/CMakeFiles/athena.dir/z4c_hyperboloidal/diagnostics.cpp.o_OPTIONS = -ffp-contract=off\n\n# Custom options: src/CMakeFiles/athena.dir/z4c_hyperboloidal/horizon_sampling.cpp.o_OPTIONS = -ffp-contract=off\n\n# Custom options: src/CMakeFiles/athena.dir/z4c_hyperboloidal/dissipation_plan.cpp.o_OPTIONS = -ffp-contract=off\n\n# Custom options: src/CMakeFiles/athena.dir/z4c_hyperboloidal/mapped_halo.cpp.o_OPTIONS = -ffp-contract=off\n\n# Custom options: src/CMakeFiles/athena.dir/z4c_hyperboloidal/surface_exchange.cpp.o_OPTIONS = -ffp-contract=off\n\n# Custom options: src/CMakeFiles/athena.dir/z4c_hyperboloidal/remesh.cpp.o_OPTIONS = -ffp-contract=off\n\n# Custom options: src/CMakeFiles/athena.dir/z4c_hyperboloidal/surface_remesh.cpp.o_OPTIONS = -ffp-contract=off\n\n# Custom options: src/CMakeFiles/athena.dir/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp.o_OPTIONS = -ffp-contract=off\n\n# Custom options: src/CMakeFiles/athena.dir/z4c_hyperboloidal/z4c_hyperboloidal_tasks.cpp.o_OPTIONS = -ffp-contract=off\n\n# Custom options: src/CMakeFiles/athena.dir/z4c_hyperboloidal/z4c_hyperboloidal_lifecycle.cpp.o_OPTIONS = -ffp-contract=off\n\n# Custom options: src/CMakeFiles/athena.dir/z4c_hyperboloidal/z4c_hyperboloidal_update.cpp.o_OPTIONS = -ffp-contract=off\n\n# Custom options: src/CMakeFiles/athena.dir/mesh/chart_atlas.cpp.o_OPTIONS = -ffp-contract=off\n\n",
+      "oracle_compile_command": [
+        "/usr/bin/c++",
+        "-std=c++17",
+        "-O2",
+        "-ffp-contract=off",
+        "-I/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/src",
+        "-I/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal",
+        "-I/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native",
+        "-I/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/kokkos",
+        "-I/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/kokkos/core/src",
+        "-I/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/kokkos/core/src",
+        "-I/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/kokkos/containers/src",
+        "-I/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/kokkos/containers/src",
+        "-I/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/kokkos/algorithms/src",
+        "-I/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/kokkos/algorithms/src",
+        "-I/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/kokkos/simd/src",
+        "-I/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/kokkos/tpls/mdspan/include",
+        "-isystem",
+        "/opt/homebrew/Cellar/open-mpi/5.0.10/include",
+        "-DHYPERBOLIC_BROAD_SMOOTH_A=1",
+        "-DHYPERBOLIC_CONFIGURED_FORMULATION=1",
+        "-DHYPERBOLIC_DIRECT_OUTER=1",
+        "-DHYPERBOLIC_INNER_TELEGRAPHER=1",
+        "-DHYPERBOLIC_NORMALIZED_INNER_SHIFT=1",
+        "-DHYPERBOLIC_RESTORE_INNER_DAMPING=1",
+        "-DHYPERBOLIC_SHORT_INNER_GAUGE=1",
+        "-DHYPERBOLIC_SMOOTH_GAUGE_BLEND=1",
+        "-DHYPERBOLIC_SPHERICAL_POLICY=1",
+        "-I/Users/hz0693/.codex/worktrees/scri-ko01/hyperboloidal/src",
+        "-I/Users/hz0693/.codex/worktrees/scri-ko01/hyperboloidal",
+        "-c",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/coupled_rhs_oracle.cpp",
+        "-o",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-dependent-batch-v1/coupled-oracle/coupled_rhs_oracle.o"
+      ],
+      "rms_weights": {
+        "bulk": "legacy grid.volumes for all independently evolved points, including overlap and the outer endpoint-grid half weight",
+        "surface": "legacy physical cell volume at scri divided by its local radial spacing (surface area weight)",
+        "aggregation": "sum(weight*delta^2)/sum(weight), square root; category aggregate includes all31fields and both scenarios; per-field RMS separately"
+      },
+      "source_unchanged_during_run": true,
+      "coordinate_mismatches": 0,
+      "coordinate_max_absolute": 0.0,
+      "legacy_normal_compatibility": 9.636456671686944e-16
+    },
+    "driver_smoke": {
+      "command": [
+        "mpiexec",
+        "-n",
+        "8",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-dependent-batch-v1/stage-smoke-retry/stage_smoke",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/tst/z4c_hyperboloidal/n12_initialize.athinput"
+      ],
+      "exit_code": 0,
+      "scope": "one native Driver RK4 cycle, local CPU MPI ranks",
+      "legacy_comparison": false,
+      "production_dynamic_enabled": false,
+      "timestep_integration_verified": false,
+      "provenance": {
+        "executable_sha256": "64f7a776d01325023ba0872fb4c9b92a4b9edf4633c36b90156f49f18659c496",
+        "harness_object_sha256": "9b363c6ce9dd498ba64e5878192fa8bbd8728a22db543bccb356a7da9493ab26",
+        "source_manifest_sha256": "f727647cc1d765e07f675985d1dc4b5d28555fb5a196860cacd52c474039560a",
+        "object_manifest_sha256": "9e4bcf41577261337ca711d0c3f74783ea8c815321858b1327f10c99e0e5ba2c",
+        "native_object_count": 197,
+        "source_count": 403,
+        "sources_unchanged_during_test": true,
+        "objects_unchanged_during_test": true
+      },
+      "accepted_state": {
+        "bulk": {
+          "count": 229392,
+          "key": "native_gid,k,j,i",
+          "state_fields": 31,
+          "chi_record_fields": 8,
+          "encoding": "little-endian int32 key, float64 state and records",
+          "sha256": "56d37688122ca510303a0a2d6f3617951ef65ff110ba1952a11d17728ac3091c"
+        },
+        "scri": {
+          "count": 864,
+          "key": "native_gid,k,j",
+          "state_fields": 31,
+          "chi_record_fields": 8,
+          "encoding": "little-endian int32 key, float64 state and records",
+          "sha256": "196db6fccef893cf99f45fe7a12faacaa9922cac9c9a852d7fed39f2360fd51f"
+        }
+      }
+    },
+    "preserved_failed_fixture": "First smoke test stopped before evolution on the obsolete16-task assertion. Updated expected count to14; no scientific gate changed."
+  },
+  "profile_evidence": "native-dependent-batch-profile-review.json",
+  "preserved": [
+    "AthenaK Driver and TaskLists",
+    "Native MeshBlock ownership/tree/equal weights",
+    "Block-local surfaces at scri",
+    "KO=0.1, chi floor=1e-10, original dt/precision/physics",
+    "Restart/output and SMR/AMR",
+    "All validity, chi, compatibility, constraint and horizon checks"
+  ],
+  "production_untouched": true,
+  "no_tolerances_changed": true,
+  "sources": {
+    "src/z4c_hyperboloidal/rhs_subset.hpp": "018e4ce9794b392802d19638ea6afb89c7e26bfde17d23d03a4a0e5f4ff91e06",
+    "src/z4c_hyperboloidal/tasks.hpp": "157a87568025ea76f32b939ada4949d95aece48f247bbc7e981e5567c5dd662f",
+    "src/z4c_hyperboloidal/z4c_hyperboloidal.cpp": "6b89186ea5b0ceb1cca0db40867309a9adf8af71bae4a50fe1c53819065c03e7",
+    "src/z4c_hyperboloidal/z4c_hyperboloidal.hpp": "e637e9c75d617951b201bb30a633e087f52a5e890418693dbd48fffb7f97cefa",
+    "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp": "f1a8f4bf6f38702baa298f20cfb893b6b40d31aff185a548f9398460a89d186d",
+    "tst/z4c_hyperboloidal/coupled_rhs_oracle.cpp": "021beebd9a1def88a0f553299644c4200cd83789a901ed11086e97f44b16dd0c",
+    "tst/z4c_hyperboloidal/stage_smoke.cpp": "0603d9cf0d34aff5638bec30a9e0b0ae00d0a5b9f8d65c95b1255418b129b95d",
+    "tst/z4c_hyperboloidal/task_contract.md": "0d47244a9827cac2d5592c8634f5c4341c8fffdbda1b297c4df44fa346824be9",
+    "tst/z4c_hyperboloidal/task_graph.cpp": "f8c76a93221894cec72f0e8c8b0476a655d39fe3265ef78626bac093648e9d38"
+  },
+  "evidence": {
+    "local": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-dependent-batch-v1",
+    "remote": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/dependent-batch-v1",
+    "timing_raw_manifest_sha256": "2f673bf1f93096f48b14f120abdcdc9748f8e0f89478b01fc5934930ca5fb78b",
+    "qualification_raw_manifest_sha256": "24697061cc85b9bdefac71d986302700534485388a0972ff4e366b502a45f2b2",
+    "gpu_build_sha256": "a338feeaf2a03ff59c73de2a950145fa1f310333528915b3caeffb7242f5f272",
+    "qualification_build_sha256": "c62d83df452426265a166447ad6dd4492320769cf6f5f1b152977940f2be1c4f",
+    "qualification_commands_sha256": "1890aae2e78e4427ac90b2039706ccdfcf04efb73b10be567b7a98e11e3c7129",
+    "source_binding_review": {
+      "passed": true,
+      "files": [
+        {
+          "file": "src/z4c_hyperboloidal/rhs_subset.hpp",
+          "canonical_sha256": "018e4ce9794b392802d19638ea6afb89c7e26bfde17d23d03a4a0e5f4ff91e06",
+          "normal_private": [
+            "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/dependent-batch-v1/build/source/src/z4c_hyperboloidal/rhs_subset.hpp",
+            "018e4ce9794b392802d19638ea6afb89c7e26bfde17d23d03a4a0e5f4ff91e06"
+          ],
+          "qualification_private": [
+            "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/dependent-batch-v1/qualification-build/coherent-source/src/z4c_hyperboloidal/rhs_subset.hpp",
+            "018e4ce9794b392802d19638ea6afb89c7e26bfde17d23d03a4a0e5f4ff91e06"
+          ]
+        },
+        {
+          "file": "src/z4c_hyperboloidal/tasks.hpp",
+          "canonical_sha256": "157a87568025ea76f32b939ada4949d95aece48f247bbc7e981e5567c5dd662f",
+          "normal_private": [
+            "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/dependent-batch-v1/build/source/src/z4c_hyperboloidal/tasks.hpp",
+            "157a87568025ea76f32b939ada4949d95aece48f247bbc7e981e5567c5dd662f"
+          ],
+          "qualification_private": [
+            "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/dependent-batch-v1/qualification-build/coherent-source/src/z4c_hyperboloidal/tasks.hpp",
+            "157a87568025ea76f32b939ada4949d95aece48f247bbc7e981e5567c5dd662f"
+          ]
+        },
+        {
+          "file": "src/z4c_hyperboloidal/z4c_hyperboloidal.hpp",
+          "canonical_sha256": "e637e9c75d617951b201bb30a633e087f52a5e890418693dbd48fffb7f97cefa",
+          "normal_private": [
+            "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/dependent-batch-v1/build/source/src/z4c_hyperboloidal/z4c_hyperboloidal.hpp",
+            "e637e9c75d617951b201bb30a633e087f52a5e890418693dbd48fffb7f97cefa"
+          ],
+          "qualification_private": [
+            "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/dependent-batch-v1/qualification-build/coherent-source/src/z4c_hyperboloidal/z4c_hyperboloidal.hpp",
+            "78248a586c07a6343171040a532b907c6123219d24ddece40ef23096ed107818"
+          ]
+        },
+        {
+          "file": "src/z4c_hyperboloidal/z4c_hyperboloidal.cpp",
+          "canonical_sha256": "6b89186ea5b0ceb1cca0db40867309a9adf8af71bae4a50fe1c53819065c03e7",
+          "normal_private": [
+            "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/dependent-batch-v1/build/source/src/z4c_hyperboloidal/z4c_hyperboloidal.cpp",
+            "6b89186ea5b0ceb1cca0db40867309a9adf8af71bae4a50fe1c53819065c03e7"
+          ],
+          "qualification_private": [
+            "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/dependent-batch-v1/qualification-build/coherent-source/src/z4c_hyperboloidal/z4c_hyperboloidal.cpp",
+            "6b89186ea5b0ceb1cca0db40867309a9adf8af71bae4a50fe1c53819065c03e7"
+          ]
+        },
+        {
+          "file": "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp",
+          "canonical_sha256": "f1a8f4bf6f38702baa298f20cfb893b6b40d31aff185a548f9398460a89d186d",
+          "normal_private": [
+            "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/dependent-batch-v1/build/source/src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp",
+            "f1a8f4bf6f38702baa298f20cfb893b6b40d31aff185a548f9398460a89d186d"
+          ],
+          "qualification_private": [
+            "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/dependent-batch-v1/qualification-build/coherent-source/src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp",
+            "f1a8f4bf6f38702baa298f20cfb893b6b40d31aff185a548f9398460a89d186d"
+          ]
+        }
+      ],
+      "qualification_header_difference": "Only the pre-existing coherent-fixture CheckFixedStepAdmission declaration, unchanged from the accepted parent.",
+      "normal_and_timed_same_solver_objects": true,
+      "qualification_manifest": "qualification-commands-executed.json"
+    },
+    "profile_archive_sha256": "5f04b183c701926fd8b936477d8025578af88e9b14e48a14f6a09c485aabd0ae"
+  }
+}

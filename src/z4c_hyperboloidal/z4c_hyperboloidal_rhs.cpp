@@ -26,9 +26,10 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver,int stage,RHSSubset subset) 
   const auto statuses=rhs_status;
   const auto gaps=rhs_gap,cfls=rhs_cfl;
   const auto dissipation=dissipation_plan_->Bind();
-  // Only the Surface batch contains endpoint rows and has both current bulk
-  // ghosts and scri samples. Ordinary batches never consume the empty cache.
-  const auto surface=subset==RHSSubset::Surface ? surface_exchange_->PrepareRadialJets()
+  // The joined dependent batch has current bulk ghosts and scri samples. Its
+  // ordinary points ignore the endpoint cache, as in the original work lists.
+  const auto surface=(subset==RHSSubset::Surface || subset==RHSSubset::Dependent)
+      ? surface_exchange_->PrepareRadialJets()
       : SurfaceExchange::CachedKernel{surface_exchange_->BindKernel(),{}};
   const Real epsilon=ko,dt=pmy_pack->pmesh->dt;
   const int count=n[0];

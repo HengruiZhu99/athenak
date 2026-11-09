@@ -66,6 +66,7 @@ struct DelayedModule {
   bool updated=false, projected=false, sends_cleared=false, recvs_cleared=false;
   int stage_tag=0, copy_calls=0, base_copies=0, update_calls=0, projection_calls=0;
   int bulk_polls=0, surface_polls=0, send_polls=0;
+  int dependent_calls=0;
   std::array<int,4> rhs_calls{};
   std::array<bool,4> empty{};
   std::array<Real,4> rhs{}, state{1,2,3,4}, base{}, sum{};
@@ -81,6 +82,7 @@ struct DelayedModule {
     sends_cleared=recvs_cleared=false;
     allow_bulk=allow_surface=allow_send_clear=false;
     rhs_calls.fill(0);
+    dependent_calls=0;
     const Real poison=std::numeric_limits<Real>::quiet_NaN();
     rhs.fill(poison);local_halo=remote_halo=surface_sample=normal=poison;
     surface_rhs=poison;
@@ -136,6 +138,13 @@ struct DelayedModule {
     surface_rhs=normal;surface_rhs_ready=true;return TaskStatus::complete;
   }
   TaskStatus CalcRHS(Driver *, int stage, hyp::RHSSubset subset) {
+    if (subset==hyp::RHSSubset::Dependent) {
+      Require(local_filled && remote_filled && normal_ready && dependent_calls++==0,
+              "joined RHS precedes dependencies or ran twice");
+      for (int batch=1;batch<4;++batch)
+        CalcRHS(nullptr,stage,static_cast<hyp::RHSSubset>(batch));
+      return TaskStatus::complete;
+    }
     const int index=static_cast<int>(subset);
     Require(prepared && rhs_calls[index]++==0,"duplicate or unprepared volume RHS");
     Real value=10+stage;
@@ -157,6 +166,7 @@ struct DelayedModule {
   }
   TaskStatus ExpRKUpdate(Driver *, int stage) {
     Require(surface_rhs_ready,"update lacks the surface RHS");
+    Require(dependent_calls==1,"update lacks the joined volume RHS");
     for (int p=0;p<4;++p) {
       Require(rhs_calls[p]==1 && std::isfinite(rhs[p]),"update lacks a volume batch");
       state[p]=time_integration::ClassicalRK4::Advance(stage,.01,base[p],rhs[p],sum[p]);
@@ -187,7 +197,7 @@ void CheckGraph(int first_available, unsigned int empty_mask) {
   NativeLists queue;
   hyp::QueueZ4cHyperboloidalStageTasks(&queue,&module);
   Require(queue.lists[nr::Task_Start].Size()==1,"wrong stage-start task count");
-  Require(queue.lists[nr::Task_Run].Size()==16,"wrong stage task count");
+  Require(queue.lists[nr::Task_Run].Size()==14,"wrong stage task count");
   Require(queue.lists[nr::Task_End].Size()==2,"wrong stage-end task count");
   for (int stage=1;stage<=4;++stage) {
     module.BeginStage();queue.Reset();
@@ -195,13 +205,13 @@ void CheckGraph(int first_available, unsigned int empty_mask) {
             "receive posting stalled");
     Require(queue.Poll(nr::Task_Run,stage)==TaskListStatus::running,
             "unavailable communication did not stall dependents");
-    Require(module.rhs_calls[0]==1 && module.rhs_calls[1]==1,
-            "independent or local work waited for remote communication");
-    Require(module.rhs_calls[2]==0 && module.rhs_calls[3]==0 &&
+    Require(module.rhs_calls[0]==1 && module.local_filled,
+            "interior work or local halo fill waited for remote communication");
+    Require(module.rhs_calls[1]==0 && module.rhs_calls[2]==0 && module.rhs_calls[3]==0 &&
             !module.surface_rhs_ready && !module.updated,
             "dependent work ran before remote communication");
     for (int poll=0;poll<3;++poll) queue.Poll(nr::Task_Run,stage);
-    Require(module.rhs_calls[0]==1 && module.rhs_calls[1]==1,
+    Require(module.rhs_calls[0]==1 && module.dependent_calls==0,
             "completed independent work reran while polling");
 
     if (first_available==0) module.allow_bulk=true;
@@ -211,8 +221,9 @@ void CheckGraph(int first_available, unsigned int empty_mask) {
       Require(!module.updated && module.rhs_calls[3]==0,
               "one communication stream released a coupled update");
       if (first_available==0) {
-        Require(module.rhs_calls[2]==1 && !module.normal_ready,
-                "ordinary remote RHS waited for scri");
+        Require(module.remote_filled && module.rhs_calls[1]==0 &&
+                module.rhs_calls[2]==0 && !module.normal_ready,
+                "halo fill stalled or joined RHS ran before scri");
       } else {
         Require(module.surface_rhs_ready && module.rhs_calls[2]==0,
                 "surface solve waited for unrelated bulk halos");

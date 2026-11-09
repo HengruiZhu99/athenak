@@ -161,13 +161,13 @@
         "evidence/native-bulk-group128-admission.json",
         "evidence/native-radial-fields-admission.json"
       ],
-      "remaining": "Parity not reached. Original goal cleared; bounded weight task completed at0.298797s best observed configuration versus~0.1364s leading legacy in an earlier allocation. No final same-allocation parity claim."
+      "remaining": "Latest accepted native0.106252s is below the historical legacy~0.1364s, but fresh same-allocation parity comparison remains pending."
     }
   ],
-  "next_milestone": "Test persistent point-state storage between reconstruction and bulk RHS, retaining all four subset dependencies, fixed workgroups, arithmetic and validity checks. Qualify complete-step improvement before acceptance; final legacy parity remains pending.",
+  "next_milestone": "Fresh same-allocation native versus all frozen validated legacy references, using repeated unprofiled maximum-rank complete-step windows and full scientific gates. No new solver change before this comparison.",
   "pause_reason": "User requested pause, summary, commit and push on 2026-11-08 after substantial improvement. Finished only already-running job9052165; no further experiment or qualification allocation.",
   "resume_reason": "User explicitly resumed on 2026-11-08: full KO qualification first, then validated legacy optimizations one at a time; commit and push only confirmed correctness and complete-step improvements.",
-  "current_request": "Seven separate improvements accepted in this series; latest0.155696s/complete RK4 step. Explicit prepared-cache reader rejected as1.14% slower. Fixed angular weights reduce representative-rank correction fill8.49ms to0.21ms; bulk remains103.27ms/step. Production untouched and formal goal remains cleared.",
+  "current_request": "Eight separate improvements accepted in this series; latest0.106252s/complete RK4 step. PointState storage and small dependent workgroups rejected as slower. Joined dependent batching halves rank23 main launches and roughly halves its measured bulk GPU time. Production untouched; formal goal remains cleared.",
   "bounded_boundary_weight_experiment": {
     "status": "completed",
     "job_id": "9052547",
@@ -200,16 +200,17 @@
     ]
   },
   "latest_accepted_experiment": {
-    "name": "fixed_angular_weights_cache",
-    "median_control": 0.16308610892499997,
-    "median_candidate": 0.15569554330000002,
-    "reduction_percent": 4.531695356346221,
-    "evidence": "evidence/native-angular-weights-admission.json"
+    "name": "joined_dependent_bulk_rhs_batch",
+    "median_control": 0.15515693885,
+    "median_candidate": 0.10625235989999998,
+    "reduction_percent": 31.51942756313282,
+    "evidence": "evidence/native-dependent-batch-admission.json"
   },
   "surface_geometry_cache_admission": "evidence/native-surface-geometry-cache-admission.json",
   "bulk_geometry_reuse_admission": "evidence/native-bulk-geometry-reuse-admission.json",
   "normal_correction_cache_admission": "evidence/native-normal-correction-cache-admission.json",
   "normal_group32_admission": "evidence/native-normal-group32-admission.json",
   "correction_fill_group32_admission": "evidence/native-correction-group32-admission.json",
-  "angular_weights_admission": "evidence/native-angular-weights-admission.json"
+  "angular_weights_admission": "evidence/native-angular-weights-admission.json",
+  "dependent_batch_admission": "evidence/native-dependent-batch-admission.json"
 }

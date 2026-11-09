@@ -25,21 +25,17 @@ flowchart TD
   Prep --> SurfaceSend[Pack and send direct scri derivative donors]
   Prep --> Interior[Interior bulk RHS]
   BulkSend --> LocalFill[Fill locally supplied halos]
-  LocalFill --> LocalRHS[Local-halo bulk RHS]
   BulkSend --> BulkRecv[Poll bulk receives]
   BulkRecv --> RemoteFill[Fill remotely supplied halos]
   LocalFill --> RemoteFill
-  RemoteFill --> RemoteRHS[Remote-halo bulk RHS]
   SurfaceSend --> SurfaceRecv[Poll scri donor receives]
   SurfaceRecv --> Normal[Sample jets and solve normal compatibility]
   Normal --> SurfaceRHS[Scri RHS]
-  Normal --> OuterRHS[Surface-dependent bulk RHS]
-  RemoteFill --> OuterRHS
+  Normal --> JoinedRHS[Joined local-halo, remote-halo and surface-dependent bulk RHS]
+  RemoteFill --> JoinedRHS
   Interior --> RK[Update bulk and scri together]
-  LocalRHS --> RK
-  RemoteRHS --> RK
   SurfaceRHS --> RK
-  OuterRHS --> RK
+  JoinedRHS --> RK
   RK --> Project[Project updated scri, including accepted stage 4]
   Project --> Retire[Poll send and receive retirement before buffer reuse]
 ```
@@ -47,9 +43,14 @@ flowchart TD
 The scri derivative plan imports independently evolved donors directly, so its
 normal solve does not wait for volume ghost interpolation. Normal corrections
 remain on the owning outer MeshBlock: the six-by-six tangential interpolation
-used by the lift reads only that block's face. The surface-dependent bulk batch
-joins normal compatibility with volume-halo completion. Complete numerical
-stencil dependencies determine the four disjoint bulk batches.
+used by the lift reads only that block's face. Complete numerical stencil
+dependencies determine the original four disjoint bulk classifications. Their three non-interior index lists are concatenated
+without changing ownership or point arithmetic, then evaluated once after
+normal compatibility and volume-halo completion. Interior RHS remains an early,
+independent task. This reduces stage tasks from 16 to 14 and trades intermediate
+local/remote RHS overlap for fewer small GPU launches and validity reductions;
+the complete-stage checks still cover every evolved point. All index lists are
+rebuilt with the native plans.
 
 Packing copies values into persistent send buffers before later ghost writes.
 Incomplete receive tasks yield to other ready tasks. Send retirement and receive
@@ -67,10 +68,12 @@ rate that produces a negative physical lapse and a separate nonfinite chi rate,
 and requires immediate rejection in both cases.
 
 `task_graph.cpp` binds this same queue function to the original `TaskList` using
-delayed mock operations. It checks all sixteen empty/nonempty bulk-batch masks
+delayed mock operations. It checks all sixteen empty/nonempty bulk-classification masks
 under three independent arrival orders, four RK stages each: 48 cases and 192
-stages. Poisoned current-stage data checks early reads; unique stage payloads
-check stale reads; accepted RK states are invariant to arrival order. The test
+stages. The joined batch must wait for both communication streams; interior work
+and local halo filling must proceed while receives are pending, and the surface
+solve must proceed independently of volume halos. Poisoned current-stage data
+checks early reads; unique stage payloads check stale reads; accepted RK states are invariant to arrival order. The test
 also checks that pending sends prevent buffer reuse while receive retirement
 continues. This is scheduler/dependency evidence, not a PDE or MPI correctness
 claim. Actual MPI transport, whole-grid RHS, and native trajectory tests are

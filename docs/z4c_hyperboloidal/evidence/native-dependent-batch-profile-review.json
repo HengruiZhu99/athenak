@@ -1,0 +1,217 @@
+{
+  "passed": true,
+  "job": "9052970",
+  "control_commit": "71cff31bbf6a17652061bd76c47642ad2da7b65e",
+  "files_rehashed": 98,
+  "normal_profiled_retained_reference_full_state_and_diagnostics_bitwise": true,
+  "runtime_and_source_binding": {
+    "executable": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/dependent-batch-v1/build/athena-candidate-normal",
+    "executable_sha256": "fd98c738a06a7e45ddebe43c15b21c5529b8124eb9f606088bcb805a75de3279",
+    "build_provenance": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/validation/perf-two-node-v1/dependent-batch-v1/build/provenance.json",
+    "build_provenance_sha256": "a338feeaf2a03ff59c73de2a950145fa1f310333528915b3caeffb7242f5f272",
+    "candidate_source_sha256": "f1a8f4bf6f38702baa298f20cfb893b6b40d31aff185a548f9398460a89d186d",
+    "private_source_files": 400,
+    "dependency_closure": [
+      "src/driver/driver.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal.cpp",
+      "src/z4c_hyperboloidal/diagnostics.cpp",
+      "src/z4c_hyperboloidal/horizon_sampling.cpp",
+      "src/z4c_hyperboloidal/dissipation_plan.cpp",
+      "src/z4c_hyperboloidal/surface_exchange.cpp",
+      "src/z4c_hyperboloidal/restart.cpp",
+      "src/z4c_hyperboloidal/remesh.cpp",
+      "src/z4c_hyperboloidal/surface_remesh.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_tasks.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_lifecycle.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_update.cpp",
+      "src/mesh/mesh.cpp",
+      "src/mesh/meshblock_pack.cpp",
+      "src/mesh/mesh_refinement.cpp",
+      "src/mesh/refinement_criteria.cpp",
+      "src/outputs/history.cpp",
+      "src/pgen/z4c/hyperboloidal_puncture.cpp",
+      "src/tasklist/numerical_relativity.cpp"
+    ],
+    "baseline_source_objects_unchanged": true,
+    "before_after_verify_logs": {
+      "before": "d9f4ff50edba3275d47940e12dab0cd337f3bdf63e81a69397468ae407cfac60",
+      "after": "d9f4ff50edba3275d47940e12dab0cd337f3bdf63e81a69397468ae407cfac60"
+    }
+  },
+  "unit_crosschecks": [
+    {
+      "rank": 8,
+      "groups": 7,
+      "text_ns_equals_chrome_us": true
+    },
+    {
+      "rank": 23,
+      "groups": 12,
+      "text_ns_equals_chrome_us": true
+    }
+  ],
+  "measurements": {
+    "8": {
+      "rhs_span_seconds": 0.63277225,
+      "gpu_union_seconds": 0.29149,
+      "bulk_groups": {
+        "main": [
+          {
+            "shape": "[SIMD32 {11; 1; 1} {128; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.09554432000000002,
+            "maximum_seconds": 0.00603888,
+            "seconds_per_step": 0.023886080000000004
+          },
+          {
+            "shape": "[SIMD32 {89; 1; 1} {128; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.14596800000000001,
+            "maximum_seconds": 0.009166879999999999,
+            "seconds_per_step": 0.036492000000000004
+          }
+        ],
+        "ko": [
+          {
+            "shape": "[SIMD32 {344; 1; 1} {1024; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.0036177600000000002,
+            "maximum_seconds": 0.00023488,
+            "seconds_per_step": 0.0009044400000000001
+          },
+          {
+            "shape": "[SIMD32 {40; 1; 1} {1024; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.001072,
+            "maximum_seconds": 7.344e-05,
+            "seconds_per_step": 0.000268
+          }
+        ],
+        "radial_prepare": []
+      },
+      "surface_groups": {
+        "SurfaceExchange::Solve()::{lambda(int, int&)#1}, Kokkos::Impl::FunctorAnalysis<Kokkos::Impl::FunctorPatternInterface::REDUCE, Kokkos::RangePolicy<>, z4c_hyperboloidal::SurfaceExcha ... ::_V1::handler&)#1}::operator()(sycl::_V1::handler&) const::{lambda()#1}[SIMD32 {1; 1; 1} {1; 1; 1}]": {
+          "calls": 16,
+          "total_seconds": 7.055999999999999e-05
+        },
+        "SurfaceExchange::Evaluate()::{lambda(int, int&, double&, double&)#1}, Kokkos::HostSpace, Kokkos::Sum<int, Kokkos::HostSpace>, Kokkos::Max<double, Kokkos::HostSpace>, Kokkos::Max<do ... ::_V1::handler&)#1}::operator()(sycl::_V1::handler&) const::{lambda()#1}[SIMD32 {1; 1; 1} {1; 1; 1}]": {
+          "calls": 16,
+          "total_seconds": 0.00011711999999999999
+        }
+      },
+      "seconds_per_step": {
+        "main": 0.06037808,
+        "ko": 0.0011724399999999999,
+        "validity": 8.792e-05,
+        "radial_prepare": 0.0
+      }
+    },
+    "23": {
+      "rhs_span_seconds": 0.63638975,
+      "gpu_union_seconds": 0.3736765,
+      "bulk_groups": {
+        "main": [
+          {
+            "shape": "[SIMD32 {3; 1; 1} {128; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.0941312,
+            "maximum_seconds": 0.006027520000000001,
+            "seconds_per_step": 0.0235328
+          },
+          {
+            "shape": "[SIMD32 {65; 1; 1} {128; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.11599936000000001,
+            "maximum_seconds": 0.00730416,
+            "seconds_per_step": 0.028999840000000002
+          }
+        ],
+        "ko": [
+          {
+            "shape": "[SIMD32 {252; 1; 1} {1024; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.0024838399999999997,
+            "maximum_seconds": 0.00015984000000000001,
+            "seconds_per_step": 0.0006209599999999999
+          },
+          {
+            "shape": "[SIMD32 {10; 1; 1} {1024; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.0007147200000000001,
+            "maximum_seconds": 6.832e-05,
+            "seconds_per_step": 0.00017868000000000002
+          }
+        ],
+        "radial_prepare": [
+          {
+            "shape": "[SIMD32 {11; 1; 1} {1024; 1; 1}]",
+            "calls": 16,
+            "total_seconds": 0.004252960000000001,
+            "maximum_seconds": 0.00027856,
+            "seconds_per_step": 0.0010632400000000002
+          }
+        ]
+      },
+      "surface_groups": {
+        "SurfaceExchange::Solve()::{lambda(int)#1}, Kokkos::Impl::SYCLInternal::USMObjectMem<(sycl::_V1::usm::alloc)0>, false>, Kokkos::RangePolicy<> >[SIMD32 {1; 1; 1} {256; 1; 1}] ... SMObjectMem<(sycl::_V1::usm::alloc)0>, false>, Kokkos::RangePolicy<> >[SIMD32 {1; 1; 1} {256; 1; 1}]": {
+          "calls": 16,
+          "total_seconds": 0.028351199999999997
+        },
+        "SurfaceExchange::Solve()::{lambda(int)#2}, Kokkos::Impl::SYCLInternal::USMObjectMem<(sycl::_V1::usm::alloc)0>, false>, Kokkos::RangePolicy<> >[SIMD32 {18; 1; 1} {32; 1; 1}] ... SMObjectMem<(sycl::_V1::usm::alloc)0>, false>, Kokkos::RangePolicy<> >[SIMD32 {18; 1; 1} {32; 1; 1}]": {
+          "calls": 16,
+          "total_seconds": 0.02020336
+        },
+        "SurfaceExchange::Solve()::{lambda(int, int&)#1}, Kokkos::Impl::FunctorAnalysis<Kokkos::Impl::FunctorPatternInterface::REDUCE, Kokkos::RangePolicy<>, z4c_hyperboloidal::SurfaceExcha ... 1::access::decorated)2>, int) const::{lambda(sycl::_V1::nd_item<1>)#1}[SIMD32 {1; 1; 1} {256; 1; 1}]": {
+          "calls": 16,
+          "total_seconds": 0.00035952000000000005
+        },
+        "SurfaceExchange::Solve()::{lambda(int)#3}, Kokkos::Impl::SYCLInternal::USMObjectMem<(sycl::_V1::usm::alloc)0>, false>, Kokkos::RangePolicy<> >[SIMD32 {14; 1; 1} {32; 1; 1}] ... SMObjectMem<(sycl::_V1::usm::alloc)0>, false>, Kokkos::RangePolicy<> >[SIMD32 {14; 1; 1} {32; 1; 1}]": {
+          "calls": 16,
+          "total_seconds": 0.00084112
+        },
+        "SurfaceExchange::Evaluate()::{lambda(int, int&, double&, double&)#1}, Kokkos::HostSpace, Kokkos::Sum<int, Kokkos::HostSpace>, Kokkos::Max<double, Kokkos::HostSpace>, Kokkos::Max<do ... 1::access::decorated)2>, int) const::{lambda(sycl::_V1::nd_item<1>)#1}[SIMD32 {1; 1; 1} {256; 1; 1}]": {
+          "calls": 16,
+          "total_seconds": 0.037416319999999996
+        }
+      },
+      "seconds_per_step": {
+        "main": 0.052532640000000005,
+        "ko": 0.0007996400000000001,
+        "validity": 8.444000000000001e-05,
+        "radial_prepare": 0.0010632400000000002
+      }
+    }
+  },
+  "next_single_experiment": "Compare the correctness-qualified joined-batch native implementation against all frozen validated legacy variants in one two-node allocation; no additional solver change before parity measurement.",
+  "limitations": [
+    "Selected ranks8/23; not a demonstrated whole-job critical path or achieved occupancy.",
+    "Dividing GPU totals byfour gives average kernel time per complete step, not additive global elapsed-time attribution.",
+    "Profiled elapsed time is excluded from throughput acceptance."
+  ],
+  "inputs": {
+    "build-native/native-cached-profile-v6/package.json": "e76e4515b454f247d81a96cfef532e77f163e14b594e0c8f27a5acab2c24b91c",
+    "build-native/native-cached-profile-v6/run-artifacts/files.json": "c01a885ffc0c81571e7f5d446344bf4c67ff31751aab40a9672c8a8a7a9922bf",
+    "build-native/native-cached-profile-v6/run-artifacts/runs/native-cached-profile-v6/qualification.json": "b757d690049dcdd9bedd242b4b79cc937874bd3fb25f810bf9b1827b0a4efcf5",
+    "build-native/native-cached-profile-v6/analysis/timeline.json": "fcdf5528110ae567e261e0036284769c9717914e3d6651936f187ca21dd95541",
+    "build-native/native-cached-profile-v6/analysis/normal-equivalence.json": "0e3275c187293dd459931c9add06ed068dca4748f9fa851d0d29c19bfc7da0c0",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-cached-profile-v6/analysis/review.py": "489bb0320d4efc4e45b2d759545f5c2e81bbed22c8ba8c44df33e18f3735352e"
+  },
+  "bulk_batch_comparison": {
+    "8": {
+      "before_seconds_per_step": 0.07779267999999998,
+      "after_seconds_per_step": 0.06037808,
+      "before_calls": 48,
+      "after_calls": 32,
+      "scope": "Calls across four complete RK4 steps; actual local size remains128. Separate selected-rank profiles, not an additive global elapsed budget."
+    },
+    "23": {
+      "before_seconds_per_step": 0.10327032000000001,
+      "after_seconds_per_step": 0.052532640000000005,
+      "before_calls": 64,
+      "after_calls": 32,
+      "scope": "Calls across four complete RK4 steps; actual local size remains128. Separate selected-rank profiles, not an additive global elapsed budget."
+    }
+  },
+  "bulk_batch_comparison_reference_sha256": "faea0b54a1bc2387e6a5b228c8ad676655005e7b822637e4985e8da076b95dd7"
+}

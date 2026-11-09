@@ -1,0 +1,179 @@
+{
+  "schema": "native-small-bulk-group32-rejection-v1",
+  "accepted": false,
+  "control_commit": "71cff31bbf6a17652061bd76c47642ad2da7b65e",
+  "scope": "Use SYCL workgroup32 for LocalHalo/RemoteHalo/Surface bulk kernels; keep Interior128, all arithmetic/storage and task dependencies unchanged.",
+  "decision": "Rejected: all six candidate windows slower than all six control windows. Restored128 for every bulk batch.",
+  "timing": {
+    "passed": true,
+    "job": "9052941",
+    "files_rehashed": 65,
+    "cases": {
+      "timed-C0": {
+        "seconds_per_step": [
+          0.1560888424,
+          0.15603551345,
+          0.15607629145
+        ],
+        "state": {
+          "bitwise_equal": true,
+          "padded31_plus8_scalar_values": 24704784,
+          "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+          "excluded_unused_coarse_indices": [
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ],
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ]
+          ]
+        },
+        "diagnostics_bitwise": true
+      },
+      "timed-K0": {
+        "seconds_per_step": [
+          0.1573828732,
+          0.1573557469,
+          0.1573817189
+        ],
+        "state": {
+          "bitwise_equal": true,
+          "padded31_plus8_scalar_values": 24704784,
+          "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+          "excluded_unused_coarse_indices": [
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ],
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ]
+          ]
+        },
+        "diagnostics_bitwise": true
+      },
+      "timed-K1": {
+        "seconds_per_step": [
+          0.15733942174999999,
+          0.15728524775,
+          0.15736440375
+        ],
+        "state": {
+          "bitwise_equal": true,
+          "padded31_plus8_scalar_values": 24704784,
+          "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+          "excluded_unused_coarse_indices": [
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ],
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ]
+          ]
+        },
+        "diagnostics_bitwise": true
+      },
+      "timed-C1": {
+        "seconds_per_step": [
+          0.1561876604,
+          0.1560130517,
+          0.1560571004
+        ],
+        "state": {
+          "bitwise_equal": true,
+          "padded31_plus8_scalar_values": 24704784,
+          "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+          "excluded_unused_coarse_indices": [
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ],
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ]
+          ]
+        },
+        "diagnostics_bitwise": true
+      }
+    },
+    "control_median": 0.156066695925,
+    "candidate_median": 0.15736007532500002,
+    "time_reduction_percent": -0.8287350432673701,
+    "all_candidate_windows_faster": false,
+    "full_qualification_pending": false
+  },
+  "full_four_endpoints_and_ordinary_diagnostics_bitwise": true,
+  "qualification_build_passed": true,
+  "qualification_allocation_submitted": false,
+  "profile_allocation_submitted": false,
+  "evidence": {
+    "local": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-small-bulk-group32-v1",
+    "remote": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/native-small-bulk-group32-abba-v1",
+    "raw_manifest_sha256": "8d263a5ee8fc7f170e0aa56310aeb8eb1eed905a6b7a987bd36e4a5682f4232e",
+    "gpu_build_sha256": "57dba0b42bbad015862b46eb47a50dfadd409801dab1c283cddd8a2b08001b2b",
+    "qualification_build_sha256": "1a30688c392685e02ffefb5454c5033a26af75c2999129c728735f67668e475f",
+    "patch_sha256": "643ad44b182efa9acfe95924149c37d86f2ab92da99e53c8e60719c71f9dc884"
+  }
+}

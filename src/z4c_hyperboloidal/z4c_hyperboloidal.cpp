@@ -157,6 +157,7 @@ void Z4cHyperboloidal::BuildStagePlans() {
       &mapped_halo_->LocalHaloPoints(),&mapped_halo_->RemoteHaloPoints(),
       &mapped_halo_->SurfaceDependentPoints()};
   std::vector<bool> covered(npoints,false);
+  std::vector<int> dependent;
   for (int batch=0;batch<4;++batch) {
     Kokkos::realloc(rhs_points_[batch],batches[batch]->size());
     auto host=Kokkos::create_mirror_view(rhs_points_[batch]);
@@ -164,10 +165,18 @@ void Z4cHyperboloidal::BuildStagePlans() {
       const auto c=(*batches[batch])[i];const int p=lookup[index(c.m,c.k,c.j,c.i)];
       if (p<0 || covered[p]) throw std::logic_error("RHS batches overlap or leave evolved state");
       covered[p]=true;host(i)=p;
+      if (batch!=0)dependent.push_back(p);
     }
     Kokkos::deep_copy(rhs_points_[batch],host);
   }
   for (bool yes:covered) if (!yes) throw std::logic_error("RHS batches omit evolved state");
+  // Keep the dependency classifications available to diagnostics and oracles,
+  // but evaluate their disjoint non-interior union in one native task.
+  auto &late=rhs_points_[static_cast<int>(RHSSubset::Dependent)];
+  Kokkos::realloc(late,dependent.size());
+  auto late_host=Kokkos::create_mirror_view(late);
+  for (std::size_t i=0;i<dependent.size();++i)late_host(i)=dependent[i];
+  Kokkos::deep_copy(late,late_host);
   Kokkos::realloc(rhs_status,npoints);
   Kokkos::realloc(rhs_gap,npoints);
   Kokkos::realloc(rhs_cfl,npoints);

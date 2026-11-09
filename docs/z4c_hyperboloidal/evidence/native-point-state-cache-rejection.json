@@ -1,0 +1,107 @@
+{
+  "schema": "native-point-state-cache-rejection-v1",
+  "accepted": false,
+  "control_commit": "71cff31bbf6a17652061bd76c47642ad2da7b65e",
+  "scope": "Persistent point-state workspace splits reconstruction and bulk evaluation, keeping native subsets, workgroup128, arithmetic and validity checks.",
+  "decision": "Rejected by prespecified first-pair rule: min candidate window >=1.05*max control window. All five candidate solver/test file changes restored before next experiment.",
+  "timing": {
+    "passed": true,
+    "job": "9052926",
+    "files_rehashed": 42,
+    "cases": {
+      "timed-C0": {
+        "seconds_per_step": [
+          0.1548094718,
+          0.1548513952,
+          0.1547433723
+        ],
+        "state": {
+          "bitwise_equal": true,
+          "padded31_plus8_scalar_values": 24704784,
+          "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+          "excluded_unused_coarse_indices": [
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ],
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ]
+          ]
+        },
+        "diagnostics_bitwise": true
+      },
+      "timed-K0": {
+        "seconds_per_step": [
+          0.16281311965,
+          0.16282567225,
+          0.16281530925
+        ],
+        "state": {
+          "bitwise_equal": true,
+          "padded31_plus8_scalar_values": 24704784,
+          "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+          "excluded_unused_coarse_indices": [
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ],
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ]
+          ]
+        },
+        "diagnostics_bitwise": true
+      }
+    },
+    "control_median": 0.1548094718,
+    "candidate_median": 0.16281530925,
+    "time_reduction_percent": -5.171413193853436,
+    "all_candidate_windows_faster": false,
+    "full_qualification_pending": false
+  },
+  "full_two_endpoints_bitwise": true,
+  "ordinary_diagnostics_bitwise": true,
+  "local_eight_rank_coupled_rhs_exact_with_workspace_poison": true,
+  "qualification_build_passed": true,
+  "qualification_allocation_submitted": false,
+  "new_workspace_gpu_poison_fixture": "Prepared and compiled only; never run after candidate failed speed screen.",
+  "evidence": {
+    "local": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native/native-point-state-cache-v1",
+    "remote": "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/native-point-state-cache-abba-v1",
+    "raw_manifest_sha256": "d4257eef9ca7ee86a61b3ef7e2dec077e5936dd44888cdc5334035f1a3baefd3",
+    "gpu_build_sha256": "7bb82734320aeca65dd0e64ef161a7a0ab0ad12034acdfbe2468ebaff40a7d79",
+    "qualification_build_sha256": "53844e61ca555d2758fbc94d27ac35f45a0c61f6cce4f8113bb639cb88eecbae",
+    "patch_sha256": "b0b7671c2ecef6e8d0cfb8128c3fdac28b70cf8f9793fbc5127108c56db2623c"
+  }
+}

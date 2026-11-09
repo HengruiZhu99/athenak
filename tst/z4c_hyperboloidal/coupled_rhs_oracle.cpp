@@ -282,12 +282,11 @@ int main(int argc,char **argv) {
       p.InitRecv(&driver,1);p.CopyU(&driver,1);p.PrepareStage(&driver,1);
       p.SendBulk(&driver,1);p.SendSurface(&driver,1);
       p.CalcRHS(&driver,1,native::RHSSubset::Interior);
-      p.FillLocalHalos(&driver,1);p.CalcRHS(&driver,1,native::RHSSubset::LocalHalo);
+      p.FillLocalHalos(&driver,1);
       while (p.RecvSurface(&driver,1)!=TaskStatus::complete) {}
       p.SolveNormalCompatibility(&driver,1);p.CalcSurfaceRHS(&driver,1);
       while (p.RecvBulk(&driver,1)!=TaskStatus::complete) {}
-      p.FillRemoteHalos(&driver,1);p.CalcRHS(&driver,1,native::RHSSubset::RemoteHalo);
-      p.CalcRHS(&driver,1,native::RHSSubset::Surface);
+      p.FillRemoteHalos(&driver,1);p.CalcRHS(&driver,1,native::RHSSubset::Dependent);
       while (p.ClearSend(&driver,1)!=TaskStatus::complete) {}
       while (p.ClearRecv(&driver,1)!=TaskStatus::complete) {}
       if (model) {

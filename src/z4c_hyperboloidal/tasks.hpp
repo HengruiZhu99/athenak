@@ -40,20 +40,14 @@ void QueueZ4cHyperboloidalStageTasks(Queue *queue, Module *module) {
   queue->QueueTask([=](Driver *driver, int stage) {
     return module->CalcRHS(driver, stage, RHSSubset::Interior);
   }, Hyp_InteriorRHS, "Hyp_InteriorRHS", Task_Run, {Hyp_Prepare});
-  queue->QueueTask([=](Driver *driver, int stage) {
-    return module->CalcRHS(driver, stage, RHSSubset::LocalHalo);
-  }, Hyp_LocalRHS, "Hyp_LocalRHS", Task_Run, {Hyp_FillLocal});
 
   // An incomplete receive yields to every other ready task on the rank.
   // Surface sampling owns a separate direct-donor plan; it need not wait for
-  // interpolated volume ghosts, nor does ordinary volume work wait for scri.
+  // interpolated volume ghosts. Interior volume work remains independent.
   queue->QueueTask(&Module::RecvBulk, module, Hyp_RecvBulk, "Hyp_RecvBulk",
                    Task_Run, {Hyp_SendBulk});
   queue->QueueTask(&Module::FillRemoteHalos, module, Hyp_FillRemote, "Hyp_FillRemote",
                    Task_Run, {Hyp_RecvBulk, Hyp_FillLocal});
-  queue->QueueTask([=](Driver *driver, int stage) {
-    return module->CalcRHS(driver, stage, RHSSubset::RemoteHalo);
-  }, Hyp_RemoteRHS, "Hyp_RemoteRHS", Task_Run, {Hyp_FillRemote});
   queue->QueueTask(&Module::RecvSurface, module, Hyp_RecvSurface, "Hyp_RecvSurface",
                    Task_Run, {Hyp_SendSurface});
   queue->QueueTask(&Module::SolveNormalCompatibility, module, Hyp_Normal, "Hyp_Normal",
@@ -61,15 +55,14 @@ void QueueZ4cHyperboloidalStageTasks(Queue *queue, Module *module) {
   queue->QueueTask(&Module::CalcSurfaceRHS, module, Hyp_SurfaceRHS, "Hyp_SurfaceRHS",
                    Task_Run, {Hyp_Normal});
   queue->QueueTask([=](Driver *driver, int stage) {
-    return module->CalcRHS(driver, stage, RHSSubset::Surface);
-  }, Hyp_OuterRHS, "Hyp_OuterRHS", Task_Run, {Hyp_FillRemote, Hyp_Normal});
+    return module->CalcRHS(driver, stage, RHSSubset::Dependent);
+  }, Hyp_OuterRHS, "Hyp_DependentRHS", Task_Run, {Hyp_FillRemote, Hyp_Normal});
 
   // All disjoint volume batches and the separately evolved surface must have
   // current-stage rates before advancing either state. Reproject after every
   // update, including stage four, so accepted state and diagnostics agree.
   queue->QueueTask(&Module::ExpRKUpdate, module, Hyp_ExplRK, "Hyp_ExplRK", Task_Run,
-                   {Hyp_InteriorRHS, Hyp_LocalRHS, Hyp_RemoteRHS,
-                    Hyp_OuterRHS, Hyp_SurfaceRHS});
+                   {Hyp_InteriorRHS, Hyp_OuterRHS, Hyp_SurfaceRHS});
   queue->QueueTask(&Module::ProjectSurface, module, Hyp_Project, "Hyp_Project",
                    Task_Run, {Hyp_ExplRK});
 
