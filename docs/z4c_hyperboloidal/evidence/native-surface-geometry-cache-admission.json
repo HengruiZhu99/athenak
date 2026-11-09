@@ -1,0 +1,505 @@
+{
+  "schema": "native-surface-geometry-cache-admission-v1",
+  "accepted": true,
+  "parity_achieved": false,
+  "control_commit": "2980cb8c6279ff2772faf84b2257372d30a8378d",
+  "scope": "Refresh real metric and Penrose geometry once per surface point per Solve; share across four compatibility cases and final surface RHS. Preserve directional-dual pole evaluation, gauge/shift-dependent arithmetic, elimination and launch policies.",
+  "storage": "Two plan-owned SpatialGeometry<Real> views: 135KiB per144-point face, 810KiB over864 surface points per plan family; diagnostic plans separate. Refresh each Solve and reallocate on Rebuild. No cross-stage or cross-regrid reuse.",
+  "timing": {
+    "passed": true,
+    "job": "9052647",
+    "files_rehashed": 65,
+    "cases": {
+      "timed-C0": {
+        "seconds_per_step": [
+          0.24289393955,
+          0.24297706754999998,
+          0.24300175705
+        ],
+        "state": {
+          "bitwise_equal": true,
+          "padded31_plus8_scalar_values": 24704784,
+          "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+          "excluded_unused_coarse_indices": [
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ],
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ]
+          ]
+        },
+        "diagnostics_bitwise": true
+      },
+      "timed-K0": {
+        "seconds_per_step": [
+          0.22729268995,
+          0.22724861715000003,
+          0.2273007093
+        ],
+        "state": {
+          "bitwise_equal": true,
+          "padded31_plus8_scalar_values": 24704784,
+          "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+          "excluded_unused_coarse_indices": [
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ],
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ]
+          ]
+        },
+        "diagnostics_bitwise": true
+      },
+      "timed-K1": {
+        "seconds_per_step": [
+          0.22716734865000002,
+          0.22717701985,
+          0.22716136145000002
+        ],
+        "state": {
+          "bitwise_equal": true,
+          "padded31_plus8_scalar_values": 24704784,
+          "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+          "excluded_unused_coarse_indices": [
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ],
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ]
+          ]
+        },
+        "diagnostics_bitwise": true
+      },
+      "timed-C1": {
+        "seconds_per_step": [
+          0.24301981420000002,
+          0.24301296104999998,
+          0.24295652310000002
+        ],
+        "state": {
+          "bitwise_equal": true,
+          "padded31_plus8_scalar_values": 24704784,
+          "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+          "excluded_unused_coarse_indices": [
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ],
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ]
+          ]
+        },
+        "diagnostics_bitwise": true
+      }
+    },
+    "control_median": 0.24298941229999999,
+    "candidate_median": 0.22721281850000002,
+    "time_reduction_percent": 6.492708324477048,
+    "all_candidate_windows_faster": true,
+    "full_qualification_pending": false
+  },
+  "qualification": {
+    "passed": true,
+    "job": "9052656",
+    "terminal": "F/0",
+    "files_rehashed": 958,
+    "cases": {
+      "observer70": {
+        "passed": true,
+        "bitwise_scientific_files": 4,
+        "checkpoints": {
+          "rst/native_n12_5M.00008.rst": {
+            "bitwise_equal": true,
+            "padded31_plus8_scalar_values": 24704784,
+            "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+            "excluded_unused_coarse_indices": [
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ],
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ]
+            ]
+          }
+        },
+        "operational_sha256": "090394a78c3590e0d33fafde95e0f106568648e3c4dbd73fdf178c78412e47d2"
+      },
+      "poison8": {
+        "passed": true,
+        "bitwise_scientific_files": 624,
+        "checkpoints": {},
+        "operational_sha256": "a68ad959f0eb673d2b2076eafc7b930a66ef05f2b67a9d581c0a759dbcf8d99e"
+      },
+      "amr4": {
+        "passed": true,
+        "bitwise_scientific_files": 240,
+        "checkpoints": {},
+        "operational_sha256": "206120e4b69359d0c209393650022ec8919b8b542a0e66fbec07f0270e0411e6"
+      },
+      "prefix2": {
+        "passed": true,
+        "bitwise_scientific_files": 4,
+        "checkpoints": {
+          "rst/native_n12_5M.00000.rst": {
+            "bitwise_equal": true,
+            "padded31_plus8_scalar_values": 24704784,
+            "payload_sha256": "64f12f4d00d7615e982fb50cfc082df8140854a8194970e3062db7bf0c79f651",
+            "excluded_unused_coarse_indices": [
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ],
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ]
+            ]
+          },
+          "rst/native_n12_5M.00001.rst": {
+            "bitwise_equal": true,
+            "padded31_plus8_scalar_values": 24704784,
+            "payload_sha256": "b70caebc12756a27cb5715438f7642c0340c2e389334deada311f9631fd1a2a4",
+            "excluded_unused_coarse_indices": [
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ],
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ]
+            ]
+          }
+        },
+        "operational_sha256": "d332dc44440234f186f3b49351b5014d01eff3da27f30735d4296c08a701c7dc"
+      },
+      "resume8": {
+        "passed": true,
+        "bitwise_scientific_files": 4,
+        "checkpoints": {
+          "rst/native_n12_5M.00002.rst": {
+            "bitwise_equal": true,
+            "padded31_plus8_scalar_values": 24704784,
+            "payload_sha256": "e303efff82e13776c01c0fd37c603b0cfa6d864586a8d919a38443bd1e65c9a1",
+            "excluded_unused_coarse_indices": [
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ],
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ]
+            ]
+          }
+        },
+        "operational_sha256": "a174a8acc0cef6d28b0589c5c03bd561d4b072ec5104459ce02d6ed5cf0c140c"
+      },
+      "cache-smr": {
+        "passed": true,
+        "bitwise_scientific_files": 0,
+        "checkpoints": {},
+        "operational_sha256": "fcdbf22fd125b66761333209aeca59b522bd2880a39a860e687f2efbc68d2c93"
+      }
+    },
+    "restart_reference_review_sha256": "f1092d15b50a765e54dca7b4f86325fac2690451941eb33a53d73a865ce0c412",
+    "restart_scope": "New prefix/resume states, parameters, initialized metadata, diagnostics and joined stages are bitwise equal to the admitted same-phase radial reference. Its complete-state/continuous8 equality and unchanged diagnostic phase gates therefore carry over exactly.",
+    "restart_reference_gates": {
+      "prefix_cycles": [
+        0,
+        2
+      ],
+      "resume_cycle": 8,
+      "joined_stage_rows": 32,
+      "complete_state_parameters_initialized_metadata_and_three_diagnostics_bitwise_same_phase_WG128": true,
+      "complete_payload_and_joined_stages_bitwise_continuous8": true,
+      "unchanged_twelve_diagnostic_gates_passed": true,
+      "max_diagnostic_absolute_difference": 6.13389339321202e-11,
+      "max_fraction_of_adopted_gate": 0.00030669465019872585,
+      "extra_prefix_final_FastFlow_seed_and_output_counter_differences_exactly_match_admitted_reference": true,
+      "max_compatibility": 9.778256860928204e-16
+    },
+    "no_tolerances_changed": true
+  },
+  "production_untouched": true,
+  "nodes": 2,
+  "ranks": 24,
+  "source_files": {
+    "src/z4c_hyperboloidal/conformal_rhs.hpp": "ccb5e7be6bbd062757be9028d0fcb8ebfbf9a77e7070c2c363c163b71527cffa",
+    "src/z4c_hyperboloidal/hyperbolic_shift.hpp": "1e4b450798dfa549423ca44d1eaffd8d5783c54680c7213e124f2ee30ae8d06a",
+    "src/z4c_hyperboloidal/point_rhs.hpp": "66b6057aa0a593757a156d6593a65ce475d8c7779ee1754ba3c11504c52edbf9",
+    "src/z4c_hyperboloidal/spherical_policy.hpp": "75dedbdc3a27e792222d3793c1ace9e85f379b64cea6c38f8072ad51ad27694a",
+    "src/z4c_hyperboloidal/surface_exchange.cpp": "610033fba88fbc2e0907c108166abd268c22360b9eb98e995b22d0470e3be334",
+    "src/z4c_hyperboloidal/surface_exchange.hpp": "f7d0362408dbe2ac4c58cda56427484dc6ee16f416bfd50ebfd3b45c01eed613",
+    "src/z4c_hyperboloidal/tensor_scri.hpp": "c46d5540495447759be3cd31f309cd13bf49a8c0a20fca6ad8126a5ad1b45521",
+    "tst/z4c_hyperboloidal/surface_oracle.cpp": "b6a707f51c95774bfeb54f2e4b37a7b763b2f9d7517344e8ed3743f7cee324d5"
+  },
+  "source_binding": {
+    "passed": true,
+    "solver_sources": {
+      "src/z4c_hyperboloidal/conformal_rhs.hpp": "ccb5e7be6bbd062757be9028d0fcb8ebfbf9a77e7070c2c363c163b71527cffa",
+      "src/z4c_hyperboloidal/hyperbolic_shift.hpp": "1e4b450798dfa549423ca44d1eaffd8d5783c54680c7213e124f2ee30ae8d06a",
+      "src/z4c_hyperboloidal/point_rhs.hpp": "66b6057aa0a593757a156d6593a65ce475d8c7779ee1754ba3c11504c52edbf9",
+      "src/z4c_hyperboloidal/spherical_policy.hpp": "75dedbdc3a27e792222d3793c1ace9e85f379b64cea6c38f8072ad51ad27694a",
+      "src/z4c_hyperboloidal/surface_exchange.cpp": "610033fba88fbc2e0907c108166abd268c22360b9eb98e995b22d0470e3be334",
+      "src/z4c_hyperboloidal/surface_exchange.hpp": "f7d0362408dbe2ac4c58cda56427484dc6ee16f416bfd50ebfd3b45c01eed613",
+      "src/z4c_hyperboloidal/tensor_scri.hpp": "c46d5540495447759be3cd31f309cd13bf49a8c0a20fca6ad8126a5ad1b45521"
+    },
+    "normal_dependency_closure": [
+      "src/driver/driver.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal.cpp",
+      "src/z4c_hyperboloidal/diagnostics.cpp",
+      "src/z4c_hyperboloidal/horizon_sampling.cpp",
+      "src/z4c_hyperboloidal/dissipation_plan.cpp",
+      "src/z4c_hyperboloidal/surface_exchange.cpp",
+      "src/z4c_hyperboloidal/restart.cpp",
+      "src/z4c_hyperboloidal/remesh.cpp",
+      "src/z4c_hyperboloidal/surface_remesh.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_tasks.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_lifecycle.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_update.cpp",
+      "src/mesh/mesh.cpp",
+      "src/mesh/meshblock_pack.cpp",
+      "src/mesh/mesh_refinement.cpp",
+      "src/mesh/refinement_criteria.cpp",
+      "src/outputs/history.cpp",
+      "src/pgen/z4c/hyperboloidal_puncture.cpp",
+      "src/tasklist/numerical_relativity.cpp"
+    ],
+    "coherent_dependency_closure": [
+      "src/driver/driver.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal.cpp",
+      "src/z4c_hyperboloidal/diagnostics.cpp",
+      "src/z4c_hyperboloidal/horizon_sampling.cpp",
+      "src/z4c_hyperboloidal/dissipation_plan.cpp",
+      "src/z4c_hyperboloidal/surface_exchange.cpp",
+      "src/z4c_hyperboloidal/restart.cpp",
+      "src/z4c_hyperboloidal/remesh.cpp",
+      "src/z4c_hyperboloidal/surface_remesh.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_tasks.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_lifecycle.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_update.cpp",
+      "src/mesh/mesh.cpp",
+      "src/mesh/meshblock_pack.cpp",
+      "src/mesh/mesh_refinement.cpp",
+      "src/mesh/refinement_criteria.cpp",
+      "src/outputs/history.cpp",
+      "src/pgen/z4c/hyperboloidal_puncture.cpp",
+      "src/tasklist/numerical_relativity.cpp"
+    ],
+    "timing_driver_source_unchanged": true,
+    "local_oracle_source_sha256": "b6a707f51c95774bfeb54f2e4b37a7b763b2f9d7517344e8ed3743f7cee324d5"
+  },
+  "local_oracle": {
+    "passed": true,
+    "local_mpi_ranks": 8,
+    "scenarios": 2,
+    "gate": "abs(delta)<=1e-12+5e-10*abs(reference)",
+    "metrics": {
+      "projection": {
+        "comparisons": 53568,
+        "max_scaled_error": 0.0,
+        "max_absolute_error": 0.0,
+        "failed_values": 0
+      },
+      "surface_jets": {
+        "comparisons": 696384,
+        "max_scaled_error": 0.0,
+        "max_absolute_error": 0.0,
+        "failed_values": 0
+      },
+      "radial_jets": {
+        "comparisons": 2089152,
+        "max_scaled_error": 0.0,
+        "max_absolute_error": 0.0,
+        "failed_values": 0
+      },
+      "normal_correction": {
+        "comparisons": 5184,
+        "max_scaled_error": 0.0,
+        "max_absolute_error": 0.0,
+        "failed_values": 0
+      },
+      "surface_rhs": {
+        "comparisons": 53568,
+        "max_scaled_error": 0.0,
+        "max_absolute_error": 0.0,
+        "failed_values": 0
+      }
+    },
+    "native_build": "/Users/hz0693/.codex/worktrees/hyperboloidal-cleaned-up/hyperboloidal/build-native",
+    "legacy_readonly_source": "/Users/hz0693/.codex/worktrees/scri-ko01/hyperboloidal",
+    "normal_compatibility": 9.636456671686944e-16,
+    "zero_face_ranks": 3,
+    "endpoint_cache": {
+      "comparisons": 2249856,
+      "poison_refresh": true,
+      "default_direct": true,
+      "bitwise": true
+    },
+    "cache_layout": {
+      "rows": 2592,
+      "fields": 26,
+      "jet_bytes": 104,
+      "bytes": 7008768
+    }
+  },
+  "local_geometry_poison": "Both cache views filled with valid=true/NaN in every numeric component before each of two scenario solves; complete surface RHS and corrections exact to independent legacy oracle on8 CPU ranks including3 zero-face ranks.",
+  "local_history_readonly": true,
+  "evidence": {
+    "build-native/native-surface-geometry-cache-v1/gpu-build-provenance.json": "14e685416c9bdea52d0259b026babe2db9644f7888fde8e2acef711eb1e4d7e6",
+    "build-native/native-surface-geometry-cache-v1/qualification-build-provenance.json": "2582bef788b11f45a9d0e2c52f9106d904aebb9d613b495ead661edee3504db0",
+    "build-native/native-surface-geometry-cache-v1/qualification-commands-executed.json": "9b836e854e1f0698f565c63c80d115b217e6d2590853b1d3b92bf70e22f3e2cf",
+    "build-native/native-surface-geometry-cache-v1/build-binding.json": "ec9ef539bab7e6d1b1b74b65e96ceb338d98d23d3e8bd0ae14a341f4fb731c83",
+    "build-native/native-surface-geometry-cache-v1/source-binding-review.json": "82aaa8aaceee5313cca74b71d54c346823476d7556bc9d8f987aad0d5118cb6f",
+    "build-native/native-surface-geometry-cache-v1/review-abba.py": "e6c8a85dce4c8da1da7352d8007d64f17b8476369ed185b975c1836c24fb03c7",
+    "build-native/native-surface-geometry-cache-v1/review-qualification.py": "23db84d5091974e90ae2242d0f56b709e213521f506947c2ec93ab0b2968fdba",
+    "build-native/native-surface-geometry-cache-v1/build.py": "7591d4b4d659b7de4fee8dd265331340d4817400e9b85e7f5b8fdc94280eae9a",
+    "build-native/native-surface-geometry-cache-v1/qualify-build.py": "bab9a4e97916693fd746629eda9762ad212af20e0cebd1744d726a808d39a494",
+    "build-native/native-surface-geometry-cache-v1/candidate.patch": "c29b21897b140ea1256c0a344cbc95802c89b59a56cf82d73a23efdb9ed2e8bf",
+    "build-native/native-surface-geometry-cache-v1/surface-oracle-poison/results.json": "1202dc886a36122c3c2f9be0f6afd098325ef3bab0c817fb80f00f47869068c8",
+    "build-native/native-surface-geometry-cache-v1/history/results.json": "f2c3097d5875e9ae235c672d37bc39041682e4993d86f361d5eb9012826de7e0"
+  },
+  "raw_remote_cases": [
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/native-surface-geometry-cache-abba-v2",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/native-surface-geometry-cache-qualification-v1"
+  ],
+  "raw_manifests": {
+    "abba": "4c06002fc90034b0d129383a5c161f77f1cb148abbbfcad77a84317edfee76eb",
+    "qualification": "5169d874f9042775e8f2d3fdee3f66c21fe6d04af59b3c8266886a49b64129ea"
+  },
+  "failed_preparation": "9052642 F/1 before solver execution: omitted frozen independent-review.json. Failed records retained; separate launch-retry preflighted and completed9052647 F/0.",
+  "collection_note": "ABBA streaming overlapped creation of terminal/manifest metadata. Those files were fetched after completion and all65 recorded file hashes verified. Qualification collection began after its958-file manifest was complete.",
+  "limitations": [
+    "No current-profile critical-rank or occupancy claim.",
+    "Legacy ~0.1364s comparison remains from earlier allocation; parity not established.",
+    "No eight-node/scaling or changed weight policy claim."
+  ]
+}

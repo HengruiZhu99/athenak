@@ -187,6 +187,21 @@ int main(int argc,char **argv) {
         // Diagnostic-only normal solves must preserve the module RHS. Final
         // evaluation must subsequently overwrite every poisoned output field.
         Kokkos::deep_copy(p.s_rhs,std::numeric_limits<Real>::quiet_NaN());
+        native::SpatialGeometry<Real> poison{};
+        poison.valid=true;
+        poison.determinant=poison.scalar=std::numeric_limits<Real>::quiet_NaN();
+        for (int a=0;a<3;++a) {
+          poison.contracted[a]=poison.scalar;
+          for (int b=0;b<3;++b) {
+            poison.inverse[a][b]=poison.ricci[a][b]=poison.dcontracted[a][b]=poison.scalar;
+            for (int c=0;c<3;++c)poison.connection[a][b][c]=poison.scalar;
+          }
+        }
+        Require(surface.MetricGeometry().extent(0)==p.nsurface_points &&
+                surface.PenroseGeometry().extent(0)==p.nsurface_points,
+                "surface geometry cache allocation differs");
+        Kokkos::deep_copy(surface.MetricGeometry(),poison);
+        Kokkos::deep_copy(surface.PenroseGeometry(),poison);
         surface.Solve();
         const auto untouched=Kokkos::create_mirror_view_and_copy(HostMemSpace(),p.s_rhs);
         for (std::size_t i=0;i<untouched.size();++i)

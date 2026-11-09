@@ -48,13 +48,15 @@ struct SphericalPolicy {
     return TryExpandCartesianChart(j);
   }
   struct BoundaryResult {std::array<double,31> rate{};std::array<double,3> defect{};double clock=0;bool valid=true;};
-  KOKKOS_INLINE_FUNCTION static BoundaryResult Boundary(const mapped::Point&map,Real spacing,const CartesianChartJets&j,const HyperbolicShiftParameters<Real>&parameters,const StationaryGaugeSource<Real>&boundary_source,Real penalty){
+  KOKKOS_INLINE_FUNCTION static BoundaryResult Boundary(const mapped::Point&map,Real spacing,const CartesianChartJets&j,const HyperbolicShiftParameters<Real>&parameters,const StationaryGaugeSource<Real>&boundary_source,Real penalty,
+      const SpatialGeometry<Real>*metric_geometry=nullptr,
+      const SpatialGeometry<Real>*penrose_geometry=nullptr){
     const auto*x=map.x;const auto u=Physical(x,j);
     auto o=parameters.profile.At(x);o.omega=0;SetStationaryOmegaNormal(u.alpha.value,u.beta.value,u.alpha.d,u.beta.d,o);
-    auto parts=ConformalRHS(u,o,parameters.kappa1,parameters.kappa2);
-    if(!HyperbolicDamping(x,u,o,parts,parameters)){BoundaryResult bad;bad.valid=false;return bad;};
+    auto parts=ConformalRHS(u,o,parameters.kappa1,parameters.kappa2,metric_geometry,penrose_geometry);
+    if(!HyperbolicDamping(x,u,o,parts,parameters,metric_geometry)){BoundaryResult bad;bad.valid=false;return bad;};
     const auto pole=TensorPoleNormalJet(u,o,x,x,parameters.kappa1,parameters.kappa2,1.,parameters.outer_lapse_damping,true,true);
-    auto rate=TensorScriLimit(parts.regular,pole,-1.);const auto trace=ScriRegularityTraces(u,o);const auto g=Geometry(u.metric);
+    auto rate=TensorScriLimit(parts.regular,pole,-1.);const auto trace=ScriRegularityTraces(u,o,metric_geometry,penrose_geometry);const auto g=metric_geometry ? *metric_geometry : Geometry(u.metric);
     double Q=0,invn[3]{};for(int a=0;a<3;++a)for(int b=0;b<3;++b){Q+=g.inverse[a][b]*x[a]*x[b];invn[a]+=g.inverse[a][b]*x[b];}
     const double fac=penalty/spacing;
     rate.chi+=fac*(4*parts.pole.chi-8*(u.chi.value-1/Q));

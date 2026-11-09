@@ -141,14 +141,15 @@ EvolvedConstraintResult<T> EvolvedConstraints(const Z4cJet<T> &u, const OmegaJet
 template <typename T>
 KOKKOS_INLINE_FUNCTION
 Z4cRHSParts<T> ConformalRHS(const Z4cJet<T> &u, const OmegaJet<T> &o,
-                          T kappa1, T kappa2) {
+                          T kappa1, T kappa2,
+                          const SpatialGeometry<T> *metric_geometry=nullptr,
+                          const SpatialGeometry<T> *penrose_geometry=nullptr) {
   Z4cRHSParts<T> out{};
   out.valid = u.chi.value > 0 && u.alpha.value > 0
       && Kokkos::isfinite(u.chi.value) && Kokkos::isfinite(u.alpha.value);
   if (!out.valid) return out;
-  const auto gt = Geometry(u.metric);
-  const auto b = PenroseMetric(u.metric, u.chi);
-  const auto gb = Geometry(b);
+  const auto gt = metric_geometry ? *metric_geometry : Geometry(u.metric);
+  const auto gb = penrose_geometry ? *penrose_geometry : Geometry(PenroseMetric(u.metric, u.chi));
   out.valid = gt.valid && gb.valid;
   if (!out.valid) return out;
   const T alpha = u.alpha.value, chi = u.chi.value, omega = o.omega;

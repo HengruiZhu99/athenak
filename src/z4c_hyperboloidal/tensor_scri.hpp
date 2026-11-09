@@ -14,14 +14,16 @@ namespace z4c_hyperboloidal {
 // The general expression retains all metric connection and angular derivatives.
 template<typename T>
 KOKKOS_INLINE_FUNCTION
-Z4cRHS<T> ScriRegularityTraces(const Z4cJet<T>&u,const OmegaJet<T>&o) {
+Z4cRHS<T> ScriRegularityTraces(const Z4cJet<T>&u,const OmegaJet<T>&o,
+    const SpatialGeometry<T> *metric_geometry=nullptr,
+    const SpatialGeometry<T> *penrose_geometry=nullptr) {
   Z4cRHS<T> result{};
-  const auto geometry=Geometry(u.metric);
+  const auto geometry=metric_geometry ? *metric_geometry : Geometry(u.metric);
   ScalarJet<T> omega{};omega.value=o.omega;
   for(int i=0;i<3;++i){omega.d[i]=o.gradient[i];
     for(int j=0;j<3;++j)omega.dd[i][j]=o.hessian[i][j];}
   // Use the same Penrose connection as this branch's native ConformalRHS.
-  const auto penrose=Geometry(PenroseMetric(u.metric,u.chi));
+  const auto penrose=penrose_geometry ? *penrose_geometry : Geometry(PenroseMetric(u.metric,u.chi));
   T chi_hessian[3][3]{};
   for(int i=0;i<3;++i)for(int j=0;j<3;++j){
     chi_hessian[i][j]=omega.dd[i][j];

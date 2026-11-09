@@ -124,6 +124,9 @@ class SurfaceExchange {
   CachedKernel PrepareRadialJets();
 
   const DvceArray1D<CartesianChartJets> &SampledJets() const {return sampled_;}
+  // Refreshed by Solve from current samples, consumed through Evaluate.
+  const DvceArray1D<SpatialGeometry<Real>> &MetricGeometry() const {return metric_geometry_;}
+  const DvceArray1D<SpatialGeometry<Real>> &PenroseGeometry() const {return penrose_geometry_;}
   const DvceArray4D<Real> &Correction() const {return correction_;}
   const DvceArray1D<Row> &Rows() const {return rows_;}
   const DvceArray1D<Term> &Terms() const {return terms_;}
@@ -147,6 +150,7 @@ class SurfaceExchange {
   DvceArray1D<CartesianChartJets> sampled_;
   struct NormalCase {Real defect[3]; bool valid;};
   DvceArray2D<NormalCase> normal_cases_;
+  DvceArray1D<SpatialGeometry<Real>> metric_geometry_,penrose_geometry_;
   DvceArray4D<Real> correction_;
   // MappedExchange addresses native GID-local-block indices. This thin surface
   // staging view has one radial slot per local block, never a global state copy.

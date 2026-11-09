@@ -78,9 +78,11 @@ KOKKOS_INLINE_FUNCTION BulkPointResult EvaluateBulkPoint(const mapped::Point &ma
 using ScriPointResult=SphericalPolicy::BoundaryResult;
 KOKKOS_INLINE_FUNCTION ScriPointResult EvaluateScriPoint(const mapped::Point &map,
     Real spacing,const CartesianChartJets &j,const HyperbolicShiftParameters<Real> &p,
-    const StationaryGaugeSource<Real> &source,Real penalty) {
+    const StationaryGaugeSource<Real> &source,Real penalty,
+    const SpatialGeometry<Real> *metric_geometry=nullptr,
+    const SpatialGeometry<Real> *penrose_geometry=nullptr) {
   // Preserve the existing endpoint validity and pole derivative conventions.
-  return SphericalPolicy::Boundary(map,spacing,j,p,source,penalty);
+  return SphericalPolicy::Boundary(map,spacing,j,p,source,penalty,metric_geometry,penrose_geometry);
 }
 }  // namespace z4c_hyperboloidal
 #endif

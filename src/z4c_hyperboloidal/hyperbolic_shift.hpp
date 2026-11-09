@@ -352,7 +352,8 @@ HyperbolicGaugeParts<T> HyperbolicGauge(const T x[3],const Z4cJet<T>&u,
 template<class T> KOKKOS_INLINE_FUNCTION
 bool HyperbolicDamping(const T x[3], const Z4cJet<T> &input,
     const OmegaJet<T> &omega, Z4cRHSParts<T> &parts,
-    const HyperbolicShiftParameters<T> &p = {}) {
+    const HyperbolicShiftParameters<T> &p = {},
+    const SpatialGeometry<T> *metric_geometry=nullptr) {
   auto u=input;
   if(p.cartesian_chi_guard && p.profile.flat && omega.omega>0) {
     T radius2=0;for(int i=0;i<3;++i)radius2+=x[i]*x[i];
@@ -363,10 +364,10 @@ bool HyperbolicDamping(const T x[3], const Z4cJet<T> &input,
       // derivatives of the evolved field. This is numerical regularization,
       // not differentiation of max(chi, floor), and never a state reset.
       u.chi.value+=s*(guarded-u.chi.value);
-      parts=ConformalRHS(u,omega,p.kappa1,p.kappa2);
+      parts=ConformalRHS(u,omega,p.kappa1,p.kappa2,metric_geometry);
     }
   }
-  const auto g=Geometry(u.metric);
+  const auto g=metric_geometry ? *metric_geometry : Geometry(u.metric);
   if (!parts.valid || !g.valid) return false;
   T r2=0; for (int i=0;i<3;++i) r2+=x[i]*x[i];
   const auto c=ShiftCoefficients(sqrt(r2),u.alpha.value,u.chi.value,p);

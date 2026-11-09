@@ -208,6 +208,8 @@ void SurfaceExchange::Rebuild() {
   Upload(face_spacing_,spacing);Upload(face_gap_,gap);
   Kokkos::realloc(sampled_,p.nsurface_points);
   Kokkos::realloc(normal_cases_,p.nsurface_points,4);
+  Kokkos::realloc(metric_geometry_,p.nsurface_points);
+  Kokkos::realloc(penrose_geometry_,p.nsurface_points);
   Kokkos::realloc(correction_,p.nfaces,3,n,n);
   Kokkos::realloc(surface_staging_,p.nblocks,Fields::count,n,n,1);
   Kokkos::deep_copy(surface_staging_,std::numeric_limits<Real>::quiet_NaN());
@@ -326,6 +328,21 @@ TaskStatus SurfaceExchange::Solve() {
   // Separate scratch belongs to this plan, including diagnostic-only plans.
   // Every case overwrites its record before the elimination reads it.
   const auto cases=normal_cases_;
+  const auto metric_geometry=metric_geometry_,penrose_geometry=penrose_geometry_;
+  // Metric and chi jets are unchanged by all four normal cases and the final
+  // shift correction. Refresh their geometry from this stage's samples once.
+  Kokkos::parallel_for("hyperboloidal shared surface geometry",
+    Kokkos::RangePolicy<>(0,p.nsurface_points),KOKKOS_LAMBDA(int point) {
+      metric_geometry(point)=SpatialGeometry<Real>{};
+      penrose_geometry(point)=SpatialGeometry<Real>{};
+      auto jets=samples(point);const auto map=maps(point);
+      if (!SphericalPolicy::Restore(map.x,jets,reference(point)))return;
+      const auto u=SphericalPolicy::Physical(map.x,jets);
+      if (!(u.chi.value>0 && u.alpha.value>0 && Kokkos::isfinite(u.chi.value)
+            && Kokkos::isfinite(u.alpha.value)))return;
+      metric_geometry(point)=Geometry(u.metric);
+      penrose_geometry(point)=Geometry(PenroseMetric(u.metric,u.chi));
+    });
   const Real penalty=p.penalty;int invalid=0;
   auto case_policy=Kokkos::RangePolicy<>(0,4*p.nsurface_points);
 #ifdef KOKKOS_ENABLE_SYCL
@@ -341,7 +358,8 @@ TaskStatus SurfaceExchange::Solve() {
       if (which>0)
         for (int a=0;a<3;++a)jets[21+which].d[a]+=map.x[a];
       const auto result=EvaluateScriPoint(map,rows(point).spacing,jets,
-                                        parameters,source,penalty);
+                                        parameters,source,penalty,
+                                        &metric_geometry(point),&penrose_geometry(point));
       if (!result.valid)return;
       for (int a=0;a<3;++a)cases(point,which).defect[a]=result.defect[a];
       cases(point,which).valid=true;
@@ -387,6 +405,7 @@ TaskStatus SurfaceExchange::Evaluate() {
   const auto reference=p.surface_reference;const auto rows=rows_;
   const auto points=p.surface_points.d_view;const auto rhs=p.s_rhs;
   const auto parameters=p.parameters;const auto source=p.boundary_source;
+  const auto metric_geometry=metric_geometry_,penrose_geometry=penrose_geometry_;
   const Real penalty=p.penalty;const auto kernel=BindKernel();
   Real compatibility=0,clock=0;int invalid=0;
   Kokkos::parallel_reduce("hyperboloidal block-owned scri RHS",
@@ -396,7 +415,8 @@ TaskStatus SurfaceExchange::Evaluate() {
       if (!SphericalPolicy::Restore(map.x,jets,reference(point))) {++bad;return;}
       for (int a=0;a<3;++a)
         jets[22+a]=jets[22+a]+kernel.Correction(c.face,c.j,c.k,map,a);
-      const auto rate=EvaluateScriPoint(map,rows(point).spacing,jets,parameters,source,penalty);
+      const auto rate=EvaluateScriPoint(map,rows(point).spacing,jets,parameters,source,penalty,
+                                        &metric_geometry(point),&penrose_geometry(point));
       if (!rate.valid) {++bad;return;}
       clock_error=fmax(clock_error,fabs(rate.clock));
       for (int a=0;a<3;++a)defect=fmax(defect,fabs(rate.defect[a]));

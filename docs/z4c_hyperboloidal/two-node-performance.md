@@ -87,10 +87,37 @@ Existing restart diagnostic gates and unused-header exclusions remain unchanged.
 Local eight-rank surface/zero-face/NaN-output checks and real history-output
 isolation also pass. See `evidence/native-normal-cases-admission.json`.
 
-Next: separately test stage-local surface geometry reuse, then the remaining
-measured cache/reuse candidates. The user-authorized task continues; the former
+Stage-local surface geometry reuse has now also passed the separate experiment below.
+Next: test bulk metric-geometry reuse, then the remaining measured cache candidates. The user-authorized task continues; the former
 formal parity goal remains cleared. This result does not establish parity with
 the earlier~0.1364s legacy reference or scaling beyond two nodes.
+
+## Stage-local surface geometry cache
+
+The next isolated change stores the real metric and Penrose geometry once per
+surface point in each Solve. The four normal cases and final surface RHS consume
+that cache. Only shift derivatives change between those evaluations, so these
+metric/chi geometries remain identical. Directional-dual pole geometry and all
+shift-dependent expressions still execute unchanged. The cache is private to
+each plan, including diagnostics, refreshed every Solve and resized on Rebuild.
+It costs135KiB per144-point face perplan (810KiB across864 surface points).
+
+The repeated unprofiled two-node comparison9052647 gives **0.242989 -> 0.227213
+s/complete RK4 step**, a **6.49% reduction**. Every candidate window beats every
+control window. All four full31+8 endpoints and diagnostics are bitwise exact.
+Full qualification9052656 completed F/0: observer, poison, coherent AMR, restart
+and refined-cache cases pass. Independent review rehashed958 files and matched
+876 scientific files bitwise, plus complete checkpoint/parameter comparisons,
+with unchanged restart gates. The eight-rank local oracle also poisons every
+numeric component of both new geometry views before each scenario and remains
+exact, including three zero-face ranks. Real history-output isolation passes.
+See `evidence/native-surface-geometry-cache-admission.json`.
+
+Job9052642 failed before solver launch because its copied package omitted a
+frozen admission-review file. Its records remain intact; the corrected launch
+was preflighted before9052647. No failed-job speed result is used. Bulk geometry
+reuse is the next separate experiment; no parity or achieved-occupancy claim is
+made from this complete-step improvement.
 
 ## Boundary weight experiment
 
@@ -635,6 +662,8 @@ bounded two-node correctness checks when a proposed change requires them.
 | Field-parallel endpoint radial derivatives | Full timing endpoints exact; observer, poison, AMR, restart, refined private-cache stale/poison/Rebuild and profile equivalence pass | Control0.379937 s; candidate0.300340 s; all six candidate windows faster | Accepted,20.95% lower complete-step time; surface and geometry arithmetic unchanged |
 | Post-radial selected-rank profile | Normal/profiled/reference full31+8 and diagnostics exact | Rank23 main0.575609 s, normalSolve0.302462 s, surfaceRHS0.200214 s acrossfour steps | Surface organization remains costly; current user instead requests isolated weight2/3 comparison |
 | Boundary weights2/3/4 through native restart/load balance | All14 cases pass; full31+8 states bitwise,840 observer stages and existing constraint/horizon gates pass | Weight1/2/3/4 medians0.301176/0.299043/0.299823/0.298797 s | Qualified isolated configuration gains0.71/0.45/0.79%; no permanent weighting policy; original goal remains cleared |
+| Independent normal-compatibility cases | Complete endpoints/diagnostics exact; observer, poison, AMR, restart and refined-cache qualification pass | 0.299643 -> 0.241150 s/step | Accepted,19.52% lower complete-step time; private scratch, fixed256 group |
+| Shared stage-local surface metric/Penrose geometry | Full endpoints exact; geometry-cache poison oracle and complete GPU qualification pass | 0.242989 -> 0.227213 s/step | Accepted,6.49% lower time; ~135KiB per144-point plan |
 
 Completion requires the committed native implementation to match or beat the
 fastest accepted previous N12 reference median on the same two nodes, with repeat
