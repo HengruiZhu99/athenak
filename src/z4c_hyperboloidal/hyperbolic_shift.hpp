@@ -316,7 +316,8 @@ HyperbolicGaugeParts<T> OuterHyperbolicGauge(const T x[3],const Z4cJet<T>&u,
 // -alpha_phys beta.grad(Omega)+Omega*(nonadvective physical lapse RHS).
 template<class T> KOKKOS_INLINE_FUNCTION
 HyperbolicGaugeParts<T> HyperbolicGauge(const T x[3],const Z4cJet<T>&u,
-    const VectorJet<T>&B,const T D[3],const HyperbolicShiftParameters<T>&p={}) {
+    const VectorJet<T>&B,const T D[3],const HyperbolicShiftParameters<T>&p={},
+    const SpatialGeometry<T>*metric_geometry=nullptr) {
   if constexpr(!inner_telegrapher) return DonorHyperbolicGauge(x,u,B,D,p);
   T r2=0;for(int i=0;i<3;++i)r2+=x[i]*x[i];
   const T s=InnerTelegrapherWeight(sqrt(r2),p.inner_begin,p.inner_end);
@@ -327,7 +328,7 @@ HyperbolicGaugeParts<T> HyperbolicGauge(const T x[3],const Z4cJet<T>&u,
   else out.valid=u.alpha.value>0&&u.chi.value>0;
   const auto omega=p.profile.At(x);
   const T o=p.profile.flat ? omega.omega : (1-r2)/2,alpha=u.alpha.value/o;
-  const auto g=Geometry(u.metric);
+  const auto g=metric_geometry ? *metric_geometry : Geometry(u.metric);
   if (!g.valid || !(o>0)) {out.valid=false;return out;}
   const T chi=fmax(o*o*u.chi.value,p.inner_chi_guard);
   T lapse=-2*u.alpha.value*u.trace.value;

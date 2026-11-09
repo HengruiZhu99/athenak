@@ -30,13 +30,13 @@ KOKKOS_INLINE_FUNCTION BulkPointResult EvaluateBulkPoint(const mapped::Point &ma
   if (!g.valid) {out.status=PointStatus::invalid_geometry;return out;}
   auto omega=p.profile.At(x);
   SetStationaryOmegaNormal(u.alpha.value,u.beta.value,u.alpha.d,u.beta.d,omega);
-  auto parts=ConformalRHS(u,omega,p.kappa1,p.kappa2);
-  if (!HyperbolicDamping(x,u,omega,parts,p)) {out.status=PointStatus::invalid_geometry;return out;}
+  auto parts=ConformalRHS(u,omega,p.kappa1,p.kappa2,&g);
+  if (!HyperbolicDamping(x,u,omega,parts,p,&g)) {out.status=PointStatus::invalid_geometry;return out;}
   Z4cRHS<Real> geometric{};
   if (!AssembleInterior(parts,omega.omega,geometric)) {out.status=PointStatus::invalid_assembly;return out;}
   SphericalPolicy::StoreGeometry(geometric,out.rate);
   const auto B=SphericalPolicy::Vector(j,19),D=SphericalPolicy::Vector(j,25);
-  auto gauge=HyperbolicGauge(x,u,B,D.value,p);
+  auto gauge=HyperbolicGauge(x,u,B,D.value,p,&g);
   ApplyStationaryGaugeSource(x,u.alpha.value,source,gauge);
   if (!gauge.valid) {out.status=PointStatus::invalid_gauge;return out;}
   out.rate[18]=gauge.lapse_regular+gauge.lapse_pole/omega.omega;

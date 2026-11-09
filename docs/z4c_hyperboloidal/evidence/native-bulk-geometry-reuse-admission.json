@@ -1,0 +1,442 @@
+{
+  "schema": "native-bulk-geometry-reuse-admission-v1",
+  "accepted": true,
+  "parity_achieved": false,
+  "control_commit": "c7ffc79bc6bb6de37380f3df7ace642f2bb0a633",
+  "scope": "Pass the bulk point evaluator existing metric geometry to ConformalRHS, HyperbolicDamping and active inner HyperbolicGauge. Preserve metric validity checks, chi-guard regularization and recomputation of Penrose geometry for changed chi. No launch tuning or persistent bulk buffer.",
+  "timing": {
+    "passed": true,
+    "job": "9052673",
+    "files_rehashed": 65,
+    "cases": {
+      "timed-C0": {
+        "seconds_per_step": [
+          0.22685788420000003,
+          0.22680738804999998,
+          0.22685049414999997
+        ],
+        "state": {
+          "bitwise_equal": true,
+          "padded31_plus8_scalar_values": 24704784,
+          "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+          "excluded_unused_coarse_indices": [
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ],
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ]
+          ]
+        },
+        "diagnostics_bitwise": true
+      },
+      "timed-K0": {
+        "seconds_per_step": [
+          0.20890310090000003,
+          0.20891460865,
+          0.2089358739
+        ],
+        "state": {
+          "bitwise_equal": true,
+          "padded31_plus8_scalar_values": 24704784,
+          "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+          "excluded_unused_coarse_indices": [
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ],
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ]
+          ]
+        },
+        "diagnostics_bitwise": true
+      },
+      "timed-K1": {
+        "seconds_per_step": [
+          0.20884324665,
+          0.20889378934999997,
+          0.20891413124999997
+        ],
+        "state": {
+          "bitwise_equal": true,
+          "padded31_plus8_scalar_values": 24704784,
+          "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+          "excluded_unused_coarse_indices": [
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ],
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ]
+          ]
+        },
+        "diagnostics_bitwise": true
+      },
+      "timed-C1": {
+        "seconds_per_step": [
+          0.22689154404999998,
+          0.226810949,
+          0.22678883789999998
+        ],
+        "state": {
+          "bitwise_equal": true,
+          "padded31_plus8_scalar_values": 24704784,
+          "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+          "excluded_unused_coarse_indices": [
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ],
+            [
+              1768714349,
+              1646290021,
+              1752440953,
+              1763734377,
+              1953853550,
+              1782319662,
+              171860591,
+              1702060386,
+              1701667182
+            ]
+          ]
+        },
+        "diagnostics_bitwise": true
+      }
+    },
+    "control_median": 0.226830721575,
+    "candidate_median": 0.208908616075,
+    "time_reduction_percent": 7.90109266309158,
+    "all_candidate_windows_faster": true,
+    "full_qualification_pending": false
+  },
+  "qualification": {
+    "passed": true,
+    "job": "9052683",
+    "terminal": "F/0",
+    "files_rehashed": 958,
+    "cases": {
+      "observer70": {
+        "passed": true,
+        "bitwise_scientific_files": 4,
+        "checkpoints": {
+          "rst/native_n12_5M.00008.rst": {
+            "bitwise_equal": true,
+            "padded31_plus8_scalar_values": 24704784,
+            "payload_sha256": "fa76b178240a0c8c3fb41979168230bc5fd389e6e782df50fb631dae47d8201b",
+            "excluded_unused_coarse_indices": [
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ],
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ]
+            ]
+          }
+        },
+        "operational_sha256": "090394a78c3590e0d33fafde95e0f106568648e3c4dbd73fdf178c78412e47d2"
+      },
+      "poison8": {
+        "passed": true,
+        "bitwise_scientific_files": 624,
+        "checkpoints": {},
+        "operational_sha256": "f03983117e3788ef336c683b3ecd7447e3c439d117dfe46d0791c0bebd6031e0"
+      },
+      "amr4": {
+        "passed": true,
+        "bitwise_scientific_files": 240,
+        "checkpoints": {},
+        "operational_sha256": "206120e4b69359d0c209393650022ec8919b8b542a0e66fbec07f0270e0411e6"
+      },
+      "prefix2": {
+        "passed": true,
+        "bitwise_scientific_files": 4,
+        "checkpoints": {
+          "rst/native_n12_5M.00000.rst": {
+            "bitwise_equal": true,
+            "padded31_plus8_scalar_values": 24704784,
+            "payload_sha256": "64f12f4d00d7615e982fb50cfc082df8140854a8194970e3062db7bf0c79f651",
+            "excluded_unused_coarse_indices": [
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ],
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ]
+            ]
+          },
+          "rst/native_n12_5M.00001.rst": {
+            "bitwise_equal": true,
+            "padded31_plus8_scalar_values": 24704784,
+            "payload_sha256": "b70caebc12756a27cb5715438f7642c0340c2e389334deada311f9631fd1a2a4",
+            "excluded_unused_coarse_indices": [
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ],
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ]
+            ]
+          }
+        },
+        "operational_sha256": "d332dc44440234f186f3b49351b5014d01eff3da27f30735d4296c08a701c7dc"
+      },
+      "resume8": {
+        "passed": true,
+        "bitwise_scientific_files": 4,
+        "checkpoints": {
+          "rst/native_n12_5M.00002.rst": {
+            "bitwise_equal": true,
+            "padded31_plus8_scalar_values": 24704784,
+            "payload_sha256": "e303efff82e13776c01c0fd37c603b0cfa6d864586a8d919a38443bd1e65c9a1",
+            "excluded_unused_coarse_indices": [
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ],
+              [
+                1768714349,
+                1646290021,
+                1752440953,
+                1763734377,
+                1953853550,
+                1782319662,
+                171860591,
+                1702060386,
+                1701667182
+              ]
+            ]
+          }
+        },
+        "operational_sha256": "a174a8acc0cef6d28b0589c5c03bd561d4b072ec5104459ce02d6ed5cf0c140c"
+      },
+      "cache-smr": {
+        "passed": true,
+        "bitwise_scientific_files": 0,
+        "checkpoints": {},
+        "operational_sha256": "fcdbf22fd125b66761333209aeca59b522bd2880a39a860e687f2efbc68d2c93"
+      }
+    },
+    "restart_reference_review_sha256": "f1092d15b50a765e54dca7b4f86325fac2690451941eb33a53d73a865ce0c412",
+    "restart_scope": "New prefix/resume states, parameters, initialized metadata, diagnostics and joined stages are bitwise equal to the admitted same-phase radial reference. Its complete-state/continuous8 equality and unchanged diagnostic phase gates therefore carry over exactly.",
+    "restart_reference_gates": {
+      "prefix_cycles": [
+        0,
+        2
+      ],
+      "resume_cycle": 8,
+      "joined_stage_rows": 32,
+      "complete_state_parameters_initialized_metadata_and_three_diagnostics_bitwise_same_phase_WG128": true,
+      "complete_payload_and_joined_stages_bitwise_continuous8": true,
+      "unchanged_twelve_diagnostic_gates_passed": true,
+      "max_diagnostic_absolute_difference": 6.13389339321202e-11,
+      "max_fraction_of_adopted_gate": 0.00030669465019872585,
+      "extra_prefix_final_FastFlow_seed_and_output_counter_differences_exactly_match_admitted_reference": true,
+      "max_compatibility": 9.778256860928204e-16
+    },
+    "no_tolerances_changed": true
+  },
+  "production_untouched": true,
+  "nodes": 2,
+  "ranks": 24,
+  "source_files": {
+    "src/z4c_hyperboloidal/hyperbolic_shift.hpp": "0b7d21d00f3b8c565f3eac3c4169e46e90f5863a68ee9c55d90bbcb91a4d68cf",
+    "src/z4c_hyperboloidal/point_rhs.hpp": "e7b86404998fd664ce204bc2a57a6936d0ad7f0929e08da1e9d0981f9231baed"
+  },
+  "source_binding": {
+    "passed": true,
+    "solver_sources": {
+      "src/z4c_hyperboloidal/hyperbolic_shift.hpp": "0b7d21d00f3b8c565f3eac3c4169e46e90f5863a68ee9c55d90bbcb91a4d68cf",
+      "src/z4c_hyperboloidal/point_rhs.hpp": "e7b86404998fd664ce204bc2a57a6936d0ad7f0929e08da1e9d0981f9231baed"
+    },
+    "normal_dependency_closure": [
+      "src/driver/driver.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal.cpp",
+      "src/z4c_hyperboloidal/diagnostics.cpp",
+      "src/z4c_hyperboloidal/horizon_sampling.cpp",
+      "src/z4c_hyperboloidal/dissipation_plan.cpp",
+      "src/z4c_hyperboloidal/surface_exchange.cpp",
+      "src/z4c_hyperboloidal/restart.cpp",
+      "src/z4c_hyperboloidal/remesh.cpp",
+      "src/z4c_hyperboloidal/surface_remesh.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_tasks.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_lifecycle.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_update.cpp",
+      "src/mesh/mesh.cpp",
+      "src/mesh/meshblock_pack.cpp",
+      "src/mesh/mesh_refinement.cpp",
+      "src/mesh/refinement_criteria.cpp",
+      "src/outputs/history.cpp",
+      "src/pgen/z4c/hyperboloidal_puncture.cpp",
+      "src/tasklist/numerical_relativity.cpp"
+    ],
+    "coherent_dependency_closure": [
+      "src/driver/driver.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal.cpp",
+      "src/z4c_hyperboloidal/diagnostics.cpp",
+      "src/z4c_hyperboloidal/horizon_sampling.cpp",
+      "src/z4c_hyperboloidal/dissipation_plan.cpp",
+      "src/z4c_hyperboloidal/surface_exchange.cpp",
+      "src/z4c_hyperboloidal/restart.cpp",
+      "src/z4c_hyperboloidal/remesh.cpp",
+      "src/z4c_hyperboloidal/surface_remesh.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_tasks.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_lifecycle.cpp",
+      "src/z4c_hyperboloidal/z4c_hyperboloidal_update.cpp",
+      "src/mesh/mesh.cpp",
+      "src/mesh/meshblock_pack.cpp",
+      "src/mesh/mesh_refinement.cpp",
+      "src/mesh/refinement_criteria.cpp",
+      "src/outputs/history.cpp",
+      "src/pgen/z4c/hyperboloidal_puncture.cpp",
+      "src/tasklist/numerical_relativity.cpp"
+    ]
+  },
+  "local_coupled_rhs": {
+    "passed": true,
+    "ranks": 8,
+    "scenarios": 2,
+    "bulk_rhs_values": 14222304,
+    "surface_rhs_values": 53568,
+    "all_max_absolute_errors": 0,
+    "source_unchanged": true
+  },
+  "evidence": {
+    "build-native/native-bulk-geometry-reuse-v1/gpu-build-provenance.json": "32ac8120a69f959b6d0672f95de26fcd0bf53b1d04a720b8a6ab97e0da4eea75",
+    "build-native/native-bulk-geometry-reuse-v1/qualification-build-provenance.json": "295a013cda73107e72a474bc19275d0fabee476818cdb84ba04db82006710c0e",
+    "build-native/native-bulk-geometry-reuse-v1/qualification-commands-executed.json": "e5079a5e09f2a82cb6d10738e0a94f38cedf381973d51167a0975b5159beb13a",
+    "build-native/native-bulk-geometry-reuse-v1/build-binding.json": "a7cc6137bf7520077f64c220949712896ee037e6acb6397c456959fd398fcd1a",
+    "build-native/native-bulk-geometry-reuse-v1/source-binding-review.json": "d23fadc7d505723fe625b857e2d9d3d98e7dc8c5e97f8e6a752d27ee05a1a58b",
+    "build-native/native-bulk-geometry-reuse-v1/review-abba.py": "adcb5e1e1bbae38958fb8af1f2e451be2baa0e67303fdb1b3744289c22aab08f",
+    "build-native/native-bulk-geometry-reuse-v1/review-qualification.py": "153b5d80d740f5fa12eee1c8834cdf2659c5ec4e3084b4a2642ec95fd8b34ed3",
+    "build-native/native-bulk-geometry-reuse-v1/build.py": "6f8b42f5443ca6c3f4711f5f6892ec68563d988f1d61251a342dca99566f6004",
+    "build-native/native-bulk-geometry-reuse-v1/qualify-build.py": "67195e0369476147d8b7a77e68c784ecf11a8a52bda3c685d2e5f8343cb582ae",
+    "build-native/native-bulk-geometry-reuse-v1/candidate.patch": "5c198ec2d108e1217ca95bc3ff501699ea40d2bd0a741ff0997b428ce27b4a7a",
+    "build-native/native-bulk-geometry-reuse-v1/coupled-oracle/results.json": "3065175b29417c52cbefc5f632c081f4dda5f54e90694df569444a5cce91a817"
+  },
+  "raw_remote_cases": [
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/native-bulk-geometry-reuse-abba-v1",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/scri-native-20261108-side/runs/native-bulk-geometry-reuse-qualification-v1"
+  ],
+  "raw_manifests": {
+    "abba": "eb54785a5693f2d712dc5886c7d64927734e4087479f9fc5f4bbf8f6f1e8e6ce",
+    "qualification": "d4de409ffe3984d03e0a0476b84661a47875846e7f10c4c38284e1db977e5c7d"
+  },
+  "scheduler_note": "Attempt to shorten queued ABBA request30min->12min was rejected by PBS account_check hook. Original30min request ran unchanged; all workloads/timer settings preserved.",
+  "limitations": [
+    "No current-profile critical-rank or occupancy claim.",
+    "Legacy ~0.1364s is from an earlier allocation; no final matched parity acceptance.",
+    "No eight-node/scaling claim."
+  ]
+}
