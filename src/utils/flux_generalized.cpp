@@ -5,6 +5,11 @@
 #include <iomanip>
 #include <sstream>
 #include <iostream>
+#include <limits>
+#include "globals.hpp"
+#if MPI_PARALLEL_ENABLED
+#include <mpi.h>
+#endif
 
 #include "athena.hpp"
 #include "mesh/mesh.hpp"
@@ -20,6 +25,9 @@
 
 // Expanded accumulator for separated fluid/EM fluxes and all axes
 struct FluxAccumulator {
+  Real moving[19]={};
+  Real owned=0, admissible=0, covered_area=0, dx_sum=0;
+  Real bad[6]={};
   Real mdot = 0, edot_fluid = 0, edot_em = 0, phiB = 0, area = 0;
   // Linear momentum fluxes (fluid, EM)
   Real pdot_x_fluid = 0, pdot_y_fluid = 0, pdot_z_fluid = 0;
@@ -30,6 +38,9 @@ struct FluxAccumulator {
 
   KOKKOS_INLINE_FUNCTION
   FluxAccumulator& operator+=(const FluxAccumulator& src) {
+    for (int i=0;i<19;++i) moving[i]+=src.moving[i];
+    owned+=src.owned; admissible+=src.admissible; covered_area+=src.covered_area;
+    for (int i=0;i<6;++i) bad[i]+=src.bad[i];
     mdot        += src.mdot;
     edot_fluid  += src.edot_fluid;
     edot_em     += src.edot_em;
@@ -62,66 +73,22 @@ namespace Kokkos {
 //----------------------------------------------------------------------------------------
 // Main Function Definition (no EOS templates; gamma-law assumed)
 //----------------------------------------------------------------------------------------
-void TorusFluxes_General(HistoryData *pdata,
-                         MeshBlockPack *pmbp,
-                         const std::vector<SphericalSurfaceGrid*>& surfs) {
-  //--- 1. Validation and Setup ---
-  if (pmbp->padm == nullptr || pmbp->pmhd == nullptr || pmbp->pdyngr == nullptr) {
-    std::cerr << "### FATAL: TorusFluxes_General requires ADM, MHD, and DynGRMHD objects."
-              << std::endl;
-    std::exit(EXIT_FAILURE);
-  }
-
-  if (surfs.empty()) {
-    pdata->nhist = 0;
-    return;
-  }
-
-  const int nflux = 17; // mdot, edot_f, edot_em, px_f,py_f,pz_f, px_em,py_em,pz_em,
-                        // lxdot_f,lydot_f,lzdot_f, lxdot_em,lydot_em,lzdot_em, phiB, area
-  pdata->nhist = static_cast<int>(surfs.size()) * nflux;
-
-  if (pdata->nhist > NHISTORY_VARIABLES) {
-    std::cerr << "### FATAL: pdata->nhist exceeds NHISTORY_VARIABLES" << std::endl;
-    std::exit(EXIT_FAILURE);
-  }
-
-  // Set history output labels
-  for (int g = 0; g < static_cast<int>(surfs.size()); ++g) {
-    std::string s_name = surfs[g]->Label();
-    int i = nflux*g;
-    pdata->label[i++] = "mdot_"     + s_name;
-    pdata->label[i++] = "edot_f_"   + s_name;
-    pdata->label[i++] = "edot_em_"  + s_name;
-    pdata->label[i++] = "pxdot_f_"  + s_name;
-    pdata->label[i++] = "pydot_f_"  + s_name;
-    pdata->label[i++] = "pzdot_f_"  + s_name;
-    pdata->label[i++] = "pxdot_em_" + s_name;
-    pdata->label[i++] = "pydot_em_" + s_name;
-    pdata->label[i++] = "pzdot_em_" + s_name;
-    pdata->label[i++] = "lxdot_f_"  + s_name;
-    pdata->label[i++] = "lydot_f_"  + s_name;
-    pdata->label[i++] = "lzdot_f_"  + s_name;
-    pdata->label[i++] = "lxdot_em_" + s_name;
-    pdata->label[i++] = "lydot_em_" + s_name;
-    pdata->label[i++] = "lzdot_em_" + s_name;
-    pdata->label[i++] = "phiB_"     + s_name;
-    pdata->label[i++] = "area_"     + s_name;
-  }
-
+SurfaceFluxResult IntegrateSurface(MeshBlockPack *pmbp, SphericalSurfaceGrid *current_surf) {
+  if (!pmbp->padm || !pmbp->pmhd || !pmbp->pdyngr ||
+      pmbp->pdyngr->eos_policy != DynGRMHD_EOS::eos_ideal)
+    Kokkos::abort("Surface diagnostics require ideal gamma-law Valencia MHD and ADM");
+  if (!pmbp->pmesh->three_d)
+    Kokkos::abort("Closed surface integrals require three spatial dimensions");
+  SurfaceFluxResult result;
   // Gamma-law EOS parameter; must match valencia_stress_energy.hpp usage
   const Real gamma_gas = pmbp->pmhd->peos->eos_data.gamma;
 
   DualArray2D<Real> dSigma;
 
-  //--- 2. Loop over surfaces ---
-  for (int g = 0; g < static_cast<int>(surfs.size()); ++g) {
-    auto current_surf = surfs[g];
-
-    if (pmbp->pmesh->adaptive) {
-      current_surf->RebuildAll();
-    }
-
+    // Ownership is rebuilt even for stationary surfaces: AMR, redistribution, restart,
+    // and zoom restoration can change interpolation support without changing the shape.
+    current_surf->RebuildAll();
+    current_surf->QualifyStencils();
     const int np = current_surf->Npts();
 
     // Interpolate primitives and densitized B to the surface
@@ -150,6 +117,9 @@ void TorusFluxes_General(HistoryData *pdata,
     // Cartesian coordinates and interpolation indices
     auto coords     = current_surf->Coords().d_view;
     auto interp_ind = current_surf->InterpIndices().d_view;
+    auto owners = current_surf->Owners().d_view;
+    auto reasons = current_surf->StencilReasons().d_view;
+    auto motion = current_surf->Motion().d_view;
 
     // Surface metric and dSigma_i
     current_surf->InterpolateMetric();
@@ -163,7 +133,10 @@ void TorusFluxes_General(HistoryData *pdata,
     Kokkos::parallel_reduce("flux_integral_from_prims",
       Kokkos::RangePolicy<DevExeSpace>(0, np),
       KOKKOS_LAMBDA(const int p, FluxAccumulator& update) {
-        if (interp_ind(p,0) == -1) return;
+        if (interp_ind(p,0) == -1 || owners(p)!=1) return;
+        update.owned+=1.0;
+        int reason=reasons(p);
+        for (int b=0;b<6;++b) if (reason & (1<<b)) update.bad[b]+=1.0;
 
         // --- A. Local primitives and geometry ---
         const Real rho  = w_vals_d(p, IDN);
@@ -194,7 +167,20 @@ void TorusFluxes_General(HistoryData *pdata,
         // det(gamma)
         Real detg = adm::SpatialDet(g_dd_1d[0], g_dd_1d[1], g_dd_1d[2],
                                     g_dd_1d[3], g_dd_1d[4], g_dd_1d[5]);
-        if (detg <= 0.0) return;
+        // Sylvester criterion, not determinant alone. No silent repairs.
+        bool metric_ok = Kokkos::isfinite(alp) && alp>0.0;
+        for (int c=0;c<6;++c) metric_ok &= Kokkos::isfinite(g_dd_1d[c]);
+        metric_ok &= g_dd_1d[0]>0.0 &&
+                     g_dd_1d[0]*g_dd_1d[3]-SQR(g_dd_1d[1])>0.0 && detg>0.0;
+        if (!metric_ok) { update.bad[1]+=1.0; return; }
+        bool fluid_ok=Kokkos::isfinite(rho) && rho>0.0 && Kokkos::isfinite(pgas) && pgas>=0.0;
+        for (int c=0;c<3;++c) {
+          fluid_ok &= Kokkos::isfinite(prim_Wv_u[c]) && Kokkos::isfinite(beta_u[c]) &&
+                      Kokkos::isfinite(B_vals_d(p,c)) && Kokkos::isfinite(motion(p,c));
+        }
+        if (!fluid_ok) { update.bad[2]+=1.0; return; }
+        if (reason) return;
+        update.admissible+=1.0;
 
         // dS_i (covariant surface element)
         const Real dS_d[3] = {
@@ -363,6 +349,43 @@ void TorusFluxes_General(HistoryData *pdata,
           update.ldot_z_em    += (x * A_em_d[1] - y * A_em_d[0]);
         }
 
+        // Every current below is UNDENSITIZED; dS_d already includes sqrt(gamma).
+        Real wn=0.0;
+        for (int i=0;i<3;++i) wn+=motion(p,i)*dS_d[i];
+        Real dmass=rho*W*wn;
+        for (int i=0;i<3;++i) dmass-=mass_flux_vec[i]*dS_d[i];
+        update.moving[0]+=dmass;
+        update.moving[1]+=fmax(dmass,0.0);
+        update.moving[2]+=fmax(-dmass,0.0);
+        for (int part=0;part<2;++part) {
+          Real E=part==0 ? E_fluid : E_em;
+          Real S[3], P[3]={}, FE[3], FS[3][3];
+          for (int j=0;j<3;++j) {
+            S[j]=part==0 ? S_fluid_d[j] : S_em_d[j];
+            FE[j]=part==0 ? FE_fluid[j] : FE_em[j];
+            for (int i=0;i<3;++i) FS[i][j]=part==0 ? FS_fluid[i][j] : FS_em[i][j];
+          }
+          Real ein=E*wn, et=alp*E, etin;
+          for (int j=0;j<3;++j) {
+            ein-=FE[j]*dS_d[j]; et-=beta_u[j]*S[j];
+            P[j]=S[j]*wn;
+            for (int i=0;i<3;++i) P[j]-=FS[i][j]*dS_d[i];
+            update.moving[5+3*part+j]+=P[j];
+          }
+          update.moving[3+part]+=ein;
+          Real x=coords(p,0),y=coords(p,1),z=coords(p,2);
+          update.moving[11+3*part]+=y*P[2]-z*P[1];
+          update.moving[12+3*part]+=z*P[0]-x*P[2];
+          update.moving[13+3*part]+=x*P[1]-y*P[0];
+          etin=et*wn;
+          for (int i=0;i<3;++i) {
+            Real ft=alp*FE[i];
+            for (int j=0;j<3;++j) ft-=beta_u[j]*FS[i][j];
+            etin-=ft*dS_d[i];
+          }
+          update.moving[17+part]+=etin;
+        }
+
         // --- H. Phi_B (magnetic flux) ---
         {
           // The EHT definition is Flux = 0.5 * Integral |B . dA|
@@ -384,32 +407,73 @@ void TorusFluxes_General(HistoryData *pdata,
         }
         const Real dS_sq = dS_d[0]*dS_u[0] + dS_d[1]*dS_u[1] + dS_d[2]*dS_u[2];
         update.area += (dS_sq > 0.0 ? sqrt(dS_sq) : 0.0);
+        update.covered_area += (dS_sq > 0.0 ? sqrt(dS_sq) : 0.0);
       },
       Kokkos::Sum<FluxAccumulator>(fluxes));
 
-    //--- 4. Store the final integrated values in the history data array ---
-    int i = nflux*g;
-    pdata->hdata[i++] = fluxes.mdot;
-    pdata->hdata[i++] = fluxes.edot_fluid;
-    pdata->hdata[i++] = fluxes.edot_em;
-    pdata->hdata[i++] = fluxes.pdot_x_fluid;
-    pdata->hdata[i++] = fluxes.pdot_y_fluid;
-    pdata->hdata[i++] = fluxes.pdot_z_fluid;
-    pdata->hdata[i++] = fluxes.pdot_x_em;
-    pdata->hdata[i++] = fluxes.pdot_y_em;
-    pdata->hdata[i++] = fluxes.pdot_z_em;
-    pdata->hdata[i++] = fluxes.ldot_x_fluid;
-    pdata->hdata[i++] = fluxes.ldot_y_fluid;
-    pdata->hdata[i++] = fluxes.ldot_z_fluid;
-    pdata->hdata[i++] = fluxes.ldot_x_em;
-    pdata->hdata[i++] = fluxes.ldot_y_em;
-    pdata->hdata[i++] = fluxes.ldot_z_em;
-    pdata->hdata[i++] = fluxes.phiB;
-    pdata->hdata[i++] = fluxes.area;
-  }
+    Real legacy[17]={fluxes.mdot,fluxes.edot_fluid,fluxes.edot_em,
+      fluxes.pdot_x_fluid,fluxes.pdot_y_fluid,fluxes.pdot_z_fluid,
+      fluxes.pdot_x_em,fluxes.pdot_y_em,fluxes.pdot_z_em,
+      fluxes.ldot_x_fluid,fluxes.ldot_y_fluid,fluxes.ldot_z_fluid,
+      fluxes.ldot_x_em,fluxes.ldot_y_em,fluxes.ldot_z_em,fluxes.phiB,fluxes.area};
+    for (int c=0;c<17;++c) result.values[c]=legacy[c];
+    for (int c=0;c<19;++c) result.values[17+c]=fluxes.moving[c];
+    Real stats[9]={fluxes.owned,fluxes.admissible,fluxes.covered_area};
+    for (int c=0;c<6;++c) stats[3+c]=fluxes.bad[c];
+#if MPI_PARALLEL_ENABLED
+    MPI_Allreduce(MPI_IN_PLACE,result.values.data(),36,MPI_ATHENA_REAL,MPI_SUM,MPI_COMM_WORLD);
+    MPI_Allreduce(MPI_IN_PLACE,stats,9,MPI_ATHENA_REAL,MPI_SUM,MPI_COMM_WORLD);
+#endif
+    Real dx=0.0;
+    for (int p=0;p<np;++p) {
+      if (current_surf->Owners().h_view(p)!=1) result.reason|=1;
+      dx=std::max(dx,current_surf->LocalSpacing().h_view(p));
+    }
+#if MPI_PARALLEL_ENABLED
+    MPI_Allreduce(MPI_IN_PLACE,&dx,1,MPI_ATHENA_REAL,MPI_MAX,MPI_COMM_WORLD);
+#endif
+    for (int c=0;c<6;++c) if (stats[3+c]>0.0) result.reason|=1<<c;
+    for (int c=0;c<36;++c) if (!std::isfinite(result.values[c])) result.reason|=4;
+    result.valid=result.reason==0 && stats[1]==np;
+    result.values[36]=result.valid ? 1.0 : 0.0;
+    result.values[37]=result.reason;
+    result.values[38]=stats[0]/np;
+    result.values[39]=stats[1]/np;
+    result.values[40]=stats[2];
+    result.values[41]=dx;
+    result.values[42]=current_surf->min_cells_per_radius;
+    result.values[43]=result.values[17];
+    if (!result.valid) for (int c=0;c<36;++c)
+      result.values[c]=std::numeric_limits<Real>::quiet_NaN();
+    return result;
+}
 
-  // Zero out unused history slots
-  for (int n = pdata->nhist; n < NHISTORY_VARIABLES; ++n) {
-    pdata->hdata[n] = 0.0;
+void TorusFluxes_General(HistoryData *pdata, MeshBlockPack *pack,
+                        const std::vector<SphericalSurfaceGrid*>& surfaces) {
+  const int count=static_cast<int>(surfaces.size());
+  if (count*kSurfaceChannels>NHISTORY_VARIABLES)
+    Kokkos::abort("Requested surface channels exceed history capacity");
+  // Preserve the complete legacy ordering, then append explicitly corrected channels.
+  static const char* names[kSurfaceChannels]={
+    "mdot_","edot_f_","edot_em_","pxdot_f_","pydot_f_","pzdot_f_",
+    "pxdot_em_","pydot_em_","pzdot_em_","lxdot_f_","lydot_f_","lzdot_f_",
+    "lxdot_em_","lydot_em_","lzdot_em_","phiB_","area_",
+    "M0_net_in_moving_","M0_in_moving_","M0_out_moving_",
+    "Eeu_f_in_moving_","Eeu_em_in_moving_",
+    "Px_f_in_moving_","Py_f_in_moving_","Pz_f_in_moving_",
+    "Px_em_in_moving_","Py_em_in_moving_","Pz_em_in_moving_",
+    "Jx_f_in_moving_","Jy_f_in_moving_","Jz_f_in_moving_",
+    "Jx_em_in_moving_","Jy_em_in_moving_","Jz_em_in_moving_",
+    "Et_f_in_moving_","Et_em_in_moving_","valid_","reason_",
+    "ownership_fraction_","valid_sample_fraction_","partial_covered_area_",
+    "stencil_dx_max_","required_cells_per_radius_","partial_M0_net_in_moving_"};
+  pdata->nhist=count*kSurfaceChannels;
+  for (int g=0;g<count;++g) {
+    auto result=IntegrateSurface(pack,surfaces[g]);
+    for (int c=0;c<kSurfaceChannels;++c) {
+      int index=c<17 ? 17*g+c : 17*count+27*g+c-17;
+      pdata->label[index]=std::string(names[c])+surfaces[g]->Label();
+      pdata->hdata[index]=global_variable::my_rank==0 ? result.values[c] : 0.0;
+    }
   }
 }

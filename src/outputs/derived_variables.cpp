@@ -21,6 +21,7 @@
 #include "coordinates/cartesian_ks.hpp"
 #include "coordinates/cell_locations.hpp"
 #include "dyn_grmhd/valencia_stress_energy.hpp"
+#include "dyn_grmhd/valencia_sources.hpp"
 #include "geodesic-grid/geodesic_grid.hpp"
 #include "mesh/mesh.hpp"
 #include "eos/eos.hpp"
@@ -1372,6 +1373,10 @@ void BaseTypeOutput::ComputeDerivedVariable(std::string name, Mesh *pm) {
 
     Real gamma_gas = pm->pmb_pack->pmhd->peos->eos_data.gamma;
 
+    const int ndim=pm->three_d ? 3 : pm->two_d ? 2 : 1;
+    const int torque_ng=indcs.ng;
+    if (pm->pmb_pack->pdyngr->eos_policy!=DynGRMHD_EOS::eos_ideal)
+      Kokkos::abort("Torque stress diagnostics require gamma-law ideal EOS");
     par_for("torque", DevExeSpace(), 0, (nmb-1), ks, ke, js, je, is, ie,
     KOKKOS_LAMBDA(int m, int k, int j, int i) {
       // --- 0. Cell geometry + inverse dx ---
@@ -1412,30 +1417,9 @@ void BaseTypeOutput::ComputeDerivedVariable(std::string name, Mesh *pm) {
       Real alpha = adm.alpha(m, k, j, i);
 
       // --- 2. Metric derivatives, lapse/shift derivatives (index DOWN: ∂_i) ---
-      AthenaPointTensor<Real, TensorSymm::SYM2, 3, 3> dg_ddd;   // ∂_c γ_ab
-      AthenaPointTensor<Real, TensorSymm::NONE, 3, 1> dalpha_d; // ∂_c α
-      AthenaPointTensor<Real, TensorSymm::NONE, 3, 2> dbeta_du; // ∂_c β^a
-
-      // ∂_c γ_ab
-      for (int c = 0; c < 3; ++c) {
-        for (int a = 0; a < 3; ++a) {
-          for (int b = a; b < 3; ++b) {
-            dg_ddd(c,a,b) = Dx<4>(c, idx, adm.g_dd, m, a, b, k, j, i);
-          }
-        }
-      }
-
-      // ∂_c α
-      for (int c = 0; c < 3; ++c) {
-        dalpha_d(c) = Dx<4>(c, idx, adm.alpha, m, k, j, i);
-      }
-
-      // ∂_c β^a
-      for (int c = 0; c < 3; ++c) {
-        for (int a = 0; a < 3; ++a) {
-          dbeta_du(c,a) = Dx<4>(c, idx, adm.beta_u, m, a, k, j, i);
-        }
-      }
+      Real dg_ddd[3][3][3], dalpha_d[3], dbeta_du[3][3];
+      ValenciaGeometryDerivatives(torque_ng,adm,ndim,idx,m,k,j,i,
+                                  dalpha_d,dbeta_du,dg_ddd);
 
       // --- 3. Primitives + B field as Valencia objects ---
       Real rho  = prim(m, IDN, k, j, i);
@@ -1501,31 +1485,11 @@ void BaseTypeOutput::ComputeDerivedVariable(std::string name, Mesh *pm) {
         }
       }
 
-      // --- 5. Momentum source G_i (index DOWN) consistent with paper ---
-      // G_i = -E ∂_i α + S_j ∂_i β^j + (1/2) α S^{jk} ∂_i γ_{jk}
-      Real G_d[3] = {0.0, 0.0, 0.0};
-      for (int i_idx = 0; i_idx < 3; ++i_idx) {
-        // -E ∂_i α
-        Real term1 = -E_tot * dalpha_d(i_idx);
-
-        // S_j ∂_i β^j
-        Real term2 = 0.0;
-        for (int j_idx = 0; j_idx < 3; ++j_idx) {
-          term2 += S_d[j_idx] * dbeta_du(i_idx, j_idx);
-        }
-
-        // (1/2) α S^{jk} ∂_i γ_{jk}
-        Real term3 = 0.0;
-        for (int j_idx = 0; j_idx < 3; ++j_idx) {
-          for (int k_idx = j_idx; k_idx < 3; ++k_idx) {
-            const Real fac = (j_idx == k_idx ? 1.0 : 2.0); // account for symmetry
-            term3 += 0.5 * fac * S_uu(j_idx, k_idx) * dg_ddd(i_idx, j_idx, k_idx);
-          }
-        }
-        term3 *= alpha;
-
-        G_d[i_idx] = term1 + term2 + term3;
-      }
+      Real W_uu[3][3];
+      for (int a=0;a<3;++a) for (int b=0;b<3;++b) W_uu[a][b]=S_uu(a,b);
+      Real G_d[3]={0.0,0.0,0.0};
+      ValenciaMomentumSources(E_tot,S_d,W_uu,alpha,dalpha_d,dbeta_du,dg_ddd,1.0,
+        [&](int a,Real term){ G_d[a]+=term; });
 
       // --- 6. Position and densitized torque density (r × G)_a ---
       Real x1v = CellCenterX(i - is, indcs.nx1,

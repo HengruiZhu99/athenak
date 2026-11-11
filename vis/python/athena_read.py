@@ -82,43 +82,54 @@ def tab(filename):
 # Keyword arguments:
 # raw -- if True, do not prune file to remove stale data
 # from prev runs (default False)
+def hst_segments(filename):
+    """Read every native history schema segment without merging restart branches.
+
+    Metadata and missing fields stay explicit. Truncated historical duplicate names
+    receive a positional suffix; no ambiguous column silently overwrites another.
+    """
+    segments = []
+    current = None
+    with open(filename) as stream:
+        for lineno, line in enumerate(stream, 1):
+            if line.strip() == '# Athena++ history data':
+                current = {'names': [], 'rows': [], 'metadata': []}
+                segments.append(current)
+            elif line.lstrip().startswith('#'):
+                names = re.findall(r'\[\d+\]=(\S+)', line)
+                if names and current is not None:
+                    duplicates = {n for n in names if names.count(n) > 1}
+                    current['names'] = [f'{n}__col{i+1}' if n in duplicates else n
+                                        for i, n in enumerate(names)]
+                    if duplicates:
+                        warnings.warn('Ambiguous truncated history labels preserved by column number')
+                elif current is not None:
+                    current['metadata'].append(line.strip()[1:].strip())
+            elif line.strip():
+                if current is None or not current['names']:
+                    raise RuntimeError(f'history row without header at {filename}:{lineno}')
+                values = [float(v) for v in line.split()]
+                if len(values) != len(current['names']):
+                    raise RuntimeError(f'history width differs from header at {filename}:{lineno}')
+                current['rows'].append(values)
+    if not segments:
+        raise RuntimeError('athena_read.hst: Could not find header')
+    for segment in segments:
+        segment['rows'] = np.asarray(segment['rows']).reshape((-1, len(segment['names'])))
+    return segments
+
+
 def hst(filename, raw=False):
-    # Read data
-    with open(filename, 'r') as data_file:
-        # Find header
-        header_found = False
-        multiple_headers = False
-        header_location = None
-        line = data_file.readline()
-        while len(line) > 0:
-            if line == '# Athena++ history data\n':
-                if header_found:
-                    multiple_headers = True
-                else:
-                    header_found = True
-                header_location = data_file.tell()
-            line = data_file.readline()
-        if multiple_headers:
-            warnings.warn('Multiple headers found; using most recent data')
-        if header_location is None:
-            raise RuntimeError('athena_read.hst: Could not find header')
-
-        # Parse header
-        data_file.seek(header_location)
-        header = data_file.readline()
-        data_names = re.findall(r'\[\d+\]=(\S+)', header)
-        if len(data_names) == 0:
-            raise RuntimeError('athena_read.hst: Could not parse header')
-
-        # Prepare dictionary of results
-        data = {}
+    # Preserve all restart segments. New columns are unavailable in older segments.
+    segments = hst_segments(filename)
+    data_names = list(dict.fromkeys(name for seg in segments for name in seg['names']))
+    data = {name: [] for name in data_names}
+    for seg in segments:
         for name in data_names:
-            data[name] = []
-
-        # Read data
-        for line in data_file:
-            for name, val in zip(data_names, line.split()):
-                data[name].append(float(val))
+            if name in seg['names']:
+                data[name].extend(seg['rows'][:, seg['names'].index(name)])
+            else:
+                data[name].extend([np.nan] * len(seg['rows']))
 
     # Finalize data
     for key, val in data.items():

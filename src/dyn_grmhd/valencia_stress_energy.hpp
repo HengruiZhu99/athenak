@@ -105,8 +105,8 @@ void ValenciaEulerianMagneticFromDensitized(const Real B_tilde_u[3],
 //      W              : Lorentz factor
 //    Outputs:
 //      Bv             : B·v = B^i v_i
-//      b0             : b^0
-//      b_u[3]         : b^i
+//      b0             : alpha b^t (Eulerian normal projection)
+//      b_u[3]         : Eulerian spatial projection of b, not coordinate b^i
 //      b_d[3]         : b_i
 //      b2             : b^2 = b^mu b_mu
 // -----------------------------------------------------------------------------
@@ -125,9 +125,9 @@ void ValenciaComovingB(const Real v_u[3], const Real v_d[3],
   const Real invW = (W > 0.0) ? 1.0/W : 0.0;
 
   // Valencia relations in Eulerian frame:
-  //   b^0 = W (B·v)
-  //   b_i = B_i / W + (B·v) v_i
-  //   b^i = B^i / W + b^0 v^i
+  //   alpha b^t = W (B·v)
+  //   b_i = B_i / W + W (B·v) v_i
+  //   spatial projection b^i_E = B^i / W + (alpha b^t) v^i
   //   b^2 = B^2 / W^2 + (B·v)^2
   b0 = W * Bv;
 

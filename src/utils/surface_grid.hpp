@@ -31,7 +31,18 @@ class SphericalSurfaceGrid {
   void SetCenter(const Real new_center[3]);
 
   // Recompute everything if r(θ,φ) changed externally.
-  void RebuildFromRadius() { RebuildAll(); }
+  void RebuildFromRadius();
+  void SetRadiusFunction(RFunc radius_function);
+  using MotionFunc = std::function<void(Real, Real, Real*)>;
+  void SetMotion(MotionFunc motion);
+  const Real* Center() const { return center_; }
+  std::string surface_type = "coordinate_transfer_sphere";
+  Real min_cells_per_radius = 0.0; // zero disables the resolution qualification
+  DualArray2D<Real>& Motion() { return motion_; }
+  DualArray1D<int>& Owners() { return owners_; }
+  DualArray1D<int>& StencilReasons() { return stencil_reasons_; }
+  DualArray1D<Real>& LocalSpacing() { return local_spacing_; }
+  DualArray1D<Real>& GeometricWeights() { return geometric_weights_; }
 
   // Rebuild interpolator and surface geometry.
   void RebuildAll();
@@ -43,8 +54,11 @@ class SphericalSurfaceGrid {
   // Interpolate the 6 components of the ADM spatial metric to the surface.
   // This now automatically triggers the calculation of derived geometric quantities.
   void InterpolateMetric();
+  // Field-dependent checks: call only once evolved fields and ghosts are ready.
+  void QualifyStencils();
 
-  // Compute surface covector dΣ_i. Uses interpolated metric if available, otherwise flat.
+  // Historical API: returns proper area covector dA_i = sqrt(gamma) dSigma_i.
+  // Contract UNDENSITIZED currents with this covector exactly once.
   void BuildSurfaceCovectors(DualArray2D<Real>& dSigma) const;
 
   // Calculates gamma_ab and proper_dA_ from g_ij and tangents
@@ -78,6 +92,10 @@ class SphericalSurfaceGrid {
   int n_th, n_ph, npts;
   Real dth, dph;
   bool metric_is_flat_;
+  RFunc radius_function_;
+  DualArray2D<Real> motion_;
+  DualArray1D<int> owners_, stencil_reasons_;
+  DualArray1D<Real> geometric_weights_, local_spacing_;
   int interp_order_; // Decoupled interpolation order
 
   // Core geometry

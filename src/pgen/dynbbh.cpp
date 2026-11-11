@@ -32,6 +32,7 @@
 #include "cyclic_zoom/cyclic_zoom.hpp"
 #include "dyn_radiation/dyn_radiation.hpp"
 #include "utils/flux_generalized.hpp"
+#include "utils/circumbinary_geometry.hpp"
 #include "units/units.hpp"
 #include "srcterms/ismcooling.hpp"
 #include "pgen/bondi_profile.hpp"
@@ -464,6 +465,58 @@ void InitializeDynBBHPreRestart(Mesh *pm);
 void InitializeDynBBHPostRestart(Mesh *pm);
 void PreconditionDynBBHRestartMHD(Mesh *pm);
 
+void UpdateDiagnosticSurfaces(Mesh *pm, Real time);
+void RegisterDiagnosticSurfaces(ProblemGenerator *pgen, ParameterInput *pin, Mesh *pm);
+
+void RegisterDiagnosticSurfaces(ProblemGenerator *pgen, ParameterInput *pin, Mesh *pm) {
+  auto pack=pm->pmb_pack;
+  bool enabled=pin->GetOrAddBoolean("problem","flux_diagnostics",pm->three_d);
+  if (!enabled) return;
+  // Existing diagnostics have always used gamma-law stress helpers. Do not substitute
+  // them into the evolution EOS. Unsupported diagnostic configurations fail explicitly.
+  if (!pack->pmhd || !pack->padm || !pack->pdyngr ||
+      pack->pdyngr->eos_policy!=DynGRMHD_EOS::eos_ideal)
+    Kokkos::abort("dynbbh flux diagnostics require ideal Valencia MHD with ADM");
+  if (!pm->three_d) Kokkos::abort("Closed dynbbh flux surfaces require a 3D domain");
+  int nt=pin->GetOrAddInteger("problem","flux_ntheta",64);
+  int np=pin->GetOrAddInteger("problem","flux_nphi",128);
+  Real ri=pin->GetOrAddReal("problem","flux_rsurf_inner",10.0);
+  Real ro=pin->GetOrAddReal("problem","flux_rsurf_outer",20.0);
+  Real dr=pin->GetOrAddReal("problem","flux_dr_surf",5.0);
+  if (!(std::isfinite(ri)&&std::isfinite(ro)&&std::isfinite(dr)&&ri>0&&ro>=ri&&dr>0))
+    Kokkos::abort("Invalid diagnostic radial range");
+  Real nr=std::floor((ro-ri)/dr+1e-10)+1;
+  bool h1=pin->GetOrAddBoolean("problem","flux_horizon1",false);
+  bool h2=pin->GetOrAddBoolean("problem","flux_horizon2",false);
+  bool bh=pin->GetOrAddBoolean("problem","flux_modeled_horizons",false);
+  if (nr>NHISTORY_VARIABLES/kSurfaceChannels ||
+      (nr+h1+h2+(bh ? (bbh.single_black_hole ? 1 : 2):0))*kSurfaceChannels>
+        NHISTORY_VARIABLES-32)
+    Kokkos::abort("Full requested diagnostic schema exceeds history capacity");
+  for (int n=0;n<static_cast<int>(nr);++n) {
+    Real r=ri+n*dr;
+    std::ostringstream label; label<<"R"<<std::setprecision(std::numeric_limits<Real>::max_digits10)<<r;
+    pgen->surface_grids.push_back(std::make_unique<SphericalSurfaceGrid>(
+      pack,nt,np,[=](Real,Real){return r;},label.str()));
+  }
+  for (int hole=0;hole<2;++hole) if (hole==0 ? h1 : h2) {
+    Real r=pin->GetOrAddReal("problem",hole==0 ? "flux_radius1":"flux_radius2",1.0);
+    if (!(std::isfinite(r)&&r>0)) Kokkos::abort("Invalid transfer sphere radius");
+    pgen->surface_grids.push_back(std::make_unique<SphericalSurfaceGrid>(
+      pack,nt,np,[=](Real,Real){return r;},hole==0 ? "H1":"H2"));
+  }
+  if (bh) for (int hole=0;hole<(bbh.single_black_hole ? 1:2);++hole) {
+    auto surf=std::make_unique<SphericalSurfaceGrid>(pack,nt,np,
+      [](Real,Real){return 1.0;},hole==0 ? "BH1_Kerr":"BH2_Kerr");
+    surf->surface_type="modeled_component_Kerr";
+    surf->min_cells_per_radius=pin->GetOrAddReal("problem","flux_min_cells_per_radius",4.0);
+    if (!(std::isfinite(surf->min_cells_per_radius)&&surf->min_cells_per_radius>0))
+      Kokkos::abort("flux_min_cells_per_radius must be finite and positive");
+    pgen->surface_grids.push_back(std::move(surf));
+  }
+}
+
+
 //----------------------------------------------------------------------------------------
 //! \fn void TorusHistory(HistoryData *pdata, Mesh *pm)
 //! \brief User history function that centers horizon grids and calls flux integrator.
@@ -476,25 +529,7 @@ void TorusHistory(HistoryData *pdata, Mesh *pm) {
     }
     MeshBlockPack *pmbp = pm->pmb_pack;
 
-    // 1. Calculate current Black Hole Trajectory
-    Real tt = bbh.corotating ? 0.0 : pm->time;
-    Real btraj[NTRAJ];
-
-    // Ensure find_traj_t is visible here (it is declared global in your snippet)
-    find_traj_t(tt, btraj);
-
-    // 2. Update Surface Grid Centers
-    // We iterate through all grids and check labels to see if they are horizons
-    for(auto& grid_ptr : pgen->surface_grids) {
-        if (grid_ptr->Label() == "H1") {
-            // Move grid to BH1 location (Indices 0, 1, 2)
-            grid_ptr->SetCenter(&btraj[0]);
-        }
-        else if (grid_ptr->Label() == "H2") {
-            // Move grid to BH2 location (Indices 3, 4, 5)
-            grid_ptr->SetCenter(&btraj[3]);
-        }
-    }
+    UpdateDiagnosticSurfaces(pm, pm->time);
 
     // 3. Prepare pointers for the flux calculator
     std::vector<SphericalSurfaceGrid*> surf_raw_ptrs;
@@ -505,6 +540,15 @@ void TorusHistory(HistoryData *pdata, Mesh *pm) {
 
     // 4. Calculate fluxes
     TorusFluxes_General(pdata, pmbp, surf_raw_ptrs);
+    std::ostringstream meta;
+    meta<<"cbd_schema=2 frame="<<(bbh.corotating ? "corotating":"inertial")
+        <<" frame_omega="<<bbh.frame_omega<<" rotation_epoch=0 origin=0,0,0 axis=z units=G=c=Mtotal_initial=1"
+        <<" legacy=mdot,edot:inward;pdot,ldot:outward;fixed_at_instantaneous_location"
+        <<" moving_channels=already_Reynolds_corrected energy_Eeu=Eulerian energy_Et=coordinate_flux_only"
+        <<" phiB=half_unsigned_Heaviside_Lorentz coverage=all_samples_required";
+    for (const auto &s:pgen->surface_grids)
+      meta<<" surface:"<<s->Label()<<"="<<s->surface_type;
+    pdata->metadata=meta.str();
 }
 
 
@@ -1066,48 +1110,11 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   if (!restart && pmy_mesh_->pzoom != nullptr && pmy_mesh_->pzoom->zstate.zone != 0) {
     Kokkos::abort("Start binary cyclic zoom at zone=0; other zones require a restart");
   }
+  RegisterDiagnosticSurfaces(this, pin, pmy_mesh_);
   if (initial_condition == "bondi_reservoir" || use_bondi_inflow) {
     InitializeBinaryReservoir(pmy_mesh_, pin, restart);
     user_bcs_func = BinaryReservoirBoundary;
     return;
-  }
-
-  // Flux diagnostics setup
-  // Resolution of surface grids
-  const int ntheta = pin->GetOrAddInteger("problem", "flux_ntheta", 64);
-  const int nphi = pin->GetOrAddInteger("problem", "flux_nphi", 128);
-  // Setup Radius of surface grids
-  const Real r_surf_inner = pin->GetOrAddReal("problem", "flux_rsurf_inner", 10.0);
-  const Real dr_surf = pin->GetOrAddReal("problem", "flux_dr_surf", 5.0);
-  const Real r_surf_outer = pin->GetOrAddReal("problem", "flux_rsurf_outer", 20.0);
-  // Create surfaces at three different radii and store them in the class member
-  // This avoids the crash-on-exit from using a static variable.
-  for (Real r_surf = r_surf_inner; r_surf <= r_surf_outer; r_surf += dr_surf) {
-    auto r_func = [=](Real th, Real ph){ return r_surf; };
-    this->surface_grids.push_back(std::make_unique<SphericalSurfaceGrid>(
-        pmbp, ntheta, nphi, r_func, "R" + std::to_string(static_cast<int>(r_surf))));
-  }
-
-  // Horizon 1
-  bool do_h1 = pin->GetOrAddBoolean("problem", "flux_horizon1", false);
-  if (do_h1) {
-    Real r_h1 = pin->GetOrAddReal("problem", "flux_radius1", 1);
-    // Initialize centered at 0,0,0; will be moved in TorusHistory
-    this->surface_grids.push_back(std::make_unique<SphericalSurfaceGrid>(
-        pmbp, ntheta, nphi,
-        [=](Real th, Real ph){ return r_h1; },
-        "H1"));
-  }
-
-  // Horizon 2
-  bool do_h2 = pin->GetOrAddBoolean("problem", "flux_horizon2", false);
-  if (do_h2) {
-    Real r_h2 = pin->GetOrAddReal("problem", "flux_radius2", 1);
-    // Initialize centered at 0,0,0; will be moved in TorusHistory
-    this->surface_grids.push_back(std::make_unique<SphericalSurfaceGrid>(
-        pmbp, ntheta, nphi,
-        [=](Real th, Real ph){ return r_h2; },
-        "H2"));
   }
 
   const bool is_radiation_enabled = (pmbp->pdynrad != nullptr);
@@ -3134,6 +3141,47 @@ KOKKOS_FORCEINLINE_FUNCTION T BoostGammaMinusOneOverV2(const T v2, const T gamma
     return T(0.5) + T(0.375) * v2 + T(0.3125) * v2 * v2;
   }
   return (gamma - T(1.0)) / v2;
+}
+
+void UpdateDiagnosticSurfaces(Mesh *pm, Real time) {
+  Real tr[NTRAJ],dt[NTRAJ];
+  find_traj_t_with_deriv(bbh.corotating ? 0.0 : time,tr,dt);
+  for (auto &ptr:pm->pgen->surface_grids) {
+    auto &grid=*ptr;
+    int hole=(grid.Label()=="H1" || grid.Label()=="BH1_Kerr") ? 0 :
+             (grid.Label()=="H2" || grid.Label()=="BH2_Kerr") ? 1 : -1;
+    if (hole<0) continue;
+    int x=hole==0 ? X1:X2, v=hole==0 ? VX1:VX2, a=hole==0 ? AX1:AX2;
+    int m=hole==0 ? M1T:M2T;
+    grid.SetCenter(&tr[x]);
+    if (grid.surface_type=="modeled_component_Kerr") {
+      Real chi2=SQR(tr[a])+SQR(tr[a+1])+SQR(tr[a+2]);
+      Real v2=SQR(tr[v])+SQR(tr[v+1])+SQR(tr[v+2]);
+      if (!(std::isfinite(tr[m])&&tr[m]>0&&std::isfinite(chi2)&&chi2<1.0&&
+            std::isfinite(v2)&&v2<1.0))
+        Kokkos::abort("Modeled Kerr diagnostics need m>0, |chi|<1, |boost|<1");
+      // Extremal geometry exists but its derivative during spin changes is singular.
+      // Strict subextremality is a diagnostic restriction, not an evolution restriction.
+      dual1_real chi[3],vel[3],H[3][3];
+      for (int i=0;i<3;++i) {
+        chi[i]=dual1_real(tr[a+i],bbh.corotating ? 0.0:dt[a+i]);
+        vel[i]=dual1_real(tr[v+i],bbh.corotating ? 0.0:dt[v+i]);
+      }
+      circumbinary::KerrQuadric(dual1_real(tr[m],bbh.corotating ? 0.0:dt[m]),
+        chi,vel,H,[](dual1_real z){return metric_sqrt(z);});
+      circumbinary::Quadric q;
+      for (int i=0;i<3;++i) {
+        q.center[i]=tr[x+i]; q.center_dot[i]=bbh.corotating ? 0.0:dt[x+i];
+        for (int j=0;j<3;++j) {q.H[i][j]=H[i][j].val; q.H_dot[i][j]=H[i][j].d;}
+      }
+      grid.SetRadiusFunction([q](Real th,Real ph){return q.Radius(th,ph);});
+      grid.SetMotion([q](Real th,Real ph,Real *w){q.Motion(th,ph,w);});
+    } else {
+      Real w[3]={bbh.corotating ? 0.0:dt[x],bbh.corotating ? 0.0:dt[x+1],
+                 bbh.corotating ? 0.0:dt[x+2]};
+      grid.SetMotion([=](Real,Real,Real *out){for (int i=0;i<3;++i) out[i]=w[i];});
+    }
+  }
 }
 
 template <typename T>

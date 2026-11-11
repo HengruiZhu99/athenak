@@ -15,6 +15,7 @@
 #include <algorithm>
 
 #include "athena.hpp"
+#include "dyn_grmhd/valencia_sources.hpp"
 #include "globals.hpp"
 #include "parameter_input.hpp"
 #include "tasklist/task_list.hpp"
@@ -632,24 +633,8 @@ void DynGRMHDPS<EOSPolicy, ErrorPolicy>::AddCoordTermsEOS(const DvceArray5D<Real
 
     // Calculate the metric derivatives
     Real idx[] = {1./size.d_view(m).dx1, 1./size.d_view(m).dx2, 1./size.d_view(m).dx3};
-    Real dalpha_d[3] = {0.};
-    for (int a = 0; a < ndim; a++) {
-      dalpha_d[a] = Dx<NGHOST>(a, idx, adm.alpha, m, k, j, i);
-    }
-    Real dbeta_du[3][3] = {0.};
-    for (int a = 0; a < 3; a++) {
-      for (int b = 0; b < ndim; b++) {
-        dbeta_du[b][a] = Dx<NGHOST>(b, idx, adm.beta_u, m, a, k, j, i);
-      }
-    }
-    Real dg_ddd[3][3][3] = {0.};
-    for (int a = 0; a < 3; ++a) {
-      for (int b = 0; b < 3; ++b) {
-        for (int c = 0; c < ndim; ++c) {
-          dg_ddd[c][a][b] = Dx<NGHOST>(c, idx, adm.g_dd, m, a, b, k, j, i);
-        }
-      }
-    }
+    Real dalpha_d[3], dbeta_du[3][3], dg_ddd[3][3][3];
+    ValenciaGeometryDerivatives<NGHOST>(adm,ndim,idx,m,k,j,i,dalpha_d,dbeta_du,dg_ddd);
 
     // Fluid quantities
     Real prim_pt[NPRIM] = {0.0};
@@ -720,16 +705,9 @@ void DynGRMHDPS<EOSPolicy, ErrorPolicy>::AddCoordTermsEOS(const DvceArray5D<Real
       }
     }
 
-    // Assemble momentum RHS
-    for (int a = 0; a < 3; a++) {
-      for (int b = 0; b < 3; b++) {
-        for (int c = 0; c < 3; c++) {
-          rhs(m,IM1+a, k, j, i) += 0.5*dt*alpha*vol*S_uu[b][c]*dg_ddd[a][b][c];
-        }
-        rhs(m, IM1+a, k, j, i) += dt*vol*S_d[b]*dbeta_du[a][b];
-      }
-      rhs(m, IM1+a, k, j, i) -= dt*vol*E*dalpha_d[a];
-    }
+    // Same contractions, EOS, and update order as before factoring.
+    ValenciaMomentumSources(E,S_d,S_uu,alpha,dalpha_d,dbeta_du,dg_ddd,dt*vol,
+      [&](int a, Real term) { rhs(m,IM1+a,k,j,i)+=term; });
   });
 }
 

@@ -193,6 +193,7 @@ struct HistoryData {
   std::string label[NHISTORY_VARIABLES];
   Real hdata[NHISTORY_VARIABLES];
   bool header_written;
+  std::string metadata;
   // constructor
   explicit HistoryData(PhysicsModule name) : physics(name), header_written(false) {}
 };
@@ -469,6 +470,7 @@ class TrackedParticleOutput : public BaseTypeOutput {
   int ntrack_thisrank;  // number of tracked particles this rank (guess)
   int npout;            // number of tracked particles to be written this rank
   bool header_written;
+  std::string metadata;
   std::vector<int> npout_eachrank;
   HostArray1D<TrackedParticleData> outpart;
 };
