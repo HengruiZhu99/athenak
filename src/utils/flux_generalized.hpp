@@ -8,12 +8,12 @@
 
 constexpr int kSurfaceChannels = 44;
 struct SurfaceFluxResult {
-  std::array<Real,kSurfaceChannels> values{};
-  bool valid=false;
-  int reason=0;
+  std::array<Real, kSurfaceChannels> values{};
+  bool valid = false;
+  int reason = 0;
 };
-// Global result, reduced outside task lists. Caller must contribute it to history on rank 0.
-SurfaceFluxResult IntegrateSurface(MeshBlockPack *pack, SphericalSurfaceGrid *surface);
-void TorusFluxes_General(HistoryData *pdata, MeshBlockPack *pack,
-                        const std::vector<SphericalSurfaceGrid*>& surfaces);
-#endif
+// Global result, reduced outside task lists. Contribute to history on rank 0.
+SurfaceFluxResult IntegrateSurface(MeshBlockPack* pack, SphericalSurfaceGrid* surface);
+void TorusFluxes_General(HistoryData* pdata, MeshBlockPack* pack,
+                         const std::vector<SphericalSurfaceGrid*>& surfaces);
+#endif  // UTILS_FLUX_GENERALIZED_HPP_

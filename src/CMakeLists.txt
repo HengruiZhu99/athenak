@@ -181,6 +181,7 @@ add_executable(
         utils/tr_table.cpp
         utils/cart_grid.cpp
         utils/spherical_surface.cpp
+        utils/circumbinary_budget.cpp
         utils/flux_generalized.cpp
         utils/surface_grid.cpp
 

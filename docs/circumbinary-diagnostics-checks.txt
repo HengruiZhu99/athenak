@@ -1,0 +1,44 @@
+Validation recorded 2026-11-11. See circumbinary-diagnostics-validation.md for commands and scope.
+
+Combined diagnostics suite
+/Users/hz0693/research/athenak-diagnostics/vis/python/athena_read.py:105: UserWarning: Ambiguous truncated history labels preserved by column number
+  warnings.warn('Ambiguous truncated history labels preserved by column number')
+...................
+----------------------------------------------------------------------
+Ran 19 tests in 54.024s
+
+OK
+
+Production-helper executable (final formatting)
+manufactured regional cells=16 absolute residual L1=0.0275389
+manufactured regional cells=32 absolute residual L1=0.000700399
+manufactured regional cells=64 absolute residual L1=0.000499034
+Kerr case=0 nt=40 area relative error=0.000257067
+Kerr case=0 nt=80 area relative error=6.42581e-05
+Kerr case=0 nt=160 area relative error=1.6064e-05
+Kerr case=1 nt=40 area relative error=0.00024591
+Kerr case=1 nt=80 area relative error=6.14733e-05
+Kerr case=1 nt=160 area relative error=1.53681e-05
+Kerr case=2 nt=40 area relative error=0.000265368
+Kerr case=2 nt=80 area relative error=6.63318e-05
+Kerr case=2 nt=160 area relative error=1.65823e-05
+surface nt=40 expanding relative error=0.000257067
+surface nt=80 expanding relative error=6.42581e-05
+surface nt=160 expanding relative error=1.6064e-05
+geometry, motion, collapsed derivatives, RK recurrence, idempotence, gaps: passed
+
+Actual metric/clock tests (final formatting)
+..
+----------------------------------------------------------------------
+Ran 2 tests in 1.825s
+
+OK
+
+C++ lint limited to changed lines
+Changed-line cpplint findings: 0
+
+
+Custom changed-line tab/brace/pragma checks: 0 findings.
+Manuscript adapter suite: Ran 3 tests in 0.022s, OK.
+Shared adapter files: byte-for-byte identical.
+git diff --check: no findings.

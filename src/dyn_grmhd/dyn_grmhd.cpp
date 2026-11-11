@@ -326,12 +326,17 @@ TaskStatus DynGRMHDPS<EOSPolicy, ErrorPolicy>::ConToPrim(Driver *pdrive, int sta
   int n1m1 = indcs.nx1 + 2*ng - 1;
   int n2m1 = (indcs.nx2 > 1)? (indcs.nx2 + 2*ng - 1) : 0;
   int n3m1 = (indcs.nx3 > 1)? (indcs.nx3 + 2*ng - 1) : 0;
+  auto change = pmy_pack->pmesh->pgen->user_diagnostic_change_func;
+  if (change) change(pmy_pack->pmesh, 0, true);
+  if (stage == 0 && pmy_pack->pmhd->diagnostic_reset.extent(0) > 0)
+    Kokkos::deep_copy(DevExeSpace(), pmy_pack->pmhd->diagnostic_reset, false);
   eos.ConsToPrim(pmy_pack->pmhd->u0, pmy_pack->pmhd->b0, pmy_pack->pmhd->bcc0,
                  pmy_pack->pmhd->w0, temperature, 0, n1m1, 0, n2m1, 0, n3m1, false);
   if(pmy_pack->pcoord->coord_data.reservoir_ghost_ct) {
     CharacteristicGhostCT(pmy_pack,eos,temperature);
     PrimToConBoundary();
   }
+  if (change) change(pmy_pack->pmesh, 0, false);
   return TaskStatus::complete;
 }
 
@@ -634,7 +639,8 @@ void DynGRMHDPS<EOSPolicy, ErrorPolicy>::AddCoordTermsEOS(const DvceArray5D<Real
     // Calculate the metric derivatives
     Real idx[] = {1./size.d_view(m).dx1, 1./size.d_view(m).dx2, 1./size.d_view(m).dx3};
     Real dalpha_d[3], dbeta_du[3][3], dg_ddd[3][3][3];
-    ValenciaGeometryDerivatives<NGHOST>(adm,ndim,idx,m,k,j,i,dalpha_d,dbeta_du,dg_ddd);
+    ValenciaGeometryDerivatives<NGHOST>(adm, ndim, idx, m, k, j, i, dalpha_d, dbeta_du,
+                                        dg_ddd);
 
     // Fluid quantities
     Real prim_pt[NPRIM] = {0.0};
@@ -706,8 +712,9 @@ void DynGRMHDPS<EOSPolicy, ErrorPolicy>::AddCoordTermsEOS(const DvceArray5D<Real
     }
 
     // Same contractions, EOS, and update order as before factoring.
-    ValenciaMomentumSources(E,S_d,S_uu,alpha,dalpha_d,dbeta_du,dg_ddd,dt*vol,
-      [&](int a, Real term) { rhs(m,IM1+a,k,j,i)+=term; });
+    ValenciaMomentumSources(
+        E, S_d, S_uu, alpha, dalpha_d, dbeta_du, dg_ddd, dt,
+        [&](int a, Real term) { rhs(m, IM1 + a, k, j, i) += term; }, vol);
   });
 }
 

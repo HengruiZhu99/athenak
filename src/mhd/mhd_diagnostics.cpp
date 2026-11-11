@@ -105,11 +105,11 @@ void RepairFluxRange(const char *component, const ViewType &a, const int nvars,
 }
 
 template <typename ViewType>
-void RepairConsRange(const ViewType &u0, const ViewType &u1, const int nvars,
+void RepairConsRange(const ViewType& u0, const ViewType& u1, const int nvars,
                      const IndexRange mrange, const IndexRange krange,
                      const IndexRange jrange, const IndexRange irange,
-                     const DvceArray1D<int> &counts,
-                     const DvceArray2D<int> &first_locs) {
+                     const DvceArray1D<int>& counts, const DvceArray2D<int>& first_locs,
+                     const DvceArray4D<bool>& diagnostic_reset) {
   const int nm = RangeCount(mrange);
   const int nk = RangeCount(krange);
   const int nj = RangeCount(jrange);
@@ -142,6 +142,7 @@ void RepairConsRange(const ViewType &u0, const ViewType &u1, const int nvars,
       if (!FiniteForRepair(u1(m,n,k,j,i))) previous_state_ok = false;
     }
     if (!bad_cell) return;
+    if (diagnostic_reset.extent(0) > 0) diagnostic_reset(m, k, j, i) = true;
 
     const int old_count = Kokkos::atomic_fetch_add(&counts(0), 1);
     Kokkos::atomic_add(&counts(1), bad_components);
@@ -848,11 +849,13 @@ TaskStatus MHD::RepairNonFiniteConserved(Driver *pdriver, int stage) {
   Kokkos::deep_copy(DevExeSpace(), first_locs, -1);
 
   const IndexRange mrange = ClampRange(0, nmb1, static_cast<int>(u0.extent(0)));
+  auto change = pmy_pack->pmesh->pgen->user_diagnostic_change_func;
+  if (change) change(pmy_pack->pmesh, 3, true);
   RepairConsRange(u0, u1, nvars, mrange,
                   ClampRange(ks, ke, static_cast<int>(u0.extent(2))),
                   ClampRange(js, je, static_cast<int>(u0.extent(3))),
-                  ClampRange(is, ie, static_cast<int>(u0.extent(4))),
-                  counts, first_locs);
+                  ClampRange(is, ie, static_cast<int>(u0.extent(4))), counts, first_locs,
+                  diagnostic_reset);
 
   auto h_counts = Kokkos::create_mirror_view(counts);
   auto h_first_locs = Kokkos::create_mirror_view(first_locs);
@@ -874,6 +877,7 @@ TaskStatus MHD::RepairNonFiniteConserved(Driver *pdriver, int stage) {
               << std::endl;
   }
   (void)pdriver;
+  if (change) change(pmy_pack->pmesh, 3, false);
   return TaskStatus::complete;
 }
 

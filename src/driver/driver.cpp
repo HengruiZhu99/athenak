@@ -314,6 +314,15 @@ void Driver::ExecuteTaskList(Mesh *pm, std::string tl, int stage) {
 //  outputting ICs, and computing initial time step
 
 void Driver::Initialize(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool res_flag) {
+  // A final checkpoint immediately after a zoom event already stores the chosen
+  // next dt. Recomputing after restart recovery can enlarge it and change which
+  // physical intervals visit the resolved region. A scheduled pre-event checkpoint
+  // instead stores the previous step's dt and must complete the pending AMR path.
+  const Real checkpoint_dt = pmesh->dt;
+  const bool post_zoom_checkpoint = res_flag && pmesh->pzoom &&
+                                    pmesh->pzoom->zstate.id > 0 &&
+                                    pmesh->pzoom->zstate.last_cycle == pmesh->ncycle;
+
   // Opt-in when changing inner-flow physics at a finest checkpoint. Consume the
   // request in the parameter header so subsequent wall-time restarts retain the
   // remaining residence instead of repeatedly resetting it.
@@ -344,7 +353,12 @@ void Driver::Initialize(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool re
     pmesh->pmb_pack->padm->SetADMVariables(pmesh->pmb_pack);
   }
   //---- Step 1.  Set conserved variables in ghost zones for all physics
+  // Startup/restart recovery is a separate zero-duration budget jump; it is not
+  // attributed to the first RK stage or to a repeated history/checkpoint request.
+  auto diagnostic_change = pmesh->pgen->user_diagnostic_change_func;
+  if (diagnostic_change) diagnostic_change(pmesh, 6, true);
   InitBoundaryValuesAndPrimitives(pmesh);
+  if (diagnostic_change) diagnostic_change(pmesh, 6, false);
   // Scheduled outputs are written before AMR. Complete a pending checkpoint-cycle
   // event before advancing the restarted state, while preserving post-AMR checkpoints.
   if (res_flag && pmesh->pzoom != nullptr &&
@@ -381,6 +395,14 @@ void Driver::Initialize(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool re
     }
 
     pmesh->NewTimeStep(tlim);
+    if (post_zoom_checkpoint && std::isfinite(checkpoint_dt) && checkpoint_dt > 0.0 &&
+        checkpoint_dt < pmesh->dt) {
+      // Retain any smaller freshly calculated stability/end-time limit.
+      pmesh->dt = checkpoint_dt;
+      if (global_variable::my_rank == 0)
+        std::cout << "Restored selected post-zoom checkpoint timestep " << pmesh->dt
+                  << std::endl;
+    }
   }
 
   //---- Step 3.  Cycle through output Types and load data / write files.
@@ -440,7 +462,7 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
       if (global_variable::my_rank == 0) {OutputCycleDiagnostics(pmesh);}
 
       if (pmesh->pgen->user_diagnostic_step_func)
-        pmesh->pgen->user_diagnostic_step_func(pmesh,this,0);
+        pmesh->pgen->user_diagnostic_step_func(pmesh, this, 0);
       // Execute TaskLists
       // Work before time integrator indicated by "0" in stage
       ExecuteTaskList(pmesh, "before_timeintegrator", 0);
@@ -448,7 +470,7 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
       // time-integrator tasks for each stage of integrator
       for (int stage=1; stage<=(nexp_stages); ++stage) {
         if (pmesh->pgen->user_diagnostic_step_func)
-          pmesh->pgen->user_diagnostic_step_func(pmesh,this,stage);
+          pmesh->pgen->user_diagnostic_step_func(pmesh, this, stage);
         ExecuteTaskList(pmesh, "before_stagen", stage);
         ExecuteTaskList(pmesh, "stagen", stage);
         ExecuteTaskList(pmesh, "after_stagen", stage);
@@ -458,7 +480,7 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
       ExecuteTaskList(pmesh, "after_timeintegrator", 1);
 
       if (pmesh->pgen->user_diagnostic_step_func)
-        pmesh->pgen->user_diagnostic_step_func(pmesh,this,-1);
+        pmesh->pgen->user_diagnostic_step_func(pmesh, this, -1);
       // Work outside of TaskLists:
       // increment time, ncycle, etc.
       pmesh->time = pmesh->time + pmesh->dt;

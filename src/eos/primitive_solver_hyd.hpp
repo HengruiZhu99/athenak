@@ -358,6 +358,7 @@ class PrimitiveSolverHydro {
     int &nhyd = pmy_pack->pmhd->nmhd;
     int &nscal = pmy_pack->pmhd->nscalars;
     int &nmb = pmy_pack->nmb_thispack;
+    auto diagnostic_reset = pmy_pack->pmhd->diagnostic_reset;
     auto &fofc_ = pmy_pack->pmhd->fofc;
 
     // Some problem-specific parameters
@@ -838,6 +839,9 @@ class PrimitiveSolverHydro {
                    x1v, x2v, x3v, cons_pt_old[CDN], cons_pt[CDN],
                    is_ghost ? "true" : "false");
           }*/
+          if (diagnostic_reset.extent(0) > 0 &&
+              (result.cons_floor || result.error != Primitive::Error::SUCCESS))
+            diagnostic_reset(m, k, j, i) = 1;
           cons(m, IDN, k, j, i) = cons_pt[CDN]*sdetg;
           cons(m, IM1, k, j, i) = cons_pt[CSX]*sdetg;
           cons(m, IM2, k, j, i) = cons_pt[CSY]*sdetg;

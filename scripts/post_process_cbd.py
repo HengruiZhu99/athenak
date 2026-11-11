@@ -5,6 +5,7 @@ import argparse
 import sys
 import os
 from multiprocessing import Pool
+from disk_diagnostics import parse_athena_parfile, find_traj_t, geometry_identity, geometry_cache_matches
 
 # ==============================================================================
 # 1. Parameter Parsing & Physics Helpers
@@ -14,7 +15,7 @@ def read_parfile(par_file="parfile.par"):
     """
     Parses the AthenaK/Athena++ input file into a nested dictionary.
     """
-    params = {}
+    params = {"_source_parfile": str(os.path.abspath(par_file))}
     current_block = None
     
     if not os.path.exists(par_file):
@@ -54,7 +55,12 @@ def read_parfile(par_file="parfile.par"):
         sys.exit(1)
     return params
 
-def get_bh_positions(t, sep, q):
+def get_bh_positions(t, sep, q, frame=None, single_black_hole=False):
+    if frame not in ("inertial","corotating"):
+        raise ValueError("Explicit inertial/corotating frame is required")
+    if single_black_hole:
+        return np.zeros(3),np.zeros(3)
+    if frame=="corotating": t=0.0
     om = sep**(-1.5)
     r_bh1 = (q / (1.0 + q)) * sep
     r_bh2 = (1.0 / (1.0 + q)) * sep 
@@ -72,13 +78,17 @@ def check_geometry_intersection(params, r_min_requested):
     flux_start = params['problem'].get('flux_rsurf_inner', 20.0)
     flux_dr    = params['problem'].get('flux_dr_surf', 10.0) 
     
-    dist_bh1 = (q / (1.0 + q)) * sep
-    dist_bh2 = (1.0 / (1.0 + q)) * sep
+    single=params['problem'].get('single_black_hole',False)
+    dist_bh1 = 0.0 if single else (q / (1.0 + q)) * sep
+    dist_bh2 = 0.0 if single else (1.0 / (1.0 + q)) * sep
+    if single:r_exc_2=0.0
     global_max_extent = max(dist_bh1 + r_exc_1, dist_bh2 + r_exc_2)
     
     if r_min_requested > (global_max_extent + 1e-5):
         return r_min_requested, False, "No intersection detected."
     
+    if not (np.isfinite(flux_dr) and flux_dr>0 and np.isfinite(flux_start) and flux_start>0):
+        raise ValueError("Surface increments/radii must be finite and positive")
     current_r = flux_start
     while current_r < (global_max_extent + 1e-5):
         current_r += flux_dr
@@ -94,7 +104,7 @@ def integrate_and_save(args):
     Worker function to process a single .athdf file AND save the .npz.
     Reads data block-by-block from disk to save RAM.
     """
-    fname, npz_out, rmin, rmax, dr, sep, q, r_exc_1, r_exc_2, delete_source = args
+    fname, npz_out, rmin, rmax, dr, sep, q, r_exc_1, r_exc_2, delete_source, geometry = args
     
     try:
         with h5py.File(fname, 'r') as f:
@@ -110,7 +120,9 @@ def integrate_and_save(args):
             
             n_vars, n_blocks, nz, ny, nx = ds_uov.shape
             
-            bh1_pos, bh2_pos = get_bh_positions(t_val, sep, q)
+            trajectory=find_traj_t(t_val,geometry)
+            bh1_pos=np.array([trajectory["xi1x"],trajectory["xi1y"],trajectory["xi1z"]])
+            bh2_pos=np.array([trajectory["xi2x"],trajectory["xi2y"],trajectory["xi2z"]])
 
             # Global Shell Setup
             bin_edges = np.arange(rmin, rmax + dr * 1e-9, dr)
@@ -258,6 +270,10 @@ def integrate_and_save(args):
         # --- SAVE RESULT ---
         np.savez(npz_out,
                  time=np.array([t_val]),
+                 geometry_identity=np.array(geometry_identity(geometry)),
+                 coordinate_frame=np.array("corotating" if geometry["corotating"] else "inertial"),
+                 frame_omega=np.array(geometry["frame_omega"]),
+                 rotation_epoch=np.array(0.0),
                  radius=radii_axis,
                  shell_data=np.array([shell_integrals]),
                  bh1_data=np.array([bh1_vol]),
@@ -282,7 +298,7 @@ def integrate_and_save(args):
 # 3. Stitching Helper
 # ==============================================================================
 
-def stitch_archives(file_pattern, output_filename):
+def stitch_archives(file_pattern, output_filename, geometry=None):
     """
     Aggregates individual small NPZ files into one master archive.
     Mimics the output format of Code 1.
@@ -309,7 +325,18 @@ def stitch_archives(file_pattern, output_filename):
     radii_axis = None
     rmin_used = None
 
+    frame_metadata=None
     for i, f in enumerate(files):
+        # Never mix newly interpreted geometries or silently reuse an ambiguous cache.
+        with np.load(f) as archive:
+            if "geometry_identity" not in archive:
+                raise ValueError("Historical cache lacks explicit frame/geometry metadata; re-extract with --historical-frame")
+            current=tuple(str(archive[k]) for k in ("geometry_identity","coordinate_frame","frame_omega","rotation_epoch"))
+            if geometry is not None and current[0]!=geometry_identity(geometry):
+                raise ValueError("Cached geometry differs from requested interpretation")
+            if frame_metadata is not None and current!=frame_metadata:
+                raise ValueError("Cannot stitch incompatible frame/geometry metadata")
+            frame_metadata=current
         try:
             with np.load(f) as data:
                 t = data['time'][0] 
@@ -345,6 +372,10 @@ def stitch_archives(file_pattern, output_filename):
     cavity_data = np.array(cavity_data)[sort_idx]
 
     np.savez(output_filename,
+             geometry_identity=np.array(frame_metadata[0]),
+             coordinate_frame=np.array(frame_metadata[1]),
+             frame_omega=np.array(float(frame_metadata[2])),
+             rotation_epoch=np.array(float(frame_metadata[3])),
              time=times,
              radius=radii_axis,
              shell_data=shell_data,
@@ -360,7 +391,10 @@ def stitch_archives(file_pattern, output_filename):
 # 4. Parallel Processing Driver
 # ==============================================================================
 
-def process_files(file_pattern, rmin, rmax, dr, params, output_filename, delete_source=False, nproc=1):
+def process_files(file_pattern, rmin, rmax, dr, params, output_filename, delete_source=False, nproc=1, historical_frame=None):
+    geometry=parse_athena_parfile(params["_source_parfile"],historical_frame)
+    geometry["diagnostic_sampling"]=[rmin,rmax,dr,params['problem'].get('flux_radius1',5.0),
+                                    params['problem'].get('flux_radius2',5.0)]
     all_files = sorted(glob.glob(file_pattern))
     if not all_files:
         print(f"[Warning] No files found matching: {file_pattern}")
@@ -370,7 +404,7 @@ def process_files(file_pattern, rmin, rmax, dr, params, output_filename, delete_
         sep = params['problem'].get('sep', 25.0)
         q   = params['problem'].get('q', 1.0)
         r_exc_1 = params['problem'].get('flux_radius1', 5.0)
-        r_exc_2 = params['problem'].get('flux_radius2', 5.0)
+        r_exc_2 = 0.0 if geometry["single_black_hole"] else params['problem'].get('flux_radius2', 5.0)
     except KeyError:
         print("[Error] Could not find critical binary parameters in <problem> block.")
         return
@@ -392,7 +426,7 @@ def process_files(file_pattern, rmin, rmax, dr, params, output_filename, delete_
             t_src = os.path.getmtime(f)
             t_npz = os.path.getmtime(npz_out)
             
-            if t_npz > t_src:
+            if t_npz > t_src and geometry_cache_matches(npz_out,geometry):
                 should_process = False
                 skipped_count += 1
                 
@@ -414,7 +448,7 @@ def process_files(file_pattern, rmin, rmax, dr, params, output_filename, delete_
                     pass
                     
         if should_process:
-            tasks.append((f, npz_out, rmin, rmax, dr, sep, q, r_exc_1, r_exc_2, delete_source))
+            tasks.append((f, npz_out, rmin, rmax, dr, sep, q, r_exc_1, r_exc_2, delete_source, geometry))
 
     # 2. Run Processing
     total_tasks = len(tasks)
@@ -445,7 +479,7 @@ def process_files(file_pattern, rmin, rmax, dr, params, output_filename, delete_
         print("\nBatch processing complete.")
     
     # 3. Trigger Stitching
-    stitch_archives(file_pattern, output_filename)
+    stitch_archives(file_pattern, output_filename,geometry)
 
 
 # ==============================================================================
@@ -456,6 +490,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="AthenaK Binary Analysis Script")
     parser.add_argument('-n', '--nproc', type=int, default=1, help='Number of processes')
     parser.add_argument('--parfile', type=str, default='parfile.par')
+    parser.add_argument('--historical-frame',choices=['inertial','corotating'])
     parser.add_argument('--delete', action='store_true', default=False, 
                         help='Delete source .athdf file after successful processing')
     args = parser.parse_args()
@@ -480,10 +515,10 @@ if __name__ == "__main__":
     
     print("\n--- Processing Torque Output ---")
     process_files("./bin/torus.torque.*.athdf", R_MIN, R_MAX, DR, 
-                  params, "analysis_torque.npz", delete_source=args.delete, nproc=args.nproc)
+                  params, "analysis_torque.npz", delete_source=args.delete, nproc=args.nproc, historical_frame=args.historical_frame)
     
     print("\n--- Processing AM Output ---")
     process_files("./bin/torus.angular_momentum.*.athdf", R_MIN, R_MAX, DR, 
-                  params, "analysis_am.npz", delete_source=args.delete, nproc=args.nproc)
+                  params, "analysis_am.npz", delete_source=args.delete, nproc=args.nproc, historical_frame=args.historical_frame)
 
     print("\nDone.")

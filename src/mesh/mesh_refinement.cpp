@@ -126,6 +126,8 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
 
   // Refine/derefine mesh and evolved data, set boundary conditions/timestep on new mesh
   if (nnew != 0 || ndel != 0) { // at least one (de)refinement flagged
+    auto change = pmy_mesh->pgen->user_diagnostic_change_func;
+    if (change && pmy_mesh->pzoom) change(pmy_mesh, 5, true);
     if (pmy_mesh->pzoom != nullptr && pmy_mesh->pmb_pack->pdyngr != nullptr &&
         pmy_mesh->pzoom->zamr.zooming_out) {
       // Use the EMF of the current state before/after coarsening. Last-stage
@@ -136,8 +138,14 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
       pmy_mesh->pzoom->UpdateFluxes(pdriver);
     }
     if (pmy_mesh->pzoom != nullptr) pmy_mesh->pzoom->StoreZoomRegion();
+    if (change && pmy_mesh->pzoom) change(pmy_mesh, 5, false);
+    if (change) change(pmy_mesh, 4, true);
     RedistAndRefineMeshBlocks(pin, nnew, ndel);
     pdriver->InitBoundaryValuesAndPrimitives(pmy_mesh);
+    if (change && pmy_mesh->pzoom) {
+      change(pmy_mesh, 4, false);
+      change(pmy_mesh, 5, true);
+    }
     if (pmy_mesh->pzoom != nullptr) pmy_mesh->pzoom->ApplyZoomRegion(pdriver);
 
     MeshBlockPack* pmbp = pmy_mesh->pmb_pack;
@@ -158,6 +166,7 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
         }
       }
     }
+    if (change) change(pmy_mesh, pmy_mesh->pzoom ? 5 : 4, false);
     if (pmbp->phydro != nullptr) {
       (void) pmbp->phydro->NewTimeStep(pdriver, pdriver->nexp_stages);
     }

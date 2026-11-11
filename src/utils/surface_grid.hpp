@@ -3,9 +3,11 @@
 //----------------------------------------------------------------------------------------
 #pragma once
 
-#include "athena.hpp" // For Real, DualArray, etc.
 #include <functional> // For std::function
+#include <array>
 #include <string>     // For std::string
+
+#include "athena.hpp"
 
 //========================================================================================
 // A uniformly sampled (θ,φ) surface with radius r(θ,φ) in Cartesian coords.
@@ -37,7 +39,8 @@ class SphericalSurfaceGrid {
   void SetMotion(MotionFunc motion);
   const Real* Center() const { return center_; }
   std::string surface_type = "coordinate_transfer_sphere";
-  Real min_cells_per_radius = 0.0; // zero disables the resolution qualification
+  int inherited_stencil_reason = 0;  // restart provenance until the next evolved state
+  Real min_cells_per_radius = 0.0;   // zero disables the resolution qualification
   DualArray2D<Real>& Motion() { return motion_; }
   DualArray1D<int>& Owners() { return owners_; }
   DualArray1D<int>& StencilReasons() { return stencil_reasons_; }
@@ -54,6 +57,8 @@ class SphericalSurfaceGrid {
   // Interpolate the 6 components of the ADM spatial metric to the surface.
   // This now automatically triggers the calculation of derived geometric quantities.
   void InterpolateMetric();
+  DualArray2D<Real> InterpolateCached(int slot, const DvceArray5D<Real>& source,
+                                      int start, int end);
   // Field-dependent checks: call only once evolved fields and ghosts are ready.
   void QualifyStencils();
 
@@ -93,7 +98,9 @@ class SphericalSurfaceGrid {
   Real dth, dph;
   bool metric_is_flat_;
   RFunc radius_function_;
+  std::array<DualArray2D<Real>, 4> buffers_;
   DualArray2D<Real> motion_;
+  mutable DualArray2D<Real> area_covectors_;
   DualArray1D<int> owners_, stencil_reasons_;
   DualArray1D<Real> geometric_weights_, local_spacing_;
   int interp_order_; // Decoupled interpolation order

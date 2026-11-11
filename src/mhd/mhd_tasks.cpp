@@ -259,12 +259,17 @@ TaskStatus MHD::RecvFlux(Driver *pdrive, int stage) {
 TaskStatus MHD::MHDSrcTerms(Driver *pdrive, int stage) {
   Real beta_dt = (pdrive->beta[stage-1])*(pmy_pack->pmesh->dt);
 
+  auto pm = pmy_pack->pmesh;
+  auto change = pm->pgen->user_diagnostic_change_func;
+  if (change && (psrc || psbox_u)) change(pm, 1, true);
   // Add physics source terms (must be computed from primitives)
   if (psrc != nullptr) psrc->ApplySrcTerms(w0, peos->eos_data,  beta_dt, u0);
 
   // Add shearing box source terms for CC MHD variables
   if (psbox_u != nullptr) psbox_u->SourceTermsCC(w0, bcc0, peos->eos_data, beta_dt, u0);
 
+  if (change && (psrc || psbox_u)) change(pm, 1, false);
+  if (change) change(pm, 2, true);
   // Add coordinate source terms in GR.  Again, must be computed with only primitives.
   if (pmy_pack->pcoord->is_general_relativistic &&
       !pmy_pack->pcoord->is_dynamical_relativistic) {
@@ -273,11 +278,13 @@ TaskStatus MHD::MHDSrcTerms(Driver *pdrive, int stage) {
     pmy_pack->pdyngr->AddCoordTerms(w0, bcc0, beta_dt, u0, pmy_pack->pmesh->mb_indcs.ng);
   }
 
+  if (change) change(pm, 2, false);
   // Add user source terms
   if (pmy_pack->pmesh->pgen->user_srcs) {
+    if (change) change(pm, 1, true);
     (pmy_pack->pmesh->pgen->user_srcs_func)(pmy_pack->pmesh, beta_dt);
+    if (change) change(pm, 1, false);
   }
-
   return TaskStatus::complete;
 }
 

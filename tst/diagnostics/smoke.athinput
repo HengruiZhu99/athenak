@@ -58,6 +58,8 @@ calculate_tmunu = false
 <adm>
 dynamic = false
 <problem>
+flux_diagnostics = true
+flux_new_epoch = false
 flux_modeled_horizons = true
 flux_ntheta = 8
 flux_nphi = 16
@@ -70,7 +72,7 @@ flux_min_cells_per_radius = 1
 
 initial_condition = bondi_inflow
 # Optional initial cavity only; exterior feeding remains the Michel solution.
-bondi_cavity_radius = 32
+bondi_cavity_radius = 0
 bondi_cavity_fraction = 0
 bondi_cavity_core_fraction = 0
 bondi_cache_boundary = true

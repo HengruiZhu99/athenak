@@ -18,6 +18,7 @@
 
 class Driver;
 using UserDiagnosticStepFnPtr = void (*)(Mesh*, Driver*, int);
+using UserDiagnosticChangeFnPtr = void (*)(Mesh*, int, bool);
 using UserDiagnosticExportFnPtr = void (*)(Mesh*, ParameterInput*);
 
 using ProblemFinalizeFnPtr = void (*)(ParameterInput *pin, Mesh *pm);
@@ -57,8 +58,9 @@ class ProblemGenerator {
   std::shared_ptr<void> user_boundary_data;
   // Explicit problem diagnostic lifecycle, run outside retryable task lists.
   std::shared_ptr<void> user_diagnostic_data;
-  UserDiagnosticStepFnPtr user_diagnostic_step_func=nullptr;
-  UserDiagnosticExportFnPtr user_diagnostic_export_func=nullptr;
+  UserDiagnosticStepFnPtr user_diagnostic_step_func = nullptr;
+  UserDiagnosticChangeFnPtr user_diagnostic_change_func = nullptr;
+  UserDiagnosticExportFnPtr user_diagnostic_export_func = nullptr;
 
   // vector of SphericalGrid objects for analysis
   std::vector<std::unique_ptr<SphericalGrid>> spherical_grids;

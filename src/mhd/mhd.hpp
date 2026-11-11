@@ -91,6 +91,7 @@ class MHD {
  public:
   MHD(MeshBlockPack *ppack, ParameterInput *pin);
   ~MHD();
+  DvceArray4D<bool> diagnostic_reset;  // optional current-state reset contamination
 
   // data
   ReconstructionMethod recon_method;

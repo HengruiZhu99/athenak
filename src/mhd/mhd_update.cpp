@@ -80,6 +80,10 @@ TaskStatus MHD::RKUpdate(Driver *pdriver, int stage) {
       u0_(m,n,k,j,i) = gam0*u0_(m,n,k,j,i) + gam1*u1_(m,n,k,j,i) - beta_dt*divf(i);
     });
   });
+  // New stage state: retain any repair performed after this update through C2P
+  // and the next diagnostic sample. This array never changes evolved variables.
+  if (diagnostic_reset.extent(0) > 0)
+    Kokkos::deep_copy(DevExeSpace(), diagnostic_reset, false);
   return TaskStatus::complete;
 }
 } // namespace mhd

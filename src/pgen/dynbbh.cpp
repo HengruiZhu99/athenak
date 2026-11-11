@@ -14,7 +14,9 @@
 #include <limits>
 #include <memory>
 #include <sstream>
+#include <set>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "athena.hpp"
@@ -34,6 +36,7 @@
 #include "utils/flux_generalized.hpp"
 #include "utils/circumbinary_geometry.hpp"
 #include "utils/circumbinary_accumulator.hpp"
+#include "utils/circumbinary_budget.hpp"
 #include "driver/driver.hpp"
 #include "units/units.hpp"
 #include "srcterms/ismcooling.hpp"
@@ -467,176 +470,857 @@ void InitializeDynBBHPreRestart(Mesh *pm);
 void InitializeDynBBHPostRestart(Mesh *pm);
 void PreconditionDynBBHRestartMHD(Mesh *pm);
 
-Real diagnostic_metric_time=0.0;
+Real diagnostic_metric_time = 0.0;
+struct BinaryBudgetState {
+  bool enabled = false, in_step = false;
+  int aggregate_depth = 0, stage = 0;
+  circumbinary::BudgetGeometry geometry;
+  int boundary[4] = {-1, -1, -1, -1};  // H1,H2,Rinner,Router
+  std::vector<std::unique_ptr<SphericalSurfaceGrid>> excision;
+  circumbinary::RegionMoments before[7];
+  Real trial[7][4] = {}, cumulative[7][4] = {}, last[7][4] = {};
+  Real boundary_trial[4] = {}, torque_trial[4] = {}, startJ[4] = {}, deltaJ[4] = {};
+  Real last_boundary[4] = {}, last_torque[4] = {}, residual[4] = {}, events[4] = {};
+  bool valid[4] = {};
+  Real dt = 0, start = 0, committed_time = 0;
+  int committed_cycle = -1;
+};
+std::vector<Real> LoadDiagnosticScalars(ParameterInput*, const std::string&);
+void InitializeBinaryBudget(BinaryBudgetState&, ParameterInput*, Mesh*,
+                            ProblemGenerator*);
+void PrepareBinaryBudget(BinaryBudgetState&, Mesh*);
+void BinaryBudgetStage(BinaryBudgetState&, Mesh*, Driver*, int);
+void BinaryBudgetChange(Mesh*, int, bool);
+void BinaryBudgetHistory(HistoryData*, Mesh*);
 struct BinaryDiagnosticState {
   std::vector<circumbinary::QualifiedMass> mass;
   std::vector<std::string> labels;
   std::string identity;
-  Real state_time=0.0;
+  BinaryBudgetState budget;
+  Real state_time = 0.0;
 };
 void BinaryDiagnosticStep(Mesh*, Driver*, int);
 void ExportBinaryDiagnostics(Mesh*, ParameterInput*);
 void InitializeBinaryDiagnostics(ProblemGenerator*, ParameterInput*, Mesh*, bool);
-void UpdateDiagnosticSurfaces(Mesh *pm, Real time);
-void RegisterDiagnosticSurfaces(ProblemGenerator *pgen, ParameterInput *pin, Mesh *pm);
+void UpdateDiagnosticSurfaces(Mesh* pm, Real time);
+void RegisterDiagnosticSurfaces(ProblemGenerator* pgen, ParameterInput* pin, Mesh* pm);
 
-void RegisterDiagnosticSurfaces(ProblemGenerator *pgen, ParameterInput *pin, Mesh *pm) {
-  auto pack=pm->pmb_pack;
-  bool enabled=pin->GetOrAddBoolean("problem","flux_diagnostics",pm->three_d);
-  if (!enabled) return;
+void RegisterDiagnosticSurfaces(ProblemGenerator* pgen, ParameterInput* pin, Mesh* pm) {
+  auto pack = pm->pmb_pack;
+  bool ideal = pack->pmhd && pack->pdyngr &&
+               pack->pdyngr->eos_policy == DynGRMHD_EOS::eos_ideal &&
+               pack->pmhd->peos->eos_data.is_ideal;
+  bool requested = pin->GetOrAddBoolean("problem", "user_hist", false) ||
+                   pin->GetOrAddBoolean("problem", "flux_modeled_horizons", false) ||
+                   pin->GetOrAddBoolean("problem", "flux_budget", false);
+  bool enabled = pin->GetOrAddBoolean("problem", "flux_diagnostics",
+                                      (pm->three_d && ideal) || requested);
+  if (!enabled) {
+    return;
+  }
   // Existing diagnostics have always used gamma-law stress helpers. Do not substitute
   // them into the evolution EOS. Unsupported diagnostic configurations fail explicitly.
   if (!pack->pmhd || !pack->padm || !pack->pdyngr ||
-      pack->pdyngr->eos_policy!=DynGRMHD_EOS::eos_ideal)
+      pack->pdyngr->eos_policy != DynGRMHD_EOS::eos_ideal ||
+      !pack->pmhd->peos->eos_data.is_ideal) {
     Kokkos::abort("dynbbh flux diagnostics require ideal Valencia MHD with ADM");
-  if (!pm->three_d) Kokkos::abort("Closed dynbbh flux surfaces require a 3D domain");
-  int nt=pin->GetOrAddInteger("problem","flux_ntheta",64);
-  int np=pin->GetOrAddInteger("problem","flux_nphi",128);
-  Real ri=pin->GetOrAddReal("problem","flux_rsurf_inner",10.0);
-  Real ro=pin->GetOrAddReal("problem","flux_rsurf_outer",20.0);
-  Real dr=pin->GetOrAddReal("problem","flux_dr_surf",5.0);
-  if (!(std::isfinite(ri)&&std::isfinite(ro)&&std::isfinite(dr)&&ri>0&&ro>=ri&&dr>0))
+  }
+  if (!pm->three_d) {
+    Kokkos::abort("Closed dynbbh flux surfaces require a 3D domain");
+  }
+  int nt = pin->GetOrAddInteger("problem", "flux_ntheta", 64);
+  int np = pin->GetOrAddInteger("problem", "flux_nphi", 128);
+  if (nt < 3 || np < 3 || 1LL * nt * np > 16777216) {
+    Kokkos::abort(
+        "Surface angular grid needs >=3 points per direction and <=16777216 samples");
+  }
+  Real ri = pin->GetOrAddReal("problem", "flux_rsurf_inner", 10.0);
+  Real ro = pin->GetOrAddReal("problem", "flux_rsurf_outer", 20.0);
+  Real dr = pin->GetOrAddReal("problem", "flux_dr_surf", 5.0);
+  if (!(std::isfinite(ri) && std::isfinite(ro) && std::isfinite(dr) && ri > 0 &&
+        ro >= ri && dr > 0)) {
     Kokkos::abort("Invalid diagnostic radial range");
-  Real nr=std::floor((ro-ri)/dr+1e-10)+1;
-  bool h1=pin->GetOrAddBoolean("problem","flux_horizon1",false);
-  bool h2=pin->GetOrAddBoolean("problem","flux_horizon2",false);
-  bool bh=pin->GetOrAddBoolean("problem","flux_modeled_horizons",false);
-  if (nr>NHISTORY_VARIABLES/kSurfaceChannels ||
-      (nr+h1+h2+(bh ? (bbh.single_black_hole ? 1 : 2):0))*kSurfaceChannels>
-        NHISTORY_VARIABLES-32)
+  }
+  Real nr = std::floor((ro - ri) / dr + 1e-10) + 1;
+  bool h1 = pin->GetOrAddBoolean("problem", "flux_horizon1", false);
+  bool h2 = pin->GetOrAddBoolean("problem", "flux_horizon2", false);
+  bool bh = pin->GetOrAddBoolean("problem", "flux_modeled_horizons", false);
+  if (nr > NHISTORY_VARIABLES / kSurfaceChannels ||
+      (nr + h1 + h2 + (bh ? (bbh.single_black_hole ? 1 : 2) : 0)) * kSurfaceChannels >
+          NHISTORY_VARIABLES - (3 + 8 * (bh ? (bbh.single_black_hole ? 1 : 2) : 0) +
+                                (pin->GetOrAddBoolean("problem", "flux_budget", false)
+                                     ? (bbh.single_black_hole ? 66 : 88)
+                                     : 0))) {
     Kokkos::abort("Full requested diagnostic schema exceeds history capacity");
-  for (int n=0;n<static_cast<int>(nr);++n) {
-    Real r=ri+n*dr;
-    std::ostringstream label; label<<"R"<<std::setprecision(std::numeric_limits<Real>::max_digits10)<<r;
-    pgen->surface_grids.push_back(std::make_unique<SphericalSurfaceGrid>(
-      pack,nt,np,[=](Real,Real){return r;},label.str()));
   }
-  for (int hole=0;hole<2;++hole) if (hole==0 ? h1 : h2) {
-    Real r=pin->GetOrAddReal("problem",hole==0 ? "flux_radius1":"flux_radius2",1.0);
-    if (!(std::isfinite(r)&&r>0)) Kokkos::abort("Invalid transfer sphere radius");
-    pgen->surface_grids.push_back(std::make_unique<SphericalSurfaceGrid>(
-      pack,nt,np,[=](Real,Real){return r;},hole==0 ? "H1":"H2"));
+  std::set<std::string> identifiers;
+  for (int n = 0; n < static_cast<int>(nr); ++n) {
+    std::ostringstream id;
+    id << "R" << std::setprecision(std::numeric_limits<Real>::max_digits10)
+       << (ri + n * dr);
+    if (!identifiers.insert(id.str()).second) {
+      Kokkos::abort("Diagnostic radii produce duplicate labels");
+    }
   }
-  if (bh) for (int hole=0;hole<(bbh.single_black_hole ? 1:2);++hole) {
-    auto surf=std::make_unique<SphericalSurfaceGrid>(pack,nt,np,
-      [](Real,Real){return 1.0;},hole==0 ? "BH1_Kerr":"BH2_Kerr");
-    surf->surface_type="modeled_component_Kerr";
-    surf->min_cells_per_radius=pin->GetOrAddReal("problem","flux_min_cells_per_radius",4.0);
-    if (!(std::isfinite(surf->min_cells_per_radius)&&surf->min_cells_per_radius>0))
-      Kokkos::abort("flux_min_cells_per_radius must be finite and positive");
-    pgen->surface_grids.push_back(std::move(surf));
+  auto ind = pm->mb_indcs;
+  Kokkos::realloc(pack->pmhd->diagnostic_reset,
+                  std::max(pack->nmb_thispack, pm->nmb_maxperrank), ind.nx3 + 2 * ind.ng,
+                  ind.nx2 + 2 * ind.ng, ind.nx1 + 2 * ind.ng);
+  Kokkos::deep_copy(pack->pmhd->diagnostic_reset, 0);
+  for (int n = 0; n < static_cast<int>(nr); ++n) {
+    Real r = ri + n * dr;
+    std::ostringstream label;
+    label << "R" << std::setprecision(std::numeric_limits<Real>::max_digits10) << r;
+    pgen->surface_grids.push_back(std::make_unique<SphericalSurfaceGrid>(
+        pack, nt, np, [=](Real, Real) { return r; }, label.str()));
+  }
+  for (int hole = 0; hole < 2; ++hole) {
+    if (hole == 0 ? h1 : h2) {
+      Real r =
+          pin->GetOrAddReal("problem", hole == 0 ? "flux_radius1" : "flux_radius2", 1.0);
+      if (!(std::isfinite(r) && r > 0)) {
+        Kokkos::abort("Invalid transfer sphere radius");
+      }
+      pgen->surface_grids.push_back(std::make_unique<SphericalSurfaceGrid>(
+          pack, nt, np, [=](Real, Real) { return r; }, hole == 0 ? "H1" : "H2"));
+    }
+  }
+  if (bh && (pack->pz4c ||
+             (!bbh.corotating && !bbh.single_black_hole && !pack->padm->is_dynamic))) {
+    Kokkos::abort(
+        "Modeled-horizon diagnostics require prescribed ADM, dynamic for inertial "
+        "binaries");
+  }
+  if (bh) {
+    for (int hole = 0; hole < (bbh.single_black_hole ? 1 : 2); ++hole) {
+      auto surf = std::make_unique<SphericalSurfaceGrid>(
+          pack, nt, np, [](Real, Real) { return 1.0; },
+          hole == 0 ? "BH1_Kerr" : "BH2_Kerr");
+      surf->surface_type = "modeled_component_Kerr";
+      surf->min_cells_per_radius =
+          pin->GetOrAddReal("problem", "flux_min_cells_per_radius", 4.0);
+      if (!(std::isfinite(surf->min_cells_per_radius) &&
+            surf->min_cells_per_radius > 0)) {
+        Kokkos::abort("flux_min_cells_per_radius must be finite and positive");
+      }
+      pgen->surface_grids.push_back(std::move(surf));
+    }
   }
 }
 
-
-void InitializeBinaryDiagnostics(ProblemGenerator *pgen, ParameterInput *pin, Mesh *pm,
-                                 bool restart) {
-  if (pgen->surface_grids.empty()) return;
-  auto state=std::make_shared<BinaryDiagnosticState>();
-  std::ostringstream signature;
-  signature<<"schema2:"<<std::setprecision(17)<<bbh.corotating<<":"<<bbh.frame_omega
-    <<":"<<bbh.sep<<":"<<bbh.q<<":"<<bbh.a1<<":"<<bbh.a2
-    <<":"<<bbh.th_a1<<":"<<bbh.th_a2<<":"<<bbh.ph_a1<<":"<<bbh.ph_a2
-    <<":"<<bbh.spin_ramp<<":"<<bbh.spin_ramp_start_time<<":"<<bbh.spin_ramp_timescale;
-  if (bbh.use_traj_table) for (std::size_t row=0;row<bbh_table.t.size();++row) {
-    signature<<":"<<bbh_table.t[row];
-    const std::vector<Real>* columns[]={&bbh_table.m1,&bbh_table.m2,&bbh_table.x1,&bbh_table.y1,
-      &bbh_table.z1,&bbh_table.x2,&bbh_table.y2,&bbh_table.z2,&bbh_table.vx1,&bbh_table.vy1,
-      &bbh_table.vz1,&bbh_table.vx2,&bbh_table.vy2,&bbh_table.vz2,&bbh_table.ax1,&bbh_table.ay1,
-      &bbh_table.az1,&bbh_table.ax2,&bbh_table.ay2,&bbh_table.az2};
-    for (auto col:columns) signature<<":"<<(*col)[row];
+void GlobalRegionMoments(circumbinary::RegionMoments& m) {
+#if MPI_PARALLEL_ENABLED
+  Real values[16];
+  for (int r = 0; r < 4; ++r) {
+    values[r] = m.J[r];
+    values[4 + r] = m.torque[r];
+    values[8 + r] = m.volume[r];
+    values[12 + r] = m.bad[r];
   }
-  for (const auto &s:pgen->surface_grids) {
-    signature<<":"<<s->Label()<<":"<<s->Npts()<<":"<<s->min_cells_per_radius
-      <<":"<<s->Radius().h_view(0)<<":"<<s->Thetas().h_view(0)<<":"<<s->Phis().h_view(1);
-    if (s->surface_type=="modeled_component_Kerr") {
+  MPI_Allreduce(MPI_IN_PLACE, values, 16, MPI_ATHENA_REAL, MPI_SUM, MPI_COMM_WORLD);
+  for (int r = 0; r < 4; ++r) {
+    m.J[r] = values[r];
+    m.torque[r] = values[4 + r];
+    m.volume[r] = values[8 + r];
+    m.bad[r] = values[12 + r];
+  }
+#endif
+  for (int r = 0; r < 4; ++r) {
+    if (!std::isfinite(m.J[r]) || !std::isfinite(m.torque[r]) ||
+        !std::isfinite(m.volume[r])) {
+      m.bad[r] += 1;
+    }
+  }
+}
+
+void InitializeBinaryBudget(BinaryBudgetState& b, ParameterInput* pin, Mesh* pm,
+                            ProblemGenerator* pgen) {
+  b.enabled = pin->GetOrAddBoolean("problem", "flux_budget", false);
+  if (!b.enabled) {
+    return;
+  }
+  if (!bbh.corotating || bbh.use_traj_table || bbh.spin_ramp || pm->pmb_pack->pdynrad ||
+      pm->pmb_pack->pz4c || bbh.puncture_excise_shrink_to_horizon) {
+    Kokkos::abort(
+        "Regional budgets currently require stationary prescribed corotating geometry "
+        "without radiation");
+  }
+  const auto& coord = pm->pmb_pack->pcoord->coord_data;
+  if (!coord.bh_excise || coord.excision_scheme != ExcisionScheme::puncture) {
+    Kokkos::abort(
+        "Regional budgets require explicitly modeled puncture excision boundaries");
+  }
+  b.start = b.committed_time = pm->time;
+  b.committed_cycle = pm->ncycle;
+  b.geometry.holes = bbh.single_black_hole ? 1 : 2;
+  b.geometry.inner = pin->GetOrAddReal("problem", "budget_r_inner", 20.0);
+  b.geometry.outer = pin->GetOrAddReal("problem", "budget_r_outer", 400.0);
+  b.geometry.subcells = pin->GetOrAddInteger("problem", "budget_subcells", 2);
+  if (!(std::isfinite(b.geometry.inner) && std::isfinite(b.geometry.outer) &&
+        b.geometry.outer > b.geometry.inner && b.geometry.inner > 0 &&
+        b.geometry.subcells >= 1 && b.geometry.subcells <= 8)) {
+    Kokkos::abort("Invalid budget radii or fractional-cell subdivision (1..8)");
+  }
+  auto domain = pm->mesh_size;
+  if (b.geometry.outer > std::min({-domain.x1min, domain.x1max, -domain.x2min,
+                                   domain.x2max, -domain.x3min, domain.x3max})) {
+    Kokkos::abort("Complete budget outer sphere must fit inside the simulation domain");
+  }
+  auto& surfaces = pgen->surface_grids;
+  const Real targets[2] = {b.geometry.inner, b.geometry.outer};
+  for (std::size_t g = 0; g < surfaces.size(); ++g) {
+    auto& s = *surfaces[g];
+    if (s.Label() == "H1") {
+      b.boundary[0] = g;
+    }
+    if (s.Label() == "H2") {
+      b.boundary[1] = g;
+    }
+    if (s.Label()[0] == 'R') {
+      for (int face = 0; face < 2; ++face) {
+        Real r = s.Radius().h_view(0);
+        if (std::abs(r - targets[face]) <=
+            16 * std::numeric_limits<Real>::epsilon() * std::max(1.0, std::abs(r))) {
+          if (b.boundary[face + 2] >= 0) {
+            Kokkos::abort("Ambiguous budget boundary radius");
+          }
+          b.boundary[face + 2] = g;
+          if (face == 0) {
+            b.geometry.inner = r;
+          } else {
+            b.geometry.outer = r;
+          }
+        }
+      }
+    }
+  }
+  if (b.boundary[0] < 0 || (b.geometry.holes == 2 && b.boundary[1] < 0) ||
+      b.boundary[2] < 0 || b.boundary[3] < 0) {
+    Kokkos::abort(
+        "Select budget boundaries among the existing R and H transfer surfaces");
+  }
+  Real tr[NTRAJ];
+  find_traj_t(0.0, tr);
+  for (int h = 0; h < b.geometry.holes; ++h) {
+    auto& s = *surfaces[b.boundary[h]];
+    b.geometry.radius[h] = s.Radius().h_view(0);
+    Real d2 = 0;
+    for (int d = 0; d < 3; ++d) {
+      b.geometry.center[h][d] = tr[(h == 0 ? X1 : X2) + d];
+      d2 += SQR(b.geometry.center[h][d]);
+    }
+    if (sqrt(d2) + b.geometry.radius[h] >= b.geometry.inner) {
+      Kokkos::abort(
+          "Budget transfer spheres must lie strictly inside the cavity boundary");
+    }
+    auto x = std::make_unique<SphericalSurfaceGrid>(
+        pm->pmb_pack, pin->GetInteger("problem", "flux_ntheta"),
+        pin->GetInteger("problem", "flux_nphi"), [](Real, Real) { return 1.0; },
+        h == 0 ? "X1_excision" : "X2_excision");
+    x->surface_type = "actual_puncture_excision_boundary";
+    x->min_cells_per_radius =
+        pin->GetOrAddReal("problem", "flux_min_cells_per_radius", 4.0);
+    if (!(std::isfinite(x->min_cells_per_radius) && x->min_cells_per_radius > 0)) {
+      Kokkos::abort("Budget boundary resolution threshold must be finite and positive");
+    }
+    b.excision.push_back(std::move(x));
+  }
+  if (b.geometry.holes == 2 && b.geometry.radius[0] + b.geometry.radius[1] >= bbh.sep) {
+    Kokkos::abort("Budget transfer spheres must be disjoint");
+  }
+}
+
+void PrepareBinaryBudget(BinaryBudgetState& b, Mesh* pm) {
+  if (!b.enabled) {
+    return;
+  }
+  const auto& c = pm->pmb_pack->pcoord->coord_data;
+  for (int h = 0; h < b.geometry.holes; ++h) {
+    const Real* spin = h == 0 ? c.punc_0_spin : c.punc_1_spin;
+    const Real* vel = h == 0 ? c.punc_0_vel : c.punc_1_vel;
+    Real radius = h == 0 ? c.punc_0_rad : c.punc_1_rad;
+    Real a2 = SQR(spin[0]) + SQR(spin[1]) + SQR(spin[2]);
+    if (!(radius > 0 && sqrt(radius * radius + a2) < b.geometry.radius[h])) {
+      Kokkos::abort(
+          "Budget excision boundary must be positive and contained in its transfer "
+          "sphere");
+    }
+    circumbinary::KerrRadiusQuadric(radius, spin, vel, b.geometry.excision_H[h]);
+    circumbinary::Quadric q;
+    for (int i = 0; i < 3; ++i) {
+      q.center[i] = b.geometry.center[h][i];
+      for (int j = 0; j < 3; ++j) {
+        q.H[i][j] = b.geometry.excision_H[h][i][j];
+      }
+    }
+    b.excision[h]->SetCenter(q.center);
+    b.excision[h]->SetRadiusFunction([q](Real th, Real ph) { return q.Radius(th, ph); });
+    b.excision[h]->SetMotion([](Real, Real, Real* w) {
+      for (int i = 0; i < 3; ++i) {
+        w[i] = 0.0;
+      }
+    });
+  }
+}
+
+// Kinds: 0 recovery/reset, 1 physical coupling, 2 coordinate rG, 3 nonfinite
+// repair, 4 remap aggregate, 5 zoom aggregate, 6 startup/restart recovery jump.
+void BinaryBudgetChange(Mesh* pm, int kind, bool before) {
+  if (kind < 0 || kind > 6) {
+    Kokkos::abort("Unknown circumbinary budget mutation");
+  }
+  auto state =
+      std::static_pointer_cast<BinaryDiagnosticState>(pm->pgen->user_diagnostic_data);
+  auto& b = state->budget;
+  if (!b.enabled) {
+    return;
+  }
+  if (kind >= 4) {
+    if (before) {
+      if (b.aggregate_depth++ > 0) {
+        return;
+      }
+      PrepareBinaryBudget(b, pm);
+      b.before[kind] = ReduceBinaryRegions(pm->pmb_pack, b.geometry);
+      return;
+    }
+    if (--b.aggregate_depth > 0) {
+      return;
+    }
+    auto after = ReduceBinaryRegions(pm->pmb_pack, b.geometry);
+    auto first = b.before[kind];
+    GlobalRegionMoments(first);
+    GlobalRegionMoments(after);
+    for (int r = 0; r < 4; ++r) {
+      if (first.bad[r] || after.bad[r]) {
+        b.last[kind][r] = NAN;
+        b.events[r] += 1;
+      } else {
+        b.last[kind][r] = after.J[r] - first.J[r];
+        b.cumulative[kind][r] += b.last[kind][r];
+      }
+    }
+    return;
+  }
+  if (!b.in_step || b.aggregate_depth) {
+    return;
+  }
+  if (before) {
+    b.before[kind] = ReduceBinaryRegions(pm->pmb_pack, b.geometry);
+  } else {
+    auto after = ReduceBinaryRegions(pm->pmb_pack, b.geometry);
+    for (int r = 0; r < 4; ++r) {
+      if (b.before[kind].bad[r] || after.bad[r]) {
+        b.trial[kind][r] = NAN;
+      } else {
+        b.trial[kind][r] += after.J[r] - b.before[kind].J[r];
+      }
+    }
+  }
+}
+
+void BinaryBudgetStage(BinaryBudgetState& b, Mesh* pm, Driver* driver, int stage) {
+  if (!b.enabled) {
+    return;
+  }
+  if (stage == 0) {
+    PrepareBinaryBudget(b, pm);
+    b.in_step = true;
+    auto moment = ReduceBinaryRegions(pm->pmb_pack, b.geometry);
+    GlobalRegionMoments(moment);
+    for (int r = 0; r < 4; ++r) {
+      b.startJ[r] = moment.bad[r] == 0 ? moment.J[r] : NAN;
+      b.valid[r] = moment.bad[r] == 0;
+      b.boundary_trial[r] = b.torque_trial[r] = 0;
+      for (int c = 0; c < 4; ++c) {
+        b.trial[c][r] = 0;
+      }
+    }
+  } else if (stage > 0) {
+    b.stage = stage;
+    Real g = driver->gam0[stage - 1], bdt = driver->beta[stage - 1] * pm->dt;
+    auto moment = ReduceBinaryRegions(pm->pmb_pack, b.geometry, true);
+    GlobalRegionMoments(moment);
+    Real flux[6] = {};
+    bool valid[6] = {true, true, true, true, true, true};
+    for (int face = 0; face < 4; ++face) {
+      if (b.boundary[face] >= 0) {
+        auto f = IntegrateSurface(pm->pmb_pack,
+                                  pm->pgen->surface_grids[b.boundary[face]].get());
+        flux[face] = f.values[30] + f.values[33];
+        valid[face] = f.valid;
+      }
+    }
+    for (int h = 0; h < b.geometry.holes; ++h) {
+      auto f = IntegrateSurface(pm->pmb_pack, b.excision[h].get());
+      flux[4 + h] = f.values[30] + f.values[33];
+      valid[4 + h] = f.valid;
+    }
+    Real boundary[4] = {flux[0] - flux[4], flux[1] - flux[5], flux[2] - flux[0] - flux[1],
+                        flux[3] - flux[2]};
+    bool complete[4] = {valid[0] && valid[4], valid[1] && valid[5],
+                        valid[2] && valid[0] && valid[1], valid[3] && valid[2]};
+    for (int r = 0; r < 4; ++r) {
+      b.valid[r] &= complete[r] && moment.bad[r] == 0;
+      b.boundary_trial[r] = g * b.boundary_trial[r] + bdt * boundary[r];
+      b.torque_trial[r] = g * b.torque_trial[r] + bdt * moment.torque[r];
+      for (int c = 0; c < 4; ++c) {
+        b.trial[c][r] *= g;
+      }
+    }
+  } else {
+    if (b.committed_cycle >= pm->ncycle + 1) {
+      return;
+    }
+    b.committed_cycle = pm->ncycle + 1;
+    b.committed_time = pm->time + pm->dt;
+    b.in_step = false;
+    b.dt = pm->dt;
+    auto moment = ReduceBinaryRegions(pm->pmb_pack, b.geometry, true);
+    GlobalRegionMoments(moment);
+    // The local mutation deltas were propagated through each subsequent RK stage.
+    // Reduce once in driver order, outside all retryable task lists.
+    for (int c = 0; c < 4; ++c) {
+      Real values[4];
+      for (int r = 0; r < 4; ++r) {
+        values[r] = b.trial[c][r];
+      }
+#if MPI_PARALLEL_ENABLED
+      MPI_Allreduce(MPI_IN_PLACE, values, 4, MPI_ATHENA_REAL, MPI_SUM, MPI_COMM_WORLD);
+#endif
+      for (int r = 0; r < 4; ++r) {
+        b.last[c][r] = values[r];
+        if (std::isfinite(values[r])) {
+          b.cumulative[c][r] += values[r];
+        } else {
+          b.valid[r] = false;
+          b.events[r] += 1;
+        }
+      }
+    }
+    for (int r = 0; r < 4; ++r) {
+      b.valid[r] &= moment.bad[r] == 0;
+      b.deltaJ[r] = moment.J[r] - b.startJ[r];
+      b.last_boundary[r] = b.boundary_trial[r];
+      b.last_torque[r] = b.torque_trial[r];
+      b.residual[r] = b.valid[r] ? b.deltaJ[r] - b.last_boundary[r] - b.last_torque[r] -
+                                       b.last[0][r] - b.last[1][r] - b.last[3][r]
+                                 : NAN;
+    }
+  }
+}
+
+void BinaryBudgetHistory(HistoryData* data, Mesh* pm) {
+  auto state =
+      std::static_pointer_cast<BinaryDiagnosticState>(pm->pgen->user_diagnostic_data);
+  if (!state || !state->budget.enabled) {
+    return;
+  }
+  auto& b = state->budget;
+  PrepareBinaryBudget(b, pm);
+  auto m = ReduceBinaryRegions(pm->pmb_pack, b.geometry, true);
+  GlobalRegionMoments(m);
+  static const char* regions[4] = {"near1", "near2", "cavity", "annulus"};
+  for (int r = 0; r < 4; ++r) {
+    if (r == 1 && b.geometry.holes == 1) {
+      continue;
+    }
+    auto add = [&](const char* name, Real value) {
+      if (data->nhist >= NHISTORY_VARIABLES) {
+        Kokkos::abort("Budget history overflow");
+      }
+      data->label[data->nhist] = std::string("budget_") + regions[r] + "_" + name;
+      data->hdata[data->nhist++] = global_variable::my_rank == 0 ? value : 0.0;
+    };
+    add("Jz", m.bad[r] == 0 ? m.J[r] : NAN);
+    add("tau_z", m.bad[r] == 0 ? m.torque[r] : NAN);
+    add("partial_coordinate_volume", m.volume[r]);
+    add("interval_valid", b.valid[r] ? 1 : 0);
+    add("interval_dJ", b.deltaJ[r]);
+    add("integral_boundary_Jz_in", b.last_boundary[r]);
+    add("integral_torque", b.last_torque[r]);
+    add("integral_recovery_reset_dJ", b.last[0][r]);
+    add("integral_physical_dJ", b.last[1][r]);
+    add("integral_coordinate_rG_dJ", b.last[2][r]);
+    add("integral_nonfinite_repair_dJ", b.last[3][r]);
+    add("residual_dJ", b.valid[r] ? b.residual[r] : NAN);
+    add("last_remap_jump_dJ", b.last[4][r]);
+    add("last_zoom_jump_dJ", b.last[5][r]);
+    add("cumulative_quantified_remap_jump_dJ", b.cumulative[4][r]);
+    add("cumulative_quantified_zoom_jump_dJ", b.cumulative[5][r]);
+    add("unquantifiable_events", b.events[r]);
+    add("interval_dt", b.dt);
+    add("cumulative_quantified_recovery_reset_dJ", b.cumulative[0][r]);
+    add("cumulative_quantified_physical_dJ", b.cumulative[1][r]);
+    add("cumulative_quantified_initial_recovery_jump_dJ", b.cumulative[6][r]);
+    add("cumulative_quantified_nonfinite_repair_dJ", b.cumulative[3][r]);
+  }
+  std::ostringstream meta;
+  meta << " budget=stationary_total_fluid_plus_EM continuum_residual_not_discrete_closure"
+       << " budget_inner=" << b.geometry.inner << " budget_outer=" << b.geometry.outer
+       << " budget_subcells=" << b.geometry.subcells << " budget_epoch=" << b.start
+       << " partition=near1,near2,cavity,annulus exclusions=actual_puncture_Kerr_radius"
+       << " region_motion=stationary shared_volumes=disjoint "
+          "source_cumulative=quantified_partial"
+       << " near_boundaries=H-X cavity_boundaries=Rinner-H1-H2 "
+          "annulus_boundaries=Router-Rinner";
+  data->metadata += meta.str();
+}
+
+std::vector<SphericalSurfaceGrid*> DiagnosticProvenanceSurfaces(ProblemGenerator* pgen) {
+  std::vector<SphericalSurfaceGrid*> surfaces;
+  for (const auto& s : pgen->surface_grids) {
+    surfaces.push_back(s.get());
+  }
+  if (pgen->user_diagnostic_data) {
+    auto state =
+        std::static_pointer_cast<BinaryDiagnosticState>(pgen->user_diagnostic_data);
+    for (const auto& s : state->budget.excision) {
+      surfaces.push_back(s.get());
+    }
+  }
+  return surfaces;
+}
+
+void ClearInheritedProvenance(ProblemGenerator* pgen) {
+  for (const auto& s : pgen->surface_grids) {
+    s->inherited_stencil_reason = 0;
+  }
+  if (pgen->user_diagnostic_data) {
+    auto state =
+        std::static_pointer_cast<BinaryDiagnosticState>(pgen->user_diagnostic_data);
+    for (const auto& s : state->budget.excision) {
+      s->inherited_stencil_reason = 0;
+    }
+  }
+}
+
+void InitializeBinaryDiagnostics(ProblemGenerator* pgen, ParameterInput* pin, Mesh* pm,
+                                 bool restart) {
+  if (pgen->surface_grids.empty()) {
+    return;
+  }
+  // Enroll the one-shot override in fresh headers so it is usable from the restart CLI.
+  pin->GetOrAddBoolean("problem", "flux_new_epoch", false);
+  auto state = std::make_shared<BinaryDiagnosticState>();
+  InitializeBinaryBudget(state->budget, pin, pm, pgen);
+  std::ostringstream signature;
+  signature << "schema2:" << std::setprecision(17) << pm->pmb_pack->padm->is_dynamic
+            << ":" << bbh.single_black_hole << ":" << bbh.corotating << ":"
+            << bbh.frame_omega << ":" << bbh.sep << ":" << bbh.q << ":" << bbh.a1 << ":"
+            << bbh.a2 << ":" << bbh.th_a1 << ":" << bbh.th_a2 << ":" << bbh.ph_a1 << ":"
+            << bbh.ph_a2 << ":" << bbh.spin_ramp << ":" << bbh.spin_ramp_start_time << ":"
+            << bbh.spin_ramp_timescale;
+  if (bbh.use_traj_table) {
+    for (std::size_t row = 0; row < bbh_table.t.size(); ++row) {
+      signature << ":" << bbh_table.t[row];
+      const std::vector<Real>* columns[] = {
+          &bbh_table.m1,  &bbh_table.m2,  &bbh_table.x1,  &bbh_table.y1,  &bbh_table.z1,
+          &bbh_table.x2,  &bbh_table.y2,  &bbh_table.z2,  &bbh_table.vx1, &bbh_table.vy1,
+          &bbh_table.vz1, &bbh_table.vx2, &bbh_table.vy2, &bbh_table.vz2, &bbh_table.ax1,
+          &bbh_table.ay1, &bbh_table.az1, &bbh_table.ax2, &bbh_table.ay2, &bbh_table.az2};
+      for (auto col : columns) {
+        signature << ":" << (*col)[row];
+      }
+    }
+  }
+  for (const auto& s : pgen->surface_grids) {
+    signature << ":" << s->Label() << ":" << s->Npts() << ":" << s->min_cells_per_radius
+              << ":" << s->Radius().h_view(0) << ":" << s->Thetas().h_view(0) << ":"
+              << s->Phis().h_view(1);
+    if (s->surface_type == "modeled_component_Kerr") {
       state->labels.push_back(s->Label());
-      circumbinary::QualifiedMass q; q.start=q.committed_time=pm->time;
-      q.committed_cycle=pm->ncycle;
+      circumbinary::QualifiedMass q;
+      q.start = q.committed_time = pm->time;
+      q.committed_cycle = pm->ncycle;
       state->mass.push_back(q);
     }
   }
-  state->identity=signature.str();
-  bool has=restart && pin->DoesParameterExist("cbd_diagnostics","schema");
-  if (has) {
-    bool match=pin->GetInteger("cbd_diagnostics","schema")==2 &&
-      pin->GetString("cbd_diagnostics","identity")==state->identity;
-    bool reset=pin->GetOrAddBoolean("problem","flux_new_epoch",false);
-    if (!match && !reset) Kokkos::abort("Changed diagnostic configuration: set flux_new_epoch=true for a new epoch");
-    if (match && !reset) for (std::size_t h=0;h<state->mass.size();++h) {
-      auto id=state->labels[h]+"_"; auto &q=state->mass[h];
-      q.mass=pin->GetReal("cbd_diagnostics",id+"mass");
-      q.start=pin->GetReal("cbd_diagnostics",id+"start");
-      q.covered=pin->GetReal("cbd_diagnostics",id+"covered");
-      q.unavailable=pin->GetReal("cbd_diagnostics",id+"unavailable");
-      q.committed_time=pin->GetReal("cbd_diagnostics",id+"time");
-      q.committed_cycle=pin->GetInteger("cbd_diagnostics",id+"cycle");
-      q.interval_valid=pin->GetBoolean("cbd_diagnostics",id+"valid");
-      q.reason=pin->GetInteger("cbd_diagnostics",id+"reason");
-      Real tol=64*std::numeric_limits<Real>::epsilon()*std::max(1.0,std::abs(pm->time));
-      if (q.committed_cycle!=pm->ncycle || std::abs(q.committed_time-pm->time)>tol ||
-          !std::isfinite(q.mass) || !std::isfinite(q.start) || q.start>pm->time ||
-          !(q.covered>=0 && q.unavailable>=0) ||
-          std::abs(q.covered+q.unavailable-(pm->time-q.start))>tol)
-        Kokkos::abort("Invalid committed diagnostic restart state");
+  signature << ":budget:" << state->budget.enabled << ":" << state->budget.geometry.inner
+            << ":" << state->budget.geometry.outer << ":"
+            << state->budget.geometry.subcells;
+  if (state->budget.enabled) {
+    signature << ":excision:" << bbh.puncture_excise_rad1 << ":"
+              << bbh.puncture_excise_rad2 << ":" << bbh.puncture_excise_cap_to_horizon
+              << ":" << bbh.puncture_excise_to_horizon;
+    for (const auto& x : state->budget.excision) {
+      signature << ":" << x->min_cells_per_radius;
     }
-  } else if (restart && global_variable::my_rank==0 && !state->mass.empty()) {
-    std::cout<<"No diagnostic state in checkpoint: starting a new measured mass epoch at "
-      <<pm->time<<"; earlier accretion is unavailable."<<std::endl;
   }
-  if (restart) pin->SetBoolean("problem","flux_new_epoch",false);
-  pgen->user_diagnostic_data=state;
-  pgen->user_diagnostic_step_func=BinaryDiagnosticStep;
-  pgen->user_diagnostic_export_func=ExportBinaryDiagnostics;
+  // Stable compact identity, including every trajectory-table value. Do not copy
+  // the trajectory into the bounded ParameterInput restart header.
+  std::uint64_t hash = 14695981039346656037ULL;
+  for (unsigned char c : signature.str()) {
+    hash ^= c;
+    hash *= 1099511628211ULL;
+  }
+  std::ostringstream identity;
+  identity << "schema2-fnv1a64-" << std::hex << hash;
+  state->identity = identity.str();
+  bool has = restart && pin->DoesParameterExist("cbd_diagnostics", "schema");
+  if (has) {
+    bool match = pin->GetInteger("cbd_diagnostics", "schema") == 2 &&
+                 pin->GetString("cbd_diagnostics", "identity") == state->identity;
+    bool reset = pin->GetOrAddBoolean("problem", "flux_new_epoch", false);
+    if (match && !reset && pin->GetInteger("cbd_diagnostics", "state_format") != 2) {
+      Kokkos::abort("Unsupported diagnostic restart state format");
+    }
+    if (!match && !reset) {
+      Kokkos::abort(
+          "Changed diagnostic configuration: set flux_new_epoch=true for a new epoch");
+    }
+    if (match && !reset) {
+      for (std::size_t h = 0; h < state->mass.size(); ++h) {
+        auto id = state->labels[h] + "_";
+        auto& q = state->mass[h];
+        q.mass = pin->GetReal("cbd_diagnostics", id + "mass");
+        q.start = pin->GetReal("cbd_diagnostics", id + "start");
+        q.covered = pin->GetReal("cbd_diagnostics", id + "covered");
+        q.unavailable = pin->GetReal("cbd_diagnostics", id + "unavailable");
+        q.committed_time = pin->GetReal("cbd_diagnostics", id + "time");
+        q.committed_cycle = pin->GetInteger("cbd_diagnostics", id + "cycle");
+        q.interval_valid = pin->GetBoolean("cbd_diagnostics", id + "valid");
+        q.reason = pin->GetInteger("cbd_diagnostics", id + "reason");
+        Real tol =
+            64 * std::numeric_limits<Real>::epsilon() * std::max(1.0, std::abs(pm->time));
+        if (q.committed_cycle != pm->ncycle ||
+            std::abs(q.committed_time - pm->time) > tol || !std::isfinite(q.mass) ||
+            !std::isfinite(q.start) || q.start > pm->time ||
+            !(q.covered >= 0 && q.unavailable >= 0) ||
+            std::abs(q.covered + q.unavailable - (pm->time - q.start)) > tol) {
+          Kokkos::abort("Invalid committed diagnostic restart state");
+        }
+      }
+    }
+  } else if (restart && global_variable::my_rank == 0 && !state->mass.empty()) {
+    std::cout
+        << "No diagnostic state in checkpoint: starting a new measured mass epoch at "
+        << pm->time << "; earlier accretion is unavailable." << std::endl;
+  }
+  if (has && state->budget.enabled &&
+      pin->GetString("cbd_diagnostics", "identity") == state->identity &&
+      !pin->GetOrAddBoolean("problem", "flux_new_epoch", false)) {
+    auto& b = state->budget;
+    b.start = pin->GetReal("cbd_diagnostics", "budget_start");
+    b.committed_time = pin->GetReal("cbd_diagnostics", "budget_time");
+    b.committed_cycle = pin->GetInteger("cbd_diagnostics", "budget_cycle");
+    b.dt = pin->GetReal("cbd_diagnostics", "budget_dt");
+    if (b.committed_cycle != pm->ncycle || b.committed_time != pm->time) {
+      Kokkos::abort("Invalid budget committed restart state");
+    }
+    for (int r = 0; r < 4; ++r) {
+      auto values = LoadDiagnosticScalars(pin, "region" + std::to_string(r));
+      b.events[r] = values[0];
+      b.deltaJ[r] = values[1];
+      b.last_boundary[r] = values[2];
+      b.last_torque[r] = values[3];
+      b.residual[r] = values[4];
+      b.valid[r] = values[5] == 1.0;
+      for (int c = 0; c < 7; ++c) {
+        b.cumulative[c][r] = values[6 + c];
+        b.last[c][r] = values[13 + c];
+      }
+    }
+  }
+  pgen->user_diagnostic_data = state;
+  if (has && pin->GetString("cbd_diagnostics", "identity") == state->identity &&
+      !pin->GetBoolean("problem", "flux_new_epoch")) {
+    std::string packed = pin->GetString("cbd_diagnostics", "source_flags");
+    std::istringstream flags(packed);
+    std::string token;
+    auto surfaces = DiagnosticProvenanceSurfaces(pgen);
+    std::size_t n = 0;
+    while (std::getline(flags, token, ',')) {
+      if (n >= surfaces.size() || (token != "0" && token != "16")) {
+        Kokkos::abort("Invalid diagnostic reset provenance state");
+      }
+      surfaces[n++]->inherited_stencil_reason = token == "16" ? 16 : 0;
+    }
+    if (n != surfaces.size()) {
+      Kokkos::abort("Diagnostic reset provenance width mismatch");
+    }
+  }
+
+  pin->SetBoolean("problem", "flux_new_epoch", false);
+  pgen->user_diagnostic_step_func = BinaryDiagnosticStep;
+  pgen->user_diagnostic_export_func = ExportBinaryDiagnostics;
+  if (state->budget.enabled) {
+    pgen->user_diagnostic_change_func = BinaryBudgetChange;
+  }
 }
 
-void BinaryDiagnosticStep(Mesh *pm, Driver *driver, int stage) {
-  auto state=std::static_pointer_cast<BinaryDiagnosticState>(pm->pgen->user_diagnostic_data);
-  if (state->mass.empty()) return;
+void BinaryDiagnosticStep(Mesh* pm, Driver* driver, int stage) {
+  auto state =
+      std::static_pointer_cast<BinaryDiagnosticState>(pm->pgen->user_diagnostic_data);
+  if (state->mass.empty() && !state->budget.enabled) {
+    if (stage > 0) {
+      ClearInheritedProvenance(pm->pgen.get());
+    }
+    return;
+  }
   // MHD's CopyCons does not implement the 2S delta recurrence required by rk4 on this
   // branch. Reject that diagnostic integration instead of inventing normalized weights.
-  if (driver->integrator!="rk1" && driver->integrator!="rk2" && driver->integrator!="rk3")
-    Kokkos::abort("Qualified mass currently supports the actual MHD rk1/rk2/rk3 recurrence");
-  if (stage==0) {
-    for (auto &q:state->mass) q.Begin();
-    state->state_time=pm->time;
-  } else if (stage>0) {
-    UpdateDiagnosticSurfaces(pm,diagnostic_metric_time);
-    std::size_t h=0;
-    for (const auto &s:pm->pgen->surface_grids) if (s->surface_type=="modeled_component_Kerr") {
-      auto flux=IntegrateSurface(pm->pmb_pack,s.get());
-      state->mass[h++].Stage(driver->gam0[stage-1],driver->beta[stage-1]*pm->dt,
-                            flux.values[17],flux.valid,flux.reason);
+  if (driver->integrator != "rk1" && driver->integrator != "rk2" &&
+      driver->integrator != "rk3") {
+    Kokkos::abort(
+        "Qualified mass currently supports the actual MHD rk1/rk2/rk3 recurrence");
+  }
+  if (stage == 0) {
+    for (auto& q : state->mass) {
+      q.Begin();
     }
-    state->state_time=driver->gam0[stage-1]*state->state_time+
-      driver->gam1[stage-1]*pm->time+driver->beta[stage-1]*pm->dt;
+    state->state_time = pm->time;
+    BinaryBudgetStage(state->budget, pm, driver, 0);
+  } else if (stage > 0) {
+    UpdateDiagnosticSurfaces(pm, diagnostic_metric_time);
+    std::size_t h = 0;
+    for (const auto& s : pm->pgen->surface_grids) {
+      if (s->surface_type == "modeled_component_Kerr") {
+        auto flux = IntegrateSurface(pm->pmb_pack, s.get());
+        state->mass[h++].Stage(driver->gam0[stage - 1], driver->beta[stage - 1] * pm->dt,
+                               flux.values[17], flux.valid, flux.reason);
+      }
+    }
+    BinaryBudgetStage(state->budget, pm, driver, stage);
+    // The pre-stage sample observed the restored state. Subsequent samples see
+    // the new RK state and the actual per-cell reset flags written by recovery.
+    ClearInheritedProvenance(pm->pgen.get());
+    state->state_time = driver->gam0[stage - 1] * state->state_time +
+                        driver->gam1[stage - 1] * pm->time +
+                        driver->beta[stage - 1] * pm->dt;
   } else {
     // Endpoint qualification catches final-stage loss of coverage. It is not another
     // quadrature sample. Never bridge a missing visit or integrate during history.
-    UpdateDiagnosticSurfaces(pm,diagnostic_metric_time);
-    std::size_t h=0;
-    for (const auto &s:pm->pgen->surface_grids) if (s->surface_type=="modeled_component_Kerr") {
-      auto flux=IntegrateSurface(pm->pmb_pack,s.get()); auto &q=state->mass[h++];
-      q.interval_valid &= flux.valid; q.reason|=flux.reason;
-      q.Commit(pm->ncycle+1,pm->time+pm->dt,pm->dt);
+    UpdateDiagnosticSurfaces(pm, diagnostic_metric_time);
+    std::size_t h = 0;
+    for (const auto& s : pm->pgen->surface_grids) {
+      if (s->surface_type == "modeled_component_Kerr") {
+        auto flux = IntegrateSurface(pm->pmb_pack, s.get());
+        auto& q = state->mass[h++];
+        q.interval_valid &= flux.valid;
+        q.reason |= flux.reason;
+        q.Commit(pm->ncycle + 1, pm->time + pm->dt, pm->dt);
+      }
     }
+    BinaryBudgetStage(state->budget, pm, driver, -1);
   }
 }
 
-void ExportBinaryDiagnostics(Mesh *pm, ParameterInput *pin) {
-  auto state=std::static_pointer_cast<BinaryDiagnosticState>(pm->pgen->user_diagnostic_data);
-  pin->SetInteger("cbd_diagnostics","schema",2);
-  pin->SetString("cbd_diagnostics","identity",state->identity);
-  for (std::size_t h=0;h<state->mass.size();++h) {
-    auto id=state->labels[h]+"_"; const auto &q=state->mass[h];
-    pin->SetReal("cbd_diagnostics",id+"mass",q.mass);
-    pin->SetReal("cbd_diagnostics",id+"start",q.start);
-    pin->SetReal("cbd_diagnostics",id+"covered",q.covered);
-    pin->SetReal("cbd_diagnostics",id+"unavailable",q.unavailable);
-    pin->SetReal("cbd_diagnostics",id+"time",q.committed_time);
-    pin->SetInteger("cbd_diagnostics",id+"cycle",q.committed_cycle);
-    pin->SetBoolean("cbd_diagnostics",id+"valid",q.interval_valid);
-    pin->SetInteger("cbd_diagnostics",id+"reason",q.reason);
+std::vector<Real> LoadDiagnosticScalars(ParameterInput* pin, const std::string& key) {
+  std::string packed = pin->GetString("cbd_diagnostics", key);
+  std::istringstream stream(packed);
+  std::vector<Real> values;
+  std::string token;
+  try {
+    while (std::getline(stream, token, ',')) {
+      if (token == "unavailable") {
+        values.push_back(NAN);
+      } else {
+        std::size_t end = 0;
+        Real value = std::stod(token, &end);
+        if (end != token.size() || !std::isfinite(value)) {
+          throw std::invalid_argument("state");
+        }
+        values.push_back(value);
+      }
+    }
+  } catch (const std::exception&) {
+    Kokkos::abort("Invalid packed diagnostic restart scalar");
+  }
+  if (values.size() != 20) {
+    Kokkos::abort("Invalid diagnostic restart region state width");
+  }
+  return values;
+}
+
+void ExportBinaryDiagnostics(Mesh* pm, ParameterInput* pin) {
+  auto state =
+      std::static_pointer_cast<BinaryDiagnosticState>(pm->pgen->user_diagnostic_data);
+  pin->SetInteger("cbd_diagnostics", "schema", 2);
+  pin->SetInteger("cbd_diagnostics", "state_format", 2);
+  pin->SetString("cbd_diagnostics", "identity", state->identity);
+  UpdateDiagnosticSurfaces(pm, diagnostic_metric_time);
+  if (state->budget.enabled) {
+    PrepareBinaryBudget(state->budget, pm);
+  }
+  std::ostringstream provenance;
+  bool first = true;
+  for (auto surface : DiagnosticProvenanceSurfaces(pm->pgen.get())) {
+    surface->RebuildAll();
+    surface->QualifyStencils();
+    auto indices = surface->InterpIndices().d_view;
+    auto reasons = surface->StencilReasons().d_view;
+    int contaminated = surface->inherited_stencil_reason & 16;
+    int local = 0;
+    Kokkos::parallel_reduce(
+        "checkpoint_reset_provenance",
+        Kokkos::RangePolicy<DevExeSpace>(0, surface->Npts()),
+        KOKKOS_LAMBDA(int p, int& sum) {
+          if (indices(p, 0) >= 0 && (reasons(p) & 16)) {
+            ++sum;
+          }
+        },
+        local);
+    if (local) {
+      contaminated = 16;
+    }
+#if MPI_PARALLEL_ENABLED
+    MPI_Allreduce(MPI_IN_PLACE, &contaminated, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
+#endif
+    if (!first) {
+      provenance << ",";
+    }
+    first = false;
+    provenance << contaminated;
+  }
+  pin->SetString("cbd_diagnostics", "source_flags", provenance.str());
+
+  for (std::size_t h = 0; h < state->mass.size(); ++h) {
+    auto id = state->labels[h] + "_";
+    const auto& q = state->mass[h];
+    pin->SetReal("cbd_diagnostics", id + "mass", q.mass);
+    pin->SetReal("cbd_diagnostics", id + "start", q.start);
+    pin->SetReal("cbd_diagnostics", id + "covered", q.covered);
+    pin->SetReal("cbd_diagnostics", id + "unavailable", q.unavailable);
+    pin->SetReal("cbd_diagnostics", id + "time", q.committed_time);
+    pin->SetInteger("cbd_diagnostics", id + "cycle", q.committed_cycle);
+    pin->SetBoolean("cbd_diagnostics", id + "valid", q.interval_valid);
+    pin->SetInteger("cbd_diagnostics", id + "reason", q.reason);
+  }
+  if (state->budget.enabled) {
+    const auto& b = state->budget;
+    pin->SetReal("cbd_diagnostics", "budget_start", b.start);
+    pin->SetReal("cbd_diagnostics", "budget_time", b.committed_time);
+    pin->SetInteger("cbd_diagnostics", "budget_cycle", b.committed_cycle);
+    pin->SetReal("cbd_diagnostics", "budget_dt", b.dt);
+  }
+  if (state->budget.enabled) {
+    for (int r = 0; r < 4; ++r) {
+      const auto& b = state->budget;
+      Real values[20] = {b.events[r],
+                         b.deltaJ[r],
+                         b.last_boundary[r],
+                         b.last_torque[r],
+                         b.valid[r] ? b.residual[r] : NAN,
+                         b.valid[r] ? 1.0 : 0.0};
+      for (int c = 0; c < 7; ++c) {
+        values[6 + c] = b.cumulative[c][r];
+        values[13 + c] = b.last[c][r];
+      }
+      std::ostringstream packed;
+      packed << std::setprecision(std::numeric_limits<Real>::max_digits10);
+      for (int n = 0; n < 20; ++n) {
+        if (n) {
+          packed << ",";
+        }
+        if (std::isfinite(values[n])) {
+          packed << values[n];
+        } else {
+          packed << "unavailable";
+        }
+      }
+      pin->SetString("cbd_diagnostics", "region" + std::to_string(r), packed.str());
+    }
   }
 }
 
@@ -644,57 +1328,68 @@ void ExportBinaryDiagnostics(Mesh *pm, ParameterInput *pin) {
 //! \fn void TorusHistory(HistoryData *pdata, Mesh *pm)
 //! \brief User history function that centers horizon grids and calls flux integrator.
 //----------------------------------------------------------------------------------------
-void TorusHistory(HistoryData *pdata, Mesh *pm) {
-    ProblemGenerator *pgen = pm->pgen.get();
-    if (pgen->surface_grids.empty()) {
-        pdata->nhist = 0;
-        return;
-    }
-    MeshBlockPack *pmbp = pm->pmb_pack;
+void TorusHistory(HistoryData* pdata, Mesh* pm) {
+  ProblemGenerator* pgen = pm->pgen.get();
+  if (pgen->surface_grids.empty()) {
+    pdata->nhist = 0;
+    return;
+  }
+  MeshBlockPack* pmbp = pm->pmb_pack;
 
-    UpdateDiagnosticSurfaces(pm, diagnostic_metric_time);
+  // Preserve the legacy output-time transfer locations. Evolution's last ADM
+  // epoch may lag this time; expose both clocks instead of relocating H1/H2.
+  UpdateDiagnosticSurfaces(pm, pm->time);
 
-    // 3. Prepare pointers for the flux calculator
-    std::vector<SphericalSurfaceGrid*> surf_raw_ptrs;
-    surf_raw_ptrs.reserve(pgen->surface_grids.size());
-    for(const auto& s : pgen->surface_grids) {
-        surf_raw_ptrs.push_back(s.get());
-    }
+  // 3. Prepare pointers for the flux calculator
+  std::vector<SphericalSurfaceGrid*> surf_raw_ptrs;
+  surf_raw_ptrs.reserve(pgen->surface_grids.size());
+  for (const auto& s : pgen->surface_grids) {
+    surf_raw_ptrs.push_back(s.get());
+  }
 
-    // 4. Calculate fluxes
-    TorusFluxes_General(pdata, pmbp, surf_raw_ptrs);
-    std::ostringstream meta;
-    meta<<"cbd_schema=2 frame="<<(bbh.corotating ? "corotating":"inertial")
-        <<" frame_omega="<<bbh.frame_omega<<" rotation_epoch=0 origin=0,0,0 axis=z units=G=c=Mtotal_initial=1"
-        <<" legacy=mdot,edot:inward;pdot,ldot:outward;fixed_at_instantaneous_location"
-        <<" moving_channels=already_Reynolds_corrected energy_Eeu=Eulerian energy_Et=coordinate_flux_only"
-        <<" phiB=half_unsigned_Heaviside_Lorentz coverage=all_samples_required";
-    for (const auto &s:pgen->surface_grids)
-      meta<<" surface:"<<s->Label()<<"="<<s->surface_type;
-    pdata->metadata=meta.str();
-    auto add=[&](const std::string &label,Real value) {
-      if (pdata->nhist>=NHISTORY_VARIABLES) Kokkos::abort("Diagnostic history overflow");
-      pdata->label[pdata->nhist]=label;
-      pdata->hdata[pdata->nhist++]=global_variable::my_rank==0 ? value:0.0;
-    };
-    add("diagnostic_state_time",pm->time);
-    add("diagnostic_metric_geometry_time",diagnostic_metric_time);
-    if (pgen->user_diagnostic_data) {
-      auto state=std::static_pointer_cast<BinaryDiagnosticState>(pgen->user_diagnostic_data);
-      for (std::size_t h=0;h<state->mass.size();++h) {
-        const auto &q=state->mass[h]; const auto &id=state->labels[h];
-        add("M0_qualified_cumulative_"+id,q.mass);
-        add("M0_epoch_start_"+id,q.start);
-        add("M0_covered_duration_"+id,q.covered);
-        add("M0_unavailable_duration_"+id,q.unavailable);
-        add("M0_committed_time_"+id,q.committed_time);
-        add("M0_committed_cycle_"+id,q.committed_cycle);
-        add("M0_interval_valid_"+id,q.interval_valid ? 1:0);
-        add("M0_interval_reason_"+id,q.reason);
-      }
+  // 4. Calculate fluxes
+  TorusFluxes_General(pdata, pmbp, surf_raw_ptrs);
+  std::ostringstream meta;
+  meta << "cbd_schema=2 frame=" << (bbh.corotating ? "corotating" : "inertial")
+       << " frame_omega=" << bbh.frame_omega
+       << " rotation_epoch=0 origin=0,0,0 axis=z units=G=c=Mref=1"
+       << " legacy=mdot,edot:inward;pdot,ldot:outward;fixed_at_instantaneous_location"
+       << " moving_channels=already_Reynolds_corrected energy_Eeu=Eulerian "
+          "energy_Et=coordinate_flux_only"
+       << " phiB=half_unsigned_Heaviside_Lorentz coverage=all_samples_required";
+  for (const auto& s : pgen->surface_grids) {
+    meta << " surface:" << s->Label() << "=" << s->surface_type;
+  }
+  meta << " metric_stationary=" << (!pmbp->padm->is_dynamic && !pmbp->pz4c);
+  pdata->metadata = meta.str();
+  auto add = [&](const std::string& label, Real value) {
+    if (pdata->nhist >= NHISTORY_VARIABLES) {
+      Kokkos::abort("Diagnostic history overflow");
     }
+    pdata->label[pdata->nhist] = label;
+    pdata->hdata[pdata->nhist++] = global_variable::my_rank == 0 ? value : 0.0;
+  };
+  add("diagnostic_state_time", pm->time);
+  add("diagnostic_metric_time", pmbp->pz4c ? pm->time : diagnostic_metric_time);
+  add("diagnostic_geometry_time", pm->time);
+  if (pgen->user_diagnostic_data) {
+    auto state =
+        std::static_pointer_cast<BinaryDiagnosticState>(pgen->user_diagnostic_data);
+    for (std::size_t h = 0; h < state->mass.size(); ++h) {
+      const auto& q = state->mass[h];
+      const auto& id = state->labels[h];
+      add("M0_qualified_cumulative_" + id, q.mass);
+      add("M0_epoch_start_" + id, q.start);
+      add("M0_covered_duration_" + id, q.covered);
+      add("M0_unavailable_duration_" + id, q.unavailable);
+      add("M0_committed_time_" + id, q.committed_time);
+      add("M0_committed_cycle_" + id, q.committed_cycle);
+      add("M0_interval_valid_" + id, q.interval_valid ? 1 : 0);
+      add("M0_interval_reason_" + id, q.reason);
+    }
+  }
+  BinaryBudgetHistory(pdata, pm);
 }
-
 
 KOKKOS_INLINE_FUNCTION
 static void GetSuperposedAndInverse(const Real t,
@@ -3289,43 +3984,60 @@ KOKKOS_FORCEINLINE_FUNCTION T BoostGammaMinusOneOverV2(const T v2, const T gamma
   return (gamma - T(1.0)) / v2;
 }
 
-void UpdateDiagnosticSurfaces(Mesh *pm, Real time) {
-  Real tr[NTRAJ],dt[NTRAJ];
-  find_traj_t_with_deriv(bbh.corotating ? 0.0 : time,tr,dt);
-  for (auto &ptr:pm->pgen->surface_grids) {
-    auto &grid=*ptr;
-    int hole=(grid.Label()=="H1" || grid.Label()=="BH1_Kerr") ? 0 :
-             (grid.Label()=="H2" || grid.Label()=="BH2_Kerr") ? 1 : -1;
-    if (hole<0) continue;
-    int x=hole==0 ? X1:X2, v=hole==0 ? VX1:VX2, a=hole==0 ? AX1:AX2;
-    int m=hole==0 ? M1T:M2T;
+void UpdateDiagnosticSurfaces(Mesh* pm, Real time) {
+  Real tr[NTRAJ], dt[NTRAJ];
+  find_traj_t_with_deriv(bbh.corotating ? 0.0 : time, tr, dt);
+  for (auto& ptr : pm->pgen->surface_grids) {
+    auto& grid = *ptr;
+    int hole = (grid.Label() == "H1" || grid.Label() == "BH1_Kerr")   ? 0
+               : (grid.Label() == "H2" || grid.Label() == "BH2_Kerr") ? 1
+                                                                      : -1;
+    if (hole < 0) {
+      continue;
+    }
+    int x = hole == 0 ? X1 : X2, v = hole == 0 ? VX1 : VX2, a = hole == 0 ? AX1 : AX2;
+    int m = hole == 0 ? M1T : M2T;
     grid.SetCenter(&tr[x]);
-    if (grid.surface_type=="modeled_component_Kerr") {
-      Real chi2=SQR(tr[a])+SQR(tr[a+1])+SQR(tr[a+2]);
-      Real v2=SQR(tr[v])+SQR(tr[v+1])+SQR(tr[v+2]);
-      if (!(std::isfinite(tr[m])&&tr[m]>0&&std::isfinite(chi2)&&chi2<1.0&&
-            std::isfinite(v2)&&v2<1.0))
-        Kokkos::abort("Modeled Kerr diagnostics need m>0, |chi|<1, |boost|<1");
-      // Extremal geometry exists but its derivative during spin changes is singular.
-      // Strict subextremality is a diagnostic restriction, not an evolution restriction.
-      dual1_real chi[3],vel[3],H[3][3];
-      for (int i=0;i<3;++i) {
-        chi[i]=dual1_real(tr[a+i],bbh.corotating ? 0.0:dt[a+i]);
-        vel[i]=dual1_real(tr[v+i],bbh.corotating ? 0.0:dt[v+i]);
+    if (grid.surface_type == "modeled_component_Kerr") {
+      Real chi2 = SQR(tr[a]) + SQR(tr[a + 1]) + SQR(tr[a + 2]);
+      Real v2 = SQR(tr[v]) + SQR(tr[v + 1]) + SQR(tr[v + 2]);
+      if (!(std::isfinite(tr[m]) && tr[m] > 0 && std::isfinite(chi2) && chi2 <= 1.0 &&
+            std::isfinite(v2) && v2 < 1.0)) {
+        Kokkos::abort("Modeled Kerr diagnostics need m>0, |chi|<=1, |boost|<1");
       }
-      circumbinary::KerrQuadric(dual1_real(tr[m],bbh.corotating ? 0.0:dt[m]),
-        chi,vel,H,[](dual1_real z){return metric_sqrt(z);});
+      // At extremality a nonzero derivative of 1-chi^2 makes the normal speed
+      // undefined. Preserve the level set and expose unavailable flux via NaN motion.
+      dual1_real chi[3], vel[3], H[3][3];
+      for (int i = 0; i < 3; ++i) {
+        chi[i] = dual1_real(tr[a + i], bbh.corotating ? 0.0 : dt[a + i]);
+        vel[i] = dual1_real(tr[v + i], bbh.corotating ? 0.0 : dt[v + i]);
+      }
+      circumbinary::KerrQuadric(dual1_real(tr[m], bbh.corotating ? 0.0 : dt[m]), chi, vel,
+                                H, [](dual1_real z) {
+                                  if (z.val == 0.0) {
+                                    return dual1_real(0.0, z.d == 0.0 ? 0.0 : NAN);
+                                  }
+                                  return metric_sqrt(z);
+                                });
       circumbinary::Quadric q;
-      for (int i=0;i<3;++i) {
-        q.center[i]=tr[x+i]; q.center_dot[i]=bbh.corotating ? 0.0:dt[x+i];
-        for (int j=0;j<3;++j) {q.H[i][j]=H[i][j].val; q.H_dot[i][j]=H[i][j].d;}
+      for (int i = 0; i < 3; ++i) {
+        q.center[i] = tr[x + i];
+        q.center_dot[i] = bbh.corotating ? 0.0 : dt[x + i];
+        for (int j = 0; j < 3; ++j) {
+          q.H[i][j] = H[i][j].val;
+          q.H_dot[i][j] = H[i][j].d;
+        }
       }
-      grid.SetRadiusFunction([q](Real th,Real ph){return q.Radius(th,ph);});
-      grid.SetMotion([q](Real th,Real ph,Real *w){q.Motion(th,ph,w);});
+      grid.SetRadiusFunction([q](Real th, Real ph) { return q.Radius(th, ph); });
+      grid.SetMotion([q](Real th, Real ph, Real* w) { q.Motion(th, ph, w); });
     } else {
-      Real w[3]={bbh.corotating ? 0.0:dt[x],bbh.corotating ? 0.0:dt[x+1],
-                 bbh.corotating ? 0.0:dt[x+2]};
-      grid.SetMotion([=](Real,Real,Real *out){for (int i=0;i<3;++i) out[i]=w[i];});
+      Real w[3] = {bbh.corotating ? 0.0 : dt[x], bbh.corotating ? 0.0 : dt[x + 1],
+                   bbh.corotating ? 0.0 : dt[x + 2]};
+      grid.SetMotion([=](Real, Real, Real* out) {
+        for (int i = 0; i < 3; ++i) {
+          out[i] = w[i];
+        }
+      });
     }
   }
 }

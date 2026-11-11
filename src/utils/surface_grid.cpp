@@ -4,30 +4,34 @@
 
 #include "surface_grid.hpp"
 
+#if MPI_PARALLEL_ENABLED
+#include <mpi.h>
+#endif
+
+#include <algorithm>
+#include <cmath>
+#include <cstdlib>
+#include <iostream>
+#include <string>
+
 #include "mesh/mesh.hpp"
+#include "mhd/mhd.hpp"
 #include "parameter_input.hpp"
 #include "coordinates/cell_locations.hpp"
 #include "coordinates/coordinates.hpp"
 #include "cyclic_zoom/cyclic_zoom.hpp"
-#if MPI_PARALLEL_ENABLED
-#include <mpi.h>
-#endif
-#include "coordinates/adm.hpp" // For adm::SpatialDet and metric indices
-
-#include <cmath>
-#include <iostream>
-#include <cstdlib>
-#include <algorithm> // For std::min
+#include "coordinates/adm.hpp"
 
 //----------------------------------------------------------------------------------------
 // Constructor
-SphericalSurfaceGrid::SphericalSurfaceGrid(MeshBlockPack* pack,
-                                           int ntheta, int nphi,
-                                           RFunc r_of_thph,
-                                           const std::string& name,
-                                           const Real* center,
-                                           int interp_order)
-    : pmy_pack(pack), tag(name), metric_is_flat_(true), radius_function_(r_of_thph), interp_order_(interp_order) {
+SphericalSurfaceGrid::SphericalSurfaceGrid(MeshBlockPack* pack, int ntheta, int nphi,
+                                           RFunc r_of_thph, const std::string& name,
+                                           const Real* center, int interp_order)
+    : pmy_pack(pack),
+      tag(name),
+      metric_is_flat_(true),
+      radius_function_(r_of_thph),
+      interp_order_(interp_order) {
   // --- basic validation ---
   if (pmy_pack == nullptr || pmy_pack->pmesh == nullptr || pmy_pack->pmb == nullptr) {
     std::cerr << "### FATAL: SphericalSurfaceGrid requires a valid MeshBlockPack/mesh"
@@ -106,6 +110,8 @@ SphericalSurfaceGrid::SphericalSurfaceGrid(MeshBlockPack* pack,
     }
   }
 
+  radius.modify<HostMemSpace>();
+  radius.sync<DevExeSpace>();
   // Build everything
   RebuildAll();
 }
@@ -126,7 +132,7 @@ void SphericalSurfaceGrid::SetRadiusFunction(RFunc f) {
 }
 
 void SphericalSurfaceGrid::RebuildFromRadius() {
-  for (int p=0; p<npts; ++p) {
+  for (int p = 0; p < npts; ++p) {
     Real r = radius_function_(theta.h_view(p), phi.h_view(p));
     if (!(std::isfinite(r) && r > 0.0)) Kokkos::abort("Invalid surface radius");
     radius.h_view(p) = r;
@@ -137,10 +143,10 @@ void SphericalSurfaceGrid::RebuildFromRadius() {
 }
 
 void SphericalSurfaceGrid::SetMotion(MotionFunc f) {
-  for (int p=0; p<npts; ++p) {
+  for (int p = 0; p < npts; ++p) {
     Real v[3];
     f(theta.h_view(p), phi.h_view(p), v);
-    for (int d=0; d<3; ++d) motion_.h_view(p,d)=v[d];
+    for (int d = 0; d < 3; ++d) motion_.h_view(p, d) = v[d];
   }
   motion_.modify<HostMemSpace>();
   motion_.sync<DevExeSpace>();
@@ -148,7 +154,16 @@ void SphericalSurfaceGrid::SetMotion(MotionFunc f) {
 
 DualArray2D<Real> SphericalSurfaceGrid::InterpolateToSurface(
     const DvceArray5D<Real> &source_array, int start_index, int end_index) {
+  auto cached = InterpolateCached(0, source_array, start_index, end_index);
+  DualArray2D<Real> copy("surface_interpolation", npts, end_index - start_index);
+  Kokkos::deep_copy(copy.d_view, cached.d_view);
+  copy.modify<DevExeSpace>();
+  copy.sync<HostMemSpace>();
+  return copy;
+}
 
+DualArray2D<Real> SphericalSurfaceGrid::InterpolateCached(
+    int slot, const DvceArray5D<Real>& source_array, int start_index, int end_index) {
   const int nvars = end_index - start_index;
   if (nvars <= 0) {
       std::cerr << "### FATAL: InterpolateToSurface called with invalid range: "
@@ -156,7 +171,9 @@ DualArray2D<Real> SphericalSurfaceGrid::InterpolateToSurface(
       std::exit(EXIT_FAILURE);
   }
 
-  DualArray2D<Real> result("interp_vals_temp", npts, nvars);
+  auto& result = buffers_.at(slot);
+  if (result.extent_int(0) != npts || result.extent_int(1) != nvars)
+    Kokkos::realloc(result, npts, nvars);
 
   auto &iindcs = interp_indcs;
   auto &iwghts = interp_wghts;
@@ -195,14 +212,14 @@ DualArray2D<Real> SphericalSurfaceGrid::InterpolateToSurface(
   Kokkos::fence();
 
   result.template modify<DevExeSpace>();
-  result.template sync<HostMemSpace>();
   return result;
 }
 
 void SphericalSurfaceGrid::InterpolateMetric() {
   const int start = adm::ADM::I_ADM_GXX;
   const int end = start + 6;
-  DualArray2D<Real> interpolated_metric = InterpolateToSurface(pmy_pack->padm->u_adm, start, end);
+  DualArray2D<Real> interpolated_metric =
+      InterpolateCached(3, pmy_pack->padm->u_adm, start, end);
 
   auto dst_view = g_dd_surf_.d_view;
   auto src_view = interpolated_metric.d_view;
@@ -220,8 +237,11 @@ void SphericalSurfaceGrid::InterpolateMetric() {
 
 void SphericalSurfaceGrid::BuildSurfaceCovectors(DualArray2D<Real>& dSigma) const {
   const int np = npts;
-  Kokkos::realloc(dSigma, np, 3);
-  auto &eTh = tan_th; auto &ePh = tan_ph; auto &wq = geometric_weights_;
+  if (area_covectors_.extent_int(0) != np) Kokkos::realloc(area_covectors_, np, 3);
+  dSigma = area_covectors_;
+  auto& eTh = tan_th;
+  auto& ePh = tan_ph;
+  auto& wq = geometric_weights_;
   auto &g_surf = g_dd_surf_;
 
   Kokkos::parallel_for("surf_cov_curved", Kokkos::RangePolicy<DevExeSpace>(0, np),
@@ -337,7 +357,7 @@ void SphericalSurfaceGrid::BuildQuadWeights() {
   auto h_w = weights.h_view;
   auto h_iind = interp_indcs.h_view;
   for (int p = 0; p < npts; ++p) {
-    geometric_weights_.h_view(p) = dth*dph;
+    geometric_weights_.h_view(p) = dth * dph;
     if (h_iind(p, 0) != -1) {
       h_w(p) = dth * dph;
     } else {
@@ -375,58 +395,72 @@ void SphericalSurfaceGrid::SetInterpolationIndices() {
   MPI_Allreduce(MPI_IN_PLACE, owners_.h_view.data(), npts, MPI_INT, MPI_SUM,
                 MPI_COMM_WORLD);
 #endif
-  owners_.modify<HostMemSpace>(); owners_.sync<DevExeSpace>();
+  owners_.modify<HostMemSpace>();
+  owners_.sync<DevExeSpace>();
   interp_indcs.template modify<HostMemSpace>();
   interp_indcs.template sync<DevExeSpace>();
 }
 
 void SphericalSurfaceGrid::QualifyStencils() {
-  // Check the actual interpolation support, including reset masks and frozen zoom data.
-  auto &size = pmy_pack->pmb->mb_size;
-  auto h_iind = interp_indcs.h_view;
+  auto size = pmy_pack->pmb->mb_size.d_view;
+  auto index = interp_indcs.d_view;
+  auto owner = owners_.d_view;
+  auto reason = stencil_reasons_.d_view;
+  auto spacing = local_spacing_.d_view;
+  auto r = radius.d_view;
   auto coord = pmy_pack->pcoord;
-  auto mask = Kokkos::create_mirror_view_and_copy(HostMemSpace(), coord->excision_floor);
-  auto flux_mask = Kokkos::create_mirror_view_and_copy(HostMemSpace(), coord->excision_flux);
-  auto weight = Kokkos::create_mirror_view_and_copy(HostMemSpace(), coord->excision_weight);
+  auto mask = coord->excision_floor, flux_mask = coord->excision_flux;
+  auto weight = coord->excision_weight;
+  auto reset = pmy_pack->pmhd->diagnostic_reset;
+  bool excise = coord->coord_data.bh_excise, smooth = coord->coord_data.smooth_excise;
   auto ind = pmy_pack->pmesh->mb_indcs;
   auto zoom = pmy_pack->pmesh->pzoom;
-  for (int p=0; p<npts; ++p) {
-    int reason = owners_.h_view(p) == 1 ? 0 : 1;
-    int m = h_iind(p,0);
-    Real dx = 0.0;
-    if (m >= 0) {
-      auto mb = size.h_view(m);
-      dx = std::max({mb.dx1,mb.dx2,mb.dx3});
-      int left = (interp_order_+1)/2;
-      for (int c=0; c<interp_order_+1; ++c)
-        for (int b=0; b<interp_order_+1; ++b)
-          for (int a=0; a<interp_order_+1; ++a) {
-            int I=ind.is+h_iind(p,1)-left+1+a;
-            int J=ind.js+h_iind(p,2)-left+1+b;
-            int K=ind.ks+h_iind(p,3)-left+1+c;
-            if (I<0 || J<0 || K<0 || I>=ind.nx1+2*ind.ng ||
-                J>=ind.nx2+2*ind.ng || K>=ind.nx3+2*ind.ng) { reason |= 1; continue; }
-            if (coord->coord_data.bh_excise &&
-                (mask(m,K,J,I) || flux_mask(m,K,J,I) ||
-                 (coord->coord_data.smooth_excise && weight(m,K,J,I)>0.0))) reason |= 16;
-            Real x=CellCenterX(I-ind.is,ind.nx1,mb.x1min,mb.x1max);
-            Real y=CellCenterX(J-ind.js,ind.nx2,mb.x2min,mb.x2max);
-            Real z=CellCenterX(K-ind.ks,ind.nx3,mb.x3min,mb.x3max);
-            if (zoom && zoom->zstate.zone>0 && zoom->zregion.IsInRegion(x,y,z)) reason |= 32;
-          }
-      // A boundary stencil may use coarser AMR data: use a conservative spacing bound.
-      if (pmy_pack->pmesh->multilevel &&
-          (h_iind(p,1)<left || h_iind(p,1)+left>=ind.nx1 ||
-           h_iind(p,2)<left || h_iind(p,2)+left>=ind.nx2 ||
-           h_iind(p,3)<left || h_iind(p,3)+left>=ind.nx3)) dx*=2.0;
-      if (min_cells_per_radius>0.0 && radius.h_view(p)/dx<min_cells_per_radius) reason |= 8;
-    }
-    local_spacing_.h_view(p)=dx;
-    stencil_reasons_.h_view(p)=reason;
-  }
-  owners_.modify<HostMemSpace>(); owners_.sync<DevExeSpace>();
-  stencil_reasons_.modify<HostMemSpace>(); stencil_reasons_.sync<DevExeSpace>();
-  local_spacing_.modify<HostMemSpace>(); local_spacing_.sync<DevExeSpace>();
+  bool frozen = zoom && zoom->zstate.zone > 0;
+  ZoomRegion region{};
+  if (frozen) region = zoom->zregion;
+  bool multilevel = pmy_pack->pmesh->multilevel;
+  int nsten = interp_order_ + 1, left = nsten / 2;
+  Real required = min_cells_per_radius;
+  Kokkos::parallel_for(
+      "qualify_surface_stencil", Kokkos::RangePolicy<DevExeSpace>(0, npts),
+      KOKKOS_LAMBDA(int p) {
+        int why = owner(p) == 1 ? 0 : 1, m = index(p, 0);
+        Real dx = 0.0;
+        if (m >= 0) {
+          auto mb = size(m);
+          dx = fmax(mb.dx1, fmax(mb.dx2, mb.dx3));
+          for (int c = 0; c < nsten; ++c)
+            for (int b = 0; b < nsten; ++b)
+              for (int a = 0; a < nsten; ++a) {
+                int I = ind.is + index(p, 1) - left + 1 + a;
+                int J = ind.js + index(p, 2) - left + 1 + b;
+                int K = ind.ks + index(p, 3) - left + 1 + c;
+                if (I < 0 || J < 0 || K < 0 || I >= ind.nx1 + 2 * ind.ng ||
+                    J >= ind.nx2 + 2 * ind.ng || K >= ind.nx3 + 2 * ind.ng) {
+                  why |= 1;
+                  continue;
+                }
+                if (excise && (mask(m, K, J, I) || flux_mask(m, K, J, I) ||
+                               (smooth && weight(m, K, J, I) > 0)))
+                  why |= 16;
+                if (reset.extent(0) > 0 && reset(m, K, J, I)) why |= 16;
+                Real x = CellCenterX(I - ind.is, ind.nx1, mb.x1min, mb.x1max);
+                Real y = CellCenterX(J - ind.js, ind.nx2, mb.x2min, mb.x2max);
+                Real z = CellCenterX(K - ind.ks, ind.nx3, mb.x3min, mb.x3max);
+                if (frozen && region.IsInRegion(x, y, z)) why |= 32;
+              }
+          if (multilevel && (index(p, 1) < left || index(p, 1) + left >= ind.nx1 ||
+                             index(p, 2) < left || index(p, 2) + left >= ind.nx2 ||
+                             index(p, 3) < left || index(p, 3) + left >= ind.nx3))
+            dx *= 2;
+          if (required > 0 && r(p) / dx < required) why |= 8;
+        }
+        spacing(p) = dx;
+        reason(p) = why;
+      });
+  local_spacing_.modify<DevExeSpace>();
+  local_spacing_.sync<HostMemSpace>();
+  stencil_reasons_.modify<DevExeSpace>();
 }
 
 void SphericalSurfaceGrid::SetInterpolationWeights() {
@@ -496,19 +530,23 @@ void SphericalSurfaceGrid::SetInterpolationWeights() {
 }
 
 void SphericalSurfaceGrid::BuildTangentsFD() {
-  const Real eps=1.0e-5;
-  for (int p=0; p<npts; ++p) {
-    Real th=theta.h_view(p), ph=phi.h_view(p), r=radius.h_view(p);
-    Real rt=(radius_function_(th+eps,ph)-radius_function_(th-eps,ph))/(2*eps);
-    Real rp=(radius_function_(th,ph+eps)-radius_function_(th,ph-eps))/(2*eps);
-    Real n[3]={sin(th)*cos(ph),sin(th)*sin(ph),cos(th)};
-    Real nt[3]={cos(th)*cos(ph),cos(th)*sin(ph),-sin(th)};
-    Real np[3]={-sin(th)*sin(ph),sin(th)*cos(ph),0.0};
-    for (int d=0; d<3; ++d) {
-      tan_th.h_view(p,d)=rt*n[d]+r*nt[d];
-      tan_ph.h_view(p,d)=rp*n[d]+r*np[d];
+  const Real eps = 1.0e-5;
+  for (int p = 0; p < npts; ++p) {
+    Real th = theta.h_view(p), ph = phi.h_view(p), r = radius.h_view(p);
+    Real rt =
+        (radius_function_(th + eps, ph) - radius_function_(th - eps, ph)) / (2 * eps);
+    Real rp =
+        (radius_function_(th, ph + eps) - radius_function_(th, ph - eps)) / (2 * eps);
+    Real n[3] = {sin(th) * cos(ph), sin(th) * sin(ph), cos(th)};
+    Real nt[3] = {cos(th) * cos(ph), cos(th) * sin(ph), -sin(th)};
+    Real np[3] = {-sin(th) * sin(ph), sin(th) * cos(ph), 0.0};
+    for (int d = 0; d < 3; ++d) {
+      tan_th.h_view(p, d) = rt * n[d] + r * nt[d];
+      tan_ph.h_view(p, d) = rp * n[d] + r * np[d];
     }
   }
-  tan_th.modify<HostMemSpace>(); tan_th.sync<DevExeSpace>();
-  tan_ph.modify<HostMemSpace>(); tan_ph.sync<DevExeSpace>();
+  tan_th.modify<HostMemSpace>();
+  tan_th.sync<DevExeSpace>();
+  tan_ph.modify<HostMemSpace>();
+  tan_ph.sync<DevExeSpace>();
 }

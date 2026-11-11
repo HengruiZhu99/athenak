@@ -215,7 +215,7 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
 
   // Export committed diagnostic scalars only; checkpoint requests never integrate.
   if (pm->pgen->user_diagnostic_export_func)
-    pm->pgen->user_diagnostic_export_func(pm,pin);
+    pm->pgen->user_diagnostic_export_func(pm, pin);
   // create string holding input parameters (copy of input file)
   std::stringstream ost;
   pin->ParameterDump(ost);

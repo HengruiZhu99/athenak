@@ -1,5 +1,7 @@
 import argparse
 import glob
+import hashlib
+import json
 import os
 import sys
 from multiprocessing import Pool
@@ -7,7 +9,6 @@ from pathlib import Path
 
 import h5py
 import numpy as np
-from scipy.interpolate import RegularGridInterpolator
 
 
 def find_athenak_root():
@@ -136,7 +137,20 @@ def tilt_is_dynamical(tilt_angle_deg, margin_deg=1.0):
     return min(dist_0, dist_180) > margin_deg
 
 
-def parse_athena_parfile(parfile_path):
+def geometry_identity(params):
+    encoded=json.dumps(params,sort_keys=True,default=lambda value:value.tolist()).encode()
+    return "cbd_geometry_v2:"+hashlib.sha256(encoded).hexdigest()
+
+
+def geometry_cache_matches(path,params):
+    try:
+        with np.load(path) as data:
+            return str(data["geometry_identity"])==geometry_identity(params)
+    except (OSError,KeyError,ValueError):
+        return False
+
+
+def parse_athena_parfile(parfile_path, historical_frame=None):
     parfile_path = Path(parfile_path)
     values = {}
     raw_values = {}
@@ -181,7 +195,29 @@ def parse_athena_parfile(parfile_path):
         "traj_file": str(traj_path) if traj_path is not None else "",
         "traj_table": traj_table,
     }
+    if "corotating" not in raw_values and historical_frame is None:
+        raise ValueError("Historical data has no frame metadata; explicitly select historical_frame='inertial' or 'corotating'")
+    params["corotating"] = parse_bool(raw_values.get("corotating"), historical_frame == "corotating")
+    params["single_black_hole"] = parse_bool(raw_values.get("single_black_hole"), False)
+    params["spin_ramp"] = parse_bool(raw_values.get("spin_ramp"), False)
+    params["spin_ramp_start_time"] = values.get("spin_ramp_start_time", 0.0)
+    params["spin_ramp_timescale"] = values.get("spin_ramp_timescale", 50.0)
     params["om"] = params["sep"] ** (-1.5)
+    params["frame_omega"] = values.get("frame_omega", params["om"] if params["corotating"] else 0.0)
+    params["rotation_epoch"] = 0.0
+    if params["spin_ramp"] and "spin_ramp_start_time" not in raw_values:
+        raise ValueError("Spin-ramp analysis requires its explicit start time from the run/checkpoint")
+    if params["single_black_hole"] and (use_traj_table or params["spin_ramp"] or params["a1"]!=0 or params["a2"]!=0):
+        raise ValueError("Single-hole control requires fixed nonspinning mass, matching C++")
+    omega=params["frame_omega"]
+    if not np.isfinite(omega) or (not params["corotating"] and omega!=0) or (
+        params["corotating"] and not params["single_black_hole"] and abs(omega-params["om"])>1e-12*params["om"]):
+        raise ValueError("Frame angular velocity conflicts with the supported metric configuration")
+
+    if params["corotating"] and (use_traj_table or params["spin_ramp"] or
+        abs(params["a1"]*np.sin(params["th_a1"]))>1e-12 or
+        abs(params["a2"]*np.sin(params["th_a2"]))>1e-12):
+        raise ValueError("Unsupported evolving or tilted corotating metric configuration")
     return params
 
 
@@ -315,12 +351,24 @@ def interpolate_trajectory_table(time, table):
 
 
 def find_traj_t(time, params):
+    if "corotating" not in params:
+        raise ValueError("Trajectory requires explicit frame metadata")
+    if params.get("single_black_hole", False):
+        state={key:0.0 for key in TRAJ_COLUMNS if key!="time"}
+        state["m1_t"]=1.0
+        return state
+    if params["corotating"]:
+        time=0.0  # metric freezes positions/spin/physical orbital boosts at this epoch
     if params.get("use_traj_table", False):
         return interpolate_trajectory_table(time, params["traj_table"])
 
     r_bh1_0 = params["q"] / (1.0 + params["q"]) * params["sep"]
     r_bh2_0 = -params["sep"] / (1.0 + params["q"])
     om_t = params["om"] * time
+    ramp=1.0
+    if params.get("spin_ramp",False):
+        u=np.clip((time-params["spin_ramp_start_time"])/params["spin_ramp_timescale"],0.0,1.0)
+        ramp=u*u*(3-2*u)
 
     return {
         "xi1x": r_bh1_0 * np.cos(om_t),
@@ -335,12 +383,12 @@ def find_traj_t(time, params):
         "v2x": -r_bh2_0 * params["om"] * np.sin(om_t),
         "v2y": r_bh2_0 * params["om"] * np.cos(om_t),
         "v2z": 0.0,
-        "a1x": params["a1"] * np.sin(params["th_a1"]) * np.cos(params["ph_a1"]),
-        "a1y": params["a1"] * np.sin(params["th_a1"]) * np.sin(params["ph_a1"]),
-        "a1z": params["a1"] * np.cos(params["th_a1"]),
-        "a2x": params["a2"] * np.sin(params["th_a2"]) * np.cos(params["ph_a2"]),
-        "a2y": params["a2"] * np.sin(params["th_a2"]) * np.sin(params["ph_a2"]),
-        "a2z": params["a2"] * np.cos(params["th_a2"]),
+        "a1x": ramp * params["a1"] * np.sin(params["th_a1"]) * np.cos(params["ph_a1"]),
+        "a1y": ramp * params["a1"] * np.sin(params["th_a1"]) * np.sin(params["ph_a1"]),
+        "a1z": ramp * params["a1"] * np.cos(params["th_a1"]),
+        "a2x": ramp * params["a2"] * np.sin(params["th_a2"]) * np.cos(params["ph_a2"]),
+        "a2y": ramp * params["a2"] * np.sin(params["th_a2"]) * np.sin(params["ph_a2"]),
+        "a2z": ramp * params["a2"] * np.cos(params["th_a2"]),
         "m1_t": 1.0 / (params["q"] + 1.0),
         "m2_t": 1.0 - 1.0 / (params["q"] + 1.0),
     }
@@ -475,6 +523,12 @@ def superposed_bbh_metric(x, y, z, time, params, kernel_source):
 
     gcov += np.einsum("...mi,...mn,...nj->...ij", j1, ks1, j1)
     gcov += np.einsum("...mi,...mn,...nj->...ij", j2, ks2, j2)
+    if params["corotating"]:
+        # dx_I/dt in the rotating basis, matching EvaluateBBHMetric in C++.
+        velocity=np.stack((-params["frame_omega"]*y,params["frame_omega"]*x,np.zeros(shape)),axis=-1)
+        jac=np.broadcast_to(np.eye(4),shape+(4,4)).copy()
+        jac[...,1:,0]=velocity
+        gcov=np.einsum("...mi,...mn,...nj->...ij",jac,gcov,jac)
     return gcov
 
 
@@ -1024,6 +1078,7 @@ def interpolate_shell_samples(
     vz_i,
     pts_sim,
 ):
+    from scipy.interpolate import RegularGridInterpolator
     n_bins, n_theta, n_phi = pts_sim.shape[:3]
     n_tot = n_bins * n_theta * n_phi
     x_flat = pts_sim[..., 0].ravel()
@@ -1368,6 +1423,10 @@ def integrate_and_save(args):
         np.savez(
             npz_out,
             time=np.array([t_val]),
+            geometry_identity=np.array(geometry_identity(metric_params)),
+            coordinate_frame=np.array("corotating" if metric_params["corotating"] else "inertial"),
+            frame_omega=np.array(metric_params["frame_omega"]),
+            rotation_epoch=np.array(0.0),
             radius=radii_axis,
             theta=theta_vals,
             disk_frame_mode_id=np.array([frame_mode_id], dtype=np.int64),
@@ -1488,6 +1547,17 @@ def stitch_archives(output_filename, files=None, npz_pattern=None, omega_bin=Non
         files = sorted(glob.glob(npz_pattern))
     if not files:
         return
+
+    frame_metadata=None
+    for fname in files:
+        with np.load(fname) as archive:
+            keys=("geometry_identity","coordinate_frame","frame_omega","rotation_epoch")
+            if any(key not in archive for key in keys):
+                raise ValueError("Historical disk cache requires explicit frame interpretation and re-extraction")
+            current=tuple(str(archive[key]) for key in keys)
+            if frame_metadata is not None and current!=frame_metadata:
+                raise ValueError("Cannot stitch incompatible disk frame/geometry metadata")
+            frame_metadata=current
 
     data_keys = [
         "time",
@@ -1761,6 +1831,10 @@ def stitch_archives(output_filename, files=None, npz_pattern=None, omega_bin=Non
         out_data["alpha_shear_em_exact_penna"] = mean_alpha_shear_em_exact_penna
         out_data["alpha_shear_penna"] = mean_alpha_shear_penna
 
+    out_data["geometry_identity"]=np.array(frame_metadata[0])
+    out_data["coordinate_frame"]=np.array(frame_metadata[1])
+    out_data["frame_omega"]=np.array(float(frame_metadata[2]))
+    out_data["rotation_epoch"]=np.array(float(frame_metadata[3]))
     np.savez(output_filename, **out_data)
 
 
@@ -1779,6 +1853,7 @@ def process_files(
     time_units="orbit",
     delete_source=False,
     nproc=1,
+    historical_frame=None,
 ):
     run_path = Path(run_dir).resolve()
     parfile = run_path / "parfile.par"
@@ -1788,7 +1863,8 @@ def process_files(
     if not bin_dir.exists():
         raise FileNotFoundError(f"Missing bin directory: {bin_dir}")
 
-    metric_params = parse_athena_parfile(parfile)
+    metric_params = parse_athena_parfile(parfile, historical_frame)
+    metric_params["diagnostic_sampling"]=[rmin,rmax,dr,n_theta,n_phi,tilt_y,tilt_x]
     if tilt_is_dynamical(metric_params.get("tilt_angle_deg", 0.0)):
         print(
             "Using angular-momentum-aligned disk frame "
@@ -1837,7 +1913,8 @@ def process_files(
         npz_out = fname[:-6] + ".npz"
         should_process = True
         if os.path.exists(npz_out):
-            if os.path.getmtime(npz_out) > max(os.path.getmtime(fname), script_mtime):
+            if (os.path.getmtime(npz_out) > max(os.path.getmtime(fname), script_mtime)
+                    and geometry_cache_matches(npz_out,metric_params)):
                 should_process = False
             else:
                 try:
@@ -1916,6 +1993,7 @@ def process_files(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--run-dir", default=".")
+    parser.add_argument("--historical-frame",choices=["inertial","corotating"])
     parser.add_argument("-n", "--nproc", type=int, default=1)
     parser.add_argument("--rmin", type=float, default=20.0)
     parser.add_argument("--rmax", type=float, default=400.0)
@@ -1946,4 +2024,5 @@ if __name__ == "__main__":
         args.time_units,
         delete_source=args.delete,
         nproc=args.nproc,
+        historical_frame=args.historical_frame,
     )

@@ -1,0 +1,106 @@
+{
+  "backend": "Kokkos Serial, MPI build, one rank",
+  "overhead": {
+    "disabled": {
+      "runs": [
+        {
+          "wall_seconds": 9.264521292,
+          "evolution_seconds": 7.425037
+        },
+        {
+          "wall_seconds": 9.243533750000001,
+          "evolution_seconds": 7.404649
+        },
+        {
+          "wall_seconds": 9.264350167,
+          "evolution_seconds": 7.425321
+        }
+      ],
+      "median_evolution_seconds": 7.425037
+    },
+    "surfaces": {
+      "runs": [
+        {
+          "wall_seconds": 9.291545874999997,
+          "evolution_seconds": 7.452894
+        },
+        {
+          "wall_seconds": 9.292751957999997,
+          "evolution_seconds": 7.454244
+        },
+        {
+          "wall_seconds": 9.302551000000001,
+          "evolution_seconds": 7.464463
+        }
+      ],
+      "median_evolution_seconds": 7.454244
+    },
+    "budgets": {
+      "runs": [
+        {
+          "wall_seconds": 9.516902541000007,
+          "evolution_seconds": 7.672532
+        },
+        {
+          "wall_seconds": 9.510273374999997,
+          "evolution_seconds": 7.670352
+        },
+        {
+          "wall_seconds": 9.556241708000002,
+          "evolution_seconds": 7.708633
+        }
+      ],
+      "median_evolution_seconds": 7.672532
+    }
+  },
+  "area_resolution": [
+    {
+      "cells_per_axis": 16,
+      "dx": 1.0,
+      "proper_area": 52.332543010127445,
+      "relative_error": 0.041122863078874916,
+      "valid": true
+    },
+    {
+      "cells_per_axis": 32,
+      "dx": 0.5,
+      "proper_area": 50.791897007348,
+      "relative_error": 0.010472684716734904,
+      "valid": true
+    },
+    {
+      "cells_per_axis": 64,
+      "dx": 0.25,
+      "proper_area": 50.401232665312435,
+      "relative_error": 0.0027006645761471493,
+      "valid": true
+    }
+  ],
+  "environment": {
+    "date": "2026-11-11",
+    "cpu": "Apple M5 Pro",
+    "architecture": "arm64",
+    "compiler": "AppleClang 21",
+    "build": "Release, double precision",
+    "kokkos": "4.6.1 Serial",
+    "mpi_ranks": 1,
+    "audited_base": "f48f3126c1096d4df0d3f72909f9075969c4efa6",
+    "fixture": "tst/diagnostics/smoke.athinput with modifications in measure_short_cases.py",
+    "active_cells": "32^3",
+    "accepted_steps": 20,
+    "angular_points_per_surface": [
+      16,
+      32
+    ],
+    "history_interval_cycles": 5,
+    "runs_per_mode": 3,
+    "surfaces": [
+      "R3.5",
+      "R4",
+      "H1",
+      "BH1_Kerr"
+    ],
+    "single_hole": true,
+    "note": "Short CPU control. Diagnostic threshold lowered to exercise paths; no physical convergence or GPU performance claim."
+  }
+}
