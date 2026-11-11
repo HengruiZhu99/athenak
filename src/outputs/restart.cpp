@@ -213,6 +213,9 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
   pin->SetInteger(out_params.block_name, "file_number", out_params.file_number);
   pin->SetReal(out_params.block_name, "last_time", out_params.last_time);
 
+  // Export committed diagnostic scalars only; checkpoint requests never integrate.
+  if (pm->pgen->user_diagnostic_export_func)
+    pm->pgen->user_diagnostic_export_func(pm,pin);
   // create string holding input parameters (copy of input file)
   std::stringstream ost;
   pin->ParameterDump(ost);

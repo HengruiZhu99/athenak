@@ -33,6 +33,8 @@
 #include "dyn_radiation/dyn_radiation.hpp"
 #include "utils/flux_generalized.hpp"
 #include "utils/circumbinary_geometry.hpp"
+#include "utils/circumbinary_accumulator.hpp"
+#include "driver/driver.hpp"
 #include "units/units.hpp"
 #include "srcterms/ismcooling.hpp"
 #include "pgen/bondi_profile.hpp"
@@ -465,6 +467,16 @@ void InitializeDynBBHPreRestart(Mesh *pm);
 void InitializeDynBBHPostRestart(Mesh *pm);
 void PreconditionDynBBHRestartMHD(Mesh *pm);
 
+Real diagnostic_metric_time=0.0;
+struct BinaryDiagnosticState {
+  std::vector<circumbinary::QualifiedMass> mass;
+  std::vector<std::string> labels;
+  std::string identity;
+  Real state_time=0.0;
+};
+void BinaryDiagnosticStep(Mesh*, Driver*, int);
+void ExportBinaryDiagnostics(Mesh*, ParameterInput*);
+void InitializeBinaryDiagnostics(ProblemGenerator*, ParameterInput*, Mesh*, bool);
 void UpdateDiagnosticSurfaces(Mesh *pm, Real time);
 void RegisterDiagnosticSurfaces(ProblemGenerator *pgen, ParameterInput *pin, Mesh *pm);
 
@@ -517,6 +529,117 @@ void RegisterDiagnosticSurfaces(ProblemGenerator *pgen, ParameterInput *pin, Mes
 }
 
 
+void InitializeBinaryDiagnostics(ProblemGenerator *pgen, ParameterInput *pin, Mesh *pm,
+                                 bool restart) {
+  if (pgen->surface_grids.empty()) return;
+  auto state=std::make_shared<BinaryDiagnosticState>();
+  std::ostringstream signature;
+  signature<<"schema2:"<<std::setprecision(17)<<bbh.corotating<<":"<<bbh.frame_omega
+    <<":"<<bbh.sep<<":"<<bbh.q<<":"<<bbh.a1<<":"<<bbh.a2
+    <<":"<<bbh.th_a1<<":"<<bbh.th_a2<<":"<<bbh.ph_a1<<":"<<bbh.ph_a2
+    <<":"<<bbh.spin_ramp<<":"<<bbh.spin_ramp_start_time<<":"<<bbh.spin_ramp_timescale;
+  if (bbh.use_traj_table) for (std::size_t row=0;row<bbh_table.t.size();++row) {
+    signature<<":"<<bbh_table.t[row];
+    const std::vector<Real>* columns[]={&bbh_table.m1,&bbh_table.m2,&bbh_table.x1,&bbh_table.y1,
+      &bbh_table.z1,&bbh_table.x2,&bbh_table.y2,&bbh_table.z2,&bbh_table.vx1,&bbh_table.vy1,
+      &bbh_table.vz1,&bbh_table.vx2,&bbh_table.vy2,&bbh_table.vz2,&bbh_table.ax1,&bbh_table.ay1,
+      &bbh_table.az1,&bbh_table.ax2,&bbh_table.ay2,&bbh_table.az2};
+    for (auto col:columns) signature<<":"<<(*col)[row];
+  }
+  for (const auto &s:pgen->surface_grids) {
+    signature<<":"<<s->Label()<<":"<<s->Npts()<<":"<<s->min_cells_per_radius
+      <<":"<<s->Radius().h_view(0)<<":"<<s->Thetas().h_view(0)<<":"<<s->Phis().h_view(1);
+    if (s->surface_type=="modeled_component_Kerr") {
+      state->labels.push_back(s->Label());
+      circumbinary::QualifiedMass q; q.start=q.committed_time=pm->time;
+      q.committed_cycle=pm->ncycle;
+      state->mass.push_back(q);
+    }
+  }
+  state->identity=signature.str();
+  bool has=restart && pin->DoesParameterExist("cbd_diagnostics","schema");
+  if (has) {
+    bool match=pin->GetInteger("cbd_diagnostics","schema")==2 &&
+      pin->GetString("cbd_diagnostics","identity")==state->identity;
+    bool reset=pin->GetOrAddBoolean("problem","flux_new_epoch",false);
+    if (!match && !reset) Kokkos::abort("Changed diagnostic configuration: set flux_new_epoch=true for a new epoch");
+    if (match && !reset) for (std::size_t h=0;h<state->mass.size();++h) {
+      auto id=state->labels[h]+"_"; auto &q=state->mass[h];
+      q.mass=pin->GetReal("cbd_diagnostics",id+"mass");
+      q.start=pin->GetReal("cbd_diagnostics",id+"start");
+      q.covered=pin->GetReal("cbd_diagnostics",id+"covered");
+      q.unavailable=pin->GetReal("cbd_diagnostics",id+"unavailable");
+      q.committed_time=pin->GetReal("cbd_diagnostics",id+"time");
+      q.committed_cycle=pin->GetInteger("cbd_diagnostics",id+"cycle");
+      q.interval_valid=pin->GetBoolean("cbd_diagnostics",id+"valid");
+      q.reason=pin->GetInteger("cbd_diagnostics",id+"reason");
+      Real tol=64*std::numeric_limits<Real>::epsilon()*std::max(1.0,std::abs(pm->time));
+      if (q.committed_cycle!=pm->ncycle || std::abs(q.committed_time-pm->time)>tol ||
+          !std::isfinite(q.mass) || !std::isfinite(q.start) || q.start>pm->time ||
+          !(q.covered>=0 && q.unavailable>=0) ||
+          std::abs(q.covered+q.unavailable-(pm->time-q.start))>tol)
+        Kokkos::abort("Invalid committed diagnostic restart state");
+    }
+  } else if (restart && global_variable::my_rank==0 && !state->mass.empty()) {
+    std::cout<<"No diagnostic state in checkpoint: starting a new measured mass epoch at "
+      <<pm->time<<"; earlier accretion is unavailable."<<std::endl;
+  }
+  if (restart) pin->SetBoolean("problem","flux_new_epoch",false);
+  pgen->user_diagnostic_data=state;
+  pgen->user_diagnostic_step_func=BinaryDiagnosticStep;
+  pgen->user_diagnostic_export_func=ExportBinaryDiagnostics;
+}
+
+void BinaryDiagnosticStep(Mesh *pm, Driver *driver, int stage) {
+  auto state=std::static_pointer_cast<BinaryDiagnosticState>(pm->pgen->user_diagnostic_data);
+  if (state->mass.empty()) return;
+  // MHD's CopyCons does not implement the 2S delta recurrence required by rk4 on this
+  // branch. Reject that diagnostic integration instead of inventing normalized weights.
+  if (driver->integrator!="rk1" && driver->integrator!="rk2" && driver->integrator!="rk3")
+    Kokkos::abort("Qualified mass currently supports the actual MHD rk1/rk2/rk3 recurrence");
+  if (stage==0) {
+    for (auto &q:state->mass) q.Begin();
+    state->state_time=pm->time;
+  } else if (stage>0) {
+    UpdateDiagnosticSurfaces(pm,diagnostic_metric_time);
+    std::size_t h=0;
+    for (const auto &s:pm->pgen->surface_grids) if (s->surface_type=="modeled_component_Kerr") {
+      auto flux=IntegrateSurface(pm->pmb_pack,s.get());
+      state->mass[h++].Stage(driver->gam0[stage-1],driver->beta[stage-1]*pm->dt,
+                            flux.values[17],flux.valid,flux.reason);
+    }
+    state->state_time=driver->gam0[stage-1]*state->state_time+
+      driver->gam1[stage-1]*pm->time+driver->beta[stage-1]*pm->dt;
+  } else {
+    // Endpoint qualification catches final-stage loss of coverage. It is not another
+    // quadrature sample. Never bridge a missing visit or integrate during history.
+    UpdateDiagnosticSurfaces(pm,diagnostic_metric_time);
+    std::size_t h=0;
+    for (const auto &s:pm->pgen->surface_grids) if (s->surface_type=="modeled_component_Kerr") {
+      auto flux=IntegrateSurface(pm->pmb_pack,s.get()); auto &q=state->mass[h++];
+      q.interval_valid &= flux.valid; q.reason|=flux.reason;
+      q.Commit(pm->ncycle+1,pm->time+pm->dt,pm->dt);
+    }
+  }
+}
+
+void ExportBinaryDiagnostics(Mesh *pm, ParameterInput *pin) {
+  auto state=std::static_pointer_cast<BinaryDiagnosticState>(pm->pgen->user_diagnostic_data);
+  pin->SetInteger("cbd_diagnostics","schema",2);
+  pin->SetString("cbd_diagnostics","identity",state->identity);
+  for (std::size_t h=0;h<state->mass.size();++h) {
+    auto id=state->labels[h]+"_"; const auto &q=state->mass[h];
+    pin->SetReal("cbd_diagnostics",id+"mass",q.mass);
+    pin->SetReal("cbd_diagnostics",id+"start",q.start);
+    pin->SetReal("cbd_diagnostics",id+"covered",q.covered);
+    pin->SetReal("cbd_diagnostics",id+"unavailable",q.unavailable);
+    pin->SetReal("cbd_diagnostics",id+"time",q.committed_time);
+    pin->SetInteger("cbd_diagnostics",id+"cycle",q.committed_cycle);
+    pin->SetBoolean("cbd_diagnostics",id+"valid",q.interval_valid);
+    pin->SetInteger("cbd_diagnostics",id+"reason",q.reason);
+  }
+}
+
 //----------------------------------------------------------------------------------------
 //! \fn void TorusHistory(HistoryData *pdata, Mesh *pm)
 //! \brief User history function that centers horizon grids and calls flux integrator.
@@ -529,7 +652,7 @@ void TorusHistory(HistoryData *pdata, Mesh *pm) {
     }
     MeshBlockPack *pmbp = pm->pmb_pack;
 
-    UpdateDiagnosticSurfaces(pm, pm->time);
+    UpdateDiagnosticSurfaces(pm, diagnostic_metric_time);
 
     // 3. Prepare pointers for the flux calculator
     std::vector<SphericalSurfaceGrid*> surf_raw_ptrs;
@@ -549,6 +672,27 @@ void TorusHistory(HistoryData *pdata, Mesh *pm) {
     for (const auto &s:pgen->surface_grids)
       meta<<" surface:"<<s->Label()<<"="<<s->surface_type;
     pdata->metadata=meta.str();
+    auto add=[&](const std::string &label,Real value) {
+      if (pdata->nhist>=NHISTORY_VARIABLES) Kokkos::abort("Diagnostic history overflow");
+      pdata->label[pdata->nhist]=label;
+      pdata->hdata[pdata->nhist++]=global_variable::my_rank==0 ? value:0.0;
+    };
+    add("diagnostic_state_time",pm->time);
+    add("diagnostic_metric_geometry_time",diagnostic_metric_time);
+    if (pgen->user_diagnostic_data) {
+      auto state=std::static_pointer_cast<BinaryDiagnosticState>(pgen->user_diagnostic_data);
+      for (std::size_t h=0;h<state->mass.size();++h) {
+        const auto &q=state->mass[h]; const auto &id=state->labels[h];
+        add("M0_qualified_cumulative_"+id,q.mass);
+        add("M0_epoch_start_"+id,q.start);
+        add("M0_covered_duration_"+id,q.covered);
+        add("M0_unavailable_duration_"+id,q.unavailable);
+        add("M0_committed_time_"+id,q.committed_time);
+        add("M0_committed_cycle_"+id,q.committed_cycle);
+        add("M0_interval_valid_"+id,q.interval_valid ? 1:0);
+        add("M0_interval_reason_"+id,q.reason);
+      }
+    }
 }
 
 
@@ -1111,6 +1255,7 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
     Kokkos::abort("Start binary cyclic zoom at zone=0; other zones require a restart");
   }
   RegisterDiagnosticSurfaces(this, pin, pmy_mesh_);
+  InitializeBinaryDiagnostics(this,pin,pmy_mesh_,restart);
   if (initial_condition == "bondi_reservoir" || use_bondi_inflow) {
     InitializeBinaryReservoir(pmy_mesh_, pin, restart);
     user_bcs_func = BinaryReservoirBoundary;
@@ -2546,6 +2691,7 @@ void StoreADMVariables(ADMVars adm_vars, const int m, const int k,
 }
 
 void SetADMVariablesToBBH(MeshBlockPack *pmbp) {
+  diagnostic_metric_time=pmbp->pmesh->time;
   ++bondi_metric_revision;  // Includes mesh redistribution and restart initialization.
   const Real tt = bbh.corotating ? 0.0 : pmbp->pmesh->time;
   auto &adm = pmbp->padm->adm;

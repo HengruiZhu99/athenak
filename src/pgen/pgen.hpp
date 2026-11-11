@@ -16,6 +16,10 @@
 #include "utils/surface_grid.hpp"
 #include "parameter_input.hpp"
 
+class Driver;
+using UserDiagnosticStepFnPtr = void (*)(Mesh*, Driver*, int);
+using UserDiagnosticExportFnPtr = void (*)(Mesh*, ParameterInput*);
+
 using ProblemFinalizeFnPtr = void (*)(ParameterInput *pin, Mesh *pm);
 using UserBoundaryFnPtr = void (*)(Mesh* pm);
 using UserSrctermFnPtr = void (*)(Mesh* pm, const Real bdt);
@@ -51,6 +55,10 @@ class ProblemGenerator {
 
   // Problem-owned boundary cache, destroyed before Kokkos finalization.
   std::shared_ptr<void> user_boundary_data;
+  // Explicit problem diagnostic lifecycle, run outside retryable task lists.
+  std::shared_ptr<void> user_diagnostic_data;
+  UserDiagnosticStepFnPtr user_diagnostic_step_func=nullptr;
+  UserDiagnosticExportFnPtr user_diagnostic_export_func=nullptr;
 
   // vector of SphericalGrid objects for analysis
   std::vector<std::unique_ptr<SphericalGrid>> spherical_grids;

@@ -76,3 +76,43 @@ Native `athena_read.hst_segments` exposes every schema/restart segment and metad
 fields, and retains the existing restart-branch pruning convention. Ambiguous
 historically truncated duplicate names gain positional `__colN` suffixes and warn.
 No new-width rows are appended without a fresh native header.
+
+## Accepted-step mass, state time, and restart
+
+Only selected modeled Kerr surfaces are sampled at every pre-stage and at final
+qualification. Other transfer surfaces stay at history cadence. The scalar trial
+integral follows the **actual** fixed-u1 MHD recurrence `a=gam0*a+beta*dt*rate`, starting
+at zero each step. For RK2 this gives dt*(f1+f2)/2, not 1.5 dt. Distinct stages with
+identical metric times are distinct samples. This implementation supports rk1/rk2/rk3;
+the branch's MHD CopyCons does not implement the delta recurrence required by its rk4
+coefficient table. Qualified integration rejects other integrators explicitly.
+
+Only accepted intervals with all required stage and endpoint samples valid contribute
+to `M0_qualified_cumulative_BH*_Kerr`. Coverage/unavailable durations count dt once per
+accepted interval. A missing interval contributes no measured mass and remains in the
+unavailable duration; no gap is interpolated. Histories and pre-checkpoint export are
+read-only with respect to mass. A committed cycle/time prevents duplicate commits.
+This is rest mass crossing a modeled component worldtube; it is neither gravitational
+mass growth nor removal by an excision/reset operator.
+
+The existing prescribed-ADM stage timing is unchanged. `diagnostic_state_time` is the
+accepted state/output time; `diagnostic_metric_geometry_time` is the last actual ADM
+setter time. Geometry and all related currents use that metric epoch, including the
+legacy fixed-surface terms at that instantaneous diagnostic location. For stationary
+ADM the metric epoch can remain zero. Pre-stage fluid states follow the integrator,
+but inertial time-dependent geometry is phase-frozen over each evolution step. This
+is only first-order temporal sampling for a geometry-only time-dependent current.
+The RK weights alone do not confer high-order accuracy on this mixed-time evolution.
+The manufactured recurrence tests separately verify RK2/RK3 quadrature of synchronized
+analytic state rates and first-order sampling of phase-frozen geometry. No evolution
+arrays or metric timing are modified to improve diagnostics.
+
+The existing restart ParameterInput header stores schema, surface/configuration identity,
+epoch start, committed mass/time/cycle, durations and last interval flags. No raw zoom
+layout changes are made. State restores only for a genuine restart. Old checkpoints
+start an explicit new epoch at restart time; they cannot recover previous accretion.
+Changed geometry, thresholds or frame configuration requires `problem/flux_new_epoch=true`
+to deliberately discard the incompatible epoch; that request is consumed once. No
+quadrature endpoint is carried between visits. Geometry/ownership rebuild from the
+restored mesh before each measurement. Pending checkpoint-cycle zoom events continue
+to use the existing driver restoration path.

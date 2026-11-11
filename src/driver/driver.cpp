@@ -439,12 +439,16 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
            (elapsed_time < wall_time)) {
       if (global_variable::my_rank == 0) {OutputCycleDiagnostics(pmesh);}
 
+      if (pmesh->pgen->user_diagnostic_step_func)
+        pmesh->pgen->user_diagnostic_step_func(pmesh,this,0);
       // Execute TaskLists
       // Work before time integrator indicated by "0" in stage
       ExecuteTaskList(pmesh, "before_timeintegrator", 0);
 
       // time-integrator tasks for each stage of integrator
       for (int stage=1; stage<=(nexp_stages); ++stage) {
+        if (pmesh->pgen->user_diagnostic_step_func)
+          pmesh->pgen->user_diagnostic_step_func(pmesh,this,stage);
         ExecuteTaskList(pmesh, "before_stagen", stage);
         ExecuteTaskList(pmesh, "stagen", stage);
         ExecuteTaskList(pmesh, "after_stagen", stage);
@@ -453,6 +457,8 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
       // Work after time integrator indicated by "1" in stage
       ExecuteTaskList(pmesh, "after_timeintegrator", 1);
 
+      if (pmesh->pgen->user_diagnostic_step_func)
+        pmesh->pgen->user_diagnostic_step_func(pmesh,this,-1);
       // Work outside of TaskLists:
       // increment time, ncycle, etc.
       pmesh->time = pmesh->time + pmesh->dt;
