@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "mesh/mesh.hpp"
+#include "z4c/compact_object_tracker.hpp"
 #include "z4c_hyperboloidal/z4c_hyperboloidal.hpp"
 #include "z4c_hyperboloidal/central_z4c_configuration.hpp"
 #include "z4c_hyperboloidal/spherical_policy.hpp"
@@ -63,9 +64,35 @@ Z4cHyperboloidal::Z4cHyperboloidal(MeshBlockPack *ppack, ParameterInput *pin)
   config.inner_z4c_radius_M=pin->GetOrAddReal("z4c_hyperboloidal","inner_z4c_radius_M",20);
   config.compact_slicing_end=pin->GetOrAddReal("z4c_hyperboloidal","compact_slicing_end",.97);
   parameters=config.Resolve().gauge;
+  const auto policy=pin->GetOrAddString("z4c_hyperboloidal","residual_weight","origin_r2");
+  if(policy=="regular_c6") {
+    auto &w=parameters.residual_weight;
+    w.inner=pin->GetReal("z4c_hyperboloidal","weight_inner");
+    w.outer=pin->GetReal("z4c_hyperboloidal","weight_outer");
+    if(!std::isfinite(w.inner)||!std::isfinite(w.outer)||
+       !(0<w.inner && w.inner<w.outer && w.outer<parameters.profile.flat_radius))
+      throw std::invalid_argument("Residual weight requires 0<a<b<flat Omega radius");
+  } else if(policy!="origin_r2") throw std::invalid_argument("Unknown residual weight policy");
+  if(pin->GetString("problem","pgen_name")=="z4c_hyperboloidal_binary") {
+    initial_data_identity="binary-v1;M0=1/3;reported-components=1/2;internal-components=1/6;"+
+      pin->GetOrAddString("problem","binary_identity","prepare");
+  }
+  floor_inner_amr_chi=pin->GetOrAddBoolean("z4c_hyperboloidal","floor_inner_amr_chi",false);
+  if(floor_inner_amr_chi && (!parameters.residual_weight.Regular() || !(chi_floor>0)))
+    throw std::invalid_argument("Inner AMR chi floor requires regular weight and positive chi_floor");
   parameters.enforce_cfl=true;
   parameters.outer_lapse_damping=pin->GetOrAddReal("z4c_hyperboloidal",
                                                   "outer_lapse_damping",.25);
+  const auto scri_mode=pin->GetOrAddString("z4c_hyperboloidal","scri_treatment","A");
+  if(scri_mode=="A")parameters.scri_treatment=ScriTreatment::existing;
+  else if(scri_mode=="B")parameters.scri_treatment=ScriTreatment::regularity;
+  else if(scri_mode=="C")parameters.scri_treatment=ScriTreatment::clock_source;
+  else throw std::invalid_argument("scri_treatment must be A, B, or C");
+  if(parameters.scri_treatment==ScriTreatment::clock_source) {
+    parameters.scri_source_epsilon=pin->GetOrAddReal("z4c_hyperboloidal","scri_source_epsilon",1);
+    parameters.scri_collar_begin=pin->GetOrAddReal("z4c_hyperboloidal","scri_collar_begin",.98);
+    parameters.scri_collar_end=pin->GetOrAddReal("z4c_hyperboloidal","scri_collar_end",.995);
+  }
   parameters.Validate();
   BuildLocalWorkLists();
   AllocateStorage();
@@ -239,9 +266,16 @@ void Z4cHyperboloidal::BuildReferenceCache() {
                      (c.k-origin+map.node_offset[2])/n[2]};
     g(p)=map.Geometry(q);
     const Real r=SphericalPolicy::Radius(g(p).x);
-    if (!(r>0 && r<1)) throw std::runtime_error("Bulk evolved point outside punctured ball");
+    if (!((r>0 || (r==0 && parameters.residual_weight.Regular())) && r<1)) throw std::runtime_error("Bulk evolved point outside punctured ball");
     ref(p)=initial.At(g(p).x);
     sources(p)=initial.source.At(r);
+    if(parameters.scri_treatment==ScriTreatment::clock_source && r>parameters.scri_collar_begin) {
+      const auto u=SphericalPolicy::Physical(g(p).x,ref(p));
+      const auto D=SphericalPolicy::Vector(ref(p),25);
+      const auto clock=EvaluateScriGeometry(g(p).x,u,D.value,parameters.profile.At(g(p).x),parameters);
+      if(!clock.valid)throw std::runtime_error("Invalid prescribed scri clock reference");
+      sources(p).scri_obstruction_reference=clock.obstruction;
+    }
   }
   for (int p=0;p<nsurface_points;++p) {
     const auto c=surface_points.h_view(p);
@@ -279,10 +313,11 @@ void Z4cHyperboloidal::InitializeReference() {
 void Z4cHyperboloidal::FormResidual() {
   auto list=points.d_view; auto state=u0; auto ref=reference;
   auto map=geometry; auto output=residual;
+  const auto weight=parameters.residual_weight;
   Kokkos::parallel_for("hyperboloidal owned residual",Kokkos::RangePolicy<>(0,npoints),
     KOKKOS_LAMBDA(int p) {
       const auto c=list(p); const auto &x=map(p).x;
-      const Real r=SphericalPolicy::Radius(x),r2=r*r;
+      const Real r2=weight.Value(x);
       for (int f=0;f<nvar;++f) {
         output(c.m,f,c.k,c.j,c.i)=Fields::Independent(f)
             ? (state(c.m,f,c.k,c.j,c.i)-ref(p)[f].f)/(f==0 ? r2 : 1) : 0;

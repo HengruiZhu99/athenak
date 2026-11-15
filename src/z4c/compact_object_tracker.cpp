@@ -31,15 +31,16 @@
 #include "z4c/z4c.hpp"
 
 //----------------------------------------------------------------------------------------
-CompactObjectTracker::CompactObjectTracker(Mesh *pmesh, ParameterInput *pin, int n):
+CompactObjectTracker::CompactObjectTracker(Mesh *pmesh, ParameterInput *pin, int n,
+    const std::string &input_block):
               owns_compact_object{false}, vel{NAN, NAN, NAN},
               pmesh{pmesh}, out_every{1}, pos{NAN, NAN, NAN} {
   std::string nstr = std::to_string(n);
   std::string ofname = pin->GetString("job", "basename") + ".";
-  ofname += pin->GetOrAddString("z4c", "filename", "co_");
+  ofname += pin->GetOrAddString(input_block, "filename", "co_");
   ofname += nstr + ".txt";
 
-  std::string cotype = pin->GetString("z4c", "co_" + nstr + "_type");
+  std::string cotype = pin->GetString(input_block, "co_" + nstr + "_type");
   if (cotype == "BH" || cotype == "BlackHole") {
     type = BlackHole;
   } else if (cotype == "NS" || cotype == "NeutronStar") {
@@ -51,7 +52,7 @@ CompactObjectTracker::CompactObjectTracker(Mesh *pmesh, ParameterInput *pin, int
     std::exit(EXIT_FAILURE);
   }
 
-  std::string trmode = pin->GetOrAddString("z4c", "tracker_mode", "ode");
+  std::string trmode = pin->GetOrAddString(input_block, "tracker_mode", "ode");
   if (trmode == "ode") {
     mode = ODE;
   } else if (trmode == "walk") {
@@ -63,16 +64,16 @@ CompactObjectTracker::CompactObjectTracker(Mesh *pmesh, ParameterInput *pin, int
     std::exit(EXIT_FAILURE);
   }
 
-  pos[0] = pin->GetOrAddReal("z4c", "co_" + nstr + "_x", 0.0);
-  pos[1] = pin->GetOrAddReal("z4c", "co_" + nstr + "_y", 0.0);
-  pos[2] = pin->GetOrAddReal("z4c", "co_" + nstr + "_z", 0.0);
+  pos[0] = pin->GetOrAddReal(input_block, "co_" + nstr + "_x", 0.0);
+  pos[1] = pin->GetOrAddReal(input_block, "co_" + nstr + "_y", 0.0);
+  pos[2] = pin->GetOrAddReal(input_block, "co_" + nstr + "_z", 0.0);
 
-  mass = pin->GetOrAddReal("z4c", "co_" + nstr + "_mass", 0.0);
+  mass = pin->GetOrAddReal(input_block, "co_" + nstr + "_mass", 0.0);
 
-  reflevel = pin->GetOrAddInteger("z4c", "co_" + nstr + "_reflevel", -1);
-  radius = pin->GetOrAddReal("z4c", "co_" + nstr + "_radius", 0.0);
+  reflevel = pin->GetOrAddInteger(input_block, "co_" + nstr + "_reflevel", -1);
+  radius = pin->GetOrAddReal(input_block, "co_" + nstr + "_radius", 0.0);
 
-  out_every = pin->GetOrAddInteger("z4c", "co_" + nstr + "_out_every", 1);
+  out_every = pin->GetOrAddInteger(input_block, "co_" + nstr + "_out_every", 1);
 
   if (0 == global_variable::my_rank) {
     std::ifstream existing(ofname);
@@ -98,6 +99,11 @@ CompactObjectTracker::~CompactObjectTracker() { }
 
 //----------------------------------------------------------------------------------------
 void CompactObjectTracker::InterpolateVelocity(MeshBlockPack *pmbp) {
+  if(velocity_sampler) {
+    if(mode!=ODE || type!=BlackHole)throw std::invalid_argument("Mapped tracker adapter supports BH ODE mode");
+    owns_compact_object=velocity_sampler(pos,vel);
+    return;
+  }
   auto &padm = pmbp->padm;
   auto &pmhd = pmbp->pmhd;
   auto &pz4c = pmbp->pz4c;

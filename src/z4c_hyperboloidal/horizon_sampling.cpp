@@ -166,7 +166,7 @@ struct HorizonSampler::Impl {
         for (int a=0;a<3;++a)jets[f].d[a]+=derivative[a]*value[f];
       }
     }
-    if (!SphericalPolicy::Restore(q.x,jets,reference->At(q.x)))return {};
+    if (!SphericalPolicy::Restore(q.x,jets,reference->At(q.x),module->parameters.residual_weight))return {};
     return PhysicalHorizonGeometry(SphericalPolicy::Physical(q.x,jets),
                                    module->parameters.profile.At(q.x));
   }

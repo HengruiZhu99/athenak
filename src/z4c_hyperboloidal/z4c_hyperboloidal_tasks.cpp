@@ -34,6 +34,10 @@ void Z4cHyperboloidal::QueueZ4cHyperboloidalTasks() {
   // MeshBlockPack assembles these native queues before the problem generator
   // initializes fields. Only bind tasks here; plans are required at execution.
   QueueZ4cHyperboloidalStageTasks(pmy_pack->pnr,this);
+  // Existing NR end-stage queue: all stage sends are retired before a tracker
+  // launches its own collective mapped exchange. Single-hole path is a no-op.
+  pmy_pack->pnr->QueueTask(&Z4cHyperboloidal::TrackBinary,this,numrel::Z4c_PT,
+      "Hyp_TrackBinary",numrel::Task_End,{numrel::Hyp_ClearS,numrel::Hyp_ClearR});
 }
 
 TaskStatus Z4cHyperboloidal::InitRecv(Driver *driver, int stage) {

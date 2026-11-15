@@ -53,7 +53,11 @@ add_executable(
         driver/driver.cpp
 
         z4c_hyperboloidal/z4c_hyperboloidal.cpp
+        z4c_hyperboloidal/binary_initial.cpp
+        z4c_hyperboloidal/binary_tracking.cpp
         z4c_hyperboloidal/diagnostics.cpp
+        z4c_hyperboloidal/boundary_history.cpp
+        z4c_hyperboloidal/scri_history.cpp
         z4c_hyperboloidal/horizon_sampling.cpp
         z4c_hyperboloidal/dissipation_plan.cpp
         z4c_hyperboloidal/mapped_halo.cpp
@@ -170,6 +174,7 @@ add_executable(
         pgen/tests/z4c_interpolation.cpp
         pgen/z4c/superposed_boosted_puncture.cpp
         pgen/z4c/hyperboloidal_puncture.cpp
+        pgen/z4c/hyperboloidal_binary.cpp
         pgen/tests/z4c_linear_wave.cpp
         pgen/tests/jeans_wave.cpp
         pgen/tests/binary_gravity.cpp
@@ -254,11 +259,15 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "^(GNU|Clang|AppleClang|IntelLLVM)$")
   set_source_files_properties(
       mesh/chart_atlas.cpp
       z4c_hyperboloidal/z4c_hyperboloidal.cpp
+        z4c_hyperboloidal/binary_initial.cpp
+        z4c_hyperboloidal/binary_tracking.cpp
       z4c_hyperboloidal/z4c_hyperboloidal_update.cpp
       z4c_hyperboloidal/z4c_hyperboloidal_rhs.cpp
       z4c_hyperboloidal/z4c_hyperboloidal_tasks.cpp
       z4c_hyperboloidal/z4c_hyperboloidal_lifecycle.cpp
       z4c_hyperboloidal/diagnostics.cpp
+      z4c_hyperboloidal/boundary_history.cpp
+        z4c_hyperboloidal/scri_history.cpp
       z4c_hyperboloidal/horizon_sampling.cpp
       z4c_hyperboloidal/dissipation_plan.cpp
       z4c_hyperboloidal/mapped_halo.cpp

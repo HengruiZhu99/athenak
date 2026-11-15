@@ -145,6 +145,7 @@ std::string Identity(const Z4cHyperboloidal &p) {
     << ";overlap=" << p.overlap << ";nghost=" << p.nghost << std::hexfloat;
 #define HYP_ID(value) s << ";" #value "=" << value
   HYP_ID(p.ko); HYP_ID(p.chi_floor); HYP_ID(p.penalty); HYP_ID(p.requested_dt);
+  if(p.floor_inner_amr_chi)s << ";floor-inner-amr-chi=v1";
   const auto &g=p.parameters;
   HYP_ID(g.profile.flat); HYP_ID(g.profile.flat_radius); HYP_ID(g.profile.outer_radius);
   HYP_ID(g.profile.plateau); HYP_ID(g.enforce_cfl); HYP_ID(g.conformal_frame_halos);
@@ -156,7 +157,19 @@ std::string Identity(const Z4cHyperboloidal &p) {
   HYP_ID(g.restoration_end); HYP_ID(g.bulk_mu); HYP_ID(g.ratio); HYP_ID(g.damping);
   HYP_ID(g.restoring); HYP_ID(g.outer_lapse_damping); HYP_ID(g.kappa); HYP_ID(g.tau);
   HYP_ID(g.epsilon); HYP_ID(g.inner_z4); HYP_ID(g.kappa1); HYP_ID(g.kappa2);
+  if(g.scri_treatment!=ScriTreatment::existing)
+    s << ";scri-treatment-v1=" << static_cast<int>(g.scri_treatment);
+  if(g.scri_treatment==ScriTreatment::clock_source) {
+    HYP_ID(g.scri_source_epsilon);HYP_ID(g.scri_collar_begin);HYP_ID(g.scri_collar_end);
+    s << ";scri-source-reference=wormhole-jets-v1";
+  }
+  // Preserve the original identity byte-for-byte for the legacy policy.
+  if(g.residual_weight.Regular()) {
+    s << ";residual-weight=regular-c6-v1";
+    HYP_ID(g.residual_weight.inner); HYP_ID(g.residual_weight.outer);
+  }
 #undef HYP_ID
+  if(!p.initial_data_identity.empty())s<<";initial-data="<<p.initial_data_identity;
   return s.str();
 }
 

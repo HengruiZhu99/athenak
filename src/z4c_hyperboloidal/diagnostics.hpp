@@ -5,6 +5,7 @@
 #include <array>
 #include <cstdint>
 #include <memory>
+#include <vector>
 
 #include "athena.hpp"
 #include "z4c/fastflow.hpp"
@@ -38,7 +39,10 @@ class Diagnostics {
   ~Diagnostics();
   void Refresh();
   const FastFlow::Result &FindHorizon();
+  const std::vector<FastFlow::Result> &FindHorizons() {FindHorizon();return horizons_;}
+  const std::vector<FastFlowSurface> &ComponentSurfaces() const {return surfaces_;}
   std::array<Real,10> HistorySums();
+  std::array<Real,10> ShellSums(int band);
   const DvceArray1D<ConstraintPoint> &Points() const {return points_;}
   const DvceArray1D<Real> &Weights() const {return weights_;}
   const DvceArray1D<int> &ExteriorMask() const {return exterior_;}
@@ -52,7 +56,9 @@ class Diagnostics {
   // Independent scri workspace preserves the last true RK stage observations.
   std::unique_ptr<SurfaceExchange> boundary_;
   std::unique_ptr<HorizonSampler> sampler_;
-  std::unique_ptr<FastFlow> finder_;
+  std::vector<std::unique_ptr<FastFlow>> finders_;
+  std::vector<FastFlow::Result> horizons_;
+  std::vector<FastFlowSurface> surfaces_;
   DvceArray1D<ConstraintPoint> points_;
   DvceArray1D<Real> weights_;
   DvceArray1D<int> exterior_;

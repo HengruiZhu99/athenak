@@ -29,8 +29,10 @@ KOKKOS_INLINE_FUNCTION PointState EndpointState(int p,const BlockPointReader &re
       out.transport[f]+=b*(biased-FirstDerivative(reader,f,a,inv_h[a]));
     }
   }
-  mapped::Jet lift[3];
+  mapped::Jet lift[4];
   for (int a=0;a<3;++a) lift[a]=surface.NormalCorrection(p,map,a);
+  if(parameters.scri_treatment!=ScriTreatment::existing)
+    lift[3]=surface.NormalCorrection(p,map,3);
   RestorePointState(out,reader,map,inv_h,reference,parameters,lift);
   return out;
 }

@@ -1,0 +1,13 @@
+#!/bin/bash -l
+#PBS -A CompactBinaryMerger
+#PBS -N n12-current
+#PBS -q debug
+#PBS -l select=2
+#PBS -l walltime=00:15:00
+#PBS -l filesystems=home:flare
+#PBS -j oe
+set -euo pipefail
+ulimit -c 0
+root=/lus/flare/projects/CompactBinaryMerger/hzhu/hyperboloidal-binary-20M-20261109
+package=$root/single-hole-performance
+exec timeout --signal=TERM --kill-after=20s 800s bash "$package/run-single-hole-current.sh"

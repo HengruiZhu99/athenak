@@ -9,6 +9,7 @@
 
 #include <cstdio>
 #include <fstream>
+#include <functional>
 #include <string>
 
 #include "athena.hpp"
@@ -27,9 +28,13 @@ class CompactObjectTracker {
 
  public:
   //! Initialize a tracker
-  CompactObjectTracker(Mesh *pmesh, ParameterInput *pin, int n);
+  CompactObjectTracker(Mesh *pmesh, ParameterInput *pin, int n,
+      const std::string &input_block="z4c");
   //! Destructor (will close output file)
   ~CompactObjectTracker();
+  // Native mapped adapter supplies an owned physical velocity on every call.
+  using VelocitySampler=std::function<bool(const Real*,Real*)>;
+  void SetVelocitySampler(VelocitySampler sampler) {velocity_sampler=std::move(sampler);}
   //! Interpolate the shift vector to the puncture position
   void InterpolateVelocity(MeshBlockPack *pmbp);
   //! Update and broadcast the puncture position
@@ -66,6 +71,7 @@ class CompactObjectTracker {
   }
 
  private:
+  VelocitySampler velocity_sampler;
   bool owns_compact_object;
   CompactObjectType type;
   TrackerMode mode;

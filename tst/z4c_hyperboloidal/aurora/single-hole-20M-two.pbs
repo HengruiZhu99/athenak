@@ -1,0 +1,44 @@
+#!/bin/bash -l
+#PBS -A CompactBinaryMerger
+#PBS -N single-hole-20M
+#PBS -q debug
+#PBS -l select=2
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -j oe
+set -euo pipefail
+ulimit -c 0
+root=/lus/flare/projects/CompactBinaryMerger/hzhu/hyperboloidal-binary-20M-20261109
+package=$root/single-hole-20M
+run=$root/runs/single-hole-20M-${PBS_JOBID%%.*}
+[[ ! -e "$run" && -r ${PBS_NODEFILE:-} ]]
+[[ $(sort -u "$PBS_NODEFILE" | wc -l) == 2 ]]
+module load oneapi/release/2025.3.1
+mkdir -p "$run/cache/neo" "$run/cache/sycl"
+cp "$PBS_NODEFILE" "$run/nodes.txt"
+cp "$package/input.athinput" "$run/input.athinput"
+cp "$package/mpi-gpu-cache.sh" "$package/single-hole-20M-two.pbs" "$run/"
+printf '%s\n' "$PBS_JOBID" > "$run/job-id.txt"
+module list > "$run/modules.txt" 2>&1
+sha256sum -c "$root/build-sycl/executable.sha256" > "$run/executable-check.txt"
+cp "$root/build-sycl/executable.sha256" "$root/build-sycl/source-sha256.json" "$root/build-sycl/source-check.txt" "$run/"
+export OMP_NUM_THREADS=1 ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export ZE_ENABLE_PCI_ID_DEVICE_ORDER=1 ONEAPI_DEVICE_SELECTOR=level_zero:gpu MPIR_CVAR_ENABLE_GPU=1
+source "$package/mpi-gpu-cache.sh"
+export NEO_CACHE_DIR="$run/cache/neo" SYCL_CACHE_DIR="$run/cache/sycl"
+unset ZE_AFFINITY_MASK NATIVE_TIMING_WARMUP NATIVE_TIMING_STEPS NATIVE_TIMING_WINDOWS
+binding='1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100'
+wrapper=$(command -v gpu_tile_compact.sh)
+mpiexec -n 24 -ppn 12 --cpu-bind=list:"$binding" "$wrapper" /bin/bash -c \
+ 'printf "%s rank=%s tile=%s cache=%s size=%s entries=%s\n" "$(hostname)" "${MPI_LOCALRANKID:-${PALS_LOCAL_RANKID:-unknown}}" "$ZE_AFFINITY_MASK" "$MPIR_CVAR_CH4_IPC_GPU_HANDLE_CACHE" "$MPIR_CVAR_CH4_IPC_GPU_CACHE_SIZE" "$MPIR_CVAR_CH4_IPC_GPU_MAX_CACHE_ENTRIES"' > "$run/rank-environment.txt"
+command=(mpiexec -n 24 -ppn 12 --cpu-bind=list:"$binding" "$wrapper" "$root/build-sycl/src/athena" -i "$run/input.athinput" -d "$run" -t 00:55:00)
+printf '%q ' "${command[@]}" > "$run/command.txt"
+printf '\n' >> "$run/command.txt"
+set +e
+timeout --signal=TERM --kill-after=20s 3500s "${command[@]}" > "$run/run.log" 2>&1
+status=$?
+printf '%s\n' "$status" > "$run/exit-code.txt"
+if [[ -f "$run/single_hole_20M.z4c_hyperboloidal.hst" ]]; then
+ /usr/bin/python3.11 "$package/normalize_binary_history.py" "$run/single_hole_20M.z4c_hyperboloidal.hst" --output "$run/history-M0-1.hst" > "$run/history-normalization.log" 2>&1
+fi
+exit "$status"

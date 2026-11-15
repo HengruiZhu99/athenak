@@ -143,6 +143,7 @@ class SurfaceExchange {
   const bvals::MappedExchange &EdgeExchange() const {return surface_exchange_;}
   Real MaxCompatibility() const {return max_compatibility_;}
   Real MaxClock() const {return max_clock_;}
+  std::array<Real,ScriHistory::count> MeasureInvestigation();
 
  private:
   MeshBlockPack *pack_;
@@ -155,6 +156,7 @@ class SurfaceExchange {
   DvceArray1D<int> radial_index_;
   DvceArray1D<int> radial_points_, radial_fields_;
   DvceArray2D<mapped::Jet> radial_jets_;
+  DvceArray2D<Real> investigation_values_;
   DvceArray1D<Real> face_spacing_, face_gap_;
   DvceArray1D<CartesianChartJets> sampled_;
   struct NormalCase {Real defect[3]; bool valid;};
@@ -170,6 +172,8 @@ class SurfaceExchange {
   Real max_compatibility_=0,max_clock_=0;
   bool ready_=false;
   bool correction_jets_ready_=false;
+  DvceArray2D<Real> history_values_;
+  std::array<Real,20> MeasureHistory();
   void CheckReady() const;
 };
 

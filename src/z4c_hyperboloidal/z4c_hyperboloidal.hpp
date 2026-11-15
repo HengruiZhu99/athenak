@@ -14,12 +14,14 @@
 #include "parameter_input.hpp"
 #include "tasklist/task_list.hpp"
 #include "z4c_hyperboloidal/fields.hpp"
+#include "z4c_hyperboloidal/scri_history.hpp"
 #include "z4c_hyperboloidal/spherical_reference_3d.hpp"
 #include "z4c_hyperboloidal/rhs_subset.hpp"
 
 class Driver;
 class MeshBlockPack;
 class MeshRefinement;
+class CompactObjectTracker;
 
 namespace z4c_hyperboloidal {
 class MappedHalo;
@@ -65,6 +67,8 @@ class Z4cHyperboloidal {
   int n[3], storage[3], origin, overlap, nghost;
   int nblocks, nfaces, npoints, nsurface_points;
   Real ko, chi_floor, penalty, requested_dt, dtnew;
+  bool floor_inner_amr_chi=false;
+  void RefineBinaryChi();
   HyperbolicShiftParameters<Real> parameters;
 
   // Only local native blocks are allocated. Nominal cells start at origin;
@@ -89,11 +93,25 @@ class Z4cHyperboloidal {
   std::uint64_t StateVersion() const {return state_version_;}
   Diagnostics &GetDiagnostics();
   std::array<Real,10> DiagnosticHistorySums();
+  std::array<Real,10> DiagnosticShellSums(int band);
   void InitializeReference();
+  void InitializeBinary(ParameterInput *pin);
+  std::string initial_data_identity;
+  void InitializeBinaryTracking();
+  TaskStatus TrackBinary(Driver *driver,int stage);
+  const Real *ComponentCenter(int component) const;
   void InitializeBoundaryValues(Driver *driver);
   TaskStatus NewTimeStep(Driver *driver, int stage);
   Real StageMaxCompatibility() const;
   Real StageMaxClock() const;
+  void EnableBoundaryHistory() {boundary_history_enabled_=true;}
+  bool BoundaryHistoryEnabled() const {return boundary_history_enabled_;}
+  void AccumulateBoundaryHistory(const std::array<Real,20> &values);
+  std::array<Real,20> TakeBoundaryHistory();
+  void EnableScriInvestigation() {scri_investigation_enabled_=true;}
+  bool ScriInvestigationEnabled() const {return scri_investigation_enabled_;}
+  void AccumulateScriInvestigation(const std::array<Real,ScriHistory::count> &values);
+  std::array<Real,ScriHistory::count> TakeScriInvestigation();
   void PrepareRemesh(MeshRefinement &refinement);
   void FinishRemesh(MeshRefinement &refinement);
   DvceArray5D<Real> &RemeshNominal();
@@ -130,8 +148,17 @@ class Z4cHyperboloidal {
   ParameterInput *pinput_;
   std::uint64_t state_version_=0;
   std::unique_ptr<Diagnostics> diagnostics_;
+  std::vector<std::unique_ptr<CompactObjectTracker>> trackers_;
   bool initialized_=false;
   bool plans_ready_=false;
+  // Diagnostic windows are per output segment, not part of the evolved state.
+  bool boundary_history_enabled_=false, boundary_history_ready_=false;
+  std::array<Real,20> boundary_history_maxima_{};
+  std::array<Real,20> boundary_history_last_{};
+  int boundary_history_written_cycle_=-1;
+  bool scri_investigation_enabled_=false,scri_investigation_ready_=false;
+  std::array<Real,ScriHistory::count> scri_investigation_maxima_{},scri_investigation_last_{};
+  int scri_investigation_written_cycle_=-1;
   std::unique_ptr<MappedHalo> mapped_halo_;
   std::unique_ptr<SurfaceExchange> surface_exchange_;
   std::unique_ptr<DissipationPlan> dissipation_plan_;

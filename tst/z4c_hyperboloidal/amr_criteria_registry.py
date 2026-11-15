@@ -31,6 +31,7 @@ sources = [source, pathlib.Path(__file__).resolve(), fixture]
 sources += [root/f'src/mesh/{name}' for name in
             ('mesh_refinement.cpp', 'mesh_refinement.hpp', 'load_balance.cpp',
              'refinement_criteria.cpp', 'refinement_criteria.hpp')]
+sources += [root/'src/z4c/z4c_amr.cpp', root/'src/z4c/z4c_amr.hpp']
 source_manifest = {str(path.relative_to(root)): sha256(path) for path in sources}
 (output/'source-manifest.json').write_text(json.dumps(source_manifest, indent=2)+'\n')
 flags = (build/'src/CMakeFiles/athena.dir/flags.make').read_text()

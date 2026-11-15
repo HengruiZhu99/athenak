@@ -1,0 +1,9 @@
+#!/bin/bash
+# Source after loading Aurora MPI. These are the qualified two-node N12 settings.
+# Clear aliases so inherited MPI configuration cannot override the chosen values.
+unset MPICH_CH4_IPC_GPU_HANDLE_CACHE MPIR_PARAM_CH4_IPC_GPU_HANDLE_CACHE
+unset MPICH_CH4_IPC_GPU_CACHE_SIZE MPIR_PARAM_CH4_IPC_GPU_CACHE_SIZE
+unset MPICH_CH4_IPC_GPU_MAX_CACHE_ENTRIES MPIR_PARAM_CH4_IPC_GPU_MAX_CACHE_ENTRIES
+export MPIR_CVAR_CH4_IPC_GPU_HANDLE_CACHE=specialized
+export MPIR_CVAR_CH4_IPC_GPU_CACHE_SIZE=limited
+export MPIR_CVAR_CH4_IPC_GPU_MAX_CACHE_ENTRIES=128

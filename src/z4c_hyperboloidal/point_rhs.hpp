@@ -38,6 +38,8 @@ KOKKOS_INLINE_FUNCTION BulkPointResult EvaluateBulkPoint(const mapped::Point &ma
   const auto B=SphericalPolicy::Vector(j,19),D=SphericalPolicy::Vector(j,25);
   auto gauge=HyperbolicGauge(x,u,B,D.value,p,&g);
   ApplyStationaryGaugeSource(x,u.alpha.value,source,gauge);
+  if(p.scri_treatment==ScriTreatment::clock_source)
+    gauge.lapse_regular+=ScriClockSource(x,u,D.value,omega,p,source,&g);
   if (!gauge.valid) {out.status=PointStatus::invalid_gauge;return out;}
   out.rate[18]=gauge.lapse_regular+gauge.lapse_pole/omega.omega;
   Real driver[3]{};

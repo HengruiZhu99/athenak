@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <string>
 #include "globals.hpp"
+#include "z4c/z4c_amr.hpp"
 #include "mesh/mesh.hpp"
 #include "mesh/mesh_refinement.hpp"
 #include "mesh/refinement_criteria.hpp"
@@ -62,6 +63,15 @@ int main(int argc,char **argv) {
         o,o+n-1,o,o+n-1,o,o+n-1,
         KOKKOS_LAMBDA(int m,int k,int j,int i) {u(m,0,k,j,i)=2;});
       reset();criteria.CheckMinMax(mesh.pmb_pack,criterion);check(false,-1);
+      // Shared Cartesian chi criterion: nominal-cell offset and hysteresis.
+      for(Real value:{1.0,2.0,2.25,2.5,3.0}) {
+        Kokkos::deep_copy(u,-1e6); // excluded ghosts must not trigger refinement
+        par_for("chi criterion nominal data",DevExeSpace(),0,p.nblocks-1,
+          o,o+n-1,o,o+n-1,o,o+n-1,
+          KOKKOS_LAMBDA(int m,int k,int j,int i){u(m,0,k,j,i)=value;});
+        reset();z4c::RefineChiMinimum(mesh.pmb_pack,u,0,p.overlap,2.0);
+        check(false,value<2.0?1:value>2.5?-1:0);
+      }
       auto old=p.u0;
       p.u0=DvceArray5D<Real>("replacement criterion state",p.nblocks,31,
                              p.storage[2],p.storage[1],p.storage[0]);

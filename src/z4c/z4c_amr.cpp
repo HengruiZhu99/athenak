@@ -151,20 +151,21 @@ void Z4c_AMR::RefineTracker(MeshBlockPack *pmbp) {
 
 // refine based on min{chi}
 void Z4c_AMR::RefineChiMin(MeshBlockPack *pmbp) {
+  RefineChiMinimum(pmbp,pmbp->pz4c->u0,pmbp->pz4c->I_Z4C_CHI,0,chi_thresh);
+}
+
+void RefineChiMinimum(MeshBlockPack *pmbp,const DvceArray5D<Real> &u0,
+                      int I_Z4C_CHI,int offset,Real chi_thresh) {
   Mesh *pmesh       = pmbp->pmesh;
   int nmb           = pmbp->nmb_thispack;
   int mbs           = pmesh->gids_eachrank[global_variable::my_rank];
   auto &refine_flag = pmesh->pmr->refine_flag;
   auto &indcs       = pmesh->mb_indcs;
-  int &is = indcs.is, nx1 = indcs.nx1;
-  int &js = indcs.js, nx2 = indcs.nx2;
-  int &ks = indcs.ks, nx3 = indcs.nx3;
+  int is = indcs.is+offset, nx1 = indcs.nx1;
+  int js = indcs.js+offset, nx2 = indcs.nx2;
+  int ks = indcs.ks+offset, nx3 = indcs.nx3;
   const int nkji = nx3 * nx2 * nx1;
   const int nji  = nx2 * nx1;
-  auto &u0       = pmbp->pz4c->u0;
-  int I_Z4C_CHI  = pmbp->pz4c->I_Z4C_CHI;
-  // note: we need this to prevent capture by this in the lambda expr.
-  auto chi_thresh = this->chi_thresh;
 
   par_for_outer(
     "Z4c_AMR::ChiMin", DevExeSpace(), 0, 0, 0, (nmb - 1),

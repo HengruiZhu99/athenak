@@ -19,14 +19,14 @@ struct BlockResidualReader {
   DvceArray5D<Real> state, reference;
   DvceArray4D<mapped::Point> geometry;
   int block, k, j, i;
+  ResidualWeight weight;
   KOKKOS_INLINE_FUNCTION Real operator()(int f,int di=0,int dj=0,int dk=0) const {
     if (!Fields::Independent(f)) return 0;
     const Real residual=state(block,f,k+dk,j+dj,i+di)
                         -reference(block,f,k+dk,j+dj,i+di);
     if (f!=Fields::chi) return residual;
     const auto &x=geometry(block,k+dk,j+dj,i+di).x;
-    const Real r=SphericalPolicy::Radius(x);
-    return residual/(r*r);
+    return residual/weight.Value(x);
   }
 };
 
@@ -109,7 +109,7 @@ KOKKOS_INLINE_FUNCTION void RestorePointState(PointState &out,const Reader &q,
     const mapped::Point &map,const Real inv_h[3],const CartesianChartJets &reference,
     const HyperbolicShiftParameters<Real> &parameters,const mapped::Jet *lift=nullptr) {
   const Real r=SphericalPolicy::Radius(map.x);
-  if (!(r>0) || !Kokkos::isfinite(r)) {out.status=PointStatus::invalid_input;return;}
+  if (!(r>=0) || (!parameters.residual_weight.Regular() && r==0) || !Kokkos::isfinite(r)) {out.status=PointStatus::invalid_input;return;}
   const Real w=SphericalPolicy::CompatibleWeight(r,parameters);
   if (w>0) {
     Real composed=0;
@@ -122,11 +122,13 @@ KOKKOS_INLINE_FUNCTION void RestorePointState(PointState &out,const Reader &q,
     for (int a=0;a<3;++a)for (int b=0;b<3;++b)
       out.jets[18].h[a][b]+=delta*map.x[a]*map.x[b]/(r*r);
   }
-  if (!SphericalPolicy::Restore(map.x,out.jets,reference)) {
+  if (!SphericalPolicy::Restore(map.x,out.jets,reference,parameters.residual_weight)) {
     out.status=PointStatus::invalid_geometry;return;
   }
   if (lift)for (int a=0;a<3;++a)out.jets[22+a]=out.jets[22+a]+lift[a];
-  out.transport[0]*=r*r;
+  if (lift && parameters.scri_treatment!=ScriTreatment::existing)
+    out.jets[18]=out.jets[18]+lift[3];
+  out.transport[0]*=parameters.residual_weight.Value(map.x);
   const auto u=SphericalPolicy::Physical(map.x,out.jets);
   if (!(u.chi.value>0 && u.alpha.value>0)) out.status=PointStatus::invalid_input;
 }

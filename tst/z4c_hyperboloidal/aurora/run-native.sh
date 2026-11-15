@@ -33,6 +33,7 @@ binding='1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100'
 export OMP_NUM_THREADS=1 ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
 export ZE_ENABLE_PCI_ID_DEVICE_ORDER=1 ONEAPI_DEVICE_SELECTOR=level_zero:gpu
 export MPIR_CVAR_ENABLE_GPU=1
+source "$(dirname "${BASH_SOURCE[0]}")/mpi-gpu-cache.sh"
 export NEO_CACHE_DIR="$case_dir/cache/neo" SYCL_CACHE_DIR="$case_dir/cache/sycl"
 mkdir -p "$NEO_CACHE_DIR" "$SYCL_CACHE_DIR"
 unset ZE_AFFINITY_MASK

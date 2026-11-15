@@ -205,6 +205,7 @@ struct OutputMeshBlockInfo {
 
 struct HistoryData {
   int nhist;
+  int scri_group=0;
   PhysicsModule physics;
   std::string label[NHISTORY_VARIABLES];
   Real hdata[NHISTORY_VARIABLES];

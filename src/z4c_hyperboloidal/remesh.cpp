@@ -5,6 +5,7 @@
 #include <array>
 #include <cmath>
 #include <limits>
+#include <iostream>
 #include <map>
 #include <numeric>
 #include <stdexcept>
@@ -160,6 +161,7 @@ std::vector<int> ReplacementFamily(const RemeshLayout &layout,int old_gid) {
 }
 
 struct RemeshState::Impl {
+  Real time=0;
   struct Row {int target,m,k,j,i,begin,end;};  // target<0 means CC staging
   struct Entry {int ordinal;Real weight;};
   struct HistoryRow {int begin,end;};
@@ -180,7 +182,7 @@ DvceArray5D<Real> &RemeshState::Coarse() {return impl_->coarse;}
 
 void RemeshState::Prepare(MeshBlockPack &pack,const Z4cHyperboloidal &p,
                           MeshRefinement &refinement) {
-  auto &s=*impl_;auto &layout=s.layout;auto &mesh=*pack.pmesh;
+  auto &s=*impl_;s.time=pack.pmesh->time;auto &layout=s.layout;auto &mesh=*pack.pmesh;
   RequireAll(!s.ready,"attempted to reuse a completed remesh context");
   layout.cells=p.n[0];layout.origin=p.origin;layout.old_first=pack.gids;
   layout.old_count=p.nblocks;layout.new_first=refinement.new_gids_eachrank[global_variable::my_rank];
@@ -388,6 +390,11 @@ void RemeshState::Install(Z4cHyperboloidal &p) const {
   const auto points=p.points.d_view;const auto state=p.u0,nominal=s.nominal;
   const auto values=s.transferred;
   const auto geometry=p.geometry;
+  const bool floor_inner=p.floor_inner_amr_chi;
+  const Real floor=p.chi_floor,inner=p.parameters.residual_weight.inner,time=s.time;
+  const auto records=s.records;
+  DvceArray1D<int> corrections("inner AMR chi corrections",p.npoints);
+  Kokkos::deep_copy(corrections,0);
   const int shift=p.origin-p.nghost;int bad=0;
   Kokkos::parallel_reduce("hyperboloidal install remeshed bulk",Kokkos::RangePolicy<>(0,p.npoints),
     KOKKOS_LAMBDA(int point,int &invalid) {
@@ -400,12 +407,25 @@ void RemeshState::Install(Z4cHyperboloidal &p) const {
       if(changed(c.m)&&!TryExpandCartesianChart(jets)) {++invalid;return;}
       const auto &x=geometry(point).x;
       const Real r=Kokkos::sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);
+      if(floor_inner && changed(c.m) && nominal_core(point) && r<=inner &&
+          Kokkos::isfinite(jets[Fields::chi].f) && jets[Fields::chi].f<floor) {
+        jets[Fields::chi].f=FloorChiCandidate(jets[Fields::chi].f,floor,time,true,records(point));
+        corrections(point)=1;
+      }
       bool finite=jets[Fields::chi].f>0&&(1+r*r)/2+jets[Fields::lapse].f>0;
       for(int f=0;f<Fields::count;++f) {
         finite=finite&&Kokkos::isfinite(jets[f].f);state(c.m,f,c.k,c.j,c.i)=jets[f].f;
       }
       if(!finite)++invalid;
     },bad);
+  int count=0;
+  Kokkos::parallel_reduce("count inner AMR chi corrections",Kokkos::RangePolicy<>(0,p.npoints),
+    KOKKOS_LAMBDA(int q,int &sum){sum+=corrections(q);},count);
+#if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE,&count,1,MPI_INT,MPI_SUM,MPI_COMM_WORLD);
+#endif
+  if(floor_inner && global_variable::my_rank==0)
+    std::cout<<"inner AMR chi floor: time="<<time<<" corrected_points="<<count<<" floor="<<floor<<std::endl;
   RequireAll(bad==0,"invalid transferred bulk state");
   Kokkos::deep_copy(p.chi_records,s.records);
   s.surface.Install(p);

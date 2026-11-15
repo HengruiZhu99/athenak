@@ -4,6 +4,8 @@
 
 #include <algorithm>
 #include <limits>
+#include <iostream>
+#include "globals.hpp"
 #include <stdexcept>
 #include <string>
 
@@ -54,6 +56,32 @@ struct SumConstraints {
     }
   }
 };
+struct SumShell {
+  using value_type=SumConstraints::value_type;
+  DvceArray1D<ConstraintPoint> points;
+  DvceArray1D<Real> weights;
+  DvceArray1D<mapped::Point> maps;
+  DvceArray1D<CartesianChartJets> reference;
+  DvceArray1D<BlockPoint> cells;
+  DvceArray5D<Real> state;
+  Real inner,outer;
+  KOKKOS_INLINE_FUNCTION void init(value_type &v) const {for(auto &x:v.sum)x=0;}
+  KOKKOS_INLINE_FUNCTION void join(value_type &a,const value_type &b) const {
+    for(int i=0;i<10;++i)a.sum[i]+=b.sum[i];
+  }
+  KOKKOS_INLINE_FUNCTION void operator()(int q,value_type &out) const {
+    const auto &x=maps(q).x;const Real r=SphericalPolicy::Radius(x);
+    if(r<inner || r>=outer)return;
+    const auto point=points(q);const auto c=point.constraints;
+    const auto cell=cells(q);const auto ref=reference(q);const Real w=weights(q);
+    const Real dc=point.chi-ref[0].f;
+    const Real da=point.lapse-ref[18].f-(1+r*r)/2;
+    Real db=0;for(int a=0;a<3;++a)db+=(state(cell.m,22+a,cell.k,cell.j,cell.i)-ref[22+a].f)*x[a]/r;
+    const Real values[10]={1,c.hamiltonian*c.hamiltonian,c.momentum_physical_norm2,
+      point.theta*point.theta,c.z4.z_physical_norm2,dc*dc,da*da,db*db,dc,da};
+    for(int i=0;i<10;++i)out.sum[i]+=w*values[i];
+  }
+};
 }  // namespace
 
 Diagnostics &Z4cHyperboloidal::GetDiagnostics() {
@@ -65,6 +93,19 @@ Diagnostics &Z4cHyperboloidal::GetDiagnostics() {
 
 std::array<Real,10> Z4cHyperboloidal::DiagnosticHistorySums() {
   return GetDiagnostics().HistorySums();
+}
+
+std::array<Real,10> Z4cHyperboloidal::DiagnosticShellSums(int band) {
+  return GetDiagnostics().ShellSums(band);
+}
+std::array<Real,10> Diagnostics::ShellSums(int band) {
+  if(band<0 || band>=4)throw std::invalid_argument("invalid scri diagnostic band");
+  Refresh();const Real edges[5]={.80,.88,.94,.97,1.};auto &p=*module_;
+  SumShell::value_type result;
+  Kokkos::parallel_reduce("fixed physical compact shell diagnostics",
+    Kokkos::RangePolicy<>(0,p.npoints),SumShell{points_,weights_,p.geometry,p.reference,
+      p.points.d_view,p.u0,edges[band],edges[band+1]},result);
+  std::array<Real,10> out;for(int i=0;i<10;++i)out[i]=result.sum[i];return out;
 }
 
 Diagnostics::Diagnostics(MeshBlockPack *pack,Z4cHyperboloidal *module,ParameterInput *pin)
@@ -222,38 +263,71 @@ const FastFlow::Result &Diagnostics::FindHorizon() {
   Refresh();
   if (horizon_ready_) return horizon_;
   Kokkos::Timer timer;
-  if (!finder_) {
-    // N12 uses the original fixed-origin finder. These defaults live in the
-    // existing FastFlow input block; mapped evolution does not instantiate ADM.
+  const int components=module_->initial_data_identity.empty()?1:2;
+  if (finders_.empty()) {
     pin_->GetOrAddInteger("fastflow","lmax",12);
     pin_->GetOrAddInteger("fastflow","ntheta",24);
-    pin_->GetOrAddInteger("fastflow","flow_iterations_0",300);
-    pin_->GetOrAddReal("fastflow","flow_alpha_beta_const_0",.1);
-    pin_->GetOrAddReal("fastflow","initial_radius_0",.02);
-    pin_->GetOrAddReal("fastflow","mass_tol_0",1e-10);
-    pin_->GetOrAddReal("fastflow","expansion_rms_tol_0",1e-3);
-    pin_->GetOrAddReal("fastflow","start_time_0",0);
-    pin_->GetOrAddReal("fastflow","stop_time_0",std::numeric_limits<Real>::max());
     sampler_=std::make_unique<HorizonSampler>(pack_,module_);
-    finder_=std::make_unique<FastFlow>(pack_,pin_,0,
-      [](const Real[3],z4c::HorizonGeometry<Real> &) -> bool {
-        // A scalar callback must never enter a collective sparse exchange.
-        // The batch callback below is the only native sampling entry point.
-        throw std::logic_error("Native horizon sampling requires the batch callback");
+    for(int h=0;h<components;++h) {
+      const std::string suffix="_"+std::to_string(h);
+      pin_->GetOrAddInteger("fastflow","flow_iterations"+suffix,300);
+      pin_->GetOrAddReal("fastflow","flow_alpha_beta_const"+suffix,.1);
+      pin_->GetOrAddReal("fastflow","initial_radius"+suffix,components==1?.02:.009);
+      pin_->GetOrAddReal("fastflow","mass_tol"+suffix,1e-10);
+      pin_->GetOrAddReal("fastflow","expansion_rms_tol"+suffix,1e-3);
+      pin_->GetOrAddReal("fastflow","start_time"+suffix,0);
+      pin_->GetOrAddReal("fastflow","stop_time"+suffix,std::numeric_limits<Real>::max());
+      if(components==2) {
+        // Component centers must be explicit. Never search both at the origin.
+        pin_->GetReal("fastflow","center_x"+suffix);
+        pin_->GetReal("fastflow","center_y"+suffix);
+        pin_->GetReal("fastflow","center_z"+suffix);
+      }
+      auto finder=std::make_unique<FastFlow>(pack_,pin_,h,
+        [](const Real[3],z4c::HorizonGeometry<Real> &) -> bool {
+          throw std::logic_error("Native horizon sampling requires the batch callback");
+        });
+      finder->SetBatchGeometrySampler([this](int n,const Real *x,
+          z4c::HorizonGeometry<Real> *out,int *owners) {
+        sampler_->SampleBatch(n,x,out,owners);
       });
-    finder_->SetBatchGeometrySampler([this](int n,const Real *x,
-        z4c::HorizonGeometry<Real> *out,int *owners) {
-      sampler_->SampleBatch(n,x,out,owners);
-    });
+      finders_.push_back(std::move(finder));
+    }
   }
-  finder_->Find(pack_->pmesh->ncycle,pack_->pmesh->time);
-  horizon_=finder_->GetResult();surface_=finder_->GetSurface();
-  RequireAll(horizon_.found && horizon_.complete_surface && surface_.Valid(),
-             "Hyperboloidal history requires a complete converged horizon");
+  // Fixed collective order on every rank, including failed/skipped components.
+  // GetSurface explicitly clears stale accepted surfaces on an unsuccessful call.
+  horizons_.clear();surfaces_.clear();bool complete=true;
+  int component=0;
+  for(auto &finder:finders_) {
+    if(components==2) {
+      const auto *center=module_->ComponentCenter(component);
+      for(int a=0;a<3;++a)finder->center[a]=center[a];
+    }
+    ++component;
+    finder->Find(pack_->pmesh->ncycle,pack_->pmesh->time);
+    horizons_.push_back(finder->GetResult());surfaces_.push_back(finder->GetSurface());
+    const auto &result=horizons_.back();
+    if(components==2 && global_variable::my_rank==0)
+      std::cout<<"binary horizon component="<<component-1
+        <<" status="<<static_cast<int>(result.status)<<" complete="<<result.complete_surface
+        <<" center="<<finder->center[0]<<','<<finder->center[1]<<','<<finder->center[2]
+        <<" area="<<result.area<<" mass_coordinate_spin="<<result.mass
+        <<" iterations="<<result.iterations
+        <<" expansion_rms="<<result.expansion_rms
+        <<" last_trial_expansion_rms="<<result.last_expansion_rms
+        <<" acceptance="<<(finder->expansion_rms_tol<0?"mass_only":"mass_and_expansion")
+        <<" expansion_above_diagnostic_threshold="
+        <<(result.last_expansion_rms>pin_->GetReal("fastflow",
+              "expansion_rms_tol_"+std::to_string(component-1)))<<std::endl;
+    complete=complete && result.found && result.complete_surface && surfaces_.back().Valid();
+  }
+  horizon_=horizons_.front();surface_=surfaces_.front();
+  RequireAll(complete,"Hyperboloidal exterior requires every component horizon; failed, skipped or missing surface");
   auto mask=Kokkos::create_mirror_view(exterior_);
   for (int q=0;q<module_->npoints;++q) {
     const Real x[3]={positions_(q,0),positions_(q,1),positions_(q,2)};
-    mask(q)=surface_.Outside(x)?1:0;
+    mask(q)=1;
+    for(const auto &surface:surfaces_)if(!surface.Outside(x))mask(q)=0;
   }
   Kokkos::deep_copy(exterior_,mask);
   Kokkos::fence();statistics_.horizon_seconds+=timer.seconds();
@@ -272,7 +346,7 @@ std::array<Real,10> Diagnostics::HistorySums() {
   }
   if (!written_) {
     Kokkos::Timer timer;
-    finder_->Write(pack_->pmesh->ncycle,pack_->pmesh->time);
+    for(auto &finder:finders_)finder->Write(pack_->pmesh->ncycle,pack_->pmesh->time);
     statistics_.io_seconds+=timer.seconds();written_=true;
   }
   // HistoryOutput owns MPI summation and only then forms the eight RMS values.

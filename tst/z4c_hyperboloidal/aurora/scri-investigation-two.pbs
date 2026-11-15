@@ -1,0 +1,68 @@
+#!/bin/bash -l
+#PBS -A CompactBinaryMerger
+#PBS -N scri-investigation
+#PBS -q debug
+#PBS -l select=2
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -j oe
+set -euo pipefail
+ulimit -c 0
+root=/lus/flare/projects/CompactBinaryMerger/hzhu/scri-regularity-20261110
+[[ ${CASE:-} =~ ^[AB]-N(12|16|20)(-halfdt)?$ ]]
+[[ -r ${PBS_NODEFILE:-} && $(sort -u "$PBS_NODEFILE" | wc -l) == 2 ]]
+run=$root/runs/${CASE}-${PBS_JOBID%%.*}
+[[ ! -e "$run" && -r "$root/inputs/$CASE.athinput" ]]
+module load oneapi/release/2025.3.1
+mkdir -p "$run/cache/neo" "$run/cache/sycl"
+cp "$PBS_NODEFILE" "$run/nodes.txt"
+cp "$root/inputs/$CASE.athinput" "$run/input.athinput"
+cp "$root/scri-investigation-two.pbs" "$root/mpi-gpu-cache.sh" "$run/"
+cp "$root/build-v1/executable.sha256" "$root/build-v1/source-sha256.json" "$run/"
+sha256sum -c "$run/executable.sha256" > "$run/executable-check.txt"
+module list > "$run/modules.txt" 2>&1
+printf '%s\n' "$PBS_JOBID" > "$run/job-id.txt"
+export OMP_NUM_THREADS=1 ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export ZE_ENABLE_PCI_ID_DEVICE_ORDER=1 ONEAPI_DEVICE_SELECTOR=level_zero:gpu MPIR_CVAR_ENABLE_GPU=1
+source "$root/mpi-gpu-cache.sh"
+export NEO_CACHE_DIR="$run/cache/neo" SYCL_CACHE_DIR="$run/cache/sycl"
+unset ZE_AFFINITY_MASK NATIVE_TIMING_WARMUP NATIVE_TIMING_STEPS NATIVE_TIMING_WINDOWS
+binding='1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100'
+wrapper=$(command -v gpu_tile_compact.sh)
+mpiexec -n 24 -ppn 12 --cpu-bind=list:"$binding" "$wrapper" /bin/bash -c \
+ 'printf "%s rank=%s tile=%s cache=%s size=%s entries=%s\n" "$(hostname)" "${MPI_LOCALRANKID:-${PALS_LOCAL_RANKID:-unknown}}" "$ZE_AFFINITY_MASK" "$MPIR_CVAR_CH4_IPC_GPU_HANDLE_CACHE" "$MPIR_CVAR_CH4_IPC_GPU_CACHE_SIZE" "$MPIR_CVAR_CH4_IPC_GPU_MAX_CACHE_ENTRIES"' > "$run/rank-environment.txt"
+args=(-i "$run/input.athinput")
+if [[ -n ${RESTART_RUN:-} ]]; then
+ [[ "$RESTART_RUN" == "$root/runs/$CASE-"* && -d "$RESTART_RUN/rst" ]]
+ restart=$(find "$RESTART_RUN/rst" -maxdepth 1 -name '*.rst' -type f | sort | tail -1)
+ [[ -s "$restart" ]]
+ args=(-r "$restart" -i "$run/input.athinput")
+ printf '%s\n' "$restart" > "$run/restart-path.txt"
+ python3 "$root/analysis-v1/scri_checkpoint_receipt.py" "$restart" --output "$run/start-checkpoint.json"
+fi
+if [[ -n ${PILOT_STEPS:-} ]]; then
+ [[ "$PILOT_STEPS" =~ ^[0-9]+$ && -z ${RESTART_RUN:-} ]]
+ args+=("time/nlim=$PILOT_STEPS")
+fi
+command=(mpiexec -n 24 -ppn 12 --cpu-bind=list:"$binding" "$wrapper" "$root/build-v1/src/athena" "${args[@]}" -d "$run" -t 00:52:00)
+printf '%q ' "${command[@]}" > "$run/command.txt"
+printf '\n' >> "$run/command.txt"
+set +e
+timeout --signal=TERM --kill-after=20s 3400s "${command[@]}" > "$run/run.log" 2>&1
+status=$?
+set -e
+printf '%s\n' "$status" > "$run/exit-code.txt"
+sha256sum -c "$run/executable.sha256" >> "$run/executable-check.txt"
+if [[ "$status" == 0 ]]; then
+ if [[ ! -f "$run/start-checkpoint.json" ]]; then
+  initial=$(find "$run/rst" -maxdepth 1 -name '*.rst' -type f | sort | head -1)
+  python3 "$root/analysis-v1/scri_checkpoint_receipt.py" "$initial" --output "$run/start-checkpoint.json"
+ fi
+ final=$(find "$run/rst" -maxdepth 1 -name '*.rst' -type f | sort | tail -1)
+ python3 "$root/analysis-v1/scri_checkpoint_receipt.py" "$final" --output "$run/final-checkpoint.json"
+fi
+if [[ -f "$run/scri_$CASE.z4c_hyperboloidal.hst" ]]; then
+ python3 "$root/source-v1/tst/z4c_hyperboloidal/normalize_binary_history.py" "$run/scri_$CASE.z4c_hyperboloidal.hst" --output "$run/history-M0-1.hst" > "$run/history-normalization.log" 2>&1
+fi
+# No automatic successor: each failed or completed segment is inspected first.
+exit "$status"

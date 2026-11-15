@@ -1,0 +1,51 @@
+#!/bin/bash -l
+#PBS -A CompactBinaryMerger
+#PBS -N binary-20M
+#PBS -q debug
+#PBS -l select=2
+#PBS -l walltime=00:15:00
+#PBS -l filesystems=home:flare
+#PBS -j oe
+set -euo pipefail
+ulimit -c 0
+root=/lus/flare/projects/CompactBinaryMerger/hzhu/hyperboloidal-binary-20M-20261109
+case_name=${BINARY_CASE:?Required unique case name}
+[[ "$case_name" =~ ^[A-Za-z0-9_-]+$ ]]
+run=$root/runs/$case_name
+mkdir -p "$run"
+[[ ! -f "$run/run.log" ]]
+module load oneapi/release/2025.3.1
+cp "$PBS_NODEFILE" "$run/nodes.txt"
+[[ $(sort -u "$PBS_NODEFILE" | wc -l) == 2 ]]
+module list > "$run/modules.txt" 2>&1
+sha256sum -c "$root/build-sycl/executable.sha256" > "$run/executable-check.txt"
+# The executable is bound to the complete snapshot verified at build completion.
+# Copy that receipt; avoid scanning thousands of source files on allocated nodes.
+cp "$root/build-sycl/source-check.txt" "$run/source-check.txt"
+cp "$root/build-sycl/source-sha256.json" "$run/source-sha256.json"
+cp "$root/build-sycl/executable.sha256" "$run/executable.sha256"
+export OMP_NUM_THREADS=1 ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export ZE_ENABLE_PCI_ID_DEVICE_ORDER=1 ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+export MPIR_CVAR_ENABLE_GPU=1
+source "$root/mpi-gpu-cache.sh"
+export NEO_CACHE_DIR="$root/cache/neo" SYCL_CACHE_DIR="$root/cache/sycl"
+mkdir -p "$NEO_CACHE_DIR" "$SYCL_CACHE_DIR"
+unset ZE_AFFINITY_MASK
+binding='1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100'
+wrapper=$(command -v gpu_tile_compact.sh)
+args=(-i "$run/input.athinput")
+if [[ -n ${BINARY_RESTART:-} ]]; then
+  [[ "$BINARY_RESTART" == "$root"/runs/*/rst/*.rst && -f "$BINARY_RESTART" ]]
+  args=(-r "$BINARY_RESTART" -i "$run/input.athinput")
+fi
+command=(mpiexec -n 24 -ppn 12 --cpu-bind=list:"$binding" "$wrapper" "$root/build-sycl/src/athena" "${args[@]}" -d "$run" -t 00:11:00)
+printf '%q ' "${command[@]}" > "$run/command.txt"
+printf '\n' >> "$run/command.txt"
+set +e
+timeout 800 "${command[@]}" > "$run/run.log" 2>&1
+status=$?
+printf '%s\n' "$status" > "$run/exit-code.txt"
+if [[ -f "$run/native_binary.z4c_hyperboloidal.hst" ]]; then
+  /usr/bin/python3.11 "$root/normalize_binary_history.py" "$run/native_binary.z4c_hyperboloidal.hst" --output "$run/history-M0-1.hst" > "$run/history-normalization.log" 2>&1
+fi
+exit "$status"

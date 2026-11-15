@@ -54,6 +54,21 @@ HistoryOutput::HistoryOutput(ParameterInput *pin, Mesh *pm, OutputParameters op)
   }
   if (pm->pmb_pack->pz4c_hyperboloidal != nullptr && !op.user_hist_only) {
     hist_data.emplace_back(PhysicsModule::HyperboloidalSpaceTimeDynamics);
+    if (pin->GetOrAddBoolean(op.block_name,"hyperboloidal_scri",false)) {
+      pm->pmb_pack->pz4c_hyperboloidal->EnableBoundaryHistory();
+      hist_data.emplace_back(PhysicsModule::HyperboloidalBoundaryDynamics);
+    }
+    if(pin->GetOrAddBoolean(op.block_name,"hyperboloidal_scri_investigation",false)) {
+      pm->pmb_pack->pz4c_hyperboloidal->EnableScriInvestigation();
+      for(int group=0;group<z4c_hyperboloidal::ScriHistory::groups;++group) {
+        hist_data.emplace_back(PhysicsModule::HyperboloidalScriInvestigation);
+        hist_data.back().scri_group=group;
+      }
+      for(int band=0;band<4;++band) {
+        hist_data.emplace_back(PhysicsModule::HyperboloidalShellDiagnostics);
+        hist_data.back().scri_group=band;
+      }
+    }
   }
 }
 
@@ -72,6 +87,27 @@ void HistoryOutput::LoadOutputData(Mesh *pm) {
       LoadZ4cHistoryData(&data, pm);
     } else if (data.physics == PhysicsModule::HyperboloidalSpaceTimeDynamics) {
       LoadHyperboloidalHistoryData(&data, pm);
+    } else if (data.physics == PhysicsModule::HyperboloidalBoundaryDynamics) {
+      constexpr const char *labels[20]={"comp-max","clock-max","alpha-1","beta-null",
+          "chiQ-1","P+3","Theta","detg-1","trA","reg-Lam","reg-A","pole-chi",
+          "pole-P","pole-Th","pole-Lam","pole-A","pole-alp","D-Lam","D-out","rhs-max"};
+      static_assert(NHISTORY_VARIABLES>=20,"Scri history requires 20 variables");
+      const auto values=pm->pmb_pack->pz4c_hyperboloidal->TakeBoundaryHistory();
+      data.nhist=values.size();
+      for (int n=0;n<data.nhist;++n) {data.label[n]=labels[n];data.hdata[n]=values[n];}
+    } else if (data.physics == PhysicsModule::HyperboloidalScriInvestigation) {
+      using H=z4c_hyperboloidal::ScriHistory;
+      const auto values=pm->pmb_pack->pz4c_hyperboloidal->TakeScriInvestigation();
+      const int begin=20*data.scri_group;
+      data.nhist=std::min(20,H::count-begin);
+      for(int n=0;n<data.nhist;++n) {
+        data.label[n]=H::Label(begin+n);data.hdata[n]=values[begin+n];
+      }
+    } else if(data.physics==PhysicsModule::HyperboloidalShellDiagnostics) {
+      const auto values=pm->pmb_pack->pz4c_hyperboloidal->DiagnosticShellSums(data.scri_group);
+      constexpr const char *labels[]={"Volume","H-rms","M-rms","Theta-rms","Z-rms",
+        "dchi-rms","dalp-rms","dbetn-rms","dchi-mean","dalp-mean"};
+      data.nhist=10;for(int n=0;n<10;++n){data.label[n]=labels[n];data.hdata[n]=values[n];}
     } else if (data.physics == PhysicsModule::UserDefined) {
       (pm->pgen->user_hist_func)(&data, pm);
     }
@@ -403,17 +439,40 @@ void HistoryOutput::LoadMHDHistoryData(HistoryData *pdata, Mesh *pm) {
 
 void HistoryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
   for (auto &data : hist_data) {
-    // first, perform in-place sum over all MPI ranks
+    // Constraint histories sum integrals; scri histories reduce local maxima.
 #if MPI_PARALLEL_ENABLED
+    const auto operation=(data.physics==PhysicsModule::HyperboloidalBoundaryDynamics ||
+        data.physics==PhysicsModule::HyperboloidalScriInvestigation) ? MPI_MAX : MPI_SUM;
     if (global_variable::my_rank == 0) {
       MPI_Reduce(MPI_IN_PLACE, &(data.hdata[0]), data.nhist, MPI_ATHENA_REAL,
-         MPI_SUM, 0, MPI_COMM_WORLD);
+         operation, 0, MPI_COMM_WORLD);
     } else {
       MPI_Reduce(&(data.hdata[0]), &(data.hdata[0]), data.nhist,
-         MPI_ATHENA_REAL, MPI_SUM, 0, MPI_COMM_WORLD);
+         MPI_ATHENA_REAL, operation, 0, MPI_COMM_WORLD);
     }
 #endif
 
+    if(data.physics==PhysicsModule::HyperboloidalScriInvestigation) {
+      for(int n=0;n<data.nhist;++n)
+        if(z4c_hyperboloidal::ScriHistory::Minimum(20*data.scri_group+n))
+          data.hdata[n]=-data.hdata[n];
+    }
+    if(data.physics==PhysicsModule::HyperboloidalShellDiagnostics) {
+      int invalid=0;
+      if(global_variable::my_rank==0) {
+        invalid=!(data.hdata[0]>0);
+        for(int i=0;i<10;++i)invalid|=!std::isfinite(data.hdata[i]);
+        for(int i=1;i<8;++i)invalid|=data.hdata[i]<0;
+      }
+#if MPI_PARALLEL_ENABLED
+      MPI_Bcast(&invalid,1,MPI_INT,0,MPI_COMM_WORLD);
+#endif
+      if(invalid)throw std::runtime_error("Invalid scri shell diagnostic integrals");
+      if(global_variable::my_rank==0) {
+        for(int i=1;i<8;++i)data.hdata[i]=std::sqrt(data.hdata[i]/data.hdata[0]);
+        for(int i=8;i<10;++i)data.hdata[i]/=data.hdata[0];
+      }
+    }
     if (data.physics==PhysicsModule::HyperboloidalSpaceTimeDynamics) {
       // MPI sums raw volume and squared-constraint integrals. Averaging local
       // RMS values would give the wrong weighting, including on empty ranks.
@@ -456,6 +515,15 @@ void HistoryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
         case PhysicsModule::HyperboloidalSpaceTimeDynamics:
           fname.append(".z4c_hyperboloidal");
           break;
+        case PhysicsModule::HyperboloidalBoundaryDynamics:
+          fname.append(".scri");
+          break;
+        case PhysicsModule::HyperboloidalShellDiagnostics:
+          fname.append(".scri-shell-"+std::to_string(data.scri_group));
+          break;
+        case PhysicsModule::HyperboloidalScriInvestigation:
+          fname.append(".scri-investigation-"+std::to_string(data.scri_group));
+          break;
         default:
           break;
       }
@@ -473,10 +541,22 @@ void HistoryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
       if (!(data.header_written)) {
         int iout = 1;
         std::fprintf(pfile,"# Athena++ history data\n");
+        if (data.physics==PhysicsModule::HyperboloidalBoundaryDynamics) {
+          std::fprintf(pfile,"# Max absolute Cartesian component over all scri nodes and RK stages since previous dump.\n");
+          std::fprintf(pfile,"# First row of a fresh or zero-step run samples the initialized state; restart windows begin at restored time.\n");
+          std::fprintf(pfile,"# Native conformal units; P=K-2Theta. D-Lam and rhs-max are amplitudes, not zero-target errors.\n");
+        }
+        if(data.physics==PhysicsModule::HyperboloidalShellDiagnostics) {
+          constexpr Real edges[5]={.80,.88,.94,.97,1.};
+          std::fprintf(pfile,"# Compact radius band [%g,%g). Coordinate-volume weighted native-unit RMS and signed means; field differences from initial reference.\n",edges[data.scri_group],edges[data.scri_group+1]);
+        }
+        if(data.physics==PhysicsModule::HyperboloidalScriInvestigation)
+          std::fprintf(pfile,"# Signed min/max or absolute maxima over all scri nodes and RK stages since the previous dump. Native units; combinations formed pointwise. Hessians include the existing adjacent bulk support.\n");
         std::fprintf(pfile,"#  [%d]=time      ", iout++);
         std::fprintf(pfile,"[%d]=dt       ", iout++);
         for (int n=0; n<data.nhist; ++n) {
-          std::fprintf(pfile,"[%d]=%.10s    ", iout++, data.label[n].c_str());
+          std::fprintf(pfile,data.physics==PhysicsModule::HyperboloidalScriInvestigation
+              ? "[%d]=%s    " : "[%d]=%.10s    ", iout++, data.label[n].c_str());
         }
         std::fprintf(pfile,"\n");                              // terminate line
         data.header_written = true;

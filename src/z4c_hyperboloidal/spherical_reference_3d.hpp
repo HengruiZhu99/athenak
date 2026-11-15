@@ -43,6 +43,17 @@ class SphericalReference3D {
   }
   CartesianChartJets At(const double*x,bool boundary=false) {
     J xx[3],r2;for(int a=0;a<3;++a){xx[a]=J::Variable(x[a],a);r2=r2+xx[a]*xx[a];}
+    if(r2.f==0) {
+      // Inner wormhole: chi=O(r^4), alpha=Omega*r^2/(r+c)^2,
+      // beta=0, A=K=Lambda=0. These second jets have regular limits.
+      // Do not evaluate sqrt jets, radial unit vectors, or Point(0).
+      CartesianChartJets v{};
+      const double c=native.Mass()*native.IsotropicScale()/2;
+      const double omega=p.profile.Radial(0.).value;
+      v[13]=J(3);v[18]=J(-.5);
+      for(int a=0;a<3;++a){v[18].h[a][a]=2*omega/(c*c)-1;v[22+a]=xx[a];}
+      ExpandCartesianChart(v);return v;
+    }
     J r=mapped::Power(r2,.5);if(boundary)r.f=1;
     const auto&radial=RadialJets(r.f);std::array<J,12> q{};
     for(int f=0;f<12;++f){q[f].f=radial[0][f];for(int a=0;a<3;++a){q[f].d[a]=radial[1][f]*r.d[a];

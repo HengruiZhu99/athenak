@@ -99,6 +99,12 @@ FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n,
   if (geometry_sampler && !(expansion_rms_tol > 0)) {
     throw std::invalid_argument("FastFlow sampler requires a positive expansion RMS tolerance");
   }
+  // Keep the measured expansion, but optionally accept a fully sampled surface
+  // on mass convergence alone. This diagnostic choice does not alter evolution.
+  if (geometry_sampler && !pin->GetOrAddBoolean("fastflow",
+          "require_expansion_convergence_" + n_str, true)) {
+    expansion_rms_tol = -1.0;
+  }
 
   // Output booleans
   verbose = pin->GetOrAddBoolean("fastflow", "verbose", false);

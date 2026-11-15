@@ -19,6 +19,7 @@
 #include "mesh/mesh.hpp"
 #include "z4c_hyperboloidal/mapped_halo.hpp"
 #include "z4c_hyperboloidal/point_rhs.hpp"
+#include "z4c_hyperboloidal/scri_reconstruction.hpp"
 #include "z4c_hyperboloidal/surface_exchange.hpp"
 
 namespace z4c_hyperboloidal {
@@ -211,8 +212,9 @@ void SurfaceExchange::Rebuild() {
   Kokkos::realloc(normal_cases_,p.nsurface_points,4);
   Kokkos::realloc(metric_geometry_,p.nsurface_points);
   Kokkos::realloc(penrose_geometry_,p.nsurface_points);
-  Kokkos::realloc(correction_,p.nfaces,3,n,n);
-  Kokkos::realloc(correction_jets_,p.nfaces,3,n,n);
+  const int corrections=p.parameters.scri_treatment==ScriTreatment::existing ? 3 : 4;
+  Kokkos::realloc(correction_,p.nfaces,corrections,n,n);
+  Kokkos::realloc(correction_jets_,p.nfaces,corrections,n,n);
   Kokkos::realloc(correction_weights_,p.nfaces>0 ? n : 0,n,36);
   const auto weights=correction_weights_;
   Kokkos::parallel_for("hyperboloidal normal correction weights",
@@ -366,6 +368,7 @@ TaskStatus SurfaceExchange::Solve() {
       penrose_geometry(point)=Geometry(PenroseMetric(u.metric,u.chi));
     });
   const Real penalty=p.penalty;int invalid=0;
+  if(parameters.scri_treatment==ScriTreatment::existing) {
   auto case_policy=Kokkos::RangePolicy<>(0,4*p.nsurface_points);
 #ifdef KOKKOS_ENABLE_SYCL
   // Use the validated legacy normal-case group size; elimination is separate.
@@ -417,19 +420,34 @@ TaskStatus SurfaceExchange::Solve() {
         if (!Kokkos::isfinite(matrix[a][3]))++bad;
       }
     },invalid);
+  } else {
+    Kokkos::parallel_reduce("hyperboloidal regularity normal reconstruction",
+      Kokkos::RangePolicy<>(0,p.nsurface_points),KOKKOS_LAMBDA(int point,int &bad) {
+        auto jets=samples(point);const auto map=maps(point);const auto c=points(point);
+        if(!SphericalPolicy::Restore(map.x,jets,reference(point))) {++bad;return;}
+        const auto rate=EvaluateScriPoint(map,rows(point).spacing,jets,parameters,
+            source,penalty,&metric_geometry(point),&penrose_geometry(point));
+        const auto u=SphericalPolicy::Physical(map.x,jets);
+        const auto fix=ReconstructRegularScri(map.x,u,metric_geometry(point),rate,parameters);
+        if(!fix.valid) {++bad;return;}
+        for(int a=0;a<3;++a)correction(c.face,a,c.k,c.j)=fix.shift[a];
+        correction(c.face,3,c.k,c.j)=fix.lapse;
+      },invalid);
+  }
   if (invalid)throw std::runtime_error("Invalid block-owned normal compatibility solve");
   // The angular polynomial is shared by scri and the last two radial layers.
   // Its lift still uses each consumer's own map, spacing and endpoint gap.
   const auto weights=correction_weights_;const auto output=correction_jets_;
   const int n=p.n[0];
-  auto correction_policy=Kokkos::RangePolicy<>(0,3*p.nsurface_points);
+  const int corrections=parameters.scri_treatment==ScriTreatment::existing ? 3 : 4;
+  auto correction_policy=Kokkos::RangePolicy<>(0,corrections*p.nsurface_points);
 #ifdef KOKKOS_ENABLE_SYCL
   // Batch the independent angular jets across smaller SYCL workgroups.
   correction_policy.set_chunk_size(32);
 #endif
   Kokkos::parallel_for("hyperboloidal shared normal correction jets",
     correction_policy,KOKKOS_LAMBDA(int task) {
-      const int point=task/3,axis=task%3;const auto c=points(point);
+      const int point=task/corrections,axis=task%corrections;const auto c=points(point);
       const int first_j=c.j-2<0 ? 0 : (c.j-2>n-6 ? n-6 : c.j-2);
       const int first_k=c.k-2<0 ? 0 : (c.k-2>n-6 ? n-6 : c.k-2);
       mapped::Jet logical;
@@ -459,6 +477,8 @@ TaskStatus SurfaceExchange::Evaluate() {
       if (!SphericalPolicy::Restore(map.x,jets,reference(point))) {++bad;return;}
       for (int a=0;a<3;++a)
         jets[22+a]=jets[22+a]+kernel.Correction(c.face,c.j,c.k,map,a);
+      if(parameters.scri_treatment!=ScriTreatment::existing)
+        jets[18]=jets[18]+kernel.Correction(c.face,c.j,c.k,map,3);
       const auto rate=EvaluateScriPoint(map,rows(point).spacing,jets,parameters,source,penalty,
                                         &metric_geometry(point),&penrose_geometry(point));
       if (!rate.valid) {++bad;return;}
@@ -473,6 +493,8 @@ TaskStatus SurfaceExchange::Evaluate() {
     throw std::runtime_error("Invalid block-owned scri RHS or normal compatibility");
   max_compatibility_=std::max(Real(0),compatibility);
   max_clock_=std::max(Real(0),clock);
+  if (p.BoundaryHistoryEnabled()) p.AccumulateBoundaryHistory(MeasureHistory());
+  if (p.ScriInvestigationEnabled()) p.AccumulateScriInvestigation(MeasureInvestigation());
   return TaskStatus::complete;
 }
 
