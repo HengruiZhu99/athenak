@@ -267,3 +267,21 @@ endif()
 
 install( TARGETS athena DESTINATION bin )
 
+
+# Self-contained recorder provenance: hash the equations, maps and output schema.
+file(GLOB SCRI_PROVENANCE_FILES CONFIGURE_DEPENDS
+  "${CMAKE_SOURCE_DIR}/src/z4c_hyperboloidal/*.hpp"
+  "${CMAKE_SOURCE_DIR}/src/z4c_hyperboloidal/*.cpp"
+  "${CMAKE_SOURCE_DIR}/src/mesh/chart_atlas.*"
+  "${CMAKE_SOURCE_DIR}/src/outputs/scri.*")
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${SCRI_PROVENANCE_FILES})
+set(SCRI_SOURCE_MANIFEST "")
+foreach(source IN LISTS SCRI_PROVENANCE_FILES)
+  file(SHA256 "${source}" digest)
+  file(RELATIVE_PATH relative "${CMAKE_SOURCE_DIR}" "${source}")
+  string(APPEND SCRI_SOURCE_MANIFEST "${digest}  ${relative}\n")
+endforeach()
+file(READ "${CMAKE_BINARY_DIR}/config.hpp" SCRI_BUILD_CONFIG)
+string(APPEND SCRI_SOURCE_MANIFEST "${SCRI_BUILD_CONFIG}\nCXX_FLAGS=${CMAKE_CXX_FLAGS}\n")
+file(WRITE "${CMAKE_BINARY_DIR}/scri_provenance.hpp"
+  "#define SCRI_SOURCE_MANIFEST R\"scri(${SCRI_SOURCE_MANIFEST})scri\"\n")

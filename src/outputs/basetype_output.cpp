@@ -45,7 +45,8 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
     outarray("cc_outvar",1,1,1,1,1),
     outfield("fc_outvar",1,1,1,1) {
   // exit for history, restart, or event log files
-  if (out_params.file_type.compare("hst") == 0 ||
+  if (out_params.file_type.compare("scri") == 0 ||
+      out_params.file_type.compare("hst") == 0 ||
       out_params.file_type.compare("rst") == 0 ||
       out_params.file_type.compare("log") == 0 ||
       out_params.file_type.compare("trk") == 0) {return;}

@@ -1,0 +1,51 @@
+
+Root grid = 3 x 3 x 3 MeshBlocks
+Total number of MeshBlocks = 106
+Number of logical  levels of refinement = 5 (6 levels total)
+Number of physical levels of refinement = 1 (2 levels total)
+Number of parallel ranks = 2
+  Rank = 0: 53 MeshBlocks, cost = 53
+  Rank = 1: 53 MeshBlocks, cost = 53
+Load Balancing:
+  Maximum normalized cost = 1, Average = 1
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: scri output requires nodal or modes
+[PU-KL2XFPVQ0D:48807] *** Process received signal ***
+[PU-KL2XFPVQ0D:48807] Signal: Abort trap: 6 (6)
+[PU-KL2XFPVQ0D:48807] Signal code:  (0)
+[PU-KL2XFPVQ0D:48807] [ 0] 0   libsystem_platform.dylib            0x000000018bbf1744 _sigtramp + 56
+[PU-KL2XFPVQ0D:48807] [ 1] 0   libsystem_pthread.dylib             0x000000018bbe78d8 pthread_kill + 296
+[PU-KL2XFPVQ0D:48807] [ 2] 0   libsystem_c.dylib                   0x000000018baed978 abort + 148
+[PU-KL2XFPVQ0D:48807] [ 3] 0   libc++abi.dylib                     0x000000018bb9e72c _ZN10__cxxabiv116__shim_type_infoD1Ev + 0
+[PU-KL2XFPVQ0D:48807] [ 4] 0   libc++abi.dylib                     0x000000018bb8b570 _ZL28demangling_terminate_handlerv + 272
+[PU-KL2XFPVQ0D:48807] [ 5] 0   libobjc.A.dylib                     0x000000018b7988a4 _ZL15_objc_terminatev + 172
+[PU-KL2XFPVQ0D:48807] [ 6] 0   libc++abi.dylib                     0x000000018bb9b75c _ZSt11__terminatePFvvE + 16
+[PU-KL2XFPVQ0D:48807] [ 7] 0   libc++abi.dylib                     0x000000018bb9dbe4 __cxa_get_exception_ptr + 0
+[PU-KL2XFPVQ0D:48807] [ 8] 0   libc++abi.dylib                     0x000000018bb8a09c __cxa_get_globals + 0
+[PU-KL2XFPVQ0D:48807] [ 9] 0   athena                              0x0000000100d160ac _ZN10ScriOutputC2EP14ParameterInputP4Mesh16OutputParameters + 1792
+[PU-KL2XFPVQ0D:48807] [10] 0   athena                              0x0000000100cd86c8 _ZN7OutputsC2EP14ParameterInputP4Mesh + 6544
+[PU-KL2XFPVQ0D:48807] [11] 0   athena                              0x000000010080e7c4 main + 4884
+[PU-KL2XFPVQ0D:48807] [12] 0   dyld                                0x000000018b81c4e4 start + 6992
+[PU-KL2XFPVQ0D:48807] *** End of error message ***
+libc++abi: terminating due to uncaught exception of type std::invalid_argument: scri output requires nodal or modes
+[PU-KL2XFPVQ0D:48806] *** Process received signal ***
+[PU-KL2XFPVQ0D:48806] Signal: Abort trap: 6 (6)
+[PU-KL2XFPVQ0D:48806] Signal code:  (0)
+[PU-KL2XFPVQ0D:48806] [ 0] 0   libsystem_platform.dylib            0x000000018bbf1744 _sigtramp + 56
+[PU-KL2XFPVQ0D:48806] [ 1] 0   libsystem_pthread.dylib             0x000000018bbe78d8 pthread_kill + 296
+[PU-KL2XFPVQ0D:48806] [ 2] 0   libsystem_c.dylib                   0x000000018baed978 abort + 148
+[PU-KL2XFPVQ0D:48806] [ 3] 0   libc++abi.dylib                     0x000000018bb9e72c _ZN10__cxxabiv116__shim_type_infoD1Ev + 0
+[PU-KL2XFPVQ0D:48806] [ 4] 0   libc++abi.dylib                     0x000000018bb8b570 _ZL28demangling_terminate_handlerv + 272
+[PU-KL2XFPVQ0D:48806] [ 5] 0   libobjc.A.dylib                     0x000000018b7988a4 _ZL15_objc_terminatev + 172
+[PU-KL2XFPVQ0D:48806] [ 6] 0   libc++abi.dylib                     0x000000018bb9b75c _ZSt11__terminatePFvvE + 16
+[PU-KL2XFPVQ0D:48806] [ 7] 0   libc++abi.dylib                     0x000000018bb9dbe4 __cxa_get_exception_ptr + 0
+[PU-KL2XFPVQ0D:48806] [ 8] 0   libc++abi.dylib                     0x000000018bb8a09c __cxa_get_globals + 0
+[PU-KL2XFPVQ0D:48806] [ 9] 0   athena                              0x0000000104dc60ac _ZN10ScriOutputC2EP14ParameterInputP4Mesh16OutputParameters + 1792
+[PU-KL2XFPVQ0D:48806] [10] 0   athena                              0x0000000104d886c8 _ZN7OutputsC2EP14ParameterInputP4Mesh + 6544
+[PU-KL2XFPVQ0D:48806] [11] 0   athena                              0x00000001048be7c4 main + 4884
+[PU-KL2XFPVQ0D:48806] [12] 0   dyld                                0x000000018b81c4e4 start + 6992
+[PU-KL2XFPVQ0D:48806] *** End of error message ***
+--------------------------------------------------------------------------
+
+prterun noticed that process rank 1 with PID 48807 on node PU-KL2XFPVQ0D exited on
+signal 6 (Abort trap: 6).
+--------------------------------------------------------------------------

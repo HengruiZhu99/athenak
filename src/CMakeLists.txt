@@ -139,6 +139,7 @@ add_executable(
         outputs/basetype_output.cpp
         outputs/cartgrid.cpp
         outputs/derived_variables.cpp
+        outputs/scri.cpp
         outputs/binary.cpp
         outputs/eventlog.cpp
         outputs/formatted_table.cpp
@@ -258,6 +259,7 @@ target_include_directories(athena PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 # leave existing AthenaK physics compilation unchanged.
 if(CMAKE_CXX_COMPILER_ID MATCHES "^(GNU|Clang|AppleClang|IntelLLVM)$")
   set_source_files_properties(
+      outputs/scri.cpp
       mesh/chart_atlas.cpp
       z4c_hyperboloidal/z4c_hyperboloidal.cpp
         z4c_hyperboloidal/binary_initial.cpp

@@ -1,0 +1,12 @@
+# Append this output block to an existing hyperboloidal evolution input.
+# Choose an unused output number. Existing evolution and mesh parameters stay as-is.
+<output20>
+file_type = scri
+id = scri
+dt = 0.01
+nodal = true
+modes = true
+lmax = 8
+unit_description = geometric code units; c=G=1; supply the run's physical mass normalization here
+# Alternative native schedule: replace dt with dcycle = 1.
+# nodal=true always includes the complete normal support and lift coefficients.

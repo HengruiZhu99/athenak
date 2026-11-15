@@ -1,0 +1,43 @@
+### WARNING in /Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/src/mesh/load_balance.cpp at line 92
+Number of MeshBlocks cannot be divided evenly by number of MPI ranks. This will result in poor load balancing.
+
+Root grid = 3 x 3 x 3 MeshBlocks
+Total number of MeshBlocks = 106
+Number of logical  levels of refinement = 5 (6 levels total)
+Number of physical levels of refinement = 1 (2 levels total)
+Number of parallel ranks = 8
+  Rank = 0: 13 MeshBlocks, cost = 13
+  Rank = 1: 13 MeshBlocks, cost = 13
+  Rank = 2: 13 MeshBlocks, cost = 13
+  Rank = 3: 13 MeshBlocks, cost = 13
+  Rank = 4: 13 MeshBlocks, cost = 13
+  Rank = 5: 13 MeshBlocks, cost = 13
+  Rank = 6: 14 MeshBlocks, cost = 14
+  Rank = 7: 14 MeshBlocks, cost = 14
+Load Balancing:
+  Maximum normalized cost = 1.07692, Average = 1.01923
+### WARNING in /Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/src/parameter_input.cpp: input parameter <refined_region0>/x1min = -.03 was not used by the code (check for a typo)
+### WARNING in /Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/src/parameter_input.cpp: input parameter <refined_region0>/x1max = .03 was not used by the code (check for a typo)
+### WARNING in /Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/src/parameter_input.cpp: input parameter <refined_region0>/x2min = -.03 was not used by the code (check for a typo)
+### WARNING in /Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/src/parameter_input.cpp: input parameter <refined_region0>/x2max = .03 was not used by the code (check for a typo)
+### WARNING in /Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/src/parameter_input.cpp: input parameter <refined_region0>/x3min = -.03 was not used by the code (check for a typo)
+### WARNING in /Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/src/parameter_input.cpp: input parameter <refined_region0>/x3max = .03 was not used by the code (check for a typo)
+### WARNING in /Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/src/parameter_input.cpp: input parameter <refined_region0>/level = 1 was not used by the code (check for a typo)
+### WARNING in /Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/src/parameter_input.cpp: input parameter <time>/start_time = 0 was not used by the code (check for a typo)
+
+Setup complete, executing task list(s)...
+
+elapsed=3.7662965000000002e+00 cycle=0 time=0.0000000000000000e+00 dt=4.6944203735617445e-04
+scri output output1 cycle=1 prepare_seconds=3.1407937499999999e-01 write_seconds=1.7770833000000000e-02
+elapsed=9.1558218329999992e+00 cycle=1 time=4.6944203735617445e-04 dt=4.6944203735617445e-04
+scri output output1 cycle=2 prepare_seconds=7.7499583999999996e-02 write_seconds=5.0092080000000002e-03
+elapsed=1.4425973750000001e+01 cycle=2 time=9.3888407471234890e-04 dt=4.6944203735617445e-04
+
+Terminating on cycle limit
+time=9.3888407471234890e-04 cycle=2
+tlim=1.0000000000000000e+00 nlim=2
+
+MeshBlock-cycles = 212
+cpu time used  = 1.0659729957580566e+01
+zone-cycles/cpu_second = 3.4366347656250000e+04
+particle-updates/cpu_second = 0.0000000000000000e+00

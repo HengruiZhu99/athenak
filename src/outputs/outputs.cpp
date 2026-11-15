@@ -51,6 +51,7 @@
 #include "parameter_input.hpp"
 #include "mesh/mesh.hpp"
 #include "outputs.hpp"
+#include "scri.hpp"
 
 //----------------------------------------------------------------------------------------
 // Outputs constructor
@@ -89,7 +90,8 @@ Outputs::Outputs(ParameterInput *pin, Mesh *pm) {
 
       // set output variable and optional file id (default is output variable name)
       // but only for those output types that use them
-      if (opar.file_type.compare("hst") != 0 &&
+      if (opar.file_type.compare("scri") != 0 &&
+          opar.file_type.compare("hst") != 0 &&
           opar.file_type.compare("rst") != 0 &&
           opar.file_type.compare("log") != 0 &&
           opar.file_type.compare("trk") != 0) {
@@ -180,7 +182,8 @@ Outputs::Outputs(ParameterInput *pin, Mesh *pm) {
       }
 
       // set output variable and optional file id (default is output variable name)
-      if (opar.file_type.compare("hst") != 0 &&
+      if (opar.file_type.compare("scri") != 0 &&
+          opar.file_type.compare("hst") != 0 &&
           opar.file_type.compare("rst") != 0 &&
           opar.file_type.compare("log") != 0) {
         opar.variable = pin->GetString(opar.block_name, "variable");
@@ -221,7 +224,11 @@ Outputs::Outputs(ParameterInput *pin, Mesh *pm) {
       // Construct new BaseTypeOutput according to file format
       // NEW_OUTPUT_TYPES: Add block to construct new types here
       BaseTypeOutput *pnode;
-      if (opar.file_type.compare("tab") == 0) {
+      if (opar.file_type.compare("scri") == 0) {
+        opar.file_id = pin->GetOrAddString(opar.block_name,"id","scri");
+        pnode = new ScriOutput(pin,pm,opar);
+        pout_list.insert(pout_list.begin(),pnode);
+      } else if (opar.file_type.compare("tab") == 0) {
         pnode = new FormattedTableOutput(pin,pm,opar);
         pout_list.insert(pout_list.begin(),pnode);
       } else if (opar.file_type.compare("hst") == 0) {

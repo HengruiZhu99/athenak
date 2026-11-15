@@ -121,8 +121,9 @@ std::vector<HostTerm> BuildRow(const NativeDonorSelector &selector,int gid,
 }
 }  // namespace
 
-SurfaceExchange::SurfaceExchange(MeshBlockPack *pack,Z4cHyperboloidal *module)
-    :pack_(pack),module_(module) {Rebuild();}
+SurfaceExchange::SurfaceExchange(MeshBlockPack *pack,Z4cHyperboloidal *module,
+                                 bool endpoint_only)
+    :pack_(pack),module_(module),endpoint_only_(endpoint_only) {Rebuild();}
 
 void SurfaceExchange::Rebuild() {
   auto &p=*module_;
@@ -168,7 +169,7 @@ void SurfaceExchange::Rebuild() {
     }
     row.end=terms.size();rows.push_back(row);
   }
-  for (int point=0;point<p.npoints;++point) {
+  for (int point=0;!endpoint_only_ && point<p.npoints;++point) {
     const auto c=p.points.h_view(point);const int face=p.block_faces.h_view(c.m);
     if (face<0 || c.i-p.origin<n-3)continue;
     const int gid=pack_->gids+c.m;
@@ -233,7 +234,7 @@ void SurfaceExchange::Rebuild() {
       for (int v=0;v<6;++v)for (int u=0;u<6;++u)
         weights(k,j,6*v+u)=basis[0][u]*basis[1][v];
     });
-  Kokkos::realloc(surface_staging_,p.nblocks,Fields::count,n,n,1);
+  Kokkos::realloc(surface_staging_,endpoint_only_ ? 0 : p.nblocks,Fields::count,n,n,1);
   Kokkos::deep_copy(surface_staging_,std::numeric_limits<Real>::quiet_NaN());
   Kokkos::deep_copy(correction_,std::numeric_limits<Real>::quiet_NaN());
   ready_=true;
@@ -312,10 +313,14 @@ TaskStatus SurfaceExchange::Receive() {
       ? TaskStatus::complete : TaskStatus::incomplete;
 }
 TaskStatus SurfaceExchange::Sample() {
+  return Sample(bulk_exchange_.Values(),surface_exchange_.Values());
+}
+
+TaskStatus SurfaceExchange::Sample(bvals::MappedExchange::ConstValues bulk,
+                                   bvals::MappedExchange::ConstValues edge) {
   CheckReady();
   correction_jets_ready_=false;
   const auto rows=rows_;const auto terms=terms_;const auto output=sampled_;
-  const auto bulk=bulk_exchange_.Values(),edge=surface_exchange_.Values();
   const auto slots=fields_;
   Kokkos::parallel_for("hyperboloidal scri residual jets",
     Kokkos::RangePolicy<>(0,module_->nsurface_points*Fields::count),KOKKOS_LAMBDA(int task) {

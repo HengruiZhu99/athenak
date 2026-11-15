@@ -1,0 +1,29 @@
+
+Root grid = 3 x 3 x 3 MeshBlocks
+Total number of MeshBlocks = 106
+Number of logical  levels of refinement = 5 (6 levels total)
+Number of physical levels of refinement = 1 (2 levels total)
+Number of parallel ranks = 8
+  Rank = 0: 13 MeshBlocks, cost = 13
+  Rank = 1: 13 MeshBlocks, cost = 13
+  Rank = 2: 13 MeshBlocks, cost = 13
+  Rank = 3: 13 MeshBlocks, cost = 13
+  Rank = 4: 13 MeshBlocks, cost = 13
+  Rank = 5: 13 MeshBlocks, cost = 13
+  Rank = 6: 14 MeshBlocks, cost = 14
+  Rank = 7: 14 MeshBlocks, cost = 14
+Load Balancing:
+  Maximum normalized cost = 1.07692, Average = 1.01923
+scri output output1 cycle=0 prepare_seconds=0.154621 write_seconds=0.0175093
+PASS scri readonly phase=0 sequence=0 blocks=106
+scri output output1 cycle=1 prepare_seconds=0.500023 write_seconds=0.0449727
+PASS scri readonly phase=1 sequence=1 blocks=113
+scri output output1 cycle=2 prepare_seconds=0.380196 write_seconds=0.010118
+PASS scri readonly phase=2 sequence=2 blocks=106
+scri output output1 cycle=2 prepare_seconds=0.188396 write_seconds=0.0162211
+scri output output1 cycle=3 prepare_seconds=0.00702129 write_seconds=0.00415054
+SCRI_BENCH maximum_rank_seconds=0.0112117
+scri output output1 cycle=4 prepare_seconds=0.00656554 write_seconds=0.00134029
+SCRI_BENCH maximum_rank_seconds=0.00792183
+scri output output1 cycle=5 prepare_seconds=0.00658817 write_seconds=0.00138817
+SCRI_BENCH maximum_rank_seconds=0.00800487

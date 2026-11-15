@@ -1,0 +1,32 @@
+
+Root grid = 3 x 3 x 3 MeshBlocks
+Total number of MeshBlocks = 106
+Number of logical  levels of refinement = 5 (6 levels total)
+Number of physical levels of refinement = 1 (2 levels total)
+Number of parallel ranks = 2
+  Rank = 0: 53 MeshBlocks, cost = 53
+  Rank = 1: 53 MeshBlocks, cost = 53
+Load Balancing:
+  Maximum normalized cost = 1, Average = 1
+scri output output3 cycle=0 prepare_seconds=0.244673 write_seconds=0.0109991
+scri output output2 cycle=0 prepare_seconds=0.247093 write_seconds=0.00529012
+scri output output1 cycle=0 prepare_seconds=0.242449 write_seconds=0.00610383
+
+Setup complete, executing task list(s)...
+
+elapsed=1.0574799833000000e+01 cycle=0 time=0.0000000000000000e+00 dt=4.6944203735617445e-04
+scri output output1 cycle=1 prepare_seconds=9.8297891599999998e-01 write_seconds=3.2205409999999999e-03
+elapsed=2.0995047667000001e+01 cycle=1 time=4.6944203735617445e-04 dt=4.6944203735617445e-04
+scri output output3 cycle=2 prepare_seconds=1.0160880000000001e+00 write_seconds=1.4944579999999999e-03
+scri output output2 cycle=2 prepare_seconds=1.4695292000000000e-02 write_seconds=3.2679200000000001e-04
+scri output output1 cycle=2 prepare_seconds=1.5887083000000000e-02 write_seconds=8.4541700000000000e-04
+elapsed=3.1471756458000002e+01 cycle=2 time=9.3888407471234890e-04 dt=4.6944203735617445e-04
+
+Terminating on cycle limit
+time=9.3888407471234890e-04 cycle=2
+tlim=1.0000000000000000e+00 nlim=2
+
+MeshBlock-cycles = 212
+cpu time used  = 2.0896978378295898e+01
+zone-cycles/cpu_second = 1.7530572265625000e+04
+particle-updates/cpu_second = 0.0000000000000000e+00

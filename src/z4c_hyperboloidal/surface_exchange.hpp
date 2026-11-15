@@ -114,13 +114,16 @@ class SurfaceExchange {
     }
   };
 
-  SurfaceExchange(MeshBlockPack *pack,Z4cHyperboloidal *module);
+  SurfaceExchange(MeshBlockPack *pack,Z4cHyperboloidal *module, bool endpoint_only=false);
   void Rebuild();
   TaskStatus Project();
   TaskStatus StartReceives();
   TaskStatus PackAndSend();
   TaskStatus Receive();
   TaskStatus Sample();
+  // Read-only output consumers may supply independently transported residuals.
+  TaskStatus Sample(bvals::MappedExchange::ConstValues bulk,
+                    bvals::MappedExchange::ConstValues edge);
   TaskStatus Solve();
   TaskStatus Evaluate();
   TaskStatus ClearSend();
@@ -171,6 +174,7 @@ class SurfaceExchange {
   DvceArray5D<Real> surface_staging_;
   Real max_compatibility_=0,max_clock_=0;
   bool ready_=false;
+  bool endpoint_only_=false;
   bool correction_jets_ready_=false;
   DvceArray2D<Real> history_values_;
   std::array<Real,20> MeasureHistory();
