@@ -63,7 +63,8 @@ def analyze(cache, output, lmax=8, stride=1, mass=1/3):
         raise ValueError('initial cut is not round; initial uniformization is required')
     transport = FrameTransport(x, weights, lmax)
     flows = np.empty((len(times), len(x), 3)); sources = np.empty((len(times), len(x)))
-    generator_times = np.empty_like(sources); null_error = []; shear_error = []
+    generator_times = np.empty_like(sources)
+    null_error = []; shear_error = []; regularity_error = []; scale_rate = []
     def geometry_at(q):
         window, center = stencil(times, q)
         metric, dg, ddg = spacetime_derivatives(archive[indices[window]], times[window], center)
@@ -83,6 +84,15 @@ def analyze(cache, output, lmax=8, stride=1, mass=1/3):
         ff = np.einsum('qi,qij,qj->q', f, gamma, f)
         dyad = (e/np.sqrt(ee)[:, None]-1j*(f-(ef/ee)[:, None]*e)/np.sqrt(ff-ef*ef/ee)[:, None])/np.sqrt(2)
         shear_error.append(float(np.max(abs(np.einsum('qi,qj,qij->q', dyad, dyad, omega_hessian[:, 1:, 1:])))))
+        box = 4*sources[q]*generator_times[q]
+        trace_free_hessian = omega_hessian-metric*box[:, None, None]/4
+        regularity_error.append(float(np.max(abs(trace_free_hessian))))
+        # In a regular vacuum conformal completion, the angular expansion and
+        # four-dimensional trace give the same preferred-frame scale rate.
+        # Their difference predicts round-cut drift independently of transport.
+        angular_trace = 2*np.einsum('qi,qj,qij->q', dyad, dyad.conj(), omega_hessian[:, 1:, 1:]).real
+        rate = angular_trace/generator_times[q]-2*sources[q]
+        scale_rate.append(float(np.sum(weights*rate)/np.sum(weights)))
     states = transport.evolve(times, flows, sources, generator_times)
     news_coefficients = []; clock_coefficients = []; diagnostics = []
     valid = range(3, len(times)-3)
@@ -101,7 +111,9 @@ def analyze(cache, output, lmax=8, stride=1, mass=1/3):
         d = observed['diagnostics']
         d.update(news_fit_rms=float(np.sqrt(np.sum(observed['angular_weights']*abs(residual)**2)/np.sum(observed['angular_weights']))),
                  news_native_rms=float(np.sqrt(np.sum(observed['angular_weights']*abs(observed['news'])**2)/np.sum(observed['angular_weights']))),
-                 null_max=null_error[q], shear_max=shear_error[q])
+                 null_max=null_error[q], shear_max=shear_error[q],
+                 conformal_hessian_tf_max=regularity_error[q],
+                 round_scale_rate_mean=scale_rate[q])
         diagnostics.append(d); news_coefficients.append(news_fit); clock_coefficients.append(clock_fit)
         if q % 100 == 0:
             print('Analyzed', q, 'of', len(times), 'native t/M0', times[q]/mass, flush=True)
@@ -130,6 +142,7 @@ def analyze(cache, output, lmax=8, stride=1, mass=1/3):
                    native_time_range_M0=[float(times[0]/mass),float(times[-1]/mass)],
                    bondi_time_range_M0=[begin/mass,end/mass], initial_round_error=initial_round_error,
                    diagnostics_max={key:max(d[key] for d in diagnostics) for key in diagnostics[0]},
+                   diagnostics_max_abs={key:max(abs(d[key]) for d in diagnostics) for key in diagnostics[0]},
                    resolution_convergence_established=False,
                    peak_mode_abs={str(pair):float(np.max(abs(modes[:,k]))) for k,pair in enumerate(labels)})
     (output/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')

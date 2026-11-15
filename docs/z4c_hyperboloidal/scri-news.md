@@ -50,6 +50,12 @@ round. The implementation reports their actual deviation from roundness.
 Its initial-round-cut requirement is checked explicitly; arbitrary initial-cut
 uniformization is not implemented.
 
+The extractor also checks `nabla_a nabla_b Omega - g_ab Box(Omega)/4` in
+native coordinates. Its tangential trace predicts the round-cut scale drift
+independently of angular transport. A nonzero four-dimensional regularity
+defect can coexist with a small tangential shear defect; the latter alone
+does not admit an inertial news interpretation.
+
 The full inverse coordinate Jacobian constructs angular vectors at fixed
 `u_B` and `Omega'`, including their native-time components. Their polarization
 is anchored to inertial north. A small Gram--Schmidt correction makes the dyad
@@ -102,9 +108,11 @@ python3 tst/z4c_hyperboloidal/scri_news.py
 python3 tst/z4c_hyperboloidal/scri_checkpoint.py --checkpoint CHECKPOINT --record RANK_ZERO_RECORD --output CHECK_REPORT
 python3 vis/python/scri_collect.py --root RUN_ROOT --output METRIC_CACHE
 python3 vis/python/scri_news.py --cache METRIC_CACHE --output NEW_RESULT_DIRECTORY
+python3 vis/python/scri_plot.py --result RESULT_DIRECTORY --output FIGURES --controls L6_RESULT STRIDE2_RESULT
 ```
 
-Only NumPy is required. Collection can resume as complete rank-local records
+Only NumPy is required for extraction; the optional plotting tool also uses
+Matplotlib and exports PNG, PDF and a `(2,0)` CSV. Collection can resume as complete rank-local records
 appear. Partial final output is retried, while malformed earlier records and
 mixed rank/time identifiers are errors. The metric cache is disposable analysis
 data; preserve the original recorder files for other reconstructions.

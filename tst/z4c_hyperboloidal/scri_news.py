@@ -32,4 +32,5 @@ with tempfile.TemporaryDirectory(prefix='scri-news-analytic-') as directory:
  other=data['news_modes'].copy();other[:,labels.index((2,0))]=0
  assert np.max(abs(other))<3e-9, np.max(abs(other))
  assert result['diagnostics_max']['round_cut_max']<2e-9
+ assert result['diagnostics_max']['conformal_hessian_tf_max']<2e-9
  print('PASS end-to-end common Bondi-time news; angle-dependent clock, spin modes, normalization',float(np.max(abs(data['news_modes'][:,labels.index((2,0))]-expected))))
