@@ -1,0 +1,29 @@
+#!/bin/bash -l
+#PBS -A CompactBinaryMerger
+#PBS -N N12-full-scri
+#PBS -q debug-scaling
+#PBS -l select=2
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -j oe
+set -euo pipefail
+ulimit -c 0
+case_dir=/lus/flare/projects/CompactBinaryMerger/hzhu/n12-full-scri-20261115
+launch=$case_dir/launch-${PBS_JOBID%%.*}
+mkdir "$launch"
+cp "$PBS_NODEFILE" "$launch/nodes.txt"
+[[ $(sort -u "$PBS_NODEFILE" | wc -l) == 2 ]]
+module load oneapi/release/2025.3.1
+module list > "$launch/modules.txt" 2>&1
+export OMP_NUM_THREADS=1 ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE ZE_ENABLE_PCI_ID_DEVICE_ORDER=1
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu MPIR_CVAR_ENABLE_GPU=1
+source "$case_dir/mpi-gpu-cache.sh"
+mkdir -p "$launch/cache/neo" "$launch/cache/sycl"
+export NEO_CACHE_DIR="$launch/cache/neo" SYCL_CACHE_DIR="$launch/cache/sycl"
+unset ZE_AFFINITY_MASK NATIVE_TIMING_WARMUP NATIVE_TIMING_STEPS NATIVE_TIMING_WINDOWS
+binding='1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100'
+wrapper=$(command -v gpu_tile_compact.sh)
+mpiexec -n 24 -ppn 12 --cpu-bind=list:"$binding" "$wrapper" /usr/bin/python3.11 "$case_dir/rank_environment.py" > "$launch/rank-environment.txt"
+args=()
+if [[ -n ${RESTART_PATH:-} ]]; then args+=(--restart "$RESTART_PATH"); fi
+/usr/bin/python3.11 "$case_dir/run.py" --case "$case_dir" --wrapper "$wrapper" --binding "$binding" "${args[@]}"
