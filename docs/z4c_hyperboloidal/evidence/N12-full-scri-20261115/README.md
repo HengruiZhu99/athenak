@@ -72,3 +72,21 @@ would be a useful check against the time derivative of news, but it still
 requires regularity cancellations and can require higher derivatives; it is
 not implemented by merely dividing endpoint curvature by zero. See
 [Babiuc et al.](https://arxiv.org/html/0808.0861v2#S3.SS2).
+
+## Long-trajectory comparison at 26 M0
+
+The fresh rerun and the original frozen science run have identical checkpoint
+time, cycle, mesh/atlas, formulation identity and step at cycle 18462
+(`26.0005166810 M0`). Their complete payloads are **not bitwise identical**.
+The maximum absolute field difference is `3.92013e-7` in `Lambda_y`; maximum
+metric-component differences are below `1.11e-8`, and lapse/shift differences
+are below `2.75e-10`. Across all 31 stored endpoint fields, the largest absolute
+scri difference is `7.43e-12`. The full receipt includes per-field maxima and
+unweighted relative L2 differences over the stored payload.
+
+The runs use different restart schedules and the original science run used the
+pre-optimization executable. This comparison does not isolate the cause of the
+small differences. The eight-step fresh/late admission comparisons above were
+bitwise exact against the selected optimized executable; do not extend that
+claim to this entire fresh trajectory. These tiny endpoint-state differences
+do not explain the much larger measured scri regularity defects.
