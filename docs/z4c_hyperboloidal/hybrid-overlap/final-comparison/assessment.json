@@ -1,0 +1,198 @@
+{
+  "12": {
+    "last_time_M0": 29.998754513173402,
+    "last_exact_common_time_M0": 29.750889117449027,
+    "exterior_full_over_legacy": [
+      0.8153874028091738,
+      0.801023117638403,
+      0.979933023948781,
+      0.9845276824011949
+    ],
+    "whole_full_over_legacy": [
+      0.8211431593720184,
+      0.8091828583661412,
+      0.9799397512896519,
+      0.9845287469963089
+    ],
+    "last_exterior_M0_units": [
+      0.0011595729710874702,
+      0.0006066966810995612,
+      0.00030624786028334613,
+      0.00032094176385793615
+    ],
+    "matched_samples": 117,
+    "max_common_time_mismatch_native": 0.0,
+    "max_relative_exterior_volume_difference": 8.241131255193324e-08,
+    "max_relative_whole_volume_difference": 0.0,
+    "finite_histories": true,
+    "dt": 0.00046944203735617445,
+    "last_masked_history_M0": 18.750453856077748
+  },
+  "16": {
+    "last_time_M0": 29.999458676220357,
+    "last_exact_common_time_M0": 29.75018495438391,
+    "exterior_full_over_legacy": [
+      0.13204629943464616,
+      0.11546362518925798,
+      0.2656144877816746,
+      0.34932821384458174
+    ],
+    "whole_full_over_legacy": [
+      0.13807856730343035,
+      0.12337205536036602,
+      0.2656946570112013,
+      0.3493389279411247
+    ],
+    "last_exterior_M0_units": [
+      0.0005424263992518875,
+      0.00028262247299085536,
+      8.73014686670617e-05,
+      0.00010626060152324452
+    ],
+    "matched_samples": 109,
+    "max_common_time_mismatch_native": 0.0,
+    "max_relative_exterior_volume_difference": 2.169814738994802e-08,
+    "max_relative_whole_volume_difference": 0.0,
+    "finite_histories": true,
+    "dt": 0.00035208152801713085,
+    "last_masked_history_M0": 17.000256580301013
+  },
+  "apparent_convergence": {
+    "legacy": {
+      "last_time_M0": 29.750889117449027,
+      "exterior_p": [
+        -3.6853979065768985,
+        -4.072732129990089,
+        -0.20133151181895534,
+        0.23203338496235018
+      ],
+      "whole_p": [
+        -3.638610486512889,
+        -4.01110530617707,
+        -0.20062838258619245,
+        0.23213248185110874
+      ],
+      "last_exact_coincident_sample": {
+        "time_M0": 29.00025129971555,
+        "exterior_p": [
+          -2.905440065205679,
+          -3.239039441509045,
+          0.5276352071854911,
+          0.6509091777224505
+        ]
+      },
+      "exact_coincident_count": 29,
+      "method": "Linear interpolation of N16 norms to N12 times within shared coverage; p=ln(C12/C16)/ln(16/12). No extrapolation."
+    },
+    "full": {
+      "last_time_M0": 29.998754513173402,
+      "exterior_p": [
+        2.6409567427012277,
+        2.655427858053458,
+        4.362550566761589,
+        3.84230919686813
+      ],
+      "whole_p": [
+        2.559799783529727,
+        2.525342292000339,
+        4.3623296798858,
+        3.842310084889914
+      ],
+      "last_exact_coincident_sample": {
+        "time_M0": 29.00025129971555,
+        "exterior_p": [
+          2.6500527068942694,
+          2.6697421546470874,
+          4.257218033363879,
+          3.8138274841579527
+        ]
+      },
+      "exact_coincident_count": 26,
+      "method": "Linear interpolation of N16 norms to N12 times within shared coverage; p=ln(C12/C16)/ln(16/12). No extrapolation."
+    }
+  },
+  "duplicate_policy": {
+    "choice": "Later numbered segment wins at identical cycle; discrepancies bounded by 1e-9 relative, not asserted bitwise.",
+    "nonidentical_rows": [
+      {
+        "N": 16,
+        "mode": "legacy",
+        "cycle": 7846,
+        "max_relative_difference": 2.4047074208400993e-16
+      },
+      {
+        "N": 16,
+        "mode": "legacy",
+        "cycle": 8048,
+        "max_relative_difference": 2.1311406131322026e-16
+      },
+      {
+        "N": 16,
+        "mode": "legacy",
+        "cycle": 8285,
+        "max_relative_difference": 2.3751520675394297e-16
+      },
+      {
+        "N": 16,
+        "mode": "legacy",
+        "cycle": 8521,
+        "max_relative_difference": 2.1544800398724784e-16
+      },
+      {
+        "N": 16,
+        "mode": "legacy",
+        "cycle": 8758,
+        "max_relative_difference": 2.1311405715178845e-16
+      },
+      {
+        "N": 16,
+        "mode": "legacy",
+        "cycle": 8995,
+        "max_relative_difference": 1.701586591847471e-16
+      },
+      {
+        "N": 16,
+        "mode": "legacy",
+        "cycle": 9231,
+        "max_relative_difference": 2.314774802220303e-16
+      },
+      {
+        "N": 16,
+        "mode": "legacy",
+        "cycle": 9468,
+        "max_relative_difference": 3.398297751963401e-11
+      },
+      {
+        "N": 16,
+        "mode": "legacy",
+        "cycle": 9705,
+        "max_relative_difference": 3.3710214046335795e-11
+      },
+      {
+        "N": 16,
+        "mode": "legacy",
+        "cycle": 9941,
+        "max_relative_difference": 3.281053618203872e-11
+      },
+      {
+        "N": 16,
+        "mode": "legacy",
+        "cycle": 10178,
+        "max_relative_difference": 3.139405433042307e-11
+      },
+      {
+        "N": 16,
+        "mode": "legacy",
+        "cycle": 10415,
+        "max_relative_difference": 2.919167242410403e-11
+      }
+    ]
+  },
+  "limits": [
+    "Histories use original frozen science executable, not optimized performance executable.",
+    "Exterior norms use each run\u2019s diagnostic horizon mask. Whole-domain plots remove this selection; masked runs still have different activity geometry.",
+    "N12 and N16 full runs reached their last timestep below 30 M0; legacy final checkpoint is one timestep later. Ratios use identical recorded times only.",
+    "No order-of-convergence claim from two resolutions.",
+    "Agreement mismatch needs a common checkpoint observer; production full runs did not record it."
+  ]
+}

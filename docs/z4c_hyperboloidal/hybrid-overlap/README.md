@@ -817,3 +817,11 @@ The final benchmark and selected late-reproduction archive contains
 SHA256 `85b0f2c0c1954455a49f36c36ac197b8bc244801992bc15d53c6a53f260a59f3`.
 Plots are `report/performance.png` and
 `report/constraint-reproduction.png` (PDF copies included).
+
+### Completed binary comparison (2026-11-15)
+
+Both frozen-science N12 and N16 evolutions reached the last timestep below
+30 M0. See [the final comparison](final-comparison/README.md) for time histories,
+matched legacy ratios, apparent two-resolution orders and read-only endpoint
+audits. The [performance evidence](performance-validation/README.md) records
+the separate optimized N12 validation and its unresolved legacy-mode caveat.

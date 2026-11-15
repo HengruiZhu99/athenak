@@ -1,0 +1,543 @@
+{
+  "checkpoint": "/lus/flare/projects/CompactBinaryMerger/hzhu/headon-6M-20261109/runs/headon30-9056684/rst/headon_6M.00030.rst",
+  "checkpoint_sha256": "9da3dcd9ef900c0ac8970c919fe674c4443e0cf3ff21959d7fe90175dcb14331",
+  "script_sha256": "72bf590311ea36ee92d1498f875500c0317fbab11fd5874d994996ea30ff7bea",
+  "restart_parser_sha256": "8afc41988e20e36d336230e111450ec3ba573940c773a6ed15ed03ed16eb8a3b",
+  "identity": "native-hyperboloidal-v1;fields=31;chi-record=8;formulation=n12-configured-constant-shift-v1;integrator=rk4_classical;real=8;n=12,12,12;overlap=3;nghost=4;p.ko=0x1.999999999999ap-4;p.chi_floor=0x1.b7cdfd9d7bdbbp-34;p.penalty=0x1p-1;p.requested_dt=0x1.ec3ee32a3d505p-12;g.profile.flat=1;g.profile.flat_radius=0x1.47d42d73857afp-1;g.profile.outer_radius=0x1.75df2216a41c3p-1;g.profile.plateau=0x1.ae147ae147ae1p-2;g.enforce_cfl=1;g.conformal_frame_halos=0;g.separated_shift_speeds=0;g.stationary_outer_reference=1;g.reference_start_M=0x1.4p+4;g.reference_end_M=0x1.4p+5;g.reference_compact_end=0x1.f0a3d70a3d70ap-1;g.inner_begin=0x1.8849ea57e38fep-1;g.inner_end=0x1.bf8a431ba1ebp-1;g.inner_gamma=0x1.4f622e6878131p-7;g.inner_chi_guard=0x1.b798090df7bdfp-24;g.cartesian_chi_guard=1;g.coefficient_begin=0x1.8849ea57e38fep-1;g.coefficient_end=0x1.bf8a431ba1ebp-1;g.restoration_begin=0x1.8849ea57e38fep-1;g.restoration_end=0x1.e45fd39e20d27p-1;g.bulk_mu=0x1p+2;g.ratio=0x1p+1;g.damping=0x1p+0;g.restoring=0x1p+2;g.outer_lapse_damping=0x1p-2;g.kappa=0x1.47ae147ae147bp-8;g.tau=0x1.47ae147ae147bp-6;g.epsilon=0x1.a36e2eb1c432dp-14;g.inner_z4=0x1p+3;g.kappa1=0x1p+2;g.kappa2=-0x1.fae147ae147aep-1;residual-weight=regular-c6-v1;g.residual_weight.inner=0x1.3333333333333p-2;g.residual_weight.outer=0x1.199999999999ap-1;initial-data=binary-v1;M0=1/3;reported-components=1/2;internal-components=1/6;f66983c0aea1a48ffc8baba57d129b8cd2d512d64c0877b78d8cdffdd44a8270",
+  "atlas": "athenak-chart-atlas-v2;half_width=0x1.999999999999ap-3;inner_radius=0x1.70a3d70a3d70ap-3;radii=0x1.eb851eb851eb8p-3,0x1.47ae147ae147bp-2,0x1.999999999999ap-2,0x1.eb851eb851eb8p-2,0x1.1eb851eb851ecp-1,0x1.47ae147ae147bp-1,0x1.70a3d70a3d70ap-1,0x1.999999999999ap-1,0x1.c28f5c28f5c29p-1,0x1.e147ae147ae14p-1,0x1p+0,;core=3,3,3,;angular=1,1,;overlap=3;equiangular=1;outer_endpoint=1",
+  "time": 10.000054279761825,
+  "time_M0": 30.000162839285473,
+  "cycle": 21302,
+  "n": 12,
+  "fixed_band_edges": [
+    0.18,
+    0.2,
+    0.25,
+    0.32,
+    0.4,
+    0.55,
+    0.8,
+    0.94,
+    1.0
+  ],
+  "band_boundary_tolerance": 1e-12,
+  "fixed_band_columns": [
+    "volume",
+    "native_Theta_squared_integral"
+  ],
+  "fixed_band_sums": [
+    [
+      0.009116146468304599,
+      1.6136822685449465e-08
+    ],
+    [
+      0.029385755582481517,
+      5.577825809113269e-08
+    ],
+    [
+      0.07446638653197388,
+      1.439486374247987e-07
+    ],
+    [
+      0.13095796738038676,
+      2.074633263399497e-07
+    ],
+    [
+      0.4166632639400879,
+      3.8417610353021794e-07
+    ],
+    [
+      1.4618669984728345,
+      1.1350360444117262e-06
+    ],
+    [
+      1.3358777859411517,
+      1.6168438843607959e-06
+    ],
+    [
+      0.6789476169899824,
+      5.866905428814655e-08
+    ]
+  ],
+  "shell_radii": [
+    0.18,
+    0.24,
+    0.32,
+    0.4,
+    0.48,
+    0.56,
+    0.64,
+    0.72,
+    0.8,
+    0.88,
+    0.94,
+    1.0
+  ],
+  "shell_columns": [
+    "volume",
+    "Theta2_integral",
+    "corner_volume",
+    "corner_Theta2_integral",
+    "max_abs_Theta"
+  ],
+  "shell_sums": [
+    [
+      0.029165610602519258,
+      5.6727679982423385e-08,
+      0.0029835314100670274,
+      1.2782576436690886e-08,
+      0.003759665434526664
+    ],
+    [
+      0.0794320547272925,
+      1.5124839107839954e-07,
+      0.008125598105070008,
+      6.635978162905294e-08,
+      0.008820410168373153
+    ],
+    [
+      0.13095796738038676,
+      2.074633263399497e-07,
+      0.013396503656404424,
+      9.006259145193053e-08,
+      0.008761217229651154
+    ],
+    [
+      0.19536535819675446,
+      1.8934550252860706e-07,
+      0.019985135595572433,
+      3.091592821111914e-08,
+      0.003736153681662769
+    ],
+    [
+      0.27265422717639615,
+      2.3778863731889498e-07,
+      0.027891493922574097,
+      2.679955257787362e-08,
+      0.0021762581482443603
+    ],
+    [
+      0.3628245743193107,
+      3.0093263209420685e-07,
+      0.03711557863740929,
+      3.229230580776871e-08,
+      0.0015416669704767258
+    ],
+    [
+      0.4658763996254992,
+      3.731587791100727e-07,
+      0.04765738974007811,
+      3.776515533581664e-08,
+      0.0011931224474127666
+    ],
+    [
+      0.5818097030949619,
+      4.1798659689016253e-07,
+      0.05951692723058065,
+      4.2296107419260075e-08,
+      0.001200462720294708
+    ],
+    [
+      0.7106244847276966,
+      1.5352750318167546e-06,
+      0.07269419110891659,
+      1.5653792745734405e-07,
+      0.0038239777393140628
+    ],
+    [
+      0.6252533012134552,
+      8.156885254404149e-08,
+      0.06396104264168255,
+      7.891853924553765e-09,
+      0.0010157369412807083
+    ],
+    [
+      0.6789476169899824,
+      5.866905428814655e-08,
+      0.06945376761303938,
+      6.044770590201089e-09,
+      0.0007407966062512943
+    ]
+  ],
+  "corner_definition": "both absolute normalized angular coordinates >= 0.75",
+  "nominal_active_points": 1261440,
+  "nominal_cumulative_chi_counts": [
+    23664.0,
+    23664.0,
+    0.0
+  ],
+  "chi_count_columns": [
+    "floor",
+    "nonpositive",
+    "nonfinite"
+  ],
+  "all_evolved_and_scri_cumulative_chi_counts": [
+    23664.0,
+    23664.0,
+    0.0
+  ],
+  "common_coordinate_samples": [
+    {
+      "face": 0,
+      "radius": 0.34,
+      "u": -0.85,
+      "v": -0.85,
+      "native_Theta": 0.0017459164082504223
+    },
+    {
+      "face": 1,
+      "radius": 0.34,
+      "u": -0.85,
+      "v": -0.85,
+      "native_Theta": 0.0017459238933849144
+    },
+    {
+      "face": 2,
+      "radius": 0.34,
+      "u": -0.85,
+      "v": -0.85,
+      "native_Theta": 0.0018079253175111536
+    },
+    {
+      "face": 3,
+      "radius": 0.34,
+      "u": -0.85,
+      "v": -0.85,
+      "native_Theta": 0.0018098883404536771
+    },
+    {
+      "face": 4,
+      "radius": 0.34,
+      "u": -0.85,
+      "v": -0.85,
+      "native_Theta": 0.0018129264644472537
+    },
+    {
+      "face": 5,
+      "radius": 0.34,
+      "u": -0.85,
+      "v": -0.85,
+      "native_Theta": 0.0018146755017069928
+    },
+    {
+      "face": 0,
+      "radius": 0.34,
+      "u": 0.85,
+      "v": 0.85,
+      "native_Theta": 0.0017457884425799027
+    },
+    {
+      "face": 1,
+      "radius": 0.34,
+      "u": 0.85,
+      "v": 0.85,
+      "native_Theta": 0.0017406283844914117
+    },
+    {
+      "face": 2,
+      "radius": 0.34,
+      "u": 0.85,
+      "v": 0.85,
+      "native_Theta": 0.0018098460305408656
+    },
+    {
+      "face": 3,
+      "radius": 0.34,
+      "u": 0.85,
+      "v": 0.85,
+      "native_Theta": 0.0018095241810779396
+    },
+    {
+      "face": 4,
+      "radius": 0.34,
+      "u": 0.85,
+      "v": 0.85,
+      "native_Theta": 0.0018145440427826886
+    },
+    {
+      "face": 5,
+      "radius": 0.34,
+      "u": 0.85,
+      "v": 0.85,
+      "native_Theta": 0.001814592941788305
+    },
+    {
+      "face": 0,
+      "radius": 0.36,
+      "u": -0.85,
+      "v": -0.85,
+      "native_Theta": -0.00047997153966409525
+    },
+    {
+      "face": 1,
+      "radius": 0.36,
+      "u": -0.85,
+      "v": -0.85,
+      "native_Theta": -0.00047992967295177225
+    },
+    {
+      "face": 2,
+      "radius": 0.36,
+      "u": -0.85,
+      "v": -0.85,
+      "native_Theta": -0.0005066895958846991
+    },
+    {
+      "face": 3,
+      "radius": 0.36,
+      "u": -0.85,
+      "v": -0.85,
+      "native_Theta": -0.0005093886776911402
+    },
+    {
+      "face": 4,
+      "radius": 0.36,
+      "u": -0.85,
+      "v": -0.85,
+      "native_Theta": -0.0004991247278063755
+    },
+    {
+      "face": 5,
+      "radius": 0.36,
+      "u": -0.85,
+      "v": -0.85,
+      "native_Theta": -0.0005015806427144519
+    },
+    {
+      "face": 0,
+      "radius": 0.36,
+      "u": 0.85,
+      "v": 0.85,
+      "native_Theta": -0.00048002324996950635
+    },
+    {
+      "face": 1,
+      "radius": 0.36,
+      "u": 0.85,
+      "v": 0.85,
+      "native_Theta": -0.00047376161446145937
+    },
+    {
+      "face": 2,
+      "radius": 0.36,
+      "u": 0.85,
+      "v": 0.85,
+      "native_Theta": -0.0005095511643904633
+    },
+    {
+      "face": 3,
+      "radius": 0.36,
+      "u": 0.85,
+      "v": 0.85,
+      "native_Theta": -0.0005091851028864893
+    },
+    {
+      "face": 4,
+      "radius": 0.36,
+      "u": 0.85,
+      "v": 0.85,
+      "native_Theta": -0.0005016851625270107
+    },
+    {
+      "face": 5,
+      "radius": 0.36,
+      "u": 0.85,
+      "v": 0.85,
+      "native_Theta": -0.0005016212507705574
+    },
+    {
+      "face": 0,
+      "radius": 0.38,
+      "u": -0.85,
+      "v": -0.85,
+      "native_Theta": 0.0018958019486015054
+    },
+    {
+      "face": 1,
+      "radius": 0.38,
+      "u": -0.85,
+      "v": -0.85,
+      "native_Theta": 0.0018958556598714
+    },
+    {
+      "face": 2,
+      "radius": 0.38,
+      "u": -0.85,
+      "v": -0.85,
+      "native_Theta": 0.0018939324967394947
+    },
+    {
+      "face": 3,
+      "radius": 0.38,
+      "u": -0.85,
+      "v": -0.85,
+      "native_Theta": 0.0018984507611323582
+    },
+    {
+      "face": 4,
+      "radius": 0.38,
+      "u": -0.85,
+      "v": -0.85,
+      "native_Theta": 0.001906218851803248
+    },
+    {
+      "face": 5,
+      "radius": 0.38,
+      "u": -0.85,
+      "v": -0.85,
+      "native_Theta": 0.0019109094468098744
+    },
+    {
+      "face": 0,
+      "radius": 0.38,
+      "u": 0.85,
+      "v": 0.85,
+      "native_Theta": 0.0018957487569293188
+    },
+    {
+      "face": 1,
+      "radius": 0.38,
+      "u": 0.85,
+      "v": 0.85,
+      "native_Theta": 0.0018872147138861296
+    },
+    {
+      "face": 2,
+      "radius": 0.38,
+      "u": 0.85,
+      "v": 0.85,
+      "native_Theta": 0.0018984496319076312
+    },
+    {
+      "face": 3,
+      "radius": 0.38,
+      "u": 0.85,
+      "v": 0.85,
+      "native_Theta": 0.0018985148285622833
+    },
+    {
+      "face": 4,
+      "radius": 0.38,
+      "u": 0.85,
+      "v": 0.85,
+      "native_Theta": 0.0019108734672184764
+    },
+    {
+      "face": 5,
+      "radius": 0.38,
+      "u": 0.85,
+      "v": 0.85,
+      "native_Theta": 0.0019108964848253687
+    }
+  ],
+  "sample_interpolation": "six-point tensor Lagrange on nominal shell nodes; identical physical r,u,v across resolutions; diagnostic only",
+  "max_radius_any_historical_floor": 0.10069923360258581,
+  "native_history_check": [
+    {
+      "file": "/lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/full-overlap-30M-20261114/final-comparison/audit-9091875/N12-legacy-final/checkpoint-band-0.user.hst",
+      "sha256": "09798f4c3137989336768b49b1e7e4fbd9c82dc6d565195b418d601a528fb377",
+      "native_raw_integrals": [
+        0.009116146468304541,
+        3.1372948889795573e-06,
+        7.835797497143388e-07,
+        1.6136822685449465e-08,
+        2.523374445141065e-09
+      ]
+    },
+    {
+      "file": "/lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/full-overlap-30M-20261114/final-comparison/audit-9091875/N12-legacy-final/checkpoint-band-1.user.hst",
+      "sha256": "22175ef2e5abee3f4ca30b4606eebae56b805a124db80bac7e8df0f262f5aa36",
+      "native_raw_integrals": [
+        0.02938575558248145,
+        2.301529508022121e-05,
+        4.718347070547194e-06,
+        5.5778258091132746e-08,
+        1.0181495509445634e-08
+      ]
+    },
+    {
+      "file": "/lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/full-overlap-30M-20261114/final-comparison/audit-9091875/N12-legacy-final/checkpoint-band-2.user.hst",
+      "sha256": "6ceadcd7d0f2e20fea055eafa97c0fd98708a30988f69cd329c9bdc6980a0d17",
+      "native_raw_integrals": [
+        0.074466386531974,
+        0.0001409298936172559,
+        2.9148126480339683e-05,
+        1.4394863742479911e-07,
+        7.056971352908539e-08
+      ]
+    },
+    {
+      "file": "/lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/full-overlap-30M-20261114/final-comparison/audit-9091875/N12-legacy-final/checkpoint-band-3.user.hst",
+      "sha256": "faf8ade242d4904a8391491161a76bbb3f55841978417c1191e2fc0f75099f32",
+      "native_raw_integrals": [
+        0.13095796738038637,
+        9.555238791516712e-05,
+        2.7797687508324513e-05,
+        2.0746332633994908e-07,
+        8.475915650363432e-08
+      ]
+    },
+    {
+      "file": "/lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/full-overlap-30M-20261114/final-comparison/audit-9091875/N12-legacy-final/checkpoint-band-4.user.hst",
+      "sha256": "145d0de6886297fbf0920b308aeb951a02c229dea672ddb425afd34b7fe9877b",
+      "native_raw_integrals": [
+        0.41666326394008657,
+        1.853022567344098e-05,
+        6.334790785046177e-06,
+        3.8417610353021837e-07,
+        1.8038064729308144e-07
+      ]
+    },
+    {
+      "file": "/lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/full-overlap-30M-20261114/final-comparison/audit-9091875/N12-legacy-final/checkpoint-band-5.user.hst",
+      "sha256": "0230cb4e0e7880e4622034675349b3ced9c86ba3d4a67940b2f2c5c2dcc4dea1",
+      "native_raw_integrals": [
+        1.4618669984728394,
+        2.4444125669562785e-06,
+        3.904425743761187e-07,
+        1.1350360444117254e-06,
+        1.1404421435005617e-06
+      ]
+    },
+    {
+      "file": "/lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/full-overlap-30M-20261114/final-comparison/audit-9091875/N12-legacy-final/checkpoint-band-6.user.hst",
+      "sha256": "8ba6fcaa0c625c96ad57aa3757f8e80d8e43174397f6289b664dbc68f068a3af",
+      "native_raw_integrals": [
+        1.3358777859411557,
+        0.00026390052221448093,
+        8.075295497961832e-05,
+        1.6168438843608005e-06,
+        2.2924174443205728e-06
+      ]
+    },
+    {
+      "file": "/lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/full-overlap-30M-20261114/final-comparison/audit-9091875/N12-legacy-final/checkpoint-band-7.user.hst",
+      "sha256": "e676874a79d55782eeb2f41bb621b91bd7c60a1e83ea046e8858a2c728a37718",
+      "native_raw_integrals": [
+        0.6789476169899824,
+        0.0001860435966780552,
+        4.317935296038041e-05,
+        5.866905428814649e-08,
+        2.2173267257389356e-07
+      ]
+    }
+  ],
+  "native_checkpoint_overlap": {
+    "file": "/lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/full-overlap-30M-20261114/final-comparison/audit-9091875/N12-legacy-final/checkpoint.overlap.hst",
+    "sha256": "8362b904e2198e5e7720922da206743b5050c7112bb601628b4e787e3cd0f86a",
+    "native_row": [
+      10.000054279761825,
+      0.00046944203735617445,
+      1.0533701205408098e-05,
+      5.646370581088819e-05,
+      0.0012385514788123473,
+      0.0019154526057756428,
+      5.833177896135959e-06,
+      0.0005528057083951139,
+      0.0,
+      0.0029991947550491163
+    ],
+    "note": "Common retained-overlap observer with kappa=0; zero energy contribution is diagnostic-only.",
+    "runtime_history_comparison": null
+  }
+}
