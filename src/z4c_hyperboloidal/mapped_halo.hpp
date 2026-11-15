@@ -10,6 +10,7 @@
 
 #include "bvals/mapped_exchange.hpp"
 #include "mesh/chart_atlas.hpp"
+#include "z4c_hyperboloidal/activity_policy.hpp"
 
 class Mesh;
 class MeshBlockPack;
@@ -23,24 +24,28 @@ struct HaloPoint {int m, k, j, i;};
 // authority; no field array or second mesh tree is held here.
 class NativeDonorSelector {
  public:
-  NativeDonorSelector(const Mesh &mesh, int origin);
+  NativeDonorSelector(const Mesh &mesh, int origin, ActivityPolicy activity={});
+  const ActivityPolicy &Activity() const {return activity_;}
+  std::vector<WeightedDonor> Cartesian(const Real x[3], int width=6) const;
+  std::vector<WeightedDonor> Spherical(const Real x[3], int width=6,
+                                     bool force_shell=false) const;
   std::vector<WeightedDonor> Interpolate(const Real x[3], int width=6) const;
   const chart_atlas::BlockMap &Map(int gid) const {return maps_.at(gid);}
   int Cells() const {return n_;}
   int Origin() const {return origin_;}
   int Lower(int gid, int axis) const;
   int Upper(int gid, int axis) const;
-  int Owner(const Real x[3]) const;
+  int Owner(const Real x[3], bool shell=false) const;
   bool IsEvolved(const bvals::DonorPoint &point) const;
 
  private:
+  ActivityPolicy activity_;
   int n_, origin_;
   Real half_width_, outer_radius_, first_radius_;
   bool spherical_;
   std::vector<Real> radii_;
   std::vector<chart_atlas::BlockMap> maps_;
   std::vector<int> levels_, order_;
-  std::vector<WeightedDonor> Cartesian(const Real x[3], int width) const;
   std::vector<WeightedDonor> Overlap(const Real x[3], int width) const;
   std::vector<WeightedDonor> Shell(int owner, const Real x[3],
                                   const Real local[3], int width) const;
@@ -57,7 +62,7 @@ class MappedHalo {
   };
   struct ExteriorTarget {HaloPoint target; Real x[3];};
   MappedHalo() = default;
-  void Rebuild(MeshBlockPack *pack, int origin);
+  void Rebuild(MeshBlockPack *pack, int origin, ActivityPolicy activity={});
   TaskStatus StartReceives();
   TaskStatus PackAndSend(const DvceArray5D<Real> &residual,
                          const DvceArray5D<Real> &physical);
@@ -79,6 +84,7 @@ class MappedHalo {
   const bvals::MappedExchange &PhysicalExchange() const {return physical_exchange_;}
 
  private:
+  ActivityPolicy activity_;
   struct DeviceRow {HaloPoint target; int begin, end;};
   struct DeviceEntry {int ordinal; Real weight;};
   bvals::MappedExchange residual_exchange_, physical_exchange_;

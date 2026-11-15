@@ -61,6 +61,7 @@ add_executable(
         z4c_hyperboloidal/horizon_sampling.cpp
         z4c_hyperboloidal/dissipation_plan.cpp
         z4c_hyperboloidal/mapped_halo.cpp
+        z4c_hyperboloidal/overlap_agreement.cpp
         z4c_hyperboloidal/surface_exchange.cpp
         z4c_hyperboloidal/restart.cpp
         z4c_hyperboloidal/remesh.cpp
@@ -271,6 +272,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "^(GNU|Clang|AppleClang|IntelLLVM)$")
       z4c_hyperboloidal/horizon_sampling.cpp
       z4c_hyperboloidal/dissipation_plan.cpp
       z4c_hyperboloidal/mapped_halo.cpp
+        z4c_hyperboloidal/overlap_agreement.cpp
       z4c_hyperboloidal/surface_exchange.cpp
       z4c_hyperboloidal/remesh.cpp
       z4c_hyperboloidal/surface_remesh.cpp

@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <cstdlib>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -21,6 +22,28 @@
 
 namespace hyp = z4c_hyperboloidal;
 
+namespace z4c_hyperboloidal {
+// Test-only high-precision reduction of the actual distributed row energy.
+// Production History() deliberately retains the native device reduction.
+struct OverlapAgreementAudit {
+  static int MaxTransposeTerms(const OverlapAgreementPlan &plan) {
+    const auto targets=Kokkos::create_mirror_view_and_copy(HostMemSpace(),plan.targets_);
+    int count=0;
+    for(int t=0;t<targets.extent_int(0);++t)count=std::max(count,targets(t).end-targets(t).begin);
+    return count;
+  }
+  static Real Energy(const OverlapAgreementPlan &plan) {
+    const auto rows=Kokkos::create_mirror_view_and_copy(HostMemSpace(),plan.rows_);
+    const auto d=Kokkos::create_mirror_view_and_copy(HostMemSpace(),plan.discrepancy_);
+    long double sum=0;
+    for(int r=0;r<rows.extent_int(0);++r)if(rows(r).owned)
+      for(int f=0;f<Fields::independent_count;++f)
+        sum+=static_cast<long double>(rows(r).weight)*d(r,f)*d(r,f);
+    return -plan.kappa_*sum;
+  }
+};
+}  // namespace z4c_hyperboloidal
+
 namespace {
 void Require(bool condition,const char *message) {
   if (!condition) throw std::runtime_error(message);
@@ -33,6 +56,8 @@ TaskID AllTasks(const std::shared_ptr<TaskList> &list) {
 }
 
 struct Checks {
+  MeshBlockPack *pack=nullptr;
+  Real inactive_value=std::numeric_limits<Real>::quiet_NaN();
   int before=0,after=0;
   std::uint64_t bulk_values=0,surface_values=0,ghost_values=0;
   Real max_cfl=0,max_rhs=0,max_update_error=0;
@@ -45,15 +70,15 @@ struct Checks {
     Kokkos::deep_copy(p.residual,poison);
     Kokkos::deep_copy(p.rhs_status,-777);
     Kokkos::deep_copy(p.rhs_gap,poison);Kokkos::deep_copy(p.rhs_cfl,poison);
-    const auto state=p.u0;const auto bounds=p.evolved_bounds.d_view;
+    const auto state=p.u0;const auto maps=pack->pmb->mb_map.d_view;
+    const auto activity=p.activity;const int n=p.n[0],origin=p.origin;
+    const Real inactive=inactive_value;
     const int nk=p.storage[2],nj=p.storage[1],ni=p.storage[0];
     Kokkos::parallel_for("stage smoke poison physical ghosts",
       Kokkos::RangePolicy<>(0,p.nblocks*nk*nj*ni),KOKKOS_LAMBDA(int q) {
         const int i=q%ni,j=(q/ni)%nj,k=(q/(ni*nj))%nk,m=q/(ni*nj*nk);
-        const auto b=bounds(m);
-        if (i<b.lo[0] || i>b.hi[0] || j<b.lo[1] || j>b.hi[1] ||
-            k<b.lo[2] || k>b.hi[2])
-          for (int f=0;f<hyp::Fields::count;++f)state(m,f,k,j,i)=poison;
+        if (!activity.Evolved(maps(m),n,i-origin,j-origin,k-origin))
+          for (int f=0;f<hyp::Fields::count;++f)state(m,f,k,j,i)=inactive;
       });
     return TaskStatus::complete;
   }
@@ -142,11 +167,10 @@ struct Checks {
         }
       }
     for (int m=0;m<p.nblocks;++m) {
-      const auto b=p.evolved_bounds.h_view(m);
+      const auto map=pack->pmb->mb_map.h_view(m);
       for (int k=0;k<p.storage[2];++k)for (int j=0;j<p.storage[1];++j)
         for (int i=0;i<p.storage[0];++i) {
-          if (i>=b.lo[0] && i<=b.hi[0] && j>=b.lo[1] && j<=b.hi[1] &&
-              k>=b.lo[2] && k<=b.hi[2]) continue;
+          if (p.activity.Evolved(map,p.n[0],i-p.origin,j-p.origin,k-p.origin)) continue;
           for (int f=0;f<hyp::Fields::count;++f) {
             Require(std::isnan(rhs(m,f,k,j,i)),"RHS kernel wrote an unevolved ghost");
             ++ghost_values;
@@ -156,6 +180,91 @@ struct Checks {
     return TaskStatus::complete;
   }
 };
+
+// Exercise the real distributed gather and transpose, independent of the PDE.
+// Stored chi and D rates are converted back to the agreement coordinates when
+// forming q^T H qdot; a missing chi weight or Lambda contribution fails this.
+void CheckAgreement(hyp::Z4cHyperboloidal &p,MeshBlockPack &pack) {
+  if(p.activity.mode!=hyp::OverlapMode::agreement && !p.agreement.full_overlap)return;
+  hyp::OverlapAgreementPlan plan;plan.Rebuild(&pack,p);
+  int max_terms=hyp::OverlapAgreementAudit::MaxTransposeTerms(plan);
+  MPI_Allreduce(MPI_IN_PLACE,&max_terms,1,MPI_INT,MPI_MAX,MPI_COMM_WORLD);
+  const auto cells=p.points.d_view;const auto geometry=p.geometry;
+  const auto maps=pack.pmb->mb_map.d_view;const auto delta=p.residual;
+  const int n=p.n[0],first_gid=pack.gids;const auto weight=p.parameters.residual_weight;
+  for(int mode=0;mode<(p.agreement.full_overlap?6:4);++mode) {
+    Kokkos::deep_copy(delta,std::numeric_limits<Real>::quiet_NaN());
+    Kokkos::parallel_for("agreement oracle data",p.npoints,KOKKOS_LAMBDA(int q) {
+      const auto c=cells(q);const auto &x=geometry(q).x;
+      for(int f=0;f<hyp::Fields::count;++f)if(hyp::Fields::Independent(f)) {
+        Real value=0;
+        if(mode==0)value=.01*(f+1);
+        if(mode==1)value=sin(17*c.i+13*c.j+7*c.k+3*(first_gid+c.m)+.1*f);
+        if(mode==2)value=maps(c.m).face<0?((c.i+c.j+c.k)%2?1:-1):0;
+        if(mode==3)value=sin(11*x[0]+7*x[1]-3*x[2])*(f+1)/31.;
+        if(mode==4)value=maps(c.m).face<0?1:0;
+        if(mode==5)value=maps(c.m).face<0?sin(3*x[0]+2*x[1]-x[2]):0;
+        delta(c.m,f,c.k,c.j,c.i)=value;
+      }
+    });
+    plan.StartReceives();plan.PackAndSend(delta);
+    while(plan.Receive()!=TaskStatus::complete) {}
+    plan.Evaluate();Kokkos::deep_copy(p.u_rhs,0.);plan.AddRHS(p);
+    auto history=plan.History();
+    while(plan.ClearSend()!=TaskStatus::complete) {}
+    while(plan.ClearRecv()!=TaskStatus::complete) {}
+    const auto rhs=p.u_rhs;Real energy=0,rate_norm=0;
+    DvceArray2D<Real> point_energy("agreement independent energy audit",p.npoints,2);
+    Kokkos::parallel_for("agreement energy oracle",p.npoints,KOKKOS_LAMBDA(int q) {
+      const auto c=cells(q);const auto g=geometry(q);const auto &a=g.J;
+      const Real det=a[0][0]*(a[1][1]*a[2][2]-a[1][2]*a[2][1])
+        -a[0][1]*(a[1][0]*a[2][2]-a[1][2]*a[2][0])+a[0][2]*(a[1][0]*a[2][1]-a[1][1]*a[2][0]);
+      const Real volume=1/(fabs(det)*n*n*n);
+      Real sum=0,norm=0;
+      for(int f=0;f<hyp::Fields::count;++f)if(hyp::Fields::Independent(f)) {
+        Real value=delta(c.m,f,c.k,c.j,c.i),rate=rhs(c.m,f,c.k,c.j,c.i);
+        if(f==0)rate/=weight.Value(g.x);
+        if(f>=hyp::Fields::D){value-=delta(c.m,f-10,c.k,c.j,c.i);rate-=rhs(c.m,f-10,c.k,c.j,c.i);}
+        sum+=volume*value*rate;
+        norm+=volume*rate*rate;
+      }
+      point_energy(q,0)=sum;point_energy(q,1)=norm;
+    });
+    // Accumulate the independent audit in extended precision. A serial sum of
+    // millions of alternating field contributions can otherwise dominate the
+    // adjoint residual even when the sparse transpose is exact.
+    const auto host_energy=Kokkos::create_mirror_view_and_copy(HostMemSpace(),point_energy);
+    long double extended_energy=0,extended_norm=0;
+    for(int q=0;q<p.npoints;++q) {
+      extended_energy+=host_energy(q,0);extended_norm+=host_energy(q,1);
+    }
+    energy=extended_energy;rate_norm=extended_norm;
+    MPI_Allreduce(MPI_IN_PLACE,&energy,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
+    MPI_Allreduce(MPI_IN_PLACE,&rate_norm,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
+    MPI_Allreduce(MPI_IN_PLACE,history.data(),8,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
+    Real audited_energy=hyp::OverlapAgreementAudit::Energy(plan);
+    MPI_Allreduce(MPI_IN_PLACE,&audited_energy,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
+    if(!global_variable::my_rank)std::cout<<std::setprecision(17)<<"AGREEMENT_ORACLE mode="<<mode
+      <<" energy="<<energy<<" expected="<<audited_energy<<" residual="<<energy-audited_energy
+      <<" history_roundoff="<<history[6]-audited_energy
+      <<" max_transpose_terms="<<max_terms
+      <<" rate_norm="<<rate_norm
+      <<" instantaneous_mismatch_RMS_efold_M0="<<(rate_norm>0?-3*history[6]/rate_norm:0)<<'\n';
+    Require(history[6]<=0,"positive penalty energy production");
+    const Real accumulation_tolerance=std::max(Real(2e-12),
+        8*std::numeric_limits<Real>::epsilon()*max_terms);
+    Require(std::abs(energy-audited_energy)<accumulation_tolerance*std::max(Real(1),std::abs(audited_energy)),
+            "distributed penalty adjoint/representation identity failed");
+    Require(std::abs(history[6]-audited_energy)<1e-9*std::max(Real(1),std::abs(audited_energy)),
+            "device history disagrees with independent row energy");
+    if(mode==0)Require(std::abs(history[6])<1e-25,"constant agreement not reproduced");
+    if(mode==2)Require(-history[6]/history[7]>.1,"grid-scale disagreement is invisible");
+    if(!global_variable::my_rank)std::cout<<std::setprecision(17)<<"PASS agreement mode="<<mode
+      <<" energy="<<energy<<" minus_kappa_dWd="<<history[6]<<" volume="<<history[7]
+      <<" rate_bound="<<plan.RateBound()<<'\n';
+  }
+  p.FormResidual();
+}
 
 void DumpAcceptedState(const hyp::Z4cHyperboloidal &p,const MeshBlockPack &pack) {
   static_assert(sizeof(Real)==8,"smoke dump requires float64");
@@ -211,16 +320,17 @@ int main(int argc,char **argv) {
       auto &p=*mesh.pmb_pack->pz4c_hyperboloidal;
       Require(p.IsInitialized(),"native problem generator did not initialize module");
       p.BuildStagePlans();
+      CheckAgreement(p,*mesh.pmb_pack);
       Require(p.StagePlansReady(),"native stage plan construction failed");
       Require(mesh.pmb_pack->pnr!=nullptr,"module did not register native NR tasks");
       Require(mesh.pmb_pack->tl_map.at("before_stagen")->Size()==1 &&
-            mesh.pmb_pack->tl_map.at("stagen")->Size()==14 &&
-              mesh.pmb_pack->tl_map.at("after_stagen")->Size()==2,
+            mesh.pmb_pack->tl_map.at("stagen")->Size()==15 &&
+              mesh.pmb_pack->tl_map.at("after_stagen")->Size()>=2,
               "native NR did not assemble the complete hyperboloidal stage graph");
 
-      // Test-only admission past the module's deliberate dynamic constructor
-      // gate. Production input still rejects dynamic evolution. This does not
-      // validate restart, AMR, diagnostics, or the not-yet-wired timestep bound.
+      // Exercise the native dynamic driver and its actual fixed-step admission.
+      // Test hooks poison non-evolved storage and verify all four RK stages;
+      // restart and topology changes have separate lifecycle tests.
       const Real dt=p.requested_dt;
       pin.SetString("time","evolution","dynamic");
       pin.SetString("time","integrator","rk4_classical");
@@ -229,8 +339,10 @@ int main(int argc,char **argv) {
       Outputs output(&pin,&mesh);
       Require(output.pout_list.empty(),"smoke fixture must not write production outputs");
       driver.Initialize(&mesh,&pin,&output,false);
-      mesh.dt=dt;  // Exact N12 policy while mapped NewTimeStep integration is pending.
-      Checks checks;
+      Require(mesh.dt==dt,"native timestep admission changed requested fixed dt");
+      Checks checks;checks.pack=mesh.pmb_pack;
+      if(const char *value=std::getenv("HYP_TEST_INACTIVE_VALUE"))
+        checks.inactive_value=std::stod(value);
       auto before=mesh.pmb_pack->tl_map.at("before_stagen");
       auto after=mesh.pmb_pack->tl_map.at("after_stagen");
       auto begin_dep=AllTasks(before),end_dep=AllTasks(after);
@@ -242,13 +354,22 @@ int main(int argc,char **argv) {
       Require(checks.before==4 && checks.after==4,"native Driver stage coverage incomplete");
       Require(checks.max_rhs>0,"smoke run executed an empty bulk RHS");
       DumpAcceptedState(p,*mesh.pmb_pack);
+      if(p.activity.Masked()) {
+        auto sums=p.DiagnosticHistorySums();
+        MPI_Allreduce(MPI_IN_PLACE,sums.data(),sums.size(),MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
+        if(!global_variable::my_rank) {
+          std::ofstream out("accepted-diagnostics.bin",std::ios::binary);
+          out.write(reinterpret_cast<const char *>(sums.data()),sizeof(Real)*sums.size());
+        }
+      }
       std::uint64_t totals[7]={std::uint64_t(p.npoints),std::uint64_t(p.nsurface_points),
           checks.bulk_values,checks.surface_values,checks.ghost_values,
           std::uint64_t(p.nfaces==0),std::uint64_t(p.nblocks)};
       Real maxima[3]={checks.max_cfl,checks.max_rhs,checks.max_update_error};
       MPI_Allreduce(MPI_IN_PLACE,totals,7,MPI_UINT64_T,MPI_SUM,MPI_COMM_WORLD);
       MPI_Allreduce(MPI_IN_PLACE,maxima,3,MPI_DOUBLE,MPI_MAX,MPI_COMM_WORLD);
-      Require(totals[0]==229392 && totals[1]==864 && totals[6]==106,
+      Require(p.activity.Masked() || p.agreement.full_overlap ||
+              (totals[0]==229392 && totals[1]==864 && totals[6]==106),
               "full N12 owned workload changed");
       if (global_variable::my_rank==0)std::cout<<std::setprecision(17)
           <<"PASS native Driver stage smoke: ranks="<<global_variable::nranks

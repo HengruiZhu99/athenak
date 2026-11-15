@@ -15,6 +15,7 @@ import subprocess
 parser = argparse.ArgumentParser()
 parser.add_argument('--build', type=pathlib.Path, required=True)
 parser.add_argument('--output', type=pathlib.Path, required=True)
+parser.add_argument('--masked', action='store_true')
 parser.add_argument('--ranks', type=int, default=2)
 args = parser.parse_args()
 root = pathlib.Path(__file__).resolve().parents[2]
@@ -55,6 +56,7 @@ with (output/'build.log').open('w') as log:
     subprocess.run(['make', '-j64', '-f', str(makefile)], cwd=build/'src', stdout=log,
                    stderr=subprocess.STDOUT, check=True)
 command = ['mpiexec', '-n', str(args.ranks), str(exe), str(fixture)]
+if args.masked: command.append('--masked')
 with (output/'run.log').open('w') as log:
     result = subprocess.run(command, cwd=output, stdout=log, stderr=subprocess.STDOUT)
 report = {'command': command, 'exit_code': result.returncode,

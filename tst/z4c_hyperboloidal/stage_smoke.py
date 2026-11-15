@@ -2,7 +2,7 @@
 """Run one instrumented cycle through native Driver and its real task lists.
 
 Link the candidate's AthenaK objects, replacing only main with the test harness.
-The production dynamic gate stays in place. This is no legacy numerical oracle.
+The native timestep admission stays in place. This is no legacy numerical oracle.
 """
 import argparse
 import hashlib
@@ -16,6 +16,7 @@ import struct
 parser = argparse.ArgumentParser()
 parser.add_argument('--build', type=pathlib.Path, required=True)
 parser.add_argument('--output', type=pathlib.Path, required=True)
+parser.add_argument('--input', type=pathlib.Path)
 parser.add_argument('--ranks', type=int, default=2)
 args = parser.parse_args()
 root = pathlib.Path(__file__).resolve().parents[2]
@@ -55,13 +56,14 @@ with (output/'build.log').open('w') as log:
     subprocess.run(['make', '-j64', '-f', str(makefile)], cwd=build/'src', stdout=log,
                    stderr=subprocess.STDOUT, check=True)
 command = ['mpiexec', '-n', str(args.ranks), str(exe),
-           str(root/'tst/z4c_hyperboloidal/n12_initialize.athinput')]
+           str(args.input.resolve() if args.input else root/'tst/z4c_hyperboloidal/n12_initialize.athinput')]
 with (output/'run.log').open('w') as log:
     result = subprocess.run(command, cwd=output, stdout=log, stderr=subprocess.STDOUT)
 report = {'command': command, 'exit_code': result.returncode,
           'scope': 'one native Driver RK4 cycle, local CPU MPI ranks',
-          'legacy_comparison': False, 'production_dynamic_enabled': False,
-          'timestep_integration_verified': False,
+          'legacy_comparison': False, 'driver_dynamic_run': True,
+          'timestep_integration_verified': result.returncode == 0,
+          'input_sha256': sha256(pathlib.Path(command[-1])),
           'provenance': {
               'executable_sha256': sha256(exe),
               'harness_object_sha256': sha256(obj),
@@ -89,6 +91,7 @@ if result.returncode == 0:
                 records.append((struct.unpack_from(key_format, raw, offset),
                                 raw[offset:offset+record_size]))
         records.sort(key=lambda item: item[0])
+        if args.input: expected=len(records)
         assert len(records) == expected
         assert len({item[0] for item in records}) == expected
         digest = hashlib.sha256()

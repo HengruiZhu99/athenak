@@ -1,0 +1,35 @@
+#!/bin/bash -l
+#PBS -A CompactBinaryMerger
+#PBS -N hybrid-science
+#PBS -q debug
+#PBS -l select=2
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -j oe
+set -euo pipefail
+ulimit -c 0
+root=/lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111
+[[ ${HYBRID_N:-} == 12 || ${HYBRID_N:-} == 16 ]]
+[[ ${HYBRID_MODE:-} == legacy || ${HYBRID_MODE:-} == masked || ${HYBRID_MODE:-} == agreement ]]
+case_name=N${HYBRID_N}-${HYBRID_MODE}
+run=$root/science/$case_name/segment-${PBS_JOBID%%.*}
+[[ ! -e "$run" && -r ${PBS_NODEFILE:-} ]]
+[[ $(sort -u "$PBS_NODEFILE" | wc -l) == 2 ]]
+module load oneapi/release/2025.3.1
+mkdir -p "$run/cache/neo" "$run/cache/sycl"
+cp "$PBS_NODEFILE" "$run/nodes.txt"
+cp "$root/science-inputs/$case_name.athinput" "$run/input.athinput"
+cp "$root/hybrid-science-two.pbs" "$root/hybrid_rank_environment.py" "$run/"
+module list > "$run/modules.txt" 2>&1
+export OMP_NUM_THREADS=1 ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export ZE_ENABLE_PCI_ID_DEVICE_ORDER=1 ONEAPI_DEVICE_SELECTOR=level_zero:gpu MPIR_CVAR_ENABLE_GPU=1
+source "$root/candidate-source-v1/tst/z4c_hyperboloidal/aurora/mpi-gpu-cache.sh"
+export NEO_CACHE_DIR="$run/cache/neo" SYCL_CACHE_DIR="$run/cache/sycl"
+unset ZE_AFFINITY_MASK NATIVE_TIMING_WARMUP NATIVE_TIMING_STEPS NATIVE_TIMING_WINDOWS
+binding='1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100'
+wrapper=$(command -v gpu_tile_compact.sh)
+mpiexec -n 24 -ppn 12 --cpu-bind=list:"$binding" "$wrapper" /usr/bin/python3.11 \
+ "$root/hybrid_rank_environment.py" > "$run/rank-environment.txt"
+restart_args=()
+if [[ -n ${HYBRID_RESTART:-} ]]; then restart_args=(--restart "$HYBRID_RESTART"); fi
+/usr/bin/python3.11 "$root/hybrid_science_segment_v4.py" --root "$root" --run "$run" --wrapper "$wrapper" --binding "$binding" --n "$HYBRID_N" --mode "$HYBRID_MODE" "${restart_args[@]}"

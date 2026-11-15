@@ -7,12 +7,14 @@ import math
 import pathlib
 import re
 import shlex
+import shutil
 import subprocess
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--build', type=pathlib.Path, required=True)
 parser.add_argument('--output', type=pathlib.Path, required=True)
 parser.add_argument('--ranks', type=int, nargs='+', default=[2, 8])
+parser.add_argument('--compile-only', action='store_true')
 parser.add_argument('--modes', choices=['synthetic', 'real'], nargs='+', default=['synthetic', 'real'])
 args = parser.parse_args()
 root = pathlib.Path(__file__).resolve().parents[2]
@@ -22,9 +24,9 @@ output.mkdir(parents=True, exist_ok=True)
 def sha256(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
-sources = [root/name for name in subprocess.check_output(
-    ['rg', '--files', 'src'], cwd=root, text=True).splitlines()
-    if name.endswith(('.cpp', '.hpp', 'CMakeLists.txt'))]
+source_names = subprocess.check_output(['rg', '--files', 'src'], cwd=root, text=True).splitlines() if shutil.which('rg') else [str(p.relative_to(root)) for p in (root/'src').rglob('*') if p.is_file()]
+sources = [root/name for name in source_names
+           if name.endswith(('.cpp', '.hpp', 'CMakeLists.txt'))]
 sources += [root/'CMakeLists.txt', pathlib.Path(__file__).resolve(),
             root/'tst/z4c_hyperboloidal/history_output.cpp',
             root/'tst/z4c_hyperboloidal/history_output_contract.md',
@@ -34,7 +36,10 @@ source_manifest = {str(p.relative_to(root)): sha256(p) for p in sorted(sources)}
 flags = (build/'src/CMakeFiles/athena.dir/flags.make').read_text()
 includes = shlex.split(re.search(r'^CXX_INCLUDES = (.*)$', flags, re.M).group(1))
 obj, exe = output/'history_output.o', output/'history_output'
-compile_command = ['/usr/bin/c++', '-std=c++17', '-O2', '-ffp-contract=off', *includes,
+compiler=shlex.split((build/'src/CMakeFiles/athena.dir/link.txt').read_text())[0]
+options=shlex.split(re.search(r'^CXX_FLAGS = (.*)$', flags, re.M).group(1))
+defines=shlex.split(re.search(r'^CXX_DEFINES = (.*)$', flags, re.M).group(1))
+compile_command = [compiler, *options, *defines, *includes,
                    '-c', str(root/'tst/z4c_hyperboloidal/history_output.cpp'), '-o', str(obj)]
 link = shlex.split((build/'src/CMakeFiles/athena.dir/link.txt').read_text())
 link = [str(obj) if p == 'CMakeFiles/athena.dir/main.cpp.o' else p for p in link]
@@ -48,6 +53,10 @@ makefile.write_text('all:\n\t'+shlex.join(compile_command)+'\n\t'+shlex.join(lin
 with (output/'build.log').open('w') as log:
     subprocess.run(['make', '-j64', '-f', str(makefile)], cwd=build/'src', stdout=log,
                    stderr=subprocess.STDOUT, check=True)
+
+if args.compile_only:
+    print(exe)
+    raise SystemExit(0)
 
 LABELS = ['Volume', 'H-rms', 'M-rms', 'Theta-rms', 'Z-rms',
           'eVolume', 'eH-rms', 'eM-rms', 'eTheta-rms', 'eZ-rms']

@@ -11,6 +11,8 @@
 #include <memory>
 
 #include "athena.hpp"
+#include "z4c_hyperboloidal/activity_policy.hpp"
+#include "z4c_hyperboloidal/overlap_agreement.hpp"
 #include "parameter_input.hpp"
 #include "tasklist/task_list.hpp"
 #include "z4c_hyperboloidal/fields.hpp"
@@ -67,6 +69,10 @@ class Z4cHyperboloidal {
   int n[3], storage[3], origin, overlap, nghost;
   int nblocks, nfaces, npoints, nsurface_points;
   Real ko, chi_floor, penalty, requested_dt, dtnew;
+  ActivityPolicy activity;
+  AgreementParameters agreement;
+  std::array<Real,12> AgreementHistorySums();
+  TaskStatus ApplyAgreement(Driver *,int);
   bool floor_inner_amr_chi=false;
   void RefineBinaryChi();
   HyperbolicShiftParameters<Real> parameters;
@@ -160,6 +166,8 @@ class Z4cHyperboloidal {
   std::array<Real,ScriHistory::count> scri_investigation_maxima_{},scri_investigation_last_{};
   int scri_investigation_written_cycle_=-1;
   std::unique_ptr<MappedHalo> mapped_halo_;
+  std::unique_ptr<OverlapAgreementPlan> agreement_plan_;
+  std::unique_ptr<OverlapAgreementPlan> agreement_diagnostics_;
   std::unique_ptr<SurfaceExchange> surface_exchange_;
   std::unique_ptr<DissipationPlan> dissipation_plan_;
   std::unique_ptr<RemeshState> remesh_;

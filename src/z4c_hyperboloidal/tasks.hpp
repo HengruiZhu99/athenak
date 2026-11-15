@@ -61,8 +61,10 @@ void QueueZ4cHyperboloidalStageTasks(Queue *queue, Module *module) {
   // All disjoint volume batches and the separately evolved surface must have
   // current-stage rates before advancing either state. Reproject after every
   // update, including stage four, so accepted state and diagnostics agree.
+  queue->QueueTask(&Module::ApplyAgreement, module, Hyp_Agreement, "Hyp_Agreement", Task_Run,
+                   {Hyp_SendBulk, Hyp_InteriorRHS, Hyp_OuterRHS, Hyp_SurfaceRHS});
   queue->QueueTask(&Module::ExpRKUpdate, module, Hyp_ExplRK, "Hyp_ExplRK", Task_Run,
-                   {Hyp_InteriorRHS, Hyp_OuterRHS, Hyp_SurfaceRHS});
+                   {Hyp_Agreement});
   queue->QueueTask(&Module::ProjectSurface, module, Hyp_Project, "Hyp_Project",
                    Task_Run, {Hyp_ExplRK});
 

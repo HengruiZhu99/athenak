@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "athena.hpp"
+#include "z4c_hyperboloidal/activity_policy.hpp"
 
 class ParameterInput;
 class MeshBlockPack;
@@ -20,7 +21,8 @@ class Z4c;
 
 // Shared minimum-chi criterion, including the Cartesian 25% hysteresis band.
 void RefineChiMinimum(MeshBlockPack *,const DvceArray5D<Real> &,int field,
-                      int index_offset,Real threshold);
+                      int index_offset,Real threshold,
+                      z4c_hyperboloidal::ActivityPolicy activity={});
 
 //! \class Z4c_AMR
 //  \brief managing AMR for Z4c simulations

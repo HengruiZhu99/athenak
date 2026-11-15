@@ -74,7 +74,7 @@ struct HorizonSampler::Impl {
     values.clear();statistics={};
     reference=std::make_unique<SphericalReference3D>(module->parameters);
     if (!selector || sequence!=next) {
-      selector=std::make_unique<NativeDonorSelector>(*pack->pmesh,module->origin);
+      selector=std::make_unique<NativeDonorSelector>(*pack->pmesh,module->origin,module->activity);
       rows.clear();
       const auto &mesh=*pack->pmesh;
       std::vector<int> order(mesh.nmb_total);std::iota(order.begin(),order.end(),0);

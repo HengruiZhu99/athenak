@@ -81,7 +81,7 @@ enum TimeEvolution {tstatic, kinematic, dynamic};
 enum PhysicsModule {HydroDynamics, MagnetoHydroDynamics,
                     SpaceTimeDynamics, UserDefined,
                     HyperboloidalSpaceTimeDynamics,
-                    HyperboloidalBoundaryDynamics, HyperboloidalScriInvestigation, HyperboloidalShellDiagnostics}; //SpaceTimeDynamics = Z4c
+                    HyperboloidalBoundaryDynamics, HyperboloidalScriInvestigation, HyperboloidalShellDiagnostics, HyperboloidalAgreement}; //SpaceTimeDynamics = Z4c
 
 // structs to store primitive/conserved variables in one-dimension
 // (density, velocity/momentum, internal/total energy, [transverse magnetic field])

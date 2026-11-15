@@ -12,6 +12,9 @@
 #include <vector>
 #include "globals.hpp"
 #include "mesh/mesh.hpp"
+#include "mesh/mesh_refinement.hpp"
+#include "mesh/chart_atlas.hpp"
+#include "z4c_hyperboloidal/overlap_agreement.hpp"
 #include "driver/driver.hpp"
 #include "outputs/outputs.hpp"
 #include "pgen/pgen.hpp"
@@ -112,6 +115,9 @@ template<class View>void CheckSentinel(const View &view,Real expected) {
 }
 void RealChecks(ParameterInput &pin,Mesh &mesh,HistoryOutput &history) {
   auto &p=*mesh.pmb_pack->pz4c_hyperboloidal;
+  // HistoryOutput adds its option defaults to output1; this harness owns the
+  // explicit HistoryOutput below and must not enroll an extra driver output.
+  pin.SetReal("output1","dt",0);
   Kokkos::Timer timer;Driver driver(&pin,&mesh,3600,&timer);Outputs output(&pin,&mesh);
   Require(output.pout_list.empty(),"history fixture unexpectedly enrolled ordinary outputs");
   driver.Initialize(&mesh,&pin,&output,false);
@@ -189,12 +195,97 @@ void RealChecks(ParameterInput &pin,Mesh &mesh,HistoryOutput &history) {
   // Pure clock/cycle changes are also cache keys, even with identical fields.
   mesh.time+=mesh.dt;++mesh.ncycle;check_refresh();
 }
+
+// Read a native checkpoint without taking a step. Fixed-band constraints and
+// the same overlap observable are dispatched through native HistoryOutput.
+// This also works for legacy checkpoints: the temporary activity policy below
+// belongs only to the diagnostic interpolation plan, never to restored fields.
+void Checkpoint(const char *path,Real cutoff,Real inner,Real outer) {
+  ParameterInput pin;IOWrapper file;file.Open(path,IOWrapper::FileMode::read);
+  pin.LoadFromFile(file);
+  const int version=pin.GetOrAddInteger("mesh","logical_location_version",1);
+  Mesh mesh(&pin);mesh.BuildTreeFromRestart(&pin,file,false,version);
+  mesh.AddCoordinatesAndPhysics(&pin);
+  if(mesh.multilevel)mesh.pmr=new MeshRefinement(&mesh,&pin);
+  mesh.pgen=std::make_unique<ProblemGenerator>(&pin,&mesh,file,false);file.Close();
+  auto &p=*mesh.pmb_pack->pz4c_hyperboloidal;
+  Kokkos::Timer timer;Driver driver(&pin,&mesh,3600,&timer);Outputs outputs(&pin,&mesh);
+  driver.Initialize(&mesh,&pin,&outputs,true);
+  const auto before=Accepted(p);const Real saved_time=mesh.time;const int cycle=mesh.ncycle;
+  auto &diagnostics=p.GetDiagnostics();diagnostics.Refresh();
+  const auto points=Kokkos::create_mirror_view_and_copy(HostMemSpace(),diagnostics.Points());
+  const auto weights=Kokkos::create_mirror_view_and_copy(HostMemSpace(),diagnostics.Weights());
+  const auto geometry=Kokkos::create_mirror_view_and_copy(HostMemSpace(),p.geometry);
+  constexpr Real edges[]={.18,.20,.25,.32,.40,.55,.80,.94,1.};
+  constexpr const char *names[]={"volume","H2","M2","Theta2","Z2"};
+  for(int band=0;band<8;++band) {
+    const auto name="checkpoint-band-"+std::to_string(band);
+    HistoryOutput history(&pin,&mesh,Parameters(name.c_str()));history.hist_data.clear();
+    history.hist_data.emplace_back(PhysicsModule::UserDefined);
+    auto &data=history.hist_data.back();data.nhist=5;
+    for(int f=0;f<5;++f){data.label[f]=names[f];data.hdata[f]=0;}
+    for(int q=0;q<p.npoints;++q) {
+      const auto &x=geometry(q).x;const Real r=std::sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);
+      // A tiny fixed tolerance assigns nodes on a band boundary consistently.
+      if(r<edges[band]-1e-12 || r>=edges[band+1]-1e-12)continue;
+      const auto a=points(q);const auto c=a.constraints;const Real w=weights(q);
+      const Real values[]={1,c.hamiltonian*c.hamiltonian,c.momentum_physical_norm2,
+                           a.theta*a.theta,c.z4.z_physical_norm2};
+      for(int f=0;f<5;++f)data.hdata[f]+=w*values[f];
+    }
+    history.WriteOutputFile(&mesh,&pin);
+  }
+  p.FormResidual();const auto activity=p.activity;const auto parameters=p.agreement;
+  p.activity.mode=h::OverlapMode::masked;p.activity.cartesian_cutoff=cutoff;
+  p.activity.shell_inner=mesh.atlas->SphericalInnerRadius();
+  p.agreement={0,inner,outer};h::OverlapAgreementPlan plan;
+  plan.Rebuild(mesh.pmb_pack,p);
+  p.activity=activity;p.agreement=parameters;
+  plan.StartReceives();plan.PackAndSend(p.residual);
+  while(plan.Receive()!=TaskStatus::complete){}plan.Evaluate();
+  const auto sums=plan.History();
+  while(plan.ClearSend()!=TaskStatus::complete){}
+  while(plan.ClearRecv()!=TaskStatus::complete){}
+  HistoryOutput overlap(&pin,&mesh,Parameters("checkpoint"));overlap.hist_data.clear();
+  overlap.hist_data.emplace_back(PhysicsModule::HyperboloidalAgreement);
+  auto &data=overlap.hist_data.back();data.nhist=8;
+  constexpr const char *group[]={"chi","metric","curvature","Lambda","gauge","DminusLam","zero-dEdt","sample-vol"};
+  for(int f=0;f<8;++f){data.label[f]=group[f];data.hdata[f]=sums[f];}
+  overlap.WriteOutputFile(&mesh,&pin);
+  if(!activity.Masked()) {
+    // Identical full-overlap observer for the unmasked candidate and archived
+    // legacy checkpoints. kappa=0: this plan never changes restored fields.
+    p.activity={};p.agreement={0,mesh.atlas->SphericalInnerRadius(),0,true,.015};
+    h::OverlapAgreementPlan full;full.Rebuild(mesh.pmb_pack,p);
+    p.activity=activity;p.agreement=parameters;
+    full.StartReceives();full.PackAndSend(p.residual);
+    while(full.Receive()!=TaskStatus::complete){}full.Evaluate();
+    const auto full_sums=full.History();
+    while(full.ClearSend()!=TaskStatus::complete){}
+    while(full.ClearRecv()!=TaskStatus::complete){}
+    HistoryOutput full_output(&pin,&mesh,Parameters("checkpoint-full"));
+    full_output.hist_data.clear();full_output.hist_data.emplace_back(PhysicsModule::HyperboloidalAgreement);
+    auto &fd=full_output.hist_data.back();fd.nhist=8;
+    for(int f=0;f<8;++f){fd.label[f]=group[f];fd.hdata[f]=full_sums[f];}
+    full_output.WriteOutputFile(&mesh,&pin);
+  }
+  const auto after=Accepted(p);
+  Require(before.size()==after.size()&&std::memcmp(before.data(),after.data(),before.size()*sizeof(Real))==0,
+          "checkpoint diagnostics modified accepted fields or chi records");
+  Require(mesh.time==saved_time&&mesh.ncycle==cycle,"checkpoint diagnostic advanced time");
+  std::cout<<"CHECKPOINT rank="<<global_variable::my_rank<<" cycle="<<cycle
+      <<" active="<<p.npoints<<'\n';
+  if(!global_variable::my_rank)std::cout<<"PASS checkpoint diagnostics; zero evolution steps; accepted fields/records bitwise preserved\n";
+}
 }  // namespace
 int main(int argc,char **argv) {
   MPI_Init(&argc,&argv);MPI_Comm_rank(MPI_COMM_WORLD,&global_variable::my_rank);
   MPI_Comm_size(MPI_COMM_WORLD,&global_variable::nranks);Kokkos::initialize(argc,argv);
   try {{
-    Require(argc==3,"usage: history_output fixture synthetic|real");
+    if(argc==6 && std::string(argv[2])=="checkpoint") {
+      Checkpoint(argv[1],std::stod(argv[3]),std::stod(argv[4]),std::stod(argv[5]));
+    } else {
+    Require(argc==3,"usage: history_output fixture synthetic|real OR restart checkpoint Rc inner outer");
     const std::string mode=argv[2];Require(mode=="synthetic"||mode=="real","unknown test mode");
     static_assert(PhysicsModule::HydroDynamics==0&&PhysicsModule::MagnetoHydroDynamics==1&&
         PhysicsModule::SpaceTimeDynamics==2&&PhysicsModule::UserDefined==3,
@@ -220,6 +311,7 @@ int main(int argc,char **argv) {
     else RealChecks(pin,mesh,history);
     if (!global_variable::my_rank)std::cout<<"PASS native history "<<mode
         <<" ranks="<<global_variable::nranks<<'\n';
+    }
   }} catch(const std::exception &error) {
     std::cerr<<"history output rank "<<global_variable::my_rank<<": "<<error.what()<<'\n';
     MPI_Abort(MPI_COMM_WORLD,1);return 1;

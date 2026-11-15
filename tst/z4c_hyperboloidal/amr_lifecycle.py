@@ -12,6 +12,7 @@ import subprocess
 parser = argparse.ArgumentParser()
 parser.add_argument('--build', type=pathlib.Path, required=True)
 parser.add_argument('--output', type=pathlib.Path, required=True)
+parser.add_argument('--input', type=pathlib.Path)
 parser.add_argument('--ranks', type=int, nargs='+', default=[2, 8])
 parser.add_argument('--build-only', action='store_true')
 parser.add_argument('--executable', type=pathlib.Path, help='reuse a manifest-verified test executable')
@@ -114,7 +115,7 @@ try:
         folder = output/f'ranks{ranks}'
         folder.mkdir(exist_ok=True)
         command = ['mpiexec', '-n', str(ranks), str(exe),
-                   str(root/'tst/z4c_hyperboloidal/n12_initialize.athinput')]
+                   str(args.input.resolve() if args.input else root/'tst/z4c_hyperboloidal/n12_initialize.athinput')]
         if args.diagnostics:
             command.append('--diagnostics')
         with (folder/'run.log').open('w') as log:

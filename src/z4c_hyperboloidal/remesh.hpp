@@ -24,6 +24,11 @@ struct RemeshLayout {
   std::vector<unsigned char> changed;
 };
 
+// Geometry-only ledger routing. A disappearing Cartesian active sliver uses
+// the nearest surviving Cartesian node when its coarsened family has none.
+bvals::DonorPoint BuildBulkHistoryTarget(const RemeshLayout &layout,int old_gid,
+    const std::vector<int> &family,int i,int j,int k,const ActivityPolicy &activity);
+
 std::vector<int> ReplacementFamily(const RemeshLayout &layout, int old_gid);
 
 // Geometry-only raw-field row; target indices are logical (without origin).

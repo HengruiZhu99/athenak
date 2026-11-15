@@ -64,6 +64,13 @@ void DissipationPlan::Rebuild(const MeshBlockPack &pack,
         const Real start=point.x[axis]-target*h;
         const Real limit=pack.pmesh->atlas->HalfWidth()+(module.overlap-.5)*h;
         if (start < -limit-1e-13 || start+4*h > limit+1e-13) continue;
+        bool active=true;
+        if (module.activity.Masked()) for (int a:{0,4}) {
+          Real x[3];for (int d=0;d<3;++d)
+            x[d]=point.x[d]+(d==axis?(a-target)*h:0);
+          active=active && module.activity.CartesianActive(x);
+        }
+        if (!active) continue;
         KOLine line{axis,target,0};
         for (int a=0;a<5;++a) {
           Real r2=0;
@@ -84,6 +91,12 @@ void DissipationPlan::Rebuild(const MeshBlockPack &pack,
       int index[3]={cell.i,cell.j,cell.k};
       index[axis]-=target;
       if (index[axis]<bounds.lo[axis] || index[axis]+4>bounds.hi[axis]) continue;
+      bool active=true;
+      for (int a=0;a<5;++a) {
+        int q[3]={index[0]-origin,index[1]-origin,index[2]-origin};q[axis]+=a;
+        active=active && module.activity.Evolved(map,n,q[0],q[1],q[2]);
+      }
+      if (!active) continue;
       bool nominal=true;
       for (int a=0;a<3;++a) nominal=nominal && index[a]>=origin && index[a]<origin+n;
       // The old scatter accumulated starts in nominal-first, then overlap

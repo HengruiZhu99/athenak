@@ -81,6 +81,8 @@ TaskStatus Z4cHyperboloidal::NewTimeStep(Driver *driver,int) {
   // This is an absolute time step, not a characteristic inverse speed to be
   // multiplied by cfl_number. The pinned device policy reports characteristic
   // CFL and retains the relaxation check; it has no additional .4 CFL rejection.
+  if (agreement_plan_ && requested_dt*agreement_plan_->RateBound()>2.5)
+    throw std::invalid_argument("Hyperboloidal fixed timestep exceeds agreement stability bound");
   dtnew=requested_dt;
   return TaskStatus::complete;
 }

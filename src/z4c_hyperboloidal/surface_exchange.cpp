@@ -139,7 +139,7 @@ void SurfaceExchange::Rebuild() {
   std::vector<Real> spacing(p.nfaces),gap(p.nfaces);
   int failed=0;std::string reason;
   try {
-    NativeDonorSelector selector(*pack_->pmesh,p.origin);
+    NativeDonorSelector selector(*pack_->pmesh,p.origin,p.activity);
   for (int f=0;f<Fields::count;++f) {
     fields_.index[f]=-1;
     if (Fields::Independent(f)) {fields_.index[f]=fields.size();fields.push_back(f);}

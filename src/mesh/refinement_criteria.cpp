@@ -222,6 +222,9 @@ void RefinementCriteria::CheckMinMax(MeshBlockPack* pmbp, RefCritData crit) {
   const int nkji = nx3*nx2*nx1;
   const int nji  = nx2*nx1;
   int nmb = pmbp->nmb_thispack;
+  const auto activity=crit.hyper_field>=0?pmbp->pz4c_hyperboloidal->activity
+      :z4c_hyperboloidal::ActivityPolicy{};
+  const auto maps=pmbp->pmb->mb_map.d_view;
 
   auto &valmax = crit.rvalue_max;
   auto &q0 = crit.rdata;
@@ -236,6 +239,7 @@ void RefinementCriteria::CheckMinMax(MeshBlockPack* pmbp, RefCritData crit) {
         int i = (idx - k*nji - j*nx1) + is;
         j += js;
         k += ks;
+        if (activity.Masked() && !activity.Evolved(maps(m),nx1,i-is,j-js,k-ks)) return;
         qmax = fmax(q0(m,k,j,i), qmax);
       },Kokkos::Max<Real>(team_qmax));
       // only derefine when flag has not been set by other criteria
@@ -257,6 +261,7 @@ void RefinementCriteria::CheckMinMax(MeshBlockPack* pmbp, RefCritData crit) {
         int i = (idx - k*nji - j*nx1) + is;
         j += js;
         k += ks;
+        if (activity.Masked() && !activity.Evolved(maps(m),nx1,i-is,j-js,k-ks)) return;
         qmin = fmin(q0(m,k,j,i), qmin);
       },Kokkos::Min<Real>(team_qmin));
       // only derefine when flag has not been set by other criteria
@@ -289,6 +294,9 @@ void RefinementCriteria::CheckSlope(MeshBlockPack* pmbp, RefCritData crit) {
   const int nkji = nx3*nx2*nx1;
   const int nji  = nx2*nx1;
   int nmb = pmbp->nmb_thispack;
+  const auto activity=crit.hyper_field>=0?pmbp->pz4c_hyperboloidal->activity
+      :z4c_hyperboloidal::ActivityPolicy{};
+  const auto maps=pmbp->pmb->mb_map.d_view;
   auto &multi_d = pmbp->pmesh->multi_d;
   auto &three_d = pmbp->pmesh->three_d;
   const int field=crit.hyper_field;
@@ -312,6 +320,7 @@ void RefinementCriteria::CheckSlope(MeshBlockPack* pmbp, RefCritData crit) {
         int i = (idx - k*nji - j*nx1) + is;
         j += js;
         k += ks;
+        if (activity.Masked() && !activity.Evolved(maps(m),nx1,i-is,j-js,k-ks)) return;
         // The outer radial endpoint lives in s0, not in a bulk ghost slot.
         const Real qp=(field>=0 && i==is+nx1-1 && outer_faces(m)>=0) ?
             surface(outer_faces(m),field,k-ks,j-js) : q0(m,k,j,i+1);
@@ -354,6 +363,9 @@ void RefinementCriteria::CheckSecondDeriv(MeshBlockPack* pmbp, RefCritData crit)
   const int nkji = nx3*nx2*nx1;
   const int nji  = nx2*nx1;
   int nmb = pmbp->nmb_thispack;
+  const auto activity=crit.hyper_field>=0?pmbp->pz4c_hyperboloidal->activity
+      :z4c_hyperboloidal::ActivityPolicy{};
+  const auto maps=pmbp->pmb->mb_map.d_view;
   auto &multi_d = pmbp->pmesh->multi_d;
   auto &three_d = pmbp->pmesh->three_d;
   const int field=crit.hyper_field;
@@ -377,6 +389,7 @@ void RefinementCriteria::CheckSecondDeriv(MeshBlockPack* pmbp, RefCritData crit)
         int i = (idx - k*nji - j*nx1) + is;
         j += js;
         k += ks;
+        if (activity.Masked() && !activity.Evolved(maps(m),nx1,i-is,j-js,k-ks)) return;
         const Real qp=(field>=0 && i==is+nx1-1 && outer_faces(m)>=0) ?
             surface(outer_faces(m),field,k-ks,j-js) : q0(m,k,j,i+1);
         Real d2q = qp - 2.0*q0(m,k,j,i) + q0(m,k,j,i-1);

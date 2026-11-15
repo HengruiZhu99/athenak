@@ -105,6 +105,7 @@ enum TaskName {
   Hyp_Normal,
   Hyp_SurfaceRHS,
   Hyp_OuterRHS,
+  Hyp_Agreement,
   Hyp_ExplRK,
   Hyp_Project,
   Hyp_ClearS,

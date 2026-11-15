@@ -155,7 +155,8 @@ void Z4c_AMR::RefineChiMin(MeshBlockPack *pmbp) {
 }
 
 void RefineChiMinimum(MeshBlockPack *pmbp,const DvceArray5D<Real> &u0,
-                      int I_Z4C_CHI,int offset,Real chi_thresh) {
+                      int I_Z4C_CHI,int offset,Real chi_thresh,
+                      z4c_hyperboloidal::ActivityPolicy activity) {
   Mesh *pmesh       = pmbp->pmesh;
   int nmb           = pmbp->nmb_thispack;
   int mbs           = pmesh->gids_eachrank[global_variable::my_rank];
@@ -166,6 +167,7 @@ void RefineChiMinimum(MeshBlockPack *pmbp,const DvceArray5D<Real> &u0,
   int ks = indcs.ks+offset, nx3 = indcs.nx3;
   const int nkji = nx3 * nx2 * nx1;
   const int nji  = nx2 * nx1;
+  const auto maps=pmbp->pmb->mb_map.d_view;
 
   par_for_outer(
     "Z4c_AMR::ChiMin", DevExeSpace(), 0, 0, 0, (nmb - 1),
@@ -179,7 +181,8 @@ void RefineChiMinimum(MeshBlockPack *pmbp,const DvceArray5D<Real> &u0,
           int i = (idx - k * nji - j * nx1) + is;
           j += js;
           k += ks;
-          dmin = fmin(u0(m, I_Z4C_CHI, k, j, i), dmin);
+          if (!activity.Masked() || activity.Evolved(maps(m),nx1,i-is,j-js,k-ks))
+            dmin = fmin(u0(m, I_Z4C_CHI, k, j, i), dmin);
         },
         Kokkos::Min<Real>(team_dmin));
 

@@ -54,6 +54,8 @@ HistoryOutput::HistoryOutput(ParameterInput *pin, Mesh *pm, OutputParameters op)
   }
   if (pm->pmb_pack->pz4c_hyperboloidal != nullptr && !op.user_hist_only) {
     hist_data.emplace_back(PhysicsModule::HyperboloidalSpaceTimeDynamics);
+    if (pm->pmb_pack->pz4c_hyperboloidal->activity.Masked())
+      hist_data.emplace_back(PhysicsModule::HyperboloidalAgreement);
     if (pin->GetOrAddBoolean(op.block_name,"hyperboloidal_scri",false)) {
       pm->pmb_pack->pz4c_hyperboloidal->EnableBoundaryHistory();
       hist_data.emplace_back(PhysicsModule::HyperboloidalBoundaryDynamics);
@@ -108,6 +110,13 @@ void HistoryOutput::LoadOutputData(Mesh *pm) {
       constexpr const char *labels[]={"Volume","H-rms","M-rms","Theta-rms","Z-rms",
         "dchi-rms","dalp-rms","dbetn-rms","dchi-mean","dalp-mean"};
       data.nhist=10;for(int n=0;n<10;++n){data.label[n]=labels[n];data.hdata[n]=values[n];}
+    } else if (data.physics == PhysicsModule::HyperboloidalAgreement) {
+      const auto values=pm->pmb_pack->pz4c_hyperboloidal->AgreementHistorySums();
+      constexpr const char *labels[]={"chi-disagreement","metric-disagreement","curvature-disagreement",
+        "Lambda-disagreement","gauge-disagreement","DminusLambda-disagreement","penalty-dEdt",
+        "sample-volume","evolved-points","fringe-points","receive-donors","send-donors"};
+      data.nhist=values.size();
+      for(int n=0;n<data.nhist;++n){data.label[n]=labels[n];data.hdata[n]=values[n];}
     } else if (data.physics == PhysicsModule::UserDefined) {
       (pm->pgen->user_hist_func)(&data, pm);
     }
@@ -494,6 +503,11 @@ void HistoryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
                 std::sqrt(data.hdata[5*region+field]/data.hdata[5*region]);
     }
 
+    if (data.physics==PhysicsModule::HyperboloidalAgreement && global_variable::my_rank==0) {
+      for(int f=0;f<6;++f)if(data.hdata[7]>0)
+        data.hdata[f]=std::sqrt(data.hdata[f]/data.hdata[7]);
+    }
+
     // only the master rank writes the file
     if (global_variable::my_rank == 0) {
       // create filename: "file_basename" + ".physics" + ".hst"
@@ -514,6 +528,9 @@ void HistoryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
           break;
         case PhysicsModule::HyperboloidalSpaceTimeDynamics:
           fname.append(".z4c_hyperboloidal");
+          break;
+        case PhysicsModule::HyperboloidalAgreement:
+          fname.append(".overlap");
           break;
         case PhysicsModule::HyperboloidalBoundaryDynamics:
           fname.append(".scri");

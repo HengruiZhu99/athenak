@@ -6,6 +6,7 @@
 //! \file z4c_hyperboloidal.cpp
 //! \brief Native block storage and reference initialization for hyperboloidal Z4c.
 
+#include <algorithm>
 #include <cmath>
 #include <limits>
 #include <stdexcept>
@@ -93,6 +94,42 @@ Z4cHyperboloidal::Z4cHyperboloidal(MeshBlockPack *ppack, ParameterInput *pin)
     parameters.scri_collar_begin=pin->GetOrAddReal("z4c_hyperboloidal","scri_collar_begin",.98);
     parameters.scri_collar_end=pin->GetOrAddReal("z4c_hyperboloidal","scri_collar_end",.995);
   }
+  const auto overlap_mode=pin->GetOrAddString("z4c_hyperboloidal","overlap_mode","legacy");
+  if (overlap_mode=="masked") activity.mode=OverlapMode::masked;
+  else if (overlap_mode=="agreement") activity.mode=OverlapMode::agreement;
+  else if (overlap_mode=="agreement_full") agreement.full_overlap=true;
+  else if (overlap_mode!="legacy")
+    throw std::invalid_argument("overlap_mode must be legacy, masked, agreement, or agreement_full");
+  if (agreement.full_overlap) {
+    // Deliberately retain the legacy activity, KO, halo and remesh policy.
+    agreement.inner=pm->atlas->SphericalInnerRadius();
+    agreement.kappa=pin->GetReal("z4c_hyperboloidal","agreement_kappa");
+    agreement.taper_width=pin->GetOrAddReal("z4c_hyperboloidal","agreement_taper_width",.015);
+    if (!(agreement.inner>0 && agreement.kappa>0 && std::isfinite(agreement.kappa)
+          && agreement.taper_width>0 && std::isfinite(agreement.taper_width)))
+      throw std::invalid_argument("full overlap requires spherical shells, positive kappa and taper width");
+  }
+  if (activity.Masked()) {
+    activity.shell_inner=pm->atlas->SphericalInnerRadius();
+    activity.cartesian_cutoff=pin->GetReal("z4c_hyperboloidal","cartesian_cutoff");
+    if (!(activity.shell_inner>0 && activity.cartesian_cutoff>activity.shell_inner)
+        || !std::isfinite(activity.cartesian_cutoff))
+      throw std::invalid_argument("masked overlap requires spherical shells and finite Rc > Rs > 0");
+  }
+  if (activity.Masked()) {
+    agreement.inner=pin->GetOrAddReal("z4c_hyperboloidal","agreement_inner",activity.shell_inner);
+    const Real default_outer=activity.shell_inner+.5*
+        (std::min(activity.cartesian_cutoff,pm->atlas->HalfWidth())-activity.shell_inner);
+    agreement.outer=pin->GetOrAddReal("z4c_hyperboloidal","agreement_outer",default_outer);
+    if (activity.mode==OverlapMode::agreement) {
+      agreement.kappa=pin->GetReal("z4c_hyperboloidal","agreement_kappa");
+      if (!(std::isfinite(agreement.kappa) && agreement.kappa>0))
+        throw std::invalid_argument("agreement requires finite kappa > 0");
+    }
+    if (!(agreement.inner>=activity.shell_inner && agreement.inner<agreement.outer &&
+          agreement.outer<=activity.cartesian_cutoff))
+      throw std::invalid_argument("agreement sampling requires Rs <= inner < outer <= Rc");
+  }
   parameters.Validate();
   BuildLocalWorkLists();
   AllocateStorage();
@@ -135,6 +172,8 @@ void Z4cHyperboloidal::ResetMeshStorage() {
   initialized_=false;
   plans_ready_=false;
   mapped_halo_.reset();
+  agreement_plan_.reset();
+  agreement_diagnostics_.reset();
   surface_exchange_.reset();
   dissipation_plan_.reset();
   for (auto &batch:rhs_points_) batch=DvceArray1D<int>();
@@ -169,7 +208,7 @@ void Z4cHyperboloidal::BuildStagePlans() {
   if (!initialized_) throw std::logic_error("Stage plans require initialized geometry");
   plans_ready_=false;
   mapped_halo_=std::make_unique<MappedHalo>();
-  mapped_halo_->Rebuild(pmy_pack,origin);
+  mapped_halo_->Rebuild(pmy_pack,origin,activity);
   surface_exchange_=std::make_unique<SurfaceExchange>(pmy_pack,this);
   dissipation_plan_=std::make_unique<DissipationPlan>();
   dissipation_plan_->Rebuild(*pmy_pack,*this);
@@ -207,6 +246,10 @@ void Z4cHyperboloidal::BuildStagePlans() {
   Kokkos::realloc(rhs_status,npoints);
   Kokkos::realloc(rhs_gap,npoints);
   Kokkos::realloc(rhs_cfl,npoints);
+  if (activity.mode==OverlapMode::agreement || agreement.full_overlap) {
+    agreement_plan_=std::make_unique<OverlapAgreementPlan>();
+    agreement_plan_->Rebuild(pmy_pack,*this);
+  }
   plans_ready_=true;
 }
 
@@ -230,7 +273,9 @@ void Z4cHyperboloidal::BuildLocalWorkLists() {
     }
     for (int k=bounds.lo[2];k<=bounds.hi[2];++k)
       for (int j=bounds.lo[1];j<=bounds.hi[1];++j)
-        for (int i=bounds.lo[0];i<=bounds.hi[0];++i) cells.push_back({m,k,j,i});
+        for (int i=bounds.lo[0];i<=bounds.hi[0];++i)
+          if (activity.Evolved(map,n[0],i-origin,j-origin,k-origin))
+            cells.push_back({m,k,j,i});
   }
   npoints=cells.size(); nfaces=faces.size(); nsurface_points=nfaces*n[1]*n[2];
   Kokkos::realloc(points,npoints);

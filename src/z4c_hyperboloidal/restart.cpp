@@ -145,6 +145,18 @@ std::string Identity(const Z4cHyperboloidal &p) {
     << ";overlap=" << p.overlap << ";nghost=" << p.nghost << std::hexfloat;
 #define HYP_ID(value) s << ";" #value "=" << value
   HYP_ID(p.ko); HYP_ID(p.chi_floor); HYP_ID(p.penalty); HYP_ID(p.requested_dt);
+  if(p.activity.Masked()) {
+    s << ";activity-policy=spherical-cut-v1;overlap-mode=" << static_cast<int>(p.activity.mode);
+    HYP_ID(p.activity.shell_inner);HYP_ID(p.activity.cartesian_cutoff);
+    if (p.activity.mode==OverlapMode::agreement) {
+      s << ";agreement=union-nodes-residual-DminusLambda-v1;H=coordinate-volume";
+      HYP_ID(p.agreement.kappa);HYP_ID(p.agreement.inner);HYP_ID(p.agreement.outer);
+    }
+  }
+  if(p.agreement.full_overlap) {
+    s << ";agreement=full-unmasked-union-evolved-cube-taper-rowmass-v1;H=coordinate-volume";
+    HYP_ID(p.agreement.kappa);HYP_ID(p.agreement.inner);HYP_ID(p.agreement.taper_width);
+  }
   if(p.floor_inner_amr_chi)s << ";floor-inner-amr-chi=v1";
   const auto &g=p.parameters;
   HYP_ID(g.profile.flat); HYP_ID(g.profile.flat_radius); HYP_ID(g.profile.outer_radius);

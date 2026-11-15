@@ -110,6 +110,12 @@ std::vector<WeightedDonor> FamilyInterpolate(const RemeshLayout &layout,
   for(int kk=0;kk<6;++kk)for(int jj=0;jj<6;++jj)for(int ii=0;ii<6;++ii)
     row.push_back({{selected,layout.origin+first[2]+kk,layout.origin+first[1]+jj,
                   layout.origin+first[0]+ii},weights[0][ii]*weights[1][jj]*weights[2][kk]});
+  for (const auto &donor:row) if (donor.weight!=0 && !selector.IsEvolved(donor.point)) {
+    if (used_global) *used_global=true;
+    return selector.Interpolate(x,6);
+  }
+  if (selector.Activity().Masked())
+    row.erase(std::remove_if(row.begin(),row.end(),[](const auto &d) {return d.weight==0;}),row.end());
   return row;
 }
 
@@ -117,7 +123,8 @@ std::vector<WeightedDonor> FamilyInterpolate(const RemeshLayout &layout,
 // sample in its replacement family, clamping overlap which no longer exists.
 // Distances use the old leaf's chart-coordinate spans; ties use newGID/k/j/i.
 bvals::DonorPoint HistoryTarget(const RemeshLayout &layout,int old_gid,
-    const std::vector<int> &family,int i,int j,int k) {
+    const std::vector<int> &family,int i,int j,int k,const ActivityPolicy &activity,
+    bool allow_global=true) {
   const auto &old=layout.old_maps[old_gid];const int source[3]={i,j,k};
   Real chart[3];
   for(int a=0;a<3;++a)chart[a]=old.lo[a]+(source[a]+old.node_offset[a])
@@ -134,15 +141,49 @@ bvals::DonorPoint HistoryTarget(const RemeshLayout &layout,int old_gid,
           *(map.hi[a]-map.lo[a]);
       const Real d=(at-chart[a])/(old.hi[a]-old.lo[a]);distance+=d*d;
     }
+    if (!activity.Evolved(map,layout.cells,q[0],q[1],q[2])) {
+      // A curved cut can remove the rounded nearest logical point. Search only
+      // this replacement family for the nearest surviving history recipient.
+      distance=std::numeric_limits<Real>::max();
+      for (int kk=Lower(map,2);kk<Upper(map,2,layout.cells);++kk)
+        for (int jj=Lower(map,1);jj<Upper(map,1,layout.cells);++jj)
+          for (int ii=Lower(map,0);ii<Upper(map,0,layout.cells);++ii) {
+            if (!activity.Evolved(map,layout.cells,ii,jj,kk)) continue;
+            const int index[3]={ii,jj,kk};Real d2=0;
+            for (int a=0;a<3;++a) {
+              const Real at=map.lo[a]+(index[a]+map.node_offset[a])/layout.cells
+                  *(map.hi[a]-map.lo[a]);
+              const Real d=(at-chart[a])/(old.hi[a]-old.lo[a]);d2+=d*d;
+            }
+            if (d2<distance) {distance=d2;for(int a=0;a<3;++a)q[a]=index[a];}
+          }
+      if (distance==std::numeric_limits<Real>::max()) continue;
+    }
     const bvals::DonorPoint candidate{gid,q[2],q[1],q[0]};
     if(best.gid<0||distance<best_distance||(distance==best_distance&&candidate<best)) {
       best=candidate;best_distance=distance;
     }
   }
-  if(best.gid<0)throw std::runtime_error("old history has no replacement family");
+  if(best.gid<0 && activity.Masked() && old.face<0 && allow_global) {
+    // Coarsening can erase the last cell center in a tiny active sliver. The
+    // ledger still belongs to the evolved Cartesian solution: route it once
+    // to the nearest surviving Cartesian sample through the same sparse
+    // remesh history gather. Geometry metadata are already global; no field
+    // replication, new communication phase, or dropped history is needed.
+    std::vector<int> surviving;
+    for(int gid=0;gid<int(layout.new_maps.size());++gid)
+      if(layout.new_maps[gid].face<0)surviving.push_back(gid);
+    return HistoryTarget(layout,old_gid,surviving,i,j,k,activity,false);
+  }
+  if(best.gid<0)throw std::runtime_error("old history has no evolved Cartesian replacement");
   return best;
 }
 }  // namespace
+
+bvals::DonorPoint BuildBulkHistoryTarget(const RemeshLayout &layout,int old_gid,
+    const std::vector<int> &family,int i,int j,int k,const ActivityPolicy &activity) {
+  return HistoryTarget(layout,old_gid,family,i,j,k,activity);
+}
 
 std::vector<WeightedDonor> BuildBulkTransferRow(const RemeshLayout &layout,
     const NativeDonorSelector &selector,const std::vector<int> &old_family,
@@ -207,11 +248,21 @@ void RemeshState::Prepare(MeshBlockPack &pack,const Z4cHyperboloidal &p,
     layout.changed[gid]=!SameLocation(mesh.lloc_eachmb[layout.new_to_old[gid]],
                                      refinement.new_lloc_eachmb[gid]);
   }
-  NativeDonorSelector selector(mesh,p.origin);
+  NativeDonorSelector selector(mesh,p.origin,p.activity);
   std::vector<int> offsets(new_total+1);
   for(int gid=0;gid<new_total;++gid)offsets[gid+1]=offsets[gid]+PointCount(layout.new_maps[gid],n);
   const int local_offset=offsets[layout.new_first];
-  const int local_points=offsets[layout.new_first+layout.new_count]-local_offset;
+  const int rectangular_points=offsets[layout.new_first+layout.new_count]-local_offset;
+  std::vector<int> active_index(rectangular_points,-1);
+  int local_points=0;
+  for (int gid=layout.new_first;gid<layout.new_first+layout.new_count;++gid) {
+    const auto &map=layout.new_maps[gid];
+    for (int k=Lower(map,2);k<Upper(map,2,n);++k)
+      for (int j=Lower(map,1);j<Upper(map,1,n);++j)
+        for (int i=Lower(map,0);i<Upper(map,0,n);++i)
+          if (p.activity.Evolved(map,n,i,j,k))
+            active_index[offsets[gid]-local_offset+PointOffset(map,n,i,j,k)]=local_points++;
+  }
   std::vector<Impl::Row> rows;
   std::vector<Impl::Entry> entries;
   std::vector<bvals::DonorPoint> requests;
@@ -240,6 +291,7 @@ void RemeshState::Prepare(MeshBlockPack &pack,const Z4cHyperboloidal &p,
       for(int k=Lower(map,2);k<Upper(map,2,n);++k)
         for(int j=Lower(map,1);j<Upper(map,1,n);++j)
           for(int i=Lower(map,0);i<Upper(map,0,n);++i) {
+            if (!p.activity.Evolved(map,n,i,j,k)) continue;
             const int point=s.targets.size();s.targets.push_back({gid-layout.new_first,
                 k+p.origin,j+p.origin,i+p.origin});
             const bool core=layout.changed[gid]&&map.face<0
@@ -276,12 +328,15 @@ void RemeshState::Prepare(MeshBlockPack &pack,const Z4cHyperboloidal &p,
       for(int k=Lower(map,2);k<Upper(map,2,n);++k)
         for(int j=Lower(map,1);j<Upper(map,1,n);++j)
           for(int i=Lower(map,0);i<Upper(map,0,n);++i) {
-            const auto target=layout.changed[family.front()]?HistoryTarget(layout,old,family,i,j,k)
+            if (!p.activity.Evolved(map,n,i,j,k)) continue;
+            const auto target=layout.changed[family.front()]?BuildBulkHistoryTarget(layout,old,family,i,j,k,p.activity)
                 :bvals::DonorPoint{family.front(),k,j,i};
             if(layout.new_owner[target.gid]!=global_variable::my_rank)continue;
             const int point=offsets[target.gid]-local_offset
                 +PointOffset(layout.new_maps[target.gid],n,target.i,target.j,target.k);
-            histories.at(point).push_back({old,k+p.origin,j+p.origin,i+p.origin});
+            const int active=active_index.at(point);
+            if (active<0) throw std::logic_error("inactive remesh history recipient");
+            histories.at(active).push_back({old,k+p.origin,j+p.origin,i+p.origin});
           }
     }
   } catch(const std::exception &e) {error=e.what();}

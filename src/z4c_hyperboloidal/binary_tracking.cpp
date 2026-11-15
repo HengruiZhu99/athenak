@@ -18,7 +18,7 @@ void Z4cHyperboloidal::RefineBinaryChi() {
   // Match ordinary isotropic Cartesian chi: x=scale*X and bar chi=scale^2*chi/Omega^2.
   const Real omega=parameters.profile.plateau;
   z4c::RefineChiMinimum(pmy_pack,u0,Fields::chi,overlap,
-                       threshold*parameters.inner_gamma/(omega*omega));
+                       threshold*parameters.inner_gamma/(omega*omega),activity);
   auto &mesh=*pmy_pack->pmesh;auto &flags=mesh.pmr->refine_flag;
   const Real radius=parameters.residual_weight.inner;
   for(int m=0;m<nblocks;++m) {
@@ -48,7 +48,7 @@ void Z4cHyperboloidal::InitializeBinaryTracking() {
     }
     auto tracker=std::make_unique<CompactObjectTracker>(pmy_pack->pmesh,pinput_,h,"z4c_hyperboloidal");
     tracker->SetVelocitySampler([this](const Real *x,Real *v) {
-      NativeDonorSelector selector(*pmy_pack->pmesh,origin);
+      NativeDonorSelector selector(*pmy_pack->pmesh,origin,activity);
       const int gid=selector.Owner(x);
       int valid=gid>=0;
       std::vector<WeightedDonor> row;

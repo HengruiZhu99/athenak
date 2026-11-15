@@ -39,14 +39,22 @@ void Z4cHyperboloidal::InitializeBinary(ParameterInput *pin) {
       if(face_blocks.h_view(surface_points.h_view(p).face)==m)edge.push_back(p);
     const int gid=pmy_pack->pmb->mb_gid.h_view(m);
     const auto path=dir/("block-"+std::to_string(gid)+(prepare?".points":".hbi"));
-    std::ofstream out;std::ifstream in;
+    std::ofstream out;std::ifstream in;bool rectangular_input=false;
+    const auto map=pmy_pack->pmb->mb_map.h_view(m);
+    std::size_t rectangular_count=1;
+    for(int a=0;a<3;++a)rectangular_count*=n[a]+map.overlap_sides[2*a]+map.overlap_sides[2*a+1];
     if(prepare) {
       if(std::filesystem::exists(path))throw std::runtime_error("Refusing to overwrite binary sample points");
       out.open(path);out<<std::setprecision(17)<<"HYPERBOL_POINTS_V1 "<<gid<<' '<<bulk.size()<<' '<<edge.size()<<'\n';
     } else {
       in.open(path);std::string magic,bound;int id=-1;std::size_t nb=0,ns=0;
       in>>magic>>bound>>id>>nb>>ns;
-      if(!in || magic!="HYPERBOL_BINARY_V1" || bound!=identity || id!=gid || nb!=bulk.size() || ns!=edge.size())
+      // A fresh masked run may select its evolved subset from the existing
+      // full initial-data export. Check every supplied coordinate and field;
+      // this is initial-data selection, never a checkpoint policy migration.
+      rectangular_input=activity.Masked() && nb==rectangular_count;
+      if(!in || magic!="HYPERBOL_BINARY_V1" || bound!=identity || id!=gid ||
+          (nb!=bulk.size() && !rectangular_input) || ns!=edge.size())
         throw std::runtime_error("Binary block header/identity/mesh mismatch: "+path.string());
     }
     auto row=[&](const Real *x,auto get,auto set) {
@@ -77,7 +85,18 @@ void Z4cHyperboloidal::InitializeBinary(ParameterInput *pin) {
         for(int f=0;f<nvar;++f)set(f,original[f].f);
       }
     };
-    for(int p:bulk){auto c=points.h_view(p);row(g(p).x,
+    if(rectangular_input) {
+      for(int k=-map.overlap_sides[4];k<n[2]+map.overlap_sides[5];++k)
+        for(int j=-map.overlap_sides[2];j<n[1]+map.overlap_sides[3];++j)
+          for(int i=-map.overlap_sides[0];i<n[0]+map.overlap_sides[1];++i) {
+            const Real q[3]={(i+map.node_offset[0])/n[0],(j+map.node_offset[1])/n[1],
+                             (k+map.node_offset[2])/n[2]};Real x[3];map.Forward(q,x);
+            const bool evolved=activity.Evolved(map,n[0],i,j,k);
+            row(x,[](int){return Real(0);},[&](int f,Real v){
+              if(evolved)u(m,f,k+origin,j+origin,i+origin)=v;
+            });
+          }
+    } else for(int p:bulk){auto c=points.h_view(p);row(g(p).x,
       [&](int f){return u(c.m,f,c.k,c.j,c.i);},[&](int f,Real v){u(c.m,f,c.k,c.j,c.i)=v;});}
     for(int p:edge){auto c=surface_points.h_view(p);row(sg(p).x,
       [&](int f){return s(c.face,f,c.k,c.j);},[&](int f,Real v){s(c.face,f,c.k,c.j)=v;});}

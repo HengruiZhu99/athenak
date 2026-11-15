@@ -63,6 +63,7 @@ struct DelayedModule {
   bool allow_bulk=false, allow_surface=false, allow_send_clear=false;
   bool bulk_received=false, surface_received=false, local_filled=false;
   bool remote_filled=false, normal_ready=false, surface_rhs_ready=false;
+  bool allow_agreement=false, agreement_applied=false;
   bool updated=false, projected=false, sends_cleared=false, recvs_cleared=false;
   int stage_tag=0, copy_calls=0, base_copies=0, update_calls=0, projection_calls=0;
   int bulk_polls=0, surface_polls=0, send_polls=0;
@@ -81,6 +82,7 @@ struct DelayedModule {
     normal_ready=surface_rhs_ready=updated=projected=false;
     sends_cleared=recvs_cleared=false;
     allow_bulk=allow_surface=allow_send_clear=false;
+    allow_agreement=agreement_applied=false;
     rhs_calls.fill(0);
     dependent_calls=0;
     const Real poison=std::numeric_limits<Real>::quiet_NaN();
@@ -164,7 +166,14 @@ struct DelayedModule {
     rhs[index]=empty[index] ? 0 : value;
     return TaskStatus::complete;
   }
+  TaskStatus ApplyAgreement(Driver *, int) {
+    Require(surface_rhs_ready && dependent_calls>0 && bulk_sent,
+            "agreement correction precedes ordinary RHS or stage pack");
+    if (!allow_agreement) return TaskStatus::incomplete;
+    agreement_applied=true;return TaskStatus::complete;
+  }
   TaskStatus ExpRKUpdate(Driver *, int stage) {
+    Require(agreement_applied,"update raced agreement receive/correction");
     Require(surface_rhs_ready,"update lacks the surface RHS");
     Require(dependent_calls==1,"update lacks the joined volume RHS");
     for (int p=0;p<4;++p) {
@@ -197,7 +206,7 @@ void CheckGraph(int first_available, unsigned int empty_mask) {
   NativeLists queue;
   hyp::QueueZ4cHyperboloidalStageTasks(&queue,&module);
   Require(queue.lists[nr::Task_Start].Size()==1,"wrong stage-start task count");
-  Require(queue.lists[nr::Task_Run].Size()==14,"wrong stage task count");
+  Require(queue.lists[nr::Task_Run].Size()==15,"wrong stage task count");
   Require(queue.lists[nr::Task_End].Size()==2,"wrong stage-end task count");
   for (int stage=1;stage<=4;++stage) {
     module.BeginStage();queue.Reset();
@@ -230,6 +239,9 @@ void CheckGraph(int first_available, unsigned int empty_mask) {
       }
     }
     module.allow_bulk=module.allow_surface=true;
+    Require(queue.Poll(nr::Task_Run,stage)==TaskListStatus::running && !module.updated,
+            "RK update ran before delayed agreement communication");
+    module.allow_agreement=true;
     Require(queue.Poll(nr::Task_Run,stage)==TaskListStatus::complete,
             "completed receives did not release full stage");
     Require(module.updated && module.projected,"stage finished before projection");

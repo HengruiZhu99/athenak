@@ -36,20 +36,6 @@ using CellKey = std::array<int, 4>;  // m,k,j,i
 CellKey Key(HaloPoint c) {return {c.m,c.k,c.j,c.i};}
 HaloPoint Point(const CellKey &c) {return {c[0],c[1],c[2],c[3]};}
 
-// The bulk PDE uses radius-two centered mixed differences and radius-four
-// one-direction KO differences. Padding beyond this union is intentionally not
-// made valid: it cannot accidentally hide a later missing dependency.
-std::vector<std::array<int, 3>> StencilOffsets() {
-  std::set<std::array<int, 3>> offsets;
-  for (int a=0; a<3; ++a) for (int d=-4; d<=4; ++d) {
-    std::array<int,3> q{};q[a]=d;offsets.insert(q);
-  }
-  for (int a=0; a<3; ++a) for (int b=a+1; b<3; ++b)
-    for (int da=-2; da<=2; ++da) for (int db=-2; db<=2; ++db) {
-      std::array<int,3> q{};q[a]=da;q[b]=db;offsets.insert(q);
-    }
-  return {offsets.begin(),offsets.end()};
-}
 template<class T>
 void CopyDevice(const std::vector<T> &host, DvceArray1D<T> &device,
                 const char *label) {
@@ -60,8 +46,8 @@ void CopyDevice(const std::vector<T> &host, DvceArray1D<T> &device,
 }
 }  // namespace
 
-NativeDonorSelector::NativeDonorSelector(const Mesh &mesh, int origin)
-    : n_(mesh.mb_indcs.nx1), origin_(origin) {
+NativeDonorSelector::NativeDonorSelector(const Mesh &mesh, int origin, ActivityPolicy activity)
+    : activity_(activity), n_(mesh.mb_indcs.nx1), origin_(origin) {
   if (!mesh.atlas || n_<6 || n_!=mesh.mb_indcs.nx2 || n_!=mesh.mb_indcs.nx3) {
     throw std::invalid_argument("mapped donor selection requires a cubic atlas mesh");
   }
@@ -93,7 +79,12 @@ NativeDonorSelector::NativeDonorSelector(const Mesh &mesh, int origin)
 }
 
 int NativeDonorSelector::Lower(int gid,int axis) const {
-  return -maps_.at(gid).overlap_sides[2*axis];
+  const auto &map=maps_.at(gid);
+  int lower=-map.overlap_sides[2*axis];
+  if (activity_.Masked() && map.face>=0 && axis==0) {
+    while (lower<n_ && !activity_.Evolved(map,n_,lower,0,0)) ++lower;
+  }
+  return lower;
 }
 int NativeDonorSelector::Upper(int gid,int axis) const {
   return n_+maps_.at(gid).overlap_sides[2*axis+1];
@@ -102,13 +93,13 @@ bool NativeDonorSelector::IsEvolved(const bvals::DonorPoint &p) const {
   if (p.gid<0 || p.gid>=static_cast<int>(maps_.size())) return false;
   const int q[3]={p.i-origin_,p.j-origin_,p.k-origin_};
   for (int a=0;a<3;++a) if (q[a]<Lower(p.gid,a)||q[a]>=Upper(p.gid,a)) return false;
-  return true;
+  return activity_.Evolved(maps_[p.gid],n_,q[0],q[1],q[2]);
 }
 
-int NativeDonorSelector::Owner(const Real x[3]) const {
+int NativeDonorSelector::Owner(const Real x[3],bool shell) const {
   const Real radius=Radius(x);
   if (radius>outer_radius_*(1+2e-14)) return -1;
-  const bool core=std::max({std::abs(x[0]),std::abs(x[1]),std::abs(x[2])})
+  const bool core=!shell && activity_.CartesianActive(x) && std::max({std::abs(x[0]),std::abs(x[1]),std::abs(x[2])})
       <=half_width_*(1+2e-14);
   int axis=0;
   for (int a=1;a<3;++a) if (std::abs(x[a])>std::abs(x[axis])) axis=a;
@@ -167,6 +158,14 @@ std::vector<WeightedDonor> NativeDonorSelector::Cartesian(const Real x[3],int wi
     first[a]=exact?int(std::round(t)):std::clamp(int(std::floor(t))-width/2+1,
                                                Lower(owner,a),Upper(owner,a)-width);
     if (first[a]<Lower(owner,a)||first[a]+length[a]>Upper(owner,a)) return {};
+  }
+  // A tensor must lie entirely on evolved points. For Cartesian boxes the
+  // largest radius occurs at a corner; no fringe or recursive donors are used.
+  if (activity_.Masked()) {
+    for (int k:{first[2],first[2]+length[2]-1})
+      for (int j:{first[1],first[1]+length[1]-1})
+        for (int i:{first[0],first[0]+length[0]-1})
+          if (!IsEvolved({owner,k+origin_,j+origin_,i+origin_})) return {};
   }
   return Tensor(owner,q,first,length);
 }
@@ -342,8 +341,16 @@ std::vector<WeightedDonor> NativeDonorSelector::Interpolate(const Real x[3],int 
   for (int a=0;a<3;++a) if (!std::isfinite(x[a]))
     throw std::invalid_argument("mapped donor coordinates must be finite");
   auto core=Cartesian(x,width);if (!core.empty()) return core;
+  return Spherical(x,width);
+}
+
+std::vector<WeightedDonor> NativeDonorSelector::Spherical(const Real x[3],int width,
+                                                       bool force_shell) const {
+  if (width<1||width>6) throw std::invalid_argument("mapped interpolation width must be 1..6");
+  if (activity_.Masked() && Radius(x)<activity_.shell_inner)
+    throw std::runtime_error("masked overlap lacks evolved Cartesian interpolation support below Rs");
   if (Radius(x)<first_radius_) return Overlap(x,width);
-  const int owner=Owner(x);
+  const int owner=Owner(x,activity_.Masked() || force_shell);
   if (owner<0) throw std::runtime_error("mapped interpolation outside scri");
   Real q[3];maps_[owner].Inverse(x,q);
   const int radial_begin=int(std::floor(n_*q[0]-maps_[owner].node_offset[0]))-width/2+1;
@@ -357,7 +364,7 @@ std::vector<WeightedDonor> NativeDonorSelector::Interpolate(const Real x[3],int 
 
 void MappedHalo::BuildRows(MeshBlockPack *pack,int origin,
                           std::vector<bvals::DonorPoint> &requests) {
-  NativeDonorSelector selector(*pack->pmesh,origin);
+  NativeDonorSelector selector(*pack->pmesh,origin,activity_);
   auto *mesh=pack->pmesh;const int ng=mesh->mb_indcs.ng,n=selector.Cells();
   if (ng!=4) throw std::invalid_argument("mapped halo requires four difference ghosts");
   for (int gid=0;gid<mesh->nmb_total;++gid) for (int a=0;a<3;++a) {
@@ -366,7 +373,7 @@ void MappedHalo::BuildRows(MeshBlockPack *pack,int origin,
   }
   rows_.clear();exterior_.clear();interior_points_.clear();local_points_.clear();
   remote_points_.clear();surface_points_.clear();
-  const auto offsets=StencilOffsets();std::map<CellKey,int> dependencies;
+  const auto &offsets=BulkStencilOffsets();std::map<CellKey,int> dependencies;
   std::vector<HaloPoint> evolved;
   auto is_evolved=[&](HaloPoint c) {return selector.IsEvolved(
       {pack->gids+c.m,c.k,c.j,c.i});};
@@ -375,6 +382,7 @@ void MappedHalo::BuildRows(MeshBlockPack *pack,int origin,
     for (int k=origin+selector.Lower(gid,2);k<origin+selector.Upper(gid,2);++k)
       for (int j=origin+selector.Lower(gid,1);j<origin+selector.Upper(gid,1);++j)
         for (int i=origin+selector.Lower(gid,0);i<origin+selector.Upper(gid,0);++i) {
+          if (!is_evolved({m,k,j,i})) continue;
           evolved.push_back({m,k,j,i});
           for (const auto &d:offsets) {
             HaloPoint c{m,k+d[2],j+d[1],i+d[0]};
@@ -420,7 +428,8 @@ void MappedHalo::BuildRows(MeshBlockPack *pack,int origin,
     throw std::overflow_error("mapped halo plan exceeds device integer indexing");
 }
 
-void MappedHalo::Rebuild(MeshBlockPack *pack,int origin) {
+void MappedHalo::Rebuild(MeshBlockPack *pack,int origin,ActivityPolicy activity) {
+  activity_=activity;
   ready_=false;
   std::vector<bvals::DonorPoint> requests;
   std::string error;
