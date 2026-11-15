@@ -1,0 +1,23 @@
+{
+  "command": [
+    "mpiexec",
+    "-n",
+    "24",
+    "-ppn",
+    "12",
+    "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+    "/opt/aurora/26.26.0/support/tools/mpi_wrapper_utils/gpu_tile_compact.sh",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/n12-full-scri-20261115/build-final/athena",
+    "-i",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/n12-full-scri-20261115/segment-9092227/input.athinput",
+    "-d",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/n12-full-scri-20261115/segment-9092227",
+    "-t",
+    "00:52:59"
+  ],
+  "executable_sha256": "dd122b2d16bb7552e409bce7b33f185d2717b5d3e37608e02e4585b705fd470b",
+  "input_sha256": "ba1705bc9c2f77ce6e492965cbd88147695c2013e0de0829c5d37f9bbc60d4f4",
+  "runner_sha256": "e8f04e352f1bfe634ec26d3f95fad1f1a5471cb7b98e1c2232efef81d6d51145",
+  "initial_manifest_sha256": "8b2a6e0581bd7dd92ac7944a5f3cba04e6bb81a816b22f71f276c01112212c7a",
+  "job": "9092227"
+}

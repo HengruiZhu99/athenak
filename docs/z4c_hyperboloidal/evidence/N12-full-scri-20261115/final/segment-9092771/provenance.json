@@ -1,0 +1,38 @@
+{
+  "command": [
+    "mpiexec",
+    "-n",
+    "24",
+    "-ppn",
+    "12",
+    "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+    "/opt/aurora/26.26.0/support/tools/mpi_wrapper_utils/gpu_tile_compact.sh",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/n12-full-scri-20261115/build-final/athena",
+    "-r",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/n12-full-scri-20261115/segment-9092592/rst/headon.00036.rst",
+    "-i",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/n12-full-scri-20261115/segment-9092771/input.athinput",
+    "-d",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/n12-full-scri-20261115/segment-9092771",
+    "-t",
+    "00:52:50"
+  ],
+  "executable_sha256": "dd122b2d16bb7552e409bce7b33f185d2717b5d3e37608e02e4585b705fd470b",
+  "input_sha256": "ba1705bc9c2f77ce6e492965cbd88147695c2013e0de0829c5d37f9bbc60d4f4",
+  "runner_sha256": "e8f04e352f1bfe634ec26d3f95fad1f1a5471cb7b98e1c2232efef81d6d51145",
+  "initial_manifest_sha256": "8b2a6e0581bd7dd92ac7944a5f3cba04e6bb81a816b22f71f276c01112212c7a",
+  "job": "9092771",
+  "restart": {
+    "path": "/lus/flare/projects/CompactBinaryMerger/hzhu/n12-full-scri-20261115/segment-9092592/rst/headon.00036.rst",
+    "sha256": "60d69b0942df9b2bfd45f307dbe81d06ac2efab34d2a1d429e96be1a70464621",
+    "cycle": 25388,
+    "time": 11.91819444440159,
+    "time_M0": 35.75458333320477,
+    "dt": 0.00046944203735617445,
+    "blocks": 730,
+    "identity": "native-hyperboloidal-v1;fields=31;chi-record=8;formulation=n12-configured-constant-shift-v1;integrator=rk4_classical;real=8;n=12,12,12;overlap=3;nghost=4;p.ko=0x1.999999999999ap-4;p.chi_floor=0x1.b7cdfd9d7bdbbp-34;p.penalty=0x1p-1;p.requested_dt=0x1.ec3ee32a3d505p-12;agreement=full-unmasked-union-evolved-cube-taper-rowmass-v1;H=coordinate-volume;p.agreement.kappa=0x1p+0;p.agreement.inner=0x1.70a3d70a3d70ap-3;p.agreement.taper_width=0x1.eb851eb851eb8p-7;g.profile.flat=1;g.profile.flat_radius=0x1.47d42d73857afp-1;g.profile.outer_radius=0x1.75df2216a41c3p-1;g.profile.plateau=0x1.ae147ae147ae1p-2;g.enforce_cfl=1;g.conformal_frame_halos=0;g.separated_shift_speeds=0;g.stationary_outer_reference=1;g.reference_start_M=0x1.4p+4;g.reference_end_M=0x1.4p+5;g.reference_compact_end=0x1.f0a3d70a3d70ap-1;g.inner_begin=0x1.8849ea57e38fep-1;g.inner_end=0x1.bf8a431ba1ebp-1;g.inner_gamma=0x1.4f622e6878131p-7;g.inner_chi_guard=0x1.b798090df7bdfp-24;g.cartesian_chi_guard=1;g.coefficient_begin=0x1.8849ea57e38fep-1;g.coefficient_end=0x1.bf8a431ba1ebp-1;g.restoration_begin=0x1.8849ea57e38fep-1;g.restoration_end=0x1.e45fd39e20d27p-1;g.bulk_mu=0x1p+2;g.ratio=0x1p+1;g.damping=0x1p+0;g.restoring=0x1p+2;g.outer_lapse_damping=0x1p-2;g.kappa=0x1.47ae147ae147bp-8;g.tau=0x1.47ae147ae147bp-6;g.epsilon=0x1.a36e2eb1c432dp-14;g.inner_z4=0x1p+3;g.kappa1=0x1p+2;g.kappa2=-0x1.fae147ae147aep-1;residual-weight=regular-c6-v1;g.residual_weight.inner=0x1.3333333333333p-2;g.residual_weight.outer=0x1.199999999999ap-1;initial-data=binary-v1;M0=1/3;reported-components=1/2;internal-components=1/6;f66983c0aea1a48ffc8baba57d129b8cd2d512d64c0877b78d8cdffdd44a8270",
+    "offset": 32077,
+    "geometry_sha256": "93d8db9a55a9f6b0315b957065e9cf2400d74e606338c47c48956aa0d3b6f625",
+    "stride": 1864512
+  }
+}

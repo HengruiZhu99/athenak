@@ -1,11 +1,50 @@
 # Full-overlap N12 rerun with scri recording
 
-This directory records the requested fresh rerun of the latest validated
-full-overlap binary. The target is approximately `60 M0`; `campaign.json`
-contains its actual target cycle, step, source revision and executable hash.
+This directory records the completed fresh rerun of the latest validated
+full-overlap binary through **59.9989173525 M0** (cycle 42603). `campaign.json`
+contains its target cycle, step, source revision and executable hash.
 The initial data, overlap strength/taper, dissipation, time step and optimized
 GPU arithmetic are unchanged. `run.py` extends the copied input's time/cycle
 limits and adds native scri output every `.01` code units (`.03 M0`).
+
+## Completed evolution and radiation diagnostic
+
+Seven sequential allocations completed the evolution in **5.99264 hours** of
+summed segment execution time, excluding build, admission, queue and analysis
+time. All segments exited successfully, their histories contained finite
+numbers, and their checkpoint hashes and restart chain were verified. The
+recorder supplied 2001 accepted-state records. The final checkpoint and
+extraction provenance are recorded in [`final/run-result.json`](final/run-result.json).
+
+The extracted curve is a **formal news diagnostic, not a validated physical
+waveform**. See the [plot](final/news_diagnostic.png), [PDF](final/news_diagnostic.pdf)
+and [quadrupole CSV](final/news20.csv). The first and last three samples are
+excluded from the full-cadence extraction. Its transported time coordinate is
+distinct from the native evolution time and is itself subject to the frame
+regularity limitation below.
+
+The peak formal `|N20|` is `0.0543002`. On common transported-time intervals,
+changing the angular fit from L=8 to L=6 changes this mode by at most
+`2.329e-6` (0.00429% of its peak); halving the recording sample rate changes it
+by at most `1.101e-4` (0.203%). These are **postprocessing sensitivity checks**,
+not evolution-resolution convergence or physical waveform error estimates.
+The full conformal-Hessian trace-free defect reaches `0.0413262`, and the
+transported round-cut RMS defect reaches `1.31866`. Extending the run has not
+removed these regularity and frame limitations. We have not inferred a
+physical strain, radiated energy or ringdown fit from this curve.
+
+The final Weyl numerator probe samples through `59.7905 M0` and has maximum
+pointwise magnitude `5.843e-4`; see
+[`final/weyl-numerator-60M.json`](final/weyl-numerator-60M.json). This remains a
+zero-target regularity diagnostic, **not** an extracted `psi4^0` waveform.
+
+The final directory contains compact receipts, scri histories, extraction
+summaries and plots. Complete mode archives and per-record extraction
+diagnostics remain under the remote analysis directories named in the run
+receipt; `download-manifest.json` records hashes of the downloaded artifacts.
+All six extraction source files and both Weyl-probe scripts were checked
+against the committed source. The evolution and analysis controllers have
+finished; no continuation beyond the requested target was submitted.
 
 ## GPU admission
 
@@ -28,7 +67,7 @@ The first science launch failed before evolution with a scheduler/process
 launcher error, `No reply from shepherd after 108s` (exit 127). Job `9092227`
 reused the successful admission and began the fresh evolution. Sequential
 continuations use verified final checkpoints, with one science job active at a
-time. Final segment and waveform receipts will accompany the completed run.
+time. The final segment and radiation-diagnostic receipts are in `final/`.
 
 ## Offline extraction
 
