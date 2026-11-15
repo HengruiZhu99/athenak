@@ -1,0 +1,121 @@
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/candidate-source-perf-pad32-20261114/src/mesh/load_balance.cpp at line 92
+Number of MeshBlocks cannot be divided evenly by number of MPI ranks. This will result in poor load balancing.
+
+Root grid = 3 x 3 x 3 MeshBlocks
+Total number of MeshBlocks = 730
+Number of logical  levels of refinement = 7 (8 levels total)
+Number of physical levels of refinement = 3 (4 levels total)
+  Physical level = 0 (logical level = 4): 66 MeshBlocks, cost = 66
+  Physical level = 1 (logical level = 5): 192 MeshBlocks, cost = 192
+  Physical level = 2 (logical level = 6): 152 MeshBlocks, cost = 152
+  Physical level = 3 (logical level = 7): 320 MeshBlocks, cost = 320
+Number of parallel ranks = 24
+  Rank = 0: 30 MeshBlocks, cost = 30
+  Rank = 1: 30 MeshBlocks, cost = 30
+  Rank = 2: 30 MeshBlocks, cost = 30
+  Rank = 3: 30 MeshBlocks, cost = 30
+  Rank = 4: 30 MeshBlocks, cost = 30
+  Rank = 5: 30 MeshBlocks, cost = 30
+  Rank = 6: 30 MeshBlocks, cost = 30
+  Rank = 7: 30 MeshBlocks, cost = 30
+  Rank = 8: 30 MeshBlocks, cost = 30
+  Rank = 9: 30 MeshBlocks, cost = 30
+  Rank = 10: 30 MeshBlocks, cost = 30
+  Rank = 11: 30 MeshBlocks, cost = 30
+  Rank = 12: 30 MeshBlocks, cost = 30
+  Rank = 13: 30 MeshBlocks, cost = 30
+  Rank = 14: 31 MeshBlocks, cost = 31
+  Rank = 15: 31 MeshBlocks, cost = 31
+  Rank = 16: 31 MeshBlocks, cost = 31
+  Rank = 17: 31 MeshBlocks, cost = 31
+  Rank = 18: 31 MeshBlocks, cost = 31
+  Rank = 19: 31 MeshBlocks, cost = 31
+  Rank = 20: 31 MeshBlocks, cost = 31
+  Rank = 21: 31 MeshBlocks, cost = 31
+  Rank = 22: 31 MeshBlocks, cost = 31
+  Rank = 23: 31 MeshBlocks, cost = 31
+Load Balancing:
+  Maximum normalized cost = 1.03333, Average = 1.01389
+binary import max_coordinate_delta=2.2204460492503131e-16
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/candidate-source-perf-pad32-20261114/src/parameter_input.cpp: input parameter <fastflow>/require_expansion_convergence_0 = false was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/candidate-source-perf-pad32-20261114/src/parameter_input.cpp: input parameter <fastflow>/require_expansion_convergence_1 = false was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/candidate-source-perf-pad32-20261114/src/parameter_input.cpp: input parameter <fastflow>/verbose = true was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/candidate-source-perf-pad32-20261114/src/parameter_input.cpp: input parameter <fastflow>/flow_iterations_0 = 2000 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/candidate-source-perf-pad32-20261114/src/parameter_input.cpp: input parameter <fastflow>/flow_iterations_1 = 2000 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/candidate-source-perf-pad32-20261114/src/parameter_input.cpp: input parameter <fastflow>/lmax = 12 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/candidate-source-perf-pad32-20261114/src/parameter_input.cpp: input parameter <fastflow>/ntheta = 24 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/candidate-source-perf-pad32-20261114/src/parameter_input.cpp: input parameter <fastflow>/initial_radius_0 = .009 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/candidate-source-perf-pad32-20261114/src/parameter_input.cpp: input parameter <fastflow>/initial_radius_1 = .009 was not used by the code (check for a typo)
+AGREEMENT_PLAN rank=6 active_points=51840 global_samples=364368 local_rows=0 cartesian_samples=334592 spherical_samples=29776 sample_rmin=0.1800366475039025 sample_rmax=0.35766518242072354 balanced_samples=41704 entries=0 recipients=0 receive_donors=0 send_donors=0 owner_once_rows=0 owner_once_entries=0 owner_once_remote_gather=0 owner_once_remote_return=0 kappa=1 rate_bound=99.529299078383531 dt=0.00046944203735617445 build_seconds=15.256992723
+FULL_OVERLAP_POLICY legacy_activity=1 taper_width=0.014999999999999999 envelope=0.20694444444444446,0.20694444444444451,0.21388888888888891,0.21388888888888896,0.21388888888888891,0.21388888888888896,
+AGREEMENT_PLAN rank=7 active_points=51840 global_samples=364368 local_rows=0 cartesian_samples=334592 spherical_samples=29776 sample_rmin=0.1800366475039025 sample_rmax=0.35766518242072354 balanced_samples=41704 entries=0 recipients=0 receive_donors=0 send_donors=0 owner_once_rows=0 owner_once_entries=0 owner_once_remote_gather=0 owner_once_remote_return=0 kappa=1 rate_bound=99.529299078383531 dt=0.00046944203735617445 build_seconds=15.256992033
+FULL_OVERLAP_POLICY legacy_activity=1 taper_width=0.014999999999999999 envelope=0.20694444444444446,0.20694444444444451,0.21388888888888891,0.21388888888888896,0.21388888888888891,0.21388888888888896,
+AGREEMENT_PLAN rank=8 active_points=51840 global_samples=364368 local_rows=0 cartesian_samples=334592 spherical_samples=29776 sample_rmin=0.1800366475039025 sample_rmax=0.35766518242072354 balanced_samples=41704 entries=0 recipients=0 receive_donors=0 send_donors=0 owner_once_rows=0 owner_once_entries=0 owner_once_remote_gather=0 owner_once_remote_return=0 kappa=1 rate_bound=99.529299078383531 dt=0.00046944203735617445 build_seconds=15.256992403
+FULL_OVERLAP_POLICY legacy_activity=1 taper_width=0.014999999999999999 envelope=0.20694444444444446,0.20694444444444451,0.21388888888888891,0.21388888888888896,0.21388888888888891,0.21388888888888896,
+AGREEMENT_PLAN rank=9 active_points=51840 global_samples=364368 local_rows=0 cartesian_samples=334592 spherical_samples=29776 sample_rmin=0.1800366475039025 sample_rmax=0.35766518242072354 balanced_samples=41704 entries=0 recipients=0 receive_donors=0 send_donors=0 owner_once_rows=0 owner_once_entries=0 owner_once_remote_gather=0 owner_once_remote_return=0 kappa=1 rate_bound=99.529299078383531 dt=0.00046944203735617445 build_seconds=15.256989898
+FULL_OVERLAP_POLICY legacy_activity=1 taper_width=0.014999999999999999 envelope=0.20694444444444446,0.20694444444444451,0.21388888888888891,0.21388888888888896,0.21388888888888891,0.21388888888888896,
+AGREEMENT_PLAN rank=10 active_points=51840 global_samples=364368 local_rows=0 cartesian_samples=334592 spherical_samples=29776 sample_rmin=0.1800366475039025 sample_rmax=0.35766518242072354 balanced_samples=41704 entries=0 recipients=0 receive_donors=0 send_donors=0 owner_once_rows=0 owner_once_entries=0 owner_once_remote_gather=0 owner_once_remote_return=0 kappa=1 rate_bound=99.529299078383531 dt=0.00046944203735617445 build_seconds=15.256989335
+FULL_OVERLAP_POLICY legacy_activity=1 taper_width=0.014999999999999999 envelope=0.20694444444444446,0.20694444444444451,0.21388888888888891,0.21388888888888896,0.21388888888888891,0.21388888888888896,
+AGREEMENT_PLAN rank=11 active_points=51840 global_samples=364368 local_rows=0 cartesian_samples=334592 spherical_samples=29776 sample_rmin=0.1800366475039025 sample_rmax=0.35766518242072354 balanced_samples=41704 entries=0 recipients=0 receive_donors=0 send_donors=0 owner_once_rows=0 owner_once_entries=0 owner_once_remote_gather=0 owner_once_remote_return=0 kappa=1 rate_bound=99.529299078383531 dt=0.00046944203735617445 build_seconds=15.256988391
+FULL_OVERLAP_POLICY legacy_activity=1 taper_width=0.014999999999999999 envelope=0.20694444444444446,0.20694444444444451,0.21388888888888891,0.21388888888888896,0.21388888888888891,0.21388888888888896,
+AGREEMENT_PLAN rank=3 active_points=52272 global_samples=364368 local_rows=1775 cartesian_samples=334592 spherical_samples=29776 sample_rmin=0.1800366475039025 sample_rmax=0.35766518242072354 balanced_samples=41704 entries=385175 recipients=1905 receive_donors=538 send_donors=1905 owner_once_rows=1763 owner_once_entries=382571 owner_once_remote_gather=538 owner_once_remote_return=538 kappa=1 rate_bound=99.529299078383531 dt=0.00046944203735617445 build_seconds=15.260974582999999
+FULL_OVERLAP_POLICY legacy_activity=1 taper_width=0.014999999999999999 envelope=0.20694444444444446,0.20694444444444451,0.21388888888888891,0.21388888888888896,0.21388888888888891,0.21388888888888896,
+AGREEMENT_PLAN rank=2 active_points=53136 global_samples=364368 local_rows=5344 cartesian_samples=334592 spherical_samples=29776 sample_rmin=0.1800366475039025 sample_rmax=0.35766518242072354 balanced_samples=41704 entries=1159648 recipients=5805 receive_donors=838 send_donors=5805 owner_once_rows=5299 owner_once_entries=1149883 owner_once_remote_gather=838 owner_once_remote_return=838 kappa=1 rate_bound=99.529299078383531 dt=0.00046944203735617445 build_seconds=15.267653003
+FULL_OVERLAP_POLICY legacy_activity=1 taper_width=0.014999999999999999 envelope=0.20694444444444446,0.20694444444444451,0.21388888888888891,0.21388888888888896,0.21388888888888891,0.21388888888888896,
+AGREEMENT_PLAN rank=14 active_points=54864 global_samples=364368 local_rows=4983 cartesian_samples=334592 spherical_samples=29776 sample_rmin=0.1800366475039025 sample_rmax=0.35766518242072354 balanced_samples=41704 entries=1081311 recipients=5364 receive_donors=735 send_donors=5364 owner_once_rows=4953 owner_once_entries=1074801 owner_once_remote_gather=735 owner_once_remote_return=735 kappa=1 rate_bound=99.529299078383531 dt=0.00046944203735617445 build_seconds=15.267544751000001
+FULL_OVERLAP_POLICY legacy_activity=1 taper_width=0.014999999999999999 envelope=0.20694444444444446,0.20694444444444451,0.21388888888888891,0.21388888888888896,0.21388888888888891,0.21388888888888896,
+AGREEMENT_PLAN rank=5 active_points=53568 global_samples=364368 local_rows=7119 cartesian_samples=334592 spherical_samples=29776 sample_rmin=0.1800366475039025 sample_rmax=0.35766518242072354 balanced_samples=41704 entries=1544823 recipients=7710 receive_donors=866 send_donors=7710 owner_once_rows=7062 owner_once_entries=1532454 owner_once_remote_gather=866 owner_once_remote_return=866 kappa=1 rate_bound=99.529299078383531 dt=0.00046944203735617445 build_seconds=15.272304517
+FULL_OVERLAP_POLICY legacy_activity=1 taper_width=0.014999999999999999 envelope=0.20694444444444446,0.20694444444444451,0.21388888888888891,0.21388888888888896,0.21388888888888891,0.21388888888888896,
+AGREEMENT_PLAN rank=4 active_points=53568 global_samples=364368 local_rows=7119 cartesian_samples=334592 spherical_samples=29776 sample_rmin=0.1800366475039025 sample_rmax=0.35766518242072354 balanced_samples=41704 entries=1544823 recipients=7710 receive_donors=866 send_donors=7710 owner_once_rows=7062 owner_once_entries=1532454 owner_once_remote_gather=866 owner_once_remote_return=866 kappa=1 rate_bound=99.529299078383531 dt=0.00046944203735617445 build_seconds=15.272409583
+FULL_OVERLAP_POLICY legacy_activity=1 taper_width=0.014999999999999999 envelope=0.20694444444444446,0.20694444444444451,0.21388888888888891,0.21388888888888896,0.21388888888888891,0.21388888888888896,
+AGREEMENT_PLAN rank=15 active_points=55296 global_samples=364368 local_rows=7119 cartesian_samples=334592 spherical_samples=29776 sample_rmin=0.1800366475039025 sample_rmax=0.35766518242072354 balanced_samples=41704 entries=1544823 recipients=7710 receive_donors=866 send_donors=7710 owner_once_rows=7062 owner_once_entries=1532454 owner_once_remote_gather=866 owner_once_remote_return=866 kappa=1 rate_bound=99.529299078383531 dt=0.00046944203735617445 build_seconds=15.272334701
+FULL_OVERLAP_POLICY legacy_activity=1 taper_width=0.014999999999999999 envelope=0.20694444444444446,0.20694444444444451,0.21388888888888891,0.21388888888888896,0.21388888888888891,0.21388888888888896,
+AGREEMENT_PLAN rank=16 active_points=55296 global_samples=364368 local_rows=7119 cartesian_samples=334592 spherical_samples=29776 sample_rmin=0.1800366475039025 sample_rmax=0.35766518242072354 balanced_samples=41704 entries=1544823 recipients=7710 receive_donors=866 send_donors=7710 owner_once_rows=7062 owner_once_entries=1532454 owner_once_remote_gather=866 owner_once_remote_return=866 kappa=1 rate_bound=99.529299078383531 dt=0.00046944203735617445 build_seconds=15.272552575000001
+FULL_OVERLAP_POLICY legacy_activity=1 taper_width=0.014999999999999999 envelope=0.20694444444444446,0.20694444444444451,0.21388888888888891,0.21388888888888896,0.21388888888888891,0.21388888888888896,
+AGREEMENT_PLAN rank=17 active_points=55296 global_samples=364368 local_rows=7119 cartesian_samples=334592 spherical_samples=29776 sample_rmin=0.1800366475039025 sample_rmax=0.35766518242072354 balanced_samples=41704 entries=1544823 recipients=7710 receive_donors=866 send_donors=7710 owner_once_rows=7062 owner_once_entries=1532454 owner_once_remote_gather=866 owner_once_remote_return=866 kappa=1 rate_bound=99.529299078383531 dt=0.00046944203735617445 build_seconds=15.272677444999999
+FULL_OVERLAP_POLICY legacy_activity=1 taper_width=0.014999999999999999 envelope=0.20694444444444446,0.20694444444444451,0.21388888888888891,0.21388888888888896,0.21388888888888891,0.21388888888888896,
+AGREEMENT_PLAN rank=13 active_points=54540 global_samples=364368 local_rows=10163 cartesian_samples=334592 spherical_samples=29776 sample_rmin=0.1800366475039025 sample_rmax=0.35766518242072354 balanced_samples=41704 entries=2205371 recipients=11936 receive_donors=4395 send_donors=20923 owner_once_rows=9268 owner_once_entries=2011156 owner_once_remote_gather=4339 owner_once_remote_return=4339 kappa=1 rate_bound=99.529299078383531 dt=0.00046944203735617445 build_seconds=15.280100847
+FULL_OVERLAP_POLICY legacy_activity=1 taper_width=0.014999999999999999 envelope=0.20694444444444446,0.20694444444444451,0.21388888888888891,0.21388888888888896,0.21388888888888891,0.21388888888888896,
+AGREEMENT_PLAN rank=1 active_points=58968 global_samples=364368 local_rows=23827 cartesian_samples=334592 spherical_samples=29776 sample_rmin=0.1800366475039025 sample_rmax=0.35766518242072354 balanced_samples=41704 entries=5170459 recipients=28156 receive_donors=5986 send_donors=28588 owner_once_rows=22236 owner_once_entries=4825212 owner_once_remote_gather=5978 owner_once_remote_return=5978 kappa=1 rate_bound=99.529299078383531 dt=0.00046944203735617445 build_seconds=15.306253546000001
+FULL_OVERLAP_POLICY legacy_activity=1 taper_width=0.014999999999999999 envelope=0.20694444444444446,0.20694444444444451,0.21388888888888891,0.21388888888888896,0.21388888888888891,0.21388888888888896,
+AGREEMENT_PLAN rank=12 active_points=62775 global_samples=364368 local_rows=34043 cartesian_samples=334592 spherical_samples=29776 sample_rmin=0.1800366475039025 sample_rmax=0.35766518242072354 balanced_samples=41704 entries=7387331 recipients=37711 receive_donors=9734 send_donors=79279 owner_once_rows=30754 owner_once_entries=6673618 owner_once_remote_gather=9730 owner_once_remote_return=9730 kappa=1 rate_bound=99.529299078383531 dt=0.00046944203735617445 build_seconds=15.333505629999999
+FULL_OVERLAP_POLICY legacy_activity=1 taper_width=0.014999999999999999 envelope=0.20694444444444446,0.20694444444444451,0.21388888888888891,0.21388888888888896,0.21388888888888891,0.21388888888888896,
+AGREEMENT_PLAN rank=20 active_points=66987 global_samples=364368 local_rows=43641 cartesian_samples=334592 spherical_samples=29776 sample_rmin=0.1800366475039025 sample_rmax=0.35766518242072354 balanced_samples=41704 entries=9470097 recipients=50468 receive_donors=13211 send_donors=98232 owner_once_rows=39376 owner_once_entries=8544592 owner_once_remote_gather=13084 owner_once_remote_return=13084 kappa=1 rate_bound=99.529299078383531 dt=0.00046944203735617445 build_seconds=15.358637810999999
+FULL_OVERLAP_POLICY legacy_activity=1 taper_width=0.014999999999999999 envelope=0.20694444444444446,0.20694444444444451,0.21388888888888891,0.21388888888888896,0.21388888888888891,0.21388888888888896,
+AGREEMENT_PLAN rank=0 active_points=66771 global_samples=364368 local_rows=47116 cartesian_samples=334592 spherical_samples=29776 sample_rmin=0.1800366475039025 sample_rmax=0.35766518242072354 balanced_samples=41704 entries=10224172 recipients=53617 receive_donors=11573 send_donors=92204 owner_once_rows=42661 owner_once_entries=9257437 owner_once_remote_gather=11569 owner_once_remote_return=11569 kappa=1 rate_bound=99.529299078383531 dt=0.00046944203735617445 build_seconds=15.362356001
+FULL_OVERLAP_POLICY legacy_activity=1 taper_width=0.014999999999999999 envelope=0.20694444444444446,0.20694444444444451,0.21388888888888891,0.21388888888888896,0.21388888888888891,0.21388888888888896,
+AGREEMENT_PLAN rank=18 active_points=68067 global_samples=364368 local_rows=46022 cartesian_samples=334592 spherical_samples=29776 sample_rmin=0.1800366475039025 sample_rmax=0.35766518242072354 balanced_samples=41704 entries=9986774 recipients=52074 receive_donors=11401 send_donors=78028 owner_once_rows=41630 owner_once_entries=9033710 owner_once_remote_gather=11397 owner_once_remote_return=11397 kappa=1 rate_bound=99.529299078383531 dt=0.00046944203735617445 build_seconds=15.368947010999999
+FULL_OVERLAP_POLICY legacy_activity=1 taper_width=0.014999999999999999 envelope=0.20694444444444446,0.20694444444444451,0.21388888888888891,0.21388888888888896,0.21388888888888891,0.21388888888888896,
+AGREEMENT_PLAN rank=19 active_points=72198 global_samples=364368 local_rows=57370 cartesian_samples=334592 spherical_samples=29776 sample_rmin=0.1800366475039025 sample_rmax=0.35766518242072354 balanced_samples=41704 entries=12449290 recipients=63499 receive_donors=17547 send_donors=122487 owner_once_rows=51967 owner_once_entries=11276839 owner_once_remote_gather=17540 owner_once_remote_return=17540 kappa=1 rate_bound=99.529299078383531 dt=0.00046944203735617445 build_seconds=15.394344581
+FULL_OVERLAP_POLICY legacy_activity=1 taper_width=0.014999999999999999 envelope=0.20694444444444446,0.20694444444444451,0.21388888888888891,0.21388888888888896,0.21388888888888891,0.21388888888888896,
+AGREEMENT_PLAN rank=23 active_points=59832 global_samples=364368 local_rows=103508 cartesian_samples=334592 spherical_samples=29776 sample_rmin=0.1800366475039025 sample_rmax=0.35766518242072354 balanced_samples=41704 entries=22461236 recipients=16776 receive_donors=239783 send_donors=29146 owner_once_rows=10068 owner_once_entries=2184756 owner_once_remote_gather=236628 owner_once_remote_return=236628 kappa=1 rate_bound=99.529299078383531 dt=0.00046944203735617445 build_seconds=15.820121549
+FULL_OVERLAP_POLICY legacy_activity=1 taper_width=0.014999999999999999 envelope=0.20694444444444446,0.20694444444444451,0.21388888888888891,0.21388888888888896,0.21388888888888891,0.21388888888888896,
+AGREEMENT_PLAN rank=21 active_points=74466 global_samples=364368 local_rows=123853 cartesian_samples=334592 spherical_samples=29776 sample_rmin=0.1800366475039025 sample_rmax=0.35766518242072354 balanced_samples=41704 entries=26876101 recipients=66911 receive_donors=131801 send_donors=110160 owner_once_rows=54207 owner_once_entries=11762919 owner_once_remote_gather=118986 owner_once_remote_return=118986 kappa=1 rate_bound=99.529299078383531 dt=0.00046944203735617445 build_seconds=15.832512619999999
+FULL_OVERLAP_POLICY legacy_activity=1 taper_width=0.014999999999999999 envelope=0.20694444444444446,0.20694444444444451,0.21388888888888891,0.21388888888888896,0.21388888888888891,0.21388888888888896,
+AGREEMENT_PLAN rank=22 active_points=62964 global_samples=364368 local_rows=184577 cartesian_samples=334592 spherical_samples=29776 sample_rmin=0.1800366475039025 sample_rmax=0.35766518242072354 balanced_samples=41704 entries=40053209 recipients=22104 receive_donors=306430 send_donors=47631 owner_once_rows=14876 owner_once_entries=3228092 owner_once_remote_gather=291184 owner_once_remote_return=291184 kappa=1 rate_bound=99.529299078383531 dt=0.00046944203735617445 build_seconds=16.316191203999999
+FULL_OVERLAP_POLICY legacy_activity=1 taper_width=0.014999999999999999 envelope=0.20694444444444446,0.20694444444444451,0.21388888888888891,0.21388888888888896,0.21388888888888891,0.21388888888888896,
+binary horizon component=0 status=1 complete=1 center=0.10116863541976967,0,0 area=1.3962876946087468 mass_coordinate_spin=0.16666811654279023 iterations=15 expansion_rms=0.00019788420576597691 last_trial_expansion_rms=0.00019788420576597691 acceptance=mass_only expansion_above_diagnostic_threshold=0
+binary horizon component=1 status=1 complete=1 center=-0.10116863541976967,0,0 area=1.3962876946087484 mass_coordinate_spin=0.16666811654279032 iterations=15 expansion_rms=0.00019788420577455514 last_trial_expansion_rms=0.00019788420577455514 acceptance=mass_only expansion_above_diagnostic_threshold=0
+
+Setup complete, executing task list(s)...
+
+elapsed=5.3540650038999999e+01 cycle=0 time=0.0000000000000000e+00 dt=4.6944203735617445e-04
+elapsed=5.4627230122000000e+01 cycle=1 time=4.6944203735617445e-04 dt=4.6944203735617445e-04
+elapsed=5.5062009175999997e+01 cycle=2 time=9.3888407471234890e-04 dt=4.6944203735617445e-04
+elapsed=5.5494404308000000e+01 cycle=3 time=1.4083261120685234e-03 dt=4.6944203735617445e-04
+elapsed=5.5928346593999997e+01 cycle=4 time=1.8777681494246978e-03 dt=4.6944203735617445e-04
+elapsed=5.6362677750000003e+01 cycle=5 time=2.3472101867808722e-03 dt=4.6944203735617445e-04
+elapsed=5.6797739469000000e+01 cycle=6 time=2.8166522241370468e-03 dt=4.6944203735617445e-04
+elapsed=5.7229509221999997e+01 cycle=7 time=3.2860942614932214e-03 dt=4.6944203735617445e-04
+binary horizon component=0 status=1 complete=1 center=1.0116863541579513e-01,3.5501666842131216e-12,3.5501665756805734e-12 area=1.3962882320603165e+00 mass_coordinate_spin=1.6666814861928583e-01 iterations=15 expansion_rms=1.7361658285803273e-04 last_trial_expansion_rms=1.7361658285803273e-04 acceptance=mass_only expansion_above_diagnostic_threshold=0
+binary horizon component=1 status=1 complete=1 center=-1.0116863541579513e-01,3.5501666905840780e-12,3.5501664564526098e-12 area=1.3962882320603180e+00 mass_coordinate_spin=1.6666814861928594e-01 iterations=15 expansion_rms=1.7361658286365217e-04 last_trial_expansion_rms=1.7361658286365217e-04 acceptance=mass_only expansion_above_diagnostic_threshold=0
+elapsed=7.8120757420000004e+01 cycle=8 time=3.7555362988493960e-03 dt=4.6944203735617445e-04
+
+Terminating on cycle limit
+time=3.7555362988493960e-03 cycle=8
+tlim=1.0000000000000000e+01 nlim=8
+
+MeshBlock-cycles = 5840
+cpu time used  = 2.4580167770385742e+01
+zone-cycles/cpu_second = 4.1055537500000000e+05
+particle-updates/cpu_second = 0.0000000000000000e+00

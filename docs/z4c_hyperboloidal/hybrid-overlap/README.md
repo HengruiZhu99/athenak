@@ -675,3 +675,145 @@ Both archive and individual file hashes were verified after retrieval.
 `report/constraint-reproduction.png` overlays the identical late constraints.
 `performance-change.patch` contains only this optimization and its documentation,
 relative to the captured working tree; `transpose-only.patch` isolates the kernel.
+
+### N12 performance follow-up: 20% legacy target (2026-11-15)
+
+The retained follow-up changes only `overlap_agreement.cpp`. It reuses completed
+Lambda corrections in D, stably groups recipients by adjacency length, pads the
+discrepancy/scratch array to 32 field slots, and uses a four-iteration unroll
+hint. A lookup-only volume hash cache reduces plan-building work. Every scalar
+sum retains its original entry order; row and bound construction remain
+ordered. Native task scheduling, communication, restart I/O, activity, halos,
+KO, kappa=1, timestep, and output cadence are unchanged. No new donor-conversion
+kernel or reordered accumulator is retained. The final source audit checks
+876 captured files: this C++ file and this appended README section are the
+only changes relative to the captured working tree. The focused patch is
+verified by applying it to the capture and reconstructing both files exactly.
+
+Job 9091365 compared the selected implementation and legacy on two Aurora
+nodes, 24 ranks, with the qualified GPU binding and MPI cache settings. Four
+opposite-order windows (legacy/full/full/legacy), using the frozen original
+legacy executable and the selected full-overlap executable,
+each evolved 1065 steps from cycle 8521 to 9586. Both modes wrote checkpoints
+at cycles 9231 and 9586. The archived output counters were explicitly restored
+after preparing the one-step full-overlap checkpoint; physical restart identity
+was unchanged. These are approximately 12--13.5-M0 restart windows, including
+startup, the regular 13-M0 checkpoint, and the forced final 13.5-M0 checkpoint.
+They do not measure the total cost of a fresh optimized 0--30-M0 evolution;
+startup amortization and the extra forced final output can affect the ratio.
+
+| Window | Median step (s) | Mean logged step (s) | Total wall (s) | Wall s/M0 |
+|---|---:|---:|---:|---:|
+| timing-0-legacy | 0.357583 | 0.396980 | 462.703 | 308.496 |
+| timing-1-candidate | 0.433011 | 0.462018 | 543.422 | 362.313 |
+| timing-2-candidate | 0.433007 | 0.464727 | 545.960 | 364.005 |
+| timing-3-legacy | 0.379832 | 0.399339 | 457.197 | 304.825 |
+
+The combined total-wall ratio is 1.184239; the two
+opposite-order pair ratios are 1.174450 and 1.194147.
+Both pairs meet the 1.20 target in this allocation.
+Total wall includes startup and outputs; mean logged step includes any
+output stalls inside its sampled interval. These two repeats are not a
+confidence interval or a guarantee across allocations. Legacy itself
+ran at a different speed from the earlier experiment, so a change in
+the cross-job ratio cannot all be attributed to this code change.
+The median-step pair ratios are 1.210940 and
+1.139999. Legacy median step time changed from
+0.357583 to 0.379832 seconds while both
+candidate medians were about 0.433011 seconds.
+The small margin below the total-wall target and this variability
+do not establish robust performance across allocations or a full
+optimized 0--30-M0 production run.
+
+
+The preceding sum-reuse implementation measured a full/legacy ratio of 1.299325
+in job 9090714. Matched short pilots for that change reduce typical-step time by
+about 5.6% against the prior transpose implementation. The host volume cache
+reduces maximum plan-building time from about 23.4 to 16.4 seconds. These are
+separate paired experiments, not a single combined speedup estimate. N16 has
+not been performance-qualified with the selected executable and continues with
+its prior frozen science executable.
+
+All 3 early/repeat payload comparisons pass bitwise.
+The full-overlap 13-M0 and legacy 13.5-M0 payloads also match their
+archived references bitwise, and all four windows reproduce their six
+common 12-column constraint-history rows exactly. The 24-rank agreement
+plan counts, rates, and parameters are unchanged in both full-overlap
+windows. Source science checkpoints remain unchanged.
+
+
+Job 9091104 independently continued both the simpler sum-reuse version and the
+selected cache version from the original 26-M0 checkpoint to cycle 21301,
+29.998754513173402 M0. Both entire final checkpoint files are byte-identical to
+the original: SHA256
+`184979b130d7f79eb3b6a566070785967b13b4f232a35d8f19068df8450517c2`.
+All 1,361,093,760 accepted-payload bytes and all 16 common constraint-history
+rows match exactly. This is a 26--30-M0 continuation check, not a new optimized
+0--30-M0 evolution. Original checkpoint hashes are unchanged. Local
+baseline/candidate and restart/repartition checks are bitwise equal across
+24,704,784 stored scalars. All six independent energy oracle cases, the
+RK-stage check, and all 12 CTests pass; the final 203 compiled CPU objects match
+the validated object manifest.
+
+Selected-rank profiling is attribution only, not throughput. On rank 22 the
+selected agreement discrepancy and transpose/application kernels account for
+0.02286 and 0.04772 GPU seconds per step, versus 0.00614 and 0.00087 on rank 0.
+Rank 22 has 184,577 local discrepancy rows and 40,053,209 interpolation entries,
+while only 14,876 rows are locally owned. Across all 24 ranks, 364,368 unique samples produce 721,817 local
+discrepancy rows (1.98 times as many) and 156,634,289 interpolation entries.
+Remaining work includes duplicated interpolation and uneven agreement work
+across ranks; these counts do not imply a corresponding total-runtime saving. Sharing that work or
+rebalancing it is a larger next step; four profiled ranks do not establish an
+exhaustive critical path. GPU durations and MPI waits overlap and must not be
+added. The profiled fresh accepted payload is also bitwise identical.
+
+Job 9091219 completed all four timing windows with raw total-wall overhead
+16.33%, but its second legacy repeat failed strict bitwise reproduction
+(maximum column-normalized field error 4.7892e-7; constraint-history relative
+error 8.1655e-11). Its first legacy window and both selected full-overlap
+windows match the archived histories exactly; the full-overlap 13-M0 payload
+is exact, and the full-overlap repeats are identical. This failed comparison
+is not used to certify the performance target. Its cause remains unresolved.
+Job 9091365 uses the original frozen legacy executable to control this
+uncertainty; that comparison does not resolve the intermittent disabled-mode
+repeat failure in job 9091219. General legacy-mode regression qualification
+therefore remains open; the measured comparison qualifies the full-overlap
+path against the frozen original legacy binary. The verified 260-file archive for the failed
+comparison and selected late continuation is `receipts-20261115T080906Z.tar.gz`,
+SHA256 `bf3b84dadfbfad9dea38593597cd5644ba3ebf8766027ed4f0bae1a2abe5f5ae`.
+
+Several other trials are excluded. Batched restart I/O produced a legacy regression
+and an invalid bulk RHS (job 9090542); its cause was not established, and
+`restart.cpp` was restored exactly. That trial also had unequal checkpoint
+schedules, so its full/legacy timing is invalid. The donor-conversion plus
+eight-way-unroll variant measured 26.8% overhead in short matched windows but
+failed the 26--30-M0 check near 27.6 M0 (job 9091045). Its 27-M0 payload and all
+constraint samples through 27.5 M0 were exact before the abrupt failure; the
+cause remains unresolved. Its short-window speed is not an accepted result.
+Neither failure affected the frozen N16 executable or original science files.
+
+Four-accumulator and workgroup-size trials also remain excluded. An indexing
+error in the first padded prototype was caught by the independent energy and
+field checks. Its corrected version passed numerical checks but gave no
+compute gain in either pair order (job 9091038). Workgroups of 128 and 256 threads passed all four fresh/late field checks
+and five pilot repeat comparisons. Their paired mean and median gains were
+only 0.5--0.64%, below the preset 2% retention threshold (job 9091219).
+The selected implementation keeps the existing workgroup settings.
+
+The selected executable SHA256 is
+`de633cda33dd17fc312214a0d7e2253512bf4ea0f2ba19911b71fe2fb94a36e3`.
+Evidence, scripts, captured baseline, final focused patch, source audit, and
+plots are in
+`../hybrid-overlap-validation/full-overlap-perf20-20261114/` relative to the
+repository root. The remote directory has the same name beneath
+`/lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/`.
+Use `performance-change.patch` for the retained change; earlier candidate
+patches are experimental artifacts and include rejected changes.
+The verified 61-file late-reproduction/profile archive is
+`receipts-20261115T070405Z.tar.gz`, SHA256
+`502d726be74c2f5bc33ba04a01a027bd1de662d93170b622a73ce9f328acd84d`.
+The final benchmark and selected late-reproduction archive contains
+342 verified files: `receipts-20261115T084744Z.tar.gz`,
+SHA256 `85b0f2c0c1954455a49f36c36ac197b8bc244801992bc15d53c6a53f260a59f3`.
+Plots are `report/performance.png` and
+`report/constraint-reproduction.png` (PDF copies included).

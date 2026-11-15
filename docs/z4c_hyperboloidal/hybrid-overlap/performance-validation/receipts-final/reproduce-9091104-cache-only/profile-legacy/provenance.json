@@ -1,0 +1,22 @@
+{
+  "command": [
+    "mpiexec",
+    "-n",
+    "24",
+    "-ppn",
+    "12",
+    "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+    "/opt/aurora/26.26.0/support/tools/mpi_wrapper_utils/gpu_tile_compact.sh",
+    "/usr/bin/python3.11",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/hybrid_profile_rank.py",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/full-overlap-perf20-20261114/reproduce-9091104-cache-only/profile-legacy",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/full-overlap-perf20-20261114/athena-cache-only",
+    "-i",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/full-overlap-perf20-20261114/reproduce-9091104-cache-only/profile-legacy/input.athinput",
+    "-d",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/full-overlap-perf20-20261114/reproduce-9091104-cache-only/profile-legacy"
+  ],
+  "input_sha256": "e500c8cf8f1f126341b7fa497e7728e31de00ed6a7a1cfd7dfb89b159bd34f57",
+  "executable_sha256": "de633cda33dd17fc312214a0d7e2253512bf4ea0f2ba19911b71fe2fb94a36e3",
+  "scope": "Profiling, not a throughput measurement"
+}

@@ -1,0 +1,28 @@
+{
+  "command": [
+    "mpiexec",
+    "-n",
+    "24",
+    "-ppn",
+    "12",
+    "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+    "/opt/aurora/26.26.0/support/tools/mpi_wrapper_utils/gpu_tile_compact.sh",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/full-overlap-perf20-20261114/athena-cache-only",
+    "-r",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/science/N12-full-overlap-30M-20261114/segment-9089673/rst/headon.00026.rst",
+    "-i",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/full-overlap-perf20-20261114/reproduce-9091104-cache-only/input.athinput",
+    "-d",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/full-overlap-perf20-20261114/reproduce-9091104-cache-only",
+    "-t",
+    "00:52:00"
+  ],
+  "input_sha256": "1f300bc6f9582358350d144c989f35911de4e5ddccea5181f8128f3ef394baa9",
+  "executable_sha256": "de633cda33dd17fc312214a0d7e2253512bf4ea0f2ba19911b71fe2fb94a36e3",
+  "restart_sha256": "7eb9f7913235e4da76b892cf36409dc44efec3749cebbe8c0d122eb109315dac",
+  "reference_final_sha256": "184979b130d7f79eb3b6a566070785967b13b4f232a35d8f19068df8450517c2",
+  "qualification_parent_legacy_ratio": 1.299325292516645,
+  "qualification_parent_pair": "reuse-pair-9090714",
+  "executable_override": true,
+  "scope": "26M0 saved-state continuation to30M0; compare entire final accepted payload to archived original"
+}

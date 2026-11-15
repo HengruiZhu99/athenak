@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <map>
+#include <unordered_map>
 #include <iostream>
 #include <iomanip>
 #include <limits>
@@ -65,7 +66,18 @@ void OverlapAgreementPlan::Rebuild(MeshBlockPack *pack,const Z4cHyperboloidal &p
   std::vector<Row> rows;std::vector<Entry> entries;
   std::vector<bvals::DonorPoint> requests;
   std::map<bvals::DonorPoint,std::vector<Transpose>> transpose;
-  std::map<bvals::DonorPoint,Real> volumes,bounds;
+  // Volume is a lookup-only cache: hashing changes neither row order nor sums.
+  const auto hash=[](const bvals::DonorPoint &d) {
+    std::size_t h=(1469598103934665603ULL^static_cast<unsigned>(d.gid))*1099511628211ULL;
+    for(int v:{d.k,d.j,d.i})h=(h^static_cast<unsigned>(v))*1099511628211ULL;
+    return h;
+  };
+  const auto equal=[](const bvals::DonorPoint &a,const bvals::DonorPoint &b) {
+    return a.gid==b.gid && a.k==b.k && a.j==b.j && a.i==b.i;
+  };
+  std::unordered_map<bvals::DonorPoint,Real,decltype(hash),decltype(equal)>
+      volumes(0,hash,equal);
+  std::map<bvals::DonorPoint,Real> bounds;
   auto volume=[&](const bvals::DonorPoint &d) {
     auto found=volumes.find(d);if(found!=volumes.end())return found->second;
     return volumes.emplace(d,Volume(selector.Map(d.gid),n,d.i-o,d.j-o,d.k-o)).first->second;
@@ -190,10 +202,14 @@ void OverlapAgreementPlan::Rebuild(MeshBlockPack *pack,const Z4cHyperboloidal &p
     targets.push_back({{d.gid-pack->gids,d.k,d.j,d.i},begin,static_cast<int>(adjacency.size()),
                        p.parameters.residual_weight.Value(x)});
   }
+  // Schedule similarly sized gathers together; each target retains its entry order.
+  std::stable_sort(targets.begin(),targets.end(),[](const Target &a,const Target &b) {
+    return a.end-a.begin>b.end-b.begin;
+  });
   Copy(rows,rows_,"agreement rows");Copy(entries,entries_,"agreement entries");
   Copy(targets,targets_,"agreement recipients");Copy(adjacency,transpose_,"agreement transpose");
   Copy(fields,fields_,"agreement fields");
-  discrepancy_=DvceArray2D<Real>("agreement discrepancies",rows.size(),Fields::independent_count);
+  discrepancy_=DvceArray2D<Real>("agreement discrepancies",rows.size()+targets.size(),32);
   // Initialization/rebuild receipt, never a stage collective or device fence.
   std::ostringstream receipt;receipt<<std::setprecision(17)
     <<"AGREEMENT_PLAN rank="<<global_variable::my_rank<<" active_points="<<p.npoints
@@ -240,27 +256,33 @@ void OverlapAgreementPlan::Evaluate() {
 void OverlapAgreementPlan::AddRHS(const Z4cHyperboloidal &p) const {
   const auto targets=targets_;const auto adjacency=transpose_;const auto d=discrepancy_;
   const auto fields=fields_;const auto rhs=p.u_rhs;const Real kappa=kappa_;
-  // Scalar accumulation avoids a dynamically indexed 26-double private
-  // array per work item. D also accumulates its Lambda correction in the same
-  // adjacency order, preserving the stored-variable conversion exactly.
-  // Keep each target's fields in one 32-lane group on PVC: adjacent targets
-  // can have very different adjacency lengths. The unused lanes do no work.
+  const int scratch_begin=rows_.extent_int(0);
   constexpr int field_lanes=32;
   static_assert(Fields::independent_count<=field_lanes);
+  // Preserve each scalar sum's adjacency order. Store completed sums after
+  // the discrepancy rows so D can reuse the identical Lambda sum.
   Kokkos::parallel_for("overlap agreement transpose",
     Kokkos::RangePolicy<>(0,targets.extent_int(0)*field_lanes),
     KOKKOS_LAMBDA(int q) {
       const int t=q/field_lanes,f=q%field_lanes;
       if(f>=Fields::independent_count)return;
-      const auto target=targets(t);const auto c=target.point;const int field=fields(f);
-      Real correction=0,lambda_correction=0;
+      const auto target=targets(t);Real correction=0;
+      #pragma unroll 4
       for(int e=target.begin;e<target.end;++e) {
         const auto a=adjacency(e);
         correction-=kappa*a.coefficient*d(a.row,f);
-        if(field>=Fields::D)lambda_correction-=kappa*a.coefficient*d(a.row,f-10);
       }
+      d(scratch_begin+t,f)=correction;
+    });
+  Kokkos::parallel_for("overlap agreement apply",
+    Kokkos::RangePolicy<>(0,targets.extent_int(0)*field_lanes),
+    KOKKOS_LAMBDA(int q) {
+      const int t=q/field_lanes,f=q%field_lanes;
+      if(f>=Fields::independent_count)return;
+      const auto target=targets(t);const auto c=target.point;const int field=fields(f);
+      Real correction=d(scratch_begin+t,f);
       if(field==Fields::chi)correction*=target.chi_weight;
-      if(field>=Fields::D)correction+=lambda_correction;
+      if(field>=Fields::D)correction+=d(scratch_begin+t,f-10);
       rhs(c.m,field,c.k,c.j,c.i)+=correction;
     });
 }

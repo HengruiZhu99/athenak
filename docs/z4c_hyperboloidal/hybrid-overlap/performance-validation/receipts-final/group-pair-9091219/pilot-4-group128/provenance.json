@@ -1,0 +1,23 @@
+{
+  "command": [
+    "mpiexec",
+    "-n",
+    "24",
+    "-ppn",
+    "12",
+    "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+    "/opt/aurora/26.26.0/support/tools/mpi_wrapper_utils/gpu_tile_compact.sh",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/full-overlap-perf20-20261114/athena-group128",
+    "-r",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/full-overlap-perf20-20261114/legacy-pair-9090542/prepare-cycle8521/rst/headon.00013.rst",
+    "-i",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/full-overlap-perf20-20261114/group-pair-9091219/pilot-4-group128/input.athinput",
+    "-d",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/full-overlap-perf20-20261114/group-pair-9091219/pilot-4-group128",
+    "output1/last_time=4.0000000000000009",
+    "output2/last_time=4",
+    "output2/file_number=13"
+  ],
+  "input_sha256": "426372d76d255a9a8b9a11163bcef7dc4789b8abfdc9d60306b7f6a76f7f3ca9",
+  "executable_sha256": "c62b4d836ce07d0a6bd67e6aafa3b631a5eeee584512762317359600391886f1"
+}

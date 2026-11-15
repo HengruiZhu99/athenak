@@ -1,0 +1,36 @@
+
+Root grid = 3 x 3 x 3 MeshBlocks
+Total number of MeshBlocks = 106
+Number of logical  levels of refinement = 5 (6 levels total)
+Number of physical levels of refinement = 1 (2 levels total)
+Number of parallel ranks = 2
+  Rank = 0: 53 MeshBlocks, cost = 53
+  Rank = 1: 53 MeshBlocks, cost = 53
+Load Balancing:
+  Maximum normalized cost = 1, Average = 1
+AGREEMENT_PLAN rank=1 active_points=104112 global_samples=70176 local_rows=44563 cartesian_samples=51432 spherical_samples=18744 sample_rmin=0.080267684871110495 sample_rmax=0.18763883748662843 balanced_samples=20744 entries=9670171 recipients=23012 receive_donors=64680 send_donors=23012 owner_once_rows=12496 owner_once_entries=2711632 owner_once_remote_gather=64680 owner_once_remote_return=64680 kappa=1 rate_bound=24.220341628436799 dt=0.00046944203735617445 build_seconds=3.016495833
+FULL_OVERLAP_POLICY legacy_activity=1 taper_width=0.014999999999999999 envelope=0.1138888888888889,0.11388888888888893,0.1138888888888889,0.11388888888888893,0.1138888888888889,0.11388888888888893,
+AGREEMENT_PLAN rank=0 active_points=125280 global_samples=70176 local_rows=70176 cartesian_samples=51432 spherical_samples=18744 sample_rmin=0.080267684871110495 sample_rmax=0.18763883748662843 balanced_samples=20744 entries=15228192 recipients=79204 receive_donors=23012 send_donors=64680 owner_once_rows=57680 owner_once_entries=12516560 owner_once_remote_gather=23004 owner_once_remote_return=23004 kappa=1 rate_bound=24.220341628436799 dt=0.00046944203735617445 build_seconds=3.0690523330000001
+FULL_OVERLAP_POLICY legacy_activity=1 taper_width=0.014999999999999999 envelope=0.1138888888888889,0.11388888888888893,0.1138888888888889,0.11388888888888893,0.1138888888888889,0.11388888888888893,
+AGREEMENT_PLAN rank=1 active_points=104112 global_samples=70176 local_rows=44563 cartesian_samples=51432 spherical_samples=18744 sample_rmin=0.080267684871110495 sample_rmax=0.18763883748662843 balanced_samples=20744 entries=9670171 recipients=23012 receive_donors=64680 send_donors=23012 owner_once_rows=12496 owner_once_entries=2711632 owner_once_remote_gather=64680 owner_once_remote_return=64680 kappa=1 rate_bound=24.220341628436799 dt=0.00046944203735617445 build_seconds=2.9647944160000002
+FULL_OVERLAP_POLICY legacy_activity=1 taper_width=0.014999999999999999 envelope=0.1138888888888889,0.11388888888888893,0.1138888888888889,0.11388888888888893,0.1138888888888889,0.11388888888888893,
+AGREEMENT_PLAN rank=0 active_points=125280 global_samples=70176 local_rows=70176 cartesian_samples=51432 spherical_samples=18744 sample_rmin=0.080267684871110495 sample_rmax=0.18763883748662843 balanced_samples=20744 entries=15228192 recipients=79204 receive_donors=23012 send_donors=64680 owner_once_rows=57680 owner_once_entries=12516560 owner_once_remote_gather=23004 owner_once_remote_return=23004 kappa=1 rate_bound=24.220341628436799 dt=0.00046944203735617445 build_seconds=3.0164932499999999
+FULL_OVERLAP_POLICY legacy_activity=1 taper_width=0.014999999999999999 envelope=0.1138888888888889,0.11388888888888893,0.1138888888888889,0.11388888888888893,0.1138888888888889,0.11388888888888893,
+AGREEMENT_ORACLE mode=0 energy=-9.2685378573635725e-34 expected=-8.5520615004185267e-34 residual=-7.1647635694504589e-35 history_roundoff=-1.0041042462874361e-45 max_transpose_terms=1717 rate_norm=6.0422419178083827e-34 instantaneous_mismatch_RMS_efold_M0=4.2461365913981162
+PASS agreement mode=0 energy=-9.2685378573635725e-34 minus_kappa_dWd=-8.5520615004285677e-34 volume=0.0060018473680318873 rate_bound=24.220341628436799
+AGREEMENT_ORACLE mode=1 energy=-0.14822224687751617 expected=-0.14822224687751415 residual=-2.0261570199409107e-15 history_roundoff=-3.4694469519536142e-15 max_transpose_terms=1717 rate_norm=0.17946650153267435 instantaneous_mismatch_RMS_efold_M0=2.4777144304648693
+PASS agreement mode=1 energy=-0.14822224687751617 minus_kappa_dWd=-0.14822224687751762 volume=0.0060018473680318873 rate_bound=24.220341628436799
+AGREEMENT_ORACLE mode=2 energy=-0.097137931191163568 expected=-0.09713793119195327 residual=7.8970163741587385e-13 history_roundoff=5.479366960159382e-13 max_transpose_terms=1717 rate_norm=0.078275011192642574 instantaneous_mismatch_RMS_efold_M0=3.7229479642873216
+PASS agreement mode=2 energy=-0.097137931191163568 minus_kappa_dWd=-0.097137931191405333 volume=0.0060018473680318873 rate_bound=24.220341628436799
+AGREEMENT_ORACLE mode=3 energy=-6.6430152962094269e-13 expected=-6.6430152961160621e-13 residual=-9.3364780467655214e-24 history_roundoff=-4.0571431899878726e-25 max_transpose_terms=1717 rate_norm=9.3793893535033907e-13 instantaneous_mismatch_RMS_efold_M0=2.1247700822779536
+PASS agreement mode=3 energy=-6.6430152962094269e-13 minus_kappa_dWd=-6.6430152961201192e-13 volume=0.0060018473680318873 rate_bound=24.220341628436799
+AGREEMENT_ORACLE mode=4 energy=-0.13804248946474504 expected=-0.13804248946555131 residual=8.0627171605840431e-13 history_roundoff=5.622446952457949e-13 max_transpose_terms=1717 rate_norm=0.22381427259399173 instantaneous_mismatch_RMS_efold_M0=1.8503175136923078
+PASS agreement mode=4 energy=-0.13804248946474504 minus_kappa_dWd=-0.13804248946498907 volume=0.0060018473680318873 rate_bound=24.220341628436799
+AGREEMENT_ORACLE mode=5 energy=-0.0086117909460131925 expected=-0.0086117909460264666 residual=1.3274104038174528e-14 history_roundoff=1.1445705494494973e-14 max_transpose_terms=1717 rate_norm=0.013654633727927721 instantaneous_mismatch_RMS_efold_M0=1.8920590147507337
+PASS agreement mode=5 energy=-0.0086117909460131925 minus_kappa_dWd=-0.0086117909460150209 volume=0.0060018473680318873 rate_bound=24.220341628436799
+
+Setup complete, executing task list(s)...
+
+elapsed=1.0273315000000001e+00 cycle=0 time=0.0000000000000000e+00 dt=4.6944203735617445e-04
+PASS native Driver stage smoke: ranks=2 cycles=1 stages=4 bulk=229392 scri=864 bulk_value_checks=28444608 surface_value_checks=107136 poisoned_ghost_checks=202574336 no_surface_ranks=0 max_cfl=2.37692302259437105e-01 max_abs_rhs=3.41416171676177171e+01 max_update_error=0.00000000000000000e+00 time=4.69442037356174451e-04 legacy_comparison=not_performed
+

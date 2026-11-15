@@ -1,0 +1,23 @@
+{
+  "command": [
+    "mpiexec",
+    "-n",
+    "24",
+    "-ppn",
+    "12",
+    "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+    "/opt/aurora/26.26.0/support/tools/mpi_wrapper_utils/gpu_tile_compact.sh",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/full-overlap-perf20-20261114/athena-cache-only",
+    "-r",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/headon-6M-20261109/runs/headon20-9055906/rst/headon_6M.00012.rst",
+    "-i",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/full-overlap-perf20-20261114/group-pair-9091219/timing-0-legacy/input.athinput",
+    "-d",
+    "/lus/flare/projects/CompactBinaryMerger/hzhu/hybrid-overlap-20261111/full-overlap-perf20-20261114/group-pair-9091219/timing-0-legacy",
+    "output1/last_time=4.0000000000000009",
+    "output2/last_time=4",
+    "output2/file_number=13"
+  ],
+  "input_sha256": "0f7a1f5c489869b0325d86781eb91c8a66b1ed120fc6c4f4376312e828ef4687",
+  "executable_sha256": "de633cda33dd17fc312214a0d7e2253512bf4ea0f2ba19911b71fe2fb94a36e3"
+}

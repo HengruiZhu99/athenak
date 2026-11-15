@@ -1,0 +1,95 @@
+# Isolated paired benchmark; fresh initialization.
+<job>
+basename = headon
+<mesh>
+nghost = 4
+nx1 = 36
+nx2 = 36
+nx3 = 36
+x1min = -.2
+x1max = .2
+x2min = -.2
+x2max = .2
+x3min = -.2
+x3max = .2
+ix1_bc = mapped
+ox1_bc = mapped
+ix2_bc = mapped
+ox2_bc = mapped
+ix3_bc = mapped
+ox3_bc = mapped
+<meshblock>
+nx1 = 12
+nx2 = 12
+nx3 = 12
+<mesh_atlas>
+type = cubed_sphere
+spherical_inner_radius = .18
+shell_radii = .24,.32,.40,.48,.56,.64,.72,.80,.88,.94,1
+evolved_overlap = 3
+outer_endpoint_grid = true
+<mesh_refinement>
+refinement = static
+# Static refinement covers both horizons and their inward head-on path.
+<refined_region0>
+x1min = -.135
+x1max = .135
+x2min = -.025
+x2max = .025
+x3min = -.025
+x3max = .025
+level = 3
+<time>
+cfl_number = .2
+evolution = dynamic
+integrator = rk4_classical
+tlim = 10
+nlim = 8
+ndiag = 1
+dt = 0.00046944203735617445
+<problem>
+pgen_name = z4c_hyperboloidal_binary
+binary_prepare = false
+binary_directory = /lus/flare/projects/CompactBinaryMerger/hzhu/headon-6M-20261109/data
+binary_identity = f66983c0aea1a48ffc8baba57d129b8cd2d512d64c0877b78d8cdffdd44a8270
+<z4c_hyperboloidal>
+agreement_kappa = 1
+agreement_taper_width = 0.015
+overlap_mode = agreement_full
+residual_weight = regular_c6
+weight_inner = .30
+weight_outer = .55
+inner_z4c_radius_M = 20
+compact_slicing_end = .97
+outer_lapse_damping = .25
+ko = .1
+chi_floor = 1e-10
+scri_penalty = .5
+
+<fastflow>
+# Expansion is monitored but does not gate diagnostic surface acceptance.
+require_expansion_convergence_0 = false
+require_expansion_convergence_1 = false
+verbose = true
+flow_iterations_0 = 2000
+flow_iterations_1 = 2000
+lmax = 12
+ntheta = 24
+center_x_0 = .10116863541976967
+center_x_1 = -.10116863541976967
+center_y_0 = 0
+center_z_0 = 0
+center_y_1 = 0
+center_z_1 = 0
+initial_radius_0 = .009
+initial_radius_1 = .009
+
+<output1>
+file_type = hst
+hyperboloidal_scri = true
+dt = 0.083333333333333333
+data_format = %.17e
+<output2>
+file_type = rst
+dt = 0.33333333333333333
+single_file_per_rank = false
