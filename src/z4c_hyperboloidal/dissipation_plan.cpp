@@ -64,13 +64,6 @@ void DissipationPlan::Rebuild(const MeshBlockPack &pack,
         const Real start=point.x[axis]-target*h;
         const Real limit=pack.pmesh->atlas->HalfWidth()+(module.overlap-.5)*h;
         if (start < -limit-1e-13 || start+4*h > limit+1e-13) continue;
-        bool active=true;
-        if (module.activity.Masked()) for (int a:{0,4}) {
-          Real x[3];for (int d=0;d<3;++d)
-            x[d]=point.x[d]+(d==axis?(a-target)*h:0);
-          active=active && module.activity.CartesianActive(x);
-        }
-        if (!active) continue;
         KOLine line{axis,target,0};
         for (int a=0;a<5;++a) {
           Real r2=0;

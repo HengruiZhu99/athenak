@@ -8,8 +8,7 @@
 namespace z4c_hyperboloidal {
 class Z4cHyperboloidal;
 struct AgreementParameters {
-  Real kappa=0, inner=0, outer=0;
-  bool full_overlap=false;
+  Real kappa=1, inner=0;
   Real taper_width=0.015;
 };
 

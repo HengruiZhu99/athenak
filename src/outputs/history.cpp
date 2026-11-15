@@ -54,8 +54,6 @@ HistoryOutput::HistoryOutput(ParameterInput *pin, Mesh *pm, OutputParameters op)
   }
   if (pm->pmb_pack->pz4c_hyperboloidal != nullptr && !op.user_hist_only) {
     hist_data.emplace_back(PhysicsModule::HyperboloidalSpaceTimeDynamics);
-    if (pm->pmb_pack->pz4c_hyperboloidal->activity.Masked())
-      hist_data.emplace_back(PhysicsModule::HyperboloidalAgreement);
     if (pin->GetOrAddBoolean(op.block_name,"hyperboloidal_scri",false)) {
       pm->pmb_pack->pz4c_hyperboloidal->EnableBoundaryHistory();
       hist_data.emplace_back(PhysicsModule::HyperboloidalBoundaryDynamics);

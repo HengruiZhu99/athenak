@@ -1,5 +1,5 @@
 # N12 initial-data fixture using native Mesh, MeshBlockPack and problem generation.
-# Static mode verifies initialization; dynamic boundary tasks are not yet integrated.
+# Static mode verifies initialization; integration tests select dynamic RK4.
 <job>
 basename = native_n12
 <mesh>
@@ -46,6 +46,10 @@ dt = 0.00046944203735617445
 <problem>
 pgen_name = z4c_hyperboloidal_puncture
 <z4c_hyperboloidal>
+# Validated full overlap is the sole supported evolution policy.
+overlap_mode = agreement_full
+agreement_kappa = 1
+agreement_taper_width = .015
 inner_z4c_radius_M = 20
 compact_slicing_end = .97
 outer_lapse_damping = .25

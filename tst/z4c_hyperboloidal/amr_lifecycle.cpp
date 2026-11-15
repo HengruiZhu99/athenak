@@ -25,27 +25,8 @@
 namespace h=z4c_hyperboloidal;
 namespace {
 int operation=0;
-bool masked_test=false;
 void Require(bool yes,const char *what) {if (!yes)throw std::runtime_error(what);}
-void VanishingSliverHistory() {
-  h::RemeshLayout layout;layout.cells=12;
-  const auto map=[](Real lo,Real hi) {
-    chart_atlas::BlockMap m{};m.face=-1;m.chart_id=0;
-    for(int a=0;a<3;++a) {m.lo[a]=lo;m.hi[a]=hi;m.node_offset[a]=.5;}
-    return m;
-  };
-  layout.old_maps={map(.12,.13)};
-  layout.new_maps={map(.12,.14),map(.10,.12)};
-  h::ActivityPolicy activity;activity.mode=h::OverlapMode::masked;
-  activity.shell_inner=.18;activity.cartesian_cutoff=.2087;
-  Require(activity.Evolved(layout.old_maps[0],12,0,0,0),"sliver fixture lacks old active point");
-  for(int k=0;k<12;++k)for(int j=0;j<12;++j)for(int i=0;i<12;++i)
-    Require(!activity.Evolved(layout.new_maps[0],12,i,j,k),"sliver parent unexpectedly active");
-  const auto t=h::BuildBulkHistoryTarget(layout,0,{0},0,0,0,activity);
-  Require(t.gid==1 && t.i==11 && t.j==11 && t.k==11,
-          "vanished sliver ledger did not reach nearest evolved Cartesian node");
-  Require(activity.Evolved(layout.new_maps[t.gid],12,t.i,t.j,t.k),"inactive sliver history target");
-}
+
 bool Selected(const chart_atlas::BlockMap &map) {
   if (map.chart_id==0)
     return map.hi[0]<=-.1/3+1e-15 && map.hi[1]<=-.1/3+1e-15 &&
@@ -64,10 +45,6 @@ void Criterion(MeshBlockPack *pack) {
   }
 }
 Real Polynomial(const chart_atlas::BlockMap &map,const Real local[3]) {
-  // Across the curved cut newly active nodes can change representation. Test
-  // reproduction of a single physical field there, while retaining the legacy
-  // chart-lineage polynomial oracle when no activity mask is requested.
-  if(masked_test) {Real x[3];map.Forward(local,x);return .001*(1+x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);}
   Real q[3];for (int a=0;a<3;++a)q[a]=map.lo[a]+local[a]*(map.hi[a]-map.lo[a]);
   return .001*(1+map.chart_id+.2*q[0]+.3*q[1]+.4*q[2]+
                .1*q[0]*q[0]+.03*q[1]*q[1]*q[2]+.02*q[2]*q[2]*q[2]);
@@ -326,8 +303,6 @@ int main(int argc,char **argv) {
     mesh.pgen=std::make_unique<ProblemGenerator>(&pin,&mesh);
     mesh.pgen->user_ref_func=Criterion;
     auto &p=*mesh.pmb_pack->pz4c_hyperboloidal;
-    masked_test=p.activity.Masked();
-    if(masked_test)VanishingSliverHistory();
     Seed(mesh);
     pin.SetString("time","evolution","dynamic");
     pin.SetString("time","integrator","rk4_classical");

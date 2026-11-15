@@ -79,12 +79,7 @@ NativeDonorSelector::NativeDonorSelector(const Mesh &mesh, int origin, ActivityP
 }
 
 int NativeDonorSelector::Lower(int gid,int axis) const {
-  const auto &map=maps_.at(gid);
-  int lower=-map.overlap_sides[2*axis];
-  if (activity_.Masked() && map.face>=0 && axis==0) {
-    while (lower<n_ && !activity_.Evolved(map,n_,lower,0,0)) ++lower;
-  }
-  return lower;
+  return -maps_.at(gid).overlap_sides[2*axis];
 }
 int NativeDonorSelector::Upper(int gid,int axis) const {
   return n_+maps_.at(gid).overlap_sides[2*axis+1];
@@ -99,7 +94,7 @@ bool NativeDonorSelector::IsEvolved(const bvals::DonorPoint &p) const {
 int NativeDonorSelector::Owner(const Real x[3],bool shell) const {
   const Real radius=Radius(x);
   if (radius>outer_radius_*(1+2e-14)) return -1;
-  const bool core=!shell && activity_.CartesianActive(x) && std::max({std::abs(x[0]),std::abs(x[1]),std::abs(x[2])})
+  const bool core=!shell && std::max({std::abs(x[0]),std::abs(x[1]),std::abs(x[2])})
       <=half_width_*(1+2e-14);
   int axis=0;
   for (int a=1;a<3;++a) if (std::abs(x[a])>std::abs(x[axis])) axis=a;
@@ -159,14 +154,7 @@ std::vector<WeightedDonor> NativeDonorSelector::Cartesian(const Real x[3],int wi
                                                Lower(owner,a),Upper(owner,a)-width);
     if (first[a]<Lower(owner,a)||first[a]+length[a]>Upper(owner,a)) return {};
   }
-  // A tensor must lie entirely on evolved points. For Cartesian boxes the
-  // largest radius occurs at a corner; no fringe or recursive donors are used.
-  if (activity_.Masked()) {
-    for (int k:{first[2],first[2]+length[2]-1})
-      for (int j:{first[1],first[1]+length[1]-1})
-        for (int i:{first[0],first[0]+length[0]-1})
-          if (!IsEvolved({owner,k+origin_,j+origin_,i+origin_})) return {};
-  }
+
   return Tensor(owner,q,first,length);
 }
 
@@ -347,10 +335,8 @@ std::vector<WeightedDonor> NativeDonorSelector::Interpolate(const Real x[3],int 
 std::vector<WeightedDonor> NativeDonorSelector::Spherical(const Real x[3],int width,
                                                        bool force_shell) const {
   if (width<1||width>6) throw std::invalid_argument("mapped interpolation width must be 1..6");
-  if (activity_.Masked() && Radius(x)<activity_.shell_inner)
-    throw std::runtime_error("masked overlap lacks evolved Cartesian interpolation support below Rs");
   if (Radius(x)<first_radius_) return Overlap(x,width);
-  const int owner=Owner(x,activity_.Masked() || force_shell);
+  const int owner=Owner(x,force_shell);
   if (owner<0) throw std::runtime_error("mapped interpolation outside scri");
   Real q[3];maps_[owner].Inverse(x,q);
   const int radial_begin=int(std::floor(n_*q[0]-maps_[owner].node_offset[0]))-width/2+1;

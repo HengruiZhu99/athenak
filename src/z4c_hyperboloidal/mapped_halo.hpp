@@ -25,7 +25,6 @@ struct HaloPoint {int m, k, j, i;};
 class NativeDonorSelector {
  public:
   NativeDonorSelector(const Mesh &mesh, int origin, ActivityPolicy activity={});
-  const ActivityPolicy &Activity() const {return activity_;}
   std::vector<WeightedDonor> Cartesian(const Real x[3], int width=6) const;
   std::vector<WeightedDonor> Spherical(const Real x[3], int width=6,
                                      bool force_shell=false) const;

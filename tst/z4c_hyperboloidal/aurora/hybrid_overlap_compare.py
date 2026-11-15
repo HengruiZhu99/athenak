@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Paired fresh-initial-data N16 windows on a single two-node allocation.
+"""ARCHIVED campaign helper for frozen pre-cleanup binaries only.
+
+Paired fresh-initial-data N16 windows on a single two-node allocation.
 
 No previous campaign is resumed. All output remains in the new allocation's
 run directory. The selected dt, precision and science output cadence are shared.

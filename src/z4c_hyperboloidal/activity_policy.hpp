@@ -8,7 +8,6 @@
 #include "mesh/chart_atlas.hpp"
 
 namespace z4c_hyperboloidal {
-enum class OverlapMode {legacy, masked, agreement};
 enum class PointActivity {inactive, fringe, evolved};
 
 // The union of the actual bulk numerical dependencies, including mixed
@@ -31,26 +30,13 @@ inline const std::vector<std::array<int,3>> &BulkStencilOffsets() {
 // Module-owned immutable geometry policy. Indices here are relative to origin.
 // Rectangular storage and native block ownership are unaffected by this policy.
 struct ActivityPolicy {
-  OverlapMode mode=OverlapMode::legacy;
-  Real shell_inner=0, cartesian_cutoff=0;
-  KOKKOS_INLINE_FUNCTION bool Masked() const {return mode!=OverlapMode::legacy;}
-  KOKKOS_INLINE_FUNCTION bool CartesianActive(const Real x[3]) const {
-    return !Masked() || x[0]*x[0]+x[1]*x[1]+x[2]*x[2]
-        <cartesian_cutoff*cartesian_cutoff;
-  }
   KOKKOS_INLINE_FUNCTION bool Evolved(const chart_atlas::BlockMap &map,
                                      int n,int i,int j,int k) const {
     const int index[3]={i,j,k};
     for (int a=0;a<3;++a)
       if (index[a]<-map.overlap_sides[2*a] ||
           index[a]>=n+map.overlap_sides[2*a+1]) return false;
-    if (!Masked()) return true;
-    const Real q[3]={(i+map.node_offset[0])/n,(j+map.node_offset[1])/n,
-                     (k+map.node_offset[2])/n};
-    if (map.face<0) {Real x[3];map.Forward(q,x);return CartesianActive(x);}
-    const Real r=map.inner_radius+(map.lo[0]+q[0]*(map.hi[0]-map.lo[0]))
-        *(map.outer_radius-map.inner_radius);
-    return r>=shell_inner;
+    return true;
   }
   PointActivity Classify(const chart_atlas::BlockMap &map,int n,
                          int i,int j,int k) const {

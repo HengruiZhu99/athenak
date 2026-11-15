@@ -1,0 +1,441 @@
+{
+  "runs": {
+    "manufactured2": {
+      "seconds": 69.009057667,
+      "command": [
+        "mpiexec",
+        "-n",
+        "2",
+        "/private/tmp/full-only-scri/scri_recorder",
+        "/private/tmp/full-only-scri/manufactured2/input"
+      ],
+      "returncode": 0
+    },
+    "manufactured8": {
+      "seconds": 35.471672125,
+      "command": [
+        "mpiexec",
+        "-n",
+        "8",
+        "/private/tmp/full-only-scri/scri_recorder",
+        "/private/tmp/full-only-scri/manufactured8/input"
+      ],
+      "returncode": 0
+    },
+    "treatment_B": {
+      "seconds": 15.768560457999996,
+      "command": [
+        "mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+        "-i",
+        "/private/tmp/full-only-scri/treatment_B/input"
+      ],
+      "returncode": 0
+    },
+    "treatment_C": {
+      "seconds": 19.751345415999992,
+      "command": [
+        "mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+        "-i",
+        "/private/tmp/full-only-scri/treatment_C/input"
+      ],
+      "returncode": 0
+    },
+    "disabled": {
+      "seconds": 42.534888790999986,
+      "command": [
+        "mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+        "-i",
+        "/private/tmp/full-only-scri/disabled/input"
+      ],
+      "returncode": 0
+    },
+    "enabled": {
+      "seconds": 41.55847141699999,
+      "command": [
+        "mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+        "-i",
+        "/private/tmp/full-only-scri/enabled/input"
+      ],
+      "returncode": 0
+    },
+    "serial": {
+      "seconds": 20.217162374999987,
+      "command": [
+        "mpiexec",
+        "-n",
+        "1",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+        "-i",
+        "/private/tmp/full-only-scri/serial/input"
+      ],
+      "returncode": 0
+    },
+    "empty_ranks": {
+      "seconds": 7.9009554579999985,
+      "command": [
+        "mpiexec",
+        "-n",
+        "8",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+        "-i",
+        "/private/tmp/full-only-scri/empty_ranks/input"
+      ],
+      "returncode": 0
+    },
+    "restart8": {
+      "seconds": 21.905195041000013,
+      "command": [
+        "mpiexec",
+        "-n",
+        "8",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+        "-r",
+        "/private/tmp/full-only-scri/enabled/rst/native_n12.00000.rst",
+        "time/nlim=2"
+      ],
+      "returncode": 0
+    },
+    "multiple": {
+      "seconds": 42.02218733300003,
+      "command": [
+        "mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+        "-i",
+        "/private/tmp/full-only-scri/multiple/input"
+      ],
+      "returncode": 0
+    },
+    "invalid_negative": {
+      "seconds": 2.0156939169999646,
+      "command": [
+        "mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+        "-i",
+        "/private/tmp/full-only-scri/invalid_negative/input"
+      ],
+      "returncode": 134
+    },
+    "invalid_resolution": {
+      "seconds": 13.44407533399999,
+      "command": [
+        "mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+        "-i",
+        "/private/tmp/full-only-scri/invalid_resolution/input"
+      ],
+      "returncode": 134
+    },
+    "invalid_empty": {
+      "seconds": 1.3827591669999606,
+      "command": [
+        "mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+        "-i",
+        "/private/tmp/full-only-scri/invalid_empty/input"
+      ],
+      "returncode": 134
+    }
+  },
+  "reconstruction": {
+    "manufactured2/native_n12.scri.o1.00000000.r00000000.scri": {
+      "points": 144,
+      "truth_donors": 864,
+      "jet_error": 0.0,
+      "lift_error": 2.7755575615628914e-17
+    },
+    "manufactured2/native_n12.scri.o1.00000000.r00000001.scri": {
+      "points": 720,
+      "truth_donors": 5161,
+      "jet_error": 0.0,
+      "lift_error": 4.163336342344337e-17
+    },
+    "manufactured2/native_n12.scri.o1.00000001.r00000000.scri": {
+      "points": 576,
+      "truth_donors": 3736,
+      "jet_error": 0.0,
+      "lift_error": 5.551115123125783e-16
+    },
+    "manufactured2/native_n12.scri.o1.00000001.r00000001.scri": {
+      "points": 720,
+      "truth_donors": 5161,
+      "jet_error": 0.0,
+      "lift_error": 1.1102230246251565e-16
+    },
+    "manufactured2/native_n12.scri.o1.00000002.r00000000.scri": {
+      "points": 144,
+      "truth_donors": 864,
+      "jet_error": 0.0,
+      "lift_error": 1.1102230246251565e-16
+    },
+    "manufactured2/native_n12.scri.o1.00000002.r00000001.scri": {
+      "points": 720,
+      "truth_donors": 5161,
+      "jet_error": 0.0,
+      "lift_error": 1.1102230246251565e-16
+    },
+    "manufactured2/native_n12.scri.o1.00000003.r00000000.scri": {
+      "points": 144,
+      "truth_donors": 864,
+      "jet_error": 0.0,
+      "lift_error": 1.1102230246251565e-16
+    },
+    "manufactured2/native_n12.scri.o1.00000003.r00000001.scri": {
+      "points": 720,
+      "truth_donors": 5161,
+      "jet_error": 0.0,
+      "lift_error": 1.1102230246251565e-16
+    },
+    "manufactured8/native_n12.scri.o1.00000000.r00000000.scri": {
+      "points": 0,
+      "truth_donors": 0,
+      "jet_error": 0.0,
+      "lift_error": 0.0
+    },
+    "manufactured8/native_n12.scri.o1.00000000.r00000001.scri": {
+      "points": 0,
+      "truth_donors": 0,
+      "jet_error": 0.0,
+      "lift_error": 0.0
+    },
+    "manufactured8/native_n12.scri.o1.00000000.r00000002.scri": {
+      "points": 0,
+      "truth_donors": 0,
+      "jet_error": 0.0,
+      "lift_error": 0.0
+    },
+    "manufactured8/native_n12.scri.o1.00000000.r00000003.scri": {
+      "points": 144,
+      "truth_donors": 864,
+      "jet_error": 0.0,
+      "lift_error": 2.7755575615628914e-17
+    },
+    "manufactured8/native_n12.scri.o1.00000000.r00000004.scri": {
+      "points": 144,
+      "truth_donors": 864,
+      "jet_error": 0.0,
+      "lift_error": 2.6020852139652106e-18
+    },
+    "manufactured8/native_n12.scri.o1.00000000.r00000005.scri": {
+      "points": 144,
+      "truth_donors": 864,
+      "jet_error": 0.0,
+      "lift_error": 2.7755575615628914e-17
+    },
+    "manufactured8/native_n12.scri.o1.00000000.r00000006.scri": {
+      "points": 144,
+      "truth_donors": 864,
+      "jet_error": 0.0,
+      "lift_error": 1.5612511283791264e-17
+    },
+    "manufactured8/native_n12.scri.o1.00000000.r00000007.scri": {
+      "points": 288,
+      "truth_donors": 1728,
+      "jet_error": 0.0,
+      "lift_error": 4.163336342344337e-17
+    },
+    "manufactured8/native_n12.scri.o1.00000001.r00000000.scri": {
+      "points": 0,
+      "truth_donors": 0,
+      "jet_error": 0.0,
+      "lift_error": 0.0
+    },
+    "manufactured8/native_n12.scri.o1.00000001.r00000001.scri": {
+      "points": 0,
+      "truth_donors": 0,
+      "jet_error": 0.0,
+      "lift_error": 0.0
+    },
+    "manufactured8/native_n12.scri.o1.00000001.r00000002.scri": {
+      "points": 0,
+      "truth_donors": 0,
+      "jet_error": 0.0,
+      "lift_error": 0.0
+    },
+    "manufactured8/native_n12.scri.o1.00000001.r00000003.scri": {
+      "points": 576,
+      "truth_donors": 3736,
+      "jet_error": 0.0,
+      "lift_error": 5.551115123125783e-16
+    },
+    "manufactured8/native_n12.scri.o1.00000001.r00000004.scri": {
+      "points": 144,
+      "truth_donors": 864,
+      "jet_error": 0.0,
+      "lift_error": 1.734723475976807e-17
+    },
+    "manufactured8/native_n12.scri.o1.00000001.r00000005.scri": {
+      "points": 144,
+      "truth_donors": 864,
+      "jet_error": 0.0,
+      "lift_error": 9.71445146547012e-17
+    },
+    "manufactured8/native_n12.scri.o1.00000001.r00000006.scri": {
+      "points": 144,
+      "truth_donors": 864,
+      "jet_error": 0.0,
+      "lift_error": 9.71445146547012e-17
+    },
+    "manufactured8/native_n12.scri.o1.00000001.r00000007.scri": {
+      "points": 288,
+      "truth_donors": 1728,
+      "jet_error": 0.0,
+      "lift_error": 1.1102230246251565e-16
+    },
+    "manufactured8/native_n12.scri.o1.00000002.r00000000.scri": {
+      "points": 0,
+      "truth_donors": 0,
+      "jet_error": 0.0,
+      "lift_error": 0.0
+    },
+    "manufactured8/native_n12.scri.o1.00000002.r00000001.scri": {
+      "points": 0,
+      "truth_donors": 0,
+      "jet_error": 0.0,
+      "lift_error": 0.0
+    },
+    "manufactured8/native_n12.scri.o1.00000002.r00000002.scri": {
+      "points": 0,
+      "truth_donors": 0,
+      "jet_error": 0.0,
+      "lift_error": 0.0
+    },
+    "manufactured8/native_n12.scri.o1.00000002.r00000003.scri": {
+      "points": 144,
+      "truth_donors": 864,
+      "jet_error": 0.0,
+      "lift_error": 1.1102230246251565e-16
+    },
+    "manufactured8/native_n12.scri.o1.00000002.r00000004.scri": {
+      "points": 144,
+      "truth_donors": 864,
+      "jet_error": 0.0,
+      "lift_error": 1.734723475976807e-17
+    },
+    "manufactured8/native_n12.scri.o1.00000002.r00000005.scri": {
+      "points": 144,
+      "truth_donors": 864,
+      "jet_error": 0.0,
+      "lift_error": 9.71445146547012e-17
+    },
+    "manufactured8/native_n12.scri.o1.00000002.r00000006.scri": {
+      "points": 144,
+      "truth_donors": 864,
+      "jet_error": 0.0,
+      "lift_error": 9.71445146547012e-17
+    },
+    "manufactured8/native_n12.scri.o1.00000002.r00000007.scri": {
+      "points": 288,
+      "truth_donors": 1728,
+      "jet_error": 0.0,
+      "lift_error": 1.1102230246251565e-16
+    },
+    "manufactured8/native_n12.scri.o1.00000003.r00000000.scri": {
+      "points": 0,
+      "truth_donors": 0,
+      "jet_error": 0.0,
+      "lift_error": 0.0
+    },
+    "manufactured8/native_n12.scri.o1.00000003.r00000001.scri": {
+      "points": 0,
+      "truth_donors": 0,
+      "jet_error": 0.0,
+      "lift_error": 0.0
+    },
+    "manufactured8/native_n12.scri.o1.00000003.r00000002.scri": {
+      "points": 0,
+      "truth_donors": 0,
+      "jet_error": 0.0,
+      "lift_error": 0.0
+    },
+    "manufactured8/native_n12.scri.o1.00000003.r00000003.scri": {
+      "points": 144,
+      "truth_donors": 864,
+      "jet_error": 0.0,
+      "lift_error": 1.1102230246251565e-16
+    },
+    "manufactured8/native_n12.scri.o1.00000003.r00000004.scri": {
+      "points": 144,
+      "truth_donors": 864,
+      "jet_error": 0.0,
+      "lift_error": 1.734723475976807e-17
+    },
+    "manufactured8/native_n12.scri.o1.00000003.r00000005.scri": {
+      "points": 144,
+      "truth_donors": 864,
+      "jet_error": 0.0,
+      "lift_error": 9.71445146547012e-17
+    },
+    "manufactured8/native_n12.scri.o1.00000003.r00000006.scri": {
+      "points": 144,
+      "truth_donors": 864,
+      "jet_error": 0.0,
+      "lift_error": 9.71445146547012e-17
+    },
+    "manufactured8/native_n12.scri.o1.00000003.r00000007.scri": {
+      "points": 288,
+      "truth_donors": 1728,
+      "jet_error": 0.0,
+      "lift_error": 1.1102230246251565e-16
+    },
+    "treatment_B/native_n12.scri.o1.00000000.r00000000.scri": {
+      "points": 144,
+      "truth_donors": 0,
+      "jet_error": 0.0,
+      "lift_error": 1.2924697071141057e-26
+    },
+    "treatment_B/native_n12.scri.o1.00000000.r00000001.scri": {
+      "points": 720,
+      "truth_donors": 0,
+      "jet_error": 0.0,
+      "lift_error": 2.5849394142282115e-26
+    },
+    "treatment_C/native_n12.scri.o1.00000000.r00000000.scri": {
+      "points": 144,
+      "truth_donors": 0,
+      "jet_error": 0.0,
+      "lift_error": 1.2924697071141057e-26
+    },
+    "treatment_C/native_n12.scri.o1.00000000.r00000001.scri": {
+      "points": 720,
+      "truth_donors": 0,
+      "jet_error": 0.0,
+      "lift_error": 2.5849394142282115e-26
+    }
+  },
+  "binary_sha256": "e597f613ffa4cbc791760fb4e2496a6be24fdde7213c85b3dea9016b614bb6e5",
+  "evolution_equivalence": {
+    "bitwise_equal": true,
+    "scalar_values": 24704784,
+    "payload_sha256": "bf13bacd165a2e77833b8e45ba70b9f2207d3919273f84fb25b343be96ee7bb1"
+  },
+  "restart_equivalence": {
+    "bitwise_equal": true,
+    "scalar_values": 24704784,
+    "payload_sha256": "bf13bacd165a2e77833b8e45ba70b9f2207d3919273f84fb25b343be96ee7bb1"
+  },
+  "bytes": {
+    "static": 63208600,
+    "per_record": 5699150,
+    "per_code_time_at_dt_001": 569915000
+  }
+}

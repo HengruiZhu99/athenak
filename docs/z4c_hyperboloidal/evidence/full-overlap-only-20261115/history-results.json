@@ -1,0 +1,72 @@
+{
+  "passed": true,
+  "scope": "native HistoryOutput reduction/dispatch, local CPU MPI",
+  "synthetic_constraint_formula_oracle": false,
+  "runs": {
+    "real": {
+      "2": {
+        "command": [
+          "mpiexec",
+          "-n",
+          "2",
+          "/private/tmp/full-only-history/history_output",
+          "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/tst/z4c_hyperboloidal/n12_initialize.athinput",
+          "real"
+        ],
+        "columns": [
+          "time",
+          "dt",
+          "Volume",
+          "H-rms",
+          "M-rms",
+          "Theta-rms",
+          "Z-rms",
+          "eVolume",
+          "eH-rms",
+          "eM-rms",
+          "eTheta-rms",
+          "eZ-rms"
+        ],
+        "rows": [
+          [
+            0.0,
+            0.00046944203735617445,
+            4.161698576889209,
+            1.2907691865439403e-09,
+            9.747371961411309e-13,
+            0.0,
+            0.0,
+            4.161677829289758,
+            1.2907111792173092e-09,
+            9.74739625862092e-13,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.00046944203735617445,
+            4.161698576889209,
+            1.2907691865439403e-09,
+            9.747371961411309e-13,
+            0.0,
+            0.0,
+            4.161677829289758,
+            1.2907111792173092e-09,
+            9.74739625862092e-13,
+            0.0,
+            0.0
+          ]
+        ],
+        "history_sha256": "48d49c42534af74b4814647acc64b54b3b61108488c600be623e563c1f148a22",
+        "ordinary_sha256": {},
+        "cross_rank_max_absolute": 0.0,
+        "cross_rank_exact": true
+      }
+    }
+  },
+  "executable_sha256": "56f05edd8993e2d76761cc530ab63468619cdfad5506abc4847567a905ef1702",
+  "provenance": {
+    "sources_unchanged": true,
+    "objects_unchanged": true
+  }
+}

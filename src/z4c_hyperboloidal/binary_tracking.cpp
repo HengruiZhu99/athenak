@@ -18,7 +18,7 @@ void Z4cHyperboloidal::RefineBinaryChi() {
   // Match ordinary isotropic Cartesian chi: x=scale*X and bar chi=scale^2*chi/Omega^2.
   const Real omega=parameters.profile.plateau;
   z4c::RefineChiMinimum(pmy_pack,u0,Fields::chi,overlap,
-                       threshold*parameters.inner_gamma/(omega*omega),activity);
+                       threshold*parameters.inner_gamma/(omega*omega));
   auto &mesh=*pmy_pack->pmesh;auto &flags=mesh.pmr->refine_flag;
   const Real radius=parameters.residual_weight.inner;
   for(int m=0;m<nblocks;++m) {

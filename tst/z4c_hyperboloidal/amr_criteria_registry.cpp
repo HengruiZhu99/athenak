@@ -23,13 +23,11 @@ int main(int argc,char **argv) {
   Kokkos::initialize(argc,argv);
   try {
     {
+      Require(argc==2,"usage: amr_criteria_registry fixture");
       ParameterInput pin;
       IOWrapper file;file.Open(argv[1],IOWrapper::FileMode::read);
       pin.LoadFromFile(file);file.Close();
-      if(argc==3 && std::string(argv[2])=="--masked") {
-        pin.SetString("z4c_hyperboloidal","overlap_mode","masked");
-        pin.SetRealExact("z4c_hyperboloidal","cartesian_cutoff",.13);
-      }
+
       pin.SetString("amr_criterion0","method","min_max");
       pin.SetString("amr_criterion0","variable","hyperboloidal_chi");
       pin.SetReal("amr_criterion0","value_max",3);
@@ -78,7 +76,7 @@ int main(int argc,char **argv) {
           KOKKOS_LAMBDA(int m,int k,int j,int i){
             u(m,0,k,j,i)=activity.Evolved(maps(m),n,i-o,j-o,k-o)?value:-1e100;
           });
-        reset();z4c::RefineChiMinimum(mesh.pmb_pack,u,0,p.overlap,2.0,p.activity);
+        reset();z4c::RefineChiMinimum(mesh.pmb_pack,u,0,p.overlap,2.0);
         check(false,value<2.0?1:value>2.5?-1:0);
       }
       auto old=p.u0;
@@ -102,14 +100,7 @@ int main(int argc,char **argv) {
             o,o+n-1,o,o+n-1,KOKKOS_LAMBDA(int m,int k,int j) {
               if (faces(m)>=0) u(m,0,k,j,o+n)=poison;
             });
-          if(activity.Masked()) {
-            auto host=Kokkos::create_mirror_view_and_copy(HostMemSpace(),u);
-            for(int m=0;m<p.nblocks;++m)for(int k=o;k<o+n;++k)
-              for(int j=o;j<o+n;++j)for(int i=o;i<o+n;++i)
-                if(activity.Classify(mesh.pmb_pack->pmb->mb_map.h_view(m),n,i-o,j-o,k-o)
-                    ==z4c_hyperboloidal::PointActivity::inactive) host(m,0,k,j,i)=poison;
-            Kokkos::deep_copy(u,host);
-          }
+
           auto evaluate=[&]() {
             reset();
             if (method==RefCritMethod::slope)

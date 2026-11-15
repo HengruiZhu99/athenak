@@ -1,0 +1,43 @@
+{
+  "command": [
+    "mpiexec",
+    "-n",
+    "2",
+    "/private/tmp/full-only-stage/stage_smoke",
+    "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/tst/z4c_hyperboloidal/n12_initialize.athinput"
+  ],
+  "exit_code": 0,
+  "scope": "one native Driver RK4 cycle, local CPU MPI ranks",
+  "legacy_comparison": false,
+  "driver_dynamic_run": true,
+  "timestep_integration_verified": true,
+  "input_sha256": "61fe2194900b57b622dab9b1479e848753b87d8026a455b080c6423de3ecf289",
+  "provenance": {
+    "executable_sha256": "41afc65cadd33d2d6d46648fe66dab9d2e879cd806e32b605d598831899ac434",
+    "harness_object_sha256": "6ede1a1babae72ae77dc9d605ad89bb81396a33b56579f7815183aa3a875e49e",
+    "source_manifest_sha256": "0ccad0620bbf54e63d16820e0fd044c4899818cbfbce5a560d223cefa58222bd",
+    "object_manifest_sha256": "cd3cd92bc526f15922fb1cb2e43d6975a674cee12abac0751e16f905306ddaca",
+    "native_object_count": 204,
+    "source_count": 419,
+    "sources_unchanged_during_test": true,
+    "objects_unchanged_during_test": true
+  },
+  "accepted_state": {
+    "bulk": {
+      "count": 229392,
+      "key": "native_gid,k,j,i",
+      "state_fields": 31,
+      "chi_record_fields": 8,
+      "encoding": "little-endian int32 key, float64 state and records",
+      "sha256": "7fef7d0838caec337b0f3e27cfbd1b13e338156de9e0bcee0e7e70a17ed4b22c"
+    },
+    "scri": {
+      "count": 864,
+      "key": "native_gid,k,j",
+      "state_fields": 31,
+      "chi_record_fields": 8,
+      "encoding": "little-endian int32 key, float64 state and records",
+      "sha256": "196db6fccef893cf99f45fe7a12faacaa9922cac9c9a852d7fed39f2360fd51f"
+    }
+  }
+}

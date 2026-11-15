@@ -1,0 +1,138 @@
+{
+  "explicit": {
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+      "-i",
+      "/private/tmp/hyperboloidal-full-policy-validation/explicit/input"
+    ],
+    "exit_code": 0
+  },
+  "default": {
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+      "-i",
+      "/private/tmp/hyperboloidal-full-policy-validation/default/input"
+    ],
+    "exit_code": 0
+  },
+  "defaults_bitwise": {
+    "bitwise_equal": true,
+    "scalar_values": 24704784,
+    "payload_sha256": "bf13bacd165a2e77833b8e45ba70b9f2207d3919273f84fb25b343be96ee7bb1"
+  },
+  "reject-legacy": {
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+      "-i",
+      "/private/tmp/hyperboloidal-full-policy-validation/reject-legacy/input"
+    ],
+    "exit_code": 134
+  },
+  "reject-masked": {
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+      "-i",
+      "/private/tmp/hyperboloidal-full-policy-validation/reject-masked/input"
+    ],
+    "exit_code": 134
+  },
+  "reject-agreement": {
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+      "-i",
+      "/private/tmp/hyperboloidal-full-policy-validation/reject-agreement/input"
+    ],
+    "exit_code": 134
+  },
+  "reject-unknown": {
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+      "-i",
+      "/private/tmp/hyperboloidal-full-policy-validation/reject-unknown/input"
+    ],
+    "exit_code": 134
+  },
+  "reject-cartesian_cutoff": {
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+      "-i",
+      "/private/tmp/hyperboloidal-full-policy-validation/reject-cartesian_cutoff/input"
+    ],
+    "exit_code": 134
+  },
+  "reject-agreement_inner": {
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+      "-i",
+      "/private/tmp/hyperboloidal-full-policy-validation/reject-agreement_inner/input"
+    ],
+    "exit_code": 134
+  },
+  "reject-agreement_outer": {
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+      "-i",
+      "/private/tmp/hyperboloidal-full-policy-validation/reject-agreement_outer/input"
+    ],
+    "exit_code": 134
+  },
+  "reference": {
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/private/tmp/hyperboloidal-full-only/athena-before",
+      "-i",
+      "/private/tmp/hyperboloidal-full-policy-validation/reference/input"
+    ],
+    "exit_code": 0
+  },
+  "reference_bitwise": {
+    "bitwise_equal": true,
+    "scalar_values": 24704784,
+    "payload_sha256": "bf13bacd165a2e77833b8e45ba70b9f2207d3919273f84fb25b343be96ee7bb1"
+  },
+  "old-full-restart-8": {
+    "command": [
+      "mpiexec",
+      "-n",
+      "8",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+      "-r",
+      "/private/tmp/hyperboloidal-full-policy-validation/reference/rst/native_n12.00000.rst"
+    ],
+    "exit_code": 0
+  },
+  "old_full_restart_bitwise": {
+    "bitwise_equal": true,
+    "scalar_values": 24704784,
+    "payload_sha256": "bf13bacd165a2e77833b8e45ba70b9f2207d3919273f84fb25b343be96ee7bb1"
+  }
+}

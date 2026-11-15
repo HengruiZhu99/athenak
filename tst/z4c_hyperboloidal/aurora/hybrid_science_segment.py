@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""One bounded science segment; no self-submission or production restart."""
+"""ARCHIVED campaign helper for frozen pre-cleanup binaries only.
+
+One bounded science segment; no self-submission or production restart."""
 import argparse,hashlib,json,os,re,struct,subprocess,time
 from pathlib import Path
 

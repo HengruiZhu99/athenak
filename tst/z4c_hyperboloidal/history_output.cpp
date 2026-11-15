@@ -198,9 +198,9 @@ void RealChecks(ParameterInput &pin,Mesh &mesh,HistoryOutput &history) {
 
 // Read a native checkpoint without taking a step. Fixed-band constraints and
 // the same overlap observable are dispatched through native HistoryOutput.
-// This also works for legacy checkpoints: the temporary activity policy below
-// belongs only to the diagnostic interpolation plan, never to restored fields.
-void Checkpoint(const char *path,Real cutoff,Real inner,Real outer) {
+// Restored full-overlap checkpoints use their own agreement plan. No evolution
+// steps or temporary overlap policies are introduced by the observer.
+void Checkpoint(const char *path) {
   ParameterInput pin;IOWrapper file;file.Open(path,IOWrapper::FileMode::read);
   pin.LoadFromFile(file);
   const int version=pin.GetOrAddInteger("mesh","logical_location_version",1);
@@ -235,40 +235,13 @@ void Checkpoint(const char *path,Real cutoff,Real inner,Real outer) {
     }
     history.WriteOutputFile(&mesh,&pin);
   }
-  p.FormResidual();const auto activity=p.activity;const auto parameters=p.agreement;
-  p.activity.mode=h::OverlapMode::masked;p.activity.cartesian_cutoff=cutoff;
-  p.activity.shell_inner=mesh.atlas->SphericalInnerRadius();
-  p.agreement={0,inner,outer};h::OverlapAgreementPlan plan;
-  plan.Rebuild(mesh.pmb_pack,p);
-  p.activity=activity;p.agreement=parameters;
-  plan.StartReceives();plan.PackAndSend(p.residual);
-  while(plan.Receive()!=TaskStatus::complete){}plan.Evaluate();
-  const auto sums=plan.History();
-  while(plan.ClearSend()!=TaskStatus::complete){}
-  while(plan.ClearRecv()!=TaskStatus::complete){}
-  HistoryOutput overlap(&pin,&mesh,Parameters("checkpoint"));overlap.hist_data.clear();
+  const auto sums=p.AgreementHistorySums();
+  HistoryOutput overlap(&pin,&mesh,Parameters("checkpoint-full"));overlap.hist_data.clear();
   overlap.hist_data.emplace_back(PhysicsModule::HyperboloidalAgreement);
   auto &data=overlap.hist_data.back();data.nhist=8;
-  constexpr const char *group[]={"chi","metric","curvature","Lambda","gauge","DminusLam","zero-dEdt","sample-vol"};
+  constexpr const char *group[]={"chi","metric","curvature","Lambda","gauge","DminusLam","dEdt","sample-vol"};
   for(int f=0;f<8;++f){data.label[f]=group[f];data.hdata[f]=sums[f];}
   overlap.WriteOutputFile(&mesh,&pin);
-  if(!activity.Masked()) {
-    // Identical full-overlap observer for the unmasked candidate and archived
-    // legacy checkpoints. kappa=0: this plan never changes restored fields.
-    p.activity={};p.agreement={0,mesh.atlas->SphericalInnerRadius(),0,true,.015};
-    h::OverlapAgreementPlan full;full.Rebuild(mesh.pmb_pack,p);
-    p.activity=activity;p.agreement=parameters;
-    full.StartReceives();full.PackAndSend(p.residual);
-    while(full.Receive()!=TaskStatus::complete){}full.Evaluate();
-    const auto full_sums=full.History();
-    while(full.ClearSend()!=TaskStatus::complete){}
-    while(full.ClearRecv()!=TaskStatus::complete){}
-    HistoryOutput full_output(&pin,&mesh,Parameters("checkpoint-full"));
-    full_output.hist_data.clear();full_output.hist_data.emplace_back(PhysicsModule::HyperboloidalAgreement);
-    auto &fd=full_output.hist_data.back();fd.nhist=8;
-    for(int f=0;f<8;++f){fd.label[f]=group[f];fd.hdata[f]=full_sums[f];}
-    full_output.WriteOutputFile(&mesh,&pin);
-  }
   const auto after=Accepted(p);
   Require(before.size()==after.size()&&std::memcmp(before.data(),after.data(),before.size()*sizeof(Real))==0,
           "checkpoint diagnostics modified accepted fields or chi records");
@@ -282,10 +255,10 @@ int main(int argc,char **argv) {
   MPI_Init(&argc,&argv);MPI_Comm_rank(MPI_COMM_WORLD,&global_variable::my_rank);
   MPI_Comm_size(MPI_COMM_WORLD,&global_variable::nranks);Kokkos::initialize(argc,argv);
   try {{
-    if(argc==6 && std::string(argv[2])=="checkpoint") {
-      Checkpoint(argv[1],std::stod(argv[3]),std::stod(argv[4]),std::stod(argv[5]));
+    if(argc==3 && std::string(argv[2])=="checkpoint") {
+      Checkpoint(argv[1]);
     } else {
-    Require(argc==3,"usage: history_output fixture synthetic|real OR restart checkpoint Rc inner outer");
+    Require(argc==3,"usage: history_output fixture synthetic|real OR restart checkpoint");
     const std::string mode=argv[2];Require(mode=="synthetic"||mode=="real","unknown test mode");
     static_assert(PhysicsModule::HydroDynamics==0&&PhysicsModule::MagnetoHydroDynamics==1&&
         PhysicsModule::SpaceTimeDynamics==2&&PhysicsModule::UserDefined==3,

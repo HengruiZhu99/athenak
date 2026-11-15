@@ -167,7 +167,6 @@ class Z4cHyperboloidal {
   int scri_investigation_written_cycle_=-1;
   std::unique_ptr<MappedHalo> mapped_halo_;
   std::unique_ptr<OverlapAgreementPlan> agreement_plan_;
-  std::unique_ptr<OverlapAgreementPlan> agreement_diagnostics_;
   std::unique_ptr<SurfaceExchange> surface_exchange_;
   std::unique_ptr<DissipationPlan> dissipation_plan_;
   std::unique_ptr<RemeshState> remesh_;

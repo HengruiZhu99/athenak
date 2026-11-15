@@ -185,14 +185,13 @@ struct Checks {
 // Stored chi and D rates are converted back to the agreement coordinates when
 // forming q^T H qdot; a missing chi weight or Lambda contribution fails this.
 void CheckAgreement(hyp::Z4cHyperboloidal &p,MeshBlockPack &pack) {
-  if(p.activity.mode!=hyp::OverlapMode::agreement && !p.agreement.full_overlap)return;
   hyp::OverlapAgreementPlan plan;plan.Rebuild(&pack,p);
   int max_terms=hyp::OverlapAgreementAudit::MaxTransposeTerms(plan);
   MPI_Allreduce(MPI_IN_PLACE,&max_terms,1,MPI_INT,MPI_MAX,MPI_COMM_WORLD);
   const auto cells=p.points.d_view;const auto geometry=p.geometry;
   const auto maps=pack.pmb->mb_map.d_view;const auto delta=p.residual;
   const int n=p.n[0],first_gid=pack.gids;const auto weight=p.parameters.residual_weight;
-  for(int mode=0;mode<(p.agreement.full_overlap?6:4);++mode) {
+  for(int mode=0;mode<6;++mode) {
     Kokkos::deep_copy(delta,std::numeric_limits<Real>::quiet_NaN());
     Kokkos::parallel_for("agreement oracle data",p.npoints,KOKKOS_LAMBDA(int q) {
       const auto c=cells(q);const auto &x=geometry(q).x;
@@ -354,23 +353,13 @@ int main(int argc,char **argv) {
       Require(checks.before==4 && checks.after==4,"native Driver stage coverage incomplete");
       Require(checks.max_rhs>0,"smoke run executed an empty bulk RHS");
       DumpAcceptedState(p,*mesh.pmb_pack);
-      if(p.activity.Masked()) {
-        auto sums=p.DiagnosticHistorySums();
-        MPI_Allreduce(MPI_IN_PLACE,sums.data(),sums.size(),MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
-        if(!global_variable::my_rank) {
-          std::ofstream out("accepted-diagnostics.bin",std::ios::binary);
-          out.write(reinterpret_cast<const char *>(sums.data()),sizeof(Real)*sums.size());
-        }
-      }
+
       std::uint64_t totals[7]={std::uint64_t(p.npoints),std::uint64_t(p.nsurface_points),
           checks.bulk_values,checks.surface_values,checks.ghost_values,
           std::uint64_t(p.nfaces==0),std::uint64_t(p.nblocks)};
       Real maxima[3]={checks.max_cfl,checks.max_rhs,checks.max_update_error};
       MPI_Allreduce(MPI_IN_PLACE,totals,7,MPI_UINT64_T,MPI_SUM,MPI_COMM_WORLD);
       MPI_Allreduce(MPI_IN_PLACE,maxima,3,MPI_DOUBLE,MPI_MAX,MPI_COMM_WORLD);
-      Require(p.activity.Masked() || p.agreement.full_overlap ||
-              (totals[0]==229392 && totals[1]==864 && totals[6]==106),
-              "full N12 owned workload changed");
       if (global_variable::my_rank==0)std::cout<<std::setprecision(17)
           <<"PASS native Driver stage smoke: ranks="<<global_variable::nranks
           <<" cycles="<<mesh.ncycle<<" stages="<<checks.after<<" bulk="<<totals[0]
@@ -378,7 +367,7 @@ int main(int argc,char **argv) {
           <<" surface_value_checks="<<totals[3]<<" poisoned_ghost_checks="<<totals[4]
           <<" no_surface_ranks="<<totals[5]<<" max_cfl="<<maxima[0]
           <<" max_abs_rhs="<<maxima[1]<<" max_update_error="<<maxima[2]
-          <<" time="<<mesh.time<<" legacy_comparison=not_performed\n";
+          <<" time="<<mesh.time<<"\n";
     }
     Kokkos::finalize();MPI_Finalize();return 0;
   } catch (const std::exception &error) {

@@ -125,9 +125,7 @@ void Diagnostics::Rebuild() {
   const auto volumes=p.dissipation_plan_->Bind().volumes;
   const int n=p.n[0],origin=p.origin;
   const Real inner=pack_->pmesh->atlas->SphericalInnerRadius();
-  const Real half_width=p.activity.Masked()
-      ? std::min(p.activity.cartesian_cutoff,pack_->pmesh->atlas->HalfWidth())
-      : pack_->pmesh->atlas->HalfWidth();
+  const Real half_width=pack_->pmesh->atlas->HalfWidth();
   Kokkos::parallel_for("hyperboloidal diagnostic quadrature",
     Kokkos::RangePolicy<>(0,p.npoints),KOKKOS_LAMBDA(int q) {
       const auto cell=cells(q);const auto map=maps(cell.m);

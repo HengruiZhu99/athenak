@@ -1,3 +1,5 @@
+> Current code supports only validated full overlap; see [current policy](../full-overlap-policy.md). This directory preserves historical comparisons.
+
 # Experimental hybrid overlap
 
 Status: v4 passes the measured two-node performance criterion and the focused
