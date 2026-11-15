@@ -90,3 +90,23 @@ small differences. The eight-step fresh/late admission comparisons above were
 bitwise exact against the selected optimized executable; do not extend that
 claim to this entire fresh trajectory. These tiny endpoint-state differences
 do not explain the much larger measured scri regularity defects.
+
+## Direct-scri Weyl feasibility check
+
+`check_scri_weyl.py` independently constructs the conformal four-dimensional
+Weyl tensor from metric jets. Its Ricci contraction matches the existing
+geometry routine and its traces vanish. On the manufactured asymptotic wave,
+the boundary radiation numerator vanishes and its one-sided native radial
+derivative recovers the known `psi4^0` to `3.9e-13`; the zero-wave case is also
+checked. This is an analytic feasibility test, not a completed N12 Psi4
+extractor.
+
+`check_n12_weyl_numerator.py` checks the zero-target numerator
+`Cbar_abcd n^a mbar^b n^c mbar^d` directly at the recorded endpoint, with
+`n=grad(Omega)` and a native orthonormal angular dyad. It does not divide by
+Omega or identify the numerator as the waveform. Sampling every tenth usable
+record through `26.4906 M0` gives a largest pointwise magnitude `5.56e-4` and
+largest angular RMS `1.41e-4`; the receipt is `weyl-numerator-27M.json`.
+These nonzero discrete residuals require a regularized limit and resolution
+checks for a physical `psi4^0` interpretation. They are not fractional waveform
+errors and, with only this N12 dataset, do not establish nonconvergence.
