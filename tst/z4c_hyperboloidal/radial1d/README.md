@@ -103,6 +103,40 @@ not justify reducing the grid by the same factor for every observable.
    exact test source remain in the raw-results directory. With zero boost,
    all saved N12 output is byte-identical to baseline.
 
+## Follow-up: larger constant damping
+
+Fifteen additional runs test 0.75 and 1.0 with the same executable, grid,
+initial data, time window and wider pulse. The peak scri tensor residuals
+over 0–2.4 M are:
+
+| Damping | Control N16 | Control N32 | Control N64 |
+|---:|---:|---:|---:|
+| 0.5 | 2.804e-3 | 2.144e-4 | 6.045e-5 |
+| 0.75 | 1.131e-3 | 3.703e-4 | 1.756e-4 |
+| 1.0 | 3.167e-3 | 2.029e-3 | 1.191e-3 |
+
+| Damping | Wide N16 | Wide N32 | Wide N64 |
+|---:|---:|---:|---:|
+| 0.5 | 2.818e-3 | 8.227e-4 | 2.261e-4 |
+| 0.75 | 1.138e-3 | 3.624e-4 | 1.719e-4 |
+| 1.0 | 3.160e-3 | 2.025e-3 | 1.189e-3 |
+
+The 0.75 choice improves the coarse N16 data and this wide-pulse window,
+but its control residual is 2.90 times larger than 0.5 at N64. Increasing
+to 1.0 is worse for both families at N64: factors 19.7 and 5.26 relative
+to 0.5. The last control doubling gives orders about 1.08 and 0.77 for
+0.75 and 1.0, respectively. Neither an error floor nor eventual asymptotic
+order is established by these limited resolution sequences.
+
+All fifteen runs completed with finite scri histories. N32 controls were
+also extended to 4.8 M; full-window peaks are 3.703e-4 for 0.75 and
+2.029e-3 for 1.0. Halving dt for the N16 wide pulse at damping 1.0 changes
+the tensor history by at most 2.09e-9 and the clock by 6.13e-9. Thus that
+case's degraded accuracy is not repaired by the tested timestep reduction.
+These are local radial results, not native 3D validation. A global increase
+to 1.0 is not recommended on this evidence. Keep 0.375–0.5 as the primary
+candidates; 0.75 is an optional comparator, not a uniform improvement.
+
 ## Interpretation and next native test
 
 The existing input parameter `outer_lapse_damping` changes the constant part
@@ -113,6 +147,23 @@ continuum gauge and boundary coefficients; it leaves the interior principal
 derivative coefficients, finite differences, independent variables, normal
 lift, penalties, RK stages and KO operators unchanged. Initial radial field
 values were identical in the baseline and 0.5 N20 runs.
+
+More precisely, combining the bare lapse pole with the prescribed stationary
+source gives the following change at fixed fields when kappa_alpha is changed:
+
+    Delta(dt alpha) = -2 W Delta(kappa_alpha) alpha (alpha-alpha_ref) / Omega.
+
+Here W is the existing outer-gauge blend weight and alpha_ref is the prescribed
+stationary conformal lapse. This follows by combining the xi-dependent pieces
+of `DonorHyperbolicGauge` with `lapse_offset` and `lapse_linear` in
+`StationaryGaugeReference::At`. The unadjusted donor uses (1+r^2)/2 as its
+reference; the source correction is essential to the full interpretation.
+At scri alpha_ref=1 and its radial derivative is 1. Alpha=1 is already
+enforced algebraically at the boundary. The finite contribution to the free
+lapse clock is +2 kappa_alpha (alpha_n-1), as recorded explicitly in
+`scri_rate_diagnostic.hpp`. Increasing the coefficient therefore changes the
+nearby relaxation and sensitivity to normal derivatives, even though the
+boundary lapse value itself remains exactly 1.
 
 Use 0.375 and 0.5 as opt-in candidates, keeping 0.25 as the control. Do not
 change a shared default or resume an old checkpoint under a changed gauge
@@ -141,6 +192,7 @@ sh tst/z4c_hyperboloidal/radial1d/build.sh EXISTING_REPO_WITH_build-binary OUTPU
 python3 tst/z4c_hyperboloidal/radial1d/surgical.py OUTPUT_BINARY NEW_RESULTS --phase screen
 python3 tst/z4c_hyperboloidal/radial1d/surgical.py OUTPUT_BINARY NEW_RESULTS --phase validate
 python3 tst/z4c_hyperboloidal/radial1d/surgical.py OUTPUT_BINARY NEW_RESULTS --phase refine
+python3 tst/z4c_hyperboloidal/radial1d/surgical.py OUTPUT_BINARY NEW_RESULTS --phase stronger
 python3 tst/z4c_hyperboloidal/radial1d/summarize_surgical.py NEW_RESULTS
 ```
 

@@ -46,15 +46,19 @@ def main():
                 'max_Mr': float(np.max(np.abs(d['momentum'][use])))}
     # Full signed tensor components are compared, not differences of maxima.
     result['halfdt_checks'] = {}
-    for prefix, n in [('control', 20), ('wide', 16)]:
-        coarse = read(root/f'{prefix}-damping-N{n}')
-        fine = read(root/f'{prefix}-damping-halfdt-N{n}')
+    for prefix, n, tag, label in [('control', 20, 'damping', 'control'),
+                                  ('wide', 16, 'damping', 'wide'),
+                                  ('wide', 16, 'strong100', 'wide_damping_1')]:
+        if not (root/f'{prefix}-{tag}-halfdt-N{n}'/'receipt.json').exists():
+            continue
+        coarse = read(root/f'{prefix}-{tag}-N{n}')
+        fine = read(root/f'{prefix}-{tag}-halfdt-N{n}')
         coarse = coarse[coarse['time'] <= .8]
         check = {}
         for field in ['clock', 'T00', 'T0x', 'Txx', 'Tyy', 'Tzz']:
             diff = coarse[field]-np.interp(coarse['time'], fine['time'], fine[field])
             check[field] = float(np.max(np.abs(diff)))
-        result['halfdt_checks'][prefix] = check
+        result['halfdt_checks'][label] = check
     (root/'summary.json').write_text(json.dumps(result, indent=2)+'\n')
 
     import matplotlib

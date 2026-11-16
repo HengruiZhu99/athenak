@@ -12,6 +12,13 @@ import time
 def cases(phase):
     # name, equivalent outer-shell N, damping, endpoint donors, duration,
     # wide pulse, half timestep. Each run uses one CPU thread.
+    if phase == 'stronger':
+        return ([(f'{family}-{tag}-N{n}', n, k, 7, .8, family == 'wide', False)
+                 for tag, k in [('strong075', .75), ('strong100', 1.)]
+                 for family in ['control', 'wide'] for n in [16, 32, 64]]
+                + [('wide-strong100-halfdt-N16', 16, 1., 7, .8, True, True)]
+                + [(f'long-{tag}-N32', 32, k, 7, 1.6, False, False)
+                   for tag, k in [('strong075', .75), ('strong100', 1.)]])
     if phase == 'refine':
         return ([('control-damping-N128', 128, .5, 7, .8, False, False)]
                 + [(f'control-moderate-N{n}', n, .375, 7, .8, False, False)
@@ -36,7 +43,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('binary', type=Path)
     p.add_argument('output', type=Path)
-    p.add_argument('--phase', choices=['screen', 'validate', 'refine'], required=True)
+    p.add_argument('--phase', choices=['screen', 'validate', 'refine', 'stronger'], required=True)
     p.add_argument('--workers', type=int, default=2)
     a = p.parse_args()
     binary, output = a.binary.resolve(), a.output.resolve()
@@ -47,7 +54,7 @@ def main():
         name, n, k, ep, end, wide, half = case
         dest = output/name
         dest.mkdir()  # Never silently overwrite an earlier experiment.
-        times = '0,.24,.48,.8,1.2,1.6' if a.phase == 'validate' else '0,.24,.48,.8'
+        times = '0,.24,.48,.8,1.2,1.6' if a.phase == 'validate' or end > .8 else '0,.24,.48,.8'
         command = [str(binary), '--h', str(.06/n), '--rin', '.5',
                    '--tend', str(end), '--kappa', str(k),
                    '--endpoint-points', str(ep), '--threads', '1',
