@@ -161,6 +161,7 @@ static TResult ScriTensor(const double *x,const Jets &j,const Row &rate) {
 
 struct Options {
   double hh=.005,rin=.5,tend=.24,dtfac=.0938884074712349,amp=0,center=.9555,width=.009;
+  double restoring=4;
   double kappa=.25,penalty=.5,ko=.1,taper=.02;
   int endpoint_points=7;
   int profile=0,stride=1,threads=8,lift_layers=2;  // production lifts the last two bulk layers
@@ -193,6 +194,7 @@ class Sim {
   explicit Sim(const Options &options):o(options) {
     h::CentralZ4cConfiguration c;c.inner_z4c_radius_M=20;c.compact_slicing_end=.97;
     p=c.Resolve().gauge;p.enforce_cfl=true;p.outer_lapse_damping=o.kappa;
+    p.restoring=o.restoring;
     p.scri_treatment=h::ScriTreatment::existing;p.Validate();
     N=static_cast<int>(std::lround((1-o.rin)/o.hh));
     if (N<40) throw std::invalid_argument("too few radial nodes");
@@ -525,6 +527,7 @@ int main(int argc,char **argv) {
     else if (key=="--center") o.center=std::stod(next());
     else if (key=="--width") o.width=std::stod(next());
     else if (key=="--profile") o.profile=std::stoi(next());
+    else if (key=="--restoring") o.restoring=std::stod(next());
     else if (key=="--kappa") o.kappa=std::stod(next());
     else if (key=="--penalty") o.penalty=std::stod(next());
     else if (key=="--ko") o.ko=std::stod(next());

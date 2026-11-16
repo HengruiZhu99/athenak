@@ -1,5 +1,13 @@
 # Surgical accuracy/cost experiments, 2026-11-16
 
+**Subsequent interpretation:** the [bulk–boundary analysis](../bulk_boundary/README.md)
+identifies a constraint-compatible formal noninteger branch for increased lapse
+damping at fixed shift restoration. Its predicted normal-derivative error
+orders match the stronger-damping experiments. The coarse-grid gains below
+remain observations, but the earlier recommendation to explore 0.375–0.5
+does not imply improved asymptotic smoothness. Retain the original production
+pair pending joint regularity and stability qualification.
+
 The radial tests support cheaper **scri residual accuracy at coarse resolution**
 from modest lapse-damping changes. They do **not** establish earlier entry into
 a uniformly fourth-order regime. No production defaults or bulk operators have
