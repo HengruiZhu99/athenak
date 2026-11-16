@@ -1,0 +1,34 @@
+{
+  "scope": "Instantaneous full-T attribution at saved extrema, never an evolved ablation.\n\nAt fixed metric values the tracefree Hessian is affine in first metric\nderivatives. Split its actual time derivative into geometric and chi-penalty\nparts, and its spatial derivative into unlifted and normal-lift parts. This\ndoes not re-solve compatibility, change a state, or establish a stable closure.\n",
+  "analysis_case": "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-followup-20261115/runs/N20-9094022/analysis/control-N20",
+  "script_sha256": "32f6db5dba75f6c1c19aae2452a3f9be724725145a4e5fc449c57477e655b9f2",
+  "cuts": {
+    "interior": {
+      "time_M": 1.2463686091806163,
+      "point_index": 1790,
+      "x": [
+        0.03922959446297751,
+        -0.03922959446297751,
+        0.9984598528917127
+      ],
+      "component": [
+        3,
+        3
+      ],
+      "signed_witness": {
+        "full": -0.011773502197082814,
+        "chi_penalty": 0.010963125297506399,
+        "shift_normal_lift": 0.005161843554446127,
+        "remainder": -0.027898471049035284
+      },
+      "full_surface_maxima": {
+        "full": 0.011773502197082814,
+        "chi_penalty": 0.01100959341347707,
+        "shift_normal_lift": 0.00518450803895204,
+        "remainder": 0.027938829870661736
+      },
+      "stored_tensor_difference": 4.718447854656915e-16,
+      "additivity_error": 2.498001805406602e-16
+    }
+  }
+}

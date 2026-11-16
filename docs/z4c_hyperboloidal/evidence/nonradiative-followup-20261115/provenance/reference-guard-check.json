@@ -1,0 +1,156 @@
+{
+  "executables": {
+    "before": {
+      "path": "/Users/hz0693/research/results/nonradiative-followup-20261115/athena-reference-before-guard",
+      "sha256": "343e83fd1a314a7f90c8815264a370c9c269ca110eb264bca46abfbd5e876bde"
+    },
+    "after": {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+      "sha256": "f16df219be145a8d56fb54bf10187500cba4de0eeae14b645c768123c3292fd6"
+    }
+  },
+  "comparisons": {
+    "0": {
+      "bitwise_equal": true,
+      "scalar_values": 24704784,
+      "field_max_differences": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "2": {
+      "bitwise_equal": true,
+      "scalar_values": 24704784,
+      "field_max_differences": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "before-0": {
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/results/nonradiative-followup-20261115/athena-reference-before-guard",
+      "-i",
+      "/Users/hz0693/research/results/nonradiative-followup-20261115/reference-guard-check/before-0/input.athinput"
+    ],
+    "input_sha256": "7d6705c06aeef82a42c0434c572d87cdb2054d6ca2ffb6eb01ce431dfc0876bb",
+    "checkpoint_sha256": "61deac66ccb2231bf32c85890238f49c2719214edb2f1b13512e3e7a65cd7463",
+    "checkpoint": "/Users/hz0693/research/results/nonradiative-followup-20261115/reference-guard-check/before-0/rst/control-N12.00001.rst"
+  },
+  "after-0": {
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+      "-i",
+      "/Users/hz0693/research/results/nonradiative-followup-20261115/reference-guard-check/after-0/input.athinput"
+    ],
+    "input_sha256": "7d6705c06aeef82a42c0434c572d87cdb2054d6ca2ffb6eb01ce431dfc0876bb",
+    "checkpoint_sha256": "61deac66ccb2231bf32c85890238f49c2719214edb2f1b13512e3e7a65cd7463",
+    "checkpoint": "/Users/hz0693/research/results/nonradiative-followup-20261115/reference-guard-check/after-0/rst/control-N12.00001.rst"
+  },
+  "before-2": {
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/results/nonradiative-followup-20261115/athena-reference-before-guard",
+      "-i",
+      "/Users/hz0693/research/results/nonradiative-followup-20261115/reference-guard-check/before-2/input.athinput"
+    ],
+    "input_sha256": "8b26e278fa7b34912af31805686daeac94128a25d1495e4ae59a1399636d9abd",
+    "checkpoint_sha256": "0bf71a8bd13746db548fc25cbcbb543b5244a6df9eda9535c921a3de5da419e8",
+    "checkpoint": "/Users/hz0693/research/results/nonradiative-followup-20261115/reference-guard-check/before-2/rst/control-N12.00001.rst"
+  },
+  "after-2": {
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+      "-i",
+      "/Users/hz0693/research/results/nonradiative-followup-20261115/reference-guard-check/after-2/input.athinput"
+    ],
+    "input_sha256": "8b26e278fa7b34912af31805686daeac94128a25d1495e4ae59a1399636d9abd",
+    "checkpoint_sha256": "0bf71a8bd13746db548fc25cbcbb543b5244a6df9eda9535c921a3de5da419e8",
+    "checkpoint": "/Users/hz0693/research/results/nonradiative-followup-20261115/reference-guard-check/after-2/rst/control-N12.00001.rst"
+  }
+}

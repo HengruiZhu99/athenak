@@ -17,7 +17,14 @@ int main(int argc,char **argv) {
   MPI_Comm_size(MPI_COMM_WORLD,&global_variable::nranks);Kokkos::initialize(argc,argv);
   int failed=0;
   try {{
-    if(argc!=3)throw std::runtime_error("usage: nonradiative_seed input.athinput amplitude");
+    if(argc!=3 && argc!=5 && argc!=6)throw std::runtime_error(
+      "usage: nonradiative_seed input.athinput amplitude [center half_width [shape]]");
+    const Real center=argc>=5 ? std::stod(argv[3]) : .9555;
+    const Real width=argc>=5 ? std::stod(argv[4]) : .009;
+    const Real shape=argc==6 ? std::stod(argv[5]) : 1;
+    if(!std::isfinite(shape)||!(shape>0))throw std::runtime_error("shape must be positive");
+    if(!std::isfinite(center)||!std::isfinite(width)||!(width>0 && center-width>0 && center+width<1))
+      throw std::runtime_error("pulse support must lie strictly inside (0,1)");
     const Real amplitude=std::stod(argv[2]);
     if(!std::isfinite(amplitude)||fabs(amplitude)>.1)
       throw std::runtime_error("pulse amplitude must be finite and <=.1");
@@ -33,16 +40,16 @@ int main(int argc,char **argv) {
     const auto parameters=p.parameters;
     Real peak=0;int count=0;
     // Pure gauge: leave physical spatial metric, K_phys, A, Lambda, Theta,
-    // shift, B and D unchanged. The compact support is wholly beyond the
-    // telegrapher blending endpoint, where B=0 is consistent and decoupled.
-    // B and D are dynamical gauge auxiliaries, not lapse-gradient constraints.
+    // shift, B and D unchanged. B and D are dynamical gauge auxiliaries,
+    // not lapse-gradient constraints. A wider pulse can cross the gauge blend:
+    // there B=0 is free initial gauge data, not a claim of a stationary driver.
     Kokkos::parallel_reduce("seed nonradiative lapse",p.npoints,
       KOKKOS_LAMBDA(int q,Real &maximum,int &nonzero) {
         const auto c=points(q);const auto &x=maps(q).x;
-        const Real r=h::SphericalPolicy::Radius(x),z=(r-.9555)/.009;
+        const Real r=h::SphericalPolicy::Radius(x),z=(r-center)/width;
         if(fabs(z)>=1 || amplitude==0)return;
         const Real angular=1+.5*(x[0]*x[0]-x[1]*x[1])/(r*r);
-        const Real bump=amplitude*exp(1-1/(1-z*z))*angular;
+        const Real bump=amplitude*exp(shape*(1-1/(1-z*z)))*angular;
         state(c.m,h::Fields::lapse,c.k,c.j,c.i)+=bump;
         maximum=fmax(maximum,fabs(bump));++nonzero;
       },Kokkos::Max<Real>(peak),Kokkos::Sum<int>(count));
@@ -54,7 +61,9 @@ int main(int argc,char **argv) {
     Kokkos::Timer timer;Driver driver(&pin,&mesh,1800,&timer);Outputs outputs(&pin,&mesh);
     driver.Initialize(&mesh,&pin,&outputs,false);
     if(!global_variable::my_rank)std::cout<<"NONRADIATIVE_SEED amplitude="<<amplitude
-      <<" peak="<<peak<<" points="<<count<<" center=.9555 width=.009 angular=1+.5(nx^2-ny^2)\n";
+      <<" peak="<<peak<<" points="<<count<<" center="<<center<<" width="<<width
+      <<" shape="<<shape<<" gauge_blend="<<parameters.inner_begin<<","<<parameters.inner_end
+      <<" angular=1+.5(nx^2-ny^2)\n";
   }}catch(const std::exception &e){std::cerr<<"rank "<<global_variable::my_rank<<" FAIL "<<e.what()<<'\n';failed=1;}
   MPI_Allreduce(MPI_IN_PLACE,&failed,1,MPI_INT,MPI_MAX,MPI_COMM_WORLD);
   Kokkos::finalize();MPI_Finalize();return failed;

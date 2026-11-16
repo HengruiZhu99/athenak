@@ -1,0 +1,108 @@
+{
+  "baseline_executable": "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-20261115/build/athena",
+  "baseline_executable_sha256": "a577cabc82d15c2aa47cb38a2ce5bdc37cbcd64ac204eefc2690c45de6764885",
+  "seed_receipt_sha256": "57c78fa254e3f6e2d29de9d6f559c2a946754b2e0487fcc9314ef5a7bfc09804",
+  "driver_sha256": "593da7167ca348315dd1bc90e646c35c2e01d31db9f7fc7bce4a63abca6f0334",
+  "pulse": {
+    "center": 0.86,
+    "half_width": 0.08,
+    "shape": 6,
+    "amplitude": 0.001
+  },
+  "cases": [
+    {
+      "name": "control-N12",
+      "seconds": 534.1694523629849,
+      "commands": [
+        [
+          "mpiexec",
+          "-n",
+          "24",
+          "-ppn",
+          "12",
+          "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+          "/opt/aurora/26.26.0/support/tools/mpi_wrapper_utils/gpu_tile_compact.sh",
+          "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-followup-20261115/seed/nonradiative_seed",
+          "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-followup-20261115/runs/N12-9093867/control-N12/input.athinput",
+          "0",
+          ".86",
+          ".08",
+          "6"
+        ],
+        [
+          "mpiexec",
+          "-n",
+          "24",
+          "-ppn",
+          "12",
+          "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+          "/opt/aurora/26.26.0/support/tools/mpi_wrapper_utils/gpu_tile_compact.sh",
+          "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-20261115/build/athena",
+          "-r",
+          "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-followup-20261115/runs/N12-9093867/control-N12/seed/rst/control-N12.00000.rst",
+          "-i",
+          "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-followup-20261115/runs/N12-9093867/control-N12/input.athinput",
+          "-d",
+          "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-followup-20261115/runs/N12-9093867/control-N12",
+          "-t",
+          "00:54:00"
+        ]
+      ],
+      "input_sha256": "03e22a37dd3a7a5ae18272310e72949a573082b2f29eaf3be0409284382a8a82",
+      "seed": "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-followup-20261115/runs/N12-9093867/control-N12/seed/rst/control-N12.00000.rst",
+      "seed_sha256": "5dc6355b4b2b92349fa4a35b5ff38e2f1edd381f4527eacd8b9d5f8548fe5985",
+      "final": "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-followup-20261115/runs/N12-9093867/control-N12/rst/control-N12.00001.rst",
+      "final_sha256": "24cb9301f83e45afe296553f021f578ee2fe70ab5ea8c76fe580b9b95738921b",
+      "cycles": 1704,
+      "time": 0.7999292316549437,
+      "record_stride": 3
+    },
+    {
+      "name": "gauge-N12",
+      "seconds": 538.9970545099932,
+      "commands": [
+        [
+          "mpiexec",
+          "-n",
+          "24",
+          "-ppn",
+          "12",
+          "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+          "/opt/aurora/26.26.0/support/tools/mpi_wrapper_utils/gpu_tile_compact.sh",
+          "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-followup-20261115/seed/nonradiative_seed",
+          "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-followup-20261115/runs/N12-9093867/gauge-N12/input.athinput",
+          ".001",
+          ".86",
+          ".08",
+          "6"
+        ],
+        [
+          "mpiexec",
+          "-n",
+          "24",
+          "-ppn",
+          "12",
+          "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+          "/opt/aurora/26.26.0/support/tools/mpi_wrapper_utils/gpu_tile_compact.sh",
+          "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-20261115/build/athena",
+          "-r",
+          "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-followup-20261115/runs/N12-9093867/gauge-N12/seed/rst/gauge-N12.00000.rst",
+          "-i",
+          "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-followup-20261115/runs/N12-9093867/gauge-N12/input.athinput",
+          "-d",
+          "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-followup-20261115/runs/N12-9093867/gauge-N12",
+          "-t",
+          "00:54:00"
+        ]
+      ],
+      "input_sha256": "eac58bda0ea75e9b761191f07c4fcb87156e407cc61d897d237f662759bc2380",
+      "seed": "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-followup-20261115/runs/N12-9093867/gauge-N12/seed/rst/gauge-N12.00000.rst",
+      "seed_sha256": "1bb98dd876ad8c888276f325a096aec8bbf5606ecc4c3c66504332af0747ceb4",
+      "final": "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-followup-20261115/runs/N12-9093867/gauge-N12/rst/gauge-N12.00001.rst",
+      "final_sha256": "3fe9ec3cd63fbba25af874bef3597fafe2069c195a4ab4297d5c6462609b0630",
+      "cycles": 1704,
+      "time": 0.7999292316549437,
+      "record_stride": 1
+    }
+  ]
+}

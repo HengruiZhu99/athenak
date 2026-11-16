@@ -29,6 +29,18 @@ class SphericalReference3D {
   const std::array<std::array<double,12>,3>& RadialJets(double r) {
     auto found=cache.find(r);if(found!=cache.end())return found->second;
     std::array<std::array<double,12>,3> out{};out[0]=Radial(r);
+    // In the exact CMC plateau, differentiating quadrature/inversion roundoff
+    // twice contaminates the reference Hessian, then the scri pole amplifies it.
+    // Use the existing ODE-derived jets only where Omega is also canonical.
+    // Values, transition-region jets and all evolution operators are unchanged.
+    if(r>=native.OuterTransitionRadius() && r>p.profile.flat_radius &&
+       (!p.profile.flat || r>=p.profile.outer_radius)) {
+      const auto exact=native.OuterRadialDerivatives(r);
+      out[1][0]=exact.first[0];out[2][0]=exact.second[0];
+      out[1][8]=exact.first[3];out[2][8]=exact.second[3];
+      out[1][9]=-1; // physical radial shift beta^r=-r in this plateau
+      return cache.emplace(r,out).first->second;
+    }
     const double h=r==1?.000125:std::min({.000125,r/8,(1-r)/8});
     if(!(h>0))throw std::invalid_argument("reference point outside punctured compact ball");
     const int begin=r==1?-6:-3;

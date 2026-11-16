@@ -1,0 +1,15 @@
+{
+  "command": [
+    "rg",
+    "-n",
+    "SphericalReference3D",
+    "src"
+  ],
+  "output": "src/outputs/scri.cpp:128:    hyp::SphericalReference3D reference(p.parameters);\nsrc/z4c_hyperboloidal/spherical_reference_3d.hpp:11:class SphericalReference3D {\nsrc/z4c_hyperboloidal/spherical_reference_3d.hpp:18:  explicit SphericalReference3D(const HyperbolicShiftParameters<double>&parameters)\nsrc/z4c_hyperboloidal/horizon_sampling.cpp:55:  std::unique_ptr<SphericalReference3D> reference;\nsrc/z4c_hyperboloidal/horizon_sampling.cpp:75:    reference=std::make_unique<SphericalReference3D>(module->parameters);\nsrc/z4c_hyperboloidal/z4c_hyperboloidal.cpp:274:  SphericalReference3D initial(parameters);\n",
+  "production_consumers": [
+    "src/z4c_hyperboloidal/z4c_hyperboloidal.cpp",
+    "src/z4c_hyperboloidal/horizon_sampling.cpp",
+    "src/outputs/scri.cpp"
+  ],
+  "interpretation": "Only these three production translation units construct or hold the host reference class and call its At/RadialJets path. Other translation units use already-cached CartesianChartJets arrays. This supplements the archived symbol-owner audit, which alone would not detect fully inlined calls."
+}

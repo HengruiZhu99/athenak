@@ -1,0 +1,1411 @@
+{
+  "complete_spatial_sequence": true,
+  "cases": {
+    "control-N12": {
+      "records": 569,
+      "end_M": 2.399787694964831,
+      "T_rhs_max": 0.03303587692484372,
+      "T_path_difference": 3.252704378065019e-08,
+      "clock_max": 0.3147212973213191,
+      "lapse_identity_error": 2.220446049250313e-15,
+      "derivative_reconstruction_error": 0,
+      "analysis_source": "/Users/hz0693/research/results/nonradiative-followup-20261115/runs/N12-9093867/analysis/control-N12",
+      "all_mode_peak": 0.017055693436510366,
+      "diagnostics": {
+        "label_norm_max": 3.148270233399586e-08,
+        "round_scale_mean": 0.003624565567809061,
+        "round_nonuniform_scale_max": 0.00038326309958276825,
+        "round_shear_max": 2.5730117920364258e-05,
+        "round_cut_max": 0.0054217193148531255,
+        "round_cut_rms": 0.0051320780203372865,
+        "frame_source_fit_max": 2.216447885111661e-05,
+        "clock_transport_max": 4.899336936148302e-09,
+        "solid_angle_sum": 12.579568519327502,
+        "news_nodal_max": 0.011051632800103605,
+        "news_fit_rms": 0.0002504978274531401,
+        "news_native_rms": 0.007862315544357054,
+        "null_max": 1.6866535091871783e-15,
+        "shear_max": 9.029182361883436e-06,
+        "conformal_hessian_tf_max": 0.03303587612212244,
+        "round_scale_rate_mean": 0.04562670708286173
+      },
+      "boundary_diagnostic_maxima": {
+        "scope": "Matching nominal native cadence; omit three common-cadence records at each end.",
+        "normal_lift_value_gradient_Hessian": [
+          1.3254238961134835e-17,
+          0.061556870548775434,
+          60.0698550422717
+        ],
+        "pole_over_h_chi_P_Theta_alpha": [
+          0.0734225590266606,
+          0.8129448955332788,
+          0.7166300640430194,
+          0.15342219183576136
+        ],
+        "penalty_rate_max": 59.91379346671086
+      },
+      "tensor-attribution.json": {
+        "scope": "Instantaneous full-T attribution at saved extrema, never an evolved ablation.\n\nAt fixed metric values the tracefree Hessian is affine in first metric\nderivatives. Split its actual time derivative into geometric and chi-penalty\nparts, and its spatial derivative into unlifted and normal-lift parts. This\ndoes not re-solve compatibility, change a state, or establish a stable closure.\n",
+        "analysis_case": "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-followup-20261115/runs/N12-9093867/analysis/control-N12",
+        "script_sha256": "32f6db5dba75f6c1c19aae2452a3f9be724725145a4e5fc449c57477e655b9f2",
+        "cuts": {
+          "interior": {
+            "time_M": 1.0351196923703667,
+            "point_index": 65,
+            "x": [
+              0.9957315404769107,
+              -0.06526369319720829,
+              -0.06526369319720829
+            ],
+            "component": [
+              1,
+              1
+            ],
+            "signed_witness": {
+              "full": 0.03303587692484394,
+              "chi_penalty": -0.02902608428818773,
+              "shift_normal_lift": -0.013681609593205024,
+              "remainder": 0.07574357080623687
+            },
+            "full_surface_maxima": {
+              "full": 0.03303587692484394,
+              "chi_penalty": 0.02902608428818773,
+              "shift_normal_lift": 0.0138524598015832,
+              "remainder": 0.07574357080623687
+            },
+            "stored_tensor_difference": 4.440892098500626e-16,
+            "additivity_error": 2.498001805406602e-16
+          }
+        }
+      }
+    },
+    "control-N16": {
+      "records": 569,
+      "end_M": 2.399787694964785,
+      "T_rhs_max": 0.021751368639174762,
+      "T_path_difference": 2.492078601812331e-08,
+      "clock_max": 0.1482903553930804,
+      "lapse_identity_error": 2.0261570199409107e-15,
+      "derivative_reconstruction_error": 0,
+      "analysis_source": "/Users/hz0693/research/results/nonradiative-followup-20261115/runs/N16-9093938/analysis/control-N16",
+      "all_mode_peak": 0.004400126170558016,
+      "diagnostics": {
+        "label_norm_max": 9.270347822720737e-09,
+        "round_scale_mean": 0.0015240215223875915,
+        "round_nonuniform_scale_max": 0.00013939807438851336,
+        "round_shear_max": 8.598092346718828e-06,
+        "round_cut_max": 0.0021811848798941923,
+        "round_cut_rms": 0.0021554269256425693,
+        "frame_source_fit_max": 8.961255307083672e-06,
+        "clock_transport_max": 3.685687310905905e-10,
+        "solid_angle_sum": 12.573792562658173,
+        "news_nodal_max": 0.002747281746335305,
+        "news_fit_rms": 0.0001089382774597467,
+        "news_native_rms": 0.0020296724691989815,
+        "null_max": 1.570746103020051e-15,
+        "shear_max": 1.5347954764078417e-06,
+        "conformal_hessian_tf_max": 0.02175136941675279,
+        "round_scale_rate_mean": 0.017039689809998426
+      },
+      "boundary_diagnostic_maxima": {
+        "scope": "Matching nominal native cadence; omit three common-cadence records at each end.",
+        "normal_lift_value_gradient_Hessian": [
+          3.779555907803974e-18,
+          0.021596327692035223,
+          28.15165580740927
+        ],
+        "pole_over_h_chi_P_Theta_alpha": [
+          0.03745444875022986,
+          0.4060277247355527,
+          0.3622614716529334,
+          0.07169752905046654
+        ],
+        "penalty_rate_max": 25.174177760680656
+      },
+      "tensor-attribution.json": {
+        "scope": "Instantaneous full-T attribution at saved extrema, never an evolved ablation.\n\nAt fixed metric values the tracefree Hessian is affine in first metric\nderivatives. Split its actual time derivative into geometric and chi-penalty\nparts, and its spatial derivative into unlifted and normal-lift parts. This\ndoes not re-solve compatibility, change a state, or establish a stable closure.\n",
+        "analysis_case": "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-followup-20261115/runs/N16-9093938/analysis/control-N16",
+        "script_sha256": "32f6db5dba75f6c1c19aae2452a3f9be724725145a4e5fc449c57477e655b9f2",
+        "cuts": {
+          "interior": {
+            "time_M": 1.4322676559737006,
+            "point_index": 392,
+            "x": [
+              -0.9975952547276307,
+              0.04900871220973773,
+              0.04900871220973773
+            ],
+            "component": [
+              1,
+              1
+            ],
+            "signed_witness": {
+              "full": -0.021751368639174873,
+              "chi_penalty": 0.021083647638793168,
+              "shift_normal_lift": 0.010110181273505409,
+              "remainder": -0.05294519755147348
+            },
+            "full_surface_maxima": {
+              "full": 0.021751368639174873,
+              "chi_penalty": 0.0210836476392115,
+              "shift_normal_lift": 0.010178654682027055,
+              "remainder": 0.05294519755163332
+            },
+            "stored_tensor_difference": 4.579669976578771e-16,
+            "additivity_error": 2.3592239273284576e-16
+          }
+        }
+      }
+    },
+    "control-N20": {
+      "records": 569,
+      "end_M": 2.399787694964657,
+      "T_rhs_max": 0.011773502197082703,
+      "T_path_difference": 2.0173103826293115e-08,
+      "clock_max": 0.0784686773072106,
+      "lapse_identity_error": 1.970645868709653e-15,
+      "derivative_reconstruction_error": 0,
+      "analysis_source": "/Users/hz0693/research/results/nonradiative-followup-20261115/runs/N20-9094022/analysis/control-N20",
+      "all_mode_peak": 0.002841816242196937,
+      "diagnostics": {
+        "label_norm_max": 3.767732903448007e-09,
+        "round_scale_mean": 0.0009906957810588818,
+        "round_nonuniform_scale_max": 2.089496253983086e-05,
+        "round_shear_max": 3.502947075724381e-06,
+        "round_cut_max": 0.0014195573144405857,
+        "round_cut_rms": 0.0014011301315602959,
+        "frame_source_fit_max": 4.2305642522274395e-06,
+        "clock_transport_max": 1.0077316758838606e-10,
+        "solid_angle_sum": 12.571120108702903,
+        "news_nodal_max": 0.0017753623465506252,
+        "news_fit_rms": 5.4867135566744566e-05,
+        "news_native_rms": 0.0013095472819435463,
+        "null_max": 1.542444556101652e-15,
+        "shear_max": 7.360164347841034e-07,
+        "conformal_hessian_tf_max": 0.011773488179272151,
+        "round_scale_rate_mean": 0.009174477283215226
+      },
+      "boundary_diagnostic_maxima": {
+        "scope": "Matching nominal native cadence; omit three common-cadence records at each end.",
+        "normal_lift_value_gradient_Hessian": [
+          2.4331141673069066e-18,
+          0.011349574179372362,
+          18.509192364065974
+        ],
+        "pole_over_h_chi_P_Theta_alpha": [
+          0.019153974234950362,
+          0.21180640231413267,
+          0.18838051367785885,
+          0.037598673305623984
+        ],
+        "penalty_rate_max": 17.960997244985037
+      },
+      "tensor-attribution.json": {
+        "scope": "Instantaneous full-T attribution at saved extrema, never an evolved ablation.\n\nAt fixed metric values the tracefree Hessian is affine in first metric\nderivatives. Split its actual time derivative into geometric and chi-penalty\nparts, and its spatial derivative into unlifted and normal-lift parts. This\ndoes not re-solve compatibility, change a state, or establish a stable closure.\n",
+        "analysis_case": "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-followup-20261115/runs/N20-9094022/analysis/control-N20",
+        "script_sha256": "32f6db5dba75f6c1c19aae2452a3f9be724725145a4e5fc449c57477e655b9f2",
+        "cuts": {
+          "interior": {
+            "time_M": 1.2463686091806163,
+            "point_index": 1790,
+            "x": [
+              0.03922959446297751,
+              -0.03922959446297751,
+              0.9984598528917127
+            ],
+            "component": [
+              3,
+              3
+            ],
+            "signed_witness": {
+              "full": -0.011773502197082814,
+              "chi_penalty": 0.010963125297506399,
+              "shift_normal_lift": 0.005161843554446127,
+              "remainder": -0.027898471049035284
+            },
+            "full_surface_maxima": {
+              "full": 0.011773502197082814,
+              "chi_penalty": 0.01100959341347707,
+              "shift_normal_lift": 0.00518450803895204,
+              "remainder": 0.027938829870661736
+            },
+            "stored_tensor_difference": 4.718447854656915e-16,
+            "additivity_error": 2.498001805406602e-16
+          }
+        }
+      },
+      "native_cut_piece_maxima": [
+        0.002833976092990706,
+        8.310020238300059e-05,
+        6.83761547694507e-10
+      ],
+      "native_cut_piece_sum_error": 2.4037491729487363e-16
+    },
+    "gauge-N12": {
+      "records": 1705,
+      "end_M": 2.399787694964831,
+      "T_rhs_max": 0.03195205610227855,
+      "T_path_difference": 2.9256486372419843e-08,
+      "clock_max": 0.31352742223058816,
+      "lapse_identity_error": 2.1371793224034263e-15,
+      "derivative_reconstruction_error": 0,
+      "analysis_source": "/Users/hz0693/research/results/nonradiative-followup-20261115/runs/N12-9093867/analysis/gauge-N12",
+      "all_mode_peak": 0.017454960161763997,
+      "diagnostics": {
+        "label_norm_max": 3.2611261802095726e-08,
+        "round_scale_mean": 0.004373876013278366,
+        "round_nonuniform_scale_max": 0.0005388514489570008,
+        "round_shear_max": 2.719043125949078e-05,
+        "round_cut_max": 0.006947646305614585,
+        "round_cut_rms": 0.006195754511160182,
+        "frame_source_fit_max": 2.2354123264144155e-05,
+        "clock_transport_max": 4.8998296531266305e-09,
+        "solid_angle_sum": 12.579568518880244,
+        "news_nodal_max": 0.011021329171573458,
+        "news_fit_rms": 0.00024987045825106683,
+        "news_native_rms": 0.007819965733926584,
+        "null_max": 1.6288443575700196e-15,
+        "shear_max": 8.459852736310478e-06,
+        "conformal_hessian_tf_max": 0.031952056096392206,
+        "round_scale_rate_mean": 0.04557782032170489
+      },
+      "boundary_diagnostic_maxima": {
+        "scope": "Matching nominal native cadence; omit three common-cadence records at each end.",
+        "normal_lift_value_gradient_Hessian": [
+          1.3214931466920483e-17,
+          0.06138327325026685,
+          59.90045596616042
+        ],
+        "pole_over_h_chi_P_Theta_alpha": [
+          0.0731591995335408,
+          0.8098801640544213,
+          0.7139666687844939,
+          0.15285191398668457
+        ],
+        "penalty_rate_max": 59.75814085858312
+      },
+      "cadence-comparison.json": {
+        "dense_vs_stride3_max_mode_difference": 3.3199442713033176e-08,
+        "comparison_Bondi_interval_M": [
+          0.012674935008618467,
+          2.4739168134758116
+        ]
+      },
+      "tensor-attribution.json": {
+        "scope": "Instantaneous full-T attribution at saved extrema, never an evolved ablation.\n\nAt fixed metric values the tracefree Hessian is affine in first metric\nderivatives. Split its actual time derivative into geometric and chi-penalty\nparts, and its spatial derivative into unlifted and normal-lift parts. This\ndoes not re-solve compatibility, change a state, or establish a stable closure.\n",
+        "analysis_case": "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-followup-20261115/runs/N12-9093867/analysis/gauge-N12",
+        "script_sha256": "32f6db5dba75f6c1c19aae2452a3f9be724725145a4e5fc449c57477e655b9f2",
+        "cuts": {
+          "interior": {
+            "time_M": 2.395562716628625,
+            "point_index": 353,
+            "x": [
+              -0.06526369319720829,
+              0.9957315404769107,
+              -0.06526369319720829
+            ],
+            "component": [
+              2,
+              2
+            ],
+            "signed_witness": {
+              "full": 0.03195205610227833,
+              "chi_penalty": -0.034496677033292025,
+              "shift_normal_lift": -0.030604893079113932,
+              "remainder": 0.09705362621468425
+            },
+            "full_surface_maxima": {
+              "full": 0.03195205610227833,
+              "chi_penalty": 0.034496677033292025,
+              "shift_normal_lift": 0.030969101847715622,
+              "remainder": 0.09705362621468425
+            },
+            "stored_tensor_difference": 6.106226635438361e-16,
+            "additivity_error": 2.7755575615628914e-16
+          }
+        }
+      }
+    },
+    "gauge-N16": {
+      "records": 569,
+      "end_M": 2.399787694964785,
+      "T_rhs_max": 0.021057705901386697,
+      "T_path_difference": 5.0168036195360157e-08,
+      "clock_max": 0.14408026297240362,
+      "lapse_identity_error": 2.0816681711721685e-15,
+      "derivative_reconstruction_error": 0,
+      "analysis_source": "/Users/hz0693/research/results/nonradiative-followup-20261115/runs/N16-9093938/analysis/gauge-N16",
+      "all_mode_peak": 0.0038270351367851365,
+      "diagnostics": {
+        "label_norm_max": 9.53933398939455e-09,
+        "round_scale_mean": 0.0014847193469550133,
+        "round_nonuniform_scale_max": 0.00015600653327235638,
+        "round_shear_max": 9.028865673766583e-06,
+        "round_cut_max": 0.002317543053190026,
+        "round_cut_rms": 0.002099934333304865,
+        "frame_source_fit_max": 9.005655588722279e-06,
+        "clock_transport_max": 4.6321635416290974e-10,
+        "solid_angle_sum": 12.573792562547272,
+        "news_nodal_max": 0.002593375874057462,
+        "news_fit_rms": 0.00010888717148477274,
+        "news_native_rms": 0.0018026555180171635,
+        "null_max": 1.4973628212995235e-15,
+        "shear_max": 1.4962823660112068e-06,
+        "conformal_hessian_tf_max": 0.0210577066300818,
+        "round_scale_rate_mean": 0.01606169490186435
+      },
+      "boundary_diagnostic_maxima": {
+        "scope": "Matching nominal native cadence; omit three common-cadence records at each end.",
+        "normal_lift_value_gradient_Hessian": [
+          3.636097042507455e-18,
+          0.021004042776425067,
+          27.379604621976824
+        ],
+        "pole_over_h_chi_P_Theta_alpha": [
+          0.03625943783353662,
+          0.39377680417508204,
+          0.35107794042026064,
+          0.06963253178643801
+        ],
+        "penalty_rate_max": 24.439460858900013
+      },
+      "tensor-attribution.json": {
+        "scope": "Instantaneous full-T attribution at saved extrema, never an evolved ablation.\n\nAt fixed metric values the tracefree Hessian is affine in first metric\nderivatives. Split its actual time derivative into geometric and chi-penalty\nparts, and its spatial derivative into unlifted and normal-lift parts. This\ndoes not re-solve compatibility, change a state, or establish a stable closure.\n",
+        "analysis_case": "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-followup-20261115/runs/N16-9093938/analysis/gauge-N16",
+        "script_sha256": "32f6db5dba75f6c1c19aae2452a3f9be724725145a4e5fc449c57477e655b9f2",
+        "cuts": {
+          "interior": {
+            "time_M": 1.4407176126461119,
+            "point_index": 887,
+            "x": [
+              -0.04900871220973773,
+              -0.9975952547276307,
+              -0.04900871220973773
+            ],
+            "component": [
+              2,
+              2
+            ],
+            "signed_witness": {
+              "full": -0.02105770590138681,
+              "chi_penalty": 0.020541513112742826,
+              "shift_normal_lift": 0.009808940712460384,
+              "remainder": -0.05140815972658999
+            },
+            "full_surface_maxima": {
+              "full": 0.02105770590138681,
+              "chi_penalty": 0.020541513112742826,
+              "shift_normal_lift": 0.00987532384851185,
+              "remainder": 0.05140815972658999
+            },
+            "stored_tensor_difference": 4.579669976578771e-16,
+            "additivity_error": 2.220446049250313e-16
+          }
+        }
+      }
+    },
+    "gauge-N20": {
+      "records": 569,
+      "end_M": 2.399787694964657,
+      "T_rhs_max": 0.01205033121769504,
+      "T_path_difference": 4.929659488668407e-08,
+      "clock_max": 0.0830901659880271,
+      "lapse_identity_error": 2.0747292772682613e-15,
+      "derivative_reconstruction_error": 0,
+      "analysis_source": "/Users/hz0693/research/results/nonradiative-followup-20261115/runs/N20-9094022/analysis/gauge-N20",
+      "all_mode_peak": 0.0023417204019797514,
+      "diagnostics": {
+        "label_norm_max": 3.844994767021603e-09,
+        "round_scale_mean": 0.0010409183254580132,
+        "round_nonuniform_scale_max": 8.115361718828812e-05,
+        "round_shear_max": 3.5865621197804977e-06,
+        "round_cut_max": 0.0015289341380196374,
+        "round_cut_rms": 0.0014722879221207386,
+        "frame_source_fit_max": 4.25313002657508e-06,
+        "clock_transport_max": 3.419697858220161e-10,
+        "solid_angle_sum": 12.571120108665092,
+        "news_nodal_max": 0.0016810020225152928,
+        "news_fit_rms": 5.4824185963104937e-05,
+        "news_native_rms": 0.001130336245785957,
+        "null_max": 1.5763113741813078e-15,
+        "shear_max": 6.792227402190897e-07,
+        "conformal_hessian_tf_max": 0.012050331164728416,
+        "round_scale_rate_mean": 0.00858543665088197
+      },
+      "boundary_diagnostic_maxima": {
+        "scope": "Matching nominal native cadence; omit three common-cadence records at each end.",
+        "normal_lift_value_gradient_Hessian": [
+          2.5404248874502215e-18,
+          0.01228057781095046,
+          20.027573583028612
+        ],
+        "pole_over_h_chi_P_Theta_alpha": [
+          0.018359929425138952,
+          0.20778561037858553,
+          0.18055085925258035,
+          0.03939588464703841
+        ],
+        "penalty_rate_max": 17.434052546747267
+      },
+      "tensor-attribution.json": {
+        "scope": "Instantaneous full-T attribution at saved extrema, never an evolved ablation.\n\nAt fixed metric values the tracefree Hessian is affine in first metric\nderivatives. Split its actual time derivative into geometric and chi-penalty\nparts, and its spatial derivative into unlifted and normal-lift parts. This\ndoes not re-solve compatibility, change a state, or establish a stable closure.\n",
+        "analysis_case": "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-followup-20261115/runs/N20-9094022/analysis/gauge-N20",
+        "script_sha256": "32f6db5dba75f6c1c19aae2452a3f9be724725145a4e5fc449c57477e655b9f2",
+        "cuts": {
+          "interior": {
+            "time_M": 0.32954831022403214,
+            "point_index": 190,
+            "x": [
+              0.9984598528917127,
+              0.03922959446297751,
+              -0.03922959446297751
+            ],
+            "component": [
+              1,
+              1
+            ],
+            "signed_witness": {
+              "full": 0.012050331217695068,
+              "chi_penalty": -0.005973596768562808,
+              "shift_normal_lift": -0.006088393763132662,
+              "remainder": 0.024112321749390535
+            },
+            "full_surface_maxima": {
+              "full": 0.012050331217695068,
+              "chi_penalty": 0.005973596768562808,
+              "shift_normal_lift": 0.006116609458023812,
+              "remainder": 0.024112321749390535
+            },
+            "stored_tensor_difference": 5.551115123125783e-16,
+            "additivity_error": 1.3530843112619095e-16
+          }
+        }
+      },
+      "native_cut_piece_maxima": [
+        0.008466651930803,
+        0.008372093001529041,
+        4.7057789047871965e-06
+      ],
+      "native_cut_piece_sum_error": 2.0858928171402094e-16
+    }
+  },
+  "common_cuts": {
+    "control": {
+      "N": [
+        12,
+        16,
+        20
+      ],
+      "Bondi_interval_M": [
+        0.01267493500864621,
+        2.4714691641644277
+      ],
+      "all_mode_error": [
+        0.017037530897950143,
+        0.004400439413166526,
+        0.0028419075813584187
+      ],
+      "adjacent_effective_orders": [
+        4.705591128579375,
+        1.9594063539815094
+      ],
+      "windows": {
+        "short_Bondi_window": {
+          "Bondi_interval_M": [
+            0.01267493500864621,
+            0.7174957278403666
+          ],
+          "all_mode_error": [
+            0.0006796302509595916,
+            0.0001616763441605274,
+            0.00040862532423430957
+          ]
+        },
+        "intermediate_Bondi_window": {
+          "Bondi_interval_M": [
+            0.1526774533947247,
+            1.199050306793716
+          ],
+          "all_mode_error": [
+            0.010102532119617882,
+            0.00406930405412352,
+            0.0028419075813584187
+          ]
+        },
+        "late_Bondi_window": {
+          "Bondi_interval_M": [
+            1.902708933220916,
+            2.4714691641644277
+          ],
+          "all_mode_error": [
+            0.017037530897950143,
+            0.0011503260564141933,
+            0.0007608855158410099
+          ]
+        }
+      },
+      "native_comparison": "Matched nominal native cuts at common physical cadence; N12 dense gauge series uses stride three; timestamp tolerance 1e-12.",
+      "common_native_interval_M": [
+        0.01267493500861671,
+        2.387112759956041
+      ],
+      "full_T_error": [
+        0.03303587692484372,
+        0.021751368639174762,
+        0.011773502197082703
+      ],
+      "full_T_adjacent_effective_orders": [
+        1.4527059868548007,
+        2.750808831415958
+      ]
+    },
+    "gauge": {
+      "N": [
+        12,
+        16,
+        20
+      ],
+      "Bondi_interval_M": [
+        0.01267493500863403,
+        2.472259855147161
+      ],
+      "all_mode_error": [
+        0.017332746991033772,
+        0.003827442660432818,
+        0.002341946739722159
+      ],
+      "adjacent_effective_orders": [
+        5.250242816787009,
+        2.201337843051751
+      ],
+      "windows": {
+        "short_Bondi_window": {
+          "Bondi_interval_M": [
+            0.01267493500863403,
+            0.718066840675552
+          ],
+          "all_mode_error": [
+            0.0016200957210574132,
+            0.0007656717416511863,
+            0.0006364425154157664
+          ]
+        },
+        "intermediate_Bondi_window": {
+          "Bondi_interval_M": [
+            0.15020490928495,
+            1.199800612806397
+          ],
+          "all_mode_error": [
+            0.009592894694146729,
+            0.0032860181331767838,
+            0.002341946739722159
+          ]
+        },
+        "late_Bondi_window": {
+          "Bondi_interval_M": [
+            1.9004063612149538,
+            2.472259855147161
+          ],
+          "all_mode_error": [
+            0.017332746991033772,
+            0.0013601298588289622,
+            0.0007750948891452937
+          ]
+        }
+      },
+      "native_comparison": "Matched nominal native cuts at common physical cadence; N12 dense gauge series uses stride three; timestamp tolerance 1e-12.",
+      "common_native_interval_M": [
+        0.01267493500861671,
+        2.387112759956041
+      ],
+      "full_T_error": [
+        0.03186238805193781,
+        0.021057705901386697,
+        0.01205033121769504
+      ],
+      "full_T_adjacent_effective_orders": [
+        1.439643713208123,
+        2.501414087130619
+      ]
+    }
+  },
+  "reference": {
+    "baseline_summary": {
+      "records": 569,
+      "end_M": 2.399787694964831,
+      "derivative_reconstruction_error": 0,
+      "T_rhs_max": 0.03303587692484372,
+      "T_fd_max": 0.03303587612212244,
+      "T_path_difference": 3.252704378065019e-08,
+      "lapse_identity_error": 2.220446049250313e-15,
+      "clock_max": 0.3147212973213191,
+      "metric_rate_difference_max": 6.840154381793084e-08,
+      "news": {
+        "kind": "preliminary Bondi-news estimate",
+        "normalization": "N=d[r(h_plus-i*h_cross)]/du_B",
+        "polarization_axis": "Cartesian x",
+        "initial_frame": "round initial cut; u_B=0; inertial angles=native angles",
+        "mass_M0": 0.3333333333333333,
+        "angular_lmax": 6,
+        "temporal_stride": 1,
+        "samples": 569,
+        "native_time_range_M0": [
+          0.0,
+          2.3997876949648314
+        ],
+        "bondi_time_range_M0": [
+          0.01267493500864621,
+          2.472981056570304
+        ],
+        "initial_round_error": 0.0,
+        "diagnostics_max": {
+          "label_norm_max": 3.148270233399586e-08,
+          "round_scale_mean": 0.003624565567809061,
+          "round_nonuniform_scale_max": 0.00038326309958276825,
+          "round_shear_max": 2.5730117920364258e-05,
+          "round_cut_max": 0.0054217193148531255,
+          "round_cut_rms": 0.0051320780203372865,
+          "frame_source_fit_max": 2.216447885111661e-05,
+          "clock_transport_max": 4.899336936148302e-09,
+          "solid_angle_sum": 12.579568519327502,
+          "news_nodal_max": 0.011051632800103605,
+          "news_fit_rms": 0.0002504978274531401,
+          "news_native_rms": 0.007862315544357054,
+          "null_max": 1.6866535091871783e-15,
+          "shear_max": 9.029182361883436e-06,
+          "conformal_hessian_tf_max": 0.03303587612212244,
+          "round_scale_rate_mean": 0.04562670708286173
+        },
+        "diagnostics_max_abs": {
+          "label_norm_max": 3.148270233399586e-08,
+          "round_scale_mean": 0.003624565567809061,
+          "round_nonuniform_scale_max": 0.00038326309958276825,
+          "round_shear_max": 2.5730117920364258e-05,
+          "round_cut_max": 0.0054217193148531255,
+          "round_cut_rms": 0.0051320780203372865,
+          "frame_source_fit_max": 2.216447885111661e-05,
+          "clock_transport_max": 4.899336936148302e-09,
+          "solid_angle_sum": 12.579568519327502,
+          "news_nodal_max": 0.011051632800103605,
+          "news_fit_rms": 0.0002504978274531401,
+          "news_native_rms": 0.007862315544357054,
+          "null_max": 1.6866535091871783e-15,
+          "shear_max": 9.029182361883436e-06,
+          "conformal_hessian_tf_max": 0.03303587612212244,
+          "round_scale_rate_mean": 0.04562670708286173
+        },
+        "resolution_convergence_established": false,
+        "peak_mode_abs": {
+          "(2, -2)": 0.017054993762144435,
+          "(2, -1)": 4.048132523541762e-07,
+          "(2, 0)": 0.01392801704970364,
+          "(2, 1)": 5.307632282223678e-07,
+          "(2, 2)": 0.017055693436510366,
+          "(3, -3)": 7.583183901053488e-06,
+          "(3, -2)": 4.267845123972413e-07,
+          "(3, -1)": 2.0260269053755014e-06,
+          "(3, 0)": 6.5671568578349645e-06,
+          "(3, 1)": 6.219223723058231e-06,
+          "(3, 2)": 2.1649595775456642e-07,
+          "(3, 3)": 2.6035915289119285e-06,
+          "(4, -4)": 0.0005714355057120521,
+          "(4, -3)": 2.5459235738587503e-06,
+          "(4, -2)": 0.00011754909858014885,
+          "(4, -1)": 2.1353243839308585e-06,
+          "(4, 0)": 0.0008514210848181293,
+          "(4, 1)": 6.422020984229309e-06,
+          "(4, 2)": 0.00011777035184850695,
+          "(4, 3)": 8.561360240509234e-07,
+          "(4, 4)": 0.0005667459739194838,
+          "(5, -5)": 1.529821026657781e-06,
+          "(5, -4)": 6.5088814134963756e-06,
+          "(5, -3)": 5.8158731831298e-06,
+          "(5, -2)": 1.440585082825921e-05,
+          "(5, -1)": 1.7926114790406203e-06,
+          "(5, 0)": 1.1213652519477674e-06,
+          "(5, 1)": 3.5946696022482502e-06,
+          "(5, 2)": 1.343843547049367e-05,
+          "(5, 3)": 9.757545144941813e-07,
+          "(5, 4)": 1.1310641120682742e-05,
+          "(5, 5)": 1.7640756343977452e-06,
+          "(6, -6)": 1.613154023745549e-05,
+          "(6, -5)": 2.1455958848018185e-06,
+          "(6, -4)": 0.00016929024309758235,
+          "(6, -3)": 3.569409426750094e-06,
+          "(6, -2)": 9.31712442511828e-06,
+          "(6, -1)": 1.6329550046713387e-06,
+          "(6, 0)": 8.976238407209359e-05,
+          "(6, 1)": 2.818291830334122e-06,
+          "(6, 2)": 1.0159329053282057e-05,
+          "(6, 3)": 2.48471190445418e-06,
+          "(6, 4)": 0.00017477097844874985,
+          "(6, 5)": 3.851491555003457e-06,
+          "(6, 6)": 1.540952845664265e-05
+        }
+      },
+      "seconds": 276.2516133299796
+    },
+    "corrected_summary": {
+      "records": 569,
+      "end_M": 2.399787694964831,
+      "derivative_reconstruction_error": 0,
+      "T_rhs_max": 0.03303588924240236,
+      "T_fd_max": 0.03303588843958588,
+      "T_path_difference": 3.252700203626446e-08,
+      "lapse_identity_error": 2.220446049250313e-15,
+      "clock_max": 0.3147213589414978,
+      "metric_rate_difference_max": 6.840132310559355e-08,
+      "news": {
+        "kind": "preliminary Bondi-news estimate",
+        "normalization": "N=d[r(h_plus-i*h_cross)]/du_B",
+        "polarization_axis": "Cartesian x",
+        "initial_frame": "round initial cut; u_B=0; inertial angles=native angles",
+        "mass_M0": 0.3333333333333333,
+        "angular_lmax": 6,
+        "temporal_stride": 1,
+        "samples": 569,
+        "native_time_range_M0": [
+          0.0,
+          2.3997876949648314
+        ],
+        "bondi_time_range_M0": [
+          0.01267493500861733,
+          2.472981055895761
+        ],
+        "initial_round_error": 0.0,
+        "diagnostics_max": {
+          "label_norm_max": 3.148270000252751e-08,
+          "round_scale_mean": 0.003624564492514745,
+          "round_nonuniform_scale_max": 0.0003832627773704936,
+          "round_shear_max": 2.5730112254282505e-05,
+          "round_cut_max": 0.005421717913472282,
+          "round_cut_rms": 0.0051320765008193514,
+          "frame_source_fit_max": 2.216405374464922e-05,
+          "clock_transport_max": 4.897783734136851e-09,
+          "solid_angle_sum": 12.579568519327498,
+          "news_nodal_max": 0.011051622457130823,
+          "news_fit_rms": 0.00025049674342143325,
+          "news_native_rms": 0.007862313839934609,
+          "null_max": 1.6129910837884162e-15,
+          "shear_max": 9.029179747459268e-06,
+          "conformal_hessian_tf_max": 0.03303588843958588,
+          "round_scale_rate_mean": 0.04562670582200073
+        },
+        "diagnostics_max_abs": {
+          "label_norm_max": 3.148270000252751e-08,
+          "round_scale_mean": 0.003624564492514745,
+          "round_nonuniform_scale_max": 0.0003832627773704936,
+          "round_shear_max": 2.5730112254282505e-05,
+          "round_cut_max": 0.005421717913472282,
+          "round_cut_rms": 0.0051320765008193514,
+          "frame_source_fit_max": 2.216405374464922e-05,
+          "clock_transport_max": 4.897783734136851e-09,
+          "solid_angle_sum": 12.579568519327498,
+          "news_nodal_max": 0.011051622457130823,
+          "news_fit_rms": 0.00025049674342143325,
+          "news_native_rms": 0.007862313839934609,
+          "null_max": 1.6129910837884162e-15,
+          "shear_max": 9.029179747459268e-06,
+          "conformal_hessian_tf_max": 0.03303588843958588,
+          "round_scale_rate_mean": 0.04562670582200073
+        },
+        "resolution_convergence_established": false,
+        "peak_mode_abs": {
+          "(2, -2)": 0.01705499029007524,
+          "(2, -1)": 4.0486271322201653e-07,
+          "(2, 0)": 0.013928013923760484,
+          "(2, 1)": 5.307562946716319e-07,
+          "(2, 2)": 0.01705568992951683,
+          "(3, -3)": 7.583488253691486e-06,
+          "(3, -2)": 4.2685999506186234e-07,
+          "(3, -1)": 2.0262100693105504e-06,
+          "(3, 0)": 6.567287787562994e-06,
+          "(3, 1)": 6.2194042529471555e-06,
+          "(3, 2)": 2.164803127080147e-07,
+          "(3, 3)": 2.603899109100227e-06,
+          "(4, -4)": 0.0005714341356126614,
+          "(4, -3)": 2.545615646069688e-06,
+          "(4, -2)": 0.00011754879393502022,
+          "(4, -1)": 2.1349658459357427e-06,
+          "(4, 0)": 0.0008514187555656584,
+          "(4, 1)": 6.421819016920161e-06,
+          "(4, 2)": 0.0001177698753554876,
+          "(4, 3)": 8.56214767159154e-07,
+          "(4, 4)": 0.0005667451017480345,
+          "(5, -5)": 1.5289645973392455e-06,
+          "(5, -4)": 6.510245779784771e-06,
+          "(5, -3)": 5.8149875632969445e-06,
+          "(5, -2)": 1.4405740808651648e-05,
+          "(5, -1)": 1.7912776817579343e-06,
+          "(5, 0)": 1.1208115756420324e-06,
+          "(5, 1)": 3.593362432875161e-06,
+          "(5, 2)": 1.3438701750037983e-05,
+          "(5, 3)": 9.746359796517613e-07,
+          "(5, 4)": 1.1309602543663047e-05,
+          "(5, 5)": 1.763149747031165e-06,
+          "(6, -6)": 1.6131394967508178e-05,
+          "(6, -5)": 2.14574222408586e-06,
+          "(6, -4)": 0.0001692874534468551,
+          "(6, -3)": 3.5694823290489293e-06,
+          "(6, -2)": 9.318178002206275e-06,
+          "(6, -1)": 1.6329624470080967e-06,
+          "(6, 0)": 8.976087663107674e-05,
+          "(6, 1)": 2.8184502289546236e-06,
+          "(6, 2)": 1.0160678679197532e-05,
+          "(6, 3)": 2.4848911942985035e-06,
+          "(6, 4)": 0.00017476832148145214,
+          "(6, 5)": 3.851540337728192e-06,
+          "(6, 6)": 1.540922803169864e-05
+        }
+      },
+      "seconds": 258.66086883298703
+    },
+    "common_Bondi_interval_M": [
+      0.01267493500864621,
+      2.472981055895761
+    ],
+    "news_mode_difference_max": 5.791584382451496e-09
+  },
+  "narrow_vs_wide_N12": {
+    "order": [
+      "narrow",
+      "wide"
+    ],
+    "common_Bondi_interval_M": [
+      0.004224978336209118,
+      0.7141396233083412
+    ],
+    "all_mode_error": [
+      0.007660894697218334,
+      0.0016200965202866568
+    ],
+    "common_native_interval_M": [
+      0.00422497833620557,
+      0.714021338818751
+    ],
+    "full_T_error": [
+      0.061138602879685484,
+      0.018718333417145024
+    ]
+  },
+  "step_control": {
+    "halfdt-news-comparison.json": {
+      "common_Bondi_interval_M": [
+        0.012674935008618467,
+        2.4739168134758116
+      ],
+      "news_mode_difference_max": 7.085343730455121e-09
+    },
+    "reference-pointwise-comparison.json": {
+      "native_time_mismatch": 0.0,
+      "baseline": "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-followup-20261115/runs/N12-9093867/analysis/control-N12",
+      "comparison": "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-followup-20261115/runs/N16-9093938/reference-analysis/control-N12",
+      "baseline_stride": 1,
+      "T_rhs_difference_max": 1.250957214161616e-08,
+      "T_fd_difference_max": 1.2509686837846104e-08,
+      "lapse_terms_difference_max": 7.806471860426342e-08,
+      "penalty_rates_difference_max": 2.6700291064332926e-05,
+      "pole_over_h_difference_max": 6.843595618870812e-08
+    },
+    "halfdt-pointwise-comparison.json": {
+      "native_time_mismatch": 4.6851411639181606e-14,
+      "baseline": "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-followup-20261115/runs/N12-9093867/analysis/gauge-N12",
+      "comparison": "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-followup-20261115/runs/halfdt-9094227/analysis/gauge-N12-halfdt",
+      "baseline_stride": 3,
+      "T_rhs_difference_max": 5.058805410684819e-08,
+      "T_fd_difference_max": 4.7870248943621455e-08,
+      "lapse_terms_difference_max": 3.942628257723457e-08,
+      "penalty_rates_difference_max": 5.78358647693733e-05,
+      "pole_over_h_difference_max": 6.073249264604286e-07
+    },
+    "frame-comparison.json": {
+      "common_Bondi_interval_M": [
+        0.012674935008618757,
+        2.4739126122991433
+      ],
+      "common_ell_max": 4,
+      "lmax6_vs4_difference": 3.2708076306305245e-07,
+      "lmax6_vs8_difference": 5.9432860984119666e-08
+    },
+    "lmax6_vs8_all_common_modes": {
+      "common_ell_max": 6,
+      "Bondi_interval_M": [
+        0.012674935008618467,
+        2.4739126122991433
+      ],
+      "news_mode_difference_max": 1.330625859471153e-07
+    }
+  },
+  "constraints": {
+    "control-N12": {
+      "final_time_M": 2.399787694964831,
+      "full_H_rms": 297.41371269213414,
+      "exterior_H_rms": 0.0056040874204108726,
+      "exterior_M_rms": 0.0032274137586449383,
+      "outer_band_H_rms": 0.002279916261819084,
+      "outer_band_M_rms": 0.0010931634524875265
+    },
+    "control-N16": {
+      "final_time_M": 2.399787694964785,
+      "full_H_rms": 50.39414539579547,
+      "exterior_H_rms": 0.0028642014216805063,
+      "exterior_M_rms": 0.0015803258807793724,
+      "outer_band_H_rms": 0.0008765566733082809,
+      "outer_band_M_rms": 0.0004235171737290182
+    },
+    "control-N20": {
+      "final_time_M": 2.399787694964657,
+      "full_H_rms": 11.93456552301947,
+      "exterior_H_rms": 0.0015054488171429724,
+      "exterior_M_rms": 0.0008172292208729877,
+      "outer_band_H_rms": 0.0005307048358331189,
+      "outer_band_M_rms": 0.00026346733014841114
+    },
+    "gauge-N12": {
+      "final_time_M": 2.399787694964831,
+      "full_H_rms": 297.41371269209503,
+      "exterior_H_rms": 0.005602010775622216,
+      "exterior_M_rms": 0.003226261740251154,
+      "outer_band_H_rms": 0.0022810327284604427,
+      "outer_band_M_rms": 0.0010934696628909389
+    },
+    "gauge-N16": {
+      "final_time_M": 2.399787694964785,
+      "full_H_rms": 50.39414539570095,
+      "exterior_H_rms": 0.0028625379803401425,
+      "exterior_M_rms": 0.0015793704686131215,
+      "outer_band_H_rms": 0.0008798746877705138,
+      "outer_band_M_rms": 0.000425250623502002
+    },
+    "gauge-N20": {
+      "final_time_M": 2.399787694964657,
+      "full_H_rms": 11.93456552329886,
+      "exterior_H_rms": 0.0015076620874306648,
+      "exterior_M_rms": 0.000818182961299372,
+      "outer_band_H_rms": 0.000537678213546767,
+      "outer_band_M_rms": 0.00026707515236296683
+    }
+  },
+  "radial_constraint_onset": {
+    "control-N12": {
+      ".80<=r<.88": [
+        {
+          "time_M": 0.030983174465507506,
+          "H_rms": 2.038935158411753e-05,
+          "M_rms": 2.421821674810347e-05
+        },
+        {
+          "time_M": 0.15069089399133193,
+          "H_rms": 0.0004684001958539799,
+          "M_rms": 0.000422033827995079
+        },
+        {
+          "time_M": 0.30138178798266385,
+          "H_rms": 0.0013476329425589823,
+          "M_rms": 0.0013768553629210551
+        }
+      ],
+      ".88<=r<.94": [
+        {
+          "time_M": 0.030983174465507506,
+          "H_rms": 3.582932296262663e-06,
+          "M_rms": 2.0963187575592534e-06
+        },
+        {
+          "time_M": 0.15069089399133193,
+          "H_rms": 9.060265631254177e-05,
+          "M_rms": 1.802749979079907e-05
+        },
+        {
+          "time_M": 0.30138178798266385,
+          "H_rms": 0.0002983066186152065,
+          "M_rms": 8.659866702890192e-05
+        }
+      ],
+      ".94<=r<.97": [
+        {
+          "time_M": 0.030983174465507506,
+          "H_rms": 1.5822699975429915e-09,
+          "M_rms": 5.929085953163123e-10
+        },
+        {
+          "time_M": 0.15069089399133193,
+          "H_rms": 1.7792492775830304e-07,
+          "M_rms": 9.667257531414766e-08
+        },
+        {
+          "time_M": 0.30138178798266385,
+          "H_rms": 2.257995727094527e-06,
+          "M_rms": 1.6335461999605384e-06
+        }
+      ],
+      ".97<=r<1": [
+        {
+          "time_M": 0.030983174465507506,
+          "H_rms": 5.446921133977611e-10,
+          "M_rms": 2.2319204682700604e-10
+        },
+        {
+          "time_M": 0.15069089399133193,
+          "H_rms": 2.479814578501905e-09,
+          "M_rms": 5.084260005777489e-09
+        },
+        {
+          "time_M": 0.30138178798266385,
+          "H_rms": 1.092344788531418e-07,
+          "M_rms": 4.400424543009095e-08
+        }
+      ]
+    },
+    "control-N16": {
+      ".80<=r<.88": [
+        {
+          "time_M": 0.03063109293749037,
+          "H_rms": 6.97681808307117e-06,
+          "M_rms": 1.0150047777988832e-05
+        },
+        {
+          "time_M": 0.15104297551934961,
+          "H_rms": 0.00018894401959361744,
+          "M_rms": 0.0001976338828061842
+        },
+        {
+          "time_M": 0.30102970645464877,
+          "H_rms": 0.000522471679720492,
+          "M_rms": 0.0006144496938813365
+        }
+      ],
+      ".88<=r<.94": [
+        {
+          "time_M": 0.03063109293749037,
+          "H_rms": 1.5892132138090233e-06,
+          "M_rms": 6.997771744992357e-07
+        },
+        {
+          "time_M": 0.15104297551934961,
+          "H_rms": 2.7176378411904793e-05,
+          "M_rms": 1.5595015057195862e-05
+        },
+        {
+          "time_M": 0.30102970645464877,
+          "H_rms": 0.0001450784281548116,
+          "M_rms": 8.224826689909296e-05
+        }
+      ],
+      ".94<=r<.97": [
+        {
+          "time_M": 0.03063109293749037,
+          "H_rms": 1.5362475935651199e-09,
+          "M_rms": 5.655614002887954e-10
+        },
+        {
+          "time_M": 0.15104297551934961,
+          "H_rms": 5.3815666073578526e-08,
+          "M_rms": 3.903206240265058e-08
+        },
+        {
+          "time_M": 0.30102970645464877,
+          "H_rms": 1.9073773568619045e-06,
+          "M_rms": 1.2885825318622388e-06
+        }
+      ],
+      ".97<=r<1": [
+        {
+          "time_M": 0.03063109293749037,
+          "H_rms": 4.741204878614652e-10,
+          "M_rms": 2.0105227960594909e-10
+        },
+        {
+          "time_M": 0.15104297551934961,
+          "H_rms": 2.1052036411306337e-09,
+          "M_rms": 9.021364446264926e-10
+        },
+        {
+          "time_M": 0.30102970645464877,
+          "H_rms": 9.596099989040999e-08,
+          "M_rms": 1.3315519665464922e-08
+        }
+      ]
+    },
+    "control-N20": {
+      ".80<=r<.88": [
+        {
+          "time_M": 0.030419844020680105,
+          "H_rms": 3.1555189333795462e-06,
+          "M_rms": 4.889803512169039e-06
+        },
+        {
+          "time_M": 0.1504092287689187,
+          "H_rms": 8.342808224026549e-05,
+          "M_rms": 9.961744466042364e-05
+        },
+        {
+          "time_M": 0.30081845753783487,
+          "H_rms": 0.0002295846434902034,
+          "M_rms": 0.00030487622810060247
+        }
+      ],
+      ".88<=r<.94": [
+        {
+          "time_M": 0.030419844020680105,
+          "H_rms": 3.2789397371842356e-07,
+          "M_rms": 2.3291802913442222e-07
+        },
+        {
+          "time_M": 0.1504092287689187,
+          "H_rms": 7.550246872072641e-06,
+          "M_rms": 8.728757987082296e-06
+        },
+        {
+          "time_M": 0.30081845753783487,
+          "H_rms": 7.394078168061326e-05,
+          "M_rms": 4.682137533547999e-05
+        }
+      ],
+      ".94<=r<.97": [
+        {
+          "time_M": 0.030419844020680105,
+          "H_rms": 2.072190731546148e-09,
+          "M_rms": 8.26689074879499e-10
+        },
+        {
+          "time_M": 0.1504092287689187,
+          "H_rms": 2.5314240059516483e-08,
+          "M_rms": 7.323030824021654e-09
+        },
+        {
+          "time_M": 0.30081845753783487,
+          "H_rms": 1.3763068389667573e-06,
+          "M_rms": 9.494852462130086e-07
+        }
+      ],
+      ".97<=r<1": [
+        {
+          "time_M": 0.030419844020680105,
+          "H_rms": 6.137432046438354e-10,
+          "M_rms": 2.7094321275636466e-10
+        },
+        {
+          "time_M": 0.1504092287689187,
+          "H_rms": 1.438195822434037e-09,
+          "M_rms": 7.03843354637386e-10
+        },
+        {
+          "time_M": 0.30081845753783487,
+          "H_rms": 7.322509174023148e-08,
+          "M_rms": 1.1441449626684278e-08
+        }
+      ]
+    },
+    "gauge-N12": {
+      ".80<=r<.88": [
+        {
+          "time_M": 0.030983174465507506,
+          "H_rms": 2.3095448910948655e-05,
+          "M_rms": 4.6792102169548506e-05
+        },
+        {
+          "time_M": 0.15069089399133193,
+          "H_rms": 0.0005325865789848368,
+          "M_rms": 0.00048565992915729884
+        },
+        {
+          "time_M": 0.30138178798266385,
+          "H_rms": 0.0014663857960944319,
+          "M_rms": 0.0014310356677205687
+        }
+      ],
+      ".88<=r<.94": [
+        {
+          "time_M": 0.030983174465507506,
+          "H_rms": 8.941818231635131e-06,
+          "M_rms": 5.151062631828472e-06
+        },
+        {
+          "time_M": 0.15069089399133193,
+          "H_rms": 0.00012196578112896184,
+          "M_rms": 3.057651484344979e-05
+        },
+        {
+          "time_M": 0.30138178798266385,
+          "H_rms": 0.00038544184501669343,
+          "M_rms": 0.0001303796022980192
+        }
+      ],
+      ".94<=r<.97": [
+        {
+          "time_M": 0.030983174465507506,
+          "H_rms": 1.8780612318946406e-06,
+          "M_rms": 7.580138445276005e-07
+        },
+        {
+          "time_M": 0.15069089399133193,
+          "H_rms": 5.171216460249658e-06,
+          "M_rms": 3.0618188045211333e-06
+        },
+        {
+          "time_M": 0.30138178798266385,
+          "H_rms": 1.766799467621082e-05,
+          "M_rms": 1.0500014034103028e-05
+        }
+      ],
+      ".97<=r<1": [
+        {
+          "time_M": 0.030983174465507506,
+          "H_rms": 2.5623318928631892e-08,
+          "M_rms": 1.5474015393128913e-08
+        },
+        {
+          "time_M": 0.15069089399133193,
+          "H_rms": 2.8076531129093585e-06,
+          "M_rms": 7.279688590033872e-07
+        },
+        {
+          "time_M": 0.30138178798266385,
+          "H_rms": 4.661619676858314e-05,
+          "M_rms": 2.566494271470694e-05
+        }
+      ]
+    },
+    "gauge-N16": {
+      ".80<=r<.88": [
+        {
+          "time_M": 0.03063109293749037,
+          "H_rms": 7.365404565945544e-06,
+          "M_rms": 1.79717788496581e-05
+        },
+        {
+          "time_M": 0.15104297551934961,
+          "H_rms": 0.0002166030470957381,
+          "M_rms": 0.00022368835975396315
+        },
+        {
+          "time_M": 0.30102970645464877,
+          "H_rms": 0.0005828219076264917,
+          "M_rms": 0.0006341260782340838
+        }
+      ],
+      ".88<=r<.94": [
+        {
+          "time_M": 0.03063109293749037,
+          "H_rms": 3.5553133090248058e-06,
+          "M_rms": 1.6423213321619288e-06
+        },
+        {
+          "time_M": 0.15104297551934961,
+          "H_rms": 3.548869217408824e-05,
+          "M_rms": 1.8820287018363767e-05
+        },
+        {
+          "time_M": 0.30102970645464877,
+          "H_rms": 0.00016051289980071977,
+          "M_rms": 8.97344834591603e-05
+        }
+      ],
+      ".94<=r<.97": [
+        {
+          "time_M": 0.03063109293749037,
+          "H_rms": 6.075700166331485e-07,
+          "M_rms": 1.956879248328336e-07
+        },
+        {
+          "time_M": 0.15104297551934961,
+          "H_rms": 1.9260238228711976e-06,
+          "M_rms": 1.0944949023833974e-06
+        },
+        {
+          "time_M": 0.30102970645464877,
+          "H_rms": 7.802016345280377e-06,
+          "M_rms": 4.40029913925308e-06
+        }
+      ],
+      ".97<=r<1": [
+        {
+          "time_M": 0.03063109293749037,
+          "H_rms": 3.8477552819031565e-09,
+          "M_rms": 1.553849631641022e-09
+        },
+        {
+          "time_M": 0.15104297551934961,
+          "H_rms": 2.222554261454427e-06,
+          "M_rms": 6.994392667382492e-07
+        },
+        {
+          "time_M": 0.30102970645464877,
+          "H_rms": 2.568983728149687e-05,
+          "M_rms": 1.2367815256982291e-05
+        }
+      ]
+    },
+    "gauge-N20": {
+      ".80<=r<.88": [
+        {
+          "time_M": 0.030419844020680105,
+          "H_rms": 2.996154265461977e-06,
+          "M_rms": 8.154495830642723e-06
+        },
+        {
+          "time_M": 0.1504092287689187,
+          "H_rms": 9.55855814989271e-05,
+          "M_rms": 0.00011111397627826509
+        },
+        {
+          "time_M": 0.30081845753783487,
+          "H_rms": 0.00025796490764254447,
+          "M_rms": 0.0003123452487456694
+        }
+      ],
+      ".88<=r<.94": [
+        {
+          "time_M": 0.030419844020680105,
+          "H_rms": 1.1748308715801867e-06,
+          "M_rms": 6.134917326195251e-07
+        },
+        {
+          "time_M": 0.1504092287689187,
+          "H_rms": 1.1087045595579432e-05,
+          "M_rms": 9.876470428614366e-06
+        },
+        {
+          "time_M": 0.30081845753783487,
+          "H_rms": 7.654064326217345e-05,
+          "M_rms": 4.818350962540431e-05
+        }
+      ],
+      ".94<=r<.97": [
+        {
+          "time_M": 0.030419844020680105,
+          "H_rms": 2.1556159835591886e-07,
+          "M_rms": 8.35954769642073e-08
+        },
+        {
+          "time_M": 0.1504092287689187,
+          "H_rms": 7.530944908363022e-07,
+          "M_rms": 4.075339986941817e-07
+        },
+        {
+          "time_M": 0.30081845753783487,
+          "H_rms": 3.2739723006033308e-06,
+          "M_rms": 1.802040583840372e-06
+        }
+      ],
+      ".97<=r<1": [
+        {
+          "time_M": 0.030419844020680105,
+          "H_rms": 1.1777764216567814e-09,
+          "M_rms": 2.6568424940379966e-10
+        },
+        {
+          "time_M": 0.1504092287689187,
+          "H_rms": 1.4502919399710625e-06,
+          "M_rms": 5.503260587273341e-07
+        },
+        {
+          "time_M": 0.30081845753783487,
+          "H_rms": 2.1324711837300714e-05,
+          "M_rms": 1.0331015569137022e-05
+        }
+      ]
+    }
+  }
+}

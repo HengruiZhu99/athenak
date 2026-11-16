@@ -1,0 +1,21 @@
+#!/bin/bash -l
+#PBS -A CompactBinaryMerger
+#PBS -N nonrad-analysis
+#PBS -q debug
+#PBS -l select=2
+#PBS -l walltime=00:20:00
+#PBS -l filesystems=home:flare
+#PBS -j oe
+set -euo pipefail
+ulimit -c 0
+root=/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-followup-20261115
+source_root=$root/source-analysis-v2
+run=$root/runs/halfdt-9094227
+[[ -r ${PBS_NODEFILE:-} && $(sort -u "$PBS_NODEFILE" | wc -l) == 2 ]]
+cp "$PBS_NODEFILE" "$run/recovery-nodes.txt"
+cp "$source_root/tst/z4c_hyperboloidal/aurora/nonradiative-wide-recover.pbs" "$run/recovery-launcher.pbs"
+module load oneapi/release/2025.3.1
+module list > "$run/recovery-modules.txt" 2>&1
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+python=$root/../n12-full-scri-20261115/analysis-env/bin/python
+"$python" "$source_root/tst/z4c_hyperboloidal/nonradiative_wide_recover.py" "$root" "$run"

@@ -1,0 +1,156 @@
+{
+  "executables": {
+    "before": {
+      "path": "/Users/hz0693/research/results/nonradiative-followup-20261115/athena-before-reference-fix",
+      "sha256": "df0d7defb9800e8f25fa0a8e7dfcaadff590a66c93c4d7d47d4e57271b5363d3"
+    },
+    "after": {
+      "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+      "sha256": "343e83fd1a314a7f90c8815264a370c9c269ca110eb264bca46abfbd5e876bde"
+    }
+  },
+  "comparisons": {
+    "0": {
+      "bitwise_equal": true,
+      "scalar_values": 24704784,
+      "field_max_differences": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "2": {
+      "bitwise_equal": false,
+      "scalar_values": 24704784,
+      "field_max_differences": [
+        5.235811784132238e-12,
+        6.30988221112503e-13,
+        4.662902120503648e-13,
+        4.663008584662593e-13,
+        6.309919958338459e-13,
+        4.662998941943787e-13,
+        6.31050767196939e-13,
+        1.0136705759436266e-09,
+        7.864057246213209e-10,
+        7.776013551961548e-10,
+        1.0136747770563908e-09,
+        7.767155545773682e-10,
+        1.0134914057140202e-09,
+        6.983185100625193e-12,
+        1.7096828283152517e-11,
+        1.019432446772182e-09,
+        1.0194244964676664e-09,
+        1.019601460153325e-09,
+        4.3693781182403986e-13,
+        7.222237291452134e-35,
+        7.222237291452134e-35,
+        1.5407439555097887e-33,
+        2.6968713146618526e-12,
+        2.696766386200462e-12,
+        2.696766386200462e-12,
+        1.0190084449706795e-09,
+        1.0190004828195578e-09,
+        1.0191774539220748e-09,
+        0.0,
+        0.0,
+        0.0,
+        5.2343684942002255e-12,
+        5.235811784132238e-12,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "before-0": {
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/results/nonradiative-followup-20261115/athena-before-reference-fix",
+      "-i",
+      "/Users/hz0693/research/results/nonradiative-followup-20261115/reference-check/before-0/input.athinput"
+    ],
+    "input_sha256": "a9e09dd657178e8997b92edeed2ed9a35ec5e13c4c983be51252fa1028923923",
+    "checkpoint_sha256": "4a93a1a1344c555a80f3eac4fca6529f001bd7635b22a9cdfcd3a466db28023f",
+    "checkpoint": "/Users/hz0693/research/results/nonradiative-followup-20261115/reference-check/before-0/rst/control-N12.00001.rst"
+  },
+  "after-0": {
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+      "-i",
+      "/Users/hz0693/research/results/nonradiative-followup-20261115/reference-check/after-0/input.athinput"
+    ],
+    "input_sha256": "a9e09dd657178e8997b92edeed2ed9a35ec5e13c4c983be51252fa1028923923",
+    "checkpoint_sha256": "4a93a1a1344c555a80f3eac4fca6529f001bd7635b22a9cdfcd3a466db28023f",
+    "checkpoint": "/Users/hz0693/research/results/nonradiative-followup-20261115/reference-check/after-0/rst/control-N12.00001.rst"
+  },
+  "before-2": {
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/results/nonradiative-followup-20261115/athena-before-reference-fix",
+      "-i",
+      "/Users/hz0693/research/results/nonradiative-followup-20261115/reference-check/before-2/input.athinput"
+    ],
+    "input_sha256": "a250d815b028eef6bb2416ca9ec84d3f231106ea398060680bcae4e36a87437d",
+    "checkpoint_sha256": "91614d336f85574dda2266f7e74a095b4e633cca7d9f0ad6efb47cb4367114ea",
+    "checkpoint": "/Users/hz0693/research/results/nonradiative-followup-20261115/reference-check/before-2/rst/control-N12.00001.rst"
+  },
+  "after-2": {
+    "command": [
+      "mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+      "-i",
+      "/Users/hz0693/research/results/nonradiative-followup-20261115/reference-check/after-2/input.athinput"
+    ],
+    "input_sha256": "a250d815b028eef6bb2416ca9ec84d3f231106ea398060680bcae4e36a87437d",
+    "checkpoint_sha256": "dca4d3965658929b7e2c236963ac79fbb93c11405c1bf59a8124f78b680ebcdd",
+    "checkpoint": "/Users/hz0693/research/results/nonradiative-followup-20261115/reference-check/after-2/rst/control-N12.00001.rst"
+  }
+}

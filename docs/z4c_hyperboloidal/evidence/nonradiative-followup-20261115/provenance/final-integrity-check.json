@@ -1,0 +1,119 @@
+{
+  "runs": {
+    "N12-9093867": {
+      "job": "9093867",
+      "receipt_sha256": "9d1671d067564560fca38c7994142cd0370aecad9beb077d0c6dfb466c91e6dc",
+      "original_exit_status": 0,
+      "complete_after_recovery_if_needed": true
+    },
+    "N16-9093938": {
+      "job": "9093938",
+      "receipt_sha256": "791af0a8e1c2d7be632710140c9d0b8305427abe958e721d89c5e02959e9ce31",
+      "original_exit_status": 0,
+      "complete_after_recovery_if_needed": true
+    },
+    "N20-9094022": {
+      "job": "9094022",
+      "receipt_sha256": "f73101a3909da3a7f78a54f4ca8104ff08f48a51b5268560634078374f6083ed",
+      "original_exit_status": 0,
+      "complete_after_recovery_if_needed": true
+    },
+    "halfdt-9094227": {
+      "job": "9094227",
+      "receipt_sha256": "fb98ed4cf746c6c8e05132fa7ef6cb698ad62f79c8e0c1d133eb9b3959dc5649",
+      "original_exit_status": 143,
+      "complete_after_recovery_if_needed": true,
+      "analysis_recovery_job": "9094386"
+    }
+  },
+  "analysis": {
+    "gauge-N12": {
+      "summary_sha256": "7acd03e7e97b50ea10aa2a04d68a6b60d014c730b125aff3a318c84658b502b2",
+      "raw_series_sha256": "eb6a319c84658db86a7824477f3e78203e44c6959c36dd69fe576833121d2113",
+      "raw_news_sha256": "ac45de6719acb9b5f0af52239d23bb8553211e6063b4c9f8d67bb875e38f5fe7"
+    },
+    "control-N12": {
+      "summary_sha256": "96a08de83eedeb6dffb0971146906da1ec029c610dede0dc07fa5783b03714fb",
+      "raw_series_sha256": "141de05f10144ee659cef938630bce5c5ed426cfc58e2c953c5026cb34d34736",
+      "raw_news_sha256": "40e71ae2cf79900d445868b720162a573fbe0c01473de713394c6788740bc8d2"
+    },
+    "control-N16": {
+      "summary_sha256": "ad386aa6f0b9a821f13f044dbac2ef848b5d3a8fab0631637b9e4ed3e9481eb8",
+      "raw_series_sha256": "93302d2f4f84e60f6dce32b54658ef4bc344e4f61d3eea69d6ccfc2da197299c",
+      "raw_news_sha256": "9189c42d72d8ca329648300e53974257d416889d06a9bc97b3ad0c8f6945e3d7"
+    },
+    "gauge-N16": {
+      "summary_sha256": "552a42e6969053e82916708a06e4e379bd36e2173ee5d9ec1b384f0fa78144e8",
+      "raw_series_sha256": "b1ba80424006ad71c83ade71836a00f57f3fffb800dd33a711de1d64924932b1",
+      "raw_news_sha256": "f67ef7f7032f4dab47e256c885750ce05b1112ec9b38d98f9400266b05ca46bc"
+    },
+    "reference-control-N12": {
+      "summary_sha256": "45bf93d4b7e88575988f5e31f95e731f5ee8d09e897ad1f6f27ce324251aba00",
+      "raw_series_sha256": "dfadf73fd9ad519dab76295201b68ffb31ff0e2fa1298d017bf7c7ffea6797c9",
+      "raw_news_sha256": "141ee3e4887e5217629b4a8e0804076932e9a57f74b28fcac87324903114cb24"
+    },
+    "control-N20": {
+      "summary_sha256": "a8c59187126fbed11ea8b404a40bb05b89b436bddde780336d8f61e992f81c21",
+      "raw_series_sha256": "a03c131c5e4c15abfceb6e43bfa136d2fb65dbf3f132874e679f09cf720e824e",
+      "raw_news_sha256": "e585c66efedd1e2426bbb094a10b7ffe5b412354c9fe02a8ccfe592a073330c2"
+    },
+    "gauge-N20": {
+      "summary_sha256": "2201ddb73219baf9016e4c43d930a844122b9f7c50e7f924000e25fbbe8b2456",
+      "raw_series_sha256": "8f3862fbdee3c8acdc5d5055efda8011502c04b68d9cc1a94c8d656ba9f2f08f",
+      "raw_news_sha256": "344b42528b0c5fbf6ce5c6ae2e73a467ec7355d2eaf864b1c01a3892269442a3"
+    },
+    "gauge-N12-halfdt": {
+      "summary_sha256": "96aa485318376bf4d5db04d12cdfac930b6ef611e330067039b401651a0b97fd",
+      "raw_series_sha256": "8f2e27c22903f84c25128c2ef3adb485f4d0e6ea44e8a0822870ae068c3bf20f",
+      "raw_news_sha256": "e41eb0ddbe81a60d9c6beb29beb180ec5bed336f56182b5d7c85f20e5e03dd03"
+    },
+    "frame-l8": {
+      "raw_news_sha256": "c970584c092c46296e51b9673b11aa216447bb92bca2fe644022102b0e0e6388"
+    },
+    "frame-l4": {
+      "raw_news_sha256": "9fa8811602a21f674cac191ccb7668864ca1955fd0ae5c3a167dd93b83af8f29"
+    },
+    "gauge-N12-cadence3": {
+      "raw_news_sha256": "867060911914f084e63f60e433531bc8493bc712632fa34b3634d0272fc16bad"
+    }
+  },
+  "scheduler": {
+    "9093867": {
+      "wall_seconds": 1886,
+      "nodes": 2,
+      "node_hours": 1.0477777777777777,
+      "exit_status": 0
+    },
+    "9093938": {
+      "wall_seconds": 2601,
+      "nodes": 2,
+      "node_hours": 1.445,
+      "exit_status": 0
+    },
+    "9094022": {
+      "wall_seconds": 2491,
+      "nodes": 2,
+      "node_hours": 1.383888888888889,
+      "exit_status": 0
+    },
+    "9094227": {
+      "wall_seconds": 757,
+      "nodes": 2,
+      "node_hours": 0.42055555555555557,
+      "exit_status": 143
+    },
+    "9094386": {
+      "wall_seconds": 336,
+      "nodes": 2,
+      "node_hours": 0.18666666666666668,
+      "exit_status": 0
+    }
+  },
+  "cancelled_before_start": {
+    "9094380": {
+      "node_hours": 0,
+      "reason": "Superseded after service-node import preflight; no allocation started."
+    }
+  },
+  "node_hours": 4.483888888888889
+}

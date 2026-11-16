@@ -1,0 +1,60 @@
+{
+  "scope": "Radial centered fourth-order stencil with analytic ghost values; excludes native interpolation, angular errors and compatible-Hessian modification.",
+  "legacy": {
+    "center": 0.9555,
+    "half_width": 0.009,
+    "support_width": 0.018,
+    "sampling": [
+      {
+        "N": 12,
+        "radial_centers_in_support": 3,
+        "radial_centers_above_half_peak": 3,
+        "relative_max_first_error": 0.32727391867888866,
+        "relative_max_second_error": 0.18082075100751713
+      },
+      {
+        "N": 16,
+        "radial_centers_in_support": 5,
+        "radial_centers_above_half_peak": 3,
+        "relative_max_first_error": 0.45045993632128317,
+        "relative_max_second_error": 0.7547705015211067
+      },
+      {
+        "N": 20,
+        "radial_centers_in_support": 6,
+        "radial_centers_above_half_peak": 4,
+        "relative_max_first_error": 0.3824357240635323,
+        "relative_max_second_error": 0.19415598970717923
+      }
+    ]
+  },
+  "wide": {
+    "center": 0.86,
+    "half_width": 0.08,
+    "shape": 6,
+    "support_width": 0.16,
+    "sampling": [
+      {
+        "N": 12,
+        "radial_centers_in_support": 27,
+        "radial_centers_above_half_peak": 8,
+        "relative_max_first_error": 0.00379960751725922,
+        "relative_max_second_error": 0.0042778493800937215
+      },
+      {
+        "N": 16,
+        "radial_centers_in_support": 36,
+        "radial_centers_above_half_peak": 11,
+        "relative_max_first_error": 0.0014812610059964535,
+        "relative_max_second_error": 0.0017499300809959701
+      },
+      {
+        "N": 20,
+        "radial_centers_in_support": 45,
+        "radial_centers_above_half_peak": 13,
+        "relative_max_first_error": 0.0006189180869509426,
+        "relative_max_second_error": 0.0008125336163490374
+      }
+    ]
+  }
+}
