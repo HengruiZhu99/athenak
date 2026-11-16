@@ -11,6 +11,11 @@ Frame, shear, nullness, angular-fit, and temporal-sampling errors must accompany
 the waveform. A failed or large diagnostic must not be hidden by relabeling
 native-coordinate field modes as radiation.
 
+The [boundary/frame audit](scri-boundary-frame-audit.md) decomposes the completed
+60 M0 N12 diagnostic and records the required evolution and extraction work.
+Its late conformal-frame corrections are large; an ordinary BMS transformation
+does not remove the observed vacuum regularity defect.
+
 ## Definition and frame
 
 The reported normalization is
@@ -58,9 +63,11 @@ does not admit an inertial news interpretation.
 
 The full inverse coordinate Jacobian constructs angular vectors at fixed
 `u_B` and `Omega'`, including their native-time components. Their polarization
-is anchored to inertial north. A small Gram--Schmidt correction makes the dyad
+is anchored to inertial north. Gram--Schmidt orthonormalization makes the dyad
 null and normalized in the actual reconstructed metric; the uncorrected cut
-metric defect remains in the diagnostics.
+metric defect remains in the diagnostics. The implementation currently applies
+this even when the defect is large. It does not make such a cut a unit-sphere
+Bondi cut, and the completed N12 data fail that interpretation.
 
 In the admitted inertial conformal frame the estimate is
 
