@@ -23,6 +23,7 @@
 #include "z4c_hyperboloidal/mapped_halo.hpp"
 #include "z4c_hyperboloidal/surface_exchange.hpp"
 #include "z4c_hyperboloidal/scri_quadrature.hpp"
+#include "z4c_hyperboloidal/scri_rate_diagnostic.hpp"
 
 namespace hyp=z4c_hyperboloidal;
 namespace {
@@ -99,7 +100,7 @@ std::string Number(int n) {std::ostringstream s;s<<std::setw(8)<<std::setfill('0
 }  // namespace
 
 struct ScriOutput::Impl {
-  bool nodal=true,modes=true,static_due=false,skip=false;
+  bool nodal=true,modes=true,static_due=false,skip=false,rate_diagnostics=false;
   int lmax=8,sequence=-1,last_cycle=-1;
   Real last_time=-1;
   std::string epoch,parameters,identity,units;
@@ -223,6 +224,8 @@ ScriOutput::ScriOutput(ParameterInput *pin,Mesh *pm,OutputParameters op)
   auto &s=*impl_;s.nodal=pin->GetOrAddBoolean(op.block_name,"nodal",true);
   s.modes=pin->GetOrAddBoolean(op.block_name,"modes",true);
   s.lmax=pin->GetOrAddInteger(op.block_name,"lmax",8);
+  s.rate_diagnostics=pin->GetOrAddBoolean(op.block_name,"boundary_diagnostics",false);
+  if(s.rate_diagnostics && !s.nodal)throw std::invalid_argument("boundary diagnostics require nodal output");
   s.units=pin->GetOrAddString(op.block_name,"unit_description","geometric code units; c=G=1; physical mass scale unspecified");
   if(!s.nodal && !s.modes)throw std::invalid_argument("scri output requires nodal or modes");
   if(s.modes && (s.lmax<0 || s.lmax>128))throw std::invalid_argument("scri lmax must lie in [0,128]");
@@ -283,15 +286,37 @@ void ScriOutput::LoadOutputData(Mesh *pm) {
     auto kernel=s.boundary->BindKernel();
     auto dr=Kokkos::create_mirror_view_and_copy(HostMemSpace(),kernel.face_spacing);
     auto gap=Kokkos::create_mirror_view_and_copy(HostMemSpace(),kernel.face_gap);
-    std::vector<double> values,lifts,jets,lift_jets;
+    auto refs=Kokkos::create_mirror_view_and_copy(HostMemSpace(),p.surface_reference);
+    auto rows=Kokkos::create_mirror_view_and_copy(HostMemSpace(),s.boundary->Rows());
+    std::vector<double> values,lifts,jets,lift_jets,metric_rates,lapse_terms,raw_rates,penalty_rates;
     const int nc=correction.extent_int(1);
     for(int i=0;i<p.nsurface_points;++i) {
       const auto c=p.surface_points.h_view(i);
       for(int f=0;f<31;++f) {values.push_back(h(c.face,f,c.k,c.j));Jet(jets,sampled(i)[f]);}
       for(int a=0;a<nc;++a) {
         lifts.push_back(correction(c.face,a,c.k,c.j));
-        Jet(lift_jets,hyp::NormalLift(sg(i),cj(c.face,a,c.k,c.j),dr(c.face),gap(c.face)));
+        const auto lift=hyp::NormalLift(sg(i),cj(c.face,a,c.k,c.j),dr(c.face),gap(c.face));
+        Jet(lift_jets,lift);
       }
+    }
+    if(s.rate_diagnostics) {
+      for(int i=0;i<p.nsurface_points;++i) {
+        auto restored=sampled(i);const auto c=p.surface_points.h_view(i);
+        if(!hyp::SphericalPolicy::Restore(sg(i).x,restored,refs(i)))
+          throw std::runtime_error("invalid diagnostic restoration");
+        for(int a=0;a<nc;++a)restored[a<3?22+a:18]=restored[a<3?22+a:18]+
+          hyp::NormalLift(sg(i),cj(c.face,a,c.k,c.j),dr(c.face),gap(c.face));
+        const auto d=hyp::DiagnoseScriRate(sg(i),rows(i).spacing,restored,p.parameters,p.boundary_source,p.penalty);
+        metric_rates.insert(metric_rates.end(),d.metric_rate.begin(),d.metric_rate.end());
+        lapse_terms.insert(lapse_terms.end(),d.lapse.begin(),d.lapse.end());
+        raw_rates.insert(raw_rates.end(),d.unprojected.begin(),d.unprojected.end());
+        penalty_rates.insert(penalty_rates.end(),d.penalty_rate.begin(),d.penalty_rate.end());
+      }
+      const auto nq=std::uint64_t(p.nsurface_points);
+      s.data.Add("projected_metric_rates",{nq,11},std::move(metric_rates));
+      s.data.Add("lapse_identity_terms",{nq,12},std::move(lapse_terms));
+      s.data.Add("unprojected_boundary_rates",{nq,31},std::move(raw_rates));
+      s.data.Add("boundary_penalty_rates",{nq,31},std::move(penalty_rates));
     }
     s.data.Add("surface_state",{std::uint64_t(p.nsurface_points),31},std::move(values));
     s.data.Add("normal_lift_jets",{std::uint64_t(p.nsurface_points),std::uint64_t(nc),13},std::move(lift_jets));

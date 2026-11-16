@@ -94,7 +94,7 @@ def analyze(cache, output, lmax=8, stride=1, mass=1/3):
         rate = angular_trace/generator_times[q]-2*sources[q]
         scale_rate.append(float(np.sum(weights*rate)/np.sum(weights)))
     states = transport.evolve(times, flows, sources, generator_times)
-    news_coefficients = []; clock_coefficients = []; diagnostics = []
+    news_coefficients = []; clock_coefficients = []; diagnostics = []; decomposition = []
     valid = range(3, len(times)-3)
     for q in valid:
         window, center = stencil(times, q)
@@ -105,11 +105,13 @@ def analyze(cache, output, lmax=8, stride=1, mass=1/3):
                                      generator_times[q], second, first)
         spin, labels = spin_basis(observed['direction'], lmax)
         scalar, _, _ = scalar_basis(observed['direction'], lmax)
-        news_fit = weighted_projection(spin, observed['angular_weights'])@observed['news']
+        spin_project = weighted_projection(spin, observed['angular_weights'])
+        news_fit = spin_project@observed['news']
+        decomposition.append([spin_project@observed[key] for key in ('ricci_piece','hessian_piece','gradient_piece')])
         clock_fit = weighted_projection(scalar, observed['angular_weights'])@observed['bondi_time']
         residual = spin@news_fit-observed['news']
         d = observed['diagnostics']
-        d.update(news_fit_rms=float(np.sqrt(np.sum(observed['angular_weights']*abs(residual)**2)/np.sum(observed['angular_weights']))),
+        d.update(news_nodal_max=float(np.max(abs(observed['news']))), news_fit_rms=float(np.sqrt(np.sum(observed['angular_weights']*abs(residual)**2)/np.sum(observed['angular_weights']))),
                  news_native_rms=float(np.sqrt(np.sum(observed['angular_weights']*abs(observed['news'])**2)/np.sum(observed['angular_weights']))),
                  null_max=null_error[q], shear_max=shear_error[q],
                  conformal_hessian_tf_max=regularity_error[q],
@@ -134,7 +136,7 @@ def analyze(cache, output, lmax=8, stride=1, mass=1/3):
     modes = common_news@(quadrature[:, None]*spin.conj())
     np.savez(output/'news.npz', bondi_time=common_time, bondi_time_over_M0=common_time/mass,
              news_modes=modes, ell_m=np.array(labels), native_times=times[3:-3],
-             native_cut_news_coefficients=np.array(news_coefficients), bondi_clock_coefficients=np.array(clock_coefficients),
+             native_cut_news_coefficients=np.array(news_coefficients), native_cut_decomposition=np.array(decomposition), bondi_clock_coefficients=np.array(clock_coefficients),
              frame_coefficients=states, frame_times=times)
     summary = dict(kind='preliminary Bondi-news estimate', normalization='N=d[r(h_plus-i*h_cross)]/du_B',
                    polarization_axis='Cartesian x', initial_frame='round initial cut; u_B=0; inertial angles=native angles',

@@ -1,0 +1,90 @@
+{
+  "runner_sha256": "4a448fa59061d39c2158d8b82b8e7d47d7a90b78f7dbcd53ec9c61215c5ec86a",
+  "seed_receipt_sha256": "ed0cc1a507a59bc4a99b5441c6e53231913f05a6b70de322f1c2f1406b302d59",
+  "build_receipt_sha256": "f3a9e4578c23266d44283b8ca35767a9735623ba6ce896ff7b6cb700cdf66224",
+  "commands": [
+    [
+      "mpiexec",
+      "-n",
+      "24",
+      "-ppn",
+      "12",
+      "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+      "/opt/aurora/26.26.0/support/tools/mpi_wrapper_utils/gpu_tile_compact.sh",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-20261115/seed-v2/nonradiative_seed",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-20261115/runs/pilot-9093394/control-N12/input.athinput",
+      "0"
+    ],
+    [
+      "mpiexec",
+      "-n",
+      "24",
+      "-ppn",
+      "12",
+      "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+      "/opt/aurora/26.26.0/support/tools/mpi_wrapper_utils/gpu_tile_compact.sh",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-20261115/build/athena",
+      "-r",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-20261115/runs/pilot-9093394/control-N12/seed/rst/control-N12.00000.rst",
+      "-i",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-20261115/runs/pilot-9093394/control-N12/input.athinput",
+      "-d",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-20261115/runs/pilot-9093394/control-N12",
+      "-t",
+      "00:48:00",
+      "time/nlim=100"
+    ],
+    [
+      "mpiexec",
+      "-n",
+      "24",
+      "-ppn",
+      "12",
+      "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+      "/opt/aurora/26.26.0/support/tools/mpi_wrapper_utils/gpu_tile_compact.sh",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-20261115/seed-v2/nonradiative_seed",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-20261115/runs/pilot-9093394/gauge-N12/input.athinput",
+      ".001"
+    ],
+    [
+      "mpiexec",
+      "-n",
+      "24",
+      "-ppn",
+      "12",
+      "--cpu-bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100",
+      "/opt/aurora/26.26.0/support/tools/mpi_wrapper_utils/gpu_tile_compact.sh",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-20261115/build/athena",
+      "-r",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-20261115/runs/pilot-9093394/gauge-N12/seed/rst/gauge-N12.00000.rst",
+      "-i",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-20261115/runs/pilot-9093394/gauge-N12/input.athinput",
+      "-d",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-20261115/runs/pilot-9093394/gauge-N12",
+      "-t",
+      "00:48:00",
+      "time/nlim=100"
+    ]
+  ],
+  "cases": [
+    {
+      "name": "control-N12",
+      "seconds": 36.04074983499595,
+      "input_sha256": "8c3ecfce24cb7ebd322b39f67f4c862d91510fb61252415d837661cc701bfe75",
+      "seed": "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-20261115/runs/pilot-9093394/control-N12/seed/rst/control-N12.00000.rst",
+      "seed_sha256": "9bd74a4632a3e0805a994d8c7fdb3024296858bc756c431242429f2ee8a68b79",
+      "final": "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-20261115/runs/pilot-9093394/control-N12/rst/control-N12.00001.rst",
+      "final_sha256": "8e5fc2ec0a314b3de27c6edd61bee1443f4fcb5eb062f9337d9c4ee6e732bf9e"
+    },
+    {
+      "name": "gauge-N12",
+      "seconds": 35.18612312499317,
+      "input_sha256": "5efb7d473f9f5a70b4fe10bfca285a75b0755be06ab7f5e68e7a19a11b860485",
+      "seed": "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-20261115/runs/pilot-9093394/gauge-N12/seed/rst/gauge-N12.00000.rst",
+      "seed_sha256": "baace1702244790f80fa52a933d723531192d06ef58ba77ced5d83fd2791040b",
+      "final": "/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-20261115/runs/pilot-9093394/gauge-N12/rst/gauge-N12.00001.rst",
+      "final_sha256": "7f1bd20325b51e5d3507bd20734940d2e8d7e011b5c6d1d4d642079c930c17a3"
+    }
+  ],
+  "wall_seconds": 94.89700685598655
+}

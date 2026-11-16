@@ -1,0 +1,24 @@
+#!/bin/bash -l
+#PBS -A CompactBinaryMerger
+#PBS -N nonradiative-analysis
+#PBS -q debug
+#PBS -l select=2
+#PBS -l walltime=00:20:00
+#PBS -l filesystems=home:flare
+#PBS -j oe
+set -euo pipefail
+root=/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-20261115
+[[ -r ${PBS_NODEFILE:-} && $(sort -u "$PBS_NODEFILE" | wc -l) == 2 ]]
+module load oneapi/release/2025.3.1
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+run=$root/analysis/${TASK}-${PBS_JOBID%%.*}
+mkdir -p "$run"
+cp "$PBS_NODEFILE" "$run/nodes.txt"
+cp "$root/source/tst/z4c_hyperboloidal/aurora/nonradiative-analysis.pbs" "$run/launcher.pbs"
+mkdir -p "$run/source/vis" "$run/source/tst"
+cp -a "$root/source/vis/python" "$run/source/vis/"
+cp -a "$root/source/tst/z4c_hyperboloidal" "$run/source/tst/"
+find "$run/source/vis/python" "$run/source/tst/z4c_hyperboloidal" -name '*.py' -exec sha256sum {} + > "$run/source-sha256.txt"
+python=$root/../n12-full-scri-20261115/analysis-env/bin/python
+export NONRAD_ROOT=$root NONRAD_ANALYSIS=$run
+mpiexec -n 2 -ppn 1 "$python" "$run/source/tst/z4c_hyperboloidal/nonradiative_batch_analysis.py" "$TASK" > "$run/run.log" 2>&1

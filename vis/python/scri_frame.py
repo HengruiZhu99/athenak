@@ -126,6 +126,11 @@ class FrameTransport:
         second = (azimuth-(f/e)[:, None]*polar)/np.sqrt(g-f*f/e)[:, None]
         bondi_dyad = (first-1j*second)/np.sqrt(2)
         news = -conformal_ricci_projection(curvature, connection, bondi_dyad*factor[:, None], gradient, hessian, factor)
+        # Passive decomposition on exactly the same normalized dyad and cut.
+        ricci_piece = -np.einsum('qa,qb,qab->q', bondi_dyad, bondi_dyad, curvature)
+        covariant = hessian-np.einsum('qcab,qc->qab', connection, gradient)
+        hessian_piece = 2*np.einsum('qa,qb,qab->q', bondi_dyad, bondi_dyad, covariant)
+        gradient_piece = -2*np.einsum('qa,qa->q', bondi_dyad, gradient)**2
         # Angular measure on this native-time sample. Subsequent interpolation
         # follows fixed inertial labels to construct common Bondi-time samples.
         n = self.x; sin_native = np.sqrt(1-n[:, 0]**2)
@@ -149,5 +154,6 @@ class FrameTransport:
             frame_source_fit_max=float(np.max(abs(time_rates[:, 0]-requested_time_rate))),
             clock_transport_max=float(np.max(abs(generator_time/factor*(time_rates[:, 4]+np.einsum('qi,qi->q', flow, gradients[:, 4]))-1))),
             solid_angle_sum=float(np.sum(angular_weights)))
-        return dict(news=news, direction=inertial, bondi_time=values[:, 4], factor=factor,
+        return dict(news=news, ricci_piece=ricci_piece, hessian_piece=hessian_piece,
+                    gradient_piece=gradient_piece, direction=inertial, bondi_time=values[:, 4], factor=factor,
                     angular_weights=angular_weights, diagnostics=diagnostics)

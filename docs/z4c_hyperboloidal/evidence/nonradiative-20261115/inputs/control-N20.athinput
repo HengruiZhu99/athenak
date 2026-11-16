@@ -1,0 +1,82 @@
+# Fresh fixed N12 through 3551 complete native Driver RK4 steps.
+# Prepared locally; no Aurora build or run is implied by this input.
+<job>
+basename = control-N20
+<mesh>
+nghost = 4
+nx1 = 60
+nx2 = 60
+nx3 = 60
+x1min = -.1
+x1max = .1
+x2min = -.1
+x2max = .1
+x3min = -.1
+x3max = .1
+ix1_bc = mapped
+ox1_bc = mapped
+ix2_bc = mapped
+ox2_bc = mapped
+ix3_bc = mapped
+ox3_bc = mapped
+<meshblock>
+nx1 = 20
+nx2 = 20
+nx3 = 20
+<mesh_atlas>
+type = cubed_sphere
+spherical_inner_radius = .08
+shell_radii = .16,.24,.32,.40,.48,.56,.64,.72,.80,.88,.94,1
+evolved_overlap = 3
+outer_endpoint_grid = true
+<mesh_refinement>
+refinement = static
+<refined_region0>
+x1min = -.03
+x1max = .03
+x2min = -.03
+x2max = .03
+x3min = -.03
+x3max = .03
+level = 1
+<time>
+cfl_number = .2
+evolution = dynamic
+integrator = rk4_classical
+tlim = 2
+nlim = 850
+ndiag = 100
+dt = 0.0002816652224137047
+<problem>
+pgen_name = z4c_hyperboloidal_puncture
+<z4c_hyperboloidal>
+inner_z4c_radius_M = 20
+compact_slicing_end = .97
+outer_lapse_damping = .25
+ko = .1
+chi_floor = 1e-10
+scri_penalty = .5
+
+
+scri_treatment=A
+overlap_mode=agreement_full
+
+<output1>
+file_type=hst
+dt=.01
+data_format=%.17e
+hyperboloidal_scri=true
+hyperboloidal_scri_investigation=true
+
+<output2>
+file_type=rst
+dt=10
+single_file_per_rank=false
+
+<output3>
+file_type=scri
+dt=-1
+dcycle=1
+modes=false
+boundary_diagnostics=true
+unit_description=G=c=1; M0=1/3; single Schwarzschild hole

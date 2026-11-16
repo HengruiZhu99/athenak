@@ -13,7 +13,7 @@ import scri_reader as reader
 from scri_geometry import endpoint_jets, spacetime_metric
 
 
-def collect(root, output, capacity=4096):
+def collect(root, output, capacity=4096, record_pattern="segment-*/*.o20.*.r00000000.scri"):
     output.mkdir(parents=True, exist_ok=True)
     index_file = output/'records.json'
     records = json.loads(index_file.read_text()) if index_file.exists() else []
@@ -47,8 +47,8 @@ def collect(root, output, capacity=4096):
     def incomplete(error):
         return isinstance(error, FileNotFoundError) or str(error) in ('truncated scri archive', 'invalid array extent')
     sources = []
-    candidates = sorted(root.glob('segment-*/*.o20.*.r00000000.scri'),
-                        key=lambda p: (int(p.name.split('.o20.')[1].split('.')[0]), p.parent.name))
+    candidates = sorted(root.glob(record_pattern),
+                        key=lambda p: (int(p.name.rsplit('.', 3)[1]), p.parent.name))
     for source_index, path in enumerate(candidates):
         try:
             state = reader.read(path)
@@ -118,5 +118,6 @@ if __name__ == '__main__':
     parser.add_argument('--root', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--capacity', type=int, default=4096)
+    parser.add_argument('--record-pattern',default='segment-*/*.o20.*.r00000000.scri')
     args = parser.parse_args()
-    collect(args.root.resolve(), args.output.resolve(), args.capacity)
+    collect(args.root.resolve(), args.output.resolve(), args.capacity, args.record_pattern)

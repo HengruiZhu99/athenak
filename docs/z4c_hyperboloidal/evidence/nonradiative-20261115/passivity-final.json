@@ -1,0 +1,44 @@
+{
+  "executable": "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+  "executable_sha256": "df0d7defb9800e8f25fa0a8e7dfcaadff590a66c93c4d7d47d4e57271b5363d3",
+  "cases": [
+    {
+      "name": "off",
+      "input_sha256": "d0d8a5101a01058382125b9297bc540d3076e30b3fd2043347241c48383523e4",
+      "checkpoint": "/Users/hz0693/research/results/nonradiative-20261115/passivity-final/off/rst/native_n12.00001.rst",
+      "checkpoint_sha256": "6961efcc1a4d7c2e2fb620f00959a3f033388205eb19606ad5e143bce0ca496c",
+      "command": [
+        "mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+        "-i",
+        "/Users/hz0693/research/results/nonradiative-20261115/passivity-final/off.athinput"
+      ],
+      "cwd": "/Users/hz0693/research/results/nonradiative-20261115/passivity-final/off",
+      "OMP_NUM_THREADS": 1
+    },
+    {
+      "name": "on",
+      "input_sha256": "5401b883bffc5a21e9d5f17a4760db528131983ebff5068ea45ad93c679d8b9b",
+      "checkpoint": "/Users/hz0693/research/results/nonradiative-20261115/passivity-final/on/rst/native_n12.00001.rst",
+      "checkpoint_sha256": "38e37d70e215bd91de3f9698ca7e62b512ec76ab31c04d7602ce56c65b386efd",
+      "command": [
+        "mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/build-binary/src/athena",
+        "-i",
+        "/Users/hz0693/research/results/nonradiative-20261115/passivity-final/on.athinput"
+      ],
+      "cwd": "/Users/hz0693/research/results/nonradiative-20261115/passivity-final/on",
+      "OMP_NUM_THREADS": 1
+    }
+  ],
+  "comparison": {
+    "bitwise_equal": true,
+    "scalar_values": 24704784,
+    "payload_sha256": "bf13bacd165a2e77833b8e45ba70b9f2207d3919273f84fb25b343be96ee7bb1"
+  },
+  "recorder_manifest_sha256": "186c6b19441bb3b7d3ef86e9e8a5f993f16eb9676ab56251bd4b53dff94df595"
+}

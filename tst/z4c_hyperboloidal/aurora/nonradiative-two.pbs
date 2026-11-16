@@ -1,0 +1,38 @@
+#!/bin/bash -l
+#PBS -A CompactBinaryMerger
+#PBS -N nonradiative-A
+#PBS -q debug
+#PBS -l select=2
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -j oe
+set -euo pipefail
+ulimit -c 0
+root=/lus/flare/projects/CompactBinaryMerger/hzhu/nonradiative-20261115
+[[ -r ${PBS_NODEFILE:-} && $(sort -u "$PBS_NODEFILE" | wc -l) == 2 ]]
+[[ ${CASE:-} =~ ^(pilot|pair-N(12|16|20)|control-N(12|16|20)|gauge-N(12|16|20)(-halfdt)?)$ ]]
+run=$root/runs/$CASE-${PBS_JOBID%%.*}
+mkdir -p "$run/cache/neo" "$run/cache/sycl"
+cp "$PBS_NODEFILE" "$run/nodes.txt"
+cp "$root/source/tst/z4c_hyperboloidal/aurora/nonradiative-two.pbs" "$run/launcher.pbs"
+cp "$root/source/tst/z4c_hyperboloidal/aurora/nonradiative-analysis.pbs" "$run/analysis-launcher.pbs"
+printf '%s\n' "$PBS_JOBID" > "$run/job-id.txt"
+module load oneapi/release/2025.3.1
+module list > "$run/modules.txt" 2>&1
+export OMP_NUM_THREADS=1 ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export ZE_ENABLE_PCI_ID_DEVICE_ORDER=1 ONEAPI_DEVICE_SELECTOR=level_zero:gpu MPIR_CVAR_ENABLE_GPU=1
+source "$root/source/tst/z4c_hyperboloidal/aurora/mpi-gpu-cache.sh"
+export NEO_CACHE_DIR="$run/cache/neo" SYCL_CACHE_DIR="$run/cache/sycl"
+unset ZE_AFFINITY_MASK NATIVE_TIMING_WARMUP NATIVE_TIMING_STEPS NATIVE_TIMING_WINDOWS
+export NONRAD_BINDING='1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100'
+export NONRAD_WRAPPER=$(command -v gpu_tile_compact.sh)
+set +e
+python3 "$root/source/tst/z4c_hyperboloidal/aurora/nonradiative-run.py" "$root" "$run" "$CASE" > "$run/driver.log" 2>&1
+status=$?
+printf '%s\n' "$status" > "$run/exit-code.txt"
+if [[ $status == 0 && $CASE =~ ^pair-N(16|20)$ ]]; then
+  TASK=native-${CASE#pair-} /bin/bash -l "$run/analysis-launcher.pbs" > "$run/analysis-driver.log" 2>&1
+  status=$?
+  printf '%s\n' "$status" > "$run/analysis-exit-code.txt"
+fi
+exit "$status"

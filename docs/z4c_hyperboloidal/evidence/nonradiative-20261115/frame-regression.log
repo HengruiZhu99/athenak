@@ -1,0 +1,63 @@
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/tst/z4c_hyperboloidal/scri_frame.py:20: RuntimeWarning: divide by zero encountered in matmul
+  np.testing.assert_allclose(scalar.T@(weights[:, None]*scalar), np.eye(81), atol=4e-14)
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/tst/z4c_hyperboloidal/scri_frame.py:20: RuntimeWarning: overflow encountered in matmul
+  np.testing.assert_allclose(scalar.T@(weights[:, None]*scalar), np.eye(81), atol=4e-14)
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/tst/z4c_hyperboloidal/scri_frame.py:20: RuntimeWarning: invalid value encountered in matmul
+  np.testing.assert_allclose(scalar.T@(weights[:, None]*scalar), np.eye(81), atol=4e-14)
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/tst/z4c_hyperboloidal/scri_frame.py:25: RuntimeWarning: divide by zero encountered in matmul
+  np.testing.assert_allclose(spin.conj().T@(weights[:, None]*spin), np.eye(77), atol=3e-13)
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/tst/z4c_hyperboloidal/scri_frame.py:25: RuntimeWarning: overflow encountered in matmul
+  np.testing.assert_allclose(spin.conj().T@(weights[:, None]*spin), np.eye(77), atol=3e-13)
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/tst/z4c_hyperboloidal/scri_frame.py:25: RuntimeWarning: invalid value encountered in matmul
+  np.testing.assert_allclose(spin.conj().T@(weights[:, None]*spin), np.eye(77), atol=3e-13)
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/vis/python/scri_angular.py:82: RuntimeWarning: divide by zero encountered in matmul
+  gram = weighted@values
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/vis/python/scri_angular.py:82: RuntimeWarning: overflow encountered in matmul
+  gram = weighted@values
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/vis/python/scri_angular.py:82: RuntimeWarning: invalid value encountered in matmul
+  gram = weighted@values
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/vis/python/scri_frame.py:41: RuntimeWarning: divide by zero encountered in matmul
+  self.initial = self.project@np.column_stack((np.zeros(len(x)), x, np.zeros(len(x))))
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/vis/python/scri_frame.py:41: RuntimeWarning: overflow encountered in matmul
+  self.initial = self.project@np.column_stack((np.zeros(len(x)), x, np.zeros(len(x))))
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/vis/python/scri_frame.py:41: RuntimeWarning: invalid value encountered in matmul
+  self.initial = self.project@np.column_stack((np.zeros(len(x)), x, np.zeros(len(x))))
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/tst/z4c_hyperboloidal/scri_frame.py:32: RuntimeWarning: divide by zero encountered in matmul
+  transport.initial = transport.project@np.column_stack((-.13*x[:, 0]**2, x, np.zeros(len(x))))
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/tst/z4c_hyperboloidal/scri_frame.py:32: RuntimeWarning: overflow encountered in matmul
+  transport.initial = transport.project@np.column_stack((-.13*x[:, 0]**2, x, np.zeros(len(x))))
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/tst/z4c_hyperboloidal/scri_frame.py:32: RuntimeWarning: invalid value encountered in matmul
+  transport.initial = transport.project@np.column_stack((-.13*x[:, 0]**2, x, np.zeros(len(x))))
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/vis/python/scri_frame.py:44: RuntimeWarning: divide by zero encountered in matmul
+  values = self.y@coefficients
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/vis/python/scri_frame.py:44: RuntimeWarning: overflow encountered in matmul
+  values = self.y@coefficients
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/vis/python/scri_frame.py:44: RuntimeWarning: invalid value encountered in matmul
+  values = self.y@coefficients
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/vis/python/scri_frame.py:49: RuntimeWarning: divide by zero encountered in matmul
+  return self.project@rates
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/vis/python/scri_frame.py:49: RuntimeWarning: overflow encountered in matmul
+  return self.project@rates
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/vis/python/scri_frame.py:49: RuntimeWarning: invalid value encountered in matmul
+  return self.project@rates
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/vis/python/scri_frame.py:89: RuntimeWarning: divide by zero encountered in matmul
+  values = self.y@coefficients
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/vis/python/scri_frame.py:89: RuntimeWarning: overflow encountered in matmul
+  values = self.y@coefficients
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/vis/python/scri_frame.py:89: RuntimeWarning: invalid value encountered in matmul
+  values = self.y@coefficients
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/vis/python/scri_frame.py:90: RuntimeWarning: divide by zero encountered in matmul
+  time_rates = self.y@coefficient_time1
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/vis/python/scri_frame.py:90: RuntimeWarning: overflow encountered in matmul
+  time_rates = self.y@coefficient_time1
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/vis/python/scri_frame.py:90: RuntimeWarning: invalid value encountered in matmul
+  time_rates = self.y@coefficient_time1
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/vis/python/scri_frame.py:96: RuntimeWarning: divide by zero encountered in matmul
+  hessian[:, 0, 0] = self.y@coefficient_time2[:, 0]
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/vis/python/scri_frame.py:96: RuntimeWarning: overflow encountered in matmul
+  hessian[:, 0, 0] = self.y@coefficient_time2[:, 0]
+/Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal/vis/python/scri_frame.py:96: RuntimeWarning: invalid value encountered in matmul
+  hessian[:, 0, 0] = self.y@coefficient_time2[:, 0]
+PASS scalar/spin harmonics, independent low modes and angular Laplacian
+PASS full frame transport and radiation 0 3.344037664254466e-13 {'label_norm_max': 5.773159728050814e-15, 'round_scale_mean': -5.558031024902067e-16, 'round_nonuniform_scale_max': 1.6719889591837095e-13, 'round_shear_max': 7.016328469534313e-15, 'round_cut_max': 2.3730462038849883e-13, 'round_cut_rms': 1.2337269242485847e-13, 'frame_source_fit_max': 4.2052472615239367e-13, 'clock_transport_max': 2.1544988015875788e-12, 'solid_angle_sum': 12.566370614359176}
+PASS full frame transport and radiation 0.02 3.3708951358397304e-13 {'label_norm_max': 5.773159728050814e-15, 'round_scale_mean': -5.524802542004363e-16, 'round_nonuniform_scale_max': 1.6720221876666072e-13, 'round_shear_max': 7.016328469534313e-15, 'round_cut_max': 2.373046203389091e-13, 'round_cut_rms': 1.2337682351228082e-13, 'frame_source_fit_max': 4.205524817280093e-13, 'clock_transport_max': 2.1544988015875788e-12, 'solid_angle_sum': 12.566370614359176}

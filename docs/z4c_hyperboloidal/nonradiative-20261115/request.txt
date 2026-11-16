@@ -1,0 +1,218 @@
+Validate the current hyperboloidal scheme A using stationary and time-dependent
+NONRADIATIVE spacetimes. Reproduce the nonradiative tests in Moxon et al. first,
+then test their relevant counterparts through our native A evolution.
+
+Objective
+Determine whether our boundary reconstruction and gauge/frame treatment recover
+zero gravitational radiation from nonradiative geometry, including substantial
+coordinate dynamics. Establish accuracy and convergence, not merely stability.
+
+Repository:
+ /Users/hz0693/.codex/worktrees/hyperboloidal-binary-integration/hyperboloidal
+
+Primary reference:
+ Moxon et al., “The SpECTRE Cauchy-characteristic evolution system for rapid,
+ precise waveform extraction,” arXiv:2110.08635, §V.1:
+ https://arxiv.org/html/2110.08635v1
+
+Read its referenced Barkett et al. test definitions where needed:
+ arXiv:1910.09677.
+
+Read the actual equations, conventions and test parameters. Check the PDF if
+HTML equations are ambiguous. Cite the precise sections/equations used.
+
+Compute authorization
+You may use up to TWO Aurora compute nodes through the existing debug
+queue/submission workflow as needed. Inspect the current queue configuration,
+allocation limits and existing launch scripts rather than guessing them.
+Compile and perform small checks locally or on appropriate service nodes;
+run substantial numerical work on allocated compute nodes.
+
+Proceed autonomously with the short validation runs. Monitor submitted jobs
+through completion, inspect failures and collect results. Do not modify or
+cancel unrelated jobs. Estimate runtime from short measured runs before
+expanding a parameter sweep.
+
+Preserve the baseline
+- Keep scheme A, its equations, gauge parameters, penalties, endpoint lapse
+  projection, shift compatibility solve and normal lifts unchanged.
+- Use only the validated full-overlap policy.
+- Do not enable B/C or introduce new continuum sources to make a test pass.
+- Add passive diagnostics, analytic fixtures and test infrastructure as needed.
+- Preserve unrelated changes and untracked files.
+- Verify that enabling the new diagnostics does not change the evolved state
+  in a controlled deterministic comparison.
+- Keep every result bound to its source, executable, input and checkpoint
+  provenance.
+
+Important distinction
+An arbitrary coordinate transformation of Schwarzschild need not satisfy A’s
+gauge equations. Therefore organize the work into two clearly separated layers:
+
+I. Analytic-data tests of our reconstruction and extraction.
+II. Native evolutions using the unchanged A equations.
+
+A successful analytic replay does not validate A’s evolution. Conversely,
+failure of an arbitrary prescribed coordinate metric to satisfy A’s gauge
+equations does not show that A is incorrect.
+
+1. Inventory and establish controls.
+
+Reuse the existing scri recorder, geometry/frame tests, stationary-reference
+tests and scri investigation diagnostics. Inspect their actual coverage.
+Do not count point-kernel checks as full evolution tests.
+
+Establish Minkowski and Schwarzschild zero-news controls. Use our actual
+compactification, field conventions, surface topology and mass normalization.
+
+For stationary evolution, check whether the chosen reference is stationary
+under the configured A equations. If its coordinates relax, distinguish
+coordinate relaxation from physical radiation and from discretization error.
+
+2. Reproduce ALL THREE nonradiative Moxon test families analytically.
+
+Implement:
+ a. Rotating Schwarzschild.
+ b. Bouncing Schwarzschild.
+ c. Schwarzschild gauge wave.
+
+Include untransformed Schwarzschild as their common control.
+
+Use the paper’s transformations, parameters and expected zero-news result.
+Begin with one representative case per family, then cover the reported
+parameter ranges where feasible. Document any reduction of the sweep.
+
+In particular, verify from the source:
+- The rotation convention and angular velocity.
+- The bouncing translation, its amplitude and period.
+- The gauge-wave coordinate transformation and sine-Gaussian profile.
+
+Convert the metrics consistently to a hyperboloidal conformal representation
+with scri at our endpoint. Derive regular endpoint limits and spatial/time
+derivatives analytically or with independent automatic differentiation.
+Avoid numerical evaluation of divergent physical expressions directly at scri.
+
+Provide an explicit map between the paper’s units/conventions and ours.
+
+Test the analytic data in two ways:
+- Feed exact metric derivatives into the existing geometry/frame extractor.
+- Sample through the native surface/donor layout and recorder reconstruction,
+  including angular seams and radial derivative support.
+
+These distinguish formula/frame errors from sampling and derivative errors.
+Use an independent analytic derivative oracle rather than validating a
+routine solely against itself.
+
+Measure news in ALL retained modes and a nodal/angular norm, not only N20.
+Inspect the separate Ricci and conformal-frame contributions on identical
+cuts and dyads. Large contributions are acceptable if their physical sum
+converges to zero.
+
+If an analytic initial cut is incompatible with the extractor’s initial-frame
+assumptions, derive a valid initialization explicitly. Do not silently apply
+the round-initial-cut assumption to unsuitable data.
+
+3. Test the unchanged A evolution on nonradiative data.
+
+Run the complete native evolution → recorder → extraction pipeline for:
+ a. A stationary Schwarzschild control.
+ b. A time-dependent gauge perturbation of the same physical geometry.
+
+Use valid vacuum spatial geometry and extrinsic curvature. Construct the
+initial lapse/shift perturbation and auxiliary gauge variables consistently.
+Prefer a compact perturbation initially away from scri, including angular
+dependence so that the angular frame treatment is exercised.
+
+Do not mistake a perturbation of physical constraint data for a pure gauge
+perturbation. Verify the initial constraints and boundary compatibility.
+
+Determine which Moxon coordinate cases, if any, can be represented by exact
+solutions of our unchanged gauge. For the others, use compatible native gauge
+dynamics as counterparts and state clearly that they are not exact
+reproductions of the paper’s prescribed coordinates.
+
+Run long enough for the gauge disturbance to affect the outer region and for
+post-disturbance behavior to be measured. Determine the duration from the
+actual characteristic propagation and observed evolution, rather than choosing
+an arbitrary short endpoint.
+
+4. Record the minimum diagnostics needed to explain any failure.
+
+At matching points/times, before reducing extrema, record:
+- Lapse-equation compatibility and its signed derivative contributions.
+- Nullness of scri.
+- The full four-dimensional tensor
+    T_ab = nabla_a nabla_b Omega - g_ab Box(Omega)/4.
+- Cut-metric defects and Bondi-time/angular transport errors.
+- News across all retained modes.
+- Relevant pole/h, penalty and normal-lift derivative diagnostics already
+  available in the code.
+
+Compute T_ab independently from:
+ A. Native spatial derivatives and the actual endpoint evolution rates.
+ B. Native spatial derivatives and time differences of accepted records.
+
+Account for algebraic projections and fixed endpoint lapse/shift when comparing
+these paths. Do not compare a pre-projection stage RHS directly with an accepted
+projected-state derivative without deriving the relationship.
+
+Check the lapse fixed-point identity from the implemented equations, including
+its assumptions and finite-resolution correction terms. Alpha=1 after
+projection is not itself a test of lapse-equation compatibility.
+
+For nonradiative exact analytic data, verify that the tensor and radiation
+diagnostics have the expected zero limits. A small tangential shear alone is
+not sufficient.
+
+5. Establish numerical convergence economically.
+
+Use three resolutions for the principal native dynamical comparison.
+Refine the actual boundary derivative support, not only the harmonic cutoff.
+
+Separate:
+- Spatial error.
+- Evolution timestep error.
+- Recorder cadence/time-differentiation error.
+- Angular frame interpolation error.
+
+Include a half-timestep control for the representative gauge-dynamical case.
+Reuse dense records for cadence comparisons where possible.
+
+Compare consistent physical cuts and polarization conventions. Account for
+roundoff floors and the expected order of differentiated quantities.
+
+Report both absolute false-news errors and their convergence. Do not choose
+an arbitrary tolerance merely because a run passes it. Explain how the
+measured error floor would limit subsequent weak-wave extraction.
+
+6. Diagnose rather than conceal discrepancies.
+
+For every failure, identify whether it first appears in:
+- Analytic coordinate/conformal conversion.
+- Exact-derivative geometry or frame extraction.
+- Native spatial derivative reconstruction.
+- Recorded-time differentiation.
+- A’s evolved boundary geometry.
+- Angular seams, normal lifts or projection consistency.
+
+Do not remove conformal corrections, subtract a fitted waveform background,
+force cuts to appear round, or change A to obtain zero news.
+
+A genuinely isolated implementation bug may be fixed with a minimal regression
+test and a before/after comparison. Changes to A’s mathematical treatment must
+remain separate proposals, not part of the baseline validation.
+
+Deliverables
+- A concise test matrix linking each Moxon case to its implementation, reference,
+  parameters, expected result and completed evidence.
+- Reproducible analytic fixtures, inputs, launch scripts and provenance.
+- Plots of all-mode false-news error, regularity, frame drift and convergence.
+- Separate conclusions for analytic extraction and native A evolution.
+- Measured compute costs and any incomplete parameter coverage.
+- A clear verdict on what has been established and what remains unresolved.
+- Commit and push the focused test/diagnostic changes and compact evidence;
+  preserve large raw outputs in the documented results location.
+
+Scope ends with these nonradiative tests. Do not launch a new binary campaign,
+implement radiative Teukolsky tests, replace A, or add a new Psi4 extractor as
+part of this task.
