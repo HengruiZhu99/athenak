@@ -506,6 +506,60 @@ void TestShellSMR() {
   Require(outer.first[0] == 1 && outer.last[0] == 2, "cube atlas spherical layers remain selectable");
 }
 
+void TestRadialBlocks() {
+  const std::vector<Real> radii{.16, .94, 1};
+  const chart_atlas::Atlas legacy(.1, radii, {3,3,3}, {1,1}, .08, true, 3, true);
+  const chart_atlas::Atlas ones(.1, radii, {3,3,3}, {1,1}, .08, true, 3, true, {1,1,1});
+  Require(legacy.Identity()==ones.Identity(), "explicit unit counts retain restart identity");
+  for (int chart=0;chart<7;++chart) {
+    const auto counts=legacy.RootBlocks(chart);
+    for (int i=0;i<counts[0];++i) {
+      const LogicalLocation loc{i,0,0,legacy.RootLevel(),chart};
+      const auto a=legacy.GetBlockMap(loc),b=ones.GetBlockMap(loc);
+      const Real q[3]={.27,.39,.61};Real x[3],y[3];a.Forward(q,x);b.Forward(q,y);
+      for (int d=0;d<3;++d) Require(x[d]==y[d], "unit counts retain exact coordinates");
+    }
+  }
+  // Non-power-of-two radial subdivisions, unequal region widths, and SMR.
+  const chart_atlas::Atlas atlas(.1,radii,{3,3,3},{1,1},.08,true,3,true,{3,2,4});
+  Require(atlas.RootBlocks(1)==std::array<int,3>{9,1,1}, "radial-only root blocks");
+  Require(atlas.Identity()!=legacy.Identity(), "radial counts bind restart geometry");
+  auto roots=MakeForest(atlas);
+  Require(Leaves(*roots[0]).size()==27+6*9, "native forest includes all radial blocks");
+  for (int refinement=0;refinement<3;++refinement) {
+    const int factor=1<<refinement;
+    for (int chart=1;chart<7;++chart) for (int i=0;i<9*factor;++i) {
+      const LogicalLocation loc{i,0,0,atlas.RootLevel()+refinement,chart};
+      const auto map=atlas.GetBlockMap(loc);
+      const int layer=i<3*factor ? 0 : (i<5*factor ? 1 : 2);
+      Require(map.layer==layer, "region identity survives radial subdivision");
+      Require(map.outer_surface==(i==9*factor-1), "only final leaf owns scri");
+      Require(map.node_offset[0]==(layer==2 ? 0 : .5), "all outer-region blocks retain endpoint grid");
+      Require(map.overlap_sides[1]==(i==3*factor-1 ? 3 : 0), "overlap stays at region edge");
+      TestMap(atlas,loc);
+      if (i+1<9*factor) {
+        const auto next=atlas.GetBlockMap({i+1,0,0,loc.level,chart});
+        const Real q1[3]={1,.37,.52},q0[3]={0,.37,.52};Real x[3],y[3];
+        map.Forward(q1,x);next.Forward(q0,y);
+        for (int a=0;a<3;++a) Near(x[a],y[a],2e-15,"radial blocks meet without gaps");
+      }
+    }
+  }
+  const auto selected=atlas.ShellRefinementParents(1,atlas.RootLevel()+1,
+                                                 {{.94,-1,-1},{1,1,1}});
+  Require(selected.first[0]==5 && selected.last[0]==9,"SMR selects physical region across radial roots");
+  const auto refined=atlas.ShellRefinementParents(1,atlas.RootLevel()+2,
+                                                {{.94,-1,-1},{1,1,1}});
+  Require(refined.first[0]==10 && refined.last[0]==18,"SMR accounts for radial subdivisions and refinement");
+  for (const std::vector<int> bad : {std::vector<int>{1,2}, {1,0,1}, {1,-2,1},
+                                    {1,std::numeric_limits<int>::max(),1}}) {
+    bool caught=false;
+    try {chart_atlas::Atlas invalid(.1,radii,{1,1,1},{1,1},.08,true,3,true,bad);}
+    catch (const std::invalid_argument &) {caught=true;}
+    Require(caught,"invalid radial block counts rejected");
+  }
+}
+
 }  // namespace
 
 int main(int argc, char **argv) {
@@ -516,6 +570,7 @@ int main(int argc, char **argv) {
     TestGeometry();
     TestSeams();
     TestShellSMR();
+    TestRadialBlocks();
     std::cout << "native forest and chart geometry tests passed\n";
   } catch (const std::exception &error) {
     std::cerr << "topology test failure: " << error.what() << '\n';

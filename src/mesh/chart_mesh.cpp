@@ -49,6 +49,23 @@ void Mesh::ConfigureChartAtlas(ParameterInput *pin, bool restarting) {
     radii.push_back(radius);
   }
   const std::array<int, 3> core{nmb_rootx1, nmb_rootx2, nmb_rootx3};
+  std::vector<int> radial_blocks;
+  if (pin->DoesParameterExist("mesh_atlas", "shell_radial_blocks")) {
+    const auto specification = pin->GetString("mesh_atlas", "shell_radial_blocks");
+    std::istringstream counts(specification);
+    while (std::getline(counts, token, ',')) {
+      std::istringstream value(token);
+      int count;
+      if (!(value >> count) || count <= 0)
+        throw std::invalid_argument("shell_radial_blocks requires positive integers");
+      value >> std::ws;
+      if (!value.eof())
+        throw std::invalid_argument("shell_radial_blocks must be comma-separated integers");
+      radial_blocks.push_back(count);
+    }
+    if (radial_blocks.empty() || specification.back() == ',')
+      throw std::invalid_argument("shell_radial_blocks must not contain empty entries");
+  }
   const std::array<int, 2> angular{
       pin->GetOrAddInteger("mesh_atlas", "angular_blocks_2", 1),
       pin->GetOrAddInteger("mesh_atlas", "angular_blocks_3", 1)};
@@ -56,7 +73,7 @@ void Mesh::ConfigureChartAtlas(ParameterInput *pin, bool restarting) {
       pin->GetOrAddReal("mesh_atlas", "spherical_inner_radius", 0.0),
       pin->GetOrAddBoolean("mesh_atlas", "equiangular", false),
       pin->GetOrAddInteger("mesh_atlas", "evolved_overlap", 0),
-      pin->GetOrAddBoolean("mesh_atlas", "outer_endpoint_grid", true));
+      pin->GetOrAddBoolean("mesh_atlas", "outer_endpoint_grid", true), radial_blocks);
   if (restarting && root_level != atlas->RootLevel()) {
     throw std::invalid_argument("restart root level differs from its chart atlas");
   }

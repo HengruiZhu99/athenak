@@ -10,7 +10,9 @@
 #include <cmath>
 #include <cstdint>
 #include <limits>
+#include <iomanip>
 #include <map>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <tuple>
@@ -494,8 +496,13 @@ TaskStatus SurfaceExchange::Evaluate() {
         if (!Kokkos::isfinite(rate.rate[f]))++bad;
       }
     },Kokkos::Sum<int>(invalid),Kokkos::Max<Real>(compatibility),Kokkos::Max<Real>(clock));
-  if (invalid || compatibility>1e-7)
-    throw std::runtime_error("Invalid block-owned scri RHS or normal compatibility");
+  if (invalid || compatibility>1e-7) {
+    std::ostringstream message;
+    message << std::setprecision(17)
+            << "Invalid block-owned scri RHS or normal compatibility: invalid_count="
+            << invalid << " compatibility=" << compatibility << " tolerance=1e-7";
+    throw std::runtime_error(message.str());
+  }
   max_compatibility_=std::max(Real(0),compatibility);
   max_clock_=std::max(Real(0),clock);
   if (p.BoundaryHistoryEnabled()) p.AccumulateBoundaryHistory(MeasureHistory());

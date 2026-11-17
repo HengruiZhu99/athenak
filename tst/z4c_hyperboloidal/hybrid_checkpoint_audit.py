@@ -77,6 +77,7 @@ def main():
         (a.output/source.name).write_bytes(source.read_bytes())
     info=parse(a.checkpoint);identity=info['identity'].decode()
     atlas=dict(x.split('=',1) for x in info['atlas'].decode().split(';')[1:])
+    assert 'radial_blocks' not in atlas, 'This legacy quadrature requires one block per radial region; subdivided shells need native mapped volumes'
     n=int(re.search(r';n=(\d+),',identity)[1]);o=int(re.search(r';overlap=(\d+)',identity)[1])
     hw=float.fromhex(atlas['half_width']);inner=float.fromhex(atlas['inner_radius'])
     radii=[inner]+[float.fromhex(x) for x in atlas['radii'].split(',') if x]

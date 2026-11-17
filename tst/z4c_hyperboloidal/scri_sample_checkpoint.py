@@ -49,6 +49,7 @@ def outer_fields(info):
     assert n1 == n2 == n3 and o == 3
     n = n1
     atlas = dict(s.split('=',1) for s in info['atlas'].decode().split(';')[1:])
+    assert 'radial_blocks' not in atlas, 'This legacy sampler requires one block per radial region; use native scri records for subdivided shells'
     assert atlas['angular'] == '1,1,' and atlas['outer_endpoint'] == '1'
     assert atlas['equiangular'] == '1' and atlas['overlap'] == '3'
     radii = [float.fromhex(x) for x in atlas['radii'].split(',') if x]

@@ -233,7 +233,9 @@ std::vector<WeightedDonor> NativeDonorSelector::Shell(
       chain.push_back(gid);coverage[map.layer]+=map.hi[0]-map.lo[0];
     }
   }
-  const bool mixed=std::any_of(coverage.begin(),coverage.end(),[](Real x) {return x!=1;});
+  const bool mixed=std::any_of(coverage.begin(),coverage.end(),[](Real x) {
+    return std::abs(x-1)>64*std::numeric_limits<Real>::epsilon();
+  });
   std::vector<WeightedDonor> out;
   if (mixed) {
     // Each radial plane uses its own native angular leaf. This handles angular

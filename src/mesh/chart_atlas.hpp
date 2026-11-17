@@ -214,12 +214,14 @@ class Atlas {
         std::array<int, 3> core_blocks = {1, 1, 1},
         std::array<int, 2> angular_blocks = {1, 1},
         Real spherical_inner_radius = 0, bool equiangular = false,
-        int evolved_overlap = 0, bool outer_endpoint_grid = false);
+        int evolved_overlap = 0, bool outer_endpoint_grid = false,
+        std::vector<int> radial_blocks = {});
 
   int RootLevel() const {return root_level_;}
   static constexpr int NumCharts() {return 7;}
   std::array<int, 3> RootBlocks(int chart_id) const;
   const std::vector<Real> &RadialKnots() const {return radial_knots_;}
+  const std::vector<int> &RadialBlocks() const {return radial_blocks_;}
   Real HalfWidth() const {return half_width_;}
   Real SphericalInnerRadius() const {return spherical_inner_radius_;}
   static Seam AngularSeam(int chart_id, int axis, int side);
@@ -236,6 +238,8 @@ class Atlas {
  private:
   Real half_width_, spherical_inner_radius_;
   std::vector<Real> radial_knots_;
+  // Prefix sums map native logical x1 indices to physical shell regions.
+  std::vector<int> radial_blocks_, radial_offsets_;
   std::array<int, 3> core_blocks_;
   std::array<int, 2> angular_blocks_;
   int root_level_ = 0, evolved_overlap_;

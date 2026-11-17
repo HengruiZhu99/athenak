@@ -23,9 +23,11 @@ namespace chart_atlas {
 Atlas::Atlas(Real half_width, std::vector<Real> radial_knots,
              std::array<int, 3> core_blocks, std::array<int, 2> angular_blocks,
              Real spherical_inner_radius, bool equiangular,
-             int evolved_overlap, bool outer_endpoint_grid)
+             int evolved_overlap, bool outer_endpoint_grid,
+             std::vector<int> radial_blocks)
     : half_width_(half_width), spherical_inner_radius_(spherical_inner_radius),
-      radial_knots_(std::move(radial_knots)), core_blocks_(core_blocks),
+      radial_knots_(std::move(radial_knots)), radial_blocks_(std::move(radial_blocks)),
+      core_blocks_(core_blocks),
       angular_blocks_(angular_blocks), evolved_overlap_(evolved_overlap),
       equiangular_(equiangular || spherical_inner_radius > 0),
       outer_endpoint_grid_(outer_endpoint_grid) {
@@ -46,7 +48,17 @@ Atlas::Atlas(Real half_width, std::vector<Real> radial_knots,
   if (radial_knots_.size() > std::numeric_limits<std::int32_t>::max()) {
     throw std::invalid_argument("too many radial intervals for logical locations");
   }
-  int max_blocks = static_cast<int>(radial_knots_.size());
+  if (radial_blocks_.empty()) radial_blocks_.assign(radial_knots_.size(), 1);
+  if (radial_blocks_.size() != radial_knots_.size())
+    throw std::invalid_argument("shell_radial_blocks needs one count per shell radius");
+  radial_offsets_.push_back(0);
+  for (int count : radial_blocks_) {
+    if (count <= 0 || count > std::numeric_limits<std::int32_t>::max()
+                                 - radial_offsets_.back())
+      throw std::invalid_argument("shell radial block counts must be positive and fit logical indices");
+    radial_offsets_.push_back(radial_offsets_.back()+count);
+  }
+  int max_blocks = radial_offsets_.back();
   for (int n : core_blocks_) {
     if (n < 1) throw std::invalid_argument("invalid core root grid");
     max_blocks = std::max(max_blocks, n);
@@ -61,7 +73,7 @@ Atlas::Atlas(Real half_width, std::vector<Real> radial_knots,
 std::array<int, 3> Atlas::RootBlocks(int chart_id) const {
   if (chart_id < 0 || chart_id >= NumCharts()) throw std::out_of_range("unknown chart");
   return chart_id == 0 ? core_blocks_
-      : std::array<int, 3>{static_cast<int>(radial_knots_.size()),
+      : std::array<int, 3>{radial_offsets_.back(),
                            angular_blocks_[0], angular_blocks_[1]};
 }
 
@@ -110,9 +122,12 @@ IndexBounds Atlas::ShellRefinementParents(int chart_id, int logical_level,
     const auto edge = [&](std::int64_t index) {
       if (a != 0) return -1 + Real(2)*index/count;
       if (index == count) return radial_knots_.back();
-      const int layer = static_cast<int>(index/factor);
+      const int layer = std::upper_bound(radial_offsets_.begin(), radial_offsets_.end(),
+                                        index/factor)-radial_offsets_.begin()-1;
       const Real lower = layer == 0 ? spherical_inner_radius_ : radial_knots_[layer-1];
-      return lower + Real(index%factor)*(radial_knots_[layer]-lower)/factor;
+      const std::int64_t begin = radial_offsets_[layer]*factor;
+      const std::int64_t width = radial_blocks_[layer]*factor;
+      return lower + Real(index-begin)*(radial_knots_[layer]-lower)/width;
     };
     // Binary search actual physical edges, preserving strict lower and inclusive
     // upper selection at radial knots without floating-point index rounding.
@@ -141,7 +156,10 @@ std::string Atlas::Identity() const {
   // preserve every stored binary digit and ignore the process numeric locale.
   std::ostringstream out;
   out.imbue(std::locale::classic());
-  out << "athenak-chart-atlas-v2;half_width=" << std::hexfloat << half_width_
+  const bool subdivided=std::any_of(radial_blocks_.begin(), radial_blocks_.end(),
+                                     [](int n) {return n!=1;});
+  out << (subdivided ? "athenak-chart-atlas-v3;half_width="
+                    : "athenak-chart-atlas-v2;half_width=") << std::hexfloat << half_width_
       << ";inner_radius=" << spherical_inner_radius_ << ";radii=";
   for (Real radius : radial_knots_) out << radius << ',';
   out << ";core=";
@@ -150,6 +168,12 @@ std::string Atlas::Identity() const {
   for (int n : angular_blocks_) out << n << ',';
   out << ";overlap=" << evolved_overlap_ << ";equiangular=" << equiangular_
       << ";outer_endpoint=" << outer_endpoint_grid_;
+  // Default counts reproduce the historical identity and coordinates exactly.
+  // Non-default counts must be bound into restart/initial-data provenance.
+  if (subdivided) {
+    out << ";radial_blocks=";
+    for (int n : radial_blocks_) out << n << ',';
+  }
   return out.str();
 }
 
@@ -191,13 +215,16 @@ BlockMap Atlas::GetBlockMap(const LogicalLocation &loc) const {
   }
 
   map.face = loc.chart_id-1;
-  map.layer = static_cast<int>(loc.lx1/factor);
+  map.layer = std::upper_bound(radial_offsets_.begin(), radial_offsets_.end(),
+                              loc.lx1/factor)-radial_offsets_.begin()-1;
   map.inner_radius = map.layer == 0 ? spherical_inner_radius_ : radial_knots_[map.layer-1];
   map.outer_radius = radial_knots_[map.layer];
   map.cube_transition = map.layer == 0 && spherical_inner_radius_ == 0;
   map.equiangular = equiangular_;
-  map.lo[0] = Real(loc.lx1%factor)/factor;
-  map.hi[0] = Real(loc.lx1%factor+1)/factor;
+  const std::int64_t radial_begin = radial_offsets_[map.layer]*factor;
+  const std::int64_t radial_width = radial_blocks_[map.layer]*factor;
+  map.lo[0] = Real(loc.lx1-radial_begin)/radial_width;
+  map.hi[0] = Real(loc.lx1-radial_begin+1)/radial_width;
   for (int a=1; a<3; ++a) {
     map.lo[a] = -1 + Real(2)*index[a]/extent[a];
     map.hi[a] = -1 + Real(2)*(index[a]+1LL)/extent[a];
@@ -212,7 +239,8 @@ BlockMap Atlas::GetBlockMap(const LogicalLocation &loc) const {
     if (loc.lx1 == 0 && spherical_inner_radius_ == 0) {
       map.overlap_sides[0] = evolved_overlap_;
     }
-    if (loc.lx1+1LL == factor) map.overlap_sides[1] = evolved_overlap_;
+    if (loc.lx1+1LL == radial_offsets_[1]*factor)
+      map.overlap_sides[1] = evolved_overlap_;
     for (int a=1; a<3; ++a) {
       if (index[a] == 0) map.overlap_sides[2*a] = evolved_overlap_;
       if (index[a]+1LL == extent[a]) map.overlap_sides[2*a+1] = evolved_overlap_;
