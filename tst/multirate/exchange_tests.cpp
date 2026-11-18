@@ -104,6 +104,74 @@ void Exercise(int rank, int ranks, bool reverse_ownership) {
     Require(exchange.CachedRecords() == 0,"unused arrivals remained cached");
   }
 }
+// Every owner publishes five records of each requested kind in one batch.
+// Initial and final records fan out to both peers on three ranks. The slope
+// has a narrower destination set and each peer selects different sparse rows.
+void ExerciseBatches(int rank,int ranks) {
+  constexpr int fields=7, per_rank=5;
+  std::vector<int> owners(per_rank*ranks),steps(owners.size(),1);
+  std::vector<mt::Point> owned,requested;
+  std::map<mt::RecordKey,std::size_t> consumers;
+  for (int gid=0; gid<static_cast<int>(owners.size()); ++gid) {
+    owners[gid]=gid%ranks;
+    const auto points=Points(gid);
+    if (owners[gid]==rank) {
+      owned.insert(owned.end(),points.begin(),points.end());
+    } else {
+      requested.push_back(points[0]);
+      if (rank%2==0) requested.push_back(points[2]);
+      consumers[{gid,0,-1}]=1;
+      consumers[{gid,1,-1}]=1;
+      if ((owners[gid]+1)%ranks==rank) consumers[{gid,0,2}]=1;
+    }
+  }
+  mt::RecordExchange exchange(owners,owned,requested,fields);
+  exchange.CompileReceives(consumers);
+  for (int epoch=1; epoch<=2; ++epoch) {
+    exchange.Begin(epoch,steps,consumers,true);
+    std::vector<mt::RecordExchange::Publication> batch;
+    for (int gid=rank;gid<static_cast<int>(owners.size());gid+=ranks) {
+      for (const mt::RecordKey key : {mt::RecordKey{gid,1,-1}, {gid,0,2}, {gid,0,-1},
+                                      {gid,0,0}, {gid,0,1}, {gid,0,3}}) {
+        const auto &points=exchange.OwnedPoints(gid);
+        DvceArray1D<Real> values("batched test record",points.size()*fields);
+        auto host=Kokkos::create_mirror_view(values);
+        for (std::size_t q=0; q<points.size(); ++q)
+          for (int f=0; f<fields; ++f) host(q*fields+f)=Expected(epoch,key,points[q],f);
+        Kokkos::deep_copy(values,host);
+        batch.emplace_back(key,values);
+      }
+    }
+    exchange.PublishBatch(batch);
+    batch.clear();  // No local consumer owns these input arrays.
+    const auto queued=exchange.Stats();
+    std::uint64_t wire=0,packets=0;
+    for (int peer=0; peer<ranks; ++peer) {
+      std::size_t count=peer==rank ? 0 : per_rank*(2+(peer==(rank+1)%ranks));
+      std::size_t bytes=count*(1+(peer%2==0))*fields*sizeof(Real);
+      Require(queued.sent_bytes_by_peer.at(peer)==bytes,"incorrect batched peer volume");
+      wire+=bytes;
+      packets+=count;
+    }
+    Require(queued.sent_bytes==wire && queued.send_packets==packets,"batched wire counters disagree");
+    Require(queued.peak_packet_bytes==wire+queued.received_bytes,"batched packet peak differs from allocations");
+    Require(!packets || (queued.pack_kernels>0 && queued.pack_kernels<per_rank*3),
+            "sparse publications launched one pack per record");
+    const auto start=std::chrono::steady_clock::now();
+    while (!exchange.Finish())
+      Require(std::chrono::steady_clock::now()-start<std::chrono::seconds(10),
+              "batched multirate records failed to drain");
+    Require(exchange.CompletedReceives()==consumers.size(),"unexpected stage in batched receive plan");
+    for (const auto &[key,uses] : consumers) {
+      auto data=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),exchange.Data(key));
+      for (const auto &point : requested) if (point.gid==key.gid)
+        for (int f=0; f<fields; ++f)
+          Require(data(exchange.PointIndex(point)*fields+f)==Expected(epoch,key,point,f),
+                  "batched sparse payload differs");
+      exchange.Release(key);
+    }
+  }
+}
 }  // namespace
 
 int main(int argc, char **argv) {
@@ -117,6 +185,7 @@ int main(int argc, char **argv) {
   try {
     Exercise(rank,ranks,false);
     Exercise(rank,ranks,true);
+    ExerciseBatches(rank,ranks);
     if (rank == 0) std::cout << "multirate sparse records passed on " << ranks << " ranks\n";
   } catch (const std::exception &error) {
     std::cerr << "rank " << rank << ": " << error.what() << '\n'; result = 1;

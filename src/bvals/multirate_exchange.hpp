@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <map>
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "athena.hpp"
@@ -33,7 +34,8 @@ struct RecordKey {
 // batch. Call Poll regularly while numerical tasks are in flight.
 // Publish's point-major values must follow OwnedPoints(gid), with fields
 // contiguous within each point. Local publications are retained by View alias:
-// do not overwrite their allocation while Has(key) remains true.
+// do not overwrite their allocation while Has(key) remains true. The exchange
+// also retains source Views until their asynchronous device gathers complete.
 class RecordExchange {
  public:
   RecordExchange(MeshBlockPack *pack, std::vector<Point> owned,
@@ -56,6 +58,10 @@ class RecordExchange {
   void Begin(std::uint64_t epoch, const std::vector<int> &steps_by_gid,
              const std::map<RecordKey, std::size_t> &consumer_counts, bool profile_peers=false);
   void Publish(const RecordKey &key, const DvceArray1D<Real> &values);
+  using Publication = std::pair<RecordKey,DvceArray1D<Real>>;
+  // Preserve all caller-visible publications. Planned GPU transport gathers
+  // compatible records and their peer slices together.
+  void PublishBatch(const std::vector<Publication> &batch);
   bool Has(const RecordKey &key) const;
   DvceArray1D<Real> Data(const RecordKey &key) const;
   bool Poll();  // true if transport made progress
@@ -66,7 +72,7 @@ class RecordExchange {
   std::size_t CachedRecords() const;
   struct Statistics {
     std::uint64_t peak_record_bytes=0, peak_packet_bytes=0;
-    std::uint64_t sent_bytes=0, received_bytes=0;
+    std::uint64_t sent_bytes=0, received_bytes=0, send_packets=0, pack_kernels=0;
     std::vector<std::uint64_t> sent_bytes_by_peer;
   };
   Statistics Stats() const;
@@ -74,6 +80,7 @@ class RecordExchange {
   // with the consumer counts registered by Begin.
   std::vector<RecordKey> TakeArrivals();
  private:
+  void Queue(const RecordKey &key,const DvceArray1D<Real> &values);
   struct Impl;
   std::unique_ptr<Impl> impl_;
 };
