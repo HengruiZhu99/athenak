@@ -83,3 +83,13 @@ including intervening communication and load balancing. Initialization, final
 checkpoint output and first regrid costs are also included in whole-process wall time.
 `aurora/compare.py` checks shared checkpoints and computes strong-scaling efficiency
 relative to the same workload and method on one physical GPU.
+
+## N12 comparison through 10 M0
+
+The Aurora N12 comparison uses the 754-block atlas with two radial subdivisions in the penultimate region and four in the outermost. It reads the verified spatial input and binary initial-data manifest from the November 17 N12 campaign. Each run starts fresh in its own directory. The fixed base interval is (10/3)/1776 so both methods reach 10 M0 at a common endpoint. Native uniform classical RK4 takes 16 steps per base interval. The short numerical control also uses fine uniform EX5 with the multirate tableau.
+
+Set the batch environment variable `MR_N12_MODE` to `uniform` or `multirate` in the benchmark's existing two-node Aurora debug job. The optional `MR_THROUGHPUT=1` first runs the placement and native uniform controls. Each invocation advances one segment, validates the accepted checkpoint, and records the executable and input digests. A subsequent invocation resumes from that mode's validated checkpoint. There is no submission loop.
+
+The multirate trajectory uses the fastest measured placement among the tested candidates that reproduce the accepted payload. Complete local batches group blocks at the same numerical stage on one rank. The optional node-placement trial keeps each physical GPU's work and both tile packs together, measures rank-to-rank bytes, and enumerates placements of twelve GPUs across two six-GPU nodes. It compares the new placement with the original on hardware.
+
+After both trajectories finish, `aurora/n12_compare.py` checks the endpoint fields, conformal regularity tensor, clock mismatch and constraints. It extracts Bondi news from the time series, compares the modes on common Bondi-time cuts, and reports elapsed time per M0 across all validated segments.
