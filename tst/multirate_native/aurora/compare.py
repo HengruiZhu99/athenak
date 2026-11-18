@@ -98,9 +98,31 @@ def main():
             checks.append(dict(mesh=mesh,method=mode,gpus=tiles//2,comparison=baseline,**fields))
             methods.append(dict(mesh=mesh,method=mode,control=baseline,gpus=tiles//2,
                                 steady_speedup=control['steady_seconds_per_M0']/v['steady_seconds_per_M0']))
-        native_key = (mesh,tiles,'classical')
+        if mode.endswith('_whole_gpu'):
+            baseline=mode.removesuffix('_whole_gpu')
+            control=rows[(mesh,tiles,baseline)]
+            for key in ('job_id','binary_sha256','intervals','physical_gpus'):
+                if v[key]!=control[key]:
+                    raise ValueError('unmatched whole-GPU control '+key)
+            for rank,(host,tile) in control['rank_binding'].items():
+                if v['rank_binding'][str(int(rank)//2)]!=[host,tile.split('.')[0]]:
+                    raise ValueError('whole-GPU trial changed the physical rank mapping')
+            if baseline!='classical':
+                def owners(receipt):
+                    with Path(receipt['log']).with_name('partition.log').open('rb') as stream:
+                        rows=stream.read(int(stream.readline())).decode().splitlines()
+                    return [int(line.split()[1]) for line in rows[1:]]
+                if owners(v)!=[rank//2 for rank in owners(control)]:
+                    raise ValueError('whole-GPU trial moved a block between physical GPUs')
+            fields=compare(v,control)
+            if max(fields['max_scaled'],fields['max_scaled_persistent_diagnostics'])>1e-11:
+                raise ValueError('whole-GPU binding changed the numerical trajectory')
+            checks.append(dict(mesh=mesh,method=mode,gpus=tiles//2,comparison=baseline,**fields))
+            methods.append(dict(mesh=mesh,method=mode,gpus=tiles//2,control=baseline,
+                                evolution_speedup=control['evolution_seconds_per_M0']/v['evolution_seconds_per_M0']))
+        native_key = (mesh,tiles,'classical_whole_gpu' if mode.endswith('_whole_gpu') else 'classical')
         native = rows.get(native_key,reference_rows.get(native_key))
-        if (native and not mode.endswith('_trace') and mode not in ('classical','uniform') and native['simulated_M0']==v['simulated_M0']
+        if (native and not mode.endswith('_trace') and mode not in ('classical','classical_whole_gpu','uniform') and native['simulated_M0']==v['simulated_M0']
                 and native['binary_sha256']==v['binary_sha256']):
             methods.append(dict(mesh=mesh,method=mode,gpus=tiles//2,control='native_uniform_rk4',
                                 binary_sha256=v['binary_sha256'],

@@ -13,7 +13,7 @@ from statistics import median
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from adaptive import adaptive_input
 from transport_modes import TRANSPORT, transport_parameters
-from binding import launcher
+from binding import launcher, rank_devices
 from activity import snapshot, utilization
 from node_placement import reorder_nodes
 
@@ -55,7 +55,9 @@ failures = []
 def case(mesh, ranks, mode, intervals):
     # Instrumented runs have separate receipts and never enter elapsed-time comparisons.
     device_profile = mode.endswith('_trace')
-    method = mode.removesuffix('_trace').removesuffix('_sibling_batch')
+    whole_gpu = mode.endswith('_whole_gpu')
+    processes = ranks//2 if whole_gpu else ranks
+    method = mode.removesuffix('_trace').removesuffix('_sibling_batch').removesuffix('_whole_gpu')
     deep_adaptive = mesh == 'adaptive754'
     production = mesh == 'current754' or deep_adaptive
     adaptive = mesh in ('adaptive88','adaptive1024')
@@ -138,31 +140,21 @@ location_rad = .0001
                     raise ValueError('sibling batching control differs from the spread layout')
                 (run/'sibling-placement.json').write_text(json.dumps(profile,indent=2)+'\n')
                 owners=profile['owners']
+            if whole_gpu:
+                owners=[tile_rank//2 for tile_rank in owners]
             ownership=','.join(map(str,owners))
             inp += f'\n<multirate>\nblock_owners = {ownership}\n'
         inp += (f'<multirate>\nspherical_levels = {regions}\nuniform_reference = {str(uniform).lower()}\n'
-                f'{transport_parameters(method)}profile_peer_bytes = true\nbalance = {balance}\nranks_per_gpu = 2\nprepost_exchanges = {str(mode!="polled_fixed").lower()}\nwarmup_intervals = 2\nreview_interval = 32\n'
+                f'{transport_parameters(method)}profile_peer_bytes = true\nbalance = {balance}\nranks_per_gpu = {1 if whole_gpu else 2}\nprepost_exchanges = {str(mode!="polled_fixed").lower()}\nwarmup_intervals = 2\nreview_interval = 32\n'
                 f'partition_log = {run}/partition.log\n')
     (run/'input.athinput').write_text(inp)
-    launch = launcher(ranks)
+    launch = launcher(processes,whole_gpu)
     with (run/'binding.log').open('w') as log:
         binding = ('echo "$(hostname) tile=$ZE_AFFINITY_MASK '
                    'rank=${PMI_RANK:-${PALS_RANKID:-${PMIX_RANK:-unknown}}}"')
         subprocess.run([*launch, '/bin/bash', '-c', binding],
                        stdout=log, stderr=log, check=True)
-    pairs = re.findall(r'^([\w.-]+) tile=(\d+\.\d+) rank=', (run/'binding.log').read_text(), re.M)
-    if len(set(pairs)) != ranks or len({(host,tile.split('.')[0]) for host,tile in pairs}) != ranks//2:
-        raise RuntimeError('unexpected Aurora tile binding: '+str(run/'binding.log'))
-    rank_binding = {int(rank):(host,tile) for host,tile,rank in re.findall(
-        r'^([\w.-]+) tile=(\d+\.\d+) rank=(\d+)$', (run/'binding.log').read_text(), re.M)}
-    if rank_binding:
-        if set(rank_binding) != set(range(ranks)):
-            raise RuntimeError('incomplete MPI rank binding in '+str(run))
-        for rank in range(0,ranks,2):
-            host, tile = rank_binding[rank]
-            device = tile.split('.')[0]
-            if tile != device+'.0' or rank_binding[rank+1] != (host, device+'.1'):
-                raise RuntimeError('adjacent ranks are not bound to sibling tiles in '+str(run))
+    rank_binding = rank_devices((run/'binding.log').read_text(),processes,whole_gpu)
     command = [*launch]
     if device_profile:
         tools = sorted(Path('/opt/aurora/default/spack/unified').glob(
@@ -172,7 +164,7 @@ location_rad = .0001
         command += ['/usr/bin/python3.11',str(source/'aurora/device_profile.py'),
                     str(tools[0]),str(run),str(2*factor)]
     command += [str(exe), '-i', str(run/'input.athinput')]
-    nodes = len({host for host,_ in pairs})
+    nodes = len({host for host,_ in rank_binding.values()})
     reserved_nodes = len(set(Path(os.environ['PBS_NODEFILE']).read_text().split()))
     if reserved_nodes<nodes:
         raise ValueError('active ranks span more nodes than the PBS reservation')
@@ -202,7 +194,7 @@ location_rad = .0001
     if not endpoints:
         raise AssertionError('missing accepted checkpoint in '+str(run))
     receipt = dict(intervals=intervals, binary_sha256=binary_sha256, input_sha256=hashlib.sha256(inp.encode()).hexdigest(),
-                   job_id=os.environ.get('PBS_JOBID'), mesh=mesh, mode=mode, tiles=ranks, physical_gpus=ranks//2,
+                   job_id=os.environ.get('PBS_JOBID'), mesh=mesh, mode=mode, tiles=ranks, mpi_ranks=processes, whole_gpu=whole_gpu, physical_gpus=ranks//2,
                    nodes=nodes, reserved_nodes=reserved_nodes, reserved_node_hours=reserved_nodes*wall/3600,
                    engine_activity=activity, rank_binding=rank_binding, simulated_M0=3*intervals*base,
                    seconds=wall, seconds_per_M0=wall/(3*intervals*base),
@@ -258,7 +250,7 @@ if case_file:
         os.environ['MR_BENCHMARK_SERIES']=specification['series']+'-'+os.environ['PBS_JOBID'].split('.')[0]
         specification=specification['cases']
     for mesh,ranks,mode,intervals in specification:
-        if mode in ('selected','selected_sibling_batch'):
+        if mode in ('selected','selected_sibling_batch','selected_whole_gpu'):
             from n12_paths import trajectory_directory
             directory = trajectory_directory(root,'multirate')
             selections = list(directory.glob('segment-*/placement-selection.json'))
@@ -269,8 +261,8 @@ if case_file:
             mode = choices.pop()+mode[len('selected'):]
         if mesh not in ('current754','adaptive754','adaptive1024','adaptive88') or ranks not in (2,4,8,12,24):
             raise ValueError('unsupported Aurora workload or tile count')
-        untraced = mode.removesuffix('_trace').removesuffix('_sibling_batch')
-        if mode.endswith('_sibling_batch') and (mesh,ranks)!=('current754',24):
+        untraced = mode.removesuffix('_trace').removesuffix('_sibling_batch').removesuffix('_whole_gpu')
+        if mode.endswith(('_sibling_batch','_whole_gpu')) and (mesh,ranks)!=('current754',24):
             raise ValueError('sibling batching experiment requires the fixed two-node N12 mesh')
         if (untraced not in TRANSPORT and untraced not in ('spread_fixed','spread','metis','scalar','zorder',
                 'uniform','classical')) or intervals<3:
