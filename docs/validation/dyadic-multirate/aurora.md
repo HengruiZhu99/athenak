@@ -65,3 +65,19 @@ On the earlier executable, the contiguous placement took 5,042 steady s/M0, 18% 
 Job 9100791 replayed both archived executables and a corrected build on the same two nodes. Over five matched coarse intervals, the fully spread layout took 6,033 steady s/M0 on the original per-peer build, 20,161 on the fused build and 6,036 on the corrected build. The correction restores per-peer device buffers and MPI polling, limits halo and donor reconstruction to active recipients, and checks the characteristic CFL in the existing RHS validity reduction. Endpoints across all three builds agreed bitwise, including the persistent diagnostic ledgers. The corrected build recovered 3.34× throughput over the regression and matched the original throughput to 0.1%. Its own native uniform RK4 control took 1,212 steady s/M0, leaving a 4.98× elapsed-time gap with the fully spread layout.
 
 On a two-rank CPU nonlinear pulse with 25 blocks refining to 32, the corrected complete-batch path, including bounded send-buffer reuse, reproduced all 7,458,048 checkpoint scalars bitwise. With floors inactive and the time interval held fixed, successive timestep halvings gave observed orders of 4.14–4.16 in the bulk, 4.01–4.03 at the radial interface, 4.19–4.21 at scri, 4.22–4.28 for the full regularity tensor and 4.19–4.21 for the clock-source mismatch.
+
+## Immutable slope traffic and buffer reuse
+
+Job 9100793 compared the same 754 blocks and spread owners on 12 GPUs. All methods covered six coarse intervals. Steady cost is the median of four post-warmup driver intervals and includes endpoint work. The native classical RK4 control advanced 16 uniform steps per coarse interval.
+
+| Method | Block RHS evaluations per interval | Steady seconds per simulated M0 | Allocated GPU-hours per M0 |
+| --- | ---: | ---: | ---: |
+| Multirate, 26 independent slopes | 18,160 | 5,571 | 18.57 |
+| Same multirate schedule, 96 MiB send cache per tile rank | 18,160 | 3,398 | 11.33 |
+| Native uniform RK4 | 48,256 | 1,219 | 4.06 |
+
+Both multirate cases sent 12.98 GB in 81,522 packets per interval. With reuse enabled, 81,404 allocations came from the cache in interval five. Median time per rank with no ready batch fell from 18.72 to 11.89 seconds. Median dependent RHS time stayed at 1.41 seconds. Buffer reuse therefore improved steady throughput by 1.64× at fixed work and traffic. The resulting elapsed cost was still 2.79× native uniform. Allocated GPU-hours include waiting and idle time.
+
+A separate two-rank CPU test used alternating A/B/B/A trials to isolate the mapped-halo stencil change. Traversing the stencil once for the physical and residual interpolants reduced multirate halo cost from 1.767 to 1.201 summed kernel-seconds per coarse interval and multirate total kernel cost from 5.658 to 5.085. On the same code change, native RK4 went from 8.955 to 8.108 summed kernel-seconds over the matching interval. These are CPU measurements on the small fixture.
+
+For the complete local batch path, host-to-device donor coupling tables now contain only the distinct donor blocks actually read by the batch. Across two CPU ranks the logical transfer fell from 96,000 to 59,520 bytes per interval before refinement and from 122,880 to 69,120 after refinement. Coalescing records produced by the same ready stage batch reduced MPI messages from 194 to 54 before refinement and from 250 to 54 after refinement. It preserved the byte volume and all 7,458,048 checkpoint scalars, including diagnostics. These message counts are from the adaptive pulse. N12 GPU timings select the transport for the isolated science run.
