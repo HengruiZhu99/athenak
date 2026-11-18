@@ -43,9 +43,13 @@ def compare(left, right):
     count = 0
     identical = True
     for u, v in zip(x, y):
-        if not np.isfinite(u).all() or not np.isfinite(v).all():
+        same=np.array_equal(u.view(np.uint64),v.view(np.uint64))
+        if not np.isfinite(u).all() or (not same and not np.isfinite(v).all()):
             raise ValueError('nonfinite accepted state or persistent diagnostic')
-        identical = identical and np.array_equal(u.view(np.uint64),v.view(np.uint64))
+        count += u.shape[0]*31
+        if same:
+            continue
+        identical = False
         diag_u, diag_v = u[:,31:], v[:,31:]
         diagnostic_worst=max(diagnostic_worst,float((np.abs(diag_u-diag_v) /
                              np.maximum(1.,np.maximum(np.abs(diag_u),np.abs(diag_v)))).max()))
@@ -53,7 +57,6 @@ def compare(left, right):
         difference = np.abs(u-v)/np.maximum(1., np.maximum(np.abs(u), np.abs(v)))
         worst = max(worst, float(difference.max()))
         squared += np.sum(difference**2)
-        count += difference.size
     return dict(endpoint_time_delta=abs(a['time']-b['time']),max_scaled=worst, max_scaled_persistent_diagnostics=diagnostic_worst, rms_scaled=float(np.sqrt(squared/count)), field_scalars=count, identical_checkpoint_payload=bool(identical))
 
 
