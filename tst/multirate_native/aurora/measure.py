@@ -40,7 +40,7 @@ failures = []
 def case(mesh, ranks, mode, intervals):
     # Instrumented runs have separate receipts and never enter elapsed-time comparisons.
     device_profile = mode.endswith('_trace')
-    method = mode.removesuffix('_trace')
+    method = mode.removesuffix('_trace').removesuffix('_sibling_batch')
     deep_adaptive = mesh == 'adaptive754'
     production = mesh == 'current754' or deep_adaptive
     adaptive = mesh in ('adaptive88','adaptive1024')
@@ -112,6 +112,17 @@ location_rad = .0001
                 measured=dict(measured,rank_binding={str(k):v for k,v in measured['rank_binding'].items()})
                 owners,traffic=reorder_nodes(owners,measured)
                 (run/'node-placement.json').write_text(json.dumps(traffic,indent=2)+'\n')
+            if mode.endswith('_sibling_batch'):
+                control=next((r for r in results if r['mode']==method and r['tiles']==ranks),None)
+                if control is None:
+                    raise ValueError('missing same-allocation sibling control')
+                python=root.parent/'n12-full-scri-20261115/analysis-env/bin/python'
+                profile=json.loads(subprocess.check_output([str(python),str(source/'aurora/node_placement.py'),
+                                   str(Path(control['log']).with_name('receipt.json'))],text=True))
+                if owners!=profile['original']:
+                    raise ValueError('sibling batching control differs from the spread layout')
+                (run/'sibling-placement.json').write_text(json.dumps(profile,indent=2)+'\n')
+                owners=profile['owners']
             ownership=','.join(map(str,owners))
             inp += f'\n<multirate>\nblock_owners = {ownership}\n'
         inp += (f'<multirate>\nspherical_levels = {regions}\nuniform_reference = {str(uniform).lower()}\n'
@@ -221,8 +232,11 @@ if case_file:
         checks=qualify(root,exe,specification['accuracy'])
         (root/campaign_report).write_text(json.dumps(dict(accuracy=checks),indent=2)+'\n')
         sys.exit(0)
+    if isinstance(specification,dict) and 'series' in specification:
+        os.environ['MR_BENCHMARK_SERIES']=specification['series']+'-'+os.environ['PBS_JOBID'].split('.')[0]
+        specification=specification['cases']
     for mesh,ranks,mode,intervals in specification:
-        if mode=='selected':
+        if mode in ('selected','selected_sibling_batch'):
             from n12_paths import trajectory_directory
             directory = trajectory_directory(root,'multirate')
             selections = list(directory.glob('segment-*/placement-selection.json'))
@@ -230,10 +244,12 @@ if case_file:
                        if (row:=json.loads(path.read_text()))['binary_sha256']==binary_sha256}
             if len(choices)!=1:
                 raise ValueError('scaling requires one qualified placement for this executable')
-            mode = choices.pop()
+            mode = choices.pop()+mode[len('selected'):]
         if mesh not in ('current754','adaptive754','adaptive1024','adaptive88') or ranks not in (2,4,8,12,24):
             raise ValueError('unsupported Aurora workload or tile count')
-        untraced = mode.removesuffix('_trace')
+        untraced = mode.removesuffix('_trace').removesuffix('_sibling_batch')
+        if mode.endswith('_sibling_batch') and (mesh,ranks)!=('current754',24):
+            raise ValueError('sibling batching experiment requires the fixed two-node N12 mesh')
         if (untraced not in TRANSPORT and untraced not in ('spread_fixed','spread','metis','scalar','zorder',
                 'uniform','classical')) or intervals<3:
             raise ValueError('unsupported benchmark method or insufficient timing intervals')

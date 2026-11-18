@@ -1,6 +1,7 @@
 """Compare accepted native records by GID and report measured physical-GPU scaling."""
 import json
 import math
+import re
 from pathlib import Path
 import sys
 import numpy as np
@@ -72,6 +73,23 @@ def main():
                 if not reference or reference is v or reference['simulated_M0']!=v['simulated_M0']:
                     continue
                 checks.append(dict(mesh=mesh,method=mode,gpus=tiles//2,comparison=name,**compare(v,reference)))
+        if mode.endswith('_sibling_batch'):
+            baseline = mode.removesuffix('_sibling_batch')
+            control = rows[(mesh,tiles,baseline)]
+            for key in ('job_id','binary_sha256','rank_binding','intervals'):
+                if v[key]!=control[key]:
+                    raise ValueError('unmatched sibling-tile trial '+key)
+            placement=json.loads(Path(v['log']).with_name('sibling-placement.json').read_text())
+            observed={int(re.search(r' batches=(\d+)',line)[1]) for line in v['work']
+                      if line.startswith('MULTIRATE_WORK cycle=')}
+            if observed!={placement['predicted_batches']}:
+                raise ValueError('executed sibling batches differ from the audited schedule')
+            fields=compare(v,control)
+            if not fields['identical_checkpoint_payload']:
+                raise ValueError('sibling-tile placement changed the N12 endpoint')
+            checks.append(dict(mesh=mesh,method=mode,gpus=tiles//2,comparison=baseline,**fields))
+            methods.append(dict(mesh=mesh,method=mode,control=baseline,gpus=tiles//2,
+                                steady_speedup=control['steady_seconds_per_M0']/v['steady_seconds_per_M0']))
         native_key = (mesh,tiles,'classical')
         native = rows.get(native_key,reference_rows.get(native_key))
         if (native and not mode.endswith('_trace') and mode not in ('classical','uniform') and native['simulated_M0']==v['simulated_M0']
