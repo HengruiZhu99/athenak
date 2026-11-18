@@ -30,12 +30,29 @@ namespace bal = ::multirate::balance;
 namespace {
 template <class T>
 DvceArray1D<T> Device(const std::vector<T>& v, const char* name) {
-  DvceArray1D<T> d(std::string(name), v.size());
+  DvceArray1D<T> d(Kokkos::view_alloc(Kokkos::WithoutInitializing,std::string(name)),v.size());
   auto h = Kokkos::create_mirror_view(d);
   for (size_t i = 0; i < v.size(); ++i) h(i) = v[i];
   Kokkos::deep_copy(d, h);
   return d;
 }
+// Every reader of a stage's pointer table has completed its reduction or fence
+// before the next upload. Reuse both allocations across all local stages.
+template <class T>
+struct StageTable {
+  DvceArray1D<T> device;
+  typename DvceArray1D<T>::HostMirror host;
+  DvceArray1D<T> Upload(const std::vector<T>& rows, const char* name) {
+    if (device.extent(0) != rows.size()) {
+      device = DvceArray1D<T>(Kokkos::view_alloc(Kokkos::WithoutInitializing,std::string(name)),
+                              rows.size());
+      host = Kokkos::create_mirror_view(device);
+    }
+    std::copy(rows.begin(),rows.end(),host.data());
+    Kokkos::deep_copy(device,host);
+    return device;
+  }
+};
 std::vector<int> ParseLevels(const std::string& s) {
   std::vector<int> out;
   std::istringstream in(s);
@@ -169,6 +186,8 @@ struct MultirateEvolution::Impl {
   std::unique_ptr<transport::RecordExchange> exchange;
   std::vector<NativePoint> native_host;
   DvceArray1D<NativePoint> native;
+  StageTable<Combination> reconstruction_rows, donor_rows;
+  StageTable<RecordDestination> destinations;
   struct GatherPlan {
     DvceArray1D<int> index, fields;
     DvceArray2D<Real> buffer;
@@ -189,10 +208,11 @@ struct MultirateEvolution::Impl {
   mr::RecordReadiness<Key, BatchKey> readiness, interior_readiness;
   bool complete_local_batches = false, peer_profile_pending = false;
   struct ActiveLayout {
-    DvceArray1D<int> mask;
+    DvceArray1D<int> mask, native_indices;
     std::array<DvceArray1D<int>, 5> rhs_points;
   };
   std::map<std::vector<int>, ActiveLayout> active_layouts;
+  DvceArray1D<int> active_native_indices;
   void SelectBatch(const std::vector<int>& slots);
   std::vector<Task> tasks;
   std::map<Key, size_t> consumers;
@@ -278,6 +298,8 @@ struct MultirateEvolution::Impl {
   void Reconstruct(const std::vector<int>& slots, const std::vector<Combination>& combinations,
                    double time, bool accepted);
   std::vector<DvceArray1D<Real>> Pack(const std::vector<int>& slots, bool rhs);
+  void Publish(const std::vector<int>& slots, const std::vector<DvceArray1D<Real>>& records,
+               std::uint32_t step, int stage);
   DvceArray2D<Real> Gather(const bvals::MappedExchange& plan, int kind,
                            const DvceArray2D<Real>& values);
   void StageDonors(size_t stage, const std::vector<int>& slots, DvceArray2D<Real>& physical,
@@ -631,6 +653,7 @@ void MultirateEvolution::Impl::SetPhaseCosts(const bal::BatchCostModel& profile)
 void MultirateEvolution::Impl::BuildLocal() {
   peer_profile_pending = pin->GetBoolean("multirate", "profile_peer_bytes");
   active_layouts.clear();
+  active_native_indices = {};
   complete_local_batches = pin->GetBoolean("multirate", "complete_local_batches");
   readiness = {};
   interior_readiness = {};
@@ -769,35 +792,53 @@ void MultirateEvolution::Impl::SelectBatch(const std::vector<int>& slots) {
   auto [layout, inserted] = active_layouts.try_emplace(slots);
   if (inserted) {
     p.SelectActiveBlocks(slots);
-    layout->second = {p.active_blocks, p.active_rhs_points};
+    layout->second.mask = p.active_blocks;
+    layout->second.rhs_points = p.active_rhs_points;
+    std::vector<int> indices;
+    if (slots.size() != static_cast<std::size_t>(p.nblocks)) {
+      // Complete local batches have a fixed membership until redistribution or AMR.
+      // The index table covers owned bulk points and owned scri points together.
+      std::vector<bool> selected(p.nblocks);
+      for (int m : slots) selected[m] = true;
+      for (std::size_t q = 0; q < native_host.size(); ++q)
+        if (selected[native_host[q].m]) indices.push_back(q);
+    }
+    layout->second.native_indices = Device(indices,"multirate active native ordinals");
   } else {
     p.active_slots_ = slots;
     p.active_blocks = layout->second.mask;
     p.active_rhs_points = layout->second.rhs_points;
   }
+  active_native_indices = layout->second.native_indices;
 }
 void MultirateEvolution::Impl::Reconstruct(const std::vector<int>& slots,
                                            const std::vector<Combination>& combinations,
                                            double time, bool accepted) {
   SelectBatch(slots);
-  const auto combinations_d = Device(combinations, "multirate reconstruction rows");
+  const auto combinations_d = reconstruction_rows.Upload(combinations,"multirate reconstruction rows");
   const auto points = native;
   const auto state = p.u0;
   const auto edge = p.s0;
   const auto active = p.active_blocks;
   const auto records = p.chi_records, srecords = p.surface_chi_records;
   const Real floor = p.chi_floor;
+  const auto geom = p.geometry;
+  const auto reference = p.reference;
+  const auto residual = p.residual;
+  const auto weight = p.parameters.residual_weight;
+  const auto indices = active_native_indices;
+  const bool indexed = complete_local_batches && slots.size() != static_cast<std::size_t>(p.nblocks);
+  const int count = indexed ? indices.extent_int(0) : points.extent_int(0);
   int invalid = 0;
+  p.InvalidateDiagnostics();
   Kokkos::parallel_reduce(
-      "multirate reconstruct owned stage", Kokkos::RangePolicy<>(0, native.extent_int(0)),
-      KOKKOS_LAMBDA(int q, int& bad) {
-        const auto point = points(q);
-        if (!active(point.m)) return;
+      "multirate reconstruct and project owned stage", Kokkos::RangePolicy<>(0, count),
+      KOKKOS_LAMBDA(int i, int& bad) {
+        const auto point = points(indexed ? indices(i) : i);
+        if (!indexed && !active(point.m)) return;
         const auto c = combinations_d(point.m);
-        if (!c.base) {
-          ++bad;
-          return;
-        }
+        if (!c.base) {++bad; return;}
+        CartesianChartJets jets{};
         for (int f = 0; f < Fields::count; ++f) {
           Real value = c.Value(point.index, f);
           if (f == Fields::chi) {
@@ -807,32 +848,33 @@ void MultirateEvolution::Impl::Reconstruct(const std::vector<int>& slots,
               value = FloorChiCandidate(value, floor, time, accepted, records(point.ledger));
           }
           if (!Kokkos::isfinite(value)) ++bad;
-          if (point.kind)
-            edge(point.face, f, point.k, point.j) = value;
-          else
-            state(point.m, f, point.k, point.j, point.i) = value;
+          jets[f].f = value;
         }
-      },
-      invalid);
-  if (invalid) throw std::runtime_error("Invalid multirate owned stage reconstruction");
-  p.EnforceAlgebraicConstraints();
-  p.surface_exchange_->Project();
-  if (accepted) {
-    const auto geom = p.geometry;
-    const auto cells = p.points.d_view;
-    Kokkos::parallel_reduce(
-        "multirate accepted bulk geometry", Kokkos::RangePolicy<>(0, p.npoints),
-        KOKKOS_LAMBDA(int q, int& bad) {
-          const auto c = cells(q);
-          if (!active(c.m)) return;
-          CartesianChartJets jets{};
-          for (int f = 0; f < Fields::count; ++f) jets[f].f = state(c.m, f, c.k, c.j, c.i);
-          const auto u = SphericalPolicy::Physical(geom(q).x, jets);
+        if (!TryExpandCartesianChart(jets)) {++bad; return;}
+        if (point.kind) {
+          for (int f = 0; f < Fields::count; ++f)
+            edge(point.face,f,point.k,point.j) = jets[f].f;
+          return;
+        }
+        const int q = point.ledger;
+        const auto& x = geom(q).x;
+        for (int f = 0; f < Fields::count; ++f)
+          state(point.m,f,point.k,point.j,point.i) = jets[f].f;
+        if (accepted) {
+          const auto u = SphericalPolicy::Physical(x,jets);
           if (!(u.chi.value > 0 && u.alpha.value > 0 && Geometry(u.metric).valid)) ++bad;
-        },
-        invalid);
-    if (invalid) throw std::runtime_error("Invalid accepted multirate bulk geometry");
-  }
+        } else {
+          const Real r2 = weight.Value(x);
+          for (int f = 0; f < Fields::count; ++f)
+            residual(point.m,f,point.k,point.j,point.i) = Fields::Independent(f)
+                ? (jets[f].f-reference(q)[f].f)/(f==Fields::chi ? r2 : 1)
+                : 0;
+        }
+      },invalid);
+  if (invalid) throw std::runtime_error("Invalid multirate owned stage or accepted geometry");
+  // Scri reads five radial support values written by the complete bulk projection.
+  if (graph.blocks[pack->GlobalId(slots.front())].kernel == bal::KernelKind::scri)
+    p.surface_exchange_->Project();
 }
 std::vector<DvceArray1D<Real>> MultirateEvolution::Impl::Pack(const std::vector<int>& slots,
                                                               bool rhs) {
@@ -844,14 +886,17 @@ std::vector<DvceArray1D<Real>> MultirateEvolution::Impl::Pack(const std::vector<
         exchange->OwnedPoints(pack->GlobalId(m)).size() * Fields::count);
     ptrs[m].data = values[m].data();
   }
-  const auto pointers = Device(ptrs, "multirate record destinations");
+  const auto pointers = destinations.Upload(ptrs,"multirate record destinations");
   const auto points = native;
   const auto state = rhs ? p.u_rhs : p.u0;
   const auto edge = rhs ? p.s_rhs : p.s0;
+  const auto indices = active_native_indices;
+  const bool indexed = complete_local_batches && slots.size() != static_cast<std::size_t>(p.nblocks);
+  const int count = indexed ? indices.extent_int(0) : points.extent_int(0);
   Kokkos::parallel_for(
-      "multirate pack record batch", Kokkos::RangePolicy<>(0, native.extent_int(0)),
-      KOKKOS_LAMBDA(int q) {
-        const auto a = points(q);
+      "multirate pack record batch", Kokkos::RangePolicy<>(0,count),
+      KOKKOS_LAMBDA(int i) {
+        const auto a = points(indexed ? indices(i) : i);
         Real* out = pointers(a.m).data;
         if (!out) return;
         for (int f = 0; f < Fields::count; ++f)
@@ -862,6 +907,15 @@ std::vector<DvceArray1D<Real>> MultirateEvolution::Impl::Pack(const std::vector<
       });
   Kokkos::fence("multirate records ready for transport");
   return values;
+}
+void MultirateEvolution::Impl::Publish(const std::vector<int>& slots,
+                                       const std::vector<DvceArray1D<Real>>& records,
+                                       std::uint32_t step, int stage) {
+  std::vector<transport::RecordExchange::Publication> batch;
+  batch.reserve(slots.size());
+  for (int m : slots)
+    batch.emplace_back(Key{pack->GlobalId(m),step,stage},records[m]);
+  exchange->PublishBatch(batch);
 }
 void MultirateEvolution::Impl::StageDonors(size_t stage, const std::vector<int>& slots,
                                            DvceArray2D<Real>& physical,
@@ -877,7 +931,7 @@ void MultirateEvolution::Impl::StageDonors(size_t stage, const std::vector<int>&
     combinations[gid] = Combine(stage, gid);
     if (!combinations[gid].base) throw std::logic_error("Ready task is missing a donor record");
   }
-  const auto combinations_d = Device(combinations, "multirate donor coupling rows");
+  const auto combinations_d = donor_rows.Upload(combinations,"multirate donor coupling rows");
   const auto metadata = donors;
   physical = donor_physical;
   residual = donor_residual;
@@ -978,7 +1032,7 @@ void MultirateEvolution::Impl::BeginInterval() {
   std::vector<int> all(p.nblocks);
   for (int m = 0; m < p.nblocks; ++m) all[m] = m;
   auto initial = Pack(all, false);
-  for (int m : all) exchange->Publish({pack->GlobalId(m), 0, -1}, initial[m]);
+  Publish(all, initial, 0, -1);
   initial.clear();
 }
 void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
@@ -1003,8 +1057,7 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
   if (interior) {
     for (int m : slots) combinations[m] = Combine(stage, pack->GlobalId(m));
     Reconstruct(slots, combinations, context.stage_time, false);
-    p.FormResidual();
-    Kokkos::fence("multirate input projection complete");
+
     model.Observe(bal::KernelKind::projection, units, Seconds(batch_start));
     const auto begin_interior = Clock::now();
     p.CalcRHS(driver, context.key.stage + 1, RHSSubset::Interior);
@@ -1066,8 +1119,7 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
         "Multirate monitored characteristic CFL bound exceeded; fixed timestep and hierarchy "
         "retained, run stopped");
   auto rhs = Pack(slots, true);
-  for (int m : slots)
-    exchange->Publish({pack->GlobalId(m), context.key.local_step, context.key.stage}, rhs[m]);
+  Publish(slots, rhs, context.key.local_step, context.key.stage);
   if (context.key.stage == 3) {
     const auto begin_accept = Clock::now();
     for (int m : slots) {
@@ -1085,8 +1137,7 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
                 true);
     auto accepted = Pack(slots, false);
     model.Observe(bal::KernelKind::projection, units, Seconds(begin_accept));
-    for (int m : slots)
-      exchange->Publish({pack->GlobalId(m), context.key.local_step + 1, -1}, accepted[m]);
+    Publish(slots, accepted, context.key.local_step + 1, -1);
   }
   Kokkos::fence("multirate batch complete before release");
   model.Observe(kind, units, rhs_seconds);
@@ -1238,11 +1289,12 @@ void MultirateEvolution::Impl::CompleteInterval(Driver* driver) {
   }
 #endif
   unsigned long long peaks[] = {stats.peak_record_bytes, stats.peak_packet_bytes, max_batch};
-  unsigned long long sums[] = {stats.sent_bytes, batch_count, interior_receives, interior_batches_with_receives};
+  unsigned long long sums[] = {stats.sent_bytes, batch_count, interior_receives, interior_batches_with_receives,
+                               stats.send_packets, stats.pack_kernels};
 #if MPI_PARALLEL_ENABLED
   MPI_Reduce(global_variable::my_rank == 0 ? MPI_IN_PLACE : peaks, peaks, 3, MPI_UNSIGNED_LONG_LONG,
              MPI_MAX, 0, MPI_COMM_WORLD);
-  MPI_Reduce(global_variable::my_rank == 0 ? MPI_IN_PLACE : sums, sums, 4, MPI_UNSIGNED_LONG_LONG,
+  MPI_Reduce(global_variable::my_rank == 0 ? MPI_IN_PLACE : sums, sums, 6, MPI_UNSIGNED_LONG_LONG,
              MPI_SUM, 0, MPI_COMM_WORLD);
   MPI_Reduce(global_variable::my_rank == 0 ? MPI_IN_PLACE : level_work.data(), level_work.data(),
              level_work.size(), MPI_UNSIGNED_LONG_LONG, MPI_SUM, 0, MPI_COMM_WORLD);
@@ -1253,7 +1305,8 @@ void MultirateEvolution::Impl::CompleteInterval(Driver* driver) {
     std::cout << "MULTIRATE_WORK cycle=" << endpoint << " peak_record_bytes_per_rank=" << peaks[0]
               << " peak_packet_bytes_per_rank=" << peaks[1] << " maximum_batch_blocks=" << peaks[2]
               << " sent_bytes=" << sums[0] << " batches=" << sums[1] << " records_completed_on_interior_poll=" << sums[2]
-              << " interior_batches_with_receives=" << sums[3] << " rhs_by_level=";
+              << " interior_batches_with_receives=" << sums[3] << " send_packets=" << sums[4]
+              << " send_pack_kernels=" << sums[5] << " rhs_by_level=";
     for (size_t i = 0; i < level_work.size(); ++i) std::cout << (i ? "," : "") << level_work[i];
     std::cout << "\n";
   }
