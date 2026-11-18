@@ -46,3 +46,5 @@ On the binary mesh, the same off-puncture location criterion created 49 blocks a
 | 12 | 24 | 519.91 | 41.767 |
 
 The weighted spread placement achieved 2.58× end-to-end speedup and 1.60× steady speedup from one GPU to two nodes. Steady parallel efficiency was 13.4%. On the last post-refinement mesh the schedule required 21,232 block RHS evaluations per interval. The experiment verifies the deep adaptive GPU trajectory and exposes a strong-scaling limitation at this workload.
+
+Three archived native classical RK4 segments on the same 754-block atlas and two-node allocation covered 0–1.408, 1.408–3.828 and 3.828–6.213 M0. Their respective measured elapsed costs were 1,281, 1,255 and 1,285 s/M0. At 5,947 steady s/M0, the short spread multirate benchmark is slower than that historical native execution path. Executable, run length and output cadence differ. The same-build native control and the isolated 10 M0 trajectories provide the matched comparisons.
