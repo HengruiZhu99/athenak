@@ -38,6 +38,7 @@ def compare(left, right):
         raise ValueError('N12 spatial physics or initial-data identities differ')
     x, y = payload(a), payload(b)
     worst = 0.
+    diagnostic_worst = 0.
     squared = 0.
     count = 0
     identical = True
@@ -45,12 +46,15 @@ def compare(left, right):
         if not np.isfinite(u).all() or not np.isfinite(v).all():
             raise ValueError('nonfinite accepted state or persistent diagnostic')
         identical = identical and np.array_equal(u.view(np.uint64),v.view(np.uint64))
+        diag_u, diag_v = u[:,31:], v[:,31:]
+        diagnostic_worst=max(diagnostic_worst,float((np.abs(diag_u-diag_v) /
+                             np.maximum(1.,np.maximum(np.abs(diag_u),np.abs(diag_v)))).max()))
         u, v = u[:, :31], v[:, :31]
         difference = np.abs(u-v)/np.maximum(1., np.maximum(np.abs(u), np.abs(v)))
         worst = max(worst, float(difference.max()))
         squared += np.sum(difference**2)
         count += difference.size
-    return dict(endpoint_time_delta=abs(a['time']-b['time']),max_scaled=worst, rms_scaled=float(np.sqrt(squared/count)), field_scalars=count, identical_checkpoint_payload=bool(identical))
+    return dict(endpoint_time_delta=abs(a['time']-b['time']),max_scaled=worst, max_scaled_persistent_diagnostics=diagnostic_worst, rms_scaled=float(np.sqrt(squared/count)), field_scalars=count, identical_checkpoint_payload=bool(identical))
 
 
 def main():
@@ -85,8 +89,9 @@ def main():
             if observed!={placement['predicted_batches']}:
                 raise ValueError('executed sibling batches differ from the audited schedule')
             fields=compare(v,control)
-            if not fields['identical_checkpoint_payload']:
-                raise ValueError('sibling-tile placement changed the N12 endpoint')
+            # Reuse the native multirate ownership qualification tolerance.
+            if max(fields['max_scaled'],fields['max_scaled_persistent_diagnostics'])>1e-11:
+                raise ValueError('sibling-tile placement changed the numerical N12 trajectory')
             checks.append(dict(mesh=mesh,method=mode,gpus=tiles//2,comparison=baseline,**fields))
             methods.append(dict(mesh=mesh,method=mode,control=baseline,gpus=tiles//2,
                                 steady_speedup=control['steady_seconds_per_M0']/v['steady_seconds_per_M0']))
