@@ -158,6 +158,9 @@ location_rad = .0001
                     str(tools[0]),str(run),str(2*factor)]
     command += [str(exe), '-i', str(run/'input.athinput')]
     nodes = len({host for host,_ in pairs})
+    reserved_nodes = len(set(Path(os.environ['PBS_NODEFILE']).read_text().split()))
+    if reserved_nodes<nodes:
+        raise ValueError('active ranks span more nodes than the PBS reservation')
     counters = snapshot(root,run,"start",nodes)
     start = time.monotonic()
     with (run/'run.log').open('w') as log:
@@ -185,7 +188,8 @@ location_rad = .0001
         raise AssertionError('missing accepted checkpoint in '+str(run))
     receipt = dict(intervals=intervals, binary_sha256=binary_sha256, input_sha256=hashlib.sha256(inp.encode()).hexdigest(),
                    job_id=os.environ.get('PBS_JOBID'), mesh=mesh, mode=mode, tiles=ranks, physical_gpus=ranks//2,
-                   nodes=nodes, engine_activity=activity, rank_binding=rank_binding, simulated_M0=3*intervals*base,
+                   nodes=nodes, reserved_nodes=reserved_nodes, reserved_node_hours=reserved_nodes*wall/3600,
+                   engine_activity=activity, rank_binding=rank_binding, simulated_M0=3*intervals*base,
                    seconds=wall, seconds_per_M0=wall/(3*intervals*base),
                    steady_base_seconds=samples, steady_seconds_per_M0=median(samples)/(3*base),
                    # Driver::Finalize writes all outputs before printing its final clock.
