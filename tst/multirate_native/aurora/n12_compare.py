@@ -37,6 +37,14 @@ def work_and_science(root, mode):
         raise ValueError('constraint history ends at a different physical time')
     for name,x in zip(('hamiltonian_rms','momentum_rms','theta_rms','z_rms'), history[3:7]):
         endpoint[name]=x
+    horizons = {}
+    for path in sorted(end_dir.glob('*.horizon_summary_*.txt')):
+        if not any(line.strip() and not line.lstrip().startswith('#') for line in path.read_text().splitlines()):
+            continue
+        row = np.atleast_2d(np.loadtxt(path))[-1]
+        component = path.stem.rsplit('_',1)[-1]
+        horizons[component] = dict(time_M0=3*float(row[1]),mass=float(row[2]),spin=float(row[6]),
+                                   area=float(row[7]),expansion_rms=float(row[8]))
     analysis_dir = root/'n12-10M'/'analysis'/mode
     cache = analysis_dir/'cache'
     records = collect(case,cache,capacity=512)
@@ -48,7 +56,7 @@ def work_and_science(root, mode):
     wall = sum(item['wall_seconds'] for item in receipts)
     return (dict(**last,simulated_M0=10.),ids,endpoint,news,
             dict(segments=len(receipts),elapsed_seconds=wall,seconds_per_M0=wall/10,
-                 physical_gpus=12,nodes=2,scri_cuts=len(records)))
+                 physical_gpus=12,nodes=2,scri_cuts=len(records),last_reported_horizons=horizons))
 
 
 def main():
