@@ -64,12 +64,12 @@ def run(root, executable, case_file):
             if row is not ref and not compare(ref,row)['identical_checkpoint_payload']:
                 raise ValueError('MPI runtime changed accepted state or diagnostics')
             observations.setdefault(method,{}).setdefault(module,[]).extend(
-                t/(row['simulated_M0']/row['intervals']) for t in row['steady_base_seconds'])
-            leg_results[method] = row['steady_seconds_per_M0']
+                t/(row['simulated_M0']/row['intervals']) for t in row['steady_base_seconds'][:-1])
+            leg_results[method] = row['evolution_seconds_per_M0']
         legs.append(dict(module=module,library=libraries[0],report=str(report),seconds_per_M0=leg_results))
     cost = {method:{name:median(samples) for name,samples in by_module.items()}
             for method,by_module in observations.items()}
-    result = dict(job=job,legs=legs,steady_seconds_per_M0=cost,
+    result = dict(job=job,legs=legs,evolution_seconds_per_M0=cost,
                   speedup={method:values[modules[0]]/values[modules[1]] for method,values in cost.items()})
     output = case_file.with_name(case_file.stem+'-results.json')
     output.write_text(json.dumps(result,indent=2)+'\n')

@@ -178,7 +178,7 @@ location_rad = .0001
     cuts = {int(n):float(t) for t,n in re.findall(r'^elapsed=(\S+) cycle=(\d+) ',text,re.M)}
     samples = [cuts[n+factor]-cuts[n] for n in range(2*factor,intervals*factor,factor)
                if n in cuts and n+factor in cuts]
-    if not samples:
+    if len(samples)!=intervals-2:
         raise AssertionError('missing post-warmup driver timing samples in '+str(run))
     endpoints = sorted((run/'rst').glob('*.rst'))
     if not endpoints:
@@ -188,6 +188,9 @@ location_rad = .0001
                    nodes=nodes, engine_activity=activity, rank_binding=rank_binding, simulated_M0=3*intervals*base,
                    seconds=wall, seconds_per_M0=wall/(3*intervals*base),
                    steady_base_seconds=samples, steady_seconds_per_M0=median(samples)/(3*base),
+                   # Driver::Finalize writes all outputs before printing its final clock.
+                   evolution_seconds_per_M0=median(samples[:-1])/(3*base) if len(samples)>1 else None,
+                   final_base_interval_seconds=samples[-1],
                    command=command, regrids=regrids, log=str(run/'run.log'),
                    work=[line for line in text.splitlines() if line.startswith('MULTIRATE_')],
                    checkpoint=str(endpoints[-1]))
