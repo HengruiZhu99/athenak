@@ -4,6 +4,7 @@
 
 #include <cstdint>
 #include <stdexcept>
+#include <type_traits>
 
 #include "driver/driver.hpp"
 #include "mesh/mesh.hpp"
@@ -56,28 +57,35 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver,int stage,RHSSubset subset,
   // Reuse the validated legacy bulk workgroup size on SYCL.
   bulk_policy.set_chunk_size(128);
 #endif
-  Kokkos::parallel_for("hyperboloidal block RHS",bulk_policy,
-    KOKKOS_LAMBDA(int index) {
-      const int p=selected(index);const auto c=cells(p);const auto map=maps(p);
-      const Real inv_h[3]={Real(count),Real(count),Real(count)};
-      const BlockPointReader reader{delta,c.m,c.k,c.j,c.i};
-      const auto state=surface.HasRadialRow(p)
-          ? EndpointState(p,reader,map,inv_h,refs(p),params,surface)
-          : BuildPointState(reader,map,inv_h,refs(p),params);
-      statuses(p)=static_cast<int>(state.status);
-      if (state.status!=PointStatus::success) return;
-      PointForcing forcing;
-      for (int f=0;f<nvar;++f) {
-        forcing.transport[f]=state.transport[f];
-        forcing.dissipation[f]=output(c.m,f,c.k,c.j,c.i);
-      }
-      const auto result=EvaluateBulkPoint(map,state.jets,params,sources(p),forcing);
-      statuses(p)=static_cast<int>(result.status);
-      gaps(p)=result.gap;cfls(p)=dt*count*(result.speed[0]+result.speed[1]+result.speed[2]);
-      if (dt/fmin(params.tau,Real(InnerTelegrapher::tau))>.25)
-        statuses(p)=static_cast<int>(PointStatus::cfl_exceeded);
-      for (int f=0;f<nvar;++f) output(c.m,f,c.k,c.j,c.i)=result.rate[f];
-    });
+  // The interior and non-scri dependent lists contain no radial closure rows.
+  // Compile their point kernel without the endpoint reconstruction temporaries.
+  auto evaluate=[&](auto radial_rows) {
+    constexpr bool with_radial_rows=decltype(radial_rows)::value;
+    Kokkos::parallel_for("hyperboloidal block RHS",bulk_policy,
+      KOKKOS_LAMBDA(int index) {
+        const int p=selected(index);const auto c=cells(p);const auto map=maps(p);
+        const Real inv_h[3]={Real(count),Real(count),Real(count)};
+        const BlockPointReader reader{delta,c.m,c.k,c.j,c.i};
+        const auto state=with_radial_rows && surface.HasRadialRow(p)
+            ? EndpointState(p,reader,map,inv_h,refs(p),params,surface)
+            : BuildPointState(reader,map,inv_h,refs(p),params);
+        statuses(p)=static_cast<int>(state.status);
+        if (state.status!=PointStatus::success) return;
+        PointForcing forcing;
+        for (int f=0;f<nvar;++f) {
+          forcing.transport[f]=state.transport[f];
+          forcing.dissipation[f]=output(c.m,f,c.k,c.j,c.i);
+        }
+        const auto result=EvaluateBulkPoint(map,state.jets,params,sources(p),forcing);
+        statuses(p)=static_cast<int>(result.status);
+        gaps(p)=result.gap;cfls(p)=dt*count*(result.speed[0]+result.speed[1]+result.speed[2]);
+        if (dt/fmin(params.tau,Real(InnerTelegrapher::tau))>.25)
+          statuses(p)=static_cast<int>(PointStatus::cfl_exceeded);
+        for (int f=0;f<nvar;++f) output(c.m,f,c.k,c.j,c.i)=result.rate[f];
+      });
+  };
+  if (radial) evaluate(std::true_type{});
+  else evaluate(std::false_type{});
   int invalid=0;
   Kokkos::parallel_reduce("hyperboloidal RHS validity",
     Kokkos::RangePolicy<>(0,selected.extent_int(0)),KOKKOS_LAMBDA(int i,int &bad) {
