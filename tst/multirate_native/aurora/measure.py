@@ -37,10 +37,13 @@ failures = []
 
 
 def case(mesh, ranks, mode, intervals):
+    # Instrumented runs have separate receipts and never enter elapsed-time comparisons.
+    device_profile = mode.endswith('_trace')
+    method = mode.removesuffix('_trace')
     deep_adaptive = mesh == 'adaptive754'
     production = mesh == 'current754' or deep_adaptive
     adaptive = mesh in ('adaptive88','adaptive1024')
-    uniform = mode in ('uniform', 'classical')
+    uniform = method in ('uniform', 'classical')
     base = 4*4.6944203735617445e-4 if production else 2**-14
     factor = (16 if production else 2) if uniform else 1
     run = root/'runs'/f'{mesh}-{ranks}tiles-{mode}'
@@ -82,21 +85,21 @@ location_x2 = .041
 location_x3 = .037
 location_rad = .0001
 """
-    inp += '\n<time>\nintegrator = '+('rk4_classical' if mode=='classical' else 'mrgark4')
+    inp += '\n<time>\nintegrator = '+('rk4_classical' if method=='classical' else 'mrgark4')
     inp += f'\ndt = {base/factor:.17g}\nnlim = {intervals*factor}\ntlim = 1\nndiag = 1\n'
-    if mode != 'classical':
+    if method != 'classical':
         regions = ('2,2,2,1,1,1,1,1,2,3,4' if production else
                    '1,1,0,1' if adaptive else '0,0,0,1')
-        balance = mode if mode in ('scalar','metis','spread') else 'none'
-        if mode in ('cohort','locality','cohort_cached'):
+        balance = method if method in ('scalar','metis','spread') else 'none'
+        if method in ('cohort','locality','cohort_cached'):
             balance = 'spread'
-        if mode in ('posted_fixed','polled_fixed','spread_fixed') or (mode in ('cohort','locality','cohort_cached') and mesh == 'current754' and ranks == 24):
-            baseline = 'spread' if mode in ('cohort','locality','spread_fixed','cohort_cached') else 'metis'
+        if method in ('posted_fixed','polled_fixed','spread_fixed') or (method in ('cohort','locality','cohort_cached') and mesh == 'current754' and ranks == 24):
+            baseline = 'spread' if method in ('cohort','locality','spread_fixed','cohort_cached') else 'metis'
             balance = 'none'
             with (root/'runs'/f'current754-24tiles-{baseline}'/'partition.log').open('rb') as stream:
                 record=stream.read(int(stream.readline())).decode().splitlines()
             owners=[int(line.split()[1]) for line in record[1:]]
-            if mode == 'locality':
+            if method == 'locality':
                 measured=next(x for x in results if x['mode']=='cohort' and x['tiles']==ranks)
                 # JSON receipts persist rank IDs as strings.
                 measured=dict(measured,rank_binding={str(k):v for k,v in measured['rank_binding'].items()})
@@ -104,10 +107,10 @@ location_rad = .0001
                 (run/'node-placement.json').write_text(json.dumps(traffic,indent=2)+'\n')
             ownership=','.join(map(str,owners))
             inp += f'\n<multirate>\nblock_owners = {ownership}\n'
-        if mode == 'cohort_cached':
+        if method == 'cohort_cached':
             inp += '<multirate>\nsend_cache_mib = 96\n'
         inp += (f'<multirate>\nspherical_levels = {regions}\nuniform_reference = {str(uniform).lower()}\n'
-                f'complete_local_batches = {str(mode in ("cohort","locality","cohort_cached")).lower()}\nprofile_peer_bytes = true\nbalance = {balance}\nranks_per_gpu = 2\nprepost_exchanges = {str(mode!="polled_fixed").lower()}\nwarmup_intervals = 2\nreview_interval = 32\n'
+                f'complete_local_batches = {str(method in ("cohort","locality","cohort_cached")).lower()}\nprofile_peer_bytes = true\nbalance = {balance}\nranks_per_gpu = 2\nprepost_exchanges = {str(mode!="polled_fixed").lower()}\nwarmup_intervals = 2\nreview_interval = 32\n'
                 f'partition_log = {run}/partition.log\n')
     (run/'input.athinput').write_text(inp)
     launch = launcher(ranks)
@@ -129,7 +132,15 @@ location_rad = .0001
             device = tile.split('.')[0]
             if tile != device+'.0' or rank_binding[rank+1] != (host, device+'.1'):
                 raise RuntimeError('adjacent ranks are not bound to sibling tiles in '+str(run))
-    command = [*launch, str(exe), '-i', str(run/'input.athinput')]
+    command = [*launch]
+    if device_profile:
+        tools = sorted(Path('/opt/aurora/default/spack/unified').glob(
+            '*/install/linux-x86_64/pti-gpu-0.17.0-*/bin/unitrace'))
+        if not tools:
+            raise RuntimeError('Aurora unitrace was unavailable')
+        command += ['/usr/bin/python3.11',str(source/'aurora/device_profile.py'),
+                    str(tools[0]),str(run)]
+    command += [str(exe), '-i', str(run/'input.athinput')]
     nodes = len({host for host,_ in pairs})
     counters = snapshot(root,run,"start",nodes)
     start = time.monotonic()
@@ -164,6 +175,9 @@ location_rad = .0001
                    command=command, regrids=regrids, log=str(run/'run.log'),
                    work=[line for line in text.splitlines() if line.startswith('MULTIRATE_')],
                    checkpoint=str(endpoints[-1]))
+    if device_profile:
+        from device_profile import device_totals
+        receipt['device_profile'] = device_totals(run,ranks)
     encoded = json.dumps(receipt,indent=2)+'\n'
     (run/'receipt.json').write_text(encoded)
     temporary = complete.with_suffix('.tmp')
@@ -193,7 +207,7 @@ if case_file:
     for mesh,ranks,mode,intervals in json.loads(case_file.read_text()):
         if mesh not in ('current754','adaptive754','adaptive1024','adaptive88') or ranks not in (2,4,8,12,24):
             raise ValueError('unsupported Aurora workload or tile count')
-        if mode not in ('cohort','locality','spread_fixed','cohort_cached','spread','metis','scalar','zorder','uniform','classical') or intervals<3:
+        if mode not in ('cohort','locality','spread_fixed','cohort_cached','spread','metis','scalar','zorder','uniform','classical','cohort_cached_trace','classical_trace') or intervals<3:
             raise ValueError('unsupported benchmark method or insufficient timing intervals')
         measure(mesh,ranks,mode,intervals)
 elif throughput:

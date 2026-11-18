@@ -73,14 +73,14 @@ def main():
                 checks.append(dict(mesh=mesh,method=mode,gpus=tiles//2,comparison=name,**compare(v,reference)))
         native_key = (mesh,tiles,'classical')
         native = rows.get(native_key,reference_rows.get(native_key))
-        if (native and mode not in ('classical','uniform') and native['simulated_M0']==v['simulated_M0']
+        if (native and not mode.endswith('_trace') and mode not in ('classical','uniform') and native['simulated_M0']==v['simulated_M0']
                 and native['binary_sha256']==v['binary_sha256']):
             methods.append(dict(mesh=mesh,method=mode,gpus=tiles//2,control='native_uniform_rk4',
                                 binary_sha256=v['binary_sha256'],
                                 elapsed_speedup=native['seconds']/v['seconds'],
                                 steady_speedup=native['steady_seconds_per_M0']/v['steady_seconds_per_M0']))
         uniform = rows.get((mesh,tiles,'uniform'),reference_rows.get((mesh,tiles,'uniform')))
-        if uniform and mode != 'uniform' and uniform['simulated_M0']==v['simulated_M0']:
+        if uniform and not mode.endswith('_trace') and mode != 'uniform' and uniform['simulated_M0']==v['simulated_M0']:
             methods.append(dict(mesh=mesh,method=mode,gpus=tiles//2,
                                 steady_speedup_vs_uniform=uniform['steady_seconds_per_M0']/v['steady_seconds_per_M0'],
                                 elapsed_speedup_vs_uniform=uniform['seconds_per_M0']/v['seconds_per_M0']))
@@ -96,6 +96,18 @@ def main():
             scaling.append(dict(mesh=mesh,method=mode,gpus=tiles//2,nodes=v['nodes'],
                                 seconds_per_M0=v['steady_seconds_per_M0'],speedup=speedup,
                                 efficiency=speedup/(tiles/2)))
+    for (mesh,tiles,mode),trial in rows.items():
+        if mode!='cohort_cached_trace':
+            continue
+        control=rows.get((mesh,tiles,'classical_trace'))
+        if not control or trial['binary_sha256']!=control['binary_sha256'] or trial['intervals']!=control['intervals']:
+            continue
+        measured=[sum(x['kernel_seconds'] for x in r['device_profile']) for r in (trial,control)]
+        methods.append(dict(mesh=mesh,gpus=tiles//2,method=mode,control='classical_trace',
+                            multirate_summed_device_seconds=measured[0],
+                            uniform_summed_device_seconds=measured[1],
+                            summed_device_time_ratio=measured[0]/measured[1],
+                            scope='whole process including setup and endpoint output'))
     if filename=='corrected-transport-results.json':
         trial=rows.get(('current754',24,'cohort'))
         if trial:
