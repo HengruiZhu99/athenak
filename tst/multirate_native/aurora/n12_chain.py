@@ -51,6 +51,12 @@ def continue_comparison(root, current, job):
             # Spread longer strong-scaling suites over the existing one-hour
             # science allocations. A later suite reuses matching hashed receipts.
             cases = pending.split(':')
+            if len(cases)==1 and Path(pending).name==pending:
+                description=json.loads((root/pending).read_text())
+                if isinstance(description,dict):
+                    cases=description['suites']
+                    if not isinstance(cases,list) or not cases or not all(isinstance(s,str) for s in cases):
+                        raise ValueError('invalid ordered benchmark suite list')
             for name in cases:
                 if Path(name).name!=name or not (root/name).is_file():
                     raise ValueError('missing benchmark case file '+name)
