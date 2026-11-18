@@ -23,9 +23,14 @@ with exe.open('rb') as binary:
     binary_sha256 = hashlib.file_digest(binary, 'sha256').hexdigest()
 large_suite = sys.argv[2:] == ['--larger-adaptive']
 throughput = sys.argv[2:] == ['--throughput']
-if sys.argv[2:] and not (large_suite or throughput):
-    raise ValueError('expected a campaign directory and optional --larger-adaptive')
-campaign_report = 'throughput-results.json' if throughput else ('larger-results.json' if large_suite else 'results.json')
+case_file = None
+if len(sys.argv)==4 and sys.argv[2]=='--cases':
+    case_file = Path(sys.argv[3]).resolve()
+elif sys.argv[2:] and not (large_suite or throughput):
+    raise ValueError('expected --larger-adaptive, --throughput or --cases FILE')
+campaign_report = (case_file.stem+'-results.json' if case_file else
+                   'throughput-results.json' if throughput else
+                   'larger-results.json' if large_suite else 'results.json')
 results = []
 failures = []
 
@@ -178,7 +183,14 @@ subprocess.run(['c++', '-std=c++17', '-O2', '-shared', '-fPIC',
                 '-o', str(memory_tool)], check=True)
 os.environ['KOKKOS_TOOLS_LIBS'] = str(memory_tool)
 
-if throughput:
+if case_file:
+    for mesh,ranks,mode,intervals in json.loads(case_file.read_text()):
+        if mesh not in ('current754','adaptive754','adaptive1024','adaptive88') or ranks not in (2,4,8,12,24):
+            raise ValueError('unsupported Aurora workload or tile count')
+        if mode not in ('cohort','spread','metis','scalar','zorder','uniform','classical') or intervals<3:
+            raise ValueError('unsupported benchmark method or insufficient timing intervals')
+        measure(mesh,ranks,mode,intervals)
+elif throughput:
     measure('current754',24,'cohort',6)
     if results and results[-1]['mode']=='cohort':
         measure('current754',24,'locality',6)

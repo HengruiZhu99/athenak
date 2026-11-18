@@ -42,6 +42,9 @@ if [[ -n ${MR_N12_MODE:-} ]]; then
       [[ "$MR_N12_MODE" == uniform ]] || exit 1
     fi
   fi
+  if [[ -n ${MR_CASES:-} ]]; then
+    /usr/bin/python3.11 -u "$suite/measure.py" "$root" --cases "$root/$MR_CASES"
+  fi
   remaining=$((3300-SECONDS+segment_start))
   exec "$root/../n12-full-scri-20261115/analysis-env/bin/python" -u "$suite/n12.py" \
     "$root" "$MR_N12_MODE" --wall-seconds "$remaining"

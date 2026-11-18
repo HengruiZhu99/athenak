@@ -44,7 +44,7 @@ def main():
     filename = sys.argv[2] if len(sys.argv)>2 else 'results.json'
     data = json.loads((root/filename).read_text())
     reference_rows = {}
-    for previous in ('results.json','larger-results.json'):
+    for previous in ('results.json','larger-results.json','throughput-results.json'):
         if previous != filename and (root/previous).exists():
             baseline=json.loads((root/previous).read_text())
             reference_rows.update({(v['mesh'],v['tiles'],v['mode']):v for v in baseline['results']})
@@ -59,13 +59,13 @@ def main():
                     continue
                 checks.append(dict(mesh=mesh,method=mode,gpus=tiles//2,comparison=name,**compare(v,reference)))
         uniform = rows.get((mesh,tiles,'uniform'),reference_rows.get((mesh,tiles,'uniform')))
-        if uniform and mode != 'uniform':
+        if uniform and mode != 'uniform' and uniform['simulated_M0']==v['simulated_M0']:
             methods.append(dict(mesh=mesh,method=mode,gpus=tiles//2,
                                 steady_speedup_vs_uniform=uniform['steady_seconds_per_M0']/v['steady_seconds_per_M0'],
                                 elapsed_speedup_vs_uniform=uniform['seconds_per_M0']/v['seconds_per_M0']))
         for candidate, control in [('posted_fixed','polled_fixed'),('spread','zorder'),('spread','metis'),('cohort','spread'),('cohort','classical'),('locality','cohort')]:
             other=rows.get((mesh,tiles,control),reference_rows.get((mesh,tiles,control)))
-            if mode==candidate and other:
+            if mode==candidate and other and other['simulated_M0']==v['simulated_M0']:
                 methods.append(dict(mesh=mesh,method=mode,control=control,gpus=tiles//2,
                                     steady_speedup=other['steady_seconds_per_M0']/v['steady_seconds_per_M0']))
                 checks.append(dict(mesh=mesh,method=mode,gpus=tiles//2,comparison=control,**compare(v,other)))
