@@ -70,6 +70,8 @@ data_format = %24.17e
 """
     if args.complete_local_batches:
         inp += '\n<multirate>\ncomplete_local_batches = true\n'
+    if args.cached_stage_packets:
+        inp += '<multirate>\ncoalesce_stage_packets = true\nsend_cache_mib = 96\nreceive_cache_mib = 96\n'
     fixture.write_text(inp + """
 <output3>
 file_type = scri
@@ -151,9 +153,12 @@ def main():
     parser.add_argument('--radial-probe', action='store_true')
     parser.add_argument('--complete-local-batches', action='store_true',
                         help='exercise compact donor and halo plans in the temporal convergence test')
+    parser.add_argument('--cached-stage-packets', action='store_true',
+                        help='exercise coalesced stage messages and both bounded buffer caches')
     parser.add_argument('--ranks', type=int, default=2)
     parser.add_argument('--launcher', default='mpiexec -n {ranks}')
     args = parser.parse_args()
+    args.complete_local_batches |= args.cached_stage_packets
     args.output = args.output.resolve()
     args.output.mkdir(parents=True, exist_ok=False)
     immutable_binary = args.output / 'athena'
@@ -165,7 +170,7 @@ def main():
     orders = {group: [math.log2(norms[i][group] / norms[i+1][group]) if norms[i+1][group] else None
                       for i in range(2)] for group in norms[0]}
     passed = all(value is not None and value >= 3.7 for row in orders.values() for value in row)
-    report = dict(adaptive=args.adaptive,complete_local_batches=args.complete_local_batches,radial_probe=args.radial_probe,binary_sha256=hashlib.sha256(args.binary.read_bytes()).hexdigest(),duration=args.duration, steps=[2, 4, 8], uniform_reference_steps=32,
+    report = dict(adaptive=args.adaptive,cached_stage_packets=args.cached_stage_packets,complete_local_batches=args.complete_local_batches,radial_probe=args.radial_probe,binary_sha256=hashlib.sha256(args.binary.read_bytes()).hexdigest(),duration=args.duration, steps=[2, 4, 8], uniform_reference_steps=32,
                   rms_errors=norms, observed_orders=orders, passed=passed)
     (args.output / 'results.json').write_text(json.dumps(report, indent=2) + '\n')
     print(json.dumps(report, indent=2))

@@ -98,16 +98,30 @@ def main():
                                 seconds_per_M0=v['steady_seconds_per_M0'],speedup=speedup,
                                 efficiency=speedup/(tiles/2)))
     for (mesh,tiles,mode),trial in rows.items():
-        if mode!='cohort_cached_trace':
+        if not mode.endswith('_trace') or mode=='classical_trace':
             continue
         control=rows.get((mesh,tiles,'classical_trace'))
         if not control or trial['binary_sha256']!=control['binary_sha256'] or trial['intervals']!=control['intervals']:
             continue
-        measured=[sum(x['kernel_seconds'] for x in r['device_profile']) for r in (trial,control)]
+        from device_profile import device_totals
+        def summary(receipt):
+            # Re-read the rank traces. Older receipts include the driver's
+            # copy/fill commands in the field originally named kernel_seconds.
+            ranks=device_totals(Path(receipt['log']).parent,tiles)
+            operations={}
+            for rank in ranks:
+                for name,timing in rank['operations'].items():
+                    item=operations.setdefault(name,dict(calls=0,nanoseconds=0))
+                    for field in item: item[field]+=timing[field]
+            return dict(device_seconds=sum(r['device_seconds'] for r in ranks),
+                        kernel_seconds=sum(r['kernel_seconds'] for r in ranks),
+                        driver_command_seconds=sum(r['driver_command_seconds'] for r in ranks),
+                        operations=operations)
+        mixed,uniform=summary(trial),summary(control)
         methods.append(dict(mesh=mesh,gpus=tiles//2,method=mode,control='classical_trace',
-                            multirate_summed_device_seconds=measured[0],
-                            uniform_summed_device_seconds=measured[1],
-                            summed_device_time_ratio=measured[0]/measured[1],
+                            multirate=mixed,uniform=uniform,
+                            summed_device_time_ratio=mixed['device_seconds']/uniform['device_seconds'],
+                            summed_kernel_time_ratio=mixed['kernel_seconds']/uniform['kernel_seconds'],
                             coarse_intervals=trial['device_profile_coarse_intervals'],
                             scope='driver integrator tasks after two coarse warmup intervals'))
     if filename=='corrected-transport-results.json':

@@ -182,6 +182,11 @@ def placement_for_binary(root, run, binary_sha):
         selected=min(choices,key=lambda r:r['steady_seconds_per_M0'])
         save(run/'placement-selection.json',dict(selected=selected['mode'],binary_sha256=binary_sha,
              report=str(cache_path),steady_seconds_per_M0={r['mode']:r['steady_seconds_per_M0'] for r in choices}))
+        if len(modes)>2 and json.loads(trial.read_text()).get('profile_selected'):
+            cases=root/f'selected-trace-{binary_sha[:12]}.json'
+            save(cases,[['current754',24,mode+'_trace',4] for mode in (selected['mode'],'classical')])
+            subprocess.run(['/usr/bin/python3.11',str(Path(__file__).with_name('measure.py')),
+                            str(root),'--cases',str(cases)],check=True)
         return selected
     if len(modes)>2:
         raise ValueError('incomplete stage-packet N12 GPU controls')

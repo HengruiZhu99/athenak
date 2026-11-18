@@ -216,8 +216,9 @@ if case_file:
             mode = choices.pop()
         if mesh not in ('current754','adaptive754','adaptive1024','adaptive88') or ranks not in (2,4,8,12,24):
             raise ValueError('unsupported Aurora workload or tile count')
-        if (mode not in TRANSPORT and mode not in ('spread_fixed','spread','metis','scalar','zorder',
-                'uniform','classical','cohort_cached_trace','classical_trace')) or intervals<3:
+        untraced = mode.removesuffix('_trace')
+        if (untraced not in TRANSPORT and untraced not in ('spread_fixed','spread','metis','scalar','zorder',
+                'uniform','classical')) or intervals<3:
             raise ValueError('unsupported benchmark method or insufficient timing intervals')
         measure(mesh,ranks,mode,intervals)
 elif throughput:
