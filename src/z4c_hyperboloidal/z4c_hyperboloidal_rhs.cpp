@@ -7,6 +7,7 @@
 #include <type_traits>
 
 #include "driver/driver.hpp"
+#include "bvals/multirate_exchange.hpp"
 #include "mesh/mesh.hpp"
 #include "z4c_hyperboloidal/z4c_hyperboloidal.hpp"
 #include "z4c_hyperboloidal/point_rhs.hpp"
@@ -17,7 +18,8 @@
 namespace z4c_hyperboloidal {
 
 TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver,int stage,RHSSubset subset,
-                                    Real max_characteristic_cfl) {
+                                    Real max_characteristic_cfl,
+                                    bvals::multirate::RecordExchange *progress) {
   if (!plans_ready_) throw std::logic_error("Hyperboloidal RHS has no stage plans");
   if (!driver->UsesSchemeARK() || stage<1 || stage>4)
     throw std::invalid_argument("Hyperboloidal RHS requires classical RK4 stage");
@@ -137,6 +139,18 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver,int stage,RHSSubset subset,
   if (radial) evaluate(std::true_type{}, std::false_type{});
   else if (split_bulk_jets_) evaluate(std::false_type{}, std::true_type{});
   else evaluate(std::false_type{}, std::false_type{});
+#if defined(KOKKOS_ENABLE_SYCL) && MPI_PARALLEL_ENABLED
+  // The validity reduction consumes these kernels and returns a host scalar.
+  // Service posted records on this MPI thread while the device reaches that point.
+  if (progress) {
+    auto complete = DevExeSpace().sycl_queue().ext_oneapi_submit_barrier();
+    while (complete.get_info<sycl::info::event::command_execution_status>() !=
+           sycl::info::event_command_status::complete)
+      progress->Poll();
+  }
+#else
+  (void)progress;
+#endif
   int invalid=0;
   Kokkos::parallel_reduce("hyperboloidal RHS validity",
     Kokkos::RangePolicy<>(0,selected.extent_int(0)),KOKKOS_LAMBDA(int i,int &bad) {

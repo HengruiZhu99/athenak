@@ -245,7 +245,7 @@ struct MultirateEvolution::Impl {
   };
   using BatchKey = std::tuple<int, size_t, bal::KernelKind>;
   mr::RecordReadiness<Key, BatchKey> readiness, interior_readiness;
-  bool fused_rhs = false, wait_for_donors = false;
+  bool fused_rhs = false, progress_during_rhs = false, wait_for_donors = false;
   bool complete_local_batches = false, peer_profile_pending = false;
   struct ActiveLayout {
     DvceArray1D<int> mask, native_indices;
@@ -270,6 +270,7 @@ struct MultirateEvolution::Impl {
   double max_cfl = .35, migration_cost = 0;
   explicit Impl(Z4cHyperboloidal& module, Driver* driver, bool rebuilt)
       : p(module), pack(p.pmy_pack), mesh(pack->pmesh), pin(p.pinput_) {
+    progress_during_rhs = pin->GetOrAddBoolean("multirate", "progress_during_rhs", false);
     wait_for_donors = pin->GetOrAddBoolean("multirate", "wait_for_donors", false);
     fused_rhs = pin->GetOrAddBoolean("multirate", "fused_rhs", false);
     if (fused_rhs && !pin->GetBoolean("multirate", "complete_local_batches"))
@@ -1262,7 +1263,8 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
   }
   if (interior) {
     const auto begin_interior = Clock::now();
-    p.CalcRHS(driver, context.key.stage + 1, RHSSubset::Interior, max_cfl);
+    p.CalcRHS(driver, context.key.stage + 1, RHSSubset::Interior, max_cfl,
+              progress_during_rhs ? exchange.get() : nullptr);
     const double elapsed_interior = Seconds(begin_interior);
     phase_seconds[0] += Seconds(batch_start);
     const double per_point = elapsed_interior / units;
@@ -1294,7 +1296,8 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
   }
   const auto begin_rhs = Clock::now();
   phase_seconds[1] += std::chrono::duration<double>(begin_rhs-dependent_start).count();
-  p.CalcRHS(driver, context.key.stage + 1, RHSSubset::Dependent, max_cfl);
+  p.CalcRHS(driver, context.key.stage + 1, RHSSubset::Dependent, max_cfl,
+            progress_during_rhs ? exchange.get() : nullptr);
   phase_seconds[2] += Seconds(begin_rhs);
   double rhs_seconds = Seconds(dependent_start);
   for (auto index : batch) rhs_seconds += tasks[index].interior_seconds;

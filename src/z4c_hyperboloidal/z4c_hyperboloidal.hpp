@@ -25,6 +25,8 @@ class MeshBlockPack;
 class MeshRefinement;
 class CompactObjectTracker;
 
+namespace bvals::multirate { class RecordExchange; }
+
 namespace z4c_hyperboloidal {
 class MappedHalo;
 class SurfaceExchange;
@@ -153,7 +155,9 @@ class Z4cHyperboloidal {
   TaskStatus ProjectSurface(Driver *driver, int stage);
   TaskStatus ClearSend(Driver *driver, int stage);
   TaskStatus ClearRecv(Driver *driver, int stage);
-  TaskStatus CalcRHS(Driver *driver, int stage, RHSSubset subset, Real max_characteristic_cfl = 0);
+  TaskStatus CalcRHS(Driver *driver, int stage, RHSSubset subset,
+                     Real max_characteristic_cfl = 0,
+                     bvals::multirate::RecordExchange *progress = nullptr);
   bool IsInitialized() const {return initialized_;}
   bool StagePlansReady() const {return plans_ready_;}
   const DvceArray1D<int> &RHSPoints(RHSSubset subset) const {
