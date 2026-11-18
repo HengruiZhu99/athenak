@@ -53,6 +53,7 @@ def compare(left, right):
 
 
 def main():
+    from transport_modes import TRANSPORT, PACKET_CONTROLS
     root = Path(sys.argv[1])
     filename = sys.argv[2] if len(sys.argv)>2 else 'results.json'
     data = json.loads((root/filename).read_text())
@@ -64,7 +65,7 @@ def main():
     rows = {(v['mesh'],v['tiles'],v['mode']):v for v in data['results']}
     checks, scaling, methods = [], [], []
     for (mesh,tiles,mode), v in rows.items():
-        if mode in ('metis','spread','posted_fixed','polled_fixed','zorder','scalar','cohort','cohort_cached','cohort_packets','locality','spread_fixed'):
+        if mode in TRANSPORT or mode in ('metis','spread','posted_fixed','polled_fixed','zorder','scalar','spread_fixed'):
             for name, key in [('uniform_reference',(mesh,tiles,'uniform')),
                               ('one_gpu_decomposition',(mesh,2,mode))]:
                 reference=rows.get(key,reference_rows.get(key))
@@ -84,7 +85,7 @@ def main():
             methods.append(dict(mesh=mesh,method=mode,gpus=tiles//2,
                                 steady_speedup_vs_uniform=uniform['steady_seconds_per_M0']/v['steady_seconds_per_M0'],
                                 elapsed_speedup_vs_uniform=uniform['seconds_per_M0']/v['seconds_per_M0']))
-        for candidate, control in [('posted_fixed','polled_fixed'),('spread','zorder'),('spread','metis'),('cohort','spread'),('cohort','classical'),('locality','cohort'),('spread_fixed','spread'),('cohort_cached','cohort'),('cohort_packets','cohort_cached')]:
+        for candidate, control in [('posted_fixed','polled_fixed'),('spread','zorder'),('spread','metis'),('cohort','classical'),('locality','cohort'),('spread_fixed','spread'),*PACKET_CONTROLS.items(),('cohort_cached_packets','cohort_receive_cache')]:
             other=rows.get((mesh,tiles,control),reference_rows.get((mesh,tiles,control)))
             if mode==candidate and other and other['simulated_M0']==v['simulated_M0']:
                 methods.append(dict(mesh=mesh,method=mode,control=control,gpus=tiles//2,

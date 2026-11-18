@@ -7,6 +7,7 @@ import math
 import os
 from pathlib import Path
 from n12_paths import trajectory_directory
+from transport_modes import PACKET_CONTROLS, transport_parameters
 import re
 import shutil
 import subprocess
@@ -160,7 +161,7 @@ def placement_for_binary(root, run, binary_sha):
     cache_path = root/'send-cache-trial-results.json'
     trial = root/'n12-10M/multirate-trial.json'
     if trial.is_file() and json.loads(trial.read_text()).get('compare_stage_packets'):
-        modes.append('cohort_packets')
+        modes=list(PACKET_CONTROLS)
         cases = root/f'stage-packets-{binary_sha[:12]}.json'
         cache_path = root/(cases.stem+'-results.json')
         if not set(modes+['classical'])<=measurements(cache_path).keys():
@@ -172,7 +173,7 @@ def placement_for_binary(root, run, binary_sha):
            and cache[m]['intervals']==6 for m in (*modes,'classical')):
         checks_path=cache_path.with_name(cache_path.name.replace('results','comparison'))
         checks=json.loads(checks_path.read_text())['checks']
-        required=set(zip(modes,['spread',*modes[:-1]]))
+        required={(mode,PACKET_CONTROLS[mode]) for mode in modes}
         verified={(c['method'],c['comparison']) for c in checks
                   if c['mesh']=='current754' and c['gpus']==12 and c['identical_checkpoint_payload']}
         if not required<=verified:
@@ -276,11 +277,8 @@ def main():
                 lines = stream.read(int(stream.readline())).decode().splitlines()[1:]
             owners = ','.join(row.split()[1] for row in lines)
             extra = (f'\n<multirate>\nbalance = none\nblock_owners = {owners}\n'
-                     f'complete_local_batches = {str(selected["mode"] in ("cohort","locality","cohort_cached","cohort_packets")).lower()}\n'
-                     f'send_cache_mib = {96 if selected["mode"] in ("cohort_cached","cohort_packets") else 0}\n'
+                     f'{transport_parameters(selected["mode"])}'
                      'spherical_levels = 2,2,2,1,1,1,1,1,2,3,4\nprepost_exchanges = true\n')
-            if selected['mode']=='cohort_packets':
-                extra += 'coalesce_stage_packets = true\n'
         integrator = 'rk4_classical' if ratio==16 else 'mrgark4'
         inputs = (original_input.read_text()+extra+f'\n<time>\nintegrator = {integrator}\ndt = {dt:.17g}\n'
                   f'nlim = {target}\ntlim = {(target+2)*dt:.17g}\nndiag = {ratio}\n'
