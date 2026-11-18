@@ -1,5 +1,6 @@
 """Advance one restartable segment of the isolated 10 M0 N12 comparison."""
 import argparse
+import fcntl
 import hashlib
 import json
 import math
@@ -43,6 +44,8 @@ def main():
     original = json.loads((campaign/'control/plan.json').read_text())
     directory = root/'n12-10M'/args.mode
     directory.mkdir(parents=True, exist_ok=True)
+    lock = (directory/'segment.lock').open('a')
+    fcntl.flock(lock,fcntl.LOCK_EX | fcntl.LOCK_NB)
     manifest = Path(original['initial_manifest'])
     if digest(manifest) != original['initial_manifest_sha256']:
         raise ValueError('N12 initial-data manifest changed')
@@ -69,7 +72,7 @@ def main():
         executable = root/'artifacts'/binary_sha/'athena'
         executable.parent.mkdir(parents=True,exist_ok=True)
         if not executable.exists():
-            temp = executable.with_suffix('.copy')
+            temp = executable.with_suffix(f'.{os.getpid()}.copy')
             shutil.copy2(built,temp)
             temp.replace(executable)
         if digest(executable) != binary_sha:
