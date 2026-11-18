@@ -48,3 +48,16 @@ On the binary mesh, the same off-puncture location criterion created 49 blocks a
 The weighted spread placement achieved 2.58× end-to-end speedup and 1.60× steady speedup from one GPU to two nodes. Steady parallel efficiency was 13.4%. On the last post-refinement mesh the schedule required 21,232 block RHS evaluations per interval. The experiment verifies the deep adaptive GPU trajectory and exposes a strong-scaling limitation at this workload.
 
 Three archived native classical RK4 segments on the same 754-block atlas and two-node allocation covered 0–1.408, 1.408–3.828 and 3.828–6.213 M0. Their respective measured elapsed costs were 1,281, 1,255 and 1,285 s/M0. At 5,947 steady s/M0, the short spread multirate benchmark is slower than that historical native execution path. Executable, run length and output cadence differ. The same-build native control and the isolated 10 M0 trajectories provide the matched comparisons.
+
+## Matched native uniform RK4 control and transport regression
+
+Each pair below used one executable, 754 blocks, the same N12 initial data, six common intervals and 12 physical GPUs. Native uniform RK4 took 16 fine steps per common interval. The multirate cohort replayed the same block placement with all 24 fastest leaves distributed across the 24 tiles.
+
+| Aurora job | Multirate implementation | Multirate steady s/M0 | Native uniform RK4 steady s/M0 | Multirate/native time |
+| --- | --- | ---: | ---: | ---: |
+| 9100244 | Per-peer GPU sends | 6,135 | 1,241 | 4.94 |
+| 9100343 | Fused GPU publication and batched MPI completion polling | 20,052 | 1,222 | 16.41 |
+
+Both multirate cohorts issued 5,920 local batches, evaluated 18,160 block RHS stages and sent 14.79 GB per common interval. Native uniform RK4 evaluated 48,256 block stages. At interval 4 the maximum time spent polling when no local work was ready rose from 25.47 to 96.39 seconds. Completions observed immediately following interior batches fell from 7,258 to 1,741. Poll time includes waiting for work on other ranks. These timings cannot distinguish driver registration, device copies, network transfers and delayed producing ranks. The two allocations used different nodes. Both all-engine and compute-engine counters returned zero across the fused run, including the native RK4 control, so those counters give no usable utilization estimate.
+
+On the earlier executable, the contiguous placement took 5,042 steady s/M0, 18% less time than the fully spread cohort, while sending 13.66 GB per interval. The contiguous run also used eager batches, so placement and batching effects are coupled in that comparison. The optimized uniform-timestep baseline is materially faster on this mesh.
