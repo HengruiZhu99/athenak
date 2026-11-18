@@ -6,6 +6,7 @@
 // Licensed under the 3-clause BSD License (the "LICENSE")
 //========================================================================================
 
+#include <map>
 #include <vector>
 
 #include "bvals/mapped_exchange.hpp"
@@ -77,7 +78,8 @@ class MappedHalo {
       const DvceArray5D<Real> &physical,
       bvals::MappedExchange::ConstValues residual_values,
       bvals::MappedExchange::ConstValues physical_values,
-      DvceArray1D<int> active);
+      DvceArray1D<int> active, const std::vector<int> *fixed_slots=nullptr);
+  const std::vector<int> &DonorOrdinalsForBatch(const std::vector<int> &slots);
   const std::vector<Row> &Rows() const {return rows_;}
   const std::vector<ExteriorTarget> &ExteriorTargets() const {return exterior_;}
   const std::vector<HaloPoint> &InteriorPoints() const {return interior_points_;}
@@ -91,6 +93,14 @@ class MappedHalo {
   ActivityPolicy activity_;
   struct DeviceRow {HaloPoint target; int begin, end;};
   struct DeviceEntry {int ordinal; Real weight;};
+  struct SlotOffset {int row=0, entry=0;};
+  struct BatchPlan {
+    DvceArray1D<DeviceRow> rows;
+    std::vector<int> donor_ordinals;
+  };
+  std::vector<SlotOffset> slot_offsets_;
+  std::map<std::vector<int>,BatchPlan> batches_;
+  const BatchPlan &PlanForBatch(const std::vector<int> &slots);
   bvals::MappedExchange residual_exchange_, physical_exchange_;
   std::vector<Row> rows_;
   std::vector<ExteriorTarget> exterior_;

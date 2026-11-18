@@ -100,6 +100,36 @@ struct DonorMeta {
   int gid, kind, support[5]{};
   Real x[3]{}, ref[31]{}, chi_weight = 1, radial_weight[5]{};
 };
+// One sorted entry per distinct donor point consumed by a fixed local batch.
+// The two halo exchanges share ordinals; surface bulk and edge are disjoint.
+struct DonorDestination {
+  int index, halo = -1, surface = -1, agreement = -1;
+};
+struct DirectDonorViews {
+  DvceArray1D<DonorDestination> targets;
+  DvceArray2D<Real> halo_physical, halo_residual, surface_bulk, surface_edge, agreement;
+  KOKKOS_INLINE_FUNCTION DonorDestination Destination(int i) const { return targets(i); }
+  KOKKOS_INLINE_FUNCTION void Store(const DonorDestination& q, int kind, int field, int slot,
+                                    Real u, Real delta) const {
+    if (q.halo >= 0) halo_physical(q.halo,field) = u;
+    if (slot < 0) return;
+    if (q.halo >= 0) halo_residual(q.halo,slot) = delta;
+    if (q.surface >= 0) {
+      if (kind) surface_edge(q.surface,slot) = delta;
+      else surface_bulk(q.surface,slot) = delta;
+    }
+    if (q.agreement >= 0) agreement(q.agreement,slot) = delta;
+  }
+};
+struct FullDonorViews {
+  DvceArray2D<Real> physical, residual;
+  KOKKOS_INLINE_FUNCTION DonorDestination Destination(int i) const { return {i}; }
+  KOKKOS_INLINE_FUNCTION void Store(const DonorDestination& q, int, int field, int,
+                                    Real u, Real delta) const {
+    physical(q.index,field) = u;
+    residual(q.index,field) = delta;
+  }
+};
 using Clock = std::chrono::steady_clock;
 double Seconds(Clock::time_point a) {
   return std::chrono::duration<double>(Clock::now() - a).count();
@@ -210,6 +240,8 @@ struct MultirateEvolution::Impl {
   struct ActiveLayout {
     DvceArray1D<int> mask, native_indices;
     std::array<DvceArray1D<int>, 5> rhs_points;
+    DirectDonorViews donor_views;
+    bool donor_views_ready = false;
   };
   std::map<std::vector<int>, ActiveLayout> active_layouts;
   DvceArray1D<int> active_native_indices;
@@ -300,6 +332,8 @@ struct MultirateEvolution::Impl {
   std::vector<DvceArray1D<Real>> Pack(const std::vector<int>& slots, bool rhs);
   void Publish(const std::vector<int>& slots, const std::vector<DvceArray1D<Real>>& records,
                std::uint32_t step, int stage);
+  GatherPlan& ExchangeView(const bvals::MappedExchange& plan, int kind);
+  DirectDonorViews MakeDonorViews(const std::vector<int>& slots);
   DvceArray2D<Real> Gather(const bvals::MappedExchange& plan, int kind,
                            const DvceArray2D<Real>& values);
   void StageDonors(size_t stage, const std::vector<int>& slots, DvceArray2D<Real>& physical,
@@ -690,8 +724,10 @@ void MultirateEvolution::Impl::BuildLocal() {
     return DvceArray2D<Real>(Kokkos::view_alloc(Kokkos::WithoutInitializing,std::string(name)),
                              requested.size(),Fields::count);
   };
-  donor_physical=scratch("multirate donor physical");
-  donor_residual=scratch("multirate donor residual");
+  if (!complete_local_batches) {
+    donor_physical=scratch("multirate donor physical");
+    donor_residual=scratch("multirate donor residual");
+  }
   exchange = std::make_unique<transport::RecordExchange>(pack, owned, requested, Fields::count);
   for (int q = 0; q < p.npoints; ++q) {
     const auto c = p.points.h_view(q);
@@ -917,6 +953,45 @@ void MultirateEvolution::Impl::Publish(const std::vector<int>& slots,
     batch.emplace_back(Key{pack->GlobalId(m),step,stage},records[m]);
   exchange->PublishBatch(batch);
 }
+DirectDonorViews MultirateEvolution::Impl::MakeDonorViews(const std::vector<int>& slots) {
+  DirectDonorViews out;
+  std::vector<DonorDestination> targets(requested.size(), {-1});
+  auto dest = [&](const bvals::DonorPoint& point, int kind) -> DonorDestination& {
+    const int q = ordinal.at({point.gid,point.k,point.j,point.i,kind});
+    targets[q].index = q;
+    return targets[q];
+  };
+  const auto& halo = p.mapped_halo_->ResidualExchange();
+  out.halo_physical = ExchangeView(p.mapped_halo_->PhysicalExchange(),0).buffer;
+  out.halo_residual = ExchangeView(halo,0).buffer;
+  for (int i : p.mapped_halo_->DonorOrdinalsForBatch(slots))
+    dest(halo.UniqueDonors()[i],0).halo = i;
+  if (graph.blocks[pack->GlobalId(slots.front())].kernel == bal::KernelKind::scri) {
+    // All scri and radial-closure blocks share one temporal level. A complete
+    // scri batch therefore consumes the rank's entire bulk/edge exchange.
+    auto surface = [&](const bvals::MappedExchange& plan, int kind) {
+      const auto& points = plan.UniqueDonors();
+      for (size_t i = 0; i < points.size(); ++i) dest(points[i],kind).surface = i;
+      return ExchangeView(plan,kind).buffer;
+    };
+    out.surface_bulk = surface(p.surface_exchange_->BulkExchange(),0);
+    out.surface_edge = surface(p.surface_exchange_->EdgeExchange(),1);
+  }
+  const auto& group = p.agreement_plan_->AgreementBlocks();
+  if (std::any_of(slots.begin(),slots.end(),[&](int m) {
+        return std::binary_search(group.begin(),group.end(),pack->GlobalId(m));
+      })) {
+    const auto& plan = p.agreement_plan_->Exchange();
+    const auto& rows = p.agreement_plan_->RowsForBatch(slots,p.active_blocks);
+    for (int i : p.agreement_plan_->DonorOrdinals(rows))
+      dest(plan.UniqueDonors()[i],0).agreement = i;
+    out.agreement = ExchangeView(plan,0).buffer;
+  }
+  targets.erase(std::remove_if(targets.begin(),targets.end(),
+      [](const DonorDestination& t){ return t.index < 0; }),targets.end());
+  out.targets = Device(targets,"multirate active donor destinations");
+  return out;
+}
 void MultirateEvolution::Impl::StageDonors(size_t stage, const std::vector<int>& slots,
                                            DvceArray2D<Real>& physical,
                                            DvceArray2D<Real>& residual) {
@@ -935,20 +1010,20 @@ void MultirateEvolution::Impl::StageDonors(size_t stage, const std::vector<int>&
   const auto metadata = donors;
   physical = donor_physical;
   residual = donor_residual;
-  const auto values = physical, delta = residual;
   const Real floor = p.chi_floor;
-  int invalid = 0;
-  Kokkos::parallel_reduce(
-      "multirate recipient donor values", Kokkos::RangePolicy<>(0, requested.size()),
-      KOKKOS_LAMBDA(int q, int& bad) {
-        const auto meta = metadata(q);
+  auto reconstruct = [&](const auto& output, int count) {
+    int invalid = 0;
+    Kokkos::parallel_reduce(
+      "multirate recipient donor values", Kokkos::RangePolicy<>(0, count),
+      KOKKOS_LAMBDA(int i, int& bad) {
+        const auto target = output.Destination(i);
+        const auto meta = metadata(target.index);
         const auto c = combinations_d(meta.gid);
         CartesianChartJets jets{};
         if (!c.base) {
-          for (int f = 0; f < Fields::count; ++f) {
-            values(q, f) = 0;
-            delta(q, f) = 0;
-          }
+          int slot = 0;
+          for (int f = 0; f < Fields::count; ++f)
+            output.Store(target,meta.kind,f,Fields::Independent(f) ? slot++ : -1,0,0);
           return;
         }
         for (int f = 0; f < Fields::count; ++f) jets[f].f = c.Value(meta.index, f);
@@ -981,33 +1056,62 @@ void MultirateEvolution::Impl::StageDonors(size_t stage, const std::vector<int>&
             jets[25 + a].f = jets[15 + a].f + C;
           }
         }
+        int slot = 0;
         for (int f = 0; f < Fields::count; ++f) {
-          values(q, f) = jets[f].f;
-          delta(q, f) = Fields::Independent(f)
-                            ? (jets[f].f - meta.ref[f]) / (f == 0 ? meta.chi_weight : 1)
-                            : 0;
-          if (!Kokkos::isfinite(values(q, f)) || !Kokkos::isfinite(delta(q, f))) ++bad;
+          const Real value = jets[f].f;
+          const Real delta = Fields::Independent(f)
+                                 ? (value - meta.ref[f]) / (f == 0 ? meta.chi_weight : 1)
+                                 : 0;
+          if (!Kokkos::isfinite(value) || !Kokkos::isfinite(delta)) ++bad;
+          output.Store(target,meta.kind,f,Fields::Independent(f) ? slot++ : -1,value,delta);
         }
-      },
-      invalid);
-  if (invalid) throw std::runtime_error("Invalid recipient-specific multirate donor stage");
+      },invalid);
+    if (invalid) throw std::runtime_error("Invalid recipient-specific multirate donor stage");
+  };
+  if (complete_local_batches) {
+    auto& layout = active_layouts.at(slots);
+    if (!layout.donor_views_ready) {
+      layout.donor_views = MakeDonorViews(slots);
+      layout.donor_views_ready = true;
+    }
+    reconstruct(layout.donor_views,layout.donor_views.targets.extent_int(0));
+  } else {
+    reconstruct(FullDonorViews{physical,residual},metadata.extent_int(0));
+  }
+}
+MultirateEvolution::Impl::GatherPlan& MultirateEvolution::Impl::ExchangeView(
+    const bvals::MappedExchange& plan, int kind) {
+  auto [it,inserted] = gather_plans.try_emplace(&plan);
+  auto& layout = it->second;
+  if (!inserted) return layout;
+  const auto& points = plan.UniqueDonors();
+  const auto& fields = plan.Fields();
+  layout.buffer = DvceArray2D<Real>(Kokkos::view_alloc(Kokkos::WithoutInitializing,
+      "multirate stage exchange view"),points.size(),fields.size());
+  if (complete_local_batches) {
+    // Direct stage writes use the same field slots as the native exchanges.
+    const bool physical = &plan == &p.mapped_halo_->PhysicalExchange();
+    size_t slot = 0;
+    for (int f = 0; f < Fields::count; ++f) if (physical || Fields::Independent(f)) {
+      if (slot >= fields.size() || fields[slot++] != f)
+        throw std::logic_error("Unexpected projected exchange field order");
+    }
+    if (slot != fields.size()) throw std::logic_error("Unexpected projected exchange field count");
+  } else {
+    std::vector<int> indices;
+    for (const auto& q : points) indices.push_back(ordinal.at({q.gid,q.k,q.j,q.i,kind}));
+    layout.index = Device(indices,"multirate exchange ordinals");
+    layout.fields = Device(fields,"multirate exchange fields");
+  }
+  return layout;
 }
 DvceArray2D<Real> MultirateEvolution::Impl::Gather(const bvals::MappedExchange& plan, int kind,
                                                    const DvceArray2D<Real>& values) {
-  auto found = gather_plans.find(&plan);
-  if (found == gather_plans.end()) {
-    std::vector<int> indices;
-    for (const auto& q : plan.UniqueDonors())
-      indices.push_back(ordinal.at({q.gid, q.k, q.j, q.i, kind}));
-    GatherPlan layout{Device(indices, "multirate exchange ordinals"),
-                      Device(plan.Fields(), "multirate exchange fields"),
-                      DvceArray2D<Real>(Kokkos::view_alloc(Kokkos::WithoutInitializing,
-                          "multirate stage exchange view"),indices.size(),plan.Fields().size())};
-    found = gather_plans.emplace(&plan, std::move(layout)).first;
-  }
-  const auto index = found->second.index, fields = found->second.fields;
+  const auto& layout = ExchangeView(plan,kind);
+  if (complete_local_batches) return layout.buffer;
+  const auto index = layout.index, fields = layout.fields;
   const int nf = fields.extent_int(0);
-  const auto out = found->second.buffer;
+  const auto out = layout.buffer;
   Kokkos::parallel_for(
       "multirate gather stage exchange", Kokkos::RangePolicy<>(0, index.extent(0) * nf),
       KOKKOS_LAMBDA(int q) {
@@ -1060,7 +1164,7 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
 
     model.Observe(bal::KernelKind::projection, units, Seconds(batch_start));
     const auto begin_interior = Clock::now();
-    p.CalcRHS(driver, context.key.stage + 1, RHSSubset::Interior);
+    p.CalcRHS(driver, context.key.stage + 1, RHSSubset::Interior, max_cfl);
     const double per_point = Seconds(begin_interior) / units;
     const auto before=exchange->CompletedReceives();
     exchange->Poll();
@@ -1078,7 +1182,8 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
   StageDonors(stage, slots, physical, delta);
   auto halo_delta = Gather(p.mapped_halo_->ResidualExchange(), 0, delta);
   auto halo_physical = Gather(p.mapped_halo_->PhysicalExchange(), 0, physical);
-  p.mapped_halo_->FillExternal(p.residual, p.u0, halo_delta, halo_physical, p.active_blocks);
+  p.mapped_halo_->FillExternal(p.residual, p.u0, halo_delta, halo_physical, p.active_blocks,
+                               complete_local_batches ? &slots : nullptr);
   if (kind == bal::KernelKind::scri) {
     auto surface_bulk = Gather(p.surface_exchange_->BulkExchange(), 0, delta);
     auto surface_edge = Gather(p.surface_exchange_->EdgeExchange(), 1, delta);
@@ -1087,7 +1192,7 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
     p.surface_exchange_->Solve();
     p.surface_exchange_->Evaluate();
   }
-  p.CalcRHS(driver, context.key.stage + 1, RHSSubset::Dependent);
+  p.CalcRHS(driver, context.key.stage + 1, RHSSubset::Dependent, max_cfl);
   double rhs_seconds = Seconds(batch_start);
   for (auto index : batch) rhs_seconds += tasks[index].interior_seconds;
   const auto& participants = p.agreement_plan_->AgreementBlocks();
@@ -1103,21 +1208,6 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
     Kokkos::fence("multirate agreement timing");
     model.Observe(bal::KernelKind::agreement, units, Seconds(begin_agreement));
   }
-  const auto selected = p.active_blocks;
-  const auto cfl = p.rhs_cfl;
-  const auto cells = p.points.d_view;
-  const double limit = max_cfl;
-  int invalid = 0;
-  Kokkos::parallel_reduce(
-      "multirate monitored stability bound", Kokkos::RangePolicy<>(0, p.npoints),
-      KOKKOS_LAMBDA(int q, int& bad) {
-        if (selected(cells(q).m) && (!Kokkos::isfinite(cfl(q)) || cfl(q) > limit)) ++bad;
-      },
-      invalid);
-  if (invalid)
-    throw std::runtime_error(
-        "Multirate monitored characteristic CFL bound exceeded; fixed timestep and hierarchy "
-        "retained, run stopped");
   auto rhs = Pack(slots, true);
   Publish(slots, rhs, context.key.local_step, context.key.stage);
   if (context.key.stage == 3) {

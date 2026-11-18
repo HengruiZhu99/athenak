@@ -15,7 +15,8 @@
 
 namespace z4c_hyperboloidal {
 
-TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver,int stage,RHSSubset subset) {
+TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver,int stage,RHSSubset subset,
+                                    Real max_characteristic_cfl) {
   if (!plans_ready_) throw std::logic_error("Hyperboloidal RHS has no stage plans");
   if (!driver->UsesSchemeARK() || stage<1 || stage>4)
     throw std::invalid_argument("Hyperboloidal RHS requires classical RK4 stage");
@@ -76,9 +77,14 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver,int stage,RHSSubset subset) 
   int invalid=0;
   Kokkos::parallel_reduce("hyperboloidal RHS validity",
     Kokkos::RangePolicy<>(0,selected.extent_int(0)),KOKKOS_LAMBDA(int i,int &bad) {
-      if (statuses(selected(i))!=static_cast<int>(PointStatus::success)) ++bad;
-    },invalid);
-  if (invalid) throw std::runtime_error("Invalid native hyperboloidal bulk RHS");
+      const int point=selected(i);
+      if (statuses(point)!=static_cast<int>(PointStatus::success)) bad=2;
+      else if (bad<1 && max_characteristic_cfl>0 &&
+               (!Kokkos::isfinite(cfls(point)) || cfls(point)>max_characteristic_cfl)) bad=1;
+    },Kokkos::Max<int>(invalid));
+  if (invalid==1) throw std::runtime_error(
+      "Multirate monitored characteristic CFL bound exceeded; fixed timestep and hierarchy retained, run stopped");
+  if (invalid==2) throw std::runtime_error("Invalid native hyperboloidal bulk RHS");
   return TaskStatus::complete;
 }
 }  // namespace z4c_hyperboloidal

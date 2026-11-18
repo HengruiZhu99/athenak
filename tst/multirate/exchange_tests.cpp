@@ -155,8 +155,7 @@ void ExerciseBatches(int rank,int ranks) {
     }
     Require(queued.sent_bytes==wire && queued.send_packets==packets,"batched wire counters disagree");
     Require(queued.peak_packet_bytes==wire+queued.received_bytes,"batched packet peak differs from allocations");
-    Require(!packets || (queued.pack_kernels>0 && queued.pack_kernels<per_rank*3),
-            "sparse publications launched one pack per record");
+    Require(queued.pack_kernels==packets,"one sparse gather per MPI send");
     const auto start=std::chrono::steady_clock::now();
     while (!exchange.Finish())
       Require(std::chrono::steady_clock::now()-start<std::chrono::seconds(10),

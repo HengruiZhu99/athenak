@@ -153,7 +153,7 @@ class Z4cHyperboloidal {
   TaskStatus ProjectSurface(Driver *driver, int stage);
   TaskStatus ClearSend(Driver *driver, int stage);
   TaskStatus ClearRecv(Driver *driver, int stage);
-  TaskStatus CalcRHS(Driver *driver, int stage, RHSSubset subset);
+  TaskStatus CalcRHS(Driver *driver, int stage, RHSSubset subset, Real max_characteristic_cfl = 0);
   bool IsInitialized() const {return initialized_;}
   bool StagePlansReady() const {return plans_ready_;}
   const DvceArray1D<int> &RHSPoints(RHSSubset subset) const {

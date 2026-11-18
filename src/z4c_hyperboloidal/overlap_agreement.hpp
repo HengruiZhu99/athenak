@@ -40,6 +40,7 @@ class OverlapAgreementPlan {
   };
   // The caller only caches complete local stage groups with fixed membership.
   const BatchRows &RowsForBatch(const std::vector<int> &slots, const DvceArray1D<int> &active);
+  std::vector<int> DonorOrdinals(const BatchRows &batch) const;
   void Evaluate(bvals::MappedExchange::ConstValues values={}, const BatchRows *batch=nullptr);
   const std::vector<std::pair<int,int>> &DependencyEdges() const {return dependency_edges_;}
   using DonorsByRecipient=std::map<int,std::set<bvals::DonorPoint>>;

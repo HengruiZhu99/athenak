@@ -281,6 +281,23 @@ const OverlapAgreementPlan::BatchRows &OverlapAgreementPlan::RowsForBatch(
   return batches_.emplace(slots,std::move(batch)).first->second;
 }
 
+std::vector<int> OverlapAgreementPlan::DonorOrdinals(const BatchRows &batch) const {
+  // Every discrepancy entry may be read, including those with a zero coefficient.
+  DvceArray1D<int> mask("agreement batch donor mask",exchange_.UniqueDonors().size());
+  const auto selected=batch.rows;
+  const auto rows=rows_;
+  const auto entries=entries_;
+  Kokkos::parallel_for("mark agreement batch donors",Kokkos::RangePolicy<>(0,selected.extent_int(0)),
+    KOKKOS_LAMBDA(int i) {
+      const auto row=rows(selected(i));
+      for(int j=row.begin;j<row.end;++j)Kokkos::atomic_exchange(&mask(entries(j).ordinal),1);
+    });
+  const auto host=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),mask);
+  std::vector<int> ordinals;
+  for(int i=0;i<mask.extent_int(0);++i)if(host(i))ordinals.push_back(i);
+  return ordinals;
+}
+
 void OverlapAgreementPlan::Evaluate(bvals::MappedExchange::ConstValues values,const BatchRows *batch) {
   const auto rows=rows_;const auto entries=entries_;const auto fields=fields_;
   if(!values.data())values=exchange_.Values();const auto d=discrepancy_;

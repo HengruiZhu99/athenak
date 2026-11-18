@@ -445,10 +445,21 @@ void MappedHalo::Rebuild(MeshBlockPack *pack,int origin,ActivityPolicy activity)
     throw std::logic_error("mapped residual/physical donor ordinals disagree");
   std::vector<DeviceRow> local_rows,remote_rows;std::vector<DeviceEntry> entries;
   const auto &ordinals=residual_exchange_.RequestOrdinals();std::size_t request=0;
+  // BuildRows visits targets in (local slot,k,j,i) order. Both exchange
+  // ordinals and interpolation weights use this same flat entry order.
+  slot_offsets_.assign(pack->nmb_thispack+1,{});
+  batches_.clear();
   for (const auto &row:rows_) {
     DeviceRow d{row.target,int(entries.size()),0};
     for (const auto &entry:row.donors) entries.push_back({ordinals.at(request++),entry.weight});
     d.end=entries.size();(row.remote?remote_rows:local_rows).push_back(d);
+    auto &offset=slot_offsets_[row.target.m+1];
+    ++offset.row;
+    offset.entry+=d.end-d.begin;
+  }
+  for (std::size_t i=1;i<slot_offsets_.size();++i) {
+    slot_offsets_[i].row+=slot_offsets_[i-1].row;
+    slot_offsets_[i].entry+=slot_offsets_[i-1].entry;
   }
   CopyDevice(local_rows,local_rows_,"mapped_local_rows");
   CopyDevice(remote_rows,remote_rows_,"mapped_remote_rows");
@@ -502,10 +513,43 @@ void MappedHalo::Fill(const DvceArray1D<DeviceRow> &rows,
       if (!Fields::Independent(f)) residual(c.m,f,c.k,c.j,c.i)=0;
     });
 }
+const MappedHalo::BatchPlan &MappedHalo::PlanForBatch(const std::vector<int> &slots) {
+  const auto found=batches_.find(slots);
+  if (found!=batches_.end()) return found->second;
+  BatchPlan plan;
+  std::vector<DeviceRow> selected;
+  const auto &ordinals=residual_exchange_.RequestOrdinals();
+  std::vector<bool> used(residual_exchange_.UniqueDonors().size());
+  for (int m:slots) {
+    const auto begin=slot_offsets_.at(m),end=slot_offsets_.at(m+1);
+    int entry=begin.entry;
+    for (int r=begin.row;r<end.row;++r) {
+      const auto &row=rows_[r];
+      const int next=entry+static_cast<int>(row.donors.size());
+      selected.push_back({row.target,entry,next});
+      entry=next;
+    }
+    for (int e=begin.entry;e<end.entry;++e) used[ordinals[e]]=true;
+  }
+  for (std::size_t q=0;q<used.size();++q)
+    if (used[q]) plan.donor_ordinals.push_back(q);
+  CopyDevice(selected,plan.rows,"mapped halo active recipient rows");
+  return batches_.emplace(slots,std::move(plan)).first->second;
+}
+
+const std::vector<int> &MappedHalo::DonorOrdinalsForBatch(const std::vector<int> &slots) {
+  return PlanForBatch(slots).donor_ordinals;
+}
+
 void MappedHalo::FillExternal(const DvceArray5D<Real> &residual,
     const DvceArray5D<Real> &physical,
     bvals::MappedExchange::ConstValues rv,
-    bvals::MappedExchange::ConstValues pv,DvceArray1D<int> active) {
+    bvals::MappedExchange::ConstValues pv,DvceArray1D<int> active,
+    const std::vector<int> *fixed_slots) {
+  if (fixed_slots) {
+    Fill(PlanForBatch(*fixed_slots).rows,residual,physical,rv,pv);
+    return;
+  }
   Fill(local_rows_,residual,physical,rv,pv,active);
   Fill(remote_rows_,residual,physical,rv,pv,active);
 }

@@ -59,8 +59,7 @@ class RecordExchange {
              const std::map<RecordKey, std::size_t> &consumer_counts, bool profile_peers=false);
   void Publish(const RecordKey &key, const DvceArray1D<Real> &values);
   using Publication = std::pair<RecordKey,DvceArray1D<Real>>;
-  // Preserve all caller-visible publications. Planned GPU transport gathers
-  // compatible records and their peer slices together.
+  // Pack into individually owned GPU-aware MPI buffers for the destination peers.
   void PublishBatch(const std::vector<Publication> &batch);
   bool Has(const RecordKey &key) const;
   DvceArray1D<Real> Data(const RecordKey &key) const;
@@ -80,7 +79,6 @@ class RecordExchange {
   // with the consumer counts registered by Begin.
   std::vector<RecordKey> TakeArrivals();
  private:
-  void Queue(const RecordKey &key,const DvceArray1D<Real> &values);
   struct Impl;
   std::unique_ptr<Impl> impl_;
 };
