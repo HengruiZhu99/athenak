@@ -31,6 +31,14 @@ Z4cHyperboloidal::~Z4cHyperboloidal() = default;
 Z4cHyperboloidal::Z4cHyperboloidal(MeshBlockPack *ppack, ParameterInput *pin)
     : pmy_pack(ppack), pinput_(pin) {
   auto *pm=ppack->pmesh;
+#ifdef KOKKOS_ENABLE_SYCL
+  rhs_workgroup_size_ = pin->GetOrAddInteger("z4c_hyperboloidal", "rhs_workgroup_size", 128);
+  const auto device = Kokkos::SYCL().sycl_queue().get_device();
+  const auto limit = device.get_info<sycl::info::device::max_work_group_size>();
+  if (rhs_workgroup_size_ < 1 || (rhs_workgroup_size_ & (rhs_workgroup_size_ - 1)) ||
+      static_cast<std::size_t>(rhs_workgroup_size_) > limit)
+    throw std::invalid_argument("rhs_workgroup_size must be a power of two supported by the SYCL device");
+#endif
   if (!pm->atlas || !pm->three_d || sizeof(Real)!=sizeof(double)) {
     throw std::invalid_argument("Hyperboloidal Z4c requires a 3D atlas and double precision");
   }

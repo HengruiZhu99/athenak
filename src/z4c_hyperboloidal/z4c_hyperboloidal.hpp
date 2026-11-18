@@ -167,6 +167,9 @@ class Z4cHyperboloidal {
   std::unique_ptr<MultirateEvolution> multirate_;
   MeshBlockPack *pmy_pack;
   ParameterInput *pinput_;
+#ifdef KOKKOS_ENABLE_SYCL
+  int rhs_workgroup_size_ = 128;
+#endif
   std::uint64_t state_version_=0;
   std::unique_ptr<Diagnostics> diagnostics_;
   std::vector<std::unique_ptr<CompactObjectTracker>> trackers_;

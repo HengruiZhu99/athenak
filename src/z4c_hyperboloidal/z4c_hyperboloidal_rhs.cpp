@@ -54,8 +54,8 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver,int stage,RHSSubset subset,
     });
   auto bulk_policy=Kokkos::RangePolicy<>(0,selected_count);
 #ifdef KOKKOS_ENABLE_SYCL
-  // Reuse the validated legacy bulk workgroup size on SYCL.
-  bulk_policy.set_chunk_size(128);
+  // A chunk of one selects Kokkos automatic sizing. Larger chunks set the workgroup.
+  bulk_policy.set_chunk_size(rhs_workgroup_size_);
 #endif
   // The interior and non-scri dependent lists contain no radial closure rows.
   // Compile their point kernel without the endpoint reconstruction temporaries.
