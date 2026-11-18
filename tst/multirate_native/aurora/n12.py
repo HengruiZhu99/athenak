@@ -156,22 +156,34 @@ def placement_for_binary(root, run, binary_sha):
         return {r['mode']:r for r in data['results'] if r['binary_sha256']==binary_sha}
     # Reuse same-executable six-interval controls when the full accepted
     # payload was checked against the archived spread run for this atlas.
+    modes = ['cohort','cohort_cached']
     cache_path = root/'send-cache-trial-results.json'
+    trial = root/'n12-10M/multirate-trial.json'
+    if trial.is_file() and json.loads(trial.read_text()).get('compare_stage_packets'):
+        modes.append('cohort_packets')
+        cases = root/f'stage-packets-{binary_sha[:12]}.json'
+        cache_path = root/(cases.stem+'-results.json')
+        if not set(modes+['classical'])<=measurements(cache_path).keys():
+            save(cases,[['current754',24,mode,6] for mode in (*modes,'classical')])
+            subprocess.run(['/usr/bin/python3.11',str(Path(__file__).with_name('measure.py')),
+                            str(root),'--cases',str(cases)],check=True)
     cache = measurements(cache_path)
     if all(m in cache and cache[m]['mesh']=='current754' and cache[m]['tiles']==24
-           and cache[m]['intervals']==6 for m in ('cohort','cohort_cached','classical')):
-        checks_path=root/'send-cache-trial-comparison.json'
+           and cache[m]['intervals']==6 for m in (*modes,'classical')):
+        checks_path=cache_path.with_name(cache_path.name.replace('results','comparison'))
         checks=json.loads(checks_path.read_text())['checks']
-        required={('cohort','spread'),('cohort_cached','cohort')}
+        required=set(zip(modes,['spread',*modes[:-1]]))
         verified={(c['method'],c['comparison']) for c in checks
                   if c['mesh']=='current754' and c['gpus']==12 and c['identical_checkpoint_payload']}
         if not required<=verified:
-            raise ValueError('missing cached-send N12 checkpoint equivalence')
-        choices=[cache[m] for m in ('cohort','cohort_cached')]
+            raise ValueError('missing verified N12 payload comparison: '+str(required-verified))
+        choices=[cache[m] for m in modes]
         selected=min(choices,key=lambda r:r['steady_seconds_per_M0'])
         save(run/'placement-selection.json',dict(selected=selected['mode'],binary_sha256=binary_sha,
              report=str(cache_path),steady_seconds_per_M0={r['mode']:r['steady_seconds_per_M0'] for r in choices}))
         return selected
+    if len(modes)>2:
+        raise ValueError('incomplete stage-packet N12 GPU controls')
     measured = measurements(report_path)
     candidates = ('cohort','locality','spread_fixed')
     if not set(candidates)<=measured.keys():
@@ -264,9 +276,11 @@ def main():
                 lines = stream.read(int(stream.readline())).decode().splitlines()[1:]
             owners = ','.join(row.split()[1] for row in lines)
             extra = (f'\n<multirate>\nbalance = none\nblock_owners = {owners}\n'
-                     f'complete_local_batches = {str(selected["mode"] in ("cohort","locality","cohort_cached")).lower()}\n'
-                     f'send_cache_mib = {96 if selected["mode"]=="cohort_cached" else 0}\n'
+                     f'complete_local_batches = {str(selected["mode"] in ("cohort","locality","cohort_cached","cohort_packets")).lower()}\n'
+                     f'send_cache_mib = {96 if selected["mode"] in ("cohort_cached","cohort_packets") else 0}\n'
                      'spherical_levels = 2,2,2,1,1,1,1,1,2,3,4\nprepost_exchanges = true\n')
+            if selected['mode']=='cohort_packets':
+                extra += 'coalesce_stage_packets = true\n'
         integrator = 'rk4_classical' if ratio==16 else 'mrgark4'
         inputs = (original_input.read_text()+extra+f'\n<time>\nintegrator = {integrator}\ndt = {dt:.17g}\n'
                   f'nlim = {target}\ntlim = {(target+2)*dt:.17g}\nndiag = {ratio}\n'

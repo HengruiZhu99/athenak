@@ -91,10 +91,10 @@ location_rad = .0001
         regions = ('2,2,2,1,1,1,1,1,2,3,4' if production else
                    '1,1,0,1' if adaptive else '0,0,0,1')
         balance = method if method in ('scalar','metis','spread') else 'none'
-        if method in ('cohort','locality','cohort_cached'):
+        if method in ('cohort','locality','cohort_cached','cohort_packets'):
             balance = 'spread'
-        if method in ('posted_fixed','polled_fixed','spread_fixed') or (method in ('cohort','locality','cohort_cached') and mesh == 'current754' and ranks == 24):
-            baseline = 'spread' if method in ('cohort','locality','spread_fixed','cohort_cached') else 'metis'
+        if method in ('posted_fixed','polled_fixed','spread_fixed') or (method in ('cohort','locality','cohort_cached','cohort_packets') and mesh == 'current754' and ranks == 24):
+            baseline = 'spread' if method in ('cohort','locality','spread_fixed','cohort_cached','cohort_packets') else 'metis'
             balance = 'none'
             with (root/'runs'/f'current754-24tiles-{baseline}'/'partition.log').open('rb') as stream:
                 record=stream.read(int(stream.readline())).decode().splitlines()
@@ -107,10 +107,12 @@ location_rad = .0001
                 (run/'node-placement.json').write_text(json.dumps(traffic,indent=2)+'\n')
             ownership=','.join(map(str,owners))
             inp += f'\n<multirate>\nblock_owners = {ownership}\n'
-        if method == 'cohort_cached':
+        if method == 'cohort_packets':
+            inp += '<multirate>\ncoalesce_stage_packets = true\n'
+        if method in ('cohort_cached','cohort_packets'):
             inp += '<multirate>\nsend_cache_mib = 96\n'
         inp += (f'<multirate>\nspherical_levels = {regions}\nuniform_reference = {str(uniform).lower()}\n'
-                f'complete_local_batches = {str(method in ("cohort","locality","cohort_cached")).lower()}\nprofile_peer_bytes = true\nbalance = {balance}\nranks_per_gpu = 2\nprepost_exchanges = {str(mode!="polled_fixed").lower()}\nwarmup_intervals = 2\nreview_interval = 32\n'
+                f'complete_local_batches = {str(method in ("cohort","locality","cohort_cached","cohort_packets")).lower()}\nprofile_peer_bytes = true\nbalance = {balance}\nranks_per_gpu = 2\nprepost_exchanges = {str(mode!="polled_fixed").lower()}\nwarmup_intervals = 2\nreview_interval = 32\n'
                 f'partition_log = {run}/partition.log\n')
     (run/'input.athinput').write_text(inp)
     launch = launcher(ranks)
@@ -206,9 +208,18 @@ os.environ['KOKKOS_TOOLS_LIBS'] = str(memory_tool)
 
 if case_file:
     for mesh,ranks,mode,intervals in json.loads(case_file.read_text()):
+        if mode=='selected':
+            from n12_paths import trajectory_directory
+            directory = trajectory_directory(root,'multirate')
+            selections = list(directory.glob('segment-*/placement-selection.json'))
+            choices = {row['selected'] for path in selections
+                       if (row:=json.loads(path.read_text()))['binary_sha256']==binary_sha256}
+            if len(choices)!=1:
+                raise ValueError('scaling requires one qualified placement for this executable')
+            mode = choices.pop()
         if mesh not in ('current754','adaptive754','adaptive1024','adaptive88') or ranks not in (2,4,8,12,24):
             raise ValueError('unsupported Aurora workload or tile count')
-        if mode not in ('cohort','locality','spread_fixed','cohort_cached','spread','metis','scalar','zorder','uniform','classical','cohort_cached_trace','classical_trace') or intervals<3:
+        if mode not in ('cohort','locality','spread_fixed','cohort_cached','cohort_packets','spread','metis','scalar','zorder','uniform','classical','cohort_cached_trace','classical_trace') or intervals<3:
             raise ValueError('unsupported benchmark method or insufficient timing intervals')
         measure(mesh,ranks,mode,intervals)
 elif throughput:
