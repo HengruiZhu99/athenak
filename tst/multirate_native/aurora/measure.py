@@ -36,7 +36,8 @@ def launcher(ranks):
 
 
 def case(mesh, ranks, mode, intervals):
-    production = mesh == 'current754'
+    deep_adaptive = mesh == 'adaptive754'
+    production = mesh == 'current754' or deep_adaptive
     adaptive = mesh in ('adaptive88','adaptive1024')
     uniform = mode in ('uniform', 'classical')
     base = 4*4.6944203735617445e-4 if production else 2**-14
@@ -45,7 +46,7 @@ def case(mesh, ranks, mode, intervals):
     complete = run/'completed.json'
     if complete.exists():
         receipt = json.loads(complete.read_text())
-        if receipt['binary_sha256']==binary_sha256:
+        if receipt['binary_sha256']==binary_sha256 and receipt.get('intervals')==intervals:
             return receipt
     run.mkdir(parents=True, exist_ok=True)
     if (run/'run.log').exists():
@@ -63,14 +64,36 @@ def case(mesh, ranks, mode, intervals):
         inp += f'\n<mesh_refinement>\nmax_nmb_per_rank = {max(12, (capacity+ranks-1)//ranks)}\n'
     else:
         inp = (campaign/'input.athinput' if production else source/'small.athinput').read_text()
+    if deep_adaptive:
+        # Start from the deployed initial atlas, then refine an off-puncture
+        # Cartesian leaf at the first common physical cut in both controls.
+        inp += f"""
+<mesh_refinement>
+refinement = adaptive
+num_levels = 5
+max_nmb_per_rank = {max(64,(1000+ranks-1)//ranks)}
+ncycle_check = {factor}
+refinement_interval = 0
+<amr_criterion0>
+method = location
+location_x1 = .053
+location_x2 = .041
+location_x3 = .037
+location_rad = .0001
+"""
     inp += '\n<time>\nintegrator = '+('rk4_classical' if mode=='classical' else 'mrgark4')
     inp += f'\ndt = {base/factor:.17g}\nnlim = {intervals*factor}\ntlim = 1\nndiag = 1\n'
     if mode != 'classical':
         regions = ('2,2,2,1,1,1,1,1,2,3,4' if production else
                    '1,1,0,1' if adaptive else '0,0,0,1')
-        balance = mode if mode in ('scalar','metis') else 'none'
+        balance = mode if mode in ('scalar','metis','spread') else 'none'
+        if mode in ('posted_fixed','polled_fixed'):
+            with (root/'runs/current754-24tiles-metis/partition.log').open('rb') as stream:
+                record=stream.read(int(stream.readline())).decode().splitlines()
+            ownership=','.join(line.split()[1] for line in record[1:])
+            inp += f'\n<multirate>\nblock_owners = {ownership}\n'
         inp += (f'<multirate>\nspherical_levels = {regions}\nuniform_reference = {str(uniform).lower()}\n'
-                f'balance = {balance}\nwarmup_intervals = 2\nreview_interval = 32\n'
+                f'balance = {balance}\nranks_per_gpu = 2\nprepost_exchanges = {str(mode!="polled_fixed").lower()}\nwarmup_intervals = 2\nreview_interval = 32\n'
                 f'partition_log = {run}/partition.log\n')
     (run/'input.athinput').write_text(inp)
     launch = launcher(ranks)
@@ -92,7 +115,7 @@ def case(mesh, ranks, mode, intervals):
     if not re.search(r'MULTIRATE_MEMORY space=SYCLDeviceUSM peak_allocated_bytes=[1-9]\d*', text):
         raise AssertionError('missing Kokkos GPU allocation receipt in '+str(run))
     regrids = re.findall(r'MULTIRATE_REGRID cycle=(\d+) created=(\d+) deleted=(\d+) blocks=(\d+)', text)
-    if adaptive and not any(int(created) and int(cycle)==factor for cycle,created,_,_ in regrids):
+    if (adaptive or deep_adaptive) and not any(int(created) and int(cycle)==factor for cycle,created,_,_ in regrids):
         raise AssertionError('missing synchronized first regrid: '+str(run))
     # Use the driver clock for every method. Differences include AMR, migration
     # and diagnostics between cuts. Ignore warmup and report individual samples.
@@ -104,7 +127,7 @@ def case(mesh, ranks, mode, intervals):
     endpoints = sorted((run/'rst').glob('*.rst'))
     if not endpoints:
         raise AssertionError('missing accepted checkpoint in '+str(run))
-    receipt = dict(binary_sha256=binary_sha256, input_sha256=hashlib.sha256(inp.encode()).hexdigest(),
+    receipt = dict(intervals=intervals, binary_sha256=binary_sha256, input_sha256=hashlib.sha256(inp.encode()).hexdigest(),
                    job_id=os.environ.get('PBS_JOBID'), mesh=mesh, mode=mode, tiles=ranks, physical_gpus=ranks//2,
                    nodes=len({host for host,_ in pairs}), simulated_M0=3*intervals*base,
                    seconds=wall, seconds_per_M0=wall/(3*intervals*base),
@@ -138,9 +161,14 @@ subprocess.run(['c++', '-std=c++17', '-O2', '-shared', '-fPIC',
 os.environ['KOKKOS_TOOLS_LIBS'] = str(memory_tool)
 
 if large_suite:
-    # Measure the same larger workload at both ends before filling in the curve.
-    for ranks, mode in [(24,'metis'),(2,'metis'),(24,'uniform'),(2,'uniform'),
-                        (12,'metis'),(4,'metis'),(8,'metis'),(24,'scalar')]:
+    # Isolate transport and placement on the deployed deep hierarchy first.
+    for mode in ('posted_fixed','spread','polled_fixed'):
+        measure('current754',24,mode,6)
+    for ranks,mode in [(24,'spread'),(2,'spread'),(24,'uniform'),(12,'spread')]:
+        measure('adaptive754',ranks,mode,5)
+    for mode in ('zorder','metis'):
+        measure('current754',24,mode,6)
+    for ranks,mode in [(24,'metis'),(2,'metis'),(24,'uniform'),(12,'metis')]:
         measure('adaptive1024',ranks,mode,6)
 else:
     # Cover both ends of the strong-scaling curve before the intermediate sizes.

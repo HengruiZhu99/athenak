@@ -111,7 +111,7 @@ class Z4cHyperboloidal {
   TaskStatus NewTimeStep(Driver *driver, int stage);
   bool UsesMultirate() const {return multirate_enabled_;}
   void InitializeMultirate(Driver *driver, bool rebuilt=false);
-  void AdvanceMultirate(Driver *driver);
+  TaskStatus AdvanceMultirate(Driver *driver, int stage);
   std::string MultirateIdentity() const;
   void RebuildAfterRedistribution(const HostArray2D<Real> &records);
   // Empty mask is the legacy/all-block path; active masks affect every stage operation.

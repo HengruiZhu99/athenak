@@ -35,6 +35,8 @@ overlap promotions and limiting characteristic block.
 | Multirate input | Default | Meaning |
 | --- | --- | --- |
 | `balance` | `metis` | Stage-aware placement. Build with `Athena_ENABLE_METIS=ON`. `scalar` selects the scalar-cost control and `none` keeps the starting partition. |
+| `ranks_per_gpu` | 1 | Consecutive MPI ranks bound to a single physical GPU. Use 2 with Aurora compact tile binding. `balance=spread` distributes the finest level across GPUs and then their tiles, exchanging leaves with the smallest predicted increase in donor traffic. |
+| `prepost_exchanges` | true | Compile peer demand from the actual stage graph and keep up to two receives posted per remote donor. False selects the probe-based comparison path. |
 | `max_characteristic_cfl` | 0.35 | Upper bound on the local characteristic CFL at initialization, remesh and evolution stages. |
 | `warmup_intervals`, `review_interval` | 32, 128 | Coarse endpoints for reviewing placement using measured kernel costs. |
 | `partition_log`, `replay_file` | empty | Write or replay recorded endpoint placements. Use separate files when recording a replayed run. |

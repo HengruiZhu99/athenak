@@ -50,7 +50,12 @@ void Exercise(int rank, int ranks, bool reverse_ownership) {
       consumers[{peer_gid,0,3}] += 1;
       consumers[{peer_gid,static_cast<std::uint32_t>(steps[peer_gid]),-1}] += 1;
     }
+    if (reverse_ownership && epoch==1) exchange.CompileReceives(consumers);
     exchange.Begin(epoch,steps,consumers);
+    if (reverse_ownership) {
+      const std::size_t wanted=(!requested.empty() && owners[peer_gid]!=rank)?3:0;
+      Require(exchange.ExpectedReceives()==wanted,"planned transport sends unused stage records");
+    }
     auto publish = [&](const mt::RecordKey &key) {
       const auto &points = exchange.OwnedPoints(key.gid);
       DvceArray1D<Real> values("multirate test local immutable record",points.size()*fields);

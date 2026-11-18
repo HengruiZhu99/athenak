@@ -82,6 +82,8 @@ struct BalanceOptions {
   int maximum_blocks_per_rank = 0;  // AMR storage capacity, zero when unlimited.
   bool require_nonempty_ranks = true;
   bool consider_sparse_compaction = true;
+  bool spread_finest = false;
+  int ranks_per_gpu = 1;
 };
 
 struct PartitionScore {

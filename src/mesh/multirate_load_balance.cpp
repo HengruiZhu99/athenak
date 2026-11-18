@@ -90,6 +90,61 @@ void RepairEmpty(const WorkGraph &g,int ranks,std::vector<int> &owners) {
   }
 }
 
+// Keep every rank's block count fixed. Exchange a fast leaf and a slower leaf
+// chosen by the change in donor traffic. First balance GPUs, then their tiles.
+void SpreadFinest(const WorkGraph &g, int ranks, const BalanceOptions &options,
+                  std::vector<int> &owners) {
+  const int tiles=options.ranks_per_gpu;
+  Require(tiles>0 && ranks%tiles==0,"ranks_per_gpu must divide the MPI rank count");
+  const auto blocks=ByGid(g);
+  int finest=0;
+  for (const auto *b:blocks) finest=std::max(finest,b->time_level);
+  if (!finest) return;
+  std::vector<std::vector<std::pair<int,double>>> neighbors(blocks.size());
+  for (const auto &e:g.edges) if (e.a!=e.b) {
+    const double cost=e.exchanges*(options.network_latency_seconds+e.bytes/options.network_bytes_per_second);
+    neighbors[e.a].emplace_back(e.b,cost);
+    neighbors[e.b].emplace_back(e.a,cost);
+  }
+  auto delta=[&](int gid,int rank,int swapped) {
+    double result=0;
+    for (const auto &[neighbor,cost]:neighbors[gid]) if (neighbor!=swapped)
+      result+=cost*((owners[neighbor]!=rank)-(owners[neighbor]!=owners[gid]));
+    return result;
+  };
+  auto distribute=[&](int first,int end,int group_size) {
+    int groups=(end-first)/group_size;
+    std::vector<int> count(groups,0);
+    for (const auto *b:blocks) {
+      int rank=owners[b->gid];
+      if (b->time_level==finest && rank>=first && rank<end) ++count[(rank-first)/group_size];
+    }
+    while (groups>1) {
+      int low=*std::min_element(count.begin(),count.end()),high=*std::max_element(count.begin(),count.end());
+      if (high-low<=1) break;
+      double best=std::numeric_limits<double>::infinity();
+      int from=-1,to=-1;
+      for (const auto *fast:blocks) {
+        const int a=fast->gid,ra=owners[a];
+        if (fast->time_level!=finest || ra<first || ra>=end || count[(ra-first)/group_size]!=high) continue;
+        for (const auto *slow:blocks) {
+          const int b=slow->gid,rb=owners[b];
+          if (slow->time_level==finest || rb<first || rb>=end || count[(rb-first)/group_size]!=low) continue;
+          const double cost=delta(a,rb,b)+delta(b,ra,a);
+          if (cost<best) {best=cost;from=a;to=b;}
+        }
+      }
+      // A device with only fine leaves has no slower block to exchange.
+      if (from<0) break;
+      --count[(owners[from]-first)/group_size];
+      ++count[(owners[to]-first)/group_size];
+      std::swap(owners[from],owners[to]);
+    }
+  };
+  distribute(0,ranks,tiles);
+  for (int first=0;first<ranks;first+=tiles) distribute(first,first+tiles,1);
+}
+
 std::vector<int> MetisPartition(const WorkGraph &g,int ranks,const BalanceOptions &o) {
 #if defined(ATHENA_MULTIRATE_METIS) && ATHENA_MULTIRATE_METIS
   const auto blocks=ByGid(g);const std::size_t n=blocks.size();
@@ -409,6 +464,7 @@ PartitionResult Partition(const WorkGraph &g,int ranks,const BalanceOptions &o,
   PartitionResult result;result.score.seconds=std::numeric_limits<double>::infinity();
   auto candidate=[&](std::string name,std::vector<int> owners) {
     if (o.require_nonempty_ranks) RepairEmpty(g,ranks,owners);
+    if (o.spread_finest) {SpreadFinest(g,ranks,o,owners);name="spread-"+name;}
     auto score=ScorePartition(g,ranks,owners,o,profile,tasks);
     result.candidates.push_back({name,score});
     // Prefer the current partition on equal predictions: migration is not free.

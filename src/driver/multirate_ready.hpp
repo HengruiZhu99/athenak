@@ -3,8 +3,6 @@
 #define DRIVER_MULTIRATE_READY_HPP_
 
 #include <map>
-#include <chrono>
-#include <thread>
 #include <stdexcept>
 #include <vector>
 
@@ -48,38 +46,5 @@ class RecordReadiness {
   std::vector<std::size_t> initial_, missing_;
   std::map<Batch, std::vector<std::size_t>> ready_;
 };
-// Both callbacks receive indices into the fixed block-stage task table. The
-// interior callback signals the local completion event after its RHS writes.
-// The coupled callback prepares the recipient view, evaluates boundary terms,
-// checks validity, publishes its slope and commits completed local steps.
-template <class Queue, class Progress, class Interior, class Coupled>
-double DispatchReadyBatches(Queue& interior, Queue& coupled, std::size_t task_count,
-                            Progress progress, Interior evaluate_interior,
-                            Coupled evaluate_coupled) {
-  using Clock = std::chrono::steady_clock;
-  double waiting_seconds = 0;
-  std::size_t completed = 0;
-  while (completed < task_count) {
-    const auto start = Clock::now();
-    for (const auto& record : progress()) {
-      coupled.Arrive(record);
-      interior.Arrive(record);
-    }
-    auto batch = coupled.TakeReady();
-    if (!batch.empty()) {
-      evaluate_coupled(batch);
-      completed += batch.size();
-      continue;
-    }
-    batch = interior.TakeReady();
-    if (!batch.empty()) {
-      evaluate_interior(batch);
-      continue;
-    }
-    std::this_thread::yield();
-    waiting_seconds += std::chrono::duration<double>(Clock::now() - start).count();
-  }
-  return waiting_seconds;
-}
 }  // namespace time_integration::multirate
 #endif

@@ -32,16 +32,21 @@ def main():
     root = Path(sys.argv[1])
     filename = sys.argv[2] if len(sys.argv)>2 else 'results.json'
     data = json.loads((root/filename).read_text())
+    reference_rows = {}
+    if filename != 'results.json' and (root/'results.json').exists():
+        baseline=json.loads((root/'results.json').read_text())
+        reference_rows={(v['mesh'],v['tiles'],v['mode']):v for v in baseline['results']}
     rows = {(v['mesh'],v['tiles'],v['mode']):v for v in data['results']}
     checks, scaling, methods = [], [], []
     for (mesh,tiles,mode), v in rows.items():
-        if mode == 'metis':
+        if mode in ('metis','spread','posted_fixed','polled_fixed','zorder','scalar'):
             for name, key in [('uniform_reference',(mesh,tiles,'uniform')),
                               ('one_gpu_decomposition',(mesh,2,mode))]:
-                if key not in rows or rows[key] is v:
+                reference=rows.get(key,reference_rows.get(key))
+                if not reference or reference is v or reference['simulated_M0']!=v['simulated_M0']:
                     continue
-                checks.append(dict(mesh=mesh,gpus=tiles//2,comparison=name,**compare(v,rows[key])))
-        uniform = rows.get((mesh,tiles,'uniform'))
+                checks.append(dict(mesh=mesh,method=mode,gpus=tiles//2,comparison=name,**compare(v,reference)))
+        uniform = rows.get((mesh,tiles,'uniform'),reference_rows.get((mesh,tiles,'uniform')))
         if uniform and mode != 'uniform':
             methods.append(dict(mesh=mesh,method=mode,gpus=tiles//2,
                                 steady_speedup_vs_uniform=uniform['steady_seconds_per_M0']/v['steady_seconds_per_M0'],

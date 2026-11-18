@@ -591,7 +591,7 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool wdfla
 
       // Execute TaskLists
       if (UsesMultirate()) {
-        pmesh->pmb_pack->pz4c_hyperboloidal->AdvanceMultirate(this);
+        ExecuteTaskList(pmesh, "multirate_interval", 0);
       } else {
         // Work before time integrator indicated by "0" in stage
         stage_time=pmesh->time;

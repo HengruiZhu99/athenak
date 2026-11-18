@@ -147,6 +147,24 @@ void BackendAndDeterminism() {
   o.memory_capacity_per_rank=50;
   Reject([&]{mb::Partition(g,4,o,p);},"impossible rank capacity accepted");
 }
+void FineGpuCoverage() {
+  mb::WorkGraph graph;
+  for(int g=0;g<48;++g) {
+    mb::BlockCost b;
+    b.gid=g;b.time_level=g<8?4:0;b.work_units=1;b.memory_bytes=1;b.phase_costs={1.};
+    graph.blocks.push_back(b);
+  }
+  mb::BalanceOptions options;
+  options.backend=mb::Backend::scalar_reference;options.consider_sparse_compaction=false;
+  options.spread_finest=true;options.ranks_per_gpu=2;
+  std::vector<int> current(48);
+  for(int g=0;g<48;++g) current[g]=g/6;
+  auto placement=mb::Partition(graph,8,options,{}, {},current);
+  std::vector<int> per_tile(8);
+  for(int g=0;g<8;++g) ++per_tile.at(placement.owner_by_gid[g]);
+  Check(std::all_of(per_tile.begin(),per_tile.end(),[](int count){return count==1;}),
+        "eight fast blocks did not cover four GPUs and their eight tiles");
+}
 void Rebalance() {
   Check(!mb::ConsiderRebalance(31,100,true,1,.5,1).apply,"rebalance before warmup");
   Check(!mb::ConsiderRebalance(32,100,false,1,.5,1).apply,"midstep rebalance allowed");
@@ -160,7 +178,7 @@ void Rebalance() {
 
 int main() {
   try {
-    Profiles();IdentityAndReplay();DagScoring();SparseCompaction();BackendAndDeterminism();Rebalance();
+    Profiles();IdentityAndReplay();DagScoring();SparseCompaction();BackendAndDeterminism();FineGpuCoverage();Rebalance();
     std::cout<<"multirate balance tests passed; METIS="<<mb::MetisAvailable()<<'\n';
   } catch (const std::exception &e) {std::cerr<<e.what()<<'\n';return 1;}
 }

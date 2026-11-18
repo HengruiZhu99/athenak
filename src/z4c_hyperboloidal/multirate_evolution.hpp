@@ -13,7 +13,7 @@ class MultirateEvolution {
   MultirateEvolution(Z4cHyperboloidal&, Driver*, bool rebuilt);
   static void ReadOptions(ParameterInput& input);
   ~MultirateEvolution();
-  void Advance(Driver*);
+  bool Poll(Driver*);
 
  private:
   struct Impl;
