@@ -167,6 +167,8 @@ class Z4cHyperboloidal {
   std::unique_ptr<MultirateEvolution> multirate_;
   MeshBlockPack *pmy_pack;
   ParameterInput *pinput_;
+  bool split_bulk_jets_ = false;
+  DvceArray2D<Real> residual_jet_scratch_;
 #ifdef KOKKOS_ENABLE_SYCL
   int rhs_workgroup_size_ = 128;
 #endif

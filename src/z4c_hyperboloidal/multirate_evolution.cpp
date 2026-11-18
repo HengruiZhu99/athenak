@@ -245,7 +245,7 @@ struct MultirateEvolution::Impl {
   };
   using BatchKey = std::tuple<int, size_t, bal::KernelKind>;
   mr::RecordReadiness<Key, BatchKey> readiness, interior_readiness;
-  bool fused_rhs = false;
+  bool fused_rhs = false, wait_for_donors = false;
   bool complete_local_batches = false, peer_profile_pending = false;
   struct ActiveLayout {
     DvceArray1D<int> mask, native_indices;
@@ -270,6 +270,7 @@ struct MultirateEvolution::Impl {
   double max_cfl = .35, migration_cost = 0;
   explicit Impl(Z4cHyperboloidal& module, Driver* driver, bool rebuilt)
       : p(module), pack(p.pmy_pack), mesh(pack->pmesh), pin(p.pinput_) {
+    wait_for_donors = pin->GetOrAddBoolean("multirate", "wait_for_donors", false);
     fused_rhs = pin->GetOrAddBoolean("multirate", "fused_rhs", false);
     if (fused_rhs && !pin->GetBoolean("multirate", "complete_local_batches"))
       throw std::invalid_argument("fused_rhs requires complete local batches");
@@ -816,7 +817,7 @@ void MultirateEvolution::Impl::BuildLocal() {
           std::vector<Key> own_keys;
           for (const auto& key : task.dependencies)
             if (key.gid == gid) own_keys.push_back(key);
-          interior_readiness.Add(batch, own_keys);
+          interior_readiness.Add(batch, wait_for_donors ? task.dependencies : own_keys);
           // Local completion event. Stages 4..7 never occur in a wire record.
           halo_keys.push_back({gid, step, stage + 4});
         }

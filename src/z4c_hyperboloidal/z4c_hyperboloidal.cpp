@@ -31,6 +31,7 @@ Z4cHyperboloidal::~Z4cHyperboloidal() = default;
 Z4cHyperboloidal::Z4cHyperboloidal(MeshBlockPack *ppack, ParameterInput *pin)
     : pmy_pack(ppack), pinput_(pin) {
   auto *pm=ppack->pmesh;
+  split_bulk_jets_ = pin->GetOrAddBoolean("z4c_hyperboloidal", "split_bulk_jets", false);
 #ifdef KOKKOS_ENABLE_SYCL
   rhs_workgroup_size_ = pin->GetOrAddInteger("z4c_hyperboloidal", "rhs_workgroup_size", 128);
   const auto device = Kokkos::SYCL().sycl_queue().get_device();

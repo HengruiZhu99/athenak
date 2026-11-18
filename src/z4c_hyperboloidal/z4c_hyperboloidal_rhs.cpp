@@ -57,18 +57,68 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver,int stage,RHSSubset subset,
   // A chunk of one selects Kokkos automatic sizing. Larger chunks set the workgroup.
   bulk_policy.set_chunk_size(rhs_workgroup_size_);
 #endif
+  // Each field's logical finite differences are independent. Store their Cartesian
+  // jets component-major so adjacent points write adjacent device addresses.
+  if (split_bulk_jets_ && !radial && selected_count>residual_jet_scratch_.extent_int(1)) {
+    residual_jet_scratch_=DvceArray2D<Real>(Kokkos::view_alloc(Kokkos::WithoutInitializing,
+        "hyperboloidal residual jets"),14*Fields::independent_count,selected_count);
+  }
+  const auto scratch=residual_jet_scratch_;
+  if (split_bulk_jets_ && !radial) {
+    Kokkos::parallel_for("hyperboloidal residual field jets",
+        Kokkos::RangePolicy<Kokkos::IndexType<KOIndex>>(0,KOIndex(selected_count)*Fields::independent_count),
+        KOKKOS_LAMBDA(KOIndex task) {
+          const int index=static_cast<int>(task%selected_count);
+          const int slot=static_cast<int>(task/selected_count);
+          int field=slot;
+          if (field>=6) ++field;
+          if (field>=12) ++field;
+          const int p=selected(index);
+          const auto c=cells(p);
+          const auto map=maps(p);
+          const BlockPointReader reader{delta,c.m,c.k,c.j,c.i};
+          const Real inv_h[3]={Real(count),Real(count),Real(count)};
+          Real beta[3],transport=0;
+          for (int a=0;a<3;++a) beta[a]=reader(22+a)+refs(p)[22+a].f-map.x[a];
+          const auto jet=SampleResidualJet(reader,field,map,inv_h,beta,
+              field<=6 || field==18 || (field>=22 && field<25),transport);
+          const int first=14*slot;
+          scratch(first,index)=jet.f;
+          for (int a=0;a<3;++a) {
+            scratch(first+1+a,index)=jet.d[a];
+            for (int b=0;b<3;++b) scratch(first+4+3*a+b,index)=jet.h[a][b];
+          }
+          scratch(first+13,index)=transport;
+        });
+  }
   // The interior and non-scri dependent lists contain no radial closure rows.
   // Compile their point kernel without the endpoint reconstruction temporaries.
-  auto evaluate=[&](auto radial_rows) {
+  auto evaluate=[&](auto radial_rows, auto precomputed) {
     constexpr bool with_radial_rows=decltype(radial_rows)::value;
     Kokkos::parallel_for("hyperboloidal block RHS",bulk_policy,
       KOKKOS_LAMBDA(int index) {
         const int p=selected(index);const auto c=cells(p);const auto map=maps(p);
         const Real inv_h[3]={Real(count),Real(count),Real(count)};
         const BlockPointReader reader{delta,c.m,c.k,c.j,c.i};
-        const auto state=with_radial_rows && surface.HasRadialRow(p)
-            ? EndpointState(p,reader,map,inv_h,refs(p),params,surface)
-            : BuildPointState(reader,map,inv_h,refs(p),params);
+        PointState state;
+        if constexpr (with_radial_rows) {
+          state=surface.HasRadialRow(p) ? EndpointState(p,reader,map,inv_h,refs(p),params,surface)
+                                        : BuildPointState(reader,map,inv_h,refs(p),params);
+        } else if constexpr (decltype(precomputed)::value) {
+          for (int f=0;f<Fields::count;++f) if (Fields::Independent(f)) {
+            const int first=14*Fields::IndependentSlot(f);
+            auto& jet=state.jets[f];
+            jet.f=scratch(first,index);
+            for (int a=0;a<3;++a) {
+              jet.d[a]=scratch(first+1+a,index);
+              for (int b=0;b<3;++b) jet.h[a][b]=scratch(first+4+3*a+b,index);
+            }
+            state.transport[f]=scratch(first+13,index);
+          }
+          RestorePointState(state,reader,map,inv_h,refs(p),params);
+        } else {
+          state=BuildPointState(reader,map,inv_h,refs(p),params);
+        }
         statuses(p)=static_cast<int>(state.status);
         if (state.status!=PointStatus::success) return;
         PointForcing forcing;
@@ -84,8 +134,9 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver,int stage,RHSSubset subset,
         for (int f=0;f<nvar;++f) output(c.m,f,c.k,c.j,c.i)=result.rate[f];
       });
   };
-  if (radial) evaluate(std::true_type{});
-  else evaluate(std::false_type{});
+  if (radial) evaluate(std::true_type{}, std::false_type{});
+  else if (split_bulk_jets_) evaluate(std::false_type{}, std::true_type{});
+  else evaluate(std::false_type{}, std::false_type{});
   int invalid=0;
   Kokkos::parallel_reduce("hyperboloidal RHS validity",
     Kokkos::RangePolicy<>(0,selected.extent_int(0)),KOKKOS_LAMBDA(int i,int &bad) {
