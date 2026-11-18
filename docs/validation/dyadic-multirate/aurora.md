@@ -130,3 +130,16 @@ At coarse interval five, grouping reduced messages from 81,522 to 34,318. The wi
 The separate all-rank Level Zero trace in job 9100919 covered two post-warmup coarse intervals. Multirate used 126.19 summed tile-seconds in compute kernels against 132.41 for native uniform RK4, a 4.7% reduction. Device copy and fill commands accounted for 4.94 and 12.24 tile-seconds, bringing total timed device commands to 131.13 and 144.64 (9.3% reduction). RHS kernels took 99.58 and 108.92. Multirate stage reconstruction took 2.53 tile-seconds for internal owned stages, 6.44 for accepted states and 3.14 for recipient-specific donors. The earlier send-cache-only build used 35.39 tile-seconds in owned and donor reconstruction combined, compared with 12.11 here. The two builds ran on different allocations. The same-build comparison against uniform used identical nodes and trace windows.
 
 Counting active bulk points in each native checkpoint block and applying its time level gives 33,467,904 bulk point RHS evaluations per coarse interval for multirate versus 91,736,064 for uniform RK4 (63.5% fewer). Both methods evaluate the 864 scri points 55,296 times in total per coarse interval. All scri blocks take all 16 finest local steps.
+
+### Strong scaling on the fixed 754-block N12 mesh
+
+Jobs 9101069 and 9100919 used the identical archived executable, input physics and six coarse intervals. The one-GPU run bound one rank to each of the two tiles on a single device. The two-node run bound 24 ranks to 12 devices. Both methods reproduced all 139,683,024 stored field entries and the persistent diagnostics bitwise across these decompositions.
+
+| Active physical GPUs | Multirate evolution s/M0 | Native uniform RK4 evolution s/M0 | Uniform time / multirate time |
+| ---: | ---: | ---: | ---: |
+| 1 | 2,624 | 5,223 | 1.99 |
+| 12 | 1,028 | 1,206 | 1.17 |
+
+The one-to-twelve speedup is 2.55× for multirate (21.3% parallel efficiency) and 4.33× for uniform (36.1%). Multirate exchanged 1.71 GB in 316 messages per coarse interval on one GPU, rising to 12.98 GB in 34,318 messages on 12 GPUs. Across the allocation the split schedule issued 768 and 5,920 interior-plus-dependent batches, respectively. At interval five median time per rank with no ready work increased from 1.10 to 2.75 seconds.
+
+The whole one-GPU launches took 387.5 seconds for multirate and 375.2 seconds for uniform, including initialization, partition selection and final output. The 12-GPU multirate benchmark replayed a saved placement. The evolution timings use the median of the three regular post-warmup intervals. The one-GPU multirate intervals were 14.57, 25.00 and 14.78 seconds. The middle interval included a longer publication and acceptance phase. With 12 GPUs they were 6.18, 5.79 and 5.78 seconds.
