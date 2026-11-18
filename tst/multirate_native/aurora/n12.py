@@ -53,12 +53,12 @@ def verify_export(manifest, parameters):
     data = json.loads(manifest.read_text())
     directory = Path(parameters['problem','binary_directory'])
     identity = parameters['problem','binary_identity']
-    if 'identity' in data and data['identity'] != identity:
+    if data.get('identity') != identity:
         raise ValueError('N12 export identity differs from the input')
     blocks = data.get('blocks')
-    if not isinstance(blocks,dict) or not any(isinstance(v,dict) and 'sha256' in v for v in blocks.values()):
-        return 0
-    if data.get('status','COMPLETE') != 'COMPLETE':
+    if not isinstance(blocks,dict) or len(blocks) != 754:
+        raise ValueError('N12 export must contain the 754 recorded block digests')
+    if data.get('status') != 'COMPLETE':
         raise ValueError('incomplete N12 export')
     if set(blocks) != {p.name for p in directory.glob('*.hbi')}:
         raise ValueError('N12 export block inventory differs from the manifest')

@@ -49,7 +49,11 @@ if [[ -n ${MR_N12_MODE:-} ]]; then
     /usr/bin/python3.11 -u "$suite/measure.py" "$root" --cases "$root/$MR_CASES"
   fi
   remaining=$((3300-SECONDS+segment_start))
-  exec "$root/../n12-full-scri-20261115/analysis-env/bin/python" -u "$suite/n12.py" \
-    "$root" "$MR_N12_MODE" --wall-seconds "$remaining"
+  analysis_python="$root/../n12-full-scri-20261115/analysis-env/bin/python"
+  "$analysis_python" -u "$suite/n12.py" "$root" "$MR_N12_MODE" --wall-seconds "$remaining"
+  if [[ ${MR_N12_CHAIN:-0} = 1 ]]; then
+    "$analysis_python" -u "$suite/n12_chain.py" "$root" "$MR_N12_MODE"
+  fi
+  exit 0
 fi
 exec /usr/bin/python3.11 -u "$suite/measure.py" "$root" ${MR_LARGER_SUITE:+--larger-adaptive}

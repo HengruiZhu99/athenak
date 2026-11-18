@@ -19,7 +19,7 @@ def compare(left, right):
         # related non-binary-exact inputs can end a few ulps apart.
         if abs(endpoint['time']-expected)>max(1,endpoint['cycle'])*math.ulp(expected):
             raise ValueError('checkpoint time differs from requested endpoint beyond summation roundoff')
-    for key in ('topology', 'atlas'):
+    for key in ('blocks','record_blocks','stride','identity','topology','atlas'):
         if a[key] != b[key]:
             raise ValueError(f'unmatched {key}: {left["checkpoint"]}, {right["checkpoint"]}')
     x, y = payload(a), payload(b)
@@ -58,6 +58,14 @@ def main():
                 if not reference or reference is v or reference['simulated_M0']!=v['simulated_M0']:
                     continue
                 checks.append(dict(mesh=mesh,method=mode,gpus=tiles//2,comparison=name,**compare(v,reference)))
+        native_key = (mesh,tiles,'classical')
+        native = rows.get(native_key,reference_rows.get(native_key))
+        if (native and mode not in ('classical','uniform') and native['simulated_M0']==v['simulated_M0']
+                and native['binary_sha256']==v['binary_sha256']):
+            methods.append(dict(mesh=mesh,method=mode,gpus=tiles//2,control='native_uniform_rk4',
+                                binary_sha256=v['binary_sha256'],
+                                elapsed_speedup=native['seconds']/v['seconds'],
+                                steady_speedup=native['steady_seconds_per_M0']/v['steady_seconds_per_M0']))
         uniform = rows.get((mesh,tiles,'uniform'),reference_rows.get((mesh,tiles,'uniform')))
         if uniform and mode != 'uniform' and uniform['simulated_M0']==v['simulated_M0']:
             methods.append(dict(mesh=mesh,method=mode,gpus=tiles//2,
