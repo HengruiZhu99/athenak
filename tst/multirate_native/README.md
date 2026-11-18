@@ -24,6 +24,26 @@ Enable CTest registration with `Athena_ENABLE_MULTIRATE_NATIVE_TESTS=ON`.
 the MPI ownership and redistribution cases, so its report is not a substitute
 for the MPI report.
 
+## Selecting the stepper
+
+Set `<time>/integrator=mrgark4` and set `<time>/dt` to the coarsest interval in
+coordinate time. A level of 3 takes eight local steps per interval. Set
+`<multirate>/spherical_levels=auto` or give a comma-separated integer list in
+order of increasing physical radius. The startup log lists the resolved levels,
+overlap promotions and limiting characteristic block.
+
+| Multirate input | Default | Meaning |
+| --- | --- | --- |
+| `balance` | `metis` | Stage-aware placement. Build with `Athena_ENABLE_METIS=ON`. `scalar` selects the scalar-cost control and `none` keeps the starting partition. |
+| `max_characteristic_cfl` | 0.35 | Upper bound on the local characteristic CFL at initialization, remesh and evolution stages. |
+| `warmup_intervals`, `review_interval` | 32, 128 | Coarse endpoints for reviewing placement using measured kernel costs. |
+| `partition_log`, `replay_file` | empty | Write or replay recorded endpoint placements. Use separate files when recording a replayed run. |
+| `uniform_reference` | false | Advance all blocks at level zero with the same EX5 base method. Supply the fine reference timestep as `<time>/dt`. |
+
+The complete four-region input is `small.athinput`. Output cadence expressed in
+cycles counts coarse intervals. Set a uniform control's cycle-based refinement
+and output periods to reach the same physical cuts as the multirate run.
+
 ## Performance runs
 
 `benchmark.py` prepares commands for an existing one/two-node debug allocation;
