@@ -172,6 +172,8 @@ void Z4cHyperboloidal::ClearActiveBlocks() {
   active_step_dt = 0;
 }
 void MultirateEvolution::ReadOptions(ParameterInput& input) {
+  if (input.GetOrAddInteger("multirate","send_cache_mib",0)<0)
+    throw std::invalid_argument("multirate send_cache_mib must be nonnegative");
   const auto levels = input.GetOrAddString("multirate", "spherical_levels", "auto");
   if (levels != "auto") ParseLevels(levels);
   const auto balance = input.GetOrAddString("multirate", "balance", "metis");
@@ -799,6 +801,7 @@ void MultirateEvolution::Impl::BuildLocal() {
       }
     ++consumers[{gid, static_cast<std::uint32_t>(steps[gid]), -1}];
   }
+  exchange->SetSendCacheBytes(static_cast<std::size_t>(pin->GetInteger("multirate","send_cache_mib"))*1024*1024);
   if (pin->GetBoolean("multirate","prepost_exchanges")) exchange->CompileReceives(consumers);
 }
 Combination MultirateEvolution::Impl::Combine(size_t stage, int gid) const {
@@ -1380,11 +1383,11 @@ void MultirateEvolution::Impl::CompleteInterval(Driver* driver) {
 #endif
   unsigned long long peaks[] = {stats.peak_record_bytes, stats.peak_packet_bytes, max_batch};
   unsigned long long sums[] = {stats.sent_bytes, batch_count, interior_receives, interior_batches_with_receives,
-                               stats.send_packets, stats.pack_kernels};
+                               stats.send_packets, stats.pack_kernels, stats.reused_send_packets};
 #if MPI_PARALLEL_ENABLED
   MPI_Reduce(global_variable::my_rank == 0 ? MPI_IN_PLACE : peaks, peaks, 3, MPI_UNSIGNED_LONG_LONG,
              MPI_MAX, 0, MPI_COMM_WORLD);
-  MPI_Reduce(global_variable::my_rank == 0 ? MPI_IN_PLACE : sums, sums, 6, MPI_UNSIGNED_LONG_LONG,
+  MPI_Reduce(global_variable::my_rank == 0 ? MPI_IN_PLACE : sums, sums, 7, MPI_UNSIGNED_LONG_LONG,
              MPI_SUM, 0, MPI_COMM_WORLD);
   MPI_Reduce(global_variable::my_rank == 0 ? MPI_IN_PLACE : level_work.data(), level_work.data(),
              level_work.size(), MPI_UNSIGNED_LONG_LONG, MPI_SUM, 0, MPI_COMM_WORLD);
@@ -1396,7 +1399,7 @@ void MultirateEvolution::Impl::CompleteInterval(Driver* driver) {
               << " peak_packet_bytes_per_rank=" << peaks[1] << " maximum_batch_blocks=" << peaks[2]
               << " sent_bytes=" << sums[0] << " batches=" << sums[1] << " records_completed_on_interior_poll=" << sums[2]
               << " interior_batches_with_receives=" << sums[3] << " send_packets=" << sums[4]
-              << " send_pack_kernels=" << sums[5] << " rhs_by_level=";
+              << " send_pack_kernels=" << sums[5] << " reused_send_packets=" << sums[6] << " rhs_by_level=";
     for (size_t i = 0; i < level_work.size(); ++i) std::cout << (i ? "," : "") << level_work[i];
     std::cout << "\n";
   }

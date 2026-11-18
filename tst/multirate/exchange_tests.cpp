@@ -126,6 +126,7 @@ void ExerciseBatches(int rank,int ranks) {
     }
   }
   mt::RecordExchange exchange(owners,owned,requested,fields);
+  exchange.SetSendCacheBytes(4096);
   exchange.CompileReceives(consumers);
   for (int epoch=1; epoch<=2; ++epoch) {
     exchange.Begin(epoch,steps,consumers,true);
@@ -155,6 +156,7 @@ void ExerciseBatches(int rank,int ranks) {
     }
     Require(queued.sent_bytes==wire && queued.send_packets==packets,"batched wire counters disagree");
     Require(queued.peak_packet_bytes==wire+queued.received_bytes,"batched packet peak differs from allocations");
+    if (epoch>1 && packets) Require(queued.reused_send_packets>0,"completed GPU send buffers were not reused");
     Require(queued.pack_kernels==packets,"one sparse gather per MPI send");
     const auto start=std::chrono::steady_clock::now();
     while (!exchange.Finish())

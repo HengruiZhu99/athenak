@@ -84,7 +84,7 @@ def main():
             methods.append(dict(mesh=mesh,method=mode,gpus=tiles//2,
                                 steady_speedup_vs_uniform=uniform['steady_seconds_per_M0']/v['steady_seconds_per_M0'],
                                 elapsed_speedup_vs_uniform=uniform['seconds_per_M0']/v['seconds_per_M0']))
-        for candidate, control in [('posted_fixed','polled_fixed'),('spread','zorder'),('spread','metis'),('cohort','spread'),('cohort','classical'),('locality','cohort'),('spread_fixed','spread')]:
+        for candidate, control in [('posted_fixed','polled_fixed'),('spread','zorder'),('spread','metis'),('cohort','spread'),('cohort','classical'),('locality','cohort'),('spread_fixed','spread'),('cohort_cached','cohort')]:
             other=rows.get((mesh,tiles,control),reference_rows.get((mesh,tiles,control)))
             if mode==candidate and other and other['simulated_M0']==v['simulated_M0']:
                 methods.append(dict(mesh=mesh,method=mode,control=control,gpus=tiles//2,

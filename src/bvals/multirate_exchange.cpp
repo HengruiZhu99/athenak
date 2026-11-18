@@ -104,6 +104,27 @@ struct RecordExchange::Impl {
   };
   std::vector<Pending> sends, receives;
   std::vector<DvceArray1D<Real>> pack_sources;
+  std::map<std::size_t,std::vector<DvceArray1D<Real>>> send_cache;
+  std::size_t send_cache_limit=0, cached_bytes=0;
+  DvceArray1D<Real> SendBuffer(std::size_t size) {
+    auto found=send_cache.find(size);
+    if (found==send_cache.end())
+      return DvceArray1D<Real>(Kokkos::view_alloc(Kokkos::WithoutInitializing,
+          "multirate immutable send packet"),size);
+    auto buffer=std::move(found->second.back());
+    found->second.pop_back();
+    if (found->second.empty()) send_cache.erase(found);
+    cached_bytes-=size*sizeof(Real);
+    ++stats.reused_send_packets;
+    return buffer;
+  }
+  void RetireSend(DvceArray1D<Real>& buffer) {
+    const auto size=buffer.extent(0), bytes=size*sizeof(Real);
+    if (bytes && bytes<=send_cache_limit-cached_bytes) {
+      send_cache[size].push_back(std::move(buffer));
+      cached_bytes+=bytes;
+    }
+  }
   // Each MPI source/destination pair has a dense tag namespace. Two banks
   // distinguish adjacent epochs without copying a header back from the GPU.
   bool planned = false;
@@ -363,7 +384,7 @@ void RecordExchange::Publish(const RecordKey &key, const DvceArray1D<Real> &valu
     const int fields = p.fields;
     const auto size = indices.extent(0)*fields;
     Count(size+header);
-    pending.packet = DvceArray1D<Real>(Kokkos::view_alloc(Kokkos::WithoutInitializing,"multirate immutable send packet"),size+header);
+    pending.packet = p.SendBuffer(size+header);
     p.AllocatePacket(size+header);
     const auto bytes=(size+header)*sizeof(Real);
     p.stats.sent_bytes+=bytes;
@@ -389,6 +410,17 @@ void RecordExchange::Publish(const RecordKey &key, const DvceArray1D<Real> &valu
 #endif
 }
 
+void RecordExchange::SetSendCacheBytes(std::size_t bytes) {
+  if (!impl_->finished) throw std::logic_error("Resize send cache only at synchronized endpoints");
+#if MPI_PARALLEL_ENABLED
+  impl_->send_cache.clear();
+  impl_->cached_bytes=0;
+  impl_->send_cache_limit=bytes;
+#else
+  (void)bytes;
+#endif
+}
+
 bool RecordExchange::Has(const RecordKey &key) const { return impl_->records.count(key) != 0; }
 DvceArray1D<Real> RecordExchange::Data(const RecordKey &key) const { return impl_->records.at(key); }
 
@@ -411,7 +443,12 @@ bool RecordExchange::Poll() {
   for (std::size_t i = 0; i < p.sends.size();) {
     int done = 0;
     CheckMPI(MPI_Test(&p.sends[i].request,&done,MPI_STATUS_IGNORE),"multirate send poll failed");
-    if (done) { p.packet_bytes-=p.sends[i].packet.extent(0)*sizeof(Real); p.sends.erase(p.sends.begin()+i); progressed = true; } else ++i;
+    if (done) {
+      p.packet_bytes-=p.sends[i].packet.extent(0)*sizeof(Real);
+      p.RetireSend(p.sends[i].packet);
+      p.sends.erase(p.sends.begin()+i);
+      progressed=true;
+    } else ++i;
   }
   // Bound one call's admission work so ready GPU tasks can continue to run.
   for (int admitted = 0; !p.planned && admitted < 32; ++admitted) {

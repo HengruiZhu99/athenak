@@ -88,10 +88,10 @@ location_rad = .0001
         regions = ('2,2,2,1,1,1,1,1,2,3,4' if production else
                    '1,1,0,1' if adaptive else '0,0,0,1')
         balance = mode if mode in ('scalar','metis','spread') else 'none'
-        if mode in ('cohort','locality'):
+        if mode in ('cohort','locality','cohort_cached'):
             balance = 'spread'
-        if mode in ('posted_fixed','polled_fixed','spread_fixed') or (mode in ('cohort','locality') and mesh == 'current754' and ranks == 24):
-            baseline = 'spread' if mode in ('cohort','locality','spread_fixed') else 'metis'
+        if mode in ('posted_fixed','polled_fixed','spread_fixed') or (mode in ('cohort','locality','cohort_cached') and mesh == 'current754' and ranks == 24):
+            baseline = 'spread' if mode in ('cohort','locality','spread_fixed','cohort_cached') else 'metis'
             balance = 'none'
             with (root/'runs'/f'current754-24tiles-{baseline}'/'partition.log').open('rb') as stream:
                 record=stream.read(int(stream.readline())).decode().splitlines()
@@ -104,8 +104,10 @@ location_rad = .0001
                 (run/'node-placement.json').write_text(json.dumps(traffic,indent=2)+'\n')
             ownership=','.join(map(str,owners))
             inp += f'\n<multirate>\nblock_owners = {ownership}\n'
+        if mode == 'cohort_cached':
+            inp += '<multirate>\nsend_cache_mib = 96\n'
         inp += (f'<multirate>\nspherical_levels = {regions}\nuniform_reference = {str(uniform).lower()}\n'
-                f'complete_local_batches = {str(mode in ("cohort","locality")).lower()}\nprofile_peer_bytes = true\nbalance = {balance}\nranks_per_gpu = 2\nprepost_exchanges = {str(mode!="polled_fixed").lower()}\nwarmup_intervals = 2\nreview_interval = 32\n'
+                f'complete_local_batches = {str(mode in ("cohort","locality","cohort_cached")).lower()}\nprofile_peer_bytes = true\nbalance = {balance}\nranks_per_gpu = 2\nprepost_exchanges = {str(mode!="polled_fixed").lower()}\nwarmup_intervals = 2\nreview_interval = 32\n'
                 f'partition_log = {run}/partition.log\n')
     (run/'input.athinput').write_text(inp)
     launch = launcher(ranks)
@@ -191,7 +193,7 @@ if case_file:
     for mesh,ranks,mode,intervals in json.loads(case_file.read_text()):
         if mesh not in ('current754','adaptive754','adaptive1024','adaptive88') or ranks not in (2,4,8,12,24):
             raise ValueError('unsupported Aurora workload or tile count')
-        if mode not in ('cohort','locality','spread_fixed','spread','metis','scalar','zorder','uniform','classical') or intervals<3:
+        if mode not in ('cohort','locality','spread_fixed','cohort_cached','spread','metis','scalar','zorder','uniform','classical') or intervals<3:
             raise ValueError('unsupported benchmark method or insufficient timing intervals')
         measure(mesh,ranks,mode,intervals)
 elif throughput:

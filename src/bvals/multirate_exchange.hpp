@@ -61,6 +61,8 @@ class RecordExchange {
   using Publication = std::pair<RecordKey,DvceArray1D<Real>>;
   // Pack into individually owned GPU-aware MPI buffers for the destination peers.
   void PublishBatch(const std::vector<Publication> &batch);
+  // Reuse completed sends of the same length up to a rank-local byte budget.
+  void SetSendCacheBytes(std::size_t bytes);
   bool Has(const RecordKey &key) const;
   DvceArray1D<Real> Data(const RecordKey &key) const;
   bool Poll();  // true if transport made progress
@@ -72,6 +74,7 @@ class RecordExchange {
   struct Statistics {
     std::uint64_t peak_record_bytes=0, peak_packet_bytes=0;
     std::uint64_t sent_bytes=0, received_bytes=0, send_packets=0, pack_kernels=0;
+    std::uint64_t reused_send_packets=0;
     std::vector<std::uint64_t> sent_bytes_by_peer;
   };
   Statistics Stats() const;
