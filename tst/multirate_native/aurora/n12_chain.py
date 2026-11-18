@@ -25,10 +25,13 @@ def next_mode(root, current, job):
             states[mode] = state
     if current not in states or states[current]['job'] != job.split('.')[0]:
         raise ValueError('this allocation did not commit a new N12 segment')
-    for mode in ('uniform', 'multirate'):
-        if mode not in states or not states[mode]['target_reached']:
-            return mode
-    return None
+    unfinished=[m for m in ('uniform','multirate') if m not in states or not states[m]['target_reached']]
+    if not unfinished:
+        return None
+    # Both methods target the same physical endpoint, with different cycle
+    # counts. Advance the lagging trajectory to provide common science cuts.
+    return min(unfinished,key=lambda m: states[m]['cycle']/states[m]['target_cycles']
+               if m in states else 0.0)
 
 
 def continue_comparison(root, current, job):
