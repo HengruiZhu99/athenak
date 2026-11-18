@@ -44,13 +44,14 @@ def main():
     filename = sys.argv[2] if len(sys.argv)>2 else 'results.json'
     data = json.loads((root/filename).read_text())
     reference_rows = {}
-    if filename != 'results.json' and (root/'results.json').exists():
-        baseline=json.loads((root/'results.json').read_text())
-        reference_rows={(v['mesh'],v['tiles'],v['mode']):v for v in baseline['results']}
+    for previous in ('results.json','larger-results.json'):
+        if previous != filename and (root/previous).exists():
+            baseline=json.loads((root/previous).read_text())
+            reference_rows.update({(v['mesh'],v['tiles'],v['mode']):v for v in baseline['results']})
     rows = {(v['mesh'],v['tiles'],v['mode']):v for v in data['results']}
     checks, scaling, methods = [], [], []
     for (mesh,tiles,mode), v in rows.items():
-        if mode in ('metis','spread','posted_fixed','polled_fixed','zorder','scalar'):
+        if mode in ('metis','spread','posted_fixed','polled_fixed','zorder','scalar','cohort'):
             for name, key in [('uniform_reference',(mesh,tiles,'uniform')),
                               ('one_gpu_decomposition',(mesh,2,mode))]:
                 reference=rows.get(key,reference_rows.get(key))
@@ -62,8 +63,8 @@ def main():
             methods.append(dict(mesh=mesh,method=mode,gpus=tiles//2,
                                 steady_speedup_vs_uniform=uniform['steady_seconds_per_M0']/v['steady_seconds_per_M0'],
                                 elapsed_speedup_vs_uniform=uniform['seconds_per_M0']/v['seconds_per_M0']))
-        for candidate, control in [('posted_fixed','polled_fixed'),('spread','zorder'),('spread','metis')]:
-            other=rows.get((mesh,tiles,control))
+        for candidate, control in [('posted_fixed','polled_fixed'),('spread','zorder'),('spread','metis'),('cohort','spread'),('cohort','classical')]:
+            other=rows.get((mesh,tiles,control),reference_rows.get((mesh,tiles,control)))
             if mode==candidate and other:
                 methods.append(dict(mesh=mesh,method=mode,control=control,gpus=tiles//2,
                                     steady_speedup=other['steady_seconds_per_M0']/v['steady_seconds_per_M0']))

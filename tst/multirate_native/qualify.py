@@ -167,6 +167,9 @@ def main():
             raise AssertionError(f'expected 4*(19+2*6) RHS evaluations per interval, got {evaluations}')
         results['mixed'] = dict(blocks=mixed['blocks'], cycle=mixed['cycle'], time=mixed['time'])
     if 'smoke' in args.cases:
+        grouped, _ = run(binary, output, 'complete_local_batches', args.launcher, args.ranks,
+                         base+['multirate/complete_local_batches=true'])
+        results['complete_local_batches'] = identical(mixed, grouped)
         uniform, text = run(binary, output, 'uniform', args.launcher, args.ranks,
                             base+['multirate/spherical_levels=0,0,0,0'])
         difference = numerical_difference(mixed, uniform)

@@ -4,7 +4,6 @@ import json
 import os
 from pathlib import Path
 import re
-import shutil
 import shlex
 import subprocess
 import sys
@@ -13,6 +12,7 @@ from statistics import median
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from adaptive import adaptive_input
+from binding import launcher
 
 root = Path(sys.argv[1]).resolve()
 source = root / 'source/tst/multirate_native'
@@ -21,18 +21,12 @@ exe = root / 'build/src/athena'
 with exe.open('rb') as binary:
     binary_sha256 = hashlib.file_digest(binary, 'sha256').hexdigest()
 large_suite = sys.argv[2:] == ['--larger-adaptive']
-if sys.argv[2:] and not large_suite:
+throughput = sys.argv[2:] == ['--throughput']
+if sys.argv[2:] and not (large_suite or throughput):
     raise ValueError('expected a campaign directory and optional --larger-adaptive')
-campaign_report = 'larger-results.json' if large_suite else 'results.json'
+campaign_report = 'throughput-results.json' if throughput else ('larger-results.json' if large_suite else 'results.json')
 results = []
 failures = []
-
-
-def launcher(ranks):
-    ppn = min(ranks, 12)
-    cores = '1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100'.split(':')
-    return ['mpiexec', '-n', str(ranks), '-ppn', str(ppn), '--cpu-bind=list:'+':'.join(cores[:ppn]),
-            shutil.which('gpu_tile_compact.sh')]
 
 
 def case(mesh, ranks, mode, intervals):
@@ -87,13 +81,17 @@ location_rad = .0001
         regions = ('2,2,2,1,1,1,1,1,2,3,4' if production else
                    '1,1,0,1' if adaptive else '0,0,0,1')
         balance = mode if mode in ('scalar','metis','spread') else 'none'
-        if mode in ('posted_fixed','polled_fixed'):
-            with (root/'runs/current754-24tiles-metis/partition.log').open('rb') as stream:
+        if mode == 'cohort':
+            balance = 'spread'
+        if mode in ('posted_fixed','polled_fixed') or (mode == 'cohort' and mesh == 'current754' and ranks == 24):
+            baseline = 'spread' if mode == 'cohort' else 'metis'
+            balance = 'none'
+            with (root/'runs'/f'current754-24tiles-{baseline}'/'partition.log').open('rb') as stream:
                 record=stream.read(int(stream.readline())).decode().splitlines()
             ownership=','.join(line.split()[1] for line in record[1:])
             inp += f'\n<multirate>\nblock_owners = {ownership}\n'
         inp += (f'<multirate>\nspherical_levels = {regions}\nuniform_reference = {str(uniform).lower()}\n'
-                f'balance = {balance}\nranks_per_gpu = 2\nprepost_exchanges = {str(mode!="polled_fixed").lower()}\nwarmup_intervals = 2\nreview_interval = 32\n'
+                f'complete_local_batches = {str(mode=="cohort").lower()}\nbalance = {balance}\nranks_per_gpu = 2\nprepost_exchanges = {str(mode!="polled_fixed").lower()}\nwarmup_intervals = 2\nreview_interval = 32\n'
                 f'partition_log = {run}/partition.log\n')
     (run/'input.athinput').write_text(inp)
     launch = launcher(ranks)
@@ -172,7 +170,10 @@ subprocess.run(['c++', '-std=c++17', '-O2', '-shared', '-fPIC',
                 '-o', str(memory_tool)], check=True)
 os.environ['KOKKOS_TOOLS_LIBS'] = str(memory_tool)
 
-if large_suite:
+if throughput:
+    measure('current754',24,'cohort',6)
+    measure('current754',24,'classical',6)
+elif large_suite:
     # Isolate transport and placement on the deployed deep hierarchy first.
     for mode in ('posted_fixed','spread','polled_fixed'):
         measure('current754',24,mode,6)

@@ -15,6 +15,7 @@ class RecordReadiness {
   void Add(const Batch& batch, const std::vector<Record>& dependencies) {
     const auto index = batches_.size();
     batches_.push_back(batch);
+    ++batch_sizes_[batch];
     initial_.push_back(dependencies.size());
     for (const auto& key : dependencies) consumers_[key].push_back(index);
   }
@@ -32,9 +33,16 @@ class RecordReadiness {
       if (--missing_[task] == 0) ready_[batches_[task]].push_back(task);
     }
   }
-  std::vector<std::size_t> TakeReady() {
-    if (ready_.empty()) return {};
+  // A complete local batch coalesces compatible leaves on this rank. Every
+  // block in the batch has the same numerical stage. Inter-block dependencies
+  // go to predecessor stages of the coefficient DAG, so this coalescing cannot
+  // introduce a cycle. Interior completion must precede the dependent batch.
+  std::vector<std::size_t> TakeReady(bool complete_local_batch = false) {
     auto first = ready_.begin();
+    if (complete_local_batch) {
+      while (first != ready_.end() && first->second.size() != batch_sizes_.at(first->first)) ++first;
+    }
+    if (first == ready_.end()) return {};
     auto batch = std::move(first->second);
     ready_.erase(first);
     return batch;
@@ -42,6 +50,7 @@ class RecordReadiness {
 
  private:
   std::vector<Batch> batches_;
+  std::map<Batch, std::size_t> batch_sizes_;
   std::map<Record, std::vector<std::size_t>> consumers_;
   std::vector<std::size_t> initial_, missing_;
   std::map<Batch, std::vector<std::size_t>> ready_;

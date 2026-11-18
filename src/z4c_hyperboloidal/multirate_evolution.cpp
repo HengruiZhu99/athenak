@@ -142,6 +142,7 @@ void MultirateEvolution::ReadOptions(ParameterInput& input) {
     throw std::invalid_argument("Multirate stage budget must cover at least four stages");
   input.GetOrAddBoolean("multirate", "uniform_reference", false);
   input.GetOrAddBoolean("multirate","prepost_exchanges",true);
+  input.GetOrAddBoolean("multirate","complete_local_batches",false);
   input.GetOrAddString("multirate", "replay_file", "");
   input.GetOrAddString("multirate", "partition_log", "");
 }
@@ -185,6 +186,13 @@ struct MultirateEvolution::Impl {
   };
   using BatchKey = std::tuple<int, size_t, bal::KernelKind>;
   mr::RecordReadiness<Key, BatchKey> readiness, interior_readiness;
+  bool complete_local_batches = false;
+  struct ActiveLayout {
+    DvceArray1D<int> mask;
+    std::array<DvceArray1D<int>, 5> rhs_points;
+  };
+  std::map<std::vector<int>, ActiveLayout> active_layouts;
+  void SelectBatch(const std::vector<int>& slots);
   std::vector<Task> tasks;
   std::map<Key, size_t> consumers;
   bal::WorkGraph graph;
@@ -620,6 +628,8 @@ void MultirateEvolution::Impl::SetPhaseCosts(const bal::BatchCostModel& profile)
   }
 }
 void MultirateEvolution::Impl::BuildLocal() {
+  active_layouts.clear();
+  complete_local_batches = pin->GetBoolean("multirate", "complete_local_batches");
   readiness = {};
   interior_readiness = {};
   native_host.clear();
@@ -746,10 +756,28 @@ Combination MultirateEvolution::Impl::Combine(size_t stage, int gid) const {
   }
   return c;
 }
+void MultirateEvolution::Impl::SelectBatch(const std::vector<int>& slots) {
+  if (p.active_slots_ == slots) return;
+  if (!complete_local_batches) {
+    p.SelectActiveBlocks(slots);
+    return;
+  }
+  // Membership of each complete local stage/kernel batch is fixed for a
+  // placement. Reuse its device point lists across stages and base intervals.
+  auto [layout, inserted] = active_layouts.try_emplace(slots);
+  if (inserted) {
+    p.SelectActiveBlocks(slots);
+    layout->second = {p.active_blocks, p.active_rhs_points};
+  } else {
+    p.active_slots_ = slots;
+    p.active_blocks = layout->second.mask;
+    p.active_rhs_points = layout->second.rhs_points;
+  }
+}
 void MultirateEvolution::Impl::Reconstruct(const std::vector<int>& slots,
                                            const std::vector<Combination>& combinations,
                                            double time, bool accepted) {
-  p.SelectActiveBlocks(slots);
+  SelectBatch(slots);
   const auto combinations_d = Device(combinations, "multirate reconstruction rows");
   const auto points = native;
   const auto state = p.u0;
@@ -958,6 +986,7 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
   const auto kind = graph.blocks[tasks[batch.front()].gid].kernel;
   std::vector<int> slots;
   for (auto task : batch) slots.push_back(tasks[task].m);
+  if (complete_local_batches) std::sort(slots.begin(), slots.end());
   ++batch_count;
   max_batch = std::max(max_batch, static_cast<unsigned long long>(batch.size()));
   if (!interior) level_work[schedule->Stage(stage).key.level] += batch.size();
@@ -989,7 +1018,7 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
       readiness.Arrive({pack->GlobalId(m), context.key.local_step, context.key.stage + 4});
     return;
   }
-  p.SelectActiveBlocks(slots);
+  SelectBatch(slots);
   DvceArray2D<Real> physical, delta;
   StageDonors(stage, slots, physical, delta);
   auto halo_delta = Gather(p.mapped_halo_->ResidualExchange(), 0, delta);
@@ -1071,13 +1100,13 @@ bool MultirateEvolution::Impl::Poll(Driver* driver) {
       readiness.Arrive(key);
       interior_readiness.Arrive(key);
     }
-    auto batch = readiness.TakeReady();
+    auto batch = readiness.TakeReady(complete_local_batches);
     if (!batch.empty()) {
       Evaluate(driver, false, batch);
       completed += batch.size();
       return false;
     }
-    batch = interior_readiness.TakeReady();
+    batch = interior_readiness.TakeReady(complete_local_batches);
     if (!batch.empty()) {
       Evaluate(driver, true, batch);
       return false;
