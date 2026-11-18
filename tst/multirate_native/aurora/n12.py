@@ -101,7 +101,7 @@ def main():
                   f'nlim = {target}\ntlim = {(target+1)*dt:.17g}\nndiag = {ratio}\n'
                   f'<output1>\ndcycle = {37*ratio}\n<output2>\ndcycle = {111*ratio}\n'
                   f'<output20>\nfile_type = scri\nid = scri\ndcycle = {6*ratio}\nnodal = true\n'
-                  'modes = true\nlmax = 8\nunit_description = geometric code units, M0=1/3\n')
+                  'modes = true\nlmax = 8\nboundary_diagnostics = true\nunit_description = geometric code units, M0=1/3\n')
         (run/'input.athinput').write_text(inputs)
         input_args = ['-i',str(run/'input.athinput')]
     if args.wall_seconds<120:

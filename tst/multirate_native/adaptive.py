@@ -57,6 +57,9 @@ def main():
     events = re.findall(r'MULTIRATE_REGRID cycle=(\d+) created=(\d+) deleted=(\d+) blocks=(\d+)', log)
     if not events or events[0][0]!='1' or int(events[0][1])<=0 or mixed['blocks']<=25:
         raise AssertionError(f'expected actual first-endpoint refinement: {events}')
+    grouped, _ = evolve('grouped', '-i', out/'mixed.athinput', 'multirate/complete_local_batches=true')
+    grouped_check = identical(mixed, grouped)
+    del grouped
     prefix, _ = evolve('prefix', '-i', out/'mixed.athinput', 'time/nlim=1')
     if prefix['blocks'] != int(events[0][3]):
         raise AssertionError('checkpoint predates the accepted refinement')
@@ -102,7 +105,7 @@ level = 1
         raise AssertionError('refinement occurred before cooldown expired')
     continued, _ = evolve('from_before_cut','-r',prefix['path'],'time/nlim=2','output1/last_time=-1')
     cooldown_restart = identical(direct,continued)
-    result = dict(events=events, coarsened_blocks=coarsened_blocks, cooldown_restart=cooldown_restart, final_blocks=mixed['blocks'], restart=restart,
+    result = dict(complete_local_batches=grouped_check, events=events, coarsened_blocks=coarsened_blocks, cooldown_restart=cooldown_restart, final_blocks=mixed['blocks'], restart=restart,
                   uniform_fine_reference=error, time=mixed['time'])
     (out/'results.json').write_text(json.dumps(result, indent=2)+'\n')
     print(json.dumps(result))
