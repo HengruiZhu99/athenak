@@ -153,5 +153,91 @@
       "worst_scalar": 2422030
     },
     "time": 4.57763671875e-05
-  }
+  },
+  "adaptive_pulse_fields": {
+    "adaptive": true,
+    "radial_probe": true,
+    "binary_sha256": "506eddb9830f905909e585dac2c1dbc54182904163b93bae4e90d83b73fb4ca3",
+    "duration": 0.00390625,
+    "steps": [
+      2,
+      4,
+      8
+    ],
+    "uniform_reference_steps": 32,
+    "rms_errors": [
+      {
+        "bulk": 1.4077070569671875e-10,
+        "radial_interface": 6.250591868827549e-12,
+        "scri": 5.793889201094046e-08
+      },
+      {
+        "bulk": 7.990472587575974e-12,
+        "radial_interface": 3.8133173262415096e-13,
+        "scri": 3.128434130857748e-09
+      },
+      {
+        "bulk": 4.463020870699963e-13,
+        "radial_interface": 2.36191749381485e-14,
+        "scri": 1.7148091865975914e-10
+      }
+    ],
+    "observed_orders": {
+      "bulk": [
+        4.138922498708231,
+        4.162188373981307
+      ],
+      "radial_interface": [
+        4.03487430966825,
+        4.013016115622644
+      ],
+      "scri": [
+        4.211019462083235,
+        4.189320772205548
+      ]
+    },
+    "passed": true
+  },
+  "adaptive_pulse_diagnostics": {
+    "time": 0.00390625,
+    "points": 864,
+    "rms_differences": [
+      {
+        "regularity_tensor": 1.922752412815691e-08,
+        "clock_mismatch": 6.434097129739621e-08
+      },
+      {
+        "regularity_tensor": 9.874685884475394e-10,
+        "clock_mismatch": 3.4769182644647633e-09
+      },
+      {
+        "regularity_tensor": 5.2852554599549347e-11,
+        "clock_mismatch": 1.9055048068146483e-10
+      }
+    ],
+    "orders": {
+      "regularity_tensor": [
+        4.283294336286838,
+        4.223689746231768
+      ],
+      "clock_mismatch": [
+        4.209856657572596,
+        4.189563999929876
+      ]
+    },
+    "reference_max_abs": {
+      "regularity_tensor": 0.00019097388022032777,
+      "clock_mismatch": 0.00037471009004450435
+    }
+  },
+  "open_adaptive_checks": [
+    {
+      "case": "25 to 32 blocks, radial pulse, refine Cartesian puncture parent halfway through integration",
+      "observed": "Single-component horizon acceptance failed in both multirate and fine uniform EX5 exterior history. The bulk and scri comparison reported separately used shared checkpoints and scri output."
+    },
+    {
+      "case": "51-block initial mesh, finer Cartesian puncture parent, radial pulse, chi floor inactive",
+      "observed": "Native spatial transfer rejected the candidate bulk state at refinement."
+    }
+  ]
 }

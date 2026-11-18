@@ -15,7 +15,7 @@ from nonradiative_native_analysis import metric_rate
 from nonradiative_tensor_attribution import tensor
 
 
-def diagnostics(directory):
+def diagnostics(directory, scri_only=False):
     anchor = sorted(directory.glob('*.o3.*.r00000000.scri'))[-1]
     series = []
     for path in sorted(directory.glob(anchor.name.replace('r00000000', 'r????????'))):
@@ -41,21 +41,25 @@ def diagnostics(directory):
         series.append((ids, tracefree, mismatch, record['time'][0]))
     ids = np.concatenate([row[0] for row in series])
     order = np.lexsort(ids.T[::-1])
-    history = np.atleast_2d(np.loadtxt(next(directory.glob('*.z4c_hyperboloidal.hst'))))[-1]
-    if any(row[3] != history[0] for row in series):
-        raise ValueError('scri and constraint diagnostics have different endpoints')
+    time = series[0][3]
+    if any(row[3] != time for row in series):
+        raise ValueError('ranks wrote different scri endpoints')
     values = dict(regularity_tensor=np.concatenate([row[1] for row in series])[order],
                   clock_mismatch=np.concatenate([row[2] for row in series])[order])
-    for i, name in enumerate(['hamiltonian_rms', 'momentum_rms', 'theta_rms', 'z_rms']):
-        values[name] = history[i + 3]
-    return ids[order], history[0], values
+    if not scri_only:
+        history = np.atleast_2d(np.loadtxt(next(directory.glob('*.z4c_hyperboloidal.hst'))))[-1]
+        if time != history[0]:
+            raise ValueError('scri and constraint diagnostics have different endpoints')
+        for i, name in enumerate(['hamiltonian_rms', 'momentum_rms', 'theta_rms', 'z_rms']):
+            values[name] = history[i + 3]
+    return ids[order], time, values
 
 
-def compare(base):
-    ids, time, reference = diagnostics(base / 'uniform-32')
+def compare(base, scri_only=False):
+    ids, time, reference = diagnostics(base / 'uniform-32',scri_only)
     differences = []
     for steps in (2, 4, 8):
-        other_ids, other_time, state = diagnostics(base / f'mixed-{steps}')
+        other_ids, other_time, state = diagnostics(base / f'mixed-{steps}',scri_only)
         if not np.array_equal(ids, other_ids) or time != other_time:
             raise ValueError('native diagnostic points or times do not match')
         differences.append({key: float(np.sqrt(np.mean((value-reference[key])**2)))
@@ -70,7 +74,8 @@ def compare(base):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('study', type=Path)
+    parser.add_argument('--scri-only', action='store_true')
     args = parser.parse_args()
-    result = compare(args.study)
+    result = compare(args.study,args.scri_only)
     (args.study/'diagnostics.json').write_text(json.dumps(result,indent=2)+'\n')
     print(json.dumps(result,indent=2))
