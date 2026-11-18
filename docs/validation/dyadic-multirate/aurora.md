@@ -99,3 +99,13 @@ The multirate schedule reduced block RHS evaluations by 62.4% and GPU time in th
 
 
 The scalar stage specialization keeps the full jet path for accepted geometry checks and scri donor compatibility. On the two-rank CPU fixture, alternating A/B/B/A measurements reduced donor reconstruction from 0.2495 to 0.0954 summed kernel-seconds per coarse interval and owned-stage reconstruction from 0.1679 to 0.0985. The 25-to-32-block nonlinear pulse again matched all 7,458,048 stored values bitwise.
+
+### Finest-level batch occupancy
+
+On the fixed 754-block spread layout in job 9100793, time levels 1 through 4 contain 46, 352, 332 and 24 blocks. Level 4 contributes 1,536 of the 18,160 block RHS evaluations per coarse interval (8.5%). Each of its 64 stages executes one block on each of 24 tile ranks. Those stages account for 1,536 of 2,960 dependent batches (51.9%), with a matching set of interior batches.
+
+The sibling-tile placement experiment exchanges a finest block with a slower block on the same physical GPU when the two finest blocks share an RHS kernel class and the swap reduces stage batches. It holds each physical GPU's block set, each tile's block count and the temporal hierarchy fixed. Ten sibling pairs on the N12 layout meet the criterion. Moving 20 blocks reduces the scheduled interior-plus-dependent batches from 5,920 to 4,640. The benchmark checks the executed batch count and accepted checkpoint against a same-job control. The schedule count alone gives no elapsed-time speedup.
+
+### Build provenance for the GPU qualification
+
+Job 9100849 stopped during mapped-halo initialization before timing in both native uniform RK4 and multirate. The linked halo object retained the removed `mapped_residual_fields` member allocation while the constructor used the smaller current class layout. A timestamp-preserving source upload had left that object newer than the source modification time. Job 9100919 rebuilt from an empty binary directory after a content comparison with the worktree. The rebuilt halo object no longer contains the removed allocation. Use a fresh binary directory when switching source snapshots, or deploy changed sources with content comparison and fresh modification times.
