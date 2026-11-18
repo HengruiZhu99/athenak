@@ -35,3 +35,14 @@ Job 9100147 used two nodes and 24 tile ranks. The first two controls below repla
 All 24 tile ranks received one finest-level leaf in the spread trial. Preposting reduced the steady interval time by 35.4% at fixed placement. It increased peak per-rank packet storage in interval 5 from 88.6 MB to 172.0 MB. On the spread trial, polls immediately following independent interior batches observed 11,451 record completions during that interval. This count measures observable communication progress during the interior phase. It does not measure concurrent hardware execution time. Replaying an existing partition avoids the fresh partitioning and migration cost in the spread trial.
 
 The uniform EX5 figures above use the multirate scheduler in single-rate mode. The production N12 classical RK4 control follows its usual native task lists. These comparisons answer different performance questions.
+
+## Deep adaptive GPU scaling
+
+On the binary mesh, the same off-puncture location criterion created 49 blocks at coarse endpoint 1 and 70 more at endpoint 2. The two decompositions reached 873 blocks and the same endpoint after five coarse intervals. All accepted native fields and persistent diagnostics agreed bitwise. The field-only comparison covered 161,728,488 scalar slots.
+
+| Physical GPUs | Tile ranks | Total time, including both regrids (s) | Steady time per interval on 873 blocks (s) |
+| ---: | ---: | ---: | ---: |
+| 1 | 2 | 1,342.88 | 66.991 |
+| 12 | 24 | 519.91 | 41.767 |
+
+The weighted spread placement achieved 2.58× end-to-end speedup and 1.60× steady speedup from one GPU to two nodes. Steady parallel efficiency was 13.4%. On the last post-refinement mesh the schedule required 21,232 block RHS evaluations per interval. The experiment verifies the deep adaptive GPU trajectory and exposes a strong-scaling limitation at this workload.
