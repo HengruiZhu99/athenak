@@ -33,4 +33,4 @@ cmake -S "$root/source" -B "$root/build" -DCMAKE_C_COMPILER=icx -DCMAKE_CXX_COMP
   -DKokkos_ENABLE_SYCL=ON -DKokkos_ARCH_INTEL_PVC=ON -DKokkos_ENABLE_SERIAL=ON > "$root/configure.log" 2>&1
 cmake --build "$root/build" --parallel 32 --target athena > "$root/build.log" 2>&1
 sha256sum "$root/build/src/athena" > "$root/executable.sha256"
-exec /usr/bin/python3.11 -u "$root/source/tst/multirate_native/aurora/measure.py" "$root"
+exec /usr/bin/python3.11 -u "$root/source/tst/multirate_native/aurora/measure.py" "$root" ${MR_LARGER_SUITE:+--larger-adaptive}

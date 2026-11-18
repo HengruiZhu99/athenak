@@ -20,6 +20,10 @@ campaign = root.parent / 'n12-radial-blocks-20261117'
 exe = root / 'build/src/athena'
 with exe.open('rb') as binary:
     binary_sha256 = hashlib.file_digest(binary, 'sha256').hexdigest()
+large_suite = sys.argv[2:] == ['--larger-adaptive']
+if sys.argv[2:] and not large_suite:
+    raise ValueError('expected a campaign directory and optional --larger-adaptive')
+campaign_report = 'larger-results.json' if large_suite else 'results.json'
 results = []
 failures = []
 
@@ -33,7 +37,7 @@ def launcher(ranks):
 
 def case(mesh, ranks, mode, intervals):
     production = mesh == 'current754'
-    adaptive = mesh == 'adaptive88'
+    adaptive = mesh in ('adaptive88','adaptive1024')
     uniform = mode in ('uniform', 'classical')
     base = 4*4.6944203735617445e-4 if production else 2**-14
     factor = (16 if production else 2) if uniform else 1
@@ -53,8 +57,10 @@ def case(mesh, ranks, mode, intervals):
         # The 25-block restart control separately refines the puncture parent.
         inp = inp.replace('location_x1 = .015','location_x1 = .065')
         start, end = inp.index('<mesh>'), inp.index('<meshblock>')
-        inp = inp[:start]+inp[start:end].replace('= 12', '= 48')+inp[end:]
-        inp += f'\n<mesh_refinement>\nmax_nmb_per_rank = {max(12, (130+ranks-1)//ranks)}\n'
+        mesh_cells = 120 if mesh == 'adaptive1024' else 48
+        inp = inp[:start]+inp[start:end].replace('= 12', f'= {mesh_cells}')+inp[end:]
+        capacity = 1400 if mesh == 'adaptive1024' else 130
+        inp += f'\n<mesh_refinement>\nmax_nmb_per_rank = {max(12, (capacity+ranks-1)//ranks)}\n'
     else:
         inp = (campaign/'input.athinput' if production else source/'small.athinput').read_text()
     inp += '\n<time>\nintegrator = '+('rk4_classical' if mode=='classical' else 'mrgark4')
@@ -122,7 +128,7 @@ def measure(*args):
         print('FAIL', args, exc, flush=True)
     else:
         print('PASS', args, results[-1]['steady_seconds_per_M0'], flush=True)
-    (root/'results.json').write_text(json.dumps(dict(results=results, failures=failures),indent=2)+'\n')
+    (root/campaign_report).write_text(json.dumps(dict(results=results, failures=failures),indent=2)+'\n')
 
 
 memory_tool = root/'memory-tool.so'
@@ -131,26 +137,32 @@ subprocess.run(['c++', '-std=c++17', '-O2', '-shared', '-fPIC',
                 '-o', str(memory_tool)], check=True)
 os.environ['KOKKOS_TOOLS_LIBS'] = str(memory_tool)
 
-# Cover both ends of the strong-scaling curve before the intermediate sizes.
-for ranks in (2, 24):
-    for mode in ('metis', 'uniform'):
-        measure('adaptive88', ranks, mode, 8)
-    restart_dir = root/'runs'/f'adaptive-restart-{ranks}tiles'
-    if not (restart_dir/'results.json').exists():
-        with (root/f'adaptive-restart-{ranks}tiles.log').open('w') as log:
-            status = subprocess.run([sys.executable, str(source/'adaptive.py'), '--binary', str(exe),
-                                     '--output', str(restart_dir), '--ranks', str(ranks),
-                                     '--launcher', shlex.join(launcher(ranks))],
-                                    stdout=log, stderr=subprocess.STDOUT).returncode
-        if status:
-            failures.append(dict(case=['adaptive-restart',ranks],error=f'exit {status}'))
-for mode in ('metis', 'uniform', 'scalar', 'classical'):
-    measure('current754', 24, mode, 6)
-for ranks in (2, 4, 8, 12, 24):
-    for mesh, count in [('adaptive88',8), ('current754',6)]:
+if large_suite:
+    # Measure the same larger workload at both ends before filling in the curve.
+    for ranks in (24,2,12,4,8):
         for mode in ('metis','uniform','scalar'):
-            if not any((item['mesh'], item['tiles'], item['mode'])==(mesh,ranks,mode) for item in results):
-                measure(mesh,ranks,mode,count)
+            measure('adaptive1024',ranks,mode,6)
+else:
+    # Cover both ends of the strong-scaling curve before the intermediate sizes.
+    for ranks in (2, 24):
+        for mode in ('metis', 'uniform'):
+            measure('adaptive88', ranks, mode, 8)
+        restart_dir = root/'runs'/f'adaptive-restart-{ranks}tiles'
+        if not (restart_dir/'results.json').exists():
+            with (root/f'adaptive-restart-{ranks}tiles.log').open('w') as log:
+                status = subprocess.run([sys.executable, str(source/'adaptive.py'), '--binary', str(exe),
+                                         '--output', str(restart_dir), '--ranks', str(ranks),
+                                         '--launcher', shlex.join(launcher(ranks))],
+                                        stdout=log, stderr=subprocess.STDOUT).returncode
+            if status:
+                failures.append(dict(case=['adaptive-restart',ranks],error=f'exit {status}'))
+    for mode in ('metis', 'uniform', 'scalar', 'classical'):
+        measure('current754', 24, mode, 6)
+    for ranks in (2, 4, 8, 12, 24):
+        for mesh, count in [('adaptive88',8), ('current754',6)]:
+            for mode in ('metis','uniform','scalar'):
+                if not any((item['mesh'], item['tiles'], item['mode'])==(mesh,ranks,mode) for item in results):
+                    measure(mesh,ranks,mode,count)
 analysis_python = root.parent/'n12-full-scri-20261115/analysis-env/bin/python'
-subprocess.run([str(analysis_python), str(source/'aurora/compare.py'), str(root)], check=True)
+subprocess.run([str(analysis_python), str(source/'aurora/compare.py'), str(root), campaign_report], check=True)
 sys.exit(bool(failures))

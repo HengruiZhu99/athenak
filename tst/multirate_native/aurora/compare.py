@@ -30,7 +30,8 @@ def compare(left, right):
 
 def main():
     root = Path(sys.argv[1])
-    data = json.loads((root/'results.json').read_text())
+    filename = sys.argv[2] if len(sys.argv)>2 else 'results.json'
+    data = json.loads((root/filename).read_text())
     rows = {(v['mesh'],v['tiles'],v['mode']):v for v in data['results']}
     checks, scaling, methods = [], [], []
     for (mesh,tiles,mode), v in rows.items():
@@ -51,7 +52,7 @@ def main():
             scaling.append(dict(mesh=mesh,method=mode,gpus=tiles//2,nodes=v['nodes'],
                                 seconds_per_M0=v['steady_seconds_per_M0'],speedup=speedup,
                                 efficiency=speedup/(tiles/2)))
-    (root/'comparison.json').write_text(json.dumps(dict(checks=checks,scaling=scaling,methods=methods),indent=2)+'\n')
+    (root/filename.replace('results','comparison')).write_text(json.dumps(dict(checks=checks,scaling=scaling,methods=methods),indent=2)+'\n')
 
 
 if __name__=='__main__':
