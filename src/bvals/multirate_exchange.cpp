@@ -164,7 +164,34 @@ struct RecordExchange::Impl {
   std::map<Channel,Window> windows;
   struct SendRoute { int tag, offset, packet_size; };
   std::map<std::pair<int,RecordKey>,SendRoute> send_routes;
-  struct OpenPacket { Pending send; std::size_t written=0; };
+  // Capture a small set of source spans by value. Each launch writes directly
+  // to one owning MPI allocation; no device descriptor upload is needed.
+  struct PacketGather {
+    struct Span { const Real* source; const int* indices; int offset, size; };
+    static constexpr int capacity=8;
+    Span spans[capacity]{};
+    int count=0, scalars=0;
+    void Append(const Real* source,const int* indices,int offset,int size) {
+      spans[count++]={source,indices,offset,size};
+      scalars+=size;
+    }
+    void Launch(const DvceArray1D<Real>& destination,int fields) const {
+      const auto gather=*this;
+      Kokkos::parallel_for("multirate stage packet gather",Kokkos::RangePolicy<>(0,scalars),
+        KOKKOS_LAMBDA(int scalar) {
+          for (int s=0;s<gather.count;++s) {
+            const auto span=gather.spans[s];
+            if (scalar<span.size) {
+              const auto point=std::size_t(span.indices[scalar/fields]);
+              destination(span.offset+scalar)=span.source[point*fields+scalar%fields];
+              return;
+            }
+            scalar-=span.size;
+          }
+        });
+    }
+  };
+  struct OpenPacket { Pending send; PacketGather gather; std::size_t written=0; };
   std::map<std::pair<int,int>,OpenPacket> open_packets;
   void PostNext(Channel channel) {
     auto &window=windows.at(channel);
@@ -469,25 +496,32 @@ void RecordExchange::Publish(const RecordKey &key, const DvceArray1D<Real> &valu
     const auto bytes=(size+header)*sizeof(Real);
     p.stats.sent_bytes+=bytes;
     if (!p.stats.sent_bytes_by_peer.empty()) p.stats.sent_bytes_by_peer[target.rank]+=bytes;
-    auto packet = shared ? open->send.packet : pending.packet;
-    const Real epoch = static_cast<Real>(p.epoch), gid = key.gid, step = key.step,
-               stage = key.stage, points = indices.extent(0);
-    Kokkos::parallel_for("multirate sparse derivative pack",Kokkos::RangePolicy<>(0,size+header),
-      KOKKOS_LAMBDA(std::size_t i) {
-        if (i < header) {
-          packet(i) = i == 0 ? epoch : (i == 1 ? gid : (i == 2 ? step : (i == 3 ? stage : points)));
-        } else {
-          const auto scalar = i-header;
-          packet(offset+i) = values(std::size_t(indices(scalar/fields))*fields+scalar%fields);
-        }
-      });
-    // Poll fences one batch of queued packs before posting their MPI sends.
     if (retain_source) {p.pack_sources.push_back(values);retain_source=false;}
-    ++p.stats.pack_kernels;
     if (shared) {
-      if (open->written!=packet_size) continue;
+      open->gather.Append(values.data(),indices.data(),static_cast<int>(offset),Count(size));
+      const bool complete = open->written==packet_size;
+      if (complete || open->gather.count==Impl::PacketGather::capacity) {
+        open->gather.Launch(open->send.packet,fields);
+        open->gather={};
+        ++p.stats.pack_kernels;
+      }
+      if (!complete) continue;
       pending=std::move(open->send);
       p.open_packets.erase(packet_key);
+    } else {
+      const auto packet=pending.packet;
+      const Real epoch = static_cast<Real>(p.epoch), gid = key.gid, step = key.step,
+                 stage = key.stage, points = indices.extent(0);
+      Kokkos::parallel_for("multirate sparse derivative pack",Kokkos::RangePolicy<>(0,size+header),
+        KOKKOS_LAMBDA(std::size_t i) {
+          if (i < header) {
+            packet(i) = i == 0 ? epoch : (i == 1 ? gid : (i == 2 ? step : (i == 3 ? stage : points)));
+          } else {
+            const auto scalar = i-header;
+            packet(i) = values(std::size_t(indices(scalar/fields))*fields+scalar%fields);
+          }
+        });
+      ++p.stats.pack_kernels;
     }
     ++p.stats.send_packets;
     p.sends.push_back(std::move(pending));
@@ -529,7 +563,9 @@ bool RecordExchange::Poll() {
       [](const Impl::Pending &item) { return item.request == MPI_REQUEST_NULL; });
   if (queued) {
     DevExeSpace().fence("multirate batched publication packs before MPI");
-    p.pack_sources.clear();
+    // A caller may poll between records in one publication group. Its
+    // partially filled gather descriptor still refers to the original views.
+    if (p.open_packets.empty()) p.pack_sources.clear();
     for (auto &pending : p.sends) if (pending.request == MPI_REQUEST_NULL) {
       CheckMPI(MPI_Isend(pending.packet.data(),Count(pending.packet.extent(0)),MPI_ATHENA_REAL,
                          pending.peer,pending.tag,p.comm,&pending.request),"multirate record send failed");

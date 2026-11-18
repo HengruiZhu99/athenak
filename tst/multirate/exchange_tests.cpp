@@ -104,11 +104,11 @@ void Exercise(int rank, int ranks, bool reverse_ownership) {
     Require(exchange.CachedRecords() == 0,"unused arrivals remained cached");
   }
 }
-// Every owner publishes five records of each requested kind in one batch.
+// Every owner publishes nine records of each requested kind in one batch.
 // Initial and final records fan out to both peers on three ranks. The slope
 // has a narrower destination set and each peer selects different sparse rows.
 void ExerciseBatches(int rank,int ranks,bool grouped) {
-  constexpr int fields=7, per_rank=5;
+  constexpr int fields=7, per_rank=9;
   std::vector<int> owners(per_rank*ranks),steps(owners.size(),1);
   std::vector<mt::Point> owned,requested;
   std::map<mt::RecordKey,std::size_t> consumers;
@@ -164,7 +164,8 @@ void ExerciseBatches(int rank,int ranks,bool grouped) {
     Require(queued.sent_bytes==wire && queued.send_packets==(grouped ? packets/per_rank : packets),"batched wire counters disagree");
     Require(queued.peak_packet_bytes==wire+queued.received_bytes,"batched packet peak differs from allocations");
     if (epoch>1 && packets) Require(queued.reused_send_packets>0,"completed GPU send buffers were not reused");
-    Require(queued.pack_kernels==packets,"one sparse gather per MPI send");
+    Require(queued.pack_kernels==(grouped ? 2*queued.send_packets : packets),
+            "unexpected number of device gathers per stage packet");
     const auto start=std::chrono::steady_clock::now();
     while (!exchange.Finish())
       Require(std::chrono::steady_clock::now()-start<std::chrono::seconds(10),
