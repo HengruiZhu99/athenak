@@ -9,6 +9,17 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]/'z4c_hyperboloidal'))
 from restart_roundtrip import parse, payload
 
 
+def spatial_identity(identity):
+    # The native restart identity includes the integrator and fixed timestep,
+    # which intentionally differ in a temporal comparison. Keep the full initial
+    # data identity, geometry, physical coefficients and agreement operator.
+    spatial, marker, initial = identity.partition(b';initial-data=')
+    timing = (b'integrator=',b'p.requested_dt=',b'multirate=',b'spherical-levels=',b'uniform-reference=')
+    fields = [value for value in spatial.split(b';')
+              if value and not value.startswith(timing) and value != b'agreement=shared-stage-v1']
+    return b';'.join(fields)+marker+initial
+
+
 def compare(left, right):
     a, b = (parse(Path(x['checkpoint'])) for x in (left, right))
     if left['simulated_M0']!=right['simulated_M0']:
@@ -19,9 +30,11 @@ def compare(left, right):
         # related non-binary-exact inputs can end a few ulps apart.
         if abs(endpoint['time']-expected)>max(1,endpoint['cycle'])*math.ulp(expected):
             raise ValueError('checkpoint time differs from requested endpoint beyond summation roundoff')
-    for key in ('blocks','record_blocks','stride','identity','topology','atlas'):
+    for key in ('blocks','record_blocks','stride','topology','atlas'):
         if a[key] != b[key]:
             raise ValueError(f'unmatched {key}: {left["checkpoint"]}, {right["checkpoint"]}')
+    if spatial_identity(a['identity']) != spatial_identity(b['identity']):
+        raise ValueError('N12 spatial physics or initial-data identities differ')
     x, y = payload(a), payload(b)
     worst = 0.
     squared = 0.
