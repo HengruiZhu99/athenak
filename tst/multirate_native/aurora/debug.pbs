@@ -45,6 +45,13 @@ if [[ -n ${MR_N12_MODE:-} ]]; then
       [[ "$MR_N12_MODE" == uniform ]] || exit 1
     fi
   fi
+  if [[ -n ${MR_TRANSPORT_CONTROLS:-} ]]; then
+    for sha in $MR_TRANSPORT_CONTROLS; do
+      binary="$root/artifacts/$sha/athena"
+      [[ $(sha256sum "$binary" | cut -d' ' -f1) == "$sha" ]]
+      MR_BENCHMARK_EXECUTABLE="$binary" /usr/bin/python3.11 -u "$suite/measure.py" "$root" --cases "$root/control-${sha:0:12}.json"
+    done
+  fi
   if [[ -n ${MR_CASES:-} ]]; then
     /usr/bin/python3.11 -u "$suite/measure.py" "$root" --cases "$root/$MR_CASES"
   fi

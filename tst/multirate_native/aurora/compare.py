@@ -96,6 +96,26 @@ def main():
             scaling.append(dict(mesh=mesh,method=mode,gpus=tiles//2,nodes=v['nodes'],
                                 seconds_per_M0=v['steady_seconds_per_M0'],speedup=speedup,
                                 efficiency=speedup/(tiles/2)))
+    if filename=='corrected-transport-results.json':
+        trial=rows.get(('current754',24,'cohort'))
+        if trial:
+            for path in sorted(root.glob('control-*-results.json')):
+                for control in json.loads(path.read_text())['results']:
+                    if (control['mesh'],control['tiles'],control['mode'],control['intervals'],control['job_id']) != (
+                            trial['mesh'],trial['tiles'],trial['mode'],trial['intervals'],trial['job_id']):
+                        continue
+                    first=Path(trial['log']).with_name('partition.log').read_bytes()
+                    second=Path(control['log']).with_name('partition.log').read_bytes()
+                    if first != second:
+                        raise ValueError('different replay placement in transport comparison')
+                    fields=compare(trial,control)
+                    if not fields['identical_checkpoint_payload']:
+                        raise ValueError('transport changed accepted Scheme A state or diagnostics')
+                    checks.append(dict(mesh=trial['mesh'],method='cohort',gpus=12,
+                                       comparison=path.stem,**fields))
+                    methods.append(dict(mesh=trial['mesh'],method='cohort',control=path.stem,
+                                        control_sha256=control['binary_sha256'],gpus=12,
+                                        steady_speedup=control['steady_seconds_per_M0']/trial['steady_seconds_per_M0']))
     (root/filename.replace('results','comparison')).write_text(json.dumps(dict(checks=checks,scaling=scaling,methods=methods),indent=2)+'\n')
 
 

@@ -19,7 +19,7 @@ from node_placement import reorder_nodes
 root = Path(sys.argv[1]).resolve()
 source = root / 'source/tst/multirate_native'
 campaign = root.parent / 'n12-radial-blocks-20261117'
-exe = root / 'build/src/athena'
+exe = Path(os.environ.get('MR_BENCHMARK_EXECUTABLE', root/'build/src/athena')).resolve()
 with exe.open('rb') as binary:
     binary_sha256 = hashlib.file_digest(binary, 'sha256').hexdigest()
 large_suite = sys.argv[2:] == ['--larger-adaptive']
