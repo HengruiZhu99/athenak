@@ -98,7 +98,7 @@ def main():
                      'spherical_levels = 2,2,2,1,1,1,1,1,2,3,4\nprepost_exchanges = true\n')
         integrator = 'rk4_classical' if ratio==16 else 'mrgark4'
         inputs = (original_input.read_text()+extra+f'\n<time>\nintegrator = {integrator}\ndt = {dt:.17g}\n'
-                  f'nlim = {target}\ntlim = {(target+1)*dt:.17g}\nndiag = {ratio}\n'
+                  f'nlim = {target}\ntlim = {(target+2)*dt:.17g}\nndiag = {ratio}\n'
                   f'<output1>\ndcycle = {37*ratio}\n<output2>\ndcycle = {111*ratio}\n'
                   f'<output20>\nfile_type = scri\nid = scri\ndcycle = {6*ratio}\nnodal = true\n'
                   'modes = true\nlmax = 8\nboundary_diagnostics = true\nunit_description = geometric code units, M0=1/3\n')
