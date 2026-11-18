@@ -127,6 +127,9 @@ void ExerciseBatches(int rank,int ranks,bool grouped) {
   }
   mt::RecordExchange exchange(owners,owned,requested,fields);
   exchange.SetSendCacheBytes(4096);
+  exchange.SetReceiveCacheBytes(4096);
+  DvceArray1D<Real> held_record;
+  Real held_first=0;
   exchange.SetSlopeFields(fields-2);
   exchange.CompileReceives(consumers,grouped ? std::vector<int>(owners.size(),0) : std::vector<int>{});
   for (int epoch=1; epoch<=2; ++epoch) {
@@ -167,8 +170,17 @@ void ExerciseBatches(int rank,int ranks,bool grouped) {
       Require(std::chrono::steady_clock::now()-start<std::chrono::seconds(10),
               "batched multirate records failed to drain");
     Require(exchange.CompletedReceives()==consumers.size(),"unexpected stage in batched receive plan");
+    if (epoch>1 && !consumers.empty()) {
+      Require(exchange.Stats().reused_receive_packets>0,"no completed receive buffers were reused");
+      auto held=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),held_record);
+      Require(held(0)==held_first,"receive cache overwrote a retained record from the previous epoch");
+    }
     for (const auto &[key,uses] : consumers) {
       auto data=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),exchange.Data(key));
+      if (epoch==1 && !held_record.data()) {
+        held_record=exchange.Data(key);
+        held_first=data(0);
+      }
       const int width=key.stage<0 ? fields : fields-2;
       for (const auto &point : requested) if (point.gid==key.gid)
         for (int f=0; f<width; ++f)

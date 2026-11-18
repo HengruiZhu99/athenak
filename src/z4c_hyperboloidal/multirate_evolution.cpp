@@ -174,6 +174,8 @@ void Z4cHyperboloidal::ClearActiveBlocks() {
 void MultirateEvolution::ReadOptions(ParameterInput& input) {
   if (input.GetOrAddInteger("multirate","send_cache_mib",0)<0)
     throw std::invalid_argument("multirate send_cache_mib must be nonnegative");
+  if (input.GetOrAddInteger("multirate","receive_cache_mib",0)<0)
+    throw std::invalid_argument("multirate receive_cache_mib must be nonnegative");
   const auto levels = input.GetOrAddString("multirate", "spherical_levels", "auto");
   if (levels != "auto") ParseLevels(levels);
   const auto balance = input.GetOrAddString("multirate", "balance", "metis");
@@ -815,6 +817,7 @@ void MultirateEvolution::Impl::BuildLocal() {
     ++consumers[{gid, static_cast<std::uint32_t>(steps[gid]), -1}];
   }
   exchange->SetSlopeFields(Fields::independent_count);
+  exchange->SetReceiveCacheBytes(static_cast<std::size_t>(pin->GetInteger("multirate","receive_cache_mib"))*1024*1024);
   exchange->SetSendCacheBytes(static_cast<std::size_t>(pin->GetInteger("multirate","send_cache_mib"))*1024*1024);
   if (pin->GetBoolean("multirate","prepost_exchanges")) {
     std::vector<int> groups;
@@ -1449,7 +1452,7 @@ void MultirateEvolution::Impl::CompleteInterval(Driver* driver) {
   }
   unsigned long long peaks[] = {stats.peak_record_bytes, stats.peak_packet_bytes, max_batch};
   unsigned long long sums[] = {stats.sent_bytes, batch_count, interior_receives, interior_batches_with_receives,
-                               stats.send_packets, stats.pack_kernels, stats.reused_send_packets, donor_table_bytes};
+                               stats.send_packets, stats.pack_kernels, stats.reused_send_packets, donor_table_bytes, stats.reused_receive_packets};
 #if MPI_PARALLEL_ENABLED
   MPI_Reduce(global_variable::my_rank == 0 ? MPI_IN_PLACE : peaks, peaks, 3, MPI_UNSIGNED_LONG_LONG,
              MPI_MAX, 0, MPI_COMM_WORLD);
@@ -1466,7 +1469,8 @@ void MultirateEvolution::Impl::CompleteInterval(Driver* driver) {
               << " sent_bytes=" << sums[0] << " batches=" << sums[1] << " records_completed_on_interior_poll=" << sums[2]
               << " interior_batches_with_receives=" << sums[3] << " send_packets=" << sums[4]
               << " send_pack_kernels=" << sums[5] << " reused_send_packets=" << sums[6]
-              << " donor_coupling_table_bytes=" << sums[7] << " rhs_by_level=";
+              << " donor_coupling_table_bytes=" << sums[7] << " reused_receive_packets=" << sums[8]
+              << " rhs_by_level=";
     for (size_t i = 0; i < level_work.size(); ++i) std::cout << (i ? "," : "") << level_work[i];
     std::cout << "\n";
   }

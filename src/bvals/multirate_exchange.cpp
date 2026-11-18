@@ -133,6 +133,29 @@ struct RecordExchange::Impl {
       cached_bytes+=bytes;
     }
   }
+  // A completed receive becomes a zero-copy record. A managed View or slice
+  // held by any consumer keeps the allocation busy, even across an epoch.
+  std::map<std::size_t,std::vector<DvceArray1D<Real>>> receive_buffers;
+  std::size_t receive_cache_limit=0, receive_cache_bytes=0;
+  DvceArray1D<Real> ReceiveBuffer(std::size_t size) {
+    if (receive_cache_limit) {
+      auto found=receive_buffers.find(size);
+      if (found!=receive_buffers.end()) {
+        for (const auto& buffer:found->second) if (buffer.use_count()==1) {
+          ++stats.reused_receive_packets;
+          return buffer;
+        }
+      }
+    }
+    DvceArray1D<Real> buffer(Kokkos::view_alloc(Kokkos::WithoutInitializing,
+        "multirate posted donor record"),size);
+    const auto bytes=size*sizeof(Real);
+    if (bytes && bytes<=receive_cache_limit-receive_cache_bytes) {
+      receive_buffers[size].push_back(buffer);
+      receive_cache_bytes+=bytes;
+    }
+    return buffer;
+  }
   // Each MPI source/destination pair has a dense tag namespace. Two banks
   // distinguish adjacent epochs without copying a header back from the GPU.
   bool planned = false;
@@ -151,8 +174,7 @@ struct RecordExchange::Impl {
     pending.receive_slot=&slot; pending.channel=channel; pending.peer=channel.first;
     pending.tag=slot.tag+static_cast<int>(epoch%2)*tag_stride;
     const auto scalars=slot.scalars;
-    pending.packet=DvceArray1D<Real>(Kokkos::view_alloc(Kokkos::WithoutInitializing,
-        "multirate posted donor record"),scalars);
+    pending.packet=ReceiveBuffer(scalars);
     AllocatePacket(scalars); stats.received_bytes+=scalars*sizeof(Real);
     CheckMPI(MPI_Irecv(pending.packet.data(),Count(scalars),MPI_ATHENA_REAL,pending.peer,
                        pending.tag,comm,&pending.request),"multirate preposted receive failed");
@@ -479,6 +501,17 @@ void RecordExchange::SetSendCacheBytes(std::size_t bytes) {
   impl_->send_cache.clear();
   impl_->cached_bytes=0;
   impl_->send_cache_limit=bytes;
+#else
+  (void)bytes;
+#endif
+}
+
+void RecordExchange::SetReceiveCacheBytes(std::size_t bytes) {
+  if (!impl_->finished) throw std::logic_error("Resize receive cache only at synchronized endpoints");
+#if MPI_PARALLEL_ENABLED
+  impl_->receive_buffers.clear();
+  impl_->receive_cache_bytes=0;
+  impl_->receive_cache_limit=bytes;
 #else
   (void)bytes;
 #endif
