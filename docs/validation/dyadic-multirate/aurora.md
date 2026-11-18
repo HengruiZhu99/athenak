@@ -81,3 +81,18 @@ Both multirate cases sent 12.98 GB in 81,522 packets per interval. With reuse en
 A separate two-rank CPU test used alternating A/B/B/A trials to isolate the mapped-halo stencil change. Traversing the stencil once for the physical and residual interpolants reduced multirate halo cost from 1.767 to 1.201 summed kernel-seconds per coarse interval and multirate total kernel cost from 5.658 to 5.085. On the same code change, native RK4 went from 8.955 to 8.108 summed kernel-seconds over the matching interval. These are CPU measurements on the small fixture.
 
 For the complete local batch path, host-to-device donor coupling tables now contain only the distinct donor blocks actually read by the batch. Across two CPU ranks the logical transfer fell from 96,000 to 59,520 bytes per interval before refinement and from 122,880 to 69,120 after refinement. Coalescing records produced by the same ready stage batch reduced MPI messages from 194 to 54 before refinement and from 250 to 54 after refinement. It preserved the byte volume and all 7,458,048 checkpoint scalars, including diagnostics. These message counts are from the adaptive pulse. N12 GPU timings select the transport for the isolated science run.
+
+### Measured GPU execution
+
+Level Zero device timing on all 24 MPI tile ranks covered two coarse intervals after two warmups. The collection window surrounded integrator tasks. Throughput above comes from separate uninstrumented runs. The profile sums active command durations across ranks. GPU-hours above use the number of allocated physical GPUs and elapsed wall time.
+
+| Summed tile-seconds over two intervals | Multirate with send reuse | Native uniform RK4 |
+| --- | ---: | ---: |
+| Compute kernels | 147.76 | 132.38 |
+| Driver copy and fill commands | 10.21 | 12.20 |
+| All timed device commands | 157.97 | 144.58 |
+| Scheme A RHS kernels, included in compute | 97.44 | 108.74 |
+| Multirate owned stage reconstruction | 18.46 | — |
+| Multirate recipient-specific donor reconstruction | 16.93 | — |
+
+The multirate schedule reduced block RHS evaluations by 62.4% and GPU time in the RHS function by 10.4%. Its smaller batches issued 35,520 RHS-related kernel calls against 18,432 in native RK4 over the trace window. The two multirate reconstruction functions together consumed 35.39 tile-seconds. Total compute kernel time was 11.6% higher. Level Zero also recorded 2,452,192 device-to-host copies and the same number of host-to-device copies during multirate. Neither command category appeared in the native trace. The trace identifies the commands and durations but does not attribute each copy to an MPI or application call site.
