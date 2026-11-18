@@ -20,8 +20,9 @@ def device_totals(directory, ranks):
 
 
 if __name__ == '__main__':
-    tool, directory, *command = sys.argv[1:]
+    tool, directory, skip_steps, *command = sys.argv[1:]
     rank = next(os.environ[key] for key in ('PMI_RANK','PALS_RANKID','PMIX_RANK') if key in os.environ)
     path = Path(directory)/f'device-rank-{int(rank)}'
     path.mkdir()
-    os.execv(tool,[tool,'--device-timing','--output',str(path/'kernels.log'),*command])
+    os.environ["MR_TRACE_SKIP_STEPS"]=skip_steps
+    os.execv(tool,[tool,'--start-paused','--device-timing','--output',str(path/'kernels.log'),*command])

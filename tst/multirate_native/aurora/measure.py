@@ -139,7 +139,7 @@ location_rad = .0001
         if not tools:
             raise RuntimeError('Aurora unitrace was unavailable')
         command += ['/usr/bin/python3.11',str(source/'aurora/device_profile.py'),
-                    str(tools[0]),str(run)]
+                    str(tools[0]),str(run),str(2*factor)]
     command += [str(exe), '-i', str(run/'input.athinput')]
     nodes = len({host for host,_ in pairs})
     counters = snapshot(root,run,"start",nodes)
@@ -176,6 +176,7 @@ location_rad = .0001
                    work=[line for line in text.splitlines() if line.startswith('MULTIRATE_')],
                    checkpoint=str(endpoints[-1]))
     if device_profile:
+        receipt['device_profile_coarse_intervals'] = intervals-2
         from device_profile import device_totals
         receipt['device_profile'] = device_totals(run,ranks)
     encoded = json.dumps(receipt,indent=2)+'\n'
@@ -200,7 +201,7 @@ def measure(*args):
 memory_tool = root/'memory-tool.so'
 subprocess.run(['c++', '-std=c++17', '-O2', '-shared', '-fPIC',
                 '-I'+str(root/'source/kokkos/core/src'), str(source/'aurora/memory.cpp'),
-                '-o', str(memory_tool)], check=True)
+                '-o', str(memory_tool), '-ldl'], check=True)
 os.environ['KOKKOS_TOOLS_LIBS'] = str(memory_tool)
 
 if case_file:

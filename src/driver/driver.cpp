@@ -589,6 +589,7 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool wdfla
         EndSTSSweep();
       }
 
+      Kokkos::Profiling::pushRegion("AthenaK integrator tasks");
       // Execute TaskLists
       if (UsesMultirate()) {
         ExecuteTaskList(pmesh, "multirate_interval", 0);
@@ -634,6 +635,7 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool wdfla
         }
       }
 
+      Kokkos::Profiling::popRegion();
       // Work outside of TaskLists:
       // increment time, ncycle, etc.
       pmesh->time = pmesh->time + pmesh->dt;

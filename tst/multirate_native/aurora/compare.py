@@ -107,7 +107,8 @@ def main():
                             multirate_summed_device_seconds=measured[0],
                             uniform_summed_device_seconds=measured[1],
                             summed_device_time_ratio=measured[0]/measured[1],
-                            scope='whole process including setup and endpoint output'))
+                            coarse_intervals=trial['device_profile_coarse_intervals'],
+                            scope='driver integrator tasks after two coarse warmup intervals'))
     if filename=='corrected-transport-results.json':
         trial=rows.get(('current754',24,'cohort'))
         if trial:
