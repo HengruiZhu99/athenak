@@ -1,4 +1,5 @@
 """Measure matched endpoint evolution on explicitly bound Aurora GPU tiles."""
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -17,6 +18,8 @@ root = Path(sys.argv[1]).resolve()
 source = root / 'source/tst/multirate_native'
 campaign = root.parent / 'n12-radial-blocks-20261117'
 exe = root / 'build/src/athena'
+with exe.open('rb') as binary:
+    binary_sha256 = hashlib.file_digest(binary, 'sha256').hexdigest()
 results = []
 failures = []
 
@@ -35,8 +38,11 @@ def case(mesh, ranks, mode, intervals):
     base = 4*4.6944203735617445e-4 if production else 2**-14
     factor = (16 if production else 2) if uniform else 1
     run = root/'runs'/f'{mesh}-{ranks}tiles-{mode}'
-    if (run/'receipt.json').exists():
-        return json.loads((run/'receipt.json').read_text())
+    complete = run/'completed.json'
+    if complete.exists():
+        receipt = json.loads(complete.read_text())
+        if receipt['binary_sha256']==binary_sha256:
+            return receipt
     run.mkdir(parents=True, exist_ok=True)
     if (run/'run.log').exists():
         run = run/('retry-'+str(time.time_ns()))
@@ -92,14 +98,19 @@ def case(mesh, ranks, mode, intervals):
     endpoints = sorted((run/'rst').glob('*.rst'))
     if not endpoints:
         raise AssertionError('missing accepted checkpoint in '+str(run))
-    receipt = dict(mesh=mesh, mode=mode, tiles=ranks, physical_gpus=ranks//2,
+    receipt = dict(binary_sha256=binary_sha256, input_sha256=hashlib.sha256(inp.encode()).hexdigest(),
+                   job_id=os.environ.get('PBS_JOBID'), mesh=mesh, mode=mode, tiles=ranks, physical_gpus=ranks//2,
                    nodes=len({host for host,_ in pairs}), simulated_M0=3*intervals*base,
                    seconds=wall, seconds_per_M0=wall/(3*intervals*base),
                    steady_base_seconds=samples, steady_seconds_per_M0=median(samples)/(3*base),
                    command=command, regrids=regrids, log=str(run/'run.log'),
                    work=[line for line in text.splitlines() if line.startswith('MULTIRATE_')],
                    checkpoint=str(endpoints[-1]))
-    (run/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
+    encoded = json.dumps(receipt,indent=2)+'\n'
+    (run/'receipt.json').write_text(encoded)
+    temporary = complete.with_suffix('.tmp')
+    temporary.write_text(encoded)
+    temporary.replace(complete)
     return receipt
 
 
