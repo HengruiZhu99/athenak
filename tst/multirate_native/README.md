@@ -97,6 +97,8 @@ After both trajectories finish, `aurora/n12_compare.py` checks the endpoint fiel
 
 ## Complete-batch transport controls
 
+With `multirate/complete_local_batches = true`, `multirate/fused_rhs = true` waits for the batch's stage donors and evaluates its disjoint interior and halo-dependent bulk points in a single RHS pass. This option defaults to false. The SYCL bulk point kernel accepts `z4c_hyperboloidal/rhs_workgroup_size`. Its default is 128, and a value of 1 requests automatic sizing from Kokkos.
+
 With `complete_local_batches = true` and `prepost_exchanges = true`, setting `coalesce_stage_packets = true` lets a rank send records from a common level, local step, stage and kernel class in one message per destination. The receiver posts two messages ahead per source and publication group. Each record keeps its own dependency key and consumer count. The shared allocation survives until its last record is released. Adaptation and redistribution rebuild the plan at common endpoints.
 
 `send_cache_mib` and `receive_cache_mib` independently limit retained GPU buffer capacity per MPI rank in MiB. Both default to zero. Active communication storage is additional. The send cache recycles completed requests. The receive cache reuses an allocation only after the MPI request and every record view release it. Compare the `send_packets`, `reused_send_packets`, `reused_receive_packets` and peak GPU memory receipts at the same endpoint when tuning these controls.

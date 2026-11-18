@@ -245,6 +245,7 @@ struct MultirateEvolution::Impl {
   };
   using BatchKey = std::tuple<int, size_t, bal::KernelKind>;
   mr::RecordReadiness<Key, BatchKey> readiness, interior_readiness;
+  bool fused_rhs = false;
   bool complete_local_batches = false, peer_profile_pending = false;
   struct ActiveLayout {
     DvceArray1D<int> mask, native_indices;
@@ -269,6 +270,9 @@ struct MultirateEvolution::Impl {
   double max_cfl = .35, migration_cost = 0;
   explicit Impl(Z4cHyperboloidal& module, Driver* driver, bool rebuilt)
       : p(module), pack(p.pmy_pack), mesh(pack->pmesh), pin(p.pinput_) {
+    fused_rhs = pin->GetOrAddBoolean("multirate", "fused_rhs", false);
+    if (fused_rhs && !pin->GetBoolean("multirate", "complete_local_batches"))
+      throw std::invalid_argument("fused_rhs requires complete local batches");
     max_cfl = pin->GetReal("multirate", "max_characteristic_cfl");
     balance = pin->GetString("multirate", "balance");
     options.backend = balance == "scalar" ? bal::Backend::scalar_reference : bal::Backend::metis;
@@ -807,12 +811,15 @@ void MultirateEvolution::Impl::BuildLocal() {
         for (const auto& key : keys) ++consumers[key];
         const BatchKey batch{-static_cast<int>(schedule->Stage(task.stage).critical_depth),
                              task.stage, graph.blocks[gid].kernel};
-        std::vector<Key> own_keys, halo_keys = task.dependencies;
-        for (const auto& key : task.dependencies)
-          if (key.gid == gid) own_keys.push_back(key);
-        interior_readiness.Add(batch, own_keys);
-        // Local completion event. Stages 4..7 never occur in a wire record.
-        halo_keys.push_back({gid, step, stage + 4});
+        auto halo_keys = task.dependencies;
+        if (!fused_rhs) {
+          std::vector<Key> own_keys;
+          for (const auto& key : task.dependencies)
+            if (key.gid == gid) own_keys.push_back(key);
+          interior_readiness.Add(batch, own_keys);
+          // Local completion event. Stages 4..7 never occur in a wire record.
+          halo_keys.push_back({gid, step, stage + 4});
+        }
         readiness.Add(batch, halo_keys);
         tasks.push_back(std::move(task));
       }
@@ -860,6 +867,20 @@ void MultirateEvolution::Impl::SelectBatch(const std::vector<int>& slots) {
   auto [layout, inserted] = active_layouts.try_emplace(slots);
   if (inserted) {
     p.SelectActiveBlocks(slots);
+    if (fused_rhs) {
+      // The fixed batch now executes only after all donor records arrive.
+      // Each occupied bulk point appears exactly once in these disjoint lists.
+      std::vector<int> points;
+      for (int m : slots) {
+        for (auto subset : {RHSSubset::Interior,RHSSubset::Dependent}) {
+          const auto& group = p.rhs_points_by_block_[static_cast<int>(subset)][m];
+          points.insert(points.end(),group.begin(),group.end());
+        }
+      }
+      std::sort(points.begin(),points.end());
+      p.active_rhs_points[static_cast<int>(RHSSubset::Dependent)] =
+          Device(points,"multirate complete RHS points");
+    }
     layout->second.mask = p.active_blocks;
     layout->second.rhs_points = p.active_rhs_points;
     std::vector<int> indices;
@@ -1226,11 +1247,19 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
   std::uint64_t units = 0;
   for (int m : slots) units += graph.blocks[pack->GlobalId(m)].work_units;
   std::vector<Combination> combinations(p.nblocks);
-  if (interior) {
+  auto dependent_start = batch_start;
+  if (interior || fused_rhs) {
     for (int m : slots) combinations[m] = Combine(stage, pack->GlobalId(m));
     Reconstruct<false>(slots, combinations, context.stage_time);
 
-    model.Observe(bal::KernelKind::projection, units, Seconds(batch_start));
+    const double projection_seconds = Seconds(batch_start);
+    model.Observe(bal::KernelKind::projection, units, projection_seconds);
+    if (fused_rhs) {
+      phase_seconds[0] += projection_seconds;
+      dependent_start = Clock::now();
+    }
+  }
+  if (interior) {
     const auto begin_interior = Clock::now();
     p.CalcRHS(driver, context.key.stage + 1, RHSSubset::Interior, max_cfl);
     const double elapsed_interior = Seconds(begin_interior);
@@ -1263,10 +1292,10 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
     p.surface_exchange_->Evaluate();
   }
   const auto begin_rhs = Clock::now();
-  phase_seconds[1] += std::chrono::duration<double>(begin_rhs-batch_start).count();
+  phase_seconds[1] += std::chrono::duration<double>(begin_rhs-dependent_start).count();
   p.CalcRHS(driver, context.key.stage + 1, RHSSubset::Dependent, max_cfl);
   phase_seconds[2] += Seconds(begin_rhs);
-  double rhs_seconds = Seconds(batch_start);
+  double rhs_seconds = Seconds(dependent_start);
   for (auto index : batch) rhs_seconds += tasks[index].interior_seconds;
   const auto& participants = p.agreement_plan_->AgreementBlocks();
   if (std::any_of(slots.begin(), slots.end(), [&](int m) {
