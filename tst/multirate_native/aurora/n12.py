@@ -6,6 +6,7 @@ import json
 import math
 import os
 from pathlib import Path
+from n12_paths import trajectory_directory
 import re
 import shutil
 import subprocess
@@ -153,6 +154,24 @@ def placement_for_binary(root, run, binary_sha):
             return {}
         data = json.loads(path.read_text())
         return {r['mode']:r for r in data['results'] if r['binary_sha256']==binary_sha}
+    # Reuse same-executable six-interval controls when the full accepted
+    # payload was checked against the archived spread run for this atlas.
+    cache_path = root/'send-cache-trial-results.json'
+    cache = measurements(cache_path)
+    if all(m in cache and cache[m]['mesh']=='current754' and cache[m]['tiles']==24
+           and cache[m]['intervals']==6 for m in ('cohort','cohort_cached','classical')):
+        checks_path=root/'send-cache-trial-comparison.json'
+        checks=json.loads(checks_path.read_text())['checks']
+        required={('cohort','spread'),('cohort_cached','cohort')}
+        verified={(c['method'],c['comparison']) for c in checks
+                  if c['mesh']=='current754' and c['gpus']==12 and c['identical_checkpoint_payload']}
+        if not required<=verified:
+            raise ValueError('missing cached-send N12 checkpoint equivalence')
+        choices=[cache[m] for m in ('cohort','cohort_cached')]
+        selected=min(choices,key=lambda r:r['steady_seconds_per_M0'])
+        save(run/'placement-selection.json',dict(selected=selected['mode'],binary_sha256=binary_sha,
+             report=str(cache_path),steady_seconds_per_M0={r['mode']:r['steady_seconds_per_M0'] for r in choices}))
+        return selected
     measured = measurements(report_path)
     candidates = ('cohort','locality','spread_fixed')
     if not set(candidates)<=measured.keys():
@@ -187,7 +206,7 @@ def main():
     root = args.root.resolve()
     campaign = root.parent/'n12-radial-blocks-20261117'
     original = json.loads((campaign/'control/plan.json').read_text())
-    directory = root/'n12-10M'/args.mode
+    directory = trajectory_directory(root,args.mode)
     directory.mkdir(parents=True, exist_ok=True)
     lock = (directory/'segment.lock').open('a')
     fcntl.flock(lock,fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -245,7 +264,8 @@ def main():
                 lines = stream.read(int(stream.readline())).decode().splitlines()[1:]
             owners = ','.join(row.split()[1] for row in lines)
             extra = (f'\n<multirate>\nbalance = none\nblock_owners = {owners}\n'
-                     f'complete_local_batches = {str(selected["mode"] in ("cohort","locality")).lower()}\n'
+                     f'complete_local_batches = {str(selected["mode"] in ("cohort","locality","cohort_cached")).lower()}\n'
+                     f'send_cache_mib = {96 if selected["mode"]=="cohort_cached" else 0}\n'
                      'spherical_levels = 2,2,2,1,1,1,1,1,2,3,4\nprepost_exchanges = true\n')
         integrator = 'rk4_classical' if ratio==16 else 'mrgark4'
         inputs = (original_input.read_text()+extra+f'\n<time>\nintegrator = {integrator}\ndt = {dt:.17g}\n'

@@ -3,6 +3,7 @@ import argparse
 import json
 import math
 from pathlib import Path
+from n12_paths import trajectory_directory
 import sys
 import tempfile
 
@@ -59,7 +60,7 @@ def extract_news(directory, sources):
 
 
 def work_and_science(root, mode):
-    case = root/'n12-10M'/mode
+    case = trajectory_directory(root,mode)
     last = json.loads((case/'state.json').read_text())
     if not last['target_reached'] or abs(last['time_M0']-10)>last['cycle']*math.ulp(10.):
         raise ValueError('N12 mode has not reached the common 10 M0 endpoint: '+mode)

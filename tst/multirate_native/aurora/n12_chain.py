@@ -3,6 +3,7 @@ import fcntl
 import json
 import os
 from pathlib import Path
+from n12_paths import trajectory_directory
 import re
 import subprocess
 import sys
@@ -13,7 +14,7 @@ from n12 import save
 def next_mode(root, current, job):
     states = {}
     for mode in ('uniform', 'multirate'):
-        path = root/'n12-10M'/mode/'state.json'
+        path = trajectory_directory(root,mode)/'state.json'
         if path.exists():
             state = json.loads(path.read_text())
             receipt = Path(state['checkpoint']).parent.parent/'receipt.json'
