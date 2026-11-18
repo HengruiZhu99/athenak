@@ -173,6 +173,7 @@ os.environ['KOKKOS_TOOLS_LIBS'] = str(memory_tool)
 if throughput:
     measure('current754',24,'cohort',6)
     measure('current754',24,'classical',6)
+    measure('current754',24,'zorder',6)
 elif large_suite:
     # Isolate transport and placement on the deployed deep hierarchy first.
     for mode in ('posted_fixed','spread','polled_fixed'):
