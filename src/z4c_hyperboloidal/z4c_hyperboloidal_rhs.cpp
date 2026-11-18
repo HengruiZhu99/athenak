@@ -139,14 +139,11 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver,int stage,RHSSubset subset,
   if (radial) evaluate(std::true_type{}, std::false_type{});
   else if (split_bulk_jets_) evaluate(std::false_type{}, std::true_type{});
   else evaluate(std::false_type{}, std::false_type{});
-#if defined(KOKKOS_ENABLE_SYCL) && MPI_PARALLEL_ENABLED
-  // The validity reduction consumes these kernels and returns a host scalar.
-  // Service posted records on this MPI thread while the device reaches that point.
-  if (progress) {
-    auto complete = DevExeSpace().sycl_queue().ext_oneapi_submit_barrier();
-    while (complete.get_info<sycl::info::event::command_execution_status>() !=
-           sycl::info::event_command_status::complete)
-      progress->Poll();
+#if MPI_PARALLEL_ENABLED
+  // Give posted records one poll on the calling MPI thread. The host-scalar
+  // validity reduction below waits for the bulk kernels to finish.
+  if (progress != nullptr) {
+    progress->Poll();
   }
 #else
   (void)progress;
