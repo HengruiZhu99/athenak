@@ -15,8 +15,8 @@ from nonradiative_native_analysis import metric_rate
 from nonradiative_tensor_attribution import tensor
 
 
-def diagnostics(directory, scri_only=False):
-    anchor = sorted(directory.glob('*.o3.*.r00000000.scri'))[-1]
+def diagnostics(directory, scri_only=False, output_number=3):
+    anchor = sorted(directory.glob(f'*.o{output_number}.*.r00000000.scri'))[-1]
     series = []
     for path in sorted(directory.glob(anchor.name.replace('r00000000', 'r????????'))):
         record = read(path)
