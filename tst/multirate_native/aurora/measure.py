@@ -204,7 +204,13 @@ subprocess.run(['c++', '-std=c++17', '-O2', '-shared', '-fPIC',
 os.environ['KOKKOS_TOOLS_LIBS'] = str(memory_tool)
 
 if case_file:
-    for mesh,ranks,mode,intervals in json.loads(case_file.read_text()):
+    specification=json.loads(case_file.read_text())
+    if isinstance(specification,dict) and 'accuracy' in specification:
+        from accuracy import qualify
+        checks=qualify(root,exe,specification['accuracy'])
+        (root/campaign_report).write_text(json.dumps(dict(accuracy=checks),indent=2)+'\n')
+        sys.exit(0)
+    for mesh,ranks,mode,intervals in specification:
         if mode=='selected':
             from n12_paths import trajectory_directory
             directory = trajectory_directory(root,'multirate')

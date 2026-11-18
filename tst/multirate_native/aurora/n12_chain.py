@@ -56,7 +56,7 @@ def continue_comparison(root, current, job):
             cases = pending.split(':')
             if len(cases)==1 and Path(pending).name==pending:
                 description=json.loads((root/pending).read_text())
-                if isinstance(description,dict):
+                if isinstance(description,dict) and 'suites' in description:
                     cases=description['suites']
                     if not isinstance(cases,list) or not cases or not all(isinstance(s,str) for s in cases):
                         raise ValueError('invalid ordered benchmark suite list')
