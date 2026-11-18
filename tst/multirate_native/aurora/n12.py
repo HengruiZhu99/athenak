@@ -6,6 +6,7 @@ import json
 import math
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -32,6 +33,116 @@ def save(path, data):
     temp = path.with_suffix('.tmp')
     temp.write_text(json.dumps(data, indent=2)+'\n')
     temp.replace(path)
+
+
+def input_parameters(text):
+    # AthenaK accepts repeated blocks; the last assignment wins.
+    parameters = {}
+    block = None
+    for raw in text.splitlines():
+        line = raw.partition('#')[0].strip()
+        if line.startswith('<') and line.endswith('>'):
+            block = line[1:-1]
+        elif '=' in line:
+            key, value = line.split('=', 1)
+            parameters[block, key.strip()] = value.strip()
+    return parameters
+
+
+def verify_export(manifest, parameters):
+    data = json.loads(manifest.read_text())
+    directory = Path(parameters['problem','binary_directory'])
+    identity = parameters['problem','binary_identity']
+    if 'identity' in data and data['identity'] != identity:
+        raise ValueError('N12 export identity differs from the input')
+    blocks = data.get('blocks')
+    if not isinstance(blocks,dict) or not any(isinstance(v,dict) and 'sha256' in v for v in blocks.values()):
+        return 0
+    if data.get('status','COMPLETE') != 'COMPLETE':
+        raise ValueError('incomplete N12 export')
+    if set(blocks) != {p.name for p in directory.glob('*.hbi')}:
+        raise ValueError('N12 export block inventory differs from the manifest')
+    for name, entry in blocks.items():
+        if digest(directory/name) != entry['sha256']:
+            raise ValueError(f'N12 initial data changed: {name}')
+    return len(blocks)
+
+
+def verify_header(info, cycle, provenance):
+    dt = provenance['dt']
+    if (info['blocks'] != 754 or info['record_blocks'] != 754 or info['cycle'] != cycle or
+            info['dt'] != dt or not math.isfinite(info['time']) or
+            abs(info['time']-cycle*dt) > max(1,cycle)*math.ulp(cycle*dt)):
+        raise ValueError('N12 native restart disagrees with the fixed hierarchy or schedule')
+    with Path(info['path']).open('rb') as stream:
+        parameters = input_parameters(stream.read(info['start']).decode())
+    integrator = 'rk4_classical' if provenance['mode']=='uniform' else 'mrgark4'
+    if parameters['time','integrator'] != integrator or int(parameters['time','nlim']) != provenance['target_cycles']:
+        raise ValueError('native restart integrator or cycle limit differs from the N12 run')
+
+
+def final_checkpoint(run):
+    # Finalize writes after periodic output even when both fall on the same cycle.
+    paths = sorted((run/'rst').glob('*.rst'),key=lambda p:int(p.suffixes[-2][1:]))
+    if not paths:
+        raise ValueError(f'no native checkpoint in {run}')
+    final = parse(paths[-1])
+    with (run/'run.log').open() as stream:
+        endings = [m.groups() for line in stream
+                   if (m := re.fullmatch(r'time=(\S+) cycle=(\d+)\s*',line))]
+    if len(endings)!=1 or (float(endings[0][0]),int(endings[0][1])) != (final['time'],final['cycle']):
+        raise ValueError('last native checkpoint differs from the driver termination record')
+    return final
+
+
+def restore(directory, provenance):
+    state_path = directory/'state.json'
+    state = json.loads(state_path.read_text()) if state_path.exists() else None
+    receipts = sorted((json.loads(p.read_text()) for p in directory.glob('segment-*/receipt.json')),
+                      key=lambda item:item['start_cycle'])
+    if not receipts:
+        if state is not None:
+            raise ValueError('missing N12 segment receipt')
+        return None
+    if state is not None and state not in receipts:
+        raise ValueError('N12 state does not identify a committed segment')
+    initial = Path(receipts[0]['checkpoint']).parent.parent/'input.athinput'
+    input_sha = digest(initial)
+    previous = None
+    for item in receipts:
+        if (any(item[k] != v for k,v in provenance.items()) or
+                item['start_cycle'] != (previous['cycle'] if previous else 0) or
+                not item['start_cycle'] < item['cycle'] <= provenance['target_cycles'] or
+                item['binary_sha256'] != receipts[0]['binary_sha256'] or
+                item.get('input_sha256',input_sha) != input_sha or
+                ('parent_checkpoint_sha256' in item and item['parent_checkpoint_sha256'] !=
+                 (previous['checkpoint_sha256'] if previous else None))):
+            raise ValueError('N12 segment provenance or progress differs from the committed chain')
+        previous = item
+    last = receipts[-1]
+    checkpoint = Path(last['checkpoint'])
+    if (digest(Path(last['executable'])) != last['binary_sha256'] or
+            digest(checkpoint) != last['checkpoint_sha256']):
+        raise ValueError('pinned restart or executable digest changed')
+    final = final_checkpoint(checkpoint.parent.parent)
+    if Path(final['path']) != checkpoint:
+        # Older receipts selected by maximum cycle alone when Finalize duplicated a
+        # periodic dump. Retain that explicit restart only if the geometric state,
+        # accepted fields and persistent diagnostics match the final sequence.
+        old = parse(checkpoint)
+        keys = ('cycle','time','dt','blocks','record_blocks','stride','atlas','topology','identity')
+        if ('input_sha256' in last or any(old[k] != final[k] for k in keys) or
+                any(not np.array_equal(a.view(np.uint64),b.view(np.uint64))
+                    for a,b in zip(payload(old),payload(final)))):
+            raise ValueError('receipt does not point to an equivalent final native checkpoint')
+        final = old
+    verify_header(final,last['cycle'],provenance)
+    if last['time_M0'] != 3*final['time'] or last['target_reached'] != (last['cycle']==provenance['target_cycles']):
+        raise ValueError('N12 state disagrees with the accepted endpoint')
+    # A job can terminate after committing receipt.json but before replacing state.json.
+    if last != state:
+        save(state_path,last)
+    return dict(last,input_sha256=input_sha,input_path=str(initial))
 
 
 def placement_for_binary(root, run, binary_sha):
@@ -93,13 +204,14 @@ def main():
     target = coarse_steps*ratio
     dt = (10/3)/target
     state_path = directory/'state.json'
-    state = json.loads(state_path.read_text()) if state_path.exists() else None
-    if state and state['cycle'] == target:
+    provenance = dict(mode=args.mode, manifest_sha256=original['initial_manifest_sha256'],
+                      input_source_sha256=digest(original_input), target_cycles=target, dt=dt)
+    state = restore(directory,provenance)
+    job = os.environ['PBS_JOBID'].split('.')[0]
+    if state and (state['cycle'] == target or state['job'] == job):
         return
     if state:
         executable = Path(state['executable'])
-        if digest(executable) != state['binary_sha256'] or digest(Path(state['checkpoint'])) != state['checkpoint_sha256']:
-            raise ValueError('pinned restart or executable digest changed')
     else:
         built = root/'build/src/athena'
         binary_sha = digest(built)
@@ -111,14 +223,20 @@ def main():
             temp.replace(executable)
         if digest(executable) != binary_sha:
             raise ValueError('isolated executable copy differs')
-    job = os.environ['PBS_JOBID'].split('.')[0]
     run = directory/f'segment-{job}'
+    attempt = 0
+    while run.exists():
+        attempt += 1
+        run = directory/f'segment-{job}-attempt-{attempt}'
     run.mkdir()
     start_cycle = state['cycle'] if state else 0
     if state:
         # Native restart input retains the integrator, phase placement and output counters.
         input_args = ['-r',state['checkpoint']]
+        initial_input = Path(state['input_path'])
+        verified_blocks = state.get('verified_export_blocks')
     else:
+        verified_blocks = verify_export(manifest,input_parameters(original_input.read_text()))
         extra = ''
         if args.mode == 'multirate':
             selected = placement_for_binary(root,run,binary_sha)
@@ -135,17 +253,19 @@ def main():
                   f'<output1>\ndcycle = {37*ratio}\n<output2>\ndcycle = {111*ratio}\n'
                   f'<output20>\nfile_type = scri\nid = scri\ndcycle = {6*ratio}\nnodal = true\n'
                   'modes = true\nlmax = 8\nboundary_diagnostics = true\nunit_description = geometric code units, M0=1/3\n')
-        (run/'input.athinput').write_text(inputs)
-        input_args = ['-i',str(run/'input.athinput')]
+        initial_input = run/'input.athinput'
+        initial_input.write_text(inputs)
+        input_args = ['-i',str(initial_input)]
     remaining = int(deadline-time.monotonic())
     if remaining<120:
         raise ValueError('segment has insufficient remaining allocation time')
     m,s = divmod(remaining,60)
     h,m = divmod(m,60)
     cmd = [*launcher(24),str(executable),*input_args,'-d',str(run),'-t',f'{h:02d}:{m:02d}:{s:02d}']
-    receipt = dict(job=job, mode=args.mode, executable=str(executable), binary_sha256=digest(executable),
-                   manifest_sha256=original['initial_manifest_sha256'], input_source_sha256=digest(original_input),
-                   start_cycle=start_cycle, target_cycles=target, dt=dt, command=cmd)
+    receipt = dict(provenance, job=job, executable=str(executable), binary_sha256=digest(executable),
+                   input_path=str(initial_input), input_sha256=digest(initial_input), verified_export_blocks=verified_blocks,
+                   launcher_sha256=digest(Path(__file__)), start_cycle=start_cycle, command=cmd,
+                   parent_checkpoint_sha256=state['checkpoint_sha256'] if state else None)
     save(run/'launch.json',receipt)
     counters = snapshot(root,run,"start",2)
     begin = time.monotonic()
@@ -153,12 +273,11 @@ def main():
         subprocess.run(cmd,stdout=log,stderr=subprocess.STDOUT,cwd=run,check=True)
     wall = time.monotonic()-begin
     receipt["engine_activity"] = utilization(counters,snapshot(root,run,"end",2))
-    final = max((parse(path) for path in (run/'rst').glob('*.rst')),key=lambda item:item['cycle'])
+    final = final_checkpoint(run)
     cycle = final['cycle']
-    if not start_cycle<cycle<=target or final['blocks']!=754 or final['dt']!=dt:
+    verify_header(final,cycle,provenance)
+    if not start_cycle<cycle<=target:
         raise ValueError('unexpected N12 checkpoint or lack of forward progress')
-    if abs(final['time']-cycle*dt)>max(1,cycle)*math.ulp(cycle*dt):
-        raise ValueError('N12 endpoint time differs from fixed-step schedule')
     values = payload(final)
     for block in values:
         if not np.isfinite(block).all():
