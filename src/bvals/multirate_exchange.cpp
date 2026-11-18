@@ -97,11 +97,18 @@ struct RecordExchange::Impl {
 #if MPI_PARALLEL_ENABLED
   MPI_Comm comm = MPI_COMM_NULL;
   int tag_upper_bound = 0, epoch_tag = 0;
+  using Channel = std::pair<int,int>;  // source rank and publication group
+  struct ReceiveSlot {
+    int tag;
+    std::vector<RecordKey> keys;
+    std::size_t scalars = 0;
+  };
   struct Pending {
     MPI_Request request = MPI_REQUEST_NULL;
     DvceArray1D<Real> packet;
     int peer = 0, tag = 0;
-    RecordKey key;
+    Channel channel{};
+    const ReceiveSlot* receive_slot = nullptr;
   };
   std::vector<Pending> sends, receives;
   std::vector<DvceArray1D<Real>> pack_sources;
@@ -130,18 +137,20 @@ struct RecordExchange::Impl {
   // distinguish adjacent epochs without copying a header back from the GPU.
   bool planned = false;
   int tag_stride = 0;
-  struct ReceiveSlot { RecordKey key; int tag; };
   struct Window { std::vector<ReceiveSlot> slots; std::size_t next = 0; };
-  std::map<int,Window> windows;
-  std::map<std::pair<int,RecordKey>,int> send_tags;
-  void PostNext(int gid) {
-    auto &window=windows.at(gid);
+  std::map<Channel,Window> windows;
+  struct SendRoute { int tag, offset, packet_size; };
+  std::map<std::pair<int,RecordKey>,SendRoute> send_routes;
+  struct OpenPacket { Pending send; std::size_t written=0; };
+  std::map<std::pair<int,int>,OpenPacket> open_packets;
+  void PostNext(Channel channel) {
+    auto &window=windows.at(channel);
     if (window.next==window.slots.size()) return;
-    const auto slot=window.slots[window.next++];
+    const auto& slot=window.slots[window.next++];
     Pending pending;
-    pending.key=slot.key; pending.peer=owners[gid];
+    pending.receive_slot=&slot; pending.channel=channel; pending.peer=channel.first;
     pending.tag=slot.tag+static_cast<int>(epoch%2)*tag_stride;
-    auto scalars=layout.at(gid).size()*Width(slot.key);
+    const auto scalars=slot.scalars;
     pending.packet=DvceArray1D<Real>(Kokkos::view_alloc(Kokkos::WithoutInitializing,
         "multirate posted donor record"),scalars);
     AllocatePacket(scalars); stats.received_bytes+=scalars*sizeof(Real);
@@ -164,7 +173,7 @@ struct RecordExchange::Impl {
       for (auto &pending : sends) if (pending.request != MPI_REQUEST_NULL) {
         MPI_Cancel(&pending.request); MPI_Wait(&pending.request,MPI_STATUS_IGNORE);
       }
-      if (!sends.empty() && Kokkos::is_initialized() && !Kokkos::is_finalized())
+      if (!pack_sources.empty() && Kokkos::is_initialized() && !Kokkos::is_finalized())
         DevExeSpace().fence("multirate unpublished pack cleanup");
       MPI_Comm_free(&comm);
     }
@@ -288,35 +297,61 @@ const std::vector<Point> &RecordExchange::OwnedPoints(int gid) const {
 std::size_t RecordExchange::PointIndex(const Point &point) const { return impl_->point_index.at(point); }
 
 void RecordExchange::SetSlopeFields(int fields) {
+#if MPI_PARALLEL_ENABLED
+  if (impl_->planned) throw std::logic_error("Configure slope width before compiling receive layouts");
+#endif
   if (impl_->used_epoch || fields<1 || fields>impl_->fields)
     throw std::invalid_argument("invalid immutable slope record width");
   impl_->slope_fields=fields;
 }
 
-void RecordExchange::CompileReceives(const std::map<RecordKey,std::size_t> &consumers) {
+void RecordExchange::CompileReceives(const std::map<RecordKey,std::size_t> &consumers,
+                                     const std::vector<int>& groups) {
 #if MPI_PARALLEL_ENABLED
   auto &p=*impl_;
   if (p.used_epoch || p.planned) throw std::logic_error("compile multirate receives before Begin");
-  std::vector<std::vector<int>> requests(p.ranks);
-  for (const auto &[key,count]:consumers) if (count && p.owners.at(key.gid)!=p.rank) {
-    const int peer=p.owners[key.gid],tag=Count(requests[peer].size()/3);
-    requests[peer].insert(requests[peer].end(),{key.gid,static_cast<int>(key.step),key.stage});
-    p.windows[key.gid].slots.push_back({key,tag});
-    p.tag_stride=std::max(p.tag_stride,tag+1);
+  using PacketKey = std::tuple<int,int,std::uint32_t,int>; // peer, group, step, stage
+  std::map<PacketKey,std::vector<RecordKey>> packets;
+  bool valid=groups.empty() || groups.size()==p.owners.size();
+  for (const auto& [key,count] : consumers) if (count)
+    valid=valid && p.layout.count(key.gid) && key.stage>=-1 && key.stage<4 &&
+        key.step<=static_cast<std::uint32_t>(std::numeric_limits<int>::max());
+  p.CollectiveRequire(valid,"invalid multirate publication group or receive layout");
+  for (const auto &[key,count] : consumers) if (count && p.owners.at(key.gid)!=p.rank) {
+    const int group = groups.empty() ? key.gid : groups[key.gid];
+    packets[{p.owners[key.gid],group,key.step,key.stage}].push_back(key);
   }
+  std::vector<std::vector<int>> requests(p.ranks);
+  std::vector<int> next_tag(p.ranks);
+  for (const auto& [descriptor,keys] : packets) {
+    const auto [peer,group,step,stage]=descriptor;
+    const int tag=next_tag[peer]++;
+    auto& window=p.windows[{peer,group}];
+    window.slots.push_back({tag,keys});
+    auto& slot=window.slots.back();
+    for (const auto& key : keys) slot.scalars+=p.layout.at(key.gid).size()*p.Width(key);
+    const int packet_size=Count(slot.scalars);
+    int offset=0;
+    for (const auto& key : keys) {
+      requests[peer].insert(requests[peer].end(),{key.gid,static_cast<int>(step),stage,
+                                                  tag,offset,packet_size});
+      offset+=Count(p.layout.at(key.gid).size()*p.Width(key));
+    }
+  }
+  p.tag_stride=*std::max_element(next_tag.begin(),next_tag.end());
   CheckMPI(MPI_Allreduce(MPI_IN_PLACE,&p.tag_stride,1,MPI_INT,MPI_MAX,p.comm),
            "multirate tag capacity validation failed");
   if (2LL*p.tag_stride>1LL+p.tag_upper_bound) {p.windows.clear();return;}
   std::vector<int> counts,offsets;
   const auto received=ExchangeRequests(requests,p.comm,counts,offsets);
-  for (int peer=0;peer<p.ranks;++peer) for (int j=0;j<counts[peer];j+=3) {
-    int i=offsets[peer]+j;
+  for (int peer=0;peer<p.ranks;++peer) for (int j=0;j<counts[peer];j+=6) {
+    const int i=offsets[peer]+j;
     RecordKey key{received[i],static_cast<std::uint32_t>(received[i+1]),received[i+2]};
-    p.send_tags.emplace(std::make_pair(peer,key),j/3);
+    p.send_routes[{peer,key}]={received[i+3],received[i+4],received[i+5]};
   }
   p.planned=true;
 #else
-  (void)consumers;
+  (void)consumers; (void)groups;
 #endif
 }
 
@@ -350,10 +385,10 @@ void RecordExchange::Begin(std::uint64_t epoch, const std::vector<int> &steps,
     p.expected_publications += 5*std::size_t(steps[entry.first])+1;
 #if MPI_PARALLEL_ENABLED
   if (p.planned) {
-    for (auto &[gid,window]:p.windows) {
+    for (auto &[channel,window]:p.windows) {
       window.next=0;
-      p.expected_receives+=window.slots.size();
-      p.PostNext(gid); p.PostNext(gid);
+      for (const auto& slot:window.slots) p.expected_receives+=slot.keys.size();
+      p.PostNext(channel); p.PostNext(channel);
     }
     return;
   }
@@ -382,21 +417,37 @@ void RecordExchange::Publish(const RecordKey &key, const DvceArray1D<Real> &valu
     pending.peer = target.rank;
     pending.tag = p.epoch_tag;
     const std::size_t header = p.planned ? 0 : kHeader;
-    if (p.planned) {
-      const auto tag=p.send_tags.find({target.rank,key});
-      if (tag==p.send_tags.end()) continue;
-      pending.tag=static_cast<int>(p.epoch%2)*p.tag_stride+tag->second;
-    }
     const auto indices = target.indices;
     const int fields = p.Width(key);
     const auto size = indices.extent(0)*fields;
-    Count(size+header);
-    pending.packet = p.SendBuffer(size+header);
-    p.AllocatePacket(size+header);
+    std::size_t offset=0,packet_size=size+header;
+    if (p.planned) {
+      const auto route=p.send_routes.find({target.rank,key});
+      if (route==p.send_routes.end()) continue;
+      pending.tag=static_cast<int>(p.epoch%2)*p.tag_stride+route->second.tag;
+      offset=route->second.offset;
+      packet_size=route->second.packet_size;
+    }
+    Count(packet_size);
+    const bool shared=packet_size!=size+header;
+    const auto packet_key=std::make_pair(target.rank,pending.tag);
+    Impl::OpenPacket* open=nullptr;
+    if (shared) {
+      open=&p.open_packets[packet_key];
+      if (!open->written) {
+        open->send=std::move(pending);
+        open->send.packet=p.SendBuffer(packet_size);
+        p.AllocatePacket(packet_size);
+      }
+      open->written+=size;
+    } else {
+      pending.packet=p.SendBuffer(packet_size);
+      p.AllocatePacket(packet_size);
+    }
     const auto bytes=(size+header)*sizeof(Real);
     p.stats.sent_bytes+=bytes;
     if (!p.stats.sent_bytes_by_peer.empty()) p.stats.sent_bytes_by_peer[target.rank]+=bytes;
-    auto packet = pending.packet;
+    auto packet = shared ? open->send.packet : pending.packet;
     const Real epoch = static_cast<Real>(p.epoch), gid = key.gid, step = key.step,
                stage = key.stage, points = indices.extent(0);
     Kokkos::parallel_for("multirate sparse derivative pack",Kokkos::RangePolicy<>(0,size+header),
@@ -405,12 +456,17 @@ void RecordExchange::Publish(const RecordKey &key, const DvceArray1D<Real> &valu
           packet(i) = i == 0 ? epoch : (i == 1 ? gid : (i == 2 ? step : (i == 3 ? stage : points)));
         } else {
           const auto scalar = i-header;
-          packet(i) = values(std::size_t(indices(scalar/fields))*fields+scalar%fields);
+          packet(offset+i) = values(std::size_t(indices(scalar/fields))*fields+scalar%fields);
         }
       });
     // Poll fences one batch of queued packs before posting their MPI sends.
     if (retain_source) {p.pack_sources.push_back(values);retain_source=false;}
     ++p.stats.pack_kernels;
+    if (shared) {
+      if (open->written!=packet_size) continue;
+      pending=std::move(open->send);
+      p.open_packets.erase(packet_key);
+    }
     ++p.stats.send_packets;
     p.sends.push_back(std::move(pending));
   }
@@ -480,12 +536,19 @@ bool RecordExchange::Poll() {
     CheckMPI(MPI_Test(&incoming.request,&done,MPI_STATUS_IGNORE),"multirate receive poll failed");
     if (!done) { ++i; continue; }
     if (p.planned) {
-      const int gid=incoming.key.gid;
-      p.Accept(incoming.key,incoming.packet);
-      ++p.completed_receives;
-      p.packet_bytes-=incoming.packet.extent(0)*sizeof(Real);
+      const auto channel=incoming.channel;
+      const auto& slot=*incoming.receive_slot;
+      std::size_t offset=0;
+      for (const auto& key : slot.keys) {
+        const std::size_t size=p.layout.at(key.gid).size()*p.Width(key);
+        if (size==slot.scalars) p.Accept(key,incoming.packet);
+        else p.Accept(key,Kokkos::subview(incoming.packet,std::make_pair(offset,offset+size)));
+        offset+=size;
+      }
+      p.completed_receives+=slot.keys.size();
+      p.packet_bytes-=slot.scalars*sizeof(Real);
       p.receives.erase(p.receives.begin()+i);
-      p.PostNext(gid);
+      p.PostNext(channel);
       progressed=true;
       continue;
     }
@@ -531,6 +594,9 @@ bool RecordExchange::Finish() {
   Poll();
   if (p.published.size() != p.expected_publications)
     throw std::logic_error("multirate Finish requires all local states and RHS records published");
+#if MPI_PARALLEL_ENABLED
+  if (!p.open_packets.empty()) throw std::logic_error("incomplete multirate publication group at endpoint");
+#endif
   if (p.completed_receives != p.expected_receives) return false;
 #if MPI_PARALLEL_ENABLED
   if (!p.receives.empty() || !p.sends.empty()) return false;

@@ -56,7 +56,10 @@ class RecordExchange {
   // Collective once per placement. Each peer requests only records read by its stages.
   // Accepted states retain their original width; slopes may encode fewer fields.
   void SetSlopeFields(int fields);
-  void CompileReceives(const std::map<RecordKey,std::size_t> &consumer_counts);
+  // Blocks with the same owner and publication group produce a given step/stage
+  // together. An empty grouping keeps individual record packets.
+  void CompileReceives(const std::map<RecordKey,std::size_t> &consumer_counts,
+                       const std::vector<int>& publication_groups = {});
   void Begin(std::uint64_t epoch, const std::vector<int> &steps_by_gid,
              const std::map<RecordKey, std::size_t> &consumer_counts, bool profile_peers=false);
   void Publish(const RecordKey &key, const DvceArray1D<Real> &values);

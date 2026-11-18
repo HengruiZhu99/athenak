@@ -107,7 +107,7 @@ void Exercise(int rank, int ranks, bool reverse_ownership) {
 // Every owner publishes five records of each requested kind in one batch.
 // Initial and final records fan out to both peers on three ranks. The slope
 // has a narrower destination set and each peer selects different sparse rows.
-void ExerciseBatches(int rank,int ranks) {
+void ExerciseBatches(int rank,int ranks,bool grouped) {
   constexpr int fields=7, per_rank=5;
   std::vector<int> owners(per_rank*ranks),steps(owners.size(),1);
   std::vector<mt::Point> owned,requested;
@@ -128,7 +128,7 @@ void ExerciseBatches(int rank,int ranks) {
   mt::RecordExchange exchange(owners,owned,requested,fields);
   exchange.SetSendCacheBytes(4096);
   exchange.SetSlopeFields(fields-2);
-  exchange.CompileReceives(consumers);
+  exchange.CompileReceives(consumers,grouped ? std::vector<int>(owners.size(),0) : std::vector<int>{});
   for (int epoch=1; epoch<=2; ++epoch) {
     exchange.Begin(epoch,steps,consumers,true);
     std::vector<mt::RecordExchange::Publication> batch;
@@ -158,7 +158,7 @@ void ExerciseBatches(int rank,int ranks) {
       wire+=bytes;
       packets+=count;
     }
-    Require(queued.sent_bytes==wire && queued.send_packets==packets,"batched wire counters disagree");
+    Require(queued.sent_bytes==wire && queued.send_packets==(grouped ? packets/per_rank : packets),"batched wire counters disagree");
     Require(queued.peak_packet_bytes==wire+queued.received_bytes,"batched packet peak differs from allocations");
     if (epoch>1 && packets) Require(queued.reused_send_packets>0,"completed GPU send buffers were not reused");
     Require(queued.pack_kernels==packets,"one sparse gather per MPI send");
@@ -191,7 +191,8 @@ int main(int argc, char **argv) {
   try {
     Exercise(rank,ranks,false);
     Exercise(rank,ranks,true);
-    ExerciseBatches(rank,ranks);
+    ExerciseBatches(rank,ranks,false);
+    ExerciseBatches(rank,ranks,true);
     if (rank == 0) std::cout << "multirate sparse records passed on " << ranks << " ranks\n";
   } catch (const std::exception &error) {
     std::cerr << "rank " << rank << ": " << error.what() << '\n'; result = 1;

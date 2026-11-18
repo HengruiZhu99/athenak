@@ -190,6 +190,10 @@ void MultirateEvolution::ReadOptions(ParameterInput& input) {
   if (input.GetOrAddInteger("multirate", "stage_budget", 1048576) < 4)
     throw std::invalid_argument("Multirate stage budget must cover at least four stages");
   input.GetOrAddBoolean("multirate", "uniform_reference", false);
+  if (input.GetOrAddBoolean("multirate","coalesce_stage_packets",false) &&
+      (!input.GetOrAddBoolean("multirate","complete_local_batches",false) ||
+       !input.GetOrAddBoolean("multirate","prepost_exchanges",true)))
+    throw std::invalid_argument("coalesce_stage_packets requires complete_local_batches and prepost_exchanges");
   input.GetOrAddBoolean("multirate","prepost_exchanges",true);
   input.GetOrAddBoolean("multirate","complete_local_batches",false);
   input.GetOrAddBoolean("multirate","profile_peer_bytes",false);
@@ -812,7 +816,17 @@ void MultirateEvolution::Impl::BuildLocal() {
   }
   exchange->SetSlopeFields(Fields::independent_count);
   exchange->SetSendCacheBytes(static_cast<std::size_t>(pin->GetInteger("multirate","send_cache_mib"))*1024*1024);
-  if (pin->GetBoolean("multirate","prepost_exchanges")) exchange->CompileReceives(consumers);
+  if (pin->GetBoolean("multirate","prepost_exchanges")) {
+    std::vector<int> groups;
+    if (pin->GetBoolean("multirate","coalesce_stage_packets")) {
+      // Group only blocks published by the very same level/stage/kernel batch.
+      groups.resize(graph.blocks.size());
+      for (const auto& block : graph.blocks)
+        groups[block.gid]=block.time_level*static_cast<int>(bal::KernelKind::count)
+                          + static_cast<int>(block.kernel);
+    }
+    exchange->CompileReceives(consumers,groups);
+  }
 }
 Combination MultirateEvolution::Impl::Combine(size_t stage, int gid) const {
   const auto& r = schedule->Row(stage, levels[gid]);
