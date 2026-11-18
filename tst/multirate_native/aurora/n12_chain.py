@@ -23,9 +23,11 @@ def next_mode(root, current, job):
                     or state['target_reached'] != (state['cycle'] == state['target_cycles'])):
                 raise ValueError(f'inconsistent {mode} segment receipt')
             states[mode] = state
-    if current not in states or states[current]['job'] != job.split('.')[0]:
+    if current != 'qualification' and (current not in states or states[current]['job'] != job.split('.')[0]):
         raise ValueError('this allocation did not commit a new N12 segment')
     unfinished=[m for m in ('uniform','multirate') if m not in states or not states[m]['target_reached']]
+    if current == 'qualification' and unfinished:
+        raise ValueError('benchmark-only continuation requires both completed N12 trajectories')
     if not unfinished:
         return None
     # Both methods target the same physical endpoint, with different cycle
@@ -39,8 +41,9 @@ def continue_comparison(root, current, job):
     with (base/'submission.lock').open('a') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)
         mode = next_mode(root, current, job)
-        if mode is None:
-            print('Both N12 trajectories reached their requested endpoint.', flush=True)
+        pending = os.environ.get('MR_N12_NEXT_CASES')
+        if mode is None and not pending:
+            print('Both N12 trajectories and the requested benchmark suites finished.', flush=True)
             return
         marker = base/f'successor-{job.split(".")[0]}.json'
         if marker.exists():
@@ -48,10 +51,12 @@ def continue_comparison(root, current, job):
                 raise RuntimeError(f'check PBS for the in-flight submission recorded in {marker}')
             print(marker.read_text(), flush=True)
             return
+        if mode is None:
+            mode = 'qualification'
         variables = [f'MR_N12_MODE={mode}', 'MR_N12_CHAIN=1']
-        if all((trajectory_directory(root,m)/'state.json').is_file() for m in (mode,'multirate')):
+        if mode == 'qualification' or all((trajectory_directory(root,m)/'state.json').is_file()
+                                           for m in (mode,'multirate')):
             variables.append('MR_N12_RESUME_PINNED=1')
-        pending = os.environ.get('MR_N12_NEXT_CASES')
         if pending:
             # Spread longer strong-scaling suites over the existing one-hour
             # science allocations. A later suite reuses matching hashed receipts.

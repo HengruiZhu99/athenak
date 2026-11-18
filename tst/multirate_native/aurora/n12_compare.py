@@ -72,8 +72,8 @@ def work_and_science(root, mode):
                 any(item[k]!=last[k] for k in ('binary_sha256','mode','manifest_sha256','input_source_sha256','dt','target_cycles'))):
             raise ValueError('N12 segment provenance or cycle gap in '+mode)
         next_cycle = item['cycle']
-    if (next_cycle != last['cycle'] or last['mode']!=mode or
-            last['cycle'] != last['target_cycles'] or last['checkpoint']!=receipts[-1]['checkpoint']):
+    if (not receipts or last != receipts[-1] or last['mode']!=mode or
+            next_cycle != last['target_cycles']):
         raise ValueError('missing final segment receipt in '+mode)
     end_dir = Path(last['checkpoint']).parent.parent
     ids, time, endpoint = diagnostics(end_dir,scri_only=True,output_number=20)
@@ -103,6 +103,14 @@ def work_and_science(root, mode):
     return (dict(**last,simulated_M0=10.),ids,endpoint,news,
             dict(segments=len(receipts),elapsed_seconds=wall,seconds_per_M0=wall/10,
                  physical_gpus=12,nodes=2,scri_cuts=len(sources),initial_checkpoint=str(initial),last_reported_horizons=horizons))
+
+
+def compare_initial(left, right):
+    result = compare(dict(checkpoint=left, simulated_M0=0.),
+                     dict(checkpoint=right, simulated_M0=0.))
+    if not result['identical_checkpoint_payload']:
+        raise ValueError('N12 initial fields or persistent diagnostics differ between methods')
+    return result
 
 
 def active_field_errors(left,right):
@@ -153,6 +161,7 @@ def main():
     b,bid,be,bn,bt=work_and_science(root,'uniform')
     if any(a[key]!=b[key] for key in ('manifest_sha256','input_source_sha256')):
         raise ValueError('N12 initial data or spatial input differs between methods')
+    initial = compare_initial(at['initial_checkpoint'],bt['initial_checkpoint'])
     if not np.array_equal(aid,bid) or not np.array_equal(an['ell_m'],bn['ell_m']):
         raise ValueError('incompatible scri nodes or waveform modes')
     ta,tb=an['bondi_time'],bn['bondi_time']
@@ -172,14 +181,12 @@ def main():
                            uniform_max_abs=float(np.max(np.abs(be[key]))),
                            multirate_rms=float(np.sqrt(np.mean(ae[key]**2))),
                            uniform_rms=float(np.sqrt(np.mean(be[key]**2))))
-    report=dict(fields=compare(a,b),endpoint=endpoint,uniform=bt,multirate=at,
+    report=dict(initial_fields=initial,fields=compare(a,b),endpoint=endpoint,uniform=bt,multirate=at,
                 elapsed_speedup_vs_native_uniform=bt['elapsed_seconds']/at['elapsed_seconds'],
                 news=dict(common_bondi_cuts=int(active.sum()),common_bondi_range_M0=[3*float(ta[active][0]),3*float(ta[active][-1])],
                           max_mode_difference=float(np.max(np.abs(error))),
                           rms_mode_difference=float(np.sqrt(np.mean(np.abs(error)**2))),
                           uniform_peak=float(np.max(np.abs(reference)))))
-    report['initial_fields']=compare(dict(checkpoint=at['initial_checkpoint'],simulated_M0=0.),
-                                     dict(checkpoint=bt['initial_checkpoint'],simulated_M0=0.))
     report['active_fields'],report['chi_floor']=active_field_errors(a,b)
     (root/'n12-10M'/'comparison.json').write_text(json.dumps(report,indent=2,allow_nan=False)+'\n')
 
