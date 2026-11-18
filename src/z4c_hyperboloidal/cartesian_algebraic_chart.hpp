@@ -4,6 +4,7 @@
 #ifndef Z4C_HYPERBOLOIDAL_NATIVE_CARTESIAN_ALGEBRAIC_CHART_HPP_
 #define Z4C_HYPERBOLOIDAL_NATIVE_CARTESIAN_ALGEBRAIC_CHART_HPP_
 #include <array>
+#include <type_traits>
 #include "z4c_hyperboloidal/mapped_geometry.hpp"
 namespace z4c_hyperboloidal {
 // Five independent Cartesian metric components and five curvature components.
@@ -11,15 +12,27 @@ namespace z4c_hyperboloidal {
 // This is a local chart on SPD determinant-one metrics. It neither reconstructs
 // Lambda from the metric nor imposes any differential Einstein constraint.
 using CartesianChartJets=std::array<mapped::Jet,31>;
-KOKKOS_INLINE_FUNCTION bool TryExpandCartesianChart(CartesianChartJets&v) {
-  using J=mapped::Jet;
+// Stage values and spatial derivative jets use the same algebraic chart.
+// Preserve the jet quotient's multiply-by-reciprocal rounding on scalar inputs.
+template <class T>
+KOKKOS_INLINE_FUNCTION decltype(auto) ChartValue(T& v) {
+  if constexpr (std::is_same_v<std::remove_cv_t<T>,mapped::Jet>) return (v.f);
+  else return (v);
+}
+template <class T>
+KOKKOS_INLINE_FUNCTION T ChartQuotient(const T& numerator,const T& denominator) {
+  if constexpr (std::is_arithmetic_v<T>) return numerator*pow(denominator,Real(-1));
+  else return numerator/denominator;
+}
+template <class J>
+KOKKOS_INLINE_FUNCTION bool TryExpandCartesianChart(std::array<J,31>&v) {
   const J a=v[1]+J(1),b=v[2],c=v[3],d=v[4]+J(1),e=v[5];
   const J minor=a*d-b*b;
-  if(!(a.f>0 && minor.f>0))return false;
-  const J f=(J(1)-J(2)*b*c*e+a*e*e+d*c*c)/minor;
+  if(!(ChartValue(a)>0 && ChartValue(minor)>0))return false;
+  const J f=ChartQuotient(J(1)-J(2)*b*c*e+a*e*e+d*c*c,minor);
   v[6]=f-J(1);
-  v[12]=(J(0)-(d*f-e*e)*v[7]-J(2)*(c*e-b*f)*v[8]
-      -J(2)*(b*e-c*d)*v[9]-(a*f-c*c)*v[10]-J(2)*(b*c-a*e)*v[11])/minor;
+  v[12]=ChartQuotient(J(0)-(d*f-e*e)*v[7]-J(2)*(c*e-b*f)*v[8]
+      -J(2)*(b*e-c*d)*v[9]-(a*f-c*c)*v[10]-J(2)*(b*c-a*e)*v[11],minor);
   return true;
 }
 inline void ExpandCartesianChart(CartesianChartJets&v){

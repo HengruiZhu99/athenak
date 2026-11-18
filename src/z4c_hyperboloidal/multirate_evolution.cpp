@@ -106,6 +106,7 @@ struct DonorDestination {
   int index, halo = -1, surface = -1, agreement = -1, coupling_row = -1;
 };
 struct DirectDonorViews {
+  int bulk_count = 0;
   DvceArray1D<DonorDestination> targets;
   DvceArray2D<Real> halo_physical, halo_residual, surface_bulk, surface_edge, agreement;
   KOKKOS_INLINE_FUNCTION DonorDestination Destination(int i) const { return targets(i); }
@@ -337,8 +338,9 @@ struct MultirateEvolution::Impl {
   void SetPhaseCosts(const bal::BatchCostModel& profile);
   void BuildLocal();
   Combination Combine(size_t stage, int gid) const;
+  template <bool accepted>
   void Reconstruct(const std::vector<int>& slots, const std::vector<Combination>& combinations,
-                   double time, bool accepted);
+                   double time);
   std::vector<DvceArray1D<Real>> Pack(const std::vector<int>& slots, bool rhs);
   void Publish(const std::vector<int>& slots, const std::vector<DvceArray1D<Real>>& records,
                std::uint32_t step, int stage);
@@ -877,9 +879,10 @@ void MultirateEvolution::Impl::SelectBatch(const std::vector<int>& slots) {
   }
   active_native_indices = layout->second.native_indices;
 }
+template <bool accepted>
 void MultirateEvolution::Impl::Reconstruct(const std::vector<int>& slots,
                                            const std::vector<Combination>& combinations,
-                                           double time, bool accepted) {
+                                           double time) {
   SelectBatch(slots);
   const auto combinations_d = reconstruction_rows.Upload(combinations,"multirate reconstruction rows");
   const auto points = native;
@@ -904,7 +907,7 @@ void MultirateEvolution::Impl::Reconstruct(const std::vector<int>& slots,
         if (!indexed && !active(point.m)) return;
         const auto c = combinations_d(point.m);
         if (!c.base) {++bad; return;}
-        CartesianChartJets jets{};
+        std::array<std::conditional_t<accepted,mapped::Jet,Real>,Fields::count> jets{};
         for (int f = 0; f < Fields::count; ++f) {
           Real value = c.Value(point.index, f);
           if (f == Fields::chi) {
@@ -914,26 +917,26 @@ void MultirateEvolution::Impl::Reconstruct(const std::vector<int>& slots,
               value = FloorChiCandidate(value, floor, time, accepted, records(point.ledger));
           }
           if (!Kokkos::isfinite(value)) ++bad;
-          jets[f].f = value;
+          ChartValue(jets[f]) = value;
         }
         if (!TryExpandCartesianChart(jets)) {++bad; return;}
         if (point.kind) {
           for (int f = 0; f < Fields::count; ++f)
-            edge(point.face,f,point.k,point.j) = jets[f].f;
+            edge(point.face,f,point.k,point.j) = ChartValue(jets[f]);
           return;
         }
         const int q = point.ledger;
         const auto& x = geom(q).x;
         for (int f = 0; f < Fields::count; ++f)
-          state(point.m,f,point.k,point.j,point.i) = jets[f].f;
-        if (accepted) {
+          state(point.m,f,point.k,point.j,point.i) = ChartValue(jets[f]);
+        if constexpr (accepted) {
           const auto u = SphericalPolicy::Physical(x,jets);
           if (!(u.chi.value > 0 && u.alpha.value > 0 && Geometry(u.metric).valid)) ++bad;
         } else {
           const Real r2 = weight.Value(x);
           for (int f = 0; f < Fields::count; ++f)
             residual(point.m,f,point.k,point.j,point.i) = Fields::Independent(f)
-                ? (jets[f].f-reference(q)[f].f)/(f==Fields::chi ? r2 : 1)
+                ? (ChartValue(jets[f])-reference(q)[f].f)/(f==Fields::chi ? r2 : 1)
                 : 0;
         }
       },invalid);
@@ -1029,6 +1032,10 @@ DirectDonorViews MultirateEvolution::Impl::MakeDonorViews(
     if (donor_gids.empty() || donor_gids.back() != gid) donor_gids.push_back(gid);
     target.coupling_row = donor_gids.size() - 1;
   }
+  // Only scri rows need derivative jets for the normal compatibility check.
+  const auto first_edge = std::stable_partition(targets.begin(),targets.end(),
+      [&](const DonorDestination& target) { return requested[target.index].kind==0; });
+  out.bulk_count = static_cast<int>(first_edge-targets.begin());
   out.targets = Device(targets,"multirate active donor destinations");
   return out;
 }
@@ -1067,54 +1074,58 @@ void MultirateEvolution::Impl::StageDonors(size_t stage, const std::vector<int>&
   physical = donor_physical;
   residual = donor_residual;
   const Real floor = p.chi_floor;
-  auto reconstruct = [&](const auto& output, int count) {
+  auto reconstruct = [&](const auto& output, int begin, int end, auto use_jets) {
+    if (begin==end) return;
+    constexpr bool with_surface=decltype(use_jets)::value;
     int invalid = 0;
     Kokkos::parallel_reduce(
-      "multirate recipient donor values", Kokkos::RangePolicy<>(0, count),
+      "multirate recipient donor values", Kokkos::RangePolicy<>(begin, end),
       KOKKOS_LAMBDA(int i, int& bad) {
         const auto target = output.Destination(i);
         const auto meta = metadata(target.index);
         const auto c = combinations_d(target.coupling_row >= 0 ? target.coupling_row : meta.gid);
-        CartesianChartJets jets{};
+        std::array<std::conditional_t<with_surface,mapped::Jet,Real>,Fields::count> jets{};
         if (!c.base) {
           int slot = 0;
           for (int f = 0; f < Fields::count; ++f)
             output.Store(target,meta.kind,f,Fields::Independent(f) ? slot++ : -1,0,0);
           return;
         }
-        for (int f = 0; f < Fields::count; ++f) jets[f].f = c.Value(meta.index, f);
-        if (Kokkos::isfinite(jets[0].f) && floor > 0 && jets[0].f < floor) jets[0].f = floor;
+        for (int f = 0; f < Fields::count; ++f) ChartValue(jets[f]) = c.Value(meta.index, f);
+        if (Kokkos::isfinite(ChartValue(jets[0])) && floor > 0 && ChartValue(jets[0]) < floor) ChartValue(jets[0]) = floor;
         if (!TryExpandCartesianChart(jets)) {
           ++bad;
           return;
         }
-        if (meta.kind) {
-          const auto physical = SphericalPolicy::Physical(meta.x, jets);
-          const auto geometry = Geometry(physical.metric);
-          Real Q = 0;
-          for (int a = 0; a < 3; ++a)
-            for (int b = 0; b < 3; ++b) Q += geometry.inverse[a][b] * meta.x[a] * meta.x[b];
-          if (!geometry.valid || !(jets[0].f > 0 && Q > 0)) {
-            ++bad;
-            return;
-          }
-          const Real speed = sqrt(jets[0].f * Q);
-          jets[18].f = 0;
-          for (int a = 0; a < 3; ++a) {
-            jets[22 + a].f = (1 - speed) * meta.x[a];
-            jets[28 + a].f = 0;
-            Real C = 0;
-            for (int k = 0; k < 5; ++k) {
-              const auto support = metadata(meta.support[k]);
-              C += meta.radial_weight[k] *
-                   (c.Value(support.index, 25 + a) - c.Value(support.index, 15 + a));
+        if constexpr (with_surface) {
+          if (meta.kind) {
+            const auto physical = SphericalPolicy::Physical(meta.x, jets);
+            const auto geometry = Geometry(physical.metric);
+            Real Q = 0;
+            for (int a = 0; a < 3; ++a)
+              for (int b = 0; b < 3; ++b) Q += geometry.inverse[a][b] * meta.x[a] * meta.x[b];
+            if (!geometry.valid || !(ChartValue(jets[0]) > 0 && Q > 0)) {
+              ++bad;
+              return;
             }
-            jets[25 + a].f = jets[15 + a].f + C;
+            const Real speed = sqrt(ChartValue(jets[0]) * Q);
+            jets[18].f = 0;
+            for (int a = 0; a < 3; ++a) {
+              jets[22 + a].f = (1 - speed) * meta.x[a];
+              jets[28 + a].f = 0;
+              Real C = 0;
+              for (int k = 0; k < 5; ++k) {
+                const auto support = metadata(meta.support[k]);
+                C += meta.radial_weight[k] *
+                     (c.Value(support.index, 25 + a) - c.Value(support.index, 15 + a));
+              }
+              jets[25 + a].f = jets[15 + a].f + C;
+            }
           }
         }
         int slot = 0;
         for (int f = 0; f < Fields::count; ++f) {
-          const Real value = jets[f].f;
+          const Real value = ChartValue(jets[f]);
           const Real delta = Fields::Independent(f)
                                  ? (value - meta.ref[f]) / (f == 0 ? meta.chi_weight : 1)
                                  : 0;
@@ -1126,9 +1137,10 @@ void MultirateEvolution::Impl::StageDonors(size_t stage, const std::vector<int>&
   };
   if (complete_local_batches) {
     const auto& view = active_layouts.at(slots).donor_views;
-    reconstruct(view,view.targets.extent_int(0));
+    reconstruct(view,0,view.bulk_count,std::false_type{});
+    reconstruct(view,view.bulk_count,view.targets.extent_int(0),std::true_type{});
   } else {
-    reconstruct(FullDonorViews{physical,residual},metadata.extent_int(0));
+    reconstruct(FullDonorViews{physical,residual},0,metadata.extent_int(0),std::true_type{});
   }
 }
 MultirateEvolution::Impl::GatherPlan& MultirateEvolution::Impl::ExchangeView(
@@ -1213,7 +1225,7 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
   std::vector<Combination> combinations(p.nblocks);
   if (interior) {
     for (int m : slots) combinations[m] = Combine(stage, pack->GlobalId(m));
-    Reconstruct(slots, combinations, context.stage_time, false);
+    Reconstruct<false>(slots, combinations, context.stage_time);
 
     model.Observe(bal::KernelKind::projection, units, Seconds(batch_start));
     const auto begin_interior = Clock::now();
@@ -1284,8 +1296,7 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
         c.weight[a] = context.local_dt * mr::BaseB()[a];
       }
     }
-    Reconstruct(slots, combinations, mesh->time + (context.key.local_step + 1) * context.local_dt,
-                true);
+    Reconstruct<true>(slots, combinations, mesh->time + (context.key.local_step + 1) * context.local_dt);
     auto accepted = Pack(slots, false);
     model.Observe(bal::KernelKind::projection, units, Seconds(begin_accept));
     Publish(slots, accepted, context.key.local_step + 1, -1);
