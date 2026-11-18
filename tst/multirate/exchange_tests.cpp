@@ -127,6 +127,7 @@ void ExerciseBatches(int rank,int ranks) {
   }
   mt::RecordExchange exchange(owners,owned,requested,fields);
   exchange.SetSendCacheBytes(4096);
+  exchange.SetSlopeFields(fields-2);
   exchange.CompileReceives(consumers);
   for (int epoch=1; epoch<=2; ++epoch) {
     exchange.Begin(epoch,steps,consumers,true);
@@ -135,10 +136,11 @@ void ExerciseBatches(int rank,int ranks) {
       for (const mt::RecordKey key : {mt::RecordKey{gid,1,-1}, {gid,0,2}, {gid,0,-1},
                                       {gid,0,0}, {gid,0,1}, {gid,0,3}}) {
         const auto &points=exchange.OwnedPoints(gid);
-        DvceArray1D<Real> values("batched test record",points.size()*fields);
+        const int width=key.stage<0 ? fields : fields-2;
+        DvceArray1D<Real> values("batched test record",points.size()*width);
         auto host=Kokkos::create_mirror_view(values);
         for (std::size_t q=0; q<points.size(); ++q)
-          for (int f=0; f<fields; ++f) host(q*fields+f)=Expected(epoch,key,points[q],f);
+          for (int f=0; f<width; ++f) host(q*width+f)=Expected(epoch,key,points[q],f);
         Kokkos::deep_copy(values,host);
         batch.emplace_back(key,values);
       }
@@ -149,7 +151,9 @@ void ExerciseBatches(int rank,int ranks) {
     std::uint64_t wire=0,packets=0;
     for (int peer=0; peer<ranks; ++peer) {
       std::size_t count=peer==rank ? 0 : per_rank*(2+(peer==(rank+1)%ranks));
-      std::size_t bytes=count*(1+(peer%2==0))*fields*sizeof(Real);
+      std::size_t scalars=count*fields;
+      if (peer!=rank && peer==(rank+1)%ranks) scalars-=2*per_rank;
+      std::size_t bytes=scalars*(1+(peer%2==0))*sizeof(Real);
       Require(queued.sent_bytes_by_peer.at(peer)==bytes,"incorrect batched peer volume");
       wire+=bytes;
       packets+=count;
@@ -165,9 +169,10 @@ void ExerciseBatches(int rank,int ranks) {
     Require(exchange.CompletedReceives()==consumers.size(),"unexpected stage in batched receive plan");
     for (const auto &[key,uses] : consumers) {
       auto data=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),exchange.Data(key));
+      const int width=key.stage<0 ? fields : fields-2;
       for (const auto &point : requested) if (point.gid==key.gid)
-        for (int f=0; f<fields; ++f)
-          Require(data(exchange.PointIndex(point)*fields+f)==Expected(epoch,key,point,f),
+        for (int f=0; f<width; ++f)
+          Require(data(exchange.PointIndex(point)*width+f)==Expected(epoch,key,point,f),
                   "batched sparse payload differs");
       exchange.Release(key);
     }

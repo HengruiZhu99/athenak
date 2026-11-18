@@ -82,7 +82,7 @@ struct Combination {
   KOKKOS_INLINE_FUNCTION Real Value(size_t index, int field) const {
     Real value = base[index * Fields::count + field];
     if (Fields::Independent(field))
-      for (int a = 0; a < count; ++a) value += weight[a] * slope[a][index * Fields::count + field];
+      for (int a = 0; a < count; ++a) value += weight[a] * slope[a][index * Fields::independent_count + Fields::IndependentSlot(field)];
     return value;
   }
 };
@@ -639,12 +639,13 @@ void MultirateEvolution::Impl::BuildCostGraph() {
           accepted_task[key] = append(3, bal::KernelKind::projection, slope_task[key]);
       }
   }
-  std::map<std::pair<int,int>,std::uint64_t> frequencies;
+  struct RecordCounts {std::uint64_t states, slopes;};
+  std::map<std::pair<int,int>,RecordCounts> frequencies;
   const bool planned=pin->GetBoolean("multirate","prepost_exchanges");
   for (const auto& e : bytes_by_direction) {
     const int recipient=e.first.first, donor=e.first.second;
     const auto pair=std::make_pair(levels[recipient],levels[donor]);
-    auto [frequency,inserted]=frequencies.emplace(pair,5ULL*steps[donor]+1);
+    auto [frequency,inserted]=frequencies.emplace(pair,RecordCounts{std::uint64_t(steps[donor])+1,4ULL*steps[donor]});
     if (planned && inserted) {
       std::set<std::pair<int,int>> used;
       for (int step=0;step<steps[recipient];++step) for(int stage=0;stage<4;++stage) {
@@ -655,9 +656,12 @@ void MultirateEvolution::Impl::BuildCostGraph() {
           used.emplace(key.local_step,key.stage);
         }
       }
-      frequency->second=used.size();
+      const std::size_t accepted=std::count_if(used.begin(),used.end(),[](const auto &k){return k.second==-1;});
+      frequency->second={accepted,used.size()-accepted};
     }
-    graph.edges.push_back({recipient,donor,e.second,frequency->second});
+    const auto [states,slopes]=frequency->second;
+    if (states) graph.edges.push_back({recipient,donor,e.second,states});
+    if (slopes) graph.edges.push_back({recipient,donor,e.second/Fields::count*Fields::independent_count,slopes});
   }
   for (const auto& entry : input_task) {
     const auto [g, stage] = entry.first;
@@ -672,7 +676,7 @@ void MultirateEvolution::Impl::BuildCostGraph() {
         task.dependencies.push_back({accepted_task.at({donor, id}), bytes});
       }
       for (int i = 0; i < row.count; ++i)
-        task.dependencies.push_back({slope_task.at({donor, row.terms[i].source}), bytes});
+        task.dependencies.push_back({slope_task.at({donor, row.terms[i].source}), bytes/Fields::count*Fields::independent_count});
     }
   }
   SetPhaseCosts(model);
@@ -804,6 +808,7 @@ void MultirateEvolution::Impl::BuildLocal() {
       }
     ++consumers[{gid, static_cast<std::uint32_t>(steps[gid]), -1}];
   }
+  exchange->SetSlopeFields(Fields::independent_count);
   exchange->SetSendCacheBytes(static_cast<std::size_t>(pin->GetInteger("multirate","send_cache_mib"))*1024*1024);
   if (pin->GetBoolean("multirate","prepost_exchanges")) exchange->CompileReceives(consumers);
 }
@@ -922,10 +927,11 @@ std::vector<DvceArray1D<Real>> MultirateEvolution::Impl::Pack(const std::vector<
                                                               bool rhs) {
   std::vector<DvceArray1D<Real>> values(p.nblocks);
   std::vector<RecordDestination> ptrs(p.nblocks);
+  const int width=rhs ? Fields::independent_count : Fields::count;
   for (int m : slots) {
     values[m] = DvceArray1D<Real>(
         Kokkos::view_alloc(Kokkos::WithoutInitializing, "multirate immutable record"),
-        exchange->OwnedPoints(pack->GlobalId(m)).size() * Fields::count);
+        exchange->OwnedPoints(pack->GlobalId(m)).size() * width);
     ptrs[m].data = values[m].data();
   }
   const auto pointers = destinations.Upload(ptrs,"multirate record destinations");
@@ -941,11 +947,11 @@ std::vector<DvceArray1D<Real>> MultirateEvolution::Impl::Pack(const std::vector<
         const auto a = points(indexed ? indices(i) : i);
         Real* out = pointers(a.m).data;
         if (!out) return;
-        for (int f = 0; f < Fields::count; ++f)
-          out[a.index * Fields::count + f] =
-              (rhs && !Fields::Independent(f))
-                  ? 0
-                  : (a.kind ? edge(a.face, f, a.k, a.j) : state(a.m, f, a.k, a.j, a.i));
+        for (int f=0; f<Fields::count; ++f) {
+          if (rhs && !Fields::Independent(f)) continue;
+          const int column=rhs ? Fields::IndependentSlot(f) : f;
+          out[a.index*width+column]=a.kind ? edge(a.face,f,a.k,a.j) : state(a.m,f,a.k,a.j,a.i);
+        }
       });
   Kokkos::fence("multirate records ready for transport");
   return values;

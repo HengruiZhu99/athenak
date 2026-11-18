@@ -54,6 +54,8 @@ class RecordExchange {
   // sorted sparse request set for the GID. PointIndex refers to that layout.
   std::size_t PointIndex(const Point &point) const;
   // Collective once per placement. Each peer requests only records read by its stages.
+  // Accepted states retain their original width; slopes may encode fewer fields.
+  void SetSlopeFields(int fields);
   void CompileReceives(const std::map<RecordKey,std::size_t> &consumer_counts);
   void Begin(std::uint64_t epoch, const std::vector<int> &steps_by_gid,
              const std::map<RecordKey, std::size_t> &consumer_counts, bool profile_peers=false);

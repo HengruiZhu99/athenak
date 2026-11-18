@@ -71,7 +71,8 @@ bool RecordKey::operator<(const RecordKey &other) const {
 }
 
 struct RecordExchange::Impl {
-  int rank = 0, ranks = 1, fields = 31;
+  int rank = 0, ranks = 1, fields = 31, slope_fields = 31;
+  int Width(const RecordKey &key) const { return key.stage<0 ? fields : slope_fields; }
   std::vector<int> owners, steps;
   std::map<int,std::vector<Point>> owned, layout;
   std::map<Point,std::size_t> point_index;
@@ -140,7 +141,7 @@ struct RecordExchange::Impl {
     Pending pending;
     pending.key=slot.key; pending.peer=owners[gid];
     pending.tag=slot.tag+static_cast<int>(epoch%2)*tag_stride;
-    auto scalars=layout.at(gid).size()*fields;
+    auto scalars=layout.at(gid).size()*Width(slot.key);
     pending.packet=DvceArray1D<Real>(Kokkos::view_alloc(Kokkos::WithoutInitializing,
         "multirate posted donor record"),scalars);
     AllocatePacket(scalars); stats.received_bytes+=scalars*sizeof(Real);
@@ -209,7 +210,7 @@ RecordExchange::RecordExchange(const std::vector<int> &owners, std::vector<Point
 #endif
                                ) : impl_(std::make_unique<Impl>()) {
   auto &p = *impl_;
-  p.owners = owners; p.fields = fields;
+  p.owners = owners; p.fields = p.slope_fields = fields;
 #if MPI_PARALLEL_ENABLED
   CheckMPI(MPI_Comm_dup(communicator,&p.comm),"cannot duplicate multirate communicator");
   CheckMPI(MPI_Comm_rank(p.comm,&p.rank),"cannot query multirate rank");
@@ -285,6 +286,12 @@ const std::vector<Point> &RecordExchange::OwnedPoints(int gid) const {
   return impl_->owned.at(gid);
 }
 std::size_t RecordExchange::PointIndex(const Point &point) const { return impl_->point_index.at(point); }
+
+void RecordExchange::SetSlopeFields(int fields) {
+  if (impl_->used_epoch || fields<1 || fields>impl_->fields)
+    throw std::invalid_argument("invalid immutable slope record width");
+  impl_->slope_fields=fields;
+}
 
 void RecordExchange::CompileReceives(const std::map<RecordKey,std::size_t> &consumers) {
 #if MPI_PARALLEL_ENABLED
@@ -364,7 +371,7 @@ void RecordExchange::Publish(const RecordKey &key, const DvceArray1D<Real> &valu
   auto &p = *impl_;
   if (!p.active || p.finished || !p.ValidKey(key) || p.owned.count(key.gid) == 0)
     throw std::invalid_argument("invalid multirate local publication");
-  if (values.extent(0) != p.owned.at(key.gid).size()*p.fields)
+  if (values.extent(0) != p.owned.at(key.gid).size()*p.Width(key))
     throw std::invalid_argument("multirate publication has wrong point-major payload size");
   if (!p.published.insert(key).second) throw std::logic_error("multirate record published twice");
   p.Accept(key,values);
@@ -381,7 +388,7 @@ void RecordExchange::Publish(const RecordKey &key, const DvceArray1D<Real> &valu
       pending.tag=static_cast<int>(p.epoch%2)*p.tag_stride+tag->second;
     }
     const auto indices = target.indices;
-    const int fields = p.fields;
+    const int fields = p.Width(key);
     const auto size = indices.extent(0)*fields;
     Count(size+header);
     pending.packet = p.SendBuffer(size+header);
@@ -495,7 +502,7 @@ bool RecordExchange::Poll() {
     const auto layout = p.layout.find(key.gid);
     if (!p.ValidKey(key) || layout == p.layout.end() || p.owners[key.gid] != incoming.peer ||
         incoming.peer == p.rank || header(4) != static_cast<Real>(layout->second.size()) ||
-        incoming.packet.extent(0) != kHeader+layout->second.size()*p.fields || !p.received.insert(key).second)
+        incoming.packet.extent(0) != kHeader+layout->second.size()*p.Width(key) || !p.received.insert(key).second)
       throw std::runtime_error("unexpected or duplicate multirate record");
     DvceArray1D<Real> payload = Kokkos::subview(incoming.packet,
         std::make_pair(kHeader,incoming.packet.extent(0)));
