@@ -88,13 +88,24 @@ def main():
             equality = next(c for c in report['checks'] if c['method']=='cohort' and c['comparison']=='spread')
             if not equality['identical_checkpoint_payload']:
                 raise ValueError('local batching did not reproduce the accepted reference')
-            speedup = next(c['steady_speedup'] for c in report['methods'] if c.get('method')=='cohort' and c.get('control')=='spread')
-            # Hold placement fixed throughout the trajectory and on restart.
-            with (root/'runs/current754-24tiles-spread/partition.log').open('rb') as stream:
+            timing = json.loads((root/'throughput-results.json').read_text())['results']
+            spread = json.loads((root/'runs/current754-24tiles-spread/completed.json').read_text())
+            candidates = [spread, next(r for r in timing if r['mode']=='cohort')]
+            locality = next((r for r in timing if r['mode']=='locality'),None)
+            if locality is not None:
+                checked = next(c for c in report['checks'] if c['method']=='locality' and c['comparison']=='cohort')
+                if not checked['identical_checkpoint_payload']:
+                    raise ValueError('node mapping changed the fixed-stage solution')
+                candidates.append(locality)
+            selected = min(candidates,key=lambda r:r['steady_seconds_per_M0'])
+            (run/'placement-selection.json').write_text(json.dumps(
+                {r['mode']:r['steady_seconds_per_M0'] for r in candidates},indent=2)+'\n')
+            # Hold the profiled owner map fixed throughout the trajectory and on restart.
+            with Path(selected['log']).with_name('partition.log').open('rb') as stream:
                 lines = stream.read(int(stream.readline())).decode().splitlines()[1:]
             owners = ','.join(row.split()[1] for row in lines)
             extra = (f'\n<multirate>\nbalance = none\nblock_owners = {owners}\n'
-                     f'complete_local_batches = {str(speedup>1).lower()}\n'
+                     f'complete_local_batches = {str(selected["mode"] in ("cohort","locality")).lower()}\n'
                      'spherical_levels = 2,2,2,1,1,1,1,1,2,3,4\nprepost_exchanges = true\n')
         integrator = 'rk4_classical' if ratio==16 else 'mrgark4'
         inputs = (original_input.read_text()+extra+f'\n<time>\nintegrator = {integrator}\ndt = {dt:.17g}\n'

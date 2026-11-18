@@ -13,6 +13,7 @@ from statistics import median
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from adaptive import adaptive_input
 from binding import launcher
+from node_placement import reorder_nodes
 
 root = Path(sys.argv[1]).resolve()
 source = root / 'source/tst/multirate_native'
@@ -81,17 +82,24 @@ location_rad = .0001
         regions = ('2,2,2,1,1,1,1,1,2,3,4' if production else
                    '1,1,0,1' if adaptive else '0,0,0,1')
         balance = mode if mode in ('scalar','metis','spread') else 'none'
-        if mode == 'cohort':
+        if mode in ('cohort','locality'):
             balance = 'spread'
-        if mode in ('posted_fixed','polled_fixed') or (mode == 'cohort' and mesh == 'current754' and ranks == 24):
-            baseline = 'spread' if mode == 'cohort' else 'metis'
+        if mode in ('posted_fixed','polled_fixed') or (mode in ('cohort','locality') and mesh == 'current754' and ranks == 24):
+            baseline = 'spread' if mode in ('cohort','locality') else 'metis'
             balance = 'none'
             with (root/'runs'/f'current754-24tiles-{baseline}'/'partition.log').open('rb') as stream:
                 record=stream.read(int(stream.readline())).decode().splitlines()
-            ownership=','.join(line.split()[1] for line in record[1:])
+            owners=[int(line.split()[1]) for line in record[1:]]
+            if mode == 'locality':
+                measured=next(x for x in results if x['mode']=='cohort' and x['tiles']==ranks)
+                # JSON receipts persist rank IDs as strings.
+                measured=dict(measured,rank_binding={str(k):v for k,v in measured['rank_binding'].items()})
+                owners,traffic=reorder_nodes(owners,measured)
+                (run/'node-placement.json').write_text(json.dumps(traffic,indent=2)+'\n')
+            ownership=','.join(map(str,owners))
             inp += f'\n<multirate>\nblock_owners = {ownership}\n'
         inp += (f'<multirate>\nspherical_levels = {regions}\nuniform_reference = {str(uniform).lower()}\n'
-                f'complete_local_batches = {str(mode=="cohort").lower()}\nprofile_peer_bytes = true\nbalance = {balance}\nranks_per_gpu = 2\nprepost_exchanges = {str(mode!="polled_fixed").lower()}\nwarmup_intervals = 2\nreview_interval = 32\n'
+                f'complete_local_batches = {str(mode in ("cohort","locality")).lower()}\nprofile_peer_bytes = true\nbalance = {balance}\nranks_per_gpu = 2\nprepost_exchanges = {str(mode!="polled_fixed").lower()}\nwarmup_intervals = 2\nreview_interval = 32\n'
                 f'partition_log = {run}/partition.log\n')
     (run/'input.athinput').write_text(inp)
     launch = launcher(ranks)
@@ -172,6 +180,8 @@ os.environ['KOKKOS_TOOLS_LIBS'] = str(memory_tool)
 
 if throughput:
     measure('current754',24,'cohort',6)
+    if results and results[-1]['mode']=='cohort':
+        measure('current754',24,'locality',6)
     measure('current754',24,'classical',6)
     measure('current754',24,'zorder',6)
 elif large_suite:
