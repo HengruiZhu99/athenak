@@ -86,9 +86,23 @@ level = 1
 """
     (out/'coarsen.athinput').write_text(coarsen_input)
     coarsened, coarsen_log = evolve('coarsen','-i',out/'coarsen.athinput')
-    if 'MULTIRATE_REGRID cycle=1 created=0 deleted=7 blocks=25' not in coarsen_log:
+    coarsened_blocks=coarsened['blocks']
+    if coarsened_blocks!=25 or 'MULTIRATE_REGRID cycle=1 created=0 deleted=7 blocks=25' not in coarsen_log:
         raise AssertionError('field criterion failed to coarsen the eight Cartesian siblings')
-    result = dict(events=events, coarsened_blocks=coarsened['blocks'], final_blocks=mixed['blocks'], restart=restart,
+    del coarsened
+    # A restart before the first eligible check must retain the elapsed cooldown.
+    delayed = (out/'mixed.athinput').read_text().replace('refinement_interval = 0',
+                                                         'refinement_interval = 2')
+    (out/'delayed.athinput').write_text(delayed)
+    direct, log = evolve('delayed', '-i', out/'delayed.athinput','time/nlim=2')
+    if 'MULTIRATE_REGRID cycle=2 created=7 deleted=0 blocks=32' not in log:
+        raise AssertionError('unexpected cooldown refinement cut')
+    prefix, _ = evolve('before_cut','-i',out/'delayed.athinput','time/nlim=1')
+    if prefix['blocks'] != 25:
+        raise AssertionError('refinement occurred before cooldown expired')
+    continued, _ = evolve('from_before_cut','-r',prefix['path'],'time/nlim=2','output1/last_time=-1')
+    cooldown_restart = identical(direct,continued)
+    result = dict(events=events, coarsened_blocks=coarsened_blocks, cooldown_restart=cooldown_restart, final_blocks=mixed['blocks'], restart=restart,
                   uniform_fine_reference=error, time=mixed['time'])
     (out/'results.json').write_text(json.dumps(result, indent=2)+'\n')
     print(json.dumps(result))

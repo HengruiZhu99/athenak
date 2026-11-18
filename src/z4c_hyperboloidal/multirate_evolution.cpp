@@ -476,6 +476,20 @@ void MultirateEvolution::Impl::BuildGraphAndLevels() {
         std::ldexp(p.requested_dt, -levels[g]) * p.agreement_plan_->RateBound() > 2.5)
       throw std::invalid_argument("Multirate shared agreement timestep exceeds stability bound");
   }
+  if (global_variable::my_rank == 0) {
+    int limiting = 0;
+    double cartesian = 0, spherical_max = 0;
+    for (int gid = 0; gid < total; ++gid) {
+      const double local = std::ldexp(p.requested_dt, -levels[gid]) * rates[gid];
+      if (local > std::max(cartesian, spherical_max)) limiting = gid;
+      auto& maximum = blocks[gid].cartesian ? cartesian : spherical_max;
+      maximum = std::max(maximum, local);
+    }
+    std::cout << "MULTIRATE_CFL cycle=" << mesh->ncycle << " limiting_gid=" << limiting
+              << " time_level=" << levels[limiting] << " spherical_region=" << maps[limiting].layer
+              << " cartesian_max=" << cartesian << " spherical_max=" << spherical_max
+              << " bound=" << max_cfl << "\n";
+  }
   if (!mesh->adaptive) pin->SetString("multirate", "spherical_levels", Csv(spherical));
   const int budget = pin->GetOrAddInteger("multirate", "stage_budget", 1048576);
   if (budget < 4)

@@ -256,7 +256,6 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
     } else {
       // Flag collection below uses contiguous ownership; there is no admissible
       // operation in this case and no reason to move any accepted state.
-      SaveMultirateRefinementAges(pin);
       return;
     }
   }
@@ -312,7 +311,6 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
         std::cout<<"MULTIRATE_REGRID cycle="<<pmy_mesh->ncycle<<" created="<<nnew
                  <<" deleted="<<ndel<<" blocks="<<pmy_mesh->nmb_total<<"\n";
     }
-    SaveMultirateRefinementAges(pin);
   }
   return;
 }

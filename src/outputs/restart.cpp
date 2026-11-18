@@ -30,6 +30,7 @@
 #include "z4c/compact_object_tracker.hpp"
 #include "z4c/z4c.hpp"
 #include "z4c_hyperboloidal/restart.hpp"
+#include "z4c_hyperboloidal/z4c_hyperboloidal.hpp"
 #include "z4c/horizon_dump.hpp"
 #include "radiation/radiation.hpp"
 #include "srcterms/turb_driver.hpp"
@@ -228,6 +229,9 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
 
   // create string holding input parameters (copy of input file)
   std::stringstream ost;
+  if (pm->adaptive && pm->pmb_pack->pz4c_hyperboloidal &&
+      pm->pmb_pack->pz4c_hyperboloidal->UsesMultirate())
+    pm->pmr->SaveMultirateRefinementAges(pin);
   pin->ParameterDump(ost);
   std::string sbuf = ost.str();
 
