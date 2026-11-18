@@ -37,7 +37,10 @@ sha256sum "$root/build/src/athena" > "$root/executable.sha256"
 suite="$root/source/tst/multirate_native/aurora"
 if [[ -n ${MR_N12_MODE:-} ]]; then
   if [[ ${MR_THROUGHPUT:-0} = 1 ]]; then
-    /usr/bin/python3.11 -u "$suite/measure.py" "$root" --throughput
+    if ! /usr/bin/python3.11 -u "$suite/measure.py" "$root" --throughput; then
+      echo "A throughput control failed. See throughput-results.json." >&2
+      [[ "$MR_N12_MODE" == uniform ]] || exit 1
+    fi
   fi
   remaining=$((3300-SECONDS+segment_start))
   exec "$root/../n12-full-scri-20261115/analysis-env/bin/python" -u "$suite/n12.py" \
