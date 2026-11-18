@@ -44,7 +44,7 @@ def work_and_science(root, mode):
         row = np.atleast_2d(np.loadtxt(path))[-1]
         component = path.stem.rsplit('_',1)[-1]
         horizons[component] = dict(time_M0=3*float(row[1]),mass=float(row[2]),spin=float(row[6]),
-                                   area=float(row[7]),expansion_rms=float(row[8]))
+                                   area=float(row[7]),expansion_rms=math.sqrt(float(row[8])))
     analysis_dir = root/'n12-10M'/'analysis'/mode
     cache = analysis_dir/'cache'
     records = collect(case,cache,capacity=512)
