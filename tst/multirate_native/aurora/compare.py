@@ -17,15 +17,17 @@ def compare(left, right):
     worst = 0.
     squared = 0.
     count = 0
+    identical = True
     for u, v in zip(x, y):
         if not np.isfinite(u).all() or not np.isfinite(v).all():
             raise ValueError('nonfinite accepted state or persistent diagnostic')
+        identical = identical and np.array_equal(u.view(np.uint64),v.view(np.uint64))
         u, v = u[:, :31], v[:, :31]
         difference = np.abs(u-v)/np.maximum(1., np.maximum(np.abs(u), np.abs(v)))
         worst = max(worst, float(difference.max()))
         squared += np.sum(difference**2)
         count += difference.size
-    return dict(max_scaled=worst, rms_scaled=float(np.sqrt(squared/count)), field_scalars=count)
+    return dict(max_scaled=worst, rms_scaled=float(np.sqrt(squared/count)), field_scalars=count, identical_checkpoint_payload=bool(identical))
 
 
 def main():
@@ -51,6 +53,12 @@ def main():
             methods.append(dict(mesh=mesh,method=mode,gpus=tiles//2,
                                 steady_speedup_vs_uniform=uniform['steady_seconds_per_M0']/v['steady_seconds_per_M0'],
                                 elapsed_speedup_vs_uniform=uniform['seconds_per_M0']/v['seconds_per_M0']))
+        for candidate, control in [('posted_fixed','polled_fixed'),('spread','zorder'),('spread','metis')]:
+            other=rows.get((mesh,tiles,control))
+            if mode==candidate and other:
+                methods.append(dict(mesh=mesh,method=mode,control=control,gpus=tiles//2,
+                                    steady_speedup=other['steady_seconds_per_M0']/v['steady_seconds_per_M0']))
+                checks.append(dict(mesh=mesh,method=mode,gpus=tiles//2,comparison=control,**compare(v,other)))
         one = rows.get((mesh,2,mode))
         if one:
             speedup = one['steady_seconds_per_M0']/v['steady_seconds_per_M0']
