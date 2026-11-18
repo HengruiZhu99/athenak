@@ -23,18 +23,25 @@ source "$root/mpi-gpu-cache.sh"
 mkdir -p "$root/cache/neo" "$root/cache/sycl"
 export NEO_CACHE_DIR="$root/cache/neo" SYCL_CACHE_DIR="$root/cache/sycl"
 unset ZE_AFFINITY_MASK
-if [[ ! -f "$root/deps/lib/libmetis.a" && ! -f "$root/deps/lib64/libmetis.a" ]]; then
-  cmake -S "$root/GKlib" -B "$root/gkbuild" -DCMAKE_C_COMPILER=gcc -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_INSTALL_PREFIX="$root/deps" -DBUILD_SHARED_LIBS=OFF > "$root/gk-config.log" 2>&1
-  cmake --build "$root/gkbuild" --parallel 8 --target install > "$root/gk-build.log" 2>&1
-  (cd "$root/METIS" && make config prefix="$root/deps" gklib_path="$root/deps" cc=gcc && make -j8 install) > "$root/metis-build.log" 2>&1
-fi
-cmake -S "$root/source" -B "$root/build" -DCMAKE_C_COMPILER=icx -DCMAKE_CXX_COMPILER=icpx \
-  -DCMAKE_BUILD_TYPE=Release '-DCMAKE_CXX_FLAGS=-fp-model=precise -ffp-contract=off -fno-sycl-id-queries-fit-in-int' \
-  -DAthena_ENABLE_MPI=ON -DAthena_ENABLE_METIS=ON -DCMAKE_PREFIX_PATH="$root/deps" \
-  -DKokkos_ENABLE_SYCL=ON -DKokkos_ARCH_INTEL_PVC=ON -DKokkos_ENABLE_SERIAL=ON > "$root/configure.log" 2>&1
-cmake --build "$root/build" --parallel 32 --target athena > "$root/build.log" 2>&1
-sha256sum "$root/build/src/athena" > "$root/executable.sha256"
 suite="$root/source/tst/multirate_native/aurora"
+if [[ ${MR_N12_RESUME_PINNED:-0} == 1 ]]; then
+  # Both the continuation and its selected-method benchmarks use the archived
+  # science executable. A fresh configure would relink output provenance.
+  MR_BENCHMARK_EXECUTABLE=$(/usr/bin/python3.11 "$suite/n12_paths.py" "$root" multirate)
+  export MR_BENCHMARK_EXECUTABLE
+else
+  if [[ ! -f "$root/deps/lib/libmetis.a" && ! -f "$root/deps/lib64/libmetis.a" ]]; then
+    cmake -S "$root/GKlib" -B "$root/gkbuild" -DCMAKE_C_COMPILER=gcc -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_INSTALL_PREFIX="$root/deps" -DBUILD_SHARED_LIBS=OFF > "$root/gk-config.log" 2>&1
+    cmake --build "$root/gkbuild" --parallel 8 --target install > "$root/gk-build.log" 2>&1
+    (cd "$root/METIS" && make config prefix="$root/deps" gklib_path="$root/deps" cc=gcc && make -j8 install) > "$root/metis-build.log" 2>&1
+  fi
+  cmake -S "$root/source" -B "$root/build" -DCMAKE_C_COMPILER=icx -DCMAKE_CXX_COMPILER=icpx \
+    -DCMAKE_BUILD_TYPE=Release '-DCMAKE_CXX_FLAGS=-fp-model=precise -ffp-contract=off -fno-sycl-id-queries-fit-in-int' \
+    -DAthena_ENABLE_MPI=ON -DAthena_ENABLE_METIS=ON -DCMAKE_PREFIX_PATH="$root/deps" \
+    -DKokkos_ENABLE_SYCL=ON -DKokkos_ARCH_INTEL_PVC=ON -DKokkos_ENABLE_SERIAL=ON > "$root/configure.log" 2>&1
+  cmake --build "$root/build" --parallel 32 --target athena > "$root/build.log" 2>&1
+  sha256sum "$root/build/src/athena" > "$root/executable.sha256"
+fi
 if [[ -f /usr/include/level_zero/zes_api.h && "$suite/engine_activity.cpp" -nt "$root/engine-activity" ]]; then
   c++ -O2 -std=c++17 "$suite/engine_activity.cpp" -lze_loader -o "$root/engine-activity"
 fi

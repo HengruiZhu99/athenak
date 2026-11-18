@@ -49,6 +49,8 @@ def continue_comparison(root, current, job):
             print(marker.read_text(), flush=True)
             return
         variables = [f'MR_N12_MODE={mode}', 'MR_N12_CHAIN=1']
+        if all((trajectory_directory(root,m)/'state.json').is_file() for m in (mode,'multirate')):
+            variables.append('MR_N12_RESUME_PINNED=1')
         pending = os.environ.get('MR_N12_NEXT_CASES')
         if pending:
             # Spread longer strong-scaling suites over the existing one-hour
