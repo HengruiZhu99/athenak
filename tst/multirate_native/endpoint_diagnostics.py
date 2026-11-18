@@ -9,7 +9,7 @@ import numpy as np
 root = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(root / 'tst/z4c_hyperboloidal'))
 sys.path.insert(0, str(root / 'vis/python'))
-from scri_reader import read
+from scri_reader import load_record
 from scri_geometry import endpoint_jets, spacetime_metric
 from nonradiative_native_analysis import metric_rate
 from nonradiative_tensor_attribution import tensor
@@ -18,9 +18,8 @@ from nonradiative_tensor_attribution import tensor
 def diagnostics(directory, scri_only=False, output_number=3):
     anchor = sorted(directory.glob(f'*.o{output_number}.*.r00000000.scri'))[-1]
     series = []
-    for path in sorted(directory.glob(anchor.name.replace('r00000000', 'r????????'))):
-        record = read(path)
-        epoch = read(path.parent / record['epoch'])
+    parts = load_record(directory.glob(anchor.name.replace('r00000000.scri', 'r????????.scri')))
+    for record,epoch in parts:
         ids = epoch['surface_ids'][:, [0, 2, 3]]
         x = epoch['surface_geometry'][:, :3]
         jets = endpoint_jets(record, epoch)
@@ -41,6 +40,8 @@ def diagnostics(directory, scri_only=False, output_number=3):
         series.append((ids, tracefree, mismatch, record['time'][0]))
     ids = np.concatenate([row[0] for row in series])
     order = np.lexsort(ids.T[::-1])
+    if not len(ids) or len(np.unique(ids,axis=0)) != len(ids):
+        raise ValueError('empty or duplicated global scri node IDs')
     time = series[0][3]
     if any(row[3] != time for row in series):
         raise ValueError('ranks wrote different scri endpoints')

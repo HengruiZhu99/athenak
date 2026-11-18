@@ -13,7 +13,8 @@ import scri_reader as reader
 from scri_geometry import endpoint_jets, spacetime_metric
 
 
-def collect(root, output, capacity=4096, record_pattern="segment-*/*.o20.*.r00000000.scri"):
+def collect(root, output, capacity=4096, record_pattern="segment-*/*.o20.*.r00000000.scri",
+            record_paths=None):
     output.mkdir(parents=True, exist_ok=True)
     index_file = output/'records.json'
     records = json.loads(index_file.read_text()) if index_file.exists() else []
@@ -47,7 +48,7 @@ def collect(root, output, capacity=4096, record_pattern="segment-*/*.o20.*.r0000
     def incomplete(error):
         return isinstance(error, FileNotFoundError) or str(error) in ('truncated scri archive', 'invalid array extent')
     sources = []
-    candidates = sorted(root.glob(record_pattern),
+    candidates = sorted(root.glob(record_pattern) if record_paths is None else record_paths,
                         key=lambda p: (int(p.name.rsplit('.', 3)[1]), p.parent.name))
     for source_index, path in enumerate(candidates):
         try:
