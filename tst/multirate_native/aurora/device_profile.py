@@ -20,7 +20,7 @@ def timing_table(text):
         name, calls, duration, *_ = next(csv.reader([line.strip()],skipinitialspace=True))
         # Preserve MPI copy directions. For SYCL compute kernels, group template
         # specializations by the native function enclosing their device lambda.
-        method = re.search(r'(?:z4c_hyperboloidal|bvals)::[\w:]+(?=\()',name)
+        method = re.search(r'(?:z4c_hyperboloidal|bvals)::[\w:]+(?:<(?:true|false)>)?(?=\()',name)
         key = method[0] if method else name
         row = operations.setdefault(key,dict(calls=0,nanoseconds=0))
         row['calls'] += int(calls)
