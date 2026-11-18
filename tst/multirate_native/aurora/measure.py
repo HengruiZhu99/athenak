@@ -47,7 +47,13 @@ def case(mesh, ranks, mode, intervals):
     uniform = method in ('uniform', 'classical')
     base = 4*4.6944203735617445e-4 if production else 2**-14
     factor = (16 if production else 2) if uniform else 1
-    run = root/'runs'/f'{mesh}-{ranks}tiles-{mode}'
+    runs = root/'runs'
+    series = os.environ.get('MR_BENCHMARK_SERIES')
+    if series:
+        if not re.fullmatch(r'[a-zA-Z0-9_-]+',series):
+            raise ValueError('invalid benchmark series name')
+        runs = runs/series
+    run = runs/f'{mesh}-{ranks}tiles-{mode}'
     complete = run/'completed.json'
     if complete.exists():
         receipt = json.loads(complete.read_text())
@@ -205,6 +211,11 @@ os.environ['KOKKOS_TOOLS_LIBS'] = str(memory_tool)
 
 if case_file:
     specification=json.loads(case_file.read_text())
+    if isinstance(specification,dict) and 'mpi_comparison' in specification:
+        analysis_python = root.parent/'n12-full-scri-20261115/analysis-env/bin/python'
+        subprocess.run([str(analysis_python),str(source/'aurora/mpi_runtime.py'),str(root),
+                        str(exe),str(case_file)],check=True)
+        sys.exit(0)
     if isinstance(specification,dict) and 'accuracy' in specification:
         from accuracy import qualify
         checks=qualify(root,exe,specification['accuracy'])
