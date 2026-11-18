@@ -20,9 +20,6 @@ from node_placement import reorder_nodes
 root = Path(sys.argv[1]).resolve()
 source = root / 'source/tst/multirate_native'
 campaign = root.parent / 'n12-radial-blocks-20261117'
-exe = Path(os.environ.get('MR_BENCHMARK_EXECUTABLE', root/'build/src/athena')).resolve()
-with exe.open('rb') as binary:
-    binary_sha256 = hashlib.file_digest(binary, 'sha256').hexdigest()
 large_suite = sys.argv[2:] == ['--larger-adaptive']
 throughput = sys.argv[2:] == ['--throughput']
 case_file = None
@@ -30,6 +27,24 @@ if len(sys.argv)==4 and sys.argv[2]=='--cases':
     case_file = Path(sys.argv[3]).resolve()
 elif sys.argv[2:] and not (large_suite or throughput):
     raise ValueError('expected --larger-adaptive, --throughput or --cases FILE')
+exe = Path(os.environ.get('MR_BENCHMARK_EXECUTABLE',root/'build/src/athena')).resolve()
+pinned_sha = None
+if case_file:
+    specification = json.loads(case_file.read_text())
+    cases = specification.get('cases',[]) if isinstance(specification,dict) else specification
+    selected_suite = (any(row[2].startswith('selected') for row in cases) or
+                      isinstance(specification,dict) and ('accuracy' in specification or 'mpi_comparison' in specification))
+    if selected_suite:
+        # Every scaling/accuracy control follows the binary that actually evolved
+        # the N12 state. Reconfiguration can relink a new output-provenance object.
+        from n12_paths import trajectory_directory
+        state=json.loads((trajectory_directory(root,'multirate')/'state.json').read_text())
+        pinned_sha=state['binary_sha256']
+        exe=Path(os.environ.get('MR_BENCHMARK_EXECUTABLE',state['executable'])).resolve()
+with exe.open('rb') as binary:
+    binary_sha256 = hashlib.file_digest(binary, 'sha256').hexdigest()
+if pinned_sha is not None and binary_sha256!=pinned_sha:
+    raise ValueError('benchmark executable differs from the accepted N12 trajectory')
 campaign_report = (case_file.stem+'-results.json' if case_file else
                    'throughput-results.json' if throughput else
                    'larger-results.json' if large_suite else 'results.json')
