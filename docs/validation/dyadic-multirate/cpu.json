@@ -238,6 +238,22 @@
     {
       "case": "51-block initial mesh, finer Cartesian puncture parent, radial pulse, chi floor inactive",
       "observed": "Native spatial transfer rejected the candidate bulk state at refinement."
+    },
+    {
+      "case": "88-block mesh, refine candidate touching the puncture",
+      "observed": "Native spatial transfer rejected the candidate bulk state. Moving the refinement box to the offset location in the scaling fixture allowed two accepted intervals."
     }
-  ]
+  ],
+  "scaling_fixture_preflight": {
+    "coordinate_dt": 6.103515625e-05,
+    "mpi_ranks": 2,
+    "initial_blocks": 88,
+    "endpoint_blocks": 102,
+    "refinement_center": [
+      0.065,
+      0.013,
+      0.014
+    ],
+    "accepted_intervals": 2
+  }
 }

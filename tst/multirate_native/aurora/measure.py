@@ -43,6 +43,9 @@ def case(mesh, ranks, mode, intervals):
         run.mkdir()
     if adaptive:
         inp = adaptive_input(ranks, uniform=uniform, intervals=intervals, base=base)
+        # This scaling control refines a core block offset from the puncture.
+        # The 25-block restart control separately refines the puncture parent.
+        inp = inp.replace('location_x1 = .015','location_x1 = .065')
         start, end = inp.index('<mesh>'), inp.index('<meshblock>')
         inp = inp[:start]+inp[start:end].replace('= 12', '= 48')+inp[end:]
         inp += f'\n<mesh_refinement>\nmax_nmb_per_rank = {max(12, (130+ranks-1)//ranks)}\n'
