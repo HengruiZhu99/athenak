@@ -304,13 +304,11 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
     nmb_created += nnew;
     nmb_deleted += ndel;
   }
-  if (multirate) {
-    if (staged || nnew || ndel) {
-      phyper->InitializeMultirate(pdriver, true);
-      if (global_variable::my_rank==0)
-        std::cout<<"MULTIRATE_REGRID cycle="<<pmy_mesh->ncycle<<" created="<<nnew
-                 <<" deleted="<<ndel<<" blocks="<<pmy_mesh->nmb_total<<"\n";
-    }
+  if (multirate && (staged || nnew || ndel)) phyper->InitializeMultirate(pdriver,true);
+  if (phyper && (staged || nnew || ndel) && global_variable::my_rank==0) {
+    std::cout<<(multirate ? "MULTIRATE_REGRID" : "SCHEME_A_REGRID")
+             <<" cycle="<<pmy_mesh->ncycle<<" created="<<nnew
+             <<" deleted="<<ndel<<" blocks="<<pmy_mesh->nmb_total<<"\n";
   }
   return;
 }

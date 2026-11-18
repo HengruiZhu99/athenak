@@ -153,7 +153,7 @@ location_rad = .0001
         raise RuntimeError(f'GPU evolution failed in {run} (exit {code})')
     if not re.search(r'MULTIRATE_MEMORY space=SYCLDeviceUSM peak_allocated_bytes=[1-9]\d*', text):
         raise AssertionError('missing Kokkos GPU allocation receipt in '+str(run))
-    regrids = re.findall(r'MULTIRATE_REGRID cycle=(\d+) created=(\d+) deleted=(\d+) blocks=(\d+)', text)
+    regrids = re.findall(r'(?:MULTIRATE|SCHEME_A)_REGRID cycle=(\d+) created=(\d+) deleted=(\d+) blocks=(\d+)', text)
     if (adaptive or deep_adaptive) and not any(int(created) and int(cycle)==factor for cycle,created,_,_ in regrids):
         raise AssertionError('missing synchronized first regrid: '+str(run))
     # Use the driver clock for every method. Differences include AMR, migration
