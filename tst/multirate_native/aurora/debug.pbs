@@ -10,6 +10,7 @@ set -euo pipefail
 ulimit -c 0
 cd "$PBS_O_WORKDIR"
 root=$PWD
+segment_start=$SECONDS
 export MR_RUN_ROOT=$root
 module load oneapi/release/2025.3.1
 module load cmake
@@ -33,4 +34,13 @@ cmake -S "$root/source" -B "$root/build" -DCMAKE_C_COMPILER=icx -DCMAKE_CXX_COMP
   -DKokkos_ENABLE_SYCL=ON -DKokkos_ARCH_INTEL_PVC=ON -DKokkos_ENABLE_SERIAL=ON > "$root/configure.log" 2>&1
 cmake --build "$root/build" --parallel 32 --target athena > "$root/build.log" 2>&1
 sha256sum "$root/build/src/athena" > "$root/executable.sha256"
-exec /usr/bin/python3.11 -u "$root/source/tst/multirate_native/aurora/measure.py" "$root" ${MR_LARGER_SUITE:+--larger-adaptive}
+suite="$root/source/tst/multirate_native/aurora"
+if [[ -n ${MR_N12_MODE:-} ]]; then
+  if [[ ${MR_THROUGHPUT:-0} = 1 ]]; then
+    /usr/bin/python3.11 -u "$suite/measure.py" "$root" --throughput
+  fi
+  remaining=$((3300-SECONDS+segment_start))
+  exec "$root/../n12-full-scri-20261115/analysis-env/bin/python" -u "$suite/n12.py" \
+    "$root" "$MR_N12_MODE" --wall-seconds "$remaining"
+fi
+exec /usr/bin/python3.11 -u "$suite/measure.py" "$root" ${MR_LARGER_SUITE:+--larger-adaptive}
