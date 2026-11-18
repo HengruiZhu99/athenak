@@ -103,7 +103,7 @@ struct DonorMeta {
 // One sorted entry per distinct donor point consumed by a fixed local batch.
 // The two halo exchanges share ordinals; surface bulk and edge are disjoint.
 struct DonorDestination {
-  int index, halo = -1, surface = -1, agreement = -1;
+  int index, halo = -1, surface = -1, agreement = -1, coupling_row = -1;
 };
 struct DirectDonorViews {
   DvceArray1D<DonorDestination> targets;
@@ -243,6 +243,8 @@ struct MultirateEvolution::Impl {
     DvceArray1D<int> mask, native_indices;
     std::array<DvceArray1D<int>, 5> rhs_points;
     DirectDonorViews donor_views;
+    std::vector<int> donor_gids;
+    StageTable<Combination> coupling;
     bool donor_views_ready = false;
   };
   std::map<std::vector<int>, ActiveLayout> active_layouts;
@@ -335,7 +337,7 @@ struct MultirateEvolution::Impl {
   void Publish(const std::vector<int>& slots, const std::vector<DvceArray1D<Real>>& records,
                std::uint32_t step, int stage);
   GatherPlan& ExchangeView(const bvals::MappedExchange& plan, int kind);
-  DirectDonorViews MakeDonorViews(const std::vector<int>& slots);
+  DirectDonorViews MakeDonorViews(const std::vector<int>& slots, std::vector<int>& donor_gids);
   DvceArray2D<Real> Gather(const bvals::MappedExchange& plan, int kind,
                            const DvceArray2D<Real>& values);
   void StageDonors(size_t stage, const std::vector<int>& slots, DvceArray2D<Real>& physical,
@@ -344,7 +346,7 @@ struct MultirateEvolution::Impl {
   std::size_t completed = 0;
   bool interval_active = false;
   std::vector<unsigned long long> level_work;
-  unsigned long long batch_count = 0, max_batch = 0;
+  unsigned long long batch_count = 0, max_batch = 0, donor_table_bytes = 0;
   double communication_wait = 0;
   // Host elapsed time in disjoint parts of task-list execution. Kernel launches
   // may complete in a later phase. These counters never introduce a device fence.
@@ -965,7 +967,8 @@ void MultirateEvolution::Impl::Publish(const std::vector<int>& slots,
     batch.emplace_back(Key{pack->GlobalId(m),step,stage},records[m]);
   exchange->PublishBatch(batch);
 }
-DirectDonorViews MultirateEvolution::Impl::MakeDonorViews(const std::vector<int>& slots) {
+DirectDonorViews MultirateEvolution::Impl::MakeDonorViews(
+    const std::vector<int>& slots, std::vector<int>& donor_gids) {
   DirectDonorViews out;
   std::vector<DonorDestination> targets(requested.size(), {-1});
   auto dest = [&](const bvals::DonorPoint& point, int kind) -> DonorDestination& {
@@ -1001,24 +1004,48 @@ DirectDonorViews MultirateEvolution::Impl::MakeDonorViews(const std::vector<int>
   }
   targets.erase(std::remove_if(targets.begin(),targets.end(),
       [](const DonorDestination& t){ return t.index < 0; }),targets.end());
+  // Requested points are ordered by GID. Store one coupling row for each
+  // donor block actually read by this batch, including radial support points
+  // which belong to the same block as their scri donor.
+  for (auto& target : targets) {
+    const int gid = requested[target.index].gid;
+    if (donor_gids.empty() || donor_gids.back() != gid) donor_gids.push_back(gid);
+    target.coupling_row = donor_gids.size() - 1;
+  }
   out.targets = Device(targets,"multirate active donor destinations");
   return out;
 }
 void MultirateEvolution::Impl::StageDonors(size_t stage, const std::vector<int>& slots,
                                            DvceArray2D<Real>& physical,
                                            DvceArray2D<Real>& residual) {
-  std::vector<Combination> combinations(mesh->nmb_total);
-  std::set<int> needed;
-  for (int m : slots) {
-    const int gid = pack->GlobalId(m);
-    needed.insert(gid);
-    needed.insert(neighbors[gid].begin(), neighbors[gid].end());
+  auto row = [&](int gid) {
+    auto c = Combine(stage,gid);
+    if (!c.base) throw std::logic_error("Ready task is missing a donor record");
+    return c;
+  };
+  DvceArray1D<Combination> combinations_d;
+  if (complete_local_batches) {
+    auto& layout = active_layouts.at(slots);
+    if (!layout.donor_views_ready) {
+      layout.donor_views = MakeDonorViews(slots,layout.donor_gids);
+      layout.donor_views_ready = true;
+    }
+    std::vector<Combination> rows;
+    rows.reserve(layout.donor_gids.size());
+    for (int gid : layout.donor_gids) rows.push_back(row(gid));
+    combinations_d = layout.coupling.Upload(rows,"multirate batch donor coupling rows");
+  } else {
+    std::vector<Combination> rows(mesh->nmb_total);
+    std::set<int> needed;
+    for (int m : slots) {
+      const int gid = pack->GlobalId(m);
+      needed.insert(gid);
+      needed.insert(neighbors[gid].begin(),neighbors[gid].end());
+    }
+    for (int gid : needed) rows[gid] = row(gid);
+    combinations_d = donor_rows.Upload(rows,"multirate donor coupling rows");
   }
-  for (int gid : needed) {
-    combinations[gid] = Combine(stage, gid);
-    if (!combinations[gid].base) throw std::logic_error("Ready task is missing a donor record");
-  }
-  const auto combinations_d = donor_rows.Upload(combinations,"multirate donor coupling rows");
+  donor_table_bytes += combinations_d.extent(0) * sizeof(Combination);
   const auto metadata = donors;
   physical = donor_physical;
   residual = donor_residual;
@@ -1030,7 +1057,7 @@ void MultirateEvolution::Impl::StageDonors(size_t stage, const std::vector<int>&
       KOKKOS_LAMBDA(int i, int& bad) {
         const auto target = output.Destination(i);
         const auto meta = metadata(target.index);
-        const auto c = combinations_d(meta.gid);
+        const auto c = combinations_d(target.coupling_row >= 0 ? target.coupling_row : meta.gid);
         CartesianChartJets jets{};
         if (!c.base) {
           int slot = 0;
@@ -1081,12 +1108,8 @@ void MultirateEvolution::Impl::StageDonors(size_t stage, const std::vector<int>&
     if (invalid) throw std::runtime_error("Invalid recipient-specific multirate donor stage");
   };
   if (complete_local_batches) {
-    auto& layout = active_layouts.at(slots);
-    if (!layout.donor_views_ready) {
-      layout.donor_views = MakeDonorViews(slots);
-      layout.donor_views_ready = true;
-    }
-    reconstruct(layout.donor_views,layout.donor_views.targets.extent_int(0));
+    const auto& view = active_layouts.at(slots).donor_views;
+    reconstruct(view,view.targets.extent_int(0));
   } else {
     reconstruct(FullDonorViews{physical,residual},metadata.extent_int(0));
   }
@@ -1135,7 +1158,7 @@ DvceArray2D<Real> MultirateEvolution::Impl::Gather(const bvals::MappedExchange& 
 void MultirateEvolution::Impl::BeginInterval() {
   interval_start = Clock::now();
   interval_active = true;
-  completed = batch_count = max_batch = 0;
+  completed = batch_count = max_batch = donor_table_bytes = 0;
   communication_wait = 0;
   phase_seconds.fill(0);
   interior_batches_with_receives = interior_receives = 0;
@@ -1412,11 +1435,11 @@ void MultirateEvolution::Impl::CompleteInterval(Driver* driver) {
   }
   unsigned long long peaks[] = {stats.peak_record_bytes, stats.peak_packet_bytes, max_batch};
   unsigned long long sums[] = {stats.sent_bytes, batch_count, interior_receives, interior_batches_with_receives,
-                               stats.send_packets, stats.pack_kernels, stats.reused_send_packets};
+                               stats.send_packets, stats.pack_kernels, stats.reused_send_packets, donor_table_bytes};
 #if MPI_PARALLEL_ENABLED
   MPI_Reduce(global_variable::my_rank == 0 ? MPI_IN_PLACE : peaks, peaks, 3, MPI_UNSIGNED_LONG_LONG,
              MPI_MAX, 0, MPI_COMM_WORLD);
-  MPI_Reduce(global_variable::my_rank == 0 ? MPI_IN_PLACE : sums, sums, 7, MPI_UNSIGNED_LONG_LONG,
+  MPI_Reduce(global_variable::my_rank == 0 ? MPI_IN_PLACE : sums, sums, sizeof(sums)/sizeof(sums[0]), MPI_UNSIGNED_LONG_LONG,
              MPI_SUM, 0, MPI_COMM_WORLD);
   MPI_Reduce(global_variable::my_rank == 0 ? MPI_IN_PLACE : level_work.data(), level_work.data(),
              level_work.size(), MPI_UNSIGNED_LONG_LONG, MPI_SUM, 0, MPI_COMM_WORLD);
@@ -1428,7 +1451,8 @@ void MultirateEvolution::Impl::CompleteInterval(Driver* driver) {
               << " peak_packet_bytes_per_rank=" << peaks[1] << " maximum_batch_blocks=" << peaks[2]
               << " sent_bytes=" << sums[0] << " batches=" << sums[1] << " records_completed_on_interior_poll=" << sums[2]
               << " interior_batches_with_receives=" << sums[3] << " send_packets=" << sums[4]
-              << " send_pack_kernels=" << sums[5] << " reused_send_packets=" << sums[6] << " rhs_by_level=";
+              << " send_pack_kernels=" << sums[5] << " reused_send_packets=" << sums[6]
+              << " donor_coupling_table_bytes=" << sums[7] << " rhs_by_level=";
     for (size_t i = 0; i < level_work.size(); ++i) std::cout << (i ? "," : "") << level_work[i];
     std::cout << "\n";
   }

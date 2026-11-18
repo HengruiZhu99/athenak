@@ -20,7 +20,9 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver,int stage,RHSSubset subset,
   if (!plans_ready_) throw std::logic_error("Hyperboloidal RHS has no stage plans");
   if (!driver->UsesSchemeARK() || stage<1 || stage>4)
     throw std::invalid_argument("Hyperboloidal RHS requires classical RK4 stage");
-  const auto selected=(active_blocks.extent(0) ? active_rhs_points : rhs_points_)[static_cast<int>(subset)];
+  const auto& lists=active_blocks.extent(0) ? active_rhs_points : rhs_points_;
+  const auto selected=lists[static_cast<int>(subset)];
+  if (!selected.extent(0)) return TaskStatus::complete;
   const auto cells=points.d_view;const auto maps=geometry;const auto refs=reference;
   const auto sources=stationary_source;const auto params=parameters;
   const auto physical=u0,delta=residual,output=u_rhs;
@@ -29,7 +31,9 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver,int stage,RHSSubset subset,
   const auto dissipation=dissipation_plan_->Bind();
   // The joined dependent batch has current bulk ghosts and scri samples. Its
   // ordinary points ignore the endpoint cache, as in the original work lists.
-  const auto surface=(subset==RHSSubset::Surface || subset==RHSSubset::Dependent)
+  const bool radial=(subset==RHSSubset::Surface || subset==RHSSubset::Dependent) &&
+      lists[static_cast<int>(RHSSubset::Surface)].extent(0);
+  const auto surface=radial
       ? surface_exchange_->PrepareRadialJets()
       : SurfaceExchange::CachedKernel{surface_exchange_->BindKernel(),{}};
   const Real epsilon=ko,dt=active_step_dt>0 ? active_step_dt : pmy_pack->pmesh->dt;
