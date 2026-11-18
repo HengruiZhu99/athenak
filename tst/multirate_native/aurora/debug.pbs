@@ -35,6 +35,9 @@ cmake -S "$root/source" -B "$root/build" -DCMAKE_C_COMPILER=icx -DCMAKE_CXX_COMP
 cmake --build "$root/build" --parallel 32 --target athena > "$root/build.log" 2>&1
 sha256sum "$root/build/src/athena" > "$root/executable.sha256"
 suite="$root/source/tst/multirate_native/aurora"
+if [[ -f /usr/include/level_zero/zes_api.h && "$suite/engine_activity.cpp" -nt "$root/engine-activity" ]]; then
+  c++ -O2 -std=c++17 "$suite/engine_activity.cpp" -lze_loader -o "$root/engine-activity"
+fi
 if [[ -n ${MR_N12_MODE:-} ]]; then
   if [[ ${MR_THROUGHPUT:-0} = 1 ]]; then
     if ! /usr/bin/python3.11 -u "$suite/measure.py" "$root" --throughput; then
