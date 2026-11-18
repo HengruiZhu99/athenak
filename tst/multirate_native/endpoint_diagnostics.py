@@ -15,10 +15,10 @@ from nonradiative_native_analysis import metric_rate
 from nonradiative_tensor_attribution import tensor
 
 
-def diagnostics(directory, scri_only=False, output_number=3):
-    anchor = sorted(directory.glob(f'*.o{output_number}.*.r00000000.scri'))[-1]
+def scri_cut(anchor):
+    """Read and point-match all rank pieces of one accepted scri cut."""
     series = []
-    parts = load_record(directory.glob(anchor.name.replace('r00000000.scri', 'r????????.scri')))
+    parts = load_record(anchor.parent.glob(anchor.name.replace('r00000000.scri', 'r????????.scri')))
     for record,epoch in parts:
         ids = epoch['surface_ids'][:, [0, 2, 3]]
         x = epoch['surface_geometry'][:, :3]
@@ -47,13 +47,19 @@ def diagnostics(directory, scri_only=False, output_number=3):
         raise ValueError('ranks wrote different scri endpoints')
     values = dict(regularity_tensor=np.concatenate([row[1] for row in series])[order],
                   clock_mismatch=np.concatenate([row[2] for row in series])[order])
+    return ids[order], time, values
+
+
+def diagnostics(directory, scri_only=False, output_number=3):
+    anchor = sorted(directory.glob(f'*.o{output_number}.*.r00000000.scri'))[-1]
+    ids, time, values = scri_cut(anchor)
     if not scri_only:
         history = np.atleast_2d(np.loadtxt(next(directory.glob('*.z4c_hyperboloidal.hst'))))[-1]
         if time != history[0]:
             raise ValueError('scri and constraint diagnostics have different endpoints')
         for i, name in enumerate(['hamiltonian_rms', 'momentum_rms', 'theta_rms', 'z_rms']):
             values[name] = history[i + 3]
-    return ids[order], time, values
+    return ids, time, values
 
 
 def compare(base, scri_only=False):
