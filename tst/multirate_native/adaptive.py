@@ -57,15 +57,18 @@ def main():
     events = re.findall(r'MULTIRATE_REGRID cycle=(\d+) created=(\d+) deleted=(\d+) blocks=(\d+)', log)
     if not events or events[0][0]!='1' or int(events[0][1])<=0 or mixed['blocks']<=25:
         raise AssertionError(f'expected actual first-endpoint refinement: {events}')
-    grouped, _ = evolve('grouped', '-i', out/'mixed.athinput', 'multirate/complete_local_batches=true')
+    grouped_input = out/'grouped.athinput'
+    grouped_input.write_text((out/'mixed.athinput').read_text()+
+        '\n<multirate>\ncomplete_local_batches = true\ncoalesce_stage_packets = true\n'
+        'send_cache_mib = 96\nreceive_cache_mib = 96\n')
+    grouped, _ = evolve('grouped','-i',grouped_input)
     grouped_check = identical(mixed, grouped)
-    del grouped
-    prefix, _ = evolve('prefix', '-i', out/'mixed.athinput', 'time/nlim=1')
+    prefix, _ = evolve('prefix', '-i', grouped_input, 'time/nlim=1')
     if prefix['blocks'] != int(events[0][3]):
         raise AssertionError('checkpoint predates the accepted refinement')
     resumed, _ = evolve('resumed', '-r', prefix['path'], 'time/nlim=3', 'output1/last_time=-1')
-    restart = identical(mixed, resumed)
-    del resumed, prefix
+    restart = identical(grouped, resumed)
+    del grouped, resumed, prefix
     uniform, _ = evolve('uniform', '-i', out/'uniform.athinput')
     if mixed['topology'] != uniform['topology'] or mixed['time'] != uniform['time']:
         raise AssertionError('different final topology or physical endpoint in uniform reference')

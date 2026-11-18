@@ -93,3 +93,10 @@ Set the batch environment variable `MR_N12_MODE` to `uniform` or `multirate` in 
 The multirate trajectory uses the fastest measured placement among the tested candidates that reproduce the accepted payload. Complete local batches group blocks at the same numerical stage on one rank. The optional node-placement trial keeps each physical GPU's work and both tile packs together, measures rank-to-rank bytes, and enumerates placements of twelve GPUs across two six-GPU nodes. It compares the new placement with the original on hardware.
 
 After both trajectories finish, `aurora/n12_compare.py` checks the endpoint fields, conformal regularity tensor, clock mismatch and constraints. It extracts Bondi news from the time series, compares the modes on common Bondi-time cuts, and reports elapsed time per M0 across all validated segments.
+
+
+## Complete-batch transport controls
+
+With `complete_local_batches = true` and `prepost_exchanges = true`, setting `coalesce_stage_packets = true` lets a rank send records from a common level, local step, stage and kernel class in one message per destination. The receiver posts two messages ahead per source and publication group. Each record keeps its own dependency key and consumer count. The shared allocation survives until its last record is released. Adaptation and redistribution rebuild the plan at common endpoints.
+
+`send_cache_mib` and `receive_cache_mib` independently limit retained GPU buffer capacity per MPI rank in MiB. Both default to zero. Active communication storage is additional. The send cache recycles completed requests. The receive cache reuses an allocation only after the MPI request and every record view release it. Compare the `send_packets`, `reused_send_packets`, `reused_receive_packets` and peak GPU memory receipts at the same endpoint when tuning these controls.
