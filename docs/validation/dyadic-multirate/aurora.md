@@ -9,11 +9,12 @@ Aurora debug job 9100106 used Intel Data Center GPU Max devices with one MPI ran
 | 88 | 102 | 12 | Multirate, stage-aware METIS | 8 | 93.50 | 7.366 |
 | 88 | 102 | 12 | Uniform EX5 | 8 | 83.88 | 8.587 |
 | 754 | fixed | 12 | Multirate, stage-aware METIS | 6 | 558.43 | 70.108 |
+| 754 | fixed | 12 | Multirate, scalar weighting | 6 | 738.97 | 114.158 |
 | 754 | fixed | 12 | Uniform EX5 | 6 | 994.95 | 155.984 |
 
 The 754-block binary atlas has 250 agreement participants. The timestep assignment promotes 176 Cartesian leaves. The level-1 through level-4 RHS counts per interval are 368, 5,632, 10,624 and 1,536. On this mesh the initial normalized stability monitor reached 0.229 at scri and 0.084 in the Cartesian region. Scri set the larger monitored bound. Its coefficients and closure were held fixed.
 
-On the 754-block mesh, stage-aware METIS achieved 2.22× the throughput of uniform EX5 after warmup and 1.78× over the complete short run. The final field comparison covered 139,683,024 field scalars and gave a maximum scaled difference of 7.90e-9 and an RMS of 4.84e-11. Scaling a difference uses the larger of unity and the absolute values of the two operands.
+On the 754-block mesh, stage-aware METIS achieved 2.22× the throughput of uniform EX5 after warmup and 1.78× over the complete short run. The stage-aware placement used 19.04 GB of MPI payload per interval compared with 41.51 GB for scalar weighting and completed steady intervals 1.63× faster. Both schedules evaluated the same 18,160 block RHS stages per interval. The final field comparison covered 139,683,024 field scalars and gave a maximum scaled difference of 7.90e-9 and an RMS of 4.84e-11. Scaling a difference uses the larger of unity and the absolute values of the two operands.
 
 The smaller adaptive problem had a steady strong-scaling speedup of 0.949× from one to twelve GPUs, equivalent to 7.9% parallel efficiency. The accepted native checkpoints, including persistent diagnostics, were bitwise identical across these GPU counts. Each multirate run differed from its fine uniform control by at most 9.19e-15 over 18,896,112 field scalars.
 
