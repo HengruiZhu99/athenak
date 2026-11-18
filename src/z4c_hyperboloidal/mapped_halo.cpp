@@ -464,7 +464,6 @@ void MappedHalo::Rebuild(MeshBlockPack *pack,int origin,ActivityPolicy activity)
   CopyDevice(local_rows,local_rows_,"mapped_local_rows");
   CopyDevice(remote_rows,remote_rows_,"mapped_remote_rows");
   CopyDevice(entries,entries_,"mapped_halo_entries");
-  CopyDevice(fields,residual_fields_,"mapped_residual_fields");
   packed_=received_=false;
   ready_=true;
 }
@@ -491,26 +490,27 @@ void MappedHalo::Fill(const DvceArray1D<DeviceRow> &rows,
                        bvals::MappedExchange::ConstValues residual_values,
                        bvals::MappedExchange::ConstValues physical_values,
                        DvceArray1D<int> active) const {
-  const auto entries=entries_;const auto fields=residual_fields_;
+  const auto entries=entries_;
   if(!residual_values.data())residual_values=residual_exchange_.Values();
   if(!physical_values.data())physical_values=physical_exchange_.Values();
-  const int count=rows.extent_int(0),nf=fields.extent_int(0);
+  const int count=rows.extent_int(0);
   Kokkos::parallel_for("mapped halo interpolation",Kokkos::RangePolicy<>(0,count*Fields::count),
     KOKKOS_LAMBDA(int index) {
       const auto row=rows(index/Fields::count);const int f=index%Fields::count;
       const auto c=row.target; if(active.extent(0) && !active(c.m))return;
       const int first=entries(row.begin).ordinal;
-      const Real anchor=physical_values(first,f);Real value=anchor;
-      for (int e=row.begin;e<row.end;++e)
-        value+=entries(e).weight*(physical_values(entries(e).ordinal,f)-anchor);
-      physical(c.m,f,c.k,c.j,c.i)=value;
-      if (f<nf) {
-        const Real base=residual_values(first,f);Real interpolated=base;
-        for (int e=row.begin;e<row.end;++e)
-          interpolated+=entries(e).weight*(residual_values(entries(e).ordinal,f)-base);
-        residual(c.m,fields(f),c.k,c.j,c.i)=interpolated;
+      const Real anchor=physical_values(first,f);
+      const bool independent=Fields::Independent(f);
+      const int slot=Fields::IndependentSlot(f);
+      const Real base=independent ? residual_values(first,slot) : 0;
+      Real value=anchor,interpolated=base;
+      for (int e=row.begin;e<row.end;++e) {
+        const auto entry=entries(e);
+        value+=entry.weight*(physical_values(entry.ordinal,f)-anchor);
+        if (independent) interpolated+=entry.weight*(residual_values(entry.ordinal,slot)-base);
       }
-      if (!Fields::Independent(f)) residual(c.m,f,c.k,c.j,c.i)=0;
+      physical(c.m,f,c.k,c.j,c.i)=value;
+      residual(c.m,f,c.k,c.j,c.i)=interpolated;
     });
 }
 const MappedHalo::BatchPlan &MappedHalo::PlanForBatch(const std::vector<int> &slots) {

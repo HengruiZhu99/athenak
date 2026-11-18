@@ -107,7 +107,6 @@ class MappedHalo {
   std::vector<HaloPoint> interior_points_, local_points_, remote_points_, surface_points_;
   DvceArray1D<DeviceRow> local_rows_, remote_rows_;
   DvceArray1D<DeviceEntry> entries_;
-  DvceArray1D<int> residual_fields_;
   bool ready_=false, packed_=false, received_=false;
   void BuildRows(MeshBlockPack *pack, int origin,
                  std::vector<bvals::DonorPoint> &requests);
