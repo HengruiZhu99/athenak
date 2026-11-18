@@ -109,3 +109,20 @@ The sibling-tile placement experiment exchanges a finest block with a slower blo
 ### Build provenance for the GPU qualification
 
 Job 9100849 stopped during mapped-halo initialization before timing in both native uniform RK4 and multirate. The linked halo object retained the removed `mapped_residual_fields` member allocation while the constructor used the smaller current class layout. A timestamp-preserving source upload had left that object newer than the source modification time. Job 9100919 rebuilt from an empty binary directory after a content comparison with the worktree. The rebuilt halo object no longer contains the removed allocation. Use a fresh binary directory when switching source snapshots, or deploy changed sources with content comparison and fresh modification times.
+
+### Matched stage-packet benchmark
+
+Job 9100919 ran the clean build on two Aurora nodes with 24 tile ranks and all 12 physical GPUs. All six runs used 754 blocks and advanced six identical physical intervals, totaling 0.03380 M0. All multirate runs used the saved spread placement. The table reports the median of intervals three through five. Interval six includes the driver's final output, which is included in whole-launch time.
+
+| Method | Evolution seconds per M0 | Whole launch, seconds |
+| --- | ---: | ---: |
+| Multirate, individual messages | 5,644 | 286.4 |
+| Individual messages, send-buffer reuse | 3,719 | 211.2 |
+| Individual messages, send- and receive-buffer reuse | 3,198 | 196.6 |
+| Grouped messages, send-buffer reuse | 1,291 | 139.1 |
+| Grouped messages, send- and receive-buffer reuse | **1,028** | **136.4** |
+| Native uniform RK4 | **1,206** | **174.0** |
+
+The fastest multirate run took a median 5.792 seconds per coarse interval against 6.792 for native RK4 (1.173×). This corresponds to 3.43 and 4.02 allocated GPU-hours per M0 during steady evolution. Whole-launch speedup was 1.276×. Using the earlier four-sample median that includes the final output gives 1,063 and 1,207 seconds per M0.
+
+At coarse interval five, grouping reduced messages from 81,522 to 34,318. The wire volume remained 12.98 GB. GPU packing used 35,702 launches instead of 81,522. The selected transport reused 34,290 send buffers and 26,405 receive buffers. Median time per rank with no ready work fell from 20.63 seconds in the uncached individual-message case to 2.75 seconds. All transport variants reproduced the archived multirate checkpoint bitwise, including cumulative diagnostics. Relative to fine uniform EX5 the scaled maximum and RMS field differences were 7.90e-9 and 4.84e-11 over 139,683,024 field entries. The six-interval benchmark establishes short-time throughput and endpoint equivalence for these optimizations.
