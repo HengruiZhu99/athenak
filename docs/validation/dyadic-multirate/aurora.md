@@ -21,3 +21,17 @@ The smaller adaptive problem had a steady strong-scaling speedup of 0.949× from
 Separate adaptive restart controls on one and twelve GPUs split a Cartesian parent at the first common endpoint, verified coarsening of eight siblings, and compared continuous trajectories with runs restarted before and after refinement. All 7,458,048 payload scalars agreed bitwise for each restart check. The stationary adaptive control differed from fine uniform EX5 by at most 1.78e-15.
 
 The job writes per-run receipts containing executable and input SHA-256, physical-device binding, post-warmup samples, time per simulated mass, MPI bytes, batch counts, GPU memory and spatial regrid events. The benchmark comparison checks native topology and atlas metadata before computing normalized field differences. The tested interval is short. Long-time binary evolution and puncture-centred spatial transfer remain separate qualification gates.
+
+## Receive scheduling and finest-level placement
+
+Job 9100147 used two nodes and 24 tile ranks. The first two controls below replay the same block owners from the original METIS run. The spread trial builds a new weighted partition. Each mode evaluates the same 18,160 block RHS stages per interval.
+
+| Partition and transport | Physical GPUs with finest blocks | Elapsed over six intervals (s) | Steady (s/interval) | MPI GB/interval | Poll wait at interval 5 (s) |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Saved METIS, polled receives | 8 | 444.12 | 62.260 | 19.04 | 46.28 |
+| Saved METIS, preposted receives | 8 | 287.32 | 40.216 | 15.03 | 18.00 |
+| Weighted spread, preposted receives | 12 | 323.17 | 33.499 | 14.79 | 20.69 |
+
+All 24 tile ranks received one finest-level leaf in the spread trial. Preposting reduced the steady interval time by 35.4% at fixed placement. It increased peak per-rank packet storage in interval 5 from 88.6 MB to 172.0 MB. On the spread trial, polls immediately following independent interior batches observed 11,451 record completions during that interval. This count measures observable communication progress during the interior phase. It does not measure concurrent hardware execution time. Replaying an existing partition avoids the fresh partitioning and migration cost in the spread trial.
+
+The uniform EX5 figures above use the multirate scheduler in single-rate mode. The production N12 classical RK4 control follows its usual native task lists. These comparisons answer different performance questions.
