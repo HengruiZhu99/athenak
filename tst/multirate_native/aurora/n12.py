@@ -14,6 +14,7 @@ import time
 import numpy as np
 
 from binding import launcher
+from activity import snapshot, utilization
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]/'z4c_hyperboloidal'))
 from restart_roundtrip import parse, payload
@@ -33,12 +34,45 @@ def save(path, data):
     temp.replace(path)
 
 
+def placement_for_binary(root, run, binary_sha):
+    # Preserve earlier timings. Each new evolution binary has its own receipts.
+    report_path = root/'throughput-results.json'
+    def measurements(path):
+        if not path.exists():
+            return {}
+        data = json.loads(path.read_text())
+        return {r['mode']:r for r in data['results'] if r['binary_sha256']==binary_sha}
+    measured = measurements(report_path)
+    candidates = ('cohort','locality','spread_fixed')
+    if not set(candidates)<=measured.keys():
+        cases = root/f'kernel-{binary_sha[:12]}.json'
+        report_path = root/(cases.stem+'-results.json')
+        measured = measurements(report_path)
+        if not set((*candidates,'classical'))<=measured.keys():
+            save(cases,[['current754',24,mode,6] for mode in (*candidates,'classical')])
+            subprocess.run(['/usr/bin/python3.11',str(Path(__file__).with_name('measure.py')),
+                            str(root),'--cases',str(cases)],check=True)
+            measured = measurements(report_path)
+    checks = json.loads(report_path.with_name(report_path.name.replace('results','comparison')).read_text())['checks']
+    for mode,control in [('cohort','spread'),('locality','cohort'),('spread_fixed','spread')]:
+        check = next(c for c in checks if c['mesh']=='current754' and c['gpus']==12 and
+                     c['method']==mode and c['comparison']==control)
+        if not check['identical_checkpoint_payload']:
+            raise ValueError(f'{mode} failed to reproduce {control} on the N12 atlas')
+    choices = [measured[m] for m in candidates]
+    selected = min(choices,key=lambda r:r['steady_seconds_per_M0'])
+    save(run/'placement-selection.json',dict(selected=selected['mode'],binary_sha256=binary_sha,
+         report=str(report_path),steady_seconds_per_M0={r['mode']:r['steady_seconds_per_M0'] for r in choices}))
+    return selected
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('root', type=Path)
     parser.add_argument('mode', choices=['multirate','uniform'])
     parser.add_argument('--wall-seconds', type=int, required=True)
     args = parser.parse_args()
+    deadline = time.monotonic()+args.wall_seconds
     root = args.root.resolve()
     campaign = root.parent/'n12-radial-blocks-20261117'
     original = json.loads((campaign/'control/plan.json').read_text())
@@ -87,22 +121,7 @@ def main():
     else:
         extra = ''
         if args.mode == 'multirate':
-            report = json.loads((root/'throughput-comparison.json').read_text())
-            equality = next(c for c in report['checks'] if c['method']=='cohort' and c['comparison']=='spread')
-            if not equality['identical_checkpoint_payload']:
-                raise ValueError('local batching did not reproduce the accepted reference')
-            timing = json.loads((root/'throughput-results.json').read_text())['results']
-            spread = json.loads((root/'runs/current754-24tiles-spread/completed.json').read_text())
-            candidates = [spread, next(r for r in timing if r['mode']=='cohort')]
-            locality = next((r for r in timing if r['mode']=='locality'),None)
-            if locality is not None:
-                checked = next(c for c in report['checks'] if c['method']=='locality' and c['comparison']=='cohort')
-                if not checked['identical_checkpoint_payload']:
-                    raise ValueError('node mapping changed the fixed-stage solution')
-                candidates.append(locality)
-            selected = min(candidates,key=lambda r:r['steady_seconds_per_M0'])
-            (run/'placement-selection.json').write_text(json.dumps(
-                {r['mode']:r['steady_seconds_per_M0'] for r in candidates},indent=2)+'\n')
+            selected = placement_for_binary(root,run,binary_sha)
             # Hold the profiled owner map fixed throughout the trajectory and on restart.
             with Path(selected['log']).with_name('partition.log').open('rb') as stream:
                 lines = stream.read(int(stream.readline())).decode().splitlines()[1:]
@@ -118,19 +137,22 @@ def main():
                   'modes = true\nlmax = 8\nboundary_diagnostics = true\nunit_description = geometric code units, M0=1/3\n')
         (run/'input.athinput').write_text(inputs)
         input_args = ['-i',str(run/'input.athinput')]
-    if args.wall_seconds<120:
+    remaining = int(deadline-time.monotonic())
+    if remaining<120:
         raise ValueError('segment has insufficient remaining allocation time')
-    m,s = divmod(args.wall_seconds,60)
+    m,s = divmod(remaining,60)
     h,m = divmod(m,60)
     cmd = [*launcher(24),str(executable),*input_args,'-d',str(run),'-t',f'{h:02d}:{m:02d}:{s:02d}']
     receipt = dict(job=job, mode=args.mode, executable=str(executable), binary_sha256=digest(executable),
                    manifest_sha256=original['initial_manifest_sha256'], input_source_sha256=digest(original_input),
                    start_cycle=start_cycle, target_cycles=target, dt=dt, command=cmd)
     save(run/'launch.json',receipt)
+    counters = snapshot(root,run,"start",2)
     begin = time.monotonic()
     with (run/'run.log').open('w') as log:
         subprocess.run(cmd,stdout=log,stderr=subprocess.STDOUT,cwd=run,check=True)
     wall = time.monotonic()-begin
+    receipt["engine_activity"] = utilization(counters,snapshot(root,run,"end",2))
     final = max((parse(path) for path in (run/'rst').glob('*.rst')),key=lambda item:item['cycle'])
     cycle = final['cycle']
     if not start_cycle<cycle<=target or final['blocks']!=754 or final['dt']!=dt:

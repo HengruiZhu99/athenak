@@ -13,6 +13,7 @@ from statistics import median
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from adaptive import adaptive_input
 from binding import launcher
+from activity import snapshot, utilization
 from node_placement import reorder_nodes
 
 root = Path(sys.argv[1]).resolve()
@@ -89,8 +90,8 @@ location_rad = .0001
         balance = mode if mode in ('scalar','metis','spread') else 'none'
         if mode in ('cohort','locality'):
             balance = 'spread'
-        if mode in ('posted_fixed','polled_fixed') or (mode in ('cohort','locality') and mesh == 'current754' and ranks == 24):
-            baseline = 'spread' if mode in ('cohort','locality') else 'metis'
+        if mode in ('posted_fixed','polled_fixed','spread_fixed') or (mode in ('cohort','locality') and mesh == 'current754' and ranks == 24):
+            baseline = 'spread' if mode in ('cohort','locality','spread_fixed') else 'metis'
             balance = 'none'
             with (root/'runs'/f'current754-24tiles-{baseline}'/'partition.log').open('rb') as stream:
                 record=stream.read(int(stream.readline())).decode().splitlines()
@@ -127,10 +128,13 @@ location_rad = .0001
             if tile != device+'.0' or rank_binding[rank+1] != (host, device+'.1'):
                 raise RuntimeError('adjacent ranks are not bound to sibling tiles in '+str(run))
     command = [*launch, str(exe), '-i', str(run/'input.athinput')]
+    nodes = len({host for host,_ in pairs})
+    counters = snapshot(root,run,"start",nodes)
     start = time.monotonic()
     with (run/'run.log').open('w') as log:
         code = subprocess.run(command, cwd=run, stdout=log, stderr=subprocess.STDOUT).returncode
     wall = time.monotonic()-start
+    activity = utilization(counters,snapshot(root,run,"end",nodes))
     text = (run/'run.log').read_text()
     final = re.search(r'^time=([^ ]+) cycle=(\d+)$', text, re.M)
     if code or not final or int(final[2]) != intervals*factor or abs(float(final[1])-intervals*base)>1.e-13:
@@ -152,7 +156,7 @@ location_rad = .0001
         raise AssertionError('missing accepted checkpoint in '+str(run))
     receipt = dict(intervals=intervals, binary_sha256=binary_sha256, input_sha256=hashlib.sha256(inp.encode()).hexdigest(),
                    job_id=os.environ.get('PBS_JOBID'), mesh=mesh, mode=mode, tiles=ranks, physical_gpus=ranks//2,
-                   nodes=len({host for host,_ in pairs}), rank_binding=rank_binding, simulated_M0=3*intervals*base,
+                   nodes=nodes, engine_activity=activity, rank_binding=rank_binding, simulated_M0=3*intervals*base,
                    seconds=wall, seconds_per_M0=wall/(3*intervals*base),
                    steady_base_seconds=samples, steady_seconds_per_M0=median(samples)/(3*base),
                    command=command, regrids=regrids, log=str(run/'run.log'),
@@ -187,7 +191,7 @@ if case_file:
     for mesh,ranks,mode,intervals in json.loads(case_file.read_text()):
         if mesh not in ('current754','adaptive754','adaptive1024','adaptive88') or ranks not in (2,4,8,12,24):
             raise ValueError('unsupported Aurora workload or tile count')
-        if mode not in ('cohort','spread','metis','scalar','zorder','uniform','classical') or intervals<3:
+        if mode not in ('cohort','locality','spread_fixed','spread','metis','scalar','zorder','uniform','classical') or intervals<3:
             raise ValueError('unsupported benchmark method or insufficient timing intervals')
         measure(mesh,ranks,mode,intervals)
 elif throughput:
