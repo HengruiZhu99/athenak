@@ -98,11 +98,23 @@ location_rad = .0001
     (run/'input.athinput').write_text(inp)
     launch = launcher(ranks)
     with (run/'binding.log').open('w') as log:
-        subprocess.run([*launch, '/bin/bash', '-c', 'echo "$(hostname) tile=$ZE_AFFINITY_MASK"'],
+        binding = ('echo "$(hostname) tile=$ZE_AFFINITY_MASK '
+                   'rank=${PMI_RANK:-${PALS_RANKID:-${PMIX_RANK:-unknown}}}"')
+        subprocess.run([*launch, '/bin/bash', '-c', binding],
                        stdout=log, stderr=log, check=True)
-    pairs = re.findall(r'^([\w.-]+) tile=(\d+\.\d+)$', (run/'binding.log').read_text(), re.M)
+    pairs = re.findall(r'^([\w.-]+) tile=(\d+\.\d+) rank=', (run/'binding.log').read_text(), re.M)
     if len(set(pairs)) != ranks or len({(host,tile.split('.')[0]) for host,tile in pairs}) != ranks//2:
         raise RuntimeError('unexpected Aurora tile binding: '+str(run/'binding.log'))
+    rank_binding = {int(rank):(host,tile) for host,tile,rank in re.findall(
+        r'^([\w.-]+) tile=(\d+\.\d+) rank=(\d+)$', (run/'binding.log').read_text(), re.M)}
+    if rank_binding:
+        if set(rank_binding) != set(range(ranks)):
+            raise RuntimeError('incomplete MPI rank binding in '+str(run))
+        for rank in range(0,ranks,2):
+            host, tile = rank_binding[rank]
+            device = tile.split('.')[0]
+            if tile != device+'.0' or rank_binding[rank+1] != (host, device+'.1'):
+                raise RuntimeError('adjacent ranks are not bound to sibling tiles in '+str(run))
     command = [*launch, str(exe), '-i', str(run/'input.athinput')]
     start = time.monotonic()
     with (run/'run.log').open('w') as log:
@@ -129,7 +141,7 @@ location_rad = .0001
         raise AssertionError('missing accepted checkpoint in '+str(run))
     receipt = dict(intervals=intervals, binary_sha256=binary_sha256, input_sha256=hashlib.sha256(inp.encode()).hexdigest(),
                    job_id=os.environ.get('PBS_JOBID'), mesh=mesh, mode=mode, tiles=ranks, physical_gpus=ranks//2,
-                   nodes=len({host for host,_ in pairs}), simulated_M0=3*intervals*base,
+                   nodes=len({host for host,_ in pairs}), rank_binding=rank_binding, simulated_M0=3*intervals*base,
                    seconds=wall, seconds_per_M0=wall/(3*intervals*base),
                    steady_base_seconds=samples, steady_seconds_per_M0=median(samples)/(3*base),
                    command=command, regrids=regrids, log=str(run/'run.log'),
