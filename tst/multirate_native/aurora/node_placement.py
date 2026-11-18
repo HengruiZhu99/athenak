@@ -1,6 +1,39 @@
-"""Map twelve measured physical-GPU assignments onto two six-GPU Aurora nodes."""
+"""Place measured tile traffic on two six-GPU Aurora nodes."""
+from functools import lru_cache
 from itertools import combinations
 import re
+
+
+def _sibling_bytes(tiles, matrix):
+    return sum(matrix[a][b] + matrix[b][a] for a, b in zip(tiles[::2], tiles[1::2]))
+
+
+def _pair_tiles(source, target, matrix):
+    """Assign twelve source ranks to fixed sibling slots on their selected node."""
+    count = len(source)
+
+    @lru_cache(maxsize=None)
+    def assign(remaining):
+        if not remaining:
+            return 0, 0, ()
+        available = [i for i in range(count) if remaining & (1 << i)]
+        slot = count - len(available)
+        best = None
+        for i, j in combinations(available, 2):
+            a, b = source[i], source[j]
+            neg_bytes, rest_moves, rest = assign(remaining ^ (1 << i) ^ (1 << j))
+            # Either orientation gives the same traffic. Keep as many labels as possible.
+            moves, pair = min(((x != target[slot]) + (y != target[slot + 1]), (x, y))
+                              for x, y in ((a, b), (b, a)))
+            candidate = (neg_bytes - matrix[a][b] - matrix[b][a],
+                         rest_moves + moves, pair + rest)
+            if best is None or candidate < best:
+                best = candidate
+        return best
+
+    neg_bytes, _, order = assign((1 << count) - 1)
+    # Keep the preceding node placement when a different matching only ties it.
+    return order if -neg_bytes > _sibling_bytes(source, matrix) else source
 
 
 def reorder_nodes(owners, receipt):
@@ -38,7 +71,26 @@ def reorder_nodes(owners, receipt):
     best=min((frozenset((groups[0],*subset)) for subset in combinations(groups[1:],5)),
              key=lambda x:(cut(x),len(x.symmetric_difference(current)),sorted(x)))
     order=sorted(best)+[g for g in groups if g not in best]
-    placement={devices[old][lane]:devices[new][lane] for old,new in zip(order,groups) for lane in (0,1)}
+    target = [devices[g][lane] for g in groups for lane in (0, 1)]
+    source = [devices[g][lane] for g in order for lane in (0, 1)]
+    # Older receipts without the initial finest-level census can still reorder whole GPUs.
+    census = next((line for line in receipt['work']
+                   if line.startswith('MULTIRATE_PLACEMENT cycle=0 ')), None)
+    equal_counts = False
+    if census is not None:
+        counts = re.search(r'\bblocks_by_rank=([\d,]+)$', census)
+        if not counts or len(counts[1].split(',')) != ranks:
+            raise ValueError('incomplete finest-level block counts')
+        equal_counts = len(set(map(int, counts[1].split(',')))) == 1
+    if equal_counts:
+        for offset in (0, ranks // 2):
+            node = slice(offset, offset + ranks // 2)
+            source[node] = _pair_tiles(source[node], target[node], matrix)
+    placement = dict(zip(source, target))
+
     return ([placement[rank] for rank in owners],
             dict(wire_bytes=wire,original_internode_bytes=cut(current),candidate_internode_bytes=cut(best),
+                 original_intragpu_bytes=_sibling_bytes(target, matrix),
+                 candidate_intragpu_bytes=_sibling_bytes(source, matrix),
+                 equal_finest_tile_counts=equal_counts,
                  rank_permutation=[placement[r] for r in range(ranks)]))
