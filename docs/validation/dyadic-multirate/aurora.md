@@ -143,3 +143,9 @@ Jobs 9101069 and 9100919 used the identical archived executable, input physics a
 The one-to-twelve speedup is 2.55× for multirate (21.3% parallel efficiency) and 4.33× for uniform (36.1%). Multirate exchanged 1.71 GB in 316 messages per coarse interval on one GPU, rising to 12.98 GB in 34,318 messages on 12 GPUs. Across the allocation the split schedule issued 768 and 5,920 interior-plus-dependent batches, respectively. At interval five median time per rank with no ready work increased from 1.10 to 2.75 seconds.
 
 The whole one-GPU launches took 387.5 seconds for multirate and 375.2 seconds for uniform, including initialization, partition selection and final output. The 12-GPU multirate benchmark replayed a saved placement. The evolution timings use the median of the three regular post-warmup intervals. The one-GPU multirate intervals were 14.57, 25.00 and 14.78 seconds. The middle interval included a longer publication and acceptance phase. With 12 GPUs they were 6.18, 5.79 and 5.78 seconds.
+
+### Overlapping derivative packing with publication setup
+
+The next benchmark candidate lets the host prepare peer routes while the default device execution instance packs derivative records. The transport synchronizes before posting an MPI send, and the driver synchronizes before releasing each batch's stage inputs. This removes one device wait in each of the first three stages. Stage four synchronizes after queuing publication so that the measured projection cost still starts at acceptance.
+
+A two-rank CPU MPI pulse reproduced the previous grouped-packet build's final checkpoint bit for bit across all 7,458,048 evolved and diagnostic scalars, including a spatial regrid at coarse cycle two. The Aurora timings above belong to the earlier archived executable. Measuring this change requires a separate executable and the same saved block placement and physical interval.

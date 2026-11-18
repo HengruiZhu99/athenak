@@ -975,7 +975,10 @@ std::vector<DvceArray1D<Real>> MultirateEvolution::Impl::Pack(const std::vector<
           out[a.index*width+column]=a.kind ? edge(a.face,f,a.k,a.j) : state(a.m,f,a.k,a.j,a.i);
         }
       });
-  Kokkos::fence("multirate records ready for transport");
+  // Derivative records feed gathers on the same default execution instance.
+  // Publish can prepare their routes while the GPU packs. Poll fences before
+  // MPI reads a packet, and Evaluate fences before releasing stage inputs.
+  if (!rhs) Kokkos::fence("multirate accepted records ready");
   return values;
 }
 void MultirateEvolution::Impl::Publish(const std::vector<int>& slots,
@@ -1284,6 +1287,8 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
   auto rhs = Pack(slots, true);
   Publish(slots, rhs, context.key.local_step, context.key.stage);
   if (context.key.stage == 3) {
+    // Keep RHS publication outside the measured projection cost.
+    DevExeSpace().fence("multirate publication before acceptance timing");
     const auto begin_accept = Clock::now();
     for (int m : slots) {
       const int gid = pack->GlobalId(m);
