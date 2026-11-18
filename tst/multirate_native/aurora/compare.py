@@ -1,5 +1,6 @@
 """Compare accepted native records by GID and report measured physical-GPU scaling."""
 import json
+import math
 from pathlib import Path
 import sys
 import numpy as np
@@ -10,7 +11,15 @@ from restart_roundtrip import parse, payload
 
 def compare(left, right):
     a, b = (parse(Path(x['checkpoint'])) for x in (left, right))
-    for key in ('topology', 'atlas', 'time'):
+    if left['simulated_M0']!=right['simulated_M0']:
+        raise ValueError('different requested physical durations')
+    expected=left['simulated_M0']/3
+    for endpoint in (a,b):
+        # The native driver accumulates one addition per step. Even dyadically
+        # related non-binary-exact inputs can end a few ulps apart.
+        if abs(endpoint['time']-expected)>max(1,endpoint['cycle'])*math.ulp(expected):
+            raise ValueError('checkpoint time differs from requested endpoint beyond summation roundoff')
+    for key in ('topology', 'atlas'):
         if a[key] != b[key]:
             raise ValueError(f'unmatched {key}: {left["checkpoint"]}, {right["checkpoint"]}')
     x, y = payload(a), payload(b)
@@ -27,7 +36,7 @@ def compare(left, right):
         worst = max(worst, float(difference.max()))
         squared += np.sum(difference**2)
         count += difference.size
-    return dict(max_scaled=worst, rms_scaled=float(np.sqrt(squared/count)), field_scalars=count, identical_checkpoint_payload=bool(identical))
+    return dict(endpoint_time_delta=abs(a['time']-b['time']),max_scaled=worst, rms_scaled=float(np.sqrt(squared/count)), field_scalars=count, identical_checkpoint_payload=bool(identical))
 
 
 def main():
