@@ -139,9 +139,9 @@ os.environ['KOKKOS_TOOLS_LIBS'] = str(memory_tool)
 
 if large_suite:
     # Measure the same larger workload at both ends before filling in the curve.
-    for ranks in (24,2,12,4,8):
-        for mode in ('metis','uniform','scalar'):
-            measure('adaptive1024',ranks,mode,6)
+    for ranks, mode in [(24,'metis'),(2,'metis'),(24,'uniform'),(2,'uniform'),
+                        (12,'metis'),(4,'metis'),(8,'metis'),(24,'scalar')]:
+        measure('adaptive1024',ranks,mode,6)
 else:
     # Cover both ends of the strong-scaling curve before the intermediate sizes.
     for ranks in (2, 24):
