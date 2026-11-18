@@ -346,6 +346,9 @@ struct MultirateEvolution::Impl {
   std::vector<unsigned long long> level_work;
   unsigned long long batch_count = 0, max_batch = 0;
   double communication_wait = 0;
+  // Host elapsed time in disjoint parts of task-list execution. Kernel launches
+  // may complete in a later phase. These counters never introduce a device fence.
+  std::array<double,5> phase_seconds{};
   unsigned long long interior_batches_with_receives = 0, interior_receives = 0;
   void BeginInterval();
   void Evaluate(Driver*, bool interior, const std::vector<size_t>& batch);
@@ -1128,6 +1131,7 @@ void MultirateEvolution::Impl::BeginInterval() {
   interval_active = true;
   completed = batch_count = max_batch = 0;
   communication_wait = 0;
+  phase_seconds.fill(0);
   interior_batches_with_receives = interior_receives = 0;
   level_work.assign(schedule->MaxLevel() + 1, 0);
   const auto epoch = static_cast<std::uint64_t>(mesh->ncycle);
@@ -1168,7 +1172,9 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
     model.Observe(bal::KernelKind::projection, units, Seconds(batch_start));
     const auto begin_interior = Clock::now();
     p.CalcRHS(driver, context.key.stage + 1, RHSSubset::Interior, max_cfl);
-    const double per_point = Seconds(begin_interior) / units;
+    const double elapsed_interior = Seconds(begin_interior);
+    phase_seconds[0] += Seconds(batch_start);
+    const double per_point = elapsed_interior / units;
     const auto before=exchange->CompletedReceives();
     exchange->Poll();
     const auto completed_receives=exchange->CompletedReceives()-before;
@@ -1195,7 +1201,10 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
     p.surface_exchange_->Solve();
     p.surface_exchange_->Evaluate();
   }
+  const auto begin_rhs = Clock::now();
+  phase_seconds[1] += std::chrono::duration<double>(begin_rhs-batch_start).count();
   p.CalcRHS(driver, context.key.stage + 1, RHSSubset::Dependent, max_cfl);
+  phase_seconds[2] += Seconds(begin_rhs);
   double rhs_seconds = Seconds(batch_start);
   for (auto index : batch) rhs_seconds += tasks[index].interior_seconds;
   const auto& participants = p.agreement_plan_->AgreementBlocks();
@@ -1209,8 +1218,11 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
     p.agreement_plan_->Evaluate(agreement,rows);
     p.agreement_plan_->AddRHS(p,rows);
     Kokkos::fence("multirate agreement timing");
-    model.Observe(bal::KernelKind::agreement, units, Seconds(begin_agreement));
+    const double elapsed = Seconds(begin_agreement);
+    model.Observe(bal::KernelKind::agreement, units, elapsed);
+    phase_seconds[3] += elapsed;
   }
+  const auto begin_publication = Clock::now();
   auto rhs = Pack(slots, true);
   Publish(slots, rhs, context.key.local_step, context.key.stage);
   if (context.key.stage == 3) {
@@ -1233,6 +1245,7 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
     Publish(slots, accepted, context.key.local_step + 1, -1);
   }
   Kokkos::fence("multirate batch complete before release");
+  phase_seconds[4] += Seconds(begin_publication);
   model.Observe(kind, units, rhs_seconds);
   for (size_t q : batch) {
     auto& t = tasks[q];
@@ -1381,6 +1394,16 @@ void MultirateEvolution::Impl::CompleteInterval(Driver* driver) {
     peer_profile_pending = false;
   }
 #endif
+  if (pin->GetBoolean("multirate","profile_peer_bytes")) {
+    // One line per rank at a common endpoint. Avoid summing maxima attained
+    // on different ranks or reporting host phase times as GPU occupancy.
+    std::ostringstream row;
+    row << "MULTIRATE_RANK_PHASES cycle=" << endpoint << " rank=" << global_variable::my_rank
+        << " interior=" << phase_seconds[0] << " donor_halo_surface=" << phase_seconds[1]
+        << " dependent_rhs=" << phase_seconds[2] << " agreement=" << phase_seconds[3]
+        << " publish_accept=" << phase_seconds[4] << " poll_no_ready=" << communication_wait << "\n";
+    std::cout << row.str();
+  }
   unsigned long long peaks[] = {stats.peak_record_bytes, stats.peak_packet_bytes, max_batch};
   unsigned long long sums[] = {stats.sent_bytes, batch_count, interior_receives, interior_batches_with_receives,
                                stats.send_packets, stats.pack_kernels, stats.reused_send_packets};
