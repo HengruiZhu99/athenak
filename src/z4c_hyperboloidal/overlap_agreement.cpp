@@ -107,6 +107,7 @@ std::array<Real,6> VisitAgreementStencils(const Mesh &mesh,const NativeDonorSele
 }
 
 void OverlapAgreementPlan::Rebuild(MeshBlockPack *pack,const Z4cHyperboloidal &p) {
+  batches_.clear();
   Kokkos::Timer build_timer;
   const auto &mesh=*pack->pmesh;const int n=p.n[0],o=p.origin;
   kappa_=p.agreement.kappa;
@@ -252,16 +253,48 @@ void OverlapAgreementPlan::Rebuild(MeshBlockPack *pack,const Z4cHyperboloidal &p
   std::cout<<receipt.str()<<std::flush;
 }
 
-void OverlapAgreementPlan::Evaluate(bvals::MappedExchange::ConstValues values) {
+const OverlapAgreementPlan::BatchRows &OverlapAgreementPlan::RowsForBatch(
+    const std::vector<int> &slots,const DvceArray1D<int> &active) {
+  const auto found=batches_.find(slots);
+  if(found!=batches_.end())return found->second;
+  const auto targets=targets_;
+  const auto transpose=transpose_;
+  DvceArray1D<int> needed_rows("agreement active discrepancy mask",rows_.extent(0));
+  DvceArray1D<int> needed_targets("agreement active transpose mask",targets.extent(0));
+  Kokkos::parallel_for("mark active agreement rows",Kokkos::RangePolicy<>(0,targets.extent_int(0)),
+    KOKKOS_LAMBDA(int t) {
+      const auto target=targets(t);
+      if(!active(target.point.m))return;
+      needed_targets(t)=1;
+      for(int e=target.begin;e<target.end;++e)Kokkos::atomic_exchange(&needed_rows(transpose(e).row),1);
+    });
+  auto indices=[](const DvceArray1D<int> &mask,const char *label) {
+    const auto host=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),mask);
+    std::vector<int> selected;
+    for(int i=0;i<mask.extent_int(0);++i)if(host(i))selected.push_back(i);
+    DvceArray1D<int> list;
+    Copy(selected,list,label);
+    return list;
+  };
+  BatchRows batch{indices(needed_rows,"agreement batch rows"),
+                  indices(needed_targets,"agreement batch targets")};
+  return batches_.emplace(slots,std::move(batch)).first->second;
+}
+
+void OverlapAgreementPlan::Evaluate(bvals::MappedExchange::ConstValues values,const BatchRows *batch) {
   const auto rows=rows_;const auto entries=entries_;const auto fields=fields_;
   if(!values.data())values=exchange_.Values();const auto d=discrepancy_;
   // Values/discrepancies store field as the contiguous index. One work item
   // per (row,field) coalesces donor loads across lanes while retaining the
   // exact entry order of every scalar dot product.
+  const bool compact=batch!=nullptr;
+  const auto selected=compact?batch->rows:DvceArray1D<int>{};
+  const int count=compact?selected.extent_int(0):rows.extent_int(0);
   Kokkos::parallel_for("overlap agreement discrepancy",
-    Kokkos::RangePolicy<>(0,rows.extent_int(0)*Fields::independent_count),
+    Kokkos::RangePolicy<>(0,count*Fields::independent_count),
     KOKKOS_LAMBDA(int q) {
-      const int r=q/Fields::independent_count,f=q%Fields::independent_count;
+      const int index=q/Fields::independent_count,f=q%Fields::independent_count;
+      const int r=compact?selected(index):index;
       const auto row=rows(r);Real sum=0;
       for(int e=row.begin;e<row.end;++e) {
         const auto a=entries(e);Real value=values(a.ordinal,f);
@@ -272,7 +305,10 @@ void OverlapAgreementPlan::Evaluate(bvals::MappedExchange::ConstValues values) {
     });
 }
 
-void OverlapAgreementPlan::AddRHS(const Z4cHyperboloidal &p) const {
+void OverlapAgreementPlan::AddRHS(const Z4cHyperboloidal &p,const BatchRows *batch) const {
+  const bool compact=batch!=nullptr;
+  const auto selected=compact?batch->targets:DvceArray1D<int>{};
+  const int count=compact?selected.extent_int(0):targets_.extent_int(0);
   const auto targets=targets_;const auto adjacency=transpose_;const auto d=discrepancy_;
   const auto fields=fields_;const auto rhs=p.u_rhs;const Real kappa=kappa_;
   const auto active=p.active_blocks;
@@ -282,9 +318,10 @@ void OverlapAgreementPlan::AddRHS(const Z4cHyperboloidal &p) const {
   // Preserve each scalar sum's adjacency order. Store completed sums after
   // the discrepancy rows so D can reuse the identical Lambda sum.
   Kokkos::parallel_for("overlap agreement transpose",
-    Kokkos::RangePolicy<>(0,targets.extent_int(0)*field_lanes),
+    Kokkos::RangePolicy<>(0,count*field_lanes),
     KOKKOS_LAMBDA(int q) {
-      const int t=q/field_lanes,f=q%field_lanes;
+      const int index=q/field_lanes,f=q%field_lanes;
+      const int t=compact?selected(index):index;
       if(f>=Fields::independent_count)return;
       const auto target=targets(t);if(active.extent(0) && !active(target.point.m))return;
       Real correction=0;
@@ -296,9 +333,10 @@ void OverlapAgreementPlan::AddRHS(const Z4cHyperboloidal &p) const {
       d(scratch_begin+t,f)=correction;
     });
   Kokkos::parallel_for("overlap agreement apply",
-    Kokkos::RangePolicy<>(0,targets.extent_int(0)*field_lanes),
+    Kokkos::RangePolicy<>(0,count*field_lanes),
     KOKKOS_LAMBDA(int q) {
-      const int t=q/field_lanes,f=q%field_lanes;
+      const int index=q/field_lanes,f=q%field_lanes;
+      const int t=compact?selected(index):index;
       if(f>=Fields::independent_count)return;
       const auto target=targets(t);const auto c=target.point;
       if(active.extent(0) && !active(c.m))return;

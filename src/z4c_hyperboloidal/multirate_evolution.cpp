@@ -1043,8 +1043,10 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
       })) {
     const auto begin_agreement = Clock::now();
     auto agreement = Gather(p.agreement_plan_->Exchange(), 0, delta);
-    p.agreement_plan_->Evaluate(agreement);
-    p.agreement_plan_->AddRHS(p);
+    const auto* rows = complete_local_batches ?
+        &p.agreement_plan_->RowsForBatch(slots,p.active_blocks) : nullptr;
+    p.agreement_plan_->Evaluate(agreement,rows);
+    p.agreement_plan_->AddRHS(p,rows);
     Kokkos::fence("multirate agreement timing");
     model.Observe(bal::KernelKind::agreement, units, Seconds(begin_agreement));
   }

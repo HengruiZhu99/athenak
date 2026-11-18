@@ -35,18 +35,24 @@ class OverlapAgreementPlan {
   TaskStatus Receive() {return exchange_.Receive();}
   TaskStatus ClearSend() {return exchange_.ClearSend();}
   TaskStatus ClearRecv() {return exchange_.ClearRecv();}
-  void Evaluate(bvals::MappedExchange::ConstValues values={});
+  struct BatchRows {
+    DvceArray1D<int> rows, targets;
+  };
+  // The caller only caches complete local stage groups with fixed membership.
+  const BatchRows &RowsForBatch(const std::vector<int> &slots, const DvceArray1D<int> &active);
+  void Evaluate(bvals::MappedExchange::ConstValues values={}, const BatchRows *batch=nullptr);
   const std::vector<std::pair<int,int>> &DependencyEdges() const {return dependency_edges_;}
   using DonorsByRecipient=std::map<int,std::set<bvals::DonorPoint>>;
   const DonorsByRecipient &MultirateDonors() const { return multirate_donors_; }
   const std::vector<int> &AgreementBlocks() const {return agreement_blocks_;}
-  void AddRHS(const Z4cHyperboloidal &module) const;
+  void AddRHS(const Z4cHyperboloidal &module, const BatchRows *batch=nullptr) const;
   std::array<Real,8> History() const;
   Real RateBound() const {return rate_bound_;}
   const bvals::MappedExchange &Exchange() const {return exchange_;}
 
  private:
   friend struct OverlapAgreementAudit;
+  std::map<std::vector<int>,BatchRows> batches_;
   std::vector<std::pair<int,int>> dependency_edges_;
   std::vector<int> agreement_blocks_;
   DonorsByRecipient multirate_donors_;
