@@ -292,7 +292,7 @@ void RecordExchange::CompileReceives(const std::map<RecordKey,std::size_t> &cons
 }
 
 void RecordExchange::Begin(std::uint64_t epoch, const std::vector<int> &steps,
-                           const std::map<RecordKey,std::size_t> &consumers) {
+                           const std::map<RecordKey,std::size_t> &consumers, bool profile_peers) {
   auto &p = *impl_;
   if (!p.finished || !p.records.empty())
     throw std::logic_error("multirate Begin requires a drained epoch and released consumers");
@@ -312,7 +312,9 @@ void RecordExchange::Begin(std::uint64_t epoch, const std::vector<int> &steps,
   // first. Full headers still reject stale data if tags eventually wrap.
   p.epoch_tag = static_cast<int>(epoch%(std::uint64_t(p.tag_upper_bound)+1));
 #endif
-  p.stats={};p.arrivals.clear();p.record_bytes=0;p.packet_bytes=0;
+  p.stats={};
+  if (profile_peers) p.stats.sent_bytes_by_peer.assign(p.ranks, 0);
+  p.arrivals.clear();p.record_bytes=0;p.packet_bytes=0;
   p.consumers = consumers; p.published.clear(); p.received.clear();
   p.expected_receives = p.completed_receives = p.expected_publications = 0;
   for (const auto &entry : p.owned)
@@ -356,7 +358,10 @@ void RecordExchange::Publish(const RecordKey &key, const DvceArray1D<Real> &valu
     const auto size = indices.extent(0)*fields;
     Count(size+header);
     pending.packet = DvceArray1D<Real>(Kokkos::view_alloc(Kokkos::WithoutInitializing,"multirate immutable send packet"),size+header);
-    p.AllocatePacket(size+header);p.stats.sent_bytes+=(size+header)*sizeof(Real);
+    p.AllocatePacket(size+header);
+    const auto bytes=(size+header)*sizeof(Real);
+    p.stats.sent_bytes+=bytes;
+    if (!p.stats.sent_bytes_by_peer.empty()) p.stats.sent_bytes_by_peer[target.rank]+=bytes;
     auto packet = pending.packet;
     const Real epoch = static_cast<Real>(p.epoch), gid = key.gid, step = key.step,
                stage = key.stage, points = indices.extent(0);

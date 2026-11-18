@@ -54,7 +54,7 @@ class RecordExchange {
   // Collective once per placement. Each peer requests only records read by its stages.
   void CompileReceives(const std::map<RecordKey,std::size_t> &consumer_counts);
   void Begin(std::uint64_t epoch, const std::vector<int> &steps_by_gid,
-             const std::map<RecordKey, std::size_t> &consumer_counts);
+             const std::map<RecordKey, std::size_t> &consumer_counts, bool profile_peers=false);
   void Publish(const RecordKey &key, const DvceArray1D<Real> &values);
   bool Has(const RecordKey &key) const;
   DvceArray1D<Real> Data(const RecordKey &key) const;
@@ -67,6 +67,7 @@ class RecordExchange {
   struct Statistics {
     std::uint64_t peak_record_bytes=0, peak_packet_bytes=0;
     std::uint64_t sent_bytes=0, received_bytes=0;
+    std::vector<std::uint64_t> sent_bytes_by_peer;
   };
   Statistics Stats() const;
   // Notifications identify newly retained records. Payload ownership remains

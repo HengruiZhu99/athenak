@@ -143,6 +143,7 @@ void MultirateEvolution::ReadOptions(ParameterInput& input) {
   input.GetOrAddBoolean("multirate", "uniform_reference", false);
   input.GetOrAddBoolean("multirate","prepost_exchanges",true);
   input.GetOrAddBoolean("multirate","complete_local_batches",false);
+  input.GetOrAddBoolean("multirate","profile_peer_bytes",false);
   input.GetOrAddString("multirate", "replay_file", "");
   input.GetOrAddString("multirate", "partition_log", "");
 }
@@ -186,7 +187,7 @@ struct MultirateEvolution::Impl {
   };
   using BatchKey = std::tuple<int, size_t, bal::KernelKind>;
   mr::RecordReadiness<Key, BatchKey> readiness, interior_readiness;
-  bool complete_local_batches = false;
+  bool complete_local_batches = false, peer_profile_pending = false;
   struct ActiveLayout {
     DvceArray1D<int> mask;
     std::array<DvceArray1D<int>, 5> rhs_points;
@@ -628,6 +629,7 @@ void MultirateEvolution::Impl::SetPhaseCosts(const bal::BatchCostModel& profile)
   }
 }
 void MultirateEvolution::Impl::BuildLocal() {
+  peer_profile_pending = pin->GetBoolean("multirate", "profile_peer_bytes");
   active_layouts.clear();
   complete_local_batches = pin->GetBoolean("multirate", "complete_local_batches");
   readiness = {};
@@ -970,7 +972,7 @@ void MultirateEvolution::Impl::BeginInterval() {
   const auto epoch = static_cast<std::uint64_t>(mesh->ncycle);
   if (mesh->dt != p.requested_dt)
     throw std::runtime_error("Multirate base interval changed during run");
-  exchange->Begin(epoch, steps, consumers);
+  exchange->Begin(epoch, steps, consumers, peer_profile_pending);
   readiness.Reset();
   interior_readiness.Reset();
   std::vector<int> all(p.nblocks);
@@ -1215,6 +1217,24 @@ void MultirateEvolution::Impl::CompleteInterval(Driver* driver) {
     }
   }
   const auto stats = exchange->Stats();
+#if MPI_PARALLEL_ENABLED
+  if (peer_profile_pending) {
+    const int ranks = global_variable::nranks;
+    std::vector<std::uint64_t> bytes;
+    if (global_variable::my_rank == 0) bytes.resize(static_cast<std::size_t>(ranks)*ranks);
+    MPI_Gather(stats.sent_bytes_by_peer.data(),ranks,MPI_UINT64_T,bytes.data(),ranks,MPI_UINT64_T,
+               0,MPI_COMM_WORLD);
+    if (global_variable::my_rank == 0) {
+      for (int rank=0; rank<ranks; ++rank) {
+        std::cout << "MULTIRATE_PEER_BYTES cycle=" << endpoint << " rank=" << rank << " bytes=";
+        for (int peer=0; peer<ranks; ++peer)
+          std::cout << (peer ? "," : "") << bytes[static_cast<std::size_t>(rank)*ranks+peer];
+        std::cout << "\n";
+      }
+    }
+    peer_profile_pending = false;
+  }
+#endif
   unsigned long long peaks[] = {stats.peak_record_bytes, stats.peak_packet_bytes, max_batch};
   unsigned long long sums[] = {stats.sent_bytes, batch_count, interior_receives, interior_batches_with_receives};
 #if MPI_PARALLEL_ENABLED

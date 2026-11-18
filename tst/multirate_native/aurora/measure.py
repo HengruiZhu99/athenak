@@ -91,7 +91,7 @@ location_rad = .0001
             ownership=','.join(line.split()[1] for line in record[1:])
             inp += f'\n<multirate>\nblock_owners = {ownership}\n'
         inp += (f'<multirate>\nspherical_levels = {regions}\nuniform_reference = {str(uniform).lower()}\n'
-                f'complete_local_batches = {str(mode=="cohort").lower()}\nbalance = {balance}\nranks_per_gpu = 2\nprepost_exchanges = {str(mode!="polled_fixed").lower()}\nwarmup_intervals = 2\nreview_interval = 32\n'
+                f'complete_local_batches = {str(mode=="cohort").lower()}\nprofile_peer_bytes = true\nbalance = {balance}\nranks_per_gpu = 2\nprepost_exchanges = {str(mode!="polled_fixed").lower()}\nwarmup_intervals = 2\nreview_interval = 32\n'
                 f'partition_log = {run}/partition.log\n')
     (run/'input.athinput').write_text(inp)
     launch = launcher(ranks)
