@@ -242,6 +242,10 @@
     {
       "case": "88-block mesh, refine candidate touching the puncture",
       "observed": "Native spatial transfer rejected the candidate bulk state. Moving the refinement box to the offset location in the scaling fixture allowed two accepted intervals."
+    },
+    {
+      "case": "51-block analytic single puncture, regular_c6 with production radii (.30,.55) and chi_floor=1e-10",
+      "observed": "At coarse endpoint 1 native nominal-core spatial prolongation produced raw chi=-5.84101e-05 on new GID 7 at storage ijk=(18,18,18). Transfer correctly rejected this candidate. No inner AMR floor was enabled."
     }
   ],
   "scaling_fixture_preflight": {

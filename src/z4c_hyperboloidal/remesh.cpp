@@ -430,7 +430,7 @@ void RemeshState::Install(Z4cHyperboloidal &p) const {
             :values(point,f);
         jets[f].f=changed(c.m)&&!Fields::Independent(f)?0:value;
       }
-      if(changed(c.m)&&!TryExpandCartesianChart(jets)) {++invalid;return;}
+      if(changed(c.m)&&!TryExpandCartesianChart(jets)) {corrections(point)=-1;++invalid;return;}
       const auto &x=geometry(point).x;
       const Real r=Kokkos::sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);
       if(floor_inner && changed(c.m) && nominal_core(point) && r<=inner &&
@@ -442,16 +442,36 @@ void RemeshState::Install(Z4cHyperboloidal &p) const {
       for(int f=0;f<Fields::count;++f) {
         finite=finite&&Kokkos::isfinite(jets[f].f);state(c.m,f,c.k,c.j,c.i)=jets[f].f;
       }
-      if(!finite)++invalid;
+      if(!finite) {corrections(point)=-2;++invalid;}
     },bad);
   int count=0;
   Kokkos::parallel_reduce("count inner AMR chi corrections",Kokkos::RangePolicy<>(0,p.npoints),
-    KOKKOS_LAMBDA(int q,int &sum){sum+=corrections(q);},count);
+    KOKKOS_LAMBDA(int q,int &sum){sum+=(corrections(q)>0);},count);
 #if MPI_PARALLEL_ENABLED
   MPI_Allreduce(MPI_IN_PLACE,&count,1,MPI_INT,MPI_SUM,MPI_COMM_WORLD);
 #endif
   if(floor_inner && global_variable::my_rank==0)
     std::cout<<"inner AMR chi floor: time="<<time<<" corrected_points="<<count<<" floor="<<floor<<std::endl;
+  if (bad) {
+    const auto outcome=Kokkos::create_mirror_view_and_copy(HostMemSpace(),corrections);
+    int q=0;
+    while (q<p.npoints && outcome(q)>=0) ++q;
+    const auto c=p.points.h_view(q);
+    const bool core=s.nominal_core[q];
+    Real chi, lapse_offset;
+    if (core) {
+      Kokkos::deep_copy(chi,Kokkos::subview(nominal,c.m,Fields::chi,c.k-shift,c.j-shift,c.i-shift));
+      Kokkos::deep_copy(lapse_offset,Kokkos::subview(nominal,c.m,Fields::lapse,c.k-shift,c.j-shift,c.i-shift));
+    } else {
+      Kokkos::deep_copy(chi,Kokkos::subview(values,q,Fields::chi));
+      Kokkos::deep_copy(lapse_offset,Kokkos::subview(values,q,Fields::lapse));
+    }
+    std::cerr<<"Invalid spatial transfer: rank="<<global_variable::my_rank
+             <<" gid="<<(layout.new_first+c.m)<<" ijk="<<c.i<<','<<c.j<<','<<c.k
+             <<" nominal_core="<<core<<" raw_chi="<<chi<<" raw_lapse_offset="<<lapse_offset
+             <<" reason="<<(outcome(q)==-1?"algebraic chart":"positivity or finite state")
+             <<std::endl;
+  }
   RequireAll(bad==0,"invalid transferred bulk state");
   Kokkos::deep_copy(p.chi_records,s.records);
   s.surface.Install(p);
