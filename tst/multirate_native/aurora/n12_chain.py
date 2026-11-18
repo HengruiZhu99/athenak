@@ -46,11 +46,17 @@ def continue_comparison(root, current, job):
             print(marker.read_text(), flush=True)
             return
         variables = [f'MR_N12_MODE={mode}', 'MR_N12_CHAIN=1']
-        cases = os.environ.get('MR_N12_NEXT_CASES')
-        if cases:
-            if Path(cases).name != cases or not (root/cases).is_file():
-                raise ValueError('missing benchmark case file '+cases)
-            variables.append('MR_CASES='+cases)
+        pending = os.environ.get('MR_N12_NEXT_CASES')
+        if pending:
+            # Spread longer strong-scaling suites over the existing one-hour
+            # science allocations. A later suite reuses matching hashed receipts.
+            cases = pending.split(':')
+            for name in cases:
+                if Path(name).name!=name or not (root/name).is_file():
+                    raise ValueError('missing benchmark case file '+name)
+            variables.append('MR_CASES='+cases[0])
+            if len(cases)>1:
+                variables.append('MR_N12_NEXT_CASES='+':'.join(cases[1:]))
         command = ['qsub', '-N', 'mr-n12-'+mode, '-W', 'depend=afterok:'+job,
                    '-v', ','.join(variables), str(Path(__file__).with_name('debug.pbs'))]
         # Preserve a submission in flight across an interruption between qsub and
