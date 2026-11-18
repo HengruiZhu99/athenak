@@ -169,7 +169,7 @@ struct ScriOutput::Impl {
     std::vector<double> row_data,term_ids,term_jets,ids,coordinates,refs,weights,face_data;
     int resolution=1000000000;const int n=p.n[0],nm=modes?(lmax+1)*(lmax+1):0;
     for(int face=0;face<p.nfaces;++face) {
-      int gid=pack->gids+p.face_blocks.h_view(face);const auto &map=selector.Map(gid);
+      int gid=pack->GlobalId(p.face_blocks.h_view(face));const auto &map=selector.Map(gid);
       face_data.push_back(gid);
       face_data.push_back((map.outer_radius-map.inner_radius)*(map.hi[0]-map.lo[0])/n);
       face_data.push_back(1-map.node_offset[0]);Map(face_data,map);
@@ -182,7 +182,7 @@ struct ScriOutput::Impl {
     Kokkos::realloc(harmonics,p.nsurface_points,modes?2*nm:0);
     auto yh=Kokkos::create_mirror_view(harmonics);
     for(int i=0;i<p.nsurface_points;++i) {
-      const auto c=p.surface_points.h_view(i);int gid=pack->gids+p.face_blocks.h_view(c.face);
+      const auto c=p.surface_points.h_view(i);int gid=pack->GlobalId(p.face_blocks.h_view(c.face));
       for(int x:{gid,c.face,c.k,c.j,global_variable::my_rank})ids.push_back(x);
       Geometry(coordinates,sg(i));for(const auto &j:sr(i))Jet(refs,j);
       const auto row=rows(i);for(double x:{double(row.begin),double(row.end),double(row.spacing)})row_data.push_back(x);

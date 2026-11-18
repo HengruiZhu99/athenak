@@ -133,7 +133,7 @@ class Mesh {
   LogicalLocation *lloc_eachmb;  // LogicalLocations for each MeshBlock
 
   // following 2x arrays allocated with length [nranks] in BuildTreeFromXXXX()
-  int *gids_eachrank;      // starting global ID of MeshBlocks in each rank
+  int *gids_eachrank;      // minimum GID per rank; arithmetic offsets require Contiguous()
   int *nmb_eachrank;       // number of MeshBlocks on each rank
   // following 1x arrays allocated with length [nranks] in AddCoordinatesAndPhysics()
   int *nprtcl_eachrank;    // number of particles on each rank
@@ -157,6 +157,9 @@ class Mesh {
   void PrintMeshDiagnostics();
   void WriteMeshStructure();
   void NewTimeStep(const Real tlim);
+  // Collective, static-topology permutation of accepted native Scheme A state.
+  // Caller must be at a common synchronized endpoint with all stage work retired.
+  void RedistributeStaticBlocks(const std::vector<int> &owners);
   void RefreshSTSParabolicTimeStep();
   void AddCoordinatesAndPhysics(ParameterInput *pinput);
   void AddCyclicZoom(ParameterInput *pin);
@@ -170,10 +173,7 @@ class Mesh {
 
   // accessors
   int FindMeshBlockIndex(int tgid) {
-    for (int m=0; m<pmb_pack->nmb_thispack; ++m) {
-      if (pmb_pack->pmb->mb_gid.h_view(m) == tgid) return m;
-    }
-    return -1;
+    return pmb_pack->LocalId(tgid);
   }
   int NumberOfMeshBlockCells() const {
     return (mb_indcs.nx1)*(mb_indcs.nx2)*(mb_indcs.nx3);
@@ -185,6 +185,8 @@ class Mesh {
   int GetAMRLoadBalanceUpdateSeq() const { return amr_lb_seq_; }
 
  private:
+  ParameterInput *parameter_input_=nullptr;
+  void ConfigureStaticOwnership(ParameterInput *pin);
   std::unique_ptr<MeshBlockTree> ptree;  // pointer to root node in binary/quad/oct-tree
   std::vector<std::unique_ptr<MeshBlockTree>> chart_trees;  // shell chart roots
   void ConfigureChartAtlas(ParameterInput *pin, bool restarting);

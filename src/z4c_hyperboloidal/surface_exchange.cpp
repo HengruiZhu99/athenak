@@ -148,7 +148,7 @@ void SurfaceExchange::Rebuild() {
     if (Fields::Independent(f)) {fields_.index[f]=fields.size();fields.push_back(f);}
   }
   for (int face=0;face<p.nfaces;++face) {
-    const int gid=pack_->gids+p.face_blocks.h_view(face);
+    const int gid=pack_->GlobalId(p.face_blocks.h_view(face));
     const auto &map=selector.Map(gid);
     spacing[face]=(map.outer_radius-map.inner_radius)*(map.hi[0]-map.lo[0])/n;
     gap[face]=1-map.node_offset[0];
@@ -157,7 +157,7 @@ void SurfaceExchange::Rebuild() {
   }
   for (int point=0;point<p.nsurface_points;++point) {
     const auto c=p.surface_points.h_view(point);
-    const int gid=pack_->gids+p.face_blocks.h_view(c.face);
+    const int gid=pack_->GlobalId(p.face_blocks.h_view(c.face));
     const auto &map=selector.Map(gid);
     const Real q[3]={1,(c.j+.5)/n,(c.k+.5)/n};
     const auto geometry=map.Geometry(q);const Real r=SphericalPolicy::Radius(geometry.x);
@@ -174,7 +174,7 @@ void SurfaceExchange::Rebuild() {
   for (int point=0;!endpoint_only_ && point<p.npoints;++point) {
     const auto c=p.points.h_view(point);const int face=p.block_faces.h_view(c.m);
     if (face<0 || c.i-p.origin<n-3)continue;
-    const int gid=pack_->gids+c.m;
+    const int gid=pack_->GlobalId(c.m);
     Row row{static_cast<int>(radial_terms.size()),0,spacing[face]};
     for (const auto &term:BuildRow(selector,gid,c.i-p.origin,c.j-p.origin,
                                   c.k-p.origin,false)) {
@@ -247,6 +247,10 @@ void SurfaceExchange::CheckReady() const {
 }
 
 TaskStatus SurfaceExchange::Project() {
+  const auto active=module_->active_blocks;
+  const auto active_faces=module_->face_blocks.d_view;
+  const auto active_points=module_->surface_points.d_view;
+
   CheckReady();
   auto &p=*module_;const auto points=p.surface_points.d_view;
   const auto owners=p.face_blocks.d_view;const auto maps=p.surface_geometry;
@@ -255,6 +259,7 @@ TaskStatus SurfaceExchange::Project() {
   int invalid=0;
   Kokkos::parallel_reduce("hyperboloidal local scri trace",
     Kokkos::RangePolicy<>(0,p.nsurface_points),KOKKOS_LAMBDA(int point,int &bad) {
+      if(active.extent(0) && !active(active_faces(active_points(point).face)))return;
       const auto c=points(point);const int m=owners(c.face);
       CartesianChartJets jets{};
       for (int f=0;f<Fields::count;++f)jets[f].f=edge(c.face,f,c.k,c.j);
@@ -320,6 +325,10 @@ TaskStatus SurfaceExchange::Sample() {
 
 TaskStatus SurfaceExchange::Sample(bvals::MappedExchange::ConstValues bulk,
                                    bvals::MappedExchange::ConstValues edge) {
+  const auto active=module_->active_blocks;
+  const auto active_faces=module_->face_blocks.d_view;
+  const auto active_points=module_->surface_points.d_view;
+
   CheckReady();
   correction_jets_ready_=false;
   const auto rows=rows_;const auto terms=terms_;const auto output=sampled_;
@@ -327,6 +336,7 @@ TaskStatus SurfaceExchange::Sample(bvals::MappedExchange::ConstValues bulk,
   Kokkos::parallel_for("hyperboloidal scri residual jets",
     Kokkos::RangePolicy<>(0,module_->nsurface_points*Fields::count),KOKKOS_LAMBDA(int task) {
       const int point=task/Fields::count,f=task%Fields::count;
+      if(active.extent(0) && !active(active_faces(active_points(point).face)))return;
       J value;
       if (Fields::Independent(f)) {
         const auto row=rows(point);const auto first=terms(row.begin);
@@ -350,6 +360,10 @@ TaskStatus SurfaceExchange::Sample(bvals::MappedExchange::ConstValues bulk,
 }
 
 TaskStatus SurfaceExchange::Solve() {
+  const auto active=module_->active_blocks;
+  const auto active_faces=module_->face_blocks.d_view;
+  const auto active_points=module_->surface_points.d_view;
+
   CheckReady();
   correction_jets_ready_=false;
   auto &p=*module_;const auto samples=sampled_;const auto maps=p.surface_geometry;
@@ -364,6 +378,7 @@ TaskStatus SurfaceExchange::Solve() {
   // shift correction. Refresh their geometry from this stage's samples once.
   Kokkos::parallel_for("hyperboloidal shared surface geometry",
     Kokkos::RangePolicy<>(0,p.nsurface_points),KOKKOS_LAMBDA(int point) {
+      if(active.extent(0) && !active(active_faces(active_points(point).face)))return;
       metric_geometry(point)=SpatialGeometry<Real>{};
       penrose_geometry(point)=SpatialGeometry<Real>{};
       auto jets=samples(point);const auto map=maps(point);
@@ -384,6 +399,7 @@ TaskStatus SurfaceExchange::Solve() {
   Kokkos::parallel_for("hyperboloidal independent normal cases",
     case_policy,KOKKOS_LAMBDA(int task) {
       const int point=task/4,which=task%4;
+      if(active.extent(0) && !active(active_faces(active_points(point).face)))return;
       cases(point,which)=NormalCase{};
       auto jets=samples(point);const auto map=maps(point);
       if (!SphericalPolicy::Restore(map.x,jets,reference(point)))return;
@@ -398,6 +414,7 @@ TaskStatus SurfaceExchange::Solve() {
     });
   Kokkos::parallel_reduce("hyperboloidal local normal compatibility",
     Kokkos::RangePolicy<>(0,p.nsurface_points),KOKKOS_LAMBDA(int point,int &bad) {
+      if(active.extent(0) && !active(active_faces(active_points(point).face)))return;
       const auto c=points(point);
       for (int which=0;which<4;++which)
         if (!cases(point,which).valid) {++bad;return;}
@@ -430,6 +447,7 @@ TaskStatus SurfaceExchange::Solve() {
   } else {
     Kokkos::parallel_reduce("hyperboloidal regularity normal reconstruction",
       Kokkos::RangePolicy<>(0,p.nsurface_points),KOKKOS_LAMBDA(int point,int &bad) {
+      if(active.extent(0) && !active(active_faces(active_points(point).face)))return;
         auto jets=samples(point);const auto map=maps(point);const auto c=points(point);
         if(!SphericalPolicy::Restore(map.x,jets,reference(point))) {++bad;return;}
         const auto rate=EvaluateScriPoint(map,rows(point).spacing,jets,parameters,
@@ -454,7 +472,9 @@ TaskStatus SurfaceExchange::Solve() {
 #endif
   Kokkos::parallel_for("hyperboloidal shared normal correction jets",
     correction_policy,KOKKOS_LAMBDA(int task) {
-      const int point=task/corrections,axis=task%corrections;const auto c=points(point);
+      const int point=task/corrections,axis=task%corrections;
+      if(active.extent(0) && !active(active_faces(active_points(point).face)))return;
+      const auto c=points(point);
       const int first_j=c.j-2<0 ? 0 : (c.j-2>n-6 ? n-6 : c.j-2);
       const int first_k=c.k-2<0 ? 0 : (c.k-2>n-6 ? n-6 : c.k-2);
       mapped::Jet logical;
@@ -468,6 +488,10 @@ TaskStatus SurfaceExchange::Solve() {
 }
 
 TaskStatus SurfaceExchange::Evaluate() {
+  const auto active=module_->active_blocks;
+  const auto active_faces=module_->face_blocks.d_view;
+  const auto active_points=module_->surface_points.d_view;
+
   CheckReady();
   auto &p=*module_;const auto samples=sampled_;const auto maps=p.surface_geometry;
   const auto reference=p.surface_reference;const auto rows=rows_;
@@ -480,6 +504,7 @@ TaskStatus SurfaceExchange::Evaluate() {
   Kokkos::parallel_reduce("hyperboloidal block-owned scri RHS",
     Kokkos::RangePolicy<>(0,p.nsurface_points),
     KOKKOS_LAMBDA(int point,int &bad,Real &defect,Real &clock_error) {
+      if(active.extent(0) && !active(active_faces(active_points(point).face)))return;
       auto jets=samples(point);const auto map=maps(point);const auto c=points(point);
       if (!SphericalPolicy::Restore(map.x,jets,reference(point))) {++bad;return;}
       for (int a=0;a<3;++a)
@@ -526,7 +551,7 @@ SurfaceExchange::Kernel SurfaceExchange::BindKernel() const {
   CheckReady();
   auto &p=*module_;
   return {radial_index_,radial_rows_,radial_terms_,p.points.d_view,p.block_faces.d_view,
-          correction_,face_spacing_,face_gap_,surface_exchange_.Values(),fields_,
+          correction_,face_spacing_,face_gap_,external_edge_.data() ? external_edge_ : surface_exchange_.Values(),fields_,
           p.n[0],p.origin,{}};
 }
 
@@ -535,6 +560,7 @@ SurfaceExchange::CachedKernel SurfaceExchange::PrepareRadialJets() {
   const auto points=radial_points_,fields=radial_fields_;
   const auto residual=module_->residual;
   const auto output=radial_jets_;
+  const auto active=module_->active_blocks;
   const int count=fields.extent_int(0);
   using Index=std::int64_t;
   // Field-fast writes match LayoutRight(rows,field slots). Every field keeps
@@ -543,6 +569,7 @@ SurfaceExchange::CachedKernel SurfaceExchange::PrepareRadialJets() {
     Kokkos::RangePolicy<Kokkos::IndexType<Index>>(0,Index(points.extent_int(0))*count),
     KOKKOS_LAMBDA(Index task) {
       const int row=static_cast<int>(task/count),slot=static_cast<int>(task%count);
+      if(active.extent(0) && !active(kernel.points(points(row)).m))return;
       output(row,slot)=kernel.EndpointResidualJet(points(row),fields(slot),residual);
     });
   if (correction_jets_ready_)kernel.correction_jets=correction_jets_;

@@ -38,17 +38,15 @@ Real SmoothStep(Real t) {
 }
 }  // namespace
 
-void OverlapAgreementPlan::Rebuild(MeshBlockPack *pack,const Z4cHyperboloidal &p) {
-  Kokkos::Timer build_timer;
-  const auto &mesh=*pack->pmesh;const int n=p.n[0],o=p.origin;
-  kappa_=p.agreement.kappa;
-  NativeDonorSelector selector(mesh,o,p.activity);
+std::array<Real,6> VisitAgreementStencils(const Mesh &mesh,const NativeDonorSelector &selector,
+    const AgreementParameters &parameters,const AgreementStencilVisitor &visit) {
+  const int n=selector.Cells(),o=selector.Origin();
   // A conservative rectangular envelope includes the entire nominal cube and
   // the overlap extension available on every exterior leaf. Refinement can
   // make those extensions differ; taper to the smallest one on each face,
   // rather than introducing jumps in W when the donor leaf changes. Corrections
   // may still reach evolved donors outside this sampling envelope.
-  Real cube_extent[6];
+  std::array<Real,6> cube_extent;
   for (auto &e:cube_extent)e=std::numeric_limits<Real>::infinity();
 
   for(int gid=0;gid<mesh.nmb_total;++gid) {
@@ -60,9 +58,62 @@ void OverlapAgreementPlan::Rebuild(MeshBlockPack *pack,const Z4cHyperboloidal &p
       cube_extent[2*a+side]=std::min(cube_extent[2*a+side],edge);
     }
   }
-  for(Real e:cube_extent)if(!(std::isfinite(e) && e>p.agreement.inner))
+  for(Real e:cube_extent)if(!(std::isfinite(e) && e>parameters.inner))
     throw std::runtime_error("full overlap lacks a bounded Cartesian support envelope");
 
+  // Sample the union of evolved nodes in both representations. Each
+  // quadrature contributes half its volume. Identity selections on both sets
+  // prevent an under-resolved spherical sample grid from missing Cartesian
+  // grid-scale disagreement (and conversely), without an auxiliary grid.
+  for(int gid=0;gid<mesh.nmb_total;++gid) {
+    const auto &map=selector.Map(gid);
+    const int lo[3]={selector.Lower(gid,0),
+                     selector.Lower(gid,1),
+                     selector.Lower(gid,2)};
+    const int hi[3]={selector.Upper(gid,0),
+                     selector.Upper(gid,1),
+                     selector.Upper(gid,2)};
+    for(int k=lo[2];k<hi[2];++k)for(int j=lo[1];j<hi[1];++j)for(int i=lo[0];i<hi[0];++i) {
+      const bvals::DonorPoint sample{gid,k+o,j+o,i+o};
+      if(!selector.IsEvolved(sample))continue;
+      const Real q[3]={(i+map.node_offset[0])/n,(j+map.node_offset[1])/n,
+                       (k+map.node_offset[2])/n};Real x[3];map.Forward(q,x);
+      const Real r=std::sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);
+      if(r<=parameters.inner)continue;
+      Real taper=SmoothStep((r-parameters.inner)/parameters.taper_width);
+      for(int a=0;a<3;++a) {
+        taper*=SmoothStep((cube_extent[2*a]+x[a])/parameters.taper_width);
+        taper*=SmoothStep((cube_extent[2*a+1]-x[a])/parameters.taper_width);
+      }
+      if(taper<=0)continue;
+
+      std::vector<WeightedDonor> row;
+      if(map.face<0) {
+        row=selector.Spherical(x,6,true);
+        for(const auto &d:row)
+          if(selector.Map(d.point.gid).face<0)
+            throw std::logic_error("full agreement spherical row contains Cartesian donors");
+        for(auto &d:row)d.weight=-d.weight;
+        row.push_back({sample,1});
+      } else {
+        row=selector.Cartesian(x);
+        if(row.empty())throw std::runtime_error("agreement sample lacks six-point evolved Cartesian coverage at r="+std::to_string(r));
+        row.push_back({sample,-1});
+      }
+      visit(row,sample,taper,r,map.face<0);
+    }
+  }
+  return cube_extent;
+}
+
+void OverlapAgreementPlan::Rebuild(MeshBlockPack *pack,const Z4cHyperboloidal &p) {
+  Kokkos::Timer build_timer;
+  const auto &mesh=*pack->pmesh;const int n=p.n[0],o=p.origin;
+  kappa_=p.agreement.kappa;
+  NativeDonorSelector selector(mesh,o,p.activity);
+  dependency_edges_.clear();agreement_blocks_.clear();multirate_donors_.clear();
+  std::set<std::pair<int,int>> graph;
+  std::set<int> group;
   std::vector<Row> rows;std::vector<Entry> entries;
   std::vector<bvals::DonorPoint> requests;
   std::map<bvals::DonorPoint,std::vector<Transpose>> transpose;
@@ -89,6 +140,16 @@ void OverlapAgreementPlan::Rebuild(MeshBlockPack *pack,const Z4cHyperboloidal &p
   std::set<bvals::DonorPoint> owner_remote;
   const auto add_row=[&](const std::vector<WeightedDonor> &row,
                          const bvals::DonorPoint &sample,Real w) {
+    if (p.UsesMultirate()) {
+      std::set<int> row_blocks;
+      for(const auto &d:row)if(d.weight!=0)row_blocks.insert(d.point.gid);
+      group.insert(row_blocks.begin(),row_blocks.end());
+      for(int a:row_blocks) {
+        for(int b:row_blocks)if(a<b)graph.emplace(a,b);
+        if(mesh.rank_eachmb[a]!=global_variable::my_rank)continue;
+        for(const auto &d:row)if(d.point.gid!=a && d.weight!=0)multirate_donors_[a].insert(d.point);
+      }
+    }
     Real norm=0;bool needed=false;
     for(const auto &d:row) {
       norm+=std::abs(d.weight);
@@ -115,46 +176,9 @@ void OverlapAgreementPlan::Rebuild(MeshBlockPack *pack,const Z4cHyperboloidal &p
     }
     device_row.end=entries.size();rows.push_back(device_row);
   };
-  // Sample the union of evolved nodes in both representations. Each
-  // quadrature contributes half its volume. Identity selections on both sets
-  // prevent an under-resolved spherical sample grid from missing Cartesian
-  // grid-scale disagreement (and conversely), without an auxiliary grid.
-  for(int gid=0;gid<mesh.nmb_total;++gid) {
-    const auto &map=selector.Map(gid);
-    const int lo[3]={selector.Lower(gid,0),
-                     selector.Lower(gid,1),
-                     selector.Lower(gid,2)};
-    const int hi[3]={selector.Upper(gid,0),
-                     selector.Upper(gid,1),
-                     selector.Upper(gid,2)};
-    for(int k=lo[2];k<hi[2];++k)for(int j=lo[1];j<hi[1];++j)for(int i=lo[0];i<hi[0];++i) {
-      const bvals::DonorPoint sample{gid,k+o,j+o,i+o};
-      if(!selector.IsEvolved(sample))continue;
-      const Real q[3]={(i+map.node_offset[0])/n,(j+map.node_offset[1])/n,
-                       (k+map.node_offset[2])/n};Real x[3];map.Forward(q,x);
-      const Real r=std::sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);
-      if(r<=p.agreement.inner)continue;
-      Real taper=SmoothStep((r-p.agreement.inner)/p.agreement.taper_width);
-      for(int a=0;a<3;++a) {
-        taper*=SmoothStep((cube_extent[2*a]+x[a])/p.agreement.taper_width);
-        taper*=SmoothStep((cube_extent[2*a+1]-x[a])/p.agreement.taper_width);
-      }
-      if(taper<=0)continue;
-
-      std::vector<WeightedDonor> row;
-      if(map.face<0) {
-        row=selector.Spherical(x,6,true);
-        for(const auto &d:row)
-          if(selector.Map(d.point.gid).face<0)
-            throw std::logic_error("full agreement spherical row contains Cartesian donors");
-        for(auto &d:row)d.weight=-d.weight;
-        row.push_back({sample,1});
-      } else {
-        row=selector.Cartesian(x);
-        if(row.empty())throw std::runtime_error("agreement sample lacks six-point evolved Cartesian coverage at r="+std::to_string(r));
-        row.push_back({sample,-1});
-      }
-      if(map.face<0)++cartesian_samples;else ++spherical_samples;
+  const auto cube_extent=VisitAgreementStencils(mesh,selector,p.agreement,
+      [&](const auto &row,const bvals::DonorPoint &sample,Real taper,Real r,bool cartesian) {
+      if(cartesian)++cartesian_samples;else ++spherical_samples;
       min_radius=std::min(min_radius,r);max_radius=std::max(max_radius,r);
       Real sample_weight=.5*volume(sample)*taper;
 
@@ -170,8 +194,9 @@ void OverlapAgreementPlan::Rebuild(MeshBlockPack *pack,const Z4cHyperboloidal &p
       if(balanced<sample_weight) {sample_weight=balanced;++balanced_samples;}
 
       add_row(row,sample,sample_weight);
-    }
-  }
+  });
+  dependency_edges_.assign(graph.begin(),graph.end());
+  agreement_blocks_.assign(group.begin(),group.end());
   if(!global_rows)throw std::runtime_error("full overlap contains no samples");
   rate_bound_=0;
   for(const auto &b:bounds)rate_bound_=std::max(rate_bound_,kappa_*b.second);
@@ -180,7 +205,7 @@ void OverlapAgreementPlan::Rebuild(MeshBlockPack *pack,const Z4cHyperboloidal &p
 #endif
   // Gershgorin/induced infinity bound for H^-1 A^T W A, similar to a symmetric
   // positive semidefinite matrix. 2.5 is inside RK4's negative-real interval.
-  if(p.requested_dt*rate_bound_>2.5)
+  if(!p.UsesMultirate() && p.requested_dt*rate_bound_>2.5)
     throw std::invalid_argument("agreement timestep exceeds 2.5 / penalty rate bound: dt="
         +std::to_string(p.requested_dt)+", bound="+std::to_string(rate_bound_));
   std::vector<int> fields;for(int f=0;f<Fields::count;++f)
@@ -193,7 +218,7 @@ void OverlapAgreementPlan::Rebuild(MeshBlockPack *pack,const Z4cHyperboloidal &p
     const Real q[3]={(d.i-o+map.node_offset[0])/n,(d.j-o+map.node_offset[1])/n,
                      (d.k-o+map.node_offset[2])/n};Real x[3];map.Forward(q,x);
     const int begin=adjacency.size();adjacency.insert(adjacency.end(),item.second.begin(),item.second.end());
-    targets.push_back({{d.gid-pack->gids,d.k,d.j,d.i},begin,static_cast<int>(adjacency.size()),
+    targets.push_back({{pack->LocalId(d.gid),d.k,d.j,d.i},begin,static_cast<int>(adjacency.size()),
                        p.parameters.residual_weight.Value(x)});
   }
   // Schedule similarly sized gathers together; each target retains its entry order.
@@ -227,9 +252,9 @@ void OverlapAgreementPlan::Rebuild(MeshBlockPack *pack,const Z4cHyperboloidal &p
   std::cout<<receipt.str()<<std::flush;
 }
 
-void OverlapAgreementPlan::Evaluate() {
+void OverlapAgreementPlan::Evaluate(bvals::MappedExchange::ConstValues values) {
   const auto rows=rows_;const auto entries=entries_;const auto fields=fields_;
-  const auto values=exchange_.Values();const auto d=discrepancy_;
+  if(!values.data())values=exchange_.Values();const auto d=discrepancy_;
   // Values/discrepancies store field as the contiguous index. One work item
   // per (row,field) coalesces donor loads across lanes while retaining the
   // exact entry order of every scalar dot product.
@@ -250,6 +275,7 @@ void OverlapAgreementPlan::Evaluate() {
 void OverlapAgreementPlan::AddRHS(const Z4cHyperboloidal &p) const {
   const auto targets=targets_;const auto adjacency=transpose_;const auto d=discrepancy_;
   const auto fields=fields_;const auto rhs=p.u_rhs;const Real kappa=kappa_;
+  const auto active=p.active_blocks;
   const int scratch_begin=rows_.extent_int(0);
   constexpr int field_lanes=32;
   static_assert(Fields::independent_count<=field_lanes);
@@ -260,7 +286,8 @@ void OverlapAgreementPlan::AddRHS(const Z4cHyperboloidal &p) const {
     KOKKOS_LAMBDA(int q) {
       const int t=q/field_lanes,f=q%field_lanes;
       if(f>=Fields::independent_count)return;
-      const auto target=targets(t);Real correction=0;
+      const auto target=targets(t);if(active.extent(0) && !active(target.point.m))return;
+      Real correction=0;
       #pragma unroll 4
       for(int e=target.begin;e<target.end;++e) {
         const auto a=adjacency(e);
@@ -273,7 +300,9 @@ void OverlapAgreementPlan::AddRHS(const Z4cHyperboloidal &p) const {
     KOKKOS_LAMBDA(int q) {
       const int t=q/field_lanes,f=q%field_lanes;
       if(f>=Fields::independent_count)return;
-      const auto target=targets(t);const auto c=target.point;const int field=fields(f);
+      const auto target=targets(t);const auto c=target.point;
+      if(active.extent(0) && !active(c.m))return;
+      const int field=fields(f);
       Real correction=d(scratch_begin+t,f);
       if(field==Fields::chi)correction*=target.chi_weight;
       if(field>=Fields::D)correction+=d(scratch_begin+t,f-10);

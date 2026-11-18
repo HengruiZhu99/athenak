@@ -17,9 +17,9 @@ namespace z4c_hyperboloidal {
 
 TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver,int stage,RHSSubset subset) {
   if (!plans_ready_) throw std::logic_error("Hyperboloidal RHS has no stage plans");
-  if (!driver->UsesClassicalRK4() || stage<1 || stage>4)
+  if (!driver->UsesSchemeARK() || stage<1 || stage>4)
     throw std::invalid_argument("Hyperboloidal RHS requires classical RK4 stage");
-  const auto selected=rhs_points_[static_cast<int>(subset)];
+  const auto selected=(active_blocks.extent(0) ? active_rhs_points : rhs_points_)[static_cast<int>(subset)];
   const auto cells=points.d_view;const auto maps=geometry;const auto refs=reference;
   const auto sources=stationary_source;const auto params=parameters;
   const auto physical=u0,delta=residual,output=u_rhs;
@@ -31,7 +31,7 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver,int stage,RHSSubset subset) 
   const auto surface=(subset==RHSSubset::Surface || subset==RHSSubset::Dependent)
       ? surface_exchange_->PrepareRadialJets()
       : SurfaceExchange::CachedKernel{surface_exchange_->BindKernel(),{}};
-  const Real epsilon=ko,dt=pmy_pack->pmesh->dt;
+  const Real epsilon=ko,dt=active_step_dt>0 ? active_step_dt : pmy_pack->pmesh->dt;
   const int count=n[0];
   const int selected_count=selected.extent_int(0);
   // Keep each subset's halo dependencies. RHS storage holds KO only until the

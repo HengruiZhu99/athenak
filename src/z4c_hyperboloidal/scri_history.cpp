@@ -14,6 +14,8 @@ std::array<Real,ScriHistory::count> SurfaceExchange::MeasureInvestigation() {
   const auto samples=sampled_,refs=p.surface_reference;
   const auto maps=p.surface_geometry,bulk_maps=p.geometry;
   const auto points=p.surface_points.d_view;
+  const auto active=p.active_blocks;
+  const auto owners=p.face_blocks.d_view;
   const auto metrics=metric_geometry_,penrose=penrose_geometry_;
   const auto rows=rows_;const auto params=p.parameters;const auto source=p.boundary_source;
   const Real penalty=p.penalty;
@@ -24,6 +26,7 @@ std::array<Real,ScriHistory::count> SurfaceExchange::MeasureInvestigation() {
   int invalid=0;
   Kokkos::parallel_reduce("scri pointwise signed diagnostics",
     Kokkos::RangePolicy<>(0,p.nsurface_points),KOKKOS_LAMBDA(int q,int &bad) {
+      if(active.extent(0) && !active(owners(points(q).face)))return;
       auto j=samples(q);const auto map=maps(q);const auto c=points(q);
       if(!SphericalPolicy::Restore(map.x,j,refs(q))) {++bad;return;}
       const auto before=SphericalPolicy::Boundary(map,rows(q).spacing,j,params,source,penalty,&metrics(q),&penrose(q));
@@ -97,11 +100,16 @@ std::array<Real,ScriHistory::count> SurfaceExchange::MeasureInvestigation() {
   if(invalid)throw std::runtime_error("Invalid scri investigation diagnostic");
   std::array<Real,H::count> maxima;maxima.fill(-std::numeric_limits<Real>::infinity());
   const auto host=Kokkos::create_mirror_view_and_copy(HostMemSpace(),values);
-  for(int q=0;q<p.nsurface_points;++q)for(int c=0;c<H::count;++c)maxima[c]=std::max(maxima[c],host(q,c));
+  const auto host_active=Kokkos::create_mirror_view_and_copy(HostMemSpace(),active);
+  for(int q=0;q<p.nsurface_points;++q) {
+    if(host_active.extent(0) && !host_active(p.face_blocks.h_view(p.surface_points.h_view(q).face)))continue;
+    for(int c=0;c<H::count;++c)maxima[c]=std::max(maxima[c],host(q,c));
+  }
   Real lapse_hessian=0,shift_hessian=0;
   Kokkos::parallel_reduce("scri lift Hessians in adjacent bulk support",
     Kokkos::RangePolicy<>(0,p.npoints),KOKKOS_LAMBDA(int point,Real &a,Real &b) {
       const auto c=kernel.points(point);const int face=kernel.block_faces(c.m);
+      if(active.extent(0) && !active(c.m))return;
       if(face<0 || c.i-kernel.origin<kernel.n-2)return;
       const auto map=bulk_maps(point);
       const int count=params.scri_treatment==ScriTreatment::existing ? 3 : 4;
@@ -111,8 +119,8 @@ std::array<Real,ScriHistory::count> SurfaceExchange::MeasureInvestigation() {
           if(f==3)a=fmax(a,fabs(jet.h[i][j]));else b=fmax(b,fabs(jet.h[i][j]));
       }
     },Kokkos::Max<Real>(lapse_hessian),Kokkos::Max<Real>(shift_hessian));
-  maxima[2*H::signed_count+H::lift_alpha_hessian]=std::max(maxima[2*H::signed_count+H::lift_alpha_hessian],lapse_hessian);
-  maxima[2*H::signed_count+H::lift_beta_hessian]=std::max(maxima[2*H::signed_count+H::lift_beta_hessian],shift_hessian);
+  maxima[2*H::signed_count+H::lift_alpha_hessian]=std::max(maxima[2*H::signed_count+H::lift_alpha_hessian],std::max(Real(0),lapse_hessian));
+  maxima[2*H::signed_count+H::lift_beta_hessian]=std::max(maxima[2*H::signed_count+H::lift_beta_hessian],std::max(Real(0),shift_hessian));
   return maxima;
 }
 void Z4cHyperboloidal::AccumulateScriInvestigation(const std::array<Real,ScriHistory::count>&v) {

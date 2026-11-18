@@ -108,7 +108,7 @@ void ParameterInput::CheckBlockNames() {
     "comment", "job",
     "mesh", "meshblock", "mesh_refinement", "refined_region", "amr_criterion",
     "coord", "adm", "shearing_box", "cyclic_zoom",
-    "time", "problem", "output", "units",
+    "time", "problem", "output", "units", "multirate",
     "hydro", "mhd", "ion-neutral", "radiation", "z4c", "z4c_amr", "cce",
     "rad_srcterms", "hydro_srcterms", "mhd_srcterms", "particles", "turb_driving",
     "gravity", "fastflow"
@@ -216,8 +216,11 @@ void ParameterInput::LoadFromStream(std::istream &is) {
 //  \brief Read the parameters from an input or restart file.
 
 void ParameterInput::LoadFromFile(IOWrapper &input, bool single_file_per_rank) {
-  std::stringstream par;
+  std::string header_bytes;
   constexpr int kBufSize = 4096;
+  // A static multirate ownership list contains one rank per stable block ID.
+  // Keep a corruption bound while allowing distributed meshes beyond 40 KiB.
+  constexpr IOWrapperSizeT max_header_bytes=64*1024*1024;
   char buf[kBufSize];
   IOWrapperSizeT header = 0, ret, loc;
 
@@ -236,17 +239,19 @@ void ParameterInput::LoadFromFile(IOWrapper &input, bool single_file_per_rank) {
     MPI_Bcast(buf, ret, MPI_BYTE, 0, MPI_COMM_WORLD);
   }
 #endif
-    par.write(buf, ret); // add the buffer into the stream
+    const auto previous=header_bytes.size();
+    header_bytes.append(buf,ret);
     header += ret;
-    std::string sbuf = par.str(); // create string for search
-    loc = sbuf.find("<par_end>", 0); // search from the top of the stream
+    // Only rescan the marker-length overlap with the preceding chunk. This
+    // avoids quadratic copying and searching for a large replay owner list.
+    loc = header_bytes.find("<par_end>",previous>8?previous-8:0);
     if (loc != std::string::npos) { // found <par_end>
       header = loc + 10; // store the header length
       break;
     }
-    if (header > kBufSize*10) {
+    if (header > max_header_bytes) {
       std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
-                << std::endl << "<par_end> is not found in the first 40KBytes."
+                << std::endl << "<par_end> is not found in the first 64 MiB."
                 << std::endl << "Probably the file is broken or the wrong file is "
                 << "specified" << std::endl;
       std::exit(EXIT_FAILURE);
@@ -255,6 +260,7 @@ void ParameterInput::LoadFromFile(IOWrapper &input, bool single_file_per_rank) {
 
   // Now par contains the parameter inputs + some additional including <par_end>
   // Read the stream and load the parameters
+  std::istringstream par(header_bytes);
   LoadFromStream(par);
   // Seek the file to the end of the header
   input.Seek(header, single_file_per_rank);
@@ -800,7 +806,11 @@ void ParameterInput::ParameterDump(std::ostream& os) {
 
       len = itb->max_len_parname - param_name.length() + 1;
       param_name.append(len,' ');                         // pad name  to align vertically
-      len = itb->max_len_parvalue - param_value.length() + 1;
+      // Do not replicate a potentially large owner map as whitespace after
+      // every other multirate setting. Legacy block formatting is unchanged.
+      const auto width=itb->block_name=="multirate"
+          ? std::min<std::size_t>(itb->max_len_parvalue,80) : itb->max_len_parvalue;
+      len = width>param_value.length()?width-param_value.length()+1:1;
       param_value.append(len,' ');                        // pad value to align vertically
 
       os<< param_name << "= " << param_value << itl->param_comment <<  std::endl;

@@ -10,6 +10,8 @@
 #include <iostream>
 #include <utility>
 #include <memory>
+#include <numeric>
+#include <algorithm>
 
 #include "athena.hpp"
 #include "parameter_input.hpp"
@@ -42,6 +44,9 @@ MeshBlockPack::MeshBlockPack(Mesh *pm, int igids, int igide) :
   gids(igids),
   gide(igide),
   nmb_thispack(igide - igids + 1) {
+  std::vector<int> ids(nmb_thispack);
+  std::iota(ids.begin(),ids.end(),igids);
+  SetBlockIds(std::move(ids));
   // create map for task lists
   tl_map.insert(std::make_pair("before_timeintegrator",std::make_shared<TaskList>()));
   tl_map.insert(std::make_pair("after_timeintegrator",std::make_shared<TaskList>()));
@@ -51,6 +56,13 @@ MeshBlockPack::MeshBlockPack(Mesh *pm, int igids, int igide) :
   tl_map.insert(std::make_pair("before_parabolic_stagen",std::make_shared<TaskList>()));
   tl_map.insert(std::make_pair("parabolic_stagen",std::make_shared<TaskList>()));
   tl_map.insert(std::make_pair("after_parabolic_stagen",std::make_shared<TaskList>()));
+}
+
+void MeshBlockPack::SetBlockIds(std::vector<int> ids) {
+  ownership_.Reset(std::move(ids),pmesh->nmb_total);
+  nmb_thispack=static_cast<int>(LocalBlockIds().size());
+  gids=nmb_thispack?*std::min_element(LocalBlockIds().begin(),LocalBlockIds().end()):0;
+  gide=nmb_thispack?*std::max_element(LocalBlockIds().begin(),LocalBlockIds().end()):-1;
 }
 
 //----------------------------------------------------------------------------------------

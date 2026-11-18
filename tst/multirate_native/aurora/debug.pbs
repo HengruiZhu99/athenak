@@ -1,0 +1,36 @@
+#!/bin/bash -l
+#PBS -A CompactBinaryMerger
+#PBS -N mr-gpu-qual
+#PBS -q debug
+#PBS -l select=2
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -j oe
+set -euo pipefail
+ulimit -c 0
+cd "$PBS_O_WORKDIR"
+root=$PWD
+export MR_RUN_ROOT=$root
+module load oneapi/release/2025.3.1
+module load cmake
+module list > modules.txt 2>&1
+cp "$PBS_NODEFILE" "nodes.${PBS_JOBID}.txt"
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE ZE_ENABLE_PCI_ID_DEVICE_ORDER=1
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu MPIR_CVAR_ENABLE_GPU=1
+source "$root/mpi-gpu-cache.sh"
+mkdir -p "$root/cache/neo" "$root/cache/sycl"
+export NEO_CACHE_DIR="$root/cache/neo" SYCL_CACHE_DIR="$root/cache/sycl"
+unset ZE_AFFINITY_MASK
+if [[ ! -f "$root/deps/lib/libmetis.a" && ! -f "$root/deps/lib64/libmetis.a" ]]; then
+  cmake -S "$root/GKlib" -B "$root/gkbuild" -DCMAKE_C_COMPILER=gcc -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_INSTALL_PREFIX="$root/deps" -DBUILD_SHARED_LIBS=OFF > "$root/gk-config.log" 2>&1
+  cmake --build "$root/gkbuild" --parallel 8 --target install > "$root/gk-build.log" 2>&1
+  (cd "$root/METIS" && make config prefix="$root/deps" gklib_path="$root/deps" cc=gcc && make -j8 install) > "$root/metis-build.log" 2>&1
+fi
+cmake -S "$root/source" -B "$root/build" -DCMAKE_C_COMPILER=icx -DCMAKE_CXX_COMPILER=icpx \
+  -DCMAKE_BUILD_TYPE=Release '-DCMAKE_CXX_FLAGS=-fp-model=precise -ffp-contract=off -fno-sycl-id-queries-fit-in-int' \
+  -DAthena_ENABLE_MPI=ON -DAthena_ENABLE_METIS=ON -DCMAKE_PREFIX_PATH="$root/deps" \
+  -DKokkos_ENABLE_SYCL=ON -DKokkos_ARCH_INTEL_PVC=ON -DKokkos_ENABLE_SERIAL=ON > "$root/configure.log" 2>&1
+cmake --build "$root/build" --parallel 32 --target athena > "$root/build.log" 2>&1
+sha256sum "$root/build/src/athena" > "$root/executable.sha256"
+exec /usr/bin/python3.11 -u "$root/source/tst/multirate_native/aurora/measure.py" "$root"

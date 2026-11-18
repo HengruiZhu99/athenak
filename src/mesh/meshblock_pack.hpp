@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "parameter_input.hpp"
+#include "mesh/block_ownership.hpp"
 #include "coordinates/coordinates.hpp"
 #include "diffusion/parabolic_process.hpp"
 #include "driver/driver.hpp"
@@ -55,8 +56,15 @@ class MeshBlockPack {
 
   // data
   Mesh *pmesh;            // ptr to Mesh containing this MeshBlockPack
-  int gids, gide;         // start/end of global IDs in this MeshBlockPack
+  int gids, gide;         // min/max GIDs; arithmetic local offsets require Contiguous()
   int nmb_thispack;       // number of MBs in this pack
+  int GlobalId(int local) const {return ownership_.GlobalId(local);}
+  int LocalId(int gid) const {return ownership_.LocalId(gid);}
+  bool Contiguous() const {return ownership_.Contiguous();}
+  const std::vector<int> &LocalBlockIds() const {return ownership_.GlobalIds();}
+  // Changes storage identity only; the caller must migrate state and rebuild
+  // MeshBlock metadata and communication plans before returning to evolution.
+  void SetBlockIds(std::vector<int> ids);
 
   // following Grid/Physics objects are all pointers so they can be allocated after
   // MeshBlockPack is constructed with pointer to my_pack.
@@ -97,6 +105,7 @@ class MeshBlockPack {
   }
 
  private:
+  LocalBlockOwnership ownership_;
   // data
 
   // functions

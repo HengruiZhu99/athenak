@@ -117,6 +117,7 @@ class SurfaceExchange {
   SurfaceExchange(MeshBlockPack *pack,Z4cHyperboloidal *module, bool endpoint_only=false);
   void Rebuild();
   TaskStatus Project();
+  void SetExternalValues(bvals::MappedExchange::ConstValues edge) {external_edge_=edge;}
   TaskStatus StartReceives();
   TaskStatus PackAndSend();
   TaskStatus Receive();
@@ -152,6 +153,7 @@ class SurfaceExchange {
   MeshBlockPack *pack_;
   Z4cHyperboloidal *module_;
   bvals::MappedExchange bulk_exchange_, surface_exchange_;
+  bvals::MappedExchange::ConstValues external_edge_;
   FieldSlots fields_;
   DvceArray1D<Row> rows_, radial_rows_;
   DvceArray1D<Term> terms_;

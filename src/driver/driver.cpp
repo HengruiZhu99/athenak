@@ -175,9 +175,8 @@ Driver::Driver(ParameterInput *pin, Mesh *pmesh, Real wtlim, Kokkos::Timer* ptim
       delta[1] = 0.217683334308543;
       delta[2] = 1.065841341361089;
       delta[3] = 0.0;
-    } else if (integrator == "rk4_classical") {
-      // Classical RK4 uses module-owned immutable base and weighted-sum arrays;
-      // the existing 2S coefficients do not represent this update.
+    } else if (integrator == "rk4_classical" || integrator == "mrgark4") {
+      // Scheme A supplies its own four-stage update for these integrators.
       nimp_stages = 0;
       nexp_stages = time_integration::ClassicalRK4::stages;
       cfl_limit = 1.3925;
@@ -305,14 +304,14 @@ Driver::Driver(ParameterInput *pin, Mesh *pmesh, Real wtlim, Kokkos::Timer* ptim
       exit(EXIT_FAILURE);
     }
 
-    if (UsesClassicalRK4()) ValidateClassicalRK4Configuration(pmesh);
+    if (UsesSchemeARK()) ValidateSchemeARKConfiguration(pmesh);
     ValidateSTSConfiguration(pmesh);
   }
 }
 
 // Classical RK4 requires an explicit module implementation. Never let the
 // generic 2S update silently consume its deliberately unused coefficients.
-void Driver::ValidateClassicalRK4Configuration(Mesh *pm) {
+void Driver::ValidateSchemeARKConfiguration(Mesh *pm) {
   const auto *pack=pm->pmb_pack;
   if (pack->pz4c_hyperboloidal==nullptr || pack->phydro!=nullptr ||
       pack->pmhd!=nullptr || pack->pz4c!=nullptr || pack->pdyngr!=nullptr ||
@@ -320,9 +319,7 @@ void Driver::ValidateClassicalRK4Configuration(Mesh *pm) {
       pack->pturb!=nullptr || pack->pgrav!=nullptr || !pack->pz4c_cce.empty() ||
       pm->sts_integrator!=parabolic::STSIntegrator::none) {
     DriverFatalError(__FILE__, __LINE__,
-        "<time>/integrator = rk4_classical requires the native z4c_hyperboloidal "
-        "module alone; other evolution modules and STS do not implement its "
-        "immutable-base/accumulator update");
+        "The requested Scheme A RK integrator requires standalone z4c_hyperboloidal evolution without STS");
   }
 }
 
@@ -494,6 +491,8 @@ void Driver::Initialize(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool re
   //---- Step 1.  Set conserved variables in ghost zones for all physics
   InitBoundaryValuesAndPrimitives(pmesh);
 
+  if (UsesMultirate()) pmesh->pmb_pack->pz4c_hyperboloidal->InitializeMultirate(this);
+
   //---- Step 2.  Compute time step (if problem involves time evolution)
   hydro::Hydro *phydro = pmesh->pmb_pack->phydro;
   mhd::MHD *pmhd = pmesh->pmb_pack->pmhd;
@@ -591,28 +590,32 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool wdfla
       }
 
       // Execute TaskLists
-      // Work before time integrator indicated by "0" in stage
-      stage_time=pmesh->time;
-      stage_state_time=pmesh->time;
-      ExecuteTaskList(pmesh, "before_timeintegrator", 0);
-      // time-integrator tasks for each stage of integrator
-      for (int stage=1; stage<=(nexp_stages); ++stage) {
-        if (UsesClassicalRK4()) {
-          stage_time=time_integration::ClassicalRK4::RHSTime(pmesh->time,pmesh->dt,stage);
-          stage_state_time=time_integration::ClassicalRK4::StateTime(
-              pmesh->time,pmesh->dt,stage);
+      if (UsesMultirate()) {
+        pmesh->pmb_pack->pz4c_hyperboloidal->AdvanceMultirate(this);
+      } else {
+        // Work before time integrator indicated by "0" in stage
+        stage_time=pmesh->time;
+        stage_state_time=pmesh->time;
+        ExecuteTaskList(pmesh, "before_timeintegrator", 0);
+        // time-integrator tasks for each stage of integrator
+        for (int stage=1; stage<=(nexp_stages); ++stage) {
+          if (UsesClassicalRK4()) {
+            stage_time=time_integration::ClassicalRK4::RHSTime(pmesh->time,pmesh->dt,stage);
+            stage_state_time=time_integration::ClassicalRK4::StateTime(
+                pmesh->time,pmesh->dt,stage);
+          }
+          ExecuteTaskList(pmesh, "before_stagen", stage);
+          // solve gravity at each RK stage so the potential is consistent
+          // with the current density (required for 2nd-order accuracy)
+          if (pmesh->pmb_pack->pgrav != nullptr)
+              {pmesh->pmb_pack->pgrav->pmgd->Solve(this, stage);}
+          ExecuteTaskList(pmesh, "stagen", stage);
+          ExecuteTaskList(pmesh, "after_stagen", stage);
         }
-        ExecuteTaskList(pmesh, "before_stagen", stage);
-        // solve gravity at each RK stage so the potential is consistent
-        // with the current density (required for 2nd-order accuracy)
-        if (pmesh->pmb_pack->pgrav != nullptr)
-            {pmesh->pmb_pack->pgrav->pmgd->Solve(this, stage);}
-        ExecuteTaskList(pmesh, "stagen", stage);
-        ExecuteTaskList(pmesh, "after_stagen", stage);
-      }
 
+      }
       // Work after time integrator indicated by "1" in stage
-      if (UsesClassicalRK4()) stage_time=stage_state_time=pmesh->time+pmesh->dt;
+      if (UsesSchemeARK()) stage_time=stage_state_time=pmesh->time+pmesh->dt;
       ExecuteTaskList(pmesh, "after_timeintegrator", 1);
 
       // Diffusion coefficients may depend on the post-RK state. Refresh the global
@@ -648,6 +651,9 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool wdfla
             static_cast<float>(pmesh->nmb_total);
       }
 
+      // Multirate checkpoints own the post-regrid mesh at the coarse endpoint.
+      if (UsesMultirate() && pmesh->adaptive) pmesh->pmr->AdaptiveMeshRefinement(this, pin);
+
       // Test for/make outputs
       for (auto &out : pout->pout_list) {
         // compare at floating point (32-bit) precision to reduce effect of round off
@@ -664,7 +670,7 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool wdfla
       }
 
       // AMR
-      if (pmesh->adaptive) {pmesh->pmr->AdaptiveMeshRefinement(this, pin);}
+      if (!UsesMultirate() && pmesh->adaptive) {pmesh->pmr->AdaptiveMeshRefinement(this, pin);}
       // compute new timestep AFTER all Meshblocks refined/derefined
       pmesh->NewTimeStep(tlim);
       RefreshSTSCycleState(pmesh);

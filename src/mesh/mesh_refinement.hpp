@@ -116,6 +116,7 @@ class MeshRefinement {
 
   // functions
   void CheckForRefinement(MeshBlockPack* pmbp);
+  void SaveMultirateRefinementAges(ParameterInput *pin) const;
   void AdaptiveMeshRefinement(Driver *pdrive, ParameterInput *pin);
   void UpdateMeshBlockTree(int &nnew, int &ndel);
   void RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, int ndel);

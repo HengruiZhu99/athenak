@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <limits>
 #include <map>
+#include <numeric>
 #include <stdexcept>
 #include <string>
 #include <tuple>
@@ -88,7 +89,7 @@ void MappedExchange::CheckCollective(bool condition, const char *message) const 
 }
 
 bool MappedExchange::IsCurrent(const MeshBlockPack *pack) const {
-  return built_ && pack != nullptr && first_gid_ == pack->gids &&
+  return built_ && pack != nullptr && local_ids_ == pack->LocalBlockIds() &&
          local_count_ == pack->nmb_thispack &&
          mesh_sequence_ == pack->pmesh->GetAMRLoadBalanceUpdateSeq();
 }
@@ -105,7 +106,7 @@ void MappedExchange::Rebuild(MeshBlockPack *pack,
                    "Mapped exchange requires one native MeshBlockPack per rank");
   auto *mesh = pack->pmesh;
   std::vector<int> owners(mesh->rank_eachmb,mesh->rank_eachmb+mesh->nmb_total);
-  Rebuild(pack->gids,pack->nmb_thispack,owners,mesh->GetAMRLoadBalanceUpdateSeq(),
+  Rebuild(pack->LocalBlockIds(),owners,mesh->GetAMRLoadBalanceUpdateSeq(),
            requested,fields);
   pack_ = pack;
 }
@@ -113,13 +114,28 @@ void MappedExchange::Rebuild(MeshBlockPack *pack,
 void MappedExchange::Rebuild(int first_gid, int local_count,
     const std::vector<int> &rank_eachmb, int mesh_sequence,
     const std::vector<DonorPoint> &requested, const std::vector<int> &fields) {
+  CheckCollective(first_gid>=0 && local_count>=0 &&
+      static_cast<std::size_t>(first_gid)+local_count<=rank_eachmb.size(),
+      "Invalid consecutive mapped ownership range");
+  std::vector<int> ids(local_count);
+  std::iota(ids.begin(),ids.end(),first_gid);
+  Rebuild(ids,rank_eachmb,mesh_sequence,requested,fields);
+}
+
+void MappedExchange::Rebuild(const std::vector<int> &local_ids,
+    const std::vector<int> &rank_eachmb, int mesh_sequence,
+    const std::vector<DonorPoint> &requested, const std::vector<int> &fields) {
   CheckCollective(!posted_,"Cannot rebuild an active mapped-boundary exchange");
-  bool valid = first_gid >= 0 && local_count >= 0 &&
-      static_cast<std::size_t>(first_gid)+local_count <= rank_eachmb.size() &&
-      !fields.empty();
+  std::vector<int> local_index(rank_eachmb.size(),-1);
+  bool valid=!fields.empty();
+  for (std::size_t m=0;m<local_ids.size();++m) {
+    const int gid=local_ids[m];
+    if (gid<0 || static_cast<std::size_t>(gid)>=rank_eachmb.size()) {valid=false;continue;}
+    if (local_index[gid]>=0) valid=false;
+    local_index[gid]=CheckedCount(m);
+  }
   for (std::size_t gid=0; gid<rank_eachmb.size(); ++gid) {
-    const bool local = gid >= static_cast<std::size_t>(first_gid) &&
-                       gid < static_cast<std::size_t>(first_gid)+local_count;
+    const bool local = local_index[gid]>=0;
     valid = valid && rank_eachmb[gid] >= 0 && rank_eachmb[gid] < nranks_ &&
             ((rank_eachmb[gid] == rank_) == local);
   }
@@ -156,13 +172,19 @@ void MappedExchange::Rebuild(int first_gid, int local_count,
   if (min_field != max_field) {
     throw std::invalid_argument("Mapped donor field selection differs across ranks");
   }
+  auto agreed_owners=rank_eachmb;
+  CheckMPI(MPI_Bcast(agreed_owners.data(),nblocks,MPI_INT,0,comm_),
+           "Mapped ownership agreement broadcast failed");
+  CheckCollective(agreed_owners==rank_eachmb,
+                  "Mapped donor ownership differs across ranks");
 #endif
 
   if (built_) DevExeSpace().fence("Mapped donor plan rebuild");
   recv_buffer_in_use_ = false;
   pack_ = nullptr;
-  first_gid_ = first_gid;
-  local_count_ = local_count;
+  local_ids_=local_ids;
+  first_gid_ = local_ids.empty()?0:local_ids.front();
+  local_count_ = CheckedCount(local_ids.size());
   mesh_sequence_ = mesh_sequence;
   fields_host_ = fields;
   unique_donors_.clear();
@@ -180,7 +202,7 @@ void MappedExchange::Rebuild(int first_gid, int local_count,
     const auto &point = unique_donors_[ordinal];
     const int owner = rank_eachmb[point.gid];
     if (owner == rank_) {
-      pack_points.push_back({point.gid-first_gid,point.k,point.j,point.i,
+      pack_points.push_back({local_index[point.gid],point.k,point.j,point.i,
                              CheckedCount(ordinal)});
     } else {
       auto &request = request_by_rank[owner];
@@ -216,11 +238,12 @@ void MappedExchange::Rebuild(int first_gid, int local_count,
                          MPI_INT,comm_),"Mapped donor request exchange failed");
 #endif
   valid = incoming.size()%4 == 0;
-  for (std::size_t n=0; n<incoming.size(); n+=4) {
+  for (std::size_t n=0; n+3<incoming.size(); n+=4) {
     const int gid=incoming[n],k=incoming[n+1],j=incoming[n+2],i=incoming[n+3];
-    valid = valid && gid >= first_gid && gid-first_gid < local_count &&
-            k >= 0 && j >= 0 && i >= 0;
-    pack_points.push_back({gid-first_gid,k,j,i,-1});
+    const int local=gid>=0 && static_cast<std::size_t>(gid)<local_index.size()
+        ?local_index[gid]:-1;
+    valid = valid && local>=0 && k>=0 && j>=0 && i>=0;
+    pack_points.push_back({local,k,j,i,-1});
   }
   CheckCollective(valid,"A mapped peer requested a donor outside its owner's native pack");
 
@@ -256,9 +279,17 @@ void MappedExchange::Rebuild(int first_gid, int local_count,
   built_ = true;
 }
 
-TaskStatus MappedExchange::StartReceives() {
+TaskStatus MappedExchange::StartReceives(int stage_tag) {
   CheckCurrent();
   if (posted_) throw std::logic_error("Mapped donor stage started before requests cleared");
+  if (stage_tag<0) throw std::invalid_argument("Negative mapped exchange stage tag");
+#if MPI_PARALLEL_ENABLED
+  int *tag_bound=nullptr,found=0;
+  CheckMPI(MPI_Comm_get_attr(comm_,MPI_TAG_UB,&tag_bound,&found),"Mapped tag bound query failed");
+  if (!found || stage_tag>*tag_bound)
+    throw std::invalid_argument("Mapped exchange stage tag exceeds MPI_TAG_UB");
+#endif
+  stage_tag_=stage_tag;
   if (recv_buffer_in_use_) {
     DevExeSpace().fence("Mapped donor receive buffer reuse");
     recv_buffer_in_use_ = false;
@@ -269,7 +300,7 @@ TaskStatus MappedExchange::StartReceives() {
   for (std::size_t p=0; p<recv_peers_.size(); ++p) {
     const auto &peer = recv_peers_[p];
     CheckMPI(MPI_Irecv(recv_buffer_.data()+peer.offset,peer.count,MPI_ATHENA_REAL,
-                       peer.rank,0,comm_,&recv_requests_[p]),
+                       peer.rank,stage_tag_,comm_,&recv_requests_[p]),
              "Mapped donor receive posting failed");
   }
 #endif
@@ -306,7 +337,7 @@ TaskStatus MappedExchange::PackAndSend(const DvceArray5D<Real> &state) {
   for (std::size_t p=0; p<send_peers_.size(); ++p) {
     const auto &peer = send_peers_[p];
     CheckMPI(MPI_Isend(send_buffer_.data()+peer.offset,peer.count,MPI_ATHENA_REAL,
-                       peer.rank,0,comm_,&send_requests_[p]),
+                       peer.rank,stage_tag_,comm_,&send_requests_[p]),
              "Mapped donor send posting failed");
   }
 #endif

@@ -31,6 +31,7 @@ class SurfaceExchange;
 class DissipationPlan;
 class RemeshState;
 class Diagnostics;
+class MultirateEvolution;
 
 // Local execution indices only. MeshBlockPack remains the ownership authority;
 // these lists batch irregular evolved overlap regions into device kernels.
@@ -108,6 +109,17 @@ class Z4cHyperboloidal {
   const Real *ComponentCenter(int component) const;
   void InitializeBoundaryValues(Driver *driver);
   TaskStatus NewTimeStep(Driver *driver, int stage);
+  bool UsesMultirate() const {return multirate_enabled_;}
+  void InitializeMultirate(Driver *driver, bool rebuilt=false);
+  void AdvanceMultirate(Driver *driver);
+  std::string MultirateIdentity() const;
+  void RebuildAfterRedistribution(const HostArray2D<Real> &records);
+  // Empty mask is the legacy/all-block path; active masks affect every stage operation.
+  DvceArray1D<int> active_blocks;
+  std::array<DvceArray1D<int>,5> active_rhs_points;
+  Real active_step_dt=0;
+  void SelectActiveBlocks(const std::vector<int> &local_blocks);
+  void ClearActiveBlocks();
   Real StageMaxCompatibility() const;
   Real StageMaxClock() const;
   void EnableBoundaryHistory() {boundary_history_enabled_=true;}
@@ -150,6 +162,9 @@ class Z4cHyperboloidal {
 
  private:
   friend class Diagnostics;
+  friend class MultirateEvolution;
+  bool multirate_enabled_=false;
+  std::unique_ptr<MultirateEvolution> multirate_;
   MeshBlockPack *pmy_pack;
   ParameterInput *pinput_;
   std::uint64_t state_version_=0;
@@ -171,6 +186,8 @@ class Z4cHyperboloidal {
   std::unique_ptr<DissipationPlan> dissipation_plan_;
   std::unique_ptr<RemeshState> remesh_;
   std::array<DvceArray1D<int>,5> rhs_points_;
+  std::array<std::vector<std::vector<int>>,5> rhs_points_by_block_;
+  std::vector<int> active_slots_;
   void BuildLocalWorkLists();
   void AllocateStorage();
   void BuildReferenceCache();

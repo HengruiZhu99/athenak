@@ -1,0 +1,63 @@
+# Small native Scheme A mesh for multirate execution and restart qualification.
+# Four physical radial regions; the outermost contains scri and its closure.
+<job>
+basename = multirate_native
+<mesh>
+nghost = 4
+nx1 = 12
+nx2 = 12
+nx3 = 12
+x1min = -.1
+x1max = .1
+x2min = -.1
+x2max = .1
+x3min = -.1
+x3max = .1
+ix1_bc = mapped
+ox1_bc = mapped
+ix2_bc = mapped
+ox2_bc = mapped
+ix3_bc = mapped
+ox3_bc = mapped
+<meshblock>
+nx1 = 12
+nx2 = 12
+nx3 = 12
+<mesh_atlas>
+type = cubed_sphere
+spherical_inner_radius = .08
+shell_radii = .24,.48,.72,1
+evolved_overlap = 3
+outer_endpoint_grid = true
+<time>
+cfl_number = .2
+evolution = dynamic
+integrator = mrgark4
+dt = 1e-6
+tlim = 1
+nlim = 2
+ndiag = 1
+<multirate>
+spherical_levels = 0,0,0,1
+balance = none
+partition_log =
+replay_file =
+block_owners = auto
+uniform_reference = false
+max_characteristic_cfl = .35
+<problem>
+pgen_name = z4c_hyperboloidal_puncture
+<z4c_hyperboloidal>
+overlap_mode = agreement_full
+agreement_kappa = 1
+agreement_taper_width = .015
+inner_z4c_radius_M = 20
+compact_slicing_end = .97
+outer_lapse_damping = .25
+ko = .1
+chi_floor = 1e-10
+scri_penalty = .5
+<output1>
+file_type = rst
+dt = 100
+single_file_per_rank = false

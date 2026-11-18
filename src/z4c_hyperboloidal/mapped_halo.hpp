@@ -73,6 +73,11 @@ class MappedHalo {
   TaskStatus ClearSend();
   TaskStatus ClearRecv();
 
+  void FillExternal(const DvceArray5D<Real> &residual,
+      const DvceArray5D<Real> &physical,
+      bvals::MappedExchange::ConstValues residual_values,
+      bvals::MappedExchange::ConstValues physical_values,
+      DvceArray1D<int> active);
   const std::vector<Row> &Rows() const {return rows_;}
   const std::vector<ExteriorTarget> &ExteriorTargets() const {return exterior_;}
   const std::vector<HaloPoint> &InteriorPoints() const {return interior_points_;}
@@ -97,7 +102,10 @@ class MappedHalo {
   void BuildRows(MeshBlockPack *pack, int origin,
                  std::vector<bvals::DonorPoint> &requests);
   void Fill(const DvceArray1D<DeviceRow> &rows, const DvceArray5D<Real> &residual,
-            const DvceArray5D<Real> &physical) const;
+            const DvceArray5D<Real> &physical,
+            bvals::MappedExchange::ConstValues residual_values={},
+            bvals::MappedExchange::ConstValues physical_values={},
+            DvceArray1D<int> active={}) const;
 };
 
 }  // namespace z4c_hyperboloidal

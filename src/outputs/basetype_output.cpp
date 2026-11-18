@@ -759,10 +759,9 @@ void BaseTypeOutput::LoadOutputData(Mesh *pm) {
   // set size & starting indices of output arrays, adjusted accordingly if gz included
   auto &indcs = pm->mb_indcs;
   auto &size  = pm->pmb_pack->pmb->mb_size;
-  auto &gids  = pm->pmb_pack->gids;
   for (int m=0; m<(pm->pmb_pack->nmb_thispack); ++m) {
     // skip if MeshBlock ID is specified and not equal to this ID
-    if (out_params.gid >= 0 && (m+gids) != out_params.gid) { continue; }
+    if (out_params.gid >= 0 && pm->pmb_pack->GlobalId(m) != out_params.gid) { continue; }
 
     int ois,oie,ojs,oje,oks,oke;
 

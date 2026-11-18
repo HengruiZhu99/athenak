@@ -36,6 +36,7 @@ void Z4cHyperboloidal::InitializeBoundaryValues(Driver *driver) {
   EnforceAlgebraicConstraints();
   auto &bulk=*mapped_halo_;
   auto &surface=*surface_exchange_;
+  surface.SetExternalValues({});
   surface.Project();
   FormResidual();
   bulk.StartReceives();surface.StartReceives();
@@ -73,8 +74,9 @@ void Z4cHyperboloidal::InitializeBoundaryValues(Driver *driver) {
 }
 
 TaskStatus Z4cHyperboloidal::NewTimeStep(Driver *driver,int) {
-  if (!driver->UsesClassicalRK4())
+  if (!driver->UsesSchemeARK())
     throw std::invalid_argument("Hyperboloidal fixed steps require rk4_classical");
+  if (UsesMultirate()) {dtnew=requested_dt; return TaskStatus::complete;}
   if (!std::isfinite(requested_dt) || requested_dt<=0 ||
       requested_dt/std::min(parameters.tau,Real(InnerTelegrapher::tau))>.25)
     throw std::invalid_argument("Hyperboloidal fixed timestep exceeds the relaxation limit");

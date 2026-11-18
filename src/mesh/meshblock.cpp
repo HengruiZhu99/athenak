@@ -23,7 +23,7 @@
 // Initializes mb_gid, mb_lev, mb_size, mb_bcs arrays.  The nghbrs array is initialized
 // by SetNeighbors function called by BuildTree***() functions.
 
-MeshBlock::MeshBlock(MeshBlockPack* ppack, int igids, int nmb) :
+MeshBlock::MeshBlock(MeshBlockPack* ppack, int /*igids*/, int nmb) :
   mb_gid("mb_gid",nmb),
   mb_lev("mb_lev",nmb),
   mb_chart("mb_chart",nmb),
@@ -36,9 +36,10 @@ MeshBlock::MeshBlock(MeshBlockPack* ppack, int igids, int nmb) :
 
   for (int m=0; m<nmb; ++m) {
     // initialize host array elements of gids, levels
-    mb_gid.h_view(m) = igids + m;
-    mb_lev.h_view(m) = pm->lloc_eachmb[igids+m].level;
-    const auto &loc = pm->lloc_eachmb[igids+m];
+    const int gid=ppack->GlobalId(m);
+    mb_gid.h_view(m) = gid;
+    mb_lev.h_view(m) = pm->lloc_eachmb[gid].level;
+    const auto &loc = pm->lloc_eachmb[gid];
     mb_chart.h_view(m) = loc.chart_id;
     if (pm->atlas) mb_map.h_view(m) = pm->atlas->GetBlockMap(loc);
     if (loc.chart_id != 0) {
@@ -67,8 +68,8 @@ MeshBlock::MeshBlock(MeshBlockPack* ppack, int igids, int nmb) :
     }
 
     // calculate physical size and set BCs of each MeshBlock in x1
-    std::int32_t &lx1 = pm->lloc_eachmb[igids+m].lx1;
-    std::int32_t &lev = pm->lloc_eachmb[igids+m].level;
+    std::int32_t &lx1 = pm->lloc_eachmb[gid].lx1;
+    std::int32_t &lev = pm->lloc_eachmb[gid].level;
     std::int32_t nmbx1 = pm->nmb_rootx1 << (lev - pm->root_level);
     if (lx1 == 0) {
       mb_size.h_view(m).x1min = ms.x1min;
@@ -94,7 +95,7 @@ MeshBlock::MeshBlock(MeshBlockPack* ppack, int igids, int nmb) :
       mb_bcs.h_view(m,2) = pm->mesh_bcs[BoundaryFace::inner_x2];
       mb_bcs.h_view(m,3) = pm->mesh_bcs[BoundaryFace::outer_x2];
     } else {
-      std::int32_t &lx2 = pm->lloc_eachmb[igids+m].lx2;
+      std::int32_t &lx2 = pm->lloc_eachmb[gid].lx2;
       std::int32_t nmbx2 = pm->nmb_rootx2 << (lev - pm->root_level);
       if (lx2 == 0) {
         mb_size.h_view(m).x2min = ms.x2min;
@@ -121,7 +122,7 @@ MeshBlock::MeshBlock(MeshBlockPack* ppack, int igids, int nmb) :
       mb_bcs.h_view(m,4) = pm->mesh_bcs[BoundaryFace::inner_x3];
       mb_bcs.h_view(m,5) = pm->mesh_bcs[BoundaryFace::outer_x3];
     } else {
-      std::int32_t &lx3 = pm->lloc_eachmb[igids+m].lx3;
+      std::int32_t &lx3 = pm->lloc_eachmb[gid].lx3;
       std::int32_t nmbx3 = pm->nmb_rootx3 << (lev - pm->root_level);
       if (lx3 == 0) {
         mb_size.h_view(m).x3min = ms.x3min;

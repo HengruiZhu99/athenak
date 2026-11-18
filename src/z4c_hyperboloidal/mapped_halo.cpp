@@ -364,9 +364,9 @@ void MappedHalo::BuildRows(MeshBlockPack *pack,int origin,
   const auto &offsets=BulkStencilOffsets();std::map<CellKey,int> dependencies;
   std::vector<HaloPoint> evolved;
   auto is_evolved=[&](HaloPoint c) {return selector.IsEvolved(
-      {pack->gids+c.m,c.k,c.j,c.i});};
+      {pack->GlobalId(c.m),c.k,c.j,c.i});};
   for (int m=0;m<pack->nmb_thispack;++m) {
-    const int gid=pack->gids+m;
+    const int gid=pack->GlobalId(m);
     for (int k=origin+selector.Lower(gid,2);k<origin+selector.Upper(gid,2);++k)
       for (int j=origin+selector.Lower(gid,1);j<origin+selector.Upper(gid,1);++j)
         for (int i=origin+selector.Lower(gid,0);i<origin+selector.Upper(gid,0);++i) {
@@ -379,7 +379,7 @@ void MappedHalo::BuildRows(MeshBlockPack *pack,int origin,
         }
   }
   for (auto &[key,dependency]:dependencies) {
-    const auto c=Point(key);const int gid=pack->gids+c.m;const auto &map=selector.Map(gid);
+    const auto c=Point(key);const int gid=pack->GlobalId(c.m);const auto &map=selector.Map(gid);
     const Real q[3]={(c.i-origin+map.node_offset[0])/n,
                       (c.j-origin+map.node_offset[1])/n,
                       (c.k-origin+map.node_offset[2])/n};
@@ -476,14 +476,19 @@ TaskStatus MappedHalo::Receive() {
 }
 void MappedHalo::Fill(const DvceArray1D<DeviceRow> &rows,
                        const DvceArray5D<Real> &residual,
-                       const DvceArray5D<Real> &physical) const {
+                       const DvceArray5D<Real> &physical,
+                       bvals::MappedExchange::ConstValues residual_values,
+                       bvals::MappedExchange::ConstValues physical_values,
+                       DvceArray1D<int> active) const {
   const auto entries=entries_;const auto fields=residual_fields_;
-  const auto residual_values=residual_exchange_.Values(),physical_values=physical_exchange_.Values();
+  if(!residual_values.data())residual_values=residual_exchange_.Values();
+  if(!physical_values.data())physical_values=physical_exchange_.Values();
   const int count=rows.extent_int(0),nf=fields.extent_int(0);
   Kokkos::parallel_for("mapped halo interpolation",Kokkos::RangePolicy<>(0,count*Fields::count),
     KOKKOS_LAMBDA(int index) {
       const auto row=rows(index/Fields::count);const int f=index%Fields::count;
-      const auto c=row.target;const int first=entries(row.begin).ordinal;
+      const auto c=row.target; if(active.extent(0) && !active(c.m))return;
+      const int first=entries(row.begin).ordinal;
       const Real anchor=physical_values(first,f);Real value=anchor;
       for (int e=row.begin;e<row.end;++e)
         value+=entries(e).weight*(physical_values(entries(e).ordinal,f)-anchor);
@@ -496,6 +501,13 @@ void MappedHalo::Fill(const DvceArray1D<DeviceRow> &rows,
       }
       if (!Fields::Independent(f)) residual(c.m,f,c.k,c.j,c.i)=0;
     });
+}
+void MappedHalo::FillExternal(const DvceArray5D<Real> &residual,
+    const DvceArray5D<Real> &physical,
+    bvals::MappedExchange::ConstValues rv,
+    bvals::MappedExchange::ConstValues pv,DvceArray1D<int> active) {
+  Fill(local_rows_,residual,physical,rv,pv,active);
+  Fill(remote_rows_,residual,physical,rv,pv,active);
 }
 TaskStatus MappedHalo::FillLocal(const DvceArray5D<Real> &residual,
                                  const DvceArray5D<Real> &physical) {

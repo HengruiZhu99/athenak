@@ -13,6 +13,7 @@ add_executable(
 
         bvals/bvals.cpp
         bvals/mapped_exchange.cpp
+        bvals/multirate_exchange.cpp
         bvals/buffs_cc.cpp
         bvals/buffs_fc.cpp
         bvals/bvals_cc.cpp
@@ -51,8 +52,10 @@ add_executable(
         diffusion/viscosity.cpp
 
         driver/driver.cpp
+        driver/multirate.cpp
 
         z4c_hyperboloidal/z4c_hyperboloidal.cpp
+        z4c_hyperboloidal/multirate_evolution.cpp
         z4c_hyperboloidal/binary_initial.cpp
         z4c_hyperboloidal/binary_tracking.cpp
         z4c_hyperboloidal/diagnostics.cpp
@@ -112,6 +115,8 @@ add_executable(
         mesh/chart_atlas.cpp
         mesh/chart_mesh.cpp
         mesh/load_balance.cpp
+        mesh/multirate_load_balance.cpp
+        mesh/static_redistribution.cpp
         mesh/mesh.cpp
         mesh/meshblock.cpp
         mesh/meshblock_pack.cpp
@@ -261,6 +266,8 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "^(GNU|Clang|AppleClang|IntelLLVM)$")
   set_source_files_properties(
       outputs/scri.cpp
       mesh/chart_atlas.cpp
+      driver/multirate.cpp
+      z4c_hyperboloidal/multirate_evolution.cpp
       z4c_hyperboloidal/z4c_hyperboloidal.cpp
         z4c_hyperboloidal/binary_initial.cpp
         z4c_hyperboloidal/binary_tracking.cpp

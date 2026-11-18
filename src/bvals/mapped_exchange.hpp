@@ -46,12 +46,15 @@ class MappedExchange {
   void Rebuild(int first_gid, int local_count, const std::vector<int> &rank_eachmb,
                int mesh_sequence, const std::vector<DonorPoint> &requested,
                const std::vector<int> &fields);
+  void Rebuild(const std::vector<int> &local_ids, const std::vector<int> &rank_eachmb,
+               int mesh_sequence, const std::vector<DonorPoint> &requested,
+               const std::vector<int> &fields);
   bool IsCurrent(const MeshBlockPack *pack) const;
 
   // Persistent stage tasks: no global collectives and no blocking MPI waits.
   // Post receives before packing; Receive polls and then scatters remote values.
   // Clear both sends and receives before reusing or rebuilding the plan.
-  TaskStatus StartReceives();
+  TaskStatus StartReceives(int stage_tag=0);
   TaskStatus PackAndSend(const DvceArray5D<Real> &state);
   TaskStatus Receive();
   TaskStatus ClearSend();
@@ -87,6 +90,8 @@ class MappedExchange {
   DvceArray1D<Real> send_buffer_, recv_buffer_;
   DvceArray2D<Real> values_;
   int direct_count_ = 0;
+  int stage_tag_=0;
+  std::vector<int> local_ids_;
 #if MPI_PARALLEL_ENABLED
   MPI_Comm comm_ = MPI_COMM_NULL;
   std::vector<MPI_Request> send_requests_, recv_requests_;

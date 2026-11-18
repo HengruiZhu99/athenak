@@ -400,7 +400,8 @@ void CoarsenedBinaryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
   std::size_t data_size = 10*sizeof(int32_t) + 6*sizeof(Real)
                         + (cells*nout_vars)*sizeof(float);
 
-  int ns_mbs = pm->gids_eachrank[global_variable::my_rank];
+  int ns_mbs = 0;
+  for (int rank=0;rank<global_variable::my_rank;++rank) ns_mbs+=pm->nmb_eachrank[rank];
   int nb_mbs = pm->nmb_eachrank[global_variable::my_rank];
 
   // allocate 1D vector of floats used to convert and output data

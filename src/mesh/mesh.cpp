@@ -61,6 +61,7 @@ Mesh::Mesh(ParameterInput *pin) :
   sts_max_dt_ratio(-1.0),
   sts_integrator(parabolic::STSIntegrator::none),
   nmb_packs_thisrank(1) {
+  parameter_input_=pin;
   std::string sts_method = pin->GetOrAddString("time", "sts_integrator", "none");
   if (sts_method == "rkl2") {
     sts_integrator = parabolic::STSIntegrator::rkl2;

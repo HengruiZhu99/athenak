@@ -1,0 +1,157 @@
+{
+  "backend": "Kokkos Serial, two-rank MPI for evolution comparisons",
+  "fixed_mesh_fields": {
+    "radial_probe": true,
+    "binary_sha256": "b497fd49a1becec6158c737fc6dc38ee9647c162bbf553cf5bdc3ab14b145ae6",
+    "duration": 0.00390625,
+    "steps": [
+      2,
+      4,
+      8
+    ],
+    "uniform_reference_steps": 32,
+    "rms_errors": [
+      {
+        "bulk": 2.1527675750953508e-10,
+        "radial_interface": 6.250591868827549e-12,
+        "scri": 5.793889201094046e-08
+      },
+      {
+        "bulk": 1.2622067818373493e-11,
+        "radial_interface": 3.8133173262415096e-13,
+        "scri": 3.128434130857748e-09
+      },
+      {
+        "bulk": 7.397321915426258e-13,
+        "radial_interface": 2.36191749381485e-14,
+        "scri": 1.7148091865975914e-10
+      }
+    ],
+    "observed_orders": {
+      "bulk": [
+        4.092172381198152,
+        4.092801409784992
+      ],
+      "radial_interface": [
+        4.03487430966825,
+        4.013016115622644
+      ],
+      "scri": [
+        4.211019462083235,
+        4.189320772205548
+      ]
+    },
+    "passed": true
+  },
+  "fixed_mesh_diagnostics": {
+    "time": 0.00390625,
+    "points": 864,
+    "rms_differences": [
+      {
+        "regularity_tensor": 1.922752412815691e-08,
+        "clock_mismatch": 6.434097129739621e-08,
+        "hamiltonian_rms": 7.31167784737835e-14,
+        "momentum_rms": 7.443336078109776e-12,
+        "theta_rms": 1.2039527986469577e-11,
+        "z_rms": 2.7128604320465728e-12
+      },
+      {
+        "regularity_tensor": 9.874685884475394e-10,
+        "clock_mismatch": 3.4769182644647633e-09,
+        "hamiltonian_rms": 1.7010861035754443e-14,
+        "momentum_rms": 3.8983152169107423e-13,
+        "theta_rms": 6.793673558612623e-13,
+        "z_rms": 1.518576786874496e-13
+      },
+      {
+        "regularity_tensor": 5.2852554599549347e-11,
+        "clock_mismatch": 1.9055048068146483e-10,
+        "hamiltonian_rms": 1.2064730724875572e-15,
+        "momentum_rms": 2.1196735230759323e-14,
+        "theta_rms": 3.8072636786492064e-14,
+        "z_rms": 8.471543694272892e-15
+      }
+    ],
+    "orders": {
+      "regularity_tensor": [
+        4.283294336286838,
+        4.223689746231768
+      ],
+      "clock_mismatch": [
+        4.209856657572596,
+        4.189563999929876
+      ],
+      "hamiltonian_rms": [
+        2.1037463391438287,
+        3.8175885462619714
+      ],
+      "momentum_rms": [
+        4.255026720900782,
+        4.200936771466909
+      ],
+      "theta_rms": [
+        4.147443124417481,
+        4.157365502424758
+      ],
+      "z_rms": [
+        4.159023062129674,
+        4.163951167002196
+      ]
+    },
+    "reference_max_abs": {
+      "regularity_tensor": 0.00019097388022032777,
+      "clock_mismatch": 0.00037471009004450435,
+      "hamiltonian_rms": 0.00017256827001617636,
+      "momentum_rms": 2.391165885228797e-05,
+      "theta_rms": 1.322647496827538e-07,
+      "z_rms": 1.4167408889890982e-06
+    }
+  },
+  "cartesian_interface": {
+    "cartesian_fine": {
+      "blocks": 8,
+      "rms": 1.749992111482294e-12,
+      "max_abs": 3.92854965037073e-11
+    },
+    "cartesian_root": {
+      "blocks": 26,
+      "rms": 5.867536719777008e-13,
+      "max_abs": 1.0622704105234249e-11
+    },
+    "overlapping_shell": {
+      "blocks": 6,
+      "rms": 3.127461064648737e-13,
+      "max_abs": 3.722952501838961e-12
+    }
+  },
+  "waveform": {
+    "native_duration": 0.01171875,
+    "common_bondi_samples": 6,
+    "maximum_mode_difference": 2.4042306936870634e-08,
+    "uniform_peak": 0.004486932689106944,
+    "mixed_peak": 0.004486956716058463,
+    "interpretation": "Nonradiative spherical control at fixed spatial and output resolution."
+  },
+  "adaptive": {
+    "events": [
+      [
+        "1",
+        "7",
+        "0",
+        "32"
+      ]
+    ],
+    "coarsened_blocks": 25,
+    "final_blocks": 32,
+    "restart": {
+      "bitwise_equal": true,
+      "scalars": 7458048,
+      "payload_sha256": "5a8cbbf7c0b191b4a0af424bf0361019360ceee016fc29a9d55bea707c4240c1"
+    },
+    "uniform_fine_reference": {
+      "max_scaled_field_difference": 1.7763568414877847e-15,
+      "worst_scalar": 2422030
+    },
+    "time": 4.57763671875e-05
+  }
+}

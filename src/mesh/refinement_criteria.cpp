@@ -212,7 +212,7 @@ void RefinementCriteria::SetRefinementData(MeshBlockPack* pmbp, bool count_deriv
 
 void RefinementCriteria::CheckMinMax(MeshBlockPack* pmbp, RefCritData crit) {
   auto &refine_flag = pmbp->pmesh->pmr->refine_flag;
-  int mbs = pmbp->pmesh->gids_eachrank[global_variable::my_rank];
+  const auto gids = pmbp->pmb->mb_gid.d_view;
 
   // capture variables for kernels
   auto &indcs = pmbp->pmesh->mb_indcs;
@@ -239,7 +239,7 @@ void RefinementCriteria::CheckMinMax(MeshBlockPack* pmbp, RefCritData crit) {
         qmax = fmax(q0(m,k,j,i), qmax);
       },Kokkos::Max<Real>(team_qmax));
       // only derefine when flag has not been set by other criteria
-      int &flag = refine_flag.d_view(m+mbs);
+      int &flag = refine_flag.d_view(gids(m));
       if  (team_qmax > valmax)                 {flag = 1;}
       if ((team_qmax < valmax) && (flag == 0)) {flag = -1;}
     });
@@ -260,7 +260,7 @@ void RefinementCriteria::CheckMinMax(MeshBlockPack* pmbp, RefCritData crit) {
         qmin = fmin(q0(m,k,j,i), qmin);
       },Kokkos::Min<Real>(team_qmin));
       // only derefine when flag has not been set by other criteria
-      int &flag = refine_flag.d_view(m+mbs);
+      int &flag = refine_flag.d_view(gids(m));
       if  (team_qmin < valmin)                 {flag = 1;}
       if ((team_qmin > valmin) && (flag == 0)) {flag = -1;}
     });
@@ -279,7 +279,7 @@ void RefinementCriteria::CheckMinMax(MeshBlockPack* pmbp, RefCritData crit) {
 
 void RefinementCriteria::CheckSlope(MeshBlockPack* pmbp, RefCritData crit) {
   auto &refine_flag = pmbp->pmesh->pmr->refine_flag;
-  int mbs = pmbp->pmesh->gids_eachrank[global_variable::my_rank];
+  const auto gids = pmbp->pmb->mb_gid.d_view;
 
   // capture variables for kernels
   auto &indcs = pmbp->pmesh->mb_indcs;
@@ -325,7 +325,7 @@ void RefinementCriteria::CheckSlope(MeshBlockPack* pmbp, RefCritData crit) {
         dqmax = fmax(ratio, dqmax);
       },Kokkos::Max<Real>(team_dqmax));
       // only derefine when flag has not been set by other criteria
-      int &flag = refine_flag.d_view(m+mbs);
+      int &flag = refine_flag.d_view(gids(m));
       if  (team_dqmax > valmax)                 {flag = 1;}
       if ((team_dqmax < valmax) && (flag == 0)) {flag = -1;}
     });
@@ -344,7 +344,7 @@ void RefinementCriteria::CheckSlope(MeshBlockPack* pmbp, RefCritData crit) {
 
 void RefinementCriteria::CheckSecondDeriv(MeshBlockPack* pmbp, RefCritData crit) {
   auto &refine_flag = pmbp->pmesh->pmr->refine_flag;
-  int mbs = pmbp->pmesh->gids_eachrank[global_variable::my_rank];
+  const auto gids = pmbp->pmb->mb_gid.d_view;
 
   // capture variables for kernels
   auto &indcs = pmbp->pmesh->mb_indcs;
@@ -389,7 +389,7 @@ void RefinementCriteria::CheckSecondDeriv(MeshBlockPack* pmbp, RefCritData crit)
         d2qmax = fmax(ratio, d2qmax);
       },Kokkos::Max<Real>(team_d2qmax));
       // only derefine when flag has not been set by other criteria
-      int &flag = refine_flag.d_view(m+mbs);
+      int &flag = refine_flag.d_view(gids(m));
       if  (team_d2qmax > valmax)                 {flag = 1;}
       if ((team_d2qmax < valmax) && (flag == 0)) {flag = -1;}
     });
@@ -407,7 +407,6 @@ void RefinementCriteria::CheckSecondDeriv(MeshBlockPack* pmbp, RefCritData crit)
 
 void RefinementCriteria::CheckLocation(MeshBlockPack* pmbp, RefCritData crit) {
   auto &refine_flag = pmbp->pmesh->pmr->refine_flag;
-  int mbs = pmbp->pmesh->gids_eachrank[global_variable::my_rank];
   int nmb = pmbp->nmb_thispack;
   auto &size = pmbp->pmb->mb_size;
   auto &multi_d = pmbp->pmesh->multi_d;
@@ -437,7 +436,7 @@ void RefinementCriteria::CheckLocation(MeshBlockPack* pmbp, RefCritData crit) {
             (((x3min < (x3+rad)) && (x3min > (x3-rad))) ||
              ((x3max < (x3+rad)) && (x3max > (x3-rad))) ||
              ((x3max > (x3+rad)) && (x3min < (x3-rad)))) ) {
-          refine_flag.h_view(m + mbs) = 1;
+          refine_flag.h_view(pmbp->GlobalId(m)) = 1;
         }
       }
     }

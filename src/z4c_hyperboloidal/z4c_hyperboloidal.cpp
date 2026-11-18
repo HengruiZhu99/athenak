@@ -22,6 +22,7 @@
 #include "z4c_hyperboloidal/dissipation_plan.hpp"
 #include "z4c_hyperboloidal/remesh.hpp"
 #include "z4c_hyperboloidal/diagnostics.hpp"
+#include "z4c_hyperboloidal/multirate_evolution.hpp"
 
 namespace z4c_hyperboloidal {
 
@@ -38,9 +39,11 @@ Z4cHyperboloidal::Z4cHyperboloidal(MeshBlockPack *ppack, ParameterInput *pin)
     if (evolution!="dynamic") {
       throw std::invalid_argument("Hyperboloidal evolution requires static or dynamic mode");
     }
-    if (pin->GetOrAddString("time","integrator","rk4_classical")!="rk4_classical") {
-      throw std::invalid_argument("Hyperboloidal evolution requires rk4_classical");
-    }
+    const auto method=pin->GetOrAddString("time","integrator","rk4_classical");
+    multirate_enabled_=method=="mrgark4";
+    if(multirate_enabled_)MultirateEvolution::ReadOptions(*pin);
+    if (method!="rk4_classical" && !multirate_enabled_)
+      throw std::invalid_argument("Hyperboloidal evolution requires rk4_classical or mrgark4");
   }
   n[0]=pm->mb_indcs.nx1; n[1]=pm->mb_indcs.nx2; n[2]=pm->mb_indcs.nx3;
   nghost=pm->mb_indcs.ng;
@@ -112,19 +115,21 @@ Z4cHyperboloidal::Z4cHyperboloidal(MeshBlockPack *ppack, ParameterInput *pin)
 }
 
 void Z4cHyperboloidal::AllocateStorage() {
+  if (!UsesMultirate()) {
+    Kokkos::realloc(u1,nblocks,nvar,storage[2],storage[1],storage[0]);
+    Kokkos::realloc(u_accum,nblocks,nvar,storage[2],storage[1],storage[0]);
+    Kokkos::realloc(s1,nfaces,nvar,n[2],n[1]);
+    Kokkos::realloc(s_accum,nfaces,nvar,n[2],n[1]);
+  }
   Kokkos::realloc(u0,nblocks,nvar,storage[2],storage[1],storage[0]);
-  Kokkos::realloc(u1,nblocks,nvar,storage[2],storage[1],storage[0]);
   Kokkos::realloc(u_rhs,nblocks,nvar,storage[2],storage[1],storage[0]);
-  Kokkos::realloc(u_accum,nblocks,nvar,storage[2],storage[1],storage[0]);
   Kokkos::realloc(residual,nblocks,nvar,storage[2],storage[1],storage[0]);
-  if (pmy_pack->pmesh->multilevel) {
+  if (pmy_pack->pmesh->multilevel && !UsesMultirate()) {
     Kokkos::realloc(coarse_u0,nblocks,nvar,n[2]/2+2*origin,
                     n[1]/2+2*origin,n[0]/2+2*origin);
   }
   Kokkos::realloc(s0,nfaces,nvar,n[2],n[1]);
-  Kokkos::realloc(s1,nfaces,nvar,n[2],n[1]);
   Kokkos::realloc(s_rhs,nfaces,nvar,n[2],n[1]);
-  Kokkos::realloc(s_accum,nfaces,nvar,n[2],n[1]);
   Kokkos::realloc(geometry,npoints);
   Kokkos::realloc(reference,npoints);
   Kokkos::realloc(stationary_source,npoints);
@@ -197,6 +202,8 @@ void Z4cHyperboloidal::BuildStagePlans() {
   const std::vector<HaloPoint> *batches[4]={&mapped_halo_->InteriorPoints(),
       &mapped_halo_->LocalHaloPoints(),&mapped_halo_->RemoteHaloPoints(),
       &mapped_halo_->SurfaceDependentPoints()};
+  if (UsesMultirate())
+    for (auto &by_block:rhs_points_by_block_) by_block.assign(nblocks,{});
   std::vector<bool> covered(npoints,false);
   std::vector<int> dependent;
   for (int batch=0;batch<4;++batch) {
@@ -206,6 +213,10 @@ void Z4cHyperboloidal::BuildStagePlans() {
       const auto c=(*batches[batch])[i];const int p=lookup[index(c.m,c.k,c.j,c.i)];
       if (p<0 || covered[p]) throw std::logic_error("RHS batches overlap or leave evolved state");
       covered[p]=true;host(i)=p;
+      if (UsesMultirate()) {
+        rhs_points_by_block_[batch][c.m].push_back(p);
+        if (batch!=0)rhs_points_by_block_[static_cast<int>(RHSSubset::Dependent)][c.m].push_back(p);
+      }
       if (batch!=0)dependent.push_back(p);
     }
     Kokkos::deep_copy(rhs_points_[batch],host);
@@ -332,11 +343,13 @@ void Z4cHyperboloidal::InitializeReference() {
 
 void Z4cHyperboloidal::FormResidual() {
   auto list=points.d_view; auto state=u0; auto ref=reference;
+  const auto active=active_blocks;
   auto map=geometry; auto output=residual;
   const auto weight=parameters.residual_weight;
   Kokkos::parallel_for("hyperboloidal owned residual",Kokkos::RangePolicy<>(0,npoints),
     KOKKOS_LAMBDA(int p) {
-      const auto c=list(p); const auto &x=map(p).x;
+      const auto c=list(p); if(active.extent(0) && !active(c.m))return;
+      const auto &x=map(p).x;
       const Real r2=weight.Value(x);
       for (int f=0;f<nvar;++f) {
         output(c.m,f,c.k,c.j,c.i)=Fields::Independent(f)
@@ -349,10 +362,12 @@ void Z4cHyperboloidal::EnforceAlgebraicConstraints() {
   InvalidateDiagnostics();
   auto list=points.d_view; auto state=u0;
   auto surf=surface_points.d_view; auto edge=s0;
+  const auto active=active_blocks;const auto owners=face_blocks.d_view;
   int bad_bulk=0,bad_surface=0;
   Kokkos::parallel_reduce("hyperboloidal bulk algebraic closure",
     Kokkos::RangePolicy<>(0,npoints),KOKKOS_LAMBDA(int p,int &bad) {
-      const auto c=list(p); CartesianChartJets jets{};
+      const auto c=list(p); if(active.extent(0) && !active(c.m))return;
+      CartesianChartJets jets{};
       for (int f=0;f<nvar;++f) jets[f].f=state(c.m,f,c.k,c.j,c.i);
       if (!TryExpandCartesianChart(jets)) {++bad; return;}
       state(c.m,6,c.k,c.j,c.i)=jets[6].f;
@@ -360,7 +375,8 @@ void Z4cHyperboloidal::EnforceAlgebraicConstraints() {
     },bad_bulk);
   Kokkos::parallel_reduce("hyperboloidal scri algebraic closure",
     Kokkos::RangePolicy<>(0,nsurface_points),KOKKOS_LAMBDA(int p,int &bad) {
-      const auto c=surf(p); CartesianChartJets jets{};
+      const auto c=surf(p); if(active.extent(0) && !active(owners(c.face)))return;
+      CartesianChartJets jets{};
       for (int f=0;f<nvar;++f) jets[f].f=edge(c.face,f,c.k,c.j);
       if (!TryExpandCartesianChart(jets)) {++bad; return;}
       edge(c.face,6,c.k,c.j)=jets[6].f;

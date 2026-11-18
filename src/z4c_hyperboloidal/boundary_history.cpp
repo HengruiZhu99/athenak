@@ -17,6 +17,7 @@ std::array<Real,20> SurfaceExchange::MeasureHistory() {
   auto kernel=BindKernel();
   if(correction_jets_ready_)kernel.correction_jets=correction_jets_;
   const auto rhs=p.s_rhs;const auto owners=p.face_blocks.d_view;const auto bulk=p.u0;const auto edge=p.s0;
+  const auto active=p.active_blocks;
   const int n=p.n[0],origin=p.origin;
   if(history_values_.extent(0)!=static_cast<std::size_t>(p.nsurface_points))
     Kokkos::realloc(history_values_,p.nsurface_points,columns);
@@ -24,6 +25,7 @@ std::array<Real,20> SurfaceExchange::MeasureHistory() {
   Kokkos::deep_copy(measured,0.0);
   Kokkos::parallel_for("scri history stage diagnostics",Kokkos::RangePolicy<>(0,p.nsurface_points),
     KOKKOS_LAMBDA(int q) {
+      if(active.extent(0) && !active(owners(points(q).face)))return;
       auto j=samples(q);const auto map=maps(q);const auto c=points(q);
       if(!SphericalPolicy::Restore(map.x,j,refs(q))) {
         measured(q,0)=NAN;return;
@@ -78,9 +80,13 @@ std::array<Real,20> SurfaceExchange::MeasureHistory() {
       for(int f=0;f<Fields::count;++f)measured(q,19)=fmax(measured(q,19),fabs(rhs(c.face,f,c.k,c.j)));
     });
   const auto host=Kokkos::create_mirror_view_and_copy(HostMemSpace(),measured);
+  const auto host_active=Kokkos::create_mirror_view_and_copy(HostMemSpace(),active);
   std::array<Real,columns> maxima{};int invalid=0,count=p.nsurface_points;
-  for(int q=0;q<count;++q)for(int c=0;c<columns;++c) {
-    invalid+=!std::isfinite(host(q,c));maxima[c]=std::max(maxima[c],host(q,c));
+  for(int q=0;q<count;++q) {
+    if(host_active.extent(0) && !host_active(p.face_blocks.h_view(p.surface_points.h_view(q).face)))continue;
+    for(int c=0;c<columns;++c) {
+      invalid+=!std::isfinite(host(q,c));maxima[c]=std::max(maxima[c],host(q,c));
+    }
   }
   if(invalid)throw std::runtime_error("Nonfinite scri history observation");
   maxima[0]=max_compatibility_;maxima[1]=max_clock_;

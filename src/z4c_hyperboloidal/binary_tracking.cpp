@@ -24,7 +24,7 @@ void Z4cHyperboloidal::RefineBinaryChi() {
   for(int m=0;m<nblocks;++m) {
     const auto map=pmy_pack->pmb->mb_map.h_view(m);
     Real far2=0;for(int a=0;a<3;++a)far2+=std::pow(std::max(std::abs(map.lo[a]),std::abs(map.hi[a])),2);
-    const int gid=pmy_pack->gids+m,level=mesh.lloc_eachmb[gid].level-mesh.root_level;
+    const int gid=pmy_pack->GlobalId(m),level=mesh.lloc_eachmb[gid].level-mesh.root_level;
     if(map.chart_id!=0 || far2>radius*radius)flags.h_view(gid)=0;
     else {
       if(level>=cap && flags.h_view(gid)>0)flags.h_view(gid)=0;

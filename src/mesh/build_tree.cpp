@@ -289,6 +289,7 @@ void Mesh::BuildTreeFromScratch(ParameterInput *pin) {
   // TODO(@user): implement variable cost per MeshBlock as needed
   for (int i=0; i<nmb_total; i++) {cost_eachmb[i] = 1.0;}
   LoadBalance(cost_eachmb, rank_eachmb, gids_eachrank, nmb_eachrank, nmb_total);
+  ConfigureStaticOwnership(pin);
 
   // create MeshBlockPack for this rank
   int mbp_gids = gids_eachrank[global_variable::my_rank];
@@ -296,6 +297,10 @@ void Mesh::BuildTreeFromScratch(ParameterInput *pin) {
   nmb_thisrank = nmb_eachrank[global_variable::my_rank];
 
   pmb_pack = new MeshBlockPack(this, mbp_gids, mbp_gide);
+  std::vector<int> local_ids;
+  for (int gid=0;gid<nmb_total;++gid)
+    if (rank_eachmb[gid]==global_variable::my_rank) local_ids.push_back(gid);
+  pmb_pack->SetBlockIds(std::move(local_ids));
   nmb_packs_thisrank = 1;
   pmb_pack->AddMeshBlocks(pin);
   pmb_pack->pmb->SetNeighbors(ptree, rank_eachmb);
@@ -527,6 +532,7 @@ void Mesh::BuildTreeFromRestart(ParameterInput *pin, IOWrapper &resfile,
 #endif
 
   LoadBalance(cost_eachmb, rank_eachmb, gids_eachrank, nmb_eachrank, nmb_total);
+  ConfigureStaticOwnership(pin);
 
   // create MeshBlockPack for this rank
   int mbp_gids = gids_eachrank[global_variable::my_rank];
@@ -534,6 +540,10 @@ void Mesh::BuildTreeFromRestart(ParameterInput *pin, IOWrapper &resfile,
   nmb_thisrank = nmb_eachrank[global_variable::my_rank];
 
   pmb_pack = new MeshBlockPack(this, mbp_gids, mbp_gide);
+  std::vector<int> local_ids;
+  for (int gid=0;gid<nmb_total;++gid)
+    if (rank_eachmb[gid]==global_variable::my_rank) local_ids.push_back(gid);
+  pmb_pack->SetBlockIds(std::move(local_ids));
   pmb_pack->AddMeshBlocks(pin);
   pmb_pack->pmb->SetNeighbors(ptree, rank_eachmb);
 

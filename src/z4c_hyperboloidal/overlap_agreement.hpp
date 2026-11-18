@@ -2,6 +2,9 @@
 #ifndef Z4C_HYPERBOLOIDAL_OVERLAP_AGREEMENT_HPP_
 #define Z4C_HYPERBOLOIDAL_OVERLAP_AGREEMENT_HPP_
 #include <array>
+#include <map>
+#include <functional>
+#include <set>
 #include "bvals/mapped_exchange.hpp"
 #include "z4c_hyperboloidal/mapped_halo.hpp"
 
@@ -11,6 +14,13 @@ struct AgreementParameters {
   Real kappa=1, inner=0;
   Real taper_width=0.015;
 };
+
+// Stream the same constructed discrepancy stencils used by Rebuild. A mesh audit
+// can visit them without allocating field storage or all transpose entries.
+using AgreementStencilVisitor=std::function<void(const std::vector<WeightedDonor>&,
+    const bvals::DonorPoint&,Real taper,Real radius,bool cartesian)>;
+std::array<Real,6> VisitAgreementStencils(const Mesh &,const NativeDonorSelector &,
+    const AgreementParameters &,const AgreementStencilVisitor &);
 
 // Rows are evaluated identically on every rank owning a transpose recipient.
 // Only sparse donor values travel. Each recipient has a precomputed gather of
@@ -25,7 +35,11 @@ class OverlapAgreementPlan {
   TaskStatus Receive() {return exchange_.Receive();}
   TaskStatus ClearSend() {return exchange_.ClearSend();}
   TaskStatus ClearRecv() {return exchange_.ClearRecv();}
-  void Evaluate();
+  void Evaluate(bvals::MappedExchange::ConstValues values={});
+  const std::vector<std::pair<int,int>> &DependencyEdges() const {return dependency_edges_;}
+  using DonorsByRecipient=std::map<int,std::set<bvals::DonorPoint>>;
+  const DonorsByRecipient &MultirateDonors() const { return multirate_donors_; }
+  const std::vector<int> &AgreementBlocks() const {return agreement_blocks_;}
   void AddRHS(const Z4cHyperboloidal &module) const;
   std::array<Real,8> History() const;
   Real RateBound() const {return rate_bound_;}
@@ -33,6 +47,9 @@ class OverlapAgreementPlan {
 
  private:
   friend struct OverlapAgreementAudit;
+  std::vector<std::pair<int,int>> dependency_edges_;
+  std::vector<int> agreement_blocks_;
+  DonorsByRecipient multirate_donors_;
   struct Row {int begin,end;Real weight;bool owned;};
   struct Entry {int ordinal;Real coefficient;};
   struct Target {HaloPoint point;int begin,end;Real chi_weight;};

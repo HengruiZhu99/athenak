@@ -19,6 +19,7 @@
 #include <utility>   // pair
 #include <climits>
 #include <stdexcept>
+#include <sstream>
 
 #include "athena.hpp"
 #include "globals.hpp"
@@ -92,6 +93,15 @@ MeshRefinement::MeshRefinement(Mesh *pm, ParameterInput *pin) :
   refine_flag.template sync<DevExeSpace>();
   fc_amr_repair.template modify<HostMemSpace>();
   fc_amr_repair.template sync<DevExeSpace>();
+
+  if (pm->adaptive && pin->DoesParameterExist("multirate","refinement_ages")) {
+    std::istringstream ages(pin->GetString("multirate","refinement_ages"));
+    for (int gid=0;gid<pm->nmb_total;++gid) {
+      if ((gid && ages.get()!=',') || !(ages>>ncyc_since_ref(gid)) || ncyc_since_ref(gid)<0)
+        throw std::invalid_argument("Invalid adaptive multirate restart refinement ages");
+    }
+    if (!(ages>>std::ws).eof()) throw std::invalid_argument("Extra restart refinement ages");
+  }
 
   // initialize interpolation weights for prolongation and restriction
   InitInterpWghts();
@@ -222,6 +232,34 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
   // then update mesh tree if MeshBlock anywhere (on any rank) is flagged for refinement
   // indicated by the refine_flag[m] value being true (1) for any m.
   int nnew = 0, ndel = 0;
+  const bool multirate = phyper && phyper->UsesMultirate();
+  bool staged = false;
+  if (multirate) {
+    // Native restriction/prolongation uses an ordered, contiguous old layout.
+    // Stage that layout only for a potential topology change, after all ranks
+    // have agreed on the flags and while the old tree is still intact.
+    int refine = 0, derefine = 0;
+    for (int gid=0; gid<pmy_mesh->nmb_total; ++gid) {
+      refine += refine_flag.h_view(gid)>0;
+      derefine += refine_flag.h_view(gid)<0;
+    }
+    if (refine || derefine>=8) {
+      const int total=pmy_mesh->nmb_total, ranks=global_variable::nranks;
+      std::vector<float> costs(total,1);
+      std::vector<int> owners(total), first(ranks), counts(ranks);
+      pmy_mesh->LoadBalance(costs.data(),owners.data(),first.data(),counts.data(),total);
+      staged=!std::equal(owners.begin(),owners.end(),pmy_mesh->rank_eachmb);
+      if (staged) {
+        pmy_mesh->RedistributeStaticBlocks(owners);
+        pdriver->InitBoundaryValuesAndPrimitives(pmy_mesh);
+      }
+    } else {
+      // Flag collection below uses contiguous ownership; there is no admissible
+      // operation in this case and no reason to move any accepted state.
+      SaveMultirateRefinementAges(pin);
+      return;
+    }
+  }
   UpdateMeshBlockTree(nnew, ndel);
 
   // Refine/derefine mesh and evolved data, set boundary conditions/timestep on new mesh
@@ -267,6 +305,15 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
     nmb_created += nnew;
     nmb_deleted += ndel;
   }
+  if (multirate) {
+    if (staged || nnew || ndel) {
+      phyper->InitializeMultirate(pdriver, true);
+      if (global_variable::my_rank==0)
+        std::cout<<"MULTIRATE_REGRID cycle="<<pmy_mesh->ncycle<<" created="<<nnew
+                 <<" deleted="<<ndel<<" blocks="<<pmy_mesh->nmb_total<<"\n";
+    }
+    SaveMultirateRefinementAges(pin);
+  }
   return;
 }
 
@@ -275,6 +322,13 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
 //! \brief Checks for refinement/de-refinement and sets refine_flag(m) for all
 //! MeshBlocks within a MeshBlockPack.  Increments number of cycles since last refinement
 //! counter for all MeshBlocks
+
+void MeshRefinement::SaveMultirateRefinementAges(ParameterInput *pin) const {
+  std::ostringstream ages;
+  for (int gid=0;gid<pmy_mesh->nmb_total;++gid)
+    ages<<(gid ? "," : "")<<ncyc_since_ref(gid);
+  pin->SetString("multirate","refinement_ages",ages.str());
+}
 
 void MeshRefinement::CheckForRefinement(MeshBlockPack* pmbp) {
   // reallocate and zero refine_flag in host space and sync with device
@@ -326,25 +380,30 @@ void MeshRefinement::CheckForRefinement(MeshBlockPack* pmbp) {
 
   // Turn off (on host) refine/derefine flag for MeshBlocks at max/root level
   int nmb = pmbp->nmb_thispack;
-  int mbs = pmy_mesh->gids_eachrank[global_variable::my_rank];
   for (int m=0; m<nmb; ++m) {
-    if (pmy_mesh->lloc_eachmb[m+mbs].level == pmy_mesh->max_level) {
-      if (refine_flag.h_view(m+mbs) > 0) {refine_flag.h_view(m+mbs) = 0;}
+    if (pmy_mesh->lloc_eachmb[pmbp->GlobalId(m)].level == pmy_mesh->max_level) {
+      if (refine_flag.h_view(pmbp->GlobalId(m)) > 0) {refine_flag.h_view(pmbp->GlobalId(m)) = 0;}
     }
-    if (pmy_mesh->lloc_eachmb[m+mbs].level == pmy_mesh->root_level) {
-      if (refine_flag.h_view(m+mbs) < 0) {refine_flag.h_view(m+mbs) = 0;}
+    if (pmy_mesh->lloc_eachmb[pmbp->GlobalId(m)].level == pmy_mesh->root_level) {
+      if (refine_flag.h_view(pmbp->GlobalId(m)) < 0) {refine_flag.h_view(pmbp->GlobalId(m)) = 0;}
     }
   }
   // Turn off (on host) refine/derefine flag for any MB that has been recently refined
   for (int m=0; m<nmb; ++m) {
-    if (ncyc_since_ref(m+mbs) < refinement_interval) {refine_flag.h_view(m+mbs) = 0;}
+    if (ncyc_since_ref(pmbp->GlobalId(m)) < refinement_interval) {refine_flag.h_view(pmbp->GlobalId(m)) = 0;}
   }
 
 #if MPI_PARALLEL_ENABLED
   // Pass (host) refine_flag between all ranks
+  if (pmbp->pz4c_hyperboloidal && pmbp->pz4c_hyperboloidal->UsesMultirate()) {
+    // Only the owner writes each GID, including negative derefinement flags.
+    MPI_Allreduce(MPI_IN_PLACE,refine_flag.h_view.data(),pmy_mesh->nmb_total,
+                  MPI_INT,MPI_SUM,MPI_COMM_WORLD);
+  } else {
     MPI_Allgatherv(MPI_IN_PLACE, pmy_mesh->nmb_eachrank[global_variable::my_rank],
                    MPI_INT, refine_flag.h_view.data(), pmy_mesh->nmb_eachrank,
                    pmy_mesh->gids_eachrank, MPI_INT, MPI_COMM_WORLD);
+  }
 #endif
   // sync host array with device
   refine_flag.template modify<HostMemSpace>();
@@ -513,6 +572,8 @@ void MeshRefinement::UpdateMeshBlockTree(int &nnew, int &ndel) {
 //! Boundary values and primitives are set in calling function: AdaptiveMeshRefinement()
 
 void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, int ndel) {
+  if (!pmy_mesh->pmb_pack->Contiguous())
+    throw std::logic_error("Adaptive topology changes require contiguous ownership");
   Mesh* pm = pmy_mesh;
   int old_nmb = pm->nmb_total;
   int new_nmb = old_nmb + nnew - ndel;
@@ -754,9 +815,10 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
   pm->nmb_total = new_nmb_total;
   pm->nmb_thisrank = pm->nmb_eachrank[global_variable::my_rank];
 
-  pm->pmb_pack->gids = pm->gids_eachrank[global_variable::my_rank];
-  pm->pmb_pack->gide = pm->pmb_pack->gids + pm->nmb_eachrank[global_variable::my_rank]-1;
-  pm->pmb_pack->nmb_thispack = pm->pmb_pack->gide - pm->pmb_pack->gids + 1;
+  std::vector<int> local_ids(pm->nmb_eachrank[global_variable::my_rank]);
+  for (std::size_t m=0;m<local_ids.size();++m)
+    local_ids[m]=pm->gids_eachrank[global_variable::my_rank]+static_cast<int>(m);
+  pm->pmb_pack->SetBlockIds(std::move(local_ids));
 
   // Delete old then allocate new MeshBlocks and Coordinates (latter includes masks in GR)
   delete (pm->pmb_pack->pmb);

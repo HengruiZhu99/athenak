@@ -140,7 +140,8 @@ std::string Identity(const Z4cHyperboloidal &p) {
   std::ostringstream s;
   s.imbue(std::locale::classic());
   s << "native-hyperboloidal-v1;fields=" << Fields::count << ";chi-record=8"
-    << ";formulation=n12-configured-constant-shift-v1;integrator=rk4_classical"
+    << ";formulation=n12-configured-constant-shift-v1;integrator="
+    << (p.UsesMultirate()?"mrgark4":"rk4_classical")
     << ";real=" << sizeof(Real) << ";n=" << p.n[0] << ',' << p.n[1] << ',' << p.n[2]
     << ";overlap=" << p.overlap << ";nghost=" << p.nghost << std::hexfloat;
 #define HYP_ID(value) s << ";" #value "=" << value
@@ -173,11 +174,14 @@ std::string Identity(const Z4cHyperboloidal &p) {
     HYP_ID(g.residual_weight.inner); HYP_ID(g.residual_weight.outer);
   }
 #undef HYP_ID
+  if(p.UsesMultirate())s<<';'<<p.MultirateIdentity();
   if(!p.initial_data_identity.empty())s<<";initial-data="<<p.initial_data_identity;
   return s.str();
 }
 
 IOWrapperSizeT WriteMetadata(IOWrapper &file, const Mesh &mesh, bool per_rank) {
+  RequireAll(!per_rank || mesh.pmb_pack->Contiguous(),
+      "Noncontiguous ownership requires a shared restart file (single_file_per_rank=false)");
   const auto &p=*mesh.pmb_pack->pz4c_hyperboloidal;
   const auto identity=Identity(p);
   const std::array<std::uint64_t,header_words> header={magic,version,identity.size(),
@@ -195,6 +199,8 @@ IOWrapperSizeT WriteMetadata(IOWrapper &file, const Mesh &mesh, bool per_rank) {
 }
 
 void ReadMetadata(IOWrapper &file, const Mesh &mesh, bool per_rank) {
+  RequireAll(!per_rank || mesh.pmb_pack->Contiguous(),
+      "Noncontiguous ownership requires a shared restart file");
   std::array<std::uint64_t,header_words> header{};
   ReadHeaderBytes(file,header.data(),sizeof(header),per_rank);
   RequireAll(header[0]==magic && header[1]==version && header[2]<=16384,
@@ -309,7 +315,10 @@ void WriteRecords(IOWrapper &file, const Mesh &mesh, const HostArray2D<Real> &ho
   bool good=true;
   for (int m=0;m<maximum;++m) {
     if (m>=mesh.nmb_thisrank) continue;
-    const auto at=Add(offset,Multiply(stride,m));
+    // Generic caller offsets start at its historical first-GID record.
+    const auto base=per_rank?offset:
+        offset-Multiply(stride,mesh.gids_eachrank[global_variable::my_rank]);
+    const auto at=Add(base,Multiply(stride,per_rank?m:mesh.pmb_pack->GlobalId(m)));
     const auto written=m<minimum ?
         file.Write_any_type_at_all(&host(m,0),count,at,"Real",per_rank) :
         file.Write_any_type_at(&host(m,0),count,at,"Real",per_rank);
@@ -331,7 +340,10 @@ void ReadRecords(IOWrapper &file, Mesh &mesh, IOWrapperSizeT offset,
   bool good=true;
   for (int m=0;m<maximum;++m) {
     if (m>=mesh.nmb_thisrank) continue;
-    const auto at=Add(offset,Multiply(stride,m));
+    // Generic caller offsets start at its historical first-GID record.
+    const auto base=per_rank?offset:
+        offset-Multiply(stride,mesh.gids_eachrank[global_variable::my_rank]);
+    const auto at=Add(base,Multiply(stride,per_rank?m:mesh.pmb_pack->GlobalId(m)));
     const auto read=m<minimum ? file.Read_Reals_at_all(&host(m,0),count,at,per_rank) :
                                file.Read_Reals_at(&host(m,0),count,at,per_rank);
     good=(read==count) && good;

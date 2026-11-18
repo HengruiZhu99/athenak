@@ -1,5 +1,6 @@
 // Copyright(C) 2026 AthenaK contributors. BSD-3-Clause; see LICENSE.
 #include "z4c_hyperboloidal/remesh.hpp"
+#include "z4c_hyperboloidal/restart.hpp"
 
 #include <algorithm>
 #include <array>
@@ -460,6 +461,13 @@ void Z4cHyperboloidal::PrepareRemesh(MeshRefinement &refinement) {
   RequireAll(initialized_&&!remesh_,"remesh requires one initialized accepted state");
   remesh_=std::make_unique<RemeshState>();
   remesh_->Prepare(*pmy_pack,*this,refinement);
+}
+void Z4cHyperboloidal::RebuildAfterRedistribution(const HostArray2D<Real> &records) {
+  ClearActiveBlocks();
+  ResetMeshStorage();
+  restart::Unpack(*this,records);
+  initialized_=true;
+  BuildStagePlans();
 }
 void Z4cHyperboloidal::FinishRemesh(MeshRefinement &) {
   RequireAll(bool(remesh_),"remesh finish has no prepared state");

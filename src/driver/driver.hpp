@@ -78,6 +78,8 @@ class Driver {
   void Finalize(Mesh *pmesh, ParameterInput *pin, Outputs *pout);
   void InitBoundaryValuesAndPrimitives(Mesh *pm);
   bool UsesClassicalRK4() const {return integrator=="rk4_classical";}
+  bool UsesMultirate() const {return integrator=="mrgark4";}
+  bool UsesSchemeARK() const {return UsesClassicalRK4() || UsesMultirate();}
 
  private:
   Kokkos::Timer run_time_;      // generalized timer for cpu/gpu/etc
@@ -86,7 +88,7 @@ class Driver {
   float lb_efficiency_;         // measure of how efficient was load balancing
   void ResetSTSController();
   void ValidateSTSConfiguration(Mesh *pm);
-  void ValidateClassicalRK4Configuration(Mesh *pm);
+  void ValidateSchemeARKConfiguration(Mesh *pm);
   void RefreshSTSCycleState(Mesh *pm);
   void BeginSTSSweep(Mesh *pm, STSSweep sweep);
   void SetSTSStage(int stage);
