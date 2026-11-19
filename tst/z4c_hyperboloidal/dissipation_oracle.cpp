@@ -5,6 +5,8 @@
 #include <cmath>
 #include <iomanip>
 #include <iostream>
+#include <limits>
+#include <map>
 #include <memory>
 #include <stdexcept>
 #include <vector>
@@ -140,8 +142,9 @@ int main(int argc,char **argv) {
           state(m,f,k,j,i)=std::sin(.17*i+.39*j+.23*k+.47*f)+.001*m;
       Kokkos::deep_copy(module.u0,state);
       z4c::hyperboloidal::LegacyKO old(grid,module.u0);
-      auto offsets=Kokkos::create_mirror_view_and_copy(HostMemSpace(),kernel.offsets);
-      auto lines=Kokkos::create_mirror_view_and_copy(HostMemSpace(),kernel.lines);
+      auto support = Kokkos::create_mirror_view_and_copy(HostMemSpace(), kernel.support);
+      auto coefficients =
+          Kokkos::create_mirror_view_and_copy(HostMemSpace(), kernel.coefficients);
       auto volumes=Kokkos::create_mirror_view_and_copy(HostMemSpace(),kernel.volumes);
       std::uint64_t terms=0,comparisons=0,bitwise=0;
       double error=0;
@@ -154,26 +157,35 @@ int main(int argc,char **argv) {
       for (int p=0;p<module.npoints;++p) {
         const auto c=module.points.h_view(p);const int origin=module.origin;
         const int op=grid.inverse[grid.Index(c.m,c.i-origin,c.j-origin,c.k-origin)];
-        Require(offsets(p+1)-offsets(p)==old.ko_offsets_(op+1)-old.ko_offsets_(op),
-                "KO term count changed");
         Require(volumes(p)==old.volumes_(op),"KO volume changed");
-        for (int t=offsets(p);t<offsets(p+1);++t) {
-          const auto line=lines(t);const auto reference=old.ko_terms_(old.ko_offsets_(op)+t-offsets(p));
-          Require(nh::PhysicalKO8::Coefficient(line.target)==reference.target_coefficient,
-                  "KO transpose coefficient changed");
-          if (line.weight!=reference.weight) {
-            std::cerr<<std::setprecision(17)<<"KO weight block="<<c.m<<" point="<<p
-                <<" axis="<<line.axis<<" target="<<line.target<<" native="
-                <<line.weight<<" old="<<reference.weight<<'\n';
-            throw std::runtime_error("KO geometry weight changed");
-          }
-          for (int a=0;a<5;++a) {
-            int index[3]={c.i-origin,c.j-origin,c.k-origin};index[line.axis]+=a-line.target;
-            Require(grid.Index(c.m,index[0],index[1],index[2])==reference.point[a],
-                    "KO line donor/order changed");
+        const int center = grid.Index(c.m, c.i - origin, c.j - origin, c.k - origin);
+        std::map<int, Real> expected;
+        for (int t = old.ko_offsets_(op); t < old.ko_offsets_(op + 1); ++t) {
+          const auto ref = old.ko_terms_(t);
+          for (int a = 0; a < nh::PhysicalKO8::points; ++a) {
+            if (ref.point[a] == center) continue;
+            const Real product = ref.target_coefficient * nh::PhysicalKO8::Coefficient(a);
+            expected[ref.point[a]] -= product * ref.weight * grid.n /
+                                      (nh::PhysicalKO8::normalization * volumes(p));
           }
           ++terms;
         }
+        for (int axis = 0; axis < 3; ++axis)
+          for (int k = 0; k < 8; ++k) {
+            if (!(support(p) & (1u << (8 * axis + k)))) continue;
+            int at[3] = {c.i - origin, c.j - origin, c.k - origin};
+            at[axis] += k < 4 ? k - 4 : k - 3;
+            const int donor = grid.Index(c.m, at[0], at[1], at[2]);
+            const auto it = expected.find(donor);
+            Require(it != expected.end(), "KO stencil added a donor");
+            const Real actual = coefficients(8 * axis + k, p);
+            Require(std::abs(actual - it->second) <=
+                        64 * std::numeric_limits<Real>::epsilon() *
+                            std::max(Real(1), std::abs(it->second)),
+                    "KO stencil coefficient changed");
+            expected.erase(it);
+          }
+        Require(expected.empty(), "KO stencil omitted a donor");
         for (int f=0;f<31;++f) {
           const double expected=old.Evaluate(op,f),actual=output(p,f);
           Require(std::isfinite(expected)&&std::isfinite(actual),"nonfinite KO value");

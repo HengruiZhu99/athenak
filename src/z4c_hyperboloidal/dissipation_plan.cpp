@@ -26,13 +26,15 @@ Real Volume(const mapped::Point &point, int n) {
 
 void DissipationPlan::Rebuild(const MeshBlockPack &pack,
                               const Z4cHyperboloidal &module) {
-  n_=module.n[0];
-  const int n=n_,origin=module.origin;
+  const int n = module.n[0], origin = module.origin;
   const auto &maps=pack.pmb->mb_map.h_view;
+  struct KOLine {
+    int axis, target;
+    Real weight;
+  };
   std::vector<KOLine> lines;
-  Kokkos::realloc(offsets_,module.npoints+1);
+  std::vector<int> offsets(module.npoints + 1);
   Kokkos::realloc(volumes_,module.npoints);
-  auto offsets=Kokkos::create_mirror_view(offsets_);
   auto volumes=Kokkos::create_mirror_view(volumes_);
   const auto geometry=Kokkos::create_mirror_view_and_copy(HostMemSpace(),module.geometry);
   const auto index_of=[&](const int m,const int i,const int j,const int k) {
@@ -50,7 +52,7 @@ void DissipationPlan::Rebuild(const MeshBlockPack &pack,
     // Refinement introduces interior radial starts, which retain full weight.
   }
   for (int p=0;p<module.npoints;++p) {
-    offsets(p)=lines.size();
+    offsets[p] = lines.size();
     const auto cell=module.points.h_view(p);
     const auto map=maps(cell.m);
     const auto bounds=module.evolved_bounds.h_view(cell.m);
@@ -120,12 +122,32 @@ void DissipationPlan::Rebuild(const MeshBlockPack &pack,
       lines.push_back(line);
     }
   }
-  offsets(module.npoints)=lines.size();
-  Kokkos::realloc(lines_,lines.size());
-  auto host_lines=Kokkos::create_mirror_view(lines_);
-  for (size_t t=0;t<lines.size();++t) host_lines(t)=lines[t];
-  Kokkos::deep_copy(offsets_,offsets);
+  offsets[module.npoints] = lines.size();
+  // Assemble the row of the weighted transpose-times-difference operator once.
+  // Its zero row sum lets the kernel difference every donor against the center.
+  Kokkos::realloc(support_, module.npoints);
+  Kokkos::realloc(coefficients_, 24, module.npoints);
+  auto support = Kokkos::create_mirror_view(support_);
+  auto coefficients = Kokkos::create_mirror_view(coefficients_);
+  Kokkos::deep_copy(coefficients, Real(0));
+  for (int p = 0; p < module.npoints; ++p) {
+    unsigned mask = 0;
+    for (int t = offsets[p]; t < offsets[p + 1]; ++t) {
+      const auto line = lines[t];
+      const Real factor = -n * PhysicalKO8::Coefficient(line.target) * line.weight /
+                          (PhysicalKO8::normalization * volumes(p));
+      for (int a = 0; a < PhysicalKO8::points; ++a) {
+        const int delta = a - line.target;
+        if (delta == 0) continue;
+        const int k = line.axis * 8 + (delta < 0 ? delta + 4 : delta + 3);
+        mask |= 1u << k;
+        coefficients(k, p) += factor * PhysicalKO8::Coefficient(a);
+      }
+    }
+    support(p) = mask;
+  }
+  Kokkos::deep_copy(support_, support);
+  Kokkos::deep_copy(coefficients_, coefficients);
   Kokkos::deep_copy(volumes_,volumes);
-  Kokkos::deep_copy(lines_,host_lines);
 }
 }  // namespace z4c_hyperboloidal

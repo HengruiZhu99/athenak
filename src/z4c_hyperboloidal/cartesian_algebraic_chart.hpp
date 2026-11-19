@@ -25,14 +25,31 @@ KOKKOS_INLINE_FUNCTION T ChartQuotient(const T& numerator,const T& denominator) 
   else return numerator/denominator;
 }
 template <class J>
-KOKKOS_INLINE_FUNCTION bool TryExpandCartesianChart(std::array<J,31>&v) {
-  const J a=v[1]+J(1),b=v[2],c=v[3],d=v[4]+J(1),e=v[5];
-  const J minor=a*d-b*b;
-  if(!(ChartValue(a)>0 && ChartValue(minor)>0))return false;
-  const J f=ChartQuotient(J(1)-J(2)*b*c*e+a*e*e+d*c*c,minor);
-  v[6]=f-J(1);
-  v[12]=ChartQuotient(J(0)-(d*f-e*e)*v[7]-J(2)*(c*e-b*f)*v[8]
-      -J(2)*(b*e-c*d)*v[9]-(a*f-c*c)*v[10]-J(2)*(b*c-a*e)*v[11],minor);
+struct CartesianChartMetric {
+  J a, b, c, d, e, minor, f;
+
+  KOKKOS_INLINE_FUNCTION bool Complete() {
+    minor = a * d - b * b;
+    if (!(ChartValue(a) > 0 && ChartValue(minor) > 0)) return false;
+    f = ChartQuotient(J(1) - J(2) * b * c * e + a * e * e + d * c * c, minor);
+    return true;
+  }
+
+  KOKKOS_INLINE_FUNCTION J TraceFreeZZ(const J &xx, const J &xy, const J &xz, const J &yy,
+                                       const J &yz) const {
+    return ChartQuotient(J(0) - (d * f - e * e) * xx - J(2) * (c * e - b * f) * xy -
+                             J(2) * (b * e - c * d) * xz - (a * f - c * c) * yy -
+                             J(2) * (b * c - a * e) * yz,
+                         minor);
+  }
+};
+
+template <class J>
+KOKKOS_INLINE_FUNCTION bool TryExpandCartesianChart(std::array<J, 31> &v) {
+  CartesianChartMetric<J> metric{v[1] + J(1), v[2], v[3], v[4] + J(1), v[5], {}, {}};
+  if (!metric.Complete()) return false;
+  v[6] = metric.f - J(1);
+  v[12] = metric.TraceFreeZZ(v[7], v[8], v[9], v[10], v[11]);
   return true;
 }
 inline void ExpandCartesianChart(CartesianChartJets&v){

@@ -212,6 +212,7 @@ void SurfaceExchange::Rebuild() {
   Kokkos::realloc(radial_jets_,radial_rows.size(),fields.size());
   Upload(face_spacing_,spacing);Upload(face_gap_,gap);
   Kokkos::realloc(sampled_,p.nsurface_points);
+  Kokkos::realloc(restored_, p.nsurface_points);
   Kokkos::realloc(normal_cases_,p.nsurface_points,4);
   Kokkos::realloc(metric_geometry_,p.nsurface_points);
   Kokkos::realloc(penrose_geometry_,p.nsurface_points);
@@ -370,6 +371,7 @@ TaskStatus SurfaceExchange::Solve() {
   CheckReady();
   correction_jets_ready_=false;
   auto &p=*module_;const auto samples=sampled_;const auto maps=p.surface_geometry;
+  const auto restored = restored_;
   const auto reference=p.surface_reference;const auto rows=rows_;
   const auto points=p.surface_points.d_view;const auto correction=correction_;
   const auto parameters=p.parameters;const auto source=p.boundary_source;
@@ -389,8 +391,10 @@ TaskStatus SurfaceExchange::Solve() {
       const auto u=SphericalPolicy::Physical(map.x,jets);
       if (!(u.chi.value>0 && u.alpha.value>0 && Kokkos::isfinite(u.chi.value)
             && Kokkos::isfinite(u.alpha.value)))return;
-      metric_geometry(point)=Geometry(u.metric);
-      penrose_geometry(point)=Geometry(PenroseMetric(u.metric,u.chi));
+      restored(point) = jets;
+      const auto metric = Geometry(u.metric);
+      metric_geometry(point) = metric;
+      penrose_geometry(point) = RescaleGeometry(u.metric, metric, u.chi);
     });
   const Real penalty=p.penalty;int invalid=0;
   auto case_policy=Kokkos::RangePolicy<>(0,4*p.nsurface_points);
@@ -403,8 +407,9 @@ TaskStatus SurfaceExchange::Solve() {
       const int point=task/4,which=task%4;
       if(active.extent(0) && !active(active_faces(active_points(point).face)))return;
       cases(point,which)=NormalCase{};
-      auto jets=samples(point);const auto map=maps(point);
-      if (!SphericalPolicy::Restore(map.x,jets,reference(point)))return;
+      if (!metric_geometry(point).valid || !penrose_geometry(point).valid) return;
+      auto jets = restored(point);
+      const auto map = maps(point);
       if (which>0)
         for (int a=0;a<3;++a)jets[21+which].d[a]+=map.x[a];
       const auto result=EvaluateScriPoint(map,rows(point).spacing,jets,
@@ -480,8 +485,13 @@ TaskStatus SurfaceExchange::Evaluate() {
   const auto active_points=module_->surface_points.d_view;
 
   CheckReady();
-  auto &p=*module_;const auto samples=sampled_;const auto maps=p.surface_geometry;
-  const auto reference=p.surface_reference;const auto rows=rows_;
+  auto &p = *module_;
+  const auto restored = restored_;
+  const auto maps = p.surface_geometry;
+  const auto rows=rows_;
+  const bool use_restored = correction_jets_ready_;
+  const auto samples = sampled_;
+  const auto reference = p.surface_reference;
   const auto points=p.surface_points.d_view;const auto rhs=p.s_rhs;
   const auto parameters=p.parameters;const auto source=p.boundary_source;
   const auto metric_geometry=metric_geometry_,penrose_geometry=penrose_geometry_;
@@ -492,8 +502,17 @@ TaskStatus SurfaceExchange::Evaluate() {
     Kokkos::RangePolicy<>(0,p.nsurface_points),
     KOKKOS_LAMBDA(int point,int &bad,Real &defect,Real &clock_error) {
       if(active.extent(0) && !active(active_faces(active_points(point).face)))return;
-      auto jets=samples(point);const auto map=maps(point);const auto c=points(point);
-      if (!SphericalPolicy::Restore(map.x,jets,reference(point))) {++bad;return;}
+      if (!metric_geometry(point).valid || !penrose_geometry(point).valid) {
+        ++bad;
+        return;
+      }
+      const auto map = maps(point);
+      const auto c = points(point);
+      auto jets = use_restored ? restored(point) : samples(point);
+      if (!use_restored && !SphericalPolicy::Restore(map.x, jets, reference(point))) {
+        ++bad;
+        return;
+      }
       for (int a=0;a<3;++a)
         jets[22+a]=jets[22+a]+kernel.Correction(c.face,c.j,c.k,map,a);
       const auto rate=EvaluateScriPoint(map,rows(point).spacing,jets,parameters,source,penalty,

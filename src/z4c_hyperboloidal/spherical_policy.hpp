@@ -43,9 +43,12 @@ struct SphericalPolicy {
     for(int t=0;t<6;++t){out[1+t]=r.metric[ti[t]][tj[t]];out[7+t]=r.a[ti[t]][tj[t]];}
     for(int a=0;a<3;++a)out[15+a]=r.lambda[a];
   }
-  KOKKOS_INLINE_FUNCTION static bool Restore(const Real*x,CartesianChartJets&j,const CartesianChartJets&ref,
-      const ResidualWeight &weight={}, const J *cached_weight=nullptr){
-    if(weight.Regular()) j[0]=ref[0]+(cached_weight ? *cached_weight : weight.At(x))*j[0];
+  KOKKOS_INLINE_FUNCTION static bool Restore(const Real *x, CartesianChartJets &j,
+                                             const CartesianChartJets &ref,
+                                             const ResidualWeight &weight = {},
+                                             const J *cached_weight = nullptr) {
+    if (weight.Regular())
+      j[0] = ref[0] + (cached_weight ? *cached_weight : weight.At(x)) * j[0];
     else {const J r2=Radius2(x);j[0]=(j[0]+ref[0]/r2)*r2;}
     for(int f=1;f<31;++f)j[f]=j[f]+ref[f];
     return TryExpandCartesianChart(j);

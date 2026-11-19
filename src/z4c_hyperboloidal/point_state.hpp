@@ -75,20 +75,23 @@ KOKKOS_INLINE_FUNCTION Real SecondDerivative(const Reader &q,int f,int a,int b,
 // Fourth-order centered jets plus the existing one-sided transport correction.
 // A radial endpoint reconstruction can supply an alternative logical jet to
 // CartesianJet without changing the point equations below.
-template<class Reader>
-KOKKOS_INLINE_FUNCTION mapped::Jet SampleResidualJet(const Reader &q,int f,
-    const mapped::Point &map,const Real inv_h[3],const Real beta[3],
-    bool need_second,Real &transport, bool affine = false) {
+template <class Reader>
+KOKKOS_INLINE_FUNCTION mapped::Jet SampleResidualJet(
+    const Reader &q, int f, const mapped::Point &map, const Real inv_h[3],
+    const Real beta[3], bool need_second, Real &transport, bool affine = false) {
   mapped::Jet logical(q(f));transport=0;
   for (int a=0;a<3;++a) {
     logical.d[a]=FirstDerivative(q,f,a,inv_h[a]);
     if (need_second) {
       for (int b = 0; b <= a; ++b)
-        logical.h[b][a] = logical.h[a][b] = SecondDerivative(q,f,a,b,inv_h);
+        logical.h[b][a] = logical.h[a][b] = SecondDerivative(q, f, a, b, inv_h);
     }
     Real b = 0;
-    if (affine) b = map.J[a][a] * beta[a];
-    else for (int i = 0; i < 3; ++i) b += map.J[a][i] * beta[i];
+    if (affine) {
+      b = map.J[a][a] * beta[a];
+    } else {
+      for (int i = 0; i < 3; ++i) b += map.J[a][i] * beta[i];
+    }
     const int sign=b>=0?1:-1;
     const Real vm=OffsetValue(q,f,a,-sign)-logical.f;
     const Real v1=OffsetValue(q,f,a,sign)-logical.f;
@@ -116,33 +119,50 @@ struct PointState {
   PointStatus status=PointStatus::success;
 };
 
+template <class Reader>
+KOKKOS_INLINE_FUNCTION void ApplyCompatibleLapse(
+    mapped::Jet &lapse, const Reader &q, const mapped::Point &map, const Real inv_h[3],
+    Real r, const HyperbolicShiftParameters<Real> &parameters) {
+  const Real w = SphericalPolicy::CompatibleWeight(r, parameters);
+  if (w > 0) {
+    Real composed = 0;
+    for (int k = -2; k <= 2; ++k)
+      if (k) {
+        const Real c = (k == 1 || k == -1) ? 2. * k / 3 : -k / 24.;
+        composed += inv_h[0] * c * FirstDerivative(q, 18, 0, inv_h[0], k);
+      }
+    Real inverse = 0;
+    for (int a = 0; a < 3; ++a) inverse += map.J[0][a] * map.x[a] / r;
+    const Real delta =
+        w * inverse * inverse * (composed - SecondDerivative(q, 18, 0, 0, inv_h));
+    for (int a = 0; a < 3; ++a)
+      for (int b = 0; b < 3; ++b) lapse.h[a][b] += delta * map.x[a] * map.x[b] / (r * r);
+  }
+}
+
 // Finish either centered or endpoint-reconstructed residual jets with the same
 // compatible lapse Hessian, reference restoration and algebraic constraints.
-template<class Reader>
-KOKKOS_INLINE_FUNCTION void RestorePointState(PointState &out,const Reader &q,
-    const mapped::Point &map,const Real inv_h[3],const CartesianChartJets &reference,
-    const HyperbolicShiftParameters<Real> &parameters,const mapped::Jet *lift=nullptr,
-    const mapped::Jet *cached_weight=nullptr) {
-  const Real r=SphericalPolicy::Radius(map.x);
-  if (!(r>=0) || (!parameters.residual_weight.Regular() && r==0) || !Kokkos::isfinite(r)) {out.status=PointStatus::invalid_input;return;}
-  const Real w=SphericalPolicy::CompatibleWeight(r,parameters);
-  if (w>0) {
-    Real composed=0;
-    for (int k=-2;k<=2;++k) if (k) {
-      const Real c=(k==1||k==-1)?2.*k/3:-k/24.;
-      composed+=inv_h[0]*c*FirstDerivative(q,18,0,inv_h[0],k);
-    }
-    Real inverse=0;for (int a=0;a<3;++a)inverse+=map.J[0][a]*map.x[a]/r;
-    const Real delta=w*inverse*inverse*(composed-SecondDerivative(q,18,0,0,inv_h));
-    for (int a=0;a<3;++a)for (int b=0;b<3;++b)
-      out.jets[18].h[a][b]+=delta*map.x[a]*map.x[b]/(r*r);
+template <class Reader>
+KOKKOS_INLINE_FUNCTION void RestorePointState(
+    PointState &out, const Reader &q, const mapped::Point &map, const Real inv_h[3],
+    const CartesianChartJets &reference,
+    const HyperbolicShiftParameters<Real> &parameters, const mapped::Jet *lift = nullptr,
+    const mapped::Jet *cached_weight = nullptr) {
+  const Real r = SphericalPolicy::Radius(map.x);
+  if (!(r >= 0) || (!parameters.residual_weight.Regular() && r == 0) ||
+      !Kokkos::isfinite(r)) {
+    out.status = PointStatus::invalid_input;
+    return;
   }
-  if (!SphericalPolicy::Restore(map.x,out.jets,reference,parameters.residual_weight,cached_weight)) {
+  ApplyCompatibleLapse(out.jets[18], q, map, inv_h, r, parameters);
+  if (!SphericalPolicy::Restore(map.x, out.jets, reference, parameters.residual_weight,
+                                cached_weight)) {
     out.status=PointStatus::invalid_geometry;return;
   }
   if (lift)for (int a=0;a<3;++a)out.jets[22+a]=out.jets[22+a]+lift[a];
   out.transport[0] *= cached_weight && parameters.residual_weight.Regular()
-      ? cached_weight->f : parameters.residual_weight.Value(map.x);
+                          ? cached_weight->f
+                          : parameters.residual_weight.Value(map.x);
   const auto u=SphericalPolicy::Physical(map.x,out.jets);
   if (!(u.chi.value>0 && u.alpha.value>0)) out.status=PointStatus::invalid_input;
 }
@@ -151,18 +171,20 @@ KOKKOS_INLINE_FUNCTION void RestorePointState(PointState &out,const Reader &q,
 // jets are analytic Cartesian jets; lift is the already interpolated Cartesian
 // shift-normal correction, with value and first/second derivatives. Ordinary
 // interior stencils need radius four for the compatible lapse Hessian.
-template<class Reader>
-KOKKOS_INLINE_FUNCTION PointState BuildPointState(const Reader &q,
-    const mapped::Point &map,const Real inv_h[3],const CartesianChartJets &reference,
-    const HyperbolicShiftParameters<Real> &parameters,const mapped::Jet *lift=nullptr,
-    const mapped::Jet *cached_weight=nullptr, bool affine=false) {
+template <class Reader>
+KOKKOS_INLINE_FUNCTION PointState BuildPointState(
+    const Reader &q, const mapped::Point &map, const Real inv_h[3],
+    const CartesianChartJets &reference,
+    const HyperbolicShiftParameters<Real> &parameters, const mapped::Jet *lift = nullptr,
+    const mapped::Jet *cached_weight = nullptr, bool affine = false) {
   PointState out;
   Real beta[3]{};
   for (int a=0;a<3;++a)beta[a]=q(22+a)+reference[22+a].f-map.x[a];
   for (int f=0;f<Fields::count;++f) if (Fields::Independent(f))
-    out.jets[f]=SampleResidualJet(q,f,map,inv_h,beta,
-        f<=6||f==18||(f>=22&&f<25),out.transport[f],affine);
-  RestorePointState(out,q,map,inv_h,reference,parameters,lift,cached_weight);
+      out.jets[f] = SampleResidualJet(q, f, map, inv_h, beta,
+                                      f <= 6 || f == 18 || (f >= 22 && f < 25),
+                                      out.transport[f], affine);
+  RestorePointState(out, q, map, inv_h, reference, parameters, lift, cached_weight);
   return out;
 }
 }  // namespace z4c_hyperboloidal

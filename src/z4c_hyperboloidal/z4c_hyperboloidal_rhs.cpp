@@ -71,7 +71,7 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver, int stage, RHSSubset subset
 #endif
   // Each field's logical finite differences are independent. Store their Cartesian
   // jets component-major so adjacent points write adjacent device addresses.
-  const bool precompute_jets = split_bulk_jets_ && !radial;
+  const bool precompute_jets = split_bulk_jets_;
   if (precompute_jets && selected_count > residual_jet_scratch_.extent_int(1)) {
     residual_jet_scratch_ = DvceArray2D<Real>(
         Kokkos::view_alloc(Kokkos::WithoutInitializing, "hyperboloidal residual jets"),
@@ -97,9 +97,13 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver, int stage, RHSSubset subset
           Real beta[3], transport = 0;
           for (int a = 0; a < 3; ++a)
             beta[a] = reader(22 + a) + refs(p)[22 + a].f - map.x[a];
-          const auto jet = SampleResidualJet(
-              reader, field, map, inv_h, beta,
-              field <= 6 || field == 18 || (field >= 22 && field < 25), transport, blocks(c.m).face < 0);
+          const auto jet = radial && surface.HasRadialRow(p)
+                               ? SampleEndpointJet(p, field, reader, map, inv_h, beta,
+                                                   surface, transport)
+                               : SampleResidualJet(reader, field, map, inv_h, beta,
+                                                   field <= 6 || field == 18 ||
+                                                       (field >= 22 && field < 25),
+                                                   transport, blocks(c.m).face < 0);
           const int first = 14 * slot;
           scratch(first, index) = jet.f;
           for (int a = 0; a < 3; ++a) {
@@ -121,37 +125,69 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver, int stage, RHSSubset subset
           const auto map = maps(p);
           const Real inv_h[3] = {Real(count), Real(count), Real(count)};
           const BlockPointReader reader{delta, c.m, c.k, c.j, c.i};
-          PointState state;
-          if constexpr (with_radial_rows) {
-            state = surface.HasRadialRow(p)
-                        ? EndpointState(p, reader, map, inv_h, refs(p), params, surface, &weights(p))
-                        : BuildPointState(reader, map, inv_h, refs(p), params, nullptr, &weights(p), blocks(c.m).face < 0);
-          } else if constexpr (decltype(precomputed)::value) {
-            for (int f = 0; f < Fields::count; ++f) {
-              if (!Fields::Independent(f)) continue;
-              const int first = 14 * Fields::IndependentSlot(f);
-              auto &jet = state.jets[f];
-              jet.f = scratch(first, index);
-              for (int a = 0; a < 3; ++a) {
-                jet.d[a] = scratch(first + 1 + a, index);
-                for (int b = 0; b < 3; ++b)
-                  jet.h[a][b] = scratch(first + 4 + 3 * a + b, index);
-              }
-              state.transport[f] = scratch(first + 13, index);
+          BulkPointResult result;
+          if constexpr (decltype(precomputed)::value) {
+            const Real radius = SphericalPolicy::Radius(map.x);
+            if (!Kokkos::isfinite(radius) || !(radius >= 0) ||
+                (radius == 0 && !params.residual_weight.Regular())) {
+              statuses(p) = static_cast<int>(PointStatus::invalid_input);
+              return;
             }
-            RestorePointState(state, reader, map, inv_h, refs(p), params, nullptr, &weights(p));
+            PointForcing forcing;
+            for (int f = 0; f < nvar; ++f)
+              forcing.dissipation[f] = output(c.m, f, c.k, c.j, c.i);
+            const bool endpoint = with_radial_rows && surface.HasRadialRow(p);
+            const auto load = [&](int f, bool second) {
+              const int first = 14 * Fields::IndependentSlot(f);
+              mapped::Jet q(scratch(first, index));
+              for (int k = 0; k < 3; ++k) {
+                q.d[k] = scratch(first + 1 + k, index);
+                if (second) {
+                  for (int l = 0; l < 3; ++l)
+                    q.h[k][l] = scratch(first + 4 + 3 * k + l, index);
+                }
+              }
+              forcing.transport[f] = scratch(first + 13, index);
+              if (f == Fields::chi) {
+                forcing.transport[f] *= params.residual_weight.Regular()
+                                            ? weights(p).f
+                                            : params.residual_weight.Value(map.x);
+                if (params.residual_weight.Regular()) return refs(p)[f] + weights(p) * q;
+                const auto r2 = SphericalPolicy::Radius2(map.x);
+                return (q + refs(p)[f] / r2) * r2;
+              }
+              if (f == Fields::lapse) {
+                ApplyCompatibleLapse(q, reader, map, inv_h, radius, params);
+              }
+              auto restored = q + refs(p)[f];
+              if (endpoint && f >= Fields::shift && f < Fields::shift + 3)
+                restored = restored + surface.NormalCorrection(p, map, f - Fields::shift);
+              return restored;
+            };
+            result =
+                EvaluateBulkFieldJets(map, params, sources(p), forcing, load, omega(p));
           } else {
-            state = BuildPointState(reader, map, inv_h, refs(p), params, nullptr, &weights(p), blocks(c.m).face < 0);
+            PointState state;
+            if constexpr (with_radial_rows) {
+              state = surface.HasRadialRow(p)
+                          ? EndpointState(p, reader, map, inv_h, refs(p), params, surface,
+                                          &weights(p))
+                          : BuildPointState(reader, map, inv_h, refs(p), params, nullptr,
+                                            &weights(p), blocks(c.m).face < 0);
+            } else {
+              state = BuildPointState(reader, map, inv_h, refs(p), params, nullptr,
+                                      &weights(p), blocks(c.m).face < 0);
+            }
+            statuses(p) = static_cast<int>(state.status);
+            if (state.status != PointStatus::success) return;
+            PointForcing forcing;
+            for (int f = 0; f < nvar; ++f) {
+              forcing.transport[f] = state.transport[f];
+              forcing.dissipation[f] = output(c.m, f, c.k, c.j, c.i);
+            }
+            result = EvaluateBulkPoint(map, state.jets, params, sources(p), forcing,
+                                       &omega(p));
           }
-          statuses(p) = static_cast<int>(state.status);
-          if (state.status != PointStatus::success) return;
-          PointForcing forcing;
-          for (int f = 0; f < nvar; ++f) {
-            forcing.transport[f] = state.transport[f];
-            forcing.dissipation[f] = output(c.m, f, c.k, c.j, c.i);
-          }
-          const auto result =
-              EvaluateBulkPoint(map, state.jets, params, sources(p), forcing, &omega(p));
           statuses(p) = static_cast<int>(result.status);
           gaps(p) = result.gap;
           cfls(p) = dt * count * (result.speed[0] + result.speed[1] + result.speed[2]);
@@ -160,7 +196,9 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver, int stage, RHSSubset subset
           for (int f = 0; f < nvar; ++f) output(c.m, f, c.k, c.j, c.i) = result.rate[f];
         });
   };
-  if (radial) {
+  if (radial && precompute_jets) {
+    evaluate(std::true_type{}, std::true_type{});
+  } else if (radial) {
     evaluate(std::true_type{}, std::false_type{});
   } else if (precompute_jets) {
     evaluate(std::false_type{}, std::true_type{});

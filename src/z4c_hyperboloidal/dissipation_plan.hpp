@@ -12,38 +12,38 @@ class Z4cHyperboloidal;
 // The five nodes of a difference stay in the target block's storage. Cartesian
 // coarse/fine ghost nodes contain interpolation of the physical stored fields,
 // separately from the residual interpolation used by the derivative operator.
-struct KOLine {int axis, target; Real weight;};
-
 class DissipationPlan {
  public:
   struct Kernel {
-    DvceArray1D<int> offsets;
-    DvceArray1D<KOLine> lines;
+    DvceArray1D<unsigned> support;
+    DvceArray2D<Real> coefficients;
     DvceArray1D<Real> volumes;
-    int n;
+
     KOKKOS_INLINE_FUNCTION Real Evaluate(int p, int f,
         const BlockPointReader &physical, Real epsilon) const {
       if (epsilon==0) return 0;
-      Real rate=0;
-      for (int t=offsets(p);t<offsets(p+1);++t) {
-        const auto line=lines(t);
-        Real values[PhysicalKO8::points];
-        for (int a=0;a<PhysicalKO8::points;++a)
-          values[a]=OffsetValue(physical,f,line.axis,a-line.target);
-        rate+=PhysicalKO8::Line(values,line.target,line.weight,volumes(p),n,epsilon);
-      }
-      return rate;
+      const Real center = physical(f, 0, 0, 0);
+      Real rate = 0;
+      const unsigned mask = support(p);
+      for (int axis = 0; axis < 3; ++axis)
+        for (int k = 0; k < 8; ++k) {
+          const int i = axis * 8 + k;
+          if (mask & (1u << i)) {
+            const Real neighbor = OffsetValue(physical, f, axis, k < 4 ? k - 4 : k - 3);
+            rate += coefficients(i, p) * (neighbor - center);
+          }
+        }
+      return epsilon * rate;
     }
   };
 
   void Rebuild(const MeshBlockPack &pack, const Z4cHyperboloidal &module);
-  Kernel Bind() const {return {offsets_,lines_,volumes_,n_};}
+  Kernel Bind() const { return {support_, coefficients_, volumes_}; }
 
  private:
-  DvceArray1D<int> offsets_;
-  DvceArray1D<KOLine> lines_;
+  DvceArray1D<unsigned> support_;
+  DvceArray2D<Real> coefficients_;
   DvceArray1D<Real> volumes_;
-  int n_=0;
 };
 }  // namespace z4c_hyperboloidal
 #endif

@@ -112,18 +112,22 @@ SpatialGeometry<T> Geometry(const MetricJet<T> &m) {
     }
   }
   for (int i = 0; i < 3; ++i)
-    for (int k = 0; k < 3; ++k) out.contracted[i] += out.inverse[i][k] * contracted_lower[k];
+    for (int k = 0; k < 3; ++k)
+      out.contracted[i] += out.inverse[i][k] * contracted_lower[k];
   for (int d = 0; d < 3; ++d) {
     for (int a = 0; a < 3; ++a) {
       T derivative = 0;
       for (int i = 0; i < 3; ++i) {
         for (int j = i; j < 3; ++j) {
-          const T dfirst = T(0.5) * (m.ddg[d][i][a][j] + m.ddg[d][j][a][i] - m.ddg[d][a][i][j]);
-          derivative += (i == j ? 1 : 2) * (dinv[d][i][j] * lower[a][i][j] + out.inverse[i][j] * dfirst);
+          const T dfirst =
+              T(0.5) * (m.ddg[d][i][a][j] + m.ddg[d][j][a][i] - m.ddg[d][a][i][j]);
+          derivative += (i == j ? 1 : 2) *
+                        (dinv[d][i][j] * lower[a][i][j] + out.inverse[i][j] * dfirst);
         }
       }
       for (int k = 0; k < 3; ++k) {
-        out.dcontracted[d][k] += dinv[d][k][a] * contracted_lower[a] + out.inverse[k][a] * derivative;
+        out.dcontracted[d][k] +=
+            dinv[d][k][a] * contracted_lower[a] + out.inverse[k][a] * derivative;
       }
     }
   }
@@ -132,12 +136,12 @@ SpatialGeometry<T> Geometry(const MetricJet<T> &m) {
       T ricci = 0;
       for (int k = 0; k < 3; ++k) {
         for (int a = 0; a < 3; ++a) {
-          const T hessian = m.ddg[k][i][a][j] + m.ddg[j][a][i][k]
-                          - m.ddg[k][a][i][j] - m.ddg[j][i][a][k];
-          ricci += T(0.5) * out.inverse[k][a] * hessian
-                 + dinv[k][k][a] * lower[a][i][j] - dinv[j][k][a] * lower[a][i][k]
-                 + out.connection[k][i][j] * out.connection[a][k][a]
-                 - out.connection[a][i][k] * out.connection[k][j][a];
+          const T hessian = m.ddg[k][i][a][j] + m.ddg[j][a][i][k] - m.ddg[k][a][i][j] -
+                            m.ddg[j][i][a][k];
+          ricci += T(0.5) * out.inverse[k][a] * hessian + dinv[k][k][a] * lower[a][i][j] -
+                   dinv[j][k][a] * lower[a][i][k] +
+                   out.connection[k][i][j] * out.connection[a][k][a] -
+                   out.connection[a][i][k] * out.connection[k][j][a];
         }
       }
       out.ricci[i][j] = out.ricci[j][i] = ricci;
