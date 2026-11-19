@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <iterator>
 #include <limits>
 #include <set>
 #include <stdexcept>
@@ -103,7 +104,9 @@ struct RecordExchange::Impl {
     std::vector<RecordKey> keys;
     std::size_t scalars = 0;
   };
+  static constexpr auto separate_allocation = std::numeric_limits<std::size_t>::max();
   struct Pending {
+    std::size_t send_offset = separate_allocation;
     MPI_Request request = MPI_REQUEST_NULL;
     DvceArray1D<Real> packet;
     int peer = 0, tag = 0;
@@ -112,26 +115,45 @@ struct RecordExchange::Impl {
   };
   std::vector<Pending> sends, receives;
   std::vector<DvceArray1D<Real>> pack_sources;
-  std::map<std::size_t,std::vector<DvceArray1D<Real>>> send_cache;
-  std::size_t send_cache_limit=0, cached_bytes=0;
-  DvceArray1D<Real> SendBuffer(std::size_t size) {
-    auto found=send_cache.find(size);
-    if (found==send_cache.end())
-      return DvceArray1D<Real>(Kokkos::view_alloc(Kokkos::WithoutInitializing,
-          "multirate immutable send packet"),size);
-    auto buffer=std::move(found->second.back());
-    found->second.pop_back();
-    if (found->second.empty()) send_cache.erase(found);
-    cached_bytes-=size*sizeof(Real);
-    ++stats.reused_send_packets;
-    return buffer;
-  }
-  void RetireSend(DvceArray1D<Real>& buffer) {
-    const auto size=buffer.extent(0), bytes=size*sizeof(Real);
-    if (bytes && bytes<=send_cache_limit-cached_bytes) {
-      send_cache[size].push_back(std::move(buffer));
-      cached_bytes+=bytes;
+  // Subviews keep a stable device allocation behind sends of different sizes.
+  // MPI may cache the allocation's device handle across packets and peers.
+  DvceArray1D<Real> send_arena;
+  std::map<std::size_t, std::size_t> free_spans;
+  std::size_t used_end = 0;
+  void AllocateSend(Pending& send, std::size_t size) {
+    for (auto it = free_spans.begin(); it != free_spans.end(); ++it) {
+      if (it->second < size) continue;
+      const auto offset = it->first;
+      const auto remaining = it->second - size;
+      free_spans.erase(it);
+      if (remaining) free_spans.emplace(offset + size, remaining);
+      send.send_offset = offset;
+      send.packet = Kokkos::subview(send_arena, std::make_pair(offset, offset + size));
+      if (offset + size <= used_end) ++stats.reused_send_packets;
+      used_end = std::max(used_end, offset + size);
+      return;
     }
+    send.packet = DvceArray1D<Real>(Kokkos::view_alloc(Kokkos::WithoutInitializing,
+                                                       "multirate send packet"), size);
+  }
+  // A span can be written again as soon as its nonblocking send completes.
+  void RetireSend(const Pending& send) {
+    if (send.send_offset == separate_allocation) return;
+    auto offset = send.send_offset;
+    auto size = send.packet.extent(0);
+    auto next = free_spans.lower_bound(offset);
+    if (next != free_spans.end() && offset + size == next->first) {
+      size += next->second;
+      next = free_spans.erase(next);
+    }
+    if (next != free_spans.begin()) {
+      auto previous = std::prev(next);
+      if (previous->first + previous->second == offset) {
+        previous->second += size;
+        return;
+      }
+    }
+    free_spans.emplace_hint(next, offset, size);
   }
   // A completed receive becomes a zero-copy record. A managed View or slice
   // held by any consumer keeps the allocation busy, even across an epoch.
@@ -485,12 +507,12 @@ void RecordExchange::Publish(const RecordKey &key, const DvceArray1D<Real> &valu
       open=&p.open_packets[packet_key];
       if (!open->written) {
         open->send=std::move(pending);
-        open->send.packet=p.SendBuffer(packet_size);
+        p.AllocateSend(open->send,packet_size);
         p.AllocatePacket(packet_size);
       }
       open->written+=size;
     } else {
-      pending.packet=p.SendBuffer(packet_size);
+      p.AllocateSend(pending,packet_size);
       p.AllocatePacket(packet_size);
     }
     const auto bytes=(size+header)*sizeof(Real);
@@ -532,9 +554,15 @@ void RecordExchange::Publish(const RecordKey &key, const DvceArray1D<Real> &valu
 void RecordExchange::SetSendCacheBytes(std::size_t bytes) {
   if (!impl_->finished) throw std::logic_error("Resize send cache only at synchronized endpoints");
 #if MPI_PARALLEL_ENABLED
-  impl_->send_cache.clear();
-  impl_->cached_bytes=0;
-  impl_->send_cache_limit=bytes;
+  const auto scalars = bytes / sizeof(Real);
+  impl_->free_spans.clear();
+  impl_->used_end = 0;
+  impl_->send_arena = {};
+  if (scalars) {
+    impl_->send_arena = DvceArray1D<Real>(
+        Kokkos::view_alloc(Kokkos::WithoutInitializing, "multirate send arena"), scalars);
+    impl_->free_spans.emplace(0, scalars);
+  }
 #else
   (void)bytes;
 #endif
@@ -577,7 +605,7 @@ bool RecordExchange::Poll() {
     CheckMPI(MPI_Test(&p.sends[i].request,&done,MPI_STATUS_IGNORE),"multirate send poll failed");
     if (done) {
       p.packet_bytes-=p.sends[i].packet.extent(0)*sizeof(Real);
-      p.RetireSend(p.sends[i].packet);
+      p.RetireSend(p.sends[i]);
       p.sends.erase(p.sends.begin()+i);
       progressed=true;
     } else ++i;
