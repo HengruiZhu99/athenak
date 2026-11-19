@@ -4,6 +4,7 @@
 #include <cerrno>
 #include <climits>
 #include <cmath>
+#include <cstdio>
 #include <cstring>
 #include <cstdlib>
 #include <fstream>
@@ -264,22 +265,32 @@ void AMRHistory::LoadHistory() {
 }
 
 void AMRHistory::WriteFreshHistory() {
-  if (FileExists(path_) || FileExists(ledger_path_)) {
-    Fatal("fresh record output already exists");
-  }
   header_ = CurrentHeader();
   std::string error;
   if (!amr_history::ValidateHeader(header_, &error)) Fatal(error);
+  // Only the writer tests freshness. A later-arriving rank can already see
+  // this run's header. Exclusive creation also protects two independent runs.
+  int write_error = 0;
   if (global_variable::my_rank == 0) {
-    std::ofstream output(path_, std::ios::binary | std::ios::out);
-    if (!output) Fatal("cannot create history file");
-    output << amr_history::EncodeHeader(header_) << '\n';
-    output.flush();
-    if (!output) Fatal("failed to flush history header");
+    if (FileExists(ledger_path_)) {
+      write_error = EEXIST;
+    } else if (auto *output = std::fopen(path_.c_str(), "wbx")) {
+      const std::string line = amr_history::EncodeHeader(header_) + '\n';
+      if (std::fwrite(line.data(), 1, line.size(), output) != line.size()) {
+        write_error = EIO;
+      }
+      if (std::fclose(output) != 0) write_error = errno;
+    } else {
+      write_error = errno;
+    }
   }
 #if MPI_PARALLEL_ENABLED
-  MPI_Barrier(MPI_COMM_WORLD);
+  MPI_Bcast(&write_error, 1, MPI_INT, 0, MPI_COMM_WORLD);
 #endif
+  if (write_error == EEXIST) Fatal("fresh record output already exists");
+  if (write_error != 0) {
+    Fatal(std::string("cannot write fresh history: ") + std::strerror(write_error));
+  }
   events_.clear();
   AppendEvent(0, 0);
 }
