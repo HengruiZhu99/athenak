@@ -1,6 +1,24 @@
 # Stationary geometry and N12 kernel performance
 
-The per-point constant-Ω trial measured **1.61272 s/interval**, **20.75 million bulk point-stages/s**, and **286.42 s/M₀** on 12 bound Aurora tiles with output off. At 33,467,904 bulk point-stages per interval, this is a 1.53× speedup over the 2.47446 s qualification and a 4.97× gap to regular RK4 at 103.2 million/s. The 2× target requires 1.23723 s/interval and the 3× target requires 0.82482 s/interval.
+## Combined bulk and surface kernels
+
+Job 9105505 compared all five binaries on the same Aurora node with 12 ranks and output off. Each timing covers cycles 9–20 after eight warm intervals and 33,467,904 bulk point-stages per coarse interval.
+
+| Solver | Seconds/interval |
+|---|---:|
+| Constant-Ω bulk equations | 1.59012 |
+| Scri projection and within-stage pole reuse | 1.66697 |
+| Combined bulk and scri changes | 1.49731 |
+| Combined, with Kokkos teams for the scri RHS and smaller geometry workgroups | **1.46007** |
+| Combined, with ordered bulk Hessian contraction | 1.57076 |
+
+The surface kernel changes saved 0.03725 s against the combined solver. The larger spread of their four-interval averages was 0.00887 s. The busiest tile in both profiles, rank 5, spent 0.07636 s on common surface geometry and 0.06544 s on the surface RHS with teams, down from 0.09830 s and 0.08301 s. The ordered Hessian trial increased mean bulk point-kernel service from 0.43761 s to 0.49327 s per tile and added 0.07344 s to the full interval.
+
+The selected solver delivered 22.92 million bulk point-stages/s and 259.31 s/M₀. That gives a 1.695× speedup over 2.47446 s/interval. Another 0.22284 s/interval is needed for 2×. The checkpoint run repeated at 1.45796 s/interval.
+
+The selected cycle-21 checkpoint matched the original simulation time and timestep. The maximum scaled difference was 3.216×10⁻¹² across 139,683,024 stored field values and 1.555×10⁻¹⁵ across the eight persistent diagnostic components. The two- and seven-rank native surface oracles passed, including the case with three ranks owning no surface points. The largest scaled surface-RHS difference from the independent evaluator was 7.131×10⁻¹³.
+
+At the same bulk work the remaining gap to regular RK4 is 1.136 s, a throughput ratio of 4.50. The largest contributions are 0.488 s of additional mean bulk RHS device service, 0.243 s of additional busiest-to-mean tile spread, and 0.137 s of mean scri exchange and closure. The wall-minus-device residual compares two separate runs. The timing and profile receipts, direct checkpoint comparison and gap plot are in the n12-halo-kernels-20261119 archive under job 9105505. Solver commit 88201e556 matches all 62 module sources in the selected build.
 
 ## Per-point constant compactification
 
