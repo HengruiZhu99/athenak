@@ -180,6 +180,26 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
       opt.chi_parent_provenance.enabled && time >= opt.chi_parent_provenance.start_time;
   const bool prescribed_zero_shift =
       opt.shift_mode == Z4cShiftMode::prescribed_zero;
+  // Restart and boundary data can reach a stencil before an RK projection.
+  // Prove the shift is identically zero on this pack, including every ghost,
+  // at the point of use. Any nonzero or NaN selects the general derivatives.
+  bool zero_shift_stencil = false;
+  if constexpr (std::is_same_v<Centering, VertexCenteredZ4c> &&
+                std::is_same_v<Symmetry, CartoonSO2>) {
+    if (prescribed_zero_shift) {
+      int nonzero = 0;
+      Kokkos::parallel_reduce(
+          "z4c check stored shift before RHS",
+          Kokkos::MDRangePolicy<DevExeSpace, Kokkos::Rank<4>>(
+              {0, 0, 0, 0}, {nmb, layout.n3, layout.n2, layout.n1}),
+          KOKKOS_LAMBDA(int m, int k, int j, int i, int &found) {
+            for (int a = 0; a < 3; ++a) {
+              if (z4c.beta_u(m, a, k, j, i) != 0.0) found = 1;
+            }
+          }, Kokkos::LOr<int>(nonzero));
+      zero_shift_stencil = !nonzero;
+    }
+  }
   const bool use_o2_shift_advection =
       opt.shift_advection_order == Z4cShiftAdvectionOrder::o2;
   auto &chi_provenance_terms = pmy_pack->pz4c->chi_provenance_terms;
@@ -323,7 +343,8 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
         // Vectors
         for (int a = 0; a < 3; ++a)
           for (int b = 0; b < 3; ++b) {
-            dbeta_du(b, a) = derivatives.VectorFirst(b, a, z4c.beta_u);
+            dbeta_du(b, a) = zero_shift_stencil ? 0.0 :
+                derivatives.VectorFirst(b, a, z4c.beta_u);
             dGam_du(b, a) = derivatives.VectorFirst(b, a, z4c.vGam_u);
           }
 
@@ -353,10 +374,10 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
         // Vectors
         for (int c = 0; c < 3; ++c)
           for (int a = 0; a < 3; ++a) {
-            ddbeta_ddu(a, a, c) =
+            ddbeta_ddu(a, a, c) = zero_shift_stencil ? 0.0 :
                 derivatives.VectorSecond(a, a, c, z4c.beta_u);
             for (int b = a + 1; b < 3; ++b) {
-              ddbeta_ddu(a, b, c) =
+              ddbeta_ddu(a, b, c) = zero_shift_stencil ? 0.0 :
                   derivatives.VectorSecond(a, b, c, z4c.beta_u);
             }
           }
@@ -742,7 +763,8 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
 
         for (int a = 0; a < 3; ++a)
           for (int b = 0; b < 3; ++b) {
-            dbeta_du(b, a) = derivatives.VectorFirst(b, a, z4c.beta_u);
+            dbeta_du(b, a) = zero_shift_stencil ? 0.0 :
+                derivatives.VectorFirst(b, a, z4c.beta_u);
             dGam_du(b, a) = derivatives.VectorFirst(b, a, z4c.vGam_u);
           }
 
@@ -756,10 +778,10 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
 
         for (int c = 0; c < 3; ++c)
           for (int a = 0; a < 3; ++a) {
-            ddbeta_ddu(a, a, c) =
+            ddbeta_ddu(a, a, c) = zero_shift_stencil ? 0.0 :
                 derivatives.VectorSecond(a, a, c, z4c.beta_u);
             for (int b = a + 1; b < 3; ++b) {
-              ddbeta_ddu(a, b, c) =
+              ddbeta_ddu(a, b, c) = zero_shift_stencil ? 0.0 :
                   derivatives.VectorSecond(a, b, c, z4c.beta_u);
             }
           }
