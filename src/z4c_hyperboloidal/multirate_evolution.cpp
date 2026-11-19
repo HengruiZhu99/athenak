@@ -283,6 +283,23 @@ struct MultirateEvolution::Impl {
     log_path = pin->GetString("multirate", "partition_log");
     BuildGraphAndLevels();
     BuildCostGraph();
+    if (balance == "auto" && schedule->MaxLevel() > 0 &&
+        global_variable::nranks % options.ranks_per_gpu == 0) {
+      int fine_blocks = 0;
+      bool fine_scri = false;
+      for (const auto& block : graph.blocks) {
+        if (block.time_level != schedule->MaxLevel()) continue;
+        ++fine_blocks;
+        fine_scri = fine_scri || block.kernel == bal::KernelKind::scri;
+      }
+      // The finest scri blocks solve an additional surface system at every
+      // substep. If the level can occupy every rank, distribute its blocks
+      // before scoring the cost and donor traffic of the candidate partitions.
+      if (fine_scri && fine_blocks >= global_variable::nranks) {
+        options.spread_finest = true;
+        options.consider_sparse_compaction = false;
+      }
+    }
     if (!replay_path.empty()) {
       std::ifstream in(replay_path);
       if (!in) throw std::runtime_error("Cannot read multirate replay_file");
