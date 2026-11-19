@@ -1086,16 +1086,30 @@ void CartoonM0FastFlow::Find(const int cycle, const Real time) {
       // A small sphere can lie inside the basin of the inner root. A larger
       // origin trial also covers common surfaces enclosing both axial centers.
       // Keep mirror seeds disjoint. All trials use the same acceptance checks.
-      const std::vector<Real> factors = entry.first == "origin"
-          ? std::vector<Real>{4.0, 1.0} : std::vector<Real>{1.0};
-      for (Real factor : factors) {
+      const std::vector<std::array<Real, 2>> seed_axes = entry.first == "origin"
+          ? std::vector<std::array<Real, 2>>{{4.0, 4.0}, {1.0, 2.0}, {1.0, 1.0}}
+          : std::vector<std::array<Real, 2>>{{1.0, 1.0}};
+      for (const auto &axes : seed_axes) {
+        const Real polar = axes[0] * fresh_initial_radius;
+        const Real equatorial = axes[1] * fresh_initial_radius;
         std::vector<Real> seed(lmax_ + 1, 0.0);
-        seed[0] = std::sqrt(4*kPi)*factor*fresh_initial_radius;
+        if (polar == equatorial) {
+          seed[0] = std::sqrt(4*kPi) * polar;
+        } else {
+          // The outer near-critical root can lie outside the basin reached
+          // by either sphere. Project a regular oblate trial onto the same basis.
+          for (int n = 0; n < ntheta_; ++n) {
+            const Real radius = 1.0 / std::hypot(std::cos(theta_[n])/polar,
+                                                std::sin(theta_[n])/equatorial);
+            for (int l = 0; l <= lmax_; ++l)
+              seed[l] += 2*kPi * weights_[n] * radius * y0_[n*(lmax_ + 1) + l];
+          }
+        }
         auto trial = RefineM0Surface(seed, entry.second, ntheta_, std::min(iterations_, 20),
                                      0.0, direct_tolerance_, hrms_tolerance_, mass_tolerance_,
                                      sample);
         trial.branch = entry.first;
-        trial.fresh_initial_radius = factor*fresh_initial_radius;
+        trial.fresh_initial_radius = polar;
         if (trial.converged || (trial.area > 0 &&
             (candidate.area <= 0 || trial.direct_residual < candidate.direct_residual))) {
           candidate = std::move(trial);
