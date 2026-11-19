@@ -6,6 +6,8 @@
 //! \brief Spectrally interpolate IrisK XCTS data onto an arbitrary AMR mesh.
 
 #include <algorithm>
+
+#include "pgen/ae93_shell_adm.hpp"
 #include <array>
 #include <cmath>
 #include <cstdint>
@@ -205,19 +207,14 @@ double EvaluateGlobalBrillPsi(const BrillGlobalCoefficients &coefficients,
 
 // Evaluate the global TA representation on authoritative native vertices.
 // Physical Cartesian axes are (rho,y,z); Cartoon storage axes are (rho,z,y).
-void FillAdmFromTimeAsymmetric(MeshBlockPack *pmbp, const std::string &path) {
+template <typename Interpolator>
+void FillNativePlaneAdm(MeshBlockPack *pmbp, const char *family,
+                        const Interpolator &interpolate) {
   constexpr auto map = z4c_irisk::AdmMap::half_rho_z_suppressed_y_v2;
   if (z4c_irisk::SelectAdmMap(pmbp->z4c_symmetry) != map ||
       pmbp->pz4c->layout.centering != z4c::Z4cGridCentering::vertex) {
-    Fail("direct_time_asymmetric_coefficients requires vertex Cartoon");
+    Fail("IrisK native plane ADM requires vertex Cartoon");
   }
-  IrisAthenakTimeAsymmetricInterpolator *raw = nullptr;
-  std::array<char, 1024> error{};
-  if (IrisAthenakTimeAsymmetricOpen(path.c_str(), &raw, error.data(),
-                                  error.size()) != 0) Fail(error.data());
-  std::unique_ptr<IrisAthenakTimeAsymmetricInterpolator,
-                 decltype(&IrisAthenakTimeAsymmetricClose)>
-      interp(raw, IrisAthenakTimeAsymmetricClose);
   auto &native = pmbp->pz4c->u_adm_native;
   auto host = create_mirror(native);
   Kokkos::deep_copy(host, 0.0);
@@ -233,15 +230,12 @@ void FillAdmFromTimeAsymmetric(MeshBlockPack *pmbp, const std::string &path) {
     const int begin = axis ? l.is : 0;
     const int nx = l.n1 - begin;
     std::vector<double> x(nx), z(l.n2);
-    const double y = 0.0;
     for (int i = begin; i < l.n1; ++i)
       x[i-begin] = VertexX(i-l.is, l.nx1, size(m).x1min, size(m).x1max);
     for (int j = 0; j < l.n2; ++j)
       z[j] = VertexX(j-l.js, l.nx2, size(m).x2min, size(m).x2max);
     std::vector<double> values(nx*l.n2*IRISK_ATHENAK_ADM_VARIABLE_COUNT);
-    if (IrisAthenakTimeAsymmetricInterpolateCartesian(
-            interp.get(), nx, 1, l.n2, x.data(), &y, z.data(), values.data(),
-            error.data(), error.size()) != 0) Fail(error.data());
+    interpolate(x,z,values);
     for (int j = 0; j < l.n2; ++j) {
       for (int i = begin; i < l.n1; ++i) {
         const double *v = values.data() + (j*nx+i-begin)*17;
@@ -274,8 +268,24 @@ void FillAdmFromTimeAsymmetric(MeshBlockPack *pmbp, const std::string &path) {
     }
   }
   Kokkos::deep_copy(native, host);
-  std::cout << "Native VC TA initial data: minimum imported lapse="
+  std::cout << "Native VC " << family << " initial data: minimum imported lapse="
             << std::setprecision(17) << min_lapse << std::endl;
+}
+
+void FillAdmFromTimeAsymmetric(MeshBlockPack *pmbp, const std::string &path) {
+  IrisAthenakTimeAsymmetricInterpolator *raw = nullptr;
+  std::array<char, 1024> error{};
+  if (IrisAthenakTimeAsymmetricOpen(path.c_str(), &raw, error.data(),
+                                  error.size()) != 0) Fail(error.data());
+  std::unique_ptr<IrisAthenakTimeAsymmetricInterpolator,
+                 decltype(&IrisAthenakTimeAsymmetricClose)>
+      interp(raw, IrisAthenakTimeAsymmetricClose);
+  FillNativePlaneAdm(pmbp, "TA", [&](const auto &x, const auto &z, auto &values) {
+    const double y = 0.0;
+    if (IrisAthenakTimeAsymmetricInterpolateCartesian(
+            interp.get(), x.size(), 1, z.size(), x.data(), &y, z.data(), values.data(),
+            error.data(), error.size()) != 0) Fail(error.data());
+  });
 }
 
 void FillAdmFromBrillGlobalCoefficients(
@@ -1716,6 +1726,14 @@ void ProblemGenerator::Z4cIrisXcts(ParameterInput *pin, const bool restart) {
     }
     FillAdmFromIrisSpectral(pmbp, interpolator);
     IrisAthenakSpectralClose(interpolator);
+  } else if (import_mode == "ae93_axisymmetric") {
+    const auto path = ResolveSpectralInputPath(pin->GetString("problem", "ae93_shell_file"));
+    imported_path = path.string();
+    imported_bytes = std::filesystem::file_size(path);
+    const z4c_irisk::Ae93ShellAdm data(imported_path);
+    FillNativePlaneAdm(pmbp, "AE93", [&](const auto &x, const auto &z, auto &values) {
+      data.Interpolate(x,z,values);
+    });
   } else if (import_mode == "direct_time_asymmetric_coefficients") {
     const std::string filename = pin->GetString(
         "problem", "time_asymmetric_coefficients_file");
