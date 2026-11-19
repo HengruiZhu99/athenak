@@ -2,6 +2,21 @@
 
 One Aurora node with 12 bound GPU tiles measured **1.757 s/interval**, **19.05 million bulk point-stages/s** and **312.1 s/M₀** for solver commit 40d0aac1a. This is a 1.41× speedup over the 2.47446 s qualification. Regular single-puncture RK4 measured 103.2 million/s, leaving a 5.42× throughput gap. At the production workload of 33,467,904 bulk point-stages, the 2× target requires 1.23723 s/interval and the 3× target requires 0.82482 s/interval.
 
+## Scri projection and shift corrections
+
+On one Aurora node, job 9104937 tested three outer-boundary changes against solver 7dd9c5559. The selected trial projected constant donor charts directly and reused the shift-independent part of the tensor pole across normal-derivative probes within an RK stage. Its checkpoint run repeated at 1.72115 s/interval.
+
+| Trial | Seconds/interval |
+|---|---:|
+| Paired control | 1.79594 |
+| Direct chart projection | 1.72390 |
+| Direct projection and cached tensor pole | **1.70925** |
+| Direct projection and fieldwise scri sampling | 1.74912 |
+
+The selected trial saved 0.08669 s against a 0.01062 s range of four-interval means. It delivered 19.58 million bulk point-stages/s and 303.56 s/M₀ with output off. In separate profiles rank 5 had the most device work. Its edge donor reconstruction fell from 0.08722 to 0.02375 s/interval, and its surface exchange kernels fell from 0.37057 to 0.31887 s/interval.
+
+At cycle 21 the maximum scaled difference from the original qualification was 3.216×10⁻¹² across 139,683,024 field values and 1.333×10⁻¹⁵ across the persistent diagnostics. The CPU build integrating this change with the curvature contractions passed both cases of the independent scri oracle. The maximum scaled surface-RHS difference was 7.131×10⁻¹³. On two CPU ranks, the mesh refined to 32 blocks and coarsened to 25. The maximum scaled field difference from the accepted-projection solver was 2.221×10⁻¹⁶ at both cuts, and the persistent diagnostics agreed exactly. Both restart comparisons matched uninterrupted evolution bit for bit. The timings in this table apply to the trial based on 7dd9c5559.
+
 ## Curvature contractions
 
 Job 9104811 tested the candidates on the same node with eight warm and twelve timed intervals. Raising one index of the trace-free curvature once supplies both quadratic contractions. In the inner adjustment, expanding the covariant derivative of the connection constraint cancels the derivatives of its contravariant components. This identity also holds off the constraint surface.
