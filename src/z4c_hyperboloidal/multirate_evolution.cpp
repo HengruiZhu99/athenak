@@ -87,6 +87,33 @@ struct Combination {
     return value;
   }
 };
+
+// Accepted RK records contain point values. Only the implicit metric component
+// needs derivative checks when projecting their constant Cartesian chart.
+KOKKOS_INLINE_FUNCTION bool ProjectAcceptedBulkChart(
+    std::array<Real, Fields::count>& fields) {
+  using J = mapped::Jet;
+  CartesianChartMetric<J> jets{J(fields[1] + 1), J(fields[2]), J(fields[3]),
+                               J(fields[4] + 1), J(fields[5]), {}, {}};
+  if (!jets.Complete()) return false;
+  // Every input is constant. Each component of the implicit metric's gradient
+  // and Hessian therefore follows the same arithmetic, even on overflow.
+  if (jets.f.d[0] != 0 || jets.f.h[0][0] != 0) return false;
+  const CartesianChartMetric<Real> chart{jets.a.f, jets.b.f, jets.c.f, jets.d.f, jets.e.f,
+                                         jets.minor.f, jets.f.f};
+  fields[6] = chart.f - 1;
+  fields[12] = chart.TraceFreeZZ(fields[7], fields[8], fields[9], fields[10], fields[11]);
+  const Real g[3][3] = {{chart.a, chart.b, chart.c},
+                        {chart.b, chart.d, chart.e},
+                        {chart.c, chart.e, fields[6] + 1}};
+  Real inverse[3][3], determinant;
+  if (!InvertMetric(g, inverse, determinant)) return false;
+  for (int i = 0; i < 3; ++i)
+    for (int j = 0; j < 3; ++j)
+      if (!Kokkos::isfinite(inverse[i][j])) return false;
+  return true;
+}
+
 struct NativePoint {
   int m, face, k, j, i, kind, ledger;
   size_t index;
@@ -974,7 +1001,7 @@ void MultirateEvolution::Impl::Reconstruct(const std::vector<int>& slots,
         if (!indexed && !active(point.m)) return;
         const auto c = combinations_d(point.m);
         if (!c.base) {++bad; return;}
-        std::array<std::conditional_t<accepted,mapped::Jet,Real>,Fields::count> jets{};
+        std::array<Real, Fields::count> values{};
         for (int f = 0; f < Fields::count; ++f) {
           Real value = c.Value(point.index, f);
           if (f == Fields::chi) {
@@ -984,29 +1011,33 @@ void MultirateEvolution::Impl::Reconstruct(const std::vector<int>& slots,
               value = FloorChiCandidate(value, floor, time, accepted, records(point.ledger));
           }
           if (!Kokkos::isfinite(value)) ++bad;
-          ChartValue(jets[f]) = value;
+          values[f] = value;
         }
-        if (!TryExpandCartesianChart(jets)) {++bad; return;}
+        const bool valid = (accepted && !point.kind)
+                               ? ProjectAcceptedBulkChart(values)
+                               : TryExpandCartesianChart(values);
+        if (!valid) {
+          ++bad;
+          return;
+        }
         if (point.kind) {
           for (int f = 0; f < Fields::count; ++f)
-            edge(point.face,f,point.k,point.j) = ChartValue(jets[f]);
+            edge(point.face, f, point.k, point.j) = values[f];
           return;
         }
         const int q = point.ledger;
         const auto& x = geom(q).x;
         for (int f = 0; f < Fields::count; ++f)
-          state(point.m,f,point.k,point.j,point.i) = ChartValue(jets[f]);
+          state(point.m, f, point.k, point.j, point.i) = values[f];
         if constexpr (accepted) {
-          const auto u = SphericalPolicy::Physical(x,jets);
-          Real inverse[3][3];
-          if (!(u.chi.value > 0 && u.alpha.value > 0 &&
-                InvertConstantMetric(u.metric, inverse)))
-            ++bad;
+          const Real radius = SphericalPolicy::Radius(x);
+          const Real lapse = values[Fields::lapse] + (1 + radius * radius) / 2;
+          if (!(values[Fields::chi] > 0 && lapse > 0)) ++bad;
         } else {
           const Real r2 = weight.Value(x);
           for (int f = 0; f < Fields::count; ++f)
             residual(point.m,f,point.k,point.j,point.i) = Fields::Independent(f)
-                ? (ChartValue(jets[f])-reference(q)[f].f)/(f==Fields::chi ? r2 : 1)
+                ? (values[f] - reference(q)[f].f) / (f == Fields::chi ? r2 : 1)
                 : 0;
         }
       },invalid);
