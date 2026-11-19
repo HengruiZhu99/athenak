@@ -1,0 +1,237 @@
+{
+  "source": "5617d14bc",
+  "archive_source": "426fc9c98",
+  "results_directory": "n12-single-node-deficit-20261118",
+  "protocol": {
+    "nodes": 1,
+    "ranks": 12,
+    "warmup": 8,
+    "timed_cycles": [
+      9,
+      20
+    ],
+    "periodic_output": false,
+    "timestep": 0.0018768768768768769,
+    "active_bulk_points": 1433376,
+    "scri_points": 864,
+    "block_stages": 18160,
+    "bulk_point_stages": 33467904,
+    "target_s": 0.973
+  },
+  "timings": {
+    "uniform_archive": {
+      "binary": "1862990e1acc9aec013e87616b49cd56039251ba8f63a2f49a11504d99bfbe1f",
+      "input": "02badad019d7f87f1782045e66c755c8f746815f7dd0ca3875b7e5b5c9100a78",
+      "hosts": [
+        "x4217c3s5b0n0.hsn.cm.aurora.alcf.anl.gov"
+      ],
+      "warmup": 8,
+      "intervals": [
+        0.36070084100000344,
+        0.3608647519999977,
+        0.36010632200000003,
+        0.36065046699999925,
+        0.36130975300000046,
+        0.36003897300000176,
+        0.3615026659999998,
+        0.3610843370000012,
+        0.359899482000003,
+        0.3606585039999999,
+        0.36090208599999585,
+        0.36083612000000187
+      ],
+      "seconds": 0.3607128585833337,
+      "point_stages": 5733504,
+      "million_per_second": 15.894925460982472,
+      "seconds_per_M0": 1025.001658950401
+    },
+    "uniform_head": {
+      "binary": "6f10a7b11c2976c8a07be3d0cf8eb417c3ead852d2c2774de99c2870102a6478",
+      "input": "02badad019d7f87f1782045e66c755c8f746815f7dd0ca3875b7e5b5c9100a78",
+      "hosts": [
+        "x4003c6s5b0n0.hsn.cm.aurora.alcf.anl.gov"
+      ],
+      "warmup": 8,
+      "intervals": [
+        0.3502375609999966,
+        0.3531091550000056,
+        0.3521244399999972,
+        0.35317946899999697,
+        0.35069792600000227,
+        0.3533806290000001,
+        0.3512974870000036,
+        0.35305562099999577,
+        0.35161474899999945,
+        0.352493207000002,
+        0.3522115430000028,
+        0.3525835959999952
+      ],
+      "seconds": 0.35216544858333315,
+      "point_stages": 5733504,
+      "million_per_second": 16.280711305053757,
+      "seconds_per_M0": 1000.7133386943996
+    },
+    "multirate_head": {
+      "binary": "6f10a7b11c2976c8a07be3d0cf8eb417c3ead852d2c2774de99c2870102a6478",
+      "input": "d9d8ee541ebd84d861777d5f9d6fc79f2ed2946862f0580e0bbec86d966f6093",
+      "hosts": [
+        "x4003c6s5b0n0.hsn.cm.aurora.alcf.anl.gov"
+      ],
+      "warmup": 8,
+      "intervals": [
+        11.058124195000005,
+        9.526121539999991,
+        10.429565733999993,
+        12.190535683000007,
+        10.385834082999992,
+        10.626665090000017,
+        9.767771556999975,
+        10.435712796000018,
+        12.504231591000007,
+        10.939364616999995,
+        9.37635723699998,
+        11.008413184999995
+      ],
+      "seconds": 10.68739144233333,
+      "point_stages": 33467904,
+      "million_per_second": 3.131531597825812,
+      "seconds_per_M0": 1898.0807201583996
+    }
+  },
+  "unitrace": {
+    "job": 9102879,
+    "source": "426fc9c98",
+    "cycles": [
+      4,
+      5
+    ],
+    "units": "seconds per RK step or multirate coarse interval",
+    "runs": {
+      "profile-multirate-athena": {
+        "mean_device_seconds": 2.21960291,
+        "rank_device_seconds": [
+          3.07942804,
+          1.6352652400000003,
+          1.912473639999999,
+          1.8363539999999994,
+          1.783608,
+          2.0835769199999996,
+          2.8214996400000003,
+          2.99464356,
+          3.08633876,
+          1.9481221199999998,
+          1.8468123600000006,
+          1.6071126400000006
+        ],
+        "mean_device_seconds_by_operation": {
+          "ordinary_point_rhs": 1.0000166600000002,
+          "radial_capable_point_rhs": 0.14933528,
+          "surface": 0.18901104666666668,
+          "reconstruct_donors": 0.10515256666666667,
+          "agreement": 0.08573288666666667,
+          "reconstruct_owned": 0.2550600866666667,
+          "mapped_halo": 0.15560466,
+          "driver_copies_and_fills": 0.14285283000000004,
+          "mapped_field_derivatives": 0.062252686666666675,
+          "field_KO_and_validity": 0.05492968,
+          "other": 0.01965452666666667
+        }
+      },
+      "profile-regular-athena": {
+        "mean_device_seconds": 0.04407850333333333,
+        "rank_device_seconds": [
+          0.038011600000000006,
+          0.04190948,
+          0.04305432,
+          0.045670240000000015,
+          0.04491372,
+          0.04613740000000001,
+          0.047940159999999996,
+          0.04855676000000002,
+          0.04660712000000001,
+          0.04328796,
+          0.04222056,
+          0.04063272000000001
+        ],
+        "mean_device_seconds_by_operation": {
+          "regular_bulk_rhs": 0.011825713333333335,
+          "other": 0.023138613333333332,
+          "driver_copies_and_fills": 0.009114176666666668
+        }
+      },
+      "profile-uniform-athena": {
+        "mean_device_seconds": 0.27648714999999996,
+        "rank_device_seconds": [
+          0.35248824,
+          0.20898124,
+          0.25638312,
+          0.22366527999999997,
+          0.22809975999999998,
+          0.28622279999999994,
+          0.3168288,
+          0.3561976000000001,
+          0.36101032,
+          0.2872916800000001,
+          0.24068848000000012,
+          0.19998848000000005
+        ],
+        "mean_device_seconds_by_operation": {
+          "radial_capable_point_rhs": 0.06695585999999999,
+          "agreement": 0.019890206666666667,
+          "mapped_halo": 0.025267566666666668,
+          "driver_copies_and_fills": 0.02463101,
+          "ordinary_point_rhs": 0.10403251333333334,
+          "surface": 0.01317206,
+          "field_KO_and_validity": 0.008944373333333333,
+          "other": 0.006314826666666667,
+          "mapped_field_derivatives": 0.007278733333333333
+        }
+      }
+    }
+  },
+  "dependency_trace": {
+    "job": 9102930,
+    "source": "qualified diagnostic executable ef946659c036c993339a21ac366b952dd59d45e6301c024b4962261e9295cac9",
+    "cycle": 4,
+    "observed_endpoint_s": 10.695521053,
+    "reconstructed_s": 10.695521053,
+    "barrier_clock_uncertainty_s": 5.0902e-05,
+    "observed_gap_partition_s": {
+      "last_remote_record_after_computed_readiness": 6.553325063000008,
+      "remaining_until_dispatch": 0.6031291569999944,
+      "last_local_record_after_computed_readiness": 0.04592976300000018
+    },
+    "critical_path_phases_s": {
+      "drain_and_endpoint": 0.5226610859999994,
+      "donors": 0.24717468700000883,
+      "halo": 0.0013791969999975562,
+      "surface": 0.19500136999999867,
+      "dependent_rhs": 2.1532893930000006,
+      "dependent_remaining_setup": -9.624900000243823e-05,
+      "agreed": 0.1321191110000009,
+      "packed": 0.03691332800000363,
+      "queued": 0.012126631999999471,
+      "projected": 0.17482569699999817,
+      "before_fence": 0.0117373090000083,
+      "published": 0.006005508999987141,
+      "local_dispatch_gap": 3.87672772,
+      "cross_rank_readiness_gap": 3.3256562630000017
+    },
+    "measured_batch_replay_s": {
+      "0.0": 4.930714412999995,
+      "0.5": 7.5068472119999985,
+      "1.0": 10.695521053
+    },
+    "efficient_batch_replay_s": {
+      "0.0": 3.781100669380372,
+      "0.5": 6.721891458953356,
+      "1.0": 10.30060195285585
+    },
+    "efficient_ns_per_point": {
+      "cartesian/dependent": 455.47269414543354,
+      "spherical/dependent": 827.3162176522195,
+      "scri/dependent": 2846.2362625687215
+    },
+    "assumptions": "Fixed per-rank dispatch order and recorded dependency DAG. Retain elapsed from last publication on any rank through global endpoint. Alternative conservatively retains each rank\u2019s observed completion tail including waits for other ranks. For each kernel class and RHS subset, use point-weighted time per point of its largest quartile of measured batches, capped at the observed RHS time. Gap multiplier acts on observed post-readiness delay, which includes MPI, host scheduling and synchronization. Zero gap is optimistic."
+  }
+}
