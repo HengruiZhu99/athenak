@@ -20,41 +20,36 @@ template <class T>
 KOKKOS_INLINE_FUNCTION void CartesianInnerAdjustment(
     const Z4cJet<T>& u, const OmegaJet<T>& o, T weight, const SpatialGeometry<T>& gt,
     const SpatialGeometry<T>& gb, Z4cRHSParts<T>& parts) {
-  T z[3]{}, dz[3][3]{}, correction[3][3]{}, pole[3][3]{};
-  T trace = 0, pole_trace = 0, ricci_trace = 0, divz = 0, divbeta = 0;
-  for (int i = 0; i < 3; ++i) {
-    divbeta += u.beta.d[i][i];
-    for (int j = 0; j < 3; ++j) {
-      const T delta = u.lambda.value[j] - gt.contracted[j];
-      z[i] += T(.5) * u.metric.g[i][j] * delta;
-      for (int d = 0; d < 3; ++d)
-        dz[d][i] += T(.5) * (u.metric.dg[d][i][j] * delta +
-                             u.metric.g[i][j] * (u.lambda.d[d][j] - gt.dcontracted[d][j]));
-    }
+  T delta[3], z[3]{}, correction[3][3]{}, pole[3][3]{};
+  T trace = 0, pole_trace = 0, constraint_trace = 0, divbeta = 0;
+  for (int k = 0; k < 3; ++k) {
+    delta[k] = u.lambda.value[k] - gt.contracted[k];
+    divbeta += u.beta.d[k][k];
+    for (int i = 0; i < 3; ++i) z[i] += T(.5) * u.metric.g[i][k] * delta[k];
   }
   for (int i = 0; i < 3; ++i)
     for (int j = 0; j < 3; ++j) {
-      T evolved_ricci = 0, covariant = dz[i][j] + dz[j][i], tilde_dz = dz[i][j];
+      // With 2 Z_i = g_ik delta^k, derivatives of delta cancel between
+      // evolved Ricci and the symmetrized covariant derivative of Z.
+      T gradient = 0, conformal_connection = 0, penrose_connection = 0;
       for (int k = 0; k < 3; ++k) {
-        evolved_ricci += T(.5) * (u.metric.g[k][i] * (u.lambda.d[j][k] - gt.dcontracted[j][k]) +
-                                  u.metric.g[k][j] * (u.lambda.d[i][k] - gt.dcontracted[i][k]));
-        covariant -= 2 * gb.connection[k][i][j] * z[k];
-        tilde_dz -= gt.connection[k][i][j] * z[k];
+        gradient -= T(.5) * (u.metric.dg[i][j][k] + u.metric.dg[j][i][k]) * delta[k];
+        conformal_connection += gt.connection[k][i][j] * z[k];
+        penrose_connection += gb.connection[k][i][j] * z[k];
       }
-      correction[i][j] = u.alpha.value * u.chi.value * (evolved_ricci - covariant);
+      correction[i][j] =
+          u.alpha.value * u.chi.value * (gradient + 2 * penrose_connection);
+      constraint_trace += gt.inverse[i][j] * (gradient + 2 * conformal_connection);
       pole[i][j] = -2 * u.alpha.value * u.chi.value * (z[i] * o.gradient[j] + z[j] * o.gradient[i]);
       trace += gt.inverse[i][j] * correction[i][j];
       pole_trace += gt.inverse[i][j] * pole[i][j];
-      ricci_trace += gt.inverse[i][j] * evolved_ricci;
-      divz += gt.inverse[i][j] * tilde_dz;
     }
   parts.regular.theta +=
-      weight * o.omega * u.alpha.value * u.chi.value * (ricci_trace - 2 * divz) / 2;
+      weight * o.omega * u.alpha.value * u.chi.value * constraint_trace / 2;
   for (int i = 0; i < 3; ++i) {
-    const T delta = u.lambda.value[i] - gt.contracted[i];
-    parts.regular.lambda[i] -= weight * T(2. / 3.) * delta * divbeta;
-    parts.pole.lambda[i] +=
-        weight * T(2. / 3.) * u.alpha.value * (u.trace.value + 2 * u.theta.value) * delta;
+    parts.regular.lambda[i] -= weight * T(2. / 3.) * delta[i] * divbeta;
+    parts.pole.lambda[i] += weight * T(2. / 3.) * u.alpha.value *
+                            (u.trace.value + 2 * u.theta.value) * delta[i];
     for (int j = 0; j < 3; ++j) {
       parts.regular.a[i][j] += weight * (correction[i][j] - u.metric.g[i][j] * trace / 3);
       parts.pole.a[i][j] += weight * (pole[i][j] - u.metric.g[i][j] * pole_trace / 3);

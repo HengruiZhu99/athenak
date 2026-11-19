@@ -201,6 +201,11 @@ Z4cRHSParts<T> ConformalRHS(const Z4cJet<T> &u, const OmegaJet<T> &o,
   T hessalpha[3][3]{}, hessomega[3][3]{};
   T z[3]{}, zup[3]{}, dz[3][3]{}, dzbar[3][3]{};
   T aup[3][3]{}, aa[3][3]{}, norm_a = 0, divz = 0;
+  // Raise the first index once. Both quadratic curvature contractions use it.
+  T mixed[3][3]{};
+  for (int i = 0; i < 3; ++i)
+    for (int j = 0; j < 3; ++j)
+      for (int k = 0; k < 3; ++k) mixed[i][j] += gt.inverse[i][k] * u.a.k[k][j];
   for (int i = 0; i < 3; ++i) {
     divbeta += u.beta.d[i][i];
     zup[i] = T(0.5)*(u.lambda.value[i]-gt.contracted[i]);
@@ -224,12 +229,8 @@ Z4cRHSParts<T> ConformalRHS(const Z4cJet<T> &u, const OmegaJet<T> &o,
       hessomega[i][j] -= gb.connection[k][i][j]*o.gradient[k];
       dzbar[i][j] -= gb.connection[k][i][j]*z[k];
       dztilde -= gt.connection[k][i][j]*z[k];
-      for (int l = 0; l < 3; ++l) {
-        aup[i][j] += gt.inverse[i][k]*gt.inverse[j][l]*u.a.k[k][l];
-      }
-      for (int l = 0; l < 3; ++l) {
-        aa[i][j] += gt.inverse[k][l]*u.a.k[i][k]*u.a.k[l][j];
-      }
+      aup[i][j] += mixed[i][k] * gt.inverse[j][k];
+      aa[i][j] += u.a.k[i][k] * mixed[k][j];
     }
     divz += gt.inverse[i][j]*dztilde;
     norm_a += gt.inverse[i][j]*aa[i][j];
