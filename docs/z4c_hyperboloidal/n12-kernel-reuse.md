@@ -1,6 +1,26 @@
 # Stationary geometry and N12 kernel performance
 
-One Aurora node advanced the fixed 33,467,904 bulk point-stages in **1.887 s/interval** with the selected code. The same-job incumbent took 2.547 s, a 1.35× speedup. Against the earlier 2.47446 s qualification, the speedup is 1.31×. Throughput reached 17.73 million bulk point-stages/s and 335.2 s/M₀. Regular single-puncture RK4 previously measured 103.2 million/s, a 5.82× gap. The 2× target relative to the qualified 2.47446 s interval is 1.23723 s, and 3× would require 0.82482 s.
+The accepted-state projection selected for commit 7dd9c5559 reached **1.768 s/interval** on one Aurora node, or **18.93 million bulk point-stages/s and 314.0 s/M₀**. This is a 1.40× speedup over the 2.47446 s qualification. Regular single-puncture RK4 measured 103.2 million/s, leaving a 5.45× throughput gap. The 2× target requires 1.23723 s/interval and the 3× target requires 0.82482 s/interval.
+
+## Accepted-state projection
+
+An accepted Runge–Kutta record contains scalar field values. The solver now reconstructs those values directly. It checks that the implicit metric component has zero first and second derivatives for constant inputs and that the metric inverse is finite. The chi floor, its persistent history, and the physical lapse check still run at acceptance.
+
+Job 9104779 used 12 bound GPU tiles, 33,467,904 bulk point-stages per interval, eight warm intervals and twelve timed intervals. Each trial started from the same executable source revision, 7cc9d1169. The cycle-21 checkpoint run repeated the selected projection at 1.7664 s/interval.
+
+| One-node trial | Seconds/interval |
+|---|---:|
+| Previously selected solver | 1.84874 |
+| Share donor loads among four halo targets | 1.83677 |
+| Store metric geometry between bulk kernels | 1.95648 |
+| Reuse projected bulk donors owned by the same stage | 1.84163 |
+| Project accepted records from scalar values | **1.76795** |
+
+The accepted projection saved 0.08080 s/interval. The larger range of four-interval means in that pair was 0.00787 s. In separate device profiles, this kernel fell from 0.09760 to 0.02529 s/interval averaged over the 12 tiles. At the same cycle and time, all 139,683,024 accepted field scalars and all eight persistent diagnostics per point matched the previous solver bit for bit. A CPU oracle reproduced the original acceptance decisions for 1,151 valid and 2,849 rejected charts, including poorly conditioned metrics. The two-rank CPU smoke and fixed-partition AMR tests passed. Refinement to 32 blocks and coarsening to 25 both preserved bitwise restart agreement.
+
+Job 9104748 separately tested compact derivative scratch storage. Its 1.86144 s interval versus 1.86396 s for the control fell within the 0.00949 s variation of the timing windows. The checkpoint matched bit for bit. Full receipts and device summaries for both jobs are in the n12-halo-kernels-20261119 results archive.
+
+The following measurements describe the earlier selection through solver commit 601cbe8ea. Its verified two-node result was 1.541 s/interval.
 
 ## Kernel changes
 
