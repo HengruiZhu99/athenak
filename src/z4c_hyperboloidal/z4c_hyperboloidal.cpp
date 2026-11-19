@@ -96,16 +96,9 @@ Z4cHyperboloidal::Z4cHyperboloidal(MeshBlockPack *ppack, ParameterInput *pin)
   parameters.enforce_cfl=true;
   parameters.outer_lapse_damping=pin->GetOrAddReal("z4c_hyperboloidal",
                                                   "outer_lapse_damping",.25);
-  const auto scri_mode=pin->GetOrAddString("z4c_hyperboloidal","scri_treatment","A");
-  if(scri_mode=="A")parameters.scri_treatment=ScriTreatment::existing;
-  else if(scri_mode=="B")parameters.scri_treatment=ScriTreatment::regularity;
-  else if(scri_mode=="C")parameters.scri_treatment=ScriTreatment::clock_source;
-  else throw std::invalid_argument("scri_treatment must be A, B, or C");
-  if(parameters.scri_treatment==ScriTreatment::clock_source) {
-    parameters.scri_source_epsilon=pin->GetOrAddReal("z4c_hyperboloidal","scri_source_epsilon",1);
-    parameters.scri_collar_begin=pin->GetOrAddReal("z4c_hyperboloidal","scri_collar_begin",.98);
-    parameters.scri_collar_end=pin->GetOrAddReal("z4c_hyperboloidal","scri_collar_end",.995);
-  }
+  if (pin->DoesParameterExist("z4c_hyperboloidal", "scri_treatment") &&
+      pin->GetString("z4c_hyperboloidal", "scri_treatment") != "A")
+    throw std::invalid_argument("Only scri treatment A is supported");
   const auto overlap_mode=pin->GetOrAddString("z4c_hyperboloidal","overlap_mode","agreement_full");
   if (overlap_mode!="agreement_full")
     throw std::invalid_argument("Only overlap_mode=agreement_full is supported");
@@ -309,13 +302,6 @@ void Z4cHyperboloidal::BuildReferenceCache() {
     if (!((r>0 || (r==0 && parameters.residual_weight.Regular())) && r<1)) throw std::runtime_error("Bulk evolved point outside punctured ball");
     ref(p)=initial.At(g(p).x);
     sources(p)=initial.source.At(r);
-    if(parameters.scri_treatment==ScriTreatment::clock_source && r>parameters.scri_collar_begin) {
-      const auto u=SphericalPolicy::Physical(g(p).x,ref(p));
-      const auto D=SphericalPolicy::Vector(ref(p),25);
-      const auto clock=EvaluateScriGeometry(g(p).x,u,D.value,parameters.profile.At(g(p).x),parameters);
-      if(!clock.valid)throw std::runtime_error("Invalid prescribed scri clock reference");
-      sources(p).scri_obstruction_reference=clock.obstruction;
-    }
   }
   for (int p=0;p<nsurface_points;++p) {
     const auto c=surface_points.h_view(p);

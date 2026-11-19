@@ -204,12 +204,13 @@ struct ScriOutput::Impl {
     geometry.Add("rows",{rows.extent(0),3},std::move(row_data));
     geometry.Add("term_ids",{terms.extent(0),2},std::move(term_ids));
     geometry.Add("term_weights",{terms.extent(0),13},std::move(term_jets));
+    // Preserve the archive fields for Scheme A (treatment 0, no added clock source).
     geometry.Add("configuration",{9},{double(n),double(p.origin),double(p.overlap),double(p.nghost),
-        double(p.parameters.scri_treatment),p.parameters.residual_weight.inner,p.parameters.residual_weight.outer,
+        0.0,p.parameters.residual_weight.inner,p.parameters.residual_weight.outer,
         double(sizeof(Real)),double(resolution)});
     const auto &source=p.boundary_source;
     geometry.Add("boundary_source",{7},{source.alpha,source.shift_ratio,source.lapse_offset,
-        source.lapse_linear,source.lapse_quadratic,source.shift_offset,source.scri_obstruction_reference});
+        source.lapse_linear,source.lapse_quadratic,source.shift_offset,0.0});
     const auto &o=p.parameters.profile;
     geometry.Add("conformal_profile",{4},{double(o.flat),o.flat_radius,o.outer_radius,o.plateau});
     Kokkos::deep_copy(harmonics,yh);

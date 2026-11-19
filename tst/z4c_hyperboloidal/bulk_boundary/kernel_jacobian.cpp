@@ -29,7 +29,7 @@ int main(int argc,char **argv) {
   const double spacing=std::stod(argv[5]),penalty=std::stod(argv[6]);
   h::CentralZ4cConfiguration config;config.inner_z4c_radius_M=20;config.compact_slicing_end=.97;
   auto p=config.Resolve().gauge;p.outer_lapse_damping=kappa;
-  p.scri_treatment=h::ScriTreatment::existing;p.Validate();
+  p.Validate();
   h::SphericalReference3D reference(p);
   std::vector<int> fields;for(int f=0;f<31;++f)if(h::Fields::Independent(f))fields.push_back(f);
   std::ofstream data(prefix+".bin",std::ios::binary),meta(prefix+".json");

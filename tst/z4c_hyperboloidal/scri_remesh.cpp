@@ -1,5 +1,5 @@
 // Copyright(C) 2026 AthenaK contributors. BSD-3-Clause; see LICENSE.
-// Exercise B's fourth correction through a real outer refine/coarsen transaction.
+// Exercise the shift corrections through a real outer refine/coarsen transaction.
 #include <cmath>
 #include <iostream>
 #include <memory>
@@ -27,15 +27,15 @@ void Check(Mesh &mesh) {
   surface.StartReceives();surface.PackAndSend();
   while(surface.Receive()!=TaskStatus::complete) {}
   surface.Sample();surface.Solve();
-  if(surface.Correction().extent_int(1)!=4)throw std::runtime_error("missing lapse correction after rebuild");
+  if(surface.Correction().extent_int(1)!=3)throw std::runtime_error("missing shift corrections after rebuild");
   auto direct=surface.BindKernel();auto cached=direct;cached.correction_jets=surface.CorrectionJets();
   const auto maps=p.surface_geometry;const auto points=p.surface_points.d_view;
   Real error=0,amplitude=0;
-  Kokkos::parallel_reduce("all four correction cache jets after remesh",
+  Kokkos::parallel_reduce("all three correction cache jets after remesh",
     Kokkos::RangePolicy<>(0,p.nsurface_points),KOKKOS_LAMBDA(int q,Real &err,Real &amp) {
       const auto c=points(q);
-      amp=fmax(amp,fabs(cached.correction(c.face,3,c.k,c.j)));
-      for(int f=0;f<4;++f) {
+      amp=fmax(amp,fabs(cached.correction(c.face,0,c.k,c.j)));
+      for(int f=0;f<3;++f) {
         auto a=direct.Correction(c.face,c.j,c.k,maps(q),f),b=cached.Correction(c.face,c.j,c.k,maps(q),f);
         err=fmax(err,fabs(a.f-b.f));
         for(int i=0;i<3;++i) {err=fmax(err,fabs(a.d[i]-b.d[i]));
@@ -44,19 +44,18 @@ void Check(Mesh &mesh) {
     },Kokkos::Max<Real>(error),Kokkos::Max<Real>(amplitude));
   MPI_Allreduce(MPI_IN_PLACE,&error,1,MPI_DOUBLE,MPI_MAX,MPI_COMM_WORLD);
   MPI_Allreduce(MPI_IN_PLACE,&amplitude,1,MPI_DOUBLE,MPI_MAX,MPI_COMM_WORLD);
-  if(!(error<1e-9 && amplitude>1e-8))throw std::runtime_error("lapse cache not exercised or inconsistent");
+  if(!(error<1e-9 && amplitude>1e-8))throw std::runtime_error("shift cache not exercised or inconsistent");
   surface.Evaluate();
   while(surface.ClearSend()!=TaskStatus::complete) {}
   while(surface.ClearRecv()!=TaskStatus::complete) {}
   if(!global_variable::my_rank)std::cout<<"PASS phase="<<operation<<" blocks="<<mesh.nmb_total
-    <<" lapse_amplitude="<<amplitude<<" cache_error="<<error<<" compatibility="<<surface.MaxCompatibility()<<'\n'<<std::flush;
+    <<" shift_amplitude="<<amplitude<<" cache_error="<<error<<" compatibility="<<surface.MaxCompatibility()<<'\n'<<std::flush;
 }
 int main(int argc,char **argv) {
   MPI_Init(&argc,&argv);MPI_Comm_rank(MPI_COMM_WORLD,&global_variable::my_rank);
   MPI_Comm_size(MPI_COMM_WORLD,&global_variable::nranks);Kokkos::initialize(argc,argv);int failed=0;
   try {{
     ParameterInput pin;IOWrapper file;file.Open(argv[1],IOWrapper::FileMode::read);pin.LoadFromFile(file);file.Close();
-    pin.SetString("z4c_hyperboloidal","scri_treatment","B");
     pin.SetString("z4c_hyperboloidal","residual_weight","regular_c6");
     pin.SetRealExact("z4c_hyperboloidal","weight_inner",.3);pin.SetRealExact("z4c_hyperboloidal","weight_outer",.55);
     pin.SetString("mesh_refinement","refinement","adaptive");pin.SetInteger("mesh_refinement","num_levels",3);

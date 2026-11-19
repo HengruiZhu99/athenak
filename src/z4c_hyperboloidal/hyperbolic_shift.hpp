@@ -62,11 +62,7 @@ T InnerTelegrapherWeight(T r) {
 // ScriShift is a gauge identity; the full endpoint closure is in SphericalPolicy.
 inline constexpr bool configured_conformal_frame=true;
 
-enum class ScriTreatment : int { existing=0, regularity=1, clock_source=2 };
-
 template<class T> struct HyperbolicShiftParameters {
-  ScriTreatment scri_treatment=ScriTreatment::existing;
-  T scri_source_epsilon=1, scri_collar_begin=.98, scri_collar_end=.995;
   ConformalProfile profile;
   ResidualWeight residual_weight;
   bool enforce_cfl=false;
@@ -91,12 +87,6 @@ template<class T> struct HyperbolicShiftParameters {
   T inner_z4 = 8, kappa1 = 4, kappa2 = T(-.99);
   void Validate() const {
     profile.Validate();
-    if(scri_treatment==ScriTreatment::clock_source &&
-       (!std::isfinite(scri_source_epsilon) || scri_source_epsilon<0 || scri_source_epsilon>1 ||
-        !std::isfinite(scri_collar_begin) || !std::isfinite(scri_collar_end) ||
-        !(scri_collar_begin>=fmax(inner_end,fmax(profile.outer_radius,restoration_end)) &&
-          scri_collar_begin<scri_collar_end && scri_collar_end<1)))
-      throw std::invalid_argument("C source requires epsilon in [0,1] and a finite outer collar beyond gauge blending");
     if(!std::isfinite(reference_compact_end)||reference_compact_end<0||reference_compact_end>=1)
       throw std::invalid_argument("invalid compact reference endpoint");
     for (const auto window : {std::array<T,2>{coefficient_begin,coefficient_end},
@@ -252,7 +242,6 @@ template<class T> struct HyperbolicGaugeParts {
 // All three corrections already include the complete-RHS outer blend weight.
 template<class T> struct StationaryGaugeSource {
   T alpha{}, shift_ratio{}, lapse_offset{}, lapse_linear{}, lapse_quadratic{}, shift_offset{};
-  T scri_obstruction_reference{};
 };
 template<class T> KOKKOS_INLINE_FUNCTION
 void ApplyStationaryGaugeSource(const T x[3],T alpha,const StationaryGaugeSource<T>&s,

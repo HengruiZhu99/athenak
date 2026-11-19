@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check default-A preservation, passive signed histories, and B restart identity."""
+"""Check default-A preservation, passive signed histories, and retired mode rejection."""
 import argparse,json,sys
 from pathlib import Path
 import numpy as np
@@ -31,12 +31,9 @@ for group in range(4):
    expected=np.min(block[:,col]) if minimum else np.max(block[:,col])
    np.testing.assert_allclose(row[2+col],expected,rtol=1e-13,atol=1e-28)
 results['signed_windows']=True
-bmode=checkpoint('B-on',args.binary,['z4c_hyperboloidal/scri_treatment=B','output1/hyperboloidal_scri_investigation=true'])
-print('Running B restart on four ranks',flush=True)
-r=run(args.binary.resolve(),out,'B-restart',4,['-r',bmode['path'],'time/nlim=6','output1/last_time=-1'])
-f=checkpoint('B-full6',args.binary,['z4c_hyperboloidal/scri_treatment=B','output1/hyperboloidal_scri_investigation=true','time/nlim=6'],4)
-results['B_restart_repartition']=compare(r,f)
-# Explicitly reject a restart which would silently switch the numerical closure.
-run(args.binary.resolve(),out,'B-wrong-mode',2,['-r',bmode['path'],'z4c_hyperboloidal/scri_treatment=A'],fail='formulation mismatch')
-results['mode_identity_rejection']=True
+for mode in ('B', 'C'):
+    run(args.binary.resolve(), out, 'reject-' + mode, 2,
+        ['-i', str(path), 'z4c_hyperboloidal/scri_treatment=' + mode],
+        fail='Only scri treatment A')
+results['mode_rejection'] = True
 (out/'results.json').write_text(json.dumps(results,indent=2)+'\n');print(json.dumps(results,indent=2))

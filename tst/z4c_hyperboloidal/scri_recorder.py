@@ -135,11 +135,6 @@ def main():
         save()
     for phase in range(3):
         agree(record(output/'manufactured2', phase), record(output/'manufactured8', phase))
-    for treatment in ('B', 'C'):
-        directory = run('treatment_'+treatment, 2, base+scri+'\n<z4c_hyperboloidal>\nscri_treatment = '+treatment+'\n')
-        for path in sorted(directory.glob('*.r????????.scri')):
-            report['reconstruction'][str(path.relative_to(output))] = validate_archive(path, truth=False)
-            assert reader.read(path)['normal_correction'].shape[1] == 4
     disabled = run('disabled', 2, base+settings)
     enabled = run('enabled', 2, base+settings+scri)
     report['evolution_equivalence'] = compare(parse(sorted((disabled/'rst').glob('*.rst'))[-1]),

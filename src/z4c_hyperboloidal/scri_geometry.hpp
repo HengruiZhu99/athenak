@@ -44,20 +44,5 @@ KOKKOS_INLINE_FUNCTION ScriGeometry EvaluateScriGeometry(const Real x[3],
   out.valid=Kokkos::isfinite(out.obstruction)&&Kokkos::isfinite(out.N);
   return out;
 }
-// Finite continuum source: C4 smoothstep collar, independent of h and reductions.
-// Subtraction is a prescribed reference function, not an evolved-field feedback
-// or an endpoint projection. At scri the reference obstruction is exactly zero.
-KOKKOS_INLINE_FUNCTION Real ScriClockSource(const Real x[3],const Z4cJet<Real> &u,
-    const Real D[3],const OmegaJet<Real> &omega,const HyperbolicShiftParameters<Real> &p,
-    const StationaryGaugeSource<Real> &source,
-    const SpatialGeometry<Real> *metric=nullptr,const SpatialGeometry<Real> *penrose=nullptr) {
-  if(p.scri_treatment!=ScriTreatment::clock_source || p.scri_source_epsilon==0)return 0;
-  const Real r=sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);
-  if(r<=p.scri_collar_begin)return 0;
-  const auto geometry=EvaluateScriGeometry(x,u,D,omega,p,metric,penrose);
-  if(!geometry.valid)return NAN;
-  const Real w=Smoothstep9((r-p.scri_collar_begin)/(p.scri_collar_end-p.scri_collar_begin));
-  return -p.scri_source_epsilon*w*(geometry.obstruction-source.scri_obstruction_reference);
-}
 }  // namespace z4c_hyperboloidal
 #endif

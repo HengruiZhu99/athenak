@@ -195,7 +195,7 @@ class Sim {
     h::CentralZ4cConfiguration c;c.inner_z4c_radius_M=20;c.compact_slicing_end=.97;
     p=c.Resolve().gauge;p.enforce_cfl=true;p.outer_lapse_damping=o.kappa;
     p.restoring=o.restoring;
-    p.scri_treatment=h::ScriTreatment::existing;p.Validate();
+    p.Validate();
     N=static_cast<int>(std::lround((1-o.rin)/o.hh));
     if (N<40) throw std::invalid_argument("too few radial nodes");
     r.resize(N+1);mask.resize(N+1);refj.resize(N+1);ref.resize(N+1);src.resize(N+1);u.resize(N+1);

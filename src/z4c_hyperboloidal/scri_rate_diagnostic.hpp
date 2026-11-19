@@ -14,8 +14,6 @@ struct ScriRateDiagnostic {
 inline ScriRateDiagnostic DiagnoseScriRate(const mapped::Point &map,Real spacing,
     const CartesianChartJets &j,const HyperbolicShiftParameters<Real> &p,
     const StationaryGaugeSource<Real> &source,Real penalty) {
-  if(p.scri_treatment!=ScriTreatment::existing)
-    throw std::invalid_argument("nonradiative rate diagnostic requires A");
   ScriRateDiagnostic out;
   const auto rate=SphericalPolicy::Boundary(map,spacing,j,p,source,penalty);
   const auto bare=SphericalPolicy::Boundary(map,spacing,j,p,source,0);

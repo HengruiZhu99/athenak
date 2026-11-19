@@ -162,12 +162,6 @@ std::string Identity(const Z4cHyperboloidal &p) {
   HYP_ID(g.restoration_end); HYP_ID(g.bulk_mu); HYP_ID(g.ratio); HYP_ID(g.damping);
   HYP_ID(g.restoring); HYP_ID(g.outer_lapse_damping); HYP_ID(g.kappa); HYP_ID(g.tau);
   HYP_ID(g.epsilon); HYP_ID(g.inner_z4); HYP_ID(g.kappa1); HYP_ID(g.kappa2);
-  if(g.scri_treatment!=ScriTreatment::existing)
-    s << ";scri-treatment-v1=" << static_cast<int>(g.scri_treatment);
-  if(g.scri_treatment==ScriTreatment::clock_source) {
-    HYP_ID(g.scri_source_epsilon);HYP_ID(g.scri_collar_begin);HYP_ID(g.scri_collar_end);
-    s << ";scri-source-reference=wormhole-jets-v1";
-  }
   // Preserve the original identity byte-for-byte for the legacy policy.
   if(g.residual_weight.Regular()) {
     s << ";residual-weight=regular-c6-v1";

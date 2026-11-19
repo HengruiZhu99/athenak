@@ -126,8 +126,6 @@ KOKKOS_INLINE_FUNCTION void RestorePointState(PointState &out,const Reader &q,
     out.status=PointStatus::invalid_geometry;return;
   }
   if (lift)for (int a=0;a<3;++a)out.jets[22+a]=out.jets[22+a]+lift[a];
-  if (lift && parameters.scri_treatment!=ScriTreatment::existing)
-    out.jets[18]=out.jets[18]+lift[3];
   out.transport[0]*=parameters.residual_weight.Value(map.x);
   const auto u=SphericalPolicy::Physical(map.x,out.jets);
   if (!(u.chi.value>0 && u.alpha.value>0)) out.status=PointStatus::invalid_input;

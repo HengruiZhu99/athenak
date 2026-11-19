@@ -64,25 +64,5 @@ int main(){
     std::abs(lift.h[0][1]-.3)>1e-13 || std::abs(lift.h[0][2]+.4)>1e-13)
   throw std::runtime_error("incomplete normal lift Hessian");
  std::cout<<"PASS singular guards and full lift Hessian/angular cross terms\n";
- // C cancels the regular geometric clock obstruction in the local compatible example.
- j={};j[0].f=1;j[25].f=eps;par.scri_treatment=nh::ScriTreatment::clock_source;
- auto c0=rate();u=nh::SphericalPolicy::Physical(map.x,j);g=nh::Geometry(u.metric);
- fix=nh::ReconstructRegularScri(map.x,u,g,c0,par);
- j[18].d[0]+=fix.lapse;for(int a=0;a<3;++a)j[22+a].d[0]+=fix.shift[a];
- const auto c1=rate();
- if(std::abs(c1.clock)>1e-12 || std::abs(c1.clock_original-eps/2)>1e-12 ||
-    std::abs(c1.speed_t)>1e-12 || std::abs(c1.clock_source+eps/2)>1e-12)
-  throw std::runtime_error("C local clock cancellation mismatch");
- // The prescribed subtraction makes the extra source vanish on its reference.
- for(double radius:{.97,.98,.985,.995,1.}) {
-  double x[3]={radius,0,0};auto omega=par.profile.At(x);
-  nh::CartesianChartJets ref{};ref[0].f=1.01;
-  ref[0].d[0]=.02;auto reference_u=nh::SphericalPolicy::Physical(x,ref);double D[3]={.02,0,0};
-  auto prescribed=source;
-  prescribed.scri_obstruction_reference=nh::EvaluateScriGeometry(x,reference_u,D,omega,par).obstruction;
-  if(nh::ScriClockSource(x,reference_u,D,omega,par,prescribed)!=0)
-    throw std::runtime_error("C reference subtraction changed reference RHS");
- }
- std::cout<<"PASS C finite source, local clock cancellation and prescribed subtraction (hyperbolicity gate separate)\n";
  return worst<1e-10 && inv_err<1e-10 && solved<1e-10 && std::abs(fixed.rate[22]-.6*eps)<1e-12 ? 0:1;
 }

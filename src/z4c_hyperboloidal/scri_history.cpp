@@ -30,13 +30,10 @@ std::array<Real,ScriHistory::count> SurfaceExchange::MeasureInvestigation() {
       auto j=samples(q);const auto map=maps(q);const auto c=points(q);
       if(!SphericalPolicy::Restore(map.x,j,refs(q))) {++bad;return;}
       const auto before=SphericalPolicy::Boundary(map,rows(q).spacing,j,params,source,penalty,&metrics(q),&penrose(q));
-      auto original_before=before;original_before.clock=before.clock_original;
-      const auto reconstruction=ReconstructRegularScri(map.x,SphericalPolicy::Physical(map.x,j),metrics(q),original_before,params);
-      mapped::Jet lift[4];
+      const auto reconstruction = ReconstructRegularScri(
+          map.x, SphericalPolicy::Physical(map.x,j), metrics(q), before, params);
+      mapped::Jet lift[3];
       for(int a=0;a<3;++a) {lift[a]=kernel.Correction(c.face,c.j,c.k,map,a);j[22+a]=j[22+a]+lift[a];}
-      if(params.scri_treatment!=ScriTreatment::existing) {
-        lift[3]=kernel.Correction(c.face,c.j,c.k,map,3);j[18]=j[18]+lift[3];
-      }
       const auto u=SphericalPolicy::Physical(map.x,j);
       const auto rate=SphericalPolicy::Boundary(map,rows(q).spacing,j,params,source,penalty,&metrics(q),&penrose(q));
       const auto no_penalty=SphericalPolicy::Boundary(map,rows(q).spacing,j,params,source,0,&metrics(q),&penrose(q));
@@ -52,7 +49,8 @@ std::array<Real,ScriHistory::count> SurfaceExchange::MeasureInvestigation() {
       Real signed_values[H::signed_count]{},absolute[H::absolute_count]{};
       signed_values[H::s_error]=sqrt(u.chi.value*geometry.Q)-1;
       signed_values[H::z_before]=before.speed_t;signed_values[H::z_after]=rate.speed_t;
-      signed_values[H::clock_original]=rate.clock_original;signed_values[H::clock_modified]=rate.clock;
+      signed_values[H::clock_original] = rate.clock;
+      signed_values[H::clock_modified] = rate.clock;
       for(int a=0;a<3;++a) {
         signed_values[H::Bx+a]=rate.defect[a];
         signed_values[H::qx+a]=kernel.correction(c.face,a,c.k,c.j);
@@ -66,15 +64,11 @@ std::array<Real,ScriHistory::count> SurfaceExchange::MeasureInvestigation() {
       signed_values[H::scalar_normal]=2*p_n+theta_n+6+3*geometry.N+2*geometry.L;
       signed_values[H::N]=geometry.N;signed_values[H::L]=geometry.L;
       signed_values[H::p_t]=rate.rate[13];signed_values[H::theta_t]=rate.rate[14];
-      if(params.scri_treatment!=ScriTreatment::existing)
-        signed_values[H::ell]=kernel.correction(c.face,3,c.k,c.j);
-      signed_values[H::source]=rate.clock_source;
       signed_values[H::pen_s_t]=rate.speed_t-no_penalty.speed_t;
       signed_values[H::pen_chi]=rate.rate[0]-no_penalty.rate[0];
       signed_values[H::pen_p]=rate.rate[13]-no_penalty.rate[13];
       signed_values[H::pen_theta]=rate.rate[14]-no_penalty.rate[14];
-      signed_values[H::clock_before]=before.clock_original;
-      signed_values[H::reference_source]=source.scri_obstruction_reference;
+      signed_values[H::clock_before]=before.clock;
       const Real invh=1/rows(q).spacing;
       absolute[H::pole_chi_h]=fabs(parts.pole.chi)*invh;
       absolute[H::pole_p_h]=fabs(parts.pole.trace)*invh;
@@ -88,7 +82,6 @@ std::array<Real,ScriHistory::count> SurfaceExchange::MeasureInvestigation() {
         for(int b=0;b<3;++b) {
           absolute[H::reg_a]=fmax(absolute[H::reg_a],fabs(trace.a[a][b]));
           absolute[H::pole_a_h]=fmax(absolute[H::pole_a_h],fabs(parts.pole.a[a][b])*invh);
-          absolute[H::lift_alpha_hessian]=fmax(absolute[H::lift_alpha_hessian],fabs(lift[3].h[a][b]));
           for(int k=0;k<3;++k)absolute[H::lift_beta_hessian]=fmax(absolute[H::lift_beta_hessian],fabs(lift[k].h[a][b]));
         }
       }
@@ -105,21 +98,19 @@ std::array<Real,ScriHistory::count> SurfaceExchange::MeasureInvestigation() {
     if(host_active.extent(0) && !host_active(p.face_blocks.h_view(p.surface_points.h_view(q).face)))continue;
     for(int c=0;c<H::count;++c)maxima[c]=std::max(maxima[c],host(q,c));
   }
-  Real lapse_hessian=0,shift_hessian=0;
+  Real shift_hessian=0;
   Kokkos::parallel_reduce("scri lift Hessians in adjacent bulk support",
-    Kokkos::RangePolicy<>(0,p.npoints),KOKKOS_LAMBDA(int point,Real &a,Real &b) {
+    Kokkos::RangePolicy<>(0,p.npoints),KOKKOS_LAMBDA(int point,Real &b) {
       const auto c=kernel.points(point);const int face=kernel.block_faces(c.m);
       if(active.extent(0) && !active(c.m))return;
       if(face<0 || c.i-kernel.origin<kernel.n-2)return;
       const auto map=bulk_maps(point);
-      const int count=params.scri_treatment==ScriTreatment::existing ? 3 : 4;
-      for(int f=0;f<count;++f) {
+      for (int f = 0; f < 3; ++f) {
         const auto jet=kernel.NormalCorrection(point,map,f);
         for(int i=0;i<3;++i)for(int j=0;j<3;++j)
-          if(f==3)a=fmax(a,fabs(jet.h[i][j]));else b=fmax(b,fabs(jet.h[i][j]));
+          b=fmax(b,fabs(jet.h[i][j]));
       }
-    },Kokkos::Max<Real>(lapse_hessian),Kokkos::Max<Real>(shift_hessian));
-  maxima[2*H::signed_count+H::lift_alpha_hessian]=std::max(maxima[2*H::signed_count+H::lift_alpha_hessian],std::max(Real(0),lapse_hessian));
+    },Kokkos::Max<Real>(shift_hessian));
   maxima[2*H::signed_count+H::lift_beta_hessian]=std::max(maxima[2*H::signed_count+H::lift_beta_hessian],std::max(Real(0),shift_hessian));
   return maxima;
 }

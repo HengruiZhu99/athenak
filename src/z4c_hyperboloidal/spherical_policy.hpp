@@ -51,7 +51,9 @@ struct SphericalPolicy {
     return TryExpandCartesianChart(j);
   }
   struct BoundaryResult {std::array<double,31> rate{};std::array<double,3> defect{};
-    double clock=0, speed_t=0, clock_original=0, clock_source=0;bool valid=true;};
+    double clock = 0, speed_t = 0;
+    bool valid = true;
+  };
   KOKKOS_INLINE_FUNCTION static BoundaryResult Boundary(const mapped::Point&map,Real spacing,const CartesianChartJets&j,const HyperbolicShiftParameters<Real>&parameters,const StationaryGaugeSource<Real>&boundary_source,Real penalty,
       const SpatialGeometry<Real>*metric_geometry=nullptr,
       const SpatialGeometry<Real>*penrose_geometry=nullptr){
@@ -70,12 +72,7 @@ struct SphericalPolicy {
     BoundaryResult out;StoreGeometry(rate,out.rate.data());
     const auto B=Vector(j,19),D=Vector(j,25);auto gauge=HyperbolicGauge(x,u,B,D.value,parameters);
     ApplyStationaryGaugeSource(x,u.alpha.value,boundary_source,gauge);
-    out.clock=gauge.lapse_regular-pole.lapse.derivative;out.clock_original=out.clock;
-    if(parameters.scri_treatment==ScriTreatment::clock_source) {
-      out.clock_source=ScriClockSource(x,u,D.value,o,parameters,boundary_source,&g,penrose_geometry);
-      out.clock+=out.clock_source;
-      out.valid=Kokkos::isfinite(out.clock);
-    }
+    out.clock=gauge.lapse_regular-pole.lapse.derivative;
     double Qdot=0;for(int a=0;a<3;++a)for(int b=0;b<3;++b)Qdot-=invn[a]*rate.metric[a][b]*invn[b];
     const double speed_t=(rate.chi*Q+u.chi.value*Qdot)/(2*std::sqrt(u.chi.value*Q));
     out.speed_t=speed_t;

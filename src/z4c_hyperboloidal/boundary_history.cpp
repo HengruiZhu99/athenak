@@ -31,8 +31,6 @@ std::array<Real,20> SurfaceExchange::MeasureHistory() {
         measured(q,0)=NAN;return;
       }
       for(int a=0;a<3;++a)j[22+a]=j[22+a]+kernel.Correction(c.face,c.j,c.k,map,a);
-      if(params.scri_treatment!=ScriTreatment::existing)
-        j[18]=j[18]+kernel.Correction(c.face,c.j,c.k,map,3);
       const auto u=SphericalPolicy::Physical(map.x,j);
       auto omega=params.profile.At(map.x);omega.omega=0;
       SetStationaryOmegaNormal(u.alpha.value,u.beta.value,u.alpha.d,u.beta.d,omega);
