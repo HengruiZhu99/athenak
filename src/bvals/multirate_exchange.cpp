@@ -157,10 +157,29 @@ struct RecordExchange::Impl {
   }
   // A completed receive becomes a zero-copy record. A managed View or slice
   // held by any consumer keeps the allocation busy, even across an epoch.
+  struct ReceiveSlab {
+    DvceArray1D<Real> data;
+    std::size_t next = 0, used_end = 0;
+  };
+  std::vector<ReceiveSlab> receive_slabs;
+  std::size_t current_slab = 0;
+  // Unplanned packets keep the individual allocation cache.
   std::map<std::size_t,std::vector<DvceArray1D<Real>>> receive_buffers;
   std::size_t receive_cache_limit=0, receive_cache_bytes=0;
   DvceArray1D<Real> ReceiveBuffer(std::size_t size) {
-    if (receive_cache_limit) {
+    for (std::size_t attempt = 0; attempt < receive_slabs.size(); ++attempt) {
+      auto& slab = receive_slabs[current_slab];
+      if (slab.data.use_count() == 1) slab.next = 0;
+      if (size <= slab.data.extent(0) - slab.next) {
+        const auto offset = slab.next;
+        slab.next += size;
+        if (offset < slab.used_end) ++stats.reused_receive_packets;
+        slab.used_end = std::max(slab.used_end, slab.next);
+        return Kokkos::subview(slab.data, std::make_pair(offset, slab.next));
+      }
+      current_slab = (current_slab + 1) % receive_slabs.size();
+    }
+    if (receive_cache_limit && !planned) {
       auto found=receive_buffers.find(size);
       if (found!=receive_buffers.end()) {
         for (const auto& buffer:found->second) if (buffer.use_count()==1) {
@@ -172,7 +191,7 @@ struct RecordExchange::Impl {
     DvceArray1D<Real> buffer(Kokkos::view_alloc(Kokkos::WithoutInitializing,
         "multirate posted donor record"),size);
     const auto bytes=size*sizeof(Real);
-    if (bytes && bytes<=receive_cache_limit-receive_cache_bytes) {
+    if (!planned && bytes && bytes<=receive_cache_limit-receive_cache_bytes) {
       receive_buffers[size].push_back(buffer);
       receive_cache_bytes+=bytes;
     }
@@ -215,6 +234,33 @@ struct RecordExchange::Impl {
   };
   struct OpenPacket { Pending send; PacketGather gather; std::size_t written=0; };
   std::map<std::pair<int,int>,OpenPacket> open_packets;
+  // Neighbor messages have a static layout, but different receiving records
+  // can stay live across stages. Fill successive slices of a slab, then reuse
+  // the slab only when all MPI packets, stage records and external views let go.
+  void PrepareReceiveSlabs() {
+    const std::size_t capacity = receive_cache_limit / sizeof(Real);
+    if (!receive_slabs.empty() || !capacity || windows.empty()) return;
+    std::size_t total = 0, largest = 0;
+    std::set<int> peers;
+    for (const auto& [channel, window] : windows) {
+      peers.insert(channel.first);
+      for (const auto& slot : window.slots) {
+        total += std::min(slot.scalars, capacity - total);
+        largest = std::max(largest, slot.scalars);
+      }
+    }
+    // Two receives can be outstanding per communication channel. Size the
+    // backing storage for the largest packet and two slabs per peer
+    // when the budget permits. Oversized packets use independent allocations.
+    const auto slab_size = std::max(std::min(largest, total),
+                                    (total + 2*peers.size() - 1)/(2*peers.size()));
+    while (total) {
+      const auto size = std::min(total, slab_size);
+      receive_slabs.push_back({DvceArray1D<Real>(Kokkos::view_alloc(
+          Kokkos::WithoutInitializing, "multirate receive slab"), size)});
+      total -= size;
+    }
+  }
   void PostNext(Channel channel) {
     auto &window=windows.at(channel);
     if (window.next==window.slots.size()) return;
@@ -456,6 +502,7 @@ void RecordExchange::Begin(std::uint64_t epoch, const std::vector<int> &steps,
     p.expected_publications += 5*std::size_t(steps[entry.first])+1;
 #if MPI_PARALLEL_ENABLED
   if (p.planned) {
+    p.PrepareReceiveSlabs();
     for (auto &[channel,window]:p.windows) {
       window.next=0;
       for (const auto& slot:window.slots) p.expected_receives+=slot.keys.size();
@@ -571,6 +618,8 @@ void RecordExchange::SetSendCacheBytes(std::size_t bytes) {
 void RecordExchange::SetReceiveCacheBytes(std::size_t bytes) {
   if (!impl_->finished) throw std::logic_error("Resize receive cache only at synchronized endpoints");
 #if MPI_PARALLEL_ENABLED
+  impl_->receive_slabs.clear();
+  impl_->current_slab = 0;
   impl_->receive_buffers.clear();
   impl_->receive_cache_bytes=0;
   impl_->receive_cache_limit=bytes;
