@@ -18,11 +18,30 @@ The selected change saved 0.02132 s/interval, against a 0.01360 s range of four-
 
 In separate device profiles, the mean ordinary and scri-adjacent bulk point kernels fell from 0.57281 to 0.55562 s/interval per tile. Rank 5 had the largest total device time for the selected solver, at 1.6816 s/interval. On that tile the point kernels used 0.6165 s, surface exchange kernels 0.3682 s, mapped halo interpolation 0.1565 s, stage donor construction 0.1472 s, and field derivative preparation 0.1294 s. These durations are device service on one tile. The timing table measures full uninstrumented intervals. Full receipts are in the n12-halo-kernels-20261119 results archive.
 
+## Gap to regular Z4c at the same bulk work
+
+The archived regular RK4 run (9102783) delivered 103.23 million bulk point-stages/s. At that throughput 33,467,904 point-stages take 0.32419 s, leaving a 1.43304 s gap to the measured 1.75724 s hyperboloidal interval. To compare device work, scale the regular profile (9102879) by 33,467,904 / 5,038,848 and compare it with the hyperboloidal profile (9104811). Both used 12 tiles.
+
+| Contribution | Additional seconds per fixed workload | Share of wall-time gap |
+|---|---:|---:|
+| Mean bulk RHS device time, including differentiation and dissipation | 0.6062 | 42.3% |
+| Difference between busiest and mean tile service | 0.3140 | 21.9% |
+| Mean scri exchange and closure | 0.1838 | 12.8% |
+| Mean stage donor construction | 0.0944 | 6.6% |
+| Mean RK state reconstruction and update | 0.0888 | 6.2% |
+| Wall time minus the busiest tile's recorded device service | 0.0739 | 5.2% |
+| Mean overlap agreement | 0.0493 | 3.4% |
+| Mean halo, device copies and remaining device work | 0.0226 | 1.6% |
+
+At equal bulk work the mean bulk RHS device service was 0.6847 s for the hyperboloidal solver and 0.0785 s for regular Z4c. The 0.3140 s spread term measures uneven total device service across tiles. It includes the concentration of scri and donor work on particular ranks. The 0.0739 s residual compares wall and device clocks from separate runs and cannot distinguish exposed MPI, host synchronization and profiling variation. Data and the plot are archived as athena-accepted-algebra-device-vs-regular under job 9104811.
+
 ## Constant compactification in the production mesh
 
 An inventory using the native atlas maps and bulk activity policy reproduced the archived bulk count for each of the 754 blocks. Weighting each block by its actual number of RK stages gives **29,818,368 of 33,467,904 point-stages (89.1%)** on the constant Ω plateau. The share is 93.2% on rank 5, the busiest tile in the factored curvature profile. All 700 plateau blocks lie completely inside the plateau, and the remaining 54 lie completely outside. The production inner gauge weight is one throughout the plateau.
 
 In these cells the prescribed spatial gradient and Hessian of Ω vanish. Stationarity then makes the normal derivative vanish for any evolved shift. In the inner geometric source the derivatives of the connection constraint combine with Ricci, and the inner damping coefficients reduce to their plateau values. A CPU trial evaluated the resulting point equations at 6,000 states, including both sides of the radial cut, general compactification profiles, invalid metrics and chi, nonzero gauge sources and transport. The general and specialized routines accepted the same 5,458 states and rejected the same 542. Across all 31 rates, coordinate speeds and the speed gap, the maximum scaled difference was 1.42×10⁻¹⁴. This check establishes the algebraic comparison. The 1.757 s timing above is for solver 40d0aac1a. The per-block inventory and oracle are in the n12-halo-kernels-20261119 results archive.
+
+The trial that specializes a full local batch also passed the two-rank CPU adaptive fixture. Across 5,928,192 accepted field values after refinement to 32 blocks, its maximum scaled difference from the archived accepted-projection solver was 2.02×10⁻¹⁶. After coarsening to 25 blocks the maximum was 1.70×10⁻¹⁶ across 4,631,400 field values. The eight persistent diagnostics matched exactly at both endpoints. Continuous and restarted runs of the trial produced identical checkpoint payloads.
 
 ## Accepted-state projection
 
