@@ -1170,10 +1170,12 @@ void MultirateEvolution::Impl::StageDonors(size_t stage, const std::vector<int>&
           return;
         }
         for (int f = 0; f < Fields::count; ++f) values[f] = c.Value(meta.index, f);
-        if (Kokkos::isfinite(values[0]) && floor > 0 && values[0] < floor) values[0] = floor;
+        if (Kokkos::isfinite(values[0]) && floor > 0 && values[0] < floor)
+          values[0] = floor;
         Real inverse[3][3];
-        const bool valid = (with_surface && meta.kind) ? ProjectConstantChart(values, inverse)
-                                                       : TryExpandCartesianChart(values);
+        const bool valid = (with_surface && meta.kind)
+                               ? ProjectConstantChart(values, inverse)
+                               : TryExpandCartesianChart(values);
         if (!valid) {
           ++bad;
           return;

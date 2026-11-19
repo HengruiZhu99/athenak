@@ -69,7 +69,10 @@ struct SphericalPolicy {
       bad.valid = false;
       return bad;
     }
-    const auto pole=pole_cache ? ShiftedSurfacePole(*pole_cache,u,o,x) : TensorPoleNormalJet(u,o,x,x,parameters.kappa1,parameters.kappa2,1.,parameters.outer_lapse_damping,true,true);
+    const auto pole = pole_cache
+        ? ShiftedSurfacePole(*pole_cache, u, o, x)
+        : TensorPoleNormalJet(u, o, x, x, parameters.kappa1, parameters.kappa2, 1.,
+                              parameters.outer_lapse_damping, true, true);
     auto rate=TensorScriLimit(parts.regular,pole,-1.);const auto trace=ScriRegularityTraces(u,o,metric_geometry,penrose_geometry);const auto g=metric_geometry ? *metric_geometry : Geometry(u.metric);
     double Q=0,invn[3]{};for(int a=0;a<3;++a)for(int b=0;b<3;++b){Q+=g.inverse[a][b]*x[a]*x[b];invn[a]+=g.inverse[a][b]*x[b];}
     const double fac=penalty/spacing;

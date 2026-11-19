@@ -276,9 +276,11 @@ TaskStatus SurfaceExchange::Project() {
       for (int a=0;a<3;++a)for (int b=0;b<3;++b)
         Q+=inverse[a][b]*x[a]*x[b];
       if (!(Q>0)) {++bad;return;}
-      const Real speed=sqrt(values[0]*Q);values[18]=0;
+      const Real speed = sqrt(values[0] * Q);
+      values[18] = 0;
       for (int a=0;a<3;++a) {
-        values[22+a]=(1-speed)*x[a];values[28+a]=0;
+        values[22+a] = (1-speed)*x[a];
+        values[28+a] = 0;
         Real C=0;
         for (int k=0;k<5;++k) {
           Real weight=1;
@@ -419,9 +421,9 @@ TaskStatus SurfaceExchange::Solve() {
       const auto map = maps(point);
       if (which>0)
         for (int a=0;a<3;++a)jets[21+which].d[a]+=map.x[a];
-      const auto result=EvaluateScriPoint(map,rows(point).spacing,jets,
-                                        parameters,source,penalty,
-                                        &metric_geometry(point),&penrose_geometry(point),&stage_pole(point));
+      const auto result = EvaluateScriPoint(
+          map, rows(point).spacing, jets, parameters, source, penalty,
+          &metric_geometry(point), &penrose_geometry(point), &stage_pole(point));
       if (!result.valid)return;
       for (int a=0;a<3;++a)cases(point,which).defect[a]=result.defect[a];
       cases(point,which).valid=true;
