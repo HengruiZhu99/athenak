@@ -10,6 +10,7 @@
 #include <set>
 #include <sstream>
 #include <stdexcept>
+#include <tuple>
 #include <thread>
 #include "bvals/multirate_exchange.hpp"
 #include "driver/multirate.hpp"
@@ -239,7 +240,7 @@ struct MultirateEvolution::Impl {
     std::vector<Key> dependencies;
     double interior_seconds = 0;
   };
-  using BatchKey = std::tuple<int, size_t, bal::KernelKind>;
+  using BatchKey = std::tuple<int, size_t, int>;
   mr::RecordReadiness<Key, BatchKey> readiness, interior_readiness;
   bool progress_during_rhs = false;
   bool complete_local_batches = false, peer_profile_pending = false;
@@ -366,6 +367,11 @@ struct MultirateEvolution::Impl {
   std::vector<DvceArray1D<Real>> Pack(const std::vector<int>& slots, bool rhs);
   void Publish(const std::vector<int>& slots, const std::vector<DvceArray1D<Real>>& records,
                std::uint32_t step, int stage);
+  bool IncludesScri(const std::vector<int>& slots) const {
+    return std::any_of(slots.begin(), slots.end(), [&](int m) {
+      return graph.blocks[pack->GlobalId(m)].kernel == bal::KernelKind::scri;
+    });
+  }
   GatherPlan& ExchangeView(const bvals::MappedExchange& plan, int kind);
   DirectDonorViews MakeDonorViews(const std::vector<int>& slots, std::vector<int>& donor_gids);
   DvceArray2D<Real> Gather(const bvals::MappedExchange& plan, int kind,
@@ -850,8 +856,10 @@ void MultirateEvolution::Impl::BuildLocal() {
         }
         task.dependencies.assign(keys.begin(), keys.end());
         for (const auto& key : keys) ++consumers[key];
-        const BatchKey batch{-static_cast<int>(schedule->Stage(task.stage).critical_depth),
-                             task.stage, graph.blocks[gid].kernel};
+        const int group = complete_local_batches ? 0
+            : static_cast<int>(graph.blocks[gid].kernel);
+        const auto depth = schedule->Stage(task.stage).critical_depth;
+        const BatchKey batch{-static_cast<int>(depth), task.stage, group};
         auto halo_keys = task.dependencies;
         if (!complete_local_batches) {
           std::vector<Key> own_keys;
@@ -871,11 +879,10 @@ void MultirateEvolution::Impl::BuildLocal() {
   exchange->SetSendCacheBytes(static_cast<std::size_t>(pin->GetInteger("multirate","send_cache_mib"))*1024*1024);
   std::vector<int> groups;
   if (complete_local_batches) {
-    // Group only blocks published by the same level/stage/kernel batch.
+    // Complete local batches publish every local block at the same level and stage.
     groups.resize(graph.blocks.size());
     for (const auto& block : graph.blocks)
-      groups[block.gid] = block.time_level * static_cast<int>(bal::KernelKind::count)
-                          + static_cast<int>(block.kernel);
+      groups[block.gid] = block.time_level;
   }
   exchange->CompileReceives(consumers, groups);
 }
@@ -1000,7 +1007,7 @@ void MultirateEvolution::Impl::Reconstruct(const std::vector<int>& slots,
       },invalid);
   if (invalid) throw std::runtime_error("Invalid multirate owned stage or accepted geometry");
   // Scri reads five radial support values written by the complete bulk projection.
-  if (graph.blocks[pack->GlobalId(slots.front())].kernel == bal::KernelKind::scri)
+  if (IncludesScri(slots))
     p.surface_exchange_->Project();
 }
 std::vector<DvceArray1D<Real>> MultirateEvolution::Impl::Pack(const std::vector<int>& slots,
@@ -1062,7 +1069,7 @@ DirectDonorViews MultirateEvolution::Impl::MakeDonorViews(
   out.halo_residual = ExchangeView(halo,0).buffer;
   for (int i : p.mapped_halo_->DonorOrdinalsForBatch(slots))
     dest(halo.UniqueDonors()[i],0).halo = i;
-  if (graph.blocks[pack->GlobalId(slots.front())].kernel == bal::KernelKind::scri) {
+  if (IncludesScri(slots)) {
     // All scri and radial-closure blocks share one temporal level. A complete
     // scri batch therefore consumes the rank's entire bulk/edge exchange.
     auto surface = [&](const bvals::MappedExchange& plan, int kind) {
@@ -1269,7 +1276,6 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
                                         const std::vector<size_t>& batch) {
   const auto epoch = static_cast<std::uint64_t>(mesh->ncycle);
   const auto stage = tasks[batch.front()].stage;
-  const auto kind = graph.blocks[tasks[batch.front()].gid].kernel;
   std::vector<int> slots;
   for (auto task : batch) slots.push_back(tasks[task].m);
   if (complete_local_batches) std::sort(slots.begin(), slots.end());
@@ -1283,10 +1289,15 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
   const auto batch_start = Clock::now();
   std::uint64_t units = 0;
   std::uint64_t rhs_work = 0, agreement_work = 0;
+  constexpr int kinds = static_cast<int>(bal::KernelKind::count);
+  std::array<std::uint64_t, kinds> class_units{}, class_rhs_work{};
   for (int m : slots) {
     const int gid = pack->GlobalId(m);
     units += graph.blocks[gid].work_units;
     rhs_work += rhs_units[gid];
+    const auto index = static_cast<int>(graph.blocks[gid].kernel);
+    class_units[index] += graph.blocks[gid].work_units;
+    class_rhs_work[index] += rhs_units[gid];
     agreement_work += agreement_units[gid];
   }
   std::vector<Combination> combinations(p.nblocks);
@@ -1327,13 +1338,16 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
   auto halo_physical = Gather(p.mapped_halo_->PhysicalExchange(), 0, physical);
   p.mapped_halo_->FillExternal(p.residual, p.u0, halo_delta, halo_physical, p.active_blocks,
                                complete_local_batches ? &slots : nullptr);
-  if (kind == bal::KernelKind::scri) {
+  double surface_seconds = 0;
+  if (IncludesScri(slots)) {
+    const auto surface_start = Clock::now();
     auto surface_bulk = Gather(p.surface_exchange_->BulkExchange(), 0, delta);
     auto surface_edge = Gather(p.surface_exchange_->EdgeExchange(), 1, delta);
     p.surface_exchange_->SetExternalValues(surface_edge);
     p.surface_exchange_->Sample(surface_bulk, surface_edge);
     p.surface_exchange_->Solve();
     p.surface_exchange_->Evaluate();
+    surface_seconds = Seconds(surface_start);
   }
   const auto begin_rhs = Clock::now();
   phase_seconds[1] += std::chrono::duration<double>(begin_rhs-dependent_start).count();
@@ -1382,7 +1396,19 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
   }
   Kokkos::fence("multirate batch complete before release");
   phase_seconds[4] += Seconds(begin_publication);
-  model.Observe(kind, rhs_work, rhs_seconds);
+  // A mixed batch has one shared RHS clock. Charge the observed surface
+  // phase to scri and apportion the remaining service by owned point work.
+  // Homogeneous batches retain their directly measured class timing.
+  for (int i = 0; i < kinds; ++i) {
+    if (class_rhs_work[i] == 0) continue;
+    const auto kernel = static_cast<bal::KernelKind>(i);
+    double seconds = rhs_seconds;
+    if (class_rhs_work[i] != rhs_work) {
+      seconds = (rhs_seconds - surface_seconds) * class_units[i] / units;
+      if (kernel == bal::KernelKind::scri) seconds += surface_seconds;
+    }
+    model.Observe(kernel, class_rhs_work[i], seconds);
+  }
   for (size_t q : batch) {
     auto& t = tasks[q];
     for (const auto& key : t.dependencies) exchange->Release(key);
