@@ -605,8 +605,9 @@ void RecordExchange::SetSendCacheBytes(std::size_t bytes) {
   impl_->free_spans.clear();
   impl_->used_end = 0;
   impl_->send_arena = {};
-  const bool has_exports = std::any_of(impl_->exports.begin(), impl_->exports.end(),
-                                       [](const auto& entry) { return !entry.second.empty(); });
+  const bool has_exports = std::any_of(
+      impl_->exports.begin(), impl_->exports.end(),
+      [](const auto& entry) { return !entry.second.empty(); });
   if (scalars && has_exports) {
     impl_->send_arena = DvceArray1D<Real>(
         Kokkos::view_alloc(Kokkos::WithoutInitializing, "multirate send arena"), scalars);
