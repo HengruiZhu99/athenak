@@ -1,5 +1,6 @@
 // Copyright(C) 2026 AthenaK contributors. BSD-3-Clause; see LICENSE.
 #include "z4c_hyperboloidal/overlap_agreement.hpp"
+#include <cstdint>
 #include <algorithm>
 #include <cmath>
 #include <map>
@@ -233,10 +234,25 @@ void OverlapAgreementPlan::Rebuild(MeshBlockPack *pack,const Z4cHyperboloidal &p
   std::stable_sort(targets.begin(),targets.end(),[](const Target &a,const Target &b) {
     return a.end-a.begin>b.end-b.begin;
   });
+  // Split high-degree rows across work groups while keeping adjacent fields
+  // together. Only completed partial sums cross the kernel boundary.
+  std::vector<Segment> segments;
+  std::vector<int> segment_offsets{0};
+  constexpr int segment_size = 64;
+  for (const auto &target : targets) {
+    for (int e = target.begin; e < target.end; e += segment_size)
+      segments.push_back({e, std::min(e + segment_size, target.end), target.point.m});
+    segment_offsets.push_back(static_cast<int>(segments.size()));
+  }
+  Copy(segments, segments_, "agreement transpose segments");
+  Copy(segment_offsets, segment_offsets_, "agreement segment offsets");
+  partials_ = DvceArray2D<Real>(
+      Kokkos::view_alloc(Kokkos::WithoutInitializing, "agreement partial corrections"),
+      segments.size(), Fields::independent_count);
   Copy(rows,rows_,"agreement rows");Copy(entries,entries_,"agreement entries");
   Copy(targets,targets_,"agreement recipients");Copy(adjacency,transpose_,"agreement transpose");
   Copy(fields,fields_,"agreement fields");
-  discrepancy_=DvceArray2D<Real>("agreement discrepancies",rows.size()+targets.size(),32);
+  discrepancy_ = DvceArray2D<Real>("agreement discrepancies", rows.size(), 32);
   // Initialization/rebuild receipt, never a stage collective or device fence.
   std::ostringstream receipt;receipt<<std::setprecision(17)
     <<"AGREEMENT_PLAN rank="<<global_variable::my_rank<<" active_points="<<p.npoints
@@ -336,40 +352,45 @@ void OverlapAgreementPlan::AddRHS(const Z4cHyperboloidal &p,const BatchRows *bat
   const auto targets=targets_;const auto adjacency=transpose_;const auto d=discrepancy_;
   const auto fields=fields_;const auto rhs=p.u_rhs;const Real kappa=kappa_;
   const auto active=p.active_blocks;
-  const int scratch_begin=rows_.extent_int(0);
-  constexpr int field_lanes=32;
-  static_assert(Fields::independent_count<=field_lanes);
-  // Preserve each scalar sum's adjacency order. Store completed sums after
-  // the discrepancy rows so D can reuse the identical Lambda sum.
-  Kokkos::parallel_for("overlap agreement transpose",
-    Kokkos::RangePolicy<>(0,count*field_lanes),
-    KOKKOS_LAMBDA(int q) {
-      const int index=q/field_lanes,f=q%field_lanes;
-      const int t=compact?selected(index):index;
-      if(f>=Fields::independent_count)return;
-      const auto target=targets(t);if(active.extent(0) && !active(target.point.m))return;
-      Real correction=0;
-      #pragma unroll 4
-      for(int e=target.begin;e<target.end;++e) {
-        const auto a=adjacency(e);
-        correction-=kappa*a.coefficient*d(a.row,f);
-      }
-      d(scratch_begin+t,f)=correction;
-    });
-  Kokkos::parallel_for("overlap agreement apply",
-    Kokkos::RangePolicy<>(0,count*field_lanes),
-    KOKKOS_LAMBDA(int q) {
-      const int index=q/field_lanes,f=q%field_lanes;
-      const int t=compact?selected(index):index;
-      if(f>=Fields::independent_count)return;
-      const auto target=targets(t);const auto c=target.point;
-      if(active.extent(0) && !active(c.m))return;
-      const int field=fields(f);
-      Real correction=d(scratch_begin+t,f);
-      if(field==Fields::chi)correction*=target.chi_weight;
-      if(field>=Fields::D)correction+=d(scratch_begin+t,f-10);
-      rhs(c.m,field,c.k,c.j,c.i)+=correction;
-    });
+  constexpr int lanes = 32;
+  static_assert(Fields::independent_count <= lanes);
+  if (!count) return;
+  const auto segments = segments_;
+  const auto offsets = segment_offsets_;
+  const auto partials = partials_;
+  Kokkos::parallel_for(
+      "agreement transpose partial sums",
+      Kokkos::RangePolicy<Kokkos::IndexType<std::int64_t>>(0, segments.extent(0) * lanes),
+      KOKKOS_LAMBDA(std::int64_t q) {
+        const int s = static_cast<int>(q / lanes), f = static_cast<int>(q % lanes);
+        if (f >= Fields::independent_count) return;
+        const auto segment = segments(s);
+        if (active.extent(0) && !active(segment.block)) return;
+        Real sum = 0;
+        for (int e = segment.begin; e < segment.end; ++e) {
+          const auto a = adjacency(e);
+          sum -= kappa * a.coefficient * d(a.row, f);
+        }
+        partials(s, f) = sum;
+      });
+  Kokkos::parallel_for(
+      "agreement transpose apply", Kokkos::RangePolicy<>(0, count * lanes),
+      KOKKOS_LAMBDA(int q) {
+        const int index = q / lanes, f = q % lanes;
+        if (f >= Fields::independent_count) return;
+        const int t = compact ? selected(index) : index;
+        const auto target = targets(t);
+        const auto c = target.point;
+        if (active.extent(0) && !active(c.m)) return;
+        const int field = fields(f);
+        Real sum = 0, lambda = 0;
+        for (int s = offsets(t); s < offsets(t + 1); ++s) {
+          sum += partials(s, f);
+          if (field >= Fields::D) lambda += partials(s, f - 10);
+        }
+        if (field == Fields::chi) sum *= target.chi_weight;
+        rhs(c.m, field, c.k, c.j, c.i) += sum + lambda;
+      });
 }
 
 std::array<Real,8> OverlapAgreementPlan::History() const {

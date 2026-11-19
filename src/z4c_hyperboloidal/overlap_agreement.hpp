@@ -64,6 +64,12 @@ class OverlapAgreementPlan {
   struct Row {int begin,end;Real weight;bool owned;};
   struct Entry {int ordinal;Real coefficient;};
   struct Target {HaloPoint point;int begin,end;Real chi_weight;};
+  struct Segment {
+    int begin, end, block;
+  };
+  DvceArray1D<Segment> segments_;
+  DvceArray1D<int> segment_offsets_;
+  DvceArray2D<Real> partials_;
   struct Transpose {int row;Real coefficient;};
   bvals::MappedExchange exchange_;
   DvceArray1D<Row> rows_;
