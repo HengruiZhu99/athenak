@@ -1,5 +1,24 @@
 # Stationary geometry and N12 kernel performance
 
+## Reusing mapped halo interpolation lines
+
+Job 9105753 compared four builds on one Aurora node with exactly the same output-off input, binding and 33,467,904 bulk point-stages in each timed interval. The halo change reuses the first of three tensor interpolation sums across rows serving the same recipient block and RK stage. The plan checks all 216 original donor coordinates and coefficients before using this path. Irregular stencils continue through the direct interpolation.
+
+| Solver | Seconds/interval |
+|---|---:|
+| Previous bulk and scri solver | 1.47078 |
+| Reuse halo interpolation lines | **1.40620** |
+| Stream the plateau curvature | 1.53089 |
+| Combine halo line reuse and streamed curvature | 1.45649 |
+
+The halo change saved 0.06457 s against a 0.00935 s spread of four-interval means. The checkpoint run repeated at 1.40261 s/interval. Mean mapped halo execution fell from 0.15373 to 0.08802 s/tile. On rank 5 it fell from 0.15701 to 0.08609 s. The isolated curvature replay had predicted a gain. In the full production profile the ordinary point kernel instead took 0.43772 s/tile with streamed curvature, up from 0.40097 s. The selected build keeps the previous bulk kernel.
+
+The selected solver delivered 23.80 million bulk point-stages/s and 249.74 s/M₀. At 1.760× the speed of the 2.47446 s starting point, it needs another 0.16897 s/interval to reach 2×. At cycle 21 the maximum scaled differences from the original qualification were 4.819e-12 across 139,683,024 field slots and 1.554e-15 for the eight persistent diagnostics. The endpoint time and timestep matched.
+
+An independent four-block CPU comparison exercised five batch masks, including an empty batch. It checked 5,731,776 output values and 4,654,464 inactive sentinels. The largest scaled physical and residual interpolation differences were 1.055e-14 and 3.123e-17. A real Cartesian regrid increased the mesh from 51 to 65 blocks. The maximum field and diagnostic differences at cycle 3 were 3.431e-16 and 3.469e-18. Restarting at the refined cut reproduced all 15,149,160 checkpoint scalars bit for bit and exercised the factored kernels 24 times after restart.
+
+Solver commit af0a57885 matches the selected Aurora module source by SHA-256. Full timing, source manifests, separate device profiles and endpoint comparisons are archived under `n12-halo-kernels-20261119/9105753`. The adaptive comparison and restart are under `tensor-halo-native/active-amr`.
+
 ## Combined bulk and surface kernels
 
 Job 9105505 compared all five binaries on the same Aurora node with 12 ranks and output off. Each timing covers cycles 9–20 after eight warm intervals and 33,467,904 bulk point-stages per coarse interval.
