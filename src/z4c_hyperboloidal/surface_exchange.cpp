@@ -242,11 +242,11 @@ void SurfaceExchange::Rebuild() {
   Kokkos::realloc(metric_geometry_,p.nsurface_points);
   Kokkos::realloc(penrose_geometry_,p.nsurface_points);
   if (p.host_surface_geometry.extent(0)) {
-    host_samples_ = Kokkos::create_mirror_view(sampled_);
-    host_restored_ = Kokkos::create_mirror_view(restored_);
-    host_metric_ = Kokkos::create_mirror_view(metric_geometry_);
-    host_penrose_ = Kokkos::create_mirror_view(penrose_geometry_);
-    host_pole_ = Kokkos::create_mirror_view(stage_pole_);
+    host_samples_ = Kokkos::create_mirror_view(HostMemSpace(), sampled_);
+    host_restored_ = Kokkos::create_mirror_view(HostMemSpace(), restored_);
+    host_metric_ = Kokkos::create_mirror_view(HostMemSpace(), metric_geometry_);
+    host_penrose_ = Kokkos::create_mirror_view(HostMemSpace(), penrose_geometry_);
+    host_pole_ = Kokkos::create_mirror_view(HostMemSpace(), stage_pole_);
   } else {
     host_samples_ = HostArray1D<CartesianChartJets>();
     host_restored_ = HostArray1D<CartesianChartJets>();

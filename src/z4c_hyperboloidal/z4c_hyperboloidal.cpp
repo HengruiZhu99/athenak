@@ -305,8 +305,8 @@ void Z4cHyperboloidal::BuildReferenceCache() {
   auto g=Kokkos::create_mirror_view(geometry);
   auto ref=Kokkos::create_mirror_view(reference);
   auto sources=Kokkos::create_mirror_view(stationary_source);
-  auto sg=Kokkos::create_mirror_view(surface_geometry);
-  auto sr=Kokkos::create_mirror_view(surface_reference);
+  auto sg=Kokkos::create_mirror_view(HostMemSpace(), surface_geometry);
+  auto sr=Kokkos::create_mirror_view(HostMemSpace(), surface_reference);
   auto maps=pmy_pack->pmb->mb_map.h_view;
   for (int p=0;p<npoints;++p) {
     const auto c=points.h_view(p);
