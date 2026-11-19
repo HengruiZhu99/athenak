@@ -1,6 +1,22 @@
 # Stationary geometry and N12 kernel performance
 
-The accepted-state projection selected for commit 7dd9c5559 reached **1.768 s/interval** on one Aurora node, or **18.93 million bulk point-stages/s and 314.0 s/M₀**. This is a 1.40× speedup over the 2.47446 s qualification. Regular single-puncture RK4 measured 103.2 million/s, leaving a 5.45× throughput gap. The 2× target requires 1.23723 s/interval and the 3× target requires 0.82482 s/interval.
+One Aurora node with 12 bound GPU tiles measured **1.757 s/interval**, **19.05 million bulk point-stages/s** and **312.1 s/M₀** for solver commit 40d0aac1a. This is a 1.41× speedup over the 2.47446 s qualification. Regular single-puncture RK4 measured 103.2 million/s, leaving a 5.42× throughput gap. At the production workload of 33,467,904 bulk point-stages, the 2× target requires 1.23723 s/interval and the 3× target requires 0.82482 s/interval.
+
+## Curvature contractions
+
+Job 9104811 tested the candidates on the same node with eight warm and twelve timed intervals. Raising one index of the trace-free curvature once supplies both quadratic contractions. In the inner adjustment, expanding the covariant derivative of the connection constraint cancels the derivatives of its contravariant components. This identity also holds off the constraint surface.
+
+| One-node trial | Seconds/interval |
+|---|---:|
+| Accepted-state projection at 7dd9c5559 | 1.77855 |
+| Share four halo donor windows | 1.77437 |
+| Factor the curvature contractions and inner adjustment | **1.75724** |
+| Restore reference fields in the derivative kernel | 1.76864 |
+| Restore there and split geometric and gauge rates | 1.82976 |
+
+The selected change saved 0.02132 s/interval, against a 0.01360 s range of four-interval means. The checkpoint run repeated at 1.76100 s/interval. At cycle 21, the maximum scaled difference from the original qualification was 3.216×10⁻¹² over 139,683,024 accepted field values and 1.555×10⁻¹⁵ for the eight persistent diagnostics per point. Both comparisons used the same time and timestep, with a tolerance of 10⁻¹¹. An independent CPU comparison of 2,000 off-constraint states gave a maximum scaled RHS difference of 2.23×10⁻¹⁵.
+
+In separate device profiles, the mean ordinary and scri-adjacent bulk point kernels fell from 0.57281 to 0.55562 s/interval per tile. Rank 5 had the largest total device time for the selected solver, at 1.6816 s/interval. On that tile the point kernels used 0.6165 s, surface exchange kernels 0.3682 s, mapped halo interpolation 0.1565 s, stage donor construction 0.1472 s, and field derivative preparation 0.1294 s. These durations are device service on one tile. The timing table measures full uninstrumented intervals. Full receipts are in the n12-halo-kernels-20261119 results archive.
 
 ## Accepted-state projection
 
