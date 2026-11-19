@@ -379,13 +379,14 @@ void Z4cVertexTopologyPlan::Rebuild(MeshBlockPack *pack,
   std::vector<int> authority_end(group_count, 0);
   std::vector<int> authority_contributors;
   authority_contributors.reserve(global_count);
+  auto next = sorted_global_indices.begin();
   for (int owner_group = 0; owner_group < group_count; ++owner_group) {
     authority_begin[owner_group] =
         static_cast<int>(authority_contributors.size());
-    for (const int global_index : sorted_global_indices) {
-      if (global_group_for_contributor[global_index] == owner_group &&
-          global_contributors[global_index].level ==
-              authority_level[owner_group]) {
+    while (next != sorted_global_indices.end() &&
+           global_group_for_contributor[*next] == owner_group) {
+      const int global_index = *next++;
+      if (global_contributors[global_index].level == authority_level[owner_group]) {
         authority_contributors.push_back(global_index);
       }
     }
