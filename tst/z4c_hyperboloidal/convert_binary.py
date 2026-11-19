@@ -105,5 +105,6 @@ def main():
         raise ValueError('input changed during export')
     manifest['status']='COMPLETE'
     path.write_text(json.dumps(manifest,indent=2)+'\n')
-    print('Use problem/binary_identity='+identity,flush=True)
+    print('Use problem/binary_file=' + str(args.output.resolve() / 'block-0.hbi'),
+          flush=True)
 if __name__=='__main__': main()

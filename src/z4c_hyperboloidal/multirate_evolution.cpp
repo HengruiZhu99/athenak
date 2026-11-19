@@ -173,15 +173,16 @@ void Z4cHyperboloidal::ClearActiveBlocks() {
   active_step_dt = 0;
 }
 void MultirateEvolution::ReadOptions(ParameterInput& input) {
-  if (input.GetOrAddInteger("multirate","send_cache_mib",0)<0)
+  if (input.GetOrAddInteger("multirate","send_cache_mib",96)<0)
     throw std::invalid_argument("multirate send_cache_mib must be nonnegative");
-  if (input.GetOrAddInteger("multirate","receive_cache_mib",0)<0)
+  if (input.GetOrAddInteger("multirate","receive_cache_mib",384)<0)
     throw std::invalid_argument("multirate receive_cache_mib must be nonnegative");
   const auto levels = input.GetOrAddString("multirate", "spherical_levels", "auto");
   if (levels != "auto") ParseLevels(levels);
-  const auto balance = input.GetOrAddString("multirate", "balance", "metis");
-  if (balance != "none" && balance != "scalar" && balance != "metis" && balance != "spread")
-    throw std::invalid_argument("multirate balance must be none, scalar, metis, or spread");
+  const auto balance = input.GetOrAddString("multirate", "balance", "auto");
+  if (balance != "auto" && balance != "none" && balance != "scalar" &&
+      balance != "metis" && balance != "spread")
+    throw std::invalid_argument("Unknown multirate balance policy: " + balance);
   if (input.GetOrAddInteger("multirate","ranks_per_gpu",1)<1)
     throw std::invalid_argument("ranks_per_gpu must be positive");
   const auto cfl = input.GetOrAddReal("multirate", "max_characteristic_cfl", .35);
@@ -193,12 +194,7 @@ void MultirateEvolution::ReadOptions(ParameterInput& input) {
   if (input.GetOrAddInteger("multirate", "stage_budget", 1048576) < 4)
     throw std::invalid_argument("Multirate stage budget must cover at least four stages");
   input.GetOrAddBoolean("multirate", "uniform_reference", false);
-  if (input.GetOrAddBoolean("multirate","coalesce_stage_packets",false) &&
-      (!input.GetOrAddBoolean("multirate","complete_local_batches",false) ||
-       !input.GetOrAddBoolean("multirate","prepost_exchanges",true)))
-    throw std::invalid_argument("coalesce_stage_packets requires complete_local_batches and prepost_exchanges");
-  input.GetOrAddBoolean("multirate","prepost_exchanges",true);
-  input.GetOrAddBoolean("multirate","complete_local_batches",false);
+  input.GetOrAddBoolean("multirate", "complete_local_batches", true);
   input.GetOrAddBoolean("multirate","profile_peer_bytes",false);
   input.GetOrAddString("multirate", "replay_file", "");
   input.GetOrAddString("multirate", "partition_log", "");
@@ -245,7 +241,7 @@ struct MultirateEvolution::Impl {
   };
   using BatchKey = std::tuple<int, size_t, bal::KernelKind>;
   mr::RecordReadiness<Key, BatchKey> readiness, interior_readiness;
-  bool fused_rhs = false, progress_during_rhs = false, wait_for_donors = false;
+  bool progress_during_rhs = false;
   bool complete_local_batches = false, peer_profile_pending = false;
   struct ActiveLayout {
     DvceArray1D<int> mask, native_indices;
@@ -261,6 +257,7 @@ struct MultirateEvolution::Impl {
   std::vector<Task> tasks;
   std::map<Key, size_t> consumers;
   bal::WorkGraph graph;
+  std::vector<std::uint64_t> rhs_units, agreement_units;
   std::vector<bal::ExecutionTask> scoring_tasks;
   bal::BatchCostModel model;
   bal::BalanceOptions options;
@@ -270,16 +267,14 @@ struct MultirateEvolution::Impl {
   double max_cfl = .35, migration_cost = 0;
   explicit Impl(Z4cHyperboloidal& module, Driver* driver, bool rebuilt)
       : p(module), pack(p.pmy_pack), mesh(pack->pmesh), pin(p.pinput_) {
-    progress_during_rhs = pin->GetOrAddBoolean("multirate", "progress_during_rhs", false);
-    wait_for_donors = pin->GetOrAddBoolean("multirate", "wait_for_donors", false);
-    fused_rhs = pin->GetOrAddBoolean("multirate", "fused_rhs", false);
-    if (fused_rhs && !pin->GetBoolean("multirate", "complete_local_batches"))
-      throw std::invalid_argument("fused_rhs requires complete local batches");
+    progress_during_rhs = pin->GetOrAddBoolean("multirate", "progress_during_rhs", true);
     max_cfl = pin->GetReal("multirate", "max_characteristic_cfl");
     balance = pin->GetString("multirate", "balance");
-    options.backend = balance == "scalar" ? bal::Backend::scalar_reference : bal::Backend::metis;
+    const bool use_metis = balance == "auto" ? bal::MetisAvailable() :
+                           balance == "metis" || balance == "spread";
+    options.backend = use_metis ? bal::Backend::metis : bal::Backend::scalar_reference;
     if (mesh->adaptive) options.maximum_blocks_per_rank = mesh->nmb_maxperrank;
-    options.consider_sparse_compaction = balance == "metis";
+    options.consider_sparse_compaction = balance == "metis" || balance == "auto";
     options.spread_finest = balance == "spread";
     options.ranks_per_gpu = pin->GetInteger("multirate","ranks_per_gpu");
     policy.warmup_intervals = pin->GetInteger("multirate", "warmup_intervals");
@@ -311,10 +306,12 @@ struct MultirateEvolution::Impl {
             "Replay needs an initial partition at or before the starting endpoint");
     }
     auto owner = Owners();
+    const bool needs_placement = balance == "auto" &&
+        pin->GetOrAddString("multirate", "block_owners", "auto") == "auto";
     if (!replay.empty()) {
       for (const auto& r : replay)
         if (r.interval <= static_cast<std::uint64_t>(mesh->ncycle)) owner = r.owner_by_gid;
-    } else if (balance != "none" && (mesh->ncycle == 0 || rebuilt)) {
+    } else if (balance != "none" && (mesh->ncycle == 0 || rebuilt || needs_placement)) {
       const auto initial =
           bal::Partition(graph, global_variable::nranks, options, model, scoring_tasks,
                          balance == "scalar" && !mesh->adaptive ? std::vector<int>{} : owner);
@@ -331,6 +328,8 @@ struct MultirateEvolution::Impl {
     }
     BuildLocal();
     pin->SetString("multirate", "block_owners", Csv(owner));
+    if (balance == "auto")
+      pin->SetInteger("multirate", "partition_ranks", global_variable::nranks);
     if (rebuilt || mesh->ncycle == 0 || !std::ifstream(log_path).good()) LogPartition(mesh->ncycle);
     if (global_variable::my_rank == 0)
       std::cout << "Multirate graph fingerprint=" << graph.Fingerprint()
@@ -526,9 +525,15 @@ void MultirateEvolution::Impl::BuildGraphAndLevels() {
     for (auto& b : blocks) b.physical_level = 0;
     input = Csv(spherical);  // Explicit qualification path, never a production default.
   } else if (input == "auto") {
-    for (const auto& b : blocks)
-      if (!b.cartesian)
-        spherical[b.radial_region] = std::max(spherical[b.radial_region], required(b.gid));
+    const auto &subdivisions = mesh->atlas->RadialBlocks();
+    for (const auto& b : blocks) {
+      if (b.cartesian) continue;
+      const int region = b.radial_region;
+      const int radial_level = static_cast<int>(
+          std::ceil(std::log2(subdivisions[region])));
+      spherical[region] = std::max({spherical[region], radial_level + b.physical_level,
+                                    required(b.gid)});
+    }
     // Raise only automatic spherical settings and declared Cartesian agreement members.
     for (int iteration = 0; iteration < 64; ++iteration) {
       bool changed = false;
@@ -620,19 +625,34 @@ void MultirateEvolution::Impl::BuildCostGraph() {
   std::map<Stage, int> input_task, rhs_task, slope_task, accepted_task;
   // Actual local point counts include evolved overlap and scri work.
   std::vector<int> counts(mesh->nmb_total, 0), edgecounts(mesh->nmb_total, 0);
+  std::vector<std::uint64_t> halo_terms(mesh->nmb_total, 0);
+  for (const auto &row : p.mapped_halo_->Rows())
+    halo_terms[pack->GlobalId(row.target.m)] += row.donors.size();
   for (int q = 0; q < p.npoints; ++q) ++counts[pack->GlobalId(p.points.h_view(q).m)];
   for (int q = 0; q < p.nsurface_points; ++q)
     ++edgecounts[pack->GlobalId(p.face_blocks.h_view(p.surface_points.h_view(q).face))];
 #if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE, halo_terms.data(), mesh->nmb_total, MPI_UINT64_T,
+                MPI_SUM, MPI_COMM_WORLD);
   MPI_Allreduce(MPI_IN_PLACE, counts.data(), counts.size(), MPI_INT, MPI_SUM, MPI_COMM_WORLD);
   MPI_Allreduce(MPI_IN_PLACE, edgecounts.data(), edgecounts.size(), MPI_INT, MPI_SUM,
                 MPI_COMM_WORLD);
 #endif
+  rhs_units.resize(mesh->nmb_total);
+  agreement_units.resize(mesh->nmb_total);
+  // Count interpolation in full sixth-order tensor stencil equivalents.
+  const auto stencil_units = [](std::uint64_t terms) {return (terms + 215) / 216;};
+  // At N12, archived large scri batches cost about 3x a spherical bulk
+  // batch per point. Attribute the excess to surface area (12 x 2 per node).
+  constexpr int extra_work_per_surface_point = 24;
   for (int g = 0; g < mesh->nmb_total; ++g) {
     const auto kind = maps[g].outer_surface ? bal::KernelKind::scri
                                             : (maps[g].face < 0 ? bal::KernelKind::cartesian
                                                                 : bal::KernelKind::spherical);
     const std::uint64_t units = counts[g] + edgecounts[g];
+    rhs_units[g] = units + stencil_units(halo_terms[g])
+                   + std::uint64_t(extra_work_per_surface_point) * edgecounts[g];
+    agreement_units[g] = stencil_units(p.agreement_plan_->StencilTermsByBlock()[g]);
     bal::BlockCost b{g, levels[g], kind, units, units * Fields::count * sizeof(Real) * 8, {}};
     graph.blocks.push_back(std::move(b));
     const auto& group = p.agreement_plan_->AgreementBlocks();
@@ -641,28 +661,30 @@ void MultirateEvolution::Impl::BuildCostGraph() {
       for (int stage = 0; stage < 4; ++stage) {
         const auto id = schedule->Id(levels[g], step, stage);
         const Stage key{g, id};
-        auto append = [&](unsigned phase, bal::KernelKind op, int predecessor) {
+        auto append = [&](unsigned phase, bal::KernelKind op, std::uint64_t work,
+                          int predecessor) {
           const int index = scoring_tasks.size();
-          scoring_tasks.push_back({g, 4 * id + phase, op, units, {}});
+          scoring_tasks.push_back({g, 4 * id + phase, op, work, {}});
           if (predecessor >= 0) scoring_tasks.back().dependencies.push_back({predecessor, 0});
           return index;
         };
-        input_task[key] = append(0, bal::KernelKind::projection, -1);
-        rhs_task[key] = append(1, kind, input_task[key]);
-        slope_task[key] =
-            agreement ? append(2, bal::KernelKind::agreement, rhs_task[key]) : rhs_task[key];
+        input_task[key] = append(0, bal::KernelKind::projection, units, -1);
+        rhs_task[key] = append(1, kind, rhs_units[g], input_task[key]);
+        slope_task[key] = agreement
+            ? append(2, bal::KernelKind::agreement, agreement_units[g], rhs_task[key])
+            : rhs_task[key];
         if (stage == 3)
-          accepted_task[key] = append(3, bal::KernelKind::projection, slope_task[key]);
+          accepted_task[key] = append(3, bal::KernelKind::projection, units,
+                                      slope_task[key]);
       }
   }
   struct RecordCounts {std::uint64_t states, slopes;};
   std::map<std::pair<int,int>,RecordCounts> frequencies;
-  const bool planned=pin->GetBoolean("multirate","prepost_exchanges");
   for (const auto& e : bytes_by_direction) {
     const int recipient=e.first.first, donor=e.first.second;
     const auto pair=std::make_pair(levels[recipient],levels[donor]);
-    auto [frequency,inserted]=frequencies.emplace(pair,RecordCounts{std::uint64_t(steps[donor])+1,4ULL*steps[donor]});
-    if (planned && inserted) {
+    auto [frequency, inserted] = frequencies.try_emplace(pair, RecordCounts{});
+    if (inserted) {
       std::set<std::pair<int,int>> used;
       for (int step=0;step<steps[recipient];++step) for(int stage=0;stage<4;++stage) {
         const auto& row=schedule->Row(schedule->Id(pair.first,step,stage),pair.second);
@@ -814,11 +836,11 @@ void MultirateEvolution::Impl::BuildLocal() {
         const BatchKey batch{-static_cast<int>(schedule->Stage(task.stage).critical_depth),
                              task.stage, graph.blocks[gid].kernel};
         auto halo_keys = task.dependencies;
-        if (!fused_rhs) {
+        if (!complete_local_batches) {
           std::vector<Key> own_keys;
           for (const auto& key : task.dependencies)
             if (key.gid == gid) own_keys.push_back(key);
-          interior_readiness.Add(batch, wait_for_donors ? task.dependencies : own_keys);
+          interior_readiness.Add(batch, own_keys);
           // Local completion event. Stages 4..7 never occur in a wire record.
           halo_keys.push_back({gid, step, stage + 4});
         }
@@ -830,17 +852,15 @@ void MultirateEvolution::Impl::BuildLocal() {
   exchange->SetSlopeFields(Fields::independent_count);
   exchange->SetReceiveCacheBytes(static_cast<std::size_t>(pin->GetInteger("multirate","receive_cache_mib"))*1024*1024);
   exchange->SetSendCacheBytes(static_cast<std::size_t>(pin->GetInteger("multirate","send_cache_mib"))*1024*1024);
-  if (pin->GetBoolean("multirate","prepost_exchanges")) {
-    std::vector<int> groups;
-    if (pin->GetBoolean("multirate","coalesce_stage_packets")) {
-      // Group only blocks published by the very same level/stage/kernel batch.
-      groups.resize(graph.blocks.size());
-      for (const auto& block : graph.blocks)
-        groups[block.gid]=block.time_level*static_cast<int>(bal::KernelKind::count)
+  std::vector<int> groups;
+  if (complete_local_batches) {
+    // Group only blocks published by the same level/stage/kernel batch.
+    groups.resize(graph.blocks.size());
+    for (const auto& block : graph.blocks)
+      groups[block.gid] = block.time_level * static_cast<int>(bal::KernelKind::count)
                           + static_cast<int>(block.kernel);
-    }
-    exchange->CompileReceives(consumers,groups);
   }
+  exchange->CompileReceives(consumers, groups);
 }
 Combination MultirateEvolution::Impl::Combine(size_t stage, int gid) const {
   const auto& r = schedule->Row(stage, levels[gid]);
@@ -869,20 +889,18 @@ void MultirateEvolution::Impl::SelectBatch(const std::vector<int>& slots) {
   auto [layout, inserted] = active_layouts.try_emplace(slots);
   if (inserted) {
     p.SelectActiveBlocks(slots);
-    if (fused_rhs) {
-      // The fixed batch now executes only after all donor records arrive.
-      // Each occupied bulk point appears exactly once in these disjoint lists.
-      std::vector<int> points;
-      for (int m : slots) {
-        for (auto subset : {RHSSubset::Interior,RHSSubset::Dependent}) {
-          const auto& group = p.rhs_points_by_block_[static_cast<int>(subset)][m];
-          points.insert(points.end(),group.begin(),group.end());
-        }
+    // The fixed batch now executes only after all donor records arrive.
+    // Each occupied bulk point appears exactly once in these disjoint lists.
+    std::vector<int> points;
+    for (int m : slots) {
+      for (auto subset : {RHSSubset::Interior,RHSSubset::Dependent}) {
+        const auto& group = p.rhs_points_by_block_[static_cast<int>(subset)][m];
+        points.insert(points.end(),group.begin(),group.end());
       }
-      std::sort(points.begin(),points.end());
-      p.active_rhs_points[static_cast<int>(RHSSubset::Dependent)] =
-          Device(points,"multirate complete RHS points");
     }
+    std::sort(points.begin(),points.end());
+    p.active_rhs_points[static_cast<int>(RHSSubset::Dependent)] =
+        Device(points,"multirate complete RHS points");
     layout->second.mask = p.active_blocks;
     layout->second.rhs_points = p.active_rhs_points;
     std::vector<int> indices;
@@ -1247,16 +1265,22 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
   p.active_step_dt = context.local_dt;
   const auto batch_start = Clock::now();
   std::uint64_t units = 0;
-  for (int m : slots) units += graph.blocks[pack->GlobalId(m)].work_units;
+  std::uint64_t rhs_work = 0, agreement_work = 0;
+  for (int m : slots) {
+    const int gid = pack->GlobalId(m);
+    units += graph.blocks[gid].work_units;
+    rhs_work += rhs_units[gid];
+    agreement_work += agreement_units[gid];
+  }
   std::vector<Combination> combinations(p.nblocks);
   auto dependent_start = batch_start;
-  if (interior || fused_rhs) {
+  if (interior || complete_local_batches) {
     for (int m : slots) combinations[m] = Combine(stage, pack->GlobalId(m));
     Reconstruct<false>(slots, combinations, context.stage_time);
 
     const double projection_seconds = Seconds(batch_start);
     model.Observe(bal::KernelKind::projection, units, projection_seconds);
-    if (fused_rhs) {
+    if (complete_local_batches) {
       phase_seconds[0] += projection_seconds;
       dependent_start = Clock::now();
     }
@@ -1267,14 +1291,14 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
               progress_during_rhs ? exchange.get() : nullptr);
     const double elapsed_interior = Seconds(begin_interior);
     phase_seconds[0] += Seconds(batch_start);
-    const double per_point = elapsed_interior / units;
+    const double per_point = elapsed_interior / rhs_work;
     const auto before=exchange->CompletedReceives();
     exchange->Poll();
     const auto completed_receives=exchange->CompletedReceives()-before;
     interior_receives+=completed_receives;
     interior_batches_with_receives+=(completed_receives!=0);
     for (auto index : batch)
-      tasks[index].interior_seconds = per_point * graph.blocks[tasks[index].gid].work_units;
+      tasks[index].interior_seconds = per_point * rhs_units[tasks[index].gid];
     for (int m : slots)
       readiness.Arrive({pack->GlobalId(m), context.key.local_step, context.key.stage + 4});
     return;
@@ -1313,7 +1337,7 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
     p.agreement_plan_->AddRHS(p,rows);
     Kokkos::fence("multirate agreement timing");
     const double elapsed = Seconds(begin_agreement);
-    model.Observe(bal::KernelKind::agreement, units, elapsed);
+    model.Observe(bal::KernelKind::agreement, agreement_work, elapsed);
     phase_seconds[3] += elapsed;
   }
   const auto begin_publication = Clock::now();
@@ -1341,7 +1365,7 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
   }
   Kokkos::fence("multirate batch complete before release");
   phase_seconds[4] += Seconds(begin_publication);
-  model.Observe(kind, units, rhs_seconds);
+  model.Observe(kind, rhs_work, rhs_seconds);
   for (size_t q : batch) {
     auto& t = tasks[q];
     for (const auto& key : t.dependencies) exchange->Release(key);

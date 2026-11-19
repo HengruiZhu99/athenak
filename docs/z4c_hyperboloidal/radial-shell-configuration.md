@@ -1,29 +1,72 @@
 # Radial shell regions and independent subdivisions
 
-`mesh_atlas/shell_radii` specifies strictly increasing physical region ends.
-The optional `shell_radial_blocks` specifies a positive integer count for each
-region. Counts default to one. Each region is subdivided uniformly in radius;
-region widths and counts may differ, and counts need not be powers of two.
-Angular resolution and per-block cell counts remain unchanged.
-
-For the N12 binary mesh, subdivide the penultimate region twice and the final
-region four times with:
+For six spherical patches surrounding a Cartesian core, specify the two radii
+and the number of equal-width base shells. Each patch defaults to one block
+in each angular direction. `angular_blocks_2` and `angular_blocks_3` set the
+per-face tiling. Each block takes its cell counts from `<meshblock>`.
 
 ```ini
 <mesh_atlas>
 type = cubed_sphere
-spherical_inner_radius = .18
-shell_radii = .24,.32,.40,.48,.56,.64,.72,.80,.88,.94,1
-shell_radial_blocks = 1,1,1,1,1,1,1,1,1,2,4
+rmin = .18
+rmax = 1
+nshell = 10
 evolved_overlap = 3
-outer_endpoint_grid = true
+
+<refined_shell0>
+rmin = .918
+rmax = 1
+level = 2
 ```
 
-This adds 24 blocks across the six spherical faces. The radial spacing in
-the last region changes from `.06/12 = .005` to `.06/(4*12) = .00125`,
-without multiplying the angular cell count. Additional static refinement
-still uses `coordinate_system = radius_angles` and physical radial bounds;
-it acts on the subdivided native root blocks.
+Each base shell whose midpoint lies in `[rmin, rmax)` receives at least the
+specified level on all six faces. Overlapping requests use the highest level.
+The code grades neighboring base shells to differ by at most one level. In
+this example the last two base shells contain two and four radial blocks,
+respectively, and the first eight contain one each. Angular resolution stays
+fixed. The 2:1 spacing guarantee applies to a uniform base grid.
+
+For the Cartesian core, use `<mesh>` for the domain and root cell counts,
+`<meshblock>` for the cells per leaf, and `<mesh_refinement>` with
+`refinement = static` plus `<refined_regionN>` boxes with `x1min` through
+`x3max` and `level`. For adaptive refinement use `refinement = adaptive`,
+`num_levels`, `max_nmb_per_rank`, and the usual `<amr_criterionN>`.
+For isotropic refinement of a single shell patch use `<refined_regionN>`
+with `chart_id = 1..6` and `coordinate_system = radius_angles`.
+
+Older binary exports can retain their exact nonuniform base edges using
+`shell_radii` in place of `nshell` and `rmax`. The archived N12 binary
+example uses this form and a single outer refinement request. Legacy
+`shell_radial_blocks` lists are also accepted in place of radial requests.
+Select a prepared binary export with `problem/binary_file = data/block-0.hbi`.
+The importer obtains the identity from its header and checks each block's
+identity, GID, point counts, and coordinates.
+
+## Time integration and load balance
+
+With `time/integrator = mrgark4`, the default coarse interval is
+`cfl_number * min(dx1, dx2, dx3)` on the Cartesian root grid. An explicit
+`time/dt` overrides it. Single-rate RK4 uses the finest initial Cartesian spacing for
+its inferred step. Cartesian time levels follow octree depth. On the
+shells, radial subdivisions and octree depth set a minimum level. The
+initial characteristic speeds, agreement and scri groups, and donor
+dependencies can require shorter local steps. Level L takes 2^L substeps.
+
+A fresh run needs no `<multirate>` block. After initializing the fields,
+the solver estimates work from the actual stage schedule, occupied points,
+mapped halo stencils, overlap agreement and outer surface work. It scores
+possible rank maps using batch size, donor traffic and dependencies before
+the first interval. METIS contributes candidates when available. The solver
+also considers the initial distribution, and later reviews placement against
+measured batch costs. Checkpoints record the resolved choices. Shared
+checkpoints can recompute automatic placement when the MPI rank count changes.
+
+Stage receives are preposted. Complete local batches coalesce messages and
+evaluate the fused RHS after their donors arrive. The former
+`prepost_exchanges`, `coalesce_stage_packets`, `wait_for_donors`, and
+`fused_rhs` experiment switches can be removed from older inputs. Scheme A
+is the sole scri evolution treatment. Existing Scheme A checkpoints use the
+same formulation identity and scri output layout.
 
 ## Region conventions
 
@@ -52,11 +95,9 @@ checkpoint cannot be restarted onto a different atlas without an explicit
 transfer procedure.
 
 Radial subdivision increases derivative and boundary-closure scales. The
-hyperboloidal formulation uses the requested fixed `time/dt`; changing
-`cfl_number` does not automatically make a subdivided mesh stable. A
-characteristic CFL estimate is not a stability bound for the complete scri
-closure, penalties, and source terms. Retain the bulk equations and diagnose
-these contributions before selecting a production timestep.
+multirate startup checks the characteristic CFL, agreement rate and time-level
+compatibility. Long-time stability of a changed mesh or base interval requires
+separate evidence.
 
 The November 17 binary attempt with manually inserted shell boundaries passed
 16-step startup/restart equivalence but aborted after the last tracker output

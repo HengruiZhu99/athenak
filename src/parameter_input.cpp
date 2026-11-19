@@ -106,7 +106,8 @@ void ParameterInput::CheckBlockNames() {
   // Following are currently recognized <input_block> names. New ones can be added to end
   std::vector<std::string> valid_name = {
     "comment", "job",
-    "mesh", "meshblock", "mesh_refinement", "refined_region", "amr_criterion",
+    "mesh", "meshblock", "mesh_refinement", "refined_region", "refined_shell",
+    "amr_criterion",
     "coord", "adm", "shearing_box", "cyclic_zoom",
     "time", "problem", "output", "units", "multirate",
     "hydro", "mhd", "ion-neutral", "radiation", "z4c", "z4c_amr", "cce",

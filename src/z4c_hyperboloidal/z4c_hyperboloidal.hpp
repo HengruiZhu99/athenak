@@ -9,6 +9,7 @@
 #include <array>
 #include <cstdint>
 #include <memory>
+#include <string>
 
 #include "athena.hpp"
 #include "z4c_hyperboloidal/activity_policy.hpp"
@@ -170,6 +171,7 @@ class Z4cHyperboloidal {
   bool multirate_enabled_=false;
   std::unique_ptr<MultirateEvolution> multirate_;
   MeshBlockPack *pmy_pack;
+  void SetBinaryIdentity(const std::string &identity);
   ParameterInput *pinput_;
   bool split_bulk_jets_ = false;
   DvceArray2D<Real> residual_jet_scratch_;

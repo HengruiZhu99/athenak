@@ -15,13 +15,40 @@
 #include "z4c_hyperboloidal/spherical_policy.hpp"
 
 namespace z4c_hyperboloidal {
+void Z4cHyperboloidal::SetBinaryIdentity(const std::string &identity) {
+  initial_data_identity = "binary-v1;M0=1/3;reported-components=1/2;"
+                          "internal-components=1/6;" + identity;
+}
+
 // Per-global-block records make offline export independent of MPI ownership.
 // This format contains physical stored fields, never representation residuals.
 void Z4cHyperboloidal::InitializeBinary(ParameterInput *pin) {
   const bool prepare=pin->GetOrAddBoolean("problem","binary_prepare",false);
   if(prepare && pin->GetString("time","evolution")!="static")
     throw std::invalid_argument("Binary sampling preparation requires static mode");
-  const std::filesystem::path dir=pin->GetString("problem","binary_directory");
+  std::filesystem::path dir;
+  if (pin->DoesParameterExist("problem", "binary_file")) {
+    const std::filesystem::path first = pin->GetString("problem", "binary_file");
+    if (prepare || first.filename() != "block-0.hbi" ||
+        pin->DoesParameterExist("problem", "binary_directory"))
+      throw std::invalid_argument("binary_file must select the export via block-0.hbi");
+    dir = first.parent_path();
+    std::ifstream header(first);
+    std::string magic, identity;
+    int gid = -1;
+    if (!(header >> magic >> identity >> gid) || magic != "HYPERBOL_BINARY_V1" ||
+        gid != 0 || identity.size() != 64 ||
+        identity.find_first_not_of("0123456789abcdef") != std::string::npos)
+      throw std::runtime_error("Invalid binary export header: " + first.string());
+    if (pin->DoesParameterExist("problem", "binary_identity") &&
+        pin->GetString("problem", "binary_identity") != identity)
+      throw std::invalid_argument("binary_file disagrees with binary_identity");
+    // The checkpoint carries this identity even if the export is later moved.
+    pin->SetString("problem", "binary_identity", identity);
+    SetBinaryIdentity(identity);
+  } else {
+    dir = pin->GetString("problem", "binary_directory");
+  }
   if(prepare)std::filesystem::create_directories(dir);
   InitializeReference();
   auto g=Kokkos::create_mirror_view_and_copy(HostMemSpace(),geometry);

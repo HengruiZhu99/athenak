@@ -115,6 +115,7 @@ void OverlapAgreementPlan::Rebuild(MeshBlockPack *pack,const Z4cHyperboloidal &p
   dependency_edges_.clear();agreement_blocks_.clear();multirate_donors_.clear();
   std::set<std::pair<int,int>> graph;
   std::set<int> group;
+  if (p.UsesMultirate()) stencil_terms_.assign(mesh.nmb_total, 0);
   std::vector<Row> rows;std::vector<Entry> entries;
   std::vector<bvals::DonorPoint> requests;
   std::map<bvals::DonorPoint,std::vector<Transpose>> transpose;
@@ -143,7 +144,13 @@ void OverlapAgreementPlan::Rebuild(MeshBlockPack *pack,const Z4cHyperboloidal &p
                          const bvals::DonorPoint &sample,Real w) {
     if (p.UsesMultirate()) {
       std::set<int> row_blocks;
-      for(const auto &d:row)if(d.weight!=0)row_blocks.insert(d.point.gid);
+      // Attribute one forward stencil to its sample and the transpose to its
+      // recipients. This counts mathematical work independently of MPI placement.
+      stencil_terms_[sample.gid] += row.size();
+      for (const auto &d : row) {
+        ++stencil_terms_[d.point.gid];
+        if (d.weight != 0) row_blocks.insert(d.point.gid);
+      }
       group.insert(row_blocks.begin(),row_blocks.end());
       for(int a:row_blocks) {
         for(int b:row_blocks)if(a<b)graph.emplace(a,b);

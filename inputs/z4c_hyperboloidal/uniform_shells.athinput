@@ -1,0 +1,48 @@
+# Self-contained N12 puncture with six uniform-base cubed-sphere patches.
+<mesh>
+nghost = 4
+nx1 = 12
+nx2 = 12
+nx3 = 12
+x1min = -.1
+x1max = .1
+x2min = -.1
+x2max = .1
+x3min = -.1
+x3max = .1
+ix1_bc = mapped
+ox1_bc = mapped
+ix2_bc = mapped
+ox2_bc = mapped
+ix3_bc = mapped
+ox3_bc = mapped
+
+<meshblock>
+nx1 = 12
+nx2 = 12
+nx3 = 12
+
+<mesh_atlas>
+type = cubed_sphere
+rmin = .08
+rmax = 1
+nshell = 4
+evolved_overlap = 3
+
+<refined_shell0>
+rmin = .77
+rmax = 1
+level = 1
+
+<time>
+cfl_number = .2
+evolution = dynamic
+integrator = mrgark4
+tlim = 1
+nlim = 2
+ndiag = 1
+
+<problem>
+pgen_name = z4c_hyperboloidal_puncture
+
+<z4c_hyperboloidal>

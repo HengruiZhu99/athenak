@@ -1,0 +1,105 @@
+# N12 head-on binary on the refined cubed-sphere mesh.
+# This export uses nonuniform base shell edges. MPI placement is computed at startup.
+
+<job>
+basename = headon
+
+<mesh>
+nghost = 4
+nx1 = 36
+nx2 = 36
+nx3 = 36
+x1min = -.2
+x1max = .2
+x2min = -.2
+x2max = .2
+x3min = -.2
+x3max = .2
+ix1_bc = mapped
+ox1_bc = mapped
+ix2_bc = mapped
+ox2_bc = mapped
+ix3_bc = mapped
+ox3_bc = mapped
+
+<meshblock>
+nx1 = 12
+nx2 = 12
+nx3 = 12
+
+<mesh_atlas>
+type = cubed_sphere
+rmin = .18
+shell_radii = .24,.32,.40,.48,.56,.64,.72,.80,.88,.94,1
+evolved_overlap = 3
+
+<refined_shell0>
+# Split the last shell four ways; the adjacent shell is graded to two blocks.
+rmin = .94
+rmax = 1
+level = 2
+
+<mesh_refinement>
+refinement = static
+
+<refined_region0>
+# Both horizons and their inward trajectory.
+level = 3
+x1min = -.135
+x1max = .135
+x2min = -.025
+x2max = .025
+x3min = -.025
+x3max = .025
+
+<time>
+evolution = dynamic
+integrator = mrgark4
+cfl_number = .2
+nlim = 223
+tlim = 4
+ndiag = 1
+
+<problem>
+pgen_name = z4c_hyperboloidal_binary
+binary_file = /lus/flare/projects/CompactBinaryMerger/hzhu/n12-radial-blocks-20261117/data/block-0.hbi
+
+<z4c_hyperboloidal>
+residual_weight = regular_c6
+weight_inner = .30
+weight_outer = .55
+
+<fastflow>
+# Initial component centers in code coordinates.
+center_x_0 = .10116863541976967
+center_y_0 = 0
+center_z_0 = 0
+center_x_1 = -.10116863541976967
+center_y_1 = 0
+center_z_1 = 0
+flow_iterations_0 = 2000
+flow_iterations_1 = 2000
+require_expansion_convergence_0 = false
+require_expansion_convergence_1 = false
+verbose = true
+
+<output1>
+file_type = hst
+dcycle = 37
+hyperboloidal_scri = true
+data_format = %.17e
+
+<output2>
+file_type = rst
+dcycle = 111
+single_file_per_rank = false
+
+<output20>
+file_type = scri
+id = scri
+dcycle = 6
+nodal = true
+modes = true
+lmax = 8
+boundary_diagnostics = true
+unit_description = geometric code units, M0=1/3

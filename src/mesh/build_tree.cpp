@@ -532,6 +532,12 @@ void Mesh::BuildTreeFromRestart(ParameterInput *pin, IOWrapper &resfile,
 #endif
 
   LoadBalance(cost_eachmb, rank_eachmb, gids_eachrank, nmb_eachrank, nmb_total);
+  // A shared checkpoint can restore stable GIDs onto a new MPI size.
+  // Re-score that distribution after the restored state's donor plans exist.
+  if (!single_file_per_rank && pin->DoesParameterExist("multirate", "partition_ranks") &&
+      pin->GetInteger("multirate", "partition_ranks") != global_variable::nranks &&
+      pin->GetString("multirate", "balance") == "auto")
+    pin->SetString("multirate", "block_owners", "auto");
   ConfigureStaticOwnership(pin);
 
   // create MeshBlockPack for this rank

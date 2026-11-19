@@ -2,9 +2,11 @@
 #ifndef Z4C_HYPERBOLOIDAL_OVERLAP_AGREEMENT_HPP_
 #define Z4C_HYPERBOLOIDAL_OVERLAP_AGREEMENT_HPP_
 #include <array>
+#include <cstdint>
 #include <map>
 #include <functional>
 #include <set>
+#include <vector>
 #include "bvals/mapped_exchange.hpp"
 #include "z4c_hyperboloidal/mapped_halo.hpp"
 
@@ -45,6 +47,7 @@ class OverlapAgreementPlan {
   const std::vector<std::pair<int,int>> &DependencyEdges() const {return dependency_edges_;}
   using DonorsByRecipient=std::map<int,std::set<bvals::DonorPoint>>;
   const DonorsByRecipient &MultirateDonors() const { return multirate_donors_; }
+  const std::vector<std::uint64_t> &StencilTermsByBlock() const {return stencil_terms_;}
   const std::vector<int> &AgreementBlocks() const {return agreement_blocks_;}
   void AddRHS(const Z4cHyperboloidal &module, const BatchRows *batch=nullptr) const;
   std::array<Real,8> History() const;
@@ -56,6 +59,7 @@ class OverlapAgreementPlan {
   std::map<std::vector<int>,BatchRows> batches_;
   std::vector<std::pair<int,int>> dependency_edges_;
   std::vector<int> agreement_blocks_;
+  std::vector<std::uint64_t> stencil_terms_;
   DonorsByRecipient multirate_donors_;
   struct Row {int begin,end;Real weight;bool owned;};
   struct Entry {int ordinal;Real coefficient;};

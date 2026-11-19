@@ -137,8 +137,8 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--launcher', default='')
     parser.add_argument('--ranks', type=int, default=1)
-    parser.add_argument('--cases', nargs='+', choices=('smoke', 'invalid', 'restart', 'ownership', 'replay'),
-                        default=('smoke', 'invalid', 'restart', 'ownership', 'replay'))
+    cases = ('smoke', 'compact', 'invalid', 'restart', 'ownership', 'replay')
+    parser.add_argument('--cases', nargs='+', choices=cases, default=cases)
     args = parser.parse_args()
     if args.ranks < 1 or (args.ranks > 1 and not args.launcher):
         parser.error('positive ranks and an MPI launcher for ranks > 1 required')
@@ -166,6 +166,17 @@ def main():
         if evaluations != [124,124]:
             raise AssertionError(f'expected 4*(19+2*6) RHS evaluations per interval, got {evaluations}')
         results['mixed'] = dict(blocks=mixed['blocks'], cycle=mixed['cycle'], time=mixed['time'])
+    if 'compact' in args.cases:
+        examples = Path(__file__).resolve().parents[2] / 'inputs' / 'z4c_hyperboloidal'
+        deck = output / 'uniform_shells.athinput'
+        deck.write_text((examples / deck.name).read_text() +
+                        '<job>\nbasename = compact\n<output1>\nfile_type = rst\n'
+                        'dcycle = 1\nsingle_file_per_rank = false\n')
+        state, log = run(binary, output, 'compact', args.launcher, args.ranks,
+                         ['-i', deck, 'time/nlim=1'])
+        assert state['blocks'] == 31 and state['time'] == .2 * (.2 / 12)
+        assert 'spherical levels=0,0,1,2' in log and 'MULTIRATE_PARTITION cycle=0' in log
+        results['compact'] = dict(blocks=state['blocks'], coarse_dt=state['time'])
     if 'smoke' in args.cases:
         grouped, _ = run(binary, output, 'complete_local_batches', args.launcher, args.ranks,
                          base+['multirate/complete_local_batches=true'])

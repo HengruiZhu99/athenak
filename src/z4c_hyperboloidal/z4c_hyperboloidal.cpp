@@ -31,15 +31,6 @@ Z4cHyperboloidal::~Z4cHyperboloidal() = default;
 Z4cHyperboloidal::Z4cHyperboloidal(MeshBlockPack *ppack, ParameterInput *pin)
     : pmy_pack(ppack), pinput_(pin) {
   auto *pm=ppack->pmesh;
-  split_bulk_jets_ = pin->GetOrAddBoolean("z4c_hyperboloidal", "split_bulk_jets", false);
-#ifdef KOKKOS_ENABLE_SYCL
-  rhs_workgroup_size_ = pin->GetOrAddInteger("z4c_hyperboloidal", "rhs_workgroup_size", 128);
-  const auto device = Kokkos::SYCL().sycl_queue().get_device();
-  const auto limit = device.get_info<sycl::info::device::max_work_group_size>();
-  if (rhs_workgroup_size_ < 1 || (rhs_workgroup_size_ & (rhs_workgroup_size_ - 1)) ||
-      static_cast<std::size_t>(rhs_workgroup_size_) > limit)
-    throw std::invalid_argument("rhs_workgroup_size must be a power of two supported by the SYCL device");
-#endif
   if (!pm->atlas || !pm->three_d || sizeof(Real)!=sizeof(double)) {
     throw std::invalid_argument("Hyperboloidal Z4c requires a 3D atlas and double precision");
   }
@@ -54,6 +45,18 @@ Z4cHyperboloidal::Z4cHyperboloidal(MeshBlockPack *ppack, ParameterInput *pin)
     if (method!="rk4_classical" && !multirate_enabled_)
       throw std::invalid_argument("Hyperboloidal evolution requires rk4_classical or mrgark4");
   }
+  split_bulk_jets_ = pin->GetOrAddBoolean("z4c_hyperboloidal", "split_bulk_jets",
+                                          multirate_enabled_);
+#ifdef KOKKOS_ENABLE_SYCL
+  rhs_workgroup_size_ =
+      pin->GetOrAddInteger("z4c_hyperboloidal", "rhs_workgroup_size",
+                           multirate_enabled_ ? 16 : 128);
+  const auto device = Kokkos::SYCL().sycl_queue().get_device();
+  const auto limit = device.get_info<sycl::info::device::max_work_group_size>();
+  if (rhs_workgroup_size_ < 1 || (rhs_workgroup_size_ & (rhs_workgroup_size_ - 1)) ||
+      static_cast<std::size_t>(rhs_workgroup_size_) > limit)
+    throw std::invalid_argument("rhs_workgroup_size must be a supported power of two");
+#endif
   n[0]=pm->mb_indcs.nx1; n[1]=pm->mb_indcs.nx2; n[2]=pm->mb_indcs.nx3;
   nghost=pm->mb_indcs.ng;
   overlap=pin->GetOrAddInteger("mesh_atlas","evolved_overlap",0);
@@ -68,7 +71,17 @@ Z4cHyperboloidal::Z4cHyperboloidal(MeshBlockPack *ppack, ParameterInput *pin)
   ko=pin->GetOrAddReal("z4c_hyperboloidal","ko",0.1);
   chi_floor=pin->GetOrAddReal("z4c_hyperboloidal","chi_floor",1e-10);
   penalty=pin->GetOrAddReal("z4c_hyperboloidal","scri_penalty",0.5);
-  requested_dt=pin->GetReal("time","dt");
+  const auto &grid = pm->mesh_size;
+  const Real coarse_dx = std::min({grid.dx1, grid.dx2, grid.dx3});
+  int depth = 0;
+  if (!multirate_enabled_ && !pin->DoesParameterExist("time", "dt")) {
+    for (int gid = 0; gid < pm->nmb_total; ++gid) {
+      const auto &leaf = pm->lloc_eachmb[gid];
+      if (leaf.chart_id == 0) depth = std::max(depth, leaf.level - pm->root_level);
+    }
+  }
+  requested_dt = pin->GetOrAddReal("time", "dt", std::ldexp(pm->cfl_no * coarse_dx,
+                                                             -depth));
   if (!std::isfinite(ko) || ko<0 || !std::isfinite(chi_floor) || chi_floor<0 ||
       !std::isfinite(penalty) || penalty<0 || !std::isfinite(requested_dt) ||
       requested_dt<=0) throw std::invalid_argument("Invalid hyperboloidal numerical policy");
@@ -87,8 +100,8 @@ Z4cHyperboloidal::Z4cHyperboloidal(MeshBlockPack *ppack, ParameterInput *pin)
       throw std::invalid_argument("Residual weight requires 0<a<b<flat Omega radius");
   } else if(policy!="origin_r2") throw std::invalid_argument("Unknown residual weight policy");
   if(pin->GetString("problem","pgen_name")=="z4c_hyperboloidal_binary") {
-    initial_data_identity="binary-v1;M0=1/3;reported-components=1/2;internal-components=1/6;"+
-      pin->GetOrAddString("problem","binary_identity","prepare");
+    SetBinaryIdentity(pin->DoesParameterExist("problem", "binary_identity")
+                      ? pin->GetString("problem", "binary_identity") : "prepare");
   }
   floor_inner_amr_chi=pin->GetOrAddBoolean("z4c_hyperboloidal","floor_inner_amr_chi",false);
   if(floor_inner_amr_chi && (!parameters.residual_weight.Regular() || !(chi_floor>0)))
