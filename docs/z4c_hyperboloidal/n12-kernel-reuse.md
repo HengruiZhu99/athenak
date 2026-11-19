@@ -19,6 +19,16 @@ The selected trial saved 0.15739 s against a 0.00635 s spread of four-interval a
 
 The selected trial repeated at 1.61431 s/interval in the checkpoint run. At cycle 21, the maximum scaled field difference from the original qualification was 3.216×10⁻¹² over 139,683,024 values. Across eight persistent diagnostics per point the maximum was 1.444×10⁻¹⁵. The production time and timestep matched. These timings precede integration with the scri projection and pole changes from job 9104937.
 
+## Stationary reference reads and evolving metric conditioning
+
+At cycle 21 of job 9105231, all 1,433,376 occupied bulk points and all 864 scri points had evolved away from the identity conformal metric. The maximum spectral condition number was 1.00170 in the bulk and 1.00045 at scri. Even at this early endpoint, the metric and its inverse depend on the evolved state. The checkpoint comparison above includes all 139,683,024 field storage slots. The occupied bulk and scri points account for 44,461,440 of those slots.
+
+The stationary reference has a different access pattern. A census evaluated the reference on the production grid and reproduced the active-point count of each of its 754 blocks. The packed bulk equations consume 194 reference scalars per point-stage when every value, gradient and required Hessian is read. Testing separately whether each field's value, gradient and Hessian vanish throughout its block reduces the logical reads from 6,492,773,376 to 1,471,136,256 per coarse interval (77.34%). The trial stores three 32-bit masks per block and rebuilds them when the reference changes. The effect on GPU memory traffic and interval wall time awaits measurement.
+
+The masked-reference CPU build passed the two-rank adaptive test. After refinement to 32 blocks and coarsening to 25, the maximum scaled field differences from the archived accepted-projection solver were 2.011×10⁻¹⁶ and 1.696×10⁻¹⁶. Persistent diagnostics matched at both cuts. Restarts before and after refinement matched uninterrupted evolution bit for bit.
+
+A separate bulk trial feeds the six chart Hessians directly into the Ricci calculation. Summing each Hessian contraction first changed some rates by 1.2×10⁻⁹ in a stress test with metric condition numbers up to 10⁶. Reading each Hessian directly in the original summation order preserved every rate, speed, gap and validity decision in both 6,000-state CPU fixtures. The latter version is in the one-node comparison. The census, checkpoint eigenvalues, and conditioning tests are archived in `n12-halo-kernels-20261119` under `reference-components`, `9105231/checkpoint-metric-range.json`, and `metric-conditioning-oracle`.
+
 ## Scri projection and shift corrections
 
 On one Aurora node, job 9104937 tested three outer-boundary changes against solver 7dd9c5559. The selected trial projected constant donor charts directly and reused the shift-independent part of the tensor pole across normal-derivative probes within an RK stage. Its checkpoint run repeated at 1.72115 s/interval.
