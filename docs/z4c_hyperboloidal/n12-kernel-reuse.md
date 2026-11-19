@@ -1,5 +1,27 @@
 # Stationary geometry and N12 kernel performance
 
+## Concurrent scri and bulk RHS
+
+Aurora job 9105928 ran the production N12 mesh on 12 bound GPU tiles. Computing the final rates of a single small scri face on the calling CPU thread while the tile evaluates the bulk RHS saved 0.04428 s/interval against a 0.00624 s spread of four-interval means. Both paths use the completed normal correction from the same stage. The host checks the surface rates and returns them before slope publication. Larger faces and ranks with multiple faces retain the device calculation.
+
+| Solver | Seconds/interval | Range of four-interval means |
+|---|---:|---:|
+| Small-face host geometry | 1.36923 | 1.36674–1.37298 |
+| Concurrent host surface RHS | 1.32496 | 1.32238–1.32812 |
+| Factor the second halo interpolation axis | 1.35884 | 1.35648–1.36339 |
+| Concurrent surface RHS and factored halo planes | 1.32271 | 1.32175–1.32443 |
+| Component-major stationary reference | 1.50056 | 1.49248–1.51172 |
+
+Each time covers the same 33,467,904 bulk point-stages, eight warm intervals and twelve timed intervals with output off. Adding the halo plane reduction improved the concurrent path by 0.00224 s, within the observed spread. The dense stationary-reference layout increased the full interval by 0.13133 s. Field differentiation and stage reconstruction saved 0.00619 and 0.00636 s per tile on average, while the ordinary point kernel used 0.10380 s more.
+
+The selected run delivered 25.26 million bulk point-stages/s and 235.31 s/M₀. Its checkpoint run repeated at 1.33174 s/interval. Compared with the 2.47446 s starting point, the measured speedup is 1.868×. Another 0.08773 s is needed for 2×. At equal work, the bulk RHS still accounts for 0.489 s of additional mean device time relative to regular Z4c.
+
+Rank 5 was the busiest tile in both device profiles. Its final surface RHS took 0.06550 s/interval on the control. The selected solver computed those rates on the host. Host computation, copies, and exposed waits enter the uninstrumented timing. The MPI capability check reported eight bound logical CPUs per rank and MPI_THREAD_SINGLE on all 12 ranks.
+
+At coarse cycle 21, time and timestep matched the original run. The maximum scaled differences were 4.819e-12 across 139,683,024 field values and 1.554e-15 across the eight persistent diagnostics per point. Against the previous host-geometry solver they were 1.781e-12 and 1.554e-15. The small-face host implementation passed the independent surface and radial oracles on two and seven CPU ranks. In the seven-rank adaptive test it ran through the 25-to-32 block refinement and the refined restart matched uninterrupted evolution across 7,458,048 saved scalars.
+
+Full receipts, source manifests, device profiles, and comparisons are archived under `n12-halo-kernels-20261119/9105928`. Solver commit ee06fc078 matches the measured sources. The selected Aurora executable has SHA-256 `dd6adb217b34230335e9e8673da779e141823e8c63e714ef85644775aa608093`.
+
 ## Small-face geometry on the CPU
 
 In Aurora job 9105790, preparing the common geometry of a single 144-point scri face on the calling host thread reduced the one-node N12 interval from **1.39035 to 1.36218 s**. This saved 0.02817 s/interval on the same 12 tiles, compared with a 0.01094 s range of four-interval means. The checkpoint run repeated at 1.36227 s/interval. All three measurements used eight warm intervals followed by twelve timed intervals and the production workload of 33,467,904 bulk point-stages. Scheduled output was off during timing.
