@@ -209,6 +209,47 @@ TensorPole<ScriDual<T>> TensorPoleNormalJet(const Z4cJet<T> &u,
       D(kappa1), D(kappa2), D(slicing), D(restoring), appendix_c, multiplicative);
 }
 
+// Only the stationary normal lapse term in the scri poles depends on the shift.
+struct SurfacePoleCache {
+  TensorPole<ScriDual<Real>> pole;
+  ScriDual<Real> lapse_normal;
+};
+KOKKOS_INLINE_FUNCTION ScriDual<Real> SurfaceLapseNormal(const Z4cJet<Real>& u,
+    const OmegaJet<Real>& o, const Real n[3]) {
+  ScriDual<Real> normal{};
+  for (int a = 0; a < 3; ++a) {
+    Real dbeta = 0, dgradient = 0;
+    for (int k = 0; k < 3; ++k) {
+      dbeta += n[k] * u.beta.d[k][a];
+      dgradient += n[k] * o.hessian[k][a];
+    }
+    normal -= ScriDual<Real>(u.beta.value[a], dbeta) *
+              ScriDual<Real>(o.gradient[a], dgradient);
+  }
+  return normal;
+}
+KOKKOS_INLINE_FUNCTION TensorPole<ScriDual<Real>> ShiftedSurfacePole(
+    const SurfacePoleCache& cached, const Z4cJet<Real>& u,
+    const OmegaJet<Real>& o, const Real n[3]) {
+  const auto change = SurfaceLapseNormal(u,o,n) - cached.lapse_normal;
+  auto pole = cached.pole;
+  Real dchi = 0, dalpha = 0;
+  for (int k = 0; k < 3; ++k) {
+    dchi += n[k] * u.chi.d[k];
+    dalpha += n[k] * u.alpha.d[k];
+  }
+  pole.geometry.chi -= ScriDual<Real>(2) * ScriDual<Real>(u.chi.value,dchi) * change;
+  pole.lapse += ScriDual<Real>(u.alpha.value,dalpha) * change;
+  for (int i = 0; i < 3; ++i) {
+    for (int j = 0; j < 3; ++j) {
+      Real da = 0;
+      for (int k = 0; k < 3; ++k) da += n[k] * u.a.dk[k][i][j];
+      pole.geometry.a[i][j] -= ScriDual<Real>(u.a.k[i][j],da) * change;
+    }
+  }
+  return pole;
+}
+
 template <typename T>
 KOKKOS_INLINE_FUNCTION
 Z4cRHS<T> TensorScriLimit(const Z4cRHS<T> &regular,

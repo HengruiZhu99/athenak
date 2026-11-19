@@ -88,32 +88,6 @@ struct Combination {
   }
 };
 
-// Accepted RK records contain point values. Only the implicit metric component
-// needs derivative checks when projecting their constant Cartesian chart.
-KOKKOS_INLINE_FUNCTION bool ProjectAcceptedBulkChart(
-    std::array<Real, Fields::count>& fields) {
-  using J = mapped::Jet;
-  CartesianChartMetric<J> jets{J(fields[1] + 1), J(fields[2]), J(fields[3]),
-                               J(fields[4] + 1), J(fields[5]), {}, {}};
-  if (!jets.Complete()) return false;
-  // Every input is constant. Each component of the implicit metric's gradient
-  // and Hessian therefore follows the same arithmetic, even on overflow.
-  if (jets.f.d[0] != 0 || jets.f.h[0][0] != 0) return false;
-  const CartesianChartMetric<Real> chart{jets.a.f, jets.b.f, jets.c.f, jets.d.f, jets.e.f,
-                                         jets.minor.f, jets.f.f};
-  fields[6] = chart.f - 1;
-  fields[12] = chart.TraceFreeZZ(fields[7], fields[8], fields[9], fields[10], fields[11]);
-  const Real g[3][3] = {{chart.a, chart.b, chart.c},
-                        {chart.b, chart.d, chart.e},
-                        {chart.c, chart.e, fields[6] + 1}};
-  Real inverse[3][3], determinant;
-  if (!InvertMetric(g, inverse, determinant)) return false;
-  for (int i = 0; i < 3; ++i)
-    for (int j = 0; j < 3; ++j)
-      if (!Kokkos::isfinite(inverse[i][j])) return false;
-  return true;
-}
-
 struct NativePoint {
   int m, face, k, j, i, kind, ledger;
   size_t index;
@@ -1013,8 +987,9 @@ void MultirateEvolution::Impl::Reconstruct(const std::vector<int>& slots,
           if (!Kokkos::isfinite(value)) ++bad;
           values[f] = value;
         }
+        Real inverse[3][3];
         const bool valid = (accepted && !point.kind)
-                               ? ProjectAcceptedBulkChart(values)
+                               ? ProjectConstantChart(values, inverse)
                                : TryExpandCartesianChart(values);
         if (!valid) {
           ++bad;
@@ -1187,48 +1162,54 @@ void MultirateEvolution::Impl::StageDonors(size_t stage, const std::vector<int>&
         const auto target = output.Destination(i);
         const auto meta = metadata(target.index);
         const auto c = combinations_d(target.coupling_row >= 0 ? target.coupling_row : meta.gid);
-        std::array<std::conditional_t<with_surface,mapped::Jet,Real>,Fields::count> jets{};
+        std::array<Real, Fields::count> values{};
         if (!c.base) {
           int slot = 0;
           for (int f = 0; f < Fields::count; ++f)
             output.Store(target,meta.kind,f,Fields::Independent(f) ? slot++ : -1,0,0);
           return;
         }
-        for (int f = 0; f < Fields::count; ++f) ChartValue(jets[f]) = c.Value(meta.index, f);
-        if (Kokkos::isfinite(ChartValue(jets[0])) && floor > 0 && ChartValue(jets[0]) < floor) ChartValue(jets[0]) = floor;
-        if (!TryExpandCartesianChart(jets)) {
+        for (int f = 0; f < Fields::count; ++f) values[f] = c.Value(meta.index, f);
+        if (Kokkos::isfinite(values[0]) && floor > 0 && values[0] < floor) values[0] = floor;
+        Real inverse[3][3];
+        const bool valid = (with_surface && meta.kind) ? ProjectConstantChart(values, inverse)
+                                                       : TryExpandCartesianChart(values);
+        if (!valid) {
           ++bad;
           return;
         }
         if constexpr (with_surface) {
           if (meta.kind) {
-            const auto physical = SphericalPolicy::Physical(meta.x, jets);
-            const auto geometry = Geometry(physical.metric);
+            // The full geometry contracts the symmetric off-diagonal Ricci entries
+            // with twice the inverse metric, even for a constant chart.
+            for (int a = 0; a < 3; ++a)
+              for (int b = a + 1; b < 3; ++b)
+                if (!Kokkos::isfinite(2 * inverse[a][b])) { ++bad; return; }
             Real Q = 0;
             for (int a = 0; a < 3; ++a)
-              for (int b = 0; b < 3; ++b) Q += geometry.inverse[a][b] * meta.x[a] * meta.x[b];
-            if (!geometry.valid || !(ChartValue(jets[0]) > 0 && Q > 0)) {
+              for (int b = 0; b < 3; ++b) Q += inverse[a][b] * meta.x[a] * meta.x[b];
+            if (!(values[0] > 0 && Q > 0)) {
               ++bad;
               return;
             }
-            const Real speed = sqrt(ChartValue(jets[0]) * Q);
-            jets[18].f = 0;
+            const Real speed = sqrt(values[0] * Q);
+            values[18] = 0;
             for (int a = 0; a < 3; ++a) {
-              jets[22 + a].f = (1 - speed) * meta.x[a];
-              jets[28 + a].f = 0;
+              values[22 + a] = (1 - speed) * meta.x[a];
+              values[28 + a] = 0;
               Real C = 0;
               for (int k = 0; k < 5; ++k) {
                 const auto support = metadata(meta.support[k]);
                 C += meta.radial_weight[k] *
                      (c.Value(support.index, 25 + a) - c.Value(support.index, 15 + a));
               }
-              jets[25 + a].f = jets[15 + a].f + C;
+              values[25 + a] = values[15 + a] + C;
             }
           }
         }
         int slot = 0;
         for (int f = 0; f < Fields::count; ++f) {
-          const Real value = ChartValue(jets[f]);
+          const Real value = values[f];
           const Real delta = Fields::Independent(f)
                                  ? (value - meta.ref[f]) / (f == 0 ? meta.chi_weight : 1)
                                  : 0;

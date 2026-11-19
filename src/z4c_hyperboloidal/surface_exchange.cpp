@@ -213,6 +213,7 @@ void SurfaceExchange::Rebuild() {
   Upload(face_spacing_,spacing);Upload(face_gap_,gap);
   Kokkos::realloc(sampled_,p.nsurface_points);
   Kokkos::realloc(restored_, p.nsurface_points);
+  Kokkos::realloc(stage_pole_, p.nsurface_points);
   Kokkos::realloc(normal_cases_,p.nsurface_points,4);
   Kokkos::realloc(metric_geometry_,p.nsurface_points);
   Kokkos::realloc(penrose_geometry_,p.nsurface_points);
@@ -262,13 +263,12 @@ TaskStatus SurfaceExchange::Project() {
     Kokkos::RangePolicy<>(0,p.nsurface_points),KOKKOS_LAMBDA(int point,int &bad) {
       if(active.extent(0) && !active(active_faces(active_points(point).face)))return;
       const auto c=points(point);const int m=owners(c.face);
-      CartesianChartJets jets{};
-      for (int f=0;f<Fields::count;++f)jets[f].f=edge(c.face,f,c.k,c.j);
-      if (!TryExpandCartesianChart(jets)) {++bad;return;}
-      const auto map=maps(point);const auto *x=map.x;
-      const auto physical=SphericalPolicy::Physical(x,jets);
+      std::array<Real, Fields::count> values{};
+      for (int f = 0; f < Fields::count; ++f) values[f] = edge(c.face, f, c.k, c.j);
+      const auto map = maps(point);
+      const auto *x = map.x;
       Real inverse[3][3];
-      if (!InvertConstantMetric(physical.metric, inverse) || !(jets[0].f > 0)) {
+      if (!ProjectConstantChart(values, inverse) || !(values[0] > 0)) {
         ++bad;
         return;
       }
@@ -276,9 +276,9 @@ TaskStatus SurfaceExchange::Project() {
       for (int a=0;a<3;++a)for (int b=0;b<3;++b)
         Q+=inverse[a][b]*x[a]*x[b];
       if (!(Q>0)) {++bad;return;}
-      const Real speed=sqrt(jets[0].f*Q);jets[18].f=0;
+      const Real speed=sqrt(values[0]*Q);values[18]=0;
       for (int a=0;a<3;++a) {
-        jets[22+a].f=(1-speed)*x[a];jets[28+a].f=0;
+        values[22+a]=(1-speed)*x[a];values[28+a]=0;
         Real C=0;
         for (int k=0;k<5;++k) {
           Real weight=1;
@@ -286,11 +286,11 @@ TaskStatus SurfaceExchange::Project() {
           C+=weight*(state(m,25+a,origin+c.k,origin+c.j,origin+n-5+k)
                      -state(m,15+a,origin+c.k,origin+c.j,origin+n-5+k));
         }
-        jets[25+a].f=jets[15+a].f+C;
+        values[25+a]=values[15+a]+C;
       }
       for (int f=0;f<Fields::count;++f) {
-        edge(c.face,f,c.k,c.j)=jets[f].f;
-        if (!Kokkos::isfinite(jets[f].f))++bad;
+        edge(c.face,f,c.k,c.j)=values[f];
+        if (!Kokkos::isfinite(values[f]))++bad;
       }
     },invalid);
   if (invalid)throw std::runtime_error("Invalid block-owned scri projection");
@@ -372,6 +372,7 @@ TaskStatus SurfaceExchange::Solve() {
   correction_jets_ready_=false;
   auto &p=*module_;const auto samples=sampled_;const auto maps=p.surface_geometry;
   const auto restored = restored_;
+  const auto stage_pole = stage_pole_;
   const auto reference=p.surface_reference;const auto rows=rows_;
   const auto points=p.surface_points.d_view;const auto correction=correction_;
   const auto parameters=p.parameters;const auto source=p.boundary_source;
@@ -395,6 +396,12 @@ TaskStatus SurfaceExchange::Solve() {
       const auto metric = Geometry(u.metric);
       metric_geometry(point) = metric;
       penrose_geometry(point) = RescaleGeometry(u.metric, metric, u.chi);
+      auto o=parameters.profile.At(map.x);
+      o.omega=0;
+      SetStationaryOmegaNormal(u.alpha.value,u.beta.value,u.alpha.d,u.beta.d,o);
+      stage_pole(point).lapse_normal=SurfaceLapseNormal(u,o,map.x);
+      stage_pole(point).pole=TensorPoleNormalJet(u,o,map.x,map.x,parameters.kappa1,
+          parameters.kappa2,1.,parameters.outer_lapse_damping,true,true);
     });
   const Real penalty=p.penalty;int invalid=0;
   auto case_policy=Kokkos::RangePolicy<>(0,4*p.nsurface_points);
@@ -414,7 +421,7 @@ TaskStatus SurfaceExchange::Solve() {
         for (int a=0;a<3;++a)jets[21+which].d[a]+=map.x[a];
       const auto result=EvaluateScriPoint(map,rows(point).spacing,jets,
                                         parameters,source,penalty,
-                                        &metric_geometry(point),&penrose_geometry(point));
+                                        &metric_geometry(point),&penrose_geometry(point),&stage_pole(point));
       if (!result.valid)return;
       for (int a=0;a<3;++a)cases(point,which).defect[a]=result.defect[a];
       cases(point,which).valid=true;
@@ -487,6 +494,7 @@ TaskStatus SurfaceExchange::Evaluate() {
   CheckReady();
   auto &p = *module_;
   const auto restored = restored_;
+  const auto stage_pole = stage_pole_;
   const auto maps = p.surface_geometry;
   const auto rows=rows_;
   const bool use_restored = correction_jets_ready_;
@@ -516,7 +524,8 @@ TaskStatus SurfaceExchange::Evaluate() {
       for (int a=0;a<3;++a)
         jets[22+a]=jets[22+a]+kernel.Correction(c.face,c.j,c.k,map,a);
       const auto rate=EvaluateScriPoint(map,rows(point).spacing,jets,parameters,source,penalty,
-                                        &metric_geometry(point),&penrose_geometry(point));
+                                        &metric_geometry(point),&penrose_geometry(point),
+                                        use_restored ? &stage_pole(point) : nullptr);
       if (!rate.valid) {++bad;return;}
       clock_error=fmax(clock_error,fabs(rate.clock));
       for (int a=0;a<3;++a)defect=fmax(defect,fabs(rate.defect[a]));

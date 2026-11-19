@@ -174,9 +174,10 @@ KOKKOS_INLINE_FUNCTION ScriPointResult EvaluateScriPoint(const mapped::Point &ma
     Real spacing,const CartesianChartJets &j,const HyperbolicShiftParameters<Real> &p,
     const StationaryGaugeSource<Real> &source,Real penalty,
     const SpatialGeometry<Real> *metric_geometry=nullptr,
-    const SpatialGeometry<Real> *penrose_geometry=nullptr) {
+    const SpatialGeometry<Real> *penrose_geometry=nullptr,
+    const SurfacePoleCache *pole_cache=nullptr) {
   // Preserve the existing endpoint validity and pole derivative conventions.
-  return SphericalPolicy::Boundary(map,spacing,j,p,source,penalty,metric_geometry,penrose_geometry);
+  return SphericalPolicy::Boundary(map,spacing,j,p,source,penalty,metric_geometry,penrose_geometry,pole_cache);
 }
 }  // namespace z4c_hyperboloidal
 #endif

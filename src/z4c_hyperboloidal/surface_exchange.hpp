@@ -164,6 +164,7 @@ class SurfaceExchange {
   DvceArray2D<Real> investigation_values_;
   DvceArray1D<Real> face_spacing_, face_gap_;
   DvceArray1D<CartesianChartJets> sampled_, restored_;
+  DvceArray1D<SurfacePoleCache> stage_pole_;
   struct NormalCase {Real defect[3]; bool valid;};
   DvceArray2D<NormalCase> normal_cases_;
   DvceArray1D<SpatialGeometry<Real>> metric_geometry_,penrose_geometry_;

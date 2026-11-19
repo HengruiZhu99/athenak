@@ -5,6 +5,8 @@
 #define Z4C_HYPERBOLOIDAL_NATIVE_CARTESIAN_ALGEBRAIC_CHART_HPP_
 #include <array>
 #include <type_traits>
+#include "z4c_hyperboloidal/conformal_constraints.hpp"
+#include "z4c_hyperboloidal/fields.hpp"
 #include "z4c_hyperboloidal/mapped_geometry.hpp"
 namespace z4c_hyperboloidal {
 // Five independent Cartesian metric components and five curvature components.
@@ -52,6 +54,33 @@ KOKKOS_INLINE_FUNCTION bool TryExpandCartesianChart(std::array<J, 31> &v) {
   v[12] = metric.TraceFreeZZ(v[7], v[8], v[9], v[10], v[11]);
   return true;
 }
+
+// Expand point values with constant input jets and return the inverse physical chart
+// metric. The implicit metric component carries the derivative overflow check.
+KOKKOS_INLINE_FUNCTION bool ProjectConstantChart(
+    std::array<Real, Fields::count>& fields, Real inverse[3][3]) {
+  using J = mapped::Jet;
+  CartesianChartMetric<J> jets{J(fields[1] + 1), J(fields[2]), J(fields[3]),
+                               J(fields[4] + 1), J(fields[5]), {}, {}};
+  if (!jets.Complete()) return false;
+  // Every input is constant. Each component of the implicit metric's gradient
+  // and Hessian therefore follows the same arithmetic, even on overflow.
+  if (jets.f.d[0] != 0 || jets.f.h[0][0] != 0) return false;
+  const CartesianChartMetric<Real> chart{jets.a.f, jets.b.f, jets.c.f, jets.d.f, jets.e.f,
+                                         jets.minor.f, jets.f.f};
+  fields[6] = chart.f - 1;
+  fields[12] = chart.TraceFreeZZ(fields[7], fields[8], fields[9], fields[10], fields[11]);
+  const Real g[3][3] = {{chart.a, chart.b, chart.c},
+                        {chart.b, chart.d, chart.e},
+                        {chart.c, chart.e, fields[6] + 1}};
+  Real determinant;
+  if (!InvertMetric(g, inverse, determinant)) return false;
+  for (int i = 0; i < 3; ++i)
+    for (int j = 0; j < 3; ++j)
+      if (!Kokkos::isfinite(inverse[i][j])) return false;
+  return true;
+}
+
 inline void ExpandCartesianChart(CartesianChartJets&v){
   if(!TryExpandCartesianChart(v))throw std::runtime_error("nonpositive Cartesian chart metric");
 }
