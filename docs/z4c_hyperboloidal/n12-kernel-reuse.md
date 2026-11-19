@@ -1,6 +1,23 @@
 # Stationary geometry and N12 kernel performance
 
-One Aurora node with 12 bound GPU tiles measured **1.757 s/interval**, **19.05 million bulk point-stages/s** and **312.1 s/M₀** for solver commit 40d0aac1a. This is a 1.41× speedup over the 2.47446 s qualification. Regular single-puncture RK4 measured 103.2 million/s, leaving a 5.42× throughput gap. At the production workload of 33,467,904 bulk point-stages, the 2× target requires 1.23723 s/interval and the 3× target requires 0.82482 s/interval.
+The per-point constant-Ω trial measured **1.61272 s/interval**, **20.75 million bulk point-stages/s**, and **286.42 s/M₀** on 12 bound Aurora tiles with output off. At 33,467,904 bulk point-stages per interval, this is a 1.53× speedup over the 2.47446 s qualification and a 4.97× gap to regular RK4 at 103.2 million/s. The 2× target requires 1.23723 s/interval and the 3× target requires 0.82482 s/interval.
+
+## Per-point constant compactification
+
+Job 9105231 compared the bulk changes on one node with factored curvature at 40d0aac1a. Curvature depends on the evolving metric. Computing the Ricci and connection-constraint terms together simplifies that calculation throughout the domain. Where the prescribed compactification is constant and the inner gauge has full weight, its derivatives vanish and the inner damping coefficients simplify as well. The production workload has 89.1% of its point-stages in that region.
+
+| One-node trial | Seconds/interval |
+|---|---:|
+| Factored-curvature control | 1.77012 |
+| Combined Ricci and connection constraint | 1.73477 |
+| Contracted form of combined Ricci | 1.73057 |
+| Direct scri compatibility matrix | 1.78203 |
+| Contracted Ricci and per-point constant-Ω equations | **1.61272** |
+| Also specialize homogeneous batches | 1.61391 |
+
+The selected trial saved 0.15739 s against a 0.00635 s spread of four-interval averages. On rank 3, the busiest tile in both device traces, the point kernels fell from 0.66001 to 0.52563 s/interval. The homogeneous batch trial dispatched the predicted specialized call count on all 12 tiles. It covered 28,946,160 point-stages and gave no measurable additional gain. The selected path tests the local geometric conditions directly.
+
+The selected trial repeated at 1.61431 s/interval in the checkpoint run. At cycle 21, the maximum scaled field difference from the original qualification was 3.216×10⁻¹² over 139,683,024 values. Across eight persistent diagnostics per point the maximum was 1.444×10⁻¹⁵. The production time and timestep matched. These timings precede integration with the scri projection and pole changes from job 9104937.
 
 ## Scri projection and shift corrections
 
