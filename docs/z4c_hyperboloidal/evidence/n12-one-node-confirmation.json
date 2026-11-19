@@ -1,0 +1,514 @@
+{
+  "source_commit": "6d663bc20f080c6ed1696fd7371c9b2d0ecfba9c",
+  "choice": {
+    "variant": "pool",
+    "binary": "athena-qualified-pool",
+    "core_means": [
+      2.6428436540000018,
+      2.6474235217499995,
+      2.6610463600000003
+    ],
+    "pool_means": [
+      2.45717469375,
+      2.4655115612499987,
+      2.477471210000001
+    ],
+    "core_seconds": 2.6504378452500004,
+    "pool_seconds": 2.466719155,
+    "observed_repeat_variation": 0.02049806575000046,
+    "extra_pool_saving": 0.18371869025000054
+  },
+  "selected": {
+    "one": {
+      "run": "9103299/verify-multirate-auto-athena-qualified-pool",
+      "seconds_per_interval": 2.47445874175,
+      "million_per_second": 13.52534331460732,
+      "seconds_per_M0": 439.46387253480003,
+      "bulk_point_stages": 33467904,
+      "warmup": 8,
+      "timed_end": 20,
+      "binary_sha256": "30cfb1cbbee26ff8a401ce4616d490e0c4e2437ee5a226fa112291e14948d36f",
+      "input_sha256": "e978a3f84f96816c609bfc5082db9916730bd593e9cc3a66cbb83cef985835d9",
+      "hosts": [
+        "x4217c5s5b0n0.hsn.cm.aurora.alcf.anl.gov"
+      ],
+      "intervals": [
+        2.4660734640000044,
+        2.4722009369999967,
+        2.4815180810000044,
+        2.4884642049999997,
+        2.46137131399999,
+        2.4771824170000087,
+        2.4765571149999914,
+        2.496410412000003,
+        2.469827418999998,
+        2.4673948660000065,
+        2.474396490999993,
+        2.4621081800000013
+      ],
+      "four_interval_means": [
+        2.4770641717500013,
+        2.4778803144999983,
+        2.4684317389999997
+      ]
+    },
+    "two": {
+      "run": "9103361/verify-two-athena-qualified-pool",
+      "seconds_per_interval": 2.139437582083333,
+      "million_per_second": 15.643318730247675,
+      "seconds_per_M0": 379.96411457799996,
+      "bulk_point_stages": 33467904,
+      "warmup": 8,
+      "timed_end": 20,
+      "binary_sha256": "30cfb1cbbee26ff8a401ce4616d490e0c4e2437ee5a226fa112291e14948d36f",
+      "input_sha256": "12cd566f28cc1ab1f87c825f909a577efa288a9cfd3fda7dc3baa5ef6c386238",
+      "hosts": [
+        "x4502c7s3b0n0.hsn.cm.aurora.alcf.anl.gov",
+        "x4502c7s4b0n0.hsn.cm.aurora.alcf.anl.gov"
+      ],
+      "intervals": [
+        2.1382663609999994,
+        2.1439608040000024,
+        2.140757123,
+        2.1389976350000026,
+        2.1393303720000034,
+        2.142380407999994,
+        2.1416294569999934,
+        2.1371833910000078,
+        2.136176993999996,
+        2.139420512000001,
+        2.138850282000007,
+        2.1362976459999885
+      ],
+      "four_interval_means": [
+        2.140495480750001,
+        2.1401309069999996,
+        2.137686358499998
+      ]
+    }
+  },
+  "historical_multirate": {
+    "one": 9.926928148666667,
+    "two": 3.0353450091666665
+  },
+  "cleanup_head": {
+    "run": "9102930/time-multirate-athena-baseline",
+    "seconds_per_interval": 10.68739144233333,
+    "million_per_second": 3.131531597825812,
+    "seconds_per_M0": 1898.0807201583996,
+    "bulk_point_stages": 33467904,
+    "warmup": 8,
+    "timed_end": 20,
+    "binary_sha256": "6f10a7b11c2976c8a07be3d0cf8eb417c3ead852d2c2774de99c2870102a6478",
+    "input_sha256": "d9d8ee541ebd84d861777d5f9d6fc79f2ed2946862f0580e0bbec86d966f6093",
+    "hosts": [
+      "x4003c6s5b0n0.hsn.cm.aurora.alcf.anl.gov"
+    ],
+    "intervals": [
+      11.058124195000005,
+      9.526121539999991,
+      10.429565733999993,
+      12.190535683000007,
+      10.385834082999992,
+      10.626665090000017,
+      9.767771556999975,
+      10.435712796000018,
+      12.504231591000007,
+      10.939364616999995,
+      9.37635723699998,
+      11.008413184999995
+    ]
+  },
+  "uniform": {
+    "run": "9102930/time-uniform-athena-baseline",
+    "seconds_per_interval": 0.35216544858333315,
+    "million_per_second": 16.280711305053757,
+    "seconds_per_M0": 1000.7133386943996,
+    "bulk_point_stages": 5733504,
+    "warmup": 8,
+    "timed_end": 20,
+    "binary_sha256": "6f10a7b11c2976c8a07be3d0cf8eb417c3ead852d2c2774de99c2870102a6478",
+    "input_sha256": "02badad019d7f87f1782045e66c755c8f746815f7dd0ca3875b7e5b5c9100a78",
+    "hosts": [
+      "x4003c6s5b0n0.hsn.cm.aurora.alcf.anl.gov"
+    ],
+    "intervals": [
+      0.3502375609999966,
+      0.3531091550000056,
+      0.3521244399999972,
+      0.35317946899999697,
+      0.35069792600000227,
+      0.3533806290000001,
+      0.3512974870000036,
+      0.35305562099999577,
+      0.35161474899999945,
+      0.352493207000002,
+      0.3522115430000028,
+      0.3525835959999952
+    ]
+  },
+  "selected_uniform": {
+    "run": "9103299/time-uniform-athena-qualified-pool",
+    "seconds_per_interval": 0.3054538643333335,
+    "million_per_second": 18.770441855478325,
+    "seconds_per_M0": 867.9777008896004,
+    "bulk_point_stages": 5733504,
+    "warmup": 8,
+    "timed_end": 20,
+    "binary_sha256": "30cfb1cbbee26ff8a401ce4616d490e0c4e2437ee5a226fa112291e14948d36f",
+    "input_sha256": "02badad019d7f87f1782045e66c755c8f746815f7dd0ca3875b7e5b5c9100a78",
+    "hosts": [
+      "x4217c5s5b0n0.hsn.cm.aurora.alcf.anl.gov"
+    ],
+    "intervals": [
+      0.30588027800000006,
+      0.3054427000000004,
+      0.3057354179999976,
+      0.30576361100000327,
+      0.3052956579999986,
+      0.30560827299999715,
+      0.30563632300000165,
+      0.30463197000000264,
+      0.3047001289999969,
+      0.30539251000000434,
+      0.3056787609999958,
+      0.3056807410000033
+    ]
+  },
+  "selected_folded": {
+    "run": "9103299/time-multirate-athena-qualified-pool",
+    "seconds_per_interval": 2.4979205374166664,
+    "million_per_second": 13.39830611049473,
+    "seconds_per_M0": 443.63068744519995,
+    "bulk_point_stages": 33467904,
+    "warmup": 8,
+    "timed_end": 20,
+    "binary_sha256": "30cfb1cbbee26ff8a401ce4616d490e0c4e2437ee5a226fa112291e14948d36f",
+    "input_sha256": "d9d8ee541ebd84d861777d5f9d6fc79f2ed2946862f0580e0bbec86d966f6093",
+    "hosts": [
+      "x4217c5s5b0n0.hsn.cm.aurora.alcf.anl.gov"
+    ],
+    "intervals": [
+      2.496854411000001,
+      2.496711673,
+      2.499407603999998,
+      2.4978937050000027,
+      2.497983341000001,
+      2.4983564789999946,
+      2.4982804100000067,
+      2.496974468999994,
+      2.499654976000002,
+      2.499278296,
+      2.497772354999995,
+      2.495878730000001
+    ]
+  },
+  "profile": {
+    "run": "9103299/profile-multirate-distributed-athena-qualified-pool",
+    "seconds_per_interval": 2.455972925000001,
+    "million_per_second": 13.627146968649903,
+    "seconds_per_M0": 436.1807914800002,
+    "bulk_point_stages": 33467904,
+    "warmup": 3,
+    "timed_end": 5,
+    "binary_sha256": "30cfb1cbbee26ff8a401ce4616d490e0c4e2437ee5a226fa112291e14948d36f",
+    "input_sha256": "030759c874fc211eb0efca24c3363c7178d53ffafffbe833ab3bce6e8f835406",
+    "hosts": [
+      "x4217c5s5b0n0.hsn.cm.aurora.alcf.anl.gov"
+    ],
+    "intervals": [
+      2.4478229620000036,
+      2.4641228879999986
+    ],
+    "tile_seconds": {
+      "mean": 1.7823546666666665,
+      "min": 1.0117526400000003,
+      "max": 2.3983604399999994
+    },
+    "mean_seconds_by_operation": {
+      "z4c_hyperboloidal::Z4cHyperboloidal::CalcRHS / ordinary point RHS": 0.63029226,
+      "z4c_hyperboloidal::Z4cHyperboloidal::CalcRHS / endpoint point RHS": 0.2137034866666667,
+      "z4c_hyperboloidal::MappedHalo::Fill": 0.15366153999999999,
+      "z4c_hyperboloidal::MultirateEvolution::Impl::StageDonors": 0.10534731999999998,
+      "z4c_hyperboloidal::SurfaceExchange::Solve": 0.10334890000000001,
+      "z4c_hyperboloidal::MultirateEvolution::Impl::Reconstruct<true>": 0.09668588,
+      "z4c_hyperboloidal::SurfaceExchange::Evaluate": 0.07361564666666666,
+      "z4c_hyperboloidal::MultirateEvolution::Impl::Reconstruct<false>": 0.06715976666666666,
+      "zeCommandListAppendMemoryCopy(D2D)": 0.06161391,
+      "z4c_hyperboloidal::Z4cHyperboloidal::CalcRHS / lambda 2": 0.059748766666666675,
+      "z4c_hyperboloidal::Z4cHyperboloidal::CalcRHS / lambda 1": 0.053761506666666674,
+      "z4c_hyperboloidal::OverlapAgreementPlan::AddRHS": 0.05220789333333334,
+      "z4c_hyperboloidal::SurfaceExchange::Sample": 0.03310308000000001,
+      "z4c_hyperboloidal::OverlapAgreementPlan::Evaluate": 0.026855580000000004,
+      "z4c_hyperboloidal::SurfaceExchange::Project": 0.024482773333333332,
+      "z4c_hyperboloidal::MultirateEvolution::Impl::Pack": 0.008646726666666668,
+      "z4c_hyperboloidal::SurfaceExchange::PrepareRadialJets": 0.008365666666666667,
+      "bvals::multirate::RecordExchange::Impl::PacketGather::Launch": 0.007251960000000001,
+      "bvals::multirate::RecordExchange::Publish": 0.0010015466666666668,
+      "z4c_hyperboloidal::Z4cHyperboloidal::FormResidual": 0.00047950000000000005,
+      "bvals::MappedExchange::PackAndSend": 0.00043377333333333347,
+      "zeCommandListAppendMemoryCopy(M2D)": 0.0002027066666666667,
+      "z4c_hyperboloidal::MultirateEvolution::Impl::CompleteInterval": 0.00015985333333333335,
+      "bvals::MappedExchange::Receive": 0.0001509066666666667,
+      "z4c_hyperboloidal::Z4cHyperboloidal::EnforceAlgebraicConstraints": 4.416666666666667e-05,
+      "z4c_hyperboloidal::SurfaceExchange::PackAndSend": 1.5713333333333334e-05,
+      "zeCommandListAppendMemoryFill(D)": 1.2933333333333334e-05,
+      "zeCommandListAppendMemoryCopy(D2M)": 9.033333333333333e-07
+    }
+  },
+  "endpoint": {
+    "one": {
+      "endpoint_time_delta": 0.0,
+      "max_scaled": 1.7741650162883538e-12,
+      "max_scaled_persistent_diagnostics": 1.5543122344752192e-15,
+      "rms_scaled": 4.786564651160289e-15,
+      "field_scalars": 139683024,
+      "identical_checkpoint_payload": false,
+      "cycle": 21,
+      "t": 0.03941441441441441,
+      "M0": 0.11824324324324323,
+      "diagnostics_per_point": 8,
+      "baseline": "9103057/verify-multirate-athena-baseline/rst/headon.00001.rst",
+      "candidate": "9103299/verify-multirate-auto-athena-qualified-pool/rst/headon.00001.rst"
+    },
+    "two": {
+      "endpoint_time_delta": 0.0,
+      "max_scaled": 1.7741650162883538e-12,
+      "max_scaled_persistent_diagnostics": 1.5543122344752192e-15,
+      "rms_scaled": 4.786564651160289e-15,
+      "field_scalars": 139683024,
+      "identical_checkpoint_payload": false,
+      "cycle": 21,
+      "t": 0.03941441441441441,
+      "M0": 0.11824324324324323,
+      "diagnostics_per_point": 8,
+      "baseline": "9103057/verify-multirate-athena-baseline/rst/headon.00001.rst",
+      "candidate": "9103361/verify-two-athena-qualified-pool/rst/headon.00001.rst"
+    }
+  },
+  "cpu": {
+    "executable_sha256": "9f8db1c1829d64046f7c658ea0918cff5520f11cb6a7336dff7daf2830e1c25b",
+    "restart_smoke": {
+      "mixed": {
+        "blocks": 25,
+        "cycle": 2,
+        "time": 2e-06
+      },
+      "complete_local_batches": {
+        "bitwise_equal": true,
+        "scalars": 5826600,
+        "payload_sha256": "d1c0e15a64f67dae00b5784db0f60a424435e947933ba268eb5f455ff8e9d0fc"
+      },
+      "uniform_vs_mixed_smoke": {
+        "max_scaled_field_difference": 5.59730114877266e-15,
+        "worst_scalar": 987375
+      },
+      "restart_same_schedule": {
+        "bitwise_equal": true,
+        "scalars": 5826600,
+        "payload_sha256": "d1c0e15a64f67dae00b5784db0f60a424435e947933ba268eb5f455ff8e9d0fc"
+      }
+    },
+    "adaptive": {
+      "complete_local_batches": {
+        "bitwise_equal": true,
+        "scalars": 7458048,
+        "payload_sha256": "aeca16f5ef35582d22c49f0cba8132b3e46a6314edf74a7c1efd44e2ce2a9271"
+      },
+      "events": [
+        [
+          "1",
+          "7",
+          "0",
+          "32"
+        ]
+      ],
+      "coarsened_blocks": 25,
+      "cooldown_restart": {
+        "bitwise_equal": true,
+        "scalars": 7458048,
+        "payload_sha256": "22d05ce15d6e21007050a9e5936ad073bda4e0980ce677b9df9b2bee4188a3b6"
+      },
+      "final_blocks": 32,
+      "restart": {
+        "bitwise_equal": true,
+        "scalars": 7458048,
+        "payload_sha256": "aeca16f5ef35582d22c49f0cba8132b3e46a6314edf74a7c1efd44e2ce2a9271"
+      },
+      "uniform_fine_reference": {
+        "max_scaled_field_difference": 1.7763568414877847e-15,
+        "worst_scalar": 2422030
+      },
+      "time": 4.57763671875e-05
+    },
+    "convergence": {
+      "adaptive": false,
+      "cached_stage_packets": true,
+      "complete_local_batches": true,
+      "radial_probe": true,
+      "binary_sha256": "9f8db1c1829d64046f7c658ea0918cff5520f11cb6a7336dff7daf2830e1c25b",
+      "duration": 0.00390625,
+      "steps": [
+        2,
+        4,
+        8
+      ],
+      "uniform_reference_steps": 32,
+      "rms_errors": [
+        {
+          "bulk": 2.152767564516856e-10,
+          "radial_interface": 6.250591864428976e-12,
+          "scri": 5.793889210471199e-08
+        },
+        {
+          "bulk": 1.2622068075615665e-11,
+          "radial_interface": 3.8133172910319604e-13,
+          "scri": 3.1284341182559764e-09
+        },
+        {
+          "bulk": 7.397331376422568e-13,
+          "radial_interface": 2.361917468917301e-14,
+          "scri": 1.7148085602625305e-10
+        }
+      ],
+      "observed_orders": {
+        "bulk": [
+          4.092172344706255,
+          4.092799594016643
+        ],
+        "radial_interface": [
+          4.034874321973872,
+          4.013016117509592
+        ],
+        "scri": [
+          4.211019470229551,
+          4.189321293339476
+        ]
+      },
+      "passed": true
+    }
+  },
+  "lint": {
+    "command": "cd tst && python run_test_suite.py --style",
+    "exit_code": 1,
+    "changed_line_diagnostics": 0,
+    "comparison_commit": "5617d14bc",
+    "failing_checks": [
+      "test_style",
+      "test_lint_python"
+    ]
+  },
+  "historical_120_M0_accounting": {
+    "source": "Aurora PBS resources_used.walltime and Resource_List.nodect",
+    "final_cycle": 85208,
+    "final_M0": 120.000651357251,
+    "segments": [
+      {
+        "job": "9092194.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+        "exit_status": 1,
+        "nodes": 2,
+        "wall_seconds": 423
+      },
+      {
+        "job": "9092227.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+        "exit_status": 0,
+        "nodes": 2,
+        "wall_seconds": 3207
+      },
+      {
+        "job": "9092382.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+        "exit_status": 0,
+        "nodes": 2,
+        "wall_seconds": 3209
+      },
+      {
+        "job": "9092479.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+        "exit_status": 0,
+        "nodes": 2,
+        "wall_seconds": 3215
+      },
+      {
+        "job": "9092592.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+        "exit_status": 0,
+        "nodes": 2,
+        "wall_seconds": 3213
+      },
+      {
+        "job": "9092771.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+        "exit_status": 0,
+        "nodes": 2,
+        "wall_seconds": 3212
+      },
+      {
+        "job": "9092964.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+        "exit_status": 0,
+        "nodes": 2,
+        "wall_seconds": 3211
+      },
+      {
+        "job": "9093067.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+        "exit_status": 0,
+        "nodes": 2,
+        "wall_seconds": 2348
+      },
+      {
+        "job": "9096787.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+        "exit_status": 0,
+        "nodes": 2,
+        "wall_seconds": 3231
+      },
+      {
+        "job": "9096978.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+        "exit_status": 0,
+        "nodes": 2,
+        "wall_seconds": 3228
+      },
+      {
+        "job": "9097131.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+        "exit_status": 0,
+        "nodes": 2,
+        "wall_seconds": 3240
+      },
+      {
+        "job": "9097235.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+        "exit_status": 0,
+        "nodes": 2,
+        "wall_seconds": 3235
+      },
+      {
+        "job": "9097330.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+        "exit_status": 0,
+        "nodes": 2,
+        "wall_seconds": 3274
+      },
+      {
+        "job": "9097417.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+        "exit_status": 0,
+        "nodes": 2,
+        "wall_seconds": 3235
+      },
+      {
+        "job": "9097548.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+        "exit_status": 0,
+        "nodes": 2,
+        "wall_seconds": 2217
+      }
+    ],
+    "successful_node_hours": 24.041666666666668,
+    "total_node_hours": 24.276666666666667
+  },
+  "one_to_two_endpoint": {
+    "endpoint_time_delta": 0.0,
+    "max_scaled": 0.0,
+    "max_scaled_persistent_diagnostics": 0.0,
+    "rms_scaled": 0.0,
+    "field_scalars": 139683024,
+    "identical_checkpoint_payload": true,
+    "cycle": 21,
+    "t": 0.03941441441441441,
+    "M0": 0.11824324324324323,
+    "diagnostics_per_point": 8,
+    "baseline": "9103299/verify-multirate-auto-athena-qualified-pool/rst/headon.00001.rst",
+    "candidate": "9103361/verify-two-athena-qualified-pool/rst/headon.00001.rst"
+  }
+}
