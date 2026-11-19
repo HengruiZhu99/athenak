@@ -50,6 +50,9 @@ class RecordExchange {
   RecordExchange(const RecordExchange &) = delete;
   RecordExchange &operator=(const RecordExchange &) = delete;
   const std::vector<Point> &OwnedPoints(int gid) const;
+  // Prepare before the first epoch. A held view keeps its record immutable.
+  void PreparePublicationBuffers();
+  DvceArray1D<Real> PublicationBuffer(const RecordKey& key);
   // Local records contain all owned points; remote records contain this rank's
   // sorted sparse request set for the GID. PointIndex refers to that layout.
   std::size_t PointIndex(const Point &point) const;

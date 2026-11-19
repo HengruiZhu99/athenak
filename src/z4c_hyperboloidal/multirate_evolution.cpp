@@ -364,7 +364,8 @@ struct MultirateEvolution::Impl {
   template <bool accepted>
   void Reconstruct(const std::vector<int>& slots, const std::vector<Combination>& combinations,
                    double time);
-  std::vector<DvceArray1D<Real>> Pack(const std::vector<int>& slots, bool rhs);
+  std::vector<DvceArray1D<Real>> Pack(const std::vector<int>& slots,
+                                     std::uint32_t step, int stage);
   void Publish(const std::vector<int>& slots, const std::vector<DvceArray1D<Real>>& records,
                std::uint32_t step, int stage);
   bool IncludesScri(const std::vector<int>& slots) const {
@@ -885,6 +886,7 @@ void MultirateEvolution::Impl::BuildLocal() {
       groups[block.gid] = block.time_level;
   }
   exchange->CompileReceives(consumers, groups);
+  exchange->PreparePublicationBuffers();
 }
 Combination MultirateEvolution::Impl::Combine(size_t stage, int gid) const {
   const auto& r = schedule->Row(stage, levels[gid]);
@@ -996,7 +998,10 @@ void MultirateEvolution::Impl::Reconstruct(const std::vector<int>& slots,
           state(point.m,f,point.k,point.j,point.i) = ChartValue(jets[f]);
         if constexpr (accepted) {
           const auto u = SphericalPolicy::Physical(x,jets);
-          if (!(u.chi.value > 0 && u.alpha.value > 0 && Geometry(u.metric).valid)) ++bad;
+          Real inverse[3][3];
+          if (!(u.chi.value > 0 && u.alpha.value > 0 &&
+                InvertConstantMetric(u.metric, inverse)))
+            ++bad;
         } else {
           const Real r2 = weight.Value(x);
           for (int f = 0; f < Fields::count; ++f)
@@ -1010,15 +1015,14 @@ void MultirateEvolution::Impl::Reconstruct(const std::vector<int>& slots,
   if (IncludesScri(slots))
     p.surface_exchange_->Project();
 }
-std::vector<DvceArray1D<Real>> MultirateEvolution::Impl::Pack(const std::vector<int>& slots,
-                                                              bool rhs) {
+std::vector<DvceArray1D<Real>> MultirateEvolution::Impl::Pack(
+    const std::vector<int>& slots, std::uint32_t step, int stage) {
+  const bool rhs = stage >= 0;
   std::vector<DvceArray1D<Real>> values(p.nblocks);
   std::vector<RecordDestination> ptrs(p.nblocks);
   const int width=rhs ? Fields::independent_count : Fields::count;
   for (int m : slots) {
-    values[m] = DvceArray1D<Real>(
-        Kokkos::view_alloc(Kokkos::WithoutInitializing, "multirate immutable record"),
-        exchange->OwnedPoints(pack->GlobalId(m)).size() * width);
+    values[m] = exchange->PublicationBuffer({pack->GlobalId(m), step, stage});
     ptrs[m].data = values[m].data();
   }
   const auto pointers = destinations.Upload(ptrs,"multirate record destinations");
@@ -1268,7 +1272,7 @@ void MultirateEvolution::Impl::BeginInterval() {
   interior_readiness.Reset();
   std::vector<int> all(p.nblocks);
   for (int m = 0; m < p.nblocks; ++m) all[m] = m;
-  auto initial = Pack(all, false);
+  auto initial = Pack(all, 0, -1);
   Publish(all, initial, 0, -1);
   initial.clear();
 }
@@ -1372,7 +1376,7 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
     phase_seconds[3] += elapsed;
   }
   const auto begin_publication = Clock::now();
-  auto rhs = Pack(slots, true);
+  auto rhs = Pack(slots, context.key.local_step, context.key.stage);
   Publish(slots, rhs, context.key.local_step, context.key.stage);
   if (context.key.stage == 3) {
     // Keep RHS publication outside the measured projection cost.
@@ -1390,7 +1394,7 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
       }
     }
     Reconstruct<true>(slots, combinations, mesh->time + (context.key.local_step + 1) * context.local_dt);
-    auto accepted = Pack(slots, false);
+    auto accepted = Pack(slots, context.key.local_step + 1, -1);
     model.Observe(bal::KernelKind::projection, units, Seconds(begin_accept));
     Publish(slots, accepted, context.key.local_step + 1, -1);
   }

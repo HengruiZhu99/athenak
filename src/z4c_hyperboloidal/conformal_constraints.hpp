@@ -34,24 +34,50 @@ struct SpatialGeometry {
 };
 
 template <typename T>
-KOKKOS_INLINE_FUNCTION
-SpatialGeometry<T> Geometry(const MetricJet<T> &m) {
-  SpatialGeometry<T> out{};
-  const T (*g)[3] = m.g;
-  const T det = g[0][0]*(g[1][1]*g[2][2]-g[1][2]*g[2][1])
+KOKKOS_INLINE_FUNCTION bool InvertMetric(const T g[3][3], T inverse[3][3],
+                                        T& determinant) {
+  determinant = g[0][0]*(g[1][1]*g[2][2]-g[1][2]*g[2][1])
       - g[0][1]*(g[1][0]*g[2][2]-g[1][2]*g[2][0])
       + g[0][2]*(g[1][0]*g[2][1]-g[1][1]*g[2][0]);
-  out.determinant = det;
-  out.valid = Kokkos::isfinite(det) && det > 0 && g[0][0] > 0
-      && g[0][0]*g[1][1]-g[0][1]*g[1][0] > 0;
-  if (!out.valid) return out;
+  if (!(Kokkos::isfinite(determinant) && determinant > 0 && g[0][0] > 0
+        && g[0][0]*g[1][1]-g[0][1]*g[1][0] > 0)) return false;
   for (int i = 0; i < 3; ++i) {
     const int p = (i+1)%3, q = (i+2)%3;
     for (int j = 0; j < 3; ++j) {
       const int r = (j+1)%3, s = (j+2)%3;
-      out.inverse[j][i] = (g[p][r]*g[q][s]-g[p][s]*g[q][r])/det;
+      inverse[j][i] = (g[p][r]*g[q][s]-g[p][s]*g[q][r])/determinant;
     }
   }
+  return true;
+}
+
+// With constant input jets the connection and curvature vanish. Check the
+// inverse and the zero derivatives explicitly, including any overflow from
+// expanding the dependent chart coordinate before projection.
+template <typename T>
+KOKKOS_INLINE_FUNCTION bool InvertConstantMetric(const MetricJet<T>& m, T inverse[3][3]) {
+  T determinant;
+  if (!InvertMetric(m.g, inverse, determinant)) return false;
+  for (int i = 0; i < 3; ++i) {
+    for (int j = 0; j < 3; ++j) {
+      if (!Kokkos::isfinite(inverse[i][j])) return false;
+      for (int a = 0; a < 3; ++a) {
+        if (m.dg[a][i][j] != 0) return false;
+        for (int b = 0; b < 3; ++b) {
+          if (m.ddg[a][b][i][j] != 0) return false;
+        }
+      }
+    }
+  }
+  return true;
+}
+
+template <typename T>
+KOKKOS_INLINE_FUNCTION
+SpatialGeometry<T> Geometry(const MetricJet<T> &m) {
+  SpatialGeometry<T> out{};
+  out.valid = InvertMetric(m.g, out.inverse, out.determinant);
+  if (!out.valid) return out;
   T dinverse[3][3][3]{};
   T dconnection[3][3][3][3]{};
   for (int d = 0; d < 3; ++d)

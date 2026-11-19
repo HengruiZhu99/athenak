@@ -2,6 +2,7 @@
 #include "bvals/multirate_exchange.hpp"
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <iterator>
 #include <limits>
@@ -73,6 +74,9 @@ bool RecordKey::operator<(const RecordKey &other) const {
 
 struct RecordExchange::Impl {
   int rank = 0, ranks = 1, fields = 31, slope_fields = 31;
+  // Independent allocation trackers allow different donors to release their
+  // records separately. Two base slots cover the old and newly accepted state.
+  std::map<int, std::array<DvceArray1D<Real>, 6>> publication_buffers;
   int Width(const RecordKey &key) const { return key.stage<0 ? fields : slope_fields; }
   std::vector<int> owners, steps;
   std::map<int,std::vector<Point>> owned, layout;
@@ -408,6 +412,31 @@ RecordExchange::RecordExchange(const std::vector<int> &owners, std::vector<Point
 
 RecordExchange::~RecordExchange() = default;
 
+void RecordExchange::PreparePublicationBuffers() {
+  auto& p = *impl_;
+  if (p.used_epoch) throw std::logic_error("prepare publication buffers before Begin");
+  for (const auto& [gid, points] : p.owned) {
+    auto& buffers = p.publication_buffers[gid];
+    for (int s = 0; s < 6; ++s) {
+      const auto width = s < 4 ? p.slope_fields : p.fields;
+      buffers[s] = DvceArray1D<Real>(Kokkos::view_alloc(Kokkos::WithoutInitializing,
+          "multirate publication buffer"), points.size()*width);
+    }
+  }
+}
+
+DvceArray1D<Real> RecordExchange::PublicationBuffer(const RecordKey& key) {
+  auto& p = *impl_;
+  if (!p.active || !p.ValidKey(key) || p.owners[key.gid] != p.rank)
+    throw std::logic_error("invalid publication buffer key");
+  const auto slot = key.stage < 0 ? 4 + key.step%2 : key.stage;
+  const auto& buffer = p.publication_buffers.at(key.gid)[slot];
+  if (buffer.use_count() == 1) return buffer;
+  // A slower consumer or pending packet still owns the previous record.
+  return DvceArray1D<Real>(Kokkos::view_alloc(Kokkos::WithoutInitializing,
+      "multirate overlapping publication"), buffer.extent(0));
+}
+
 const std::vector<Point> &RecordExchange::OwnedPoints(int gid) const {
   return impl_->owned.at(gid);
 }
@@ -419,7 +448,10 @@ void RecordExchange::SetSlopeFields(int fields) {
 #endif
   if (impl_->used_epoch || fields<1 || fields>impl_->fields)
     throw std::invalid_argument("invalid immutable slope record width");
-  impl_->slope_fields=fields;
+  if (fields != impl_->slope_fields) {
+    impl_->slope_fields = fields;
+    if (!impl_->publication_buffers.empty()) PreparePublicationBuffers();
+  }
 }
 
 void RecordExchange::CompileReceives(const std::map<RecordKey,std::size_t> &consumers,

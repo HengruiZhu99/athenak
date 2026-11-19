@@ -266,11 +266,14 @@ TaskStatus SurfaceExchange::Project() {
       if (!TryExpandCartesianChart(jets)) {++bad;return;}
       const auto map=maps(point);const auto *x=map.x;
       const auto physical=SphericalPolicy::Physical(x,jets);
-      const auto geometry=Geometry(physical.metric);
-      if (!geometry.valid || !(jets[0].f>0)) {++bad;return;}
+      Real inverse[3][3];
+      if (!InvertConstantMetric(physical.metric, inverse) || !(jets[0].f > 0)) {
+        ++bad;
+        return;
+      }
       Real Q=0;
       for (int a=0;a<3;++a)for (int b=0;b<3;++b)
-        Q+=geometry.inverse[a][b]*x[a]*x[b];
+        Q+=inverse[a][b]*x[a]*x[b];
       if (!(Q>0)) {++bad;return;}
       const Real speed=sqrt(jets[0].f*Q);jets[18].f=0;
       for (int a=0;a<3;++a) {
