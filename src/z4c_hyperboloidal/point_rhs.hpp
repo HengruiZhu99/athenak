@@ -27,11 +27,15 @@ KOKKOS_INLINE_FUNCTION BulkPointResult EvaluatePhysicalBulkPoint(
   BulkPointResult out;
   const Real *x=map.x,r=SphericalPolicy::Radius(x);
   if (!(u.chi.value>0 && u.alpha.value>0)) {out.status=PointStatus::invalid_input;return out;}
-  const auto g=Geometry(u.metric);
+  const auto g=BulkRHSGeometry(u.metric, u.lambda);
   if (!g.valid) {out.status=PointStatus::invalid_geometry;return out;}
   auto omega = spatial_omega ? *spatial_omega : p.profile.At(x);
   SetStationaryOmegaNormal(u.alpha.value,u.beta.value,u.alpha.d,u.beta.d,omega);
-  auto parts=DampedConformalRHS(x,u,omega,p,&g);
+  const bool flat_inner = configured_conformal_frame && inner_telegrapher &&
+                          p.profile.flat && r <= p.profile.flat_radius &&
+                          r <= p.inner_begin;
+  const auto parts = flat_inner ? InnerPlateauRHS(u, omega.omega, p, g)
+                                : DampedConformalRHS<Real, true>(x, u, omega, p, &g);
   if (!parts.valid) {
     out.status = PointStatus::invalid_geometry;
     return out;

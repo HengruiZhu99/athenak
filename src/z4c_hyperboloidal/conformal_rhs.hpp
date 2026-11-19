@@ -44,6 +44,58 @@ struct EvolvedConstraintResult {
   Z4ConstraintResult<T> z4;
 };
 
+template <typename T>
+KOKKOS_INLINE_FUNCTION SpatialGeometry<T> BulkRHSGeometry(
+    const MetricJet<T> &m, const VectorJet<T> &lambda) {
+  SpatialGeometry<T> g{};
+  if (!InvertMetric(m.g, g.inverse, g.determinant)) return g;
+  T lower[3][3][3];
+  for (int k = 0; k < 3; ++k)
+    for (int i = 0; i < 3; ++i)
+      for (int j = i; j < 3; ++j)
+        lower[k][i][j] = lower[k][j][i] =
+            T(.5) * (m.dg[i][k][j] + m.dg[j][k][i] - m.dg[k][i][j]);
+  for (int k = 0; k < 3; ++k)
+    for (int i = 0; i < 3; ++i)
+      for (int j = i; j < 3; ++j) {
+        T value = 0;
+        for (int a = 0; a < 3; ++a) value += g.inverse[k][a] * lower[a][i][j];
+        g.connection[k][i][j] = g.connection[k][j][i] = value;
+        g.contracted[k] += (i == j ? 1 : 2) * g.inverse[i][j] * value;
+      }
+  // Metric compatibility gives the derivative of the inverse from the
+  // already raised Christoffels. The symmetric Ricci plus the connection
+  // constraint then needs just the metric Laplacian and first derivatives.
+  T dinv[3][3][3];
+  for (int d = 0; d < 3; ++d) {
+    T raised[3][3]{};
+    for (int i = 0; i < 3; ++i)
+      for (int j = 0; j < 3; ++j)
+        for (int k = 0; k < 3; ++k)
+          raised[i][j] += g.inverse[i][k] * g.connection[j][d][k];
+    for (int i = 0; i < 3; ++i)
+      for (int j = 0; j < 3; ++j) dinv[d][i][j] = -raised[i][j] - raised[j][i];
+  }
+  for (int i = 0; i < 3; ++i)
+    for (int j = i; j < 3; ++j) {
+      T ricci = 0;
+      for (int a = 0; a < 3; ++a) {
+        ricci += T(.5) * (m.g[a][i] * lambda.d[j][a] + m.g[a][j] * lambda.d[i][a] +
+                          g.contracted[a] * m.dg[a][i][j]);
+        for (int b = 0; b < 3; ++b) {
+          ricci -= T(.5) * (g.inverse[a][b] * m.ddg[a][b][i][j] +
+                            dinv[j][a][b] * m.dg[a][i][b] +
+                            dinv[i][a][b] * m.dg[a][j][b]) +
+                   g.connection[a][i][b] * g.connection[b][j][a];
+        }
+      }
+      g.ricci[i][j] = g.ricci[j][i] = ricci;
+      g.scalar += (i == j ? 1 : 2) * g.inverse[i][j] * ricci;
+    }
+  g.valid=Kokkos::isfinite(g.scalar);
+  return g;
+}
+
 // Transform the spatial geometry under b_ij = exp(2 phi) g_ij, phi = -log(chi)/2.
 // The derivatives of the connection contraction are ordinary coordinate derivatives.
 template <typename T>
@@ -180,7 +232,7 @@ EvolvedConstraintResult<T> EvolvedConstraints(const Z4cJet<T> &u, const OmegaJet
 // can be imposed explicitly. Never replace Omega by a numerical floor.
 // The tensor-system Theta term -3*w*theta/Omega is retained (see derivation/test);
 // the later spherical stabilization in that paper makes a different choice.
-template <typename T>
+template <typename T, bool combined_ricci = false, bool inner_plateau = false>
 KOKKOS_INLINE_FUNCTION
 Z4cRHSParts<T> ConformalRHS(const Z4cJet<T> &u, const OmegaJet<T> &o,
                           T kappa1, T kappa2,
@@ -208,13 +260,18 @@ Z4cRHSParts<T> ConformalRHS(const Z4cJet<T> &u, const OmegaJet<T> &o,
       for (int k = 0; k < 3; ++k) mixed[i][j] += gt.inverse[i][k] * u.a.k[k][j];
   for (int i = 0; i < 3; ++i) {
     divbeta += u.beta.d[i][i];
+    // On the full inner plateau the evolved-connection Ricci already
+    // includes the complete connection-constraint derivative in the source.
+    if constexpr (inner_plateau) continue;
     zup[i] = T(0.5)*(u.lambda.value[i]-gt.contracted[i]);
     for (int j = 0; j < 3; ++j) {
       z[i] += T(0.5)*u.metric.g[i][j]*(u.lambda.value[j]-gt.contracted[j]);
       for (int d = 0; d < 3; ++d) {
-        dz[d][i] += T(0.5)*(u.metric.dg[d][i][j]
-            *(u.lambda.value[j]-gt.contracted[j])
-            +u.metric.g[i][j]*(u.lambda.d[d][j]-gt.dcontracted[d][j]));
+        T derivative = u.metric.dg[d][i][j] * (u.lambda.value[j] - gt.contracted[j]);
+        if constexpr (!combined_ricci) {
+          derivative += u.metric.g[i][j] * (u.lambda.d[d][j] - gt.dcontracted[d][j]);
+        }
+        dz[d][i] += T(.5) * derivative;
       }
     }
   }
@@ -278,7 +335,8 @@ Z4cRHSParts<T> ConformalRHS(const Z4cJet<T> &u, const OmegaJet<T> &o,
     }
   }
   for (int i = 0; i < 3; ++i) {
-    r.lambda[i] = T(2./3.)*u.lambda.value[i]*divbeta;
+    const T connection = inner_plateau ? gt.contracted[i] : u.lambda.value[i];
+    r.lambda[i] = T(2./3.) * connection * divbeta;
     s.lambda[i] = -alpha*(T(4./3.)*physical_k+2*kappa1)*zup[i];
     for (int j = 0; j < 3; ++j) {
       r.lambda[i] += u.beta.value[j]*u.lambda.d[j][i]

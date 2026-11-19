@@ -354,7 +354,7 @@ KOKKOS_INLINE_FUNCTION HyperbolicGaugeParts<T> HyperbolicGauge(
 
 // The chi guard affects only the geometric source and damping. Evaluate both
 // with the same effective chi and the same pair of point-local geometries.
-template<class T> KOKKOS_INLINE_FUNCTION
+template<class T, bool combined_ricci = false> KOKKOS_INLINE_FUNCTION
 Z4cRHSParts<T> DampedConformalRHS(const T x[3], const Z4cJet<T> &input,
     const OmegaJet<T> &omega,
     const HyperbolicShiftParameters<T> &p = {},
@@ -375,7 +375,7 @@ Z4cRHSParts<T> DampedConformalRHS(const T x[3], const Z4cJet<T> &input,
   }
   const auto g=metric_geometry ? *metric_geometry : Geometry(u.metric);
   const auto gb=penrose_geometry ? *penrose_geometry : RescaleGeometry(u.metric,g,u.chi);
-  auto parts=ConformalRHS(u,omega,p.kappa1,p.kappa2,&g,&gb);
+  auto parts=ConformalRHS<T,combined_ricci>(u,omega,p.kappa1,p.kappa2,&g,&gb);
   if (!parts.valid) return parts;
   T r2=0; for (int i=0;i<3;++i) r2+=x[i]*x[i];
   const auto c=ShiftCoefficients(sqrt(r2),u.alpha.value,u.chi.value,p);
@@ -400,6 +400,30 @@ Z4cRHSParts<T> DampedConformalRHS(const T x[3], const Z4cJet<T> &input,
         if (p.profile.flat) CartesianInnerAdjustment(u,omega,s,g,gb,parts);
     }
   }
+  return parts;
+}
+
+// Inside the constant spatial compactification and full inner gauge, all
+// compactification derivatives vanish and both damping blends are constant.
+// The metric geometry supplied here uses the evolved connection in Ricci.
+template <class T>
+KOKKOS_INLINE_FUNCTION Z4cRHSParts<T> InnerPlateauRHS(
+    const Z4cJet<T> &state, T omega, const HyperbolicShiftParameters<T> &p,
+    const SpatialGeometry<T> &g) {
+  auto u = state;
+  if (p.cartesian_chi_guard) {
+    const T guarded = fmax(u.chi.value, p.inner_chi_guard / (omega * omega));
+    if (guarded > u.chi.value) u.chi.value += guarded - u.chi.value;
+  }
+  const auto gb = RescaleGeometry(u.metric, g, u.chi);
+  OmegaJet<T> compactification{};
+  compactification.omega = omega;
+  auto parts = ConformalRHS<T, true, true>(u, compactification, T(0), T(0), &g, &gb);
+  const T target = T(InnerTelegrapher::kappa1) * u.alpha.value;
+  parts.pole.trace += target * u.theta.value;
+  parts.pole.theta -= 2 * target * u.theta.value;
+  for (int i = 0; i < 3; ++i)
+    parts.pole.lambda[i] -= 2 * target * (u.lambda.value[i] - g.contracted[i]);
   return parts;
 }
 
