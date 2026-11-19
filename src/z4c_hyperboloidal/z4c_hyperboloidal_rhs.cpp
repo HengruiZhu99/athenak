@@ -19,14 +19,21 @@ namespace z4c_hyperboloidal {
 
 TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver, int stage, RHSSubset subset,
                                      Real max_characteristic_cfl,
-                                     bvals::multirate::RecordExchange *progress) {
+                                     bvals::multirate::RecordExchange *progress,
+                                     const std::function<void()> &host_work) {
   if (!plans_ready_) throw std::logic_error("Hyperboloidal RHS has no stage plans");
   if (!driver->UsesSchemeARK() || stage < 1 || stage > 4) {
     throw std::invalid_argument("Hyperboloidal RHS requires classical RK4 stage");
   }
   const auto &lists = active_blocks.extent(0) ? active_rhs_points : rhs_points_;
   const auto selected = lists[static_cast<int>(subset)];
-  if (!selected.extent(0)) return TaskStatus::complete;
+  if (!selected.extent(0)) {
+    if (host_work) {
+      host_work();
+      Kokkos::fence("surface-only stage complete");
+    }
+    return TaskStatus::complete;
+  }
   const auto cells = points.d_view;
   const auto maps = geometry;
   const auto blocks = pmy_pack->pmb->mb_map.d_view;
@@ -214,6 +221,7 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver, int stage, RHSSubset subset
 #else
   (void)progress;
 #endif
+  if (host_work) host_work();
   int invalid = 0;
   Kokkos::parallel_reduce(
       "hyperboloidal RHS validity", Kokkos::RangePolicy<>(0, selected_count),

@@ -257,6 +257,18 @@ void SurfaceExchange::Rebuild() {
   const int corrections=3;
   Kokkos::realloc(correction_,p.nfaces,corrections,n,n);
   Kokkos::realloc(correction_jets_,p.nfaces,corrections,n,n);
+  row_spacing_.clear();
+  if (host_samples_.extent(0)) {
+    host_correction_jets_ = Kokkos::create_mirror_view(HostMemSpace(), correction_jets_);
+    host_rhs_ = Kokkos::create_mirror_view(HostMemSpace(), p.s_rhs);
+    host_face_spacing_ = spacing.at(0);
+    host_face_gap_ = gap.at(0);
+    row_spacing_.reserve(rows.size());
+    for (const auto &row : rows) row_spacing_.push_back(row.spacing);
+  } else {
+    host_correction_jets_ = HostArray4D<mapped::Jet>();
+    host_rhs_ = HostArray4D<Real>();
+  }
   Kokkos::realloc(correction_weights_,p.nfaces>0 ? n : 0,n,36);
   const auto weights=correction_weights_;
   Kokkos::parallel_for("hyperboloidal normal correction weights",
@@ -538,6 +550,53 @@ TaskStatus SurfaceExchange::Solve() {
   return TaskStatus::complete;
 }
 
+bool SurfaceExchange::PrepareHostRates() {
+  if (!host_samples_.extent(0) || !correction_jets_ready_) return false;
+  const auto &p = *module_;
+  if (p.active_blocks.extent(0)) {
+    int enabled = 0;
+    Kokkos::deep_copy(enabled, Kokkos::subview(p.active_blocks, p.face_blocks.h_view(0)));
+    if (!enabled) return false;
+  }
+  Kokkos::deep_copy(host_correction_jets_, correction_jets_);
+  return true;
+}
+
+TaskStatus SurfaceExchange::EvaluateHostRates() {
+  auto &p = *module_;
+  int invalid = 0;
+  Real clock = 0, compatibility = 0;
+  for (int i = 0; i < p.nsurface_points; ++i) {
+    if (!host_metric_(i).valid || !host_penrose_(i).valid) {
+      ++invalid;
+      continue;
+    }
+    const auto c = p.surface_points.h_view(i);
+    const auto &map = p.host_surface_geometry(i);
+    auto jets = host_restored_(i);
+    for (int a = 0; a < 3; ++a) {
+      const auto &logical = host_correction_jets_(c.face, a, c.k, c.j);
+      jets[22 + a] = jets[22 + a] + NormalLift(map, logical, host_face_spacing_, host_face_gap_);
+    }
+    const auto rate = EvaluateScriPoint(map, row_spacing_[i], jets, p.parameters,
+        p.boundary_source, p.penalty, &host_metric_(i), &host_penrose_(i), &host_pole_(i));
+    if (!rate.valid) {
+      ++invalid;
+      continue;
+    }
+    clock = fmax(clock, fabs(rate.clock));
+    for (int a = 0; a < 3; ++a) compatibility = fmax(compatibility, fabs(rate.defect[a]));
+    for (int f = 0; f < Fields::count; ++f) {
+      host_rhs_(c.face, f, c.k, c.j) = rate.rate[f];
+      if (!Kokkos::isfinite(rate.rate[f])) ++invalid;
+    }
+  }
+  // Consumers run on the same execution instance. The caller's validity
+  // reduction completes this copy before the stage scratch is reused.
+  Kokkos::deep_copy(DevExeSpace(), p.s_rhs, host_rhs_);
+  return FinishRates(invalid, compatibility, clock);
+}
+
 TaskStatus SurfaceExchange::Evaluate() {
   const auto active=module_->active_blocks;
   const auto active_faces=module_->face_blocks.d_view;
@@ -596,6 +655,11 @@ TaskStatus SurfaceExchange::Evaluate() {
         }
       }
     },Kokkos::Sum<int>(invalid),Kokkos::Max<Real>(compatibility),Kokkos::Max<Real>(clock));
+  return FinishRates(invalid, compatibility, clock);
+}
+
+TaskStatus SurfaceExchange::FinishRates(int invalid, Real compatibility, Real clock) {
+  auto &p = *module_;
   if (invalid || compatibility>1e-7) {
     std::ostringstream message;
     message << std::setprecision(17)

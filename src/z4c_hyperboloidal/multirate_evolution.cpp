@@ -1357,6 +1357,7 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
   p.mapped_halo_->FillExternal(p.residual, p.u0, halo_delta, halo_physical, p.active_blocks,
                                complete_local_batches ? &slots : nullptr);
   double surface_seconds = 0;
+  std::function<void()> host_surface_rates;
   if (IncludesScri(slots)) {
     const auto surface_start = Clock::now();
     auto surface_bulk = Gather(p.surface_exchange_->BulkExchange(), 0, delta);
@@ -1364,13 +1365,23 @@ void MultirateEvolution::Impl::Evaluate(Driver* driver, bool interior,
     p.surface_exchange_->SetExternalValues(surface_edge);
     p.surface_exchange_->Sample(surface_bulk, surface_edge);
     p.surface_exchange_->Solve();
-    p.surface_exchange_->Evaluate();
+    if (p.surface_exchange_->PrepareHostRates()) {
+      // The bulk RHS and final scri RHS share the completed normal correction.
+      // They write disjoint rates and both finish before slope publication.
+      host_surface_rates = [&]() {
+        const auto start = Clock::now();
+        p.surface_exchange_->EvaluateHostRates();
+        surface_seconds += Seconds(start);
+      };
+    } else {
+      p.surface_exchange_->Evaluate();
+    }
     surface_seconds = Seconds(surface_start);
   }
   const auto begin_rhs = Clock::now();
   phase_seconds[1] += std::chrono::duration<double>(begin_rhs-dependent_start).count();
   p.CalcRHS(driver, context.key.stage + 1, RHSSubset::Dependent, max_cfl,
-            progress_during_rhs ? exchange.get() : nullptr);
+            progress_during_rhs ? exchange.get() : nullptr, host_surface_rates);
   phase_seconds[2] += Seconds(begin_rhs);
   double rhs_seconds = Seconds(dependent_start);
   for (auto index : batch) rhs_seconds += tasks[index].interior_seconds;

@@ -6,6 +6,8 @@
 // Licensed under the 3-clause BSD License (the "LICENSE")
 //========================================================================================
 
+#include <vector>
+
 #include "bvals/mapped_exchange.hpp"
 #include "z4c_hyperboloidal/endpoint.hpp"
 #include "z4c_hyperboloidal/z4c_hyperboloidal.hpp"
@@ -127,6 +129,8 @@ class SurfaceExchange {
                     bvals::MappedExchange::ConstValues edge);
   TaskStatus Solve();
   TaskStatus Evaluate();
+  bool PrepareHostRates();
+  TaskStatus EvaluateHostRates();
   TaskStatus ClearSend();
   TaskStatus ClearRecv();
   Kernel BindKernel() const;
@@ -168,6 +172,11 @@ class SurfaceExchange {
   HostArray1D<SpatialGeometry<Real>> host_metric_, host_penrose_;
   HostArray1D<SurfacePoleCache> host_pole_;
   void PrepareHostGeometry();
+  HostArray4D<mapped::Jet> host_correction_jets_;
+  HostArray4D<Real> host_rhs_;
+  std::vector<Real> row_spacing_;
+  Real host_face_spacing_ = 0, host_face_gap_ = 0;
+  TaskStatus FinishRates(int invalid, Real compatibility, Real clock);
   DvceArray1D<SurfacePoleCache> stage_pole_;
   struct NormalCase {Real defect[3]; bool valid;};
   DvceArray2D<NormalCase> normal_cases_;

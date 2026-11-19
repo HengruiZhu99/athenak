@@ -7,6 +7,7 @@
 //========================================================================================
 
 #include <array>
+#include <functional>
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -162,7 +163,8 @@ class Z4cHyperboloidal {
   TaskStatus ClearRecv(Driver *driver, int stage);
   TaskStatus CalcRHS(Driver *driver, int stage, RHSSubset subset,
                      Real max_characteristic_cfl = 0,
-                     bvals::multirate::RecordExchange *progress = nullptr);
+                     bvals::multirate::RecordExchange *progress = nullptr,
+                     const std::function<void()> &host_work = {});
   bool IsInitialized() const {return initialized_;}
   bool StagePlansReady() const {return plans_ready_;}
   const DvceArray1D<int> &RHSPoints(RHSSubset subset) const {
