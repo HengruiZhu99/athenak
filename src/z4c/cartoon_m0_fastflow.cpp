@@ -14,7 +14,6 @@
 #include "globals.hpp"
 #include "mesh/mesh.hpp"
 #include "parameter_input.hpp"
-#include "utils/spherical_harm.hpp"
 #include "z4c/cartoon_derivatives.hpp"
 #include "z4c/cartoon_meridional_sampler.hpp"
 #include "z4c/z4c.hpp"
@@ -748,12 +747,12 @@ CartoonM0FastFlow::CartoonM0FastFlow(MeshBlockPack *pack, ParameterInput *pin,
   for (int n = 0; n < ntheta_; ++n) {
     theta_[n] = std::acos(quadrature[n].first);
     weights_[n] = quadrature[n].second;
+    const M0Node node(theta_[n], weights_[n], lmax_ + 1);
     for (int l = 0; l <= lmax_; ++l) {
-      Real yi, dyi, dphir, dphii, ddyi, ddphir, ddphii, mixedr, mixedi;
-      SphericalHarmSecondDerivs(&y0_[n * (lmax_ + 1) + l], &yi,
-          &dy0_[n * (lmax_ + 1) + l], &dyi, &dphir, &dphii,
-          &ddy0_[n * (lmax_ + 1) + l], &ddyi, &ddphir, &ddphii,
-          &mixedr, &mixedi, l, 0, theta_[n], 0.0);
+      const int i = n * (lmax_ + 1) + l;
+      y0_[i] = node.basis[l][0];
+      dy0_[i] = node.basis[l][1];
+      ddy0_[i] = node.basis[l][2];
     }
   }
   Restore();
