@@ -131,38 +131,32 @@ def main() -> int:
             "the final hierarchy did not return to the root leaf count")
 
     history = work / "z4c_vc_minkowski_dynamic.z4c.user.hst"
-    rows = [
-        [float(value) for value in line.split()]
-        for line in history.read_text(encoding="utf-8").splitlines()
-        if line.strip() and not line.startswith("#")
-    ]
+    _, rows = parse_history(history)
     require(len(rows) >= 4, "history is missing accepted states")
     refined_leaves = args.root_leaves + created_leaves
-    require([int(round(row[12])) for row in rows[:4]] ==
+    require([int(round(row["nmb_total"])) for row in rows[:4]] ==
             [args.root_leaves, refined_leaves, args.root_leaves, args.root_leaves],
             "history leaf counts do not bind refine/derefine lifecycle")
-    require([int(round(row[13])) for row in rows[:4]] == [0, 1, 0, 0],
+    require([int(round(row["maxRefLev"])) for row in rows[:4]] == [0, 1, 0, 0],
             "history maximum levels do not bind refine/derefine lifecycle")
     for row in rows:
-        require(all(math.isfinite(value) for value in row),
-                "history contains a nonfinite value")
-        require(row[2] < 1.0e-18 and row[3] < 1.0e-18,
+        require(row["C-norm2"] < 1.0e-18 and row["H-norm2"] < 1.0e-18,
                 "Minkowski constraints exceed the dynamic AMR regression bound")
-        require(math.isclose(row[10], args.expected_volume, rel_tol=5.0e-6),
+        require(math.isclose(row["Volume"], args.expected_volume, rel_tol=5.0e-6),
                 f"{args.centering}-centered history does not integrate the exact "
                 "physical volume")
         if args.geometry == "cartoon":
-            require(math.isclose(row[18], 1.0, rel_tol=0.0, abs_tol=2.0e-14),
+            require(math.isclose(row["axisLapse"], 1.0, rel_tol=0.0, abs_tol=2.0e-14),
                     f"{args.centering}-centered central observer did not sample unit "
                     "lapse at the origin")
-            require(math.isclose(row[19], row[0], rel_tol=2.0e-6,
+            require(math.isclose(row["axisTau"], row["time"], rel_tol=2.0e-6,
                                  abs_tol=2.0e-12),
                     f"{args.centering}-centered central proper time does not track "
                     "coordinate time")
-            require(abs(row[20]) < 1.0e-18,
+            require(abs(row["axisKret"]) < 1.0e-18,
                     f"{args.centering}-centered origin curvature is nonzero in "
                     "Minkowski spacetime")
-    require(max(row[10] for row in rows) == min(row[10] for row in rows),
+    require(max(row["Volume"] for row in rows) == min(row["Volume"] for row in rows),
             f"{args.centering}-centered history volume changed across "
             "refine/derefine events")
 

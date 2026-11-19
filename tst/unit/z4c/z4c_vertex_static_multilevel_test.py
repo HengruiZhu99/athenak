@@ -12,16 +12,12 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+from z4c_cartoon_history_test import parse_history
+
 
 def require(condition: bool, message: str) -> None:
     if not condition:
         raise RuntimeError(message)
-
-
-def numeric_rows(path: Path) -> list[list[float]]:
-    return [[float(value) for value in line.split()]
-            for line in path.read_text(encoding="utf-8").splitlines()
-            if line.strip() and not line.startswith("#")]
 
 
 def active_coordinates(binary: dict[str, object], block: int,
@@ -73,16 +69,15 @@ def main() -> int:
     require(not list(work.rglob("z4c_state_failure.json")),
             "static multilevel wave emitted a Z4c failure artifact")
 
-    history = numeric_rows(work / "z4c_vc_static_multilevel_wave.z4c.user.hst")
-    evaluated_history = [row for row in history if int(round(row[17])) > 0]
-    require(len(evaluated_history) >= 4 and
-            all(math.isfinite(value) for row in evaluated_history for value in row),
+    _, history = parse_history(work / "z4c_vc_static_multilevel_wave.z4c.user.hst")
+    evaluated_history = [row for row in history if int(round(row["cycle"])) > 0]
+    require(len(evaluated_history) >= 4,
             "evaluated static multilevel history is incomplete or nonfinite")
-    require(all(int(round(row[12])) == args.expected_leaves and
-                int(round(row[13])) == 1
+    require(all(int(round(row["nmb_total"])) == args.expected_leaves and
+                int(round(row["maxRefLev"])) == 1
                 for row in evaluated_history),
             "static hierarchy changed during the bounded wave run")
-    require(max(max(row[2], row[3], row[4], row[5])
+    require(max(max(row["C-norm2"], row["H-norm2"], row["M-norm2"], row["Z-norm2"])
                 for row in evaluated_history) < 1.0e-4,
             "static multilevel constraint norm exceeds its bounded-wave guard")
 
