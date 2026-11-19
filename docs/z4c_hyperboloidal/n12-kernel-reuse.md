@@ -1,5 +1,19 @@
 # Stationary geometry and N12 kernel performance
 
+## Small-face geometry on the CPU
+
+In Aurora job 9105790, preparing the common geometry of a single 144-point scri face on the calling host thread reduced the one-node N12 interval from **1.39035 to 1.36218 s**. This saved 0.02817 s/interval on the same 12 tiles, compared with a 0.01094 s range of four-interval means. The checkpoint run repeated at 1.36227 s/interval. All three measurements used eight warm intervals followed by twelve timed intervals and the production workload of 33,467,904 bulk point-stages. Scheduled output was off during timing.
+
+The selected solver delivers **24.57 million bulk point-stages/s and 241.92 s/M₀**. This is 1.817× the 2.47446 s starting rate and leaves 0.12495 s/interval to reach 2×. Regular uniform RK4 achieves 4.20× this throughput on the same node count. At equal bulk work, the largest remaining differences in the separate device profiles are 0.484 s of additional mean bulk RHS time, 0.206 s of additional busiest-to-mean tile spread and 0.100 s of mean scri service. Another 0.086 s of wall time remains after comparing the busiest device with the separate timing run. That residual includes exposed host work and synchronization.
+
+Each eligible rank keeps host mirrors of the fixed surface map and reference and refreshes them on remesh. The calling thread copies the active samples, computes the geometry from the evolved fields and returns the results before the independent normal solves. The existing device path handles larger or multi-face ranks. On rank 5, surface-solve device time fell from 0.11308 to 0.03747 s/interval. The wall-time comparison includes the host computation, transfers and waits.
+
+At cycle 21 the maximum scaled differences from the original qualification were 4.819e-12 across 139,683,024 stored field values and 1.444e-15 for the eight persistent diagnostics. Against the immediate halo solver they were 1.378e-12 and 1.333e-15. Time and timestep matched. Both the two-rank and seven-rank CPU surface tests passed against the independent radial and scri oracle.
+
+The live-stage probe measured the final surface RHS on rank 5 at 1.023 ms on the tile and 0.267 ms on the calling CPU thread, including transfers. The rank had 64 such stages per interval. An independent bulk point kernel is available after the same normal solve. A model using the per-rank transfer and compute times gives 0.063 s of potential interval savings from concurrent execution. This is a prediction for the subsequent one-node comparison.
+
+Solver commit bff89c7ec matches the measured Aurora source. Commit 295abf84f requests the declared Kokkos HostSpace for the retained mirrors. A syntax check with the Aurora compiler verified the assignment for memory on the host, device and shared USM. The native CPU target rebuilt and its two-rank, four-stage driver smoke passed with zero maximum update error. The paired timings, device profiles, CPU measurements and checkpoint comparisons are archived under `n12-halo-kernels-20261119/9105790`.
+
 ## Reusing mapped halo interpolation lines
 
 Job 9105753 compared four builds on one Aurora node with exactly the same output-off input, binding and 33,467,904 bulk point-stages in each timed interval. The halo change reuses the first of three tensor interpolation sums across rows serving the same recipient block and RK stage. The plan checks all 216 original donor coordinates and coefficients before using this path. Irregular stencils continue through the direct interpolation.
