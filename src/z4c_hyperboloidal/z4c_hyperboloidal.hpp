@@ -91,6 +91,8 @@ class Z4cHyperboloidal {
   DualArray1D<int> face_blocks, block_faces;
   DvceArray1D<mapped::Point> geometry, surface_geometry;
   DvceArray1D<CartesianChartJets> reference, surface_reference;
+  HostArray1D<mapped::Point> host_surface_geometry;
+  HostArray1D<CartesianChartJets> host_surface_reference;
   DvceArray1D<StationaryGaugeSource<Real>> stationary_source;
   DvceArray1D<mapped::Jet> residual_weights;
   DvceArray1D<OmegaJet<Real>> spatial_omega;

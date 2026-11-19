@@ -341,6 +341,15 @@ void Z4cHyperboloidal::BuildReferenceCache() {
         omega(p) = profile.At(coords(p).x);
       });
   Kokkos::deep_copy(surface_geometry,sg); Kokkos::deep_copy(surface_reference,sr);
+  // The one-face crossover was measured through a 12 by 12 surface. Keep the
+  // construction mirrors for these ranks and refresh them with each reference.
+  if (nfaces == 1 && nsurface_points <= 144) {
+    host_surface_geometry = sg;
+    host_surface_reference = sr;
+  } else {
+    host_surface_geometry = HostArray1D<mapped::Point>();
+    host_surface_reference = HostArray1D<CartesianChartJets>();
+  }
 }
 
 void Z4cHyperboloidal::InitializeReference() {

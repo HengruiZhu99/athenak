@@ -121,6 +121,30 @@ std::vector<HostTerm> BuildRow(const NativeDonorSelector &selector,int gid,
   }
   return terms;
 }
+// Common to the four normal cases and the final corrected surface RHS.
+KOKKOS_INLINE_FUNCTION void PrepareSurfacePoint(
+    const CartesianChartJets &samples, const mapped::Point &map,
+    const CartesianChartJets &reference, const HyperbolicShiftParameters<Real> &parameters,
+    CartesianChartJets &restored, SpatialGeometry<Real> &metric_out,
+    SpatialGeometry<Real> &penrose, SurfacePoleCache &stage_pole) {
+  metric_out = SpatialGeometry<Real>{};
+  penrose = SpatialGeometry<Real>{};
+  auto jets = samples;
+  if (!SphericalPolicy::Restore(map.x, jets, reference)) return;
+  const auto u = SphericalPolicy::Physical(map.x, jets);
+  if (!(u.chi.value > 0 && u.alpha.value > 0 && Kokkos::isfinite(u.chi.value) &&
+        Kokkos::isfinite(u.alpha.value))) return;
+  restored = jets;
+  const auto metric = Geometry(u.metric);
+  metric_out = metric;
+  penrose = RescaleGeometry(u.metric, metric, u.chi);
+  auto o = parameters.profile.At(map.x);
+  o.omega = 0;
+  SetStationaryOmegaNormal(u.alpha.value, u.beta.value, u.alpha.d, u.beta.d, o);
+  stage_pole.lapse_normal = SurfaceLapseNormal(u, o, map.x);
+  stage_pole.pole = TensorPoleNormalJet(u, o, map.x, map.x, parameters.kappa1,
+      parameters.kappa2, 1., parameters.outer_lapse_damping, true, true);
+}
 }  // namespace
 
 SurfaceExchange::SurfaceExchange(MeshBlockPack *pack,Z4cHyperboloidal *module,
@@ -217,6 +241,19 @@ void SurfaceExchange::Rebuild() {
   Kokkos::realloc(normal_cases_,p.nsurface_points,4);
   Kokkos::realloc(metric_geometry_,p.nsurface_points);
   Kokkos::realloc(penrose_geometry_,p.nsurface_points);
+  if (p.host_surface_geometry.extent(0)) {
+    host_samples_ = Kokkos::create_mirror_view(sampled_);
+    host_restored_ = Kokkos::create_mirror_view(restored_);
+    host_metric_ = Kokkos::create_mirror_view(metric_geometry_);
+    host_penrose_ = Kokkos::create_mirror_view(penrose_geometry_);
+    host_pole_ = Kokkos::create_mirror_view(stage_pole_);
+  } else {
+    host_samples_ = HostArray1D<CartesianChartJets>();
+    host_restored_ = HostArray1D<CartesianChartJets>();
+    host_metric_ = HostArray1D<SpatialGeometry<Real>>();
+    host_penrose_ = HostArray1D<SpatialGeometry<Real>>();
+    host_pole_ = HostArray1D<SurfacePoleCache>();
+  }
   const int corrections=3;
   Kokkos::realloc(correction_,p.nfaces,corrections,n,n);
   Kokkos::realloc(correction_jets_,p.nfaces,corrections,n,n);
@@ -365,6 +402,27 @@ TaskStatus SurfaceExchange::Sample(bvals::MappedExchange::ConstValues bulk,
   return TaskStatus::complete;
 }
 
+void SurfaceExchange::PrepareHostGeometry() {
+  const auto &p = *module_;
+  // Only an entire active face is eligible. The rank may have other active
+  // blocks while its sole face is inactive.
+  if (p.active_blocks.extent(0)) {
+    int enabled = 0;
+    Kokkos::deep_copy(enabled, Kokkos::subview(p.active_blocks, p.face_blocks.h_view(0)));
+    if (!enabled) return;
+  }
+  Kokkos::deep_copy(host_samples_, sampled_);
+  for (int i = 0; i < p.nsurface_points; ++i) {
+    PrepareSurfacePoint(host_samples_(i), p.host_surface_geometry(i),
+                        p.host_surface_reference(i), p.parameters, host_restored_(i),
+                        host_metric_(i), host_penrose_(i), host_pole_(i));
+  }
+  Kokkos::deep_copy(restored_, host_restored_);
+  Kokkos::deep_copy(metric_geometry_, host_metric_);
+  Kokkos::deep_copy(penrose_geometry_, host_penrose_);
+  Kokkos::deep_copy(stage_pole_, host_pole_);
+}
+
 TaskStatus SurfaceExchange::Solve() {
   const auto active=module_->active_blocks;
   const auto active_faces=module_->face_blocks.d_view;
@@ -384,29 +442,19 @@ TaskStatus SurfaceExchange::Solve() {
   const auto metric_geometry=metric_geometry_,penrose_geometry=penrose_geometry_;
   // Metric and chi jets are unchanged by all four normal cases and the final
   // shift correction. Refresh their geometry from this stage's samples once.
-  auto geometry_policy = Kokkos::RangePolicy<>(0, p.nsurface_points);
-  geometry_policy.set_chunk_size(16);
-  Kokkos::parallel_for("hyperboloidal shared surface geometry",
-    geometry_policy, KOKKOS_LAMBDA(int point) {
-      if(active.extent(0) && !active(active_faces(active_points(point).face)))return;
-      metric_geometry(point)=SpatialGeometry<Real>{};
-      penrose_geometry(point)=SpatialGeometry<Real>{};
-      auto jets=samples(point);const auto map=maps(point);
-      if (!SphericalPolicy::Restore(map.x,jets,reference(point)))return;
-      const auto u=SphericalPolicy::Physical(map.x,jets);
-      if (!(u.chi.value>0 && u.alpha.value>0 && Kokkos::isfinite(u.chi.value)
-            && Kokkos::isfinite(u.alpha.value)))return;
-      restored(point) = jets;
-      const auto metric = Geometry(u.metric);
-      metric_geometry(point) = metric;
-      penrose_geometry(point) = RescaleGeometry(u.metric, metric, u.chi);
-      auto o=parameters.profile.At(map.x);
-      o.omega=0;
-      SetStationaryOmegaNormal(u.alpha.value,u.beta.value,u.alpha.d,u.beta.d,o);
-      stage_pole(point).lapse_normal=SurfaceLapseNormal(u,o,map.x);
-      stage_pole(point).pole=TensorPoleNormalJet(u,o,map.x,map.x,parameters.kappa1,
-          parameters.kappa2,1.,parameters.outer_lapse_damping,true,true);
-    });
+  if (host_samples_.extent(0)) {
+    PrepareHostGeometry();
+  } else {
+    auto geometry_policy = Kokkos::RangePolicy<>(0, p.nsurface_points);
+    geometry_policy.set_chunk_size(16);
+    Kokkos::parallel_for("hyperboloidal shared surface geometry",
+      geometry_policy, KOKKOS_LAMBDA(int point) {
+        if(active.extent(0) && !active(active_faces(active_points(point).face)))return;
+        PrepareSurfacePoint(samples(point), maps(point), reference(point), parameters,
+                            restored(point), metric_geometry(point), penrose_geometry(point),
+                            stage_pole(point));
+      });
+  }
   const Real penalty=p.penalty;int invalid=0;
   auto case_policy=Kokkos::RangePolicy<>(0,4*p.nsurface_points);
 #ifdef KOKKOS_ENABLE_SYCL
