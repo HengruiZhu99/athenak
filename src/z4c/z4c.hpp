@@ -418,7 +418,8 @@ class Z4c {
 
   template <int NGHOST>
   TaskStatus CalcRHS(Driver *d, int stage);
-  template <typename Centering, typename Symmetry, int NGHOST>
+  bool StoredShiftIsZero() const;
+  template <typename Centering, typename Symmetry, int NGHOST, bool ZeroShift = false>
   TaskStatus CalcRHSImpl(Driver *d, int stage);
   template <int NGHOST>
   void ADMToZ4c(MeshBlockPack *pmbp, ParameterInput *pin);
