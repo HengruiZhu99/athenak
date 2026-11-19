@@ -11,6 +11,8 @@ import re
 import shutil
 import subprocess
 
+from z4c_cartoon_history_test import parse_history
+
 
 def require(condition: bool, message: str) -> None:
     if not condition:

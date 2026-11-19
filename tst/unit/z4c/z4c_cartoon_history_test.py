@@ -25,7 +25,7 @@ def close(a: float, b: float) -> bool:
     return math.isclose(a, b, rel_tol=3.0e-5, abs_tol=5.0e-9)
 
 
-def parse_history(path: Path) -> tuple[list[str], list[dict[str, float]]]:
+def parse_history(path: Path, *, after_initial: bool = False) -> tuple[list[str], list[dict[str, float]]]:
     text = path.read_text(encoding="utf-8")
     header_lines = [line for line in text.splitlines() if line.startswith("#  [1]=")]
     require(len(header_lines) == 1, "history must contain exactly one indexed header")
@@ -38,9 +38,12 @@ def parse_history(path: Path) -> tuple[list[str], list[dict[str, float]]]:
             continue
         values = [float(token) for token in line.split()]
         require(len(values) == len(labels), "history row width differs from header")
+        row = dict(zip(labels, values))
+        if after_initial and row["cycle"] == 0:
+            continue
         require(all(math.isfinite(value) for value in values),
                 "history row contains a non-finite value")
-        rows.append(dict(zip(labels, values, strict=True)))
+        rows.append(row)
     require(rows, "history contains no data rows")
     return labels, rows
 

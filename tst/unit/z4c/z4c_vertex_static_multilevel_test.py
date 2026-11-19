@@ -69,8 +69,8 @@ def main() -> int:
     require(not list(work.rglob("z4c_state_failure.json")),
             "static multilevel wave emitted a Z4c failure artifact")
 
-    _, history = parse_history(work / "z4c_vc_static_multilevel_wave.z4c.user.hst")
-    evaluated_history = [row for row in history if int(round(row["cycle"])) > 0]
+    _, evaluated_history = parse_history(
+        work / "z4c_vc_static_multilevel_wave.z4c.user.hst", after_initial=True)
     require(len(evaluated_history) >= 4,
             "evaluated static multilevel history is incomplete or nonfinite")
     require(all(int(round(row["nmb_total"])) == args.expected_leaves and
