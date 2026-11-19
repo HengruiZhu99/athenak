@@ -6,6 +6,7 @@
 // Licensed under the 3-clause BSD License (the "LICENSE")
 //========================================================================================
 
+#include <array>
 #include <map>
 #include <vector>
 
@@ -94,10 +95,27 @@ class MappedHalo {
   struct DeviceRow {HaloPoint target; int begin, end;};
   struct DeviceEntry {int ordinal; Real weight;};
   struct SlotOffset {int row=0, entry=0;};
+  using AxisWeights = std::array<std::array<Real, 6>, 3>;
+  struct TensorLine { int block, ordinal[6]; Real weight[6]; };
+  struct TensorRow {
+    HaloPoint target;
+    int line[36];
+    Real y[6], z[6], sum_x;
+  };
   struct BatchPlan {
+    DvceArray1D<TensorLine> lines;
+    DvceArray1D<TensorRow> tensors;
     DvceArray1D<DeviceRow> rows;
     std::vector<int> donor_ordinals;
   };
+  std::map<int, AxisWeights> tensor_weights_;
+  DvceArray2D<Real> line_values_;
+  bool AppendTensorBlock(const SlotOffset &begin, const SlotOffset &end,
+                         std::vector<TensorLine> &lines, std::vector<TensorRow> &tensors) const;
+  void FillTensors(const BatchPlan &plan, const DvceArray5D<Real> &residual,
+                   const DvceArray5D<Real> &physical, bvals::MappedExchange::ConstValues rv,
+                   bvals::MappedExchange::ConstValues pv, DvceArray1D<int> active) const;
+  std::vector<int> all_slots_;
   std::vector<SlotOffset> slot_offsets_;
   std::map<std::vector<int>,BatchPlan> batches_;
   const BatchPlan &PlanForBatch(const std::vector<int> &slots);

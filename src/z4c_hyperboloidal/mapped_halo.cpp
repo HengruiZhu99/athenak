@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <cstdint>
 #include <limits>
 #include <map>
 #include <numeric>
@@ -43,6 +44,38 @@ void CopyDevice(const std::vector<T> &host, DvceArray1D<T> &device,
   auto mirror=Kokkos::create_mirror_view(device);
   for (std::size_t i=0;i<host.size();++i) mirror(i)=host[i];
   Kokkos::deep_copy(device,mirror);
+}
+void LagrangeWeights(Real t, int first, int length, Real *weights) {
+  for (int i = 0; i < length; ++i) {
+    weights[i] = 1;
+    for (int j = 0; j < length; ++j) {
+      if (j != i) weights[i] *= (t - first - j) / Real(i - j);
+    }
+  }
+}
+
+// Recover only full native tensor stencils. The stored donor order and every
+// coefficient must agree with the original interpolation, including its cutoff.
+bool TensorAxes(const MappedHalo::Row &row, const NativeDonorSelector &selector,
+                const Real x[3], std::array<std::array<Real, 6>, 3> &weights) {
+  if (row.donors.size() != 216) return false;
+  const auto p = row.donors.front().point;
+  const auto &map = selector.Map(p.gid);
+  const int origin = selector.Origin();
+  const int first[] = {p.i - origin, p.j - origin, p.k - origin};
+  Real q[3];
+  map.Inverse(x, q);
+  for (int a = 0; a < 3; ++a) {
+    LagrangeWeights(selector.Cells()*q[a] - map.node_offset[a], first[a], 6,
+                    weights[a].data());
+  }
+  for (int k = 0; k < 6; ++k) for (int j = 0; j < 6; ++j) for (int i = 0; i < 6; ++i) {
+    const auto &entry = row.donors[36*k + 6*j + i];
+    const auto d = entry.point;
+    if (d.gid != p.gid || d.k != p.k+k || d.j != p.j+j || d.i != p.i+i ||
+        entry.weight != weights[0][i]*weights[1][j]*weights[2][k]) return false;
+  }
+  return true;
 }
 }  // namespace
 
@@ -116,12 +149,8 @@ int NativeDonorSelector::Owner(const Real x[3],bool shell) const {
 std::vector<WeightedDonor> NativeDonorSelector::Tensor(
     int gid,const Real q[3],const int first[3],const int length[3]) const {
   Real weights[3][6]{};
-  for (int a=0;a<3;++a) for (int i=0;i<length[a];++i) {
-    weights[a][i]=1;
-    const Real t=n_*q[a]-maps_[gid].node_offset[a];
-    for (int j=0;j<length[a];++j) if (i!=j)
-      weights[a][i]*=(t-first[a]-j)/Real(i-j);
-  }
+  for (int a=0; a<3; ++a)
+    LagrangeWeights(n_*q[a]-maps_[gid].node_offset[a], first[a], length[a], weights[a]);
   std::vector<WeightedDonor> out;
   for (int k=0;k<length[2];++k) for (int j=0;j<length[1];++j)
     for (int i=0;i<length[0];++i) {
@@ -359,6 +388,7 @@ void MappedHalo::BuildRows(MeshBlockPack *pack,int origin,
     if (origin<ng-selector.Lower(gid,a)||origin<ng+selector.Upper(gid,a)-n)
       throw std::invalid_argument("mapped halo origin does not include overlap and ghosts");
   }
+  tensor_weights_.clear();
   rows_.clear();exterior_.clear();interior_points_.clear();local_points_.clear();
   remote_points_.clear();surface_points_.clear();
   const auto &offsets=BulkStencilOffsets();std::map<CellKey,int> dependencies;
@@ -398,6 +428,8 @@ void MappedHalo::BuildRows(MeshBlockPack *pack,int origin,
       row.remote=row.remote||mesh->rank_eachmb[point.gid]!=global_variable::my_rank;
     }
     if (row.donors.empty()) throw std::runtime_error("empty mapped halo row");
+    AxisWeights axes{};
+    if (TensorAxes(row, selector, x, axes)) tensor_weights_.emplace(rows_.size(), axes);
     dependency=row.remote?2:1;rows_.push_back(std::move(row));
   }
   for (auto c:evolved) {
@@ -449,6 +481,9 @@ void MappedHalo::Rebuild(MeshBlockPack *pack,int origin,ActivityPolicy activity)
   // ordinals and interpolation weights use this same flat entry order.
   slot_offsets_.assign(pack->nmb_thispack+1,{});
   batches_.clear();
+  line_values_ = DvceArray2D<Real>();
+  all_slots_.resize(pack->nmb_thispack);
+  std::iota(all_slots_.begin(), all_slots_.end(), 0);
   for (const auto &row:rows_) {
     DeviceRow d{row.target,int(entries.size()),0};
     for (const auto &entry:row.donors) entries.push_back({ordinals.at(request++),entry.weight});
@@ -513,26 +548,135 @@ void MappedHalo::Fill(const DvceArray1D<DeviceRow> &rows,
       residual(c.m,f,c.k,c.j,c.i)=interpolated;
     });
 }
+// Keep complete recipient blocks together. All uses of a line in this plan
+// see the same stage donor values. A topology rebuild discards the plan.
+bool MappedHalo::AppendTensorBlock(const SlotOffset &begin, const SlotOffset &end,
+                                   std::vector<TensorLine> &lines,
+                                   std::vector<TensorRow> &tensors) const {
+  const auto &ordinals = residual_exchange_.RequestOrdinals();
+  std::map<std::pair<int, std::array<Real, 6>>, int> indices;
+  const size_t first_line = lines.size(), first_tensor = tensors.size();
+  int entry = begin.entry;
+  for (int r = begin.row; r < end.row; ++r) {
+    const auto &row = rows_[r];
+    const int offset = entry;
+    entry += static_cast<int>(row.donors.size());
+    const auto found = tensor_weights_.find(r);
+    if (found == tensor_weights_.end()) continue;
+    const auto &w = found->second;
+    TensorRow result{};
+    result.target = row.target;
+    for (int i = 0; i < 6; ++i) {
+      result.y[i] = w[1][i];
+      result.z[i] = w[2][i];
+      result.sum_x += w[0][i];
+    }
+    for (int l = 0; l < 36; ++l) {
+      const int e = offset + 6*l;
+      // The verified line starts here and covers the next five native i coordinates.
+      const auto key = std::make_pair(ordinals[e], w[0]);
+      const auto [it, fresh] = indices.try_emplace(key, static_cast<int>(lines.size()));
+      if (fresh) {
+        TensorLine line{};
+        line.block = row.target.m;
+        for (int i = 0; i < 6; ++i) {
+          line.ordinal[i] = ordinals[e+i];
+          line.weight[i] = w[0][i];
+        }
+        lines.push_back(line);
+      }
+      result.line[l] = it->second;
+    }
+    tensors.push_back(result);
+  }
+  const size_t count = tensors.size() - first_tensor;
+  if (count && 4*(lines.size()-first_line) <= 36*count) return true;
+  lines.resize(first_line);
+  tensors.resize(first_tensor);
+  return false;
+}
+
+void MappedHalo::FillTensors(const BatchPlan &plan, const DvceArray5D<Real> &residual,
+                             const DvceArray5D<Real> &physical,
+                             bvals::MappedExchange::ConstValues rv,
+                             bvals::MappedExchange::ConstValues pv, DvceArray1D<int> active) const {
+  const auto lines = plan.lines;
+  const auto rows = plan.tensors;
+  if (rows.extent(0) == 0) return;
+  if (!rv.data()) rv = residual_exchange_.Values();
+  if (!pv.data()) pv = physical_exchange_.Values();
+  const auto sums = line_values_;
+  constexpr int fields = Fields::count;
+  using Policy = Kokkos::RangePolicy<Kokkos::IndexType<std::int64_t>>;
+  Kokkos::parallel_for("mapped halo first-axis interpolation", Policy(0, lines.extent(0)*fields),
+      KOKKOS_LAMBDA(std::int64_t index) {
+        const int l = index/fields, f = index%fields;
+        const auto &line = lines(l);
+        if (active.extent(0) && !active(line.block)) return;
+        const int first = line.ordinal[0], slot = Fields::IndependentSlot(f);
+        const bool independent = Fields::Independent(f);
+        const Real anchor = pv(first, f), base = independent ? rv(first, slot) : 0;
+        Real value = 0, delta = 0;
+        for (int i = 0; i < 6; ++i) {
+          const int q = line.ordinal[i];
+          value += line.weight[i]*(pv(q,f)-anchor);
+          if (independent) delta += line.weight[i]*(rv(q,slot)-base);
+        }
+        sums(l, f) = value;
+        if (independent) sums(l, fields+slot) = delta;
+      });
+  Kokkos::parallel_for("mapped halo tensor interpolation", Policy(0, rows.extent(0)*fields),
+      KOKKOS_LAMBDA(std::int64_t index) {
+        const auto &row = rows(index/fields);
+        if (active.extent(0) && !active(row.target.m)) return;
+        const int f = index%fields, slot = Fields::IndependentSlot(f);
+        const bool independent = Fields::Independent(f);
+        const int first = lines(row.line[0]).ordinal[0];
+        const Real anchor = pv(first,f), base = independent ? rv(first,slot) : 0;
+        Real value = anchor, delta = base;
+        for (int k = 0; k < 6; ++k) for (int j = 0; j < 6; ++j) {
+          const int l = row.line[6*k+j], q = lines(l).ordinal[0];
+          const Real weight = row.y[j]*row.z[k];
+          value += weight*(sums(l,f) + row.sum_x*(pv(q,f)-anchor));
+          if (independent)
+            delta += weight*(sums(l,fields+slot) + row.sum_x*(rv(q,slot)-base));
+        }
+        const auto c = row.target;
+        physical(c.m,f,c.k,c.j,c.i) = value;
+        residual(c.m,f,c.k,c.j,c.i) = delta;
+      });
+}
 const MappedHalo::BatchPlan &MappedHalo::PlanForBatch(const std::vector<int> &slots) {
   const auto found=batches_.find(slots);
   if (found!=batches_.end()) return found->second;
   BatchPlan plan;
   std::vector<DeviceRow> selected;
+  std::vector<TensorLine> lines;
+  std::vector<TensorRow> tensors;
   const auto &ordinals=residual_exchange_.RequestOrdinals();
   std::vector<bool> used(residual_exchange_.UniqueDonors().size());
   for (int m:slots) {
     const auto begin=slot_offsets_.at(m),end=slot_offsets_.at(m+1);
+    const bool factored = AppendTensorBlock(begin, end, lines, tensors);
     int entry=begin.entry;
     for (int r=begin.row;r<end.row;++r) {
       const auto &row=rows_[r];
       const int next=entry+static_cast<int>(row.donors.size());
-      selected.push_back({row.target,entry,next});
+      if (!factored || tensor_weights_.find(r) == tensor_weights_.end())
+        selected.push_back({row.target,entry,next});
       entry=next;
     }
     for (int e=begin.entry;e<end.entry;++e) used[ordinals[e]]=true;
   }
   for (std::size_t q=0;q<used.size();++q)
     if (used[q]) plan.donor_ordinals.push_back(q);
+  CopyDevice(lines, plan.lines, "mapped halo tensor donor lines");
+  CopyDevice(tensors, plan.tensors, "mapped halo tensor targets");
+  if (lines.size() > line_values_.extent(0)) {
+    if (line_values_.data()) Kokkos::fence("mapped halo scratch resize");
+    line_values_ = DvceArray2D<Real>(Kokkos::view_alloc(Kokkos::WithoutInitializing,
+        "mapped halo stage line values"), lines.size(), Fields::count+Fields::independent_count);
+  }
   CopyDevice(selected,plan.rows,"mapped halo active recipient rows");
   return batches_.emplace(slots,std::move(plan)).first->second;
 }
@@ -546,12 +690,10 @@ void MappedHalo::FillExternal(const DvceArray5D<Real> &residual,
     bvals::MappedExchange::ConstValues rv,
     bvals::MappedExchange::ConstValues pv,DvceArray1D<int> active,
     const std::vector<int> *fixed_slots) {
-  if (fixed_slots) {
-    Fill(PlanForBatch(*fixed_slots).rows,residual,physical,rv,pv);
-    return;
-  }
-  Fill(local_rows_,residual,physical,rv,pv,active);
-  Fill(remote_rows_,residual,physical,rv,pv,active);
+  const auto &plan = PlanForBatch(fixed_slots ? *fixed_slots : all_slots_);
+  if (fixed_slots) active = DvceArray1D<int>();
+  Fill(plan.rows,residual,physical,rv,pv,active);
+  FillTensors(plan,residual,physical,rv,pv,active);
 }
 TaskStatus MappedHalo::FillLocal(const DvceArray5D<Real> &residual,
                                  const DvceArray5D<Real> &physical) {
