@@ -218,3 +218,7 @@ endif()
 
 # enable include of header files with /src/ as root of path
 target_include_directories(athena PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+
+option(Athena_VC_DEVICE_MPI "Use MPI device buffers for sparse VC synchronization" OFF)
+target_compile_definitions(athena PRIVATE ATHENA_VC_DEVICE_MPI=$<BOOL:${Athena_VC_DEVICE_MPI}>)

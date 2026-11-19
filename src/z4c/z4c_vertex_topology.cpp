@@ -723,7 +723,7 @@ void Z4cVertexTopologyPlan::SynchronizeSharedNodes(
   }
 #if MPI_PARALLEL_ENABLED
   if (single_rank_device_sync && global_variable::nranks > 1 &&
-      !diagnostic_requested && !synchronization_postcondition) {
+      !diagnostic_requested) {
     if (nvar > maximum_variables) {
       std::cerr << "### FATAL ERROR: sparse native VC synchronization received "
                 << nvar << " variables, exceeding configured capacity "
@@ -737,6 +737,45 @@ void Z4cVertexTopologyPlan::SynchronizeSharedNodes(
     }
 
     const auto indices = local_indices.d_view;
+    const bool checked = synchronization_postcondition;
+    if (checked) {
+      // Local contributors follow the same total order as sorted_global_indices.
+      // Translate the first invalid entry before the collective to keep failure
+      // selection independent of rank ownership, including coarse replicas.
+      using Key = unsigned long long;
+      constexpr Key valid = std::numeric_limits<Key>::max();
+      Key first = valid;
+      if (local_count > 0) {
+        Kokkos::parallel_reduce(
+            "check all sparse VC inputs",
+            Kokkos::MDRangePolicy<DevExeSpace, Kokkos::Rank<2>>(
+                {0, 0}, {local_count, nvar}),
+            KOKKOS_LAMBDA(int c, int v, Key &minimum) {
+              if (!Kokkos::isfinite(state(indices(c, 0), v, indices(c, 1),
+                                          indices(c, 2), indices(c, 3)))) {
+                const Key key = static_cast<Key>(c) * nvar + v;
+                if (key < minimum) minimum = key;
+              }
+            }, Kokkos::Min<Key>(first));
+      }
+      if (first != valid) {
+        const int index = contributor_displacements[global_variable::my_rank] +
+                          static_cast<int>(first / nvar);
+        const auto it = std::find(sorted_global_indices.begin(),
+                                  sorted_global_indices.end(), index);
+        first = static_cast<Key>(it - sorted_global_indices.begin()) * nvar +
+                first % nvar;
+      }
+      MPI_Allreduce(MPI_IN_PLACE, &first, 1, MPI_UNSIGNED_LONG_LONG, MPI_MIN,
+                    sparse_communicator);
+      if (first != valid) {
+        const auto &c = global_contributors[sorted_global_indices[first / nvar]];
+        std::cerr << "### FATAL ERROR: nonfinite VC shared contributor key=("
+                  << c.key1 << ',' << c.key2 << ',' << c.key3 << ") variable="
+                  << first % nvar << std::endl;
+        MPI_Abort(sparse_communicator, EXIT_FAILURE);
+      }
+    }
     const auto contribution_local_index =
         sparse_contribution_local_index.d_view;
     auto contribution_send = sparse_contribution_send;
@@ -750,7 +789,7 @@ void Z4cVertexTopologyPlan::SynchronizeSharedNodes(
                 state(indices(contributor, 0), variable,
                       indices(contributor, 1), indices(contributor, 2),
                       indices(contributor, 3));
-            if (!Kokkos::isfinite(value)) {
+            if (!checked && !Kokkos::isfinite(value)) {
               Kokkos::abort("nonfinite sparse VC authority contribution");
             }
             contribution_send(entry * nvar + variable) = value;
@@ -764,19 +803,28 @@ void Z4cVertexTopologyPlan::SynchronizeSharedNodes(
             const std::vector<int> &recv_counts,
             const std::vector<int> &recv_displacements, const int tag) {
           Kokkos::fence();
+          // Host mirrors alias host-accessible buffers on Serial/OpenMP.
+          // Device buffers require an explicitly capable MPI installation.
+#if ATHENA_VC_DEVICE_MPI
+          auto mpi_send = send;
+          auto mpi_recv = recv;
+#else
+          auto mpi_send = Kokkos::create_mirror_view_and_copy(HostMemSpace(), send);
+          auto mpi_recv = Kokkos::create_mirror_view(HostMemSpace(), recv);
+#endif
           std::vector<MPI_Request> requests;
           requests.reserve(2 * global_variable::nranks);
           for (int peer = 0; peer < global_variable::nranks; ++peer) {
             if (recv_counts[peer] <= 0) continue;
             requests.push_back(MPI_REQUEST_NULL);
-            MPI_Irecv(recv.data() + recv_displacements[peer] * nvar,
+            MPI_Irecv(mpi_recv.data() + recv_displacements[peer] * nvar,
                       recv_counts[peer] * nvar, MPI_ATHENA_REAL, peer, tag,
                       sparse_communicator, &requests.back());
           }
           for (int peer = 0; peer < global_variable::nranks; ++peer) {
             if (send_counts[peer] <= 0) continue;
             requests.push_back(MPI_REQUEST_NULL);
-            MPI_Isend(send.data() + send_displacements[peer] * nvar,
+            MPI_Isend(mpi_send.data() + send_displacements[peer] * nvar,
                       send_counts[peer] * nvar, MPI_ATHENA_REAL, peer, tag,
                       sparse_communicator, &requests.back());
           }
@@ -784,6 +832,9 @@ void Z4cVertexTopologyPlan::SynchronizeSharedNodes(
             MPI_Waitall(static_cast<int>(requests.size()), requests.data(),
                         MPI_STATUSES_IGNORE);
           }
+#if !ATHENA_VC_DEVICE_MPI
+          Kokkos::deep_copy(recv, mpi_recv);
+#endif
         };
 
     sparse_exchange(
@@ -848,6 +899,28 @@ void Z4cVertexTopologyPlan::SynchronizeSharedNodes(
                 average_recv(local_average_recv_entry(contributor) * nvar +
                              variable);
           });
+    }
+    if (checked) {
+      unsigned long long mismatches = 0;
+      if (local_count > 0) {
+        Kokkos::parallel_reduce(
+            "verify sparse VC owner values",
+            Kokkos::MDRangePolicy<DevExeSpace, Kokkos::Rank<2>>(
+                {0, 0}, {local_count, nvar}),
+            KOKKOS_LAMBDA(int c, int v, unsigned long long &count) {
+              const Real expected = average_recv(local_average_recv_entry(c) * nvar + v);
+              const Real actual = state(indices(c, 0), v, indices(c, 1),
+                                        indices(c, 2), indices(c, 3));
+              if (actual != expected) ++count;
+            }, mismatches);
+      }
+      MPI_Allreduce(MPI_IN_PLACE, &mismatches, 1, MPI_UNSIGNED_LONG_LONG,
+                    MPI_SUM, sparse_communicator);
+      if (mismatches != 0) {
+        std::cerr << "### FATAL ERROR: canonical VC shared-node synchronization left "
+                  << mismatches << " mismatched contributor values" << std::endl;
+        MPI_Abort(sparse_communicator, EXIT_FAILURE);
+      }
     }
     return;
   }
