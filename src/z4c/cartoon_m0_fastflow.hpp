@@ -7,6 +7,7 @@
 
 #include <array>
 #include <cstdio>
+#include <functional>
 #include <string>
 #include <vector>
 
@@ -20,6 +21,7 @@ namespace z4c {
 
 struct M0AdmSample {
   bool valid = false;
+  Real spacing = 0.0;  // Larger physical meridional grid spacing, zero for analytic data.
   std::array<Real, 6> metric{};
   std::array<Real, 6> curvature{};
   std::array<Real, 18> metric_derivative{};
@@ -28,6 +30,8 @@ struct M0AdmSample {
 struct M0SurfacePoint {
   bool valid = false;
   Real expansion = 0.0;
+  Real gradient_norm = 0.0;
+  Real ingoing_expansion = 0.0;
   Real flow_residual = 0.0;
   Real area_factor = 0.0;  // dA/(dtheta dphi)
   Real spin_integrand_z = 0.0;
@@ -66,6 +70,14 @@ M0SurfacePoint EvaluateM0SurfacePoint(Real theta, Real radius,
                                       Real radius_theta,
                                       Real radius_theta_theta,
                                       const M0AdmSample &sample);
+using M0Locations = std::vector<std::array<Real, 2>>;
+using M0Sampler = std::function<std::vector<M0AdmSample>(const M0Locations &)>;
+
+//! Local meridional correction in the same normalized Y_l0 basis as FastFlow.
+//! target is the dimensionless r*Theta+. Nonzero targets never update AH state.
+M0CandidateSummary RefineM0Surface(const std::vector<Real> &seed, Real center_z,
+    int ntheta, int iterations, Real target, Real direct_tolerance, Real flow_tolerance,
+    Real mass_tolerance, const M0Sampler &sample);
 Real M0HorizonMass(Real area, Real spin_z);
 bool SelectM0AxisLapseMinimum(const std::vector<M0AxisSample> &samples,
                               int sign, Real *center_z, Real *lapse);
@@ -104,8 +116,8 @@ class CartoonM0FastFlow {
   // nvcc requires a member function enclosing an extended KOKKOS_LAMBDA to be
   // publicly accessible.  Keep only the two kernel-launching samplers public;
   // they remain implementation details of the composed Cartoon finder.
-  M0AdmSample SampleAdm(Real rho, Real z) const;
-  M0AxisSample SampleAxisLapse(Real z) const;
+  std::vector<M0AdmSample> SampleAdm(const M0Locations &locations) const;
+  std::vector<M0AxisSample> SampleAxisLapse(const std::vector<Real> &z) const;
 
   bool Found() const { return found_; }
   int LastSearchCycle() const { return last_search_cycle_; }

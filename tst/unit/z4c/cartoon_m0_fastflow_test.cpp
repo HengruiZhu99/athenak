@@ -1,6 +1,10 @@
 //========================================================================================
 //! Focused analytic tests for the theta-only Cartoon FastFlow adapter.
 //========================================================================================
+// These are executable numerical checks, including in Release CTest builds.
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
 #include <cassert>
 #include <cmath>
 #include <limits>
@@ -73,6 +77,59 @@ int main() {
   assert(horizon.valid);
   Close(horizon.expansion, 0.0, 3.0e-14);
 
+  // Flat spatial slices of ingoing Painleve-Gullstrand Schwarzschild.
+  // r*Theta+ = 2*(1-sqrt(2M/r)). Check signed targets, area, a displaced
+  // coordinate center, and independent rejection of an unresolved polar cap.
+  const double center_z = 0.37;
+  auto pg = [&](double rho, double world_z) {
+    auto field = flat;
+    const double zloc = world_z - center_z;
+    const double r = std::hypot(rho, zloc);
+    const double k = std::sqrt(2.0*mass/(r*r*r));
+    const double nx = rho/r, nz = zloc/r;
+    field.curvature = {k*(1 - 1.5*nx*nx), 0, -1.5*k*nx*nz, k, 0, k*(1 - 1.5*nz*nz)};
+    return field;
+  };
+  auto batch = [](auto sample) {
+    return [sample](const z4c::M0Locations &locations) {
+      std::vector<z4c::M0AdmSample> fields;
+      for (const auto &xz : locations) fields.push_back(sample(xz[0], xz[1]));
+      return fields;
+    };
+  };
+  std::vector<Real> seed(7, 0);
+  seed[0] = 3.4*std::sqrt(4*kPi);
+  seed[2] = 0.05;
+  for (double target : {0.0, -0.02, 0.02}) {
+    const auto surface = z4c::RefineM0Surface(seed, center_z, 16, 20, target,
+                                               1.e-6, 1.e-6, 1.e-6, batch(pg));
+    assert(surface.converged);
+    const double r = 2*mass/std::pow(1 - target/2, 2);
+    Close(surface.irreducible_mass, 0.5*r, 2.e-7);
+    Close(surface.minimum_radius, r, 5.e-7);
+  }
+  auto flat_result = z4c::RefineM0Surface(seed, 0, 16, 20, 0, .03, .03, 1.e-4,
+                                          batch([&](double, double) { return flat; }));
+  assert(!flat_result.converged);
+  auto cap = [&](double rho, double zpos) {
+    auto field = pg(rho, zpos);
+    if (rho < 0.02*std::abs(zpos - center_z)) field.curvature.fill(0);
+    return field;
+  };
+  assert(!z4c::RefineM0Surface(seed, center_z, 16, 20, 0, .03, .03, 1.e-4, batch(cap)).converged);
+  auto unresolved = [&](double x, double zpos) {
+    auto field = pg(x, zpos);
+    field.spacing = 1.1;
+    return field;
+  };
+  assert(!z4c::RefineM0Surface(seed, center_z, 16, 20, 0, .03, .03, 1.e-4,
+                               batch(unresolved)).converged);
+  auto invalid = flat;
+  invalid.metric[0] = -1;
+  invalid.metric[3] = -1;
+  assert(!z4c::EvaluateM0SurfacePoint(theta, radius, 0, 0, invalid).valid);
+  Close(sphere.ingoing_expansion, -2.0/radius, 2.e-14);
+
   z4c::M0AdmSample anisotropic;
   anisotropic.valid = true;
   anisotropic.metric = {2.0, 0.2, 0.3, 3.0, 0.4, 4.0};
@@ -118,6 +175,9 @@ int main() {
   candidates[2].direct_residual = 1.0e-5;
   candidates[2].coefficients = {1.0, -0.1};
   assert(z4c::SelectM0Single(candidates) == 1);
+  auto nested = candidates;
+  nested[0].coefficients = {5*std::sqrt(4*kPi), 0.0};
+  assert(z4c::SelectM0Single(nested) == 0);  // Inner roots have smaller residuals.
   auto nonfinite_spin = candidates;
   nonfinite_spin[0].spin_z = std::numeric_limits<double>::quiet_NaN();
   nonfinite_spin[1].spin_z = std::numeric_limits<double>::quiet_NaN();
@@ -131,6 +191,10 @@ int main() {
   int minus = -1;
   assert(z4c::SelectM0MirrorPair(candidates, 1.0e-12, &plus, &minus));
   assert(plus == 1 && minus == 2);
+  auto overlapping = candidates;
+  overlapping[1].center_z = 0.1;
+  overlapping[2].center_z = -0.1;
+  assert(!z4c::SelectM0MirrorPair(overlapping, 1.e-12, &plus, &minus));
   candidates[2].converged = false;
   assert(!z4c::SelectM0MirrorPair(candidates, 1.0e-12, &plus, &minus));
 

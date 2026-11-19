@@ -46,10 +46,14 @@ HORIZON_COLUMNS = (
     "mean_radius", "minimum_radius", "direct_residual", "flow_residual",
     "failure",
 )
-HORIZON_HEADER = "# " + " ".join(HORIZON_COLUMNS) + " a_l0..."
+LEGACY_HORIZON_HEADER = "# " + " ".join(HORIZON_COLUMNS) + " a_l0..."
+HORIZON_HEADER = "# " + " ".join(HORIZON_COLUMNS) + " fresh_initial_radius a_l0..."
 BRANCHES = {"origin", "plus", "minus"}
 FAILURE_CODES = {
     "none", "nonfinite_coefficient", "coverage_or_radius",
+    "nonpositive_radius", "invalid_adm_sample", "invalid_surface_geometry",
+    "underresolved_surface", "ingoing_expansion", "pointwise_expansion", "excessive_radial_step", "insufficient_collocation",
+    "singular_meridional_step", "invalid_meridional_sample", "meridional_stagnation",
     "nonfinite_integral", "iteration_limit", "axis_lapse_scan_coverage",
 }
 FASTFLOW_KEYS = (
@@ -476,7 +480,7 @@ def run_case(args: argparse.Namespace) -> None:
 
 def parse_horizon(path: Path, lmax: int) -> list[dict[str, Any]]:
     lines = path.read_text(encoding="utf-8").splitlines()
-    r1.require(lines and lines[0] == HORIZON_HEADER,
+    r1.require(lines and lines[0] in (HORIZON_HEADER, LEGACY_HORIZON_HEADER),
                f"unexpected horizon header: {path}")
     records: list[dict[str, Any]] = []
     keys: set[tuple[int, str]] = set()
@@ -484,7 +488,8 @@ def parse_horizon(path: Path, lmax: int) -> list[dict[str, Any]]:
         r1.require(line.strip() and not line.startswith("#"),
                    f"malformed horizon record at {path}:{number}")
         fields = line.split()
-        r1.require(len(fields) >= len(HORIZON_COLUMNS),
+        coeff_start = len(HORIZON_COLUMNS) + int(lines[0] == HORIZON_HEADER)
+        r1.require(len(fields) >= coeff_start,
                    f"short horizon record at {path}:{number}")
         branch, failure = fields[2], fields[15]
         r1.require(branch in BRANCHES and failure in FAILURE_CODES,
@@ -493,11 +498,12 @@ def parse_horizon(path: Path, lmax: int) -> list[dict[str, Any]]:
             cycle = int(fields[0])
             accepted_integer = int(fields[3])
             numeric = [float(token) for token in fields[1:2] + fields[4:15]]
-            coefficients = [float(token) for token in fields[16:]]
+            seed = float(fields[16]) if lines[0] == HORIZON_HEADER else 0.0
+            coefficients = [float(token) for token in fields[coeff_start:]]
         except ValueError as error:
             raise RuntimeError(f"malformed horizon value at {path}:{number}") from error
         r1.require(cycle >= 0 and accepted_integer in (0, 1) and
-                   all(math.isfinite(value) for value in numeric + coefficients),
+                   math.isfinite(seed) and all(math.isfinite(value) for value in numeric + coefficients),
                    f"nonfinite/malformed horizon record at {path}:{number}")
         accepted = accepted_integer == 1
         r1.require((accepted and failure == "none" and
@@ -514,6 +520,8 @@ def parse_horizon(path: Path, lmax: int) -> list[dict[str, Any]]:
              "minimum_radius", "direct_residual", "flow_residual"), numeric))
         record.update({"cycle": cycle, "branch": branch, "accepted": accepted,
                        "failure": failure, "coefficients": coefficients})
+        if lines[0] == HORIZON_HEADER:
+            record["fresh_initial_radius"] = seed
         if accepted:
             r1.require(record["area"] > 0.0 and record["mean_radius"] > 0.0 and
                        record["minimum_radius"] > 0.0 and
@@ -1107,7 +1115,7 @@ def self_test() -> None:
                       "1" if accepted else "0"]
             values.extend(format(row[key], ".17e") for key in
                           HORIZON_COLUMNS[4:15])
-            values.append(row["failure"])
+            values.extend([row["failure"], "0.5"])
             values.extend(format(value, ".17e") for value in row["coefficients"])
             lines.append(" ".join(values))
         path.write_text("\n".join(lines) + "\n", encoding="utf-8")

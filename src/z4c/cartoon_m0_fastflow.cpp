@@ -34,7 +34,6 @@ constexpr int PackedIndex(int a, int b) {
   return a == 0 ? b : (a == 1 ? b + 2 : 5);
 }
 
-#ifndef ATHENA_CARTOON_M0_MATH_ONLY
 std::vector<std::pair<Real, Real>> GaussLegendre(const int count) {
   std::vector<std::pair<Real, Real>> result(count);
   for (int n = 0; n < (count + 1) / 2; ++n) {
@@ -59,7 +58,6 @@ std::vector<std::pair<Real, Real>> GaussLegendre(const int count) {
   }
   return result;
 }
-#endif
 
 bool FiniteSummary(const M0CandidateSummary &value) {
   return std::isfinite(value.center_z) &&
@@ -95,6 +93,7 @@ M0AdmSample RotateM0AdmSample(const M0AdmSample &input, const Real phi) {
   const Real rotation[3][3] = {{c, -s, 0.0}, {s, c, 0.0}, {0.0, 0.0, 1.0}};
   M0AdmSample output;
   output.valid = true;
+  output.spacing = input.spacing;
   for (int a = 0; a < 3; ++a) {
     for (int b = a; b < 3; ++b) {
       Real metric = 0.0;
@@ -143,7 +142,8 @@ M0SurfacePoint EvaluateM0SurfacePoint(
   }
   const Real det = adm::SpatialDet(g[0][0], g[0][1], g[0][2], g[1][1],
                                    g[1][2], g[2][2]);
-  if (!std::isfinite(det) || det <= 0.0) return result;
+  if (!(g[0][0] > 0.0 && g[0][0]*g[1][1] > g[0][1]*g[0][1]) ||
+      !std::isfinite(det) || det <= 0.0) return result;
   adm::SpatialInv(1.0 / det, g[0][0], g[0][1], g[0][2], g[1][1], g[1][2],
                   g[2][2], &inverse[0][0], &inverse[0][1], &inverse[0][2],
                   &inverse[1][1], &inverse[1][2], &inverse[2][2]);
@@ -201,9 +201,12 @@ M0SurfacePoint EvaluateM0SurfacePoint(
       trace_k += inverse[a][b] * curvature[a][b];
     }
   }
-  result.expansion = laplacian * invu - normal_hessian * invu * invu * invu +
-                     normal_k * invu * invu - trace_k;
-  result.flow_residual = result.expansion / invu;
+  const Real mean_curvature = (laplacian - normal_hessian * invu * invu) * invu;
+  const Real projected_k = normal_k * invu * invu - trace_k;
+  result.expansion = projected_k + mean_curvature;
+  result.ingoing_expansion = projected_k - mean_curvature;
+  result.gradient_norm = 1.0 / invu;
+  result.flow_residual = result.expansion * result.gradient_norm;
   // At phi=0 the axial rotational Killing vector is (0,x,0).
   for (int b = 0; b < 3; ++b) {
     result.spin_integrand_z += x * upper[b] * invu * curvature[1][b];
@@ -222,7 +225,8 @@ M0SurfacePoint EvaluateM0SurfacePoint(
     return M0SurfacePoint{};
   }
   result.area_factor = std::sqrt(det_h);
-  result.valid = true;
+  result.valid = std::isfinite(result.ingoing_expansion) &&
+                 std::isfinite(result.flow_residual) && std::isfinite(result.spin_integrand_z);
   return result;
 }
 
@@ -233,6 +237,223 @@ Real M0HorizonMass(const Real area, const Real spin_z) {
   return std::sqrt(irreducible_mass * irreducible_mass +
                    0.25 * spin_z * spin_z /
                        (irreducible_mass * irreducible_mass));
+}
+
+namespace {
+// Differentiate the Legendre recurrence in theta. This also gives regular
+// first and second derivatives near either symmetry pole without dividing by sin(theta).
+struct M0Node {
+  Real theta, weight;
+  std::vector<std::array<Real, 3>> basis;
+  M0Node(Real angle, Real w, int count) : theta(angle), weight(w), basis(count) {
+    const Real x = std::cos(theta), s = std::sin(theta);
+    std::array<Real, 3> prev{}, cur{1, 0, 0};
+    for (int l = 0; l < count; ++l) {
+      const Real norm = std::sqrt((2*l + 1)/(4*kPi));
+      for (int k = 0; k < 3; ++k) basis[l][k] = norm * cur[k];
+      const Real a = (2*l + 1.0)/(l + 1.0), b = l/(l + 1.0);
+      std::array<Real, 3> next = {a*x*cur[0] - b*prev[0],
+          a*(x*cur[1] - s*cur[0]) - b*prev[1],
+          a*(x*cur[2] - 2*s*cur[1] - x*cur[0]) - b*prev[2]};
+      prev = cur;
+      cur = next;
+    }
+  }
+
+  std::array<Real, 3> profile(const std::vector<Real> &c) const {
+    std::array<Real, 3> h{};
+    for (std::size_t l = 0; l < c.size(); ++l)
+      for (int k = 0; k < 3; ++k) h[k] += c[l]*basis[l][k];
+    return h;
+  }
+};
+
+// Fold each weighted row into an upper triangular least-squares system with
+// Givens rotations. Only lmax+1 unknowns, independent of the mesh and rank count.
+void InsertRow(std::vector<std::vector<Real>> &qr, std::vector<Real> &row) {
+  const int count = qr.size();
+  for (int j = 0; j < count; ++j) {
+    const Real norm = std::hypot(qr[j][j], row[j]);
+    if (norm == 0) continue;
+    const Real c = qr[j][j]/norm, s = row[j]/norm;
+    for (int k = j; k <= count; ++k) {
+      const Real top = qr[j][k], bottom = row[k];
+      qr[j][k] = c*top + s*bottom;
+      row[k] = c*bottom - s*top;
+    }
+  }
+}
+
+const char *M0ExpansionFailure(const std::vector<Real> &coeff, Real center, int ntheta,
+                       Real target, Real tolerance, Real area_radius, const M0Sampler &sample) {
+  // Uniform meridional angles interleave the quadrature, include the equator
+  // and approach both regular poles. Angular-average convergence alone can
+  // hide an untrapped cap. Allow the time-symmetric bifurcation sphere.
+  const int intervals = 2*std::max(ntheta, static_cast<int>(coeff.size()));
+  const Real cap = 1.e-4;
+  std::vector<Real> angles;
+  for (const auto &point : GaussLegendre(ntheta)) angles.push_back(std::acos(point.first));
+  for (int i = 0; i <= intervals; ++i) angles.push_back(cap + (kPi - 2*cap)*i/intervals);
+  std::vector<std::array<Real, 3>> profiles;
+  M0Locations locations;
+  for (const Real theta : angles) {
+    auto h = M0Node(theta, 0, coeff.size()).profile(coeff);
+    if (!(h[0] > 0) || !std::isfinite(h[0])) return "nonpositive_radius";
+    profiles.push_back(h);
+    locations.push_back({h[0]*std::sin(theta), center + h[0]*std::cos(theta)});
+  }
+  const auto adm = sample(locations);
+  for (std::size_t i = 0; i < angles.size(); ++i) {
+    const auto &h = profiles[i];
+    const auto p = EvaluateM0SurfacePoint(angles[i], h[0], h[1], h[2], adm[i]);
+    const Real length = std::max(area_radius, h[0]);
+    if (!p.valid) return "invalid_surface_geometry";
+    if (h[0] < 2*adm[i].spacing) return "underresolved_surface";
+    if (length*std::abs(p.expansion - target/h[0]) > tolerance ||
+        (target < 0 && p.expansion >= 0)) return "pointwise_expansion";
+    if (target < 0 ? p.ingoing_expansion >= 0 : length*p.ingoing_expansion > tolerance)
+      return "ingoing_expansion";
+  }
+  return nullptr;
+}
+}  // namespace
+
+M0CandidateSummary RefineM0Surface(const std::vector<Real> &seed, Real center,
+    int ntheta, int iterations, Real target, Real direct_tol, Real flow_tol,
+    Real mass_tol, const M0Sampler &sample) {
+  M0CandidateSummary result;
+  result.coefficients = seed;
+  result.center_z = center;
+  const int count = seed.size();
+  if (count == 0 || ntheta < count || ntheta < 2 || iterations < 2) {
+    result.failure = "insufficient_collocation";
+    return result;
+  }
+  std::vector<M0Node> nodes;
+  for (const auto &point : GaussLegendre(ntheta))
+    nodes.emplace_back(std::acos(point.first), point.second, count);
+  const Real diff = std::cbrt(std::numeric_limits<Real>::epsilon());
+  using Matrix = std::vector<std::vector<Real>>;
+  auto evaluate = [&](M0CandidateSummary &candidate, Matrix *qr) {
+    Real cost = 0, area = 0, spin = 0, mean = 0, direct2 = 0, flow2 = 0;
+    Real minimum = std::numeric_limits<Real>::infinity();
+    std::vector<std::array<Real, 3>> profiles;
+    M0Locations locations;
+    for (const auto &node : nodes) {
+      const auto h = node.profile(candidate.coefficients);
+      const Real r = h[0];
+      if (!(r > 0) || !std::isfinite(r)) return std::numeric_limits<Real>::infinity();
+      profiles.push_back(h);
+      locations.push_back({r*std::sin(node.theta), center + r*std::cos(node.theta)});
+      if (qr) {
+        const Real trial = r + diff*r;
+        locations.push_back({trial*std::sin(node.theta), center + trial*std::cos(node.theta)});
+      }
+    }
+    const auto samples = sample(locations);
+    for (int n = 0; n < ntheta; ++n) {
+      const auto &node = nodes[n];
+      const auto &h = profiles[n];
+      const Real r = h[0], theta = node.theta, w = node.weight;
+      const auto &adm = samples[qr ? 2*n : n];
+      const auto p = EvaluateM0SurfacePoint(theta, r, h[1], h[2], adm);
+      if (!p.valid) return std::numeric_limits<Real>::infinity();
+      const Real f = r*p.expansion - target;
+      const Real da = 2*kPi*w*p.area_factor/std::sin(theta);
+      cost += w*f*f;
+      area += da;
+      spin += da*p.spin_integrand_z;
+      mean += 0.5*w*r;
+      minimum = std::min(minimum, r);
+      direct2 += da*(f/r)*(f/r);
+      const Real flow = (f/r)*p.gradient_norm;
+      flow2 += 0.5*w*flow*flow;
+      if (!qr) continue;
+      std::array<Real, 3> derivative{};
+      for (int k = 0; k < 3; ++k) {
+        auto trial = h;
+        const Real step = diff*std::max(r, std::abs(h[k]));
+        trial[k] += step;
+        const auto perturbed = EvaluateM0SurfacePoint(theta, trial[0], trial[1], trial[2],
+                                                      k == 0 ? samples[2*n+1] : adm);
+        if (!perturbed.valid) return std::numeric_limits<Real>::infinity();
+        derivative[k] = (trial[0]*perturbed.expansion - r*p.expansion)/step;
+      }
+      std::vector<Real> row(count + 1, 0);
+      for (int l = 0; l < count; ++l)
+        for (int k = 0; k < 3; ++k) row[l] += std::sqrt(w)*derivative[k]*node.basis[l][k];
+      row[count] = -std::sqrt(w)*f;
+      InsertRow(*qr, row);
+    }
+    candidate.minimum_radius = minimum;
+    candidate.mean_radius = mean;
+    candidate.area = area;
+    candidate.spin_z = spin/(8*kPi);
+    candidate.irreducible_mass = std::sqrt(area/(16*kPi));
+    candidate.mass = M0HorizonMass(area, candidate.spin_z);
+    candidate.direct_residual = mean*std::sqrt(direct2/area);
+    candidate.flow_residual = mean*std::sqrt(flow2);
+    return FiniteSummary(candidate) ? cost : std::numeric_limits<Real>::infinity();
+  };
+
+  Real previous_mass = 0;
+  for (int iter = 0; iter < iterations; ++iter) {
+    Matrix qr(count, std::vector<Real>(count + 1, 0));
+    const Real cost = evaluate(result, &qr);
+    if (!std::isfinite(cost)) { result.failure = "invalid_meridional_sample"; break; }
+    const char *validation_failure = nullptr;
+    if (iter && RelativeDifference(previous_mass, result.irreducible_mass) < mass_tol &&
+        result.direct_residual < direct_tol && result.flow_residual < flow_tol) {
+      validation_failure = M0ExpansionFailure(result.coefficients, center, ntheta, target,
+                                              direct_tol, 2*result.irreducible_mass, sample);
+      if (!validation_failure) {
+        result.converged = true;
+        result.failure = "none";
+        return result;
+      }
+      // Further optimization of a sub-cell surface cannot resolve its geometry.
+      if (std::string(validation_failure) == "underresolved_surface") {
+        result.failure = validation_failure;
+        return result;
+      }
+    }
+    previous_mass = result.irreducible_mass;
+    // Give an initially exact seed a second mass observation.
+    if (iter == 0 && cost < std::numeric_limits<Real>::epsilon()) continue;
+    std::vector<Real> step(count, 0);
+    Real diagonal = 0;
+    for (int j = 0; j < count; ++j) diagonal = std::max(diagonal, std::abs(qr[j][j]));
+    for (int j = count-1; j >= 0; --j) {
+      if (std::abs(qr[j][j]) <= count*std::numeric_limits<Real>::epsilon()*diagonal) {
+        result.failure = "singular_meridional_step";
+        return result;
+      }
+      Real rhs = qr[j][count];
+      for (int k = j+1; k < count; ++k) rhs -= qr[j][k]*step[k];
+      step[j] = rhs/qr[j][j];
+    }
+    Real fraction = 1;
+    for (const auto &node : nodes) {
+      const Real delta = std::abs(node.profile(step)[0]);
+      if (delta > 0) fraction = std::min(fraction, 0.5*node.profile(result.coefficients)[0]/delta);
+    }
+    bool advanced = false;
+    for (int backtrack = 0; backtrack < 8; ++backtrack, fraction *= 0.5) {
+      auto trial = result;
+      for (int l = 0; l < count; ++l) trial.coefficients[l] += fraction*step[l];
+      if (evaluate(trial, nullptr) < cost) {
+        result = std::move(trial);
+        advanced = true;
+        break;
+      }
+    }
+    if (!advanced) {
+      result.failure = validation_failure ? validation_failure : "meridional_stagnation";
+      break;
+    }
+    result.failure = validation_failure ? validation_failure : "iteration_limit";
+  }
+  return result;
 }
 
 bool SelectM0AxisLapseMinimum(const std::vector<M0AxisSample> &samples,
@@ -286,11 +507,28 @@ Real M0DisjointPairInitialRadius(const Real configured_radius,
   return std::min(configured_radius, pair_fraction * half_separation);
 }
 
+// |P_l| <= 1 gives conservative coordinate-radius bounds, including the
+// unsampled caps. Only discard an inner candidate when containment is certain.
+static std::pair<Real, Real> M0RadiusBounds(const std::vector<Real> &c) {
+  Real variation = 0.0;
+  for (std::size_t l = 1; l < c.size(); ++l)
+    variation += std::abs(c[l])*std::sqrt((2*l+1)/(4*kPi));
+  const Real mean = c[0]/std::sqrt(4*kPi);
+  return {mean - variation, mean + variation};
+}
+
 int SelectM0Single(const std::vector<M0CandidateSummary> &candidates) {
   int selected = -1;
   for (int index = 0; index < static_cast<int>(candidates.size()); ++index) {
     const auto &candidate = candidates[index];
     if (!candidate.converged || !FiniteSummary(candidate)) continue;
+    const Real upper = M0RadiusBounds(candidate.coefficients).second;
+    const bool enclosed = std::any_of(candidates.begin(), candidates.end(), [&](const auto &outer) {
+      return &outer != &candidate && outer.converged && FiniteSummary(outer) &&
+          upper + std::abs(candidate.center_z - outer.center_z) <
+          M0RadiusBounds(outer.coefficients).first*(1-64*std::numeric_limits<Real>::epsilon());
+    });
+    if (enclosed) continue;
     if (selected < 0 || candidate.direct_residual < candidates[selected].direct_residual ||
         (candidate.direct_residual == candidates[selected].direct_residual &&
          index < selected)) selected = index;
@@ -312,6 +550,24 @@ bool SelectM0MirrorPair(const std::vector<M0CandidateSummary> &candidates,
   if (*plus < 0 || *minus < 0) return false;
   const auto &p = candidates[*plus];
   const auto &m = candidates[*minus];
+  // A mirror pair must occupy opposite half-spaces. Two centers can
+  // otherwise converge onto the same common horizon and pass the mass tests.
+  auto in_half_space = [](const M0CandidateSummary &candidate, int sign) {
+    const auto &c = candidate.coefficients;
+    Real slope_bound = 0;
+    for (std::size_t l = 0; l < c.size(); ++l) {
+      // |d(mu P_l)/dmu| <= 1 + l(l+1)/2 on [-1,1].
+      slope_bound += std::abs(c[l])*std::sqrt((2*l+1)/(4*kPi))*(1 + 0.5*l*(l+1));
+    }
+    const int intervals = std::max(128, 16*static_cast<int>(c.size()));
+    for (int i = 0; i < intervals; ++i) {
+      const Real mu = -1 + (2*i+1.0)/intervals;
+      const Real radius = M0Node(std::acos(mu), 0, c.size()).profile(c)[0];
+      if (sign*(candidate.center_z + mu*radius) <= slope_bound/intervals) return false;
+    }
+    return true;
+  };
+  if (!in_half_space(p, 1) || !in_half_space(m, -1)) return false;
   return RelativeDifference(p.center_z, -m.center_z) <= tolerance &&
          RelativeDifference(p.area, m.area) <= tolerance &&
          RelativeDifference(p.irreducible_mass, m.irreducible_mass) <= tolerance &&
@@ -464,6 +720,9 @@ CartoonM0FastFlow::CartoonM0FastFlow(MeshBlockPack *pack, ParameterInput *pin,
       center_seed_ > 0.0 ? center_seed_ : initial_radius_);
   axis_search_samples_ = pin->GetOrAddInteger(
       "fastflow", "cartoon_axis_search_samples_" + suffix, 33);
+  const Real inner_target = pin->GetOrAddReal("fastflow", "cartoon_inner_target_" + suffix, 0.0);
+  if (!std::isfinite(inner_target) || inner_target > 0.0)
+    throw std::runtime_error("cartoon_inner_target must be zero or negative");
   mode_ = pin->GetOrAddString("fastflow", "cartoon_surface_mode_" + suffix, "single");
   if (lmax_ < 1 || ntheta_ < 2 || iterations_ < 1 || find_interval_ < 1 ||
       !(initial_radius_ > 0.0) || !(flow_scale_ > 0.0) ||
@@ -509,115 +768,125 @@ bool CartoonM0FastFlow::ShouldSearch(const int cycle, const Real time) const {
          (stop_time_ < 0.0 || time <= stop_time_);
 }
 
-M0AdmSample CartoonM0FastFlow::SampleAdm(const Real rho, const Real z) const {
-  M0AdmSample result;
-  const auto stencil = LocateCartoonMeridionalPoint(pack_->pmesh, rho, z);
-  if (!stencil.valid) return result;
+std::vector<M0AdmSample> CartoonM0FastFlow::SampleAdm(const M0Locations &locations) const {
+  const int count = locations.size();
+  std::vector<M0AdmSample> result(count);
   const int fd_stencil = pack_->z4c_symmetry.stencil_width;
-  if (fd_stencil < 2 || fd_stencil > 4 || pack_->pmesh->mb_indcs.ng < fd_stencil)
-    return result;
-  Kokkos::View<Real *> values("Cartoon m0 ADM sample", 42);
-  Kokkos::deep_copy(values, 0.0);
-  if (stencil.owner_rank == global_variable::my_rank) {
-    auto metric = pack_->padm->adm.g_dd;
-    auto curvature = pack_->padm->adm.vK_dd;
-    auto size = pack_->pmb->mb_size.d_view;
-    const auto indices = pack_->pmesh->mb_indcs;
-    Kokkos::parallel_for("Cartoon m0 ADM interpolate",
-        Kokkos::RangePolicy<DevExeSpace>(0, 1), KOKKOS_LAMBDA(const int) {
-      const int physical_to_code[3] = {0, 2, 1};
-      for (int dj = 0; dj <= 1; ++dj) for (int di = 0; di <= 1; ++di) {
-        const int i = stencil.i0 + di;
-        const int j = stencil.j0 + dj;
-        const Real weight = (di ? stencil.wi : 1.0 - stencil.wi) *
-                            (dj ? stencil.wj : 1.0 - stencil.wj);
-        const Real inverse_spacing[3] = {
-            1.0 / size(stencil.local_block).dx1,
-            1.0 / size(stencil.local_block).dx2,
-            1.0 / size(stencil.local_block).dx3};
-        for (int a = 0; a < 3; ++a) for (int b = a; b < 3; ++b) {
-          const int packed = PackedIndex(a, b);
-          const int ca = physical_to_code[a];
-          const int cb = physical_to_code[b];
-          values(packed) += weight * metric(stencil.local_block, ca, cb,
-                                             stencil.k, j, i);
-          values(6 + packed) += weight * curvature(stencil.local_block, ca, cb,
-                                                    stencil.k, j, i);
-          for (int d = 0; d < 3; ++d) {
-            Real derivative_value = 0.0;
-            if (fd_stencil == 2) {
-              auto derivative = MakeCellCenteredDerivativeProvider<CartoonSO2, 2>(
-                  inverse_spacing, size, indices.nx1, indices.is,
-                  stencil.local_block, stencil.k, j, i);
-              derivative_value = derivative.template TensorFirst<
-                  TensorVariance::all_lower>(physical_to_code[d], ca, cb, metric);
-            } else if (fd_stencil == 3) {
-              auto derivative = MakeCellCenteredDerivativeProvider<CartoonSO2, 3>(
-                  inverse_spacing, size, indices.nx1, indices.is,
-                  stencil.local_block, stencil.k, j, i);
-              derivative_value = derivative.template TensorFirst<
-                  TensorVariance::all_lower>(physical_to_code[d], ca, cb, metric);
-            } else {
-              auto derivative = MakeCellCenteredDerivativeProvider<CartoonSO2, 4>(
-                  inverse_spacing, size, indices.nx1, indices.is,
-                  stencil.local_block, stencil.k, j, i);
-              derivative_value = derivative.template TensorFirst<
-                  TensorVariance::all_lower>(physical_to_code[d], ca, cb, metric);
-            }
-            values(12 + d * 6 + packed) += weight * derivative_value;
+  if (count == 0 || fd_stencil < 2 || fd_stencil > 4 ||
+      pack_->pmesh->mb_indcs.ng < fd_stencil) return result;
+  Kokkos::View<CartoonMeridionalStencil *> stencils("m0 surface stencils", count);
+  auto host_stencils = Kokkos::create_mirror_view(stencils);
+  for (int n = 0; n < count; ++n) {
+    host_stencils(n) = LocateCartoonMeridionalPoint(pack_->pmesh, locations[n][0], locations[n][1]);
+  }
+  Kokkos::deep_copy(stencils, host_stencils);
+  // One launch and one collective for an entire meridian. The last value
+  // verifies exactly one contributing rank, also for points on AMR interfaces.
+  Kokkos::View<Real *[32], Kokkos::LayoutRight> values("m0 ADM samples", count);
+  const int rank = global_variable::my_rank;
+  auto metric = pack_->padm->adm.g_dd;
+  auto curvature = pack_->padm->adm.vK_dd;
+  auto size = pack_->pmb->mb_size.d_view;
+  const auto indices = pack_->pmesh->mb_indcs;
+  Kokkos::parallel_for("Cartoon m0 ADM interpolate",
+      Kokkos::RangePolicy<DevExeSpace>(0, count), KOKKOS_LAMBDA(const int n) {
+    const auto stencil = stencils(n);
+    if (!stencil.valid || stencil.owner_rank != rank) return;
+    values(n, 30) = Kokkos::max(size(stencil.local_block).dx1, size(stencil.local_block).dx2);
+    values(n, 31) = 1.0;
+    const int physical_to_code[3] = {0, 2, 1};
+    for (int dj = 0; dj <= 1; ++dj) for (int di = 0; di <= 1; ++di) {
+      const int i = stencil.i0 + di;
+      const int j = stencil.j0 + dj;
+      const Real weight = (di ? stencil.wi : 1.0 - stencil.wi) *
+                          (dj ? stencil.wj : 1.0 - stencil.wj);
+      const Real inverse_spacing[3] = {
+          1.0 / size(stencil.local_block).dx1,
+          1.0 / size(stencil.local_block).dx2,
+          1.0 / size(stencil.local_block).dx3};
+      for (int a = 0; a < 3; ++a) for (int b = a; b < 3; ++b) {
+        const int packed = PackedIndex(a, b);
+        const int ca = physical_to_code[a];
+        const int cb = physical_to_code[b];
+        values(n, packed) += weight * metric(stencil.local_block, ca, cb,
+                                           stencil.k, j, i);
+        values(n, 6 + packed) += weight * curvature(stencil.local_block, ca, cb,
+                                                  stencil.k, j, i);
+        for (int d = 0; d < 3; ++d) {
+          Real derivative_value = 0.0;
+          if (fd_stencil == 2) {
+            auto derivative = MakeCellCenteredDerivativeProvider<CartoonSO2, 2>(
+                inverse_spacing, size, indices.nx1, indices.is,
+                stencil.local_block, stencil.k, j, i);
+            derivative_value = derivative.template TensorFirst<
+                TensorVariance::all_lower>(physical_to_code[d], ca, cb, metric);
+          } else if (fd_stencil == 3) {
+            auto derivative = MakeCellCenteredDerivativeProvider<CartoonSO2, 3>(
+                inverse_spacing, size, indices.nx1, indices.is,
+                stencil.local_block, stencil.k, j, i);
+            derivative_value = derivative.template TensorFirst<
+                TensorVariance::all_lower>(physical_to_code[d], ca, cb, metric);
+          } else {
+            auto derivative = MakeCellCenteredDerivativeProvider<CartoonSO2, 4>(
+                inverse_spacing, size, indices.nx1, indices.is,
+                stencil.local_block, stencil.k, j, i);
+            derivative_value = derivative.template TensorFirst<
+                TensorVariance::all_lower>(physical_to_code[d], ca, cb, metric);
           }
+          values(n, 12 + d * 6 + packed) += weight * derivative_value;
         }
       }
-    });
-    Kokkos::fence();
-  }
+    }
+  });
+  Kokkos::fence();
   auto host = Kokkos::create_mirror_view_and_copy(HostMemSpace(), values);
-  Real reduced[42];
-  for (int n = 0; n < 42; ++n) reduced[n] = host(n);
 #if MPI_PARALLEL_ENABLED
-  MPI_Allreduce(MPI_IN_PLACE, reduced, 42, MPI_ATHENA_REAL, MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, host.data(), 32*count, MPI_ATHENA_REAL, MPI_SUM, MPI_COMM_WORLD);
 #endif
-  for (int n = 0; n < 6; ++n) {
-    result.metric[n] = reduced[n];
-    result.curvature[n] = reduced[6 + n];
+  for (int n = 0; n < count; ++n) {
+    auto &point = result[n];
+    point.spacing = host(n, 30);
+    point.valid = host(n, 31) == 1.0 && point.spacing > 0;
+    for (int k = 0; k < 30; ++k) point.valid = point.valid && std::isfinite(host(n, k));
+    for (int k = 0; k < 6; ++k) {
+      point.metric[k] = host(n, k);
+      point.curvature[k] = host(n, 6+k);
+    }
+    for (int k = 0; k < 18; ++k) point.metric_derivative[k] = host(n, 12+k);
   }
-  for (int n = 0; n < 18; ++n) result.metric_derivative[n] = reduced[12 + n];
-  result.valid = true;
-  for (const Real value : reduced) result.valid = result.valid && std::isfinite(value);
   return result;
 }
 
-M0AxisSample CartoonM0FastFlow::SampleAxisLapse(const Real z) const {
-  M0AxisSample result;
-  result.z = z;
-  // Lapse is an evolved Z4c field.  In VC mode sample the authoritative
-  // rho=0 nodal line; the ADM metric path above deliberately uses the explicit
-  // cell-centred adapter instead.
-  const auto stencil =
-      LocateNativeCartoonMeridionalPoint(pack_->pmesh, 0.0, z);
-  if (!stencil.valid) return result;
-  Kokkos::View<Real *> values("Cartoon axis lapse sample", 2);
-  Kokkos::deep_copy(values, 0.0);
-  if (stencil.owner_rank == global_variable::my_rank) {
-    auto u0 = pack_->pz4c->u0;
-    const int alpha = pack_->pz4c->I_Z4C_ALPHA;
-    Kokkos::parallel_for("Cartoon axis lapse interpolate",
-        Kokkos::RangePolicy<DevExeSpace>(0, 1), KOKKOS_LAMBDA(const int) {
-          values(0) = SampleCartoonMeridionalScalar(u0, alpha, stencil);
-          values(1) = 1.0;
-        });
-    Kokkos::fence();
-  }
+std::vector<M0AxisSample> CartoonM0FastFlow::SampleAxisLapse(const std::vector<Real> &z) const {
+  const int count = z.size();
+  Kokkos::View<CartoonMeridionalStencil *> stencils("m0 axis stencils", count);
+  auto on_host = Kokkos::create_mirror_view(stencils);
+  // The lapse uses the native Z4c layout, including the rho=0 vertex.
+  for (int n = 0; n < count; ++n)
+    on_host(n) = LocateNativeCartoonMeridionalPoint(pack_->pmesh, 0.0, z[n]);
+  Kokkos::deep_copy(stencils, on_host);
+  Kokkos::View<Real *[2], Kokkos::LayoutRight> values("m0 axis lapse samples", count);
+  const int rank = global_variable::my_rank;
+  const auto u0 = pack_->pz4c->u0;
+  const int alpha = pack_->pz4c->I_Z4C_ALPHA;
+  Kokkos::parallel_for("Cartoon axis lapse interpolate",
+      Kokkos::RangePolicy<DevExeSpace>(0, count), KOKKOS_LAMBDA(const int n) {
+        const auto stencil = stencils(n);
+        if (!stencil.valid || stencil.owner_rank != rank) return;
+        values(n, 0) = SampleCartoonMeridionalScalar(u0, alpha, stencil);
+        values(n, 1) = 1.0;
+      });
+  Kokkos::fence();
   auto host = Kokkos::create_mirror_view_and_copy(HostMemSpace(), values);
-  Real reduced[2] = {host(0), host(1)};
 #if MPI_PARALLEL_ENABLED
-  MPI_Allreduce(MPI_IN_PLACE, reduced, 2, MPI_ATHENA_REAL, MPI_SUM,
-                MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, host.data(), 2*count, MPI_ATHENA_REAL, MPI_SUM, MPI_COMM_WORLD);
 #endif
-  result.lapse = reduced[0];
-  result.valid = reduced[1] == 1.0 && std::isfinite(result.lapse) &&
-                 result.lapse >= 0.0;
-  return result;
+  std::vector<M0AxisSample> samples(count);
+  for (int n = 0; n < count; ++n) {
+    const Real lapse = host(n, 0);
+    samples[n] = {host(n, 1) == 1.0 && std::isfinite(lapse) && lapse >= 0.0, z[n], lapse};
+  }
+  return samples;
 }
 
 M0CandidateSummary CartoonM0FastFlow::SearchCandidate(
@@ -650,7 +919,8 @@ M0CandidateSummary CartoonM0FastFlow::SearchCandidate(
     Real area = 0.0, direct2 = 0.0, flow2 = 0.0, mean = 0.0, spin_z = 0.0;
     Real minimum = std::numeric_limits<Real>::infinity();
     std::vector<Real> projection(lmax_ + 1, 0.0);
-    bool covered = true;
+    std::vector<std::array<Real, 3>> profiles(ntheta_);
+    M0Locations locations;
     for (int n = 0; n < ntheta_; ++n) {
       Real radius = 0.0, first = 0.0, second = 0.0;
       for (int l = 0; l <= lmax_; ++l) {
@@ -659,12 +929,24 @@ M0CandidateSummary CartoonM0FastFlow::SearchCandidate(
         first += summary.coefficients[l] * dy0_[index];
         second += summary.coefficients[l] * ddy0_[index];
       }
-      if (!std::isfinite(radius) || radius <= 0.0) { covered = false; break; }
+      if (!std::isfinite(radius) || radius <= 0.0) {
+        summary.failure = "nonpositive_radius";
+        return summary;
+      }
+      profiles[n] = {radius, first, second};
+      locations.push_back({radius*std::sin(theta_[n]), center_z + radius*std::cos(theta_[n])});
+    }
+    const auto samples = SampleAdm(locations);
+    for (int n = 0; n < ntheta_; ++n) {
+      const auto [radius, first, second] = profiles[n];
       minimum = std::min(minimum, radius);
       mean += weights_[n] * radius * 0.5;
-      const auto point = EvaluateM0SurfacePoint(theta_[n], radius, first, second,
-          SampleAdm(radius * std::sin(theta_[n]), center_z + radius * std::cos(theta_[n])));
-      if (!point.valid) { covered = false; break; }
+      const auto &adm = samples[n];
+      const auto point = EvaluateM0SurfacePoint(theta_[n], radius, first, second, adm);
+      if (!point.valid) {
+        summary.failure = adm.valid ? "invalid_surface_geometry" : "invalid_adm_sample";
+        return summary;
+      }
       const Real darea = kCartoonTwoPi * weights_[n] * point.area_factor /
                          std::sin(theta_[n]);
       area += darea;
@@ -676,11 +958,11 @@ M0CandidateSummary CartoonM0FastFlow::SearchCandidate(
                          y0_[n * (lmax_ + 1) + l];
       }
     }
-    if (!covered || !std::isfinite(area) || area <= 0.0 ||
+    if (!std::isfinite(area) || area <= 0.0 ||
         !std::isfinite(spin_z) || !std::isfinite(direct2) ||
         !std::isfinite(flow2) || !std::isfinite(mean) || mean <= 0.0 ||
         !std::isfinite(minimum) || minimum <= 0.0) {
-      summary.failure = "coverage_or_radius";
+      summary.failure = "nonfinite_integral";
       return summary;
     }
     const Real irreducible_mass = std::sqrt(area / (16.0 * kPi));
@@ -706,18 +988,40 @@ M0CandidateSummary CartoonM0FastFlow::SearchCandidate(
         std::abs(irreducible_mass - previous_mass) / irreducible_mass;
     if (iteration > 0 && relative_mass < mass_tolerance_ &&
         flow < hrms_tolerance_ && direct < direct_tolerance_) {
+      if (const char *failure = M0ExpansionFailure(summary.coefficients, center_z, ntheta_,
+              0.0, direct_tolerance_, 2*irreducible_mass,
+              [this](const M0Locations &points) { return SampleAdm(points); })) {
+        summary.failure = failure;
+        return summary;
+      }
       summary.converged = true;
       summary.failure = "none";
       return summary;
     }
+    if (iteration + 1 == iterations_) break;  // Keep diagnostics and coefficients on one iterate.
     previous_mass = irreducible_mass;
     const Real alpha = flow_scale_;
     const Real beta = 0.5 * flow_scale_;
     for (int l = 0; l <= lmax_; ++l) {
       const Real factor = (alpha / (lmax_ * (lmax_ + 1.0)) + beta) /
                           (1.0 + (beta / alpha) * l * (l + 1.0));
-      summary.coefficients[l] -= factor * projection[l];
+      projection[l] *= -factor;
     }
+    // Do not advance to a nonpositive trial radius. Hand an excessive step
+    // to the safeguarded meridional correction at the last admissible surface.
+    for (int n = 0; n < ntheta_; ++n) {
+      Real radius = 0.0, delta = 0.0;
+      for (int l = 0; l <= lmax_; ++l) {
+        const Real y = y0_[n*(lmax_ + 1) + l];
+        radius += y*summary.coefficients[l];
+        delta += y*projection[l];
+      }
+      if (delta < -0.5*radius) {
+        summary.failure = "excessive_radial_step";
+        return summary;
+      }
+    }
+    for (int l = 0; l <= lmax_; ++l) summary.coefficients[l] += projection[l];
   }
   summary.failure = "iteration_limit";
   return summary;
@@ -728,14 +1032,14 @@ void CartoonM0FastFlow::Find(const int cycle, const Real time) {
   last_search_cycle_ = cycle;
   last_search_time_ = time;
   candidates_.clear();
-  const M0AxisSample origin_sample = SampleAxisLapse(0.0);
-  std::vector<M0AxisSample> axis_samples;
-  axis_samples.reserve(2 * axis_search_samples_);
+  std::vector<Real> positions{0.0};
   for (int index = 1; index <= axis_search_samples_; ++index) {
     const Real magnitude = axis_search_bound_ * index / axis_search_samples_;
-    axis_samples.push_back(SampleAxisLapse(-magnitude));
-    axis_samples.push_back(SampleAxisLapse(magnitude));
+    positions.push_back(-magnitude);
+    positions.push_back(magnitude);
   }
+  const auto axis_samples = SampleAxisLapse(positions);
+  const auto &origin_sample = axis_samples.front();
   Real plus_center = 0.0, minus_center = 0.0;
   Real plus_lapse = 0.0, minus_lapse = 0.0;
   const bool plus_valid = SelectM0AxisLapseMinimum(
@@ -778,6 +1082,28 @@ void CartoonM0FastFlow::Find(const int cycle, const Real time) {
         ? origin_initial_radius : pair_initial_radius;
     auto candidate = SearchCandidate(entry.first, entry.second,
                                      fresh_initial_radius, warm);
+    const auto sample = [this](const M0Locations &points) { return SampleAdm(points); };
+    if (!candidate.converged && iterations_ > 1 && ntheta_ >= lmax_ + 1) {
+      // A small sphere can lie inside the basin of the inner root. A larger
+      // origin trial also covers common surfaces enclosing both axial centers.
+      // Keep mirror seeds disjoint. All trials use the same acceptance checks.
+      const std::vector<Real> factors = entry.first == "origin"
+          ? std::vector<Real>{4.0, 1.0} : std::vector<Real>{1.0};
+      for (Real factor : factors) {
+        std::vector<Real> seed(lmax_ + 1, 0.0);
+        seed[0] = std::sqrt(4*kPi)*factor*fresh_initial_radius;
+        auto trial = RefineM0Surface(seed, entry.second, ntheta_, std::min(iterations_, 20),
+                                     0.0, direct_tolerance_, hrms_tolerance_, mass_tolerance_,
+                                     sample);
+        trial.branch = entry.first;
+        trial.fresh_initial_radius = factor*fresh_initial_radius;
+        if (trial.converged || (trial.area > 0 &&
+            (candidate.area <= 0 || trial.direct_residual < candidate.direct_residual))) {
+          candidate = std::move(trial);
+        }
+        if (candidate.converged) break;
+      }
+    }
     candidate.axis_extremum_z = entry.second;
     candidate.center_lapse = entry.first == "plus" ? plus_lapse :
                               entry.first == "minus" ? minus_lapse :
@@ -793,11 +1119,37 @@ void CartoonM0FastFlow::Find(const int cycle, const Real time) {
       recentered[1] = 0.0;
       const Real center_lapse = candidate.center_lapse;
       const Real axis_extremum_z = candidate.axis_extremum_z;
-      candidate = SearchCandidate(entry.first, candidate.center_z + shift,
+      auto moved = SearchCandidate(entry.first, candidate.center_z + shift,
                                   fresh_initial_radius,
                                   recentered);
+      if (!moved.converged) break;
+      candidate = std::move(moved);
       candidate.axis_extremum_z = axis_extremum_z;
       candidate.center_lapse = center_lapse;
+    }
+    const Real inner_target = pin_->GetReal("fastflow", "cartoon_inner_target_0");
+    if (inner_target < 0 && candidate.area > 0 && ntheta_ >= lmax_ + 1) {
+      const Real tol = std::min(direct_tolerance_, -0.25*inner_target);
+      auto inner = RefineM0Surface(candidate.coefficients, candidate.center_z, ntheta_,
+                                   std::min(iterations_, 20), inner_target, tol,
+                                   hrms_tolerance_, mass_tolerance_, sample);
+      // Do not promote a strictly trapped surface to a MOTS or feed it to the
+      // tracker/restart. Save its shape and mass for independent verification.
+      if (global_variable::my_rank == 0) {
+        const auto path = pin_->GetString("job", "basename") + ".cartoon_m0_inner_0.txt";
+        FILE *fp = std::fopen(path.c_str(), "a");
+        if (!fp) throw std::runtime_error("cannot open Cartoon inner-surface history");
+        std::fseek(fp, 0, SEEK_END);
+        if (std::ftell(fp) == 0)
+          std::fprintf(fp, "# cycle time branch target_rThetaPlus trapped center_z area "
+                           "irreducible_mass direct_residual status a_l0...\n");
+        std::fprintf(fp, "%d %.17e %s %.17e %d %.17e %.17e %.17e %.17e %s", cycle,
+                     time, entry.first.c_str(), inner_target, inner.converged, inner.center_z,
+                     inner.area, inner.irreducible_mass, inner.direct_residual, inner.failure.c_str());
+        for (const Real c : inner.coefficients) std::fprintf(fp, " %.17e", c);
+        std::fputc('\n', fp);
+        std::fclose(fp);
+      }
     }
     candidates_.push_back(std::move(candidate));
   }

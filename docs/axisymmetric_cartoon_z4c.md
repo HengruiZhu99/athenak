@@ -79,3 +79,11 @@ restarts without the block retain their previous behavior and acquire a carrier 
 written. The central sampler and m=0 FastFlow algorithms persist their state; each field is
 initialized to an explicit inactive default until its consumer is enabled. The carrier
 supports the admitted `kerr_puncture` pgen but does not by itself qualify Cartoon restart.
+
+### Axisymmetric horizon search
+
+The Cartoon finder represents a closed surface by a radius about an axial center, expanded in real normalized $Y_{\ell 0}$. If FastFlow overshoots or fails to converge, the finder also solves the meridional equation for $r\Theta_+=0$ with a damped least-squares Newton step. The origin search tries a larger enclosing seed as well as the configured seed. Each search samples the ADM data across ranks and checks the full meridian at the quadrature angles, on an independent angular grid and near both poles. Acceptance requires a stable area mass, the configured RMS residuals, and an angle-by-angle outgoing residual within `cartoon_direct_residual_tol_0`. The pointwise check scales the physical residual by the larger of local coordinate radius and area radius. Each sampled radius must span at least two local grid spacings. The same pointwise tolerance bounds positive ingoing expansion to allow a time-symmetric bifurcation sphere.
+
+Set `fastflow/cartoon_inner_target_0` to a small negative dimensionless value, such as `-0.025`, to request a separate search for $r\Theta_+$ at that value. Zero disables this diagnostic. The file `<basename>.cartoon_m0_inner_0.txt` records the trial center, area, irreducible mass and shape. Only rows with `trapped=1` passed both strict sign checks. Only marginal surfaces enter the horizon tracker and restart state.
+
+Use at least as many quadrature points as harmonic coefficients for Newton correction. For distorted surfaces compare angular orders and spatial resolution. A surface can have an accurate integrated area while retaining a significant expansion error near a pole. The search covers star-shaped surfaces about the tested centers. A failed search leaves the existence of other surfaces open.

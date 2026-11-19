@@ -30,8 +30,8 @@ def main() -> int:
     public = body.split(" private:", 1)[0]
     private = body.split(" private:", 1)[1]
     for declaration in (
-        "M0AdmSample SampleAdm(Real rho, Real z) const;",
-        "M0AxisSample SampleAxisLapse(Real z) const;",
+        "std::vector<M0AdmSample> SampleAdm(const M0Locations &locations) const;",
+        "std::vector<M0AxisSample> SampleAxisLapse(const std::vector<Real> &z) const;",
     ):
         require(public.count(declaration) == 1,
                 f"nvcc kernel-enclosing method is not public: {declaration}")
@@ -42,7 +42,7 @@ def main() -> int:
             "unrelated FastFlow implementation methods escaped private access")
 
     definitions = tuple(re.finditer(
-        r"(?:M0AdmSample|M0AxisSample) CartoonM0FastFlow::"
+        r"std::vector<(?:M0AdmSample|M0AxisSample)> CartoonM0FastFlow::"
         r"(?P<name>SampleAdm|SampleAxisLapse)\([^)]*\) const \{(?P<body>.*?)\n\}",
         source, re.DOTALL))
     require(len(definitions) == 2 and

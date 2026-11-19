@@ -272,7 +272,7 @@ def validate_source_contract(source: Path) -> None:
         ('No <amr_criterion> blocks were found in input file', criteria),
         ('pmy_mesh->pgen->user_ref_func(pmbp)', refinement),
         ('GetOrAddString("mesh_refinement","refinement","none")', mesh),
-        ('GetOrAddReal("mesh_refinement", "refinement_interval"', refinement),
+        ('GetOrAddInteger("mesh_refinement", "refinement_interval"', refinement),
         ('DoesParameterExist("mesh_refinement", "max_nmb_per_rank"', tree),
         ('GetOrAddInteger("mesh_refinement", "num_levels"', tree),
         ('GetInteger(opar.block_name,"dcycle")', outputs),
