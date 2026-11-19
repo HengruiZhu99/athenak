@@ -18,6 +18,12 @@ The selected change saved 0.02132 s/interval, against a 0.01360 s range of four-
 
 In separate device profiles, the mean ordinary and scri-adjacent bulk point kernels fell from 0.57281 to 0.55562 s/interval per tile. Rank 5 had the largest total device time for the selected solver, at 1.6816 s/interval. On that tile the point kernels used 0.6165 s, surface exchange kernels 0.3682 s, mapped halo interpolation 0.1565 s, stage donor construction 0.1472 s, and field derivative preparation 0.1294 s. These durations are device service on one tile. The timing table measures full uninstrumented intervals. Full receipts are in the n12-halo-kernels-20261119 results archive.
 
+## Constant compactification in the production mesh
+
+An inventory using the native atlas maps and bulk activity policy reproduced the archived bulk count for each of the 754 blocks. Weighting each block by its actual number of RK stages gives **29,818,368 of 33,467,904 point-stages (89.1%)** on the constant Ω plateau. The share is 93.2% on rank 5, the busiest tile in the factored curvature profile. All 700 plateau blocks lie completely inside the plateau, and the remaining 54 lie completely outside. The production inner gauge weight is one throughout the plateau.
+
+In these cells the prescribed spatial gradient and Hessian of Ω vanish. Stationarity then makes the normal derivative vanish for any evolved shift. In the inner geometric source the derivatives of the connection constraint combine with Ricci, and the inner damping coefficients reduce to their plateau values. A CPU trial evaluated the resulting point equations at 6,000 states, including both sides of the radial cut, general compactification profiles, invalid metrics and chi, nonzero gauge sources and transport. The general and specialized routines accepted the same 5,458 states and rejected the same 542. Across all 31 rates, coordinate speeds and the speed gap, the maximum scaled difference was 1.42×10⁻¹⁴. This check establishes the algebraic comparison. The 1.757 s timing above is for solver 40d0aac1a. The per-block inventory and oracle are in the n12-halo-kernels-20261119 results archive.
+
 ## Accepted-state projection
 
 An accepted Runge–Kutta record contains scalar field values. The solver now reconstructs those values directly. It checks that the implicit metric component has zero first and second derivatives for constant inputs and that the metric inverse is finite. The chi floor, its persistent history, and the physical lapse check still run at acceptance.
