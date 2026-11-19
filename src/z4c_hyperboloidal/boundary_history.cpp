@@ -34,8 +34,8 @@ std::array<Real,20> SurfaceExchange::MeasureHistory() {
       const auto u=SphericalPolicy::Physical(map.x,j);
       auto omega=params.profile.At(map.x);omega.omega=0;
       SetStationaryOmegaNormal(u.alpha.value,u.beta.value,u.alpha.d,u.beta.d,omega);
-      auto parts=ConformalRHS(u,omega,params.kappa1,params.kappa2,&metrics(q),&penrose(q));
-      if(!HyperbolicDamping(map.x,u,omega,parts,params,&metrics(q))) {
+      auto parts=DampedConformalRHS(map.x,u,omega,params,&metrics(q),&penrose(q));
+      if(!parts.valid) {
         measured(q,0)=NAN;return;
       }
       const auto traces=ScriRegularityTraces(u,omega,&metrics(q),&penrose(q));

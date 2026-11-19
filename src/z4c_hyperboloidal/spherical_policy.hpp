@@ -59,8 +59,12 @@ struct SphericalPolicy {
       const SpatialGeometry<Real>*penrose_geometry=nullptr){
     const auto*x=map.x;const auto u=Physical(x,j);
     auto o=parameters.profile.At(x);o.omega=0;SetStationaryOmegaNormal(u.alpha.value,u.beta.value,u.alpha.d,u.beta.d,o);
-    auto parts=ConformalRHS(u,o,parameters.kappa1,parameters.kappa2,metric_geometry,penrose_geometry);
-    if(!HyperbolicDamping(x,u,o,parts,parameters,metric_geometry)){BoundaryResult bad;bad.valid=false;return bad;};
+    auto parts=DampedConformalRHS(x,u,o,parameters,metric_geometry,penrose_geometry);
+    if (!parts.valid) {
+      BoundaryResult bad;
+      bad.valid = false;
+      return bad;
+    }
     const auto pole=TensorPoleNormalJet(u,o,x,x,parameters.kappa1,parameters.kappa2,1.,parameters.outer_lapse_damping,true,true);
     auto rate=TensorScriLimit(parts.regular,pole,-1.);const auto trace=ScriRegularityTraces(u,o,metric_geometry,penrose_geometry);const auto g=metric_geometry ? *metric_geometry : Geometry(u.metric);
     double Q=0,invn[3]{};for(int a=0;a<3;++a)for(int b=0;b<3;++b){Q+=g.inverse[a][b]*x[a]*x[b];invn[a]+=g.inverse[a][b]*x[b];}

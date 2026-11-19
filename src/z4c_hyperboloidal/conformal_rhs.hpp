@@ -44,6 +44,48 @@ struct EvolvedConstraintResult {
   Z4ConstraintResult<T> z4;
 };
 
+// Transform the spatial geometry under b_ij = exp(2 phi) g_ij, phi = -log(chi)/2.
+// The derivatives of the connection contraction are ordinary coordinate derivatives.
+template <typename T>
+KOKKOS_INLINE_FUNCTION SpatialGeometry<T> RescaleGeometry(
+    const MetricJet<T>& metric, const SpatialGeometry<T>& g, const ScalarJet<T>& chi) {
+  SpatialGeometry<T> b{};
+  const T c = chi.value;
+  if (!g.valid || !(c > 0) || !Kokkos::isfinite(c)) return b;
+  b.determinant = g.determinant / c / c / c;
+  if (!(b.determinant > 0) || !Kokkos::isfinite(b.determinant)) return b;
+  T grad[3], raised[3]{}, hess[3][3], lap = 0, norm2 = 0;
+  for (int i = 0; i < 3; ++i) grad[i] = -chi.d[i] / (2*c);
+  for (int i = 0; i < 3; ++i) {
+    for (int j = 0; j < 3; ++j) {
+      b.inverse[i][j] = c * g.inverse[i][j];
+      raised[i] += g.inverse[i][j] * grad[j];
+      hess[i][j] = -chi.dd[i][j] / (2*c) + 2*grad[i]*grad[j];
+      for (int k = 0; k < 3; ++k) hess[i][j] -= g.connection[k][i][j] * grad[k];
+      lap += g.inverse[i][j] * hess[i][j];
+    }
+    norm2 += grad[i] * raised[i];
+  }
+  for (int i = 0; i < 3; ++i) {
+    b.contracted[i] = c * (g.contracted[i] - raised[i]);
+    for (int j = 0; j < 3; ++j) {
+      b.ricci[i][j] = g.ricci[i][j] - hess[i][j] + grad[i]*grad[j]
+                      - metric.g[i][j]*(lap + norm2);
+      b.scalar += b.inverse[i][j] * b.ricci[i][j];
+      T derivative = 0;
+      for (int k = 0; k < 3; ++k) {
+        b.connection[k][i][j] = g.connection[k][i][j] + (k == i ? grad[j] : T(0))
+                              + (k == j ? grad[i] : T(0)) - metric.g[i][j]*raised[k];
+        derivative += g.inverse[i][k]*hess[j][k] - g.connection[i][j][k]*raised[k];
+      }
+      b.dcontracted[j][i] = chi.d[j]*(g.contracted[i]-raised[i])
+                           + c*(g.dcontracted[j][i]-derivative);
+    }
+  }
+  b.valid = Kokkos::isfinite(b.scalar);
+  return b;
+}
+
 // Convert twice-conformal spatial metric jets to Penrose spatial metric jets.
 template <typename T>
 KOKKOS_INLINE_FUNCTION

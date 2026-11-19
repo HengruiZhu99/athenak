@@ -17,14 +17,9 @@ namespace z4c_hyperboloidal {
 // no spatial derivatives of the blend enter. Split pole numerators avoid an
 // artificial Omega floor. The caller must leave the legacy formulation alone.
 template <class T>
-KOKKOS_INLINE_FUNCTION bool CartesianInnerAdjustment(const Z4cJet<T>& u, const OmegaJet<T>& o,
-                                                     T weight, Z4cRHSParts<T>& parts) {
-  if (weight == 0)
-    return true;
-  const auto gt = Geometry(u.metric);
-  const auto gb = Geometry(PenroseMetric(u.metric, u.chi));
-  if (!gt.valid || !gb.valid || !parts.valid)
-    return false;
+KOKKOS_INLINE_FUNCTION void CartesianInnerAdjustment(
+    const Z4cJet<T>& u, const OmegaJet<T>& o, T weight, const SpatialGeometry<T>& gt,
+    const SpatialGeometry<T>& gb, Z4cRHSParts<T>& parts) {
   T z[3]{}, dz[3][3]{}, correction[3][3]{}, pole[3][3]{};
   T trace = 0, pole_trace = 0, ricci_trace = 0, divz = 0, divbeta = 0;
   for (int i = 0; i < 3; ++i) {
@@ -65,7 +60,6 @@ KOKKOS_INLINE_FUNCTION bool CartesianInnerAdjustment(const Z4cJet<T>& u, const O
       parts.pole.a[i][j] += weight * (pole[i][j] - u.metric.g[i][j] * pole_trace / 3);
     }
   }
-  return true;
 }
 }  // namespace z4c_hyperboloidal
 #endif

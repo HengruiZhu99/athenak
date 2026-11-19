@@ -350,13 +350,14 @@ HyperbolicGaugeParts<T> HyperbolicGauge(const T x[3],const Z4cJet<T>&u,
   return out;
 }
 
-// Finite products only. Apply to the SAME free ConformalRHS used in the donor.
-// Geometry(u.metric).contracted is used for damping Z, not to overwrite Lambda.
+// The chi guard affects only the geometric source and damping. Evaluate both
+// with the same effective chi and the same pair of point-local geometries.
 template<class T> KOKKOS_INLINE_FUNCTION
-bool HyperbolicDamping(const T x[3], const Z4cJet<T> &input,
-    const OmegaJet<T> &omega, Z4cRHSParts<T> &parts,
+Z4cRHSParts<T> DampedConformalRHS(const T x[3], const Z4cJet<T> &input,
+    const OmegaJet<T> &omega,
     const HyperbolicShiftParameters<T> &p = {},
-    const SpatialGeometry<T> *metric_geometry=nullptr) {
+    const SpatialGeometry<T> *metric_geometry=nullptr,
+    const SpatialGeometry<T> *penrose_geometry=nullptr) {
   auto u=input;
   if(p.cartesian_chi_guard && p.profile.flat && omega.omega>0) {
     T radius2=0;for(int i=0;i<3;++i)radius2+=x[i]*x[i];
@@ -367,11 +368,13 @@ bool HyperbolicDamping(const T x[3], const Z4cJet<T> &input,
       // derivatives of the evolved field. This is numerical regularization,
       // not differentiation of max(chi, floor), and never a state reset.
       u.chi.value+=s*(guarded-u.chi.value);
-      parts=ConformalRHS(u,omega,p.kappa1,p.kappa2,metric_geometry);
+      penrose_geometry=nullptr;
     }
   }
   const auto g=metric_geometry ? *metric_geometry : Geometry(u.metric);
-  if (!parts.valid || !g.valid) return false;
+  const auto gb=penrose_geometry ? *penrose_geometry : RescaleGeometry(u.metric,g,u.chi);
+  auto parts=ConformalRHS(u,omega,p.kappa1,p.kappa2,&g,&gb);
+  if (!parts.valid) return parts;
   T r2=0; for (int i=0;i<3;++i) r2+=x[i]*x[i];
   const auto c=ShiftCoefficients(sqrt(r2),u.alpha.value,u.chi.value,p);
   const T delta=((direct_outer && !restore_inner_damping) || p.inner_z4==0) ? T(0) :
@@ -392,10 +395,10 @@ bool HyperbolicDamping(const T x[3], const Z4cJet<T> &input,
       for(int i=0;i<3;++i)parts.pole.lambda[i]+=s*(old-2*target)*(u.lambda.value[i]-g.contracted[i]);
       // Keep the experimental off-constraint algebra out of legacy GPU kernels.
       if constexpr (configured_conformal_frame)
-        if (p.profile.flat && !CartesianInnerAdjustment(u,omega,s,parts)) return false;
+        if (p.profile.flat) CartesianInnerAdjustment(u,omega,s,g,gb,parts);
     }
   }
-  return true;
+  return parts;
 }
 
 // Use the freely evolved connection RHS, including its chosen numerical

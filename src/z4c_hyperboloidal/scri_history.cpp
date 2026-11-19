@@ -41,8 +41,8 @@ std::array<Real,ScriHistory::count> SurfaceExchange::MeasureInvestigation() {
       SetStationaryOmegaNormal(u.alpha.value,u.beta.value,u.alpha.d,u.beta.d,omega);
       const auto D=SphericalPolicy::Vector(j,25);
       const auto geometry=EvaluateScriGeometry(map.x,u,D.value,omega,params,&metrics(q),&penrose(q));
-      auto parts=ConformalRHS(u,omega,params.kappa1,params.kappa2,&metrics(q),&penrose(q));
-      const bool damping=HyperbolicDamping(map.x,u,omega,parts,params,&metrics(q));
+      auto parts=DampedConformalRHS(map.x,u,omega,params,&metrics(q),&penrose(q));
+      const bool damping=parts.valid;
       const auto trace=ScriRegularityTraces(u,omega,&metrics(q),&penrose(q));
       const auto pole=TensorPoleNormalJet(u,omega,map.x,map.x,params.kappa1,params.kappa2,Real(1),params.outer_lapse_damping,true,true);
       if(!reconstruction.valid || !rate.valid || !no_penalty.valid || !geometry.valid || !damping) {++bad;return;}
