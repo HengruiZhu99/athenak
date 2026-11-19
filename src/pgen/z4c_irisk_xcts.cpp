@@ -27,6 +27,7 @@
 #include "coordinates/cell_locations.hpp"
 #include "globals.hpp"
 #include "irisk_athenak_spectral_interpolator.h"
+#include "irisk_athenak_time_asymmetric_interpolator.h"
 #include "mesh/mesh.hpp"
 #include "parameter_input.hpp"
 #include "pgen/pgen.hpp"
@@ -200,6 +201,81 @@ double EvaluateGlobalBrillPsi(const BrillGlobalCoefficients &coefficients,
     }
   }
   return psi;
+}
+
+// Evaluate the global TA representation on authoritative native vertices.
+// Physical Cartesian axes are (rho,y,z); Cartoon storage axes are (rho,z,y).
+void FillAdmFromTimeAsymmetric(MeshBlockPack *pmbp, const std::string &path) {
+  constexpr auto map = z4c_irisk::AdmMap::half_rho_z_suppressed_y_v2;
+  if (z4c_irisk::SelectAdmMap(pmbp->z4c_symmetry) != map ||
+      pmbp->pz4c->layout.centering != z4c::Z4cGridCentering::vertex) {
+    Fail("direct_time_asymmetric_coefficients requires vertex Cartoon");
+  }
+  IrisAthenakTimeAsymmetricInterpolator *raw = nullptr;
+  std::array<char, 1024> error{};
+  if (IrisAthenakTimeAsymmetricOpen(path.c_str(), &raw, error.data(),
+                                  error.size()) != 0) Fail(error.data());
+  std::unique_ptr<IrisAthenakTimeAsymmetricInterpolator,
+                 decltype(&IrisAthenakTimeAsymmetricClose)>
+      interp(raw, IrisAthenakTimeAsymmetricClose);
+  auto &native = pmbp->pz4c->u_adm_native;
+  auto host = create_mirror(native);
+  Kokkos::deep_copy(host, 0.0);
+  Kokkos::deep_copy(pmbp->pz4c->u0, 0.0);
+  const auto &l = pmbp->pz4c->layout;
+  pmbp->pmb->mb_size.sync_host();
+  pmbp->pmb->mb_bcs.sync_host();
+  auto size = pmbp->pmb->mb_size.h_view;
+  auto bcs = pmbp->pmb->mb_bcs.h_view;
+  Real min_lapse = std::numeric_limits<Real>::infinity();
+  for (int m = 0; m < pmbp->nmb_thispack; ++m) {
+    const bool axis = bcs(m, BoundaryFace::inner_x1) == BoundaryFlag::axis;
+    const int begin = axis ? l.is : 0;
+    const int nx = l.n1 - begin;
+    std::vector<double> x(nx), z(l.n2);
+    const double y = 0.0;
+    for (int i = begin; i < l.n1; ++i)
+      x[i-begin] = VertexX(i-l.is, l.nx1, size(m).x1min, size(m).x1max);
+    for (int j = 0; j < l.n2; ++j)
+      z[j] = VertexX(j-l.js, l.nx2, size(m).x2min, size(m).x2max);
+    std::vector<double> values(nx*l.n2*IRISK_ATHENAK_ADM_VARIABLE_COUNT);
+    if (IrisAthenakTimeAsymmetricInterpolateCartesian(
+            interp.get(), nx, 1, l.n2, x.data(), &y, z.data(), values.data(),
+            error.data(), error.size()) != 0) Fail(error.data());
+    for (int j = 0; j < l.n2; ++j) {
+      for (int i = begin; i < l.n1; ++i) {
+        const double *v = values.data() + (j*nx+i-begin)*17;
+        for (int n = 0; n < 17; ++n)
+          if (!std::isfinite(v[n])) Fail("nonfinite TA ADM field");
+        if (!(v[12] > 0.0 && v[13] > 0.0)) Fail("nonpositive TA psi4/lapse");
+        const auto g = z4c_irisk::SymmetricTensorFromPhysicalCartesian<map>(
+            std::array<double,6>{v[0],v[1],v[2],v[3],v[4],v[5]});
+        const auto kc = z4c_irisk::SymmetricTensorFromPhysicalCartesian<map>(
+            std::array<double,6>{v[6],v[7],v[8],v[9],v[10],v[11]});
+        const auto beta = z4c_irisk::VectorFromPhysicalCartesian<map>(
+            std::array<double,3>{v[14],v[15],v[16]});
+        min_lapse = std::min(min_lapse, static_cast<Real>(v[13]));
+        for (int k = 0; k < l.n3; ++k) {
+          for (int n = 0; n < 6; ++n) {
+            host(m,adm::ADM::I_ADM_GXX+n,k,j,i) = g[n];
+            host(m,adm::ADM::I_ADM_KXX+n,k,j,i) = kc[n];
+          }
+          host(m,adm::ADM::I_ADM_PSI4,k,j,i) = v[12];
+          host(m,adm::ADM::I_ADM_ALPHA,k,j,i) = v[13];
+          for (int n = 0; n < 3; ++n)
+            host(m,adm::ADM::I_ADM_BETAX+n,k,j,i) = beta[n];
+        }
+      }
+      if (axis) for (int k = 0; k < l.n3; ++k)
+        for (int n = 0; n <= adm::ADM::I_ADM_BETAZ; ++n)
+          if (!z4c::FillCenteredAdmAxisGhostLine<z4c::VertexCenteredZ4c>(
+                  host,m,n,k,j,l.is,pmbp->pmesh->mb_indcs.ng))
+            Fail("TA axis parity fill failed");
+    }
+  }
+  Kokkos::deep_copy(native, host);
+  std::cout << "Native VC TA initial data: minimum imported lapse="
+            << std::setprecision(17) << min_lapse << std::endl;
 }
 
 void FillAdmFromBrillGlobalCoefficients(
@@ -1640,6 +1716,13 @@ void ProblemGenerator::Z4cIrisXcts(ParameterInput *pin, const bool restart) {
     }
     FillAdmFromIrisSpectral(pmbp, interpolator);
     IrisAthenakSpectralClose(interpolator);
+  } else if (import_mode == "direct_time_asymmetric_coefficients") {
+    const std::string filename = pin->GetString(
+        "problem", "time_asymmetric_coefficients_file");
+    const auto resolved = ResolveSpectralInputPath(filename);
+    imported_path = resolved.string();
+    imported_bytes = std::filesystem::file_size(resolved);
+    FillAdmFromTimeAsymmetric(pmbp, imported_path);
   } else if (import_mode == "direct_global_coefficients") {
     const std::string initial_lapse = pin->GetOrAddString(
         "problem", "brill_direct_initial_lapse", "unit");
@@ -1662,7 +1745,7 @@ void ProblemGenerator::Z4cIrisXcts(ParameterInput *pin, const bool restart) {
         pmbp, coefficients, initial_lapse == "precollapsed_psi_minus_2");
   } else {
     Fail("problem.irisk_adm_import_mode must be m0_spectral_payload or "
-         "direct_global_coefficients");
+         "direct_global_coefficients or direct_time_asymmetric_coefficients");
   }
 
   // Convert the selected ADM fields, including the explicitly chosen direct
