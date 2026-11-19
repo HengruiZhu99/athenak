@@ -21,14 +21,15 @@ struct BulkPointResult {
 // in the N12 formulation. No timestep, array ownership or MPI is hidden here.
 KOKKOS_INLINE_FUNCTION BulkPointResult EvaluateBulkPoint(const mapped::Point &map,
     const CartesianChartJets &j,const HyperbolicShiftParameters<Real> &p,
-    const StationaryGaugeSource<Real> &source,const PointForcing &forcing={}) {
+    const StationaryGaugeSource<Real> &source,const PointForcing &forcing={},
+    const OmegaJet<Real> *spatial_omega=nullptr) {
   BulkPointResult out;
   const Real *x=map.x,r=SphericalPolicy::Radius(x);
   const auto u=SphericalPolicy::Physical(x,j);
   if (!(u.chi.value>0 && u.alpha.value>0)) {out.status=PointStatus::invalid_input;return out;}
   const auto g=Geometry(u.metric);
   if (!g.valid) {out.status=PointStatus::invalid_geometry;return out;}
-  auto omega=p.profile.At(x);
+  auto omega=spatial_omega ? *spatial_omega : p.profile.At(x);
   SetStationaryOmegaNormal(u.alpha.value,u.beta.value,u.alpha.d,u.beta.d,omega);
   auto parts=DampedConformalRHS(x,u,omega,p,&g);
   if (!parts.valid) {
@@ -39,7 +40,7 @@ KOKKOS_INLINE_FUNCTION BulkPointResult EvaluateBulkPoint(const mapped::Point &ma
   if (!AssembleInterior(parts,omega.omega,geometric)) {out.status=PointStatus::invalid_assembly;return out;}
   SphericalPolicy::StoreGeometry(geometric,out.rate);
   const auto B=SphericalPolicy::Vector(j,19),D=SphericalPolicy::Vector(j,25);
-  auto gauge=HyperbolicGauge(x,u,B,D.value,p,&g);
+  auto gauge=HyperbolicGauge(x,u,B,D.value,p,&g,&omega);
   ApplyStationaryGaugeSource(x,u.alpha.value,source,gauge);
   if (!gauge.valid) {out.status=PointStatus::invalid_gauge;return out;}
   out.rate[18]=gauge.lapse_regular+gauge.lapse_pole/omega.omega;

@@ -29,8 +29,11 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver, int stage, RHSSubset subset
   if (!selected.extent(0)) return TaskStatus::complete;
   const auto cells = points.d_view;
   const auto maps = geometry;
+  const auto blocks = pmy_pack->pmb->mb_map.d_view;
   const auto refs = reference;
   const auto sources = stationary_source;
+  const auto weights = residual_weights;
+  const auto omega = spatial_omega;
   const auto params = parameters;
   const auto physical = u0, delta = residual, output = u_rhs;
   const auto statuses = rhs_status;
@@ -96,7 +99,7 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver, int stage, RHSSubset subset
             beta[a] = reader(22 + a) + refs(p)[22 + a].f - map.x[a];
           const auto jet = SampleResidualJet(
               reader, field, map, inv_h, beta,
-              field <= 6 || field == 18 || (field >= 22 && field < 25), transport);
+              field <= 6 || field == 18 || (field >= 22 && field < 25), transport, blocks(c.m).face < 0);
           const int first = 14 * slot;
           scratch(first, index) = jet.f;
           for (int a = 0; a < 3; ++a) {
@@ -121,8 +124,8 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver, int stage, RHSSubset subset
           PointState state;
           if constexpr (with_radial_rows) {
             state = surface.HasRadialRow(p)
-                        ? EndpointState(p, reader, map, inv_h, refs(p), params, surface)
-                        : BuildPointState(reader, map, inv_h, refs(p), params);
+                        ? EndpointState(p, reader, map, inv_h, refs(p), params, surface, &weights(p))
+                        : BuildPointState(reader, map, inv_h, refs(p), params, nullptr, &weights(p), blocks(c.m).face < 0);
           } else if constexpr (decltype(precomputed)::value) {
             for (int f = 0; f < Fields::count; ++f) {
               if (!Fields::Independent(f)) continue;
@@ -136,9 +139,9 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver, int stage, RHSSubset subset
               }
               state.transport[f] = scratch(first + 13, index);
             }
-            RestorePointState(state, reader, map, inv_h, refs(p), params);
+            RestorePointState(state, reader, map, inv_h, refs(p), params, nullptr, &weights(p));
           } else {
-            state = BuildPointState(reader, map, inv_h, refs(p), params);
+            state = BuildPointState(reader, map, inv_h, refs(p), params, nullptr, &weights(p), blocks(c.m).face < 0);
           }
           statuses(p) = static_cast<int>(state.status);
           if (state.status != PointStatus::success) return;
@@ -148,7 +151,7 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver, int stage, RHSSubset subset
             forcing.dissipation[f] = output(c.m, f, c.k, c.j, c.i);
           }
           const auto result =
-              EvaluateBulkPoint(map, state.jets, params, sources(p), forcing);
+              EvaluateBulkPoint(map, state.jets, params, sources(p), forcing, &omega(p));
           statuses(p) = static_cast<int>(result.status);
           gaps(p) = result.gap;
           cfls(p) = dt * count * (result.speed[0] + result.speed[1] + result.speed[2]);

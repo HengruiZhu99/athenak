@@ -148,6 +148,8 @@ void Z4cHyperboloidal::AllocateStorage() {
   Kokkos::realloc(geometry,npoints);
   Kokkos::realloc(reference,npoints);
   Kokkos::realloc(stationary_source,npoints);
+  Kokkos::realloc(residual_weights,npoints);
+  Kokkos::realloc(spatial_omega,npoints);
   Kokkos::realloc(surface_geometry,nsurface_points);
   Kokkos::realloc(surface_reference,nsurface_points);
   Kokkos::realloc(chi_records,npoints);
@@ -185,6 +187,8 @@ void Z4cHyperboloidal::ResetMeshStorage() {
   reference=DvceArray1D<CartesianChartJets>();
   surface_reference=DvceArray1D<CartesianChartJets>();
   stationary_source=DvceArray1D<StationaryGaugeSource<Real>>();
+  residual_weights = {};
+  spatial_omega = {};
   chi_records=DvceArray1D<ChiRecord>(); surface_chi_records=DvceArray1D<ChiRecord>();
   nblocks=pmy_pack->nmb_thispack;
   BuildLocalWorkLists();
@@ -326,6 +330,15 @@ void Z4cHyperboloidal::BuildReferenceCache() {
   boundary_source=initial.source.At(1);
   Kokkos::deep_copy(geometry,g); Kokkos::deep_copy(reference,ref);
   Kokkos::deep_copy(stationary_source,sources);
+  const auto coords = geometry;
+  const auto weights = residual_weights;
+  const auto omega = spatial_omega;
+  const auto weight = parameters.residual_weight;
+  const auto profile = parameters.profile;
+  Kokkos::parallel_for("cache stationary bulk profiles", npoints, KOKKOS_LAMBDA(int p) {
+    weights(p) = weight.At(coords(p).x);
+    omega(p) = profile.At(coords(p).x);
+  });
   Kokkos::deep_copy(surface_geometry,sg); Kokkos::deep_copy(surface_reference,sr);
 }
 

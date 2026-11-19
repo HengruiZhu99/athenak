@@ -92,6 +92,8 @@ class Z4cHyperboloidal {
   DvceArray1D<mapped::Point> geometry, surface_geometry;
   DvceArray1D<CartesianChartJets> reference, surface_reference;
   DvceArray1D<StationaryGaugeSource<Real>> stationary_source;
+  DvceArray1D<mapped::Jet> residual_weights;
+  DvceArray1D<OmegaJet<Real>> spatial_omega;
   StationaryGaugeSource<Real> boundary_source;
   DvceArray1D<ChiRecord> chi_records, surface_chi_records;
   DvceArray1D<int> rhs_status;

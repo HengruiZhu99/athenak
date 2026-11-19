@@ -9,7 +9,8 @@ namespace z4c_hyperboloidal {
 template<class SurfaceKernel>
 KOKKOS_INLINE_FUNCTION PointState EndpointState(int p,const BlockPointReader &reader,
     const mapped::Point &map,const Real inv_h[3],const CartesianChartJets &reference,
-    const HyperbolicShiftParameters<Real> &parameters,const SurfaceKernel &surface) {
+    const HyperbolicShiftParameters<Real> &parameters,const SurfaceKernel &surface,
+    const mapped::Jet *cached_weight=nullptr) {
   PointState out;
   Real beta[3]{};
   for (int a=0;a<3;++a) beta[a]=reader(22+a)+reference[22+a].f-map.x[a];
@@ -31,7 +32,7 @@ KOKKOS_INLINE_FUNCTION PointState EndpointState(int p,const BlockPointReader &re
   }
   mapped::Jet lift[3];
   for (int a=0;a<3;++a) lift[a]=surface.NormalCorrection(p,map,a);
-  RestorePointState(out,reader,map,inv_h,reference,parameters,lift);
+  RestorePointState(out,reader,map,inv_h,reference,parameters,lift,cached_weight);
   return out;
 }
 }  // namespace z4c_hyperboloidal

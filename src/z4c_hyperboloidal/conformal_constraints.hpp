@@ -78,46 +78,71 @@ SpatialGeometry<T> Geometry(const MetricJet<T> &m) {
   SpatialGeometry<T> out{};
   out.valid = InvertMetric(m.g, out.inverse, out.determinant);
   if (!out.valid) return out;
-  T dinverse[3][3][3]{};
-  T dconnection[3][3][3][3]{};
-  for (int d = 0; d < 3; ++d)
-  for (int i = 0; i < 3; ++i)
-  for (int j = 0; j < 3; ++j)
-  for (int a = 0; a < 3; ++a)
-  for (int b = 0; b < 3; ++b) {
-    dinverse[d][i][j] -= out.inverse[i][a]*m.dg[d][a][b]*out.inverse[b][j];
-  }
-  for (int k = 0; k < 3; ++k)
-  for (int i = 0; i < 3; ++i)
-  for (int j = 0; j < 3; ++j)
+  // Work with Christoffels of the first kind. Only contracted derivatives of
+  // the connection enter Ricci and d(Gamma); no rank-four connection is needed.
+  T lower[3][3][3]{}, dinv[3][3][3]{}, contracted_lower[3]{};
   for (int a = 0; a < 3; ++a) {
-    const T first = m.dg[i][a][j]+m.dg[j][a][i]-m.dg[a][i][j];
-    out.connection[k][i][j] += T(0.5)*out.inverse[k][a]*first;
-    for (int d = 0; d < 3; ++d) {
-      dconnection[d][k][i][j] += T(0.5)*(dinverse[d][k][a]*first
-          + out.inverse[k][a]*(m.ddg[d][i][a][j]+m.ddg[d][j][a][i]
-                               -m.ddg[d][a][i][j]));
-    }
-  }
-  for (int i = 0; i < 3; ++i)
-  for (int j = 0; j < 3; ++j)
-  for (int k = 0; k < 3; ++k) {
-    out.contracted[i] += out.inverse[j][k]*out.connection[i][j][k];
-    for (int d = 0; d < 3; ++d) {
-      out.dcontracted[d][i] += dinverse[d][j][k]*out.connection[i][j][k]
-          +out.inverse[j][k]*dconnection[d][i][j][k];
-    }
-  }
-  for (int i = 0; i < 3; ++i)
-  for (int j = 0; j < 3; ++j) {
-    for (int k = 0; k < 3; ++k) {
-      out.ricci[i][j] += dconnection[k][k][i][j]-dconnection[j][k][i][k];
-      for (int a = 0; a < 3; ++a) {
-        out.ricci[i][j] += out.connection[k][i][j]*out.connection[a][k][a]
-            - out.connection[a][i][k]*out.connection[k][j][a];
+    for (int i = 0; i < 3; ++i) {
+      for (int j = i; j < 3; ++j) {
+        lower[a][i][j] = lower[a][j][i] =
+            T(0.5) * (m.dg[i][a][j] + m.dg[j][a][i] - m.dg[a][i][j]);
       }
     }
-    out.scalar += out.inverse[i][j]*out.ricci[i][j];
+  }
+  for (int d = 0; d < 3; ++d) {
+    T left[3][3]{};
+    for (int i = 0; i < 3; ++i)
+      for (int j = 0; j < 3; ++j)
+        for (int a = 0; a < 3; ++a) left[i][j] += out.inverse[i][a] * m.dg[d][a][j];
+    for (int i = 0; i < 3; ++i)
+      for (int j = i; j < 3; ++j) {
+        T value = 0;
+        for (int a = 0; a < 3; ++a) value -= left[i][a] * out.inverse[a][j];
+        dinv[d][i][j] = dinv[d][j][i] = value;
+      }
+  }
+  for (int k = 0; k < 3; ++k) {
+    for (int i = 0; i < 3; ++i) {
+      for (int j = i; j < 3; ++j) {
+        T upper = 0;
+        for (int a = 0; a < 3; ++a) upper += out.inverse[k][a] * lower[a][i][j];
+        out.connection[k][i][j] = out.connection[k][j][i] = upper;
+        contracted_lower[k] += (i == j ? 1 : 2) * out.inverse[i][j] * lower[k][i][j];
+      }
+    }
+  }
+  for (int i = 0; i < 3; ++i)
+    for (int k = 0; k < 3; ++k) out.contracted[i] += out.inverse[i][k] * contracted_lower[k];
+  for (int d = 0; d < 3; ++d) {
+    for (int a = 0; a < 3; ++a) {
+      T derivative = 0;
+      for (int i = 0; i < 3; ++i) {
+        for (int j = i; j < 3; ++j) {
+          const T dfirst = T(0.5) * (m.ddg[d][i][a][j] + m.ddg[d][j][a][i] - m.ddg[d][a][i][j]);
+          derivative += (i == j ? 1 : 2) * (dinv[d][i][j] * lower[a][i][j] + out.inverse[i][j] * dfirst);
+        }
+      }
+      for (int k = 0; k < 3; ++k) {
+        out.dcontracted[d][k] += dinv[d][k][a] * contracted_lower[a] + out.inverse[k][a] * derivative;
+      }
+    }
+  }
+  for (int i = 0; i < 3; ++i) {
+    for (int j = i; j < 3; ++j) {
+      T ricci = 0;
+      for (int k = 0; k < 3; ++k) {
+        for (int a = 0; a < 3; ++a) {
+          const T hessian = m.ddg[k][i][a][j] + m.ddg[j][a][i][k]
+                          - m.ddg[k][a][i][j] - m.ddg[j][i][a][k];
+          ricci += T(0.5) * out.inverse[k][a] * hessian
+                 + dinv[k][k][a] * lower[a][i][j] - dinv[j][k][a] * lower[a][i][k]
+                 + out.connection[k][i][j] * out.connection[a][k][a]
+                 - out.connection[a][i][k] * out.connection[k][j][a];
+        }
+      }
+      out.ricci[i][j] = out.ricci[j][i] = ricci;
+      out.scalar += (i == j ? 1 : 2) * out.inverse[i][j] * ricci;
+    }
   }
   out.valid = Kokkos::isfinite(out.scalar);
   return out;
