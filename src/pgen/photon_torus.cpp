@@ -28,11 +28,12 @@ struct Torus {
     std::string magic;
     if (!(in >> magic >> nr >> nt >> inner >> outer >> center >> width >>
           norm >> b >> db >> nu) ||
-        magic != "IRISK_PHOTON_TORUS_V1" || nr < 8 || nr > 512 || nt < 6 ||
+        (magic != "IRISK_PHOTON_TORUS_V1" && magic != "IRISK_PHOTON_TORUS_V2") ||
+        nr < 8 || nr > 512 || nt < 6 ||
         nt > 512 ||
         !(outer > inner && inner > 0 && center > width && width > 0 &&
           norm >= 0 && db > 0 && nu > 0 && nu < 1 &&
-          (norm == 0 || std::abs(b) > db)))
+          (magic == "IRISK_PHOTON_TORUS_V2" || norm == 0 || std::abs(b) > db)))
       throw std::runtime_error("invalid photon torus header: " + path);
     coeff.resize(21 * nr * nt);
     for (auto& v : coeff)
@@ -122,8 +123,8 @@ void InitializePhotonTorus(MeshBlockPack* pack, ParameterInput* pin) {
           z4c_irisk::AdmMap::half_rho_z_suppressed_y_v2)
     throw std::runtime_error("torus requires native vertex Cartoon");
   if (t.norm &&
-      ((t.b > 0 && photons->mu_min + photons->nmu * photons->dmu < 0.5) ||
-       (t.b < 0 && photons->mu_min >= 0)))
+      ((t.b + t.db > 0 && photons->mu_min + photons->nmu * photons->dmu < 0.5) ||
+       (t.b - t.db < 0 && photons->mu_min >= 0)))
     throw std::runtime_error("Boltzmann hemisphere excludes launch");
   const auto b = pack->pmesh->mb_indcs;
   pack->pmb->mb_size.sync_host();
