@@ -20,6 +20,9 @@ Boltzmann::Boltzmann(MeshBlockPack* pp, ParameterInput* pin)
       npsi(pin->GetOrAddInteger("boltzmann", "npsi", 16)),
       nmu_half(pin->GetOrAddInteger("boltzmann", "nmu_half", 4)),
       transport_order(pin->GetOrAddInteger("boltzmann", "transport_order", 2)),
+      source_order(pin->GetOrAddInteger(
+          "boltzmann", "source_order",
+          pp->pmesh->restart_origin ? 2 : transport_order)),
       flux("boltzmann_flux", 1, 1, 1, 1, 1) {
   const auto sign = pin->GetOrAddString("boltzmann", "sign", "prograde");
   if (sign != "prograde" && sign != "retrograde" && sign != "both")
@@ -50,6 +53,14 @@ Boltzmann::Boltzmann(MeshBlockPack* pp, ParameterInput* pin)
   int nj = b.nx2 + 2 * b.ng, ni = b.nx1 + 2 * b.ng;
   if (transport_order != 2 && transport_order != 4)
     throw std::invalid_argument("boltzmann/transport_order must be 2 or 4");
+  if (source_order != 2 && source_order != 4)
+    throw std::invalid_argument("boltzmann/source_order must be 2 or 4");
+  if (backreaction && source_order == 4) {
+    source_moments =
+        DvceArray5D<Real>("spatial source means", cap, 10, 1, nj, ni);
+    radial_source_weights =
+        DvceArray2D<SourceStencil>("radial source weights", cap, ni + 1);
+  }
   if (transport_order == 4) {
     if (b.ng < 4 || nmu_half < 5 || npsi < 6)
       throw std::invalid_argument("FV4 needs four ghosts, five cosine bins and six sectors");
@@ -119,6 +130,8 @@ TaskStatus Boltzmann::GeometryAndStress(Driver* driver, int stage) {
   const auto stress = moments;
   const auto state = u;
   const auto w = weights;
+  const auto source_means = source_moments;
+  const bool project = backreaction && source_order == 4;
   const int count = nang, last = pack->nmb_thispack - 1;
   const bool fourth = transport_order == 4;
   const Real domega = dmu * dpsi;
@@ -142,6 +155,12 @@ TaskStatus Boltzmann::GeometryAndStress(Driver* driver, int stage) {
           }
         }
         stress(m, 6, 0, j, i) = fourth ? energy_sum : avg[6];
+        if (project && i >= b.is && i <= b.ie && j >= b.js && j <= b.je) {
+          const Real cart_volume = g.frame.volume / rho;
+          for (int l = 0; l < 10; ++l)
+            source_means(m, l, 0, j, i) =
+                cart_volume * ((fourth && l == 6) ? energy_sum : avg[l]);
+        }
         const int sym[3][3] = {{0, 1, 2}, {1, 3, 4}, {2, 4, 5}};
         for (int a = 0; a < 3; ++a) {
           Real s = 0;
@@ -160,11 +179,41 @@ TaskStatus Boltzmann::GeometryAndStress(Driver* driver, int stage) {
   if (!backreaction) return TaskStatus::complete;
   const auto v = pack->pz4c->layout;
   auto target = pack->ptmunu->u_tmunu;
-  par_for(
-      "boltzmann vertex source", DevExeSpace(), 0, last, v.js, v.je, v.is, v.ie,
-      KOKKOS_LAMBDA(int m, int j, int i) {
-        TransferVertex(stress, target, m, j, i, sizes(m).x1min == 0 && i == v.is);
-      });
+  if (project) {
+    const auto radial = radial_source_weights;
+    const auto native = pack->pz4c->u_adm_native;
+    par_for(
+        "radial source interpolation", DevExeSpace(), 0, last, v.is, v.ie,
+        KOKKOS_LAMBDA(int m, int i) {
+          radial(m, i) =
+              RadialSourceStencil(i, b.is, b.ie, sizes(m).x1min / sizes(m).dx1);
+        });
+    par_for(
+        "FV4 native vertex stress", DevExeSpace(), 0, last, v.js, v.je, v.is,
+        v.ie, KOKKOS_LAMBDA(int m, int j, int i) {
+          const auto vertical = VerticalSourceStencil(j, b.js, b.je);
+          Real src[10];
+          ProjectSourceMoments(source_means, m, j, i, radial(m, i), vertical,
+                               src);
+          constexpr int sym[3][3] = {{0, 1, 2}, {1, 3, 4}, {2, 4, 5}};
+          Real metric[3][3];
+          for (int a = 0; a < 3; ++a)
+            for (int c = 0; c < 3; ++c)
+              metric[a][c] =
+                  native(m, adm::ADM::I_ADM_GXX + sym[a][c], 0, j, i);
+          Frame frame{};
+          frame.Set(metric);
+          StoreVertexSource(src, frame, target, m, j, i,
+                            sizes(m).x1min == 0 && i == v.is);
+        });
+  } else {
+    par_for(
+        "boltzmann vertex source", DevExeSpace(), 0, last, v.js, v.je, v.is,
+        v.ie, KOKKOS_LAMBDA(int m, int j, int i) {
+          TransferVertex(stress, target, m, j, i,
+                         sizes(m).x1min == 0 && i == v.is);
+        });
+  }
   // Coincident coarse and fine vertices must see the same RHS source.
   pack->pz4c->vertex_topology_plan->SynchronizeSharedNodes(target);
   return TaskStatus::complete;

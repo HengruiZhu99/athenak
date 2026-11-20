@@ -2,6 +2,7 @@
 #define BOLTZMANN_BOLTZMANN_HPP_
 #include "boltzmann/geometry.hpp"
 #include "boltzmann/polar_quadrature.hpp"
+#include "boltzmann/source_projection.hpp"
 #include "bvals/bvals.hpp"
 #include "tasklist/task_list.hpp"
 
@@ -35,7 +36,7 @@ class Boltzmann {
 
   MeshBlockPack* pack;
   const int npsi, nmu_half;
-  const int transport_order;
+  const int transport_order, source_order;
   int nmu, nang;
   Real mu_min, dmu, dpsi, dtnew;
   bool backreaction, fixed_metric;
@@ -50,7 +51,8 @@ class Boltzmann {
   Kokkos::Array<DvceArray5D<Real>, 5> speeds;
   DvceArray1D<PolarQuadrature> polar_rules;
   Kokkos::Array<DvceArray5D<Real>, 3> polar_flux_weights;
-  DvceArray5D<Real> inverse_budget;
+  DvceArray5D<Real> inverse_budget, source_moments;
+  DvceArray2D<SourceStencil> radial_source_weights;
   bool speed_cache_valid = false, source_free = false;
   MeshBoundaryValuesCC* boundary;
   DvceArray5D<Real> accumulator, angular_mu, angular_psi, source;

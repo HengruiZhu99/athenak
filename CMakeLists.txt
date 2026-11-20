@@ -342,6 +342,11 @@ if (Athena_BUILD_UNIT_TESTS)
       target_link_libraries(athena_boltzmann_fourth_amr PRIVATE MPI::MPI_CXX)
     endif()
     add_test(NAME boltzmann_fourth_amr COMMAND athena_boltzmann_fourth_amr)
+    add_executable(athena_boltzmann_vertex_source tst/unit/boltzmann/vertex_source.cpp)
+    target_include_directories(athena_boltzmann_vertex_source PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_BINARY_DIR})
+    target_link_libraries(athena_boltzmann_vertex_source PRIVATE Kokkos::kokkos)
+    add_test(NAME boltzmann_vertex_source COMMAND athena_boltzmann_vertex_source)
   endif()
   if (NOT Kokkos_ENABLE_CUDA AND NOT Kokkos_ENABLE_HIP AND NOT Kokkos_ENABLE_SYCL
       AND NOT Athena_SINGLE_PRECISION)

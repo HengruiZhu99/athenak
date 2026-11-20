@@ -61,7 +61,7 @@ def check_energy(rows, ranks, phase_cells, log):
     return relative
 
 
-def restart_amr(exe, ranks, root, order=2):
+def restart_amr(exe, ranks, root, order=2, backreaction=False):
     root.mkdir(exist_ok=True)
     nmu_half = 6 if order == 4 else 4
     changes = {
@@ -70,7 +70,7 @@ def restart_amr(exe, ranks, root, order=2):
             "ring_radius": 15,
             "angular_width": 0.65,
         },
-        "boltzmann": {"sign": "both", "backreaction": "false",
+        "boltzmann": {"sign": "both", "backreaction": str(backreaction).lower(),
                       "nmu_half": nmu_half, "transport_order": order},
         "time": {"nlim": 6, "integrator": "ssprk104" if order == 4 else "rk2"},
         "fastflow": {"num_horizons": 0},
@@ -340,6 +340,7 @@ if __name__ == "__main__":
         root = Path(tmp)
         restart_amr(str(args.athena.resolve()), args.ranks, root)
         restart_amr(str(args.athena.resolve()), args.ranks, root / "fv4", order=4)
+        restart_amr(str(args.athena.resolve()), args.ranks, root / "coupled-fv4", order=4, backreaction=True)
         expansion(str(args.athena.resolve()), args.ranks, root)
         signs(str(args.athena.resolve()), args.ranks, root)
         if args.joint:

@@ -14,6 +14,7 @@
 #include "mesh/mesh.hpp"
 #include "parameter_input.hpp"
 #include "pgen/z4c_irisk_coordinate_map.hpp"
+#include "z4c/tmunu.hpp"
 #include "z4c/z4c.hpp"
 
 namespace {
@@ -214,6 +215,10 @@ void AuditPhotonTorus(MeshBlockPack* pack, ParameterInput* pin) {
                                                pack->pz4c->u_adm_native);
   auto c = Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),
                                                pack->pz4c->u_con);
+  HostArray5D<Real> vertex_source;
+  if (pack->ptmunu)
+    vertex_source = Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),
+                                                        pack->ptmunu->u_tmunu);
   auto mom = Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),
                                                  pack->pboltzmann->moments);
   auto u = Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),
@@ -223,7 +228,8 @@ void AuditPhotonTorus(MeshBlockPack* pack, ParameterInput* pin) {
   std::string rank = std::to_string(global_variable::my_rank);
   std::ofstream vertex(prefix + ".vertices." + rank),
       cell(prefix + ".cells." + rank);
-  vertex << "# rho z psi4 Krr Krz Krp Kzz Kzp Kpp H M_r M_z M_p\n"
+  vertex << "# rho z psi4 Krr Krz Krp Kzz Kzp Kpp H M_r M_z M_p Srr Srz Srp "
+            "Szz Szp Spp E Sr Sz Sp\n"
          << std::setprecision(17);
   cell << "# rho z E S_r S_z S_p occupied_mu effective_mu S_zz S_pp U_energy "
           "U_spin moment_error\n"
@@ -258,6 +264,9 @@ void AuditPhotonTorus(MeshBlockPack* pack, ParameterInput* pin) {
         vertex << ' ' << c(m, z4c::Z4c::I_CON_H, v.ks, j, i);
         for (int n = 0; n < 3; ++n)
           vertex << ' ' << c(m, z4c::Z4c::I_CON_MX + n, v.ks, j, i);
+        for (int l = 0; l < 10; ++l)
+          vertex << ' '
+                 << (pack->ptmunu ? vertex_source(m, l, v.ks, j, i) : 0.0);
         vertex << '\n';
       }
     for (int j = b.js; j <= b.je; ++j)
