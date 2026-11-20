@@ -17,6 +17,7 @@
 #include "pgen/z4c/kerr_puncture.hpp"
 #include "pgen/tests/z4c_deterministic_amr.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c/z4c_amr.hpp"
 
 namespace {
 void SetFlatSlice(MeshBlockPack *pack, Real hubble) {
@@ -76,6 +77,10 @@ void ProblemGenerator::BoltzmannPhotons(ParameterInput *pin, const bool restart)
   if (!photons) Kokkos::abort("photon problem requires <boltzmann>");
   if (z4c_test::ConfigureDeterministicRefinementSchedule(pin, pmy_mesh_, "boltzmann"))
     user_ref_func = z4c_test::DeterministicRefinementSchedule;
+  else if (pmy_mesh_->adaptive && pack->pz4c &&
+           pin->GetString("problem", "pgen_name") == "photon_torus" &&
+           pin->DoesParameterExist("z4c_amr", "method"))
+    user_ref_func = [](MeshBlockPack *blocks) { blocks->pz4c->pamr->Refine(blocks); };
   user_hist_func = boltzmann::RingHistory;
   if (restart) return;
   const auto name = pin->GetString("problem", "pgen_name");
