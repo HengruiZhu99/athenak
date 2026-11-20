@@ -1,5 +1,13 @@
 # Stationary geometry and N12 kernel performance
 
+## Reuse within a derivative stage
+
+On one Aurora node, job 9106014 measured 1.29074 s/interval after projecting the shift once per point and reusing axial neighbors across the centered and biased stencils. The same-node control took 1.34557 s/interval. The 0.05482 s saving exceeded the 0.00801 s spread of the control's four-interval means. Each timing covered twelve intervals after eight warm intervals, with output off and the same 33,467,904 bulk point-stages per interval. The checkpoint run repeated at 1.29840 s/interval.
+
+The selected solver delivered 25.93 million bulk point-stages/s and 229.24 s/M₀. Against the 2.47446 s starting interval, the speedup is 1.917×. Reaching 2× requires another 0.05351 s/interval. In the separate device profile, the largest remaining difference from equal-work regular Z4c was 0.465 s of additional mean bulk RHS time. The excess in busiest-to-mean tile service was 0.164 s.
+
+At cycle 21 the checkpoint payload matched the immediate parent bit for bit. Against the original endpoint the maximum scaled difference was 4.819e-12 across 139,683,024 field values and 1.554e-15 across the eight persistent diagnostics per point. Both were within the 1e-11 bound. Solver commit 02ad81493 matches the source manifest for the selected executable. Timing receipts, comparisons and device profiles are archived under `n12-halo-kernels-20261119/9106014`.
+
 ## Concurrent scri and bulk RHS
 
 Aurora job 9105928 ran the production N12 mesh on 12 bound GPU tiles. Computing the final rates of a single small scri face on the calling CPU thread while the tile evaluates the bulk RHS saved 0.04428 s/interval against a 0.00624 s spread of four-interval means. Both paths use the completed normal correction from the same stage. The host checks the surface rates and returns them before slope publication. Larger faces and ranks with multiple faces retain the device calculation.
