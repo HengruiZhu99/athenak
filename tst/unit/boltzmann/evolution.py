@@ -61,18 +61,21 @@ def check_energy(rows, ranks, phase_cells, log):
     return relative
 
 
-def restart_amr(exe, ranks, root):
+def restart_amr(exe, ranks, root, order=2):
+    root.mkdir(exist_ok=True)
+    nmu_half = 6 if order == 4 else 4
     changes = {
         "problem": {
             "exercise_deterministic_amr": "true",
             "ring_radius": 15,
             "angular_width": 0.65,
         },
-        "boltzmann": {"sign": "both", "backreaction": "false"},
-        "time": {"nlim": 6},
+        "boltzmann": {"sign": "both", "backreaction": "false",
+                      "nmu_half": nmu_half, "transport_order": order},
+        "time": {"nlim": 6, "integrator": "ssprk104" if order == 4 else "rk2"},
         "fastflow": {"num_horizons": 0},
         "amr_criterion0": {"method": "user"},
-        "mesh_refinement": {"ncycle_check": 1, "refinement_interval": 1},
+        "mesh_refinement": {"ncycle_check": 1, "refinement_interval": 1, "max_nmb_per_rank": 8},
         "output1": {"dcycle": 1},
         "output2": {"dcycle": 3},
     }
@@ -80,14 +83,14 @@ def restart_amr(exe, ranks, root):
     assert re.search(r"3 MeshBlocks created, 3 deleted", log), log[-800:]
     if ranks == 2:
         assert re.search(r"[1-9]\d* communicated for load balancing", log)
-    residual = check_energy(direct, ranks, 32 * 32 * 4 * 12 * 8, log)
+    residual = check_energy(direct, ranks, 32 * 32 * nmu_half * 12 * 8, log)
     rst = root / "direct/rst/ring.00001.rst"
     resumed, _ = run(exe, 1, root / "resumed", changes, restart=rst)
     np.testing.assert_allclose(resumed[-1], direct[-1], rtol=3e-12, atol=5e-16)
     assert direct[-1, 4] > 1.0e-8 * direct[0, 2]
     # Final topology has its four original blocks. Compare every active
     # ordinate in the block records, independently of history reduction order.
-    nb, angular, cells, vertices = 4, 2 * 4 * 12, 16 + 8, 17 + 8
+    nb, angular, cells, vertices = 4, 2 * nmu_half * 12, 16 + 8, 17 + 8
     stride = angular * cells**2 + 25 * vertices**2
 
     def ordinates(directory):
@@ -336,6 +339,7 @@ if __name__ == "__main__":
     with tempfile.TemporaryDirectory(prefix="athenak-boltzmann-") as tmp:
         root = Path(tmp)
         restart_amr(str(args.athena.resolve()), args.ranks, root)
+        restart_amr(str(args.athena.resolve()), args.ranks, root / "fv4", order=4)
         expansion(str(args.athena.resolve()), args.ranks, root)
         signs(str(args.athena.resolve()), args.ranks, root)
         if args.joint:

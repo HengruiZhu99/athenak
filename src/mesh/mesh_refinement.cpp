@@ -1581,6 +1581,7 @@ void MeshRefinement::RefineCC(DualArray1D<int> &n2o, DvceArray5D<Real> &a,
                               DvceArray5D<Real> &ca, bool is_z4c) {
   const auto *photons = pmy_mesh->pmb_pack->pboltzmann;
   const bool photon_state = photons && a.data() == photons->u.data();
+  const bool photon_fourth = photon_state && photons->transport_order == 4;
   int nvar = a.extent_int(1);  // TODO(@user): 2nd index from L of in array must be NVAR
   auto &new_nmb = new_nmb_eachrank[global_variable::my_rank];
   auto &indcs = pmy_mesh->mb_indcs;
@@ -1640,7 +1641,10 @@ void MeshRefinement::RefineCC(DualArray1D<int> &n2o, DvceArray5D<Real> &a,
         int fk = 2*k - cks;  // correct when cks=ks
 
         // call inlined prolongation operator for CC variables
-        if (photon_state) {
+        if (photon_fourth) {
+          boltzmann::ProlongOrdinatesFourth(m, v, j, i, fj, fi, cis, cie, cjs,
+                                            cje, ca, a);
+        } else if (photon_state) {
           boltzmann::ProlongOrdinates(m,v,j,i,fj,fi,ca,a);
         } else if (!is_z4c) {
           ProlongCC(m,v,k,j,i,fk,fj,fi,multi_d,three_d,ca,a);
@@ -1859,9 +1863,7 @@ void MeshRefinement::RestrictCC(DvceArray5D<Real> &u, DvceArray5D<Real> &cu,
       int finei = 2*i - cis;  // correct when cis=is
       int finej = 2*j - cjs;  // correct when cjs=js
       if (!is_z4c || limited_o2) {
-        cu(m,n,cks,j,i) =
-            0.25*(u(m,n,cks,finej  ,finei) + u(m,n,cks,finej  ,finei+1)
-                + u(m,n,cks,finej+1,finei) + u(m,n,cks,finej+1,finei+1));
+        cu(m, n, cks, j, i) = RestrictCellAverage2D(u, m, n, cks, finej, finei);
       } else {
         switch (z4c_stencil) {
           case 2: cu(m,n,cks,j,i) = RestrictInterpolation<2>(m,n,cks,finej,finei,

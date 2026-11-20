@@ -15,6 +15,15 @@
 #include "mesh/mesh.hpp"
 #include "coordinates/cell_locations.hpp"
 
+// Exact integral restriction for equal-area 2:1 finite-volume children.
+// A densitized photon ordinate already includes the metric and polar Jacobian.
+KOKKOS_INLINE_FUNCTION
+Real RestrictCellAverage2D(const DvceArray5D<Real>& fine, int m, int v, int k,
+                           int j, int i) {
+  return .25 * (fine(m, v, k, j, i) + fine(m, v, k, j, i + 1) +
+                fine(m, v, k, j + 1, i) + fine(m, v, k, j + 1, i + 1));
+}
+
 struct CoarseRestrictionRange {
   int lower;
   int upper;

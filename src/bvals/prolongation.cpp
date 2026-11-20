@@ -151,9 +151,8 @@ void MeshBoundaryValuesCC::FillCoarseInBndryCC(DvceArray5D<Real> &a,
           // restrict in 2D
           if (!(three_d)) {
             if (!is_z4c || limited_o2) {
-              ca(m,v,kl,j,i) =
-                  0.25*(a(m,v,kl,finej  ,finei) + a(m,v,kl,finej  ,finei+1)
-                      + a(m,v,kl,finej+1,finei) + a(m,v,kl,finej+1,finei+1));
+              ca(m, v, kl, j, i) =
+                  RestrictCellAverage2D(a, m, v, kl, finej, finei);
             } else {
               switch (z4c_stencil) {
                 case 2: ca(m,v,kl,j,i) = RestrictInterpolation<2>(m,v,indcs.ks,
@@ -209,6 +208,7 @@ void MeshBoundaryValuesCC::ProlongateCC(DvceArray5D<Real> &a, DvceArray5D<Real> 
     bool is_z4c) {
   const auto *photons = pmy_pack->pboltzmann;
   const bool photon_state = photons && a.data() == photons->u.data();
+  const bool photon_fourth = photon_state && photons->transport_order == 4;
   // create local references for variables in kernel
   int nmb = pmy_pack->nmb_thispack;
   int nnghbr = pmy_pack->pmb->nnghbr;
@@ -287,7 +287,40 @@ void MeshBoundaryValuesCC::ProlongateCC(DvceArray5D<Real> &a, DvceArray5D<Real> 
         int fj = (j - indcs.cjs)*2 + indcs.js;
         int fk = (k - indcs.cks)*2 + indcs.ks;
         // call inlined prolongation operator for CC variables
-        if (photon_state) {
+        if (photon_fourth) {
+          const auto received = rbuf[n].icoar[0];
+          int xlo = received.bis, xhi = received.bie, ylo = received.bjs,
+              yhi = received.bje;
+          const bool in_x = i >= indcs.cis && i <= indcs.cie;
+          const bool in_y = j >= indcs.cjs && j <= indcs.cje;
+          // On faces join the received parent means to the exactly restricted
+          // fine interior. At corners use only the sender's native means.
+          if (in_y && !in_x) {
+            xlo = Kokkos::min(xlo, indcs.cis);
+            xhi = Kokkos::max(xhi, indcs.cie);
+            ylo = indcs.cjs;
+            yhi = indcs.cje;
+          } else if (in_x && !in_y) {
+            ylo = Kokkos::min(ylo, indcs.cjs);
+            yhi = Kokkos::max(yhi, indcs.cje);
+            xlo = indcs.cis;
+            xhi = indcs.cie;
+          } else if (!in_x && !in_y) {
+            // A coarse face can cover the internal corner of its two fine
+            // neighbors. Assign a unique writer if two buffers cover the cell.
+            for (int p = 0; p < n; ++p) {
+              if (nghbr.d_view(m, p).gid < 0 ||
+                  nghbr.d_view(m, p).lev >= mblev.d_view(m))
+                continue;
+              const auto other = rbuf[p].iprol[0];
+              if (i >= other.bis && i <= other.bie && j >= other.bjs &&
+                  j <= other.bje)
+                return;
+            }
+          }
+          boltzmann::ProlongOrdinatesFourth(m, v, j, i, fj, fi, xlo, xhi, ylo,
+                                            yhi, ca, a);
+        } else if (photon_state) {
           boltzmann::ProlongOrdinates(m,v,j,i,fj,fi,ca,a);
         } else if (!is_z4c) {
           ProlongCC(m,v,k,j,i,fk,fj,fi,multi_d,three_d,ca,a);

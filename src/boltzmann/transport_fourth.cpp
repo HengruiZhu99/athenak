@@ -16,6 +16,15 @@ TaskStatus Boltzmann::FluxesFourth(Driver* driver, int stage) {
   const auto inv = inverse_budget;
   const auto rules = polar_rules;
   const auto polar = polar_flux_weights;
+  const bool multilevel = pack->pmesh->multilevel;
+  const auto neighbors = pack->pmb->nghbr.d_view;
+  const auto levels = pack->pmb->mb_lev.d_view;
+  const auto parent = coarse;
+  // Four spatial sides, four angular sides and the source share one Euler
+  // donor budget. Reserve a known spatial share for fine-to-coarse reflux.
+  const Real space_floor = multilevel ? .08 : .02;
+  const Real normalization = 1 + 4 * space_floor + 5 * .02;
+  const Real reflux_share = space_floor / normalization;
   const int hemisphere = nmu_half, sectors = npsi, count = nang,
             blocks = pack->nmb_thispack;
   const Real start = mu_min, dm = dmu, dp = dpsi;
@@ -104,8 +113,27 @@ TaskStatus Boltzmann::FluxesFourth(Driver* driver, int stage) {
             total += (fabs(right) + fabs(p.Read(a[d], m, sectors))) / h[d];
           }
           inv(m, n, 0, j, i) = total > 0 ? 1 / total : 0;
-          if (j >= b.js && j <= b.je && i >= b.is && i <= b.ie)
-            largest = fmax(largest, total);
+          if (j >= b.js && j <= b.je && i >= b.is && i <= b.ie) {
+            largest =
+                fmax(largest, multilevel ? total * normalization / .99 : total);
+            if (multilevel) {
+              for (int side = 0; side < 4; ++side) {
+                const bool on_face = side == 0   ? i == b.is
+                                     : side == 1 ? i == b.ie
+                                     : side == 2 ? j == b.js
+                                                 : j == b.je;
+                if (!on_face) continue;
+                const auto nb = neighbors(m, 4 * side);
+                if (nb.gid < 0 || nb.lev >= levels(m)) continue;
+                const int d = side / 2;
+                const auto face = p.Shift(d, side % 2, sectors);
+                // Parent width is twice this fine width. Keep a smooth inflow
+                // below its reserved share without an extra MPI exchange.
+                largest = fmax(largest, fabs(face.Read(a[d], m, sectors)) /
+                                            (.99 * 2 * h[d] * reflux_share));
+              }
+            }
+          }
         },
         Kokkos::Max<Real>(maxrate), Kokkos::Max<Real>(maxsource));
     source_free = maxsource == 0;
@@ -153,16 +181,31 @@ TaskStatus Boltzmann::FluxesFourth(Driver* driver, int stage) {
             // sink. The small equal share also permits a transverse flux at a
             // velocity zero.
             Real norm = donor.Read(inv, m, sectors);
-            Real share =
-                norm == 0
-                    ? 1. / 9
-                    : (fabs(p.Read(a[d], m, sectors)) * norm / width + 0.02) /
-                          1.18;
+            Real share = norm == 0
+                             ? 1. / 9
+                             : (fabs(p.Read(a[d], m, sectors)) * norm / width +
+                                (d < 2 ? space_floor : .02)) /
+                                   normalization;
             // A small unspent fraction keeps the Euler mass positive after
             // rounding.
             // Subnormal donors cannot represent a fractional outflow budget.
             // Retain that mass until incoming flux restores normal precision.
-            const Real mass = donor.Read(state, m, sectors);
+            Real mass = donor.Read(state, m, sectors);
+            if (multilevel && d < 2 &&
+                (donor.i < b.is || donor.i > b.ie || donor.j < b.js ||
+                 donor.j > b.je)) {
+              const int side = 2 * d + (donor.i > b.ie || donor.j > b.je);
+              const auto nb = neighbors(m, 4 * side);
+              if (nb.gid >= 0 && nb.lev < levels(m)) {
+                // Even if the two subface fluxes have opposite signs, their
+                // area-averaged outward part cannot exceed the parent's share.
+                const int ci = (donor.i - b.is + 2 * b.cis) / 2;
+                const int cj = (donor.j - b.js + 2 * b.cjs) / 2;
+                mass = parent(m, n, 0, cj, ci);
+                width *= 2;
+                share = reflux_share;
+              }
+            }
             const Real cap = mass < 16 * std::numeric_limits<Real>::min()
                                  ? 0
                                  : (0.99 * share * (width / euler_dt)) * mass;

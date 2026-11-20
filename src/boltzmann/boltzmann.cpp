@@ -51,10 +51,10 @@ Boltzmann::Boltzmann(MeshBlockPack* pp, ParameterInput* pin)
   if (transport_order != 2 && transport_order != 4)
     throw std::invalid_argument("boltzmann/transport_order must be 2 or 4");
   if (transport_order == 4) {
-    if (pp->pmesh->multilevel)
-      throw std::invalid_argument("FV4 donor budgets require a uniform-level mesh");
     if (b.ng < 4 || nmu_half < 5 || npsi < 6)
       throw std::invalid_argument("FV4 needs four ghosts, five cosine bins and six sectors");
+    if (pp->pmesh->multilevel && (b.cnx1 < 4 || b.cnx2 < 4))
+      throw std::invalid_argument("FV4 refinement needs at least eight cells per block direction");
     for (auto& a : speeds)
       a = DvceArray5D<Real>("boltzmann characteristic", cap, nang, 1, nj, ni);
     polar_rules = DvceArray1D<PolarQuadrature>("colatitude integration", nmu);
