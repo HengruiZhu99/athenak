@@ -77,6 +77,26 @@ def main():
         p["speedup"] = one["seconds"] / p["seconds"]
         p["parallel_efficiency"] = p["speedup"] / p["ranks"]
     table(a.output / "scaling.csv", perf)
+    import matplotlib
+
+    matplotlib.use("Agg")
+    from matplotlib import pyplot as plt
+
+    fig, ax = plt.subplots(1, 2, figsize=(9.2, 3.7), layout="constrained")
+    for order, label in ((2, "PLM · RK2"), (4, "Fourth order · SSPRK(10,4)")):
+        rows = sorted((r for r in perf if r["order"] == order), key=lambda r: r["ranks"])
+        counts = [r["ranks"] for r in rows]
+        ax[0].plot(counts, [r["simulated_per_second"] for r in rows], "o-", label=label)
+        ax[1].plot(counts, [r["speedup"] for r in rows], "o-", label=label)
+    ax[1].plot([1, 8], [1, 8], ":", color="0.45", label="Ideal")
+    ax[0].set_ylabel("Simulated time per wall second")
+    ax[1].set_ylabel("Speedup over one GPU")
+    for panel in ax:
+        panel.set(xlabel="B200 GPUs", xticks=[1, 2, 4, 8])
+        panel.grid(alpha=0.22)
+        panel.legend(fontsize="small")
+    fig.savefig(a.output / "scaling.png", dpi=170)
+    plt.close(fig)
     checks = []
     cases = sorted(a.transport.iterdir())
     if a.refinement:
