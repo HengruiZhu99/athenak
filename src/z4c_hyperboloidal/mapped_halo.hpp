@@ -111,9 +111,11 @@ class MappedHalo {
   std::map<int, AxisWeights> tensor_weights_;
   DvceArray2D<Real> line_values_;
   bool AppendTensorBlock(const SlotOffset &begin, const SlotOffset &end,
-                         std::vector<TensorLine> &lines, std::vector<TensorRow> &tensors) const;
+                         std::vector<TensorLine> &lines,
+                         std::vector<TensorRow> &tensors) const;
   void FillTensors(const BatchPlan &plan, const DvceArray5D<Real> &residual,
-                   const DvceArray5D<Real> &physical, bvals::MappedExchange::ConstValues rv,
+                   const DvceArray5D<Real> &physical,
+                   bvals::MappedExchange::ConstValues rv,
                    bvals::MappedExchange::ConstValues pv, DvceArray1D<int> active) const;
   std::vector<int> all_slots_;
   std::vector<SlotOffset> slot_offsets_;

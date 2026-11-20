@@ -8,9 +8,8 @@
 namespace z4c_hyperboloidal {
 template <class SurfaceKernel>
 KOKKOS_INLINE_FUNCTION mapped::Jet SampleEndpointJet(
-    int p, int f, const BlockPointReader &reader,
-    const Real inv_h[3], const LogicalShift &shift, const SurfaceKernel &surface,
-    Real &transport) {
+    int p, int f, const BlockPointReader &reader, const Real inv_h[3],
+    const LogicalShift &shift, const SurfaceKernel &surface, Real &transport) {
   const auto jet = surface.EndpointResidualJet(p, f, reader.state);
   // Radial transport already belongs to the endpoint reconstruction. Only
   // the ordinary angular centered-to-biased corrections are added here.
@@ -24,6 +23,7 @@ KOKKOS_INLINE_FUNCTION mapped::Jet SampleEndpointJet(
   }
   return jet;
 }
+
 template <class SurfaceKernel>
 KOKKOS_INLINE_FUNCTION PointState
 EndpointState(int p, const BlockPointReader &reader, const mapped::Point &map,
@@ -32,14 +32,15 @@ EndpointState(int p, const BlockPointReader &reader, const mapped::Point &map,
               const SurfaceKernel &surface, const mapped::Jet *cached_weight = nullptr) {
   PointState out;
   Real beta[3]{};
-  for (int a=0;a<3;++a) beta[a]=reader(22+a)+reference[22+a].f-map.x[a];
+  for (int a = 0; a < 3; ++a) beta[a] = reader(22 + a) + reference[22 + a].f - map.x[a];
   const auto shift = LogicalShift::Project(map, beta, false);
-  for (int f=0;f<Fields::count;++f) if (Fields::Independent(f)) {
-      out.jets[f] =
-          SampleEndpointJet(p, f, reader, inv_h, shift, surface, out.transport[f]);
+  for (int f = 0; f < Fields::count; ++f) {
+    if (!Fields::Independent(f)) continue;
+    out.jets[f] =
+        SampleEndpointJet(p, f, reader, inv_h, shift, surface, out.transport[f]);
   }
   mapped::Jet lift[3];
-  for (int a=0;a<3;++a) lift[a]=surface.NormalCorrection(p,map,a);
+  for (int a = 0; a < 3; ++a) lift[a] = surface.NormalCorrection(p, map, a);
   RestorePointState(out, reader, map, inv_h, reference, parameters, lift, cached_weight);
   return out;
 }

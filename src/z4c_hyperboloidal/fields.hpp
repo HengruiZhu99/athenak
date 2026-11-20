@@ -20,6 +20,10 @@ struct Fields {
     "Lambda_x","Lambda_y","Lambda_z","alpha-(1+r2)/2",
     "B_x","B_y","B_z","beta_x+x","beta_y+y","beta_z+z",
     "D_x","D_y","D_z","J_x","J_y","J_z"};
+  KOKKOS_INLINE_FUNCTION static bool NeedsBulkHessian(int f) {
+    return f < curvature || f == lapse || (f >= shift && f < D);
+  }
+
   // Dense slope storage omits the two constrained tensor components and three sources.
   KOKKOS_INLINE_FUNCTION static int IndependentSlot(int f) { return f-(f>6)-(f>12); }
   KOKKOS_INLINE_FUNCTION static bool Independent(int f) {

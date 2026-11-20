@@ -51,7 +51,8 @@ KOKKOS_INLINE_FUNCTION Real OffsetValue(const Reader &q,int f,int a,int offset,
   int d[3]{};d[a]+=offset;d[b]+=offset_b;
   return q(f,d[0],d[1],d[2]);
 }
-// The centered and biased formulas use the same four axial neighbors.
+
+// Keep axial samples for the centered and biased derivatives.
 struct AxialSamples {
   Real minus_two, minus_one, plus_one, plus_two;
 
@@ -125,8 +126,9 @@ template <class Reader>
 KOKKOS_INLINE_FUNCTION mapped::Jet SampleResidualJet(
     const Reader &q, int f, const mapped::Point &map, const Real inv_h[3],
     const LogicalShift &shift, bool need_second, Real &transport, bool affine = false) {
-  mapped::Jet logical(q(f));transport=0;
-  for (int a=0;a<3;++a) {
+  mapped::Jet logical(q(f));
+  transport = 0;
+  for (int a = 0; a < 3; ++a) {
     const AxialSamples samples(q, f, a);
     logical.d[a] = samples.First(inv_h[a]);
     if (need_second) {
@@ -135,10 +137,10 @@ KOKKOS_INLINE_FUNCTION mapped::Jet SampleResidualJet(
         logical.h[b][a] = logical.h[a][b] = SecondDerivative(q, f, a, b, inv_h);
     }
     const Real b = shift.value[a];
-    const int sign=b>=0?1:-1;
+    const int sign = b >= 0 ? 1 : -1;
     const Real far = OffsetValue(q, f, a, 3 * sign);
     const Real biased = samples.Biased(logical.f, far, inv_h[a], sign);
-    transport+=b*(biased-logical.d[a]);
+    transport += b * (biased - logical.d[a]);
   }
   if (affine) {
     // For an affine Cartesian leaf H=0 and J is constant and diagonal.
@@ -227,12 +229,13 @@ KOKKOS_INLINE_FUNCTION PointState BuildPointState(
     const mapped::Jet *cached_weight = nullptr, bool affine = false) {
   PointState out;
   Real beta[3]{};
-  for (int a=0;a<3;++a)beta[a]=q(22+a)+reference[22+a].f-map.x[a];
+  for (int a = 0; a < 3; ++a) beta[a] = q(22 + a) + reference[22 + a].f - map.x[a];
   const auto shift = LogicalShift::Project(map, beta, affine);
-  for (int f=0;f<Fields::count;++f) if (Fields::Independent(f))
-      out.jets[f] = SampleResidualJet(q, f, map, inv_h, shift,
-                                      f <= 6 || f == 18 || (f >= 22 && f < 25),
-                                      out.transport[f], affine);
+  for (int f = 0; f < Fields::count; ++f) {
+    if (!Fields::Independent(f)) continue;
+    out.jets[f] = SampleResidualJet(q, f, map, inv_h, shift, Fields::NeedsBulkHessian(f),
+                                    out.transport[f], affine);
+  }
   RestorePointState(out, q, map, inv_h, reference, parameters, lift, cached_weight);
   return out;
 }

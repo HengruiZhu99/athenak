@@ -572,7 +572,7 @@ bool MappedHalo::AppendTensorBlock(const SlotOffset &begin, const SlotOffset &en
       result.sum_x += w[0][i];
     }
     for (int l = 0; l < 36; ++l) {
-      const int e = offset + 6*l;
+      const int e = offset + 6 * l;
       // The verified line starts here and covers the next five native i coordinates.
       const auto key = std::make_pair(ordinals[e], w[0]);
       const auto [it, fresh] = indices.try_emplace(key, static_cast<int>(lines.size()));
@@ -580,7 +580,7 @@ bool MappedHalo::AppendTensorBlock(const SlotOffset &begin, const SlotOffset &en
         TensorLine line{};
         line.block = row.target.m;
         for (int i = 0; i < 6; ++i) {
-          line.ordinal[i] = ordinals[e+i];
+          line.ordinal[i] = ordinals[e + i];
           line.weight[i] = w[0][i];
         }
         lines.push_back(line);
@@ -590,7 +590,7 @@ bool MappedHalo::AppendTensorBlock(const SlotOffset &begin, const SlotOffset &en
     tensors.push_back(result);
   }
   const size_t count = tensors.size() - first_tensor;
-  if (count && 4*(lines.size()-first_line) <= 36*count) return true;
+  if (count && 4 * (lines.size() - first_line) <= 36 * count) return true;
   lines.resize(first_line);
   tensors.resize(first_tensor);
   return false;
@@ -599,7 +599,8 @@ bool MappedHalo::AppendTensorBlock(const SlotOffset &begin, const SlotOffset &en
 void MappedHalo::FillTensors(const BatchPlan &plan, const DvceArray5D<Real> &residual,
                              const DvceArray5D<Real> &physical,
                              bvals::MappedExchange::ConstValues rv,
-                             bvals::MappedExchange::ConstValues pv, DvceArray1D<int> active) const {
+                             bvals::MappedExchange::ConstValues pv,
+                             DvceArray1D<int> active) const {
   const auto lines = plan.lines;
   const auto rows = plan.tensors;
   if (rows.extent(0) == 0) return;
@@ -608,9 +609,10 @@ void MappedHalo::FillTensors(const BatchPlan &plan, const DvceArray5D<Real> &res
   const auto sums = line_values_;
   constexpr int fields = Fields::count;
   using Policy = Kokkos::RangePolicy<Kokkos::IndexType<std::int64_t>>;
-  Kokkos::parallel_for("mapped halo first-axis interpolation", Policy(0, lines.extent(0)*fields),
+  Kokkos::parallel_for(
+      "mapped halo first-axis interpolation", Policy(0, lines.extent(0) * fields),
       KOKKOS_LAMBDA(std::int64_t index) {
-        const int l = index/fields, f = index%fields;
+        const int l = index / fields, f = index % fields;
         const auto &line = lines(l);
         if (active.extent(0) && !active(line.block)) return;
         const int first = line.ordinal[0], slot = Fields::IndependentSlot(f);
@@ -619,36 +621,39 @@ void MappedHalo::FillTensors(const BatchPlan &plan, const DvceArray5D<Real> &res
         Real value = 0, delta = 0;
         for (int i = 0; i < 6; ++i) {
           const int q = line.ordinal[i];
-          value += line.weight[i]*(pv(q,f)-anchor);
-          if (independent) delta += line.weight[i]*(rv(q,slot)-base);
+          value += line.weight[i] * (pv(q, f) - anchor);
+          if (independent) delta += line.weight[i] * (rv(q, slot) - base);
         }
         sums(l, f) = value;
-        if (independent) sums(l, fields+slot) = delta;
+        if (independent) sums(l, fields + slot) = delta;
       });
-  Kokkos::parallel_for("mapped halo tensor interpolation", Policy(0, rows.extent(0)*fields),
+  Kokkos::parallel_for(
+      "mapped halo tensor interpolation", Policy(0, rows.extent(0) * fields),
       KOKKOS_LAMBDA(std::int64_t index) {
-        const auto &row = rows(index/fields);
+        const auto &row = rows(index / fields);
         if (active.extent(0) && !active(row.target.m)) return;
-        const int f = index%fields, slot = Fields::IndependentSlot(f);
+        const int f = index % fields, slot = Fields::IndependentSlot(f);
         const bool independent = Fields::Independent(f);
         const int first = lines(row.line[0]).ordinal[0];
-        const Real anchor = pv(first,f), base = independent ? rv(first,slot) : 0;
+        const Real anchor = pv(first, f), base = independent ? rv(first, slot) : 0;
         Real value = anchor, delta = base;
-        for (int k = 0; k < 6; ++k) for (int j = 0; j < 6; ++j) {
-          const int l = row.line[6*k+j], q = lines(l).ordinal[0];
-          const Real weight = row.y[j]*row.z[k];
-          value += weight*(sums(l,f) + row.sum_x*(pv(q,f)-anchor));
-          if (independent)
-            delta += weight*(sums(l,fields+slot) + row.sum_x*(rv(q,slot)-base));
-        }
+        for (int k = 0; k < 6; ++k)
+          for (int j = 0; j < 6; ++j) {
+            const int l = row.line[6 * k + j], q = lines(l).ordinal[0];
+            const Real weight = row.y[j] * row.z[k];
+            value += weight * (sums(l, f) + row.sum_x * (pv(q, f) - anchor));
+            if (independent)
+              delta +=
+                  weight * (sums(l, fields + slot) + row.sum_x * (rv(q, slot) - base));
+          }
         const auto c = row.target;
-        physical(c.m,f,c.k,c.j,c.i) = value;
-        residual(c.m,f,c.k,c.j,c.i) = delta;
+        physical(c.m, f, c.k, c.j, c.i) = value;
+        residual(c.m, f, c.k, c.j, c.i) = delta;
       });
 }
 const MappedHalo::BatchPlan &MappedHalo::PlanForBatch(const std::vector<int> &slots) {
-  const auto found=batches_.find(slots);
-  if (found!=batches_.end()) return found->second;
+  const auto found = batches_.find(slots);
+  if (found != batches_.end()) return found->second;
   BatchPlan plan;
   std::vector<DeviceRow> selected;
   std::vector<TensorLine> lines;
@@ -674,10 +679,11 @@ const MappedHalo::BatchPlan &MappedHalo::PlanForBatch(const std::vector<int> &sl
   CopyDevice(tensors, plan.tensors, "mapped halo tensor targets");
   if (lines.size() > line_values_.extent(0)) {
     if (line_values_.data()) Kokkos::fence("mapped halo scratch resize");
-    line_values_ = DvceArray2D<Real>(Kokkos::view_alloc(Kokkos::WithoutInitializing,
-        "mapped halo stage line values"), lines.size(), Fields::count+Fields::independent_count);
+    line_values_ = DvceArray2D<Real>(
+        Kokkos::view_alloc(Kokkos::WithoutInitializing, "mapped halo stage line values"),
+        lines.size(), Fields::count + Fields::independent_count);
   }
-  CopyDevice(selected,plan.rows,"mapped halo active recipient rows");
+  CopyDevice(selected, plan.rows, "mapped halo active recipient rows");
   return batches_.emplace(slots,std::move(plan)).first->second;
 }
 

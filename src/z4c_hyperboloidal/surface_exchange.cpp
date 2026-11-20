@@ -124,9 +124,10 @@ std::vector<HostTerm> BuildRow(const NativeDonorSelector &selector,int gid,
 // Common to the four normal cases and the final corrected surface RHS.
 KOKKOS_INLINE_FUNCTION void PrepareSurfacePoint(
     const CartesianChartJets &samples, const mapped::Point &map,
-    const CartesianChartJets &reference, const HyperbolicShiftParameters<Real> &parameters,
-    CartesianChartJets &restored, SpatialGeometry<Real> &metric_out,
-    SpatialGeometry<Real> &penrose, SurfacePoleCache &stage_pole) {
+    const CartesianChartJets &reference,
+    const HyperbolicShiftParameters<Real> &parameters, CartesianChartJets &restored,
+    SpatialGeometry<Real> &metric_out, SpatialGeometry<Real> &penrose,
+    SurfacePoleCache &stage_pole) {
   metric_out = SpatialGeometry<Real>{};
   penrose = SpatialGeometry<Real>{};
   auto jets = samples;
@@ -459,13 +460,15 @@ TaskStatus SurfaceExchange::Solve() {
   } else {
     auto geometry_policy = Kokkos::RangePolicy<>(0, p.nsurface_points);
     geometry_policy.set_chunk_size(16);
-    Kokkos::parallel_for("hyperboloidal shared surface geometry",
-      geometry_policy, KOKKOS_LAMBDA(int point) {
-        if(active.extent(0) && !active(active_faces(active_points(point).face)))return;
-        PrepareSurfacePoint(samples(point), maps(point), reference(point), parameters,
-                            restored(point), metric_geometry(point), penrose_geometry(point),
-                            stage_pole(point));
-      });
+    Kokkos::parallel_for(
+        "hyperboloidal shared surface geometry", geometry_policy,
+        KOKKOS_LAMBDA(int point) {
+          if (active.extent(0) && !active(active_faces(active_points(point).face)))
+            return;
+          PrepareSurfacePoint(samples(point), maps(point), reference(point), parameters,
+                              restored(point), metric_geometry(point),
+                              penrose_geometry(point), stage_pole(point));
+        });
   }
   const Real penalty=p.penalty;int invalid=0;
   auto case_policy=Kokkos::RangePolicy<>(0,4*p.nsurface_points);
@@ -576,10 +579,12 @@ TaskStatus SurfaceExchange::EvaluateHostRates() {
     auto jets = host_restored_(i);
     for (int a = 0; a < 3; ++a) {
       const auto &logical = host_correction_jets_(c.face, a, c.k, c.j);
-      jets[22 + a] = jets[22 + a] + NormalLift(map, logical, host_face_spacing_, host_face_gap_);
+      jets[22 + a] =
+          jets[22 + a] + NormalLift(map, logical, host_face_spacing_, host_face_gap_);
     }
-    const auto rate = EvaluateScriPoint(map, row_spacing_[i], jets, p.parameters,
-        p.boundary_source, p.penalty, &host_metric_(i), &host_penrose_(i), &host_pole_(i));
+    const auto rate =
+        EvaluateScriPoint(map, row_spacing_[i], jets, p.parameters, p.boundary_source,
+                          p.penalty, &host_metric_(i), &host_penrose_(i), &host_pole_(i));
     if (!rate.valid) {
       ++invalid;
       continue;
@@ -598,63 +603,75 @@ TaskStatus SurfaceExchange::EvaluateHostRates() {
 }
 
 TaskStatus SurfaceExchange::Evaluate() {
-  const auto active=module_->active_blocks;
-  const auto active_faces=module_->face_blocks.d_view;
-  const auto active_points=module_->surface_points.d_view;
+  const auto active = module_->active_blocks;
+  const auto active_faces = module_->face_blocks.d_view;
+  const auto active_points = module_->surface_points.d_view;
 
   CheckReady();
   auto &p = *module_;
   const auto restored = restored_;
   const auto stage_pole = stage_pole_;
   const auto maps = p.surface_geometry;
-  const auto rows=rows_;
+  const auto rows = rows_;
   const bool use_restored = correction_jets_ready_;
   const auto samples = sampled_;
   const auto reference = p.surface_reference;
-  const auto points=p.surface_points.d_view;const auto rhs=p.s_rhs;
-  const auto parameters=p.parameters;const auto source=p.boundary_source;
-  const auto metric_geometry=metric_geometry_,penrose_geometry=penrose_geometry_;
-  const Real penalty=p.penalty;auto kernel=BindKernel();
-  if (correction_jets_ready_)kernel.correction_jets=correction_jets_;
-  Real compatibility=0,clock=0;int invalid=0;
+  const auto points = p.surface_points.d_view;
+  const auto rhs = p.s_rhs;
+  const auto parameters = p.parameters;
+  const auto source = p.boundary_source;
+  const auto metric_geometry = metric_geometry_, penrose_geometry = penrose_geometry_;
+  const Real penalty = p.penalty;
+  auto kernel = BindKernel();
+  if (correction_jets_ready_) kernel.correction_jets = correction_jets_;
+  Real compatibility = 0, clock = 0;
+  int invalid = 0;
   // Each team evaluates a short run of surface points before the global
   // reduction. Small faces can then use several independent teams.
   constexpr int points_per_team = 16;
   const int count = p.nsurface_points;
   const int groups = count / points_per_team + (count % points_per_team != 0);
-  Kokkos::parallel_reduce("hyperboloidal block-owned scri RHS",
-    Kokkos::TeamPolicy<>(groups, Kokkos::AUTO),
-    KOKKOS_LAMBDA(const TeamMember_t &team, int &bad, Real &defect, Real &clock_error) {
-      const int begin = team.league_rank() * points_per_team;
-      const int limit = count - begin < points_per_team ? count - begin : points_per_team;
-      for (int lane = team.team_rank(); lane < limit; lane += team.team_size()) {
-        const int point = begin + lane;
-        if(active.extent(0) && !active(active_faces(active_points(point).face)))continue;
-        if (!metric_geometry(point).valid || !penrose_geometry(point).valid) {
-          ++bad;
-          continue;
+  Kokkos::parallel_reduce(
+      "hyperboloidal block-owned scri RHS", Kokkos::TeamPolicy<>(groups, Kokkos::AUTO),
+      KOKKOS_LAMBDA(const TeamMember_t &team, int &bad, Real &defect, Real &clock_error) {
+        const int begin = team.league_rank() * points_per_team;
+        const int limit =
+            count - begin < points_per_team ? count - begin : points_per_team;
+        for (int lane = team.team_rank(); lane < limit; lane += team.team_size()) {
+          const int point = begin + lane;
+          if (active.extent(0) && !active(active_faces(active_points(point).face)))
+            continue;
+          if (!metric_geometry(point).valid || !penrose_geometry(point).valid) {
+            ++bad;
+            continue;
+          }
+          const auto map = maps(point);
+          const auto c = points(point);
+          auto jets = use_restored ? restored(point) : samples(point);
+          if (!use_restored && !SphericalPolicy::Restore(map.x, jets, reference(point))) {
+            ++bad;
+            continue;
+          }
+          for (int a = 0; a < 3; ++a)
+            jets[22 + a] = jets[22 + a] + kernel.Correction(c.face, c.j, c.k, map, a);
+          const auto rate = EvaluateScriPoint(
+              map, rows(point).spacing, jets, parameters, source, penalty,
+              &metric_geometry(point), &penrose_geometry(point),
+              use_restored ? &stage_pole(point) : nullptr);
+          if (!rate.valid) {
+            ++bad;
+            continue;
+          }
+          clock_error = fmax(clock_error, fabs(rate.clock));
+          for (int a = 0; a < 3; ++a) defect = fmax(defect, fabs(rate.defect[a]));
+          for (int f = 0; f < Fields::count; ++f) {
+            rhs(c.face, f, c.k, c.j) = rate.rate[f];
+            if (!Kokkos::isfinite(rate.rate[f])) ++bad;
+          }
         }
-        const auto map = maps(point);
-        const auto c = points(point);
-        auto jets = use_restored ? restored(point) : samples(point);
-        if (!use_restored && !SphericalPolicy::Restore(map.x, jets, reference(point))) {
-          ++bad;
-          continue;
-        }
-        for (int a=0;a<3;++a)
-          jets[22+a]=jets[22+a]+kernel.Correction(c.face,c.j,c.k,map,a);
-        const auto rate=EvaluateScriPoint(map,rows(point).spacing,jets,parameters,source,penalty,
-                                          &metric_geometry(point),&penrose_geometry(point),
-                                          use_restored ? &stage_pole(point) : nullptr);
-        if (!rate.valid) {++bad;continue;}
-        clock_error=fmax(clock_error,fabs(rate.clock));
-        for (int a=0;a<3;++a)defect=fmax(defect,fabs(rate.defect[a]));
-        for (int f=0;f<Fields::count;++f) {
-          rhs(c.face,f,c.k,c.j)=rate.rate[f];
-          if (!Kokkos::isfinite(rate.rate[f]))++bad;
-        }
-      }
-    },Kokkos::Sum<int>(invalid),Kokkos::Max<Real>(compatibility),Kokkos::Max<Real>(clock));
+      },
+      Kokkos::Sum<int>(invalid), Kokkos::Max<Real>(compatibility),
+      Kokkos::Max<Real>(clock));
   return FinishRates(invalid, compatibility, clock);
 }
 

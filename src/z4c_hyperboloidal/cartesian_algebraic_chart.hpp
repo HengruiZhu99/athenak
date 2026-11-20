@@ -48,7 +48,9 @@ struct CartesianChartMetric {
 
 template <class J>
 KOKKOS_INLINE_FUNCTION bool TryExpandCartesianChart(std::array<J, 31> &v) {
-  CartesianChartMetric<J> metric{v[1] + J(1), v[2], v[3], v[4] + J(1), v[5], {}, {}};
+  CartesianChartMetric<J> metric{
+      v[1] + J(1), v[2], v[3], v[4] + J(1), v[5], {}, {},
+  };
   if (!metric.Complete()) return false;
   v[6] = metric.f - J(1);
   v[12] = metric.TraceFreeZZ(v[7], v[8], v[9], v[10], v[11]);
@@ -60,8 +62,10 @@ KOKKOS_INLINE_FUNCTION bool TryExpandCartesianChart(std::array<J, 31> &v) {
 KOKKOS_INLINE_FUNCTION bool ProjectConstantChart(
     std::array<Real, Fields::count>& fields, Real inverse[3][3]) {
   using J = mapped::Jet;
-  CartesianChartMetric<J> jets{J(fields[1] + 1), J(fields[2]), J(fields[3]),
-                               J(fields[4] + 1), J(fields[5]), {}, {}};
+  CartesianChartMetric<J> jets{
+      J(fields[1] + 1), J(fields[2]), J(fields[3]), J(fields[4] + 1), J(fields[5]),
+      {}, {},
+  };
   if (!jets.Complete()) return false;
   // Every input is constant. Each component of the implicit metric's gradient
   // and Hessian therefore follows the same arithmetic, even on overflow.
@@ -70,9 +74,11 @@ KOKKOS_INLINE_FUNCTION bool ProjectConstantChart(
                                          jets.minor.f, jets.f.f};
   fields[6] = chart.f - 1;
   fields[12] = chart.TraceFreeZZ(fields[7], fields[8], fields[9], fields[10], fields[11]);
-  const Real g[3][3] = {{chart.a, chart.b, chart.c},
-                        {chart.b, chart.d, chart.e},
-                        {chart.c, chart.e, fields[6] + 1}};
+  const Real g[3][3] = {
+      {chart.a, chart.b, chart.c},
+      {chart.b, chart.d, chart.e},
+      {chart.c, chart.e, fields[6] + 1},
+  };
   Real determinant;
   if (!InvertMetric(g, inverse, determinant)) return false;
   for (int i = 0; i < 3; ++i)

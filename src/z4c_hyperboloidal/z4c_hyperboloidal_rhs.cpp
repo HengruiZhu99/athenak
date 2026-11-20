@@ -59,7 +59,9 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver, int stage, RHSSubset subset
   const int selected_count = selected.extent_int(0);
   // Keep each subset's halo dependencies. RHS storage holds KO only until the
   // point kernel loads all fields, including Lambda's contribution to D.
-  constexpr int shift_start = 14 * Fields::independent_count;
+  // Each field stores its value, three gradients, nine Hessian entries and transport.
+  constexpr int components_per_jet = 14;
+  constexpr int shift_start = components_per_jet * Fields::independent_count;
   const bool precompute_jets = split_bulk_jets_;
   if (precompute_jets && selected_count > residual_jet_scratch_.extent_int(1)) {
     residual_jet_scratch_ = DvceArray2D<Real>(
@@ -84,7 +86,8 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver, int stage, RHSSubset subset
           Real beta[3];
           for (int a = 0; a < 3; ++a)
             beta[a] = reader(22 + a) + refs(p)[22 + a].f - map.x[a];
-          const bool affine = blocks(c.m).face < 0 && !(radial && surface.HasRadialRow(p));
+          const bool affine =
+              blocks(c.m).face < 0 && !(radial && surface.HasRadialRow(p));
           const auto shift = LogicalShift::Project(map, beta, affine);
           for (int a = 0; a < 3; ++a) scratch(shift_start + a, index) = shift.value[a];
         }
@@ -115,14 +118,13 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver, int stage, RHSSubset subset
           LogicalShift shift;
           for (int a = 0; a < 3; ++a) shift.value[a] = scratch(shift_start + a, index);
           Real transport = 0;
-          const auto jet = radial && surface.HasRadialRow(p)
-                               ? SampleEndpointJet(p, field, reader, inv_h, shift,
-                                                   surface, transport)
-                               : SampleResidualJet(reader, field, map, inv_h, shift,
-                                                   field <= 6 || field == 18 ||
-                                                       (field >= 22 && field < 25),
-                                                   transport, blocks(c.m).face < 0);
-          const int first = 14 * slot;
+          const auto jet =
+              radial && surface.HasRadialRow(p)
+                  ? SampleEndpointJet(p, field, reader, inv_h, shift, surface, transport)
+                  : SampleResidualJet(reader, field, map, inv_h, shift,
+                                      Fields::NeedsBulkHessian(field), transport,
+                                      blocks(c.m).face < 0);
+          const int first = components_per_jet * slot;
           scratch(first, index) = jet.f;
           for (int a = 0; a < 3; ++a) {
             scratch(first + 1 + a, index) = jet.d[a];
@@ -156,7 +158,7 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver, int stage, RHSSubset subset
               forcing.dissipation[f] = output(c.m, f, c.k, c.j, c.i);
             const bool endpoint = with_radial_rows && surface.HasRadialRow(p);
             const auto load = [&](int f, bool second) {
-              const int first = 14 * Fields::IndependentSlot(f);
+              const int first = components_per_jet * Fields::IndependentSlot(f);
               mapped::Jet q(scratch(first, index));
               for (int k = 0; k < 3; ++k) {
                 q.d[k] = scratch(first + 1 + k, index);

@@ -155,13 +155,10 @@ KOKKOS_INLINE_FUNCTION BulkPointResult EvaluateBulkFieldJets(
   using J = mapped::Jet;
   Z4cJet<Real> u{};
   VectorJet<Real> B{}, D{};
-  CartesianChartMetric<J> chart{load(1, true) + J(1),
-                                load(2, true),
-                                load(3, true),
-                                load(4, true) + J(1),
-                                load(5, true),
-                                {},
-                                {}};
+  CartesianChartMetric<J> chart{
+      load(1, true) + J(1), load(2, true), load(3, true),
+      load(4, true) + J(1), load(5, true), {}, {},
+  };
   if (!chart.Complete()) {
     BulkPointResult bad;
     bad.status = PointStatus::invalid_geometry;
