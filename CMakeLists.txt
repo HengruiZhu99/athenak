@@ -328,6 +328,14 @@ if (Athena_BUILD_UNIT_TESTS)
 
   enable_testing()
   find_package(PythonInterp 3 REQUIRED)
+  if (NOT Kokkos_ENABLE_CUDA AND NOT Kokkos_ENABLE_HIP AND NOT Kokkos_ENABLE_SYCL
+      AND NOT Athena_SINGLE_PRECISION)
+    add_executable(athena_boltzmann_operators tst/unit/boltzmann/operators.cpp)
+    target_include_directories(athena_boltzmann_operators PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_BINARY_DIR})
+    target_link_libraries(athena_boltzmann_operators PRIVATE Kokkos::kokkos)
+    add_test(NAME boltzmann_operators COMMAND athena_boltzmann_operators)
+  endif()
   # Low-frequency qualification only: each order has its own translation unit to
   # bound compiler memory. The explicit target covers the complete manufactured
   # SO(2) API at the evolved VC axis and first four radial layers.

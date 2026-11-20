@@ -13,6 +13,7 @@
 #include <cstdlib>
 #include <string> // string
 
+#include "boltzmann/boltzmann.hpp"
 #include "athena.hpp"
 #include "globals.hpp"
 #include "parameter_input.hpp"
@@ -821,6 +822,11 @@ void Driver::InitBoundaryValuesAndPrimitives(Mesh *pm,
       }
       (void) pdyngr->ConToPrim(this, 0);
     }
+  }
+
+  if (pm->pmb_pack->pboltzmann) {
+    pm->pmb_pack->pz4c->Z4cToADM(pm->pmb_pack);
+    pm->pmb_pack->pboltzmann->Synchronize(this);
   }
 
   // Initialize radiation: ghost zones and intensity (everywhere)

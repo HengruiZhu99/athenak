@@ -14,6 +14,8 @@
 #include <limits>
 #include <vector>
 
+#include "boltzmann/prolongation.hpp"
+#include "boltzmann/boltzmann.hpp"
 #include "athena.hpp"
 #include "globals.hpp"
 #include "parameter_input.hpp"
@@ -205,6 +207,8 @@ void MeshBoundaryValuesCC::FillCoarseInBndryCC(DvceArray5D<Real> &a,
 
 void MeshBoundaryValuesCC::ProlongateCC(DvceArray5D<Real> &a, DvceArray5D<Real> &ca,
     bool is_z4c) {
+  const auto *photons = pmy_pack->pboltzmann;
+  const bool photon_state = photons && a.data() == photons->u.data();
   // create local references for variables in kernel
   int nmb = pmy_pack->nmb_thispack;
   int nnghbr = pmy_pack->pmb->nnghbr;
@@ -283,7 +287,9 @@ void MeshBoundaryValuesCC::ProlongateCC(DvceArray5D<Real> &a, DvceArray5D<Real> 
         int fj = (j - indcs.cjs)*2 + indcs.js;
         int fk = (k - indcs.cks)*2 + indcs.ks;
         // call inlined prolongation operator for CC variables
-        if (!is_z4c) {
+        if (photon_state) {
+          boltzmann::ProlongOrdinates(m,v,j,i,fj,fi,ca,a);
+        } else if (!is_z4c) {
           ProlongCC(m,v,k,j,i,fk,fj,fi,multi_d,three_d,ca,a);
         } else if (limited_o2) {
           if (v == z4c::Z4c::I_Z4C_CHI) {

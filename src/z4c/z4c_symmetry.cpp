@@ -85,13 +85,18 @@ Z4cValidationResult ValidateZ4cSymmetry(const Z4cValidationInput &input) {
     return Invalid(config, "<z4c>/grid_centering must be cell or vertex, not '" +
                                input.requested_grid_centering + "'");
   }
+  if (input.boltzmann_enabled &&
+      (!input.z4c_enabled || config.grid_centering != Z4cGridCentering::vertex ||
+       input.requested_symmetry != "cartoon_so2")) {
+    return Invalid(config, "<boltzmann> requires vertex-centered cartoon_so2 Z4c");
+  }
   config.centering_schema = Z4cGridLayout::kCenteringSchema;
   if (config.grid_centering == Z4cGridCentering::vertex && !input.z4c_enabled) {
     return Invalid(config, "grid_centering=vertex requires the <z4c> physics block");
   }
   if (config.grid_centering == Z4cGridCentering::vertex &&
       !input.incompatible_physics.empty()) {
-    return Invalid(config, "grid_centering=vertex is qualified only for vacuum Z4c; "
+    return Invalid(config, "grid_centering=vertex supports vacuum Z4c and Cartoon Boltzmann matter; "
                                "found <" + input.incompatible_physics.front() +
                                "> physics without a CC-to-VC matter adapter");
   }
@@ -324,6 +329,9 @@ Z4cValidationResult ValidateZ4cSymmetry(const Z4cValidationInput &input) {
   // the pgen, while all allocation-free gates above apply unchanged here.
   if (input.problem_generator == "kerr_puncture" ||
       input.problem_generator == "z4c_irisk_xcts" ||
+      input.problem_generator == "boltzmann_kerr_beam" ||
+      input.problem_generator == "boltzmann_flrw" ||
+      input.problem_generator == "boltzmann_ring" ||
       input.problem_generator == "z4c_vc_minkowski") {
     return {true, config, ""};
   }

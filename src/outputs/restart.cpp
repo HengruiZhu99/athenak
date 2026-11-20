@@ -17,6 +17,10 @@
 #include <string>
 #include <utility> // make_pair
 
+#include <iomanip>
+#include <sstream>
+#include <limits>
+#include "boltzmann/boltzmann.hpp"
 #include "athena.hpp"
 #include "coordinates/cell_locations.hpp"
 #include "geodesic-grid/geodesic_grid.hpp"
@@ -68,6 +72,7 @@ void RestartOutput::LoadOutputData(Mesh *pm) {
   adm::ADM* padm = pm->pmb_pack->padm;
   z4c::Z4c* pz4c = pm->pmb_pack->pz4c;
   radiation::Radiation* prad = pm->pmb_pack->prad;
+  auto *photons = pm->pmb_pack->pboltzmann;
   TurbulenceDriver* pturb=pm->pmb_pack->pturb;
   int nhydro=0, nmhd=0, nrad=0, nforce=3, nadm=0, nz4c=0;
   if (phydro != nullptr) {
@@ -82,8 +87,8 @@ void RestartOutput::LoadOutputData(Mesh *pm) {
     nadm = padm->nadm;
   }
   // if the spacetime is evolved, we do not need to checkpoint/recover the ADM variables
-  if (prad != nullptr) {
-    nrad = prad->prgeo->nangles;
+  if (prad != nullptr || photons != nullptr) {
+    nrad = photons ? photons->nang : prad->prgeo->nangles;
   }
 
   // Note for restarts, outarrays are dimensioned (m,n,k,j,i)
@@ -106,9 +111,9 @@ void RestartOutput::LoadOutputData(Mesh *pm) {
     Kokkos::deep_copy(outfield.x3f, Kokkos::subview(pmhd->b0.x3f, std::make_pair(0,nmb),
                       Kokkos::ALL, Kokkos::ALL, Kokkos::ALL));
   }
-  if (prad != nullptr) {
+  if (prad != nullptr || photons != nullptr) {
     Kokkos::realloc(outarray_rad, nmb, nrad, nout3, nout2, nout1);
-    Kokkos::deep_copy(outarray_rad, Kokkos::subview(prad->i0, std::make_pair(0,nmb),
+    Kokkos::deep_copy(outarray_rad, Kokkos::subview(photons ? photons->u : prad->i0, std::make_pair(0,nmb),
                       Kokkos::ALL, Kokkos::ALL, Kokkos::ALL, Kokkos::ALL));
   }
   if (pturb != nullptr) {
@@ -149,6 +154,7 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
   hydro::Hydro* phydro = pm->pmb_pack->phydro;
   mhd::MHD* pmhd = pm->pmb_pack->pmhd;
   radiation::Radiation* prad = pm->pmb_pack->prad;
+  auto *photons = pm->pmb_pack->pboltzmann;
   TurbulenceDriver* pturb=pm->pmb_pack->pturb;
   z4c::Z4c* pz4c = pm->pmb_pack->pz4c;
   adm::ADM* padm = pm->pmb_pack->padm;
@@ -159,8 +165,8 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
   if (pmhd != nullptr) {
     nmhd = pmhd->nmhd + pmhd->nscalars;
   }
-  if (prad != nullptr) {
-    nrad = prad->prgeo->nangles;
+  if (prad != nullptr || photons != nullptr) {
+    nrad = photons ? photons->nang : prad->prgeo->nangles;
   }
   if (pz4c != nullptr) {
     nz4c = pz4c->nz4c;
@@ -203,6 +209,21 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
   }
   pin->SetInteger(out_params.block_name, "file_number", out_params.file_number);
   pin->SetReal(out_params.block_name, "last_time", out_params.last_time);
+  if (photons) {
+    Real budgets[3]={photons->escaped,photons->escaped_j,photons->work};
+#if MPI_PARALLEL_ENABLED
+    MPI_Allreduce(MPI_IN_PLACE,budgets,3,MPI_ATHENA_REAL,MPI_SUM,MPI_COMM_WORLD);
+#endif
+    const char *keys[3]={"escaped_energy","escaped_j","metric_work"};
+    for (int i=0;i<3;++i) {
+      std::ostringstream out;
+      out << std::setprecision(std::numeric_limits<Real>::max_digits10) << budgets[i];
+      pin->SetString("boltzmann_restart",keys[i],out.str());
+    }
+    pin->SetInteger("boltzmann_restart","npsi",photons->npsi);
+    pin->SetInteger("boltzmann_restart","nmu",photons->nmu);
+    pin->SetReal("boltzmann_restart","mu_min",photons->mu_min);
+  }
   if (pz4c != nullptr) {
     pm->pmb_pack->z4c_restart_state.config = pm->pmb_pack->z4c_symmetry;
     pm->pmb_pack->z4c_restart_state.layout = pz4c->layout;
@@ -328,7 +349,7 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
     data_size += nout1*(nout2+1)*nout3*sizeof(Real);    // mhd b0.x2f
     data_size += nout1*nout2*(nout3+1)*sizeof(Real);    // mhd b0.x3f
   }
-  if (prad != nullptr) {
+  if (prad != nullptr || photons != nullptr) {
     data_size += nout1*nout2*nout3*nrad*sizeof(Real);   // radiation i0
   }
   if (pturb != nullptr) {
@@ -527,7 +548,7 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
     myoffset = offset_myrank;
   }
 
-  if (prad != nullptr) {
+  if (prad != nullptr || photons != nullptr) {
     for (int m=0;  m<noutmbs_max; ++m) {
       // every rank has a MB to write, so write collectively
       if (m < noutmbs_min) {

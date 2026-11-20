@@ -13,6 +13,7 @@
 #include <cstdio> // fclose
 #include <string> // string
 
+#include "boltzmann/boltzmann.hpp"
 #include "athena.hpp"
 #include "globals.hpp"
 #include "parameter_input.hpp"
@@ -634,6 +635,7 @@ void Mesh::NewTimeStep(const Real tlim) {
     dt = std::min(dt, (cfl_no)*(pmb_pack->pz4c->dt_spatial) );
     dt = std::min(dt, pmb_pack->pz4c->dt_source);
   }
+  if (pmb_pack->pboltzmann) dt = std::min(dt, cfl_no*pmb_pack->pboltzmann->dtnew);
   // Radiation timestep
   if (pmb_pack->prad != nullptr) {
     dt = std::min(dt, (cfl_no)*(pmb_pack->prad->dtnew) );

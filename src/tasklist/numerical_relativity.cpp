@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 
+#include "boltzmann/boltzmann.hpp"
 #include "numerical_relativity.hpp"
 #include "z4c/z4c.hpp"
 #include "dyn_grmhd/dyn_grmhd.hpp"
@@ -42,6 +43,8 @@ PhysicsDependency NumericalRelativity::NeedsPhysics(TaskName task) {
     return Phys_MHD;
   } else if (task < Z4c_NTASKS) {
     return Phys_Z4c;
+  } else if (task > Z4c_NTASKS && task < Boltz_NTASKS) {
+    return Phys_Boltzmann;
   } else {
     return Phys_None;
   }
@@ -51,6 +54,8 @@ bool NumericalRelativity::DependencyAvailable(PhysicsDependency dep) {
   switch(dep) {
     case Phys_None:
       return true;
+    case Phys_Boltzmann:
+      return pmy_pack->pboltzmann != nullptr;
     case Phys_MHD:
       return pmy_pack->pdyngr != nullptr;
     case Phys_Z4c:
@@ -159,7 +164,9 @@ void NumericalRelativity::AssembleNumericalRelativityTasks(
     pmy_pack->pdyngr->QueueDynGRMHDTasks();
   }
   if (pmy_pack->pz4c != nullptr) {
-    pmy_pack->pz4c->QueueZ4cTasks();
+    auto *photons = pmy_pack->pboltzmann;
+    if (!photons || !photons->fixed_metric) pmy_pack->pz4c->QueueZ4cTasks();
+    if (photons) photons->QueueTasks();
   }
 
   bool success = AssembleNumericalRelativityTasks(tl["before_stagen"], start_queue);

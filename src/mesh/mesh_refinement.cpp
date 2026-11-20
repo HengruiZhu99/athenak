@@ -26,6 +26,8 @@
 #include <utility>   // pair
 #include <vector>
 
+#include "boltzmann/prolongation.hpp"
+#include "boltzmann/boltzmann.hpp"
 #include "athena.hpp"
 #include "globals.hpp"
 #include "parameter_input.hpp"
@@ -257,6 +259,9 @@ MeshRefinement::MeshRefinement(Mesh *pm, ParameterInput *pin) :
   }
   if (pm->pmb_pack->prad != nullptr) {
     ncc_tosend += (pm->pmb_pack->prad->prgeo->nangles);
+  }
+  if (pm->pmb_pack->pboltzmann != nullptr) {
+    ncc_tosend += (pm->pmb_pack->pboltzmann->nang);
   }
   if (pm->pmb_pack->pz4c != nullptr) {
     if (pm->pmb_pack->pz4c->layout.centering ==
@@ -1028,6 +1033,7 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
   hydro::Hydro* phydro = pm->pmb_pack->phydro;
   mhd::MHD* pmhd = pm->pmb_pack->pmhd;
   radiation::Radiation* prad = pm->pmb_pack->prad;
+  auto *pboltzmann = pm->pmb_pack->pboltzmann;
   z4c::Z4c* pz4c = pm->pmb_pack->pz4c;
   adm::ADM* padm = pm->pmb_pack->padm;
   // derefine (if needed)
@@ -1041,6 +1047,9 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
     }
     if (prad != nullptr) {
       DerefineCCSameRank(prad->i0, prad->coarse_i0);
+    }
+    if (pboltzmann != nullptr) {
+      DerefineCCSameRank(pboltzmann->u, pboltzmann->coarse);
     }
     if (pz4c != nullptr) {
       if (pz4c->layout.centering == z4c::Z4cGridCentering::vertex) {
@@ -1065,6 +1074,9 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
   if (prad != nullptr) {
     CopyCC(prad->i0);
   }
+  if (pboltzmann != nullptr) {
+    CopyCC(pboltzmann->u);
+  }
   if (pz4c != nullptr) {
     if (pz4c->layout.centering == z4c::Z4cGridCentering::vertex) {
       CopyVC(pz4c->u0);
@@ -1088,6 +1100,9 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
     }
     if (prad != nullptr) {
       CopyForRefinementCC(prad->i0, prad->coarse_i0);
+    }
+    if (pboltzmann != nullptr) {
+      CopyForRefinementCC(pboltzmann->u, pboltzmann->coarse);
     }
     if (pz4c != nullptr) {
       if (pz4c->layout.centering == z4c::Z4cGridCentering::vertex) {
@@ -1130,6 +1145,9 @@ void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, in
     }
     if (prad != nullptr) {
       RefineCC(new_to_old, prad->i0, prad->coarse_i0);
+    }
+    if (pboltzmann != nullptr) {
+      RefineCC(new_to_old, pboltzmann->u, pboltzmann->coarse);
     }
     if (pz4c != nullptr) {
       if (pz4c->layout.centering == z4c::Z4cGridCentering::vertex) {
@@ -1561,6 +1579,8 @@ void MeshRefinement::CopyForRefinementFC(DvceFaceFld4D<Real> &b,DvceFaceFld4D<Re
 
 void MeshRefinement::RefineCC(DualArray1D<int> &n2o, DvceArray5D<Real> &a,
                               DvceArray5D<Real> &ca, bool is_z4c) {
+  const auto *photons = pmy_mesh->pmb_pack->pboltzmann;
+  const bool photon_state = photons && a.data() == photons->u.data();
   int nvar = a.extent_int(1);  // TODO(@user): 2nd index from L of in array must be NVAR
   auto &new_nmb = new_nmb_eachrank[global_variable::my_rank];
   auto &indcs = pmy_mesh->mb_indcs;
@@ -1620,7 +1640,9 @@ void MeshRefinement::RefineCC(DualArray1D<int> &n2o, DvceArray5D<Real> &a,
         int fk = 2*k - cks;  // correct when cks=ks
 
         // call inlined prolongation operator for CC variables
-        if (!is_z4c) {
+        if (photon_state) {
+          boltzmann::ProlongOrdinates(m,v,j,i,fj,fi,ca,a);
+        } else if (!is_z4c) {
           ProlongCC(m,v,k,j,i,fk,fj,fi,multi_d,three_d,ca,a);
         } else if (limited_o2) {
           if (v == z4c::Z4c::I_Z4C_CHI) {

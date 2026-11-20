@@ -13,6 +13,7 @@
 #include <utility> // make_pair
 #include <vector>
 
+#include "boltzmann/boltzmann.hpp"
 #include "athena.hpp"
 #include "globals.hpp"
 #include "mesh.hpp"
@@ -152,6 +153,9 @@ void MeshRefinement::InitRecvAMR(int nleaf) {
   }
   if (pmy_mesh->pmb_pack->prad != nullptr) {
     ncc_tosend += (pmy_mesh->pmb_pack->prad->prgeo->nangles);
+  }
+  if (pmy_mesh->pmb_pack->pboltzmann != nullptr) {
+    ncc_tosend += (pmy_mesh->pmb_pack->pboltzmann->nang);
   }
   if (pz4c != nullptr) {
     if (pz4c->layout.centering ==
@@ -570,6 +574,9 @@ void MeshRefinement::PackAndSendAMR(int nleaf) {
   if (pmy_mesh->pmb_pack->prad != nullptr) {
     ncc_tosend += (pmy_mesh->pmb_pack->prad->prgeo->nangles);
   }
+  if (pmy_mesh->pmb_pack->pboltzmann != nullptr) {
+    ncc_tosend += (pmy_mesh->pmb_pack->pboltzmann->nang);
+  }
   if (pmy_mesh->pmb_pack->pz4c != nullptr) {
     if (pmy_mesh->pmb_pack->pz4c->layout.centering ==
         z4c::Z4cGridCentering::vertex) {
@@ -753,6 +760,7 @@ void MeshRefinement::PackAndSendAMR(int nleaf) {
   hydro::Hydro* phydro = pmy_mesh->pmb_pack->phydro;
   mhd::MHD* pmhd = pmy_mesh->pmb_pack->pmhd;
   radiation::Radiation* prad = pmy_mesh->pmb_pack->prad;
+  auto *pboltzmann = pmy_mesh->pmb_pack->pboltzmann;
   z4c::Z4c* pz4c = pmy_mesh->pmb_pack->pz4c;
 
   int ncc_sent = 0, nvc_sent = 0, nfc_sent = 0;
@@ -770,6 +778,10 @@ void MeshRefinement::PackAndSendAMR(int nleaf) {
   if (prad != nullptr) {
     PackAMRBuffersCC(prad->i0, prad->coarse_i0, ncc_sent, nfc_sent);
     ncc_sent += prad->prgeo->nangles;
+  }
+  if (pboltzmann != nullptr) {
+    PackAMRBuffersCC(pboltzmann->u, pboltzmann->coarse, ncc_sent, nfc_sent);
+    ncc_sent += pboltzmann->nang;
   }
   if (pz4c != nullptr) {
     if (pz4c->layout.centering == z4c::Z4cGridCentering::vertex) {
@@ -1090,6 +1102,7 @@ void MeshRefinement::ClearRecvAndUnpackAMR() {
   hydro::Hydro* phydro = pmy_mesh->pmb_pack->phydro;
   mhd::MHD* pmhd = pmy_mesh->pmb_pack->pmhd;
   radiation::Radiation* prad = pmy_mesh->pmb_pack->prad;
+  auto *pboltzmann = pmy_mesh->pmb_pack->pboltzmann;
   z4c::Z4c* pz4c = pmy_mesh->pmb_pack->pz4c;
 
   int ncc_recv=0, nvc_recv=0, nfc_recv=0;
@@ -1108,6 +1121,10 @@ void MeshRefinement::ClearRecvAndUnpackAMR() {
   if (prad != nullptr) {
     UnpackAMRBuffersCC(prad->i0, prad->coarse_i0, ncc_recv, nfc_recv);
     ncc_recv += prad->prgeo->nangles;
+  }
+  if (pboltzmann != nullptr) {
+    UnpackAMRBuffersCC(pboltzmann->u, pboltzmann->coarse, ncc_recv, nfc_recv);
+    ncc_recv += pboltzmann->nang;
   }
   if (pz4c != nullptr) {
     if (pz4c->layout.centering == z4c::Z4cGridCentering::vertex) {

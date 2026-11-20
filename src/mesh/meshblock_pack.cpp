@@ -15,6 +15,7 @@
 #include <string>
 #include <vector>
 
+#include "boltzmann/boltzmann.hpp"
 #include "athena.hpp"
 #include "config.hpp"
 #include "parameter_input.hpp"
@@ -60,6 +61,7 @@ bool HasAnySecondPdfKey(ParameterInput *pin, const std::string &block_name) {
 z4c::Z4cValidationInput CollectZ4cValidationInput(ParameterInput *pin,
                                                   const Mesh &mesh) {
   z4c::Z4cValidationInput input;
+  input.boltzmann_enabled = pin->DoesBlockExist("boltzmann");
   input.z4c_enabled = pin->DoesBlockExist("z4c");
   if (input.z4c_enabled) {
     input.requested_grid_centering =
@@ -334,6 +336,7 @@ MeshBlockPack::~MeshBlockPack() {
   if (ppart  != nullptr) {delete ppart;}
   if (pnr    != nullptr) {delete pnr;}
   if (pdyngr != nullptr) {delete pdyngr;}
+  delete pboltzmann;
   if (ptmunu != nullptr) {delete ptmunu;}
   if (padm   != nullptr) {delete padm;}
   if (pz4c   != nullptr) {
@@ -505,6 +508,10 @@ void MeshBlockPack::AddPhysics(ParameterInput *pin) {
     ptmunu = new Tmunu(this, pin);
   }
 
+  if (pin->DoesBlockExist("boltzmann")) {
+    pboltzmann = new boltzmann::Boltzmann(this, pin);
+    if (pboltzmann->backreaction) ptmunu = new Tmunu(this, pin);
+  }
   if (pz4c != nullptr || padm != nullptr) {
     pnr = new numrel::NumericalRelativity(this, pin);
     pnr->AssembleNumericalRelativityTasks(tl_map);

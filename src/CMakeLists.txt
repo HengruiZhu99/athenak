@@ -11,6 +11,9 @@ add_executable(
         globals.cpp
         parameter_input.cpp
 
+        boltzmann/boltzmann.cpp
+        boltzmann/transport.cpp
+        boltzmann/tasks.cpp
         bvals/bvals.cpp
         bvals/buffs_cc.cpp
         bvals/buffs_fc.cpp

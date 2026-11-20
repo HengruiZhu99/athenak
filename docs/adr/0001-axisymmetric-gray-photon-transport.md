@@ -1,0 +1,9 @@
+# Evolve gray intensity on signed hemispheres of the Eulerian sky
+
+The metric needs photon stress–energy. Frequency integration is exact for collisionless massless particles because their trajectories are independent of energy. We evolve one gray intensity per finite ordinate on the meridional half-plane and align its azimuthal frame leg with the axial Killing vector. This permits independent prograde and retrograde hemispheres and resolves intersecting beams.
+
+Cell-centered transport stores the coordinate-volume average of cylindrical densitized energy. The angular weights are fixed across spatial refinement levels. This gives finite-volume reflux and mean-preserving subdivision a flat-spacetime energy balance to roundoff. The independent angular-momentum budget measures truncation error. The vertex-centered modified-Cartoon geometry receives the ten Eulerian stress projections at each explicit stage.
+
+A separate spectral-energy coordinate is required for a frequency-dependent observable or interaction. For this collisionless calculation the gray energy moment closes, and the distribution over directions retains the angular information needed for the gravitational source and axial Killing current. The hemisphere layout makes storage proportional to the number of selected signs. The uniform solid-angle bands permit conservative differencing even for a multistream distribution. [Zhu et al., finite-solid-angle ADM transport](https://arxiv.org/abs/2608.22020)
+
+The science target is the rotating analogue of the collapse threshold studied in spherical Einstein–Maxwell–Vlasov evolution. Testing for a resolved subextremal horizon precedes any measurement of the extremal threshold. [East, gravitational collapse near the extremal critical point](https://arxiv.org/abs/2511.20567)

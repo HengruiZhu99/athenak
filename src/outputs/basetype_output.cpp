@@ -26,6 +26,7 @@
 #include "dyn_grmhd/dyn_grmhd.hpp"
 #include "coordinates/adm.hpp"
 #include "z4c/tmunu.hpp"
+#include "boltzmann/boltzmann.hpp"
 #include "z4c/z4c.hpp"
 #include "srcterms/srcterms.hpp"
 #include "srcterms/turb_driver.hpp"
@@ -183,7 +184,7 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
        << std::endl << "Input file is likely missing corresponding block" << std::endl;
     exit(EXIT_FAILURE);
   }
-  if ((ivar>=143) && (ivar<154) && (pm->pmb_pack->ptmunu == nullptr)) {
+  if ((ivar>=143) && (ivar<154) && (pm->pmb_pack->ptmunu == nullptr && !pm->pmb_pack->pboltzmann)) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__ << std::endl
        << "Output of Tmunu variable requested in <output> block '"
        << out_params.block_name << "' but no Tmunu object has been constructed."
@@ -674,7 +675,9 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
     for (int v = 0; v < Tmunu::N_Tmunu; ++v) {
       if (variable.compare("tmunu") == 0 ||
           variable.compare(Tmunu::Tmunu_names[v]) == 0) {
-        outvars.emplace_back(Tmunu::Tmunu_names[v], v, &(pm->pmb_pack->ptmunu->u_tmunu));
+        auto *photons=pm->pmb_pack->pboltzmann;
+        auto *stress=photons ? &photons->moments : &pm->pmb_pack->ptmunu->u_tmunu;
+        outvars.emplace_back(Tmunu::Tmunu_names[v], v, stress);
       }
     }
     // con z4c variables

@@ -24,6 +24,7 @@
 class MeshBlock;
 class ADM;
 class Tmunu;
+namespace boltzmann {class Boltzmann;}
 namespace hydro {class Hydro;}
 namespace mhd {class MHD;}
 namespace ion_neutral {class IonNeutral;}
@@ -67,6 +68,7 @@ class MeshBlockPack {
   hydro::Hydro *phydro=nullptr;
   mhd::MHD *pmhd=nullptr;
   adm::ADM *padm=nullptr;
+  boltzmann::Boltzmann *pboltzmann=nullptr;
   Tmunu *ptmunu=nullptr;
   z4c::Z4c *pz4c=nullptr;
   dyngr::DynGRMHD *pdyngr=nullptr;

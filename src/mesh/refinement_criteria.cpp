@@ -10,6 +10,7 @@
 #include <algorithm> // max
 #include <string>
 
+#include "boltzmann/boltzmann.hpp"
 #include "athena.hpp"
 #include "globals.hpp"
 #include "parameter_input.hpp"
@@ -131,6 +132,9 @@ void RefinementCriteria::SetRefinementData(MeshBlockPack* pmbp, bool count_deriv
           int n = static_cast<int>(IDN);
           it->rdata = Kokkos::subview(pmbp->phydro->u0, ALL, n, ALL, ALL, ALL);
         }
+      } else if (it->rvariable == "boltzmann_E") {
+        if (!pmbp->pboltzmann) Kokkos::abort("boltzmann_E requires <boltzmann>");
+        it->rdata = Kokkos::subview(pmbp->pboltzmann->moments, ALL, 6, ALL, ALL, ALL);
       // hydro (rest-frame) density
       } else if (it->rvariable.compare("hydro_w_d") == 0) {
         if (!(count_derived) && !(load_derived)) {

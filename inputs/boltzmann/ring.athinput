@@ -1,0 +1,96 @@
+# Collisionless rotating ring on the vertex-centered Cartoon half-plane.
+
+<job>
+basename = ring
+
+<mesh>
+nghost = 4
+nx1 = 32
+x1min = 0.0
+x1max = 16.0
+ix1_bc = axis
+ox1_bc = outflow
+nx2 = 32
+x2min = -8.0
+x2max = 8.0
+ix2_bc = outflow
+ox2_bc = outflow
+nx3 = 1
+x3min = -0.5
+x3max = 0.5
+ix3_bc = periodic
+ox3_bc = periodic
+
+<meshblock>
+nx1 = 16
+nx2 = 16
+nx3 = 1
+
+<mesh_refinement>
+refinement = adaptive
+max_nmb_per_rank = 64
+num_levels = 2
+ncycle_check = 4
+refinement_interval = 4
+amr_history_mode = off
+
+<amr_criterion0>
+method = min_max
+variable = boltzmann_E
+value_max = 0.0002
+
+<time>
+evolution = dynamic
+integrator = rk2
+cfl_number = 0.7
+nlim = -1
+tlim = 12.0
+ndiag = 50
+
+<z4c>
+grid_centering = vertex
+symmetry = cartoon_so2
+coordinate_map = half_rho_z_suppressed_y_v2
+symmetry_schema = 2
+spatial_order = 6
+diss = 0.02
+lean_runtime = false
+chi_div_floor = 1.0e-5
+damp_kappa1 = 0.15
+damp_kappa2 = 0.0
+lapse_oplog = 2.0
+lapse_harmonicf = 1.0
+lapse_harmonic = 0.0
+lapse_advect = 1.0
+shift_Gamma = 0.75
+shift_eta = 1.0
+shift_advect = 0.0
+
+<boltzmann>
+npsi = 12
+nmu_half = 4
+sign = prograde
+backreaction = true
+
+<problem>
+pgen_name = boltzmann_ring
+user_hist = true
+ring_radius = 6.0
+ring_width = 1.0
+ring_mu = 0.25
+angular_width = 0.3
+intensity = 0.002
+
+<fastflow>
+num_horizons = 1
+find_interval_0 = 50
+initial_radius_0 = 1.0
+
+<output1>
+file_type = hst
+data_format = %24.16e
+dcycle = 10
+
+<output2>
+file_type = rst
+dt = 4.0

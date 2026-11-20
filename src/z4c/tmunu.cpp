@@ -11,6 +11,7 @@
 #include "athena_tensor.hpp"
 #include "parameter_input.hpp"
 #include "z4c/tmunu.hpp"
+#include "z4c/z4c.hpp"
 #include "mesh/mesh.hpp"
 
 char const * const Tmunu::Tmunu_names[Tmunu::N_Tmunu] = {
@@ -29,6 +30,10 @@ Tmunu::Tmunu(MeshBlockPack *ppack, ParameterInput *pin):
   int ncells2 = (indcs.nx2 > 1) ? (indcs.nx2 + 2*(indcs.ng)) : 1;
   int ncells3 = (indcs.nx3 > 1) ? (indcs.nx3 + 2*(indcs.ng)) : 1;
 
+  if (ppack->pboltzmann) {
+    const auto &v = ppack->pz4c->layout;
+    ncells1=v.n1; ncells2=v.n2; ncells3=v.n3;
+  }
   Kokkos::realloc(u_tmunu, nmb, N_Tmunu, ncells3, ncells2, ncells1);
   tmunu.S_dd.InitWithShallowSlice(u_tmunu, I_Tmunu_Sxx, I_Tmunu_Szz);
   tmunu.E.InitWithShallowSlice(u_tmunu, I_Tmunu_E);

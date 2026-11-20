@@ -77,6 +77,7 @@ class ProblemGenerator {
   void Z4cBoostedPuncture(ParameterInput *pin, const bool restart);
   void Z4cGaugeWave(ParameterInput *pin, const bool restart);
   void Z4cLinearWave(ParameterInput *pin, const bool restart);
+  void BoltzmannPhotons(ParameterInput *pin, const bool restart);
   void Z4cVcMinkowski(ParameterInput *pin, const bool restart);
   void Z4cIrisXcts(ParameterInput *pin, const bool restart);
   void Z4cFinalizeImportedAdm(ParameterInput *pin);

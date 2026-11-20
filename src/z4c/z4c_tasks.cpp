@@ -58,15 +58,15 @@ void Z4c::QueueZ4cTasks() {
   switch (fd_stencil) {
     case 2:
       pnr->QueueTask(&Z4c::CalcRHS<2>, this, Z4c_CalcRHS, "Z4c_CalcRHS",
-                     Task_Run, {Z4c_AxisGhosts}, {MHD_SetTmunu});
+                     Task_Run, {Z4c_AxisGhosts}, {MHD_SetTmunu, Boltz_Stress});
       break;
     case 3:
       pnr->QueueTask(&Z4c::CalcRHS<3>, this, Z4c_CalcRHS, "Z4c_CalcRHS",
-                     Task_Run, {Z4c_AxisGhosts}, {MHD_SetTmunu});
+                     Task_Run, {Z4c_AxisGhosts}, {MHD_SetTmunu, Boltz_Stress});
       break;
     case 4:
       pnr->QueueTask(&Z4c::CalcRHS<4>, this, Z4c_CalcRHS, "Z4c_CalcRHS",
-                     Task_Run, {Z4c_AxisGhosts}, {MHD_SetTmunu});
+                     Task_Run, {Z4c_AxisGhosts}, {MHD_SetTmunu, Boltz_Stress});
       break;
     default:
       std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
@@ -78,7 +78,7 @@ void Z4c::QueueZ4cTasks() {
   pnr->QueueTask(&Z4c::Z4cBoundaryRHS, this, Z4c_SomBC, "Z4c_SomBC", Task_Run,
                  {Z4c_CalcRHS});
   pnr->QueueTask(&Z4c::ExpRKUpdate, this, Z4c_ExplRK, "Z4c_ExplRK", Task_Run,
-                 {Z4c_SomBC},{MHD_EField});
+                 {Z4c_SomBC},{MHD_EField, Boltz_Flux});
   const bool vertex_centered =
       layout.centering == Z4cGridCentering::vertex;
   if (pmy_pack->pz4c->opt.floor_chi) {
@@ -137,7 +137,7 @@ void Z4c::QueueZ4cTasks() {
                  {Z4c_ClearR});*/
   pnr->QueueTask(&Z4c::ADMConstraints_, this, Z4c_ADMC, "Z4c_ADMC", Task_End,
   //               {Z4c_Z4c2ADM});
-                 {Z4c_ClearR});
+                 {Z4c_ClearR}, {Boltz_FinalStress});
   pnr->QueueTask(&Z4c::CalcWeylScalar, this, Z4c_Weyl, "Z4c_Weyl", Task_End, {Z4c_ADMC});
   pnr->QueueTask(&Z4c::RestrictWeyl, this, Z4c_RestW, "Z4c_RestW", Task_End, {Z4c_Weyl});
   pnr->QueueTask(&Z4c::SendWeyl, this, Z4c_SendW, "Z4c_SendW", Task_End, {Z4c_RestW});
@@ -589,7 +589,8 @@ TaskStatus Z4c::FinalizeVertexAcceptedState(Driver *pdrive, int stage) {
 //! \brief
 
 TaskStatus Z4c::ConvertZ4cToADM(Driver *pdrive, int stage) {
-  if (pmy_pack->pdyngr != nullptr || stage == pdrive->nexp_stages) {
+  if (pmy_pack->pdyngr != nullptr || pmy_pack->pboltzmann != nullptr ||
+      stage == pdrive->nexp_stages) {
     Z4cToADM(pmy_pack);
   }
   return TaskStatus::complete;

@@ -91,13 +91,17 @@ enum TaskName {
   Z4c_FastFlow,
   Z4c_CCE,
   Z4c_DumpHorizon,
-  Z4c_NTASKS
+  Z4c_NTASKS,
+  Boltz_Receive, Boltz_Stress, Boltz_Flux, Boltz_SendFlux, Boltz_RecvFlux,
+  Boltz_Update, Boltz_Send, Boltz_Boundary, Boltz_Clear, Boltz_FinalStress,
+  Boltz_NTASKS
 };
 
 enum PhysicsDependency {
   Phys_None,
   Phys_MHD,
-  Phys_Z4c
+  Phys_Z4c,
+  Phys_Boltzmann
 };
 
 enum TaskLocation {

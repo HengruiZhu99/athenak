@@ -89,6 +89,14 @@ bool CheckCenteringSelection() {
       std::string(z4c::ToString(result.config.grid_centering)) != "vertex") {
     return false;
   }
+  input.boltzmann_enabled = true;
+  if (!z4c::ValidateZ4cSymmetry(input).valid) return false;
+  input.requested_grid_centering = "cell";
+  if (!Rejects(input, "requires vertex-centered cartoon_so2")) return false;
+  input.requested_grid_centering = "vertex";
+  input.requested_symmetry = "cartesian3d";
+  if (!Rejects(input, "requires vertex-centered cartoon_so2")) return false;
+  input.boltzmann_enabled = false;
   input.requested_grid_centering = "nodal";
   if (!Rejects(input, "grid_centering must be cell or vertex")) return false;
   z4c::Z4cValidationInput no_z4c;

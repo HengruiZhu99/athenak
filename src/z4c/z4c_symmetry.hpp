@@ -83,6 +83,7 @@ struct Z4cValidationInput {
   int schema = Z4cSymmetryConfig::kCartesianSchema;
 
   bool z4c_enabled = false;
+  bool boltzmann_enabled = false;
   int nghost = 2;
   int requested_spatial_order = 2;
   bool vertex_prolongation_order_specified = false;
