@@ -76,10 +76,14 @@ def measure(patch, coeff, theta):
         dF = np.stack((sine - derivative*cosine/radius,
                        cosine + derivative*sine/radius, np.zeros_like(r)), axis=-1)
         g = patch.tensor(r, y, 0)
+        determinant = np.linalg.det(g)
+        minor = g[:, 0, 0] * g[:, 1, 1] - g[:, 0, 1]**2
+        if not np.all((g[:, 0, 0] > 0) & (minor > 0) & (determinant > 0)):
+            raise ValueError("interpolated spatial metric is not positive definite")
         inv = np.linalg.inv(g)
         upper = np.einsum("nij,nj->ni", inv, dF)
         n = upper / np.sqrt(np.sum(upper*dF, axis=1))[:, None]
-        volume = r * np.sqrt(np.linalg.det(g))
+        volume = r * np.sqrt(determinant)
         return n * volume[:, None], volume, n, g, inv
 
     _, volume, n, g, inv = normal(rho, z)
@@ -146,6 +150,14 @@ if __name__ == "__main__":
     args = cli.parse_args()
     frame = read_binary(args.snapshot)
     patch = NativePatch(frame)
+    usable = 0
     for seed in args.seeds:
-        row = solve_surface(patch, seed, args.target, args.order, args.max_evals)
-        print(json.dumps(dict(time=frame["time"], dx=patch.dx, **row)), flush=True)
+        try:
+            row = solve_surface(patch, seed, args.target, args.order, args.max_evals)
+        except (ValueError, np.linalg.LinAlgError) as error:
+            print(f"Rejected seed {seed:g}: {error}", file=sys.stderr)
+            continue
+        print(json.dumps(dict(time=frame["time"], dx=patch.dx, **row), allow_nan=False), flush=True)
+        usable += 1
+    if not usable:
+        raise SystemExit("No usable surface fits")
