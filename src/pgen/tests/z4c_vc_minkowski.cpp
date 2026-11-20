@@ -13,6 +13,7 @@
 #include "mesh/mesh.hpp"
 #include "parameter_input.hpp"
 #include "pgen/pgen.hpp"
+#include "pgen/photon_torus.hpp"
 #include "pgen/z4c/kerr_puncture.hpp"
 #include "pgen/tests/z4c_deterministic_amr.hpp"
 #include "z4c/z4c.hpp"
@@ -78,6 +79,13 @@ void ProblemGenerator::BoltzmannPhotons(ParameterInput *pin, const bool restart)
   user_hist_func = boltzmann::RingHistory;
   if (restart) return;
   const auto name = pin->GetString("problem", "pgen_name");
+  if (name == "photon_torus") {
+    InitializePhotonTorus(pack, pin);
+    photons->GeometryAndStress(nullptr, 0);
+    SetInitialConstraints(pack);
+    AuditPhotonTorus(pack, pin);
+    return;
+  }
   const bool flrw = name == "boltzmann_flrw";
   const Real H = flrw ? pin->GetOrAddReal("problem", "hubble", 0.2) : 0;
   if (name == "boltzmann_kerr_beam") {

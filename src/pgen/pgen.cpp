@@ -983,7 +983,7 @@ void ProblemGenerator::CallProblemGenerator(ParameterInput *pin, bool is_restart
   } else if (pgen_fun_name.compare("z4c_linear_wave") == 0) {
     Z4cLinearWave(pin, is_restart);
   } else if (pgen_fun_name == "boltzmann_ring" || pgen_fun_name == "boltzmann_flrw" ||
-             pgen_fun_name == "boltzmann_kerr_beam") {
+             pgen_fun_name == "boltzmann_kerr_beam" || pgen_fun_name == "photon_torus") {
     BoltzmannPhotons(pin, is_restart);
   } else if (pgen_fun_name == "z4c_vc_minkowski") {
     Z4cVcMinkowski(pin, is_restart);

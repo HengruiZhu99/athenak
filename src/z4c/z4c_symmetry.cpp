@@ -330,6 +330,7 @@ Z4cValidationResult ValidateZ4cSymmetry(const Z4cValidationInput &input) {
   if (input.problem_generator == "kerr_puncture" ||
       input.problem_generator == "z4c_irisk_xcts" ||
       input.problem_generator == "boltzmann_kerr_beam" ||
+      input.problem_generator == "photon_torus" ||
       input.problem_generator == "boltzmann_flrw" ||
       input.problem_generator == "boltzmann_ring" ||
       input.problem_generator == "z4c_vc_minkowski") {

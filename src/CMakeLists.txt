@@ -137,6 +137,7 @@ add_executable(
         pgen/tests/z4c_gauge_wave.cpp
         pgen/tests/z4c_linear_wave.cpp
         pgen/tests/z4c_vc_minkowski.cpp
+        pgen/photon_torus.cpp
         pgen/z4c/kerr_puncture.cpp
 
         pgen/unit_tests/eos_compose.cpp
