@@ -1,5 +1,22 @@
 # Stationary geometry and N12 kernel performance
 
+## Release verification
+
+The selected production solver is commit 02ad81493. Commit 4ecb00499 cleaned up the derivative, mapped halo and scri kernels and centralized the bulk Hessian requirement. The measured hierarchy covers 33,467,904 bulk point-stages per coarse interval. Both release runs used 12 bound GPU tiles per node, eight warm intervals and twelve timed intervals. The cycle-21 restart was written after timing.
+
+| Aurora configuration | PBS job | Seconds/interval | Million bulk point-stages/s | Seconds/M₀ |
+|---|---:|---:|---:|---:|
+| One node, 12 ranks | 9106222 | 1.30144 | 25.72 | 231.14 |
+| Two nodes, 24 ranks | 9106243 | 0.99908 | 33.50 | 177.44 |
+
+The one-node release confirmation is 1.90× faster than the 2.47446 s starting point and delivers 25.72 million bulk point-stages/s against 103.2 million for regular RK4. The earlier optimization run measured 1.29074 s/interval. The two-node confirmation used the archived 24-rank ownership map and was 3.04× faster than the archived 3.03535 s/interval scaling run.
+
+At cycle 21, the maximum scaled field and persistent-diagnostic differences between the cleaned solver and the selected one-node solver were 0 and 0. Against the original one-node checkpoint they were 4.819e-12 and 1.554e-15. Across one and two nodes they were 1.48e-12 and 1.44e-15. Each comparison covered 139,683,024 field values and eight diagnostic values per point with a 1e-11 acceptance bound.
+
+The Kokkos Serial CPU and Kokkos SYCL Aurora targets rebuilt. The release and pre-cleanup Aurora executables have byte-identical device instructions for dissipation, field derivatives and both ordinary and radial bulk point kernels. The optimized paths use Kokkos execution policies and views with standard MPI progress on the calling thread. The SYCL-specific workgroup size validation remains isolated at initialization. The native two-rank four-stage RK4 smoke passed with zero maximum update error. The seven-rank CPU AMR case refined from 25 to 32 blocks and reproduced the control checkpoint at cycle 3. Restarting at the refined cut reproduced all 7,458,048 saved scalars bit for bit. The long science trajectory, convergence and Bondi results are inherited from the earlier qualification.
+
+The repository style command reported existing C++ and Python failures. The final CPPLINT.cfg check reported zero diagnostics on the added or replaced C++ lines since d4ab8ad45. The Python diagnostics were identical to the archived style run. The build manifest, native checks and both Aurora confirmation receipts are archived in `n12-halo-kernels-20261119`. The Aurora release executable has SHA-256 `4052d7886bb67e4e63e0d6449ec1f42ac30acd417cb0fefe64538e91e5ac5fb1`.
+
 ## Reuse within a derivative stage
 
 On one Aurora node, job 9106014 measured 1.29074 s/interval after projecting the shift once per point and reusing axial neighbors across the centered and biased stencils. The same-node control took 1.34557 s/interval. The 0.05482 s saving exceeded the 0.00801 s spread of the control's four-interval means. Each timing covered twelve intervals after eight warm intervals, with output off and the same 33,467,904 bulk point-stages per interval. The checkpoint run repeated at 1.29840 s/interval.
