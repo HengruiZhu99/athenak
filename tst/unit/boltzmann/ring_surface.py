@@ -95,7 +95,7 @@ def measure(patch, coeff, theta):
     return h, projected+div, projected-div, da, j
 
 
-def solve_surface(patch, seed, target, order, max_evals):
+def solve_surface(patch, seed, target, order, max_evals, initial_coeff=None):
     x, w = leg.leggauss(max(32, 3*order))
     theta = np.arccos(x)
 
@@ -113,6 +113,10 @@ def solve_surface(patch, seed, target, order, max_evals):
 
     a = np.zeros(order//2+1)
     a[0] = seed
+    if initial_coeff is not None:
+        previous = np.asarray(initial_coeff)[::2]
+        count = min(len(previous), len(a))
+        a[:count] = previous[:count]
     fit = least_squares(residual, a, max_nfev=max_evals, ftol=1e-10, xtol=1e-10)
     c = unpack(fit.x)
     h, out, ingoing, da, j = measure(patch, c, theta)
