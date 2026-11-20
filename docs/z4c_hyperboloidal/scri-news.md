@@ -133,3 +133,5 @@ conformal rescaling, rotating coordinates, nonuniform time differences, mixed
 derivatives, scalar/spin harmonic normalization, and common-Bondi-time extraction
 from angle-dependent native-time cuts. The latter recovers the known `(2,0)`
 news to about `2e-12` in the local test.
+
+A finite-radius cross-check and full Weyl hierarchy are available through [characteristic extraction from checkpoints](cce.md).

@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "athenak-cce"
+version = "0.1.0"
+description = "Hyperboloidal Z4c worldtube conversion and asymptotic Bondi diagnostics"
+requires-python = ">=3.11"
+dependencies = ["numpy", "scipy>=1.15", "h5py", "PyYAML", "scri>=2024.0.14", "matplotlib>=3.7"]
+
+[project.scripts]
+athenak-worldtube = "athenak_cce.worldtube:main"
+athenak-cce = "athenak_cce.run:main"
+athenak-bondi = "athenak_cce.diagnostics:main"
+
+[tool.setuptools]
+packages = ["athenak_cce"]
+package-dir = {athenak_cce = "."}
