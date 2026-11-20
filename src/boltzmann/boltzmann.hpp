@@ -1,6 +1,7 @@
 #ifndef BOLTZMANN_BOLTZMANN_HPP_
 #define BOLTZMANN_BOLTZMANN_HPP_
 #include "boltzmann/geometry.hpp"
+#include "boltzmann/polar_quadrature.hpp"
 #include "bvals/bvals.hpp"
 #include "tasklist/task_list.hpp"
 
@@ -21,7 +22,9 @@ class Boltzmann {
   void InitializeRing(ParameterInput* pin);
   void Synchronize(Driver* driver);
   TaskStatus GeometryAndStress(Driver*, int);
+  TaskStatus AcceptedStress(Driver*, int);
   TaskStatus Fluxes(Driver*, int);
+  TaskStatus FluxesFourth(Driver*, int);
   TaskStatus Update(Driver*, int);
   TaskStatus InitRecv(Driver*, int);
   TaskStatus SendFlux(Driver*, int);
@@ -32,6 +35,7 @@ class Boltzmann {
 
   MeshBlockPack* pack;
   const int npsi, nmu_half;
+  const int transport_order;
   int nmu, nang;
   Real mu_min, dmu, dpsi, dtnew;
   bool backreaction, fixed_metric;
@@ -42,6 +46,12 @@ class Boltzmann {
   void Ghosts();
 
  private:
+  // Four face characteristic fields and the cell redshift coefficient.
+  Kokkos::Array<DvceArray5D<Real>, 5> speeds;
+  DvceArray1D<PolarQuadrature> polar_rules;
+  Kokkos::Array<DvceArray5D<Real>, 3> polar_flux_weights;
+  DvceArray5D<Real> inverse_budget;
+  bool speed_cache_valid = false, source_free = false;
   MeshBoundaryValuesCC* boundary;
   DvceArray5D<Real> accumulator, angular_mu, angular_psi, source;
   DvceFaceFld5D<Real> flux;

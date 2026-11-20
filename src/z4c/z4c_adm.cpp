@@ -16,17 +16,18 @@
 #include <type_traits>
 
 // Athena++ headers
-#include "parameter_input.hpp"
 #include "athena.hpp"
-#include "mesh/mesh.hpp"
+#include "boltzmann/boltzmann.hpp"
 #include "coordinates/adm.hpp"
-#include "z4c/z4c.hpp"
+#include "coordinates/cell_locations.hpp"
+#include "mesh/mesh.hpp"
+#include "parameter_input.hpp"
 #include "z4c/cartoon_derivatives.hpp"
-#include "z4c/z4c_symmetry.hpp"
 #include "z4c/stored_domain_bounds.hpp"
 #include "z4c/tmunu.hpp"
 #include "z4c/vertex_to_cell.hpp"
-#include "coordinates/cell_locations.hpp"
+#include "z4c/z4c.hpp"
+#include "z4c/z4c_symmetry.hpp"
 
 namespace z4c {
 
@@ -319,6 +320,17 @@ void FillCellCenteredAdmAdapter(MeshBlockPack *pmbp) {
         target(m, v, k, j, i) = InterpolateVertexToCellPoint<2>(
             source, m, v, k, j, i, collapse_x2, collapse_x3);
       });
+  if (pmbp->pboltzmann && pmbp->pboltzmann->transport_order == 4) {
+    // Every rank must see the same point metric throughout the transport halo.
+    par_for(
+        "fourth-order photon ADM adapter", DevExeSpace(), 0, nmb - 1, 0, adm::ADM::nadm - 1,
+        indcs.js - 3, indcs.je + 3, indcs.is - 3, indcs.ie + 3,
+        KOKKOS_LAMBDA(int m, int v, int j, int i) {
+          target(m, v, 0, j, i) =
+              InterpolateVertexToCellPoint<4>(source, m, v, 0, j, i, false, true);
+        });
+    return;
+  }
   par_for("fill active order-matched VC-to-CC ADM adapter", DevExeSpace(),
           0, nmb - 1, 0, adm::ADM::nadm - 1, indcs.ks, indcs.ke,
           indcs.js, indcs.je, indcs.is, indcs.ie,

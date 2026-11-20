@@ -162,38 +162,44 @@ void InitializePhotonTorus(MeshBlockPack* pack, ParameterInput* pin) {
   for (int m = 0; m < pack->nmb_thispack; ++m) {
     for (int j = b.js - 1; j <= b.je + 1; ++j)
       for (int i = b.is - 1; i <= b.ie + 1; ++i) {
-        double rho = size(m).x1min + (i - b.is + 0.5) * size(m).dx1;
-        double z = size(m).x2min + (j - b.js + 0.5) * size(m).dx2;
-        double e = t.norm * Bump((std::pow(rho - t.center, 2) + z * z) /
-                                 (t.width * t.width));
-        if (!e) continue;
-        double psi4 = metric(m, adm::ADM::I_ADM_GZZ, 0, j, i);
-        double radius = rho * std::sqrt(psi4);
-        if (!(std::pow((std::abs(t.b) + t.db) / radius, 2) + t.nu * t.nu < 1))
-          throw std::runtime_error("infeasible torus on cell metric");
-        double sum = 0, first = 0, second = 0;
-        for (int n = 0; n < photons->nang; ++n) {
-          double lo = photons->mu_min + n / photons->npsi * photons->dmu;
-          double center = radius * (lo + 0.5 * photons->dmu);
-          mass[n] = BinMass(t, radius, lo, photons->dmu,
-                            n % photons->npsi * photons->dpsi, photons->dpsi);
-          sum += mass[n];
-          first += center * mass[n];
-          second += center * center * mass[n];
-        }
-        if (!(sum > 0 && second / sum > std::pow(first / sum, 2)))
-          throw std::runtime_error("unresolved launch impact band");
-        double mean = first / sum,
-               slope = (t.b - mean) / (second / sum - mean * mean);
-        for (int n = 0; n < photons->nang; ++n) {
-          double impact = radius * (photons->mu_min +
-                                    (n / photons->npsi + 0.5) * photons->dmu);
-          double projected = mass[n] * (1 + slope * (impact - mean)) / sum;
-          if (projected < 0)
-            throw std::runtime_error("negative moment-fit bin; refine the sky");
-          u(m, n, 0, j, i) = e * rho * std::pow(psi4, 1.5) * projected /
-                             (photons->dmu * photons->dpsi);
-        }
+        const double rc = size(m).x1min + (i - b.is + 0.5) * size(m).dx1;
+        const double zc = size(m).x2min + (j - b.js + 0.5) * size(m).dx2;
+        const int nq = photons->transport_order == 4 ? 2 : 1;
+        for (int kz = 0; kz < nq; ++kz)
+          for (int kr = 0; kr < nq; ++kr) {
+            const double rho = rc + (nq == 1 ? 0 : (kr - 0.5) * size(m).dx1 / std::sqrt(3.));
+            const double z = zc + (nq == 1 ? 0 : (kz - 0.5) * size(m).dx2 / std::sqrt(3.));
+            double e =
+                t.norm * Bump((std::pow(rho - t.center, 2) + z * z) / (t.width * t.width));
+            if (!e) continue;
+            double psi4 = nq == 2 ? std::pow(t.Eval(rho, z)[0], 4)
+                                  : metric(m, adm::ADM::I_ADM_GZZ, 0, j, i);
+            double radius = rho * std::sqrt(psi4);
+            if (!(std::pow((std::abs(t.b) + t.db) / radius, 2) + t.nu * t.nu < 1))
+              throw std::runtime_error("infeasible torus on cell metric");
+            double sum = 0, first = 0, second = 0;
+            for (int n = 0; n < photons->nang; ++n) {
+              double lo = photons->mu_min + n / photons->npsi * photons->dmu;
+              double center = radius * (lo + 0.5 * photons->dmu);
+              mass[n] = BinMass(t, radius, lo, photons->dmu, n % photons->npsi * photons->dpsi,
+                                photons->dpsi);
+              sum += mass[n];
+              first += center * mass[n];
+              second += center * center * mass[n];
+            }
+            if (!(sum > 0 && second / sum > std::pow(first / sum, 2)))
+              throw std::runtime_error("unresolved launch impact band");
+            double mean = first / sum, slope = (t.b - mean) / (second / sum - mean * mean);
+            for (int n = 0; n < photons->nang; ++n) {
+              double impact =
+                  radius * (photons->mu_min + (n / photons->npsi + 0.5) * photons->dmu);
+              double projected = mass[n] * (1 + slope * (impact - mean)) / sum;
+              if (projected < 0)
+                throw std::runtime_error("negative moment-fit bin; refine the sky");
+              u(m, n, 0, j, i) += e * rho * std::pow(psi4, 1.5) * projected /
+                                  (nq * nq * photons->dmu * photons->dpsi);
+            }
+          }
       }
   }
   Kokkos::deep_copy(photons->u, u);

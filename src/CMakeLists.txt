@@ -12,6 +12,7 @@ add_executable(
         parameter_input.cpp
 
         boltzmann/boltzmann.cpp
+        boltzmann/transport_fourth.cpp
         boltzmann/transport.cpp
         boltzmann/tasks.cpp
         bvals/bvals.cpp

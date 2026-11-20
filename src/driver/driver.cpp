@@ -29,6 +29,7 @@
 #include "ion-neutral/ion-neutral.hpp"
 #include "radiation/radiation.hpp"
 #include "driver.hpp"
+#include "driver/ssprk104.hpp"
 
 #if MPI_PARALLEL_ENABLED
 #include <mpi.h>
@@ -142,6 +143,16 @@ Driver::Driver(ParameterInput *pin, Mesh *pmesh, Real wtlim, Kokkos::Timer* ptim
       gam0[2] = 2.0/3.0;
       gam1[2] = 1.0/3.0;
       beta[2] = 2.0/3.0;
+    } else if (integrator == "ssprk104") {
+      // Two-register optimal SSPRK(10,4). The final saved contribution
+      // equals (9/10) u5 - (1/2) u0, a positive combination of Euler steps.
+      if (!pmesh->pmb_pack->pboltzmann || pmesh->pmb_pack->phydro || pmesh->pmb_pack->pmhd ||
+          pmesh->pmb_pack->prad)
+        throw std::invalid_argument("ssprk104 requires the Z4c + Boltzmann task graph");
+      nexp_stages = 10;
+      nimp_stages = 0;
+      cfl_limit = 1;
+      ConfigureSSPRK104(gam0, gam1, beta, delta);
     } else if (integrator == "rk4") {
       // RK4()4[2S] from Table 2 of Ketcheson (2010)
       // Non-SSP, explicit four-stage, fourth-order RK
@@ -287,9 +298,9 @@ Driver::Driver(ParameterInput *pin, Mesh *pmesh, Real wtlim, Kokkos::Timer* ptim
       a_impl = a;
     // Error, unrecognized integrator name.
     } else {
-      std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
-         << std::endl << "integrator=" << integrator << " not implemented. "
-         << "Valid choices are [rk1,rk2,rk3,rk4,imex2,imex3]." << std::endl;
+      std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__ << std::endl
+                << "integrator=" << integrator << " not implemented. "
+                << "Valid choices are [rk1,rk2,rk3,rk4,ssprk104,imex2,imex3]." << std::endl;
       exit(EXIT_FAILURE);
     }
   }

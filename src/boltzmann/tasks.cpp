@@ -23,8 +23,17 @@ void Boltzmann::QueueTasks() {
   nr->QueueTask(&Boltzmann::RecvState, this, Boltz_Boundary, "boltzmann boundaries", Task_Run,
                 {Boltz_Send});
   nr->QueueTask(&Boltzmann::Clear, this, Boltz_Clear, "boltzmann clear", Task_End);
-  nr->QueueTask(&Boltzmann::GeometryAndStress, this, Boltz_FinalStress,
+  nr->QueueTask(&Boltzmann::AcceptedStress, this, Boltz_FinalStress,
                 "boltzmann accepted stress", Task_End, {Boltz_Clear});
+}
+
+TaskStatus Boltzmann::AcceptedStress(Driver* driver, int stage) {
+  auto status = GeometryAndStress(driver, stage);
+  // Store the CFL bound of the accepted metric, as on a checkpoint restart.
+  // Its characteristic fields are reused by the next first-stage flux.
+  if (transport_order == 4 && !fixed_metric && stage == driver->nexp_stages)
+    return FluxesFourth(driver, 0);
+  return status;
 }
 
 TaskStatus Boltzmann::InitRecv(Driver*, int stage) {
@@ -95,6 +104,7 @@ TaskStatus Boltzmann::RecvState(Driver*, int) {
   return TaskStatus::complete;
 }
 void Boltzmann::Synchronize(Driver* driver) {
+  speed_cache_valid = false;
   InitRecv(driver, -1);
   SendState(driver, -1);
   Clear(driver, -1);

@@ -6,7 +6,8 @@
 
 namespace boltzmann {
 
-TaskStatus Boltzmann::Fluxes(Driver*, int) {
+TaskStatus Boltzmann::Fluxes(Driver* driver, int stage) {
+  if (transport_order == 4) return FluxesFourth(driver, stage);
   const auto sz = pack->pmb->mb_size.d_view;
   const auto b = pack->pmesh->mb_indcs;
   const auto native = pack->pz4c->adm;
@@ -110,6 +111,17 @@ TaskStatus Boltzmann::Update(Driver* driver, int stage) {
     budget_old[0] = escaped;
     budget_old[1] = escaped_j;
     budget_old[2] = work;
+  }
+  const Real accumulate = driver->delta[stage - 1];
+  if (driver->integrator == "ssprk104" && stage == 6) {
+    budget_old[0] += accumulate * escaped;
+    budget_old[1] += accumulate * escaped_j;
+    budget_old[2] += accumulate * work;
+    par_for(
+        "boltzmann saved SSP stage", DevExeSpace(), 0, blocks - 1, 0, count - 1, b.js, b.je,
+        b.is, b.ie, KOKKOS_LAMBDA(int m, int n, int j, int i) {
+          old(m, n, 0, j, i) += accumulate * state(m, n, 0, j, i);
+        });
   }
   auto flags = pack->pmb->mb_bcs.d_view;
   const auto faces = face_geometry;

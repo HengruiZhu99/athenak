@@ -215,7 +215,7 @@ TaskStatus Z4c::CopyU(Driver *pdrive, int stage) {
   // hierarchical parallel loop that updates conserved variables to intermediate step
   // using weights and fractional time step appropriate to stages of time-integrator.
   // Important to use vector inner loop for good performance on cpus
-  if (integrator == "rk4") {
+  if (integrator == "rk4" || (integrator == "ssprk104" && stage == 6)) {
     Real &delta = pdrive->delta[stage-1];
     if (stage == 1) {
       Kokkos::deep_copy(DevExeSpace(), u1, u0);

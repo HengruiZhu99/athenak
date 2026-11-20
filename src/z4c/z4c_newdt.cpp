@@ -36,6 +36,11 @@ ExplicitRKMethod MethodFromDriver(const Driver *driver) {
     method.beta[stage] = driver->beta[stage];
     method.delta[stage] = driver->delta[stage];
   }
+  // The stability-polynomial helper indexes changes between consecutive stages.
+  if (driver->integrator == "ssprk104") {
+    method.delta[4] = driver->delta[5];
+    method.delta[5] = 0;
+  }
   return method;
 }
 

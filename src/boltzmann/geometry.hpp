@@ -43,7 +43,7 @@ struct Geometry {
 
   template <class AdmFields>
   KOKKOS_INLINE_FUNCTION void Set(const AdmFields& adm, int m, int j, int i, Real rho, Real dr,
-                                  Real dz) {
+                                  Real dz, bool fourth = false) {
     const Real scale[3] = {1, 1, rho};
     Real g[3][3], gt[3][3];
     alpha = adm.alpha(m, 0, j, i);
@@ -60,15 +60,32 @@ struct Geometry {
       const Real invh = 0.5 / (di ? dr : dz);
       grad_alpha[d] =
           invh * (adm.alpha(m, 0, j + dj, i + di) - adm.alpha(m, 0, j - dj, i - di));
+      if (fourth)
+        grad_alpha[d] = (4 * grad_alpha[d] - 0.5 * invh *
+                                                 (adm.alpha(m, 0, j + 2 * dj, i + 2 * di) -
+                                                  adm.alpha(m, 0, j - 2 * dj, i - 2 * di))) /
+                        3;
       for (int a = 0; a < 3; ++a) {
         grad_beta[d][a] =
             invh / scale[a] *
             (adm.beta_u(m, a, 0, j + dj, i + di) - adm.beta_u(m, a, 0, j - dj, i - di));
+        if (fourth)
+          grad_beta[d][a] =
+              (4 * grad_beta[d][a] - 0.5 * invh / scale[a] *
+                                         (adm.beta_u(m, a, 0, j + 2 * dj, i + 2 * di) -
+                                          adm.beta_u(m, a, 0, j - 2 * dj, i - 2 * di))) /
+              3;
         if (di && a == 2) grad_beta[d][a] -= beta[a] / rho;
         for (int b = 0; b < 3; ++b) {
           grad_g[d][a][b] =
               invh * scale[a] * scale[b] *
               (adm.g_dd(m, a, b, 0, j + dj, i + di) - adm.g_dd(m, a, b, 0, j - dj, i - di));
+          if (fourth)
+            grad_g[d][a][b] =
+                (4 * grad_g[d][a][b] - 0.5 * invh * scale[a] * scale[b] *
+                                           (adm.g_dd(m, a, b, 0, j + 2 * dj, i + 2 * di) -
+                                            adm.g_dd(m, a, b, 0, j - 2 * dj, i - 2 * di))) /
+                3;
           if (di) grad_g[d][a][b] += ((a == 2) + (b == 2)) * g[a][b] / rho;
         }
       }

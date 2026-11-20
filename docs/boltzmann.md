@@ -106,3 +106,79 @@ python3 tst/unit/boltzmann/collapse.py build/src/athena results/angular --nmu 6 
 python3 tst/unit/boltzmann/collapse.py build/src/athena results/finder --lmax 8 --ranks 2
 python3 tst/unit/boltzmann/collapse.py build/src/athena results/far --radius 10 --ranks 3
 ```
+
+## Fourth-order phase-space transport
+
+On a uniform-level mesh set `boltzmann/transport_order=4` and
+`time/integrator=ssprk104`. Both Boltzmann input decks expose the order.
+The implementation needs four spatial ghosts, at least five cosine bins per
+hemisphere and at least six even polygon sectors. A mesh may contain many
+blocks distributed across MPI ranks. Coarse–fine reflux and the existing
+positive subdivision rule remain available with order 2. A coarse donor would
+need a budget shared by its fine subtending faces before the order-4 positivity
+proof could be applied across a refinement boundary.
+
+The cell unknown is the phase-volume average of densitized gray energy. For
+each face the code reconstructs the average over that face with an upwind
+quartic polynomial constrained by five normal cell averages. The positive
+speed stencil at the face between cells −1 and 0 has weights
+$(2,-13,47,27,-3)/60$ on cells −3 through +1. Negative speed uses its reflection.
+Cosine stencils slide inside their own hemisphere. The polygon wraps periodically.
+The axis and the edges of each signed hemisphere carry exactly zero normal flux.
+
+For a smooth speed $a$, the face-average product through fourth order is
+
+$$
+\langle aU\rangle_f =
+\left[a_f+\frac{1}{24}\sum_{t\perp f}\Delta_t^2 a\right]\langle U\rangle_f
++\frac{1}{48}\sum_{t\perp f}(a_{+t}-a_{-t})(U_{+t}-U_{-t})
++O(h^4).
+$$
+
+Here $\Delta_t^2 a=a_{+t}-2a_f+a_{-t}$ and the transverse values of $U$
+in the covariance use the mean of the adjacent normal cells. For the redshift
+source the sum includes all four dimensions. Each flux enters its adjacent
+phase cells with opposite signs. This face-product quadrature follows the
+multidimensional finite-volume treatment of the Vlasov equation.
+[Banks and Hittinger](https://www.osti.gov/servlets/purl/991524)
+
+The polygon-face characteristic contains an integrable pole in direction
+cosine. Its cosine-bin integral uses four Gauss points in colatitude with
+measure $\sin\theta\,d\theta$. Four adjacent bin averages determine a cubic
+in colatitude. The code integrates the velocity times each basis function and
+uses the resulting weights on the four normal reconstructions. Transverse
+corrections in the two spatial directions apply to this integrated speed. In a
+prescribed metric the velocity and quadrature weights are computed once.
+A fourth-order vertex midpoint supplies the spatial face metric. A consistent
+fourth-order metric halo and centered derivatives supply the angular
+characteristics on both sides of an MPI interface.
+
+For positivity, a donor divides its available energy among eight faces and a
+possible redshift sink. Let $S$ be the sum of absolute normal speeds divided
+by their cell widths across all eight faces plus the absolute source
+coefficient. Each face receives a fraction $(|a_f|/(h_f S)+0.02)/1.18$ of the
+positive Euler budget. The source uses the corresponding unit-width fraction.
+These fractions sum to one. The limiter reserves one percent for rounding and
+retains subnormal donor mass until incoming flux restores normal precision. A
+single signed face flux is capped against the actual donor. The code applies
+the resulting signed source and open-boundary fluxes to the history budgets
+with the same RK coefficients as the ordinates. The limit is inactive in the
+smooth convergence test. Limiting is expected in underresolved tails.
+[Conservative flux limiting for positivity](https://arxiv.org/abs/1203.1540)
+
+The ten-stage fourth-order SSP integrator uses two state registers and Euler
+substeps of one sixth of the full timestep. The coupled Z4c and Boltzmann
+updates advance on the same stages. The next matter CFL bound uses the accepted
+metric, including after restart. The conserved energy balance is
+$E+E_{\rm escaped}-W_{\rm metric}$. Axial angular momentum is diagnosed from
+the finite ordinates and has a separately measured discretization error. Stress
+output and vertex stress transfer retain the native finite-ordinate moment
+convention. Spatial and angular transport orders are measured on smooth data.
+[Ketcheson’s SSP methods](https://epubs.siam.org/doi/10.1137/07070485X)
+
+The `boltzmann_fourth_accuracy` CTest evaluates the actual face kernels against
+independent cell-integrated variable-coefficient fluxes. Its direction indices
+0 through 3 correspond to radius, height, direction cosine and polygon angle.
+Index 4 measures time order on a nonlinear ODE. The companion scripts
+`torus_fv4_checks.py` and `qualify_fv4.py` check the physical energy budget,
+signed-spin reflection, restart ordinates, CPU/GPU parity and multi-GPU timing.

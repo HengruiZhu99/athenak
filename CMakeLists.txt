@@ -328,6 +328,13 @@ if (Athena_BUILD_UNIT_TESTS)
 
   enable_testing()
   find_package(PythonInterp 3 REQUIRED)
+  if (NOT Athena_SINGLE_PRECISION)
+    add_executable(athena_boltzmann_fourth_accuracy tst/unit/boltzmann/fourth_accuracy.cpp)
+    target_include_directories(athena_boltzmann_fourth_accuracy PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_BINARY_DIR})
+    target_link_libraries(athena_boltzmann_fourth_accuracy PRIVATE Kokkos::kokkos)
+    add_test(NAME boltzmann_fourth_accuracy COMMAND athena_boltzmann_fourth_accuracy)
+  endif()
   if (NOT Kokkos_ENABLE_CUDA AND NOT Kokkos_ENABLE_HIP AND NOT Kokkos_ENABLE_SYCL
       AND NOT Athena_SINGLE_PRECISION)
     add_executable(athena_boltzmann_operators tst/unit/boltzmann/operators.cpp)
