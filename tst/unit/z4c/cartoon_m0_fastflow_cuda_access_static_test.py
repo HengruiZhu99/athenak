@@ -50,7 +50,9 @@ def main() -> int:
             {"SampleAdm", "SampleAxisLapse"},
             "kernel-launching sampler definition inventory changed")
     require(all("KOKKOS_LAMBDA" in match.group("body") for match in definitions) and
-            source.count("KOKKOS_LAMBDA") == 2,
+            source.count("KOKKOS_LAMBDA") == 3 and
+            re.search(r"SampleNativeAdm\(MeshBlockPack.*?KOKKOS_LAMBDA",
+                      source.split("CartoonM0FastFlow::SampleAdm(")[0], re.DOTALL) is not None,
             "KOKKOS_LAMBDA launch inventory changed")
     print("Cartoon m=0 FastFlow CUDA access static checks passed")
     return 0

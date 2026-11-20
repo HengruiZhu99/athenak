@@ -126,8 +126,10 @@ def solve_surface(patch, seed, target, order, max_evals):
     return dict(target=target, seed=seed, h_min=float(r.min()), h_max=float(r.max()),
                 zones=float(r.min()/patch.dx), max_rTheta=float(max(r*plus)),
                 min_rTheta=float(min(r*plus)), max_rThetaMinus=float(max(r*minus)),
-                area=float(area), MH=float(np.sqrt(mass2)), JH=float(angular),
-                chi=float(angular/mass2), coeff=c.tolist())
+                sampled_future_trapped=bool(np.all(plus < 0) and np.all(minus < 0)),
+                area=float(area), surface_mass=float(np.sqrt(mass2)),
+                surface_J=float(angular), surface_spin_ratio=float(angular/mass2),
+                area_spin_gap=float(1 - 8*np.pi*abs(angular)/area), coeff=c.tolist())
 
 
 if __name__ == "__main__":

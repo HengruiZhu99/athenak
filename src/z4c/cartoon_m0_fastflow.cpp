@@ -767,7 +767,125 @@ bool CartoonM0FastFlow::ShouldSearch(const int cycle, const Real time) const {
          (stop_time_ < 0.0 || time <= stop_time_);
 }
 
+namespace {
+std::vector<M0AdmSample> SampleNativeAdm(MeshBlockPack *pack_, const M0Locations &points) {
+  std::vector<M0AdmSample> result(points.size());
+  const int count = points.size();
+  if (count == 0) return result;
+  const auto layout = pack_->pz4c->layout;
+  const int fd = pack_->pz4c->opt.fd_stencil;
+  if (fd < 2 || fd > 4 || pack_->pmesh->mb_indcs.ng < fd - 1 || layout.nx1 < 3 ||
+      layout.nx2 < 3)
+    return result;
+  Kokkos::View<CartoonMeridionalStencil*> stencils("MOTS locations", count);
+  auto locations = Kokkos::create_mirror_view(stencils);
+  for (int n = 0; n < count; ++n) {
+    auto p = LocateNativeCartoonMeridionalPoint(pack_->pmesh, points[n][0], points[n][1]);
+    if (p.valid && p.owner_rank == global_variable::my_rank) {
+      // Keep all derivative evaluation nodes active. Cubic stencils become
+      // one-sided near a face, without reducing polynomial degree.
+      const int i = std::max(layout.is, std::min(layout.ie - 3, p.i0 - 1));
+      const int j = std::max(layout.js, std::min(layout.je - 3, p.j0 - 1));
+      p.wi += p.i0 - i;
+      p.wj += p.j0 - j;
+      p.i0 = i;
+      p.j0 = j;
+      const int reach = fd - 1;
+      if (i - reach < 0 || i + 3 + reach >= layout.n1 || j - reach < 0 ||
+          j + 3 + reach >= layout.n2)
+        p.valid = false;
+    }
+    locations(n) = p;
+  }
+  Kokkos::deep_copy(stencils, locations);
+  Kokkos::View<Real**> values("MOTS geometry batch", count, 32);
+  Kokkos::deep_copy(values, 0.0);
+  const auto metric = pack_->pz4c->adm.g_dd;
+  const auto curvature = pack_->pz4c->adm.vK_dd;
+  const auto size = pack_->pmb->mb_size.d_view;
+  const int rank = global_variable::my_rank;
+  Kokkos::parallel_for(
+      "MOTS native cubic samples", Kokkos::RangePolicy<DevExeSpace>(0, count),
+      KOKKOS_LAMBDA(const int n) {
+        const auto s = stencils(n);
+        if (!s.valid || s.owner_rank != rank) return;
+        Real wi[4], wj[4];
+        for (int a = 0; a < 4; ++a) {
+          wi[a] = wj[a] = 1;
+          for (int b = 0; b < 4; ++b)
+            if (a != b) {
+              wi[a] *= (s.wi - b) / (a - b);
+              wj[a] *= (s.wj - b) / (a - b);
+            }
+        }
+        const int map[3] = {0, 2, 1};
+        const Real inv[3] = {1 / size(s.local_block).dx1, 1 / size(s.local_block).dx2,
+                             1 / size(s.local_block).dx3};
+        for (int dj = 0; dj < 4; ++dj)
+          for (int di = 0; di < 4; ++di) {
+            const int i = s.i0 + di, j = s.j0 + dj, m = s.local_block;
+            const Real w = wi[di] * wj[dj];
+            for (int a = 0; a < 3; ++a)
+              for (int b = a; b < 3; ++b) {
+                const int v = PackedIndex(a, b), ca = map[a], cb = map[b];
+                values(n, v) += w * metric(m, ca, cb, s.k, j, i);
+                values(n, 6 + v) += w * curvature(m, ca, cb, s.k, j, i);
+                for (int d = 0; d < 3; ++d) {
+                  Real value = 0;
+                  if (fd == 2) {
+                    auto deriv = MakeVertexCenteredDerivativeProvider<CartoonSO2, 2>(
+                        inv, size, layout.nx1, layout.is, m, s.k, j, i);
+                    value = deriv.template TensorFirst<TensorVariance::all_lower>(
+                        map[d], ca, cb, metric);
+                  } else if (fd == 3) {
+                    auto deriv = MakeVertexCenteredDerivativeProvider<CartoonSO2, 3>(
+                        inv, size, layout.nx1, layout.is, m, s.k, j, i);
+                    value = deriv.template TensorFirst<TensorVariance::all_lower>(
+                        map[d], ca, cb, metric);
+                  } else {
+                    auto deriv = MakeVertexCenteredDerivativeProvider<CartoonSO2, 4>(
+                        inv, size, layout.nx1, layout.is, m, s.k, j, i);
+                    value = deriv.template TensorFirst<TensorVariance::all_lower>(
+                        map[d], ca, cb, metric);
+                  }
+                  values(n, 12 + 6 * d + v) += w * value;
+                }
+              }
+          }
+        values(n, 30) = 1;
+        values(n, 31) = fmax(size(s.local_block).dx1, size(s.local_block).dx2);
+      });
+  auto host = Kokkos::create_mirror_view_and_copy(HostMemSpace(), values);
+  // Pack explicitly: device/host layouts need not have the same strides.
+  std::vector<Real> packed(count * 32);
+  for (int n = 0; n < count; ++n)
+    for (int v = 0; v < 32; ++v) packed[n * 32 + v] = host(n, v);
+#if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE, packed.data(), count * 32, MPI_ATHENA_REAL, MPI_SUM,
+                MPI_COMM_WORLD);
+#endif
+  for (int n = 0; n < count; ++n) {
+    auto& r = result[n];
+    r.valid = packed[n * 32 + 30] == 1;
+    r.spacing = packed[n * 32 + 31];
+    for (int v = 0; v < 6; ++v) {
+      r.metric[v] = packed[n * 32 + v];
+      r.curvature[v] = packed[n * 32 + 6 + v];
+    }
+    for (int v = 0; v < 18; ++v) r.metric_derivative[v] = packed[n * 32 + 12 + v];
+    for (int v = 0; v < 30; ++v)
+      if (!std::isfinite(packed[n * 32 + v])) {
+        r.valid = false;
+      }
+  }
+  return result;
+}
+}  // namespace
+
 std::vector<M0AdmSample> CartoonM0FastFlow::SampleAdm(const M0Locations &locations) const {
+  if (pack_->pz4c->layout.centering == Z4cGridCentering::vertex &&
+      pin_->GetOrAddBoolean("fastflow", "cartoon_native_geometry", false))
+    return SampleNativeAdm(pack_, locations);
   const int count = locations.size();
   std::vector<M0AdmSample> result(count);
   const int fd_stencil = pack_->z4c_symmetry.stencil_width;
