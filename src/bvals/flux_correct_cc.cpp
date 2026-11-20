@@ -5,7 +5,7 @@
 //========================================================================================
 //! \file flux_correction_cc.cpp
 //! \brief functions to pack/send and recv/unpack fluxes for cell-centered variables at
-//! fine/coarse boundaries for the flux correction step.
+//! fine/coarse boundaries and optional shared meridional faces.
 
 #include <cstdlib>
 #include <iostream>
@@ -15,6 +15,18 @@
 #include "parameter_input.hpp"
 #include "mesh/mesh.hpp"
 #include "bvals.hpp"
+
+namespace {
+// Same-level FV4 proposals may use different transverse ghost data where a
+// coarse/fine boundary meets the face. Both blocks must apply one common flux.
+KOKKOS_INLINE_FUNCTION Real &MeridionalFlux(const DvceFaceFld5D<Real> &flux,
+    const RegionIndcs &b, int n, int m, int v, int transverse) {
+  if (n < 8) {
+    return flux.x1f(m, v, 0, b.js + transverse, n < 4 ? b.is : b.ie + 1);
+  }
+  return flux.x2f(m, v, 0, n < 12 ? b.js : b.je + 1, b.is + transverse);
+}
+}  // namespace
 
 //----------------------------------------------------------------------------------------
 //! \fn void MeshBoundaryValuesCC::PackAndSendFlux()
@@ -42,6 +54,8 @@ TaskStatus MeshBoundaryValuesCC::PackAndSendFluxCC(DvceFaceFld5D<Real> &flx) {
   auto &mblev = pmy_pack->pmb->mb_lev;
   auto &sbuf = sendbuf;
   auto &rbuf = recvbuf;
+  const bool share = share_meridional_fluxes_;
+  const auto bounds = pmy_pack->pmesh->mb_indcs;
   auto &one_d = pmy_pack->pmesh->one_d;
   auto &two_d = pmy_pack->pmesh->two_d;
 
@@ -71,8 +85,18 @@ TaskStatus MeshBoundaryValuesCC::PackAndSendFluxCC(DvceFaceFld5D<Real> &flx) {
     int dm = nghbr.d_view(m,n).gid - mbgid.d_view(0);
     int dn = nghbr.d_view(m,n).dest;
 
-    // only pack buffers when neighbor is at coarser level
-    if ((nghbr.d_view(m,n).gid >=0) && (nghbr.d_view(m,n).lev < mblev.d_view(m))) {
+    if (share && n < 16 && nghbr.d_view(m,n).gid >= 0 &&
+        nghbr.d_view(m,n).lev == mblev.d_view(m)) {
+      const int len = sbuf[n].iflxs_ndat;
+      Kokkos::parallel_for(Kokkos::TeamThreadRange<>(tmember, len), [&](const int t) {
+        const Real value = MeridionalFlux(flx, bounds, n, m, v, t);
+        if (nghbr.d_view(m,n).rank == my_rank) {
+          rbuf[dn].flux(dm, v*len + t) = value;
+        } else {
+          sbuf[n].flux(m, v*len + t) = value;
+        }
+      });
+    } else if ((nghbr.d_view(m,n).gid >=0) && (nghbr.d_view(m,n).lev < mblev.d_view(m))) {
       // x1faces
       if (n<8) {
         // i-index is fixed for flux correction on x1faces
@@ -154,13 +178,15 @@ TaskStatus MeshBoundaryValuesCC::PackAndSendFluxCC(DvceFaceFld5D<Real> &flx) {
 
 #if MPI_PARALLEL_ENABLED
   // Send boundary buffer to neighboring MeshBlocks using MPI
-  // Sends only occur to neighbors on FACES at a COARSER level
+  // Standard reflux sends to a coarser face. FV4 also exchanges same-level proposals.
   Kokkos::fence();
   bool no_errors=true;
   for (int m=0; m<nmb; ++m) {
     for (int n=0; n<nnghbr; ++n) {
+      const bool shared_face = share_meridional_fluxes_ && n < 16 &&
+                               nghbr.h_view(m,n).lev == mblev.h_view(m);
       if ( (nghbr.h_view(m,n).gid >=0) &&
-           (nghbr.h_view(m,n).lev < mblev.h_view(m)) &&
+           (shared_face || nghbr.h_view(m,n).lev < mblev.h_view(m)) &&
            ((n<16) || ((n>=24) && (n<32))) ) {
         // index and rank of destination Neighbor
         int dn = nghbr.h_view(m,n).dest;
@@ -172,7 +198,7 @@ TaskStatus MeshBoundaryValuesCC::PackAndSendFluxCC(DvceFaceFld5D<Real> &flx) {
           int tag = CreateBvals_MPI_Tag(lid, dn);
 
           // get ptr to send buffer for fluxes
-          int data_size = nvar*(sendbuf[n].iflxc_ndat);
+          int data_size = nvar*(shared_face ? sendbuf[n].iflxs_ndat : sendbuf[n].iflxc_ndat);
           auto send_ptr = Kokkos::subview(sendbuf[n].flux, m, Kokkos::ALL);
 
           int ierr = MPI_Isend(send_ptr.data(), data_size, MPI_ATHENA_REAL, drank, tag,
@@ -203,16 +229,20 @@ TaskStatus MeshBoundaryValuesCC::RecvAndUnpackFluxCC(DvceFaceFld5D<Real> &flx) {
   auto &nghbr = pmy_pack->pmb->nghbr;
   auto &mblev = pmy_pack->pmb->mb_lev;
   auto &rbuf = recvbuf;
+  const bool share = share_meridional_fluxes_;
+  const auto bounds = pmy_pack->pmesh->mb_indcs;
 #if MPI_PARALLEL_ENABLED
   //----- STEP 1: check that recv boundary buffer communications have all completed
-  // receives only occur for neighbors on faces at a FINER level
+  // Receive restricted fine fluxes and any same-level meridional proposals.
 
   bool bflag = false;
   bool no_errors=true;
   for (int m=0; m<nmb; ++m) {
     for (int n=0; n<nnghbr; ++n) {
+      const bool shared_face = share_meridional_fluxes_ && n < 16 &&
+                               nghbr.h_view(m,n).lev == mblev.h_view(m);
       if ( (nghbr.h_view(m,n).gid >=0) &&
-           (nghbr.h_view(m,n).lev > mblev.h_view(m)) &&
+           (shared_face || nghbr.h_view(m,n).lev > mblev.h_view(m)) &&
            ((n<16) || ((n>=24) && (n<32))) ) {
         if (nghbr.h_view(m,n).rank != global_variable::my_rank) {
           int test;
@@ -261,8 +291,16 @@ TaskStatus MeshBoundaryValuesCC::RecvAndUnpackFluxCC(DvceFaceFld5D<Real> &flx) {
     const int nkj  = nk*nj;
     const int nki  = nk*ni;
 
-    // only unpack buffers for faces when neighbor is at finer level
-    if ((nghbr.d_view(m,n).gid >=0) && (nghbr.d_view(m,n).lev > mblev.d_view(m))) {
+    if (share && n < 16 && nghbr.d_view(m,n).gid >= 0 &&
+        nghbr.d_view(m,n).lev == mblev.d_view(m)) {
+      const int len = rbuf[n].iflxs_ndat;
+      Kokkos::parallel_for(Kokkos::TeamThreadRange<>(tmember, len), [&](const int t) {
+        Real &local = MeridionalFlux(flx, bounds, n, m, v, t);
+        const Real other = rbuf[n].flux(m, v*len + t);
+        // Minmod preserves both donor budgets, including opposing signs.
+        local = fmax(0., fmin(local, other)) + fmin(0., fmax(local, other));
+      });
+    } else if ((nghbr.d_view(m,n).gid >=0) && (nghbr.d_view(m,n).lev > mblev.d_view(m))) {
       //x1 faces
       if (n<8) {
         Kokkos::parallel_for(Kokkos::TeamThreadRange<>(tmember, nkj), [&](const int idx) {
@@ -311,10 +349,11 @@ TaskStatus MeshBoundaryValuesCC::InitFluxRecv(const int nvars) {
   bool no_errors=true;
   for (int m=0; m<nmb; ++m) {
     for (int n=0; n<nnghbr; ++n) {
-      // only post receives for neighbors on FACES at FINER level
-      // this is the only thing different from BoundaryValuesFC::InitRecvFlux()
+      // Same-level proposals and restricted fine fluxes use disjoint neighbor slots.
+      const bool shared_face = share_meridional_fluxes_ && n < 16 &&
+                               nghbr.h_view(m,n).lev == pmy_pack->pmb->mb_lev.h_view(m);
       if ( (nghbr.h_view(m,n).gid >=0) &&
-           (nghbr.h_view(m,n).lev > pmy_pack->pmb->mb_lev.h_view(m)) &&
+           (shared_face || nghbr.h_view(m,n).lev > pmy_pack->pmb->mb_lev.h_view(m)) &&
            ((n<16) || ((n>=24) && (n<32))) ) {
         // rank of destination buffer
         int drank = nghbr.h_view(m,n).rank;
@@ -325,7 +364,7 @@ TaskStatus MeshBoundaryValuesCC::InitFluxRecv(const int nvars) {
           int tag = CreateBvals_MPI_Tag(m, n);
 
           // calculate amount of data to be passed, get pointer to variables
-          int data_size = nvars*(recvbuf[n].iflxc_ndat);
+          int data_size = nvars*(shared_face ? recvbuf[n].iflxs_ndat : recvbuf[n].iflxc_ndat);
           auto recv_ptr = Kokkos::subview(recvbuf[n].flux, m, Kokkos::ALL);
 
           // Post non-blocking receive for this buffer on this MeshBlock

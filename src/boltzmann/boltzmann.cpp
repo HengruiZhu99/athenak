@@ -90,7 +90,8 @@ Boltzmann::Boltzmann(MeshBlockPack* pp, ParameterInput* pin)
     coarse = DvceArray5D<Real>("boltzmann_coarse", cap, nang, 1, b.cnx2 + 2 * b.ng,
                                b.cnx1 + 2 * b.ng);
   }
-  boundary = new MeshBoundaryValuesCC(pp, pin, false);
+  boundary = new MeshBoundaryValuesCC(pp, pin, false,
+                                      transport_order == 4 && pp->pmesh->multilevel);
   boundary->InitializeBuffers(nang);
   weights = DvceArray2D<Real>("boltzmann_weights", nang, 10);
   auto w = Kokkos::create_mirror_view(weights);

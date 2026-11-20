@@ -28,6 +28,10 @@
 void MeshBoundaryValuesCC::InitSendIndices(MeshBoundaryBuffer &buf,
                                           int ox1, int ox2, int ox3, int f1, int f2) {
   auto &mb_indcs  = pmy_pack->pmesh->mb_indcs;
+  if (share_meridional_fluxes_ && f1 == 0 && f2 == 0 && ox3 == 0 &&
+      std::abs(ox1) + std::abs(ox2) == 1) {
+    buf.iflxs_ndat = ox1 != 0 ? mb_indcs.nx2 : mb_indcs.nx1;
+  }
   int ng  = mb_indcs.ng;
   int ng1 = ng - 1;
 
@@ -164,6 +168,10 @@ void MeshBoundaryValuesCC::InitSendIndices(MeshBoundaryBuffer &buf,
 void MeshBoundaryValuesCC::InitRecvIndices(MeshBoundaryBuffer &buf,
                                            int ox1, int ox2, int ox3, int f1, int f2) {
   auto &mb_indcs  = pmy_pack->pmesh->mb_indcs;
+  if (share_meridional_fluxes_ && f1 == 0 && f2 == 0 && ox3 == 0 &&
+      std::abs(ox1) + std::abs(ox2) == 1) {
+    buf.iflxs_ndat = ox1 != 0 ? mb_indcs.nx2 : mb_indcs.nx1;
+  }
   int ng = mb_indcs.ng;
 
   // set indices for receives from neighbors on SAME level

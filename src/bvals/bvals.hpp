@@ -156,7 +156,8 @@ class MeshBoundaryValues {
 
 class MeshBoundaryValuesCC : public MeshBoundaryValues {
  public:
-  MeshBoundaryValuesCC(MeshBlockPack *ppack, ParameterInput *pin, bool z4c);
+  MeshBoundaryValuesCC(MeshBlockPack *ppack, ParameterInput *pin, bool z4c,
+                       bool share_meridional_fluxes = false);
 
   //functions
   void InitSendIndices(MeshBoundaryBuffer &b,int o1,int o2,int o3,int f1,int f2) override;
@@ -180,6 +181,9 @@ class MeshBoundaryValuesCC : public MeshBoundaryValues {
                              DvceArray5D<Real> &prim);
   void PrimToConsFineBndry(const DvceArray5D<Real> &prim, const DvceFaceFld4D<Real> &b,
                            DvceArray5D<Real> &cons);
+
+ private:
+  bool share_meridional_fluxes_;
 };
 
 //----------------------------------------------------------------------------------------

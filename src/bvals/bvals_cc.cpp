@@ -22,8 +22,8 @@
 // BValCC constructor:
 
 MeshBoundaryValuesCC::MeshBoundaryValuesCC(MeshBlockPack *pp, ParameterInput *pin,
-                                           bool z4c) :
-  MeshBoundaryValues(pp, pin, z4c) {
+                                           bool z4c, bool share_meridional_fluxes) :
+  MeshBoundaryValues(pp, pin, z4c), share_meridional_fluxes_(share_meridional_fluxes) {
 }
 
 //----------------------------------------------------------------------------------------
