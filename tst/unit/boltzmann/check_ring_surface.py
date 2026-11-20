@@ -47,7 +47,7 @@ class KerrSchild:
 if __name__ == "__main__":
     x, w = leg.leggauss(128)
     theta = np.arccos(x)
-    for a in [0.0, 0.95, -0.95]:
+    for a in [0.0, 0.95, -0.95, 0.995, 0.999]:
         rp = 1 + np.sqrt(1-a*a)
         h = 1/np.sqrt((1-x*x)/(rp*rp+a*a) + x*x/(rp*rp))
         coeff = leg.legfit(x, h, 40)
@@ -58,3 +58,14 @@ if __name__ == "__main__":
         assert np.max(abs(plus)) < 2e-7 and max(minus) < 0
         np.testing.assert_allclose(area, 8*np.pi*rp, rtol=1e-10)
         np.testing.assert_allclose(j, a, atol=1e-9)
+
+        # Compare exact constant-Kerr-radius spheroids on each side of r_+.
+        # The inward displacement stays between the two Kerr horizon radii.
+        dense = np.linspace(1.e-5, np.pi - 1.e-5, 2049)
+        step = .1 * np.sqrt(1-a*a)
+        for r, sign in [(rp-step, -1), (rp+step, 1)]:
+            radius = 1/np.sqrt((1-x*x)/(r*r+a*a) + x*x/(r*r))
+            coefficients = leg.legfit(x, radius, 40)
+            h, plus, minus, _, _ = measure(KerrSchild(a), coefficients, dense)
+            assert min(sign*h*plus) > 0 and max(h*minus) < 0
+            print("neighbor", a, sign, min(h*plus), max(h*plus), max(h*minus))
