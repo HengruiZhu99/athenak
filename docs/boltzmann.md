@@ -1,5 +1,15 @@
 # Axisymmetric gray photon transport
 
+## Running the constraint-solved torus
+
+The `photon_torus` family imports a solved maximal Einstein–Vlasov slice and its
+calibrated launch prescription. Set `problem/torus_file` to the IrisK
+`IRISK_PHOTON_TORUS_V1` handoff. Positive physical axial spin selects
+`boltzmann/sign=prograde`, and negative spin selects `retrograde`.
+The optional `problem/torus_audit_prefix` saves native vertex constraints,
+curvature and independent raw-ordinate moment checks by rank. A coupled run
+and refinement driver are included. [Torus input](../inputs/boltzmann/photon_torus.athinput) · [Native qualification](../tst/unit/boltzmann/torus_native.py)
+
 ## Running the ring
 
 From a checkout with the Kokkos submodule initialized, build the MPI executable and run the sample in its own directory.

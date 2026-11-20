@@ -25,6 +25,7 @@ def profiles(directory, rays, metrics, band):
                 key, val = line.split("=", 1)
                 inputs[key.strip()] = val.strip()
         columns = {}
+        height_second = 0.0
         for name in ["E", "Sx"]:
             field = "tmunu_" + name
             if field not in frame["mb_data"]:
@@ -32,6 +33,8 @@ def profiles(directory, rays, metrics, band):
             bins = {}
             mid = {}
             for r, z, v, dr, dz in cells(frame, field):
+                if name == "E":
+                    height_second += 2 * np.pi * dr * dz * np.sum(r * z * z * v, dtype=np.float64)
                 for k, rho in enumerate(r[0]):
                     idx = round(rho / dr - 0.5)
                     bins[idx] = bins.get(idx, 0) + np.sum(v[:, k]) * dz
@@ -61,6 +64,16 @@ def profiles(directory, rays, metrics, band):
             nmu=int(inputs["nmu_half"]),
             npsi=int(inputs["npsi"]),
             **native,
+        )
+        energy = 2 * np.pi * dr * (r @ e)
+        inside_edge = r + dr / 2 <= band[0]
+        row.update(
+            total_E=energy,
+            E_inside_bmin=2 * np.pi * dr * (r[inside_edge] @ e[inside_edge]),
+            mean_rho=((r * r) @ e) / (r @ e),
+            ref_mean_rho=((r * r) @ eq) / (r @ eq),
+            z_rms=np.sqrt(height_second / energy),
+            ref_z_rms=rays.height_rms(t),
         )
         row.update({"ref_" + k: v for k, v in exact.items()})
         # Scale both profiles by reference inner energy, well conditioned through flux reversal.
@@ -95,10 +108,13 @@ def main():
     args.output.mkdir(parents=True, exist_ok=True)
     rows = []
     fig, axes = plt.subplots(2, 2, figsize=(10, 6.6), layout="constrained", sharex=True)
+    at_turn = []
     for index, spec in enumerate(args.runs):
         label, folder = spec.split("=", 1)
         stats, values = profiles(Path(folder), rays, metrics, turning_band(rays.m))
         rows.extend(dict(case=label, **row) for row in stats)
+        sample = min(stats, key=lambda row: abs(row["time"] - 5.5))
+        at_turn.append(sample)
         values = np.array(values)
         np.savetxt(
             args.output / (label + "-profiles.csv"),
@@ -110,17 +126,59 @@ def main():
         for k, t in enumerate([5.0, 6.5]):
             nearest = min(stats, key=lambda row: abs(row["time"] - t))["time"]
             cut = values[values[:, 0] == nearest]
-            for j, name in enumerate(["Vertical energy column", "Vertical radial flux integral"]):
+            for j, name in enumerate(
+                ["Height-integrated energy density", "Height-integrated radial flux"]
+            ):
                 ax = axes[j, k]
                 if index == 0:
                     rr = np.linspace(0.15, 5, 320)
                     ax.plot(rr, rays.forward(rr, t)[j], "k-", lw=2, label="Straight rays")
-                ax.plot(cut[:, 1], cut[:, 2 + j], label=label, lw=1)
+                if len(args.runs) <= 3 or (sample["nx"], sample["nmu"]) in [
+                    (48, 12),
+                    (72, 24),
+                    (96, 48),
+                ]:
+                    name_grid = f"{sample['nx']} cells, {sample['nmu']} × {sample['npsi']} sky"
+                    ax.plot(cut[:, 1], cut[:, 2 + j], label=name_grid, lw=1.3)
                 ax.set(xlim=(0.15, 5), xlabel="Cylindrical radius", ylabel=name, title=f"t = {t:g}")
     axes[0, 0].legend(fontsize="x-small", ncol=2)
     fig.savefig(args.output / "turning.png", dpi=160)
+    plt.close(fig)
+    fig, axes = plt.subplots(1, 2, figsize=(9, 3.8), layout="constrained")
+    for ax, subset, key, title in [
+        (axes[0], [r for r in at_turn if r["nmu"] == 24], "nx", "Spatial refinement, 24 × 32 sky"),
+        (
+            axes[1],
+            [r for r in at_turn if r["nx"] == 72],
+            "nmu",
+            "Angular refinement, 72 × 36 cells",
+        ),
+    ]:
+        subset.sort(key=lambda r: r[key])
+        xx = [r[key] for r in subset]
+        for var, label in [
+            ("peak", "Peak column"),
+            ("FWHM", "FWHM"),
+            ("inner_E", "Energy in turning band"),
+        ]:
+            ax.plot(
+                xx, [100 * abs(r[var] / r["ref_" + var] - 1) for r in subset], "o-", label=label
+            )
+        ax.plot(
+            xx, [100 * r["flux_error"] for r in subset], "s--", label="Radial flux profile / energy"
+        )
+        ax.set(
+            xlabel="Radial cells" if key == "nx" else "Cosine bins per hemisphere",
+            ylabel="Error at t ≈ 5.5 (%)",
+            title=title,
+            xticks=xx,
+        )
+        ax.grid(alpha=0.22)
+    axes[0].legend(fontsize="small")
+    fig.savefig(args.output / "turning_refinement.png", dpi=160)
+    plt.close(fig)
     with (args.output / "transport.csv").open("w", newline="") as file:
-        w = csv.DictWriter(file, fieldnames=rows[0])
+        w = csv.DictWriter(file, fieldnames=rows[0], lineterminator="\n")
         w.writeheader()
         w.writerows(rows)
 

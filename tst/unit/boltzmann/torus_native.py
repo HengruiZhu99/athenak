@@ -104,14 +104,16 @@ def run(exe, family, out):
     rows = []
     for label, case, n, mu, sectors, evolve in [
         ("space48", "strong", 48, 24, 32, True),
-        ("space96", "strong", 96, 24, 32, False),
+        ("space96", "strong", 96, 24, 32, True),
         ("space144", "strong", 144, 24, 32, False),
         ("angle_coarse", "strong", 96, 12, 16, False),
         ("angle_fine", "strong", 96, 48, 64, False),
+        ("polygon", "strong", 96, 24, 64, False),
+        ("vertical", "strong", 96, 48, 128, False),
         ("elliptic", "medium", 96, 24, 32, False),
-        ("negative", "negative", 96, 24, 32, False),
-        ("weak", "weak", 96, 24, 32, False),
-        ("narrow", "narrow", 96, 24, 32, False),
+        ("negative", "negative", 96, 24, 32, True),
+        ("weak", "weak", 96, 24, 32, True),
+        ("narrow", "narrow", 96, 24, 32, True),
         ("vacuum", "vacuum", 48, 24, 32, False),
     ]:
         folder = out / label
@@ -138,7 +140,7 @@ def run(exe, family, out):
         rows.append(dict(case=label, grid=n, nmu=mu, npsi=sectors, **row))
         print(label, row["H_L2"], row["J10"], row["end_t"], flush=True)
     with (out / "native.csv").open("w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=rows[0])
+        writer = csv.DictWriter(f, fieldnames=rows[0], lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
     for key in ["H_L2", "Mr_L2", "Mz_L2", "Mp_L2"]:
