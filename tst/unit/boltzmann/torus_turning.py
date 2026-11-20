@@ -109,7 +109,8 @@ def main():
     rows = []
     fig, axes = plt.subplots(2, 2, figsize=(10, 6.6), layout="constrained", sharex=True)
     at_turn = []
-    for index, spec in enumerate(args.runs):
+    panels = {}
+    for spec in args.runs:
         label, folder = spec.split("=", 1)
         stats, values = profiles(Path(folder), rays, metrics, turning_band(rays.m))
         rows.extend(dict(case=label, **row) for row in stats)
@@ -123,24 +124,29 @@ def main():
             header="t,rho,column,flux,exact_column,exact_flux,mid_E,mid_Sr,exact_mid_E,exact_mid_Sr",
             comments="",
         )
-        for k, t in enumerate([5.0, 6.5]):
+        key = (sample["nx"], sample["nmu"], sample["npsi"])
+        panels[key] = []
+        for t in [5.0, 6.5]:
             nearest = min(stats, key=lambda row: abs(row["time"] - t))["time"]
-            cut = values[values[:, 0] == nearest]
-            for j, name in enumerate(
-                ["Height-integrated energy density", "Height-integrated radial flux"]
-            ):
-                ax = axes[j, k]
-                if index == 0:
-                    rr = np.linspace(0.15, 5, 320)
-                    ax.plot(rr, rays.forward(rr, t)[j], "k-", lw=2, label="Straight rays")
-                if len(args.runs) <= 3 or (sample["nx"], sample["nmu"]) in [
-                    (48, 12),
-                    (72, 24),
-                    (96, 48),
-                ]:
-                    name_grid = f"{sample['nx']} cells, {sample['nmu']} × {sample['npsi']} sky"
-                    ax.plot(cut[:, 1], cut[:, 2 + j], label=name_grid, lw=1.3)
-                ax.set(xlim=(0.15, 5), xlabel="Cylindrical radius", ylabel=name, title=f"t = {t:g}")
+            panels[key].append(values[values[:, 0] == nearest])
+    ordered = sorted(panels)
+    middle_grid = np.median(sorted({k[0] for k in ordered}))
+    middle_sky = np.median(sorted({k[1] for k in ordered}))
+    middle = min(ordered, key=lambda k: (abs(k[0] - middle_grid), abs(k[1] - middle_sky)))
+    selected = ordered if len(ordered) <= 3 else sorted({ordered[0], middle, ordered[-1]})
+    for k, t in enumerate([5.0, 6.5]):
+        rr = np.linspace(0.15, 5, 320)
+        reference = rays.forward(rr, t)
+        for j, name in enumerate(
+            ["Height-integrated energy density", "Height-integrated radial flux"]
+        ):
+            ax = axes[j, k]
+            ax.plot(rr, reference[j], "k-", lw=2, label="Straight rays")
+            for key in selected:
+                cut = panels[key][k]
+                name_grid = f"{key[0]} cells, {key[1]} × {key[2]} sky"
+                ax.plot(cut[:, 1], cut[:, 2 + j], label=name_grid, lw=1.3)
+            ax.set(xlim=(0.15, 5), xlabel="Cylindrical radius", ylabel=name, title=f"t = {t:g}")
     axes[0, 0].legend(fontsize="x-small", ncol=2)
     fig.savefig(args.output / "turning.png", dpi=160)
     plt.close(fig)
