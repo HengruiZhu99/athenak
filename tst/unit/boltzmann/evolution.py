@@ -39,23 +39,20 @@ def run(executable, ranks, directory, changes, restart=None, binary_dt=None):
     path.write_text(template)
     args = ["mpiexec", "-n", str(ranks)] if ranks > 1 else []
     args += [executable, "-d", str(directory)]
-    args += ["-i", str(path)] if restart is None else ["-r", str(restart), "time/nlim=6"]
+    args += ["-i", str(path)] if restart is None else ["-r", str(restart)]
     result = subprocess.run(args, cwd=directory, capture_output=True, text=True)
     if result.returncode:
         raise RuntimeError(result.stdout[-4000:] + result.stderr[-4000:])
     return np.loadtxt(directory / "ring.user.hst", ndmin=2), result.stdout
 
 
-def check_energy(rows, ranks, phase_cells):
+def check_energy(rows, ranks, phase_cells, log):
     assert np.all(rows[:, 8] >= 0), np.min(rows[:, 8])
     energy = rows[:, 2]
     residual = energy + rows[:, 4] - rows[:, 6] - energy[0]
     # Tree reductions, one RK sum per accepted step, and summation over bins.
     depth = math.ceil(math.log2(max(2, ranks * phase_cells)))
-    steps = 1 + np.sum(
-        np.diff(rows[:, 0]) / np.maximum(rows[1:, 1], np.finfo(float).tiny),
-        where=rows[1:, 1] > 0,
-    )
+    steps = int(re.search(r"(?m)^time=\S+ cycle=(\d+)$", log)[1])
     flux_scale = np.sum(abs(np.diff(rows[:, 4]))) + np.sum(abs(np.diff(rows[:, 6])))
     scale = abs(energy[0]) + flux_scale
     tolerance = (4 * depth + 2 * steps) * np.finfo(float).eps * scale
@@ -83,7 +80,7 @@ def restart_amr(exe, ranks, root):
     assert re.search(r"3 MeshBlocks created, 3 deleted", log), log[-800:]
     if ranks == 2:
         assert re.search(r"[1-9]\d* communicated for load balancing", log)
-    residual = check_energy(direct, ranks, 32 * 32 * 4 * 12 * 8)
+    residual = check_energy(direct, ranks, 32 * 32 * 4 * 12 * 8, log)
     rst = root / "direct/rst/ring.00001.rst"
     resumed, _ = run(exe, 1, root / "resumed", changes, restart=rst)
     np.testing.assert_allclose(resumed[-1], direct[-1], rtol=3e-12, atol=5e-16)
@@ -146,8 +143,8 @@ def signs(exe, ranks, root):
             "fastflow": {"num_horizons": 0},
             "output1": {"dcycle": 4},
         }
-        data, _ = run(exe, ranks, root / sign, changes)
-        check_energy(data, ranks, 64 * 64 * 4 * 12)
+        data, log = run(exe, ranks, root / sign, changes)
+        check_energy(data, ranks, 64 * 64 * 4 * 12, log)
         rows.append(data)
     parity = np.array([1, 1, 1, -1, 1, -1, 1, -1, 1])
     np.testing.assert_allclose(rows[0], rows[1] * parity, rtol=3.0e-12, atol=5.0e-16)
@@ -210,9 +207,11 @@ def flux_profile(snapshot):
     nz = np.sqrt(1 - mu * mu) * np.sin(psi)
     t = snapshot["time"]
     numerator = denominator = integrated = exact_integrated = 0
-    for rs, zs, values, dr, dz in cells(snapshot, "tmunu_Sx"):
+    j_error = j_norm = 0
+    for radial, shear in zip(cells(snapshot, "tmunu_Sx"), cells(snapshot, "tmunu_Sxz")):
+        rs, zs, values, dr, dz = radial
         idx = np.where((rs >= 3) & (rs < 3 + dr) & (abs(zs) < 4))
-        for r, z, value in zip(rs[idx], zs[idx], values[idx]):
+        for r, z, value, stress in zip(rs[idx], zs[idx], values[idx], shear[2][idx]):
             rstart = np.hypot(r - t * nr, t * mu)
             dot = (
                 0.25 * r * mu - math.sqrt(1 - 0.25**2) * (r * nr - t * (nr * nr + mu * mu))
@@ -221,11 +220,40 @@ def flux_profile(snapshot):
                 -0.5 * ((rstart - 6) ** 2 + (z - t * nz) ** 2) + (dot - 1) / 0.3**2
             )
             true = np.sum(intensity * nr * weight[:, None]) * np.pi / 192
+            # The independent radial flux of the axial Killing current is
+            # T^rho_phi = rho S_rho,y on the flat Cartoon plane.
+            exact_j = r * np.sum(intensity * nr * mu * weight[:, None]) * np.pi / 192
+            j_error += abs(r * stress - exact_j) * dz
+            j_norm += abs(exact_j) * dz
             integrated += value * dz
             exact_integrated += true * dz
             numerator += abs(true - value) * dz
             denominator += abs(true) * dz
-    return numerator, denominator, integrated, exact_integrated
+    return numerator, denominator, integrated, exact_integrated, j_error, j_norm
+
+
+def reflected_turn(exe, ranks, root, positive):
+    changes = {
+        "boltzmann": {
+            "sign": "retrograde",
+            "nmu_half": 4,
+            "npsi": 12,
+            "backreaction": "false",
+            "fixed_metric": "true",
+        },
+        "fastflow": {"num_horizons": 0},
+        "time": {"tlim": 8},
+        "problem": {"ring_mu": -0.25},
+    }
+    directory = root / "turn-retrograde"
+    retro, log = run(exe, ranks, directory, changes)
+    check_energy(retro, ranks, 64 * 64 * 4 * 12, log)
+    parity = np.array([1, 1, 1, -1, 1, -1, 1, -1, 1])
+    np.testing.assert_allclose(retro * parity, positive, rtol=3e-10, atol=2e-14)
+    checkpoint = directory / "rst/ring.00001.rst"
+    resumed, _ = run(exe, ranks, root / "turn-resumed", changes, restart=checkpoint)
+    np.testing.assert_allclose(resumed[-1], retro[-1], rtol=3e-11, atol=2e-14)
+    print("retrograde turning pulse matches prograde reflection and midpoint restart")
 
 
 def turning(exe, ranks, root):
@@ -242,14 +270,15 @@ def turning(exe, ranks, root):
             "time": {"tlim": 8.0},
         }
         directory = root / f"turn-{nm}"
-        rows, _ = run(exe, ranks, directory, changes, binary_dt=0.5)
-        balance = check_energy(rows, ranks, 64 * 64 * nm * ns)
+        rows, log = run(exe, ranks, directory, changes, binary_dt=0.5)
+        balance = check_energy(rows, ranks, 64 * 64 * nm * ns, log)
         gaps = abs(rows[-1, 3] + rows[-1, 5] - rows[0, 3]) / abs(rows[0, 3])
         samples = sorted((directory / "bin").glob("*.bin"))[1:]
         profiles = [read_binary(p) for p in samples]
         times = np.array([p["time"] for p in profiles])
         sums = np.array([flux_profile(p) for p in profiles])
         err = sums[:, 0].sum() / sums[:, 1].sum()
+        jflux_error = sums[:, 4].sum() / sums[:, 5].sum()
 
         # Arrival time of the ingoing pulse: centroid of inward radial flux.
         def arrival(signal):
@@ -262,9 +291,11 @@ def turning(exe, ranks, root):
 
         timing = abs(arrival(sums[:, 2]) - arrival(sums[:, 3]))
         print(
-            f"{nm} x {ns}: Jz residual {gaps:.5g}, radial flux profile L1 {err:.5g}, arrival error {timing:.5g}, energy {balance:.3g}"
+            f"{nm} x {ns}: Jz residual {gaps:.5g}, radial flux profile L1 {err:.5g}, arrival error {timing:.5g}, Jz flux L1 {jflux_error:.5g}, energy {balance:.3g}"
         )
-        errors.append((gaps, err, timing))
+        errors.append((gaps, err, timing, jflux_error))
+        if nm == 4:
+            reflected_turn(exe, ranks, root, rows)
     assert np.all(np.diff(np.array(errors), axis=0) < 0), errors
 
 
@@ -284,8 +315,8 @@ def joint_refinement(exe, ranks, root):
             "time": {"tlim": 4},
         }
         processes = min(ranks, (zones // 16) ** 2)
-        rows, _ = run(exe, processes, root / f"joint-{zones}", changes)
-        balance = check_energy(rows, processes, zones**2 * nm * ns)
+        rows, log = run(exe, processes, root / f"joint-{zones}", changes)
+        balance = check_energy(rows, processes, zones**2 * nm * ns, log)
         residual = abs(rows[-1, 3] + rows[-1, 5] - rows[0, 3]) / abs(rows[0, 3])
         residuals.append(residual)
         print(
