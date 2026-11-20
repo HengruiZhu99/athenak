@@ -30,6 +30,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for k in ["host", "scaling", "transport", "output"]:
         parser.add_argument(k, type=Path)
+    parser.add_argument("--refinement", type=Path, help="additional independently refined runs")
     a = parser.parse_args()
     a.output.mkdir(parents=True, exist_ok=True)
     perf = []
@@ -47,6 +48,10 @@ def main():
         physical = cycles[40][1] - cycles[10][1]
         phase = n * (n // 2) * bands * (bands * 4 // 3)
         stages = 10 if order == 4 else 2
+        history = np.loadtxt(case / "torus.user.hst", ndmin=2)
+        reference = next(a.scaling.glob(f"bench-1-{order}-*"))
+        single = np.loadtxt(reference / "torus.user.hst", ndmin=2)
+        np.testing.assert_allclose(history, single, atol=2e-13, rtol=2e-12)
         perf.append(
             dict(
                 ranks=ranks,
@@ -59,6 +64,7 @@ def main():
                 physical_time=physical,
                 simulated_per_second=physical / secs,
                 phase_cell_stages_per_second=30 * stages * phase / secs,
+                max_history_difference=float(abs(history - single).max()),
                 host=devices[0]["host"],
                 gpu_pci=" ".join(sorted(r["pci"] for r in devices)),
             )
@@ -72,7 +78,10 @@ def main():
         p["parallel_efficiency"] = p["speedup"] / p["ranks"]
     table(a.output / "scaling.csv", perf)
     checks = []
-    for case in sorted(a.transport.iterdir()):
+    cases = sorted(a.transport.iterdir())
+    if a.refinement:
+        cases += sorted(a.refinement.glob("turn-*"))
+    for case in cases:
         if not case.is_dir():
             continue
         mode, ranks, order, n, bands = case.name.split("-")
@@ -92,7 +101,7 @@ def main():
                 order=order,
                 n=n,
                 nmu=bands,
-                job=a.transport.name,
+                job=case.parent.name,
                 time=h[-1, 0],
                 initial_E=h[0, 2],
                 final_E=h[-1, 2],
