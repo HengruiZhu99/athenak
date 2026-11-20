@@ -59,6 +59,14 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver, int stage, RHSSubset subset
   const int selected_count = selected.extent_int(0);
   // Keep each subset's halo dependencies. RHS storage holds KO only until the
   // point kernel loads all fields, including Lambda's contribution to D.
+  constexpr int shift_start = 14 * Fields::independent_count;
+  const bool precompute_jets = split_bulk_jets_;
+  if (precompute_jets && selected_count > residual_jet_scratch_.extent_int(1)) {
+    residual_jet_scratch_ = DvceArray2D<Real>(
+        Kokkos::view_alloc(Kokkos::WithoutInitializing, "hyperboloidal residual jets"),
+        shift_start + 3, selected_count);
+  }
+  const auto scratch = residual_jet_scratch_;
   using KOIndex = std::int64_t;
   Kokkos::parallel_for(
       "hyperboloidal field KO",
@@ -70,6 +78,16 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver, int stage, RHSSubset subset
         const auto c = cells(p);
         output(c.m, f, c.k, c.j, c.i) =
             dissipation.Evaluate(p, f, {physical, c.m, c.k, c.j, c.i}, epsilon);
+        if (precompute_jets && f == 0) {
+          const auto &map = maps(p);
+          const BlockPointReader reader{delta, c.m, c.k, c.j, c.i};
+          Real beta[3];
+          for (int a = 0; a < 3; ++a)
+            beta[a] = reader(22 + a) + refs(p)[22 + a].f - map.x[a];
+          const bool affine = blocks(c.m).face < 0 && !(radial && surface.HasRadialRow(p));
+          const auto shift = LogicalShift::Project(map, beta, affine);
+          for (int a = 0; a < 3; ++a) scratch(shift_start + a, index) = shift.value[a];
+        }
       });
   auto bulk_policy = Kokkos::RangePolicy<>(0, selected_count);
 #ifdef KOKKOS_ENABLE_SYCL
@@ -78,13 +96,6 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver, int stage, RHSSubset subset
 #endif
   // Each field's logical finite differences are independent. Store their Cartesian
   // jets component-major so adjacent points write adjacent device addresses.
-  const bool precompute_jets = split_bulk_jets_;
-  if (precompute_jets && selected_count > residual_jet_scratch_.extent_int(1)) {
-    residual_jet_scratch_ = DvceArray2D<Real>(
-        Kokkos::view_alloc(Kokkos::WithoutInitializing, "hyperboloidal residual jets"),
-        14 * Fields::independent_count, selected_count);
-  }
-  const auto scratch = residual_jet_scratch_;
   if (precompute_jets) {
     Kokkos::parallel_for(
         "hyperboloidal residual field jets",
@@ -101,13 +112,13 @@ TaskStatus Z4cHyperboloidal::CalcRHS(Driver *driver, int stage, RHSSubset subset
           const auto map = maps(p);
           const BlockPointReader reader{delta, c.m, c.k, c.j, c.i};
           const Real inv_h[3] = {Real(count), Real(count), Real(count)};
-          Real beta[3], transport = 0;
-          for (int a = 0; a < 3; ++a)
-            beta[a] = reader(22 + a) + refs(p)[22 + a].f - map.x[a];
+          LogicalShift shift;
+          for (int a = 0; a < 3; ++a) shift.value[a] = scratch(shift_start + a, index);
+          Real transport = 0;
           const auto jet = radial && surface.HasRadialRow(p)
-                               ? SampleEndpointJet(p, field, reader, map, inv_h, beta,
+                               ? SampleEndpointJet(p, field, reader, inv_h, shift,
                                                    surface, transport)
-                               : SampleResidualJet(reader, field, map, inv_h, beta,
+                               : SampleResidualJet(reader, field, map, inv_h, shift,
                                                    field <= 6 || field == 18 ||
                                                        (field >= 22 && field < 25),
                                                    transport, blocks(c.m).face < 0);

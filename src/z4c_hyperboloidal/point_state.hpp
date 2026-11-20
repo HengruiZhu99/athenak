@@ -51,6 +51,35 @@ KOKKOS_INLINE_FUNCTION Real OffsetValue(const Reader &q,int f,int a,int offset,
   int d[3]{};d[a]+=offset;d[b]+=offset_b;
   return q(f,d[0],d[1],d[2]);
 }
+// The centered and biased formulas use the same four axial neighbors.
+struct AxialSamples {
+  Real minus_two, minus_one, plus_one, plus_two;
+
+  template <class Reader>
+  KOKKOS_INLINE_FUNCTION AxialSamples(const Reader &q, int f, int axis)
+      : minus_two(OffsetValue(q, f, axis, -2)),
+        minus_one(OffsetValue(q, f, axis, -1)),
+        plus_one(OffsetValue(q, f, axis, 1)),
+        plus_two(OffsetValue(q, f, axis, 2)) {}
+
+  KOKKOS_INLINE_FUNCTION Real First(Real inv_h) const {
+    return inv_h * (minus_two - 8 * minus_one + 8 * plus_one - plus_two) / 12;
+  }
+
+  KOKKOS_INLINE_FUNCTION Real Second(Real center, Real inv_h) const {
+    return inv_h * inv_h * (-minus_two + 16 * minus_one - 30 * center +
+                            16 * plus_one - plus_two) / 12;
+  }
+
+  KOKKOS_INLINE_FUNCTION Real Biased(Real center, Real far, Real inv_h, int sign) const {
+    const Real vm = (sign > 0 ? minus_one : plus_one) - center;
+    const Real v1 = (sign > 0 ? plus_one : minus_one) - center;
+    const Real v2 = (sign > 0 ? plus_two : minus_two) - center;
+    const Real v3 = far - center;
+    return sign * inv_h * (-3 * vm + 18 * v1 - 6 * v2 + v3) / 12;
+  }
+};
+
 template<class Reader>
 KOKKOS_INLINE_FUNCTION Real FirstDerivative(const Reader &q,int f,int a,Real inv_h,
                                             int shift=0) {
@@ -72,32 +101,43 @@ KOKKOS_INLINE_FUNCTION Real SecondDerivative(const Reader &q,int f,int a,int b,
   return value*inv_h[a]*inv_h[b];
 }
 
+struct LogicalShift {
+  Real value[3]{};
+
+  KOKKOS_INLINE_FUNCTION static LogicalShift Project(const mapped::Point &map,
+                                                     const Real beta[3], bool affine) {
+    LogicalShift shift;
+    for (int a = 0; a < 3; ++a) {
+      if (affine) {
+        shift.value[a] = map.J[a][a] * beta[a];
+      } else {
+        for (int i = 0; i < 3; ++i) shift.value[a] += map.J[a][i] * beta[i];
+      }
+    }
+    return shift;
+  }
+};
+
 // Fourth-order centered jets plus the existing one-sided transport correction.
 // A radial endpoint reconstruction can supply an alternative logical jet to
 // CartesianJet without changing the point equations below.
 template <class Reader>
 KOKKOS_INLINE_FUNCTION mapped::Jet SampleResidualJet(
     const Reader &q, int f, const mapped::Point &map, const Real inv_h[3],
-    const Real beta[3], bool need_second, Real &transport, bool affine = false) {
+    const LogicalShift &shift, bool need_second, Real &transport, bool affine = false) {
   mapped::Jet logical(q(f));transport=0;
   for (int a=0;a<3;++a) {
-    logical.d[a]=FirstDerivative(q,f,a,inv_h[a]);
+    const AxialSamples samples(q, f, a);
+    logical.d[a] = samples.First(inv_h[a]);
     if (need_second) {
-      for (int b = 0; b <= a; ++b)
+      logical.h[a][a] = samples.Second(logical.f, inv_h[a]);
+      for (int b = 0; b < a; ++b)
         logical.h[b][a] = logical.h[a][b] = SecondDerivative(q, f, a, b, inv_h);
     }
-    Real b = 0;
-    if (affine) {
-      b = map.J[a][a] * beta[a];
-    } else {
-      for (int i = 0; i < 3; ++i) b += map.J[a][i] * beta[i];
-    }
+    const Real b = shift.value[a];
     const int sign=b>=0?1:-1;
-    const Real vm=OffsetValue(q,f,a,-sign)-logical.f;
-    const Real v1=OffsetValue(q,f,a,sign)-logical.f;
-    const Real v2=OffsetValue(q,f,a,2*sign)-logical.f;
-    const Real v3=OffsetValue(q,f,a,3*sign)-logical.f;
-    const Real biased=sign*inv_h[a]*(-3*vm+18*v1-6*v2+v3)/12;
+    const Real far = OffsetValue(q, f, a, 3 * sign);
+    const Real biased = samples.Biased(logical.f, far, inv_h[a], sign);
     transport+=b*(biased-logical.d[a]);
   }
   if (affine) {
@@ -111,6 +151,14 @@ KOKKOS_INLINE_FUNCTION mapped::Jet SampleResidualJet(
     return logical;
   }
   return CartesianJet(logical,map,need_second);
+}
+
+template <class Reader>
+KOKKOS_INLINE_FUNCTION mapped::Jet SampleResidualJet(
+    const Reader &q, int f, const mapped::Point &map, const Real inv_h[3],
+    const Real beta[3], bool need_second, Real &transport, bool affine = false) {
+  return SampleResidualJet(q, f, map, inv_h, LogicalShift::Project(map, beta, affine),
+                           need_second, transport, affine);
 }
 
 struct PointState {
@@ -180,8 +228,9 @@ KOKKOS_INLINE_FUNCTION PointState BuildPointState(
   PointState out;
   Real beta[3]{};
   for (int a=0;a<3;++a)beta[a]=q(22+a)+reference[22+a].f-map.x[a];
+  const auto shift = LogicalShift::Project(map, beta, affine);
   for (int f=0;f<Fields::count;++f) if (Fields::Independent(f))
-      out.jets[f] = SampleResidualJet(q, f, map, inv_h, beta,
+      out.jets[f] = SampleResidualJet(q, f, map, inv_h, shift,
                                       f <= 6 || f == 18 || (f >= 22 && f < 25),
                                       out.transport[f], affine);
   RestorePointState(out, q, map, inv_h, reference, parameters, lift, cached_weight);
