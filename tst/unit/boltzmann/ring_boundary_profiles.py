@@ -20,7 +20,7 @@ def profile(path, mass=1.0):
     if adm is not None:
         np.testing.assert_array_equal(geometry, adm["mb_geometry"])
         assert frame["cycle"] == adm["cycle"]
-    weights, distances = [], []
+    weights, distances, circumferential = [], [], []
     flow, peak = 0.0, 0.0
     for block, bounds in enumerate(geometry):
         e = data["tmunu_E"][block][0].astype(float)
@@ -39,6 +39,9 @@ def profile(path, mass=1.0):
                 g = [(v[:-1, :-1] + v[1:, :-1] + v[:-1, 1:] + v[1:, 1:]) / 4
                      for v in g]
             xx, xy, xz, yy, yz, zz = g
+            # In the modified-Cartoon meridional plane the suppressed Cartesian
+            # component zz carries the physical azimuthal metric divided by rho^2.
+            circumferential.append((rho*np.sqrt(zz)).ravel())
             vol *= np.sqrt(xx*yy*zz + 2*xy*xz*yz - xx*yz**2 - yy*xz**2 - zz*xy**2)
         weights.append((vol * e).ravel())
         distances.append(rad.ravel())
@@ -47,10 +50,19 @@ def profile(path, mass=1.0):
     weight, radius = np.concatenate(weights), np.concatenate(distances)
     total = weight.sum()
     order = np.argsort(radius)
-    quantile = np.interp([0.5, 0.9], np.cumsum(weight[order]) / total, radius[order])
+    cumulative = np.cumsum(weight[order])
+    quantile = np.interp([0.5, 0.9], cumulative / total, radius[order])
+    # The step inverse of the cell-weighted empirical CDF is independent of
+    # the ordering of cells at identical radii.
+    median_cell = radius[order[np.searchsorted(cumulative, .5*total)]]
+    median_circ = None
+    if circumferential:
+        circ = np.concatenate(circumferential)
+        order_circ = np.argsort(circ)
+        median_circ = circ[order_circ[np.searchsorted(np.cumsum(weight[order_circ]), .5*total)]]
     return dict(time=frame["time"], time_M=frame["time"]/mass, proper_volume=int(adm is not None),
                 E_integral=total, E_peak=peak, median_radius=quantile[0],
-                radius90=quantile[1], fraction_r2M=weight[radius < 2*mass].sum() / total,
+                median_circumferential_radius=median_circ, cell_median_radius=median_cell, radius90=quantile[1], fraction_r2M=weight[radius < 2*mass].sum() / total,
                 mean_radial_covector=flow / total)
 
 
