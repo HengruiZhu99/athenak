@@ -19,7 +19,7 @@ inline PolarQuadrature MakePolarQuadrature(int band, int hemisphere, Real start,
   constexpr double weights[] = {0.3478548451374539, 0.6521451548625461,
                                 0.6521451548625461, 0.3478548451374539};
   auto edge = [&](int k) {
-    return std::acos(std::clamp(start + k * dm, -1., 1.));
+    return std::acos(std::clamp<double>(start + k * dm, -1., 1.));
   };
   PolarQuadrature rule{};
   const int k = band % hemisphere;
