@@ -6,6 +6,7 @@
 #include "boltzmann/fourth_order.hpp"
 #include "boltzmann/prolongation.hpp"
 #include "mesh/restriction.hpp"
+#include "mesh/mesh.hpp"
 
 namespace {
 using Policy = Kokkos::MDRangePolicy<DevExeSpace, Kokkos::Rank<3>>;
@@ -136,6 +137,28 @@ Real CompositeDivergence(int n) {
   }
   return l1;
 }
+bool CheckCoarseNeighborSlots() {
+  DvceArray2D<NeighborBlock> neighbors("meridional test neighbors", 1, 16);
+  auto host = Kokkos::create_mirror_view(neighbors);
+  for (int n = 0; n < 16; ++n) {
+    host(0,n).gid = -1;
+    host(0,n).lev = -1;
+  }
+  // The two inner faces meet coarser blocks through opposite child slots.
+  // The outer faces meet a same-level block and a pair of finer blocks.
+  for (int slot : {0, 4, 9, 12, 13}) host(0,slot).gid = slot;
+  host(0,0).lev = host(0,9).lev = 2;
+  host(0,4).lev = 3;
+  host(0,12).lev = host(0,13).lev = 4;
+  Kokkos::deep_copy(neighbors, host);
+  int errors = 0;
+  Kokkos::parallel_reduce("coarse neighbor slots", Kokkos::RangePolicy<DevExeSpace>(0,4),
+      KOKKOS_LAMBDA(const int side, int& sum) {
+        if (boltzmann::HasCoarserFace(neighbors, 0, side, 3) != (side % 2 == 0)) ++sum;
+      }, errors);
+  return errors == 0;
+}
+
 bool CheckFourthTransfers() {
   bool ok = true;
   std::puts("AMR operator,n,error,order");
@@ -161,5 +184,5 @@ bool CheckFourthTransfers() {
 
 int main(int argc, char** argv) {
   Kokkos::ScopeGuard guard(argc, argv);
-  return CheckFourthTransfers() ? 0 : 1;
+  return CheckCoarseNeighborSlots() && CheckFourthTransfers() ? 0 : 1;
 }

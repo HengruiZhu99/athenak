@@ -5,6 +5,18 @@
 #include "athena.hpp"
 
 namespace boltzmann {
+// SetNeighbors stores the coarser neighbor in the fine block's transverse
+// child slot. Both slots occur on meridional faces of a 2:1 mesh.
+template <class NeighborView>
+KOKKOS_INLINE_FUNCTION bool HasCoarserFace(const NeighborView& neighbors, int m,
+                                          int side, int level) {
+  for (int child = 0; child < 2; ++child) {
+    const auto& nb = neighbors(m, 4 * side + child);
+    if (nb.gid >= 0 && nb.lev < level) return true;
+  }
+  return false;
+}
+
 struct PhaseCell {
   int i, j, band, sector;
   KOKKOS_INLINE_FUNCTION PhaseCell Shift(int d, int step, int sectors) const {

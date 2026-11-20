@@ -6,6 +6,7 @@
 #include "z4c/z4c.hpp"
 
 namespace boltzmann {
+
 TaskStatus Boltzmann::FluxesFourth(Driver* driver, int stage) {
   const auto sz = pack->pmb->mb_size.d_view;
   const auto b = pack->pmesh->mb_indcs;
@@ -123,8 +124,7 @@ TaskStatus Boltzmann::FluxesFourth(Driver* driver, int stage) {
                                      : side == 2 ? j == b.js
                                                  : j == b.je;
                 if (!on_face) continue;
-                const auto nb = neighbors(m, 4 * side);
-                if (nb.gid < 0 || nb.lev >= levels(m)) continue;
+                if (!HasCoarserFace(neighbors, m, side, levels(m))) continue;
                 const int d = side / 2;
                 const auto face = p.Shift(d, side % 2, sectors);
                 // Parent width is twice this fine width. Keep a smooth inflow
@@ -195,8 +195,7 @@ TaskStatus Boltzmann::FluxesFourth(Driver* driver, int stage) {
                 (donor.i < b.is || donor.i > b.ie || donor.j < b.js ||
                  donor.j > b.je)) {
               const int side = 2 * d + (donor.i > b.ie || donor.j > b.je);
-              const auto nb = neighbors(m, 4 * side);
-              if (nb.gid >= 0 && nb.lev < levels(m)) {
+              if (HasCoarserFace(neighbors, m, side, levels(m))) {
                 // Even if the two subface fluxes have opposite signs, their
                 // area-averaged outward part cannot exceed the parent's share.
                 const int ci = (donor.i - b.is + 2 * b.cis) / 2;
