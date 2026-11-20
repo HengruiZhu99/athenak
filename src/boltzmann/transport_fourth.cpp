@@ -23,7 +23,7 @@ TaskStatus Boltzmann::FluxesFourth(Driver* driver, int stage) {
   // Four spatial sides, four angular sides and the source share one Euler
   // donor budget. Reserve a known spatial share for fine-to-coarse reflux.
   const Real space_floor = multilevel ? .08 : .02;
-  const Real normalization = 1 + 4 * space_floor + 5 * .02;
+  const Real normalization = multilevel ? 1 + 4 * space_floor + 5 * .02 : 1.18;
   const Real reflux_share = space_floor / normalization;
   const int hemisphere = nmu_half, sectors = npsi, count = nang,
             blocks = pack->nmb_thispack;
