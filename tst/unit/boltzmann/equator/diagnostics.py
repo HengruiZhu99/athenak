@@ -10,7 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[4]/"vis/python"))
 from bin_convert import read_binary
 
 
-def profile(path, mass):
+def profile(path, mass, *, stride=1):
     f = read_binary(path)
     adm = read_binary(path.with_name(path.name.replace(".tmunu.", ".adm.")))
     np.testing.assert_array_equal(adm["mb_geometry"], f["mb_geometry"])
@@ -27,13 +27,19 @@ def profile(path, mass):
     angular = vertical = 0.
     for b, bounds in enumerate(f["mb_geometry"]):
         matter = f["mb_data"]
-        E = matter["tmunu_E"][b][0].astype(float)
+        def cell_average(key):
+            data = matter[key][b][0].astype(float)
+            if stride == 1:
+                return data
+            nz, nr = data.shape
+            return data.reshape(nz//stride, stride, nr//stride, stride).mean(axis=(1,3))
+        E = cell_average("tmunu_E")
         nz, nr = E.shape
         dr, dz = (bounds[1]-bounds[0])/nr, (bounds[3]-bounds[2])/nz
         rho = bounds[0] + (np.arange(nr)+.5)*dr
         metric = []
         for name in ("xx","xy","xz","yy","yz","zz"):
-            v = adm["mb_data"]["adm_g"+name][b][0].astype(float)
+            v = adm["mb_data"]["adm_g"+name][b][0][::stride, ::stride].astype(float)
             assert v.shape == (nz+1, nr+1)
             metric.append((v[:-1,:-1]+v[1:,:-1]+v[:-1,1:]+v[1:,1:])*.25)
         xx, xy, xz, yy, yz, zz = metric
@@ -41,10 +47,10 @@ def profile(path, mass):
         w = vol * E
         weights.append(w.ravel())
         radii.append((rho*np.sqrt(zz)).ravel())
-        sizes.append(np.full(w.size,max(dr,dz)))
-        angular += (vol*rho*matter["tmunu_Sz"][b][0]).sum()
+        sizes.append(np.full(w.size,max(dr,dz)/stride))
+        angular += (vol*rho*cell_average("tmunu_Sz")).sum()
         # Stress along the coordinate z tangent of unit proper length.
-        vertical += (vol*matter["tmunu_Syy"][b][0]/yy).sum()
+        vertical += (vol*cell_average("tmunu_Syy")/yy).sum()
     w, r, h = map(np.concatenate, (weights,radii,sizes))
     if not (np.all(np.isfinite(w)) and np.all(np.isfinite(r)) and w.sum() > 0):
         raise ValueError(f"invalid radius or proper energy in {path}")

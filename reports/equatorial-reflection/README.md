@@ -4,7 +4,7 @@ The opt-in boundary is `mesh/ix2_bc=reflect` with `mesh/x2min=0` and the existin
 
 ## Reflection and diagnostics
 
-In the evolved component order ((\rho,z,\phi)), the reflection matrix is `diag(1,-1,1)`. A Cartesian tensor component acquires one minus sign per axial index. The odd Z4c fields are gXY, gYZ, AXY, AYZ, GammaY, betaY and BY. Lapse, chi, trace variables and the other components are even. The odd radiation moments are Sxy, Syz and Sy. Syy, the vertical normal stress, is even.
+In the evolved component order \( (\rho,z,\phi) \), the reflection matrix is `diag(1,-1,1)`. A Cartesian tensor component acquires one minus sign per axial index. The odd Z4c fields are gXY, gYZ, AXY, AYZ, GammaY, betaY and BY. Lapse, chi, trace variables and the other components are even. The odd radiation moments are Sxy, Syz and Sy. Syy, the vertical normal stress, is even.
 
 The angular grid uses `mu = n_phi` and meridional angle psi, with `n_z = sqrt(1-mu²) sin(psi)`. Reflection keeps the cosine bin and reverses the sector index. Cell averages mirror about the intervening face. Geometry ghosts mirror about the equatorial vertex, where odd fields vanish. The axis half-turn sends psi to pi minus psi. The two permutations commute, including at the axis-equator corner. Reflection is applied to the restricted parent cache before interpolation and to fine ghosts afterward. The normal flux of each opposite-direction pair sums to zero, including when the positivity limiter acts.
 
@@ -67,6 +67,19 @@ Each layout uses 24-by-24-cell blocks. The production-boundary pair has radial o
 At 30 M in the archived 1.0600 dispersal run, the centroid was 3.73220 M and the 90th-percentile circumferential radius was 4.69606 M. Only 16.58% of the represented Eulerian energy was on the finest level. The outer decile had energy-weighted mean spacing 0.25. Reproducing the outgoing radius and its resolution is a separate late-time check on a coarsened exterior.
 
 The matched 0.9508 and 1.0600 endpoint jobs use the original physical outer distances and compare full and half coverage with the same new executable. They retain the 120-cycle finder and snapshot cadence. Compare physical timestamps as well as cycles. The coarsened layout remains experimental until the late-time centroid, vertical stress, fields, constraints, budgets and trapping checks pass. The ongoing bisection uses its original executable and deck.
+
+### Two-B200 timing and field comparison
+
+The first two-GPU pilot used two B200s on StellarAI node `sai-n02g3`, with SHA-256 `5a5afe424b37baec95a472e6702d36a4eb75c49cf48b8935b85e2bea11c1ede6`. The four layouts use the same pilot binary, input geometry and angular bins. This binary predates the final polar-limit and even-mode finder changes and the reduction of redundant fine-ghost fills. The separate eight-GPU experiment uses the updated executable.
+
+| Layout, outer distances (36,36) | Mean active blocks | Steps to 0.2 M | Wall seconds | GPU-hours | Peak MiB per GPU |
+|---|---:|---:|---:|---:|---:|
+| Full, original exterior spacing | 114.95 | 569 | 801.73 | 0.44541 | 16,446 |
+| Half, original exterior spacing | 57.47 | 569 | 395.04 | 0.21947 | 16,440 |
+
+The measured symmetry saving was 50.73% through 0.2 M. Wall time includes initialization, evolution, diagnostics and the final checkpoint. Memory is the largest one-second device sample. Both layouts preallocate storage for 80 blocks per rank.
+
+Across all six saved times, the maximum difference in the circumferential centroid was 4.45e-16 M and the integrated vertical stress differed by at most 6.94e-18. On the common spatial lattice, the largest absolute field differences in the ADM, radiation and constraint output groups were 5.96e-8, 4.29e-18 and 2.95e-7 respectively. At the endpoint the full-domain centroid was 2.39940 M. Changing the diagnostic integration to two-cell bins shifted this value by 0.00187 M, and the last saved interval changed it by 0.03476 M. Diagnostic quadrature and temporal sampling errors are distinct from the evolution errors measured in the smooth refinement test.
 
 ## Reproduction
 

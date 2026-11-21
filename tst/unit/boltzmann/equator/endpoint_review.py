@@ -7,6 +7,27 @@ import sys
 
 import numpy as np
 from compare import compare
+from profile_comparison import compare_profiles
+from witness import LocalPolynomial, NativePatch, measure, read_binary, solve_surface
+
+
+def enclosing_surface(frame, interior, seed):
+    """Select a resolved outer marginal branch enclosing the verified interior everywhere."""
+    patch = NativePatch(read_binary(frame))
+    theta = np.r_[0., np.linspace(1.e-5, np.pi-1.e-5, 4097), np.pi]
+    inner_radius = np.polynomial.legendre.legval(np.cos(theta), interior)
+    shape = solve_surface(patch, seed[0], 0., 48, 70, seed)
+    checks = {}
+    for name, metric in (("spline", patch), ("cubic", LocalPolynomial(patch, 3)),
+                         ("quintic", LocalPolynomial(patch, 5))):
+        h, plus, minus, _, _ = measure(metric, shape["coeff"], theta)
+        checks[name] = dict(residual=float(np.max(abs(h*plus))), max_in=float(max(h*minus)),
+                            min_gap=float(min(h-inner_radius)))
+    # Use the production fastflow tolerance, retain the actual residual for comparison.
+    accepted = all(v["residual"] < .006 and v["max_in"] < 0 and v["min_gap"] > 0
+                   for v in checks.values())
+    return dict(accepted=accepted, checks=checks, **shape)
+
 
 
 def summarize_run(folder):
@@ -53,6 +74,7 @@ if __name__ == "__main__":
     args.output.mkdir(exist_ok=True,parents=True)
     mass=json.loads(args.metadata.read_text())["M_adm"]
     compare(args.full,args.half,mass,args.output/"comparison")
+    compare_profiles(args.full,args.half,mass,args.output/"timed-profiles.csv")
     result={}
     for side, folder in (("full",args.full),("half",args.half)):
         result[side]=summarize_run(folder)
@@ -79,5 +101,7 @@ if __name__ == "__main__":
                     measured["online_origin_marginal"]=dict(area=float(r[7]),mass=float(r[9]),
                                                 spin=float(r[10])/float(r[9])**2,
                                                 direct_residual=float(r[13]))
+                seed = json.loads(args.seed.read_text())["enclosing_horizon"]["coeff"]
+                measured["enclosing_fit"] = enclosing_surface(folder/"bin"/v["file"], v["coeff"], seed)
                 result[side]["first_verified_in_window"]=measured
     (args.output/"summary.json").write_text(json.dumps(result,indent=2)+"\n")
