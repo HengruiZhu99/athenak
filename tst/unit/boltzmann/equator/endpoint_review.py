@@ -7,6 +7,7 @@ import sys
 
 import numpy as np
 from compare import compare, stamp
+from endpoint_report import write_report
 from profile_comparison import compare_profiles
 from witness import LocalPolynomial, NativePatch, measure, read_binary, solve_surface
 
@@ -108,5 +109,16 @@ if __name__ == "__main__":
                         keys = ("area", "surface_mass", "surface_spin_ratio")
                         measured["geometric_sampling_change"] = {
                             key:abs(coarse[key]-fine[key]) for key in keys}
+                    earlier = [stamp(f)[0] for f in selected if stamp(f)[0] < v["time"]]
+                    if earlier:
+                        measured["previous_interval_M"] = (v["time"]-max(earlier))/mass
+                    following = next((f for f in selected if stamp(f)[0] > v["time"]), None)
+                    if following:
+                        neighbor = enclosing_surface(following, v["coeff"], fine["coeff"])
+                        if neighbor["accepted"]:
+                            measured["next_cadence_change"] = {
+                                key:abs(neighbor[key]-fine[key])
+                                for key in ("area","surface_mass","surface_spin_ratio")}
                 result[side]["first_verified_in_window"]=measured
     (args.output/"summary.json").write_text(json.dumps(result,indent=2)+"\n")
+    write_report(result, args.full, args.half, args.output)

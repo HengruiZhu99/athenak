@@ -56,6 +56,12 @@ if [[ $# -eq 0 ]]; then
     measure square-half j09508 1 --square --half
     measure coarse-full j09508 1 --square --coarse
     measure coarse-half j09508 1 --square --coarse --half
+elif [[ $1 == --pair ]]; then
+    family=$2
+    end=$3
+    shift 3
+    measure "$family-full" "$family" "$end" "$@"
+    measure "$family-half" "$family" "$end" "$@" --half
 else
     measure "$@"
 fi

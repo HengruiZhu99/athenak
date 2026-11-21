@@ -1805,6 +1805,12 @@ if (Athena_BUILD_UNIT_TESTS)
       ${CMAKE_CURRENT_BINARY_DIR})
   target_link_libraries(
       athena_z4c_cartoon_m0_fastflow_unit_test PRIVATE Kokkos::kokkos)
+  add_executable(athena_m0_replay EXCLUDE_FROM_ALL
+      tst/unit/z4c/cartoon_m0_replay.cpp src/z4c/cartoon_m0_fastflow.cpp)
+  target_compile_definitions(athena_m0_replay PRIVATE ATHENA_CARTOON_M0_MATH_ONLY=1)
+  target_include_directories(athena_m0_replay PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_BINARY_DIR})
+  target_link_libraries(athena_m0_replay PRIVATE Kokkos::kokkos)
   add_test(
       NAME athena.z4c_cartoon_m0_fastflow
       COMMAND athena_z4c_cartoon_m0_fastflow_unit_test)
