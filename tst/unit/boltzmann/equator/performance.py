@@ -36,7 +36,13 @@ def summarize(folder):
     if check != blocksteps:
         raise ValueError(f"block census {check} differs from driver {blocksteps}")
     time_weighted = weighted / (times[steps]-times[0])
-    return dict(layout=folder.name, host=devices[0]["host"], GPUs=len(hardware), steps=steps,
+    hashes = (folder/"hashes").read_text().splitlines()
+    if len(hashes) != 2 or not all(re.fullmatch(r"[0-9a-f]{64}", line.split()[0]) for line in hashes):
+        raise ValueError(f"invalid input or executable checksum in {folder}")
+    return dict(layout=folder.name, host=devices[0]["host"], GPUs=len(hardware),
+                pci_devices=sorted(row["pci"] for row in devices),
+                initial_data_sha256=hashes[0].split()[0], executable_sha256=hashes[1].split()[0],
+                steps=steps,
                 end_time=history[-1,0], blocks_per_step=blocksteps/steps,
                 time_mean_blocks=time_weighted, wall_seconds=seconds,
                 GPU_hours=seconds*len(hardware)/3600,

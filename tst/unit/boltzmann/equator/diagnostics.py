@@ -13,6 +13,10 @@ from bin_convert import read_binary
 def profile(path, mass, *, stride=1, minimum_spacing=0.):
     f = read_binary(path)
     adm = read_binary(path.with_name(path.name.replace(".tmunu.", ".adm.")))
+    return profile_frames(f, adm, mass, stride=stride, minimum_spacing=minimum_spacing)
+
+
+def profile_frames(f, adm, mass, *, stride=1, minimum_spacing=0.):
     np.testing.assert_array_equal(adm["mb_geometry"], f["mb_geometry"])
     assert adm["cycle"] == f["cycle"]
     # Require the declared equatorial boundary, not just an output covering z>=0.
@@ -55,7 +59,7 @@ def profile(path, mass, *, stride=1, minimum_spacing=0.):
         vertical += (vol*cell_average("tmunu_Syy")/yy).sum()
     w, r, h = map(np.concatenate, (weights,radii,sizes))
     if not (np.all(np.isfinite(w)) and np.all(np.isfinite(r)) and w.sum() > 0):
-        raise ValueError(f"invalid radius or proper energy in {path}")
+        raise ValueError(f"invalid radius or proper energy at cycle {f['cycle']}")
     indices = np.argsort(r)
     q90 = r[indices[np.searchsorted(np.cumsum(w[indices]), .9*w.sum())]]
     outer = r >= q90

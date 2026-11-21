@@ -38,6 +38,8 @@ The two-rank half-domain test created three leaves, migrated four block records 
 
 The manufactured quarter-period evolution reached the same maximum error and order on a StellarAI B200 (job 57843). The same AMR and two-rank to one-rank restart passed on two StellarAI B200 GPUs. The fixed-metric energy residual was 2.14e-16 for each domain. The largest active-ordinate difference was 1.39e-17 against the positive full-domain half and 4.10e-16 against the reflected negative half. The restarted ordinates agreed exactly. In the coupled CPU tests the maximum differences across all geometry components were 9.89e-8 and 2.01e-8 at the two resolutions, versus 4.23e-4 between the two full-domain grids at coincident vertices.
 
+An archived full-domain check gives a late-time baseline for the symmetry defect. In 20 samples of 0.9508 through 16.8 M and 26 samples of 1.0600 through 30 M every northern leaf had a reflected southern leaf at the same resolution. Doubling the northern data instead of using both evolved hemispheres changed the centroid by at most 5.98e-11 M (0.9508) and 2.24e-7 M (1.0600). The maximum pointwise ADM differences between the stored hemispheres were 9.54e-7 and 4.77e-7 respectively. The two archive CSVs give all sampled times and the worst fields. These are measurements of each archived full run's own symmetry.
+
 ## Horizon finder
 
 The existing finder already evolves an axisymmetric Legendre generating curve and has a direct meridional least-squares correction. The half-domain adapter folds the sampling locations and pulls back both tensors and metric derivatives. In the half-domain origin branch, even Legendre modes enforce zero equatorial slope. The direct correction uses a northern quadrature with mirror weights, then independently verifies both hemispheres, both regular poles and the equator. Displaced searches keep their signed centers and all modes. Two disjoint analytic Schwarzschild neighborhoods recover both components with nonzero local dipoles in the displaced parameterization. Horizon area and the axial Killing integral already cover a whole surface. Their normalization is independent of the domain used to store the geometry.
@@ -83,7 +85,7 @@ The matched 0.9508 and 1.0600 endpoint jobs use the original physical outer dist
 
 ### Two-B200 timing and field comparison
 
-The first two-GPU pilot used two B200s on StellarAI node `sai-n02g3`, with SHA-256 `5a5afe424b37baec95a472e6702d36a4eb75c49cf48b8935b85e2bea11c1ede6`. The four layouts use the same pilot binary, input geometry and angular bins. This binary predates the final polar-limit and even-mode finder changes and the reduction of redundant fine-ghost fills. The separate eight-GPU experiment uses the updated executable.
+The first two-GPU pilot used two B200s on StellarAI node `sai-n02g3`, with SHA-256 `5a5afe424b37baec95a472e6702d36a4eb75c49cf48b8935b85e2bea11c1ede6`. The four layouts use the same pilot binary, input geometry and angular bins. The first three used the same GPU pair. The combined layout used a second allocation on the same B200 node with one GPU in common. The eight-GPU experiment runs all four layouts in one allocation. This binary predates the final polar-limit and even-mode finder changes and the reduction of redundant fine-ghost fills. The separate eight-GPU experiment uses the updated executable.
 
 | Layout, outer distances (36,36) | Mean active blocks | Steps to 0.2 M | Wall seconds | GPU-hours | Peak MiB per GPU |
 |---|---:|---:|---:|---:|---:|
