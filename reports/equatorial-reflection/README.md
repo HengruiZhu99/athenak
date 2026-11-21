@@ -71,7 +71,7 @@ The fixed-target solve frequently missed strictly trapped surfaces. At 0.9508 on
 
 ## Mesh experiment
 
-Each layout uses 24-by-24-cell blocks. The production-boundary pair has radial outer face 36 and axial distance 18. The four factorial layouts have both outer faces at distance 36. Only the latter four isolate coarsening and reflection at comparable face distances. Coarsening changes root spacing from 0.25 to 0.5 and moves the inner and ring boxes one refinement level deeper. The mesh builder supplies the required 2:1 transitions. The embedded projected ring box is 5.10–6.90 in rho and ±0.90 axially. A leaf-by-leaf intersection check measured 0.0625 spacing in **both** directions over the whole box in every layout.
+Each layout uses 24-by-24-cell blocks. The production-boundary pair has radial outer face 36 and axial distance 18. The four factorial layouts have both outer faces at distance 36. Only the latter four isolate coarsening and reflection at comparable face distances. Coarsening changes root spacing from 0.25 to 0.5 and moves the inner and ring boxes one refinement level deeper. The mesh builder supplies the required 2:1 transitions. The embedded projected ring box is 5.10–6.90 in rho and ±0.90 axially. A leaf-by-leaf intersection check measured 0.0625 spacing in **both** directions over the whole box in every layout. The complete finest-level footprint also matched leaf for leaf after reflection. Its 16 full-space blocks cover 3 ≤ rho ≤ 9 and −3 ≤ z ≤ 3.
 
 | Outer distances (rho, axial) | Full leaves at initialization | Half leaves at initialization |
 |---|---:|---:|
