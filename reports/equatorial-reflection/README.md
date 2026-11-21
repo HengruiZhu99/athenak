@@ -24,6 +24,9 @@ The full-volume normalization is twice the represented hemisphere for radiation 
 | Order of that junction measurement | 4.999 |
 | Counterstreaming manufactured solution, maximum divergence error at 192 cells | 1.18e-9 |
 | Order of that streaming measurement | 4.999 |
+| Evolved counterstreaming pulse, maximum error at 192 cells after a quarter period | 3.91e-10 |
+| Evolved pulse order from 96 to 192 cells at fixed CFL | 4.735 |
+| Largest relative energy change over the four evolved-pulse resolutions | 4.45e-16 |
 | Fixed-metric pulse relative energy residual, full / half | 1.07e-15 / 6.42e-16 |
 | Maximum half versus upper full-domain ordinate difference | 1.39e-17 |
 | Maximum half versus reflected lower full-domain ordinate difference | 7.45e-16 |

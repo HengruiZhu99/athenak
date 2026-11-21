@@ -6,6 +6,7 @@
 #include "boltzmann/fourth_order.hpp"
 #include "boltzmann/prolongation.hpp"
 #include "mesh/restriction.hpp"
+#include "driver/ssprk104.hpp"
 #include "mesh/mesh.hpp"
 
 namespace {
@@ -194,6 +195,59 @@ Real EquatorialStreamingError(int n) {
   return defect <= 16*std::numeric_limits<Real>::epsilon() ? error : INFINITY;
 }
 
+// Advance both directional cell averages through the symmetry boundary for
+// a quarter period. The period-one profile also reflects at the outer face.
+Real EvolvedStreamingError(int n, Real &budget) {
+  const Real dx = 1./n, final_time = .25;
+  const int steps = n/4;
+  const Real dt = final_time/steps;
+  DvceArray5D<Real> u("streaming means",1,2,1,n+8,1), old("saved means",1,2,1,n+8,1);
+  DvceArray2D<Real> flux("shared streaming flux",2,n+1);
+  Real curr[10], saved[10], rhs[10], delta[10];
+  ConfigureSSPRK104(curr,saved,rhs,delta);
+  using Range = Kokkos::RangePolicy<DevExeSpace>;
+  Kokkos::parallel_for("initialize both means",Range(0,2*n),KOKKOS_LAMBDA(int index) {
+    const int b = index/n, j = index%n;
+    u(0,b,0,4+j,0) = Mean((1-2*b)*(j+.5)*dx,dx);
+  });
+  for (int step=0; step<steps; ++step) {
+    Kokkos::deep_copy(old,u);
+    for (int stage=0; stage<10; ++stage) {
+      Kokkos::parallel_for("reflect streaming means",Range(0,8),KOKKOS_LAMBDA(int index) {
+        const int b = index/4, g = index%4;
+        u(0,b,0,3-g,0) = u(0,1-b,0,4+g,0);
+        u(0,b,0,4+n+g,0) = u(0,1-b,0,3+n-g,0);
+      });
+      // For constant streaming speed, the production flux reduces exactly
+      // to velocity times its one-dimensional finite-volume reconstruction.
+      const boltzmann::PhaseFace face{1,0,1,2,u,u};
+      Kokkos::parallel_for("shared streaming faces",Range(0,2*(n+1)),KOKKOS_LAMBDA(int index) {
+        const int b = index/(n+1), j = index%(n+1);
+        const Real sign = 1-2*b;
+        flux(b,j) = sign*face.Reconstruct({0,4+j,0,b},sign);
+      });
+      const Real c = curr[stage], o = saved[stage], d = delta[stage], g = rhs[stage]*dt/dx;
+      Kokkos::parallel_for("advance reflected means",Range(0,2*n),KOKKOS_LAMBDA(int index) {
+        const int b = index/n, j = index%n;
+        auto &v = u(0,b,0,4+j,0), &base = old(0,b,0,4+j,0);
+        base += d*v;
+        v = c*v + o*base - g*(flux(b,j+1)-flux(b,j));
+      });
+    }
+  }
+  Real error = 0, total = 0;
+  Kokkos::parallel_reduce("final streaming solution",Range(0,2*n),
+      KOKKOS_LAMBDA(int index, Real &max_error, Real &sum) {
+        const int b = index/n, j = index%n;
+        const Real ufinal = u(0,b,0,4+j,0);
+        const Real expected = Mean((1-2*b)*(j+.5)*dx-final_time,dx);
+        max_error = fmax(max_error, fabs(ufinal-expected));
+        sum += dx*ufinal;
+      },Kokkos::Max<Real>(error),Kokkos::Sum<Real>(total));
+  budget = fabs(total/2-1);
+  return error;
+}
+
 bool CheckCoarseNeighborSlots() {
   DvceArray2D<NeighborBlock> neighbors("meridional test neighbors", 1, 16);
   auto host = Kokkos::create_mirror_view(neighbors);
@@ -247,6 +301,16 @@ bool CheckFourthTransfers() {
     const Real order = previous ? log2(previous/error) : 0;
     std::printf("reflected streaming Linf,%d,%.12e,%.5f\n",n,error,order);
     if (!std::isfinite(error) || (n >= 96 && order < 3.8)) ok = false;
+    previous = error;
+  }
+  previous = 0;
+  for (int n : {24,48,96,192}) {
+    Real budget = 0;
+    const Real error = EvolvedStreamingError(n,budget);
+    const Real order = previous ? log2(previous/error) : 0;
+    std::printf("evolved reflected pulse Linf,%d,%.12e,%.5f,relative budget %.3e\n",
+                n,error,order,budget);
+    if (!std::isfinite(error) || budget > 3.e-13 || (n >= 96 && order < 3.8)) ok = false;
     previous = error;
   }
   return std::isfinite(TransferError(24, 4, true)) &&
