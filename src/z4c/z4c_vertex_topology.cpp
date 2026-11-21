@@ -178,7 +178,10 @@ void Z4cVertexTopologyPlan::Rebuild(MeshBlockPack *pack,
                              blocks->mb_bcs.h_view(m, BoundaryFace::inner_x1))) ||
               (upper1 && IsNonperiodicPhysicalBoundary(
                              blocks->mb_bcs.h_view(m, BoundaryFace::outer_x1))) ||
-              (lower2 && IsNonperiodicPhysicalBoundary(
+              (lower2 && !(blocks->mb_bcs.h_view(m, BoundaryFace::inner_x2) == BoundaryFlag::reflect &&
+                           mesh->mesh_size.x2min == 0 &&
+                           pack->z4c_symmetry.mode == Z4cSymmetryMode::cartoon_so2) &&
+               IsNonperiodicPhysicalBoundary(
                              blocks->mb_bcs.h_view(m, BoundaryFace::inner_x2))) ||
               (upper2 && IsNonperiodicPhysicalBoundary(
                              blocks->mb_bcs.h_view(m, BoundaryFace::outer_x2))) ||

@@ -280,17 +280,16 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
       const int m = compact_work ? boundary_work(row) : row;
       // apply physical boundaries to inner_x2
       switch (mb_bcs.d_view(m,BoundaryFace::inner_x2)) {
-        case BoundaryFlag::reflect:
-          for (int j=0; j<ng; ++j) {
-            if (n==z4c::Z4c::I_Z4C_GXY || n==z4c::Z4c::I_Z4C_GYZ ||
-                n==z4c::Z4c::I_Z4C_AXY || n==z4c::Z4c::I_Z4C_AYZ ||
-                n==z4c::Z4c::I_Z4C_GAMY || n==z4c::Z4c::I_Z4C_BETAY) {
-              u0(m,n,k,js-j-1,i) = -u0(m,n,k,js+j+(vertex ? 1 : 0),i);
-            } else {
-              u0(m,n,k,js-j-1,i) =  u0(m,n,k,js+j+(vertex ? 1 : 0),i);
-            }
-          }
+        case BoundaryFlag::reflect: {
+          using Z = z4c::Z4c;
+          const bool odd = n == Z::I_Z4C_GXY || n == Z::I_Z4C_GYZ ||
+              n == Z::I_Z4C_AXY || n == Z::I_Z4C_AYZ || n == Z::I_Z4C_GAMY ||
+              n == Z::I_Z4C_BETAY || n == Z::I_Z4C_BY;
+          if (vertex && odd) u0(m,n,k,js,i) = 0;
+          for (int j=0; j<ng; ++j)
+            u0(m,n,k,js-j-1,i) = (odd ? -1 : 1) * u0(m,n,k,js+j+(vertex ? 1 : 0),i);
           break;
+        }
         case BoundaryFlag::diode:
         case BoundaryFlag::outflow:
         case BoundaryFlag::vacuum:

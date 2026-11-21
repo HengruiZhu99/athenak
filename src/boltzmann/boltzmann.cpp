@@ -31,9 +31,14 @@ Boltzmann::Boltzmann(MeshBlockPack* pp, ParameterInput* pin)
     throw std::invalid_argument("invalid boltzmann angular grid (npsi must be even)");
   for (int f = 1; f <= 3; ++f) {
     auto bc = pp->pmesh->mesh_bcs[f];
+    if (f == BoundaryFace::inner_x2 && bc == BoundaryFlag::reflect &&
+        pp->pmesh->mesh_size.x2min == 0 &&
+        pp->pmesh->mesh_bcs[BoundaryFace::inner_x1] == BoundaryFlag::axis &&
+        pp->pmesh->mb_indcs.nx2 >= 2 * pp->pmesh->mb_indcs.ng) continue;
     if (bc != BoundaryFlag::outflow && !(f >= 2 && bc == BoundaryFlag::periodic))
       throw std::invalid_argument(
-          "Boltzmann transport requires open outer boundaries or periodic z");
+          "Boltzmann transport requires open boundaries, periodic z, or inner_x2 "
+          "reflection at z=0 with an axis and at least 2*ng axial cells per block");
   }
   const auto rk = pin->GetOrAddString("time", "integrator", "rk2");
   if (rk != "rk1" && rk != "rk2" && rk != "rk3" && rk != "ssprk104")
@@ -215,6 +220,17 @@ TaskStatus Boltzmann::GeometryAndStress(Driver* driver, int stage) {
                          sizes(m).x1min == 0 && i == v.is);
         });
   }
+  if (pack->pmesh->mesh_bcs[BoundaryFace::inner_x2] == BoundaryFlag::reflect) {
+    const auto flags = pack->pmb->mb_bcs.d_view;
+    par_for("equatorial vertex stress", DevExeSpace(), 0, last, v.is, v.ie,
+            KOKKOS_LAMBDA(int m, int i) {
+              if (flags(m, BoundaryFace::inner_x2) == BoundaryFlag::reflect) {
+                target(m, 1, 0, v.js, i) = 0;
+                target(m, 4, 0, v.js, i) = 0;
+                target(m, 8, 0, v.js, i) = 0;
+              }
+            });
+  }
   // Coincident coarse and fine vertices must see the same RHS source.
   pack->pz4c->vertex_topology_plan->SynchronizeSharedNodes(target);
   return TaskStatus::complete;
@@ -290,6 +306,7 @@ void RingHistory(HistoryData* data, Mesh* mesh) {
   data->label[2] = "escaped_E";
   data->label[3] = "escaped_Jz";
   data->label[4] = "metric_work";
+  const Real copies = mesh->mesh_bcs[BoundaryFace::inner_x2] == BoundaryFlag::reflect ? 2 : 1;
   for (int k = 0; k < 3; ++k) {
     Real total = 0;
     Kokkos::parallel_reduce(
@@ -322,7 +339,7 @@ void RingHistory(HistoryData* data, Mesh* mesh) {
           sum += 2 * M_PI * r * f.volume * sz(m).dx1 * sz(m).dx2 * density;
         },
         total);
-    data->hdata[k == 2 ? 5 : k] = total;
+    data->hdata[k == 2 ? 5 : k] = copies * total;
   }
   data->hdata[2] = matter->escaped;
   data->hdata[3] = matter->escaped_j;

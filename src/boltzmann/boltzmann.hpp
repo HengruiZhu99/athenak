@@ -45,6 +45,7 @@ class Boltzmann {
   DvceArray2D<Real> weights;
   Real escaped = 0, escaped_j = 0, work = 0;
   void Ghosts();
+  void ReflectEquatorialFlux();
 
  private:
   // Four face characteristic fields and the cell redshift coefficient.

@@ -81,6 +81,16 @@ void Boltzmann::Ghosts() {
               (i > ie && flags(m, BoundaryFace::outer_x1) == BoundaryFlag::outflow))
             state(m, n, 0, j, i) = 0;
         });
+    if (pack->pmesh->mesh_bcs[BoundaryFace::inner_x2] == BoundaryFlag::reflect) {
+      par_for("boltzmann equatorial reflection", DevExeSpace(), 0, pack->nmb_thispack - 1,
+          0, nang - 1, 0, js - 1, 0, state.extent_int(4) - 1,
+          KOKKOS_LAMBDA(int m, int n, int j, int i) {
+            if (flags(m, BoundaryFace::inner_x2) == BoundaryFlag::reflect) {
+              const int partner = n / sectors * sectors + sectors - 1 - n % sectors;
+              state(m, n, 0, j, i) = state(m, partner, 0, 2 * js - 1 - j, i);
+            }
+          });
+    }
     par_for(
         "boltzmann axis continuation", DevExeSpace(), 0, pack->nmb_thispack - 1, 0, nang - 1, 0,
         state.extent_int(3) - 1, 0, is - 1, KOKKOS_LAMBDA(int m, int n, int j, int i) {
@@ -98,6 +108,8 @@ TaskStatus Boltzmann::RecvState(Driver*, int) {
   Ghosts();
   if (pack->pmesh->multilevel) {
     boundary->FillCoarseInBndryCC(u, coarse);
+    // Restriction can populate a new coarse tangential neighbor at the equator.
+    if (pack->pmesh->mesh_bcs[BoundaryFace::inner_x2] == BoundaryFlag::reflect) Ghosts();
     boundary->ProlongateCC(u, coarse);
     Ghosts();
   }

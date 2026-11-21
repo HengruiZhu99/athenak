@@ -6,6 +6,9 @@
 #undef NDEBUG
 #endif
 #include <cassert>
+#include <chrono>
+#include <cstdio>
+#include "pgen/z4c/kerr_puncture.hpp"
 #include <cmath>
 #include <limits>
 #include <string>
@@ -22,9 +25,71 @@ void Close(const double actual, const double expected, const double tolerance) {
   assert(std::isfinite(actual));
   assert(std::abs(actual - expected) <= tolerance);
 }
+// Direct meridional solve on the analytic puncture exterior. The singular
+// second asymptotic end is outside every interpolation stencil used here.
+void CheckReflectedKerr(double spin) {
+  using namespace kerr_puncture;
+  const Parameters<double> parameters{1, spin, 0};
+  const auto fields = [&](const std::array<double, 3> &x) {
+    return Evaluate<CoordinateMap::cartesian_xyz, GaugeChoice::pre_collapsed>(
+        x[0], x[1], x[2], parameters);
+  };
+  const double rplus = 1 + std::sqrt(1-spin*spin);
+  const double radius = rplus / 4;
+  for (bool folded : {false, true}) {
+    auto sampler = [&](const z4c::M0Locations &points) {
+      std::vector<z4c::M0AdmSample> out;
+      for (const auto &p : points) {
+        std::array<double, 3> x{p[0], 0, folded ? std::abs(p[1]) : p[1]};
+        const auto f = fields(x);
+        z4c::M0AdmSample sample;
+        sample.valid = f.valid && f.physical_adm_available;
+        int k = 0;
+        for (int a = 0; a < 3; ++a) for (int b = a; b < 3; ++b, ++k) {
+          sample.metric[k] = f.spatial_metric(a,b);
+          sample.curvature[k] = f.extrinsic_curvature(a,b);
+        }
+        for (int d = 0; d < 3; ++d) {
+          auto left = x, right = x;
+          const double h = 1e-6 * radius;
+          left[d] -= h;
+          right[d] += h;
+          const auto gl = fields(left).spatial_metric;
+          const auto gr = fields(right).spatial_metric;
+          k = 0;
+          for (int a = 0; a < 3; ++a) for (int b = a; b < 3; ++b, ++k)
+            sample.metric_derivative[6*d+k] = (gr(a,b)-gl(a,b))/(2*h);
+        }
+        if (folded && p[1] < 0) z4c::ReflectM0AdmSample(sample);
+        out.push_back(sample);
+      }
+      return out;
+    };
+    for (double ratio : {0.8, 1.0, 1.2}) {
+      std::vector<double> seed(9);
+      seed[0] = std::sqrt(4*kPi)*radius*ratio;
+      if (folded) seed[1] = .03;  // Restart or guess can contain an odd mode.
+      const auto start = std::chrono::steady_clock::now();
+      const auto result = z4c::RefineM0Surface(seed, 0, ratio == 1 ? 33 : 32, 20, 0, 2e-6, 2e-6,
+                                               1e-7, sampler, folded);
+      const double ms = std::chrono::duration<double,std::milli>(
+          std::chrono::steady_clock::now()-start).count();
+      std::printf("Kerr chi=%g folded=%d seed/rH=%g accepted=%d residual=%.3g "
+                  "area=%.10g mass=%.10g J=%.10g ms=%.3f failure=%s\n",
+                  spin, folded, ratio, result.converged, result.direct_residual,
+                  result.area, result.mass, result.spin_z, ms, result.failure.c_str());
+      assert(result.converged);
+      if (folded) for (int l=1; l<9; l+=2) assert(result.coefficients[l] == 0);
+      Close(result.area, 8*kPi*rplus, 2.e-6);
+      Close(result.mass, 1, 1.e-6);
+      Close(result.spin_z, spin, 1.e-6);
+    }
+  }
+}
 }  // namespace
 
 int main() {
+  for (double spin : {0., .95, .995}) CheckReflectedKerr(spin);
   z4c::M0AdmSample flat;
   flat.valid = true;
   flat.metric = {1.0, 0.0, 0.0, 1.0, 0.0, 1.0};
@@ -35,6 +100,14 @@ int main() {
   Close(sphere.expansion, 2.0 / radius, 2.0e-14);
   Close(sphere.area_factor, radius * radius * std::sin(0.7), 2.0e-14);
   Close(sphere.spin_integrand_z, 0.0, 0.0);
+  for (const double pole : {0., kPi}) {
+    const double hpp = .12;
+    const auto tip = z4c::EvaluateM0SurfacePoint(pole, radius, 0, hpp, flat);
+    assert(tip.valid);
+    Close(tip.expansion, 2/radius-2*hpp/(radius*radius), 3e-14);
+    Close(tip.area_factor, 0, 0);
+    assert(!z4c::EvaluateM0SurfacePoint(pole, radius, .1, hpp, flat).valid);
+  }
   auto spinning = flat;
   spinning.curvature[1] = 1.0;  // K_XY=K_YX
   const auto spin_point = z4c::EvaluateM0SurfacePoint(
@@ -107,6 +180,22 @@ int main() {
     const double r = 2*mass/std::pow(1 - target/2, 2);
     Close(surface.irreducible_mass, 0.5*r, 2.e-7);
     Close(surface.minimum_radius, r, 5.e-7);
+  }
+  // Disjoint analytic PG neighborhoods form a mirror pair. Offset the two
+  // expansion centers from the holes so the local dipole is indispensable.
+  auto pair_field = [&](double rho, double z) {
+    auto field = pg(rho, std::abs(z) - 5 + center_z);
+    if (z < 0) z4c::ReflectM0AdmSample(field);
+    return field;
+  };
+  std::vector<Real> pair_seed(9);
+  pair_seed[0] = 2*std::sqrt(4*kPi);
+  for (double center : {-4.92, 4.92}) {
+    const auto component = z4c::RefineM0Surface(pair_seed,center,32,20,0,
+                           1e-6,1e-6,1e-7,batch(pair_field),true);
+    assert(component.converged);
+    assert(component.coefficients[1]*center > 0);
+    Close(component.area,16*kPi,3e-6);
   }
   auto flat_result = z4c::RefineM0Surface(seed, 0, 16, 20, 0, .03, .03, 1.e-4,
                                           batch([&](double, double) { return flat; }));

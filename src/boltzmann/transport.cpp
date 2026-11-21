@@ -6,6 +6,26 @@
 
 namespace boltzmann {
 
+void Boltzmann::ReflectEquatorialFlux() {
+  if (pack->pmesh->mesh_bcs[BoundaryFace::inner_x2] != BoundaryFlag::reflect) return;
+  const auto flags = pack->pmb->mb_bcs.d_view;
+  const auto b = pack->pmesh->mb_indcs;
+  const auto face = flux.x2f;
+  const int sectors = npsi;
+  par_for("paired equatorial flux", DevExeSpace(), 0, pack->nmb_thispack - 1,
+          0, nmu - 1, 0, sectors / 2 - 1, b.is, b.ie,
+          KOKKOS_LAMBDA(int m, int band, int sector, int i) {
+            if (flags(m, BoundaryFace::inner_x2) != BoundaryFlag::reflect) return;
+            auto &a = face(m, band * sectors + sector, 0, b.js, i);
+            auto &bflux = face(m, (band + 1) * sectors - 1 - sector, 0, b.js, i);
+            // Equal and opposite, with no increase in either limited donor flux.
+            const Real paired = (a > 0 && bflux < 0) ? fmin(a, -bflux) :
+                                (a < 0 && bflux > 0) ? fmax(a, -bflux) : 0;
+            a = paired;
+            bflux = -paired;
+          });
+}
+
 TaskStatus Boltzmann::Fluxes(Driver* driver, int stage) {
   if (transport_order == 4) return FluxesFourth(driver, stage);
   const auto sz = pack->pmb->mb_size.d_view;
@@ -94,6 +114,7 @@ TaskStatus Boltzmann::Fluxes(Driver* driver, int stage) {
       },
       Kokkos::Max<Real>(max_rate));
   dtnew = 1 / fmax(max_rate, std::numeric_limits<Real>::min());
+  ReflectEquatorialFlux();
   return TaskStatus::complete;
 }
 
@@ -126,6 +147,7 @@ TaskStatus Boltzmann::Update(Driver* driver, int stage) {
   auto flags = pack->pmb->mb_bcs.d_view;
   const auto faces = face_geometry;
   const Real start = mu_min;
+  const Real copies = pack->pmesh->mesh_bcs[BoundaryFace::inner_x2] == BoundaryFlag::reflect ? 2 : 1;
   Kokkos::Array<Real, 3> rates{};
   for (int v = 0; v < 3; ++v) {
     Real total = 0;
@@ -155,7 +177,7 @@ TaskStatus Boltzmann::Update(Driver* driver, int stage) {
           sum += val;
         },
         total);
-    rates[v] = total * (2 * M_PI * dm * dp);
+    rates[v] = copies * total * (2 * M_PI * dm * dp);
   }
   escaped = g0 * escaped + g1 * budget_old[0] + dt * rates[0];
   escaped_j = g0 * escaped_j + g1 * budget_old[1] + dt * rates[1];

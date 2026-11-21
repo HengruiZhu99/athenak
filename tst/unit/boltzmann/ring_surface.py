@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import re
 from pathlib import Path
 import sys
 
@@ -38,6 +39,15 @@ class NativePatch:
         for _, bounds, b, nr, nz in patches:
             i, j = round(bounds[0]/h), round(bounds[2]/h)-low_z
             grid[:, j:j+nz, i:i+nr] = [values[k][b][0] for k in names]
+        # Mirror only a declared equatorial boundary. A finest patch wholly
+        # north of the plane in a full-domain file is a different situation.
+        mesh = re.search(r"(?ms)^<mesh>\n(.*?)(?=^<|\Z)", "\n".join(frame["header"]))
+        if mesh and re.search(r"(?m)^ix2_bc\s*=\s*reflect\s*$", mesh[1]):
+            if low_z != 0:
+                raise ValueError("the finest equatorial patch must touch z=0")
+            parity = np.array([1, -1, 1, 1, -1, 1] * 2)
+            grid = np.concatenate((parity[:, None, None]*grid[:, :0:-1, :], grid), axis=1)
+            low_z = -high_z
         extent = min(high, -low_z, high_z)
         while extent > 3:
             region = grid[:, -low_z-extent:-low_z+extent+1, :extent+1]
@@ -61,7 +71,8 @@ class NativePatch:
 
 def measure(patch, coeff, theta):
     """Compute D_i s^i through the cylindrical divergence of the unit normal."""
-    u, sn = np.cos(theta), np.sin(theta)
+    poles = (theta == 0) | (theta == np.pi)
+    u, sn = np.cos(theta), np.where(poles, 0., np.sin(theta))
     h = leg.legval(u, coeff)
     dh = -sn * leg.legval(u, leg.legder(coeff))
     rho, z = h*sn, h*u
@@ -87,8 +98,20 @@ def measure(patch, coeff, theta):
         return n * volume[:, None], volume, n, g, inv
 
     _, volume, n, g, inv = normal(rho, z)
-    div = ((normal(rho+step, z)[0][:, 0]-normal(rho-step, z)[0][:, 0])
-           + (normal(rho, z+step)[0][:, 1]-normal(rho, z-step)[0][:, 1])) / (2*step*volume)
+    radial = normal(rho+step, z)[0][:, 0]-normal(rho-step, z)[0][:, 0]
+    axial = normal(rho, z+step)[0][:, 1]-normal(rho, z-step)[0][:, 1]
+    div = np.divide(radial+axial, 2*step*volume, out=np.zeros_like(volume), where=~poles)
+    if np.any(poles):
+        # At the regular axis the cylindrical radial divergence tends to
+        # twice the derivative of sqrt(gamma) s^rho. Evaluate in signed rho.
+        zp = z[poles]
+        zero = np.zeros_like(zp)
+        def densitized(r, y, component):
+            _, _, unit, metric, _ = normal(r, y)
+            return np.sqrt(np.linalg.det(metric))*unit[:,component]
+        dr = (densitized(zero+step,zp,0) - densitized(zero-step,zp,0))/(2*step)
+        dz = (densitized(zero,zp+step,1) - densitized(zero,zp-step,1))/(2*step)
+        div[poles] = (2*dr+dz)/np.sqrt(np.linalg.det(g[poles]))
     k = patch.tensor(rho, z, 6)
     projected = np.einsum("ni,nij,nj->n", n, k, n) - np.einsum("nij,nij->n", inv, k)
     tangent = np.stack((dh*sn+h*u, dh*u-h*sn, np.zeros_like(h)), axis=-1)
@@ -129,7 +152,7 @@ def solve_surface(patch, seed, target, order, max_evals, initial_coeff=None):
     mirr2 = area / (16*np.pi)
     mass2 = mirr2 + angular**2 / (4*mirr2)
     # Include the poles' regular limiting neighborhoods and independent angles.
-    fine = np.linspace(1e-4, np.pi-1e-4, 257)
+    fine = np.r_[0., np.linspace(1e-4, np.pi-1e-4, 257), np.pi]
     r, plus, minus, _, _ = measure(patch, c, fine)
     return dict(target=target, seed=seed, h_min=float(r.min()), h_max=float(r.max()),
                 zones=float(r.min()/patch.dx), max_rTheta=float(max(r*plus)),

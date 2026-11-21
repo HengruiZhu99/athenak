@@ -85,6 +85,17 @@ Real RelativeDifference(const Real left, const Real right) {
 
 }  // namespace
 
+void ReflectM0AdmSample(M0AdmSample &s) {
+  // Sampler returns physical Cartesian (rho, azimuth, axial) components.
+  for (int k = 0; k < 6; ++k) {
+    const int sign = k == 2 || k == 4 ? -1 : 1;
+    s.metric[k] *= sign;
+    s.curvature[k] *= sign;
+    for (int d = 0; d < 3; ++d)
+      s.metric_derivative[6*d+k] *= d == 2 ? -sign : sign;
+  }
+}
+
 M0AdmSample RotateM0AdmSample(const M0AdmSample &input, const Real phi) {
   if (!input.valid) return input;
   const Real c = std::cos(phi);
@@ -129,9 +140,12 @@ M0SurfacePoint EvaluateM0SurfacePoint(
     const Real radius_theta_theta, const M0AdmSample &sample) {
   M0SurfacePoint result;
   if (!sample.valid || !std::isfinite(radius) || radius <= 0.0) return result;
-  const Real st = std::sin(theta);
+  if (!(theta >= 0 && theta <= kPi)) return result;
+  const bool pole = theta == 0 || theta == kPi;
+  if (pole && std::abs(radius_theta) > 128*std::numeric_limits<Real>::epsilon()*
+      (radius + std::abs(radius_theta_theta))) return result;
+  const Real st = pole ? 0 : std::sin(theta);
   const Real ct = std::cos(theta);
-  if (!(st > 0.0)) return result;
   Real g[3][3], curvature[3][3], inverse[3][3];
   for (int a = 0; a < 3; ++a) {
     for (int b = 0; b < 3; ++b) {
@@ -164,7 +178,7 @@ M0SurfacePoint EvaluateM0SurfacePoint(
   }
   ddtheta[0][0] = -2.0 * x * z / std::pow(radius, 4);
   ddtheta[0][2] = ddtheta[2][0] = (x * x - z * z) / std::pow(radius, 4);
-  ddtheta[1][1] = z / (x * radius * radius);
+  ddtheta[1][1] = pole ? 0 : z / (x * radius * radius);
   ddtheta[2][2] = 2.0 * x * z / std::pow(radius, 4);
   Real dF[3], ddF[3][3], upper[3]{};
   for (int a = 0; a < 3; ++a) {
@@ -173,6 +187,13 @@ M0SurfacePoint EvaluateM0SurfacePoint(
       ddF[a][b] = ddr[a][b] - radius_theta * ddtheta[a][b] -
                   radius_theta_theta * dtheta[a] * dtheta[b];
     }
+  }
+  if (pole) {
+    // In the regular chart, F = r - h(theta) has equal transverse Hessians:
+    // F_xx = F_yy = 1/h - h''/h^2. The mixed axial derivatives vanish.
+    dF[0] = 0;
+    ddF[0][0] = ddF[1][1] = invr - radius_theta_theta*invr*invr;
+    ddF[0][2] = ddF[2][0] = 0;
   }
   for (int a = 0; a < 3; ++a)
     for (int b = 0; b < 3; ++b) upper[a] += inverse[a][b] * dF[b];
@@ -220,7 +241,7 @@ M0SurfacePoint EvaluateM0SurfacePoint(
     h22 += tangent_phi[a] * tangent_phi[b] * g[a][b];
   }
   const Real det_h = h11 * h22 - h12 * h12;
-  if (!std::isfinite(det_h) || det_h <= 0.0 || !std::isfinite(result.expansion)) {
+  if (!std::isfinite(det_h) || (!pole && det_h <= 0.0) || !std::isfinite(result.expansion)) {
     return M0SurfacePoint{};
   }
   result.area_factor = std::sqrt(det_h);
@@ -290,7 +311,7 @@ const char *M0ExpansionFailure(const std::vector<Real> &coeff, Real center, int 
   // hide an untrapped cap. Allow the time-symmetric bifurcation sphere.
   const int intervals = 2*std::max(ntheta, static_cast<int>(coeff.size()));
   const Real cap = 1.e-4;
-  std::vector<Real> angles;
+  std::vector<Real> angles{0., kPi};
   for (const auto &point : GaussLegendre(ntheta)) angles.push_back(std::acos(point.first));
   for (int i = 0; i <= intervals; ++i) angles.push_back(cap + (kPi - 2*cap)*i/intervals);
   std::vector<std::array<Real, 3>> profiles;
@@ -299,7 +320,7 @@ const char *M0ExpansionFailure(const std::vector<Real> &coeff, Real center, int 
     auto h = M0Node(theta, 0, coeff.size()).profile(coeff);
     if (!(h[0] > 0) || !std::isfinite(h[0])) return "nonpositive_radius";
     profiles.push_back(h);
-    locations.push_back({h[0]*std::sin(theta), center + h[0]*std::cos(theta)});
+    locations.push_back({theta == kPi ? 0 : h[0]*std::sin(theta), center + h[0]*std::cos(theta)});
   }
   const auto adm = sample(locations);
   for (std::size_t i = 0; i < angles.size(); ++i) {
@@ -319,18 +340,27 @@ const char *M0ExpansionFailure(const std::vector<Real> &coeff, Real center, int 
 
 M0CandidateSummary RefineM0Surface(const std::vector<Real> &seed, Real center,
     int ntheta, int iterations, Real target, Real direct_tol, Real flow_tol,
-    Real mass_tol, const M0Sampler &sample) {
+    Real mass_tol, const M0Sampler &sample, bool equatorial) {
   M0CandidateSummary result;
   result.coefficients = seed;
   result.center_z = center;
   const int count = seed.size();
+  const int stride = equatorial && center == 0 ? 2 : 1;
+  const int unknowns = (count + stride - 1)/stride;
+  if (stride == 2) {
+    for (int l = 1; l < count; l += 2) result.coefficients[l] = 0;
+  }
   if (count == 0 || ntheta < count || ntheta < 2 || iterations < 2) {
     result.failure = "insufficient_collocation";
     return result;
   }
   std::vector<M0Node> nodes;
-  for (const auto &point : GaussLegendre(ntheta))
-    nodes.emplace_back(std::acos(point.first), point.second, count);
+  const auto quadrature = GaussLegendre(ntheta);
+  for (int n = stride == 2 ? ntheta/2 : 0; n < ntheta; ++n) {
+    const auto &point = quadrature[n];
+    const bool has_partner = stride == 2 && n != ntheta-1-n;
+    nodes.emplace_back(std::acos(point.first), point.second*(has_partner ? 2 : 1), count);
+  }
   const Real diff = std::cbrt(std::numeric_limits<Real>::epsilon());
   using Matrix = std::vector<std::vector<Real>>;
   auto evaluate = [&](M0CandidateSummary &candidate, Matrix *qr) {
@@ -350,7 +380,7 @@ M0CandidateSummary RefineM0Surface(const std::vector<Real> &seed, Real center,
       }
     }
     const auto samples = sample(locations);
-    for (int n = 0; n < ntheta; ++n) {
+    for (size_t n = 0; n < nodes.size(); ++n) {
       const auto &node = nodes[n];
       const auto &h = profiles[n];
       const Real r = h[0], theta = node.theta, w = node.weight;
@@ -378,10 +408,10 @@ M0CandidateSummary RefineM0Surface(const std::vector<Real> &seed, Real center,
         if (!perturbed.valid) return std::numeric_limits<Real>::infinity();
         derivative[k] = (trial[0]*perturbed.expansion - r*p.expansion)/step;
       }
-      std::vector<Real> row(count + 1, 0);
-      for (int l = 0; l < count; ++l)
-        for (int k = 0; k < 3; ++k) row[l] += std::sqrt(w)*derivative[k]*node.basis[l][k];
-      row[count] = -std::sqrt(w)*f;
+      std::vector<Real> row(unknowns + 1, 0);
+      for (int l = 0; l < count; l += stride)
+        for (int k = 0; k < 3; ++k) row[l/stride] += std::sqrt(w)*derivative[k]*node.basis[l][k];
+      row[unknowns] = -std::sqrt(w)*f;
       InsertRow(*qr, row);
     }
     candidate.minimum_radius = minimum;
@@ -397,7 +427,7 @@ M0CandidateSummary RefineM0Surface(const std::vector<Real> &seed, Real center,
 
   Real previous_mass = 0;
   for (int iter = 0; iter < iterations; ++iter) {
-    Matrix qr(count, std::vector<Real>(count + 1, 0));
+    Matrix qr(unknowns, std::vector<Real>(unknowns + 1, 0));
     const Real cost = evaluate(result, &qr);
     if (!std::isfinite(cost)) { result.failure = "invalid_meridional_sample"; break; }
     const char *validation_failure = nullptr;
@@ -421,15 +451,15 @@ M0CandidateSummary RefineM0Surface(const std::vector<Real> &seed, Real center,
     if (iter == 0 && cost < std::numeric_limits<Real>::epsilon()) continue;
     std::vector<Real> step(count, 0);
     Real diagonal = 0;
-    for (int j = 0; j < count; ++j) diagonal = std::max(diagonal, std::abs(qr[j][j]));
-    for (int j = count-1; j >= 0; --j) {
-      if (std::abs(qr[j][j]) <= count*std::numeric_limits<Real>::epsilon()*diagonal) {
+    for (int j = 0; j < unknowns; ++j) diagonal = std::max(diagonal, std::abs(qr[j][j]));
+    for (int j = unknowns-1; j >= 0; --j) {
+      if (std::abs(qr[j][j]) <= unknowns*std::numeric_limits<Real>::epsilon()*diagonal) {
         result.failure = "singular_meridional_step";
         return result;
       }
-      Real rhs = qr[j][count];
-      for (int k = j+1; k < count; ++k) rhs -= qr[j][k]*step[k];
-      step[j] = rhs/qr[j][j];
+      Real rhs = qr[j][unknowns];
+      for (int k = j+1; k < unknowns; ++k) rhs -= qr[j][k]*step[stride*k];
+      step[stride*j] = rhs/qr[j][j];
     }
     Real fraction = 1;
     for (const auto &node : nodes) {
@@ -691,6 +721,8 @@ CartoonM0FastFlow::CartoonM0FastFlow(MeshBlockPack *pack, ParameterInput *pin,
     throw std::runtime_error(
         "Cartoon m=0 FastFlow uses one finder containing origin/+/- candidates");
   }
+  equatorial_ = pack_->pmesh->mesh_bcs[BoundaryFace::inner_x2] == BoundaryFlag::reflect &&
+                pack_->pmesh->mesh_size.x2min == 0;
   lmax_ = pin->GetOrAddInteger("fastflow", "lmax", 4);
   ntheta_ = pin->GetOrAddInteger("fastflow", "ntheta", 12);
   iterations_ = pin->GetOrAddInteger("fastflow", "flow_iterations_" + suffix, 100);
@@ -883,6 +915,19 @@ std::vector<M0AdmSample> SampleNativeAdm(MeshBlockPack *pack_, const M0Locations
 }  // namespace
 
 std::vector<M0AdmSample> CartoonM0FastFlow::SampleAdm(const M0Locations &locations) const {
+  if (!equatorial_) return SampleStoredAdm(locations);
+  M0Locations folded = locations;
+  for (auto &point : folded) point[1] = std::abs(point[1]);
+  auto samples = SampleStoredAdm(folded);
+  for (size_t n = 0; n < locations.size(); ++n) {
+    if (locations[n][1] >= 0) continue;
+    auto &s = samples[n];
+    ReflectM0AdmSample(s);
+  }
+  return samples;
+}
+
+std::vector<M0AdmSample> CartoonM0FastFlow::SampleStoredAdm(const M0Locations &locations) const {
   if (pack_->pz4c->layout.centering == Z4cGridCentering::vertex &&
       pin_->GetOrAddBoolean("fastflow", "cartoon_native_geometry", false))
     return SampleNativeAdm(pack_, locations);
@@ -979,8 +1024,10 @@ std::vector<M0AxisSample> CartoonM0FastFlow::SampleAxisLapse(const std::vector<R
   Kokkos::View<CartoonMeridionalStencil *> stencils("m0 axis stencils", count);
   auto on_host = Kokkos::create_mirror_view(stencils);
   // The lapse uses the native Z4c layout, including the rho=0 vertex.
+
   for (int n = 0; n < count; ++n)
-    on_host(n) = LocateNativeCartoonMeridionalPoint(pack_->pmesh, 0.0, z[n]);
+    on_host(n) = LocateNativeCartoonMeridionalPoint(pack_->pmesh, 0.0,
+                                                    equatorial_ ? std::abs(z[n]) : z[n]);
   Kokkos::deep_copy(stencils, on_host);
   Kokkos::View<Real *[2], Kokkos::LayoutRight> values("m0 axis lapse samples", count);
   const int rank = global_variable::my_rank;
@@ -1023,6 +1070,10 @@ M0CandidateSummary CartoonM0FastFlow::SearchCandidate(
       return summary;
     }
     summary.coefficients[0] = fresh_initial_radius * std::sqrt(4.0 * kPi);
+  }
+  const bool even_shape = equatorial_ && branch == "origin" && center_z == 0;
+  if (even_shape) {
+    for (int l = 1; l <= lmax_; l += 2) summary.coefficients[l] = 0;
   }
   Real previous_mass = 0.0;
   for (int iteration = 0; iteration < iterations_; ++iteration) {
@@ -1122,7 +1173,7 @@ M0CandidateSummary CartoonM0FastFlow::SearchCandidate(
     for (int l = 0; l <= lmax_; ++l) {
       const Real factor = (alpha / (lmax_ * (lmax_ + 1.0)) + beta) /
                           (1.0 + (beta / alpha) * l * (l + 1.0));
-      projection[l] *= -factor;
+      projection[l] = even_shape && l % 2 ? 0 : -factor * projection[l];
     }
     // Do not advance to a nonpositive trial radius. Hand an excessive step
     // to the safeguarded meridional correction at the last admissible surface.
@@ -1225,7 +1276,7 @@ void CartoonM0FastFlow::Find(const int cycle, const Real time) {
         }
         auto trial = RefineM0Surface(seed, entry.second, ntheta_, std::min(iterations_, 20),
                                      0.0, direct_tolerance_, hrms_tolerance_, mass_tolerance_,
-                                     sample);
+                                     sample, equatorial_ && entry.first == "origin");
         trial.branch = entry.first;
         trial.fresh_initial_radius = polar;
         if (trial.converged || (trial.area > 0 &&
@@ -1263,7 +1314,8 @@ void CartoonM0FastFlow::Find(const int cycle, const Real time) {
       const Real tol = std::min(direct_tolerance_, -0.25*inner_target);
       auto inner = RefineM0Surface(candidate.coefficients, candidate.center_z, ntheta_,
                                    std::min(iterations_, 20), inner_target, tol,
-                                   hrms_tolerance_, mass_tolerance_, sample);
+                                   hrms_tolerance_, mass_tolerance_, sample,
+                                   equatorial_ && entry.first == "origin");
       // Do not promote a strictly trapped surface to a MOTS or feed it to the
       // tracker/restart. Save its shape and mass for independent verification.
       if (global_variable::my_rank == 0) {

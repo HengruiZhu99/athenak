@@ -185,3 +185,7 @@ independent cell-integrated variable-coefficient fluxes. Its direction indices
 Index 4 measures time order on a nonlinear ODE. The companion scripts
 `torus_fv4_checks.py` and `qualify_fv4.py` check the physical energy budget,
 signed-spin reflection, restart ordinates, CPU/GPU parity and multi-GPU timing.
+
+### Equatorial reflection
+
+For reflection-symmetric initial data, the Cartoon ring can evolve the northern meridional quadrant with `mesh/x2min=0` and `mesh/ix2_bc=reflect`. Keep the axial outer face fixed and halve `mesh/nx2` to preserve the axial cell spacing. The solver reverses the meridional angular sector at the equator, projects odd vertex components to zero and reports full-volume energy and axial angular momentum. The full-domain reference uses axial outflow faces on both sides. The refined-family input generator, measured comparisons and reconstruction of whole horizons are documented in the [equatorial validation report](../reports/equatorial-reflection/README.md).

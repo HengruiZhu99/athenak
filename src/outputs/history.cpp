@@ -511,6 +511,9 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
 
   auto &size = pm->pmb_pack->pmb->mb_size;
   const z4c::Z4cSymmetryMode symmetry_mode = pm->pmb_pack->z4c_symmetry.mode;
+  const Real copies = symmetry_mode == z4c::Z4cSymmetryMode::cartoon_so2 &&
+      pm->mesh_size.x2min == 0 && pm->mesh_bcs[BoundaryFace::inner_x2] == BoundaryFlag::reflect
+      ? 2 : 1;
   constexpr int nsum = 9;
 
   // loop over all MeshBlocks in this pack
@@ -563,7 +566,7 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
                                : CellCenterX(k - ks, indcs.nx3,
                                              size.d_view(m).x3min,
                                              size.d_view(m).x3max));
-    const Real vol = vertex
+    const Real vol = copies * (vertex
         ? z4c::Z4cDiagnosticVertexMeasure(
               symmetry_mode, rho, size.d_view(m).dx1, size.d_view(m).dx2,
               size.d_view(m).dx3, detg,
@@ -575,7 +578,7 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
                                            layout.nx3 <= 1))
         : z4c::Z4cDiagnosticCellMeasure(
               symmetry_mode, rho, size.d_view(m).dx1, size.d_view(m).dx2,
-              size.d_view(m).dx3, detg);
+              size.d_view(m).dx3, detg));
 
     // Excise the punctures based on chi
     array_sum::GlobalSum hvars;
@@ -656,7 +659,7 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
               g_dd(m,0,0,k,j,i), g_dd(m,0,1,k,j,i),
               g_dd(m,0,2,k,j,i), g_dd(m,1,1,k,j,i),
               g_dd(m,1,2,k,j,i), g_dd(m,2,2,k,j,i));
-          const Real physical_volume = vertex
+          const Real physical_volume = copies * (vertex
               ? z4c::Z4cDiagnosticVertexMeasure(
                     symmetry_mode, rho, dx1, size.d_view(m).dx2,
                     size.d_view(m).dx3, detg,
@@ -668,7 +671,7 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
                                                  layout.nx3 <= 1))
               : z4c::Z4cDiagnosticCellMeasure(
                     symmetry_mode, rho, dx1, size.d_view(m).dx2,
-                    size.d_view(m).dx3, detg);
+                    size.d_view(m).dx3, detg));
           const Real squared[kCartoonConstraintFamilies] = {
               u_con_(m,0,k,j,i), SQR(u_con_(m,1,k,j,i)),
               u_con_(m,2,k,j,i), u_con_(m,3,k,j,i)};
@@ -677,20 +680,21 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
               !vertex || topology(m, k, j, i).canonical_diagnostic_owner;
           if (radial_layer >= 0 && radial_layer < kCartoonAxisLayers) {
             if (diagnostic_owner) {
+              const Real nodes = z == 0 ? 1 : copies;
               for (int family = 0; family < kCartoonConstraintFamilies; ++family) {
                 thread_sums.the_array[kCartoonAxisSumBase + family] +=
-                    squared[family];
+                    nodes * squared[family];
                 thread_sums.the_array[
                     kCartoonLayerSumBase +
                     radial_layer * kCartoonRegionStride + family] +=
-                    squared[family];
+                    nodes * squared[family];
               }
               thread_sums.the_array[
-                  kCartoonAxisSumBase + kCartoonConstraintFamilies] += 1.0;
+                  kCartoonAxisSumBase + kCartoonConstraintFamilies] += nodes;
               thread_sums.the_array[
                   kCartoonLayerSumBase +
                   radial_layer * kCartoonRegionStride +
-                  kCartoonConstraintFamilies] += 1.0;
+                  kCartoonConstraintFamilies] += nodes;
             }
           } else {
             for (int family = 0; family < kCartoonConstraintFamilies; ++family) {

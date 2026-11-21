@@ -80,14 +80,24 @@ struct Level {
     Kokkos::parallel_for(
         "exact composite data", Policy({0, 0, 0}, {6, ycells + 8, xcells + 8}),
         KOKKOS_LAMBDA(int b, int j, int i) {
-          const Real x = left + (i - 4) * dx, y = (j - 3.5) * dx;
+          const Real x = left + (i - 4) * dx;
+          const Real y = (b < 3 ? 1 : -1) * (j - 3.5) * dx;
           u(0, b, 0, j, i) = Mean(x + dx / 2, dx) * Mean(y, dx);
           a(0, b, 0, j, i) = Speed(x) * Speed(y);
+        });
+    // Mirrored directional populations F_-(x,z)=F_+(x,-z). Their sum
+    // is smooth and even, their difference is smooth and odd. Use the
+    // opposite population to supply the equatorial ghosts read by FV4.
+    Kokkos::parallel_for(
+        "equatorial manufactured ghost fill", Policy({0, 0, 0}, {6, 4, xcells + 8}),
+        KOKKOS_LAMBDA(int b, int j, int i) {
+          u(0, b, 0, j, i) = u(0, 5-b, 0, 7-j, i);
+          a(0, b, 0, j, i) = a(0, 5-b, 0, 7-j, i);
         });
   }
 };
 
-Real CompositeDivergence(int n) {
+Real CompositeDivergence(int n, Real &junction) {
   Level coarse(n / 2, n, 1. / n, 0), fine(n, 2 * n, .5 / n, .5);
   coarse.Fill();
   fine.Fill();
@@ -109,6 +119,16 @@ Real CompositeDivergence(int n) {
                                           u, v);
       });
   const boltzmann::PhaseFace child_face{0, 0, 6, 1, fine.state, fine.speed};
+  const auto zface = boltzmann::PhaseFace{0, 0, 6, 1, fine.state, fine.speed};
+  Real flux_error = 0;
+  Kokkos::parallel_reduce("equator and refinement face intersection",
+      Kokkos::RangePolicy<DevExeSpace>(0, 2), KOKKOS_LAMBDA(int j, Real &e) {
+        const boltzmann::PhaseCell p{4, 4+j, 1, 0};
+        const Real dx = .5/n;
+        const Real exact = Speed(.5)*Mean(.5, 0)*MeanProduct((j+.5)*dx, dx);
+        e = fmax(e, fabs(zface.Product(p)-exact));
+      }, Kokkos::Max<Real>(flux_error));
+  junction = flux_error;
   Real l1 = 0;
   for (const auto& level : {coarse, fine}) {
     const bool is_coarse = level.x0 == 0;
@@ -119,10 +139,10 @@ Real CompositeDivergence(int n) {
         "composite finite volume divergence",
         Policy({0, 0, 0}, {1, level.ny, level.nx}),
         KOKKOS_LAMBDA(int, int j, int i, Real& err) {
-          const boltzmann::PhaseCell p{i + 4, j + 4, 2, 0};
+          const boltzmann::PhaseCell p{i + 4, j + 4, 1, 0};
           Real right = face.Product(p.Shift(0, 1, 1));
           if (is_coarse && p.i + 1 == edge) {
-            const boltzmann::PhaseCell first{4, 4 + 2 * j, 2, 0};
+            const boltzmann::PhaseCell first{4, 4 + 2 * j, 1, 0};
             right = .5 * (child_face.Product(first) +
                           child_face.Product(first.Shift(1, 1, 1)));
           }
@@ -137,6 +157,43 @@ Real CompositeDivergence(int n) {
   }
   return l1;
 }
+// Two counterstreaming ordinates with exact solution U_+(z,t)=f(z-t),
+// U_-(z,t)=f(-z-t). The normal flux of each bin at z=0 is nonzero.
+Real EquatorialStreamingError(int n) {
+  const Real dx = 1./n, time = .13;
+  Level level(1,n,dx,0);
+  const auto u = level.state, a = level.speed;
+  Kokkos::parallel_for("counterstreaming FV means", Policy({0,4,0},{6,n+8,9}),
+      KOKKOS_LAMBDA(int b, int j, int i) {
+        const Real sign = b < 3 ? 1 : -1;
+        u(0,b,0,j,i) = Mean(sign*(j-3.5)*dx-time,dx);
+        a(0,b,0,j,i) = sign;
+      });
+  Kokkos::parallel_for("counterstreaming equatorial ghosts", Policy({0,0,0},{6,4,9}),
+      KOKKOS_LAMBDA(int b, int j, int i) {
+        u(0,b,0,j,i) = u(0,5-b,0,7-j,i);
+        a(0,b,0,j,i) = -a(0,5-b,0,7-j,i);
+      });
+  const boltzmann::PhaseFace face{1,0,6,1,u,a};
+  Real error = 0, defect = 0;
+  Kokkos::parallel_reduce("streaming divergence and equatorial budget",
+      Kokkos::RangePolicy<DevExeSpace>(0,2*n),
+      KOKKOS_LAMBDA(int index, Real &e, Real &balance) {
+        const int j = index % n;
+        const int band = index < n ? 1 : 4;
+        const Real sign = index < n ? 1 : -1;
+        boltzmann::PhaseCell p{4,j+4,band,0};
+        const Real exact = sign*(Mean(sign*(j+1)*dx-time,0)-Mean(sign*j*dx-time,0))/dx;
+        const Real left = face.Product(p);
+        if (!j) {
+          const boltzmann::PhaseCell partner{4,4,5-band,0};
+          balance = fmax(balance,fabs(left+face.Product(partner)));
+        }
+        e = fmax(e, fabs((face.Product(p.Shift(1,1,1))-left)/dx-exact));
+      }, Kokkos::Max<Real>(error), Kokkos::Max<Real>(defect));
+  return defect <= 16*std::numeric_limits<Real>::epsilon() ? error : INFINITY;
+}
+
 bool CheckCoarseNeighborSlots() {
   DvceArray2D<NeighborBlock> neighbors("meridional test neighbors", 1, 16);
   auto host = Kokkos::create_mirror_view(neighbors);
@@ -163,10 +220,11 @@ bool CheckFourthTransfers() {
   bool ok = true;
   std::puts("AMR operator,n,error,order");
   for (int tile : {4, 6, 0}) {
-    Real prev = 0;
+    Real prev = 0, prev_junction = 0;
     for (int n : {24, 48, 96, 192}) {
+      Real junction = 0;
       Real error =
-          tile == 0 ? CompositeDivergence(n) : TransferError(n, tile, false);
+          tile == 0 ? CompositeDivergence(n, junction) : TransferError(n, tile, false);
       Real order = prev ? log2(prev / error) : 0;
       std::printf("%s,%d,%.12e,%.5f\n",
                   tile == 0 ? "composite L1"
@@ -174,8 +232,22 @@ bool CheckFourthTransfers() {
                   n, error, order);
       if (!std::isfinite(error) || (n >= 96 && order < (tile == 6 ? 4.7 : 3.8)))
         ok = false;
+      if (tile == 0) {
+        const Real observed = prev_junction ? log2(prev_junction/junction) : 0;
+        std::printf("equator junction flux Linf,%d,%.12e,%.5f\n", n, junction, observed);
+        if (!std::isfinite(junction) || (n >= 96 && observed < 3.8)) ok = false;
+        prev_junction = junction;
+      }
       prev = error;
     }
+  }
+  Real previous = 0;
+  for (int n : {24,48,96,192}) {
+    const Real error = EquatorialStreamingError(n);
+    const Real order = previous ? log2(previous/error) : 0;
+    std::printf("reflected streaming Linf,%d,%.12e,%.5f\n",n,error,order);
+    if (!std::isfinite(error) || (n >= 96 && order < 3.8)) ok = false;
+    previous = error;
   }
   return std::isfinite(TransferError(24, 4, true)) &&
          std::isfinite(TransferError(24, 6, true)) && ok;

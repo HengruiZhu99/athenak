@@ -62,6 +62,9 @@ struct M0AxisSample {
   Real lapse = 0.0;
 };
 
+//! Reflect physical-Cartesian tensors and their derivatives across z=0.
+void ReflectM0AdmSample(M0AdmSample &sample);
+
 //! Rotate physical-Cartesian covariant tensors from phi=0 to arbitrary phi.
 M0AdmSample RotateM0AdmSample(const M0AdmSample &sample, Real phi);
 
@@ -77,7 +80,7 @@ using M0Sampler = std::function<std::vector<M0AdmSample>(const M0Locations &)>;
 //! target is the dimensionless r*Theta+. Nonzero targets never update AH state.
 M0CandidateSummary RefineM0Surface(const std::vector<Real> &seed, Real center_z,
     int ntheta, int iterations, Real target, Real direct_tolerance, Real flow_tolerance,
-    Real mass_tolerance, const M0Sampler &sample);
+    Real mass_tolerance, const M0Sampler &sample, bool equatorial = false);
 Real M0HorizonMass(Real area, Real spin_z);
 bool SelectM0AxisLapseMinimum(const std::vector<M0AxisSample> &samples,
                               int sign, Real *center_z, Real *lapse);
@@ -116,6 +119,7 @@ class CartoonM0FastFlow {
   // nvcc requires a member function enclosing an extended KOKKOS_LAMBDA to be
   // publicly accessible.  Keep only the two kernel-launching samplers public;
   // they remain implementation details of the composed Cartoon finder.
+  std::vector<M0AdmSample> SampleStoredAdm(const M0Locations &locations) const;
   std::vector<M0AdmSample> SampleAdm(const M0Locations &locations) const;
   std::vector<M0AxisSample> SampleAxisLapse(const std::vector<Real> &z) const;
 
@@ -142,6 +146,7 @@ class CartoonM0FastFlow {
 
   MeshBlockPack *pack_;
   ParameterInput *pin_;
+  bool equatorial_;
   int horizon_;
   int lmax_;
   int ntheta_;

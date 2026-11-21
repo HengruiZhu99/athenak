@@ -213,6 +213,7 @@ TaskStatus Boltzmann::FluxesFourth(Driver* driver, int stage) {
           out(m, n, 0, j, i) = value;
         });
   }
+  ReflectEquatorialFlux();
   return TaskStatus::complete;
 }
 }  // namespace boltzmann

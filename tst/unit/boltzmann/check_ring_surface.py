@@ -61,7 +61,7 @@ if __name__ == "__main__":
 
         # Compare exact constant-Kerr-radius spheroids on each side of r_+.
         # The inward displacement stays between the two Kerr horizon radii.
-        dense = np.linspace(1.e-5, np.pi - 1.e-5, 2049)
+        dense = np.r_[0., np.linspace(1.e-5, np.pi - 1.e-5, 2049), np.pi]
         step = .1 * np.sqrt(1-a*a)
         for r, sign in [(rp-step, -1), (rp+step, 1)]:
             radius = 1/np.sqrt((1-x*x)/(r*r+a*a) + x*x/(r*r))
