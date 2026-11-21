@@ -18,7 +18,7 @@ from bin_convert import read_binary
 class NativePatch:
     """A contiguous uniform patch of the finest native nodes surrounding the origin."""
 
-    def __init__(self, frame):
+    def __init__(self, frame, stride=1):
         names = ["adm_" + prefix + suffix for prefix in ("g", "K")
                  for suffix in ("xx", "xy", "xz", "yy", "yz", "zz")]
         values = frame["mb_data"]
@@ -30,15 +30,23 @@ class NativePatch:
             if not np.isclose(dr, dz):
                 raise ValueError("surface analysis expects square native cells")
             patches.append((dr, bounds, b, nr, nz))
-        self.dx = h = min(p[0] for p in patches)
-        patches = [p for p in patches if np.isclose(p[0], h)]
+        if stride < 1 or stride & (stride-1):
+            raise ValueError("native sampling stride must be a positive power of two")
+        self.dx = h = stride * min(p[0] for p in patches)
+        # Retain coincident native nodes from finer leaves as well as leaves
+        # already at the requested spacing. An enclosing curve can cross levels.
+        patches = [p for p in patches if p[0] < h or np.isclose(p[0], h)]
         high = round(max(p[1][1] for p in patches) / h)
         low_z = round(min(p[1][2] for p in patches) / h)
         high_z = round(max(p[1][3] for p in patches) / h)
         grid = np.full((12, high_z-low_z+1, high+1), np.nan)
-        for _, bounds, b, nr, nz in patches:
+        for dx, bounds, b, nr, nz in patches:
+            step = round(h/dx)
+            if (nr-1) % step or (nz-1) % step or not np.isclose(step*dx, h):
+                raise ValueError("incompatible native vertex spacings")
             i, j = round(bounds[0]/h), round(bounds[2]/h)-low_z
-            grid[:, j:j+nz, i:i+nr] = [values[k][b][0] for k in names]
+            nodes = np.array([values[k][b][0,::step,::step] for k in names])
+            grid[:, j:j+nodes.shape[1], i:i+nodes.shape[2]] = nodes
         # Mirror only a declared equatorial boundary. A finest patch wholly
         # north of the plane in a full-domain file is a different situation.
         mesh = re.search(r"(?ms)^<mesh>\n(.*?)(?=^<|\Z)", "\n".join(frame["header"]))

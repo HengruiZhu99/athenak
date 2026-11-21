@@ -24,8 +24,13 @@ def main():
     rows = []
     for path in reversed(sorted(args.snapshots)):
         frame = read_binary(path)
-        patch = NativePatch(frame)
-        fit = solve_surface(patch, seed[0], args.target, args.order, 50, seed)
+        try:
+            patch = NativePatch(frame)
+            fit = solve_surface(patch, seed[0], args.target, args.order, 50, seed)
+        except (ValueError, np.linalg.LinAlgError) as error:
+            rows.append(dict(file=path.name, cycle=frame["cycle"], time=frame["time"],
+                             all_negative=False, failure=str(error)))
+            continue
         checks = {}
         for name, interp in [("spline", patch), ("cubic", LocalPolynomial(patch,3)),
                              ("quintic", LocalPolynomial(patch,5))]:

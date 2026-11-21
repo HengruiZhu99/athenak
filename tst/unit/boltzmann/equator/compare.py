@@ -41,17 +41,30 @@ def raster(frame, key, h):
     return out
 
 
+def stamp(path):
+    """Read the time and cycle without loading block data."""
+    with path.open("rb") as stream:
+        if not stream.readline().startswith(b"Athena binary output"):
+            raise ValueError(f"invalid Athena output {path}")
+        count = int(stream.readline().split(b"=")[-1])
+        rows = dict(stream.readline().strip().split(b"=",1) for _ in range(count-1))
+    return float(rows[b"time"]), int(rows[b"cycle"])
+
+
 def compare(full, half, mass, prefix):
     scalar_rows, field_rows = [], []
+    frames = sorted((full/"bin").glob("*.tmunu.*.bin"))
+    if not frames:
+        raise ValueError(f"no radiation snapshots in {full}")
+    reference_times = np.array([stamp(f)[0] for f in frames])
+    if np.any(np.diff(reference_times) <= 0):
+        raise ValueError(f"unordered snapshot times in {full}")
     for p in sorted((half/"bin").glob("*.tmunu.*.bin")):
-        q = full/"bin"/p.name
-        if not q.is_file():
+        t, _ = stamp(p)
+        if t < reference_times[0]-1.e-12 or t > reference_times[-1]+1.e-12:
             continue
+        q = frames[np.argmin(abs(reference_times-t))]
         a,b = profile(q,mass),profile(p,mass)
-        if a["cycle"] != b["cycle"]:
-            # A forced terminal dump may have its own independently clipped timestep.
-            if abs(a["t_M"]-b["t_M"]) > 1.e-10:
-                continue
         row = dict(cycle_full=a["cycle"],cycle_half=b["cycle"],t_full_M=a["t_M"],
                    delta_t_M=b["t_M"]-a["t_M"])
         scalar_rows.append(dict(row, **{key:b[key]-a[key] for key in a if key not in ("cycle","t_M")}))

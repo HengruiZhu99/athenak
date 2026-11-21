@@ -6,17 +6,21 @@ import subprocess
 import sys
 
 import numpy as np
-from compare import compare
+from compare import compare, stamp
 from profile_comparison import compare_profiles
 from witness import LocalPolynomial, NativePatch, measure, read_binary, solve_surface
 
 
-def enclosing_surface(frame, interior, seed):
+def enclosing_surface(frame, interior, seed, stride=1):
     """Select a resolved outer marginal branch enclosing the verified interior everywhere."""
-    patch = NativePatch(read_binary(frame))
+    native = read_binary(frame)
+    try:
+        patch = NativePatch(native, stride)
+        shape = solve_surface(patch, seed[0], 0., 48, 70, seed)
+    except (ValueError, np.linalg.LinAlgError) as error:
+        return dict(accepted=False, failure=str(error))
     theta = np.r_[0., np.linspace(1.e-5, np.pi-1.e-5, 4097), np.pi]
     inner_radius = np.polynomial.legendre.legval(np.cos(theta), interior)
-    shape = solve_surface(patch, seed[0], 0., 48, 70, seed)
     checks = {}
     for name, metric in (("spline", patch), ("cubic", LocalPolynomial(patch, 3)),
                          ("quintic", LocalPolynomial(patch, 5))):
@@ -26,7 +30,7 @@ def enclosing_surface(frame, interior, seed):
     # Use the production fastflow tolerance, retain the actual residual for comparison.
     accepted = all(v["residual"] < .006 and v["max_in"] < 0 and v["min_gap"] > 0
                    for v in checks.values())
-    return dict(accepted=accepted, checks=checks, **shape)
+    return dict(accepted=accepted, dx=patch.dx, checks=checks, **shape)
 
 
 
@@ -50,14 +54,7 @@ def window(folder):
     files=sorted((folder/"bin").glob("*.adm.*.bin"))
     selected=[]
     for f in files:
-        with f.open("rb") as stream:
-            for _ in range(10):
-                line=stream.readline()
-                if line.startswith(b"  cycle=") or line.strip().startswith(b"cycle="):
-                    cycle=int(line.split(b"=")[1])
-                    break
-            else:
-                raise ValueError(f"missing cycle in {f}")
+        _, cycle = stamp(f)
         if cycle >= found-2*120:
             selected.append(f)
     return found, selected
@@ -103,5 +100,13 @@ if __name__ == "__main__":
                                                 direct_residual=float(r[13]))
                 seed = json.loads(args.seed.read_text())["enclosing_horizon"]["coeff"]
                 measured["enclosing_fit"] = enclosing_surface(folder/"bin"/v["file"], v["coeff"], seed)
+                fine = measured["enclosing_fit"]
+                if fine["accepted"]:
+                    coarse = enclosing_surface(folder/"bin"/v["file"], v["coeff"], fine["coeff"], 2)
+                    measured["coarse_geometry_enclosing_fit"] = coarse
+                    if coarse["accepted"]:
+                        keys = ("area", "surface_mass", "surface_spin_ratio")
+                        measured["geometric_sampling_change"] = {
+                            key:abs(coarse[key]-fine[key]) for key in keys}
                 result[side]["first_verified_in_window"]=measured
     (args.output/"summary.json").write_text(json.dumps(result,indent=2)+"\n")
