@@ -91,6 +91,8 @@ The measured savings through 0.2 M were 50.73% from reflection alone, 24.37% fro
 
 Across all six saved times, the maximum difference in the circumferential centroid was 4.45e-16 M and the integrated vertical stress differed by at most 1.05e-17. On the common spatial lattice, the largest absolute field differences in the ADM, radiation and constraint output groups were 5.96e-8, 4.29e-18 and 2.95e-7 respectively. With both changes, the largest radiation centroid difference was 8.89e-16 M. The maximum difference in the metric was 2.63e-4 and in the Hamiltonian constraint was 2.80e-4, including exterior interpolation onto the common lattice. At the endpoint the full-domain centroid was 2.39940 M. Changing the diagnostic integration to two-cell bins shifted this value by 0.00187 M, and the last saved interval changed it by 0.03476 M. Diagnostic quadrature and temporal sampling errors are distinct from the evolution errors measured in the smooth refinement test. Over the same interval the full/half energy-budget residuals were 2.24e-15 / 2.35e-15. Both axial angular-momentum budgets drifted by 9.09e-5 relative to the initial matter J. The largest full/half difference in the integrated Hamiltonian constraint squared was 2.50e-12.
 
+The final GPU executable, SHA-256 `2dfbf0f93e75e976eec7d149f5b9aa05edf545a370cca6c5e296763f2af13289`, passed the coupled two-GPU to one-GPU restart regression (StellarAI 57761). An independent initial 1.0600 comparison on the original (36,18) boundary reached 0.09954345 M in 220 steps. Full and half cost 0.12794 / 0.05698 GPU-hours and averaged 67.87 / 33.94 blocks. The three saved centroid and integrated vertical-stress values agreed to their stored precision. The largest ADM-component difference was 1.35e-7 and the largest constraint-field difference was 1.87e-7. This interval covers initial infall. The 30 M jobs measure the outward shell.
+
 The eight-GPU selection job compares elapsed GPU-hours at fixed outer distances, rank count, node and evolution interval. A candidate that wins that comparison is queued against the full original-spacing square mesh at both physical endpoints. The two original-boundary endpoint pairs independently test the effect of symmetry. Promotion requires the long-interval field, charge, outgoing-shell and horizon comparisons.
 
 ## Reproduction
@@ -103,6 +105,14 @@ cmake --build build --target athena athena_boltzmann_fourth_amr athena_z4c_carto
 ctest --test-dir build -R '^(boltzmann_fourth_amr|boltzmann_equatorial_amr|athena.z4c_cartoon_m0_fastflow)$' --output-on-failure
 python tst/unit/boltzmann/equatorial_amr.py build/src/athena /tmp/new-equator-amr-test
 python tst/unit/boltzmann/equator/layout.py /tmp/input --square --half --coarse --check build/src/athena
+```
+
+To replay the archived first-trapping tests, extract `horizon-replay-inputs.tar.xz` from this report directory. It contains the original native ADM binaries and the two sets of archived seed coefficients.
+
+```sh
+cmake --build build --target athena_m0_replay
+tar xf reports/equatorial-reflection/horizon-replay-inputs.tar.xz -C /tmp
+python tst/unit/boltzmann/equator/native_replay.py build/athena_m0_replay /tmp/j09508/seed.json /tmp/j09508/torus.adm.00279.bin --degree 48
 ```
 
 The StellarAI launch scripts are in `tst/unit/boltzmann/equator`. Set `EQUATOR_DATA` to the directory containing the two calibrated run folders. `stellar.sh` launches the four layouts in one allocation. `performance.py` reads each completed directory, verifies the block census against the driver's block-cycle total, and reports physical-time-weighted block count, steps, elapsed seconds, allocated GPU-hours and sampled peak device memory. `compare.py` compares every ADM, stress and constraint field on a common meridional lattice, including parity in the reflected lower half, and records the physical time offset of each pair. `endpoint_review.py` combines the profiles, budget checks and trapped-surface review near the first online marginal detection. `witness.py` scans earlier archived slices against known shapes. The offline analysis requires NumPy, SciPy and h5py.

@@ -43,6 +43,11 @@ def write_report(result, reference, trial, output):
                              f"and spin {outer['surface_spin_ratio']:.8f}.")
         elif v["first_online_marginal_cycle"] is None:
             lines.append("The online search reported no marginal surface through the final output.")
+            if "witness_frames" in v:
+                usable = len(v["witness_frames_with_whole_surface_samples"])
+                attempted = len(v["witness_frames"])
+                lines.append(f"The independent search sampled a whole candidate on {usable} of "
+                             f"{attempted} selected slices. It verified no strictly trapped witness.")
         else:
             lines.append(f"The online search first reported a marginal surface on cycle "
                          f"{v['first_online_marginal_cycle']}. Strict trapping remains unverified.")

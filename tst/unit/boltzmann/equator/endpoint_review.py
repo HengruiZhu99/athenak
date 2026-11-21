@@ -1,5 +1,6 @@
 """Reduce a matched pair and look for strictly trapped witnesses near the first marginal detection."""
 import argparse
+import csv
 import json
 from pathlib import Path
 import subprocess
@@ -70,22 +71,42 @@ if __name__ == "__main__":
     p.add_argument("--seed",type=Path)
     args=p.parse_args()
     args.output.mkdir(exist_ok=True,parents=True)
+    seed = args.seed or args.output.parent/"j09508-trapped.json"
     mass=json.loads(args.metadata.read_text())["M_adm"]
     compare(args.full,args.half,mass,args.output/"comparison")
     compare_profiles(args.full,args.half,mass,args.output/"timed-profiles.csv")
+    with (args.output/"timed-profiles.csv").open() as stream:
+        profiles = list(csv.DictReader(stream))
     result={}
     for side, folder in (("full",args.full),("half",args.half)):
         result[side]=summarize_run(folder)
         first, selected=window(folder)
         result[side]["first_online_marginal_cycle"]=first
-        if selected and args.seed:
+        if first is None and seed.is_file():
+            # Check closest approach on the actual centroid and the final slice
+            # even when no online marginal candidate crossed its tolerance.
+            def radius(row):
+                mean = float(row["mean_Rcirc_M"])
+                return mean-float(row["delta_mean_Rcirc_M"]) if side=="full" else mean
+            closest = mass*float(min(profiles,key=radius)["t_M"])
+            frames = sorted((folder/"bin").glob("*.adm.*.bin"))
+            selected = sorted(set(sorted(frames,key=lambda path:abs(stamp(path)[0]-closest))[:5]
+                                  + frames[-1:]))
+            result[side]["witness_window"] = "closest approach and terminal frame"
+        if selected and seed.is_file():
+            result[side]["witness_seed"] = str(seed)
+            result[side]["witness_frames"] = [f.name for f in selected]
             accepted=[]
+            sampled_frames=set()
             for order, expansion in [(40,-.002),(48,-.0005)]:
                 target=args.output/f"{side}-l{order}-witnesses.json"
                 subprocess.run([sys.executable,str(Path(__file__).with_name("witness.py")),
-                                str(args.seed),str(target),*map(str,selected),
+                                str(seed),str(target),*map(str,selected),
                                 f"--target={expansion}",f"--order={order}"],check=True)
-                accepted.extend(v for v in json.loads(target.read_text()) if v["all_negative"])
+                fits = json.loads(target.read_text())
+                accepted.extend(v for v in fits if v["all_negative"])
+                sampled_frames.update(v["file"] for v in fits if "checks" in v)
+            result[side]["witness_frames_with_whole_surface_samples"] = sorted(sampled_frames)
             if accepted:
                 v=min(accepted,key=lambda t:t["time"])
                 measured={k:v[k] for k in
@@ -99,8 +120,8 @@ if __name__ == "__main__":
                     measured["online_origin_marginal"]=dict(area=float(r[7]),mass=float(r[9]),
                                                 spin=float(r[10])/float(r[9])**2,
                                                 direct_residual=float(r[13]))
-                seed = json.loads(args.seed.read_text())["enclosing_horizon"]["coeff"]
-                measured["enclosing_fit"] = enclosing_surface(folder/"bin"/v["file"], v["coeff"], seed)
+                outer_seed = json.loads(seed.read_text())["enclosing_horizon"]["coeff"]
+                measured["enclosing_fit"] = enclosing_surface(folder/"bin"/v["file"], v["coeff"], outer_seed)
                 fine = measured["enclosing_fit"]
                 if fine["accepted"]:
                     coarse = enclosing_surface(folder/"bin"/v["file"], v["coeff"], fine["coeff"], 2)
