@@ -10,7 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[4]/"vis/python"))
 from bin_convert import read_binary
 
 
-def profile(path, mass, *, stride=1):
+def profile(path, mass, *, stride=1, minimum_spacing=0.):
     f = read_binary(path)
     adm = read_binary(path.with_name(path.name.replace(".tmunu.", ".adm.")))
     np.testing.assert_array_equal(adm["mb_geometry"], f["mb_geometry"])
@@ -27,19 +27,21 @@ def profile(path, mass, *, stride=1):
     angular = vertical = 0.
     for b, bounds in enumerate(f["mb_geometry"]):
         matter = f["mb_data"]
+        base_dx = (bounds[1]-bounds[0])/matter["tmunu_E"][b].shape[-1]
+        step = stride if base_dx >= minimum_spacing else 1
         def cell_average(key):
             data = matter[key][b][0].astype(float)
-            if stride == 1:
+            if step == 1:
                 return data
             nz, nr = data.shape
-            return data.reshape(nz//stride, stride, nr//stride, stride).mean(axis=(1,3))
+            return data.reshape(nz//step, step, nr//step, step).mean(axis=(1,3))
         E = cell_average("tmunu_E")
         nz, nr = E.shape
         dr, dz = (bounds[1]-bounds[0])/nr, (bounds[3]-bounds[2])/nz
         rho = bounds[0] + (np.arange(nr)+.5)*dr
         metric = []
         for name in ("xx","xy","xz","yy","yz","zz"):
-            v = adm["mb_data"]["adm_g"+name][b][0][::stride, ::stride].astype(float)
+            v = adm["mb_data"]["adm_g"+name][b][0][::step, ::step].astype(float)
             assert v.shape == (nz+1, nr+1)
             metric.append((v[:-1,:-1]+v[1:,:-1]+v[:-1,1:]+v[1:,1:])*.25)
         xx, xy, xz, yy, yz, zz = metric
@@ -47,7 +49,7 @@ def profile(path, mass, *, stride=1):
         w = vol * E
         weights.append(w.ravel())
         radii.append((rho*np.sqrt(zz)).ravel())
-        sizes.append(np.full(w.size,max(dr,dz)/stride))
+        sizes.append(np.full(w.size,max(dr,dz)))
         angular += (vol*rho*cell_average("tmunu_Sz")).sum()
         # Stress along the coordinate z tangent of unit proper length.
         vertical += (vol*cell_average("tmunu_Syy")/yy).sum()
@@ -68,10 +70,12 @@ if __name__ == "__main__":
     cli = argparse.ArgumentParser(description=__doc__)
     cli.add_argument("mass", type=float)
     cli.add_argument("files", type=Path, nargs="+")
+    cli.add_argument("--stride", type=int, choices=(1,2), default=1)
+    cli.add_argument("--minimum-spacing", type=float, default=0.)
     args = cli.parse_args()
     writer = None
     for path in sorted(args.files):
-        row = profile(path, args.mass)
+        row = profile(path, args.mass, stride=args.stride, minimum_spacing=args.minimum_spacing)
         if writer is None:
             writer = csv.DictWriter(sys.stdout, fieldnames=row)
             writer.writeheader()

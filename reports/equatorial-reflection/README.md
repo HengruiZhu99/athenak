@@ -72,7 +72,7 @@ Each layout uses 24-by-24-cell blocks. The production-boundary pair has radial o
 | (36,36), original root | 96 | 48 |
 | (36,36), coarse root | 54 | 27 |
 
-At 30 M in the archived 1.0600 dispersal run, the centroid was 3.73220 M and the 90th-percentile circumferential radius was 4.69606 M. Only 16.58% of the represented Eulerian energy was on the finest level. The outer decile had energy-weighted mean spacing 0.25. Reproducing the outgoing radius and its resolution is a separate late-time check on a coarsened exterior.
+At 30 M in the archived 1.0600 dispersal run, the centroid was 3.73220 M and the 90th-percentile circumferential radius was 4.69606 M. Only 16.58% of the represented Eulerian energy was on the finest level. The outer decile had energy-weighted mean spacing 0.25. Rebinning just the archived exterior from 0.25 to 0.5 changed the 30 M centroid by +9.51e-5 M and its 90th percentile by −0.00489 M. Across the last three outputs the largest 90th-percentile sampling change was 0.01145 M. These are measured diagnostic sampling effects on identical evolved fields. The independent coarsened evolution tests the transport of the outgoing radiation on that mesh.
 
 The matched 0.9508 and 1.0600 endpoint jobs use the original physical outer distances and compare full and half coverage with the same new executable. They retain the 120-cycle finder and snapshot cadence. Compare physical timestamps as well as cycles. The coarsened layout remains experimental until the late-time centroid, vertical stress, fields, constraints, budgets and trapping checks pass. The ongoing bisection uses its original executable and deck.
 

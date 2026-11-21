@@ -28,6 +28,35 @@ def write_report(result, reference, trial, output):
         lines.append(f"| {key} | {float(profiles[-1][key]):.8g} | {v[-1]:.5g} | {max(abs(v)):.5g} |")
     lines += ["", "Differences in the table use reference values interpolated in physical time. "
               "The accompanying timed profiles record quadrature and cadence scales.", ""]
+    with (output/"comparison-fields.csv").open() as stream:
+        fields = list(csv.DictReader(stream))
+    for group in ("adm_", "tmunu_", "con_"):
+        worst = max((r for r in fields if r["field"].startswith(group)),key=lambda r:float(r["Linf"]))
+        lines.append(f"The largest {group[:-1]} field difference on the common spatial lattice was "
+                     f"{float(worst['Linf']):.5g} in {worst['field']} at "
+                     f"{float(worst['t_full_M']):.6g} M. The paired times differed by "
+                     f"{abs(float(worst['delta_t_M'])):.3g} M.")
+    dcon = np.array(result["half"]["final_constraint_sums"])-result["full"]["final_constraint_sums"]
+    lines.append("Terminal trial-minus-reference squared constraint integrals (C, H, M, Z) were "
+                 + ", ".join(f"{x:.5g}" for x in dcon) + ".")
+    lines.append("")
+    first = [result[side].get("first_verified_in_window") for side in ("full","half")]
+    if all(m and m["enclosing_fit"]["accepted"] for m in first):
+        a, b = first
+        dt = abs(a["t_M"]-b["t_M"])
+        cadence = max(a.get("previous_interval_M",0), b.get("previous_interval_M",0))
+        lines.append(f"First verified times differed by {dt:.5g} M. "
+                     f"The larger preceding sampling interval was {cadence:.5g} M.")
+        for key in ("area","surface_mass","surface_spin_ratio"):
+            diff = abs(a["enclosing_fit"][key]-b["enclosing_fit"][key])
+            if "geometric_sampling_change" in a and "geometric_sampling_change" in b:
+                spatial = a["geometric_sampling_change"][key]+b["geometric_sampling_change"][key]
+                lines.append(f"The enclosing {key} differed by {diff:.5g}. The sum of the "
+                             f"two measured spatial sampling changes was {spatial:.5g}.")
+            if "next_cadence_change" in a:
+                lines.append(f"The reference {key} changed by {a['next_cadence_change'][key]:.5g} "
+                             "over the next saved interval.")
+        lines.append("")
     for side in ("full","half"):
         v = result[side]
         lines.append(f"**{side}** relative energy and angular-momentum budget residuals were "
