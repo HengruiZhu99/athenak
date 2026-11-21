@@ -7,6 +7,7 @@ import subprocess
 import sys
 
 import numpy as np
+from adm_spheres import charges
 from compare import compare, stamp
 from endpoint_report import write_report
 from profile_comparison import compare_profiles
@@ -80,6 +81,8 @@ if __name__ == "__main__":
     result={}
     for side, folder in (("full",args.full),("half",args.half)):
         result[side]=summarize_run(folder)
+        frames=sorted((folder/"bin").glob("*.adm.*.bin"))
+        result[side]["R17_charges"] = [charges(read_binary(f),17) for f in (frames[0],frames[-1])]
         first, selected=window(folder)
         result[side]["first_online_marginal_cycle"]=first
         if first is None and seed.is_file():

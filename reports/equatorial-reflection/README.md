@@ -15,6 +15,8 @@ The full-volume normalization is twice the represented hemisphere for radiation 
 | 0.9508 | 5.0000000 | 23.7700000 | `0c34be12b8873c4c5c6b22cb226f86de05f3856eab63ec388dc0858c6e900730` |
 | 1.0600 | 5.0229322 | 26.7436388 | `5c53d9f2babff9474e2888d45a2ee852a76cf51d825a6badeebb0eb07353a0ff` |
 
+A separate native-snapshot audit integrates the Cartesian ADM mass surface integrand and the axial Killing angular momentum on coordinate spheres. The full grid integrates both hemispheres and the reflected grid doubles the northern quadrature. At radius 17, the initial 0.9508 data gave finite-sphere mass 7.21827128 and angular momentum 23.76999905 in both representations. The 1.0600 values were 7.25763591 and 26.74363773. Finite-radius Cartesian ADM mass has appreciable radial dependence here. The asymptotic masses used for normalization are the elliptic values in the table. On an analytic isotropic exterior with a Bowen–York spin tensor, the integral test at radius 5 and spacing 0.0625 recovered the known finite-radius mass and axial J to 4.91e-7 and 2.30e-8, with full/half differences below 2e-13.
+
 ## Convergence, MPI and restart
 
 | Measurement | Result |
@@ -34,7 +36,7 @@ The full-volume normalization is twice the represented hemisphere for radiation 
 
 The two-rank half-domain test created three leaves, migrated four block records and derefined three leaves. It restarted from the five-leaf checkpoint immediately after refinement. With backreaction active, at a common time of 0.25 code units the energy differences between half and full coverage were 3.13e-10 and 2.30e-11 at the two spatial resolutions. The difference between the *full* solutions at those resolutions was 8.06e-6. The corresponding half/full Hamiltonian constraint squared-integral differences were 6.21e-8 and 4.17e-9, versus 8.49e-2 from full-domain refinement. These are smooth-pulse tests, with angular resolution held fixed within each comparison.
 
-The same AMR and two-rank to one-rank restart passed on two StellarAI B200 GPUs. The fixed-metric energy residual was 2.14e-16 for each domain. The largest active-ordinate difference was 1.39e-17 against the positive full-domain half and 4.10e-16 against the reflected negative half. The restarted ordinates agreed exactly. In the coupled CPU tests the maximum differences across all geometry components were 9.89e-8 and 2.01e-8 at the two resolutions, versus 4.23e-4 between the two full-domain grids at coincident vertices.
+The manufactured quarter-period evolution reached the same maximum error and order on a StellarAI B200 (job 57843). The same AMR and two-rank to one-rank restart passed on two StellarAI B200 GPUs. The fixed-metric energy residual was 2.14e-16 for each domain. The largest active-ordinate difference was 1.39e-17 against the positive full-domain half and 4.10e-16 against the reflected negative half. The restarted ordinates agreed exactly. In the coupled CPU tests the maximum differences across all geometry components were 9.89e-8 and 2.01e-8 at the two resolutions, versus 4.23e-4 between the two full-domain grids at coincident vertices.
 
 ## Horizon finder
 

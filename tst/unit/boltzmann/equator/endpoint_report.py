@@ -61,6 +61,11 @@ def write_report(result, reference, trial, output):
         v = result[side]
         lines.append(f"**{side}** relative energy and angular-momentum budget residuals were "
                      f"{v['energy_budget_relative']:.4g} and {v['J_budget_relative']:.4g}.")
+        if "R17_charges" in v:
+            initial, last = v["R17_charges"]
+            lines.append(f"At coordinate radius 17 the finite-sphere mass changed from "
+                         f"{initial['M_sphere']:.8g} to {last['M_sphere']:.8g}, and axial J "
+                         f"from {initial['J_sphere']:.8g} to {last['J_sphere']:.8g}.")
         surface = v.get("first_verified_in_window")
         if surface:
             outer = surface["enclosing_fit"]
