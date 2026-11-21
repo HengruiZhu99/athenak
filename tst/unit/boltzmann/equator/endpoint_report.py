@@ -7,7 +7,8 @@ from performance import summarize
 
 
 def write_report(result, reference, trial, output):
-    cost = [summarize(p) for p in (reference, trial)]
+    cost = [summarize(p) if "Terminating on time limit" in (p/"stdout").read_text() else None
+            for p in (reference, trial)]
     with (output/"timed-profiles.csv").open() as stream:
         profiles = list(csv.DictReader(stream))
     lines = ["# Matched photon-ring evolution", "",
@@ -15,13 +16,21 @@ def write_report(result, reference, trial, output):
              "|---|---:|---:|---:|---:|---:|---:|"]
     for side, snapshot in zip(("Reference","Trial"), cost):
         c = snapshot
+        if c is None:
+            history = result["full" if side=="Reference" else "half"]
+            lines.append(f"| {side} (incomplete) | {history['end']:.8g} | — | — | — | — | — |")
+            continue
         lines.append(f"| {side} | {c['end_time']:.8g} | {c['time_mean_blocks']:.3f} | "
                      f"{c['steps']} | {c['wall_seconds']:.2f} | {c['GPU_hours']:.5f} | "
                      f"{c['sampled_peak_MiB']} |")
-    lines += ["", f"GPU-hour saving over the matched interval was "
-              f"{100*(1-cost[1]['GPU_hours']/cost[0]['GPU_hours']):.2f}%. "
-              f"Hosts were {cost[0]['host']} and {cost[1]['host']}.",
-              "", "| Quantity | Final trial | Final trial minus reference | Largest absolute difference |",
+    if all(cost) and abs(cost[0]["end_time"]-cost[1]["end_time"]) < 1e-10:
+        lines += ["", f"GPU-hour saving over the matched interval was "
+                  f"{100*(1-cost[1]['GPU_hours']/cost[0]['GPU_hours']):.2f}%. "
+                  f"Hosts were {cost[0]['host']} and {cost[1]['host']}."]
+    else:
+        lines += ["", "At least one evolution stopped before the requested endpoint. "
+                  "GPU-hours over the complete matched interval remain unavailable."]
+    lines += ["", "| Quantity | Final trial | Final trial minus reference | Largest absolute difference |",
               "|---|---:|---:|---:|"]
     for key in ("mean_Rcirc_M","p90_Rcirc_M","vertical_stress","E","J","outer_decile_mean_dx"):
         v = np.array([float(r["delta_"+key]) for r in profiles])

@@ -43,8 +43,8 @@ def summarize_run(folder):
     energy, angular, escaped, escaped_j, work=history[:,2:7].T
     # Rotational symmetry removes axial torque; energy includes metric work.
     return dict(start=float(history[0,0]),end=float(history[-1,0]),
-                energy_budget_relative=float(np.max(abs(energy+escaped-work-energy[0]))/energy[0]),
-                J_budget_relative=float(np.max(abs(angular+escaped_j-angular[0]))/abs(angular[0])),
+                energy_budget_relative=float(np.max(abs(energy+escaped-work-(energy[0]+escaped[0]-work[0])))/energy[0]),
+                J_budget_relative=float(np.max(abs(angular+escaped_j-(angular[0]+escaped_j[0])))/abs(angular[0])),
                 history_rows=len(history), final_constraint_sums=constraints[-1,2:6].tolist())
 
 

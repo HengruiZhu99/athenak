@@ -102,6 +102,12 @@ The final GPU executable, SHA-256 `2dfbf0f93e75e976eec7d149f5b9aa05edf545a370cca
 
 The eight-GPU selection job compares elapsed GPU-hours at fixed outer distances, rank count, node and evolution interval. A candidate that wins that comparison is queued against the full original-spacing square mesh at both physical endpoints. The two original-boundary endpoint pairs independently test the effect of symmetry. Promotion requires the long-interval field, charge, outgoing-shell and horizon comparisons.
 
+### Original-domain 1.0600 continuation beyond 30 M
+
+The existing full-domain continuation on the original bisection executable (57501) aborted at 37.169 M with the device assertion `invalid Boltzmann spatial metric`. By 35.247 M the native spatial metric had minimum eigenvalue 0.163 at (36,17.375) and the largest constraint violation was on the radial outer face. At 37.135 M the minimum eigenvalue had fallen to 0.00355 at (36,−12.938), the integrated squared constraint was 4.92e7 and the radiation centroid was still outward at 5.561 M. The final history sample reached an integrated squared constraint of 1.05e8. The output localizes a loss of metric conditioning to the radial exterior before the abort. It does not isolate a unique cause.
+
+The online finder accepted no marginal candidate in the continuation. Independent centered searches on five native slices from 31.98 to 37.14 M used 25 spherical radii and up to seven fitted starting radii. None passed the two-expansion sign test. The original 60 M classification remains indeterminate. The square-boundary qualification can continue from the two 30 M checkpoints to test the exterior beyond this failure if the matched 30 M outcomes are outward.
+
 ## Reproduction
 
 Run these commands from the solver root with Kokkos and MPI available. The archive `reports/equatorial-reflection/initial-data.tar.gz` contains both elliptic data files and their metadata. To run the StellarAI scripts from another checkout, extract it into the directory assigned to `EQUATOR_DATA`.

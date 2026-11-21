@@ -32,7 +32,19 @@ measure() {
     cd "$output/$tag"
     ln -s "$data/$family/ring.adm" ring.adm
     sha256sum ring.adm "$exe" > hashes
-    python3 "$tests/equator/layout.py" input "$@"
+    local launch=(-i input)
+    if [[ -n "${EQUATOR_PARENT:-}" ]]; then
+        grep -q '^Terminating on time limit' "$EQUATOR_PARENT/stdout"
+        cmp hashes "$EQUATOR_PARENT/hashes"
+        cp "$EQUATOR_PARENT/input" input
+        local checkpoints=("$EQUATOR_PARENT"/rst/*.rst)
+        local checkpoint="${checkpoints[-1]}"
+        test -s "$checkpoint"
+        printf '%s\n' "$checkpoint" > restart.path
+        launch=(-r "$checkpoint")
+    else
+        python3 "$tests/equator/layout.py" input "$@"
+    fi
     nvidia-smi --query-gpu=timestamp,uuid,memory.used --format=csv,noheader,nounits -l 1 > gpu-memory.csv &
     local monitor=$!
     trap 'kill "$monitor" 2>/dev/null || true' RETURN
@@ -44,7 +56,7 @@ measure() {
     fi
     /usr/bin/time -f '%e' -o wall.seconds srun --exact -N1 -n"$ranks" -c4 --gres=gpu:"$ranks" \
         "${bind[@]}" --cpu-bind=none --mpi=pmix --kill-on-bad-exit=1 \
-        python3 "$tests/stellar_photon_rank.py" "${mapper[@]}" "$exe" -i input time/tlim="$end" > stdout 2>&1
+        python3 "$tests/stellar_photon_rank.py" "${mapper[@]}" "$exe" "${launch[@]}" time/tlim="$end" > stdout 2>&1
     grep -q '^Terminating on time limit' stdout
     kill "$monitor" 2>/dev/null || true
     wait "$monitor" 2>/dev/null || true

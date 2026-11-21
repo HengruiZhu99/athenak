@@ -24,26 +24,27 @@ def summarize(folder):
     history = np.loadtxt(folder/"torus.z4c.user.hst", ndmin=2)
     with (folder/"z4c_timestep_contract.csv").open() as stream:
         times = {int(v["cycle"]):float(v["time"]) for v in csv.DictReader(stream)}
+    first = min(times)
     times[steps] = history[-1,0]
     count = int(re.search(r"Total number of MeshBlocks = (\d+)", text)[1])
     changes = {int(c):int(add)-int(drop) for c,add,drop in re.findall(
         r"CARTOON_AMR_TRANSACTION cycle=(\d+).*?created_leaves=(\d+) deleted_leaves=(\d+)",text)}
     weighted, check = 0., 0
-    for cycle in range(steps):
+    for cycle in range(first,steps):
         count += changes.get(cycle,0)
         weighted += count*(times[cycle+1]-times[cycle])
         check += count
     if check != blocksteps:
         raise ValueError(f"block census {check} differs from driver {blocksteps}")
-    time_weighted = weighted / (times[steps]-times[0])
+    time_weighted = weighted / (times[steps]-times[first])
     hashes = (folder/"hashes").read_text().splitlines()
     if len(hashes) != 2 or not all(re.fullmatch(r"[0-9a-f]{64}", line.split()[0]) for line in hashes):
         raise ValueError(f"invalid input or executable checksum in {folder}")
     return dict(layout=folder.name, host=devices[0]["host"], GPUs=len(hardware),
                 pci_devices=sorted(row["pci"] for row in devices),
                 initial_data_sha256=hashes[0].split()[0], executable_sha256=hashes[1].split()[0],
-                steps=steps,
-                end_time=history[-1,0], blocks_per_step=blocksteps/steps,
+                steps=steps-first, start_time=times[first],
+                end_time=history[-1,0], blocks_per_step=blocksteps/(steps-first),
                 time_mean_blocks=time_weighted, wall_seconds=seconds,
                 GPU_hours=seconds*len(hardware)/3600,
                 sampled_peak_MiB=max(int(row[-1]) for row in samples))
